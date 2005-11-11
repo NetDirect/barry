@@ -5,6 +5,7 @@
 
 #include "error.h"
 #include <sstream>
+#include <iomanip>
 
 using namespace std;
 
@@ -13,7 +14,9 @@ namespace Syncberry {
 std::string GetErrorString(int libusb_errno, const std::string &str)
 {
 	ostringstream oss;
-	oss << "(" << libusb_errno << "): " << str;
+	oss << "(" << setbase(10) << libusb_errno << ", "
+	    << strerror(-libusb_errno) << "): "
+	    << str;
 	return oss.str();
 }
 
