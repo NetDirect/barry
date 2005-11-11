@@ -1,3 +1,41 @@
+Release: version 0.0.1 - 2005/??/??
+------------------------------------------------------------------------------
+2005/11/11
+	- added .cvsignore files to project
+	- added README notes to document the source architecture
+	- added dbsetup data script, which shows how to get into database
+		mode, using the RIM Desktop mode, and open a socket
+	- added blackberry.{h,cc} class
+	- added command line parameters to bbtool.cc
+		-l = list only
+		-p = specify pin of blackberry device
+	- added blackberry test code in bbtool.cc - debugging the initial
+		opening protocol: sockets, modes, etc... see dbsetup for
+		results
+	- added copy-on-write functionality to Data class, so it can be used
+		with plain data buffers with little performance impact
+	- added eout() and ddout() debugging - to separate:
+		- regular debug output
+		- exception debug output (should probably be logged to
+			syslog someday, and never turned off)
+		- raw data dump output
+	- changed errno SBError exception handler to try to decode the error
+		numbers into english (limited success)
+	- fixed probe and socket USB Bulk message handling, so they don't
+		use PollCompletions(), but use IO::Wait() (libusb_io_wait())
+	- added common packet size checker in protocol.cc
+	- fixed unpacked protocol packet structs... using gcc's
+		__attribute__ ((packed)) ... see protocol.h
+	- added ModeSelectCommand structure (protocol.h)
+	- finished Socket::Open() call  (Close() not yet implemented)
+	- moved Socket::Send/Receive() out of private, as they can be used
+		for socket 0 operations.
+	- cleaned up pointer management with macros:
+		MAKE_PACKET()
+		COMMAND()
+		IS_COMMAND()
+	- added IO::Wait() and IO::Cancel() to correspond with libusb API
+	- added datadumping in usbwrap for easy protocol capture
 2005/10/20
 	- syncberry tree started
 
