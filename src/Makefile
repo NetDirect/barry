@@ -74,6 +74,7 @@ BBTOOLOBJS = \
 	error.o \
 	socket.o \
 	protocol.o \
+	blackberry.o \
 
 
 #
