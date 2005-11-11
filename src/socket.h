@@ -22,6 +22,7 @@ class Socket
 					// since socket 0 is always open
 					// If this is not 0, then class will
 					// deal with closing automatically.
+	uint8_t m_flag;
 	uint32_t m_sequenceId;
 
 	int m_lastStatus;
@@ -29,8 +30,6 @@ class Socket
 private:
 	// sends 'send' data to device, and waits for response, using
 	// "read first, write second" order observed in capture
-	bool Send(const Data &send, Data &receive);
-	bool Receive(Data &receive);
 	void AppendFragment(Data &whole, const Data &fragment);
 	void CheckSequence(const Data &seq);
 
@@ -40,8 +39,14 @@ public:
 
 	int GetLastStatus() const { return m_lastStatus; }
 
-	void Open(uint16_t socket);
+	void Open(uint16_t socket, uint8_t flag);
 	void Close();
+
+	// Send and Receive are available before Open...
+	// an unopened socket defaults to socket 0, which you need
+	// in order to set the blackberry mode
+	bool Send(const Data &send, Data &receive);
+	bool Receive(Data &receive);
 
 	// sends the send packet down to the device, fragmenting if
 	// necessary, and returns the response in receive, defragmenting
