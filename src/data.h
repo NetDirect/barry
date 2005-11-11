@@ -37,7 +37,7 @@ public:
 	const unsigned char * GetData() const { return m_data; }
 	int GetSize() const { return m_datasize; }
 
-	unsigned char * GetBuffer() { return m_data; }
+	unsigned char * GetBuffer(int requiredsize = -1);
 	int GetBufSize() const { return m_bufsize; }
 	void ReleaseBuffer(int datasize = -1);
 

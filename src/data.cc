@@ -152,6 +152,13 @@ void Data::DumpHex(ostream &os) const
 	}
 }
 
+unsigned char * Data::GetBuffer(int requiredsize)
+{
+	if( requiredsize > 0 )
+		MakeSpace(requiredsize);
+	return m_data;
+}
+
 void Data::ReleaseBuffer(int datasize)
 {
 	assert( datasize <= m_bufsize );

@@ -7,6 +7,7 @@
 
 #include "usbwrap.h"
 #include "data.h"
+#include "error.h"
 
 #include <sstream>
 
@@ -45,7 +46,7 @@ IO& IO::operator=(const IO &other)
 		return *this;		// nothing to do
 
 	if( m_dev && m_dev != other.m_dev )
-		throw std::runtime_error("Copying IO objects that are not "
+		throw UsbError("Copying IO objects that are not "
 			"related to the same device.");
 
 	cleanup();
@@ -138,12 +139,14 @@ const unsigned char * IO::GetData() const
 
 bool Device::SetConfiguration(unsigned char cfg)
 {
-	return libusb_set_configuration(m_handle, cfg) >= 0;
+	m_lasterror = libusb_set_configuration(m_handle, cfg);
+	return m_lasterror >= 0;
 }
 
 bool Device::Reset()
 {
-	return libusb_reset(m_handle) == 0;
+	m_lasterror = libusb_reset(m_handle);
+	return m_lasterror == 0;
 }
 
 void Device::TrackBulkRead(int ep, Data &data)
@@ -207,7 +210,7 @@ IO Device::ABulkRead(int ep, Data &data)
 	libusb_io_handle_t *rd = libusb_submit_bulk_read( GetHandle(), ep,
 		data.GetBuffer(), data.GetBufSize(), m_timeout, NULL);
 	if( !rd )
-		throw std::runtime_error("Error in libusb_submit_bulk_read");
+		throw UsbError("Error in libusb_submit_bulk_read");
 
 	return IO(*this, rd);
 }
@@ -217,7 +220,17 @@ IO Device::ABulkWrite(int ep, const Data &data)
 	libusb_io_handle_t *wr = libusb_submit_bulk_write(GetHandle(), ep,
 		data.GetData(), data.GetSize(), m_timeout, NULL);
 	if( !wr )
-		throw std::runtime_error("Error in libusb_submit_bulk_write");
+		throw UsbError("Error in libusb_submit_bulk_write");
+
+	return IO(*this, wr);
+}
+
+IO Device::ABulkWrite(int ep, const void *data, size_t size)
+{
+	libusb_io_handle_t *wr = libusb_submit_bulk_write(GetHandle(), ep,
+		data, size, m_timeout, NULL);
+	if( !wr )
+		throw UsbError("Error in libusb_submit_bulk_write");
 
 	return IO(*this, wr);
 }
@@ -227,7 +240,7 @@ IO Device::AInterruptRead(int ep, Data &data)
 	libusb_io_handle_t *rd = libusb_submit_interrupt_read( GetHandle(), ep,
 		data.GetBuffer(), data.GetBufSize(), m_timeout, NULL);
 	if( !rd )
-		throw std::runtime_error("Error in libusb_submit_interrupt_read");
+		throw UsbError("Error in libusb_submit_interrupt_read");
 
 	return IO(*this, rd);
 }
@@ -237,7 +250,7 @@ IO Device::AInterruptWrite(int ep, const Data &data)
 	libusb_io_handle_t *wr = libusb_submit_interrupt_write(GetHandle(), ep,
 		data.GetData(), data.GetSize(), m_timeout, NULL);
 	if( !wr )
-		throw std::runtime_error("Error in libusb_submit_interrupt_write");
+		throw UsbError("Error in libusb_submit_interrupt_write");
 
 	return IO(*this, wr);
 }

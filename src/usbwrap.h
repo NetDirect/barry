@@ -12,24 +12,29 @@
 #include <vector>
 #include <stdexcept>
 
-#define VENDOR_RIM		0x0fca
-#define PRODUCT_RIM_BLACKBERRY	0x0001
-
 #define USBWRAP_DEFAULT_TIMEOUT	1000
 
 class Data;
 
 namespace Usb {
 
+class UsbError : public std::runtime_error
+{
+public:
+	UsbError(const std::string &str) : std::runtime_error(str) {}
+};
+
+
 class Match
 {
 	libusb_match_handle_t *m_match;
+	int m_lasterror;
 public:
 	Match(int vendor, int product)
 		: m_match(0)
 	{
 		if( libusb_match_devices_by_vendor(&m_match, vendor, product) < 0 )
-			throw std::runtime_error("match failed");
+			throw UsbError("match failed");
 	}
 
 	~Match()
@@ -39,7 +44,8 @@ public:
 
 	bool next_device(libusb_device_id_t *devid)
 	{
-		return libusb_match_next_device(m_match, devid) >= 0;
+		m_lasterror = libusb_match_next_device(m_match, devid);
+		return m_lasterror >= 0;
 	}
 };
 
@@ -137,13 +143,14 @@ private:
 	io_list_type m_ios;
 
 	int m_timeout;
+	int m_lasterror;
 
 public:
 	Device(libusb_device_id_t id)
 		: m_id(id), m_timeout(USBWRAP_DEFAULT_TIMEOUT)
 	{
 		if( libusb_open(m_id, &m_handle) < 0 )
-			throw std::runtime_error("open failed");
+			throw UsbError("open failed");
 	}
 
 	~Device()
@@ -157,6 +164,7 @@ public:
 
 	libusb_device_id_t GetID() const { return m_id; }
 	libusb_dev_handle_t * GetHandle() const { return m_handle; }
+	int GetLastError() const { return m_lasterror; }
 
 
 	/////////////////////////////
@@ -182,6 +190,7 @@ public:
 	// return the IO handle immediately for the caller to deal with
 	IO ABulkRead(int ep, Data &data);
 	IO ABulkWrite(int ep, const Data &data);
+	IO ABulkWrite(int ep, const void *data, size_t size);
 	IO AInterruptRead(int ep, Data &data);
 	IO AInterruptWrite(int ep, const Data &data);
 
@@ -199,7 +208,7 @@ public:
 		: m_dev(dev), m_iface(iface)
 	{
 		if( libusb_claim_interface(dev.GetHandle(), iface) < 0 )
-			throw std::runtime_error("claim interface failed");
+			throw UsbError("claim interface failed");
 	}
 
 	~Interface()

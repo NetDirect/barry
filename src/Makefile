@@ -59,26 +59,40 @@ LDFLAGS = ../../external/rootdir/libusb/lib/libusb.a -lpthread $(LDDEBUG)
 #
 # Syncberry files
 #
-SYNCBERRYOBJS = \
+CONNECTOBJS = \
 	data.o \
 	usbwrap.o \
 	connect.o \
 
 
+BBTOOLOBJS = \
+	data.o \
+	usbwrap.o \
+	bbtool.o \
+	probe.o \
+	sbcommon.o \
+	error.o \
+	socket.o \
+	protocol.o \
+
+
 #
 # object files needed to build syncberry
 #
-OBJS = $(SYNCBERRYOBJS)
+OBJS = $(CONNECTOBJS) $(BBTOOLOBJS)
 
 
 ###############################################################################
-all:	visual dep.mak tests connect translate
+all:	visual dep.mak tests connect bbtool translate
 
 visual:
 	echo ; echo
 
-connect:	$(OBJS)
-	$(CXX) $(DEBUG) -o connect $(OBJS) $(LDFLAGS)
+connect:	$(CONNECTOBJS)
+	$(CXX) $(DEBUG) -o connect $(CONNECTOBJS) $(LDFLAGS)
+
+bbtool:		$(BBTOOLOBJS)
+	$(CXX) $(DEBUG) -o bbtool $(BBTOOLOBJS) $(LDFLAGS)
 
 translate:	translate.cc
 	$(CXX) $(CXXFLAGS) $(DEBUG) -O2 -pg -o translate translate.cc
@@ -100,7 +114,8 @@ clean-tests:
 #################
 
 clean:	clean-tests
-	rm -f $(OBJS) *.rpo */*.rpo dep.mak core core.* gmon.out leak.out connect
+	rm -f $(OBJS) *.rpo */*.rpo dep.mak core core.* gmon.out leak.out
+	rm -f connect bbtool
 	rm -f translate
 
 dep:
