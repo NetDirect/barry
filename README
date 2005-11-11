@@ -1,2 +1,31 @@
-readme text goes here
+
+Some notes on code architecture:
+--------------------------------
+
+Lowest level:
+	Lowest level is the libusb software, currently using the DEVEL branch
+
+USB layer:
+	usbwrap.{h,cc}		- C++ wrapper for libusb
+	data.{h,cc}		- C++ data class for buffer management
+	connect.cc		- low level USB test program, capable of
+				  using data file scripts to talk to a
+				  device via bulk read/write
+	debug.h			- general debugging output support
+
+
+Blackberry layer:
+	error.{h,cc}		- common exception classes for Syncberry layer
+	probe.{h,cc}		- USB probe class to find Blackberry devices
+	protocol.{h,cc}		- structs and defines for packets seen on wire
+	sbcommon.{h,cc}		- general API and utilities
+	socket.{h,cc}		- socket class encapsulating the Blackberry
+				  logical socket
+	blackberry.{h,cc}	- high level blackberry API class
+	bbtool.cc		- command line testing utility
+
+
+Misc utilities:
+	translate.cc		- translate UsbSnoop log file data into
+				  hex+ascii dumps
 
