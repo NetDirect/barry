@@ -10,9 +10,6 @@
 #include "error.h"
 #include <iomanip>
 
-#define BLACKBERRY_INTERFACE		0
-#define BLACKBERRY_CONFIGURATION	1
-
 using namespace Usb;
 
 namespace Syncberry {
@@ -57,13 +54,14 @@ namespace {
 
 	void Intro(int IntroIndex, Device &dev, Data &response)
 	{
-		dev.TrackBulkRead(READ_ENDPOINT, response);
+		IO rd = dev.ABulkRead(READ_ENDPOINT, response);
 		IO wr = dev.ABulkWrite(WRITE_ENDPOINT, Intro_Sends[IntroIndex],
 			GetSize(Intro_Sends[IntroIndex]));
 
-		IO rd = dev.PollCompletions();
-		while( !rd.IsValid() )
-			rd = dev.PollCompletions();
+		rd.Wait();
+		wr.Wait();
+
+		response.ReleaseBuffer(rd.GetStatus() >= 0 ? rd.GetSize() : 0);
 	}
 
 } // anonymous namespace
