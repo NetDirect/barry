@@ -16,15 +16,21 @@ class Data
 	int m_datasize;			//< number of bytes of actual data
 	int m_endpoint;
 
+	// copy on write feature
+	const unsigned char *m_externalData;
+	bool m_external;
+
 	// output format flags
 	static bool bPrintAscii;
 
 protected:
 	void MakeSpace(int desiredsize);
+	void CopyOnWrite(int desiredsize = -1);
 
 public:
 	Data();
 	Data(int endpoint, int startsize = 0x4000);
+	Data(const void *ValidData, int size);
 	Data(const Data &other);
 	~Data();
 
@@ -34,7 +40,7 @@ public:
 
 	int GetEndpoint() const { return m_endpoint; }
 
-	const unsigned char * GetData() const { return m_data; }
+	const unsigned char * GetData() const { return m_external ? m_externalData : m_data; }
 	int GetSize() const { return m_datasize; }
 
 	unsigned char * GetBuffer(int requiredsize = -1);

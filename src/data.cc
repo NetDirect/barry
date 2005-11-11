@@ -45,7 +45,9 @@ Data::Data()
 	: m_data(new unsigned char[0x4000]),
 	m_bufsize(0x4000),
 	m_datasize(0),
-	m_endpoint(-1)
+	m_endpoint(-1),
+	m_externalData(0),
+	m_external(false)
 {
 	memset(m_data, 0, m_bufsize);
 }
@@ -54,19 +56,34 @@ Data::Data(int endpoint, int startsize)
 	: m_data(new unsigned char[startsize]),
 	m_bufsize(startsize),
 	m_datasize(0),
-	m_endpoint(endpoint)
+	m_endpoint(endpoint),
+	m_externalData(0),
+	m_external(false)
 {
 	memset(m_data, 0, m_bufsize);
 }
 
+Data::Data(const void *ValidData, int size)
+	: m_data(0),
+	m_bufsize(0),
+	m_datasize(size),
+	m_endpoint(-1),
+	m_externalData((const unsigned char*)ValidData),
+	m_external(true)
+{
+}
+
 Data::Data(const Data &other)
-	: m_data(new unsigned char[other.m_bufsize]),
+	: m_data(other.m_bufsize ? new unsigned char[other.m_bufsize] : 0),
 	m_bufsize(other.m_bufsize),
 	m_datasize(other.m_datasize),
-	m_endpoint(other.m_endpoint)
+	m_endpoint(other.m_endpoint),
+	m_externalData(other.m_externalData),
+	m_external(other.m_external)
 {
 	// copy over the raw data
-	memcpy(m_data, other.m_data, other.m_bufsize);
+	if( !m_external )
+		memcpy(m_data, other.m_data, other.m_bufsize);
 }
 
 Data::~Data()
@@ -84,6 +101,21 @@ void Data::MakeSpace(int desiredsize)
 		delete [] m_data;
 		m_data = newbuf;
 		m_bufsize = desiredsize;
+	}
+}
+
+// perform the copy on write operation if needed
+void Data::CopyOnWrite(int desiredsize)
+{
+	if( m_external ) {
+		// make room
+		MakeSpace(desiredsize == -1 ? m_datasize : desiredsize);
+
+		// copy it over
+		memcpy(m_data, m_externalData, m_datasize);
+
+		// not external anymore
+		m_external = false;
 	}
 }
 
@@ -107,6 +139,7 @@ void Data::InputHexLine(istream &is)
 
 	dout("InputHexLine: read " << index << " bytes");
 
+	CopyOnWrite(address + index);
 	MakeSpace(address + index);	// make space for the new
 	m_datasize = std::max(address + index, m_datasize);
 	while( index-- )
@@ -123,10 +156,10 @@ void Data::DumpHexLine(ostream &os, int index, int size) const
 
 	// hex byte data
 	for( int i = 0; i < size; i++ ) {
-		if( (index+i) < m_datasize ) {
+		if( (index+i) < GetSize() ) {
 			os << setbase(16) << setfill('0')
 			   << setw(2) << setprecision(2)
-			   << (unsigned int) m_data[index + i] << ' ';
+			   << (unsigned int) GetData()[index + i] << ' ';
 		}
 		else {
 			os << "   ";
@@ -136,8 +169,8 @@ void Data::DumpHexLine(ostream &os, int index, int size) const
 	// printable data
 	if( bPrintAscii ) {
 		os << ' ';
-		for( int i = 0; i < size && (index+i) < m_datasize; i++ ) {
-			int c = m_data[index + i];
+		for( int i = 0; i < size && (index+i) < GetSize(); i++ ) {
+			int c = GetData()[index + i];
 			os << setbase(10) << (char) (isprint(c) ? c : '.');
 		}
 	}
@@ -147,13 +180,14 @@ void Data::DumpHexLine(ostream &os, int index, int size) const
 
 void Data::DumpHex(ostream &os) const
 {
-	for( int address = 0; address < m_datasize; address += 16 ) {
+	for( int address = 0; address < GetSize(); address += 16 ) {
 		DumpHexLine(os, address, 16);
 	}
 }
 
 unsigned char * Data::GetBuffer(int requiredsize)
 {
+	CopyOnWrite(requiredsize);
 	if( requiredsize > 0 )
 		MakeSpace(requiredsize);
 	return m_data;
@@ -163,6 +197,7 @@ void Data::ReleaseBuffer(int datasize)
 {
 	assert( datasize <= m_bufsize );
 	assert( datasize >= 0 || datasize == -1 );
+	assert( !m_external );
 
 	if( datasize >= 0 ) {
 		m_datasize = datasize;
@@ -178,7 +213,8 @@ void Data::ReleaseBuffer(int datasize)
 /// set buffer to 0 and remove all data
 void Data::Zap()
 {
-	memset(m_data, 0, m_bufsize);
+	if( !m_external )
+		memset(m_data, 0, m_bufsize);
 	m_datasize = 0;
 }
 
@@ -187,12 +223,15 @@ Data & Data::operator=(const Data &other)
 	if( this == &other )
 		return *this;
 
-	delete [] m_data;
-	m_data = new unsigned char[other.m_bufsize];
+	// don't remove our current buffer, only grow it if needed
+	MakeSpace(other.m_bufsize);
 	memcpy(m_data, other.m_data, other.m_bufsize);
-	m_bufsize = other.m_bufsize;
+
+	// then copy over the data state
 	m_datasize = other.m_datasize;
 	m_endpoint = other.m_endpoint;
+	m_externalData = other.m_externalData;
+	m_external = other.m_external;
 	return *this;
 }
 
