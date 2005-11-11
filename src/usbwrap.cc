@@ -8,6 +8,7 @@
 #include "usbwrap.h"
 #include "data.h"
 #include "error.h"
+#include "debug.h"
 
 #include <sstream>
 
@@ -88,6 +89,34 @@ bool IO::IsCompleted() const
 		return true;
 
 	return libusb_is_io_completed(m_handle) != 0;
+}
+
+void IO::Wait()
+{
+	if( !IsValid() )
+		return;			// nothing to wait on
+	libusb_io_wait(m_handle);
+
+#ifdef __DEBUG_MODE__
+	ddout("IO::Wait(): Endpoint " << GetEndpoint()
+		<< " Status " << GetStatus());
+
+	// only dump read endpoints that are successful
+	if( (GetEndpoint() & USB_ENDPOINT_DIR_MASK) && GetStatus() >= 0 ) {
+		Data dump(GetData(), GetSize());
+		ddout(dump);
+	}
+#endif
+}
+
+void IO::Cancel()
+{
+	if( !IsValid() )
+		return;
+	if( !IsCompleted() ) {
+		// not complete yet, cancel
+		libusb_io_cancel(m_handle);
+	}
 }
 
 int IO::GetStatus() const
@@ -217,6 +246,7 @@ IO Device::ABulkRead(int ep, Data &data)
 
 IO Device::ABulkWrite(int ep, const Data &data)
 {
+	ddout("ABulkWrite to endpoint " << ep << ":\n" << data);
 	libusb_io_handle_t *wr = libusb_submit_bulk_write(GetHandle(), ep,
 		data.GetData(), data.GetSize(), m_timeout, NULL);
 	if( !wr )
@@ -227,6 +257,11 @@ IO Device::ABulkWrite(int ep, const Data &data)
 
 IO Device::ABulkWrite(int ep, const void *data, size_t size)
 {
+#ifdef __DEBUG_MODE__
+	Data dump(data, size);
+	ddout("ABulkWrite to endpoint " << ep << ":\n" << dump);
+#endif
+
 	libusb_io_handle_t *wr = libusb_submit_bulk_write(GetHandle(), ep,
 		data, size, m_timeout, NULL);
 	if( !wr )
@@ -247,6 +282,7 @@ IO Device::AInterruptRead(int ep, Data &data)
 
 IO Device::AInterruptWrite(int ep, const Data &data)
 {
+	ddout("AInterruptWrite to endpoint " << ep << ":\n" << data);
 	libusb_io_handle_t *wr = libusb_submit_interrupt_write(GetHandle(), ep,
 		data.GetData(), data.GetSize(), m_timeout, NULL);
 	if( !wr )

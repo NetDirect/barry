@@ -89,6 +89,8 @@ public:
 
 	// API wrappers
 	bool IsCompleted() const;
+	void Wait();
+	void Cancel();
 	int GetStatus() const;
 	int GetSize() const;
 	int GetReqSize() const;
@@ -188,6 +190,16 @@ public:
 
 	// perform async io and don't track handles in Device, but
 	// return the IO handle immediately for the caller to deal with
+	// It is safe to use PollCompletions() along with these calls,
+	// keep in mind that PollCompletions() will return IO's for handles
+	// that it doesn't track, thereby duplicating IO's that you
+	// get from these async functions.  The IO destructor will properly
+	// handle multiple cleanups, but if one IO is destroyed, the other
+	// becomes invalid on the low level, but the object doesn't know it.
+	//
+	// Best to use one or the other IO style.  Remember you can IO.Wait()
+	// to block if needed.
+	//
 	IO ABulkRead(int ep, Data &data);
 	IO ABulkWrite(int ep, const Data &data);
 	IO ABulkWrite(int ep, const void *data, size_t size);
