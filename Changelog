@@ -37,6 +37,7 @@ Release: version 0.0.1 - 2005/??/??
 	- added IO::Wait() and IO::Cancel() to correspond with libusb API
 	- added datadumping in usbwrap for easy protocol capture
 	- added preliminary record.{h,cc} classes
+	- added Contact record parsing, and test code
 2005/10/20
 	- syncberry tree started
 

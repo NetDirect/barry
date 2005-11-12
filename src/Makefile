@@ -74,6 +74,7 @@ BBTOOLOBJS = \
 	error.o \
 	socket.o \
 	protocol.o \
+	record.o \
 	blackberry.o \
 
 
@@ -96,19 +97,25 @@ bbtool:		$(BBTOOLOBJS)
 	$(CXX) $(DEBUG) -o bbtool $(BBTOOLOBJS) $(LDFLAGS)
 
 translate:	translate.cc
-	$(CXX) $(CXXFLAGS) $(DEBUG) -O2 -pg -o translate translate.cc
+	$(CXX) $(CXXFLAGS) $(DEBUG) -o translate translate.cc
 
 #############
 # Tests
 #############
 
-tests:	data-test
+tests:	test-data test-contact
 
-data-test:	data.h data.cc
-	$(CXX) $(CXXFLAGS) -D__TEST_MODE__ $(DEBUG) -O2 -g -o data-test data.cc
+test-data:	data.h data.cc
+	$(CXX) $(CXXFLAGS) -D__TEST_MODE__ $(DEBUG) -o test-data data.cc
+
+test-contact.o:	record.cc
+	$(CXX) $(CXXFLAGS) -D__TEST_MODE__ $(DEBUG) -o test-contact.o -c record.cc
+
+test-contact:	test-contact.o data.o
+	$(CXX) $(DEBUG) -o test-contact test-contact.o data.o
 
 clean-tests:
-	rm -f data-test
+	rm -f test-data test-contact test-contact.o
 
 #################
 # Cleanup / Misc

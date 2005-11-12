@@ -1,6 +1,7 @@
 bbtool
 connect
-data-test
+test-data
+test-contact
 dep.mak
 gmon.out
 translate

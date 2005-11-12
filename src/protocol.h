@@ -45,6 +45,8 @@ struct DBCommand
 struct DBResponse
 {
 	uint8_t		command;
+	uint32_t	unknown;
+	uint16_t	sequenceCount;
 	uint8_t		data[1];
 } __attribute__ ((packed));
 
