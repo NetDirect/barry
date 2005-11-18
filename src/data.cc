@@ -109,7 +109,7 @@ void Data::CopyOnWrite(int desiredsize)
 {
 	if( m_external ) {
 		// make room
-		MakeSpace(desiredsize == -1 ? m_datasize : desiredsize);
+		MakeSpace(std::max(desiredsize, m_datasize));
 
 		// copy it over
 		memcpy(m_data, m_externalData, m_datasize);
