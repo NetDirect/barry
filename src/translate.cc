@@ -35,6 +35,8 @@ void PrintHex(const char *str)
 	char *endpos = (char*) str;
 	while( *endpos ) {
 		int c = (int) strtol(str, &endpos, 16);
+		if( c == LONG_MIN || c == LONG_MAX )
+			break;
 		if( isprint(c) )
 			cout << (char)c;
 		else
@@ -66,10 +68,17 @@ int main()
 	while( cin ) {
 		char buff[1024];
 		cin.getline(buff, sizeof(buff));
-		if( IsHexData(buff) )
+		if( IsHexData(buff) ) {
+			// strip whitespace
+			int sln = strlen(buff);
+			while( sln && (buff[sln] == 0 || isspace(buff[sln])) ){
+				buff[sln--] = 0;
+			}
 			PrintHex(buff);
-		else
+		}
+		else {
 			cout << buff << "\n";
+		}
 
 		if( cin.fail() && !cin.eof() ) {
 			// getline busted its buffer... discard the
