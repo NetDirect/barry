@@ -59,8 +59,7 @@ void Socket::Open(uint16_t socket, uint8_t flag)
 	Data send(&packet, packet.size);
 	Data receive;
 	if( !Send(send, receive) ) {
-		eout("Send packet:\n" << send);
-		eout("Receive packet: \n" << receive);
+		eeout(send, receive);
 		throw SBError(GetLastStatus(), "Error opening socket");
 	}
 
@@ -70,8 +69,7 @@ void Socket::Open(uint16_t socket, uint8_t flag)
 		CheckSequence(receive);
 
 		// still need our ACK
-		IO rd = m_dev.ABulkRead(m_readEp, receive);
-		rd.Wait();
+		Receive(receive);
 	}
 
 	CheckSize(receive, SB_SOCKET_PACKET_SIZE);
@@ -83,12 +81,58 @@ void Socket::Open(uint16_t socket, uint8_t flag)
 		eout("Packet:\n" << receive);
 		throw SBError("Socket: Bad OPENED packet in Open");
 	}
+
+	// success!  save the socket
+	m_socket = socket;
+	m_flag = flag;
 }
 
 void Socket::Close()
 {
 	if( m_socket != 0 ) {
 		// only close non-default sockets
+
+		// build close command
+		Syncberry::Packet packet;
+		packet.socket = 0;
+		packet.size = SB_SOCKET_PACKET_SIZE;
+		packet.command = SB_COMMAND_CLOSE_SOCKET;
+		packet.data.simple.data.socket.socket = m_socket;
+		packet.data.simple.data.socket.param = m_flag;
+
+		Data command(&packet, packet.size);
+		Data response;
+		if( !Send(command, response) ) {
+			eeout(command, response);
+			throw SBError(GetLastStatus(), "Error closing socket");
+		}
+
+		// starting fresh, reset sequence ID
+		CheckSize(response);
+		if( IS_COMMAND(response, SB_COMMAND_SEQUENCE_HANDSHAKE) ) {
+			CheckSequence(response);
+
+			// still need our ACK
+			Receive(response);
+		}
+
+		CheckSize(response, SB_SOCKET_PACKET_SIZE);
+		MAKE_PACKET(rpack, response);
+		if( rpack->command != SB_COMMAND_CLOSED_SOCKET ||
+		    rpack->data.simple.data.socket.socket != m_socket ||
+		    rpack->data.simple.data.socket.param != m_flag )
+		{
+			eout("Packet:\n" << response);
+			throw SBError("Socket: Bad CLOSED packet in Close");
+		}
+
+		// and finally, there always seems to be an extra read of
+		// an empty packet at the end... just throw it away
+		Receive(response);
+
+		// reset socket and flag
+		m_socket = 0;
+		m_flag = 0;
 	}
 }
 
@@ -152,10 +196,10 @@ void Socket::AppendFragment(Data &whole, const Data &fragment)
 
 void Socket::CheckSequence(const Data &seq)
 {
-	if( m_socket == 0 ) {
-		// don't do any sequence checking on socket 0
-		return;
-	}
+//	if( m_socket == 0 ) {
+//		// don't do any sequence checking on socket 0
+//		return;
+//	}
 
 	MAKE_PACKET(spack, seq);
 	if( (unsigned int) seq.GetSize() < SB_SEQUENCE_PACKET_SIZE ) {
@@ -172,9 +216,16 @@ void Socket::CheckSequence(const Data &seq)
 	}
 	else {
 		if( sequenceId != m_sequenceId ) {
-			eout("Socket sequence: " << m_sequenceId
-				<< ". Packet sequence: " << sequenceId);
-			throw SBError("Socket: out of sequence");
+			if( m_socket != 0 ) {
+				eout("Socket sequence: " << m_sequenceId
+					<< ". Packet sequence: " << sequenceId);
+				throw SBError("Socket: out of sequence");
+			}
+			else {
+				dout("Bad sequence on socket 0: expected: "
+					<< msequenceId
+					<< ". Packet sequence: " << sequenceId);
+			}
 		}
 	}
 
@@ -188,6 +239,17 @@ void Socket::CheckSequence(const Data &seq)
 // Blocks until response received or timed out in Usb::Device
 bool Socket::Packet(const Data &send, Data &receive)
 {
+/*
+// FIXME - this might be a good idea someday, or perhaps provide a wrapper
+// function that forces the socket number to the correct current value,
+// but putting it here means a copy on every packet.
+
+	// force socket to our socket
+	Data send = sendorig;
+	Syncberry::Packet *sspack = (Syncberry::Packet *)send.GetBuffer(2);
+	sspack->socket = GetSocket();
+*/
+
 	MAKE_PACKET(spack, send);
 	if( send.GetSize() < MIN_PACKET_SIZE ||
 	    (spack->command != SB_COMMAND_DB_DATA &&
@@ -256,6 +318,19 @@ bool Socket::Packet(const Data &send, Data &receive)
 	}
 
 	return true;
+}
+
+bool Socket::NextRecord(Data &receive)
+{
+	Syncberry::Packet packet;
+	packet.socket = GetSocket();
+	packet.size = 7;
+	packet.command = SB_COMMAND_DB_DONE;
+	packet.data.param.param = 0;
+	packet.data.param.data.db.command = 0;
+
+	Data command(&packet, packet.size);
+	return Packet(command, receive);
 }
 
 

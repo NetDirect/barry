@@ -14,6 +14,20 @@ namespace Usb { class Device; }
 
 namespace Syncberry {
 
+//
+// Socket class
+//
+/// Encapsulates a "logical socket" in the Blackberry USB protocol.
+/// By default, provides raw send/receive access, as well as packet
+/// writing on socket 0, which is always open.
+///
+/// There are Open and Close members to open data sockets which are used
+/// to transfer data to and from the device.
+///
+/// The destructor will close any non-0 open sockets automatically.
+///
+/// Requires an active Usb::Device object to work on.
+///
 class Socket
 {
 	Usb::Device &m_dev;
@@ -38,6 +52,7 @@ public:
 	~Socket();
 
 	int GetLastStatus() const { return m_lastStatus; }
+	uint16_t GetSocket() const { return m_socket; }
 
 	void Open(uint16_t socket, uint8_t flag);
 	void Close();
@@ -53,6 +68,9 @@ public:
 	// if needed
 	// Blocks until response received or timed out in Usb::Device
 	bool Packet(const Data &send, Data &receive);
+
+	// some handy wrappers for the Packet() interface
+	bool NextRecord(Data &receive);
 };
 
 
