@@ -19,7 +19,7 @@ void CheckSize(const Data &packet, int requiredsize)
 	    packet.GetSize() < requiredsize )
 	{
 		std::ostringstream oss;
-		oss << "Bad packets size. Packet: " << p->size
+		oss << "Bad packet size. Packet: " << p->size
 		    << ". DataSize(): " << packet.GetSize()
 		    << ". Required size: " << requiredsize;
 		eout(oss.str());
