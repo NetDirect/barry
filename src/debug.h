@@ -16,8 +16,12 @@
 	// exception output
 	#define eout(x)  	std::cout << x << std::endl
 
+	// easy exception output
+	#define eeout(c, r)	std::cout << "Sent packet:\n" << c << "\n" << "Response packet:\n" << r << "\n"
+
 	// data dump output
 	#define ddout(x)	std::cout << x << std::endl
+//	#define ddout(x)
 #else
 	#undef dout
 	#undef eout
@@ -25,6 +29,7 @@
 
 	#define dout(x)
 	#define eout(x)  	std::cout << x << std::endl
+	#define eeout(c, r)	std::cout << "Sent packet:\n" << c << "\n" << "Response packet:\n" << r << "\n"
 	#define ddout(x)
 #endif
 
