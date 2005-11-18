@@ -1,5 +1,31 @@
 Release: version 0.0.1 - 2005/??/??
 ------------------------------------------------------------------------------
+2005/11/17
+	- added Doxyfile to the project
+	- tuned Makefile
+	- added mode selection support to Blackberry class (RIM Desktop,
+		RIM Bypass, and RIM_JavaLoader)
+		Mode selection governs which socket is used in subsequent
+		data transfers.
+	- added Command Table parsing and protocol support
+		Blackberry class, and CommandTable record class
+	- added Database database parsing and protocol support
+		Blackberry class and DatabaseDatabase record class
+	- added Address book retrieval support - dumps data to stdout for now
+	- fixed bug in CopyOnWrite mode in Data class, where could allocate
+		less buffer than data copied
+	- added "easy exception" debug output macro
+	- fixed minor spelling error in protocol.cc
+	- fixed ModeSelectCommand protocol structure - it is not a parameter
+		command, but uses the unknown slots for socket and flag
+		data
+	- removed hardcoded socket numbers from protocol.h
+	- fixed bug in socket.cc:Open() where packet size was not properly
+		saved
+	- implemented socket::Close()
+	- fixed sequence number checks, so it is reset properly on socket 0
+	- added Socket::NextRecord() for multiple record data transfers
+	- fixed input handling bug in translate.cc
 2005/11/11
 	- added .cvsignore files to project
 	- added README notes to document the source architecture
