@@ -30,15 +30,19 @@ struct SequenceCommand
 
 struct ModeSelectCommand
 {
-	uint8_t		unknown1;
-	uint8_t		unknown2;	// starts at 0x05... should figure this
-	uint8_t		mode_name[16];
+	uint16_t	socket;
+	uint8_t		flag;
+	uint8_t		modeName[16];
+	struct ResponseBlock
+	{
+		uint8_t		unknown[20];
+	} __attribute__ ((packed)) response;
 } __attribute__ ((packed));
 
 struct DBCommand
 {
 	uint8_t		command;	// see below
-	uint16_t	database_id;	// value from the Database Database
+	uint16_t	databaseId;	// value from the Database Database
 	uint8_t		data[1];
 } __attribute__ ((packed));
 
@@ -63,8 +67,9 @@ struct Packet
 		{
 			union SimplePacketData
 			{
-				SocketCommand	socket;
-				SequenceCommand	sequence;
+				SocketCommand		socket;
+				SequenceCommand		sequence;
+				ModeSelectCommand	mode;
 				uint8_t		raw[1];
 			} __attribute__ ((packed)) data;
 		}  __attribute__ ((packed)) simple;
@@ -76,7 +81,6 @@ struct Packet
 			uint8_t		param;
 			union ParamPacketData
 			{
-				ModeSelectCommand	mode;
 				DBCommand		db;
 				DBResponse		db_r;
 				uint8_t			raw[1];
@@ -100,24 +104,17 @@ struct Packet
 #define SB_FRAG_HEADER_SIZE	(SB_PACKET_HEADER_SIZE + SB_PARAM_HEADER_SIZE)
 #define SB_SEQUENCE_PACKET_SIZE	(SB_PACKET_HEADER_SIZE + sizeof(Syncberry::SequenceCommand))
 #define SB_SOCKET_PACKET_SIZE	(SB_PACKET_HEADER_SIZE + sizeof(Syncberry::SocketCommand))
-#define SB_MODE_PACKET_SIZE	(SB_PACKET_HEADER_SIZE + SB_PARAM_HEADER_SIZE + sizeof(Syncberry::ModeSelectCommand))
+#define SB_MODE_PACKET_COMMAND_SIZE	(SB_PACKET_HEADER_SIZE + sizeof(Syncberry::ModeSelectCommand) - sizeof(Syncberry::ModeSelectCommand::ResponseBlock))
+#define SB_MODE_PACKET_RESPONSE_SIZE	(SB_PACKET_HEADER_SIZE + sizeof(Syncberry::ModeSelectCommand))
 
-
-
-// sockets seen
-#define SB_SOCKET_INIT		0x07
-#define SB_SOCKET_COMM		0x06
-//#define SB_SOCKET_???		0x03	// unknown
-
-// socket params
-#define SB_SOCKET_INIT_PARAM	0x06
 
 
 // packet commands (Packet.command: has response codes too)
 #define SB_COMMAND_SELECT_MODE		0x07
+#define SB_COMMAND_MODE_SELECTED	0x08
 #define SB_COMMAND_OPEN_SOCKET		0x0a
 #define SB_COMMAND_CLOSE_SOCKET		0x0b
-#define SB_COMMAND_CLOSED_SOCKET	0x0c	// response #2
+#define SB_COMMAND_CLOSED_SOCKET	0x0c
 #define SB_COMMAND_OPENED_SOCKET	0x10
 #define SB_COMMAND_SEQUENCE_HANDSHAKE	0x13
 #define SB_COMMAND_DB_DATA		0x40
@@ -125,12 +122,17 @@ struct Packet
 #define SB_COMMAND_DB_DONE		0x41
 
 
+// mode constants
+#define SB_MODE_REQUEST_SOCKET		0x00ff
+
+
 // param command parameters
-#define SB_PARAM_DEFAULT		0xff
+//#define SB_PARAM_DEFAULT		0xff
 
 
 // DB Operation Command
 #define SB_DBOP_GET_DBDB		0x4a
+#define SB_DBOP_OLD_GET_DBDB		0x4c
 #define SB_DBOP_GET_COUNT		0x4e
 #define SB_DBOP_GET_RECORDS		0x4f
 
