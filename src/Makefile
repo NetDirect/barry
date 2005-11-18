@@ -97,7 +97,7 @@ bbtool:		$(BBTOOLOBJS)
 	$(CXX) $(DEBUG) -o bbtool $(BBTOOLOBJS) $(LDFLAGS)
 
 translate:	translate.cc
-	$(CXX) $(CXXFLAGS) $(DEBUG) -o translate translate.cc
+	$(CXX) $(CXXFLAGS) -o translate translate.cc
 
 #############
 # Tests
@@ -106,13 +106,13 @@ translate:	translate.cc
 tests:	test-data test-contact
 
 test-data:	data.h data.cc
-	$(CXX) $(CXXFLAGS) -D__TEST_MODE__ $(DEBUG) -o test-data data.cc
+	$(CXX) $(CXXFLAGS) -D__TEST_MODE__ -o test-data data.cc
 
 test-contact.o:	record.cc
-	$(CXX) $(CXXFLAGS) -D__TEST_MODE__ $(DEBUG) -o test-contact.o -c record.cc
+	$(CXX) $(CXXFLAGS) -D__TEST_MODE__ -o test-contact.o -c record.cc
 
 test-contact:	test-contact.o data.o
-	$(CXX) $(DEBUG) -o test-contact test-contact.o data.o
+	$(CXX) $(CXXFLAGS) -o test-contact test-contact.o data.o
 
 clean-tests:
 	rm -f test-data test-contact test-contact.o
@@ -125,14 +125,14 @@ clean:	clean-tests
 	rm -f $(OBJS) *.rpo */*.rpo dep.mak core core.* gmon.out leak.out
 	rm -f connect bbtool
 	rm -f translate
+	rm -rf ../doc/doxygen/html
 
 dep:
 	$(CXX) $(CXXFLAGS) -M *.cc > dep.mak
 
 dep.mak:
-	@echo "Please run 'make dep'"
-	@echo
-	@exit 1
+	make dep
+	make
 
 # dependencies.... run make dep to create them
 ifeq (dep.mak,$(wildcard dep.mak))
