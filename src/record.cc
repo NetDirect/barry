@@ -244,6 +244,175 @@ void Contact::Dump(std::ostream &os) const
 	os.fill(fill);
 }
 
+
+
+///////////////////////////////////////////////////////////////////////////////
+// CommandTable class
+
+// CommandTable field format
+struct CommandField
+{
+	uint8_t		size;		// no null terminator
+	uint8_t		code;
+	uint8_t		name[1];
+} __attribute__ ((packed));
+
+#define COMMAND_FIELD_HEADER_SIZE	(sizeof(::Syncberry::CommandField) - 1)
+
+CommandTable::CommandTable()
+{
+}
+
+CommandTable::~CommandTable()
+{
+}
+
+void CommandTable::Parse(const unsigned char *begin, const unsigned char *end)
+{
+	while( begin < end )
+		begin = ParseField(begin, end);
+}
+
+const unsigned char* CommandTable::ParseField(const unsigned char *begin,
+					      const unsigned char *end)
+{
+	const CommandField *field = (const CommandField *) begin;
+
+	// advance and check size
+	begin += COMMAND_FIELD_HEADER_SIZE + field->size;
+	if( begin > end )		// if begin==end, we are ok
+		return begin;
+
+	if( !field->size )		// if field has no size, something's up
+		return begin;
+
+	Command command;
+	command.Code = field->code;
+	command.Name.assign((const char *)field->name, field->size);
+	Commands.push_back(command);
+	return begin;
+}
+
+void CommandTable::Parse(const Data &data, int offset)
+{
+	if( offset < data.GetSize() )
+		Parse(data.GetData() + offset, data.GetData() + data.GetSize());
+}
+
+void CommandTable::Clear()
+{
+	Commands.clear();
+}
+
+unsigned int CommandTable::GetCommand(const std::string &name) const
+{
+	CommandArrayType::const_iterator b = Commands.begin();
+	for( ; b != Commands.end(); b++ )
+		if( b->Name == name )
+			return b->Code;
+	return 0;
+}
+
+void CommandTable::Dump(std::ostream &os) const
+{
+	CommandArrayType::const_iterator b = Commands.begin();
+	os << "Command table:\n";
+	for( ; b != Commands.end(); b++ ) {
+		os << "    Command: 0x" << setbase(16) << b->Code
+		   << " '" << b->Name << "'\n";
+	}
+}
+
+
+
+
+///////////////////////////////////////////////////////////////////////////////
+// DatabaseDatabase class
+
+struct DBDBField
+{
+	uint16_t	dbNumber;
+	uint8_t		unknown1;
+	uint32_t	dbSize;			// assumed from Cassis docs...
+						// always 0 in USB
+	uint32_t	dbRecordCount;
+	uint16_t	unknown2;
+	uint16_t	nameSize;		// includes null terminator
+	uint8_t		unknown3;
+	uint8_t		name[1];		// followed by 2 zeros!
+} __attribute__ ((packed));
+
+#define DBDB_FIELD_HEADER_SIZE	(sizeof(::Syncberry::DBDBField) - 1)
+
+DatabaseDatabase::DatabaseDatabase()
+{
+}
+
+DatabaseDatabase::~DatabaseDatabase()
+{
+}
+
+void DatabaseDatabase::Parse(const unsigned char *begin,
+			     const unsigned char *end)
+{
+	while( begin < end )
+		begin = ParseField(begin, end);
+}
+
+const unsigned char* DatabaseDatabase::ParseField(const unsigned char *begin,
+						  const unsigned char *end)
+{
+	const DBDBField *field = (const DBDBField *) begin;
+
+	// advance and check size
+	begin += DBDB_FIELD_HEADER_SIZE + field->nameSize + 2;
+	if( begin > end )		// if begin==end, we are ok
+		return begin;
+
+	if( !field->nameSize )		// if field has no size, something's up
+		return begin;
+
+	Database db;
+	db.Number = field->dbNumber;
+	db.RecordCount = field->dbRecordCount;
+	db.Name.assign((const char *)field->name, field->nameSize - 1);
+	Databases.push_back(db);
+	return begin;
+}
+
+void DatabaseDatabase::Parse(const Data &data, int offset)
+{
+	if( offset < data.GetSize() )
+		Parse(data.GetData() + offset, data.GetData() + data.GetSize());
+}
+
+void DatabaseDatabase::Clear()
+{
+	Databases.clear();
+}
+
+unsigned int DatabaseDatabase::GetDBNumber(const std::string &name) const
+{
+	DatabaseArrayType::const_iterator b = Databases.begin();
+	for( ; b != Databases.end(); b++ )
+		if( b->Name == name )
+			return b->Number;
+	return 0;
+}
+
+void DatabaseDatabase::Dump(std::ostream &os) const
+{
+	DatabaseArrayType::const_iterator b = Databases.begin();
+	os << "Database database:\n";
+	for( ; b != Databases.end(); b++ ) {
+		os << "    Database: 0x" << setbase(16) << b->Number
+		   << " '" << b->Name << "' (records: "
+		   << setbase(10) << b->RecordCount << ")\n";
+	}
+}
+
+
+
 } // namespace Syncberry
 
 
