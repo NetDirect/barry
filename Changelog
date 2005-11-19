@@ -1,5 +1,17 @@
 Release: version 0.0.1 - 2005/??/??
 ------------------------------------------------------------------------------
+2005/11/18
+	- changed project name to Barry, including namespaces
+	- renamed sbcommon.* to common.*
+	- increased USB default timeout to 2 seconds
+	- fixed formatting bug in Data operator<< output
+	- cleaned up the protocol packet structs, getting rid of the
+		confusing param/simple split... param is now the tableCmd
+		from the Command Table
+	- moved protocol structs from record.h to protocol.h
+	- added support for older version of the USB protocol, which matches
+		the Cassis spec more closely
+	- fixed the hardcoded offsets in blackberry.cc's protocol parsing
 2005/11/17
 	- added Doxyfile to the project
 	- tuned Makefile
