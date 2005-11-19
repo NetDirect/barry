@@ -3,23 +3,24 @@
 ///		USB Blackberry bulk protocol API
 ///
 
-#ifndef __SYNCBERRY_PROTOCOL_H__
-#define __SYNCBERRY_PROTOCOL_H__
+#ifndef __BARRY_PROTOCOL_H__
+#define __BARRY_PROTOCOL_H__
 
 #include <stdint.h>
 
 // forward declarations
 class Data;
 
-namespace Syncberry {
+namespace Barry {
 
-
+///////////////////////////////////////////////////////////////////////////////
 struct SocketCommand
 {
 	uint16_t	socket;
 	uint8_t		param;
 } __attribute__ ((packed));
 
+///////////////////////////////////////////////////////////////////////////////
 struct SequenceCommand
 {
 	uint8_t		unknown1;
@@ -28,6 +29,7 @@ struct SequenceCommand
 	uint32_t	sequenceId;
 } __attribute__ ((packed));
 
+///////////////////////////////////////////////////////////////////////////////
 struct ModeSelectCommand
 {
 	uint16_t	socket;
@@ -39,20 +41,163 @@ struct ModeSelectCommand
 	} __attribute__ ((packed)) response;
 } __attribute__ ((packed));
 
+///////////////////////////////////////////////////////////////////////////////
 struct DBCommand
 {
-	uint8_t		command;	// see below
+	uint8_t		operation;	// see below
 	uint16_t	databaseId;	// value from the Database Database
 	uint8_t		data[1];
 } __attribute__ ((packed));
 
 struct DBResponse
 {
-	uint8_t		command;
+	uint8_t		operation;
 	uint32_t	unknown;
 	uint16_t	sequenceCount;
 	uint8_t		data[1];
 } __attribute__ ((packed));
+
+
+
+///////////////////////////////////////////////////////////////////////////////
+// CommandTable command and field structures
+
+struct CommandTableField
+{
+	uint8_t		size;		// no null terminator
+	uint8_t		code;
+	uint8_t		name[1];
+} __attribute__ ((packed));
+
+#define COMMAND_FIELD_HEADER_SIZE	(sizeof(Barry::CommandTableField) - 1)
+
+
+
+///////////////////////////////////////////////////////////////////////////////
+// Database database command and field structures
+
+struct OldDBDBField
+{
+	uint16_t	dbNumber;
+	uint8_t		unknown1;
+	uint32_t	dbSize;			// assumed from Cassis docs...
+						// always 0 in USB
+	uint16_t	dbRecordCount;
+	uint16_t	unknown2;
+	uint16_t	nameSize;		// includes null terminator
+	uint8_t		name[1];
+} __attribute__ ((packed));
+#define OLD_DBDB_FIELD_HEADER_SIZE	(sizeof(Barry::OldDBDBField) - 1)
+
+struct DBDBField
+{
+	uint16_t	dbNumber;
+	uint8_t		unknown1;
+	uint32_t	dbSize;			// assumed from Cassis docs...
+						// always 0 in USB
+	uint32_t	dbRecordCount;
+	uint16_t	unknown2;
+	uint16_t	nameSize;		// includes null terminator
+	uint8_t		unknown3;
+	uint8_t		name[1];		// followed by 2 zeros!
+	uint16_t	unknown;		// this comes after the
+						// null terminated name, but
+						// is here for size calcs
+} __attribute__ ((packed));
+#define DBDB_FIELD_HEADER_SIZE	(sizeof(Barry::DBDBField) - 1)
+
+struct OldDBDBRecord
+{
+	uint8_t		operation;
+	uint16_t	count;			// number of fields in record
+	OldDBDBField	field[1];
+} __attribute__ ((packed));
+#define OLD_DBDB_RECORD_HEADER_SIZE	(sizeof(Barry::OldDBDBRecord) - sizeof(Barry::OldDBDBField))
+
+struct DBDBRecord
+{
+	uint8_t		operation;
+	uint16_t	count;
+	uint8_t		unknown[3];
+	DBDBField	field[1];
+} __attribute__ ((packed));
+#define DBDB_RECORD_HEADER_SIZE		(sizeof(Barry::DBDBRecord) - sizeof(Barry::DBDBField))
+
+
+
+///////////////////////////////////////////////////////////////////////////////
+// Address book / Contact field and record data
+struct GroupLink
+{
+	uint32_t	uniqueId;
+	uint16_t	unknown;
+} __attribute__ ((packed));
+
+// Contact field format
+struct ContactField
+{
+	uint16_t	size;		// including null terminator
+	uint8_t		type;
+
+	union FieldData
+	{
+		GroupLink	link;
+		uint8_t		raw[1];
+	} __attribute__ ((packed)) data;
+} __attribute__ ((packed));
+#define CONTACT_FIELD_HEADER_SIZE	(sizeof(Barry::ContactField) - sizeof(Barry::ContactField::FieldData))
+
+struct OldContactRecord
+{
+	uint8_t		operation;
+	uint8_t		unknown;
+	uint16_t	recordNumber;	
+	uint32_t	uniqueId;
+	uint8_t		unknown2;
+	ContactField	field[1];
+} __attribute__ ((packed));
+#define OLD_CONTACT_RECORD_HEADER_SIZE	(sizeof(Barry::OldContactRecord) - sizeof(Barry::ContactField))
+
+struct ContactRecord
+{
+	uint8_t		operation;
+	uint8_t		unknown;
+	uint16_t	recordNumber;
+	uint8_t		unknown2[3];
+	uint32_t	uniqueId;
+	uint8_t		unknown3[3];
+	ContactField	field[1];
+} __attribute__ ((packed));
+#define CONTACT_RECORD_HEADER_SIZE	(sizeof(Barry::ContactRecord) - sizeof(Barry::ContactField))
+
+
+
+///////////////////////////////////////////////////////////////////////////////
+// Database access command structure
+
+// even fragmented packets have a tableCmd
+struct DBAccess
+{
+	uint8_t		tableCmd;
+	union DBData
+	{
+		DBCommand		db;
+		DBResponse		db_r;
+		OldContactRecord	old_contact;
+		ContactRecord		contact;
+		CommandTableField	table[1];
+		OldDBDBRecord		old_dbdb;
+		DBDBRecord		dbdb;
+		uint8_t			fragment[1];
+		uint8_t			raw[1];
+
+	} __attribute__ ((packed)) data;
+} __attribute__ ((packed));
+
+
+
+///////////////////////////////////////////////////////////////////////////////
+// Main packet struct
 
 struct Packet
 {
@@ -62,30 +207,12 @@ struct Packet
 
 	union PacketData
 	{
-		// some commands have no parameter
-		struct SimplePacket
-		{
-			union SimplePacketData
-			{
-				SocketCommand		socket;
-				SequenceCommand		sequence;
-				ModeSelectCommand	mode;
-				uint8_t		raw[1];
-			} __attribute__ ((packed)) data;
-		}  __attribute__ ((packed)) simple;
 
-
-		// and some commands do, even in their fragmented packets
-		struct ParamPacket
-		{
-			uint8_t		param;
-			union ParamPacketData
-			{
-				DBCommand		db;
-				DBResponse		db_r;
-				uint8_t			raw[1];
-			} __attribute__ ((packed)) data;
-		}  __attribute__ ((packed)) param;
+		SocketCommand		socket;
+		SequenceCommand		sequence;
+		ModeSelectCommand	mode;
+		DBAccess		db;
+		uint8_t			raw[1];
 
 	} __attribute__ ((packed)) data;
 } __attribute__ ((packed));
@@ -98,14 +225,18 @@ struct Packet
 #define MAX_PACKET_SIZE		0x400	// anything beyond this needs to be
 					// fragmented
 // various useful sizes
-// frag header is the header of a normal packet, plus the param
-#define SB_PACKET_HEADER_SIZE	(sizeof(Syncberry::Packet) - sizeof(Syncberry::Packet::PacketData))
-#define SB_PARAM_HEADER_SIZE	(sizeof(Syncberry::Packet::PacketData::ParamPacket) - sizeof(Syncberry::Packet::PacketData::ParamPacket::ParamPacketData))
-#define SB_FRAG_HEADER_SIZE	(SB_PACKET_HEADER_SIZE + SB_PARAM_HEADER_SIZE)
-#define SB_SEQUENCE_PACKET_SIZE	(SB_PACKET_HEADER_SIZE + sizeof(Syncberry::SequenceCommand))
-#define SB_SOCKET_PACKET_SIZE	(SB_PACKET_HEADER_SIZE + sizeof(Syncberry::SocketCommand))
-#define SB_MODE_PACKET_COMMAND_SIZE	(SB_PACKET_HEADER_SIZE + sizeof(Syncberry::ModeSelectCommand) - sizeof(Syncberry::ModeSelectCommand::ResponseBlock))
-#define SB_MODE_PACKET_RESPONSE_SIZE	(SB_PACKET_HEADER_SIZE + sizeof(Syncberry::ModeSelectCommand))
+#define SB_PACKET_HEADER_SIZE			(sizeof(Barry::Packet) - sizeof(Barry::Packet::PacketData))
+#define SB_DBACCESS_HEADER_SIZE			(sizeof(Barry::DBAccess) - sizeof(Barry::DBAccess::DBData))
+#define SB_PACKET_DBACCESS_HEADER_SIZE		(SB_PACKET_HEADER_SIZE + SB_DBACCESS_HEADER_SIZE)
+#define SB_FRAG_HEADER_SIZE			SB_PACKET_DBACCESS_HEADER_SIZE
+#define SB_SEQUENCE_PACKET_SIZE			(SB_PACKET_HEADER_SIZE + sizeof(Barry::SequenceCommand))
+#define SB_SOCKET_PACKET_SIZE			(SB_PACKET_HEADER_SIZE + sizeof(Barry::SocketCommand))
+#define SB_MODE_PACKET_COMMAND_SIZE		(SB_PACKET_HEADER_SIZE + sizeof(Barry::ModeSelectCommand) - sizeof(Barry::ModeSelectCommand::ResponseBlock))
+#define SB_MODE_PACKET_RESPONSE_SIZE		(SB_PACKET_HEADER_SIZE + sizeof(Barry::ModeSelectCommand))
+#define SB_PACKET_CONTACT_HEADER_SIZE		(SB_PACKET_HEADER_SIZE + SB_DBACCESS_HEADER_SIZE + CONTACT_RECORD_HEADER_SIZE)
+#define SB_PACKET_OLD_CONTACT_HEADER_SIZE	(SB_PACKET_HEADER_SIZE + SB_DBACCESS_HEADER_SIZE + OLD_CONTACT_RECORD_HEADER_SIZE)
+#define SB_PACKET_DBDB_HEADER_SIZE		(SB_PACKET_HEADER_SIZE + SB_DBACCESS_HEADER_SIZE + DBDB_RECORD_HEADER_SIZE)
+#define SB_PACKET_OLD_DBDB_HEADER_SIZE		(SB_PACKET_HEADER_SIZE + SB_DBACCESS_HEADER_SIZE + OLD_DBDB_RECORD_HEADER_SIZE)
 
 
 
@@ -135,12 +266,14 @@ struct Packet
 #define SB_DBOP_OLD_GET_DBDB		0x4c
 #define SB_DBOP_GET_COUNT		0x4e
 #define SB_DBOP_GET_RECORDS		0x4f
+#define SB_DBOP_OLD_GET_RECORDS		0x42
+#define SB_DBOP_OLD_GET_RECORDS_REPLY	0x44
 
 
 // Macros
-#define COMMAND(data)			(((const Syncberry::Packet *)data.GetData())->command)
+#define COMMAND(data)			(((const Barry::Packet *)data.GetData())->command)
 #define IS_COMMAND(data, cmd)		(COMMAND(data) == cmd)
-#define MAKE_PACKET(var, data)		const Syncberry::Packet *var = (const Syncberry::Packet *) data.GetData()
+#define MAKE_PACKET(var, data)		const Barry::Packet *var = (const Barry::Packet *) data.GetData()
 
 // fragmentation protocol
 // send DATA first, then keep sending DATA packets, FRAGMENTing
@@ -156,7 +289,7 @@ struct Packet
 // checks packet size and throws SBError if not right
 void CheckSize(const Data &packet, int requiredsize = MIN_PACKET_SIZE);
 
-} // namespace Syncberry
+} // namespace Barry
 
 #endif
 
