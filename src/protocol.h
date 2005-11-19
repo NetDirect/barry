@@ -125,16 +125,36 @@ struct DBDBRecord
 
 
 
+
 ///////////////////////////////////////////////////////////////////////////////
-// Address book / Contact field and record data
+// Address book sub-field structs
+
 struct GroupLink
 {
 	uint32_t	uniqueId;
 	uint16_t	unknown;
 } __attribute__ ((packed));
 
-// Contact field format
-struct ContactField
+
+///////////////////////////////////////////////////////////////////////////////
+// Message sub-field structs
+
+struct MessageAddress
+{
+	uint8_t		unknown[8];
+	uint8_t		addr[1];	// 2 null terminated strings: first
+					// contains full name, second contains
+					// the email address
+} __attribute__ ((packed));
+
+
+
+
+
+///////////////////////////////////////////////////////////////////////////////
+// Common database field structure
+
+struct CommonField
 {
 	uint16_t	size;		// including null terminator
 	uint8_t		type;
@@ -142,10 +162,16 @@ struct ContactField
 	union FieldData
 	{
 		GroupLink	link;
+		MessageAddress	addr;
 		uint8_t		raw[1];
+
 	} __attribute__ ((packed)) data;
 } __attribute__ ((packed));
-#define CONTACT_FIELD_HEADER_SIZE	(sizeof(Barry::ContactField) - sizeof(Barry::ContactField::FieldData))
+#define COMMON_FIELD_HEADER_SIZE	(sizeof(Barry::CommonField) - sizeof(Barry::CommonField::FieldData))
+
+
+///////////////////////////////////////////////////////////////////////////////
+// Address book / Contact record data
 
 struct OldContactRecord
 {
@@ -154,9 +180,9 @@ struct OldContactRecord
 	uint16_t	recordNumber;	
 	uint32_t	uniqueId;
 	uint8_t		unknown2;
-	ContactField	field[1];
+	CommonField	field[1];
 } __attribute__ ((packed));
-#define OLD_CONTACT_RECORD_HEADER_SIZE	(sizeof(Barry::OldContactRecord) - sizeof(Barry::ContactField))
+#define OLD_CONTACT_RECORD_HEADER_SIZE	(sizeof(Barry::OldContactRecord) - sizeof(Barry::CommonField))
 
 struct ContactRecord
 {
@@ -166,9 +192,31 @@ struct ContactRecord
 	uint8_t		unknown2[3];
 	uint32_t	uniqueId;
 	uint8_t		unknown3[3];
-	ContactField	field[1];
+	CommonField	field[1];
 } __attribute__ ((packed));
-#define CONTACT_RECORD_HEADER_SIZE	(sizeof(Barry::ContactRecord) - sizeof(Barry::ContactField))
+#define CONTACT_RECORD_HEADER_SIZE	(sizeof(Barry::ContactRecord) - sizeof(Barry::CommonField))
+
+
+///////////////////////////////////////////////////////////////////////////////
+// Message field and record structures
+
+struct OldMessageRecord
+{
+	uint8_t		operation;
+	uint8_t		unknown;
+	uint16_t	count;
+	uint8_t		timeBlock[0x72];
+	CommonField	field[1];
+} __attribute__ ((packed));
+
+struct MessageRecord
+{
+	uint8_t		operation;
+	uint8_t		unknown;
+	uint16_t	count;
+	uint8_t		timeBlock[0x77];
+	CommonField	field[1];
+} __attribute__ ((packed));
 
 
 
@@ -188,6 +236,8 @@ struct DBAccess
 		CommandTableField	table[1];
 		OldDBDBRecord		old_dbdb;
 		DBDBRecord		dbdb;
+		OldMessageRecord	old_message;
+		MessageRecord		message;
 		uint8_t			fragment[1];
 		uint8_t			raw[1];
 
