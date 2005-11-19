@@ -3,8 +3,8 @@
 ///		USB Blackberry detection routines
 ///
 
-#ifndef __SYNCBERRY_PROBE_H__
-#define __SYNCBERRY_PROBE_H__
+#ifndef __BARRY_PROBE_H__
+#define __BARRY_PROBE_H__
 
 #include <libusb.h>
 #include <vector>
@@ -14,7 +14,7 @@
 class Data;
 
 
-namespace Syncberry {
+namespace Barry {
 
 struct ProbeResult
 {
@@ -38,7 +38,7 @@ public:
 };
 
 
-} // namespace Syncberry
+} // namespace Barry
 
 #endif
 

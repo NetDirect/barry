@@ -1,10 +1,10 @@
 ///
-/// \file	sbcommon.h
-///		General header for the syncberry library
+/// \file	common.h
+///		General header for the Barry library
 ///
 
-#ifndef __SYNCBERRY_SBCOMMON_H__
-#define __SYNCBERRY_SBCOMMON_H__
+#ifndef __BARRY_COMMON_H__
+#define __BARRY_COMMON_H__
 
 #define VENDOR_RIM		0x0fca
 #define PRODUCT_RIM_BLACKBERRY	0x0001
@@ -15,11 +15,11 @@
 #define WRITE_ENDPOINT		0x05
 #define READ_ENDPOINT		0x82
 
-namespace Syncberry {
+namespace Barry {
 
 void Init();
 
-} // namespace Syncberry
+} // namespace Barry
 
 #endif
 

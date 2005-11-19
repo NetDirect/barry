@@ -1,5 +1,5 @@
 #
-# Makefile for the Syncberry library and test programs
+# Makefile for the Barry library and test programs
 #
 
 #
@@ -57,7 +57,7 @@ LDFLAGS = ../../external/rootdir/libusb/lib/libusb.a -lpthread $(LDDEBUG)
 #LDFLAGS = -Wl,--gc-sections -s -lmysqlpp -lfaxutil -lldap $(LDDEBUG)
 
 #
-# Syncberry files
+# Barry files
 #
 CONNECTOBJS = \
 	data.o \
@@ -70,7 +70,7 @@ BBTOOLOBJS = \
 	usbwrap.o \
 	bbtool.o \
 	probe.o \
-	sbcommon.o \
+	common.o \
 	error.o \
 	socket.o \
 	protocol.o \
@@ -79,7 +79,7 @@ BBTOOLOBJS = \
 
 
 #
-# object files needed to build syncberry
+# object files needed to build Barry
 #
 OBJS = $(CONNECTOBJS) $(BBTOOLOBJS)
 

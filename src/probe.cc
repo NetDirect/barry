@@ -3,7 +3,7 @@
 ///		USB Blackberry detection routines
 ///
 
-#include "sbcommon.h"
+#include "common.h"
 #include "probe.h"
 #include "usbwrap.h"
 #include "data.h"
@@ -12,7 +12,7 @@
 
 using namespace Usb;
 
-namespace Syncberry {
+namespace Barry {
 
 unsigned char Intro_Sends[][32] = {
 	// packet #1
@@ -118,5 +118,5 @@ std::ostream& operator<< (std::ostream &os, const ProbeResult &pr)
 	return os;
 }
 
-} // namespace Syncberry
+} // namespace Barry
 
