@@ -69,7 +69,7 @@ BBTOOLOBJS = \
 	parser.o \
 	data.o \
 	usbwrap.o \
-	bbtool.o \
+	btool.o \
 	probe.o \
 	common.o \
 	error.o \
@@ -86,7 +86,7 @@ OBJS = $(CONNECTOBJS) $(BBTOOLOBJS)
 
 
 ###############################################################################
-all:	visual dep.mak tests connect bbtool translate
+all:	visual dep.mak tests connect btool translate
 
 visual:
 	echo ; echo
@@ -94,8 +94,8 @@ visual:
 connect:	$(CONNECTOBJS)
 	$(CXX) $(DEBUG) -o connect $(CONNECTOBJS) $(LDFLAGS)
 
-bbtool:		$(BBTOOLOBJS)
-	$(CXX) $(DEBUG) -o bbtool $(BBTOOLOBJS) $(LDFLAGS)
+btool:		$(BBTOOLOBJS)
+	$(CXX) $(DEBUG) -o btool $(BBTOOLOBJS) $(LDFLAGS)
 
 translate:	translate.cc
 	$(CXX) $(CXXFLAGS) -o translate translate.cc
@@ -124,7 +124,7 @@ clean-tests:
 
 clean:	clean-tests
 	rm -f $(OBJS) *.rpo */*.rpo dep.mak core core.* gmon.out leak.out
-	rm -f connect bbtool
+	rm -f connect btool
 	rm -f translate
 	rm -rf ../doc/doxygen/html
 
