@@ -10,6 +10,7 @@
 #include "probe.h"
 #include "socket.h"
 #include "record.h"
+#include "parser.h"
 
 namespace Barry {
 
@@ -43,9 +44,12 @@ public:
 
 	void Test();
 
-	void GetCommandTable();
-	void GetDBDB();
-	void GetAddressBook();
+	void LoadCommandTable();
+	void LoadDBDB();
+
+	unsigned int GetDBID(const char *name) const;
+
+	void LoadDatabase(unsigned int dbId, Parser &parser);
 };
 
 } // namespace Barry

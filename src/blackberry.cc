@@ -124,25 +124,44 @@ unsigned int Blackberry::GetCommand(CommandType ct)
 	return cmd;
 }
 
+template <class Record>
+struct StoreFunc
+{
+	int count;
+	StoreFunc() :count(0) {}
+	void operator()(const Record &rec)
+	{
+		count++;
+//		std::cout << "count so far: " << count << std::endl;
+		std::cout << rec << std::endl;
+	}
+};
+
 void Blackberry::Test()
 {
 	// open desktop mode socket
 	OpenMode(Desktop);
 
 	// get command table
-	GetCommandTable();
+	LoadCommandTable();
 
 	// get database database
-	GetDBDB();
+	LoadDBDB();
 
-	// get contact records
-	GetAddressBook();
+	// some databases
+//	StoreFunc<Contact> store;
+//	RecordParser<Contact, StoreFunc<Contact> > contactParser(store);
+//	LoadDatabase(GetDBID("Address Book"), contactParser);
+
+	StoreFunc<Message> storeMsg;
+	RecordParser<Message, StoreFunc<Message> > messageParser(storeMsg);
+	LoadDatabase(GetDBID("Messages"), messageParser);
 
 	// cleanup... not strictly needed, but nice to "release" the device
 	m_socket.Close();
 }
 
-void Blackberry::GetCommandTable()
+void Blackberry::LoadCommandTable()
 {
 	char rawCommand[] = { 6, 0, 0x0a, 0, 0x40, 0, 0, 1, 0, 0 };
 	*((uint16_t*) rawCommand) = m_socket.GetSocket();
@@ -175,7 +194,7 @@ void Blackberry::GetCommandTable()
 	ddout(m_commandTable);
 }
 
-void Blackberry::GetDBDB()
+void Blackberry::LoadDBDB()
 {
 	Packet packet;
 	packet.socket = m_socket.GetSocket();
@@ -213,16 +232,18 @@ void Blackberry::GetDBDB()
 	ddout(m_dbdb);
 }
 
-void Blackberry::GetAddressBook()
+unsigned int Blackberry::GetDBID(const char *name) const
 {
-// just dumping to screen for now
-
-	unsigned int ABID = m_dbdb.GetDBNumber("Address Book");
+	unsigned int ID = m_dbdb.GetDBNumber(name);
 	// FIXME - this needs a better error handler... the dbdb needs one too!
-	if( ABID == 0 ) {
+	if( ID == 0 ) {
 		throw SBError("Blackberry: Address Book not found");
 	}
+	return ID;
+}
 
+void Blackberry::LoadDatabase(unsigned int dbId, Parser &parser)
+{
 	Packet packet;
 	packet.socket = m_socket.GetSocket();
 	packet.size = 9;
@@ -230,121 +251,34 @@ void Blackberry::GetAddressBook()
 	packet.data.db.tableCmd = GetCommand(DatabaseAccess);
 //	packet.data.db.data.db.operation = SB_DBOP_GET_RECORDS;
 	packet.data.db.data.db.operation = SB_DBOP_OLD_GET_RECORDS;
-	packet.data.db.data.db.databaseId = ABID;
+	packet.data.db.data.db.databaseId = dbId;
 
 	Data command(&packet, packet.size);
 	Data response;
 
 	if( !m_socket.Packet(command, response) ) {
+		eout("Database ID: " << dbId);
 		eeout(command, response);
 		throw SBError(m_socket.GetLastStatus(),
-			"Blackberry: error getting database database");
+			"Blackberry: error loading database");
 	}
 
-int count = 0;
 	MAKE_PACKET(rpack, response);
 	while( rpack->command != SB_COMMAND_DB_DONE ) {
 		if( rpack->command == SB_COMMAND_DB_DATA ) {
-			Contact contact;
-			contact.Parse(response);
-
-			// FIXME - do something better with the data
-			count++;
-			std::cout << contact;
+			parser(response);
 		}
 
 		// advance!
 		if( !m_socket.NextRecord(response) ) {
 			eout("Response packet:\n" << response);
 			throw SBError(m_socket.GetLastStatus(),
-				"Blackberry: error getting command table(next)");
+				"Blackberry: error loading database (next)");
 		}
 		rpack = (const Packet *) response.GetData();
 	}
-
-std::cout << "Contact count: " << std::setbase(10) << count << "\n";
 }
 
 
 } // namespace Barry
-
-/*
-
-This is the conversation we are aiming for:
-
-The numbers at the end of this command change... perhaps a date?
-They are always returned.
-sep: 5
-    00000000: 00 00 10 00 01 ff 00 00 a8 18 da 8d 6c 02 00 00
-
-rep: 82
-    00000000: 00 00 10 00 02 ff 00 00 a8 18 da 8d 6c 02 00 00
-
-This command is always the same.
-sep: 5
-    00000000: 00 00 0c 00 05 ff 00 01 14 00 01 00
-
-rep: 82
-    00000000: 00 00 20 00 06 ff 00 01 14 00 01 00 51 e1 33 6b
-    00000010: f3 09 bc 37 3b a3 5e ed ff 30 a1 3a 60 c9 81 8e
-
-This command is always the same.  It retrieves the PIN number.
-sep: 5
-    00000000: 00 00 0c 00 05 ff 00 02 08 00 04 00
-
-rep: 82
-    00000000: 00 00 14 00 06 ff 00 02 08 00 04 00 04 00 00 00
-    00000010: e3 ef 09 30
-
-
-Note: There are about 3 different top level modes that this command activates.
-	RIM Bypass, RIM Desktop, and RIM_Javasomething
-	We want RIM Desktop, as all the data is transferred in this mode.
-sep: 5
-    00000000: 00 00 18 00 07 ff 00 05 52 49 4d 20 44 65 73 6b  ........RIM Desk
-    00000010: 74 6f 70 00 00 00 00 00                          top.....
-rep: 82
-    00000000: 00 00 2c 00 08 06 00 05 52 49 4d 20 44 65 73 6b  ..,.....RIM Desk
-    00000010: 74 6f 70 00 00 00 00 00 00 00 00 00 01 00 04 00  top.............
-    00000020: 02 00 04 00 03 01 00 00 04 01 00 00              ............
-
-Open a socket...
-sep: 5
-    00000000: 00 00 08 00 0a 06 00 06
-
-rep: 82
-    00000000: 00 00 08 00 10 06 00 06
-
-
-Get the Command Table...
-sep: 5
-    00000000: 06 00 0a 00 40 00 00 01 00 00
-rep: 82
-    00000000: 00 00 0c 00 13 06 01 00 01 00 00 00
-rep: 82
-    00000000: 06 00 0a 00 40 00 00 02 00 04
-
-
-Continue Get Command Table...
-sep: 5
-    00000000: 06 00 07 00 41 00 00
-rep: 82
-    00000000: 00 00 0c 00 13 06 01 00 02 00 00 00
-rep: 82
-    00000000: 06 00 35 00 40 00 0c 01 53 65 72 76 69 63 65 20
-    00000010: 42 6f 6f 6b 0e 02 44 65 76 69 63 65 20 4f 70 74
-    00000020: 69 6f 6e 73 0f 03 44 61 74 61 62 61 73 65 20 41
-    00000030: 63 63 65 73 73
-
-
-At this point, we are well into the database access conversation... the
-next thing to do is retrieve the Database Database, and then use that
-to get the item count and all the records in each database.
-	Memos
-	Calendar
-	Contacts
-	Email
-
-
-*/
 
