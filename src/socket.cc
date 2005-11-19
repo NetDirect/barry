@@ -280,42 +280,56 @@ bool Socket::Packet(const Data &send, Data &receive)
 		return false;
 
 	bool done = false, frag = false;
+	int blankCount = 0;
 	while( !done ) {
 		MAKE_PACKET(rpack, inFrag);
 
 		// check the packet's validity
-		CheckSize(inFrag);
+		if( inFrag.GetSize() > 0 ) {
+			blankCount = 0;
 
-		switch( rpack->command )
-		{
-		case SB_COMMAND_SEQUENCE_HANDSHAKE:
-			CheckSequence(inFrag);
-			break;
+			CheckSize(inFrag);
 
-		case SB_COMMAND_DB_DATA:
-			if( frag ) {
+			switch( rpack->command )
+			{
+			case SB_COMMAND_SEQUENCE_HANDSHAKE:
+				CheckSequence(inFrag);
+				break;
+
+			case SB_COMMAND_DB_DATA:
+				if( frag ) {
+					AppendFragment(receive, inFrag);
+				}
+				else {
+					receive = inFrag;
+				}
+				done = true;
+				break;
+
+			case SB_COMMAND_DB_FRAGMENTED:
 				AppendFragment(receive, inFrag);
-			}
-			else {
+				frag = true;
+				break;
+
+			case SB_COMMAND_DB_DONE:
 				receive = inFrag;
+				done = true;
+				break;
+
+			default:
+				eout("Command: " << rpack->command << inFrag);
+				throw SBError("Socket: unhandled packet in Packet()");
+				break;
 			}
-			done = true;
-			break;
-
-		case SB_COMMAND_DB_FRAGMENTED:
-			AppendFragment(receive, inFrag);
-			frag = true;
-			break;
-
-		case SB_COMMAND_DB_DONE:
-			receive = inFrag;
-			done = true;
-			break;
-
-		default:
-			eout("Command: " << rpack->command << inFrag);
-			throw SBError("Socket: unhandled packet in Packet()");
-			break;
+		}
+		else {
+			blankCount++;
+			//std::cerr << "Blank! " << blankCount << std::endl;
+			if( blankCount == 10 ) {
+				// only ask for more data on stalled sockets
+				// for so long
+				throw SBError("Socket: 10 blank packets received");
+			}
 		}
 
 		if( !done ) {
