@@ -15,7 +15,7 @@
 using namespace Usb;
 
 
-namespace Syncberry {
+namespace Barry {
 
 Socket::Socket(Device &dev, int writeEndpoint, int readEndpoint)
 	: m_dev(dev),
@@ -49,12 +49,12 @@ void Socket::Open(uint16_t socket, uint8_t flag)
 	}
 
 	// build open command
-	Syncberry::Packet packet;
+	Barry::Packet packet;
 	packet.socket = 0;
 	packet.size = SB_SOCKET_PACKET_SIZE;
 	packet.command = SB_COMMAND_OPEN_SOCKET;
-	packet.data.simple.data.socket.socket = socket;
-	packet.data.simple.data.socket.param = flag;
+	packet.data.socket.socket = socket;
+	packet.data.socket.param = flag;
 
 	Data send(&packet, packet.size);
 	Data receive;
@@ -75,8 +75,8 @@ void Socket::Open(uint16_t socket, uint8_t flag)
 	CheckSize(receive, SB_SOCKET_PACKET_SIZE);
 	MAKE_PACKET(rpack, receive);
 	if( rpack->command != SB_COMMAND_OPENED_SOCKET ||
-	    rpack->data.simple.data.socket.socket != socket ||
-	    rpack->data.simple.data.socket.param != flag )
+	    rpack->data.socket.socket != socket ||
+	    rpack->data.socket.param != flag )
 	{
 		eout("Packet:\n" << receive);
 		throw SBError("Socket: Bad OPENED packet in Open");
@@ -93,12 +93,12 @@ void Socket::Close()
 		// only close non-default sockets
 
 		// build close command
-		Syncberry::Packet packet;
+		Barry::Packet packet;
 		packet.socket = 0;
 		packet.size = SB_SOCKET_PACKET_SIZE;
 		packet.command = SB_COMMAND_CLOSE_SOCKET;
-		packet.data.simple.data.socket.socket = m_socket;
-		packet.data.simple.data.socket.param = m_flag;
+		packet.data.socket.socket = m_socket;
+		packet.data.socket.param = m_flag;
 
 		Data command(&packet, packet.size);
 		Data response;
@@ -119,8 +119,8 @@ void Socket::Close()
 		CheckSize(response, SB_SOCKET_PACKET_SIZE);
 		MAKE_PACKET(rpack, response);
 		if( rpack->command != SB_COMMAND_CLOSED_SOCKET ||
-		    rpack->data.simple.data.socket.socket != m_socket ||
-		    rpack->data.simple.data.socket.param != m_flag )
+		    rpack->data.socket.socket != m_socket ||
+		    rpack->data.socket.param != m_flag )
 		{
 			eout("Packet:\n" << response);
 			throw SBError("Socket: Bad CLOSED packet in Close");
@@ -128,7 +128,7 @@ void Socket::Close()
 
 		// and finally, there always seems to be an extra read of
 		// an empty packet at the end... just throw it away
-		Receive(response);
+//		Receive(response);
 
 		// reset socket and flag
 		m_socket = 0;
@@ -182,12 +182,12 @@ void Socket::AppendFragment(Data &whole, const Data &fragment)
 		MAKE_PACKET(fpack, fragment);
 		int fragsize = fragment.GetSize() - SB_FRAG_HEADER_SIZE;
 
-		memcpy(buf+size, &fpack->data.param.data.raw, fragsize);
+		memcpy(buf+size, &fpack->data.db.data.fragment, fragsize);
 		whole.ReleaseBuffer(size + fragsize);
 	}
 
 	// update whole's size and command type for future sanity
-	Syncberry::Packet *wpack = (Syncberry::Packet *) whole.GetBuffer();
+	Barry::Packet *wpack = (Barry::Packet *) whole.GetBuffer();
 	wpack->size = (uint16_t) whole.GetSize();
 	wpack->command = SB_COMMAND_DB_DATA;
 	// don't need to call ReleaseBuffer here, since we're not changing
@@ -209,7 +209,7 @@ void Socket::CheckSequence(const Data &seq)
 
 	// we'll cheat here... if the packet's sequence is 0, we'll
 	// silently restart, otherwise, fail
-	uint32_t sequenceId = spack->data.simple.data.sequence.sequenceId;
+	uint32_t sequenceId = spack->data.sequence.sequenceId;
 	if( sequenceId == 0 ) {
 		// silently restart (will advance below)
 		m_sequenceId = 0;
@@ -246,7 +246,7 @@ bool Socket::Packet(const Data &send, Data &receive)
 
 	// force socket to our socket
 	Data send = sendorig;
-	Syncberry::Packet *sspack = (Syncberry::Packet *)send.GetBuffer(2);
+	Barry::Packet *sspack = (Barry::Packet *)send.GetBuffer(2);
 	sspack->socket = GetSocket();
 */
 
@@ -322,17 +322,17 @@ bool Socket::Packet(const Data &send, Data &receive)
 
 bool Socket::NextRecord(Data &receive)
 {
-	Syncberry::Packet packet;
+	Barry::Packet packet;
 	packet.socket = GetSocket();
 	packet.size = 7;
 	packet.command = SB_COMMAND_DB_DONE;
-	packet.data.param.param = 0;
-	packet.data.param.data.db.command = 0;
+	packet.data.db.tableCmd = 0;
+	packet.data.db.data.db.operation = 0;
 
 	Data command(&packet, packet.size);
 	return Packet(command, receive);
 }
 
 
-} // namespace Syncberry
+} // namespace Barry
 

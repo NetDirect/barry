@@ -3,8 +3,8 @@
 ///		Class wrapper to encapsulate the Blackberry USB logical socket
 ///
 
-#ifndef __SYNCBERRY_SOCKET_H__
-#define __SYNCBERRY_SOCKET_H__
+#ifndef __BARRY_SOCKET_H__
+#define __BARRY_SOCKET_H__
 
 #include <stdint.h>
 
@@ -12,7 +12,7 @@
 class Data;
 namespace Usb { class Device; }
 
-namespace Syncberry {
+namespace Barry {
 
 //
 // Socket class
@@ -74,7 +74,7 @@ public:
 };
 
 
-} // namespace Syncberry
+} // namespace Barry
 
 #endif
 
