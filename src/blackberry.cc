@@ -4,7 +4,7 @@
 ///
 
 #include "blackberry.h"
-#include "sbcommon.h"
+#include "common.h"
 #include "protocol.h"
 #include "error.h"
 #include "data.h"
@@ -16,7 +16,7 @@
 
 #include <iomanip>
 
-namespace Syncberry {
+namespace Barry {
 
 Blackberry::Blackberry(const ProbeResult &device)
 	: m_dev(device.m_dev),
@@ -41,12 +41,12 @@ void Blackberry::SelectMode(ModeType mode, uint16_t &socket, uint8_t &flag)
 	packet.socket = 0;
 	packet.size = SB_MODE_PACKET_COMMAND_SIZE;
 	packet.command = SB_COMMAND_SELECT_MODE;
-	packet.data.simple.data.mode.socket = SB_MODE_REQUEST_SOCKET;
-	packet.data.simple.data.mode.flag = 0x05;	// FIXME
-	memset(packet.data.simple.data.mode.modeName, 0,
-		sizeof(packet.data.simple.data.mode.modeName));
+	packet.data.mode.socket = SB_MODE_REQUEST_SOCKET;
+	packet.data.mode.flag = 0x05;	// FIXME
+	memset(packet.data.mode.modeName, 0,
+		sizeof(packet.data.mode.modeName));
 
-	char *modeName = (char *) packet.data.simple.data.mode.modeName;
+	char *modeName = (char *) packet.data.mode.modeName;
 	switch( mode )
 	{
 	case Bypass:
@@ -86,8 +86,8 @@ void Blackberry::SelectMode(ModeType mode, uint16_t &socket, uint8_t &flag)
 	}
 
 	// return the socket and flag that the device is expecting us to use
-	socket = modepack->data.simple.data.mode.socket;
-	flag = modepack->data.simple.data.mode.flag + 1;
+	socket = modepack->data.mode.socket;
+	flag = modepack->data.mode.flag + 1;
 }
 
 void Blackberry::OpenMode(ModeType mode)
@@ -181,8 +181,9 @@ void Blackberry::GetDBDB()
 	packet.socket = m_socket.GetSocket();
 	packet.size = 7;
 	packet.command = SB_COMMAND_DB_DATA;
-	packet.data.param.param = GetCommand(DatabaseAccess);
-	packet.data.param.data.db.command = SB_DBOP_GET_DBDB;
+	packet.data.db.tableCmd = GetCommand(DatabaseAccess);
+//	packet.data.db.data.db.operation = SB_DBOP_GET_DBDB;
+	packet.data.db.data.db.operation = SB_DBOP_OLD_GET_DBDB;
 
 	Data command(&packet, packet.size);
 	Data response;
@@ -197,7 +198,7 @@ void Blackberry::GetDBDB()
 	while( rpack->command != SB_COMMAND_DB_DONE ) {
 		if( rpack->command == SB_COMMAND_DB_DATA ) {
 			m_dbdb.Clear();
-			m_dbdb.Parse(response, 12);	// FIXME - hardcoded
+			m_dbdb.Parse(response);
 		}
 
 		// advance!
@@ -226,9 +227,10 @@ void Blackberry::GetAddressBook()
 	packet.socket = m_socket.GetSocket();
 	packet.size = 9;
 	packet.command = SB_COMMAND_DB_DATA;
-	packet.data.param.param = GetCommand(DatabaseAccess);
-	packet.data.param.data.db.command = SB_DBOP_GET_RECORDS;
-	packet.data.param.data.db.databaseId = ABID;
+	packet.data.db.tableCmd = GetCommand(DatabaseAccess);
+//	packet.data.db.data.db.operation = SB_DBOP_GET_RECORDS;
+	packet.data.db.data.db.operation = SB_DBOP_OLD_GET_RECORDS;
+	packet.data.db.data.db.databaseId = ABID;
 
 	Data command(&packet, packet.size);
 	Data response;
@@ -244,7 +246,7 @@ int count = 0;
 	while( rpack->command != SB_COMMAND_DB_DONE ) {
 		if( rpack->command == SB_COMMAND_DB_DATA ) {
 			Contact contact;
-			contact.Parse(response, 13);	// FIXME - hardcoded
+			contact.Parse(response);
 
 			// FIXME - do something better with the data
 			count++;
@@ -260,11 +262,11 @@ int count = 0;
 		rpack = (const Packet *) response.GetData();
 	}
 
-std::cout << "Contact count: " << std::setbase(10) << count;
+std::cout << "Contact count: " << std::setbase(10) << count << "\n";
 }
 
 
-} // namespace Syncberry
+} // namespace Barry
 
 /*
 

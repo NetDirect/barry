@@ -3,15 +3,15 @@
 ///		High level BlackBerry API class
 ///
 
-#ifndef __SYNCBERRY_BLACKBERRY_H__
-#define __SYNCBERRY_BLACKBERRY_H__
+#ifndef __BARRY_BLACKBERRY_H__
+#define __BARRY_BLACKBERRY_H__
 
 #include "usbwrap.h"
 #include "probe.h"
 #include "socket.h"
 #include "record.h"
 
-namespace Syncberry {
+namespace Barry {
 
 class Blackberry
 {
@@ -48,7 +48,7 @@ public:
 	void GetAddressBook();
 };
 
-} // namespace Syncberry
+} // namespace Barry
 
 #endif
 
