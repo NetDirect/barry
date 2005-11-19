@@ -149,6 +149,8 @@ void Data::InputHexLine(istream &is)
 
 void Data::DumpHexLine(ostream &os, int index, int size) const
 {
+	ios::fmtflags oldflags = os.setf(ios::right);
+
 	// index
 	os << "    ";
 	os << setbase(16) << setfill('0') << setw(8)
@@ -176,6 +178,7 @@ void Data::DumpHexLine(ostream &os, int index, int size) const
 	}
 
 	os << "\n";
+	os.flags(oldflags);
 }
 
 void Data::DumpHex(ostream &os) const
