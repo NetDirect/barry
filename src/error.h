@@ -1,14 +1,14 @@
 ///
 /// \file	error.h
-///		Common exception classes for the syncberry library
+///		Common exception classes for the Barry library
 ///
 
-#ifndef __SYNCBERRY_ERROR_H__
-#define __SYNCBERRY_ERROR_H__
+#ifndef __BARRY_ERROR_H__
+#define __BARRY_ERROR_H__
 
 #include <stdexcept>
 
-namespace Syncberry {
+namespace Barry {
 
 class SBError : public std::runtime_error
 {
@@ -17,7 +17,7 @@ public:
 	SBError(int libusb_errno, const std::string &str);
 };
 
-} // namespace Syncberry
+} // namespace Barry
 
 #endif
 

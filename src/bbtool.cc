@@ -1,11 +1,11 @@
 ///
 /// \file	bbtool.cc
-///		Syncberry library tester
+///		Barry library tester
 ///
 // FIXME - add copyright notices
 
 
-#include "sbcommon.h"
+#include "common.h"
 #include "probe.h"
 #include "usbwrap.h"
 #include "error.h"
@@ -15,7 +15,7 @@
 #include <getopt.h>
 
 using namespace std;
-using namespace Syncberry;
+using namespace Barry;
 
 void Usage()
 {
@@ -96,7 +96,7 @@ int main(int argc, char *argv[])
 		bb.Test();
 
 	}
-	catch( Syncberry::SBError &se ) {
+	catch( Barry::SBError &se ) {
 		std::cerr << "SBError caught: " << se.what() << endl;
 	}
 	catch( Usb::UsbError &ue) {

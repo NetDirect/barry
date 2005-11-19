@@ -10,7 +10,7 @@
 
 #include <sstream>
 
-namespace Syncberry {
+namespace Barry {
 
 void CheckSize(const Data &packet, int requiredsize)
 {
@@ -28,5 +28,5 @@ void CheckSize(const Data &packet, int requiredsize)
 	}
 }
 
-} // namespace Syncberry
+} // namespace Barry
 

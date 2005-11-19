@@ -1,6 +1,6 @@
 ///
 /// \file	error.cc
-///		Common exception classes for the syncberry library
+///		Common exception classes for the Barry library
 ///
 
 #include "error.h"
@@ -9,7 +9,7 @@
 
 using namespace std;
 
-namespace Syncberry {
+namespace Barry {
 
 std::string GetErrorString(int libusb_errno, const std::string &str)
 {
@@ -25,5 +25,5 @@ SBError::SBError(int libusb_errno, const std::string &str)
 {
 }
 
-} // namespace Syncberry
+} // namespace Barry
 
