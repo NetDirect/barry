@@ -15,14 +15,17 @@ USB layer:
 
 
 Blackberry layer:
-	error.{h,cc}		- common exception classes for Syncberry layer
+	error.{h,cc}		- common exception classes for Barry layer
 	probe.{h,cc}		- USB probe class to find Blackberry devices
 	protocol.{h,cc}		- structs and defines for packets seen on wire
 	sbcommon.{h,cc}		- general API and utilities
 	socket.{h,cc}		- socket class encapsulating the Blackberry
 				  logical socket
-	blackberry.{h,cc}	- high level blackberry API class
-	bbtool.cc		- command line testing utility
+	record.{h,cc}		- programmer-friendly record classes
+	parser.{h,cc}		- C++ virtual wrappers to connect record
+				  and controller in a generic way
+	controller.{h,cc}	- high level API class
+	btool.cc		- command line testing utility
 
 
 Misc utilities:
