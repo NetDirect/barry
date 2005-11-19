@@ -66,6 +66,7 @@ CONNECTOBJS = \
 
 
 BBTOOLOBJS = \
+	parser.o \
 	data.o \
 	usbwrap.o \
 	bbtool.o \
