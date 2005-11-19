@@ -12,7 +12,7 @@
 #include <vector>
 #include <stdexcept>
 
-#define USBWRAP_DEFAULT_TIMEOUT	1000
+#define USBWRAP_DEFAULT_TIMEOUT	2000
 
 class Data;
 
