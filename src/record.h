@@ -12,6 +12,8 @@
 #include <vector>
 #include <stdint.h>
 
+#include "protocol.h"			// only needed for size typedefs
+
 // forward declarations
 class Data;
 
@@ -21,73 +23,6 @@ namespace Barry {
 // NOTE:  All classes here must be container-safe!  Perhaps add sorting
 //        operators in the future.
 //
-
-class Contact
-{
-public:
-	struct UnknownField
-	{
-		uint8_t type;
-		std::string data;
-	};
-
-private:
-	// private contact management data
-	uint64_t m_recordId;
-
-public:
-	// contact specific data
-	std::string
-		Email,
-		Phone,
-		Fax,
-		WorkPhone,
-		HomePhone,
-		MobilePhone,
-		Pager,
-		PIN,
-		FirstName,
-		LastName,
-		Company,
-		DefaultCommunicationsMethod,
-		Address1,
-		Address2,
-		Address3,
-		City,
-		Province,
-		PostalCode,
-		Country,
-		Title,
-		PublicKey,
-		Notes;
-
-	std::vector<uint64_t> GroupLinks;
-	std::vector<UnknownField> Unknowns;
-
-
-protected:
-	template <class RecordType>
-	void Parse(const RecordType &rec, const unsigned char *end);
-
-	const unsigned char* ParseField(const unsigned char *begin,
-		const unsigned char *end);
-
-public:
-	Contact();
-	~Contact();
-
-	uint64_t GetID() const { return m_recordId; }
-
-	void Parse(const Data &data);
-	void Clear();			// erase everything
-
-	void Dump(std::ostream &os) const;
-};
-
-inline std::ostream& operator<< (std::ostream &os, const Contact &contact) {
-	contact.Dump(os);
-	return os;
-}
 
 
 
@@ -105,7 +40,6 @@ public:
 	CommandArrayType Commands;
 
 private:
-	void Parse(const unsigned char *begin, const unsigned char *end);
 	const unsigned char* ParseField(const unsigned char *begin,
 		const unsigned char *end);
 public:
@@ -168,6 +102,124 @@ inline std::ostream& operator<<(std::ostream &os, const DatabaseDatabase &dbdb) 
 	dbdb.Dump(os);
 	return os;
 }
+
+
+
+
+class Contact
+{
+public:
+	// protocol record types, for size calculations
+	typedef Barry::OldContactRecord		OldProtocolRecordType;
+	typedef Barry::ContactRecord		ProtocolRecordType;
+
+	struct UnknownField
+	{
+		uint8_t type;
+		std::string data;
+	};
+
+private:
+	// private contact management data
+	uint64_t m_recordId;
+
+public:
+	// contact specific data
+	std::string
+		Email,
+		Phone,
+		Fax,
+		WorkPhone,
+		HomePhone,
+		MobilePhone,
+		Pager,
+		PIN,
+		FirstName,
+		LastName,
+		Company,
+		DefaultCommunicationsMethod,
+		Address1,
+		Address2,
+		Address3,
+		City,
+		Province,
+		PostalCode,
+		Country,
+		Title,
+		PublicKey,
+		Notes;
+
+	std::vector<uint64_t> GroupLinks;
+	std::vector<UnknownField> Unknowns;
+
+
+//protected:
+public:
+	const unsigned char* ParseField(const unsigned char *begin,
+		const unsigned char *end);
+
+public:
+	Contact();
+	~Contact();
+
+	uint64_t GetID() const { return m_recordId; }
+
+	void Parse(const Data &data, unsigned int operation);
+	void Clear();			// erase everything
+
+	void Dump(std::ostream &os) const;
+};
+
+inline std::ostream& operator<< (std::ostream &os, const Contact &contact) {
+	contact.Dump(os);
+	return os;
+}
+
+class Message
+{
+public:
+	// protocol record types, for size calculations
+	typedef Barry::OldMessageRecord		OldProtocolRecordType;
+	typedef Barry::MessageRecord		ProtocolRecordType;
+
+	struct Address
+	{
+		std::string Name;
+		std::string Email;
+	};
+
+	struct UnknownField
+	{
+		uint8_t type;
+		std::string data;
+	};
+
+
+	Address From;
+	Address To;
+	Address Cc;
+	std::string Subject;
+	std::string Body;
+	std::vector<UnknownField> Unknowns;
+
+public:
+	Message();
+	~Message();
+
+	const unsigned char* ParseField(const unsigned char *begin,
+		const unsigned char *end);
+	void Parse(const Data &data, unsigned int operation);
+	void Clear();
+
+	void Dump(std::ostream &os) const;
+};
+
+inline std::ostream& operator<<(std::ostream &os, const Message &msg) {
+	msg.Dump(os);
+	return os;
+}
+
+std::ostream& operator<<(std::ostream &os, const Message::Address &msga);
 
 
 } // namespace Barry
