@@ -4,8 +4,8 @@
 ///		from data packets to useful structurs, and back.
 ///
 
-#ifndef __SYNCBERRY_RECORD_H__
-#define __SYNCBERRY_RECORD_H__
+#ifndef __BARRY_RECORD_H__
+#define __BARRY_RECORD_H__
 
 #include <iosfwd>
 #include <string>
@@ -15,7 +15,7 @@
 // forward declarations
 class Data;
 
-namespace Syncberry {
+namespace Barry {
 
 //
 // NOTE:  All classes here must be container-safe!  Perhaps add sorting
@@ -66,7 +66,9 @@ public:
 
 
 protected:
-	void Parse(const unsigned char *begin, const unsigned char *end);
+	template <class RecordType>
+	void Parse(const RecordType &rec, const unsigned char *end);
+
 	const unsigned char* ParseField(const unsigned char *begin,
 		const unsigned char *end);
 
@@ -76,7 +78,7 @@ public:
 
 	uint64_t GetID() const { return m_recordId; }
 
-	void Parse(const Data &data, int offset);
+	void Parse(const Data &data);
 	void Clear();			// erase everything
 
 	void Dump(std::ostream &os) const;
@@ -142,7 +144,10 @@ public:
 	DatabaseArrayType Databases;
 
 private:
-	void Parse(const unsigned char *begin, const unsigned char *end);
+	template <class RecordType, class FieldType>
+	void ParseRec(const RecordType &rec, const unsigned char *end);
+
+	template <class FieldType>
 	const unsigned char* ParseField(const unsigned char *begin,
 		const unsigned char *end);
 
@@ -150,7 +155,7 @@ public:
 	DatabaseDatabase();
 	~DatabaseDatabase();
 
-	void Parse(const Data &data, int offset);
+	void Parse(const Data &data);
 	void Clear();
 
 	// FIXME - returns 0 on error here, but that's a valid DBNumber
@@ -165,7 +170,7 @@ inline std::ostream& operator<<(std::ostream &os, const DatabaseDatabase &dbdb) 
 }
 
 
-} // namespace Syncberry
+} // namespace Barry
 
 #endif
 

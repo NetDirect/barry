@@ -5,6 +5,7 @@
 ///
 
 #include "record.h"
+#include "protocol.h"
 #include "data.h"
 #include <ostream>
 #include <iomanip>
@@ -14,37 +15,7 @@
 
 using namespace std;
 
-namespace Syncberry {
-
-struct GroupLink
-{
-	uint64_t	uniqueId : 48;
-} __attribute__ ((packed));
-
-// Contact field format
-struct ContactField
-{
-	uint16_t	size;		// including null terminator
-	uint8_t		type;
-
-	union FieldData
-	{
-		GroupLink	link;
-		uint8_t		raw[1];
-	} __attribute__ ((packed)) data;
-} __attribute__ ((packed));
-
-struct ContactRecord
-{
-	uint64_t	uniqueId : 48;	// only 48 bits of this is used in the
-					// link above, so assuming that's all
-					// there is
-	uint8_t	unknown;
-	ContactField	field[1];
-} __attribute__ ((packed));
-
-#define CONTACT_RECORD_HEADER_SIZE	(sizeof(Syncberry::ContactRecord) - sizeof(Syncberry::ContactField))
-#define CONTACT_FIELD_HEADER_SIZE	(sizeof(Syncberry::ContactField) - sizeof(Syncberry::ContactField::FieldData))
+namespace Barry {
 
 
 // Contact record codes
@@ -112,20 +83,14 @@ Contact::~Contact()
 {
 }
 
-void Contact::Parse(const unsigned char *begin, const unsigned char *end)
+template <class RecordType>
+void Contact::Parse(const RecordType &rec, const unsigned char *end)
 {
-	// check size
-	unsigned int totalSize = end - begin;
-	if( totalSize < CONTACT_RECORD_HEADER_SIZE ) {
-		dout("Contact: not enough data for parsing");
-		return;			// nothing to do
-	}
-
-	const ContactRecord *record = (const ContactRecord *) begin;
-	m_recordId = record->uniqueId;
+	// save the contact record ID
+	m_recordId = rec.uniqueId;
 
 	// advance pointer and cycle through all fields
-	begin += CONTACT_RECORD_HEADER_SIZE;
+	const unsigned char *begin = (const unsigned char *) &rec.field[0];
 	while( (begin + CONTACT_FIELD_HEADER_SIZE) < end )
 		begin = ParseField(begin, end);
 }
@@ -187,10 +152,39 @@ const unsigned char* Contact::ParseField(const unsigned char *begin,
 	return begin;
 }
 
-void Contact::Parse(const Data &data, int offset)
+void Contact::Parse(const Data &data)
 {
-	if( offset < data.GetSize() )
-		Parse(data.GetData() + offset, data.GetData() + data.GetSize());
+	// check size to make sure we have up to the DBAccess operation byte
+	if( (unsigned int)data.GetSize() < (SB_PACKET_DBACCESS_HEADER_SIZE + 1) )
+		return;
+
+	// calculate the end of data pointer
+	const unsigned char *end = data.GetData() + data.GetSize();
+
+	MAKE_PACKET(pack, data);
+	switch( pack->data.db.data.contact.operation )
+	{
+	case SB_DBOP_GET_RECORDS:
+		// using the new protocol
+		if( (unsigned int)data.GetSize() > SB_PACKET_CONTACT_HEADER_SIZE )
+			Parse(pack->data.db.data.contact, end);
+		else
+			dout("Contact: not enough data for parsing");
+		break;
+
+	case SB_DBOP_OLD_GET_RECORDS_REPLY:
+		// using the old protocol
+		if( (unsigned int)data.GetSize() > SB_PACKET_OLD_CONTACT_HEADER_SIZE )
+			Parse(pack->data.db.data.old_contact, end);
+		else
+			dout("Contact: not enough data for parsing");
+		break;
+
+	default:
+		// unknown protocol
+		dout("Unknown protocol");
+		break;
+	}
 }
 
 void Contact::Dump(std::ostream &os) const
@@ -249,15 +243,6 @@ void Contact::Dump(std::ostream &os) const
 ///////////////////////////////////////////////////////////////////////////////
 // CommandTable class
 
-// CommandTable field format
-struct CommandField
-{
-	uint8_t		size;		// no null terminator
-	uint8_t		code;
-	uint8_t		name[1];
-} __attribute__ ((packed));
-
-#define COMMAND_FIELD_HEADER_SIZE	(sizeof(::Syncberry::CommandField) - 1)
 
 CommandTable::CommandTable()
 {
@@ -276,7 +261,12 @@ void CommandTable::Parse(const unsigned char *begin, const unsigned char *end)
 const unsigned char* CommandTable::ParseField(const unsigned char *begin,
 					      const unsigned char *end)
 {
-	const CommandField *field = (const CommandField *) begin;
+	// check if there is enough data for a header
+	const unsigned char *headend = begin + sizeof(CommandTableField);
+	if( headend > end )
+		return headend;
+
+	const CommandTableField *field = (const CommandTableField *) begin;
 
 	// advance and check size
 	begin += COMMAND_FIELD_HEADER_SIZE + field->size;
@@ -329,21 +319,6 @@ void CommandTable::Dump(std::ostream &os) const
 ///////////////////////////////////////////////////////////////////////////////
 // DatabaseDatabase class
 
-struct DBDBField
-{
-	uint16_t	dbNumber;
-	uint8_t		unknown1;
-	uint32_t	dbSize;			// assumed from Cassis docs...
-						// always 0 in USB
-	uint32_t	dbRecordCount;
-	uint16_t	unknown2;
-	uint16_t	nameSize;		// includes null terminator
-	uint8_t		unknown3;
-	uint8_t		name[1];		// followed by 2 zeros!
-} __attribute__ ((packed));
-
-#define DBDB_FIELD_HEADER_SIZE	(sizeof(::Syncberry::DBDBField) - 1)
-
 DatabaseDatabase::DatabaseDatabase()
 {
 }
@@ -352,20 +327,31 @@ DatabaseDatabase::~DatabaseDatabase()
 {
 }
 
-void DatabaseDatabase::Parse(const unsigned char *begin,
-			     const unsigned char *end)
+template <class RecordType, class FieldType>
+void DatabaseDatabase::ParseRec(const RecordType &rec, const unsigned char *end)
 {
+	// advance pointer and cycle through all fields
+	const unsigned char *begin = (const unsigned char *) &rec.field[0];
+
+	// this while check is ok, since ParseField checks for header size
 	while( begin < end )
-		begin = ParseField(begin, end);
+		begin = ParseField<FieldType>(begin, end);
 }
 
+template <class FieldType>
 const unsigned char* DatabaseDatabase::ParseField(const unsigned char *begin,
 						  const unsigned char *end)
 {
-	const DBDBField *field = (const DBDBField *) begin;
+	// check if there is enough data for a header
+	const unsigned char *headend = begin + sizeof(FieldType);
+	if( headend > end )
+		return headend;
+
+	// get our header
+	const FieldType *field = (const FieldType *) begin;
 
 	// advance and check size
-	begin += DBDB_FIELD_HEADER_SIZE + field->nameSize + 2;
+	begin += sizeof(FieldType) - sizeof(field->name) + field->nameSize;
 	if( begin > end )		// if begin==end, we are ok
 		return begin;
 
@@ -380,10 +366,41 @@ const unsigned char* DatabaseDatabase::ParseField(const unsigned char *begin,
 	return begin;
 }
 
-void DatabaseDatabase::Parse(const Data &data, int offset)
+void DatabaseDatabase::Parse(const Data &data)
 {
-	if( offset < data.GetSize() )
-		Parse(data.GetData() + offset, data.GetData() + data.GetSize());
+	// check size to make sure we have up to the DBAccess operation byte
+	if( (unsigned int)data.GetSize() < (SB_PACKET_DBACCESS_HEADER_SIZE + 1) )
+		return;
+
+	// calculate the end of data pointer
+	const unsigned char *end = data.GetData() + data.GetSize();
+
+	MAKE_PACKET(pack, data);
+	switch( pack->data.db.data.dbdb.operation )
+	{
+	case SB_DBOP_GET_DBDB:
+		// using the new protocol
+		if( (unsigned int)data.GetSize() > SB_PACKET_DBDB_HEADER_SIZE )
+			ParseRec<DBDBRecord, DBDBField>
+				(pack->data.db.data.dbdb, end);
+		else
+			dout("Contact: not enough data for parsing");
+		break;
+
+	case SB_DBOP_OLD_GET_DBDB:
+		// using the old protocol
+		if( (unsigned int)data.GetSize() > SB_PACKET_OLD_DBDB_HEADER_SIZE )
+			ParseRec<OldDBDBRecord, OldDBDBField>
+				(pack->data.db.data.old_dbdb, end);
+		else
+			dout("Contact: not enough data for parsing");
+		break;
+
+	default:
+		// unknown protocol
+		dout("Unknown protocol");
+		break;
+	}
 }
 
 void DatabaseDatabase::Clear()
@@ -413,7 +430,7 @@ void DatabaseDatabase::Dump(std::ostream &os) const
 
 
 
-} // namespace Syncberry
+} // namespace Barry
 
 
 #ifdef __TEST_MODE__
@@ -439,8 +456,8 @@ int main(int argc, char *argv[])
 		Data &d = *b;
 //		cout << d << endl;
 		if( d.GetSize() > 13 && d.GetData()[6] == 0x4f ) {
-			Syncberry::Contact contact;
-			contact.Parse(d, 13);
+			Barry::Contact contact;
+			contact.Parse(d);
 			cout << contact << endl;
 		}
 	}
