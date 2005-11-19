@@ -5,7 +5,7 @@
 // FIXME - add copyright notices
 
 
-#include "sbcommon.h"
+#include "common.h"
 #include "usbwrap.h"
 #include "data.h"
 
