@@ -1,5 +1,27 @@
 Release: version 0.0.1 - 2005/??/??
 ------------------------------------------------------------------------------
+2005/11/19
+	- added parser.{h,cc} virtual wrapper to generalize LoadDatabase()
+	- added code to socket.cc's Packet() command to re-receive on
+		reception of empty packets... this seems to be a signal
+		from the device that it needs more time for long transfers
+		Current limit: 10 blank packets before exception is thrown
+		Observed maximum blank count: 1
+	- added MessageRecord and OldMessageRecord to protocol.h
+	- changed common record field structs to one CommonField struct
+	- increased default USB timeout to 10 seconds (some loaded devices
+		seem to need more time...)
+	- reorganized record.{h,cc} to try to reduce the code duplication
+	- record.h classes now "know" the sizes of their corresponding
+		protocol structs... this may cause trouble down the line
+		with Python, if used(?)
+	- added Message class for Email records
+	- removed the "Get*" database functions and replaced with
+		general LoadDatabase() call, which loads any database
+		available, and parses it with a Parser object
+	- added GetDBID() for searching for database numbers via name
+	- added test code to retrieve and display all email
+	- cleaned up comments
 2005/11/18
 	- changed project name to Barry, including namespaces
 	- renamed sbcommon.* to common.*
@@ -12,6 +34,9 @@ Release: version 0.0.1 - 2005/??/??
 	- added support for older version of the USB protocol, which matches
 		the Cassis spec more closely
 	- fixed the hardcoded offsets in blackberry.cc's protocol parsing
+	- fixed Socket::Close() so on error, socket flags are reset.
+		This stops Close() from being called twice on exception
+		destructors
 2005/11/17
 	- added Doxyfile to the project
 	- tuned Makefile
