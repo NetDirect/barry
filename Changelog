@@ -22,6 +22,7 @@ Release: version 0.0.1 - 2005/??/??
 	- added GetDBID() for searching for database numbers via name
 	- added test code to retrieve and display all email
 	- cleaned up comments
+	- renamed blackberry.{h,cc} to controller.{h,cc}
 2005/11/18
 	- changed project name to Barry, including namespaces
 	- renamed sbcommon.* to common.*

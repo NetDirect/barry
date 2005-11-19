@@ -1,5 +1,5 @@
 ///
-/// \file	bbtool.cc
+/// \file	btool.cc
 ///		Barry library tester
 ///
 // FIXME - add copyright notices
@@ -9,7 +9,7 @@
 #include "probe.h"
 #include "usbwrap.h"
 #include "error.h"
-#include "blackberry.h"
+#include "controller.h"
 #include <iostream>
 #include <iomanip>
 #include <getopt.h>
@@ -22,9 +22,9 @@ void Usage()
    cerr
    << "bbtool - Command line USB Blackberry Test Tool\n\n"
    << "   -h        This help\n"
-   << "   -l        List Blackberry devices\n"
-   << "   -p pin    Blackberry PIN of device to talk with\n"
-   << "             If only one Blackberry plugged in, this flag is optional\n"
+   << "   -l        List devices\n"
+   << "   -p pin    PIN of device to talk with\n"
+   << "             If only one device plugged in, this flag is optional\n"
    << endl;
 }
 
@@ -92,8 +92,8 @@ int main(int argc, char *argv[])
 			}
 		}
 
-		Blackberry bb(probe.Get(activeDevice));
-		bb.Test();
+		Controller con(probe.Get(activeDevice));
+		con.Test();
 
 	}
 	catch( Barry::SBError &se ) {

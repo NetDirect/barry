@@ -1,9 +1,9 @@
 ///
-/// \file	blackberry.cc
-///		High level BlackBerry API class
+/// \file	controller.cc
+///		High level Barry API class
 ///
 
-#include "blackberry.h"
+#include "controller.h"
 #include "common.h"
 #include "protocol.h"
 #include "error.h"
@@ -18,7 +18,7 @@
 
 namespace Barry {
 
-Blackberry::Blackberry(const ProbeResult &device)
+Controller::Controller(const ProbeResult &device)
 	: m_dev(device.m_dev),
 	m_iface(m_dev, BLACKBERRY_INTERFACE),
 	m_pin(device.m_pin),
@@ -27,14 +27,14 @@ Blackberry::Blackberry(const ProbeResult &device)
 {
 	if( !m_dev.SetConfiguration(BLACKBERRY_CONFIGURATION) )
 		throw SBError(m_dev.GetLastError(),
-			"Blackberry: SetConfiguration failed");
+			"Controller: SetConfiguration failed");
 }
 
-Blackberry::~Blackberry()
+Controller::~Controller()
 {
 }
 
-void Blackberry::SelectMode(ModeType mode, uint16_t &socket, uint8_t &flag)
+void Controller::SelectMode(ModeType mode, uint16_t &socket, uint8_t &flag)
 {
 	// select mode
 	Packet packet;
@@ -62,7 +62,7 @@ void Blackberry::SelectMode(ModeType mode, uint16_t &socket, uint8_t &flag)
 		break;
 
 	default:
-		throw std::logic_error("Blackberry: Invalid mode in SelectMode");
+		throw std::logic_error("Controller: Invalid mode in SelectMode");
 		break;
 	}
 
@@ -72,7 +72,7 @@ void Blackberry::SelectMode(ModeType mode, uint16_t &socket, uint8_t &flag)
 	if( !m_socket.Send(command, response) ) {
 		eeout(command, response);
 		throw SBError(m_socket.GetLastStatus(),
-			"Blackberry: error setting desktop mode");
+			"Controller: error setting desktop mode");
 	}
 
 	// get the data socket number
@@ -82,7 +82,7 @@ void Blackberry::SelectMode(ModeType mode, uint16_t &socket, uint8_t &flag)
 	MAKE_PACKET(modepack, response);
 	if( modepack->command != SB_COMMAND_MODE_SELECTED ) {
 		eeout(command, response);
-		throw SBError("Blackberry: mode not selected");
+		throw SBError("Controller: mode not selected");
 	}
 
 	// return the socket and flag that the device is expecting us to use
@@ -90,7 +90,7 @@ void Blackberry::SelectMode(ModeType mode, uint16_t &socket, uint8_t &flag)
 	flag = modepack->data.mode.flag + 1;
 }
 
-void Blackberry::OpenMode(ModeType mode)
+void Controller::OpenMode(ModeType mode)
 {
 	uint16_t socket;
 	uint8_t flag;
@@ -100,7 +100,7 @@ void Blackberry::OpenMode(ModeType mode)
 	m_socket.Open(socket, flag);
 }
 
-unsigned int Blackberry::GetCommand(CommandType ct)
+unsigned int Controller::GetCommand(CommandType ct)
 {
 	unsigned int cmd = 0;
 	char *cmdName = "Unknown";
@@ -112,12 +112,12 @@ unsigned int Blackberry::GetCommand(CommandType ct)
 		cmd = m_commandTable.GetCommand(cmdName);
 		break;
 	default:
-		throw std::logic_error("Blackberry: unknown command type");
+		throw std::logic_error("Controller: unknown command type");
 	}
 
 	if( cmd == 0 ) {
 		std::ostringstream oss;
-		oss << "Blackberry: unable to get command code: " << cmdName;
+		oss << "Controller: unable to get command code: " << cmdName;
 		throw SBError(oss.str());
 	}
 
@@ -137,7 +137,7 @@ struct StoreFunc
 	}
 };
 
-void Blackberry::Test()
+void Controller::Test()
 {
 	// open desktop mode socket
 	OpenMode(Desktop);
@@ -161,7 +161,7 @@ void Blackberry::Test()
 	m_socket.Close();
 }
 
-void Blackberry::LoadCommandTable()
+void Controller::LoadCommandTable()
 {
 	char rawCommand[] = { 6, 0, 0x0a, 0, 0x40, 0, 0, 1, 0, 0 };
 	*((uint16_t*) rawCommand) = m_socket.GetSocket();
@@ -171,7 +171,7 @@ void Blackberry::LoadCommandTable()
 	if( !m_socket.Packet(command, response) ) {
 		eeout(command, response);
 		throw SBError(m_socket.GetLastStatus(),
-			"Blackberry: error getting command table");
+			"Controller: error getting command table");
 	}
 
 	MAKE_PACKET(firstpack, response);
@@ -179,7 +179,7 @@ void Blackberry::LoadCommandTable()
 		if( !m_socket.NextRecord(response) ) {
 			eout("Response packet:\n" << response);
 			throw SBError(m_socket.GetLastStatus(),
-				"Blackberry: error getting command table(next)");
+				"Controller: error getting command table(next)");
 		}
 
 		MAKE_PACKET(rpack, response);
@@ -194,7 +194,7 @@ void Blackberry::LoadCommandTable()
 	ddout(m_commandTable);
 }
 
-void Blackberry::LoadDBDB()
+void Controller::LoadDBDB()
 {
 	Packet packet;
 	packet.socket = m_socket.GetSocket();
@@ -210,7 +210,7 @@ void Blackberry::LoadDBDB()
 	if( !m_socket.Packet(command, response) ) {
 		eeout(command, response);
 		throw SBError(m_socket.GetLastStatus(),
-			"Blackberry: error getting database database");
+			"Controller: error getting database database");
 	}
 
 	MAKE_PACKET(rpack, response);
@@ -224,7 +224,7 @@ void Blackberry::LoadDBDB()
 		if( !m_socket.NextRecord(response) ) {
 			eout("Response packet:\n" << response);
 			throw SBError(m_socket.GetLastStatus(),
-				"Blackberry: error getting command table(next)");
+				"Controller: error getting command table(next)");
 		}
 		rpack = (const Packet *) response.GetData();
 	}
@@ -232,17 +232,17 @@ void Blackberry::LoadDBDB()
 	ddout(m_dbdb);
 }
 
-unsigned int Blackberry::GetDBID(const char *name) const
+unsigned int Controller::GetDBID(const char *name) const
 {
 	unsigned int ID = m_dbdb.GetDBNumber(name);
 	// FIXME - this needs a better error handler... the dbdb needs one too!
 	if( ID == 0 ) {
-		throw SBError("Blackberry: Address Book not found");
+		throw SBError("Controller: Address Book not found");
 	}
 	return ID;
 }
 
-void Blackberry::LoadDatabase(unsigned int dbId, Parser &parser)
+void Controller::LoadDatabase(unsigned int dbId, Parser &parser)
 {
 	Packet packet;
 	packet.socket = m_socket.GetSocket();
@@ -260,7 +260,7 @@ void Blackberry::LoadDatabase(unsigned int dbId, Parser &parser)
 		eout("Database ID: " << dbId);
 		eeout(command, response);
 		throw SBError(m_socket.GetLastStatus(),
-			"Blackberry: error loading database");
+			"Controller: error loading database");
 	}
 
 	MAKE_PACKET(rpack, response);
@@ -273,7 +273,7 @@ void Blackberry::LoadDatabase(unsigned int dbId, Parser &parser)
 		if( !m_socket.NextRecord(response) ) {
 			eout("Response packet:\n" << response);
 			throw SBError(m_socket.GetLastStatus(),
-				"Blackberry: error loading database (next)");
+				"Controller: error loading database (next)");
 		}
 		rpack = (const Packet *) response.GetData();
 	}

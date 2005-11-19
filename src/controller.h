@@ -1,10 +1,10 @@
 ///
-/// \file	blackberry.h
+/// \file	controller.h
 ///		High level BlackBerry API class
 ///
 
-#ifndef __BARRY_BLACKBERRY_H__
-#define __BARRY_BLACKBERRY_H__
+#ifndef __BARRY_CONTROLLER_H__
+#define __BARRY_CONTROLLER_H__
 
 #include "usbwrap.h"
 #include "probe.h"
@@ -14,7 +14,7 @@
 
 namespace Barry {
 
-class Blackberry
+class Controller
 {
 public:
 	enum ModeType { Unspecified, Bypass, Desktop, JavaLoader };
@@ -39,8 +39,8 @@ protected:
 	unsigned int GetCommand(CommandType ct);
 
 public:
-	Blackberry(const ProbeResult &device);
-	~Blackberry();
+	Controller(const ProbeResult &device);
+	~Controller();
 
 	void Test();
 

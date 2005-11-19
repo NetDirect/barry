@@ -76,7 +76,7 @@ BBTOOLOBJS = \
 	socket.o \
 	protocol.o \
 	record.o \
-	blackberry.o \
+	controller.o \
 
 
 #
