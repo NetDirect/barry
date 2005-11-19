@@ -103,6 +103,10 @@ void Socket::Close()
 		Data command(&packet, packet.size);
 		Data response;
 		if( !Send(command, response) ) {
+			// reset so this won't be called again
+			m_socket = 0;
+			m_flag = 0;
+
 			eeout(command, response);
 			throw SBError(GetLastStatus(), "Error closing socket");
 		}
@@ -122,6 +126,10 @@ void Socket::Close()
 		    rpack->data.socket.socket != m_socket ||
 		    rpack->data.socket.param != m_flag )
 		{
+			// reset so this won't be called again
+			m_socket = 0;
+			m_flag = 0;
+
 			eout("Packet:\n" << response);
 			throw SBError("Socket: Bad CLOSED packet in Close");
 		}
