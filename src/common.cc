@@ -24,6 +24,12 @@
 
 namespace Barry {
 
+//
+// Init
+//
+/// Barry library initializer.  Call this before anything else.
+/// This takes care of initializing the lower level libusb.
+///
 void Init()
 {
 	libusb_set_debug(9);
