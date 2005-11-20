@@ -2,6 +2,7 @@ bbtool
 connect
 test-data
 test-contact
+test-base64
 dep.mak
 gmon.out
 translate
