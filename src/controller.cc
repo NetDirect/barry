@@ -24,6 +24,7 @@
 #include "protocol.h"
 #include "error.h"
 #include "data.h"
+#include "parser.h"
 
 #define __DEBUG_MODE__
 #include "debug.h"
@@ -49,6 +50,9 @@ Controller::Controller(const ProbeResult &device)
 Controller::~Controller()
 {
 }
+
+///////////////////////////////////////////////////////////////////////////////
+// protected members
 
 void Controller::SelectMode(ModeType mode, uint16_t &socket, uint8_t &flag)
 {
@@ -106,16 +110,6 @@ void Controller::SelectMode(ModeType mode, uint16_t &socket, uint8_t &flag)
 	flag = modepack->data.mode.flag + 1;
 }
 
-void Controller::OpenMode(ModeType mode)
-{
-	uint16_t socket;
-	uint8_t flag;
-
-	m_socket.Close();
-	SelectMode(mode, socket, flag);
-	m_socket.Open(socket, flag);
-}
-
 unsigned int Controller::GetCommand(CommandType ct)
 {
 	unsigned int cmd = 0;
@@ -140,45 +134,10 @@ unsigned int Controller::GetCommand(CommandType ct)
 	return cmd;
 }
 
-template <class Record>
-struct StoreFunc
-{
-	int count;
-	StoreFunc() :count(0) {}
-	void operator()(const Record &rec)
-	{
-		count++;
-//		std::cout << "count so far: " << count << std::endl;
-		std::cout << rec << std::endl;
-	}
-};
-
-void Controller::Test()
-{
-	// open desktop mode socket
-	OpenMode(Desktop);
-
-	// get command table
-	LoadCommandTable();
-
-	// get database database
-	LoadDBDB();
-
-	// some databases
-//	StoreFunc<Contact> store;
-//	RecordParser<Contact, StoreFunc<Contact> > contactParser(store);
-//	LoadDatabase(GetDBID("Address Book"), contactParser);
-
-	StoreFunc<Message> storeMsg;
-	RecordParser<Message, StoreFunc<Message> > messageParser(storeMsg);
-	LoadDatabase(GetDBID("Messages"), messageParser);
-
-	// cleanup... not strictly needed, but nice to "release" the device
-	m_socket.Close();
-}
-
 void Controller::LoadCommandTable()
 {
+	assert( m_mode == Desktop );
+
 	char rawCommand[] = { 6, 0, 0x0a, 0, 0x40, 0, 0, 1, 0, 0 };
 	*((uint16_t*) rawCommand) = m_socket.GetSocket();
 
@@ -212,6 +171,8 @@ void Controller::LoadCommandTable()
 
 void Controller::LoadDBDB()
 {
+	assert( m_mode == Desktop );
+
 	Packet packet;
 	packet.socket = m_socket.GetSocket();
 	packet.size = 7;
@@ -248,7 +209,11 @@ void Controller::LoadDBDB()
 	ddout(m_dbdb);
 }
 
-unsigned int Controller::GetDBID(const char *name) const
+
+///////////////////////////////////////////////////////////////////////////////
+// public API
+
+unsigned int Controller::GetDBID(const std::string &name) const
 {
 	unsigned int ID = m_dbdb.GetDBNumber(name);
 	// FIXME - this needs a better error handler... the dbdb needs one too!
@@ -258,8 +223,38 @@ unsigned int Controller::GetDBID(const char *name) const
 	return ID;
 }
 
+void Controller::OpenMode(ModeType mode)
+{
+	uint16_t socket;
+	uint8_t flag;
+
+	if( m_mode != mode ) {
+		m_socket.Close();
+		SelectMode(mode, socket, flag);
+		m_socket.Open(socket, flag);
+		m_mode = mode;
+
+		switch( m_mode )
+		{
+		case Desktop:
+			// get command table
+			LoadCommandTable();
+
+			// get database database
+			LoadDBDB();
+			break;
+
+		default:
+			throw std::logic_error("Mode not implemented");
+		}
+	}
+}
+
 void Controller::LoadDatabase(unsigned int dbId, Parser &parser)
 {
+	if( m_mode != Desktop )
+		throw std::logic_error("Wrong mode in LoadDatabase");
+
 	Packet packet;
 	packet.socket = m_socket.GetSocket();
 	packet.size = 9;
