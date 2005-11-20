@@ -1,15 +1,18 @@
 /*
  * Encode or decode file as MIME base64 (RFC 1341)
  * Public domain by John Walker, August 11 1997
+ *           http://www.fourmilab.ch/
  * Modified slightly for the Citadel/UX system, June 1999
+ *
+ * Taken from the Citadel/UX GPL source tree, at version 6.01
+ * Modified into a C++ API by Chris Frey for Net Direct Inc., November 2005
+ *           http://www.netdirect.ca/
  *
  */
 
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <ctype.h>
-#include <string.h>
+#include "base64.h"
+#include <string>
+#include <iterator>
 
 #define TRUE  1
 #define FALSE 0
@@ -18,72 +21,59 @@
 
 typedef unsigned char byte;	      /* Byte type */
 
-FILE *fi;			      /* Input file */
-FILE *fo;			      /* Output file */
-static byte iobuf[256]; 	      /* I/O buffer */
-static int iolen = 0;		      /* Bytes left in I/O buffer */
-static int iocp = 256;		      /* Character removal pointer */
-static int ateof = FALSE;	      /* EOF encountered */
 static byte dtable[256];	      /* Encode / decode table */
-static int linelength = 0;	      /* Length of encoded output line */
-static char eol[] = "\r\n";           /* End of line sequence */
+//static char eol[] = "\r\n";           /* End of line sequence */
 static int errcheck = TRUE;	      /* Check decode input for errors ? */
 
-/*  INBUF  --  Fill input buffer with data  */
-
-static int inbuf(void)
-{
-    int l;
-
-    if (ateof) {
-	return FALSE;
-    }
-    l = fread(iobuf, 1, sizeof iobuf, fi);     /* Read input buffer */
-    if (l <= 0) {
-	if (ferror(fi)) {
-	    exit(1);
-	}
-	ateof = TRUE;
-	return FALSE;
-    }
-    iolen = l;
-    iocp = 0;
-    return TRUE;
-}
 
 /*  INCHAR  --	Return next character from input  */
 
-static int inchar(void)
+class base64_input
 {
-    if (iocp >= iolen) {
-       if (!inbuf()) {
-	  return EOF;
+	std::string::const_iterator begin, end;
+public:
+	base64_input(const std::string &input)
+		: begin(input.begin()), end(input.end()) {}
+	
+	int operator()()
+	{
+		if (begin == end) {
+			return EOF;
+		}
+		return *begin++;
 	}
-    }
+};
 
-    return iobuf[iocp++];
-}
 
 /*  OCHAR  --  Output an encoded character, inserting line breaks
 	       where required.	*/
 
-static void ochar(int c)
+class base64_output
 {
-    if (linelength >= LINELEN) {
-	if (fputs(eol, fo) == EOF) {
-	    exit(1);
+	std::back_insert_iterator<std::string> insert;
+	int linelength;			/* Length of encoded output line */
+
+public:
+	base64_output(std::string &output)
+		: insert(back_inserter(output)),
+		linelength(0)
+	{}
+
+	void operator()(int c)
+	{
+		if (linelength >= LINELEN) {
+			*insert++ = '\n';
+			*insert++ = ' ';
+			linelength = 0;
+		}
+		*insert++ = (unsigned char) c;
+		linelength++;
 	}
-	linelength = 0;
-    }
-    if (putc(((byte) c), fo) == EOF) {
-	exit(1);
-    }
-    linelength++;
-}
+};
 
 /*  ENCODE  --	Encode binary file into base64.  */
 
-static void encode(void)
+static bool encode(base64_input &inchar, base64_output &ochar)
 {
     int i, hiteof = FALSE;
 
@@ -133,14 +123,12 @@ static void encode(void)
 	    }
 	}
     }
-    if (fputs(eol, fo) == EOF) {
-	exit(1);
-    }
+    return true;
 }
 
 /*  INSIG  --  Return next significant input  */
 
-static int insig(void)
+static int insig(base64_input &inchar)
 {
     int c;
 
@@ -156,7 +144,7 @@ static int insig(void)
 
 /*  DECODE  --	Decode base64.	*/
 
-static void decode(void)
+static bool decode(base64_input &inchar, base64_output &ochar)
 {
     int i;
 
@@ -181,19 +169,16 @@ static void decode(void)
 	byte a[4], b[4], o[3];
 
 	for (i = 0; i < 4; i++) {
-	    int c = insig();
+	    int c = insig(inchar);
 
 	    if (c == EOF) {
-		if (errcheck && (i > 0)) {
-                    fprintf(stderr, "Input file incomplete.\n");
-		    exit(1);
-		}
-		return;
+                // fprintf(stderr, "Input file incomplete.\n");
+		return false;
 	    }
 	    if (dtable[c] & 0x80) {
 		if (errcheck) {
-                    fprintf(stderr, "Illegal character '%c' in input file.\n", c);
-		    exit(1);
+                    //fprintf(stderr, "Illegal character '%c' in input file.\n", c);
+		    return false;
 		}
 		/* Ignoring errors: discard invalid character. */
 		i--;
@@ -206,116 +191,49 @@ static void decode(void)
 	o[1] = (b[1] << 4) | (b[2] >> 2);
 	o[2] = (b[2] << 6) | b[3];
         i = a[2] == '=' ? 1 : (a[3] == '=' ? 2 : 3);
-	if (fwrite(o, i, 1, fo) == EOF) {
-	    exit(1);
-	}
+	for (int w = 0; w < i; w++ )
+	    ochar(o[w]);
 	if (i < 3) {
-	    return;
+	    return true;
 	}
     }
 }
 
-/*  USAGE  --  Print how-to-call information.  */
-
-static void usage(char *pname)
+// in-memory encode / decode API
+bool base64_encode(const std::string &in, std::string &out)
 {
-    fprintf(stderr, "%s  --  Encode/decode file as base64.  Call:\n", pname);
-    fprintf(stderr,
-    "            %s [-e[ncode] / -d[ecode]] [-n] [infile] [outfile]\n", pname);
-    fprintf(stderr, "\n");
-    fprintf(stderr, "Options:\n");
-    fprintf(stderr, "           -D         Decode base64 encoded file\n");
-    fprintf(stderr, "           -E         Encode file into base64\n");
-    fprintf(stderr, "           -N         Ignore errors when decoding\n");
-    fprintf(stderr, "           -U         Print this message\n");
-    fprintf(stderr, "\n");
-    fprintf(stderr, "by John Walker\n");
-    fprintf(stderr, "   WWW:    http://www.fourmilab.ch/\n");
+	out.clear();
+	base64_input input(in);
+	base64_output output(out);
+	return encode(input, output);
 }
+
+bool base64_decode(const std::string &in, std::string &out)
+{
+	out.clear();
+	base64_input input(in);
+	base64_output output(out);
+	return decode(input, output);
+}
+
+
+#ifdef __TEST_MODE__
+
+#include <iostream>
+using namespace std;
 
 /*  Main program  */
 
-int main(int argc, char *argv[])
+int main()
 {
-    int i, f = 0, decoding = FALSE;
-    char *cp, opt;
-
-    fi = stdin;
-    fo = stdout;
-
-    for (i = 1; i < argc; i++) {
-	cp = argv[i];
-        if (*cp == '-') {
-	    opt = *(++cp);
-	    if (islower(opt)) {
-		opt = toupper(opt);
-	    }
-	    switch (opt) {
-
-                case 'D':             /* -D  Decode */
-		    decoding = TRUE;
-		    break;
-
-                case 'E':             /* -E  Encode */
-		    decoding = FALSE;
-		    break;
-
-                case 'N':             /* -N  Suppress error checking */
-		    errcheck = FALSE;
-		    break;
-
-                case 'U':             /* -U  Print how-to-call information */
-                case '?':
-		    usage(argv[0]);
-		    return 0;
-	   }
-	} else {
-	    switch (f) {
-
-		/** Warning!  On systems which distinguish text mode and
-		    binary I/O (MS-DOS, Macintosh, etc.) the modes in these
-		    open statements will have to be made conditional based
-		    upon whether an encode or decode is being done, which
-                    will have to be specified earlier.  But it's worse: if
-		    input or output is from standard input or output, the 
-		    mode will have to be changed on the fly, which is
-                    generally system and compiler dependent.  'Twasn't me
-                    who couldn't conform to Unix CR/LF convention, so 
-                    don't ask me to write the code to work around
-                    Apple and Microsoft's incompatible standards. **/
-
-		case 0:
-                    if (strcmp(cp, "-") != 0) {
-                        if ((fi = fopen(cp, "r")) == NULL) {
-                            fprintf(stderr, "Cannot open input file %s\n", cp);
-			    return 2;
-			}
-		    }
-		    f++;
-		    break;
-
-		case 1:
-                    if (strcmp(cp, "-") != 0) {
-                        if ((fo = fopen(cp, "w")) == NULL) {
-                            fprintf(stderr, "Cannot open output file %s\n", cp);
-			    return 2;
-			}
-		    }
-		    f++;
-		    break;
-
-		default:
-                    fprintf(stderr, "Too many file names specified.\n");
-		    usage(argv[0]);
-		    return 2;
-	    }
-       }
-    }
-
-    if (decoding) {
-       decode();
-    } else {
-       encode();
-    }
-    return 0;
+	string test = "This is a test.", encoded, decoded;
+	base64_encode(test, encoded);
+	base64_decode(encoded, decoded);
+	if( test != decoded )
+		cerr << "Test failed" << endl;
+	else
+		cerr << "Success" << endl;
 }
+
+#endif
+
