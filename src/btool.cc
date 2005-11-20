@@ -26,8 +26,11 @@
 #include "usbwrap.h"
 #include "error.h"
 #include "controller.h"
+#include "parser.h"
 #include <iostream>
 #include <iomanip>
+#include <vector>
+#include <string>
 #include <getopt.h>
 
 using namespace std;
@@ -36,12 +39,53 @@ using namespace Barry;
 void Usage()
 {
    cerr
-   << "bbtool - Command line USB Blackberry Test Tool\n\n"
+   << "bbtool - Command line USB Blackberry Test Tool\n"
+   << "         Copyright 2005, Net Direct Inc. (http://www.netdirect.ca/)\n\n"
+   << "   -d db     Load database 'db' and dump to screen\n"
+   << "             Can be used multiple times to fetch more than one DB\n"
    << "   -h        This help\n"
    << "   -l        List devices\n"
    << "   -p pin    PIN of device to talk with\n"
    << "             If only one device plugged in, this flag is optional\n"
+   << "   -t        Show database database table\n"
    << endl;
+}
+
+template <class Record>
+struct Store
+{
+	int count;
+	Store() : count(0) {}
+	~Store()
+	{
+		cout << "Store counted " << count << " records." << endl;
+	}
+
+	// just dump to screen for now
+	void operator()(const Record &rec)
+	{
+		count++;
+		std::cout << rec << std::endl;
+	}
+};
+
+auto_ptr<Parser> GetParser(const string &name)
+{
+	// check for recognized database names
+	if( name == "Address Book" ) {
+		return auto_ptr<Parser>(
+			new RecordParser<Contact, Store<Contact> > (
+				new Store<Contact>));
+	}
+	else if( name == "Messages" ) {
+		return auto_ptr<Parser>(
+			new RecordParser<Message, Store<Message> > (
+				new Store<Message>));
+	}
+	else {
+		// unknown database, use null parser
+		return auto_ptr<Parser>( new Parser );
+	}
 }
 
 int main(int argc, char *argv[])
@@ -52,22 +96,32 @@ int main(int argc, char *argv[])
 	try {
 
 		uint32_t pin = 0;
-		bool list_only = false;
+		bool	list_only = false,
+			show_dbdb = false;
+		vector<string> dbNames;
 
 		// process command line options
 		for(;;) {
-			int cmd = getopt(argc, argv, "hlp:");
+			int cmd = getopt(argc, argv, "d:hlp:t");
 			if( cmd == -1 )
 				break;
 
 			switch( cmd )
 			{
+			case 'd':	// show dbname
+				dbNames.push_back(string(optarg));
+				break;
+
 			case 'l':	// list only
 				list_only = true;
 				break;
 
 			case 'p':	// Blackberry PIN
 				pin = strtoul(optarg, NULL, 16);
+				break;
+
+			case 't':	// display database database
+				show_dbdb = true;
 				break;
 
 			case 'h':	// help
@@ -108,8 +162,25 @@ int main(int argc, char *argv[])
 			}
 		}
 
+		// create our controller object
 		Controller con(probe.Get(activeDevice));
-		con.Test();
+
+		// execute each mode that was turned on
+		if( show_dbdb ) {
+			// open desktop mode socket
+			con.OpenMode(Controller::Desktop);
+			cout << con.GetDBDB() << endl;
+		}
+
+		if( dbNames.size() ) {
+			vector<string>::iterator b = dbNames.begin();
+
+			for( ; b != dbNames.end(); b++ ) {
+				unsigned int id = con.GetDBID(*b);
+				auto_ptr<Parser> parse = GetParser(*b);
+				con.LoadDatabase(id, *parse.get());
+			}
+		}
 
 	}
 	catch( Barry::SBError &se ) {
