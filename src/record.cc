@@ -23,6 +23,7 @@
 #include "record.h"
 #include "protocol.h"
 #include "data.h"
+#include "base64.h"
 #include <ostream>
 #include <iomanip>
 #include <time.h>
@@ -285,31 +286,33 @@ struct FieldLink
 {
 	int type;
 	char *name;
+	char *ldif;
+	char *objectClass;
 	std::string Record::* strMember;
 	Message::Address Record::* addrMember;
 };
 
 FieldLink<Contact> ContactFieldLinks[] = {
-   { CFC_EMAIL,        "Email",      &Contact::Email, 0 },
-   { CFC_PHONE,        "Phone",      &Contact::Phone, 0 },
-   { CFC_FAX,          "Fax",        &Contact::Fax, 0 },
-   { CFC_WORK_PHONE,   "WorkPhone",  &Contact::WorkPhone, 0 },
-   { CFC_HOME_PHONE,   "HomePhone",  &Contact::HomePhone, 0 },
-   { CFC_MOBILE_PHONE, "MobilePhone",&Contact::MobilePhone, 0 },
-   { CFC_PAGER,        "Pager",      &Contact::Pager, 0 },
-   { CFC_PIN,          "PIN",        &Contact::PIN, 0 },
-   { CFC_COMPANY,      "Company",    &Contact::Company, 0 },
-   { CFC_DEFAULT_COMM_METHOD,"DefaultCommMethod",&Contact::DefaultCommunicationsMethod, 0 },
-   { CFC_ADDRESS1,     "Address1",   &Contact::Address1, 0 },
-   { CFC_ADDRESS2,     "Address2",   &Contact::Address2, 0 },
-   { CFC_ADDRESS3,     "Address3",   &Contact::Address3, 0 },
-   { CFC_CITY,         "City",       &Contact::City, 0 },
-   { CFC_PROVINCE,     "Province",   &Contact::Province, 0 },
-   { CFC_POSTAL_CODE,  "PostalCode", &Contact::PostalCode, 0 },
-   { CFC_COUNTRY,      "Country",    &Contact::Country, 0 },
-   { CFC_TITLE,        "Title",      &Contact::Title, 0 },
-   { CFC_PUBLIC_KEY,   "PublicKey",  &Contact::PublicKey, 0 },
-   { CFC_NOTES,        "Notes",      &Contact::Notes, 0 },
+   { CFC_EMAIL,        "Email",      "mail",0,            &Contact::Email, 0 },
+   { CFC_PHONE,        "Phone",      0,0,                 &Contact::Phone, 0 },
+   { CFC_FAX,          "Fax",        "facsimileTelephoneNumber",0, &Contact::Fax, 0 },
+   { CFC_WORK_PHONE,   "WorkPhone",  "telephoneNumber",0, &Contact::WorkPhone, 0 },
+   { CFC_HOME_PHONE,   "HomePhone",  "homePhone",0,       &Contact::HomePhone, 0 },
+   { CFC_MOBILE_PHONE, "MobilePhone","mobile",0,          &Contact::MobilePhone, 0 },
+   { CFC_PAGER,        "Pager",      "pager",0,           &Contact::Pager, 0 },
+   { CFC_PIN,          "PIN",        0,0,                 &Contact::PIN, 0 },
+   { CFC_COMPANY,      "Company",    "o",0,               &Contact::Company, 0 },
+   { CFC_DEFAULT_COMM_METHOD,"DefaultCommMethod",0,0,     &Contact::DefaultCommunicationsMethod, 0 },
+   { CFC_ADDRESS1,     "Address1",   0,0,                 &Contact::Address1, 0 },
+   { CFC_ADDRESS2,     "Address2",   0,0,                 &Contact::Address2, 0 },
+   { CFC_ADDRESS3,     "Address3",   0,0,                 &Contact::Address3, 0 },
+   { CFC_CITY,         "City",       "l",0,               &Contact::City, 0 },
+   { CFC_PROVINCE,     "Province",   "st",0,              &Contact::Province, 0 },
+   { CFC_POSTAL_CODE,  "PostalCode", "postalCode",0,      &Contact::PostalCode, 0 },
+   { CFC_COUNTRY,      "Country",    "c", "country",      &Contact::Country, 0 },
+   { CFC_TITLE,        "Title",      "title",0,           &Contact::Title, 0 },
+   { CFC_PUBLIC_KEY,   "PublicKey",  0,0,                 &Contact::PublicKey, 0 },
+   { CFC_NOTES,        "Notes",      0,0,                 &Contact::Notes, 0 },
    { CFC_INVALID_FIELD,"EndOfList",  0, 0 }
 };
 
@@ -403,6 +406,40 @@ void Contact::Parse(const Data &data, unsigned int operation)
 	ParseCommonFields(*this, begin, data.GetData() + data.GetSize());
 }
 
+//
+// GetPostalAddress
+//
+/// Format a mailing address, handling missing fields.
+///
+std::string Contact::GetPostalAddress() const
+{
+	std::string address = Address1;
+	if( Address2.size() ) {
+		if( address.size() )
+			address += "\n";
+		address += Address2;
+	}
+	if( Address3.size() ) {
+		if( address.size() )
+			address += "\n";
+		address += Address3;
+	}
+	if( address.size() )
+		address += "\n";
+	if( City.size() )
+		address += City + " ";
+	if( Province.size() )
+		address += Province + " ";
+	if( Country.size() )
+		address += Country;
+	if( address.size() )
+		address += "\n";
+	if( PostalCode.size() )
+		address += PostalCode;
+	
+	return address;
+}
+
 void Contact::Dump(std::ostream &os) const
 {
 	ios::fmtflags oldflags = os.setf(ios::left);
@@ -454,6 +491,76 @@ void Contact::Dump(std::ostream &os) const
 	os.fill(fill);
 }
 
+//
+// DumpLdif
+//
+/// Output contact data to os in LDAP LDIF format.
+/// This is hardcoded for now.  Someday we should support mapping
+/// of fields.
+///
+void Contact::DumpLdif(std::ostream &os, const std::string &baseDN) const
+{
+	ios::fmtflags oldflags = os.setf(ios::left);
+	char fill = os.fill(' ');
+
+	if( FirstName.size() == 0 && LastName.size() == 0 )
+		return;			// nothing to do
+
+	std::string FullName = FirstName + " " + LastName;
+	os << "# Contact 0x" << setbase(16) << GetID() << FullName << "\n";
+	os << "dn: " << FullName << "," << baseDN << "\n";
+	os << "objectClass: inetOrgPerson\n";
+	os << "displayName: " << FullName << "\n";
+	os << "cn: " << FullName << "\n";
+	if( LastName.size() )
+		os << "sn: " << LastName << "\n";
+	if( FirstName.size() )
+		os << "givenName: " << FirstName << "\n";
+
+	// cycle through the type table
+	for(	FieldLink<Contact> *b = ContactFieldLinks;
+		b->type != CFC_INVALID_FIELD;
+		b++ )
+	{
+		// print only fields with data
+		const std::string &field = this->*(b->strMember);
+		if( b->ldif && field.size() ) {
+			os << b->ldif << ": " << field << "\n";
+			if( b->objectClass )
+				os << "objectClass: " << b->objectClass << "\n";
+		}
+	}
+
+	std::string b64;
+	if( Address1.size() && base64_encode(Address1, b64) )
+		os << "street:: " << b64 << "\n";
+
+	std::string FullAddress = GetPostalAddress();
+	if( FullAddress.size() && base64_encode(FullAddress, b64) )
+		os << "postalAddress:: " << b64 << "\n";
+
+	if( Notes.size() && base64_encode(Notes, b64) )
+		os << "note:: " << b64 << "\n";
+
+/*
+	// print any group links
+	std::vector<uint64_t>::const_iterator
+		gb = GroupLinks.begin(), ge = GroupLinks.end();
+	if( gb != ge )
+		os << "    GroupLinks:\n";
+	for( ; gb != ge; gb++ ) {
+		os << "        ID: 0x" << setbase(16) << *gb << "\n";
+	}
+*/
+
+	// last line must be empty
+	os << "\n";
+
+	// cleanup the stream
+	os.flags(oldflags);
+	os.fill(fill);
+}
+
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -468,11 +575,11 @@ void Contact::Dump(std::ostream &os) const
 #define MFC_END			0xffff
 
 FieldLink<Message> MessageFieldLinks[] = {
-   { MFC_TO,      "To",         0, &Message::To },
-   { MFC_FROM,    "From",       0, &Message::From },
-   { MFC_SUBJECT, "Subject",    &Message::Subject, 0 },
-   { MFC_BODY,    "Body",       &Message::Body, 0 },
-   { MFC_END,     "End of List", 0, 0 }
+   { MFC_TO,      "To",         0, 0,    0, &Message::To },
+   { MFC_FROM,    "From",       0, 0,    0, &Message::From },
+   { MFC_SUBJECT, "Subject",    0, 0,    &Message::Subject, 0 },
+   { MFC_BODY,    "Body",       0, 0,    &Message::Body, 0 },
+   { MFC_END,     "End of List",0, 0,    0, 0 }
 };
 
 Message::Message()
@@ -618,6 +725,7 @@ int main(int argc, char *argv[])
 			Barry::Contact contact;
 			contact.Parse(d, d.GetData()[6]);
 			cout << contact << endl;
+			contact.DumpLdif(cout, "ou=People,dc=example,dc=com");
 		}
 	}
 }

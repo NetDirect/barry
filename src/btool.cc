@@ -41,6 +41,8 @@ void Usage()
    cerr
    << "bbtool - Command line USB Blackberry Test Tool\n"
    << "         Copyright 2005, Net Direct Inc. (http://www.netdirect.ca/)\n\n"
+   << "   -c dn     Convert address book database to LDIF format, using the\n"
+   << "             specified baseDN\n"
    << "   -d db     Load database 'db' and dump to screen\n"
    << "             Can be used multiple times to fetch more than one DB\n"
    << "   -h        This help\n"
@@ -50,6 +52,17 @@ void Usage()
    << "   -t        Show database database table\n"
    << endl;
 }
+
+class Contact2Ldif
+{
+	std::string m_baseDN;
+public:
+	Contact2Ldif(const std::string &baseDN) : m_baseDN(baseDN) {}
+	void operator()(const Contact &rec)
+	{
+		rec.DumpLdif(cout, m_baseDN);
+	}
+};
 
 template <class Record>
 struct Store
@@ -97,17 +110,24 @@ int main(int argc, char *argv[])
 
 		uint32_t pin = 0;
 		bool	list_only = false,
-			show_dbdb = false;
+			show_dbdb = false,
+			ldif_contacts = false;
+		string ldifBaseDN;
 		vector<string> dbNames;
 
 		// process command line options
 		for(;;) {
-			int cmd = getopt(argc, argv, "d:hlp:t");
+			int cmd = getopt(argc, argv, "c:d:hlp:t");
 			if( cmd == -1 )
 				break;
 
 			switch( cmd )
 			{
+			case 'c':	// contacts to ldap ldif
+				ldif_contacts = true;
+				ldifBaseDN = optarg;
+				break;
+
 			case 'd':	// show dbname
 				dbNames.push_back(string(optarg));
 				break;
@@ -166,16 +186,25 @@ int main(int argc, char *argv[])
 		Controller con(probe.Get(activeDevice));
 
 		// execute each mode that was turned on
+
 		if( show_dbdb ) {
 			// open desktop mode socket
 			con.OpenMode(Controller::Desktop);
 			cout << con.GetDBDB() << endl;
 		}
 
+		if( ldif_contacts ) {
+			con.OpenMode(Controller::Desktop);
+			Contact2Ldif storage(ldifBaseDN);
+			RecordParser<Contact, Contact2Ldif> parser(storage);
+			con.LoadDatabase(con.GetDBID("Address Book"), parser);
+		}
+
 		if( dbNames.size() ) {
 			vector<string>::iterator b = dbNames.begin();
 
 			for( ; b != dbNames.end(); b++ ) {
+				con.OpenMode(Controller::Desktop);
 				unsigned int id = con.GetDBID(*b);
 				auto_ptr<Parser> parse = GetParser(*b);
 				con.LoadDatabase(id, *parse.get());

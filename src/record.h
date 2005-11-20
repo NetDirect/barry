@@ -179,11 +179,13 @@ public:
 	~Contact();
 
 	uint64_t GetID() const { return m_recordId; }
+	std::string GetPostalAddress() const;
 
 	void Parse(const Data &data, unsigned int operation);
 	void Clear();			// erase everything
 
 	void Dump(std::ostream &os) const;
+	void DumpLdif(std::ostream &os, const std::string &baseDN) const;
 };
 
 inline std::ostream& operator<< (std::ostream &os, const Contact &contact) {
