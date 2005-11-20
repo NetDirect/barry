@@ -26,9 +26,11 @@
 #include "probe.h"
 #include "socket.h"
 #include "record.h"
-#include "parser.h"
 
 namespace Barry {
+
+// forward declarations
+class Parser;
 
 class Controller
 {
@@ -44,27 +46,29 @@ private:
 	Socket m_socket;
 
 	CommandTable m_commandTable;
-
 	DatabaseDatabase m_dbdb;
 
 	ModeType m_mode;
 
 protected:
 	void SelectMode(ModeType mode, uint16_t &socket, uint8_t &flag);
-	void OpenMode(ModeType mode);
 	unsigned int GetCommand(CommandType ct);
+
+	void LoadCommandTable();
+	void LoadDBDB();
 
 public:
 	Controller(const ProbeResult &device);
 	~Controller();
 
-	void Test();
+	// meta access
+	const DatabaseDatabase& GetDBDB() const { return m_dbdb; }
+	unsigned int GetDBID(const std::string &name) const;
 
-	void LoadCommandTable();
-	void LoadDBDB();
+	// general operations
+	void OpenMode(ModeType mode);
 
-	unsigned int GetDBID(const char *name) const;
-
+	// database-specific
 	void LoadDatabase(unsigned int dbId, Parser &parser);
 };
 
