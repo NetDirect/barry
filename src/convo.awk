@@ -1,3 +1,8 @@
+#
+# This script is useful for turning a UsbSnoop log file into something
+# more readable.  It assumes USB endpoints 0x05 and 0x82
+#
+
 BEGIN {
 	#  0 for down
 	#  1 for up
