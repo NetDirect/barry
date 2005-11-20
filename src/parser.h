@@ -26,6 +26,8 @@
 #include "protocol.h"
 #include "debug.h"
 
+namespace Barry {
+
 // also acts as a null parser
 class Parser
 {
@@ -42,10 +44,19 @@ public:
 template <class Record, class Storage>
 class RecordParser : public Parser
 {
-	Storage &m_store;
+	Storage *m_store;
+	bool m_owned;
 
 public:
-	RecordParser(Storage &storage) : m_store(storage) {}
+	RecordParser(Storage &storage)
+		: m_store(&storage), m_owned(false) {}
+	RecordParser(Storage *storage)
+		: m_store(storage), m_owned(true) {}
+	~RecordParser()
+	{
+		if( this->m_owned )
+			delete m_store;
+	}
 
 	virtual bool CheckHeaderSize(const Data &data, unsigned int operation)
 	{
@@ -86,10 +97,12 @@ public:
 
 		Record rec;
 		rec.Parse(data, operation);
-		m_store(rec);
+		(*m_store)(rec);
 		return true;
 	}
 };
+
+} // namespace Barry
 
 #endif
 

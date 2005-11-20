@@ -22,6 +22,8 @@
 #include "parser.h"
 #include "protocol.h"
 
+namespace Barry {
+
 bool Parser::GetOperation(const Data &data, unsigned int &operation)
 {
 	// check size to make sure we have up to the DBAccess operation byte
@@ -32,4 +34,6 @@ bool Parser::GetOperation(const Data &data, unsigned int &operation)
 	operation = pack->data.db.data.db.operation;
 	return true;
 }
+
+} // namespace Barry
 
