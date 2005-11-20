@@ -14,6 +14,7 @@ CONNECTOBJS = \
 
 
 BBTOOLOBJS = \
+	base64.o \
 	parser.o \
 	data.o \
 	usbwrap.o \
@@ -52,7 +53,10 @@ translate:	translate.cc
 # Tests
 #############
 
-tests:	test-data test-contact
+tests:	test-data test-contact test-base64
+
+test-base64:	base64.h base64.cc
+	$(CXX) $(CXXFLAGS) -D__TEST_MODE__ -o test-base64 base64.cc
 
 test-data:	data.h data.cc
 	$(CXX) $(CXXFLAGS) -D__TEST_MODE__ -o test-data data.cc
