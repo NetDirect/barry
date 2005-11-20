@@ -27,6 +27,19 @@ Release: version 0.0.1 - 2005/??/??
 	- added Makefile.conf
 	- added copyright notices to source files
 	- added COPYING file with GPL
+	- put parser in Barry namespace, and added auto_ptr-like mode for
+		store object pointers
+	- added doxygen docs
+	- added header comments to convo.awk script
+	- removed Test() function in Controller object, and made class
+		better suited to its general API purpose
+	- changed OpenMode() so it loads command table and DBDB... it is now
+		a public API function
+	- moved Controller test code to btool.cc and made tool more
+		generically useful... can now download any DB by name on
+		the command line
+	- added mode checks to Controller
+	- added -t and -d command line options to btool
 2005/11/18
 	- changed project name to Barry, including namespaces
 	- renamed sbcommon.* to common.*
