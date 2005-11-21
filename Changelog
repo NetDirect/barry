@@ -6,6 +6,7 @@ Release: version 0.0.1 - 2005/??/??
 	- added contact-to-ldif generation, and updated supporting code
 	- added argument to btool to support contact-to-ldif operation
 	- added Contact::GetPostalAddress()
+	- added README documentation in preparation for future release
 2005/11/19
 	- added parser.{h,cc} virtual wrapper to generalize LoadDatabase()
 	- added code to socket.cc's Packet() command to re-receive on

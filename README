@@ -1,3 +1,79 @@
+Introduction:
+-------------
+Barry is a GPL C++ library to interface with USB BlackBerry handheld devices
+on Linux.  This is one of Net Direct Inc.'s (http://www.netdirect.ca/)
+open source projects.
+
+The SourceForge home page can be found at: http://barry.sourceforge.net/
+
+Barry is currently in early development, but is reaching stages of usefulness.
+For example, it is possible to retrieve Address Book contact data, and export
+it in text or LDAP LDIF format.
+
+
+Installation:
+-------------
+You need:
+	libusb, devel branch	http://libusb.sourceforge.net/
+
+Check out the V1_0_DEVEL tag/branch from CVS.
+
+Barry uses the asynchronous library calls, which is why the development
+branch is used.  The libusb devel branch is well along in its development
+cycle, so don't be afraid to play with it.
+
+This version of Barry has been tested using the 2005/11/?? CVS tree.
+You can download a tarball of this tested libusb tree at the Barry website
+if you'd rather not use CVS.
+
+To build Barry:
+
+	- Edit Makefile.conf to point to the proper location for libusb
+		headers and library files
+	- Enter the src/ directory and type 'make'
+	- If you want to generate doxygen documentation, run 'doxygen'
+		as well.  The resulting files will be in doc/doxygen/html/
+
+This will give you a command line tool called 'btool'.  Use the -h
+switch for help on its command line options.  Some good ones to start with
+are -l to list the devices found, and -t to list the Database Database.
+
+
+BlackBerry protocol:
+--------------------
+No BlackBerry-related protocol project would be complete without referencing
+the fine documentation from the Cassis project, which tackled the earlier
+serial protocol.  You can find this documentation at:
+
+	http://off.net/cassis/protocol-description.html
+
+There were some major and minor differences found between the serial
+protocol and the USB protocol.  Some of the new handheld devices use new
+database record access commands, and in these cases the record format changes.
+Barry tries to handle both.  See the code for more detailed information.
+
+Further documentation on the USB protocol is planned.  Stay tuned.
+
+
+Playing with the protocol:
+--------------------------
+The USB captures were performed on a Windows XP Pro system running UsbSnoop
+from http://benoit.papillault.free.fr/usbsnoop/index.php
+
+You can use the convo.awk and translate.cc tools to turn these very verbose
+logs into something more manageable.  Other than the normal USB control
+commands at the beginning of each conversation, it was found that only
+USB Bulk Transfers were used.
+
+The btool utility is at the stage where it can be used instead of UsbSnoop,
+for database operations.  You can use the -v switch to turn on data packet
+dumping, which will display the sent and received packets in canonical hex
+format as btool talks to the device.  You can use this in combination with
+the -d switch to capture new database records to reverse engineer.
+
+If you reverse engineer some of the unimplemented packet formats, please
+send patches and/or documentation to the mailing list!
+
 
 Some notes on code architecture:
 --------------------------------
@@ -8,17 +84,18 @@ Lowest level:
 USB layer:
 	usbwrap.{h,cc}		- C++ wrapper for libusb
 	data.{h,cc}		- C++ data class for buffer management
+				  and hex log file input and output
 	connect.cc		- low level USB test program, capable of
 				  using data file scripts to talk to a
 				  device via bulk read/write
 	debug.h			- general debugging output support
 
 
-Blackberry layer:
+Barry API layer:
 	error.{h,cc}		- common exception classes for Barry layer
 	probe.{h,cc}		- USB probe class to find Blackberry devices
 	protocol.{h,cc}		- structs and defines for packets seen on wire
-	sbcommon.{h,cc}		- general API and utilities
+	common.{h,cc}		- general API and utilities
 	socket.{h,cc}		- socket class encapsulating the Blackberry
 				  logical socket
 	record.{h,cc}		- programmer-friendly record classes
@@ -29,6 +106,12 @@ Blackberry layer:
 
 
 Misc utilities:
+	convo.awk		- script to convert UsbSnoop log files into
+				  trimmed-down request/response conversations
 	translate.cc		- translate UsbSnoop log file data into
 				  hex+ascii dumps
+
+Enjoy!
+
+November 2005
 
