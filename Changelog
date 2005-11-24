@@ -3,6 +3,7 @@ Release: version 0.0.1 - 2005/??/??
 2005/11/24
 	- added conversion routines (and tests) between time_t and min1900_t
 	- added -v option to btool to dynamically control protocol dumping
+	- removed duplicated database database table display in controller.cc
 2005/11/20
 	- added legal.txt, to save typing when adding new source files
 	- ignore test-base64 file (cvsignore)

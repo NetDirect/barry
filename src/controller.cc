@@ -205,8 +205,6 @@ void Controller::LoadDBDB()
 		}
 		rpack = (const Packet *) response.GetData();
 	}
-
-	ddout(m_dbdb);
 }
 
 
