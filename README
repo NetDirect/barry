@@ -22,7 +22,7 @@ Barry uses the asynchronous library calls, which is why the development
 branch is used.  The libusb devel branch is well along in its development
 cycle, so don't be afraid to play with it.
 
-This version of Barry has been tested using the 2005/11/?? CVS tree.
+This version of Barry has been tested using the 2005/11/24 CVS tree.
 You can download a tarball of this tested libusb tree at the Barry website
 if you'd rather not use CVS.
 

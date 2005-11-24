@@ -39,7 +39,7 @@ using namespace Barry;
 void Usage()
 {
    cerr
-   << "bbtool - Command line USB Blackberry Test Tool\n"
+   << "btool - Command line USB Blackberry Test Tool\n"
    << "         Copyright 2005, Net Direct Inc. (http://www.netdirect.ca/)\n\n"
    << "   -c dn     Convert address book database to LDIF format, using the\n"
    << "             specified baseDN\n"
