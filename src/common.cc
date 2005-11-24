@@ -24,16 +24,19 @@
 
 namespace Barry {
 
+bool __data_dump_mode__;
+
 //
 // Init
 //
 /// Barry library initializer.  Call this before anything else.
 /// This takes care of initializing the lower level libusb.
 ///
-void Init()
+void Init(bool data_dump_mode)
 {
 	libusb_set_debug(9);
 	libusb_init();
+	__data_dump_mode__ = data_dump_mode;
 }
 
 } // namespace Barry

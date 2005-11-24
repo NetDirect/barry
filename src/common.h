@@ -33,7 +33,7 @@
 
 namespace Barry {
 
-void Init();
+void Init(bool data_dump_mode);
 
 } // namespace Barry
 

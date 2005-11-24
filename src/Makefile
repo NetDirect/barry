@@ -11,6 +11,7 @@ CONNECTOBJS = \
 	data.o \
 	usbwrap.o \
 	connect.o \
+	common.o \
 
 
 BBTOOLOBJS = \

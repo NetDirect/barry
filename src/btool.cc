@@ -50,6 +50,7 @@ void Usage()
    << "   -p pin    PIN of device to talk with\n"
    << "             If only one device plugged in, this flag is optional\n"
    << "   -t        Show database database table\n"
+   << "   -v        Dump protocol data during operation\n"
    << endl;
 }
 
@@ -111,13 +112,14 @@ int main(int argc, char *argv[])
 		uint32_t pin = 0;
 		bool	list_only = false,
 			show_dbdb = false,
-			ldif_contacts = false;
+			ldif_contacts = false,
+			data_dump = false;
 		string ldifBaseDN;
 		vector<string> dbNames;
 
 		// process command line options
 		for(;;) {
-			int cmd = getopt(argc, argv, "c:d:hlp:t");
+			int cmd = getopt(argc, argv, "c:d:hlp:tv");
 			if( cmd == -1 )
 				break;
 
@@ -144,6 +146,10 @@ int main(int argc, char *argv[])
 				show_dbdb = true;
 				break;
 
+			case 'v':	// data dump on
+				data_dump = true;
+				break;
+
 			case 'h':	// help
 			default:
 				Usage();
@@ -151,7 +157,7 @@ int main(int argc, char *argv[])
 			}
 		}
 
-		Init();
+		Init(data_dump);
 
 		Probe probe;
 		int activeDevice = -1;

@@ -16,12 +16,18 @@
 
 #include <iostream>		// debugging only
 
+namespace Barry {
+extern bool __data_dump_mode__;
+}
+
+// data dump output
+#define ddout(x)	if(Barry::__data_dump_mode__) std::cout << x << std::endl
+
 #ifdef __DEBUG_MODE__
 	// debugging on
 
 	#undef dout
 	#undef eout
-	#undef ddout
 
 	// debug output
 //	#define dout(x)  	std::cout << x << std::endl
@@ -33,10 +39,6 @@
 	// easy exception output
 	#define eeout(c, r)	std::cout << "Sent packet:\n" << c << "\n" << "Response packet:\n" << r << "\n"
 
-	// data dump output
-	#define ddout(x)	std::cout << x << std::endl
-//	#define ddout(x)
-
 	// handle assert()
 	#undef NDEBUG
 #else
@@ -44,12 +46,10 @@
 	// debugging off
 	#undef dout
 	#undef eout
-	#undef ddout
 
 	#define dout(x)
 	#define eout(x)  	std::cout << x << std::endl
 	#define eeout(c, r)	std::cout << "Sent packet:\n" << c << "\n" << "Response packet:\n" << r << "\n"
-	#define ddout(x)
 
 	// handle assert() as well
 	#define NDEBUG
