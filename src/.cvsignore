@@ -3,6 +3,7 @@ connect
 test-data
 test-contact
 test-base64
+test-time
 dep.mak
 gmon.out
 translate

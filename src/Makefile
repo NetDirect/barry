@@ -14,6 +14,7 @@ CONNECTOBJS = \
 
 
 BBTOOLOBJS = \
+	time.o \
 	base64.o \
 	parser.o \
 	data.o \
@@ -53,7 +54,10 @@ translate:	translate.cc
 # Tests
 #############
 
-tests:	test-data test-contact test-base64
+tests:	test-data test-contact test-base64 test-time
+
+test-time:	time.h time.cc
+	$(CXX) $(CXXFLAGS) -D__TEST_MODE__ -o test-time time.cc
 
 test-base64:	base64.h base64.cc
 	$(CXX) $(CXXFLAGS) -D__TEST_MODE__ -o test-base64 base64.cc
