@@ -22,7 +22,7 @@ sep: 5
 
 rep: 82
     00000000: 00 00 14 00 06 ff 00 02 08 00 04 00 04 00 00 00
-    00000010: e3 ef 09 30
+    00000010: ee ff 01 22
 
 
 Note: There are about 3 different top level modes that this command activates.
