@@ -4,7 +4,8 @@ Barry is a GPL C++ library to interface with USB BlackBerry handheld devices
 on Linux.  This is one of Net Direct Inc.'s (http://www.netdirect.ca/)
 open source projects.
 
-The SourceForge home page can be found at: http://barry.sourceforge.net/
+The SourceForge project page can be found at:
+	http://sourceforge.net/projects/barry/
 
 Barry is currently in early development, but is reaching stages of usefulness.
 For example, it is possible to retrieve Address Book contact data, and export
@@ -22,9 +23,7 @@ Barry uses the asynchronous library calls, which is why the development
 branch is used.  The libusb devel branch is well along in its development
 cycle, so don't be afraid to play with it.
 
-This version of Barry has been tested using the 2005/11/24 CVS tree.
-You can download a tarball of this tested libusb tree at the Barry website
-if you'd rather not use CVS.
+This version of Barry has been tested using the 2005/11/25 libusb CVS tree.
 
 To build Barry:
 
@@ -33,6 +32,7 @@ To build Barry:
 	- Enter the src/ directory and type 'make'
 	- If you want to generate doxygen documentation, run 'doxygen'
 		as well.  The resulting files will be in doc/doxygen/html/
+		This has been tested with Doxygen 1.4.5
 
 This will give you a command line tool called 'btool'.  Use the -h
 switch for help on its command line options.  Some good ones to start with
