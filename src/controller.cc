@@ -35,6 +35,15 @@
 
 namespace Barry {
 
+//
+// Controller constructor
+//
+/// Constructor for the Controller class.  Requires a valid ProbeResult
+/// object to find the USB device to talk to.
+///
+/// \param[in]	device		One of the ProbeResult objects from the
+///				Probe class.
+///
 Controller::Controller(const ProbeResult &device)
 	: m_dev(device.m_dev),
 	m_iface(m_dev, BLACKBERRY_INTERFACE),
@@ -43,7 +52,7 @@ Controller::Controller(const ProbeResult &device)
 	m_mode(Unspecified)
 {
 	if( !m_dev.SetConfiguration(BLACKBERRY_CONFIGURATION) )
-		throw SBError(m_dev.GetLastError(),
+		throw BError(m_dev.GetLastError(),
 			"Controller: SetConfiguration failed");
 }
 
@@ -91,7 +100,7 @@ void Controller::SelectMode(ModeType mode, uint16_t &socket, uint8_t &flag)
 	Data response;
 	if( !m_socket.Send(command, response) ) {
 		eeout(command, response);
-		throw SBError(m_socket.GetLastStatus(),
+		throw BError(m_socket.GetLastStatus(),
 			"Controller: error setting desktop mode");
 	}
 
@@ -102,7 +111,7 @@ void Controller::SelectMode(ModeType mode, uint16_t &socket, uint8_t &flag)
 	MAKE_PACKET(modepack, response);
 	if( modepack->command != SB_COMMAND_MODE_SELECTED ) {
 		eeout(command, response);
-		throw SBError("Controller: mode not selected");
+		throw BError("Controller: mode not selected");
 	}
 
 	// return the socket and flag that the device is expecting us to use
@@ -128,7 +137,7 @@ unsigned int Controller::GetCommand(CommandType ct)
 	if( cmd == 0 ) {
 		std::ostringstream oss;
 		oss << "Controller: unable to get command code: " << cmdName;
-		throw SBError(oss.str());
+		throw BError(oss.str());
 	}
 
 	return cmd;
@@ -145,7 +154,7 @@ void Controller::LoadCommandTable()
 	Data response;
 	if( !m_socket.Packet(command, response) ) {
 		eeout(command, response);
-		throw SBError(m_socket.GetLastStatus(),
+		throw BError(m_socket.GetLastStatus(),
 			"Controller: error getting command table");
 	}
 
@@ -153,7 +162,7 @@ void Controller::LoadCommandTable()
 	while( firstpack->command != SB_COMMAND_DB_DONE ) {
 		if( !m_socket.NextRecord(response) ) {
 			eout("Response packet:\n" << response);
-			throw SBError(m_socket.GetLastStatus(),
+			throw BError(m_socket.GetLastStatus(),
 				"Controller: error getting command table(next)");
 		}
 
@@ -186,7 +195,7 @@ void Controller::LoadDBDB()
 
 	if( !m_socket.Packet(command, response) ) {
 		eeout(command, response);
-		throw SBError(m_socket.GetLastStatus(),
+		throw BError(m_socket.GetLastStatus(),
 			"Controller: error getting database database");
 	}
 
@@ -200,7 +209,7 @@ void Controller::LoadDBDB()
 		// advance!
 		if( !m_socket.NextRecord(response) ) {
 			eout("Response packet:\n" << response);
-			throw SBError(m_socket.GetLastStatus(),
+			throw BError(m_socket.GetLastStatus(),
 				"Controller: error getting command table(next)");
 		}
 		rpack = (const Packet *) response.GetData();
@@ -211,16 +220,45 @@ void Controller::LoadDBDB()
 ///////////////////////////////////////////////////////////////////////////////
 // public API
 
+//
+// GetDBID
+//
+/// Get numeric database ID by name.
+///
+/// \param[in]	name		Name of database, which matches one of the
+///				names listed in GetDBDB()
+///
+/// \exception	Barry::BError
+///		Thrown if name not found.
+///
 unsigned int Controller::GetDBID(const std::string &name) const
 {
 	unsigned int ID = m_dbdb.GetDBNumber(name);
 	// FIXME - this needs a better error handler... the dbdb needs one too!
 	if( ID == 0 ) {
-		throw SBError("Controller: Address Book not found");
+		throw BError("Controller: Address Book not found");
 	}
 	return ID;
 }
 
+//
+// OpenMode
+//
+/// Select device mode.  This is required before using any other mode-based
+/// operations, such as GetDBDB() and LoadDatabase().  Currently only
+/// Desktop mode is supported, but the following modes are available.
+/// (See ModeType)
+///
+///	- Controller::Bypass
+///	- Controller::Desktop
+///	- Controller::JavaLoader
+///
+/// \exception	Barry::BError
+///		Thrown on protocol error.
+///
+/// \exception	std::logic_error()
+///		Thrown if unsupported mode is requested.
+///
 void Controller::OpenMode(ModeType mode)
 {
 	uint16_t socket;
@@ -248,6 +286,29 @@ void Controller::OpenMode(ModeType mode)
 	}
 }
 
+//
+// LoadDatabase
+//
+/// Retrieve a database from the handheld device, using the given parser
+/// to parse the resulting data, and optionally store it.
+///
+/// See the RecordParser<> template to create a parser object.  The
+/// RecordParser<> template allows custom storage based on the type of
+/// database record retrieved.  The database ID and the parser Record
+/// type must match.
+///
+/// \param[in]	dbId		Database Database ID - use GetDBID()
+/// \param[out]	parser		Parser object which parses the resulting
+///				protocol data, and optionally stores it in
+///				a custom fashion.  See the RecordParser<>
+///				template.
+///
+/// \exception	Barry::BError
+///		Thrown on protocol error.
+///
+/// \exception	std::logic_error
+///		Thrown if not in Desktop mode.
+///
 void Controller::LoadDatabase(unsigned int dbId, Parser &parser)
 {
 	if( m_mode != Desktop )
@@ -268,7 +329,7 @@ void Controller::LoadDatabase(unsigned int dbId, Parser &parser)
 	if( !m_socket.Packet(command, response) ) {
 		eout("Database ID: " << dbId);
 		eeout(command, response);
-		throw SBError(m_socket.GetLastStatus(),
+		throw BError(m_socket.GetLastStatus(),
 			"Controller: error loading database");
 	}
 
@@ -281,7 +342,7 @@ void Controller::LoadDatabase(unsigned int dbId, Parser &parser)
 		// advance!
 		if( !m_socket.NextRecord(response) ) {
 			eout("Response packet:\n" << response);
-			throw SBError(m_socket.GetLastStatus(),
+			throw BError(m_socket.GetLastStatus(),
 				"Controller: error loading database (next)");
 		}
 		rpack = (const Packet *) response.GetData();

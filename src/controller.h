@@ -27,15 +27,44 @@
 #include "socket.h"
 #include "record.h"
 
+/// Project namespace, containing all related functions and classes.
+/// This is the only namespace applications should be concerned with,
+/// for now.
 namespace Barry {
 
 // forward declarations
 class Parser;
 
+//
+// Controller class
+//
+/// The main interface class.  This class coordinates the communication to
+/// a single handheld.
+///
+/// To use this class, use the following steps:
+///
+///	- Probe the USB bus for matching devices with the Probe class
+///	- Pass one of the probe results into the Controller constructor
+///		to connect
+///	- Call OpenMode() to select the desired mode.  This will fill all
+///		internal data structures for that mode, such as the
+///		Database Database in Desktop mode.
+///		NOTE: only Desktop mode is currently implemented.
+///	- Call GetDBDB() to get the device's database database
+///	- Call GetDBID() to get a database ID by name
+///	- In Desktop mode, call LoadDatabase() to retrieve and store a database
+///
 class Controller
 {
 public:
-	enum ModeType { Unspecified, Bypass, Desktop, JavaLoader };
+	/// Handheld mode type
+	enum ModeType {
+		Unspecified,		//< default on start up
+		Bypass,			//< unsupported, unknown
+		Desktop,		//< desktop mode required for database
+					//< operation
+		JavaLoader		//< unsupported
+	};
 	enum CommandType { Unknown, DatabaseAccess };
 
 private:
@@ -61,13 +90,19 @@ public:
 	Controller(const ProbeResult &device);
 	~Controller();
 
+	//////////////////////////////////
 	// meta access
+
+	/// Returns DatabaseDatabase object for this connection.
+	/// Must call OpenMode() to select Desktop mode first
 	const DatabaseDatabase& GetDBDB() const { return m_dbdb; }
 	unsigned int GetDBID(const std::string &name) const;
 
+	//////////////////////////////////
 	// general operations
 	void OpenMode(ModeType mode);
 
+	//////////////////////////////////
 	// database-specific
 	void LoadDatabase(unsigned int dbId, Parser &parser);
 };

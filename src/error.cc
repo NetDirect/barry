@@ -36,7 +36,7 @@ std::string GetErrorString(int libusb_errno, const std::string &str)
 	return oss.str();
 }
 
-SBError::SBError(int libusb_errno, const std::string &str)
+BError::BError(int libusb_errno, const std::string &str)
 	: std::runtime_error(GetErrorString(libusb_errno, str))
 {
 }

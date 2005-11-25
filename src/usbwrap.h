@@ -31,13 +31,21 @@
 
 class Data;
 
+/// Namespace for the libusb-related wrapper classes.  This namespace
+/// may change in the future.
 namespace Usb {
 
+/// \addtogroup exceptions
+/// @{
+
+/// Thrown on low level USB errors.
 class UsbError : public std::runtime_error
 {
 public:
 	UsbError(const std::string &str) : std::runtime_error(str) {}
 };
+
+/// @}
 
 
 class Match

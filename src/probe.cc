@@ -90,7 +90,7 @@ void Probe::Parse(const Data &data, ProbeResult &result)
 	    data.GetSize() < 0x14 ||
 	    pd[4] != 0x06 )
 	{
-		throw SBError("Probe: Unexpected reponse data in parse");
+		throw BError("Probe: Unexpected reponse data in parse");
 	}
 
 	// capture the PIN
@@ -113,7 +113,7 @@ Probe::Probe()
 		Interface iface(dev, BLACKBERRY_INTERFACE);
 
 		if( !dev.SetConfiguration(BLACKBERRY_CONFIGURATION) )
-			throw SBError(dev.GetLastError(),
+			throw BError(dev.GetLastError(),
 				"Probe: SetConfiguration failed");
 
 		Data data;

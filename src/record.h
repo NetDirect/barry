@@ -129,6 +129,14 @@ struct UnknownField
 std::ostream& operator<< (std::ostream &os, const std::vector<UnknownField> &unknowns);
 
 
+/// \addtogroup RecordParserClasses
+///		Parser and data storage classes.  These classes take a
+///		Database Database record and convert them into C++ objects.
+///		Each of these classes are safe to be used in standard
+///		containers, and are meant to be used in conjunction with the
+///		RecordParser<> template when calling Controller::LoadDatabase().
+/// @{
+
 class Contact
 {
 public:
@@ -270,6 +278,8 @@ inline std::ostream& operator<<(std::ostream &os, const Calendar &msg) {
 	msg.Dump(os);
 	return os;
 }
+
+/// @}
 
 } // namespace Barry
 

@@ -60,7 +60,7 @@ void Socket::Open(uint16_t socket, uint8_t flag)
 {
 	if( m_socket != 0 ) {
 		// already open
-		throw SBError("Socket: already open");
+		throw BError("Socket: already open");
 	}
 
 	// build open command
@@ -75,7 +75,7 @@ void Socket::Open(uint16_t socket, uint8_t flag)
 	Data receive;
 	if( !Send(send, receive) ) {
 		eeout(send, receive);
-		throw SBError(GetLastStatus(), "Error opening socket");
+		throw BError(GetLastStatus(), "Error opening socket");
 	}
 
 	// starting fresh, reset sequence ID
@@ -94,7 +94,7 @@ void Socket::Open(uint16_t socket, uint8_t flag)
 	    rpack->data.socket.param != flag )
 	{
 		eout("Packet:\n" << receive);
-		throw SBError("Socket: Bad OPENED packet in Open");
+		throw BError("Socket: Bad OPENED packet in Open");
 	}
 
 	// success!  save the socket
@@ -123,7 +123,7 @@ void Socket::Close()
 			m_flag = 0;
 
 			eeout(command, response);
-			throw SBError(GetLastStatus(), "Error closing socket");
+			throw BError(GetLastStatus(), "Error closing socket");
 		}
 
 		// starting fresh, reset sequence ID
@@ -146,7 +146,7 @@ void Socket::Close()
 			m_flag = 0;
 
 			eout("Packet:\n" << response);
-			throw SBError("Socket: Bad CLOSED packet in Close");
+			throw BError("Socket: Bad CLOSED packet in Close");
 		}
 
 		// and finally, there always seems to be an extra read of
@@ -227,7 +227,7 @@ void Socket::CheckSequence(const Data &seq)
 	MAKE_PACKET(spack, seq);
 	if( (unsigned int) seq.GetSize() < SB_SEQUENCE_PACKET_SIZE ) {
 		eout("Short sequence packet:\n" << seq);
-		throw SBError("Socket: invalid sequence packet");
+		throw BError("Socket: invalid sequence packet");
 	}
 
 	// we'll cheat here... if the packet's sequence is 0, we'll
@@ -242,7 +242,7 @@ void Socket::CheckSequence(const Data &seq)
 			if( m_socket != 0 ) {
 				eout("Socket sequence: " << m_sequenceId
 					<< ". Packet sequence: " << sequenceId);
-				throw SBError("Socket: out of sequence");
+				throw BError("Socket: out of sequence");
 			}
 			else {
 				dout("Bad sequence on socket 0: expected: "
@@ -333,7 +333,7 @@ bool Socket::Packet(const Data &send, Data &receive)
 
 			default:
 				eout("Command: " << rpack->command << inFrag);
-				throw SBError("Socket: unhandled packet in Packet()");
+				throw BError("Socket: unhandled packet in Packet()");
 				break;
 			}
 		}
@@ -343,7 +343,7 @@ bool Socket::Packet(const Data &send, Data &receive)
 			if( blankCount == 10 ) {
 				// only ask for more data on stalled sockets
 				// for so long
-				throw SBError("Socket: 10 blank packets received");
+				throw BError("Socket: 10 blank packets received");
 			}
 		}
 

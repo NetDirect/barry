@@ -32,6 +32,10 @@ bool __data_dump_mode__;
 /// Barry library initializer.  Call this before anything else.
 /// This takes care of initializing the lower level libusb.
 ///
+/// \param[in]	data_dump_mode	If set to true, the protocol conversation
+///				will be sent to stdout via the C++ std::cout
+///				stream.
+///
 void Init(bool data_dump_mode)
 {
 	libusb_set_debug(9);

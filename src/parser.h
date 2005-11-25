@@ -29,6 +29,13 @@
 namespace Barry {
 
 // also acts as a null parser
+//
+// Parser class
+//
+/// Base class for the parser functor hierarchy.  If in debug mode, this
+/// class can be used as a null parser.  Call Init() and the protocol
+/// will be dumped to stdout and no parsing will be done.
+///
 class Parser
 {
 public:
@@ -41,6 +48,39 @@ public:
 };
 
 
+//
+// RecordParser template class
+//
+/// Template class for easy creation of specific parser objects.  This template
+/// takes the following template argumens:
+///
+///	- Record: One of the record parser classes in record.h
+///	- Storage: A custom storage functor class.  An object of this type
+///		will be called as a function with parsed Record as an
+///		argument.  This happens on the fly as the data is retrieved
+///		from the device over USB, so it should not block forever.
+///
+/// Example LoadDatabase() call:
+///
+/// <pre>
+/// struct StoreContact
+/// {
+///     std::vector<Contact> &amp;array;
+///     StoreContact(std::vector<Contact> &amp;a) : array(a) {}
+///     void operator() (const Contact &amp;c)
+///     {
+///         array.push_back(c);
+///     }
+/// };
+///
+/// Controller con(probeResult);
+/// con.OpenMode(Controller::Desktop);
+/// std::vector<Contact> contactList;
+/// StoreContact storage(contactList);
+/// RecordParser<Contact, StoreContact> parser(storage);
+/// con.LoadDatabase(con.GetDBID("Address Book"), parser);
+/// </pre>
+///
 template <class Record, class Storage>
 class RecordParser : public Parser
 {
@@ -48,10 +88,17 @@ class RecordParser : public Parser
 	bool m_owned;
 
 public:
+	/// Constructor that references an externally managed storage object.
 	RecordParser(Storage &storage)
 		: m_store(&storage), m_owned(false) {}
+
+	/// Constructor that references a locally managed storage object.
+	/// The pointer passed in will be stored, and freed when this class
+	/// is destroyed.  It is safe to call this constructor with
+	/// a 'new'ly created storage object.
 	RecordParser(Storage *storage)
 		: m_store(storage), m_owned(true) {}
+
 	~RecordParser()
 	{
 		if( this->m_owned )
@@ -87,6 +134,8 @@ public:
 		return (unsigned int)data.GetSize() > fullsize;
 	}
 
+	/// Functor member called by Controller::LoadDatabase() during
+	/// processing.
 	virtual bool operator()(const Data &data)
 	{
 		unsigned int operation;

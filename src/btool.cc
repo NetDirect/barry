@@ -21,12 +21,7 @@
 
 
 
-#include "common.h"
-#include "probe.h"
-#include "usbwrap.h"
-#include "error.h"
-#include "controller.h"
-#include "parser.h"
+#include "barry.h"
 #include <iostream>
 #include <iomanip>
 #include <vector>
@@ -40,7 +35,7 @@ void Usage()
 {
    cerr
    << "btool - Command line USB Blackberry Test Tool\n"
-   << "         Copyright 2005, Net Direct Inc. (http://www.netdirect.ca/)\n\n"
+   << "        Copyright 2005, Net Direct Inc. (http://www.netdirect.ca/)\n\n"
    << "   -c dn     Convert address book database to LDIF format, using the\n"
    << "             specified baseDN\n"
    << "   -d db     Load database 'db' and dump to screen\n"
@@ -223,8 +218,8 @@ int main(int argc, char *argv[])
 		}
 
 	}
-	catch( Barry::SBError &se ) {
-		std::cerr << "SBError caught: " << se.what() << endl;
+	catch( Barry::BError &se ) {
+		std::cerr << "BError caught: " << se.what() << endl;
 	}
 	catch( Usb::UsbError &ue) {
 		std::cerr << "UsbError caught: " << ue.what() << endl;

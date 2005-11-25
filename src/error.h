@@ -26,12 +26,22 @@
 
 namespace Barry {
 
-class SBError : public std::runtime_error
+/// \addtogroup exceptions
+/// @{
+
+//
+// BError class
+//
+/// Currently the only Barry exception class.  Thrown on any protocol error.
+///
+class BError : public std::runtime_error
 {
 public:
-	SBError(const std::string &str) : std::runtime_error(str) {}
-	SBError(int libusb_errno, const std::string &str);
+	BError(const std::string &str) : std::runtime_error(str) {}
+	BError(int libusb_errno, const std::string &str);
 };
+
+/// @}
 
 } // namespace Barry
 

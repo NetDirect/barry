@@ -377,7 +377,7 @@ struct Packet
 
 
 
-// checks packet size and throws SBError if not right
+// checks packet size and throws BError if not right
 void CheckSize(const Data &packet, int requiredsize = MIN_PACKET_SIZE);
 
 } // namespace Barry
