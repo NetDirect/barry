@@ -96,6 +96,11 @@ auto_ptr<Parser> GetParser(const string &name)
 			new RecordParser<Message, Store<Message> > (
 				new Store<Message>));
 	}
+	else if( name == "Calendar" ) {
+		return auto_ptr<Parser>(
+			new RecordParser<Calendar, Store<Calendar> > (
+				new Store<Calendar>));
+	}
 	else {
 		// unknown database, use null parser
 		return auto_ptr<Parser>( new Parser );

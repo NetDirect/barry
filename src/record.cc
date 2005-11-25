@@ -24,9 +24,11 @@
 #include "protocol.h"
 #include "data.h"
 #include "base64.h"
+#include "time.h"
 #include <ostream>
 #include <iomanip>
 #include <time.h>
+#include <stdexcept>
 
 #define __DEBUG_MODE__
 #include "debug.h"
@@ -250,6 +252,20 @@ void DatabaseDatabase::Dump(std::ostream &os) const
 }
 
 
+std::ostream& operator<< (std::ostream &os, const std::vector<UnknownField> &unknowns)
+{
+	std::vector<UnknownField>::const_iterator
+		ub = unknowns.begin(), ue = unknowns.end();
+	if( ub != ue )
+		os << "    Unknowns:\n";
+	for( ; ub != ue; ub++ ) {
+		os << "        Type: 0x" << setbase(16)
+		   << (unsigned int) ub->type
+		   << " Data:\n" << Data(ub->data.data(), ub->data.size());
+	}
+	return os;
+}
+
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -288,32 +304,33 @@ struct FieldLink
 	char *name;
 	char *ldif;
 	char *objectClass;
-	std::string Record::* strMember;
-	Message::Address Record::* addrMember;
+	std::string Record::* strMember;	// FIXME - find a more general
+	Message::Address Record::* addrMember;	// way to do this...
+	time_t Record::* timeMember;
 };
 
 FieldLink<Contact> ContactFieldLinks[] = {
-   { CFC_EMAIL,        "Email",      "mail",0,            &Contact::Email, 0 },
-   { CFC_PHONE,        "Phone",      0,0,                 &Contact::Phone, 0 },
-   { CFC_FAX,          "Fax",        "facsimileTelephoneNumber",0, &Contact::Fax, 0 },
-   { CFC_WORK_PHONE,   "WorkPhone",  "telephoneNumber",0, &Contact::WorkPhone, 0 },
-   { CFC_HOME_PHONE,   "HomePhone",  "homePhone",0,       &Contact::HomePhone, 0 },
-   { CFC_MOBILE_PHONE, "MobilePhone","mobile",0,          &Contact::MobilePhone, 0 },
-   { CFC_PAGER,        "Pager",      "pager",0,           &Contact::Pager, 0 },
-   { CFC_PIN,          "PIN",        0,0,                 &Contact::PIN, 0 },
-   { CFC_COMPANY,      "Company",    "o",0,               &Contact::Company, 0 },
-   { CFC_DEFAULT_COMM_METHOD,"DefaultCommMethod",0,0,     &Contact::DefaultCommunicationsMethod, 0 },
-   { CFC_ADDRESS1,     "Address1",   0,0,                 &Contact::Address1, 0 },
-   { CFC_ADDRESS2,     "Address2",   0,0,                 &Contact::Address2, 0 },
-   { CFC_ADDRESS3,     "Address3",   0,0,                 &Contact::Address3, 0 },
-   { CFC_CITY,         "City",       "l",0,               &Contact::City, 0 },
-   { CFC_PROVINCE,     "Province",   "st",0,              &Contact::Province, 0 },
-   { CFC_POSTAL_CODE,  "PostalCode", "postalCode",0,      &Contact::PostalCode, 0 },
-   { CFC_COUNTRY,      "Country",    "c", "country",      &Contact::Country, 0 },
-   { CFC_TITLE,        "Title",      "title",0,           &Contact::Title, 0 },
-   { CFC_PUBLIC_KEY,   "PublicKey",  0,0,                 &Contact::PublicKey, 0 },
-   { CFC_NOTES,        "Notes",      0,0,                 &Contact::Notes, 0 },
-   { CFC_INVALID_FIELD,"EndOfList",  0, 0 }
+   { CFC_EMAIL,        "Email",      "mail",0,            &Contact::Email, 0, 0 },
+   { CFC_PHONE,        "Phone",      0,0,                 &Contact::Phone, 0, 0 },
+   { CFC_FAX,          "Fax",        "facsimileTelephoneNumber",0, &Contact::Fax, 0, 0 },
+   { CFC_WORK_PHONE,   "WorkPhone",  "telephoneNumber",0, &Contact::WorkPhone, 0, 0 },
+   { CFC_HOME_PHONE,   "HomePhone",  "homePhone",0,       &Contact::HomePhone, 0, 0 },
+   { CFC_MOBILE_PHONE, "MobilePhone","mobile",0,          &Contact::MobilePhone, 0, 0 },
+   { CFC_PAGER,        "Pager",      "pager",0,           &Contact::Pager, 0, 0 },
+   { CFC_PIN,          "PIN",        0,0,                 &Contact::PIN, 0, 0 },
+   { CFC_COMPANY,      "Company",    "o",0,               &Contact::Company, 0, 0 },
+   { CFC_DEFAULT_COMM_METHOD,"DefaultCommMethod",0,0,     &Contact::DefaultCommunicationsMethod, 0, 0 },
+   { CFC_ADDRESS1,     "Address1",   0,0,                 &Contact::Address1, 0, 0 },
+   { CFC_ADDRESS2,     "Address2",   0,0,                 &Contact::Address2, 0, 0 },
+   { CFC_ADDRESS3,     "Address3",   0,0,                 &Contact::Address3, 0, 0 },
+   { CFC_CITY,         "City",       "l",0,               &Contact::City, 0, 0 },
+   { CFC_PROVINCE,     "Province",   "st",0,              &Contact::Province, 0, 0 },
+   { CFC_POSTAL_CODE,  "PostalCode", "postalCode",0,      &Contact::PostalCode, 0, 0 },
+   { CFC_COUNTRY,      "Country",    "c", "country",      &Contact::Country, 0, 0 },
+   { CFC_TITLE,        "Title",      "title",0,           &Contact::Title, 0, 0 },
+   { CFC_PUBLIC_KEY,   "PublicKey",  0,0,                 &Contact::PublicKey, 0, 0 },
+   { CFC_NOTES,        "Notes",      0,0,                 &Contact::Notes, 0, 0 },
+   { CFC_INVALID_FIELD,"EndOfList",  0, 0, 0 }
 };
 
 Contact::Contact()
@@ -476,15 +493,7 @@ void Contact::Dump(std::ostream &os) const
 	}
 
 	// and finally print unknowns
-	std::vector<UnknownField>::const_iterator
-		ub = Unknowns.begin(), ue = Unknowns.end();
-	if( ub != ue )
-		os << "    Unknowns:\n";
-	for( ; ub != ue; ub++ ) {
-		os << "        Type: 0x" << setbase(16)
-		   << (unsigned int) ub->type
-		   << " Data:\n" << Data(ub->data.data(), ub->data.size());
-	}
+	os << Unknowns;
 
 	// cleanup the stream
 	os.flags(oldflags);
@@ -575,11 +584,11 @@ void Contact::DumpLdif(std::ostream &os, const std::string &baseDN) const
 #define MFC_END			0xffff
 
 FieldLink<Message> MessageFieldLinks[] = {
-   { MFC_TO,      "To",         0, 0,    0, &Message::To },
-   { MFC_FROM,    "From",       0, 0,    0, &Message::From },
-   { MFC_SUBJECT, "Subject",    0, 0,    &Message::Subject, 0 },
-   { MFC_BODY,    "Body",       0, 0,    &Message::Body, 0 },
-   { MFC_END,     "End of List",0, 0,    0, 0 }
+   { MFC_TO,      "To",         0, 0,    0, &Message::To, 0 },
+   { MFC_FROM,    "From",       0, 0,    0, &Message::From, 0 },
+   { MFC_SUBJECT, "Subject",    0, 0,    &Message::Subject, 0, 0 },
+   { MFC_BODY,    "Body",       0, 0,    &Message::Body, 0, 0 },
+   { MFC_END,     "End of List",0, 0,    0, 0, 0 }
 };
 
 Message::Message()
@@ -695,6 +704,142 @@ void Message::Dump(std::ostream &os) const
 
 
 
+///////////////////////////////////////////////////////////////////////////////
+// Calendar class
+
+// calendar field codes
+#define CALFC_SUBJECT			0x02
+#define CALFC_NOTES			0x03
+#define CALFC_LOCATION			0x04
+#define CALFC_NOTIFICATION_TIME		0x05
+#define CALFC_START_TIME		0x06
+#define CALFC_END_TIME			0x07
+#define CALFC_RECURRANCE_DATA		0x0c
+#define CALFC_VERSION_DATA		0x10
+#define CALFC_NOTIFICATION_DATA		0x1a
+#define CALFC_END			0xffff
+
+FieldLink<Calendar> CalendarFieldLinks[] = {
+   { CALFC_SUBJECT,    "Subject",    0, 0,    &Calendar::Subject, 0, 0 },
+   { CALFC_NOTES,      "Notes",      0, 0,    &Calendar::Notes, 0, 0 },
+   { CALFC_LOCATION,   "Location",   0, 0,    &Calendar::Location, 0, 0 },
+   { CALFC_NOTIFICATION_TIME,"Notification Time",0,0, 0, 0, &Calendar::NotificationTime },
+   { CALFC_START_TIME, "Start Time", 0, 0,    0, 0, &Calendar::StartTime },
+   { CALFC_END_TIME,   "End Time",   0, 0,    0, 0, &Calendar::EndTime },
+   { CALFC_END,        "End of List",0, 0,    0, 0, 0 }
+};
+
+
+Calendar::Calendar()
+{
+	Clear();
+}
+
+Calendar::~Calendar()
+{
+}
+
+const unsigned char* Calendar::ParseField(const unsigned char *begin,
+					  const unsigned char *end)
+{
+	const CommonField *field = (const CommonField *) begin;
+
+	// advance and check size
+	begin += COMMON_FIELD_HEADER_SIZE + field->size;
+	if( begin > end )		// if begin==end, we are ok
+		return begin;
+
+	if( !field->size )		// if field has no size, something's up
+		return begin;
+
+	// cycle through the type table
+	for(	FieldLink<Calendar> *b = CalendarFieldLinks;
+		b->type != CALFC_END;
+		b++ )
+	{
+		if( b->type == field->type ) {
+			if( b->strMember ) {
+				std::string &s = this->*(b->strMember);
+				s.assign((const char *)field->data.raw, field->size-1);
+				return begin;	// done!
+			}
+			else if( b->timeMember ) {
+				time_t &t = this->*(b->timeMember);
+				t = min2time(field->data.min1900);
+				return begin;
+			}
+		}
+	}
+
+	// if still not handled, add to the Unknowns list
+	UnknownField uf;
+	uf.type = field->type;
+	uf.data.assign((const char*)field->data.raw, field->size);
+	Unknowns.push_back(uf);
+
+	// return new pointer for next field
+	return begin;
+}
+
+void Calendar::Parse(const Data &data, unsigned int operation)
+{
+	MAKE_PACKET(pack, data);
+	const void *begin = 0;
+	switch( operation )
+	{
+	case SB_DBOP_GET_RECORDS:
+		// using the new protocol
+		// save the contact record ID
+		throw std::logic_error("New Calendar: Not yet implemented");
+//		m_recordId = pack->data.db.data.calendar.uniqueId;
+//		begin = &pack->data.db.data.calendar.field[0];
+		break;
+
+	case SB_DBOP_OLD_GET_RECORDS_REPLY:
+		// using the old protocol
+		// save the contact record ID
+		m_recordId = pack->data.db.data.old_calendar.uniqueId;
+		begin = &pack->data.db.data.old_calendar.field[0];
+		break;
+	}
+
+	ParseCommonFields(*this, begin, data.GetData() + data.GetSize());
+}
+
+void Calendar::Clear()
+{
+	Subject.clear();
+	Notes.clear();
+	Location.clear();
+	NotificationTime = StartTime = EndTime = 0;
+	Unknowns.clear();
+}
+
+void Calendar::Dump(std::ostream &os) const
+{
+	os << "Calendar entry: 0x" << setbase(16) << m_recordId << "\n";
+
+	// cycle through the type table
+	for(	const FieldLink<Calendar> *b = CalendarFieldLinks;
+		b->type != CALFC_END;
+		b++ )
+	{
+		if( b->strMember ) {
+			const std::string &s = this->*(b->strMember);
+			if( s.size() )
+				os << "   " << b->name << ": " << s << "\n";
+		}
+		else if( b->timeMember ) {
+			time_t t = this->*(b->timeMember);
+			if( t > 0 )
+				os << "   " << b->name << ": " << ctime(&t);
+		}
+	}
+
+	// print any unknowns
+	os << Unknowns;
+}
+
 
 } // namespace Barry
 
@@ -716,6 +861,8 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
+	cout << "Loaded " << array.size() << " items" << endl;
+
 	for( std::vector<Data>::iterator b = array.begin(), e = array.end();
 		b != e; b++ )
 	{
@@ -726,6 +873,11 @@ int main(int argc, char *argv[])
 			contact.Parse(d, d.GetData()[6]);
 			cout << contact << endl;
 			contact.DumpLdif(cout, "ou=People,dc=example,dc=com");
+		}
+		else if( d.GetSize() > 13 && d.GetData()[6] == 0x44 ) {
+			Barry::Calendar cal;
+			cal.Parse(d, d.GetData()[6]);
+			cout << cal << endl;
 		}
 	}
 }

@@ -179,6 +179,7 @@ struct CommonField
 	{
 		GroupLink	link;
 		MessageAddress	addr;
+		int32_t		min1900;
 		uint8_t		raw[1];
 
 	} __attribute__ ((packed)) data;
@@ -237,6 +238,28 @@ struct MessageRecord
 
 
 ///////////////////////////////////////////////////////////////////////////////
+// Calendar field and record structures
+
+struct OldCalendarRecord
+{
+	uint8_t		operation;
+	uint8_t		unknown;
+	uint16_t	count;
+	uint32_t	uniqueId;
+	uint8_t		unknown2;	// observed as 0 or 1
+	CommonField	field[1];
+} __attribute__ ((packed));
+
+struct CalendarRecord
+{
+	uint8_t		operation;
+	// FIXME - not yet implemented
+	CommonField	field[1];
+} __attribute__ ((packed));
+
+
+
+///////////////////////////////////////////////////////////////////////////////
 // Database access command structure
 
 // even fragmented packets have a tableCmd
@@ -254,6 +277,8 @@ struct DBAccess
 		DBDBRecord		dbdb;
 		OldMessageRecord	old_message;
 		MessageRecord		message;
+		OldCalendarRecord	old_calendar;
+		CalendarRecord		calendar;
 		uint8_t			fragment[1];
 		uint8_t			raw[1];
 

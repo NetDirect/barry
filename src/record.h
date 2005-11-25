@@ -121,6 +121,13 @@ inline std::ostream& operator<<(std::ostream &os, const DatabaseDatabase &dbdb) 
 
 
 
+struct UnknownField
+{
+	uint8_t type;
+	std::string data;
+};
+std::ostream& operator<< (std::ostream &os, const std::vector<UnknownField> &unknowns);
+
 
 class Contact
 {
@@ -128,12 +135,6 @@ public:
 	// protocol record types, for size calculations
 	typedef Barry::OldContactRecord		OldProtocolRecordType;
 	typedef Barry::ContactRecord		ProtocolRecordType;
-
-	struct UnknownField
-	{
-		uint8_t type;
-		std::string data;
-	};
 
 private:
 	// private contact management data
@@ -206,12 +207,6 @@ public:
 		std::string Email;
 	};
 
-	struct UnknownField
-	{
-		uint8_t type;
-		std::string data;
-	};
-
 
 	Address From;
 	Address To;
@@ -239,6 +234,42 @@ inline std::ostream& operator<<(std::ostream &os, const Message &msg) {
 
 std::ostream& operator<<(std::ostream &os, const Message::Address &msga);
 
+
+class Calendar
+{
+public:
+	// protocol record types, for size calculations
+	typedef Barry::OldCalendarRecord	OldProtocolRecordType;
+	typedef Barry::CalendarRecord		ProtocolRecordType;
+
+private:
+	uint64_t m_recordId;
+
+public:
+	std::string Subject;
+	std::string Notes;
+	std::string Location;
+	time_t NotificationTime;
+	time_t StartTime;
+	time_t EndTime;
+	std::vector<UnknownField> Unknowns;
+
+public:
+	Calendar();
+	~Calendar();
+
+	const unsigned char* ParseField(const unsigned char *begin,
+		const unsigned char *end);
+	void Parse(const Data &data, unsigned int operation);
+	void Clear();
+
+	void Dump(std::ostream &os) const;
+};
+
+inline std::ostream& operator<<(std::ostream &os, const Calendar &msg) {
+	msg.Dump(os);
+	return os;
+}
 
 } // namespace Barry
 
