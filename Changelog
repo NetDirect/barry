@@ -1,5 +1,11 @@
-Release: version 0.0.1 - 2005/??/??
+Release: version 0.0.1 - 2005/11/25
 ------------------------------------------------------------------------------
+2005/11/25
+	- added barry.h for documentation purposes and application usage
+	- updated README for release
+	- renamed SBError exception class to BError
+	- updated Doxyfile to version 1.4.5
+	- added more doxygen comments
 2005/11/24
 	- added conversion routines (and tests) between time_t and min1900_t
 	- added -v option to btool to dynamically control protocol dumping
