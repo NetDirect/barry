@@ -22,6 +22,7 @@
 #include "controller.h"
 #include "common.h"
 #include "protocol.h"
+#include "protostructs.h"
 #include "error.h"
 #include "data.h"
 #include "parser.h"

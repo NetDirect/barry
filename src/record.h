@@ -28,8 +28,6 @@
 #include <vector>
 #include <stdint.h>
 
-#include "protocol.h"			// only needed for size typedefs
-
 // forward declarations
 class Data;
 
@@ -139,11 +137,6 @@ std::ostream& operator<< (std::ostream &os, const std::vector<UnknownField> &unk
 
 class Contact
 {
-public:
-	// protocol record types, for size calculations
-	typedef Barry::OldContactRecord		OldProtocolRecordType;
-	typedef Barry::ContactRecord		ProtocolRecordType;
-
 private:
 	// private contact management data
 	uint64_t m_recordId;
@@ -195,6 +188,10 @@ public:
 
 	void Dump(std::ostream &os) const;
 	void DumpLdif(std::ostream &os, const std::string &baseDN) const;
+
+	// protocol record sizes
+	static size_t GetOldProtocolRecordSize();
+	static size_t GetProtocolRecordSize();
 };
 
 inline std::ostream& operator<< (std::ostream &os, const Contact &contact) {
@@ -205,10 +202,6 @@ inline std::ostream& operator<< (std::ostream &os, const Contact &contact) {
 class Message
 {
 public:
-	// protocol record types, for size calculations
-	typedef Barry::OldMessageRecord		OldProtocolRecordType;
-	typedef Barry::MessageRecord		ProtocolRecordType;
-
 	struct Address
 	{
 		std::string Name;
@@ -233,6 +226,10 @@ public:
 	void Clear();
 
 	void Dump(std::ostream &os) const;
+
+	// protocol record sizes
+	static size_t GetOldProtocolRecordSize();
+	static size_t GetProtocolRecordSize();
 };
 
 inline std::ostream& operator<<(std::ostream &os, const Message &msg) {
@@ -245,11 +242,6 @@ std::ostream& operator<<(std::ostream &os, const Message::Address &msga);
 
 class Calendar
 {
-public:
-	// protocol record types, for size calculations
-	typedef Barry::OldCalendarRecord	OldProtocolRecordType;
-	typedef Barry::CalendarRecord		ProtocolRecordType;
-
 private:
 	uint64_t m_recordId;
 
@@ -272,6 +264,10 @@ public:
 	void Clear();
 
 	void Dump(std::ostream &os) const;
+
+	// protocol record sizes
+	static size_t GetOldProtocolRecordSize();
+	static size_t GetProtocolRecordSize();
 };
 
 inline std::ostream& operator<<(std::ostream &os, const Calendar &msg) {

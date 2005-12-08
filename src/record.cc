@@ -22,6 +22,7 @@
 
 #include "record.h"
 #include "protocol.h"
+#include "protostructs.h"
 #include "data.h"
 #include "base64.h"
 #include "time.h"
@@ -333,6 +334,16 @@ FieldLink<Contact> ContactFieldLinks[] = {
    { CFC_INVALID_FIELD,"EndOfList",  0, 0, 0 }
 };
 
+size_t Contact::GetOldProtocolRecordSize()
+{
+	return sizeof(Barry::OldContactRecord);
+}
+
+size_t Contact::GetProtocolRecordSize()
+{
+	return sizeof(Barry::ContactRecord);
+}
+
 Contact::Contact()
 {
 }
@@ -591,6 +602,16 @@ FieldLink<Message> MessageFieldLinks[] = {
    { MFC_END,     "End of List",0, 0,    0, 0, 0 }
 };
 
+size_t Message::GetOldProtocolRecordSize()
+{
+	return sizeof(Barry::OldMessageRecord);
+}
+
+size_t Message::GetProtocolRecordSize()
+{
+	return sizeof(Barry::MessageRecord);
+}
+
 Message::Message()
 {
 }
@@ -729,6 +750,15 @@ FieldLink<Calendar> CalendarFieldLinks[] = {
    { CALFC_END,        "End of List",0, 0,    0, 0, 0 }
 };
 
+size_t Calendar::GetOldProtocolRecordSize()
+{
+	return sizeof(Barry::OldCalendarRecord);
+}
+
+size_t Calendar::GetProtocolRecordSize()
+{
+	return sizeof(Barry::CalendarRecord);
+}
 
 Calendar::Calendar()
 {

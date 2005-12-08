@@ -20,6 +20,7 @@
 */
 
 #include "protocol.h"
+#include "protostructs.h"
 #include "data.h"
 #include "error.h"
 #include "debug.h"

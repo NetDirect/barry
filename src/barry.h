@@ -28,11 +28,18 @@
 */
 
 
-#include "usbwrap.h"
-#include "common.h"
-#include "error.h"
-#include "probe.h"
+// This lists all the headers that the application needs.
+// Only these headers get installed.
+
+#include "data.h"
+#include "usbwrap.h"			// to be moved to libusb someday
+#include "common.h"			// Init()
+#include "error.h"			// exceptions
+#include "probe.h"			// device prober class
+#include "socket.h"
+#include "protocol.h"			// application-safe header
 #include "parser.h"
+#include "record.h"
 #include "controller.h"
 
 #endif

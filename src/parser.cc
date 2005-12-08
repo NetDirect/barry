@@ -1,6 +1,7 @@
 ///
 /// \file	parser.cc
-///		Virtual parser functor class
+///		Virtual parser functor class.  Also, all protocol-specific
+///		parser code goes in here.
 ///
 
 /*
@@ -21,6 +22,7 @@
 
 #include "parser.h"
 #include "protocol.h"
+#include "protostructs.h"
 
 namespace Barry {
 
@@ -33,6 +35,13 @@ bool Parser::GetOperation(const Data &data, unsigned int &operation)
 	MAKE_PACKET(pack, data);
 	operation = pack->data.db.data.db.operation;
 	return true;
+}
+
+size_t Parser::GetHeaderSize(size_t recordsize) const
+{
+	// calculate the full header size, which (for records) is a DBACCESS
+	// header size, plus the header size of recordsize...
+	return SB_PACKET_DBACCESS_HEADER_SIZE + recordsize - sizeof(Barry::CommonField);
 }
 
 } // namespace Barry

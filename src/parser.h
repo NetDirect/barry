@@ -45,6 +45,7 @@ public:
 	virtual bool operator()(const Data &data) { return true; }
 
 	virtual bool GetOperation(const Data &data, unsigned int &operation);
+	virtual size_t GetHeaderSize(size_t recordsize) const;
 };
 
 
@@ -112,12 +113,12 @@ public:
 		{
 		case SB_DBOP_GET_RECORDS:
 			// using the new protocol
-			recordsize = sizeof(Record::ProtocolRecordType);
+			recordsize = Record::GetProtocolRecordSize();
 			break;
 
 		case SB_DBOP_OLD_GET_RECORDS_REPLY:
 			// using the old protocol
-			recordsize = sizeof(Record::OldProtocolRecordType);
+			recordsize = Record::GetOldProtocolRecordSize();
 			break;
 
 		default:
@@ -126,12 +127,8 @@ public:
 			return false;
 		}
 
-		// calculate the full header size, which is a DBACCESS
-		// header size, plus the header size of recordsize...
-		size_t fullsize = SB_PACKET_DBACCESS_HEADER_SIZE + recordsize - sizeof(Barry::CommonField);
-
 		// return true if header is ok
-		return (unsigned int)data.GetSize() > fullsize;
+		return (size_t)data.GetSize() > GetHeaderSize(recordsize);
 	}
 
 	/// Functor member called by Controller::LoadDatabase() during

@@ -19,9 +19,10 @@
     root directory of this project for more details.
 */
 
+#include "socket.h"
 #include "usbwrap.h"
 #include "protocol.h"
-#include "socket.h"
+#include "protostructs.h"
 #include "debug.h"
 #include "data.h"
 #include "error.h"
