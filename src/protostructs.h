@@ -209,13 +209,24 @@ struct ContactRecord
 {
 	uint8_t		operation;
 	uint8_t		unknown;
-	uint16_t	recordNumber;
 	uint8_t		unknown2[3];
+	uint16_t	recordNumber;
 	uint32_t	uniqueId;
 	uint8_t		unknown3[3];
 	CommonField	field[1];
 } __attribute__ ((packed));
 #define CONTACT_RECORD_HEADER_SIZE	(sizeof(Barry::ContactRecord) - sizeof(Barry::CommonField))
+
+struct ContactUploadRecord		// observed for db operation: 0x41
+{
+	uint8_t		operation;
+	uint16_t	databaseId;	// value from the Database Database
+	uint8_t		unknown;	// observed: 00
+	uint32_t	uniqueId;
+	uint8_t		unknown2;	// observed: 01
+	CommonField	field[1];
+} __attribute__ ((packed));
+#define CONTACT_UPLOAD_RECORD_HEADER_SIZE	(sizeof(Barry::ContactUploadRecord) - sizeof(Barry::CommonField))
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -276,6 +287,7 @@ struct DBAccess
 		DBResponse		db_r;
 		OldContactRecord	old_contact;
 		ContactRecord		contact;
+		ContactUploadRecord	contact_up;
 		CommandTableField	table[1];
 		OldDBDBRecord		old_dbdb;
 		DBDBRecord		dbdb;
@@ -330,6 +342,7 @@ struct Packet
 #define SB_MODE_PACKET_RESPONSE_SIZE		(SB_PACKET_HEADER_SIZE + sizeof(Barry::ModeSelectCommand))
 #define SB_PACKET_CONTACT_HEADER_SIZE		(SB_PACKET_HEADER_SIZE + SB_DBACCESS_HEADER_SIZE + CONTACT_RECORD_HEADER_SIZE)
 #define SB_PACKET_OLD_CONTACT_HEADER_SIZE	(SB_PACKET_HEADER_SIZE + SB_DBACCESS_HEADER_SIZE + OLD_CONTACT_RECORD_HEADER_SIZE)
+#define SB_PACKET_CONTACT_UPLOAD_HEADER_SIZE	(SB_PACKET_HEADER_SIZE + SB_DBACCESS_HEADER_SIZE + CONTACT_UPLOAD_RECORD_HEADER_SIZE)
 #define SB_PACKET_DBDB_HEADER_SIZE		(SB_PACKET_HEADER_SIZE + SB_DBACCESS_HEADER_SIZE + DBDB_RECORD_HEADER_SIZE)
 #define SB_PACKET_OLD_DBDB_HEADER_SIZE		(SB_PACKET_HEADER_SIZE + SB_DBACCESS_HEADER_SIZE + OLD_DBDB_RECORD_HEADER_SIZE)
 
@@ -339,6 +352,7 @@ struct Packet
 #define COMMAND(data)			(((const Barry::Packet *)data.GetData())->command)
 #define IS_COMMAND(data, cmd)		(COMMAND(data) == cmd)
 #define MAKE_PACKET(var, data)		const Barry::Packet *var = (const Barry::Packet *) data.GetData()
+#define MAKE_PACKETPTR_BUF(var, ptr)	Barry::Packet *var = (Barry::Packet *)ptr
 
 // fragmentation protocol
 // send DATA first, then keep sending DATA packets, FRAGMENTing
