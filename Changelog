@@ -1,5 +1,13 @@
 Release: version 0.0.2 - 2005/??/??
 ------------------------------------------------------------------------------
+2005/12/08
+	- fixed potential casting / pointer bug in controller.cc
+	- added builder.h, to support uploading
+	- minor comment fixes in parser.h
+	- added preliminary Contact protocol record building support
+	- fixed field order bug in ContactRecord protocol struct
+	- Contact record.h class now saves unknown Group Link field,
+		for later saving
 2005/12/07
 	- added -fno-strict-aliasing to compiler flags so gcc-4.0.x won't
 		optimize away protocol struct casts
