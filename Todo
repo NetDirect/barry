@@ -1,5 +1,4 @@
 - Barry Probe API should determine interface number and configuration
 	dynamically instead of hardcoding 0 and 1
 - API should determine endpoint numbers dynamically
-- work on calendar retrieval support
 
