@@ -44,6 +44,8 @@
 
 
 // DB Operation Command
+#define SB_DBOP_SET_RECORD		0x41
+#define SB_DBOP_CLEAR_DATABASE		0x43
 #define SB_DBOP_GET_DBDB		0x4a
 #define SB_DBOP_OLD_GET_DBDB		0x4c
 #define SB_DBOP_GET_COUNT		0x4e

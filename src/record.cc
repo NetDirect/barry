@@ -55,6 +55,35 @@ void ParseCommonFields(Record &rec, const void *begin, const void *end)
 		b = rec.ParseField(b, e);
 }
 
+void BuildField(Data &data, int &size, uint8_t type, const std::string &str)
+{
+	// include null terminator
+	size_t strsize = str.size() + 1;
+	int fieldsize = COMMON_FIELD_HEADER_SIZE + strsize;
+	unsigned char *pd = data.GetBuffer(size + fieldsize) + size;
+	CommonField *field = (CommonField *) pd;
+
+	field->size = strsize;
+	field->type = type;
+	memcpy(field->data.raw, str.c_str(), strsize);
+
+	size += fieldsize;
+}
+
+void BuildField(Data &data, int &size, uint8_t type, const Barry::GroupLink &link)
+{
+	size_t linksize = sizeof(Barry::GroupLink);
+	int fieldsize = COMMON_FIELD_HEADER_SIZE + linksize;
+	unsigned char *pd = data.GetBuffer(size + fieldsize) + size;
+	CommonField *field = (CommonField *) pd;
+
+	field->size = linksize;
+	field->type = type;
+	field->data.link = link;
+
+	size += fieldsize;
+}
+
 
 ///////////////////////////////////////////////////////////////////////////////
 // CommandTable class
@@ -395,7 +424,9 @@ const unsigned char* Contact::ParseField(const unsigned char *begin,
 
 	case CFC_GROUP_LINK:
 		// just add the unique ID to the list
-		GroupLinks.push_back(field->data.link.uniqueId);
+		GroupLinks.push_back(
+			GroupLink(field->data.link.uniqueId,
+				field->data.link.unknown));
 		return begin;
 	}
 
@@ -432,6 +463,61 @@ void Contact::Parse(const Data &data, unsigned int operation)
 	}
 
 	ParseCommonFields(*this, begin, data.GetData() + data.GetSize());
+}
+
+//
+// Build
+//
+/// Build a raw protocol packet based on data in the class.
+///
+void Contact::Build(Data &data, unsigned int databaseId) const
+{
+	data.Zap();
+
+	int size = SB_PACKET_CONTACT_UPLOAD_HEADER_SIZE;
+	unsigned char *pd = data.GetBuffer(size);
+	MAKE_PACKETPTR_BUF(spack, pd);
+
+	spack->data.db.data.contact_up.operation = SB_DBOP_SET_RECORD;
+	spack->data.db.data.contact_up.databaseId = databaseId;
+	spack->data.db.data.contact_up.unknown = 0;
+	spack->data.db.data.contact_up.uniqueId = m_recordId;
+	spack->data.db.data.contact_up.unknown2 = 1;
+
+	// special fields not in type table
+	BuildField(data, size, CFC_NAME, FirstName);
+	BuildField(data, size, CFC_NAME, LastName);
+
+	// cycle through the type table
+	for(	FieldLink<Contact> *b = ContactFieldLinks;
+		b->type != CFC_INVALID_FIELD;
+		b++ )
+	{
+		// print only fields with data
+		const std::string &field = this->*(b->strMember);
+		if( field.size() ) {
+			BuildField(data, size, b->type, field);
+		}
+	}
+
+	// save any group links
+	GroupLinksType::const_iterator
+		gb = GroupLinks.begin(), ge = GroupLinks.end();
+	for( ; gb != ge; gb++ ) {
+		Barry::GroupLink link;
+		link.uniqueId = gb->Link;
+		link.unknown = gb->Unknown;
+		BuildField(data, size, CFC_GROUP_LINK, link);
+	}
+
+	// and finally save unknowns
+	UnknownsType::const_iterator
+		ub = Unknowns.begin(), ue = Unknowns.end();
+	for( ; ub != ue; ub++ ) {
+		BuildField(data, size, ub->type, ub->data);
+	}
+
+	data.ReleaseBuffer(size);
 }
 
 //
@@ -495,12 +581,12 @@ void Contact::Dump(std::ostream &os) const
 	}
 
 	// print any group links
-	std::vector<uint64_t>::const_iterator
+	GroupLinksType::const_iterator
 		gb = GroupLinks.begin(), ge = GroupLinks.end();
 	if( gb != ge )
 		os << "    GroupLinks:\n";
 	for( ; gb != ge; gb++ ) {
-		os << "        ID: 0x" << setbase(16) << *gb << "\n";
+		os << "        ID: 0x" << setbase(16) << gb->Link << "\n";
 	}
 
 	// and finally print unknowns
@@ -564,12 +650,12 @@ void Contact::DumpLdif(std::ostream &os, const std::string &baseDN) const
 
 /*
 	// print any group links
-	std::vector<uint64_t>::const_iterator
+	GroupLinksType::const_iterator
 		gb = GroupLinks.begin(), ge = GroupLinks.end();
 	if( gb != ge )
 		os << "    GroupLinks:\n";
 	for( ; gb != ge; gb++ ) {
-		os << "        ID: 0x" << setbase(16) << *gb << "\n";
+		os << "        ID: 0x" << setbase(16) << gb->Link << "\n";
 	}
 */
 

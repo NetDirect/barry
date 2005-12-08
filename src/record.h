@@ -139,9 +139,22 @@ class Contact
 {
 private:
 	// private contact management data
-	uint64_t m_recordId;
+	uint32_t m_recordId;
 
 public:
+	struct GroupLink
+	{
+		uint32_t Link;
+		uint16_t Unknown;
+
+		GroupLink(uint32_t link, uint16_t unknown)
+			: Link(link), Unknown(unknown)
+		{}
+	};
+
+	typedef std::vector<GroupLink>			GroupLinksType;
+	typedef std::vector<UnknownField>		UnknownsType;
+
 	// contact specific data
 	std::string
 		Email,
@@ -167,8 +180,8 @@ public:
 		PublicKey,
 		Notes;
 
-	std::vector<uint64_t> GroupLinks;
-	std::vector<UnknownField> Unknowns;
+	GroupLinksType GroupLinks;
+	UnknownsType Unknowns;
 
 
 //protected:
@@ -184,6 +197,7 @@ public:
 	std::string GetPostalAddress() const;
 
 	void Parse(const Data &data, unsigned int operation);
+	void Build(Data &data, unsigned int databaseId) const;
 	void Clear();			// erase everything
 
 	void Dump(std::ostream &os) const;
