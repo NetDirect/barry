@@ -159,15 +159,15 @@ void Controller::LoadCommandTable()
 			"Controller: error getting command table");
 	}
 
-	MAKE_PACKET(firstpack, response);
-	while( firstpack->command != SB_COMMAND_DB_DONE ) {
+	MAKE_PACKET(rpack, response);
+	while( rpack->command != SB_COMMAND_DB_DONE ) {
 		if( !m_socket.NextRecord(response) ) {
 			eout("Response packet:\n" << response);
 			throw BError(m_socket.GetLastStatus(),
 				"Controller: error getting command table(next)");
 		}
 
-		MAKE_PACKET(rpack, response);
+		rpack = (const Packet *) response.GetData();
 		if( rpack->command == SB_COMMAND_DB_DATA && rpack->size > 10 ) {
 			// second packet is generally large, and contains
 			// the command table
