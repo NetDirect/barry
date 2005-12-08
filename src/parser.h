@@ -45,6 +45,8 @@ public:
 	virtual bool operator()(const Data &data) { return true; }
 
 	virtual bool GetOperation(const Data &data, unsigned int &operation);
+
+	/// Returns full header size
 	virtual size_t GetHeaderSize(size_t recordsize) const;
 };
 
@@ -53,7 +55,7 @@ public:
 // RecordParser template class
 //
 /// Template class for easy creation of specific parser objects.  This template
-/// takes the following template argumens:
+/// takes the following template arguments:
 ///
 ///	- Record: One of the record parser classes in record.h
 ///	- Storage: A custom storage functor class.  An object of this type
