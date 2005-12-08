@@ -1,3 +1,18 @@
+Release: version 0.0.2 - 2005/??/??
+------------------------------------------------------------------------------
+2005/12/07
+	- added -fno-strict-aliasing to compiler flags so gcc-4.0.x won't
+		optimize away protocol struct casts
+		see: 
+		http://gcc.gnu.org/bugzilla/show_bug.cgi?id=25235
+		http://mail-index.netbsd.org/tech-kern/2003/08/11/0001.html
+		http://groups.google.ca/group/comp.lang.c++.moderated/ \
+			browse_thread/thread/e7bf096832526f8e/5714701b \
+			02a2a3cc?hl=en#5714701b02a2a3cc
+	- changed headers so that any low level protocol-specific sizes and
+		structs are completely hidden in the library...
+		this adds library-only header: protostructs.h
+
 Release: version 0.0.1 - 2005/11/25
 ------------------------------------------------------------------------------
 2005/11/25
