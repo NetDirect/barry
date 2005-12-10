@@ -1,5 +1,18 @@
 Release: version 0.0.2 - 2005/??/??
 ------------------------------------------------------------------------------
+2005/12/10
+	- added s11n-boost.h serialization templates for boost::serialization
+	- added boost::serialization to build
+	- minor change in usbwrap.cc to display error codes in decimal
+	- added SizePacket special case code to Socket::Send()... this is
+		required when uploaded packet size is a multiple of 0x40,
+		a special 3 byte size packet is sent
+	- moved some record class variables to public: so they can be
+		properly serialized
+	- fixed variable name but in RecordBuilder template
+	- added -f switch to btool, for saving and loading of record data
+	- added -s switch to btool, for uploading saved data back to handheld
+	- added Controller::SaveDatabase()
 2005/12/08
 	- fixed potential casting / pointer bug in controller.cc
 	- added builder.h, to support uploading
