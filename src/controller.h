@@ -34,6 +34,7 @@ namespace Barry {
 
 // forward declarations
 class Parser;
+class Builder;
 
 //
 // Controller class
@@ -105,6 +106,7 @@ public:
 	//////////////////////////////////
 	// database-specific
 	void LoadDatabase(unsigned int dbId, Parser &parser);
+	void SaveDatabase(unsigned int dbId, Builder &builder);
 };
 
 } // namespace Barry

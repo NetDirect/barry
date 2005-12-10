@@ -26,6 +26,7 @@
 #include "error.h"
 #include "data.h"
 #include "parser.h"
+#include "builder.h"
 
 #define __DEBUG_MODE__
 #include "debug.h"
@@ -237,7 +238,7 @@ unsigned int Controller::GetDBID(const std::string &name) const
 	unsigned int ID = m_dbdb.GetDBNumber(name);
 	// FIXME - this needs a better error handler... the dbdb needs one too!
 	if( ID == 0 ) {
-		throw BError("Controller: Address Book not found");
+		throw BError("Controller: database name not found");
 	}
 	return ID;
 }
@@ -347,6 +348,60 @@ void Controller::LoadDatabase(unsigned int dbId, Parser &parser)
 				"Controller: error loading database (next)");
 		}
 		rpack = (const Packet *) response.GetData();
+	}
+}
+
+void Controller::SaveDatabase(unsigned int dbId, Builder &builder)
+{
+	if( m_mode != Desktop )
+		throw std::logic_error("Wrong mode in SaveDatabase");
+
+	Packet packet;
+	packet.socket = m_socket.GetSocket();
+	packet.size = 9;
+	packet.command = SB_COMMAND_DB_DATA;
+	packet.data.db.tableCmd = GetCommand(DatabaseAccess);
+	packet.data.db.data.db.operation = SB_DBOP_CLEAR_DATABASE;
+	packet.data.db.data.db.databaseId = dbId;
+
+	Data command(&packet, packet.size);
+	Data response;
+
+	if( !m_socket.Packet(command, response) ) {
+		eout("Database ID: " << dbId);
+		eeout(command, response);
+		throw BError(m_socket.GetLastStatus(),
+			"Controller: error clearing database");
+	}
+
+	// check response to clear command was successful
+	MAKE_PACKET(rpack, response);
+	if( rpack->command != SB_COMMAND_DB_DONE ) {
+		throw BError(m_socket.GetLastStatus(),
+			"Controller: error clearing database, bad response");
+	}
+
+	// loop until builder object has no more data
+	while( builder(command, dbId) ) {
+		int size = command.GetSize();
+		unsigned char *data = command.GetBuffer(SB_PACKET_DBACCESS_HEADER_SIZE);
+
+		// fill in the missing header values
+		MAKE_PACKETPTR_BUF(cpack, data);
+		cpack->socket = m_socket.GetSocket();
+		cpack->size = size;
+		cpack->command = SB_COMMAND_DB_DATA;
+		cpack->data.db.tableCmd = GetCommand(DatabaseAccess);
+
+		command.ReleaseBuffer(size);
+
+		// write
+		if( !m_socket.Packet(command, response) ) {
+			eout("Database ID: " << dbId);
+			eeout(command, response);
+			throw BError(m_socket.GetLastStatus(),
+				"Controller: error writing to device database");
+		}
 	}
 }
 
