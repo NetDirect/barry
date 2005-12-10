@@ -25,6 +25,7 @@
 #include "error.h"
 #include "debug.h"
 
+#include <iomanip>
 #include <sstream>
 
 #define __DEBUG_MODE__
@@ -114,7 +115,8 @@ void IO::Wait()
 
 #ifdef __DEBUG_MODE__
 	ddout("IO::Wait(): Endpoint " << GetEndpoint()
-		<< " Status " << GetStatus());
+		<< " Status "
+		<< std::setbase(10) << GetStatus() << std::setbase(16));
 
 	// only dump read endpoints that are successful
 	if( (GetEndpoint() & USB_ENDPOINT_DIR_MASK) && GetStatus() >= 0 ) {
