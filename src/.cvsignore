@@ -7,4 +7,5 @@ test-time
 dep.mak
 gmon.out
 translate
+doxygen.log
 
