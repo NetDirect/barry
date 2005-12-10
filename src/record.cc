@@ -450,14 +450,14 @@ void Contact::Parse(const Data &data, unsigned int operation)
 	case SB_DBOP_GET_RECORDS:
 		// using the new protocol
 		// save the contact record ID
-		m_recordId = pack->data.db.data.contact.uniqueId;
+		RecordId = pack->data.db.data.contact.uniqueId;
 		begin = &pack->data.db.data.contact.field[0];
 		break;
 
 	case SB_DBOP_OLD_GET_RECORDS_REPLY:
 		// using the old protocol
 		// save the contact record ID
-		m_recordId = pack->data.db.data.old_contact.uniqueId;
+		RecordId = pack->data.db.data.old_contact.uniqueId;
 		begin = &pack->data.db.data.old_contact.field[0];
 		break;
 	}
@@ -481,7 +481,7 @@ void Contact::Build(Data &data, unsigned int databaseId) const
 	spack->data.db.data.contact_up.operation = SB_DBOP_SET_RECORD;
 	spack->data.db.data.contact_up.databaseId = databaseId;
 	spack->data.db.data.contact_up.unknown = 0;
-	spack->data.db.data.contact_up.uniqueId = m_recordId;
+	spack->data.db.data.contact_up.uniqueId = RecordId;
 	spack->data.db.data.contact_up.unknown2 = 1;
 
 	// special fields not in type table
@@ -907,14 +907,14 @@ void Calendar::Parse(const Data &data, unsigned int operation)
 		// using the new protocol
 		// save the contact record ID
 		throw std::logic_error("New Calendar: Not yet implemented");
-//		m_recordId = pack->data.db.data.calendar.uniqueId;
+//		RecordId = pack->data.db.data.calendar.uniqueId;
 //		begin = &pack->data.db.data.calendar.field[0];
 		break;
 
 	case SB_DBOP_OLD_GET_RECORDS_REPLY:
 		// using the old protocol
 		// save the contact record ID
-		m_recordId = pack->data.db.data.old_calendar.uniqueId;
+		RecordId = pack->data.db.data.old_calendar.uniqueId;
 		begin = &pack->data.db.data.old_calendar.field[0];
 		break;
 	}
@@ -933,7 +933,7 @@ void Calendar::Clear()
 
 void Calendar::Dump(std::ostream &os) const
 {
-	os << "Calendar entry: 0x" << setbase(16) << m_recordId << "\n";
+	os << "Calendar entry: 0x" << setbase(16) << RecordId << "\n";
 
 	// cycle through the type table
 	for(	const FieldLink<Calendar> *b = CalendarFieldLinks;

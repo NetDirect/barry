@@ -137,16 +137,13 @@ std::ostream& operator<< (std::ostream &os, const std::vector<UnknownField> &unk
 
 class Contact
 {
-private:
-	// private contact management data
-	uint32_t m_recordId;
-
 public:
 	struct GroupLink
 	{
 		uint32_t Link;
 		uint16_t Unknown;
 
+		GroupLink() : Link(0), Unknown(0) {}
 		GroupLink(uint32_t link, uint16_t unknown)
 			: Link(link), Unknown(unknown)
 		{}
@@ -156,6 +153,7 @@ public:
 	typedef std::vector<UnknownField>		UnknownsType;
 
 	// contact specific data
+	uint32_t RecordId;
 	std::string
 		Email,
 		Phone,
@@ -193,7 +191,7 @@ public:
 	Contact();
 	~Contact();
 
-	uint64_t GetID() const { return m_recordId; }
+	uint64_t GetID() const { return RecordId; }
 	std::string GetPostalAddress() const;
 
 	void Parse(const Data &data, unsigned int operation);
@@ -256,10 +254,8 @@ std::ostream& operator<<(std::ostream &os, const Message::Address &msga);
 
 class Calendar
 {
-private:
-	uint64_t m_recordId;
-
 public:
+	uint64_t RecordId;
 	std::string Subject;
 	std::string Notes;
 	std::string Location;
