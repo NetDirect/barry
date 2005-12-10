@@ -58,30 +58,7 @@ public:
 /// Example SaveDatabase() call:
 ///
 /// <pre>
-fixme - document this
-/// struct StoreContact
-/// {
-///     const std::vector<Contact> &amp;array;
-///     std::vector<Contact>::const_iterator ci;
-///     StoreContact(const std::vector<Contact> &amp;a)
-///         : array(a), ci(array.begin()) {}
-///     bool operator() (Contact &amp;c)
-///     {
-///         if( ci != array.end() ) {
-///             c = *ci;
-///             ci++;
-///             return true;
-///         }
-///         return false;
-///     }
-/// };
-///
-/// Controller con(probeResult);
-/// con.OpenMode(Controller::Desktop);
-/// std::vector<Contact> contactList;
-/// StoreContact storage(contactList);
-/// RecordBuilder<Contact, StoreContact> builder(storage);
-/// con.SaveDatabase(con.GetDBID("Address Book"), builder);
+/// FIXME
 /// </pre>
 ///
 template <class Record, class Storage>
@@ -93,19 +70,19 @@ class RecordBuilder : public Builder
 public:
 	/// Constructor that references an externally managed storage object.
 	RecordBuilder(Storage &storage)
-		: m_store(&storage), m_owned(false) {}
+		: m_storage(&storage), m_owned(false) {}
 
 	/// Constructor that references a locally managed storage object.
 	/// The pointer passed in will be stored, and freed when this class
 	/// is destroyed.  It is safe to call this constructor with
 	/// a 'new'ly created storage object.
 	RecordBuilder(Storage *storage)
-		: m_store(storage), m_owned(true) {}
+		: m_storage(storage), m_owned(true) {}
 
 	~RecordBuilder()
 	{
 		if( this->m_owned )
-			delete m_store;
+			delete m_storage;
 	}
 
 	/// Functor member called by Controller::SaveDatabase() during
@@ -113,7 +90,7 @@ public:
 	virtual bool operator()(Data &data, unsigned int databaseId)
 	{
 		Record rec;
-		if( !(*m_storage)(rec) )
+		if( !(*m_storage)(rec, databaseId) )
 			return false;
 		rec.Build(data, databaseId);
 		return true;
