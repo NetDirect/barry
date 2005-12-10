@@ -39,8 +39,22 @@
 #include "socket.h"
 #include "protocol.h"			// application-safe header
 #include "parser.h"
+#include "builder.h"
 #include "record.h"
 #include "controller.h"
+
+#ifdef __BOOST_MODE__
+// Boost serialization seems to be picky about header order, do them all here
+#include <iomanip>
+#include <iostream>
+#include <fstream>
+#include <vector>
+#include <string>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/archive_exception.hpp>
+#include "s11n-boost.h"
+#endif
 
 #endif
 
