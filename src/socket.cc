@@ -167,6 +167,23 @@ void Socket::Close()
 // URB error code
 bool Socket::Send(const Data &send, Data &receive)
 {
+	// Special case: it seems that sending packets with a size that's an
+	// exact multiple of 0x40 causes the device to get confused.
+	//
+	// To get around that, it is observed in the captures that the size
+	// is sent in a special 3 byte packet before the real packet.
+	// Check for this case here.
+	//
+	if( (send.GetSize() % 0x40) == 0 ) {
+		SizePacket packet;
+		packet.size = send.GetSize();
+		packet.buffer[2] = 0;		// zero the top byte
+		Data sizeCommand(&packet, 3);
+
+		IO wr = m_dev.ABulkWrite(m_writeEp, sizeCommand);
+		wr.Wait();
+	}
+
 	IO rd = m_dev.ABulkRead(m_readEp, receive);
 	IO wr = m_dev.ABulkWrite(m_writeEp, send);
 
@@ -284,6 +301,8 @@ bool Socket::Packet(const Data &send, Data &receive)
 	}
 
 	if( send.GetSize() > MAX_PACKET_SIZE ) {
+		// FIXME - must check send packet to see whether
+		// fragmentation on the way down is required
 		// not yet implemented
 		throw std::logic_error("Socket: fragmented sends not implemented");
 	}
