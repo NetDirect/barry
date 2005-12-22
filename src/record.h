@@ -60,7 +60,7 @@ public:
 	CommandTable();
 	~CommandTable();
 
-	void Parse(const Data &data, int offset);
+	void Parse(const Data &data, size_t offset);
 	void Clear();
 
 	// returns 0 if unable to find command name, which is safe, since
@@ -194,8 +194,8 @@ public:
 	uint64_t GetID() const { return RecordId; }
 	std::string GetPostalAddress() const;
 
-	void Parse(const Data &data, unsigned int operation);
-	void Build(Data &data, unsigned int databaseId) const;
+	void Parse(const Data &data, size_t offset, unsigned int operation);
+	void Build(Data &data, size_t offset) const;
 	void Clear();			// erase everything
 
 	void Dump(std::ostream &os) const;
@@ -234,7 +234,7 @@ public:
 
 	const unsigned char* ParseField(const unsigned char *begin,
 		const unsigned char *end);
-	void Parse(const Data &data, unsigned int operation);
+	void Parse(const Data &data, size_t offset, unsigned int operation);
 	void Clear();
 
 	void Dump(std::ostream &os) const;
@@ -255,6 +255,8 @@ std::ostream& operator<<(std::ostream &os, const Message::Address &msga);
 class Calendar
 {
 public:
+	typedef std::vector<UnknownField>		UnknownsType;
+
 	uint64_t RecordId;
 	std::string Subject;
 	std::string Notes;
@@ -262,7 +264,7 @@ public:
 	time_t NotificationTime;
 	time_t StartTime;
 	time_t EndTime;
-	std::vector<UnknownField> Unknowns;
+	UnknownsType Unknowns;
 
 public:
 	Calendar();
@@ -270,7 +272,8 @@ public:
 
 	const unsigned char* ParseField(const unsigned char *begin,
 		const unsigned char *end);
-	void Parse(const Data &data, unsigned int operation);
+	void Parse(const Data &data, size_t offset, unsigned int operation);
+	void Build(Data &data, size_t offset) const;
 	void Clear();
 
 	void Dump(std::ostream &os) const;

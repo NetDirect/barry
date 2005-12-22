@@ -28,8 +28,8 @@
 class Data
 {
 	unsigned char *m_data;
-	int m_bufsize;			//< size of m_data buffer allocated
-	int m_datasize;			//< number of bytes of actual data
+	size_t m_bufsize;		//< size of m_data buffer allocated
+	size_t m_datasize;		//< number of bytes of actual data
 	int m_endpoint;
 
 	// copy on write feature
@@ -40,27 +40,27 @@ class Data
 	static bool bPrintAscii;
 
 protected:
-	void MakeSpace(int desiredsize);
-	void CopyOnWrite(int desiredsize = -1);
+	void MakeSpace(size_t desiredsize);
+	void CopyOnWrite(size_t desiredsize);
 
 public:
 	Data();
-	Data(int endpoint, int startsize = 0x4000);
-	Data(const void *ValidData, int size);
+	Data(int endpoint, size_t startsize = 0x4000);
+	Data(const void *ValidData, size_t size);
 	Data(const Data &other);
 	~Data();
 
 	void InputHexLine(std::istream &is);
-	void DumpHexLine(std::ostream &os, int index, int size) const;
+	void DumpHexLine(std::ostream &os, size_t index, size_t size) const;
 	void DumpHex(std::ostream &os) const;
 
 	int GetEndpoint() const { return m_endpoint; }
 
 	const unsigned char * GetData() const { return m_external ? m_externalData : m_data; }
-	int GetSize() const { return m_datasize; }
+	size_t GetSize() const { return m_datasize; }
 
-	unsigned char * GetBuffer(int requiredsize = -1);
-	int GetBufSize() const { return m_bufsize; }
+	unsigned char * GetBuffer(size_t requiredsize = 0);
+	size_t GetBufSize() const { return m_bufsize; }
 	void ReleaseBuffer(int datasize = -1);
 
 	void Zap();
@@ -81,7 +81,7 @@ class Diff
 {
 	const Data &m_old, &m_new;
 
-	void Compare(std::ostream &os, int index, int size) const;
+	void Compare(std::ostream &os, size_t index, size_t size) const;
 
 public:
 	Diff(const Data &old, const Data &new_);

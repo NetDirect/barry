@@ -39,7 +39,7 @@ public:
 	Builder() {}
 	virtual ~Builder() {}
 
-	virtual bool operator()(Data &data, unsigned int databaseId) = 0;
+	virtual bool operator()(Data &data, size_t offset, unsigned int databaseId) = 0;
 };
 
 
@@ -87,12 +87,12 @@ public:
 
 	/// Functor member called by Controller::SaveDatabase() during
 	/// processing.
-	virtual bool operator()(Data &data, unsigned int databaseId)
+	virtual bool operator()(Data &data, size_t offset, unsigned int databaseId)
 	{
 		Record rec;
 		if( !(*m_storage)(rec, databaseId) )
 			return false;
-		rec.Build(data, databaseId);
+		rec.Build(data, offset);
 		return true;
 	}
 };

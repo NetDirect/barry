@@ -1,5 +1,16 @@
 Release: version 0.0.2 - 2005/??/??
 ------------------------------------------------------------------------------
+2005/12/22
+	- added autoconf to Todo list
+	- refactored the protocol structures so that record structs can
+		be reused for upload and download
+	- with new protostructs, more header control is handled by
+		controller.cc instead of record.cc parsers and builders
+	- parser code now accepts an offset, to govern start of record data
+	- changed Data sizes from int to size_t and removed casts
+	- removed unneeded Parser::GetHeaderSize() (new protostructs make
+		this obsolete)
+	- added Calendar::Build() for calendar uploads
 2005/12/10
 	- added s11n-boost.h serialization templates for boost::serialization
 	- added boost::serialization to build

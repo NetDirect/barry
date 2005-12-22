@@ -33,15 +33,8 @@ bool Parser::GetOperation(const Data &data, unsigned int &operation)
 		return false;
 
 	MAKE_PACKET(pack, data);
-	operation = pack->data.db.data.db.operation;
+	operation = pack->u.db.u.response.operation;
 	return true;
-}
-
-size_t Parser::GetHeaderSize(size_t recordsize) const
-{
-	// calculate the full header size, which (for records) is a DBACCESS
-	// header size, plus the header size of recordsize...
-	return SB_PACKET_DBACCESS_HEADER_SIZE + recordsize - sizeof(Barry::CommonField);
 }
 
 } // namespace Barry

@@ -68,7 +68,7 @@ Data::Data()
 	memset(m_data, 0, m_bufsize);
 }
 
-Data::Data(int endpoint, int startsize)
+Data::Data(int endpoint, size_t startsize)
 	: m_data(new unsigned char[startsize]),
 	m_bufsize(startsize),
 	m_datasize(0),
@@ -79,7 +79,7 @@ Data::Data(int endpoint, int startsize)
 	memset(m_data, 0, m_bufsize);
 }
 
-Data::Data(const void *ValidData, int size)
+Data::Data(const void *ValidData, size_t size)
 	: m_data(0),
 	m_bufsize(0),
 	m_datasize(size),
@@ -107,7 +107,7 @@ Data::~Data()
 	delete [] m_data;
 }
 
-void Data::MakeSpace(int desiredsize)
+void Data::MakeSpace(size_t desiredsize)
 {
 	if( m_bufsize < desiredsize ) {
 		desiredsize += 1024;	// get a proper chunk
@@ -121,7 +121,7 @@ void Data::MakeSpace(int desiredsize)
 }
 
 // perform the copy on write operation if needed
-void Data::CopyOnWrite(int desiredsize)
+void Data::CopyOnWrite(size_t desiredsize)
 {
 	if( m_external ) {
 		// make room
@@ -138,9 +138,9 @@ void Data::CopyOnWrite(int desiredsize)
 void Data::InputHexLine(istream &is)
 {
 	unsigned int values[16];
-	int index = 0;
+	size_t index = 0;
 
-	int address;
+	size_t address;
 	is >> setbase(16) >> address;
 	if( !is )
 		return;		// nothing to do
@@ -163,7 +163,7 @@ void Data::InputHexLine(istream &is)
 	return;
 }
 
-void Data::DumpHexLine(ostream &os, int index, int size) const
+void Data::DumpHexLine(ostream &os, size_t index, size_t size) const
 {
 	ios::fmtflags oldflags = os.setf(ios::right);
 
@@ -173,7 +173,7 @@ void Data::DumpHexLine(ostream &os, int index, int size) const
 	   << index << ": ";
 
 	// hex byte data
-	for( int i = 0; i < size; i++ ) {
+	for( size_t i = 0; i < size; i++ ) {
 		if( (index+i) < GetSize() ) {
 			os << setbase(16) << setfill('0')
 			   << setw(2) << setprecision(2)
@@ -187,7 +187,7 @@ void Data::DumpHexLine(ostream &os, int index, int size) const
 	// printable data
 	if( bPrintAscii ) {
 		os << ' ';
-		for( int i = 0; i < size && (index+i) < GetSize(); i++ ) {
+		for( size_t i = 0; i < size && (index+i) < GetSize(); i++ ) {
 			int c = GetData()[index + i];
 			os << setbase(10) << (char) (isprint(c) ? c : '.');
 		}
@@ -199,12 +199,12 @@ void Data::DumpHexLine(ostream &os, int index, int size) const
 
 void Data::DumpHex(ostream &os) const
 {
-	for( int address = 0; address < GetSize(); address += 16 ) {
+	for( size_t address = 0; address < GetSize(); address += 16 ) {
 		DumpHexLine(os, address, 16);
 	}
 }
 
-unsigned char * Data::GetBuffer(int requiredsize)
+unsigned char * Data::GetBuffer(size_t requiredsize)
 {
 	CopyOnWrite(requiredsize);
 	if( requiredsize > 0 )
@@ -275,9 +275,9 @@ Diff::Diff(const Data &old, const Data &new_)
 {
 }
 
-void Diff::Compare(ostream &os, int index, int size) const
+void Diff::Compare(ostream &os, size_t index, size_t size) const
 {
-	int min = std::min(m_old.GetSize(), m_new.GetSize());
+	size_t min = std::min(m_old.GetSize(), m_new.GetSize());
 
 	// index
 	os << ">   ";
@@ -285,8 +285,8 @@ void Diff::Compare(ostream &os, int index, int size) const
 	   << index << ": ";
 
 	// diff data
-	for( int i = 0; i < size; i++ ) {
-		int address = index + i;
+	for( size_t i = 0; i < size; i++ ) {
+		size_t address = index + i;
 
 		// if data is available, print the diff
 		if( address < min ) {
@@ -324,7 +324,7 @@ void Diff::Compare(ostream &os, int index, int size) const
 	// printable data, just dump new
 	if( Data::PrintAscii() ) {
 		os << ' ';
-		for( int i = 0; i < size && (index+i) < m_new.GetSize(); i++ ) {
+		for( size_t i = 0; i < size && (index+i) < m_new.GetSize(); i++ ) {
 			int c = m_new.GetData()[index + i];
 			os << setbase(10) << (char) (isprint(c) ? c : '.');
 		}
@@ -339,8 +339,8 @@ void Diff::Dump(std::ostream &os) const
 		os << "sizes differ: "
 		   << m_old.GetSize() << " != " << m_new.GetSize() << endl;
 
-	int max = std::max(m_old.GetSize(), m_new.GetSize());
-	for( int i = 0; i < max; i += 16 ) {
+	size_t max = std::max(m_old.GetSize(), m_new.GetSize());
+	for( size_t i = 0; i < max; i += 16 ) {
 		m_old.DumpHexLine(os, i, 16);
 		Compare(os, i, 16);
 	}
@@ -375,7 +375,7 @@ bool LoadDataArray(const string &filename, std::vector<Data> &array)
 
 	bool bInEndpoint = false;
 	unsigned int nCurrent = 0;
-	int nLargestSize = 0x100;
+	size_t nLargestSize = 0x100;
 	while( in ) {
 		string line;
 		getline(in, line);

@@ -69,8 +69,8 @@ void Socket::Open(uint16_t socket, uint8_t flag)
 	packet.socket = 0;
 	packet.size = SB_SOCKET_PACKET_SIZE;
 	packet.command = SB_COMMAND_OPEN_SOCKET;
-	packet.data.socket.socket = socket;
-	packet.data.socket.param = flag;
+	packet.u.socket.socket = socket;
+	packet.u.socket.param = flag;
 
 	Data send(&packet, packet.size);
 	Data receive;
@@ -91,8 +91,8 @@ void Socket::Open(uint16_t socket, uint8_t flag)
 	CheckSize(receive, SB_SOCKET_PACKET_SIZE);
 	MAKE_PACKET(rpack, receive);
 	if( rpack->command != SB_COMMAND_OPENED_SOCKET ||
-	    rpack->data.socket.socket != socket ||
-	    rpack->data.socket.param != flag )
+	    rpack->u.socket.socket != socket ||
+	    rpack->u.socket.param != flag )
 	{
 		eout("Packet:\n" << receive);
 		throw BError("Socket: Bad OPENED packet in Open");
@@ -113,8 +113,8 @@ void Socket::Close()
 		packet.socket = 0;
 		packet.size = SB_SOCKET_PACKET_SIZE;
 		packet.command = SB_COMMAND_CLOSE_SOCKET;
-		packet.data.socket.socket = m_socket;
-		packet.data.socket.param = m_flag;
+		packet.u.socket.socket = m_socket;
+		packet.u.socket.param = m_flag;
 
 		Data command(&packet, packet.size);
 		Data response;
@@ -139,8 +139,8 @@ void Socket::Close()
 		CheckSize(response, SB_SOCKET_PACKET_SIZE);
 		MAKE_PACKET(rpack, response);
 		if( rpack->command != SB_COMMAND_CLOSED_SOCKET ||
-		    rpack->data.socket.socket != m_socket ||
-		    rpack->data.socket.param != m_flag )
+		    rpack->u.socket.socket != m_socket ||
+		    rpack->u.socket.param != m_flag )
 		{
 			// reset so this won't be called again
 			m_socket = 0;
@@ -223,7 +223,7 @@ void Socket::AppendFragment(Data &whole, const Data &fragment)
 		MAKE_PACKET(fpack, fragment);
 		int fragsize = fragment.GetSize() - SB_FRAG_HEADER_SIZE;
 
-		memcpy(buf+size, &fpack->data.db.data.fragment, fragsize);
+		memcpy(buf+size, &fpack->u.db.u.fragment, fragsize);
 		whole.ReleaseBuffer(size + fragsize);
 	}
 
@@ -250,7 +250,7 @@ void Socket::CheckSequence(const Data &seq)
 
 	// we'll cheat here... if the packet's sequence is 0, we'll
 	// silently restart, otherwise, fail
-	uint32_t sequenceId = spack->data.sequence.sequenceId;
+	uint32_t sequenceId = spack->u.sequence.sequenceId;
 	if( sequenceId == 0 ) {
 		// silently restart (will advance below)
 		m_sequenceId = 0;
@@ -383,8 +383,8 @@ bool Socket::NextRecord(Data &receive)
 	packet.socket = GetSocket();
 	packet.size = 7;
 	packet.command = SB_COMMAND_DB_DONE;
-	packet.data.db.tableCmd = 0;
-	packet.data.db.data.db.operation = 0;
+	packet.u.db.tableCmd = 0;
+	packet.u.db.u.command.operation = 0;
 
 	Data command(&packet, packet.size);
 	return Packet(command, receive);

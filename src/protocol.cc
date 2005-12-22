@@ -29,11 +29,10 @@
 
 namespace Barry {
 
-void CheckSize(const Data &packet, int requiredsize)
+void CheckSize(const Data &packet, size_t requiredsize)
 {
 	const Packet *p = (const Packet *) packet.GetData();
-	if( p->size != (unsigned int) packet.GetSize() ||
-	    packet.GetSize() < requiredsize )
+	if( p->size != packet.GetSize() || packet.GetSize() < requiredsize )
 	{
 		std::ostringstream oss;
 		oss << "Bad packet size. Packet: " << p->size

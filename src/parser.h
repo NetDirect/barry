@@ -42,12 +42,9 @@ public:
 	Parser() {}
 	virtual ~Parser() {}
 
-	virtual bool operator()(const Data &data) { return true; }
+	virtual bool operator()(const Data &data, size_t offset) { return true; }
 
 	virtual bool GetOperation(const Data &data, unsigned int &operation);
-
-	/// Returns full header size
-	virtual size_t GetHeaderSize(size_t recordsize) const;
 };
 
 
@@ -108,7 +105,7 @@ public:
 			delete m_store;
 	}
 
-	virtual bool CheckHeaderSize(const Data &data, unsigned int operation)
+	virtual bool CheckHeaderSize(const Data &data, size_t offset, unsigned int operation)
 	{
 		size_t recordsize;
 		switch( operation )
@@ -130,21 +127,21 @@ public:
 		}
 
 		// return true if header is ok
-		return (size_t)data.GetSize() > GetHeaderSize(recordsize);
+		return data.GetSize() > (offset + recordsize);
 	}
 
 	/// Functor member called by Controller::LoadDatabase() during
 	/// processing.
-	virtual bool operator()(const Data &data)
+	virtual bool operator()(const Data &data, size_t offset)
 	{
 		unsigned int operation;
 		if( !GetOperation(data, operation) )
 			return false;
-		if( !CheckHeaderSize(data, operation) )
+		if( !CheckHeaderSize(data, offset, operation) )
 			return false;
 
 		Record rec;
-		rec.Parse(data, operation);
+		rec.Parse(data, offset, operation);
 		(*m_store)(rec);
 		return true;
 	}

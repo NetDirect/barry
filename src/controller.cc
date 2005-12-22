@@ -72,12 +72,11 @@ void Controller::SelectMode(ModeType mode, uint16_t &socket, uint8_t &flag)
 	packet.socket = 0;
 	packet.size = SB_MODE_PACKET_COMMAND_SIZE;
 	packet.command = SB_COMMAND_SELECT_MODE;
-	packet.data.mode.socket = SB_MODE_REQUEST_SOCKET;
-	packet.data.mode.flag = 0x05;	// FIXME
-	memset(packet.data.mode.modeName, 0,
-		sizeof(packet.data.mode.modeName));
+	packet.u.mode.socket = SB_MODE_REQUEST_SOCKET;
+	packet.u.mode.flag = 0x05;	// FIXME
+	memset(packet.u.mode.modeName, 0, sizeof(packet.u.mode.modeName));
 
-	char *modeName = (char *) packet.data.mode.modeName;
+	char *modeName = (char *) packet.u.mode.modeName;
 	switch( mode )
 	{
 	case Bypass:
@@ -117,8 +116,8 @@ void Controller::SelectMode(ModeType mode, uint16_t &socket, uint8_t &flag)
 	}
 
 	// return the socket and flag that the device is expecting us to use
-	socket = modepack->data.mode.socket;
-	flag = modepack->data.mode.flag + 1;
+	socket = modepack->u.mode.socket;
+	flag = modepack->u.mode.flag + 1;
 }
 
 unsigned int Controller::GetCommand(CommandType ct)
@@ -188,9 +187,9 @@ void Controller::LoadDBDB()
 	packet.socket = m_socket.GetSocket();
 	packet.size = 7;
 	packet.command = SB_COMMAND_DB_DATA;
-	packet.data.db.tableCmd = GetCommand(DatabaseAccess);
-//	packet.data.db.data.db.operation = SB_DBOP_GET_DBDB;
-	packet.data.db.data.db.operation = SB_DBOP_OLD_GET_DBDB;
+	packet.u.db.tableCmd = GetCommand(DatabaseAccess);
+//	packet.u.db.u.command.operation = SB_DBOP_GET_DBDB;
+	packet.u.db.u.command.operation = SB_DBOP_OLD_GET_DBDB;
 
 	Data command(&packet, packet.size);
 	Data response;
@@ -320,10 +319,10 @@ void Controller::LoadDatabase(unsigned int dbId, Parser &parser)
 	packet.socket = m_socket.GetSocket();
 	packet.size = 9;
 	packet.command = SB_COMMAND_DB_DATA;
-	packet.data.db.tableCmd = GetCommand(DatabaseAccess);
-//	packet.data.db.data.db.operation = SB_DBOP_GET_RECORDS;
-	packet.data.db.data.db.operation = SB_DBOP_OLD_GET_RECORDS;
-	packet.data.db.data.db.databaseId = dbId;
+	packet.u.db.tableCmd = GetCommand(DatabaseAccess);
+//	packet.u.db.u.command.operation = SB_DBOP_GET_RECORDS;
+	packet.u.db.u.command.operation = SB_DBOP_OLD_GET_RECORDS;
+	packet.u.db.u.command.databaseId = dbId;
 
 	Data command(&packet, packet.size);
 	Data response;
@@ -336,9 +335,15 @@ void Controller::LoadDatabase(unsigned int dbId, Parser &parser)
 	}
 
 	MAKE_PACKET(rpack, response);
-	while( rpack->command != SB_COMMAND_DB_DONE ) {
+	while( response.GetSize() >= SB_PACKET_HEADER_SIZE &&
+	       rpack->command != SB_COMMAND_DB_DONE )
+	{
 		if( rpack->command == SB_COMMAND_DB_DATA ) {
-			parser(response);
+			// this size is the old header size, since using
+			// old command above
+			size_t size = SB_PACKET_OLD_RESPONSE_HEADER_SIZE;
+			if( response.GetSize() >= size )
+				parser(response, size);
 		}
 
 		// advance!
@@ -360,9 +365,9 @@ void Controller::SaveDatabase(unsigned int dbId, Builder &builder)
 	packet.socket = m_socket.GetSocket();
 	packet.size = 9;
 	packet.command = SB_COMMAND_DB_DATA;
-	packet.data.db.tableCmd = GetCommand(DatabaseAccess);
-	packet.data.db.data.db.operation = SB_DBOP_CLEAR_DATABASE;
-	packet.data.db.data.db.databaseId = dbId;
+	packet.u.db.tableCmd = GetCommand(DatabaseAccess);
+	packet.u.db.u.command.operation = SB_DBOP_CLEAR_DATABASE;
+	packet.u.db.u.command.databaseId = dbId;
 
 	Data command(&packet, packet.size);
 	Data response;
@@ -382,16 +387,19 @@ void Controller::SaveDatabase(unsigned int dbId, Builder &builder)
 	}
 
 	// loop until builder object has no more data
-	while( builder(command, dbId) ) {
-		int size = command.GetSize();
-		unsigned char *data = command.GetBuffer(SB_PACKET_DBACCESS_HEADER_SIZE);
+	while( builder(command, SB_PACKET_UPLOAD_HEADER_SIZE, dbId) ) {
+		size_t size = command.GetSize();
+		unsigned char *data = command.GetBuffer(SB_PACKET_UPLOAD_HEADER_SIZE);
 
 		// fill in the missing header values
 		MAKE_PACKETPTR_BUF(cpack, data);
 		cpack->socket = m_socket.GetSocket();
 		cpack->size = size;
 		cpack->command = SB_COMMAND_DB_DATA;
-		cpack->data.db.tableCmd = GetCommand(DatabaseAccess);
+		cpack->u.db.tableCmd = GetCommand(DatabaseAccess);
+		cpack->u.db.u.upload.operation = SB_DBOP_SET_RECORD;
+		cpack->u.db.u.upload.databaseId = dbId;
+		cpack->u.db.u.upload.unknown = 0;	// FIXME - what does this mean? observed 0 and 5 here
 
 		command.ReleaseBuffer(size);
 

@@ -27,6 +27,7 @@
 #define __BARRY_PROTOSTRUCTS_H__
 
 #include <stdint.h>
+#include <sys/types.h>
 
 // forward declarations
 class Data;
@@ -75,14 +76,34 @@ struct DBCommand
 	uint16_t	databaseId;	// value from the Database Database
 	uint8_t		data[1];
 } __attribute__ ((packed));
+#define DB_COMMAND_HEADER_SIZE		(sizeof(Barry::DBCommand) - 1)
 
 struct DBResponse
 {
 	uint8_t		operation;
 	uint32_t	unknown;
-	uint16_t	sequenceCount;
+	uint16_t	count;
 	uint8_t		data[1];
 } __attribute__ ((packed));
+#define DB_RESPONSE_HEADER_SIZE		(sizeof(Barry::DBResponse) - 1)
+
+struct OldDBResponse
+{
+	uint8_t		operation;
+	uint8_t		unknown;
+	uint16_t	count;
+	uint8_t		data[1];
+} __attribute__ ((packed));
+#define OLD_DB_RESPONSE_HEADER_SIZE	(sizeof(Barry::OldDBResponse) - 1)
+
+struct UploadCommand
+{
+	uint8_t		operation;
+	uint16_t	databaseId;	// value from the Database Database
+	uint8_t		unknown;	// observed: 00 or 05
+	uint8_t		data[1];
+};
+#define UPLOAD_HEADER_SIZE		(sizeof(Barry::UploadCommand) - 1)
 
 
 
@@ -196,6 +217,7 @@ struct CommonField
 	} __attribute__ ((packed)) data;
 } __attribute__ ((packed));
 #define COMMON_FIELD_HEADER_SIZE	(sizeof(Barry::CommonField) - sizeof(Barry::CommonField::FieldData))
+#define COMMON_FIELD_MIN1900_SIZE	(sizeof(int32_t))
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -203,37 +225,19 @@ struct CommonField
 
 struct OldContactRecord
 {
-	uint8_t		operation;
-	uint8_t		unknown;
-	uint16_t	recordNumber;	
 	uint32_t	uniqueId;
-	uint8_t		unknown2;
+	uint8_t		unknown;
 	CommonField	field[1];
 } __attribute__ ((packed));
 #define OLD_CONTACT_RECORD_HEADER_SIZE	(sizeof(Barry::OldContactRecord) - sizeof(Barry::CommonField))
 
 struct ContactRecord
 {
-	uint8_t		operation;
-	uint8_t		unknown;
-	uint8_t		unknown2[3];
-	uint16_t	recordNumber;
 	uint32_t	uniqueId;
-	uint8_t		unknown3[3];
+	uint8_t		unknown[3];
 	CommonField	field[1];
 } __attribute__ ((packed));
 #define CONTACT_RECORD_HEADER_SIZE	(sizeof(Barry::ContactRecord) - sizeof(Barry::CommonField))
-
-struct ContactUploadRecord		// observed for db operation: 0x41
-{
-	uint8_t		operation;
-	uint16_t	databaseId;	// value from the Database Database
-	uint8_t		unknown;	// observed: 00
-	uint32_t	uniqueId;
-	uint8_t		unknown2;	// observed: 01
-	CommonField	field[1];
-} __attribute__ ((packed));
-#define CONTACT_UPLOAD_RECORD_HEADER_SIZE	(sizeof(Barry::ContactUploadRecord) - sizeof(Barry::CommonField))
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -241,19 +245,13 @@ struct ContactUploadRecord		// observed for db operation: 0x41
 
 struct OldMessageRecord
 {
-	uint8_t		operation;
-	uint8_t		unknown;
-	uint16_t	count;
 	uint8_t		timeBlock[0x72];
 	CommonField	field[1];
 } __attribute__ ((packed));
 
 struct MessageRecord
 {
-	uint8_t		operation;
-	uint8_t		unknown;
-	uint16_t	count;
-	uint8_t		timeBlock[0x77];
+	uint8_t		timeBlock[0x74];
 	CommonField	field[1];
 } __attribute__ ((packed));
 
@@ -264,20 +262,18 @@ struct MessageRecord
 
 struct OldCalendarRecord
 {
-	uint8_t		operation;
-	uint8_t		unknown;
-	uint16_t	count;
 	uint32_t	uniqueId;
-	uint8_t		unknown2;	// observed as 0 or 1
+	uint8_t		unknown;	// observed as 0 or 1
 	CommonField	field[1];
 } __attribute__ ((packed));
+#define OLD_CALENDAR_RECORD_HEADER_SIZE	(sizeof(Barry::OldCalendarRecord) - sizeof(Barry::CommonField))
 
 struct CalendarRecord
 {
-	uint8_t		operation;
 	// FIXME - not yet implemented
 	CommonField	field[1];
 } __attribute__ ((packed));
+//#define CALENDAR_RECORD_HEADER_SIZE	(sizeof(Barry::CalendarRecord) - sizeof(Barry::CommonField))
 
 
 
@@ -290,22 +286,17 @@ struct DBAccess
 	uint8_t		tableCmd;
 	union DBData
 	{
-		DBCommand		db;
-		DBResponse		db_r;
-		OldContactRecord	old_contact;
-		ContactRecord		contact;
-		ContactUploadRecord	contact_up;
+		DBCommand		command;
+		DBResponse		response;
+		OldDBResponse		old_response;
+		UploadCommand		upload;
 		CommandTableField	table[1];
 		OldDBDBRecord		old_dbdb;
 		DBDBRecord		dbdb;
-		OldMessageRecord	old_message;
-		MessageRecord		message;
-		OldCalendarRecord	old_calendar;
-		CalendarRecord		calendar;
-		uint8_t			fragment[1];
-		uint8_t			raw[1];
 
-	} __attribute__ ((packed)) data;
+		uint8_t			fragment[1];
+
+	} __attribute__ ((packed)) u;
 } __attribute__ ((packed));
 
 
@@ -328,7 +319,7 @@ struct Packet
 		DBAccess		db;
 		uint8_t			raw[1];
 
-	} __attribute__ ((packed)) data;
+	} __attribute__ ((packed)) u;
 } __attribute__ ((packed));
 
 // minimum required sizes for various responses
@@ -342,24 +333,28 @@ struct Packet
 #define SB_PACKET_HEADER_SIZE			(sizeof(Barry::Packet) - sizeof(Barry::Packet::PacketData))
 #define SB_DBACCESS_HEADER_SIZE			(sizeof(Barry::DBAccess) - sizeof(Barry::DBAccess::DBData))
 #define SB_PACKET_DBACCESS_HEADER_SIZE		(SB_PACKET_HEADER_SIZE + SB_DBACCESS_HEADER_SIZE)
+
 #define SB_FRAG_HEADER_SIZE			SB_PACKET_DBACCESS_HEADER_SIZE
 #define SB_SEQUENCE_PACKET_SIZE			(SB_PACKET_HEADER_SIZE + sizeof(Barry::SequenceCommand))
 #define SB_SOCKET_PACKET_SIZE			(SB_PACKET_HEADER_SIZE + sizeof(Barry::SocketCommand))
 #define SB_MODE_PACKET_COMMAND_SIZE		(SB_PACKET_HEADER_SIZE + sizeof(Barry::ModeSelectCommand) - sizeof(Barry::ModeSelectCommand::ResponseBlock))
 #define SB_MODE_PACKET_RESPONSE_SIZE		(SB_PACKET_HEADER_SIZE + sizeof(Barry::ModeSelectCommand))
-#define SB_PACKET_CONTACT_HEADER_SIZE		(SB_PACKET_HEADER_SIZE + SB_DBACCESS_HEADER_SIZE + CONTACT_RECORD_HEADER_SIZE)
-#define SB_PACKET_OLD_CONTACT_HEADER_SIZE	(SB_PACKET_HEADER_SIZE + SB_DBACCESS_HEADER_SIZE + OLD_CONTACT_RECORD_HEADER_SIZE)
-#define SB_PACKET_CONTACT_UPLOAD_HEADER_SIZE	(SB_PACKET_HEADER_SIZE + SB_DBACCESS_HEADER_SIZE + CONTACT_UPLOAD_RECORD_HEADER_SIZE)
 #define SB_PACKET_DBDB_HEADER_SIZE		(SB_PACKET_HEADER_SIZE + SB_DBACCESS_HEADER_SIZE + DBDB_RECORD_HEADER_SIZE)
 #define SB_PACKET_OLD_DBDB_HEADER_SIZE		(SB_PACKET_HEADER_SIZE + SB_DBACCESS_HEADER_SIZE + OLD_DBDB_RECORD_HEADER_SIZE)
+
+#define SB_PACKET_RESPONSE_HEADER_SIZE		(SB_PACKET_DBACCESS_HEADER_SIZE + DB_RESPONSE_HEADER_SIZE)
+#define SB_PACKET_OLD_RESPONSE_HEADER_SIZE	(SB_PACKET_DBACCESS_HEADER_SIZE + OLD_DB_RESPONSE_HEADER_SIZE)
+#define SB_PACKET_UPLOAD_HEADER_SIZE		(SB_PACKET_DBACCESS_HEADER_SIZE + UPLOAD_HEADER_SIZE)
 
 
 
 // Macros
-#define COMMAND(data)			(((const Barry::Packet *)data.GetData())->command)
-#define IS_COMMAND(data, cmd)		(COMMAND(data) == cmd)
-#define MAKE_PACKET(var, data)		const Barry::Packet *var = (const Barry::Packet *) data.GetData()
-#define MAKE_PACKETPTR_BUF(var, ptr)	Barry::Packet *var = (Barry::Packet *)ptr
+#define COMMAND(data)				(((const Barry::Packet *)data.GetData())->command)
+#define IS_COMMAND(data, cmd)			(COMMAND(data) == cmd)
+#define MAKE_PACKET(var, data)			const Barry::Packet *var = (const Barry::Packet *) data.GetData()
+#define MAKE_PACKETPTR_BUF(var, ptr)		Barry::Packet *var = (Barry::Packet *)ptr
+#define MAKE_RECORD(type,var,data,off)		type *var = (type *) (data.GetData() + (off))
+#define MAKE_RECORD_PTR(type,var,data,off)	type *var = (type *) (data + (off))
 
 // fragmentation protocol
 // send DATA first, then keep sending DATA packets, FRAGMENTing
@@ -373,7 +368,7 @@ struct Packet
 
 
 // checks packet size and throws BError if not right
-void CheckSize(const Data &packet, int requiredsize = MIN_PACKET_SIZE);
+void CheckSize(const Data &packet, size_t requiredsize = MIN_PACKET_SIZE);
 
 } // namespace Barry
 
