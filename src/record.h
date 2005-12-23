@@ -201,6 +201,11 @@ public:
 	void Dump(std::ostream &os) const;
 	void DumpLdif(std::ostream &os, const std::string &baseDN) const;
 
+	// sorting - put group links at the end
+	bool operator<(const Contact &other) const {
+		return GroupLinks.size() == 0 && other.GroupLinks.size() > 0;
+	}
+
 	// protocol record sizes
 	static size_t GetOldProtocolRecordSize();
 	static size_t GetProtocolRecordSize();
@@ -239,6 +244,9 @@ public:
 
 	void Dump(std::ostream &os) const;
 
+	// sorting
+	bool operator<(const Message &other) const { return Subject < other.Subject; }
+
 	// protocol record sizes
 	static size_t GetOldProtocolRecordSize();
 	static size_t GetProtocolRecordSize();
@@ -258,6 +266,8 @@ public:
 	typedef std::vector<UnknownField>		UnknownsType;
 
 	uint64_t RecordId;
+	bool Recurring;
+	bool AllDayEvent;
 	std::string Subject;
 	std::string Notes;
 	std::string Location;
@@ -277,6 +287,9 @@ public:
 	void Clear();
 
 	void Dump(std::ostream &os) const;
+
+	// sorting
+	bool operator<(const Calendar &other) const { return StartTime < other.StartTime; }
 
 	// protocol record sizes
 	static size_t GetOldProtocolRecordSize();

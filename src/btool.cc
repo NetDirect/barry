@@ -89,7 +89,14 @@ struct Store
 				cout << records.size()
 				     << " records loaded from '"
 				     << filename << "'" << endl;
+				sort(records.begin(), records.end());
 				rec_it = records.begin();
+
+				// debugging aid
+				typename std::vector<Record>::const_iterator beg = records.begin(), end = records.end();
+				for( ; beg != end; beg++ ) {
+					dout(*beg);
+				}
 			}
 
 		} catch( boost::archive::archive_exception &ae ) {

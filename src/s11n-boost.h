@@ -119,6 +119,9 @@ void serialize(Archive &ar, Barry::Calendar &c, const unsigned int ver)
 {
 	ar & make_nvp("RecordId", c.RecordId);
 
+	ar & make_nvp("Recurring", c.Recurring);
+	ar & make_nvp("AllDayEvent", c.AllDayEvent);
+
 	ar & make_nvp("Subject", c.Subject);
 	ar & make_nvp("Notes", c.Notes);
 	ar & make_nvp("Location", c.Location);

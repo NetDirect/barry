@@ -26,6 +26,7 @@
 #include "data.h"
 #include "base64.h"
 #include "time.h"
+#include "error.h"
 #include <ostream>
 #include <iomanip>
 #include <time.h>
@@ -64,7 +65,21 @@ void BuildField1900(Data &data, size_t &size, uint8_t type, time_t t)
 
 	field->size = timesize;
 	field->type = type;
-	field->data.min1900 = time2min(t);
+	field->u.min1900 = time2min(t);
+
+	size += fieldsize;
+}
+
+void BuildField(Data &data, size_t &size, uint8_t type, char c)
+{
+	size_t strsize = 1;
+	size_t fieldsize = COMMON_FIELD_HEADER_SIZE + strsize;
+	unsigned char *pd = data.GetBuffer(size + fieldsize) + size;
+	CommonField *field = (CommonField *) pd;
+
+	field->size = strsize;
+	field->type = type;
+	memcpy(field->u.raw, &c, strsize);
 
 	size += fieldsize;
 }
@@ -79,7 +94,7 @@ void BuildField(Data &data, size_t &size, uint8_t type, const std::string &str)
 
 	field->size = strsize;
 	field->type = type;
-	memcpy(field->data.raw, str.c_str(), strsize);
+	memcpy(field->u.raw, str.c_str(), strsize);
 
 	size += fieldsize;
 }
@@ -93,7 +108,7 @@ void BuildField(Data &data, size_t &size, uint8_t type, const Barry::GroupLink &
 
 	field->size = linksize;
 	field->type = type;
-	field->data.link = link;
+	field->u.link = link;
 
 	size += fieldsize;
 }
@@ -336,6 +351,7 @@ std::ostream& operator<< (std::ostream &os, const std::vector<UnknownField> &unk
 #define CFC_COUNTRY		41
 #define CFC_TITLE		42
 #define CFC_PUBLIC_KEY		43
+#define CFC_GROUP_FLAG		44
 #define CFC_GROUP_LINK		52
 #define CFC_NOTES		64
 #define CFC_INVALID_FIELD	255
@@ -415,7 +431,7 @@ const unsigned char* Contact::ParseField(const unsigned char *begin,
 	{
 		if( b->type == field->type ) {
 			std::string &s = this->*(b->strMember);
-			s.assign((const char *)field->data.raw, field->size-1);
+			s.assign((const char *)field->u.raw, field->size-1);
 			return begin;	// done!
 		}
 	}
@@ -432,22 +448,27 @@ const unsigned char* Contact::ParseField(const unsigned char *begin,
 		else
 			name = &FirstName;
 
-		name->assign((const char*)field->data.raw, field->size-1);
+		name->assign((const char*)field->u.raw, field->size-1);
 		}
 		return begin;
 
 	case CFC_GROUP_LINK:
 		// just add the unique ID to the list
 		GroupLinks.push_back(
-			GroupLink(field->data.link.uniqueId,
-				field->data.link.unknown));
+			GroupLink(field->u.link.uniqueId,
+				field->u.link.unknown));
+		return begin;
+
+	case CFC_GROUP_FLAG:
+		// ignore the group flag... the presense of group link items
+		// behaves as the flag in this class
 		return begin;
 	}
 
 	// if still not handled, add to the Unknowns list
 	UnknownField uf;
 	uf.type = field->type;
-	uf.data.assign((const char*)field->data.raw, field->size);
+	uf.data.assign((const char*)field->u.raw, field->size);
 	Unknowns.push_back(uf);
 
 	// return new pointer for next field
@@ -496,14 +517,21 @@ void Contact::Build(Data &data, size_t offset) const
 	// uploading always seems to use the old record
 	size_t size = offset + OLD_CONTACT_RECORD_HEADER_SIZE;
 	unsigned char *pd = data.GetBuffer(size);
-	MAKE_RECORD_PTR(Barry::OldContactRecord, contact, pd, size);
+	MAKE_RECORD_PTR(Barry::OldContactRecord, contact, pd, offset);
 
 	contact->uniqueId = RecordId;
 	contact->unknown = 1;
 
+	// check if this is a group link record, and if so, output
+	// the group flag
+	if( GroupLinks.size() )
+		BuildField(data, size, CFC_GROUP_FLAG, 'G');
+
 	// special fields not in type table
-	BuildField(data, size, CFC_NAME, FirstName);
-	BuildField(data, size, CFC_NAME, LastName);
+	if( FirstName.size() )
+		BuildField(data, size, CFC_NAME, FirstName);
+	if( LastName.size() )
+		BuildField(data, size, CFC_NAME, LastName);
 
 	// cycle through the type table
 	for(	FieldLink<Contact> *b = ContactFieldLinks;
@@ -745,14 +773,14 @@ const unsigned char* Message::ParseField(const unsigned char *begin,
 			if( b->strMember ) {
 				// parse regular string
 				std::string &s = this->*(b->strMember);
-				s.assign((const char *)field->data.raw, field->size-1);
+				s.assign((const char *)field->u.raw, field->size-1);
 				return begin;	// done!
 			}
 			else if( b->addrMember ) {
 				// parse email address
 				// get dual name+addr string first
-				const char *fa = (const char*)field->data.addr.addr;
-				std::string dual(fa, field->size - sizeof(field->data.addr.unknown));
+				const char *fa = (const char*)field->u.addr.addr;
+				std::string dual(fa, field->size - sizeof(field->u.addr.unknown));
 
 				// assign first string, using null terminator...letting std::string add it for us if it doesn't exist
 				Address &a = this->*(b->addrMember);
@@ -837,6 +865,7 @@ void Message::Dump(std::ostream &os) const
 // Calendar class
 
 // calendar field codes
+#define CALFC_APPT_TYPE_FLAG		0x01
 #define CALFC_SUBJECT			0x02
 #define CALFC_NOTES			0x03
 #define CALFC_LOCATION			0x04
@@ -846,6 +875,7 @@ void Message::Dump(std::ostream &os) const
 #define CALFC_RECURRANCE_DATA		0x0c
 #define CALFC_VERSION_DATA		0x10
 #define CALFC_NOTIFICATION_DATA		0x1a
+#define CALFC_ALLDAYEVENT_FLAG		0xff
 #define CALFC_END			0xffff
 
 FieldLink<Calendar> CalendarFieldLinks[] = {
@@ -869,6 +899,8 @@ size_t Calendar::GetProtocolRecordSize()
 }
 
 Calendar::Calendar()
+	: Recurring(false),
+	AllDayEvent(false)
 {
 	Clear();
 }
@@ -898,21 +930,45 @@ const unsigned char* Calendar::ParseField(const unsigned char *begin,
 		if( b->type == field->type ) {
 			if( b->strMember ) {
 				std::string &s = this->*(b->strMember);
-				s.assign((const char *)field->data.raw, field->size-1);
+				s.assign((const char *)field->u.raw, field->size-1);
 				return begin;	// done!
 			}
 			else if( b->timeMember ) {
 				time_t &t = this->*(b->timeMember);
-				t = min2time(field->data.min1900);
+				t = min2time(field->u.min1900);
 				return begin;
 			}
 		}
 	}
 
+	// handle special cases
+	switch( field->type )
+	{
+	case CALFC_APPT_TYPE_FLAG:
+		switch( field->u.raw[0] )
+		{
+		case 'a':			// regular non-recurring appointment
+			Recurring = false;
+			return begin;
+
+		case '*':			// recurring appointment
+			Recurring = true;
+			return begin;
+
+		default:
+			throw BError("Calendar::ParseField: unknown appointment type");
+		}
+		break;
+
+	case CALFC_ALLDAYEVENT_FLAG:
+		AllDayEvent = field->u.raw[0] == 1;
+		return begin;
+	}
+
 	// if still not handled, add to the Unknowns list
 	UnknownField uf;
 	uf.type = field->type;
-	uf.data.assign((const char*)field->data.raw, field->size);
+	uf.data.assign((const char*)field->u.raw, field->size);
 	Unknowns.push_back(uf);
 
 	// return new pointer for next field
@@ -959,10 +1015,17 @@ void Calendar::Build(Data &data, size_t offset) const
 	// uploading always seems to use the old record
 	size_t size = offset + OLD_CALENDAR_RECORD_HEADER_SIZE;
 	unsigned char *pd = data.GetBuffer(size);
-	MAKE_RECORD_PTR(Barry::OldCalendarRecord, contact, pd, size);
+	MAKE_RECORD_PTR(Barry::OldCalendarRecord, contact, pd, offset);
 
 	contact->uniqueId = RecordId;
 	contact->unknown = 1;
+
+	// output the type first
+	BuildField(data, size, CALFC_APPT_TYPE_FLAG, Recurring ? '*' : 'a');
+
+	// output all day event flag only if set
+	if( AllDayEvent )
+		BuildField(data, size, CALFC_ALLDAYEVENT_FLAG, (char)1);
 
 	// cycle through the type table
 	for(	const FieldLink<Calendar> *b = CalendarFieldLinks;
@@ -1003,6 +1066,8 @@ void Calendar::Clear()
 void Calendar::Dump(std::ostream &os) const
 {
 	os << "Calendar entry: 0x" << setbase(16) << RecordId << "\n";
+	os << "   Recurring: " << (Recurring ? "yes" : "no") << "\n";
+	os << "   All Day Event: " << (AllDayEvent ? "yes" : "no") << "\n";
 
 	// cycle through the type table
 	for(	const FieldLink<Calendar> *b = CalendarFieldLinks;
