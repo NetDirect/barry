@@ -1,5 +1,20 @@
 Release: version 0.0.2 - 2005/??/??
 ------------------------------------------------------------------------------
+2005/12/23
+	- fixed packing bug in new upload header struct
+	- renamed CommonField union from data to u to be consistent
+	- added return_code field to DBAccess struct, for error checking
+	- added response checking during upload: if response is non-zero
+		throw exception in controller.cc
+	- added sorting operators to record parser classes... when writing
+		contact data to the device, it may be important to write
+		group link items last, since they reference other contacts...
+		This needs to be tested, and if not required, removed.
+	- added GROUP_FLAG field code to Contact parser class
+	- fixed offset bug in Contact and Calendar Build() functions
+	- fixed name bug in Contact::Build(), now output only with data
+	- added appointment type flag support to Calendar record parser
+		class, and "all day event" flag support
 2005/12/22
 	- added autoconf to Todo list
 	- refactored the protocol structures so that record structs can
