@@ -410,6 +410,17 @@ void Controller::SaveDatabase(unsigned int dbId, Builder &builder)
 			throw BError(m_socket.GetLastStatus(),
 				"Controller: error writing to device database");
 		}
+		else {
+			// successful packet transfer, so check the network return code
+			MAKE_PACKET(rpack, response);
+			if( rpack->command != SB_COMMAND_DB_DONE || rpack->u.db.u.return_code != 0 ) {
+				std::ostringstream oss;
+				oss << "Controller: device responded with error code (command: "
+				    << (unsigned int)rpack->command << ", code: "
+				    << (unsigned int)rpack->u.db.u.return_code << ")";
+				throw BError(oss.str());
+			}
+		}
 	}
 }
 
