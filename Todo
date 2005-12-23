@@ -2,4 +2,10 @@
 	dynamically instead of hardcoding 0 and 1
 - API should determine endpoint numbers dynamically
 - autoconfiscate the project
+- test whether sorting of contact records is required before
+	uploading data to the device... test whether it is ok
+	to upload a GroupLink item in the middle of a contact
+	upload, even before all the groups have been sent...
+	if ok, remove the sorting code from Contact, Message, and
+	Calendar classes
 
