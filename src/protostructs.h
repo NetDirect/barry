@@ -102,7 +102,7 @@ struct UploadCommand
 	uint16_t	databaseId;	// value from the Database Database
 	uint8_t		unknown;	// observed: 00 or 05
 	uint8_t		data[1];
-};
+} __attribute__ ((packed));
 #define UPLOAD_HEADER_SIZE		(sizeof(Barry::UploadCommand) - 1)
 
 
@@ -214,7 +214,7 @@ struct CommonField
 		int32_t		min1900;
 		uint8_t		raw[1];
 
-	} __attribute__ ((packed)) data;
+	} __attribute__ ((packed)) u;
 } __attribute__ ((packed));
 #define COMMON_FIELD_HEADER_SIZE	(sizeof(Barry::CommonField) - sizeof(Barry::CommonField::FieldData))
 #define COMMON_FIELD_MIN1900_SIZE	(sizeof(int32_t))
@@ -293,6 +293,7 @@ struct DBAccess
 		CommandTableField	table[1];
 		OldDBDBRecord		old_dbdb;
 		DBDBRecord		dbdb;
+		uint8_t			return_code;
 
 		uint8_t			fragment[1];
 
