@@ -1,0 +1,247 @@
+You want to help?  Excellent!
+-----------------------------
+Barry currently only supports about 3 database record formats.  A
+database dump reveals over 50 different databases types, and you can help
+code these.
+
+Use the following command to dump the Database Database to stdout:
+
+	./btool -t
+
+Pick a database you are interested in, and run the following command to
+dump the protocol to stdout:
+
+	./btool -v -d "Memos"
+
+
+Protocol Documentation:
+-----------------------
+Once you have the raw protocol dump, you need to reverse engineer it.
+There are a number of places you can find documentation on this.
+
+The original source that I started with was the Cassis project docs.
+You can find them here:
+
+	http://off.net/cassis/protocol-description.html
+
+While these docs are quite helpful, they only cover the serial protocol.
+
+The USB protocol is more data-block based.  There are no checksums, since
+USB provides a reliable data transfer.  The common protocol headers are
+struct based, until you get to the variable sized data.  (This is also
+struct based, but requires pointer arithmetic.)
+
+See the following Barry source file for protocol structure information:
+
+	src/protostructs.h
+
+
+Protostructs.h
+--------------
+These structures are all low level in nature, and MUST be packed.  You
+will notice that every struct in this header is flagged with the gcc
+extension "__attribute__ ((packed))", which makes it useful to apply
+structure to raw protocol data.
+
+You can build / deconstruct a protocol packet in this manner:
+
+Imagine you have a packet of raw data in the following buffer:
+
+	char buff[4096];
+
+You can apply the Packet struct to it directly:
+
+	struct Packet *packet = (struct Packet *) buff;
+
+Looking at the structure, this gives you a lot of fixed-position data:
+
+
+
+///////////////////////////////////////////////////////////////////////////////
+// Main packet struct
+
+struct Packet
+{
+        uint16_t        socket;         // socket ID... 0 is always there
+        uint16_t        size;           // total size of data packet
+        uint8_t         command;
+
+        union PacketData
+        {
+
+                SocketCommand           socket;
+                SequenceCommand         sequence;
+                ModeSelectCommand       mode;
+                DBAccess                db;
+                uint8_t                 raw[1];
+
+        } __attribute__ ((packed)) u;
+} __attribute__ ((packed));
+
+
+
+In the case of database records, you are interested in the DBAccess union
+member:
+
+
+
+
+///////////////////////////////////////////////////////////////////////////////
+// Database access command structure
+
+// even fragmented packets have a tableCmd
+struct DBAccess
+{
+        uint8_t         tableCmd;
+        union DBData
+        {
+                DBCommand               command;
+                DBResponse              response;
+                OldDBResponse           old_response;
+                UploadCommand           upload;
+                CommandTableField       table[1];
+                OldDBDBRecord           old_dbdb;
+                DBDBRecord              dbdb;
+                uint8_t                 return_code;
+
+                uint8_t                 fragment[1];
+
+        } __attribute__ ((packed)) u;
+} __attribute__ ((packed));
+
+
+
+When downloading database records, they all arrive in either a DBResponse
+or OldDBResponse, depending on the database access command you use.
+Barry uses the old, serial-compatible command, so you're interested in:
+
+
+struct OldDBResponse
+{
+        uint8_t         operation;
+        uint8_t         unknown;
+        uint16_t        count;
+        uint8_t         data[1];
+} __attribute__ ((packed));
+
+
+
+This is enough information to get you to the data you need to reverse
+engineer.  That data will be located at:
+
+	packet->u.db.u.old_response.data[0]
+
+
+So, taking an Address Book record as an example:
+
+    00000000: 06 00 37 00 40 03 44 00 08 00 80 82 b1 22 00 06  ..7.@.D......"..
+    00000010: 00 20 43 68 72 69 73 00 05 00 20 46 72 65 79 00  . Chris... Frey.
+    00000020: 14 00 01 63 64 66 72 65 79 40 6e 65 74 64 69 72  ...cdfrey@netdir
+    00000030: 65 63 74 2e 63 61 00                             ect.ca.
+
+We now know:
+
+	06 00		- packet->socket
+	37 00		- packet->size
+	40		- packet->command
+	03		- packet->u.db.tableCmd
+	44		- packet->u.db.u.old_response.operation
+	00		- packet->u.db.u.old_response.unknown
+	08 00		- packet->u.db.u.old_response.count
+	80 82 b1 22	- packet->u.db.u.old_response.data[0]...
+			first bytes of record data
+
+In the case of Address Book records, the struct is:
+
+struct OldContactRecord
+{
+        uint32_t        uniqueId;
+        uint8_t         unknown;
+        CommonField     field[1];
+} __attribute__ ((packed));
+
+struct CommonField
+{
+        uint16_t        size;           // including null terminator
+        uint8_t         type;
+
+        union FieldData
+        {
+                GroupLink       link;
+                MessageAddress  addr;
+                int32_t         min1900;
+                uint8_t         raw[1];
+
+        } __attribute__ ((packed)) u;
+} __attribute__ ((packed));
+
+
+Which gives the following code:
+
+	struct OldContactRecord *con = (struct OldContactRecord *)
+		&packet->u.db.u.old_response.data[0];
+
+	80 82 b1 22	- con->uniqueId
+	00		- con->unknown
+	06 00 		- con->field[0].size
+	20		- con->field[0].type
+	43 68 72...	- con->field[0].raw  ("Chris..."
+			Data of first field
+
+
+This is a common theme in the database records.  There is a static header
+(eg. OldContactRecord) followed by a number of fields, which each contains
+a common field header (eg. CommonField), followed by a variable sized block
+of data (CommonField's u.raw field).  The next field starts size bytes later,
+so you _cannot_ use con->field[1], con->field[2], etc.  You must advance using
+the size of the data.
+
+
+
+This should give you enough information to begin hacking on additional
+database records.  Once you have a "Record" header struct, you are ready
+to begin parsing into an API class.
+
+
+
+
+Record API Classes
+------------------
+Record API Classes are intended to be consistent, C++-friendly structures
+for storing the parsed data.  You can find them in:
+
+	src/record.h
+
+These classes may be broken out into multiple files someday.
+
+The requirements of these classes are as follows:
+
+	- no virtual functions
+	- must be valid STL container items
+	- generally contain all public data
+	- provide member functions for:
+		- dumping to ostream
+		- parsing downloaded data blocks from the BlackBerry
+		- building data blocks for the BlackBerry for uploads
+	- must have absolutely no low level contamination
+
+The final point deserves some commentary.  When using gcc-specific extensions
+like __attribute__, and when using pointer arithmetic and pointer casts
+across types, as is necessary in some of the low level parsing code,
+special compiler flags are required.
+
+Specifically, g++ requires -fno-strict-aliasing to stop it from optimizing
+away some of the pointer casts and data accesses.  This is not desireable
+in an end-user application, so care must be taken to hide all low level
+parsing in the library, while exposing the record class structures and
+member function APIs to the application.
+
+Therefore src/record.h (or any new record header you add) must not include
+src/protostructs.h.  Your .cc code may include protostructs.h, but not
+the header, which will be used by the application.
+
+
+Good luck, and happy hacking!
+
+December 2005
+

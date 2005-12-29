@@ -17,13 +17,14 @@ Installation:
 You need:
 	libusb, devel branch	http://libusb.sourceforge.net/
 
-Check out the V1_0_DEVEL tag/branch from CVS.
+Check out the 2005/11/26 V1_0_DEVEL tag/branch from CVS, or download it
+as a tarball from the Barry file download page.
 
 Barry uses the asynchronous library calls, which is why the development
 branch is used.  The libusb devel branch is well along in its development
 cycle, so don't be afraid to play with it.
 
-This version of Barry has been tested using the 2005/11/25 libusb CVS tree.
+This version of Barry has been tested using the 2005/11/26 libusb CVS tree.
 
 To build Barry:
 
@@ -50,7 +51,7 @@ serial protocol.  You can find this documentation at:
 There were some major and minor differences found between the serial
 protocol and the USB protocol.  Some of the new handheld devices use new
 database record access commands, and in these cases the record format changes.
-Barry tries to handle both.  See the code for more detailed information.
+See the code for more detailed information.
 
 Further documentation on the USB protocol is planned.  Stay tuned.
 
@@ -74,6 +75,9 @@ the -d switch to capture new database records to reverse engineer.
 If you reverse engineer some of the unimplemented packet formats, please
 send patches and/or documentation to the mailing list!
 
+See the Hacking file for more information on getting started reverse
+engineering the protocol.
+
 
 Some notes on code architecture:
 --------------------------------
@@ -91,7 +95,17 @@ USB layer:
 	debug.h			- general debugging output support
 
 
+Barry low level layer:
+	protostructs.h		- low level, packed structs representing the
+				  USB protocol
+	time.{h,cc}		- time conversions between 1900-based minutes
+				  and C's 1970-based time_t
+
+
 Barry API layer:
+	base64.{h,cc}		- base64 encoding and decoding (for LDIF)
+	builder.h		- C++ virtual wrappers to connect record and
+				  controller in a generic way
 	error.{h,cc}		- common exception classes for Barry layer
 	probe.{h,cc}		- USB probe class to find Blackberry devices
 	protocol.{h,cc}		- structs and defines for packets seen on wire
@@ -102,10 +116,13 @@ Barry API layer:
 	parser.{h,cc}		- C++ virtual wrappers to connect record
 				  and controller in a generic way
 	controller.{h,cc}	- high level API class
-	btool.cc		- command line testing utility
+	s11n-boost.h		- serialization functions for record.h classes
+
+	barry.h			- application header (only one needed)
 
 
 Misc utilities:
+	btool.cc		- command line testing utility
 	convo.awk		- script to convert UsbSnoop log files into
 				  trimmed-down request/response conversations
 	translate.cc		- translate UsbSnoop log file data into
@@ -113,5 +130,5 @@ Misc utilities:
 
 Enjoy!
 
-November 2005
+December 2005
 
