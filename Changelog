@@ -10,6 +10,7 @@ Release: version 0.0.2 - 2005/??/??
 		common.h, controller.cc, probe.cc, probe.h, usbwrap.cc
 	- added ClearHalt() to Usb::Device (usbwrap.cc)
 	- updated usbwrap.h to match latest libusb CVS devel tree
+	- updated README to refer to 2005/12/30 libusb CVS devel tree
 2005/12/29
 	- added convenience Makefile in root directory
 	- added Hacking document
