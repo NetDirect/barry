@@ -24,6 +24,15 @@ Installation:
 -------------
 You need:
 	libusb, devel branch	http://libusb.sourceforge.net/
+	boost 1.33 (optional)	http://www.boost.org/
+
+
+Boost:
+
+Boost is needed for the serialization library, which you need if you want
+to save downloads for later uploads to the device.
+
+Libusb:
 
 Check out the 2005/11/26 V1_0_DEVEL tag/branch from CVS, or download it
 as a tarball from the Barry file download page.
