@@ -309,5 +309,105 @@ IO Device::AInterruptWrite(int ep, const Data &data)
 }
 
 
+
+///////////////////////////////////////////////////////////////////////////////
+// EndpointDiscovery
+
+bool EndpointDiscovery::Discover(libusb_device_id_t devid, int cfgidx, int ifcidx, int epcount)
+{
+	// start fresh
+	clear();
+	m_valid = false;
+
+	for( int i = 0; i < epcount; i++ ) {
+		// load descriptor
+		usb_endpoint_desc desc;
+		if( libusb_get_endpoint_desc(devid, cfgidx, ifcidx, i, &desc) < 0 )
+			return false;
+
+		// add to the map
+		(*this)[desc.bEndpointAddress] = desc;
+	}
+
+	return m_valid = true;
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+// InterfaceDiscovery
+
+bool InterfaceDiscovery::Discover(libusb_device_id_t devid, int cfgidx, int ifcount)
+{
+	// start fresh
+	clear();
+	m_valid = false;
+
+	for( int i = 0; i < ifcount; i++ ) {
+		// load descriptor
+		InterfaceDesc desc;
+		if( libusb_get_interface_desc(devid, cfgidx, i, &desc.desc) < 0 )
+			return false;
+
+		// load all endpoints on this interface
+		if( !desc.endpoints.Discover(devid, cfgidx, i, desc.desc.bNumEndpoints) )
+			return false;
+
+		// add to the map
+		(*this)[desc.desc.bInterfaceNumber] = desc;
+	}
+
+	return m_valid = true;
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+// ConfigDiscovery
+
+bool ConfigDiscovery::Discover(libusb_device_id_t devid, int cfgcount)
+{
+	// start fresh
+	clear();
+	m_valid = false;
+
+	for( int i = 0; i < cfgcount; i++ ) {
+		// load descriptor
+		ConfigDesc desc;
+		if( libusb_get_config_desc(devid, i, &desc.desc) < 0 )
+			return false;
+
+		// load all interfaces on this configuration
+		if( !desc.interfaces.Discover(devid, i, desc.desc.bNumInterfaces) )
+			return false;
+
+		// add to the map
+		(*this)[desc.desc.bConfigurationValue] = desc;
+	}
+
+	return m_valid = true;
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+// DeviceDiscovery
+
+DeviceDiscovery::DeviceDiscovery(libusb_device_id_t devid)
+	: m_valid(false)
+{
+	Discover(devid);
+}
+
+bool DeviceDiscovery::Discover(libusb_device_id_t devid)
+{
+	// start fresh
+	configs.clear();
+	m_valid = false;
+
+	if( libusb_get_device_desc(devid, &desc) < 0 )
+		return false;
+
+	m_valid = configs.Discover(devid, desc.bNumConfigurations);
+	return m_valid;
+}
+
 } // namespace Usb
 

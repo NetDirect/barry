@@ -25,6 +25,7 @@
 
 #include <libusb.h>
 #include <vector>
+#include <map>
 #include <stdexcept>
 
 #define USBWRAP_DEFAULT_TIMEOUT	10000
@@ -250,6 +251,92 @@ public:
 	{
 		libusb_release_interface(m_dev.GetHandle(), m_iface);
 	}
+};
+
+
+
+
+// Map of Endpoint numbers (not indexes) to endpoint descriptors
+class EndpointDiscovery : public std::map<unsigned char, usb_endpoint_desc>
+{
+public:
+	typedef std::map<unsigned char, usb_endpoint_desc>	base_type;
+
+private:
+	bool m_valid;
+
+public:
+	EndpointDiscovery() : m_valid(false) {}
+
+	bool Discover(libusb_device_id_t devid, int cfgidx, int ifcidx, int epcount);
+	bool IsValid() const { return m_valid; }
+};
+
+
+
+// Map of Interface numbers (not indexes) to interface descriptors and endpoint map
+struct InterfaceDesc
+{
+	usb_interface_desc desc;
+	EndpointDiscovery endpoints;
+};
+
+class InterfaceDiscovery : public std::map<int, InterfaceDesc>
+{
+public:
+	typedef std::map<int, InterfaceDesc>			base_type;
+
+private:
+	bool m_valid;
+
+public:
+	InterfaceDiscovery() : m_valid(false) {}
+
+	bool Discover(libusb_device_id_t devid, int cfgidx, int ifcount);
+	bool IsValid() const { return m_valid; }
+};
+
+
+
+
+// Map of Config numbers (not indexes) to config descriptors and interface map
+struct ConfigDesc
+{
+	usb_config_desc desc;
+	InterfaceDiscovery interfaces;
+};
+
+class ConfigDiscovery : public std::map<unsigned char, ConfigDesc>
+{
+public:
+	typedef std::map<unsigned char, ConfigDesc>		base_type;
+
+private:
+	bool m_valid;
+
+public:
+	ConfigDiscovery() : m_valid(false) {}
+
+	bool Discover(libusb_device_id_t devid, int cfgcount);
+	bool IsValid() const { return m_valid; }
+};
+
+
+
+// Discovers all configurations, interfaces, and endpoints for a given device
+class DeviceDiscovery
+{
+	bool m_valid;
+
+public:
+	usb_device_desc desc;
+	ConfigDiscovery configs;
+
+public:
+	DeviceDiscovery(libusb_device_id_t devid);
+
+	bool Discover(libusb_device_id_t devid);
+	bool IsValid() const { return m_valid; }
 };
 
 } // namespace Usb
