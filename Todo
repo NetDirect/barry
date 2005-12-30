@@ -1,3 +1,101 @@
+Barry roadmap, in dazzling ASCII:
+
+- Milestone 1:
+	- autoconf the project
+	- handle USB interface and configuration numbers dynamically
+	- handle USB endpoint numbers dynamically (appears to use the
+		endpoint numbers in ascending order: 1 read, 1 write)
+	- make the old/new DBDB commands dynamic
+	- flesh out LDIF support (should read/import them as well)
+	- reverse engineer email header data
+	- use SWIG to make the API available in Python
+
+- Milestone 2
+	- reliable command line backup and restore of:
+		- Contacts / Address Book
+		- Calendar
+		- Email
+
+- Milestone 3
+	- reliable command line backup and restore of:
+		- Content Store
+		- AutoText
+		- Trusted Key Store
+		- Service Book
+		- Handheld Configuration
+		- Handheld Agent
+		- Default Service Selector
+		- Handheld Key Store
+		- Firewall Options
+		- KeyStoreManager
+		- Policy
+		- Device Options
+		- Options
+		- Key Store Options
+		- RMS Databases
+		- TLS Options
+		- Random Pool
+		- WTLS Options
+		- MemoPad Options
+		- Memos
+		- Browser Bookmarks
+		- Browser Messages
+		- Browser Data Cache
+		- Browser Channels
+		- Browser Folders
+		- Browser Options
+		- WAP Push Messages
+		- Browser Urls
+		- Calendar Options
+		- Alarm Options
+		- Profiles Options
+		- Profiles
+		- Categories
+		- Message List Options
+		- SMS Messages
+		- Phone Options
+		- Searches
+		- Ribbon Bar Positions
+		- Tasks Options
+		- Folder Id
+		- Folders
+		- Purged Messages
+		- Recipient Cache
+		- Tasks
+		- Address Book Options
+		- Phone Call Logs
+		- Phone Hotlist
+		- Attachment Options
+		- Attachment Data
+		- Browser Push Options
+		- Help Options
+		- Quick Contacts
+
+- Milestone 4
+	- reliable command line backup and restore of Java program modules
+
+- Milestone 5
+	- design and implement sync functionality (must support data from
+		any external data source)
+	- command line sync tool
+
+- Milestone 6
+	- GUI sync tool
+
+- Milestone 7
+	- Evolution sync
+
+- Milestone 8
+	- Mozilla sync
+
+- Milestone 9
+	- LDAP sync
+
+-------------------------------------------------------------------------------
+
+
+Misc Todo Items:
+----------------
 - Barry Probe API should determine interface number and configuration
 	dynamically instead of hardcoding 0 and 1
 - autoconfiscate the project
