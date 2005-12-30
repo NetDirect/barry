@@ -1,5 +1,16 @@
 Release: version 0.0.2 - 2005/??/??
 ------------------------------------------------------------------------------
+2005/12/29
+	- added convenience Makefile in root directory
+	- added Hacking document
+	- minor touchups to README
+	- added caution warning to README, since this release will support
+		delete / overwrite / upload functionality
+	- minor compile order change in Makefile (speed reasons)
+	- added dynamic endpoint discovery to probe.cc
+	- changed claim_interface/set_configuration() function call order in
+		probe.cc based on feedback on the libusb mailing list
+	- added USB discovery code to usbwrap.{h,cc}
 2005/12/23
 	- fixed packing bug in new upload header struct
 	- renamed CommonField union from data to u to be consistent
