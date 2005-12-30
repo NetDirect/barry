@@ -20,7 +20,6 @@ BBTOOLOBJS = \
 	parser.o \
 	data.o \
 	usbwrap.o \
-	btool.o \
 	probe.o \
 	common.o \
 	error.o \
@@ -28,6 +27,7 @@ BBTOOLOBJS = \
 	protocol.o \
 	record.o \
 	controller.o \
+	btool.o \
 
 
 #
