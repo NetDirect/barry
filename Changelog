@@ -1,5 +1,14 @@
 Release: version 0.0.2 - 2005/??/??
 ------------------------------------------------------------------------------
+2005/12/30
+	- added clean target to convenience Makefile
+	- added Boost to list of dependencies in README
+	- fixed minor compile warnings in base64.cc
+	- fixed new USB discovery code, and changed endpoint usage to use
+		it, instead of the READ_ENDPOINT and WRITE_ENDPOINT
+		constants... constants are now removed
+		common.h, controller.cc, probe.cc, probe.h, usbwrap.cc
+	- added ClearHalt() to Usb::Device (usbwrap.cc)
 2005/12/29
 	- added convenience Makefile in root directory
 	- added Hacking document
