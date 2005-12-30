@@ -1,6 +1,5 @@
 - Barry Probe API should determine interface number and configuration
 	dynamically instead of hardcoding 0 and 1
-- API should determine endpoint numbers dynamically
 - autoconfiscate the project
 - test whether sorting of contact records is required before
 	uploading data to the device... test whether it is ok
