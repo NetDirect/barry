@@ -51,7 +51,7 @@ public:
 
 class Match
 {
-	libusb_match_handle_t *m_match;
+	libusb_match_handle_t m_match;
 	int m_lasterror;
 public:
 	Match(int vendor, int product)
@@ -164,7 +164,7 @@ public:
 
 private:
 	libusb_device_id_t m_id;
-	libusb_dev_handle_t *m_handle;
+	libusb_dev_handle_t m_handle;
 
 	io_list_type m_ios;
 
@@ -189,7 +189,7 @@ public:
 	// Data access
 
 	libusb_device_id_t GetID() const { return m_id; }
-	libusb_dev_handle_t * GetHandle() const { return m_handle; }
+	libusb_dev_handle_t GetHandle() const { return m_handle; }
 	int GetLastError() const { return m_lasterror; }
 
 
