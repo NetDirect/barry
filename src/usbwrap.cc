@@ -189,6 +189,12 @@ bool Device::SetConfiguration(unsigned char cfg)
 	return m_lasterror >= 0;
 }
 
+bool Device::ClearHalt(int ep)
+{
+	m_lasterror = libusb_clear_halt(m_handle, ep);
+	return m_lasterror >= 0;
+}
+
 bool Device::Reset()
 {
 	m_lasterror = libusb_reset(m_handle);
@@ -319,14 +325,58 @@ bool EndpointDiscovery::Discover(libusb_device_id_t devid, int cfgidx, int ifcid
 	clear();
 	m_valid = false;
 
+	EndpointPair pair;
+
 	for( int i = 0; i < epcount; i++ ) {
 		// load descriptor
 		usb_endpoint_desc desc;
 		if( libusb_get_endpoint_desc(devid, cfgidx, ifcidx, i, &desc) < 0 )
 			return false;
+		dout("      endpoint_desc #" << i << " loaded");
 
 		// add to the map
 		(*this)[desc.bEndpointAddress] = desc;
+		dout("      endpoint added to map with bEndpointAddress: " << (unsigned int)desc.bEndpointAddress);
+
+		// parse the endpoint into read/write sets, if possible,
+		// going in discovery order...
+		// Assumptions:
+		//	- endpoints of related utility will be grouped
+		//	- endpoints with same type will be grouped
+		//	- endpoints that do not meet the above assumptions
+		//		do not belong in a pair
+		unsigned char type = desc.bmAttributes & USB_ENDPOINT_TYPE_MASK;
+		if( desc.bEndpointAddress & USB_ENDPOINT_DIR_MASK ) {
+			// read endpoint
+			pair.read = desc.bEndpointAddress;
+			dout("        pair.read = " << (unsigned int)pair.read);
+			if( pair.IsTypeSet() && pair.type != type ) {
+				// if type is already set, we must start over
+				pair.write = 0;
+			}
+		}
+		else {
+			// write endpoint
+			pair.write = desc.bEndpointAddress;
+			dout("        pair.write = " << (unsigned int)pair.write);
+			if( pair.IsTypeSet() && pair.type != type ) {
+				// if type is already set, we must start over
+				pair.read = 0;
+			}
+		}
+		// save the type last
+		pair.type = type;
+		dout("        pair.type = " << (unsigned int)pair.type);
+
+		// if pair is complete, add to array
+		if( pair.IsComplete() ) {
+			m_endpoints.push_back(pair);
+			dout("        pair added! ("
+				<< (unsigned int)pair.read << ","
+				<< (unsigned int)pair.write << ","
+				<< (unsigned int)pair.type << ")");
+			pair = EndpointPair();	// clear
+		}
 	}
 
 	return m_valid = true;
@@ -347,6 +397,7 @@ bool InterfaceDiscovery::Discover(libusb_device_id_t devid, int cfgidx, int ifco
 		InterfaceDesc desc;
 		if( libusb_get_interface_desc(devid, cfgidx, i, &desc.desc) < 0 )
 			return false;
+		dout("    interface_desc #" << i << " loaded");
 
 		// load all endpoints on this interface
 		if( !desc.endpoints.Discover(devid, cfgidx, i, desc.desc.bNumEndpoints) )
@@ -354,6 +405,7 @@ bool InterfaceDiscovery::Discover(libusb_device_id_t devid, int cfgidx, int ifco
 
 		// add to the map
 		(*this)[desc.desc.bInterfaceNumber] = desc;
+		dout("    interface added to map with bInterfaceNumber: " << (unsigned int)desc.desc.bInterfaceNumber);
 	}
 
 	return m_valid = true;
@@ -374,6 +426,7 @@ bool ConfigDiscovery::Discover(libusb_device_id_t devid, int cfgcount)
 		ConfigDesc desc;
 		if( libusb_get_config_desc(devid, i, &desc.desc) < 0 )
 			return false;
+		dout("  config_desc #" << i << " loaded");
 
 		// load all interfaces on this configuration
 		if( !desc.interfaces.Discover(devid, i, desc.desc.bNumInterfaces) )
@@ -381,6 +434,7 @@ bool ConfigDiscovery::Discover(libusb_device_id_t devid, int cfgcount)
 
 		// add to the map
 		(*this)[desc.desc.bConfigurationValue] = desc;
+		dout("  config added to map with bConfigurationValue: " << (unsigned int)desc.desc.bConfigurationValue);
 	}
 
 	return m_valid = true;
@@ -404,6 +458,7 @@ bool DeviceDiscovery::Discover(libusb_device_id_t devid)
 
 	if( libusb_get_device_desc(devid, &desc) < 0 )
 		return false;
+	dout("device_desc loaded");
 
 	m_valid = configs.Discover(devid, desc.bNumConfigurations);
 	return m_valid;

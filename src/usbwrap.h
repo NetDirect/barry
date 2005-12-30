@@ -197,6 +197,7 @@ public:
 	// Device manipulation
 
 	bool SetConfiguration(unsigned char cfg);
+	bool ClearHalt(int ep);
 	bool Reset();
 
 
@@ -257,19 +258,34 @@ public:
 
 
 // Map of Endpoint numbers (not indexes) to endpoint descriptors
+struct EndpointPair
+{
+	unsigned char read;
+	unsigned char write;
+	unsigned char type;
+
+	EndpointPair() : read(0), write(0), type(0xff) {}
+	bool IsTypeSet() const { return type != 0xff; }
+	bool IsComplete() const { return read && write && IsTypeSet(); }
+};
+
 class EndpointDiscovery : public std::map<unsigned char, usb_endpoint_desc>
 {
 public:
 	typedef std::map<unsigned char, usb_endpoint_desc>	base_type;
+	typedef std::vector<EndpointPair>			endpoint_array_type;
 
 private:
 	bool m_valid;
+	endpoint_array_type m_endpoints;
 
 public:
 	EndpointDiscovery() : m_valid(false) {}
 
 	bool Discover(libusb_device_id_t devid, int cfgidx, int ifcidx, int epcount);
 	bool IsValid() const { return m_valid; }
+
+	const endpoint_array_type & GetEndpointPairs() const { return m_endpoints; }
 };
 
 
