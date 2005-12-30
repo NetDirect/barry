@@ -50,7 +50,7 @@ Controller::Controller(const ProbeResult &device)
 	: m_dev(device.m_dev),
 	m_iface(m_dev, BLACKBERRY_INTERFACE),
 	m_pin(device.m_pin),
-	m_socket(m_dev, WRITE_ENDPOINT, READ_ENDPOINT),
+	m_socket(m_dev, device.m_ep.write, device.m_ep.read),
 	m_mode(Unspecified)
 {
 	if( !m_dev.SetConfiguration(BLACKBERRY_CONFIGURATION) )

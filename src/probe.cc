@@ -69,22 +69,23 @@ namespace {
 		return *((uint16_t *)&packet[2]);
 	}
 
-	void Intro(int IntroIndex, Device &dev, Data &response)
+	bool Intro(int IntroIndex, const EndpointPair &ep, Device &dev, Data &response)
 	{
-		IO rd = dev.ABulkRead(READ_ENDPOINT, response);
-		IO wr = dev.ABulkWrite(WRITE_ENDPOINT, Intro_Sends[IntroIndex],
+		IO rd = dev.ABulkRead(ep.read, response);
+		IO wr = dev.ABulkWrite(ep.write, Intro_Sends[IntroIndex],
 			GetSize(Intro_Sends[IntroIndex]));
 
 		rd.Wait();
 		wr.Wait();
 
 		response.ReleaseBuffer(rd.GetStatus() >= 0 ? rd.GetSize() : 0);
+		return rd.GetStatus() >= 0;
 	}
 
 } // anonymous namespace
 
 
-void Probe::Parse(const Data &data, ProbeResult &result)
+bool Probe::Parse(const Data &data, ProbeResult &result)
 {
 	// validate response data
 	const unsigned char *pd = data.GetData();
@@ -92,11 +93,13 @@ void Probe::Parse(const Data &data, ProbeResult &result)
 	    data.GetSize() < 0x14 ||
 	    pd[4] != 0x06 )
 	{
-		throw BError("Probe: Unexpected reponse data in parse");
+		return false;
+//		throw BError("Probe: Unexpected reponse data in parse");
 	}
 
 	// capture the PIN
 	result.m_pin = *((uint32_t *) &pd[16]);
+	return true;
 }
 
 Probe::Probe()
@@ -111,60 +114,47 @@ Probe::Probe()
 		EndpointDiscovery &ed = discover.configs[BLACKBERRY_CONFIGURATION]
 			.interfaces[BLACKBERRY_INTERFACE]
 			.endpoints;
-		if( !ed.IsValid() )
+		if( !ed.IsValid() || ed.GetEndpointPairs().size() == 0 )
 			continue;
 
 
 		ProbeResult result;
 		result.m_dev = devid;
-		result.m_readEndpoint = 0xff;
-		result.m_writeEndpoint = 0xff;
 
-		// find the first 2 bulk read/write endpoints
-		EndpointDiscovery::iterator beg = ed.begin(), end = ed.end();
-		for( ; beg != end ; beg++ ) {
-			usb_endpoint_desc &desc = beg->second;
-			if( (desc.bmAttributes & USB_ENDPOINT_TYPE_MASK) == USB_ENDPOINT_TYPE_BULK ) {
-				unsigned char address = desc.bEndpointAddress & USB_ENDPOINT_ADDRESS_MASK;
-				if( address & USB_ENDPOINT_DIR_MASK ) {
-					// this is a read endpoint
-					if( result.m_readEndpoint > address )
-						result.m_readEndpoint = address;
-				}
-				else {
-					// write endpoint
-					if( result.m_writeEndpoint > address )
-						result.m_writeEndpoint = address;
+		// find the first bulk read/write endpoint pair that answers
+		// to our probe commands
+		// Search in reverse, since evidence indicates the last pairs
+		// are the ones we need.
+		for(size_t i = ed.GetEndpointPairs().size(); i; i-- ) {
+			const EndpointPair &ep = ed.GetEndpointPairs()[i-1];
+			if( ep.type == USB_ENDPOINT_TYPE_BULK ) {
+				result.m_ep = ep;
+
+				Device dev(devid);
+				dev.Reset();
+				sleep(5);
+
+				if( !dev.SetConfiguration(BLACKBERRY_CONFIGURATION) )
+					throw BError(dev.GetLastError(),
+						"Probe: SetConfiguration failed");
+
+				Interface iface(dev, BLACKBERRY_INTERFACE);
+
+				Data data;
+				if( Intro(0, ep, dev, data) && Intro(1, ep, dev, data) &&
+				    Intro(2, ep, dev, data) && Parse(data, result) )
+				{
+					// all info obtained, add to list
+					m_results.push_back(result);
+					ddout("Using ReadEndpoint: " << (unsigned int)result.m_ep.read);
+					ddout("      WriteEndpoint: " << (unsigned int)result.m_ep.write);
+					break;
 				}
 			}
 		}
 
-		if( result.m_readEndpoint == 0xff )
-			throw BError("Unable to discover read endpoint");
-		if( result.m_writeEndpoint == 0xff )
-			throw BError("Unable to discover write endpoint");
-
-		ddout("Using ReadEndpoint: " << result.m_readEndpoint);
-		ddout("      WriteEndpoint: " << result.m_writeEndpoint);
-
-		Device dev(devid);
-		dev.Reset();
-		sleep(5);
-
-		if( !dev.SetConfiguration(BLACKBERRY_CONFIGURATION) )
-			throw BError(dev.GetLastError(),
-				"Probe: SetConfiguration failed");
-
-		Interface iface(dev, BLACKBERRY_INTERFACE);
-
-		Data data;
-		Intro(0, dev, data);
-		Intro(1, dev, data);
-		Intro(2, dev, data);
-		Parse(data, result);
-
-		// all info obtained, add to list
-		m_results.push_back(result);
+		if( !result.m_ep.IsComplete() )
+			ddout("Unable to discover endpoint pair for one device.");
 	}
 }
 

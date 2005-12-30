@@ -22,7 +22,7 @@
 #ifndef __BARRY_PROBE_H__
 #define __BARRY_PROBE_H__
 
-#include <libusb.h>
+#include "usbwrap.h"
 #include <vector>
 #include <iosfwd>
 
@@ -36,8 +36,7 @@ struct ProbeResult
 {
 	libusb_device_id_t m_dev;
 	uint32_t m_pin;
-	unsigned char m_readEndpoint;
-	unsigned char m_writeEndpoint;
+	Usb::EndpointPair m_ep;
 };
 
 std::ostream& operator<< (std::ostream &os, const ProbeResult &pr);
@@ -47,7 +46,7 @@ class Probe
 {
 	std::vector<ProbeResult> m_results;
 
-	void Parse(const Data &data, ProbeResult &result);
+	bool Parse(const Data &data, ProbeResult &result);
 public:
 	Probe();
 

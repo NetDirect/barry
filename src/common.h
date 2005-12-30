@@ -28,9 +28,6 @@
 #define BLACKBERRY_INTERFACE		0
 #define BLACKBERRY_CONFIGURATION	1
 
-#define WRITE_ENDPOINT		0x05
-#define READ_ENDPOINT		0x82
-
 namespace Barry {
 
 void Init(bool data_dump_mode);
