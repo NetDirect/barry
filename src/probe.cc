@@ -24,6 +24,7 @@
 #include "usbwrap.h"
 #include "data.h"
 #include "error.h"
+#include "debug.h"
 #include <iomanip>
 
 using namespace Usb;
@@ -82,6 +83,7 @@ namespace {
 
 } // anonymous namespace
 
+
 void Probe::Parse(const Data &data, ProbeResult &result)
 {
 	// validate response data
@@ -103,18 +105,57 @@ Probe::Probe()
 
 	libusb_device_id_t devid;
 	while( match.next_device(&devid) ) {
+
+		// skip if we can't properly discover device config
+		DeviceDiscovery discover(devid);
+		EndpointDiscovery &ed = discover.configs[BLACKBERRY_CONFIGURATION]
+			.interfaces[BLACKBERRY_INTERFACE]
+			.endpoints;
+		if( !ed.IsValid() )
+			continue;
+
+
 		ProbeResult result;
 		result.m_dev = devid;
+		result.m_readEndpoint = 0xff;
+		result.m_writeEndpoint = 0xff;
+
+		// find the first 2 bulk read/write endpoints
+		EndpointDiscovery::iterator beg = ed.begin(), end = ed.end();
+		for( ; beg != end ; beg++ ) {
+			usb_endpoint_desc &desc = beg->second;
+			if( (desc.bmAttributes & USB_ENDPOINT_TYPE_MASK) == USB_ENDPOINT_TYPE_BULK ) {
+				unsigned char address = desc.bEndpointAddress & USB_ENDPOINT_ADDRESS_MASK;
+				if( address & USB_ENDPOINT_DIR_MASK ) {
+					// this is a read endpoint
+					if( result.m_readEndpoint > address )
+						result.m_readEndpoint = address;
+				}
+				else {
+					// write endpoint
+					if( result.m_writeEndpoint > address )
+						result.m_writeEndpoint = address;
+				}
+			}
+		}
+
+		if( result.m_readEndpoint == 0xff )
+			throw BError("Unable to discover read endpoint");
+		if( result.m_writeEndpoint == 0xff )
+			throw BError("Unable to discover write endpoint");
+
+		ddout("Using ReadEndpoint: " << result.m_readEndpoint);
+		ddout("      WriteEndpoint: " << result.m_writeEndpoint);
 
 		Device dev(devid);
 		dev.Reset();
 		sleep(5);
 
-		Interface iface(dev, BLACKBERRY_INTERFACE);
-
 		if( !dev.SetConfiguration(BLACKBERRY_CONFIGURATION) )
 			throw BError(dev.GetLastError(),
 				"Probe: SetConfiguration failed");
+
+		Interface iface(dev, BLACKBERRY_INTERFACE);
 
 		Data data;
 		Intro(0, dev, data);

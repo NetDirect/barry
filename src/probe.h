@@ -36,6 +36,8 @@ struct ProbeResult
 {
 	libusb_device_id_t m_dev;
 	uint32_t m_pin;
+	unsigned char m_readEndpoint;
+	unsigned char m_writeEndpoint;
 };
 
 std::ostream& operator<< (std::ostream &os, const ProbeResult &pr);
