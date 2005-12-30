@@ -20,7 +20,7 @@ namespace Barry {
 extern bool __data_dump_mode__;
 }
 
-// data dump output
+// data dump output - controlled by command line -v switch
 #define ddout(x)	if(Barry::__data_dump_mode__) std::cout << x << std::endl
 
 #ifdef __DEBUG_MODE__
@@ -29,7 +29,7 @@ extern bool __data_dump_mode__;
 	#undef dout
 	#undef eout
 
-	// debug output
+	// low level debug output
 //	#define dout(x)  	std::cout << x << std::endl
 	#define dout(x)
 
