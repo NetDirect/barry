@@ -1,5 +1,7 @@
 Release: version 0.0.2 - 2005/??/??
 ------------------------------------------------------------------------------
+2006/03/29
+	- copyright dates updated for 2006
 2006/01/05
 	- backed out update to latest libusb DEVEL tree, since it is buggy.
 		Stick with libusb 2005/11/26
