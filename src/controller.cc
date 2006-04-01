@@ -234,9 +234,9 @@ void Controller::LoadDBDB()
 ///
 unsigned int Controller::GetDBID(const std::string &name) const
 {
-	unsigned int ID = m_dbdb.GetDBNumber(name);
-	// FIXME - this needs a better error handler... the dbdb needs one too!
-	if( ID == 0 ) {
+	unsigned int ID = 0;
+	// FIXME - this needs a better error handler...
+	if( !m_dbdb.GetDBNumber(name, ID) ) {
 		throw BError("Controller: database name not found");
 	}
 	return ID;

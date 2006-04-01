@@ -290,13 +290,28 @@ void DatabaseDatabase::Clear()
 	Databases.clear();
 }
 
-unsigned int DatabaseDatabase::GetDBNumber(const std::string &name) const
+bool DatabaseDatabase::GetDBNumber(const std::string &name,
+				   unsigned int &number) const
 {
 	DatabaseArrayType::const_iterator b = Databases.begin();
 	for( ; b != Databases.end(); b++ )
-		if( b->Name == name )
-			return b->Number;
-	return 0;
+		if( b->Name == name ) {
+			number = b->Number;
+			return true;
+		}
+	return false;
+}
+
+bool DatabaseDatabase::GetDBName(unsigned int number,
+				 std::string &name) const
+{
+	DatabaseArrayType::const_iterator b = Databases.begin();
+	for( ; b != Databases.end(); b++ )
+		if( b->Number == number ) {
+			name = b->Name;
+			return true;
+		}
+	return false;
 }
 
 void DatabaseDatabase::Dump(std::ostream &os) const

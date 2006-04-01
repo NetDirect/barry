@@ -106,8 +106,9 @@ public:
 	void Parse(const Data &data);
 	void Clear();
 
-	// FIXME - returns 0 on error here, but that's a valid DBNumber
-	unsigned int GetDBNumber(const std::string &name) const;
+	// returns true on success, and fills target
+	bool GetDBNumber(const std::string &name, unsigned int &number) const;
+	bool GetDBName(unsigned int number, std::string &name) const;
 
 	void Dump(std::ostream &os) const;
 };
@@ -204,11 +205,16 @@ public:
 	// sorting - put group links at the end
 	bool operator<(const Contact &other) const {
 		return GroupLinks.size() == 0 && other.GroupLinks.size() > 0;
+//		// testing - put group links at the top
+//		return GroupLinks.size() > 0 && other.GroupLinks.size() == 0;
 	}
 
 	// protocol record sizes
 	static size_t GetOldProtocolRecordSize();
 	static size_t GetProtocolRecordSize();
+
+	// database name
+	static const char * GetDBName() { return "Address Book"; }
 };
 
 inline std::ostream& operator<< (std::ostream &os, const Contact &contact) {
@@ -250,6 +256,9 @@ public:
 	// protocol record sizes
 	static size_t GetOldProtocolRecordSize();
 	static size_t GetProtocolRecordSize();
+
+	// database name
+	static const char * GetDBName() { return "Messages"; }
 };
 
 inline std::ostream& operator<<(std::ostream &os, const Message &msg) {
@@ -294,6 +303,9 @@ public:
 	// protocol record sizes
 	static size_t GetOldProtocolRecordSize();
 	static size_t GetProtocolRecordSize();
+
+	// database name
+	static const char * GetDBName() { return "Calendar"; }
 };
 
 inline std::ostream& operator<<(std::ostream &os, const Calendar &msg) {
