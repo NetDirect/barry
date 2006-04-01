@@ -42,6 +42,7 @@
 #include "builder.h"
 #include "record.h"
 #include "controller.h"
+#include "controllertmpl.h"
 
 #ifdef __BOOST_MODE__
 // Boost serialization seems to be picky about header order, do them all here

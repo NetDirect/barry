@@ -104,9 +104,15 @@ public:
 	void OpenMode(ModeType mode);
 
 	//////////////////////////////////
-	// database-specific
+	// Desktop mode - database specific
 	void LoadDatabase(unsigned int dbId, Parser &parser);
 	void SaveDatabase(unsigned int dbId, Builder &builder);
+
+	template <class RecordT, class StorageT> void LoadDatabaseByType(StorageT &store);
+	template <class RecordT, class StorageT> void SaveDatabaseByType(StorageT &store);
+
+	template <class StorageT> void LoadDatabaseByName(const std::string &name, StorageT &store);
+	template <class StorageT> void SaveDatabaseByName(const std::string &name, StorageT &store);
 };
 
 } // namespace Barry
