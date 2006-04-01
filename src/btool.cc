@@ -81,7 +81,7 @@ struct Store
 		try {
 
 			if( load && filename.size() ) {
-				// filename is available, attempt to save
+				// filename is available, attempt to load
 				cout << "Loading: " << filename << endl;
 				ifstream ifs(filename.c_str());
 				boost::archive::text_iarchive ia(ifs);
@@ -265,9 +265,14 @@ int main(int argc, char *argv[])
 			}
 		}
 
-		Init(data_dump);
+		// Initialize the barry library.  Must be called before
+		// anything else.
+		Barry::Init(data_dump);
 
-		Probe probe;
+		// Probe the USB bus for Blackberry devices and display.
+		// If user has specified a PIN, search for it in the
+		// available device list here as well
+		Barry::Probe probe;
 		int activeDevice = -1;
 		cout << "Blackberry devices found:" << endl;
 		for( int i = 0; i < probe.GetCount(); i++ ) {
@@ -296,24 +301,38 @@ int main(int argc, char *argv[])
 			}
 		}
 
-		// create our controller object
-		Controller con(probe.Get(activeDevice));
+		// Create our controller object
+		Barry::Controller con(probe.Get(activeDevice));
 
+		//
 		// execute each mode that was turned on
+		//
 
+
+		// Dump list of all databases to stdout
 		if( show_dbdb ) {
 			// open desktop mode socket
 			con.OpenMode(Controller::Desktop);
 			cout << con.GetDBDB() << endl;
 		}
 
+		// Dump list of contacts to an LDAP LDIF file
+		// This uses the Controller convenience templates
 		if( ldif_contacts ) {
+			// make sure we're in desktop mode
 			con.OpenMode(Controller::Desktop);
+
+			// create a storage functor object that accepts
+			// Barry::Contact objects as input
 			Contact2Ldif storage(ldifBaseDN);
-			RecordParser<Contact, Contact2Ldif> parser(storage);
-			con.LoadDatabase(con.GetDBID("Address Book"), parser);
+
+			// load all the Contact records into storage
+			con.LoadDatabaseByType<Barry::Contact>(storage);
 		}
 
+		// Dump contents of selected databases to stdout, or
+		// to file if specified.
+		// This is retrieving data from the Blackberry.
 		if( dbNames.size() ) {
 			vector<string>::iterator b = dbNames.begin();
 
@@ -325,6 +344,8 @@ int main(int argc, char *argv[])
 			}
 		}
 
+		// Save contents of file to specified databases
+		// This is writing data to the Blackberry.
 		if( saveDbNames.size() ) {
 			vector<string>::iterator b = saveDbNames.begin();
 
