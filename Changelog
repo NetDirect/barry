@@ -1,5 +1,17 @@
 Release: version 0.0.2 - 2005/??/??
 ------------------------------------------------------------------------------
+2006/03/31
+	- turned source code browsing on in Doxyfile
+	- added LoadDatabaseByName() and LoadDatabaseByType() template members
+		to the Controller class
+		- new file: controllertmpl.h
+	- documentation fixes in builder.h
+	- added static GetDBName() functions to all record classes, in
+		support of the template Controller functions
+	- fleshed out DatabaseDatabase::GetDBNumber() and GetDBName(),
+		returning errors properly
+	- documented sample btool.cc code better, and added example
+		of Controller template member usage
 2006/03/29
 	- copyright dates updated for 2006
 2006/01/05
