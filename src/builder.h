@@ -52,8 +52,10 @@ public:
 ///	- Record: One of the record classes in record.h
 ///	- Storage: A custom storage functor class.  An object of this type
 ///		will be called as a function with empty Record as an
-///		argument.  This happens on the fly as the data is sent
-///		to the device over USB, so it should not block forever.
+///		argument.  The storage class is expected to fill the
+///		record object in preparation for building the packet
+///		out of that data.  These calls happen on the fly as the data
+///		is sent to the device over USB, so it should not block forever.
 ///
 /// Example SaveDatabase() call:
 ///
