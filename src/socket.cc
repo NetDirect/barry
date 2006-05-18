@@ -57,6 +57,24 @@ Socket::~Socket()
 	}
 }
 
+//
+// Open
+//
+/// Open a logical socket on the device.
+///
+/// Both the socket number and the flag are based on the response to the
+/// SELECT_MODE command.  See Controller::SelectMode() for more info
+/// on this.
+///
+/// The packet sequence is normal for most socket operations.
+///
+///	- Down: command packet with OPEN_SOCKET
+///	- Up: optional sequence handshake packet
+///	- Up: command response, which repeats the socket and flag data
+///		as confirmation
+///
+/// \exception	Barry::BError
+///
 void Socket::Open(uint16_t socket, uint8_t flag)
 {
 	if( m_socket != 0 ) {
@@ -103,6 +121,16 @@ void Socket::Open(uint16_t socket, uint8_t flag)
 	m_flag = flag;
 }
 
+//
+// Close
+//
+/// Closes a non-default socket (i.e. non-zero socket number)
+///
+/// The packet sequence is just like Open(), except the command is
+/// CLOSE_SOCKET.
+///
+/// \exception	Barry::BError
+///
 void Socket::Close()
 {
 	if( m_socket != 0 ) {
@@ -160,11 +188,17 @@ void Socket::Close()
 	}
 }
 
-// sends 'send' data to device, and waits for response, using
-// "read first, write second" order observed in capture
 //
-// returns true on success, on failure, use GetLastStatus() for kernel
-// URB error code
+// Send
+//
+/// Sends 'send' data to device, and waits for response, using
+/// "read first, write second" order observed in capture.
+///
+/// \returns	bool
+///		- true on success
+///		- false on failure, use GetLastStatus() for kernel
+///			URB error code
+///
 bool Socket::Send(const Data &send, Data &receive)
 {
 	// Special case: it seems that sending packets with a size that's an
