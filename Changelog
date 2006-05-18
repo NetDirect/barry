@@ -1,5 +1,7 @@
 Release: version 0.0.2 - 2005/??/??
 ------------------------------------------------------------------------------
+2006/05/18
+	- make clean cleans up tests properly now
 2006/03/31
 	- turned source code browsing on in Doxyfile
 	- added LoadDatabaseByName() and LoadDatabaseByType() template members

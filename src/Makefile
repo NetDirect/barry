@@ -73,7 +73,7 @@ test-contact:	test-contact.o data.o base64.o
 	$(CXX) $(CXXFLAGS) -o test-contact test-contact.o data.o base64.o
 
 clean-tests:
-	rm -f test-data test-contact test-contact.o
+	rm -f test-data test-contact test-contact.o test-base64 test-time
 
 #################
 # Cleanup / Misc
