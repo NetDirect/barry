@@ -1,5 +1,8 @@
 Release: version 0.0.2 - 2005/??/??
 ------------------------------------------------------------------------------
+2006/05/25
+	- renamed Changelog to ChangeLog in preparation for autoconf
+	- renamed Todo to TODO in preparation for autoconf
 2006/05/18
 	- make clean cleans up tests properly now
 2006/03/31
