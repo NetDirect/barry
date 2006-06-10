@@ -48,7 +48,6 @@ namespace Barry {
 ///
 Controller::Controller(const ProbeResult &device)
 	: m_dev(device.m_dev),
-	m_iface(m_dev, BLACKBERRY_INTERFACE),
 	m_pin(device.m_pin),
 	m_socket(m_dev, device.m_ep.write, device.m_ep.read),
 	m_mode(Unspecified)
@@ -56,10 +55,13 @@ Controller::Controller(const ProbeResult &device)
 	if( !m_dev.SetConfiguration(BLACKBERRY_CONFIGURATION) )
 		throw BError(m_dev.GetLastError(),
 			"Controller: SetConfiguration failed");
+
+	m_iface = new Usb::Interface(m_dev, BLACKBERRY_INTERFACE);
 }
 
 Controller::~Controller()
 {
+	delete m_iface;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

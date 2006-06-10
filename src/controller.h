@@ -70,7 +70,7 @@ public:
 
 private:
 	Usb::Device m_dev;
-	Usb::Interface m_iface;
+	Usb::Interface *m_iface;
 	uint32_t m_pin;
 
 	Socket m_socket;

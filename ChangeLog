@@ -4,6 +4,9 @@ Release: version 0.0.2 - 2005/??/??
 	- added ServiceBook record class and parser code, based on some
 		of Ron Gage's reverse engineering... code is by Chris Frey
 	- added AUTHORS file
+	- fixed the libusb set_configuration/claim_interface order
+		bug in controller.{h,cc}... already fixed in probe,
+		but not controller.  Thanks Ron Gage for finding this.
 2006/05/25
 	- renamed Changelog to ChangeLog in preparation for autoconf
 	- renamed Todo to TODO in preparation for autoconf
