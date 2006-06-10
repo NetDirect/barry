@@ -135,6 +135,16 @@ void serialize(Archive &ar, Barry::Calendar &c, const unsigned int ver)
 	}
 }
 
+template <class Archive>
+void serialize(Archive &ar, Barry::ServiceBook &c, const unsigned int ver)
+{
+	ar & make_nvp("RecordId", c.RecordId);
+
+	if( ver < BARRY_POD_MAP_VERSION ) {
+		ar & make_nvp("Unknowns", c.Unknowns);
+	}
+}
+
 }} // namespace boost::serialization
 
 #endif

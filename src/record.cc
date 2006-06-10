@@ -1106,6 +1106,219 @@ void Calendar::Dump(std::ostream &os) const
 }
 
 
+///////////////////////////////////////////////////////////////////////////////
+// ServiceBook class
+
+// service book field codes
+/*
+#define CALFC_APPT_TYPE_FLAG		0x01
+#define CALFC_SUBJECT			0x02
+#define CALFC_NOTES			0x03
+#define CALFC_LOCATION			0x04
+#define CALFC_NOTIFICATION_TIME		0x05
+#define CALFC_START_TIME		0x06
+#define CALFC_END_TIME			0x07
+#define CALFC_RECURRANCE_DATA		0x0c
+#define CALFC_VERSION_DATA		0x10
+#define CALFC_NOTIFICATION_DATA		0x1a
+#define CALFC_ALLDAYEVENT_FLAG		0xff
+*/
+#define SBFC_END			0xffff
+
+FieldLink<ServiceBook> ServiceBookFieldLinks[] = {
+/*
+   { CALFC_SUBJECT,    "Subject",    0, 0,    &ServiceBook::Subject, 0, 0 },
+   { CALFC_NOTES,      "Notes",      0, 0,    &ServiceBook::Notes, 0, 0 },
+   { CALFC_LOCATION,   "Location",   0, 0,    &ServiceBook::Location, 0, 0 },
+   { CALFC_NOTIFICATION_TIME,"Notification Time",0,0, 0, 0, &ServiceBook::NotificationTime },
+   { CALFC_START_TIME, "Start Time", 0, 0,    0, 0, &ServiceBook::StartTime },
+   { CALFC_END_TIME,   "End Time",   0, 0,    0, 0, &ServiceBook::EndTime },
+*/
+   { SBFC_END,         "End of List",0, 0,    0, 0, 0 }
+};
+
+size_t ServiceBook::GetOldProtocolRecordSize()
+{
+	return sizeof(Barry::OldServiceBookRecord);
+}
+
+size_t ServiceBook::GetProtocolRecordSize()
+{
+	throw std::logic_error("ServiceBook::GetProtocolRecordSize not yet implemented");
+//	return sizeof(Barry::ServiceBookRecord);
+	return 0;
+}
+
+ServiceBook::ServiceBook()
+	: RecordId(0)
+{
+	Clear();
+}
+
+ServiceBook::~ServiceBook()
+{
+}
+
+const unsigned char* ServiceBook::ParseField(const unsigned char *begin,
+					  const unsigned char *end)
+{
+	const CommonField *field = (const CommonField *) begin;
+
+	// advance and check size
+	begin += COMMON_FIELD_HEADER_SIZE + field->size;
+	if( begin > end )		// if begin==end, we are ok
+		return begin;
+
+	if( !field->size )		// if field has no size, something's up
+		return begin;
+
+	// cycle through the type table
+	for(	FieldLink<ServiceBook> *b = ServiceBookFieldLinks;
+		b->type != SBFC_END;
+		b++ )
+	{
+		if( b->type == field->type ) {
+			if( b->strMember ) {
+				std::string &s = this->*(b->strMember);
+				s.assign((const char *)field->u.raw, field->size-1);
+				return begin;	// done!
+			}
+			else if( b->timeMember ) {
+				time_t &t = this->*(b->timeMember);
+				t = min2time(field->u.min1900);
+				return begin;
+			}
+		}
+	}
+
+	// handle special cases
+	switch( field->type )
+	{
+	}
+
+	// if still not handled, add to the Unknowns list
+	UnknownField uf;
+	uf.type = field->type;
+	uf.data.assign((const char*)field->u.raw, field->size);
+	Unknowns.push_back(uf);
+
+	// return new pointer for next field
+	return begin;
+}
+
+void ServiceBook::Parse(const Data &data, size_t offset, unsigned int operation)
+{
+	const void *begin = 0;
+
+	switch( operation )
+	{
+	case SB_DBOP_GET_RECORDS:
+		// using the new protocol
+		// save the contact record ID
+		throw std::logic_error("New ServiceBook: Not yet implemented");
+//		RecordId = pack->u.db.u.calendar.uniqueId;
+//		begin = &pack->u.db.u.calendar.field[0];
+		break;
+
+	case SB_DBOP_OLD_GET_RECORDS_REPLY:
+		{
+			// using the old protocol
+			// save the contact record ID
+			MAKE_RECORD(const Barry::OldServiceBookRecord, sb, data, offset);
+			RecordId = sb->uniqueId;
+			begin = &sb->field[0];
+			break;
+		}
+	}
+
+	ParseCommonFields(*this, begin, data.GetData() + data.GetSize());
+}
+
+//
+// Build
+//
+/// Build a raw protocol packet based on data in the class.
+///
+void ServiceBook::Build(Data &data, size_t offset) const
+{
+	throw std::logic_error("ServiceBook::Build not yet implemented");
+/*
+	data.Zap();
+
+	// uploading always seems to use the old record
+	size_t size = offset + OLD_SERVICE_BOOK_RECORD_HEADER_SIZE;
+	unsigned char *pd = data.GetBuffer(size);
+	MAKE_RECORD_PTR(Barry::OldServiceBookRecord, sbook, pd, offset);
+
+	sbook->uniqueId = RecordId;
+	sbook->unknown = 0;
+
+	// output the type first
+	BuildField(data, size, SBFC_APPT_TYPE_FLAG, Recurring ? '*' : 'a');
+
+	// output all day event flag only if set
+	if( AllDayEvent )
+		BuildField(data, size, SBFC_ALLDAYEVENT_FLAG, (char)1);
+
+	// cycle through the type table
+	for(	const FieldLink<ServiceBook> *b = ServiceBookFieldLinks;
+		b->type != SBFC_END;
+		b++ )
+	{
+		if( b->strMember ) {
+			const std::string &s = this->*(b->strMember);
+			if( s.size() )
+				BuildField(data, size, b->type, s);
+		}
+		else if( b->timeMember ) {
+			time_t t = this->*(b->timeMember);
+			if( t > 0 )
+				BuildField1900(data, size, b->type, t);
+		}
+	}
+
+	// and finally save unknowns
+	UnknownsType::const_iterator
+		ub = Unknowns.begin(), ue = Unknowns.end();
+	for( ; ub != ue; ub++ ) {
+		BuildField(data, size, ub->type, ub->data);
+	}
+
+	data.ReleaseBuffer(size);
+*/
+}
+
+void ServiceBook::Clear()
+{
+	Unknowns.clear();
+}
+
+void ServiceBook::Dump(std::ostream &os) const
+{
+	os << "ServiceBook entry: 0x" << setbase(16) << RecordId << "\n";
+
+	// cycle through the type table
+	for(	const FieldLink<ServiceBook> *b = ServiceBookFieldLinks;
+		b->type != SBFC_END;
+		b++ )
+	{
+		if( b->strMember ) {
+			const std::string &s = this->*(b->strMember);
+			if( s.size() )
+				os << "   " << b->name << ": " << s << "\n";
+		}
+		else if( b->timeMember ) {
+			time_t t = this->*(b->timeMember);
+			if( t > 0 )
+				os << "   " << b->name << ": " << ctime(&t);
+		}
+	}
+
+	// print any unknowns
+	os << Unknowns;
+}
+
+
 } // namespace Barry
 
 

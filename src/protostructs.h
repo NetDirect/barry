@@ -278,6 +278,19 @@ struct CalendarRecord
 
 
 ///////////////////////////////////////////////////////////////////////////////
+// Service Book field and record structures
+
+struct OldServiceBookRecord
+{
+	uint32_t	uniqueId;
+	uint8_t		unknown;
+	CommonField	field[1];
+} __attribute__ ((packed));
+#define OLD_SERVICE_BOOK_RECORD_HEADER_SIZE (sizeof(Barry::OldServiceBookRecord) - sizeof(Barry::CommonField))
+
+
+
+///////////////////////////////////////////////////////////////////////////////
 // Database access command structure
 
 // even fragmented packets have a tableCmd

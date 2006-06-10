@@ -313,6 +313,43 @@ inline std::ostream& operator<<(std::ostream &os, const Calendar &msg) {
 	return os;
 }
 
+
+class ServiceBook
+{
+public:
+	typedef std::vector<UnknownField>		UnknownsType;
+
+	uint64_t RecordId;
+	UnknownsType Unknowns;
+
+public:
+	ServiceBook();
+	~ServiceBook();
+
+	const unsigned char* ParseField(const unsigned char *begin,
+		const unsigned char *end);
+	void Parse(const Data &data, size_t offset, unsigned int operation);
+	void Build(Data &data, size_t offset) const;
+	void Clear();
+
+	void Dump(std::ostream &os) const;
+
+	// sorting
+	bool operator<(const ServiceBook &other) const { return RecordId < RecordId; }
+
+	// protocol record sizes
+	static size_t GetOldProtocolRecordSize();
+	static size_t GetProtocolRecordSize();
+
+	// database name
+	static const char * GetDBName() { return "Service Book"; }
+};
+
+inline std::ostream& operator<<(std::ostream &os, const ServiceBook &msg) {
+	msg.Dump(os);
+	return os;
+}
+
 /// @}
 
 } // namespace Barry

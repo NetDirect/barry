@@ -166,6 +166,11 @@ auto_ptr<Parser> GetParser(const string &name, const string &filename)
 			new RecordParser<Calendar, Store<Calendar> > (
 				new Store<Calendar>(filename, false)));
 	}
+	else if( name == "Service Book" ) {
+		return auto_ptr<Parser>(
+			new RecordParser<ServiceBook, Store<ServiceBook> > (
+				new Store<ServiceBook>(filename, false)));
+	}
 	else {
 		// unknown database, use null parser
 		return auto_ptr<Parser>( new Parser );
@@ -190,6 +195,11 @@ auto_ptr<Builder> GetBuilder(const string &name, const string &filename)
 		return auto_ptr<Parser>(
 			new RecordParser<Calendar, Store<Calendar> > (
 				new Store<Calendar>(filename, true)));
+	}
+	else if( name == "Service Book" ) {
+		return auto_ptr<Parser>(
+			new RecordParser<ServiceBook, Store<ServiceBook> > (
+				new Store<ServiceBook>(filename, true)));
 	}
 */
 	else {
