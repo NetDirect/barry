@@ -3,6 +3,7 @@ Release: version 0.0.2 - 2005/??/??
 2006/06/09
 	- added ServiceBook record class and parser code, based on some
 		of Ron Gage's reverse engineering... code is by Chris Frey
+	- added AUTHORS file
 2006/05/25
 	- renamed Changelog to ChangeLog in preparation for autoconf
 	- renamed Todo to TODO in preparation for autoconf
