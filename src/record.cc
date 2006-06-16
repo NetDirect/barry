@@ -1110,30 +1110,20 @@ void Calendar::Dump(std::ostream &os) const
 // ServiceBook class
 
 // service book field codes
-/*
-#define CALFC_APPT_TYPE_FLAG		0x01
-#define CALFC_SUBJECT			0x02
-#define CALFC_NOTES			0x03
-#define CALFC_LOCATION			0x04
-#define CALFC_NOTIFICATION_TIME		0x05
-#define CALFC_START_TIME		0x06
-#define CALFC_END_TIME			0x07
-#define CALFC_RECURRANCE_DATA		0x0c
-#define CALFC_VERSION_DATA		0x10
-#define CALFC_NOTIFICATION_DATA		0x1a
-#define CALFC_ALLDAYEVENT_FLAG		0xff
-*/
+#define SBFC_OLD_NAME			0x01
+#define SBFC_NAME			0x03
+#define SBFC_OLD_UNIQUE_ID		0x06
+#define SBFC_UNIQUE_ID			0x07
+#define SBFC_CONTENT_ID			0x08
+#define SBFC_OLD_DESC			0x32
+#define SBFC_DESCRIPTION		0x0f
+#define SBFC_DSID			0xa1
+#define SBFC_BES_DOMAIN			0xa2
+#define SBFC_USER_ID			0xa3
 #define SBFC_END			0xffff
 
 FieldLink<ServiceBook> ServiceBookFieldLinks[] = {
-/*
-   { CALFC_SUBJECT,    "Subject",    0, 0,    &ServiceBook::Subject, 0, 0 },
-   { CALFC_NOTES,      "Notes",      0, 0,    &ServiceBook::Notes, 0, 0 },
-   { CALFC_LOCATION,   "Location",   0, 0,    &ServiceBook::Location, 0, 0 },
-   { CALFC_NOTIFICATION_TIME,"Notification Time",0,0, 0, 0, &ServiceBook::NotificationTime },
-   { CALFC_START_TIME, "Start Time", 0, 0,    0, 0, &ServiceBook::StartTime },
-   { CALFC_END_TIME,   "End Time",   0, 0,    0, 0, &ServiceBook::EndTime },
-*/
+   { SBFC_DSID,        "DSID",       0, 0,    &ServiceBook::DSID, 0, 0 },
    { SBFC_END,         "End of List",0, 0,    0, 0, 0 }
 };
 
@@ -1150,7 +1140,10 @@ size_t ServiceBook::GetProtocolRecordSize()
 }
 
 ServiceBook::ServiceBook()
-	: RecordId(0)
+	: NameType(SBFC_OLD_NAME),
+	DescType(SBFC_OLD_DESC),
+	UniqueIdType(SBFC_OLD_UNIQUE_ID),
+	RecordId(0)
 {
 	Clear();
 }
@@ -1194,6 +1187,31 @@ const unsigned char* ServiceBook::ParseField(const unsigned char *begin,
 	// handle special cases
 	switch( field->type )
 	{
+	case SBFC_OLD_NAME:		// strings with old/new type codes
+	case SBFC_NAME:
+		Name.assign((const char *)field->u.raw, field->size-1);
+		NameType = field->type;
+		return begin;
+
+	case SBFC_OLD_DESC:
+	case SBFC_DESCRIPTION:
+		Description.assign((const char *)field->u.raw, field->size-1);
+		DescType = field->type;
+		return begin;
+
+	case SBFC_OLD_UNIQUE_ID:
+	case SBFC_UNIQUE_ID:
+		UniqueId.assign((const char *)field->u.raw, field->size);
+		UniqueIdType = field->type;
+		return begin;
+
+	case SBFC_CONTENT_ID:
+		ContentId.assign((const char *)field->u.raw, field->size);
+		return begin;
+
+	case SBFC_BES_DOMAIN:
+		BesDomain.assign((const char *)field->u.raw, field->size);
+		return begin;
 	}
 
 	// if still not handled, add to the Unknowns list
@@ -1313,6 +1331,14 @@ void ServiceBook::Dump(std::ostream &os) const
 				os << "   " << b->name << ": " << ctime(&t);
 		}
 	}
+
+	// special cases
+	if( UniqueId.size() )
+		os << "   Unique ID: " << UniqueId << "\n";
+	if( ContentId.size() )
+		os << "   Content ID: " << ContentId << "\n";
+	if( BesDomain.size() )
+		os << "   (BES) Domain: " << BesDomain << "\n";
 
 	// print any unknowns
 	os << Unknowns;

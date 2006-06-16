@@ -316,10 +316,19 @@ inline std::ostream& operator<<(std::ostream &os, const Calendar &msg) {
 
 class ServiceBook
 {
+	int NameType, DescType, UniqueIdType;
+
 public:
 	typedef std::vector<UnknownField>		UnknownsType;
 
 	uint64_t RecordId;
+	std::string Name;
+	std::string Description;
+	std::string DSID;
+	std::string BesDomain;
+	std::string UniqueId;
+	std::string ContentId;
+
 	UnknownsType Unknowns;
 
 public:
