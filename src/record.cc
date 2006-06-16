@@ -1107,14 +1107,173 @@ void Calendar::Dump(std::ostream &os) const
 
 
 ///////////////////////////////////////////////////////////////////////////////
+// ServiceBookConfig class
+
+// service book packed field codes
+#define SBFCC_END			0xffff
+
+FieldLink<ServiceBookConfig> ServiceBookConfigFieldLinks[] = {
+//   { SBFC_DSID,        "DSID",       0, 0,    &ServiceBook::DSID, 0, 0 },
+   { SBFCC_END,         "End of List",0, 0,    0, 0, 0 }
+};
+
+ServiceBookConfig::ServiceBookConfig()
+	: Format(0)
+{
+	Clear();
+}
+
+ServiceBookConfig::~ServiceBookConfig()
+{
+}
+
+const unsigned char* ServiceBookConfig::ParseField(const unsigned char *begin,
+						   const unsigned char *end)
+{
+	const void *raw;
+	uint16_t size, type;
+
+	switch( Format )
+	{
+	case 0x02:
+		{
+			const PackedField_02 *field = (const PackedField_02 *) begin;
+			raw = field->raw;
+			size = field->size;
+			type = field->type;
+			begin += PACKED_FIELD_02_HEADER_SIZE + size;
+		}
+		break;
+
+	case 0x10:
+		{
+			const PackedField_10 *field = (const PackedField_10 *) begin;
+			raw = field->raw;
+			size = field->size;
+			type = field->type;
+			begin += PACKED_FIELD_10_HEADER_SIZE + size;
+		}
+		break;
+
+	default:
+		eout("Unknown packed field format" << Format);
+		return begin + 1;
+	}
+
+
+	// check size
+	if( begin > end )		// if begin==end, we are ok
+		return begin;
+
+	if( !size )		// if field has no size, something's up
+		return begin;
+
+	// cycle through the type table
+	for(	FieldLink<ServiceBookConfig> *b = ServiceBookConfigFieldLinks;
+		b->type != SBFCC_END;
+		b++ )
+	{
+		if( b->type == type ) {
+			if( b->strMember ) {
+				std::string &s = this->*(b->strMember);
+				s.assign((const char *)raw, size-1);
+				return begin;	// done!
+			}
+		}
+	}
+
+/*
+	// handle special cases
+	switch( type )
+	{
+	}
+*/
+
+	// if still not handled, add to the Unknowns list
+	UnknownField uf;
+	uf.type = type;
+	uf.data.assign((const char*)raw, size);
+	Unknowns.push_back(uf);
+
+	// return new pointer for next field
+	return begin;
+}
+
+void ServiceBookConfig::Parse(const Data &data, size_t offset, unsigned int operation)
+{
+	const void *begin = 0;
+
+	switch( operation )
+	{
+	case SB_DBOP_GET_RECORDS:
+	case SB_DBOP_OLD_GET_RECORDS_REPLY:
+	default:	// FIXME - any operation is ok here... we don't know yet if it makes a difference
+		{
+			// using the old protocol
+			// save the contact record ID
+			MAKE_RECORD(const Barry::ServiceBookConfigField, sbc, data, offset);
+			Format = sbc->format;
+			begin = &sbc->fields[0];
+			break;
+		}
+	}
+
+	ParseCommonFields(*this, begin, data.GetData() + data.GetSize());
+}
+
+//
+// Build
+//
+/// Build a raw protocol packet based on data in the class.
+///
+void ServiceBookConfig::Build(Data &data, size_t offset) const
+{
+	throw std::logic_error("ServiceBookConfig::Build not yet implemented");
+}
+
+void ServiceBookConfig::Clear()
+{
+	Unknowns.clear();
+}
+
+void ServiceBookConfig::Dump(std::ostream &os) const
+{
+	os << "   ServiceBookConfig Format: " << setbase(16) << (uint16_t)Format << "\n";
+
+	// cycle through the type table
+	for(	const FieldLink<ServiceBookConfig> *b = ServiceBookConfigFieldLinks;
+		b->type != SBFCC_END;
+		b++ )
+	{
+		if( b->strMember ) {
+			const std::string &s = this->*(b->strMember);
+			if( s.size() )
+				os << "      " << b->name << ": " << s << "\n";
+		}
+		else if( b->timeMember ) {
+			time_t t = this->*(b->timeMember);
+			if( t > 0 )
+				os << "      " << b->name << ": " << ctime(&t);
+		}
+	}
+
+	// print any unknowns
+	os << Unknowns;
+	os << "   ------------------- End of Config Field\n";
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
 // ServiceBook class
 
 // service book field codes
 #define SBFC_OLD_NAME			0x01
+#define SBFC_HIDDEN_NAME		0x02
 #define SBFC_NAME			0x03
 #define SBFC_OLD_UNIQUE_ID		0x06
 #define SBFC_UNIQUE_ID			0x07
 #define SBFC_CONTENT_ID			0x08
+#define SBFC_CONFIG			0x09
 #define SBFC_OLD_DESC			0x32
 #define SBFC_DESCRIPTION		0x0f
 #define SBFC_DSID			0xa1
@@ -1123,6 +1282,7 @@ void Calendar::Dump(std::ostream &os) const
 #define SBFC_END			0xffff
 
 FieldLink<ServiceBook> ServiceBookFieldLinks[] = {
+   { SBFC_HIDDEN_NAME, "Hidden Name",0, 0,    &ServiceBook::HiddenName, 0, 0 },
    { SBFC_DSID,        "DSID",       0, 0,    &ServiceBook::DSID, 0, 0 },
    { SBFC_END,         "End of List",0, 0,    0, 0, 0 }
 };
@@ -1212,6 +1372,14 @@ const unsigned char* ServiceBook::ParseField(const unsigned char *begin,
 	case SBFC_BES_DOMAIN:
 		BesDomain.assign((const char *)field->u.raw, field->size);
 		return begin;
+
+	case SBFC_CONFIG:
+		{
+			Data config((const void *)field->u.raw, field->size);
+			Config.Parse(config, 0, 0);
+		}
+		break;	// break here so raw packet is still visible in dump
+//		return begin;
 	}
 
 	// if still not handled, add to the Unknowns list
@@ -1309,6 +1477,7 @@ void ServiceBook::Build(Data &data, size_t offset) const
 void ServiceBook::Clear()
 {
 	Unknowns.clear();
+	Config.Clear();
 }
 
 void ServiceBook::Dump(std::ostream &os) const
@@ -1339,6 +1508,8 @@ void ServiceBook::Dump(std::ostream &os) const
 		os << "   Content ID: " << ContentId << "\n";
 	if( BesDomain.size() )
 		os << "   (BES) Domain: " << BesDomain << "\n";
+
+	os << Config;
 
 	// print any unknowns
 	os << Unknowns;

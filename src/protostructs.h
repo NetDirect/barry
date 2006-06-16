@@ -202,22 +202,44 @@ struct MessageAddress
 ///////////////////////////////////////////////////////////////////////////////
 // Common database field structure
 
+union CommonFieldData
+{
+	GroupLink	link;
+	MessageAddress	addr;
+	int32_t		min1900;
+	uint8_t		raw[1];
+
+} __attribute__ ((packed));
+
 struct CommonField
 {
 	uint16_t	size;		// including null terminator
 	uint8_t		type;
-
-	union FieldData
-	{
-		GroupLink	link;
-		MessageAddress	addr;
-		int32_t		min1900;
-		uint8_t		raw[1];
-
-	} __attribute__ ((packed)) u;
+	CommonFieldData	u;
 } __attribute__ ((packed));
-#define COMMON_FIELD_HEADER_SIZE	(sizeof(Barry::CommonField) - sizeof(Barry::CommonField::FieldData))
+#define COMMON_FIELD_HEADER_SIZE	(sizeof(Barry::CommonField) - sizeof(Barry::CommonFieldData))
 #define COMMON_FIELD_MIN1900_SIZE	(sizeof(int32_t))
+
+
+///////////////////////////////////////////////////////////////////////////////
+// Packed field structures
+
+struct PackedField_02
+{
+	uint8_t		code;
+	uint8_t		size;
+	uint8_t		type;
+	uint8_t		raw[1];
+} __attribute__ ((packed));
+#define PACKED_FIELD_02_HEADER_SIZE	(sizeof(Barry::PackedField_02) - 1)
+
+struct PackedField_10
+{
+	uint8_t		type;
+	uint8_t		size;
+	uint8_t		raw[1];
+} __attribute__ ((packed));
+#define PACKED_FIELD_10_HEADER_SIZE	(sizeof(Barry::PackedField_10) - 1)
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -279,6 +301,12 @@ struct CalendarRecord
 
 ///////////////////////////////////////////////////////////////////////////////
 // Service Book field and record structures
+
+struct ServiceBookConfigField
+{
+	uint8_t		format;
+	uint8_t		fields[1];
+} __attribute__ ((packed));
 
 struct OldServiceBookRecord
 {

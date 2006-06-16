@@ -9,6 +9,11 @@ Release: version 0.0.2 - 2005/??/??
 		- DSID
 		- bes domain / domain
 	- date change in legal.txt
+	- added initial parsing of ServiceBook field 0x09, and calling it
+		ServiceBookConfig for now, for lack of a better name
+	- added parsing for ServiceBook field 0x02 on 72xx Blackberries...
+		seems to be a name or description, but doesn't appear
+		in the device's own GUI... called "Hidden Name" for now
 2006/06/09
 	- added ServiceBook record class and parser code, based on some
 		of Ron Gage's reverse engineering... code is by Chris Frey

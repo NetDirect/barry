@@ -314,6 +314,36 @@ inline std::ostream& operator<<(std::ostream &os, const Calendar &msg) {
 }
 
 
+// This is a packed field, which is a group of fields packed in
+// variable length records inside one larger field of a normal record.
+class ServiceBookConfig
+{
+public:
+	typedef std::vector<UnknownField>		UnknownsType;
+
+	uint8_t Format;
+
+	UnknownsType Unknowns;
+
+public:
+	ServiceBookConfig();
+	~ServiceBookConfig();
+
+	const unsigned char* ParseField(const unsigned char *begin,
+		const unsigned char *end);
+	void Parse(const Data &data, size_t offset, unsigned int operation);
+	void Build(Data &data, size_t offset) const;
+	void Clear();
+
+	void Dump(std::ostream &os) const;
+};
+
+inline std::ostream& operator<<(std::ostream &os, const ServiceBookConfig &msg) {
+	msg.Dump(os);
+	return os;
+}
+
+
 class ServiceBook
 {
 	int NameType, DescType, UniqueIdType;
@@ -323,11 +353,13 @@ public:
 
 	uint64_t RecordId;
 	std::string Name;
+	std::string HiddenName;
 	std::string Description;
 	std::string DSID;
 	std::string BesDomain;
 	std::string UniqueId;
 	std::string ContentId;
+	ServiceBookConfig Config;
 
 	UnknownsType Unknowns;
 
