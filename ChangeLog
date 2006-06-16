@@ -1,5 +1,14 @@
 Release: version 0.0.2 - 2005/??/??
 ------------------------------------------------------------------------------
+2006/06/16
+	- added parsing of service book fields:
+		- old and new name
+		- old and new unique ID (UID)
+		- content ID (CID)
+		- old and new description
+		- DSID
+		- bes domain / domain
+	- date change in legal.txt
 2006/06/09
 	- added ServiceBook record class and parser code, based on some
 		of Ron Gage's reverse engineering... code is by Chris Frey
