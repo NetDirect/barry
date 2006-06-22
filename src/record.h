@@ -201,6 +201,7 @@ public:
 
 	void Dump(std::ostream &os) const;
 	void DumpLdif(std::ostream &os, const std::string &baseDN) const;
+	bool ReadLdif(std::istream &is);	// returns true on success
 
 	// sorting - put group links at the end
 	bool operator<(const Contact &other) const {
@@ -215,6 +216,9 @@ public:
 
 	// database name
 	static const char * GetDBName() { return "Address Book"; }
+
+	// helpers
+	static void SplitName(const std::string &full, std::string &first, std::string &last);
 };
 
 inline std::ostream& operator<< (std::ostream &os, const Contact &contact) {

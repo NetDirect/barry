@@ -419,6 +419,7 @@ size_t Contact::GetProtocolRecordSize()
 }
 
 Contact::Contact()
+	: RecordId(0)
 {
 }
 
@@ -580,6 +581,35 @@ void Contact::Build(Data &data, size_t offset) const
 	data.ReleaseBuffer(size);
 }
 
+void Contact::Clear()
+{
+	Email.clear();
+	Phone.clear();
+	Fax.clear();
+	WorkPhone.clear();
+	HomePhone.clear();
+	MobilePhone.clear();
+	Pager.clear();
+	PIN.clear();
+	FirstName.clear();
+	LastName.clear();
+	Company.clear();
+	DefaultCommunicationsMethod.clear();
+	Address1.clear();
+	Address2.clear();
+	Address3.clear();
+	City.clear();
+	Province.clear();
+	PostalCode.clear();
+	Country.clear();
+	Title.clear();
+	PublicKey.clear();
+	Notes.clear();
+
+	GroupLinks.clear();
+	Unknowns.clear();
+}
+
 //
 // GetPostalAddress
 //
@@ -725,6 +755,155 @@ void Contact::DumpLdif(std::ostream &os, const std::string &baseDN) const
 	// cleanup the stream
 	os.flags(oldflags);
 	os.fill(fill);
+}
+
+bool Contact::ReadLdif(std::istream &is)
+{
+	string line;
+
+	// start fresh
+	Clear();
+
+	// search for beginning dn: line
+	bool found = false;
+	while( getline(is, line) ) {
+		if( strncmp(line.c_str(), "dn: ", 4) == 0 ) {
+			found = true;
+			break;
+		}
+	}
+	if( !found )
+		return false;
+
+	// storage for various name styles
+	string cn, displayName, sn, givenName;
+	string coded, decode;
+	string *b64field = 0;
+
+	// read ldif lines until empty line is found
+	while( getline(is, line) && line.size() ) {
+
+		if( b64field ) {
+			// processing a base64 encoded field
+			if( line[0] == ' ' ) {
+				coded += "\n";
+				coded += line;
+				continue;
+			}
+			else {
+				// end of base64 block
+				base64_decode(coded, decode);
+				*b64field = decode;
+				coded.clear();
+				b64field = 0;
+			}
+			// fall through to process new line
+		}
+
+		if( strncmp(line.c_str(), "cn: ", 4) == 0 ) {
+			cn = line.c_str() + 4;	// full name
+		}
+		else if( strncmp(line.c_str(), "displayName: ", 13) == 0 ) {
+			displayName = line.c_str() + 13;	// full name
+		}
+		else if( strncmp(line.c_str(), "sn: ", 4) == 0 ) {
+			sn = line.c_str() + 4;	// last name
+		}
+		else if( strncmp(line.c_str(), "givenName: ", 11) == 0 ) {
+			givenName = line.c_str() + 11;	// first name
+		}
+		else if( strncmp(line.c_str(), "street:: ", 9) == 0 ) {
+			coded = line.substr(9);
+			b64field = &Address1;
+
+		}
+//		else if( strncmp(line.c_str(), "postalAddress:: ", 16) == 0 ) {
+//			std::string FullAddress = GetPostalAddress();
+//			if( FullAddress.size() && base64_encode(FullAddress, b64) )
+//				os << "postalAddress:: " << b64 << "\n";
+//		}
+		else if( strncmp(line.c_str(), "note:: ", 7) == 0 ) {
+			coded = line.substr(7);
+			b64field = &Notes;
+		}
+		else {
+
+			// cycle through the type table
+			for(	FieldLink<Contact> *b = ContactFieldLinks;
+				b->type != CFC_INVALID_FIELD;
+				b++ )
+			{
+				// read fields
+				if( b->ldif ) {
+					std::string &field = this->*(b->strMember);
+					std::string key = b->ldif;
+					key += ": ";
+
+					if( strncmp(line.c_str(), key.c_str(), key.size()) == 0 ) {
+						field = line.c_str() + key.size();
+						break;
+					}
+				}
+			}
+		}
+	}
+
+	if( b64field ) {
+		// clean up base64 decoding
+		base64_decode(coded, decode);
+		*b64field = decode;
+		coded.clear();
+		b64field = 0;
+	}
+
+	// find the best match for name... prefer sn/givenName if available
+	if( sn.size() ) {
+		LastName = sn;
+	}
+	if( givenName.size() ) {
+		FirstName = givenName;
+	}
+
+	if( !LastName.size() || !FirstName.size() ) {
+		string first, last;
+
+		// still don't have a complete name, check cn first
+		if( cn.size() ) {
+			SplitName(cn, first, last);
+			if( !LastName.size() && last.size() )
+				LastName = last;
+			if( !FirstName.size() && first.size() )
+				FirstName = first;
+		}
+
+		// displayName is last chance
+		if( displayName.size() ) {
+			SplitName(displayName, first, last);
+			if( !LastName.size() && last.size() )
+				LastName = last;
+			if( !FirstName.size() && first.size() )
+				FirstName = first;
+		}
+	}
+
+	return LastName.size() && FirstName.size();
+}
+
+void Contact::SplitName(const std::string &full, std::string &first, std::string &last)
+{
+	first.clear();
+	last.clear();
+
+	string::size_type pos = full.find_last_of(' ');
+	if( pos != string::npos ) {
+		// has space, assume last word is last name
+		last = full.c_str() + pos + 1;
+		first = full.substr(0, pos);
+	}
+	else {
+		// no space, assume only first name
+		first = full.substr(0);
+	}
 }
 
 
