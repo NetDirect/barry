@@ -107,7 +107,7 @@ struct Store
 	}
 	~Store()
 	{
-		cout << "Store counted " << count << " records." << endl;
+		cout << "Store counted " << dec << count << " records." << endl;
 #ifdef __BOOST_MODE__
 		try {
 
@@ -118,7 +118,7 @@ struct Store
 				ofstream ofs(filename.c_str());
 				boost::archive::text_oarchive oa(ofs);
 				oa << r;
-				cout << r.size() << " records saved to '"
+				cout << dec << r.size() << " records saved to '"
 					<< filename << "'" << endl;
 			}
 
