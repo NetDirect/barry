@@ -61,6 +61,7 @@ private:
 	// sends 'send' data to device, and waits for response, using
 	// "read first, write second" order observed in capture
 	void AppendFragment(Data &whole, const Data &fragment);
+	unsigned int MakeNextFragment(const Data &whole, Data &fragment, unsigned int offset = 0);
 	void CheckSequence(const Data &seq);
 
 public:

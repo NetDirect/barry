@@ -269,6 +269,47 @@ void Socket::AppendFragment(Data &whole, const Data &fragment)
 	// the real size size
 }
 
+// If offset is 0, starts fresh, taking the first fragment packet size chunk
+// out of whole and creating a sendable packet in fragment.  Returns the
+// next offset if there is still more data, or 0 if finished.
+unsigned int Socket::MakeNextFragment(const Data &whole, Data &fragment, unsigned int offset)
+{
+	// sanity check
+	if( whole.GetSize() < SB_FRAG_HEADER_SIZE ) {
+		eout("Whole packet too short to fragment: " << whole.GetSize());
+		throw BError("Socket: Whole packet too short to fragment");
+	}
+
+	// calculate size
+	unsigned int todo = whole.GetSize() - SB_FRAG_HEADER_SIZE - offset;
+	unsigned int nextOffset = 0;
+	if( todo > (MAX_PACKET_SIZE - SB_FRAG_HEADER_SIZE) ) {
+		todo = MAX_PACKET_SIZE - SB_FRAG_HEADER_SIZE;
+		nextOffset = offset + todo;
+	}
+
+	// create fragment header
+	unsigned char *buf = fragment.GetBuffer(SB_FRAG_HEADER_SIZE + todo);
+	memcpy(buf, whole.GetData(), SB_FRAG_HEADER_SIZE);
+
+	// copy over a fragment size of data
+	memcpy(buf + SB_FRAG_HEADER_SIZE, whole.GetData() + SB_FRAG_HEADER_SIZE + offset, todo);
+
+	// update fragment's size and command type
+	Barry::Packet *wpack = (Barry::Packet *) buf;
+	wpack->size = (uint16_t) (todo + SB_FRAG_HEADER_SIZE);
+	if( nextOffset )
+		wpack->command = SB_COMMAND_DB_FRAGMENTED;
+	else
+		wpack->command = SB_COMMAND_DB_DATA;
+
+	// adjust the new fragment size
+	fragment.ReleaseBuffer(SB_FRAG_HEADER_SIZE + todo);
+
+	// return next round
+	return nextOffset;
+}
+
 void Socket::CheckSequence(const Data &seq)
 {
 //	if( m_socket == 0 ) {
@@ -334,19 +375,48 @@ bool Socket::Packet(const Data &send, Data &receive)
 		throw std::logic_error("Socket: unknown send data in Packet()");
 	}
 
-	if( send.GetSize() > MAX_PACKET_SIZE ) {
-		// FIXME - must check send packet to see whether
-		// fragmentation on the way down is required
-		// not yet implemented
-		throw std::logic_error("Socket: fragmented sends not implemented");
-	}
-
 	Data inFrag;
 	receive.Zap();
 
-	// send command
-	if( !Send(send, inFrag) )
-		return false;
+	if( send.GetSize() <= MAX_PACKET_SIZE ) {
+		// send non-fragmented
+		if( !Send(send, inFrag) )
+			return false;
+	}
+	else {
+		// send fragmented
+		unsigned int offset = 0;
+		Data outFrag;
+
+		do {
+			offset = MakeNextFragment(send, outFrag, offset);
+			if( !Send(outFrag, inFrag) )
+				return false;
+
+			MAKE_PACKET(rpack, inFrag);
+			// only process sequence handshakes... once we
+			// get to the last fragment, we fall through to normal
+			// processing below
+			if( offset && inFrag.GetSize() > 0 ) {
+
+				CheckSize(inFrag);
+
+				switch( rpack->command )
+				{
+				case SB_COMMAND_SEQUENCE_HANDSHAKE:
+					CheckSequence(inFrag);
+					break;
+
+				default:
+					eout("Command: " << rpack->command << inFrag);
+					throw BError("Socket: unhandled packet in Packet()");
+					break;
+				}
+			}
+
+
+		} while( offset > 0 );
+	}
 
 	bool done = false, frag = false;
 	int blankCount = 0;
