@@ -158,6 +158,22 @@ Probe::Probe()
 	}
 }
 
+int Probe::FindActive(uint32_t pin) const
+{
+	for( int i = 0; i < GetCount(); i++ ) {
+		if( Get(i).m_pin == pin )
+			return i;
+	}
+	if( pin == 0 ) {
+		// can we default to a single device?
+		if( GetCount() == 1 )
+			return 0;	// yes!
+	}
+
+	// PIN not found
+	return -1;
+}
+
 std::ostream& operator<< (std::ostream &os, const ProbeResult &pr)
 {
 	os << "Device ID: " << pr.m_dev << std::setbase(16) << ". PIN: "

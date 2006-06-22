@@ -52,6 +52,9 @@ public:
 
 	int GetCount() const { return m_results.size(); }
 	const ProbeResult& Get(int index) const { return m_results[index]; }
+
+	int FindActive(uint32_t pin = 0) const;	// returns -1 if pin not found
+						// or if no devices
 };
 
 
