@@ -29,15 +29,30 @@ BBTOOLOBJS = \
 	controller.o \
 	btool.o \
 
+UPLDIFOBJS = \
+	time.o \
+	base64.o \
+	parser.o \
+	data.o \
+	usbwrap.o \
+	probe.o \
+	common.o \
+	error.o \
+	socket.o \
+	protocol.o \
+	record.o \
+	controller.o \
+	upldif.o
+
 
 #
 # object files needed to build Barry
 #
-OBJS = $(CONNECTOBJS) $(BBTOOLOBJS)
+OBJS = $(CONNECTOBJS) $(BBTOOLOBJS) $(UPLDIFOBJS)
 
 
 ###############################################################################
-all:	visual dep.mak tests connect btool translate
+all:	visual dep.mak tests connect btool upldif translate
 
 visual:
 	echo ; echo
@@ -47,6 +62,9 @@ connect:	$(CONNECTOBJS)
 
 btool:		$(BBTOOLOBJS)
 	$(CXX) $(DEBUG) -o btool $(BBTOOLOBJS) $(LDFLAGS)
+
+upldif:		$(UPLDIFOBJS)
+	$(CXX) $(DEBUG) -o upldif $(UPLDIFOBJS) $(LDFLAGS)
 
 translate:	translate.cc
 	$(CXX) $(CXXFLAGS) -o translate translate.cc
@@ -81,7 +99,7 @@ clean-tests:
 
 clean:	clean-tests
 	rm -f $(OBJS) *.rpo */*.rpo dep.mak core core.* gmon.out leak.out
-	rm -f connect btool
+	rm -f connect btool upldif
 	rm -f translate
 	rm -rf ../doc/doxygen/html
 
