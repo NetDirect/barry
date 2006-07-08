@@ -1,0 +1,51 @@
+Hi,
+
+so you are interested in writing a plugin for the
+OpenSync synchronization framework... Great! :)
+
+Here is what you have to do:
+
+Edit the files
+
+AUTHORS
+INSTALL
+LICENSE
+
+and fill in the required information. Then edit:
+
+configure.in
+
+and add any checks etc that you need for you plugin
+to function.
+
+Then go to src/ and edit:
+
+Makefile.am
+
+there to suit your needs. Afterwards take a look at the example
+source files of the plugin
+
+plugin.c
+plugin.h
+
+and start writing the functions you need to connect, read and write
+etc to your device.
+
+Then edit the default config file which must be the same name
+as your plugin:
+
+plugin
+
+if you need to write a format plugin take a look at
+
+format.c
+
+Before running ./configure the first time you need to run
+./autogen.sh once.
+
+If you need help, feel free to ask on the opensync mailing lists:
+http://sourceforge.net/projects/opensync and go to "Lists"
+
+or ask on our irc channel:
+server: irc.freenode.org
+channel: #opensync
