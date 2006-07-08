@@ -32,7 +32,8 @@ namespace Barry {
 //
 // BError class
 //
-/// Currently the only Barry exception class.  Thrown on any protocol error.
+/// Currently the only Barry exception class, and planned to be the base class
+/// for any future derived exceptions.  Thrown on any protocol error.
 ///
 class BError : public std::runtime_error
 {
