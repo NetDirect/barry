@@ -1,5 +1,13 @@
 Release: version 0.0.2 - 2005/??/??
 ------------------------------------------------------------------------------
+2006/07/07
+	- added quick "install" makefile target, to src/install by default
+	- added static library target... this is temporary until autoconf
+		stuff is added properly... needed for the opensync plugin
+	- documented in comments that Barry::BError is intended to be
+		the base classes for all exceptions
+	- added first round of implementation of an opensync plugin, based
+		on the example plugin code from the opensync sources
 2006/06/22
 	- added to Contact record class:
 		- Clear()
