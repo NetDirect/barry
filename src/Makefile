@@ -7,14 +7,7 @@ include ../Makefile.conf
 #
 # Barry files
 #
-CONNECTOBJS = \
-	data.o \
-	usbwrap.o \
-	connect.o \
-	common.o \
-
-
-BBTOOLOBJS = \
+LIBOBJS = \
 	time.o \
 	base64.o \
 	parser.o \
@@ -26,8 +19,18 @@ BBTOOLOBJS = \
 	socket.o \
 	protocol.o \
 	record.o \
-	controller.o \
+	controller.o
+
+CONNECTOBJS = \
+	data.o \
+	usbwrap.o \
+	connect.o \
+	common.o \
+
+
+BBTOOLOBJS = \
 	btool.o \
+	libbarry.a
 
 UPLDIFOBJS = \
 	time.o \
@@ -48,11 +51,11 @@ UPLDIFOBJS = \
 #
 # object files needed to build Barry
 #
-OBJS = $(CONNECTOBJS) $(BBTOOLOBJS) $(UPLDIFOBJS)
+OBJS = $(LIBOBJS) $(CONNECTOBJS) $(BBTOOLOBJS) $(UPLDIFOBJS)
 
 
 ###############################################################################
-all:	visual dep.mak tests connect btool upldif translate
+all:	visual dep.mak tests connect btool upldif translate libbarry.a
 
 visual:
 	echo ; echo
@@ -68,6 +71,21 @@ upldif:		$(UPLDIFOBJS)
 
 translate:	translate.cc
 	$(CXX) $(CXXFLAGS) -o translate translate.cc
+
+libbarry.a:	$(LIBOBJS)
+	ar rcs libbarry.a $(LIBOBJS)
+
+#############
+# Install
+#############
+
+install:
+	mkdir -p $(INSTALLDIR)
+	mkdir -p $(INSTALLDIR)/include/barry
+	mkdir -p $(INSTALLDIR)/lib
+	install libbarry.a $(INSTALLDIR)/lib
+	install barry.h base64.h builder.h common.h controller.h controllertmpl.h data.h debug.h error.h parser.h probe.h protocol.h protostructs.h record.h s11n-boost.h socket.h time.h usbwrap.h $(INSTALLDIR)/include/barry
+
 
 #############
 # Tests
@@ -101,7 +119,9 @@ clean:	clean-tests
 	rm -f $(OBJS) *.rpo */*.rpo dep.mak core core.* gmon.out leak.out
 	rm -f connect btool upldif
 	rm -f translate
+	rm -f libbarry.a
 	rm -rf ../doc/doxygen/html
+	rm -rf install
 
 dep:
 	$(CXX) $(CXXFLAGS) -M *.cc > dep.mak
