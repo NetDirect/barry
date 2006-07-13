@@ -153,8 +153,8 @@ public:
 	void operator()(const Barry::Calendar &rec)
 	{
 		// Put calendar event data into vevent20 format
-		char *start = osync_time_unix2vtime_utc(&rec.StartTime);
-		char *end = osync_time_unix2vtime_utc(&rec.EndTime);
+		char *start = osync_time_unix2vtime(&rec.StartTime);
+		char *end = osync_time_unix2vtime(&rec.EndTime);
 		// FIXME - need the notification time too... where does that fit in VCALENDAR?
 		char *data = g_strdup_printf(
 			"BEGIN:VCALENDAR\r\n"
@@ -179,6 +179,7 @@ public:
 		osync_change_set_uid(change, uid);
 		g_free(uid);
 
+		osync_change_set_changetype(change, CHANGE_ADDED);
 		osync_change_set_objformat_string(change, "vevent20");
 //		osync_change_set_hash(change, "the calculated hash of the object");
 
@@ -208,8 +209,8 @@ static void get_changeinfo(OSyncContext *ctx)
 		// otherwise you have to make 2 function like "get_changes" and
 		// "get_all" and decide which to use using
 		// osync_member_get_slow_sync
-		if( osync_member_get_slow_sync(env->member, "<object type>") )
-			osync_hashtable_set_slow_sync(env->hashtable, "<object type>");
+//		if( osync_member_get_slow_sync(env->member, "event") )
+//			osync_hashtable_set_slow_sync(env->hashtable, "event");
 
 		//
 		// Now you can get the changes.
