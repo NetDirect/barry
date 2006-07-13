@@ -1,5 +1,11 @@
 Release: version 0.0.2 - 2005/??/??
 ------------------------------------------------------------------------------
+2006/07/13
+	- added opensync-plugin to root Makefile's clean
+	- updated time conversion calls to match opensync's latest SVN
+	- added opensync_change_set_changetype() (only add for now,
+		for development)
+	- removed slow sync functions for now
 2006/07/07
 	- added quick "install" makefile target, to src/install by default
 	- added static library target... this is temporary until autoconf
