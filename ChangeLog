@@ -1,5 +1,24 @@
-Release: version 0.0.2 - 2005/??/??
+Release: version 0.0.2 - 2006/??/??
 ------------------------------------------------------------------------------
+2006/09/01
+	- added sample hotplug scripts
+	- added .cvsignore files for doxygen and opensync directories
+	- added src/endian.h... still need to add configure support to
+		handle non-little-endian machines
+	- added exception handler in opensync plugin commit_change()
+	- removed the device reset code in probe.cc, as resetting a device
+		can renumber the devices in /proc on kernel 2.4.x,
+		and cause a failure to reach the device...
+		FIXME - this should be changed someday to reset if probing
+		fails, and restart the probe on reset, as sometimes
+		the blackberry devices respond differently when not reset
+		Ideally, the probe protocol should be properly reverse
+		engineered.
+	- added support for retrieving record state table, which is needed
+		for smarter syncing
+	- added support for retrieving, deleting, and clearing the dirty
+		flags of individual blackberry device records
+	- added endian macros throughout the code
 2006/07/13
 	- added opensync-plugin to root Makefile's clean
 	- updated time conversion calls to match opensync's latest SVN
