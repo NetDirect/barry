@@ -1,0 +1,5 @@
+Drop these files into /etc/hotplug/usb, to adjust the permissions automatically.
+Blackberry devices will be set to 0660 group barry.
+
+Don't forget to add the barry group to your system.
+
