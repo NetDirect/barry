@@ -131,8 +131,8 @@ Probe::Probe()
 				result.m_ep = ep;
 
 				Device dev(devid);
-				dev.Reset();
-				sleep(5);
+//				dev.Reset();
+//				sleep(5);
 
 				if( !dev.SetConfiguration(BLACKBERRY_CONFIGURATION) )
 					throw BError(dev.GetLastError(),
