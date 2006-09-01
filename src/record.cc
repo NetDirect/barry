@@ -27,6 +27,7 @@
 #include "base64.h"
 #include "time.h"
 #include "error.h"
+#include "endian.h"
 #include <ostream>
 #include <iomanip>
 #include <time.h>
@@ -63,7 +64,7 @@ void BuildField1900(Data &data, size_t &size, uint8_t type, time_t t)
 	unsigned char *pd = data.GetBuffer(size + fieldsize) + size;
 	CommonField *field = (CommonField *) pd;
 
-	field->size = timesize;
+	field->size = htobs(timesize);
 	field->type = type;
 	field->u.min1900 = time2min(t);
 
@@ -77,7 +78,7 @@ void BuildField(Data &data, size_t &size, uint8_t type, char c)
 	unsigned char *pd = data.GetBuffer(size + fieldsize) + size;
 	CommonField *field = (CommonField *) pd;
 
-	field->size = strsize;
+	field->size = htobs(strsize);
 	field->type = type;
 	memcpy(field->u.raw, &c, strsize);
 
@@ -92,7 +93,7 @@ void BuildField(Data &data, size_t &size, uint8_t type, const std::string &str)
 	unsigned char *pd = data.GetBuffer(size + fieldsize) + size;
 	CommonField *field = (CommonField *) pd;
 
-	field->size = strsize;
+	field->size = htobs(strsize);
 	field->type = type;
 	memcpy(field->u.raw, str.c_str(), strsize);
 
@@ -106,7 +107,7 @@ void BuildField(Data &data, size_t &size, uint8_t type, const Barry::GroupLink &
 	unsigned char *pd = data.GetBuffer(size + fieldsize) + size;
 	CommonField *field = (CommonField *) pd;
 
-	field->size = linksize;
+	field->size = htobs(linksize);
 	field->type = type;
 	field->u.link = link;
 
@@ -137,7 +138,7 @@ const unsigned char* CommandTable::ParseField(const unsigned char *begin,
 	const CommandTableField *field = (const CommandTableField *) begin;
 
 	// advance and check size
-	begin += COMMAND_FIELD_HEADER_SIZE + field->size;
+	begin += COMMAND_FIELD_HEADER_SIZE + field->size;	// size is byte
 	if( begin > end )		// if begin==end, we are ok
 		return begin;
 
@@ -191,6 +192,86 @@ void CommandTable::Dump(std::ostream &os) const
 
 
 ///////////////////////////////////////////////////////////////////////////////
+// RecordStateTable class
+
+RecordStateTable::RecordStateTable()
+{
+}
+
+RecordStateTable::~RecordStateTable()
+{
+}
+
+const unsigned char* RecordStateTable::ParseField(const unsigned char *begin,
+						  const unsigned char *end)
+{
+	const RecordStateTableField *field = (const RecordStateTableField *) begin;
+
+	// advance and check size
+	begin += sizeof(RecordStateTableField);
+	if( begin > end )		// if begin==end, we are ok
+		return begin;
+
+	State state;
+	state.Index = btohs(field->index);
+	state.RecordId = btohl(field->uniqueId);
+	state.Dirty = (field->flags & BARRY_RSTF_DIRTY) != 0;
+	state.Unknown1 = field->unknown;
+	state.Unknown2.assign((const char*)field->unknown2, sizeof(field->unknown2));
+	StateMap[state.Index] = state;
+
+	return begin;
+}
+
+void RecordStateTable::Parse(const Data &data)
+{
+	size_t offset = 12;	// skipping the unknown 2 bytes at start
+
+	if( offset >= data.GetSize() )
+		return;
+
+	const unsigned char *begin = data.GetData() + offset;
+	const unsigned char *end = data.GetData() + data.GetSize();
+
+	while( begin < end )
+		begin = ParseField(begin, end);
+}
+
+void RecordStateTable::Clear()
+{
+	StateMap.clear();
+}
+
+void RecordStateTable::Dump(std::ostream &os) const
+{
+	ios::fmtflags oldflags = os.setf(ios::right);
+	char fill = os.fill(' ');
+	bool bPrintAscii = Data::PrintAscii();
+	Data::PrintAscii(false);
+
+	os << "  Index  RecordId    Dirty" << endl;
+	os << "-------  ----------  -----" << endl;
+
+	StateMapType::const_iterator b, e = StateMap.end();
+	for( b = StateMap.begin(); b != e ; ++b ) {
+		const State &state = b->second;
+
+		os.fill(' ');
+		os << setbase(10) << setw(7) << state.Index;
+		os << "  0x" << setbase(16) << state.RecordId;
+		os << "  " << (state.Dirty ? "yes" : "no");
+		os << "  0x" << setbase(16) << state.Unknown1;
+		os << "   " << Data(state.Unknown2.data(), state.Unknown2.size());
+	}
+
+	// cleanup the stream
+	os.flags(oldflags);
+	os.fill(fill);
+	Data::PrintAscii(bPrintAscii);
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
 // DatabaseDatabase class
 
 DatabaseDatabase::DatabaseDatabase()
@@ -206,6 +287,19 @@ void DatabaseDatabase::ParseRec(const RecordType &rec, const unsigned char *end)
 {
 }
 
+template <class SizeType>
+SizeType ConvertHtoB(SizeType s)
+{
+	throw BError("Not implemented.");
+}
+
+// specializations for specific sizes
+template <> uint8_t ConvertHtoB<uint8_t>(uint8_t s)    { return s; }
+template <> uint16_t ConvertHtoB<uint16_t>(uint16_t s) { return htobs(s); }
+template <> uint32_t ConvertHtoB<uint32_t>(uint32_t s) { return htobl(s); }
+template <> uint64_t ConvertHtoB<uint64_t>(uint64_t s) { return htobll(s); }
+
+
 template <class FieldType>
 const unsigned char* DatabaseDatabase::ParseField(const unsigned char *begin,
 						  const unsigned char *end)
@@ -219,7 +313,7 @@ const unsigned char* DatabaseDatabase::ParseField(const unsigned char *begin,
 	const FieldType *field = (const FieldType *) begin;
 
 	// advance and check size
-	begin += sizeof(FieldType) - sizeof(field->name) + field->nameSize;
+	begin += sizeof(FieldType) - sizeof(field->name) + ConvertHtoB(field->nameSize);
 	if( begin > end )		// if begin==end, we are ok
 		return begin;
 
@@ -566,8 +660,8 @@ void Contact::Build(Data &data, size_t offset) const
 		gb = GroupLinks.begin(), ge = GroupLinks.end();
 	for( ; gb != ge; gb++ ) {
 		Barry::GroupLink link;
-		link.uniqueId = gb->Link;
-		link.unknown = gb->Unknown;
+		link.uniqueId = htobl(gb->Link);
+		link.unknown = htobs(gb->Unknown);
 		BuildField(data, size, CFC_GROUP_LINK, link);
 	}
 

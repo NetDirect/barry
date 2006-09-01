@@ -53,6 +53,19 @@
 #define SB_DBOP_OLD_GET_RECORDS		0x42
 #define SB_DBOP_OLD_GET_RECORDS_REPLY	0x44
 
+#define SB_DBOP_GET_RECORD_STATE_TABLE	0x53	// replies with 0x60, 0x41
+#define SB_DBOP_SET_RECORD_FLAGS	0x54	// replies with 0x41
+						// used to clear dirty flag
+#define SB_DBOP_GET_RECORD_BY_INDEX	0x46	// replies with 0x44
+	// John's device uses 0x50, with a reply of 0x4f (!)
+	// Then uses 0x55 as usual
+	// Delete uses 0x50/0x4f to check as well, then uses 0x52 as
+	// usual to do the actual delete.
+#define SB_DBOP_SET_RECORD_BY_INDEX	0x55	// replies with 0x41
+#define SB_DBOP_DELETE_RECORD_BY_INDEX	0x52	// intellisync does a GET(0x46)
+						// first, probably to make sure
+						// it has the right data and
+						// record
 
 #endif
 

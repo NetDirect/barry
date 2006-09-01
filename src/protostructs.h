@@ -105,6 +105,29 @@ struct UploadCommand
 } __attribute__ ((packed));
 #define UPLOAD_HEADER_SIZE		(sizeof(Barry::UploadCommand) - 1)
 
+struct DBRecordCommand
+{
+	uint8_t		operation;
+	uint16_t	databaseId;	// value from the Database Database
+	uint16_t	recordIndex;	// index comes from RecordStateTable
+	uint8_t		data[1];
+} __attribute__ ((packed));
+#define DB_RECORD_COMMAND_HEADER_SIZE	(sizeof(Barry::DBRecordCommand) - 1)
+
+struct DBRecordFlagsCommand
+{
+	uint8_t		operation;	// see below
+	uint16_t	databaseId;	// value from the Database Database
+	struct RecordStateFlags
+	{
+		uint8_t		unknown;
+		uint16_t	index;
+		uint8_t		unknown2[5];
+	} __attribute__ ((packed)) flags;
+
+} __attribute__ ((packed));
+#define DB_RECORD_FLAGS_COMMAND_SIZE	(sizeof(Barry::DBRecordFlagsCommand))
+
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -172,6 +195,23 @@ struct DBDBRecord
 #define DBDB_RECORD_HEADER_SIZE		(sizeof(Barry::DBDBRecord) - sizeof(Barry::DBDBField))
 
 
+
+
+///////////////////////////////////////////////////////////////////////////////
+// State table structs
+
+struct RecordStateTableField
+{
+	uint8_t		unknown;
+	uint16_t	index;
+	uint32_t	uniqueId;		// matches the uniqueId of say,
+						// address book records
+	uint8_t		flags;			// bit 0x01 is the dirty flag
+						// don't know if any other bits
+						// are used
+#define BARRY_RSTF_DIRTY	0x01
+	uint8_t		unknown2[4];
+} __attribute__ ((packed));
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -331,6 +371,8 @@ struct DBAccess
 		DBResponse		response;
 		OldDBResponse		old_response;
 		UploadCommand		upload;
+		DBRecordCommand		record_cmd;
+		DBRecordFlagsCommand	rf_cmd;
 		CommandTableField	table[1];
 		OldDBDBRecord		old_dbdb;
 		DBDBRecord		dbdb;

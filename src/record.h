@@ -26,6 +26,7 @@
 #include <iosfwd>
 #include <string>
 #include <vector>
+#include <map>
 #include <stdint.h>
 
 // forward declarations
@@ -72,6 +73,44 @@ public:
 
 inline std::ostream& operator<< (std::ostream &os, const CommandTable &command) {
 	command.Dump(os);
+	return os;
+}
+
+
+
+class RecordStateTable
+{
+public:
+	struct State
+	{
+		unsigned int Index;
+		uint32_t RecordId;
+		bool Dirty;
+		unsigned int Unknown1;
+		std::string Unknown2;
+	};
+
+	typedef unsigned int IndexType;
+	typedef std::map<IndexType, State> StateMapType;
+
+	StateMapType StateMap;
+
+private:
+	const unsigned char* ParseField(const unsigned char *begin,
+		const unsigned char *end);
+
+public:
+	RecordStateTable();
+	~RecordStateTable();
+
+	void Parse(const Data &data);
+	void Clear();
+
+	void Dump(std::ostream &os) const;
+};
+
+inline std::ostream& operator<< (std::ostream &os, const RecordStateTable &rst) {
+	rst.Dump(os);
 	return os;
 }
 

@@ -47,7 +47,18 @@ void Usage()
    << "             If only one device plugged in, this flag is optional\n"
    << "   -s db     Save database 'db' from data loaded from -f file\n"
    << "   -t        Show database database table\n"
+   << "   -T db     Show record state table for given database\n"
    << "   -v        Dump protocol data during operation\n"
+   << "\n"
+   << " -d Command modifiers:\n"
+   << "\n"
+   << "   -r #      Record index number as seen in the -T state table.\n"
+   << "             This overrides the default -d behaviour, and only\n"
+   << "             downloads the one specified record, sending to stdout.\n"
+   << "   -R #      Same as -r, but also clears the record's dirty flags.\n"
+   << "   -D #      Record index number as seen in the -T state table,\n"
+   << "             which indicates the record to delete.  Used with the -d\n"
+   << "             command to specify the database.\n"
    << endl;
 }
 
@@ -218,14 +229,19 @@ int main(int argc, char *argv[])
 		bool	list_only = false,
 			show_dbdb = false,
 			ldif_contacts = false,
-			data_dump = false;
+			data_dump = false,
+			record_state = false,
+			get_record = false,
+			del_record = false,
+			clear_dirty = false;
+		unsigned int recordIndex = 0;
 		string ldifBaseDN;
 		string filename;
 		vector<string> dbNames, saveDbNames;
 
 		// process command line options
 		for(;;) {
-			int cmd = getopt(argc, argv, "c:d:f:hlp:s:tv");
+			int cmd = getopt(argc, argv, "c:d:D:f:hlp:r:R:s:tT:v");
 			if( cmd == -1 )
 				break;
 
@@ -238,6 +254,12 @@ int main(int argc, char *argv[])
 
 			case 'd':	// show dbname
 				dbNames.push_back(string(optarg));
+				break;
+
+			case 'D':	// delete record
+				del_record = true;
+				get_record = false;
+				recordIndex = atoi(optarg);
 				break;
 
 			case 'f':	// filename
@@ -256,12 +278,30 @@ int main(int argc, char *argv[])
 				pin = strtoul(optarg, NULL, 16);
 				break;
 
+			case 'r':	// get specific record index
+				get_record = true;
+				del_record = false;
+				recordIndex = atoi(optarg);
+				break;
+
+			case 'R':	// same as 'r', and clears dirty
+				get_record = true;
+				del_record = false;
+				clear_dirty = true;
+				recordIndex = atoi(optarg);
+				break;
+
 			case 's':	// save dbname
 				saveDbNames.push_back(string(optarg));
 				break;
 
 			case 't':	// display database database
 				show_dbdb = true;
+				break;
+
+			case 'T':	// show RecordStateTable
+				record_state = true;
+				dbNames.push_back(string(optarg));
 				break;
 
 			case 'v':	// data dump on
@@ -338,6 +378,49 @@ int main(int argc, char *argv[])
 
 			// load all the Contact records into storage
 			con.LoadDatabaseByType<Barry::Contact>(storage);
+		}
+
+		// Dump record state table to stdout
+		if( record_state ) {
+			if( dbNames.size() == 0 ) {
+				cout << "No db names to process" << endl;
+				return 1;
+			}
+
+			vector<string>::iterator b = dbNames.begin();
+			for( ; b != dbNames.end(); b++ ) {
+				con.OpenMode(Controller::Desktop);
+				unsigned int id = con.GetDBID(*b);
+				RecordStateTable state;
+				con.GetRecordStateTable(id, state);
+				cout << "Record state table for: " << *b << endl;
+				cout << state;
+			}
+			return 0;
+		}
+
+		// Get Record mode overrides the default name mode
+		if( get_record || del_record ) {
+			if( dbNames.size() != 1 ) {
+				cout << "Must have 1 db name to process" << endl;
+				return 1;
+			}
+
+			con.OpenMode(Controller::Desktop);
+			unsigned int id = con.GetDBID(dbNames[0]);
+			auto_ptr<Parser> parse = GetParser(dbNames[0],filename);
+			con.GetRecord(id, recordIndex, *parse.get());
+
+			if( get_record && clear_dirty ) {
+				cout << "Clearing record's dirty flags..." << endl;
+				con.ClearDirty(id, recordIndex);
+			}
+
+			if( del_record ) {
+				con.DeleteRecord(id, recordIndex);
+			}
+
+			return 0;
 		}
 
 		// Dump contents of selected databases to stdout, or

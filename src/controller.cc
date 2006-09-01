@@ -27,6 +27,7 @@
 #include "data.h"
 #include "parser.h"
 #include "builder.h"
+#include "endian.h"
 
 #define __DEBUG_MODE__
 #include "debug.h"
@@ -72,9 +73,9 @@ void Controller::SelectMode(ModeType mode, uint16_t &socket, uint8_t &flag)
 	// select mode
 	Packet packet;
 	packet.socket = 0;
-	packet.size = SB_MODE_PACKET_COMMAND_SIZE;
+	packet.size = htobs(SB_MODE_PACKET_COMMAND_SIZE);
 	packet.command = SB_COMMAND_SELECT_MODE;
-	packet.u.mode.socket = SB_MODE_REQUEST_SOCKET;
+	packet.u.mode.socket = htobs(SB_MODE_REQUEST_SOCKET);
 	packet.u.mode.flag = 0x05;	// FIXME
 	memset(packet.u.mode.modeName, 0, sizeof(packet.u.mode.modeName));
 
@@ -99,7 +100,7 @@ void Controller::SelectMode(ModeType mode, uint16_t &socket, uint8_t &flag)
 	}
 
 	// send mode command before we open, as a default socket is socket 0
-	Data command(&packet, packet.size);
+	Data command(&packet, btohs(packet.size));
 	Data response;
 	if( !m_socket.Send(command, response) ) {
 		eeout(command, response);
@@ -118,7 +119,7 @@ void Controller::SelectMode(ModeType mode, uint16_t &socket, uint8_t &flag)
 	}
 
 	// return the socket and flag that the device is expecting us to use
-	socket = modepack->u.mode.socket;
+	socket = btohs(modepack->u.mode.socket);
 	flag = modepack->u.mode.flag + 1;
 }
 
@@ -170,7 +171,7 @@ void Controller::LoadCommandTable()
 		}
 
 		rpack = (const Packet *) response.GetData();
-		if( rpack->command == SB_COMMAND_DB_DATA && rpack->size > 10 ) {
+		if( rpack->command == SB_COMMAND_DB_DATA && btohs(rpack->size) > 10 ) {
 			// second packet is generally large, and contains
 			// the command table
 			m_commandTable.Clear();
@@ -186,14 +187,14 @@ void Controller::LoadDBDB()
 	assert( m_mode == Desktop );
 
 	Packet packet;
-	packet.socket = m_socket.GetSocket();
-	packet.size = 7;
+	packet.socket = htobs(m_socket.GetSocket());
+	packet.size = htobs(7);
 	packet.command = SB_COMMAND_DB_DATA;
 	packet.u.db.tableCmd = GetCommand(DatabaseAccess);
 //	packet.u.db.u.command.operation = SB_DBOP_GET_DBDB;
 	packet.u.db.u.command.operation = SB_DBOP_OLD_GET_DBDB;
 
-	Data command(&packet, packet.size);
+	Data command(&packet, btohs(packet.size));
 	Data response;
 
 	if( !m_socket.Packet(command, response) ) {
@@ -290,6 +291,227 @@ void Controller::OpenMode(ModeType mode)
 }
 
 //
+// GetRecordStateTable
+//
+/// Retrieve the record state table from the handheld device, using the given
+/// database ID.  Results will be stored in result, which will be cleared
+/// before adding.
+///
+void Controller::GetRecordStateTable(unsigned int dbId, RecordStateTable &result)
+{
+	if( m_mode != Desktop )
+		throw std::logic_error("Wrong mode in GetRecordStateTable");
+
+	// start fresh
+	result.Clear();
+
+	Packet packet;
+	packet.socket = htobs(m_socket.GetSocket());
+	packet.size = htobs(9);
+	packet.command = SB_COMMAND_DB_DATA;
+	packet.u.db.tableCmd = GetCommand(DatabaseAccess);
+	packet.u.db.u.command.operation = SB_DBOP_GET_RECORD_STATE_TABLE;
+	packet.u.db.u.command.databaseId = htobs(dbId);
+
+	Data command(&packet, btohs(packet.size));
+	Data response;
+
+	if( !m_socket.Packet(command, response) ) {
+		eout("Database ID: " << dbId);
+		eeout(command, response);
+		throw BError(m_socket.GetLastStatus(),
+			"Controller: error loading database");
+	}
+
+	result.Parse(response);
+
+	// flush the command sequence
+	MAKE_PACKET(rpack, response);
+	while( response.GetSize() >= SB_PACKET_HEADER_SIZE &&
+	       rpack->command != SB_COMMAND_DB_DONE )
+	{
+		// advance!
+		if( !m_socket.NextRecord(response) ) {
+			eout("Response packet:\n" << response);
+			throw BError(m_socket.GetLastStatus(),
+				"Controller: error loading state table (next)");
+		}
+		rpack = (const Packet *) response.GetData();
+	}
+}
+
+//
+// GetRecord
+//
+/// Retrieves a specific record from the specified database.
+/// The stateTableIndex comes from the GetRecordStateTable()
+/// function.  GetRecord() does not clear the dirty flag.
+///
+void Controller::GetRecord(unsigned int dbId,
+			   unsigned int stateTableIndex,
+			   Parser &parser)
+{
+	if( m_mode != Desktop )
+		throw std::logic_error("Wrong mode in GetRecord");
+
+	Packet packet;
+	packet.socket = htobs(m_socket.GetSocket());
+	packet.size = htobs(11);
+	packet.command = SB_COMMAND_DB_DATA;
+	packet.u.db.tableCmd = GetCommand(DatabaseAccess);
+	packet.u.db.u.record_cmd.operation = SB_DBOP_GET_RECORD_BY_INDEX;
+	packet.u.db.u.record_cmd.databaseId = htobs(dbId);
+	packet.u.db.u.record_cmd.recordIndex = htobs(stateTableIndex);
+
+	Data command(&packet, btohs(packet.size));
+	Data response;
+
+	if( !m_socket.Packet(command, response) ) {
+		eout("Database ID: " << dbId);
+		eeout(command, response);
+		throw BError(m_socket.GetLastStatus(),
+			"Controller: error loading database");
+	}
+
+	MAKE_PACKET(rpack, response);
+
+	// perform copious packet checks
+	if( response.GetSize() < SB_PACKET_HEADER_SIZE ||
+	    response.GetSize() < SB_PACKET_OLD_RESPONSE_HEADER_SIZE ) {
+		eeout(command, response);
+
+		std::ostringstream oss;
+		oss << "Controller: invalid response packet size of "
+		    << response.GetSize();
+		eout(oss.str());
+		throw BError(oss.str());
+	}
+	if( rpack->command != SB_COMMAND_DB_DATA ) {
+		eeout(command, response);
+
+		std::ostringstream oss;
+		oss << "Controller: unexpected command of 0x"
+		    << std::setbase(16) << (unsigned int)rpack->command
+		    << " instead of expected 0x"
+		    << std::setbase(16) << (unsigned int)SB_COMMAND_DB_DATA;
+		eout(oss.str());
+		throw BError(oss.str());
+	}
+
+	// grab that data
+	parser(response, SB_PACKET_OLD_RESPONSE_HEADER_SIZE);
+
+	// flush the command sequence
+	while( response.GetSize() >= SB_PACKET_HEADER_SIZE &&
+	       rpack->command != SB_COMMAND_DB_DONE )
+	{
+		// advance!
+		if( !m_socket.NextRecord(response) ) {
+			eout("Response packet:\n" << response);
+			throw BError(m_socket.GetLastStatus(),
+				"Controller: error loading state table (next)");
+		}
+		rpack = (const Packet *) response.GetData();
+	}
+}
+
+//
+// ClearDirty
+//
+/// Clears the dirty flag on the specified record in the specified database.
+///
+void Controller::ClearDirty(unsigned int dbId, unsigned int stateTableIndex)
+{
+	if( m_mode != Desktop )
+		throw std::logic_error("Wrong mode in ClearDirty");
+
+	size_t size = SB_PACKET_DBACCESS_HEADER_SIZE + DB_RECORD_FLAGS_COMMAND_SIZE;
+
+	Packet packet;
+	packet.socket = htobs(m_socket.GetSocket());
+	packet.size = htobs(size);
+	packet.command = SB_COMMAND_DB_DATA;
+	packet.u.db.tableCmd = GetCommand(DatabaseAccess);
+	packet.u.db.u.rf_cmd.operation = SB_DBOP_SET_RECORD_FLAGS;
+	packet.u.db.u.rf_cmd.databaseId = htobs(dbId);
+	packet.u.db.u.rf_cmd.flags.unknown = 0;
+	packet.u.db.u.rf_cmd.flags.index = htobs(stateTableIndex);
+	memset(packet.u.db.u.rf_cmd.flags.unknown2, 0, sizeof(packet.u.db.u.rf_cmd.flags.unknown2));
+
+	Data command(&packet, size);
+	Data response;
+
+	if( !m_socket.Packet(command, response) ) {
+		eout("Database ID: " << dbId);
+		eeout(command, response);
+		throw BError(m_socket.GetLastStatus(),
+			"Controller: error loading database");
+	}
+
+	MAKE_PACKET(rpack, response);
+
+	// flush the command sequence
+	while( response.GetSize() >= SB_PACKET_HEADER_SIZE &&
+	       rpack->command != SB_COMMAND_DB_DONE )
+	{
+		// advance!
+		if( !m_socket.NextRecord(response) ) {
+			eout("Response packet:\n" << response);
+			throw BError(m_socket.GetLastStatus(),
+				"Controller: error loading state table (next)");
+		}
+		rpack = (const Packet *) response.GetData();
+	}
+}
+
+//
+// DeleteRecord
+//
+/// Deletes the specified record in the specified database.
+///
+void Controller::DeleteRecord(unsigned int dbId, unsigned int stateTableIndex)
+{
+	if( m_mode != Desktop )
+		throw std::logic_error("Wrong mode in DeleteRecord");
+
+	size_t size = SB_PACKET_DBACCESS_HEADER_SIZE + DB_RECORD_COMMAND_HEADER_SIZE;
+
+	Packet packet;
+	packet.socket = htobs(m_socket.GetSocket());
+	packet.size = htobs(size);
+	packet.command = SB_COMMAND_DB_DATA;
+	packet.u.db.tableCmd = GetCommand(DatabaseAccess);
+	packet.u.db.u.record_cmd.operation = SB_DBOP_DELETE_RECORD_BY_INDEX;
+	packet.u.db.u.record_cmd.databaseId = htobs(dbId);
+	packet.u.db.u.record_cmd.recordIndex = htobs(stateTableIndex);
+
+	Data command(&packet, size);
+	Data response;
+
+	if( !m_socket.Packet(command, response) ) {
+		eout("Database ID: " << dbId);
+		eeout(command, response);
+		throw BError(m_socket.GetLastStatus(),
+			"Controller: error deleting record");
+	}
+
+	MAKE_PACKET(rpack, response);
+
+	// flush the command sequence
+	while( response.GetSize() >= SB_PACKET_HEADER_SIZE &&
+	       rpack->command != SB_COMMAND_DB_DONE )
+	{
+		// advance!
+		if( !m_socket.NextRecord(response) ) {
+			eout("Response packet:\n" << response);
+			throw BError(m_socket.GetLastStatus(),
+				"Controller: error deleting record (next)");
+		}
+		rpack = (const Packet *) response.GetData();
+	}
+}
+
+//
 // LoadDatabase
 //
 /// Retrieve a database from the handheld device, using the given parser
@@ -318,15 +540,15 @@ void Controller::LoadDatabase(unsigned int dbId, Parser &parser)
 		throw std::logic_error("Wrong mode in LoadDatabase");
 
 	Packet packet;
-	packet.socket = m_socket.GetSocket();
-	packet.size = 9;
+	packet.socket = htobs(m_socket.GetSocket());
+	packet.size = htobs(9);
 	packet.command = SB_COMMAND_DB_DATA;
 	packet.u.db.tableCmd = GetCommand(DatabaseAccess);
 //	packet.u.db.u.command.operation = SB_DBOP_GET_RECORDS;
 	packet.u.db.u.command.operation = SB_DBOP_OLD_GET_RECORDS;
-	packet.u.db.u.command.databaseId = dbId;
+	packet.u.db.u.command.databaseId = htobs(dbId);
 
-	Data command(&packet, packet.size);
+	Data command(&packet, btohs(packet.size));
 	Data response;
 
 	if( !m_socket.Packet(command, response) ) {
@@ -363,17 +585,26 @@ void Controller::SaveDatabase(unsigned int dbId, Builder &builder)
 	if( m_mode != Desktop )
 		throw std::logic_error("Wrong mode in SaveDatabase");
 
+	// Protocol note: so far in testing, this CLEAR_DATABASE operation is
+	//                required, since every record sent via SET_RECORD
+	//                is treated like a hypothetical "ADD_RECORD" (perhaps
+	//                SET_RECORD should be renamed)... I don't know if
+	//                there is a real SET_RECORD... all I know is from
+	//                the Windows USB captures, which uses this same
+	//                technique.
 	Packet packet;
-	packet.socket = m_socket.GetSocket();
-	packet.size = 9;
+	packet.socket = htobs(m_socket.GetSocket());
+	packet.size = htobs(9);
 	packet.command = SB_COMMAND_DB_DATA;
 	packet.u.db.tableCmd = GetCommand(DatabaseAccess);
 	packet.u.db.u.command.operation = SB_DBOP_CLEAR_DATABASE;
-	packet.u.db.u.command.databaseId = dbId;
+	packet.u.db.u.command.databaseId = htobs(dbId);
 
-	Data command(&packet, packet.size);
+	Data command(&packet, btohs(packet.size));
 	Data response;
 
+	// FIXME - sometimes this takes a long time... find out if there
+	// is a timeout mechanism or something needed as well
 	if( !m_socket.Packet(command, response) ) {
 		eout("Database ID: " << dbId);
 		eeout(command, response);
@@ -395,12 +626,12 @@ void Controller::SaveDatabase(unsigned int dbId, Builder &builder)
 
 		// fill in the missing header values
 		MAKE_PACKETPTR_BUF(cpack, data);
-		cpack->socket = m_socket.GetSocket();
-		cpack->size = size;
+		cpack->socket = htobs(m_socket.GetSocket());
+		cpack->size = htobs(size);
 		cpack->command = SB_COMMAND_DB_DATA;
 		cpack->u.db.tableCmd = GetCommand(DatabaseAccess);
 		cpack->u.db.u.upload.operation = SB_DBOP_SET_RECORD;
-		cpack->u.db.u.upload.databaseId = dbId;
+		cpack->u.db.u.upload.databaseId = htobs(dbId);
 		cpack->u.db.u.upload.unknown = 0;	// FIXME - what does this mean? observed 0 and 5 here
 
 		command.ReleaseBuffer(size);

@@ -105,6 +105,14 @@ public:
 
 	//////////////////////////////////
 	// Desktop mode - database specific
+
+	// dirty flag related functions, for sync operations
+	void GetRecordStateTable(unsigned int dbId, RecordStateTable &result);
+	void GetRecord(unsigned int dbId, unsigned int stateTableIndex, Parser &parser);
+	void ClearDirty(unsigned int dbId, unsigned int stateTableIndex);
+	void DeleteRecord(unsigned int dbId, unsigned int stateTableIndex);
+
+	// pure load/save operations
 	void LoadDatabase(unsigned int dbId, Parser &parser);
 	void SaveDatabase(unsigned int dbId, Builder &builder);
 
