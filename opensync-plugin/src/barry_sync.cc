@@ -236,39 +236,49 @@ static void get_changeinfo(OSyncContext *ctx)
 
 static osync_bool commit_change(OSyncContext *ctx, OSyncChange *change)
 {
-/*
 	barry_environment *env = (barry_environment *)osync_context_get_plugin_data(ctx);
 	
-	//
-	// Here you have to add, modify or delete a object
-	// 
-	//
-	switch (osync_change_get_changetype(change)) {
-		case CHANGE_DELETED:
-			//Delete the change
-			//Dont forget to answer the call on error
-			break;
-		case CHANGE_ADDED:
-			//Add the change
-			//Dont forget to answer the call on error
-			//If you are using hashtables you have to calculate the hash here:
-			osync_change_set_hash(change, "new hash");
-			break;
-		case CHANGE_MODIFIED:
-			//Modify the change
-			//Dont forget to answer the call on error
-			//If you are using hashtables you have to calculate the new hash here:
-			osync_change_set_hash(change, "new hash");
-			break;
-		default:
-			osync_debug("FILE-SYNC", 0, "Unknown change type");
+	try {
+
+		switch( osync_change_get_changetype(change) )
+		{
+//			case CHANGE_DELETED:
+//				//Delete the change
+//				//Dont forget to answer the call on error
+//				break;
+			case CHANGE_ADDED:
+				//Add the change
+				//Dont forget to answer the call on error
+				//If you are using hashtables you have to calculate the hash here:
+//				osync_change_set_hash(change, "new hash");
+				break;
+//			case CHANGE_MODIFIED:
+//				//Modify the change
+//				//Dont forget to answer the call on error
+//				//If you are using hashtables you have to calculate the new hash here:
+//				osync_change_set_hash(change, "new hash");
+//				break;
+			default:
+				osync_debug("barry-sync", 0, "Unknown change type");
+				break;
+		}
+
+		// Answer the call
+		osync_context_report_success(ctx);
+		// if you use hashtable, update the hash now.
+//		osync_hashtable_update_hash(env->hashtable, change);
+		return TRUE;
+
 	}
-	//Answer the call
-	osync_context_report_success(ctx);
-	//if you use hashtable, update the hash now.
-	osync_hashtable_update_hash(env->hashtable, change);
-	return TRUE;
-*/
+	catch( Barry::BError &be ) {
+		osync_context_report_error(ctx, OSYNC_ERROR_GENERIC, "Barry exception: %s", be.what());
+		return FALSE;
+	}
+//	catch( std::bad_alloc &ba ) {
+//		// don't let exceptions escape to the C modules
+//		osync_context_report_error(ctx, OSYNC_ERROR_INITIALIZATION, "Misc. memory error: %s", ba.what());
+//		return FALSE;
+//	}
 }
 
 static void sync_done(OSyncContext *ctx)
