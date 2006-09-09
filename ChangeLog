@@ -1,5 +1,36 @@
 Release: version 0.0.2 - 2006/??/??
 ------------------------------------------------------------------------------
+2006/09/08
+	- large refactoring of the packet parsing and building code,
+		splitting the code into 3 groups:
+		- record: handles record specific parsing and building...
+			this is mostly subfields with CommonField structs
+			as their headers, but sometimes has a specific
+			header of its own, in the case of email
+			Note: email's header is as yet undecoded.
+			Record does not know the details of the packet
+			formats, only the formats of its own record data.
+		- packet: handles building of complete command packets
+			and handles parsing of commonly used header values,
+			providing an API for it... packet does not know
+			the record format details, but does know the
+			details of each Database Operation (protocol.h)
+			packet format.
+			So far, it seems that there is a real separation
+			of operation formats and record formats, with the
+			record formats being the same even with different
+			database operation codes (GET_RECORDS /
+			OLD_GET_RECORDS), which was not confirmed before.
+			See the header size of the email record after
+			refactoring.
+		- controller: handles device state, and the management of
+			sockets, commands, and checking for response values.
+			The Controller object does not know the format
+			of either the record or the packet it is sending,
+			but does know the protocol handshake logic used
+			to talk to the device.
+	- implemented SetRecord (SET_RECORD_BY_INDEX)... syncing, here
+		we come!
 2006/09/01
 	- added sample hotplug scripts
 	- added .cvsignore files for doxygen and opensync directories
