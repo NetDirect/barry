@@ -26,6 +26,7 @@
 #include "debug.h"
 #include "data.h"
 #include "error.h"
+#include "packet.h"
 
 
 using namespace Usb;
@@ -83,7 +84,7 @@ void Socket::Open(uint16_t socket, uint8_t flag)
 	}
 
 	// build open command
-	Barry::Packet packet;
+	Barry::Protocol::Packet packet;
 	packet.socket = 0;
 	packet.size = SB_SOCKET_PACKET_SIZE;
 	packet.command = SB_COMMAND_OPEN_SOCKET;
@@ -98,7 +99,7 @@ void Socket::Open(uint16_t socket, uint8_t flag)
 	}
 
 	// starting fresh, reset sequence ID
-	CheckSize(receive);
+	Protocol::CheckSize(receive);
 	if( IS_COMMAND(receive, SB_COMMAND_SEQUENCE_HANDSHAKE) ) {
 		CheckSequence(receive);
 
@@ -106,7 +107,7 @@ void Socket::Open(uint16_t socket, uint8_t flag)
 		Receive(receive);
 	}
 
-	CheckSize(receive, SB_SOCKET_PACKET_SIZE);
+	Protocol::CheckSize(receive, SB_SOCKET_PACKET_SIZE);
 	MAKE_PACKET(rpack, receive);
 	if( rpack->command != SB_COMMAND_OPENED_SOCKET ||
 	    rpack->u.socket.socket != socket ||
@@ -137,7 +138,7 @@ void Socket::Close()
 		// only close non-default sockets
 
 		// build close command
-		Barry::Packet packet;
+		Barry::Protocol::Packet packet;
 		packet.socket = 0;
 		packet.size = SB_SOCKET_PACKET_SIZE;
 		packet.command = SB_COMMAND_CLOSE_SOCKET;
@@ -156,7 +157,7 @@ void Socket::Close()
 		}
 
 		// starting fresh, reset sequence ID
-		CheckSize(response);
+		Protocol::CheckSize(response);
 		if( IS_COMMAND(response, SB_COMMAND_SEQUENCE_HANDSHAKE) ) {
 			CheckSequence(response);
 
@@ -164,7 +165,7 @@ void Socket::Close()
 			Receive(response);
 		}
 
-		CheckSize(response, SB_SOCKET_PACKET_SIZE);
+		Protocol::CheckSize(response, SB_SOCKET_PACKET_SIZE);
 		MAKE_PACKET(rpack, response);
 		if( rpack->command != SB_COMMAND_CLOSED_SOCKET ||
 		    rpack->u.socket.socket != m_socket ||
@@ -209,7 +210,7 @@ bool Socket::Send(const Data &send, Data &receive)
 	// Check for this case here.
 	//
 	if( (send.GetSize() % 0x40) == 0 ) {
-		SizePacket packet;
+		Protocol::SizePacket packet;
 		packet.size = send.GetSize();
 		packet.buffer[2] = 0;		// zero the top byte
 		Data sizeCommand(&packet, 3);
@@ -262,7 +263,7 @@ void Socket::AppendFragment(Data &whole, const Data &fragment)
 	}
 
 	// update whole's size and command type for future sanity
-	Barry::Packet *wpack = (Barry::Packet *) whole.GetBuffer();
+	Barry::Protocol::Packet *wpack = (Barry::Protocol::Packet *) whole.GetBuffer();
 	wpack->size = (uint16_t) whole.GetSize();
 	wpack->command = SB_COMMAND_DB_DATA;
 	// don't need to call ReleaseBuffer here, since we're not changing
@@ -296,7 +297,7 @@ unsigned int Socket::MakeNextFragment(const Data &whole, Data &fragment, unsigne
 	memcpy(buf + SB_FRAG_HEADER_SIZE, whole.GetData() + SB_FRAG_HEADER_SIZE + offset, todo);
 
 	// update fragment's size and command type
-	Barry::Packet *wpack = (Barry::Packet *) buf;
+	Barry::Protocol::Packet *wpack = (Barry::Protocol::Packet *) buf;
 	wpack->size = (uint16_t) (todo + SB_FRAG_HEADER_SIZE);
 	if( nextOffset )
 		wpack->command = SB_COMMAND_DB_FRAGMENTED;
@@ -362,7 +363,7 @@ bool Socket::Packet(const Data &send, Data &receive)
 
 	// force socket to our socket
 	Data send = sendorig;
-	Barry::Packet *sspack = (Barry::Packet *)send.GetBuffer(2);
+	Barry::Protocol::Packet *sspack = (Barry::Protocol::Packet *)send.GetBuffer(2);
 	sspack->socket = GetSocket();
 */
 
@@ -399,7 +400,7 @@ bool Socket::Packet(const Data &send, Data &receive)
 			// processing below
 			if( offset && inFrag.GetSize() > 0 ) {
 
-				CheckSize(inFrag);
+				Protocol::CheckSize(inFrag);
 
 				switch( rpack->command )
 				{
@@ -427,7 +428,7 @@ bool Socket::Packet(const Data &send, Data &receive)
 		if( inFrag.GetSize() > 0 ) {
 			blankCount = 0;
 
-			CheckSize(inFrag);
+			Protocol::CheckSize(inFrag);
 
 			switch( rpack->command )
 			{
@@ -481,9 +482,14 @@ bool Socket::Packet(const Data &send, Data &receive)
 	return true;
 }
 
+bool Socket::Packet(Barry::Packet &packet)
+{
+	return Packet(packet.m_send, packet.m_receive);
+}
+
 bool Socket::NextRecord(Data &receive)
 {
-	Barry::Packet packet;
+	Barry::Protocol::Packet packet;
 	packet.socket = GetSocket();
 	packet.size = 7;
 	packet.command = SB_COMMAND_DB_DONE;

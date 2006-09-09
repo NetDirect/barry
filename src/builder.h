@@ -39,7 +39,10 @@ public:
 	Builder() {}
 	virtual ~Builder() {}
 
-	virtual bool operator()(Data &data, size_t offset, unsigned int databaseId) = 0;
+	virtual bool Retrieve(unsigned int databaseId) = 0;
+	virtual uint32_t GetUniqueId() const = 0;
+	virtual void BuildHeader(Data &data, size_t &offset) = 0;
+	virtual void BuildFields(Data &data, size_t &offset) = 0;
 };
 
 
@@ -68,6 +71,7 @@ class RecordBuilder : public Builder
 {
 	Storage *m_storage;
 	bool m_owned;
+	Record m_rec;
 
 public:
 	/// Constructor that references an externally managed storage object.
@@ -87,15 +91,26 @@ public:
 			delete m_storage;
 	}
 
+	virtual bool Retrieve(unsigned int databaseId)
+	{
+		return (*m_storage)(m_rec, databaseId);
+	}
+
+	virtual uint32_t GetUniqueId() const
+	{
+		return m_rec.GetUniqueId();
+	}
+
 	/// Functor member called by Controller::SaveDatabase() during
 	/// processing.
-	virtual bool operator()(Data &data, size_t offset, unsigned int databaseId)
+	virtual void BuildHeader(Data &data, size_t &offset)
 	{
-		Record rec;
-		if( !(*m_storage)(rec, databaseId) )
-			return false;
-		rec.Build(data, offset);
-		return true;
+		m_rec.BuildHeader(data, offset);
+	}
+
+	virtual void BuildFields(Data &data, size_t &offset)
+	{
+		m_rec.BuildFields(data, offset);
 	}
 };
 

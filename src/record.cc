@@ -37,6 +37,7 @@
 #include "debug.h"
 
 using namespace std;
+using namespace Barry::Protocol;
 
 namespace Barry {
 
@@ -48,13 +49,14 @@ std::ostream& operator<<(std::ostream &os, const Message::Address &msga) {
 
 
 template <class Record>
-void ParseCommonFields(Record &rec, const void *begin, const void *end)
+const unsigned char*  ParseCommonFields(Record &rec, const void *begin, const void *end)
 {
 	const unsigned char *b = (const unsigned char*) begin;
 	const unsigned char *e = (const unsigned char*) end;
 
 	while( (b + COMMON_FIELD_HEADER_SIZE) < e )
 		b = rec.ParseField(b, e);
+	return b;
 }
 
 void BuildField1900(Data &data, size_t &size, uint8_t type, time_t t)
@@ -100,9 +102,9 @@ void BuildField(Data &data, size_t &size, uint8_t type, const std::string &str)
 	size += fieldsize;
 }
 
-void BuildField(Data &data, size_t &size, uint8_t type, const Barry::GroupLink &link)
+void BuildField(Data &data, size_t &size, uint8_t type, const Barry::Protocol::GroupLink &link)
 {
-	size_t linksize = sizeof(Barry::GroupLink);
+	size_t linksize = sizeof(Barry::Protocol::GroupLink);
 	size_t fieldsize = COMMON_FIELD_HEADER_SIZE + linksize;
 	unsigned char *pd = data.GetBuffer(size + fieldsize) + size;
 	CommonField *field = (CommonField *) pd;
@@ -338,13 +340,13 @@ void DatabaseDatabase::Parse(const Data &data)
 	const unsigned char *begin = 0;
 	const unsigned char *end = data.GetData() + data.GetSize();
 
-	switch( pack->u.db.u.dbdb.operation )
+	switch( pack->u.db.u.response.operation )
 	{
 	case SB_DBOP_GET_DBDB:
 		// using the new protocol
 		if( data.GetSize() > SB_PACKET_DBDB_HEADER_SIZE ) {
 			begin = (const unsigned char *)
-				&pack->u.db.u.dbdb.field[0];
+				&pack->u.db.u.response.u.dbdb.field[0];
 
 			// this while check is ok, since ParseField checks
 			// for header size
@@ -352,14 +354,14 @@ void DatabaseDatabase::Parse(const Data &data)
 				begin = ParseField<DBDBField>(begin, end);
 		}
 		else
-			dout("Contact: not enough data for parsing");
+			dout("DatabaseDatabase: not enough data for parsing");
 		break;
 
 	case SB_DBOP_OLD_GET_DBDB:
 		// using the old protocol
 		if( data.GetSize() > SB_PACKET_OLD_DBDB_HEADER_SIZE ) {
 			begin = (const unsigned char *)
-				&pack->u.db.u.old_dbdb.field[0];
+				&pack->u.db.u.response.u.old_dbdb.field[0];
 
 			// this while check is ok, since ParseField checks
 			// for header size
@@ -367,7 +369,7 @@ void DatabaseDatabase::Parse(const Data &data)
 				begin = ParseField<OldDBDBField>(begin, end);
 		}
 		else
-			dout("Contact: not enough data for parsing");
+			dout("DatabaseDatabase: not enough data for parsing");
 		break;
 
 	default:
@@ -502,16 +504,6 @@ FieldLink<Contact> ContactFieldLinks[] = {
    { CFC_INVALID_FIELD,"EndOfList",  0, 0, 0 }
 };
 
-size_t Contact::GetOldProtocolRecordSize()
-{
-	return sizeof(Barry::OldContactRecord);
-}
-
-size_t Contact::GetProtocolRecordSize()
-{
-	return sizeof(Barry::ContactRecord);
-}
-
 Contact::Contact()
 	: RecordId(0)
 {
@@ -585,63 +577,43 @@ const unsigned char* Contact::ParseField(const unsigned char *begin,
 	return begin;
 }
 
-// this is called by the RecordParser<> class, which checks size for us
-void Contact::Parse(const Data &data, size_t offset, unsigned int operation)
+void Contact::ParseHeader(const Data &data, size_t &offset)
 {
-	const void *begin = 0;
-	switch( operation )
-	{
-	case SB_DBOP_GET_RECORDS:
-		{
-			// using the new protocol
-			// save the contact record ID
-			MAKE_RECORD(const Barry::ContactRecord, contact, data, offset);
-			RecordId = contact->uniqueId;
-			begin = &contact->field[0];
-			break;
-		}
+	// no header to parse in Contact records
+}
 
-	case SB_DBOP_OLD_GET_RECORDS_REPLY:
-		{
-			// using the old protocol
-			// save the contact record ID
-			MAKE_RECORD(const Barry::OldContactRecord, contact, data, offset);
-			RecordId = contact->uniqueId;
-			begin = &contact->field[0];
-			break;
-		}
-	}
+// this is called by the RecordParser<> class, which checks size for us
+void Contact::ParseFields(const Data &data, size_t &offset)
+{
+	const unsigned char *finish = ParseCommonFields(*this,
+		data.GetData() + offset, data.GetData() + data.GetSize());
+	offset += finish - (data.GetData() + offset);
+}
 
-	ParseCommonFields(*this, begin, data.GetData() + data.GetSize());
+void Contact::BuildHeader(Data &data, size_t &offset) const
+{
+	// no header in Contact records
 }
 
 //
-// Build
+// BuildFields
 //
-/// Build a raw protocol packet based on data in the class.
+/// Build fields part of record
 ///
-void Contact::Build(Data &data, size_t offset) const
+void Contact::BuildFields(Data &data, size_t &offset) const
 {
 	data.Zap();
-
-	// uploading always seems to use the old record
-	size_t size = offset + OLD_CONTACT_RECORD_HEADER_SIZE;
-	unsigned char *pd = data.GetBuffer(size);
-	MAKE_RECORD_PTR(Barry::OldContactRecord, contact, pd, offset);
-
-	contact->uniqueId = RecordId;
-	contact->unknown = 1;
 
 	// check if this is a group link record, and if so, output
 	// the group flag
 	if( GroupLinks.size() )
-		BuildField(data, size, CFC_GROUP_FLAG, 'G');
+		BuildField(data, offset, CFC_GROUP_FLAG, 'G');
 
 	// special fields not in type table
 	if( FirstName.size() )
-		BuildField(data, size, CFC_NAME, FirstName);
+		BuildField(data, offset, CFC_NAME, FirstName);
 	if( LastName.size() )
-		BuildField(data, size, CFC_NAME, LastName);
+		BuildField(data, offset, CFC_NAME, LastName);
 
 	// cycle through the type table
 	for(	FieldLink<Contact> *b = ContactFieldLinks;
@@ -651,7 +623,7 @@ void Contact::Build(Data &data, size_t offset) const
 		// print only fields with data
 		const std::string &field = this->*(b->strMember);
 		if( field.size() ) {
-			BuildField(data, size, b->type, field);
+			BuildField(data, offset, b->type, field);
 		}
 	}
 
@@ -659,20 +631,20 @@ void Contact::Build(Data &data, size_t offset) const
 	GroupLinksType::const_iterator
 		gb = GroupLinks.begin(), ge = GroupLinks.end();
 	for( ; gb != ge; gb++ ) {
-		Barry::GroupLink link;
+		Barry::Protocol::GroupLink link;
 		link.uniqueId = htobl(gb->Link);
 		link.unknown = htobs(gb->Unknown);
-		BuildField(data, size, CFC_GROUP_LINK, link);
+		BuildField(data, offset, CFC_GROUP_LINK, link);
 	}
 
 	// and finally save unknowns
 	UnknownsType::const_iterator
 		ub = Unknowns.begin(), ue = Unknowns.end();
 	for( ; ub != ue; ub++ ) {
-		BuildField(data, size, ub->type, ub->data);
+		BuildField(data, offset, ub->type, ub->data);
 	}
 
-	data.ReleaseBuffer(size);
+	data.ReleaseBuffer(offset);
 }
 
 void Contact::Clear()
@@ -1021,16 +993,6 @@ FieldLink<Message> MessageFieldLinks[] = {
    { MFC_END,     "End of List",0, 0,    0, 0, 0 }
 };
 
-size_t Message::GetOldProtocolRecordSize()
-{
-	return sizeof(Barry::OldMessageRecord);
-}
-
-size_t Message::GetProtocolRecordSize()
-{
-	return sizeof(Barry::MessageRecord);
-}
-
 Message::Message()
 {
 }
@@ -1083,27 +1045,39 @@ const unsigned char* Message::ParseField(const unsigned char *begin,
 	return begin;
 }
 
-void Message::Parse(const Data &data, size_t offset, unsigned int operation)
+// empty API, not required by protocol
+uint32_t Message::GetUniqueId() const
 {
-	const void *begin = 0;
-	switch( operation )
-	{
-	case SB_DBOP_GET_RECORDS:
-		{
-			MAKE_RECORD(const Barry::MessageRecord, msg, data, offset);
-			begin = &msg->field[0];
-			break;
-		}
+	throw std::logic_error("Message::GetUniqueId() called, and not supported by the USB protocol.  Should never get called.");
+}
 
-	case SB_DBOP_OLD_GET_RECORDS_REPLY:
-		{
-			MAKE_RECORD(const Barry::OldMessageRecord, msg, data, offset);
-			begin = &msg->field[0];
-			break;
-		}
-	}
+// empty API, not required by protocol
+void Message::SetUniqueId(uint32_t Id)
+{
+	// accept it without complaining, just do nothing
+}
 
-	ParseCommonFields(*this, begin, data.GetData() + data.GetSize());
+void Message::ParseHeader(const Data &data, size_t &offset)
+{
+	// we skip the "header" since we don't know what to do with it yet
+	offset += MESSAGE_RECORD_HEADER_SIZE;
+}
+
+void Message::ParseFields(const Data &data, size_t &offset)
+{
+	const unsigned char *finish = ParseCommonFields(*this,
+		data.GetData() + offset, data.GetData() + data.GetSize());
+	offset += finish - (data.GetData() + offset);
+}
+
+void Message::BuildHeader(Data &data, size_t &offset) const
+{
+	throw std::logic_error("Message::BuildHeader not yet implemented");
+}
+
+void Message::BuildFields(Data &data, size_t &offset) const
+{
+	throw std::logic_error("Message::BuildFields not yet implemented");
 }
 
 void Message::Clear()
@@ -1175,16 +1149,6 @@ FieldLink<Calendar> CalendarFieldLinks[] = {
    { CALFC_END_TIME,   "End Time",   0, 0,    0, 0, &Calendar::EndTime },
    { CALFC_END,        "End of List",0, 0,    0, 0, 0 }
 };
-
-size_t Calendar::GetOldProtocolRecordSize()
-{
-	return sizeof(Barry::OldCalendarRecord);
-}
-
-size_t Calendar::GetProtocolRecordSize()
-{
-	return sizeof(Barry::CalendarRecord);
-}
 
 Calendar::Calendar()
 	: Recurring(false),
@@ -1263,57 +1227,38 @@ const unsigned char* Calendar::ParseField(const unsigned char *begin,
 	return begin;
 }
 
-void Calendar::Parse(const Data &data, size_t offset, unsigned int operation)
+void Calendar::ParseHeader(const Data &data, size_t &offset)
 {
-	const void *begin = 0;
+	// no header in Calendar records
+}
 
-	switch( operation )
-	{
-	case SB_DBOP_GET_RECORDS:
-		// using the new protocol
-		// save the contact record ID
-		throw std::logic_error("New Calendar: Not yet implemented");
-//		RecordId = pack->u.db.u.calendar.uniqueId;
-//		begin = &pack->u.db.u.calendar.field[0];
-		break;
+void Calendar::ParseFields(const Data &data, size_t &offset)
+{
+	const unsigned char *finish = ParseCommonFields(*this,
+		data.GetData() + offset, data.GetData() + data.GetSize());
+	offset += finish - (data.GetData() + offset);
+}
 
-	case SB_DBOP_OLD_GET_RECORDS_REPLY:
-		{
-			// using the old protocol
-			// save the contact record ID
-			MAKE_RECORD(const Barry::OldCalendarRecord, cal, data, offset);
-			RecordId = cal->uniqueId;
-			begin = &cal->field[0];
-			break;
-		}
-	}
-
-	ParseCommonFields(*this, begin, data.GetData() + data.GetSize());
+void Calendar::BuildHeader(Data &data, size_t &offset) const
+{
+	// no header in Calendar records
 }
 
 //
 // Build
 //
-/// Build a raw protocol packet based on data in the class.
+/// Build fields part of record.
 ///
-void Calendar::Build(Data &data, size_t offset) const
+void Calendar::BuildFields(Data &data, size_t &offset) const
 {
 	data.Zap();
 
-	// uploading always seems to use the old record
-	size_t size = offset + OLD_CALENDAR_RECORD_HEADER_SIZE;
-	unsigned char *pd = data.GetBuffer(size);
-	MAKE_RECORD_PTR(Barry::OldCalendarRecord, contact, pd, offset);
-
-	contact->uniqueId = RecordId;
-	contact->unknown = 1;
-
 	// output the type first
-	BuildField(data, size, CALFC_APPT_TYPE_FLAG, Recurring ? '*' : 'a');
+	BuildField(data, offset, CALFC_APPT_TYPE_FLAG, Recurring ? '*' : 'a');
 
 	// output all day event flag only if set
 	if( AllDayEvent )
-		BuildField(data, size, CALFC_ALLDAYEVENT_FLAG, (char)1);
+		BuildField(data, offset, CALFC_ALLDAYEVENT_FLAG, (char)1);
 
 	// cycle through the type table
 	for(	const FieldLink<Calendar> *b = CalendarFieldLinks;
@@ -1323,12 +1268,12 @@ void Calendar::Build(Data &data, size_t offset) const
 		if( b->strMember ) {
 			const std::string &s = this->*(b->strMember);
 			if( s.size() )
-				BuildField(data, size, b->type, s);
+				BuildField(data, offset, b->type, s);
 		}
 		else if( b->timeMember ) {
 			time_t t = this->*(b->timeMember);
 			if( t > 0 )
-				BuildField1900(data, size, b->type, t);
+				BuildField1900(data, offset, b->type, t);
 		}
 	}
 
@@ -1336,10 +1281,10 @@ void Calendar::Build(Data &data, size_t offset) const
 	UnknownsType::const_iterator
 		ub = Unknowns.begin(), ue = Unknowns.end();
 	for( ; ub != ue; ub++ ) {
-		BuildField(data, size, ub->type, ub->data);
+		BuildField(data, offset, ub->type, ub->data);
 	}
 
-	data.ReleaseBuffer(size);
+	data.ReleaseBuffer(offset);
 }
 
 void Calendar::Clear()
@@ -1472,34 +1417,39 @@ const unsigned char* ServiceBookConfig::ParseField(const unsigned char *begin,
 	return begin;
 }
 
-void ServiceBookConfig::Parse(const Data &data, size_t offset, unsigned int operation)
+void ServiceBookConfig::ParseHeader(const Data &data, size_t &offset)
 {
-	const void *begin = 0;
-
-	switch( operation )
-	{
-	case SB_DBOP_GET_RECORDS:
-	case SB_DBOP_OLD_GET_RECORDS_REPLY:
-	default:	// FIXME - any operation is ok here... we don't know yet if it makes a difference
-		{
-			// using the old protocol
-			// save the contact record ID
-			MAKE_RECORD(const Barry::ServiceBookConfigField, sbc, data, offset);
-			Format = sbc->format;
-			begin = &sbc->fields[0];
-			break;
-		}
+	MAKE_RECORD(const Barry::Protocol::ServiceBookConfigField, sbc, data, offset);
+	offset += SERVICE_BOOK_CONFIG_FIELD_HEADER_SIZE;
+	if( data.GetSize() >= offset ) {	// size check!
+		Format = sbc->format;
 	}
+}
 
-	ParseCommonFields(*this, begin, data.GetData() + data.GetSize());
+void ServiceBookConfig::ParseFields(const Data &data, size_t &offset)
+{
+	const unsigned char *finish = ParseCommonFields(*this,
+		data.GetData() + offset, data.GetData() + data.GetSize());
+	offset += finish - (data.GetData() + offset);
+}
+
+void ServiceBookConfig::BuildHeader(Data &data, size_t &offset) const
+{
+	// make sure there is enough space
+	data.GetBuffer(offset + SERVICE_BOOK_CONFIG_FIELD_HEADER_SIZE);
+
+	MAKE_RECORD(Barry::Protocol::ServiceBookConfigField, sbc, data, offset);
+	sbc->format = Format;
+
+	offset += SERVICE_BOOK_CONFIG_FIELD_HEADER_SIZE;
 }
 
 //
-// Build
+// BuildFields
 //
-/// Build a raw protocol packet based on data in the class.
+/// Build fields part of record
 ///
-void ServiceBookConfig::Build(Data &data, size_t offset) const
+void ServiceBookConfig::BuildFields(Data &data, size_t &offset) const
 {
 	throw std::logic_error("ServiceBookConfig::Build not yet implemented");
 }
@@ -1559,18 +1509,6 @@ FieldLink<ServiceBook> ServiceBookFieldLinks[] = {
    { SBFC_DSID,        "DSID",       0, 0,    &ServiceBook::DSID, 0, 0 },
    { SBFC_END,         "End of List",0, 0,    0, 0, 0 }
 };
-
-size_t ServiceBook::GetOldProtocolRecordSize()
-{
-	return sizeof(Barry::OldServiceBookRecord);
-}
-
-size_t ServiceBook::GetProtocolRecordSize()
-{
-	throw std::logic_error("ServiceBook::GetProtocolRecordSize not yet implemented");
-//	return sizeof(Barry::ServiceBookRecord);
-	return 0;
-}
 
 ServiceBook::ServiceBook()
 	: NameType(SBFC_OLD_NAME),
@@ -1649,7 +1587,9 @@ const unsigned char* ServiceBook::ParseField(const unsigned char *begin,
 	case SBFC_CONFIG:
 		{
 			Data config((const void *)field->u.raw, field->size);
-			Config.Parse(config, 0, 0);
+			size_t offset = 0;
+			Config.ParseHeader(config, offset);
+			Config.ParseFields(config, offset);
 		}
 		break;	// break here so raw packet is still visible in dump
 //		return begin;
@@ -1665,86 +1605,31 @@ const unsigned char* ServiceBook::ParseField(const unsigned char *begin,
 	return begin;
 }
 
-void ServiceBook::Parse(const Data &data, size_t offset, unsigned int operation)
+void ServiceBook::ParseHeader(const Data &data, size_t &offset)
 {
-	const void *begin = 0;
+	// no header in this record (?)
+}
 
-	switch( operation )
-	{
-	case SB_DBOP_GET_RECORDS:
-		// using the new protocol
-		// save the contact record ID
-		throw std::logic_error("New ServiceBook: Not yet implemented");
-//		RecordId = pack->u.db.u.calendar.uniqueId;
-//		begin = &pack->u.db.u.calendar.field[0];
-		break;
+void ServiceBook::ParseFields(const Data &data, size_t &offset)
+{
+	const unsigned char *finish = ParseCommonFields(*this,
+		data.GetData() + offset, data.GetData() + data.GetSize());
+	offset += finish - (data.GetData() + offset);
+}
 
-	case SB_DBOP_OLD_GET_RECORDS_REPLY:
-		{
-			// using the old protocol
-			// save the contact record ID
-			MAKE_RECORD(const Barry::OldServiceBookRecord, sb, data, offset);
-			RecordId = sb->uniqueId;
-			begin = &sb->field[0];
-			break;
-		}
-	}
-
-	ParseCommonFields(*this, begin, data.GetData() + data.GetSize());
+void ServiceBook::BuildHeader(Data &data, size_t &offset) const
+{
+	// no header in this record (?)
 }
 
 //
-// Build
+// BuildFields
 //
-/// Build a raw protocol packet based on data in the class.
+/// Build fields part of record
 ///
-void ServiceBook::Build(Data &data, size_t offset) const
+void ServiceBook::BuildFields(Data &data, size_t &offset) const
 {
-	throw std::logic_error("ServiceBook::Build not yet implemented");
-/*
-	data.Zap();
-
-	// uploading always seems to use the old record
-	size_t size = offset + OLD_SERVICE_BOOK_RECORD_HEADER_SIZE;
-	unsigned char *pd = data.GetBuffer(size);
-	MAKE_RECORD_PTR(Barry::OldServiceBookRecord, sbook, pd, offset);
-
-	sbook->uniqueId = RecordId;
-	sbook->unknown = 0;
-
-	// output the type first
-	BuildField(data, size, SBFC_APPT_TYPE_FLAG, Recurring ? '*' : 'a');
-
-	// output all day event flag only if set
-	if( AllDayEvent )
-		BuildField(data, size, SBFC_ALLDAYEVENT_FLAG, (char)1);
-
-	// cycle through the type table
-	for(	const FieldLink<ServiceBook> *b = ServiceBookFieldLinks;
-		b->type != SBFC_END;
-		b++ )
-	{
-		if( b->strMember ) {
-			const std::string &s = this->*(b->strMember);
-			if( s.size() )
-				BuildField(data, size, b->type, s);
-		}
-		else if( b->timeMember ) {
-			time_t t = this->*(b->timeMember);
-			if( t > 0 )
-				BuildField1900(data, size, b->type, t);
-		}
-	}
-
-	// and finally save unknowns
-	UnknownsType::const_iterator
-		ub = Unknowns.begin(), ue = Unknowns.end();
-	for( ; ub != ue; ub++ ) {
-		BuildField(data, size, ub->type, ub->data);
-	}
-
-	data.ReleaseBuffer(size);
-*/
+	throw std::logic_error("ServiceBook::BuildFields not yet implemented");
 }
 
 void ServiceBook::Clear()
@@ -1818,13 +1703,15 @@ int main(int argc, char *argv[])
 //		cout << d << endl;
 		if( d.GetSize() > 13 && d.GetData()[6] == 0x4f ) {
 			Barry::Contact contact;
-			contact.Parse(d, 13, d.GetData()[6]);
+			size_t size = 13;
+			contact.ParseFields(d, size);
 			cout << contact << endl;
 			contact.DumpLdif(cout, "ou=People,dc=example,dc=com");
 		}
 		else if( d.GetSize() > 13 && d.GetData()[6] == 0x44 ) {
 			Barry::Calendar cal;
-			cal.Parse(d, 13, d.GetData()[6]);
+			size_t size = 13;
+			cal.ParseFields(d, size);
 			cout << cal << endl;
 		}
 	}

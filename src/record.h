@@ -234,8 +234,14 @@ public:
 	uint64_t GetID() const { return RecordId; }
 	std::string GetPostalAddress() const;
 
-	void Parse(const Data &data, size_t offset, unsigned int operation);
-	void Build(Data &data, size_t offset) const;
+	// Parser / Builder API (see parser.h / builder.h)
+	uint32_t GetUniqueId() const { return RecordId; }
+	void SetUniqueId(uint32_t Id) { RecordId = Id; }
+	void ParseHeader(const Data &data, size_t &offset);
+	void ParseFields(const Data &data, size_t &offset);
+	void BuildHeader(Data &data, size_t &offset) const;
+	void BuildFields(Data &data, size_t &offset) const;
+
 	void Clear();			// erase everything
 
 	void Dump(std::ostream &os) const;
@@ -283,12 +289,21 @@ public:
 	std::vector<UnknownField> Unknowns;
 
 public:
+	const unsigned char* ParseField(const unsigned char *begin,
+		const unsigned char *end);
+
+public:
 	Message();
 	~Message();
 
-	const unsigned char* ParseField(const unsigned char *begin,
-		const unsigned char *end);
-	void Parse(const Data &data, size_t offset, unsigned int operation);
+	// Parser / Builder API (see parser.h / builder.h)
+	uint32_t GetUniqueId() const;	// empty API, not required by protocol
+	void SetUniqueId(uint32_t Id);	// empty API, not required by protocol
+	void ParseHeader(const Data &data, size_t &offset);
+	void ParseFields(const Data &data, size_t &offset);
+	void BuildHeader(Data &data, size_t &offset) const;
+	void BuildFields(Data &data, size_t &offset) const;
+
 	void Clear();
 
 	void Dump(std::ostream &os) const;
@@ -329,13 +344,21 @@ public:
 	UnknownsType Unknowns;
 
 public:
+	const unsigned char* ParseField(const unsigned char *begin,
+		const unsigned char *end);
+
+public:
 	Calendar();
 	~Calendar();
 
-	const unsigned char* ParseField(const unsigned char *begin,
-		const unsigned char *end);
-	void Parse(const Data &data, size_t offset, unsigned int operation);
-	void Build(Data &data, size_t offset) const;
+	// Parser / Builder API (see parser.h / builder.h)
+	uint32_t GetUniqueId() const { return RecordId; }
+	void SetUniqueId(uint32_t Id) { RecordId = Id; }
+	void ParseHeader(const Data &data, size_t &offset);
+	void ParseFields(const Data &data, size_t &offset);
+	void BuildHeader(Data &data, size_t &offset) const;
+	void BuildFields(Data &data, size_t &offset) const;
+
 	void Clear();
 
 	void Dump(std::ostream &os) const;
@@ -369,13 +392,21 @@ public:
 	UnknownsType Unknowns;
 
 public:
+	const unsigned char* ParseField(const unsigned char *begin,
+		const unsigned char *end);
+
+public:
 	ServiceBookConfig();
 	~ServiceBookConfig();
 
-	const unsigned char* ParseField(const unsigned char *begin,
-		const unsigned char *end);
-	void Parse(const Data &data, size_t offset, unsigned int operation);
-	void Build(Data &data, size_t offset) const;
+	// Parser / Builder API (see parser.h / builder.h)
+	uint32_t GetUniqueId() const;
+	void SetUniqueId(uint32_t Id);
+	void ParseHeader(const Data &data, size_t &offset);
+	void ParseFields(const Data &data, size_t &offset);
+	void BuildHeader(Data &data, size_t &offset) const;
+	void BuildFields(Data &data, size_t &offset) const;
+
 	void Clear();
 
 	void Dump(std::ostream &os) const;
@@ -407,13 +438,21 @@ public:
 	UnknownsType Unknowns;
 
 public:
+	const unsigned char* ParseField(const unsigned char *begin,
+		const unsigned char *end);
+
+public:
 	ServiceBook();
 	~ServiceBook();
 
-	const unsigned char* ParseField(const unsigned char *begin,
-		const unsigned char *end);
-	void Parse(const Data &data, size_t offset, unsigned int operation);
-	void Build(Data &data, size_t offset) const;
+	// Parser / Builder API (see parser.h / builder.h)
+	uint32_t GetUniqueId() const { return RecordId; }
+	void SetUniqueId(uint32_t Id) { RecordId = Id; }
+	void ParseHeader(const Data &data, size_t &offset);
+	void ParseFields(const Data &data, size_t &offset);
+	void BuildHeader(Data &data, size_t &offset) const;
+	void BuildFields(Data &data, size_t &offset) const;
+
 	void Clear();
 
 	void Dump(std::ostream &os) const;

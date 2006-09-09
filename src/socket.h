@@ -27,6 +27,7 @@
 // forward declarations
 class Data;
 namespace Usb { class Device; }
+namespace Barry { class Packet; }
 
 namespace Barry {
 
@@ -85,6 +86,7 @@ public:
 	// if needed
 	// Blocks until response received or timed out in Usb::Device
 	bool Packet(const Data &send, Data &receive);
+	bool Packet(Barry::Packet &packet);
 
 	// some handy wrappers for the Packet() interface
 	bool NextRecord(Data &receive);

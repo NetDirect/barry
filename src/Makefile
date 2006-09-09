@@ -19,6 +19,7 @@ LIBOBJS = \
 	socket.o \
 	protocol.o \
 	record.o \
+	packet.o \
 	controller.o
 
 CONNECTOBJS = \
@@ -44,6 +45,7 @@ UPLDIFOBJS = \
 	socket.o \
 	protocol.o \
 	record.o \
+	packet.o \
 	controller.o \
 	upldif.o
 
@@ -84,7 +86,7 @@ install:
 	mkdir -p $(INSTALLDIR)/include/barry
 	mkdir -p $(INSTALLDIR)/lib
 	install libbarry.a $(INSTALLDIR)/lib
-	install barry.h base64.h builder.h common.h controller.h controllertmpl.h data.h debug.h error.h parser.h probe.h protocol.h protostructs.h record.h s11n-boost.h socket.h time.h usbwrap.h $(INSTALLDIR)/include/barry
+	install barry.h base64.h builder.h common.h controller.h controllertmpl.h data.h debug.h error.h packet.h parser.h probe.h protocol.h protostructs.h record.h s11n-boost.h socket.h time.h usbwrap.h $(INSTALLDIR)/include/barry
 
 
 #############

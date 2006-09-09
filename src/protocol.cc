@@ -27,7 +27,7 @@
 
 #include <sstream>
 
-namespace Barry {
+namespace Barry { namespace Protocol {
 
 void CheckSize(const Data &packet, size_t requiredsize)
 {
@@ -44,5 +44,5 @@ void CheckSize(const Data &packet, size_t requiredsize)
 	}
 }
 
-} // namespace Barry
+}} // namespace Barry::Protocol
 

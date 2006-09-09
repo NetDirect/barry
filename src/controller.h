@@ -57,6 +57,8 @@ class Builder;
 ///
 class Controller
 {
+	friend class Barry::Packet;
+
 public:
 	/// Handheld mode type
 	enum ModeType {
@@ -109,6 +111,7 @@ public:
 	// dirty flag related functions, for sync operations
 	void GetRecordStateTable(unsigned int dbId, RecordStateTable &result);
 	void GetRecord(unsigned int dbId, unsigned int stateTableIndex, Parser &parser);
+	void SetRecord(unsigned int dbId, unsigned int stateTableIndex, Builder &build);
 	void ClearDirty(unsigned int dbId, unsigned int stateTableIndex);
 	void DeleteRecord(unsigned int dbId, unsigned int stateTableIndex);
 

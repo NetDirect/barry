@@ -32,7 +32,7 @@
 // forward declarations
 class Data;
 
-namespace Barry {
+namespace Barry { namespace Protocol {
 
 ///////////////////////////////////////////////////////////////////////////////
 union SizePacket
@@ -41,97 +41,47 @@ union SizePacket
 	char buffer[4];
 } __attribute__ ((packed));
 
-///////////////////////////////////////////////////////////////////////////////
-struct SocketCommand
-{
-	uint16_t	socket;
-	uint8_t		param;
-} __attribute__ ((packed));
 
 ///////////////////////////////////////////////////////////////////////////////
-struct SequenceCommand
+// Record sub-field structs
+
+struct GroupLink				// used for Contacts records
 {
-	uint8_t		unknown1;
-	uint8_t		unknown2;
-	uint8_t		unknown3;
-	uint32_t	sequenceId;
+	uint32_t	uniqueId;
+	uint16_t	unknown;
 } __attribute__ ((packed));
 
-///////////////////////////////////////////////////////////////////////////////
-struct ModeSelectCommand
+struct MessageAddress				// used for Message records
 {
-	uint16_t	socket;
-	uint8_t		flag;
-	uint8_t		modeName[16];
-	struct ResponseBlock
+	uint8_t		unknown[8];
+	uint8_t		addr[1];	// 2 null terminated strings: first
+					// contains full name, second contains
+					// the email address
+} __attribute__ ((packed));
+
+
+
+///////////////////////////////////////////////////////////////////////////////
+// Record Field Formats
+
+struct CommonField
+{
+	uint16_t	size;			// including null terminator
+	uint8_t		type;
+
+	union CommonFieldData
 	{
-		uint8_t		unknown[20];
-	} __attribute__ ((packed)) response;
-} __attribute__ ((packed));
 
-///////////////////////////////////////////////////////////////////////////////
-struct DBCommand
-{
-	uint8_t		operation;	// see below
-	uint16_t	databaseId;	// value from the Database Database
-	uint8_t		data[1];
-} __attribute__ ((packed));
-#define DB_COMMAND_HEADER_SIZE		(sizeof(Barry::DBCommand) - 1)
+		GroupLink	link;
+		MessageAddress	addr;
+		int32_t		min1900;
+		uint8_t		raw[1];
 
-struct DBResponse
-{
-	uint8_t		operation;
-	uint32_t	unknown;
-	uint16_t	count;
-	uint8_t		data[1];
-} __attribute__ ((packed));
-#define DB_RESPONSE_HEADER_SIZE		(sizeof(Barry::DBResponse) - 1)
-
-struct OldDBResponse
-{
-	uint8_t		operation;
-	uint8_t		unknown;
-	uint16_t	count;
-	uint8_t		data[1];
-} __attribute__ ((packed));
-#define OLD_DB_RESPONSE_HEADER_SIZE	(sizeof(Barry::OldDBResponse) - 1)
-
-struct UploadCommand
-{
-	uint8_t		operation;
-	uint16_t	databaseId;	// value from the Database Database
-	uint8_t		unknown;	// observed: 00 or 05
-	uint8_t		data[1];
-} __attribute__ ((packed));
-#define UPLOAD_HEADER_SIZE		(sizeof(Barry::UploadCommand) - 1)
-
-struct DBRecordCommand
-{
-	uint8_t		operation;
-	uint16_t	databaseId;	// value from the Database Database
-	uint16_t	recordIndex;	// index comes from RecordStateTable
-	uint8_t		data[1];
-} __attribute__ ((packed));
-#define DB_RECORD_COMMAND_HEADER_SIZE	(sizeof(Barry::DBRecordCommand) - 1)
-
-struct DBRecordFlagsCommand
-{
-	uint8_t		operation;	// see below
-	uint16_t	databaseId;	// value from the Database Database
-	struct RecordStateFlags
-	{
-		uint8_t		unknown;
-		uint16_t	index;
-		uint8_t		unknown2[5];
-	} __attribute__ ((packed)) flags;
+	} __attribute__ ((packed)) u;
 
 } __attribute__ ((packed));
-#define DB_RECORD_FLAGS_COMMAND_SIZE	(sizeof(Barry::DBRecordFlagsCommand))
-
-
-
-///////////////////////////////////////////////////////////////////////////////
-// CommandTable command and field structures
+#define COMMON_FIELD_HEADER_SIZE	(sizeof(Barry::Protocol::CommonField) - sizeof(Barry::Protocol::CommonField::CommonFieldData))
+#define COMMON_FIELD_MIN1900_SIZE	(sizeof(int32_t))
 
 struct CommandTableField
 {
@@ -139,13 +89,7 @@ struct CommandTableField
 	uint8_t		code;
 	uint8_t		name[1];
 } __attribute__ ((packed));
-
-#define COMMAND_FIELD_HEADER_SIZE	(sizeof(Barry::CommandTableField) - 1)
-
-
-
-///////////////////////////////////////////////////////////////////////////////
-// Database database command and field structures
+#define COMMAND_FIELD_HEADER_SIZE	(sizeof(Barry::Protocol::CommandTableField) - 1)
 
 struct OldDBDBField
 {
@@ -158,7 +102,7 @@ struct OldDBDBField
 	uint16_t	nameSize;		// includes null terminator
 	uint8_t		name[1];
 } __attribute__ ((packed));
-#define OLD_DBDB_FIELD_HEADER_SIZE	(sizeof(Barry::OldDBDBField) - 1)
+#define OLD_DBDB_FIELD_HEADER_SIZE	(sizeof(Barry::Protocol::OldDBDBField) - 1)
 
 struct DBDBField
 {
@@ -175,30 +119,7 @@ struct DBDBField
 						// null terminated name, but
 						// is here for size calcs
 } __attribute__ ((packed));
-#define DBDB_FIELD_HEADER_SIZE	(sizeof(Barry::DBDBField) - 1)
-
-struct OldDBDBRecord
-{
-	uint8_t		operation;
-	uint16_t	count;			// number of fields in record
-	OldDBDBField	field[1];
-} __attribute__ ((packed));
-#define OLD_DBDB_RECORD_HEADER_SIZE	(sizeof(Barry::OldDBDBRecord) - sizeof(Barry::OldDBDBField))
-
-struct DBDBRecord
-{
-	uint8_t		operation;
-	uint16_t	count;
-	uint8_t		unknown[3];
-	DBDBField	field[1];
-} __attribute__ ((packed));
-#define DBDB_RECORD_HEADER_SIZE		(sizeof(Barry::DBDBRecord) - sizeof(Barry::DBDBField))
-
-
-
-
-///////////////////////////////////////////////////////////////////////////////
-// State table structs
+#define DBDB_FIELD_HEADER_SIZE	(sizeof(Barry::Protocol::DBDBField) - 1)
 
 struct RecordStateTableField
 {
@@ -214,55 +135,9 @@ struct RecordStateTableField
 } __attribute__ ((packed));
 
 
-///////////////////////////////////////////////////////////////////////////////
-// Address book sub-field structs
-
-struct GroupLink
-{
-	uint32_t	uniqueId;
-	uint16_t	unknown;
-} __attribute__ ((packed));
-
 
 ///////////////////////////////////////////////////////////////////////////////
-// Message sub-field structs
-
-struct MessageAddress
-{
-	uint8_t		unknown[8];
-	uint8_t		addr[1];	// 2 null terminated strings: first
-					// contains full name, second contains
-					// the email address
-} __attribute__ ((packed));
-
-
-
-
-
-///////////////////////////////////////////////////////////////////////////////
-// Common database field structure
-
-union CommonFieldData
-{
-	GroupLink	link;
-	MessageAddress	addr;
-	int32_t		min1900;
-	uint8_t		raw[1];
-
-} __attribute__ ((packed));
-
-struct CommonField
-{
-	uint16_t	size;		// including null terminator
-	uint8_t		type;
-	CommonFieldData	u;
-} __attribute__ ((packed));
-#define COMMON_FIELD_HEADER_SIZE	(sizeof(Barry::CommonField) - sizeof(Barry::CommonFieldData))
-#define COMMON_FIELD_MIN1900_SIZE	(sizeof(int32_t))
-
-
-///////////////////////////////////////////////////////////////////////////////
-// Packed field structures
+// Packed field structures - odd format used with Service Book records
 
 struct PackedField_02
 {
@@ -271,7 +146,7 @@ struct PackedField_02
 	uint8_t		type;
 	uint8_t		raw[1];
 } __attribute__ ((packed));
-#define PACKED_FIELD_02_HEADER_SIZE	(sizeof(Barry::PackedField_02) - 1)
+#define PACKED_FIELD_02_HEADER_SIZE	(sizeof(Barry::Protocol::PackedField_02) - 1)
 
 struct PackedField_10
 {
@@ -279,63 +154,8 @@ struct PackedField_10
 	uint8_t		size;
 	uint8_t		raw[1];
 } __attribute__ ((packed));
-#define PACKED_FIELD_10_HEADER_SIZE	(sizeof(Barry::PackedField_10) - 1)
+#define PACKED_FIELD_10_HEADER_SIZE	(sizeof(Barry::Protocol::PackedField_10) - 1)
 
-
-///////////////////////////////////////////////////////////////////////////////
-// Address book / Contact record data
-
-struct OldContactRecord
-{
-	uint32_t	uniqueId;
-	uint8_t		unknown;
-	CommonField	field[1];
-} __attribute__ ((packed));
-#define OLD_CONTACT_RECORD_HEADER_SIZE	(sizeof(Barry::OldContactRecord) - sizeof(Barry::CommonField))
-
-struct ContactRecord
-{
-	uint32_t	uniqueId;
-	uint8_t		unknown[3];
-	CommonField	field[1];
-} __attribute__ ((packed));
-#define CONTACT_RECORD_HEADER_SIZE	(sizeof(Barry::ContactRecord) - sizeof(Barry::CommonField))
-
-
-///////////////////////////////////////////////////////////////////////////////
-// Message field and record structures
-
-struct OldMessageRecord
-{
-	uint8_t		timeBlock[0x72];
-	CommonField	field[1];
-} __attribute__ ((packed));
-
-struct MessageRecord
-{
-	uint8_t		timeBlock[0x74];
-	CommonField	field[1];
-} __attribute__ ((packed));
-
-
-
-///////////////////////////////////////////////////////////////////////////////
-// Calendar field and record structures
-
-struct OldCalendarRecord
-{
-	uint32_t	uniqueId;
-	uint8_t		unknown;	// observed as 0 or 1
-	CommonField	field[1];
-} __attribute__ ((packed));
-#define OLD_CALENDAR_RECORD_HEADER_SIZE	(sizeof(Barry::OldCalendarRecord) - sizeof(Barry::CommonField))
-
-struct CalendarRecord
-{
-	// FIXME - not yet implemented
-	CommonField	field[1];
-} __attribute__ ((packed));
-//#define CALENDAR_RECORD_HEADER_SIZE	(sizeof(Barry::CalendarRecord) - sizeof(Barry::CommonField))
 
 
 
@@ -347,14 +167,158 @@ struct ServiceBookConfigField
 	uint8_t		format;
 	uint8_t		fields[1];
 } __attribute__ ((packed));
+#define SERVICE_BOOK_CONFIG_FIELD_HEADER_SIZE (sizeof(Barry::Protocol::ServiceBookConfigField) - 1)
 
-struct OldServiceBookRecord
+
+///////////////////////////////////////////////////////////////////////////////
+// DB Command Parameter structures
+
+struct DBC_Record
 {
-	uint32_t	uniqueId;
+	uint16_t	recordIndex;	// index comes from RecordStateTable
+	uint8_t		data[1];
+} __attribute__ ((packed));
+#define DBC_RECORD_HEADER_SIZE		(sizeof(Barry::Protocol::DBC_Record) - 1)
+
+struct DBC_RecordFlags
+{
 	uint8_t		unknown;
+	uint16_t	index;
+	uint8_t		unknown2[5];
+} __attribute__ ((packed));
+#define DBC_RECORD_FLAGS_SIZE		(sizeof(Barry::Protocol::DBC_RecordFlags))
+
+struct DBC_TaggedUpload
+{
+	uint8_t		unknown;	// observed: 00 or 05
+	uint32_t	uniqueId;
+	uint8_t		unknown2;
+	uint8_t		data[1];
+} __attribute__ ((packed));
+#define DBC_TAGGED_UPLOAD_HEADER_SIZE	(sizeof(Barry::Protocol::DBC_TaggedUpload) - 1)
+
+struct DBC_IndexedUpload
+{
+	uint8_t		unknown;	// observed: 00 or 05
+	uint16_t	index;
+	uint8_t		data[1];
+} __attribute__ ((packed));
+#define DBC_INDEXED_UPLOAD_HEADER_SIZE	(sizeof(Barry::Protocol::DBC_IndexedUpload) - 1)
+
+
+///////////////////////////////////////////////////////////////////////////////
+// Protocol command structures
+
+struct SocketCommand
+{
+	uint16_t	socket;
+	uint8_t		param;
+} __attribute__ ((packed));
+
+struct SequenceCommand
+{
+	uint8_t		unknown1;
+	uint8_t		unknown2;
+	uint8_t		unknown3;
+	uint32_t	sequenceId;
+} __attribute__ ((packed));
+
+struct ModeSelectCommand
+{
+	uint16_t	socket;
+	uint8_t		flag;
+	uint8_t		modeName[16];
+	struct ResponseBlock
+	{
+		uint8_t		unknown[20];
+	} __attribute__ ((packed)) response;
+} __attribute__ ((packed));
+
+struct DBCommand
+{
+	uint8_t		operation;	// see below
+	uint16_t	databaseId;	// value from the Database Database
+
+	union Parameters
+	{
+
+		DBC_Record		record;
+		DBC_RecordFlags		flags;
+		DBC_TaggedUpload	tag_upload;
+		DBC_IndexedUpload	index_upload;
+		uint8_t			raw[1];
+
+	} __attribute__ ((packed)) u;
+} __attribute__ ((packed));
+#define DB_COMMAND_HEADER_SIZE		(sizeof(Barry::Protocol::DBCommand) - sizeof(Barry::Protocol::DBCommand::Parameters))
+
+
+
+///////////////////////////////////////////////////////////////////////////////
+// Protocol response parameter structures
+
+struct DBR_OldDBDBRecord
+{
+	uint16_t	count;			// number of fields in record
+	OldDBDBField	field[1];
+} __attribute__ ((packed));
+#define OLD_DBDB_RECORD_HEADER_SIZE	(sizeof(Barry::Protocol::DBR_OldDBDBRecord) - sizeof(Barry::Protocol::OldDBDBField))
+
+struct DBR_DBDBRecord
+{
+	uint16_t	count;
+	uint8_t		unknown[3];
+	DBDBField	field[1];
+} __attribute__ ((packed));
+#define DBDB_RECORD_HEADER_SIZE		(sizeof(Barry::Protocol::DBR_DBDBRecord) - sizeof(Barry::Protocol::DBDBField))
+
+// Records with a uniqueId.  This covers the following records:
+//
+//	Old Contact records
+//	Old Service Book records
+//	Old Calendar records
+//
+struct DBR_OldTaggedRecord
+{
+	uint8_t		unknown;
+	uint16_t	index;
+	uint32_t	uniqueId;
+	uint8_t		unknown2;
+
+	union TaggedData
+	{
+		CommonField	field[1];
+	} __attribute__ ((packed)) u;
+} __attribute__ ((packed));
+#define DBR_OLD_TAGGED_RECORD_HEADER_SIZE (sizeof(Barry::Protocol::DBR_OldTaggedRecord) - sizeof(Barry::Protocol::DBR_OldTaggedRecord::TaggedData))
+
+struct MessageRecord
+{
+	uint8_t		timeBlock[0x74];
 	CommonField	field[1];
 } __attribute__ ((packed));
-#define OLD_SERVICE_BOOK_RECORD_HEADER_SIZE (sizeof(Barry::OldServiceBookRecord) - sizeof(Barry::CommonField))
+#define MESSAGE_RECORD_HEADER_SIZE (sizeof(Barry::Protocol::MessageRecord) - sizeof(Barry::Protocol::CommonField))
+
+
+
+///////////////////////////////////////////////////////////////////////////////
+// Protocol response structures
+
+struct DBResponse
+{
+	uint8_t		operation;
+
+	union Parameters
+	{
+
+		DBR_OldTaggedRecord	tagged;
+		DBR_OldDBDBRecord	old_dbdb;
+		DBR_DBDBRecord		dbdb;
+
+	} __attribute__ ((packed)) u;
+
+} __attribute__ ((packed));
+#define DB_RESPONSE_HEADER_SIZE		(sizeof(Barry::Protocol::DBResponse) - sizeof(Barry::Protocol::DBResponse::Parameters))
 
 
 
@@ -365,23 +329,19 @@ struct OldServiceBookRecord
 struct DBAccess
 {
 	uint8_t		tableCmd;
+
 	union DBData
 	{
 		DBCommand		command;
 		DBResponse		response;
-		OldDBResponse		old_response;
-		UploadCommand		upload;
-		DBRecordCommand		record_cmd;
-		DBRecordFlagsCommand	rf_cmd;
 		CommandTableField	table[1];
-		OldDBDBRecord		old_dbdb;
-		DBDBRecord		dbdb;
 		uint8_t			return_code;
-
 		uint8_t			fragment[1];
 
 	} __attribute__ ((packed)) u;
 } __attribute__ ((packed));
+#define SB_DBACCESS_HEADER_SIZE			(sizeof(Barry::Protocol::DBAccess) - sizeof(Barry::Protocol::DBAccess::DBData))
+#define SB_DBACCESS_RETURN_CODE_SIZE		(1)
 
 
 
@@ -390,7 +350,7 @@ struct DBAccess
 
 struct Packet
 {
-	uint16_t	socket;		// socket ID... 0 is always there
+	uint16_t	socket;		// socket ID... 0 exists by default
 	uint16_t	size;		// total size of data packet
 	uint8_t		command;
 
@@ -405,6 +365,7 @@ struct Packet
 
 	} __attribute__ ((packed)) u;
 } __attribute__ ((packed));
+#define SB_PACKET_HEADER_SIZE			(sizeof(Barry::Protocol::Packet) - sizeof(Barry::Protocol::Packet::PacketData))
 
 // minimum required sizes for various responses
 #define MIN_PACKET_SIZE		6
@@ -413,30 +374,34 @@ struct Packet
 // maximum sizes
 #define MAX_PACKET_SIZE		0x400	// anything beyond this needs to be
 					// fragmented
+
+/////////////////////////////////////////////////////////////////////////////
+//
 // various useful sizes
-#define SB_PACKET_HEADER_SIZE			(sizeof(Barry::Packet) - sizeof(Barry::Packet::PacketData))
-#define SB_DBACCESS_HEADER_SIZE			(sizeof(Barry::DBAccess) - sizeof(Barry::DBAccess::DBData))
+//
+
 #define SB_PACKET_DBACCESS_HEADER_SIZE		(SB_PACKET_HEADER_SIZE + SB_DBACCESS_HEADER_SIZE)
-
 #define SB_FRAG_HEADER_SIZE			SB_PACKET_DBACCESS_HEADER_SIZE
-#define SB_SEQUENCE_PACKET_SIZE			(SB_PACKET_HEADER_SIZE + sizeof(Barry::SequenceCommand))
-#define SB_SOCKET_PACKET_SIZE			(SB_PACKET_HEADER_SIZE + sizeof(Barry::SocketCommand))
-#define SB_MODE_PACKET_COMMAND_SIZE		(SB_PACKET_HEADER_SIZE + sizeof(Barry::ModeSelectCommand) - sizeof(Barry::ModeSelectCommand::ResponseBlock))
-#define SB_MODE_PACKET_RESPONSE_SIZE		(SB_PACKET_HEADER_SIZE + sizeof(Barry::ModeSelectCommand))
-#define SB_PACKET_DBDB_HEADER_SIZE		(SB_PACKET_HEADER_SIZE + SB_DBACCESS_HEADER_SIZE + DBDB_RECORD_HEADER_SIZE)
-#define SB_PACKET_OLD_DBDB_HEADER_SIZE		(SB_PACKET_HEADER_SIZE + SB_DBACCESS_HEADER_SIZE + OLD_DBDB_RECORD_HEADER_SIZE)
 
+#define SB_PACKET_COMMAND_HEADER_SIZE		(SB_PACKET_DBACCESS_HEADER_SIZE + DB_COMMAND_HEADER_SIZE)
 #define SB_PACKET_RESPONSE_HEADER_SIZE		(SB_PACKET_DBACCESS_HEADER_SIZE + DB_RESPONSE_HEADER_SIZE)
-#define SB_PACKET_OLD_RESPONSE_HEADER_SIZE	(SB_PACKET_DBACCESS_HEADER_SIZE + OLD_DB_RESPONSE_HEADER_SIZE)
+
+#define SB_PACKET_DBDB_HEADER_SIZE		(SB_PACKET_RESPONSE_HEADER_SIZE + DBDB_RECORD_HEADER_SIZE)
+#define SB_PACKET_OLD_DBDB_HEADER_SIZE		(SB_PACKET_RESPONSE_HEADER_SIZE + OLD_DBDB_RECORD_HEADER_SIZE)
+
 #define SB_PACKET_UPLOAD_HEADER_SIZE		(SB_PACKET_DBACCESS_HEADER_SIZE + UPLOAD_HEADER_SIZE)
 
+#define SB_SEQUENCE_PACKET_SIZE			(SB_PACKET_HEADER_SIZE + sizeof(Barry::Protocol::SequenceCommand))
+#define SB_SOCKET_PACKET_SIZE			(SB_PACKET_HEADER_SIZE + sizeof(Barry::Protocol::SocketCommand))
+#define SB_MODE_PACKET_COMMAND_SIZE		(SB_PACKET_HEADER_SIZE + sizeof(Barry::Protocol::ModeSelectCommand) - sizeof(Barry::Protocol::ModeSelectCommand::ResponseBlock))
+#define SB_MODE_PACKET_RESPONSE_SIZE		(SB_PACKET_HEADER_SIZE + sizeof(Barry::Protocol::ModeSelectCommand))
 
 
 // Macros
-#define COMMAND(data)				(((const Barry::Packet *)data.GetData())->command)
+#define COMMAND(data)				(((const Barry::Protocol::Packet *)data.GetData())->command)
 #define IS_COMMAND(data, cmd)			(COMMAND(data) == cmd)
-#define MAKE_PACKET(var, data)			const Barry::Packet *var = (const Barry::Packet *) data.GetData()
-#define MAKE_PACKETPTR_BUF(var, ptr)		Barry::Packet *var = (Barry::Packet *)ptr
+#define MAKE_PACKET(var, data)			const Barry::Protocol::Packet *var = (const Barry::Protocol::Packet *) data.GetData()
+#define MAKE_PACKETPTR_BUF(var, ptr)		Barry::Protocol::Packet *var = (Barry::Protocol::Packet *)ptr
 #define MAKE_RECORD(type,var,data,off)		type *var = (type *) (data.GetData() + (off))
 #define MAKE_RECORD_PTR(type,var,data,off)	type *var = (type *) (data + (off))
 
@@ -454,7 +419,7 @@ struct Packet
 // checks packet size and throws BError if not right
 void CheckSize(const Data &packet, size_t requiredsize = MIN_PACKET_SIZE);
 
-} // namespace Barry
+}} // namespace Barry::Protocol
 
 #endif
 

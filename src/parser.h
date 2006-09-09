@@ -32,7 +32,7 @@ namespace Barry {
 //
 // Parser class
 //
-/// Base class for the parser functor hierarchy.  If in debug mode, this
+/// Base class for the parser hierarchy.  If in debug mode, this
 /// class can be used as a null parser.  Call Init() and the protocol
 /// will be dumped to stdout and no parsing will be done.
 ///
@@ -42,9 +42,11 @@ public:
 	Parser() {}
 	virtual ~Parser() {}
 
-	virtual bool operator()(const Data &data, size_t offset) { return true; }
-
-	virtual bool GetOperation(const Data &data, unsigned int &operation);
+	virtual void Clear() {}
+	virtual void SetUniqueId(uint32_t Id) {}
+	virtual void ParseHeader(const Data &data, size_t &offset) {}
+	virtual void ParseFields(const Data &data, size_t &offset) {}
+	virtual void Store() {}
 };
 
 
@@ -86,6 +88,7 @@ class RecordParser : public Parser
 {
 	Storage *m_store;
 	bool m_owned;
+	Record m_rec;
 
 public:
 	/// Constructor that references an externally managed storage object.
@@ -105,45 +108,29 @@ public:
 			delete m_store;
 	}
 
-	virtual bool CheckHeaderSize(const Data &data, size_t offset, unsigned int operation)
+	virtual void Clear()
 	{
-		size_t recordsize;
-		switch( operation )
-		{
-		case SB_DBOP_GET_RECORDS:
-			// using the new protocol
-			recordsize = Record::GetProtocolRecordSize();
-			break;
-
-		case SB_DBOP_OLD_GET_RECORDS_REPLY:
-			// using the old protocol
-			recordsize = Record::GetOldProtocolRecordSize();
-			break;
-
-		default:
-			// unknown protocol
-			dout("Unknown protocol");
-			return false;
-		}
-
-		// return true if header is ok
-		return data.GetSize() > (offset + recordsize);
+		m_rec = Record();
 	}
 
-	/// Functor member called by Controller::LoadDatabase() during
-	/// processing.
-	virtual bool operator()(const Data &data, size_t offset)
+	virtual void SetUniqueId(uint32_t Id)
 	{
-		unsigned int operation;
-		if( !GetOperation(data, operation) )
-			return false;
-		if( !CheckHeaderSize(data, offset, operation) )
-			return false;
+		m_rec.SetUniqueId(Id);
+	}
 
-		Record rec;
-		rec.Parse(data, offset, operation);
-		(*m_store)(rec);
-		return true;
+	virtual void ParseHeader(const Data &data, size_t &offset)
+	{
+		m_rec.ParseHeader(data, offset);
+	}
+
+	virtual void ParseFields(const Data &data, size_t &offset)
+	{
+		m_rec.ParseFields(data, offset);
+	}
+
+	virtual void Store()
+	{
+		(*m_store)(m_rec);
 	}
 };
 
