@@ -31,6 +31,7 @@ Release: version 0.0.2 - 2006/??/??
 			to talk to the device.
 	- implemented SetRecord (SET_RECORD_BY_INDEX)... syncing, here
 		we come!
+	- spelling correction in opensync-plugin/AUTHORS
 2006/09/01
 	- added sample hotplug scripts
 	- added .cvsignore files for doxygen and opensync directories
