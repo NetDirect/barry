@@ -1,5 +1,8 @@
 Release: version 0.0.2 - 2006/??/??
 ------------------------------------------------------------------------------
+2006/09/29
+	- added stdint.h to parser.h for uint32_t.  Thanks Ron Gage for
+		the bug report
 2006/09/08
 	- large refactoring of the packet parsing and building code,
 		splitting the code into 3 groups:
