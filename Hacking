@@ -93,17 +93,13 @@ member:
 struct DBAccess
 {
         uint8_t         tableCmd;
+
         union DBData
         {
                 DBCommand               command;
                 DBResponse              response;
-                OldDBResponse           old_response;
-                UploadCommand           upload;
                 CommandTableField       table[1];
-                OldDBDBRecord           old_dbdb;
-                DBDBRecord              dbdb;
                 uint8_t                 return_code;
-
                 uint8_t                 fragment[1];
 
         } __attribute__ ((packed)) u;
@@ -111,17 +107,46 @@ struct DBAccess
 
 
 
-When downloading database records, they all arrive in either a DBResponse
-or OldDBResponse, depending on the database access command you use.
-Barry uses the old, serial-compatible command, so you're interested in:
+When downloading database records, they all arrive in a DBResponse packet.
 
-
-struct OldDBResponse
+struct DBResponse
 {
         uint8_t         operation;
+
+        union Parameters
+        {
+
+                DBR_OldTaggedRecord     tagged;
+                DBR_OldDBDBRecord       old_dbdb;
+                DBR_DBDBRecord          dbdb;
+
+        } __attribute__ ((packed)) u;
+
+} __attribute__ ((packed));
+
+
+Depending on the command you use, the format of the record will change.
+Also, newer versions of Blackberries have new "GET" commands that
+return a slightly different record header.  Barry currenly uses
+the "old" command, which is supported by all USB Blackberries tested
+so far, so it has the greatest compatibility.
+
+Some database records are tagged with a unique ID.  These databases
+include the Contact records, Service Book records, and Calendar
+records.  This allows for intelligent syncing, as Barry can reference,
+update, and delete records individually instead of a group.
+
+struct DBR_OldTaggedRecord
+{
         uint8_t         unknown;
-        uint16_t        count;
-        uint8_t         data[1];
+        uint16_t        index;
+        uint32_t        uniqueId;
+        uint8_t         unknown2;
+
+        union TaggedData
+        {
+                CommonField     field[1];
+        } __attribute__ ((packed)) u;
 } __attribute__ ((packed));
 
 
@@ -129,7 +154,7 @@ struct OldDBResponse
 This is enough information to get you to the data you need to reverse
 engineer.  That data will be located at:
 
-	packet->u.db.u.old_response.data[0]
+	packet->u.db.u.response.u.tagged.u.field[0]
 
 
 So, taking an Address Book record as an example:
@@ -145,56 +170,24 @@ We now know:
 	37 00		- packet->size
 	40		- packet->command
 	03		- packet->u.db.tableCmd
-	44		- packet->u.db.u.old_response.operation
-	00		- packet->u.db.u.old_response.unknown
-	08 00		- packet->u.db.u.old_response.count
-	80 82 b1 22	- packet->u.db.u.old_response.data[0]...
-			first bytes of record data
+	44		- packet->u.db.u.response.operation
+	00		- packet->u.db.u.response.u.tagged.unknown
+	08 00		- packet->u.db.u.response.u.tagged.index
+	80 82 b1 22	- packet->u.db.u.response.u.tagged.uniqueId
+	00		- packet->u.db.u.response.u.tagged.unknown2
+	06 00		- packet->u.db.u.response.u.tagged.u.field[0].size
+	20		- packet->u.db.u.response.u.tagged.u.field[0].type
+	...             - continued data from sequential CommonField packets
 
-In the case of Address Book records, the struct is:
-
-struct OldContactRecord
-{
-        uint32_t        uniqueId;
-        uint8_t         unknown;
-        CommonField     field[1];
-} __attribute__ ((packed));
-
-struct CommonField
-{
-        uint16_t        size;           // including null terminator
-        uint8_t         type;
-
-        union FieldData
-        {
-                GroupLink       link;
-                MessageAddress  addr;
-                int32_t         min1900;
-                uint8_t         raw[1];
-
-        } __attribute__ ((packed)) u;
-} __attribute__ ((packed));
-
-
-Which gives the following code:
-
-	struct OldContactRecord *con = (struct OldContactRecord *)
-		&packet->u.db.u.old_response.data[0];
-
-	80 82 b1 22	- con->uniqueId
-	00		- con->unknown
-	06 00 		- con->field[0].size
-	20		- con->field[0].type
-	43 68 72...	- con->field[0].raw  ("Chris..."
-			Data of first field
-
+Note that CommonField packets are variable size, so you can only use
+field[0] the first time.  You'll need to do pointer arithmetic to
+calculate the start of the next CommonField.
 
 This is a common theme in the database records.  There is a static header
-(eg. OldContactRecord) followed by a number of fields, which each contains
+(eg. DBR_OldTaggedRecord) followed by a number of fields, which each contains
 a common field header (eg. CommonField), followed by a variable sized block
 of data (CommonField's u.raw field).  The next field starts size bytes later,
-so you _cannot_ use con->field[1], con->field[2], etc.  You must advance using
-the size of the data.
+and so on.
 
 
 
@@ -223,7 +216,7 @@ The requirements of these classes are as follows:
 		- dumping to ostream
 		- parsing downloaded data blocks from the BlackBerry
 		- building data blocks for the BlackBerry for uploads
-	- must have absolutely no low level contamination
+	- must have absolutely no low level protocol contamination
 
 The final point deserves some commentary.  When using gcc-specific extensions
 like __attribute__, and when using pointer arithmetic and pointer casts
@@ -243,5 +236,5 @@ the header, which will be used by the application.
 
 Good luck, and happy hacking!
 
-December 2005
+October 2006
 
