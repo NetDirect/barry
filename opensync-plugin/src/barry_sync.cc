@@ -236,7 +236,7 @@ static void get_changeinfo(OSyncContext *ctx)
 
 static osync_bool commit_change(OSyncContext *ctx, OSyncChange *change)
 {
-	barry_environment *env = (barry_environment *)osync_context_get_plugin_data(ctx);
+	BarryEnvironment *env = (BarryEnvironment *)osync_context_get_plugin_data(ctx);
 	
 	try {
 

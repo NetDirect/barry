@@ -1,5 +1,7 @@
 Release: version 0.0.2 - 2006/??/??
 ------------------------------------------------------------------------------
+2006/10/12
+	- fixed casting error in opensync module
 2006/09/29
 	- added stdint.h to parser.h for uint32_t.  Thanks Ron Gage for
 		the bug report
