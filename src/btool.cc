@@ -50,7 +50,7 @@ void Usage()
    << "   -T db     Show record state table for given database\n"
    << "   -v        Dump protocol data during operation\n"
    << "\n"
-   << " -d Command modifiers:\n"
+   << " -d Command modifiers:   (can be used multiple times for more than 1 record)\n"
    << "\n"
    << "   -r #      Record index number as seen in the -T state table.\n"
    << "             This overrides the default -d behaviour, and only\n"
@@ -218,6 +218,16 @@ auto_ptr<Builder> GetBuilder(const string &name, const string &filename)
 	}
 }
 
+struct StateTableCommand
+{
+	char flag;
+	bool clear;
+	unsigned int index;
+
+	StateTableCommand(char f, bool c, unsigned int i)
+		: flag(f), clear(c), index(i) {}
+};
+
 int main(int argc, char *argv[])
 {
 	cout.sync_with_stdio(true);	// leave this on, since libusb uses
@@ -230,14 +240,11 @@ int main(int argc, char *argv[])
 			show_dbdb = false,
 			ldif_contacts = false,
 			data_dump = false,
-			record_state = false,
-			get_record = false,
-			del_record = false,
-			clear_dirty = false;
-		unsigned int recordIndex = 0;
+			record_state = false;
 		string ldifBaseDN;
 		string filename;
 		vector<string> dbNames, saveDbNames;
+		vector<StateTableCommand> stCommands;
 
 		// process command line options
 		for(;;) {
@@ -257,9 +264,8 @@ int main(int argc, char *argv[])
 				break;
 
 			case 'D':	// delete record
-				del_record = true;
-				get_record = false;
-				recordIndex = atoi(optarg);
+				stCommands.push_back(
+					StateTableCommand('D', false, atoi(optarg)));
 				break;
 
 			case 'f':	// filename
@@ -279,16 +285,13 @@ int main(int argc, char *argv[])
 				break;
 
 			case 'r':	// get specific record index
-				get_record = true;
-				del_record = false;
-				recordIndex = atoi(optarg);
+				stCommands.push_back(
+					StateTableCommand('r', false, atoi(optarg)));
 				break;
 
 			case 'R':	// same as 'r', and clears dirty
-				get_record = true;
-				del_record = false;
-				clear_dirty = true;
-				recordIndex = atoi(optarg);
+				stCommands.push_back(
+					StateTableCommand('r', true, atoi(optarg)));
 				break;
 
 			case 's':	// save dbname
@@ -400,7 +403,7 @@ int main(int argc, char *argv[])
 		}
 
 		// Get Record mode overrides the default name mode
-		if( get_record || del_record ) {
+		if( stCommands.size() ) {
 			if( dbNames.size() != 1 ) {
 				cout << "Must have 1 db name to process" << endl;
 				return 1;
@@ -409,15 +412,18 @@ int main(int argc, char *argv[])
 			con.OpenMode(Controller::Desktop);
 			unsigned int id = con.GetDBID(dbNames[0]);
 			auto_ptr<Parser> parse = GetParser(dbNames[0],filename);
-			con.GetRecord(id, recordIndex, *parse.get());
 
-			if( get_record && clear_dirty ) {
-				cout << "Clearing record's dirty flags..." << endl;
-				con.ClearDirty(id, recordIndex);
-			}
+			for( unsigned int i = 0; i < stCommands.size(); i++ ) {
+				con.GetRecord(id, stCommands[i].index, *parse.get());
 
-			if( del_record ) {
-				con.DeleteRecord(id, recordIndex);
+				if( stCommands[i].flag == 'r' && stCommands[i].clear ) {
+					cout << "Clearing record's dirty flags..." << endl;
+					con.ClearDirty(id, stCommands[i].index);
+				}
+
+				if( stCommands[i].flag == 'D' ) {
+					con.DeleteRecord(id, stCommands[i].index);
+				}
 			}
 
 			return 0;
