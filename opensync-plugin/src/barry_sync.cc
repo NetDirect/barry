@@ -21,7 +21,6 @@
 
 #include "barry_sync.h"
 #include <string>
-#include <sstream>
 #include <glib.h>
 //#include <stdlib.h>
 //#include <string.h>
@@ -32,126 +31,56 @@ extern "C" {
 	static void *initialize(OSyncMember *member, OSyncError **error);
 	static void connect(OSyncContext *ctx);
 	static void get_changeinfo(OSyncContext *ctx);
-	static osync_bool commit_change(OSyncContext *ctx, OSyncChange *change);
+	static void batch_commit_vevent20(OSyncContext *ctx,
+			OSyncContext **contexts,
+			OSyncChange **changes);
 	static void sync_done(OSyncContext *ctx);
 	static void disconnect(OSyncContext *ctx);
 	static void finalize(void *data);
 	void get_info(OSyncEnv *env);
 }
 
-static void *initialize(OSyncMember *member, OSyncError **error)
+
+//////////////////////////////////////////////////////////////////////////////
+//
+// Support functions and classes
+//
+
+class CalendarToVEvent
 {
-	// Create the environment struct, including our Barry objects
-	try {
-		Barry::Init(true);
-
-		BarryEnvironment *env = new BarryEnvironment;
-
-		// Load config file for this plugin
-		char *configdata;
-		int configsize;
-	//	if (!osync_member_get_config(member, &configdata, &configsize, error)) {
-	//		osync_error_update(error, "Unable to get config data: %s", osync_error_print(error));
-	//		delete env;
-	//		return NULL;
-	//	}
-
-		// Process the configdata here and set the options on your environment
-	//	free(configdata);
-		env->member = member;
-
-		// If you need a hashtable you make it here
-	//	env->hashtable = osync_hashtable_new();
-
-		return env;
-
-	}
-	catch( std::bad_alloc &ba ) {
-		// Don't let C++ exceptions escape to the C code
-		osync_error_update(error, "Unable to allocate memory for environment: %s", ba.what());
-		return NULL;
-	}
-}
-
-static void connect(OSyncContext *ctx)
-{
-	try {
-
-		// Each time you get passed a context (which is used to track
-		// calls to your plugin) you can get the data your returned in
-		// initialize via this call:
-		BarryEnvironment *env = (BarryEnvironment *)osync_context_get_plugin_data(ctx);
-
-		//
-		// Now connect to your devices and report
-		// 
-		// an error via:
-		// osync_context_report_error(ctx, ERROR_CODE, "Some message");
-		// 
-		// or success via:
-		// osync_context_report_success(ctx);
-		// 
-		// You have to use one of these 2 somewhere to answer the context.
-		// 
-		//
-		
-//		// If you are using a hashtable you have to load it here
-//		OSyncError *error = NULL;
-//		if (!osync_hashtable_load(env->hashtable, env->member, &error)) {
-//			osync_context_report_osyncerror(ctx, &error);
-//			return;
-//		}
-		
-//		//you can also use the anchor system to detect a device reset
-//		//or some parameter change here. Check the docs to see how it works
-//		char *lanchor = NULL;
-//		//Now you get the last stored anchor from the device
-//		if (!osync_anchor_compare(env->member, "lanchor", lanchor))
-//			osync_member_set_slow_sync(env->member, "<object type to request a slow-sync>", TRUE);
-
-		// Probe for available devices
-		Barry::Probe probe;
-		int nIndex = probe.FindActive(env->m_pin);
-		if( nIndex == -1 ) {
-			osync_context_report_error(ctx, OSYNC_ERROR_NO_CONNECTION, "Unable to find PIN %lu", env->m_pin);
-			return;
-		}
-		env->m_ProbeResult = probe.Get(nIndex);
-
-		// Create controller
-		env->m_pCon = new Barry::Controller(env->m_ProbeResult);
-		env->m_pCon->OpenMode(Barry::Controller::Desktop);
-
-		// Success!
-		osync_context_report_success(ctx);
-
-	}
-	catch( Barry::BError &be ) {
-		osync_context_report_error(ctx, OSYNC_ERROR_GENERIC, "Barry exception: %s", be.what());
-	}
-	catch( std::bad_alloc &ba ) {
-		// don't let exceptions escape to the C modules
-		osync_context_report_error(ctx, OSYNC_ERROR_INITIALIZATION,
-			"Unable to allocate memory for controller: %s", ba.what());
-	}
-}
-
-class CalendarStore
-{
-	// external data
-	OSyncContext *ctx;
-	BarryEnvironment *env;
-
+	char *m_Data;
 
 public:
-	CalendarStore(OSyncContext *c, BarryEnvironment *e)
-		: ctx(c), env(e)
+	CalendarToVEvent()
+		: m_Data(0)
 	{
+	}
+
+	~CalendarToVEvent()
+	{
+		if( m_Data )
+			g_free(m_Data);
+	}
+
+	// Transfers ownership of m_Data to the caller
+	char* ExtractData()
+	{
+		char *ret = m_Data;
+		m_Data = 0;
+		return ret;
 	}
 
 	// storage operator
 	void operator()(const Barry::Calendar &rec)
 	{
+		Trace trace("CalendarStore::operator()");
+
+		// Delete data if some already exists
+		if( m_Data ) {
+			g_free(m_Data);
+			m_Data = 0;
+		}
+
 		// Put calendar event data into vevent20 format
 		char *start = osync_time_unix2vtime(&rec.StartTime);
 		char *end = osync_time_unix2vtime(&rec.EndTime);
@@ -170,94 +99,292 @@ public:
 			start, end, rec.Subject.c_str());
 		g_free(start);
 		g_free(end);
+	}
 
-		// Setup the change object for opensync
-		OSyncChange *change = osync_change_new();
-		osync_change_set_member(change, env->member);
+	// Handles calling of the Barry::Controller to fetch a specific
+	// record, indicated by index (into the RecordStateTable).
+	// Returns a g_malloc'd string of data containing the vevent20
+	// data.  It is the responsibility of the caller to free it.
+	// This is intended to be passed into the GetChanges() function.
+	static char* GetRecordData(BarryEnvironment *env, unsigned int index)
+	{
+		using namespace Barry;
 
-		char *uid = g_strdup_printf("%lu", rec.RecordId);
-		osync_change_set_uid(change, uid);
-		g_free(uid);
-
-		osync_change_set_changetype(change, CHANGE_ADDED);
-		osync_change_set_objformat_string(change, "vevent20");
-//		osync_change_set_hash(change, "the calculated hash of the object");
-
-		// Now you can set the data for the object
-		// Set the last argument to FALSE if the real data
-		// should be queried later in a "get_data" function
-		osync_change_set_data(change, data, strlen(data), TRUE);			
-
-//		// If you use hashtables use these functions:
-//		if (osync_hashtable_detect_change(env->hashtable, change)) {
-//			osync_context_report_change(ctx, change);
-//			osync_hashtable_update_hash(env->hashtable, change);
-//		}	
-		// otherwise just report the change via
-		osync_context_report_change(ctx, change);
+		CalendarToVEvent cal2event;
+		RecordParser<Calendar, CalendarToVEvent> parser(cal2event);
+		unsigned int dbId = env->m_pCon->GetDBID("Calendar");
+		env->m_pCon->GetRecord(dbId, index, parser);
+		return cal2event.ExtractData();
 	}
 };
 
+void GetChanges(OSyncContext *ctx, BarryEnvironment *env,
+		BarryEnvironment::cache_type &cache,
+		const char *DBDBName, const char *FormatName,
+		char* (*getdata)(BarryEnvironment *, unsigned int))
+{
+	// shortcut references
+	using namespace Barry;
+	using Barry::RecordStateTable;
+	Controller &con = *env->m_pCon;
+
+	// fetch state table
+	unsigned int dbId = con.GetDBID(DBDBName);
+	RecordStateTable table;
+	con.GetRecordStateTable(dbId, table);
+
+	// cycle through the state table...
+	//    - if not in cache, it is added.
+	//    - if in cache, check Blackberry's dirty flag
+	RecordStateTable::StateMapType::const_iterator i = table.StateMap.begin();
+	for( ; i != table.StateMap.end(); ++i ) {
+
+		OSyncChange *change = 0;
+		const RecordStateTable::IndexType &index = i->first;
+		const RecordStateTable::State &state = i->second;
+
+		// search the cache
+		BarryEnvironment::cache_type::const_iterator c = cache.find(state.RecordId);
+		if( c == cache.end() ) {
+			// not in cache, this is a new item
+			change = osync_change_new();
+			osync_change_set_changetype(change, CHANGE_ADDED);
+		}
+		else {
+			// in the cache... dirty?
+			if( state.Dirty ) {
+				// modified
+				change = osync_change_new();
+				osync_change_set_changetype(change, CHANGE_MODIFIED);
+			}
+		}
+
+		// finish filling out the change object
+		if( change ) {
+			osync_change_set_member(change, env->member);
+			osync_change_set_objformat_string(change, FormatName);
+
+			char *uid = g_strdup_printf("%lu", state.RecordId);
+			osync_change_set_uid(change, uid);
+			g_free(uid);
+
+			// Now you can set the data for the object
+			// Set the last argument to FALSE if the real data
+			// should be queried later in a "get_data" function
+			char *data = (*getdata)(env, index);
+			osync_change_set_data(change, data, strlen(data), TRUE);
+
+			// just report the change via
+			osync_context_report_change(ctx, change);
+		}
+	}
+
+	// now cycle through the cache... any objects in the cache
+	// but not found in the state table means that they have been
+	// deleted in the device
+	BarryEnvironment::cache_type::const_iterator c = cache.begin();
+	for( ; c != cache.end(); ++c ) {
+		uint32_t recordId = c->first;
+
+		i = table.StateMap.begin();
+		for( ; i != table.StateMap.end(); ++i ) {
+
+			if( i->second.RecordId == recordId )
+				break;	// found
+		}
+
+		// check if not found...
+		if( i == table.StateMap.end() ) {
+			// register a DELETE, no data
+			OSyncChange *change = osync_change_new();
+			osync_change_set_changetype(change, CHANGE_DELETED);
+			osync_change_set_member(change, env->member);
+			osync_change_set_objformat_string(change, FormatName);
+
+			char *uid = g_strdup_printf("%lu", recordId);
+			osync_change_set_uid(change, uid);
+			g_free(uid);
+
+			// report the change
+			osync_context_report_change(ctx, change);
+		}
+	}
+}
+
+
+
+//////////////////////////////////////////////////////////////////////////////
+//
+// OpenSync API
+//
+
+static void *initialize(OSyncMember *member, OSyncError **error)
+{
+	Trace trace("initialize");
+
+	BarryEnvironment *env = 0;
+
+	// Create the environment struct, including our Barry objects
+	try {
+		Barry::Init(true);
+
+		env = new BarryEnvironment(member);
+
+		// Load config file for this plugin
+		char *configdata;
+		int configsize;
+		if (!osync_member_get_config(member, &configdata, &configsize, error)) {
+			osync_error_update(error, "Unable to get config data: %s",
+				osync_error_print(error));
+			delete env;
+			return NULL;
+		}
+
+		// Process the configdata here and set the options on your environment
+		env->ParseConfig(configdata, configsize);
+		free(configdata);
+
+		// Load all needed cache files
+		if( env->m_SyncCalendar ) {
+			env->LoadCalendarCache();
+		}
+
+		if( env->m_SyncContacts ) {
+			env->LoadContactsCache();
+		}
+
+		return env;
+
+	}
+	// Don't let C++ exceptions escape to the C code
+	catch( std::bad_alloc &ba ) {
+		osync_error_update(error, "Unable to allocate memory for environment: %s", ba.what());
+		delete env;
+		return NULL;
+	}
+	catch( std::exception &e ) {
+		osync_error_update(error, "%s", e.what());
+		delete env;
+		return NULL;
+	}
+}
+
+static void connect(OSyncContext *ctx)
+{
+	Trace trace("connect");
+
+	try {
+
+		// Each time you get passed a context (which is used to track
+		// calls to your plugin) you can get the data your returned in
+		// initialize via this call:
+		BarryEnvironment *env = (BarryEnvironment *)osync_context_get_plugin_data(ctx);
+
+		// Probe for available devices
+		Barry::Probe probe;
+		int nIndex = probe.FindActive(env->m_pin);
+		if( nIndex == -1 ) {
+			osync_context_report_error(ctx, OSYNC_ERROR_NO_CONNECTION, "Unable to find PIN %lu", env->m_pin);
+			return;
+		}
+		env->m_ProbeResult = probe.Get(nIndex);
+
+		// Create controller
+		env->m_pCon = new Barry::Controller(env->m_ProbeResult);
+		env->m_pCon->OpenMode(Barry::Controller::Desktop);
+
+		// Success!
+		osync_context_report_success(ctx);
+
+	}
+	// Don't let exceptions escape to the C modules
+	catch( std::bad_alloc &ba ) {
+		osync_context_report_error(ctx, OSYNC_ERROR_INITIALIZATION,
+			"Unable to allocate memory for controller: %s", ba.what());
+	}
+	catch( std::exception &e ) {
+		osync_context_report_error(ctx, OSYNC_ERROR_INITIALIZATION,
+			"%s", e.what());
+	}
+}
+
 static void get_changeinfo(OSyncContext *ctx)
 {
+	Trace trace("get_changeinfo");
+
 	try {
 
 		BarryEnvironment *env = (BarryEnvironment *)osync_context_get_plugin_data(ctx);
 
-		// If you use opensync hashtables you can detect if you need
-		// to do a slow-sync and set this on the hastable directly
-		// otherwise you have to make 2 function like "get_changes" and
-		// "get_all" and decide which to use using
-		// osync_member_get_slow_sync
-//		if( osync_member_get_slow_sync(env->member, "event") )
-//			osync_hashtable_set_slow_sync(env->hashtable, "event");
+		if( env->m_SyncCalendar ) {
+			GetChanges(ctx, env, env->m_CalendarCache,
+				"Calendar", "vevent20",
+				&CalendarToVEvent::GetRecordData);
+		}
 
-		//
-		// Now you can get the changes.
-		// Loop over all changes you get and do the following:
-		//
-		CalendarStore store(ctx, env);
-		env->m_pCon->LoadDatabaseByType<Barry::Calendar>(store);
-
-		// When you are done looping and if you are using hashtables	
-//		osync_hashtable_report_deleted(env->hashtable, ctx, "data");
+		if( env->m_SyncContacts ) {
+			// FIXME - not yet implemented
+//			GetChanges(ctx, env, env->m_ContactsCache,
+//				"Address Book", "vcard30",
+//				&ContactToVCard::GetRecordData);
+		}
 
 		// Success!
 		osync_context_report_success(ctx);
 	}
-	catch( Barry::BError &be ) {
-		osync_context_report_error(ctx, OSYNC_ERROR_GENERIC, "Barry exception: %s", be.what());
-	}
-	catch( std::bad_alloc &ba ) {
-		// don't let exceptions escape to the C modules
-		osync_context_report_error(ctx, OSYNC_ERROR_INITIALIZATION, "Misc. memory error: %s", ba.what());
+	// don't let exceptions escape to the C modules
+	catch( std::exception &e ) {
+		osync_context_report_error(ctx, OSYNC_ERROR_IO_ERROR, "%s", e.what());
 	}
 }
 
-static osync_bool commit_change(OSyncContext *ctx, OSyncChange *change)
+static bool commit_vevent20(BarryEnvironment *env,
+			    unsigned int dbId,
+			    OSyncContext *ctx,
+			    OSyncChange *change)
 {
-	BarryEnvironment *env = (BarryEnvironment *)osync_context_get_plugin_data(ctx);
-	
+	Trace trace("batch_commit_vevent20");
+
 	try {
+
+		Barry::Controller &con = *env->m_pCon;
+		Barry::RecordStateTable &table = env->m_CalendarTable;
+
+		const char *uid = osync_change_get_uid(change);
+		unsigned long RecordId;
+		if( sscanf(uid, "%lu", &RecordId) == 0 ) {
+			osync_context_report_error(ctx, OSYNC_ERROR_PARAMETER,
+				"uid is not an expected number: %s", uid);
+			return false;
+		}
+
+		Barry::RecordStateTable::IndexType StateIndex;
+		if( osync_change_get_changetype(change) != CHANGE_ADDED ) {
+			if( !table.GetIndex(RecordId, &StateIndex) ) {
+				osync_context_report_error(ctx, OSYNC_ERROR_GENERIC,
+					"unable to get state table index for RecordId: %lu",
+					RecordId);
+				return false;
+			}
+		}
 
 		switch( osync_change_get_changetype(change) )
 		{
-//			case CHANGE_DELETED:
-//				//Delete the change
-//				//Dont forget to answer the call on error
-//				break;
-			case CHANGE_ADDED:
-				//Add the change
-				//Dont forget to answer the call on error
-				//If you are using hashtables you have to calculate the hash here:
-//				osync_change_set_hash(change, "new hash");
+			case CHANGE_DELETED:
+				con.DeleteRecord(dbId, StateIndex);
 				break;
-//			case CHANGE_MODIFIED:
-//				//Modify the change
-//				//Dont forget to answer the call on error
-//				//If you are using hashtables you have to calculate the new hash here:
-//				osync_change_set_hash(change, "new hash");
-//				break;
+
+			case CHANGE_ADDED:
+				// FIXME
+//				newRecordId = env->m_CalendarTable.MakeNewRecordId();
+//				con.AddRecord(dbId, builder);
+				break;
+
+			case CHANGE_MODIFIED:
+				// FIXME
+//				con.SetRecord(dbId, StateIndex, builder);
+				break;
+
 			default:
 				osync_debug("barry-sync", 0, "Unknown change type");
 				break;
@@ -265,51 +392,100 @@ static osync_bool commit_change(OSyncContext *ctx, OSyncChange *change)
 
 		// Answer the call
 		osync_context_report_success(ctx);
-		// if you use hashtable, update the hash now.
-//		osync_hashtable_update_hash(env->hashtable, change);
-		return TRUE;
+		return true;
 
 	}
-	catch( Barry::BError &be ) {
-		osync_context_report_error(ctx, OSYNC_ERROR_GENERIC, "Barry exception: %s", be.what());
-		return FALSE;
+	catch( std::exception &e ) {
+		osync_context_report_error(ctx, OSYNC_ERROR_IO_ERROR, "%s", e.what());
+		return false;
 	}
-//	catch( std::bad_alloc &ba ) {
-//		// don't let exceptions escape to the C modules
-//		osync_context_report_error(ctx, OSYNC_ERROR_INITIALIZATION, "Misc. memory error: %s", ba.what());
-//		return FALSE;
-//	}
+}
+
+static void batch_commit_vevent20(OSyncContext *ctx,
+				  OSyncContext **contexts,
+				  OSyncChange **changes)
+{
+	Trace trace("batch_commit_vevent20");
+
+	BarryEnvironment *env = (BarryEnvironment *)osync_context_get_plugin_data(ctx);
+	
+	try {
+		Barry::Controller &con = *env->m_pCon;
+
+		// fetch state table
+		unsigned int dbId = con.GetDBID("Calendar");
+		con.GetRecordStateTable(dbId, env->m_CalendarTable);
+
+		//
+		// Cycle through changes, looking for modifications first,
+		// so that the state table will be stable (paranoia here,
+		// it's worth checking whether this is necessary, by
+		// trying to overwrite, delete, add, then overwrite
+		// another using the same table index... will it work?)
+		//
+		// Update: tests confirm that it does work, for
+		// read/delete/read.
+		//
+		for( int i = 0; contexts[i] && changes[i]; i++ ) {
+			if( osync_change_get_changetype(changes[i]) != CHANGE_ADDED ) {
+				if( !commit_vevent20(env, dbId, contexts[i], changes[i]) ) {
+					osync_context_report_error(ctx, OSYNC_ERROR_IO_ERROR,
+						"error committing context %i", i);
+					return;
+				}
+			}
+		}
+		for( int i = 0; contexts[i] && changes[i]; i++ ) {
+			if( osync_change_get_changetype(changes[i]) == CHANGE_ADDED ) {
+				if( !commit_vevent20(env, dbId, contexts[i], changes[i]) ) {
+					osync_context_report_error(ctx, OSYNC_ERROR_IO_ERROR,
+						"error committing context %i", i);
+					return;
+				}
+			}
+		}
+
+		// get the state table again, so we can update the cache on success, later
+		con.GetRecordStateTable(dbId, env->m_CalendarTable);
+
+		// all done
+		osync_context_report_success(ctx);
+
+	}
+	catch( std::exception &e ) {
+		osync_context_report_error(ctx, OSYNC_ERROR_IO_ERROR, "%s", e.what());
+	}
 }
 
 static void sync_done(OSyncContext *ctx)
 {
+	Trace trace("sync_done");
+
 //	BarryEnvironment *env = (BarryEnvironment *)osync_context_get_plugin_data(ctx);
-	
+
 	//
 	// This function will only be called if the sync was successfull
 	//
-	
-	// If we have a hashtable we can now forget the already reported changes
-//	osync_hashtable_forget(env->hashtable);
-	
-//	//If we use anchors we have to update it now.
-//	char *lanchor = NULL;
-//	//Now you get/calculate the current anchor of the device
-//	osync_anchor_update(env->member, "lanchor", lanchor);
-	
+
+// FIXME - finish this
+	// update the caches
+	// copy the latest record state table into the cache,
+	// then write the cache to the file
+//	env->m_CalendarTable, and env->m_CalendarCache
+
+	// then do it again for the ContactsCache...
+
 	// Success
 	osync_context_report_success(ctx);
 }
 
 static void disconnect(OSyncContext *ctx)
 {
-	BarryEnvironment *env = (BarryEnvironment *)osync_context_get_plugin_data(ctx);
-	
+	Trace trace("disconnect");
+
 	// Disconnect the controller, which closes our connection
+	BarryEnvironment *env = (BarryEnvironment *)osync_context_get_plugin_data(ctx);
 	env->Disconnect();
-	
-	// Close the hashtable
-//	osync_hashtable_close(env->hashtable);
 
 	// Done!
 	osync_context_report_success(ctx);
@@ -317,16 +493,16 @@ static void disconnect(OSyncContext *ctx)
 
 static void finalize(void *data)
 {
+	Trace trace("finalize");
+
 	BarryEnvironment *env = (BarryEnvironment *)data;
-
-	// Free all stuff that you have allocated here.
-//	osync_hashtable_free(env->hashtable);
-
 	delete env;
 }
 
 void get_info(OSyncEnv *env)
 {
+	Trace trace("get_info");
+
 	// Create first plugin
 	OSyncPluginInfo *info = osync_plugin_new_info(env);
 	
@@ -358,12 +534,10 @@ void get_info(OSyncEnv *env)
 //	osync_plugin_accept_objformat(info, "contact", "vcard30", NULL);
 	osync_plugin_accept_objformat(info, "event", "vevent20", NULL);
 
-	// set the commit function for this format. this function will be called for
-	// each object to write once
-//	osync_plugin_set_commit_objformat(info, "<object type name>", "<format name>", commit_change);
-
-	// the other possibility is to do a batch commit by setting
-	// osync_plugin_set_batch_commit_objformat(info, "<object type name>", "<format name>", batch_commit);
-	// this function will be called exactly once with all objects to write gathered in an array
+	// the other possibility is to do a batch commit
+	// this function will be called exactly once with all objects to write
+	// gathered in an array
+	osync_plugin_set_batch_commit_objformat(info, "event", "vevent20",
+						batch_commit_vevent20);
 }
 

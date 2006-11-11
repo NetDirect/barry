@@ -10,6 +10,10 @@ Release: version 0.0.2 - 2006/10/12
 	- changed btool so that the -d command modifiers can be
 		specified multiple times to work with multiple records
 		at once
+	- added Calendar sync code to the opensync module (not complete)
+	- cleaned up exception handling in the opensync module, making
+		more use of the base exception to make sure no
+		exceptions leak into the C library code
 2006/10/12
 	- fixed casting error in opensync module
 	- minor updates to documentation to prepare for release
