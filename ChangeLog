@@ -1,5 +1,15 @@
 Release: version 0.0.2 - 2006/10/12
 ------------------------------------------------------------------------------
+2006/11/10
+	- added Exceptions doc file, documenting the C++ exceptions used,
+		and their hierarchy
+	- fixed small bug in 'make install' which didn't build first
+	- minor documentation and cleanup in upldif.cc
+	- added utility functions to the RecordStateTable class,
+		GetIndex() and MakeNewRecordId()
+	- changed btool so that the -d command modifiers can be
+		specified multiple times to work with multiple records
+		at once
 2006/10/12
 	- fixed casting error in opensync module
 	- minor updates to documentation to prepare for release
