@@ -61,6 +61,8 @@ struct Store
 	mutable typename std::vector<Record>::const_iterator rec_it;
 	int count;
 
+	// Store constructor -- reads LDIF records from the given
+	// stream object and stores them in memory.
 	Store(std::istream &is)
 		: count(0)
 	{
@@ -74,12 +76,14 @@ struct Store
 
 		rec_it = records.begin();
 	}
+
 	~Store()
 	{
 		cout << "Store counted " << dec << count << " records." << endl;
 	}
 
-	// retrieval operator
+	// Retrieval operator -- called by Barry during the upload
+	// process to get the next object
 	bool operator()(Record &rec, unsigned int databaseId) const
 	{
 		if( rec_it == records.end() )
@@ -89,6 +93,7 @@ struct Store
 		return true;
 	}
 
+	// For easy data display and debugging.
 	void Dump(std::ostream &os) const
 	{
 		typename std::vector<Record>::const_iterator b = records.begin();
@@ -145,8 +150,9 @@ int main(int argc, char *argv[])
 
 		// Read all contacts from stdin
 		Store<Contact> contactStore(cin);
-		if( !do_upload) {
-			// only dump to stdout
+
+		// Only dump to stdout if not uploading to device
+		if( !do_upload ) {
 			cout << contactStore << endl;
 			return 0;
 		}
@@ -166,9 +172,6 @@ int main(int argc, char *argv[])
 
 		// Create our controller object
 		Barry::Controller con(probe.Get(activeDevice));
-
-		// Create our builder object
-		RecordBuilder<Contact, Store<Contact> > build(contactStore);
 
 		// make sure we're in desktop mode
 		con.OpenMode(Controller::Desktop);
