@@ -81,7 +81,7 @@ libbarry.a:	$(LIBOBJS)
 # Install
 #############
 
-install:
+install:	all
 	mkdir -p $(INSTALLDIR)
 	mkdir -p $(INSTALLDIR)/include/barry
 	mkdir -p $(INSTALLDIR)/lib
