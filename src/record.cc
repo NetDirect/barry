@@ -197,6 +197,7 @@ void CommandTable::Dump(std::ostream &os) const
 // RecordStateTable class
 
 RecordStateTable::RecordStateTable()
+	: m_LastNewRecordId(1)
 {
 }
 
@@ -242,6 +243,44 @@ void RecordStateTable::Parse(const Data &data)
 void RecordStateTable::Clear()
 {
 	StateMap.clear();
+	m_LastNewRecordId = 1;
+}
+
+// Searches the StateMap table for RecordId, and returns the "index"
+// in the map if found.  Returns true if found, false if not.
+// pFoundIndex can be null if only the existence of the index is desired
+bool RecordStateTable::GetIndex(uint32_t RecordId, IndexType *pFoundIndex) const
+{
+	StateMapType::const_iterator i = StateMap.begin();
+	for( ; i != StateMap.end(); ++i ) {
+		if( i->second.RecordId == RecordId ) {
+			if( pFoundIndex )
+				*pFoundIndex = i->first;
+			return true;
+		}
+	}
+	return false;
+}
+
+// Generate a new RecordId that is not in the state table.
+// Starts at 1 and keeps incrementing until a free one is found.
+uint32_t RecordStateTable::MakeNewRecordId() const
+{
+	// start with next Id
+	m_LastNewRecordId++;
+
+	// make sure it doesn't already exist
+	StateMapType::const_iterator i = StateMap.begin();
+	while( i != StateMap.end() ) {
+		if( m_LastNewRecordId == i->second.RecordId ) {
+			m_LastNewRecordId++;		// try again
+			i = StateMap.begin();		// start over
+		}
+		else {
+			++i;				// next State
+		}
+	}
+	return m_LastNewRecordId;
 }
 
 void RecordStateTable::Dump(std::ostream &os) const

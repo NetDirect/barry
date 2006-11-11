@@ -96,6 +96,9 @@ public:
 	StateMapType StateMap;
 
 private:
+	mutable IndexType m_LastNewRecordId;
+
+private:
 	const unsigned char* ParseField(const unsigned char *begin,
 		const unsigned char *end);
 
@@ -105,6 +108,9 @@ public:
 
 	void Parse(const Data &data);
 	void Clear();
+
+	bool GetIndex(uint32_t RecordId, IndexType *pFoundIndex = 0) const;
+	uint32_t MakeNewRecordId() const;
 
 	void Dump(std::ostream &os) const;
 };
