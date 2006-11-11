@@ -1,0 +1,24 @@
+
+The Barry library throws two types of exceptions:
+
+	Usb::UsbError - derived from std::runtime_error
+		All specific USB error exceptions will be derived from
+		this class.  This is currently the only class used, and
+		only thrown in the usbwrap.{h,cc} code.
+
+
+	Barry::BError - derived from std::runtime_error
+		All specific Barry error exceptions will be derived from
+		this class.  This is currently the only class used, and
+		can be thrown from anywhere inside Barry.
+
+
+
+There is also the remote possibility that there will be memory exceptions
+from a call to 'new'.  In that case, std::bad_alloc will be thrown
+by the standard C++ libraries.  Barry does not catch these errors.
+
+All of the above exceptions are derived from std::exception, so they
+can all be caught in one statement for the efficient and lazy. :-)
+
+
