@@ -326,7 +326,7 @@ unsigned int Packet::Command() const
 unsigned int Packet::ReturnCode() const
 {
 	if( Command() == SB_COMMAND_DB_DONE ) {
-		Protocol::CheckSize(SB_PACKET_DBACCESS_HEADER_SIZE + SB_DBACCESS_RETURN_CODE_SIZE);
+		Protocol::CheckSize(m_receive, SB_PACKET_DBACCESS_HEADER_SIZE + SB_DBACCESS_RETURN_CODE_SIZE);
 		MAKE_PACKET(rpack, m_receive);
 		return rpack->u.db.u.return_code;
 	}
