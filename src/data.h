@@ -45,7 +45,7 @@ protected:
 
 public:
 	Data();
-	Data(int endpoint, size_t startsize = 0x4000);
+	explicit Data(int endpoint, size_t startsize = 0x4000);
 	Data(const void *ValidData, size_t size);
 	Data(const Data &other);
 	~Data();
