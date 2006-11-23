@@ -575,6 +575,13 @@ void Controller::SaveDatabase(unsigned int dbId, Builder &builder)
 		throw BError(m_socket.GetLastStatus(),
 			"Controller: error clearing database");
 	}
+	if( packet.ReturnCode() != 0 ) {
+		std::ostringstream oss;
+		oss << "Controller: could not clear database: (command: "
+		    << packet.Command() << ", code: "
+		    << packet.ReturnCode() << ")";
+		throw BError(oss.str());
+	}
 
 	// check response to clear command was successful
 	if( packet.Command() != SB_COMMAND_DB_DONE ) {
