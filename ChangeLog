@@ -1,5 +1,11 @@
 Release: version 0.0.2 - 2006/10/12
 ------------------------------------------------------------------------------
+2006/11/23
+	- added return code check to Controller::SaveDatabase()
+	- fixed Data() class constructor, so it doesn't auto-convert
+		from any int
+	- fixed size checking bug in Packet::ReturnCode() that caused
+		uploading to device to fail
 2006/11/10
 	- added Exceptions doc file, documenting the C++ exceptions used,
 		and their hierarchy
