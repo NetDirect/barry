@@ -1,4 +1,4 @@
-Release: version 0.0.2 - 2006/10/12
+Release: version 0.0.3 - 2006/11/24
 ------------------------------------------------------------------------------
 2006/11/23
 	- added return code check to Controller::SaveDatabase()
@@ -20,6 +20,9 @@ Release: version 0.0.2 - 2006/10/12
 	- cleaned up exception handling in the opensync module, making
 		more use of the base exception to make sure no
 		exceptions leak into the C library code
+
+Release: version 0.0.2 - 2006/10/12
+------------------------------------------------------------------------------
 2006/10/12
 	- fixed casting error in opensync module
 	- minor updates to documentation to prepare for release
