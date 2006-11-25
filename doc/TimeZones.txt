@@ -1,0 +1,86 @@
+The following is a list of codes for time zones on the BlackBerry.
+It was reverse engineered from a BlackBerry 7750, v4.0.0.171 (Platform 1.5.0.30)
+--------------------------------------------------------------------------------
+
+Code(2 bytes)	Name					Zone Offset
+-------------	------------------------------		-----------
+0x00		Eniwetok, Kwajalein			-12
+0x01		Midway Island, Samoa			-12
+0x02		Hawaii					-10
+0x03		Alaska					-9
+0x04		Pacific Time (US & Canada), Tijuana	-8
+0x0f		Arizona					-7
+0x0a		Mountain Time (US & Canada)		-7
+0x0d		Chihuahua, La Paz, Mazatlan		-7
+0x21		Central America				-6
+0x19		Saskatchewan				-6
+0x14		Central Time (US & Canada)		-6
+0x1e		Mexico City				-6
+0x2d		Bogota, Lima, Quito			-5
+0x28		Indiana (East)				-5
+0x23		Eastern Time (US & Canada)		-5
+0x37		Caracas, La Paz				-4
+0x38		Santiago				-4
+0x32		Atlantic Time (Canada)			-4
+0x3c		Newfoundland				-3.5
+0x46		Buenos Aires, Georgetown		-3
+0x41		Brasilia				-3
+0x49		Greenland				-3
+0x4b		Mid-Atlantic				-2
+0x53		Cape Verde Island			-1
+0x50		Azores					-1
+0x5a		Casablanca, Monrovia			GMT
+0x55		Dublin, Edinburgh, Lisbon, London	GMT
+0x71		West Central Africa			+1
+0x6e		Amsterdam, Berlin, Bern, Rome,		+1
+			Stockholm, Vienna
+0x5f		Belgrade, Bratislava, Budapest,		+1
+			Ljubljana, Prague
+0x69		Brussels, Copenhagen, Madrid, Paris	+1
+0x64		Sarajevo, Skopje, Sofija, Vilnius,	+1
+			Warsaw, Zagreb
+0x8c		Harare, Pretoria			+2
+0x87		Jerusalem				+2
+0x73		Bucharest				+2
+0x78		Cairo					+2
+0x82		Athens, Istanbul, Minsk			+2
+0x7d		Helsinki, Riga, Tallinn			+2
+0x96		Kuwait, Riyadh				+3
+0x9b		Nairobi					+3
+0x9e		Baghdad					+3
+0x91		Moscow, St. Petersburg, Volgograd	+3
+0xa0		Tehran					+3.5
+0xa5		Abu Dhabi, Muscat			+4
+0xaa		Baku, Tbilisi, Yerevan			+4
+0xaf		Kabul					+4.5
+0xb9		Islamabad, Karachi, Tashkent		+5
+0xb4		Ekaterinburg				+5
+0xbe		Calcutta, Chennai, Mumbai, New Delhi	+5.5
+0xc1		Kathmandu				+5.75
+0xc3		Astana, Dhaka				+6
+0xc8		Sri Lanka				+6
+0xc9		Almaty, Novosibirsk			+6
+0xcb		Rangoon					+6.5
+0xcd		Bangkok, Hanoi, Jakarta			+7
+0xcf		Krasnoyarsk				+7
+0xd2		Beijing, Chongqing, Hong Kong, Urumqi	+8
+0xd7		Kuala Lumpur, Singapore			+8
+0xe1		Perth					+8
+0xdc		Taipei					+8
+0xe3		Irkutsk, Ulaan Bataar			+8
+0xeb		Osaka, Sapporo, Tokyo			+9
+0xe6		Seoul					+9
+0xf0		Yakutsk					+9
+0xf5		Darwin					+9.5
+0xfa		Adelaide				+9.5
+0x104		Brisbane				+10
+0x113		Guam, Port Moresby			+10
+0xff		Canberra, Melbourne, Sydney		+10
+0x109		Hobart					+10
+0x10e		Vladivostok				+10
+0x118		Magadan, Solomon Islands, New Caledonia	+11
+0x11d		Fiji, Kamchatka, Marshall Islands	+12
+0x122		Auckland, Wellington			+12
+0x12c		Nuku'alofa				+13
+
+
