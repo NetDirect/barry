@@ -23,6 +23,99 @@
 
 #include "time.h"
 
+namespace Barry {
+
+TimeZone Zones[] = {
+	{ 0x0000,  -12,   0, "Eniwetok, Kwajalein (-12)" },
+	{ 0x0001,  -12,   0, "Midway Island, Samoa (-12)" },
+	{ 0x0002,  -10,   0, "Hawaii (-10)" },
+	{ 0x0003,   -9,   0, "Alaska (-9)" },
+	{ 0x0004,   -8,   0, "Pacific Time (US & Canada), Tijuana (-8)" },
+	{ 0x000f,   -7,   0, "Arizona (-7)" },
+	{ 0x000a,   -7,   0, "Mountain Time (US & Canada) (-7)" },
+	{ 0x000d,   -7,   0, "Chihuahua, La Paz, Mazatlan (-7)" },
+	{ 0x0021,   -6,   0, "Central America (-6)" },
+	{ 0x0019,   -6,   0, "Saskatchewan (-6)" },
+	{ 0x0014,   -6,   0, "Central Time (US & Canada) (-6)" },
+	{ 0x001e,   -6,   0, "Mexico City (-6)" },
+	{ 0x002d,   -5,   0, "Bogota, Lima, Quito (-5)" },
+	{ 0x0028,   -5,   0, "Indiana (East) (-5)" },
+	{ 0x0023,   -5,   0, "Eastern Time (US & Canada) (-5)" },
+	{ 0x0037,   -4,   0, "Caracas, La Paz (-4)" },
+	{ 0x0038,   -4,   0, "Santiago (-4)" },
+	{ 0x0032,   -4,   0, "Atlantic Time (Canada) (-4)" },
+	{ 0x003c,   -3, -30, "Newfoundland (-3.5)" },
+	{ 0x0046,   -3,   0, "Buenos Aires, Georgetown (-3)" },
+	{ 0x0041,   -3,   0, "Brasilia (-3)" },
+	{ 0x0049,   -3,   0, "Greenland (-3)" },
+	{ 0x004b,   -2,   0, "Mid-Atlantic (-2)" },
+	{ 0x0053,   -1,   0, "Cape Verde Island (-1)" },
+	{ 0x0050,   -1,   0, "Azores (-1)" },
+	{ 0x005a,    0,   0, "Casablanca, Monrovia (GMT)" },
+	{ 0x0055,    0,   0, "Dublin, Edinburgh, Lisbon, London (GMT)" },
+	{ 0x0071,    1,   0, "West Central Africa (+1)" },
+	{ 0x006e,    1,   0, "Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna (+1)" },
+	{ 0x005f,    1,   0, "Belgrade, Bratislava, Budapest, Ljubljana, Prague (+1)" },
+	{ 0x0069,    1,   0, "Brussels, Copenhagen, Madrid, Paris (+1)" },
+	{ 0x0064,    1,   0, "Sarajevo, Skopje, Sofija, Vilnius, Warsaw, Zagreb (+1)" },
+	{ 0x008c,    2,   0, "Harare, Pretoria (+2)" },
+	{ 0x0087,    2,   0, "Jerusalem (+2)" },
+	{ 0x0073,    2,   0, "Bucharest (+2)" },
+	{ 0x0078,    2,   0, "Cairo (+2)" },
+	{ 0x0082,    2,   0, "Athens, Istanbul, Minsk (+2)" },
+	{ 0x007d,    2,   0, "Helsinki, Riga, Tallinn (+2)" },
+	{ 0x0096,    3,   0, "Kuwait, Riyadh (+3)" },
+	{ 0x009b,    3,   0, "Nairobi (+3)" },
+	{ 0x009e,    3,   0, "Baghdad (+3)" },
+	{ 0x0091,    3,   0, "Moscow, St. Petersburg, Volgograd (+3)" },
+	{ 0x00a0,    3,  30, "Tehran (+3.5)" },
+	{ 0x00a5,    4,   0, "Abu Dhabi, Muscat (+4)" },
+	{ 0x00aa,    4,   0, "Baku, Tbilisi, Yerevan (+4)" },
+	{ 0x00af,    4,  30, "Kabul (+4.5)" },
+	{ 0x00b9,    5,   0, "Islamabad, Karachi, Tashkent (+5)" },
+	{ 0x00b4,    5,   0, "Ekaterinburg (+5)" },
+	{ 0x00be,    5,  30, "Calcutta, Chennai, Mumbai, New Delhi (+5.5)" },
+	{ 0x00c1,    5,  45, "Kathmandu (+5.75)" },
+	{ 0x00c3,    6,   0, "Astana, Dhaka (+6)" },
+	{ 0x00c8,    6,   0, "Sri Lanka (+6)" },
+	{ 0x00c9,    6,   0, "Almaty, Novosibirsk (+6)" },
+	{ 0x00cb,    6,  30, "Rangoon (+6.5)" },
+	{ 0x00cd,    7,   0, "Bangkok, Hanoi, Jakarta (+7)" },
+	{ 0x00cf,    7,   0, "Krasnoyarsk (+7)" },
+	{ 0x00d2,    8,   0, "Beijing, Chongqing, Hong Kong, Urumqi (+8)" },
+	{ 0x00d7,    8,   0, "Kuala Lumpur, Singapore (+8)" },
+	{ 0x00e1,    8,   0, "Perth (+8)" },
+	{ 0x00dc,    8,   0, "Taipei (+8)" },
+	{ 0x00e3,    8,   0, "Irkutsk, Ulaan Bataar (+8)" },
+	{ 0x00eb,    9,   0, "Osaka, Sapporo, Tokyo (+9)" },
+	{ 0x00e6,    9,   0, "Seoul (+9)" },
+	{ 0x00f0,    9,   0, "Yakutsk (+9)" },
+	{ 0x00f5,    9,  30, "Darwin (+9.5)" },
+	{ 0x00fa,    9,  30, "Adelaide (+9.5)" },
+	{ 0x0104,   10,   0, "Brisbane (+10)" },
+	{ 0x0113,   10,   0, "Guam, Port Moresby (+10)" },
+	{ 0x00ff,   10,   0, "Canberra, Melbourne, Sydney (+10)" },
+	{ 0x0109,   10,   0, "Hobart (+10)" },
+	{ 0x010e,   10,   0, "Vladivostok (+10)" },
+	{ 0x0118,   11,   0, "Magadan, Solomon Islands, New Caledonia (+11)" },
+	{ 0x011d,   12,   0, "Fiji, Kamchatka, Marshall Islands (+12)" },
+	{ 0x0122,   12,   0, "Auckland, Wellington (+12)" },
+	{ 0x012c,   13,   0, "Nuku'alofa (+13)" },
+	{ 0,         0,   0, 0 }
+};
+
+const TimeZone* GetTimeZone(unsigned short Code)
+{
+	static TimeZone Unknown = { 0, 0, 0, "Unknown time zone" };
+
+	for( TimeZone *z = Zones; z->Name; z++ ) {
+		if( Code == z->Code )
+			return z;
+	}
+	return &Unknown;
+}
+
+} // namespace Barry
 
 
 #ifdef __TEST_MODE__
@@ -81,6 +174,10 @@ int main()
 		cout << "Success! (orig == converted + mod)" << endl;
 	else
 		cout << "Failed!" << endl;
+
+	// time zone
+	cout << "Should say Eastern: " << GetTimeZone(0x23)->Name << endl;
+	cout << "should say Unknown: " << GetTimeZone(0xffff)->Name << endl;
 }
 
 #endif

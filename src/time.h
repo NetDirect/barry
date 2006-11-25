@@ -57,6 +57,15 @@ inline time_t min2time(min1900_t m)
 	return (m - STDC_MIN1900_DIFF) * 60;
 }
 
+struct TimeZone
+{
+	unsigned short Code;
+	signed short HourOffset;
+	signed short MinOffset;
+	char *Name;
+};
+
+const TimeZone* GetTimeZone(unsigned short Code);
 
 } // namespace Barry
 
