@@ -84,7 +84,9 @@ libbarry.a:	$(LIBOBJS)
 install:	all
 	mkdir -p $(INSTALLDIR)
 	mkdir -p $(INSTALLDIR)/include/barry
+	mkdir -p $(INSTALLDIR)/bin
 	mkdir -p $(INSTALLDIR)/lib
+	install btool upldif $(INSTALLDIR)/bin
 	install libbarry.a $(INSTALLDIR)/lib
 	install barry.h base64.h builder.h common.h controller.h controllertmpl.h data.h debug.h error.h packet.h parser.h probe.h protocol.h protostructs.h record.h s11n-boost.h socket.h time.h usbwrap.h $(INSTALLDIR)/include/barry
 
