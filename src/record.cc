@@ -558,11 +558,11 @@ const unsigned char* Contact::ParseField(const unsigned char *begin,
 	const CommonField *field = (const CommonField *) begin;
 
 	// advance and check size
-	begin += COMMON_FIELD_HEADER_SIZE + field->size;
+	begin += COMMON_FIELD_HEADER_SIZE + btohs(field->size);
 	if( begin > end )		// if begin==end, we are ok
 		return begin;
 
-	if( !field->size )		// if field has no size, something's up
+	if( !btohs(field->size) )	// if field has no size, something's up
 		return begin;
 
 	// cycle through the type table
@@ -572,7 +572,7 @@ const unsigned char* Contact::ParseField(const unsigned char *begin,
 	{
 		if( b->type == field->type ) {
 			std::string &s = this->*(b->strMember);
-			s.assign((const char *)field->u.raw, field->size-1);
+			s.assign((const char *)field->u.raw, btohs(field->size)-1);
 			return begin;	// done!
 		}
 	}
@@ -589,7 +589,7 @@ const unsigned char* Contact::ParseField(const unsigned char *begin,
 		else
 			name = &FirstName;
 
-		name->assign((const char*)field->u.raw, field->size-1);
+		name->assign((const char*)field->u.raw, btohs(field->size)-1);
 		}
 		return begin;
 
@@ -609,7 +609,7 @@ const unsigned char* Contact::ParseField(const unsigned char *begin,
 	// if still not handled, add to the Unknowns list
 	UnknownField uf;
 	uf.type = field->type;
-	uf.data.assign((const char*)field->u.raw, field->size);
+	uf.data.assign((const char*)field->u.raw, btohs(field->size));
 	Unknowns.push_back(uf);
 
 	// return new pointer for next field
@@ -1046,11 +1046,11 @@ const unsigned char* Message::ParseField(const unsigned char *begin,
 	const CommonField *field = (const CommonField *) begin;
 
 	// advance and check size
-	begin += COMMON_FIELD_HEADER_SIZE + field->size;
+	begin += COMMON_FIELD_HEADER_SIZE + btohs(field->size);
 	if( begin > end )		// if begin==end, we are ok
 		return begin;
 
-	if( !field->size )		// if field has no size, something's up
+	if( !btohs(field->size) )	// if field has no size, something's up
 		return begin;
 
 	// cycle through the type table
@@ -1062,14 +1062,14 @@ const unsigned char* Message::ParseField(const unsigned char *begin,
 			if( b->strMember ) {
 				// parse regular string
 				std::string &s = this->*(b->strMember);
-				s.assign((const char *)field->u.raw, field->size-1);
+				s.assign((const char *)field->u.raw, btohs(field->size)-1);
 				return begin;	// done!
 			}
 			else if( b->addrMember ) {
 				// parse email address
 				// get dual name+addr string first
 				const char *fa = (const char*)field->u.addr.addr;
-				std::string dual(fa, field->size - sizeof(field->u.addr.unknown));
+				std::string dual(fa, btohs(field->size) - sizeof(field->u.addr.unknown));
 
 				// assign first string, using null terminator...letting std::string add it for us if it doesn't exist
 				Address &a = this->*(b->addrMember);
@@ -1206,11 +1206,11 @@ const unsigned char* Calendar::ParseField(const unsigned char *begin,
 	const CommonField *field = (const CommonField *) begin;
 
 	// advance and check size
-	begin += COMMON_FIELD_HEADER_SIZE + field->size;
+	begin += COMMON_FIELD_HEADER_SIZE + btohs(field->size);
 	if( begin > end )		// if begin==end, we are ok
 		return begin;
 
-	if( !field->size )		// if field has no size, something's up
+	if( !btohs(field->size) )	// if field has no size, something's up
 		return begin;
 
 	// cycle through the type table
@@ -1221,10 +1221,10 @@ const unsigned char* Calendar::ParseField(const unsigned char *begin,
 		if( b->type == field->type ) {
 			if( b->strMember ) {
 				std::string &s = this->*(b->strMember);
-				s.assign((const char *)field->u.raw, field->size-1);
+				s.assign((const char *)field->u.raw, btohs(field->size)-1);
 				return begin;	// done!
 			}
-			else if( b->timeMember ) {
+			else if( b->timeMember && btohs(field->size) == 4 ) {
 				time_t &t = this->*(b->timeMember);
 				t = min2time(field->u.min1900);
 				return begin;
@@ -1259,7 +1259,7 @@ const unsigned char* Calendar::ParseField(const unsigned char *begin,
 	// if still not handled, add to the Unknowns list
 	UnknownField uf;
 	uf.type = field->type;
-	uf.data.assign((const char*)field->u.raw, field->size);
+	uf.data.assign((const char*)field->u.raw, btohs(field->size));
 	Unknowns.push_back(uf);
 
 	// return new pointer for next field
@@ -1328,10 +1328,12 @@ void Calendar::BuildFields(Data &data, size_t &offset) const
 
 void Calendar::Clear()
 {
+	AllDayEvent = false;
 	Subject.clear();
 	Notes.clear();
 	Location.clear();
 	NotificationTime = StartTime = EndTime = 0;
+
 	Unknowns.clear();
 }
 
@@ -1568,11 +1570,11 @@ const unsigned char* ServiceBook::ParseField(const unsigned char *begin,
 	const CommonField *field = (const CommonField *) begin;
 
 	// advance and check size
-	begin += COMMON_FIELD_HEADER_SIZE + field->size;
+	begin += COMMON_FIELD_HEADER_SIZE + btohs(field->size);
 	if( begin > end )		// if begin==end, we are ok
 		return begin;
 
-	if( !field->size )		// if field has no size, something's up
+	if( !btohs(field->size) )	// if field has no size, something's up
 		return begin;
 
 	// cycle through the type table
@@ -1583,10 +1585,10 @@ const unsigned char* ServiceBook::ParseField(const unsigned char *begin,
 		if( b->type == field->type ) {
 			if( b->strMember ) {
 				std::string &s = this->*(b->strMember);
-				s.assign((const char *)field->u.raw, field->size-1);
+				s.assign((const char *)field->u.raw, btohs(field->size)-1);
 				return begin;	// done!
 			}
-			else if( b->timeMember ) {
+			else if( b->timeMember && btohs(field->size) == 4 ) {
 				time_t &t = this->*(b->timeMember);
 				t = min2time(field->u.min1900);
 				return begin;
@@ -1599,33 +1601,33 @@ const unsigned char* ServiceBook::ParseField(const unsigned char *begin,
 	{
 	case SBFC_OLD_NAME:		// strings with old/new type codes
 	case SBFC_NAME:
-		Name.assign((const char *)field->u.raw, field->size-1);
+		Name.assign((const char *)field->u.raw, btohs(field->size)-1);
 		NameType = field->type;
 		return begin;
 
 	case SBFC_OLD_DESC:
 	case SBFC_DESCRIPTION:
-		Description.assign((const char *)field->u.raw, field->size-1);
+		Description.assign((const char *)field->u.raw, btohs(field->size)-1);
 		DescType = field->type;
 		return begin;
 
 	case SBFC_OLD_UNIQUE_ID:
 	case SBFC_UNIQUE_ID:
-		UniqueId.assign((const char *)field->u.raw, field->size);
+		UniqueId.assign((const char *)field->u.raw, btohs(field->size));
 		UniqueIdType = field->type;
 		return begin;
 
 	case SBFC_CONTENT_ID:
-		ContentId.assign((const char *)field->u.raw, field->size);
+		ContentId.assign((const char *)field->u.raw, btohs(field->size));
 		return begin;
 
 	case SBFC_BES_DOMAIN:
-		BesDomain.assign((const char *)field->u.raw, field->size);
+		BesDomain.assign((const char *)field->u.raw, btohs(field->size));
 		return begin;
 
 	case SBFC_CONFIG:
 		{
-			Data config((const void *)field->u.raw, field->size);
+			Data config((const void *)field->u.raw, btohs(field->size));
 			size_t offset = 0;
 			Config.ParseHeader(config, offset);
 			Config.ParseFields(config, offset);
@@ -1637,7 +1639,7 @@ const unsigned char* ServiceBook::ParseField(const unsigned char *begin,
 	// if still not handled, add to the Unknowns list
 	UnknownField uf;
 	uf.type = field->type;
-	uf.data.assign((const char*)field->u.raw, field->size);
+	uf.data.assign((const char*)field->u.raw, btohs(field->size));
 	Unknowns.push_back(uf);
 
 	// return new pointer for next field
