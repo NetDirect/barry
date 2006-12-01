@@ -1,5 +1,14 @@
-Release: version 0.0.4 - 2006/11/??
+Release: version 0.0.4 - 2006/12/??
 ------------------------------------------------------------------------------
+2006/12/01
+	- fixed some missed endian conversions in record.cc and added
+		some size checks
+	- fixed endian issues in time.h
+	- added 2 more functions to the time zone API, and adjusted
+		the time zone table for better defaults in North America
+	- added btool and upldif to the make install sequence
+	- added support for Calendar recurrance data
+	- small doc/TimeZones.txt update
 2006/11/24
 	- added BlackBerry time zone code list, reverse engineered from a 7750
 	- added GetTimeZone() to convert device time zone codes to useful data
