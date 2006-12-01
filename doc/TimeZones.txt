@@ -1,5 +1,6 @@
 The following is a list of codes for time zones on the BlackBerry.
 It was reverse engineered from a BlackBerry 7750, v4.0.0.171 (Platform 1.5.0.30)
+Record #5 in the "Options" Database contains the device's time zone code.
 --------------------------------------------------------------------------------
 
 Code(2 bytes)	Name					Zone Offset
