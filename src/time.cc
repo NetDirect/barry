@@ -31,19 +31,19 @@ TimeZone Zones[] = {
 	{ 0x0002,  -10,   0, "Hawaii (-10)" },
 	{ 0x0003,   -9,   0, "Alaska (-9)" },
 	{ 0x0004,   -8,   0, "Pacific Time (US & Canada), Tijuana (-8)" },
-	{ 0x000f,   -7,   0, "Arizona (-7)" },
 	{ 0x000a,   -7,   0, "Mountain Time (US & Canada) (-7)" },
+	{ 0x000f,   -7,   0, "Arizona (-7)" },
 	{ 0x000d,   -7,   0, "Chihuahua, La Paz, Mazatlan (-7)" },
+	{ 0x0014,   -6,   0, "Central Time (US & Canada) (-6)" },
 	{ 0x0021,   -6,   0, "Central America (-6)" },
 	{ 0x0019,   -6,   0, "Saskatchewan (-6)" },
-	{ 0x0014,   -6,   0, "Central Time (US & Canada) (-6)" },
 	{ 0x001e,   -6,   0, "Mexico City (-6)" },
+	{ 0x0023,   -5,   0, "Eastern Time (US & Canada) (-5)" },
 	{ 0x002d,   -5,   0, "Bogota, Lima, Quito (-5)" },
 	{ 0x0028,   -5,   0, "Indiana (East) (-5)" },
-	{ 0x0023,   -5,   0, "Eastern Time (US & Canada) (-5)" },
+	{ 0x0032,   -4,   0, "Atlantic Time (Canada) (-4)" },
 	{ 0x0037,   -4,   0, "Caracas, La Paz (-4)" },
 	{ 0x0038,   -4,   0, "Santiago (-4)" },
-	{ 0x0032,   -4,   0, "Atlantic Time (Canada) (-4)" },
 	{ 0x003c,   -3, -30, "Newfoundland (-3.5)" },
 	{ 0x0046,   -3,   0, "Buenos Aires, Georgetown (-3)" },
 	{ 0x0041,   -3,   0, "Brasilia (-3)" },
@@ -51,10 +51,10 @@ TimeZone Zones[] = {
 	{ 0x004b,   -2,   0, "Mid-Atlantic (-2)" },
 	{ 0x0053,   -1,   0, "Cape Verde Island (-1)" },
 	{ 0x0050,   -1,   0, "Azores (-1)" },
-	{ 0x005a,    0,   0, "Casablanca, Monrovia (GMT)" },
 	{ 0x0055,    0,   0, "Dublin, Edinburgh, Lisbon, London (GMT)" },
-	{ 0x0071,    1,   0, "West Central Africa (+1)" },
+	{ 0x005a,    0,   0, "Casablanca, Monrovia (GMT)" },
 	{ 0x006e,    1,   0, "Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna (+1)" },
+	{ 0x0071,    1,   0, "West Central Africa (+1)" },
 	{ 0x005f,    1,   0, "Belgrade, Bratislava, Budapest, Ljubljana, Prague (+1)" },
 	{ 0x0069,    1,   0, "Brussels, Copenhagen, Madrid, Paris (+1)" },
 	{ 0x0064,    1,   0, "Sarajevo, Skopje, Sofija, Vilnius, Warsaw, Zagreb (+1)" },
@@ -104,15 +104,56 @@ TimeZone Zones[] = {
 	{ 0,         0,   0, 0 }
 };
 
+
+//
+// GetTimeZoneTable
+//
+/// Returns a pointer to an array of TimeZone structs.
+/// The last struct contains 0 in all fields, and can be used as
+/// an "end of array" marker.
+///
+const TimeZone* GetTimeZoneTable()
+{
+	return Zones;
+}
+
+//
+// GetTimeZone
+//
+/// Searches the internal timezone code table for the given Code
+/// and returns a pointer to a TimeZone struct found.  If the
+/// code is not found, a pointer to a valid TimeZone struct is
+/// is still returned, but the struct's Code contains TIME_ZONE_CODE_ERR,
+/// and the name is "Unknown time zone."  The unknown timezone
+/// is the same offset as GMT.
+///
 const TimeZone* GetTimeZone(unsigned short Code)
 {
-	static TimeZone Unknown = { 0, 0, 0, "Unknown time zone" };
+	static TimeZone Unknown = { TIME_ZONE_CODE_ERR, 0, 0, "Unknown time zone" };
 
 	for( TimeZone *z = Zones; z->Name; z++ ) {
 		if( Code == z->Code )
 			return z;
 	}
 	return &Unknown;
+}
+
+//
+// GetTimeZoneCode
+//
+/// Searches the internal timezone table for the first matching
+/// Code.  If no matching Code is found, TIME_ZONE_CODE_ERR is returned.
+///
+/// This function does not adjust for daylight saving time.
+///
+unsigned short GetTimeZoneCode(signed short HourOffset,
+			       signed short MinOffset)
+{
+	for( TimeZone *z = Zones; z->Name; z++ ) {
+		if( HourOffset == z->HourOffset && MinOffset == z->MinOffset )
+			return z->Code;
+	}
+	return TIME_ZONE_CODE_ERR;
 }
 
 } // namespace Barry

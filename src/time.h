@@ -25,6 +25,7 @@
 #define __BARRY_TIME_H__
 
 #include <time.h>
+#include "endian.h"
 
 //
 // Calculate the number of minutes between Jan 01, 1900 and Jan 01, 1970
@@ -49,12 +50,13 @@ typedef long min1900_t;
 
 inline min1900_t time2min(time_t t)
 {
-	return t / 60 + STDC_MIN1900_DIFF;
+	min1900_t r = t / 60 + STDC_MIN1900_DIFF;
+	return htobl(r);
 }
 
 inline time_t min2time(min1900_t m)
 {
-	return (m - STDC_MIN1900_DIFF) * 60;
+	return (btohl(m) - STDC_MIN1900_DIFF) * 60;
 }
 
 struct TimeZone
@@ -65,7 +67,12 @@ struct TimeZone
 	char *Name;
 };
 
+#define TIME_ZONE_CODE_ERR	0xffff
+
+const TimeZone* GetTimeZoneTable();
 const TimeZone* GetTimeZone(unsigned short Code);
+unsigned short GetTimeZoneCode(signed short HourOffset,
+	signed short MinOffset = 0);
 
 } // namespace Barry
 
