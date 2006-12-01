@@ -261,10 +261,6 @@ public:
 //		return GroupLinks.size() > 0 && other.GroupLinks.size() == 0;
 	}
 
-	// protocol record sizes
-	static size_t GetOldProtocolRecordSize();
-	static size_t GetProtocolRecordSize();
-
 	// database name
 	static const char * GetDBName() { return "Address Book"; }
 
@@ -317,10 +313,6 @@ public:
 	// sorting
 	bool operator<(const Message &other) const { return Subject < other.Subject; }
 
-	// protocol record sizes
-	static size_t GetOldProtocolRecordSize();
-	static size_t GetProtocolRecordSize();
-
 	// database name
 	static const char * GetDBName() { return "Messages"; }
 };
@@ -339,7 +331,8 @@ public:
 	typedef std::vector<UnknownField>		UnknownsType;
 
 	uint64_t RecordId;
-	bool Recurring;
+
+	// general data
 	bool AllDayEvent;
 	std::string Subject;
 	std::string Notes;
@@ -347,11 +340,51 @@ public:
 	time_t NotificationTime;
 	time_t StartTime;
 	time_t EndTime;
+
+	// recurring data
+	enum RecurringCodeType { Day = 1, MonthByDate = 3, MonthByDay = 4,
+		YearByDate = 5, YearByDay = 6, Week = 12 };
+
+	bool Recurring;
+	RecurringCodeType RecurringType;
+	unsigned short Interval;	// must be >= 1
+	time_t RecurringEndTime;	// only pertains if Recurring is true
+					// sets the date and time when
+					// recurrance of this appointment
+					// should no longer occur
+					// If a perpetual appointment, this
+					// is 0xFFFFFFFF in the low level data
+					// Instead, set the following flag.
+	bool Perpetual;			// if true, this will always recur
+	unsigned short TimeZoneCode;	// the time zone originally used
+					// for the recurrance data...
+					// seems to have little use, but
+					// set to your current time zone
+					// as a good default
+
+	unsigned short			// recurring details, depending on type
+		DayOfWeek,		// 0-6
+		WeekOfMonth,		// 1-5
+		DayOfMonth,		// 1-31
+		MonthOfYear;		// 1-12
+	unsigned char WeekDays;		// bitmask, bit 0 = sunday
+
+		#define CAL_WD_SUN	0x01
+		#define CAL_WD_MON	0x02
+		#define CAL_WD_TUE	0x04
+		#define CAL_WD_WED	0x08
+		#define CAL_WD_THU	0x10
+		#define CAL_WD_FRI	0x20
+		#define CAL_WD_SAT	0x40
+
+	// unknown
 	UnknownsType Unknowns;
 
 public:
 	const unsigned char* ParseField(const unsigned char *begin,
 		const unsigned char *end);
+	void ParseRecurranceData(const void *data);
+	void BuildRecurranceData(void *data);
 
 public:
 	Calendar();
@@ -371,10 +404,6 @@ public:
 
 	// sorting
 	bool operator<(const Calendar &other) const { return StartTime < other.StartTime; }
-
-	// protocol record sizes
-	static size_t GetOldProtocolRecordSize();
-	static size_t GetProtocolRecordSize();
 
 	// database name
 	static const char * GetDBName() { return "Calendar"; }
@@ -465,10 +494,6 @@ public:
 
 	// sorting
 	bool operator<(const ServiceBook &other) const { return RecordId < RecordId; }
-
-	// protocol record sizes
-	static size_t GetOldProtocolRecordSize();
-	static size_t GetProtocolRecordSize();
 
 	// database name
 	static const char * GetDBName() { return "Service Book"; }

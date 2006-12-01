@@ -75,6 +75,7 @@ struct CommonField
 		GroupLink	link;
 		MessageAddress	addr;
 		int32_t		min1900;
+		uint16_t	code;
 		uint8_t		raw[1];
 
 	} __attribute__ ((packed)) u;
@@ -133,6 +134,82 @@ struct RecordStateTableField
 #define BARRY_RSTF_DIRTY	0x01
 	uint8_t		unknown2[4];
 } __attribute__ ((packed));
+
+struct CalendarRecurranceDataField  // as documented in the Cassis project spec
+{
+	uint8_t		type;
+#define CRDF_TYPE_DAY		0x01
+#define CRDF_TYPE_MONTH_BY_DATE	0x03
+#define CRDF_TYPE_MONTH_BY_DAY	0x04
+#define CRDF_TYPE_YEAR_BY_DATE	0x05
+#define CRDF_TYPE_YEAR_BY_DAY	0x06
+#define CRDF_TYPE_WEEK		0x0c
+
+	uint8_t		unknown;		// always 0x01
+	uint16_t	interval;
+	uint32_t	startTime;
+	uint32_t	endTime;		// 0xFFFFFFFF for never
+
+	union Additional
+	{
+		// Note: blank fields should be set to 0
+
+		struct Day
+		{
+			uint8_t day[6];		// always zeros!
+		} __attribute__ ((packed)) day;
+
+		struct MonthByDate
+		{
+			uint8_t monthDay;	// day of month to recur on
+						// (1-31)
+			uint8_t blank[5];
+		} __attribute__ ((packed)) month_by_date;
+
+		struct MonthByDay
+		{
+			uint8_t weekDay;	// day of week to recur on (0-6)
+			uint8_t week;		// week of month to recur on
+						// (1 to 5, first week, second
+						// week, etc)
+			uint8_t blank[4];
+		} __attribute__ ((packed)) month_by_day;
+
+		struct YearByDate
+		{
+			uint8_t monthDay;	// day of month to recur on
+						// (1-31)
+			uint8_t blank;
+			uint8_t month;		// month to recur on (1-12)
+			uint8_t blank_[3];
+		} __attribute__ ((packed)) year_by_date;
+
+		struct YearByDay
+		{
+			uint8_t weekDay;	// day of week to recur on (0-6)
+			uint8_t week;		// week of month (1 to 5)
+			uint8_t month;		// (1-12)
+			uint8_t blank[3];
+		} __attribute__ ((packed)) year_by_day;
+
+		struct Week
+		{
+			uint8_t	days;		// bitmask
+			#define CRDF_WD_SUN	0x01
+			#define CRDF_WD_MON	0x02
+			#define CRDF_WD_TUE	0x04
+			#define CRDF_WD_WED	0x08
+			#define CRDF_WD_THU	0x10
+			#define CRDF_WD_FRI	0x20
+			#define CRDF_WD_SAT	0x40
+
+			uint8_t blank[5];
+		} __attribute__ ((packed)) week;
+
+	} __attribute__ ((packed)) u;
+
+} __attribute__ ((packed));
+#define CALENDAR_RECURRANCE_DATA_FIELD_SIZE	sizeof(Barry::Protocol::CalendarRecurranceDataField)
 
 
 
