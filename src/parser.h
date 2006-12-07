@@ -24,7 +24,6 @@
 
 #include "data.h"
 #include "protocol.h"
-#include "debug.h"
 #include <stdint.h>		// for uint32_t
 
 namespace Barry {

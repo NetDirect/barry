@@ -19,7 +19,7 @@
     root directory of this project for more details.
 */
 
-#include "barry.h"
+#include <barry/barry.h>
 #include <iomanip>
 #include <iostream>
 #include <fstream>
