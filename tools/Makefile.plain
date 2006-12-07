@@ -1,0 +1,4 @@
+btool-plain: btool.cc
+	g++ -I../rootdir/include -I../../external/rootdir/libusb/include \
+		-o btool-manual btool.cc -L../rootdir/lib -lbarry
+
