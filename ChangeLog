@@ -1,5 +1,23 @@
 Release: version 0.0.4 - 2006/12/??
 ------------------------------------------------------------------------------
+2006/12/07
+	- added autoconf support based on Peter McAlpine's patch
+	- renamed Makefiles to Makefile.orig and added script to turn
+		on old build system if wanted
+	- fixed boost-specific error path in btool
+	- moved platform specific code out of time.h and into time.cc
+	- moved btool.cc, translate.cc, and upldif.cc out of src/ and
+		into their own tools/ subdirectory
+	- added NEWS file to make autotools happy
+	- added a "clean" option to the buildgen.sh script... maintainer's
+		use only
+	- reworked autoconf and automake files, to support
+		barry as a library, to move the programs into their
+		own tools directory, and support a proper installation
+	- fixed headers in parser.h, btool.cc, and upldif.cc to work
+		properly when installed standalone
+	- added tools/Makefile.plain for testing compiling against
+		installed barry library
 2006/12/01
 	- fixed some missed endian conversions in record.cc and added
 		some size checks
