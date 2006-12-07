@@ -1,11 +1,12 @@
 
-EXTRA_DIST	= \
-			  COPYING \
-			  ChangeLog \
-			  README
+EXTRA_DIST = COPYING ChangeLog README
 
-SUBDIRS		= \
-			  libusb \
-			  . \
-			  src
+SUBDIRS = . src tools
+
+all-local:
+	rm -f barry
+	ln -s src barry
+
+clean-local:
+	rm -f barry
 
