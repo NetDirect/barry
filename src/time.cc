@@ -22,6 +22,7 @@
 */
 
 #include "time.h"
+#include "endian.h"
 
 namespace Barry {
 
@@ -103,6 +104,17 @@ TimeZone Zones[] = {
 	{ 0x012c,   13,   0, "Nuku'alofa (+13)" },
 	{ 0,         0,   0, 0 }
 };
+
+min1900_t time2min(time_t t)
+{
+	min1900_t r = t / 60 + STDC_MIN1900_DIFF;
+	return htobl(r);
+}
+
+time_t min2time(min1900_t m)
+{
+	return (btohl(m) - STDC_MIN1900_DIFF) * 60;
+}
 
 
 //
