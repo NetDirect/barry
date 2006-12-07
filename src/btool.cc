@@ -40,7 +40,9 @@ void Usage()
    << "             specified baseDN\n"
    << "   -d db     Load database 'db' and dump to screen\n"
    << "             Can be used multiple times to fetch more than one DB\n"
+#ifdef __BOOST_MODE__
    << "   -f file   Filename to save or load handheld data to/from\n"
+#endif
    << "   -h        This help\n"
    << "   -l        List devices\n"
    << "   -p pin    PIN of device to talk with\n"
@@ -273,7 +275,8 @@ int main(int argc, char *argv[])
 				filename = optarg;
 #else
 				cerr << "-f option not supported - no Boost "
-					"serialization support available";
+					"serialization support available\n";
+				return 1;
 #endif
 				break;
 			case 'l':	// list only
