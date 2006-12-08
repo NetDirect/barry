@@ -114,6 +114,32 @@ public:
 	}
 };
 
+
+//
+// RecordFetch template class
+//
+/// Generic record fetch class, to help with using records without
+/// builder classes.
+///
+template <class RecordT>
+class RecordFetch
+{
+	const RecordT &m_rec;
+	mutable bool m_done;
+
+public:
+	RecordFetch(const RecordT &rec) : m_rec(rec), m_done(false) {}
+	bool operator()(RecordT &rec, unsigned int dbId) const
+	{
+		if( m_done )
+			return false;
+		rec = m_rec;
+		m_done = true;
+		return true;
+	}
+};
+
+
 } // namespace Barry
 
 #endif
