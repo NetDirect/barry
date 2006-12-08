@@ -3,9 +3,10 @@
 
 AC_PREREQ(2.59)
 AC_INIT([barry], [0.4], [barry-devel@lists.sourceforge.net])
-AM_INIT_AUTOMAKE([barry], [0.4])
-AM_CONFIG_HEADER(config.h)
+#AM_CONFIG_HEADER(config.h)
 AC_CONFIG_SRCDIR([src/barry.h])
+AC_CONFIG_HEADERS([config.h:config.h.in])
+AM_INIT_AUTOMAKE
 
 # Checks for programs.
 AC_PROG_CC
@@ -21,14 +22,25 @@ AC_ARG_WITH(libusb,
 	 LIBUSB_INC_PATH="$with_libusb/include"],
 	[LIBUSB_LIB_PATH="/usr/lib"
 	 LIBUSB_INC_PATH="/usr/include"])
+AC_ARG_WITH(boost,
+	[  --with-boost=<path>     root path of boost installation],
+	[BOOST_LIB_PATH="$with_boost/lib"
+	 BOOST_INC_PATH="$with_boost/include"
+	 BOOST_ENABLED="true"],
+	[BOOST_LIB_PATH="/usr/lib"
+	 BOOST_INC_PATH="/usr/include"])
 
 AC_SUBST(LIBUSB_LIB_PATH)
 AC_SUBST(LIBUSB_INC_PATH)
+AC_SUBST(BOOST_LIB_PATH)
+AC_SUBST(BOOST_INC_PATH)
+
+AM_CONDITIONAL([WITH_BOOST], [test "$BOOST_ENABLED" = "true"])
 
 # Checks for libraries.
 #AC_CHECK_LIB([IOKit], [main])
 AC_CHECK_LIB([pthread], [main])
-AC_CHECK_LIB([libusb], [libusb_init])
+#AC_CHECK_LIB([libusb], [libusb_init])
 
 # Checks for header files.
 AC_HEADER_DIRENT
