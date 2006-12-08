@@ -1,0 +1,28 @@
+Barry is primarily intended to be a library, for any application to
+access Blackberry devices.  There will be an OpenSync module built
+on top of this, plus some command line utilities, and possibly a GUI,
+but initially Barry is a library, and must be versioned accordingly.
+
+Additional applications built on top of Barry may be versioned separately.
+
+Most operating systems can handle two library version numbers: major.minor.
+They use these numbers to determine which library is compatible
+and most recent.
+
+Therefore Barry will be versioned the same way, the major version
+number indicating a backward incompatible change to the library.
+
+Alpha development will occur on major version 0, incrementing the
+minor version only until stability is reached.  This version will be
+declared stable, a new development branch will be started with major
+version 1, and patches to stable will increment its minor number.
+
+Development will then continue on odd numbered major versions with incompatible
+changes allowed.  When stable, version 1.x will become 2.0, and the
+3.x branch will be opened.
+
+Due to limitations in remaining portable across as many operating systems
+as possible, Barry will discontinue its 3-number version scheme as of
+version 0.4.
+
+
