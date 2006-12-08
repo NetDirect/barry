@@ -54,21 +54,49 @@ Barry uses the asynchronous library calls, which is why the development
 branch is used.  The libusb devel branch is well along in its development
 cycle, so don't be afraid to play with it.
 
+
 To build Barry:
+---------------
 
-	- Edit Makefile.conf to point to the proper location for libusb
-		headers and library files
-	- Enter the src/ directory and type 'make'
-	- If you want to generate doxygen documentation, run 'doxygen'
-		as well.  The resulting files will be in doc/doxygen/html/
-		This has been tested with Doxygen 1.4.5
-	- make install - install a static library in the install/
-		subdirectory. This is needed if you want to play with
-		the opensync module.
+	./configure
 
-This will give you a command line tool called 'btool'.  Use the -h
-switch for help on its command line options.  Some good ones to start with
-are -l to list the devices found, and -t to list the Database Database.
+		set --prefix as needed
+		set --with-libusb=/path/to/root/libusb
+		set --with-boost=/path/to/root/boost if you want
+			the -f switch to work in btool
+
+	make
+
+	su
+	make install
+
+	This will give you a command line tool called 'btool'.  Use the -h
+	switch for help on its command line options.  Some good ones to start with
+	are -l to list the devices found, and -t to list the Database Database.
+
+
+To generate the Doxygen documentation:
+--------------------------------------
+
+	run 'doxygen' from inside the src/ directory.
+
+	The resulting files will be in doc/doxygen/html/
+	This has been tested with Doxygen 1.4.5
+
+
+To build the OpenSync module:
+-----------------------------
+
+	cd opensync-plugin
+	./configure
+
+		set --with-libusb
+		set --with-barry
+
+	make
+	su
+	make install
+
 
 
 BlackBerry protocol:

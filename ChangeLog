@@ -27,6 +27,7 @@ Release: version 0.0.4 - 2006/12/??
 	- removed debug.h dependency from btool.cc
 	- removed libusb check in favour of specific --with-libusb
 		option... may need to revisit this later
+	- quick installation update in README
 2006/12/01
 	- fixed some missed endian conversions in record.cc and added
 		some size checks
