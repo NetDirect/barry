@@ -44,7 +44,7 @@
 #include "controller.h"
 #include "controllertmpl.h"
 
-#ifdef __BOOST_MODE__
+#ifdef __BARRY_BOOST_MODE__
 // Boost serialization seems to be picky about header order, do them all here
 #include <iomanip>
 #include <iostream>
