@@ -23,7 +23,7 @@ AC_ARG_WITH(libusb,
 	[LIBUSB_LIB_PATH="/usr/lib"
 	 LIBUSB_INC_PATH="/usr/include"])
 AC_ARG_WITH(boost,
-	[  --with-boost=<path>     root path of boost installation],
+	[  --with-boost=<path>     root path of boost installation (default=no boost)],
 	[BOOST_LIB_PATH="$with_boost/lib"
 	 BOOST_INC_PATH="$with_boost/include"
 	 BOOST_ENABLED="true"],
@@ -64,6 +64,7 @@ AC_CHECK_FUNCS([bzero gettimeofday memset select strcasecmp strchr strerror strt
 
 AC_CONFIG_FILES([Makefile
                  src/Makefile
-                 tools/Makefile])
+                 tools/Makefile
+                 examples/Makefile])
 AC_OUTPUT
 
