@@ -73,6 +73,21 @@ void Controller::SaveDatabaseByName(const std::string &name, StorageT &store)
 		throw BError("Unknown database name in SaveDatabaseByName: " + name);
 }
 
+template <class RecordT>
+void Controller::AddRecordByType(uint32_t recordId, const RecordT &rec)
+{
+	unsigned int dbId = this->GetDBID( RecordT::GetDBName() );
+	// FIXME - I know this is a convenience template, but it still
+	// hurts making a temporary copy just to set the record ID...
+	// create a better API for this.
+	RecordT r = rec;
+	r.SetUniqueId(recordId);
+	Barry::RecordFetch<RecordT> fetch(r);
+	Barry::RecordBuilder<RecordT, Barry::RecordFetch<RecordT> > build(fetch);
+	this->AddRecord(dbId, build);
+}
+
+
 } // namespace Barry
 
 #endif

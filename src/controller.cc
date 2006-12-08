@@ -323,6 +323,49 @@ void Controller::GetRecordStateTable(unsigned int dbId, RecordStateTable &result
 }
 
 //
+// AddRecord
+//
+/// Adds a record to the specified database.  RecordId is
+/// retrieved from build, and duplicate IDs are allowed by the device
+/// (i.e. you can have two records with the same ID) 
+/// but *not* recommended!
+//
+void Controller::AddRecord(unsigned int dbId, Builder &build)
+{
+	if( m_mode != Desktop )
+		throw std::logic_error("Wrong mode in GetRecord");
+
+	Data command, response;
+	Packet packet(*this, command, response);
+
+	if( packet.SetRecord(dbId, build) ) {
+		if( !m_socket.Packet(packet) ) {
+			eout("Database ID: " << dbId);
+			eeout(command, response);
+			throw BError(m_socket.GetLastStatus(),
+				"Controller: error adding record to device database");
+		}
+		else {
+			std::ostringstream oss;
+
+			// successful packet transfer, so check the network return code
+			if( packet.Command() != SB_COMMAND_DB_DONE ) {
+				oss << "Controller: device responded with unexpected packet command code: "
+				    << packet.Command();
+				throw BError(oss.str());
+			}
+
+			if( packet.ReturnCode() != 0 ) {
+				oss << "Controller: device responded with error code (command: "
+				    << packet.Command() << ", code: "
+				    << packet.ReturnCode() << ")";
+				throw BError(oss.str());
+			}
+		}
+	}
+}
+
+//
 // GetRecord
 //
 /// Retrieves a specific record from the specified database.

@@ -110,6 +110,9 @@ public:
 
 	// dirty flag related functions, for sync operations
 	void GetRecordStateTable(unsigned int dbId, RecordStateTable &result);
+	void AddRecord(unsigned int dbId, Builder &build); // RecordId is
+		// retrieved from build, and duplicate IDs are allowed,
+		// but *not* recommended!
 	void GetRecord(unsigned int dbId, unsigned int stateTableIndex, Parser &parser);
 	void SetRecord(unsigned int dbId, unsigned int stateTableIndex, Builder &build);
 	void ClearDirty(unsigned int dbId, unsigned int stateTableIndex);
@@ -124,6 +127,8 @@ public:
 
 	template <class StorageT> void LoadDatabaseByName(const std::string &name, StorageT &store);
 	template <class StorageT> void SaveDatabaseByName(const std::string &name, StorageT &store);
+
+	template <class RecordT> void AddRecordByType(uint32_t recordId, const RecordT &rec);
 };
 
 } // namespace Barry
