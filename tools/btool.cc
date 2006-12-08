@@ -40,7 +40,7 @@ void Usage()
    << "             specified baseDN\n"
    << "   -d db     Load database 'db' and dump to screen\n"
    << "             Can be used multiple times to fetch more than one DB\n"
-#ifdef __BOOST_MODE__
+#ifdef __BARRY_BOOST_MODE__
    << "   -f file   Filename to save or load handheld data to/from\n"
 #endif
    << "   -h        This help\n"
@@ -90,7 +90,7 @@ struct Store
 		load(load),
 		count(0)
 	{
-#ifdef __BOOST_MODE__
+#ifdef __BARRY_BOOST_MODE__
 		try {
 
 			if( load && filename.size() ) {
@@ -108,7 +108,7 @@ struct Store
 				// debugging aid
 				typename std::vector<Record>::const_iterator beg = records.begin(), end = records.end();
 				for( ; beg != end; beg++ ) {
-					dout(*beg);
+					cout << (*beg) << endl;
 				}
 			}
 
@@ -121,7 +121,7 @@ struct Store
 	~Store()
 	{
 		cout << "Store counted " << dec << count << " records." << endl;
-#ifdef __BOOST_MODE__
+#ifdef __BARRY_BOOST_MODE__
 		try {
 
 			if( !load && filename.size() ) {
@@ -271,7 +271,7 @@ int main(int argc, char *argv[])
 				break;
 
 			case 'f':	// filename
-#ifdef __BOOST_MODE__
+#ifdef __BARRY_BOOST_MODE__
 				filename = optarg;
 #else
 				cerr << "-f option not supported - no Boost "
