@@ -1,0 +1,107 @@
+Capturing USB Traffic for Fun and Profit
+=========================================
+
+Capturing USB traffic is critical to reverse engineering your shiny
+new Linux-incompatible toy.  This article documents my experiences
+with this process in the Barry project.
+
+
+What do these numbers mean?
+---------------------------
+
+The first step is to get the USB specifications themselves.  Fortunately,
+they are freely available on the internet at http://www.usb.org/ under
+the Developers section.
+
+There are two versions of USB, but the important stuff is similar in both
+versions.  Chapters 9 and 11 document the format of the various descriptor
+structs involved with communicating with the device, and will be important
+in decoding some of the data dumps later on.
+
+
+Talking to the device
+---------------------
+
+Programming the USB device itself does not require a kernel driver.  You
+can do it from user space with the libusb library.  This library uses
+the usbdevfs filesystem under /proc to pass USB messages to the kernel,
+and the device.
+
+As USB is a completely host-driven protocol, meaning that the device
+itself cannot initiate messages, a simple "make request, wait for
+response" style of programming is quite sufficient in the majority
+of cases.  Some of the USB capture logs may appear reversed, in that there
+is a read before the write.  Don't be too concerned about that.
+
+The stable version of libusb only supports synchronous communication
+with USB, which forces you to use a write/read cycle.  Again, this is
+sufficient for most cases and is the path you should use when first
+starting out.
+
+
+Capturing: The Windows Way
+--------------------------
+
+Your shiny new device probably has some proprietary software, and if you've
+played with it, you likely have it installed already on some Windows system.
+This is likely the fastest method to start getting captures.
+
+I used the USBsnoop package from:
+
+	http://benoit.papillault.free.fr/usbsnoop/index.php
+
+I was only able to get it to work on a Windows XP Pro system, and as this
+was the only method I knew of at the time, I kept trying different versions
+of Windows until I found one that worked.  If you have a Windows 2000 or
+2002 system, USBsnoop may not work for you, but it is still simple to try.
+
+USBsnoop comes as a simple EXE.  Whenever you wish to make a capture, you
+run the program, which installs the capture driver temporarily and presents
+you with a list of devices to listen to.  Click the device, click the
+Install button, then plug in your device and run the software.  The logs
+generally show up in the windows directory as usbsnoop.log.
+
+When you are finished, copy this log somewhere else for safekeeping,
+click the Uninstall button, and try deleting the log to start fresh for your
+next capture.  Sometimes it requires a reboot to get rid of the log.
+
+These captures are very helpful to see the bulk of the protocol.  In my
+experience, USBsnoop can miss some of the very early setup behaviour,
+but still does a smashing job capturing the heavy duty areas of the protocol.
+
+Once you have the logs, you can use the convo.awk script in the Barry
+src directory, and the translate.cc program to help analyze the data.
+
+
+Capturing: The Linux Way
+------------------------
+
+Recent versions of the Linux kernel in the 2.6 series provide their own
+way of getting to the low level USB behaviour.  In the usbcore driver/module,
+there is a switch you can turn on with the following command:
+
+	echo Y > /sys/module/usbcore/parameters/usbfs_snoop
+
+All USB data going through the usbdevfs interface (this includes all data
+transferred through libusb) will be logged from the kernel.  This shows up
+in dmesg output, and /var/log/kern.log on most systems.
+
+The data captured is very raw, in disorganized hex, so you'll need a script
+or tool to help with the conversion something readable.
+
+But what if you only have a Windows driver?  The nice thing is that VMWare
+uses the usbdevfs interface to share USB devices with the virtual machines.
+So, install windows in a VMWare session, install your proprietary drivers
+and software, and watch the logging goodness appear from Linux.
+
+As of December 2006, you can still download a free version of VMWare server
+from:
+
+	http://www.vmware.com/download/server/
+
+
+Happy Hacking!
+
+Chris Frey <cdfrey@foursquare.net>
+2006/12/15
+
