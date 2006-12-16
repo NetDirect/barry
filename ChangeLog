@@ -1,5 +1,8 @@
 Release: version 0.0.4 - 2006/12/??
 ------------------------------------------------------------------------------
+2006/12/15
+	- moved Exceptions, Hacking, and VersionNotes to doc/
+	- added doc/USB-capture.txt
 2006/12/08
 	- added Controller::AddRecord() and template helper
 	- added beginning version of generic RecordFetch<> template
