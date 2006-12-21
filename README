@@ -23,7 +23,7 @@ it in text or LDAP LDIF format.
 Installation:
 -------------
 You need:
-	libusb, devel branch (as of 2005/12/30)
+	libusb, stable (0.1.x)
 				http://libusb.sourceforge.net/
 
 	boost 1.33 (optional)
@@ -37,22 +37,9 @@ to save downloads for later uploads to the device.
 
 Libusb:
 
-Barry currently relies on an old version of the libusb library.  This
-should be fixed in future versions, but in the meantime, you can download
-a tarball of libusb from the Barry file download page.
+Install the stable libusb packages (library and devel) from your distribution.
+Version 0.1.x is the series you want, and is commonly available.
 
-Alternatively you can check out the 2005/12/30 V1_0_DEVEL tag/branch from
-libusb's CVS.  To grab a specific date version of libusb, use the
-following CVS commands:
-
-	cvs -d :pserver:anonymous@cvs.sourceforge.net:/cvsroot/libusb \
-		co -r V1_0_DEVEL -d libusb-1_0_devel libusb
-	cd libusb-1_0_devel
-	cvs update -Pd -r V1_0_DEVEL -D 2005/12/30
-
-Barry uses the asynchronous library calls, which is why the development
-branch is used.  The libusb devel branch is well along in its development
-cycle, so don't be afraid to play with it.
 
 
 To build Barry:
@@ -197,5 +184,5 @@ Misc utilities:
 
 Enjoy!
 
-October 2006
+December 2006
 

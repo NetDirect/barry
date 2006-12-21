@@ -1,2 +1,12 @@
+December 2006
+=============
+
+Note: as of version 0.4, Barry depends on the stable version of libusb,
+not the devel tarball available on the Barry sourceforge site.  Install
+stable libusb (0.1.12 or similar) and libusb-devel from your distribution's
+regular package set.
+
+------------------------------------------------------------------------------
+
 See http://sourceforge.net/projects/barry for the latest news.
 
