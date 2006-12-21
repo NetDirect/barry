@@ -1,5 +1,11 @@
 Release: version 0.0.4 - 2006/12/??
 ------------------------------------------------------------------------------
+2006/12/21
+	- ported Barry to use the stable branch of libusb
+		NOTE: no longer depends on the devel libusb tarball!
+			Just use your distro's libusb packages.
+	- fixed more endian issues
+	- minor update to TODO
 2006/12/15
 	- moved Exceptions, Hacking, and VersionNotes to doc/
 	- added doc/USB-capture.txt
