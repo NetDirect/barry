@@ -23,6 +23,7 @@
 #include "probe.h"
 #include "usbwrap.h"
 #include "data.h"
+#include "endian.h"
 #include "error.h"
 #include "debug.h"
 #include <iomanip>
@@ -66,20 +67,23 @@ namespace {
 
 	unsigned int GetSize(const unsigned char *packet)
 	{
-		return *((uint16_t *)&packet[2]);
+		uint16_t size = *((uint16_t *)&packet[2]);
+		return btohs(size);
 	}
 
 	bool Intro(int IntroIndex, const EndpointPair &ep, Device &dev, Data &response)
 	{
-		IO rd = dev.ABulkRead(ep.read, response);
-		IO wr = dev.ABulkWrite(ep.write, Intro_Sends[IntroIndex],
+		dev.BulkWrite(ep.write, Intro_Sends[IntroIndex],
 			GetSize(Intro_Sends[IntroIndex]));
+		dev.BulkRead(ep.read, response);
 
-		rd.Wait();
-		wr.Wait();
-
-		response.ReleaseBuffer(rd.GetStatus() >= 0 ? rd.GetSize() : 0);
-		return rd.GetStatus() >= 0;
+		// the stable libusb doesn't give us the size of the
+		// data actually returned, so parse the packet for its size
+		response.ReleaseBuffer(response.GetBufSize());
+		unsigned int bufsize = GetSize(response.GetData());
+		if( bufsize < response.GetSize() )
+			response.ReleaseBuffer(bufsize);
+		return true;
 	}
 
 } // anonymous namespace
@@ -89,6 +93,7 @@ bool Probe::Parse(const Data &data, ProbeResult &result)
 {
 	// validate response data
 	const unsigned char *pd = data.GetData();
+
 	if( GetSize(pd) != (unsigned int) data.GetSize() ||
 	    data.GetSize() < 0x14 ||
 	    pd[4] != 0x06 )
@@ -106,7 +111,7 @@ Probe::Probe()
 {
 	Match match(VENDOR_RIM, PRODUCT_RIM_BLACKBERRY);
 
-	libusb_device_id_t devid;
+	Usb::DeviceIDType devid;
 	while( match.next_device(&devid) ) {
 
 		// skip if we can't properly discover device config

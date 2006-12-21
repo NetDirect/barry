@@ -495,6 +495,7 @@ struct Packet
 
 // checks packet size and throws BError if not right
 void CheckSize(const Data &packet, size_t requiredsize = MIN_PACKET_SIZE);
+unsigned int GetSize(const Data &packet);
 
 }} // namespace Barry::Protocol
 

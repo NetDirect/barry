@@ -25,7 +25,6 @@ extern bool __data_dump_mode__;
 
 #ifdef __DEBUG_MODE__
 	// debugging on
-
 	#undef dout
 	#undef eout
 

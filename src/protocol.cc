@@ -22,6 +22,7 @@
 #include "protocol.h"
 #include "protostructs.h"
 #include "data.h"
+#include "endian.h"
 #include "error.h"
 #include "debug.h"
 
@@ -32,7 +33,11 @@ namespace Barry { namespace Protocol {
 void CheckSize(const Data &packet, size_t requiredsize)
 {
 	const Packet *p = (const Packet *) packet.GetData();
-	if( p->size != packet.GetSize() || packet.GetSize() < requiredsize )
+
+// FIXME - NOTE - can't rely on GetSize() when using libusb-stable
+//	if( btohs(p->size) != packet.GetSize() || packet.GetSize() < requiredsize )
+
+	if( packet.GetSize() < requiredsize )
 	{
 		std::ostringstream oss;
 		oss << "Bad packet size. Packet: " << p->size
@@ -42,6 +47,13 @@ void CheckSize(const Data &packet, size_t requiredsize)
 		eout(packet);
 		throw BError(oss.str());
 	}
+}
+
+unsigned int GetSize(const Data &packet)
+{
+	CheckSize(packet, 4);
+	uint16_t size = *((uint16_t *)&packet.GetData()[2]);
+	return btohs(size);
 }
 
 }} // namespace Barry::Protocol

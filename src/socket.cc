@@ -215,30 +215,33 @@ bool Socket::Send(const Data &send, Data &receive)
 		packet.buffer[2] = 0;		// zero the top byte
 		Data sizeCommand(&packet, 3);
 
-		IO wr = m_dev.ABulkWrite(m_writeEp, sizeCommand);
-		wr.Wait();
+		m_dev.BulkWrite(m_writeEp, sizeCommand);
 	}
 
-	IO rd = m_dev.ABulkRead(m_readEp, receive);
-	IO wr = m_dev.ABulkWrite(m_writeEp, send);
+	m_dev.BulkWrite(m_writeEp, send);
+	m_dev.BulkRead(m_readEp, receive);
 
-	// wait for response
-	rd.Wait();
-	wr.Wait();
-
-	m_lastStatus = rd.GetStatus();
-	receive.ReleaseBuffer(m_lastStatus >= 0 ? rd.GetSize() : 0);
+	// the stable libusb doesn't give us the actual size read,
+	// so parse the first bit of the packet for the size field
+	m_lastStatus = m_dev.GetLastError();
+	receive.ReleaseBuffer(receive.GetBufSize());
+	unsigned int bufsize = Protocol::GetSize(receive);
+	if( bufsize < receive.GetBufSize() )
+		receive.ReleaseBuffer(bufsize);
 	return m_lastStatus >= 0;
 }
 
 bool Socket::Receive(Data &receive)
 {
-	IO rd = m_dev.ABulkRead(m_readEp, receive);
+	m_dev.BulkRead(m_readEp, receive);
 
-	rd.Wait();
-
-	m_lastStatus = rd.GetStatus();
-	receive.ReleaseBuffer(m_lastStatus >= 0 ? rd.GetSize() : 0);
+	// the stable libusb doesn't give us the actual size read,
+	// so parse the first bit of the packet for the size field
+	m_lastStatus = m_dev.GetLastError();
+	receive.ReleaseBuffer(receive.GetBufSize());
+	unsigned int bufsize = Protocol::GetSize(receive);
+	if( bufsize < receive.GetBufSize() )
+		receive.ReleaseBuffer(bufsize);
 	return m_lastStatus >= 0;
 }
 

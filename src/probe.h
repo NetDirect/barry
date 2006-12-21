@@ -34,7 +34,7 @@ namespace Barry {
 
 struct ProbeResult
 {
-	libusb_device_id_t m_dev;
+	Usb::DeviceIDType m_dev;
 	uint32_t m_pin;
 	Usb::EndpointPair m_ep;
 };

@@ -33,285 +33,137 @@
 
 namespace Usb {
 
-IO::IO(Device *dev, libusb_io_handle_t *handle)
-	: m_dev(dev),
-	m_handle(handle)
+///////////////////////////////////////////////////////////////////////////////
+// Match
+
+Match::Match(int vendor, int product)
+	: m_busses(0),
+	m_dev(0),
+	m_vendor(vendor),
+	m_product(product)
 {
-	if( m_handle )
-		dout("IO::IO handle: " << m_handle);
+	usb_find_busses();
+	usb_find_devices();
+	m_busses = usb_get_busses();
 }
 
-IO::IO(Device &dev, libusb_io_handle_t *handle)
-	: m_dev(&dev),
-	m_handle(handle)
+Match::~Match()
 {
-	if( m_handle )
-		dout("IO::IO handle: " << m_handle);
 }
 
-IO::IO(const IO &other)
-	: m_dev(other.m_dev),
-	m_handle(0)
+bool Match::next_device(Usb::DeviceIDType *devid)
 {
-	operator=(other);
-}
+	for( ; m_busses; m_busses = m_busses->next ) {
 
-// only one IO object can ever hold a handle to an io operation
-IO& IO::operator=(const IO &other)
-{
-	if( this == &other )
-		return *this;		// nothing to do
+		if( !m_dev )
+			m_dev = m_busses->devices;
 
-	if( m_dev && m_dev != other.m_dev )
-		throw UsbError("Copying IO objects that are not "
-			"related to the same device.");
+		for( ; m_dev; m_dev = m_dev->next ) {
+			// is there a match?
+			if( m_dev->descriptor.idVendor == m_vendor &&
+			    m_dev->descriptor.idProduct == m_product ) {
+				// found!
+				*devid = m_dev;
 
-	cleanup();
-	m_handle = other.m_handle;
-	other.m_handle = 0;
-	return *this;
-}
+				// advance for next time
+				m_dev = m_dev->next;
+				if( !m_dev )
+					m_busses = m_busses->next;
 
-// cleans up the io handle, making this IO object invalid
-void IO::cleanup()
-{
-	if( IsValid() ) {
-		dout("IO::cleanup handle: " << m_handle);
-
-		std::ostringstream oss;
-		oss << "cleanup: " << GetEndpoint() << " ";
-		if( !IsCompleted() ) {
-			// not complete yet, cancel
-			oss << " cancel ";
-			libusb_io_cancel(m_handle);
+				// done
+				return true;
+			}
 		}
-		oss << " free";
-		dout(oss.str());
-		libusb_io_free(m_handle);
-		m_handle = 0;
 	}
+	return false;
 }
-
-// will cancel if not complete, and will always free if valid
-IO::~IO()
-{
-	cleanup();
-}
-
-// API wrappers
-bool IO::IsCompleted() const
-{
-	if( !IsValid() )
-		return true;
-
-	return libusb_is_io_completed(m_handle) != 0;
-}
-
-void IO::Wait()
-{
-	if( !IsValid() )
-		return;			// nothing to wait on
-	libusb_io_wait(m_handle);
-
-#ifdef __DEBUG_MODE__
-	ddout("IO::Wait(): Endpoint " << GetEndpoint()
-		<< " Status "
-		<< std::setbase(10) << GetStatus() << std::setbase(16));
-
-	// only dump read endpoints that are successful
-	if( (GetEndpoint() & USB_ENDPOINT_DIR_MASK) && GetStatus() >= 0 ) {
-		Data dump(GetData(), GetSize());
-		ddout(dump);
-	}
-#endif
-}
-
-void IO::Cancel()
-{
-	if( !IsValid() )
-		return;
-	if( !IsCompleted() ) {
-		// not complete yet, cancel
-		libusb_io_cancel(m_handle);
-	}
-}
-
-int IO::GetStatus() const
-{
-	if( !IsValid() )
-		return -1;
-	return libusb_io_comp_status(m_handle);
-}
-
-int IO::GetSize() const
-{
-	if( !IsValid() )
-		return 0;
-	return libusb_io_xfer_size(m_handle);
-}
-
-int IO::GetReqSize() const
-{
-	if( !IsValid() )
-		return 0;
-	return libusb_io_req_size(m_handle);
-}
-
-int IO::GetEndpoint() const
-{
-	if( !IsValid() )
-		return 0;
-	return libusb_io_ep_addr(m_handle);
-}
-
-unsigned char * IO::GetData()
-{
-	if( !IsValid() )
-		return 0;
-	return libusb_io_data(m_handle);
-}
-
-const unsigned char * IO::GetData() const
-{
-	if( !IsValid() )
-		return 0;
-	return libusb_io_data(m_handle);
-}
-
 
 
 ///////////////////////////////////////////////////////////////////////////////
 // Device
 
+Device::Device(Usb::DeviceIDType id)
+	: m_id(id),
+	m_timeout(USBWRAP_DEFAULT_TIMEOUT)
+{
+	m_handle = usb_open(id);
+	if( !m_handle )
+		throw UsbError("open failed");
+}
+
+Device::~Device()
+{
+	usb_close(m_handle);
+}
+
 bool Device::SetConfiguration(unsigned char cfg)
 {
-	m_lasterror = libusb_set_configuration(m_handle, cfg);
+	m_lasterror = usb_set_configuration(m_handle, cfg);
 	return m_lasterror >= 0;
 }
 
 bool Device::ClearHalt(int ep)
 {
-	m_lasterror = libusb_clear_halt(m_handle, ep);
+	m_lasterror = usb_clear_halt(m_handle, ep);
 	return m_lasterror >= 0;
 }
 
 bool Device::Reset()
 {
-	m_lasterror = libusb_reset(m_handle);
+	m_lasterror = usb_reset(m_handle);
 	return m_lasterror == 0;
 }
 
-void Device::TrackBulkRead(int ep, Data &data)
+bool Device::BulkRead(int ep, Data &data)
 {
-	m_ios.push_back(ABulkRead(ep, data));
+	m_lasterror = usb_bulk_read(m_handle, ep,
+		(char*) data.GetBuffer(), data.GetBufSize(), m_timeout);
+	if( m_lasterror < 0 )
+		throw UsbError("Error in usb_bulk_read");
+	return m_lasterror >= 0;
 }
 
-void Device::TrackBulkWrite(int ep, const Data &data)
+bool Device::BulkWrite(int ep, const Data &data)
 {
-	m_ios.push_back(ABulkWrite(ep, data));
+	ddout("BulkWrite to endpoint " << ep << ":\n" << data);
+	m_lasterror = usb_bulk_write(m_handle, ep,
+		(char*) data.GetData(), data.GetSize(), m_timeout);
+	if( m_lasterror < 0 )
+		throw UsbError("Error in usb_bulk_write");
+	return m_lasterror >= 0;
 }
 
-void Device::TrackInterruptRead(int ep, Data &data)
-{
-	m_ios.push_back(AInterruptRead(ep, data));
-}
-
-void Device::TrackInterruptWrite(int ep, const Data &data)
-{
-	m_ios.push_back(AInterruptWrite(ep, data));
-}
-
-// extracts the next completed IO handle, and returns it as an IO object
-// The Device object no longer tracks this handle, and if the IO object
-// goes out of scope, the handle will be freed.
-IO Device::PollCompletions()
-{
-	// get next completed libusb IO handle
-	libusb_io_handle_t *done = libusb_io_poll_completions();
-	if( !done )
-		return IO::InvalidIO();
-
-	// search for it in our list
-	io_list_type::iterator b = m_ios.begin();
-	for( ; b != m_ios.end(); b++ ) {
-		if( *b == done ) {
-			IO io = *b;	// make copy to return
-			m_ios.erase(b);	// remove forgotten placeholder
-			return io;	// return so user can deal with it
-		}
-	}
-
-	// not found in our tracked list
-	if( libusb_io_dev(done) == m_handle ) {
-		// this is an event for our device handle, so ok to return it
-		return IO(*this, done);
-	}
-	else {
-		// not our device, ignore it
-		return IO::InvalidIO();
-	}
-}
-
-void Device::ClearIO(int index)
-{
-	m_ios.erase(m_ios.begin() + index);
-}
-
-IO Device::ABulkRead(int ep, Data &data)
-{
-	libusb_io_handle_t *rd = libusb_submit_bulk_read( GetHandle(), ep,
-		data.GetBuffer(), data.GetBufSize(), m_timeout, NULL);
-	if( !rd )
-		throw UsbError("Error in libusb_submit_bulk_read");
-
-	return IO(*this, rd);
-}
-
-IO Device::ABulkWrite(int ep, const Data &data)
-{
-	ddout("ABulkWrite to endpoint " << ep << ":\n" << data);
-	libusb_io_handle_t *wr = libusb_submit_bulk_write(GetHandle(), ep,
-		data.GetData(), data.GetSize(), m_timeout, NULL);
-	if( !wr )
-		throw UsbError("Error in libusb_submit_bulk_write");
-
-	return IO(*this, wr);
-}
-
-IO Device::ABulkWrite(int ep, const void *data, size_t size)
+bool Device::BulkWrite(int ep, const void *data, size_t size)
 {
 #ifdef __DEBUG_MODE__
 	Data dump(data, size);
-	ddout("ABulkWrite to endpoint " << ep << ":\n" << dump);
+	ddout("BulkWrite to endpoint " << ep << ":\n" << dump);
 #endif
 
-	libusb_io_handle_t *wr = libusb_submit_bulk_write(GetHandle(), ep,
-		data, size, m_timeout, NULL);
-	if( !wr )
-		throw UsbError("Error in libusb_submit_bulk_write");
-
-	return IO(*this, wr);
+	m_lasterror = usb_bulk_write(m_handle, ep,
+		(char*) data, size, m_timeout);
+	if( m_lasterror < 0 )
+		throw UsbError("Error in usb_bulk_write");
+	return m_lasterror >= 0;
 }
 
-IO Device::AInterruptRead(int ep, Data &data)
+bool Device::InterruptRead(int ep, Data &data)
 {
-	libusb_io_handle_t *rd = libusb_submit_interrupt_read( GetHandle(), ep,
-		data.GetBuffer(), data.GetBufSize(), m_timeout, NULL);
-	if( !rd )
-		throw UsbError("Error in libusb_submit_interrupt_read");
-
-	return IO(*this, rd);
+	m_lasterror = usb_interrupt_read(m_handle, ep,
+		(char*) data.GetBuffer(), data.GetBufSize(), m_timeout);
+	if( m_lasterror < 0 )
+		throw UsbError("Error in usb_interrupt_read");
+	return m_lasterror >= 0;
 }
 
-IO Device::AInterruptWrite(int ep, const Data &data)
+bool Device::InterruptWrite(int ep, const Data &data)
 {
-	ddout("AInterruptWrite to endpoint " << ep << ":\n" << data);
-	libusb_io_handle_t *wr = libusb_submit_interrupt_write(GetHandle(), ep,
-		data.GetData(), data.GetSize(), m_timeout, NULL);
-	if( !wr )
-		throw UsbError("Error in libusb_submit_interrupt_write");
-
-	return IO(*this, wr);
+	ddout("InterruptWrite to endpoint " << ep << ":\n" << data);
+	m_lasterror = usb_interrupt_write(m_handle, ep,
+		(char*) data.GetData(), data.GetSize(), m_timeout);
+	if( m_lasterror < 0 )
+		throw UsbError("Error in usb_interrupt_write");
+	return m_lasterror >= 0;
 }
 
 
@@ -319,7 +171,7 @@ IO Device::AInterruptWrite(int ep, const Data &data)
 ///////////////////////////////////////////////////////////////////////////////
 // EndpointDiscovery
 
-bool EndpointDiscovery::Discover(libusb_device_id_t devid, int cfgidx, int ifcidx, int epcount)
+bool EndpointDiscovery::Discover(struct usb_interface_descriptor *interface, int epcount)
 {
 	// start fresh
 	clear();
@@ -327,12 +179,24 @@ bool EndpointDiscovery::Discover(libusb_device_id_t devid, int cfgidx, int ifcid
 
 	EndpointPair pair;
 
+	if( !interface || !interface->endpoint )
+		return false;
+
 	for( int i = 0; i < epcount; i++ ) {
 		// load descriptor
-		usb_endpoint_desc desc;
-		if( libusb_get_endpoint_desc(devid, cfgidx, ifcidx, i, &desc) < 0 )
-			return false;
-		dout("      endpoint_desc #" << i << " loaded");
+		usb_endpoint_descriptor desc;
+		desc = interface->endpoint[i];
+		dout("      endpoint_desc #" << i << " loaded"
+			<< "\nbLength: " << (unsigned ) desc.bLength
+			<< "\nbDescriptorType: " << (unsigned ) desc.bDescriptorType
+			<< "\nbEndpointAddress: " << (unsigned ) desc.bEndpointAddress
+			<< "\nbmAttributes: " << (unsigned ) desc.bmAttributes
+			<< "\nwMaxPacketSize: " << (unsigned ) desc.wMaxPacketSize
+			<< "\nbInterval: " << (unsigned ) desc.bInterval
+			<< "\nbRefresh: " << (unsigned ) desc.bRefresh
+			<< "\nbSynchAddress: " << (unsigned ) desc.bSynchAddress
+			<< "\n"
+			);
 
 		// add to the map
 		(*this)[desc.bEndpointAddress] = desc;
@@ -372,9 +236,9 @@ bool EndpointDiscovery::Discover(libusb_device_id_t devid, int cfgidx, int ifcid
 		if( pair.IsComplete() ) {
 			m_endpoints.push_back(pair);
 			dout("        pair added! ("
-				<< (unsigned int)pair.read << ","
-				<< (unsigned int)pair.write << ","
-				<< (unsigned int)pair.type << ")");
+				<< "read: " << (unsigned int)pair.read << ","
+				<< "write: " << (unsigned int)pair.write << ","
+				<< "type: " << (unsigned int)pair.type << ")");
 			pair = EndpointPair();	// clear
 		}
 	}
@@ -386,26 +250,51 @@ bool EndpointDiscovery::Discover(libusb_device_id_t devid, int cfgidx, int ifcid
 ///////////////////////////////////////////////////////////////////////////////
 // InterfaceDiscovery
 
-bool InterfaceDiscovery::Discover(libusb_device_id_t devid, int cfgidx, int ifcount)
+bool InterfaceDiscovery::DiscoverInterface(struct usb_interface *interface)
 {
-	// start fresh
-	clear();
-	m_valid = false;
+	if( !interface->altsetting )
+		return false;
 
-	for( int i = 0; i < ifcount; i++ ) {
+	for( int i = 0; i < interface->num_altsetting; i++ ) {
 		// load descriptor
 		InterfaceDesc desc;
-		if( libusb_get_interface_desc(devid, cfgidx, i, &desc.desc) < 0 )
-			return false;
-		dout("    interface_desc #" << i << " loaded");
+		desc.desc = interface->altsetting[i];
+		dout("    interface_desc #" << i << " loaded"
+			<< "\nbLength: " << (unsigned) desc.desc.bLength
+			<< "\nbDescriptorType: " << (unsigned) desc.desc.bDescriptorType
+			<< "\nbInterfaceNumber: " << (unsigned) desc.desc.bInterfaceNumber
+			<< "\nbAlternateSetting: " << (unsigned) desc.desc.bAlternateSetting
+			<< "\nbNumEndpoints: " << (unsigned) desc.desc.bNumEndpoints
+			<< "\nbInterfaceClass: " << (unsigned) desc.desc.bInterfaceClass
+			<< "\nbInterfaceSubClass: " << (unsigned) desc.desc.bInterfaceSubClass
+			<< "\nbInterfaceProtocol: " << (unsigned) desc.desc.bInterfaceProtocol
+			<< "\niInterface: " << (unsigned) desc.desc.iInterface
+			<< "\n"
+			);
 
 		// load all endpoints on this interface
-		if( !desc.endpoints.Discover(devid, cfgidx, i, desc.desc.bNumEndpoints) )
+		if( !desc.endpoints.Discover(&desc.desc, desc.desc.bNumEndpoints) )
 			return false;
 
 		// add to the map
 		(*this)[desc.desc.bInterfaceNumber] = desc;
 		dout("    interface added to map with bInterfaceNumber: " << (unsigned int)desc.desc.bInterfaceNumber);
+	}
+	return true;
+}
+
+bool InterfaceDiscovery::Discover(Usb::DeviceIDType devid, int cfgidx, int ifcount)
+{
+	// start fresh
+	clear();
+	m_valid = false;
+
+	if( !devid || !devid->config || !devid->config[cfgidx].interface )
+		return false;
+
+	for( int i = 0; i < ifcount; i++ ) {
+		if( !DiscoverInterface(&devid->config[cfgidx].interface[i]) )
+			return false;
 	}
 
 	return m_valid = true;
@@ -415,7 +304,7 @@ bool InterfaceDiscovery::Discover(libusb_device_id_t devid, int cfgidx, int ifco
 ///////////////////////////////////////////////////////////////////////////////
 // ConfigDiscovery
 
-bool ConfigDiscovery::Discover(libusb_device_id_t devid, int cfgcount)
+bool ConfigDiscovery::Discover(Usb::DeviceIDType devid, int cfgcount)
 {
 	// start fresh
 	clear();
@@ -424,9 +313,20 @@ bool ConfigDiscovery::Discover(libusb_device_id_t devid, int cfgcount)
 	for( int i = 0; i < cfgcount; i++ ) {
 		// load descriptor
 		ConfigDesc desc;
-		if( libusb_get_config_desc(devid, i, &desc.desc) < 0 )
+		if( !devid || !devid->config )
 			return false;
-		dout("  config_desc #" << i << " loaded");
+		desc.desc = devid->config[i];
+		dout("  config_desc #" << i << " loaded"
+			<< "\nbLength: " << (unsigned int) desc.desc.bLength
+			<< "\nbDescriptorType: " << (unsigned int) desc.desc.bDescriptorType
+			<< "\nwTotalLength: " << (unsigned int) desc.desc.wTotalLength
+			<< "\nbNumInterfaces: " << (unsigned int) desc.desc.bNumInterfaces
+			<< "\nbConfigurationValue: " << (unsigned int) desc.desc.bConfigurationValue
+			<< "\niConfiguration: " << (unsigned int) desc.desc.iConfiguration
+			<< "\nbmAttributes: " << (unsigned int) desc.desc.bmAttributes
+			<< "\nMaxPower: " << (unsigned int) desc.desc.MaxPower
+			<< "\n"
+			);
 
 		// load all interfaces on this configuration
 		if( !desc.interfaces.Discover(devid, i, desc.desc.bNumInterfaces) )
@@ -444,21 +344,39 @@ bool ConfigDiscovery::Discover(libusb_device_id_t devid, int cfgcount)
 ///////////////////////////////////////////////////////////////////////////////
 // DeviceDiscovery
 
-DeviceDiscovery::DeviceDiscovery(libusb_device_id_t devid)
+DeviceDiscovery::DeviceDiscovery(Usb::DeviceIDType devid)
 	: m_valid(false)
 {
 	Discover(devid);
 }
 
-bool DeviceDiscovery::Discover(libusb_device_id_t devid)
+bool DeviceDiscovery::Discover(Usb::DeviceIDType devid)
 {
 	// start fresh
 	configs.clear();
 	m_valid = false;
 
-	if( libusb_get_device_desc(devid, &desc) < 0 )
+	// copy the descriptor over to our memory
+	if( !devid )
 		return false;
-	dout("device_desc loaded");
+	desc = devid->descriptor;
+	dout("device_desc loaded"
+		<< "\nbLength: " << (unsigned int) desc.bLength
+		<< "\nbDescriptorType: " << (unsigned int) desc.bDescriptorType
+		<< "\nbcdUSB: " << (unsigned int) desc.bcdUSB
+		<< "\nbDeviceClass: " << (unsigned int) desc.bDeviceClass
+		<< "\nbDeviceSubClass: " << (unsigned int) desc.bDeviceSubClass
+		<< "\nbDeviceProtocol: " << (unsigned int) desc.bDeviceProtocol
+		<< "\nbMaxPacketSize0: " << (unsigned int) desc.bMaxPacketSize0
+		<< "\nidVendor: " << (unsigned int) desc.idVendor
+		<< "\nidProduct: " << (unsigned int) desc.idProduct
+		<< "\nbcdDevice: " << (unsigned int) desc.bcdDevice
+		<< "\niManufacturer: " << (unsigned int) desc.iManufacturer
+		<< "\niProduct: " << (unsigned int) desc.iProduct
+		<< "\niSerialNumber: " << (unsigned int) desc.iSerialNumber
+		<< "\nbNumConfigurations: " << (unsigned int) desc.bNumConfigurations
+		<< "\n"
+	);
 
 	m_valid = configs.Discover(devid, desc.bNumConfigurations);
 	return m_valid;

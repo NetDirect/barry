@@ -20,7 +20,7 @@
 */
 
 #include "common.h"
-#include <libusb.h>
+#include <usb.h>
 
 namespace Barry {
 
@@ -38,8 +38,8 @@ bool __data_dump_mode__;
 ///
 void Init(bool data_dump_mode)
 {
-	libusb_set_debug(9);
-	libusb_init();
+	usb_set_debug(9);
+	usb_init();
 	__data_dump_mode__ = data_dump_mode;
 }
 
