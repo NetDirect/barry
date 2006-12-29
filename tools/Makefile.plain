@@ -1,4 +1,9 @@
+all:	btool-plain bcharge
+
 btool-plain: btool.cc
 	g++ -I../rootdir/include -I../../external/rootdir/libusb/include \
-		-o btool-manual btool.cc -L../rootdir/lib -lbarry
+		-o btool-plain btool.cc -L../rootdir/lib -lbarry
+
+bcharge: bcharge.cc
+	g++ -Wall -o bcharge bcharge.cc -lusb
 
