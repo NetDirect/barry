@@ -2,6 +2,12 @@ Release: version 0.4 - 2006/12/??
 ------------------------------------------------------------------------------
 2006/12/29
 	- added bcharge.cc to the tools/ directory (whoohoo!)
+	- added initial release version of rpm/barry.spec (aka bcharge.spec)
+		This begins the barry binary release, currently only
+		including the bcharge utility, but possibly more in
+		the future.  Future binary packages will likely include
+		libbarry, libbarry-devel, etc, which barry will then
+		depend on.
 2006/12/21
 	- ported Barry to use the stable branch of libusb
 		NOTE: no longer depends on the devel libusb tarball!
