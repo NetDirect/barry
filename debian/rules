@@ -90,7 +90,7 @@ install-arch:
 	install -d $(CURDIR)/debian/barry/usr/sbin
 	install -d $(CURDIR)/debian/barry/etc/udev/rules.d
 	install tools/bcharge $(CURDIR)/debian/barry/usr/sbin
-	install udev/10-blackberry.rules $(CURDIR)/debian/barry/etc/udev/rules.d
+	install udev/10-blackberry.rules.Debian $(CURDIR)/debian/barry/etc/udev/rules.d/10-blackberry.rules
 
 	dh_install -s
 # Must not depend on anything. This is to be called by
