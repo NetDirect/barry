@@ -17,6 +17,8 @@ Release: version 0.4 - 2006/12/??
 		a future Debian install
 	- added more cleaning to buildgen.sh
 	- added new udev rule file for Debian stable
+	- hardcoded g++ to 3.3 in debian/rules as I have multiple versions
+		on my system and need to compile releases with stable
 2006/12/21
 	- ported Barry to use the stable branch of libusb
 		NOTE: no longer depends on the devel libusb tarball!

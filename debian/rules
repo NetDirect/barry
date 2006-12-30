@@ -42,7 +42,7 @@ build-arch-stamp: configure-stamp
 
 	# Add here commands to compile the arch part of the package.
 	#$(MAKE) 
-	g++ -Wall -o tools/bcharge tools/bcharge.cc -lusb
+	g++-3.3 -Wall -o tools/bcharge tools/bcharge.cc -lusb
 
 	touch build-arch-stamp
 
