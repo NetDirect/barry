@@ -1,0 +1,40 @@
+.\"                                      Hey, EMACS: -*- nroff -*-
+.\" First parameter, NAME, should be all caps
+.\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
+.\" other parameters are allowed: see man(7), man(1)
+.TH BCHARGE 1 "December 29, 2006"
+.\" Please adjust this date whenever revising the manpage.
+.\"
+.\" Some roff macros, for reference:
+.\" .nh        disable hyphenation
+.\" .hy        enable hyphenation
+.\" .ad l      left justify
+.\" .ad b      justify to both left and right margins
+.\" .nf        disable filling
+.\" .fi        enable filling
+.\" .br        insert line break
+.\" .sp <n>    insert n+1 empty lines
+.\" for manpage-specific macros, see man(7)
+.SH NAME
+bcharge \- program to set BlackBerry handhelds to 500mA
+.SH SYNOPSIS
+.B bcharge
+.SH DESCRIPTION
+.PP
+.\" TeX users may be more comfortable with the \fB<whatever>\fP and
+.\" \fI<whatever>\fP escape sequences to invode bold face and italics, 
+.\" respectively.
+\fBbcharge\fP is a program that sends a special handshake to all BlackBerry
+devices it finds on the USB bus.  This handshake causes the device to reset
+itself, and then request 500mA instead of the usual 100mA.  This allows
+proper charging on Linux.
+.PP
+It is safe to run this command multiple times, as it only changes devices
+that are not already set to 500mA.
+
+.SH AUTHOR
+bcharge and this manual page were written by Chris Frey <cdfrey@foursquare.net>
+for the Barry project.
+.PP
+http://www.netdirect.ca/software/packages/barry/index.php
+

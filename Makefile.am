@@ -1,7 +1,7 @@
 
 EXTRA_DIST = COPYING ChangeLog README
 
-SUBDIRS = . src tools examples
+SUBDIRS = . src tools examples man
 
 all-local:
 	rm -f barry

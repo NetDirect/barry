@@ -65,6 +65,7 @@ AC_CHECK_FUNCS([bzero gettimeofday memset select strcasecmp strchr strerror strt
 AC_CONFIG_FILES([Makefile
                  src/Makefile
                  tools/Makefile
-                 examples/Makefile])
+                 examples/Makefile
+                 man/Makefile])
 AC_OUTPUT
 
