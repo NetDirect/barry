@@ -1,0 +1,27 @@
+Source: barry
+Section: main
+Priority: optional
+Maintainer: Chris Frey <cdfrey@foursquare.net>
+Build-Depends: debhelper (>= 4.0.0), libusb-dev
+Standards-Version: 3.6.1
+
+Package: barry
+Architecture: any
+Depends: ${shlibs:Depends}
+Description: Applications for using the BlackBerry handheld on Linux
+ Barry is a GPL C++ library for interfacing with the RIM BlackBerry Handheld.
+ It comes with a command line tool for exploring the device and for making quick
+ backups. The goal of this project is to create a fully functional syncing
+ mechanism on Linux.
+ .
+ This version only contains the bcharge utility, which provides USB charging
+ capability on Linux.
+
+#Package: barry-doc
+#Architecture: all
+#Description: Documentation for barry
+# Barry is a GPL C++ library for interfacing with the RIM BlackBerry Handheld.
+# It comes with a command line tool for exploring the device and for making quick
+# backups. The goal of this project is to create a fully functional syncing
+# mechanism on Linux.
+
