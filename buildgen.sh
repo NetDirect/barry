@@ -10,6 +10,11 @@ if [ "$1" = "clean" ] ; then
 		configure depcomp install-sh ltmain.sh missing \
 		src/Makefile.in tools/Makefile.in examples/Makefile.in \
 		man/Makefile.in
+	# clean up Debian build trails
+	rm -rf debian/barry
+	rm -f build-arch-stamp build-indep-stamp configure-stamp \
+		debian/barry.substvars debian/files \
+		tools/bcharge
 else
 	autoreconf -if
 	#autoreconf -ifv
