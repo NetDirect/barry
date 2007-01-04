@@ -1,0 +1,18 @@
+#!/bin/sh
+
+VERSION="$(udevinfo -V | sed "s/^.* //")"
+
+if [ "$VERSION" -gt 056 ] ; then
+	echo "You seem to have a newer version of udev.  Using more modern rules file."
+
+	cat > /etc/udev/rules.d/10-blackberry.rules <<EOF
+# Blackberry devices
+#
+# Debian stable:
+#BUS=="usb", SYSFS{idVendor}=="0fca", SYSFS{idProduct}=="0001", SYMLINK+="bb-%k", PROGRAM="/usr/sbin/bcharge"
+# Ubuntu and Fedora:
+BUS=="usb", ACTION=="add", SYSFS{idVendor}=="0fca", SYSFS{idProduct}=="0001", SYMLINK+="bb-%k", RUN="/usr/sbin/bcharge"
+EOF
+
+fi
+
