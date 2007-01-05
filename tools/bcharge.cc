@@ -36,6 +36,7 @@
 
 #define VENDOR_RIM		0x0fca
 #define PRODUCT_RIM_BLACKBERRY	0x0001
+#define PRODUCT_RIM_PEARL	0x0006
 
 #define BLACKBERRY_INTERFACE		0
 #define BLACKBERRY_CONFIGURATION	1
@@ -79,7 +80,8 @@ int main()
 		for (dev = bus->devices; dev; dev = dev->next) {
 			// Is this a blackberry?
 			if( dev->descriptor.idVendor == VENDOR_RIM &&
-			    dev->descriptor.idProduct == PRODUCT_RIM_BLACKBERRY ) {
+			    (dev->descriptor.idProduct == PRODUCT_RIM_BLACKBERRY ||
+			     dev->descriptor.idProduct == PRODUCT_RIM_PEARL) ) {
 			    	printf("Found...");
 				if( dev->config &&
 				    dev->descriptor.bNumConfigurations >= 1 &&
