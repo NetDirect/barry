@@ -47,6 +47,10 @@ class Probe
 	std::vector<ProbeResult> m_results;
 
 	bool Parse(const Data &data, ProbeResult &result);
+
+protected:
+	void ProbeDevice(Usb::DeviceIDType devid);
+
 public:
 	Probe();
 

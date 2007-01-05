@@ -109,58 +109,74 @@ bool Probe::Parse(const Data &data, ProbeResult &result)
 
 Probe::Probe()
 {
-	Match match(VENDOR_RIM, PRODUCT_RIM_BLACKBERRY);
-
 	Usb::DeviceIDType devid;
-	while( match.next_device(&devid) ) {
 
-		// skip if we can't properly discover device config
-		DeviceDiscovery discover(devid);
-		EndpointDiscovery &ed = discover.configs[BLACKBERRY_CONFIGURATION]
-			.interfaces[BLACKBERRY_INTERFACE]
-			.endpoints;
-		if( !ed.IsValid() || ed.GetEndpointPairs().size() == 0 )
-			continue;
+	// Search for standard product ID first
+	{
+		Match match(VENDOR_RIM, PRODUCT_RIM_BLACKBERRY);
+		while( match.next_device(&devid) )
+			ProbeDevice(devid);
+	}
+
+	// Search for Pearl devices second
+	{
+		// FIXME - the actual probing code doesn't work on
+		// productID 6 devices... we need a capture from
+		// someone who has such a device
+		Match match(VENDOR_RIM, PRODUCT_RIM_PEARL);
+		while( match.next_device(&devid) )
+			ProbeDevice(devid);
+	}
+}
+
+void Probe::ProbeDevice(Usb::DeviceIDType devid)
+{
+	// skip if we can't properly discover device config
+	DeviceDiscovery discover(devid);
+	EndpointDiscovery &ed = discover.configs[BLACKBERRY_CONFIGURATION]
+		.interfaces[BLACKBERRY_INTERFACE]
+		.endpoints;
+	if( !ed.IsValid() || ed.GetEndpointPairs().size() == 0 )
+		return;
 
 
-		ProbeResult result;
-		result.m_dev = devid;
+	ProbeResult result;
+	result.m_dev = devid;
 
-		// find the first bulk read/write endpoint pair that answers
-		// to our probe commands
-		// Search in reverse, since evidence indicates the last pairs
-		// are the ones we need.
-		for(size_t i = ed.GetEndpointPairs().size(); i; i-- ) {
-			const EndpointPair &ep = ed.GetEndpointPairs()[i-1];
-			if( ep.type == USB_ENDPOINT_TYPE_BULK ) {
-				result.m_ep = ep;
+	// find the first bulk read/write endpoint pair that answers
+	// to our probe commands
+	// Search in reverse, since evidence indicates the last pairs
+	// are the ones we need.
+	for(size_t i = ed.GetEndpointPairs().size(); i; i-- ) {
+		const EndpointPair &ep = ed.GetEndpointPairs()[i-1];
+		if( ep.type == USB_ENDPOINT_TYPE_BULK ) {
+			result.m_ep = ep;
 
-				Device dev(devid);
+			Device dev(devid);
 //				dev.Reset();
 //				sleep(5);
 
-				if( !dev.SetConfiguration(BLACKBERRY_CONFIGURATION) )
-					throw BError(dev.GetLastError(),
-						"Probe: SetConfiguration failed");
+			if( !dev.SetConfiguration(BLACKBERRY_CONFIGURATION) )
+				throw BError(dev.GetLastError(),
+					"Probe: SetConfiguration failed");
 
-				Interface iface(dev, BLACKBERRY_INTERFACE);
+			Interface iface(dev, BLACKBERRY_INTERFACE);
 
-				Data data;
-				if( Intro(0, ep, dev, data) && Intro(1, ep, dev, data) &&
-				    Intro(2, ep, dev, data) && Parse(data, result) )
-				{
-					// all info obtained, add to list
-					m_results.push_back(result);
-					ddout("Using ReadEndpoint: " << (unsigned int)result.m_ep.read);
-					ddout("      WriteEndpoint: " << (unsigned int)result.m_ep.write);
-					break;
-				}
+			Data data;
+			if( Intro(0, ep, dev, data) && Intro(1, ep, dev, data) &&
+			    Intro(2, ep, dev, data) && Parse(data, result) )
+			{
+				// all info obtained, add to list
+				m_results.push_back(result);
+				ddout("Using ReadEndpoint: " << (unsigned int)result.m_ep.read);
+				ddout("      WriteEndpoint: " << (unsigned int)result.m_ep.write);
+				break;
 			}
 		}
-
-		if( !result.m_ep.IsComplete() )
-			ddout("Unable to discover endpoint pair for one device.");
 	}
+
+	if( !result.m_ep.IsComplete() )
+		ddout("Unable to discover endpoint pair for one device.");
 }
 
 int Probe::FindActive(uint32_t pin) const
