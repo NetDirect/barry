@@ -3,6 +3,10 @@ Release: version 0.5 - 2007/01/??
 2007/01/04
 	- support the newer udev packages on Ubuntu, which need slightly
 		different rules
+	- modified bcharge.cc to search for Pearl devices too.
+		USB product ID 6
+	- added Pearl product ID to probe code, but likely not functional
+		yet until we find someone able to get a USB capture for us
 2006/12/29
 	- version bump in configure.ac and src/Makefile.am
 
