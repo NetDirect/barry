@@ -25,6 +25,7 @@
 #include "usbwrap.h"
 #include <vector>
 #include <iosfwd>
+#include <stdint.h>
 
 // forward declarations
 class Data;
