@@ -1,5 +1,13 @@
 Release: version 0.5 - 2007/01/??
 ------------------------------------------------------------------------------
+2007/01/05
+	- added pkg-config support for the library (libbarry-0.pc.in)
+	- fixed compile error on g++ 3.3 systems (missing stdint.h
+		in probe.h)
+	- fixed protocol hang at end of Controller operation... in
+		controller destructor, it was deleting the USB interface
+		before closing the socket at the BlackBerry level, thereby
+		leaving he device in Desktop mode
 2007/01/04
 	- support the newer udev packages on Ubuntu, which need slightly
 		different rules
