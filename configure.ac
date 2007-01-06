@@ -30,6 +30,9 @@ AC_ARG_WITH(boost,
 	[BOOST_LIB_PATH="/usr/lib"
 	 BOOST_INC_PATH="/usr/include"])
 
+pkgconfigdir=${libdir}/pkgconfig
+AC_SUBST(pkgconfigdir)
+
 AC_SUBST(LIBUSB_LIB_PATH)
 AC_SUBST(LIBUSB_INC_PATH)
 AC_SUBST(BOOST_LIB_PATH)
@@ -66,6 +69,7 @@ AC_CONFIG_FILES([Makefile
                  src/Makefile
                  tools/Makefile
                  examples/Makefile
-                 man/Makefile])
+                 man/Makefile
+                 libbarry-0.pc])
 AC_OUTPUT
 
