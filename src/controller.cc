@@ -63,6 +63,17 @@ Controller::Controller(const ProbeResult &device)
 
 Controller::~Controller()
 {
+	// trap exceptions in the destructor
+	try {
+		// a non-default socket has been opened, close it
+		m_socket.Close();
+	}
+	catch( std::runtime_error &re ) {
+		// do nothing... log it?
+		dout("Exception caught in ~Socket: " << re.what());
+	}
+
+	// cleanup the interface
 	delete m_iface;
 }
 
