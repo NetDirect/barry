@@ -1,5 +1,12 @@
 Release: version 0.5 - 2007/01/??
 ------------------------------------------------------------------------------
+2007/01/11
+	- added doc/ReleaseChecklist.txt
+	- added version API, returning version number and string
+	- added Troy Engel to AUTHORS
+	- added special case to bcharge.cc for the Blackberry Pearl,
+		which doesn't reset itself after the charge handshake
+		Thanks to Troy Engel for testing.
 2007/01/05
 	- added pkg-config support for the library (libbarry-0.pc.in)
 	- fixed compile error on g++ 3.3 systems (missing stdint.h
