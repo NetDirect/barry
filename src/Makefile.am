@@ -63,6 +63,7 @@ include_barry_HEADERS = barry.h \
 	socket.h \
 	usbwrap.h \
 	time.h \
+	version.h \
 	s11n-boost.h
 
 
@@ -79,6 +80,7 @@ libbarry_la_SOURCES = time.cc \
 	record.cc \
 	packet.cc packet.h \
 	controller.cc \
+	version.cc \
 	protostructs.h \
 	debug.h \
 	endian.h
