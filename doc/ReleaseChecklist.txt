@@ -1,0 +1,8 @@
+
+- bump version numbers in:
+	- configure.ac
+	- src/Makefile.am
+	- src/version.cc
+- checkout pure CVS and test building everything
+- checkout pure CVS and build configure, tar, and release
+
