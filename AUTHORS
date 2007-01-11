@@ -3,8 +3,10 @@ Written by:
 	Chris Frey <cdfrey@foursquare.net>
 	Net Direct Inc. <ndprojects@users.sourceforge.net>
 
-Contributors in alphabetical order by last name:
-------------------------------------------------
+Contributors (code and otherwise) in alphabetical order by last name:
+---------------------------------------------------------------------
+	Troy Engel <tengel@users.sourceforge.net>
+		- usb captures on Windows XP for the BlackBerry Pearl
 	Ron Gage <ron@rongage.org>
 		- CVS testing
 		- reverse engineering Service Book record
