@@ -54,6 +54,12 @@ void charge(struct usb_device *dev)
 	usb_control_msg(handle, 0x40, 0xa2, 0, 1, buffer, 0, 100);
 	usb_set_configuration(handle, BLACKBERRY_CONFIGURATION);
 
+	// the Blackberry Pearl doesn't reset itself after the above,
+	// so do it ourselves
+	if( dev->descriptor.idProduct == PRODUCT_RIM_PEARL) {
+		usb_reset(handle);
+	}
+
 	// let it reset itself
 	sleep(3);
 
