@@ -1,6 +1,6 @@
 
 #DEFAULT_INCLUDES =
-INCLUDES = -I@LIBUSB_INC_PATH@
+INCLUDES = $(LIBUSB_CFLAGS)
 #AM_CXXFLAGS = -ansi -Wall -fno-strict-aliasing -g
 AM_CXXFLAGS = -ansi -Wall -g
 
@@ -23,5 +23,5 @@ upldif_LDADD = ../src/libbarry.la
 translate_SOURCES = translate.cc
 
 bcharge_SOURCES = bcharge.cc
-bcharge_LDADD = @LIBUSB_LIB_PATH@/libusb.la
+bcharge_LDADD = $(LIBUSB_LIBS)
 

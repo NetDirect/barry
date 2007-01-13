@@ -16,12 +16,17 @@ AC_PROG_LIBTOOL
 
 AC_LANG([C++])
 
+# generates LIBUSB_CFLAGS and LIBUSB_LIBS for us
+PKG_CHECK_MODULES([LIBUSB], [libusb],
+	[],
+	[echo "ERROR: Libusb not found automatically... build may fail if you don't specify --with-libusb"])
+
 AC_ARG_WITH(libusb,
 	[  --with-libusb=<path>    root path of libusb installation],
-	[LIBUSB_LIB_PATH="$with_libusb/lib"
-	 LIBUSB_INC_PATH="$with_libusb/include"],
-	[LIBUSB_LIB_PATH="/usr/lib"
-	 LIBUSB_INC_PATH="/usr/include"])
+	[LIBUSB_CFLAGS="-I$with_libusb/include"
+	 LIBUSB_LIBS="-L$with_libusb/lib -lusb"],
+	[])
+
 AC_ARG_WITH(boost,
 	[  --with-boost=<path>     root path of boost installation (default=no boost)],
 	[BOOST_LIB_PATH="$with_boost/lib"
@@ -33,8 +38,6 @@ AC_ARG_WITH(boost,
 pkgconfigdir=${libdir}/pkgconfig
 AC_SUBST(pkgconfigdir)
 
-AC_SUBST(LIBUSB_LIB_PATH)
-AC_SUBST(LIBUSB_INC_PATH)
 AC_SUBST(BOOST_LIB_PATH)
 AC_SUBST(BOOST_INC_PATH)
 

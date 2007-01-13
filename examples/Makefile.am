@@ -1,6 +1,6 @@
 
 #DEFAULT_INCLUDES =
-INCLUDES = -I@LIBUSB_INC_PATH@
+INCLUDES = $(LIBUSB_CFLAGS)
 AM_CXXFLAGS = -ansi -Wall -g
 
 noinst_PROGRAMS = addcontact

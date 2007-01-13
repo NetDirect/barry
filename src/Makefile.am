@@ -29,7 +29,7 @@ LIB_BARRY_VERSION = 0:5:0
 # are proper anyway. :-)
 DEFAULT_INCLUDES =
 #INCLUDES = @PACKAGE_CXXFLAGS@ -I@LIBUSB_INC_PATH@
-INCLUDES = -I@LIBUSB_INC_PATH@
+INCLUDES = $(LIBUSB_CFLAGS)
 AM_CXXFLAGS = -ansi -Wall -fno-strict-aliasing -g
 include_barrydir = ${includedir}/barry
 
@@ -84,7 +84,7 @@ libbarry_la_SOURCES = time.cc \
 	protostructs.h \
 	debug.h \
 	endian.h
-libbarry_la_LIBADD = @LIBUSB_LIB_PATH@/libusb.la
+libbarry_la_LIBADD = $(LIBUSB_LIBS)
 libbarry_la_LDFLAGS = -version-info ${LIB_BARRY_VERSION}
 
 ##if DO_TEST
