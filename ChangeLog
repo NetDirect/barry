@@ -1,5 +1,16 @@
 Release: version 0.5 - 2007/01/??
 ------------------------------------------------------------------------------
+2007/01/13
+	- updated copyright dates for the new year
+	- clarified exception message in controller.cc
+	- fixed pointer initialization bug in controller.cc
+	- added documentation comments to parser.h and builder.h
+	- updated ReleaseChecklist.txt
+	- updated README
+	- changed Barry library configure scripts to make better
+		use of pkg-config for autodetecting dependencies
+	- added initial Barry Backup GUI (gui/ directory), capable of making
+		backups only at this point
 2007/01/11
 	- added doc/ReleaseChecklist.txt
 	- added version API, returning version number and string
