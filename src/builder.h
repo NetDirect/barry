@@ -4,7 +4,7 @@
 ///
 
 /*
-    Copyright (C) 2005-2006, Net Direct Inc. (http://www.netdirect.ca/)
+    Copyright (C) 2005-2007, Net Direct Inc. (http://www.netdirect.ca/)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -33,15 +33,33 @@ namespace Barry {
 //
 /// Base class for the builder functor hierarchy.
 ///
+/// This defines the API used by the Controller and Packet classes
+/// for building a raw device record to write to the device.
+///
 class Builder
 {
 public:
 	Builder() {}
 	virtual ~Builder() {}
 
+	/// Called first in the sequence, to allow the application to
+	/// load the needed data from memory, disk, etc.  If successful,
+	/// return true.  If at the end of the series, return false.
 	virtual bool Retrieve(unsigned int databaseId) = 0;
+
+	/// Called to retrive the unique ID for this record.
 	virtual uint32_t GetUniqueId() const = 0;
+
+	/// Called before BuildFields() in order to build the header
+	/// for this record.  Store the raw data in data, at the
+	/// offset given in offset.  When finished, update offset to
+	/// point to the next spot to put new data.
 	virtual void BuildHeader(Data &data, size_t &offset) = 0;
+
+	/// Called to build the record field data.  Store the raw data
+	/// in data, using offset to know where to write.  Be sure to
+	/// update offset, and be sure to adjust the size of the data
+	/// packet (possibly with Data::ReleaseBuffer()).
 	virtual void BuildFields(Data &data, size_t &offset) = 0;
 };
 

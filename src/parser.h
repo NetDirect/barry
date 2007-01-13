@@ -4,7 +4,7 @@
 ///
 
 /*
-    Copyright (C) 2005-2006, Net Direct Inc. (http://www.netdirect.ca/)
+    Copyright (C) 2005-2007, Net Direct Inc. (http://www.netdirect.ca/)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -36,16 +36,36 @@ namespace Barry {
 /// class can be used as a null parser.  Call Init() and the protocol
 /// will be dumped to stdout and no parsing will be done.
 ///
+/// This class provides the interface that the Controller class uses
+/// to pass raw data it reads from the device.  The Controller, along
+/// with the Packet class, calls each of the virtual functions below
+/// in the same order.
+///
 class Parser
 {
 public:
 	Parser() {}
 	virtual ~Parser() {}
 
+	/// Reset and prepare for a new raw data packet
 	virtual void Clear() {}
+
+	/// Stores the record's unique ID
 	virtual void SetUniqueId(uint32_t Id) {}
+
+	/// Called to parse the header portion of the raw data packet.
+	/// data contains the entire packet, and offset contains the
+	/// location at which to start parsing.
 	virtual void ParseHeader(const Data &data, size_t &offset) {}
+
+	/// Called to parse sub fields in the raw data packet.
+	/// The same data is passed as was passed in ParseHeader,
+	/// only the offset will be updated if it was advanced during
+	/// the header parsing.
 	virtual void ParseFields(const Data &data, size_t &offset) {}
+
+	/// Called at the very end of record parsing, and used to
+	/// store the final packet somewhere, either in memory, disk, etc.
 	virtual void Store() {}
 };
 
