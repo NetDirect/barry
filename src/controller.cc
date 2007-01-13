@@ -4,7 +4,7 @@
 ///
 
 /*
-    Copyright (C) 2005-2006, Net Direct Inc. (http://www.netdirect.ca/)
+    Copyright (C) 2005-2007, Net Direct Inc. (http://www.netdirect.ca/)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -50,6 +50,7 @@ namespace Barry {
 ///
 Controller::Controller(const ProbeResult &device)
 	: m_dev(device.m_dev),
+	m_iface(0),
 	m_pin(device.m_pin),
 	m_socket(m_dev, device.m_ep.write, device.m_ep.read),
 	m_mode(Unspecified)
@@ -243,7 +244,7 @@ unsigned int Controller::GetDBID(const std::string &name) const
 	unsigned int ID = 0;
 	// FIXME - this needs a better error handler...
 	if( !m_dbdb.GetDBNumber(name, ID) ) {
-		throw BError("Controller: database name not found");
+		throw BError("Controller: database name not found: " + name);
 	}
 	return ID;
 }
