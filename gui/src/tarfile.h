@@ -1,0 +1,73 @@
+///
+/// \file	tarfile.h
+///		API for reading and writing sequentially from compressed
+///		tar files.
+
+/*
+    Copyright (C) 2007, Chris Frey <cdfrey@foursquare.net>
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+    See the GNU General Public License in the COPYING file at the
+    root directory of this project for more details.
+*/
+
+#ifndef __REUSE_TARFILE_H__
+#define __REUSE_TARFILE_H__
+
+#include <string>
+#include <stdexcept>
+#include <memory>
+
+namespace reuse {
+
+class TarFileData;
+
+class TarFile
+{
+	std::auto_ptr<TarFileData> m_data;
+	bool m_throw;
+	bool m_writemode;
+	std::string m_last_error;
+
+private:
+	bool False(const char *msg);
+
+public:
+	class TarError : public std::runtime_error
+	{
+	public:
+		TarError(const char *msg) : std::runtime_error(msg) {}
+	};
+
+public:
+	explicit TarFile(const char *filename, bool write = false,
+		bool compress = true, bool always_throw = false);
+	~TarFile();
+
+	const std::string& get_last_error() const { return m_last_error; }
+
+	bool Close();
+
+	/// Appends a new file to the current tarfile, using tarpath as
+	/// its internal filename, and data as the complete file contents.
+	/// Uses current date and time as file mtime.
+	bool AppendFile(const char *tarpath, const std::string &data);
+
+	/// Reads next available file into data, filling tarpath with
+	/// internal filename from tarball.
+	/// Returns false on end of archive.
+	bool ReadNextFile(std::string &tarpath, std::string &data);
+};
+
+}
+
+#endif
+

@@ -1,0 +1,35 @@
+
+This is the GUI sub-project of the Barry project.  You will need the
+Barry library compiled and installed to use this.  This directory
+contains a fully standalone build tree, and is not built automatically
+when you build Barry.
+
+You will need the following packages installed on your system, including
+any dev or devel packages that come along with them: (all of these
+packages are easily available on Debian stable... your mileage may vary
+on other distros)
+
+	pkg-config		Used by the configure scripts
+	gtkmm 2.4		C++ GTK+ wrapper library
+	glademm 2.4		C++ glade wrapper library
+	glibmm 2.4		C++ glib wrapper library
+	libusb 0.1.x		USB interface library
+	libtar 1.2.x		TAR file library
+	zlib			compression library
+
+And of course:
+
+	libbarry 0.x		In the same tarball as this code.
+
+If you've installed Barry in a non-standard spot, use something like the
+following:
+
+	export PKG_CONFIG_PATH="/home/cdfrey/Barry/lib/pkgconfig"
+	./configure --prefix=/home/cdfrey/Barry
+
+
+And if you have any trouble, please send mail to the mailing list and
+ask for help!
+
+January 2007
+
