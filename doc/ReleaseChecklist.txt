@@ -4,5 +4,9 @@
 	- src/Makefile.am
 	- src/version.cc
 - checkout pure CVS and test building everything
-- checkout pure CVS and build configure, tar, and release
+- checkout pure CVS and:
+	- ./buildgen.sh in root
+	- ./buildgen.sh in opensync-plugin
+	- ./buildgen.sh in gui
+- tar, and release
 
