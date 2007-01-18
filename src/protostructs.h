@@ -30,7 +30,7 @@
 #include <sys/types.h>
 
 // forward declarations
-class Data;
+namespace Barry { class Data; }
 
 namespace Barry { namespace Protocol {
 
@@ -494,8 +494,8 @@ struct Packet
 
 
 // checks packet size and throws BError if not right
-void CheckSize(const Data &packet, size_t requiredsize = MIN_PACKET_SIZE);
-unsigned int GetSize(const Data &packet);
+void CheckSize(const Barry::Data &packet, size_t requiredsize = MIN_PACKET_SIZE);
+unsigned int GetSize(const Barry::Data &packet);
 
 }} // namespace Barry::Protocol
 

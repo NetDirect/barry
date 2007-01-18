@@ -25,6 +25,8 @@
 #include <iosfwd>
 #include <vector>
 
+namespace Barry {
+
 class Data
 {
 	unsigned char *m_data;
@@ -94,6 +96,8 @@ std::ostream& operator<< (std::ostream &os, const Diff &diff);
 
 // utility functions
 bool LoadDataArray(const std::string &filename, std::vector<Data> &array);
+
+} // namespace Barry
 
 #endif
 

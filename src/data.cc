@@ -33,6 +33,8 @@
 using namespace std;
 
 
+namespace Barry {
+
 inline bool IsHexData(const std::string &s)
 {
 	const char *str = s.c_str();
@@ -403,6 +405,8 @@ bool LoadDataArray(const string &filename, std::vector<Data> &array)
 	}
 	return true;
 }
+
+} // namespace Barry
 
 
 #ifdef __TEST_MODE__

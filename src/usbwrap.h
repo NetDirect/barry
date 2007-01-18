@@ -30,7 +30,7 @@
 
 #define USBWRAP_DEFAULT_TIMEOUT	10000
 
-class Data;
+namespace Barry { class Data; }
 
 /// Namespace for the libusb-related wrapper classes.  This namespace
 /// may change in the future.
@@ -103,11 +103,11 @@ public:
 	/////////////////////////////
 	// IO functions
 
-	bool BulkRead(int ep, Data &data);
-	bool BulkWrite(int ep, const Data &data);
+	bool BulkRead(int ep, Barry::Data &data);
+	bool BulkWrite(int ep, const Barry::Data &data);
 	bool BulkWrite(int ep, const void *data, size_t size);
-	bool InterruptRead(int ep, Data &data);
-	bool InterruptWrite(int ep, const Data &data);
+	bool InterruptRead(int ep, Barry::Data &data);
+	bool InterruptWrite(int ep, const Barry::Data &data);
 };
 
 class Interface

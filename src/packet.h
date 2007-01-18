@@ -26,7 +26,7 @@
 
 #include <stdint.h>
 
-class Data;
+namespace Barry { class Data; }
 
 namespace Barry {
 

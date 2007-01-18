@@ -26,6 +26,9 @@
 #include "protocol.h"
 #include <stdint.h>		// for uint32_t
 
+// forward declarations
+namespace Barry { class Data; }
+
 namespace Barry {
 
 // also acts as a null parser

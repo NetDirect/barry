@@ -27,10 +27,6 @@
 #include <iosfwd>
 #include <stdint.h>
 
-// forward declarations
-class Data;
-
-
 namespace Barry {
 
 struct ProbeResult

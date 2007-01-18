@@ -1,5 +1,7 @@
 Release: version 0.5 - 2007/01/??
 ------------------------------------------------------------------------------
+2007/01/18
+	- moved Data class into Barry namespace
 2007/01/13
 	- updated copyright dates for the new year
 	- clarified exception message in controller.cc

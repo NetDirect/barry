@@ -25,9 +25,8 @@
 #include <stdint.h>
 
 // forward declarations
-class Data;
 namespace Usb { class Device; }
-namespace Barry { class Packet; }
+namespace Barry { class Data; class Packet; }
 
 namespace Barry {
 

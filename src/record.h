@@ -30,7 +30,7 @@
 #include <stdint.h>
 
 // forward declarations
-class Data;
+namespace Barry { class Data; }
 
 namespace Barry {
 
