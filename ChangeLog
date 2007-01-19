@@ -1,5 +1,12 @@
 Release: version 0.5 - 2007/01/??
 ------------------------------------------------------------------------------
+2007/01/19
+	- backup GUI now properly shows progress
+	- the buttons become insensitive when backup is busy
+	- refactored directory check code, and added mkdir check
+		when to the backup setup (so the directory exists
+		when we try to write to it)
+	- updated code to use Barry::Data in new namespace
 2007/01/18
 	- moved Data class into Barry namespace
 2007/01/13
