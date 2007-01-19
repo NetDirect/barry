@@ -20,14 +20,23 @@
 */
 
 #include "ConfigFile.h"
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
+#include "util.h"
 #include <pwd.h>
 #include <string.h>
 #include <errno.h>
 #include <fstream>
 #include <sstream>
+
+bool ConfigFile::DBListType::IsSelected(const std::string &dbname) const
+{
+	const_iterator i = begin();
+	for( ; i != end(); ++i ) {
+		if( *i == dbname ) {
+			return true;
+		}
+	}
+	return false;
+}
 
 ConfigFile::ConfigFileError::ConfigFileError(const char *msg, int err)
 	: std::runtime_error(std::string(msg) + ": " + strerror(err))
@@ -116,32 +125,7 @@ void ConfigFile::Load()
 /// Returns false if unable to create path, true if ok.
 bool ConfigFile::CheckPath()
 {
-	if( m_path.size() == 0 ) {
-		m_last_error = "m_path is empty!";
-		return false;
-	}
-
-	if( access(m_path.c_str(), F_OK) == 0 )
-		return true;
-
-	std::string base;
-	std::string::size_type slash = 0;
-	while( (slash = m_path.find('/', slash + 1)) != std::string::npos ) {
-		base = m_path.substr(0, slash);
-		if( access(base.c_str(), F_OK) != 0 ) {
-			if( mkdir(base.c_str(), 0755) == -1 ) {
-				m_last_error = "mkdir(" + base + ") failed: ";
-				m_last_error += strerror(errno);
-				return false;
-			}
-		}
-	}
-	if( mkdir(m_path.c_str(), 0755) == -1 ) {
-		m_last_error = "last mkdir(" + m_path + ") failed: ";
-		m_last_error += strerror(errno);
-		return false;
-	}
-	return true;
+	return ::CheckPath(m_path, &m_last_error);
 }
 
 /// Saves current config, overwriting or creating a config file

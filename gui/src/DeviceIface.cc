@@ -20,13 +20,17 @@
 */
 
 #include "DeviceIface.h"
+#include "util.h"
 #include <glibmm.h>
+#include <iomanip>
 #include <sstream>
+#include <time.h>
 
 DeviceInterface::DeviceInterface()
 	: m_con(0)
-	, m_signal_progress(0)
-	, m_signal_done(0)
+	, m_dbnameMutex(new Glib::Mutex) // this is just in an effort to
+					 // avoid gtkmm headers in
+					 // DeviceIface.h
 	, m_thread_quit(false)
 {
 }
@@ -34,6 +38,7 @@ DeviceInterface::DeviceInterface()
 DeviceInterface::~DeviceInterface()
 {
 	delete m_con;
+	delete m_dbnameMutex;
 }
 
 bool DeviceInterface::False(const std::string &msg)
@@ -54,10 +59,10 @@ void DeviceInterface::BackupThread()
 		ConfigFile::DBListType::const_iterator name = m_dbList.begin();
 		for( ; name != m_dbList.end(); ++name ) {
 			// save current db name
-			m_current_dbname = *name;
+			SetThreadDBName(*name);
 
 			// call the controller to do the work
-			unsigned int dbId = m_con->GetDBID(m_current_dbname);
+			unsigned int dbId = m_con->GetDBID(*name);
 			m_con->LoadDatabase(dbId, *this);
 		}
 
@@ -68,15 +73,18 @@ void DeviceInterface::BackupThread()
 	catch( std::exception &e ) {
 		m_last_thread_error = e.what();
 	}
+	catch( Quit &q ) {
+		m_last_thread_error = "Terminated by user.";
+	}
 
 	m_tar->Close();
 	m_tar.reset();
 
 	// signal host thread that we're done
-	m_signal_done->emit();
+	m_AppComm.m_done->emit();
 
 	// done!
-	m_signal_progress = m_signal_done = 0;
+	m_AppComm.Invalidate();
 }
 
 void DeviceInterface::RestoreThread()
@@ -92,15 +100,42 @@ void DeviceInterface::RestoreThread()
 	catch( std::exception &e ) {
 		m_last_thread_error = e.what();
 	}
+	catch( Quit &q ) {
+		m_last_thread_error = "Terminated by user.";
+	}
 
 	m_tar->Close();
 	m_tar.reset();
 
 	// signal host thread that we're done
-	m_signal_done->emit();
+	m_AppComm.m_done->emit();
 
 	// done!
-	m_signal_progress = m_signal_done = 0;
+	m_AppComm.Invalidate();
+}
+
+std::string DeviceInterface::MakeFilename(const std::string &pin)
+{
+	time_t t = time(NULL);
+	struct tm *lt = localtime(&t);
+
+	std::ostringstream tarfilename;
+	tarfilename << pin << "-"
+		<< std::setw(4) << std::setfill('0') << (lt->tm_year + 1900)
+		<< std::setw(2) << std::setfill('0') << (lt->tm_mon + 1)
+		<< std::setw(2) << std::setfill('0') << lt->tm_mday
+		<< std::setw(2) << std::setfill('0') << lt->tm_hour
+		<< std::setw(2) << std::setfill('0') << lt->tm_min
+		<< std::setw(2) << std::setfill('0') << lt->tm_sec
+		<< ".tar.gz";
+	return tarfilename.str();
+}
+
+void DeviceInterface::SetThreadDBName(const std::string &dbname)
+{
+	Glib::Mutex::Lock lock(*m_dbnameMutex);
+	m_current_dbname_not_thread_safe = dbname;
+	m_current_dbname = dbname;
 }
 
 
@@ -127,15 +162,40 @@ void DeviceInterface::Disconnect()
 	m_con = 0;
 }
 
-bool DeviceInterface::StartBackup(Glib::Dispatcher *progress,
-				  Glib::Dispatcher *done,
-				  const ConfigFile::DBListType &backupList,
-				  const std::string &filename)
+// cycle through controller's DBDB and count the records in all the
+// databases selected in the backupList
+int DeviceInterface::GetDeviceRecordTotal(const ConfigFile::DBListType &backupList) const
 {
-	if( m_signal_progress || m_signal_done )
+	int count = 0;
+
+	Barry::DatabaseDatabase::DatabaseArrayType::const_iterator
+		i = m_con->GetDBDB().Databases.begin();
+	for( ; i != m_con->GetDBDB().Databases.end(); ++i ) {
+		if( backupList.IsSelected(i->Name) ) {
+			count += i->RecordCount;
+		}
+	}
+	return count;
+}
+
+/// returns name of database the thread is currently working on
+std::string DeviceInterface::GetThreadDBName() const
+{
+	Glib::Mutex::Lock lock(*m_dbnameMutex);
+	return m_current_dbname_not_thread_safe;
+}
+
+bool DeviceInterface::StartBackup(AppComm comm,
+				  const ConfigFile::DBListType &backupList,
+				  const std::string &directory,
+				  const std::string &pin)
+{
+	if( m_AppComm.IsValid() )
 		return False("Thread already running.");
 
 	try {
+// fixme - get record total here
+		std::string filename = directory + "/" + MakeFilename(pin);
 		m_tar.reset( new reuse::TarFile(filename.c_str(), true, true, true) );
 	}
 	catch( reuse::TarFile::TarError &te ) {
@@ -143,8 +203,7 @@ bool DeviceInterface::StartBackup(Glib::Dispatcher *progress,
 	}
 
 	// setup
-	m_signal_progress = progress;
-	m_signal_done = done;
+	m_AppComm = comm;
 	m_dbList = backupList;
 
 	// start the thread
@@ -152,15 +211,16 @@ bool DeviceInterface::StartBackup(Glib::Dispatcher *progress,
 	return true;
 }
 
-bool DeviceInterface::StartRestore(Glib::Dispatcher *progress,
-				   Glib::Dispatcher *done,
+bool DeviceInterface::StartRestore(AppComm comm,
 				   const ConfigFile::DBListType &restoreList,
-				   const std::string &filename)
+				   const std::string &directory,
+				   const std::string &pin)
 {
-	if( m_signal_progress || m_signal_done )
+	if( m_AppComm.IsValid() )
 		return False("Thread already running.");
 
 	try {
+		std::string filename = directory + "/" + MakeFilename(pin);
 		m_tar.reset( new reuse::TarFile(filename.c_str(), false, true, true) );
 	}
 	catch( reuse::TarFile::TarError &te ) {
@@ -168,8 +228,7 @@ bool DeviceInterface::StartRestore(Glib::Dispatcher *progress,
 	}
 
 	// setup
-	m_signal_progress = progress;
-	m_signal_done = done;
+	m_AppComm = comm;
 	m_dbList = restoreList;
 
 	// start the thread
@@ -191,7 +250,7 @@ void DeviceInterface::SetUniqueId(uint32_t Id)
 		throw std::runtime_error("No unique ID available!");
 }
 
-void DeviceInterface::ParseFields(const Data &data, size_t &offset)
+void DeviceInterface::ParseFields(const Barry::Data &data, size_t &offset)
 {
 	m_record_data.assign((const char*)data.GetData(), data.GetSize() - offset);
 }
@@ -201,7 +260,12 @@ void DeviceInterface::Store()
 	std::string tarname = m_current_dbname + "/" + m_unique_id_text;
 	m_tar->AppendFile(tarname.c_str(), m_record_data);
 
-	m_signal_progress->emit();
+	m_AppComm.m_progress->emit();
+
+	// check quit flag
+	if( m_thread_quit ) {
+		throw Quit();
+	}
 }
 
 

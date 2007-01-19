@@ -76,16 +76,9 @@ void DatabaseSelectDlg::LoadTree(const Barry::DatabaseDatabase &dbdb)
 	m_pTree->append_column("Name", m_Columns.m_name);
 }
 
-// yes, this is inefficient, but this is a GUI, and a short list
 bool DatabaseSelectDlg::IsSelected(const std::string &dbname)
 {
-	ConfigFile::DBListType::const_iterator i = m_selections.begin();
-	for( ; i != m_selections.end(); ++i ) {
-		if( *i == dbname ) {
-			return true;
-		}
-	}
-	return false;
+	return m_selections.IsSelected(dbname);
 }
 
 void DatabaseSelectDlg::SaveSelections()

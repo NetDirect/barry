@@ -23,8 +23,11 @@
 #define __BARRYBACKUP_UTIL_H__
 
 #include <libglademm.h>
+#include <string>
 
 Glib::RefPtr<Gnome::Glade::Xml> LoadXml(const char *filename);
+std::string GetPath(const std::string &filename);
+bool CheckPath(const std::string &path, std::string *perr = 0);
 
 #endif
 

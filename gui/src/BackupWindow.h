@@ -37,11 +37,14 @@ class BackupWindow : public Gtk::Window
 	std::auto_ptr<ConfigFile> m_pConfig;
 	Glib::Dispatcher m_signal_progress;
 	Glib::Dispatcher m_signal_done;
+	int m_recordTotal;
+	int m_finishedRecords;
 
 	// Widget objects
 	Gtk::ProgressBar *m_pProgressBar;
 	Gtk::Statusbar *m_pStatusBar;
 	Gtk::Entry *m_pPINEntry, *m_pDatabaseEntry;
+	Gtk::Button *m_pBackupButton, *m_pRestoreButton;
 
 	// state
 	bool m_scanned;
@@ -49,6 +52,9 @@ class BackupWindow : public Gtk::Window
 
 protected:
 	void ScanAndConnect();
+	void SetWorkingMode();
+	void ClearWorkingMode();
+	void UpdateProgress();
 
 public:
 	BackupWindow(BaseObjectType *cobject, const Glib::RefPtr<Gnome::Glade::Xml> &xml);

@@ -30,19 +30,16 @@ BackupWindow::BackupWindow(BaseObjectType *cobject,
 			   const Glib::RefPtr<Gnome::Glade::Xml> &xml)
 	: Gtk::Window(cobject)
 	, m_xml(xml)
+	, m_recordTotal(0)
+	, m_finishedRecords(0)
+	, m_pProgressBar(0)
+	, m_pStatusBar(0)
+	, m_pBackupButton(0)
+	, m_pRestoreButton(0)
 	, m_scanned(false)
 	, m_working(false)
 {
-
-	Gtk::Button *pButton = 0;
-	m_xml->get_widget("BackupButton", pButton);
-	pButton->signal_clicked().connect(
-		sigc::mem_fun(*this, &BackupWindow::on_backup));
-
-	m_xml->get_widget("RestoreButton", pButton);
-	pButton->signal_clicked().connect(
-		sigc::mem_fun(*this, &BackupWindow::on_restore));
-
+	// setup menu signals
 	Gtk::MenuItem *pItem = 0;
 	m_xml->get_widget("menu_file_quit", pItem);
 	pItem->signal_activate().connect(
@@ -56,19 +53,31 @@ BackupWindow::BackupWindow(BaseObjectType *cobject,
 	pItem->signal_activate().connect(
 		sigc::mem_fun(*this, &BackupWindow::on_help_about));
 
+	// get various widget pointers we will use later
+	m_xml->get_widget("BackupButton", m_pBackupButton);
+	m_xml->get_widget("RestoreButton", m_pRestoreButton);
 	m_xml->get_widget("progressbar1", m_pProgressBar);
 	m_xml->get_widget("statusbar1", m_pStatusBar);
 	m_xml->get_widget("entry1", m_pPINEntry);
 	m_xml->get_widget("entry2", m_pDatabaseEntry);
 
+	// setup widget signals
+	m_pBackupButton->signal_clicked().connect(
+		sigc::mem_fun(*this, &BackupWindow::on_backup));
+	m_pRestoreButton->signal_clicked().connect(
+		sigc::mem_fun(*this, &BackupWindow::on_restore));
+
+	// setup thread dispatcher signals
 	m_signal_progress.connect(
 		sigc::mem_fun(*this, &BackupWindow::on_thread_progress));
 	m_signal_done.connect(sigc::mem_fun(*this, &BackupWindow::on_thread_done));
 
+	// setup startup device scan
 	Glib::signal_timeout().connect(
 		sigc::mem_fun(*this, &BackupWindow::on_startup), 500);
 
 	m_pStatusBar->push("Ready");
+	m_pProgressBar->set_fraction(0.00);
 }
 
 BackupWindow::~BackupWindow()
@@ -132,35 +141,67 @@ void BackupWindow::ScanAndConnect()
 	m_pStatusBar->pop();
 }
 
+void BackupWindow::SetWorkingMode()
+{
+	m_working = true;
+	m_pBackupButton->set_sensitive(false);
+	m_pRestoreButton->set_sensitive(false);
+}
+
+void BackupWindow::ClearWorkingMode()
+{
+	m_working = false;
+	m_pBackupButton->set_sensitive(true);
+	m_pRestoreButton->set_sensitive(true);
+	m_pProgressBar->set_fraction(0.00);
+
+	std::ostringstream oss;
+	oss << m_recordTotal << " total records backed up.";
+	m_pDatabaseEntry->set_text(oss.str());
+}
+
+void BackupWindow::UpdateProgress()
+{
+	double done = (double)m_finishedRecords / m_recordTotal;
+	// never say 100% unless really done
+	if( done >= 1.0 && m_finishedRecords < m_recordTotal ) {
+		done = 0.99;
+	}
+	m_pProgressBar->set_fraction(done);
+
+	m_pDatabaseEntry->set_text(m_dev.GetThreadDBName());
+}
+
+
 //////////////////////////////////////////////////////////////////////////////
 // signal handlers
 
 void BackupWindow::on_backup()
 {
-	time_t t = time(NULL);
-	struct tm *lt = localtime(&t);
-
-	std::ostringstream tarfilename;
-	tarfilename << m_pConfig->GetPath() << "/"
-		<< m_pConfig->GetPIN() << "-"
-		<< std::setw(4) << std::setfill('0') << (lt->tm_year + 1900)
-		<< std::setw(2) << std::setfill('0') << (lt->tm_mon + 1)
-		<< std::setw(2) << std::setfill('0') << lt->tm_mday
-		<< std::setw(2) << std::setfill('0') << lt->tm_hour
-		<< std::setw(2) << std::setfill('0') << lt->tm_min
-		<< std::setw(2) << std::setfill('0') << lt->tm_sec
-		<< ".tar.gz";
-
-	if( m_dev.StartBackup(&m_signal_progress, &m_signal_done,
-		m_pConfig->GetBackupList(), tarfilename.str()) )
-	{
-		m_working = true;
+	// already working?
+	if( m_working ) {
+		Gtk::MessageDialog msg("Thread already in progress.");
+		msg.run();
+		return;
 	}
-	else {
+
+	// prepare for the progress bar
+	m_recordTotal = m_dev.GetDeviceRecordTotal(m_pConfig->GetBackupList());
+	m_finishedRecords = 0;
+
+	// start the thread
+	m_working = m_dev.StartBackup(
+		DeviceInterface::AppComm(&m_signal_progress, &m_signal_done),
+		m_pConfig->GetBackupList(), m_pConfig->GetPath(),
+		m_pConfig->GetPIN());
+	if( !m_working ) {
 		Gtk::MessageDialog msg("Error starting backup thread: " +
 			m_dev.get_last_error());
 		msg.run();
 	}
+
+	// update the GUI
+	SetWorkingMode();
 }
 
 void BackupWindow::on_restore()
@@ -232,7 +273,8 @@ bool BackupWindow::on_startup()
 
 void BackupWindow::on_thread_progress()
 {
-	m_pProgressBar->pulse();
+	m_finishedRecords++;
+	UpdateProgress();
 }
 
 void BackupWindow::on_thread_done()
@@ -240,7 +282,11 @@ void BackupWindow::on_thread_done()
 	std::cout << "on_thread_done" << std::endl;
 
 	// done!
+	ClearWorkingMode();
 	m_working = false;
+
+	Gtk::MessageDialog msg("Backup complete!");
+	msg.run();
 }
 
 

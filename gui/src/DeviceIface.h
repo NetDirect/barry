@@ -24,6 +24,7 @@
 
 #include <barry/barry.h>
 #include <string>
+#include <memory>
 #include "ConfigFile.h"
 #include "tarfile.h"
 
@@ -32,19 +33,45 @@
 
 namespace Glib {
 	class Dispatcher;
+	class Mutex;
 }
 
 class DeviceInterface : public Barry::Parser
 {
+public:
+	struct AppComm				// app communication
+	{
+		Glib::Dispatcher *m_progress;
+		Glib::Dispatcher *m_done;
+
+		AppComm() :
+			m_progress(0),
+			m_done(0)
+			{}
+		AppComm(Glib::Dispatcher *progress, Glib::Dispatcher *done) :
+			m_progress(progress),
+			m_done(done)
+			{}
+		bool IsValid() const { return m_progress && m_done; }
+		void Invalidate() { m_progress = m_done = 0; }
+	};
+
+	class Quit	// quit exception to break out of upload/download
+	{
+	};
+
+private:
 	Barry::Controller *m_con;
 	std::string m_last_error;
 	std::string m_last_thread_error;
 
-	Glib::Dispatcher *m_signal_progress, *m_signal_done;
+	AppComm m_AppComm;
 	std::auto_ptr<reuse::TarFile> m_tar;
 	ConfigFile::DBListType m_dbList;
 
 	// parser data
+	mutable Glib::Mutex *m_dbnameMutex;
+	std::string m_current_dbname_not_thread_safe;
 	std::string m_current_dbname;
 	uint32_t m_unique_id;
 	std::string m_unique_id_text;
@@ -59,29 +86,40 @@ protected:
 	void BackupThread();
 	void RestoreThread();
 
+	// helpers
+	std::string MakeFilename(const std::string &pin);
+
+	// Sets the name of the database the thread is currently working on
+	void SetThreadDBName(const std::string &dbname);
+
 public:
 	DeviceInterface();
 	~DeviceInterface();
 
 	const std::string& get_last_error() const { return m_last_error; }
 	const std::string& get_last_thread_error() const { return m_last_thread_error; }
-	const Barry::DatabaseDatabase& GetDBDB() const { return m_con->GetDBDB(); }
 
 	bool Connect(const Barry::ProbeResult &dev);
 	void Disconnect();
 
+	const Barry::DatabaseDatabase& GetDBDB() const { return m_con->GetDBDB(); }
+	int GetDeviceRecordTotal(const ConfigFile::DBListType &backupList) const;
+
 	void QuitThread()	{ m_thread_quit = true; }
 
-	bool StartBackup(Glib::Dispatcher *progress, Glib::Dispatcher *done,
+	/// returns name of database the thread is currently working on
+	std::string GetThreadDBName() const;
+
+	bool StartBackup(AppComm comm,
 		const ConfigFile::DBListType &backupList,
-		const std::string &filename);
-	bool StartRestore(Glib::Dispatcher *progress, Glib::Dispatcher *done,
+		const std::string &directory, const std::string &pin);
+	bool StartRestore(AppComm comm,
 		const ConfigFile::DBListType &backupList,
-		const std::string &filename);
+		const std::string &directory, const std::string &pin);
 
 	// Barry::Parser overrides
 	virtual void SetUniqueId(uint32_t Id);
-	virtual void ParseFields(const Data &data, size_t &offset);
+	virtual void ParseFields(const Barry::Data &data, size_t &offset);
 	virtual void Store();
 };
 

@@ -29,7 +29,11 @@
 class ConfigFile
 {
 public:
-	typedef std::vector<std::string>		DBListType;
+	class DBListType : public std::vector<std::string>
+	{
+	public:
+		bool IsSelected(const std::string &dbname) const;
+	};
 
 	class ConfigFileError : public std::runtime_error
 	{
