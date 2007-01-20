@@ -19,6 +19,9 @@ Required functionality:
 	Save... file chooser there.
 - add option in config dialog to set a different default backup
 	directory instead of ~/.barry/backup/<pin>/
+- add code to detect when user is trying to quit or close window with X
+	while a backup/restore is still running and give them the
+	option to shutdown thread and really quit or cancel and keep going.
 - add a Cancel button to stop a backup or restore
 - find out why the following give errors on restore:
 	- Browser Bookmarks
