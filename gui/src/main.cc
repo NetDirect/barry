@@ -27,13 +27,33 @@
 #include "BackupWindow.h"
 #include "util.h"
 
-int main(int argc, char *argv[])
+void main_exception_handler()
 {
 	try {
-		Barry::Init();
+		throw;
+	}
+	catch( Glib::Exception &e ) {
+		std::cerr << "Glib::Exception caught in main: " << std::endl;
+		std::cerr << e.what() << std::endl;
+		Gtk::MessageDialog msg(e.what());
+		msg.run();
+	}
+	catch( std::exception &e ) {
+		std::cerr << "std::exception caught in main: " << std::endl;
+		std::cerr << e.what() << std::endl;
+		Gtk::MessageDialog msg(e.what());
+		msg.run();
+	}
+}
 
-		Glib::thread_init();
-		Gtk::Main app(argc, argv);
+int main(int argc, char *argv[])
+{
+	Barry::Init(true);
+	Glib::thread_init();
+	Gtk::Main app(argc, argv);
+	Glib::add_exception_handler( sigc::ptr_fun(main_exception_handler) );
+
+	try {
 
 		Glib::RefPtr<Gnome::Glade::Xml> refXml = LoadXml("BackupWindow.glade");
 
@@ -42,15 +62,10 @@ int main(int argc, char *argv[])
 		std::auto_ptr<BackupWindow> apWnd(pWnd);
 
 		Gtk::Main::run(*pWnd);
+
 	}
-	catch( Glib::Exception &e ) {
-		Gtk::MessageDialog msg(e.what());
-		msg.run();
-		return 1;
-	}
-	catch( std::exception &e ) {
-		Gtk::MessageDialog msg(e.what());
-		msg.run();
+	catch(...) {
+		main_exception_handler();
 		return 1;
 	}
 }

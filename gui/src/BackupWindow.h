@@ -36,9 +36,12 @@ class BackupWindow : public Gtk::Window
 	// data
 	std::auto_ptr<ConfigFile> m_pConfig;
 	Glib::Dispatcher m_signal_progress;
+	Glib::Dispatcher m_signal_error_done;
 	Glib::Dispatcher m_signal_done;
+	Glib::Dispatcher m_signal_erase_db;
 	int m_recordTotal;
 	int m_finishedRecords;
+	std::string m_modeName;
 
 	// Widget objects
 	Gtk::ProgressBar *m_pProgressBar;
@@ -55,6 +58,8 @@ protected:
 	void SetWorkingMode();
 	void ClearWorkingMode();
 	void UpdateProgress();
+	bool PromptForRestoreTarball(std::string &restoreFilename,
+		const std::string &start_path);
 
 public:
 	BackupWindow(BaseObjectType *cobject, const Glib::RefPtr<Gnome::Glade::Xml> &xml);
@@ -68,6 +73,8 @@ public:
 	void on_help_about();
 	bool on_startup();
 	void on_thread_progress();
+	void on_thread_error_done();
 	void on_thread_done();
+	void on_thread_erase_db();
 };
 

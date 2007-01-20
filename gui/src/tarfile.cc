@@ -24,6 +24,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <errno.h>
 
 #include <libtar.h>
 #include <zlib.h>
@@ -81,7 +82,7 @@ TarFile::TarFile(const char *filename,
 	// open... throw on error, as we are in the constructor
 	if( tar_open(&m_data->m_tar, const_cast<char*>(filename),
 		ops, flags, mode, TAR_VERBOSE | TAR_GNU) == -1 ) {
-		throw TarError("Unable to open tar file.");
+		throw TarError(std::string("Unable to open tar file: ") + strerror(errno));
 	}
 }
 
@@ -101,16 +102,24 @@ bool TarFile::False(const char *msg)
 		return false;
 }
 
+bool TarFile::False(const std::string &msg, int err)
+{
+	std::string str = msg;
+	str += ": ";
+	str += strerror(err);
+	return False(str);
+}
+
 bool TarFile::Close()
 {
 	if( m_data->m_tar ) {
 		if( m_writemode ) {
 			if( tar_append_eof(m_data->m_tar) != 0 )
-				return False("Unable to write eof.");
+				return False("Unable to write eof", errno);
 		}
 
 		if( tar_close(m_data->m_tar) != 0 ) {
-			return False("Unable to close file.");
+			return False("Unable to close file", errno);
 		}
 		m_data->m_tar = 0;
 	}
@@ -131,7 +140,7 @@ bool TarFile::AppendFile(const char *tarpath, const std::string &data)
 	th_set_size(m_data->m_tar, data.size());
 	th_set_mtime(m_data->m_tar, time(NULL));
 	if( th_write(m_data->m_tar) != 0 ) {
-		return False("Unable to write tar header");
+		return False("Unable to write tar header", errno);
 	}
 
 	// write the data in blocks until finished
@@ -146,7 +155,7 @@ bool TarFile::AppendFile(const char *tarpath, const std::string &data)
 		memcpy(block, data.data() + pos, size);
 
 		if( tar_block_write(m_data->m_tar, block) != T_BLOCKSIZE ) {
-			return False("Unable to write block.");
+			return False("Unable to write block", errno);
 		}
 	}
 
@@ -164,7 +173,9 @@ bool TarFile::ReadNextFile(std::string &tarpath, std::string &data)
 	// read next tar file header
 	if( th_read(m_data->m_tar) != 0 ) {
 		// this is not necessarily an error, as it could just
-		// be the end of file, so a simple false is good here
+		// be the end of file, so a simple false is good here,
+		// don't throw an exception
+		m_last_error = "";
 		return false;
 	}
 
@@ -186,10 +197,40 @@ bool TarFile::ReadNextFile(std::string &tarpath, std::string &data)
 			readsize = size - pos;
 
 		if( tar_block_read(m_data->m_tar, block) != T_BLOCKSIZE ) {
-			return False("Unable to read block.");
+			return False("Unable to read block", errno);
 		}
 
 		data.append(block, readsize);
+	}
+
+	return true;
+}
+
+/// Read next available filename, skipping the data if it is
+/// a regular file
+bool TarFile::ReadNextFilenameOnly(std::string &tarpath)
+{
+	// start fresh
+	tarpath.clear();
+
+	// read next tar file header
+	if( th_read(m_data->m_tar) != 0 ) {
+		// this is not necessarily an error, as it could just
+		// be the end of file, so a simple false is good here,
+		// don't throw an exception
+		m_last_error = "";
+		return false;
+	}
+
+	// write standard file header
+	if( !TH_ISREG(m_data->m_tar) ) {
+		return False("Only regular files are supported inside a tarball.");
+	}
+
+	tarpath = th_get_pathname(m_data->m_tar);
+
+	if( tar_skip_regfile(m_data->m_tar) != 0 ) {
+		return False("Unable to skip tar file", errno);
 	}
 
 	return true;

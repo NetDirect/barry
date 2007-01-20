@@ -39,12 +39,14 @@ class TarFile
 
 private:
 	bool False(const char *msg);
+	bool False(const std::string &str) { return False(str.c_str()); }
+	bool False(const std::string &msg, int err);
 
 public:
 	class TarError : public std::runtime_error
 	{
 	public:
-		TarError(const char *msg) : std::runtime_error(msg) {}
+		TarError(const std::string &msg) : std::runtime_error(msg) {}
 	};
 
 public:
@@ -65,6 +67,10 @@ public:
 	/// internal filename from tarball.
 	/// Returns false on end of archive.
 	bool ReadNextFile(std::string &tarpath, std::string &data);
+
+	/// Read next available filename, skipping the data if it is
+	/// a regular file
+	bool ReadNextFilenameOnly(std::string &tarpath);
 };
 
 }
