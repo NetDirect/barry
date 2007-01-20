@@ -1,6 +1,57 @@
 
 Required functionality:
 	+ backup
-	- restore
+	+ restore
 	- edit
+
+
+- add message and "continue/stop" choice for restores, if the protocol
+	side throws an error... should always try to restore everything
+	the user asks for, not stop half way through if the device
+	doesn't like a particular database
+- allow temporary overriding of backup destination by letting user
+	type in the PIN field... as soon as the user types something,
+	change the label to "Backup filename:" or something, and
+	let user type in full path name.  If no '/' chars exist in user's
+	filename, then assume config default path, and open a
+	Save... file chooser box in that directory.  If there are '/'
+	chars in the filename, attempt to chdir() there and open
+	Save... file chooser there.
+- add option in config dialog to set a different default backup
+	directory instead of ~/.barry/backup/<pin>/
+- add a Cancel button to stop a backup or restore
+- find out why the following give errors on restore:
+	- Browser Bookmarks
+	- Browser Channels(?)
+	- Browser Folders
+	- Browser Options
+	- Browser Urls
+	- Content Store
+	- Default Service Selector
+	- Handheld Agent
+	- Messages
+	- Searches
+	- Service Book
+	- Also, the following restore ok, but end up different
+		on the next backup than the first... why?
+		- KeyStoreManager
+		- Profiles
+		- Quick Contacts
+		- Random Pool
+	- See the two backup tar.gz files in gui/src/workdata/
+	- After a Windows restore, there are still differences in
+		the following databases:
+		- Browser Options
+		- Content Store
+		- Handheld Agent
+		- KeyStoreManager
+		- Messages
+		- Profiles
+		- Quick Contacts
+		- Random Pool
+		- Service Book
+	- Perhaps the databases that Windows can't even restore fully should
+		be removed from the restore list by default.  There are
+		still databases that Windows seems able to restore that
+		we can't though, such as most of the Browser* databases.
 
