@@ -161,6 +161,24 @@ struct Store
 	}
 };
 
+class DataDumpParser : public Barry::Parser
+{
+	uint32_t m_id;
+
+public:
+	virtual void SetUniqueId(uint32_t id)
+	{
+		m_id = id;
+	}
+
+	virtual void ParseFields(const Barry::Data &data, size_t &offset)
+	{
+		std::cout << "Raw record dump for record: "
+			<< std::hex << m_id << std::endl;
+		std::cout << data << std::endl;
+	}
+};
+
 auto_ptr<Parser> GetParser(const string &name, const string &filename)
 {
 	// check for recognized database names
@@ -186,7 +204,7 @@ auto_ptr<Parser> GetParser(const string &name, const string &filename)
 	}
 	else {
 		// unknown database, use null parser
-		return auto_ptr<Parser>( new Parser );
+		return auto_ptr<Parser>( new DataDumpParser );
 	}
 }
 
