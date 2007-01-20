@@ -77,15 +77,15 @@ public:
 	// Send and Receive are available before Open...
 	// an unopened socket defaults to socket 0, which you need
 	// in order to set the blackberry mode
-	bool Send(const Data &send, Data &receive);
-	bool Receive(Data &receive);
+	bool Send(const Data &send, Data &receive, int timeout = -1);
+	bool Receive(Data &receive, int timeout = -1);
 
 	// sends the send packet down to the device, fragmenting if
 	// necessary, and returns the response in receive, defragmenting
 	// if needed
 	// Blocks until response received or timed out in Usb::Device
-	bool Packet(const Data &send, Data &receive);
-	bool Packet(Barry::Packet &packet);
+	bool Packet(const Data &send, Data &receive, int timeout = -1);
+	bool Packet(Barry::Packet &packet, int timeout = -1);
 
 	// some handy wrappers for the Packet() interface
 	bool NextRecord(Data &receive);

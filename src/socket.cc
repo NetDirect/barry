@@ -200,7 +200,7 @@ void Socket::Close()
 ///		- false on failure, use GetLastStatus() for kernel
 ///			URB error code
 ///
-bool Socket::Send(const Data &send, Data &receive)
+bool Socket::Send(const Data &send, Data &receive, int timeout)
 {
 	// Special case: it seems that sending packets with a size that's an
 	// exact multiple of 0x40 causes the device to get confused.
@@ -219,7 +219,7 @@ bool Socket::Send(const Data &send, Data &receive)
 	}
 
 	m_dev.BulkWrite(m_writeEp, send);
-	m_dev.BulkRead(m_readEp, receive);
+	m_dev.BulkRead(m_readEp, receive, timeout);
 
 	// the stable libusb doesn't give us the actual size read,
 	// so parse the first bit of the packet for the size field
@@ -231,9 +231,9 @@ bool Socket::Send(const Data &send, Data &receive)
 	return m_lastStatus >= 0;
 }
 
-bool Socket::Receive(Data &receive)
+bool Socket::Receive(Data &receive, int timeout)
 {
-	m_dev.BulkRead(m_readEp, receive);
+	m_dev.BulkRead(m_readEp, receive, timeout);
 
 	// the stable libusb doesn't give us the actual size read,
 	// so parse the first bit of the packet for the size field
@@ -357,7 +357,7 @@ void Socket::CheckSequence(const Data &seq)
 // necessary, and returns the response in receive, defragmenting
 // if needed
 // Blocks until response received or timed out in Usb::Device
-bool Socket::Packet(const Data &send, Data &receive)
+bool Socket::Packet(const Data &send, Data &receive, int timeout)
 {
 /*
 // FIXME - this might be a good idea someday, or perhaps provide a wrapper
@@ -384,7 +384,7 @@ bool Socket::Packet(const Data &send, Data &receive)
 
 	if( send.GetSize() <= MAX_PACKET_SIZE ) {
 		// send non-fragmented
-		if( !Send(send, inFrag) )
+		if( !Send(send, inFrag, timeout) )
 			return false;
 	}
 	else {
@@ -394,7 +394,7 @@ bool Socket::Packet(const Data &send, Data &receive)
 
 		do {
 			offset = MakeNextFragment(send, outFrag, offset);
-			if( !Send(outFrag, inFrag) )
+			if( !Send(outFrag, inFrag, timeout) )
 				return false;
 
 			MAKE_PACKET(rpack, inFrag);
@@ -485,9 +485,9 @@ bool Socket::Packet(const Data &send, Data &receive)
 	return true;
 }
 
-bool Socket::Packet(Barry::Packet &packet)
+bool Socket::Packet(Barry::Packet &packet, int timeout)
 {
-	return Packet(packet.m_send, packet.m_receive);
+	return Packet(packet.m_send, packet.m_receive, timeout);
 }
 
 bool Socket::NextRecord(Data &receive)

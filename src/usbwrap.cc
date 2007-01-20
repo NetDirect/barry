@@ -82,9 +82,9 @@ bool Match::next_device(Usb::DeviceIDType *devid)
 ///////////////////////////////////////////////////////////////////////////////
 // Device
 
-Device::Device(Usb::DeviceIDType id)
+Device::Device(Usb::DeviceIDType id, int timeout)
 	: m_id(id),
-	m_timeout(USBWRAP_DEFAULT_TIMEOUT)
+	m_timeout(timeout)
 {
 	m_handle = usb_open(id);
 	if( !m_handle )
@@ -114,26 +114,28 @@ bool Device::Reset()
 	return m_lasterror == 0;
 }
 
-bool Device::BulkRead(int ep, Barry::Data &data)
+bool Device::BulkRead(int ep, Barry::Data &data, int timeout)
 {
 	m_lasterror = usb_bulk_read(m_handle, ep,
-		(char*) data.GetBuffer(), data.GetBufSize(), m_timeout);
+		(char*) data.GetBuffer(), data.GetBufSize(),
+		timeout == -1 ? m_timeout : timeout);
 	if( m_lasterror < 0 )
 		throw UsbError("Error in usb_bulk_read");
 	return m_lasterror >= 0;
 }
 
-bool Device::BulkWrite(int ep, const Barry::Data &data)
+bool Device::BulkWrite(int ep, const Barry::Data &data, int timeout)
 {
 	ddout("BulkWrite to endpoint " << ep << ":\n" << data);
 	m_lasterror = usb_bulk_write(m_handle, ep,
-		(char*) data.GetData(), data.GetSize(), m_timeout);
+		(char*) data.GetData(), data.GetSize(),
+		timeout == -1 ? m_timeout : timeout);
 	if( m_lasterror < 0 )
 		throw UsbError("Error in usb_bulk_write");
 	return m_lasterror >= 0;
 }
 
-bool Device::BulkWrite(int ep, const void *data, size_t size)
+bool Device::BulkWrite(int ep, const void *data, size_t size, int timeout)
 {
 #ifdef __DEBUG_MODE__
 	Barry::Data dump(data, size);
@@ -141,26 +143,29 @@ bool Device::BulkWrite(int ep, const void *data, size_t size)
 #endif
 
 	m_lasterror = usb_bulk_write(m_handle, ep,
-		(char*) data, size, m_timeout);
+		(char*) data, size,
+		timeout == -1 ? m_timeout : timeout);
 	if( m_lasterror < 0 )
 		throw UsbError("Error in usb_bulk_write");
 	return m_lasterror >= 0;
 }
 
-bool Device::InterruptRead(int ep, Barry::Data &data)
+bool Device::InterruptRead(int ep, Barry::Data &data, int timeout)
 {
 	m_lasterror = usb_interrupt_read(m_handle, ep,
-		(char*) data.GetBuffer(), data.GetBufSize(), m_timeout);
+		(char*) data.GetBuffer(), data.GetBufSize(),
+		timeout == -1 ? m_timeout : timeout);
 	if( m_lasterror < 0 )
 		throw UsbError("Error in usb_interrupt_read");
 	return m_lasterror >= 0;
 }
 
-bool Device::InterruptWrite(int ep, const Barry::Data &data)
+bool Device::InterruptWrite(int ep, const Barry::Data &data, int timeout)
 {
 	ddout("InterruptWrite to endpoint " << ep << ":\n" << data);
 	m_lasterror = usb_interrupt_write(m_handle, ep,
-		(char*) data.GetData(), data.GetSize(), m_timeout);
+		(char*) data.GetData(), data.GetSize(),
+		timeout == -1 ? m_timeout : timeout);
 	if( m_lasterror < 0 )
 		throw UsbError("Error in usb_interrupt_write");
 	return m_lasterror >= 0;

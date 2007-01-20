@@ -28,7 +28,7 @@
 #include <map>
 #include <stdexcept>
 
-#define USBWRAP_DEFAULT_TIMEOUT	10000
+#define USBWRAP_DEFAULT_TIMEOUT	30000
 
 namespace Barry { class Data; }
 
@@ -81,7 +81,7 @@ private:
 	int m_lasterror;
 
 public:
-	Device(Usb::DeviceIDType id);
+	Device(Usb::DeviceIDType id, int timeout = USBWRAP_DEFAULT_TIMEOUT);
 	~Device();
 
 	/////////////////////////////
@@ -103,11 +103,11 @@ public:
 	/////////////////////////////
 	// IO functions
 
-	bool BulkRead(int ep, Barry::Data &data);
-	bool BulkWrite(int ep, const Barry::Data &data);
-	bool BulkWrite(int ep, const void *data, size_t size);
-	bool InterruptRead(int ep, Barry::Data &data);
-	bool InterruptWrite(int ep, const Barry::Data &data);
+	bool BulkRead(int ep, Barry::Data &data, int timeout = -1);
+	bool BulkWrite(int ep, const Barry::Data &data, int timeout = -1);
+	bool BulkWrite(int ep, const void *data, size_t size, int timeout = -1);
+	bool InterruptRead(int ep, Barry::Data &data, int timeout = -1);
+	bool InterruptWrite(int ep, const Barry::Data &data, int timeout = -1);
 };
 
 class Interface

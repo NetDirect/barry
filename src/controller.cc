@@ -622,9 +622,8 @@ void Controller::SaveDatabase(unsigned int dbId, Builder &builder)
 	Packet packet(*this, command, response);
 	packet.ClearDatabase(dbId);
 
-	// FIXME - sometimes this takes a long time... find out if there
-	// is a timeout mechanism or something needed as well
-	if( !m_socket.Packet(packet) ) {
+	// wait up to a minute here for old, slower devices with lots of data
+	if( !m_socket.Packet(packet, 60000) ) {
 		eout("Database ID: " << dbId);
 		eeout(command, response);
 		throw BError(m_socket.GetLastStatus(),
@@ -645,8 +644,9 @@ void Controller::SaveDatabase(unsigned int dbId, Builder &builder)
 	}
 
 	// loop until builder object has no more data
+	bool first = true;
 	while( packet.SetRecord(dbId, builder) ) {
-		if( !m_socket.Packet(packet) ) {
+		if( !m_socket.Packet(packet, first ? 60000 : -1) ) {
 			eout("Database ID: " << dbId);
 			eeout(command, response);
 			throw BError(m_socket.GetLastStatus(),
@@ -669,6 +669,7 @@ void Controller::SaveDatabase(unsigned int dbId, Builder &builder)
 				throw BError(oss.str());
 			}
 		}
+		first = false;
 	}
 }
 
