@@ -1,5 +1,24 @@
 Release: version 0.5 - 2007/01/??
 ------------------------------------------------------------------------------
+2007/01/20
+	- added smarter timeout values to controller, and allowed
+		timeout overrides in the packet, socket, and usbwrap code...
+		extra timeouts are needed for erasing databases for
+		some older devices
+	- added an explicit DataDumpParser class to btool.cc, as the
+		library doesn't always have extreme verbose debugging on...
+		this makes sure anyone can always get raw database packets
+		through btool, for development
+	- added thread callback signals for error finishes and erase_db
+		operations, so the GUI is updated properly
+	- more GUI cleanups (status bar updates, etc)
+	- finished implementation of GUI restore
+	- fixed gtkmm/glibmm exception handling when the exceptions
+		occur in sigc signal handlers... in that case,
+		exceptions need to be handled with
+		Glib::add_exception_handler()
+	- added filename-only reading support to TarFile class
+	- added pending gui/TODO items
 2007/01/19
 	- backup GUI now properly shows progress
 	- the buttons become insensitive when backup is busy
