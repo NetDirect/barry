@@ -27,7 +27,7 @@ LIB_BARRY_VERSION = 0:5:0
 
 # Disable the default -I. -I$(srcdir) -I$(topdir), etc, as our includes
 # are proper anyway. :-)
-DEFAULT_INCLUDES =
+DEFAULT_INCLUDES = -I $(top_srcdir)
 #INCLUDES = @PACKAGE_CXXFLAGS@ -I@LIBUSB_INC_PATH@
 INCLUDES = $(LIBUSB_CFLAGS)
 AM_CXXFLAGS = -ansi -Wall -fno-strict-aliasing -g

@@ -61,6 +61,10 @@ void Usage()
    << "   -D #      Record index number as seen in the -T state table,\n"
    << "             which indicates the record to delete.  Used with the -d\n"
    << "             command to specify the database.\n"
+#ifdef WORDS_BIGENDIAN
+   << "\n"
+   << "             host is BIG ENDIAN. Use at your own risk.\n"	    
+#endif	    
    << endl;
 }
 

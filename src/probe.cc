@@ -103,7 +103,8 @@ bool Probe::Parse(const Data &data, ProbeResult &result)
 	}
 
 	// capture the PIN
-	result.m_pin = *((uint32_t *) &pd[16]);
+	result.m_pin = btohl(*((uint32_t *) &pd[16]));
+        
 	return true;
 }
 

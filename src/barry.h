@@ -43,6 +43,7 @@
 #include "record.h"
 #include "controller.h"
 #include "controllertmpl.h"
+#include "endian.h"
 #include "version.h"
 
 #ifdef __BARRY_BOOST_MODE__
