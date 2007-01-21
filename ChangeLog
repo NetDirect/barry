@@ -17,6 +17,7 @@ Release: version 0.5 - 2007/01/??
 	- updated AUTHORS
 	- fixed install location of bcharge when building with ./configure;
 		now goes to sbin/ for both source compile and binary packages
+		Thanks to Jonathan Hudson for reporting this bug.
 2007/01/20
 	- added smarter timeout values to controller, and allowed
 		timeout overrides in the packet, socket, and usbwrap code...
