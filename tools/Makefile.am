@@ -4,7 +4,8 @@ INCLUDES = $(LIBUSB_CFLAGS)
 #AM_CXXFLAGS = -ansi -Wall -fno-strict-aliasing -g
 AM_CXXFLAGS = -ansi -Wall -g
 
-bin_PROGRAMS = btool upldif translate bcharge
+bin_PROGRAMS = btool upldif translate
+sbin_PROGRAMS = bcharge
 
 btool_SOURCES = btool.cc
 btool_LDADD = ../src/libbarry.la

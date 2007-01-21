@@ -15,6 +15,8 @@ Release: version 0.5 - 2007/01/??
 			Version call instead
 	- added big/little endian text to the Barry::Version call
 	- updated AUTHORS
+	- fixed install location of bcharge when building with ./configure;
+		now goes to sbin/ for both source compile and binary packages
 2007/01/20
 	- added smarter timeout values to controller, and allowed
 		timeout overrides in the packet, socket, and usbwrap code...
