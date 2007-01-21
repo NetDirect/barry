@@ -33,9 +33,14 @@ using namespace Barry;
 
 void Usage()
 {
+   int major, minor;
+   const char *Version = Barry::Version(major, minor);
+
    cerr
    << "btool - Command line USB Blackberry Test Tool\n"
-   << "        Copyright 2005-2007, Net Direct Inc. (http://www.netdirect.ca/)\n\n"
+   << "        Copyright 2005-2007, Net Direct Inc. (http://www.netdirect.ca/)\n"
+   << "        Using: " << Version << "\n"
+   << "\n"
    << "   -c dn     Convert address book database to LDIF format, using the\n"
    << "             specified baseDN\n"
    << "   -d db     Load database 'db' and dump to screen\n"
@@ -61,10 +66,6 @@ void Usage()
    << "   -D #      Record index number as seen in the -T state table,\n"
    << "             which indicates the record to delete.  Used with the -d\n"
    << "             command to specify the database.\n"
-#ifdef WORDS_BIGENDIAN
-   << "\n"
-   << "             host is BIG ENDIAN. Use at your own risk.\n"	    
-#endif	    
    << endl;
 }
 
