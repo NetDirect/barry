@@ -24,7 +24,7 @@
 
 // The Blackberry is little endian in its USB data.  Fortunately,
 // this makes conversion easy on the x86...
-#include "config.h"
+#include "../config.h"
 
 #ifndef WORDS_BIGENDIAN
 #define btohs(x) x			// for uint16_t

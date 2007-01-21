@@ -20,8 +20,14 @@
 */
 
 #include "version.h"
+#include "../config.h"
 
-#define BARRY_VERSION_STRING	"Barry library version 0.5"
+#ifdef WORDS_BIGENDIAN
+#define BARRY_VERSION_STRING	"Barry library version 0.5 (big endian)"
+#else
+#define BARRY_VERSION_STRING	"Barry library version 0.5 (little endian)"
+#endif
+
 #define BARRY_VERSION_MAJOR	0
 #define BARRY_VERSION_MINOR	5
 
