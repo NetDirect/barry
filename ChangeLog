@@ -1,5 +1,19 @@
 Release: version 0.5 - 2007/01/??
 ------------------------------------------------------------------------------
+2007/01/21
+	- added future considerations to doc/ReleaseChecklist.txt
+	- applied big endian patch from Jonathan Hudson
+	- changes to patch:
+		- removed endian.h include from barry.h, since applications
+			using the library should not care about endianness
+		- hard coded the path to config.h in endian.h
+			so that endian.h never makes it into the final
+			install
+		- removed DEFAULT_INCLUDES setting from src/Makefile.am
+			for the same reason
+		- removed config.h dependency in btool.cc and used library
+			Version call instead
+	- added big/little endian text to the Barry::Version call
 2007/01/20
 	- added smarter timeout values to controller, and allowed
 		timeout overrides in the packet, socket, and usbwrap code...
