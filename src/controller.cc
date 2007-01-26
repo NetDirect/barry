@@ -165,7 +165,7 @@ void Controller::LoadCommandTable()
 	assert( m_mode == Desktop );
 
 	char rawCommand[] = { 6, 0, 0x0a, 0, 0x40, 0, 0, 1, 0, 0 };
-	*((uint16_t*) rawCommand) = m_socket.GetSocket();
+	*((uint16_t*) rawCommand) = htobs(m_socket.GetSocket());
 
 	Data command(rawCommand, sizeof(rawCommand));
 	Data response;

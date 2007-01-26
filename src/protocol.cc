@@ -40,7 +40,7 @@ void CheckSize(const Data &packet, size_t requiredsize)
 	if( packet.GetSize() < requiredsize )
 	{
 		std::ostringstream oss;
-		oss << "Bad packet size. Packet: " << p->size
+		oss << "Bad packet size. Packet: " << btohs(p->size)
 		    << ". DataSize(): " << packet.GetSize()
 		    << ". Required size: " << requiredsize;
 		eout(oss.str());

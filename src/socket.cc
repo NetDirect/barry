@@ -27,6 +27,7 @@
 #include "data.h"
 #include "error.h"
 #include "packet.h"
+#include "endian.h"
 
 
 using namespace Usb;
@@ -86,12 +87,12 @@ void Socket::Open(uint16_t socket, uint8_t flag)
 	// build open command
 	Barry::Protocol::Packet packet;
 	packet.socket = 0;
-	packet.size = SB_SOCKET_PACKET_SIZE;
+	packet.size = htobs(SB_SOCKET_PACKET_SIZE);
 	packet.command = SB_COMMAND_OPEN_SOCKET;
-	packet.u.socket.socket = socket;
+	packet.u.socket.socket = htobs(socket);
 	packet.u.socket.param = flag;
 
-	Data send(&packet, packet.size);
+	Data send(&packet, SB_SOCKET_PACKET_SIZE);
 	Data receive;
 	if( !Send(send, receive) ) {
 		eeout(send, receive);
@@ -110,7 +111,7 @@ void Socket::Open(uint16_t socket, uint8_t flag)
 	Protocol::CheckSize(receive, SB_SOCKET_PACKET_SIZE);
 	MAKE_PACKET(rpack, receive);
 	if( rpack->command != SB_COMMAND_OPENED_SOCKET ||
-	    rpack->u.socket.socket != socket ||
+	    btohs(rpack->u.socket.socket) != socket ||
 	    rpack->u.socket.param != flag )
 	{
 		eout("Packet:\n" << receive);
@@ -140,12 +141,12 @@ void Socket::Close()
 		// build close command
 		Barry::Protocol::Packet packet;
 		packet.socket = 0;
-		packet.size = SB_SOCKET_PACKET_SIZE;
+		packet.size = htobs(SB_SOCKET_PACKET_SIZE);
 		packet.command = SB_COMMAND_CLOSE_SOCKET;
-		packet.u.socket.socket = m_socket;
+		packet.u.socket.socket = htobs(m_socket);
 		packet.u.socket.param = m_flag;
 
-		Data command(&packet, packet.size);
+		Data command(&packet, SB_SOCKET_PACKET_SIZE);
 		Data response;
 		if( !Send(command, response) ) {
 			// reset so this won't be called again
@@ -168,7 +169,7 @@ void Socket::Close()
 		Protocol::CheckSize(response, SB_SOCKET_PACKET_SIZE);
 		MAKE_PACKET(rpack, response);
 		if( rpack->command != SB_COMMAND_CLOSED_SOCKET ||
-		    rpack->u.socket.socket != m_socket ||
+		    btohs(rpack->u.socket.socket) != m_socket ||
 		    rpack->u.socket.param != m_flag )
 		{
 			// reset so this won't be called again
@@ -211,7 +212,7 @@ bool Socket::Send(const Data &send, Data &receive, int timeout)
 	//
 	if( (send.GetSize() % 0x40) == 0 ) {
 		Protocol::SizePacket packet;
-		packet.size = send.GetSize();
+		packet.size = htobs(send.GetSize());
 		packet.buffer[2] = 0;		// zero the top byte
 		Data sizeCommand(&packet, 3);
 
@@ -273,7 +274,7 @@ void Socket::AppendFragment(Data &whole, const Data &fragment)
 
 	// update whole's size and command type for future sanity
 	Barry::Protocol::Packet *wpack = (Barry::Protocol::Packet *) whole.GetBuffer();
-	wpack->size = (uint16_t) whole.GetSize();
+	wpack->size = htobs((uint16_t) whole.GetSize());
 	wpack->command = SB_COMMAND_DB_DATA;
 	// don't need to call ReleaseBuffer here, since we're not changing
 	// the real size size
@@ -307,7 +308,7 @@ unsigned int Socket::MakeNextFragment(const Data &whole, Data &fragment, unsigne
 
 	// update fragment's size and command type
 	Barry::Protocol::Packet *wpack = (Barry::Protocol::Packet *) buf;
-	wpack->size = (uint16_t) (todo + SB_FRAG_HEADER_SIZE);
+	wpack->size = htobs((uint16_t) (todo + SB_FRAG_HEADER_SIZE));
 	if( nextOffset )
 		wpack->command = SB_COMMAND_DB_FRAGMENTED;
 	else
@@ -335,7 +336,7 @@ void Socket::CheckSequence(const Data &seq)
 
 	// we'll cheat here... if the packet's sequence is 0, we'll
 	// silently restart, otherwise, fail
-	uint32_t sequenceId = spack->u.sequence.sequenceId;
+	uint32_t sequenceId = btohl(spack->u.sequence.sequenceId);
 	if( sequenceId == 0 ) {
 		// silently restart (will advance below)
 		m_sequenceId = 0;
@@ -373,7 +374,7 @@ bool Socket::Packet(const Data &send, Data &receive, int timeout)
 	// force socket to our socket
 	Data send = sendorig;
 	Barry::Protocol::Packet *sspack = (Barry::Protocol::Packet *)send.GetBuffer(2);
-	sspack->socket = GetSocket();
+	sspack->socket = htobs(GetSocket());
 */
 
 	MAKE_PACKET(spack, send);
@@ -418,7 +419,7 @@ bool Socket::Packet(const Data &send, Data &receive, int timeout)
 					break;
 
 				default:
-					eout("Command: " << rpack->command << inFrag);
+					eout("Command: " << (unsigned int)rpack->command << inFrag);
 					throw BError("Socket: unhandled packet in Packet()");
 					break;
 				}
@@ -466,7 +467,7 @@ bool Socket::Packet(const Data &send, Data &receive, int timeout)
 				break;
 
 			default:
-				eout("Command: " << rpack->command << inFrag);
+				eout("Command: " << (unsigned int)rpack->command << inFrag);
 				throw BError("Socket: unhandled packet in Packet()");
 				break;
 			}
@@ -499,13 +500,13 @@ bool Socket::Packet(Barry::Packet &packet, int timeout)
 bool Socket::NextRecord(Data &receive)
 {
 	Barry::Protocol::Packet packet;
-	packet.socket = GetSocket();
-	packet.size = 7;
+	packet.socket = htobs(GetSocket());
+	packet.size = htobs(7);
 	packet.command = SB_COMMAND_DB_DONE;
 	packet.u.db.tableCmd = 0;
 	packet.u.db.u.command.operation = 0;
 
-	Data command(&packet, packet.size);
+	Data command(&packet, 7);
 	return Packet(command, receive);
 }
 

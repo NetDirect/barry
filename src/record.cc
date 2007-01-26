@@ -358,13 +358,13 @@ const unsigned char* DatabaseDatabase::ParseField(const unsigned char *begin,
 	if( begin > end )		// if begin==end, we are ok
 		return begin;
 
-	if( !field->nameSize )		// if field has no size, something's up
+	if( !ConvertHtoB(field->nameSize) ) // if field has no size, something's up
 		return begin;
 
 	Database db;
-	db.Number = field->dbNumber;
-	db.RecordCount = field->dbRecordCount;
-	db.Name.assign((const char *)field->name, field->nameSize - 1);
+	db.Number = ConvertHtoB(field->dbNumber);
+	db.RecordCount = ConvertHtoB(field->dbRecordCount);
+	db.Name.assign((const char *)field->name, ConvertHtoB(field->nameSize) - 1);
 	Databases.push_back(db);
 	return begin;
 }
@@ -1298,7 +1298,7 @@ void Calendar::ParseRecurranceData(const void *data)
 	const CalendarRecurranceDataField *rec =
 		(const CalendarRecurranceDataField*) data;
 
-	Interval = rec->interval;
+	Interval = btohs(rec->interval);
 	if( Interval < 1 )
 		Interval = 1;	// must always be >= 1
 
@@ -1368,7 +1368,7 @@ void Calendar::BuildRecurranceData(void *data)
 	// set all to zero
 	memset(data, 0, CALENDAR_RECURRANCE_DATA_FIELD_SIZE);
 
-	rec->interval = Interval;
+	rec->interval = htobs(Interval);
 	rec->startTime = time2min(StartTime);
 	if( Perpetual )
 		rec->endTime = 0xffffffff;
