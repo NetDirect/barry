@@ -1,5 +1,41 @@
 Release: version 0.5 - 2007/01/??
 ------------------------------------------------------------------------------
+2007/01/25
+	- found a link between the unknown field in tagged protocol headers
+		and the unknown field in RecordStateTable entries.  This
+		field matters when uploading certain databases, such as
+		Browser Options.  It is unknown what this field really
+		means, but we're calling it RecType.  Updated the API
+		to use this in all parser objects and builder objects
+		and record objects that use it.
+	- changed some uses of uint64_t to uint32_t, in Contact and
+		Calendar record objects... unique IDs only seem to be
+		32 bits
+	- added new static function to record classes: GetDefaultRecType()
+		This returns the default rectype that should work
+		for that record.  Ideally this should be retrieved from
+		the device, but in the case where a database has no
+		records, this info would be good to know.
+	- updated convenience template function Controller::AddRecordByType()
+		to use GetDefaultRecType()
+	- documented the recurrance data and how to use it in Calendar objects
+	- added data debug output for incoming USB packets in the
+		socket class... when we ported to the stable libusb
+		we lost some of the verbose output... this should get it
+		back.  (In the official release, you need to uncomment
+		ddout() in debug.h for the full blast of debug output).
+	- backup GUI updates:
+		- changed error_done signal into a pure error signal,
+			and changed the logic so the restore continues
+			even if there was a protocol error on one database
+		- changed status bar messages to show what's happening
+			i.e. Backup or Restore
+		- default to not restore the "Handheld Agent" database as
+			it appears to be read-only on the device
+		- added temporary Restore & Backup mode for debugging
+		- added extra hyphen to backup files to show date/time better
+		- updated GUI to save and restore the new RecType field
+			supported now by the library
 2007/01/21
 	- added future considerations to doc/ReleaseChecklist.txt
 	- applied big endian patch from Jonathan Hudson
