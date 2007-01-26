@@ -56,6 +56,7 @@ void Usage()
    << "   -t        Show database database table\n"
    << "   -T db     Show record state table for given database\n"
    << "   -v        Dump protocol data during operation\n"
+   << "   -X        Reset device\n"
    << "\n"
    << " -d Command modifiers:   (can be used multiple times for more than 1 record)\n"
    << "\n"
@@ -265,6 +266,7 @@ int main(int argc, char *argv[])
 			show_dbdb = false,
 			ldif_contacts = false,
 			data_dump = false,
+			reset_device = false,
 			record_state = false;
 		string ldifBaseDN;
 		string filename;
@@ -273,7 +275,7 @@ int main(int argc, char *argv[])
 
 		// process command line options
 		for(;;) {
-			int cmd = getopt(argc, argv, "c:d:D:f:hlp:r:R:s:tT:v");
+			int cmd = getopt(argc, argv, "c:d:D:f:hlp:r:R:s:tT:vX");
 			if( cmd == -1 )
 				break;
 
@@ -337,6 +339,10 @@ int main(int argc, char *argv[])
 				data_dump = true;
 				break;
 
+			case 'X':	// reset device
+				reset_device = true;
+				break;
+
 			case 'h':	// help
 			default:
 				Usage();
@@ -378,6 +384,12 @@ int main(int argc, char *argv[])
 					<< " not found" << endl;
 				return 1;
 			}
+		}
+
+		if( reset_device ) {
+			Usb::Device dev(probe.Get(activeDevice).m_dev);
+			dev.Reset();
+			return 0;
 		}
 
 		// Create our controller object
