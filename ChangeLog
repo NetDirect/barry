@@ -1,5 +1,7 @@
 Release: version 0.5 - 2007/01/??
 ------------------------------------------------------------------------------
+2007/01/26
+	- added missing errno.h header to gui/src/util.cc
 2007/01/25
 	- found a link between the unknown field in tagged protocol headers
 		and the unknown field in RecordStateTable entries.  This
