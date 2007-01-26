@@ -50,6 +50,8 @@ typedef long min1900_t;
 min1900_t time2min(time_t t);
 time_t min2time(min1900_t m);
 
+// FIXME - turn TimeZone into a C typedef and wrap this in extern "C"
+// so the data can be used in both C and C++ libraries
 struct TimeZone
 {
 	unsigned short Code;
@@ -58,6 +60,7 @@ struct TimeZone
 	char *Name;
 };
 
+// FIXME - put this somewhere for both C and C++
 #define TIME_ZONE_CODE_ERR	0xffff
 
 const TimeZone* GetTimeZoneTable();

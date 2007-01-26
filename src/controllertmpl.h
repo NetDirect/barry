@@ -81,7 +81,7 @@ void Controller::AddRecordByType(uint32_t recordId, const RecordT &rec)
 	// hurts making a temporary copy just to set the record ID...
 	// create a better API for this.
 	RecordT r = rec;
-	r.SetUniqueId(recordId);
+	r.SetIds(RecordT::GetDefaultRecType(), recordId);
 	Barry::RecordFetch<RecordT> fetch(r);
 	Barry::RecordBuilder<RecordT, Barry::RecordFetch<RecordT> > build(fetch);
 	this->AddRecord(dbId, build);

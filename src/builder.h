@@ -48,6 +48,7 @@ public:
 	virtual bool Retrieve(unsigned int databaseId) = 0;
 
 	/// Called to retrive the unique ID for this record.
+	virtual uint8_t GetRecType() const = 0;
 	virtual uint32_t GetUniqueId() const = 0;
 
 	/// Called before BuildFields() in order to build the header
@@ -112,6 +113,11 @@ public:
 	virtual bool Retrieve(unsigned int databaseId)
 	{
 		return (*m_storage)(m_rec, databaseId);
+	}
+
+	virtual uint8_t GetRecType() const
+	{
+		return m_rec.GetRecType();
 	}
 
 	virtual uint32_t GetUniqueId() const

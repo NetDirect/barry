@@ -86,7 +86,7 @@ public:
 		unsigned int Index;
 		uint32_t RecordId;
 		bool Dirty;
-		unsigned int Unknown1;
+		unsigned int RecType;
 		std::string Unknown2;
 	};
 
@@ -199,6 +199,7 @@ public:
 	typedef std::vector<UnknownField>		UnknownsType;
 
 	// contact specific data
+	uint8_t RecType;
 	uint32_t RecordId;
 	std::string
 		Email,
@@ -237,12 +238,13 @@ public:
 	Contact();
 	~Contact();
 
-	uint64_t GetID() const { return RecordId; }
+	uint32_t GetID() const { return RecordId; }
 	std::string GetPostalAddress() const;
 
 	// Parser / Builder API (see parser.h / builder.h)
+	uint8_t GetRecType() const { return RecType; }
 	uint32_t GetUniqueId() const { return RecordId; }
-	void SetUniqueId(uint32_t Id) { RecordId = Id; }
+	void SetIds(uint8_t Type, uint32_t Id) { RecType = Type; RecordId = Id; }
 	void ParseHeader(const Data &data, size_t &offset);
 	void ParseFields(const Data &data, size_t &offset);
 	void BuildHeader(Data &data, size_t &offset) const;
@@ -263,6 +265,7 @@ public:
 
 	// database name
 	static const char * GetDBName() { return "Address Book"; }
+	static uint8_t GetDefaultRecType() { return 0; }
 
 	// helpers
 	static void SplitName(const std::string &full, std::string &first, std::string &last);
@@ -299,8 +302,9 @@ public:
 	~Message();
 
 	// Parser / Builder API (see parser.h / builder.h)
+	uint8_t GetRecType() const;
 	uint32_t GetUniqueId() const;	// empty API, not required by protocol
-	void SetUniqueId(uint32_t Id);	// empty API, not required by protocol
+	void SetIds(uint8_t Type, uint32_t Id);	// empty API, not required by protocol
 	void ParseHeader(const Data &data, size_t &offset);
 	void ParseFields(const Data &data, size_t &offset);
 	void BuildHeader(Data &data, size_t &offset) const;
@@ -315,6 +319,7 @@ public:
 
 	// database name
 	static const char * GetDBName() { return "Messages"; }
+	static uint8_t GetDefaultRecType() { return 0; }
 };
 
 inline std::ostream& operator<<(std::ostream &os, const Message &msg) {
@@ -330,7 +335,8 @@ class Calendar
 public:
 	typedef std::vector<UnknownField>		UnknownsType;
 
-	uint64_t RecordId;
+	uint8_t RecType;
+	uint32_t RecordId;
 
 	// general data
 	bool AllDayEvent;
@@ -341,9 +347,27 @@ public:
 	time_t StartTime;
 	time_t EndTime;
 
-	// recurring data
-	enum RecurringCodeType { Day = 1, MonthByDate = 3, MonthByDay = 4,
-		YearByDate = 5, YearByDay = 6, Week = 12 };
+	///
+	/// Recurring data
+	///
+	/// Note: interval can be used on all of these recurring types to
+	///       make it happen "every other time" or more, etc.
+	///
+	enum RecurringCodeType {
+		Day = 1,		//< eg. every day
+					//< set: nothing
+		MonthByDate = 3,	//< eg. every month on the 12th
+					//< set: DayOfMonth
+		MonthByDay = 4,		//< eg. every month on 3rd Wed
+					//< set: DayOfWeek and WeekOfMonth
+		YearByDate = 5,		//< eg. every year on March 5
+					//< set: DayOfMonth and MonthOfYear
+		YearByDay = 6,		//< eg. every year on 3rd Wed of Jan
+					//< set: DayOfWeek, WeekOfMonth, and
+					//<      MonthOfYear
+		Week = 12		//< eg. every week on Mon and Fri
+					//< set: WeekDays
+	};
 
 	bool Recurring;
 	RecurringCodeType RecurringType;
@@ -369,6 +393,7 @@ public:
 		MonthOfYear;		// 1-12
 	unsigned char WeekDays;		// bitmask, bit 0 = sunday
 
+// FIXME - put these somewhere usable by both C and C++
 		#define CAL_WD_SUN	0x01
 		#define CAL_WD_MON	0x02
 		#define CAL_WD_TUE	0x04
@@ -391,8 +416,9 @@ public:
 	~Calendar();
 
 	// Parser / Builder API (see parser.h / builder.h)
+	uint8_t GetRecType() const { return RecType; }
 	uint32_t GetUniqueId() const { return RecordId; }
-	void SetUniqueId(uint32_t Id) { RecordId = Id; }
+	void SetIds(uint8_t Type, uint32_t Id) { RecType = Type; RecordId = Id; }
 	void ParseHeader(const Data &data, size_t &offset);
 	void ParseFields(const Data &data, size_t &offset);
 	void BuildHeader(Data &data, size_t &offset) const;
@@ -407,6 +433,7 @@ public:
 
 	// database name
 	static const char * GetDBName() { return "Calendar"; }
+	static uint8_t GetDefaultRecType() { return 5; }	// or 0?
 };
 
 inline std::ostream& operator<<(std::ostream &os, const Calendar &msg) {
@@ -435,8 +462,6 @@ public:
 	~ServiceBookConfig();
 
 	// Parser / Builder API (see parser.h / builder.h)
-	uint32_t GetUniqueId() const;
-	void SetUniqueId(uint32_t Id);
 	void ParseHeader(const Data &data, size_t &offset);
 	void ParseFields(const Data &data, size_t &offset);
 	void BuildHeader(Data &data, size_t &offset) const;
@@ -460,7 +485,8 @@ class ServiceBook
 public:
 	typedef std::vector<UnknownField>		UnknownsType;
 
-	uint64_t RecordId;
+	uint8_t RecType;
+	uint32_t RecordId;
 	std::string Name;
 	std::string HiddenName;
 	std::string Description;
@@ -481,8 +507,9 @@ public:
 	~ServiceBook();
 
 	// Parser / Builder API (see parser.h / builder.h)
+	uint8_t GetRecType() const { return RecType; }
 	uint32_t GetUniqueId() const { return RecordId; }
-	void SetUniqueId(uint32_t Id) { RecordId = Id; }
+	void SetIds(uint8_t Type, uint32_t Id) { RecType = Type; RecordId = Id; }
 	void ParseHeader(const Data &data, size_t &offset);
 	void ParseFields(const Data &data, size_t &offset);
 	void BuildHeader(Data &data, size_t &offset) const;
@@ -497,6 +524,7 @@ public:
 
 	// database name
 	static const char * GetDBName() { return "Service Book"; }
+	static uint8_t GetDefaultRecType() { return 0; }
 };
 
 inline std::ostream& operator<<(std::ostream &os, const ServiceBook &msg) {

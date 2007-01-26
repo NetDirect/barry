@@ -53,8 +53,8 @@ public:
 	/// Reset and prepare for a new raw data packet
 	virtual void Clear() {}
 
-	/// Stores the record's unique ID
-	virtual void SetUniqueId(uint32_t Id) {}
+	/// Stores the IDs
+	virtual void SetIds(uint8_t RecType, uint32_t UniqueId) {}
 
 	/// Called to parse the header portion of the raw data packet.
 	/// data contains the entire packet, and offset contains the
@@ -136,9 +136,9 @@ public:
 		m_rec = Record();
 	}
 
-	virtual void SetUniqueId(uint32_t Id)
+	virtual void SetIds(uint8_t RecType, uint32_t UniqueId)
 	{
-		m_rec.SetUniqueId(Id);
+		m_rec.SetIds(RecType, UniqueId);
 	}
 
 	virtual void ParseHeader(const Data &data, size_t &offset)

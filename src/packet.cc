@@ -298,7 +298,7 @@ bool Packet::SetRecord(unsigned int dbId, Builder &build)
 	packet.u.db.tableCmd = m_con.GetCommand(Controller::DatabaseAccess);
 	packet.u.db.u.command.operation = SB_DBOP_SET_RECORD;
 	packet.u.db.u.command.databaseId = htobs(dbId);
-	packet.u.db.u.command.u.tag_upload.unknown = 0;
+	packet.u.db.u.command.u.tag_upload.rectype = build.GetRecType();
 	packet.u.db.u.command.u.tag_upload.uniqueId = htobl(build.GetUniqueId());
 	packet.u.db.u.command.u.tag_upload.unknown2 = 1;	// unknown observed value
 
@@ -374,7 +374,8 @@ bool Packet::Parse(Parser &parser)
 		Protocol::CheckSize(m_receive, offset);
 		// FIXME - this may need adjustment for email records... they
 		// don't seem to have uniqueID's
-		parser.SetUniqueId(btohl(rpack->u.db.u.response.u.tagged.uniqueId));
+		parser.SetIds(rpack->u.db.u.response.u.tagged.rectype,
+			btohl(rpack->u.db.u.response.u.tagged.uniqueId));
 
 		parser.ParseHeader(m_receive, offset);
 		parser.ParseFields(m_receive, offset);

@@ -228,6 +228,9 @@ bool Socket::Send(const Data &send, Data &receive, int timeout)
 	unsigned int bufsize = Protocol::GetSize(receive);
 	if( bufsize < receive.GetBufSize() )
 		receive.ReleaseBuffer(bufsize);
+
+	ddout("Socket::Send: Endpoint " << m_readEp << "\nReceived:\n" << receive);
+
 	return m_lastStatus >= 0;
 }
 
@@ -242,6 +245,9 @@ bool Socket::Receive(Data &receive, int timeout)
 	unsigned int bufsize = Protocol::GetSize(receive);
 	if( bufsize < receive.GetBufSize() )
 		receive.ReleaseBuffer(bufsize);
+
+	ddout("Socket::Receive: Endpoint " << m_readEp << "\nReceived:\n" << receive);
+
 	return m_lastStatus >= 0;
 }
 

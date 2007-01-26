@@ -219,7 +219,7 @@ const unsigned char* RecordStateTable::ParseField(const unsigned char *begin,
 	state.Index = btohs(field->index);
 	state.RecordId = btohl(field->uniqueId);
 	state.Dirty = (field->flags & BARRY_RSTF_DIRTY) != 0;
-	state.Unknown1 = field->unknown;
+	state.RecType = field->rectype;
 	state.Unknown2.assign((const char*)field->unknown2, sizeof(field->unknown2));
 	StateMap[state.Index] = state;
 
@@ -290,8 +290,8 @@ void RecordStateTable::Dump(std::ostream &os) const
 	bool bPrintAscii = Data::PrintAscii();
 	Data::PrintAscii(false);
 
-	os << "  Index  RecordId    Dirty" << endl;
-	os << "-------  ----------  -----" << endl;
+	os << "  Index  RecordId    Dirty  RecType" << endl;
+	os << "-------  ----------  -----  -------" << endl;
 
 	StateMapType::const_iterator b, e = StateMap.end();
 	for( b = StateMap.begin(); b != e ; ++b ) {
@@ -299,9 +299,9 @@ void RecordStateTable::Dump(std::ostream &os) const
 
 		os.fill(' ');
 		os << setbase(10) << setw(7) << state.Index;
-		os << "  0x" << setbase(16) << state.RecordId;
-		os << "  " << (state.Dirty ? "yes" : "no");
-		os << "  0x" << setbase(16) << state.Unknown1;
+		os << "  0x" << setbase(16) << setfill('0') << setw(8) << state.RecordId;
+		os << "  " << setfill(' ') << setw(5) << (state.Dirty ? "yes" : "no");
+		os << "     0x" << setbase(16) << setfill('0') << setw(2) << state.RecType;
 		os << "   " << Data(state.Unknown2.data(), state.Unknown2.size());
 	}
 
@@ -754,7 +754,8 @@ void Contact::Dump(std::ostream &os) const
 	ios::fmtflags oldflags = os.setf(ios::left);
 	char fill = os.fill(' ');
 
-	os << "Contact: 0x" << setbase(16) << GetID() << "\n";
+	os << "Contact: 0x" << setbase(16) << GetID()
+		<< " (" << (unsigned int)RecType << ")\n";
 
 	// special fields not in type table
 	os << "    " << setw(20) << "FirstName";
@@ -1084,6 +1085,11 @@ const unsigned char* Message::ParseField(const unsigned char *begin,
 	return begin;
 }
 
+uint8_t Message::GetRecType() const
+{
+	throw std::logic_error("Message::GetRecType() called, and not supported by the USB protocol.  Should never get called.");
+}
+
 // empty API, not required by protocol
 uint32_t Message::GetUniqueId() const
 {
@@ -1091,7 +1097,7 @@ uint32_t Message::GetUniqueId() const
 }
 
 // empty API, not required by protocol
-void Message::SetUniqueId(uint32_t Id)
+void Message::SetIds(uint8_t Type, uint32_t Id)
 {
 	// accept it without complaining, just do nothing
 }
@@ -1507,7 +1513,8 @@ void Calendar::Dump(std::ostream &os) const
 // recurrance data is within range.  Then call that before using
 // the data, such as in Build and in Dump.
 
-	os << "Calendar entry: 0x" << setbase(16) << RecordId << "\n";
+	os << "Calendar entry: 0x" << setbase(16) << RecordId
+		<< " (" << (unsigned int)RecType << ")\n";
 	os << "   All Day Event: " << (AllDayEvent ? "yes" : "no") << "\n";
 
 	// cycle through the type table
@@ -1914,7 +1921,8 @@ void ServiceBook::Clear()
 
 void ServiceBook::Dump(std::ostream &os) const
 {
-	os << "ServiceBook entry: 0x" << setbase(16) << RecordId << "\n";
+	os << "ServiceBook entry: 0x" << setbase(16) << RecordId
+		<< " (" << (unsigned int)RecType << ")\n";
 
 	// cycle through the type table
 	for(	const FieldLink<ServiceBook> *b = ServiceBookFieldLinks;

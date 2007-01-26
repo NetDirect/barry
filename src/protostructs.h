@@ -124,7 +124,12 @@ struct DBDBField
 
 struct RecordStateTableField
 {
-	uint8_t		unknown;
+	uint8_t		rectype;		// it is unknown exactly what
+						// this field does, but it
+						// shows up here and in the
+						// tagged record header, and
+						// for some of the records
+						// they must match when writing
 	uint16_t	index;
 	uint32_t	uniqueId;		// matches the uniqueId of say,
 						// address book records
@@ -267,7 +272,12 @@ struct DBC_RecordFlags
 
 struct DBC_TaggedUpload
 {
-	uint8_t		unknown;	// observed: 00 or 05
+	uint8_t		rectype;		// it is unknown exactly what
+						// this field does, but it
+						// shows up here and in the
+						// RecordStateTable, and
+						// for some of the records
+						// they must match when writing
 	uint32_t	uniqueId;
 	uint8_t		unknown2;
 	uint8_t		data[1];
@@ -357,7 +367,7 @@ struct DBR_DBDBRecord
 //
 struct DBR_OldTaggedRecord
 {
-	uint8_t		unknown;
+	uint8_t		rectype;
 	uint16_t	index;
 	uint32_t	uniqueId;
 	uint8_t		unknown2;
