@@ -71,8 +71,8 @@ BackupWindow::BackupWindow(BaseObjectType *cobject,
 	// setup thread dispatcher signals
 	m_signal_progress.connect(
 		sigc::mem_fun(*this, &BackupWindow::on_thread_progress));
-	m_signal_error_done.connect(
-		sigc::mem_fun(*this, &BackupWindow::on_thread_error_done));
+	m_signal_error.connect(
+		sigc::mem_fun(*this, &BackupWindow::on_thread_error));
 	m_signal_done.connect(
 		sigc::mem_fun(*this, &BackupWindow::on_thread_done));
 	m_signal_erase_db.connect(
@@ -147,12 +147,13 @@ void BackupWindow::ScanAndConnect()
 	m_pStatusBar->pop();
 }
 
-void BackupWindow::SetWorkingMode()
+void BackupWindow::SetWorkingMode(const std::string &taskname)
 {
 	m_working = true;
+	m_thread_error = false;
 	m_pBackupButton->set_sensitive(false);
 	m_pRestoreButton->set_sensitive(false);
-	m_pStatusBar->push("Working...");
+	m_pStatusBar->push(taskname + " working...");
 	m_pProgressBar->set_fraction(0.00);
 }
 
@@ -205,7 +206,7 @@ void BackupWindow::on_backup()
 	// start the thread
 	m_working = m_dev.StartBackup(
 		DeviceInterface::AppComm(&m_signal_progress,
-					&m_signal_error_done,
+					&m_signal_error,
 					&m_signal_done,
 					&m_signal_erase_db),
 		m_pConfig->GetBackupList(), m_pConfig->GetPath(),
@@ -217,7 +218,7 @@ void BackupWindow::on_backup()
 	}
 
 	// update the GUI
-	SetWorkingMode();
+	SetWorkingMode("Backup");
 }
 
 bool BackupWindow::PromptForRestoreTarball(std::string &restoreFilename,
@@ -265,10 +266,18 @@ void BackupWindow::on_restore()
 	// start the thread
 	m_working = m_dev.StartRestore(
 		DeviceInterface::AppComm(&m_signal_progress,
-					&m_signal_error_done,
+					&m_signal_error,
 					&m_signal_done,
 					&m_signal_erase_db),
 		m_pConfig->GetRestoreList(), restoreFilename, &m_recordTotal);
+//	m_working = m_dev.StartRestoreAndBackup(
+//		DeviceInterface::AppComm(&m_signal_progress,
+//					&m_signal_error,
+//					&m_signal_done,
+//					&m_signal_erase_db),
+//		m_pConfig->GetRestoreList(), restoreFilename,
+//		m_pConfig->GetPath(), m_pConfig->GetPIN(),
+//		&m_recordTotal);
 	if( !m_working ) {
 		Gtk::MessageDialog msg("Error starting restore thread: " +
 			m_dev.get_last_error());
@@ -278,7 +287,7 @@ void BackupWindow::on_restore()
 std::cerr << "m_recordTotal for restore: " << m_recordTotal << std::endl;
 
 	// update the GUI
-	SetWorkingMode();
+	SetWorkingMode("Restore");
 }
 
 void BackupWindow::on_file_quit()
@@ -348,13 +357,11 @@ void BackupWindow::on_thread_progress()
 	UpdateProgress();
 }
 
-void BackupWindow::on_thread_error_done()
+void BackupWindow::on_thread_error()
 {
-	std::cout << "on_thread_error_done" << std::endl;
+	std::cout << "on_thread_error" << std::endl;
 
-	// done!
-	ClearWorkingMode();
-	m_working = false;
+	m_thread_error = true;
 
 	Gtk::MessageDialog msg(m_modeName + " error: " + m_dev.get_last_thread_error());
 	msg.run();
@@ -364,12 +371,14 @@ void BackupWindow::on_thread_done()
 {
 	std::cout << "on_thread_done" << std::endl;
 
+	if( !m_thread_error ) {
+		Gtk::MessageDialog msg(m_modeName + " complete!");
+		msg.run();
+	}
+
 	// done!
 	ClearWorkingMode();
 	m_working = false;
-
-	Gtk::MessageDialog msg(m_modeName + " complete!");
-	msg.run();
 }
 
 void BackupWindow::on_thread_erase_db()

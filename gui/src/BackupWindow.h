@@ -36,7 +36,7 @@ class BackupWindow : public Gtk::Window
 	// data
 	std::auto_ptr<ConfigFile> m_pConfig;
 	Glib::Dispatcher m_signal_progress;
-	Glib::Dispatcher m_signal_error_done;
+	Glib::Dispatcher m_signal_error;
 	Glib::Dispatcher m_signal_done;
 	Glib::Dispatcher m_signal_erase_db;
 	int m_recordTotal;
@@ -52,10 +52,11 @@ class BackupWindow : public Gtk::Window
 	// state
 	bool m_scanned;
 	bool m_working;		// true if backup or restore in progress
+	bool m_thread_error;
 
 protected:
 	void ScanAndConnect();
-	void SetWorkingMode();
+	void SetWorkingMode(const std::string &taskname);
 	void ClearWorkingMode();
 	void UpdateProgress();
 	bool PromptForRestoreTarball(std::string &restoreFilename,
@@ -73,7 +74,7 @@ public:
 	void on_help_about();
 	bool on_startup();
 	void on_thread_progress();
-	void on_thread_error_done();
+	void on_thread_error();
 	void on_thread_done();
 	void on_thread_erase_db();
 };

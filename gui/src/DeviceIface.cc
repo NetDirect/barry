@@ -84,14 +84,14 @@ void DeviceInterface::BackupThread()
 		m_last_thread_error = "Terminated by user.";
 	}
 
-	m_tar->Close();
-	m_tar.reset();
+	m_tarback->Close();
+	m_tarback.reset();
+
+	if( error )
+		m_AppComm.m_error->emit();
 
 	// signal host thread that we're done
-	if( error )
-		m_AppComm.m_error_done->emit();
-	else
-		m_AppComm.m_done->emit();
+	m_AppComm.m_done->emit();
 
 	// done!
 	m_AppComm.Invalidate();
@@ -99,7 +99,6 @@ void DeviceInterface::BackupThread()
 
 void DeviceInterface::RestoreThread()
 {
-	bool error = false;
 	m_thread_quit = false;
 	m_last_thread_error = "";
 
@@ -107,20 +106,37 @@ void DeviceInterface::RestoreThread()
 
 		// cycle until m_end_of_tar
 		while( !m_end_of_tar ) {
-			// call the controller to do the work
-			unsigned int dbId = m_con->GetDBID(m_current_dbname);
-			m_AppComm.m_erase_db->emit();
-			m_con->SaveDatabase(dbId, *this);
+			try {
+				// call the controller to do the work
+				unsigned int dbId = m_con->GetDBID(m_current_dbname);
+				m_AppComm.m_erase_db->emit();
+				m_con->SaveDatabase(dbId, *this);
+			}
+			catch( Barry::BError &be ) {
+				// save thread error
+				m_last_thread_error = "Error while restoring ";
+				m_last_thread_error += m_current_dbname + ".  ";
+				m_last_thread_error += be.what();
+				m_last_thread_error += "  Will continue processing.";
+
+				// notify host thread
+				m_AppComm.m_error->emit();
+
+				// skip over records from this db
+				std::cerr << "Error on database: "
+					<< m_current_dbname << std::endl;
+				SkipCurrentDB();
+			}
 		}
 
 	}
 	catch( Glib::Exception &e ) {
 		m_last_thread_error = e.what();
-		error = true;
+		m_AppComm.m_error->emit();
 	}
 	catch( std::exception &e ) {
 		m_last_thread_error = e.what();
-		error = true;
+		m_AppComm.m_error->emit();
 	}
 	catch( Quit &q ) {
 		m_last_thread_error = "Terminated by user.";
@@ -130,10 +146,71 @@ void DeviceInterface::RestoreThread()
 	m_tar.reset();
 
 	// signal host thread that we're done
-	if( error )
-		m_AppComm.m_error_done->emit();
-	else
-		m_AppComm.m_done->emit();
+	m_AppComm.m_done->emit();
+
+	// done!
+	m_AppComm.Invalidate();
+}
+
+void DeviceInterface::RestoreAndBackupThread()
+{
+	m_thread_quit = false;
+	m_last_thread_error = "";
+
+	try {
+
+		// cycle until m_end_of_tar
+		while( !m_end_of_tar ) {
+			unsigned int dbId = m_con->GetDBID(m_current_dbname);
+
+			try {
+
+				// do restore first
+				m_AppComm.m_erase_db->emit();
+				m_con->SaveDatabase(dbId, *this);
+
+			}
+			catch( Barry::BError &be ) {
+				// save thread error
+				m_last_thread_error = "Error while restoring ";
+				m_last_thread_error += m_current_dbname + ".  ";
+				m_last_thread_error += be.what();
+				m_last_thread_error += "  Will continue processing.";
+
+				// notify host thread
+				m_AppComm.m_error->emit();
+
+				// skip over records from this db
+				std::cerr << "Error on database: "
+					<< m_current_dbname << std::endl;
+				SkipCurrentDB();
+			}
+
+			// then the backup, even if restore fails
+			m_con->LoadDatabase(dbId, *this);
+
+		}
+
+	}
+	catch( Glib::Exception &e ) {
+		m_last_thread_error = e.what();
+		m_AppComm.m_error->emit();
+	}
+	catch( std::exception &e ) {
+		m_last_thread_error = e.what();
+		m_AppComm.m_error->emit();
+	}
+	catch( Quit &q ) {
+		m_last_thread_error = "Terminated by user.";
+	}
+
+	m_tar->Close();
+	m_tar.reset();
+	m_tarback->Close();
+	m_tarback.reset();
+
+	// signal host thread that we're done
+	m_AppComm.m_done->emit();
 
 	// done!
 	m_AppComm.Invalidate();
@@ -149,6 +226,7 @@ std::string DeviceInterface::MakeFilename(const std::string &pin)
 		<< std::setw(4) << std::setfill('0') << (lt->tm_year + 1900)
 		<< std::setw(2) << std::setfill('0') << (lt->tm_mon + 1)
 		<< std::setw(2) << std::setfill('0') << lt->tm_mday
+		<< "-"
 		<< std::setw(2) << std::setfill('0') << lt->tm_hour
 		<< std::setw(2) << std::setfill('0') << lt->tm_min
 		<< std::setw(2) << std::setfill('0') << lt->tm_sec
@@ -184,6 +262,7 @@ int DeviceInterface::CountFiles(reuse::TarFile &tar,
 bool DeviceInterface::SplitTarPath(const std::string &tarpath,
 				   std::string &dbname,
 				   std::string &dbid_text,
+				   uint8_t &dbrectype,
 				   uint32_t &dbid)
 {
 	std::string::size_type pos = tarpath.rfind('/');
@@ -194,7 +273,11 @@ bool DeviceInterface::SplitTarPath(const std::string &tarpath,
 	dbid_text = tarpath.substr(pos + 1);
 	if( dbname.size() == 0 || dbid_text.size() == 0 )
 		return false;		// bad name
-	dbid = strtoul(dbid_text.c_str(), NULL, 16);
+
+	std::istringstream iss(dbid_text);
+	unsigned int temp;
+	iss >> std::hex >> dbid >> temp;
+	dbrectype = (uint8_t) temp;
 
 	return true;
 }
@@ -264,7 +347,7 @@ bool DeviceInterface::StartBackup(AppComm comm,
 	try {
 
 		std::string filename = directory + "/" + MakeFilename(pin);
-		m_tar.reset( new reuse::TarFile(filename.c_str(), true, true, true) );
+		m_tarback.reset( new reuse::TarFile(filename.c_str(), true, true, true) );
 
 	}
 	catch( reuse::TarFile::TarError &te ) {
@@ -324,17 +407,68 @@ bool DeviceInterface::StartRestore(AppComm comm,
 	return true;
 }
 
+bool DeviceInterface::StartRestoreAndBackup(AppComm comm,
+				const ConfigFile::DBListType &restoreAndBackupList,
+				const std::string &filename,
+				const std::string &directory, const std::string &pin,
+				int *pRecordCount)
+{
+	if( m_AppComm.IsValid() )
+		return False("Thread already running.");
+
+	try {
+		if( pRecordCount ) {
+			// caller is asking for a total, so we do a quick
+			// scan through the tar file first
+			m_tar.reset( new reuse::TarFile(filename.c_str(), false, true, true) );
+			*pRecordCount = CountFiles(*m_tar, restoreAndBackupList);
+
+			// close for next open
+			m_tar.reset();
+		}
+
+		// open for the main restore
+		m_tar.reset( new reuse::TarFile(filename.c_str(), false, true, true) );
+
+		// open for secondary backup
+		std::string back = directory + "/" + MakeFilename(pin);
+		m_tarback.reset( new reuse::TarFile(back.c_str(), true, true, true) );
+
+	}
+	catch( reuse::TarFile::TarError &te ) {
+		return False(te.what());
+	}
+
+	// setup
+	m_AppComm = comm;
+	m_dbList = restoreAndBackupList;
+	m_current_dbname_not_thread_safe = "";
+	m_current_dbname = "";
+	m_unique_id = 0;
+	m_end_of_tar = false;
+	m_tar_record_loaded = false;
+
+	// get first tar record
+	Retrieve(0);
+
+	// start the thread
+	Glib::Thread::create(sigc::mem_fun(*this, &DeviceInterface::RestoreAndBackupThread), false);
+	return true;
+}
+
+
 
 //////////////////////////////////////////////////////////////////////////////
 // Barry::Parser overrides
 
-void DeviceInterface::SetUniqueId(uint32_t Id)
+void DeviceInterface::SetIds(uint8_t RecType, uint32_t UniqueId)
 {
-	m_unique_id = Id;
+	m_rec_type = RecType;
+	m_unique_id = UniqueId;
 	std::ostringstream oss;
-	oss << std::hex << m_unique_id;
-	m_unique_id_text = oss.str();
-	if( m_unique_id_text.size() == 0 )
+	oss << std::hex << m_unique_id << " " << (unsigned int)m_rec_type;
+	m_tar_id_text = oss.str();
+	if( m_tar_id_text.size() == 0 )
 		throw std::runtime_error("No unique ID available!");
 }
 
@@ -345,8 +479,8 @@ void DeviceInterface::ParseFields(const Barry::Data &data, size_t &offset)
 
 void DeviceInterface::Store()
 {
-	std::string tarname = m_current_dbname + "/" + m_unique_id_text;
-	m_tar->AppendFile(tarname.c_str(), m_record_data);
+	std::string tarname = m_current_dbname + "/" + m_tar_id_text;
+	m_tarback->AppendFile(tarname.c_str(), m_record_data);
 
 	m_AppComm.m_progress->emit();
 
@@ -383,7 +517,7 @@ bool DeviceInterface::Retrieve(unsigned int dbId)
 
 		// split record filename into dbname and ID
 		std::string dbname;
-		if( !SplitTarPath(filename, dbname, m_unique_id_text, m_unique_id) ) {
+		if( !SplitTarPath(filename, dbname, m_tar_id_text, m_rec_type, m_unique_id) ) {
 			// invalid filename, skip it
 			std::cerr << "Skipping invalid tar record: " << filename << std::endl;
 			continue;
@@ -415,6 +549,11 @@ bool DeviceInterface::Retrieve(unsigned int dbId)
 	}
 }
 
+uint8_t DeviceInterface::GetRecType() const
+{
+	return m_rec_type;
+}
+
 uint32_t DeviceInterface::GetUniqueId() const
 {
 	return m_unique_id;
@@ -437,5 +576,27 @@ void DeviceInterface::BuildFields(Barry::Data &data, size_t &offset)
 	m_tar_record_loaded = false;
 
 	m_AppComm.m_progress->emit();
+}
+
+// helper function for halding restore errors
+void DeviceInterface::SkipCurrentDB() throw()
+{
+	// skip all records until next DB
+	try {
+		while( Retrieve(0) ) {
+			std::cerr << "Skipping: "
+				<< m_current_dbname << "/"
+				<< m_tar_id_text << std::endl;
+			m_tar_record_loaded = false;
+		}
+	}
+	catch( reuse::TarFile::TarError & ) {
+		m_end_of_tar = true;
+	}
+	catch( ... ) {
+		// swallow all other exceptions
+		std::cerr << "EXCEPTION IN SkipCurrentDB()!  "
+			"Please report to Barry mailing list." << std::endl;
+	}
 }
 

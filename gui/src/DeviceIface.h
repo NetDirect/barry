@@ -47,13 +47,13 @@ public:
 		Glib::Dispatcher *m_erase_db;	// to notify the app about the
 						// db erase stage of restore
 		Glib::Dispatcher *m_progress;
-		Glib::Dispatcher *m_error_done;
+		Glib::Dispatcher *m_error;
 		Glib::Dispatcher *m_done;
 
 		AppComm() :
 			m_erase_db(0),
 			m_progress(0),
-			m_error_done(0),
+			m_error(0),
 			m_done(0)
 			{}
 		AppComm(Glib::Dispatcher *progress,
@@ -62,13 +62,13 @@ public:
 			Glib::Dispatcher *erase_db) :
 			m_erase_db(erase_db),
 			m_progress(progress),
-			m_error_done(error),
+			m_error(error),
 			m_done(done)
 			{}
 		bool IsValid() const
-			{ return m_erase_db && m_progress && m_error_done && m_done; }
+			{ return m_erase_db && m_progress && m_error && m_done; }
 		void Invalidate()
-			{ m_erase_db = m_progress = m_error_done = m_done = 0; }
+			{ m_erase_db = m_progress = m_error = m_done = 0; }
 	};
 
 	class Quit	// quit exception to break out of upload/download
@@ -81,15 +81,16 @@ private:
 	std::string m_last_thread_error;
 
 	AppComm m_AppComm;
-	std::auto_ptr<reuse::TarFile> m_tar;
+	std::auto_ptr<reuse::TarFile> m_tar, m_tarback;
 
 	// parser and builder data (only one side uses these at a time)
 	ConfigFile::DBListType m_dbList;
 	mutable Glib::Mutex *m_dbnameMutex;
 	std::string m_current_dbname_not_thread_safe;
 	std::string m_current_dbname;
+	uint8_t m_rec_type;
 	uint32_t m_unique_id;
-	std::string m_unique_id_text;
+	std::string m_tar_id_text;
 	std::string m_record_data;
 	bool m_end_of_tar;
 	bool m_tar_record_loaded;
@@ -100,14 +101,16 @@ private:
 protected:
 	bool False(const std::string &msg);
 
+	// threads
 	void BackupThread();
 	void RestoreThread();
+	void RestoreAndBackupThread();
 
 	// helpers
 	std::string MakeFilename(const std::string &pin);
 	int CountFiles(reuse::TarFile &tar, const ConfigFile::DBListType &restoreList);
 	bool SplitTarPath(const std::string &tarpath, std::string &dbname,
-		std::string &dbid_text, uint32_t &dbid);
+		std::string &dbid_text, uint8_t &dbrectype, uint32_t &dbid);
 
 	// Sets the name of the database the thread is currently working on
 	void SetThreadDBName(const std::string &dbname);
@@ -134,19 +137,28 @@ public:
 		const ConfigFile::DBListType &backupList,
 		const std::string &directory, const std::string &pin);
 	bool StartRestore(AppComm comm,
-		const ConfigFile::DBListType &backupList,
+		const ConfigFile::DBListType &restoreList,
 		const std::string &tarfilename, int *pRecordCount = 0);
+	// this is for debugging... starts a restore, and then does an
+	// immediate backup of the same DB before moving on to the next
+	bool StartRestoreAndBackup(AppComm comm,
+		const ConfigFile::DBListType &restoreAndBackupList,
+		const std::string &tarfilename,
+		const std::string &directory, const std::string &pin,
+		int *pRecordCount = 0);
 
 	// Barry::Parser overrides
-	virtual void SetUniqueId(uint32_t Id);
+	virtual void SetIds(uint8_t RecType, uint32_t UniqueId);
 	virtual void ParseFields(const Barry::Data &data, size_t &offset);
 	virtual void Store();
 
 	// Barry::Builder overrides
 	virtual bool Retrieve(unsigned int dbId);
+	virtual uint8_t GetRecType() const;
 	virtual uint32_t GetUniqueId() const;
 	virtual void BuildHeader(Barry::Data &data, size_t &offset);
 	virtual void BuildFields(Barry::Data &data, size_t &offset);
+	void SkipCurrentDB() throw();	// helper function for halding restore errors
 };
 
 #endif

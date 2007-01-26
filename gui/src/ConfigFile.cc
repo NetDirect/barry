@@ -176,8 +176,11 @@ void ConfigFile::Enlighten(const Barry::DatabaseDatabase &db)
 			// backup everything
 			m_backupList.push_back(i->Name);
 
-			// restore everything except email
-			if( i->Name != Barry::Message::GetDBName() ) {
+			// restore everything except email (which could take ages)
+			// and Handheld Agent (which seems write protected)
+			if( i->Name != Barry::Message::GetDBName() &&
+			    i->Name != "Handheld Agent" )
+			{
 				m_restoreList.push_back(i->Name);
 			}
 		}
