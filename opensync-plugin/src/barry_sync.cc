@@ -4,7 +4,7 @@
 //
 
 /*
-    Copyright (C) 2006, Net Direct Inc. (http://www.netdirect.ca/)
+    Copyright (C) 2006-2007, Net Direct Inc. (http://www.netdirect.ca/)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -85,7 +85,7 @@ public:
 		char *start = osync_time_unix2vtime(&rec.StartTime);
 		char *end = osync_time_unix2vtime(&rec.EndTime);
 		// FIXME - need the notification time too... where does that fit in VCALENDAR?
-		char *data = g_strdup_printf(
+		m_Data = g_strdup_printf(
 			"BEGIN:VCALENDAR\r\n"
 			"PRODID:-//OpenSync//NONSGML Barry Calendar Record//EN\r\n"
 			"VERSION:2.0\r\n"
@@ -123,6 +123,8 @@ void GetChanges(OSyncContext *ctx, BarryEnvironment *env,
 		const char *DBDBName, const char *FormatName,
 		char* (*getdata)(BarryEnvironment *, unsigned int))
 {
+	Trace trace("GetChanges");
+
 	// shortcut references
 	using namespace Barry;
 	using Barry::RecordStateTable;
@@ -147,6 +149,7 @@ void GetChanges(OSyncContext *ctx, BarryEnvironment *env,
 		BarryEnvironment::cache_type::const_iterator c = cache.find(state.RecordId);
 		if( c == cache.end() ) {
 			// not in cache, this is a new item
+			trace.log("found an ADDED change");
 			change = osync_change_new();
 			osync_change_set_changetype(change, CHANGE_ADDED);
 		}
@@ -154,8 +157,12 @@ void GetChanges(OSyncContext *ctx, BarryEnvironment *env,
 			// in the cache... dirty?
 			if( state.Dirty ) {
 				// modified
+				trace.log("found a MODIFIED change");
 				change = osync_change_new();
 				osync_change_set_changetype(change, CHANGE_MODIFIED);
+			}
+			else {
+				trace.log("no change detected");
 			}
 		}
 
@@ -166,6 +173,7 @@ void GetChanges(OSyncContext *ctx, BarryEnvironment *env,
 
 			char *uid = g_strdup_printf("%lu", state.RecordId);
 			osync_change_set_uid(change, uid);
+			trace.log(uid);
 			g_free(uid);
 
 			// Now you can set the data for the object
@@ -186,6 +194,7 @@ void GetChanges(OSyncContext *ctx, BarryEnvironment *env,
 	for( ; c != cache.end(); ++c ) {
 		uint32_t recordId = c->first;
 
+		// search the state table
 		i = table.StateMap.begin();
 		for( ; i != table.StateMap.end(); ++i ) {
 
@@ -196,6 +205,8 @@ void GetChanges(OSyncContext *ctx, BarryEnvironment *env,
 		// check if not found...
 		if( i == table.StateMap.end() ) {
 			// register a DELETE, no data
+			trace.log("found DELETE change");
+
 			OSyncChange *change = osync_change_new();
 			osync_change_set_changetype(change, CHANGE_DELETED);
 			osync_change_set_member(change, env->member);
@@ -203,6 +214,7 @@ void GetChanges(OSyncContext *ctx, BarryEnvironment *env,
 
 			char *uid = g_strdup_printf("%lu", recordId);
 			osync_change_set_uid(change, uid);
+			trace.log(uid);
 			g_free(uid);
 
 			// report the change
@@ -350,6 +362,9 @@ static bool commit_vevent20(BarryEnvironment *env,
 		Barry::Controller &con = *env->m_pCon;
 		Barry::RecordStateTable &table = env->m_CalendarTable;
 
+		// extract RecordId from change's UID
+		// FIXME - this may need some fudging, since there is no
+		// guarantee that the UID will be a plain number
 		const char *uid = osync_change_get_uid(change);
 		unsigned long RecordId;
 		if( sscanf(uid, "%lu", &RecordId) == 0 ) {
@@ -358,6 +373,9 @@ static bool commit_vevent20(BarryEnvironment *env,
 			return false;
 		}
 
+		// search for the RecordId in the state table, to find the
+		// index... we only need the index if we are deleting or
+		// modifying
 		Barry::RecordStateTable::IndexType StateIndex;
 		if( osync_change_get_changetype(change) != CHANGE_ADDED ) {
 			if( !table.GetIndex(RecordId, &StateIndex) ) {

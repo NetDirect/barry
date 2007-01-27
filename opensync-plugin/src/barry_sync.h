@@ -4,7 +4,7 @@
 //
 
 /*
-    Copyright (C) 2006, Net Direct Inc. (http://www.netdirect.ca/)
+    Copyright (C) 2006-2007, Net Direct Inc. (http://www.netdirect.ca/)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -26,6 +26,30 @@
 #include <barry/barry.h>
 #include <string>
 #include <fstream>
+#include <sstream>
+#include <iomanip>
+
+
+class Trace
+{
+	const char *text;
+public:
+	Trace(const char *t) : text(t)
+	{
+		osync_trace(TRACE_ENTRY, "barry_sync: %s", text);
+	}
+
+	~Trace()
+	{
+		osync_trace(TRACE_EXIT, "barry_sync: %s", text);
+	}
+
+	void log(const char *t)
+	{
+		osync_trace(TRACE_INTERNAL, "barry_sync: %s", t);
+	}
+};
+
 
 struct BarryEnvironment
 {
@@ -49,9 +73,6 @@ public:
 	bool m_SyncCalendar;
 	bool m_SyncContacts;
 
-	//If you need a hashtable:
-	OSyncHashTable *hashtable;
-
 	// device communication
 	Barry::ProbeResult m_ProbeResult;
 	Barry::Controller *m_pCon;
@@ -62,7 +83,6 @@ public:
 		m_pin(0),
 		m_SyncCalendar(false),
 		m_SyncContacts(false),
-		hashtable(0),
 		m_pCon(0)
 	{
 		m_CalendarCacheFilename = m_ContactsCacheFilename =
@@ -120,8 +140,9 @@ public:
 
 	void ParseConfig(const char *data, int size)
 	{
+		Trace trace("ParseConfig");
+
 		m_ConfigData.assign(data, size);
-//		FIXME - do some parsing...
 
 		// The config data should contain:
 		//    - PIN of device to sync with
@@ -132,34 +153,30 @@ public:
 		//    - checkboxes for (both can be on):
 		//         - sync calendar items
 		//         - sync contacts
+
+		std::istringstream iss(m_ConfigData);
+		int cal = 0, con = 0;
+		iss >> std::hex >> m_pin >> cal >> con;
+
+		std::ostringstream oss;
+		oss << std::hex << m_pin;
+		trace.log(oss.str().c_str());
+
+		if( cal ) {
+			m_SyncCalendar = true;
+			trace.log("calendar syncing enabled");
+		}
+
+		if( con ) {
+			m_SyncContacts = true;
+			trace.log("contacts syncing enabled");
+		}
 	}
 
 //	void BuildConfig()
 //	{
 //		FIXME - build back into one long string
 //	}
-};
-
-
-
-class Trace
-{
-	const char *text;
-public:
-	Trace(const char *t) : text(t)
-	{
-		osync_trace(TRACE_ENTRY, "barry_sync: %s", text);
-	}
-
-	~Trace()
-	{
-		osync_trace(TRACE_EXIT, "barry_sync: %s", text);
-	}
-
-	void log(const char *t)
-	{
-		osync_trace(TRACE_INTERNAL, "%s", t);
-	}
 };
 
 #endif
