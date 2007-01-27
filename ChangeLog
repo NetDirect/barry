@@ -1,4 +1,4 @@
-Release: version 0.5 - 2007/01/??
+Release: version 0.5 - 2007/01/26
 ------------------------------------------------------------------------------
 2007/01/26
 	- added missing errno.h header to gui/src/util.cc
