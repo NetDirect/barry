@@ -22,6 +22,7 @@
 #include "BackupWindow.h"
 #include "DeviceSelectDlg.h"
 #include "ConfigDlg.h"
+#include "aboutdialog.h"
 #include <iostream>
 #include <iomanip>
 #include <sstream>
@@ -343,7 +344,6 @@ void BackupWindow::on_edit_config()
 
 void BackupWindow::on_help_about()
 {
-/*
 	Gtk::AboutDialog dlg;
 	dlg.set_copyright("Copyright (C) 2007, Net Direct Inc.");
 	dlg.set_license(
@@ -366,10 +366,11 @@ void BackupWindow::on_help_about()
 
 	int major, minor;
 	const char *BarryVersion = Barry::Version(major, minor);
-	dlg.set_version(std::string("Barry Backup 0.1 - Using library: ") + BarryVersion);
-	dlg.set_website("http://www.netdirect.ca/");
+	dlg.set_name("Barry Backup");
+	dlg.set_version("0.1");
+	dlg.set_comments(std::string("Using library: ") + BarryVersion);
+	dlg.set_website("http://www.netdirect.ca/software/packages/barry/");
 	dlg.run();
-*/
 }
 
 bool BackupWindow::on_startup()

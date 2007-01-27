@@ -19,6 +19,7 @@ bin_PROGRAMS = barrybackup
 
 barrybackup_SOURCES = \
 	main.cc \
+	aboutdialog.cc \
 	BackupWindow.cc \
 	DeviceSelectDlg.cc \
 	DatabaseSelectDlg.cc \
