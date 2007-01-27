@@ -33,6 +33,9 @@ class BackupWindow : public Gtk::Window
 	// Interface to Blackberry
 	DeviceInterface m_dev;
 
+	// signal exception handling connection
+	sigc::connection m_signal_handler_connection;
+
 	// data
 	std::auto_ptr<ConfigFile> m_pConfig;
 	Glib::Dispatcher m_signal_progress;
@@ -65,6 +68,9 @@ protected:
 public:
 	BackupWindow(BaseObjectType *cobject, const Glib::RefPtr<Gnome::Glade::Xml> &xml);
 	~BackupWindow();
+
+	// handler for exceptions that happen in signal calls
+	void signal_exception_handler();
 
 	// signal handlers
 	void on_backup();

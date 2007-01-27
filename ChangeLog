@@ -5,6 +5,7 @@ Release: version 0.5 - 2007/01/??
 	- lots more endian fixes after testing on iMac  
 	- iostream output size fixes
 	- added option to btool to reset the device via software
+	- beefed up exception handling in barrybackup
 2007/01/25
 	- found a link between the unknown field in tagged protocol headers
 		and the unknown field in RecordStateTable entries.  This

@@ -84,10 +84,18 @@ BackupWindow::BackupWindow(BaseObjectType *cobject,
 
 	m_pStatusBar->push("Ready");
 	m_pProgressBar->set_fraction(0.00);
+
+	// do this last so that any exceptions in the constructor
+	// won't cause a connected signal handler to a non-object
+	// (i.e. ~BackupWindow() won't get called if constructor throws)
+	m_signal_handler_connection = Glib::add_exception_handler(
+		sigc::mem_fun(*this, &BackupWindow::signal_exception_handler) );
 }
 
 BackupWindow::~BackupWindow()
 {
+	// disconnect the signal, as we're going out of business
+	m_signal_handler_connection.disconnect();
 }
 
 void BackupWindow::ScanAndConnect()
@@ -183,6 +191,29 @@ void BackupWindow::UpdateProgress()
 	m_pProgressBar->set_fraction(done);
 
 	m_pDatabaseEntry->set_text(m_dev.GetThreadDBName());
+}
+
+
+
+void BackupWindow::signal_exception_handler()
+{
+	try {
+		throw;
+	}
+	catch( Glib::Exception &e ) {
+		// This usually just means a missing .glade file,
+		// so we try to carry on.
+		std::cerr << "Glib::Exception caught in main: " << std::endl;
+		std::cerr << e.what() << std::endl;
+		Gtk::MessageDialog msg(e.what());
+		msg.run();
+	}
+	catch( ... ) {
+		// anything else, terminate window and pass on to next handler
+		// (which should be in main.cc)
+		hide();
+		throw;
+	}
 }
 
 

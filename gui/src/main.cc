@@ -27,6 +27,9 @@
 #include "BackupWindow.h"
 #include "util.h"
 
+//
+// The catch-all handler for exceptions that occur inside signals
+//
 void main_exception_handler()
 {
 	try {
@@ -46,8 +49,35 @@ void main_exception_handler()
 	}
 }
 
+
+//
+// These are for debugging... hopefully should never need them in the field,
+// but you never know...
+//
+
+void (*old_unexpected_handler)() = 0;
+void unexpected_handler()
+{
+	std::cerr << "main.cc: Unexpected exception detected - check your throw() specifications" << std::endl;
+	(*old_unexpected_handler)();
+}
+
+void (*old_terminate_handler)() = 0;
+void terminate_handler()
+{
+	std::cerr << "main.cc: terminate_handler() called - exception handling "
+		"could not complete, most likely due to exception inside "
+		"a destructor or catch()" << std::endl;
+	(*old_terminate_handler)();
+}
+
+
+
 int main(int argc, char *argv[])
 {
+	old_unexpected_handler = std::set_unexpected(&unexpected_handler);
+	old_terminate_handler = std::set_terminate(&terminate_handler);
+
 	Barry::Init(true);
 	Glib::thread_init();
 	Gtk::Main app(argc, argv);
