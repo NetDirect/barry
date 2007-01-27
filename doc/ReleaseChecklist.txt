@@ -3,6 +3,7 @@
 	- configure.ac
 	- src/Makefile.am
 	- src/version.cc
+	- gui/src/BackupWindow.cc (about dialog)
 - checkout pure CVS and test building everything
 - checkout pure CVS and:
 	- ./buildgen.sh in root

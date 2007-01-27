@@ -4,7 +4,12 @@
 # Generates the build system.
 #
 
-if [ "$1" = "clean" ] ; then
+if [ "$1" = "cleanall" ] ; then
+	(cd gui && make distclean)
+	(cd gui && ./buildgen.sh clean)
+	make distclean
+	./buildgen.sh clean
+elif [ "$1" = "clean" ] ; then
 	rm -rf autom4te.cache
 	rm -f Makefile.in aclocal.m4 config.guess config.h.in config.sub \
 		configure depcomp install-sh ltmain.sh missing \

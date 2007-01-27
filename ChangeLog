@@ -12,6 +12,8 @@ Release: version 0.5 - 2007/01/??
 		class for systems running older versions of gtkmm, like
 		Debian stable
 	- uncommented the about box menu handler
+	- added "cleanall" option to root buildgen.sh script
+	- update ReleaseChecklist.txt
 2007/01/25
 	- found a link between the unknown field in tagged protocol headers
 		and the unknown field in RecordStateTable entries.  This
