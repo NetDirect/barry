@@ -23,13 +23,14 @@
 # two digit version number, and leave age as 0, always.
 #
 # Only ever increment the first 2 numbers in this version:
-LIB_BARRY_VERSION = 0:5:0
+LIB_BARRY_VERSION = 0:6:0
 
 # Disable the default -I. -I$(srcdir) -I$(topdir), etc, as our includes
 # are proper anyway. :-)
 DEFAULT_INCLUDES =
 #INCLUDES = @PACKAGE_CXXFLAGS@ -I@LIBUSB_INC_PATH@
 INCLUDES = $(LIBUSB_CFLAGS)
+#AM_CXXFLAGS = -ansi -Wall -fno-strict-aliasing -g -D__DEBUG_MODE__
 AM_CXXFLAGS = -ansi -Wall -fno-strict-aliasing -g
 include_barrydir = ${includedir}/barry
 

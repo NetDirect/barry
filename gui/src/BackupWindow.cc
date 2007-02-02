@@ -367,7 +367,7 @@ void BackupWindow::on_help_about()
 	int major, minor;
 	const char *BarryVersion = Barry::Version(major, minor);
 	dlg.set_name("Barry Backup");
-	dlg.set_version("0.1");
+	dlg.set_version("0.2");
 	dlg.set_comments(std::string("Using library: ") + BarryVersion);
 	dlg.set_website("http://www.netdirect.ca/software/packages/barry/");
 	dlg.run();
