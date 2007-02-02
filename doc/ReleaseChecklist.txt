@@ -9,6 +9,7 @@
 	- ./buildgen.sh in root
 	- ./buildgen.sh in opensync-plugin
 	- ./buildgen.sh in gui
+	- remove all autom4te.cache directories
 - tar, and release
 
 Future considerations:
