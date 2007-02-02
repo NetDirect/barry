@@ -28,7 +28,9 @@
 #include <iomanip>
 #include <sstream>
 
+#ifndef __DEBUG_MODE__
 #define __DEBUG_MODE__
+#endif
 #include "debug.h"
 
 namespace Usb {
@@ -169,6 +171,22 @@ bool Device::InterruptWrite(int ep, const Barry::Data &data, int timeout)
 	if( m_lasterror < 0 )
 		throw UsbError("Error in usb_interrupt_write");
 	return m_lasterror >= 0;
+}
+
+//
+// BulkDrain
+//
+/// Reads anything available on the given endpoint, with a low timeout,
+/// in order to clear any pending reads.
+///
+void Device::BulkDrain(int ep)
+{
+	try {
+		Barry::Data data;
+		while( BulkRead(ep, data, 100) )
+		;
+	}
+	catch( UsbError & ) {}
 }
 
 

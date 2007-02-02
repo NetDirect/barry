@@ -83,6 +83,7 @@ namespace {
 		unsigned int bufsize = GetSize(response.GetData());
 		if( bufsize < response.GetSize() )
 			response.ReleaseBuffer(bufsize);
+		ddout("BulkRead (" << (unsigned int)ep.read << "):\n" << response);
 		return true;
 	}
 
@@ -164,6 +165,7 @@ void Probe::ProbeDevice(Usb::DeviceIDType devid)
 			Interface iface(dev, BLACKBERRY_INTERFACE);
 
 			Data data;
+			dev.BulkDrain(ep.read);
 			if( Intro(0, ep, dev, data) && Intro(1, ep, dev, data) &&
 			    Intro(2, ep, dev, data) && Parse(data, result) )
 			{

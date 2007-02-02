@@ -216,8 +216,8 @@ unsigned char * Data::GetBuffer(size_t requiredsize)
 
 void Data::ReleaseBuffer(int datasize)
 {
-	assert( datasize <= m_bufsize );
 	assert( datasize >= 0 || datasize == -1 );
+	assert( (unsigned int)datasize <= m_bufsize );
 	assert( !m_external );
 
 	if( datasize >= 0 ) {
