@@ -45,7 +45,7 @@ void CheckSize(const Data &packet, size_t requiredsize)
 		    << ". Required size: " << requiredsize;
 		eout(oss.str());
 		eout(packet);
-		throw BError(oss.str());
+		throw Error(oss.str());
 	}
 }
 

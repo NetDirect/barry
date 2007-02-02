@@ -57,7 +57,7 @@ void Controller::LoadDatabaseByName(const std::string &name, StorageT &store)
 	else if( name == Calendar::GetDBName() )
 		LoadDatabaseByType<Calendar>(store);
 	else
-		throw BError("Unknown database name in LoadDatabaseByName: " + name);
+		throw Error("Unknown database name in LoadDatabaseByName: " + name);
 }
 
 template <class StorageT>
@@ -70,7 +70,7 @@ void Controller::SaveDatabaseByName(const std::string &name, StorageT &store)
 	else if( name == Calendar::GetDBName() )
 		SaveDatabaseByType<Calendar>(store);
 	else
-		throw BError("Unknown database name in SaveDatabaseByName: " + name);
+		throw Error("Unknown database name in SaveDatabaseByName: " + name);
 }
 
 template <class RecordT>

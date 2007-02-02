@@ -1,5 +1,11 @@
 Release: version 0.6 - 2007/02/??
 ------------------------------------------------------------------------------
+2007/02/02
+	- reworked exception hierarchy, so applications can handle all
+		Barry related exceptions, including Usb errors, with
+		one base class: Barry::Error
+	- fixed all the ripple changes this caused throughout the codebase
+	- added BadPassword exception
 2007/02/01
 	- version bump in:
 		- configure.ac

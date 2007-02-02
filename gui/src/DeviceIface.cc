@@ -112,7 +112,7 @@ void DeviceInterface::RestoreThread()
 				m_AppComm.m_erase_db->emit();
 				m_con->SaveDatabase(dbId, *this);
 			}
-			catch( Barry::BError &be ) {
+			catch( Barry::Error &be ) {
 				// save thread error
 				m_last_thread_error = "Error while restoring ";
 				m_last_thread_error += m_current_dbname + ".  ";
@@ -170,7 +170,7 @@ void DeviceInterface::RestoreAndBackupThread()
 				m_con->SaveDatabase(dbId, *this);
 
 			}
-			catch( Barry::BError &be ) {
+			catch( Barry::Error &be ) {
 				// save thread error
 				m_last_thread_error = "Error while restoring ";
 				m_last_thread_error += m_current_dbname + ".  ";
@@ -301,7 +301,7 @@ bool DeviceInterface::Connect(const Barry::ProbeResult &dev)
 		m_con->OpenMode(Barry::Controller::Desktop);
 		return true;
 	}
-	catch( Barry::BError &e ) {
+	catch( Barry::Error &e ) {
 		m_con = 0;
 		return False(e.what());
 	}

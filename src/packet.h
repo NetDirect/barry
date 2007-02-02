@@ -87,9 +87,9 @@ public:
 	//////////////////////////////////
 	// response analysis
 
-	unsigned int Command() const;	// throws BError if receive isn't big enough
+	unsigned int Command() const;	// throws Error if receive isn't big enough
 	unsigned int ReturnCode() const;	// throws FIXME if packet doesn't support it
-	unsigned int DBOperation() const; // throws BError on size trouble
+	unsigned int DBOperation() const; // throws Error on size trouble
 
 	bool Parse(Parser &parser);	// switches based on last m_send command
 

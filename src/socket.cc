@@ -75,13 +75,13 @@ Socket::~Socket()
 ///	- Up: command response, which repeats the socket and flag data
 ///		as confirmation
 ///
-/// \exception	Barry::BError
+/// \exception	Barry::Error
 ///
 void Socket::Open(uint16_t socket, uint8_t flag)
 {
 	if( m_socket != 0 ) {
 		// already open
-		throw BError("Socket: already open");
+		throw Error("Socket: already open");
 	}
 
 	// build open command
@@ -96,7 +96,7 @@ void Socket::Open(uint16_t socket, uint8_t flag)
 	Data receive;
 	if( !Send(send, receive) ) {
 		eeout(send, receive);
-		throw BError(GetLastStatus(), "Error opening socket");
+		throw Error(GetLastStatus(), "Error opening socket");
 	}
 
 	// starting fresh, reset sequence ID
@@ -115,7 +115,7 @@ void Socket::Open(uint16_t socket, uint8_t flag)
 	    rpack->u.socket.param != flag )
 	{
 		eout("Packet:\n" << receive);
-		throw BError("Socket: Bad OPENED packet in Open");
+		throw Error("Socket: Bad OPENED packet in Open");
 	}
 
 	// success!  save the socket
@@ -131,7 +131,7 @@ void Socket::Open(uint16_t socket, uint8_t flag)
 /// The packet sequence is just like Open(), except the command is
 /// CLOSE_SOCKET.
 ///
-/// \exception	Barry::BError
+/// \exception	Barry::Error
 ///
 void Socket::Close()
 {
@@ -154,7 +154,7 @@ void Socket::Close()
 			m_flag = 0;
 
 			eeout(command, response);
-			throw BError(GetLastStatus(), "Error closing socket");
+			throw Error(GetLastStatus(), "Error closing socket");
 		}
 
 		// starting fresh, reset sequence ID
@@ -177,7 +177,7 @@ void Socket::Close()
 			m_flag = 0;
 
 			eout("Packet:\n" << response);
-			throw BError("Socket: Bad CLOSED packet in Close");
+			throw Error("Socket: Bad CLOSED packet in Close");
 		}
 
 		// and finally, there always seems to be an extra read of
@@ -288,7 +288,7 @@ unsigned int Socket::MakeNextFragment(const Data &whole, Data &fragment, unsigne
 	// sanity check
 	if( whole.GetSize() < SB_FRAG_HEADER_SIZE ) {
 		eout("Whole packet too short to fragment: " << whole.GetSize());
-		throw BError("Socket: Whole packet too short to fragment");
+		throw Error("Socket: Whole packet too short to fragment");
 	}
 
 	// calculate size
@@ -331,7 +331,7 @@ void Socket::CheckSequence(const Data &seq)
 	MAKE_PACKET(spack, seq);
 	if( (unsigned int) seq.GetSize() < SB_SEQUENCE_PACKET_SIZE ) {
 		eout("Short sequence packet:\n" << seq);
-		throw BError("Socket: invalid sequence packet");
+		throw Error("Socket: invalid sequence packet");
 	}
 
 	// we'll cheat here... if the packet's sequence is 0, we'll
@@ -346,7 +346,7 @@ void Socket::CheckSequence(const Data &seq)
 			if( m_socket != 0 ) {
 				eout("Socket sequence: " << m_sequenceId
 					<< ". Packet sequence: " << sequenceId);
-				throw BError("Socket: out of sequence");
+				throw Error("Socket: out of sequence");
 			}
 			else {
 				dout("Bad sequence on socket 0: expected: "
@@ -420,7 +420,7 @@ bool Socket::Packet(const Data &send, Data &receive, int timeout)
 
 				default:
 					eout("Command: " << (unsigned int)rpack->command << inFrag);
-					throw BError("Socket: unhandled packet in Packet()");
+					throw Error("Socket: unhandled packet in Packet()");
 					break;
 				}
 			}
@@ -468,7 +468,7 @@ bool Socket::Packet(const Data &send, Data &receive, int timeout)
 
 			default:
 				eout("Command: " << (unsigned int)rpack->command << inFrag);
-				throw BError("Socket: unhandled packet in Packet()");
+				throw Error("Socket: unhandled packet in Packet()");
 				break;
 			}
 		}
@@ -478,7 +478,7 @@ bool Socket::Packet(const Data &send, Data &receive, int timeout)
 			if( blankCount == 10 ) {
 				// only ask for more data on stalled sockets
 				// for so long
-				throw BError("Socket: 10 blank packets received");
+				throw Error("Socket: 10 blank packets received");
 			}
 		}
 

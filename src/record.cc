@@ -331,7 +331,7 @@ void DatabaseDatabase::ParseRec(const RecordType &rec, const unsigned char *end)
 template <class SizeType>
 SizeType ConvertHtoB(SizeType s)
 {
-	throw BError("Not implemented.");
+	throw Error("Not implemented.");
 }
 
 // specializations for specific sizes
@@ -1252,7 +1252,7 @@ const unsigned char* Calendar::ParseField(const unsigned char *begin,
 			return begin;
 
 		default:
-			throw BError("Calendar::ParseField: unknown appointment type");
+			throw Error("Calendar::ParseField: unknown appointment type");
 		}
 		break;
 
@@ -1267,7 +1267,7 @@ const unsigned char* Calendar::ParseField(const unsigned char *begin,
 		}
 		else {
 			// not enough data!
-			throw BError("Calendar::ParseField: not enough data in recurrance data field");
+			throw Error("Calendar::ParseField: not enough data in recurrance data field");
 		}
 		return begin;
 
@@ -1277,7 +1277,7 @@ const unsigned char* Calendar::ParseField(const unsigned char *begin,
 			TimeZoneCode = btohs(field->u.code);
 		}
 		else {
-			throw BError("Calendar::ParseField: not enough data in time zone code field");
+			throw Error("Calendar::ParseField: not enough data in time zone code field");
 		}
 		return begin;
 	}
@@ -1352,7 +1352,7 @@ void Calendar::ParseRecurranceData(const void *data)
 
 	default:
 		eout("Unknown recurrance data type: " << rec->type);
-		throw BError("Unknown recurrance data type");
+		throw Error("Unknown recurrance data type");
 	}
 }
 
@@ -1361,7 +1361,7 @@ void Calendar::ParseRecurranceData(const void *data)
 void Calendar::BuildRecurranceData(void *data)
 {
 	if( !Recurring )
-		throw BError("Calendar::BuildRecurranceData: Attempting to build recurrance data on non-recurring record.");
+		throw Error("Calendar::BuildRecurranceData: Attempting to build recurrance data on non-recurring record.");
 
 	CalendarRecurranceDataField *rec = (CalendarRecurranceDataField*) data;
 
@@ -1418,7 +1418,7 @@ void Calendar::BuildRecurranceData(void *data)
 	default:
 		eout("Calendar::BuildRecurranceData: "
 			"Unknown recurrance data type: " << rec->type);
-		throw BError("Calendar::BuildRecurranceData: Unknown recurrance data type");
+		throw Error("Calendar::BuildRecurranceData: Unknown recurrance data type");
 	}
 }
 

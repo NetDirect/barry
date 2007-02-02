@@ -56,7 +56,7 @@ Controller::Controller(const ProbeResult &device)
 	m_mode(Unspecified)
 {
 	if( !m_dev.SetConfiguration(BLACKBERRY_CONFIGURATION) )
-		throw BError(m_dev.GetLastError(),
+		throw Error(m_dev.GetLastError(),
 			"Controller: SetConfiguration failed");
 
 	m_iface = new Usb::Interface(m_dev, BLACKBERRY_INTERFACE);
@@ -117,7 +117,7 @@ void Controller::SelectMode(ModeType mode, uint16_t &socket, uint8_t &flag)
 	Data response;
 	if( !m_socket.Send(command, response) ) {
 		eeout(command, response);
-		throw BError(m_socket.GetLastStatus(),
+		throw Error(m_socket.GetLastStatus(),
 			"Controller: error setting desktop mode");
 	}
 
@@ -128,7 +128,7 @@ void Controller::SelectMode(ModeType mode, uint16_t &socket, uint8_t &flag)
 	MAKE_PACKET(modepack, response);
 	if( modepack->command != SB_COMMAND_MODE_SELECTED ) {
 		eeout(command, response);
-		throw BError("Controller: mode not selected");
+		throw Error("Controller: mode not selected");
 	}
 
 	// return the socket and flag that the device is expecting us to use
@@ -154,7 +154,7 @@ unsigned int Controller::GetCommand(CommandType ct)
 	if( cmd == 0 ) {
 		std::ostringstream oss;
 		oss << "Controller: unable to get command code: " << cmdName;
-		throw BError(oss.str());
+		throw Error(oss.str());
 	}
 
 	return cmd;
@@ -171,7 +171,7 @@ void Controller::LoadCommandTable()
 	Data response;
 	if( !m_socket.Packet(command, response) ) {
 		eeout(command, response);
-		throw BError(m_socket.GetLastStatus(),
+		throw Error(m_socket.GetLastStatus(),
 			"Controller: error getting command table");
 	}
 
@@ -179,7 +179,7 @@ void Controller::LoadCommandTable()
 	while( rpack->command != SB_COMMAND_DB_DONE ) {
 		if( !m_socket.NextRecord(response) ) {
 			eout("Response packet:\n" << response);
-			throw BError(m_socket.GetLastStatus(),
+			throw Error(m_socket.GetLastStatus(),
 				"Controller: error getting command table(next)");
 		}
 
@@ -205,7 +205,7 @@ void Controller::LoadDBDB()
 
 	if( !m_socket.Packet(packet) ) {
 		eeout(command, response);
-		throw BError(m_socket.GetLastStatus(),
+		throw Error(m_socket.GetLastStatus(),
 			"Controller: error getting database database");
 	}
 
@@ -218,7 +218,7 @@ void Controller::LoadDBDB()
 		// advance!
 		if( !m_socket.NextRecord(response) ) {
 			eout("Response packet:\n" << response);
-			throw BError(m_socket.GetLastStatus(),
+			throw Error(m_socket.GetLastStatus(),
 				"Controller: error getting command table(next)");
 		}
 	}
@@ -236,7 +236,7 @@ void Controller::LoadDBDB()
 /// \param[in]	name		Name of database, which matches one of the
 ///				names listed in GetDBDB()
 ///
-/// \exception	Barry::BError
+/// \exception	Barry::Error
 ///		Thrown if name not found.
 ///
 unsigned int Controller::GetDBID(const std::string &name) const
@@ -244,7 +244,7 @@ unsigned int Controller::GetDBID(const std::string &name) const
 	unsigned int ID = 0;
 	// FIXME - this needs a better error handler...
 	if( !m_dbdb.GetDBNumber(name, ID) ) {
-		throw BError("Controller: database name not found: " + name);
+		throw Error("Controller: database name not found: " + name);
 	}
 	return ID;
 }
@@ -261,7 +261,7 @@ unsigned int Controller::GetDBID(const std::string &name) const
 ///	- Controller::Desktop
 ///	- Controller::JavaLoader
 ///
-/// \exception	Barry::BError
+/// \exception	Barry::Error
 ///		Thrown on protocol error.
 ///
 /// \exception	std::logic_error()
@@ -316,7 +316,7 @@ void Controller::GetRecordStateTable(unsigned int dbId, RecordStateTable &result
 	if( !m_socket.Packet(packet) ) {
 		eout("Database ID: " << dbId);
 		eeout(command, response);
-		throw BError(m_socket.GetLastStatus(),
+		throw Error(m_socket.GetLastStatus(),
 			"Controller: error loading database");
 	}
 
@@ -328,7 +328,7 @@ void Controller::GetRecordStateTable(unsigned int dbId, RecordStateTable &result
 		// advance!
 		if( !m_socket.NextRecord(response) ) {
 			eout("Response packet:\n" << response);
-			throw BError(m_socket.GetLastStatus(),
+			throw Error(m_socket.GetLastStatus(),
 				"Controller: error loading state table (next)");
 		}
 	}
@@ -354,7 +354,7 @@ void Controller::AddRecord(unsigned int dbId, Builder &build)
 		if( !m_socket.Packet(packet) ) {
 			eout("Database ID: " << dbId);
 			eeout(command, response);
-			throw BError(m_socket.GetLastStatus(),
+			throw Error(m_socket.GetLastStatus(),
 				"Controller: error adding record to device database");
 		}
 		else {
@@ -364,14 +364,14 @@ void Controller::AddRecord(unsigned int dbId, Builder &build)
 			if( packet.Command() != SB_COMMAND_DB_DONE ) {
 				oss << "Controller: device responded with unexpected packet command code: "
 				    << packet.Command();
-				throw BError(oss.str());
+				throw Error(oss.str());
 			}
 
 			if( packet.ReturnCode() != 0 ) {
 				oss << "Controller: device responded with error code (command: "
 				    << packet.Command() << ", code: "
 				    << packet.ReturnCode() << ")";
-				throw BError(oss.str());
+				throw Error(oss.str());
 			}
 		}
 	}
@@ -398,7 +398,7 @@ void Controller::GetRecord(unsigned int dbId,
 	if( !m_socket.Packet(packet) ) {
 		eout("Database ID: " << dbId);
 		eeout(command, response);
-		throw BError(m_socket.GetLastStatus(),
+		throw Error(m_socket.GetLastStatus(),
 			"Controller: error loading database");
 	}
 
@@ -410,7 +410,7 @@ void Controller::GetRecord(unsigned int dbId,
 		oss << "Controller: invalid response packet size of "
 		    << response.GetSize();
 		eout(oss.str());
-		throw BError(oss.str());
+		throw Error(oss.str());
 	}
 	if( packet.Command() != SB_COMMAND_DB_DATA ) {
 		eeout(command, response);
@@ -421,7 +421,7 @@ void Controller::GetRecord(unsigned int dbId,
 		    << " instead of expected 0x"
 		    << std::setbase(16) << (unsigned int)SB_COMMAND_DB_DATA;
 		eout(oss.str());
-		throw BError(oss.str());
+		throw Error(oss.str());
 	}
 
 	// grab that data
@@ -433,7 +433,7 @@ void Controller::GetRecord(unsigned int dbId,
 		// advance!
 		if( !m_socket.NextRecord(response) ) {
 			eout("Response packet:\n" << response);
-			throw BError(m_socket.GetLastStatus(),
+			throw Error(m_socket.GetLastStatus(),
 				"Controller: error loading state table (next)");
 		}
 	}
@@ -462,7 +462,7 @@ void Controller::SetRecord(unsigned int dbId, unsigned int stateTableIndex,
 	if( !m_socket.Packet(packet) ) {
 		eout("Database ID: " << dbId << " Index: " << stateTableIndex);
 		eeout(command, response);
-		throw BError(m_socket.GetLastStatus(),
+		throw Error(m_socket.GetLastStatus(),
 			"Controller: error writing to device database (SetRecord)");
 	}
 	else {
@@ -472,14 +472,14 @@ void Controller::SetRecord(unsigned int dbId, unsigned int stateTableIndex,
 		if( packet.Command() != SB_COMMAND_DB_DONE ) {
 			oss << "Controller: device responded with unexpected packet command code: "
 			    << packet.Command();
-			throw BError(oss.str());
+			throw Error(oss.str());
 		}
 
 		if( packet.ReturnCode() != 0 ) {
 			oss << "Controller: device responded with error code (command: "
 			    << packet.Command() << ", code: "
 			    << packet.ReturnCode() << ")";
-			throw BError(oss.str());
+			throw Error(oss.str());
 		}
 	}
 }
@@ -501,7 +501,7 @@ void Controller::ClearDirty(unsigned int dbId, unsigned int stateTableIndex)
 	if( !m_socket.Packet(packet) ) {
 		eout("Database ID: " << dbId);
 		eeout(command, response);
-		throw BError(m_socket.GetLastStatus(),
+		throw Error(m_socket.GetLastStatus(),
 			"Controller: error loading database");
 	}
 
@@ -511,7 +511,7 @@ void Controller::ClearDirty(unsigned int dbId, unsigned int stateTableIndex)
 		// advance!
 		if( !m_socket.NextRecord(response) ) {
 			eout("Response packet:\n" << response);
-			throw BError(m_socket.GetLastStatus(),
+			throw Error(m_socket.GetLastStatus(),
 				"Controller: error loading state table (next)");
 		}
 	}
@@ -534,7 +534,7 @@ void Controller::DeleteRecord(unsigned int dbId, unsigned int stateTableIndex)
 	if( !m_socket.Packet(packet) ) {
 		eout("Database ID: " << dbId);
 		eeout(command, response);
-		throw BError(m_socket.GetLastStatus(),
+		throw Error(m_socket.GetLastStatus(),
 			"Controller: error deleting record");
 	}
 
@@ -544,7 +544,7 @@ void Controller::DeleteRecord(unsigned int dbId, unsigned int stateTableIndex)
 		// advance!
 		if( !m_socket.NextRecord(response) ) {
 			eout("Response packet:\n" << response);
-			throw BError(m_socket.GetLastStatus(),
+			throw Error(m_socket.GetLastStatus(),
 				"Controller: error deleting record (next)");
 		}
 	}
@@ -567,7 +567,7 @@ void Controller::DeleteRecord(unsigned int dbId, unsigned int stateTableIndex)
 ///				a custom fashion.  See the RecordParser<>
 ///				template.
 ///
-/// \exception	Barry::BError
+/// \exception	Barry::Error
 ///		Thrown on protocol error.
 ///
 /// \exception	std::logic_error
@@ -585,7 +585,7 @@ void Controller::LoadDatabase(unsigned int dbId, Parser &parser)
 	if( !m_socket.Packet(packet) ) {
 		eout("Database ID: " << dbId);
 		eeout(command, response);
-		throw BError(m_socket.GetLastStatus(),
+		throw Error(m_socket.GetLastStatus(),
 			"Controller: error loading database");
 	}
 
@@ -600,7 +600,7 @@ void Controller::LoadDatabase(unsigned int dbId, Parser &parser)
 		// advance!
 		if( !m_socket.NextRecord(response) ) {
 			eout("Response packet:\n" << response);
-			throw BError(m_socket.GetLastStatus(),
+			throw Error(m_socket.GetLastStatus(),
 				"Controller: error loading database (next)");
 		}
 	}
@@ -626,7 +626,7 @@ void Controller::SaveDatabase(unsigned int dbId, Builder &builder)
 	if( !m_socket.Packet(packet, 60000) ) {
 		eout("Database ID: " << dbId);
 		eeout(command, response);
-		throw BError(m_socket.GetLastStatus(),
+		throw Error(m_socket.GetLastStatus(),
 			"Controller: error clearing database");
 	}
 	if( packet.ReturnCode() != 0 ) {
@@ -634,12 +634,12 @@ void Controller::SaveDatabase(unsigned int dbId, Builder &builder)
 		oss << "Controller: could not clear database: (command: "
 		    << packet.Command() << ", code: "
 		    << packet.ReturnCode() << ")";
-		throw BError(oss.str());
+		throw Error(oss.str());
 	}
 
 	// check response to clear command was successful
 	if( packet.Command() != SB_COMMAND_DB_DONE ) {
-		throw BError(m_socket.GetLastStatus(),
+		throw Error(m_socket.GetLastStatus(),
 			"Controller: error clearing database, bad response");
 	}
 
@@ -649,7 +649,7 @@ void Controller::SaveDatabase(unsigned int dbId, Builder &builder)
 		if( !m_socket.Packet(packet, first ? 60000 : -1) ) {
 			eout("Database ID: " << dbId);
 			eeout(command, response);
-			throw BError(m_socket.GetLastStatus(),
+			throw Error(m_socket.GetLastStatus(),
 				"Controller: error writing to device database");
 		}
 		else {
@@ -659,14 +659,14 @@ void Controller::SaveDatabase(unsigned int dbId, Builder &builder)
 			if( packet.Command() != SB_COMMAND_DB_DONE ) {
 				oss << "Controller: device responded with unexpected packet command code: "
 				    << packet.Command();
-				throw BError(oss.str());
+				throw Error(oss.str());
 			}
 
 			if( packet.ReturnCode() != 0 ) {
 				oss << "Controller: device responded with error code (command: "
 				    << packet.Command() << ", code: "
 				    << packet.ReturnCode() << ")";
-				throw BError(oss.str());
+				throw Error(oss.str());
 			}
 		}
 		first = false;

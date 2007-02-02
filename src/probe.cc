@@ -100,7 +100,7 @@ bool Probe::Parse(const Data &data, ProbeResult &result)
 	    pd[4] != 0x06 )
 	{
 		return false;
-//		throw BError("Probe: Unexpected reponse data in parse");
+//		throw Error("Probe: Unexpected reponse data in parse");
 	}
 
 	// capture the PIN
@@ -159,7 +159,7 @@ void Probe::ProbeDevice(Usb::DeviceIDType devid)
 //				sleep(5);
 
 			if( !dev.SetConfiguration(BLACKBERRY_CONFIGURATION) )
-				throw BError(dev.GetLastError(),
+				throw Error(dev.GetLastError(),
 					"Probe: SetConfiguration failed");
 
 			Interface iface(dev, BLACKBERRY_INTERFACE);

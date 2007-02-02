@@ -30,16 +30,42 @@ namespace Barry {
 /// @{
 
 //
-// BError class
+// Error class
 //
-/// Currently the only Barry exception class, and planned to be the base class
-/// for any future derived exceptions.  Thrown on any protocol error.
+/// The base class for any future derived exceptions.
+/// Can be thrown on any protocol error.
 ///
-class BError : public std::runtime_error
+class Error : public std::runtime_error
 {
 public:
-	BError(const std::string &str) : std::runtime_error(str) {}
-	BError(int libusb_errno, const std::string &str);
+	Error(const std::string &str) : std::runtime_error(str) {}
+	Error(int libusb_errno, const std::string &str);
+};
+
+
+//
+// BadPassword
+//
+/// A bad or unknown password when talking to the device.
+/// Can be thrown in the following instances:
+///
+///	- no password provided and the device requests one
+///	- device rejected the available password
+///	- too few remaining tries left... Barry will refuse to keep
+///		trying passwords if there are fewer than
+///		6 tries remaining
+///		
+///
+class BadPassword : public Barry::Error
+{
+	int m_remaining_tries;
+
+public:
+	BadPassword(const std::string &str, int remaining_tries)
+		: Barry::Error(str),
+		m_remaining_tries(remaining_tries)
+		{}
+	int remaining_tries() const { return m_remaining_tries; }
 };
 
 /// @}

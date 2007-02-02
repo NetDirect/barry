@@ -1,17 +1,20 @@
 
-The Barry library throws two types of exceptions:
+The Barry library has the following exception hierarchy:
 
-	Usb::UsbError - derived from std::runtime_error
-		All specific USB error exceptions will be derived from
-		this class.  This is currently the only class used, and
-		only thrown in the usbwrap.{h,cc} code.
+- std::exception
+	- std::runtime_error
+		- Barry::Error
+			- Usb::Error
+			- Barry::BadPassword
 
+Usb::Error
+	All specific USB error exceptions will be derived from
+	this class.  This is currently the only class used, and
+	only thrown in the usbwrap.{h,cc} code.
 
-	Barry::BError - derived from std::runtime_error
-		All specific Barry error exceptions will be derived from
-		this class.  This is currently the only class used, and
-		can be thrown from anywhere inside Barry.
-
+Barry::Error
+	All specific Barry error exceptions will be derived from
+	this class.  This can be thrown from anywhere inside Barry.
 
 
 There is also the remote possibility that there will be memory exceptions
@@ -20,5 +23,4 @@ by the standard C++ libraries.  Barry does not catch these errors.
 
 All of the above exceptions are derived from std::exception, so they
 can all be caught in one statement for the efficient and lazy. :-)
-
 

@@ -26,7 +26,7 @@
 #include <usb.h>
 #include <vector>
 #include <map>
-#include <stdexcept>
+#include "error.h"
 
 #define USBWRAP_DEFAULT_TIMEOUT	30000
 
@@ -40,10 +40,10 @@ namespace Usb {
 /// @{
 
 /// Thrown on low level USB errors.
-class UsbError : public std::runtime_error
+class Error : public Barry::Error
 {
 public:
-	UsbError(const std::string &str) : std::runtime_error(str) {}
+	Error(const std::string &str) : Barry::Error(str) {}
 };
 
 /// @}
@@ -121,7 +121,7 @@ public:
 		: m_dev(dev), m_iface(iface)
 	{
 		if( usb_claim_interface(dev.GetHandle(), iface) < 0 )
-			throw UsbError("claim interface failed");
+			throw Error("claim interface failed");
 	}
 
 	~Interface()

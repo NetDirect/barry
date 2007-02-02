@@ -496,15 +496,11 @@ int main(int argc, char *argv[])
 		}
 
 	}
-	catch( Barry::BError &se ) {
-		std::cerr << "BError caught: " << se.what() << endl;
+	catch( Usb::Error &ue) {
+		std::cerr << "Usb::Error caught: " << ue.what() << endl;
 	}
-	catch( Usb::UsbError &ue) {
-		std::cerr << "UsbError caught: " << ue.what() << endl;
-	}
-	catch( std::runtime_error &re ) {
-		std::cerr << "std::runtime_error caught: " << re.what() << endl;
-		return 1;
+	catch( Barry::Error &se ) {
+		std::cerr << "Barry::Error caught: " << se.what() << endl;
 	}
 	catch( std::exception &e ) {
 		std::cerr << "std::exception caught: " << e.what() << endl;

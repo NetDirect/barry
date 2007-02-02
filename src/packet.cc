@@ -313,7 +313,7 @@ bool Packet::SetRecord(unsigned int dbId, Builder &build)
 // Command
 //
 /// Returns the command value of the receive packet.  If receive isn't
-/// large enough, throws BError.
+/// large enough, throws Error.
 ///
 unsigned int Packet::Command() const
 {
@@ -331,7 +331,7 @@ unsigned int Packet::ReturnCode() const
 		return rpack->u.db.u.return_code;
 	}
 	else {
-		throw BError("Attempting to extract a return code from the wrong response packet type");
+		throw Error("Attempting to extract a return code from the wrong response packet type");
 	}
 }
 
@@ -340,7 +340,7 @@ unsigned int Packet::ReturnCode() const
 //
 /// Returns the database operation code from the receive packet, assuming
 /// that receive contains a response packet.  If receive isn't large
-/// enough, throws BError.
+/// enough, throws Error.
 ///
 unsigned int Packet::DBOperation() const
 {
