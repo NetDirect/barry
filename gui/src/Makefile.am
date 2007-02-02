@@ -27,5 +27,6 @@ barrybackup_SOURCES = \
 	ConfigFile.cc \
 	DeviceIface.cc \
 	tarfile.cc \
+	tarfile-ops-nt.cc \
 	util.cc
 

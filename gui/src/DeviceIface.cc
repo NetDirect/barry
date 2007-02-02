@@ -347,7 +347,7 @@ bool DeviceInterface::StartBackup(AppComm comm,
 	try {
 
 		std::string filename = directory + "/" + MakeFilename(pin);
-		m_tarback.reset( new reuse::TarFile(filename.c_str(), true, true, true) );
+		m_tarback.reset( new reuse::TarFile(filename.c_str(), true, &reuse::gztar_ops_nonthread, true) );
 
 	}
 	catch( reuse::TarFile::TarError &te ) {
@@ -375,7 +375,7 @@ bool DeviceInterface::StartRestore(AppComm comm,
 		if( pRecordCount ) {
 			// caller is asking for a total, so we do a quick
 			// scan through the tar file first
-			m_tar.reset( new reuse::TarFile(filename.c_str(), false, true, true) );
+			m_tar.reset( new reuse::TarFile(filename.c_str(), false, &reuse::gztar_ops_nonthread, true) );
 			*pRecordCount = CountFiles(*m_tar, restoreList);
 
 			// close for next open
@@ -383,7 +383,7 @@ bool DeviceInterface::StartRestore(AppComm comm,
 		}
 
 		// open for the main restore
-		m_tar.reset( new reuse::TarFile(filename.c_str(), false, true, true) );
+		m_tar.reset( new reuse::TarFile(filename.c_str(), false, &reuse::gztar_ops_nonthread, true) );
 
 	}
 	catch( reuse::TarFile::TarError &te ) {
@@ -420,7 +420,7 @@ bool DeviceInterface::StartRestoreAndBackup(AppComm comm,
 		if( pRecordCount ) {
 			// caller is asking for a total, so we do a quick
 			// scan through the tar file first
-			m_tar.reset( new reuse::TarFile(filename.c_str(), false, true, true) );
+			m_tar.reset( new reuse::TarFile(filename.c_str(), false, &reuse::gztar_ops_nonthread, true) );
 			*pRecordCount = CountFiles(*m_tar, restoreAndBackupList);
 
 			// close for next open
@@ -428,11 +428,11 @@ bool DeviceInterface::StartRestoreAndBackup(AppComm comm,
 		}
 
 		// open for the main restore
-		m_tar.reset( new reuse::TarFile(filename.c_str(), false, true, true) );
+		m_tar.reset( new reuse::TarFile(filename.c_str(), false, &reuse::gztar_ops_nonthread, true) );
 
 		// open for secondary backup
 		std::string back = directory + "/" + MakeFilename(pin);
-		m_tarback.reset( new reuse::TarFile(back.c_str(), true, true, true) );
+		m_tarback.reset( new reuse::TarFile(back.c_str(), true, &reuse::gztar_ops_nonthread, true) );
 
 	}
 	catch( reuse::TarFile::TarError &te ) {

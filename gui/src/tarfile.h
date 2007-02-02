@@ -24,15 +24,21 @@
 
 #include <string>
 #include <stdexcept>
-#include <memory>
+#include <libtar.h>
 
 namespace reuse {
 
-class TarFileData;
+//
+// Compression options... more op sets can be added based on
+// threading needs, or threading library support.
+//
+
+/// Compression op set for zlib, non-threadsafe.
+extern tartype_t gztar_ops_nonthread;
 
 class TarFile
 {
-	std::auto_ptr<TarFileData> m_data;
+	TAR *m_tar;
 	bool m_throw;
 	bool m_writemode;
 	std::string m_last_error;
@@ -51,7 +57,7 @@ public:
 
 public:
 	explicit TarFile(const char *filename, bool write = false,
-		bool compress = true, bool always_throw = false);
+		tartype_t *compress_ops = 0, bool always_throw = false);
 	~TarFile();
 
 	const std::string& get_last_error() const { return m_last_error; }
