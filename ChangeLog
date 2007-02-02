@@ -1,3 +1,25 @@
+Release: version 0.6 - 2007/02/??
+------------------------------------------------------------------------------
+2007/02/01
+	- version bump in:
+		- configure.ac
+		- src/Makefile.am
+		- src/version.cc
+		- gui/src/BackupWindow.cc (about dialog)
+	- updated doc/ReleaseChecklist.txt
+	- added usb-level breset.cc command line tool
+	- fixed bug in gui/src/tarfile.* for systems where
+		sizeof(int) != sizeof(void*)
+		- TarFile class now uses a plugin style for the compression
+			operations, to allow for threadsafe versions if needed
+			in the future.
+		- also fixed leaked file handle bug in open_compressed()
+		- Thanks to Jonathan Hudson for reporting this for 64bit systems
+	- minor signed comparison fixes in the library
+	- added better protocol data dumping code in probe.cc
+	- added Usb::Device::BulkDrain(), to prevent Barry from hanging
+		due to pending reads
+
 Release: version 0.5 - 2007/01/26
 ------------------------------------------------------------------------------
 2007/01/26
