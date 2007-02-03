@@ -5,6 +5,8 @@ Written by:
 
 Contributors (code and otherwise) in alphabetical order by last name:
 ---------------------------------------------------------------------
+	Ian Darwin <ian@darwinsys.com>
+		- documentation fixes and additions
 	Troy Engel <tengel@users.sourceforge.net>
 		- usb captures on Windows XP for the BlackBerry Pearl
 	Ron Gage <ron@rongage.org>
@@ -14,4 +16,8 @@ Contributors (code and otherwise) in alphabetical order by last name:
 		- big endian testing and patches
 	Peter McAlpine <peter@aoeu.ca>
 		- autoconf patches
+	Alan Miller <Alan.Miller@synopsys.com>
+		- usb captures on Windows XP for password authentication
+	Rick Scott <rwscott@alumni.uwaterloo.ca>
+		- password authentication code and tips
 
