@@ -4,6 +4,7 @@ Release: version 0.6 - 2007/02/??
 	- added initial btool.1 man page from Ian Darwin
 	- updated man/Makefile.am for new btool.1
 	- updated AUTHORS
+	- applied btool -h help clarification patch from Ian Darwin
 2007/02/02
 	- reworked exception hierarchy, so applications can handle all
 		Barry related exceptions, including Usb errors, with

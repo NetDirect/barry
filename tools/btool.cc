@@ -43,7 +43,7 @@ void Usage()
    << "\n"
    << "   -c dn     Convert address book database to LDIF format, using the\n"
    << "             specified baseDN\n"
-   << "   -d db     Load database 'db' and dump to screen\n"
+   << "   -d db     Load database 'db' FROM device and dump to screen\n"
    << "             Can be used multiple times to fetch more than one DB\n"
 #ifdef __BARRY_BOOST_MODE__
    << "   -f file   Filename to save or load handheld data to/from\n"
@@ -52,7 +52,7 @@ void Usage()
    << "   -l        List devices\n"
    << "   -p pin    PIN of device to talk with\n"
    << "             If only one device plugged in, this flag is optional\n"
-   << "   -s db     Save database 'db' from data loaded from -f file\n"
+   << "   -s db     Save database 'db' TO device from data loaded from -f file\n"
    << "   -t        Show database database table\n"
    << "   -T db     Show record state table for given database\n"
    << "   -v        Dump protocol data during operation\n"
