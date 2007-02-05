@@ -1,5 +1,10 @@
 Release: version 0.6 - 2007/02/??
 ------------------------------------------------------------------------------
+2007/02/04
+	- updated AUTHORS
+	- fixed bug in barrybackup GUI that didn't create the target path
+		if the user didn't do Edit | Config first.
+		Thanks to Ian Darwin for reporting the bug.
 2007/02/03
 	- added initial btool.1 man page from Ian Darwin
 	- updated man/Makefile.am for new btool.1
