@@ -24,6 +24,7 @@
 #include <pwd.h>
 #include <string.h>
 #include <errno.h>
+#include <unistd.h>
 #include <fstream>
 #include <sstream>
 

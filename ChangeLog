@@ -5,6 +5,8 @@ Release: version 0.6 - 2007/02/??
 	- fixed bug in barrybackup GUI that didn't create the target path
 		if the user didn't do Edit | Config first.
 		Thanks to Ian Darwin for reporting the bug.
+	- applied gui/src/ConfigFile.cc header fix patch for OpenBSD
+		from Ian Darwin
 2007/02/03
 	- added initial btool.1 man page from Ian Darwin
 	- updated man/Makefile.am for new btool.1
