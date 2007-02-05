@@ -23,6 +23,7 @@
 #include "DeviceSelectDlg.h"
 #include "ConfigDlg.h"
 #include "aboutdialog.h"
+#include "util.h"
 #include <iostream>
 #include <iomanip>
 #include <sstream>
@@ -226,6 +227,13 @@ void BackupWindow::on_backup()
 	// already working?
 	if( m_working ) {
 		Gtk::MessageDialog msg("Thread already in progress.");
+		msg.run();
+		return;
+	}
+
+	// make sure our target directory exists
+	if( !::CheckPath(m_pConfig->GetPath()) ) {
+		Gtk::MessageDialog msg("Could not create directory: " + m_pConfig->GetPath());
 		msg.run();
 		return;
 	}
