@@ -363,7 +363,7 @@ void Controller::AddRecord(unsigned int dbId, Builder &build)
 			// successful packet transfer, so check the network return code
 			if( packet.Command() != SB_COMMAND_DB_DONE ) {
 				oss << "Controller: device responded with unexpected packet command code: "
-				    << packet.Command();
+				    << "0x" << std::hex << packet.Command();
 				throw Error(oss.str());
 			}
 
@@ -408,7 +408,7 @@ void Controller::GetRecord(unsigned int dbId,
 
 		std::ostringstream oss;
 		oss << "Controller: invalid response packet size of "
-		    << response.GetSize();
+		    << std::dec << response.GetSize();
 		eout(oss.str());
 		throw Error(oss.str());
 	}
@@ -471,7 +471,7 @@ void Controller::SetRecord(unsigned int dbId, unsigned int stateTableIndex,
 		// successful packet transfer, so check the network return code
 		if( packet.Command() != SB_COMMAND_DB_DONE ) {
 			oss << "Controller: device responded with unexpected packet command code: "
-			    << packet.Command();
+			    << "0x" << std::hex << packet.Command();
 			throw Error(oss.str());
 		}
 
@@ -632,8 +632,8 @@ void Controller::SaveDatabase(unsigned int dbId, Builder &builder)
 	if( packet.ReturnCode() != 0 ) {
 		std::ostringstream oss;
 		oss << "Controller: could not clear database: (command: "
-		    << packet.Command() << ", code: "
-		    << packet.ReturnCode() << ")";
+		    << "0x" << std::hex << packet.Command() << ", code: "
+		    << "0x" << std::hex << packet.ReturnCode() << ")";
 		throw Error(oss.str());
 	}
 
@@ -658,7 +658,7 @@ void Controller::SaveDatabase(unsigned int dbId, Builder &builder)
 			// successful packet transfer, so check the network return code
 			if( packet.Command() != SB_COMMAND_DB_DONE ) {
 				oss << "Controller: device responded with unexpected packet command code: "
-				    << packet.Command();
+				    << "0x" << std::hex << packet.Command();
 				throw Error(oss.str());
 			}
 

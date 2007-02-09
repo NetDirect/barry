@@ -419,7 +419,7 @@ bool Socket::Packet(const Data &send, Data &receive, int timeout)
 					break;
 
 				default:
-					eout("Command: " << (unsigned int)rpack->command << inFrag);
+					eout("Command: " << std::setbase(16) << (unsigned int)rpack->command << inFrag);
 					throw Error("Socket: unhandled packet in Packet()");
 					break;
 				}
@@ -467,7 +467,7 @@ bool Socket::Packet(const Data &send, Data &receive, int timeout)
 				break;
 
 			default:
-				eout("Command: " << (unsigned int)rpack->command << inFrag);
+				eout("Command: " << std::setbase(16) << (unsigned int)rpack->command << inFrag);
 				throw Error("Socket: unhandled packet in Packet()");
 				break;
 			}
