@@ -498,9 +498,11 @@ int main(int argc, char *argv[])
 	}
 	catch( Usb::Error &ue) {
 		std::cerr << "Usb::Error caught: " << ue.what() << endl;
+		return 1;
 	}
 	catch( Barry::Error &se ) {
 		std::cerr << "Barry::Error caught: " << se.what() << endl;
+		return 1;
 	}
 	catch( std::exception &e ) {
 		std::cerr << "std::exception caught: " << e.what() << endl;
