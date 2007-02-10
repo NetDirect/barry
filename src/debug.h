@@ -15,6 +15,7 @@
 */
 
 #include <iostream>		// debugging only
+#include <iomanip>
 
 namespace Barry {
 extern bool __data_dump_mode__;
