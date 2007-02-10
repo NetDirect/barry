@@ -34,10 +34,8 @@ void CheckSize(const Data &packet, size_t requiredsize)
 {
 	const Packet *p = (const Packet *) packet.GetData();
 
-// FIXME - NOTE - can't rely on GetSize() when using libusb-stable
-//	if( btohs(p->size) != packet.GetSize() || packet.GetSize() < requiredsize )
+	if( btohs(p->size) != packet.GetSize() || packet.GetSize() < requiredsize )
 
-	if( packet.GetSize() < requiredsize )
 	{
 		std::ostringstream oss;
 		oss << "Bad packet size. Packet: " << btohs(p->size)

@@ -125,6 +125,7 @@ bool Device::BulkRead(int ep, Barry::Data &data, int timeout)
 			timeout == -1 ? m_timeout : timeout);
 		if( m_lasterror < 0 && m_lasterror != -EINTR && m_lasterror != -EAGAIN )
 			throw Error("Error in usb_bulk_read");
+		data.ReleaseBuffer(m_lasterror);
 	} while( m_lasterror == -EINTR || m_lasterror == -EAGAIN );
 
 	return m_lasterror >= 0;
@@ -170,6 +171,7 @@ bool Device::InterruptRead(int ep, Barry::Data &data, int timeout)
 			timeout == -1 ? m_timeout : timeout);
 		if( m_lasterror < 0 && m_lasterror != -EINTR && m_lasterror != -EAGAIN )
 			throw Error("Error in usb_interrupt_read");
+		data.ReleaseBuffer(m_lasterror);
 	} while( m_lasterror == -EINTR || m_lasterror == -EAGAIN );
 
 	return m_lasterror >= 0;

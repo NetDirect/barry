@@ -76,13 +76,6 @@ namespace {
 		dev.BulkWrite(ep.write, Intro_Sends[IntroIndex],
 			GetSize(Intro_Sends[IntroIndex]));
 		dev.BulkRead(ep.read, response);
-
-		// the stable libusb doesn't give us the size of the
-		// data actually returned, so parse the packet for its size
-		response.ReleaseBuffer(response.GetBufSize());
-		unsigned int bufsize = GetSize(response.GetData());
-		if( bufsize < response.GetSize() )
-			response.ReleaseBuffer(bufsize);
 		ddout("BulkRead (" << (unsigned int)ep.read << "):\n" << response);
 		return true;
 	}

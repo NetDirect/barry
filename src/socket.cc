@@ -222,14 +222,6 @@ bool Socket::Send(const Data &send, Data &receive, int timeout)
 	m_dev.BulkWrite(m_writeEp, send);
 	m_dev.BulkRead(m_readEp, receive, timeout);
 
-	// the stable libusb doesn't give us the actual size read,
-	// so parse the first bit of the packet for the size field
-	m_lastStatus = m_dev.GetLastError();
-	receive.ReleaseBuffer(receive.GetBufSize());
-	unsigned int bufsize = Protocol::GetSize(receive);
-	if( bufsize < receive.GetBufSize() )
-		receive.ReleaseBuffer(bufsize);
-
 	ddout("Socket::Send: Endpoint " << m_readEp << "\nReceived:\n" << receive);
 
 	return m_lastStatus >= 0;
@@ -238,14 +230,6 @@ bool Socket::Send(const Data &send, Data &receive, int timeout)
 bool Socket::Receive(Data &receive, int timeout)
 {
 	m_dev.BulkRead(m_readEp, receive, timeout);
-
-	// the stable libusb doesn't give us the actual size read,
-	// so parse the first bit of the packet for the size field
-	m_lastStatus = m_dev.GetLastError();
-	receive.ReleaseBuffer(receive.GetBufSize());
-	unsigned int bufsize = Protocol::GetSize(receive);
-	if( bufsize < receive.GetBufSize() )
-		receive.ReleaseBuffer(bufsize);
 
 	ddout("Socket::Receive: Endpoint " << m_readEp << "\nReceived:\n" << receive);
 
