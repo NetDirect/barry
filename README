@@ -31,6 +31,9 @@ You need:
 	boost 1.33 (optional)
 				http://www.boost.org/
 
+If building directly from CVS instead of from a release tarball, you also need:
+	automake (1.9)		run from buildgen.sh
+	autoconf (2.60)		run from buildgen.sh
 
 Boost:
 
@@ -46,6 +49,8 @@ Version 0.1.x is the series you want, and is commonly available.
 
 To build Barry:
 ---------------
+
+	If starting from CVS, run buildgen.sh with no arguments.
 
 	export PKG_CONFIG_PATH=/path/to/external/libusb
 				Only needed if you want to use a libusb

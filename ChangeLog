@@ -1,5 +1,7 @@
 Release: version 0.6 - 2007/02/??
 ------------------------------------------------------------------------------
+2007/02/10
+	- applied README patch from Ian Darwin
 2007/02/09
 	- added proper return codes for error conditions in btool.cc
 	- clarified some stream output code in the library, for hex/dec numbers
