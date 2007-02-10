@@ -33,7 +33,7 @@ You need:
 
 If building directly from CVS instead of from a release tarball, you also need:
 	automake (1.9)		run from buildgen.sh
-	autoconf (2.60)		run from buildgen.sh
+	autoconf (2.59)		run from buildgen.sh
 
 Boost:
 
@@ -206,5 +206,5 @@ Misc utilities:
 
 Enjoy!
 
-January 2007
+February 2007
 
