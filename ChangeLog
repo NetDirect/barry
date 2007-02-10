@@ -5,6 +5,11 @@ Release: version 0.6 - 2007/02/??
 	- minor tweaks to README
 	- added missing errno.h header in src/usbwrap.cc for AMD64
 		Thanks to Jonathan Hudson for reporting the bug.
+	- tightened up size checks in Data::ReleaseBuffer()
+	- stable libusb *does* return the actual length of the USB packet...
+		fixed this in usbwrap.cc to set the actual size of read data,
+		and removed the size hacks elsewhere in the code:
+		probe.cc, protocol.cc, socket.cc, usbwrap.cc
 2007/02/09
 	- added proper return codes for error conditions in btool.cc
 	- clarified some stream output code in the library, for hex/dec numbers
