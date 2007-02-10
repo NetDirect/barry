@@ -27,6 +27,7 @@
 
 #include <iomanip>
 #include <sstream>
+#include <errno.h>
 
 #ifndef __DEBUG_MODE__
 #define __DEBUG_MODE__
