@@ -1,5 +1,10 @@
 Release: version 0.6 - 2007/02/??
 ------------------------------------------------------------------------------
+2007/02/09
+	- added proper return codes for error conditions in btool.cc
+	- clarified some stream output code in the library, for hex/dec numbers
+	- removed old, non-working connect.cc test program
+	- added iomanip to debug.h
 2007/02/04
 	- updated AUTHORS
 	- fixed bug in barrybackup GUI that didn't create the target path
@@ -162,7 +167,7 @@ Release: version 0.5 - 2007/01/26
 	- fixed protocol hang at end of Controller operation... in
 		controller destructor, it was deleting the USB interface
 		before closing the socket at the BlackBerry level, thereby
-		leaving he device in Desktop mode
+		leaving the device in Desktop mode
 2007/01/04
 	- support the newer udev packages on Ubuntu, which need slightly
 		different rules
