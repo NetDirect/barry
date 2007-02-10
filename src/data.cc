@@ -217,8 +217,17 @@ unsigned char * Data::GetBuffer(size_t requiredsize)
 void Data::ReleaseBuffer(int datasize)
 {
 	assert( datasize >= 0 || datasize == -1 );
-	assert( (unsigned int)datasize <= m_bufsize );
+	assert( datasize == -1 || (unsigned int)datasize <= m_bufsize );
 	assert( !m_external );
+
+	if( m_external )
+		return;
+	if( datasize >= 0 && (unsigned int)datasize > m_bufsize ) {
+		dout("ReleaseBuffer called with datasize("
+			<< std::dec << datasize << ") > m_bufsize("
+			<< m_bufsize << ")");
+		return;
+	}
 
 	if( datasize >= 0 ) {
 		m_datasize = datasize;
