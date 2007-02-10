@@ -5,6 +5,8 @@ Release: version 0.6 - 2007/02/??
 	- clarified some stream output code in the library, for hex/dec numbers
 	- removed old, non-working connect.cc test program
 	- added iomanip to debug.h
+	- changed usbwrap to call libusb again if EINTR and EAGAIN
+		This should fix one of the OpenBSD issues
 2007/02/04
 	- updated AUTHORS
 	- fixed bug in barrybackup GUI that didn't create the target path
