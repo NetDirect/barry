@@ -38,13 +38,6 @@ bool IsHexData(const char *str)
 
 void PrintHex(const char *str)
 {
-/*
-	ios::fmtflags flags = cout.setf(ios::right);
-	streamsize width = cout.width(14 + 16 * 3 + 1);
-	cout.flags(flags);
-	cout.width(width);
-*/
-
 	cout << setiosflags(ios::left) << setw(14 + 16 * 3 + 1) << str;
 	cout << setw(0);
 	str += 14;
@@ -60,21 +53,6 @@ void PrintHex(const char *str)
 		str = endpos;
 	}
 	cout << '\n';
-
-/*
-	cout << str << ' ';
-	istringstream iss(str+14);
-	iss.setf(ios::hex);
-	cout.setf(ios::hex);
-	cout.width(2);
-	cout.fill('0');
-	while( iss ) {
-		unsigned int val;
-		iss >> val;
-		cout << val << ' ';
-	}
-	cout << '\n';
-*/
 }
 
 int main()
