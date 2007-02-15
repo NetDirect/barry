@@ -240,6 +240,20 @@ void Data::ReleaseBuffer(int datasize)
 	}
 }
 
+/// Append bytes of data based on str
+void Data::AppendHexString(const char *str)
+{
+	CopyOnWrite(m_datasize + 512);
+
+	std::istringstream iss(str);
+	unsigned int byte;
+	while( iss >> hex >> byte ) {
+		MakeSpace(m_datasize + 1);
+		m_data[m_datasize] = (unsigned char) byte;
+		m_datasize++;
+	}
+}
+
 /// set buffer to 0 and remove all data
 void Data::Zap()
 {

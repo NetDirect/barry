@@ -65,6 +65,8 @@ public:
 	size_t GetBufSize() const { return m_bufsize; }
 	void ReleaseBuffer(int datasize = -1);
 
+	void AppendHexString(const char *str);
+
 	void Zap();
 
 	Data& operator=(const Data &other);
