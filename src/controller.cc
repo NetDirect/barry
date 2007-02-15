@@ -59,7 +59,7 @@ Controller::Controller(const ProbeResult &device)
 		throw Error(m_dev.GetLastError(),
 			"Controller: SetConfiguration failed");
 
-	m_iface = new Usb::Interface(m_dev, BLACKBERRY_INTERFACE);
+	m_iface = new Usb::Interface(m_dev, device.m_interface);
 }
 
 Controller::~Controller()

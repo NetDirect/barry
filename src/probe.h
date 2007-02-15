@@ -32,6 +32,7 @@ namespace Barry {
 struct ProbeResult
 {
 	Usb::DeviceIDType m_dev;
+	unsigned char m_interface;
 	uint32_t m_pin;
 	Usb::EndpointPair m_ep;
 };

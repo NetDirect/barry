@@ -115,10 +115,11 @@ Probe::Probe()
 
 	// Search for Pearl devices second
 	{
-		// FIXME - the actual probing code doesn't work on
-		// productID 6 devices... we need a capture from
-		// someone who has such a device
-		Match match(VENDOR_RIM, PRODUCT_RIM_PEARL);
+		// productID 6 devices (PRODUCT_RIM_PEARL) do not expose
+		// the USB class 255 interface we need, but only the
+		// Mass Storage one.  Here we search for PRODUCT_RIM_PEARL_DUAL,
+		// (ID 4) which has both enabled.
+		Match match(VENDOR_RIM, PRODUCT_RIM_PEARL_DUAL);
 		while( match.next_device(&devid) )
 			ProbeDevice(devid);
 	}
@@ -128,15 +129,27 @@ void Probe::ProbeDevice(Usb::DeviceIDType devid)
 {
 	// skip if we can't properly discover device config
 	DeviceDiscovery discover(devid);
-	EndpointDiscovery &ed = discover.configs[BLACKBERRY_CONFIGURATION]
-		.interfaces[BLACKBERRY_INTERFACE]
-		.endpoints;
+	ConfigDesc &config = discover.configs[BLACKBERRY_CONFIGURATION];
+
+	// search for interface class
+	InterfaceDiscovery::base_type::iterator i = config.interfaces.begin();
+	for( ; i != config.interfaces.end(); i++ ) {
+		if( i->second.desc.bInterfaceClass == BLACKBERRY_DB_CLASS )
+			break;
+	}
+	if( i == config.interfaces.end() )
+		return;	// not found
+
+	unsigned char InterfaceNumber = i->second.desc.bInterfaceNumber;
+
+	// check endpoint validity
+	EndpointDiscovery &ed = config.interfaces[InterfaceNumber].endpoints;
 	if( !ed.IsValid() || ed.GetEndpointPairs().size() == 0 )
 		return;
 
-
 	ProbeResult result;
 	result.m_dev = devid;
+	result.m_interface = InterfaceNumber;
 
 	// find the first bulk read/write endpoint pair that answers
 	// to our probe commands
@@ -155,7 +168,7 @@ void Probe::ProbeDevice(Usb::DeviceIDType devid)
 				throw Error(dev.GetLastError(),
 					"Probe: SetConfiguration failed");
 
-			Interface iface(dev, BLACKBERRY_INTERFACE);
+			Interface iface(dev, InterfaceNumber);
 
 			Data data;
 			dev.BulkDrain(ep.read);
