@@ -1,5 +1,15 @@
 Release: version 0.6 - 2007/02/??
 ------------------------------------------------------------------------------
+2007/02/15
+	- added ktrans.cc to make reading of kernel usbfs_snoop logs easier
+	- removed commented code from translate.cc
+	- added Pearl handshake support to bcharge.cc, which resets the
+		Pearl so that the vendor specific 0xFF class exists.
+		This should allow use of btool on the Pearl.
+	- added Data::AppendHexString to data.cc
+	- added better probing support for the Pearl, so it detects the
+		Product ID 0x0004 mode, and does a search for class 0xFF
+		instead of hardcoding it.
 2007/02/10
 	- applied README patch from Ian Darwin
 	- minor tweaks to README
