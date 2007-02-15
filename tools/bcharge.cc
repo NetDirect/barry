@@ -52,6 +52,14 @@ void charge(struct usb_device *dev)
 	char buffer[2];
 	usb_control_msg(handle, 0xc0, 0xa5, 0, 1, buffer, 2, 100);
 	usb_control_msg(handle, 0x40, 0xa2, 0, 1, buffer, 0, 100);
+	if( dev->descriptor.idProduct == PRODUCT_RIM_PEARL) {
+		// use this for "old style" interface: product ID 0001
+//		usb_control_msg(handle, 0xc0, 0xa9, 0, 1, buffer, 2, 100);
+
+		// Product ID 0004
+		usb_control_msg(handle, 0xc0, 0xa9, 1, 1, buffer, 2, 100);
+	}
+
 	usb_set_configuration(handle, BLACKBERRY_CONFIGURATION);
 
 	// the Blackberry Pearl doesn't reset itself after the above,
