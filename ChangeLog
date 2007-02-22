@@ -1,5 +1,7 @@
 Release: version 0.6 - 2007/02/??
 ------------------------------------------------------------------------------
+2007/02/22
+	- updated Doxygen input files and version, and added to ReleaseChecklist
 2007/02/15
 	- added ktrans.cc to make reading of kernel usbfs_snoop logs easier
 	- removed commented code from translate.cc
