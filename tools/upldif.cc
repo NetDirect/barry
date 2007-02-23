@@ -44,16 +44,6 @@ void Usage()
    << endl;
 }
 
-class Ldif2Contact
-{
-public:
-	Ldif2Contact() {}
-	bool operator()(Contact &rec)
-	{
-		return rec.ReadLdif(cin);
-	}
-};
-
 template <class Record>
 struct Store
 {
@@ -61,14 +51,17 @@ struct Store
 	mutable typename std::vector<Record>::const_iterator rec_it;
 	int count;
 
+	Barry::ContactLdif ldif;
+
 	// Store constructor -- reads LDIF records from the given
 	// stream object and stores them in memory.
 	Store(std::istream &is)
-		: count(0)
+		: count(0),
+		ldif("")
 	{
 		Record rec;
 		while( is ) {
-			if( rec.ReadLdif(is) ) {
+			if( ldif.ReadLdif(is, rec) ) {
 				count++;
 				records.push_back(rec);
 			}

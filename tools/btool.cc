@@ -43,6 +43,8 @@ void Usage()
    << "\n"
    << "   -c dn     Convert address book database to LDIF format, using the\n"
    << "             specified baseDN\n"
+   << "   -C dnattr LDIF attribute name to use when building the FQDN\n"
+   << "             Defaults to 'cn'\n"
    << "   -d db     Load database 'db' FROM device and dump to screen\n"
    << "             Can be used multiple times to fetch more than one DB\n"
 #ifdef __BARRY_BOOST_MODE__
@@ -50,6 +52,11 @@ void Usage()
 #endif
    << "   -h        This help\n"
    << "   -l        List devices\n"
+   << "   -L        List Contact field names\n"
+   << "   -m        Map LDIF name to Contact field / Unmap LDIF name\n"
+   << "                Map: ldif,read,write - maps ldif to read/write Contact fields\n"
+   << "                Unmap: ldif name alone\n"
+   << "   -M        List current LDIF mapping\n"
    << "   -p pin    PIN of device to talk with\n"
    << "             If only one device plugged in, this flag is optional\n"
    << "   -s db     Save database 'db' TO device from data loaded from -f file\n"
@@ -72,12 +79,14 @@ void Usage()
 
 class Contact2Ldif
 {
-	std::string m_baseDN;
 public:
-	Contact2Ldif(const std::string &baseDN) : m_baseDN(baseDN) {}
+	Barry::ContactLdif &ldif;
+
+	Contact2Ldif(Barry::ContactLdif &ldif) : ldif(ldif) {}
+
 	void operator()(const Contact &rec)
 	{
-		rec.DumpLdif(cout, m_baseDN);
+		ldif.DumpLdif(cout, rec);
 	}
 };
 
@@ -254,6 +263,52 @@ struct StateTableCommand
 		: flag(f), clear(c), index(i) {}
 };
 
+bool SplitMap(const string &map, string &ldif, string &read, string &write)
+{
+	string::size_type a = map.find(',');
+	if( a == string::npos )
+		return false;
+
+	string::size_type b = map.find(',', a+1);
+	if( b == string::npos )
+		return false;
+
+	ldif.assign(map, 0, a);
+	read.assign(map, a + 1, b - a - 1);
+	write.assign(map, b + 1, map.size() - b - 1);
+
+	return ldif.size() && read.size() && write.size();
+}
+
+void DoMapping(ContactLdif &ldif, const vector<string> &mapCommands)
+{
+	for(	vector<string>::const_iterator i = mapCommands.begin();
+		i != mapCommands.end();
+		++i )
+	{
+		// single names mean unmapping
+		if( i->find(',') == string::npos ) {
+			// unmap
+			cerr << "Unmapping: " << *i << endl;
+			ldif.Unmap(*i);
+		}
+		else {
+			cerr << "Mapping: " << *i << endl;
+
+			// map... extract ldif/read/write names
+			string ldifname, read, write;
+			if( SplitMap(*i, ldifname, read, write) ) {
+				if( !ldif.Map(ldifname, read, write) ) {
+					cerr << "Read/Write name unknown: " << *i << endl;
+				}
+			}
+			else {
+				cerr << "Invalid map format: " << *i << endl;
+			}
+		}
+	}
+}
+
 int main(int argc, char *argv[])
 {
 	cout.sync_with_stdio(true);	// leave this on, since libusb uses
@@ -267,15 +322,17 @@ int main(int argc, char *argv[])
 			ldif_contacts = false,
 			data_dump = false,
 			reset_device = false,
+			list_contact_fields = false,
+			list_ldif_map = false,
 			record_state = false;
-		string ldifBaseDN;
+		string ldifBaseDN, ldifDnAttr;
 		string filename;
-		vector<string> dbNames, saveDbNames;
+		vector<string> dbNames, saveDbNames, mapCommands;
 		vector<StateTableCommand> stCommands;
 
 		// process command line options
 		for(;;) {
-			int cmd = getopt(argc, argv, "c:d:D:f:hlp:r:R:s:tT:vX");
+			int cmd = getopt(argc, argv, "c:C:d:D:f:hlLm:Mp:r:R:s:tT:vX");
 			if( cmd == -1 )
 				break;
 
@@ -284,6 +341,10 @@ int main(int argc, char *argv[])
 			case 'c':	// contacts to ldap ldif
 				ldif_contacts = true;
 				ldifBaseDN = optarg;
+				break;
+
+			case 'C':	// DN Attribute for FQDN
+				ldifDnAttr = optarg;
 				break;
 
 			case 'd':	// show dbname
@@ -306,6 +367,18 @@ int main(int argc, char *argv[])
 				break;
 			case 'l':	// list only
 				list_only = true;
+				break;
+
+			case 'L':	// List Contact field names
+				list_contact_fields = true;
+				break;
+
+			case 'm':	// Map / Unmap
+				mapCommands.push_back(string(optarg));
+				break;
+
+			case 'M':	// List LDIF map
+				list_ldif_map = true;
 				break;
 
 			case 'p':	// Blackberry PIN
@@ -354,13 +427,26 @@ int main(int argc, char *argv[])
 		// anything else.
 		Barry::Init(data_dump);
 
+		// LDIF class... only needed if ldif output turned on
+		ContactLdif ldif(ldifBaseDN);
+		DoMapping(ldif, mapCommands);
+		if( ldifDnAttr.size() ) {
+			if( !ldif.SetDNAttr(ldifDnAttr) ) {
+				cerr << "Unable to set DN Attr: " << ldifDnAttr << endl;
+			}
+		}
+
 		// Probe the USB bus for Blackberry devices and display.
 		// If user has specified a PIN, search for it in the
 		// available device list here as well
 		Barry::Probe probe;
 		int activeDevice = -1;
+		if( ldif_contacts )
+			cout << "# ";
 		cout << "Blackberry devices found:" << endl;
 		for( int i = 0; i < probe.GetCount(); i++ ) {
+			if( ldif_contacts )
+				cout << "# ";
 			cout << probe.Get(i) << endl;
 			if( probe.Get(i).m_pin == pin )
 				activeDevice = i;
@@ -407,6 +493,19 @@ int main(int argc, char *argv[])
 			cout << con.GetDBDB() << endl;
 		}
 
+		// Dump list of Contact field names
+		if( list_contact_fields ) {
+			for( const ContactLdif::NameToFunc *n = ldif.GetFieldNames(); n->name; n++ ) {
+				cout << "  " << left << setw(20) << n->name << ": "
+					<< n->description << endl;
+			}
+		}
+
+		// Dump current LDIF mapping
+		if( list_ldif_map ) {
+			cout << ldif << endl;
+		}
+
 		// Dump list of contacts to an LDAP LDIF file
 		// This uses the Controller convenience templates
 		if( ldif_contacts ) {
@@ -415,7 +514,7 @@ int main(int argc, char *argv[])
 
 			// create a storage functor object that accepts
 			// Barry::Contact objects as input
-			Contact2Ldif storage(ldifBaseDN);
+			Contact2Ldif storage(ldif);
 
 			// load all the Contact records into storage
 			con.LoadDatabaseByType<Barry::Contact>(storage);

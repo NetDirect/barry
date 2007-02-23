@@ -57,13 +57,14 @@ include_barry_HEADERS = barry.h \
 	controllertmpl.h \
 	data.h \
 	error.h \
+	ldif.h \
 	parser.h \
 	probe.h \
 	protocol.h \
 	record.h \
 	socket.h \
-	usbwrap.h \
 	time.h \
+	usbwrap.h \
 	version.h \
 	s11n-boost.h
 
@@ -76,6 +77,7 @@ libbarry_la_SOURCES = time.cc \
 	probe.cc \
 	common.cc \
 	error.cc \
+	ldif.cc \
 	socket.cc \
 	protocol.cc \
 	record.cc \

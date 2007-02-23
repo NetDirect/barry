@@ -41,6 +41,7 @@
 #include "parser.h"
 #include "builder.h"
 #include "record.h"
+#include "ldif.h"
 #include "controller.h"
 #include "controllertmpl.h"
 #include "version.h"

@@ -24,7 +24,6 @@
 #include "protocol.h"
 #include "protostructs.h"
 #include "data.h"
-#include "base64.h"
 #include "time.h"
 #include "error.h"
 #include "endian.h"
@@ -544,7 +543,8 @@ FieldLink<Contact> ContactFieldLinks[] = {
 };
 
 Contact::Contact()
-	: RecordId(0)
+	: RecType(0),
+	RecordId(0)
 {
 }
 
@@ -791,208 +791,6 @@ void Contact::Dump(std::ostream &os) const
 	// cleanup the stream
 	os.flags(oldflags);
 	os.fill(fill);
-}
-
-//
-// DumpLdif
-//
-/// Output contact data to os in LDAP LDIF format.
-/// This is hardcoded for now.  Someday we should support mapping
-/// of fields.
-///
-void Contact::DumpLdif(std::ostream &os, const std::string &baseDN) const
-{
-	ios::fmtflags oldflags = os.setf(ios::left);
-	char fill = os.fill(' ');
-
-	if( FirstName.size() == 0 && LastName.size() == 0 )
-		return;			// nothing to do
-
-	std::string FullName = FirstName + " " + LastName;
-	os << "# Contact 0x" << setbase(16) << GetID() << FullName << "\n";
-	os << "dn: " << FullName << "," << baseDN << "\n";
-	os << "objectClass: inetOrgPerson\n";
-	os << "displayName: " << FullName << "\n";
-	os << "cn: " << FullName << "\n";
-	if( LastName.size() )
-		os << "sn: " << LastName << "\n";
-	if( FirstName.size() )
-		os << "givenName: " << FirstName << "\n";
-
-	// cycle through the type table
-	for(	FieldLink<Contact> *b = ContactFieldLinks;
-		b->type != CFC_INVALID_FIELD;
-		b++ )
-	{
-		// print only fields with data
-		const std::string &field = this->*(b->strMember);
-		if( b->ldif && field.size() ) {
-			os << b->ldif << ": " << field << "\n";
-			if( b->objectClass )
-				os << "objectClass: " << b->objectClass << "\n";
-		}
-	}
-
-	std::string b64;
-	if( Address1.size() && base64_encode(Address1, b64) )
-		os << "street:: " << b64 << "\n";
-
-	std::string FullAddress = GetPostalAddress();
-	if( FullAddress.size() && base64_encode(FullAddress, b64) )
-		os << "postalAddress:: " << b64 << "\n";
-
-	if( Notes.size() && base64_encode(Notes, b64) )
-		os << "note:: " << b64 << "\n";
-
-/*
-	// print any group links
-	GroupLinksType::const_iterator
-		gb = GroupLinks.begin(), ge = GroupLinks.end();
-	if( gb != ge )
-		os << "    GroupLinks:\n";
-	for( ; gb != ge; gb++ ) {
-		os << "        ID: 0x" << setbase(16) << gb->Link << "\n";
-	}
-*/
-
-	// last line must be empty
-	os << "\n";
-
-	// cleanup the stream
-	os.flags(oldflags);
-	os.fill(fill);
-}
-
-bool Contact::ReadLdif(std::istream &is)
-{
-	string line;
-
-	// start fresh
-	Clear();
-
-	// search for beginning dn: line
-	bool found = false;
-	while( getline(is, line) ) {
-		if( strncmp(line.c_str(), "dn: ", 4) == 0 ) {
-			found = true;
-			break;
-		}
-	}
-	if( !found )
-		return false;
-
-	// storage for various name styles
-	string cn, displayName, sn, givenName;
-	string coded, decode;
-	string *b64field = 0;
-
-	// read ldif lines until empty line is found
-	while( getline(is, line) && line.size() ) {
-
-		if( b64field ) {
-			// processing a base64 encoded field
-			if( line[0] == ' ' ) {
-				coded += "\n";
-				coded += line;
-				continue;
-			}
-			else {
-				// end of base64 block
-				base64_decode(coded, decode);
-				*b64field = decode;
-				coded.clear();
-				b64field = 0;
-			}
-			// fall through to process new line
-		}
-
-		if( strncmp(line.c_str(), "cn: ", 4) == 0 ) {
-			cn = line.c_str() + 4;	// full name
-		}
-		else if( strncmp(line.c_str(), "displayName: ", 13) == 0 ) {
-			displayName = line.c_str() + 13;	// full name
-		}
-		else if( strncmp(line.c_str(), "sn: ", 4) == 0 ) {
-			sn = line.c_str() + 4;	// last name
-		}
-		else if( strncmp(line.c_str(), "givenName: ", 11) == 0 ) {
-			givenName = line.c_str() + 11;	// first name
-		}
-		else if( strncmp(line.c_str(), "street:: ", 9) == 0 ) {
-			coded = line.substr(9);
-			b64field = &Address1;
-
-		}
-//		else if( strncmp(line.c_str(), "postalAddress:: ", 16) == 0 ) {
-//			std::string FullAddress = GetPostalAddress();
-//			if( FullAddress.size() && base64_encode(FullAddress, b64) )
-//				os << "postalAddress:: " << b64 << "\n";
-//		}
-		else if( strncmp(line.c_str(), "note:: ", 7) == 0 ) {
-			coded = line.substr(7);
-			b64field = &Notes;
-		}
-		else {
-
-			// cycle through the type table
-			for(	FieldLink<Contact> *b = ContactFieldLinks;
-				b->type != CFC_INVALID_FIELD;
-				b++ )
-			{
-				// read fields
-				if( b->ldif ) {
-					std::string &field = this->*(b->strMember);
-					std::string key = b->ldif;
-					key += ": ";
-
-					if( strncmp(line.c_str(), key.c_str(), key.size()) == 0 ) {
-						field = line.c_str() + key.size();
-						break;
-					}
-				}
-			}
-		}
-	}
-
-	if( b64field ) {
-		// clean up base64 decoding
-		base64_decode(coded, decode);
-		*b64field = decode;
-		coded.clear();
-		b64field = 0;
-	}
-
-	// find the best match for name... prefer sn/givenName if available
-	if( sn.size() ) {
-		LastName = sn;
-	}
-	if( givenName.size() ) {
-		FirstName = givenName;
-	}
-
-	if( !LastName.size() || !FirstName.size() ) {
-		string first, last;
-
-		// still don't have a complete name, check cn first
-		if( cn.size() ) {
-			SplitName(cn, first, last);
-			if( !LastName.size() && last.size() )
-				LastName = last;
-			if( !FirstName.size() && first.size() )
-				FirstName = first;
-		}
-
-		// displayName is last chance
-		if( displayName.size() ) {
-			SplitName(displayName, first, last);
-			if( !LastName.size() && last.size() )
-				LastName = last;
-			if( !FirstName.size() && first.size() )
-				FirstName = first;
-		}
-	}
-
-	return LastName.size() && FirstName.size();
 }
 
 void Contact::SplitName(const std::string &full, std::string &first, std::string &last)

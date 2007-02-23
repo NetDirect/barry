@@ -2,7 +2,7 @@
 .\" First parameter, NAME, should be all caps
 .\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
 .\" other parameters are allowed: see man(7), man(1)
-.TH BTOOL 1 "February 1, 2007"
+.TH BTOOL 1 "February 23, 2007"
 .\" Please adjust this date whenever revising the manpage.
 .\"
 .\" Some roff macros, for reference:
@@ -20,7 +20,7 @@
 \- Barry Project's program to interface with BlackBerry handheld
 .SH SYNOPSIS
 .B btool 
-[-c dn][-d db[-r#][-R#]-D#]][-h][-l][-p pin][-s db -f file][-t][-v][-X]
+[-c dn][-C dnattr][-d db [-f file][-r#][-R#]-D#]][-h][-l][-L][-m cmd][-M][-p pin][-s db -f file][-t][-v][-X]
 .SH DESCRIPTION
 .PP
 .B btool
@@ -32,19 +32,96 @@ by the manufacturer Research In Motion, this program is
 experimental and you \fBuse at own risk\fP. 
 Be sure your device is backed up by another program
 if it contains important data.
-.PP
-The -l option lists attached devices.
-.PP
-The -d option loads a database from the device and displays it to the screen.
-.PP
-The -s option saves a database to the device from the named file.
-.PP
-Use -h for description of the other options.
+.SH OPTIONS
+.TP
+.B \-c dn
+Convert address book database to LDIF format, using the
+specified dn as the baseDN.  Sends LDIF output to stdout.
+.TP
+.B \-C dnattr
+Spcify LDIF attribute name to use when building the FQDN in the dn attribute.
+Defaults to 'cn'.  If you modify the mapping with the \-m
+switch, make sure that the new dnattr exists.
+.TP
+.B \-d db
+Load database 'db' FROM device and dump to stdout.
+Can be used multiple times to fetch more than one database.  See the -t
+option for a list of device databases.
+.TP
+.B \-f file
+Filename to write or read handheld data to/from.  Used in conjunction with
+the -d and -s options, respectively.
+.TP
+.B \-l
+Lists attached Blackberry devices, and their PIN numbers.
+.TP
+.B \-L
+List Contact field names.  Each name represents a contact field that the
+Barry library recognizes.  Use these names with the -m option to adjust
+the LDIF name to field mapping.
+.TP
+.B \-m command
+Map LDIF name to Contact field, or unmap LDIF name.  To map a new or existing
+LDIF attribute name to a Barry contact field, use the format 'ldif,read,write'
+where ldif represents the name of the attribute to map, read is the
+contact field name used to read data from the record, and write is the
+contact field name used to write data to the record.
+
+To unmap an LDIF name, specify the LDIF attribute alone.
+
+For example, to map a new LDIF attribute called "strange" to read from
+FirstName and write to LastName, use:
+
+\-m strange,FirstName,LastName
+
+The -m option can be specified multiple times to create the desired mapping.
+.TP
+.B \-M
+List current LDIF mapping to stdout.
+.TP
+.B \-p pin
+PIN of device to talk with.  Only needed if you have more than one Blackberry
+connected at once.
+.TP
+.B \-s db
+Save database 'db' TO device from data loaded from -f file.  See the -t
+option for a list of device databases.
+.TP
+.B \-t
+Show device's database table.
+.TP
+.B \-T db
+Show record state table for given database.
+.TP
+.B \-v
+Dump verbose protocol data during operation.
+.TP
+.B \-X
+Reset device.
+.TP
+.B \-h, \-\-help
+Show summary of options.
+
+.SH DATABASE COMMAND MODIFIERS
+The following options modify the -d command option above, and can be used
+multiple times for more than one record.
+.TP
+.B \-r #
+Fetch specific record, given a record index number as seen in the -T state table.
+Can be used multiple times to fetch specific records from a single database.
+.TP
+.B \-R #
+Same as -r, but also clears the record's dirty flags.
+.TP
+.B \-D #
+Delete the specified record using the index number as seen in the -T state table.
+
 
 .SH AUTHOR
+.nh
 .B btool 
 is part of the Barry project.
-This manual page was written by Ian Darwin.
+This manual page was written by Ian Darwin and Chris Frey.
 .SH SEE ALSO
 .PP
 http://www.netdirect.ca/software/packages/barry/index.php
@@ -52,4 +129,3 @@ http://www.netdirect.ca/software/packages/barry/index.php
 Especially the caveats, and the call for developers and others
 to help with the project.
 
- 	  	 
