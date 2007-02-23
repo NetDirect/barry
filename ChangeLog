@@ -2,6 +2,24 @@ Release: version 0.6 - 2007/02/??
 ------------------------------------------------------------------------------
 2007/02/22
 	- updated Doxygen input files and version, and added to ReleaseChecklist
+	- fixed btool PIN output for LDIF mode, now commented in output
+	- major LDIF overhaul:
+		- split LDIF specific code out of the record class and
+			into its own
+		- fixed "full name" behaviour that added an extra space
+			in dn attributes, as reported by Troy Engel
+		- added support for mapping of LDIF attributes to Barry
+			contact field names
+		- fixed base64 handling, so attributes are only so encoded
+			if necessary
+		- fixed base64 attribute reading inconsistency... some
+			notes fields were missed in old version if not
+			encoded
+		- added support for specifying alternate attribute for
+			constructing a FQDN, instead of just "cn"
+		- updated btool and upldif to use new features
+	- large update to btool manpage
+	- fixed initialization bug in Contact constructor (missed RecType)
 2007/02/15
 	- added ktrans.cc to make reading of kernel usbfs_snoop logs easier
 	- removed commented code from translate.cc
