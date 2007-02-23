@@ -1,5 +1,9 @@
 Release: version 0.6 - 2007/02/??
 ------------------------------------------------------------------------------
+2007/02/23
+	- changed library behaviour so it only turns on libusb debug output
+		if in data dump mode.  In btool, -v controls this output.
+	- minor stream formatting fix in btool
 2007/02/22
 	- updated Doxygen input files and version, and added to ReleaseChecklist
 	- fixed btool PIN output for LDIF mode, now commented in output
