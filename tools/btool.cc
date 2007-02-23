@@ -496,6 +496,7 @@ int main(int argc, char *argv[])
 		// Dump list of Contact field names
 		if( list_contact_fields ) {
 			for( const ContactLdif::NameToFunc *n = ldif.GetFieldNames(); n->name; n++ ) {
+				cout.fill(' ');
 				cout << "  " << left << setw(20) << n->name << ": "
 					<< n->description << endl;
 			}
