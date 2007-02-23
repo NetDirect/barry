@@ -38,7 +38,8 @@ bool __data_dump_mode__;
 ///
 void Init(bool data_dump_mode)
 {
-	usb_set_debug(9);
+	if( data_dump_mode )
+		usb_set_debug(9);
 	usb_init();
 	__data_dump_mode__ = data_dump_mode;
 }
