@@ -6,6 +6,10 @@
 ///		aliasing problems in the application, or using
 ///		-fno-strict-aliasing, which the library only needs.
 ///
+///		Do not include this in any Barry library header.
+///		This may only be included from .cc files, in order
+///		to hide aliasing concernes from the application.
+///
 
 /*
     Copyright (C) 2005-2007, Net Direct Inc. (http://www.netdirect.ca/)
@@ -315,6 +319,9 @@ struct PasswordChallenge
 	} __attribute__ ((packed)) u;
 
 } __attribute__ ((packed));
+#define PASSWORD_CHALLENGE_HEADER_SIZE	(sizeof(Barry::Protocol::PasswordChallenge) - sizeof(Barry::Protocol::PasswordChallenge::Hash))
+#define PASSWORD_CHALLENGE_SEED_SIZE	(PASSWORD_CHALLENGE_HEADER_SIZE + sizeof(uint32_t))
+#define PASSWORD_CHALLENGE_SIZE		(sizeof(Barry::Protocol::PasswordChallenge))
 
 struct AttributeFetch
 {
