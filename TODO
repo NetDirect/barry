@@ -1,19 +1,23 @@
 Barry roadmap, in dazzling ASCII:
+		- = not done
+		+ = done
+		x = not needed
 
 - Milestone 1:
-	- autoconf the project
-	- handle USB interface and configuration numbers dynamically
-	- handle USB endpoint numbers dynamically (appears to use the
+	+ autoconf the project
+	+ handle USB interface numbers dynamically
+	+ handle USB configuration numbers dynamically
+	+ handle USB endpoint numbers dynamically (appears to use the
 		endpoint numbers in ascending order: 1 read, 1 write)
 	- make the old/new DBDB commands dynamic
-	- flesh out LDIF support (should read/import them as well)
+	+ flesh out LDIF support (should read/import them as well)
 	- reverse engineer email header data
 	- use SWIG to make the API available in Python
 
 - Milestone 2
 	- reliable command line backup and restore of:
-		- Contacts / Address Book
-		- Calendar
+		+ Contacts / Address Book
+		+ Calendar
 		- Email
 
 - Milestone 3
@@ -71,6 +75,9 @@ Barry roadmap, in dazzling ASCII:
 		- Help Options
 		- Quick Contacts
 
++ Milestone 3.5
+	+ GUI backup / restore
+
 - Milestone 4
 	- reliable command line backup and restore of Java program modules
 
@@ -96,8 +103,6 @@ Barry roadmap, in dazzling ASCII:
 
 Misc Todo Items:
 ----------------
-- Barry Probe API should determine interface number and configuration
-	dynamically instead of hardcoding 0 and 1
 - test whether sorting of contact records is required before
 	uploading data to the device... test whether it is ok
 	to upload a GroupLink item in the middle of a contact
