@@ -83,8 +83,11 @@ private:
 
 	ModeType m_mode;
 
+	uint16_t m_modeSocket;			// socket recommended by device
+						// when mode was selected
+
 protected:
-	void SelectMode(ModeType mode, uint16_t &socket);
+	void SelectMode(ModeType mode);
 	unsigned int GetCommand(CommandType ct);
 
 	void LoadCommandTable();
@@ -104,7 +107,8 @@ public:
 
 	//////////////////////////////////
 	// general operations
-	void OpenMode(ModeType mode);
+	void OpenMode(ModeType mode, const char *password = 0);
+	void RetryPassword(const char *password);
 
 	//////////////////////////////////
 	// Desktop mode - database specific

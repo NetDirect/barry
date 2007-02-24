@@ -28,6 +28,7 @@
 #include "error.h"
 #include "packet.h"
 #include "endian.h"
+#include <openssl/sha.h>
 
 
 using namespace Usb;
@@ -44,7 +45,10 @@ Socket::Socket(	Device &dev,
 	m_socket(0),
 	m_zeroSocketSequence(zeroSocketSequenceStart),
 	m_flag(0),
-	m_sequenceId(0)
+	m_sequenceId(0),
+	m_halfOpen(false),
+	m_challengeSeed(0),
+	m_remainingTries(0)
 {
 }
 
@@ -60,6 +64,100 @@ Socket::~Socket()
 		dout("Exception caught in ~Socket: " << re.what());
 	}
 }
+
+void Socket::SendOpen(uint16_t socket, Data &receive)
+{
+	// build open command
+	Barry::Protocol::Packet packet;
+	packet.socket = 0;
+	packet.size = htobs(SB_SOCKET_PACKET_HEADER_SIZE);
+	packet.command = SB_COMMAND_OPEN_SOCKET;
+	packet.u.socket.socket = htobs(socket);
+	packet.u.socket.sequence = m_zeroSocketSequence;// overwritten by Send()
+
+	// save sequence for later close, and inc
+	m_flag = m_zeroSocketSequence;
+
+	Data send(&packet, SB_SOCKET_PACKET_HEADER_SIZE);
+	try {
+		Send(send, receive);
+	} catch( Usb::Error & ) {
+		eeout(send, receive);
+		throw;
+	}
+
+	// check sequence ID
+	Protocol::CheckSize(receive);
+	if( IS_COMMAND(receive, SB_COMMAND_SEQUENCE_HANDSHAKE) ) {
+		CheckSequence(receive);
+
+		// still need our ACK
+		Receive(receive);
+	}
+
+	// receive now holds the Open response
+}
+
+// SHA1 hashing logic based on Rick Scott's XmBlackBerry's send_password()
+void Socket::SendPasswordHash(uint16_t socket, const char *password, Data &receive)
+{
+	unsigned char pwdigest[SHA_DIGEST_LENGTH];
+	unsigned char prefixedhash[SHA_DIGEST_LENGTH + 4];
+
+	// first, hash the password by itself
+	SHA1((unsigned char *) password, strlen(password), pwdigest);
+
+	// prefix the resulting hash with the provided seed
+	uint32_t seed = htobl(m_challengeSeed);
+	memcpy(&prefixedhash[0], &seed, sizeof(uint32_t));
+	memcpy(&prefixedhash[4], pwdigest, SHA_DIGEST_LENGTH);
+
+	// hash again
+	SHA1((unsigned char *) prefixedhash, SHA_DIGEST_LENGTH + 4, pwdigest);
+
+
+	size_t size = SB_SOCKET_PACKET_HEADER_SIZE + PASSWORD_CHALLENGE_SIZE;
+
+	// build open command
+	Barry::Protocol::Packet packet;
+	packet.socket = 0;
+	packet.size = htobs(size);
+	packet.command = SB_COMMAND_PASSWORD;
+	packet.u.socket.socket = htobs(socket);
+	packet.u.socket.sequence = m_zeroSocketSequence;// overwritten by Send()
+	packet.u.socket.u.password.remaining_tries = 0;
+	packet.u.socket.u.password.unknown = 0;
+	packet.u.socket.u.password.param = htobs(0x14);	// FIXME - what does this mean?
+	memcpy(packet.u.socket.u.password.u.hash, pwdigest,
+		sizeof(packet.u.socket.u.password.u.hash));
+
+	// blank password hashes as we don't need these anymore
+	memset(pwdigest, 0, sizeof(pwdigest));
+	memset(prefixedhash, 0, sizeof(prefixedhash));
+
+	// save sequence for later close, and inc
+	m_flag = m_zeroSocketSequence;
+
+	Data send(&packet, size);
+	Send(send, receive);
+
+	// blank password hash as we don't need this anymore either
+	memset(packet.u.socket.u.password.u.hash, 0,
+		sizeof(packet.u.socket.u.password.u.hash));
+	send.Zap();
+
+	// check sequence ID
+	Protocol::CheckSize(receive);
+	if( IS_COMMAND(receive, SB_COMMAND_SEQUENCE_HANDSHAKE) ) {
+		CheckSequence(receive);
+
+		// still need our ACK
+		Receive(receive);
+	}
+
+	// receive now holds the Password response
+}
+
 
 //
 // Open
@@ -78,48 +176,81 @@ Socket::~Socket()
 ///		as confirmation
 ///
 /// \exception	Barry::Error
+///		Thrown on protocol error.
 ///
-void Socket::Open(uint16_t socket)
+/// \exception	Barry::BadPassword
+///		Thrown on invalid password, or not enough retries left
+///		on device.
+///
+void Socket::Open(uint16_t socket, const char *password)
 {
 	if( m_socket != 0 ) {
 		// already open
 		throw Error("Socket: already open");
 	}
 
-	// build open command
-	Barry::Protocol::Packet packet;
-	packet.socket = 0;
-	packet.size = htobs(SB_SOCKET_PACKET_HEADER_SIZE);
-	packet.command = SB_COMMAND_OPEN_SOCKET;
-	packet.u.socket.socket = htobs(socket);
-	packet.u.socket.sequence = m_zeroSocketSequence;// overwritten by Send()
+	// Things get a little funky here, as we may be left in an
+	// intermediate state in the case of a failed password.
+	// This function should support being called as many times
+	// as needed to handle the password
 
-	// save sequence for later close, and inc
-	m_flag = m_zeroSocketSequence;
+	Data send, receive;
+	ZeroPacket packet(send, receive);
 
-	Data send(&packet, SB_SOCKET_PACKET_HEADER_SIZE);
-	Data receive;
-	try {
-		Send(send, receive);
-	} catch( Usb::Error & ) {
-		eeout(send, receive);
-		throw;
+	if( !m_halfOpen ) {
+		// starting fresh
+		m_remainingTries = 0;
+
+		SendOpen(socket, receive);
+
+		// check for password challenge, or success
+		if( packet.Command() == SB_COMMAND_PASSWORD_CHALLENGE ) {
+			m_halfOpen = true;
+			m_challengeSeed = packet.ChallengeSeed();
+			m_remainingTries = packet.RemainingTries();
+		}
+
+		// fall through to challenge code...
 	}
 
-	// starting fresh, reset sequence ID
-	Protocol::CheckSize(receive);
-	if( IS_COMMAND(receive, SB_COMMAND_SEQUENCE_HANDSHAKE) ) {
-		CheckSequence(receive);
+	if( m_halfOpen ) {
+		// half open, device is expecting a password hash... do we
+		// have a password?
+		if( !password ) {
+			throw BadPassword("No password specified.", m_remainingTries);
+		}
 
-		// still need our ACK
-		Receive(receive);
+		// only allow password attempts if there are 6 or more
+		// tries remaining... we want to give the user at least
+		// 5 chances on a Windows machine before the device
+		// commits suicide.
+		if( m_remainingTries < 6 ) {
+			throw BadPassword("Fewer than 6 password tries "
+				"remaining in device. Refusing to proceed, "
+				"to avoid device zapping itself.  Use a "
+				"Windows client, or re-cradle the device.",
+				m_remainingTries);
+		}
+
+		SendPasswordHash(socket, password, receive);
+
+		if( packet.Command() == SB_COMMAND_PASSWORD_FAILED ) {
+			m_halfOpen = true;
+			m_challengeSeed = packet.ChallengeSeed();
+			m_remainingTries = packet.RemainingTries();
+			throw BadPassword("Password rejected by device.", m_remainingTries);
+		}
+
+		// if we get this far, we are no longer in half-open password
+		// mode, so we can reset our flags
+		m_halfOpen = false;
+
+		// fall through to success check...
 	}
 
-	Protocol::CheckSize(receive, SB_SOCKET_PACKET_HEADER_SIZE);
-	MAKE_PACKET(rpack, receive);
-	if( rpack->command != SB_COMMAND_OPENED_SOCKET ||
-	    btohs(rpack->u.socket.socket) != socket ||
-	    rpack->u.socket.sequence != m_flag )
+	if( packet.Command() != SB_COMMAND_OPENED_SOCKET ||
+	    packet.SocketResponse() != socket ||
+	    packet.SocketSequence() != m_flag )
 	{
 		eout("Packet:\n" << receive);
 		throw Error("Socket: Bad OPENED packet in Open");

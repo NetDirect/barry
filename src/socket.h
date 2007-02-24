@@ -56,12 +56,20 @@ class Socket
 	uint8_t m_flag;
 	uint32_t m_sequenceId;
 
+	// half open socket stata, for passwords
+	bool m_halfOpen;
+	uint32_t m_challengeSeed;
+	unsigned int m_remainingTries;
+
 private:
 	// sends 'send' data to device, and waits for response, using
 	// "read first, write second" order observed in capture
 	void AppendFragment(Data &whole, const Data &fragment);
 	unsigned int MakeNextFragment(const Data &whole, Data &fragment, unsigned int offset = 0);
 	void CheckSequence(const Data &seq);
+
+	void SendOpen(uint16_t socket, Data &receive);
+	void SendPasswordHash(uint16_t socket, const char *password, Data &receive);
 
 public:
 	Socket(Usb::Device &dev, int writeEndpoint, int readEndpoint,
@@ -71,7 +79,7 @@ public:
 	uint16_t GetSocket() const { return m_socket; }
 	uint8_t GetZeroSocketSequence() const { return m_zeroSocketSequence; }
 
-	void Open(uint16_t socket);
+	void Open(uint16_t socket, const char *password = 0);
 	void Close();
 
 	// Send and Receive are available before Open...

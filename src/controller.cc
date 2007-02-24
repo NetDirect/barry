@@ -53,7 +53,8 @@ Controller::Controller(const ProbeResult &device)
 	m_iface(0),
 	m_pin(device.m_pin),
 	m_socket(m_dev, device.m_ep.write, device.m_ep.read, device.m_zeroSocketSequence),
-	m_mode(Unspecified)
+	m_mode(Unspecified),
+	m_modeSocket(0)
 {
 	if( !m_dev.SetConfiguration(BLACKBERRY_CONFIGURATION) )
 		throw Error(m_dev.GetLastError(),
@@ -81,8 +82,11 @@ Controller::~Controller()
 ///////////////////////////////////////////////////////////////////////////////
 // protected members
 
-void Controller::SelectMode(ModeType mode, uint16_t &socket)
+void Controller::SelectMode(ModeType mode)
 {
+	// start fresh
+	m_modeSocket = 0;
+
 	// select mode
 	Protocol::Packet packet;
 	packet.socket = 0;
@@ -129,8 +133,8 @@ void Controller::SelectMode(ModeType mode, uint16_t &socket)
 			throw Error("Controller: mode not selected");
 		}
 
-		// return the socket and flag that the device is expecting us to use
-		socket = btohs(modepack->u.socket.socket);
+		// save the socket that the device is expecting us to use
+		m_modeSocket = btohs(modepack->u.socket.socket);
 	}
 	catch( Usb::Error & ) {
 		eout("Controller: error setting desktop mode");
@@ -257,35 +261,77 @@ unsigned int Controller::GetDBID(const std::string &name) const
 ///	- Controller::Desktop
 ///	- Controller::JavaLoader
 ///
+/// This function opens a socket to the device when in Desktop mode.
+/// If the device requires it, specify the password with a conat char*
+/// string in password.  The password will not be stored in memory
+/// inside this class, only a hash will be generated from it.  After
+/// using the hash, the hash memory will be set to 0.  The application
+/// is responsible for safely handling the raw password data.
+///
+/// You can retry the password by catching Barry::BadPassword and
+/// calling RetryPassword() with the new password.
+///
 /// \exception	Barry::Error
 ///		Thrown on protocol error.
 ///
 /// \exception	std::logic_error()
-///		Thrown if unsupported mode is requested.
+///		Thrown if unsupported mode is requested, or if socket
+///		already open.
 ///
-void Controller::OpenMode(ModeType mode)
+/// \exception	Barry::BadPassword
+///		Thrown when password is invalid or if not enough retries
+///		left in the device.
+///
+void Controller::OpenMode(ModeType mode, const char *password)
 {
-	uint16_t socket;
-
 	if( m_mode != mode ) {
 		m_socket.Close();
-		SelectMode(mode, socket);
-		m_socket.Open(socket);
+		SelectMode(mode);
 		m_mode = mode;
 
-		switch( m_mode )
-		{
-		case Desktop:
-			// get command table
-			LoadCommandTable();
+		RetryPassword(password);
+	}
+}
 
-			// get database database
-			LoadDBDB();
-			break;
+//
+// RetryPassword
+//
+/// Retry a failed password attempt from the first call to OpenMode().
+/// Only call this function on Barry::BadPassword exceptions thrown
+/// from OpenMode().
+///
+/// \exception	Barry::Error
+///		Thrown on protocol error.
+///
+/// \exception	std::logic_error()
+///		Thrown if in unsupported mode, or if socket already open.
+///
+/// \exception	Barry::BadPassword
+///		Thrown when password is invalid or if not enough retries
+///		left in the device.
+///
+void Controller::RetryPassword(const char *password)
+{
+	if( m_mode != Desktop )
+		throw std::logic_error("Wrong mode in RetryPassword");
 
-		default:
-			throw std::logic_error("Mode not implemented");
-		}
+	if( m_socket.GetSocket() != 0 )
+		throw std::logic_error("Socket alreay open in RetryPassword");
+
+	m_socket.Open(m_modeSocket, password);
+
+	switch( m_mode )
+	{
+	case Desktop:
+		// get command table
+		LoadCommandTable();
+
+		// get database database
+		LoadDBDB();
+		break;
+
+	default:
+		throw std::logic_error("Mode not implemented");
 	}
 }
 
