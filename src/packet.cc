@@ -30,9 +30,6 @@
 #include "parser.h"
 #include "builder.h"
 #include "error.h"
-/*
-#include "common.h"
-*/
 
 #define __DEBUG_MODE__
 #include "debug.h"
@@ -40,15 +37,70 @@
 
 namespace Barry {
 
-Packet::Packet(Controller &con, Data &send, Data &receive)
-	: m_con(con)
-	, m_send(send)
-	, m_receive(receive)
+//////////////////////////////////////////////////////////////////////////////
+// ZeroPacket class
+
+ZeroPacket::ZeroPacket(Data &send, Data &receive)
+	: Packet(send, receive)
+{
+}
+
+ZeroPacket::~ZeroPacket()
+{
+}
+
+//
+// GetAttribute
+//
+/// Builds a command packet for the initial socket-0 handshakes
+/// that fetch certain (some unknown) attributes.  The attributes
+/// appear to exist in an object/attribute sequence, so that's
+/// how we address them here.
+///
+void ZeroPacket::GetAttribute(unsigned int object, unsigned int attribute)
+{
+	size_t size = SB_SOCKET_PACKET_HEADER_SIZE + ATTRIBUTE_FETCH_COMMAND_SIZE;
+	MAKE_PACKETPTR_BUF(cpack, m_send.GetBuffer(size));
+	Protocol::Packet &packet = *cpack;
+
+	packet.socket = 0;
+	packet.size = htobs(size);
+	packet.command = SB_COMMAND_FETCH_ATTRIBUTE;
+	packet.u.socket.socket = htobs(0x00ff);	// default non-socket request
+	packet.u.socket.sequence = 0;		// filled in by Socket class
+	packet.u.socket.u.fetch.object = htobs(object);
+	packet.u.socket.u.fetch.attribute = htobs(attribute);
+
+	m_send.ReleaseBuffer(size);
+}
+
+unsigned int ZeroPacket::ObjectID() const
+{
+	Protocol::CheckSize(m_receive, SB_SOCKET_PACKET_HEADER_SIZE);
+	MAKE_PACKET(rpack, m_receive);
+	return btohs(rpack->u.socket.u.fetch.object);
+}
+
+unsigned int ZeroPacket::AttributeID() const
+{
+	Protocol::CheckSize(m_receive, SB_SOCKET_PACKET_HEADER_SIZE);
+	MAKE_PACKET(rpack, m_receive);
+	return btohs(rpack->u.socket.u.fetch.attribute);
+}
+
+
+
+//////////////////////////////////////////////////////////////////////////////
+// DBPacket class
+
+DBPacket::DBPacket(Controller &con, Data &send, Data &receive)
+	: Packet(send, receive)
+	, m_con(con)
 	, m_last_dbop(0)
 {
 }
 
-Packet::~Packet()
+DBPacket::~DBPacket()
 {
 }
 
@@ -58,7 +110,7 @@ Packet::~Packet()
 /// Builds a command packet for the CLEAR_DATABASE command code, placing
 /// the data in the send buffer.
 ///
-void Packet::ClearDatabase(unsigned int dbId)
+void DBPacket::ClearDatabase(unsigned int dbId)
 {
 	MAKE_PACKETPTR_BUF(cpack, m_send.GetBuffer(9));
 	Protocol::Packet &packet = *cpack;
@@ -81,7 +133,7 @@ void Packet::ClearDatabase(unsigned int dbId)
 /// Builds a command packet for the GET_DBDB command code, placing the
 /// data in m_send.
 ///
-void Packet::GetDBDB()
+void DBPacket::GetDBDB()
 {
 	MAKE_PACKETPTR_BUF(cpack, m_send.GetBuffer(7));
 	Protocol::Packet &packet = *cpack;
@@ -104,7 +156,7 @@ void Packet::GetDBDB()
 /// Builds a command packet in the send buffer for the
 /// GET_RECORD_STATE_TABLE command.
 ///
-void Packet::GetRecordStateTable(unsigned int dbId)
+void DBPacket::GetRecordStateTable(unsigned int dbId)
 {
 	MAKE_PACKETPTR_BUF(cpack, m_send.GetBuffer(9));
 	Protocol::Packet &packet = *cpack;
@@ -131,7 +183,7 @@ void Packet::GetRecordStateTable(unsigned int dbId)
 ///         in the SetRecordFlags protocol packet.  Currently it is only
 ///         used to set all flags to zero.
 ///
-void Packet::SetRecordFlags(unsigned int dbId, unsigned int stateTableIndex,
+void DBPacket::SetRecordFlags(unsigned int dbId, unsigned int stateTableIndex,
 			    uint8_t flag1)
 {
 	size_t size = SB_PACKET_COMMAND_HEADER_SIZE + DBC_RECORD_FLAGS_SIZE;
@@ -159,7 +211,7 @@ void Packet::SetRecordFlags(unsigned int dbId, unsigned int stateTableIndex,
 /// Builds a command packet in the send buffer for the DELETE_RECORD_BY_INDEX
 /// command code.
 ///
-void Packet::DeleteRecordByIndex(unsigned int dbId, unsigned int stateTableIndex)
+void DBPacket::DeleteRecordByIndex(unsigned int dbId, unsigned int stateTableIndex)
 {
 	size_t size = SB_PACKET_COMMAND_HEADER_SIZE + DBC_RECORD_HEADER_SIZE;
 	MAKE_PACKETPTR_BUF(cpack, m_send.GetBuffer(size));
@@ -184,7 +236,7 @@ void Packet::DeleteRecordByIndex(unsigned int dbId, unsigned int stateTableIndex
 /// Builds a command packet in the send buffer for the GET_RECORD_BY_INDEX
 /// command code.
 ///
-void Packet::GetRecordByIndex(unsigned int dbId, unsigned int stateTableIndex)
+void DBPacket::GetRecordByIndex(unsigned int dbId, unsigned int stateTableIndex)
 {
 	MAKE_PACKETPTR_BUF(cpack, m_send.GetBuffer(11));
 	Protocol::Packet &packet = *cpack;
@@ -212,7 +264,7 @@ void Packet::GetRecordByIndex(unsigned int dbId, unsigned int stateTableIndex)
 ///		- true means success
 ///		- false means no data available from Builder object
 ///
-bool Packet::SetRecordByIndex(unsigned int dbId, unsigned int stateTableIndex,
+bool DBPacket::SetRecordByIndex(unsigned int dbId, unsigned int stateTableIndex,
 			      Builder &build)
 {
 	// get new data if available
@@ -249,7 +301,7 @@ bool Packet::SetRecordByIndex(unsigned int dbId, unsigned int stateTableIndex,
 /// Builds a command packet in the send buffer for the GET_RECORDS
 /// command code.
 ///
-void Packet::GetRecords(unsigned int dbId)
+void DBPacket::GetRecords(unsigned int dbId)
 {
 	MAKE_PACKETPTR_BUF(cpack, m_send.GetBuffer(9));
 	Protocol::Packet &packet = *cpack;
@@ -276,7 +328,7 @@ void Packet::GetRecords(unsigned int dbId)
 ///		- true means success
 ///		- false means no data available from Builder object
 ///
-bool Packet::SetRecord(unsigned int dbId, Builder &build)
+bool DBPacket::SetRecord(unsigned int dbId, Builder &build)
 {
 	// get new data if available
 	if( !build.Retrieve(dbId) )
@@ -315,7 +367,7 @@ bool Packet::SetRecord(unsigned int dbId, Builder &build)
 /// Returns the command value of the receive packet.  If receive isn't
 /// large enough, throws Error.
 ///
-unsigned int Packet::Command() const
+unsigned int DBPacket::Command() const
 {
 	Protocol::CheckSize(m_receive);
 	MAKE_PACKET(rpack, m_receive);
@@ -323,7 +375,7 @@ unsigned int Packet::Command() const
 }
 
 // throws FIXME if packet doesn't support it
-unsigned int Packet::ReturnCode() const
+unsigned int DBPacket::ReturnCode() const
 {
 	if( Command() == SB_COMMAND_DB_DONE ) {
 		Protocol::CheckSize(m_receive, SB_PACKET_DBACCESS_HEADER_SIZE + SB_DBACCESS_RETURN_CODE_SIZE);
@@ -342,7 +394,7 @@ unsigned int Packet::ReturnCode() const
 /// that receive contains a response packet.  If receive isn't large
 /// enough, throws Error.
 ///
-unsigned int Packet::DBOperation() const
+unsigned int DBPacket::DBOperation() const
 {
 	Protocol::CheckSize(m_receive, SB_PACKET_RESPONSE_HEADER_SIZE);
 	MAKE_PACKET(rpack, m_receive);
@@ -359,7 +411,7 @@ unsigned int Packet::DBOperation() const
 /// \returns	bool	true - packet was recognized and parse was attempted
 ///			false - packet was not recognized
 ///
-bool Packet::Parse(Parser &parser)
+bool DBPacket::Parse(Parser &parser)
 {
 	size_t offset = 0;
 	MAKE_PACKET(rpack, m_receive);

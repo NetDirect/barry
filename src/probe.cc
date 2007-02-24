@@ -26,6 +26,9 @@
 #include "endian.h"
 #include "error.h"
 #include "debug.h"
+#include "packet.h"
+#include "socket.h"
+#include "protocol.h"
 #include <iomanip>
 
 using namespace Usb;
@@ -35,32 +38,14 @@ namespace Barry {
 unsigned char Intro_Sends[][32] = {
 	// packet #1
 	{ 0x00, 0x00, 0x10, 0x00, 0x01, 0xff, 0x00, 0x00,
-	  0xa8, 0x18, 0xda, 0x8d, 0x6c, 0x02, 0x00, 0x00 },
-
-	// packet #2
-	{ 0x00, 0x00, 0x0c, 0x00, 0x05, 0xff, 0x00, 0x01,
-	  0x14, 0x00, 0x01, 0x00 },
-
-	// packet #3
-	{ 0x00, 0x00, 0x0c, 0x00, 0x05, 0xff, 0x00, 0x02,
-	  0x08, 0x00, 0x04, 0x00 }
+	  0xa8, 0x18, 0xda, 0x8d, 0x6c, 0x02, 0x00, 0x00 }
 };
 
 
 unsigned char Intro_Receives[][32] = {
 	// response to packet #1
 	{ 0x00, 0x00, 0x10, 0x00, 0x02, 0xff, 0x00, 0x00,
-	  0xa8, 0x18, 0xda, 0x8d, 0x6c, 0x02, 0x00, 0x00 },
-
-	// response to packet #2
-	{ 0x00, 0x00, 0x20, 0x00, 0x06, 0xff, 0x00, 0x01,
-	  0x14, 0x00, 0x01, 0x00, 0x51, 0xe1, 0x33, 0x6b,
-	  0xf3, 0x09, 0xbc, 0x37, 0x3b, 0xa3, 0x5e, 0xed,
-	  0xff, 0x30, 0xa1, 0x3a, 0x60, 0xc9, 0x81, 0x8e },
-
-	{ 0x00, 0x00, 0x14, 0x00, 0x06, 0xff, 0x00, 0x02,
-	  0x08, 0x00, 0x04, 0x00, 0x04, 0x00, 0x00, 0x00,
-	  0xe3, 0xef, 0x09, 0x30 }
+	  0xa8, 0x18, 0xda, 0x8d, 0x6c, 0x02, 0x00, 0x00 }
 };
 
 namespace {
@@ -93,7 +78,6 @@ bool Probe::Parse(const Data &data, ProbeResult &result)
 	    pd[4] != 0x06 )
 	{
 		return false;
-//		throw Error("Probe: Unexpected reponse data in parse");
 	}
 
 	// capture the PIN
@@ -150,6 +134,7 @@ void Probe::ProbeDevice(Usb::DeviceIDType devid)
 	ProbeResult result;
 	result.m_dev = devid;
 	result.m_interface = InterfaceNumber;
+	result.m_zeroSocketSequence = 0;
 
 	// find the first bulk read/write endpoint pair that answers
 	// to our probe commands
@@ -172,15 +157,42 @@ void Probe::ProbeDevice(Usb::DeviceIDType devid)
 
 			Data data;
 			dev.BulkDrain(ep.read);
-			if( Intro(0, ep, dev, data) && Intro(1, ep, dev, data) &&
-			    Intro(2, ep, dev, data) && Parse(data, result) )
-			{
-				// all info obtained, add to list
-				m_results.push_back(result);
-				ddout("Using ReadEndpoint: " << (unsigned int)result.m_ep.read);
-				ddout("      WriteEndpoint: " << (unsigned int)result.m_ep.write);
-				break;
+			if( !Intro(0, ep, dev, data) )
+				continue;
+
+			Socket socket(dev, ep.write, ep.read);
+
+			Data send, receive;
+			ZeroPacket packet(send, receive);
+
+			// unknown attribute: 0x14 / 0x01
+			packet.GetAttribute(SB_OBJECT_INITIAL_UNKNOWN,
+				SB_ATTR_INITIAL_UNKNOWN);
+			socket.Send(packet);
+
+			// fetch PIN
+			packet.GetAttribute(SB_OBJECT_PROFILE, SB_ATTR_PROFILE_PIN);
+			socket.Send(packet);
+			if( packet.ObjectID() != SB_OBJECT_PROFILE ||
+			    packet.AttributeID() != SB_ATTR_PROFILE_PIN ||
+			    !Parse(receive, result) )
+				continue;
+
+			// more unknowns:
+			for( uint16_t attr = 5; attr < 9; attr++ ) {
+				packet.GetAttribute(SB_OBJECT_SOCKET_UNKNOWN, attr);
+				socket.Send(packet);
+				// FIXME parse these responses, if they turn
+				// out to be important
 			}
+
+
+			// all info obtained, add to list
+			result.m_zeroSocketSequence = socket.GetZeroSocketSequence();
+			m_results.push_back(result);
+			ddout("Using ReadEndpoint: " << (unsigned int)result.m_ep.read);
+			ddout("      WriteEndpoint: " << (unsigned int)result.m_ep.write);
+			break;
 		}
 	}
 

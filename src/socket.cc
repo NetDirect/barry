@@ -35,14 +35,16 @@ using namespace Usb;
 
 namespace Barry {
 
-Socket::Socket(Device &dev, int writeEndpoint, int readEndpoint)
+Socket::Socket(	Device &dev,
+		int writeEndpoint, int readEndpoint,
+		uint8_t zeroSocketSequenceStart)
 	: m_dev(dev),
 	m_writeEp(writeEndpoint),
 	m_readEp(readEndpoint),
 	m_socket(0),
+	m_zeroSocketSequence(zeroSocketSequenceStart),
 	m_flag(0),
-	m_sequenceId(0),
-	m_lastStatus(0)
+	m_sequenceId(0)
 {
 }
 
@@ -77,7 +79,7 @@ Socket::~Socket()
 ///
 /// \exception	Barry::Error
 ///
-void Socket::Open(uint16_t socket, uint8_t flag)
+void Socket::Open(uint16_t socket)
 {
 	if( m_socket != 0 ) {
 		// already open
@@ -87,16 +89,21 @@ void Socket::Open(uint16_t socket, uint8_t flag)
 	// build open command
 	Barry::Protocol::Packet packet;
 	packet.socket = 0;
-	packet.size = htobs(SB_SOCKET_PACKET_SIZE);
+	packet.size = htobs(SB_SOCKET_PACKET_HEADER_SIZE);
 	packet.command = SB_COMMAND_OPEN_SOCKET;
 	packet.u.socket.socket = htobs(socket);
-	packet.u.socket.param = flag;
+	packet.u.socket.sequence = m_zeroSocketSequence;// overwritten by Send()
 
-	Data send(&packet, SB_SOCKET_PACKET_SIZE);
+	// save sequence for later close, and inc
+	m_flag = m_zeroSocketSequence;
+
+	Data send(&packet, SB_SOCKET_PACKET_HEADER_SIZE);
 	Data receive;
-	if( !Send(send, receive) ) {
+	try {
+		Send(send, receive);
+	} catch( Usb::Error & ) {
 		eeout(send, receive);
-		throw Error(GetLastStatus(), "Error opening socket");
+		throw;
 	}
 
 	// starting fresh, reset sequence ID
@@ -108,11 +115,11 @@ void Socket::Open(uint16_t socket, uint8_t flag)
 		Receive(receive);
 	}
 
-	Protocol::CheckSize(receive, SB_SOCKET_PACKET_SIZE);
+	Protocol::CheckSize(receive, SB_SOCKET_PACKET_HEADER_SIZE);
 	MAKE_PACKET(rpack, receive);
 	if( rpack->command != SB_COMMAND_OPENED_SOCKET ||
 	    btohs(rpack->u.socket.socket) != socket ||
-	    rpack->u.socket.param != flag )
+	    rpack->u.socket.sequence != m_flag )
 	{
 		eout("Packet:\n" << receive);
 		throw Error("Socket: Bad OPENED packet in Open");
@@ -120,7 +127,6 @@ void Socket::Open(uint16_t socket, uint8_t flag)
 
 	// success!  save the socket
 	m_socket = socket;
-	m_flag = flag;
 }
 
 //
@@ -141,20 +147,23 @@ void Socket::Close()
 		// build close command
 		Barry::Protocol::Packet packet;
 		packet.socket = 0;
-		packet.size = htobs(SB_SOCKET_PACKET_SIZE);
+		packet.size = htobs(SB_SOCKET_PACKET_HEADER_SIZE);
 		packet.command = SB_COMMAND_CLOSE_SOCKET;
 		packet.u.socket.socket = htobs(m_socket);
-		packet.u.socket.param = m_flag;
+		packet.u.socket.sequence = m_flag;
 
-		Data command(&packet, SB_SOCKET_PACKET_SIZE);
+		Data command(&packet, SB_SOCKET_PACKET_HEADER_SIZE);
 		Data response;
-		if( !Send(command, response) ) {
+		try {
+			Send(command, response);
+		}
+		catch( Usb::Error & ) {
 			// reset so this won't be called again
 			m_socket = 0;
 			m_flag = 0;
 
 			eeout(command, response);
-			throw Error(GetLastStatus(), "Error closing socket");
+			throw;
 		}
 
 		// starting fresh, reset sequence ID
@@ -166,11 +175,11 @@ void Socket::Close()
 			Receive(response);
 		}
 
-		Protocol::CheckSize(response, SB_SOCKET_PACKET_SIZE);
+		Protocol::CheckSize(response, SB_SOCKET_PACKET_HEADER_SIZE);
 		MAKE_PACKET(rpack, response);
 		if( rpack->command != SB_COMMAND_CLOSED_SOCKET ||
 		    btohs(rpack->u.socket.socket) != m_socket ||
-		    rpack->u.socket.param != m_flag )
+		    rpack->u.socket.sequence != m_flag )
 		{
 			// reset so this won't be called again
 			m_socket = 0;
@@ -193,15 +202,13 @@ void Socket::Close()
 //
 // Send
 //
-/// Sends 'send' data to device, and waits for response, using
-/// "read first, write second" order observed in capture.
+/// Sends 'send' data to device, and waits for response.
 ///
-/// \returns	bool
-///		- true on success
-///		- false on failure, use GetLastStatus() for kernel
-///			URB error code
+/// \returns	void
 ///
-bool Socket::Send(const Data &send, Data &receive, int timeout)
+/// \exception	Usb::Error on underlying bus errors.
+///
+void Socket::Send(Data &send, Data &receive, int timeout)
 {
 	// Special case: it seems that sending packets with a size that's an
 	// exact multiple of 0x40 causes the device to get confused.
@@ -219,21 +226,30 @@ bool Socket::Send(const Data &send, Data &receive, int timeout)
 		m_dev.BulkWrite(m_writeEp, sizeCommand);
 	}
 
+	// If this is a socket 0 packet, force the send packet data's
+	// socket 0 sequence number to something correct.
+	if( m_socket == 0 && send.GetSize() >= SB_SOCKET_PACKET_HEADER_SIZE ) {
+		MAKE_PACKETPTR_BUF(spack, send.GetBuffer());
+		spack->u.socket.sequence = m_zeroSocketSequence;
+		m_zeroSocketSequence++;
+	}
+
 	m_dev.BulkWrite(m_writeEp, send);
 	m_dev.BulkRead(m_readEp, receive, timeout);
 
 	ddout("Socket::Send: Endpoint " << m_readEp << "\nReceived:\n" << receive);
-
-	return m_lastStatus >= 0;
 }
 
-bool Socket::Receive(Data &receive, int timeout)
+void Socket::Send(Barry::Packet &packet, int timeout)
+{
+	Send(packet.m_send, packet.m_receive, timeout);
+}
+
+void Socket::Receive(Data &receive, int timeout)
 {
 	m_dev.BulkRead(m_readEp, receive, timeout);
 
 	ddout("Socket::Receive: Endpoint " << m_readEp << "\nReceived:\n" << receive);
-
-	return m_lastStatus >= 0;
 }
 
 // appends fragment to whole... if whole is empty, simply copies, and
@@ -348,7 +364,7 @@ void Socket::CheckSequence(const Data &seq)
 // necessary, and returns the response in receive, defragmenting
 // if needed
 // Blocks until response received or timed out in Usb::Device
-bool Socket::Packet(const Data &send, Data &receive, int timeout)
+void Socket::Packet(Data &send, Data &receive, int timeout)
 {
 /*
 // FIXME - this might be a good idea someday, or perhaps provide a wrapper
@@ -375,8 +391,7 @@ bool Socket::Packet(const Data &send, Data &receive, int timeout)
 
 	if( send.GetSize() <= MAX_PACKET_SIZE ) {
 		// send non-fragmented
-		if( !Send(send, inFrag, timeout) )
-			return false;
+		Send(send, inFrag, timeout);
 	}
 	else {
 		// send fragmented
@@ -385,8 +400,7 @@ bool Socket::Packet(const Data &send, Data &receive, int timeout)
 
 		do {
 			offset = MakeNextFragment(send, outFrag, offset);
-			if( !Send(outFrag, inFrag, timeout) )
-				return false;
+			Send(outFrag, inFrag, timeout);
 
 			MAKE_PACKET(rpack, inFrag);
 			// only process sequence handshakes... once we
@@ -468,20 +482,17 @@ bool Socket::Packet(const Data &send, Data &receive, int timeout)
 
 		if( !done ) {
 			// not done yet, ask for another read
-			if( !Receive(inFrag) )
-				return false;
+			Receive(inFrag);
 		}
 	}
-
-	return true;
 }
 
-bool Socket::Packet(Barry::Packet &packet, int timeout)
+void Socket::Packet(Barry::Packet &packet, int timeout)
 {
-	return Packet(packet.m_send, packet.m_receive, timeout);
+	Packet(packet.m_send, packet.m_receive, timeout);
 }
 
-bool Socket::NextRecord(Data &receive)
+void Socket::NextRecord(Data &receive)
 {
 	Barry::Protocol::Packet packet;
 	packet.socket = htobs(GetSocket());
@@ -491,7 +502,7 @@ bool Socket::NextRecord(Data &receive)
 	packet.u.db.u.command.operation = 0;
 
 	Data command(&packet, 7);
-	return Packet(command, receive);
+	Packet(command, receive);
 }
 
 

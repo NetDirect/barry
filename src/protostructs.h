@@ -292,6 +292,47 @@ struct DBC_IndexedUpload
 } __attribute__ ((packed));
 #define DBC_INDEXED_UPLOAD_HEADER_SIZE	(sizeof(Barry::Protocol::DBC_IndexedUpload) - 1)
 
+struct PasswordChallenge
+{
+	uint8_t		remaining_tries;	// number of password attempts
+						// the device will accept before
+						// committing suicide...
+						// starts at 10 and counts down
+						// on each bad password
+	uint8_t		unknown;		// observed as 0... probably just
+						// the top byte of a uint16
+						// remaining_tries, but I don't
+						// want to take that chance
+	uint16_t	param;			// seems to be a secondary command
+						// of some kind, observed as 0x14
+						// or 0x04, but purpose unknown
+						// possibly a send/receive flag
+						// bit (0x10/0x00)
+	union Hash
+	{
+		uint32_t	seed;
+		uint8_t		hash[20];
+	} __attribute__ ((packed)) u;
+
+} __attribute__ ((packed));
+
+struct AttributeFetch
+{
+	uint16_t	object;
+	uint16_t	attribute;
+	uint8_t		raw[1];			// used only in response
+} __attribute__ ((packed));
+#define ATTRIBUTE_FETCH_COMMAND_SIZE	(sizeof(Barry::Protocol::AttributeFetch) - 1)
+
+struct ModeSelect
+{
+	uint8_t		name[16];
+	struct ResponseBlock
+	{
+		uint8_t		unknown[20];
+	} __attribute__ ((packed)) response;
+} __attribute__ ((packed));
+
 
 ///////////////////////////////////////////////////////////////////////////////
 // Protocol command structures
@@ -299,8 +340,21 @@ struct DBC_IndexedUpload
 struct SocketCommand
 {
 	uint16_t	socket;
-	uint8_t		param;
+	uint8_t		sequence;		// incremented on each socket 0
+						// communication, replies return
+						// the same number from command
+
+	union PacketData
+	{
+
+		PasswordChallenge	password;
+		AttributeFetch		fetch;
+		ModeSelect		mode;
+		uint8_t			raw[1];
+
+	} __attribute__ ((packed)) u;
 } __attribute__ ((packed));
+#define SOCKET_COMMAND_HEADER_SIZE		(sizeof(Barry::Protocol::SocketCommand) - sizeof(Barry::Protocol::SocketCommand::PacketData))
 
 struct SequenceCommand
 {
@@ -308,17 +362,6 @@ struct SequenceCommand
 	uint8_t		unknown2;
 	uint8_t		unknown3;
 	uint32_t	sequenceId;
-} __attribute__ ((packed));
-
-struct ModeSelectCommand
-{
-	uint16_t	socket;
-	uint8_t		flag;
-	uint8_t		modeName[16];
-	struct ResponseBlock
-	{
-		uint8_t		unknown[20];
-	} __attribute__ ((packed)) response;
 } __attribute__ ((packed));
 
 struct DBCommand
@@ -446,7 +489,6 @@ struct Packet
 
 		SocketCommand		socket;
 		SequenceCommand		sequence;
-		ModeSelectCommand	mode;
 		DBAccess		db;
 		uint8_t			raw[1];
 
@@ -479,9 +521,9 @@ struct Packet
 #define SB_PACKET_UPLOAD_HEADER_SIZE		(SB_PACKET_DBACCESS_HEADER_SIZE + UPLOAD_HEADER_SIZE)
 
 #define SB_SEQUENCE_PACKET_SIZE			(SB_PACKET_HEADER_SIZE + sizeof(Barry::Protocol::SequenceCommand))
-#define SB_SOCKET_PACKET_SIZE			(SB_PACKET_HEADER_SIZE + sizeof(Barry::Protocol::SocketCommand))
-#define SB_MODE_PACKET_COMMAND_SIZE		(SB_PACKET_HEADER_SIZE + sizeof(Barry::Protocol::ModeSelectCommand) - sizeof(Barry::Protocol::ModeSelectCommand::ResponseBlock))
-#define SB_MODE_PACKET_RESPONSE_SIZE		(SB_PACKET_HEADER_SIZE + sizeof(Barry::Protocol::ModeSelectCommand))
+#define SB_SOCKET_PACKET_HEADER_SIZE		(SB_PACKET_HEADER_SIZE + SOCKET_COMMAND_HEADER_SIZE)
+#define SB_MODE_PACKET_COMMAND_SIZE		(SB_SOCKET_PACKET_HEADER_SIZE + sizeof(Barry::Protocol::ModeSelect) - sizeof(Barry::Protocol::ModeSelect::ResponseBlock))
+#define SB_MODE_PACKET_RESPONSE_SIZE		(SB_SOCKET_PACKET_HEADER_SIZE + sizeof(Barry::Protocol::ModeSelect))
 
 
 // Macros

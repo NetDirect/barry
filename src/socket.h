@@ -52,10 +52,9 @@ class Socket
 					// since socket 0 is always open
 					// If this is not 0, then class will
 					// deal with closing automatically.
+	uint8_t m_zeroSocketSequence;
 	uint8_t m_flag;
 	uint32_t m_sequenceId;
-
-	int m_lastStatus;
 
 private:
 	// sends 'send' data to device, and waits for response, using
@@ -65,30 +64,34 @@ private:
 	void CheckSequence(const Data &seq);
 
 public:
-	Socket(Usb::Device &dev, int writeEndpoint, int readEndpoint);
+	Socket(Usb::Device &dev, int writeEndpoint, int readEndpoint,
+		uint8_t zeroSocketSequenceStart = 0);
 	~Socket();
 
-	int GetLastStatus() const { return m_lastStatus; }
 	uint16_t GetSocket() const { return m_socket; }
+	uint8_t GetZeroSocketSequence() const { return m_zeroSocketSequence; }
 
-	void Open(uint16_t socket, uint8_t flag);
+	void Open(uint16_t socket);
 	void Close();
 
 	// Send and Receive are available before Open...
 	// an unopened socket defaults to socket 0, which you need
 	// in order to set the blackberry mode
-	bool Send(const Data &send, Data &receive, int timeout = -1);
-	bool Receive(Data &receive, int timeout = -1);
+	// The send function will overwrite the zeroSocketSequence byte
+	// *inside* the packet, if the current m_socket is 0.
+	void Send(Data &send, Data &receive, int timeout = -1);
+	void Send(Barry::Packet &packet, int timeout = -1);
+	void Receive(Data &receive, int timeout = -1);
 
 	// sends the send packet down to the device, fragmenting if
 	// necessary, and returns the response in receive, defragmenting
 	// if needed
 	// Blocks until response received or timed out in Usb::Device
-	bool Packet(const Data &send, Data &receive, int timeout = -1);
-	bool Packet(Barry::Packet &packet, int timeout = -1);
+	void Packet(Data &send, Data &receive, int timeout = -1);
+	void Packet(Barry::Packet &packet, int timeout = -1);
 
 	// some handy wrappers for the Packet() interface
-	bool NextRecord(Data &receive);
+	void NextRecord(Data &receive);
 };
 
 

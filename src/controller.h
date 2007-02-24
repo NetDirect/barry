@@ -35,6 +35,7 @@ namespace Barry {
 // forward declarations
 class Parser;
 class Builder;
+class DBPacket;
 
 //
 // Controller class
@@ -57,7 +58,7 @@ class Builder;
 ///
 class Controller
 {
-	friend class Barry::Packet;
+	friend class Barry::DBPacket;
 
 public:
 	/// Handheld mode type
@@ -83,7 +84,7 @@ private:
 	ModeType m_mode;
 
 protected:
-	void SelectMode(ModeType mode, uint16_t &socket, uint8_t &flag);
+	void SelectMode(ModeType mode, uint16_t &socket);
 	unsigned int GetCommand(CommandType ct);
 
 	void LoadCommandTable();

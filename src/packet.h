@@ -36,10 +36,62 @@ class Builder;
 class Socket;
 class Controller;
 
+class Packet
+{
+	friend class Socket;
+
+protected:
+	Data &m_send, &m_receive;
+
+protected:
+	Packet(Data &send, Data &receive)
+		: m_send(send), m_receive(receive)
+		{}
+	virtual ~Packet() {}
+
+	Data& GetSend() { return m_send; }
+	Data& GetReceive() { return m_receive; }
+};
+
 //
-// Packet class
+// ZeroPacket class
 //
-/// Provides an API for building and analyzing raw protocol packets.
+/// Provides an API for building and analyzing socket-0 protocol packets.
+/// This class relies on 2 external objects: a send and receive Data buffer.
+///
+/// Note that the receive buffer may be modified
+/// during a packet send, and this DBPacket class provides API helpers
+/// to analyze the results.
+///
+class ZeroPacket : public Packet
+{
+	friend class Socket;
+
+public:
+	ZeroPacket(Data &send, Data &receive);
+	~ZeroPacket();
+
+	//////////////////////////////////
+	// meta access
+
+	//////////////////////////////////
+	// packet building
+
+	void GetAttribute(unsigned int object, unsigned int attribute);
+
+
+	//////////////////////////////////
+	// response analysis
+
+	unsigned int ObjectID() const;
+	unsigned int AttributeID() const;
+};
+
+
+//
+// DBPacket class
+//
+/// Provides an API for building and analyzing raw DB protocol packets.
 /// This class relies on 3 external objects: a Controller object,
 /// a send Data buffer, and a receive data buffer.  Socket and
 /// connection details are retrieved on a readonly basis from the
@@ -47,23 +99,22 @@ class Controller;
 /// modified.
 ///
 /// Note that the receive buffer may be modified
-/// during a packet send, and this Packet class provides API helpers
+/// during a packet send, and this DBPacket class provides API helpers
 /// to analyze the results.
 ///
-class Packet
+class DBPacket : public Packet
 {
 	friend class Socket;
 
 private:
 	Controller &m_con;
-	Data &m_send, &m_receive;
 	unsigned int m_last_dbop;	// last database operation
 
 protected:
 
 public:
-	Packet(Controller &con, Data &send, Data &receive);
-	~Packet();
+	DBPacket(Controller &con, Data &send, Data &receive);
+	~DBPacket();
 
 	//////////////////////////////////
 	// meta access
@@ -87,6 +138,7 @@ public:
 	//////////////////////////////////
 	// response analysis
 
+	// DB command response functions
 	unsigned int Command() const;	// throws Error if receive isn't big enough
 	unsigned int ReturnCode() const;	// throws FIXME if packet doesn't support it
 	unsigned int DBOperation() const; // throws Error on size trouble

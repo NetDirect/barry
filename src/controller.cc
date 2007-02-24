@@ -52,7 +52,7 @@ Controller::Controller(const ProbeResult &device)
 	: m_dev(device.m_dev),
 	m_iface(0),
 	m_pin(device.m_pin),
-	m_socket(m_dev, device.m_ep.write, device.m_ep.read),
+	m_socket(m_dev, device.m_ep.write, device.m_ep.read, device.m_zeroSocketSequence),
 	m_mode(Unspecified)
 {
 	if( !m_dev.SetConfiguration(BLACKBERRY_CONFIGURATION) )
@@ -81,18 +81,18 @@ Controller::~Controller()
 ///////////////////////////////////////////////////////////////////////////////
 // protected members
 
-void Controller::SelectMode(ModeType mode, uint16_t &socket, uint8_t &flag)
+void Controller::SelectMode(ModeType mode, uint16_t &socket)
 {
 	// select mode
 	Protocol::Packet packet;
 	packet.socket = 0;
 	packet.size = htobs(SB_MODE_PACKET_COMMAND_SIZE);
 	packet.command = SB_COMMAND_SELECT_MODE;
-	packet.u.mode.socket = htobs(SB_MODE_REQUEST_SOCKET);
-	packet.u.mode.flag = 0x05;	// FIXME
-	memset(packet.u.mode.modeName, 0, sizeof(packet.u.mode.modeName));
+	packet.u.socket.socket = htobs(SB_MODE_REQUEST_SOCKET);
+	packet.u.socket.sequence = 0; // updated by Socket::Send()
+	memset(packet.u.socket.u.mode.name, 0, sizeof(packet.u.socket.u.mode.name));
 
-	char *modeName = (char *) packet.u.mode.modeName;
+	char *modeName = (char *) packet.u.socket.u.mode.name;
 	switch( mode )
 	{
 	case Bypass:
@@ -115,25 +115,28 @@ void Controller::SelectMode(ModeType mode, uint16_t &socket, uint8_t &flag)
 	// send mode command before we open, as a default socket is socket 0
 	Data command(&packet, btohs(packet.size));
 	Data response;
-	if( !m_socket.Send(command, response) ) {
-		eeout(command, response);
-		throw Error(m_socket.GetLastStatus(),
-			"Controller: error setting desktop mode");
-	}
 
-	// get the data socket number
-	// indicates the socket number that
-	// should be used below in the Open() call
-	Protocol::CheckSize(response, SB_MODE_PACKET_RESPONSE_SIZE);
-	MAKE_PACKET(modepack, response);
-	if( modepack->command != SB_COMMAND_MODE_SELECTED ) {
-		eeout(command, response);
-		throw Error("Controller: mode not selected");
-	}
+	try {
+		m_socket.Send(command, response);
 
-	// return the socket and flag that the device is expecting us to use
-	socket = btohs(modepack->u.mode.socket);
-	flag = modepack->u.mode.flag + 1;
+		// get the data socket number
+		// indicates the socket number that
+		// should be used below in the Open() call
+		Protocol::CheckSize(response, SB_MODE_PACKET_RESPONSE_SIZE);
+		MAKE_PACKET(modepack, response);
+		if( modepack->command != SB_COMMAND_MODE_SELECTED ) {
+			eeout(command, response);
+			throw Error("Controller: mode not selected");
+		}
+
+		// return the socket and flag that the device is expecting us to use
+		socket = btohs(modepack->u.socket.socket);
+	}
+	catch( Usb::Error & ) {
+		eout("Controller: error setting desktop mode");
+		eeout(command, response);
+		throw;
+	}
 }
 
 unsigned int Controller::GetCommand(CommandType ct)
@@ -169,30 +172,31 @@ void Controller::LoadCommandTable()
 
 	Data command(rawCommand, sizeof(rawCommand));
 	Data response;
-	if( !m_socket.Packet(command, response) ) {
+
+	try {
+		m_socket.Packet(command, response);
+
+		MAKE_PACKET(rpack, response);
+		while( rpack->command != SB_COMMAND_DB_DONE ) {
+			m_socket.NextRecord(response);
+
+			rpack = (const Protocol::Packet *) response.GetData();
+			if( rpack->command == SB_COMMAND_DB_DATA && btohs(rpack->size) > 10 ) {
+				// second packet is generally large, and contains
+				// the command table
+				m_commandTable.Clear();
+				m_commandTable.Parse(response, 6);
+			}
+		}
+
+		ddout(m_commandTable);
+
+	}
+	catch( Usb::Error & ) {
+		eout("Controller: error getting command table");
 		eeout(command, response);
-		throw Error(m_socket.GetLastStatus(),
-			"Controller: error getting command table");
+		throw;
 	}
-
-	MAKE_PACKET(rpack, response);
-	while( rpack->command != SB_COMMAND_DB_DONE ) {
-		if( !m_socket.NextRecord(response) ) {
-			eout("Response packet:\n" << response);
-			throw Error(m_socket.GetLastStatus(),
-				"Controller: error getting command table(next)");
-		}
-
-		rpack = (const Protocol::Packet *) response.GetData();
-		if( rpack->command == SB_COMMAND_DB_DATA && btohs(rpack->size) > 10 ) {
-			// second packet is generally large, and contains
-			// the command table
-			m_commandTable.Clear();
-			m_commandTable.Parse(response, 6);
-		}
-	}
-
-	ddout(m_commandTable);
 }
 
 void Controller::LoadDBDB()
@@ -200,14 +204,10 @@ void Controller::LoadDBDB()
 	assert( m_mode == Desktop );
 
 	Data command, response;
-	Packet packet(*this, command, response);
+	DBPacket packet(*this, command, response);
 	packet.GetDBDB();
 
-	if( !m_socket.Packet(packet) ) {
-		eeout(command, response);
-		throw Error(m_socket.GetLastStatus(),
-			"Controller: error getting database database");
-	}
+	m_socket.Packet(packet);
 
 	while( packet.Command() != SB_COMMAND_DB_DONE ) {
 		if( packet.Command() == SB_COMMAND_DB_DATA ) {
@@ -216,11 +216,7 @@ void Controller::LoadDBDB()
 		}
 
 		// advance!
-		if( !m_socket.NextRecord(response) ) {
-			eout("Response packet:\n" << response);
-			throw Error(m_socket.GetLastStatus(),
-				"Controller: error getting command table(next)");
-		}
+		m_socket.NextRecord(response);
 	}
 }
 
@@ -270,12 +266,11 @@ unsigned int Controller::GetDBID(const std::string &name) const
 void Controller::OpenMode(ModeType mode)
 {
 	uint16_t socket;
-	uint8_t flag;
 
 	if( m_mode != mode ) {
 		m_socket.Close();
-		SelectMode(mode, socket, flag);
-		m_socket.Open(socket, flag);
+		SelectMode(mode, socket);
+		m_socket.Open(socket);
 		m_mode = mode;
 
 		switch( m_mode )
@@ -306,32 +301,21 @@ void Controller::GetRecordStateTable(unsigned int dbId, RecordStateTable &result
 	if( m_mode != Desktop )
 		throw std::logic_error("Wrong mode in GetRecordStateTable");
 
+	dout("Database ID: " << dbId);
+
 	// start fresh
 	result.Clear();
 
 	Data command, response;
-	Packet packet(*this, command, response);
+	DBPacket packet(*this, command, response);
 	packet.GetRecordStateTable(dbId);
 
-	if( !m_socket.Packet(packet) ) {
-		eout("Database ID: " << dbId);
-		eeout(command, response);
-		throw Error(m_socket.GetLastStatus(),
-			"Controller: error loading database");
-	}
-
+	m_socket.Packet(packet);
 	result.Parse(response);
 
 	// flush the command sequence
 	while( packet.Command() != SB_COMMAND_DB_DONE )
-	{
-		// advance!
-		if( !m_socket.NextRecord(response) ) {
-			eout("Response packet:\n" << response);
-			throw Error(m_socket.GetLastStatus(),
-				"Controller: error loading state table (next)");
-		}
-	}
+		m_socket.NextRecord(response);
 }
 
 //
@@ -347,32 +331,29 @@ void Controller::AddRecord(unsigned int dbId, Builder &build)
 	if( m_mode != Desktop )
 		throw std::logic_error("Wrong mode in GetRecord");
 
+	dout("Database ID: " << dbId);
+
 	Data command, response;
-	Packet packet(*this, command, response);
+	DBPacket packet(*this, command, response);
 
 	if( packet.SetRecord(dbId, build) ) {
-		if( !m_socket.Packet(packet) ) {
-			eout("Database ID: " << dbId);
-			eeout(command, response);
-			throw Error(m_socket.GetLastStatus(),
-				"Controller: error adding record to device database");
+
+		std::ostringstream oss;
+
+		m_socket.Packet(packet);
+
+		// successful packet transfer, so check the network return code
+		if( packet.Command() != SB_COMMAND_DB_DONE ) {
+			oss << "Controller: device responded with unexpected packet command code: "
+			    << "0x" << std::hex << packet.Command();
+			throw Error(oss.str());
 		}
-		else {
-			std::ostringstream oss;
 
-			// successful packet transfer, so check the network return code
-			if( packet.Command() != SB_COMMAND_DB_DONE ) {
-				oss << "Controller: device responded with unexpected packet command code: "
-				    << "0x" << std::hex << packet.Command();
-				throw Error(oss.str());
-			}
-
-			if( packet.ReturnCode() != 0 ) {
-				oss << "Controller: device responded with error code (command: "
-				    << packet.Command() << ", code: "
-				    << packet.ReturnCode() << ")";
-				throw Error(oss.str());
-			}
+		if( packet.ReturnCode() != 0 ) {
+			oss << "Controller: device responded with error code (command: "
+			    << packet.Command() << ", code: "
+			    << packet.ReturnCode() << ")";
+			throw Error(oss.str());
 		}
 	}
 }
@@ -391,16 +372,13 @@ void Controller::GetRecord(unsigned int dbId,
 	if( m_mode != Desktop )
 		throw std::logic_error("Wrong mode in GetRecord");
 
+	dout("Database ID: " << dbId);
+
 	Data command, response;
-	Packet packet(*this, command, response);
+	DBPacket packet(*this, command, response);
 	packet.GetRecordByIndex(dbId, stateTableIndex);
 
-	if( !m_socket.Packet(packet) ) {
-		eout("Database ID: " << dbId);
-		eeout(command, response);
-		throw Error(m_socket.GetLastStatus(),
-			"Controller: error loading database");
-	}
+	m_socket.Packet(packet);
 
 	// perform copious packet checks
 	if( response.GetSize() < SB_PACKET_RESPONSE_HEADER_SIZE ) {
@@ -429,14 +407,7 @@ void Controller::GetRecord(unsigned int dbId,
 
 	// flush the command sequence
 	while( packet.Command() != SB_COMMAND_DB_DONE )
-	{
-		// advance!
-		if( !m_socket.NextRecord(response) ) {
-			eout("Response packet:\n" << response);
-			throw Error(m_socket.GetLastStatus(),
-				"Controller: error loading state table (next)");
-		}
-	}
+		m_socket.NextRecord(response);
 }
 
 //
@@ -451,36 +422,32 @@ void Controller::SetRecord(unsigned int dbId, unsigned int stateTableIndex,
 	if( m_mode != Desktop )
 		throw std::logic_error("Wrong mode in SetRecord");
 
+	dout("Database ID: " << dbId << " Index: " << stateTableIndex);
+
 	Data command, response;
-	Packet packet(*this, command, response);
+	DBPacket packet(*this, command, response);
 
 	// loop until builder object has no more data
 	if( !packet.SetRecordByIndex(dbId, stateTableIndex, build) ) {
 		throw std::logic_error("Controller: no data available in SetRecord");
 	}
 
-	if( !m_socket.Packet(packet) ) {
-		eout("Database ID: " << dbId << " Index: " << stateTableIndex);
-		eeout(command, response);
-		throw Error(m_socket.GetLastStatus(),
-			"Controller: error writing to device database (SetRecord)");
+	m_socket.Packet(packet);
+
+	std::ostringstream oss;
+
+	// successful packet transfer, so check the network return code
+	if( packet.Command() != SB_COMMAND_DB_DONE ) {
+		oss << "Controller: device responded with unexpected packet command code: "
+		    << "0x" << std::hex << packet.Command();
+		throw Error(oss.str());
 	}
-	else {
-		std::ostringstream oss;
 
-		// successful packet transfer, so check the network return code
-		if( packet.Command() != SB_COMMAND_DB_DONE ) {
-			oss << "Controller: device responded with unexpected packet command code: "
-			    << "0x" << std::hex << packet.Command();
-			throw Error(oss.str());
-		}
-
-		if( packet.ReturnCode() != 0 ) {
-			oss << "Controller: device responded with error code (command: "
-			    << packet.Command() << ", code: "
-			    << packet.ReturnCode() << ")";
-			throw Error(oss.str());
-		}
+	if( packet.ReturnCode() != 0 ) {
+		oss << "Controller: device responded with error code (command: "
+		    << packet.Command() << ", code: "
+		    << packet.ReturnCode() << ")";
+		throw Error(oss.str());
 	}
 }
 
@@ -494,27 +461,17 @@ void Controller::ClearDirty(unsigned int dbId, unsigned int stateTableIndex)
 	if( m_mode != Desktop )
 		throw std::logic_error("Wrong mode in ClearDirty");
 
+	dout("Database ID: " << dbId);
+
 	Data command, response;
-	Packet packet(*this, command, response);
+	DBPacket packet(*this, command, response);
 	packet.SetRecordFlags(dbId, stateTableIndex, 0);
 
-	if( !m_socket.Packet(packet) ) {
-		eout("Database ID: " << dbId);
-		eeout(command, response);
-		throw Error(m_socket.GetLastStatus(),
-			"Controller: error loading database");
-	}
+	m_socket.Packet(packet);
 
 	// flush the command sequence
 	while( packet.Command() != SB_COMMAND_DB_DONE )
-	{
-		// advance!
-		if( !m_socket.NextRecord(response) ) {
-			eout("Response packet:\n" << response);
-			throw Error(m_socket.GetLastStatus(),
-				"Controller: error loading state table (next)");
-		}
-	}
+		m_socket.NextRecord(response);
 }
 
 //
@@ -527,27 +484,17 @@ void Controller::DeleteRecord(unsigned int dbId, unsigned int stateTableIndex)
 	if( m_mode != Desktop )
 		throw std::logic_error("Wrong mode in DeleteRecord");
 
+	dout("Database ID: " << dbId);
+
 	Data command, response;
-	Packet packet(*this, command, response);
+	DBPacket packet(*this, command, response);
 	packet.DeleteRecordByIndex(dbId, stateTableIndex);
 
-	if( !m_socket.Packet(packet) ) {
-		eout("Database ID: " << dbId);
-		eeout(command, response);
-		throw Error(m_socket.GetLastStatus(),
-			"Controller: error deleting record");
-	}
+	m_socket.Packet(packet);
 
 	// flush the command sequence
 	while( packet.Command() != SB_COMMAND_DB_DONE )
-	{
-		// advance!
-		if( !m_socket.NextRecord(response) ) {
-			eout("Response packet:\n" << response);
-			throw Error(m_socket.GetLastStatus(),
-				"Controller: error deleting record (next)");
-		}
-	}
+		m_socket.NextRecord(response);
 }
 
 //
@@ -578,19 +525,15 @@ void Controller::LoadDatabase(unsigned int dbId, Parser &parser)
 	if( m_mode != Desktop )
 		throw std::logic_error("Wrong mode in LoadDatabase");
 
+	dout("Database ID: " << dbId);
+
 	Data command, response;
-	Packet packet(*this, command, response);
+	DBPacket packet(*this, command, response);
 	packet.GetRecords(dbId);
 
-	if( !m_socket.Packet(packet) ) {
-		eout("Database ID: " << dbId);
-		eeout(command, response);
-		throw Error(m_socket.GetLastStatus(),
-			"Controller: error loading database");
-	}
+	m_socket.Packet(packet);
 
-	while( packet.Command() != SB_COMMAND_DB_DONE )
-	{
+	while( packet.Command() != SB_COMMAND_DB_DONE ) {
 		if( packet.Command() == SB_COMMAND_DB_DATA ) {
 			// this size is the old header size, since using
 			// old command above
@@ -598,11 +541,7 @@ void Controller::LoadDatabase(unsigned int dbId, Parser &parser)
 		}
 
 		// advance!
-		if( !m_socket.NextRecord(response) ) {
-			eout("Response packet:\n" << response);
-			throw Error(m_socket.GetLastStatus(),
-				"Controller: error loading database (next)");
-		}
+		m_socket.NextRecord(response);
 	}
 }
 
@@ -610,6 +549,8 @@ void Controller::SaveDatabase(unsigned int dbId, Builder &builder)
 {
 	if( m_mode != Desktop )
 		throw std::logic_error("Wrong mode in SaveDatabase");
+
+	dout("Database ID: " << dbId);
 
 	// Protocol note: so far in testing, this CLEAR_DATABASE operation is
 	//                required, since every record sent via SET_RECORD
@@ -619,16 +560,11 @@ void Controller::SaveDatabase(unsigned int dbId, Builder &builder)
 	//                the Windows USB captures, which uses this same
 	//                technique.
 	Data command, response;
-	Packet packet(*this, command, response);
+	DBPacket packet(*this, command, response);
 	packet.ClearDatabase(dbId);
 
 	// wait up to a minute here for old, slower devices with lots of data
-	if( !m_socket.Packet(packet, 60000) ) {
-		eout("Database ID: " << dbId);
-		eeout(command, response);
-		throw Error(m_socket.GetLastStatus(),
-			"Controller: error clearing database");
-	}
+	m_socket.Packet(packet, 60000);
 	if( packet.ReturnCode() != 0 ) {
 		std::ostringstream oss;
 		oss << "Controller: could not clear database: (command: "
@@ -639,37 +575,32 @@ void Controller::SaveDatabase(unsigned int dbId, Builder &builder)
 
 	// check response to clear command was successful
 	if( packet.Command() != SB_COMMAND_DB_DONE ) {
-		throw Error(m_socket.GetLastStatus(),
-			"Controller: error clearing database, bad response");
+		eeout(command, response);
+		throw Error("Controller: error clearing database, bad response");
 	}
 
 	// loop until builder object has no more data
 	bool first = true;
 	while( packet.SetRecord(dbId, builder) ) {
-		if( !m_socket.Packet(packet, first ? 60000 : -1) ) {
-			eout("Database ID: " << dbId);
-			eeout(command, response);
-			throw Error(m_socket.GetLastStatus(),
-				"Controller: error writing to device database");
-		}
-		else {
-			std::ostringstream oss;
+		dout("Database ID: " << dbId);
 
-			// successful packet transfer, so check the network return code
-			if( packet.Command() != SB_COMMAND_DB_DONE ) {
-				oss << "Controller: device responded with unexpected packet command code: "
-				    << "0x" << std::hex << packet.Command();
-				throw Error(oss.str());
-			}
-
-			if( packet.ReturnCode() != 0 ) {
-				oss << "Controller: device responded with error code (command: "
-				    << packet.Command() << ", code: "
-				    << packet.ReturnCode() << ")";
-				throw Error(oss.str());
-			}
-		}
+		m_socket.Packet(packet, first ? 60000 : -1);
 		first = false;
+
+		std::ostringstream oss;
+		// successful packet transfer, so check the network return code
+		if( packet.Command() != SB_COMMAND_DB_DONE ) {
+			oss << "Controller: device responded with unexpected packet command code: "
+			    << "0x" << std::hex << packet.Command();
+			throw Error(oss.str());
+		}
+
+		if( packet.ReturnCode() != 0 ) {
+			oss << "Controller: device responded with error code (command: "
+			    << packet.Command() << ", code: "
+			    << packet.ReturnCode() << ")";
+			throw Error(oss.str());
+		}
 	}
 }
 

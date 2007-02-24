@@ -35,6 +35,7 @@ struct ProbeResult
 	unsigned char m_interface;
 	uint32_t m_pin;
 	Usb::EndpointPair m_ep;
+	uint8_t m_zeroSocketSequence;
 };
 
 std::ostream& operator<< (std::ostream &os, const ProbeResult &pr);
