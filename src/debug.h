@@ -30,8 +30,8 @@ extern bool __data_dump_mode__;
 	#undef eout
 
 	// low level debug output
-//	#define dout(x)  	std::cout << x << std::endl
-	#define dout(x)
+	#define dout(x)  	if(Barry::__data_dump_mode__) std::cout << x << std::endl
+//	#define dout(x)
 
 	// exception output
 	#define eout(x)  	std::cout << x << std::endl
