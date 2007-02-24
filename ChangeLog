@@ -44,7 +44,7 @@ Release: version 0.6 - 2007/02/??
 		- RemainingTries()
 		- SocketResponse()
 		- SocketSqeuence()
-	- move Command() to base Packet class
+	- moved Command() to base Packet class
 	- added comments to protostructs.h and size constants for the
 		new PasswordChallenge struct
 	- added password support to Socket and Controller classes
