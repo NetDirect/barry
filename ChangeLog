@@ -37,6 +37,8 @@ Release: version 0.6 - 2007/02/??
 				socket 0 sequence number
 	- added initial, incomplete prototype header for the C API
 	- updated some .cvsignore files
+	- updated TODO
+	- updated ReleaseChecklist.txt, adding rpm spec file
 2007/02/22
 	- updated Doxygen input files and version, and added to ReleaseChecklist
 	- fixed btool PIN output for LDIF mode, now commented in output
