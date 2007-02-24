@@ -59,6 +59,7 @@ void Usage()
    << "   -M        List current LDIF mapping\n"
    << "   -p pin    PIN of device to talk with\n"
    << "             If only one device plugged in, this flag is optional\n"
+   << "   -P pass   Simplistic method to specify device password\n"
    << "   -s db     Save database 'db' TO device from data loaded from -f file\n"
    << "   -t        Show database database table\n"
    << "   -T db     Show record state table for given database\n"
@@ -327,12 +328,13 @@ int main(int argc, char *argv[])
 			record_state = false;
 		string ldifBaseDN, ldifDnAttr;
 		string filename;
+		string password;
 		vector<string> dbNames, saveDbNames, mapCommands;
 		vector<StateTableCommand> stCommands;
 
 		// process command line options
 		for(;;) {
-			int cmd = getopt(argc, argv, "c:C:d:D:f:hlLm:Mp:r:R:s:tT:vX");
+			int cmd = getopt(argc, argv, "c:C:d:D:f:hlLm:Mp:P:r:R:s:tT:vX");
 			if( cmd == -1 )
 				break;
 
@@ -383,6 +385,10 @@ int main(int argc, char *argv[])
 
 			case 'p':	// Blackberry PIN
 				pin = strtoul(optarg, NULL, 16);
+				break;
+
+			case 'P':	// Device password
+				password = optarg;
 				break;
 
 			case 'r':	// get specific record index
@@ -489,7 +495,7 @@ int main(int argc, char *argv[])
 		// Dump list of all databases to stdout
 		if( show_dbdb ) {
 			// open desktop mode socket
-			con.OpenMode(Controller::Desktop);
+			con.OpenMode(Controller::Desktop, password.c_str());
 			cout << con.GetDBDB() << endl;
 		}
 
@@ -511,7 +517,7 @@ int main(int argc, char *argv[])
 		// This uses the Controller convenience templates
 		if( ldif_contacts ) {
 			// make sure we're in desktop mode
-			con.OpenMode(Controller::Desktop);
+			con.OpenMode(Controller::Desktop, password.c_str());
 
 			// create a storage functor object that accepts
 			// Barry::Contact objects as input
@@ -530,7 +536,7 @@ int main(int argc, char *argv[])
 
 			vector<string>::iterator b = dbNames.begin();
 			for( ; b != dbNames.end(); b++ ) {
-				con.OpenMode(Controller::Desktop);
+				con.OpenMode(Controller::Desktop, password.c_str());
 				unsigned int id = con.GetDBID(*b);
 				RecordStateTable state;
 				con.GetRecordStateTable(id, state);
@@ -547,7 +553,7 @@ int main(int argc, char *argv[])
 				return 1;
 			}
 
-			con.OpenMode(Controller::Desktop);
+			con.OpenMode(Controller::Desktop, password.c_str());
 			unsigned int id = con.GetDBID(dbNames[0]);
 			auto_ptr<Parser> parse = GetParser(dbNames[0],filename);
 
@@ -574,7 +580,7 @@ int main(int argc, char *argv[])
 			vector<string>::iterator b = dbNames.begin();
 
 			for( ; b != dbNames.end(); b++ ) {
-				con.OpenMode(Controller::Desktop);
+				con.OpenMode(Controller::Desktop, password.c_str());
 				auto_ptr<Parser> parse = GetParser(*b,filename);
 				unsigned int id = con.GetDBID(*b);
 				con.LoadDatabase(id, *parse.get());
@@ -587,7 +593,7 @@ int main(int argc, char *argv[])
 			vector<string>::iterator b = saveDbNames.begin();
 
 			for( ; b != saveDbNames.end(); b++ ) {
-				con.OpenMode(Controller::Desktop);
+				con.OpenMode(Controller::Desktop, password.c_str());
 				auto_ptr<Builder> build =
 					GetBuilder(*b, filename);
 				unsigned int id = con.GetDBID(*b);
