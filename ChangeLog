@@ -4,6 +4,37 @@ Release: version 0.6 - 2007/02/??
 	- changed library behaviour so it only turns on libusb debug output
 		if in data dump mode.  In btool, -v controls this output.
 	- minor stream formatting fix in btool
+	- added OpenSSL dependency to build for password hash support
+	- made debug dout() output conditional on Init() flag... In btool,
+		-v now controls this as well
+	- reverse engineered more of the initial probe packets, and
+		implemented probing in struct based code... changes include:
+		- added support for "attribute fetch" packets, used at
+			the beginning of USB conversations
+		- defined object/attribute id codes for the PIN number
+		- made Protocol::SocketCommand more robust, and implemented
+			its sequence number behaviour
+		- moved ModeSelectCommand into SocketCommand, as it is a
+			socket 0 level command
+		- added initial struct PasswordChallenge
+		- renamed Barry::Packet to DBPacket
+		- added ZeroPacket for socket 0 packet creation and analysis
+		- Barry::Packet is now the base class for the above
+		- implemented socket 0 behaviour in socket.cc
+		- changed return values for Send/Receive/Packet/NextRecord
+			members in the Socket class from bool to void, as they
+			don't generate errors themselves, but only can
+			have an error if Usb::Device throws an exception.
+			Cleaned up all code that called these members as well.
+		- removed "last status" from Socket class as it was unused
+		- updated probe.cc to use new socket 0 implementation
+		- removed two of the hard coded packet handshakes in favour
+			of socket 0 packets
+		- updated controller.cc:
+			- uses new socket 0 implementation
+			- removed "flag" hack when opening sockets and
+				selecting modes, as it should use the
+				socket 0 sequence number
 2007/02/22
 	- updated Doxygen input files and version, and added to ReleaseChecklist
 	- fixed btool PIN output for LDIF mode, now commented in output
