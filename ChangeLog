@@ -16,7 +16,7 @@ Release: version 0.6 - 2007/02/??
 			its sequence number behaviour
 		- moved ModeSelectCommand into SocketCommand, as it is a
 			socket 0 level command
-		- added initial struct PasswordChallenge
+		- added initial protocol struct: PasswordChallenge
 		- renamed Barry::Packet to DBPacket
 		- added ZeroPacket for socket 0 packet creation and analysis
 		- Barry::Packet is now the base class for the above
@@ -48,6 +48,8 @@ Release: version 0.6 - 2007/02/??
 	- added comments to protostructs.h and size constants for the
 		new PasswordChallenge struct
 	- added password support to Socket and Controller classes
+		Thanks to Rick Scott's XmBlackBerry for the openssl
+		password hashing logic.
 	- updated btool to use new password support, and updated its man page
 2007/02/22
 	- updated Doxygen input files and version, and added to ReleaseChecklist
