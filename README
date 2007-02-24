@@ -28,12 +28,16 @@ You need:
 	libusb, stable (0.1.x)
 				http://libusb.sourceforge.net/
 
+	openssl
+				http://www.openssl.org/
+
 	boost 1.33 (optional)
 				http://www.boost.org/
 
 If building directly from CVS instead of from a release tarball, you also need:
 	automake (1.9)		run from buildgen.sh
 	autoconf (2.59)		run from buildgen.sh
+
 
 Boost:
 
@@ -44,6 +48,10 @@ Libusb:
 
 Install the stable libusb packages (library and devel) from your distribution.
 Version 0.1.x is the series you want, and is commonly available.
+
+OpenSSL:
+
+OpenSSL is needed for password hashing.
 
 
 

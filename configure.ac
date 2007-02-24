@@ -35,6 +35,8 @@ AC_ARG_WITH(boost,
 	[BOOST_LIB_PATH="/usr/lib"
 	 BOOST_INC_PATH="/usr/include"])
 
+PKG_CHECK_MODULES([OPENSSL], [openssl])
+
 pkgconfigdir=${libdir}/pkgconfig
 AC_SUBST(pkgconfigdir)
 

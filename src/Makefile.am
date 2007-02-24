@@ -29,7 +29,7 @@ LIB_BARRY_VERSION = 0:6:0
 # are proper anyway. :-)
 DEFAULT_INCLUDES =
 #INCLUDES = @PACKAGE_CXXFLAGS@ -I@LIBUSB_INC_PATH@
-INCLUDES = $(LIBUSB_CFLAGS)
+INCLUDES = $(LIBUSB_CFLAGS) $(OPENSSL_CFLAGS)
 #AM_CXXFLAGS = -ansi -Wall -fno-strict-aliasing -g -D__DEBUG_MODE__
 AM_CXXFLAGS = -ansi -Wall -fno-strict-aliasing -g
 include_barrydir = ${includedir}/barry
@@ -87,7 +87,7 @@ libbarry_la_SOURCES = time.cc \
 	protostructs.h \
 	debug.h \
 	endian.h
-libbarry_la_LIBADD = $(LIBUSB_LIBS)
+libbarry_la_LIBADD = $(LIBUSB_LIBS) $(OPENSSL_LIBS)
 libbarry_la_LDFLAGS = -version-info ${LIB_BARRY_VERSION}
 
 ##if DO_TEST
