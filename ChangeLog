@@ -35,6 +35,8 @@ Release: version 0.6 - 2007/02/??
 			- removed "flag" hack when opening sockets and
 				selecting modes, as it should use the
 				socket 0 sequence number
+	- added initial, incomplete prototype header for the C API
+	- updated some .cvsignore files
 2007/02/22
 	- updated Doxygen input files and version, and added to ReleaseChecklist
 	- fixed btool PIN output for LDIF mode, now commented in output
