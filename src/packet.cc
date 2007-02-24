@@ -38,6 +38,23 @@
 namespace Barry {
 
 //////////////////////////////////////////////////////////////////////////////
+// Packet base class
+
+//
+// Command
+//
+/// Returns the command value of the receive packet.  If receive isn't
+/// large enough, throws Error.
+///
+unsigned int Packet::Command() const
+{
+	Protocol::CheckSize(m_receive);
+	MAKE_PACKET(rpack, m_receive);
+	return rpack->command;
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
 // ZeroPacket class
 
 ZeroPacket::ZeroPacket(Data &send, Data &receive)
@@ -86,6 +103,37 @@ unsigned int ZeroPacket::AttributeID() const
 	Protocol::CheckSize(m_receive, SB_SOCKET_PACKET_HEADER_SIZE);
 	MAKE_PACKET(rpack, m_receive);
 	return btohs(rpack->u.socket.u.fetch.attribute);
+}
+
+uint32_t ZeroPacket::ChallengeSeed() const
+{
+	Protocol::CheckSize(m_receive, SB_SOCKET_PACKET_HEADER_SIZE +
+		PASSWORD_CHALLENGE_SEED_SIZE);
+	MAKE_PACKET(rpack, m_receive);
+	return btohl(rpack->u.socket.u.password.u.seed);
+}
+
+unsigned int ZeroPacket::RemainingTries() const
+{
+	Protocol::CheckSize(m_receive, SB_SOCKET_PACKET_HEADER_SIZE +
+		PASSWORD_CHALLENGE_HEADER_SIZE);
+	MAKE_PACKET(rpack, m_receive);
+	// this is a byte, so no byte swapping needed
+	return rpack->u.socket.u.password.remaining_tries;
+}
+
+unsigned int ZeroPacket::SocketResponse() const
+{
+	Protocol::CheckSize(m_receive, SB_SOCKET_PACKET_HEADER_SIZE);
+	MAKE_PACKET(rpack, m_receive);
+	return btohs(rpack->u.socket.socket);
+}
+
+unsigned char ZeroPacket::SocketSequence() const
+{
+	Protocol::CheckSize(m_receive, SB_SOCKET_PACKET_HEADER_SIZE);
+	MAKE_PACKET(rpack, m_receive);
+	return rpack->u.socket.sequence;	// sequence is a byte
 }
 
 
@@ -360,19 +408,6 @@ bool DBPacket::SetRecord(unsigned int dbId, Builder &build)
 	return true;
 }
 
-
-//
-// Command
-//
-/// Returns the command value of the receive packet.  If receive isn't
-/// large enough, throws Error.
-///
-unsigned int DBPacket::Command() const
-{
-	Protocol::CheckSize(m_receive);
-	MAKE_PACKET(rpack, m_receive);
-	return rpack->command;
-}
 
 // throws FIXME if packet doesn't support it
 unsigned int DBPacket::ReturnCode() const

@@ -43,14 +43,19 @@ class Packet
 protected:
 	Data &m_send, &m_receive;
 
-protected:
+	Data& GetSend() { return m_send; }
+	Data& GetReceive() { return m_receive; }
+
+public:
 	Packet(Data &send, Data &receive)
 		: m_send(send), m_receive(receive)
 		{}
 	virtual ~Packet() {}
 
-	Data& GetSend() { return m_send; }
-	Data& GetReceive() { return m_receive; }
+	//////////////////////////////////
+	// common response analysis
+
+	unsigned int Command() const;	// throws Error if receive isn't big enough
 };
 
 //
@@ -85,6 +90,10 @@ public:
 
 	unsigned int ObjectID() const;
 	unsigned int AttributeID() const;
+	uint32_t ChallengeSeed() const;
+	unsigned int RemainingTries() const;
+	unsigned int SocketResponse() const;
+	unsigned char SocketSequence() const;
 };
 
 
@@ -139,7 +148,6 @@ public:
 	// response analysis
 
 	// DB command response functions
-	unsigned int Command() const;	// throws Error if receive isn't big enough
 	unsigned int ReturnCode() const;	// throws FIXME if packet doesn't support it
 	unsigned int DBOperation() const; // throws Error on size trouble
 
