@@ -243,6 +243,13 @@ void BackupWindow::on_backup()
 	m_finishedRecords = 0;
 	m_modeName = "Backup";
 
+	// anything to do?
+	if( m_recordTotal == 0 ) {
+		Gtk::MessageDialog msg("No databases selected in configuration.");
+		msg.run();
+		return;
+	}
+
 	// start the thread
 	m_working = m_dev.StartBackup(
 		DeviceInterface::AppComm(&m_signal_progress,
