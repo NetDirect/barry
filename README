@@ -55,6 +55,31 @@ OpenSSL is needed for password hashing.
 
 
 
+Dependency packages for common distributions:
+---------------------------------------------
+The following is a list of packages you'll need to install to build Barry,
+if you are using one of the below common distributions.  Other distributions
+should have similar package names.
+
+	Fedora 5 and 6:
+	---------------
+	Use the yum package manager to install the following:
+
+		pkgconfig
+		libusb-devel
+		openssl-devel
+		boost-devel (optional)
+
+	Debian stable:
+	--------------
+	Use the apt-get package manager to install the following:
+
+		pkg-config
+		libusb-dev
+		libssl-dev
+		libboost-serialization-dev
+
+
 To build Barry:
 ---------------
 
@@ -159,15 +184,12 @@ Some notes on code architecture:
 --------------------------------
 
 Lowest level:
-	Lowest level is the libusb software, currently using the DEVEL branch
+	Lowest level is the libusb software, currently using the stable branch
 
 USB layer:
 	usbwrap.{h,cc}		- C++ wrapper for libusb
 	data.{h,cc}		- C++ data class for buffer management
 				  and hex log file input and output
-	connect.cc		- low level USB test program, capable of
-				  using data file scripts to talk to a
-				  device via bulk read/write
 	debug.h			- general debugging output support
 
 
@@ -186,7 +208,8 @@ Barry API layer:
 	base64.{h,cc}		- base64 encoding and decoding (for LDIF)
 	builder.h		- C++ virtual wrappers to connect record and
 				  controller in a generic way
-	endian.h		- big/little endian defines
+	endian.h		- big/little endian defines... only used for
+				  compiling the library, never installed
 	error.{h,cc}		- common exception classes for Barry layer
 	probe.{h,cc}		- USB probe class to find Blackberry devices
 	protocol.{h,cc}		- structs and defines for packets seen on wire
@@ -198,19 +221,32 @@ Barry API layer:
 				  and controller in a generic way
 	controller.{h,cc}	- high level API class
 	controllertmpl.h
+	version.{h,cc}		- library version information
 	s11n-boost.h		- serialization functions for record.h classes
 
-	barry.h			- application header (only one needed)
+	barry.h			- C++ application header (only one needed)
+	cbarry.h		- C application header (incomplete)
 
 
 Misc utilities:
 	btool.cc		- command line testing utility
+	bcharge.cc		- set device to use 500mA, and also enables
+				  database access for Blackberry Pearl devices
+	breset.cc		- does a USB level software reset on all
+				  Blackberry devices found
 	convo.awk		- script to convert UsbSnoop log files into
 				  trimmed-down request/response conversations
+	ktrans.cc		- turns USB kernel capture logs from 2.6
+				  kernels into hex+ascii dumps
 	translate.cc		- translate UsbSnoop log file data into
 				  hex+ascii dumps
 	upldif.cc		- takes an ldap LDIF file on stdin and
 				  uploads contact data to the Blackberry
+
+Example code:
+	addcontact.cc		- example on adding a contact record to
+				  the device
+
 
 Enjoy!
 

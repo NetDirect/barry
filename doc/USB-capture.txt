@@ -86,8 +86,8 @@ All USB data going through the usbdevfs interface (this includes all data
 transferred through libusb) will be logged from the kernel.  This shows up
 in dmesg output, and /var/log/kern.log on most systems.
 
-The data captured is very raw, in disorganized hex, so you'll need a script
-or tool to help with the conversion something readable.
+The data captured is very raw, in disorganized hex.  Use the ktrans
+program in the tools/ directory to convert it to something readable.
 
 But what if you only have a Windows driver?  The nice thing is that VMWare
 uses the usbdevfs interface to share USB devices with the virtual machines.
@@ -103,5 +103,5 @@ from:
 Happy Hacking!
 
 Chris Frey <cdfrey@foursquare.net>
-2006/12/15
+February 2007
 

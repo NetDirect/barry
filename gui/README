@@ -4,6 +4,11 @@ Barry library compiled and installed to use this.  This directory
 contains a fully standalone build tree, and is not built automatically
 when you build Barry.
 
+
+
+Library Dependencies:
+---------------------
+
 You will need the following packages installed on your system, including
 any dev or devel packages that come along with them: (all of these
 packages are easily available on Debian stable... your mileage may vary
@@ -28,8 +33,39 @@ following:
 	./configure --prefix=/home/cdfrey/Barry
 
 
-And if you have any trouble, please send mail to the mailing list and
+
+Dependency packages for common distributions:
+---------------------------------------------
+The following is a list of packages you'll need to install to build the GUI,
+if you are using one of the below common distributions.  Other distributions
+should have similar package names.
+
+	Fedora 5 and 6:
+	---------------
+	Use the yum package manager to install the following:
+
+		pkgconfig
+		libtar  (libtar-devel on Fedora 6)
+		libusb-devel
+		gtkmm24-devel
+		glibmm24-devel
+		zlib-devel
+
+	Debian stable:
+	--------------
+	Use the apt-get package manager to install the following:
+
+		pkg-config
+		libtar-dev
+		libusb-dev
+		libgtkmm-2.4-dev
+		libglibmm-2.4-dev
+		zlib1g-dev
+
+
+
+If you have any trouble, please send mail to the mailing list and
 ask for help!
 
-January 2007
+February 2007
 
