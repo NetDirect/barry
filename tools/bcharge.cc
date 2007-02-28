@@ -32,6 +32,7 @@
 
 #include <usb.h>
 #include <stdio.h>
+#include <string.h>
 #include <unistd.h>
 
 #define VENDOR_RIM		0x0fca
@@ -41,7 +42,7 @@
 #define BLACKBERRY_INTERFACE		0
 #define BLACKBERRY_CONFIGURATION	1
 
-void charge(struct usb_device *dev)
+void charge(struct usb_device *dev, bool old_style_pearl)
 {
 	usb_dev_handle *handle = usb_open(dev);
 	if( !handle )
@@ -53,11 +54,14 @@ void charge(struct usb_device *dev)
 	usb_control_msg(handle, 0xc0, 0xa5, 0, 1, buffer, 2, 100);
 	usb_control_msg(handle, 0x40, 0xa2, 0, 1, buffer, 0, 100);
 	if( dev->descriptor.idProduct == PRODUCT_RIM_PEARL) {
-		// use this for "old style" interface: product ID 0001
-//		usb_control_msg(handle, 0xc0, 0xa9, 0, 1, buffer, 2, 100);
-
-		// Product ID 0004
-		usb_control_msg(handle, 0xc0, 0xa9, 1, 1, buffer, 2, 100);
+		if( old_style_pearl ) {
+			// use this for "old style" interface: product ID 0001
+			usb_control_msg(handle, 0xc0, 0xa9, 0, 1, buffer, 2, 100);
+		}
+		else {
+			// Product ID 0004
+			usb_control_msg(handle, 0xc0, 0xa9, 1, 1, buffer, 2, 100);
+		}
 	}
 
 	usb_set_configuration(handle, BLACKBERRY_CONFIGURATION);
@@ -75,9 +79,17 @@ void charge(struct usb_device *dev)
 	usb_close(handle);
 }
 
-int main()
+int main(int argc, char *argv[])
 {
 	struct usb_bus *busses;
+
+	//
+	// allow -o command line switch to choose which mode to use for
+	// Blackberry Pearls:
+	//	Default:     0004
+	//	With switch: 0001
+	//
+	bool old_style_pearl = (argc > 1 && strcmp(argv[1], "-o") == 0);
 
 	usb_init();
 	usb_find_busses();
@@ -101,7 +113,7 @@ int main()
 				    dev->descriptor.bNumConfigurations >= 1 &&
 				    dev->config[0].MaxPower < 250 ) {
 					printf("attempting to adjust charge setting.\n");
-					charge(dev);
+					charge(dev, old_style_pearl);
 					found++;
 				}
 				else {

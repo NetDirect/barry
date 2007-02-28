@@ -2,7 +2,7 @@
 .\" First parameter, NAME, should be all caps
 .\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
 .\" other parameters are allowed: see man(7), man(1)
-.TH BCHARGE 1 "December 29, 2006"
+.TH BCHARGE 1 "February 28, 2007"
 .\" Please adjust this date whenever revising the manpage.
 .\"
 .\" Some roff macros, for reference:
@@ -31,6 +31,19 @@ proper charging on Linux.
 .PP
 It is safe to run this command multiple times, as it only changes devices
 that are not already set to 500mA.
+
+.SH OPTIONS
+.TP
+.B \-o
+For Blackberry Pearl devices, using this switch causes bcharge to set the
+Product ID to 0001.  Otherwise, the default is to use Product ID 0004.
+When the Pearl is in 0004 mode, two USB interfaces are presented:
+one for database access and one for mass storage.  In 0001 mode, only
+the database access is available.
+
+Before bcharge is run, the Pearl shows up with a Product ID of 0006,
+which only gives mass storage functionality.  You must run bcharge
+for the Pearl before using btool.
 
 .SH AUTHOR
 bcharge and this manual page were written by Chris Frey <cdfrey@foursquare.net>
