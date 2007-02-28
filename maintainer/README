@@ -1,0 +1,3 @@
+Most of the build or test build scripts in this directory assume a system
+with a number of chroot installs, in the directory /var/chroot.
+
