@@ -34,7 +34,10 @@ void CheckSize(const Data &packet, size_t requiredsize)
 {
 	const Packet *p = (const Packet *) packet.GetData();
 
-	if( btohs(p->size) != packet.GetSize() || packet.GetSize() < requiredsize )
+	// when packets are larger than 0xFFFF bytes, packet->size is no
+	// longer reliable, so we go with the Data class size
+	if( (btohs(p->size) != packet.GetSize() && packet.GetSize() <= 0xFFFF) ||
+	    packet.GetSize() < requiredsize )
 
 	{
 		std::ostringstream oss;
@@ -50,8 +53,16 @@ void CheckSize(const Data &packet, size_t requiredsize)
 unsigned int GetSize(const Data &packet)
 {
 	CheckSize(packet, 4);
-	uint16_t size = *((uint16_t *)&packet.GetData()[2]);
-	return btohs(size);
+
+	// when packets are larger than 0xFFFF bytes, packet->size is no
+	// longer reliable, so we go with the Data class size
+	if( packet.GetSize() > 0xFFFF ) {
+		return packet.GetSize();
+	}
+	else {
+		const Packet *p = (const Packet *) packet.GetData();
+		return btohs(p->size);
+	}
 }
 
 }} // namespace Barry::Protocol
