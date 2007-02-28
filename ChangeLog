@@ -2,7 +2,13 @@ Release: version 0.6 - 2007/02/??
 ------------------------------------------------------------------------------
 2007/02/28
 	- fixed size checks for device database records larger than 64K
+		Thanks to Michael Brown for the bug report.
 	- added initial release maintainer scripts
+	- fixed odd backup success message in GUI when doing a backup with
+		no databases selected in configuration
+		Thanks to Michael Brown for the bug report.
+	- added udev permissions file patch from Michael Brown
+	- added Michael Brown to AUTHORS
 2007/02/23
 	- changed library behaviour so it only turns on libusb debug output
 		if in data dump mode.  In btool, -v controls this output.
