@@ -5,6 +5,9 @@ Written by:
 
 Contributors (code and otherwise) in alphabetical order by last name:
 ---------------------------------------------------------------------
+	Michael Brown <michael@netdirect.ca>
+		- udev rules patch
+		- edge case testing
 	Ian Darwin <ian@darwinsys.com>
 		- documentation fixes and additions
 		- OpenBSD port maintainer
