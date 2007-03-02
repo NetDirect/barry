@@ -19,6 +19,7 @@ Release: version 0.7 - 2007/02/??
 		just ignore the missing data and assume success
 	- applied udev script patch #1663986 from Troy Engel
 	- applied barry-bcharge.spec patch #1672178 from Troy Engel
+	- ReleaseChecklist update
 
 Release: version 0.6 - 2007/02/28
 ------------------------------------------------------------------------------
