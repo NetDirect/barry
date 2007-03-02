@@ -17,6 +17,7 @@ Release: version 0.7 - 2007/02/??
 		some devices report a higher number in bNumInterfaces
 		than are really available... in this case, let's
 		just ignore the missing data and assume success
+	- applied udev script patch #1663986 from Troy Engel
 
 Release: version 0.6 - 2007/02/28
 ------------------------------------------------------------------------------

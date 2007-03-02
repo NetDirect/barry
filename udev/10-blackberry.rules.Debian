@@ -1,3 +1,4 @@
 # Blackberry devices
 #
 BUS=="usb", SYSFS{idVendor}=="0fca", SYSFS{idProduct}=="0001", SYMLINK+="bb-%k", PROGRAM="/usr/sbin/bcharge"
+BUS=="usb", SYSFS{idVendor}=="0fca", SYSFS{idProduct}=="0006", SYMLINK+="bb-%k", PROGRAM="/usr/sbin/bcharge"
