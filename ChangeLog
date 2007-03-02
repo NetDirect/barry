@@ -10,6 +10,8 @@ Release: version 0.7 - 2007/02/??
 		- rpm/barry.spec
 	- build system tweaks for opensync-plugin, and added a buildgen.sh
 		for it
+	- added better debug messages in probe.cc and usbwrap.cc's
+		device discovery code
 
 Release: version 0.6 - 2007/02/28
 ------------------------------------------------------------------------------

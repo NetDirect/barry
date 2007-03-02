@@ -77,6 +77,9 @@ bool Probe::Parse(const Data &data, ProbeResult &result)
 	    data.GetSize() < 0x14 ||
 	    pd[4] != 0x06 )
 	{
+		dout("Probe: Parse data failure: GetSize(pd): " << GetSize(pd)
+			<< ", data.GetSize(): " << data.GetSize()
+			<< ", pd[4]: " << (unsigned int) pd[4]);
 		return false;
 	}
 
@@ -121,15 +124,24 @@ void Probe::ProbeDevice(Usb::DeviceIDType devid)
 		if( i->second.desc.bInterfaceClass == BLACKBERRY_DB_CLASS )
 			break;
 	}
-	if( i == config.interfaces.end() )
+	if( i == config.interfaces.end() ) {
+		dout("Probe: Interface with BLACKBERRY_DB_CLASS ("
+			<< BLACKBERRY_DB_CLASS << ") not found.");
 		return;	// not found
+	}
 
 	unsigned char InterfaceNumber = i->second.desc.bInterfaceNumber;
+	dout("Probe: using InterfaceNumber: " << (unsigned int) InterfaceNumber);
 
 	// check endpoint validity
 	EndpointDiscovery &ed = config.interfaces[InterfaceNumber].endpoints;
-	if( !ed.IsValid() || ed.GetEndpointPairs().size() == 0 )
+	if( !ed.IsValid() || ed.GetEndpointPairs().size() == 0 ) {
+		dout("Probe: endpoint invalid.   ed.IsValud() == "
+			<< (ed.IsValid() ? "true" : "false")
+			<< ", ed.GetEndpointPairs().size() == "
+			<< ed.GetEndpointPairs().size());
 		return;
+	}
 
 	ProbeResult result;
 	result.m_dev = devid;
@@ -157,8 +169,10 @@ void Probe::ProbeDevice(Usb::DeviceIDType devid)
 
 			Data data;
 			dev.BulkDrain(ep.read);
-			if( !Intro(0, ep, dev, data) )
+			if( !Intro(0, ep, dev, data) ) {
+				dout("Probe: Intro(0) failed");
 				continue;
+			}
 
 			Socket socket(dev, ep.write, ep.read);
 
@@ -176,7 +190,10 @@ void Probe::ProbeDevice(Usb::DeviceIDType devid)
 			if( packet.ObjectID() != SB_OBJECT_PROFILE ||
 			    packet.AttributeID() != SB_ATTR_PROFILE_PIN ||
 			    !Parse(receive, result) )
+			{
+				dout("Probe: unable to fetch PIN");
 				continue;
+			}
 
 			// more unknowns:
 			for( uint16_t attr = 5; attr < 9; attr++ ) {
@@ -193,6 +210,10 @@ void Probe::ProbeDevice(Usb::DeviceIDType devid)
 			ddout("Using ReadEndpoint: " << (unsigned int)result.m_ep.read);
 			ddout("      WriteEndpoint: " << (unsigned int)result.m_ep.write);
 			break;
+		}
+		else {
+			dout("Probe: Skipping non-bulk endpoint pair (offset: "
+				<< i-1 << ") ");
 		}
 	}
 

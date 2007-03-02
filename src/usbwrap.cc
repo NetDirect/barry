@@ -221,8 +221,10 @@ bool EndpointDiscovery::Discover(struct usb_interface_descriptor *interface, int
 
 	EndpointPair pair;
 
-	if( !interface || !interface->endpoint )
+	if( !interface || !interface->endpoint ) {
+		dout("EndpointDiscovery::Discover: empty interface pointer");
 		return false;
+	}
 
 	for( int i = 0; i < epcount; i++ ) {
 		// load descriptor
@@ -294,8 +296,10 @@ bool EndpointDiscovery::Discover(struct usb_interface_descriptor *interface, int
 
 bool InterfaceDiscovery::DiscoverInterface(struct usb_interface *interface)
 {
-	if( !interface->altsetting )
+	if( !interface->altsetting ) {
+		dout("InterfaceDiscovery::DiscoverIterface: empty altsetting");
 		return false;
+	}
 
 	for( int i = 0; i < interface->num_altsetting; i++ ) {
 		// load descriptor
@@ -315,8 +319,10 @@ bool InterfaceDiscovery::DiscoverInterface(struct usb_interface *interface)
 			);
 
 		// load all endpoints on this interface
-		if( !desc.endpoints.Discover(&desc.desc, desc.desc.bNumEndpoints) )
+		if( !desc.endpoints.Discover(&desc.desc, desc.desc.bNumEndpoints) ) {
+			dout("    endpoint discovery failed for bInterfaceNumber: " << (unsigned int)desc.desc.bInterfaceNumber << ", not added to map.");
 			return false;
+		}
 
 		// add to the map
 		(*this)[desc.desc.bInterfaceNumber] = desc;
@@ -331,8 +337,10 @@ bool InterfaceDiscovery::Discover(Usb::DeviceIDType devid, int cfgidx, int ifcou
 	clear();
 	m_valid = false;
 
-	if( !devid || !devid->config || !devid->config[cfgidx].interface )
+	if( !devid || !devid->config || !devid->config[cfgidx].interface ) {
+		dout("InterfaceDiscovery::Discover: empty devid/config/interface");
 		return false;
+	}
 
 	for( int i = 0; i < ifcount; i++ ) {
 		if( !DiscoverInterface(&devid->config[cfgidx].interface[i]) )
@@ -355,8 +363,10 @@ bool ConfigDiscovery::Discover(Usb::DeviceIDType devid, int cfgcount)
 	for( int i = 0; i < cfgcount; i++ ) {
 		// load descriptor
 		ConfigDesc desc;
-		if( !devid || !devid->config )
+		if( !devid || !devid->config ) {
+			dout("ConfigDiscovery::Discover: empty devid or config");
 			return false;
+		}
 		desc.desc = devid->config[i];
 		dout("  config_desc #" << i << " loaded"
 			<< "\nbLength: " << (unsigned int) desc.desc.bLength
@@ -371,8 +381,10 @@ bool ConfigDiscovery::Discover(Usb::DeviceIDType devid, int cfgcount)
 			);
 
 		// load all interfaces on this configuration
-		if( !desc.interfaces.Discover(devid, i, desc.desc.bNumInterfaces) )
+		if( !desc.interfaces.Discover(devid, i, desc.desc.bNumInterfaces) ) {
+			dout("  config discovery failed for bConfigurationValue: " << (unsigned int)desc.desc.bConfigurationValue << ", not added to map.");
 			return false;
+		}
 
 		// add to the map
 		(*this)[desc.desc.bConfigurationValue] = desc;
@@ -399,8 +411,11 @@ bool DeviceDiscovery::Discover(Usb::DeviceIDType devid)
 	m_valid = false;
 
 	// copy the descriptor over to our memory
-	if( !devid )
+	if( !devid ) {
+		dout("DeviceDiscovery::Discover: empty devid");
 		return false;
+	}
+
 	desc = devid->descriptor;
 	dout("device_desc loaded"
 		<< "\nbLength: " << (unsigned int) desc.bLength
