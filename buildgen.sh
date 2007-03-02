@@ -7,6 +7,8 @@
 if [ "$1" = "cleanall" ] ; then
 	(cd gui && make distclean)
 	(cd gui && ./buildgen.sh clean)
+	(cd opensync-plugin && make distclean)
+	(cd opensync-plugin && ./buildgen.sh clean)
 	make distclean
 	./buildgen.sh clean
 elif [ "$1" = "clean" ] ; then
