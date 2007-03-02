@@ -12,6 +12,11 @@ Release: version 0.7 - 2007/02/??
 		for it
 	- added better debug messages in probe.cc and usbwrap.cc's
 		device discovery code
+	- changed error handling for null interface->altsetting pointers
+		when doing device discovery in usbwrap.cc.  Seems that
+		some devices report a higher number in bNumInterfaces
+		than are really available... in this case, let's
+		just ignore the missing data and assume success
 
 Release: version 0.6 - 2007/02/28
 ------------------------------------------------------------------------------

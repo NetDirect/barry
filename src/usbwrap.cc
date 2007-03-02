@@ -298,7 +298,10 @@ bool InterfaceDiscovery::DiscoverInterface(struct usb_interface *interface)
 {
 	if( !interface->altsetting ) {
 		dout("InterfaceDiscovery::DiscoverIterface: empty altsetting");
-		return false;
+		// some devices are buggy and return a higher bNumInterfaces
+		// than the number of interfaces available... in this case
+		// we just skip and continue
+		return true;
 	}
 
 	for( int i = 0; i < interface->num_altsetting; i++ ) {
