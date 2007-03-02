@@ -1,10 +1,10 @@
 Summary: BlackBerry (tm) Desktop for Linux
 Name: barry
 License: GPL
-Version: 0.1
+Version: 0.7
 Release: 1bcharge
 Group: Applications/Productivity
-Source: barry-0.1.tar.gz
+Source: barry-0.7.tar.gz
 URL: http://www.netdirect.ca/downloads/barry
 Vendor: Net Direct Inc.
 BuildRoot: /var/tmp/%{name}-buildroot
