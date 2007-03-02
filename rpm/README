@@ -1,12 +1,8 @@
 This SPEC file, barry-bcharge.spec, will create a complete standalone RPM
 for just the bcharge utility out of the official barry tarball.
 
-NOTE: At this time it requires SF.net patch #1663986, the udev rules patch
-to support the newer 8100/8800 devices.
-
-Download the udev rules patch and barry-0.6 tarball to
-/usr/src/redhat/SOURCES and this SPEC file to /usr/src/redhat/SPECS, then
-build it like so:
+Download the barry-0.7 tarball to /usr/src/redhat/SOURCES and this SPEC file
+to /usr/src/redhat/SPECS, then build it like so:
 
 cd /usr/src/redhat/SPECS/
 rpmbuild -ba barry-bcharge.spec
@@ -16,10 +12,12 @@ user, just make sure the permissions on /usr/src/redhat/* are OK for your
 non-root user)
 
 The resultant RPM will be called something akin to
-barry-bcharge-0.6-1.i386.rpm; it will contain the binary, udev rules,
+barry-bcharge-0.7-1.i386.rpm; it will contain the binary, udev rules,
 manpage and doc files. It must be installed as root.
 
 If this is the first time installing it or the udev rules, a reboot is
 recommended to get the udev rules working correctly. If you have already
-installed the udev rules before a reboot is not needed.
+installed the udev rules before, a reboot is not needed.
+
+March 2007
 

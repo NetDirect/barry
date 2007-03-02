@@ -21,6 +21,8 @@ Release: version 0.7 - 2007/02/??
 	- applied barry-bcharge.spec patch #1672178 from Troy Engel
 	- ReleaseChecklist update
 	- added rpm/README based on Troy Engel's patch notes
+	- updated new barry-bcharge.spec for version 0.7, removing patch
+		dependency
 
 Release: version 0.6 - 2007/02/28
 ------------------------------------------------------------------------------

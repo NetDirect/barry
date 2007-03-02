@@ -1,11 +1,10 @@
 Summary: BlackBerry(tm) Desktop for Linux  - bcharge utility
 Name: barry-bcharge
 License: GPL
-Version: 0.6
+Version: 0.7
 Release: 1
 Group: Applications/Productivity
-Source: barry-0.6.tar.gz
-Patch0: bbrules-udev-pearl.patch
+Source: barry-0.7.tar.gz
 URL: http://www.netdirect.ca/downloads/barry
 Vendor: Net Direct Inc.
 BuildRoot: /var/tmp/%{name}-buildroot
@@ -25,7 +24,6 @@ interface descriptor that btool will need in order to operate.
 %prep
 
 %setup -n barry-%{version}
-%patch0 -p0
 
 %build
 %{__cxx} -Wall -g -o tools/bcharge tools/bcharge.cc -lusb
@@ -50,6 +48,10 @@ interface descriptor that btool will need in order to operate.
 %attr(0644,root,root) %config %{_sysconfdir}/udev/rules.d/*
 
 %changelog
+* Fri Mar 02 2007 Chris Frey <cdfrey@foursquare.net> 0.7-1
+- bumped version number
+- removed patch dependency, as patch has been applied
+
 * Thu Mar 01 2007 Troy Engel <tengel@users.sourceforge.net> 0.6-1
 - renamed build RPM to barry-bcharge and enhanced description
 - reworked spec file to build right out of official releases
