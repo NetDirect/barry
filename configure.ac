@@ -19,7 +19,7 @@ AC_LANG([C++])
 # generates LIBUSB_CFLAGS and LIBUSB_LIBS for us
 PKG_CHECK_MODULES([LIBUSB], [libusb],
 	[],
-	[echo "ERROR: Libusb not found automatically... build may fail if you don't specify --with-libusb"])
+	[echo "ERROR: Libusb not found automatically... build may fail if you don't specify --with-libusb";LIBUSB_CFLAGS="-I/usr/include" LIBUSB_LIBS="-lusb"])
 
 AC_ARG_WITH(libusb,
 	[  --with-libusb=<path>    root path of libusb installation],
@@ -42,6 +42,8 @@ AC_SUBST(pkgconfigdir)
 
 AC_SUBST(BOOST_LIB_PATH)
 AC_SUBST(BOOST_INC_PATH)
+AC_SUBST(LIBUSB_CFLAGS)
+AC_SUBST(LIBUSB_LIBS)
 
 AM_CONDITIONAL([WITH_BOOST], [test "$BOOST_ENABLED" = "true"])
 

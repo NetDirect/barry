@@ -8,7 +8,7 @@ bin_PROGRAMS = btool upldif translate ktrans
 sbin_PROGRAMS = bcharge breset
 
 btool_SOURCES = btool.cc
-btool_LDADD = ../src/libbarry.la
+btool_LDADD = ../src/libbarry.la $(LIBUSB_LIBS)
 if WITH_BOOST
 btool_CXXFLAGS = -D__BARRY_BOOST_MODE__ -D_REENTRANT -I@BOOST_INC_PATH@ $(AM_CXXFLAGS)
 btool_LDFLAGS = -L@BOOST_LIB_PATH@
@@ -19,7 +19,7 @@ btool_LDADD += -lboost_serialization
 endif
 
 upldif_SOURCES = upldif.cc
-upldif_LDADD = ../src/libbarry.la
+upldif_LDADD = ../src/libbarry.la $(LIBUSB_LIBS)
 
 translate_SOURCES = translate.cc
 

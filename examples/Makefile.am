@@ -6,5 +6,5 @@ AM_CXXFLAGS = -ansi -Wall -g
 noinst_PROGRAMS = addcontact
 
 addcontact_SOURCES = addcontact.cc
-addcontact_LDADD = ../src/libbarry.la
+addcontact_LDADD = ../src/libbarry.la $(LIBUSB_LIBS)
 
