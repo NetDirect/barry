@@ -3,6 +3,8 @@ Release: version 0.7 - 2007/02/??
 2007/03/08
 	- committed Troy Engel's bbrules_mass_symlinks.patch, fixing
 		udev rules for the Pearl
+	- updated 10-blackberry.rules.Debian to match 10-blackberry.rules's
+		functionality
 2007/03/02
 	- version bump in:
 		- configure.ac
