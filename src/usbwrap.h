@@ -46,6 +46,12 @@ public:
 	Error(const std::string &str) : Barry::Error(str) {}
 };
 
+class Timeout : public Error
+{
+public:
+	Timeout(const std::string &str) : Error(str) {}
+};
+
 /// @}
 
 /// Typedefs used by the wrapper class, in the hope to make it

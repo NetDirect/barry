@@ -5,6 +5,7 @@ The Barry library has the following exception hierarchy:
 	- std::runtime_error
 		- Barry::Error
 			- Usb::Error
+				- Usb::Timeout
 			- Barry::BadPassword
 
 Usb::Error
