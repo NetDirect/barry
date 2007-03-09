@@ -13,7 +13,7 @@
 
 Summary: BlackBerry(tm) Desktop for Linux
 Name: barry
-Version: 0.6
+Version: 0.7
 Release: 1
 Group: Applications/Productivity
 License: GPL
@@ -22,7 +22,6 @@ URL: http://www.netdirect.ca/downloads/barry
 Vendor: Net Direct Inc.
 BuildRoot: %{_tmppath}/%{name}-%{release}-%{version}-root
 BuildRequires: libusb-devel, gcc-c++, pkgconfig, boost-devel, openssl-devel
-Patch0: barry-0.6-udev.patch
 
 %define barryroot %{_builddir}/%{name}-%{version}
 
@@ -30,25 +29,25 @@ Patch0: barry-0.6-udev.patch
 Barry is a desktop toolset for managing your BlackBerry(tm) device. (BlackBerry
 is a registered trademark of Research in Motion Limited.)
 
-This package contains the license agreement, README file and all other
-assorted documentation common to all sub-packages. You most likely want to
-also install libbarry, barry-util and barry-backup.
 
 %package -n libbarry
 Summary: BlackBerry(tm) Desktop for Linux - libbarry libraries
 Group: Development/Libraries
-Requires: barry libusb openssl boost
+Requires: libusb openssl boost
 
 %description -n libbarry
 Barry is a desktop toolset for managing your BlackBerry(tm) device. (BlackBerry
 is a registered trademark of Research in Motion Limited.)
 
-This package contains the library files for Barry, libbarry.
+This package contains the library files, license agreement, README file,
+and most other assorted documentation common to all sub-packages. You most likely
+want to also install barry-util and barry-gui.
+
 
 %package -n libbarry-devel
 Summary: BlackBerry(tm) Desktop for Linux - libbarry libraries
 Group: Development/Libraries
-Requires: barry libbarry libusb-devel openssl-devel boost-devel
+Requires: libbarry libusb-devel openssl-devel boost-devel
 
 %description -n libbarry-devel
 Barry is a desktop toolset for managing your BlackBerry(tm) device. (BlackBerry
@@ -56,10 +55,11 @@ is a registered trademark of Research in Motion Limited.)
 
 This package contains the development library files for Barry, libbarry.
 
+
 %package util
 Summary: BlackBerry(tm) Desktop for Linux - bcharge, btool, breset and others
 Group: Applications/Productivity
-Requires: barry libbarry
+Requires: libbarry
 Conflicts: barry-bcharge
 
 %description util
@@ -70,11 +70,12 @@ This package contains the commandline tools bcharge, btool, breset and others
 which will enable you to charge your device with a proper 500mA and be able
 to access the data on the device in many ways.
 
+
 %if %{with gui}
 %package gui
 Summary: BlackBerry(tm) Desktop for Linux - bcharge, btool, breset and others
 Group: Applications/Productivity
-Requires: barry libbarry gtkmm24 libglademm24 libtar
+Requires: libbarry gtkmm24 libglademm24 libtar
 BuildRequires: gtkmm24-devel libglademm24-devel libtar-devel
 
 %description gui
@@ -84,11 +85,12 @@ is a registered trademark of Research in Motion Limited.)
 This package contains the GUI applications built on top of libbarry.
 %endif
 
+
 %if %{with opensync}
 %package opensync
 Summary: BlackBerry(tm) Desktop for Linux - opensync plugin
 Group: Applications/Productivity
-Requires: barry libbarry libopensync
+Requires: libbarry libopensync
 BuildRequires: libopensync-devel
 
 %description opensync
@@ -100,7 +102,6 @@ This package contains the opensync plugin.
 
 %prep
 %setup -q
-%patch0 -p1
 
 %build
 # main tree
@@ -129,7 +130,7 @@ cd ../
 %{__mkdir_p} %{buildroot}%{_sysconfdir}/udev/rules.d
 %{__cp} udev/10-blackberry.rules %{buildroot}%{_sysconfdir}/udev/rules.d/
 %{__mkdir_p} %{buildroot}%{_sysconfdir}/security/console.perms.d
-%{__cp} udev/10-blackberry.perms %{buildroot}%{_sysconfdir}/security/console.perms.d/
+#%{__cp} udev/10-blackberry.perms %{buildroot}%{_sysconfdir}/security/console.perms.d/
 
 # gui tree
 %if %{with gui}
@@ -145,13 +146,10 @@ cd opensync-plugin/
 cd ../
 %endif
 
-%files
-%defattr(-,root,root)
-%doc AUTHORS ChangeLog COPYING NEWS README TODO doc/*
-
 %files -n libbarry
 %defattr(-,root,root)
 %attr(-,root,root) %{_libdir}/*.so*
+%doc AUTHORS ChangeLog COPYING NEWS README
 
 %files -n libbarry-devel
 %defattr(-,root,root)
@@ -160,6 +158,7 @@ cd ../
 %attr(0644,root,root) %{_libdir}/*.a
 %attr(0755,root,root) %{_libdir}/*.la
 %attr(0644,root,root) %{_libdir}/pkgconfig/*.pc
+%doc COPYING TODO doc/*
 
 %files util
 %defattr(-,root,root)
@@ -172,13 +171,15 @@ cd ../
 %attr(0644,root,root) %{_mandir}/man1/btool*
 %attr(0644,root,root) %{_mandir}/man1/bcharge*
 %attr(0644,root,root) %config %{_sysconfdir}/udev/rules.d/*
-%attr(0644,root,root) %config %{_sysconfdir}/security/console.perms.d/*
+#%attr(0644,root,root) %config %{_sysconfdir}/security/console.perms.d/*
+%doc COPYING
 
 %if %{with gui}
 %files gui
 %defattr(-,root,root)
 %attr(0755,root,root) %{_bindir}/barrybackup
 %attr(0644,root,root) %{_datadir}/barry/glade/*.glade
+%doc COPYING
 %endif
 
 %if %{with opensync}
@@ -186,6 +187,7 @@ cd ../
 %defattr(-,root,root)
 %attr(0755,root,root) %{_libdir}/opensync/plugins/*
 %attr(0644,root,root) %{_datadir}/opensync/defaults/*
+%doc COPYING
 %endif
 
 %clean
@@ -199,6 +201,13 @@ cd ../
 /sbin/ldconfig
 
 %changelog
+* Thu Mar 08 2007 Chris Frey <cdfrey@foursquare.net> 0.7-1
+- removed barry base package that only contained docs, and put docs in libbarry*
+- changed barrybackup reference to barry-gui
+- removed the patch step, as version 0.7 shouldn't need it
+- added license file to each package
+- commented out console perms scripts, pending mailing list discussion
+
 * Sun Mar 04 2007 Troy Engel <tengel@users.sourceforge.net> 0.6-1
 - initial build
 - adding udev and console perms patch for raw 0.6
