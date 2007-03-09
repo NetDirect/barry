@@ -39,8 +39,8 @@ Barry is a desktop toolset for managing your BlackBerry(tm) device. (BlackBerry
 is a registered trademark of Research in Motion Limited.)
 
 This package contains the library files, license agreement, README file,
-and most other assorted documentation common to all sub-packages. You most likely
-want to also install barry-util and barry-gui.
+and most other assorted documentation common to all sub-packages. You most
+likely want to also install barry-util and barry-gui.
 
 
 %package -n libbarry-devel
