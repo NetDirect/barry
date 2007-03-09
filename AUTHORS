@@ -13,6 +13,9 @@ Contributors (code and otherwise) in alphabetical order by last name:
 		- OpenBSD port maintainer
 	Troy Engel <tengel@users.sourceforge.net>
 		- usb captures on Windows XP for the BlackBerry Pearl
+		- udev script updates
+		- CVS testing
+		- RPM spec files
 	Ron Gage <ron@rongage.org>
 		- CVS testing
 		- reverse engineering Service Book record
@@ -24,4 +27,5 @@ Contributors (code and otherwise) in alphabetical order by last name:
 		- usb captures on Windows XP for password authentication
 	Rick Scott <rwscott@alumni.uwaterloo.ca>
 		- password authentication code and tips
+		- GPRS modem behaviour
 
