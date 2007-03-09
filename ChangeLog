@@ -31,6 +31,13 @@ Release: version 0.7 - 2007/02/??
 		on the above udev permissions patch from Troy Engel
 	- uncommented the console perms scripts for rpm/barry.spec
 	- added libglademm-2.4 to gui/README's dependency list
+	- made usbwrap.* calls more threadsafe
+	- added Usb::Timeout exception for timeout errors
+	- added preliminary UsbSerData support to library for GPRS modem
+		functionality, using Rick Scott's XmBlackBerry's serdata.c
+		as a guide
+	- added overloaded Socket::Send() for sending without receiving
+	- added preliminary pppob command line tool
 2007/03/02
 	- version bump in:
 		- configure.ac
