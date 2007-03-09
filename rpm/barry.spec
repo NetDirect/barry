@@ -4,12 +4,11 @@
 ## pass in '--with opensync' to build the opensync plugin
 # ex.: rpmbuild -ba barry.spec --with opensync
 
-## bcond_with() is a rpm-4.4 addition, we'll backport a private
-## copy in case we're building on CentOS/Red Hat Enterprise 4 and lower
-%define barry_with()  %{expand:%%{?_with_%{1}:%%global with_%{1} 1}}
-#
-%barry_with gui
-%barry_with opensync
+# newer bcond_with() macros are not available on RHEL4/CentOS4 and below
+%{?_with_gui: %define with_gui 1}
+%{!?_with_gui: %define with_gui 0}
+%{?_with_opensync: %define with_opensync 1}
+%{!?_with_opensync: %define with_opensync 0}
 
 Summary: BlackBerry(tm) Desktop for Linux
 Name: barry
@@ -71,7 +70,7 @@ which will enable you to charge your device with a proper 500mA and be able
 to access the data on the device in many ways.
 
 
-%if %{with gui}
+%if %{with_gui}
 %package gui
 Summary: BlackBerry(tm) Desktop for Linux - bcharge, btool, breset and others
 Group: Applications/Productivity
@@ -86,7 +85,7 @@ This package contains the GUI applications built on top of libbarry.
 %endif
 
 
-%if %{with opensync}
+%if %{with_opensync}
 %package opensync
 Summary: BlackBerry(tm) Desktop for Linux - opensync plugin
 Group: Applications/Productivity
@@ -109,7 +108,7 @@ This package contains the opensync plugin.
 %{__make} %{?_smp_mflags}
 
 # gui tree
-%if %{with gui}
+%if %{with_gui}
 cd gui/
 %{configure} PKG_CONFIG_PATH="../" CXXFLAGS="-I../.." LDFLAGS="-L../../src"
 %{__make} %{?_smp_mflags}
@@ -117,7 +116,7 @@ cd ../
 %endif
 
 # opensync tree
-%if %{with opensync}
+%if %{with_opensync}
 cd opensync-plugin/
 %{configure} PKG_CONFIG_PATH="../" CXXFLAGS="-I../.." LDFLAGS="-L../../src"
 %{__make} %{?_smp_mflags}
@@ -133,14 +132,14 @@ cd ../
 #%{__cp} udev/10-blackberry.perms %{buildroot}%{_sysconfdir}/security/console.perms.d/
 
 # gui tree
-%if %{with gui}
+%if %{with_gui}
 cd gui/
 %{__make} DESTDIR=%{buildroot} install
 cd ../
 %endif
 
 # opensync tree
-%if %{with opensync}
+%if %{with_opensync}
 cd opensync-plugin/
 %{__make} DESTDIR=%{buildroot} install
 cd ../
@@ -174,7 +173,7 @@ cd ../
 #%attr(0644,root,root) %config %{_sysconfdir}/security/console.perms.d/*
 %doc COPYING
 
-%if %{with gui}
+%if %{with_gui}
 %files gui
 %defattr(-,root,root)
 %attr(0755,root,root) %{_bindir}/barrybackup
@@ -182,7 +181,7 @@ cd ../
 %doc COPYING
 %endif
 
-%if %{with opensync}
+%if %{with_opensync}
 %files opensync
 %defattr(-,root,root)
 %attr(0755,root,root) %{_libdir}/opensync/plugins/*
