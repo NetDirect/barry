@@ -87,7 +87,8 @@ public:
 	// in order to set the blackberry mode
 	// The send function will overwrite the zeroSocketSequence byte
 	// *inside* the packet, if the current m_socket is 0.
-	void Send(Data &send, Data &receive, int timeout = -1);
+	void Send(Data &send, int timeout = -1);	// send only
+	void Send(Data &send, Data &receive, int timeout = -1); // send+recv
 	void Send(Barry::Packet &packet, int timeout = -1);
 	void Receive(Data &receive, int timeout = -1);
 

@@ -330,16 +330,17 @@ void Socket::Close()
 	}
 }
 
+
 //
 // Send
 //
-/// Sends 'send' data to device, and waits for response.
+/// Sends 'send' data to device, no receive.
 ///
 /// \returns	void
 ///
 /// \exception	Usb::Error on underlying bus errors.
 ///
-void Socket::Send(Data &send, Data &receive, int timeout)
+void Socket::Send(Data &send, int timeout)
 {
 	// Special case: it seems that sending packets with a size that's an
 	// exact multiple of 0x40 causes the device to get confused.
@@ -366,8 +367,21 @@ void Socket::Send(Data &send, Data &receive, int timeout)
 	}
 
 	m_dev.BulkWrite(m_writeEp, send);
-	m_dev.BulkRead(m_readEp, receive, timeout);
+}
 
+//
+// Send
+//
+/// Sends 'send' data to device, and waits for response.
+///
+/// \returns	void
+///
+/// \exception	Usb::Error on underlying bus errors.
+///
+void Socket::Send(Data &send, Data &receive, int timeout)
+{
+	Send(send, timeout);
+	m_dev.BulkRead(m_readEp, receive, timeout);
 	ddout("Socket::Send: Endpoint " << m_readEp << "\nReceived:\n" << receive);
 }
 

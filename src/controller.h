@@ -26,6 +26,7 @@
 #include "probe.h"
 #include "socket.h"
 #include "record.h"
+#include "data.h"
 
 /// Project namespace, containing all related functions and classes.
 /// This is the only namespace applications should be concerned with,
@@ -67,7 +68,8 @@ public:
 		Bypass,			//< unsupported, unknown
 		Desktop,		//< desktop mode required for database
 					//< operation
-		JavaLoader		//< unsupported
+		JavaLoader,		//< unsupported
+		UsbSerData		//< GPRS modem support over USB
 	};
 	enum CommandType { Unknown, DatabaseAccess };
 
@@ -85,6 +87,9 @@ private:
 
 	uint16_t m_modeSocket;			// socket recommended by device
 						// when mode was selected
+
+	// UsbSerData cache
+	Data m_writeCache, m_readCache;
 
 protected:
 	void SelectMode(ModeType mode);
@@ -134,6 +139,13 @@ public:
 	template <class StorageT> void SaveDatabaseByName(const std::string &name, StorageT &store);
 
 	template <class RecordT> void AddRecordByType(uint32_t recordId, const RecordT &rec);
+
+
+	//////////////////////////////////
+	// UsbSerData mode - modem specific
+
+	void SerialRead(Data &data, int timeout); // can be called from separate thread
+	void SerialWrite(const Data &data);
 };
 
 } // namespace Barry
