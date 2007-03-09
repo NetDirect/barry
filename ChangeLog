@@ -22,6 +22,13 @@ Release: version 0.7 - 2007/02/??
 	- applied Troy Engel's barry.spec patch to fix RHEL4 compile issues
 	- fixed 80 column wrapping error in barry.spec, thanks to Troy Engel
 		for the bug report
+	- applied Troy Engel's udev permissions patch for Redhat/Fedora
+		systems, which automatically set the ownership of a
+		newly plugged in device to the currently logged in console
+		user.
+	- added udev/README to document what all those files are for...
+		part of the text comes from the sourceforge comment
+		on the above udev permissions patch from Troy Engel
 2007/03/02
 	- version bump in:
 		- configure.ac

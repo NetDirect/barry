@@ -1,0 +1,38 @@
+This describes the udev files in this directory and what they are used for:
+
+
+10-blackberry.rules
+10-blackberry.rules.Debian
+
+	udev rules for running bcharge when you plugin your Blackberry.
+	Creates symlinks as well.
+
+	The .Debian file is for systems that use older versions of udev.
+
+
+10-blackberry.perms
+
+	For RedHat/Fedora systems, this file goes into:
+
+		/etc/security/console.perms.d/
+
+	It will dynamically give ownership of the /dev/bb-* (well, the
+	target of those symlinks) to the logged in console or xconsole
+	user. The idea was taken from this page:
+
+	http://gentoo-wiki.com/HOWTO_Griffin_PowerMate_with_UDEV_and_Kernel_2.6.x
+
+	Search for 'New alternative'.
+
+
+99-barry-perms
+
+	For systems that don't support /etc/security/console.perms.d/,
+	this udev script utilizes a special group "barry" and sets
+	the devices to mode "0660".
+
+	You will need to create a "barry" group on your system to use this.
+
+
+March 2007
+
