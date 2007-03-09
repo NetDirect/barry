@@ -129,7 +129,7 @@ cd ../
 %{__mkdir_p} %{buildroot}%{_sysconfdir}/udev/rules.d
 %{__cp} udev/10-blackberry.rules %{buildroot}%{_sysconfdir}/udev/rules.d/
 %{__mkdir_p} %{buildroot}%{_sysconfdir}/security/console.perms.d
-#%{__cp} udev/10-blackberry.perms %{buildroot}%{_sysconfdir}/security/console.perms.d/
+%{__cp} udev/10-blackberry.perms %{buildroot}%{_sysconfdir}/security/console.perms.d/
 
 # gui tree
 %if %{with_gui}
@@ -170,7 +170,7 @@ cd ../
 %attr(0644,root,root) %{_mandir}/man1/btool*
 %attr(0644,root,root) %{_mandir}/man1/bcharge*
 %attr(0644,root,root) %config %{_sysconfdir}/udev/rules.d/*
-#%attr(0644,root,root) %config %{_sysconfdir}/security/console.perms.d/*
+%attr(0644,root,root) %config %{_sysconfdir}/security/console.perms.d/*
 %doc COPYING
 
 %if %{with_gui}
@@ -205,7 +205,6 @@ cd ../
 - changed barrybackup reference to barry-gui
 - removed the patch step, as version 0.7 shouldn't need it
 - added license file to each package
-- commented out console perms scripts, pending mailing list discussion
 
 * Sun Mar 04 2007 Troy Engel <tengel@users.sourceforge.net> 0.6-1
 - initial build
