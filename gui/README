@@ -49,6 +49,7 @@ should have similar package names.
 		libusb-devel
 		gtkmm24-devel
 		glibmm24-devel
+		libglademm24-devel
 		zlib-devel
 
 	Debian stable:
@@ -60,6 +61,7 @@ should have similar package names.
 		libusb-dev
 		libgtkmm-2.4-dev
 		libglibmm-2.4-dev
+		libglademm-2.4-dev
 		zlib1g-dev
 
 
