@@ -37,45 +37,89 @@
 
 #define VENDOR_RIM		0x0fca
 #define PRODUCT_RIM_BLACKBERRY	0x0001
+#define PRODUCT_RIM_PEARL_DUAL	0x0004
 #define PRODUCT_RIM_PEARL	0x0006
+
+#define IPRODUCT_RIM_COMPOSITE	5
 
 #define BLACKBERRY_INTERFACE		0
 #define BLACKBERRY_CONFIGURATION	1
 
-void charge(struct usb_device *dev, bool old_style_pearl)
-{
-	usb_dev_handle *handle = usb_open(dev);
-	if( !handle )
-		return;
+bool old_style_pearl = false;
 
-	// the special sauce... these 3 steps seem to do the trick
+void charge(struct usb_dev_handle *handle)
+{
+	// the special sauce... these steps seem to do the trick
 	// for the 7750 series... needs testing on others
 	char buffer[2];
 	usb_control_msg(handle, 0xc0, 0xa5, 0, 1, buffer, 2, 100);
 	usb_control_msg(handle, 0x40, 0xa2, 0, 1, buffer, 0, 100);
-	if( dev->descriptor.idProduct == PRODUCT_RIM_PEARL) {
-		if( old_style_pearl ) {
-			// use this for "old style" interface: product ID 0001
-			usb_control_msg(handle, 0xc0, 0xa9, 0, 1, buffer, 2, 100);
-		}
-		else {
-			// Product ID 0004
-			usb_control_msg(handle, 0xc0, 0xa9, 1, 1, buffer, 2, 100);
-		}
+}
+
+void pearl_mode(struct usb_dev_handle *handle)
+{
+	char buffer[2];
+	if( old_style_pearl ) {
+		// use this for "old style" interface: product ID 0001
+		usb_control_msg(handle, 0xc0, 0xa9, 0, 1, buffer, 2, 100);
+	}
+	else {
+		// Product ID 0004
+		usb_control_msg(handle, 0xc0, 0xa9, 1, 1, buffer, 2, 100);
+	}
+}
+
+void process(struct usb_device *dev)
+{
+	printf("Found device #%s...", dev->filename);
+
+	// open
+	usb_dev_handle *handle = usb_open(dev);
+	if( !handle ) {
+		printf("unable to open device\n");
+		return;
 	}
 
+	// adjust power
+	if( dev->config &&
+	    dev->descriptor.bNumConfigurations >= 1 &&
+	    dev->config[0].MaxPower < 250 ) {
+		printf("adjusting charge setting");
+		charge(handle);
+	}
+	else {
+		printf("already at 500mA");
+	}
+
+	// adjust Pearl mode
+	if( dev->descriptor.iProduct == IPRODUCT_RIM_COMPOSITE ) {
+		int desired_mode = old_style_pearl
+			? PRODUCT_RIM_BLACKBERRY : PRODUCT_RIM_PEARL_DUAL;
+
+		if( desired_mode != dev->descriptor.idProduct ) {
+			printf("...adjusting Pearl mode to %s",
+				old_style_pearl ? "single" : "dual");
+			pearl_mode(handle);
+		}
+		else {
+			printf("...already in desired Pearl mode");
+		}
+	}
+	else {
+		printf("...not a Pearl");
+	}
+
+	// apply changes
 	usb_set_configuration(handle, BLACKBERRY_CONFIGURATION);
 
 	// the Blackberry Pearl doesn't reset itself after the above,
 	// so do it ourselves
-	if( dev->descriptor.idProduct == PRODUCT_RIM_PEARL) {
+	if( dev->descriptor.idProduct == PRODUCT_RIM_PEARL ) {
 		usb_reset(handle);
 	}
 
-	// let it reset itself
-	sleep(3);
-
 	// cleanup
+	printf("...done\n");
 	usb_close(handle);
 }
 
@@ -89,7 +133,7 @@ int main(int argc, char *argv[])
 	//	Default:     0004
 	//	With switch: 0001
 	//
-	bool old_style_pearl = (argc > 1 && strcmp(argv[1], "-o") == 0);
+	old_style_pearl = (argc > 1 && strcmp(argv[1], "-o") == 0);
 
 	usb_init();
 	usb_find_busses();
@@ -97,7 +141,6 @@ int main(int argc, char *argv[])
 	busses = usb_get_busses();
 
 	printf("Scanning for Blackberry devices...\n");
-	int found = 0;
 
 	struct usb_bus *bus;
 	for( bus = busses; bus; bus = bus->next ) {
@@ -105,24 +148,17 @@ int main(int argc, char *argv[])
 
 		for (dev = bus->devices; dev; dev = dev->next) {
 			// Is this a blackberry?
-			if( dev->descriptor.idVendor == VENDOR_RIM &&
-			    (dev->descriptor.idProduct == PRODUCT_RIM_BLACKBERRY ||
-			     dev->descriptor.idProduct == PRODUCT_RIM_PEARL) ) {
-			    	printf("Found...");
-				if( dev->config &&
-				    dev->descriptor.bNumConfigurations >= 1 &&
-				    dev->config[0].MaxPower < 250 ) {
-					printf("attempting to adjust charge setting.\n");
-					charge(dev, old_style_pearl);
-					found++;
-				}
-				else {
-					printf("already at 500mA\n");
+			if( dev->descriptor.idVendor == VENDOR_RIM ) {
+				switch(dev->descriptor.idProduct)
+				{
+				case PRODUCT_RIM_BLACKBERRY:
+				case PRODUCT_RIM_PEARL_DUAL:
+				case PRODUCT_RIM_PEARL:
+					process(dev);
+					break;
 				}
 			}
 		}
 	}
-
-	printf("%d device%s adjusted.\n", found, found > 1 ? "s" : "");
 }
 
