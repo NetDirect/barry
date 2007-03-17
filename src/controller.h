@@ -91,6 +91,9 @@ private:
 	// UsbSerData cache
 	Data m_writeCache, m_readCache;
 
+	// tracking of open Desktop socket, and the need to reset
+	bool m_halfOpen;
+
 protected:
 	void SelectMode(ModeType mode);
 	unsigned int GetCommand(CommandType ct);

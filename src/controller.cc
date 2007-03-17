@@ -54,7 +54,8 @@ Controller::Controller(const ProbeResult &device)
 	m_pin(device.m_pin),
 	m_socket(m_dev, device.m_ep.write, device.m_ep.read, device.m_zeroSocketSequence),
 	m_mode(Unspecified),
-	m_modeSocket(0)
+	m_modeSocket(0),
+	m_halfOpen(false)
 {
 	if( !m_dev.SetConfiguration(BLACKBERRY_CONFIGURATION) )
 		throw Error(m_dev.GetLastError(),
@@ -77,6 +78,21 @@ Controller::~Controller()
 
 	// cleanup the interface
 	delete m_iface;
+
+	// this happens when for some reason the Desktop mode
+	// is not fully opened, but the device has already recommended
+	// a socket to open... in this case, reset the device
+	// in the hopes that on next open, it will be in a
+	// recognizable state.
+	//
+	// FIXME - this should not be necessary, and someday we
+	// we should figure out how to handle the "already open"
+	// response we get for the Desktop
+	//
+	if( m_halfOpen ) {
+		dout("Controller object destroyed in halfopen state, resetting device");
+		m_dev.Reset();
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -322,7 +338,9 @@ void Controller::RetryPassword(const char *password)
 	if( m_socket.GetSocket() != 0 )
 		throw std::logic_error("Socket alreay open in RetryPassword");
 
+	m_halfOpen = true;
 	m_socket.Open(m_modeSocket, password);
+	m_halfOpen = false;
 
 	switch( m_mode )
 	{
