@@ -71,6 +71,7 @@ void pearl_mode(struct usb_dev_handle *handle)
 
 void process(struct usb_device *dev)
 {
+	bool apply = false;
 	printf("Found device #%s...", dev->filename);
 
 	// open
@@ -86,6 +87,7 @@ void process(struct usb_device *dev)
 	    dev->config[0].MaxPower < 250 ) {
 		printf("adjusting charge setting");
 		charge(handle);
+		apply = true;
 	}
 	else {
 		printf("already at 500mA");
@@ -100,6 +102,7 @@ void process(struct usb_device *dev)
 			printf("...adjusting Pearl mode to %s",
 				old_style_pearl ? "single" : "dual");
 			pearl_mode(handle);
+			apply = true;
 		}
 		else {
 			printf("...already in desired Pearl mode");
@@ -110,16 +113,22 @@ void process(struct usb_device *dev)
 	}
 
 	// apply changes
-	usb_set_configuration(handle, BLACKBERRY_CONFIGURATION);
+	if( apply ) {
+		usb_set_configuration(handle, BLACKBERRY_CONFIGURATION);
 
-	// the Blackberry Pearl doesn't reset itself after the above,
-	// so do it ourselves
-	if( dev->descriptor.idProduct == PRODUCT_RIM_PEARL ) {
-		usb_reset(handle);
+		// the Blackberry Pearl doesn't reset itself after the above,
+		// so do it ourselves
+		if( dev->descriptor.idProduct == PRODUCT_RIM_PEARL ) {
+			usb_reset(handle);
+		}
+
+		printf("...done\n");
+	}
+	else {
+		printf("...no change\n");
 	}
 
 	// cleanup
-	printf("...done\n");
 	usb_close(handle);
 }
 

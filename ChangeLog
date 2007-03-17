@@ -1,5 +1,7 @@
 Release: version 0.7 - 2007/02/??
 ------------------------------------------------------------------------------
+2007/03/17
+	- fixed bcharge to avoid endless reset loop... oops
 2007/03/16
 	- reorganized bcharge.cc to make it possible to switch between
 		Pearl modes 0004 and 0001
