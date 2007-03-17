@@ -123,6 +123,7 @@ public:
 	const std::string& get_last_thread_error() const { return m_last_thread_error; }
 
 	bool Connect(const Barry::ProbeResult &dev);
+	bool Password(const char *password);
 	void Disconnect();
 
 	const Barry::DatabaseDatabase& GetDBDB() const { return m_con->GetDBDB(); }

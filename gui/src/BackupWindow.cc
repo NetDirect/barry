@@ -21,6 +21,7 @@
 
 #include "BackupWindow.h"
 #include "DeviceSelectDlg.h"
+#include "PasswordDlg.h"
 #include "ConfigDlg.h"
 #include "aboutdialog.h"
 #include "util.h"
@@ -140,11 +141,59 @@ void BackupWindow::ScanAndConnect()
 		return;
 	}
 
-	if( !m_dev.Connect(probe.Get(nSelection)) ) {
-		Gtk::MessageDialog msg(m_dev.get_last_error());
-		msg.run();
-		hide();
-		return;
+	bool out_of_tries = false, password_required = false;
+	int remaining_tries = 0;
+	try {
+		if( !m_dev.Connect(probe.Get(nSelection)) ) {
+			Gtk::MessageDialog msg(m_dev.get_last_error());
+			msg.run();
+			hide();
+			return;
+		}
+	}
+	catch( Barry::BadPassword &bp ) {
+		out_of_tries = bp.out_of_tries();
+		remaining_tries = bp.remaining_tries();
+		password_required = true;
+	}
+
+	if( password_required ) {
+		// try password repeatedly until out of tries or
+		// the user cancels... or success :-)
+
+		bool connected = false;
+		while( !connected && !out_of_tries ) try {
+			PasswordDlg dlg(remaining_tries);
+			if( dlg.run() == Gtk::RESPONSE_OK ) {
+				connected = m_dev.Password(dlg.GetPassword());
+				if( !connected ) {
+					Gtk::MessageDialog msg(m_dev.get_last_error());
+					msg.run();
+					hide();
+					return;
+				}
+			}
+			else {
+				// user cancelled
+				hide();
+				return;
+			}
+		}
+		catch( Barry::BadPassword &bp ) {
+			out_of_tries = bp.out_of_tries();
+			remaining_tries = bp.remaining_tries();
+			if( out_of_tries ) {
+				Gtk::MessageDialog msg(bp.what());
+				msg.run();
+				hide();
+				return;
+			}
+		}
+
+		if( !connected ) {
+			hide();
+			return;
+		}
 	}
 
 	std::ostringstream oss;

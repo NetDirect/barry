@@ -301,8 +301,28 @@ bool DeviceInterface::Connect(const Barry::ProbeResult &dev)
 		m_con->OpenMode(Barry::Controller::Desktop);
 		return true;
 	}
+	catch( Barry::BadPassword & ) {
+		// pass on to the caller
+		throw;
+	}
 	catch( Barry::Error &e ) {
-		m_con = 0;
+		Disconnect();
+		return False(e.what());
+	}
+}
+
+bool DeviceInterface::Password(const char *password)
+{
+	try {
+		m_con->RetryPassword(password);
+		return true;
+	}
+	catch( Barry::BadPassword & ) {
+		// pass on to the caller
+		throw;
+	}
+	catch( Barry::Error &e ) {
+		Disconnect();
 		return False(e.what());
 	}
 }

@@ -10,6 +10,7 @@ glade_DATA = \
 	BackupWindow.glade \
 	DeviceSelectDlg.glade \
 	DatabaseSelectDlg.glade \
+	PasswordDlg.glade \
 	ConfigDlg.glade
 
 EXTRA_DIST = \
@@ -23,6 +24,7 @@ barrybackup_SOURCES = \
 	BackupWindow.cc \
 	DeviceSelectDlg.cc \
 	DatabaseSelectDlg.cc \
+	PasswordDlg.cc \
 	ConfigDlg.cc \
 	ConfigFile.cc \
 	DeviceIface.cc \
