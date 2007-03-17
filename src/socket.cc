@@ -217,7 +217,7 @@ void Socket::Open(uint16_t socket, const char *password)
 		// half open, device is expecting a password hash... do we
 		// have a password?
 		if( !password ) {
-			throw BadPassword("No password specified.", m_remainingTries);
+			throw BadPassword("No password specified.", m_remainingTries, false);
 		}
 
 		// only allow password attempts if there are 6 or more
@@ -229,7 +229,8 @@ void Socket::Open(uint16_t socket, const char *password)
 				"remaining in device. Refusing to proceed, "
 				"to avoid device zapping itself.  Use a "
 				"Windows client, or re-cradle the device.",
-				m_remainingTries);
+				m_remainingTries,
+				true);
 		}
 
 		SendPasswordHash(socket, password, receive);
@@ -238,7 +239,7 @@ void Socket::Open(uint16_t socket, const char *password)
 			m_halfOpen = true;
 			m_challengeSeed = packet.ChallengeSeed();
 			m_remainingTries = packet.RemainingTries();
-			throw BadPassword("Password rejected by device.", m_remainingTries);
+			throw BadPassword("Password rejected by device.", m_remainingTries, false);
 		}
 
 		// if we get this far, we are no longer in half-open password
