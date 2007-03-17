@@ -53,19 +53,24 @@ public:
 ///	- device rejected the available password
 ///	- too few remaining tries left... Barry will refuse to keep
 ///		trying passwords if there are fewer than
-///		6 tries remaining
+///		6 tries remaining.  In this case, out_of_tries()
+///		will return true.
 ///		
 ///
 class BadPassword : public Barry::Error
 {
 	int m_remaining_tries;
+	bool m_out_of_tries;
 
 public:
-	BadPassword(const std::string &str, int remaining_tries)
+	BadPassword(const std::string &str, int remaining_tries,
+		bool out_of_tries)
 		: Barry::Error(str),
-		m_remaining_tries(remaining_tries)
+		m_remaining_tries(remaining_tries),
+		m_out_of_tries(out_of_tries)
 		{}
 	int remaining_tries() const { return m_remaining_tries; }
+	bool out_of_tries() const { return m_out_of_tries; }
 };
 
 /// @}
