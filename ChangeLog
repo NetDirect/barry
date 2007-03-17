@@ -3,6 +3,16 @@ Release: version 0.7 - 2007/02/??
 2007/03/16
 	- reorganized bcharge.cc to make it possible to switch between
 		Pearl modes 0004 and 0001
+	- added flag to BadPassword exception class, to signal whether
+		the library considers the device "out of retries" or not
+	- updated socket.cc for new BadPassword exception
+	- added special case to Controller class destructor to reset the
+		device if being destroyed in a half-open state... this is
+		a temporary fix until we understand how to handle
+		the "already open" message we get when opening the Desktop
+		in some cases
+	- added password prompt dialog to the backup GUI
+	- fixed possible memory leak in GUI's DeviceInterface::Connect()
 2007/03/08
 	- committed Troy Engel's bbrules_mass_symlinks.patch, fixing
 		udev rules for the Pearl
