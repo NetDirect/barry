@@ -3,6 +3,14 @@ Release: version 0.7 - 2007/02/??
 2007/03/29
 	- applied patch from Niels de Vos, fixing deb udev rules for Pearl
 	- updated AUTHORS
+	- fixed extra space bug in LDIF output (added space when creating
+		FullName, even if there was no last name)
+	- fixed Address Book record parsing in Contact class... the
+		Blackberry database uses field id 0x20 for both the
+		first and last names, and if only a last name exists,
+		the first name will be empty.  Fixed parser to handle
+		this special case, without relying on string length.
+		Thanks to Troy Engel for reporting above two LDIF bugs.
 2007/03/17
 	- fixed bcharge to avoid endless reset loop... oops
 2007/03/16
