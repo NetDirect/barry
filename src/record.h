@@ -228,6 +228,8 @@ public:
 	GroupLinksType GroupLinks;
 	UnknownsType Unknowns;
 
+private:
+	bool m_FirstNameSeen;
 
 //protected:
 public:

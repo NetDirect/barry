@@ -544,7 +544,8 @@ FieldLink<Contact> ContactFieldLinks[] = {
 
 Contact::Contact()
 	: RecType(0),
-	RecordId(0)
+	RecordId(0),
+	m_FirstNameSeen(false)
 {
 }
 
@@ -583,11 +584,15 @@ const unsigned char* Contact::ParseField(const unsigned char *begin,
 	case CFC_NAME: {
 		// can be used multiple times, for first/last names
 		std::string *name;
-		if( FirstName.size() )
+		if( FirstName.size() || m_FirstNameSeen ) {
 			// first name already filled, use last name
 			name = &LastName;
-		else
+			m_FirstNameSeen = false;
+		}
+		else {
 			name = &FirstName;
+			m_FirstNameSeen = true;
+		}
 
 		name->assign((const char*)field->u.raw, btohs(field->size)-1);
 		}
@@ -713,6 +718,8 @@ void Contact::Clear()
 
 	GroupLinks.clear();
 	Unknowns.clear();
+
+	m_FirstNameSeen = false;
 }
 
 //
