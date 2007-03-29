@@ -395,7 +395,7 @@ std::string ContactLdif::PostalAddress(const Barry::Contact &con) const
 std::string ContactLdif::FullName(const Barry::Contact &con) const
 {
 	std::string Full = con.FirstName;
-	if( Full.size() )
+	if( Full.size() && con.LastName.size() )
 		Full += " ";
 	Full += con.LastName;
 	return Full;
