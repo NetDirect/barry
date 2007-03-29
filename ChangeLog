@@ -1,5 +1,7 @@
 Release: version 0.7 - 2007/02/??
 ------------------------------------------------------------------------------
+2007/03/29
+	- applied patch from Niels de Vos, fixing deb udev rules for Pearl
 2007/03/17
 	- fixed bcharge to avoid endless reset loop... oops
 2007/03/16

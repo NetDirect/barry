@@ -12,6 +12,10 @@ if [ "$VERSION" -gt 056 ] ; then
 #BUS=="usb", SYSFS{idVendor}=="0fca", SYSFS{idProduct}=="0001", SYMLINK+="bb-%k", PROGRAM="/usr/sbin/bcharge"
 # Ubuntu and Fedora:
 BUS=="usb", ACTION=="add", SYSFS{idVendor}=="0fca", SYSFS{idProduct}=="0001", SYMLINK+="bb-%k", RUN="/usr/sbin/bcharge"
+#
+# Newer devices with USB Mass Storage, 0x0006 + 0x0004.
+BUS=="usb", SYSFS{idVendor}=="0fca", SYSFS{idProduct}=="0006", SYMLINK+="bb-%k", PROGRAM="/usr/sbin/bcharge"
+BUS=="usb", SYSFS{idVendor}=="0fca", SYSFS{idProduct}=="0004", SYMLINK+="bb-%k"
 EOF
 
 fi
