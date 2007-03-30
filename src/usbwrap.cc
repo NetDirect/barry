@@ -424,6 +424,14 @@ bool ConfigDiscovery::Discover(Usb::DeviceIDType devid, int cfgcount)
 			<< "\n"
 			);
 
+		// just for debugging purposes, check for extra descriptors, and
+		// dump them to dout if they exist
+		if( desc.desc.extra ) {
+			dout("while parsing config descriptor, found a block of extra descriptors:");
+			Barry::Data data(desc.desc.extra, desc.desc.extralen);
+			dout(data);
+		}
+
 		// load all interfaces on this configuration
 		if( !desc.interfaces.Discover(devid, i, desc.desc.bNumInterfaces) ) {
 			dout("  config discovery failed for bConfigurationValue: " << (unsigned int)desc.desc.bConfigurationValue << ", not added to map.");
