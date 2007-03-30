@@ -1,5 +1,8 @@
 Release: version 0.7 - 2007/02/??
 ------------------------------------------------------------------------------
+2007/03/30
+	- added code to dump extra descriptors during device discovery,
+		if found
 2007/03/29
 	- applied patch from Niels de Vos, fixing deb udev rules for Pearl
 	- updated AUTHORS

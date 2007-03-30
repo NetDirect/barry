@@ -320,6 +320,14 @@ bool EndpointDiscovery::Discover(struct usb_interface_descriptor *interface, int
 		}
 	}
 
+	// just for debugging purposes, check for extra descriptors, and
+	// dump them to dout if they exist
+	if( interface->extra ) {
+		dout("while parsing endpoints, found a block of extra descriptors:");
+		Barry::Data data(interface->extra, interface->extralen);
+		dout(data);
+	}
+
 	return m_valid = true;
 }
 
