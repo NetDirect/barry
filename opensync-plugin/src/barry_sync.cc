@@ -171,7 +171,7 @@ void GetChanges(OSyncContext *ctx, BarryEnvironment *env,
 			osync_change_set_member(change, env->member);
 			osync_change_set_objformat_string(change, FormatName);
 
-			char *uid = g_strdup_printf("%lu", state.RecordId);
+			char *uid = g_strdup_printf("%u", state.RecordId);
 			osync_change_set_uid(change, uid);
 			trace.log(uid);
 			g_free(uid);
@@ -212,7 +212,7 @@ void GetChanges(OSyncContext *ctx, BarryEnvironment *env,
 			osync_change_set_member(change, env->member);
 			osync_change_set_objformat_string(change, FormatName);
 
-			char *uid = g_strdup_printf("%lu", recordId);
+			char *uid = g_strdup_printf("%u", recordId);
 			osync_change_set_uid(change, uid);
 			trace.log(uid);
 			g_free(uid);
