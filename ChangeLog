@@ -12,6 +12,7 @@ Release: version 0.7 - 2007/02/??
 		this special case, without relying on string length.
 		Thanks to Troy Engel for reporting above two LDIF bugs.
 	- added a few more constants to bcharge.cc
+	- renamed opensync's configure.in to configure.ac
 2007/03/17
 	- fixed bcharge to avoid endless reset loop... oops
 2007/03/16
