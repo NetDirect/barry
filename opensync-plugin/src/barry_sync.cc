@@ -46,17 +46,72 @@ extern "C" {
 // Support functions and classes
 //
 
-class CalendarToVEvent
+// searches for key in vdata
+static std::string ExtractKeyData(const char *vdata, const char *key)
+{
+	int keylen = strlen(key);
+	bool found = false, first = true;
+
+	// we must do this in a case-insensitive manner, as per RFC,
+	// and unfortunately there is no standard way to do it,
+	// or we could be using stristr or something...
+	while( *vdata ) {
+		if( *vdata == '\n' || first ) {
+			first = false;
+
+			// search for end of key name
+			const char *vend = ++vdata;
+			while( *vend && *vend != ':' )
+				vend++;
+
+			// compare
+			if( keylen == (vend - vdata) ) {
+				if( strncasecmp(vdata, key, keylen) == 0 ) {
+					found = true;
+					vdata = vend + 1;
+					break;
+				}
+			}
+			else {
+				vdata = vend;
+			}
+		}
+		else {
+			vdata++;
+		}
+	}
+
+	if( found ) {
+		// pack up key data for return
+		const char *vend = vdata;
+		while( *vend && *vend != '\r' && *vend != '\n' )
+			vend++;
+
+		return std::string(vdata, vend);
+	}
+	else {
+		return std::string();
+	}
+}
+
+class VEventConverter
 {
 	char *m_Data;
+	std::string m_start, m_end, m_subject;
+	uint32_t m_RecordId;
 
 public:
-	CalendarToVEvent()
+	VEventConverter()
 		: m_Data(0)
 	{
 	}
 
-	~CalendarToVEvent()
+	explicit VEventConverter(uint32_t newRecordId)
+		: m_RecordId(newRecordId)
+	{
+	}
+
+	~VEventConverter()
 	{
 		if( m_Data )
 			g_free(m_Data);
@@ -65,15 +120,32 @@ public:
 	// Transfers ownership of m_Data to the caller
 	char* ExtractData()
 	{
+		Trace trace("VEventConverter::ExtractData");
 		char *ret = m_Data;
 		m_Data = 0;
 		return ret;
 	}
 
+	bool ParseData(const char *data)
+	{
+		Trace trace("VEventConverter::ParseData");
+
+		m_start = ExtractKeyData(m_Data, "DTSTART");
+		trace.log(m_start.c_str());
+		m_end = ExtractKeyData(m_Data, "DTEND");
+		trace.log(m_end.c_str());
+		m_subject = ExtractKeyData(m_Data, "SUMMARY");
+		trace.log(m_subject.c_str());
+
+		if( !m_start.size() || !m_end.size() || !m_subject.size() )
+			return false;
+		return true;
+	}
+
 	// storage operator
 	void operator()(const Barry::Calendar &rec)
 	{
-		Trace trace("CalendarStore::operator()");
+		Trace trace("VEventConverter::operator()");
 
 		// Delete data if some already exists
 		if( m_Data ) {
@@ -101,6 +173,26 @@ public:
 		g_free(end);
 	}
 
+	// builder operator
+	bool operator()(Barry::Calendar &rec, unsigned int dbId)
+	{
+		Trace trace("VEventConverter::builder operator()");
+
+		// FIXME - we are assuming that any non-UTC timestamps
+		// in the vcalendar record will be in the current timezone...
+		// Also, ParseData() currently ignores any time zone
+		// parameters that might be in the vcalendar format,
+		// so we can't base it on input data.
+		time_t now = time(NULL);
+		int zoneoffset = osync_time_timezone_diff(localtime(&now));
+
+		rec.SetIds(Barry::Calendar::GetDefaultRecType(), m_RecordId);
+		rec.StartTime = osync_time_vtime2unix(m_start.c_str(), zoneoffset);
+		rec.EndTime = osync_time_vtime2unix(m_end.c_str(), zoneoffset);
+		rec.Subject = m_subject;
+		return true;
+	}
+
 	// Handles calling of the Barry::Controller to fetch a specific
 	// record, indicated by index (into the RecordStateTable).
 	// Returns a g_malloc'd string of data containing the vevent20
@@ -110,12 +202,15 @@ public:
 	{
 		using namespace Barry;
 
-		CalendarToVEvent cal2event;
-		RecordParser<Calendar, CalendarToVEvent> parser(cal2event);
+		VEventConverter cal2event;
+		RecordParser<Calendar, VEventConverter> parser(cal2event);
 		unsigned int dbId = env->m_pCon->GetDBID("Calendar");
 		env->m_pCon->GetRecord(dbId, index, parser);
 		return cal2event.ExtractData();
 	}
+
+	static bool SetRecordData(BarryEnvironment *env, unsigned int index,
+		const char *data);
 };
 
 void GetChanges(OSyncContext *ctx, BarryEnvironment *env,
@@ -331,7 +426,7 @@ static void get_changeinfo(OSyncContext *ctx)
 		if( env->m_SyncCalendar ) {
 			GetChanges(ctx, env, env->m_CalendarCache,
 				"Calendar", "vevent20",
-				&CalendarToVEvent::GetRecordData);
+				&VEventConverter::GetRecordData);
 		}
 
 		if( env->m_SyncContacts ) {
@@ -355,7 +450,7 @@ static bool commit_vevent20(BarryEnvironment *env,
 			    OSyncContext *ctx,
 			    OSyncChange *change)
 {
-	Trace trace("batch_commit_vevent20");
+	Trace trace("commit_vevent20");
 
 	try {
 
@@ -392,16 +487,30 @@ static bool commit_vevent20(BarryEnvironment *env,
 				con.DeleteRecord(dbId, StateIndex);
 				break;
 
-			case CHANGE_ADDED:
-				// FIXME
-//				newRecordId = env->m_CalendarTable.MakeNewRecordId();
-//				con.AddRecord(dbId, builder);
-				break;
+			case CHANGE_ADDED: {
+				uint32_t newRecordId = env->m_CalendarTable.MakeNewRecordId();
+				VEventConverter convert(newRecordId);
+				if( !convert.ParseData(osync_change_get_data(change)) ) {
+					osync_context_report_error(ctx, OSYNC_ERROR_PARAMETER, "unable to parse change data for new RecordId: %lu", newRecordId);
+					return false;
+				}
 
-			case CHANGE_MODIFIED:
-				// FIXME
-//				con.SetRecord(dbId, StateIndex, builder);
+				Barry::RecordBuilder<Barry::Calendar, VEventConverter> builder(convert);
+				con.AddRecord(dbId, builder);
 				break;
+				}
+
+			case CHANGE_MODIFIED: {
+				VEventConverter convert(RecordId);
+				if( !convert.ParseData(osync_change_get_data(change)) ) {
+					osync_context_report_error(ctx, OSYNC_ERROR_PARAMETER, "unable to parse change data for RecordId: %lu", RecordId);
+					return false;
+				}
+
+				Barry::RecordBuilder<Barry::Calendar, VEventConverter> builder(convert);
+				con.SetRecord(dbId, StateIndex, builder);
+				break;
+				}
 
 			default:
 				osync_debug("barry-sync", 0, "Unknown change type");
@@ -419,6 +528,8 @@ static bool commit_vevent20(BarryEnvironment *env,
 	}
 }
 
+// this function will be called exactly once with all objects to write
+// gathered in an array
 static void batch_commit_vevent20(OSyncContext *ctx,
 				  OSyncContext **contexts,
 				  OSyncChange **changes)
@@ -463,7 +574,8 @@ static void batch_commit_vevent20(OSyncContext *ctx,
 			}
 		}
 
-		// get the state table again, so we can update the cache on success, later
+		// get the state table again, so we can update
+		// the cache on success, later
 		con.GetRecordStateTable(dbId, env->m_CalendarTable);
 
 		// all done
@@ -544,18 +656,21 @@ void get_info(OSyncEnv *env)
 //	info->timeouts.connect_timeout = 5;
 	// There are more timeouts for the other functions
 
-	// Register all object types we support
-//	osync_plugin_accept_objtype(info, "contact");
+	//
+	// Register each supported feature
+	//
+
+	// Calendar entries, using batch commit
 	osync_plugin_accept_objtype(info, "event");
-
-	// Register the formats for each object type
-//	osync_plugin_accept_objformat(info, "contact", "vcard30", NULL);
 	osync_plugin_accept_objformat(info, "event", "vevent20", NULL);
-
-	// the other possibility is to do a batch commit
-	// this function will be called exactly once with all objects to write
-	// gathered in an array
 	osync_plugin_set_batch_commit_objformat(info, "event", "vevent20",
 						batch_commit_vevent20);
+
+	// Address Book entries
+//	osync_plugin_accept_objtype(info, "contact");
+//	osync_plugin_accept_objformat(info, "contact", "vcard30", NULL);
+//	osync_plugin_set_batch_commit_objformat(info, "contact", "vcard30",
+//						batch_commit_vcard30);
+
 }
 
