@@ -82,8 +82,7 @@ min1900_t:
 
 Recurrence:
   -- Recurrence information does not appear to be stored in the Tasks DB.
-  -- Recurrence is systematically mis-spelled in both the protocol description document
-     and all the barry source code (recurr_a_nce)
+  -- Recurrence is systematically mis-spelled in the protocol description document
 
 Order of fields... as observed in dump, do not know if it is significant, given fields
 are so self-descriptive. 

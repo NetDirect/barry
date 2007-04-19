@@ -374,14 +374,14 @@ public:
 	unsigned short Interval;	// must be >= 1
 	time_t RecurringEndTime;	// only pertains if Recurring is true
 					// sets the date and time when
-					// recurrance of this appointment
+					// recurrence of this appointment
 					// should no longer occur
 					// If a perpetual appointment, this
 					// is 0xFFFFFFFF in the low level data
 					// Instead, set the following flag.
 	bool Perpetual;			// if true, this will always recur
 	unsigned short TimeZoneCode;	// the time zone originally used
-					// for the recurrance data...
+					// for the recurrence data...
 					// seems to have little use, but
 					// set to your current time zone
 					// as a good default
@@ -408,8 +408,8 @@ public:
 public:
 	const unsigned char* ParseField(const unsigned char *begin,
 		const unsigned char *end);
-	void ParseRecurranceData(const void *data);
-	void BuildRecurranceData(void *data);
+	void ParseRecurrenceData(const void *data);
+	void BuildRecurrenceData(void *data);
 
 public:
 	Calendar();

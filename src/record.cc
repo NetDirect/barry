@@ -984,7 +984,7 @@ void Message::Dump(std::ostream &os) const
 #define CALFC_NOTIFICATION_TIME		0x05
 #define CALFC_START_TIME		0x06
 #define CALFC_END_TIME			0x07
-#define CALFC_RECURRANCE_DATA		0x0c
+#define CALFC_RECURRENCE_DATA		0x0c
 #define CALFC_VERSION_DATA		0x10
 #define CALFC_NOTIFICATION_DATA		0x1a
 #define CALFC_TIMEZONE_CODE		0x1e	// only seems to show up if recurring
@@ -1065,14 +1065,14 @@ const unsigned char* Calendar::ParseField(const unsigned char *begin,
 		AllDayEvent = field->u.raw[0] == 1;
 		return begin;
 
-	case CALFC_RECURRANCE_DATA:
-		if( btohs(field->size) >= CALENDAR_RECURRANCE_DATA_FIELD_SIZE ) {
+	case CALFC_RECURRENCE_DATA:
+		if( btohs(field->size) >= CALENDAR_RECURRENCE_DATA_FIELD_SIZE ) {
 			// good data
-			ParseRecurranceData(&field->u.raw[0]);
+			ParseRecurrenceData(&field->u.raw[0]);
 		}
 		else {
 			// not enough data!
-			throw Error("Calendar::ParseField: not enough data in recurrance data field");
+			throw Error("Calendar::ParseField: not enough data in recurrence data field");
 		}
 		return begin;
 
@@ -1098,10 +1098,10 @@ const unsigned char* Calendar::ParseField(const unsigned char *begin,
 }
 
 // this function assumes the size has already been checked
-void Calendar::ParseRecurranceData(const void *data)
+void Calendar::ParseRecurrenceData(const void *data)
 {
-	const CalendarRecurranceDataField *rec =
-		(const CalendarRecurranceDataField*) data;
+	const CalendarRecurrenceDataField *rec =
+		(const CalendarRecurrenceDataField*) data;
 
 	Interval = btohs(rec->interval);
 	if( Interval < 1 )
@@ -1156,22 +1156,22 @@ void Calendar::ParseRecurranceData(const void *data)
 		break;
 
 	default:
-		eout("Unknown recurrance data type: " << rec->type);
-		throw Error("Unknown recurrance data type");
+		eout("Unknown recurrence data type: " << rec->type);
+		throw Error("Unknown recurrence data type");
 	}
 }
 
-// this function assumes there is CALENDAR_RECURRANCE_DATA_FIELD_SIZE bytes
+// this function assumes there is CALENDAR_RECURRENCE_DATA_FIELD_SIZE bytes
 // available in data
-void Calendar::BuildRecurranceData(void *data)
+void Calendar::BuildRecurrenceData(void *data)
 {
 	if( !Recurring )
-		throw Error("Calendar::BuildRecurranceData: Attempting to build recurrance data on non-recurring record.");
+		throw Error("Calendar::BuildRecurrenceData: Attempting to build recurrence data on non-recurring record.");
 
-	CalendarRecurranceDataField *rec = (CalendarRecurranceDataField*) data;
+	CalendarRecurrenceDataField *rec = (CalendarRecurrenceDataField*) data;
 
 	// set all to zero
-	memset(data, 0, CALENDAR_RECURRANCE_DATA_FIELD_SIZE);
+	memset(data, 0, CALENDAR_RECURRENCE_DATA_FIELD_SIZE);
 
 	rec->interval = htobs(Interval);
 	rec->startTime = time2min(StartTime);
@@ -1221,9 +1221,9 @@ void Calendar::BuildRecurranceData(void *data)
 		break;
 
 	default:
-		eout("Calendar::BuildRecurranceData: "
-			"Unknown recurrance data type: " << rec->type);
-		throw Error("Calendar::BuildRecurranceData: Unknown recurrance data type");
+		eout("Calendar::BuildRecurrenceData: "
+			"Unknown recurrence data type: " << rec->type);
+		throw Error("Calendar::BuildRecurrenceData: Unknown recurrence data type");
 	}
 }
 
@@ -1315,7 +1315,7 @@ void Calendar::Dump(std::ostream &os) const
 		"May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
 
 // FIXME - need a "check all data" function that make sure that all
-// recurrance data is within range.  Then call that before using
+// recurrence data is within range.  Then call that before using
 // the data, such as in Build and in Dump.
 
 	os << "Calendar entry: 0x" << setbase(16) << RecordId
@@ -1339,7 +1339,7 @@ void Calendar::Dump(std::ostream &os) const
 		}
 	}
 
-	// print recurrance data if available
+	// print recurrence data if available
 	os << "   Recurring: " << (Recurring ? "yes" : "no") << "\n";
 	if( Recurring ) {
 		switch( RecurringType )
@@ -1392,7 +1392,7 @@ void Calendar::Dump(std::ostream &os) const
 			break;
 
 		default:
-			os << "      Unknown recurrance type\n";
+			os << "      Unknown recurrence type\n";
 			break;
 		}
 

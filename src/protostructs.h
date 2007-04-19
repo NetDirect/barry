@@ -144,7 +144,7 @@ struct RecordStateTableField
 	uint8_t		unknown2[4];
 } __attribute__ ((packed));
 
-struct CalendarRecurranceDataField  // as documented in the Cassis project spec
+struct CalendarRecurrenceDataField  // as documented in the Cassis project spec
 {
 	uint8_t		type;
 #define CRDF_TYPE_DAY		0x01
@@ -218,7 +218,7 @@ struct CalendarRecurranceDataField  // as documented in the Cassis project spec
 	} __attribute__ ((packed)) u;
 
 } __attribute__ ((packed));
-#define CALENDAR_RECURRANCE_DATA_FIELD_SIZE	sizeof(Barry::Protocol::CalendarRecurranceDataField)
+#define CALENDAR_RECURRENCE_DATA_FIELD_SIZE	sizeof(Barry::Protocol::CalendarRecurrenceDataField)
 
 
 
