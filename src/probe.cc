@@ -152,7 +152,10 @@ void Probe::ProbeDevice(Usb::DeviceIDType devid)
 	// to our probe commands
 	// Start with second pair, since evidence indicates the later pairs
 	// are the ones we need.
-	for(size_t i = 1; i < ed.GetEndpointPairs().size(); i++ ) {
+	for(size_t i = ed.GetEndpointPairs().size() > 1 ? 1 : 0;
+	    i < ed.GetEndpointPairs().size();
+	    i++ )
+	{
 		const EndpointPair &ep = ed.GetEndpointPairs()[i];
 		if( ep.type == USB_ENDPOINT_TYPE_BULK ) {
 			result.m_ep = ep;

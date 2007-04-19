@@ -18,6 +18,9 @@ Release: version 0.7 - 2007/02/??
 		the reliance on /tmp when installing 99-barry-perms.rules
 	- applied bb_task_format.txt patch from Peter Silva
 	- fixed each misspelling of "recurrance" to "recurrence"
+	- tweaked src/probe.cc again for paranoia's sake... start at
+		offset 1 if more than 1 endpoint pair, otherwise start
+		search at 0
 2007/04/04
 	- more incremental work on the opensync plugin, adding ADDED
 		and MODIFIED functionality... (experimental!)
