@@ -48,6 +48,7 @@
 #define BLACKBERRY_CONFIGURATION	1
 
 bool old_style_pearl = false;
+bool force_dual = false;
 
 void charge(struct usb_dev_handle *handle)
 {
@@ -71,7 +72,7 @@ void pearl_mode(struct usb_dev_handle *handle)
 	}
 }
 
-void process(struct usb_device *dev)
+void process(struct usb_device *dev, bool is_pearl)
 {
 	bool apply = false;
 	printf("Found device #%s...", dev->filename);
@@ -96,7 +97,7 @@ void process(struct usb_device *dev)
 	}
 
 	// adjust Pearl mode
-	if( dev->descriptor.iProduct == IPRODUCT_RIM_COMPOSITE ) {
+	if( is_pearl || force_dual ) {
 		int desired_mode = old_style_pearl
 			? PRODUCT_RIM_BLACKBERRY : PRODUCT_RIM_PEARL_DUAL;
 
@@ -111,7 +112,7 @@ void process(struct usb_device *dev)
 		}
 	}
 	else {
-		printf("...not a Pearl");
+		printf("...no Pearl adjustment");
 	}
 
 	// apply changes
@@ -120,7 +121,7 @@ void process(struct usb_device *dev)
 
 		// the Blackberry Pearl doesn't reset itself after the above,
 		// so do it ourselves
-		if( dev->descriptor.idProduct == PRODUCT_RIM_PEARL ) {
+		if( is_pearl || force_dual ) {
 			usb_reset(handle);
 		}
 
@@ -141,10 +142,11 @@ int main(int argc, char *argv[])
 	//
 	// allow -o command line switch to choose which mode to use for
 	// Blackberry Pearls:
-	//	Default:     0004
-	//	With switch: 0001
+	//	Dual(default):  0004	-d
+	//	With switch:    0001	-o
 	//
 	old_style_pearl = (argc > 1 && strcmp(argv[1], "-o") == 0);
+	force_dual = (argc > 1 && strcmp(argv[1], "-d") == 0);
 
 	usb_init();
 	usb_find_busses();
@@ -163,9 +165,12 @@ int main(int argc, char *argv[])
 				switch(dev->descriptor.idProduct)
 				{
 				case PRODUCT_RIM_BLACKBERRY:
+					process(dev, false);
+					break;
+
 				case PRODUCT_RIM_PEARL_DUAL:
 				case PRODUCT_RIM_PEARL:
-					process(dev);
+					process(dev, true);
 					break;
 				}
 			}
