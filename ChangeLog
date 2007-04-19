@@ -11,6 +11,9 @@ Release: version 0.7 - 2007/02/??
 		of doing a reverse search from the end... newer Pearls
 		in Dual mode seem to have at least 3 or 4 endpoint pairs,
 		and the old search didn't always work
+	- applied sourceforge patch #1696884 from Peter Silva, updating
+		the Debian build for Etch, and including all files in one deb
+	- added Peter Silva to AUTHORS file
 2007/04/04
 	- more incremental work on the opensync plugin, adding ADDED
 		and MODIFIED functionality... (experimental!)
