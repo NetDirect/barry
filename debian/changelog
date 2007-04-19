@@ -1,3 +1,9 @@
+barry (0.6-1) unstable; urgency=low
+   * adapted for Debian Etch.  has a newer version of udev, and plugdev 
+     available.  Also added btool in addition to only bcharge available
+
+ -- Peter Silva <Peter.A.Silva@gmail.com>  Fri, 06 Apr 2007 00:00:01 -0500
+
 barry (0.1-2) unstable; urgency=low
 
   * Make this work on ubuntu as well.  Ubuntu has a newer version of udev
