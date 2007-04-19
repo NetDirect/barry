@@ -1,5 +1,16 @@
 Release: version 0.7 - 2007/02/??
 ------------------------------------------------------------------------------
+2007/04/19
+	- updated gui/TODO
+	- added -d switch to bcharge to switch back from 0001 to 0004 mode,
+		changed the auto-detection logic to ignore iProduct and
+		only use idProduct, and updated man page
+	- updated breset to recognize the Pearl in 00004 mode as well
+	- changed src/probe.cc logic to assume that the second endpoint
+		pair is the one needed for database communication, instead
+		of doing a reverse search from the end... newer Pearls
+		in Dual mode seem to have at least 3 or 4 endpoint pairs,
+		and the old search didn't always work
 2007/04/04
 	- more incremental work on the opensync plugin, adding ADDED
 		and MODIFIED functionality... (experimental!)
