@@ -9,6 +9,8 @@ Required functionality:
 	side throws an error... should always try to restore everything
 	the user asks for, not stop half way through if the device
 	doesn't like a particular database
+- add an "ignore these errors" for the case when restoring
+	causes numerous errors that you don't care about
 - allow temporary overriding of backup destination by letting user
 	type in the PIN field... as soon as the user types something,
 	change the label to "Backup filename:" or something, and
