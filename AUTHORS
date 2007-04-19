@@ -28,6 +28,8 @@ Contributors (code and otherwise) in alphabetical order by last name:
 	Rick Scott <rwscott@alumni.uwaterloo.ca>
 		- password authentication code and tips
 		- GPRS modem behaviour
+	Peter Silva <Peter.A.Silva@gmail.com>
+		- debian packaging
 	Niels de Vos <nixpanic@users.sourceforge.net>
 		- debian package patch
 
