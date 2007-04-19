@@ -34,6 +34,7 @@
 
 #define VENDOR_RIM		0x0fca
 #define PRODUCT_RIM_BLACKBERRY	0x0001
+#define PRODUCT_RIM_PEARL_DUAL	0x0004
 #define PRODUCT_RIM_PEARL	0x0006
 
 #define BLACKBERRY_INTERFACE		0
@@ -69,7 +70,8 @@ int main()
 			// Is this a blackberry?
 			if( dev->descriptor.idVendor == VENDOR_RIM &&
 			    (dev->descriptor.idProduct == PRODUCT_RIM_BLACKBERRY ||
-			     dev->descriptor.idProduct == PRODUCT_RIM_PEARL) ) {
+			     dev->descriptor.idProduct == PRODUCT_RIM_PEARL ||
+			     dev->descriptor.idProduct == PRODUCT_RIM_PEARL_DUAL ) ) {
 			    	printf("Found...");
 				printf("attempting to reset.\n");
 				reset(dev);
