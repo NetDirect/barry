@@ -150,10 +150,10 @@ void Probe::ProbeDevice(Usb::DeviceIDType devid)
 
 	// find the first bulk read/write endpoint pair that answers
 	// to our probe commands
-	// Search in reverse, since evidence indicates the last pairs
+	// Start with second pair, since evidence indicates the later pairs
 	// are the ones we need.
-	for(size_t i = ed.GetEndpointPairs().size(); i; i-- ) {
-		const EndpointPair &ep = ed.GetEndpointPairs()[i-1];
+	for(size_t i = 1; i < ed.GetEndpointPairs().size(); i++ ) {
+		const EndpointPair &ep = ed.GetEndpointPairs()[i];
 		if( ep.type == USB_ENDPOINT_TYPE_BULK ) {
 			result.m_ep = ep;
 
