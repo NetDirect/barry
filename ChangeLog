@@ -16,6 +16,7 @@ Release: version 0.7 - 2007/02/??
 	- added Peter Silva to AUTHORS file
 	- uncommented the "make distclean" in debian/rules, and removed
 		the reliance on /tmp when installing 99-barry-perms.rules
+	- applied bb_task_format.txt patch from Peter Silva
 2007/04/04
 	- more incremental work on the opensync plugin, adding ADDED
 		and MODIFIED functionality... (experimental!)
