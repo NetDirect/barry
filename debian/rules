@@ -60,7 +60,7 @@ clean:
 	rm -f build-arch-stamp build-indep-stamp #CONFIGURE-STAMP#
 
 	# Add here commands to clean up after the build process.
-	#$(MAKE) clean
+	$(MAKE) distclean
 
 	dh_clean  --exclude ./src/Makefile.orig
 
@@ -88,8 +88,8 @@ install-arch:
 	$(MAKE) install DESTDIR=$(CURDIR)/debian/barry
 	install -d $(CURDIR)/debian/barry/etc/udev/rules.d
 	install udev/10-blackberry.rules $(CURDIR)/debian/barry/etc/udev/rules.d/10-blackberry.rules
-	sed s/"barry"/"plugdev"/g <udev/99-barry-perms >/tmp/99-barry-perms  
-	install /tmp/99-barry-perms $(CURDIR)/debian/barry/etc/udev/rules.d/99-barry-perms.rules
+	sed s/"barry"/"plugdev"/g <udev/99-barry-perms >$(CURDIR)/debian/barry/etc/udev/rules.d/99-barry-perms.rules
+	chmod 0644 $(CURDIR)/debian/barry/etc/udev/rules.d/99-barry-perms.rules
 
 	dh_install -s
 # Must not depend on anything. This is to be called by
