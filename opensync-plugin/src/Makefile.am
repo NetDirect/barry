@@ -16,7 +16,12 @@ opensyncheader_HEADER = barry_sync.h
 
 barry_sync_LTLIBRARIES = barry_sync.la
 
-barry_sync_la_SOURCES = barry_sync.cc
+barry_sync_la_SOURCES = \
+	barry_sync.cc barry_sync.h \
+	environment.cc environment.h \
+	vevent.cc vevent.h \
+	trace.h
+
 barry_sync_la_LDFLAGS = -avoid-version -export-dynamic -module
 barry_sync_la_LIBADD = @PACKAGE_LIBS@ @LIBS@ @BARRY_LIBS@
 

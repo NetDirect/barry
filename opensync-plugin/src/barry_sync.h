@@ -22,162 +22,16 @@
 #ifndef __BARRY_SYNC_H__
 #define __BARRY_SYNC_H__
 
-#include <opensync/opensync.h>
 #include <barry/barry.h>
 #include <string>
-#include <fstream>
-#include <sstream>
-#include <iomanip>
 
+class BarryEnvironment;
 
-class Trace
-{
-	const char *text;
-public:
-	Trace(const char *t) : text(t)
-	{
-		osync_trace(TRACE_ENTRY, "barry_sync: %s", text);
-	}
-
-	~Trace()
-	{
-		osync_trace(TRACE_EXIT, "barry_sync: %s", text);
-	}
-
-	void log(const char *t)
-	{
-		osync_trace(TRACE_INTERNAL, "barry_sync: %s", t);
-	}
-};
-
-
-struct BarryEnvironment
-{
-public:
-	typedef std::map<uint32_t, bool>			cache_type;
-
-public:
-	OSyncMember *member;
-
-	// cache data
-	std::string m_CalendarCacheFilename, m_ContactsCacheFilename;
-	cache_type m_CalendarCache, m_ContactsCache;
-
-	// device data
-	Barry::RecordStateTable m_CalendarTable;
-	Barry::RecordStateTable m_ContactsTable;
-
-	// user config data
-	std::string m_ConfigData;
-	uint32_t m_pin;
-	bool m_SyncCalendar;
-	bool m_SyncContacts;
-
-	// device communication
-	Barry::ProbeResult m_ProbeResult;
-	Barry::Controller *m_pCon;
-
-public:
-	BarryEnvironment(OSyncMember *pm)
-		: member(pm),
-		m_pin(0),
-		m_SyncCalendar(false),
-		m_SyncContacts(false),
-		m_pCon(0)
-	{
-		m_CalendarCacheFilename = m_ContactsCacheFilename =
-			osync_member_get_configdir(pm);
-		m_CalendarCacheFilename += "/barry_calendar_cache.txt";
-		m_ContactsCacheFilename += "/barry_contacts_cache.txt";
-	}
-
-	~BarryEnvironment()
-	{
-		delete m_pCon;
-	}
-
-	void Disconnect()
-	{
-		delete m_pCon;
-		m_pCon = 0;
-	}
-
-	static bool LoadCache(const std::string &file, cache_type &cache)
-	{
-		std::ifstream ifs(file.c_str());
-		if( !ifs )
-			return false;
-
-		while( ifs ) {
-			uint32_t recordId = 0;
-			ifs >> recordId;
-			if( recordId ) {
-				cache[recordId] = false;
-			}
-		}
-		return !ifs.bad() && !ifs.fail();
-	}
-
-	bool LoadCalendarCache()
-	{
-		m_CalendarCache.clear();
-		if( !LoadCache(m_CalendarCacheFilename, m_CalendarCache) ) {
-			m_CalendarCache.clear();	// assume full sync
-			return false;
-		}
-		return true;
-	}
-
-	bool LoadContactsCache()
-	{
-		m_ContactsCache.clear();
-		if( !LoadCache(m_ContactsCacheFilename, m_ContactsCache) ) {
-			m_ContactsCache.clear();
-			return false;
-		}
-		return true;
-	}
-
-	void ParseConfig(const char *data, int size)
-	{
-		Trace trace("ParseConfig");
-
-		m_ConfigData.assign(data, size);
-
-		// The config data should contain:
-		//    - PIN of device to sync with
-		//    - or a flag that says "autoconfig with first device found"
-		//      which will autodetect, and update the config
-		//      automatically with the found PIN... all future syncs
-		//      will then have a PIN
-		//    - checkboxes for (both can be on):
-		//         - sync calendar items
-		//         - sync contacts
-
-		std::istringstream iss(m_ConfigData);
-		int cal = 0, con = 0;
-		iss >> std::hex >> m_pin >> cal >> con;
-
-		std::ostringstream oss;
-		oss << std::hex << m_pin;
-		trace.log(oss.str().c_str());
-
-		if( cal ) {
-			m_SyncCalendar = true;
-			trace.log("calendar syncing enabled");
-		}
-
-		if( con ) {
-			m_SyncContacts = true;
-			trace.log("contacts syncing enabled");
-		}
-	}
-
-//	void BuildConfig()
-//	{
-//		FIXME - build back into one long string
-//	}
-};
+typedef char* (*GetData_t)(BarryEnvironment *env, unsigned int dbId,
+	Barry::RecordStateTable::IndexType);
+typedef bool (*CommitData_t)(BarryEnvironment *env, unsigned int dbId,
+	Barry::RecordStateTable::IndexType StateIndex, const char *data,
+	bool add, std::string &errmsg);
 
 #endif
 

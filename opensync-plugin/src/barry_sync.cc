@@ -19,9 +19,15 @@
     root directory of this project for more details.
 */
 
+#include <opensync/opensync.h>
+#include <barry/barry.h>
 #include "barry_sync.h"
+#include "environment.h"
+#include "vevent.h"
+#include "trace.h"
 #include <string>
 #include <glib.h>
+#include <stdint.h>
 //#include <stdlib.h>
 //#include <string.h>
 //#include <assert.h>
@@ -46,177 +52,10 @@ extern "C" {
 // Support functions and classes
 //
 
-// searches for key in vdata
-static std::string ExtractKeyData(const char *vdata, const char *key)
-{
-	int keylen = strlen(key);
-	bool found = false, first = true;
-
-	// we must do this in a case-insensitive manner, as per RFC,
-	// and unfortunately there is no standard way to do it,
-	// or we could be using stristr or something...
-	while( *vdata ) {
-		if( *vdata == '\n' || first ) {
-			first = false;
-
-			// search for end of key name
-			const char *vend = ++vdata;
-			while( *vend && *vend != ':' )
-				vend++;
-
-			// compare
-			if( keylen == (vend - vdata) ) {
-				if( strncasecmp(vdata, key, keylen) == 0 ) {
-					found = true;
-					vdata = vend + 1;
-					break;
-				}
-			}
-			else {
-				vdata = vend;
-			}
-		}
-		else {
-			vdata++;
-		}
-	}
-
-	if( found ) {
-		// pack up key data for return
-		const char *vend = vdata;
-		while( *vend && *vend != '\r' && *vend != '\n' )
-			vend++;
-
-		return std::string(vdata, vend);
-	}
-	else {
-		return std::string();
-	}
-}
-
-class VEventConverter
-{
-	char *m_Data;
-	std::string m_start, m_end, m_subject;
-	uint32_t m_RecordId;
-
-public:
-	VEventConverter()
-		: m_Data(0)
-	{
-	}
-
-	explicit VEventConverter(uint32_t newRecordId)
-		: m_RecordId(newRecordId)
-	{
-	}
-
-	~VEventConverter()
-	{
-		if( m_Data )
-			g_free(m_Data);
-	}
-
-	// Transfers ownership of m_Data to the caller
-	char* ExtractData()
-	{
-		Trace trace("VEventConverter::ExtractData");
-		char *ret = m_Data;
-		m_Data = 0;
-		return ret;
-	}
-
-	bool ParseData(const char *data)
-	{
-		Trace trace("VEventConverter::ParseData");
-
-		m_start = ExtractKeyData(m_Data, "DTSTART");
-		trace.log(m_start.c_str());
-		m_end = ExtractKeyData(m_Data, "DTEND");
-		trace.log(m_end.c_str());
-		m_subject = ExtractKeyData(m_Data, "SUMMARY");
-		trace.log(m_subject.c_str());
-
-		if( !m_start.size() || !m_end.size() || !m_subject.size() )
-			return false;
-		return true;
-	}
-
-	// storage operator
-	void operator()(const Barry::Calendar &rec)
-	{
-		Trace trace("VEventConverter::operator()");
-
-		// Delete data if some already exists
-		if( m_Data ) {
-			g_free(m_Data);
-			m_Data = 0;
-		}
-
-		// Put calendar event data into vevent20 format
-		char *start = osync_time_unix2vtime(&rec.StartTime);
-		char *end = osync_time_unix2vtime(&rec.EndTime);
-		// FIXME - need the notification time too... where does that fit in VCALENDAR?
-		m_Data = g_strdup_printf(
-			"BEGIN:VCALENDAR\r\n"
-			"PRODID:-//OpenSync//NONSGML Barry Calendar Record//EN\r\n"
-			"VERSION:2.0\r\n"
-			"BEGIN:VEVENT\r\n"
-			"DTSTART:%s\r\n"
-			"DTEND:%s\r\n"
-			"SEQUENCE:0\r\n"
-			"SUMMARY:%s\r\n"
-			"END:VEVENT\r\n"
-			"END:VCALENDAR",
-			start, end, rec.Subject.c_str());
-		g_free(start);
-		g_free(end);
-	}
-
-	// builder operator
-	bool operator()(Barry::Calendar &rec, unsigned int dbId)
-	{
-		Trace trace("VEventConverter::builder operator()");
-
-		// FIXME - we are assuming that any non-UTC timestamps
-		// in the vcalendar record will be in the current timezone...
-		// Also, ParseData() currently ignores any time zone
-		// parameters that might be in the vcalendar format,
-		// so we can't base it on input data.
-		time_t now = time(NULL);
-		int zoneoffset = osync_time_timezone_diff(localtime(&now));
-
-		rec.SetIds(Barry::Calendar::GetDefaultRecType(), m_RecordId);
-		rec.StartTime = osync_time_vtime2unix(m_start.c_str(), zoneoffset);
-		rec.EndTime = osync_time_vtime2unix(m_end.c_str(), zoneoffset);
-		rec.Subject = m_subject;
-		return true;
-	}
-
-	// Handles calling of the Barry::Controller to fetch a specific
-	// record, indicated by index (into the RecordStateTable).
-	// Returns a g_malloc'd string of data containing the vevent20
-	// data.  It is the responsibility of the caller to free it.
-	// This is intended to be passed into the GetChanges() function.
-	static char* GetRecordData(BarryEnvironment *env, unsigned int index)
-	{
-		using namespace Barry;
-
-		VEventConverter cal2event;
-		RecordParser<Calendar, VEventConverter> parser(cal2event);
-		unsigned int dbId = env->m_pCon->GetDBID("Calendar");
-		env->m_pCon->GetRecord(dbId, index, parser);
-		return cal2event.ExtractData();
-	}
-
-	static bool SetRecordData(BarryEnvironment *env, unsigned int index,
-		const char *data);
-};
-
 void GetChanges(OSyncContext *ctx, BarryEnvironment *env,
 		BarryEnvironment::cache_type &cache,
 		const char *DBDBName, const char *FormatName,
-		char* (*getdata)(BarryEnvironment *, unsigned int))
+		GetData_t getdata)
 {
 	Trace trace("GetChanges");
 
@@ -274,7 +113,7 @@ void GetChanges(OSyncContext *ctx, BarryEnvironment *env,
 			// Now you can set the data for the object
 			// Set the last argument to FALSE if the real data
 			// should be queried later in a "get_data" function
-			char *data = (*getdata)(env, index);
+			char *data = (*getdata)(env, dbId, index);
 			osync_change_set_data(change, data, strlen(data), TRUE);
 
 			// just report the change via
@@ -317,6 +156,107 @@ void GetChanges(OSyncContext *ctx, BarryEnvironment *env,
 		}
 	}
 }
+
+CommitData_t GetCommitFunction(OSyncChange *change)
+{
+	OSyncObjType *type = osync_change_get_objtype(change);
+	const char *name = osync_objtype_get_name(type);
+	if( strcmp(name, "event") == 0 ) {
+		return &VEventConverter::CommitRecordData;
+	}
+	else if( strcmp(name, "contact") == 0 ) {
+		return 0;
+//		return &VCardConverter::CommitRecordData;
+	}
+	else {
+		return 0;
+	}
+}
+
+bool CommitChange(BarryEnvironment *env,
+		  unsigned int dbId,
+		  OSyncContext *ctx,
+		  OSyncChange *change)
+{
+	Trace trace("CommitChange");
+
+	// find the needed commit function, based on objtype of the change
+	CommitData_t CommitData = GetCommitFunction(change);
+	if( !CommitData ) {
+		osync_context_report_error(ctx, OSYNC_ERROR_GENERIC,
+			"unable to get commit function pointer");
+		return false;
+	}
+
+	try {
+
+		Barry::Controller &con = *env->m_pCon;
+		Barry::RecordStateTable &table = env->m_CalendarTable;
+
+		// extract RecordId from change's UID
+		// FIXME - this may need some fudging, since there is no
+		// guarantee that the UID will be a plain number
+		const char *uid = osync_change_get_uid(change);
+		trace.logf("uid from change: %s", uid);
+		unsigned long RecordId;
+		if( sscanf(uid, "%lu", &RecordId) == 0 ) {
+			osync_context_report_error(ctx, OSYNC_ERROR_PARAMETER,
+				"uid is not an expected number: %s", uid);
+			return false;
+		}
+		trace.logf("parsed uid as: %lu", RecordId);
+
+		// search for the RecordId in the state table, to find the
+		// index... we only need the index if we are deleting or
+		// modifying
+		Barry::RecordStateTable::IndexType StateIndex;
+		if( osync_change_get_changetype(change) != CHANGE_ADDED ) {
+			if( !table.GetIndex(RecordId, &StateIndex) ) {
+				osync_context_report_error(ctx, OSYNC_ERROR_GENERIC,
+					"unable to get state table index for RecordId: %lu",
+					RecordId);
+				return false;
+			}
+		}
+
+		std::string errmsg;
+
+		switch( osync_change_get_changetype(change) )
+		{
+			case CHANGE_DELETED:
+				con.DeleteRecord(dbId, StateIndex);
+				break;
+
+			case CHANGE_ADDED:
+				if( !(*CommitData)(env, dbId, StateIndex, osync_change_get_data(change), true, errmsg) ) {
+					osync_context_report_error(ctx, OSYNC_ERROR_PARAMETER, "%s", errmsg.c_str());
+					return false;
+				}
+				break;
+
+			case CHANGE_MODIFIED:
+				if( !(*CommitData)(env, dbId, StateIndex, osync_change_get_data(change), false, errmsg) ) {
+					osync_context_report_error(ctx, OSYNC_ERROR_PARAMETER, "%s", errmsg.c_str());
+					return false;
+				}
+				break;
+
+			default:
+				osync_debug("barry-sync", 0, "Unknown change type");
+				break;
+		}
+
+		// Answer the call
+		osync_context_report_success(ctx);
+		return true;
+
+	}
+	catch( std::exception &e ) {
+		osync_context_report_error(ctx, OSYNC_ERROR_IO_ERROR, "%s", e.what());
+		return false;
+	}
+}
+
 
 
 
@@ -445,89 +385,6 @@ static void get_changeinfo(OSyncContext *ctx)
 	}
 }
 
-static bool commit_vevent20(BarryEnvironment *env,
-			    unsigned int dbId,
-			    OSyncContext *ctx,
-			    OSyncChange *change)
-{
-	Trace trace("commit_vevent20");
-
-	try {
-
-		Barry::Controller &con = *env->m_pCon;
-		Barry::RecordStateTable &table = env->m_CalendarTable;
-
-		// extract RecordId from change's UID
-		// FIXME - this may need some fudging, since there is no
-		// guarantee that the UID will be a plain number
-		const char *uid = osync_change_get_uid(change);
-		unsigned long RecordId;
-		if( sscanf(uid, "%lu", &RecordId) == 0 ) {
-			osync_context_report_error(ctx, OSYNC_ERROR_PARAMETER,
-				"uid is not an expected number: %s", uid);
-			return false;
-		}
-
-		// search for the RecordId in the state table, to find the
-		// index... we only need the index if we are deleting or
-		// modifying
-		Barry::RecordStateTable::IndexType StateIndex;
-		if( osync_change_get_changetype(change) != CHANGE_ADDED ) {
-			if( !table.GetIndex(RecordId, &StateIndex) ) {
-				osync_context_report_error(ctx, OSYNC_ERROR_GENERIC,
-					"unable to get state table index for RecordId: %lu",
-					RecordId);
-				return false;
-			}
-		}
-
-		switch( osync_change_get_changetype(change) )
-		{
-			case CHANGE_DELETED:
-				con.DeleteRecord(dbId, StateIndex);
-				break;
-
-			case CHANGE_ADDED: {
-				uint32_t newRecordId = env->m_CalendarTable.MakeNewRecordId();
-				VEventConverter convert(newRecordId);
-				if( !convert.ParseData(osync_change_get_data(change)) ) {
-					osync_context_report_error(ctx, OSYNC_ERROR_PARAMETER, "unable to parse change data for new RecordId: %lu", newRecordId);
-					return false;
-				}
-
-				Barry::RecordBuilder<Barry::Calendar, VEventConverter> builder(convert);
-				con.AddRecord(dbId, builder);
-				break;
-				}
-
-			case CHANGE_MODIFIED: {
-				VEventConverter convert(RecordId);
-				if( !convert.ParseData(osync_change_get_data(change)) ) {
-					osync_context_report_error(ctx, OSYNC_ERROR_PARAMETER, "unable to parse change data for RecordId: %lu", RecordId);
-					return false;
-				}
-
-				Barry::RecordBuilder<Barry::Calendar, VEventConverter> builder(convert);
-				con.SetRecord(dbId, StateIndex, builder);
-				break;
-				}
-
-			default:
-				osync_debug("barry-sync", 0, "Unknown change type");
-				break;
-		}
-
-		// Answer the call
-		osync_context_report_success(ctx);
-		return true;
-
-	}
-	catch( std::exception &e ) {
-		osync_context_report_error(ctx, OSYNC_ERROR_IO_ERROR, "%s", e.what());
-		return false;
-	}
-}
-
 // this function will be called exactly once with all objects to write
 // gathered in an array
 static void batch_commit_vevent20(OSyncContext *ctx,
@@ -557,7 +414,7 @@ static void batch_commit_vevent20(OSyncContext *ctx,
 		//
 		for( int i = 0; contexts[i] && changes[i]; i++ ) {
 			if( osync_change_get_changetype(changes[i]) != CHANGE_ADDED ) {
-				if( !commit_vevent20(env, dbId, contexts[i], changes[i]) ) {
+				if( !CommitChange(env, dbId, contexts[i], changes[i]) ) {
 					osync_context_report_error(ctx, OSYNC_ERROR_IO_ERROR,
 						"error committing context %i", i);
 					return;
@@ -566,7 +423,7 @@ static void batch_commit_vevent20(OSyncContext *ctx,
 		}
 		for( int i = 0; contexts[i] && changes[i]; i++ ) {
 			if( osync_change_get_changetype(changes[i]) == CHANGE_ADDED ) {
-				if( !commit_vevent20(env, dbId, contexts[i], changes[i]) ) {
+				if( !CommitChange(env, dbId, contexts[i], changes[i]) ) {
 					osync_context_report_error(ctx, OSYNC_ERROR_IO_ERROR,
 						"error committing context %i", i);
 					return;
@@ -603,6 +460,8 @@ static void sync_done(OSyncContext *ctx)
 	// then write the cache to the file
 //	env->m_CalendarTable, and env->m_CalendarCache
 
+
+// FIXME...
 	// then do it again for the ContactsCache...
 
 	// Success
