@@ -30,6 +30,9 @@
 struct BarryEnvironment
 {
 public:
+	// cache is a map of record ID to bool... the bool doesn't mean
+	// anything... the mere existence of the ID means it belongs
+	// in the cache
 	typedef std::map<uint32_t, bool>			cache_type;
 
 public:
@@ -60,9 +63,17 @@ public:
 	void Disconnect();
 
 	static bool LoadCache(const std::string &file, cache_type &cache);
+	static bool SaveCache(const std::string &file, const cache_type &cache);
 
 	bool LoadCalendarCache();
 	bool LoadContactsCache();
+	bool SaveCalendarCache();
+	bool SaveContactsCache();
+
+	void ClearDirtyFlags(Barry::RecordStateTable &table, const std::string &dbname);
+	void ClearCalendarDirtyFlags();
+	void ClearContactsDirtyFlags();
+
 	void ParseConfig(const char *data, int size);
 	void BuildConfig();
 };

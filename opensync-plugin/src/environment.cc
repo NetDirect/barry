@@ -43,7 +43,20 @@ bool BarryEnvironment::LoadCache(const std::string &file, cache_type &cache)
 			cache[recordId] = false;
 		}
 	}
-	return !ifs.bad() && !ifs.fail();
+	return ifs.eof();
+}
+
+bool BarryEnvironment::SaveCache(const std::string &file, const cache_type &cache)
+{
+	std::ofstream ofs(file.c_str());
+	if( !ofs )
+		return false;
+
+	cache_type::const_iterator i = cache.begin();
+	for( ; i != cache.end(); ++i ) {
+		ofs << i->first << std::endl;
+	}
+	return !ofs.bad() && !ofs.fail();
 }
 
 
@@ -76,9 +89,12 @@ void BarryEnvironment::Disconnect()
 
 bool BarryEnvironment::LoadCalendarCache()
 {
+	Trace trace("LoadCalendarCache");
+
 	m_CalendarCache.clear();
 	if( !LoadCache(m_CalendarCacheFilename, m_CalendarCache) ) {
 		m_CalendarCache.clear();	// assume full sync
+		trace.log("Load failed!");
 		return false;
 	}
 	return true;
@@ -86,12 +102,54 @@ bool BarryEnvironment::LoadCalendarCache()
 
 bool BarryEnvironment::LoadContactsCache()
 {
+	Trace trace("LoadContactsCache");
+
 	m_ContactsCache.clear();
 	if( !LoadCache(m_ContactsCacheFilename, m_ContactsCache) ) {
 		m_ContactsCache.clear();
+		trace.log("Load failed!");
 		return false;
 	}
 	return true;
+}
+
+bool BarryEnvironment::SaveCalendarCache()
+{
+	Trace trace("SaveCalendarCache");
+	return SaveCache(m_CalendarCacheFilename, m_CalendarCache);
+}
+
+bool BarryEnvironment::SaveContactsCache()
+{
+	Trace trace("SaveContactsCache");
+	return SaveCache(m_ContactsCacheFilename, m_ContactsCache);
+}
+
+void BarryEnvironment::ClearDirtyFlags(Barry::RecordStateTable &table,
+				const std::string &dbname)
+{
+	Trace trace("ClearDirtyFlags");
+
+	unsigned int dbId = m_pCon->GetDBID(dbname);
+
+	Barry::RecordStateTable::StateMapType::const_iterator i = table.StateMap.begin();
+	for( ; i != table.StateMap.end(); ++i ) {
+		if( i->second.Dirty ) {
+			m_pCon->ClearDirty(dbId, i->first);
+		}
+	}
+}
+
+void BarryEnvironment::ClearCalendarDirtyFlags()
+{
+	Trace trace("ClearCalendarDirtyFlags");
+	ClearDirtyFlags(m_CalendarTable, Barry::Calendar::GetDBName());
+}
+
+void BarryEnvironment::ClearContactsDirtyFlags()
+{
+	Trace trace("ClearContactsDirtyFlags");
+	ClearDirtyFlags(m_ContactsTable, Barry::Contact::GetDBName());
 }
 
 void BarryEnvironment::ParseConfig(const char *data, int size)
@@ -111,21 +169,29 @@ void BarryEnvironment::ParseConfig(const char *data, int size)
 	//         - sync contacts
 
 	std::istringstream iss(m_ConfigData);
-	int cal = 0, con = 0;
-	iss >> std::hex >> m_pin >> cal >> con;
+	std::string line;
+	while( std::getline(iss, line) ) {
 
-	std::ostringstream oss;
-	oss << std::hex << m_pin;
-	trace.log(oss.str().c_str());
+		if( line[0] == '#' )
+			continue;
 
-	if( cal ) {
-		m_SyncCalendar = true;
-		trace.log("calendar syncing enabled");
-	}
+		std::istringstream ils(line);
+		int cal = 0, con = 0;
+		ils >> std::hex >> m_pin >> cal >> con;
 
-	if( con ) {
-		m_SyncContacts = true;
-		trace.log("contacts syncing enabled");
+		std::ostringstream oss;
+		oss << std::hex << m_pin;
+		trace.log(oss.str().c_str());
+
+		if( cal ) {
+			m_SyncCalendar = true;
+			trace.log("calendar syncing enabled");
+		}
+
+		if( con ) {
+			m_SyncContacts = true;
+			trace.log("contacts syncing enabled");
+		}
 	}
 }
 

@@ -1,0 +1,11 @@
+#
+# This is the default configuration file for the bary-sync opensync plugin.
+# Comments are preceded by a '#' mark at the beginning of a line.
+# The config format is just the following numbers separated by whitespace:
+#      PIN number    - PIN number of the device to sync with (in hex)
+#      sync calendar - 1 to sync calendar, 0 to skip
+#      sync contacts - 1 to sync contacts, 0 to skip
+#
+
+3009efe3 1 0
+

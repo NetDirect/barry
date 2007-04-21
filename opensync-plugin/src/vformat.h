@@ -28,6 +28,10 @@
 #include <glib.h>
 #include <time.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef enum {
 	VFORMAT_CARD_21,
 	VFORMAT_CARD_30,
@@ -152,5 +156,9 @@ gboolean         vformat_attribute_has_type         (VFormatAttribute *attr, con
 /* Utility functions. */
 char*            vformat_escape_string (const char *str, VFormatType type);
 char*            vformat_unescape_string (const char *str);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _VFORMAT_H */

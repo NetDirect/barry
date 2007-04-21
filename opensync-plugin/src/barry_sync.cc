@@ -107,7 +107,7 @@ void GetChanges(OSyncContext *ctx, BarryEnvironment *env,
 
 			char *uid = g_strdup_printf("%u", state.RecordId);
 			osync_change_set_uid(change, uid);
-			trace.log(uid);
+			trace.logf("change record ID: %s", uid);
 			g_free(uid);
 
 			// Now you can set the data for the object
@@ -155,6 +155,18 @@ void GetChanges(OSyncContext *ctx, BarryEnvironment *env,
 			osync_context_report_change(ctx, change);
 		}
 	}
+
+	// finally, cycle through the state map again, and overwrite the
+	// cache with the current state table. Memory only... if successful,
+	// it will be written back to disk later on.
+
+	// start fresh
+	cache.clear();
+
+	for( i = table.StateMap.begin(); i != table.StateMap.end(); ++i ) {
+		const RecordStateTable::State &state = i->second;
+		cache[state.RecordId] = false;
+	}
 }
 
 CommitData_t GetCommitFunction(OSyncChange *change)
@@ -173,6 +185,22 @@ CommitData_t GetCommitFunction(OSyncChange *change)
 	}
 }
 
+BarryEnvironment::cache_type *GetCache(BarryEnvironment *env, OSyncChange *change)
+{
+	OSyncObjType *type = osync_change_get_objtype(change);
+	const char *name = osync_objtype_get_name(type);
+	if( strcmp(name, "event") == 0 ) {
+		return &env->m_CalendarCache;
+	}
+	else if( strcmp(name, "contact") == 0 ) {
+		return &env->m_ContactsCache;
+	}
+	else {
+		return 0;
+	}
+}
+
+
 bool CommitChange(BarryEnvironment *env,
 		  unsigned int dbId,
 		  OSyncContext *ctx,
@@ -185,6 +213,13 @@ bool CommitChange(BarryEnvironment *env,
 	if( !CommitData ) {
 		osync_context_report_error(ctx, OSYNC_ERROR_GENERIC,
 			"unable to get commit function pointer");
+		return false;
+	}
+
+	BarryEnvironment::cache_type *pCache = GetCache(env, change);
+	if( !pCache ) {
+		osync_context_report_error(ctx, OSYNC_ERROR_GENERIC,
+			"unable to get cache");
 		return false;
 	}
 
@@ -225,6 +260,7 @@ bool CommitChange(BarryEnvironment *env,
 		{
 			case CHANGE_DELETED:
 				con.DeleteRecord(dbId, StateIndex);
+				pCache->erase(RecordId);
 				break;
 
 			case CHANGE_ADDED:
@@ -232,6 +268,7 @@ bool CommitChange(BarryEnvironment *env,
 					osync_context_report_error(ctx, OSYNC_ERROR_PARAMETER, "%s", errmsg.c_str());
 					return false;
 				}
+				(*pCache)[RecordId] = false;
 				break;
 
 			case CHANGE_MODIFIED:
@@ -273,7 +310,10 @@ static void *initialize(OSyncMember *member, OSyncError **error)
 
 	// Create the environment struct, including our Barry objects
 	try {
-		Barry::Init(true);
+		// FIXME - near the end of release, do a run with
+		// this set to true, and look for USB protocol
+		// inefficiencies.
+		Barry::Init(false);
 
 		env = new BarryEnvironment(member);
 
@@ -446,26 +486,45 @@ static void batch_commit_vevent20(OSyncContext *ctx,
 
 static void sync_done(OSyncContext *ctx)
 {
-	Trace trace("sync_done");
-
-//	BarryEnvironment *env = (BarryEnvironment *)osync_context_get_plugin_data(ctx);
-
 	//
 	// This function will only be called if the sync was successfull
 	//
 
-// FIXME - finish this
-	// update the caches
-	// copy the latest record state table into the cache,
-	// then write the cache to the file
-//	env->m_CalendarTable, and env->m_CalendarCache
+	Trace trace("sync_done");
 
+	try {
 
-// FIXME...
-	// then do it again for the ContactsCache...
+		BarryEnvironment *env = (BarryEnvironment *)osync_context_get_plugin_data(ctx);
 
-	// Success
-	osync_context_report_success(ctx);
+		if( env->m_SyncCalendar ) {
+			// update the cache
+			if( !env->SaveCalendarCache() ) {
+				osync_context_report_error(ctx, OSYNC_ERROR_IO_ERROR,
+					"Error saving calendar cache");
+			}
+
+			// clear all dirty flags
+			env->ClearCalendarDirtyFlags();
+		}
+
+		if( env->m_SyncContacts ) {
+			// update the cache
+			if( !env->SaveContactsCache() ) {
+				osync_context_report_error(ctx, OSYNC_ERROR_IO_ERROR,
+					"Error saving contacts cache");
+			}
+
+			// clear all dirty flags
+			env->ClearContactsDirtyFlags();
+		}
+
+		// Success
+		osync_context_report_success(ctx);
+
+	}
+	catch( std::exception &e ) {
+		osync_context_report_error(ctx, OSYNC_ERROR_IO_ERROR, "%s", e.what());
+	}
 }
 
 static void disconnect(OSyncContext *ctx)

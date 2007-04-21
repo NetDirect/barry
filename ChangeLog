@@ -1,5 +1,15 @@
-Release: version 0.7 - 2007/02/??
+Release: version 0.7 - 2007/04/??
 ------------------------------------------------------------------------------
+2007/04/20
+	- renamed barry-config to barry-sync, the default configuration
+		file for the opensync module... and filled it with
+		a sample configuration
+	- added code to update the calendar cache, and write it to disk
+		on success (opensync module)
+	- added code to clear dirty flags in the device (opensync module)
+	- allowed comments in the config file
+	- added vformat.c from libopensync 0.22, since the vformat
+		routines are not available from the plugin side
 2007/04/19
 	- updated gui/TODO
 	- added -d switch to bcharge to switch back from 0001 to 0004 mode,
