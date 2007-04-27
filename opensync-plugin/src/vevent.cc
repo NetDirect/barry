@@ -58,6 +58,9 @@ char* VEventConverter::ExtractData()
 
 std::string GetAttr(VFormat *format, const char *attrname)
 {
+	Trace trace("GetAttr");
+	trace.logf("getting attr: %s", attrname);
+
 	std::string ret;
 
 	VFormatAttribute *attr = vformat_find_attribute(format, attrname);
@@ -70,6 +73,9 @@ std::string GetAttr(VFormat *format, const char *attrname)
 			ret = vformat_attribute_get_nth_value(attr, 0);
 		}
 	}
+
+	trace.logf("attr value: %s", ret.c_str());
+
 	return ret;
 }
 
@@ -97,6 +103,8 @@ bool VEventConverter::ParseData(const char *data)
 
 void AddAttr(Trace &trace, VFormat *format, const char *name, const char *value)
 {
+	trace.logf("adding attr: %s, %s", name, value);
+
 	VFormatAttribute *attr = vformat_attribute_new(NULL, name);
 	if( !attr ) {
 		trace.log("resource error allocating vformat attribute");
@@ -127,6 +135,7 @@ void VEventConverter::operator()(const Barry::Calendar &rec)
 	char *start = osync_time_unix2vtime(&rec.StartTime);
 	char *end = osync_time_unix2vtime(&rec.EndTime);
 
+	AddAttr(trace, format, "BEGIN", "VEVENT");
 	AddAttr(trace, format, "PRODID",
 		"-//OpenSync//NONSGML Barry Calendar Record//EN");
 	AddAttr(trace, format, "DTSTART", start);
@@ -134,6 +143,7 @@ void VEventConverter::operator()(const Barry::Calendar &rec)
 	AddAttr(trace, format, "SEQUENCE", "0");
 	AddAttr(trace, format, "SUMMARY", rec.Subject.c_str());
 	// FIXME - need the notification time too... where does that fit in VCALENDAR?
+	AddAttr(trace, format, "END", "VEVENT");
 
 	// generate the raw VCALENDAR data
 	m_Data = vformat_to_string(format, VFORMAT_EVENT_20);
@@ -160,6 +170,9 @@ bool VEventConverter::operator()(Barry::Calendar &rec, unsigned int dbId)
 	rec.SetIds(Barry::Calendar::GetDefaultRecType(), m_RecordId);
 	rec.StartTime = osync_time_vtime2unix(m_start.c_str(), zoneoffset);
 	rec.EndTime = osync_time_vtime2unix(m_end.c_str(), zoneoffset);
+	// FIXME - until notification time is supported, we assume 15 min
+	// in advance
+	rec.NotificationTime = rec.StartTime - 15 * 60;
 	rec.Subject = m_subject;
 	return true;
 }
@@ -172,6 +185,8 @@ bool VEventConverter::operator()(Barry::Calendar &rec, unsigned int dbId)
 char* VEventConverter::GetRecordData(BarryEnvironment *env, unsigned int dbId,
 				Barry::RecordStateTable::IndexType index)
 {
+	Trace trace("VEventConverter::GetRecordData()");
+
 	using namespace Barry;
 
 	VEventConverter cal2event;
@@ -181,16 +196,27 @@ char* VEventConverter::GetRecordData(BarryEnvironment *env, unsigned int dbId,
 }
 
 bool VEventConverter::CommitRecordData(BarryEnvironment *env, unsigned int dbId,
-	Barry::RecordStateTable::IndexType StateIndex, const char *data,
-	bool add, std::string &errmsg)
+	Barry::RecordStateTable::IndexType StateIndex, uint32_t recordId,
+	const char *data, bool add, std::string &errmsg)
 {
+	Trace trace("VEventConverter::CommitRecordData()");
+
 	uint32_t newRecordId;
 	if( add ) {
-		newRecordId = env->m_CalendarTable.MakeNewRecordId();
+		// use given id if possible
+		if( recordId && !env->m_CalendarTable.GetIndex(recordId) ) {
+			// recordId is unique and non-zero
+			newRecordId = recordId;
+		}
+		else {
+			trace.log("Can't use recommended recordId, generating new one.");
+			newRecordId = env->m_CalendarTable.MakeNewRecordId();
+		}
 	}
 	else {
 		newRecordId = env->m_CalendarTable.StateMap[StateIndex].RecordId;
 	}
+	trace.logf("newRecordId: %lu", newRecordId);
 
 	VEventConverter convert(newRecordId);
 	if( !convert.ParseData(data) ) {
@@ -198,16 +224,20 @@ bool VEventConverter::CommitRecordData(BarryEnvironment *env, unsigned int dbId,
 		oss << "unable to parse change data for new RecordId: "
 		    << newRecordId;
 		errmsg = oss.str();
+		trace.logf(errmsg.c_str());
 		return false;
 	}
 
 	Barry::RecordBuilder<Barry::Calendar, VEventConverter> builder(convert);
 
 	if( add ) {
+		trace.log("adding record");
 		env->m_pCon->AddRecord(dbId, builder);
 	}
 	else {
+		trace.log("setting record");
 		env->m_pCon->SetRecord(dbId, StateIndex, builder);
+		trace.log("clearing dirty flag");
 		env->m_pCon->ClearDirty(dbId, StateIndex);
 	}
 

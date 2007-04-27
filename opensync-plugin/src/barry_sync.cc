@@ -185,21 +185,63 @@ CommitData_t GetCommitFunction(OSyncChange *change)
 	}
 }
 
-BarryEnvironment::cache_type *GetCache(BarryEnvironment *env, OSyncChange *change)
+void GetChangeObjects(BarryEnvironment *env, OSyncChange *change,
+	BarryEnvironment::cache_type **pCache,
+	Barry::RecordStateTable **pTable,
+	idmap **pMap)
 {
 	OSyncObjType *type = osync_change_get_objtype(change);
 	const char *name = osync_objtype_get_name(type);
 	if( strcmp(name, "event") == 0 ) {
-		return &env->m_CalendarCache;
+		*pCache = &env->m_CalendarCache;
+		*pTable = &env->m_CalendarTable;
+		*pMap = &env->m_CalendarIdMap;
 	}
 	else if( strcmp(name, "contact") == 0 ) {
-		return &env->m_ContactsCache;
+		*pCache = &env->m_ContactsCache;
+		*pTable = &env->m_ContactsTable;
+		*pMap = &env->m_ContactsIdMap;
 	}
 	else {
-		return 0;
+		*pCache = 0;
+		*pTable = 0;
+		*pMap = 0;
 	}
 }
 
+
+unsigned long GetBarryRecordId(	Barry::RecordStateTable &table,
+				idmap &map,
+				const std::string &uid)
+{
+	Trace trace("GetBarryRecordId()");
+
+	// if already in map, use the matching rid
+	idmap::const_iterator it;
+	if( map.UidExists(uid, &it) ) {
+		trace.logf("found existing uid in map: %lu", it->second);
+		return it->second;
+	}
+
+	// nothing in the map, so try to convert the string to a number
+	unsigned long RecordId;
+	if( sscanf(uid.c_str(), "%lu", &RecordId) != 0 ) {
+		trace.logf("parsed uid as: %lu", RecordId);
+		if( map.Map(uid, RecordId) != map.end() )
+			return RecordId;
+
+		trace.logf("parsed uid already exists in map, skipping");
+	}
+
+	// create one of our own, if we get here...
+	// do this in a loop to keep going until we find an ID that's unique
+	do {
+		RecordId = table.MakeNewRecordId();
+	} while( map.Map(uid, RecordId) == map.end() );
+
+	trace.logf("made new record id: %lu", RecordId);
+	return RecordId;
+}
 
 bool CommitChange(BarryEnvironment *env,
 		  unsigned int dbId,
@@ -208,38 +250,43 @@ bool CommitChange(BarryEnvironment *env,
 {
 	Trace trace("CommitChange");
 
-	// find the needed commit function, based on objtype of the change
-	CommitData_t CommitData = GetCommitFunction(change);
-	if( !CommitData ) {
-		osync_context_report_error(ctx, OSYNC_ERROR_GENERIC,
-			"unable to get commit function pointer");
-		return false;
-	}
-
-	BarryEnvironment::cache_type *pCache = GetCache(env, change);
-	if( !pCache ) {
-		osync_context_report_error(ctx, OSYNC_ERROR_GENERIC,
-			"unable to get cache");
-		return false;
-	}
-
 	try {
 
-		Barry::Controller &con = *env->m_pCon;
-		Barry::RecordStateTable &table = env->m_CalendarTable;
-
-		// extract RecordId from change's UID
-		// FIXME - this may need some fudging, since there is no
-		// guarantee that the UID will be a plain number
-		const char *uid = osync_change_get_uid(change);
-		trace.logf("uid from change: %s", uid);
-		unsigned long RecordId;
-		if( sscanf(uid, "%lu", &RecordId) == 0 ) {
-			osync_context_report_error(ctx, OSYNC_ERROR_PARAMETER,
-				"uid is not an expected number: %s", uid);
+		// find the needed commit function, based on objtype of the change
+		CommitData_t CommitData = GetCommitFunction(change);
+		if( !CommitData ) {
+			osync_context_report_error(ctx, OSYNC_ERROR_GENERIC,
+				"unable to get commit function pointer");
 			return false;
 		}
-		trace.logf("parsed uid as: %lu", RecordId);
+
+		// find the matching cache, state table, and id map for this change
+		BarryEnvironment::cache_type *pCache = 0;
+		Barry::RecordStateTable *pTable = 0;
+		idmap *pMap = 0;
+
+		GetChangeObjects(env, change, &pCache, &pTable, &pMap);
+		if( !pCache || !pTable || !pMap ) {
+			osync_context_report_error(ctx, OSYNC_ERROR_GENERIC,
+				"unable to get cache/table/map");
+			return false;
+		}
+
+		// make references instead of pointers
+		Barry::RecordStateTable &table = *pTable;
+		idmap &map = *pMap;
+		Barry::Controller &con = *env->m_pCon;
+
+
+		// extract RecordId from change's UID,
+		// and update the ID map if necessary
+		const char *uid = osync_change_get_uid(change);
+		trace.logf("uid from change: %s", uid);
+		if( strlen(uid) == 0 ) {
+			osync_context_report_error(ctx, OSYNC_ERROR_GENERIC,
+				"uid from change object is blank!");
+		}
+		unsigned long RecordId = GetBarryRecordId(table, map, uid);
 
 		// search for the RecordId in the state table, to find the
 		// index... we only need the index if we are deleting or
@@ -261,24 +308,30 @@ bool CommitChange(BarryEnvironment *env,
 			case CHANGE_DELETED:
 				con.DeleteRecord(dbId, StateIndex);
 				pCache->erase(RecordId);
+				map.UnmapUid(uid);
 				break;
 
 			case CHANGE_ADDED:
-				if( !(*CommitData)(env, dbId, StateIndex, osync_change_get_data(change), true, errmsg) ) {
+				if( !(*CommitData)(env, dbId, StateIndex, RecordId, osync_change_get_data(change), true, errmsg) ) {
+					trace.logf("CommitData() for ADDED state returned false: %s", errmsg.c_str());
 					osync_context_report_error(ctx, OSYNC_ERROR_PARAMETER, "%s", errmsg.c_str());
+					map.UnmapUid(uid);
 					return false;
 				}
 				(*pCache)[RecordId] = false;
 				break;
 
 			case CHANGE_MODIFIED:
-				if( !(*CommitData)(env, dbId, StateIndex, osync_change_get_data(change), false, errmsg) ) {
+				if( !(*CommitData)(env, dbId, StateIndex, RecordId, osync_change_get_data(change), false, errmsg) ) {
+					trace.logf("CommitData() for MODIFIED state returned false: %s", errmsg.c_str());
 					osync_context_report_error(ctx, OSYNC_ERROR_PARAMETER, "%s", errmsg.c_str());
+					map.UnmapUid(uid);
 					return false;
 				}
 				break;
 
 			default:
+				trace.log("Unknown change type");
 				osync_debug("barry-sync", 0, "Unknown change type");
 				break;
 		}
@@ -290,6 +343,12 @@ bool CommitChange(BarryEnvironment *env,
 	}
 	catch( std::exception &e ) {
 		osync_context_report_error(ctx, OSYNC_ERROR_IO_ERROR, "%s", e.what());
+
+		// we don't worry about unmapping ids here, as there
+		// is still a possibility that the record was added...
+		// plus, the map might not get written out to disk anyway
+		// in a plugin error state
+
 		return false;
 	}
 }
@@ -334,10 +393,12 @@ static void *initialize(OSyncMember *member, OSyncError **error)
 		// Load all needed cache files
 		if( env->m_SyncCalendar ) {
 			env->LoadCalendarCache();
+			env->LoadCalendarMap();
 		}
 
 		if( env->m_SyncContacts ) {
 			env->LoadContactsCache();
+			env->LoadContactsMap();
 		}
 
 		return env;
@@ -503,6 +564,13 @@ static void sync_done(OSyncContext *ctx)
 					"Error saving calendar cache");
 			}
 
+			// save the id map
+			env->CleanupCalendarMap();
+			if( !env->SaveCalendarMap() ) {
+				osync_context_report_error(ctx, OSYNC_ERROR_IO_ERROR,
+					"Error saving calendar id map");
+			}
+
 			// clear all dirty flags
 			env->ClearCalendarDirtyFlags();
 		}
@@ -514,6 +582,12 @@ static void sync_done(OSyncContext *ctx)
 					"Error saving contacts cache");
 			}
 
+			// save the id map
+			env->CleanupContactsMap();
+			if( !env->SaveContactsMap() ) {
+				osync_context_report_error(ctx, OSYNC_ERROR_IO_ERROR,
+					"Error saving contacts id map");
+			}
 			// clear all dirty flags
 			env->ClearContactsDirtyFlags();
 		}

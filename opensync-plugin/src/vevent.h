@@ -64,8 +64,8 @@ public:
 	// given vevent20 data in data, and the proper environmebnt,
 	// dbId, StateIndex.  Set add to true if adding.
 	static bool CommitRecordData(BarryEnvironment *env, unsigned int dbId,
-		Barry::RecordStateTable::IndexType StateIndex, const char *data,
-		bool add, std::string &errmsg);
+		Barry::RecordStateTable::IndexType StateIndex, uint32_t recordId,
+		const char *data, bool add, std::string &errmsg);
 };
 
 

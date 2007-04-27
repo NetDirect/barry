@@ -30,8 +30,8 @@ class BarryEnvironment;
 typedef char* (*GetData_t)(BarryEnvironment *env, unsigned int dbId,
 	Barry::RecordStateTable::IndexType);
 typedef bool (*CommitData_t)(BarryEnvironment *env, unsigned int dbId,
-	Barry::RecordStateTable::IndexType StateIndex, const char *data,
-	bool add, std::string &errmsg);
+	Barry::RecordStateTable::IndexType StateIndex, uint32_t recordId,
+	const char *data, bool add, std::string &errmsg);
 
 #endif
 

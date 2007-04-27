@@ -20,6 +20,7 @@ barry_sync_la_SOURCES = \
 	barry_sync.cc barry_sync.h \
 	environment.cc environment.h \
 	vevent.cc vevent.h \
+	idmap.cc idmap.h \
 	vformat.c vformat.h \
 	trace.h
 

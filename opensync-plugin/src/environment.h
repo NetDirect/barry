@@ -25,6 +25,7 @@
 #include <opensync/opensync.h>
 #include <barry/barry.h>
 #include <string>
+#include "idmap.h"
 
 
 struct BarryEnvironment
@@ -41,6 +42,10 @@ public:
 	// cache data
 	std::string m_CalendarCacheFilename, m_ContactsCacheFilename;
 	cache_type m_CalendarCache, m_ContactsCache;
+
+	// id map data
+	std::string m_CalendarMapFilename, m_ContactsMapFilename;
+	idmap m_CalendarIdMap, m_ContactsIdMap;
 
 	// device data
 	Barry::RecordStateTable m_CalendarTable;
@@ -69,6 +74,14 @@ public:
 	bool LoadContactsCache();
 	bool SaveCalendarCache();
 	bool SaveContactsCache();
+
+	bool LoadCalendarMap();
+	bool LoadContactsMap();
+	bool SaveCalendarMap();
+	bool SaveContactsMap();
+
+	void CleanupCalendarMap() {}
+	void CleanupContactsMap() {}
 
 	void ClearDirtyFlags(Barry::RecordStateTable &table, const std::string &dbname);
 	void ClearCalendarDirtyFlags();

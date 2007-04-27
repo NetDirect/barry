@@ -71,9 +71,12 @@ BarryEnvironment::BarryEnvironment(OSyncMember *pm)
 	m_pCon(0)
 {
 	m_CalendarCacheFilename = m_ContactsCacheFilename =
+	m_CalendarMapFilename = m_ContactsMapFilename =
 		osync_member_get_configdir(pm);
 	m_CalendarCacheFilename += "/barry_calendar_cache.txt";
 	m_ContactsCacheFilename += "/barry_contacts_cache.txt";
+	m_CalendarMapFilename += "/barry_calendar_idmap.txt";
+	m_ContactsMapFilename += "/barry_contacts_idmap.txt";
 }
 
 BarryEnvironment::~BarryEnvironment()
@@ -123,6 +126,26 @@ bool BarryEnvironment::SaveContactsCache()
 {
 	Trace trace("SaveContactsCache");
 	return SaveCache(m_ContactsCacheFilename, m_ContactsCache);
+}
+
+bool BarryEnvironment::LoadCalendarMap()
+{
+	return m_CalendarIdMap.Load(m_CalendarMapFilename.c_str());
+}
+
+bool BarryEnvironment::LoadContactsMap()
+{
+	return m_ContactsIdMap.Load(m_ContactsMapFilename.c_str());
+}
+
+bool BarryEnvironment::SaveCalendarMap()
+{
+	return m_CalendarIdMap.Save(m_CalendarMapFilename.c_str());
+}
+
+bool BarryEnvironment::SaveContactsMap()
+{
+	return m_ContactsIdMap.Save(m_ContactsMapFilename.c_str());
 }
 
 void BarryEnvironment::ClearDirtyFlags(Barry::RecordStateTable &table,

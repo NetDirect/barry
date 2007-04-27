@@ -1,5 +1,18 @@
 Release: version 0.7 - 2007/04/??
 ------------------------------------------------------------------------------
+2007/04/26
+	- opensync module work:
+		- added id map class to map string uid's from OpenSync to
+			numeric ID's from the Blackberry
+		- fixed bug in CommitChange() where it was still using
+			a hard coded calendar record state table
+		- added lots of logging throughout
+		- fixed bug where newly added records didn't use the
+			change object's uid, but created a new ID,
+			causing another sync on the next run
+			i.e. (CommitData_t was missing an argument)
+		- fixed bug where uninitialized notification time was
+			written to the Blackberry
 2007/04/20
 	- renamed barry-config to barry-sync, the default configuration
 		file for the opensync module... and filled it with
