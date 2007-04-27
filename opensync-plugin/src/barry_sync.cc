@@ -53,7 +53,7 @@ extern "C" {
 //
 
 void GetChanges(OSyncContext *ctx, BarryEnvironment *env,
-		BarryEnvironment::cache_type &cache,
+		DatabaseSyncState::cache_type &cache,
 		const char *DBDBName, const char *FormatName,
 		GetData_t getdata)
 {
@@ -80,7 +80,7 @@ void GetChanges(OSyncContext *ctx, BarryEnvironment *env,
 		const RecordStateTable::State &state = i->second;
 
 		// search the cache
-		BarryEnvironment::cache_type::const_iterator c = cache.find(state.RecordId);
+		DatabaseSyncState::cache_type::const_iterator c = cache.find(state.RecordId);
 		if( c == cache.end() ) {
 			// not in cache, this is a new item
 			trace.log("found an ADDED change");
@@ -124,7 +124,7 @@ void GetChanges(OSyncContext *ctx, BarryEnvironment *env,
 	// now cycle through the cache... any objects in the cache
 	// but not found in the state table means that they have been
 	// deleted in the device
-	BarryEnvironment::cache_type::const_iterator c = cache.begin();
+	DatabaseSyncState::cache_type::const_iterator c = cache.begin();
 	for( ; c != cache.end(); ++c ) {
 		uint32_t recordId = c->first;
 
@@ -185,63 +185,6 @@ CommitData_t GetCommitFunction(OSyncChange *change)
 	}
 }
 
-void GetChangeObjects(BarryEnvironment *env, OSyncChange *change,
-	BarryEnvironment::cache_type **pCache,
-	Barry::RecordStateTable **pTable,
-	idmap **pMap)
-{
-	OSyncObjType *type = osync_change_get_objtype(change);
-	const char *name = osync_objtype_get_name(type);
-	if( strcmp(name, "event") == 0 ) {
-		*pCache = &env->m_CalendarCache;
-		*pTable = &env->m_CalendarTable;
-		*pMap = &env->m_CalendarIdMap;
-	}
-	else if( strcmp(name, "contact") == 0 ) {
-		*pCache = &env->m_ContactsCache;
-		*pTable = &env->m_ContactsTable;
-		*pMap = &env->m_ContactsIdMap;
-	}
-	else {
-		*pCache = 0;
-		*pTable = 0;
-		*pMap = 0;
-	}
-}
-
-
-unsigned long GetBarryRecordId(	Barry::RecordStateTable &table,
-				idmap &map,
-				const std::string &uid)
-{
-	Trace trace("GetBarryRecordId()");
-
-	// if already in map, use the matching rid
-	idmap::const_iterator it;
-	if( map.UidExists(uid, &it) ) {
-		trace.logf("found existing uid in map: %lu", it->second);
-		return it->second;
-	}
-
-	// nothing in the map, so try to convert the string to a number
-	unsigned long RecordId;
-	if( sscanf(uid.c_str(), "%lu", &RecordId) != 0 ) {
-		trace.logf("parsed uid as: %lu", RecordId);
-		if( map.Map(uid, RecordId) != map.end() )
-			return RecordId;
-
-		trace.logf("parsed uid already exists in map, skipping");
-	}
-
-	// create one of our own, if we get here...
-	// do this in a loop to keep going until we find an ID that's unique
-	do {
-		RecordId = table.MakeNewRecordId();
-	} while( map.Map(uid, RecordId) == map.end() );
-
-	trace.logf("made new record id: %lu", RecordId);
-	return RecordId;
-}
 
 bool CommitChange(BarryEnvironment *env,
 		  unsigned int dbId,
@@ -261,20 +204,17 @@ bool CommitChange(BarryEnvironment *env,
 		}
 
 		// find the matching cache, state table, and id map for this change
-		BarryEnvironment::cache_type *pCache = 0;
-		Barry::RecordStateTable *pTable = 0;
-		idmap *pMap = 0;
-
-		GetChangeObjects(env, change, &pCache, &pTable, &pMap);
-		if( !pCache || !pTable || !pMap ) {
+		DatabaseSyncState *pSync = env->GetSyncObject(change);
+		if( !pSync ) {
 			osync_context_report_error(ctx, OSYNC_ERROR_GENERIC,
-				"unable to get cache/table/map");
+				"unable to get sync object that matches change type");
 			return false;
 		}
 
 		// make references instead of pointers
-		Barry::RecordStateTable &table = *pTable;
-		idmap &map = *pMap;
+		DatabaseSyncState::cache_type &cache = pSync->m_Cache;
+		Barry::RecordStateTable &table = pSync->m_Table;
+		idmap &map = pSync->m_IdMap;
 		Barry::Controller &con = *env->m_pCon;
 
 
@@ -286,7 +226,7 @@ bool CommitChange(BarryEnvironment *env,
 			osync_context_report_error(ctx, OSYNC_ERROR_GENERIC,
 				"uid from change object is blank!");
 		}
-		unsigned long RecordId = GetBarryRecordId(table, map, uid);
+		unsigned long RecordId = pSync->GetMappedRecordId(uid);
 
 		// search for the RecordId in the state table, to find the
 		// index... we only need the index if we are deleting or
@@ -307,7 +247,7 @@ bool CommitChange(BarryEnvironment *env,
 		{
 			case CHANGE_DELETED:
 				con.DeleteRecord(dbId, StateIndex);
-				pCache->erase(RecordId);
+				cache.erase(RecordId);
 				map.UnmapUid(uid);
 				break;
 
@@ -318,7 +258,7 @@ bool CommitChange(BarryEnvironment *env,
 					map.UnmapUid(uid);
 					return false;
 				}
-				(*pCache)[RecordId] = false;
+				cache[RecordId] = false;
 				break;
 
 			case CHANGE_MODIFIED:
@@ -391,14 +331,14 @@ static void *initialize(OSyncMember *member, OSyncError **error)
 		free(configdata);
 
 		// Load all needed cache files
-		if( env->m_SyncCalendar ) {
-			env->LoadCalendarCache();
-			env->LoadCalendarMap();
+		if( env->m_CalendarSync.m_Sync ) {
+			env->m_CalendarSync.LoadCache();
+			env->m_CalendarSync.LoadMap();
 		}
 
-		if( env->m_SyncContacts ) {
-			env->LoadContactsCache();
-			env->LoadContactsMap();
+		if( env->m_ContactsSync.m_Sync ) {
+			env->m_ContactsSync.LoadCache();
+			env->m_ContactsSync.LoadMap();
 		}
 
 		return env;
@@ -464,15 +404,15 @@ static void get_changeinfo(OSyncContext *ctx)
 
 		BarryEnvironment *env = (BarryEnvironment *)osync_context_get_plugin_data(ctx);
 
-		if( env->m_SyncCalendar ) {
-			GetChanges(ctx, env, env->m_CalendarCache,
+		if( env->m_CalendarSync.m_Sync ) {
+			GetChanges(ctx, env, env->m_CalendarSync.m_Cache,
 				"Calendar", "vevent20",
 				&VEventConverter::GetRecordData);
 		}
 
-		if( env->m_SyncContacts ) {
+		if( env->m_ContactsSync.m_Sync ) {
 			// FIXME - not yet implemented
-//			GetChanges(ctx, env, env->m_ContactsCache,
+//			GetChanges(ctx, env, env->m_ContactsSync.m_Cache
 //				"Address Book", "vcard30",
 //				&ContactToVCard::GetRecordData);
 		}
@@ -501,7 +441,7 @@ static void batch_commit_vevent20(OSyncContext *ctx,
 
 		// fetch state table
 		unsigned int dbId = con.GetDBID("Calendar");
-		con.GetRecordStateTable(dbId, env->m_CalendarTable);
+		con.GetRecordStateTable(dbId, env->m_CalendarSync.m_Table);
 
 		//
 		// Cycle through changes, looking for modifications first,
@@ -534,7 +474,7 @@ static void batch_commit_vevent20(OSyncContext *ctx,
 
 		// get the state table again, so we can update
 		// the cache on success, later
-		con.GetRecordStateTable(dbId, env->m_CalendarTable);
+		con.GetRecordStateTable(dbId, env->m_CalendarSync.m_Table);
 
 		// all done
 		osync_context_report_success(ctx);
@@ -557,16 +497,16 @@ static void sync_done(OSyncContext *ctx)
 
 		BarryEnvironment *env = (BarryEnvironment *)osync_context_get_plugin_data(ctx);
 
-		if( env->m_SyncCalendar ) {
+		if( env->m_CalendarSync.m_Sync ) {
 			// update the cache
-			if( !env->SaveCalendarCache() ) {
+			if( !env->m_CalendarSync.SaveCache() ) {
 				osync_context_report_error(ctx, OSYNC_ERROR_IO_ERROR,
 					"Error saving calendar cache");
 			}
 
 			// save the id map
-			env->CleanupCalendarMap();
-			if( !env->SaveCalendarMap() ) {
+			env->m_CalendarSync.CleanupMap();
+			if( !env->m_CalendarSync.SaveMap() ) {
 				osync_context_report_error(ctx, OSYNC_ERROR_IO_ERROR,
 					"Error saving calendar id map");
 			}
@@ -575,16 +515,16 @@ static void sync_done(OSyncContext *ctx)
 			env->ClearCalendarDirtyFlags();
 		}
 
-		if( env->m_SyncContacts ) {
+		if( env->m_ContactsSync.m_Sync ) {
 			// update the cache
-			if( !env->SaveContactsCache() ) {
+			if( !env->m_ContactsSync.SaveCache() ) {
 				osync_context_report_error(ctx, OSYNC_ERROR_IO_ERROR,
 					"Error saving contacts cache");
 			}
 
 			// save the id map
-			env->CleanupContactsMap();
-			if( !env->SaveContactsMap() ) {
+			env->m_ContactsSync.CleanupMap();
+			if( !env->m_ContactsSync.SaveMap() ) {
 				osync_context_report_error(ctx, OSYNC_ERROR_IO_ERROR,
 					"Error saving contacts id map");
 			}

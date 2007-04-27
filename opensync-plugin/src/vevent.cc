@@ -204,17 +204,17 @@ bool VEventConverter::CommitRecordData(BarryEnvironment *env, unsigned int dbId,
 	uint32_t newRecordId;
 	if( add ) {
 		// use given id if possible
-		if( recordId && !env->m_CalendarTable.GetIndex(recordId) ) {
+		if( recordId && !env->m_CalendarSync.m_Table.GetIndex(recordId) ) {
 			// recordId is unique and non-zero
 			newRecordId = recordId;
 		}
 		else {
 			trace.log("Can't use recommended recordId, generating new one.");
-			newRecordId = env->m_CalendarTable.MakeNewRecordId();
+			newRecordId = env->m_CalendarSync.m_Table.MakeNewRecordId();
 		}
 	}
 	else {
-		newRecordId = env->m_CalendarTable.StateMap[StateIndex].RecordId;
+		newRecordId = env->m_CalendarSync.m_Table.StateMap[StateIndex].RecordId;
 	}
 	trace.logf("newRecordId: %lu", newRecordId);
 

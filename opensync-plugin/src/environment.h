@@ -28,7 +28,7 @@
 #include "idmap.h"
 
 
-struct BarryEnvironment
+struct DatabaseSyncState
 {
 public:
 	// cache is a map of record ID to bool... the bool doesn't mean
@@ -37,29 +37,54 @@ public:
 	typedef std::map<uint32_t, bool>			cache_type;
 
 public:
-	OSyncMember *member;
-
 	// cache data
-	std::string m_CalendarCacheFilename, m_ContactsCacheFilename;
-	cache_type m_CalendarCache, m_ContactsCache;
+	std::string m_CacheFilename;
+	cache_type m_Cache;
 
 	// id map data
-	std::string m_CalendarMapFilename, m_ContactsMapFilename;
-	idmap m_CalendarIdMap, m_ContactsIdMap;
+	std::string m_MapFilename;
+	idmap m_IdMap;
 
 	// device data
-	Barry::RecordStateTable m_CalendarTable;
-	Barry::RecordStateTable m_ContactsTable;
+	Barry::RecordStateTable m_Table;
+
+	bool m_Sync;
+
+private:
+	std::string m_Desc;
+
+public:
+	DatabaseSyncState(OSyncMember *pm, const char *description);
+	~DatabaseSyncState();
+
+	bool LoadCache();
+	bool SaveCache();
+
+	bool LoadMap();
+	bool SaveMap();
+
+	void CleanupMap();
+	void ClearDirtyFlags();
+
+	unsigned long GetMappedRecordId(const std::string &uid);
+};
+
+
+struct BarryEnvironment
+{
+public:
+	OSyncMember *member;
 
 	// user config data
 	std::string m_ConfigData;
 	uint32_t m_pin;
-	bool m_SyncCalendar;
-	bool m_SyncContacts;
 
 	// device communication
 	Barry::ProbeResult m_ProbeResult;
 	Barry::Controller *m_pCon;
+
+	// sync data
+	DatabaseSyncState m_CalendarSync, m_ContactsSync;
 
 public:
 	BarryEnvironment(OSyncMember *pm);
@@ -67,28 +92,14 @@ public:
 
 	void Disconnect();
 
-	static bool LoadCache(const std::string &file, cache_type &cache);
-	static bool SaveCache(const std::string &file, const cache_type &cache);
+	DatabaseSyncState* GetSyncObject(OSyncChange *change);
 
-	bool LoadCalendarCache();
-	bool LoadContactsCache();
-	bool SaveCalendarCache();
-	bool SaveContactsCache();
-
-	bool LoadCalendarMap();
-	bool LoadContactsMap();
-	bool SaveCalendarMap();
-	bool SaveContactsMap();
-
-	void CleanupCalendarMap() {}
-	void CleanupContactsMap() {}
+	void ParseConfig(const char *data, int size);
+	void BuildConfig();
 
 	void ClearDirtyFlags(Barry::RecordStateTable &table, const std::string &dbname);
 	void ClearCalendarDirtyFlags();
 	void ClearContactsDirtyFlags();
-
-	void ParseConfig(const char *data, int size);
-	void BuildConfig();
 };
 
 #endif

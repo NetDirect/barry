@@ -71,10 +71,12 @@ public:
 	const_iterator Map(unsigned long uid_number, const rid_type &rid);
 	const_iterator Map(unsigned long uid_number, const std::string &rid_string);
 
+	void Unmap(iterator i) { m_map.erase(i); }
 	void UnmapUid(const uid_type &uid);
 	void UnmapRid(const rid_type &rid);
 
 	// some stl-like functions
+	iterator begin() { return m_map.begin(); }
 	iterator end() { return m_map.end(); }
 };
 

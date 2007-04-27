@@ -13,6 +13,13 @@ Release: version 0.7 - 2007/04/??
 			i.e. (CommitData_t was missing an argument)
 		- fixed bug where uninitialized notification time was
 			written to the Blackberry
+	- more opensync module work:
+		- refactored the environment class into another subclass
+			called DatabaseSyncState, and moved some stand-
+			alone functions from barry_sync.cc into
+			the environment classes
+		- added a tagged constructor to the trace class
+		- fixed idmap::Load() to clear map before loading
 2007/04/20
 	- renamed barry-config to barry-sync, the default configuration
 		file for the opensync module... and filled it with

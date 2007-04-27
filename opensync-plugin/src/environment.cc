@@ -27,12 +27,30 @@
 #include <sstream>
 #include <iomanip>
 
-//////////////////////////////////////////////////////////////////////////////
-// static members
 
-bool BarryEnvironment::LoadCache(const std::string &file, cache_type &cache)
+//////////////////////////////////////////////////////////////////////////////
+// DatabaseSyncState
+
+DatabaseSyncState::DatabaseSyncState(OSyncMember *pm, const char *description)
+	: m_Sync(false),
+	m_Desc(description)
 {
-	std::ifstream ifs(file.c_str());
+	m_CacheFilename = m_MapFilename =
+		osync_member_get_configdir(pm);
+	m_CacheFilename += "/barry_" + m_Desc + "_cache.txt";
+	m_MapFilename += "/barry_" + m_Desc + "_idmap.txt";
+}
+
+DatabaseSyncState::~DatabaseSyncState()
+{
+}
+
+bool DatabaseSyncState::LoadCache()
+{
+	Trace trace("LoadCache", m_Desc.c_str());
+
+	m_Cache.clear();
+	std::ifstream ifs(m_CacheFilename.c_str());
 	if( !ifs )
 		return false;
 
@@ -40,43 +58,100 @@ bool BarryEnvironment::LoadCache(const std::string &file, cache_type &cache)
 		uint32_t recordId = 0;
 		ifs >> recordId;
 		if( recordId ) {
-			cache[recordId] = false;
+			m_Cache[recordId] = false;
 		}
 	}
-	return ifs.eof();
+
+	if( !ifs.eof() ) {
+		m_Cache.clear();	// assume full sync
+		trace.log("Load failed!");
+		return false;
+	}
+	return true;
 }
 
-bool BarryEnvironment::SaveCache(const std::string &file, const cache_type &cache)
+bool DatabaseSyncState::SaveCache()
 {
-	std::ofstream ofs(file.c_str());
+	Trace trace("SaveCache", m_Desc.c_str());
+
+	std::ofstream ofs(m_CacheFilename.c_str());
 	if( !ofs )
 		return false;
 
-	cache_type::const_iterator i = cache.begin();
-	for( ; i != cache.end(); ++i ) {
+	cache_type::const_iterator i = m_Cache.begin();
+	for( ; i != m_Cache.end(); ++i ) {
 		ofs << i->first << std::endl;
 	}
 	return !ofs.bad() && !ofs.fail();
 }
 
+bool DatabaseSyncState::LoadMap()
+{
+	return m_IdMap.Load(m_MapFilename.c_str());
+}
+
+bool DatabaseSyncState::SaveMap()
+{
+	return m_IdMap.Save(m_MapFilename.c_str());
+}
+
+// cycle through the map and search the state table for each rid,
+// and remove any that do not exist
+void DatabaseSyncState::CleanupMap()
+{
+	idmap::iterator i = m_IdMap.begin();
+	for( ; i != m_IdMap.end(); ++i ) {
+		if( !m_Table.GetIndex(i->second) ) {
+			// Record Id does not exist in state table, so it is
+			// not needed anymore in the ID map
+			m_IdMap.Unmap(i);
+		}
+	}
+}
+
+unsigned long DatabaseSyncState::GetMappedRecordId(const std::string &uid)
+{
+	Trace trace("DatabaseSyncState::GetMappedRecordId()", m_Desc.c_str());
+
+	// if already in map, use the matching rid
+	idmap::const_iterator it;
+	if( m_IdMap.UidExists(uid, &it) ) {
+		trace.logf("found existing uid in map: %lu", it->second);
+		return it->second;
+	}
+
+	// nothing in the map, so try to convert the string to a number
+	unsigned long RecordId;
+	if( sscanf(uid.c_str(), "%lu", &RecordId) != 0 ) {
+		trace.logf("parsed uid as: %lu", RecordId);
+		if( m_IdMap.Map(uid, RecordId) != m_IdMap.end() )
+			return RecordId;
+
+		trace.logf("parsed uid already exists in map, skipping");
+	}
+
+	// create one of our own, if we get here...
+	// do this in a loop to keep going until we find an ID that's unique
+	do {
+		RecordId = m_Table.MakeNewRecordId();
+	} while( m_IdMap.Map(uid, RecordId) == m_IdMap.end() );
+
+	trace.logf("made new record id: %lu", RecordId);
+	return RecordId;
+}
+
+
 
 //////////////////////////////////////////////////////////////////////////////
-// Public API
+// BarryEnvironment Public API
 
 BarryEnvironment::BarryEnvironment(OSyncMember *pm)
 	: member(pm),
 	m_pin(0),
-	m_SyncCalendar(false),
-	m_SyncContacts(false),
-	m_pCon(0)
+	m_pCon(0),
+	m_CalendarSync(pm, "calendar"),
+	m_ContactsSync(pm, "contacts")
 {
-	m_CalendarCacheFilename = m_ContactsCacheFilename =
-	m_CalendarMapFilename = m_ContactsMapFilename =
-		osync_member_get_configdir(pm);
-	m_CalendarCacheFilename += "/barry_calendar_cache.txt";
-	m_ContactsCacheFilename += "/barry_contacts_cache.txt";
-	m_CalendarMapFilename += "/barry_calendar_idmap.txt";
-	m_ContactsMapFilename += "/barry_contacts_idmap.txt";
 }
 
 BarryEnvironment::~BarryEnvironment()
@@ -88,64 +163,6 @@ void BarryEnvironment::Disconnect()
 {
 	delete m_pCon;
 	m_pCon = 0;
-}
-
-bool BarryEnvironment::LoadCalendarCache()
-{
-	Trace trace("LoadCalendarCache");
-
-	m_CalendarCache.clear();
-	if( !LoadCache(m_CalendarCacheFilename, m_CalendarCache) ) {
-		m_CalendarCache.clear();	// assume full sync
-		trace.log("Load failed!");
-		return false;
-	}
-	return true;
-}
-
-bool BarryEnvironment::LoadContactsCache()
-{
-	Trace trace("LoadContactsCache");
-
-	m_ContactsCache.clear();
-	if( !LoadCache(m_ContactsCacheFilename, m_ContactsCache) ) {
-		m_ContactsCache.clear();
-		trace.log("Load failed!");
-		return false;
-	}
-	return true;
-}
-
-bool BarryEnvironment::SaveCalendarCache()
-{
-	Trace trace("SaveCalendarCache");
-	return SaveCache(m_CalendarCacheFilename, m_CalendarCache);
-}
-
-bool BarryEnvironment::SaveContactsCache()
-{
-	Trace trace("SaveContactsCache");
-	return SaveCache(m_ContactsCacheFilename, m_ContactsCache);
-}
-
-bool BarryEnvironment::LoadCalendarMap()
-{
-	return m_CalendarIdMap.Load(m_CalendarMapFilename.c_str());
-}
-
-bool BarryEnvironment::LoadContactsMap()
-{
-	return m_ContactsIdMap.Load(m_ContactsMapFilename.c_str());
-}
-
-bool BarryEnvironment::SaveCalendarMap()
-{
-	return m_CalendarIdMap.Save(m_CalendarMapFilename.c_str());
-}
-
-bool BarryEnvironment::SaveContactsMap()
-{
-	return m_ContactsIdMap.Save(m_ContactsMapFilename.c_str());
 }
 
 void BarryEnvironment::ClearDirtyFlags(Barry::RecordStateTable &table,
@@ -166,13 +183,30 @@ void BarryEnvironment::ClearDirtyFlags(Barry::RecordStateTable &table,
 void BarryEnvironment::ClearCalendarDirtyFlags()
 {
 	Trace trace("ClearCalendarDirtyFlags");
-	ClearDirtyFlags(m_CalendarTable, Barry::Calendar::GetDBName());
+	ClearDirtyFlags(m_CalendarSync.m_Table, Barry::Calendar::GetDBName());
 }
 
 void BarryEnvironment::ClearContactsDirtyFlags()
 {
 	Trace trace("ClearContactsDirtyFlags");
-	ClearDirtyFlags(m_ContactsTable, Barry::Contact::GetDBName());
+	ClearDirtyFlags(m_ContactsSync.m_Table, Barry::Contact::GetDBName());
+}
+
+DatabaseSyncState* BarryEnvironment::GetSyncObject(OSyncChange *change)
+{
+	Trace trace("BarryEnvironment::GetSyncObject()");
+
+	OSyncObjType *type = osync_change_get_objtype(change);
+	const char *name = osync_objtype_get_name(type);
+	if( strcmp(name, "event") == 0 ) {
+		return &m_CalendarSync;
+	}
+	else if( strcmp(name, "contact") == 0 ) {
+		return &m_ContactsSync;
+	}
+	else {
+		return 0;
+	}
 }
 
 void BarryEnvironment::ParseConfig(const char *data, int size)
@@ -207,12 +241,12 @@ void BarryEnvironment::ParseConfig(const char *data, int size)
 		trace.log(oss.str().c_str());
 
 		if( cal ) {
-			m_SyncCalendar = true;
+			m_CalendarSync.m_Sync = true;
 			trace.log("calendar syncing enabled");
 		}
 
 		if( con ) {
-			m_SyncContacts = true;
+			m_ContactsSync.m_Sync = true;
 			trace.log("contacts syncing enabled");
 		}
 	}

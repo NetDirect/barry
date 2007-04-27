@@ -27,16 +27,24 @@
 
 class Trace
 {
-	const char *text;
+	const char *text, *tag;
 public:
-	Trace(const char *t) : text(t)
+	explicit Trace(const char *t) : text(t), tag(0)
 	{
 		osync_trace(TRACE_ENTRY, "barry_sync: %s", text);
 	}
 
+	Trace(const char *t, const char *tag) : text(t), tag(tag)
+	{
+		osync_trace(TRACE_ENTRY, "barry_sync (%s): %s", tag, text);
+	}
+
 	~Trace()
 	{
-		osync_trace(TRACE_EXIT, "barry_sync: %s", text);
+		if( tag )
+			osync_trace(TRACE_EXIT, "barry_sync (%s): %s", tag, text);
+		else
+			osync_trace(TRACE_EXIT, "barry_sync: %s", text);
 	}
 
 	void log(const char *t)

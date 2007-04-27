@@ -36,14 +36,20 @@ idmap::~idmap()
 
 bool idmap::Load(const char *filename)
 {
+	// start fresh
+	m_map.clear();
+
 	std::ifstream ifs(filename);
 	if( !ifs )
 		return false;
 
 	std::string line;
 	uint32_t recordId;
-	while( ((recordId = 0), ifs >> recordId) && std::getline(ifs, line) ) {
-		if( recordId && line.size() ) {
+	while( ifs ) {
+		recordId = 0;
+		ifs >> recordId >> std::ws;
+		std::getline(ifs, line);
+		if( ifs && recordId && line.size() ) {
 			Map(line, recordId);
 		}
 	}
