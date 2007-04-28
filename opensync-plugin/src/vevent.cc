@@ -37,7 +37,8 @@ VEventConverter::VEventConverter()
 }
 
 VEventConverter::VEventConverter(uint32_t newRecordId)
-	: m_RecordId(newRecordId)
+	: m_Data(0),
+	m_RecordId(newRecordId)
 {
 }
 
@@ -95,13 +96,50 @@ bool VEventConverter::ParseData(const char *data)
 	trace.logf("DTEND attr retrieved: %s", m_end.c_str());
 	m_subject = GetAttr(format, "SUMMARY");
 	trace.logf("SUMMARY attr retrieved: %s", m_subject.c_str());
+	if( m_subject.size() == 0 ) {
+		m_subject = "<blank subject>";
+		trace.logf("ERROR: bad data, blank SUMMARY: %s", data);
+	}
 
-	bool success = m_start.size() && m_end.size() && m_subject.size();
+	bool success = m_start.size() && m_end.size();
 	vformat_free(format);
 	return success;
 }
 
-void AddAttr(Trace &trace, VFormat *format, const char *name, const char *value)
+class Param
+{
+	mutable VFormatParam *m_pParam;
+public:
+	Param() : m_pParam(0)
+	{
+	}
+
+	Param(const char *name, const char *value)
+	{
+		m_pParam = vformat_attribute_param_new(name);
+		vformat_attribute_param_add_value(m_pParam, value);
+	}
+
+	~Param()
+	{
+		if( m_pParam )
+			vformat_attribute_param_free(m_pParam);
+	}
+
+	bool HasData() const { return m_pParam; }
+
+	VFormatParam* Extract() const
+	{
+		VFormatParam *pRet = m_pParam;
+		m_pParam = 0;
+		return pRet;
+	}
+};
+
+void AddAttr(Trace &trace, VFormat *format, const char *name, const char *value,
+	const Param &param = Param());
+void AddAttr(Trace &trace, VFormat *format, const char *name, const char *value,
+	const Param &param)
 {
 	trace.logf("adding attr: %s, %s", name, value);
 
@@ -111,6 +149,11 @@ void AddAttr(Trace &trace, VFormat *format, const char *name, const char *value)
 		return;
 	}
 	vformat_attribute_add_value(attr, value);
+
+	if( param.HasData() ) {
+		vformat_attribute_add_param(attr, param.Extract());
+	}
+
 	vformat_add_attribute(format, attr);
 }
 
@@ -134,16 +177,82 @@ void VEventConverter::operator()(const Barry::Calendar &rec)
 
 	char *start = osync_time_unix2vtime(&rec.StartTime);
 	char *end = osync_time_unix2vtime(&rec.EndTime);
+	char *notify = osync_time_unix2vtime(&rec.NotificationTime);
 
-	AddAttr(trace, format, "BEGIN", "VEVENT");
 	AddAttr(trace, format, "PRODID",
 		"-//OpenSync//NONSGML Barry Calendar Record//EN");
+	AddAttr(trace, format, "BEGIN", "VEVENT");
 	AddAttr(trace, format, "DTSTART", start);
 	AddAttr(trace, format, "DTEND", end);
 	AddAttr(trace, format, "SEQUENCE", "0");
 	AddAttr(trace, format, "SUMMARY", rec.Subject.c_str());
-	// FIXME - need the notification time too... where does that fit in VCALENDAR?
+	AddAttr(trace, format, "DESCRIPTION", rec.Notes.c_str());
+	AddAttr(trace, format, "LOCATION", rec.Location.c_str());
+	// "UID" ?
+	AddAttr(trace, format, "BEGIN", "VALARM");
+	AddAttr(trace, format, "ACTION", "AUDIO");
+	// notify must be UTC, when specified in DATE-TIME
+	AddAttr(trace, format, "TRIGGER", notify, Param("VALUE", "DATE-TIME"));
+	AddAttr(trace, format, "END", "VALARM");
 	AddAttr(trace, format, "END", "VEVENT");
+/*
+	bool AllDayEvent;
+
+	///
+	/// Recurring data
+	///
+	/// Note: interval can be used on all of these recurring types to
+	///       make it happen "every other time" or more, etc.
+	///
+	enum RecurringCodeType {
+		Day = 1,		//< eg. every day
+					//< set: nothing
+		MonthByDate = 3,	//< eg. every month on the 12th
+					//< set: DayOfMonth
+		MonthByDay = 4,		//< eg. every month on 3rd Wed
+					//< set: DayOfWeek and WeekOfMonth
+		YearByDate = 5,		//< eg. every year on March 5
+					//< set: DayOfMonth and MonthOfYear
+		YearByDay = 6,		//< eg. every year on 3rd Wed of Jan
+					//< set: DayOfWeek, WeekOfMonth, and
+					//<      MonthOfYear
+		Week = 12		//< eg. every week on Mon and Fri
+					//< set: WeekDays
+	};
+
+	bool Recurring;
+	RecurringCodeType RecurringType;
+	unsigned short Interval;	// must be >= 1
+	time_t RecurringEndTime;	// only pertains if Recurring is true
+					// sets the date and time when
+					// recurrence of this appointment
+					// should no longer occur
+					// If a perpetual appointment, this
+					// is 0xFFFFFFFF in the low level data
+					// Instead, set the following flag.
+	bool Perpetual;			// if true, this will always recur
+	unsigned short TimeZoneCode;	// the time zone originally used
+					// for the recurrence data...
+					// seems to have little use, but
+					// set to your current time zone
+					// as a good default
+
+	unsigned short			// recurring details, depending on type
+		DayOfWeek,		// 0-6
+		WeekOfMonth,		// 1-5
+		DayOfMonth,		// 1-31
+		MonthOfYear;		// 1-12
+	unsigned char WeekDays;		// bitmask, bit 0 = sunday
+
+		#define CAL_WD_SUN	0x01
+		#define CAL_WD_MON	0x02
+		#define CAL_WD_TUE	0x04
+		#define CAL_WD_WED	0x08
+		#define CAL_WD_THU	0x10
+		#define CAL_WD_FRI	0x20
+		#define CAL_WD_SAT	0x40
+
+*/
 
 	// generate the raw VCALENDAR data
 	m_Data = vformat_to_string(format, VFORMAT_EVENT_20);
@@ -151,6 +260,7 @@ void VEventConverter::operator()(const Barry::Calendar &rec)
 	// cleanup
 	g_free(start);
 	g_free(end);
+	g_free(notify);
 	vformat_free(format);
 }
 
@@ -222,7 +332,7 @@ bool VEventConverter::CommitRecordData(BarryEnvironment *env, unsigned int dbId,
 	if( !convert.ParseData(data) ) {
 		std::ostringstream oss;
 		oss << "unable to parse change data for new RecordId: "
-		    << newRecordId;
+		    << newRecordId << " data: " << data;
 		errmsg = oss.str();
 		trace.logf(errmsg.c_str());
 		return false;

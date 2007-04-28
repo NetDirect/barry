@@ -58,8 +58,6 @@ bool idmap::Load(const char *filename)
 
 bool idmap::Save(const char *filename) const
 {
-	Trace trace("idmap::Save()");
-
 	std::ofstream ofs(filename);
 	if( !ofs )
 		return false;
@@ -67,7 +65,6 @@ bool idmap::Save(const char *filename) const
 	const_iterator i = m_map.begin();
 	for( ; i != m_map.end(); ++i ) {
 		ofs << i->second << " " << i->first << std::endl;
-		trace.logf("uid: %s, rid: %lu", i->first.c_str(), i->second);
 	}
 	return !ofs.bad() && !ofs.fail();
 }

@@ -1,5 +1,15 @@
 Release: version 0.7 - 2007/04/??
 ------------------------------------------------------------------------------
+2007/04/27
+	- opensync module:
+		- removed some unneeded trace logs
+		- fixed VEventConverter constructor bug, with uninitialized
+			m_Data pointer
+		- eased up the requirement that every calendar event
+			must have a summary... defaults to "<blank subject>"
+			if empty
+		- added more VCALENDAR fields to match Barry::Calendar record
+		- fixed case sensitive compares in vformat.c
 2007/04/26
 	- opensync module work:
 		- added id map class to map string uid's from OpenSync to

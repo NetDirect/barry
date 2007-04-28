@@ -386,7 +386,7 @@ static void _read_attribute_value (VFormatAttribute *attr, char **p, int format_
 				case 'r': str = g_string_append_c (str, '\r'); break;
 				case ';': str = g_string_append_c (str, ';'); break;
 				case ',':
-					if (!strcmp (attr->name, "CATEGORIES")) {
+					if (!g_ascii_strcasecmp (attr->name, "CATEGORIES")) {
 						//We need to handle categories here to work
 						//aroung a bug in evo2
 						_read_attribute_value_add (attr, str, charset);
@@ -407,7 +407,7 @@ static void _read_attribute_value (VFormatAttribute *attr, char **p, int format_
 			lp = g_utf8_next_char(lp);
 		}
 		else if ((*lp == ';') ||
-			 (*lp == ',' && !strcmp (attr->name, "CATEGORIES"))) {
+			 (*lp == ',' && !g_ascii_strcasecmp (attr->name, "CATEGORIES"))) {
 			_read_attribute_value_add (attr, str, charset);
 			g_string_assign (str, "");
 			lp = g_utf8_next_char(lp);
@@ -851,7 +851,7 @@ VFormatAttribute *vformat_find_attribute(VFormat *vcard, const char *name)
 	GList *a = NULL;
 	for (a = attributes; a; a = a->next) {
 		VFormatAttribute *attr = a->data;
-		if (!strcmp(vformat_attribute_get_name(attr), name)) {
+		if (!g_ascii_strcasecmp(vformat_attribute_get_name(attr), name)) {
 			return attr;
 		}	
 	}
@@ -981,7 +981,7 @@ char *vformat_to_string (VFormat *evc, VFormatType type)
 			char *value = v->data;
 			char *escaped_value = NULL;
 
-			if (!strcmp (attr->name, "RRULE") && 
+			if (!g_ascii_strcasecmp (attr->name, "RRULE") && 
 				  strstr (value, "BYDAY") == v->data) {
 				attr_str = g_string_append (attr_str, value);
 			} else {
@@ -994,7 +994,7 @@ char *vformat_to_string (VFormat *evc, VFormatType type)
 				/* XXX toshok - i hate you, rfc 2426.
 				   why doesn't CATEGORIES use a ; like
 				   a normal list attribute? */
-				if (!strcmp (attr->name, "CATEGORIES"))
+				if (!g_ascii_strcasecmp (attr->name, "CATEGORIES"))
 					attr_str = g_string_append_c (attr_str, ',');
 				else
 					attr_str = g_string_append_c (attr_str, ';');
