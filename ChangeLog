@@ -3,6 +3,9 @@ Release: version 0.7 - 2007/04/??
 2007/04/29
 	- updated README and opensync-plugin/README with more current
 		build instructions
+	- opensync plugin:
+		- refactored some calendar conversion routines
+		- added Barry->vCalendar conversion for recurring appointments
 2007/04/27
 	- opensync module:
 		- removed some unneeded trace logs

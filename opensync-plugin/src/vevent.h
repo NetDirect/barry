@@ -25,9 +25,119 @@
 #include <barry/barry.h>
 #include <stdint.h>
 #include <string>
+#include "vformat.h"
 
 // forward declarations
 class BarryEnvironment;
+
+// A special smart pointer for vformat pointer handling.
+// Behaves like std::auto_ptr<> in that only one object
+// at a time owns the pointer, and destruction frees it.
+template <class T, class FT, void (*FreeFunc)(FT *pt)>
+class vSmartPtr
+{
+	mutable T *m_pt;
+
+public:
+	vSmartPtr() : m_pt(0) {}
+	vSmartPtr(T *pt) : m_pt(pt) {}
+	vSmartPtr(const vSmartPtr &sp) : m_pt(sp.m_pt)
+	{
+		sp.m_pt = 0;
+	}
+	~vSmartPtr()
+	{
+		if( m_pt )
+			FreeFunc(m_pt);
+	}
+
+	vSmartPtr& operator=(T *pt)
+	{
+		Extract();
+		m_pt = pt;
+		return *this;
+	}
+
+	vSmartPtr& operator=(const vSmartPtr &sp)
+	{
+		Extract();
+		m_pt = sp.Extract();
+		return *this;
+	}
+
+	T* Extract()
+	{
+		T *rp = m_pt;
+		m_pt = 0;
+		return rp;
+	}
+
+	T* Get()
+	{
+		return m_pt;
+	}
+};
+
+typedef vSmartPtr<VFormatAttribute, VFormatAttribute, &vformat_attribute_free> vAttrPtr;
+typedef vSmartPtr<VFormatParam, VFormatParam, &vformat_attribute_param_free> vParamPtr;
+typedef vSmartPtr<char, void, &g_free> gStringPtr;
+
+
+//
+// vCalendar
+//
+/// Class for converting between RFC 2445 iCalendar data format,
+/// and the Barry::Calendar class.
+///
+class vCalendar
+{
+	// data to pass to external requests
+	char *m_gCalData;	// dynamic memory returned by vformat()... can
+				// be used directly by the plugin, without
+				// overmuch allocation and freeing (see Extract())
+	std::string m_vCalData;	// copy of m_gCalData, for C++ use
+	Barry::Calendar m_BarryCal;
+
+	// internal data for managing the vformat
+	VFormat *m_format;
+
+	static const char *WeekDays[7];
+
+public:
+	// FIXME - if you put this class in the Barry library,
+	// you'll need to change the class hierarchy
+	class ConvertError : public std::runtime_error
+	{
+	public:
+		ConvertError(const std::string &msg) : std::runtime_error(msg) {}
+	};
+
+protected:
+	vAttrPtr NewAttr(const char *name);
+	vAttrPtr NewAttr(const char *name, const char *value);
+	void AddAttr(vAttrPtr attr);
+	void AddParam(vAttrPtr &attr, const char *name, const char *value);
+
+	void RecurToVCal();
+	void RecurToBarryCal();
+
+	static unsigned short GetWeekDayIndex(const char *dayname);
+
+public:
+	vCalendar();
+	~vCalendar();
+
+	const std::string&	ToVCal(const Barry::Calendar &cal);
+	const Barry::Calendar&	ToBarry(const char *vcal);
+
+	const std::string&	GetVCal() const { return m_vCalData; }
+	const Barry::Calendar&	GetBarryCal() const { return m_BarryCal; }
+
+	char* ExtractVCal();
+
+	void Clear();
+};
+
 
 class VEventConverter
 {
