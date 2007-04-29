@@ -1,5 +1,8 @@
 Release: version 0.7 - 2007/04/??
 ------------------------------------------------------------------------------
+2007/04/29
+	- updated README and opensync-plugin/README with more current
+		build instructions
 2007/04/27
 	- opensync module:
 		- removed some unneeded trace logs

@@ -117,12 +117,10 @@ To generate the Doxygen documentation:
 To build the OpenSync module:
 -----------------------------
 
+	(see opensync-plugin/README for more information)
+
 	cd opensync-plugin
 	./configure
-
-		set --with-libusb
-		set --with-barry
-
 	make
 	su
 	make install

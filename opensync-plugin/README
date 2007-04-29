@@ -1,51 +1,78 @@
-Hi,
 
-so you are interested in writing a plugin for the
-OpenSync synchronization framework... Great! :)
+*****************************************************************************
+*  CAUTION: This is alpha software.  Please make complete backups of your   *
+*           Blackberry device before experimenting.  While the author has   *
+*           had good success with this software, that is no guarantee that  *
+*           you will.  Please make backups.                                 *
+*****************************************************************************
 
-Here is what you have to do:
+Introduction:
+-------------
+This directory contains a plugin for the OpenSync framework, which can
+be used to synchronize between handhelds and desktop management software,
+such as Evolution and Mozilla Sunbird.
 
-Edit the files
+Please note that this plugin has the potential to not only change the
+data in your Blackberry handheld, but also, through sending sync ADD,
+MODIFY and DELETE changes, can change the data in your address book
+and calendar in your desktop software of choice.  As this plugin is
+in development, please exercise caution, and make backups of your
+Blackberry (see the ../gui directory) *and* backups of your desktop
+software's data.
 
-AUTHORS
-INSTALL
-LICENSE
 
-and fill in the required information. Then edit:
+You can find more information on the OpenSync framework at the following
+website:
 
-configure.in
+	http://www.opensync.org/
 
-and add any checks etc that you need for you plugin
-to function.
 
-Then go to src/ and edit:
 
-Makefile.am
+Library Dependencies:
+---------------------
 
-there to suit your needs. Afterwards take a look at the example
-source files of the plugin
+You will need the following packages installed on your system, including
+any dev or devel packages that come along with them.
 
-plugin.c
-plugin.h
+	pkg-config		Used by the configure scripts
+	libopensync-0.22	OpenSync framework library
+	sqlite			Required by OpenSync
+	glib2			Required by OpenSync
+	libxml2			Required by OpenSync
+	libbarry 0.x		In the same tarball as this code.
+	libusb			Required by libbarry
+	openssl			Required by libbarry
 
-and start writing the functions you need to connect, read and write
-etc to your device.
+In addition to libopensync, you will need a plugin for your desktop
+software of choice, or for other handheld devices, such as the Palm.
+Please see the OpenSync website for a list of available plugins.
 
-Then edit the default config file which must be the same name
-as your plugin:
+If you've installed Barry or OpenSync in a non-standard spot, use something
+like the following:
 
-plugin
+	export PKG_CONFIG_PATH="/home/cdfrey/Barry/lib/pkgconfig:/home/cdfrey/software/lib/pkgconfig"
+	./configure --prefix=/home/cdfrey/Barry
 
-if you need to write a format plugin take a look at
 
-format.c
 
-Before running ./configure the first time you need to run
-./autogen.sh once.
+Installation:
+-------------
 
-If you need help, feel free to ask on the opensync mailing lists:
-http://sourceforge.net/projects/opensync and go to "Lists"
+	cd opensync-plugin
+	./configure
 
-or ask on our irc channel:
-server: irc.freenode.org
-channel: #opensync
+		(pkg-config will be used to find required libraries...
+		make sure they are installed in standard locations,
+		or that PKG_CONFIG_PATH is set appropriately)
+
+	make
+	su
+	make install
+
+
+Please report any bugs you find to the Barry mailing list.
+
+Thanks!
+
+April 2007
+
