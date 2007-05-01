@@ -30,6 +30,39 @@
 // forward declarations
 class BarryEnvironment;
 
+// FIXME - possibly scrap this in favour of opensync's xml time routines,
+// but this will require an overhaul of the plugin itself.
+class vTimeZone
+{
+public:
+	struct ZoneBlock
+	{
+		bool m_daylightSaving;
+		std::string m_name;
+		std::string m_dtstart;
+		std::string m_tzoffsetfrom;
+		std::string m_tzoffsetto;
+	};
+
+private:
+	bool m_valid;
+
+public:
+	std::string m_id;
+
+public:
+	vTimeZone();
+	~vTimeZone();
+
+	void Clear();
+
+	bool IsValid();
+
+	/// used for comparing by TZID
+	bool operator==(const std::string &tzid) const;
+};
+
+
 // A special smart pointer for vformat pointer handling.
 // Behaves like std::auto_ptr<> in that only one object
 // at a time owns the pointer, and destruction frees it.
@@ -117,18 +150,20 @@ protected:
 	vAttrPtr NewAttr(const char *name, const char *value);
 	void AddAttr(vAttrPtr attr);
 	void AddParam(vAttrPtr &attr, const char *name, const char *value);
+	std::string GetAttr(const char *attrname);
 
 	void RecurToVCal();
 	void RecurToBarryCal();
 
 	static unsigned short GetWeekDayIndex(const char *dayname);
+	bool HasMultipleVEvents() const;
 
 public:
 	vCalendar();
 	~vCalendar();
 
 	const std::string&	ToVCal(const Barry::Calendar &cal);
-	const Barry::Calendar&	ToBarry(const char *vcal);
+	const Barry::Calendar&	ToBarry(const char *vcal, uint32_t RecordId);
 
 	const std::string&	GetVCal() const { return m_vCalData; }
 	const Barry::Calendar&	GetBarryCal() const { return m_BarryCal; }
@@ -142,7 +177,7 @@ public:
 class VEventConverter
 {
 	char *m_Data;
-	std::string m_start, m_end, m_subject;
+	Barry::Calendar m_Cal;
 	uint32_t m_RecordId;
 
 public:

@@ -64,7 +64,7 @@ vAttrPtr vCalendar::NewAttr(const char *name, const char *value)
 {
 	Trace trace("vCalendar::NewAttr");
 
-	if( strlen(value) ) {
+	if( strlen(value) == 0 ) {
 		trace.logf("attribute '%s' contains no data, skipping", name);
 		return vAttrPtr();
 	}
@@ -99,7 +99,7 @@ void vCalendar::AddParam(vAttrPtr &attr, const char *name, const char *value)
 		trace.log("attribute pointer contains no data, skipping");
 		return;
 	}
-	if( strlen(value) ) {
+	if( strlen(value) == 0 ) {
 		trace.log("parameter value is empty, skipping");
 		return;
 	}
@@ -108,6 +108,30 @@ void vCalendar::AddParam(vAttrPtr &attr, const char *name, const char *value)
 	vformat_attribute_param_add_value(pParam, value);
 	vformat_attribute_add_param(attr.Get(), pParam);
 }
+
+std::string vCalendar::GetAttr(const char *attrname)
+{
+	Trace trace("vCalendar::GetAttr");
+	trace.logf("getting attr: %s", attrname);
+
+	std::string ret;
+
+	VFormatAttribute *attr = vformat_find_attribute(m_format, attrname);
+	if( attr ) {
+		if( vformat_attribute_is_single_valued(attr) ) {
+			ret = vformat_attribute_get_value(attr);
+		}
+		else {
+			// FIXME - does this ever happen?
+			ret = vformat_attribute_get_nth_value(attr, 0);
+		}
+	}
+
+	trace.logf("attr value: %s", ret.c_str());
+
+	return ret;
+}
+
 
 const char *vCalendar::WeekDays[] = { "SU", "MO", "TU", "WE", "TH", "FR", "SA" };
 
@@ -118,6 +142,21 @@ unsigned short vCalendar::GetWeekDayIndex(const char *dayname)
 			return i;
 	}
 	return 0;
+}
+
+bool vCalendar::HasMultipleVEvents() const
+{
+	int count = 0;
+	GList *attrs = vformat_get_attributes(m_format);
+	for( ; attrs; attrs = attrs->next ) {
+		VFormatAttribute *attr = (VFormatAttribute*) attrs->data;
+		if( strcasecmp(vformat_attribute_get_name(attr), "BEGIN") == 0 &&
+		    strcasecmp(vformat_attribute_get_nth_value(attr, 0), "VEVENT") == 0 )
+		{
+			count++;
+		}
+	}
+	return count > 1;
 }
 
 void vCalendar::RecurToVCal()
@@ -330,8 +369,66 @@ const std::string& vCalendar::ToVCal(const Barry::Calendar &cal)
 
 // Main conversion routine for converting from vCalendar data string
 // to a Barry::Calendar object.
-const Barry::Calendar& vCalendar::ToBarry(const char *vcal)
+const Barry::Calendar& vCalendar::ToBarry(const char *vcal, uint32_t RecordId)
 {
+	using namespace std;
+
+	Trace trace("vCalendar::ToBarry");
+
+	// we only handle vCalendar data with one vevent block
+	if( HasMultipleVEvents() )
+		throw ConvertError("vCalendar data contains more than one VEVENT block, unsupported");
+
+	// start fresh
+	Clear();
+
+	// store the vCalendar raw data
+	m_vCalData = vcal;
+
+	// create format parser structures
+	m_format = vformat_new_from_string(vcal);
+	if( !m_format )
+		throw ConvertError("resource error allocating vformat");
+
+	string start = GetAttr("DTSTART");
+	trace.logf("DTSTART attr retrieved: %s", start.c_str());
+	string end = GetAttr("DTEND");
+	trace.logf("DTEND attr retrieved: %s", end.c_str());
+	string subject = GetAttr("SUMMARY");
+	trace.logf("SUMMARY attr retrieved: %s", subject.c_str());
+	if( subject.size() == 0 ) {
+		subject = "<blank subject>";
+		trace.logf("ERROR: bad data, blank SUMMARY: %s", vcal);
+	}
+
+	if( !start.size() || !end.size() ) {
+		// FIXME - DTEND is actually optional!  According to the
+		// RFC, a DTSTART with no DTEND should be treated
+		// like a "special day" like an anniversary, which occupies
+		// no time.
+		throw ConvertError("Blank DTSTART or DTEND");
+	}
+
+	// FIXME - we are assuming that any non-UTC timestamps
+	// in the vcalendar record will be in the current timezone...
+	// This is wrong!  fix this later.
+	//
+	// Also, we current ignore any time zone
+	// parameters that might be in the vcalendar format... this
+	// must be fixed.
+	//
+	time_t now = time(NULL);
+	int zoneoffset = osync_time_timezone_diff(localtime(&now));
+
+	Barry::Calendar &rec = m_BarryCal;
+	rec.SetIds(Barry::Calendar::GetDefaultRecType(), RecordId);
+	rec.StartTime = osync_time_vtime2unix(start.c_str(), zoneoffset);
+	rec.EndTime = osync_time_vtime2unix(end.c_str(), zoneoffset);
+	// FIXME - until notification time is supported, we assume 15 min
+	// in advance
+	rec.NotificationTime = rec.StartTime - 15 * 60;
+	rec.Subject = subject;
+
 	return m_BarryCal;
 }
 
@@ -390,53 +487,22 @@ char* VEventConverter::ExtractData()
 	return ret;
 }
 
-std::string GetAttr(VFormat *format, const char *attrname)
-{
-	Trace trace("GetAttr");
-	trace.logf("getting attr: %s", attrname);
-
-	std::string ret;
-
-	VFormatAttribute *attr = vformat_find_attribute(format, attrname);
-	if( attr ) {
-		if( vformat_attribute_is_single_valued(attr) ) {
-			ret = vformat_attribute_get_value(attr);
-		}
-		else {
-			// FIXME - does this ever happen?
-			ret = vformat_attribute_get_nth_value(attr, 0);
-		}
-	}
-
-	trace.logf("attr value: %s", ret.c_str());
-
-	return ret;
-}
-
 bool VEventConverter::ParseData(const char *data)
 {
 	Trace trace("VEventConverter::ParseData");
 
-	VFormat *format = vformat_new_from_string(data);
-	if( !format ) {
-		trace.log("vformat parser unable to initialize");
+	try {
+
+		vCalendar vcal;
+		m_Cal = vcal.ToBarry(data, m_RecordId);
+
+	}
+	catch( vCalendar::ConvertError &ce ) {
+		trace.logf("ERROR: vCalendar::ConvertError exception: %s", ce.what());
 		return false;
 	}
 
-	m_start = GetAttr(format, "DTSTART");
-	trace.logf("DTSTART attr retrieved: %s", m_start.c_str());
-	m_end = GetAttr(format, "DTEND");
-	trace.logf("DTEND attr retrieved: %s", m_end.c_str());
-	m_subject = GetAttr(format, "SUMMARY");
-	trace.logf("SUMMARY attr retrieved: %s", m_subject.c_str());
-	if( m_subject.size() == 0 ) {
-		m_subject = "<blank subject>";
-		trace.logf("ERROR: bad data, blank SUMMARY: %s", data);
-	}
-
-	bool success = m_start.size() && m_end.size();
-	vformat_free(format);
-	return success;
+	return true;
 }
 
 // Barry storage operator
@@ -467,21 +533,7 @@ bool VEventConverter::operator()(Barry::Calendar &rec, unsigned int dbId)
 {
 	Trace trace("VEventConverter::builder operator()");
 
-	// FIXME - we are assuming that any non-UTC timestamps
-	// in the vcalendar record will be in the current timezone...
-	// Also, ParseData() currently ignores any time zone
-	// parameters that might be in the vcalendar format,
-	// so we can't base it on input data.
-	time_t now = time(NULL);
-	int zoneoffset = osync_time_timezone_diff(localtime(&now));
-
-	rec.SetIds(Barry::Calendar::GetDefaultRecType(), m_RecordId);
-	rec.StartTime = osync_time_vtime2unix(m_start.c_str(), zoneoffset);
-	rec.EndTime = osync_time_vtime2unix(m_end.c_str(), zoneoffset);
-	// FIXME - until notification time is supported, we assume 15 min
-	// in advance
-	rec.NotificationTime = rec.StartTime - 15 * 60;
-	rec.Subject = m_subject;
+	rec = m_Cal;
 	return true;
 }
 

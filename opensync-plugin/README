@@ -6,6 +6,12 @@
 *           you will.  Please make backups.                                 *
 *****************************************************************************
 
+Development note: this plugin is in flux, not only from pure development,
+	but also because the OpenSync libraries themselves are getting
+	close to releasing version 0.30, which changes some internals
+	from 0.22.  This plugin is currently based on 0.22, but that may
+	change in the future.
+
 Introduction:
 -------------
 This directory contains a plugin for the OpenSync framework, which can

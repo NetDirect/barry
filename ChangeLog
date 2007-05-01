@@ -1,5 +1,13 @@
 Release: version 0.7 - 2007/04/??
 ------------------------------------------------------------------------------
+2007/04/30
+	- opensync plugin:
+		- fixed size check bugs (strlen() == 0 when empty)
+		- finished refactoring calendar conversion routines
+		- started timezone parsing, but this may go away
+			if we use opensync 0.30's time functions and
+			xml data format...
+		- added development note to README
 2007/04/29
 	- updated README and opensync-plugin/README with more current
 		build instructions
