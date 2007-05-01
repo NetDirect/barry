@@ -1,5 +1,7 @@
 Release: version 0.7 - 2007/04/??
 ------------------------------------------------------------------------------
+2007/05/01
+	- added pppob to rpm barry.spec
 2007/04/30
 	- opensync plugin:
 		- fixed size check bugs (strlen() == 0 when empty)

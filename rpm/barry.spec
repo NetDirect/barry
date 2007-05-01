@@ -163,6 +163,7 @@ cd ../
 %defattr(-,root,root)
 %attr(0755,root,root) %{_sbindir}/bcharge
 %attr(0755,root,root) %{_sbindir}/breset
+%attr(0755,root,root) %{_sbindir}/pppob
 %attr(0755,root,root) %{_bindir}/btool
 %attr(0755,root,root) %{_bindir}/upldif
 %attr(0755,root,root) %{_bindir}/ktrans
@@ -200,6 +201,9 @@ cd ../
 /sbin/ldconfig
 
 %changelog
+* Tue May 01 2007 Chris Frey <cdfrey@foursquare.net> 0.7-2
+- added pppob to utils
+
 * Thu Mar 08 2007 Chris Frey <cdfrey@foursquare.net> 0.7-1
 - removed barry base package that only contained docs, and put docs in libbarry*
 - changed barrybackup reference to barry-gui
