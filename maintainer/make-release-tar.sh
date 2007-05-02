@@ -38,7 +38,7 @@ cd build || exit 1
 
 set -e
 
-if [ "$3" = "HEAD" ] ; then
+if [ "$3" != "HEAD" ] ; then
 	cvs -z3 -d "$CVSROOT" co -d $DIRNAME -r $TAGNAME "$CVSREP"
 	echo "Fetched tag: $TAGNAME"
 else
