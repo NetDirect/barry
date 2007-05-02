@@ -2,7 +2,7 @@
 
 if [ -z "$1" -o -z "$2" ] ; then
 	echo
-	echo "Usage: ./release.sh MAJOR MINOR"
+	echo "Usage: ./release.sh MAJOR MINOR HEAD"
 	echo
 	echo "Set the environment var CVSROOT to use a different repository."
 	echo "Set CVSREP to a different directory if needed."
@@ -16,7 +16,7 @@ fi
 set -e
 
 # Create the tarball
-./make-release-tar.sh $1 $2
+./make-release-tar.sh $1 $2 $3
 
 # Make sure it compiles cleanly on all handy systems
 # Local first...
