@@ -1,5 +1,9 @@
-Release: version 0.7 - 2007/04/??
+Release: version 0.7 - 2007/05/02
 ------------------------------------------------------------------------------
+2007/05/02
+	- added rpm building to maintainer/release scripts
+	- added "HEAD" feature to tarball creation script, for easier testing
+	- updated maintainer/README
 2007/05/01
 	- added pppob to rpm barry.spec
 	- bumped release number in barry.spec
