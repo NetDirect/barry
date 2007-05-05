@@ -5,6 +5,9 @@ Required functionality:
 	- edit
 
 
+- add option in config to always pop up a database selection box
+	when pressing Backup or Restore buttons, so they can be
+	confirmed each time instead of relying on the config
 - add message and "continue/stop" choice for restores, if the protocol
 	side throws an error... should always try to restore everything
 	the user asks for, not stop half way through if the device
