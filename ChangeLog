@@ -1,3 +1,13 @@
+Release: version 0.8 - 2007/05/??
+------------------------------------------------------------------------------
+2007/05/04
+	- opensync plugin:
+		- partial porting to opensync 0.30 (in progress!)
+		- fixed bug in sync_done where it reported context error
+			and then success afterward
+	- checking in new INSTALL files based on Etch's autoconf run
+	- added item to gui's todo list
+
 Release: version 0.7 - 2007/05/02
 ------------------------------------------------------------------------------
 2007/05/02
@@ -139,7 +149,7 @@ Release: version 0.7 - 2007/05/02
 		- does not create doc-only barry base package anymore
 		- fixed "barry-backup" typo
 		- removed the patch step, as version 0.7 shouldn't need it
-		- added license file to each packageo
+		- added license file to each package
 		- commented out console perms scripts, pending mailing list
 			discussion
 	- updated AUTHORS
