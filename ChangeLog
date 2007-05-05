@@ -7,6 +7,13 @@ Release: version 0.8 - 2007/05/??
 			and then success afterward
 	- checking in new INSTALL files based on Etch's autoconf run
 	- added item to gui's todo list
+	- bumped version numbers to 0.8 in:
+		- configure.ac
+		- src/Makefile.am
+		- src/version.cc
+		- gui/src/BackupWindow.cc (about dialog)
+		- src/Doxygen
+		- rpm/barry*.spec
 
 Release: version 0.7 - 2007/05/02
 ------------------------------------------------------------------------------

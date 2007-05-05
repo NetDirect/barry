@@ -12,8 +12,8 @@
 
 Summary: BlackBerry(tm) Desktop for Linux
 Name: barry
-Version: 0.7
-Release: 2
+Version: 0.8
+Release: 1
 Group: Applications/Productivity
 License: GPL
 Source: %{name}-%{version}.tar.gz
@@ -201,6 +201,9 @@ cd ../
 /sbin/ldconfig
 
 %changelog
+* Fri May 04 2007 Chris Frey <cdfrey@foursquare.net> 0.8-1
+- version bump
+
 * Tue May 01 2007 Chris Frey <cdfrey@foursquare.net> 0.7-2
 - added pppob to utils
 
