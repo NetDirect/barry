@@ -34,16 +34,14 @@
 
 // All functions that are callable from outside must look like C
 extern "C" {
-	static void *initialize(OSyncMember *member, OSyncError **error);
 	static void connect(OSyncContext *ctx);
 	static void get_changeinfo(OSyncContext *ctx);
 	static void batch_commit_vevent20(OSyncContext *ctx,
 			OSyncContext **contexts,
 			OSyncChange **changes);
-	static void sync_done(OSyncContext *ctx);
-	static void disconnect(OSyncContext *ctx);
-	static void finalize(void *data);
-	void get_info(OSyncEnv *env);
+
+	osync_bool get_sync_info(OSyncPluginEnv *env, OSyncError **error);
+	int get_version(void);
 }
 
 
@@ -301,62 +299,6 @@ bool CommitChange(BarryEnvironment *env,
 // OpenSync API
 //
 
-static void *initialize(OSyncMember *member, OSyncError **error)
-{
-	Trace trace("initialize");
-
-	BarryEnvironment *env = 0;
-
-	// Create the environment struct, including our Barry objects
-	try {
-		// FIXME - near the end of release, do a run with
-		// this set to true, and look for USB protocol
-		// inefficiencies.
-		Barry::Init(false);
-
-		env = new BarryEnvironment(member);
-
-		// Load config file for this plugin
-		char *configdata;
-		int configsize;
-		if (!osync_member_get_config(member, &configdata, &configsize, error)) {
-			osync_error_update(error, "Unable to get config data: %s",
-				osync_error_print(error));
-			delete env;
-			return NULL;
-		}
-
-		// Process the configdata here and set the options on your environment
-		env->ParseConfig(configdata, configsize);
-		free(configdata);
-
-		// Load all needed cache files
-		if( env->m_CalendarSync.m_Sync ) {
-			env->m_CalendarSync.LoadCache();
-			env->m_CalendarSync.LoadMap();
-		}
-
-		if( env->m_ContactsSync.m_Sync ) {
-			env->m_ContactsSync.LoadCache();
-			env->m_ContactsSync.LoadMap();
-		}
-
-		return env;
-
-	}
-	// Don't let C++ exceptions escape to the C code
-	catch( std::bad_alloc &ba ) {
-		osync_error_update(error, "Unable to allocate memory for environment: %s", ba.what());
-		delete env;
-		return NULL;
-	}
-	catch( std::exception &e ) {
-		osync_error_update(error, "%s", e.what());
-		delete env;
-		return NULL;
-	}
-}
-
 static void connect(OSyncContext *ctx)
 {
 	Trace trace("connect");
@@ -485,7 +427,7 @@ static void batch_commit_vevent20(OSyncContext *ctx,
 	}
 }
 
-static void sync_done(OSyncContext *ctx)
+static void sync_done(void *userdata, OSyncPluginInfo *info, OSyncContext *ctx)
 {
 	//
 	// This function will only be called if the sync was successfull
@@ -495,11 +437,13 @@ static void sync_done(OSyncContext *ctx)
 
 	try {
 
-		BarryEnvironment *env = (BarryEnvironment *)osync_context_get_plugin_data(ctx);
+		BarryEnvironment *env = (BarryEnvironment *)userdata;
+		bool error = false;
 
 		if( env->m_CalendarSync.m_Sync ) {
 			// update the cache
 			if( !env->m_CalendarSync.SaveCache() ) {
+				error = true;
 				osync_context_report_error(ctx, OSYNC_ERROR_IO_ERROR,
 					"Error saving calendar cache");
 			}
@@ -507,6 +451,7 @@ static void sync_done(OSyncContext *ctx)
 			// save the id map
 			env->m_CalendarSync.CleanupMap();
 			if( !env->m_CalendarSync.SaveMap() ) {
+				error = true;
 				osync_context_report_error(ctx, OSYNC_ERROR_IO_ERROR,
 					"Error saving calendar id map");
 			}
@@ -518,6 +463,7 @@ static void sync_done(OSyncContext *ctx)
 		if( env->m_ContactsSync.m_Sync ) {
 			// update the cache
 			if( !env->m_ContactsSync.SaveCache() ) {
+				error = true;
 				osync_context_report_error(ctx, OSYNC_ERROR_IO_ERROR,
 					"Error saving contacts cache");
 			}
@@ -525,6 +471,7 @@ static void sync_done(OSyncContext *ctx)
 			// save the id map
 			env->m_ContactsSync.CleanupMap();
 			if( !env->m_ContactsSync.SaveMap() ) {
+				error = true;
 				osync_context_report_error(ctx, OSYNC_ERROR_IO_ERROR,
 					"Error saving contacts id map");
 			}
@@ -533,7 +480,8 @@ static void sync_done(OSyncContext *ctx)
 		}
 
 		// Success
-		osync_context_report_success(ctx);
+		if( !error )
+			osync_context_report_success(ctx);
 
 	}
 	catch( std::exception &e ) {
@@ -541,46 +489,151 @@ static void sync_done(OSyncContext *ctx)
 	}
 }
 
-static void disconnect(OSyncContext *ctx)
+static void disconnect(void *userdata, OSyncPluginInfo *info, OSyncContext *ctx)
 {
 	Trace trace("disconnect");
 
 	// Disconnect the controller, which closes our connection
-	BarryEnvironment *env = (BarryEnvironment *)osync_context_get_plugin_data(ctx);
+	BarryEnvironment *env = (BarryEnvironment *)userdata;
 	env->Disconnect();
 
 	// Done!
 	osync_context_report_success(ctx);
 }
 
-static void finalize(void *data)
+static void finalize(void *userdata)
 {
 	Trace trace("finalize");
 
-	BarryEnvironment *env = (BarryEnvironment *)data;
+	BarryEnvironment *env = (BarryEnvironment *)userdata;
 	delete env;
 }
 
-void get_info(OSyncEnv *env)
+static void *initialize(OSyncPlugin *plugin, OSyncPluginInfo *info, OSyncError **error)
 {
-	Trace trace("get_info");
+	Trace trace("initialize");
+
+
+	// Create the environment struct, including our Barry objects
+	try {
+		// Load config file for this plugin
+		const char *configdata = osync_plugin_info_get_config(info);
+		if( !configdata ) {
+			osync_error_set(error, OSYNC_ERROR_GENERIC, "Unable to get config data.");
+			return NULL;
+		}
+		osync_trace(TRACE_INTERNAL, "The config: %s", configdata);
+
+		// FIXME - near the end of release, do a run with
+		// this set to true, and look for USB protocol
+		// inefficiencies.
+		Barry::Init(false);
+
+		std::auto_ptr<BarryEnvironment> env(new BarryEnvironment(member));
+
+		// Process the configdata here and set the options on your environment
+		env->ParseConfig(configdata, configsize);
+
+		// Load all needed cache files
+		if( env->m_CalendarSync.m_Sync ) {
+			env->m_CalendarSync.LoadCache();
+			env->m_CalendarSync.LoadMap();
+		}
+
+		if( env->m_ContactsSync.m_Sync ) {
+			env->m_ContactsSync.LoadCache();
+			env->m_ContactsSync.LoadMap();
+		}
+
+		// Setup the Calendar sink, using batch commit
+		OSyncObjTypeSink *sink = osync_objtype_sink_new("event", error);
+		if( !sink ) {
+			trace.error("Unable to create new sink.");
+			return NULL;
+		}
+
+		osync_objtype_sink_add_objformat(sink, "vevent20");
+
+		// Every sink can have different functions
+		OSyncObjTypeSinkFunctions functions;
+		memset(&functions, 0, sizeof(functions));
+		functions.connect = connect;
+		functions.disconnect = disconnect;
+		functions.get_changes = get_changes;
+		functions.batch_commit = batch_commit_vevent20;
+		functions.sync_done = sync_done;
+
+		// We pass the OSyncFileDir object to the sink,
+		// so we dont have to look it up again once
+		// the functions are called
+		osync_objtype_sink_set_functions(sink, functions, env);
+
+		osync_plugin_info_add_objtype(info, sink);
+
+FIXME - add sink for contacts too;
+
+		return env.release();
+
+	}
+	// Don't let C++ exceptions escape to the C code
+	catch( std::bad_alloc &ba ) {
+		osync_error_set(error, OSYNC_ERROR_GENERIC, "Unable to allocate memory for environment: %s", ba.what());
+		return NULL;
+	}
+	catch( std::exception &e ) {
+		osync_error_set(error, OSYNC_ERROR_GENERIC, "%s", e.what());
+		return NULL;
+	}
+}
+
+// Tell opensync which sinks are available
+static osync_bool discover(void *userdata, OSyncPluginInfo *info, OSyncError **error)
+{
+	Trace trace("discover");
+
+	// Report avaliable sinks...
+	do {
+		osync_objtype_sink_set_available(NULL, TRUE);
+	} while(0);
+
+	OSyncVersion *version = osync_version_new(error);
+	osync_version_set_plugin(version, "barry-sync");
+	//osync_version_set_modelversion(version, "version");
+	//osync_version_set_firmwareversion(version, "firmwareversion");
+	//osync_version_set_softwareversion(version, "softwareversion");
+	//osync_version_set_hardwareversion(version, "hardwareversion");
+	osync_plugin_info_set_version(info, version);
+	osync_version_unref(version);
+
+	return TRUE;
+}
+
+osync_bool get_sync_info(OSyncPluginEnv *env, OSyncError **error);
+{
+	Trace trace("get_sync_info");
 
 	// Create first plugin
-	OSyncPluginInfo *info = osync_plugin_new_info(env);
-	
-	info->name = "barry-sync";
-	info->longname = "Barry OpenSync plugin for the Blackberry handheld";
-	info->description = "Plugin to synchronize calendar and contact entries on USB Blackberry handhelds";
-	info->version = 1;		// API version (opensync api?)
-	info->is_threadsafe = TRUE;
-	
-	info->functions.initialize = initialize;
-	info->functions.connect = connect;
-	info->functions.sync_done = sync_done;
-	info->functions.disconnect = disconnect;
-	info->functions.finalize = finalize;
-	info->functions.get_changeinfo = get_changeinfo;
-	
+	OSyncPlugin *plugin = osync_plugin_new(error);
+	if( !plugin ) {
+		trace.errorf("Unable to register plugin: %s", osync_error_print(error));
+		osync_error_unref(error);
+		return FALSE;
+	}
+
+	// Boy, doesn't this look like a C++ API in disguise?.... :-)
+	osync_plugin_set_name(plugin, "barry-sync");
+	osync_plugin_set_longname(plugin, "Barry OpenSync plugin for the Blackberry handheld");
+	osync_plugin_set_description(plugin, "Plugin to synchronize calendar and contact entries on USB Blackberry handhelds");
+
+	// Register callback functions
+	osync_plugin_set_initialize(plugin, initialize);
+	osync_plugin_set_finalize(plugin, finalize);
+	osync_plugin_set_discover(plugin, discover);
+
+	osync_plugin_env_register_plugin(env, plugin);
+	osync_plugin_unref(plugin);
+
+/*
 	// If you like, you can overwrite the default timeouts of your plugin
 	// The default is set to 60 sec. Note that this MUST NOT be used to
 	// wait for expected timeouts (Lets say while waiting for a webserver).
@@ -603,6 +656,14 @@ void get_info(OSyncEnv *env)
 //	osync_plugin_accept_objformat(info, "contact", "vcard30", NULL);
 //	osync_plugin_set_batch_commit_objformat(info, "contact", "vcard30",
 //						batch_commit_vcard30);
+*/
 
+	return TRUE;
+}
+
+int get_version(void)
+{
+	Trace trace("get_version");
+	return 1;
 }
 

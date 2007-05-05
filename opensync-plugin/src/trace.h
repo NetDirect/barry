@@ -28,13 +28,14 @@
 class Trace
 {
 	const char *text, *tag;
+	bool error;
 public:
-	explicit Trace(const char *t) : text(t), tag(0)
+	explicit Trace(const char *t) : text(t), tag(0), error(false)
 	{
 		osync_trace(TRACE_ENTRY, "barry_sync: %s", text);
 	}
 
-	Trace(const char *t, const char *tag) : text(t), tag(tag)
+	Trace(const char *t, const char *tag) : text(t), tag(tag), error(false)
 	{
 		osync_trace(TRACE_ENTRY, "barry_sync (%s): %s", tag, text);
 	}
@@ -42,14 +43,22 @@ public:
 	~Trace()
 	{
 		if( tag )
-			osync_trace(TRACE_EXIT, "barry_sync (%s): %s", tag, text);
+			osync_trace(error ? TRACE_EXIT_ERROR : TRACE_EXIT,
+				"barry_sync (%s): %s", tag, text);
 		else
-			osync_trace(TRACE_EXIT, "barry_sync: %s", text);
+			osync_trace(error ? TRACE_EXIT_ERROR : TRACE_EXIT,
+				"barry_sync: %s", text);
 	}
 
 	void log(const char *t)
 	{
 		osync_trace(TRACE_INTERNAL, "barry_sync: %s", t);
+	}
+
+	void error(const char *t)
+	{
+		error = true;
+		osync_trace(TRACE_ERROR, "barry_sync: %s", t);
 	}
 
 	void logf(const char *t, ...)
@@ -63,6 +72,21 @@ public:
 			osync_trace(TRACE_INTERNAL, "barry_sync: %s", buffer);
 		else
 			osync_trace(TRACE_INTERNAL, "barry_sync: (trace error, output too long for buffer: %s)", t);
+	}
+
+	void errorf(const char *t, ...)
+	{
+		error = true;
+
+		va_list vl;
+		va_start(vl, t);
+		char buffer[2048];
+		int n = vsnprintf(buffer, sizeof(buffer), t, vl);
+		va_end(vl);
+		if( n > -1 && n < (int)sizeof(buffer) )
+			osync_trace(TRACE_ERROR, "barry_sync: %s", buffer);
+		else
+			osync_trace(TRACE_ERROR, "barry_sync: (trace error, output too long for buffer: %s)", t);
 	}
 };
 
