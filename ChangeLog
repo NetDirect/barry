@@ -3,6 +3,7 @@ Release: version 0.8 - 2007/05/??
 2007/05/11
 	- applied patches from Brian Edginton, parsing more
 		fields in Contact and Calendar records
+	- added Brian Edginton to AUTHORS
 2007/05/04
 	- opensync plugin:
 		- partial porting to opensync 0.30 (in progress!)
