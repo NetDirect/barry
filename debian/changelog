@@ -1,4 +1,15 @@
+barry (0.8-1) unstable; urgency=low
+
+   * updated for future version 0.8 release
+   * removed postinst, as the latest stable Debian has a current udev version
+   * split packaging into 4 separate packages: libbarry, libbarry-dev,
+     barry-util, barrybackup-gui
+   * added menu support for barrybackup-gui
+
+ -- Chris Frey <cdfrey@foursquare.net>  Fri, 11 May 2007 16:38:11 -0500
+
 barry (0.6-1) unstable; urgency=low
+
    * adapted for Debian Etch.  has a newer version of udev, and plugdev 
      available.  Also added btool in addition to only bcharge available
 

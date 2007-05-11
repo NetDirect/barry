@@ -8,6 +8,15 @@ Release: version 0.8 - 2007/05/??
 		removed commented out code, and removed mention of
 		Outlook from the comments.
 	- updated udev/10-blackberry.rules.Debian for Debian Etch
+	- updated debian/rules to use new udev rules file
+	- removed debian/postinst, as stable versions of Debian now
+		have a recent udev, and don't need the special handling
+	- updated Debian build scripts to build separate packages:
+		libbarry
+		libbarry-dev
+		barry-util
+		barrybackup-gui
+	- added menu support to Debian barrybackup-gui package
 2007/05/04
 	- opensync plugin:
 		- partial porting to opensync 0.30 (in progress!)

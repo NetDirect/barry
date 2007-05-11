@@ -1,0 +1,10 @@
+README
+TODO
+ChangeLog
+doc/Exceptions
+doc/Hacking
+doc/TimeZones.txt
+doc/USB-capture.txt
+doc/VersionNotes
+doc/bb_task_format.txt
+examples/addcontact.cc

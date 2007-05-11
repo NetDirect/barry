@@ -42,8 +42,10 @@ build-arch: build-arch-stamp
 build-arch-stamp: configure-stamp 
 
 	# Add here commands to compile the arch part of the package.
-	./configure --prefix=/usr
+	./configure --prefix=/usr --with-boost=/usr
 	$(MAKE) 
+	(cd gui && ./configure PKG_CONFIG_PATH="../" CXXFLAGS="-I../.." LDFLAGS="-L../../src" --prefix=/usr)
+	(cd gui && $(MAKE))
 
 	touch build-arch-stamp
 
@@ -57,10 +59,12 @@ build-indep-stamp: configure-stamp
 clean:
 	dh_testdir
 	dh_testroot
+	rm -rf $(CURDIR)/debian/everything
 	rm -f build-arch-stamp build-indep-stamp #CONFIGURE-STAMP#
 
 	# Add here commands to clean up after the build process.
 	$(MAKE) distclean
+	(cd gui && $(MAKE) distclean)
 
 	dh_clean  --exclude ./src/Makefile.orig
 
@@ -85,13 +89,41 @@ install-arch:
 
 	# Add here commands to install the arch part of the package into 
 	# debian/tmp.
-	$(MAKE) install DESTDIR=$(CURDIR)/debian/barry
-	install -d $(CURDIR)/debian/barry/etc/udev/rules.d
-	install udev/10-blackberry.rules $(CURDIR)/debian/barry/etc/udev/rules.d/10-blackberry.rules
-	sed s/"barry"/"plugdev"/g <udev/99-barry-perms >$(CURDIR)/debian/barry/etc/udev/rules.d/99-barry-perms.rules
-	chmod 0644 $(CURDIR)/debian/barry/etc/udev/rules.d/99-barry-perms.rules
+
+	# Install EVERYTHING from the base library portion into
+	# a temporary directory, then split them out into their
+	# respective package directories.  Anything left behind
+	# needs to be looked at!
+	$(MAKE) install DESTDIR=$(CURDIR)/debian/everything
+
+	# Move the basic libbarry files
+	install -d $(CURDIR)/debian/libbarry/usr/lib
+	mv $(CURDIR)/debian/everything/usr/lib/libbarry.so.* $(CURDIR)/debian/libbarry/usr/lib
+
+	# Move the devel library files
+	install -d $(CURDIR)/debian/libbarry-dev/usr/include
+	mv $(CURDIR)/debian/everything/usr/include/* $(CURDIR)/debian/libbarry-dev/usr/include
+	mv $(CURDIR)/debian/everything/usr/lib $(CURDIR)/debian/libbarry-dev/usr
+
+	# Move the command line utils
+	mv $(CURDIR)/debian/everything/usr/bin $(CURDIR)/debian/barry-util
+	mv $(CURDIR)/debian/everything/usr/sbin $(CURDIR)/debian/barry-util
+	install -d $(CURDIR)/debian/barry-util/usr/share
+	mv $(CURDIR)/debian/everything/usr/share/man $(CURDIR)/debian/barry-util/usr/share
+
+	# Install udev rules for the barry-util package
+	install -d $(CURDIR)/debian/barry-util/etc/udev/rules.d
+	install -m 0644 $(CURDIR)/udev/10-blackberry.rules.Debian $(CURDIR)/debian/barry-util/etc/udev/rules.d/10-blackberry.rules
+
+	# The GUI has its own install, so we go directly to target package dir
+	(cd gui && $(MAKE) install DESTDIR=$(CURDIR)/debian/barrybackup-gui)
+
+	# Display anything remaining
+	echo "NOTE: IF ANYTHING IS LISTED HERE, IT IS NOT BEING PACKAGED:"
+	find $(CURDIR)/debian/everything
 
 	dh_install -s
+
 # Must not depend on anything. This is to be called by
 # binary-arch/binary-indep
 # in another 'make' thread.
@@ -101,7 +133,7 @@ binary-common:
 	dh_installchangelogs ChangeLog
 	dh_installdocs
 	dh_installexamples
-#	dh_installmenu
+	dh_installmenu
 #	dh_installdebconf	
 #	dh_installlogrotate	
 #	dh_installemacsen
