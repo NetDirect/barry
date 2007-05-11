@@ -210,6 +210,10 @@ public:
 		MobilePhone,
 		Pager,
 		PIN,
+        Radio,
+        WorkPhone2,
+        HomePhone2,
+        OtherPhone,
 		FirstName,
 		LastName,
 		Company,
@@ -223,7 +227,22 @@ public:
 		Country,
 		Title,
 		PublicKey,
-		Notes;
+        URL,
+        Prefix,
+        Category,
+        HomeAddress1,
+        HomeAddress2,
+        HomeAddress3,
+		Notes,
+        UserDefined1,
+        UserDefined2,
+        UserDefined3,
+        UserDefined4,
+        HomeCity,
+        HomeProvince,
+        HomePostalCode,
+        HomeCountry,
+        Image;
 
 	GroupLinksType GroupLinks;
 	UnknownsType Unknowns;
@@ -343,6 +362,7 @@ public:
 	std::string Subject;
 	std::string Notes;
 	std::string Location;
+    std::string FreeBusy;
 	time_t NotificationTime;
 	time_t StartTime;
 	time_t EndTime;
@@ -368,6 +388,19 @@ public:
 		Week = 12		//< eg. every week on Mon and Fri
 					//< set: WeekDays
 	};
+    
+    ///
+    /// Free Busy Flag
+    ///
+    /// Note: This is set either to Free, Busy, Tentative or Out of Office
+    ///        by Microsoft Outlook
+    ///
+    enum FreeBusyFlag {
+        Free = 0, 
+        Tentative,
+        Busy,
+        OutOfOffice
+    };
 
 	bool Recurring;
 	RecurringCodeType RecurringType;
