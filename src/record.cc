@@ -480,50 +480,50 @@ std::ostream& operator<< (std::ostream &os, const std::vector<UnknownField> &unk
 // Contact class
 
 // Contact field codes
-#define CFC_EMAIL			1
-#define CFC_PHONE			2
-#define CFC_FAX				3
+#define CFC_EMAIL		1
+#define CFC_PHONE		2
+#define CFC_FAX			3
 #define CFC_WORK_PHONE		6
 #define CFC_HOME_PHONE		7
 #define CFC_MOBILE_PHONE	8
-#define CFC_PAGER			9
-#define CFC_PIN				10
-#define CFC_RADIO			14	// 0x0e
+#define CFC_PAGER		9
+#define CFC_PIN			10
+#define CFC_RADIO		14	// 0x0e
 #define CFC_WORK_PHONE_2	16	// 0x10
 #define CFC_HOME_PHONE_2	17	// 0x11
 #define CFC_OTHER_PHONE		18	// 0x12
-#define CFC_NAME			32	// 0x20 used twice, in first/last name order
-#define CFC_COMPANY			33
+#define CFC_NAME		32	// 0x20 used twice, in first/last name order
+#define CFC_COMPANY		33
 #define CFC_DEFAULT_COMM_METHOD	34
 #define CFC_ADDRESS1		35
 #define CFC_ADDRESS2		36
 #define CFC_ADDRESS3		37
-#define CFC_CITY			38
+#define CFC_CITY		38
 #define CFC_PROVINCE		39
 #define CFC_POSTAL_CODE		40
-#define CFC_COUNTRY			41
-#define CFC_TITLE			42  // 0x2a
+#define CFC_COUNTRY		41
+#define CFC_TITLE		42	// 0x2a
 #define CFC_PUBLIC_KEY		43
 #define CFC_GROUP_FLAG		44
 #define CFC_GROUP_LINK		52
-#define CFC_URL				54	// 0x36
-#define CFC_PREFIX			55	// 0x37
+#define CFC_URL			54	// 0x36
+#define CFC_PREFIX		55	// 0x37
 #define CFC_CATEGORY		59	// 0x3B
 #define CFC_HOME_ADDRESS1	61	// 0x3D
 #define CFC_HOME_ADDRESS2	62	// 0x3E
   // If the address 3 isn't mapped then it appears
   // in the same field as address2 with a space
 #define CFC_HOME_ADDRESS3	63 	// 0x3F
-#define CFC_NOTES			64	// 0x40
+#define CFC_NOTES		64	// 0x40
 #define CFC_USER_DEFINED_1	65	// 0x41
 #define CFC_USER_DEFINED_2	66	// 0x42
 #define CFC_USER_DEFINED_3	67	// 0x43
 #define CFC_USER_DEFINED_4	68	// 0x44
 #define CFC_HOME_CITY		69	// 0x45
 #define CFC_HOME_PROVINCE	70	// 0x46
-#define CFC_HOME_POSTAL_CODE 71	// 0x47
-#define CFC_HOME_COUNTRY		72	// 0x48
-#define CFC_IMAGE			77	// 0x4D
+#define CFC_HOME_POSTAL_CODE	71	// 0x47
+#define CFC_HOME_COUNTRY	72	// 0x48
+#define CFC_IMAGE		77	// 0x4D
 #define CFC_INVALID_FIELD	255
 
 // Contact code to field table
@@ -552,7 +552,6 @@ FieldLink<Contact> ContactFieldLinks[] = {
    { CFC_WORK_PHONE_2, "WorkPhone2", 0,0,                 &Contact::WorkPhone2, 0, 0 },
    { CFC_HOME_PHONE_2, "HomePhone2", 0,0,                 &Contact::HomePhone2, 0, 0 },
    { CFC_OTHER_PHONE,  "OtherPhone", 0,0,                 &Contact::OtherPhone, 0, 0 },
-  //{ CFC_NAME,         "Name",       0,0,                 &Contact::Name, 0, 0 },
    { CFC_COMPANY,      "Company",    "o",0,               &Contact::Company, 0, 0 },
    { CFC_DEFAULT_COMM_METHOD,"DefaultCommMethod",0,0,     &Contact::DefaultCommunicationsMethod, 0, 0 },
    { CFC_ADDRESS1,     "Address1",   0,0,                 &Contact::Address1, 0, 0 },
@@ -1028,7 +1027,7 @@ void Message::Dump(std::ostream &os) const
 #define CALFC_RECURRENCE_DATA		0x0c
 #define CALFC_VERSION_DATA		0x10
 #define CALFC_NOTIFICATION_DATA		0x1a
-#define CALFC_FREEBUSY_FLAG     0x1c
+#define CALFC_FREEBUSY_FLAG		0x1c
 #define CALFC_TIMEZONE_CODE		0x1e	// only seems to show up if recurring
 #define CALFC_ALLDAYEVENT_FLAG		0xff
 #define CALFC_END			0xffff
