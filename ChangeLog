@@ -7,6 +7,7 @@ Release: version 0.8 - 2007/05/??
 	- reformatted record.{h,cc} to match the rest of the code,
 		removed commented out code, and removed mention of
 		Outlook from the comments.
+	- updated udev/10-blackberry.rules.Debian for Debian Etch
 2007/05/04
 	- opensync plugin:
 		- partial porting to opensync 0.30 (in progress!)

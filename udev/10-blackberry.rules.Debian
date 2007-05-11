@@ -1,9 +1,9 @@
 # Blackberry devices
 #
 # Older devices that only use 0x0001 (no USB Mass Storage)
-BUS=="usb", SYSFS{idVendor}=="0fca", SYSFS{idProduct}=="0001", SYMLINK+="bb-%k", PROGRAM="/usr/sbin/bcharge"
+BUS=="usb", ACTION=="add", SYSFS{idVendor}=="0fca", SYSFS{idProduct}=="0001", SYMLINK+="bb-%k", GROUP="plugdev", MODE="0660", RUN="/usr/sbin/bcharge"
 #
 # Newer devices with USB Mass Storage, 0x0006 + 0x0004.
-BUS=="usb", SYSFS{idVendor}=="0fca", SYSFS{idProduct}=="0006", SYMLINK+="bb-%k", PROGRAM="/usr/sbin/bcharge"
-BUS=="usb", SYSFS{idVendor}=="0fca", SYSFS{idProduct}=="0004", SYMLINK+="bb-%k"
+BUS=="usb", ACTION=="add", SYSFS{idVendor}=="0fca", SYSFS{idProduct}=="0006", GROUP="plugdev", MODE="0660", RUN="/usr/sbin/bcharge"
+BUS=="usb", ACTION=="add", SYSFS{idVendor}=="0fca", SYSFS{idProduct}=="0004", SYMLINK+="bb-%k", GROUP="plugdev", MODE="0660"
 

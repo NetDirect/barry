@@ -7,7 +7,8 @@ This describes the udev files in this directory and what they are used for:
 	udev rules for running bcharge when you plugin your Blackberry.
 	Creates symlinks as well.
 
-	The .Debian file is for systems that use older versions of udev.
+	The .Debian file is for Debian Etch, and sets the permissions
+	as well.  This should be the only file you need for Debian Etch.
 
 
 10-blackberry.perms
@@ -34,5 +35,5 @@ This describes the udev files in this directory and what they are used for:
 	You will need to create a "barry" group on your system to use this.
 
 
-March 2007
+May 2007
 
