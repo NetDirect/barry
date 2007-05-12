@@ -26,6 +26,7 @@
 #include <stdint.h>
 #include <glib.h>
 #include <sstream>
+#include <opensync/format/opensync_time.h>
 
 
 //////////////////////////////////////////////////////////////////////////////

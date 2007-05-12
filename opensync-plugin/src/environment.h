@@ -23,6 +23,7 @@
 #define __BARRY_SYNC_ENVIRONMENT_H__
 
 #include <opensync/opensync.h>
+#include <opensync/plugin/opensync_plugin_info.h>
 #include <barry/barry.h>
 #include <string>
 #include "idmap.h"
@@ -54,7 +55,7 @@ private:
 	std::string m_Desc;
 
 public:
-	DatabaseSyncState(OSyncMember *pm, const char *description);
+	DatabaseSyncState(OSyncPluginInfo *pi, const char *description);
 	~DatabaseSyncState();
 
 	bool LoadCache();
@@ -73,8 +74,6 @@ public:
 struct BarryEnvironment
 {
 public:
-	OSyncMember *member;
-
 	// user config data
 	std::string m_ConfigData;
 	uint32_t m_pin;
@@ -87,14 +86,15 @@ public:
 	DatabaseSyncState m_CalendarSync, m_ContactsSync;
 
 public:
-	BarryEnvironment(OSyncMember *pm);
+	BarryEnvironment(OSyncPluginInfo *pi);
 	~BarryEnvironment();
 
+	void OpenDesktop(Barry::ProbeResult &result);
 	void Disconnect();
 
 	DatabaseSyncState* GetSyncObject(OSyncChange *change);
 
-	void ParseConfig(const char *data, int size);
+	void ParseConfig(const char *data);
 	void BuildConfig();
 
 	void ClearDirtyFlags(Barry::RecordStateTable &table, const std::string &dbname);

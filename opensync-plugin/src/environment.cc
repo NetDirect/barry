@@ -26,17 +26,18 @@
 #include <fstream>
 #include <sstream>
 #include <iomanip>
+#include <opensync/data/opensync_change.h>
 
 
 //////////////////////////////////////////////////////////////////////////////
 // DatabaseSyncState
 
-DatabaseSyncState::DatabaseSyncState(OSyncMember *pm, const char *description)
+DatabaseSyncState::DatabaseSyncState(OSyncPluginInfo *pi, const char *description)
 	: m_Sync(false),
 	m_Desc(description)
 {
 	m_CacheFilename = m_MapFilename =
-		osync_member_get_configdir(pm);
+		osync_plugin_info_get_configdir(pi);
 	m_CacheFilename += "/barry_" + m_Desc + "_cache.txt";
 	m_MapFilename += "/barry_" + m_Desc + "_idmap.txt";
 }
@@ -145,18 +146,26 @@ unsigned long DatabaseSyncState::GetMappedRecordId(const std::string &uid)
 //////////////////////////////////////////////////////////////////////////////
 // BarryEnvironment Public API
 
-BarryEnvironment::BarryEnvironment(OSyncMember *pm)
-	: member(pm),
-	m_pin(0),
+BarryEnvironment::BarryEnvironment(OSyncPluginInfo *pi)
+	: m_pin(0),
 	m_pCon(0),
-	m_CalendarSync(pm, "calendar"),
-	m_ContactsSync(pm, "contacts")
+	m_CalendarSync(pi, "calendar"),
+	m_ContactsSync(pi, "contacts")
 {
 }
 
 BarryEnvironment::~BarryEnvironment()
 {
 	delete m_pCon;
+}
+
+void BarryEnvironment::OpenDesktop(Barry::ProbeResult &result)
+{
+	if( m_pCon )
+		throw std::logic_error("Desktop already opened");
+
+	m_pCon = new Barry::Controller(result);
+	m_pCon->OpenMode(Barry::Controller::Desktop);
 }
 
 void BarryEnvironment::Disconnect()
@@ -196,8 +205,7 @@ DatabaseSyncState* BarryEnvironment::GetSyncObject(OSyncChange *change)
 {
 	Trace trace("BarryEnvironment::GetSyncObject()");
 
-	OSyncObjType *type = osync_change_get_objtype(change);
-	const char *name = osync_objtype_get_name(type);
+	const char *name = osync_change_get_objtype(change);
 	if( strcmp(name, "event") == 0 ) {
 		return &m_CalendarSync;
 	}
@@ -209,11 +217,11 @@ DatabaseSyncState* BarryEnvironment::GetSyncObject(OSyncChange *change)
 	}
 }
 
-void BarryEnvironment::ParseConfig(const char *data, int size)
+void BarryEnvironment::ParseConfig(const char *data)
 {
 	Trace trace("ParseConfig");
 
-	m_ConfigData.assign(data, size);
+	m_ConfigData = data;
 
 	// The config data should contain:
 	//    - PIN of device to sync with

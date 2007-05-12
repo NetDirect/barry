@@ -2,6 +2,11 @@
 // \file	barry_sync.cc
 //		Opensync module for the USB Blackberry handheld
 //
+//		A lot of this code is based heavily on the example
+//		plugin from the OpenSync project:
+//		http://www.opensync.org/
+//		OpenSync is distributed under LGPLv2.1
+//
 
 /*
     Copyright (C) 2006-2007, Net Direct Inc. (http://www.netdirect.ca/)
@@ -20,6 +25,13 @@
 */
 
 #include <opensync/opensync.h>
+#include <opensync/opensync-context.h>
+#include <opensync/plugin/opensync_plugin.h>
+#include <opensync/plugin/opensync_plugin_info.h>
+#include <opensync/plugin/opensync_plugin_env.h>
+#include <opensync/plugin/opensync_sink.h>
+#include <opensync/version/opensync_version.h>
+#include <opensync/data/opensync_change.h>
 #include <barry/barry.h>
 #include "barry_sync.h"
 #include "environment.h"
@@ -34,12 +46,6 @@
 
 // All functions that are callable from outside must look like C
 extern "C" {
-	static void connect(OSyncContext *ctx);
-	static void get_changeinfo(OSyncContext *ctx);
-	static void batch_commit_vevent20(OSyncContext *ctx,
-			OSyncContext **contexts,
-			OSyncChange **changes);
-
 	osync_bool get_sync_info(OSyncPluginEnv *env, OSyncError **error);
 	int get_version(void);
 }
@@ -56,6 +62,8 @@ void GetChanges(OSyncContext *ctx, BarryEnvironment *env,
 		GetData_t getdata)
 {
 	Trace trace("GetChanges");
+
+	OSyncError *error = NULL;
 
 	// shortcut references
 	using namespace Barry;
@@ -82,16 +90,28 @@ void GetChanges(OSyncContext *ctx, BarryEnvironment *env,
 		if( c == cache.end() ) {
 			// not in cache, this is a new item
 			trace.log("found an ADDED change");
-			change = osync_change_new();
-			osync_change_set_changetype(change, CHANGE_ADDED);
+			change = osync_change_new(&error);
+			if( !change ) {
+				trace.error("osync_change_new() failed");
+				osync_context_report_osyncwarning(ctx, error);
+				osync_error_unref(&error);
+				continue;
+			}
+			osync_change_set_changetype(change, OSYNC_CHANGE_TYPE_ADDED);
 		}
 		else {
 			// in the cache... dirty?
 			if( state.Dirty ) {
 				// modified
 				trace.log("found a MODIFIED change");
-				change = osync_change_new();
-				osync_change_set_changetype(change, CHANGE_MODIFIED);
+				change = osync_change_new(&error);
+				if( !change ) {
+					trace.error("osync_change_new() failed");
+					osync_context_report_osyncwarning(ctx, error);
+					osync_error_unref(&error);
+					continue;
+				}
+				osync_change_set_changetype(change, OSYNC_CHANGE_TYPE_MODIFIED);
 			}
 			else {
 				trace.log("no change detected");
@@ -100,9 +120,6 @@ void GetChanges(OSyncContext *ctx, BarryEnvironment *env,
 
 		// finish filling out the change object
 		if( change ) {
-			osync_change_set_member(change, env->member);
-			osync_change_set_objformat_string(change, FormatName);
-
 			char *uid = g_strdup_printf("%u", state.RecordId);
 			osync_change_set_uid(change, uid);
 			trace.logf("change record ID: %s", uid);
@@ -113,6 +130,16 @@ void GetChanges(OSyncContext *ctx, BarryEnvironment *env,
 			// should be queried later in a "get_data" function
 			char *data = (*getdata)(env, dbId, index);
 			osync_change_set_data(change, data, strlen(data), TRUE);
+
+			OSyncData *odata = osync_data_new(data, 0, env->objformat, &error);
+			if( !odata ) {
+				osync_change_unref(change);
+				osync_context_report_osyncwarning(ctx, error);
+				osync_error_unref(&error);
+				continue;
+			}
+
+			osync_data_set_objtype(odata, osync_objtype_sink_get_name(sink));
 
 			// just report the change via
 			osync_context_report_change(ctx, change);
@@ -139,8 +166,9 @@ void GetChanges(OSyncContext *ctx, BarryEnvironment *env,
 			// register a DELETE, no data
 			trace.log("found DELETE change");
 
+FIXME - this needs to match the same calls as above...
 			OSyncChange *change = osync_change_new();
-			osync_change_set_changetype(change, CHANGE_DELETED);
+			osync_change_set_changetype(change, OSYNC_CHANGE_TYPE_DELETED);
 			osync_change_set_member(change, env->member);
 			osync_change_set_objformat_string(change, FormatName);
 
@@ -167,6 +195,7 @@ void GetChanges(OSyncContext *ctx, BarryEnvironment *env,
 	}
 }
 
+/*
 CommitData_t GetCommitFunction(OSyncChange *change)
 {
 	OSyncObjType *type = osync_change_get_objtype(change);
@@ -290,16 +319,17 @@ bool CommitChange(BarryEnvironment *env,
 		return false;
 	}
 }
+*/
 
 
 
 
 //////////////////////////////////////////////////////////////////////////////
 //
-// OpenSync API
+// OpenSync sink callbacks
 //
 
-static void connect(OSyncContext *ctx)
+static void connect(void *userdata, OSyncPluginInfo *info, OSyncContext *ctx)
 {
 	Trace trace("connect");
 
@@ -308,7 +338,7 @@ static void connect(OSyncContext *ctx)
 		// Each time you get passed a context (which is used to track
 		// calls to your plugin) you can get the data your returned in
 		// initialize via this call:
-		BarryEnvironment *env = (BarryEnvironment *)osync_context_get_plugin_data(ctx);
+		BarryEnvironment *env = (BarryEnvironment *)userdata;
 
 		// Probe for available devices
 		Barry::Probe probe;
@@ -320,8 +350,7 @@ static void connect(OSyncContext *ctx)
 		env->m_ProbeResult = probe.Get(nIndex);
 
 		// Create controller
-		env->m_pCon = new Barry::Controller(env->m_ProbeResult);
-		env->m_pCon->OpenMode(Barry::Controller::Desktop);
+		env->OpenDesktop(env->m_ProbeResult);
 
 		// Success!
 		osync_context_report_success(ctx);
@@ -338,13 +367,13 @@ static void connect(OSyncContext *ctx)
 	}
 }
 
-static void get_changeinfo(OSyncContext *ctx)
+static void get_changes(void *userdata, OSyncPluginInfo *info, OSyncContext *ctx)
 {
-	Trace trace("get_changeinfo");
+	Trace trace("get_changes");
 
 	try {
 
-		BarryEnvironment *env = (BarryEnvironment *)osync_context_get_plugin_data(ctx);
+		BarryEnvironment *env = (BarryEnvironment *)userdata;
 
 		if( env->m_CalendarSync.m_Sync ) {
 			GetChanges(ctx, env, env->m_CalendarSync.m_Cache,
@@ -370,10 +399,13 @@ static void get_changeinfo(OSyncContext *ctx)
 
 // this function will be called exactly once with all objects to write
 // gathered in an array
-static void batch_commit_vevent20(OSyncContext *ctx,
+static void batch_commit_vevent20(void *userdata,
+				  OSyncPluginInfo *info,
+				  OSyncContext *ctx,
 				  OSyncContext **contexts,
 				  OSyncChange **changes)
 {
+/*
 	Trace trace("batch_commit_vevent20");
 
 	BarryEnvironment *env = (BarryEnvironment *)osync_context_get_plugin_data(ctx);
@@ -425,6 +457,7 @@ static void batch_commit_vevent20(OSyncContext *ctx,
 	catch( std::exception &e ) {
 		osync_context_report_error(ctx, OSYNC_ERROR_IO_ERROR, "%s", e.what());
 	}
+*/
 }
 
 static void sync_done(void *userdata, OSyncPluginInfo *info, OSyncContext *ctx)
@@ -501,6 +534,12 @@ static void disconnect(void *userdata, OSyncPluginInfo *info, OSyncContext *ctx)
 	osync_context_report_success(ctx);
 }
 
+
+//////////////////////////////////////////////////////////////////////////////
+//
+// OpenSync plugin callbacks
+//
+
 static void finalize(void *userdata)
 {
 	Trace trace("finalize");
@@ -529,10 +568,10 @@ static void *initialize(OSyncPlugin *plugin, OSyncPluginInfo *info, OSyncError *
 		// inefficiencies.
 		Barry::Init(false);
 
-		std::auto_ptr<BarryEnvironment> env(new BarryEnvironment(member));
+		std::auto_ptr<BarryEnvironment> env(new BarryEnvironment(info));
 
 		// Process the configdata here and set the options on your environment
-		env->ParseConfig(configdata, configsize);
+		env->ParseConfig(configdata);
 
 		// Load all needed cache files
 		if( env->m_CalendarSync.m_Sync ) {
@@ -544,6 +583,12 @@ static void *initialize(OSyncPlugin *plugin, OSyncPluginInfo *info, OSyncError *
 			env->m_ContactsSync.LoadCache();
 			env->m_ContactsSync.LoadMap();
 		}
+
+// FIXME - this is needed down the road, in change processing,
+// and it appears to be sink-related... there's a lot we could
+// do here to organize this into classes, per-sink, etc.
+OSyncFormatEnv *formatenv = osync_plugin_info_get_format_env(info);
+env->objformat = osync_format_env_find_objformat(formatenv, "vevent20");
 
 		// Setup the Calendar sink, using batch commit
 		OSyncObjTypeSink *sink = osync_objtype_sink_new("event", error);
@@ -566,12 +611,19 @@ static void *initialize(OSyncPlugin *plugin, OSyncPluginInfo *info, OSyncError *
 		// We pass the OSyncFileDir object to the sink,
 		// so we dont have to look it up again once
 		// the functions are called
-		osync_objtype_sink_set_functions(sink, functions, env);
+		osync_objtype_sink_set_functions(sink, functions, env.get());
 
 		osync_plugin_info_add_objtype(info, sink);
 
-FIXME - add sink for contacts too;
+// FIXME - add sink for contacts too;
+	// Address Book entries
+//	osync_plugin_accept_objtype(info, "contact");
+//	osync_plugin_accept_objformat(info, "contact", "vcard30", NULL);
+//	osync_plugin_set_batch_commit_objformat(info, "contact", "vcard30",
+//						batch_commit_vcard30);
 
+
+		// return our user data
 		return env.release();
 
 	}
@@ -605,10 +657,25 @@ static osync_bool discover(void *userdata, OSyncPluginInfo *info, OSyncError **e
 	osync_plugin_info_set_version(info, version);
 	osync_version_unref(version);
 
+/*
+	// If you like, you can overwrite the default timeouts of your plugin
+	// The default is set to 60 sec. Note that this MUST NOT be used to
+	// wait for expected timeouts (Lets say while waiting for a webserver).
+	// you should wait for the normal timeout and return a error.
+//	info->timeouts.connect_timeout = 5;
+	// There are more timeouts for the other functions
+*/
+
 	return TRUE;
 }
 
-osync_bool get_sync_info(OSyncPluginEnv *env, OSyncError **error);
+
+//////////////////////////////////////////////////////////////////////////////
+//
+// OpenSync module API
+//
+
+osync_bool get_sync_info(OSyncPluginEnv *env, OSyncError **error)
 {
 	Trace trace("get_sync_info");
 
@@ -632,31 +699,6 @@ osync_bool get_sync_info(OSyncPluginEnv *env, OSyncError **error);
 
 	osync_plugin_env_register_plugin(env, plugin);
 	osync_plugin_unref(plugin);
-
-/*
-	// If you like, you can overwrite the default timeouts of your plugin
-	// The default is set to 60 sec. Note that this MUST NOT be used to
-	// wait for expected timeouts (Lets say while waiting for a webserver).
-	// you should wait for the normal timeout and return a error.
-//	info->timeouts.connect_timeout = 5;
-	// There are more timeouts for the other functions
-
-	//
-	// Register each supported feature
-	//
-
-	// Calendar entries, using batch commit
-	osync_plugin_accept_objtype(info, "event");
-	osync_plugin_accept_objformat(info, "event", "vevent20", NULL);
-	osync_plugin_set_batch_commit_objformat(info, "event", "vevent20",
-						batch_commit_vevent20);
-
-	// Address Book entries
-//	osync_plugin_accept_objtype(info, "contact");
-//	osync_plugin_accept_objformat(info, "contact", "vcard30", NULL);
-//	osync_plugin_set_batch_commit_objformat(info, "contact", "vcard30",
-//						batch_commit_vcard30);
-*/
 
 	return TRUE;
 }

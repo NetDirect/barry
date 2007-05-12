@@ -19,6 +19,11 @@ Release: version 0.8 - 2007/05/??
 	- added menu support to Debian barrybackup-gui package
 	- made the buttons bigger in the backup GUI, as they were too
 		small on Debian Etch
+	- opensync plugin:
+		- more progress in porting to opensync 0.30, heavily
+			based on the example plugin in the opensync
+			svn tree...  this is a work in progress, and so far
+			is incomplete
 2007/05/04
 	- opensync plugin:
 		- partial porting to opensync 0.30 (in progress!)

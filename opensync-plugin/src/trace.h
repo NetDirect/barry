@@ -28,14 +28,14 @@
 class Trace
 {
 	const char *text, *tag;
-	bool error;
+	bool m_error;
 public:
-	explicit Trace(const char *t) : text(t), tag(0), error(false)
+	explicit Trace(const char *t) : text(t), tag(0), m_error(false)
 	{
 		osync_trace(TRACE_ENTRY, "barry_sync: %s", text);
 	}
 
-	Trace(const char *t, const char *tag) : text(t), tag(tag), error(false)
+	Trace(const char *t, const char *tag) : text(t), tag(tag), m_error(false)
 	{
 		osync_trace(TRACE_ENTRY, "barry_sync (%s): %s", tag, text);
 	}
@@ -43,10 +43,10 @@ public:
 	~Trace()
 	{
 		if( tag )
-			osync_trace(error ? TRACE_EXIT_ERROR : TRACE_EXIT,
+			osync_trace(m_error ? TRACE_EXIT_ERROR : TRACE_EXIT,
 				"barry_sync (%s): %s", tag, text);
 		else
-			osync_trace(error ? TRACE_EXIT_ERROR : TRACE_EXIT,
+			osync_trace(m_error ? TRACE_EXIT_ERROR : TRACE_EXIT,
 				"barry_sync: %s", text);
 	}
 
@@ -57,7 +57,7 @@ public:
 
 	void error(const char *t)
 	{
-		error = true;
+		m_error = true;
 		osync_trace(TRACE_ERROR, "barry_sync: %s", t);
 	}
 
@@ -76,7 +76,7 @@ public:
 
 	void errorf(const char *t, ...)
 	{
-		error = true;
+		m_error = true;
 
 		va_list vl;
 		va_start(vl, t);
