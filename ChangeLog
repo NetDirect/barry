@@ -17,6 +17,8 @@ Release: version 0.8 - 2007/05/??
 		barry-util
 		barrybackup-gui
 	- added menu support to Debian barrybackup-gui package
+	- made the buttons bigger in the backup GUI, as they were too
+		small on Debian Etch
 2007/05/04
 	- opensync plugin:
 		- partial porting to opensync 0.30 (in progress!)
