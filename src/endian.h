@@ -34,7 +34,28 @@
 #define htobl(x) x			// for uint32_t
 #define htobll(x) x			// for uint64_t
 #else
-#include <byteswap.h>
+
+//#include <byteswap.h>
+
+// The following is a byteswap.h replacement, for systems like Mac OS X.
+// It was taken from a patch to the GPL software cowpatty, patch
+// by user gm2net.
+// http://www.netstumbler.org/showpost.php?s=79764fd1526e4653d5cb4432225da6ee&p=190494&postcount=29
+
+//#warning "byteswap.h is an unportable GNU extension!  Don't use!"
+
+static inline unsigned short bswap_16(unsigned short x) {
+  return (x>>8) | (x<<8);
+}
+
+static inline unsigned int bswap_32(unsigned int x) {
+  return (bswap_16(x&0xffff)<<16) | (bswap_16(x>>16));
+}
+
+static inline unsigned long long bswap_64(unsigned long long x) {
+  return (((unsigned long long)bswap_32(x&0xffffffffull))<<32) | (bswap_32(x>>32));
+}
+
 #define btohs(x) bswap_16(x)		// for uint16_t
 #define btohl(x) bswap_32(x)		// for uint32_t
 #define btohll(x) bswap_64(x)		// for uint64_t

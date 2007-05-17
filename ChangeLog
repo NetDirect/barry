@@ -3,6 +3,7 @@ Release: version 0.8 - 2007/05/??
 2007/05/17
 	- fixed bug in Debian packaging that put util commands in
 		/bin and /sbin instead of /usr/bin and /usr/sbin
+	- commited byteswap.h replacement code from gm2net
 2007/05/11
 	- applied patches from Brian Edginton, parsing more
 		fields in Contact and Calendar records
