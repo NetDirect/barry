@@ -106,8 +106,9 @@ install-arch:
 	mv $(CURDIR)/debian/everything/usr/lib $(CURDIR)/debian/libbarry-dev/usr
 
 	# Move the command line utils
-	mv $(CURDIR)/debian/everything/usr/bin $(CURDIR)/debian/barry-util
-	mv $(CURDIR)/debian/everything/usr/sbin $(CURDIR)/debian/barry-util
+	mkdir $(CURDIR)/debian/barry-util/usr
+	mv $(CURDIR)/debian/everything/usr/bin $(CURDIR)/debian/barry-util/usr
+	mv $(CURDIR)/debian/everything/usr/sbin $(CURDIR)/debian/barry-util/usr
 	install -d $(CURDIR)/debian/barry-util/usr/share
 	mv $(CURDIR)/debian/everything/usr/share/man $(CURDIR)/debian/barry-util/usr/share
 
