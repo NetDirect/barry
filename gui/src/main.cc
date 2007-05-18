@@ -78,10 +78,31 @@ int main(int argc, char *argv[])
 	old_unexpected_handler = std::set_unexpected(&unexpected_handler);
 	old_terminate_handler = std::set_terminate(&terminate_handler);
 
-	Barry::Init(true);
 	Glib::thread_init();
-	Gtk::Main app(argc, argv);
+
+	using namespace Glib;
+	OptionEntry debug_opt;
+	debug_opt.set_flags(
+		OptionEntry::FLAG_NO_ARG |
+		OptionEntry::FLAG_IN_MAIN |
+		OptionEntry::FLAG_OPTIONAL_ARG);
+	debug_opt.set_short_name('d');
+	debug_opt.set_long_name("debug-output");
+	debug_opt.set_description("Enable protocol debug output to stdout/stderr");
+
+	OptionGroup option_group("barry",
+		"Options specific to the Barry Backup application.",
+		"Options specific to the Barry Backup application.");
+	bool debug_flag = false;
+	option_group.add_entry(debug_opt, debug_flag);
+
+	OptionContext option_context("Backup program for the Blackberry Handheld");
+	option_context.add_group(option_group);
+
+	Gtk::Main app(argc, argv, option_context);
 	Glib::add_exception_handler( sigc::ptr_fun(main_exception_handler) );
+
+	Barry::Init(debug_flag);
 
 	try {
 
