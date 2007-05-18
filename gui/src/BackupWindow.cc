@@ -439,7 +439,6 @@ void BackupWindow::on_help_about()
 
 bool BackupWindow::on_startup()
 {
-	std::cout << "on_startup" << std::endl;
 	if( !m_scanned ) {
 		ScanAndConnect();
 		m_scanned = true;
@@ -455,8 +454,6 @@ void BackupWindow::on_thread_progress()
 
 void BackupWindow::on_thread_error()
 {
-	std::cout << "on_thread_error" << std::endl;
-
 	m_thread_error = true;
 
 	Gtk::MessageDialog msg(m_modeName + " error: " + m_dev.get_last_thread_error());
@@ -465,8 +462,6 @@ void BackupWindow::on_thread_error()
 
 void BackupWindow::on_thread_done()
 {
-	std::cout << "on_thread_done" << std::endl;
-
 	if( !m_thread_error ) {
 		Gtk::MessageDialog msg(m_modeName + " complete!");
 		msg.run();
@@ -479,10 +474,7 @@ void BackupWindow::on_thread_done()
 
 void BackupWindow::on_thread_erase_db()
 {
-	std::cout << "on_thread_erase_db()" << std::endl;
-
 	std::string name = m_dev.GetThreadDBName();
-	std::cout << "Erasing database: " << name << std::endl;
 	m_pDatabaseEntry->set_text("Erasing database: " + name);
 }
 
@@ -499,7 +491,6 @@ void on_showtext()
 
 void on_close()
 {
-	std::cout << "on_close()\n";
 //		response(Gtk::RESPONSE_CLOSE);
 //		signal_delete_event().emit();
 //	Gtk::Main::quit();
