@@ -10,6 +10,10 @@ Release: version 0.8 - 2007/05/??
 			and added a command line option to turn
 			it on if necessary  (--debug-output)
 		- command line option --help now also works
+	- fixed bug in Calendar class where it didn't initialize
+		RecType properly... and cleaned up other RecType
+		code to use the GetDefaultRecType() functions,
+		localizing the constants in one place
 2007/05/11
 	- applied patches from Brian Edginton, parsing more
 		fields in Contact and Calendar records

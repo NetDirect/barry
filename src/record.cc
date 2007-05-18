@@ -583,7 +583,7 @@ FieldLink<Contact> ContactFieldLinks[] = {
 };
 
 Contact::Contact()
-	: RecType(0),
+	: RecType(Contact::GetDefaultRecType()),
 	RecordId(0),
 	m_FirstNameSeen(false)
 {
@@ -733,6 +733,8 @@ void Contact::BuildFields(Data &data, size_t &offset) const
 
 void Contact::Clear()
 {
+	RecType = Contact::GetDefaultRecType();
+
 	Email.clear();
 	Phone.clear();
 	Fax.clear();
@@ -1331,6 +1333,8 @@ void Calendar::BuildFields(Data &data, size_t &offset) const
 
 void Calendar::Clear()
 {
+	RecType = Calendar::GetDefaultRecType();
+
 	AllDayEvent = false;
 	Subject.clear();
 	Notes.clear();
