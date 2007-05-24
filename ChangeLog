@@ -6,6 +6,7 @@ Release: version 0.8 - 2007/05/??
 		- ClassFlag
 		- FreeBusyFlag
 		- Clear() fixes
+	- fixed broken formatting in above patch
 2007/05/17
 	- fixed bug in Debian packaging that put util commands in
 		/bin and /sbin instead of /usr/bin and /usr/sbin

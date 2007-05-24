@@ -743,10 +743,10 @@ void Contact::Clear()
 	MobilePhone.clear();
 	Pager.clear();
 	PIN.clear();
-    Radio.clear();
-    WorkPhone2.clear();
-    HomePhone2.clear();
-    OtherPhone.clear();
+	Radio.clear();
+	WorkPhone2.clear();
+	HomePhone2.clear();
+	OtherPhone.clear();
 	FirstName.clear();
 	LastName.clear();
 	Company.clear();
@@ -760,22 +760,22 @@ void Contact::Clear()
 	Country.clear();
 	Title.clear();
 	PublicKey.clear();
-    URL.clear();
-    Prefix.clear();
-    HomeAddress1.clear();
-    HomeAddress2.clear();
-    HomeAddress3.clear();
+	URL.clear();
+	Prefix.clear();
+	HomeAddress1.clear();
+	HomeAddress2.clear();
+	HomeAddress3.clear();
 	Notes.clear();
-    UserDefined1.clear();
-    UserDefined2.clear();
-    UserDefined3.clear();
-    UserDefined4.clear();
-    HomeCity.clear();
-    HomeProvince.clear();
-    HomePostalCode.clear();
-    HomeCountry.clear();
-    Image.clear();
-    
+	UserDefined1.clear();
+	UserDefined2.clear();
+	UserDefined3.clear();
+	UserDefined4.clear();
+	HomeCity.clear();
+	HomeProvince.clear();
+	HomePostalCode.clear();
+	HomeCountry.clear();
+	Image.clear();
+
  	GroupLinks.clear();
 	Unknowns.clear();
 
@@ -1039,7 +1039,7 @@ void Message::Dump(std::ostream &os) const
 // calendar field codes
 #define CALFC_APPT_TYPE_FLAG		0x01
 #define CALFC_SUBJECT			0x02
-#define CALFC_NOTES			    0x03
+#define CALFC_NOTES			0x03
 #define CALFC_LOCATION			0x04
 #define CALFC_NOTIFICATION_TIME		0x05
 #define CALFC_START_TIME		0x06
@@ -1049,7 +1049,7 @@ void Message::Dump(std::ostream &os) const
 #define CALFC_NOTIFICATION_DATA		0x1a
 #define CALFC_FREEBUSY_FLAG		0x1c
 #define CALFC_TIMEZONE_CODE		0x1e	// only seems to show up if recurring
-#define CALFC_CLASS_FLAG       0x28    // private flag from outlook
+#define CALFC_CLASS_FLAG		0x28    // private flag from outlook
 #define CALFC_ALLDAYEVENT_FLAG		0xff
 #define CALFC_END			0xffff
 
@@ -1147,20 +1147,20 @@ const unsigned char* Calendar::ParseField(const unsigned char *begin,
 			throw Error("Calendar::ParseField: not enough data in time zone code field");
 		}
 		return begin;
-        
-    case CALFC_FREEBUSY_FLAG:
-    	FreeBusyFlag = (FreeBusyFlagType)field->u.raw[0];
-        if( FreeBusyFlag > OutOfOffice ) {
-        	throw Error("Calendar::ParseField: FreeBusyFlag out of range" );
-        }
-        return begin;
-        
-    case CALFC_CLASS_FLAG:
-        ClassFlag = (ClassFlagType)field->u.raw[0];
-        if( ClassFlag > Private ) {
-        	throw Error("Calendar::ParseField: ClassFlag out of range" );
-        }
-        return begin;
+
+	case CALFC_FREEBUSY_FLAG:
+		FreeBusyFlag = (FreeBusyFlagType)field->u.raw[0];
+		if( FreeBusyFlag > OutOfOffice ) {
+			throw Error("Calendar::ParseField: FreeBusyFlag out of range" );
+		}
+		return begin;
+
+	case CALFC_CLASS_FLAG:
+		ClassFlag = (ClassFlagType)field->u.raw[0];
+		if( ClassFlag > Private ) {
+			throw Error("Calendar::ParseField: ClassFlag out of range" );
+		}
+		return begin;
 	}
 
 	// if still not handled, add to the Unknowns list
@@ -1391,8 +1391,8 @@ void Calendar::Dump(std::ostream &os) const
 		"Thu", "Fri", "Sat" };
 	static const char *MonthNames[] = { "Jan", "Feb", "Mar", "Apr",
 		"May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
-    static const char *ClassTypes[] = { "Public", "Confidential", "Private" };
-    static const char *FreeBusy[] = { "Free", "Tentative", "Busy", "Out of Office" };
+	static const char *ClassTypes[] = { "Public", "Confidential", "Private" };
+	static const char *FreeBusy[] = { "Free", "Tentative", "Busy", "Out of Office" };
 
 // FIXME - need a "check all data" function that make sure that all
 // recurrence data is within range.  Then call that before using
@@ -1401,8 +1401,8 @@ void Calendar::Dump(std::ostream &os) const
 	os << "Calendar entry: 0x" << setbase(16) << RecordId
 		<< " (" << (unsigned int)RecType << ")\n";
 	os << "   All Day Event: " << (AllDayEvent ? "yes" : "no") << "\n";
-    os << "   Class: " << ClassTypes[ClassFlag] << "\n";
-    os << "   Free/Busy: " << FreeBusy[FreeBusyFlag] << "\n";
+	os << "   Class: " << ClassTypes[ClassFlag] << "\n";
+	os << "   Free/Busy: " << FreeBusy[FreeBusyFlag] << "\n";
 
 	// cycle through the type table
 	for(	const FieldLink<Calendar> *b = CalendarFieldLinks;
