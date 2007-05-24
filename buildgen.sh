@@ -22,6 +22,17 @@ elif [ "$1" = "clean" ] ; then
 	rm -f build-arch-stamp build-indep-stamp configure-stamp \
 		debian/barry.substvars debian/files \
 		tools/bcharge
+	# clean up ctags trails
+	rm -f src/tags tools/tags examples/tags \
+		gui/src/tags opensync-plugin/src/tags
+elif [ "$1" = "ctags" ] ; then
+	(cd src && ctags -R)
+	(cd tools && ctags -R)
+	(cd examples && ctags -R)
+	(cd gui/src && ctags -R)
+	(cd opensync-plugin/src && ctags -R)
+	# and one with everything
+	ctags -R -f ~/tags-barry --tag-relative=yes
 else
 	autoreconf -if
 	#autoreconf -ifv
