@@ -2,6 +2,10 @@ Release: version 0.8 - 2007/05/??
 ------------------------------------------------------------------------------
 2007/05/24
 	- added ctags generation to buildgen.sh
+	- applied record.{h,cc} fix patch from Brian Edginton
+		- ClassFlag
+		- FreeBusyFlag
+		- Clear() fixes
 2007/05/17
 	- fixed bug in Debian packaging that put util commands in
 		/bin and /sbin instead of /usr/bin and /usr/sbin

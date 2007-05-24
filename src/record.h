@@ -362,11 +362,43 @@ public:
 	std::string Subject;
 	std::string Notes;
 	std::string Location;
-	std::string FreeBusy;
 	time_t NotificationTime;
 	time_t StartTime;
 	time_t EndTime;
 
+    ///
+    /// Free Busy Flag
+    ///
+    /// This lists the available settings found in the device.
+    /// This list is based on information from MS Outlook 2007
+    /// (Free ==0 and Busy == 2)
+    /// This is FBTYPE in RFC2445 and is defined as
+    /// FREE, BUSY, BUSY-UNAVAILABLE and BUSY-TENTATIVE
+    ///
+	enum FreeBusyFlagType {
+		Free = 0,
+		Tentative,
+		Busy,
+		OutOfOffice
+	};
+    	FreeBusyFlagType FreeBusyFlag;
+    
+    ///
+    /// Class Flag
+    ///
+    /// This is also called classification in Evolution and it
+    ///  is the equivilant of public or private in outlook
+    ///  Private is set to 0x2 in Outlook
+    ///  RFC2445 CLASS is PUBLIC, PRIVATE, CONFIDENTIAL
+    ///
+    enum ClassFlagType {
+    	Public = 0,
+    	Confidential,
+    	Private
+    };
+
+    ClassFlagType ClassFlag;
+    
 	///
 	/// Recurring data
 	///
@@ -389,18 +421,8 @@ public:
 					//< set: WeekDays
 	};
     
-	///
-	/// Free Busy Flag
-	///
-	/// This lists the available settings found in the device.
-	///
-	enum FreeBusyFlag {
-		Free = 0, 
-		Tentative,
-		Busy,
-		OutOfOffice
-	};
-
+	
+        
 	bool Recurring;
 	RecurringCodeType RecurringType;
 	unsigned short Interval;	// must be >= 1
