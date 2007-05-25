@@ -2,6 +2,8 @@ Release: version 0.8 - 2007/05/??
 ------------------------------------------------------------------------------
 2007/05/25
 	- renamed template values to more consistent naming scheme
+	- applied memos and tasks patch from Brian Edginton, slightly
+		modified to split into the new separate files system
 2007/05/24
 	- added ctags generation to buildgen.sh
 	- applied record.{h,cc} fix patch from Brian Edginton
