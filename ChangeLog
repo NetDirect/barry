@@ -7,6 +7,9 @@ Release: version 0.8 - 2007/05/??
 		- FreeBusyFlag
 		- Clear() fixes
 	- fixed broken formatting in above patch
+	- refactored record parser classes into separate files for each
+	- changed the ConvertHtoB<> template to inline, as it caused
+		linker errors with the new file layout
 2007/05/17
 	- fixed bug in Debian packaging that put util commands in
 		/bin and /sbin instead of /usr/bin and /usr/sbin
