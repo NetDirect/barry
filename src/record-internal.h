@@ -35,8 +35,8 @@ namespace Barry { class Data; }
 
 namespace Barry {
 
-template <class Record>
-const unsigned char*  ParseCommonFields(Record &rec, const void *begin, const void *end)
+template <class RecordT>
+const unsigned char*  ParseCommonFields(RecordT &rec, const void *begin, const void *end)
 {
 	const unsigned char *b = (const unsigned char*) begin;
 	const unsigned char *e = (const unsigned char*) end;
@@ -47,8 +47,8 @@ const unsigned char*  ParseCommonFields(Record &rec, const void *begin, const vo
 }
 
 // Use templates here to guarantee types are converted in the strictest manner.
-template <class SizeType>
-inline SizeType ConvertHtoB(SizeType s)
+template <class SizeT>
+inline SizeT ConvertHtoB(SizeT s)
 {
 	throw Error("Not implemented.");
 }
@@ -60,16 +60,16 @@ template <> inline uint32_t ConvertHtoB<uint32_t>(uint32_t s) { return htobl(s);
 template <> inline uint64_t ConvertHtoB<uint64_t>(uint64_t s) { return htobll(s); }
 
 
-template <class Record>
+template <class RecordT>
 struct FieldLink
 {
 	int type;
 	char *name;
 	char *ldif;
 	char *objectClass;
-	std::string Record::* strMember;	// FIXME - find a more general
-	Message::Address Record::* addrMember;	// way to do this...
-	time_t Record::* timeMember;
+	std::string RecordT::* strMember;	// FIXME - find a more general
+	Message::Address RecordT::* addrMember;	// way to do this...
+	time_t RecordT::* timeMember;
 };
 
 void BuildField1900(Data &data, size_t &size, uint8_t type, time_t t);

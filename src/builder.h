@@ -71,8 +71,8 @@ public:
 /// Template class for easy creation of specific protocol packet builder
 /// objects.  This template takes the following template arguments:
 ///
-///	- Record: One of the record classes in record.h
-///	- Storage: A custom storage functor class.  An object of this type
+///	- RecordT: One of the record classes in record.h
+///	- StorageT: A custom storage functor class.  An object of this type
 ///		will be called as a function with empty Record as an
 ///		argument.  The storage class is expected to fill the
 ///		record object in preparation for building the packet
@@ -85,23 +85,23 @@ public:
 /// FIXME
 /// </pre>
 ///
-template <class Record, class Storage>
+template <class RecordT, class StorageT>
 class RecordBuilder : public Builder
 {
-	Storage *m_storage;
+	StorageT *m_storage;
 	bool m_owned;
-	Record m_rec;
+	RecordT m_rec;
 
 public:
 	/// Constructor that references an externally managed storage object.
-	RecordBuilder(Storage &storage)
+	RecordBuilder(StorageT &storage)
 		: m_storage(&storage), m_owned(false) {}
 
 	/// Constructor that references a locally managed storage object.
 	/// The pointer passed in will be stored, and freed when this class
 	/// is destroyed.  It is safe to call this constructor with
 	/// a 'new'ly created storage object.
-	RecordBuilder(Storage *storage)
+	RecordBuilder(StorageT *storage)
 		: m_storage(storage), m_owned(true) {}
 
 	~RecordBuilder()

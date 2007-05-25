@@ -1,5 +1,7 @@
 Release: version 0.8 - 2007/05/??
 ------------------------------------------------------------------------------
+2007/05/25
+	- renamed template values to more consistent naming scheme
 2007/05/24
 	- added ctags generation to buildgen.sh
 	- applied record.{h,cc} fix patch from Brian Edginton

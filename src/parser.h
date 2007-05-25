@@ -79,8 +79,8 @@ public:
 /// Template class for easy creation of specific parser objects.  This template
 /// takes the following template arguments:
 ///
-///	- Record: One of the record parser classes in record.h
-///	- Storage: A custom storage functor class.  An object of this type
+///	- RecordT: One of the record parser classes in record.h
+///	- StorageT: A custom storage functor class.  An object of this type
 ///		will be called as a function with parsed Record as an
 ///		argument.  This happens on the fly as the data is retrieved
 ///		from the device over USB, so it should not block forever.
@@ -106,23 +106,23 @@ public:
 /// con.LoadDatabase(con.GetDBID("Address Book"), parser);
 /// </pre>
 ///
-template <class Record, class Storage>
+template <class RecordT, class StorageT>
 class RecordParser : public Parser
 {
-	Storage *m_store;
+	StorageT *m_store;
 	bool m_owned;
-	Record m_rec;
+	RecordT m_rec;
 
 public:
 	/// Constructor that references an externally managed storage object.
-	RecordParser(Storage &storage)
+	RecordParser(StorageT &storage)
 		: m_store(&storage), m_owned(false) {}
 
 	/// Constructor that references a locally managed storage object.
 	/// The pointer passed in will be stored, and freed when this class
 	/// is destroyed.  It is safe to call this constructor with
 	/// a 'new'ly created storage object.
-	RecordParser(Storage *storage)
+	RecordParser(StorageT *storage)
 		: m_store(storage), m_owned(true) {}
 
 	~RecordParser()
@@ -133,7 +133,7 @@ public:
 
 	virtual void Clear()
 	{
-		m_rec = Record();
+		m_rec = RecordT();
 	}
 
 	virtual void SetIds(uint8_t RecType, uint32_t UniqueId)

@@ -45,22 +45,22 @@
 namespace boost {
 namespace serialization {
 
-template <class Archive>
-void serialize(Archive &ar, Barry::UnknownField &uf, const unsigned int ver)
+template <class ArchiveT>
+void serialize(ArchiveT &ar, Barry::UnknownField &uf, const unsigned int ver)
 {
 	ar & make_nvp("type", uf.type);
 	ar & make_nvp("data", uf.data);
 }
 
-template <class Archive>
-void serialize(Archive &ar, Barry::Contact::GroupLink &g, const unsigned int ver)
+template <class ArchiveT>
+void serialize(ArchiveT &ar, Barry::Contact::GroupLink &g, const unsigned int ver)
 {
 	ar & make_nvp("Link", g.Link);
 	ar & make_nvp("Unknown", g.Unknown);
 }
 
-template <class Archive>
-void serialize(Archive &ar, Barry::Contact &c, const unsigned int ver)
+template <class ArchiveT>
+void serialize(ArchiveT &ar, Barry::Contact &c, const unsigned int ver)
 {
 	ar & make_nvp("RecordId", c.RecordId);
 
@@ -93,15 +93,15 @@ void serialize(Archive &ar, Barry::Contact &c, const unsigned int ver)
 	}
 }
 
-template <class Archive>
-void serialize(Archive &ar, Barry::Message::Address &a, const unsigned int ver)
+template <class ArchiveT>
+void serialize(ArchiveT &ar, Barry::Message::Address &a, const unsigned int ver)
 {
 	ar & make_nvp("Name", a.Name);
 	ar & make_nvp("Email", a.Email);
 }
 
-template <class Archive>
-void serialize(Archive &ar, Barry::Message &m, const unsigned int ver)
+template <class ArchiveT>
+void serialize(ArchiveT &ar, Barry::Message &m, const unsigned int ver)
 {
 	ar & make_nvp("From", m.From);
 	ar & make_nvp("To", m.To);
@@ -114,8 +114,8 @@ void serialize(Archive &ar, Barry::Message &m, const unsigned int ver)
 	}
 }
 
-template <class Archive>
-void serialize(Archive &ar, Barry::Calendar &c, const unsigned int ver)
+template <class ArchiveT>
+void serialize(ArchiveT &ar, Barry::Calendar &c, const unsigned int ver)
 {
 	ar & make_nvp("RecordId", c.RecordId);
 
@@ -135,8 +135,8 @@ void serialize(Archive &ar, Barry::Calendar &c, const unsigned int ver)
 	}
 }
 
-template <class Archive>
-void serialize(Archive &ar, Barry::ServiceBook &c, const unsigned int ver)
+template <class ArchiveT>
+void serialize(ArchiveT &ar, Barry::ServiceBook &c, const unsigned int ver)
 {
 	ar & make_nvp("RecordId", c.RecordId);
 
