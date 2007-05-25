@@ -16,6 +16,7 @@ Release: version 0.8 - 2007/05/??
 	- added support for Memos and Tasks to tools/btool.cc, based on
 		Brian Edginton's patch
 		(currently commented out, for Boost library reasons):
+	- added doc/CommitPolicy.txt
 2007/05/24
 	- added ctags generation to buildgen.sh
 	- applied record.{h,cc} fix patch from Brian Edginton

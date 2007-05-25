@@ -1,0 +1,30 @@
+Date: Fri, 25 May 2007 17:39:27 -0400
+From: Chris Frey <cdfrey@foursquare.net>
+To: barry-devel@lists.sourceforge.net
+Subject: CVS commit policy
+
+Hi folks,
+
+For those of you sending patches, this is probably good to know:
+
+In order to track copyrights properly, so I can go back in the history
+and see who sent what patch, I try, whenever possible, to commit
+the *exact* patch I receive, even if it temporarily breaks the tree,
+or if there are things I don't agree with and plan to change later.
+
+For these commits, I use the words "applied patch from X" in the Changelog
+and the CVS commit message.  And then I change whatever I think needs
+changing, and commit that later.
+
+In this way, history is preserved, in case it is needed down the road.
+
+Also, if you see your raw patch committed, there may be a followup
+commit coming after.  Just to be aware of.
+
+And again, a huge thank you to everyone who has sent patches!
+If you have sent a patch and didn't get into the AUTHORS file, or
+are unhappy with what is there (perhaps an email address change,
+or whatever) just let me know.
+
+- Chris
+
