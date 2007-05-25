@@ -64,8 +64,10 @@ include_barry_HEADERS = barry.h \
 	record.h \
 	r_calendar.h \
 	r_contact.h \
+	r_memo.h \
 	r_message.h \
 	r_servicebook.h \
+	r_task.h \
 	socket.h \
 	time.h \
 	usbwrap.h \
@@ -87,8 +89,10 @@ libbarry_la_SOURCES = time.cc \
 	record.cc \
 	r_calendar.cc \
 	r_contact.cc \
+	r_memo.cc \
 	r_message.cc \
 	r_servicebook.cc \
+	r_task.cc \
 	packet.cc packet.h \
 	controller.cc \
 	version.cc \

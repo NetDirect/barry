@@ -1,30 +1,62 @@
-class Tasks
+///
+/// \file	r_task.h
+///		Record parsing class for the task database.
+///
+
+/*
+    Copyright (C) 2005-2007, Net Direct Inc. (http://www.netdirect.ca/)
+    Copyright (C) 2007, Brian Edginton
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+    See the GNU General Public License in the COPYING file at the
+    root directory of this project for more details.
+*/
+
+#ifndef __BARRY_RECORD_TASK_H__
+#define __BARRY_RECORD_TASK_H__
+
+#include "record.h"
+#include <vector>
+#include <string>
+#include <stdint.h>
+
+namespace Barry {
+
+class Task
 {
 public:
-	typedef std::vector<UnknownField>       UnknownsType;
+	typedef std::vector<UnknownField>			UnknownsType;
 	uint8_t RecType;
-    uint32_t RecordId;
-    
-    uint8_t TaskType;
-    std::string Summary;
-    std::string Notes;
-    std::string Categories;
-    std::string UID;
-    
-    time_t StartTime;
-    time_t DueTime;
-    time_t AlarmTime;
-    int TimeZoneCode;
-    
-    enum AlarmFlagType
-    {
-    	Date = 1,
-    	Relative
-    };
-    AlarmFlagType AlarmType;
-    
-    unsigned short Interval;
-    enum RecurringCodeType {
+	uint32_t RecordId;
+
+	uint8_t TaskType;
+	std::string Summary;
+	std::string Notes;
+	std::string Categories;
+	std::string UID;
+
+	time_t StartTime;
+	time_t DueTime;
+	time_t AlarmTime;
+	int TimeZoneCode;
+
+	enum AlarmFlagType
+	{
+		Date = 1,
+		Relative
+	};
+	AlarmFlagType AlarmType;
+
+	unsigned short Interval;
+	enum RecurringCodeType {
 		Day = 1,		//< eg. every day
 					//< set: nothing
 		MonthByDate = 3,	//< eg. every month on the 12th
@@ -39,46 +71,46 @@ public:
 		Week = 12		//< eg. every week on Mon and Fri
 					//< set: WeekDays
 	};
-    RecurringCodeType RecurringType;
+	RecurringCodeType RecurringType;
 	time_t RecurringEndTime;	
-		unsigned short			// recurring details, depending on type
+	unsigned short			// recurring details, depending on type
 		DayOfWeek,		// 0-6
 		WeekOfMonth,		// 1-5
 		DayOfMonth,		// 1-31
 		MonthOfYear;		// 1-12
 	unsigned char WeekDays;		// bitmask, bit 0 = sunday
-    
-    int ClassType;
-    enum PriorityFlagType
-    {
-    	High = 0,
-    	Normal,
-    	Low
-    };
-    PriorityFlagType PriorityFlag;
-    
-    enum StatusFlagType
-    {
-    	NotStarted = 0,
-    	InProgress,
-    	Completed,
-    	Waiting,
-    	Deferred
-    };
-    StatusFlagType StatusFlag;
-    
-    bool Recurring;
-    bool Perpetual;
-    bool DueDateFlag;	// true if due date is set
 
-    UnknownsType Unknowns;
+	int ClassType;
+	enum PriorityFlagType
+	{
+		High = 0,
+		Normal,
+		Low
+	};
+	PriorityFlagType PriorityFlag;
+
+	enum StatusFlagType
+	{
+		NotStarted = 0,
+		InProgress,
+		Completed,
+		Waiting,
+		Deferred
+	};
+	StatusFlagType StatusFlag;
+
+	bool Recurring;
+	bool Perpetual;
+	bool DueDateFlag;	// true if due date is set
+
+	UnknownsType Unknowns;
 
 public:	
-	Tasks();
-	~Tasks();
-	
-    const unsigned char* ParseField(const unsigned char *begin,
-        const unsigned char *end);	
+	Task();
+	~Task();
+
+	const unsigned char* ParseField(const unsigned char *begin,
+		const unsigned char *end);	
 	void ParseRecurrenceData(const void *data);
 	void BuildRecurrenceData(void *data);
 	uint8_t GetRecType() const { return RecType; }
@@ -95,9 +127,15 @@ public:
 	// database name
 	static const char * GetDBName() { return "Tasks"; }
 	static uint8_t GetDefaultRecType() { return 2; }
-	
+
 };
-inline std::ostream& operator<<(std::ostream &os, const Tasks &msg) {
+
+inline std::ostream& operator<<(std::ostream &os, const Task &msg) {
 	msg.Dump(os);
 	return os;
 }
+
+} // namespace Barry
+
+#endif
+
