@@ -4,6 +4,18 @@ Release: version 0.8 - 2007/05/??
 	- renamed template values to more consistent naming scheme
 	- applied memos and tasks patch from Brian Edginton, slightly
 		modified to split into the new separate files system
+	- changes to memos and tasks classes:
+		- reformatted the code to match coding style
+			(come on Brian) :-)
+		- added copyright notice
+		- changed class to singular (Memo, not Memos)
+		- placed in Barry namespace
+		- added #ifdef header protectors
+		- added new files to Makefile.am
+		- added new r_*.h headers to record.h
+	- added support for Memos and Tasks to tools/btool.cc, based on
+		Brian Edginton's patch
+		(currently commented out, for Boost library reasons):
 2007/05/24
 	- added ctags generation to buildgen.sh
 	- applied record.{h,cc} fix patch from Brian Edginton
