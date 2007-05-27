@@ -4,7 +4,8 @@ Required functionality:
 	+ restore
 	- edit
 
-
+- fix configure script for GUI, to check for libtar and zlib and fail
+	if not found
 - add option in config to always pop up a database selection box
 	when pressing Backup or Restore buttons, so they can be
 	confirmed each time instead of relying on the config

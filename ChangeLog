@@ -1,5 +1,7 @@
 Release: version 0.8 - 2007/05/??
 ------------------------------------------------------------------------------
+2007/05/27
+	- added item to gui/TODO
 2007/05/25
 	- renamed template values to more consistent naming scheme
 	- applied memos and tasks patch from Brian Edginton, slightly
