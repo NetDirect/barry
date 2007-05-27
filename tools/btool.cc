@@ -218,7 +218,7 @@ auto_ptr<Parser> GetParser(const string &name, const string &filename)
 			new RecordParser<ServiceBook, Store<ServiceBook> > (
 				new Store<ServiceBook>(filename, false)));
 	}
-/*
+
 	else if( name == "Memos" ) {
 		return auto_ptr<Parser>(
 			new RecordParser<Memo, Store<Memo> > (
@@ -229,7 +229,6 @@ auto_ptr<Parser> GetParser(const string &name, const string &filename)
 			new RecordParser<Task, Store<Task> > (
 				new Store<Task>(filename, false )));
 	}
-*/
 	else {
 		// unknown database, use null parser
 		return auto_ptr<Parser>( new DataDumpParser );

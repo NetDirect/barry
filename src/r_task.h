@@ -123,6 +123,7 @@ public:
 	void Clear();
 
 	void Dump(std::ostream &os) const;
+	bool operator<(const Task &other) const { return Summary < other.Summary; }
 
 	// database name
 	static const char * GetDBName() { return "Tasks"; }
