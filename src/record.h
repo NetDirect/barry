@@ -174,10 +174,16 @@ struct UnknownField
 };
 std::ostream& operator<< (std::ostream &os, const std::vector<UnknownField> &unknowns);
 
-typedef struct Address
+struct Address
 {
 	std::string Name;
 	std::string Email;
+
+	void clear()
+	{
+		Name.clear();
+		Email.clear();
+	}
 };
 
 /// \addtogroup RecordParserClasses

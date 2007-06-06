@@ -42,7 +42,6 @@ namespace Barry {
 class Message
 {
 public:
-
 	Address From;
 	Address To;
 	Address Cc;

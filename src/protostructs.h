@@ -78,6 +78,7 @@ struct CommonField
 
 		GroupLink	link;
 		MessageAddress	addr;
+		uint32_t	uint32;
 		int32_t		min1900;
 		uint16_t	code;
 		uint8_t		raw[1];

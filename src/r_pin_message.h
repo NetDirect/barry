@@ -43,7 +43,6 @@ namespace Barry {
 class PINMessage
 {
 public:
-
 	Address From;
 	Address To;
 	Address Cc;

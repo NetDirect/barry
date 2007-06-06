@@ -55,19 +55,19 @@ namespace Barry {
 #define PNMFC_CC		0x02		// ditto
 #define PNMFC_BCC		0x03		// ditto
 #define PNMFC_FROM		0x05
-#define PNMFC_SUBJECT	0x0b
+#define PNMFC_SUBJECT		0x0b
 #define PNMFC_BODY		0x0c
-#define PNMFC_RECORDID	0x4b	// Internal Message ID, mimics header RecNumber
+#define PNMFC_RECORDID		0x4b	// Internal Message ID, mimics header RecNumber
 #define PNMFC_END		0xffff
 
 FieldLink<PINMessage> PINMessageFieldLinks[] = {
-		{ PNMFC_TO,		"To",		0, 0,    0, &PINMessage::To,  0 },
-		{ PNMFC_CC,		"Cc",		0, 0,    0, &PINMessage::Cc, 0 },
-		{ PNMFC_BCC,	"Bcc",		0, 0,    0, &PINMessage::Bcc, 0 },
-		{ PNMFC_FROM,	"From",		0, 0,    0, &PINMessage::From, 0 },
-		{ PNMFC_SUBJECT	"Subject",	0, 0,    &PINMessage::Subject, 0, 0 },
-		{ PNMFC_BODY,	"Body",		0, 0,    &PINMessage::Body, 0, 0 },
-		{ PNMFC_END,	"End of List",	0, 0,    0, 0, 0 }
+   { PNMFC_TO,      "To",          0, 0,    0, &PINMessage::To,  0 },
+   { PNMFC_CC,      "Cc",          0, 0,    0, &PINMessage::Cc, 0 },
+   { PNMFC_BCC,     "Bcc",         0, 0,    0, &PINMessage::Bcc, 0 },
+   { PNMFC_FROM,    "From",        0, 0,    0, &PINMessage::From, 0 },
+   { PNMFC_SUBJECT, "Subject",     0, 0,    &PINMessage::Subject, 0, 0 },
+   { PNMFC_BODY,    "Body",        0, 0,    &PINMessage::Body, 0, 0 },
+   { PNMFC_END,     "End of List", 0, 0,    0, 0, 0 }
 };
 
 PINMessage::PINMessage()
@@ -119,19 +119,21 @@ const unsigned char* PINMessage::ParseField(const unsigned char *begin,
 			}
 		}
 	}
+
 	// handle special cases
 	switch( field->type )
 	{
 	case PNMFC_RECORDID:
-		MessageRecordId = field->u.min1900; // not really time, but we need easy access to an int
+		MessageRecordId = field->u.uint32;
 		return begin;
 	}
+
 	// if still not handled, add to the Unknowns list
 	UnknownField uf;
 	uf.type = field->type;
 	uf.data.assign((const char*)field->u.raw, btohs(field->size));
 	Unknowns.push_back(uf);
-	
+
 	return begin;
 }
 
@@ -155,6 +157,10 @@ void PINMessage::SetIds(uint8_t Type, uint32_t Id)
 void PINMessage::ParseHeader(const Data &data, size_t &offset)
 {
 	// we skip the "header" since we don't know what to do with it yet
+	// FIXME - we are using a Message (email) record header size
+	// for a PIN Message record... this is not necessarily guaranteed
+	// to be the same... someday we could use some more info on
+	// the message record header and pin message record header
 	offset += MESSAGE_RECORD_HEADER_SIZE;
 }
 
@@ -177,23 +183,15 @@ void PINMessage::BuildFields(Data &data, size_t &offset) const
 
 void PINMessage::Clear()
 {
-
-	From.Name.clear();
-	From.Email.clear();
-
-	To.Name.clear();
-	To.Email.clear();
-
-	Cc.Name.clear();
-	Cc.Email.clear();
-	
-	Bcc.Name.clear();
-	Bcc.Email.clear();
+	From.clear();
+	To.clear();
+	Cc.clear();
+	Bcc.clear();
 
 	Subject.clear();
 	Body.clear();
 	MessageRecordId = 0;
-	
+
 	Unknowns.clear();
 }
 
@@ -213,13 +211,13 @@ void PINMessage::Dump(std::ostream &os) const
 	if( Bcc.Name.size()) {
 		os << "    Bcc: " << Bcc.Name << " <" << Bcc.Email << ">\n";
 	}
-	
+
 	if( Subject.size() )
 		os << "    Subject: " << Subject << "\n";
 	else 
 		os << "    Subject: <>\n";
 	os << "\n";
-	
+
 	for(	std::string::const_iterator i = Body.begin();
 		i != Body.end() && *i;
 		i++)
@@ -230,7 +228,7 @@ void PINMessage::Dump(std::ostream &os) const
 			os << *i;
 	}
 	os << "\n";
-	
+
 	os << Unknowns;
 	os << "\n\n";
 }

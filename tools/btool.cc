@@ -222,17 +222,17 @@ auto_ptr<Parser> GetParser(const string &name, const string &filename)
 	else if( name == "Memos" ) {
 		return auto_ptr<Parser>(
 			new RecordParser<Memo, Store<Memo> > (
-				new Store<Memo>(filename, false )));
+				new Store<Memo>(filename, false)));
 	}
 	else if( name == "Tasks" ) {
 		return auto_ptr<Parser>(
 			new RecordParser<Task, Store<Task> > (
-				new Store<Task>(filename, false )));
+				new Store<Task>(filename, false)));
 	}
 	else if( name == "PIN Messages" ) {
 		return auto_ptr<Parser>(
-				new RecordParser<PINMessage, Store<PINMessage> > (
-						new Store<PINMessage>(filename, false )));
+			new RecordParser<PINMessage, Store<PINMessage> > (
+				new Store<PINMessage>(filename, false)));
 	}
 	else {
 		// unknown database, use null parser

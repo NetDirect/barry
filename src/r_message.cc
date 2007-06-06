@@ -52,21 +52,21 @@ std::ostream& operator<<(std::ostream &os, const Address &msga) {
 // Email / message field codes
 #define MFC_TO			0x01		// can occur multiple times
 #define MFC_CC			0x02		// ditto
-#define MFC_BCC		0x03		// ditto
+#define MFC_BCC			0x03		// ditto
 #define MFC_SENDER		0x04
 #define MFC_FROM		0x05
-#define MFC_REPLY_TO	0x06
+#define MFC_REPLY_TO		0x06
 #define MFC_SUBJECT		0x0b
 #define MFC_BODY		0x0c
-#define MFC_ATTACHMENT	0x16
+#define MFC_ATTACHMENT		0x16
 #define MFC_END			0xffff
 
 FieldLink<Message> MessageFieldLinks[] = {
    { MFC_TO,            "To",           0, 0,    0, &Message::To, 0 },
    { MFC_CC,            "Cc",           0, 0,    0, &Message::Cc, 0 },
-   { MFC_BCC,          "Bcc",         0, 0,    0, &Message::Bcc, 0 },
-   { MFC_SENDER,    "Sender",       0, 0,    0, &Message::Sender, 0 },
-   { MFC_FROM,        "From",         0, 0,    0, &Message::From, 0 },
+   { MFC_BCC,           "Bcc",          0, 0,    0, &Message::Bcc, 0 },
+   { MFC_SENDER,        "Sender",       0, 0,    0, &Message::Sender, 0 },
+   { MFC_FROM,          "From",         0, 0,    0, &Message::From, 0 },
    { MFC_REPLY_TO,      "ReplyTo",      0, 0,    0, &Message::ReplyTo, 0 },
    { MFC_SUBJECT,       "Subject",      0, 0,    &Message::Subject, 0, 0 },
    { MFC_BODY,          "Body",         0, 0,    &Message::Body, 0, 0 },
@@ -175,18 +175,12 @@ void Message::BuildFields(Data &data, size_t &offset) const
 
 void Message::Clear()
 {
-	From.Name.clear();
-	From.Email.clear();
-	To.Name.clear();
-	To.Email.clear();
-	Cc.Name.clear();
-	Cc.Email.clear();
-	Bcc.Email.clear();
-	Bcc.Name.clear();
-	Sender.Name.clear();
-	Sender.Email.clear();
-	ReplyTo.Name.clear();
-	ReplyTo.Email.clear();
+	From.clear();
+	To.clear();
+	Cc.clear();
+	Bcc.clear();
+	Sender.clear();
+	ReplyTo.clear();
 	Subject.clear();
 	Body.clear();
 	Attachment.clear();

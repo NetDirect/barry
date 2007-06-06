@@ -2,6 +2,16 @@ Release: version 0.8 - 2007/05/??
 ------------------------------------------------------------------------------
 2007/06/06
 	- applied Brian Edginton's PIN message patch
+	- changes to PIN message patch:
+		- fixed missing backslash in src/Makefile.am
+		- fixed tab alignment throughout
+		- removed typedef from Address struct
+		- added clear() to Address... might as well, if it it is
+			going to be a standalone type
+		- fixed missing comma in PINMessageFieldLinks table
+		- changed MessageRecordId in PINMessage to load from a new
+			uint32_t field in CommonField, instead of piggy
+			backing on a field for other use
 2007/05/27
 	- added item to gui/TODO
 	- applied Brian Edginton's s11n-boost.h patch

@@ -228,7 +228,7 @@ void serialize(ArchiveT &ar, Barry::PINMessage &p, const unsigned int ver)
 	ar & make_nvp("Bcc", p.Bcc);
 	ar & make_nvp("Subject", p.Subject);
 	ar & make_nvp("Body", p.Body);
-	
+
 	if(ver < BARRY_POD_MAP_VERSION) {
 		ar & make_nvp("Unknowns", p.Unknowns);
 	}
