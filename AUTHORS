@@ -13,7 +13,10 @@ Contributors (code and otherwise) in alphabetical order by last name:
 		- OpenBSD port maintainer
 	Brian Edginton <edge@edginton.net>
 		- Contact and Calendar record patches, parsing unknown fields
-		- Memo and Task record classes
+		- New record parser classes:
+			- Memos
+			- PIN Messages
+			- Tasks
 	Troy Engel <tengel@users.sourceforge.net>
 		- usb captures on Windows XP for the BlackBerry Pearl
 		- udev script updates

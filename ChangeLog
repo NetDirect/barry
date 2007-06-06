@@ -19,6 +19,7 @@ Release: version 0.8 - 2007/05/??
 		MessageRecordId is stored in the record it self as
 		a common field... added RecType and RecordId to
 		PIN Message so that we store both of these
+	- updated AUTHORS
 2007/05/27
 	- added item to gui/TODO
 	- applied Brian Edginton's s11n-boost.h patch
