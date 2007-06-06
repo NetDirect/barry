@@ -12,6 +12,13 @@ Release: version 0.8 - 2007/05/??
 		- changed MessageRecordId in PINMessage to load from a new
 			uint32_t field in CommonField, instead of piggy
 			backing on a field for other use
+	- did some testing and found that PINMessage's MessageRecordId
+		is the same as the RecordId given through the SetIds()
+		API... but these Id's are duplicated in the protocol...
+		RecordId is stored in the protocol header, while
+		MessageRecordId is stored in the record it self as
+		a common field... added RecType and RecordId to
+		PIN Message so that we store both of these
 2007/05/27
 	- added item to gui/TODO
 	- applied Brian Edginton's s11n-boost.h patch

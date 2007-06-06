@@ -137,23 +137,6 @@ const unsigned char* PINMessage::ParseField(const unsigned char *begin,
 	return begin;
 }
 
-uint8_t PINMessage::GetRecType() const
-{
-	throw std::logic_error("PINMessage::GetRecType() called, and not supported by the USB protocol.  Should never get called.");
-}
-
-// empty API, not required by protocol
-uint32_t PINMessage::GetUniqueId() const
-{
-	throw std::logic_error("PINMessage::GetUniqueId() called, and not supported by the USB protocol.  Should never get called.");
-}
-
-// empty API, not required by protocol
-void PINMessage::SetIds(uint8_t Type, uint32_t Id)
-{
-	// accept it without complaining, just do nothing
-}
-
 void PINMessage::ParseHeader(const Data &data, size_t &offset)
 {
 	// we skip the "header" since we don't know what to do with it yet

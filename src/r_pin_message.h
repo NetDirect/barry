@@ -43,13 +43,22 @@ namespace Barry {
 class PINMessage
 {
 public:
+	uint8_t RecType;
+	uint32_t RecordId;
+
 	Address From;
 	Address To;
 	Address Cc;
 	Address Bcc;
 	std::string Subject;
 	std::string Body;
-	uint32_t MessageRecordId;
+	uint32_t MessageRecordId;	// this happens to be the same as
+					// RecordId in my (CDF) testing,
+					// but interestingly, it is stored
+					// as a field *inside* the record,
+					// and not as part of the header...
+					// in effect, this record ID occurs
+					// twice in the protocol
 	std::vector<UnknownField> Unknowns;
 
 public:
@@ -61,9 +70,9 @@ public:
 	~PINMessage();
 
 	// Parser / Builder API (see parser.h / builder.h)
-	uint8_t GetRecType() const;
-	uint32_t GetUniqueId() const;	// empty API, not required by protocol
-	void SetIds(uint8_t Type, uint32_t Id);	// empty API, not required by protocol
+	uint8_t GetRecType() const { return RecType; }
+	uint32_t GetUniqueId() const { return RecordId; }
+	void SetIds(uint8_t Type, uint32_t Id) { RecType = Type; RecordId = Id; }
 	void ParseHeader(const Data &data, size_t &offset);
 	void ParseFields(const Data &data, size_t &offset);
 	void BuildHeader(Data &data, size_t &offset) const;
