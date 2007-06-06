@@ -68,7 +68,7 @@ struct FieldLink
 	char *ldif;
 	char *objectClass;
 	std::string RecordT::* strMember;	// FIXME - find a more general
-	Message::Address RecordT::* addrMember;	// way to do this...
+	Address RecordT::* addrMember;	// way to do this...
 	time_t RecordT::* timeMember;
 };
 

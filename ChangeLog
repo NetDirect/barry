@@ -1,5 +1,7 @@
 Release: version 0.8 - 2007/05/??
 ------------------------------------------------------------------------------
+2007/06/06
+	- applied Brian Edginton's PIN message patch
 2007/05/27
 	- added item to gui/TODO
 	- applied Brian Edginton's s11n-boost.h patch

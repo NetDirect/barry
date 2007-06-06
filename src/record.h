@@ -174,6 +174,11 @@ struct UnknownField
 };
 std::ostream& operator<< (std::ostream &os, const std::vector<UnknownField> &unknowns);
 
+typedef struct Address
+{
+	std::string Name;
+	std::string Email;
+};
 
 /// \addtogroup RecordParserClasses
 ///		Parser and data storage classes.  These classes take a
@@ -193,6 +198,7 @@ std::ostream& operator<< (std::ostream &os, const std::vector<UnknownField> &unk
 #include "r_message.h"
 #include "r_servicebook.h"
 #include "r_task.h"
+#include "r_pin_message.h"
 
 #endif
 

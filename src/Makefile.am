@@ -68,6 +68,7 @@ include_barry_HEADERS = barry.h \
 	r_message.h \
 	r_servicebook.h \
 	r_task.h \
+	r_pin_message.h \
 	socket.h \
 	time.h \
 	usbwrap.h \
@@ -93,6 +94,7 @@ libbarry_la_SOURCES = time.cc \
 	r_message.cc \
 	r_servicebook.cc \
 	r_task.cc \
+	r_pin_message.cc
 	packet.cc packet.h \
 	controller.cc \
 	version.cc \

@@ -1,10 +1,11 @@
 ///
-/// \file	r_message.h
-///		Blackberry database record parser class for email records.
+/// \file	r_pin_message.h
+///		Blackberry database record parser class for pin message records.
 ///
 
 /*
     Copyright (C) 2005-2007, Net Direct Inc. (http://www.netdirect.ca/)
+    Copyright (C) 2007, Brian Edginton (edge@edginton.net)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -19,8 +20,8 @@
     root directory of this project for more details.
 */
 
-#ifndef __BARRY_RECORD_MESSAGE_H__
-#define __BARRY_RECORD_MESSAGE_H__
+#ifndef __BARRY_RECORD_PIN_MESSAGE_H__
+#define __BARRY_RECORD_PIN_MESSAGE_H__
 
 #include "record.h"
 #include <iosfwd>
@@ -39,7 +40,7 @@ namespace Barry {
 /// \addtogroup RecordParserClasses
 /// @{
 
-class Message
+class PINMessage
 {
 public:
 
@@ -47,11 +48,9 @@ public:
 	Address To;
 	Address Cc;
 	Address Bcc;
-	Address Sender;
-	Address ReplyTo;
 	std::string Subject;
 	std::string Body;
-	std::string Attachment;
+	uint32_t MessageRecordId;
 	std::vector<UnknownField> Unknowns;
 
 public:
@@ -59,8 +58,8 @@ public:
 		const unsigned char *end);
 
 public:
-	Message();
-	~Message();
+	PINMessage();
+	~PINMessage();
 
 	// Parser / Builder API (see parser.h / builder.h)
 	uint8_t GetRecType() const;
@@ -76,14 +75,14 @@ public:
 	void Dump(std::ostream &os) const;
 
 	// sorting
-	bool operator<(const Message &other) const { return Subject < other.Subject; }
+	bool operator<(const PINMessage &other) const { return Subject < other.Subject; }
 
 	// database name
-	static const char * GetDBName() { return "Messages"; }
+	static const char * GetDBName() { return "PIN Messages"; }
 	static uint8_t GetDefaultRecType() { return 0; }
 };
 
-inline std::ostream& operator<<(std::ostream &os, const Message &msg) {
+inline std::ostream& operator<<(std::ostream &os, const PINMessage &msg) {
 	msg.Dump(os);
 	return os;
 }
@@ -95,5 +94,6 @@ std::ostream& operator<<(std::ostream &os, const Address &msga);
 
 } // namespace Barry
 
-#endif
+#endif // __BARRY_RECORD_PIN_MESSAGE_H__
+
 

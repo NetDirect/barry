@@ -1,10 +1,11 @@
 ///
-/// \file	r_message.cc
-///		Blackberry database record parser class for email records.
+/// \file	r_pin_message.cc
+///		Blackberry database record parser class for pin message records.
 ///
 
 /*
     Copyright (C) 2005-2007, Net Direct Inc. (http://www.netdirect.ca/)
+    Copyright (C) 2007, Brian Edginton (edge@edginton.net)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -19,7 +20,7 @@
     root directory of this project for more details.
 */
 
-#include "r_message.h"
+#include "r_pin_message.h"
 #include "record-internal.h"
 #include "protocol.h"
 #include "protostructs.h"
@@ -40,49 +41,44 @@ using namespace Barry::Protocol;
 
 namespace Barry {
 
-std::ostream& operator<<(std::ostream &os, const Address &msga) {
-	os << msga.Name.c_str() << " <" << msga.Email.c_str() << ">";
-	return os;
-}
+//std::ostream& operator<<(std::ostream &os, const Address &msgp) {
+//	os << msgp.Name.c_str() << " <" << msgp.Email.c_str() << ">";
+//	return os;
+//}
 
 ///////////////////////////////////////////////////////////////////////////////
-// Message class
+// PINMessage class
 
 
-// Email / message field codes
-#define MFC_TO			0x01		// can occur multiple times
-#define MFC_CC			0x02		// ditto
-#define MFC_BCC		0x03		// ditto
-#define MFC_SENDER		0x04
-#define MFC_FROM		0x05
-#define MFC_REPLY_TO	0x06
-#define MFC_SUBJECT		0x0b
-#define MFC_BODY		0x0c
-#define MFC_ATTACHMENT	0x16
-#define MFC_END			0xffff
+// PIN message field codes
+#define PNMFC_TO		0x01		// can occur multiple times
+#define PNMFC_CC		0x02		// ditto
+#define PNMFC_BCC		0x03		// ditto
+#define PNMFC_FROM		0x05
+#define PNMFC_SUBJECT	0x0b
+#define PNMFC_BODY		0x0c
+#define PNMFC_RECORDID	0x4b	// Internal Message ID, mimics header RecNumber
+#define PNMFC_END		0xffff
 
-FieldLink<Message> MessageFieldLinks[] = {
-   { MFC_TO,            "To",           0, 0,    0, &Message::To, 0 },
-   { MFC_CC,            "Cc",           0, 0,    0, &Message::Cc, 0 },
-   { MFC_BCC,          "Bcc",         0, 0,    0, &Message::Bcc, 0 },
-   { MFC_SENDER,    "Sender",       0, 0,    0, &Message::Sender, 0 },
-   { MFC_FROM,        "From",         0, 0,    0, &Message::From, 0 },
-   { MFC_REPLY_TO,      "ReplyTo",      0, 0,    0, &Message::ReplyTo, 0 },
-   { MFC_SUBJECT,       "Subject",      0, 0,    &Message::Subject, 0, 0 },
-   { MFC_BODY,          "Body",         0, 0,    &Message::Body, 0, 0 },
-   { MFC_ATTACHMENT,    "Attachment",   0, 0,    &Message::Attachment, 0, 0 },
-   { MFC_END,           "End of List",  0, 0,    0, 0, 0 }
+FieldLink<PINMessage> PINMessageFieldLinks[] = {
+		{ PNMFC_TO,		"To",		0, 0,    0, &PINMessage::To,  0 },
+		{ PNMFC_CC,		"Cc",		0, 0,    0, &PINMessage::Cc, 0 },
+		{ PNMFC_BCC,	"Bcc",		0, 0,    0, &PINMessage::Bcc, 0 },
+		{ PNMFC_FROM,	"From",		0, 0,    0, &PINMessage::From, 0 },
+		{ PNMFC_SUBJECT	"Subject",	0, 0,    &PINMessage::Subject, 0, 0 },
+		{ PNMFC_BODY,	"Body",		0, 0,    &PINMessage::Body, 0, 0 },
+		{ PNMFC_END,	"End of List",	0, 0,    0, 0, 0 }
 };
 
-Message::Message()
+PINMessage::PINMessage()
 {
 }
 
-Message::~Message()
+PINMessage::~PINMessage()
 {
 }
 
-const unsigned char* Message::ParseField(const unsigned char *begin,
+const unsigned char* PINMessage::ParseField(const unsigned char *begin,
 					 const unsigned char *end)
 {
 	const CommonField *field = (const CommonField *) begin;
@@ -96,8 +92,8 @@ const unsigned char* Message::ParseField(const unsigned char *begin,
 		return begin;
 
 	// cycle through the type table
-	for(	FieldLink<Message> *b = MessageFieldLinks;
-		b->type != MFC_END;
+	for(	FieldLink<PINMessage> *b = PINMessageFieldLinks;
+		b->type != PNMFC_END;
 		b++ )
 	{
 		if( b->type == field->type ) {
@@ -123,7 +119,13 @@ const unsigned char* Message::ParseField(const unsigned char *begin,
 			}
 		}
 	}
-
+	// handle special cases
+	switch( field->type )
+	{
+	case PNMFC_RECORDID:
+		MessageRecordId = field->u.min1900; // not really time, but we need easy access to an int
+		return begin;
+	}
 	// if still not handled, add to the Unknowns list
 	UnknownField uf;
 	uf.type = field->type;
@@ -133,90 +135,91 @@ const unsigned char* Message::ParseField(const unsigned char *begin,
 	return begin;
 }
 
-uint8_t Message::GetRecType() const
+uint8_t PINMessage::GetRecType() const
 {
-	throw std::logic_error("Message::GetRecType() called, and not supported by the USB protocol.  Should never get called.");
+	throw std::logic_error("PINMessage::GetRecType() called, and not supported by the USB protocol.  Should never get called.");
 }
 
 // empty API, not required by protocol
-uint32_t Message::GetUniqueId() const
+uint32_t PINMessage::GetUniqueId() const
 {
-	throw std::logic_error("Message::GetUniqueId() called, and not supported by the USB protocol.  Should never get called.");
+	throw std::logic_error("PINMessage::GetUniqueId() called, and not supported by the USB protocol.  Should never get called.");
 }
 
 // empty API, not required by protocol
-void Message::SetIds(uint8_t Type, uint32_t Id)
+void PINMessage::SetIds(uint8_t Type, uint32_t Id)
 {
 	// accept it without complaining, just do nothing
 }
 
-void Message::ParseHeader(const Data &data, size_t &offset)
+void PINMessage::ParseHeader(const Data &data, size_t &offset)
 {
 	// we skip the "header" since we don't know what to do with it yet
 	offset += MESSAGE_RECORD_HEADER_SIZE;
 }
 
-void Message::ParseFields(const Data &data, size_t &offset)
+void PINMessage::ParseFields(const Data &data, size_t &offset)
 {
 	const unsigned char *finish = ParseCommonFields(*this,
 		data.GetData() + offset, data.GetData() + data.GetSize());
 	offset += finish - (data.GetData() + offset);
 }
 
-void Message::BuildHeader(Data &data, size_t &offset) const
+void PINMessage::BuildHeader(Data &data, size_t &offset) const
 {
-	throw std::logic_error("Message::BuildHeader not yet implemented");
+	throw std::logic_error("PINMessage::BuildHeader not yet implemented");
 }
 
-void Message::BuildFields(Data &data, size_t &offset) const
+void PINMessage::BuildFields(Data &data, size_t &offset) const
 {
-	throw std::logic_error("Message::BuildFields not yet implemented");
+	throw std::logic_error("PINMessage::BuildFields not yet implemented");
 }
 
-void Message::Clear()
+void PINMessage::Clear()
 {
+
 	From.Name.clear();
 	From.Email.clear();
+
 	To.Name.clear();
 	To.Email.clear();
+
 	Cc.Name.clear();
 	Cc.Email.clear();
-	Bcc.Email.clear();
+	
 	Bcc.Name.clear();
-	Sender.Name.clear();
-	Sender.Email.clear();
-	ReplyTo.Name.clear();
-	ReplyTo.Email.clear();
+	Bcc.Email.clear();
+
 	Subject.clear();
 	Body.clear();
-	Attachment.clear();
+	MessageRecordId = 0;
 	
 	Unknowns.clear();
 }
 
 // dump message in mbox format
-void Message::Dump(std::ostream &os) const
+void PINMessage::Dump(std::ostream &os) const
 {
-	// FIXME - use current time until we figure out the date headers
-	time_t fixme = time(NULL);
-
-	os << "From " << (From.Email.size() ? From.Email.c_str() : "unknown")
-	   << "  " << ctime(&fixme);
-	os << "Date: " << ctime(&fixme);
-	os << "From: " << From << "\n";
-	if( To.Email.size() )
-		os << "To: " << To << "\n";
-	if( Cc.Email.size() )
-		os << "Cc: " << Cc << "\n";
-	if( Bcc.Email.size() )
-		os << "Bcc: " << Bcc << "\n";
-	if( Sender.Email.size() )
-		os << "Sender: " << Sender << "\n";
-	if( ReplyTo.Email.size())
-		os << "Reply To: " << ReplyTo << "\n";
+	os << "Record ID  (" << MessageRecordId << ")\n";
+	if( From.Name.size()) {
+		os << "    From: " << From.Name << " <" << From.Email << ">\n";
+	}
+	if( To.Name.size()) {
+		os << "    To: " << To.Name << " <" << To.Email << ">\n";
+	}
+	if( Cc.Name.size()) {
+		os << "    Cc: " << Cc.Name << " <" << Cc.Email << ">\n";
+	}
+	if( Bcc.Name.size()) {
+		os << "    Bcc: " << Bcc.Name << " <" << Bcc.Email << ">\n";
+	}
+	
 	if( Subject.size() )
-		os << "Subject: " << Subject << "\n";
+		os << "    Subject: " << Subject << "\n";
+	else 
+		os << "    Subject: <>\n";
 	os << "\n";
+	
 	for(	std::string::const_iterator i = Body.begin();
 		i != Body.end() && *i;
 		i++)
@@ -227,8 +230,6 @@ void Message::Dump(std::ostream &os) const
 			os << *i;
 	}
 	os << "\n";
-	if( Attachment.size() )
-		os << "Attachments: " << Attachment << "\n";
 	
 	os << Unknowns;
 	os << "\n\n";

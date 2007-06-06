@@ -229,6 +229,11 @@ auto_ptr<Parser> GetParser(const string &name, const string &filename)
 			new RecordParser<Task, Store<Task> > (
 				new Store<Task>(filename, false )));
 	}
+	else if( name == "PIN Messages" ) {
+		return auto_ptr<Parser>(
+				new RecordParser<PINMessage, Store<PINMessage> > (
+						new Store<PINMessage>(filename, false )));
+	}
 	else {
 		// unknown database, use null parser
 		return auto_ptr<Parser>( new DataDumpParser );
