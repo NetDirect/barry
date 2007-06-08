@@ -2,7 +2,7 @@ Source: barry
 Section: misc
 Priority: optional
 Maintainer: Chris Frey <cdfrey@foursquare.net>
-Build-Depends: debhelper (>= 4.0.0), libusb-dev, libssl-dev, libboost-serialization-dev
+Build-Depends: debhelper (>= 4.0.0), libusb-dev, libssl-dev, libboost-serialization-dev, libtar-dev
 Standards-Version: 3.6.1
 
 Package: libbarry
