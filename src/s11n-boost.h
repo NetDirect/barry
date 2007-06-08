@@ -234,6 +234,24 @@ void serialize(ArchiveT &ar, Barry::PINMessage &p, const unsigned int ver)
 	}
 }
 
+template <class ArchiveT>
+void serialize(ArchiveT &ar, Barry::SavedMessage &m, const unsigned int ver)
+{
+	ar & make_nvp("From", m.From);
+	ar & make_nvp("To", m.To);
+	ar & make_nvp("Cc", m.Cc);
+	ar & make_nvp("Bcc", m.Bcc);
+	ar & make_nvp("Sender", m.Sender);
+	ar & make_nvp("ReplyTo", m.ReplyTo);
+	ar & make_nvp("Subject", m.Subject);
+	ar & make_nvp("Body", m.Body);
+	ar & make_nvp("Attachment", m.Attachment);
+
+	if( ver < BARRY_POD_MAP_VERSION ) {
+		ar & make_nvp("Unknowns", m.Unknowns);
+	}
+}
+
 }} // namespace boost::serialization
 
 #endif

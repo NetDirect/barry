@@ -3,6 +3,7 @@ Release: version 0.8 - 2007/05/??
 2007/06/08
 	- applied patch from Niels de Vos fixing debian package build
 		dependency
+	- applied Brian Edginton's Saved Email Messages patch
 2007/06/07
 	- added doc/CodingStyle.txt... preliminary version
 2007/06/06

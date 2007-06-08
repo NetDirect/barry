@@ -234,6 +234,11 @@ auto_ptr<Parser> GetParser(const string &name, const string &filename)
 			new RecordParser<PINMessage, Store<PINMessage> > (
 				new Store<PINMessage>(filename, false)));
 	}
+	else if( name == "Saved Email Messages" ) {
+		return auto_ptr<Parser>(
+			new RecordParser<SavedMessage, Store<SavedMessage> > (
+				new Store<SavedMessage>(filename, false)));
+	}
 	else {
 		// unknown database, use null parser
 		return auto_ptr<Parser>( new DataDumpParser );

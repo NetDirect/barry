@@ -205,6 +205,7 @@ struct Address
 #include "r_servicebook.h"
 #include "r_task.h"
 #include "r_pin_message.h"
+#include "r_saved_message.h"
 
 #endif
 
