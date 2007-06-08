@@ -94,8 +94,8 @@ libbarry_la_SOURCES = time.cc \
 	r_memo.cc \
 	r_message.cc \
 	r_pin_message.cc \
-	r_servicebook.cc \
 	r_saved_message.cc \
+	r_servicebook.cc \
 	r_task.cc \
 	packet.cc packet.h \
 	controller.cc \
