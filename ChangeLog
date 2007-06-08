@@ -4,6 +4,14 @@ Release: version 0.8 - 2007/05/??
 	- applied patch from Niels de Vos fixing debian package build
 		dependency
 	- applied Brian Edginton's Saved Email Messages patch
+	- updated r_saved_messages.cc comment to match header
+	- added GetRecType()/GetUniqueId() to r_saved_messages.h, since
+		SetIds() is already there
+	- removed Address version of operator<<() from message related headers
+		and moved into record.h
+	- added std::hex to message related dumps, and changed output to
+		be more mbox-like
+	- updated doc/CodingStyle.txt to cover switch() statements
 2007/06/07
 	- added doc/CodingStyle.txt... preliminary version
 2007/06/06
