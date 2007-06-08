@@ -185,6 +185,8 @@ struct Address
 		Email.clear();
 	}
 };
+std::ostream& operator<<(std::ostream &os, const Address &msga);
+
 
 /// \addtogroup RecordParserClasses
 ///		Parser and data storage classes.  These classes take a

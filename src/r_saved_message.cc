@@ -1,6 +1,7 @@
 ///
 /// \file	r_saved_message.cc
-///		Blackberry database record parser class for email records.
+///		Blackberry database record parser class for saved email
+///		message records.
 ///
 
 /*
@@ -81,7 +82,7 @@ SavedMessage::~SavedMessage()
 }
 
 const unsigned char* SavedMessage::ParseField(const unsigned char *begin,
-					 const unsigned char *end)
+					      const unsigned char *end)
 {
 	const CommonField *field = (const CommonField *) begin;
 
@@ -121,35 +122,31 @@ const unsigned char* SavedMessage::ParseField(const unsigned char *begin,
 			}
 		}
 	}
+
 	// handle special cases
-	switch( field->type ) {
+	switch( field->type )
+	{
 	case SEMFC_RECORDID:
 		MessageRecordId = field->u.uint32;
 		return begin;
 	}
+
 	// if still not handled, add to the Unknowns list
 	UnknownField uf;
 	uf.type = field->type;
 	uf.data.assign((const char*)field->u.raw, btohs(field->size));
 	Unknowns.push_back(uf);
-	
+
 	return begin;
-}
-
-uint8_t SavedMessage::GetRecType() const
-{
-	throw std::logic_error("SavedMessage::GetRecType() called, and not supported by the USB protocol.  Should never get called.");
-}
-
-// empty API, not required by protocol
-uint32_t SavedMessage::GetUniqueId() const
-{
-	throw std::logic_error("SavedMessage::GetUniqueId() called, and not supported by the USB protocol.  Should never get called.");
 }
 
 void SavedMessage::ParseHeader(const Data &data, size_t &offset)
 {
 	// we skip the "header" since we don't know what to do with it yet
+	// FIXME - we are using a Message (email) record header size
+	// for a PIN Message record... this is not necessarily guaranteed
+	// to be the same... someday we could use some more info on
+	// the message record header and pin message record header
 	offset += MESSAGE_RECORD_HEADER_SIZE;
 }
 
@@ -172,24 +169,18 @@ void SavedMessage::BuildFields(Data &data, size_t &offset) const
 
 void SavedMessage::Clear()
 {
-	From.Name.clear();
-	From.Email.clear();
-	To.Name.clear();
-	To.Email.clear();
-	Cc.Name.clear();
-	Cc.Email.clear();
-	Bcc.Email.clear();
-	Bcc.Name.clear();
-	Sender.Name.clear();
-	Sender.Email.clear();
-	ReplyTo.Name.clear();
-	ReplyTo.Email.clear();
+	From.clear();
+	To.clear();
+	Cc.clear();
+	Bcc.clear();
+	Sender.clear();
+	ReplyTo.clear();
 	Subject.clear();
 	Body.clear();
 	Attachment.clear();
-	
+
 	MessageRecordId = 0;
-	
+
 	Unknowns.clear();
 }
 
@@ -199,9 +190,9 @@ void SavedMessage::Dump(std::ostream &os) const
 	// FIXME - use current time until we figure out the date headers
 	time_t fixme = time(NULL);
 	
-	os << "Record ID  (0x"   << MessageRecordId << ")\n";
 	os << "From " << (From.Email.size() ? From.Email.c_str() : "unknown")
 	   << "  " << ctime(&fixme);
+	os << "X-Record-ID: (0x"  << std::hex << MessageRecordId << ")\n";
 	os << "Date: " << ctime(&fixme);
 	os << "From: " << From << "\n";
 	if( To.Email.size() )

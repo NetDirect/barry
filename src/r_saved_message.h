@@ -1,6 +1,7 @@
 ///
 /// \file	r_save_message.h
-///		Blackberry database record parser class for saved email message records.
+///		Blackberry database record parser class for saved email
+///		message records.
 ///
 
 /*
@@ -67,9 +68,9 @@ public:
 	~SavedMessage();
 
 	// Parser / Builder API (see parser.h / builder.h)
-	uint8_t GetRecType() const;
-	uint32_t GetUniqueId() const;	// empty API, not required by protocol
-	void SetIds(uint8_t Type, uint32_t Id){ RecType = Type; RecordId = Id; }
+	uint8_t GetRecType() const { return RecType; }
+	uint32_t GetUniqueId() const { return RecordId; }
+	void SetIds(uint8_t Type, uint32_t Id) { RecType = Type; RecordId = Id; }
 	void ParseHeader(const Data &data, size_t &offset);
 	void ParseFields(const Data &data, size_t &offset);
 	void BuildHeader(Data &data, size_t &offset) const;
@@ -89,9 +90,6 @@ inline std::ostream& operator<<(std::ostream &os, const SavedMessage &msg) {
 	msg.Dump(os);
 	return os;
 }
-
-std::ostream& operator<<(std::ostream &os, const Address &msga);
-
 
 /// @}
 

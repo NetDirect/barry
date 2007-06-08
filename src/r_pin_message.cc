@@ -181,7 +181,12 @@ void PINMessage::Clear()
 // dump message in mbox format
 void PINMessage::Dump(std::ostream &os) const
 {
-	os << "Record ID  (" << MessageRecordId << ")\n";
+	// FIXME - use current time until we figure out the date headers
+	time_t fixme = time(NULL);
+	
+	os << "From " << (From.Email.size() ? From.Email.c_str() : "unknown")
+	   << "  " << ctime(&fixme);
+	os << "X-Record-ID: (" << std::hex << MessageRecordId << ")\n";
 	if( From.Name.size()) {
 		os << "    From: " << From.Name << " <" << From.Email << ">\n";
 	}

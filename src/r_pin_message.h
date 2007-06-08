@@ -95,9 +95,6 @@ inline std::ostream& operator<<(std::ostream &os, const PINMessage &msg) {
 	return os;
 }
 
-std::ostream& operator<<(std::ostream &os, const Address &msga);
-
-
 /// @}
 
 } // namespace Barry

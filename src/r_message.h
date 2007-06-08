@@ -87,9 +87,6 @@ inline std::ostream& operator<<(std::ostream &os, const Message &msg) {
 	return os;
 }
 
-std::ostream& operator<<(std::ostream &os, const Address &msga);
-
-
 /// @}
 
 } // namespace Barry
