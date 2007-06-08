@@ -59,6 +59,18 @@ As for coding style, I keep opening braces on the statement line:
 	else {
 	}
 
+Except for switches, because that's just wrong. :-)
+
+	switch( something )
+	{
+	case 1:
+		break;
+	case 2:
+		break;
+	default:
+		break;
+	}
+
 I put spaces inside the parentheses too.
 
 For reeeeeally long lines, I sometimes favour keeping it all on one line
