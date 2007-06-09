@@ -29,8 +29,13 @@
 #include "idmap.h"
 
 
-struct DatabaseSyncState
+class BarryEnvironment;
+
+class DatabaseSyncState
 {
+private:
+	BarryEnvironment *m_pEnv;
+
 public:
 	// cache is a map of record ID to bool... the bool doesn't mean
 	// anything... the mere existence of the ID means it belongs
@@ -51,11 +56,16 @@ public:
 
 	bool m_Sync;
 
+	// OpenSync data
+	OSyncObjFormat *m_pObjFormat;
+
 private:
 	std::string m_Desc;
+	const char *m_DBName;
 
 public:
-	DatabaseSyncState(OSyncPluginInfo *pi, const char *description);
+	DatabaseSyncState(BarryEnvironment *pEnv, OSyncPluginInfo *pi,
+		const char *DBName, const char *description);
 	~DatabaseSyncState();
 
 	bool LoadCache();
@@ -68,10 +78,13 @@ public:
 	void ClearDirtyFlags();
 
 	unsigned long GetMappedRecordId(const std::string &uid);
+
+	const std::string& GetDesc() const { return m_Desc; }
+	const char* GetDBName() const { return m_DBName; }
 };
 
 
-struct BarryEnvironment
+class BarryEnvironment
 {
 public:
 	// user config data
@@ -88,6 +101,11 @@ public:
 public:
 	BarryEnvironment(OSyncPluginInfo *pi);
 	~BarryEnvironment();
+
+	// meta data
+	bool IsConnected() { return m_pCon; }
+
+	// operations
 
 	void OpenDesktop(Barry::ProbeResult &result);
 	void Disconnect();

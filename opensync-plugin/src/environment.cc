@@ -32,9 +32,15 @@
 //////////////////////////////////////////////////////////////////////////////
 // DatabaseSyncState
 
-DatabaseSyncState::DatabaseSyncState(OSyncPluginInfo *pi, const char *description)
-	: m_Sync(false),
-	m_Desc(description)
+DatabaseSyncState::DatabaseSyncState(BarryEnvironment *pEnv,
+				     OSyncPluginInfo *pi,
+				     const char *DBName,
+				     const char *description)
+	: m_pEnv(pEnv),
+	m_Sync(false),
+	m_pObjFormat(0),
+	m_Desc(description),
+	m_DBName(DBName)
 {
 	m_CacheFilename = m_MapFilename =
 		osync_plugin_info_get_configdir(pi);
@@ -110,6 +116,12 @@ void DatabaseSyncState::CleanupMap()
 	}
 }
 
+void DatabaseSyncState::ClearDirtyFlags()
+{
+	Trace trace("DatabaseSyncState::ClearDirtyFlags()", m_Desc.c_str());
+	m_pEnv->ClearDirtyFlags(m_Table, GetDBName());
+}
+
 unsigned long DatabaseSyncState::GetMappedRecordId(const std::string &uid)
 {
 	Trace trace("DatabaseSyncState::GetMappedRecordId()", m_Desc.c_str());
@@ -149,8 +161,8 @@ unsigned long DatabaseSyncState::GetMappedRecordId(const std::string &uid)
 BarryEnvironment::BarryEnvironment(OSyncPluginInfo *pi)
 	: m_pin(0),
 	m_pCon(0),
-	m_CalendarSync(pi, "calendar"),
-	m_ContactsSync(pi, "contacts")
+	m_CalendarSync(this, pi, Barry::Calendar::GetDBName(), "calendar"),
+	m_ContactsSync(this, pi, Barry::Contact::GetDBName(), "contacts")
 {
 }
 

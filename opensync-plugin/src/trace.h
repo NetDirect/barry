@@ -29,6 +29,7 @@ class Trace
 {
 	const char *text, *tag;
 	bool m_error;
+	char m_buffer[2048];
 public:
 	explicit Trace(const char *t) : text(t), tag(0), m_error(false)
 	{
@@ -49,6 +50,8 @@ public:
 			osync_trace(m_error ? TRACE_EXIT_ERROR : TRACE_EXIT,
 				"barry_sync: %s", text);
 	}
+
+	const char* get_last_msg() const { return m_buffer; }
 
 	void log(const char *t)
 	{
@@ -72,6 +75,7 @@ public:
 			osync_trace(TRACE_INTERNAL, "barry_sync: %s", buffer);
 		else
 			osync_trace(TRACE_INTERNAL, "barry_sync: (trace error, output too long for buffer: %s)", t);
+		strcpy(m_buffer, buffer);
 	}
 
 	void errorf(const char *t, ...)
@@ -87,6 +91,7 @@ public:
 			osync_trace(TRACE_ERROR, "barry_sync: %s", buffer);
 		else
 			osync_trace(TRACE_ERROR, "barry_sync: (trace error, output too long for buffer: %s)", t);
+		strcpy(m_buffer, buffer);
 	}
 };
 

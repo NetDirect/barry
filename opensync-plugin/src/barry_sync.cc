@@ -1,12 +1,12 @@
-//
-// \file	barry_sync.cc
-//		Opensync module for the USB Blackberry handheld
-//
-//		A lot of this code is based heavily on the example
-//		plugin from the OpenSync project:
-//		http://www.opensync.org/
-//		OpenSync is distributed under LGPLv2.1
-//
+///
+/// \file	barry_sync.cc
+///		Opensync module for the USB Blackberry handheld
+///
+///		A lot of this code is based heavily on the example
+///		plugin from the OpenSync project:
+///		http://www.opensync.org/
+///		OpenSync is distributed under LGPLv2.1
+///
 
 /*
     Copyright (C) 2006-2007, Net Direct Inc. (http://www.netdirect.ca/)
@@ -32,6 +32,8 @@
 #include <opensync/plugin/opensync_sink.h>
 #include <opensync/version/opensync_version.h>
 #include <opensync/data/opensync_change.h>
+#include <opensync/data/opensync_data.h>
+#include <opensync/format/opensync_format_env.h>
 #include <barry/barry.h>
 #include "barry_sync.h"
 #include "environment.h"
@@ -56,12 +58,11 @@ extern "C" {
 // Support functions and classes
 //
 
-void GetChanges(OSyncContext *ctx, BarryEnvironment *env,
-		DatabaseSyncState::cache_type &cache,
-		const char *DBDBName, const char *FormatName,
+void GetChanges(OSyncContext *ctx, OSyncObjTypeSink *sink,
+		BarryEnvironment *env, DatabaseSyncState *sync,
 		GetData_t getdata)
 {
-	Trace trace("GetChanges");
+	Trace trace("GetChanges", sync->GetDesc().c_str());
 
 	OSyncError *error = NULL;
 
@@ -69,9 +70,10 @@ void GetChanges(OSyncContext *ctx, BarryEnvironment *env,
 	using namespace Barry;
 	using Barry::RecordStateTable;
 	Controller &con = *env->m_pCon;
+	DatabaseSyncState::cache_type &cache = sync->m_Cache;
 
 	// fetch state table
-	unsigned int dbId = con.GetDBID(DBDBName);
+	unsigned int dbId = con.GetDBID(sync->GetDBName());
 	RecordStateTable table;
 	con.GetRecordStateTable(dbId, table);
 
@@ -129,9 +131,8 @@ void GetChanges(OSyncContext *ctx, BarryEnvironment *env,
 			// Set the last argument to FALSE if the real data
 			// should be queried later in a "get_data" function
 			char *data = (*getdata)(env, dbId, index);
-			osync_change_set_data(change, data, strlen(data), TRUE);
 
-			OSyncData *odata = osync_data_new(data, 0, env->objformat, &error);
+			OSyncData *odata = osync_data_new(NULL, 0, sync->m_pObjFormat, &error);
 			if( !odata ) {
 				osync_change_unref(change);
 				osync_context_report_osyncwarning(ctx, error);
@@ -140,6 +141,10 @@ void GetChanges(OSyncContext *ctx, BarryEnvironment *env,
 			}
 
 			osync_data_set_objtype(odata, osync_objtype_sink_get_name(sink));
+			osync_data_set_data(odata, data, strlen(data));
+
+			osync_change_set_data(change, odata);
+			osync_data_unref(odata);
 
 			// just report the change via
 			osync_context_report_change(ctx, change);
@@ -166,16 +171,34 @@ void GetChanges(OSyncContext *ctx, BarryEnvironment *env,
 			// register a DELETE, no data
 			trace.log("found DELETE change");
 
-FIXME - this needs to match the same calls as above...
-			OSyncChange *change = osync_change_new();
+			OSyncChange *change = osync_change_new(&error);
+			if( !change ) {
+				trace.error("osync_change_new() failed");
+				osync_context_report_osyncwarning(ctx, error);
+				osync_error_unref(&error);
+				continue;
+			}
+
 			osync_change_set_changetype(change, OSYNC_CHANGE_TYPE_DELETED);
-			osync_change_set_member(change, env->member);
-			osync_change_set_objformat_string(change, FormatName);
+
+			OSyncData *odata = osync_data_new(NULL, 0, sync->m_pObjFormat, &error);
+			if( !odata ) {
+				osync_change_unref(change);
+				osync_context_report_osyncwarning(ctx, error);
+				osync_error_unref(&error);
+				continue;
+			}
+			osync_change_set_data(change, odata);
+
+			osync_data_set_objtype(odata, osync_objtype_sink_get_name(sink));
 
 			char *uid = g_strdup_printf("%u", recordId);
 			osync_change_set_uid(change, uid);
 			trace.log(uid);
 			g_free(uid);
+
+			osync_change_set_data(change, odata);
+			osync_data_unref(odata);
 
 			// report the change
 			osync_context_report_change(ctx, change);
@@ -340,6 +363,13 @@ static void connect(void *userdata, OSyncPluginInfo *info, OSyncContext *ctx)
 		// initialize via this call:
 		BarryEnvironment *env = (BarryEnvironment *)userdata;
 
+		if( env->IsConnected() ) {
+			// we've been here before.... possibly another "sink"
+			// was run ahead of us
+			trace.log("Already connected in connect()");
+			return;
+		}
+
 		// Probe for available devices
 		Barry::Probe probe;
 		int nIndex = probe.FindActive(env->m_pin);
@@ -371,22 +401,22 @@ static void get_changes(void *userdata, OSyncPluginInfo *info, OSyncContext *ctx
 {
 	Trace trace("get_changes");
 
+	BarryEnvironment *env = (BarryEnvironment*) userdata;
+	OSyncObjTypeSink *sink = osync_plugin_info_get_sink(info);
+	DatabaseSyncState *sync = (DatabaseSyncState*) osync_objtype_sink_get_userdata(sink);
+
+	if( !sync ) {
+		osync_context_report_error(ctx, OSYNC_ERROR_IO_ERROR,
+			"Unable to retrieve database sync state.");
+		return;
+	}
+
+	trace.logf("get_chagnes for %s", sync->GetDesc().c_str());
+
 	try {
 
-		BarryEnvironment *env = (BarryEnvironment *)userdata;
-
-		if( env->m_CalendarSync.m_Sync ) {
-			GetChanges(ctx, env, env->m_CalendarSync.m_Cache,
-				"Calendar", "vevent20",
-				&VEventConverter::GetRecordData);
-		}
-
-		if( env->m_ContactsSync.m_Sync ) {
-			// FIXME - not yet implemented
-//			GetChanges(ctx, env, env->m_ContactsSync.m_Cache
-//				"Address Book", "vcard30",
-//				&ContactToVCard::GetRecordData);
-		}
+		GetChanges(ctx, sink, env, sync,
+			&VEventConverter::GetRecordData); // FIXME ack, hard coded
 
 		// Success!
 		osync_context_report_success(ctx);
@@ -399,7 +429,7 @@ static void get_changes(void *userdata, OSyncPluginInfo *info, OSyncContext *ctx
 
 // this function will be called exactly once with all objects to write
 // gathered in an array
-static void batch_commit_vevent20(void *userdata,
+static void batch_commit_calendar(void *userdata,
 				  OSyncPluginInfo *info,
 				  OSyncContext *ctx,
 				  OSyncContext **contexts,
@@ -463,54 +493,46 @@ static void batch_commit_vevent20(void *userdata,
 static void sync_done(void *userdata, OSyncPluginInfo *info, OSyncContext *ctx)
 {
 	//
-	// This function will only be called if the sync was successfull
+	// This function will only be called if the sync was successful
 	//
 
 	Trace trace("sync_done");
 
+//	BarryEnvironment *env = (BarryEnvironment*) userdata;
+	OSyncObjTypeSink *sink = osync_plugin_info_get_sink(info);
+	DatabaseSyncState *sync = (DatabaseSyncState*) osync_objtype_sink_get_userdata(sink);
+	bool error = false;
+
+	if( !sync ) {
+		osync_context_report_error(ctx, OSYNC_ERROR_IO_ERROR,
+			"Unable to retrieve database sync state.");
+		return;
+	}
+
+	trace.logf("sync_done for %s", sync->GetDesc().c_str());
+
 	try {
 
-		BarryEnvironment *env = (BarryEnvironment *)userdata;
-		bool error = false;
 
-		if( env->m_CalendarSync.m_Sync ) {
-			// update the cache
-			if( !env->m_CalendarSync.SaveCache() ) {
-				error = true;
-				osync_context_report_error(ctx, OSYNC_ERROR_IO_ERROR,
-					"Error saving calendar cache");
-			}
-
-			// save the id map
-			env->m_CalendarSync.CleanupMap();
-			if( !env->m_CalendarSync.SaveMap() ) {
-				error = true;
-				osync_context_report_error(ctx, OSYNC_ERROR_IO_ERROR,
-					"Error saving calendar id map");
-			}
-
-			// clear all dirty flags
-			env->ClearCalendarDirtyFlags();
+		// update the cache
+		if( !sync->SaveCache() ) {
+			error = true;
+			trace.errorf("Error saving %s cache", sync->GetDesc().c_str());
+			osync_context_report_error(ctx, OSYNC_ERROR_IO_ERROR,
+				trace.get_last_msg());
 		}
 
-		if( env->m_ContactsSync.m_Sync ) {
-			// update the cache
-			if( !env->m_ContactsSync.SaveCache() ) {
-				error = true;
-				osync_context_report_error(ctx, OSYNC_ERROR_IO_ERROR,
-					"Error saving contacts cache");
-			}
-
-			// save the id map
-			env->m_ContactsSync.CleanupMap();
-			if( !env->m_ContactsSync.SaveMap() ) {
-				error = true;
-				osync_context_report_error(ctx, OSYNC_ERROR_IO_ERROR,
-					"Error saving contacts id map");
-			}
-			// clear all dirty flags
-			env->ClearContactsDirtyFlags();
+		// save the id map
+		sync->CleanupMap();
+		if( !sync->SaveMap() ) {
+			error = true;
+			trace.errorf("Error saving %s id map", sync->GetDesc().c_str());
+			osync_context_report_error(ctx, OSYNC_ERROR_IO_ERROR,
+				trace.get_last_msg());
 		}
+
+		// clear all dirty flags
+		sync->ClearDirtyFlags();
 
 		// Success
 		if( !error )
@@ -539,14 +561,6 @@ static void disconnect(void *userdata, OSyncPluginInfo *info, OSyncContext *ctx)
 //
 // OpenSync plugin callbacks
 //
-
-static void finalize(void *userdata)
-{
-	Trace trace("finalize");
-
-	BarryEnvironment *env = (BarryEnvironment *)userdata;
-	delete env;
-}
 
 static void *initialize(OSyncPlugin *plugin, OSyncPluginInfo *info, OSyncError **error)
 {
@@ -588,7 +602,7 @@ static void *initialize(OSyncPlugin *plugin, OSyncPluginInfo *info, OSyncError *
 // and it appears to be sink-related... there's a lot we could
 // do here to organize this into classes, per-sink, etc.
 OSyncFormatEnv *formatenv = osync_plugin_info_get_format_env(info);
-env->objformat = osync_format_env_find_objformat(formatenv, "vevent20");
+env->m_CalendarSync.m_pObjFormat = osync_format_env_find_objformat(formatenv, "vevent20");
 
 		// Setup the Calendar sink, using batch commit
 		OSyncObjTypeSink *sink = osync_objtype_sink_new("event", error);
@@ -605,13 +619,12 @@ env->objformat = osync_format_env_find_objformat(formatenv, "vevent20");
 		functions.connect = connect;
 		functions.disconnect = disconnect;
 		functions.get_changes = get_changes;
-		functions.batch_commit = batch_commit_vevent20;
+		functions.batch_commit = batch_commit_calendar;
 		functions.sync_done = sync_done;
 
-		// We pass the OSyncFileDir object to the sink,
-		// so we dont have to look it up again once
-		// the functions are called
-		osync_objtype_sink_set_functions(sink, functions, env.get());
+		// store pointer to database object in sink,
+		// for functions to use later
+		osync_objtype_sink_set_functions(sink, functions, &env->m_CalendarSync);
 
 		osync_plugin_info_add_objtype(info, sink);
 
@@ -636,6 +649,14 @@ env->objformat = osync_format_env_find_objformat(formatenv, "vevent20");
 		osync_error_set(error, OSYNC_ERROR_GENERIC, "%s", e.what());
 		return NULL;
 	}
+}
+
+static void finalize(void *userdata)
+{
+	Trace trace("finalize");
+
+	BarryEnvironment *env = (BarryEnvironment *)userdata;
+	delete env;
 }
 
 // Tell opensync which sinks are available
