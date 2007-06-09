@@ -12,6 +12,9 @@ Release: version 0.8 - 2007/05/??
 	- added std::hex to message related dumps, and changed output to
 		be more mbox-like
 	- updated doc/CodingStyle.txt to cover switch() statements
+	- opensync compiles again, with 0.30!  (not functional yet)
+		- moving closer to more modular and reusable plugin functions
+	- updated release checklist for opensync version number
 2007/06/07
 	- added doc/CodingStyle.txt... preliminary version
 2007/06/06
