@@ -6,6 +6,7 @@ Release: version 0.8 - 2007/05/??
 		in general use will not break on build
 	- added PKG_CONFIG_PATH to debian script too, just in case :-)
 	- added debian/changelog to doc/ReleaseChecklist.txt
+	- added comment to rpm/barry.spec regarding SuSE RPM builds
 2007/06/08
 	- applied patch from Niels de Vos fixing debian package build
 		dependency

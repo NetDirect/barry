@@ -4,6 +4,15 @@
 ## pass in '--with opensync' to build the opensync plugin
 # ex.: rpmbuild -ba barry.spec --with opensync
 
+#
+# When building on SuSE, remove the "-devel" on the following packages:
+#   libusb-devel
+#   gtkmm24-devel
+#
+# SuSE also seems to name libglademm24 differently:
+#   libglademm
+#
+
 # newer bcond_with() macros are not available on RHEL4/CentOS4 and below
 %{?_with_gui: %define with_gui 1}
 %{!?_with_gui: %define with_gui 0}
