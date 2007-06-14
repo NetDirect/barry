@@ -6,6 +6,7 @@
 	- gui/src/BackupWindow.cc (about dialog)
 	- src/Doxygen
 	- rpm/barry*.spec
+	- debian/changelog
 	- opensync.../barry_sync.cc
 - checkout pure CVS and test building everything
 - checkout pure CVS and:
