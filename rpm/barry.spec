@@ -110,7 +110,7 @@ This package contains the opensync plugin.
 # gui tree
 %if %{with_gui}
 cd gui/
-%{configure} PKG_CONFIG_PATH="../" CXXFLAGS="-I../.." LDFLAGS="-L../../src"
+%{configure} PKG_CONFIG_PATH="..:$PKG_CONFIG_PATH" CXXFLAGS="-I../.." LDFLAGS="-L../../src"
 %{__make} %{?_smp_mflags}
 cd ../
 %endif
@@ -118,7 +118,7 @@ cd ../
 # opensync tree
 %if %{with_opensync}
 cd opensync-plugin/
-%{configure} PKG_CONFIG_PATH="../" CXXFLAGS="-I../.." LDFLAGS="-L../../src"
+%{configure} PKG_CONFIG_PATH="..:$PKG_CONFIG_PATH" CXXFLAGS="-I../.." LDFLAGS="-L../../src"
 %{__make} %{?_smp_mflags}
 cd ../
 %endif
