@@ -44,7 +44,7 @@ build-arch-stamp: configure-stamp
 	# Add here commands to compile the arch part of the package.
 	./configure --prefix=/usr --with-boost=/usr
 	$(MAKE) 
-	(cd gui && ./configure PKG_CONFIG_PATH="../" CXXFLAGS="-I../.." LDFLAGS="-L../../src" --prefix=/usr)
+	(cd gui && ./configure PKG_CONFIG_PATH="..:$PKG_CONFIG_PATH" CXXFLAGS="-I../.." LDFLAGS="-L../../src" --prefix=/usr)
 	(cd gui && $(MAKE))
 
 	touch build-arch-stamp
