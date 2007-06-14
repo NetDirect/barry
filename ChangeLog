@@ -1,5 +1,11 @@
 Release: version 0.8 - 2007/05/??
 ------------------------------------------------------------------------------
+2007/06/14
+	- changed PKG_CONFIG_PATH setting in rpm script, so that systems
+		like SuSE that have an extensive PKG_CONFIG_PATH
+		in general use will not break on build
+	- added PKG_CONFIG_PATH to debian script too, just in case :-)
+	- added debian/changelog to doc/ReleaseChecklist.txt
 2007/06/08
 	- applied patch from Niels de Vos fixing debian package build
 		dependency
