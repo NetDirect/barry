@@ -1,5 +1,8 @@
 Release: version 0.8 - 2007/05/??
 ------------------------------------------------------------------------------
+2007/06/21
+	- more porting of OpenSync module to 0.30
+	- added ctags build for opensync source tree to buildgen.sh
 2007/06/14
 	- changed PKG_CONFIG_PATH setting in rpm script, so that systems
 		like SuSE that have an extensive PKG_CONFIG_PATH
