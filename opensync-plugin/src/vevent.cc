@@ -22,13 +22,14 @@
 #include "vevent.h"
 #include "environment.h"
 #include "trace.h"
-#include "vformat.h"		// comes from opensync, but not a public header yet
+//#include "vformat.h"		// comes from opensync, but not a public header yet
 #include <stdint.h>
 #include <glib.h>
 #include <sstream>
 #include <opensync/format/opensync_time.h>
 
 
+/*
 //////////////////////////////////////////////////////////////////////////////
 // vCalendar
 
@@ -261,49 +262,47 @@ void vCalendar::RecurToVCal()
 
 	AddAttr(attr);
 
-/*
-	bool AllDayEvent;
-
-	///
-	/// Recurring data
-	///
-	/// Note: interval can be used on all of these recurring types to
-	///       make it happen "every other time" or more, etc.
-	///
-
-	bool Recurring;
-	RecurringCodeType RecurringType;
-	unsigned short Interval;	// must be >= 1
-	time_t RecurringEndTime;	// only pertains if Recurring is true
-					// sets the date and time when
-					// recurrence of this appointment
-					// should no longer occur
-					// If a perpetual appointment, this
-					// is 0xFFFFFFFF in the low level data
-					// Instead, set the following flag.
-	bool Perpetual;			// if true, this will always recur
-	unsigned short TimeZoneCode;	// the time zone originally used
-					// for the recurrence data...
-					// seems to have little use, but
-					// set to your current time zone
-					// as a good default
-
-	unsigned short			// recurring details, depending on type
-		DayOfWeek,		// 0-6
-		WeekOfMonth,		// 1-5
-		DayOfMonth,		// 1-31
-		MonthOfYear;		// 1-12
-	unsigned char WeekDays;		// bitmask, bit 0 = sunday
-
-		#define CAL_WD_SUN	0x01
-		#define CAL_WD_MON	0x02
-		#define CAL_WD_TUE	0x04
-		#define CAL_WD_WED	0x08
-		#define CAL_WD_THU	0x10
-		#define CAL_WD_FRI	0x20
-		#define CAL_WD_SAT	0x40
-
-*/
+//	bool AllDayEvent;
+//
+//	///
+//	/// Recurring data
+//	///
+//	/// Note: interval can be used on all of these recurring types to
+//	///       make it happen "every other time" or more, etc.
+//	///
+//
+//	bool Recurring;
+//	RecurringCodeType RecurringType;
+//	unsigned short Interval;	// must be >= 1
+//	time_t RecurringEndTime;	// only pertains if Recurring is true
+//					// sets the date and time when
+//					// recurrence of this appointment
+//					// should no longer occur
+//					// If a perpetual appointment, this
+//					// is 0xFFFFFFFF in the low level data
+//					// Instead, set the following flag.
+//	bool Perpetual;			// if true, this will always recur
+//	unsigned short TimeZoneCode;	// the time zone originally used
+//					// for the recurrence data...
+//					// seems to have little use, but
+//					// set to your current time zone
+//					// as a good default
+//
+//	unsigned short			// recurring details, depending on type
+//		DayOfWeek,		// 0-6
+//		WeekOfMonth,		// 1-5
+//		DayOfMonth,		// 1-31
+//		MonthOfYear;		// 1-12
+//	unsigned char WeekDays;		// bitmask, bit 0 = sunday
+//
+//		#define CAL_WD_SUN	0x01
+//		#define CAL_WD_MON	0x02
+//		#define CAL_WD_TUE	0x04
+//		#define CAL_WD_WED	0x08
+//		#define CAL_WD_THU	0x10
+//		#define CAL_WD_FRI	0x20
+//		#define CAL_WD_SAT	0x40
+//
 
 }
 
@@ -456,6 +455,7 @@ void vCalendar::Clear()
 		m_format = 0;
 	}
 }
+*/
 
 
 
@@ -492,6 +492,7 @@ bool VEventConverter::ParseData(const char *data)
 {
 	Trace trace("VEventConverter::ParseData");
 
+/*
 	try {
 
 		vCalendar vcal;
@@ -504,6 +505,8 @@ bool VEventConverter::ParseData(const char *data)
 	}
 
 	return true;
+*/
+	return false;
 }
 
 // Barry storage operator
@@ -511,6 +514,7 @@ void VEventConverter::operator()(const Barry::Calendar &rec)
 {
 	Trace trace("VEventConverter::operator()");
 
+/*
 	// Delete data if some already exists
 	if( m_Data ) {
 		g_free(m_Data);
@@ -527,6 +531,7 @@ void VEventConverter::operator()(const Barry::Calendar &rec)
 	catch( vCalendar::ConvertError &ce ) {
 		trace.logf("ERROR: vCalendar::ConvertError exception: %s", ce.what());
 	}
+*/
 }
 
 // Barry builder operator

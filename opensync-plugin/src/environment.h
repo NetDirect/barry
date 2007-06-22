@@ -56,8 +56,9 @@ public:
 
 	bool m_Sync;
 
-	// OpenSync data
+	// external OpenSync data
 	OSyncObjFormat *m_pObjFormat;
+	OSyncObjTypeSink *m_pSink;
 
 private:
 	std::string m_Desc;

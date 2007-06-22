@@ -26,14 +26,10 @@
 
 #include <opensync/opensync.h>
 #include <opensync/opensync-context.h>
-#include <opensync/plugin/opensync_plugin.h>
-#include <opensync/plugin/opensync_plugin_info.h>
-#include <opensync/plugin/opensync_plugin_env.h>
-#include <opensync/plugin/opensync_sink.h>
-#include <opensync/version/opensync_version.h>
-#include <opensync/data/opensync_change.h>
-#include <opensync/data/opensync_data.h>
-#include <opensync/format/opensync_format_env.h>
+#include <opensync/opensync-plugin.h>
+#include <opensync/opensync-version.h>
+#include <opensync/opensync-data.h>
+#include <opensync/opensync-format.h>
 #include <barry/barry.h>
 #include "barry_sync.h"
 #include "environment.h"
@@ -588,21 +584,18 @@ static void *initialize(OSyncPlugin *plugin, OSyncPluginInfo *info, OSyncError *
 		env->ParseConfig(configdata);
 
 		// Load all needed cache files
-		if( env->m_CalendarSync.m_Sync ) {
-			env->m_CalendarSync.LoadCache();
-			env->m_CalendarSync.LoadMap();
-		}
+		env->m_CalendarSync.LoadCache();
+		env->m_CalendarSync.LoadMap();
 
-		if( env->m_ContactsSync.m_Sync ) {
-			env->m_ContactsSync.LoadCache();
-			env->m_ContactsSync.LoadMap();
-		}
+		env->m_ContactsSync.LoadCache();
+		env->m_ContactsSync.LoadMap();
 
-// FIXME - this is needed down the road, in change processing,
-// and it appears to be sink-related... there's a lot we could
-// do here to organize this into classes, per-sink, etc.
-OSyncFormatEnv *formatenv = osync_plugin_info_get_format_env(info);
-env->m_CalendarSync.m_pObjFormat = osync_format_env_find_objformat(formatenv, "vevent20");
+		// FIXME - this is needed down the road, in change processing,
+		// and it appears to be sink-related... there's a lot we could
+		// do here to organize this into classes, per-sink, etc.
+		OSyncFormatEnv *formatenv = osync_plugin_info_get_format_env(info);
+		env->m_CalendarSync.m_pObjFormat =
+			osync_format_env_find_objformat(formatenv, "vevent20");
 
 		// Setup the Calendar sink, using batch commit
 		OSyncObjTypeSink *sink = osync_objtype_sink_new("event", error);
@@ -611,7 +604,7 @@ env->m_CalendarSync.m_pObjFormat = osync_format_env_find_objformat(formatenv, "v
 			return NULL;
 		}
 
-		osync_objtype_sink_add_objformat(sink, "vevent20");
+		osync_objtype_sink_add_objformat(sink, "xmlformat-event");
 
 		// Every sink can have different functions
 		OSyncObjTypeSinkFunctions functions;
@@ -626,10 +619,12 @@ env->m_CalendarSync.m_pObjFormat = osync_format_env_find_objformat(formatenv, "v
 		// for functions to use later
 		osync_objtype_sink_set_functions(sink, functions, &env->m_CalendarSync);
 
+		// add and save sink pointer
 		osync_plugin_info_add_objtype(info, sink);
+		env->m_CalendarSync.m_pSink = sink;
 
-// FIXME - add sink for contacts too;
-	// Address Book entries
+		// FIXME - add sink for contacts too;
+		// Address Book entries
 //	osync_plugin_accept_objtype(info, "contact");
 //	osync_plugin_accept_objformat(info, "contact", "vcard30", NULL);
 //	osync_plugin_set_batch_commit_objformat(info, "contact", "vcard30",
@@ -664,10 +659,10 @@ static osync_bool discover(void *userdata, OSyncPluginInfo *info, OSyncError **e
 {
 	Trace trace("discover");
 
+	BarryEnvironment *env = (BarryEnvironment *)userdata;
+
 	// Report avaliable sinks...
-	do {
-		osync_objtype_sink_set_available(NULL, TRUE);
-	} while(0);
+	osync_objtype_sink_set_available(env->m_CalendarSync.m_pSink, TRUE);
 
 	OSyncVersion *version = osync_version_new(error);
 	osync_version_set_plugin(version, "barry-sync");
@@ -677,15 +672,6 @@ static osync_bool discover(void *userdata, OSyncPluginInfo *info, OSyncError **e
 	//osync_version_set_hardwareversion(version, "hardwareversion");
 	osync_plugin_info_set_version(info, version);
 	osync_version_unref(version);
-
-/*
-	// If you like, you can overwrite the default timeouts of your plugin
-	// The default is set to 60 sec. Note that this MUST NOT be used to
-	// wait for expected timeouts (Lets say while waiting for a webserver).
-	// you should wait for the normal timeout and return a error.
-//	info->timeouts.connect_timeout = 5;
-	// There are more timeouts for the other functions
-*/
 
 	return TRUE;
 }

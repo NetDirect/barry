@@ -26,7 +26,7 @@
 #include <fstream>
 #include <sstream>
 #include <iomanip>
-#include <opensync/data/opensync_change.h>
+#include <opensync/opensync-data.h>
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -39,6 +39,7 @@ DatabaseSyncState::DatabaseSyncState(BarryEnvironment *pEnv,
 	: m_pEnv(pEnv),
 	m_Sync(false),
 	m_pObjFormat(0),
+	m_pSink(0),
 	m_Desc(description),
 	m_DBName(DBName)
 {
