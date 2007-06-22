@@ -26,6 +26,7 @@ elif [ "$1" = "clean" ] ; then
 	rm -f src/tags tools/tags examples/tags \
 		gui/src/tags opensync-plugin/src/tags
 elif [ "$1" = "ctags" ] ; then
+	echo "Building ctags..."
 	(cd src && ctags -R)
 	(cd tools && ctags -R)
 	(cd examples && ctags -R)
@@ -33,6 +34,8 @@ elif [ "$1" = "ctags" ] ; then
 	(cd opensync-plugin/src && ctags -R)
 	# and one with everything
 	ctags -R -f ~/tags-barry --tag-relative=yes
+	# add opensync library as well
+	(cd ~/software/opensync/svn/opensync && ctags -R -a -f ~/tags-barry --tag-relative=yes)
 else
 	autoreconf -if
 	#autoreconf -ifv
