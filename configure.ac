@@ -28,12 +28,21 @@ AC_ARG_WITH(libusb,
 	[])
 
 AC_ARG_WITH(boost,
-	[  --with-boost=<path>     root path of boost installation (default=no boost)],
-	[BOOST_LIB_PATH="$with_boost/lib"
-	 BOOST_INC_PATH="$with_boost/include"
-	 BOOST_ENABLED="true"],
-	[BOOST_LIB_PATH="/usr/lib"
-	 BOOST_INC_PATH="/usr/include"])
+	AC_HELP_STRING(--with-boost[=path],
+		[root path of boost installation (no arg defaults to 'yes' and uses system path]),
+	use_boost=$withval,  use_boost=no ) 
+
+if test x"$use_boost" != "xyes" ; then
+	if test x"$use_boost" != "xno" ; then
+		BOOST_LIB_PATH=$use_boost/lib
+		BOOST_INC_PATH=$use_boost/include
+		BOOST_ENABLED="true"
+	fi
+else
+	BOOST_LIB_PATH="/usr/lib"
+	BOOST_INC_PATH="/usr/include"
+	BOOST_ENABLED="true"	
+fi
 
 PKG_CHECK_MODULES([OPENSSL], [openssl])
 
