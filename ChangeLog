@@ -1,5 +1,7 @@
 Release: version 0.8 - 2007/05/??
 ------------------------------------------------------------------------------
+2007/06/28
+	- minor adjustment to ctags building in buildgen.sh
 2007/06/21
 	- more porting of OpenSync module to 0.30
 	- added ctags build for opensync source tree to buildgen.sh

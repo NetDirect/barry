@@ -34,8 +34,12 @@ elif [ "$1" = "ctags" ] ; then
 	(cd opensync-plugin/src && ctags -R)
 	# and one with everything
 	ctags -R -f ~/tags-barry --tag-relative=yes
-	# add opensync library as well
-	(cd ~/software/opensync/svn/opensync && ctags -R -a -f ~/tags-barry --tag-relative=yes)
+	# add opensync library as well (yes, I know this only works for my
+	# setup... sorry) :-)
+	if [ -d ~/software/opensync/svn ] ; then
+		echo "Detected opensync source tree, building ctags on it..."
+		(cd ~/software/opensync/svn && ctags -R -a -f ~/tags-barry --tag-relative=yes)
+	fi
 else
 	autoreconf -if
 	#autoreconf -ifv
