@@ -40,6 +40,13 @@ void Usage()
    << "btool - Command line USB Blackberry Test Tool\n"
    << "        Copyright 2005-2007, Net Direct Inc. (http://www.netdirect.ca/)\n"
    << "        Using: " << Version << "\n"
+   << "        Compiled "
+#ifdef __BARRY_BOOST_MODE__
+   << "with"
+#else
+   << "without"
+#endif
+   << " Boost support\n"
    << "\n"
    << "   -c dn     Convert address book database to LDIF format, using the\n"
    << "             specified baseDN\n"

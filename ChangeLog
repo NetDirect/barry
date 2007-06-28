@@ -4,6 +4,7 @@ Release: version 0.8 - 2007/05/??
 	- minor adjustment to ctags building in buildgen.sh
 	- applied patch from Brian Edginton for better boost detection
 		in configure.ac
+	- added boost usage message to btool -h output
 2007/06/21
 	- more porting of OpenSync module to 0.30
 	- added ctags build for opensync source tree to buildgen.sh
