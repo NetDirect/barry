@@ -152,13 +152,13 @@ void Folder::Clear()
 {
 	FolderName.clear();
 	Unknowns.clear();
-	FolderType = (FolderTypeEnum)0;
+	FolderType = FolderSubtree;
 }
 
 void Folder::Dump(std::ostream &os) const
 {
 	static const char *FolderTypeString[] = { "Subtree", "Deleted", "Inbox", "Outbox", "Sent", "Other"};
-	static const char *FolderStatusString[] = { "Orphan", "Unfiled", "Filed" };
+//	static const char *FolderStatusString[] = { "Orphan", "Unfiled", "Filed" };
 	
 	os << "Folder Records\n\n";
 	os << "Folder Name: " << FolderName << "\n";

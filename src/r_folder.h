@@ -55,7 +55,7 @@ public:
 	enum FolderStatusType {
 		FolderOrphan = 0x50,
 		FolderUnfiled,
-		FolderFiled,
+		FolderFiled
 	};
 
 	UnknownsType Unknowns;
