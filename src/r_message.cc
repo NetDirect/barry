@@ -276,6 +276,22 @@ void Message::Clear()
 	Unknowns.clear();
 }
 
+std::string Message::SimpleEmailAddress() const
+{
+	if( From.Email.size() ) {
+		// remove all spaces from the email
+		std::string ret;
+		for( size_t i = 0; i < From.Email.size(); i++ )
+			if( From.Email[i] != ' ' )
+				ret += From.Email[i];
+
+		return ret;
+	}
+	else {
+		return "unknown";
+	}
+}
+
 // dump message in mbox format
 void Message::Dump(std::ostream &os) const
 {
@@ -284,13 +300,12 @@ void Message::Dump(std::ostream &os) const
 	static const char *MessageSensitivityString[] = 
 		{ "Normal", "Personal", "Private", "Confidential", "Unknown Sensivity" };
 	
-	os << "From " << (From.Email.size() ? From.Email.c_str() : "unknown")
-	   << "  " << ctime( &MessageDateSent );
+	os << "From " << SimpleEmailAddress() << "  " << ctime( &MessageDateReceived );
 	os << "X-Record-ID: (" << setw(8) << std::hex << MessageRecordId << ")\n";
 	if( MessageReplyTo )
 		os << "X-rim-org-msg-ref-id: " << std::dec << MessageReplyTo << "\n";
 	if( MessageSaved )
-		os << "Message Status: Saved\n";
+		os << "X-Message-Status: Saved\n";
 	else if( MessageRead )
 		os << "Message Status: Opened\n";
 	if( MessagePriority != NormalPriority )

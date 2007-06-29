@@ -44,7 +44,7 @@ class Message
 public:
 	uint8_t RecType;
 	uint32_t RecordId;
-	
+
 	Address From;
 	Address To;
 	Address Cc;
@@ -59,14 +59,14 @@ public:
 	uint32_t MessageReplyTo;
 	time_t MessageDateSent;
 	time_t MessageDateReceived;
-	
+
 	// Message Flags
 	bool	MessageTruncated;
 	bool	MessageRead;
 	bool	MessageReply;
 	bool	MessageSaved;
 	bool	MessageSavedDeleted;
-	
+
 	enum MessagePriorityType {
 		LowPriority = 0,
 		NormalPriority,
@@ -74,7 +74,7 @@ public:
 		UnknownPriority
 	};
 	MessagePriorityType MessagePriority;
-	
+
 	enum MessageSensitivityType {
 		NormalSensitivity = 0,
 		Personal,
@@ -83,7 +83,10 @@ public:
 		UnknownSensitivity
 	};
 	MessageSensitivityType MessageSensitivity;
-	
+
+protected:
+	std::string SimpleEmailAddress() const;
+
 public:
 	const unsigned char* ParseField(const unsigned char *begin,
 		const unsigned char *end);
