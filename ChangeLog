@@ -6,6 +6,7 @@ Release: version 0.8 - 2007/05/??
 		the goal is to be able to do:
 			btool -d "Messages" > email.mbox
 			mutt -f email.mbox
+	- changed some TODO's to FIXME's to keep it grep-consistent
 2007/06/28
 	- minor adjustment to ctags building in buildgen.sh
 	- applied patch from Brian Edginton for better boost detection

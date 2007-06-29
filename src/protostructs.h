@@ -463,7 +463,7 @@ struct MessageRecord
 	uint16_t	field21;	// 0x01 unless PIN reply then 0x00
 	uint32_t	inReplyTo;	// reply to message?
 	uint32_t	field22;	// always 0x00000000
-	uint16_t	field23;	// TODO
+	uint16_t	field23;	// FIXME
 	
 	uint32_t	folderOne;	// these are the 'folders' the message is in
 	uint32_t	folderTwo;	//
@@ -482,7 +482,7 @@ struct MessageRecord
 	uint16_t	field32;	// always 0x0004
 	uint16_t	field34;	// always 0x0000
 	uint8_t		field33;	// always 'd'
-	uint32_t	timeBlock;	// TODO
+	uint32_t	timeBlock;	// FIXME
 	CommonField	field[1];
 } __attribute__ ((packed));
 #define MESSAGE_RECORD_HEADER_SIZE (sizeof(Barry::Protocol::MessageRecord) - sizeof(Barry::Protocol::CommonField))

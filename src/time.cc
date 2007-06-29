@@ -172,7 +172,7 @@ unsigned short GetTimeZoneCode(signed short HourOffset,
 /// returns a time_t adjusted from the first of
 /// the year.
 ///
-/// TODO This function assumes the year hasn't changed,
+/// FIXME This function assumes the year hasn't changed,
 /// but I don't have enough information to determine 
 /// where the year is in this header info
 /// 
