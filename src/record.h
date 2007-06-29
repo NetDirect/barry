@@ -208,6 +208,7 @@ std::ostream& operator<<(std::ostream &os, const Address &msga);
 #include "r_task.h"
 #include "r_pin_message.h"
 #include "r_saved_message.h"
+#include "r_folder.h"
 
 #endif
 

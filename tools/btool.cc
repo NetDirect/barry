@@ -246,6 +246,11 @@ auto_ptr<Parser> GetParser(const string &name, const string &filename)
 			new RecordParser<SavedMessage, Store<SavedMessage> > (
 				new Store<SavedMessage>(filename, false)));
 	}
+	else if( name == "Folders" ) {
+		return auto_ptr<Parser>(
+			new RecordParser<Folder, Store<Folder> > (
+				new Store<Folder>(filename, false)));
+	}
 	else {
 		// unknown database, use null parser
 		return auto_ptr<Parser>( new DataDumpParser );

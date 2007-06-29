@@ -252,6 +252,15 @@ void serialize(ArchiveT &ar, Barry::SavedMessage &m, const unsigned int ver)
 	}
 }
 
+template <class ArchiveT>
+void serialize(ArchiveT &ar, Barry::Folder &f, const unsigned int ver)
+{
+	ar & make_nvp("FolderName", f.FolderName);
+	if( ver < BARRY_POD_MAP_VERSION ) {
+		ar & make_nvp( "Unknowns", f.Unknowns);
+	}
+}
+
 }} // namespace boost::serialization
 
 #endif
