@@ -5,6 +5,7 @@ Release: version 0.8 - 2007/05/??
 	- applied patch from Brian Edginton for better boost detection
 		in configure.ac
 	- added boost usage message to btool -h output
+	- applied email MessageRecord patch from Brian Edginton (thanks!)
 2007/06/21
 	- more porting of OpenSync module to 0.30
 	- added ctags build for opensync source tree to buildgen.sh

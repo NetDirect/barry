@@ -168,6 +168,36 @@ unsigned short GetTimeZoneCode(signed short HourOffset,
 	return TIME_ZONE_CODE_ERR;
 }
 
+/// This routine takes the day of the year and
+/// returns a time_t adjusted from the first of
+/// the year.
+///
+/// TODO This function assumes the year hasn't changed,
+/// but I don't have enough information to determine 
+/// where the year is in this header info
+/// 
+time_t DayToDate( unsigned short Day )
+{
+	struct tm *now, then;
+	time_t t = time( NULL );
+	
+	now = localtime( &t ); // need this to get year
+	// set to Jan 1 midnight, this year;
+	then.tm_sec = 0;
+	then.tm_min = 0;
+	then.tm_hour = 0;
+	then.tm_mday = 0;
+	then.tm_mon = 0;
+	then.tm_year = now->tm_year;
+	then.tm_isdst = -1;
+	t = mktime(&then);
+	t -= 60*60;			// need to subract an hour
+	t += Day * 24 * 60 * 60;	// Add the day converted to seconds
+	
+	return t;
+}
+	
+	
 } // namespace Barry
 
 

@@ -59,6 +59,34 @@ public:
 					// and not as part of the header...
 					// in effect, this record ID occurs
 					// twice in the protocol
+	uint32_t MessageReplyTo;
+	time_t MessageDateSent;
+	time_t MessageDateReceived;
+	
+	// Message Flags
+	bool	MessageTruncated;
+	bool	MessageRead;
+	bool	MessageReply;
+	bool	MessageSaved;
+	bool	MessageSavedDeleted;
+	
+	enum MessagePriorityType {
+		LowPriority = 0,
+		NormalPriority,
+		HighPriority,
+		UnknownPriority
+	};
+	MessagePriorityType MessagePriority;
+	
+	enum MessageSensitivityType {
+		NormalSensitivity = 0,
+		Personal,
+		Private,
+		Confidential,
+		UnknownSensitivity
+	};
+	MessageSensitivityType MessageSensitivity;
+	
 	std::vector<UnknownField> Unknowns;
 
 public:

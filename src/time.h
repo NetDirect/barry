@@ -67,6 +67,9 @@ const TimeZone* GetTimeZoneTable();
 const TimeZone* GetTimeZone(unsigned short Code);
 unsigned short GetTimeZoneCode(signed short HourOffset,
 	signed short MinOffset = 0);
+	
+// Message time conversion stuff
+time_t DayToDate( unsigned short Day );
 
 } // namespace Barry
 

@@ -58,8 +58,26 @@ std::ostream& operator<<(std::ostream &os, const Address &msga) {
 #define MFC_REPLY_TO		0x06
 #define MFC_SUBJECT		0x0b
 #define MFC_BODY		0x0c
+#define MFC_REPLY_UNKNOWN	0x12	// This shows up as 0x00 on replies but we don't do much with it now
 #define MFC_ATTACHMENT		0x16
-#define MFC_END			0xffff
+#define MFC_RECORDID		0x4b
+#define MFC_END		0xffff
+
+#define PRIORITY_MASK		0x003f
+#define PRIORITY_HIGH		0x0008
+#define PRIORITY_LOW		0x0002
+
+#define SENSITIVE_MASK		0xff80
+#define SENSITIVE_CONFIDENTIAL	0x0100
+#define SENSITIVE_PERSONAL	0x0080
+#define SENSITIVE_PRIVATE	0x0040	// actual pattern is 0x00C0
+
+#define MESSAGE_READ		0x0800
+#define MESSAGE_REPLY		0x0001
+#define MESSAGE_SAVED		0x0002
+#define MESSAGE_FORWARD 	0x0008
+#define MESSAGE_TRUNCATED	0x0020
+#define MESSAGE_SAVED_DELETED	0x0080
 
 FieldLink<Message> MessageFieldLinks[] = {
    { MFC_TO,            "To",           0, 0,    0, &Message::To, 0 },
@@ -76,6 +94,7 @@ FieldLink<Message> MessageFieldLinks[] = {
 
 Message::Message()
 {
+	Clear();
 }
 
 Message::~Message()
@@ -123,7 +142,17 @@ const unsigned char* Message::ParseField(const unsigned char *begin,
 			}
 		}
 	}
-
+	// handle special cases
+	char swallow;
+	switch( field->type )
+	{
+	case MFC_RECORDID:
+		MessageRecordId = field->u.uint32;
+		return begin;
+	case MFC_REPLY_UNKNOWN:
+		swallow = field->u.raw[0];
+		return begin;
+	}
 	// if still not handled, add to the Unknowns list
 	UnknownField uf;
 	uf.type = field->type;
@@ -144,15 +173,64 @@ uint32_t Message::GetUniqueId() const
 	throw std::logic_error("Message::GetUniqueId() called, and not supported by the USB protocol.  Should never get called.");
 }
 
-// empty API, not required by protocol
-void Message::SetIds(uint8_t Type, uint32_t Id)
-{
-	// accept it without complaining, just do nothing
-}
-
 void Message::ParseHeader(const Data &data, size_t &offset)
 {
-	// we skip the "header" since we don't know what to do with it yet
+	MAKE_RECORD(const Barry::Protocol::MessageRecord, mr, data, offset);
+	
+	// Priority
+	MessagePriority = NormalPriority;
+	if( mr->priority & PRIORITY_MASK ) {
+		if( mr->priority & PRIORITY_HIGH ) {
+			MessagePriority = HighPriority;
+		}
+		else if( mr->priority & PRIORITY_LOW ) {
+			MessagePriority = LowPriority;
+		}
+		else
+			MessagePriority = UnknownPriority;
+	} 
+	// Sensitivity
+	MessageSensitivity = NormalSensitivity;
+	if( mr->priority & SENSITIVE_MASK ) {
+		if(( mr->priority & SENSITIVE_CONFIDENTIAL ) == SENSITIVE_CONFIDENTIAL ) {
+			MessageSensitivity = Confidential;
+		}
+		else if(( mr->priority & SENSITIVE_PRIVATE ) == SENSITIVE_PRIVATE ) {
+			MessageSensitivity = Private;
+		}
+		else if(( mr->priority & SENSITIVE_PERSONAL ) == SENSITIVE_PERSONAL ) {
+			MessageSensitivity = Personal;
+		}
+		else
+			MessageSensitivity = UnknownSensitivity;
+	}
+	// X-rim-org-message-ref-id	// NOTE: I'm cheating a bit here and using this as a reply-to
+	if( mr->inReplyTo )		// It's actually sent by BB with the actual UID in every message
+		MessageReplyTo = mr->inReplyTo;
+	// Status Flags
+	if( !( mr->flags & MESSAGE_READ ))
+		MessageRead = true;	// NOTE: A lot of these flags are 'backwards' but this seemed
+					// like the most logical way to interpret them for now
+	if(( mr->flags & MESSAGE_REPLY ) == MESSAGE_REPLY )
+		MessageReply = true;	// NOTE: This is a reply, the original message's flags are not changed
+					// the inReplyTo field is updated with the original messages's UID
+	if( !( mr->flags & MESSAGE_TRUNCATED ))
+		MessageTruncated = true;	// NOTE: This bit is unset on truncation, around 4096 on my 7100g
+					// NOTE: bit 0x400 is set on REALLY huge messages, haven't tested
+					//       the exact size yet
+	if( !( mr->flags & MESSAGE_SAVED ))
+		MessageSaved = true;	// NOTE: Saved to 'saved' folder
+	if( !( mr->flags & MESSAGE_SAVED_DELETED ))
+		MessageSavedDeleted = true;	// NOTE: Saved to 'saved' folder and then deleted from inbox
+		
+	MessageDateSent = ( mr->dateSent & 0x01ff ) - 0x29;
+	MessageDateSent = DayToDate( MessageDateSent );
+	MessageDateSent += (time_t)( mr->timeSent*1.77 );
+	
+	MessageDateReceived = ( mr->dateReceived & 0x01ff ) - 0x29;
+	MessageDateReceived = DayToDate( MessageDateReceived );
+	MessageDateReceived += (time_t)( mr->timeReceived*1.77 );
+	
 	offset += MESSAGE_RECORD_HEADER_SIZE;
 }
 
@@ -185,18 +263,41 @@ void Message::Clear()
 	Body.clear();
 	Attachment.clear();
 	
+	MessageRecordId = 0;
+	MessageReplyTo = 0;
+	MessageDateSent = 0;
+	MessageDateReceived = 0;
+	MessageTruncated = false;
+	MessageRead = false;
+	MessageReply = false;
+	MessageSaved = false;
+	MessageSavedDeleted = false;
+	
 	Unknowns.clear();
 }
 
 // dump message in mbox format
 void Message::Dump(std::ostream &os) const
 {
-	// FIXME - use current time until we figure out the date headers
-	time_t fixme = time(NULL);
-
+	static const char *MessageImportance[] = 
+		{ "Low", "Normal", "High", "Unknown Priority" };
+	static const char *MessageSensitivityString[] = 
+		{ "Normal", "Personal", "Private", "Confidential", "Unknown Sensivity" };
+	
 	os << "From " << (From.Email.size() ? From.Email.c_str() : "unknown")
-	   << "  " << ctime(&fixme);
-	os << "Date: " << ctime(&fixme);
+	   << "  " << ctime( &MessageDateSent );
+	os << "X-Record-ID: (" << setw(8) << std::hex << MessageRecordId << ")\n";
+	if( MessageReplyTo )
+		os << "X-rim-org-msg-ref-id: " << std::dec << MessageReplyTo << "\n";
+	if( MessageSaved )
+		os << "Message Status: Saved\n";
+	else if( MessageRead )
+		os << "Message Status: Opened\n";
+	if( MessagePriority != NormalPriority )
+		os << "Importance: " << MessageImportance[MessagePriority] << "\n";
+	if( MessageSensitivity != NormalSensitivity )
+		os << "Sensitivity: " << MessageSensitivityString[MessageSensitivity] << "\n";
+	os << "Date: " << ctime(&MessageDateSent);
 	os << "From: " << From << "\n";
 	if( To.Email.size() )
 		os << "To: " << To << "\n";

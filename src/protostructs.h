@@ -432,7 +432,57 @@ struct DBR_OldTaggedRecord
 
 struct MessageRecord
 {
-	uint8_t		timeBlock[0x74];
+	uint8_t		field1;		// always 'j'
+	uint32_t	field2;		// always 0x00000000
+	uint32_t	flags;		// flags
+	uint32_t	field4;		// normal email and pin recv this is 0x7ff
+					// changes on sent and reply to 0x01ffffff
+					// and 0x003fffff on pin send
+	uint32_t	field5;		// always 0x00000000
+	uint32_t	field6;		// always 0x00000000
+	uint32_t	field7;		// always 0x00000000
+	uint32_t	field8;		// always 0x00000000
+	uint16_t	field9;		// always 0x0000
+	
+	uint16_t	dateReceived;	// the first two of these time fields are always the same
+	uint16_t	timeReceived;	// 
+	uint16_t	dateDuplicate;	// On mail sent from the BB all three fields are identical
+	uint16_t	timeDuplicate;	// (time sent)
+	uint16_t	dateSent;	
+	uint16_t	timeSent;
+	
+	uint16_t	priority;	// priority field
+	uint32_t	field14;	// always 0x00000000
+	uint32_t	field15;	// always 0x00000000
+	uint16_t	field16;	// always 0x0000
+	uint32_t	field13;	// PIN reply 0x00000000 other time 0xffffffff or 0xfffffffe
+	uint16_t	messageSize;	// Message size, 0x0000 if Reply or Saved, 0xffff if below ????
+	uint32_t	field18;	// 0x0's and 0xF'x
+	uint32_t	field19;	// 0x0's and 0xF's
+	uint16_t	field20;	// always 0x0000
+	uint16_t	field21;	// 0x01 unless PIN reply then 0x00
+	uint32_t	inReplyTo;	// reply to message?
+	uint32_t	field22;	// always 0x00000000
+	uint16_t	field23;	// TODO
+	
+	uint32_t	folderOne;	// these are the 'folders' the message is in
+	uint32_t	folderTwo;	//
+	 
+	uint16_t	replyMessageFlags;	// 0xfffe on recvd messages
+					// 0x001b on reply
+					// 0x0015 on send
+					// 0x3 pin send
+					// 0x2 on pin recv
+	uint16_t	field27;	// set to 0x00000004 on PIN reply, 0x00000005 otherwise
+	uint32_t	headerUID;	// yet another copy of the UID (RecId)	
+	
+	uint32_t	field29;	// always 0x00000000
+	uint16_t	field30;	// always 0x0002
+	uint16_t	field31;	// always 0x00000000
+	uint16_t	field32;	// always 0x0004
+	uint16_t	field34;	// always 0x0000
+	uint8_t		field33;	// always 'd'
+	uint32_t	timeBlock;	// TODO
 	CommonField	field[1];
 } __attribute__ ((packed));
 #define MESSAGE_RECORD_HEADER_SIZE (sizeof(Barry::Protocol::MessageRecord) - sizeof(Barry::Protocol::CommonField))
