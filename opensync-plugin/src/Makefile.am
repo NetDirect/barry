@@ -21,6 +21,7 @@ barry_sync_la_SOURCES = \
 	environment.cc environment.h \
 	event_converter.cc event_converter.h \
 	idmap.cc idmap.h \
+	error.cc error.h \
 	trace.h
 
 barry_sync_la_LDFLAGS = -avoid-version -export-dynamic -module

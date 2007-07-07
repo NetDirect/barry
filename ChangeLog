@@ -1,5 +1,11 @@
 Release: version 0.8 - 2007/05/??
 ------------------------------------------------------------------------------
+2007/07/06
+	- reorganized exception and trace code in opensync plugin
+	- added XmlToCalendar() function, based on unfinished opensync
+		library API that is not yet finished... will be
+		committed to opensync svn tree when complete
+	- added OSyncXMLField logger to plugin trace class
 2007/06/29
 	- applied email MessageRecord patch from Brian Edginton (thanks!)
 	- updated Message::Dump() to output more valid mbox data...

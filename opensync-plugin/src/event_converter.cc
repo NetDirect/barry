@@ -22,9 +22,13 @@
 
 #include "event_converter.h"
 #include "trace.h"
+#include "error.h"
 #include <opensync/opensync-time.h>
 #include <sstream>
 
+
+//////////////////////////////////////////////////////////////////////////////
+// Week day helpers
 
 const char *WeekDays[] = { "SU", "MO", "TU", "WE", "TH", "FR", "SA" };
 
@@ -37,7 +41,81 @@ unsigned short GetWeekDayIndex(const char *dayname)
 	return 0;
 }
 
-void RecurToBarryCal()
+
+//////////////////////////////////////////////////////////////////////////////
+// XmlField wrapper class
+
+class XmlField
+{
+	OSyncXMLField *m_field;
+
+public:
+	/// Create new empty field, ready to add values.
+	XmlField(fXMLFormatPtr &format, const char *fieldname)
+	{
+		OSyncError *error = NULL;
+		m_field = osync_xmlfield_new(format.Get(), fieldname, &error);
+		if( !m_field )
+			throw osync_error(error);
+	}
+
+	/// Create new field, and add a "Content" key immediately with specified value
+	XmlField(fXMLFormatPtr &format, const char *fieldname, const char *content)
+	{
+		OSyncError *error = NULL;
+		m_field = osync_xmlfield_new(format.Get(), fieldname, &error);
+		if( !m_field )
+			throw osync_error(error);
+		osync_xmlfield_set_key_value(m_field, "Content", content);
+	}
+
+	/// Same as const char* version, except with std::string&.
+	XmlField(fXMLFormatPtr &format, const char *fieldname, const std::string &content)
+	{
+		OSyncError *error = NULL;
+		m_field = osync_xmlfield_new(format.Get(), fieldname, &error);
+		if( !m_field )
+			throw osync_error(error);
+		osync_xmlfield_set_key_value(m_field, "Content", content.c_str());
+	}
+
+	/// Create XmlField object based on existing OSyncXMLField pointer
+	explicit XmlField(OSyncXMLField *field)
+		: m_field(field)
+	{
+	}
+
+	void SetKeyValue(const char *key, const char *value)
+	{
+		osync_xmlfield_set_key_value(m_field, key, value);
+	}
+
+	void SetAttr(const char *name, const char *value)
+	{
+		osync_xmlfield_set_attr(m_field, name, value);
+	}
+
+	std::string GetKeyValue(const char *key)
+	{
+		const char *content = osync_xmlfield_get_key_value(m_field, key);
+		if( !content )
+			throw osync_error("osync_xmlfield_get_key_value returned NULL");
+		return content;
+	}
+
+	std::string GetKeyValue()	// Defaults to "Content"
+	{
+		return GetKeyValue("Content");
+	}
+};
+
+
+//////////////////////////////////////////////////////////////////////////////
+// XML -> Barry::Calendar conversion routines
+
+void RecurToBarryCal(OSyncXMLFormat *event,
+		     OSyncXMLField *field,
+		     std::auto_ptr<Barry::Calendar> &cal)
 {
 	// FIXME - needs to be implemented
 
@@ -51,47 +129,83 @@ void RecurToBarryCal()
 /// Converts an OSyncXMLFormat object into a Barry::Calendar object.
 /// On error, the auto_ptr<> will contain a null pointer.
 ///
-/*
+/// \exception osync_error for OpenSync related errors,
+///		and ConvertError for conversion errors
+///
 std::auto_ptr<Barry::Calendar> XmlToCalendar(OSyncXMLFormat *event)
 {
 	Trace trace("XmlToCalendar");
 
-	using namespace std;
+	std::auto_ptr<Barry::Calendar> cal(new Barry::Calendar);
 
-	Trace trace("vCalendar::ToBarry");
-
-	// we only handle vCalendar data with one vevent block
-	if( HasMultipleVEvents() )
-		throw ConvertError("vCalendar data contains more than one VEVENT block, unsupported");
-
-	// start fresh
-	Clear();
-
-	// store the vCalendar raw data
-	m_vCalData = vcal;
-
-	// create format parser structures
-	m_format = vformat_new_from_string(vcal);
-	if( !m_format )
-		throw ConvertError("resource error allocating vformat");
-
-	string start = GetAttr("DTSTART");
-	trace.logf("DTSTART attr retrieved: %s", start.c_str());
-	string end = GetAttr("DTEND");
-	trace.logf("DTEND attr retrieved: %s", end.c_str());
-	string subject = GetAttr("SUMMARY");
-	trace.logf("SUMMARY attr retrieved: %s", subject.c_str());
-	if( subject.size() == 0 ) {
-		subject = "<blank subject>";
-		trace.logf("ERROR: bad data, blank SUMMARY: %s", vcal);
+	// this function only handles calendar events
+	if( strcmp("event", osync_xmlformat_get_objtype(event)) != 0 ) {
+		cal.reset();
+		throw ConvertError("OSyncXMLFormat is not an event.");
 	}
 
-	if( !start.size() || !end.size() ) {
+	OSyncXMLField *field = osync_xmlformat_get_first_field(event);
+	for( ; field; field = osync_xmlfield_get_next(field) ) {
+
+		std::string name = osync_xmlfield_get_name(field);
+		XmlField xmlobj(field);
+
+		// log everything
+		trace.log(field);
+
+		if( name == "DateStarted" ) {
+			cal->StartTime = osync_time_xml2unix(event, field);
+			if( cal->StartTime == -1 ) {
+				trace.log("Unable to convert DateStarted to time_t");
+			}
+		}
+		else if( name == "DateEnd" ) {
+			cal->EndTime = osync_time_xml2unix(event, field);
+			if( cal->EndTime == -1 ) {
+				trace.log("Unable to convert DateEnd to time_t");
+			}
+		}
+		/*
+		else if( name == "Alarm" ||
+			 name == "AlarmAudio" ||
+			 name == "AlarmDisplay" ||
+			 name == "AlarmEmail" ||
+			 name == "AlarmProcedure" ) {
+
+	XmlField alarm(xml, "Alarm");
+	alarm.SetKeyValue("AlarmAction", "AUDIO");
+	// notify must be UTC, when specified in DATE-TIME
+	alarm.SetKeyValue("AlarmTrigger", tz_notify.Get());
+	alarm.SetAttr("Value", "DATE-TIME");
+
+		}
+		*/
+		else if( name == "Summary" ) {
+			cal->Subject = xmlobj.GetKeyValue();
+			if( cal->Subject.size() == 0 ) {
+				cal->Subject = "<blank subject>";
+				trace.log("ERROR: bad data, blank SUMMARY");
+			}
+		}
+		else if( name == "Description" ) {
+			cal->Notes = xmlobj.GetKeyValue();
+		}
+		else if( name == "Location" ) {
+			cal->Location = xmlobj.GetKeyValue();
+		}
+		else if( name == "RecurrenceRule" ) {
+			RecurToBarryCal(event, field, cal);
+		}
+	}
+
+
+	// do some checking
+	if( cal->StartTime == -1 || cal->EndTime == -1 ) {
 		// FIXME - DTEND is actually optional!  According to the
 		// RFC, a DTSTART with no DTEND should be treated
 		// like a "special day" like an anniversary, which occupies
 		// no time.
-		throw ConvertError("Blank DTSTART or DTEND");
+		throw ConvertError("Blank DateStarted or DateEnd");
 	}
 
 	// FIXME - we are assuming that any non-UTC timestamps
@@ -102,109 +216,19 @@ std::auto_ptr<Barry::Calendar> XmlToCalendar(OSyncXMLFormat *event)
 	// parameters that might be in the vcalendar format... this
 	// must be fixed.
 	//
-	time_t now = time(NULL);
-	int zoneoffset = osync_time_timezone_diff(localtime(&now));
+	uint32_t RecordId = 0;
+	cal->SetIds(Barry::Calendar::GetDefaultRecType(), RecordId);
 
-	Barry::Calendar &rec = m_BarryCal;
-	rec.SetIds(Barry::Calendar::GetDefaultRecType(), RecordId);
-	rec.StartTime = osync_time_vtime2unix(start.c_str(), zoneoffset);
-	rec.EndTime = osync_time_vtime2unix(end.c_str(), zoneoffset);
 	// FIXME - until notification time is supported, we assume 15 min
 	// in advance
-	rec.NotificationTime = rec.StartTime - 15 * 60;
-	rec.Subject = subject;
+	cal->NotificationTime = cal->StartTime - 15 * 60;
 
-	return m_BarryCal;
+	return cal;
 }
-*/
 
-/// Exception class for wrapping OSyncError messages.  Takes ownership
-/// of the error, and unref's it on destruction.
-class osync_error : public std::runtime_error
-{
-	OSyncError *m_error;
 
-public:
-	explicit osync_error(OSyncError *error)
-		: std::runtime_error(get_error_msg(error)),
-		m_error(error)
-	{
-	}
-
-	// handle copying correctly
-	osync_error(const osync_error &other)
-		: std::runtime_error(other.what())
-	{
-		operator=(other);
-	}
-
-	osync_error& operator=(const osync_error &other)
-	{
-		m_error = other.m_error;
-		osync_error_ref(&m_error);
-		return *this;
-	}
-
-	~osync_error() throw()
-	{
-		osync_error_unref(&m_error);
-	}
-
-	OSyncError* c_obj() { return m_error; }
-
-	static std::string get_error_msg(OSyncError *error)
-	{
-		return std::string(osync_error_print(&error));
-	}
-};
-
-class ConvertError : public std::runtime_error
-{
-public:
-	ConvertError(const std::string &msg) : std::runtime_error(msg) {}
-};
-
-class XmlField
-{
-	OSyncXMLField *m_field;
-
-public:
-	XmlField(fXMLFormatPtr &format, const char *fieldname)
-	{
-		OSyncError *error = NULL;
-		m_field = osync_xmlfield_new(format.Get(), fieldname, &error);
-		if( !m_field )
-			throw osync_error(error);
-	}
-
-	XmlField(fXMLFormatPtr &format, const char *fieldname, const char *content)
-	{
-		OSyncError *error = NULL;
-		m_field = osync_xmlfield_new(format.Get(), fieldname, &error);
-		if( !m_field )
-			throw osync_error(error);
-		osync_xmlfield_set_key_value(m_field, "Content", content);
-	}
-
-	XmlField(fXMLFormatPtr &format, const char *fieldname, const std::string &content)
-	{
-		OSyncError *error = NULL;
-		m_field = osync_xmlfield_new(format.Get(), fieldname, &error);
-		if( !m_field )
-			throw osync_error(error);
-		osync_xmlfield_set_key_value(m_field, "Content", content.c_str());
-	}
-
-	void SetKeyValue(const char *key, const char *value)
-	{
-		osync_xmlfield_set_key_value(m_field, key, value);
-	}
-
-	void SetAttr(const char *name, const char *value)
-	{
-		osync_xmlfield_set_attr(m_field, name, value);
-	}
-};
+//////////////////////////////////////////////////////////////////////////////
+// Barry::Calendar -> XML conversion routines
 
 void RecurToXml(fXMLFormatPtr &xml, const Barry::Calendar &cal)
 {
@@ -285,7 +309,8 @@ void RecurToXml(fXMLFormatPtr &xml, const Barry::Calendar &cal)
 					cnt++;
 				}
 			}
-			recur.SetKeyValue("WKST", oss.str().c_str());
+//			recur.SetKeyValue("WKST", oss.str().c_str());
+			recur.SetKeyValue("ByDay", oss.str().c_str());
 		}
 		break;
 
@@ -399,23 +424,4 @@ fXMLFormatPtr CalendarToXml(const Barry::Calendar &cal)
 
 	return xml;
 }
-
-
-
-/*
-bool vCalendar::HasMultipleVEvents() const
-{
-	int count = 0;
-	GList *attrs = vformat_get_attributes(m_format);
-	for( ; attrs; attrs = attrs->next ) {
-		VFormatAttribute *attr = (VFormatAttribute*) attrs->data;
-		if( strcasecmp(vformat_attribute_get_name(attr), "BEGIN") == 0 &&
-		    strcasecmp(vformat_attribute_get_nth_value(attr, 0), "VEVENT") == 0 )
-		{
-			count++;
-		}
-	}
-	return count > 1;
-}
-*/
 
