@@ -19,9 +19,9 @@ barry_sync_LTLIBRARIES = barry_sync.la
 barry_sync_la_SOURCES = \
 	barry_sync.cc barry_sync.h \
 	environment.cc environment.h \
-	event_converter.cc event_converter.h \
+	vevent.cc vevent.h \
 	idmap.cc idmap.h \
-	error.cc error.h \
+	vformat.c vformat.h \
 	trace.h
 
 barry_sync_la_LDFLAGS = -avoid-version -export-dynamic -module

@@ -23,19 +23,13 @@
 #define __BARRY_SYNC_ENVIRONMENT_H__
 
 #include <opensync/opensync.h>
-#include <opensync/plugin/opensync_plugin_info.h>
 #include <barry/barry.h>
 #include <string>
 #include "idmap.h"
 
 
-class BarryEnvironment;
-
-class DatabaseSyncState
+struct DatabaseSyncState
 {
-private:
-	BarryEnvironment *m_pEnv;
-
 public:
 	// cache is a map of record ID to bool... the bool doesn't mean
 	// anything... the mere existence of the ID means it belongs
@@ -56,17 +50,11 @@ public:
 
 	bool m_Sync;
 
-	// external OpenSync data
-	OSyncObjFormat *m_pObjFormat;
-	OSyncObjTypeSink *m_pSink;
-
 private:
 	std::string m_Desc;
-	const char *m_DBName;
 
 public:
-	DatabaseSyncState(BarryEnvironment *pEnv, OSyncPluginInfo *pi,
-		const char *DBName, const char *description);
+	DatabaseSyncState(OSyncMember *pm, const char *description);
 	~DatabaseSyncState();
 
 	bool LoadCache();
@@ -79,15 +67,14 @@ public:
 	void ClearDirtyFlags();
 
 	unsigned long GetMappedRecordId(const std::string &uid);
-
-	const std::string& GetDesc() const { return m_Desc; }
-	const char* GetDBName() const { return m_DBName; }
 };
 
 
-class BarryEnvironment
+struct BarryEnvironment
 {
 public:
+	OSyncMember *member;
+
 	// user config data
 	std::string m_ConfigData;
 	uint32_t m_pin;
@@ -100,20 +87,14 @@ public:
 	DatabaseSyncState m_CalendarSync, m_ContactsSync;
 
 public:
-	BarryEnvironment(OSyncPluginInfo *pi);
+	BarryEnvironment(OSyncMember *pm);
 	~BarryEnvironment();
 
-	// meta data
-	bool IsConnected() { return m_pCon; }
-
-	// operations
-
-	void OpenDesktop(Barry::ProbeResult &result);
 	void Disconnect();
 
 	DatabaseSyncState* GetSyncObject(OSyncChange *change);
 
-	void ParseConfig(const char *data);
+	void ParseConfig(const char *data, int size);
 	void BuildConfig();
 
 	void ClearDirtyFlags(Barry::RecordStateTable &table, const std::string &dbname);

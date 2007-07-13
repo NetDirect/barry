@@ -26,25 +26,17 @@
 #include <fstream>
 #include <sstream>
 #include <iomanip>
-#include <opensync/opensync-data.h>
 
 
 //////////////////////////////////////////////////////////////////////////////
 // DatabaseSyncState
 
-DatabaseSyncState::DatabaseSyncState(BarryEnvironment *pEnv,
-				     OSyncPluginInfo *pi,
-				     const char *DBName,
-				     const char *description)
-	: m_pEnv(pEnv),
-	m_Sync(false),
-	m_pObjFormat(0),
-	m_pSink(0),
-	m_Desc(description),
-	m_DBName(DBName)
+DatabaseSyncState::DatabaseSyncState(OSyncMember *pm, const char *description)
+	: m_Sync(false),
+	m_Desc(description)
 {
 	m_CacheFilename = m_MapFilename =
-		osync_plugin_info_get_configdir(pi);
+		osync_member_get_configdir(pm);
 	m_CacheFilename += "/barry_" + m_Desc + "_cache.txt";
 	m_MapFilename += "/barry_" + m_Desc + "_idmap.txt";
 }
@@ -117,12 +109,6 @@ void DatabaseSyncState::CleanupMap()
 	}
 }
 
-void DatabaseSyncState::ClearDirtyFlags()
-{
-	Trace trace("DatabaseSyncState::ClearDirtyFlags()", m_Desc.c_str());
-	m_pEnv->ClearDirtyFlags(m_Table, GetDBName());
-}
-
 unsigned long DatabaseSyncState::GetMappedRecordId(const std::string &uid)
 {
 	Trace trace("DatabaseSyncState::GetMappedRecordId()", m_Desc.c_str());
@@ -159,26 +145,18 @@ unsigned long DatabaseSyncState::GetMappedRecordId(const std::string &uid)
 //////////////////////////////////////////////////////////////////////////////
 // BarryEnvironment Public API
 
-BarryEnvironment::BarryEnvironment(OSyncPluginInfo *pi)
-	: m_pin(0),
+BarryEnvironment::BarryEnvironment(OSyncMember *pm)
+	: member(pm),
+	m_pin(0),
 	m_pCon(0),
-	m_CalendarSync(this, pi, Barry::Calendar::GetDBName(), "calendar"),
-	m_ContactsSync(this, pi, Barry::Contact::GetDBName(), "contacts")
+	m_CalendarSync(pm, "calendar"),
+	m_ContactsSync(pm, "contacts")
 {
 }
 
 BarryEnvironment::~BarryEnvironment()
 {
 	delete m_pCon;
-}
-
-void BarryEnvironment::OpenDesktop(Barry::ProbeResult &result)
-{
-	if( m_pCon )
-		throw std::logic_error("Desktop already opened");
-
-	m_pCon = new Barry::Controller(result);
-	m_pCon->OpenMode(Barry::Controller::Desktop);
 }
 
 void BarryEnvironment::Disconnect()
@@ -218,7 +196,8 @@ DatabaseSyncState* BarryEnvironment::GetSyncObject(OSyncChange *change)
 {
 	Trace trace("BarryEnvironment::GetSyncObject()");
 
-	const char *name = osync_change_get_objtype(change);
+	OSyncObjType *type = osync_change_get_objtype(change);
+	const char *name = osync_objtype_get_name(type);
 	if( strcmp(name, "event") == 0 ) {
 		return &m_CalendarSync;
 	}
@@ -230,11 +209,11 @@ DatabaseSyncState* BarryEnvironment::GetSyncObject(OSyncChange *change)
 	}
 }
 
-void BarryEnvironment::ParseConfig(const char *data)
+void BarryEnvironment::ParseConfig(const char *data, int size)
 {
 	Trace trace("ParseConfig");
 
-	m_ConfigData = data;
+	m_ConfigData.assign(data, size);
 
 	// The config data should contain:
 	//    - PIN of device to sync with

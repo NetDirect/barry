@@ -25,7 +25,7 @@
 #include <barry/barry.h>
 #include <stdint.h>
 #include <string>
-//#include "vformat.h"
+#include "vformat.h"
 
 // forward declarations
 class BarryEnvironment;
@@ -111,7 +111,6 @@ public:
 	}
 };
 
-/*
 typedef vSmartPtr<VFormatAttribute, VFormatAttribute, &vformat_attribute_free> vAttrPtr;
 typedef vSmartPtr<VFormatParam, VFormatParam, &vformat_attribute_param_free> vParamPtr;
 typedef vSmartPtr<char, void, &g_free> gStringPtr;
@@ -173,7 +172,6 @@ public:
 
 	void Clear();
 };
-*/
 
 
 class VEventConverter

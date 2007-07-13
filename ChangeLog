@@ -1,5 +1,9 @@
 Release: version 0.8 - 2007/05/??
 ------------------------------------------------------------------------------
+2007/07/12
+	- upper management directive: revert all OpenSync 0.3x changes
+		and proceed with OpenSync 0.22.  Reverting the
+		opensync-plugin/src tree to Barry 0.7 status.
 2007/07/06
 	- reorganized exception and trace code in opensync plugin
 	- added XmlToCalendar() function, based on unfinished opensync
