@@ -147,7 +147,7 @@ unsigned short vCalendar::GetWeekDayIndex(const char *dayname)
 bool vCalendar::HasMultipleVEvents() const
 {
 	int count = 0;
-	GList *attrs = vformat_get_attributes(m_format);
+	GList *attrs = m_format ? vformat_get_attributes(m_format) : 0;
 	for( ; attrs; attrs = attrs->next ) {
 		VFormatAttribute *attr = (VFormatAttribute*) attrs->data;
 		if( strcasecmp(vformat_attribute_get_name(attr), "BEGIN") == 0 &&

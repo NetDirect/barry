@@ -1,5 +1,7 @@
 Release: version 0.8 - 2007/05/??
 ------------------------------------------------------------------------------
+2007/07/13
+	- fixed null pointer access in opensync's HasMultipleVEvents()
 2007/07/12
 	- upper management directive: revert all OpenSync 0.3x changes
 		and proceed with OpenSync 0.22.  Reverting the
