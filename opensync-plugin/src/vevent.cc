@@ -132,6 +132,61 @@ std::string vCalendar::GetAttr(const char *attrname)
 	return ret;
 }
 
+vAttr vCalendar::GetAttrObj(const char *attrname)
+{
+	Trace trace("vCalendar::GetAttrObj");
+	trace.logf("getting attr: %s", attrname);
+
+	return vAttr(vformat_find_attribute(m_format, attrname));
+}
+
+std::string vAttr::GetName()
+{
+	std::string ret;
+
+	if( !m_attr )
+		return ret;
+
+	const char *name = vformat_attribute_get_name(m_attr);
+	if( name )
+		ret = name;
+	return ret;
+}
+
+std::string vAttr::GetValue()
+{
+	std::string ret;
+
+	if( m_attr ) {
+		if( vformat_attribute_is_single_valued(m_attr) ) {
+			ret = vformat_attribute_get_value(m_attr);
+		}
+		else {
+			// FIXME - does this ever happen?
+			ret = vformat_attribute_get_nth_value(m_attr, 0);
+		}
+	}
+	return ret;
+}
+
+std::string vAttr::GetParam(const char *name, int nth)
+{
+	std::string ret;
+
+	if( !m_attr )
+		return ret;
+
+	VFormatParam *param = vformat_attribute_find_param(m_attr, name);
+	if( !param )
+		return ret;
+
+	const char *value = vformat_attribute_param_get_nth_value(param, nth);
+	if( value )
+		ret = value;
+
+	return ret;
+}
+
 
 const char *vCalendar::WeekDays[] = { "SU", "MO", "TU", "WE", "TH", "FR", "SA" };
 
@@ -145,8 +200,7 @@ unsigned short vCalendar::GetWeekDayIndex(const char *dayname)
 }
 
 bool vCalendar::HasMultipleVEvents() const
-{
-	int count = 0;
+{ int count = 0;
 	GList *attrs = m_format ? vformat_get_attributes(m_format) : 0;
 	for( ; attrs; attrs = attrs->next ) {
 		VFormatAttribute *attr = (VFormatAttribute*) attrs->data;
@@ -317,6 +371,11 @@ void vCalendar::RecurToBarryCal()
 // a vCalendar string of data.
 const std::string& vCalendar::ToVCal(const Barry::Calendar &cal)
 {
+	Trace trace("vCalendar::ToVCal");
+	std::ostringstream oss;
+	cal.Dump(oss);
+	trace.logf("ToVCal, initial Barry record: %s", oss.str().c_str());
+
 	// start fresh
 	Clear();
 	m_format = vformat_new();
@@ -364,6 +423,7 @@ const std::string& vCalendar::ToVCal(const Barry::Calendar &cal)
 	m_gCalData = vformat_to_string(m_format, VFORMAT_EVENT_20);
 	m_vCalData = m_gCalData;
 
+	trace.logf("ToVCal, resulting vcal data: %s", m_vCalData.c_str());
 	return m_vCalData;
 }
 
@@ -374,6 +434,7 @@ const Barry::Calendar& vCalendar::ToBarry(const char *vcal, uint32_t RecordId)
 	using namespace std;
 
 	Trace trace("vCalendar::ToBarry");
+	trace.logf("ToBarry, working on vcal data: %s", vcal);
 
 	// we only handle vCalendar data with one vevent block
 	if( HasMultipleVEvents() )
@@ -400,14 +461,14 @@ const Barry::Calendar& vCalendar::ToBarry(const char *vcal, uint32_t RecordId)
 		subject = "<blank subject>";
 		trace.logf("ERROR: bad data, blank SUMMARY: %s", vcal);
 	}
+	vAttr trigger_obj = GetAttrObj("TRIGGER");
 
-	if( !start.size() || !end.size() ) {
-		// FIXME - DTEND is actually optional!  According to the
-		// RFC, a DTSTART with no DTEND should be treated
-		// like a "special day" like an anniversary, which occupies
-		// no time.
-		throw ConvertError("Blank DTSTART or DTEND");
-	}
+
+
+	//
+	// Now, run checks and convert into Barry object
+	//
+
 
 	// FIXME - we are assuming that any non-UTC timestamps
 	// in the vcalendar record will be in the current timezone...
@@ -422,12 +483,60 @@ const Barry::Calendar& vCalendar::ToBarry(const char *vcal, uint32_t RecordId)
 
 	Barry::Calendar &rec = m_BarryCal;
 	rec.SetIds(Barry::Calendar::GetDefaultRecType(), RecordId);
+
+	if( !start.size() )
+		throw ConvertError("Blank DTSTART");
 	rec.StartTime = osync_time_vtime2unix(start.c_str(), zoneoffset);
-	rec.EndTime = osync_time_vtime2unix(end.c_str(), zoneoffset);
-	// FIXME - until notification time is supported, we assume 15 min
-	// in advance
-	rec.NotificationTime = rec.StartTime - 15 * 60;
+
+	if( !end.size() ) {
+		// DTEND is actually optional!  According to the
+		// RFC, a DTSTART with no DTEND should be treated
+		// like a "special day" like an anniversary, which occupies
+		// no time.
+		//
+		// Since the Blackberry doesn't really map well to this
+		// case, we'll set the end time to 1 day past start.
+		//
+		rec.EndTime = rec.StartTime + 24 * 60 * 60;
+	}
+	else {
+		rec.EndTime = osync_time_vtime2unix(end.c_str(), zoneoffset);
+	}
+
 	rec.Subject = subject;
+
+	// convert trigger time into notification time
+	// assume no notification, by default
+	rec.NotificationTime = 0;
+	if( trigger_obj.Get() ) {
+		string trigger_type = trigger_obj.GetParam("VALUE");
+		string trigger = trigger_obj.GetValue();
+
+		if( trigger.size() == 0 ) {
+			trace.logf("ERROR: no TRIGGER found in calendar entry, assuming notification time as 15 minutes before start.");
+		}
+		else if( trigger_type == "DATE-TIME" ) {
+			rec.NotificationTime = osync_time_vtime2unix(trigger.c_str(), zoneoffset);
+		}
+		else if( trigger_type == "DURATION" || trigger_type.size() == 0 ) {
+			// default is DURATION (RFC 4.8.6.3)
+			string related = trigger_obj.GetParam("RELATED");
+
+			// default to relative to start time
+			time_t *relative = &rec.StartTime;
+			if( related == "END" )
+				relative = &rec.EndTime;
+
+			rec.NotificationTime = *relative + osync_time_alarmdu2sec(trigger.c_str());
+		}
+		else {
+			throw ConvertError("Unknown TRIGGER VALUE");
+		}
+	}
+	else {
+		trace.logf("ERROR: no TRIGGER found in calendar entry, assuming notification time as 15 minutes before start.");
+	}
+
 
 	return m_BarryCal;
 }

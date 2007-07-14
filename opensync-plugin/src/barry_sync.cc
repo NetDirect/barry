@@ -52,9 +52,28 @@ extern "C" {
 // Support functions and classes
 //
 
+std::string Map2Uid(const idmap &map, uint32_t recordId)
+{
+	// search the idmap for the UID
+	std::string uid;
+	idmap::const_iterator mapped_id;
+	if( map.RidExists(recordId, &mapped_id) ) {
+		uid = mapped_id->first;
+	}
+	else {
+		// not mapped, map it ourselves
+		char *puid = g_strdup_printf("%u", recordId);
+		uid = puid;
+		g_free(puid);
+	}
+	return uid;
+}
+
+
 void GetChanges(OSyncContext *ctx, BarryEnvironment *env,
-		DatabaseSyncState::cache_type &cache,
-		const char *DBDBName, const char *FormatName,
+		DatabaseSyncState *pSync,
+		const char *DBDBName,
+		const char *ObjTypeName, const char *FormatName,
 		GetData_t getdata)
 {
 	Trace trace("GetChanges");
@@ -63,6 +82,18 @@ void GetChanges(OSyncContext *ctx, BarryEnvironment *env,
 	using namespace Barry;
 	using Barry::RecordStateTable;
 	Controller &con = *env->m_pCon;
+
+	// find the matching cache, state table, and id map for this change
+	DatabaseSyncState::cache_type &cache = pSync->m_Cache;
+	idmap &map = pSync->m_IdMap;
+
+	// check if slow sync has been requested, and if so, empty the
+	// cache and id map and start fresh
+	if( osync_member_get_slow_sync(env->member, ObjTypeName) ) {
+		trace.log("GetChanges: slow sync request detected, clearing cache and id map");
+		cache.clear();
+		map.clear();
+	}
 
 	// fetch state table
 	unsigned int dbId = con.GetDBID(DBDBName);
@@ -78,6 +109,9 @@ void GetChanges(OSyncContext *ctx, BarryEnvironment *env,
 		OSyncChange *change = 0;
 		const RecordStateTable::IndexType &index = i->first;
 		const RecordStateTable::State &state = i->second;
+
+		// search the idmap for the UID
+		std::string uid = Map2Uid(map, state.RecordId);
 
 		// search the cache
 		DatabaseSyncState::cache_type::const_iterator c = cache.find(state.RecordId);
@@ -105,10 +139,8 @@ void GetChanges(OSyncContext *ctx, BarryEnvironment *env,
 			osync_change_set_member(change, env->member);
 			osync_change_set_objformat_string(change, FormatName);
 
-			char *uid = g_strdup_printf("%u", state.RecordId);
-			osync_change_set_uid(change, uid);
-			trace.logf("change record ID: %s", uid);
-			g_free(uid);
+			osync_change_set_uid(change, uid.c_str());
+			trace.logf("change record ID: %s", uid.c_str());
 
 			// Now you can set the data for the object
 			// Set the last argument to FALSE if the real data
@@ -118,6 +150,9 @@ void GetChanges(OSyncContext *ctx, BarryEnvironment *env,
 
 			// just report the change via
 			osync_context_report_change(ctx, change);
+
+			// map our IDs for later
+			map.Map(uid, state.RecordId);
 		}
 	}
 
@@ -127,6 +162,9 @@ void GetChanges(OSyncContext *ctx, BarryEnvironment *env,
 	DatabaseSyncState::cache_type::const_iterator c = cache.begin();
 	for( ; c != cache.end(); ++c ) {
 		uint32_t recordId = c->first;
+
+		// search the idmap for the UID
+		std::string uid = Map2Uid(map, recordId);
 
 		// search the state table
 		i = table.StateMap.begin();
@@ -146,10 +184,8 @@ void GetChanges(OSyncContext *ctx, BarryEnvironment *env,
 			osync_change_set_member(change, env->member);
 			osync_change_set_objformat_string(change, FormatName);
 
-			char *uid = g_strdup_printf("%u", recordId);
-			osync_change_set_uid(change, uid);
-			trace.log(uid);
-			g_free(uid);
+			osync_change_set_uid(change, uid.c_str());
+			trace.log(uid.c_str());
 
 			// report the change
 			osync_context_report_change(ctx, change);
@@ -405,15 +441,15 @@ static void get_changeinfo(OSyncContext *ctx)
 		BarryEnvironment *env = (BarryEnvironment *)osync_context_get_plugin_data(ctx);
 
 		if( env->m_CalendarSync.m_Sync ) {
-			GetChanges(ctx, env, env->m_CalendarSync.m_Cache,
-				"Calendar", "vevent20",
+			GetChanges(ctx, env, &env->m_CalendarSync,
+				"Calendar", "event", "vevent20",
 				&VEventConverter::GetRecordData);
 		}
 
 		if( env->m_ContactsSync.m_Sync ) {
 			// FIXME - not yet implemented
-//			GetChanges(ctx, env, env->m_ContactsSync.m_Cache
-//				"Address Book", "vcard30",
+//			GetChanges(ctx, env, &env->m_ContactsSync
+//				"Address Book", "contact", "vcard30",
 //				&ContactToVCard::GetRecordData);
 		}
 

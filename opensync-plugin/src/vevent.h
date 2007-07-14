@@ -117,6 +117,30 @@ typedef vSmartPtr<char, void, &g_free> gStringPtr;
 
 
 //
+// vAttr
+//
+/// Class for reading a VFormatAttribute.  Reading does not require
+/// memory management, so none is done.
+///
+class vAttr
+{
+	VFormatAttribute *m_attr;
+
+public:
+	vAttr(VFormatAttribute *attr)
+		: m_attr(attr)
+	{
+	}
+
+	VFormatAttribute* Get() { return m_attr; }
+
+	std::string GetName();
+	std::string GetValue();
+	std::string GetParam(const char *name, int nth = 0);
+};
+
+
+//
 // vCalendar
 //
 /// Class for converting between RFC 2445 iCalendar data format,
@@ -151,6 +175,7 @@ protected:
 	void AddAttr(vAttrPtr attr);
 	void AddParam(vAttrPtr &attr, const char *name, const char *value);
 	std::string GetAttr(const char *attrname);
+	vAttr GetAttrObj(const char *attrname);
 
 	void RecurToVCal();
 	void RecurToBarryCal();

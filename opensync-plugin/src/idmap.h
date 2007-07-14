@@ -78,6 +78,7 @@ public:
 	// some stl-like functions
 	iterator begin() { return m_map.begin(); }
 	iterator end() { return m_map.end(); }
+	void clear() { m_map.clear(); }
 };
 
 #endif
