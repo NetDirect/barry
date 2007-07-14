@@ -106,6 +106,7 @@ const unsigned char* Calendar::ParseField(const unsigned char *begin,
 			}
 			else if( b->timeMember && btohs(field->size) == 4 ) {
 				time_t &t = this->*(b->timeMember);
+				dout("min1900: " << field->u.min1900);
 				t = min2time(field->u.min1900);
 				return begin;
 			}
@@ -426,6 +427,8 @@ void Calendar::Dump(std::ostream &os) const
 			time_t t = this->*(b->timeMember);
 			if( t > 0 )
 				os << "   " << b->name << ": " << ctime(&t);
+			else
+				os << "   " << b->name << ": disabled\n";
 		}
 	}
 

@@ -54,7 +54,7 @@ public:
 	std::string Subject;
 	std::string Notes;
 	std::string Location;
-	time_t NotificationTime;
+	time_t NotificationTime;	// 0 means notification is off
 	time_t StartTime;
 	time_t EndTime;
 

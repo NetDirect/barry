@@ -107,13 +107,19 @@ TimeZone Zones[] = {
 
 min1900_t time2min(time_t t)
 {
+	if( t == 0 )
+		return htobl(0xffffffff);
+
 	min1900_t r = t / 60 + STDC_MIN1900_DIFF;
 	return htobl(r);
 }
 
 time_t min2time(min1900_t m)
 {
-	return (btohl(m) - STDC_MIN1900_DIFF) * 60;
+	if( (unsigned long) btohl(m) == 0xffffffff )
+		return 0;
+	else
+		return (btohl(m) - STDC_MIN1900_DIFF) * 60;
 }
 
 
