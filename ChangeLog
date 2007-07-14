@@ -1,5 +1,25 @@
 Release: version 0.8 - 2007/05/??
 ------------------------------------------------------------------------------
+2007/07/14
+	- opensync plugin:
+		- fixed ID mapping bug in the case of a non-numeric UID
+			from syncing external -> Barry, and then the
+			new Barry ID would look like a new change
+			when syncing back from Barry -> external.
+		- added support for slow sync
+		- added clear() to idmap class
+		- added vformat attr parameter extraction class
+		- added more trace logging during vformat/Barry conversions
+		- added Notification time support
+		- handled "all day" vformat special case, when DTEND
+			does not exist in a vformat data block
+	- changed the min1900_t time conversion functions to handle
+		the 0xffffffff special case, when notifications
+		are turned off on a calendar event (src/time.cc)
+	- also made the calendar data dump output clearer for
+		disabled timestamps, and added debug output
+		for the raw min1900 value, in case there are more
+		special cases in the future
 2007/07/13
 	- fixed null pointer access in opensync's HasMultipleVEvents()
 2007/07/12
