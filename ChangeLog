@@ -1,5 +1,11 @@
 Release: version 0.8 - 2007/05/??
 ------------------------------------------------------------------------------
+2007/07/19
+	- added SUBSYSTEM=="usb_device" to example udev rules, in order
+		to avoid running bcharge for each endpoint that is
+		added by udev, when first plugged in.  Running bcharge
+		back-to-back multiple times can crash some
+		Blackberries.
 2007/07/14
 	- opensync plugin:
 		- fixed ID mapping bug in the case of a non-numeric UID
