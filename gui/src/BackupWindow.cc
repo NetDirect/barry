@@ -212,7 +212,7 @@ void BackupWindow::SetWorkingMode(const std::string &taskname)
 	m_thread_error = false;
 	m_pBackupButton->set_sensitive(false);
 	m_pRestoreButton->set_sensitive(false);
-	m_pStatusBar->push(taskname + " working...");
+	m_pStatusBar->push(taskname + " in progress...");
 	m_pProgressBar->set_fraction(0.00);
 }
 
