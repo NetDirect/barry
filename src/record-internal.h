@@ -26,6 +26,7 @@
 #ifndef __BARRY_RECORD_INTERNAL_H__
 #define __BARRY_RECORD_INTERNAL_H__
 
+#include <string>
 #include "protostructs.h"
 #include "error.h"
 #include "endian.h"
@@ -76,6 +77,8 @@ void BuildField1900(Data &data, size_t &size, uint8_t type, time_t t);
 void BuildField(Data &data, size_t &size, uint8_t type, char c);
 void BuildField(Data &data, size_t &size, uint8_t type, const std::string &str);
 void BuildField(Data &data, size_t &size, uint8_t type, const Barry::Protocol::GroupLink &link);
+std::string ParseFieldString(const Barry::Protocol::CommonField *field);
+std::string ParseFieldString(const void *data, uint16_t maxlen);
 
 } // namespace Barry
 

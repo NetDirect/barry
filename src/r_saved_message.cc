@@ -119,7 +119,7 @@ const unsigned char* SavedMessage::ParseField(const unsigned char *begin,
 			if( b->strMember ) {
 				// parse regular string
 				std::string &s = this->*(b->strMember);
-				s.assign((const char *)field->u.raw, btohs(field->size)-1);
+				s = ParseFieldString(field);
 				return begin;	// done!
 			}
 			else if( b->addrMember ) {

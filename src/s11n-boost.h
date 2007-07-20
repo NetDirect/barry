@@ -87,7 +87,7 @@ void serialize(ArchiveT &ar, Barry::Contact &c, const unsigned int ver)
 	ar & make_nvp("Province", c.Province);
 	ar & make_nvp("PostalCode", c.PostalCode);
 	ar & make_nvp("Country", c.Country);
-	ar & make_nvp("Title", c.Title);
+	ar & make_nvp("JobTitle", c.JobTitle);
 	ar & make_nvp("PublicKey", c.PublicKey);
 	ar & make_nvp("URL", c.URL);
 	ar & make_nvp("Prefix", c.Prefix);

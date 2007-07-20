@@ -88,7 +88,7 @@ const unsigned char* Memo::ParseField(const unsigned char *begin,
 		if( b->type == field->type ) {
 			if( b->strMember ) {
 				std::string &s = this->*(b->strMember);
-				s.assign((const char *)field->u.raw, btohs(field->size)-1);
+				s = ParseFieldString(field);
 				return begin;   // done!
 			}
 			else if( b->timeMember && btohs(field->size) == 4 ) {

@@ -112,7 +112,7 @@ const unsigned char* ServiceBookConfig::ParseField(const unsigned char *begin,
 		if( b->type == type ) {
 			if( b->strMember ) {
 				std::string &s = this->*(b->strMember);
-				s.assign((const char *)raw, size-1);
+				s = ParseFieldString(raw, size-1);
 				return begin;	// done!
 			}
 		}
@@ -262,7 +262,7 @@ const unsigned char* ServiceBook::ParseField(const unsigned char *begin,
 		if( b->type == field->type ) {
 			if( b->strMember ) {
 				std::string &s = this->*(b->strMember);
-				s.assign((const char *)field->u.raw, btohs(field->size)-1);
+				s = ParseFieldString(field);
 				return begin;	// done!
 			}
 			else if( b->timeMember && btohs(field->size) == 4 ) {
@@ -278,28 +278,28 @@ const unsigned char* ServiceBook::ParseField(const unsigned char *begin,
 	{
 	case SBFC_OLD_NAME:		// strings with old/new type codes
 	case SBFC_NAME:
-		Name.assign((const char *)field->u.raw, btohs(field->size)-1);
+		Name = ParseFieldString(field);
 		NameType = field->type;
 		return begin;
 
 	case SBFC_OLD_DESC:
 	case SBFC_DESCRIPTION:
-		Description.assign((const char *)field->u.raw, btohs(field->size)-1);
+		Description = ParseFieldString(field);
 		DescType = field->type;
 		return begin;
 
 	case SBFC_OLD_UNIQUE_ID:
 	case SBFC_UNIQUE_ID:
-		UniqueId.assign((const char *)field->u.raw, btohs(field->size));
+		UniqueId = ParseFieldString(field);
 		UniqueIdType = field->type;
 		return begin;
 
 	case SBFC_CONTENT_ID:
-		ContentId.assign((const char *)field->u.raw, btohs(field->size));
+		ContentId = ParseFieldString(field);
 		return begin;
 
 	case SBFC_BES_DOMAIN:
-		BesDomain.assign((const char *)field->u.raw, btohs(field->size));
+		BesDomain = ParseFieldString(field);
 		return begin;
 
 	case SBFC_CONFIG:

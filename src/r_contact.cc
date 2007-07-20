@@ -114,7 +114,7 @@ FieldLink<Contact> ContactFieldLinks[] = {
    { CFC_PROVINCE,     "Province",   "st",0,              &Contact::Province, 0, 0 },
    { CFC_POSTAL_CODE,  "PostalCode", "postalCode",0,      &Contact::PostalCode, 0, 0 },
    { CFC_COUNTRY,      "Country",    "c", "country",      &Contact::Country, 0, 0 },
-   { CFC_TITLE,        "Title",      "title",0,           &Contact::Title, 0, 0 },
+   { CFC_TITLE,        "JobTitle",   "title",0,           &Contact::JobTitle, 0, 0 },
    { CFC_PUBLIC_KEY,   "PublicKey",  0,0,                 &Contact::PublicKey, 0, 0 },
    { CFC_URL,          "URL",        0,0,                 &Contact::URL, 0, 0 },
    { CFC_PREFIX,       "Prefix",     0,0,                 &Contact::Prefix, 0, 0 },
@@ -166,7 +166,7 @@ const unsigned char* Contact::ParseField(const unsigned char *begin,
 	{
 		if( b->type == field->type ) {
 			std::string &s = this->*(b->strMember);
-			s.assign((const char *)field->u.raw, btohs(field->size)-1);
+			s = ParseFieldString(field);
 			return begin;	// done!
 		}
 	}
@@ -187,7 +187,7 @@ const unsigned char* Contact::ParseField(const unsigned char *begin,
 			m_FirstNameSeen = true;
 		}
 
-		name->assign((const char*)field->u.raw, btohs(field->size)-1);
+		*name = ParseFieldString(field);
 		}
 		return begin;
 
@@ -311,7 +311,7 @@ void Contact::Clear()
 	Province.clear();
 	PostalCode.clear();
 	Country.clear();
-	Title.clear();
+	JobTitle.clear();
 	PublicKey.clear();
 	URL.clear();
 	Prefix.clear();
@@ -367,6 +367,20 @@ std::string Contact::GetPostalAddress() const
 		address += PostalCode;
 	
 	return address;
+}
+
+//
+// GetFullName
+//
+/// Helper function that returns a formatted full name
+///
+std::string Contact::GetFullName() const
+{
+	std::string Full = FirstName;
+	if( Full.size() && LastName.size() )
+		Full += " ";
+	Full += LastName;
+	return Full;
 }
 
 void Contact::Dump(std::ostream &os) const

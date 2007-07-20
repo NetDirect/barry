@@ -84,7 +84,7 @@ public:
 		Province,
 		PostalCode,
 		Country,
-		Title,
+		JobTitle,
 		PublicKey,
 		URL,
 		Prefix,
@@ -120,6 +120,7 @@ public:
 
 	uint32_t GetID() const { return RecordId; }
 	std::string GetPostalAddress() const;
+	std::string GetFullName() const;
 
 	// Parser / Builder API (see parser.h / builder.h)
 	uint8_t GetRecType() const { return RecType; }

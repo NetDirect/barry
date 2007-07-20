@@ -105,6 +105,26 @@ void BuildField(Data &data, size_t &size, uint8_t type, const Barry::Protocol::G
 	size += fieldsize;
 }
 
+std::string ParseFieldString(const Barry::Protocol::CommonField *field)
+{
+	// make no assumptions here, and pass the full size in as
+	// the maxlen, even though 99% of the time, it will be a null...
+	// this function can be used by non-null terminated strings as well
+	return ParseFieldString(field->u.raw, btohs(field->size));
+}
+
+std::string ParseFieldString(const void *data, uint16_t maxlen)
+{
+	const char *str = (const char *)data;
+
+	// find last non-null character, since some fields
+	// can have multiple null terminators
+	while( maxlen && str[maxlen-1] == 0 )
+		maxlen--;
+
+	return std::string(str, maxlen);
+}
+
 
 ///////////////////////////////////////////////////////////////////////////////
 // CommandTable class

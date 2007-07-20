@@ -70,8 +70,8 @@ const ContactLdif::NameToFunc ContactLdif::FieldMap[] = {
 		&ContactLdif::PostalCode, &ContactLdif::SetPostalCode },
 	{ "Country", "Country",
 		&ContactLdif::Country, &ContactLdif::SetCountry },
-	{ "Title", "Title",
-		&ContactLdif::Title, &ContactLdif::SetTitle },
+	{ "JobTitle", "Job Title",
+		&ContactLdif::JobTitle, &ContactLdif::SetJobTitle },
 	{ "PublicKey", "Public key",
 		&ContactLdif::PublicKey, &ContactLdif::SetPublicKey },
 	{ "Notes", "Notes",
@@ -127,7 +127,7 @@ ContactLdif::ContactLdif(const std::string &baseDN)
 	Map("c", &ContactLdif::Country, &ContactLdif::SetCountry);
 	SetObjectClass("c", "country");
 
-	Map("title", &ContactLdif::Title, &ContactLdif::SetTitle);
+	Map("title", &ContactLdif::JobTitle, &ContactLdif::SetJobTitle);
 	Map("dn", &ContactLdif::FQDN, &ContactLdif::SetFQDN);
 	Map("displayName", &ContactLdif::FullName, &ContactLdif::SetFullName);
 	Map("cn", &ContactLdif::FullName, &ContactLdif::SetFullName);
@@ -372,9 +372,9 @@ std::string ContactLdif::Country(const Barry::Contact &con) const
 	return con.Country;
 }
 
-std::string ContactLdif::Title(const Barry::Contact &con) const
+std::string ContactLdif::JobTitle(const Barry::Contact &con) const
 {
-	return con.Title;
+	return con.JobTitle;
 }
 
 std::string ContactLdif::PublicKey(const Barry::Contact &con) const
@@ -394,11 +394,7 @@ std::string ContactLdif::PostalAddress(const Barry::Contact &con) const
 
 std::string ContactLdif::FullName(const Barry::Contact &con) const
 {
-	std::string Full = con.FirstName;
-	if( Full.size() && con.LastName.size() )
-		Full += " ";
-	Full += con.LastName;
-	return Full;
+	return con.GetFullName();
 }
 
 std::string ContactLdif::FQDN(const Barry::Contact &con) const
@@ -514,9 +510,9 @@ void ContactLdif::SetCountry(Barry::Contact &con, const std::string &val) const
 	con.Country = val;
 }
 
-void ContactLdif::SetTitle(Barry::Contact &con, const std::string &val) const
+void ContactLdif::SetJobTitle(Barry::Contact &con, const std::string &val) const
 {
-	con.Title = val;
+	con.JobTitle = val;
 }
 
 void ContactLdif::SetPublicKey(Barry::Contact &con, const std::string &val) const

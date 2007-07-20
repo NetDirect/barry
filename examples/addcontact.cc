@@ -37,7 +37,7 @@ void ReadInput(Barry::Contact &contact)
 {
 	ReadLine("First Name", contact.FirstName);
 	ReadLine("Last Name", contact.LastName);
-	ReadLine("Title", contact.Title);
+	ReadLine("Job Title", contact.JobTitle);
 	ReadLine("Email Address", contact.Email);
 	ReadLine("Main Phone Number", contact.Phone);
 	ReadLine("Home Phone Number", contact.HomePhone);

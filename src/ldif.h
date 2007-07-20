@@ -168,7 +168,7 @@ public:
 	virtual std::string Province(const Barry::Contact &con) const;
 	virtual std::string PostalCode(const Barry::Contact &con) const;
 	virtual std::string Country(const Barry::Contact &con) const;
-	virtual std::string Title(const Barry::Contact &con) const;
+	virtual std::string JobTitle(const Barry::Contact &con) const;
 	virtual std::string PublicKey(const Barry::Contact &con) const;
 	virtual std::string Notes(const Barry::Contact &con) const;
 	// calculated values...
@@ -199,7 +199,7 @@ public:
 	virtual void SetProvince(Barry::Contact &con, const std::string &val) const;
 	virtual void SetPostalCode(Barry::Contact &con, const std::string &val) const;
 	virtual void SetCountry(Barry::Contact &con, const std::string &val) const;
-	virtual void SetTitle(Barry::Contact &con, const std::string &val) const;
+	virtual void SetJobTitle(Barry::Contact &con, const std::string &val) const;
 	virtual void SetPublicKey(Barry::Contact &con, const std::string &val) const;
 	virtual void SetNotes(Barry::Contact &con, const std::string &val) const;
 	virtual void SetPostalAddress(Barry::Contact &con, const std::string &val) const;
