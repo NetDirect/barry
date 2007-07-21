@@ -129,7 +129,7 @@ const unsigned char* SavedMessage::ParseField(const unsigned char *begin,
 				std::string dual(fa, btohs(field->size) - sizeof(field->u.addr.unknown));
 
 				// assign first string, using null terminator...letting std::string add it for us if it doesn't exist
-				Address &a = this->*(b->addrMember);
+				EmailAddress &a = this->*(b->addrMember);
 				a.Name = dual.c_str();
 
 				// assign second string, using first size as starting point

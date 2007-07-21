@@ -41,10 +41,6 @@ using namespace Barry::Protocol;
 
 namespace Barry {
 
-//std::ostream& operator<<(std::ostream &os, const Address &msgp) {
-//	os << msgp.Name.c_str() << " <" << msgp.Email.c_str() << ">";
-//	return os;
-//}
 
 ///////////////////////////////////////////////////////////////////////////////
 // PINMessage class
@@ -127,7 +123,7 @@ const unsigned char* PINMessage::ParseField(const unsigned char *begin,
 				std::string dual(fa, btohs(field->size) - sizeof(field->u.addr.unknown));
 
 				// assign first string, using null terminator...letting std::string add it for us if it doesn't exist
-				Address &a = this->*(b->addrMember);
+				EmailAddress &a = this->*(b->addrMember);
 				a.Name = dual.c_str();
 
 				// assign second string, using first size as starting point

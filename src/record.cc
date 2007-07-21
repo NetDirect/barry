@@ -470,6 +470,72 @@ std::ostream& operator<< (std::ostream &os, const std::vector<UnknownField> &unk
 	return os;
 }
 
+
+
+///////////////////////////////////////////////////////////////////////////////
+// EmailAddress class
+
+std::ostream& operator<<(std::ostream &os, const EmailAddress &msga) {
+	os << msga.Name.c_str() << " <" << msga.Email.c_str() << ">";
+	return os;
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+// PostalAddress class
+
+//
+// GetLabel
+//
+/// Format a mailing address into a single string, handling missing fields.
+///
+std::string PostalAddress::GetLabel() const
+{
+	std::string address = Address1;
+	if( Address2.size() ) {
+		if( address.size() )
+			address += "\n";
+		address += Address2;
+	}
+	if( Address3.size() ) {
+		if( address.size() )
+			address += "\n";
+		address += Address3;
+	}
+	if( address.size() )
+		address += "\n";
+	if( City.size() )
+		address += City + " ";
+	if( Province.size() )
+		address += Province + " ";
+	if( Country.size() )
+		address += Country;
+	if( address.size() )
+		address += "\n";
+	if( PostalCode.size() )
+		address += PostalCode;
+	
+	return address;
+}
+
+void PostalAddress::Clear()
+{
+	Address1.clear();
+	Address2.clear();
+	Address3.clear();
+	City.clear();
+	Province.clear();
+	PostalCode.clear();
+	Country.clear();
+}
+
+std::ostream& operator<<(std::ostream &os, const PostalAddress &post) {
+	os << post.GetLabel();
+	return os;
+}
+
+
+
 } // namespace Barry
 
 

@@ -46,10 +46,10 @@ public:
 	uint8_t RecType;
 	uint32_t RecordId;
 
-	Address From;
-	Address To;
-	Address Cc;
-	Address Bcc;
+	EmailAddress From;
+	EmailAddress To;
+	EmailAddress Cc;
+	EmailAddress Bcc;
 	std::string Subject;
 	std::string Body;
 	uint32_t MessageRecordId;	// this happens to be the same as

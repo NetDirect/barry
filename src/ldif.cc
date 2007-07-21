@@ -339,37 +339,37 @@ std::string ContactLdif::DefaultCommunicationsMethod(const Barry::Contact &con) 
 
 std::string ContactLdif::Address1(const Barry::Contact &con) const
 {
-	return con.Address1;
+	return con.WorkAddress.Address1;
 }
 
 std::string ContactLdif::Address2(const Barry::Contact &con) const
 {
-	return con.Address2;
+	return con.WorkAddress.Address2;
 }
 
 std::string ContactLdif::Address3(const Barry::Contact &con) const
 {
-	return con.Address3;
+	return con.WorkAddress.Address3;
 }
 
 std::string ContactLdif::City(const Barry::Contact &con) const
 {
-	return con.City;
+	return con.WorkAddress.City;
 }
 
 std::string ContactLdif::Province(const Barry::Contact &con) const
 {
-	return con.Province;
+	return con.WorkAddress.Province;
 }
 
 std::string ContactLdif::PostalCode(const Barry::Contact &con) const
 {
-	return con.PostalCode;
+	return con.WorkAddress.PostalCode;
 }
 
 std::string ContactLdif::Country(const Barry::Contact &con) const
 {
-	return con.Country;
+	return con.WorkAddress.Country;
 }
 
 std::string ContactLdif::JobTitle(const Barry::Contact &con) const
@@ -389,7 +389,7 @@ std::string ContactLdif::Notes(const Barry::Contact &con) const
 
 std::string ContactLdif::PostalAddress(const Barry::Contact &con) const
 {
-	return con.GetPostalAddress();
+	return con.WorkAddress.GetLabel();
 }
 
 std::string ContactLdif::FullName(const Barry::Contact &con) const
@@ -477,37 +477,37 @@ void ContactLdif::SetDefaultCommunicationsMethod(Barry::Contact &con, const std:
 
 void ContactLdif::SetAddress1(Barry::Contact &con, const std::string &val) const
 {
-	con.Address1 = val;
+	con.WorkAddress.Address1 = val;
 }
 
 void ContactLdif::SetAddress2(Barry::Contact &con, const std::string &val) const
 {
-	con.Address2 = val;
+	con.WorkAddress.Address2 = val;
 }
 
 void ContactLdif::SetAddress3(Barry::Contact &con, const std::string &val) const
 {
-	con.Address3 = val;
+	con.WorkAddress.Address3 = val;
 }
 
 void ContactLdif::SetCity(Barry::Contact &con, const std::string &val) const
 {
-	con.City = val;
+	con.WorkAddress.City = val;
 }
 
 void ContactLdif::SetProvince(Barry::Contact &con, const std::string &val) const
 {
-	con.Province = val;
+	con.WorkAddress.Province = val;
 }
 
 void ContactLdif::SetPostalCode(Barry::Contact &con, const std::string &val) const
 {
-	con.PostalCode = val;
+	con.WorkAddress.PostalCode = val;
 }
 
 void ContactLdif::SetCountry(Barry::Contact &con, const std::string &val) const
 {
-	con.Country = val;
+	con.WorkAddress.Country = val;
 }
 
 void ContactLdif::SetJobTitle(Barry::Contact &con, const std::string &val) const

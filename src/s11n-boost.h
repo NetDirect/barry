@@ -80,30 +80,30 @@ void serialize(ArchiveT &ar, Barry::Contact &c, const unsigned int ver)
 	ar & make_nvp("LastName", c.LastName);
 	ar & make_nvp("Company", c.Company);
 	ar & make_nvp("DefaultCommunicationsMethod", c.DefaultCommunicationsMethod);
-	ar & make_nvp("Address1", c.Address1);
-	ar & make_nvp("Address2", c.Address2);
-	ar & make_nvp("Address3", c.Address3);
-	ar & make_nvp("City", c.City);
-	ar & make_nvp("Province", c.Province);
-	ar & make_nvp("PostalCode", c.PostalCode);
-	ar & make_nvp("Country", c.Country);
+	ar & make_nvp("Address1", c.WorkAddress.Address1);
+	ar & make_nvp("Address2", c.WorkAddress.Address2);
+	ar & make_nvp("Address3", c.WorkAddress.Address3);
+	ar & make_nvp("City", c.WorkAddress.City);
+	ar & make_nvp("Province", c.WorkAddress.Province);
+	ar & make_nvp("PostalCode", c.WorkAddress.PostalCode);
+	ar & make_nvp("Country", c.WorkAddress.Country);
 	ar & make_nvp("JobTitle", c.JobTitle);
 	ar & make_nvp("PublicKey", c.PublicKey);
 	ar & make_nvp("URL", c.URL);
 	ar & make_nvp("Prefix", c.Prefix);
 	ar & make_nvp("Category", c.Category);
-	ar & make_nvp("HomeAddress1", c.HomeAddress1);
-	ar & make_nvp("HomeAddress2", c.HomeAddress2);
-	ar & make_nvp("HomeAddress3", c.HomeAddress3);
+	ar & make_nvp("HomeAddress1", c.HomeAddress.Address1);
+	ar & make_nvp("HomeAddress2", c.HomeAddress.Address2);
+	ar & make_nvp("HomeAddress3", c.HomeAddress.Address3);
 	ar & make_nvp("Notes", c.Notes);
 	ar & make_nvp("UserDefined1", c.UserDefined1);
 	ar & make_nvp("UserDefined2", c.UserDefined2);
 	ar & make_nvp("UserDefined3", c.UserDefined3);
 	ar & make_nvp("UserDefined4", c.UserDefined4);
-	ar & make_nvp("HomeCity", c.HomeCity);
-	ar & make_nvp("HomeProvince", c.HomeProvince);
-	ar & make_nvp("HomePostalCode", c.HomePostalCode);
-	ar & make_nvp("HomeCountry", c.HomeCountry);
+	ar & make_nvp("HomeCity", c.HomeAddress.City);
+	ar & make_nvp("HomeProvince", c.HomeAddress.Province);
+	ar & make_nvp("HomePostalCode", c.HomeAddress.PostalCode);
+	ar & make_nvp("HomeCountry", c.HomeAddress.Country);
 	ar & make_nvp("Image", c.Image);
 	
 	if( ver < BARRY_POD_MAP_VERSION ) {
@@ -113,7 +113,7 @@ void serialize(ArchiveT &ar, Barry::Contact &c, const unsigned int ver)
 }
 
 template <class ArchiveT>
-void serialize(ArchiveT &ar, Barry::Address &a, const unsigned int ver)
+void serialize(ArchiveT &ar, Barry::EmailAddress &a, const unsigned int ver)
 {
 	ar & make_nvp("Name", a.Name);
 	ar & make_nvp("Email", a.Email);

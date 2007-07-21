@@ -45,12 +45,12 @@ public:
 	uint8_t RecType;
 	uint32_t RecordId;
 
-	Address From;
-	Address To;
-	Address Cc;
-	Address Bcc;
-	Address Sender;
-	Address ReplyTo;
+	EmailAddress From;
+	EmailAddress To;
+	EmailAddress Cc;
+	EmailAddress Bcc;
+	EmailAddress Sender;
+	EmailAddress ReplyTo;
 	std::string Subject;
 	std::string Body;
 	std::string Attachment;

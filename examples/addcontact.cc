@@ -46,13 +46,13 @@ void ReadInput(Barry::Contact &contact)
 	ReadLine("Cell Number", contact.MobilePhone);
 	ReadLine("Pager Number", contact.Pager);
 	ReadLine("Company", contact.Company);
-	ReadLine("Address Line 1", contact.Address1);
-	ReadLine("Address Line 2", contact.Address2);
-	ReadLine("Address Line 3", contact.Address3);
-	ReadLine("City", contact.City);
-	ReadLine("Province / State", contact.Province);
-	ReadLine("Country", contact.Country);
-	ReadLine("Postal / Zip Code", contact.PostalCode);
+	ReadLine("Address Line 1", contact.WorkAddress.Address1);
+	ReadLine("Address Line 2", contact.WorkAddress.Address2);
+	ReadLine("Address Line 3", contact.WorkAddress.Address3);
+	ReadLine("City", contact.WorkAddress.City);
+	ReadLine("Province / State", contact.WorkAddress.Province);
+	ReadLine("Country", contact.WorkAddress.Country);
+	ReadLine("Postal / Zip Code", contact.WorkAddress.PostalCode);
 	ReadLine("Notes", contact.Notes);
 }
 

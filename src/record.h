@@ -174,7 +174,7 @@ struct UnknownField
 };
 std::ostream& operator<< (std::ostream &os, const std::vector<UnknownField> &unknowns);
 
-struct Address
+struct EmailAddress
 {
 	std::string Name;
 	std::string Email;
@@ -185,7 +185,27 @@ struct Address
 		Email.clear();
 	}
 };
-std::ostream& operator<<(std::ostream &os, const Address &msga);
+std::ostream& operator<<(std::ostream &os, const EmailAddress &msga);
+
+struct PostalAddress
+{
+	std::string
+		Address1,
+		Address2,
+		Address3,
+		City,
+		Province,
+		PostalCode,
+		Country;
+
+	std::string GetLabel() const;
+	void Clear();
+
+	bool HasData() const { return Address1.size() || Address2.size() ||
+		Address3.size() || City.size() || Province.size() ||
+		PostalCode.size() || Country.size(); }
+};
+std::ostream& operator<<(std::ostream &os, const PostalAddress &msga);
 
 
 /// \addtogroup RecordParserClasses

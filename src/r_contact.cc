@@ -41,6 +41,7 @@ using namespace Barry::Protocol;
 namespace Barry {
 
 
+
 ///////////////////////////////////////////////////////////////////////////////
 // Contact class
 
@@ -107,30 +108,30 @@ FieldLink<Contact> ContactFieldLinks[] = {
    { CFC_OTHER_PHONE,  "OtherPhone", 0,0,                 &Contact::OtherPhone, 0, 0 },
    { CFC_COMPANY,      "Company",    "o",0,               &Contact::Company, 0, 0 },
    { CFC_DEFAULT_COMM_METHOD,"DefaultCommMethod",0,0,     &Contact::DefaultCommunicationsMethod, 0, 0 },
-   { CFC_ADDRESS1,     "Address1",   0,0,                 &Contact::Address1, 0, 0 },
-   { CFC_ADDRESS2,     "Address2",   0,0,                 &Contact::Address2, 0, 0 },
-   { CFC_ADDRESS3,     "Address3",   0,0,                 &Contact::Address3, 0, 0 },
-   { CFC_CITY,         "City",       "l",0,               &Contact::City, 0, 0 },
-   { CFC_PROVINCE,     "Province",   "st",0,              &Contact::Province, 0, 0 },
-   { CFC_POSTAL_CODE,  "PostalCode", "postalCode",0,      &Contact::PostalCode, 0, 0 },
-   { CFC_COUNTRY,      "Country",    "c", "country",      &Contact::Country, 0, 0 },
+   { CFC_ADDRESS1,     "WorkAddress1",   0,0,             0, 0, 0, &Contact::WorkAddress, &PostalAddress::Address1 },
+   { CFC_ADDRESS2,     "WorkAddress2",   0,0,             0, 0, 0, &Contact::WorkAddress, &PostalAddress::Address2 },
+   { CFC_ADDRESS3,     "WorkAddress3",   0,0,             0, 0, 0, &Contact::WorkAddress, &PostalAddress::Address3 },
+   { CFC_CITY,         "WorkCity",       "l",0,           0, 0, 0, &Contact::WorkAddress, &PostalAddress::City },
+   { CFC_PROVINCE,     "WorkProvince",   "st",0,          0, 0, 0, &Contact::WorkAddress, &PostalAddress::Province },
+   { CFC_POSTAL_CODE,  "WorkPostalCode", "postalCode",0,  0, 0, 0, &Contact::WorkAddress, &PostalAddress::PostalCode },
+   { CFC_COUNTRY,      "WorkCountry",    "c", "country",  0, 0, 0, &Contact::WorkAddress, &PostalAddress::Country },
    { CFC_TITLE,        "JobTitle",   "title",0,           &Contact::JobTitle, 0, 0 },
    { CFC_PUBLIC_KEY,   "PublicKey",  0,0,                 &Contact::PublicKey, 0, 0 },
    { CFC_URL,          "URL",        0,0,                 &Contact::URL, 0, 0 },
    { CFC_PREFIX,       "Prefix",     0,0,                 &Contact::Prefix, 0, 0 },
    { CFC_CATEGORY,     "Category",   0,0,                 &Contact::Category, 0, 0 },
-   { CFC_HOME_ADDRESS1,"HomeAddress1", 0,0,               &Contact::HomeAddress1, 0, 0 },
-   { CFC_HOME_ADDRESS2,"HomeAddress2", 0,0,               &Contact::HomeAddress2, 0, 0 },
-   { CFC_HOME_ADDRESS3,"HomeAddress3", 0,0,               &Contact::HomeAddress3, 0, 0 },
+   { CFC_HOME_ADDRESS1,"HomeAddress1", 0,0,               0, 0, 0, &Contact::HomeAddress, &PostalAddress::Address1, },
+   { CFC_HOME_ADDRESS2,"HomeAddress2", 0,0,               0, 0, 0, &Contact::HomeAddress, &PostalAddress::Address2, },
+   { CFC_HOME_ADDRESS3,"HomeAddress3", 0,0,               0, 0, 0, &Contact::HomeAddress, &PostalAddress::Address3, },
    { CFC_NOTES,        "Notes",      0,0,                 &Contact::Notes, 0, 0 },
    { CFC_USER_DEFINED_1, "UserDefined1", 0,0,             &Contact::UserDefined1, 0, 0 },
    { CFC_USER_DEFINED_2, "UserDefined2", 0,0,             &Contact::UserDefined2, 0, 0 },
    { CFC_USER_DEFINED_3, "UserDefined3", 0,0,             &Contact::UserDefined3, 0, 0 },
    { CFC_USER_DEFINED_4, "UserDefined4", 0,0,             &Contact::UserDefined4, 0, 0 },
-   { CFC_HOME_CITY,    "HomeCity",   0,0,                 &Contact::HomeCity, 0, 0 },
-   { CFC_HOME_PROVINCE,"HomeProvince", 0,0,               &Contact::HomeProvince, 0, 0 },
-   { CFC_HOME_POSTAL_CODE, "HomePostalCode", 0,0,         &Contact::HomePostalCode, 0, 0 },
-   { CFC_HOME_COUNTRY, "HomeCountry",0,0,                 &Contact::HomeCountry, 0, 0 },
+   { CFC_HOME_CITY,    "HomeCity",   0,0,                 0, 0, 0, &Contact::HomeAddress, &PostalAddress::City, },
+   { CFC_HOME_PROVINCE,"HomeProvince", 0,0,               0, 0, 0, &Contact::HomeAddress, &PostalAddress::Province, },
+   { CFC_HOME_POSTAL_CODE, "HomePostalCode", 0,0,         0, 0, 0, &Contact::HomeAddress, &PostalAddress::PostalCode, },
+   { CFC_HOME_COUNTRY, "HomeCountry",0,0,                 0, 0, 0, &Contact::HomeAddress, &PostalAddress::Country, },
    { CFC_IMAGE,        "Image",      0,0,                 &Contact::Image, 0, 0 },
    { CFC_INVALID_FIELD,"EndOfList",  0, 0, 0 }
 };
@@ -165,9 +166,19 @@ const unsigned char* Contact::ParseField(const unsigned char *begin,
 		b++ )
 	{
 		if( b->type == field->type ) {
-			std::string &s = this->*(b->strMember);
-			s = ParseFieldString(field);
-			return begin;	// done!
+			if( b->strMember ) {
+				std::string &s = this->*(b->strMember);
+				s = ParseFieldString(field);
+				return begin;	// done!
+			}
+			else if( b->postMember && b->postField ) {
+				std::string &s = (this->*(b->postMember)).*(b->postField);
+				s = ParseFieldString(field);
+				return begin;
+			}
+			else {
+				break;	// fall through to special handling
+			}
 		}
 	}
 
@@ -304,69 +315,24 @@ void Contact::Clear()
 	LastName.clear();
 	Company.clear();
 	DefaultCommunicationsMethod.clear();
-	Address1.clear();
-	Address2.clear();
-	Address3.clear();
-	City.clear();
-	Province.clear();
-	PostalCode.clear();
-	Country.clear();
 	JobTitle.clear();
 	PublicKey.clear();
 	URL.clear();
 	Prefix.clear();
-	HomeAddress1.clear();
-	HomeAddress2.clear();
-	HomeAddress3.clear();
 	Notes.clear();
 	UserDefined1.clear();
 	UserDefined2.clear();
 	UserDefined3.clear();
 	UserDefined4.clear();
-	HomeCity.clear();
-	HomeProvince.clear();
-	HomePostalCode.clear();
-	HomeCountry.clear();
 	Image.clear();
+
+	WorkAddress.Clear();
+	HomeAddress.Clear();
 
  	GroupLinks.clear();
 	Unknowns.clear();
 
 	m_FirstNameSeen = false;
-}
-
-//
-// GetPostalAddress
-//
-/// Format a mailing address, handling missing fields.
-///
-std::string Contact::GetPostalAddress() const
-{
-	std::string address = Address1;
-	if( Address2.size() ) {
-		if( address.size() )
-			address += "\n";
-		address += Address2;
-	}
-	if( Address3.size() ) {
-		if( address.size() )
-			address += "\n";
-		address += Address3;
-	}
-	if( address.size() )
-		address += "\n";
-	if( City.size() )
-		address += City + " ";
-	if( Province.size() )
-		address += Province + " ";
-	if( Country.size() )
-		address += Country;
-	if( address.size() )
-		address += "\n";
-	if( PostalCode.size() )
-		address += PostalCode;
-	
-	return address;
 }
 
 //

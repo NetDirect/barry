@@ -77,31 +77,20 @@ public:
 		LastName,
 		Company,
 		DefaultCommunicationsMethod,
-		Address1,
-		Address2,
-		Address3,
-		City,
-		Province,
-		PostalCode,
-		Country,
 		JobTitle,
 		PublicKey,
 		URL,
 		Prefix,
 		Category,
-		HomeAddress1,
-		HomeAddress2,
-		HomeAddress3,
 		Notes,
 		UserDefined1,
 		UserDefined2,
 		UserDefined3,
 		UserDefined4,
-		HomeCity,
-		HomeProvince,
-		HomePostalCode,
-		HomeCountry,
 		Image;
+
+	PostalAddress WorkAddress;
+	PostalAddress HomeAddress;
 
 	GroupLinksType GroupLinks;
 	UnknownsType Unknowns;
@@ -119,7 +108,6 @@ public:
 	~Contact();
 
 	uint32_t GetID() const { return RecordId; }
-	std::string GetPostalAddress() const;
 	std::string GetFullName() const;
 
 	// Parser / Builder API (see parser.h / builder.h)

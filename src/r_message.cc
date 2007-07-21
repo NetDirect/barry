@@ -40,11 +40,6 @@ using namespace Barry::Protocol;
 
 namespace Barry {
 
-std::ostream& operator<<(std::ostream &os, const Address &msga) {
-	os << msga.Name.c_str() << " <" << msga.Email.c_str() << ">";
-	return os;
-}
-
 ///////////////////////////////////////////////////////////////////////////////
 // Message class
 
@@ -133,7 +128,7 @@ const unsigned char* Message::ParseField(const unsigned char *begin,
 				std::string dual(fa, btohs(field->size) - sizeof(field->u.addr.unknown));
 
 				// assign first string, using null terminator...letting std::string add it for us if it doesn't exist
-				Address &a = this->*(b->addrMember);
+				EmailAddress &a = this->*(b->addrMember);
 				a.Name = dual.c_str();
 
 				// assign second string, using first size as starting point

@@ -69,8 +69,10 @@ struct FieldLink
 	char *ldif;
 	char *objectClass;
 	std::string RecordT::* strMember;	// FIXME - find a more general
-	Address RecordT::* addrMember;	// way to do this...
+	EmailAddress RecordT::* addrMember;	// way to do this...
 	time_t RecordT::* timeMember;
+	PostalAddress RecordT::* postMember;
+	std::string PostalAddress::* postField;
 };
 
 void BuildField1900(Data &data, size_t &size, uint8_t type, time_t t);
