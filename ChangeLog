@@ -9,6 +9,26 @@ Release: version 0.8 - 2007/05/??
 		and changed the record parsing code to use this new function
 	- moved FullName() function from ldif.cc to r_contact.cc since it
 		is generally useful in areas outside of LDIF processing
+	- refactored postal addresses in the Contact record class into
+		a new class called PostalAddress
+	- renamed Address class in record.h to EmailAddress
+	- moved Contact::GetPostalAddress() to record.cc as part of the
+		new PostalAddress class and renamed it
+		PostalAddress::GetLabel()
+	- opensync plugin:
+		- refactored vformat helpers into separate base class
+			called vBase
+		- added vCard converter class
+		- commented out the code that skipped over the adding
+			of empty attribute values and parameters,
+			since VCARD depends on some of this behaviour
+		- movified vformat.c:vformat_find_attribute() to take
+			an extra nth argument, in order to search
+			for multiple attributes with the same name...
+			the way this is coded is a bit inefficient...
+			but we're moving away from vformat when we move
+			to OpenSync 0.3x / 0.40, so this is just temporary
+			pain
 2007/07/19
 	- added SUBSYSTEM=="usb_device" to example udev rules, in order
 		to avoid running bcharge for each endpoint that is
