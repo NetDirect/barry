@@ -19,7 +19,9 @@ barry_sync_LTLIBRARIES = barry_sync.la
 barry_sync_la_SOURCES = \
 	barry_sync.cc barry_sync.h \
 	environment.cc environment.h \
+	vbase.cc vbase.h \
 	vevent.cc vevent.h \
+	vcard.cc vcard.h \
 	idmap.cc idmap.h \
 	vformat.c vformat.h \
 	trace.h

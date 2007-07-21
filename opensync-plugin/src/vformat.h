@@ -112,7 +112,7 @@ void             vformat_attribute_add_value_decoded (VFormatAttribute *attr, co
 void             vformat_attribute_add_values        (VFormatAttribute *attr, ...);
 void             vformat_attribute_remove_values     (VFormatAttribute *attr);
 void             vformat_attribute_remove_params     (VFormatAttribute *attr);
-VFormatAttribute *vformat_find_attribute             (VFormat *evc, const char *name);
+VFormatAttribute *vformat_find_attribute             (VFormat *evc, const char *name, int nth);
 
 /* attribute parameters */
 VFormatParam* vformat_attribute_param_new             (const char *param_name);

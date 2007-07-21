@@ -845,14 +845,17 @@ VFormat *vformat_new(void)
 	return vformat_new_from_string ("");
 }
 
-VFormatAttribute *vformat_find_attribute(VFormat *vcard, const char *name)
+VFormatAttribute *vformat_find_attribute(VFormat *vcard, const char *name, int nth)
 {
 	GList *attributes = vformat_get_attributes(vcard);
 	GList *a = NULL;
+	int i = 0;
 	for (a = attributes; a; a = a->next) {
 		VFormatAttribute *attr = a->data;
 		if (!g_ascii_strcasecmp(vformat_attribute_get_name(attr), name)) {
-			return attr;
+			if( i == nth )
+				return attr;
+			i++;
 		}	
 	}
 	return NULL;

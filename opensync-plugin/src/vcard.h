@@ -1,7 +1,7 @@
-//
-// \file	vevent.h
-//		Conversion routines for vevents (VCALENDAR, etc)
-//
+///
+/// \file	vcard.h
+///		Conversion routines for vcards
+///
 
 /*
     Copyright (C) 2006-2007, Net Direct Inc. (http://www.netdirect.ca/)
@@ -19,8 +19,8 @@
     root directory of this project for more details.
 */
 
-#ifndef __BARRY_SYNC_VEVENT_H__
-#define __BARRY_SYNC_VEVENT_H__
+#ifndef __BARRY_SYNC_VCARD_H__
+#define __BARRY_SYNC_VCARD_H__
 
 #include <barry/barry.h>
 #include <stdint.h>
@@ -31,56 +31,54 @@
 // forward declarations
 class BarryEnvironment;
 
+
 //
-// vCalendar
+// vCard
 //
-/// Class for converting between RFC 2445 iCalendar data format,
-/// and the Barry::Calendar class.
+/// Class for converting between RFC 2425/2426 vCard data format,
+/// and the Barry::Contact class.
 ///
-class vCalendar : public vBase
+class vCard : public vBase
 {
 	// data to pass to external requests
-	char *m_gCalData;	// dynamic memory returned by vformat()... can
+	char *m_gCardData;	// dynamic memory returned by vformat()... can
 				// be used directly by the plugin, without
 				// overmuch allocation and freeing (see Extract())
-	std::string m_vCalData;	// copy of m_gCalData, for C++ use
-	Barry::Calendar m_BarryCal;
-
-	static const char *WeekDays[7];
+	std::string m_vCardData;// copy of m_gCardData, for C++ use
+	Barry::Contact m_BarryContact;
 
 protected:
-	void RecurToVCal();
-	void RecurToBarryCal();
+	void AddAddress(const char *rfc_type, const Barry::PostalAddress &addr);
+	void AddPhoneCond(const char *rfc_type, const std::string &phone);
 
-	static unsigned short GetWeekDayIndex(const char *dayname);
-	bool HasMultipleVEvents() const;
+	void ParseAddress(vAttr &adr, Barry::PostalAddress &address);
 
 public:
-	vCalendar();
-	~vCalendar();
+	vCard();
+	~vCard();
 
-	const std::string&	ToVCal(const Barry::Calendar &cal);
-	const Barry::Calendar&	ToBarry(const char *vcal, uint32_t RecordId);
+	const std::string&	ToVCard(const Barry::Contact &con);
+	const Barry::Contact&	ToBarry(const char *vcal, uint32_t RecordId);
 
-	const std::string&	GetVCal() const { return m_vCalData; }
-	const Barry::Calendar&	GetBarryCal() const { return m_BarryCal; }
+	const std::string&	GetVCard() const { return m_vCardData; }
+	const Barry::Contact&	GetBarryContact() const { return m_BarryContact; }
 
-	char* ExtractVCal();
+	char* ExtractVCard();
 
 	void Clear();
 };
 
 
-class VEventConverter
+class VCardConverter
 {
 	char *m_Data;
-	Barry::Calendar m_Cal;
+	Barry::Contact m_Contact;
 	uint32_t m_RecordId;
 
 public:
-	VEventConverter();
-	explicit VEventConverter(uint32_t newRecordId);
-	~VEventConverter();
+	VCardConverter();
+	explicit VCardConverter(uint32_t newRecordId);
+	~VCardConverter();
 
 	// Transfers ownership of m_Data to the caller
 	char* ExtractData();
@@ -89,10 +87,10 @@ public:
 	bool ParseData(const char *data);
 
 	// Barry storage operator
-	void operator()(const Barry::Calendar &rec);
+	void operator()(const Barry::Contact &rec);
 
 	// Barry builder operator
-	bool operator()(Barry::Calendar &rec, unsigned int dbId);
+	bool operator()(Barry::Contact &rec, unsigned int dbId);
 
 	// Handles calling of the Barry::Controller to fetch a specific
 	// record, indicated by index (into the RecordStateTable).

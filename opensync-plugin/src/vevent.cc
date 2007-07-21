@@ -32,8 +32,7 @@
 // vCalendar
 
 vCalendar::vCalendar()
-	: m_gCalData(0),
-	m_format(0)
+	: m_gCalData(0)
 {
 }
 
@@ -42,151 +41,7 @@ vCalendar::~vCalendar()
 	if( m_gCalData ) {
 		g_free(m_gCalData);
 	}
-
-	if( m_format ) {
-		vformat_free(m_format);
-	}
 }
-
-vAttrPtr vCalendar::NewAttr(const char *name)
-{
-	Trace trace("vCalendar::NewAttr");
-
-	trace.logf("creating valueless attr: %s", name);
-
-	vAttrPtr attr(vformat_attribute_new(NULL, name));
-	if( !attr.Get() )
-		throw ConvertError("resource error allocating vformat attribute");
-	return attr;
-}
-
-vAttrPtr vCalendar::NewAttr(const char *name, const char *value)
-{
-	Trace trace("vCalendar::NewAttr");
-
-	if( strlen(value) == 0 ) {
-		trace.logf("attribute '%s' contains no data, skipping", name);
-		return vAttrPtr();
-	}
-
-	trace.logf("creating attr: %s, %s", name, value);
-
-	vAttrPtr attr(vformat_attribute_new(NULL, name));
-	if( !attr.Get() )
-		throw ConvertError("resource error allocating vformat attribute");
-
-	vformat_attribute_add_value(attr.Get(), value);
-	return attr;
-}
-
-void vCalendar::AddAttr(vAttrPtr attr)
-{
-	Trace trace("vCalendar::AddAttr");
-
-	if( !attr.Get() ) {
-		trace.log("attribute contains no data, skipping");
-		return;
-	}
-
-	vformat_add_attribute(m_format, attr.Extract());
-}
-
-void vCalendar::AddParam(vAttrPtr &attr, const char *name, const char *value)
-{
-	Trace trace("vCalendar::AddParam");
-
-	if( !attr.Get() ) {
-		trace.log("attribute pointer contains no data, skipping");
-		return;
-	}
-	if( strlen(value) == 0 ) {
-		trace.log("parameter value is empty, skipping");
-		return;
-	}
-
-	VFormatParam *pParam = vformat_attribute_param_new(name);
-	vformat_attribute_param_add_value(pParam, value);
-	vformat_attribute_add_param(attr.Get(), pParam);
-}
-
-std::string vCalendar::GetAttr(const char *attrname)
-{
-	Trace trace("vCalendar::GetAttr");
-	trace.logf("getting attr: %s", attrname);
-
-	std::string ret;
-
-	VFormatAttribute *attr = vformat_find_attribute(m_format, attrname);
-	if( attr ) {
-		if( vformat_attribute_is_single_valued(attr) ) {
-			ret = vformat_attribute_get_value(attr);
-		}
-		else {
-			// FIXME - does this ever happen?
-			ret = vformat_attribute_get_nth_value(attr, 0);
-		}
-	}
-
-	trace.logf("attr value: %s", ret.c_str());
-
-	return ret;
-}
-
-vAttr vCalendar::GetAttrObj(const char *attrname)
-{
-	Trace trace("vCalendar::GetAttrObj");
-	trace.logf("getting attr: %s", attrname);
-
-	return vAttr(vformat_find_attribute(m_format, attrname));
-}
-
-std::string vAttr::GetName()
-{
-	std::string ret;
-
-	if( !m_attr )
-		return ret;
-
-	const char *name = vformat_attribute_get_name(m_attr);
-	if( name )
-		ret = name;
-	return ret;
-}
-
-std::string vAttr::GetValue()
-{
-	std::string ret;
-
-	if( m_attr ) {
-		if( vformat_attribute_is_single_valued(m_attr) ) {
-			ret = vformat_attribute_get_value(m_attr);
-		}
-		else {
-			// FIXME - does this ever happen?
-			ret = vformat_attribute_get_nth_value(m_attr, 0);
-		}
-	}
-	return ret;
-}
-
-std::string vAttr::GetParam(const char *name, int nth)
-{
-	std::string ret;
-
-	if( !m_attr )
-		return ret;
-
-	VFormatParam *param = vformat_attribute_find_param(m_attr, name);
-	if( !param )
-		return ret;
-
-	const char *value = vformat_attribute_param_get_nth_value(param, nth);
-	if( value )
-		ret = value;
-
-	return ret;
-}
-
 
 const char *vCalendar::WeekDays[] = { "SU", "MO", "TU", "WE", "TH", "FR", "SA" };
 
@@ -200,8 +55,10 @@ unsigned short vCalendar::GetWeekDayIndex(const char *dayname)
 }
 
 bool vCalendar::HasMultipleVEvents() const
-{ int count = 0;
-	GList *attrs = m_format ? vformat_get_attributes(m_format) : 0;
+{
+	int count = 0;
+	VFormat *format = const_cast<VFormat*>(Format());
+	GList *attrs = format ? vformat_get_attributes(format) : 0;
 	for( ; attrs; attrs = attrs->next ) {
 		VFormatAttribute *attr = (VFormatAttribute*) attrs->data;
 		if( strcasecmp(vformat_attribute_get_name(attr), "BEGIN") == 0 &&
@@ -378,8 +235,8 @@ const std::string& vCalendar::ToVCal(const Barry::Calendar &cal)
 
 	// start fresh
 	Clear();
-	m_format = vformat_new();
-	if( !m_format )
+	SetFormat( vformat_new() );
+	if( !Format() )
 		throw ConvertError("resource error allocating vformat");
 
 	// store the Barry object we're working with
@@ -420,7 +277,7 @@ const std::string& vCalendar::ToVCal(const Barry::Calendar &cal)
 	AddAttr(NewAttr("END", "VEVENT"));
 
 	// generate the raw VCALENDAR data
-	m_gCalData = vformat_to_string(m_format, VFORMAT_EVENT_20);
+	m_gCalData = vformat_to_string(Format(), VFORMAT_EVENT_20);
 	m_vCalData = m_gCalData;
 
 	trace.logf("ToVCal, resulting vcal data: %s", m_vCalData.c_str());
@@ -447,8 +304,8 @@ const Barry::Calendar& vCalendar::ToBarry(const char *vcal, uint32_t RecordId)
 	m_vCalData = vcal;
 
 	// create format parser structures
-	m_format = vformat_new_from_string(vcal);
-	if( !m_format )
+	SetFormat( vformat_new_from_string(vcal) );
+	if( !Format() )
 		throw ConvertError("resource error allocating vformat");
 
 	string start = GetAttr("DTSTART");
@@ -551,17 +408,13 @@ char* vCalendar::ExtractVCal()
 
 void vCalendar::Clear()
 {
+	vBase::Clear();
 	m_vCalData.clear();
 	m_BarryCal.Clear();
 
 	if( m_gCalData ) {
 		g_free(m_gCalData);
 		m_gCalData = 0;
-	}
-
-	if( m_format ) {
-		vformat_free(m_format);
-		m_format = 0;
 	}
 }
 
