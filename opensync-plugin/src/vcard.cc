@@ -200,7 +200,7 @@ const Barry::Contact& vCard::ToBarry(const char *vcard, uint32_t RecordId)
 	Barry::Contact &con = m_BarryContact;
 	con.SetIds(Barry::Contact::GetDefaultRecType(), RecordId);
 
-	vAttr name = GetAttrObj("FN");
+	vAttr name = GetAttrObj("N");
 	if( !name.Get() )
 		throw ConvertError("no FN field in VCARD data");
 						// RFC 2426, 3.1.2
