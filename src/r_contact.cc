@@ -260,8 +260,15 @@ void Contact::BuildFields(Data &data, size_t &offset) const
 	// special fields not in type table
 	if( FirstName.size() )
 		BuildField(data, offset, CFC_NAME, FirstName);
-	if( LastName.size() )
+	if( LastName.size() ) {
+		if( !FirstName.size() ) {
+			// order matters with first/last name, and if
+			// last name exists, and first name doesn't,
+			// insert blank first name ahead of it
+			BuildField(data, offset, CFC_NAME, FirstName);
+		}
 		BuildField(data, offset, CFC_NAME, LastName);
+	}
 
 	// cycle through the type table
 	for(	FieldLink<Contact> *b = ContactFieldLinks;
@@ -269,9 +276,17 @@ void Contact::BuildFields(Data &data, size_t &offset) const
 		b++ )
 	{
 		// print only fields with data
-		const std::string &field = this->*(b->strMember);
-		if( field.size() ) {
-			BuildField(data, offset, b->type, field);
+		if( b->strMember ) {
+			const std::string &field = this->*(b->strMember);
+			if( field.size() ) {
+				BuildField(data, offset, b->type, field);
+			}
+		}
+		else if( b->postMember && b->postField ) {
+			const std::string &field = (this->*(b->postMember)).*(b->postField);
+			if( field.size() ) {
+				BuildField(data, offset, b->type, field);
+			}
 		}
 	}
 
@@ -289,7 +304,7 @@ void Contact::BuildFields(Data &data, size_t &offset) const
 	UnknownsType::const_iterator
 		ub = Unknowns.begin(), ue = Unknowns.end();
 	for( ; ub != ue; ub++ ) {
-		BuildField(data, offset, ub->type, ub->data);
+		BuildField(data, offset, ub->type, ub->data.c_str(), ub->data.size());
 	}
 
 	data.ReleaseBuffer(offset);
@@ -368,11 +383,18 @@ void Contact::Dump(std::ostream &os) const
 		b->type != CFC_INVALID_FIELD;
 		b++ )
 	{
+		const std::string *pField = 0;
+		if( b->strMember ) {
+			pField = &(this->*(b->strMember));
+		}
+		else if( b->postMember && b->postField ) {
+			pField = &((this->*(b->postMember)).*(b->postField));
+		}
+
 		// print only fields with data
-		const std::string &field = this->*(b->strMember);
-		if( field.size() ) {
+		if( pField && pField->size() ) {
 			os << "    " << setw(20) << b->name;
-			os << ": " << field << "\n";
+			os << ": " << *pField << "\n";
 		}
 	}
 
