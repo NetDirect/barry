@@ -1,11 +1,19 @@
 #
 # This is the default configuration file for the bary-sync opensync plugin.
 # Comments are preceded by a '#' mark at the beginning of a line.
-# The config format is just the following numbers separated by whitespace:
+# The config format is a set of lines of <keyword> <values>.
+#
+# Keywords available:
+#
+# DebugMode        - If present, verbose USB debug output will be enabled
+#
+# Device           - If present, it is followed by the following values:
 #      PIN number    - PIN number of the device to sync with (in hex)
 #      sync calendar - 1 to sync calendar, 0 to skip
 #      sync contacts - 1 to sync contacts, 0 to skip
 #
 
-3009efe3 1 0
+#DebugMode
+
+Device 3009efe3 1 1
 
