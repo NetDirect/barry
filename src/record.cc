@@ -79,14 +79,20 @@ void BuildField(Data &data, size_t &size, uint8_t type, char c)
 void BuildField(Data &data, size_t &size, uint8_t type, const std::string &str)
 {
 	// include null terminator
-	size_t strsize = str.size() + 1;
-	size_t fieldsize = COMMON_FIELD_HEADER_SIZE + strsize;
+	BuildField(data, size, type, str.c_str(), str.size() + 1);
+}
+
+void BuildField(Data &data, size_t &size, uint8_t type,
+		const void *buf, size_t bufsize)
+{
+	// include null terminator
+	size_t fieldsize = COMMON_FIELD_HEADER_SIZE + bufsize;
 	unsigned char *pd = data.GetBuffer(size + fieldsize) + size;
 	CommonField *field = (CommonField *) pd;
 
-	field->size = htobs(strsize);
+	field->size = htobs(bufsize);
 	field->type = type;
-	memcpy(field->u.raw, str.c_str(), strsize);
+	memcpy(field->u.raw, buf, bufsize);
 
 	size += fieldsize;
 }
