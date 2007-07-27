@@ -66,6 +66,7 @@ public:
 	void CleanupMap();
 	void ClearDirtyFlags();
 
+	std::string Map2Uid(uint32_t recordId) const;
 	unsigned long GetMappedRecordId(const std::string &uid);
 };
 
@@ -78,6 +79,7 @@ public:
 	// user config data
 	std::string m_ConfigData;
 	uint32_t m_pin;
+	bool m_DebugMode;
 
 	// device communication
 	Barry::ProbeResult m_ProbeResult;

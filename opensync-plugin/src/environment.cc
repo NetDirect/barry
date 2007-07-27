@@ -109,6 +109,29 @@ void DatabaseSyncState::CleanupMap()
 	}
 }
 
+//
+// Map2Uid
+//
+/// Searches for the given record ID, and returns the mapped UID.  If not
+/// found, it creates a new UID and returns it without mapping it.
+///
+std::string DatabaseSyncState::Map2Uid(uint32_t recordId) const
+{
+	// search the idmap for the UID
+	std::string uid;
+	idmap::const_iterator mapped_id;
+	if( m_IdMap.RidExists(recordId, &mapped_id) ) {
+		uid = mapped_id->first;
+	}
+	else {
+		// not mapped, map it ourselves
+		char *puid = g_strdup_printf("%s-%u", m_Desc.c_str(), recordId);
+		uid = puid;
+		g_free(puid);
+	}
+	return uid;
+}
+
 unsigned long DatabaseSyncState::GetMappedRecordId(const std::string &uid)
 {
 	Trace trace("DatabaseSyncState::GetMappedRecordId()", m_Desc.c_str());
@@ -147,7 +170,8 @@ unsigned long DatabaseSyncState::GetMappedRecordId(const std::string &uid)
 
 BarryEnvironment::BarryEnvironment(OSyncMember *pm)
 	: member(pm),
-	m_pin(0),
+	m_pin(-1),
+	m_DebugMode(false),
 	m_pCon(0),
 	m_CalendarSync(pm, "calendar"),
 	m_ContactsSync(pm, "contacts")
@@ -216,17 +240,21 @@ void BarryEnvironment::ParseConfig(const char *data, int size)
 	m_ConfigData.assign(data, size);
 
 	// The config data should contain:
-	//    - PIN of device to sync with
-	//    - or a flag that says "autoconfig with first device found"
-	//      which will autodetect, and update the config
-	//      automatically with the found PIN... all future syncs
-	//      will then have a PIN
-	//    - checkboxes for (both can be on):
-	//         - sync calendar items
-	//         - sync contacts
+	//    - Keyword: DebugMode
+	//      - if the single word "DebugMode" is found, enable Debug
+	//
+	//    - Keyword: Device <pin> ...
+	//      - PIN of device to sync with
+	//      - or a flag that says "autoconfig with first device found"
+	//        which will autodetect, and update the config
+	//        automatically with the found PIN... all future syncs
+	//        will then have a PIN
+	//      - checkboxes for (both can be on):
+	//           - sync calendar items
+	//           - sync contacts
 
 	std::istringstream iss(m_ConfigData);
-	std::string line;
+	std::string line, key;
 	while( std::getline(iss, line) ) {
 
 		if( line[0] == '#' )
@@ -234,20 +262,28 @@ void BarryEnvironment::ParseConfig(const char *data, int size)
 
 		std::istringstream ils(line);
 		int cal = 0, con = 0;
-		ils >> std::hex >> m_pin >> cal >> con;
 
-		std::ostringstream oss;
-		oss << std::hex << m_pin;
-		trace.log(oss.str().c_str());
+		ils >> key;
 
-		if( cal ) {
-			m_CalendarSync.m_Sync = true;
-			trace.log("calendar syncing enabled");
+		if( key == "DebugMode" ) {
+			m_DebugMode = true;
 		}
+		else if( key == "Device" ) {
+			ils >> std::hex >> m_pin >> cal >> con;
 
-		if( con ) {
-			m_ContactsSync.m_Sync = true;
-			trace.log("contacts syncing enabled");
+			std::ostringstream oss;
+			oss << std::hex << m_pin;
+			trace.log(oss.str().c_str());
+
+			if( cal ) {
+				m_CalendarSync.m_Sync = true;
+				trace.log("calendar syncing enabled");
+			}
+
+			if( con ) {
+				m_ContactsSync.m_Sync = true;
+				trace.log("contacts syncing enabled");
+			}
 		}
 	}
 }
