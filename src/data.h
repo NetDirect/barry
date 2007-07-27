@@ -98,6 +98,7 @@ std::ostream& operator<< (std::ostream &os, const Diff &diff);
 
 // utility functions
 bool LoadDataArray(const std::string &filename, std::vector<Data> &array);
+bool ReadDataArray(std::istream &is, std::vector<Data> &array);
 
 } // namespace Barry
 

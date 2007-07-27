@@ -395,15 +395,20 @@ static bool IsEndpointStart(const std::string &line, int &endpoint)
 bool LoadDataArray(const string &filename, std::vector<Data> &array)
 {
 	ifstream in(filename.c_str());
-	if( !in )
+	return ReadDataArray(in, array);
+}
+
+bool ReadDataArray(std::istream &is, std::vector<Data> &array)
+{
+	if( !is )
 		return false;
 
 	bool bInEndpoint = false;
 	unsigned int nCurrent = 0;
 	size_t nLargestSize = 0x100;
-	while( in ) {
+	while( is ) {
 		string line;
-		getline(in, line);
+		getline(is, line);
 		int endpoint;
 		if( bInEndpoint ) {
 			if( IsHexData(line) ) {
