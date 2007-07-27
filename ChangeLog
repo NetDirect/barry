@@ -1,5 +1,40 @@
 Release: version 0.8 - 2007/05/??
 ------------------------------------------------------------------------------
+2007/07/26
+	- added ReadDataArray() to data.h, using an istream instead of
+		requiring a file
+	- added raw data version of BuildField() to record-internal.h
+		This is so that btool doesn't add extra null terminators
+		to unknown data, when restoring with option -s
+	- fixed bugs in r_contact.cc:
+		- fixed bug that caused a LastName/FirstName swap
+			if FirstName was empty and you wrote a contact
+			record into the device.... First/Last Name
+			fields are position sensitive, and the code
+			was missing the empty FirstName case on writing
+		- fixed bug in BuildFields() and Dump() where they
+			were not updated to handle the new field
+			table added for the postal address changes
+			on 2007/07/20, oops
+	- opensync plugin:
+		- changed the plugin config file, so it is possible to
+			turn debug output on/off without recompiling
+		- moved the standalone Map2Uid() function into
+			the DatabaseSyncState class, and changed the
+			code to produce "contact-#" and "calendar-#"
+			UID strings, instead of just numbers
+		- changed default PIN to -1, so that if the user doesn't
+			configure properly, it will fail... this is a
+			safety measure to avoid syncing with different
+			devices and corrupting the cache/idmap...
+			this should be fixed someday, to handle this
+			automatically
+		- incorporated the new VCardConverter code into the
+			main barry_sync.cc plugin code
+		- fixed bug that did not clear the devices dirty flags
+			in the case where a sync only read data from it,
+			and didn't write
+		- changed PIN error message number to hex
 2007/07/20
 	- minor wording change in backup GUI prompt: "Backup working..." to
 		"Backup in progress..."
