@@ -24,6 +24,7 @@
 #include "barry_sync.h"
 #include "environment.h"
 #include "vevent.h"
+#include "vcard.h"
 #include "trace.h"
 #include <string>
 #include <glib.h>
@@ -40,6 +41,9 @@ extern "C" {
 	static void batch_commit_vevent20(OSyncContext *ctx,
 			OSyncContext **contexts,
 			OSyncChange **changes);
+	static void batch_commit_vcard30(OSyncContext *ctx,
+			OSyncContext **contexts,
+			OSyncChange **changes);
 	static void sync_done(OSyncContext *ctx);
 	static void disconnect(OSyncContext *ctx);
 	static void finalize(void *data);
@@ -51,23 +55,6 @@ extern "C" {
 //
 // Support functions and classes
 //
-
-std::string Map2Uid(const idmap &map, uint32_t recordId)
-{
-	// search the idmap for the UID
-	std::string uid;
-	idmap::const_iterator mapped_id;
-	if( map.RidExists(recordId, &mapped_id) ) {
-		uid = mapped_id->first;
-	}
-	else {
-		// not mapped, map it ourselves
-		char *puid = g_strdup_printf("%u", recordId);
-		uid = puid;
-		g_free(puid);
-	}
-	return uid;
-}
 
 
 void GetChanges(OSyncContext *ctx, BarryEnvironment *env,
@@ -97,7 +84,7 @@ void GetChanges(OSyncContext *ctx, BarryEnvironment *env,
 
 	// fetch state table
 	unsigned int dbId = con.GetDBID(DBDBName);
-	RecordStateTable table;
+	RecordStateTable &table = pSync->m_Table;
 	con.GetRecordStateTable(dbId, table);
 
 	// cycle through the state table...
@@ -111,7 +98,7 @@ void GetChanges(OSyncContext *ctx, BarryEnvironment *env,
 		const RecordStateTable::State &state = i->second;
 
 		// search the idmap for the UID
-		std::string uid = Map2Uid(map, state.RecordId);
+		std::string uid = pSync->Map2Uid(state.RecordId);
 
 		// search the cache
 		DatabaseSyncState::cache_type::const_iterator c = cache.find(state.RecordId);
@@ -164,7 +151,7 @@ void GetChanges(OSyncContext *ctx, BarryEnvironment *env,
 		uint32_t recordId = c->first;
 
 		// search the idmap for the UID
-		std::string uid = Map2Uid(map, recordId);
+		std::string uid = pSync->Map2Uid(recordId);
 
 		// search the state table
 		i = table.StateMap.begin();
@@ -213,8 +200,7 @@ CommitData_t GetCommitFunction(OSyncChange *change)
 		return &VEventConverter::CommitRecordData;
 	}
 	else if( strcmp(name, "contact") == 0 ) {
-		return 0;
-//		return &VCardConverter::CommitRecordData;
+		return &VCardConverter::CommitRecordData;
 	}
 	else {
 		return 0;
@@ -329,6 +315,60 @@ bool CommitChange(BarryEnvironment *env,
 	}
 }
 
+void BatchCommit(OSyncContext *ctx, OSyncContext **contexts, OSyncChange **changes,
+		 const char *dbname, DatabaseSyncState *pSync)
+{
+
+	BarryEnvironment *env = (BarryEnvironment *)osync_context_get_plugin_data(ctx);
+	
+	try {
+		Barry::Controller &con = *env->m_pCon;
+
+		// fetch state table
+		unsigned int dbId = con.GetDBID(dbname);
+		con.GetRecordStateTable(dbId, pSync->m_Table);
+
+		//
+		// Cycle through changes, looking for modifications first,
+		// so that the state table will be stable (paranoia here,
+		// it's worth checking whether this is necessary, by
+		// trying to overwrite, delete, add, then overwrite
+		// another using the same table index... will it work?)
+		//
+		// Update: tests confirm that it does work, for
+		// read/delete/read.
+		//
+		for( int i = 0; contexts[i] && changes[i]; i++ ) {
+			if( osync_change_get_changetype(changes[i]) != CHANGE_ADDED ) {
+				if( !CommitChange(env, dbId, contexts[i], changes[i]) ) {
+					osync_context_report_error(ctx, OSYNC_ERROR_IO_ERROR,
+						"error committing context %i", i);
+					return;
+				}
+			}
+		}
+		for( int i = 0; contexts[i] && changes[i]; i++ ) {
+			if( osync_change_get_changetype(changes[i]) == CHANGE_ADDED ) {
+				if( !CommitChange(env, dbId, contexts[i], changes[i]) ) {
+					osync_context_report_error(ctx, OSYNC_ERROR_IO_ERROR,
+						"error committing context %i", i);
+					return;
+				}
+			}
+		}
+
+		// get the state table again, so we can update
+		// the cache on success, later
+		con.GetRecordStateTable(dbId, pSync->m_Table);
+
+		// all done
+		osync_context_report_success(ctx);
+
+	}
+	catch( std::exception &e ) {
+		osync_context_report_error(ctx, OSYNC_ERROR_IO_ERROR, "%s", e.what());
+	}
+}
 
 
 
@@ -345,11 +385,6 @@ static void *initialize(OSyncMember *member, OSyncError **error)
 
 	// Create the environment struct, including our Barry objects
 	try {
-		// FIXME - near the end of release, do a run with
-		// this set to true, and look for USB protocol
-		// inefficiencies.
-		Barry::Init(false);
-
 		env = new BarryEnvironment(member);
 
 		// Load config file for this plugin
@@ -365,6 +400,11 @@ static void *initialize(OSyncMember *member, OSyncError **error)
 		// Process the configdata here and set the options on your environment
 		env->ParseConfig(configdata, configsize);
 		free(configdata);
+
+		// FIXME - near the end of release, do a run with
+		// this set to true, and look for USB protocol
+		// inefficiencies.
+		Barry::Init(env->m_DebugMode);
 
 		// Load all needed cache files
 		if( env->m_CalendarSync.m_Sync ) {
@@ -408,7 +448,7 @@ static void connect(OSyncContext *ctx)
 		Barry::Probe probe;
 		int nIndex = probe.FindActive(env->m_pin);
 		if( nIndex == -1 ) {
-			osync_context_report_error(ctx, OSYNC_ERROR_NO_CONNECTION, "Unable to find PIN %lu", env->m_pin);
+			osync_context_report_error(ctx, OSYNC_ERROR_NO_CONNECTION, "Unable to find PIN %lx", env->m_pin);
 			return;
 		}
 		env->m_ProbeResult = probe.Get(nIndex);
@@ -447,10 +487,9 @@ static void get_changeinfo(OSyncContext *ctx)
 		}
 
 		if( env->m_ContactsSync.m_Sync ) {
-			// FIXME - not yet implemented
-//			GetChanges(ctx, env, &env->m_ContactsSync
-//				"Address Book", "contact", "vcard30",
-//				&ContactToVCard::GetRecordData);
+			GetChanges(ctx, env, &env->m_ContactsSync,
+				"Address Book", "contact", "vcard30",
+				&VCardConverter::GetRecordData);
 		}
 
 		// Success!
@@ -469,57 +508,30 @@ static void batch_commit_vevent20(OSyncContext *ctx,
 				  OSyncChange **changes)
 {
 	Trace trace("batch_commit_vevent20");
-
 	BarryEnvironment *env = (BarryEnvironment *)osync_context_get_plugin_data(ctx);
-	
-	try {
-		Barry::Controller &con = *env->m_pCon;
-
-		// fetch state table
-		unsigned int dbId = con.GetDBID("Calendar");
-		con.GetRecordStateTable(dbId, env->m_CalendarSync.m_Table);
-
-		//
-		// Cycle through changes, looking for modifications first,
-		// so that the state table will be stable (paranoia here,
-		// it's worth checking whether this is necessary, by
-		// trying to overwrite, delete, add, then overwrite
-		// another using the same table index... will it work?)
-		//
-		// Update: tests confirm that it does work, for
-		// read/delete/read.
-		//
-		for( int i = 0; contexts[i] && changes[i]; i++ ) {
-			if( osync_change_get_changetype(changes[i]) != CHANGE_ADDED ) {
-				if( !CommitChange(env, dbId, contexts[i], changes[i]) ) {
-					osync_context_report_error(ctx, OSYNC_ERROR_IO_ERROR,
-						"error committing context %i", i);
-					return;
-				}
-			}
-		}
-		for( int i = 0; contexts[i] && changes[i]; i++ ) {
-			if( osync_change_get_changetype(changes[i]) == CHANGE_ADDED ) {
-				if( !CommitChange(env, dbId, contexts[i], changes[i]) ) {
-					osync_context_report_error(ctx, OSYNC_ERROR_IO_ERROR,
-						"error committing context %i", i);
-					return;
-				}
-			}
-		}
-
-		// get the state table again, so we can update
-		// the cache on success, later
-		con.GetRecordStateTable(dbId, env->m_CalendarSync.m_Table);
-
-		// all done
-		osync_context_report_success(ctx);
-
-	}
-	catch( std::exception &e ) {
-		osync_context_report_error(ctx, OSYNC_ERROR_IO_ERROR, "%s", e.what());
-	}
+	BatchCommit(ctx, contexts, changes, "Calendar", &env->m_CalendarSync);
 }
+
+// this function will be called exactly once with all objects to write
+// gathered in an array
+static void batch_commit_vcard30(OSyncContext *ctx,
+				 OSyncContext **contexts,
+				 OSyncChange **changes)
+{
+	Trace trace("batch_commit_vcard30");
+	BarryEnvironment *env = (BarryEnvironment *)osync_context_get_plugin_data(ctx);
+	BatchCommit(ctx, contexts, changes, "Address Book", &env->m_ContactsSync);
+}
+
+/*
+static osync_bool commit_vevent20(OSyncContext *ctx, OSyncChange *change)
+{
+}
+
+static osync_bool commit_vcard30(OSyncContext *ctx, OSyncChange *change)
+{
+}
+*/
 
 static void sync_done(OSyncContext *ctx)
 {
@@ -633,12 +645,16 @@ void get_info(OSyncEnv *env)
 	osync_plugin_accept_objformat(info, "event", "vevent20", NULL);
 	osync_plugin_set_batch_commit_objformat(info, "event", "vevent20",
 						batch_commit_vevent20);
+//	osync_plugin_set_commit_objformat(info, "event", "vevent20",
+//						commit_vevent20);
 
 	// Address Book entries
-//	osync_plugin_accept_objtype(info, "contact");
-//	osync_plugin_accept_objformat(info, "contact", "vcard30", NULL);
-//	osync_plugin_set_batch_commit_objformat(info, "contact", "vcard30",
-//						batch_commit_vcard30);
+	osync_plugin_accept_objtype(info, "contact");
+	osync_plugin_accept_objformat(info, "contact", "vcard30", NULL);
+	osync_plugin_set_batch_commit_objformat(info, "contact", "vcard30",
+						batch_commit_vcard30);
+//	osync_plugin_set_commit_objformat(info, "contact", "vcard30",
+//						commit_vcard30);
 
 }
 
