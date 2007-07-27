@@ -46,6 +46,8 @@ public:
 	idmap m_IdMap;
 
 	// device data
+	unsigned int m_dbId;
+	std::string m_dbName;
 	Barry::RecordStateTable m_Table;
 
 	bool m_Sync;
@@ -88,10 +90,15 @@ public:
 	// sync data
 	DatabaseSyncState m_CalendarSync, m_ContactsSync;
 
+protected:
+	void DoConnect();
+
 public:
 	BarryEnvironment(OSyncMember *pm);
 	~BarryEnvironment();
 
+	void Connect(const Barry::ProbeResult &result);
+	void Reconnect();
 	void Disconnect();
 
 	DatabaseSyncState* GetSyncObject(OSyncChange *change);

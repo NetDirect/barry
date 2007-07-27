@@ -32,7 +32,8 @@
 // DatabaseSyncState
 
 DatabaseSyncState::DatabaseSyncState(OSyncMember *pm, const char *description)
-	: m_Sync(false),
+	: m_dbId(0),
+	m_Sync(false),
 	m_Desc(description)
 {
 	m_CacheFilename = m_MapFilename =
@@ -183,6 +184,36 @@ BarryEnvironment::~BarryEnvironment()
 	delete m_pCon;
 }
 
+void BarryEnvironment::DoConnect()
+{
+	// Create controller
+	m_pCon = new Barry::Controller(m_ProbeResult);
+	m_pCon->OpenMode(Barry::Controller::Desktop);
+
+	// Save the DBIDs and DBNames of the databases we will work with
+	m_CalendarSync.m_dbName = Barry::Calendar::GetDBName();
+	m_CalendarSync.m_dbId = m_pCon->GetDBID(Barry::Calendar::GetDBName());
+
+	m_ContactsSync.m_dbId = m_pCon->GetDBID(Barry::Contact::GetDBName());
+	m_ContactsSync.m_dbName = Barry::Contact::GetDBName();
+}
+
+void BarryEnvironment::Connect(const Barry::ProbeResult &result)
+{
+	Disconnect();
+
+	// save result in case we need to reconnect later
+	m_ProbeResult = result;
+
+	DoConnect();
+}
+
+void BarryEnvironment::Reconnect()
+{
+	Disconnect();
+	DoConnect();
+}
+
 void BarryEnvironment::Disconnect()
 {
 	delete m_pCon;
@@ -199,6 +230,8 @@ void BarryEnvironment::ClearDirtyFlags(Barry::RecordStateTable &table,
 	Barry::RecordStateTable::StateMapType::const_iterator i = table.StateMap.begin();
 	for( ; i != table.StateMap.end(); ++i ) {
 		if( i->second.Dirty ) {
+			trace.logf("Clearing dirty flag for db %u, index %u",
+				dbId, i->first);
 			m_pCon->ClearDirty(dbId, i->first);
 		}
 	}
