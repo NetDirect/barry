@@ -1,0 +1,74 @@
+A list of common issues when working with Barry:
+------------------------------------------------
+
+-------------------------------------------------------------------------------
+Q:	I'm running Ubuntu Feisty Fawn and bcharge appears to work, but
+	then the charge icon goes out.
+
+A:	This is a known problem, and unfortunately the real solution has
+	not yet been found.  You might try compiling your own kernel,
+	or upgrading to a different kernel.  Keep an eye on the Barry
+	mailing list for the latest developments.
+
+
+-------------------------------------------------------------------------------
+Q:	I've installed Barry, and bcharge is set to run automatically,
+	but as soon as I plug my device into the USB port, the device
+	reboots.
+
+A:	This is a bug in the udev script, which causes the bcharge program
+	to be run 7 to 10 times back to back.  This confuses the BlackBerry
+	enough to reset it.  As of 2007/07/28, there is a corrected
+	udev script example in Barry CVS.  This corrected script
+	will be included in the Barry 0.8 release.
+
+
+-------------------------------------------------------------------------------
+Q:	btool is giving me errors, saying it can't find my device, or
+	can't access it!
+
+A:	If you have one of the newer BlackBerry devices, such as the Pearl
+	or the Curve, these devices default to USB Mass Storage mode
+	when you first plug them in.  The Linux kernel detects this,
+	and on most systems loads the usb_storage module automatically,
+	sometimes mounting the device as a drive.
+
+	As only one program can control a USB device at once, you must
+	remove this module before btool can find your BlackBerry.
+
+	Run as root:     rmmod usb_storage
+
+	Alternately, you can setup your system to run bcharge with the -o
+	command line switch.  This will disable USB Mass Storage on
+	your BlackBerry until the next time you plug it in, and
+	without USB Mass Storage, usb_storage won't load.
+
+
+-------------------------------------------------------------------------------
+Q:	One of the Barry applications crashed, and now I keep getting
+	a Desktop error message in hex.
+
+A:	If a Barry application crashes, that means the Desktop mode was
+	not shutdown properly.  Your device will likely appear to still
+	be "busy" as well.  Currently the only way to fix this is to
+	reset the device, either by unplugging/replugging it, or by
+	running the program "breset".
+
+
+-------------------------------------------------------------------------------
+Q:	Everytime I restore a backup with the backup GUI, the database
+	I need does not get restored.  What gives?
+
+A:	Both the backup and the restore are filtered based on your
+	configuration.  Check your Edit | Config... settings and make
+	sure the needed database is turned on in both backup and restore.
+
+
+-------------------------------------------------------------------------------
+Q:	I ran the backup, but can't find my backup files!  Where did they go?
+
+A:	The backup program saves all backup files as gzip'd tarballs
+	under your home directory:  ~/.barry/backup/<pin>/
+	Each backup session creates a new file, named with the
+	pin number, date, and time.
+

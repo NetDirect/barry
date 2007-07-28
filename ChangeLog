@@ -1,5 +1,7 @@
 Release: version 0.8 - 2007/05/??
 ------------------------------------------------------------------------------
+2007/07/28
+	- added doc/TroubleShooting.txt
 2007/07/27
 	- opensync plugin:
 		- fixed bug in vcard.cc that was using the FN field
