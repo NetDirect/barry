@@ -1,5 +1,25 @@
 Release: version 0.8 - 2007/05/??
 ------------------------------------------------------------------------------
+2007/07/27
+	- opensync plugin:
+		- fixed bug in vcard.cc that was using the FN field
+			for the broken-down name instead of N
+		- added dbId and dbName to DatabaseSyncState
+		- added Reconnect() functionality to BarryEnvironment class
+			and moved connect logic out of barry_sync.cc
+		- changed the batch commit functionality in barry_sync.cc
+			to single-change-commit.  Why?  Because opensync
+			0.22 groups all batch changes into one group
+			and calls one batch commit function, even if you
+			registered two.  Moving to single change commit
+			mode removes a chunk of unneccessary code
+			from the plugin as well, and can in theory
+			ease memory pressure in the library.
+		- added FinishSync() to perform actions needed on successful
+			syncing completion
+		- disconnect on successful sync completion, and reconnect,
+			since the device's dirty flags don't seem to
+			be updated until a disconnect occurs.
 2007/07/26
 	- added ReadDataArray() to data.h, using an istream instead of
 		requiring a file
@@ -29,6 +49,13 @@ Release: version 0.8 - 2007/05/??
 			devices and corrupting the cache/idmap...
 			this should be fixed someday, to handle this
 			automatically
+			On second thought... is this right?  Perhaps
+			it is better to fail if the PIN is not what
+			is expected, so a user doesn't accidentally
+			sync the wrong device and lose data.
+			Actions to take on new PIN:
+				- force slow_sync, or
+				- fail
 		- incorporated the new VCardConverter code into the
 			main barry_sync.cc plugin code
 		- fixed bug that did not clear the devices dirty flags
