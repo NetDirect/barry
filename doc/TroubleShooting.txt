@@ -2,6 +2,31 @@ A list of common issues when working with Barry:
 ------------------------------------------------
 
 -------------------------------------------------------------------------------
+Q:	When I run btool, it hangs for 30 seconds and then times out on the
+	USB read call.
+
+A:	From reports on the mailing list, this appears most likely to be
+	a bug in the BlackBerry firmware.  Sometimes upgrading your
+	Blackberry will fix this issue.
+
+	This is not conclusive, and may be a kernel issue as well.
+
+	To verify that you are experiencing the right issue, run
+	"btool -vl" to get a verbose USB log.  At the beginning
+	the USB configuration and endpoint information is printed.
+	If the last set of endpoints have 0's in the values, you are
+	experiencing the problem.  The proper set of endpoints will not
+	be displayed with "lsusb -v" in this case either.
+
+	One workaround is to run bcharge twice like this:
+
+		bcharge
+		bcharge -o
+
+	After the second bcharge, btool should work normally.
+
+
+-------------------------------------------------------------------------------
 Q:	I'm running Ubuntu Feisty Fawn and bcharge appears to work, but
 	then the charge icon goes out.
 
