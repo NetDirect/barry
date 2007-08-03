@@ -7,6 +7,11 @@ Release: version 0.8 - 2007/05/??
 	- added temporary workaround in opensync-plugin environment's
 		Reconnect(), for odd message seen on newer Blackberry
 		devices
+	- fixing issues with Brian Edginton's MessageRecord patch (2007/06/29)
+		- fixed missing size check in message oriented ParseHeader()
+		- fixed endian conversion issues (also found one pre-existing
+			endian bug in the process)
+		- moved message timestamp converter code to time.cc
 2007/08/01
 	- added entry to doc/TroubleShooting.txt
 2007/07/28
