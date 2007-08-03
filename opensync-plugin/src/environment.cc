@@ -211,6 +211,19 @@ void BarryEnvironment::Connect(const Barry::ProbeResult &result)
 void BarryEnvironment::Reconnect()
 {
 	Disconnect();
+
+	// FIXME - temporary fix for odd reconnect message... without this
+	// probe, the reconnect will often fail on newer Blackberries
+	// due to an unexpected close socket message.  It is unclear
+	// if this is really a message from the device, but until then,
+	// we add this probe.
+	{
+		Barry::Probe probe;
+		int i = probe.FindActive(m_ProbeResult.m_pin);
+		if( i != -1 )
+			m_ProbeResult = probe.Get(i);
+	}
+
 	DoConnect();
 }
 
