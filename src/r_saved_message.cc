@@ -143,7 +143,7 @@ const unsigned char* SavedMessage::ParseField(const unsigned char *begin,
 	switch( field->type )
 	{
 	case SEMFC_RECORDID:
-		MessageRecordId = field->u.uint32;
+		MessageRecordId = btohl(field->u.uint32);
 		return begin;
 	}
 
@@ -164,11 +164,13 @@ void SavedMessage::ParseHeader(const Data &data, size_t &offset)
 
 	// Priority
 	MessagePriority = NormalPriority;
-	if( mr->priority & PRIORITY_MASK ) {
-		if( mr->priority & PRIORITY_HIGH ) {
+
+	uint16_t priority = btohs(mr->priority);  // deal with endian swap once
+	if( priority & PRIORITY_MASK ) {
+		if( priority & PRIORITY_HIGH ) {
 			MessagePriority = HighPriority;
 		}
-		else if( mr->priority & PRIORITY_LOW ) {
+		else if( priority & PRIORITY_LOW ) {
 			MessagePriority = LowPriority;
 		}
 		else
@@ -176,14 +178,14 @@ void SavedMessage::ParseHeader(const Data &data, size_t &offset)
 	} 
 	// Sensitivity
 	MessageSensitivity = NormalSensitivity;
-	if( mr->priority & SENSITIVE_MASK ) {
-		if(( mr->priority & SENSITIVE_CONFIDENTIAL ) == SENSITIVE_CONFIDENTIAL ) {
+	if( priority & SENSITIVE_MASK ) {
+		if(( priority & SENSITIVE_CONFIDENTIAL ) == SENSITIVE_CONFIDENTIAL ) {
 			MessageSensitivity = Confidential;
 		}
-		else if(( mr->priority & SENSITIVE_PRIVATE ) == SENSITIVE_PRIVATE ) {
+		else if(( priority & SENSITIVE_PRIVATE ) == SENSITIVE_PRIVATE ) {
 			MessageSensitivity = Private;
 		}
-		else if(( mr->priority & SENSITIVE_PERSONAL ) == SENSITIVE_PERSONAL ) {
+		else if(( priority & SENSITIVE_PERSONAL ) == SENSITIVE_PERSONAL ) {
 			MessageSensitivity = Personal;
 		}
 		else
@@ -191,30 +193,27 @@ void SavedMessage::ParseHeader(const Data &data, size_t &offset)
 	}
 	// X-rim-org-message-ref-id		// NOTE: I'm cheating a bit here and using this as a reply-to
 	if( mr->inReplyTo )			// It's actually sent by BB with the actual UID in every message
-		MessageReplyTo = mr->inReplyTo;
+		MessageReplyTo = btohl(mr->inReplyTo);
+
 	// Status Flags
-	if( !( mr->flags & MESSAGE_READ ))
+	uint32_t flags = btohl(mr->flags);
+	if( !( flags & MESSAGE_READ ))
 		MessageRead = true;		// NOTE: A lot of these flags are 'backwards' but this seemed
 						// like the most logical way to interpret them for now
-	if(( mr->flags & MESSAGE_REPLY ) == MESSAGE_REPLY )
+	if(( flags & MESSAGE_REPLY ) == MESSAGE_REPLY )
 		MessageReply = true;		// NOTE: This is a reply, the original message's flags are not changed
 						// the inReplyTo field is updated with the original messages's UID
-	if( !( mr->flags & MESSAGE_TRUNCATED ))
+	if( !( flags & MESSAGE_TRUNCATED ))
 		MessageTruncated = true;	// NOTE: This bit is unset on truncation, around 4096 on my 7100g
 						// NOTE: bit 0x400 is set on REALLY huge messages, haven't tested
 						//       the exact size yet
-	if( !( mr->flags & MESSAGE_SAVED ))
+	if( !( flags & MESSAGE_SAVED ))
 		MessageSaved = true;		// NOTE: Saved to 'saved' folder
-	if( !( mr->flags & MESSAGE_SAVED_DELETED ))
+	if( !( flags & MESSAGE_SAVED_DELETED ))
 		MessageSavedDeleted = true;	// NOTE: Saved to 'saved' folder and then deleted from inbox
 
-	MessageDateSent = ( mr->dateSent & 0x01ff ) - 0x29;
-	MessageDateSent = DayToDate( MessageDateSent );
-	MessageDateSent += (time_t)( mr->timeSent*1.77 );
-
-	MessageDateReceived = ( mr->dateReceived & 0x01ff ) - 0x29;
-	MessageDateReceived = DayToDate( MessageDateReceived );
-	MessageDateReceived += (time_t)( mr->timeReceived*1.77 );	
+	MessageDateSent = Message2Time(mr->dateSent, mr->timeSent);
+	MessageDateReceived = Message2Time(mr->dateReceived, mr->timeReceived);
 
 	offset += MESSAGE_RECORD_HEADER_SIZE;
 }

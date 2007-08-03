@@ -23,6 +23,7 @@
 
 #include "time.h"
 #include "endian.h"
+#include "debug.h"
 
 namespace Barry {
 
@@ -201,6 +202,29 @@ time_t DayToDate( unsigned short Day )
 	t += Day * 24 * 60 * 60;	// Add the day converted to seconds
 	
 	return t;
+}
+
+//
+// Message2Time
+//
+/// Localize the funky math used to convert a Blackberry message
+/// timestamp into a time_t.
+///
+/// Both r_date and r_time are expected to be fed in from the
+/// Protocol::MessageRecord struct in raw form, without endian
+/// conversion.  This function handles that.
+///
+time_t Message2Time(uint16_t r_date, uint16_t r_time)
+{
+	dout("Message2Time(0x" << std::hex << btohs(r_date) << ", 0x"
+		<< btohs(r_time) << ")");
+
+	time_t result = ( btohs(r_date) & 0x01ff ) - 0x29;
+	result = DayToDate( result );
+	result += (time_t)( btohs(r_time)*1.77 );
+
+	dout("Message2Time result: " << ctime(&result));
+	return result;
 }
 	
 	

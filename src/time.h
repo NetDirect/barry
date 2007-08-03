@@ -25,6 +25,7 @@
 #define __BARRY_TIME_H__
 
 #include <time.h>
+#include <stdint.h>
 
 //
 // Calculate the number of minutes between Jan 01, 1900 and Jan 01, 1970
@@ -70,6 +71,7 @@ unsigned short GetTimeZoneCode(signed short HourOffset,
 	
 // Message time conversion stuff
 time_t DayToDate( unsigned short Day );
+time_t Message2Time(uint16_t r_date, uint16_t r_time);
 
 } // namespace Barry
 
