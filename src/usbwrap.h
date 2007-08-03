@@ -123,17 +123,8 @@ class Interface
 	Device &m_dev;
 	int m_iface;
 public:
-	Interface(Device &dev, int iface)
-		: m_dev(dev), m_iface(iface)
-	{
-		if( usb_claim_interface(dev.GetHandle(), iface) < 0 )
-			throw Error("claim interface failed");
-	}
-
-	~Interface()
-	{
-		usb_release_interface(m_dev.GetHandle(), m_iface);
-	}
+	Interface(Device &dev, int iface);
+	~Interface();
 };
 
 

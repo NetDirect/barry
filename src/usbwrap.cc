@@ -89,6 +89,7 @@ Device::Device(Usb::DeviceIDType id, int timeout)
 	: m_id(id),
 	m_timeout(timeout)
 {
+	dout("usb_open(" << std::dec << id << ")");
 	m_handle = usb_open(id);
 	if( !m_handle )
 		throw Error("open failed");
@@ -96,11 +97,13 @@ Device::Device(Usb::DeviceIDType id, int timeout)
 
 Device::~Device()
 {
+	dout("usb_close(" << std::dec << m_handle << ")");
 	usb_close(m_handle);
 }
 
 bool Device::SetConfiguration(unsigned char cfg)
 {
+	dout("usb_set_configuration(" << std::dec << m_handle << "," << std::dec << (unsigned int) cfg << ")");
 	int ret = usb_set_configuration(m_handle, cfg);
 	m_lasterror = ret;
 	return ret >= 0;
@@ -108,6 +111,7 @@ bool Device::SetConfiguration(unsigned char cfg)
 
 bool Device::ClearHalt(int ep)
 {
+	dout("usb_clear_halt(" << std::dec << m_handle << "," << std::dec << ep << ")");
 	int ret = usb_clear_halt(m_handle, ep);
 	m_lasterror = ret;
 	return ret >= 0;
@@ -115,6 +119,7 @@ bool Device::ClearHalt(int ep)
 
 bool Device::Reset()
 {
+	dout("usb_reset(" << std::dec << m_handle << ")");
 	int ret = usb_reset(m_handle);
 	m_lasterror = ret;
 	return ret == 0;
@@ -142,7 +147,7 @@ bool Device::BulkRead(int ep, Barry::Data &data, int timeout)
 
 bool Device::BulkWrite(int ep, const Barry::Data &data, int timeout)
 {
-	ddout("BulkWrite to endpoint " << ep << ":\n" << data);
+	ddout("BulkWrite to endpoint " << std::dec << ep << ":\n" << data);
 	int ret;
 	do {
 		ret = usb_bulk_write(m_handle, ep,
@@ -164,7 +169,7 @@ bool Device::BulkWrite(int ep, const void *data, size_t size, int timeout)
 {
 #ifdef __DEBUG_MODE__
 	Barry::Data dump(data, size);
-	ddout("BulkWrite to endpoint " << ep << ":\n" << dump);
+	ddout("BulkWrite to endpoint " << std::dec << ep << ":\n" << dump);
 #endif
 
 	int ret;
@@ -206,7 +211,7 @@ bool Device::InterruptRead(int ep, Barry::Data &data, int timeout)
 
 bool Device::InterruptWrite(int ep, const Barry::Data &data, int timeout)
 {
-	ddout("InterruptWrite to endpoint " << ep << ":\n" << data);
+	ddout("InterruptWrite to endpoint " << std::dec << ep << ":\n" << data);
 
 	int ret;
 	do {
@@ -239,6 +244,25 @@ void Device::BulkDrain(int ep)
 		;
 	}
 	catch( Usb::Error & ) {}
+}
+
+
+
+///////////////////////////////////////////////////////////////////////////////
+// Interface
+
+Interface::Interface(Device &dev, int iface)
+	: m_dev(dev), m_iface(iface)
+{
+	dout("usb_claim_interface(" << dev.GetHandle() << "," << std::dec << iface << ")");
+	if( usb_claim_interface(dev.GetHandle(), iface) < 0 )
+		throw Error("claim interface failed");
+}
+
+Interface::~Interface()
+{
+	dout("usb_release_interface(" << m_dev.GetHandle() << "," << std::dec << m_iface << ")");
+	usb_release_interface(m_dev.GetHandle(), m_iface);
 }
 
 
