@@ -12,6 +12,7 @@ Release: version 0.8 - 2007/05/??
 		- fixed endian conversion issues (also found one pre-existing
 			endian bug in the process)
 		- moved message timestamp converter code to time.cc
+	- added Barry version number to opensync plugin name
 2007/08/01
 	- added entry to doc/TroubleShooting.txt
 2007/07/28
