@@ -1,6 +1,6 @@
 barry (0.8-1) unstable; urgency=low
 
-   * updated for future version 0.8 release
+   * updated for version 0.8 release
    * removed postinst, as the latest stable Debian has a current udev version
    * split packaging into 4 separate packages: libbarry, libbarry-dev,
      barry-util, barrybackup-gui
