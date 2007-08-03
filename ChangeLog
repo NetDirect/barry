@@ -1,4 +1,4 @@
-Release: version 0.8 - 2007/05/??
+Release: version 0.8 - 2007/08/03
 ------------------------------------------------------------------------------
 2007/08/03
 	- moved Interface implementation to usbwrap.cc file
@@ -16,6 +16,11 @@ Release: version 0.8 - 2007/05/??
 	- changed maintainer scripts and rpm.spec to use bzip2 instead of gzip
 	- added opensync-plugin to configure script build
 	- added -S option to btool, to list supported parsers and builders
+	- slight change to opensync-plugin/buildgen.sh to cleanup config.h.in~
+	- opensync-plugin/README update
+	- added opensync-plugin/patches for others who may be building and
+		testing the plugin with OpenSync 0.22
+	- added debian package build scripts to maintainer/
 2007/08/01
 	- added entry to doc/TroubleShooting.txt
 2007/07/28
