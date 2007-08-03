@@ -20,7 +20,7 @@ set -e
 
 # Make sure it compiles cleanly on all handy systems
 # Local first...
-./test-build-local.sh build/barry-$1.$2.tar.gz
+./test-build-local.sh build/barry-$1.$2.tar.bz2
 
 # Then as root, for the chroot systems...
 su - -c "cd $(pwd) && ./release-root.sh $1 $2"

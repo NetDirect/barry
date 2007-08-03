@@ -13,6 +13,8 @@ Release: version 0.8 - 2007/05/??
 			endian bug in the process)
 		- moved message timestamp converter code to time.cc
 	- added Barry version number to opensync plugin name
+	- changed maintainer scripts and rpm.spec to use bzip2 instead of gzip
+	- added opensync-plugin to configure script build
 2007/08/01
 	- added entry to doc/TroubleShooting.txt
 2007/07/28

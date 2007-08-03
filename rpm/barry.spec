@@ -25,7 +25,7 @@ Version: 0.8
 Release: 1
 Group: Applications/Productivity
 License: GPL
-Source: %{name}-%{version}.tar.gz
+Source: %{name}-%{version}.tar.bz2
 URL: http://www.netdirect.ca/downloads/barry
 Vendor: Net Direct Inc.
 BuildRoot: %{_tmppath}/%{name}-%{release}-%{version}-root
@@ -210,8 +210,9 @@ cd ../
 /sbin/ldconfig
 
 %changelog
-* Fri May 04 2007 Chris Frey <cdfrey@foursquare.net> 0.8-1
+* Fri Aug 03 2007 Chris Frey <cdfrey@foursquare.net> 0.8-1
 - version bump
+- changed tarball to bz2
 
 * Tue May 01 2007 Chris Frey <cdfrey@foursquare.net> 0.7-2
 - added pppob to utils
