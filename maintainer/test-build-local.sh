@@ -23,7 +23,7 @@ cd
 rm -rf testbuild
 mkdir testbuild
 cd testbuild
-tar xzvf $TARFULLPATH
+tar xjvf $TARFULLPATH
 cd *
 ./configure --prefix=/home/$BUILDUSER/testbuild/rootdir
 make install
