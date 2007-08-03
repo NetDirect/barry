@@ -15,6 +15,7 @@ Release: version 0.8 - 2007/05/??
 	- added Barry version number to opensync plugin name
 	- changed maintainer scripts and rpm.spec to use bzip2 instead of gzip
 	- added opensync-plugin to configure script build
+	- added -S option to btool, to list supported parsers and builders
 2007/08/01
 	- added entry to doc/TroubleShooting.txt
 2007/07/28

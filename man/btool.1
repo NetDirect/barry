@@ -2,7 +2,7 @@
 .\" First parameter, NAME, should be all caps
 .\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
 .\" other parameters are allowed: see man(7), man(1)
-.TH BTOOL 1 "February 23, 2007"
+.TH BTOOL 1 "August 3, 2007"
 .\" Please adjust this date whenever revising the manpage.
 .\"
 .\" Some roff macros, for reference:
@@ -20,7 +20,7 @@
 \- Barry Project's program to interface with BlackBerry handheld
 .SH SYNOPSIS
 .B btool 
-[-c dn][-C dnattr][-d db [-f file][-r#][-R#]-D#]][-h][-l][-L][-m cmd][-M][-p pin][-s db -f file][-t][-v][-X]
+[-c dn][-C dnattr][-d db [-f file][-r#][-R#]-D#]][-h][-l][-L][-m cmd][-M][-p pin][-s db -f file][-S][-t][-v][-X]
 .SH DESCRIPTION
 .PP
 .B btool
@@ -90,6 +90,13 @@ would be done using a more secure prompt.
 .B \-s db
 Save database 'db' TO device from data loaded from -f file.  See the -t
 option for a list of device databases.
+.TP
+.B \-S
+Show list of supported database parsers and builders.  Parsers are used
+when reading data out of the device, and builders are used when writing
+data to the device.  If a parser is supported, but its associated builder
+is not, that means you cannot change the database programmatically, such
+as with the -s option.
 .TP
 .B \-t
 Show device's database table.

@@ -68,6 +68,7 @@ void Usage()
    << "             If only one device plugged in, this flag is optional\n"
    << "   -P pass   Simplistic method to specify device password\n"
    << "   -s db     Save database 'db' TO device from data loaded from -f file\n"
+   << "   -S        Show list of supported database parsers\n"
    << "   -t        Show database database table\n"
    << "   -T db     Show record state table for given database\n"
    << "   -v        Dump protocol data during operation\n"
@@ -297,6 +298,24 @@ auto_ptr<Builder> GetBuilder(const string &name, const string &filename)
 	}
 }
 
+void ShowParsers()
+{
+	cout << "Supported Database parsers:\n"
+	<< "   Address Book\n"
+	<< "   Messages\n"
+	<< "   Calendar\n"
+	<< "   Service Book\n"
+	<< "   Memos\n"
+	<< "   Tasks\n"
+	<< "   PIN Messages\n"
+	<< "   Saved Email Messages\n"
+	<< "   Folders\n"
+	<< "\n"
+	<< "Supported Database builders:\n"
+	<< "   Address Book\n"
+	<< endl;
+}
+
 struct StateTableCommand
 {
 	char flag;
@@ -377,7 +396,7 @@ int main(int argc, char *argv[])
 
 		// process command line options
 		for(;;) {
-			int cmd = getopt(argc, argv, "c:C:d:D:f:hlLm:Mp:P:r:R:s:tT:vX");
+			int cmd = getopt(argc, argv, "c:C:d:D:f:hlLm:Mp:P:r:R:Ss:tT:vX");
 			if( cmd == -1 )
 				break;
 
@@ -447,6 +466,10 @@ int main(int argc, char *argv[])
 			case 's':	// save dbname
 				saveDbNames.push_back(string(optarg));
 				break;
+
+			case 'S':	// show supported databases
+				ShowParsers();
+				return 0;
 
 			case 't':	// display database database
 				show_dbdb = true;
