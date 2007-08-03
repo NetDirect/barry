@@ -29,6 +29,7 @@
 #include "packet.h"
 #include "endian.h"
 #include <openssl/sha.h>
+#include <sstream>
 
 
 using namespace Usb;
@@ -321,9 +322,13 @@ void Socket::Close()
 			throw Error("Socket: Bad CLOSED packet in Close");
 		}
 
-		// and finally, there always seems to be an extra read of
-		// an empty packet at the end... just throw it away
-//		Receive(response);
+//		// and finally, there always seems to be an extra read of
+//		// an empty packet at the end... just throw it away
+//		try {
+//			Receive(response, 1);
+//		}
+//		catch( Usb::Timeout & ) {
+//		}
 
 		// reset socket and flag
 		m_socket = 0;
@@ -562,9 +567,12 @@ void Socket::Packet(Data &send, Data &receive, int timeout)
 					CheckSequence(inFrag);
 					break;
 
-				default:
-					eout("Command: " << std::setbase(16) << (unsigned int)rpack->command << inFrag);
-					throw Error("Socket: unhandled packet in Packet()");
+				default: {
+					std::ostringstream oss;
+					oss << "Socket: unhandled packet in Packet() (send): 0x" << std::hex << (unsigned int)rpack->command;
+					eout(oss.str());
+					throw Error(oss.str());
+					}
 					break;
 				}
 			}
@@ -610,9 +618,12 @@ void Socket::Packet(Data &send, Data &receive, int timeout)
 				done = true;
 				break;
 
-			default:
-				eout("Command: " << std::setbase(16) << (unsigned int)rpack->command << inFrag);
-				throw Error("Socket: unhandled packet in Packet()");
+			default: {
+				std::ostringstream oss;
+				oss << "Socket: unhandled packet in Packet() (read): 0x" << std::hex << (unsigned int)rpack->command;
+				eout(oss.str());
+				throw Error(oss.str());
+				}
 				break;
 			}
 		}
