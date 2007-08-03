@@ -27,7 +27,8 @@ Blackberry (see the ../gui directory) *and* backups of your desktop
 software's data.
 
 
-You can find more information on the OpenSync framework at the following
+You can find more information on the OpenSync framework, as well
+as tarballs for the version 0.22 library and plugins, at the following
 website:
 
 	http://www.opensync.org/
@@ -80,5 +81,5 @@ Please report any bugs you find to the Barry mailing list.
 
 Thanks!
 
-April 2007
+August 2007
 
