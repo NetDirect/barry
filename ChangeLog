@@ -1,5 +1,12 @@
 Release: version 0.8 - 2007/05/??
 ------------------------------------------------------------------------------
+2007/08/03
+	- moved Interface implementation to usbwrap.cc file
+	- added dout debugging messages to usbwrap.cc
+	- clarified unhandled packet error message in socket.cc
+	- added temporary workaround in opensync-plugin environment's
+		Reconnect(), for odd message seen on newer Blackberry
+		devices
 2007/08/01
 	- added entry to doc/TroubleShooting.txt
 2007/07/28
