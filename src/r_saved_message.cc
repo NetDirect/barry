@@ -158,7 +158,10 @@ const unsigned char* SavedMessage::ParseField(const unsigned char *begin,
 
 void SavedMessage::ParseHeader(const Data &data, size_t &offset)
 {
+	Protocol::CheckSize(data, offset + MESSAGE_RECORD_HEADER_SIZE);
+
 	MAKE_RECORD(const Barry::Protocol::MessageRecord, mr, data, offset);
+
 	// Priority
 	MessagePriority = NormalPriority;
 	if( mr->priority & PRIORITY_MASK ) {
@@ -204,14 +207,15 @@ void SavedMessage::ParseHeader(const Data &data, size_t &offset)
 		MessageSaved = true;		// NOTE: Saved to 'saved' folder
 	if( !( mr->flags & MESSAGE_SAVED_DELETED ))
 		MessageSavedDeleted = true;	// NOTE: Saved to 'saved' folder and then deleted from inbox
-		
+
 	MessageDateSent = ( mr->dateSent & 0x01ff ) - 0x29;
 	MessageDateSent = DayToDate( MessageDateSent );
 	MessageDateSent += (time_t)( mr->timeSent*1.77 );
-	
+
 	MessageDateReceived = ( mr->dateReceived & 0x01ff ) - 0x29;
 	MessageDateReceived = DayToDate( MessageDateReceived );
 	MessageDateReceived += (time_t)( mr->timeReceived*1.77 );	
+
 	offset += MESSAGE_RECORD_HEADER_SIZE;
 }
 
