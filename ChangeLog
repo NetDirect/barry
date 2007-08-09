@@ -8,7 +8,7 @@ Release: version 0.9 - 2007/08/??
 		- src/version.cc
 		- gui/src/BackupWindow.cc
 		- src/Doxygen
-		- rpm/barry*.spec
+		- rpm/barry.spec
 		- debian/changelog
 		- opensync-plugin/src/barry_sync.cc
 
