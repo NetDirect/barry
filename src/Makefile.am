@@ -23,7 +23,7 @@
 # two digit version number, and leave age as 0, always.
 #
 # Only ever increment the first 2 numbers in this version:
-LIB_BARRY_VERSION = 0:8:0
+LIB_BARRY_VERSION = 0:9:0
 
 # Disable the default -I. -I$(srcdir) -I$(topdir), etc, as our includes
 # are proper anyway. :-)
