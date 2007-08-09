@@ -128,11 +128,9 @@ void process(struct usb_device *dev, bool is_pearl)
 
 	// apply changes
 	if( apply ) {
-		int result = usb_set_configuration(handle, BLACKBERRY_CONFIGURATION);
-		if( result < 0 ) {
-			printf("\nusb_set_configuration failed: %d, %s\n",
-				result, usb_strerror());
-		}
+		// usb_set_configuration may fail here, and that's ok...
+		// likely means the device is in the process of resetting
+		usb_set_configuration(handle, BLACKBERRY_CONFIGURATION);
 
 		// the Blackberry Pearl doesn't reset itself after the above,
 		// so do it ourselves

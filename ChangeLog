@@ -11,6 +11,8 @@ Release: version 0.9 - 2007/08/??
 		- rpm/barry.spec
 		- debian/changelog
 		- opensync-plugin/src/barry_sync.cc
+	- removed usb_set_configuration() check from bcharge.cc, since
+		that may fail under normal operation, in this case
 
 Release: version 0.8 - 2007/08/03
 ------------------------------------------------------------------------------
