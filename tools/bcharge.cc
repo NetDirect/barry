@@ -50,13 +50,24 @@
 bool old_style_pearl = false;
 bool force_dual = false;
 
+void control(usb_dev_handle *dev, int requesttype, int request, int value,
+	int index, char *bytes, int size, int timeout)
+{
+	int result = usb_control_msg(dev, requesttype, request, value, index,
+		bytes, size, timeout);
+	if( result < 0 ) {
+		printf("\nusb_control_msg failed: code: %d, %s\n", result,
+			usb_strerror());
+	}
+}
+
 void charge(struct usb_dev_handle *handle)
 {
 	// the special sauce... these steps seem to do the trick
 	// for the 7750 series... needs testing on others
 	char buffer[2];
-	usb_control_msg(handle, 0xc0, 0xa5, 0, 1, buffer, 2, 100);
-	usb_control_msg(handle, 0x40, 0xa2, 0, 1, buffer, 0, 100);
+	control(handle, 0xc0, 0xa5, 0, 1, buffer, 2, 100);
+	control(handle, 0x40, 0xa2, 0, 1, buffer, 0, 100);
 }
 
 void pearl_mode(struct usb_dev_handle *handle)
@@ -64,11 +75,11 @@ void pearl_mode(struct usb_dev_handle *handle)
 	char buffer[2];
 	if( old_style_pearl ) {
 		// use this for "old style" interface: product ID 0001
-		usb_control_msg(handle, 0xc0, 0xa9, 0, 1, buffer, 2, 100);
+		control(handle, 0xc0, 0xa9, 0, 1, buffer, 2, 100);
 	}
 	else {
 		// Product ID 0004
-		usb_control_msg(handle, 0xc0, 0xa9, 1, 1, buffer, 2, 100);
+		control(handle, 0xc0, 0xa9, 1, 1, buffer, 2, 100);
 	}
 }
 
@@ -117,12 +128,18 @@ void process(struct usb_device *dev, bool is_pearl)
 
 	// apply changes
 	if( apply ) {
-		usb_set_configuration(handle, BLACKBERRY_CONFIGURATION);
+		int result = usb_set_configuration(handle, BLACKBERRY_CONFIGURATION);
+		if( result < 0 ) {
+			printf("\nusb_set_configuration failed: %d, %s\n",
+				result, usb_strerror());
+		}
 
 		// the Blackberry Pearl doesn't reset itself after the above,
 		// so do it ourselves
 		if( is_pearl || force_dual ) {
-			usb_reset(handle);
+			if( usb_reset(handle) < 0 ) {
+				printf("\nusb_reset failed: %s\n", usb_strerror());
+			}
 		}
 
 		printf("...done\n");
@@ -149,8 +166,10 @@ int main(int argc, char *argv[])
 	force_dual = (argc > 1 && strcmp(argv[1], "-d") == 0);
 
 	usb_init();
-	usb_find_busses();
-	usb_find_devices();
+	if( usb_find_busses() < 0 || usb_find_devices() < 0 ) {
+		printf("\nUnable to scan devices: %s\n", usb_strerror());
+		return 1;
+	}
 	busses = usb_get_busses();
 
 	printf("Scanning for Blackberry devices...\n");
