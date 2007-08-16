@@ -23,8 +23,8 @@
 #include "DeviceSelectDlg.h"
 #include "PasswordDlg.h"
 #include "ConfigDlg.h"
-#include "aboutdialog.h"
 #include "util.h"
+#include <gtkmm/aboutdialog.h>
 #include <iostream>
 #include <iomanip>
 #include <sstream>
