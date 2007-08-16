@@ -1,5 +1,14 @@
 Release: version 0.9 - 2007/08/??
 ------------------------------------------------------------------------------
+2007/08/16
+	- cleaned up Usb exception handling, moving libusb error code
+		processing into the Usb::Error exception class.
+		error.cc is now an empty shell
+	- added return codes to the Usb::Error exceptions
+	- removed aboutdialog.{h,cc} from the backup GUI since even
+		Debian stable now has up-to-date gtkmm libraries
+	- added more user friendly error message for the "device busy"
+		case, recommending 'rmmod usb_storage'.
 2007/08/09
 	- added better error checking to bcharge.cc
 	- version bump:
