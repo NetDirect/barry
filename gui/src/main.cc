@@ -21,6 +21,7 @@
 
 #include <iostream>
 #include <stdexcept>
+#include <errno.h>
 #include <gtkmm.h>
 #include <libglademm.h>
 #include <barry/barry.h>
@@ -39,6 +40,21 @@ void main_exception_handler()
 		std::cerr << "Glib::Exception caught in main: " << std::endl;
 		std::cerr << e.what() << std::endl;
 		Gtk::MessageDialog msg(e.what());
+		msg.run();
+	}
+	catch( Usb::Error &e ) {
+		std::cerr << "Usb::Error caught in main:\n"
+			<< e.what() << std::endl;
+
+		// special check for EBUSY to make the error message
+		// more user friendly
+		Gtk::MessageDialog msg("");
+		if( e.libusb_errcode() == -EBUSY ) {
+			msg.set_message("Device busy.  This is likely due to the usb_storage kernel module being loaded.  Try 'rmmod usb_storage'.");
+		}
+		else {
+			msg.set_message(e.what());
+		}
 		msg.run();
 	}
 	catch( std::exception &e ) {
