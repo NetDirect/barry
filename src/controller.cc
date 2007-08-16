@@ -58,7 +58,7 @@ Controller::Controller(const ProbeResult &device)
 	m_halfOpen(false)
 {
 	if( !m_dev.SetConfiguration(BLACKBERRY_CONFIGURATION) )
-		throw Error(m_dev.GetLastError(),
+		throw Usb::Error(m_dev.GetLastError(),
 			"Controller: SetConfiguration failed");
 
 	m_iface = new Usb::Interface(m_dev, device.m_interface);

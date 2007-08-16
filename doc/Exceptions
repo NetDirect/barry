@@ -10,8 +10,9 @@ The Barry library has the following exception hierarchy:
 
 Usb::Error
 	All specific USB error exceptions will be derived from
-	this class.  This is currently the only class used, and
-	only thrown in the usbwrap.{h,cc} code.
+	this class.  Where possible, this class also stores the
+	specific return code from the libusb API, to allow
+	fine grained error handling.
 
 Barry::Error
 	All specific Barry error exceptions will be derived from

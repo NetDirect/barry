@@ -39,7 +39,6 @@ class Error : public std::runtime_error
 {
 public:
 	Error(const std::string &str) : std::runtime_error(str) {}
-	Error(int libusb_errno, const std::string &str);
 };
 
 

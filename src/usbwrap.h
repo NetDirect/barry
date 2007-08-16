@@ -42,14 +42,22 @@ namespace Usb {
 /// Thrown on low level USB errors.
 class Error : public Barry::Error
 {
+	int m_libusb_errcode;
+
 public:
-	Error(const std::string &str) : Barry::Error(str) {}
+	Error(const std::string &str);
+	Error(int libusb_errcode, const std::string &str);
+
+	// can return 0 in some case, if unknown error code
+	int libusb_errcode() const { return m_libusb_errcode; }
 };
 
 class Timeout : public Error
 {
 public:
 	Timeout(const std::string &str) : Error(str) {}
+	Timeout(int libusb_errcode, const std::string &str)
+		: Error(libusb_errcode, str) {}
 };
 
 /// @}
