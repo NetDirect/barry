@@ -1,5 +1,11 @@
 Release: version 0.9 - 2007/08/??
 ------------------------------------------------------------------------------
+2007/08/17
+	- changed bcharge to use getopt() for its argument processing
+	- added options -p and -s to bcharge, to adjust usb suspend
+		settings automatically where possible
+	- updated the udev rules to use the new bcharge settings
+	- updated the bcharge man page with the new arguments
 2007/08/16
 	- cleaned up Usb exception handling, moving libusb error code
 		processing into the Usb::Error exception class.

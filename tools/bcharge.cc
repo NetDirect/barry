@@ -34,6 +34,11 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
+#include <errno.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <string>
 
 #define VENDOR_RIM		0x0fca
 #define PRODUCT_RIM_BLACKBERRY	0x0001
@@ -49,6 +54,25 @@
 
 bool old_style_pearl = false;
 bool force_dual = false;
+std::string udev_devpath;
+std::string sysfs_path = "/sys";
+
+void Usage()
+{
+	printf(
+	"bcharge - Adjust Blackberry charging modes\n"
+	"          Copyright 2006-2007, Net Direct Inc. (http://www.netdirect.ca/)\n"
+	"\n"
+	"   -d          Dual mode (mode 0004) (default)\n"
+	"   -o          Set a Pearl to old Blackberry mode (0001)\n"
+	"\n"
+	"   -h          This help message\n"
+	"   -p devpath  The devpath argument from udev.  If specified, will attempt\n"
+	"               to adjust USB suspend settings to keep the device charging.\n"
+	"   -s path     The path where sysfs is mounted.  Defaults to '/sys'\n"
+	"\n"
+	);
+}
 
 void control(usb_dev_handle *dev, int requesttype, int request, int value,
 	int index, char *bytes, int size, int timeout)
@@ -83,7 +107,8 @@ void pearl_mode(struct usb_dev_handle *handle)
 	}
 }
 
-void process(struct usb_device *dev, bool is_pearl)
+// returns true if device mode was modified, false otherwise
+bool process(struct usb_device *dev, bool is_pearl)
 {
 	bool apply = false;
 	printf("Found device #%s...", dev->filename);
@@ -92,7 +117,7 @@ void process(struct usb_device *dev, bool is_pearl)
 	usb_dev_handle *handle = usb_open(dev);
 	if( !handle ) {
 		printf("unable to open device\n");
-		return;
+		return false;
 	}
 
 	// adjust power
@@ -148,6 +173,29 @@ void process(struct usb_device *dev, bool is_pearl)
 
 	// cleanup
 	usb_close(handle);
+	return apply;
+}
+
+// checks for USB suspend, and enables the device if suspended
+void resume()
+{
+	if( udev_devpath.size() == 0 )
+		return;	// nothing to do
+
+	// let sysfs settle a bit
+	sleep(5);
+
+	// attempt to open the state file
+	std::string status = sysfs_path + "/" + udev_devpath + "/device/power/state";
+	int fd = open(status.c_str(), O_RDWR);
+	if( fd == -1 ) {
+		printf("unable to adjust USB suspend/resume settings: %s\n",
+			strerror(errno));
+		return;
+	}
+
+	write(fd, "0", 1);
+	close(fd);
 }
 
 int main(int argc, char *argv[])
@@ -160,8 +208,39 @@ int main(int argc, char *argv[])
 	//	Dual(default):  0004	-d
 	//	With switch:    0001	-o
 	//
-	old_style_pearl = (argc > 1 && strcmp(argv[1], "-o") == 0);
-	force_dual = (argc > 1 && strcmp(argv[1], "-d") == 0);
+
+	// process command line options
+	for(;;) {
+		int cmd = getopt(argc, argv, "dop:s:h");
+		if( cmd == -1 )
+			break;
+
+		switch( cmd )
+		{
+		case 'd':	// Dual (default)
+			force_dual = true;
+			old_style_pearl = false;
+			break;
+
+		case 'o':	// Old style pearl
+			force_dual = false;
+			old_style_pearl = true;
+			break;
+
+		case 'p':	// udev devpath
+			udev_devpath = optarg;
+			break;
+
+		case 's':	// where sysfs is mounted
+			sysfs_path = optarg;
+			break;
+
+		case 'h':	// help!
+		default:
+			Usage();
+			return 0;
+		}
+	}
 
 	usb_init();
 	if( usb_find_busses() < 0 || usb_find_devices() < 0 ) {
@@ -182,12 +261,14 @@ int main(int argc, char *argv[])
 				switch(dev->descriptor.idProduct)
 				{
 				case PRODUCT_RIM_BLACKBERRY:
-					process(dev, false);
+					if( !process(dev, false) )
+						resume();
 					break;
 
 				case PRODUCT_RIM_PEARL_DUAL:
 				case PRODUCT_RIM_PEARL:
-					process(dev, true);
+					if( !process(dev, true) )
+						resume();
 					break;
 				}
 			}

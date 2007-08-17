@@ -2,7 +2,7 @@
 .\" First parameter, NAME, should be all caps
 .\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
 .\" other parameters are allowed: see man(7), man(1)
-.TH BCHARGE 1 "April 19, 2007"
+.TH BCHARGE 1 "August 17, 2007"
 .\" Please adjust this date whenever revising the manpage.
 .\"
 .\" Some roff macros, for reference:
@@ -51,6 +51,23 @@ Again, this switch is for the Blackberry Pearl to switch it back to
 a Pearl in mode 0001 is practically indistinguishable from a classic
 Blackberry, the -d switch is needed to tell bcharge that you really
 are working with a Pearl.
+.TP
+.B \-h
+Help summary.
+.TP
+.B \-p devpath
+If your system runs a kernel with CONFIG_USB_SUSPEND enabled (some Ubuntu
+kernels have this turned on, as well as some Fedora 7 kernels), then you
+also need to adjust the suspend state to avoid going into power saving mode.
+This option is used when run from udev, using a rule such as:
+
+BUS=="usb", SUBSYSTEM=="usb_device", ACTION=="add", SYSFS{idVendor}=="0fca", SYSFS{idProduct}=="0001", SYMLINK+="bb-%k", GROUP="plugdev", MODE="0660", RUN="/usr/sbin/bcharge \-p %p"
+
+When using this option, you will almost always need to be root.
+.TP
+.B \-s path
+Specify the mount point for the sysfs filesystem.  On most systems this is
+mounted at /sys which is the default.
 
 .SH AUTHOR
 bcharge and this manual page were written by Chris Frey <cdfrey@foursquare.net>
