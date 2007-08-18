@@ -36,6 +36,7 @@ struct ProbeResult
 	uint32_t m_pin;
 	Usb::EndpointPair m_ep;
 	uint8_t m_zeroSocketSequence;
+	std::string m_description;
 };
 
 std::ostream& operator<< (std::ostream &os, const ProbeResult &pr);
@@ -45,7 +46,9 @@ class Probe
 {
 	std::vector<ProbeResult> m_results;
 
-	bool Parse(const Data &data, ProbeResult &result);
+	bool CheckSize(const Data &data, unsigned int required);
+	bool ParsePIN(const Data &data, ProbeResult &result);
+	bool ParseDesc(const Data &data, ProbeResult &result);
 
 protected:
 	void ProbeDevice(Usb::DeviceIDType devid);

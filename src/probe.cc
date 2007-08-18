@@ -29,6 +29,8 @@
 #include "packet.h"
 #include "socket.h"
 #include "protocol.h"
+#include "record-internal.h"
+#include "strnlen.h"
 #include <iomanip>
 
 using namespace Usb;
@@ -68,14 +70,13 @@ namespace {
 } // anonymous namespace
 
 
-bool Probe::Parse(const Data &data, ProbeResult &result)
+bool Probe::CheckSize(const Data &data, unsigned int required)
 {
-	// validate response data
 	const unsigned char *pd = data.GetData();
 
 	if( GetSize(pd) != (unsigned int) data.GetSize() ||
-	    data.GetSize() < 0x14 ||
-	    pd[4] != 0x06 )
+	    data.GetSize() < required ||
+	    pd[4] != SB_COMMAND_FETCHED_ATTRIBUTE )
 	{
 		dout("Probe: Parse data failure: GetSize(pd): " << GetSize(pd)
 			<< ", data.GetSize(): " << data.GetSize()
@@ -83,8 +84,32 @@ bool Probe::Parse(const Data &data, ProbeResult &result)
 		return false;
 	}
 
+	return true;
+}
+
+bool Probe::ParsePIN(const Data &data, ProbeResult &result)
+{
+	// validate response data
+	const unsigned char *pd = data.GetData();
+
+	if( !CheckSize(data, 0x14) )
+		return false;
+
 	// capture the PIN
 	result.m_pin = btohl(*((uint32_t *) &pd[16]));
+
+	return true;
+}
+
+bool Probe::ParseDesc(const Data &data, ProbeResult &result)
+{
+	if( !CheckSize(data, 29) )
+		return false;
+
+	// capture the description
+	const char *desc = (const char*) &data.GetData()[28];
+	int maxlen = data.GetSize() - 28;
+	result.m_description.assign(desc, strnlen(desc, maxlen));
 
 	return true;
 }
@@ -192,10 +217,24 @@ void Probe::ProbeDevice(Usb::DeviceIDType devid)
 			socket.Send(packet);
 			if( packet.ObjectID() != SB_OBJECT_PROFILE ||
 			    packet.AttributeID() != SB_ATTR_PROFILE_PIN ||
-			    !Parse(receive, result) )
+			    !ParsePIN(receive, result) )
 			{
 				dout("Probe: unable to fetch PIN");
 				continue;
+			}
+
+			// fetch Description
+			packet.GetAttribute(SB_OBJECT_PROFILE, SB_ATTR_PROFILE_DESC);
+			socket.Send(packet);
+			// response ObjectID does not match request... :-/
+			if( // packet.ObjectID() != SB_OBJECT_PROFILE ||
+			    packet.AttributeID() != SB_ATTR_PROFILE_DESC ||
+			    !ParseDesc(receive, result) )
+			{
+				dout("Probe: unable to fetch description");
+				// this is a relatively new feature, so don't
+				// fail here... just blank the description
+				result.m_description.clear();
 			}
 
 			// more unknowns:
@@ -242,8 +281,9 @@ int Probe::FindActive(uint32_t pin) const
 
 std::ostream& operator<< (std::ostream &os, const ProbeResult &pr)
 {
-	os << "Device ID: " << pr.m_dev << std::setbase(16) << ". PIN: "
-		<< pr.m_pin;
+	os << "Device ID: " << pr.m_dev
+	   << std::hex << ". PIN: " << pr.m_pin
+	   << ", Description: " << pr.m_description;
 	return os;
 }
 
