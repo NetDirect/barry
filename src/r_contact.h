@@ -36,6 +36,17 @@ namespace Barry {
 //        operators in the future.
 //
 
+struct ContactGroupLink
+{
+	uint32_t Link;
+	uint16_t Unknown;
+
+	ContactGroupLink() : Link(0), Unknown(0) {}
+	ContactGroupLink(uint32_t link, uint16_t unknown)
+		: Link(link), Unknown(unknown)
+	{}
+};
+
 
 /// \addtogroup RecordParserClasses
 /// @{
@@ -43,17 +54,7 @@ namespace Barry {
 class Contact
 {
 public:
-	struct GroupLink
-	{
-		uint32_t Link;
-		uint16_t Unknown;
-
-		GroupLink() : Link(0), Unknown(0) {}
-		GroupLink(uint32_t link, uint16_t unknown)
-			: Link(link), Unknown(unknown)
-		{}
-	};
-
+	typedef ContactGroupLink			GroupLink;
 	typedef std::vector<GroupLink>			GroupLinksType;
 	typedef std::vector<UnknownField>		UnknownsType;
 

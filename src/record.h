@@ -45,15 +45,16 @@ namespace Barry {
 
 
 
+struct CommandTableCommand
+{
+	unsigned int Code;
+	std::string Name;
+};
+
 class CommandTable
 {
 public:
-	struct Command
-	{
-		unsigned int Code;
-		std::string Name;
-	};
-
+	typedef CommandTableCommand Command;
 	typedef std::vector<Command> CommandArrayType;
 
 	CommandArrayType Commands;
@@ -82,18 +83,19 @@ inline std::ostream& operator<< (std::ostream &os, const CommandTable &command) 
 
 
 
+struct RecordStateTableState
+{
+	unsigned int Index;
+	uint32_t RecordId;
+	bool Dirty;
+	unsigned int RecType;
+	std::string Unknown2;
+};
+
 class RecordStateTable
 {
 public:
-	struct State
-	{
-		unsigned int Index;
-		uint32_t RecordId;
-		bool Dirty;
-		unsigned int RecType;
-		std::string Unknown2;
-	};
-
+	typedef RecordStateTableState State;
 	typedef unsigned int IndexType;
 	typedef std::map<IndexType, State> StateMapType;
 
@@ -126,16 +128,17 @@ inline std::ostream& operator<< (std::ostream &os, const RecordStateTable &rst) 
 
 
 
+struct DatabaseItem
+{
+	unsigned int Number;
+	unsigned int RecordCount;
+	std::string Name;
+};
+
 class DatabaseDatabase
 {
 public:
-	struct Database
-	{
-		unsigned int Number;
-		unsigned int RecordCount;
-		std::string Name;
-	};
-
+	typedef DatabaseItem Database;
 	typedef std::vector<Database> DatabaseArrayType;
 
 	DatabaseArrayType Databases;
