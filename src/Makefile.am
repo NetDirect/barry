@@ -105,7 +105,7 @@ libbarry_la_SOURCES = time.cc \
 	protostructs.h \
 	debug.h \
 	endian.h
-libbarry_la_LIBADD = $(LIBUSB_LIBS) $(OPENSSL_LIBS)
+libbarry_la_LIBADD = $(LTLIBOBJS) $(LIBUSB_LIBS) $(OPENSSL_LIBS)
 libbarry_la_LDFLAGS = -version-info ${LIB_BARRY_VERSION}
 
 ##if DO_TEST

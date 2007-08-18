@@ -8,6 +8,8 @@ AC_CONFIG_SRCDIR([src/barry.h])
 AC_CONFIG_HEADERS([config.h:config.h.in])
 AM_INIT_AUTOMAKE
 
+AC_USE_SYSTEM_EXTENSIONS
+
 # Checks for programs.
 AC_PROG_CC
 AC_PROG_CXX
@@ -71,14 +73,32 @@ AC_CHECK_HEADERS([assert.h stdint.h time.h])
 AC_HEADER_TIME
 AC_STRUCT_TM
 
+#
 # Checks for library functions.
+#
+
+# checks that are buggy and need a C compiler only
+AC_LANG([C])
+AC_FUNC_STRNLEN
+if test $ac_cv_func_strnlen_working = yes ; then
+	AC_DEFINE([HAVE_WORKING_STRNLEN], 1,
+		[Define to 1 if a working strnlen exists.])
+fi
+if test $ac_cv_func_strnlen_working = no ; then
+	AC_DEFINE([HAVE_WORKING_STRNLEN], 0,
+		[Define to 1 if a working strnlen exists, 0 if not.])
+fi
+
+# checks that work with C++
+AC_LANG([C++])
 AC_FUNC_CLOSEDIR_VOID
 AC_PROG_GCC_TRADITIONAL
-AC_FUNC_MALLOC
-AC_FUNC_MKTIME
-AC_FUNC_REALLOC
+#AC_FUNC_MALLOC
+#AC_FUNC_MKTIME
+#AC_FUNC_REALLOC
 AC_FUNC_SELECT_ARGTYPES
-AC_FUNC_STAT
+#AC_FUNC_STAT
+
 AC_CHECK_FUNCS([bzero gettimeofday memset select strcasecmp strchr strerror strtol strtoul])
 AC_C_BIGENDIAN
 
