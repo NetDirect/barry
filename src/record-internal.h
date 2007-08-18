@@ -30,6 +30,7 @@
 #include "protostructs.h"
 #include "error.h"
 #include "endian.h"
+#include "record.h"
 
 // forward declarations
 namespace Barry { class Data; }
