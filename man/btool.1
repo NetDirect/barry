@@ -2,7 +2,7 @@
 .\" First parameter, NAME, should be all caps
 .\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
 .\" other parameters are allowed: see man(7), man(1)
-.TH BTOOL 1 "August 3, 2007"
+.TH BTOOL 1 "August 21, 2007"
 .\" Please adjust this date whenever revising the manpage.
 .\"
 .\" Some roff macros, for reference:
@@ -47,6 +47,17 @@ switch, make sure that the new dnattr exists.
 Load database 'db' FROM device and dump to stdout.
 Can be used multiple times to fetch more than one database.  See the -t
 option for a list of device databases.
+.TP
+.B \-e epp
+Override endpoint pair detection.  'epp' is a single string separated
+by a comma, holding the read,write endpoint pair.
+
+Example: -e 83,5
+
+Note: Endpoints are specified in hex.  Use the same numbers given by the
+lsusb -v output.
+
+You should never need to use this option, as endpoints are autodetected.
 .TP
 .B \-f file
 Filename to write or read handheld data to/from.  Used in conjunction with

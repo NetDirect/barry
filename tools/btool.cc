@@ -23,6 +23,7 @@
 #include <iomanip>
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <vector>
 #include <string>
 #include <getopt.h>
@@ -54,6 +55,11 @@ void Usage()
    << "             Defaults to 'cn'\n"
    << "   -d db     Load database 'db' FROM device and dump to screen\n"
    << "             Can be used multiple times to fetch more than one DB\n"
+   << "   -e epp    Override endpoint pair detection.  'epp' is a single\n"
+   << "             string separated by a comma, holding the read,write\n"
+   << "             endpoint pair.  Example: -e 83,5\n"
+   << "             Note: Endpoints are specified in hex.\n"
+   << "             You should never need to use this option.\n"
 #ifdef __BARRY_BOOST_MODE__
    << "   -f file   Filename to save or load handheld data to/from\n"
 #endif
@@ -372,6 +378,19 @@ void DoMapping(ContactLdif &ldif, const vector<string> &mapCommands)
 	}
 }
 
+bool ParseEpOverride(const char *arg, Usb::EndpointPair *epp)
+{
+	int read, write;
+	char comma;
+	istringstream iss(arg);
+	iss >> hex >> read >> comma >> write;
+	if( !iss )
+		return false;
+	epp->read = read;
+	epp->write = write;
+	return true;
+}
+
 int main(int argc, char *argv[])
 {
 	cout.sync_with_stdio(true);	// leave this on, since libusb uses
@@ -387,16 +406,18 @@ int main(int argc, char *argv[])
 			reset_device = false,
 			list_contact_fields = false,
 			list_ldif_map = false,
+			epp_override = false,
 			record_state = false;
 		string ldifBaseDN, ldifDnAttr;
 		string filename;
 		string password;
 		vector<string> dbNames, saveDbNames, mapCommands;
 		vector<StateTableCommand> stCommands;
+		Usb::EndpointPair epOverride;
 
 		// process command line options
 		for(;;) {
-			int cmd = getopt(argc, argv, "c:C:d:D:f:hlLm:Mp:P:r:R:Ss:tT:vX");
+			int cmd = getopt(argc, argv, "c:C:d:D:e:f:hlLm:Mp:P:r:R:Ss:tT:vX");
 			if( cmd == -1 )
 				break;
 
@@ -418,6 +439,14 @@ int main(int argc, char *argv[])
 			case 'D':	// delete record
 				stCommands.push_back(
 					StateTableCommand('D', false, atoi(optarg)));
+				break;
+
+			case 'e':	// endpoint override
+				if( !ParseEpOverride(optarg, &epOverride) ) {
+					Usage();
+					return 1;
+				}
+				epp_override = true;
 				break;
 
 			case 'f':	// filename
@@ -551,7 +580,13 @@ int main(int argc, char *argv[])
 		}
 
 		// Create our controller object
-		Barry::Controller con(probe.Get(activeDevice));
+		Barry::ProbeResult device = probe.Get(activeDevice);
+		if( epp_override ) {
+			device.m_ep.read = epOverride.read;
+			device.m_ep.write = epOverride.write;
+			device.m_ep.type = 2;	// FIXME - override this too?
+		}
+		Barry::Controller con(device);
 
 		//
 		// execute each mode that was turned on
