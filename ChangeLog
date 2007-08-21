@@ -2,6 +2,7 @@ Release: version 0.9 - 2007/08/??
 ------------------------------------------------------------------------------
 2007/08/20
 	- added -e endpoint override option to btool
+	- added status message to endpoint override
 2007/08/18
 	- added configure check for strnlen, and implementation for
 		systems that don't have it, or that have it implemented
