@@ -587,8 +587,8 @@ int main(int argc, char *argv[])
 			device.m_ep.type = 2;	// FIXME - override this too?
 			cout << "Endpoint pair (read,write) overridden with: "
 			     << hex
-			     << (unsigned int) read << ","
-			     << (unsigned int) write << endl;
+			     << (unsigned int) device.m_ep.read << ","
+			     << (unsigned int) device.m_ep.write << endl;
 		}
 		Barry::Controller con(device);
 
