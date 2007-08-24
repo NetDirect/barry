@@ -305,6 +305,11 @@ bool DeviceInterface::Connect(const Barry::ProbeResult &dev)
 		// pass on to the caller
 		throw;
 	}
+	catch( Barry::BadSize & ) {
+		// pass on to the caller
+		Disconnect();
+		throw;
+	}
 	catch( Barry::Error &e ) {
 		Disconnect();
 		return False(e.what());

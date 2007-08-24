@@ -106,6 +106,10 @@ void BackupWindow::ScanAndConnect()
 	m_pStatusBar->push("Scanning for devices...");
 	m_pStatusBar->show_now();
 
+	int tries = 0;
+
+sac_retry:
+	tries++;
 	Barry::Probe probe;
 	uint32_t pin = 0;
 	int nSelection = -1;
@@ -155,6 +159,25 @@ void BackupWindow::ScanAndConnect()
 		out_of_tries = bp.out_of_tries();
 		remaining_tries = bp.remaining_tries();
 		password_required = true;
+	}
+	catch( Barry::BadSize &bs ) {
+		std::cerr << "Barry::BadSize caught in ScanAndConnect: "
+			<< bs.what() << std::endl;
+		if( tries < 2 ) {
+			// BadSize during connect at startup usually means
+			// the device didn't shutdown properly, so try
+			// a reset or two before we give up
+			Usb::Device dev(probe.Get(nSelection).m_dev);
+			dev.Reset();
+			sleep(2);
+			goto sac_retry;
+		}
+		else {
+			Gtk::MessageDialog msg(bs.what());
+			msg.run();
+			hide();
+			return;
+		}
 	}
 
 	if( password_required ) {
