@@ -26,7 +26,20 @@
 #include <stdint.h>
 #include <glib.h>
 #include <sstream>
+#include <ctype.h>
 
+
+//////////////////////////////////////////////////////////////////////////////
+// Utility functions
+
+void ToLower(std::string &str)
+{
+	size_t i = 0;
+	while( i < str.size() ) {
+		str[i] = tolower(str[i]);
+		i++;
+	}
+}
 
 //////////////////////////////////////////////////////////////////////////////
 // vCard
@@ -54,9 +67,9 @@ void vCard::AddAddress(const char *rfc_type, const Barry::PostalAddress &address
 	// add breakout address form
 	vAttrPtr adr = NewAttr("ADR");			// RFC 2426, 3.2.1
 	AddParam(adr, "TYPE", rfc_type);
-	AddValue(adr, address.Address1.c_str());	// PO Box
+	AddValue(adr, address.Address3.c_str());	// PO Box
 	AddValue(adr, address.Address2.c_str());	// Extended address
-	AddValue(adr, address.Address3.c_str());	// Street address
+	AddValue(adr, address.Address1.c_str());	// Street address
 	AddValue(adr, address.City.c_str());		// Locality (city)
 	AddValue(adr, address.Province.c_str());	// Region (province)
 	AddValue(adr, address.PostalCode.c_str());	// Postal code
@@ -77,9 +90,9 @@ void vCard::AddPhoneCond(const char *rfc_type, const std::string &phone)
 void vCard::ParseAddress(vAttr &adr, Barry::PostalAddress &address)
 {
 	// RFC 2426, 3.2.1
-	address.Address1 = adr.GetValue(0);		// PO Box
+	address.Address3 = adr.GetValue(0);		// PO Box
 	address.Address2 = adr.GetValue(1);		// Extended address
-	address.Address3 = adr.GetValue(2);		// Street address
+	address.Address1 = adr.GetValue(2);		// Street address
 	address.City = adr.GetValue(3);			// Locality (city)
 	address.Province = adr.GetValue(4);		// Region (province)
 	address.PostalCode = adr.GetValue(5);		// Postal code
@@ -212,6 +225,7 @@ const Barry::Contact& vCard::ToBarry(const char *vcard, uint32_t RecordId)
 	for( int i = 0; adr.Get(); adr = GetAttrObj("ADR", ++i) )
 	{
 		std::string type = adr.GetParam("TYPE");
+		ToLower(type);
 
 		// do not use "else" here, since TYPE can have multiple keys
 		if( strstr(type.c_str(), "work") )
@@ -227,6 +241,7 @@ const Barry::Contact& vCard::ToBarry(const char *vcard, uint32_t RecordId)
 	for( int i = 0; tel.Get(); tel = GetAttrObj("TEL", ++i) )
 	{
 		std::string stype = tel.GetParam("TYPE");
+		ToLower(stype);
 		const char *type = stype.c_str();
 
 		// do not use "else" here, since TYPE can have multiple keys
@@ -252,6 +267,7 @@ const Barry::Contact& vCard::ToBarry(const char *vcard, uint32_t RecordId)
 	for( int i = 0; email.Get(); email = GetAttrObj("EMAIL", ++i) )
 	{
 		std::string type = email.GetParam("TYPE");
+		ToLower(type);
 
 		bool of_interest = (i == 0 || strstr(type.c_str(), "pref"));
 		bool x400 = strstr(type.c_str(), "x400");
