@@ -2,6 +2,18 @@ Release: version 0.9 - 2007/08/??
 ------------------------------------------------------------------------------
 2007/08/23
 	- fixed wrong read/write in btool output (oops)
+	- added BadSize exception, and changed CheckSize() function
+		to throw it on error
+	- changed backup GUI to catch BadSize exceptions on initial
+		connect, and try a reset if that error occurs, since
+		that likely means the device didn't shutdown properly
+	- fixed in opensync plugin:
+		- some vcard data contains types codes in capital letters,
+			so added lower case conversion routine
+		- changed the order of address lines, so that address1
+			is the street, address2 is the extended address,
+			and address3 is the PO Box.  The Blackberry
+			doesn't seem to have any PO Box field.
 2007/08/20
 	- added -e endpoint override option to btool
 	- added status message to endpoint override
