@@ -54,6 +54,10 @@ void ReadInput(Barry::Contact &contact)
 	ReadLine("Country", contact.WorkAddress.Country);
 	ReadLine("Postal / Zip Code", contact.WorkAddress.PostalCode);
 	ReadLine("Notes", contact.Notes);
+
+	string categories;
+	ReadLine("Categories", categories);
+	Contact::CategoryStr2List(categories, contact.Categories);
 }
 
 void Upload(const Barry::ProbeResult &device, const Barry::Contact &contact)
