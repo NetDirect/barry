@@ -40,13 +40,10 @@ void CheckSize(const Data &packet, size_t requiredsize)
 	    packet.GetSize() < requiredsize )
 
 	{
-		std::ostringstream oss;
-		oss << "Bad packet size. Packet: " << btohs(p->size)
-		    << ". DataSize(): " << packet.GetSize()
-		    << ". Required size: " << requiredsize;
-		eout(oss.str());
+		BadSize bs(btohs(p->size), packet.GetSize(), requiredsize);
+		eout(bs.what());
 		eout(packet);
-		throw Error(oss.str());
+		throw bs;
 	}
 }
 

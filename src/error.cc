@@ -20,10 +20,20 @@
 */
 
 #include "error.h"
+#include <sstream>
 
 using namespace std;
 
 namespace Barry {
+
+std::string BadSize::GetMsg(unsigned int p, unsigned int d, unsigned int r)
+{
+	std::ostringstream oss;
+	oss << "Bad packet size. Packet: " << p
+	    << ". DataSize(): " << d
+	    << ". Required size: " << r;
+	return oss.str();
+}
 
 } // namespace Barry
 

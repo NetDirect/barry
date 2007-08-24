@@ -72,6 +72,33 @@ public:
 	bool out_of_tries() const { return m_out_of_tries; }
 };
 
+//
+// BadSize
+//
+/// Unexpected packet size, or not enough data.
+///
+class BadSize : public Barry::Error
+{
+	unsigned int m_packet_size,
+		m_data_buf_size,
+		m_required_size;
+
+	static std::string GetMsg(unsigned int p, unsigned int d, unsigned int r);
+
+public:
+	BadSize(unsigned int packet_size,
+		unsigned int data_buf_size,
+		unsigned int required_size)
+		: Barry::Error(GetMsg(packet_size, data_buf_size, required_size)),
+		m_packet_size(packet_size),
+		m_data_buf_size(data_buf_size),
+		m_required_size(required_size)
+		{}
+	unsigned int packet_size() const { return m_packet_size; }
+	unsigned int data_buf_size() const { return m_data_buf_size; }
+	unsigned int required_size() const { return m_required_size; }
+};
+
 /// @}
 
 } // namespace Barry
