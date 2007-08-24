@@ -47,6 +47,7 @@ struct ContactGroupLink
 	{}
 };
 
+typedef std::vector<std::string> CategoryList;
 
 /// \addtogroup RecordParserClasses
 /// @{
@@ -54,6 +55,7 @@ struct ContactGroupLink
 class Contact
 {
 public:
+	typedef Barry::CategoryList			CategoryList;
 	typedef ContactGroupLink			GroupLink;
 	typedef std::vector<GroupLink>			GroupLinksType;
 	typedef std::vector<UnknownField>		UnknownsType;
@@ -82,7 +84,6 @@ public:
 		PublicKey,
 		URL,
 		Prefix,
-		Category,
 		Notes,
 		UserDefined1,
 		UserDefined2,
@@ -92,6 +93,12 @@ public:
 
 	PostalAddress WorkAddress;
 	PostalAddress HomeAddress;
+
+	// Categories are not allowed to have commas in them.
+	// A category name containing a comma will be split into
+	// two categories, not only by this library, but by the
+	// device itself.
+	CategoryList Categories;
 
 	GroupLinksType GroupLinks;
 	UnknownsType Unknowns;
@@ -137,6 +144,8 @@ public:
 
 	// helpers
 	static void SplitName(const std::string &full, std::string &first, std::string &last);
+	static void CategoryStr2List(const std::string &str, Barry::CategoryList &list);
+	static void CategoryList2Str(const Barry::CategoryList &list, std::string &str);
 };
 
 inline std::ostream& operator<< (std::ostream &os, const Contact &contact) {

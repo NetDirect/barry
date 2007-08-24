@@ -119,7 +119,6 @@ FieldLink<Contact> ContactFieldLinks[] = {
    { CFC_PUBLIC_KEY,   "PublicKey",  0,0,                 &Contact::PublicKey, 0, 0 },
    { CFC_URL,          "URL",        0,0,                 &Contact::URL, 0, 0 },
    { CFC_PREFIX,       "Prefix",     0,0,                 &Contact::Prefix, 0, 0 },
-   { CFC_CATEGORY,     "Category",   0,0,                 &Contact::Category, 0, 0 },
    { CFC_HOME_ADDRESS1,"HomeAddress1", 0,0,               0, 0, 0, &Contact::HomeAddress, &PostalAddress::Address1, },
    { CFC_HOME_ADDRESS2,"HomeAddress2", 0,0,               0, 0, 0, &Contact::HomeAddress, &PostalAddress::Address2, },
    { CFC_HOME_ADDRESS3,"HomeAddress3", 0,0,               0, 0, 0, &Contact::HomeAddress, &PostalAddress::Address3, },
@@ -213,6 +212,12 @@ const unsigned char* Contact::ParseField(const unsigned char *begin,
 		// ignore the group flag... the presense of group link items
 		// behaves as the flag in this class
 		return begin;
+
+	case CFC_CATEGORY: {
+		std::string catstring = ParseFieldString(field);
+		CategoryStr2List(catstring, Categories);
+		}
+		return begin;
 	}
 
 	// if still not handled, add to the Unknowns list
@@ -300,6 +305,12 @@ void Contact::BuildFields(Data &data, size_t &offset) const
 		BuildField(data, offset, CFC_GROUP_LINK, link);
 	}
 
+	if( Categories.size() ) {
+		string store;
+		CategoryList2Str(Categories, store);
+		BuildField(data, offset, CFC_CATEGORY, store);
+	}
+
 	// and finally save unknowns
 	UnknownsType::const_iterator
 		ub = Unknowns.begin(), ue = Unknowns.end();
@@ -343,6 +354,8 @@ void Contact::Clear()
 
 	WorkAddress.Clear();
 	HomeAddress.Clear();
+
+	Categories.clear();
 
  	GroupLinks.clear();
 	Unknowns.clear();
@@ -398,6 +411,12 @@ void Contact::Dump(std::ostream &os) const
 		}
 	}
 
+	if( Categories.size() ) {
+		string display;
+		CategoryList2Str(Categories, display);
+		os << "    Categories          : " << display << "\n";
+	}
+
 	// print any group links
 	GroupLinksType::const_iterator
 		gb = GroupLinks.begin(), ge = GroupLinks.end();
@@ -432,6 +451,55 @@ void Contact::SplitName(const std::string &full, std::string &first, std::string
 	}
 }
 
+void Contact::CategoryStr2List(const std::string &str,
+			       Barry::CategoryList &list)
+{
+	// start fresh
+	list.clear();
+
+	if( !str.size() )
+		return;
+
+	// parse the comma-delimited string to a list, stripping away
+	// any white space around each category name
+	string::size_type start = 0, end = 0, delim = str.find(',', start);
+	while( start != string::npos ) {
+		if( delim == string::npos )
+			end = str.size() - 1;
+		else
+			end = delim - 1;
+
+		// strip surrounding whitespace
+		while( str[start] == ' ' )
+			start++;
+		while( end && str[end] == ' ' )
+			end--;
+
+		if( start <= end ) {
+			string token = str.substr(start, end-start+1);
+			list.push_back(token);
+		}
+
+		// next
+		start = delim;
+		if( start != string::npos )
+			start++;
+		delim = str.find(',', start);
+	}
+}
+
+void Contact::CategoryList2Str(const Barry::CategoryList &list,
+			       std::string &str)
+{
+	str.clear();
+
+	Barry::CategoryList::const_iterator i = list.begin();
+	for( ; i != list.end(); ++i ) {
+		if( str.size() )
+			str += ", ";
+		str += *i;
+	}
+}
 
 } // namespace Barry
 

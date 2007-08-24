@@ -91,7 +91,7 @@ void serialize(ArchiveT &ar, Barry::Contact &c, const unsigned int ver)
 	ar & make_nvp("PublicKey", c.PublicKey);
 	ar & make_nvp("URL", c.URL);
 	ar & make_nvp("Prefix", c.Prefix);
-	ar & make_nvp("Category", c.Category);
+	ar & make_nvp("Categories", c.Categories);
 	ar & make_nvp("HomeAddress1", c.HomeAddress.Address1);
 	ar & make_nvp("HomeAddress2", c.HomeAddress.Address2);
 	ar & make_nvp("HomeAddress3", c.HomeAddress.Address3);
