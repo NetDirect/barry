@@ -77,6 +77,19 @@ void vCard::AddAddress(const char *rfc_type, const Barry::PostalAddress &address
 	AddAttr(adr);
 }
 
+void vCard::AddCategories(const Barry::CategoryList &categories)
+{
+	if( !categories.size() )
+		return;
+
+	vAttrPtr cat = NewAttr("CATEGORIES");		// RFC 2426, 3.6.1
+	Barry::CategoryList::const_iterator i = categories.begin();
+	for( ; i < categories.end(); ++i ) {
+		AddValue(cat, i->c_str());
+	}
+	AddAttr(cat);
+}
+
 /// Add phone conditionally, only if phone has data in it
 void vCard::AddPhoneCond(const char *rfc_type, const std::string &phone)
 {
@@ -97,6 +110,17 @@ void vCard::ParseAddress(vAttr &adr, Barry::PostalAddress &address)
 	address.Province = adr.GetValue(4);		// Region (province)
 	address.PostalCode = adr.GetValue(5);		// Postal code
 	address.Country = adr.GetValue(6);		// Country name
+}
+
+void vCard::ParseCategories(vAttr &cat, Barry::CategoryList &cats)
+{
+	int i = 0;
+	std::string value = cat.GetValue(i);
+	while( value.size() ) {
+		cats.push_back(value);
+		i++;
+		value = cat.GetValue(i);
+	}
 }
 
 // Main conversion routine for converting from Barry::Contact to
@@ -176,6 +200,8 @@ const std::string& vCard::ToVCard(const Barry::Contact &con)
 		AddAttr(NewAttr("NOTE", con.Notes.c_str()));
 	if( con.URL.size() )
 		AddAttr(NewAttr("URL", con.URL.c_str()));
+	if( con.Categories.size() )
+		AddCategories(con.Categories);
 
 	// generate the raw VCARD data
 	m_gCardData = vformat_to_string(Format(), VFORMAT_CARD_30);
@@ -286,6 +312,10 @@ const Barry::Contact& vCard::ToBarry(const char *vcard, uint32_t RecordId)
 	con.Company = GetAttr("ORG");
 	con.Notes = GetAttr("NOTE");
 	con.URL = GetAttr("URL");
+
+	vAttr cat = GetAttrObj("CATEGORIES");
+	if( cat.Get() )
+		ParseCategories(cat, con.Categories);
 
 	return m_BarryContact;
 }
