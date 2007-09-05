@@ -46,8 +46,8 @@ else
 	echo "Fetched HEAD"
 fi
 (cd $DIRNAME && ./buildgen.sh)
-(cd $DIRNAME/gui && ./buildgen.sh)
-(cd $DIRNAME/opensync-plugin && ./buildgen.sh)
+#(cd $DIRNAME/gui && ./buildgen.sh)
+#(cd $DIRNAME/opensync-plugin && ./buildgen.sh)
 rm -rf "$DIRNAME/autom4te.cache" "$DIRNAME/gui/autom4te.cache" "$DIRNAME/opensync-plugin/autom4te.cache"
 tar --exclude=CVS -cvf - $DIRNAME | bzip2 -9c > barry-$1.$2.tar.bz2
 
