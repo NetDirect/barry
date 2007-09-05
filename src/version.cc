@@ -20,7 +20,7 @@
 */
 
 #include "version.h"
-#include "../config.h"
+#include "config.h"
 
 #ifdef WORDS_BIGENDIAN
 #define BARRY_VERSION_STRING	"Barry library version 0.9 (big endian)"

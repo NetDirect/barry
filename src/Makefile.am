@@ -25,9 +25,9 @@
 # Only ever increment the first 2 numbers in this version:
 LIB_BARRY_VERSION = 0:9:0
 
-# Disable the default -I. -I$(srcdir) -I$(topdir), etc, as our includes
-# are proper anyway. :-)
-DEFAULT_INCLUDES =
+# Disable the default -I. -I$(srcdir) -I$(topdir), etc, but $(top_builddir) is
+# needed for config.h
+DEFAULT_INCLUDES = -I$(top_builddir)
 #INCLUDES = @PACKAGE_CXXFLAGS@ -I@LIBUSB_INC_PATH@
 INCLUDES = $(LIBUSB_CFLAGS) $(OPENSSL_CFLAGS)
 #AM_CXXFLAGS = -ansi -Wall -fno-strict-aliasing -g -D__DEBUG_MODE__
@@ -107,6 +107,15 @@ libbarry_la_SOURCES = time.cc \
 	endian.h
 libbarry_la_LIBADD = $(LTLIBOBJS) $(LIBUSB_LIBS) $(OPENSSL_LIBS)
 libbarry_la_LDFLAGS = -version-info ${LIB_BARRY_VERSION}
+
+noinst_HEADERS = cbarry.h \
+	record-internal.h \
+	strnlen.h
+
+EXTRA_DIST = convo.awk \
+	Doxyfile \
+	legal.txt \
+	Makefile.orig
 
 ##if DO_TEST
 ##	bin_PROGRAMS += test-base64 test-data test-time

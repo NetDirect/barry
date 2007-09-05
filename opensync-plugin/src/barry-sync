@@ -1,5 +1,5 @@
 #
-# This is the default configuration file for the bary-sync opensync plugin.
+# This is the default configuration file for the barry-sync opensync plugin.
 # Comments are preceded by a '#' mark at the beginning of a line.
 # The config format is a set of lines of <keyword> <values>.
 #

@@ -6,15 +6,12 @@ LIBS = $(BARRY_LIBS) $(GTKMM_LIBS) $(LIBTAR_LIBS) $(LIBZ_LIBS)
 AM_CXXFLAGS = -ansi -Wall -g
 AM_CPPFLAGS = -DBARRYBACKUP_GLADEDIR='"$(gladedir)"'
 
-glade_DATA = \
+dist_glade_DATA = \
 	BackupWindow.glade \
 	DeviceSelectDlg.glade \
 	DatabaseSelectDlg.glade \
 	PasswordDlg.glade \
 	ConfigDlg.glade
-
-EXTRA_DIST = \
-	$(glade_DATA)
 
 bin_PROGRAMS = barrybackup
 
@@ -31,3 +28,15 @@ barrybackup_SOURCES = \
 	tarfile-ops-nt.cc \
 	util.cc
 
+noinst_HEADERS= \
+	BackupWindow.h \
+	ConfigDlg.h \
+	ConfigFile.h \
+	DatabaseSelectDlg.h \
+	DeviceIface.h \
+	DeviceSelectDlg.h \
+	PasswordDlg.h \
+	tarfile.h \
+	util.h
+
+EXTRA_DIST = barry-gui.glade

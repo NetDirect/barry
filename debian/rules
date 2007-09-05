@@ -63,8 +63,8 @@ clean:
 	rm -f build-arch-stamp build-indep-stamp #CONFIGURE-STAMP#
 
 	# Add here commands to clean up after the build process.
-	$(MAKE) distclean
-	(cd gui && $(MAKE) distclean)
+	-$(MAKE) distclean
+	-(cd gui && $(MAKE) distclean)
 
 	dh_clean  --exclude ./src/Makefile.orig
 

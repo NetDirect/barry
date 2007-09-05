@@ -10,7 +10,7 @@ AM_CXXFLAGS = -Wall -Werror
 
 EXTRA_DIST = barry_sync.h
 
-config_DATA = barry-sync
+dist_config_DATA = barry-sync
 
 opensyncheader_HEADER = barry_sync.h
 

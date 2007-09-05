@@ -108,5 +108,20 @@ AC_CONFIG_FILES([Makefile
                  examples/Makefile
                  man/Makefile
                  libbarry-0.pc])
-AC_OUTPUT
 
+# nested packages
+AC_ARG_ENABLE([gui], [AC_HELP_STRING([--enable-gui], [build the gui])])
+if test "$enable_gui" = yes; then
+	AC_CONFIG_SUBDIRS([gui])
+fi
+AC_ARG_ENABLE([opensync-plugin], [AC_HELP_STRING([--enable-opensync-plugin], [build the opensync plugin])])
+if test "$enable_opensync_plugin" = yes; then
+	AC_CONFIG_SUBDIRS([opensync-plugin])
+fi
+if test "$enable_gui" = yes || test "$enable_opensync_plugin" = yes; then
+	export CXXFLAGS="-I`pwd` $CXXFLAGS"
+	export LDFLAGS="-L`pwd`/src $LDFLAGS"
+	export PKG_CONFIG_PATH="`pwd`:$PKG_CONFIG_PATH"
+fi
+
+AC_OUTPUT

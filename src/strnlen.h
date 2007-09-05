@@ -22,7 +22,7 @@
 #ifndef __BARRY_STRNLEN_H__
 #define __BARRY_STRNLEN_H__
 
-#include "../config.h"
+#include "config.h"
 #include <string.h>
 
 // this is always defined by configure, if not, then the autoconf
