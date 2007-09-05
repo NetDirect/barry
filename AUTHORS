@@ -31,6 +31,8 @@ Contributors (code and otherwise) in alphabetical order by last name:
 		- autoconf patches
 	Alan Miller <Alan.Miller@synopsys.com>
 		- usb captures on Windows XP for password authentication
+	Simon Ruggier <simon80@gmail.com>
+		- autoconf / build system patch
 	Rick Scott <rwscott@alumni.uwaterloo.ca>
 		- password authentication code and tips
 		- GPRS modem behaviour
