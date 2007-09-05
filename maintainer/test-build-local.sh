@@ -19,6 +19,11 @@ TARGET="$2"
 
 set -e
 
+#
+# perform the build test in 3 stages, so that we test the
+# headers are valid for non-barry tree builds (i.e. can we build
+# properly with headers installed in /usr/include/barry ?)
+#
 cd
 rm -rf testbuild
 mkdir testbuild
