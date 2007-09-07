@@ -1,0 +1,267 @@
+/*----------------------------------------------------------------------*/
+/* BASE ELEMENTS                                                        */
+/*----------------------------------------------------------------------*/
+
+body {	font-family: Arial,Helvetica,Sans-Serif;
+	font-size: 8pt;
+	margin: 10px;
+	background-color: #E0E0E0;
+	background-image: url("/images/background.jpg");
+}
+
+p	{ font-family: Arial,Helvetica,Sans-Serif; font-size: 10pt; }
+
+a 		{ color: #0000CC; text-decoration: none; }
+a:hover		{ color: #0000AA; text-decoration: underline; }
+a:active	{ color: #0000AA; }
+a:visited	{ color: #0000AA; }
+
+table	{ font-family: Arial,Helvetica,Sans-Serif; font-size: 10pt; }
+
+form	{ margin: 0px; }
+ul	{ margin-top: 0px; }
+dl	{ margin-left: 25px; }
+
+/*----------------------------------------------------------------------*/
+/* MAIN LOOK & FEEL                                                     */
+/*----------------------------------------------------------------------*/
+
+.pageHeader {	font-family: Arial,Helvetica,Sans-Serif;
+		font-size: 14pt;
+		font-weight: bold;
+		color: #313472;
+		margin-top: 0px;
+		margin-bottom: 3px;
+}
+
+.subHeader {	font-family: Arial,Helvetica,Sans-Serif;
+		font-size: 11pt;
+		font-weight: bold;
+		color: #313472;
+		margin-top: 5px;
+		margin-bottom: 5px;
+}
+
+.linearNav {	font-family: Arial,Helvetica,Sans-Serif;
+		font-size: 8pt;
+		margin-left: 2px;
+		margin-top: 2px;
+		margin-bottom: 5px;
+}
+
+.itemHeader {	font-family: Arial,Helvetica,Sans-Serif;
+		font-size: 10pt;
+		font-weight: bold;
+		margin-top: 10px; 
+}
+
+.note {		font-family: Arial,Helvetica,Sans-Serif;
+		font-size: 8pt;
+		font-style: italic;
+		text-align: center;
+}
+
+.copyRight {	font-family: Arial,Helvetica,Sans-Serif;
+		font-size: 8pt;
+		font-style: italic;
+		margin: 2px;
+}
+
+/*----------------------------------------------------------------------*/
+/* FRAME STRUCTURES                                                     */
+/*----------------------------------------------------------------------*/
+
+.headerFrame {	border: solid 1px black;
+		border-collapse: collapse;
+		width: 750;
+		height: 80px;
+		background-color: #FFFFFF;
+}
+
+.topMenuFrame {	border-left: solid 1px black;
+		border-right: solid 1px black;
+		border-collapse: collapse;
+		width: 750;
+		height: 22px;
+		padding: 0px;
+}
+
+.mainFrame {	border: solid 1px #000000;
+		border-collapse: collapse;
+		width: 750;
+}
+
+.contentFrame {	padding: 15px;
+		background-color: #FFFFFF;
+		vertical-align: top;
+}
+
+.leftMenuFrame {	padding: 5px;
+			background-color: #95ADDA;
+			vertical-align: top;
+			width: 175px;
+}
+
+.rightMenuFrame {	background-color: #EEEEEE;
+			vertical-align: top;
+			width: 115px;
+			border-left: dashed 1px #CCCCCC;
+			padding: 10px;
+}
+
+/*----------------------------------------------------------------------*/
+/* TOP MENU                                                             */
+/*----------------------------------------------------------------------*/
+
+.topMenuCell {	font-family: Arial,Helvetica,Sans-Serif;
+		font-size: 8pt;
+		border-left: solid 0px black;
+		border-right: solid 0px black;
+		padding: 0px;
+		background-color: #9C80A7;
+}
+
+.topMenuLink		{ color: #FFFFFF; font-weight: bold; }
+.topMenuLink:hover	{ color: #FFFFFF; text-decoration: none; }
+.topMenuLink:active	{ color: #FFFFFF; }
+.topMenuLink:visited	{ color: #FFFFFF; }
+
+/*----------------------------------------------------------------------*/
+/* LEFT MENU		                                                */
+/*----------------------------------------------------------------------*/
+
+.leftMenu {	width: 100%;
+		test-align: center;
+}
+
+.leftMenuHeader {	font-family: Arial,Helvetica,Sans-Serif;
+			font-size: 10pt;
+			font-weight: bold;
+			color: #FFFFFF;
+			text-align: center;
+			border: 1px solid #CCCCFF;
+}
+
+.leftMenuHeaderLink		{ color: #FFFFFF; text-decoration: none; }
+.leftMenuHeaderLink:hover	{ color: #FFFFFF; text-decoration: none; }
+.leftMenuHeaderLink:active	{ color: #FFFFFF; }
+.leftMenuHeaderLink:visited	{ color: #FFFFFF; }
+
+.leftMenuLink {	font-family: Arial,Helvetica,Sans-Serif;
+		font-size: 8pt;
+		color: #313472;
+		text-align: left;
+		padding: 5px;
+}
+
+.leftMenuLink:hover	{ color: #313472; text-decoration: none; }
+.leftMenuLink:active	{ color: #313472; }
+.leftMenuLink:visited	{ color: #313472; }
+
+/*----------------------------------------------------------------------*/
+/* TABLE LISTINGS
+/*----------------------------------------------------------------------*/
+
+.listTable {	width: 95%;
+		margin-left: auto;
+		margin-right: auto;
+}
+
+.listHeader {	font-family: Arial,Helvetica,Sans-Serif;
+		font-size: 10pt;
+		font-weight: bold;
+		text-align: center;
+		color: #FFFFFF;
+		background-color: #9C80A7;
+		padding: 2px;
+}
+
+.listRow {	font-family: Arial,Helvetica,Sans-Serif;
+		font-size: 8pt;
+}
+
+.listRow1	{ background-color: #FFFFFF; }
+.listRow2	{ background-color: #F0F0F0; }
+
+/*----------------------------------------------------------------------*/
+/* PDF VERSION                                                          */
+/*----------------------------------------------------------------------*/
+
+.pdfFrame {	border: solid 1px #B98A9F;
+		border-collapse: collapse;
+		width: 60px;
+		margin: 3px;
+}
+
+.pdfCell {	font-family: Arial,Helvetica,Sans-Serif;
+		font-size: 8pt;
+		text-align: center;
+		padding: 5px;
+}
+
+/*----------------------------------------------------------------------*/
+/* STYLES FOR NEWS ITEMS		                                */
+/*----------------------------------------------------------------------*/
+
+.newsHeader {	font-family: Arial,Helvetica,Sans-Serif;
+		font-size: 10pt;
+		font-weight: bold;
+		margin-top: 10px;
+		margin-bottom: 0px;
+}
+
+.newsDate {	font-family: Arial,Helvetica,Sans-Serif;
+		font-size: 8pt;
+		font-style: italic;
+		margin-top: 0px;
+		margin-bottom: 5px;
+}
+
+.newsLink {	font-family: Arial,Helvetica,Sans-Serif;
+		font-size: 8pt;
+}
+
+.newsHeaderSide {	font-family: Arial,Helvetica,Sans-Serif;
+			font-size: 8pt;
+			font-weight: bold;
+			margin-top: 5px;
+			margin-bottom: 5px;
+			text-align: center;
+}
+
+.newsLinkSide {	font-family: Arial,Helvetica,Sans-Serif;
+		font-size: 8pt;
+		text-align: right;
+}
+
+.newsDateSide {	font-family: Arial,Helvetica,Sans-Serif;
+		font-size: 6pt;
+		color: #999999;
+		margin-bottom: 10px;
+}
+
+/*----------------------------------------------------------------------*/
+/* STYLES FOR SUMMARY PAGES                                             */
+/*----------------------------------------------------------------------*/
+
+.summaryList { margin-top: 10px; }
+
+.summaryItem { padding-bottom: 10px; }
+
+/*----------------------------------------------------------------------*/
+/* STYLES FOR CONTACT                                                   */
+/*----------------------------------------------------------------------*/
+
+.contactHeader {	font-family: Arial,Helvetica,Sans-Serif;
+			font-size: 10pt;
+			font-weight: bold;
+			color: #000000;
+			margin-bottom: 10px;
+}
+
+.contactSub {	font-family: Arial,Helvetica,Sans-Serif;
+		font-size: 10pt;
+		font-style: italic;
+}
+
+/*----------------------------------------------------------------------*/

@@ -1,5 +1,9 @@
 Release: version 0.9 - 2007/08/??
 ------------------------------------------------------------------------------
+2007/09/07
+	- added website docs to doc/www... these are out of date at the
+		moment, and hopefully by including them here, they
+		will be updated more frequently
 2007/09/05
 	- applied Simon Ruggier's build system patch that allowed a build
 		of all 3 components from the root directory and fixed the

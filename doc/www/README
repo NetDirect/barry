@@ -1,0 +1,12 @@
+This website code is part of a larger system, and hence the funny
+looking PHP syntax.  It is coded this way in order to easily
+plugin to that system, but the content is included in this
+tarball so at least the docs are available.
+
+Some simple function stubs are provided to turn this into static
+web pages if you have PHP installed.  Just run static.sh,
+then point your browser at the resulting index.html.
+
+Chris Frey
+September 2007
+
