@@ -1,5 +1,11 @@
 Release: version 0.9 - 2007/08/??
 ------------------------------------------------------------------------------
+2007/09/13
+	- fixed some of the release build scripts and added support for
+		automated opensuse 10.2 builds
+		- fixed build target to i386
+		- changed scripts to add to PKG_CONFIG_PATH variable instead
+			of overwriting it
 2007/09/07
 	- added website docs to doc/www... these are out of date at the
 		moment, and hopefully by including them here, they
