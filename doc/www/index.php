@@ -16,16 +16,13 @@ You can find the source code at the
 <div class="subHeader">Help Wanted</div>
 
 <p>We can always use help in developing extra features.
-There are dozens of protocols that need to be documented and coded for.
-If you have a BlackBerry &trade; device are interested in helping decipher data
-we have a <? createLink("hacking", "barry hacking document"); ?> that will
+There are dozens of databases that need to be documented and coded for.
+If you have a BlackBerry &trade; device and are interested in helping decipher
+data, we have a <? createLink("hacking", "barry hacking document"); ?> that will
 help you.
 
 <p>We are also looking for help in many areas.
-We need a GUI developer. If you are a Python guru and want to help dig in.
-If you are familiar with the data storage formats for various applications
-(Evolution, Kmail, ThunderBird, Sunbird, etc.) we need your help to build
-sync modules.
+We need a GUI developer, if you are a Python guru and want to help dig in.
 
 <div class="subHeader">Design</div>
 
