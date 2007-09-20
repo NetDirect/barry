@@ -189,7 +189,8 @@ void resume()
 	std::string status = sysfs_path + "/" + udev_devpath + "/device/power/state";
 	int fd = open(status.c_str(), O_RDWR);
 	if( fd == -1 ) {
-		printf("unable to adjust USB suspend/resume settings: %s\n",
+		printf("unable to adjust USB suspend/resume settings (using sysfs file: %s): %s\n",
+			status.c_str(),
 			strerror(errno));
 		return;
 	}
