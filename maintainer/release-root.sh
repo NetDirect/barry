@@ -20,5 +20,6 @@ set -e
 ./make-rpm.sh build/barry-$1.$2.tar.bz2 ../rpm/barry.spec fedora5 fc5
 ./make-rpm.sh build/barry-$1.$2.tar.bz2 ../rpm/barry.spec fedora6 fc6
 ./make-rpm.sh build/barry-$1.$2.tar.bz2 ../rpm/barry.spec fedora7 fc7
-./make-rpm.sh build/barry-$1.$2.tar.bz2 ../rpm/barry.spec opensuse10.2 suse10
+sed "s/libusb-devel/libusb/g;s/gtkmm24/gtkmm2/g;s/libglademm24/libglademm/g" < ../rpm/barry.spec > barry-opensuse.spec
+./make-rpm.sh build/barry-$1.$2.tar.bz2 barry-opensuse.spec opensuse10.2 suse10
 

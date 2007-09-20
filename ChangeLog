@@ -2,6 +2,8 @@ Release: version 0.9 - 2007/08/??
 ------------------------------------------------------------------------------
 2007/09/20
 	- added filename to power/state error message in bcharge.cc
+	- adjusted maintainer scripts to automatically adjust barry.spec
+		for opensuse rpm builds
 2007/09/13
 	- fixed some of the release build scripts and added support for
 		automated opensuse 10.2 builds
