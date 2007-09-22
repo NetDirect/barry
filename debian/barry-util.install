@@ -1,0 +1,10 @@
+debian/tmp/usr/bin/btool
+debian/tmp/usr/bin/ktrans
+debian/tmp/usr/bin/upldif
+debian/tmp/usr/bin/translate
+debian/tmp/usr/sbin/breset
+debian/tmp/usr/sbin/bcharge
+debian/tmp/usr/sbin/pppob
+debian/tmp/usr/share/man/man1/bcharge.1
+debian/tmp/usr/share/man/man1/btool.1
+

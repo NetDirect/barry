@@ -1,169 +1,40 @@
 #!/usr/bin/make -f
-# -*- makefile -*-
+# Based on the multi2 sample debian/rules file:
+# ---
 # Sample debian/rules that uses debhelper.
-#
-# This file was originally written by Joey Hess and Craig Small.
-# As a special exception, when this file is copied by dh-make into a
-# dh-make output file, you may use that output file without restriction.
-# This special exception was added by Craig Small in version 0.37 of dh-make.
-#
-# Modified to make a template file for a multi-binary package with separated
-# build-arch and build-indep targets  by Bill Allombert 2001
+# This file is public domain software, originally written by Joey Hess.
 
-# Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
+include /usr/share/cdbs/1/rules/debhelper.mk
+include /usr/share/cdbs/1/class/autotools.mk
+#include /usr/share/cdbs/1/rules/simple-patchsys.mk
 
-# This has to be exported to make some magic below work.
-export DH_OPTIONS
+# where sources are
+DEB_SRCDIR = .
+# in which directory to build
+DEB_BUILDDIR = .
+# in which directory to install the sofware
+DEB_DESTDIR = $(CURDIR)/debian/tmp
+#To register a debug library package libfoo-dbg for libfoo (which needs unstripped '.so') in compat mode 4:
+#DEB_DH_STRIP_ARGS := --dbg-package=libsyncml0-dbg
+#CDBS automatically handles common flags to pass to the configure script, 
+#but it is possible to give some extra parameters : 
+DEB_CONFIGURE_EXTRA_FLAGS := --with-boost=/usr --enable-gui --enable-opensync-plugin
+COMMON_CONFIGURE_FLAGS := --prefix=/usr
+DEB_INSTALL_DOCS_ALL =
 
-
-
-CFLAGS = -Wall -g
-
-ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
-	CFLAGS += -O0
-else
-	CFLAGS += -O2
-endif
-
-configure: configure-stamp
-
-configure-stamp:
-	dh_testdir
-	# Add here commands to configure the package.
-
-	touch configure-stamp
-
-
-#Architecture 
-build: build-arch build-indep
-
-build-arch: build-arch-stamp
-build-arch-stamp: configure-stamp 
-
-	# Add here commands to compile the arch part of the package.
-	./configure --prefix=/usr --with-boost=/usr
-	$(MAKE) 
-	(cd gui && ./configure PKG_CONFIG_PATH="..:$PKG_CONFIG_PATH" CXXFLAGS="-I../.." LDFLAGS="-L../../src" --prefix=/usr)
-	(cd gui && $(MAKE))
-
-	touch build-arch-stamp
-
-build-indep: build-indep-stamp
-build-indep-stamp: configure-stamp 
-
-	# Add here commands to compile the indep part of the package.
-	$(MAKE) doc
-	#touch build-indep-stamp
-
-clean:
-	dh_testdir
-	dh_testroot
-	rm -rf $(CURDIR)/debian/everything
-	rm -f build-arch-stamp build-indep-stamp #CONFIGURE-STAMP#
-
-	# Add here commands to clean up after the build process.
-	-$(MAKE) distclean
-	-(cd gui && $(MAKE) distclean)
-
-	dh_clean  --exclude ./src/Makefile.orig
-
-install: install-indep install-arch
-install-indep:
-	dh_testdir
-	dh_testroot
-	dh_clean -k -i  --exclude ./src/Makefile.orig
-	dh_installdirs -i
-
-	# Add here commands to install the indep part of the package into
-	# debian/<package>-doc.
-	#INSTALLDOC#
-
-	dh_install -i
-
-install-arch:
-	dh_testdir
-	dh_testroot
-	dh_clean -k -s  --exclude ./src/Makefile.orig
-	dh_installdirs -s
-
-	# Add here commands to install the arch part of the package into 
-	# debian/tmp.
-
-	# Install EVERYTHING from the base library portion into
-	# a temporary directory, then split them out into their
-	# respective package directories.  Anything left behind
-	# needs to be looked at!
-	$(MAKE) install DESTDIR=$(CURDIR)/debian/everything
-
-	# Move the basic libbarry files
-	install -d $(CURDIR)/debian/libbarry/usr/lib
-	mv $(CURDIR)/debian/everything/usr/lib/libbarry.so.* $(CURDIR)/debian/libbarry/usr/lib
-
-	# Move the devel library files
-	install -d $(CURDIR)/debian/libbarry-dev/usr/include
-	mv $(CURDIR)/debian/everything/usr/include/* $(CURDIR)/debian/libbarry-dev/usr/include
-	mv $(CURDIR)/debian/everything/usr/lib $(CURDIR)/debian/libbarry-dev/usr
-
-	# Move the command line utils
-	mkdir $(CURDIR)/debian/barry-util/usr
-	mv $(CURDIR)/debian/everything/usr/bin $(CURDIR)/debian/barry-util/usr
-	mv $(CURDIR)/debian/everything/usr/sbin $(CURDIR)/debian/barry-util/usr
-	install -d $(CURDIR)/debian/barry-util/usr/share
-	mv $(CURDIR)/debian/everything/usr/share/man $(CURDIR)/debian/barry-util/usr/share
-
+install/barry-util::
 	# Install udev rules for the barry-util package
 	install -d $(CURDIR)/debian/barry-util/etc/udev/rules.d
 	install -m 0644 $(CURDIR)/udev/10-blackberry.rules.Debian $(CURDIR)/debian/barry-util/etc/udev/rules.d/10-blackberry.rules
 
-	# The GUI has its own install, so we go directly to target package dir
-	(cd gui && $(MAKE) install DESTDIR=$(CURDIR)/debian/barrybackup-gui)
+post-patches::
+	@test -x $(DEB_SRCDIR)/configure && echo "allready autoreconf" || (cd $(DEB_SRCDIR) && autoreconf -i)
 
-	# Display anything remaining
-	echo "NOTE: IF ANYTHING IS LISTED HERE, IT IS NOT BEING PACKAGED:"
-	find $(CURDIR)/debian/everything
-
-	dh_install -s
-
-# Must not depend on anything. This is to be called by
-# binary-arch/binary-indep
-# in another 'make' thread.
-binary-common:
-	dh_testdir
-	dh_testroot
-	dh_installchangelogs ChangeLog
-	dh_installdocs
-	dh_installexamples
-	dh_installmenu
-#	dh_installdebconf	
-#	dh_installlogrotate	
-#	dh_installemacsen
-#	dh_installpam
-#	dh_installmime
-#	dh_installinit
-#	dh_installcron
-#	dh_installinfo
-	dh_installman
-	dh_link
-	dh_strip
-	dh_compress 
-	dh_fixperms
-#	dh_perl
-#	dh_python
-	dh_makeshlibs
-	dh_installdeb
-	dh_shlibdeps
-	dh_gencontrol
-	dh_md5sums
-	dh_builddeb
-# Build architecture independant packages using the common target.
-binary-indep: build-indep install-indep
-	$(MAKE) -f debian/rules DH_OPTIONS=-i binary-common
-
-# Build architecture dependant packages using the common target.
-binary-arch: build-arch install-arch
-	$(MAKE) -f debian/rules DH_OPTIONS=-a binary-common
-
-binary: binary-arch binary-indep
-.PHONY: build clean binary-indep binary-arch binary install install-indep install-arch configure
+clean::
+	-@rm -f $(DEB_SRCDIR)/config.guess $(DEB_SRCDIR)/config.sub $(DEB_SRCDIR)/ltmain.sh $(DEB_SRCDIR)/aclocal.m4 
+	-@rm -f $(DEB_SRCDIR)/config.h.in $(DEB_SRCDIR)/mkinstalldirs $(DEB_SRCDIR)/install-sh
+	-@rm -f $(DEB_SRCDIR)/missing $(DEB_SRCDIR)/depcomp $(DEB_SRCDIR)/configure $(DEB_SRCDIR)/subdirs
+	-@rm -rf build/ $(DEB_SRCDIR)/configure.files $(DEB_SRCDIR)/stamp-h.in
+	-@rm `find . -type f -name "Makefile.in" -print`
 

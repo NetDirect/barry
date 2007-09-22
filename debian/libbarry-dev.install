@@ -1,0 +1,6 @@
+debian/tmp/usr/lib/libbarry.a
+debian/tmp/usr/lib/libbarry.la
+debian/tmp/usr/lib/libbarry.so
+debian/tmp/usr/include/barry/*
+debian/tmp/usr/lib/pkgconfig/*
+
