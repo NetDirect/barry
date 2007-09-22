@@ -6,3 +6,4 @@ EXTRA_DIST = \
 
 dist-hook:
 	 rm -rf `find $(distdir) -name CVS`
+

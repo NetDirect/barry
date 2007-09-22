@@ -24,6 +24,11 @@ AC_LANG([C++])
 
 PKG_CHECK_MODULES([BARRY], [libbarry-0 libusb])
 
+# Carry the special tree build environment variables from parent configure,
+# just in case user is doing a complete tree build with --enable-opensync-plugin
+AC_SUBST(TREE_BUILD_CXXFLAGS)
+AC_SUBST(TREE_BUILD_LDFLAGS)
+
 OPENSYNC_CONFIGDIR=$(pkg-config --variable=configdir opensync-1.0)
 OPENSYNC_PLUGINDIR=$(pkg-config --variable=plugindir opensync-1.0)
 OPENSYNC_FORMATSDIR=$(pkg-config --variable=formatsdir opensync-1.0)

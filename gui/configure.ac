@@ -39,6 +39,11 @@ AC_SUBST(LIBZ_LIBS)
 PKG_CHECK_MODULES([BARRY], [libbarry-0 libusb])
 PKG_CHECK_MODULES([GTKMM], [gtkmm-2.4 libglademm-2.4 gthread-2.0])
 
+# Carry the special tree build environment variables from parent configure,
+# just in case user is doing a complete tree build with --enable-gui
+AC_SUBST(TREE_BUILD_CXXFLAGS)
+AC_SUBST(TREE_BUILD_LDFLAGS)
+
 # Setup gladedir, so src/Makefile.am can use it for the compile
 # and for the glade file installations. (glade_DATA)
 gladedir="$datadir/barry/glade/"

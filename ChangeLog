@@ -2,6 +2,10 @@ Release: version 0.9 - 2007/08/??
 ------------------------------------------------------------------------------
 2007/09/21
 	- updated README to mention new tree build configure options
+	- fixed the configure scripts and makefiles so that when building
+		with custom CXXFLAGS and LDFLAGS environment variables,
+		it doesn't break the full-tree build mode, when
+		using --enable-gui and/or --enable-opensync-plugin
 2007/09/20
 	- added filename to power/state error message in bcharge.cc
 	- adjusted maintainer scripts to automatically adjust barry.spec
