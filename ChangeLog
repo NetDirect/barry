@@ -1,5 +1,7 @@
 Release: version 0.9 - 2007/08/??
 ------------------------------------------------------------------------------
+2007/09/21
+	- updated README to mention new tree build configure options
 2007/09/20
 	- added filename to power/state error message in bcharge.cc
 	- adjusted maintainer scripts to automatically adjust barry.spec

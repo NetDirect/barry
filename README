@@ -94,6 +94,11 @@ To build Barry:
 		set --prefix as needed
 		set --with-boost=/path/to/root/boost if you want
 			the -f switch to work in btool
+		set --enable-gui to recursively build the gui/ subdirectory
+			(see gui/README for more info)
+		set --enable-opensync-plugin to recursively build the
+			opensync-plugin/ subdirectory
+			(see opensync-plugin/README for more info)
 
 	make
 
@@ -248,5 +253,5 @@ Example code:
 
 Enjoy!
 
-February 2007
+September 2007
 
