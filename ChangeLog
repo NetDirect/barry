@@ -6,6 +6,7 @@ Release: version 0.9 - 2007/08/??
 		with custom CXXFLAGS and LDFLAGS environment variables,
 		it doesn't break the full-tree build mode, when
 		using --enable-gui and/or --enable-opensync-plugin
+	- added config.h.in~ to buildgen.sh clean target
 2007/09/20
 	- added filename to power/state error message in bcharge.cc
 	- adjusted maintainer scripts to automatically adjust barry.spec
