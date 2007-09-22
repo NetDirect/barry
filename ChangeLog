@@ -9,6 +9,8 @@ Release: version 0.9 - 2007/08/??
 	- added config.h.in~ to buildgen.sh clean target
 	- converted Debian build scripts to use cdbs
 	- added opensync plugin binary package for Debian
+	- added "Getting Started" section to web pages, as well as an
+		explanatory document for various system requirements
 2007/09/20
 	- added filename to power/state error message in bcharge.cc
 	- adjusted maintainer scripts to automatically adjust barry.spec

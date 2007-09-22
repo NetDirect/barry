@@ -13,6 +13,28 @@ You can find the source code at the
 <a href="http://sourceforge.net/projects/barry/">Sourceforge project page</a>
 </p>
 
+<div class="subHeader">Getting Started</div>
+
+<p>Barry comes in source and binary package format.  You can find the latest
+downloads <a href="http://sourceforge.net/project/showfiles.php?group_id=153722">here</a>.</p>
+
+<p>Before you start, you should check whether your system meets the following
+requirements:</p>
+
+<ul>
+	<li>A kernel with:</li>
+	<ul>
+		<li>the berry_charge module disabled</li>
+		<li>CONFIG_USB_SUSPEND disabled</li>
+	</ul>
+	<li>If you are running a Fedora system, make sure you have the
+		ConsoleKit package installed.  This will allow you to
+		access the Blackberry without root privileges.</li>
+</ul>
+
+<p>See the <? createLink("requirements", "requirements"); ?> document for
+more details on the reasons behind the above requirements.</p>
+
 <div class="subHeader">Help Wanted</div>
 
 <p>We can always use help in developing extra features.
