@@ -98,7 +98,7 @@ This package contains the GUI applications built on top of libbarry.
 %package opensync
 Summary: BlackBerry(tm) Desktop for Linux - opensync plugin
 Group: Applications/Productivity
-Requires: libbarry libopensync
+Requires: libbarry, libopensync >= 0.22
 BuildRequires: libopensync-devel
 
 %description opensync
