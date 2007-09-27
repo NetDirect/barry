@@ -1,73 +1,9 @@
 
 This is the GUI sub-project of the Barry project.  You will need the
 Barry library compiled and installed to use this.  This directory
-contains a fully standalone build tree, and is not built automatically
-when you build Barry.
+contains a fully standalone build tree, but can optionally be built
+automatically when you build Barry if you use the --enable-gui
+configure option.
 
-
-
-Library Dependencies:
----------------------
-
-You will need the following packages installed on your system, including
-any dev or devel packages that come along with them: (all of these
-packages are easily available on Debian stable... your mileage may vary
-on other distros)
-
-	pkg-config		Used by the configure scripts
-	gtkmm 2.4		C++ GTK+ wrapper library
-	glademm 2.4		C++ glade wrapper library
-	glibmm 2.4		C++ glib wrapper library
-	libusb 0.1.x		USB interface library
-	libtar 1.2.x		TAR file library
-	zlib			compression library
-
-And of course:
-
-	libbarry 0.x		In the same tarball as this code.
-
-If you've installed Barry in a non-standard spot, use something like the
-following:
-
-	export PKG_CONFIG_PATH="/home/cdfrey/Barry/lib/pkgconfig"
-	./configure --prefix=/home/cdfrey/Barry
-
-
-
-Dependency packages for common distributions:
----------------------------------------------
-The following is a list of packages you'll need to install to build the GUI,
-if you are using one of the below common distributions.  Other distributions
-should have similar package names.
-
-	Fedora 5 and 6:
-	---------------
-	Use the yum package manager to install the following:
-
-		pkgconfig
-		libtar  (libtar-devel on Fedora 6)
-		libusb-devel
-		gtkmm24-devel
-		glibmm24-devel
-		libglademm24-devel
-		zlib-devel
-
-	Debian stable:
-	--------------
-	Use the apt-get package manager to install the following:
-
-		pkg-config
-		libtar-dev
-		libusb-dev
-		libgtkmm-2.4-dev
-		libglibmm-2.4-dev
-		libglademm-2.4-dev
-		zlib1g-dev
-
-
-
-If you have any trouble, please send mail to the mailing list and
-ask for help!
-
-February 2007
+See doc/www/index.html for more documentation.
 

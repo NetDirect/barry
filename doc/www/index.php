@@ -7,9 +7,11 @@
 <p>Linux users who also use a BlackBerry &trade; now have an option for
 managing their BlackBerry directly from Linux.</p>
 
-<p>Barry is an Open Source Linux application that will allow synchronization,
+<p>Barry is an Open Source application that will allow synchronization,
 backup, restore and program management for BlackBerry &trade; devices.
-You can find the source code at the
+Barry is primarily developed on Linux, but is intended as a cross platform
+library and application set, targetting Linux, BSD, 32/64bit, and big/little
+endian systems.  You can find the source code at the
 <a href="http://sourceforge.net/projects/barry/">Sourceforge project page</a>
 </p>
 
@@ -35,16 +37,25 @@ requirements:</p>
 <p>See the <? createLink("requirements", "requirements"); ?> document for
 more details on the reasons behind the above requirements.</p>
 
+<p>See the <? createLink("install", "installation"); ?> page for
+instructions on installing Barry from source.</p>
+
 <div class="subHeader">Help Wanted</div>
 
-<p>We can always use help in developing extra features.
-There are dozens of databases that need to be documented and coded for.
-If you have a BlackBerry &trade; device and are interested in helping decipher
-data, we have a <? createLink("hacking", "barry hacking document"); ?> that will
-help you.
+<p>We can always use help in testing and developing extra features.
+If you have any trouble getting Barry to work, please contact us on
+the <a href="http://sourceforge.net/mail/?group_id=153722">mailing list</a>.
+</p>
 
-<p>We are also looking for help in many areas.
-We need a GUI developer, if you are a Python guru and want to help dig in.
+<p>There are dozens of databases that need to be documented and supported
+in the library.  If you have a BlackBerry &trade; device and are interested
+in helping decipher data, we have a
+<? createLink("hacking", "barry hacking document"); ?> that will help you.
+</p>
+
+<p>We are also looking for help in many areas: general documentation,
+howto documents, Python SWIG wrappers, or Python GUIs.  Feel free to
+ask on the mailing list for more information.</p>
 
 <div class="subHeader">Design</div>
 

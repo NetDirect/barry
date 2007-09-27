@@ -2,52 +2,6 @@
 
 <? include ("barry.inc"); ?>
 
-<div class="subHeader">Introduction</div>
-
-
-<p>Barry is a GPL C++ library to interface with USB BlackBerry handheld devices
-on Linux.  This is one of Net Direct Inc.'s (<a href="http://www.netdirect.ca/">http://www.netdirect.ca</a>)
-open source projects.</p>
-
-<p>The SourceForge project page can be found at:<br>
-<ul>
-        <a href="http://sourceforge.net/projects/barry/">http://sourceforge.net/projects/barry/</a>
-</ul>
-
-<p>Barry is currently in early development, but is reaching stages of usefulness.
-For example, it is possible to retrieve Address Book contact data, and export
-it in text or LDAP LDIF format.</p>
-
-
-<div class="subHeader">Installation:</div>
-
-<p>You need:
-<ul>
-        libusb, devel branch    <a href="http://libusb.sourceforge.net">http://libusb.sourceforge.net/</a>
-</ul>
-
-<p>Check out the 2005/11/26 V1_0_DEVEL tag/branch from CVS, or download it
-as a tarball from the Barry file download page.</p>
-
-<p>Barry uses the asynchronous library calls, which is why the development
-branch is used.  The libusb devel branch is well along in its development
-cycle, so don't be afraid to play with it.</p>
-
-<p>This version of Barry has been tested using the 2005/11/26 libusb CVS tree.</p>
-
-<p>To build Barry:
-
-<ul>
-<li>Edit Makefile.conf to point to the proper location for libusb headers and library files
-<li> Enter the src/ directory and type 'make'
-<li> If you want to generate doxygen documentation, run 'doxygen' as well.  The resulting files will be in doc/doxygen/html/ This has been tested with Doxygen 1.4.5
-</ul>
-
-<p>This will give you a command line tool called 'btool'.  Use the -h
-switch for help on its command line options.  Some good ones to start with
-are -l to list the devices found, and -t to list the Database Database.</p>
-
-
 <div class="subHeader">BlackBerry protocol</div>
 
 <p>No BlackBerry-related protocol project would be complete without referencing
@@ -83,9 +37,10 @@ format as btool talks to the device.  You can use this in combination with
 the -d switch to capture new database records to reverse engineer.</p>
 
 <p>If you reverse engineer some of the unimplemented packet formats, please
-send patches and/or documentation to the mailing list!</p>
+send patches and/or documentation to the
+<a href="http://sourceforge.net/mail/?group_id=153722">mailing list</a>!</p>
 
-<p>See the Hacking file for more information on getting started reverse
+<p>See the doc/Hacking file for more information on getting started reverse
 engineering the protocol.</p>
 
 
@@ -93,7 +48,7 @@ engineering the protocol.</p>
 
 <p>Lowest level:
 <ul>
-        Lowest level is the libusb software, currently using the DEVEL branch
+        Lowest level is the libusb software.
 </ul>
 
 <p>USB layer:
@@ -106,9 +61,6 @@ engineering the protocol.</p>
 	<td valign=top>data.{h,cc}</td>
 	<td valign=top>C++ data class for buffer management and hex log file input and output</td>
 </tr><tr>
-	<td valign=top>connect.cc</td>
-	<td valign=top>low level USB test program, capable of using data file scripts to talk to a device via bulk read/write</td>
-</tr><tr>
 	<td valign=top>debug.h</td>
 	<td valign=top>general debugging output support</td>
 </table>
@@ -119,6 +71,11 @@ engineering the protocol.</p>
 <ul>
 <table border=0>
 <tr>
+	<td valign=top>packet.{h,cc}</td>
+	<td valign=top>low level packet builder class, having knowledge of
+		specific protocol commands in order to hide protocol details
+		behind an API</td>
+</tr><tr>
 	<td valign=top>protostructs.h</td>
 	<td valign=top>low level, packed structs representing the USB protocol</td>
 </tr><tr>
@@ -137,6 +94,10 @@ engineering the protocol.</p>
 </tr><tr>
 	<td valign=top>builder.h</td>
 	<td valign=top>C++ virtual wrappers to connect record and controller in a generic way</td>
+</tr><tr>
+	<td valign=top>endian.h</td>
+	<td valign=top>big/little endian defines... only used for compiling
+		the library, never installed</td>
 </tr><tr>
 	<td valign=top>error.{h,cc}</td>
 	<td valign=top>common exception classes for Barry layer</td>
@@ -159,14 +120,20 @@ engineering the protocol.</p>
 	<td valign=top>parser.{h,cc}</td>
 	<td valign=top>C++ virtual wrappers to connect record and controller in a generic way</td>
 </tr><tr>
-	<td valign=top>controller.{h,cc}</td>
+	<td valign=top>controller.{h,cc}, controllertmpl.h</td>
 	<td valign=top>high level API class</td>
+</tr><tr>
+	<td valign=top>version.h</td>
+	<td valign=top>library version information and API</td>
 </tr><tr>
 	<td valign=top>s11n-boost.h</td>
 	<td valign=top>serialization functions for record.h classes</td>
 </tr><tr>
 	<td valign=top>barry.h</td>
 	<td valign=top>application header (only one needed)</td>
+</tr><tr>
+	<td valign=top>cbarry.h</td>
+	<td valign=top>C application header (incomplete)</td>
 </tr>
 </table>
 </ul>
@@ -175,18 +142,40 @@ engineering the protocol.</p>
 <ul>
 <table border=0>
 <tr>
-	<td valign=top>btool.cci</td>
+	<td valign=top>btool.cc</td>
 	<td valign=top>command line testing utility</td>
-</tr>
-<tr>
+</tr><tr>
+	<td valign=top>bcharge.cc</td>
+	<td valign=top>set device to use 500mA, and also enables database access for Blackberry Pearl devices</td>
+</tr><tr>
+	<td valign=top>breset.cc</td>
+	<td valign=top>does a USB level software reset on all Blackberry devices found</td>
+</tr><tr>
 	<td valign=top>convo.awk</td>
 	<td valign=top>script to convert UsbSnoop log files into trimmed-down request/response conversations</td>
-</tr>
-<tr>
+</tr><tr>
+	<td valign=top>ktrans.cc</td>
+	<td valign=top>turns USB kernel capture logs from 2.6 kernels into hex+ascii dumps</td>
+</tr><tr>
 	<td valign=top>translate.cc</td>
 	<td valign=top>translate UsbSnoop log file data into hex+ascii dumps</td>
+</tr><tr>
+	<td valign=top>upldif.cc</td>
+	<td valign=top>takes an ldap LDIF file on stdin and uploads contact data to the Blackberry, overwriting existing contacts</td>
 </tr>
 </table>
 </ul>
 
+<p>Example code:
+<ul>
+<table border=0>
+<tr>
+	<td valign=top>addcontact.cc</td>
+	<td valign=top>example for adding a contact record to the device</td>
+</tr>
+</table>
+</ul>
+
+
 <p>Enjoy!</p>
+
