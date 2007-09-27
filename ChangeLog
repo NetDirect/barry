@@ -1,5 +1,11 @@
 Release: version 0.9 - 2007/08/??
 ------------------------------------------------------------------------------
+2007/09/27
+	- large update to the doc/www web pages, moving some of the
+		information in README files to html format, so that it
+		is commonly available on the web
+	- added step in maintenance scripts to automatically build the
+		.html files in doc/www when making a tarball release
 2007/09/22
 	- added libopensync 0.22 version requirement to barry.spec file,
 		but it doesn't seem to work on OpenSuSE 10.2, where it's
