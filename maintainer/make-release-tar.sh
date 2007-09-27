@@ -45,6 +45,7 @@ else
 	cvs -z3 -d "$CVSROOT" co -d $DIRNAME "$CVSREP"
 	echo "Fetched HEAD"
 fi
+(cd $DIRNAME/doc/www && ./static.sh)
 (cd $DIRNAME && ./buildgen.sh)
 #(cd $DIRNAME/gui && ./buildgen.sh)
 #(cd $DIRNAME/opensync-plugin && ./buildgen.sh)
