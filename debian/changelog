@@ -1,8 +1,10 @@
 barry (0.9-1) unstable; urgency=low
 
    * updated for version 0.9 release
+   * converted build scripts to use cdbs
+   * added opensync plugin package
 
- -- Chris Frey <cdfrey@foursquare.net>  Thu, 09 Aug 2007 16:27:11 -0500
+ -- Chris Frey <cdfrey@foursquare.net>  Thu, 28 Sep 2007 15:55:11 -0500
 
 barry (0.8-1) unstable; urgency=low
 
