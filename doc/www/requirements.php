@@ -34,15 +34,25 @@ into suspend mode.  Kernels included in the latest Ubuntu 7.04 and
 Fedora 7 have this turned on by default.</p>
 
 <p>When bcharge runs, it successfully changes the Blackberry to use 500mA
-(its normal charge power level), but then the kernel puts the device
+(its normal power level for charging), but then the kernel puts the device
 into suspend mode.  This can have various undefined effects, such as
 the charge icon disappearing on the device, or having your device lose
 its charge in an accelerated manner.</p>
 
 <p>Bcharge attempts to work around this by writing to the
-/sys/.../device/power/state file to attempt to turn this suspend off,
-but this is not always successful.  To be sure to have a working charge
-setup, recompile your kernel with CONFIG_USB_SUSPEND disabled.</p>
+control files under <code>/sys/class/usb_device/.../device/power/</code>
+to turn autosuspend off.  Depending on your kernel version or kernel
+config, these files may not be available, but in most cases at
+least one of the needed files are there.</p>
+
+<p>If you continue to experience trouble charging your Blackberry:
+<ul>
+	<li> consider upgrading your kernel (Ubuntu 7.10 Gutsy
+		patches their 2.6.22 kernel to fix this,
+		for example) </li>
+	<li> recompile your kernel with CONFIG_USB_SUSPEND disabled </li>
+</ul>
+</p>
 
 
 <div class="subHeader">Device Ownership and Permissions</div>

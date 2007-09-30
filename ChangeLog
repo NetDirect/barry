@@ -6,6 +6,7 @@ Release: version 0.9 - 2007/09/??
 		See bcharge.cc for comments.  If device/power/level or
 		device/power/autosuspend exist, charging should now work
 		without recompiling the kernel.
+	- updated website docs with autosuspend info
 2007/09/27
 	- large update to the doc/www web pages, moving some of the
 		information in README files to html format, so that it

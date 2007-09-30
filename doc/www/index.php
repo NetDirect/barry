@@ -24,18 +24,14 @@ downloads <a href="http://sourceforge.net/project/showfiles.php?group_id=153722"
 requirements:</p>
 
 <ul>
-	<li>A kernel with:</li>
-	<ul>
-		<li>the berry_charge module disabled</li>
-		<li>CONFIG_USB_SUSPEND disabled</li>
-	</ul>
+	<li>A kernel with the berry_charge module disabled</li>
 	<li>If you are running a Fedora system, make sure you have the
 		ConsoleKit package installed.  This will allow you to
 		access the Blackberry without root privileges.</li>
 </ul>
 
 <p>See the <? createLink("requirements", "requirements"); ?> document for
-more details on the reasons behind the above requirements.</p>
+more details on the above requirements.</p>
 
 <p>See the <? createLink("install", "installation"); ?> page for
 instructions on installing Barry from source.</p>
