@@ -176,7 +176,88 @@ bool process(struct usb_device *dev, bool is_pearl)
 	return apply;
 }
 
-// checks for USB suspend, and enables the device if suspended
+bool power_write(const std::string &file, const std::string &value)
+{
+	// attempt to open the state file
+	int fd = open(file.c_str(), O_RDWR);
+	if( fd == -1 ) {
+		printf("autosuspend adjustment failure: (file: %s): %s\n",
+			file.c_str(),
+			strerror(errno));
+		return false;
+	}
+
+	int written = write(fd, value.data(), value.size());
+	int error = errno;
+	close(fd);
+
+	if( written < 0 || (size_t)written != value.size() ) {
+		printf("autosuspend adjustment failure (write): (file: %s): %s\n",
+			file.c_str(),
+			strerror(error));
+		return false;
+	}
+
+	printf("autosuspend adjustment: wrote %s to %s\n",
+		value.c_str(), file.c_str());
+	return true;
+}
+
+//
+// Checks for USB suspend, and enables the device if suspended.
+//
+// Kernel 2.6.21 behaves with autosuspend=0 meaning off, while 2.6.22
+// and higher needs autosuspend=-1 to turn it off.  In 2.6.22, a value
+// of 0 means "immediate" instead of "never".
+//
+// Version 2.6.22 adds variables internal to the system called
+// autosuspend_disabled and autoresume_disabled.  These are controlled by the
+// /sys/class/usb_device/*/device/power/level file.  (See below)
+// 
+// Here's a summary of files under device/power.  These may or may not exist
+// depending on your kernel version and configuration.
+// 
+// 
+//        autosuspend
+//                -1 or 0 means off, depending on kernel,
+//                otherwise it is the number of seconds to
+//                autosuspend
+//
+//        level
+//                with the settings:
+//
+//                on      - suspend is disabled, device is fully powered
+//                auto    - suspend is controlled by the kernel (default)
+//                suspend - suspend is enabled permanently
+//
+//                You can write these strings to the file to control
+//                behaviour on a per-device basis.
+//
+//                echo on > /sys/usb_device/.../device/power/level
+//
+//        state
+//                current state of device
+//                0 - fully powered
+//                2 - suspended
+//
+//                You can write these numbers to control behaviour, but
+//                any change you make here might change automatically
+//                if autosuspend is on.
+//
+//                echo -n 0 > /sys/usb_device/.../device/power/state
+//
+//        wakeup
+//                unknown
+//
+//
+// Given the above facts, use the following heuristics to try to disable
+// autosuspend for the Blackberry:
+//
+//	- if level exists, write "on" to it
+//	- if autosuspend exists, write -1 to it
+//		- if error, write 0 to it
+//	- if neither of the above work, and state exists, write 0 to it
+//
 void resume()
 {
 	if( udev_devpath.size() == 0 )
@@ -185,18 +266,12 @@ void resume()
 	// let sysfs settle a bit
 	sleep(5);
 
-	// attempt to open the state file
-	std::string status = sysfs_path + "/" + udev_devpath + "/device/power/state";
-	int fd = open(status.c_str(), O_RDWR);
-	if( fd == -1 ) {
-		printf("unable to adjust USB suspend/resume settings (using sysfs file: %s): %s\n",
-			status.c_str(),
-			strerror(errno));
-		return;
-	}
+	std::string power_path = sysfs_path + "/" + udev_devpath + "/device/power/";
 
-	write(fd, "0", 1);
-	close(fd);
+	if( !power_write(power_path + "level", "on\n") )
+		if( !power_write(power_path + "autosuspend", "-1\n") )
+			if( !power_write(power_path + "autosuspend", "0\n") )
+				power_write(power_path + "state", "0");
 }
 
 int main(int argc, char *argv[])
