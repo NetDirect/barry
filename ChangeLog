@@ -1,8 +1,17 @@
-Release: version 0.9.2 - 2007/10/12
+Release: version 0.10 - 2007/10/12
 ------------------------------------------------------------------------------
 2007/10/12
 	- renamed ktrans and translate to bktrans and btranslate to avoid
 		file name clashes with libtranslate of Gnome
+	- version bump:
+		- configure.ac
+		- src/Makefile.am
+		- src/version.cc
+		- gui/src/BackupWindow.cc
+		- src/Doxygen
+		- rpm/barry.spec
+		- debian/changelog
+		- opensync-plugin/src/barry_sync.cc
 
 Release: version 0.9 - 2007/10/12
 ------------------------------------------------------------------------------
