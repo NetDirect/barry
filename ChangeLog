@@ -1,3 +1,9 @@
+Release: version 0.9.2 - 2007/10/12
+------------------------------------------------------------------------------
+2007/10/12
+	- renamed ktrans and translate to bktrans and btranslate to avoid
+		file name clashes with libtranslate of Gnome
+
 Release: version 0.9 - 2007/10/12
 ------------------------------------------------------------------------------
 2007/09/29

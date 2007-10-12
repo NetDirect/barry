@@ -1,7 +1,7 @@
 debian/tmp/usr/bin/btool
-debian/tmp/usr/bin/ktrans
+debian/tmp/usr/bin/bktrans
 debian/tmp/usr/bin/upldif
-debian/tmp/usr/bin/translate
+debian/tmp/usr/bin/btranslate
 debian/tmp/usr/sbin/breset
 debian/tmp/usr/sbin/bcharge
 debian/tmp/usr/sbin/pppob

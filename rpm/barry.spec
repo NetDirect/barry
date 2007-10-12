@@ -175,8 +175,8 @@ cd ../
 %attr(0755,root,root) %{_sbindir}/pppob
 %attr(0755,root,root) %{_bindir}/btool
 %attr(0755,root,root) %{_bindir}/upldif
-%attr(0755,root,root) %{_bindir}/ktrans
-%attr(0755,root,root) %{_bindir}/translate
+%attr(0755,root,root) %{_bindir}/bktrans
+%attr(0755,root,root) %{_bindir}/btranslate
 %attr(0644,root,root) %{_mandir}/man1/btool*
 %attr(0644,root,root) %{_mandir}/man1/bcharge*
 %attr(0644,root,root) %config %{_sysconfdir}/udev/rules.d/*
@@ -210,6 +210,9 @@ cd ../
 /sbin/ldconfig
 
 %changelog
+* Fri Oct 12 2007 Chris Frey <cdfrey@foursquare.net> 0.9-2
+- removed ktrans and translate from rpm package
+
 * Thu Aug 09 2007 Chris Frey <cdfrey@foursquare.net> 0.9-1
 - version bump
 
