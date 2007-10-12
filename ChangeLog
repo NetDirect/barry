@@ -16,6 +16,9 @@ Release: version 0.10 - 2007/10/12
 	- fixed missing default config file in the debian package for
 		the opensync plugin
 		Closes bug #1812224 reported by Ariel (adonatti).
+	- added debian dbg packages for tracing segfaults
+	- modified maintainer scripts so debug packages would reference
+		source code located in /usr/src/barry-0.9, etc.
 
 Release: version 0.9 - 2007/10/12
 ------------------------------------------------------------------------------
