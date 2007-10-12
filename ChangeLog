@@ -3,6 +3,7 @@ Release: version 0.10 - 2007/10/12
 2007/10/12
 	- renamed ktrans and translate to bktrans and btranslate to avoid
 		file name clashes with libtranslate of Gnome
+		Closes bug #1812410 reported by Troy Engel.
 	- version bump:
 		- configure.ac
 		- src/Makefile.am
@@ -12,6 +13,8 @@ Release: version 0.10 - 2007/10/12
 		- rpm/barry.spec
 		- debian/changelog
 		- opensync-plugin/src/barry_sync.cc
+	- fixed missing default config file in the debian package for
+		the opensync plugin
 
 Release: version 0.9 - 2007/10/12
 ------------------------------------------------------------------------------
