@@ -2,7 +2,7 @@
 
 if [ -z "$1" -o -z "$2" ] ; then
 	echo
-	echo "Usage: ./make-deb-local.sh tarball target_name"
+	echo "Usage: ./make-deb-local-root.sh tarball MAJOR MINOR target_name"
 	echo
 	echo "Extracts tarball in temporary directory and builds Debian"
 	echo "packages based on the internal debian scripts.  Assumes"
@@ -16,16 +16,17 @@ fi
 
 TARPATH="$1"
 TARNAME=`basename "$TARPATH"`
-TARGET="$2"
+MAJOR="$2"
+MINOR="$3"
+TARGET="$4"
 
 set -e
 
+# Build package in /usr/src so that the dbg packages refer to the source
+# code in a user-friendly place.
+tar -C /usr/src -xjvf "$TARPATH"
+(cd "/usr/src/barry-$MAJOR.$MINOR" && fakeroot -- debian/rules binary)
 mkdir "build/$TARGET"
-cp "$TARPATH" "build/$TARGET"
-cd "build/$TARGET"
-tar xjvf "$TARNAME"
-rm -f "$TARNAME"
-cd barry*
-debian/rules build
-fakeroot -- debian/rules binary
+mv /usr/src/*barry*deb "build/$TARGET"
+rm -rf "/usr/src/barry-$MAJOR.$MINOR"
 
