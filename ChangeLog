@@ -1,3 +1,12 @@
+Branch: barry-b1-socket-arch
+------------------------------------------------------------------------------
+	2007/10/19
+		- branch started, to track development of the new socket
+			architecture, and new mode architecture, needed
+			to support GPRS modem support, and threaded
+			USB access
+		- committed work-in-progress... does not compile
+
 Release: version 0.10 - 2007/10/12
 ------------------------------------------------------------------------------
 2007/10/12

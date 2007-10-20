@@ -54,7 +54,9 @@ include_barry_HEADERS = barry.h \
 	builder.h \
 	common.h \
 	controller.h \
-	controllertmpl.h \
+	m_desktop.h \
+	m_desktoptmpl.h \
+	m_serial.h \
 	data.h \
 	error.h \
 	ldif.h \
@@ -71,6 +73,7 @@ include_barry_HEADERS = barry.h \
 	r_saved_message.h \
 	r_servicebook.h \
 	r_task.h \
+	dataqueue.h \
 	socket.h \
 	time.h \
 	usbwrap.h \
@@ -101,6 +104,7 @@ libbarry_la_SOURCES = time.cc \
 	r_task.cc \
 	packet.cc packet.h \
 	controller.cc \
+	m_desktop.cc \
 	version.cc \
 	protostructs.h \
 	debug.h \

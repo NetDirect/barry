@@ -30,6 +30,7 @@
 #include "endian.h"
 #include <openssl/sha.h>
 #include <sstream>
+#include <iomanip>
 
 
 using namespace Usb;
@@ -37,15 +38,19 @@ using namespace Usb;
 
 namespace Barry {
 
-Socket::Socket(	Device &dev,
-		int writeEndpoint, int readEndpoint,
-		uint8_t zeroSocketSequenceStart)
-	: m_dev(dev),
+
+
+//////////////////////////////////////////////////////////////////////////////
+// SocketZero class
+
+SocketZero::SocketZero(	Device &dev,
+			int writeEndpoint, int readEndpoint,
+			uint8_t zeroSocketSequenceStart)
+	: m_dev(&dev),
+	m_queue(0),
 	m_writeEp(writeEndpoint),
 	m_readEp(readEndpoint),
-	m_socket(0),
 	m_zeroSocketSequence(zeroSocketSequenceStart),
-	m_flag(0),
 	m_sequenceId(0),
 	m_halfOpen(false),
 	m_challengeSeed(0),
@@ -53,355 +58,14 @@ Socket::Socket(	Device &dev,
 {
 }
 
-Socket::~Socket()
+SocketZero::~SocketZero()
 {
-	// trap exceptions in the destructor
-	try {
-		// a non-default socket has been opened, close it
-		Close();
-	}
-	catch( std::runtime_error &re ) {
-		// do nothing... log it?
-		dout("Exception caught in ~Socket: " << re.what());
-	}
-}
-
-void Socket::SendOpen(uint16_t socket, Data &receive)
-{
-	// build open command
-	Barry::Protocol::Packet packet;
-	packet.socket = 0;
-	packet.size = htobs(SB_SOCKET_PACKET_HEADER_SIZE);
-	packet.command = SB_COMMAND_OPEN_SOCKET;
-	packet.u.socket.socket = htobs(socket);
-	packet.u.socket.sequence = m_zeroSocketSequence;// overwritten by Send()
-
-	// save sequence for later close, and inc
-	m_flag = m_zeroSocketSequence;
-
-	Data send(&packet, SB_SOCKET_PACKET_HEADER_SIZE);
-	try {
-		Send(send, receive);
-	} catch( Usb::Error & ) {
-		eeout(send, receive);
-		throw;
-	}
-
-	// check sequence ID
-	Protocol::CheckSize(receive);
-	if( IS_COMMAND(receive, SB_COMMAND_SEQUENCE_HANDSHAKE) ) {
-		CheckSequence(receive);
-
-		// still need our ACK
-		Receive(receive);
-	}
-
-	// receive now holds the Open response
-}
-
-// SHA1 hashing logic based on Rick Scott's XmBlackBerry's send_password()
-void Socket::SendPasswordHash(uint16_t socket, const char *password, Data &receive)
-{
-	unsigned char pwdigest[SHA_DIGEST_LENGTH];
-	unsigned char prefixedhash[SHA_DIGEST_LENGTH + 4];
-
-	// first, hash the password by itself
-	SHA1((unsigned char *) password, strlen(password), pwdigest);
-
-	// prefix the resulting hash with the provided seed
-	uint32_t seed = htobl(m_challengeSeed);
-	memcpy(&prefixedhash[0], &seed, sizeof(uint32_t));
-	memcpy(&prefixedhash[4], pwdigest, SHA_DIGEST_LENGTH);
-
-	// hash again
-	SHA1((unsigned char *) prefixedhash, SHA_DIGEST_LENGTH + 4, pwdigest);
-
-
-	size_t size = SB_SOCKET_PACKET_HEADER_SIZE + PASSWORD_CHALLENGE_SIZE;
-
-	// build open command
-	Barry::Protocol::Packet packet;
-	packet.socket = 0;
-	packet.size = htobs(size);
-	packet.command = SB_COMMAND_PASSWORD;
-	packet.u.socket.socket = htobs(socket);
-	packet.u.socket.sequence = m_zeroSocketSequence;// overwritten by Send()
-	packet.u.socket.u.password.remaining_tries = 0;
-	packet.u.socket.u.password.unknown = 0;
-	packet.u.socket.u.password.param = htobs(0x14);	// FIXME - what does this mean?
-	memcpy(packet.u.socket.u.password.u.hash, pwdigest,
-		sizeof(packet.u.socket.u.password.u.hash));
-
-	// blank password hashes as we don't need these anymore
-	memset(pwdigest, 0, sizeof(pwdigest));
-	memset(prefixedhash, 0, sizeof(prefixedhash));
-
-	// save sequence for later close, and inc
-	m_flag = m_zeroSocketSequence;
-
-	Data send(&packet, size);
-	Send(send, receive);
-
-	// blank password hash as we don't need this anymore either
-	memset(packet.u.socket.u.password.u.hash, 0,
-		sizeof(packet.u.socket.u.password.u.hash));
-	send.Zap();
-
-	// check sequence ID
-	Protocol::CheckSize(receive);
-	if( IS_COMMAND(receive, SB_COMMAND_SEQUENCE_HANDSHAKE) ) {
-		CheckSequence(receive);
-
-		// still need our ACK
-		Receive(receive);
-	}
-
-	// receive now holds the Password response
+	// nothing to close for socket zero
 }
 
 
-//
-// Open
-//
-/// Open a logical socket on the device.
-///
-/// Both the socket number and the flag are based on the response to the
-/// SELECT_MODE command.  See Controller::SelectMode() for more info
-/// on this.
-///
-/// The packet sequence is normal for most socket operations.
-///
-///	- Down: command packet with OPEN_SOCKET
-///	- Up: optional sequence handshake packet
-///	- Up: command response, which repeats the socket and flag data
-///		as confirmation
-///
-/// \exception	Barry::Error
-///		Thrown on protocol error.
-///
-/// \exception	Barry::BadPassword
-///		Thrown on invalid password, or not enough retries left
-///		on device.
-///
-void Socket::Open(uint16_t socket, const char *password)
-{
-	if( m_socket != 0 ) {
-		// already open
-		throw Error("Socket: already open");
-	}
-
-	// Things get a little funky here, as we may be left in an
-	// intermediate state in the case of a failed password.
-	// This function should support being called as many times
-	// as needed to handle the password
-
-	Data send, receive;
-	ZeroPacket packet(send, receive);
-
-	if( !m_halfOpen ) {
-		// starting fresh
-		m_remainingTries = 0;
-
-		SendOpen(socket, receive);
-
-		// check for password challenge, or success
-		if( packet.Command() == SB_COMMAND_PASSWORD_CHALLENGE ) {
-			m_halfOpen = true;
-			m_challengeSeed = packet.ChallengeSeed();
-			m_remainingTries = packet.RemainingTries();
-		}
-
-		// fall through to challenge code...
-	}
-
-	if( m_halfOpen ) {
-		// half open, device is expecting a password hash... do we
-		// have a password?
-		if( !password ) {
-			throw BadPassword("No password specified.", m_remainingTries, false);
-		}
-
-		// only allow password attempts if there are 6 or more
-		// tries remaining... we want to give the user at least
-		// 5 chances on a Windows machine before the device
-		// commits suicide.
-		if( m_remainingTries < 6 ) {
-			throw BadPassword("Fewer than 6 password tries "
-				"remaining in device. Refusing to proceed, "
-				"to avoid device zapping itself.  Use a "
-				"Windows client, or re-cradle the device.",
-				m_remainingTries,
-				true);
-		}
-
-		SendPasswordHash(socket, password, receive);
-
-		if( packet.Command() == SB_COMMAND_PASSWORD_FAILED ) {
-			m_halfOpen = true;
-			m_challengeSeed = packet.ChallengeSeed();
-			m_remainingTries = packet.RemainingTries();
-			throw BadPassword("Password rejected by device.", m_remainingTries, false);
-		}
-
-		// if we get this far, we are no longer in half-open password
-		// mode, so we can reset our flags
-		m_halfOpen = false;
-
-		// fall through to success check...
-	}
-
-	if( packet.Command() != SB_COMMAND_OPENED_SOCKET ||
-	    packet.SocketResponse() != socket ||
-	    packet.SocketSequence() != m_flag )
-	{
-		eout("Packet:\n" << receive);
-		throw Error("Socket: Bad OPENED packet in Open");
-	}
-
-	// success!  save the socket
-	m_socket = socket;
-}
-
-//
-// Close
-//
-/// Closes a non-default socket (i.e. non-zero socket number)
-///
-/// The packet sequence is just like Open(), except the command is
-/// CLOSE_SOCKET.
-///
-/// \exception	Barry::Error
-///
-void Socket::Close()
-{
-	if( m_socket != 0 ) {
-		// only close non-default sockets
-
-		// build close command
-		Barry::Protocol::Packet packet;
-		packet.socket = 0;
-		packet.size = htobs(SB_SOCKET_PACKET_HEADER_SIZE);
-		packet.command = SB_COMMAND_CLOSE_SOCKET;
-		packet.u.socket.socket = htobs(m_socket);
-		packet.u.socket.sequence = m_flag;
-
-		Data command(&packet, SB_SOCKET_PACKET_HEADER_SIZE);
-		Data response;
-		try {
-			Send(command, response);
-		}
-		catch( Usb::Error & ) {
-			// reset so this won't be called again
-			m_socket = 0;
-			m_flag = 0;
-
-			eeout(command, response);
-			throw;
-		}
-
-		// starting fresh, reset sequence ID
-		Protocol::CheckSize(response);
-		if( IS_COMMAND(response, SB_COMMAND_SEQUENCE_HANDSHAKE) ) {
-			CheckSequence(response);
-
-			// still need our ACK
-			Receive(response);
-		}
-
-		Protocol::CheckSize(response, SB_SOCKET_PACKET_HEADER_SIZE);
-		MAKE_PACKET(rpack, response);
-		if( rpack->command != SB_COMMAND_CLOSED_SOCKET ||
-		    btohs(rpack->u.socket.socket) != m_socket ||
-		    rpack->u.socket.sequence != m_flag )
-		{
-			// reset so this won't be called again
-			m_socket = 0;
-			m_flag = 0;
-
-			eout("Packet:\n" << response);
-			throw Error("Socket: Bad CLOSED packet in Close");
-		}
-
-//		// and finally, there always seems to be an extra read of
-//		// an empty packet at the end... just throw it away
-//		try {
-//			Receive(response, 1);
-//		}
-//		catch( Usb::Timeout & ) {
-//		}
-
-		// reset socket and flag
-		m_socket = 0;
-		m_flag = 0;
-	}
-}
-
-
-//
-// Send
-//
-/// Sends 'send' data to device, no receive.
-///
-/// \returns	void
-///
-/// \exception	Usb::Error on underlying bus errors.
-///
-void Socket::Send(Data &send, int timeout)
-{
-	// Special case: it seems that sending packets with a size that's an
-	// exact multiple of 0x40 causes the device to get confused.
-	//
-	// To get around that, it is observed in the captures that the size
-	// is sent in a special 3 byte packet before the real packet.
-	// Check for this case here.
-	//
-	if( (send.GetSize() % 0x40) == 0 ) {
-		Protocol::SizePacket packet;
-		packet.size = htobs(send.GetSize());
-		packet.buffer[2] = 0;		// zero the top byte
-		Data sizeCommand(&packet, 3);
-
-		m_dev.BulkWrite(m_writeEp, sizeCommand);
-	}
-
-	// If this is a socket 0 packet, force the send packet data's
-	// socket 0 sequence number to something correct.
-	if( m_socket == 0 && send.GetSize() >= SB_SOCKET_PACKET_HEADER_SIZE ) {
-		MAKE_PACKETPTR_BUF(spack, send.GetBuffer());
-		spack->u.socket.sequence = m_zeroSocketSequence;
-		m_zeroSocketSequence++;
-	}
-
-	m_dev.BulkWrite(m_writeEp, send);
-}
-
-//
-// Send
-//
-/// Sends 'send' data to device, and waits for response.
-///
-/// \returns	void
-///
-/// \exception	Usb::Error on underlying bus errors.
-///
-void Socket::Send(Data &send, Data &receive, int timeout)
-{
-	Send(send, timeout);
-	m_dev.BulkRead(m_readEp, receive, timeout);
-	ddout("Socket::Send: Endpoint " << m_readEp << "\nReceived:\n" << receive);
-}
-
-void Socket::Send(Barry::Packet &packet, int timeout)
-{
-	Send(packet.m_send, packet.m_receive, timeout);
-}
-
-void Socket::Receive(Data &receive, int timeout)
-{
-	m_dev.BulkRead(m_readEp, receive, timeout);
-
-	ddout("Socket::Receive: Endpoint " << m_readEp << "\nReceived:\n" << receive);
-}
+///////////////////////////////////////
+// Socket Zero static calls
 
 // appends fragment to whole... if whole is empty, simply copies, and
 // sets command to DATA instead of FRAGMENTED.  Always updates the
@@ -472,7 +136,16 @@ unsigned int Socket::MakeNextFragment(const Data &whole, Data &fragment, unsigne
 	return nextOffset;
 }
 
-void Socket::CheckSequence(const Data &seq)
+
+///////////////////////////////////////
+// SocketZero private API
+
+//
+// FIXME - not sure yet whether sequence ID's are per socket or not... if
+// they are per socket, then this global sequence behaviour will not work,
+// and we need to track m_sequenceId on a Socket level.
+//
+void SocketZero::CheckSequence(uint16_t socket, const Data &seq)
 {
 //	if( m_socket == 0 ) {
 //		// don't do any sequence checking on socket 0
@@ -494,10 +167,15 @@ void Socket::CheckSequence(const Data &seq)
 	}
 	else {
 		if( sequenceId != m_sequenceId ) {
-			if( m_socket != 0 ) {
-				eout("Socket sequence: " << m_sequenceId
-					<< ". Packet sequence: " << sequenceId);
-				throw Error("Socket: out of sequence");
+			if( socket != 0 ) {
+				std::ostringstream oss;
+				oss << "Socket 0x" << std::hex << (unsigned int)socket
+					<< ": out of sequence. "
+					<< "(Global sequence: " << m_sequenceId
+					<< ". Packet sequence: " << sequenceId
+					<< ")";
+				eout(oss.str());
+				throw Error(oss.str());
 			}
 			else {
 				dout("Bad sequence on socket 0: expected: "
@@ -509,6 +187,434 @@ void Socket::CheckSequence(const Data &seq)
 
 	// advance!
 	m_sequenceId++;
+}
+
+void SocketZero::SendOpen(uint16_t socket, Data &receive)
+{
+	// build open command
+	Barry::Protocol::Packet packet;
+	packet.socket = 0;
+	packet.size = htobs(SB_SOCKET_PACKET_HEADER_SIZE);
+	packet.command = SB_COMMAND_OPEN_SOCKET;
+	packet.u.socket.socket = htobs(socket);
+	packet.u.socket.sequence = m_zeroSocketSequence;// overwritten by Send()
+
+	Data send(&packet, SB_SOCKET_PACKET_HEADER_SIZE);
+	try {
+		RawSend(send);
+		RawReceive(receive);
+	} catch( Usb::Error & ) {
+		eeout(send, receive);
+		throw;
+	}
+
+	// check sequence ID
+	Protocol::CheckSize(receive);
+	if( IS_COMMAND(receive, SB_COMMAND_SEQUENCE_HANDSHAKE) ) {
+		CheckSequence(0, receive);
+
+		// still need our ACK
+		RawReceive(receive);
+	}
+
+	// receive now holds the Open response
+}
+
+// SHA1 hashing logic based on Rick Scott's XmBlackBerry's send_password()
+void SocketZero::SendPasswordHash(uint16_t socket, const char *password, Data &receive)
+{
+	unsigned char pwdigest[SHA_DIGEST_LENGTH];
+	unsigned char prefixedhash[SHA_DIGEST_LENGTH + 4];
+
+	// first, hash the password by itself
+	SHA1((unsigned char *) password, strlen(password), pwdigest);
+
+	// prefix the resulting hash with the provided seed
+	uint32_t seed = htobl(m_challengeSeed);
+	memcpy(&prefixedhash[0], &seed, sizeof(uint32_t));
+	memcpy(&prefixedhash[4], pwdigest, SHA_DIGEST_LENGTH);
+
+	// hash again
+	SHA1((unsigned char *) prefixedhash, SHA_DIGEST_LENGTH + 4, pwdigest);
+
+
+	size_t size = SB_SOCKET_PACKET_HEADER_SIZE + PASSWORD_CHALLENGE_SIZE;
+
+	// build open command
+	Barry::Protocol::Packet packet;
+	packet.socket = 0;
+	packet.size = htobs(size);
+	packet.command = SB_COMMAND_PASSWORD;
+	packet.u.socket.socket = htobs(socket);
+	packet.u.socket.sequence = m_zeroSocketSequence;// overwritten by Send()
+	packet.u.socket.u.password.remaining_tries = 0;
+	packet.u.socket.u.password.unknown = 0;
+	packet.u.socket.u.password.param = htobs(0x14);	// FIXME - what does this mean?
+	memcpy(packet.u.socket.u.password.u.hash, pwdigest,
+		sizeof(packet.u.socket.u.password.u.hash));
+
+	// blank password hashes as we don't need these anymore
+	memset(pwdigest, 0, sizeof(pwdigest));
+	memset(prefixedhash, 0, sizeof(prefixedhash));
+
+	Data send(&packet, size);
+	RawSend(send);
+	RawReceive(receive);
+
+	// blank password hash as we don't need this anymore either
+	memset(packet.u.socket.u.password.u.hash, 0,
+		sizeof(packet.u.socket.u.password.u.hash));
+	send.Zap();
+
+	// check sequence ID
+	Protocol::CheckSize(receive);
+	if( IS_COMMAND(receive, SB_COMMAND_SEQUENCE_HANDSHAKE) ) {
+		CheckSequence(0, receive);
+
+		// still need our ACK
+		RawReceive(receive);
+	}
+
+	// receive now holds the Password response
+}
+
+
+///////////////////////////////////////
+// SocketZero public API
+
+void SocketZero::SetRoutingQueue(SocketRoutingQueue &queue)
+{
+	// replace the current queue pointer
+	m_queue = &queue;
+}
+
+void SocketZero::UnlinkRoutingQueue()
+{
+	m_queue = 0;
+}
+
+void SocketZero::RawSend(Data &send, int timeout)
+{
+	// Special case: it seems that sending packets with a size that's an
+	// exact multiple of 0x40 causes the device to get confused.
+	//
+	// To get around that, it is observed in the captures that the size
+	// is sent in a special 3 byte packet before the real packet.
+	// Check for this case here.
+	//
+	if( (send.GetSize() % 0x40) == 0 ) {
+		Protocol::SizePacket packet;
+		packet.size = htobs(send.GetSize());
+		packet.buffer[2] = 0;		// zero the top byte
+		Data sizeCommand(&packet, 3);
+
+		m_dev->BulkWrite(m_writeEp, sizeCommand);
+	}
+
+	m_dev->BulkWrite(m_writeEp, send);
+}
+
+void SocketZero::RawReceive(Data &receive, int timeout)
+{
+	if( m_queue ) {
+		m_queue->DefaultRead(receive, timeout);
+	}
+	else {
+		m_dev->BulkRead(m_readEp, receive, timeout);
+	}
+	ddout("SocketZero::RawReceive: Endpoint " << m_readEp
+		<< "\nReceived:\n" << receive);
+}
+
+void SocketZero::Send(Data &send, int timeout)
+{
+	// force the socket number to 0
+	if( send.GetSize() >= SB_SOCKET_PACKET_HEADER_SIZE ) {
+		MAKE_PACKETPTR_BUF(spack, send.GetBuffer());
+		spack->socket = 0;
+	}
+
+	// This is a socket 0 packet, so force the send packet data's
+	// socket 0 sequence number to something correct.
+	if( send.GetSize() >= SB_SOCKET_PACKET_HEADER_SIZE ) {
+		MAKE_PACKETPTR_BUF(spack, send.GetBuffer());
+		spack->u.socket.sequence = m_zeroSocketSequence;
+		m_zeroSocketSequence++;
+	}
+
+	RawSend(send, timeout);
+}
+
+void SocketZero::Send(Data &send, Data &receive, int timeout)
+{
+	Send(send, timeout);
+	RawReceive(receive, timeout);
+}
+
+void SocketZero::Send(Barry::Packet &packet, int timeout)
+{
+	Send(packet.m_send, packet.m_receive, timeout);
+}
+
+
+//
+// Open
+//
+/// Open a logical socket on the device.
+///
+/// Both the socket number and the flag are based on the response to the
+/// SELECT_MODE command.  See Controller::SelectMode() for more info
+/// on this.
+///
+/// The packet sequence is normal for most socket operations.
+///
+///	- Down: command packet with OPEN_SOCKET
+///	- Up: optional sequence handshake packet
+///	- Up: command response, which repeats the socket and flag data
+///		as confirmation
+///
+/// \exception	Barry::Error
+///		Thrown on protocol error.
+///
+/// \exception	Barry::BadPassword
+///		Thrown on invalid password, or not enough retries left
+///		on device.
+///
+SocketHandle SocketZero::Open(uint16_t socket, const char *password)
+{
+	// Things get a little funky here, as we may be left in an
+	// intermediate state in the case of a failed password.
+	// This function should support being called as many times
+	// as needed to handle the password
+
+	Data send, receive;
+	ZeroPacket packet(send, receive);
+
+	// save sequence for later close
+	uint8_t closeFlag = GetZeroSocketSequence();
+
+	if( !m_halfOpen ) {
+		// starting fresh
+		m_remainingTries = 0;
+
+		SendOpen(socket, receive);
+
+		// check for password challenge, or success
+		if( packet.Command() == SB_COMMAND_PASSWORD_CHALLENGE ) {
+			m_halfOpen = true;
+			m_challengeSeed = packet.ChallengeSeed();
+			m_remainingTries = packet.RemainingTries();
+		}
+
+		// fall through to challenge code...
+	}
+
+	if( m_halfOpen ) {
+		// half open, device is expecting a password hash... do we
+		// have a password?
+		if( !password ) {
+			throw BadPassword("No password specified.", m_remainingTries, false);
+		}
+
+		// only allow password attempts if there are 6 or more
+		// tries remaining... we want to give the user at least
+		// 5 chances on a Windows machine before the device
+		// commits suicide.
+		if( m_remainingTries < 6 ) {
+			throw BadPassword("Fewer than 6 password tries "
+				"remaining in device. Refusing to proceed, "
+				"to avoid device zapping itself.  Use a "
+				"Windows client, or re-cradle the device.",
+				m_remainingTries,
+				true);
+		}
+
+		// save sequence for later close (again after SendOpen())
+		closeFlag = GetZeroSocketSequence();
+
+		SendPasswordHash(socket, password, receive);
+
+		if( packet.Command() == SB_COMMAND_PASSWORD_FAILED ) {
+			m_halfOpen = true;
+			m_challengeSeed = packet.ChallengeSeed();
+			m_remainingTries = packet.RemainingTries();
+			throw BadPassword("Password rejected by device.", m_remainingTries, false);
+		}
+
+		// if we get this far, we are no longer in half-open password
+		// mode, so we can reset our flags
+		m_halfOpen = false;
+
+		// fall through to success check...
+	}
+
+	if( packet.Command() != SB_COMMAND_OPENED_SOCKET ||
+	    packet.SocketResponse() != socket ||
+	    packet.SocketSequence() != closeFlag )
+	{
+		eout("Packet:\n" << receive);
+		throw Error("Socket: Bad OPENED packet in Open");
+	}
+
+	// success!  save the socket
+	return SocketHandle(new Socket(*this, socket, closeFlag));
+}
+
+//
+// Close
+//
+/// Closes a non-default socket (i.e. non-zero socket number)
+///
+/// The packet sequence is just like Open(), except the command is
+/// CLOSE_SOCKET.
+///
+/// \exception	Barry::Error
+///
+void SocketZero::Close(Socket &socket)
+{
+	if( socket.GetSocket() == 0 )
+		return;		// nothing to do
+
+	// build close command
+	Barry::Protocol::Packet packet;
+	packet.socket = 0;
+	packet.size = htobs(SB_SOCKET_PACKET_HEADER_SIZE);
+	packet.command = SB_COMMAND_CLOSE_SOCKET;
+	packet.u.socket.socket = htobs(socket.GetSocket());
+	packet.u.socket.sequence = socket.GetCloseFlag();
+
+	Data command(&packet, SB_SOCKET_PACKET_HEADER_SIZE);
+	Data response;
+	try {
+		Send(command, response);
+	}
+	catch( Usb::Error & ) {
+		// reset so this won't be called again
+		socket.ForceClosed();
+
+		eeout(command, response);
+		throw;
+	}
+
+	// starting fresh, reset sequence ID
+	Protocol::CheckSize(response);
+	if( IS_COMMAND(response, SB_COMMAND_SEQUENCE_HANDSHAKE) ) {
+		CheckSequence(0, response);
+
+		// still need our ACK
+		RawReceive(response);
+	}
+
+	Protocol::CheckSize(response, SB_SOCKET_PACKET_HEADER_SIZE);
+	MAKE_PACKET(rpack, response);
+	if( rpack->command != SB_COMMAND_CLOSED_SOCKET ||
+	    btohs(rpack->u.socket.socket) != socket.GetSocket() ||
+	    rpack->u.socket.sequence != socket.GetCloseFlag() )
+	{
+		// reset so this won't be called again
+		socket.ForceClosed();
+
+		eout("Packet:\n" << response);
+		throw Error("Socket: Bad CLOSED packet in Close");
+	}
+
+//	// and finally, there always seems to be an extra read of
+//	// an empty packet at the end... just throw it away
+//	try {
+//		RawReceive(response, 1);
+//	}
+//	catch( Usb::Timeout & ) {
+//	}
+
+	// reset socket and flag
+	socket.ForceClosed();
+}
+
+
+
+
+
+
+//////////////////////////////////////////////////////////////////////////////
+// Socket class
+
+Socket::Socket( SocketZero &zero,
+		uint16_t socket,
+		uint8_t closeFlag)
+	: m_zero(&zero)
+	, m_socket(socket)
+	, m_closeFlag(closeFlag)
+{
+}
+
+Socket::~Socket()
+{
+	// trap exceptions in the destructor
+	try {
+		// a non-default socket has been opened, close it
+		Close();
+	}
+	catch( std::runtime_error &re ) {
+		// do nothing... log it?
+		dout("Exception caught in ~Socket: " << re.what());
+	}
+}
+
+void Socket::Close()
+{
+	m_zero->Close(*this);
+}
+
+////////////////////////////////////
+// Socket private API
+
+void Socket::CheckSequence(const Data &seq)
+{
+	m_zero->CheckSequence(m_socket, seq);
+}
+
+//
+// Send
+//
+/// Sends 'send' data to device, no receive.
+///
+/// \returns	void
+///
+/// \exception	Usb::Error on underlying bus errors.
+///
+void Socket::Send(Data &send, int timeout)
+{
+	// force the socket number to this socket
+	if( send.GetSize() >= SB_SOCKET_PACKET_HEADER_SIZE ) {
+		MAKE_PACKETPTR_BUF(spack, send.GetBuffer());
+		spack->socket = htobs(m_socket);
+	}
+	m_zero->RawSend(send, timeout);
+}
+
+//
+// Send
+//
+/// Sends 'send' data to device, and waits for response.
+///
+/// \returns	void
+///
+/// \exception	Usb::Error on underlying bus errors.
+///
+void Socket::Send(Data &send, Data &receive, int timeout)
+{
+	Send(send, timeout);
+	Receive(receive, timeout);
+}
+
+void Socket::Send(Barry::Packet &packet, int timeout)
+{
+	Send(packet, timeout);
+}
+
+void Socket::Receive(Data &receive, int timeout)
+{
+	m_zero->RawReceive(receive, timeout);
 }
 
 // sends the send packet down to the device, fragmenting if

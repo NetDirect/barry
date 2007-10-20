@@ -33,11 +33,14 @@ namespace Barry {
 // forward declarations
 class Parser;
 class Builder;
-class Socket;
-class Controller;
+class SocketZero;
+namespace Mode {
+	class Desktop;
+}
 
 class Packet
 {
+	friend class SocketZero;
 	friend class Socket;
 
 protected:
@@ -101,10 +104,10 @@ public:
 // DBPacket class
 //
 /// Provides an API for building and analyzing raw DB protocol packets.
-/// This class relies on 3 external objects: a Controller object,
+/// This class relies on 3 external objects: a Mode::Desktop object,
 /// a send Data buffer, and a receive data buffer.  Socket and
 /// connection details are retrieved on a readonly basis from the
-/// Controller object, but both send and receive buffers can be
+/// Mode::Desktop object, but both send and receive buffers can be
 /// modified.
 ///
 /// Note that the receive buffer may be modified
@@ -116,13 +119,13 @@ class DBPacket : public Packet
 	friend class Socket;
 
 private:
-	Controller &m_con;
+	Mode::Desktop &m_con;
 	unsigned int m_last_dbop;	// last database operation
 
 protected:
 
 public:
-	DBPacket(Controller &con, Data &send, Data &receive);
+	DBPacket(Mode::Desktop &con, Data &send, Data &receive);
 	~DBPacket();
 
 	//////////////////////////////////

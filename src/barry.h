@@ -36,6 +36,7 @@
 #include "common.h"			// Init()
 #include "error.h"			// exceptions
 #include "probe.h"			// device prober class
+#include "dataqueue.h"
 #include "socket.h"
 #include "protocol.h"			// application-safe header
 #include "parser.h"
@@ -43,7 +44,9 @@
 #include "record.h"
 #include "ldif.h"
 #include "controller.h"
-#include "controllertmpl.h"
+#include "m_desktop.h"
+#include "m_desktoptmpl.h"
+#include "m_serial.h"
 #include "version.h"
 
 #ifdef __BARRY_BOOST_MODE__

@@ -202,7 +202,7 @@ void Probe::ProbeDevice(Usb::DeviceIDType devid)
 				continue;
 			}
 
-			Socket socket(dev, ep.write, ep.read);
+			SocketZero socket(dev, ep.write, ep.read);
 
 			Data send, receive;
 			ZeroPacket packet(send, receive);

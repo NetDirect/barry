@@ -38,6 +38,11 @@ class Parser;
 class Builder;
 class DBPacket;
 
+namespace Mode {
+	class Desktop;
+	class Serial;
+}
+
 //
 // Controller class
 //
@@ -59,7 +64,8 @@ class DBPacket;
 ///
 class Controller
 {
-	friend class Barry::DBPacket;
+	friend class Barry::Mode::Desktop;
+	friend class Barry::Mode::Serial;
 
 public:
 	/// Handheld mode type
@@ -69,86 +75,40 @@ public:
 		Desktop,		//< desktop mode required for database
 					//< operation
 		JavaLoader,		//< unsupported
-		UsbSerData		//< GPRS modem support over USB
+		UsbSerData,		//< GPRS modem support over USB
+		UsbSerCtrl		//< internally used behind the scenes
 	};
-	enum CommandType { Unknown, DatabaseAccess };
 
 private:
 	Usb::Device m_dev;
 	Usb::Interface *m_iface;
 	uint32_t m_pin;
 
-	Socket m_socket;
+	SocketZero m_zero;
+//	SocketHandle m_serCtrlSocket;
 
-	CommandTable m_commandTable;
-	DatabaseDatabase m_dbdb;
+//	CommandTable m_commandTable;
+//	DatabaseDatabase m_dbdb;
 
-	ModeType m_mode;
+//	ModeType m_mode;
 
-	uint16_t m_modeSocket;			// socket recommended by device
+//	uint16_t m_tmpModeSocket;		// socket recommended by device
 						// when mode was selected
 
 	// UsbSerData cache
-	Data m_writeCache, m_readCache;
+//	Data m_writeCache, m_readCache;
 
 	// tracking of open Desktop socket, and the need to reset
-	bool m_halfOpen;
+//	bool m_halfOpen;
 
 protected:
-	void SelectMode(ModeType mode);
-	unsigned int GetCommand(CommandType ct);
-
-	void LoadCommandTable();
-	void LoadDBDB();
+	uint16_t SelectMode(ModeType mode);	// returns mode socket
+	SocketRoutingQueue* GetRoutingQueue();
 
 public:
-	Controller(const ProbeResult &device);
+	explicit Controller(const ProbeResult &device);
+	Controller(const ProbeResult &device, SocketRoutingQueue &queue);
 	~Controller();
-
-	//////////////////////////////////
-	// meta access
-
-	/// Returns DatabaseDatabase object for this connection.
-	/// Must call OpenMode() to select Desktop mode first
-	const DatabaseDatabase& GetDBDB() const { return m_dbdb; }
-	unsigned int GetDBID(const std::string &name) const;
-
-	//////////////////////////////////
-	// general operations
-	void OpenMode(ModeType mode, const char *password = 0);
-	void RetryPassword(const char *password);
-
-	//////////////////////////////////
-	// Desktop mode - database specific
-
-	// dirty flag related functions, for sync operations
-	void GetRecordStateTable(unsigned int dbId, RecordStateTable &result);
-	void AddRecord(unsigned int dbId, Builder &build); // RecordId is
-		// retrieved from build, and duplicate IDs are allowed,
-		// but *not* recommended!
-	void GetRecord(unsigned int dbId, unsigned int stateTableIndex, Parser &parser);
-	void SetRecord(unsigned int dbId, unsigned int stateTableIndex, Builder &build);
-	void ClearDirty(unsigned int dbId, unsigned int stateTableIndex);
-	void DeleteRecord(unsigned int dbId, unsigned int stateTableIndex);
-
-	// pure load/save operations
-	void LoadDatabase(unsigned int dbId, Parser &parser);
-	void SaveDatabase(unsigned int dbId, Builder &builder);
-
-	template <class RecordT, class StorageT> void LoadDatabaseByType(StorageT &store);
-	template <class RecordT, class StorageT> void SaveDatabaseByType(StorageT &store);
-
-	template <class StorageT> void LoadDatabaseByName(const std::string &name, StorageT &store);
-	template <class StorageT> void SaveDatabaseByName(const std::string &name, StorageT &store);
-
-	template <class RecordT> void AddRecordByType(uint32_t recordId, const RecordT &rec);
-
-
-	//////////////////////////////////
-	// UsbSerData mode - modem specific
-
-	void SerialRead(Data &data, int timeout); // can be called from separate thread
-	void SerialWrite(const Data &data);
 };
 
 } // namespace Barry

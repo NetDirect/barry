@@ -34,6 +34,7 @@ using namespace std;
 using namespace Barry;
 
 volatile bool read_finished = false;
+bool data_dump = false;
 
 void Usage()
 {
@@ -53,43 +54,32 @@ void Usage()
 
 void *UsbReadThread(void *userptr)
 {
-	try {
+	SocketRoutingQueue *q = (SocketRoutingQueue *)userptr;
 
-		Data data;
-		Controller *con = (Controller *)userptr;
+	// read from USB and write to stdout until finished
+	while( !read_finished ) {
+		q->DoRead(2000);	// FIXME - timeout in milliseconds?
+	}
+}
 
-		// read from USB and write to stdout until finished
-		while( !read_finished ) {
+void SerialDataCallback(Data *data)
+{
+	int todo = data.GetSize();
+	const unsigned char *buf = data.GetData();
 
-			try {
-				con->SerialRead(data, 60000);
+	if( todo && data_dump )
+		cerr << "ReadThread:\n" << data << endl;
 
-				int todo = data.GetSize();
-				const unsigned char *buf = data.GetData();
-
-				while( todo ) {
-					int written = write(1, buf, todo);
-					if( written > 0 ) {
-						todo -= written;
-						buf += written;
-					}
-					else {
-						cerr << "Error in write()" << endl;
-					}
-				}
-			}
-			catch( Usb::Timeout & ) {
-				// timeouts are allowed
-			}
-
+	while( todo ) {
+		int written = write(1, buf, todo);
+		if( written > 0 ) {
+			todo -= written;
+			buf += written;
 		}
-
+		else {
+			cerr << "Error in write()" << endl;
+		}
 	}
-	catch( std::exception &e ) {
-		cerr << "Exception caught in UsbReadThread(): " << e.what() << endl;
-	}
-
-	return 0;
 }
 
 int main(int argc, char *argv[])
@@ -100,7 +90,6 @@ int main(int argc, char *argv[])
 	try {
 
 		uint32_t pin = 0;
-		bool data_dump = false;
 
 		// process command line options
 		for(;;) {
@@ -142,27 +131,31 @@ int main(int argc, char *argv[])
 			return 1;
 		}
 
-		// Create our controller object
-		Barry::Controller con(probe.Get(activeDevice));
+		// Create our socket router
+		SocketRoutingQueue router;
 
-		// open serial mode socket
-		con.OpenMode(Controller::UsbSerData);
-
-		// start USB read thread
+		// Start USB read thread, to handle all routing
 		pthread_t usb_read_thread;
-		if( pthread_create(&usb_read_thread, NULL, UsbReadThread, &con) ) {
+		if( pthread_create(&usb_read_thread, NULL, UsbReadThread, &router) ) {
 			cerr << "Error creating USB read thread." << endl;
 			return 1;
 		}
 
-		// read from stdin and write to USB, until
+		// Create our controller object
+		Controller con(probe.Get(activeDevice), router);
+
+		// Open serial mode... the callback handles reading from
+		// USB and writing to stdout
+		Mode::Serial serial(con, SerialDataCallback);
+
+		// Read from stdin and write to USB, until
 		// stdin is closed
 		Data data;
 		int bytes_read;
 		while( (bytes_read = read(0, data.GetBuffer(), data.GetBufSize())) != 0 ) {
 			if( bytes_read > 0 ) {
 				data.ReleaseBuffer(bytes_read);
-				con.SerialWrite(data);
+				con.SerialWrite(data); // FIXME - does this copy data?
 			}
 		}
 
