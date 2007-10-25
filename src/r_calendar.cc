@@ -382,6 +382,9 @@ void Calendar::Clear()
 	Location.clear();
 	NotificationTime = StartTime = EndTime = 0;
 
+	FreeBusyFlag = Free;
+	ClassFlag = Public;
+
 	Recurring = false;
 	RecurringType = Calendar::Week;
 	Interval = 1;
