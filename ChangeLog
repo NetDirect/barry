@@ -1,5 +1,13 @@
 Release: version 0.10 - 2007/10/12
 ------------------------------------------------------------------------------
+2007/10/25
+	- fixed bug in Calendar::Clear, missing the Free / Class
+		member variables, leaving them uninitialized
+	- added examples/addcalendar.cc
+	- added more logging to the opensync plugin, logging the
+		ToBarry conversion results
+	- added code to force struct tm.tm_isdst to -1 before calling
+		mktime, in vformat.c
 2007/10/12
 	- renamed ktrans and translate to bktrans and btranslate to avoid
 		file name clashes with libtranslate of Gnome
