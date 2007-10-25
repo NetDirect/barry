@@ -6,6 +6,8 @@ Branch: barry-b1-socket-arch
 			to support GPRS modem support, and threaded
 			USB access
 		- committed work-in-progress... does not compile
+	2007/10/25
+		- merged HEAD changes
 
 Release: version 0.10 - 2007/10/12
 ------------------------------------------------------------------------------

@@ -394,7 +394,9 @@ const Barry::Calendar& vCalendar::ToBarry(const char *vcal, uint32_t RecordId)
 		trace.logf("ERROR: no TRIGGER found in calendar entry, assuming notification time as 15 minutes before start.");
 	}
 
-
+	std::ostringstream oss;
+	m_BarryCal.Dump(oss);
+	trace.logf("ToBarry, resulting Barry record: %s", oss.str().c_str());
 	return m_BarryCal;
 }
 
