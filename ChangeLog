@@ -8,6 +8,7 @@ Release: version 0.10 - 2007/10/12
 		ToBarry conversion results
 	- added code to force struct tm.tm_isdst to -1 before calling
 		mktime, in vformat.c
+		- fixed typo in previous fix
 2007/10/12
 	- renamed ktrans and translate to bktrans and btranslate to avoid
 		file name clashes with libtranslate of Gnome

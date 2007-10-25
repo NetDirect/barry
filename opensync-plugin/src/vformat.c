@@ -73,7 +73,7 @@ time_t vformat_time_to_unix(const char *inptime)
 	
 	struct tm btime;
 	memset(&btime, 0, sizeof(struct tm));
-	btime.is_dst = -1;
+	btime.tm_isdst = -1;
 
 	if (strlen(date) == 10) {
 		btime.tm_year = date[0] * 1000 + date[1] * 100 + date[2] * 10 + date[3] - '0' * 1111 - 1900;
