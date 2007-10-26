@@ -197,7 +197,7 @@ void vBase::AddParam(vAttrPtr &attr, const char *name, const char *value)
 	vformat_attribute_add_param(attr.Get(), pParam);
 }
 
-std::string vBase::GetAttr(const char *attrname)
+std::string vBase::GetAttr(const char *attrname, const char *block)
 {
 	Trace trace("vBase::GetAttr");
 	trace.logf("getting attr: %s", attrname);
@@ -205,10 +205,13 @@ std::string vBase::GetAttr(const char *attrname)
 	std::string ret;
 	const char *value = 0;
 
-	VFormatAttribute *attr = vformat_find_attribute(m_format, attrname, 0);
+	bool needs_freeing = false;
+
+	VFormatAttribute *attr = vformat_find_attribute(m_format, attrname, 0, block);
 	if( attr ) {
 		if( vformat_attribute_is_single_valued(attr) ) {
 			value = vformat_attribute_get_value(attr);
+			needs_freeing = true;
 		}
 		else {
 			// FIXME, this is hardcoded
@@ -219,15 +222,18 @@ std::string vBase::GetAttr(const char *attrname)
 	if( value )
 		ret = value;
 
+	if( needs_freeing )
+		g_free((char *)value);
+
 	trace.logf("attr value: %s", ret.c_str());
 	return ret;
 }
 
-vAttr vBase::GetAttrObj(const char *attrname, int nth)
+vAttr vBase::GetAttrObj(const char *attrname, int nth, const char *block)
 {
 	Trace trace("vBase::GetAttrObj");
 	trace.logf("getting attr: %s", attrname);
 
-	return vAttr(vformat_find_attribute(m_format, attrname, nth));
+	return vAttr(vformat_find_attribute(m_format, attrname, nth, block));
 }
 

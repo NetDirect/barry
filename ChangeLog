@@ -1,5 +1,14 @@
 Release: version 0.10 - 2007/10/12
 ------------------------------------------------------------------------------
+2007/10/26
+	- opensync plugin fixes:
+		- fixed memory leak in vBase::GetAttr()
+		- added support in vformat parser to parse "blocks"
+			and keep track of the hierarchy when
+			parsing an iCalendar, etc.
+		- added support for searching for attributes only
+			inside certain blocks (i.e. find first
+			DTSTART in VEVENT block, not VTIMEZONE block)
 2007/10/25
 	- fixed bug in Calendar::Clear, missing the Free / Class
 		member variables, leaving them uninitialized

@@ -189,8 +189,8 @@ protected:
 	void AddValue(vAttrPtr &attr, const char *value);
 	void AddParam(vAttrPtr &attr, const char *name, const char *value);
 
-	std::string GetAttr(const char *attrname);
-	vAttr GetAttrObj(const char *attrname, int nth = 0);
+	std::string GetAttr(const char *attrname, const char *block = 0);
+	vAttr GetAttrObj(const char *attrname, int nth = 0, const char *block = 0);
 };
 
 #endif

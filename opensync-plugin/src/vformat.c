@@ -675,6 +675,36 @@ static VFormatAttribute *_read_attribute (char **p)
 	return NULL;
 }
 
+void open_block(char **block, const char *block_name)
+{
+	char *start = *block ? *block : "";
+	char *result = NULL;
+
+	result = g_strconcat(start, "/", block_name, NULL);
+	if( *block )
+		g_free(*block);
+	*block = result;
+}
+
+void close_block(char **block, const char *block_name)
+{
+	int name_len = strlen(block_name);
+	int block_len = *block ? strlen(*block) : 0;
+	char *cmp_start = NULL;
+
+	if( block_len < name_len + 1 )
+		return;
+
+	cmp_start = *block + (block_len - name_len - 1);
+	if( cmp_start[0] == '/' && strcmp(cmp_start+1, block_name) == 0 ) {
+		// end of block hierarchy contains block name,
+		// so safe to remove
+
+		// cut off the end of the string... no need to free/realloc
+		*cmp_start = '\0';
+	}
+}
+
 /* we try to be as forgiving as we possibly can here - this isn't a
  * validator.  Almost nothing is considered a fatal error.  We always
  * try to return *something*.
@@ -708,12 +738,31 @@ static void _parse(VFormat *evc, const char *str)
 	else if (attr)
 		vformat_add_attribute (evc, attr);
 
+	char *block = NULL;
 	while (*p) {
 		VFormatAttribute *next_attr = _read_attribute (&p);
 
 		if (next_attr) {
-			//if (g_ascii_strcasecmp (next_attr->name, "end"))
-				vformat_add_attribute (evc, next_attr);
+			if( g_ascii_strcasecmp(next_attr->name, "begin") == 0 ) {
+				// add to block hierarchy string
+				char *value = vformat_attribute_get_value(next_attr);
+				open_block(&block, value);
+				//osync_trace(TRACE_INTERNAL, "open block: %s", block);
+				g_free(value);
+			}
+			else if( g_ascii_strcasecmp(next_attr->name, "end") == 0 ) {
+				// close off the block
+				char *value = vformat_attribute_get_value(next_attr);
+				close_block(&block, value);
+				//osync_trace(TRACE_INTERNAL, "close block: %s", block);
+				g_free(value);
+			}
+
+			// apply the block to the attr
+			next_attr->block = g_strdup(block);
+
+			// add!
+			vformat_add_attribute (evc, next_attr);
 			attr = next_attr;
 		}
 	}
@@ -723,6 +772,7 @@ static void _parse(VFormat *evc, const char *str)
 	}
 
 	g_free (buf);
+	g_free (block);
 }
 
 char *vformat_escape_string (const char *s, VFormatType type)
@@ -846,7 +896,36 @@ VFormat *vformat_new(void)
 	return vformat_new_from_string ("");
 }
 
-VFormatAttribute *vformat_find_attribute(VFormat *vcard, const char *name, int nth)
+int _block_match(VFormatAttribute *attr, const char *block)
+{
+	// a block matches if the end of the attribute's block
+	// string matches a case insensitive compare with block
+	//
+	// for example, a calendar may or may not start with a
+	// BEGIN: VCALENDAR, so DTSTART's block string could be
+	// "/vcalendar/vevent" or just "/vevent".  By passing
+	// "/vevent" or even "vevent" as the block argument above,
+	// we should get a match for any of the above.
+
+	int attr_len = attr->block ? strlen(attr->block) : 0;
+	int block_len = block ? strlen(block) : 0;
+
+	if( block == NULL )
+		return 1;	// if block is null, match everything
+
+	if( attr_len < block_len )
+		return 0;	// not enough string to compare
+
+	if( attr_len == 0 && block_len == 0 )
+		return 1;	// empty and null strings match
+
+	if( attr->block == NULL )
+		return 0;	// don't compare if one side is null
+
+	return g_ascii_strcasecmp(&attr->block[attr_len - block_len], block) == 0;
+}
+
+VFormatAttribute *vformat_find_attribute(VFormat *vcard, const char *name, int nth, const char *block)
 {
 	GList *attributes = vformat_get_attributes(vcard);
 	GList *a = NULL;
@@ -854,9 +933,11 @@ VFormatAttribute *vformat_find_attribute(VFormat *vcard, const char *name, int n
 	for (a = attributes; a; a = a->next) {
 		VFormatAttribute *attr = a->data;
 		if (!g_ascii_strcasecmp(vformat_attribute_get_name(attr), name)) {
-			if( i == nth )
-				return attr;
-			i++;
+			if( block == NULL || _block_match(attr, block) ) {
+				if( i == nth )
+					return attr;
+				i++;
+			}
 		}	
 	}
 	return NULL;
@@ -1162,6 +1243,7 @@ vformat_attribute_free (VFormatAttribute *attr)
 {
 	g_return_if_fail (attr != NULL);
 
+	g_free (attr->block);
 	g_free (attr->group);
 	g_free (attr->name);
 
@@ -1561,6 +1643,14 @@ vformat_attribute_get_name (VFormatAttribute *attr)
 	g_return_val_if_fail (attr != NULL, NULL);
 
 	return attr->name;
+}
+
+const char*
+vformat_attribute_get_block (VFormatAttribute *attr)
+{
+	g_return_val_if_fail (attr != NULL, NULL);
+
+	return attr->block;
 }
 
 GList*
