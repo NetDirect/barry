@@ -9,6 +9,7 @@ Release: version 0.10 - 2007/10/12
 	- AUTHORS update
 	- fixed string comparison to use case insensitive compare in
 		opensync plugin
+	- updated Debian package to include modprobe blacklist file
 2007/10/26
 	- opensync plugin fixes:
 		- fixed memory leak in vBase::GetAttr()
