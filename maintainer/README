@@ -1,6 +1,9 @@
 Most of the build or test build scripts in this directory assume a system
 with a number of chroot installs, in the directory /var/chroot.
 
-The release.sh script is the top level script, calling all others to build
-the tarball, test the builds, and generate the binary files.
+The top level scripts are:
+
+	release.sh - builds all tar, deb, and rpm packages
+	test.sh    - does simple makes on all testable systems, and
+		     prompts after each so you can examine the output
 

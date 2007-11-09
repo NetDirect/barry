@@ -11,6 +11,8 @@ Release: version 0.10 - 2007/10/12
 		opensync plugin
 	- updated Debian package to include modprobe blacklist file
 	- updated rpm spec file to include modprobe blacklist file
+	- split the maintenance scripts into release and test, so
+		that release package builds can be done faster
 2007/10/26
 	- opensync plugin fixes:
 		- fixed memory leak in vBase::GetAttr()
