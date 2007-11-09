@@ -139,7 +139,7 @@ cd ../
 %{__cp} udev/10-blackberry.rules %{buildroot}%{_sysconfdir}/udev/rules.d/
 %{__mkdir_p} %{buildroot}%{_sysconfdir}/security/console.perms.d
 %{__cp} udev/10-blackberry.perms %{buildroot}%{_sysconfdir}/security/console.perms.d/
-%{__mkdir_p} %{buildroot}${_sysconfdir}/modprobe.d
+%{__mkdir_p} %{buildroot}%{_sysconfdir}/modprobe.d
 %{__cp} modprobe/blacklist-berry_charge %{buildroot}%{_sysconfdir}/modprobe.d/
 
 # gui tree
