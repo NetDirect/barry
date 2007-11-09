@@ -696,7 +696,9 @@ void close_block(char **block, const char *block_name)
 		return;
 
 	cmp_start = *block + (block_len - name_len - 1);
-	if( cmp_start[0] == '/' && strcmp(cmp_start+1, block_name) == 0 ) {
+	if( cmp_start[0] == '/' &&
+	    g_ascii_strcasecmp(cmp_start+1, block_name) == 0 )
+	{
 		// end of block hierarchy contains block name,
 		// so safe to remove
 

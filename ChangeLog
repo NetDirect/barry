@@ -7,6 +7,8 @@ Release: version 0.10 - 2007/10/12
 	- fixed udev rules to work on both old and new distros
 		Thanks to Duncan Mak for the bug report.
 	- AUTHORS update
+	- fixed string comparison to use case insensitive compare in
+		opensync plugin
 2007/10/26
 	- opensync plugin fixes:
 		- fixed memory leak in vBase::GetAttr()
