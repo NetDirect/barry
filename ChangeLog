@@ -1,5 +1,9 @@
 Release: version 0.10 - 2007/10/12
 ------------------------------------------------------------------------------
+2007/11/09
+	- added modprobe/blacklist-berry_charge as per Simon Ruggier's
+		suggestion.  Thanks also to Niels de Vos for a similar
+		suggestion.
 2007/10/26
 	- opensync plugin fixes:
 		- fixed memory leak in vBase::GetAttr()
