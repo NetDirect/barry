@@ -27,12 +27,15 @@ Contributors (code and otherwise) in alphabetical order by last name:
 		- reverse engineering Service Book record
 	Jonathan Hudson <jh+barry@daria.co.uk>
 		- big endian testing and patches
+	Duncan Mak
+		- modern udev updates
 	Peter McAlpine <peter@aoeu.ca>
 		- autoconf patches
 	Alan Miller <Alan.Miller@synopsys.com>
 		- usb captures on Windows XP for password authentication
 	Simon Ruggier <simon80@gmail.com>
 		- autoconf / build system patch
+		- modprobe advice for bcharge/berry_charge conflict
 	Rick Scott <rwscott@alumni.uwaterloo.ca>
 		- password authentication code and tips
 		- GPRS modem behaviour
