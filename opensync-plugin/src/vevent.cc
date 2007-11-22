@@ -308,17 +308,17 @@ const Barry::Calendar& vCalendar::ToBarry(const char *vcal, uint32_t RecordId)
 	if( !Format() )
 		throw ConvertError("resource error allocating vformat");
 
-	string start = GetAttr("DTSTART");
+	string start = GetAttr("DTSTART", "/vevent");
 	trace.logf("DTSTART attr retrieved: %s", start.c_str());
-	string end = GetAttr("DTEND");
+	string end = GetAttr("DTEND", "/vevent");
 	trace.logf("DTEND attr retrieved: %s", end.c_str());
-	string subject = GetAttr("SUMMARY");
+	string subject = GetAttr("SUMMARY", "/vevent");
 	trace.logf("SUMMARY attr retrieved: %s", subject.c_str());
 	if( subject.size() == 0 ) {
 		subject = "<blank subject>";
 		trace.logf("ERROR: bad data, blank SUMMARY: %s", vcal);
 	}
-	vAttr trigger_obj = GetAttrObj("TRIGGER");
+	vAttr trigger_obj = GetAttrObj("TRIGGER", 0, "/valarm");
 
 
 

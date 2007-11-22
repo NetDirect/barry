@@ -139,6 +139,8 @@ cd ../
 %{__cp} udev/10-blackberry.rules %{buildroot}%{_sysconfdir}/udev/rules.d/
 %{__mkdir_p} %{buildroot}%{_sysconfdir}/security/console.perms.d
 %{__cp} udev/10-blackberry.perms %{buildroot}%{_sysconfdir}/security/console.perms.d/
+%{__mkdir_p} %{buildroot}%{_sysconfdir}/modprobe.d
+%{__cp} modprobe/blacklist-berry_charge %{buildroot}%{_sysconfdir}/modprobe.d/
 
 # gui tree
 %if %{with_gui}
@@ -181,6 +183,7 @@ cd ../
 %attr(0644,root,root) %{_mandir}/man1/bcharge*
 %attr(0644,root,root) %config %{_sysconfdir}/udev/rules.d/*
 %attr(0644,root,root) %config %{_sysconfdir}/security/console.perms.d/*
+%attr(0644,root,root) %config %{_sysconfdir}/modprobe.d/blacklist-berry_charge
 %doc COPYING
 
 %if %{with_gui}

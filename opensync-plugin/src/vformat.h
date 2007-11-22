@@ -57,6 +57,8 @@ typedef enum {
 } VFormatEncoding;
 
 typedef struct VFormatAttribute {
+	char  *block;       /* "vtimezone/standard", or "vevent", depending on
+				current begin/end location... may be null */
 	char  *group;
 	char  *name;
 	GList *params; /* VFormatParam */
@@ -112,7 +114,7 @@ void             vformat_attribute_add_value_decoded (VFormatAttribute *attr, co
 void             vformat_attribute_add_values        (VFormatAttribute *attr, ...);
 void             vformat_attribute_remove_values     (VFormatAttribute *attr);
 void             vformat_attribute_remove_params     (VFormatAttribute *attr);
-VFormatAttribute *vformat_find_attribute             (VFormat *evc, const char *name, int nth);
+VFormatAttribute *vformat_find_attribute             (VFormat *evc, const char *name, int nth, const char *block);
 
 /* attribute parameters */
 VFormatParam* vformat_attribute_param_new             (const char *param_name);
@@ -136,6 +138,7 @@ gboolean vformat_attribute_has_param(VFormatAttribute *attr, const char *name);
 GList*           vformat_get_attributes       (VFormat *vformat);
 const char*      vformat_attribute_get_group  (VFormatAttribute *attr);
 const char*      vformat_attribute_get_name   (VFormatAttribute *attr);
+const char*      vformat_attribute_get_block  (VFormatAttribute *attr);
 GList*           vformat_attribute_get_values (VFormatAttribute *attr);  /* GList elements are of type char* */
 GList*           vformat_attribute_get_values_decoded (VFormatAttribute *attr); /* GList elements are of type GString* */
 const char *vformat_attribute_get_nth_value(VFormatAttribute *attr, int nth);
