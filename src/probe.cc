@@ -189,9 +189,15 @@ void Probe::ProbeDevice(Usb::DeviceIDType devid)
 //				dev.Reset();
 //				sleep(5);
 
-			if( !dev.SetConfiguration(BLACKBERRY_CONFIGURATION) )
+			unsigned char cfg;
+			if( !dev.GetConfiguration(cfg) )
 				throw Usb::Error(dev.GetLastError(),
-					"Probe: SetConfiguration failed");
+					"Probe: GetConfiguration failed");
+			if( cfg != BLACKBERRY_CONFIGURATION ) {
+				if( !dev.SetConfiguration(BLACKBERRY_CONFIGURATION) )
+					throw Usb::Error(dev.GetLastError(),
+						"Probe: SetConfiguration failed");
+			}
 
 			Interface iface(dev, InterfaceNumber);
 

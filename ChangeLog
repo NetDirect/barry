@@ -1,5 +1,12 @@
 Release: version 0.10 - 2007/10/12
 ------------------------------------------------------------------------------
+2007/11/23
+	- added usbwrap.cc:GetConfiguration()
+	- added code to check whether the configuration is the one
+		we require, before calling SetConfiguration()... and not
+		to call it if unnecessary.  This allows us to run
+		at the same time as usb_storage.
+		Thanks to Martin Owens for not letting this issue go. :-)
 2007/11/09
 	- added modprobe/blacklist-berry_charge as per Simon Ruggier's
 		suggestion.  Thanks also to Niels de Vos for a similar

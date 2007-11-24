@@ -277,6 +277,21 @@ void Device::BulkDrain(int ep)
 	catch( Usb::Error & ) {}
 }
 
+//
+// GetConfiguration
+//
+/// Uses the GET_CONFIGURATION control message to determine the currently
+/// selected USB configuration, returning it in the cfg argument.
+/// If unsuccessful, returns false.
+///
+bool Device::GetConfiguration(unsigned char &cfg)
+{
+	int result = usb_control_msg(m_handle, 0x80, USB_REQ_GET_CONFIGURATION, 0, 0,
+		(char*) &cfg, 1, m_timeout);
+	m_lasterror = result;
+	return result >= 0;
+}
+
 
 
 ///////////////////////////////////////////////////////////////////////////////

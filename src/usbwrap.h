@@ -124,6 +124,12 @@ public:
 	bool InterruptWrite(int ep, const Barry::Data &data, int timeout = -1);
 
 	void BulkDrain(int ep);
+
+
+	/////////////////////////////
+	// Combo functions
+
+	bool GetConfiguration(unsigned char &cfg);
 };
 
 class Interface

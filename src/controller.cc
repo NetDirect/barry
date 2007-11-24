@@ -57,9 +57,16 @@ Controller::Controller(const ProbeResult &device)
 	m_modeSocket(0),
 	m_halfOpen(false)
 {
-	if( !m_dev.SetConfiguration(BLACKBERRY_CONFIGURATION) )
+	unsigned char cfg;
+	if( !m_dev.GetConfiguration(cfg) )
 		throw Usb::Error(m_dev.GetLastError(),
-			"Controller: SetConfiguration failed");
+			"Controller: GetConfiguration failed");
+
+	if( cfg != BLACKBERRY_CONFIGURATION ) {
+		if( !m_dev.SetConfiguration(BLACKBERRY_CONFIGURATION) )
+			throw Usb::Error(m_dev.GetLastError(),
+				"Controller: SetConfiguration failed");
+	}
 
 	m_iface = new Usb::Interface(m_dev, device.m_interface);
 }
