@@ -160,6 +160,7 @@ bool process(struct usb_device *dev, bool is_pearl)
 		// the Blackberry Pearl doesn't reset itself after the above,
 		// so do it ourselves
 		if( is_pearl || force_dual ) {
+			sleep(1);
 			if( usb_reset(handle) < 0 ) {
 				printf("\nusb_reset failed: %s\n", usb_strerror());
 			}

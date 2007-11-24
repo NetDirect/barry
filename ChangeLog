@@ -7,6 +7,14 @@ Release: version 0.10 - 2007/10/12
 		to call it if unnecessary.  This allows us to run
 		at the same time as usb_storage.
 		Thanks to Martin Owens for not letting this issue go. :-)
+	- added sleep to bcharge, before calling usb_reset()... the
+		Blackberry 8830 behaves like a Pearl device in that
+		it has mass storage support, but behaves like a Classic
+		in that it resets itself... the usb_reset() seems
+		to reset it back to 0006.  The sleep allows the device
+		to disappear via its own reset, and let usb_reset()
+		fail naturally on these devices.
+		This is not an ideal solution... mainly for testing.
 2007/11/09
 	- added modprobe/blacklist-berry_charge as per Simon Ruggier's
 		suggestion.  Thanks also to Niels de Vos for a similar
