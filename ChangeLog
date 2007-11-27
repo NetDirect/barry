@@ -1,5 +1,9 @@
 Release: version 0.10 - 2007/10/12
 ------------------------------------------------------------------------------
+2007/11/27
+	- added ClearHalt() calls to probe and controller classes, just
+		before any communication happens... the 8830 seems
+		to need this
 2007/11/23
 	- added usbwrap.cc:GetConfiguration()
 	- added code to check whether the configuration is the one

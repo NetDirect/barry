@@ -201,6 +201,9 @@ void Probe::ProbeDevice(Usb::DeviceIDType devid)
 
 			Interface iface(dev, InterfaceNumber);
 
+			dev.ClearHalt(ep.read);
+			dev.ClearHalt(ep.write);
+
 			Data data;
 			dev.BulkDrain(ep.read);
 			if( !Intro(0, ep, dev, data) ) {
