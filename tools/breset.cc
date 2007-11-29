@@ -40,14 +40,15 @@
 #define BLACKBERRY_INTERFACE		0
 #define BLACKBERRY_CONFIGURATION	1
 
-void reset(struct usb_device *dev)
+bool reset(struct usb_device *dev)
 {
 	usb_dev_handle *handle = usb_open(dev);
 	if( !handle )
-		return;
+		return false;
 
-	usb_reset(handle);
+	bool ret = usb_reset(handle) < 0;
 	usb_close(handle);
+	return ret;
 }
 
 int main()
@@ -74,8 +75,10 @@ int main()
 			     dev->descriptor.idProduct == PRODUCT_RIM_PEARL_DUAL ) ) {
 			    	printf("Found...");
 				printf("attempting to reset.\n");
-				reset(dev);
-				found++;
+				if( reset(dev) )
+					found++;
+				else
+					printf("Can't reset device on bus %s, devnum %u\n", bus->dirname, (unsigned int) dev->devnum);
 			}
 		}
 	}
