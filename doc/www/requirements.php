@@ -13,16 +13,14 @@ program every time you plug in your Blackberry.</p>
 
 <p>Recent kernels have a module called berry_charge, which does similar
 things from the kernel level.  These two methods can conflict if both
-run at the same time.  Pick which one works for you, and disable the
-other.</p>
+run at the same time.</p>
 
-<ul>
-	<li>To disable berry_charge, either rename the module under
-		/lib/modules, or recompile your kernel without that
-		module enabled.</li>
-	<li>To disable bcharge, comment out the udev commands in
-		/etc/udev/rules.d/10-blackberry.rules.</li>
-</ul>
+<p>Due to this conflict, the binary packages are setup to install
+a blacklist file under /etc/modprobe.d, which will disable berry_charge
+as long as you have the barry-util package installed.</p>
+
+<p>If you are not using the binary packages, you can use the sample
+blacklist file that comes with the source tarball.</p>
 
 
 
@@ -30,7 +28,7 @@ other.</p>
 <div class="subHeader">Power and the Kernel</div>
 
 <p>Recent kernels also have the ability to put the USB bus and its devices
-into suspend mode.  Kernels included in the latest Ubuntu 7.04 and
+into suspend mode.  Kernels included in Ubuntu 7.04 and
 Fedora 7 have this turned on by default.</p>
 
 <p>When bcharge runs, it successfully changes the Blackberry to use 500mA

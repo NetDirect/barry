@@ -24,7 +24,6 @@ downloads <a href="http://sourceforge.net/project/showfiles.php?group_id=153722"
 requirements:</p>
 
 <ul>
-	<li>A kernel with the berry_charge module disabled</li>
 	<li>If you are running a Fedora system, make sure you have the
 		ConsoleKit package installed.  This will allow you to
 		access the Blackberry without root privileges.</li>
