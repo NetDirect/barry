@@ -10,6 +10,15 @@ Release: version 0.10 - 2007/10/12
 		possible to run bcharge, moving from 0006 to 0004
 		to 0001 and back to 0004, all *while* usb_storage
 		is loaded!
+	- changed Probe class behaviour so that it will not throw an
+		exception on Device Busy (-EBUSY) but instead
+		log the error in an internal array and keep going.
+		This makes it possible to use btool and barrybackup
+		with two devices plugged in at the same time.
+		BACKWARD COMPATIBILITY NOTE: this changes initializaion
+			behaviour, but in practice, it should only
+			make applications look more capable, not less.
+	- updated btool to show errors logged by Probe
 2007/11/27
 	- added ClearHalt() calls to probe and controller classes, just
 		before any communication happens... the 8830 seems

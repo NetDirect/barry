@@ -542,6 +542,20 @@ int main(int argc, char *argv[])
 		// available device list here as well
 		Barry::Probe probe;
 		int activeDevice = -1;
+
+		// show any errors during probe first
+		if( probe.GetFailCount() ) {
+			if( ldif_contacts )
+				cout << "# ";
+			cout << "Blackberry device errors with errors during probe:" << endl;
+			for( int i = 0; i < probe.GetFailCount(); i++ ) {
+				if( ldif_contacts )
+					cout << "# ";
+				cout << probe.GetFailMsg(i) << endl;
+			}
+		}
+
+		// show all successfully found devices
 		if( ldif_contacts )
 			cout << "# ";
 		cout << "Blackberry devices found:" << endl;

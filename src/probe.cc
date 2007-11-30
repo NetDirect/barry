@@ -32,6 +32,7 @@
 #include "record-internal.h"
 #include "strnlen.h"
 #include <iomanip>
+#include <errno.h>
 
 using namespace Usb;
 
@@ -115,25 +116,38 @@ bool Probe::ParseDesc(const Data &data, ProbeResult &result)
 }
 
 Probe::Probe()
+	: m_fail_count(0)
+{
+
+	// Search for standard product ID first
+	ProbeMatching(VENDOR_RIM, PRODUCT_RIM_BLACKBERRY);
+
+	// Search for Pearl devices second
+	//
+	// productID 6 devices (PRODUCT_RIM_PEARL) do not expose
+	// the USB class 255 interface we need, but only the
+	// Mass Storage one.  Here we search for PRODUCT_RIM_PEARL_DUAL,
+	// (ID 4) which has both enabled.
+	ProbeMatching(VENDOR_RIM, PRODUCT_RIM_PEARL_DUAL);
+}
+
+void Probe::ProbeMatching(int vendor, int product)
 {
 	Usb::DeviceIDType devid;
 
-	// Search for standard product ID first
-	{
-		Match match(VENDOR_RIM, PRODUCT_RIM_BLACKBERRY);
-		while( match.next_device(&devid) )
-			ProbeDevice(devid);
+	Match match(vendor, product);
+	while( match.next_device(&devid) ) try {
+		ProbeDevice(devid);
 	}
-
-	// Search for Pearl devices second
-	{
-		// productID 6 devices (PRODUCT_RIM_PEARL) do not expose
-		// the USB class 255 interface we need, but only the
-		// Mass Storage one.  Here we search for PRODUCT_RIM_PEARL_DUAL,
-		// (ID 4) which has both enabled.
-		Match match(VENDOR_RIM, PRODUCT_RIM_PEARL_DUAL);
-		while( match.next_device(&devid) )
-			ProbeDevice(devid);
+	catch( Usb::Error &e ) {
+		dout("Usb::Error exception caught: " << e.what());
+		if( e.libusb_errcode() == -EBUSY ) {
+			m_fail_count++;
+			m_fail_msgs.push_back(e.what());
+		}
+		else {
+			throw;
+		}
 	}
 }
 
