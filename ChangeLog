@@ -1,5 +1,15 @@
 Release: version 0.10 - 2007/10/12
 ------------------------------------------------------------------------------
+2007/11/29
+	- added better error checking to breset
+	- commented the sleep() for the 8830
+	- added code to handle the race condition where usb_storage
+		claims the device before bcharge arrives on the scene,
+		by asking the kernel to detach the driver from
+		the Mass Storage interface... this change makes it
+		possible to run bcharge, moving from 0006 to 0004
+		to 0001 and back to 0004, all *while* usb_storage
+		is loaded!
 2007/11/27
 	- added ClearHalt() calls to probe and controller classes, just
 		before any communication happens... the 8830 seems
