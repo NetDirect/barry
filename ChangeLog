@@ -1,6 +1,8 @@
 Release: version 0.10 - 2007/10/12
 ------------------------------------------------------------------------------
 2007/11/30
+	- added support to the usbwrap Match class to limit its
+		search by busname / devname
 	- added support to the Probe class to limit its search for
 		Blackberry devices to a given bus or device name
 	- added command line options to btool for the above Probe
