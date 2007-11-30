@@ -19,6 +19,7 @@ Release: version 0.10 - 2007/10/12
 			behaviour, but in practice, it should only
 			make applications look more capable, not less.
 	- updated btool to show errors logged by Probe
+	- added message to specify which PIN device is being used by btool
 2007/11/27
 	- added ClearHalt() calls to probe and controller classes, just
 		before any communication happens... the 8830 seems

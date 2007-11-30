@@ -587,6 +587,11 @@ int main(int argc, char *argv[])
 			}
 		}
 
+		if( ldif_contacts )
+			cout << "# ";
+		cout << "Using device (PIN): " << setbase(16)
+			<< probe.Get(activeDevice).m_pin << endl;
+
 		if( reset_device ) {
 			Usb::Device dev(probe.Get(activeDevice).m_dev);
 			dev.Reset();
