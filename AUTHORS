@@ -33,6 +33,9 @@ Contributors (code and otherwise) in alphabetical order by last name:
 		- autoconf patches
 	Alan Miller <Alan.Miller@synopsys.com>
 		- usb captures on Windows XP for password authentication
+	Martin Owens <doctormo@gmail.com>
+		- integration with HAL, udev, opensync, and Conduit
+		- low level USB testing
 	Simon Ruggier <simon80@gmail.com>
 		- autoconf / build system patch
 		- modprobe advice for bcharge/berry_charge conflict
