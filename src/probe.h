@@ -54,11 +54,12 @@ class Probe
 	bool ParseDesc(const Data &data, ProbeResult &result);
 
 protected:
-	void ProbeMatching(int vendor, int product);
+	void ProbeMatching(int vendor, int product,
+		const char *busname, const char *devname);
 	void ProbeDevice(Usb::DeviceIDType devid);
 
 public:
-	Probe();
+	Probe(const char *busname = 0, const char *devname = 0);
 
 	int GetCount() const { return m_results.size(); }
 	int GetFailCount() const { return m_fail_count; }

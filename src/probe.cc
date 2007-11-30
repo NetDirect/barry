@@ -33,6 +33,7 @@
 #include "strnlen.h"
 #include <iomanip>
 #include <errno.h>
+#include <string.h>
 
 using namespace Usb;
 
@@ -115,12 +116,17 @@ bool Probe::ParseDesc(const Data &data, ProbeResult &result)
 	return true;
 }
 
-Probe::Probe()
+Probe::Probe(const char *busname, const char *devname)
 	: m_fail_count(0)
 {
+	// let the programmer pass in "" as well as 0
+	if( !strlen(busname) )
+		busname = 0;
+	if( !strlen(devname) )
+		devname = 0;
 
 	// Search for standard product ID first
-	ProbeMatching(VENDOR_RIM, PRODUCT_RIM_BLACKBERRY);
+	ProbeMatching(VENDOR_RIM, PRODUCT_RIM_BLACKBERRY, busname, devname);
 
 	// Search for Pearl devices second
 	//
@@ -128,14 +134,15 @@ Probe::Probe()
 	// the USB class 255 interface we need, but only the
 	// Mass Storage one.  Here we search for PRODUCT_RIM_PEARL_DUAL,
 	// (ID 4) which has both enabled.
-	ProbeMatching(VENDOR_RIM, PRODUCT_RIM_PEARL_DUAL);
+	ProbeMatching(VENDOR_RIM, PRODUCT_RIM_PEARL_DUAL, busname, devname);
 }
 
-void Probe::ProbeMatching(int vendor, int product)
+void Probe::ProbeMatching(int vendor, int product,
+			const char *busname, const char *devname)
 {
 	Usb::DeviceIDType devid;
 
-	Match match(vendor, product);
+	Match match(vendor, product, busname, devname);
 	while( match.next_device(&devid) ) try {
 		ProbeDevice(devid);
 	}

@@ -74,8 +74,14 @@ private:
 	struct usb_device *m_dev;
 	int m_vendor, m_product;
 	int m_lasterror;
+	const char *m_busname;
+	const char *m_devname;
+protected:
+	static bool ToNum(const char *str, long &num);
+	static bool NameCompare(const char *n1, const char *n2);
 public:
-	Match(int vendor, int product);
+	Match(int vendor, int product,
+		const char *busname = 0, const char *devname = 0);
 	~Match();
 
 	// searches for next match, and if found, fills devid with

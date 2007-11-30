@@ -49,6 +49,9 @@ void Usage()
 #endif
    << " Boost support\n"
    << "\n"
+   << "   -B bus    Specify which USB bus to search on\n"
+   << "   -N dev    Specify which system device, using system specific string\n"
+   << "\n"
    << "   -c dn     Convert address book database to LDIF format, using the\n"
    << "             specified baseDN\n"
    << "   -C dnattr LDIF attribute name to use when building the FQDN\n"
@@ -411,18 +414,24 @@ int main(int argc, char *argv[])
 		string ldifBaseDN, ldifDnAttr;
 		string filename;
 		string password;
+		string busname;
+		string devname;
 		vector<string> dbNames, saveDbNames, mapCommands;
 		vector<StateTableCommand> stCommands;
 		Usb::EndpointPair epOverride;
 
 		// process command line options
 		for(;;) {
-			int cmd = getopt(argc, argv, "c:C:d:D:e:f:hlLm:Mp:P:r:R:Ss:tT:vX");
+			int cmd = getopt(argc, argv, "B:c:C:d:D:e:f:hlLm:MN:p:P:r:R:Ss:tT:vX");
 			if( cmd == -1 )
 				break;
 
 			switch( cmd )
 			{
+			case 'B':	// busname
+				busname = optarg;
+				break;
+
 			case 'c':	// contacts to ldap ldif
 				ldif_contacts = true;
 				ldifBaseDN = optarg;
@@ -472,6 +481,10 @@ int main(int argc, char *argv[])
 
 			case 'M':	// List LDIF map
 				list_ldif_map = true;
+				break;
+
+			case 'N':	// Devname
+				devname = optarg;
 				break;
 
 			case 'p':	// Blackberry PIN
@@ -540,7 +553,7 @@ int main(int argc, char *argv[])
 		// Probe the USB bus for Blackberry devices and display.
 		// If user has specified a PIN, search for it in the
 		// available device list here as well
-		Barry::Probe probe;
+		Barry::Probe probe(busname.c_str(), devname.c_str());
 		int activeDevice = -1;
 
 		// show any errors during probe first
