@@ -10,6 +10,7 @@ Release: version 0.10 - 2007/10/12
 	- updated the www docs with regard to the new usb_storage
 		behaviour and the new blacklist files... less
 		concern about berry_charge and usb_storage conflicts
+	- added bidentify tool and accompanying man page
 2007/11/29
 	- added better error checking to breset
 	- commented the sleep() for the 8830

@@ -5,7 +5,7 @@ INCLUDES = $(LIBUSB_CFLAGS)
 #AM_CXXFLAGS = -ansi -Wall -fno-strict-aliasing -g
 AM_CXXFLAGS = -ansi -Wall -g
 
-bin_PROGRAMS = btool upldif btranslate bktrans
+bin_PROGRAMS = btool bidentify upldif btranslate bktrans
 sbin_PROGRAMS = bcharge breset pppob
 
 btool_SOURCES = btool.cc
@@ -18,6 +18,9 @@ btool_LDFLAGS = -L@BOOST_LIB_PATH@
 btool_LDADD += -lboost_serialization
 #LDBOOST = ../../../../boost/rootdir/lib/libboost_serialization-gcc-mt-1_33_1.a
 endif
+
+bidentify_SOURCES = bidentify.cc
+bidentify_LDADD = ../src/libbarry.la $(LIBUSB_LIBS)
 
 upldif_SOURCES = upldif.cc
 upldif_LDADD = ../src/libbarry.la $(LIBUSB_LIBS)
