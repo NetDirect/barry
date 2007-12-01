@@ -30,6 +30,9 @@ if [ -z "$1" -o -z "$2" ] ; then
 	exit 1
 fi
 
+# give user time to see the CVS info
+sleep 3s
+
 DIRNAME="barry-$1.$2"
 TAGNAME="barry-$1_$2"
 
