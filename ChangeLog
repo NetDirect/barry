@@ -11,6 +11,8 @@ Release: version 0.10 - 2007/11/30
 		behaviour and the new blacklist files... less
 		concern about berry_charge and usb_storage conflicts
 	- added bidentify tool and accompanying man page
+	- fixed bug in rpm maintenance script that used the wrong
+		spec file for opensuse
 2007/11/29
 	- added better error checking to breset
 	- commented the sleep() for the 8830
