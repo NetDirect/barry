@@ -1,5 +1,7 @@
 Release: version 0.11 - 2007/12/??
 ------------------------------------------------------------------------------
+2007/12/01
+	- fixed null pointer bug in Probe class (bug #1842407)
 2007/11/30
 	- version bump:
 		- configure.ac

@@ -120,9 +120,9 @@ Probe::Probe(const char *busname, const char *devname)
 	: m_fail_count(0)
 {
 	// let the programmer pass in "" as well as 0
-	if( !strlen(busname) )
+	if( busname && !strlen(busname) )
 		busname = 0;
-	if( !strlen(devname) )
+	if( devname && !strlen(devname) )
 		devname = 0;
 
 	// Search for standard product ID first
