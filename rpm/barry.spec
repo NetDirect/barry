@@ -215,6 +215,9 @@ cd ../
 /sbin/ldconfig
 
 %changelog
+* Fri Nov 30 2007 Chris Frey <cdfrey@foursquare.net> 0.11-1
+- version bump
+
 * Fri Nov 30 2007 Chris Frey <cdfrey@foursquare.net> 0.10-1
 - version bump
 - removed ktrans and translate from rpm package

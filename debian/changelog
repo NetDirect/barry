@@ -1,3 +1,9 @@
+barry (0.11-1) unstable; urgency=low
+
+   * version bump
+
+ -- Chris Frey <cdfrey@foursquare.net>  Fri, 30 Nov 2007 22:35:11 -0500
+
 barry (0.10-1) unstable; urgency=low
 
    * renamed ktrans and translate to bktrans and btranslate
