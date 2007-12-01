@@ -47,6 +47,20 @@ Dump verbose protocol data during operation.
 .B \-h, \-\-help
 Show summary of options.
 
+
+.SH RETURN STATUS
+If
+.B bidentify
+detects a BlackBerry device, but cannot access it for some reason, it
+will write an error message to stderr describing the access problem,
+and return a count of the number of such failed devices as the error code.
+A return code of 0 means there were no BlackBerry devices found that
+could not be probed.
+
+In the event of a fatal error, the message will be written to stderr,
+with an error code of 1.
+
+
 .SH AUTHOR
 .nh
 .B bidentify 
