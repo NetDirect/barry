@@ -215,48 +215,48 @@ public:
 auto_ptr<Parser> GetParser(const string &name, const string &filename)
 {
 	// check for recognized database names
-	if( name == "Address Book" ) {
+	if( name == Contact::GetDBName() ) {
 		return auto_ptr<Parser>(
 			new RecordParser<Contact, Store<Contact> > (
 				new Store<Contact>(filename, false)));
 	}
-	else if( name == "Messages" ) {
+	else if( name == Message::GetDBName() ) {
 		return auto_ptr<Parser>(
 			new RecordParser<Message, Store<Message> > (
 				new Store<Message>(filename, false)));
 	}
-	else if( name == "Calendar" ) {
+	else if( name == Calendar::GetDBName() ) {
 		return auto_ptr<Parser>(
 			new RecordParser<Calendar, Store<Calendar> > (
 				new Store<Calendar>(filename, false)));
 	}
-	else if( name == "Service Book" ) {
+	else if( name == ServiceBook::GetDBName() ) {
 		return auto_ptr<Parser>(
 			new RecordParser<ServiceBook, Store<ServiceBook> > (
 				new Store<ServiceBook>(filename, false)));
 	}
 
-	else if( name == "Memos" ) {
+	else if( name == Memo::GetDBName() ) {
 		return auto_ptr<Parser>(
 			new RecordParser<Memo, Store<Memo> > (
 				new Store<Memo>(filename, false)));
 	}
-	else if( name == "Tasks" ) {
+	else if( name == Task::GetDBName() ) {
 		return auto_ptr<Parser>(
 			new RecordParser<Task, Store<Task> > (
 				new Store<Task>(filename, false)));
 	}
-	else if( name == "PIN Messages" ) {
+	else if( name == PINMessage::GetDBName() ) {
 		return auto_ptr<Parser>(
 			new RecordParser<PINMessage, Store<PINMessage> > (
 				new Store<PINMessage>(filename, false)));
 	}
-	else if( name == "Saved Email Messages" ) {
+	else if( name == SavedMessage::GetDBName() ) {
 		return auto_ptr<Parser>(
 			new RecordParser<SavedMessage, Store<SavedMessage> > (
 				new Store<SavedMessage>(filename, false)));
 	}
-	else if( name == "Folders" ) {
+	else if( name == Folder::GetDBName() ) {
 		return auto_ptr<Parser>(
 			new RecordParser<Folder, Store<Folder> > (
 				new Store<Folder>(filename, false)));
@@ -270,7 +270,7 @@ auto_ptr<Parser> GetParser(const string &name, const string &filename)
 auto_ptr<Builder> GetBuilder(const string &name, const string &filename)
 {
 	// check for recognized database names
-	if( name == "Address Book" ) {
+	if( name == Contact::GetDBName() ) {
 		return auto_ptr<Builder>(
 			new RecordBuilder<Contact, Store<Contact> > (
 				new Store<Contact>(filename, true)));
