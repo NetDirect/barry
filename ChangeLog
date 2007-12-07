@@ -3,6 +3,15 @@ Release: version 0.12 - 2007/12/??
 2007/12/07
 	- changed hard coded databases names in btool to calls to
 		<recordclass>::GetDBName()
+	- version bump:
+		- configure.ac
+		- src/Makefile.am
+		- src/version.cc
+		- gui/src/BackupWindow.cc
+		- src/Doxygen
+		- rpm/barry.spec
+		- debian/changelog
+		- opensync-plugin/src/barry_sync.cc
 
 Release: version 0.11 - 2007/12/01
 ------------------------------------------------------------------------------
