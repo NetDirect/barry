@@ -12,6 +12,7 @@ Release: version 0.12 - 2007/12/??
 		- rpm/barry.spec
 		- debian/changelog
 		- opensync-plugin/src/barry_sync.cc
+	- updated TODO
 
 Release: version 0.11 - 2007/12/01
 ------------------------------------------------------------------------------

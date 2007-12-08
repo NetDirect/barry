@@ -1,108 +1,312 @@
-Barry roadmap, in dazzling ASCII:
-		- = not done
-		+ = done
-		x = not needed
+This file contains features that need work.  If you wish to tackle
+any of them, please post a quick message to the mailing list of your
+intentions, in order to avoid duplication of effort.
 
-- Milestone 1:
-	+ autoconf the project
-	+ handle USB interface numbers dynamically
-	+ handle USB configuration numbers dynamically
-	+ handle USB endpoint numbers dynamically (appears to use the
-		endpoint numbers in ascending order: 1 read, 1 write)
-	- make the old/new DBDB commands dynamic
-	+ flesh out LDIF support (should read/import them as well)
-	- reverse engineer email header data
-	- use SWIG to make the API available in Python
+If you would like help or more information on any of these items,
+please ask on the mailing list as well.
 
-- Milestone 2
-	- reliable command line backup and restore of:
-		+ Contacts / Address Book
-		+ Calendar
-		- Email
-
-- Milestone 3
-	- reliable command line backup and restore of:
-		- Content Store
-		- AutoText
-		- Trusted Key Store
-		- Service Book
-		- Handheld Configuration
-		- Handheld Agent
-		- Default Service Selector
-		- Handheld Key Store
-		- Firewall Options
-		- KeyStoreManager
-		- Policy
-		- Device Options
-		- Options
-		- Key Store Options
-		- RMS Databases
-		- TLS Options
-		- Random Pool
-		- WTLS Options
-		- MemoPad Options
-		- Memos
-		- Browser Bookmarks
-		- Browser Messages
-		- Browser Data Cache
-		- Browser Channels
-		- Browser Folders
-		- Browser Options
-		- WAP Push Messages
-		- Browser Urls
-		- Calendar Options
-		- Alarm Options
-		- Profiles Options
-		- Profiles
-		- Categories
-		- Message List Options
-		- SMS Messages
-		- Phone Options
-		- Searches
-		- Ribbon Bar Positions
-		- Tasks Options
-		- Folder Id
-		- Folders
-		- Purged Messages
-		- Recipient Cache
-		- Tasks
-		- Address Book Options
-		- Phone Call Logs
-		- Phone Hotlist
-		- Attachment Options
-		- Attachment Data
-		- Browser Push Options
-		- Help Options
-		- Quick Contacts
-
-+ Milestone 3.5
-	+ GUI backup / restore
-
-- Milestone 4
-	- reliable command line backup and restore of Java program modules
-
-- Milestone 5
-	- design and implement sync functionality (must support data from
-		any external data source)
-	- command line sync tool
-
-- Milestone 6
-	- GUI sync tool
-
-- Milestone 7
-	- Evolution sync
-
-- Milestone 8
-	- Mozilla sync
-
-- Milestone 9
-	- LDAP sync
-
--------------------------------------------------------------------------------
+- Chris
+<cdfrey@foursquare.net>
+December 2007
 
 
-Misc Todo Items:
-----------------
+
+Porting opensync plugin to opensync 0.40
+----------------------------------------
+There's two options to this item:
+
+	- simple way
+	- proper way
+
+The difference between opensync 0.22 and 0.40 involves some API changes.
+You should be able to note the changes in the example plugin code once
+0.40 is released.
+
+The simple way involves merely updating Barry's opensync plugin to match
+the new API.  This shouldn't be too difficult, but you may run across
+some small surprises.
+
+The proper way involves:
+
+	- switching from the vcard/vevent formats to the opensync XML
+		formats
+	- switching from storing state information in text files to
+		storing it in the built in database (optional)
+	- making use of the new opensync time APIs to properly support
+		timezones for all time operations
+
+Switching away from text based vcard and vevent formats will remove
+the burden of raw data parsing and formatting from the plugin itself,
+and make use of the more tested opensync library.  Any bugs fixed
+in opensync's parsers will automatically fix bugs in the Barry plugin.
+
+Switching state storage formats may allow for greater flexibility
+in supporting multiple devices.  This needs more research, but it
+is the "way things are done" in opensync, and likely worth moving
+in that direction.
+
+Support for timezones will likely stress the opensync API as well as
+the Barry API, but definitely needs to be done for completeness on both
+sides of the equation.
+
+Estimated time:   simple way: 10 hours if lucky
+                  proper way: open ended
+
+
+
+Reverse engineer the new TimeZones database
+-------------------------------------------
+This is a relatively light but important project for those that want to
+get their feet wet.
+
+In relation to the above opensync porting, the new TimeZones database
+found in devices such as the BlackBerry 8830, will need to be reverse
+engineered in order to fully support timezone conversions.
+
+I have sample data of these databases in hex dump format for anyone
+who wishes to take a stab at it.  If you have a newer device,
+you can retrieve this data yourself using:
+
+	btool -d "Time Zones"
+
+Estimated tasks:
+	- reverse engineer the record
+	- write and test the parser
+	- no builder needed, as it is a read-only database
+Estimated time: 4 hours
+
+
+
+Reverse engineering java loader protocol
+----------------------------------------
+This has not been done by any opensource Blackberry project out there,
+to my knowledge, and would be most useful to Blackberry application
+developers.
+
+If you are a Blackberry app developer, this may interest you.
+
+Estimated time: open ended
+
+
+
+Adding GPRS / CDMA modem support
+--------------------------------
+Barry has had plans to include modem support for a few months now, but
+it has not yet percolated to the surface.
+
+The primary source for modem protocol specifics is the XmBlackBerry
+project (http://sourceforge.net/projects/XmBlackBerry).  Barry's
+goal is to create a standalone pppob utility that can be configured
+with pppd similarly to pppoe.
+
+The tricky part of modem support is that it requires threading support,
+especially if you intend to use the database at the same time.
+This leads to some architectural challenges that need to be dealt with:
+
+	As Barry is not a single application, how do you access the
+	database while pppob is using the modem?
+
+There are two viable ways of dealing with this.  One involves placing
+a (hopefully thin) driver in the kernel, and the other involves using
+a daemon and RPC calls.
+
+My preference is to implement this using RPC calls if needed, and hammer
+out all the implementation details in user space.  Once they are well
+understood, a smaller kernel driver hook may be more easily written
+that supports routing messages according to socket or application
+needs.  For example, one application may register an interest in
+database messages, another in javaloader messages, and another in the
+multiple modem socket messages.
+
+There is currently a development branch in CVS that intends to support
+optional threading support in the Barry library, so that at least
+it should be possible to use both the database and the modem in the
+same application.
+
+Estimated tasks (assuming threading support is finished):
+	- copy protocol specifics from XmBlackBerry
+	- add Serial class for controller interface
+	- write and test pppob
+	- write pppob manpage
+Estimated time: 8 hours
+
+
+
+Finish the threaded architecture changes in CVS branch
+------------------------------------------------------
+For the reasons outlined above, for modem support, this CVS branch
+needs to be finished.  For more information, contact the mailing list.
+
+Estimated tasks:
+	- write SocketRouting code
+	- refactor the controller class into RAII behaving
+		mode classes, such as Desktop, Serial, and
+		Javaloader, that operate on top of Controller
+	- testing threaded and non-threaded behaviour
+	- testing performance impact
+Estimated time: 20 hours
+
+
+
+Add bluetooth serial support
+----------------------------
+It is reported that it is possible to access the database through
+Bluetooth using the older Blackberry serial protocol.  XmBlackBerry
+has support for this and may be used as a reference.
+
+The goal here would be to hide the bluetooth access behind the
+same Barry library API, so that syncing with the opensync plugin
+would be seamless whether plugged in via USB or Bluetooth.
+
+Estimated tasks:
+	- research and design serial protocol stack to reuse as much
+		library code as possible
+Estimated time: unknown
+
+
+
+Write simple GUI for streamlining sync setup and action
+-------------------------------------------------------
+Syncing setup and operation is currently a tedious, complicated task.
+A GUI that performed all the detailed setup and configuration work,
+for a Blackberry-specific sync, using opensync libraries and plugins
+for Evolution, Sunbird, etc, would be very helpful.
+
+This would be much easier for an experienced GUI programmer, but there is
+a learning curve for the opensync API.
+
+Estimated tasks:
+	- document the settings required for Blackberry, and
+		all intended plugins required
+	- write application that:
+		- does the opensync configuration through the opensync
+			API directly
+		- scans the USB bus for available Blackberry devices using
+			Barry
+		- lives in the system tray watching for Blackberry devices
+	- if aiming for super ease of use, script a source build of
+		all needed opensync components and install in private
+		area to avoid conflict with system
+Estimated time: unknown
+Note: Depending how fast HAL, OpenSync, and Conduit are implemented,
+	this may never be needed... but if it existed today, there's a
+	lot of users who would be very happy...
+
+
+
+Document the USB protocol
+-------------------------
+Currently the only english documentation for the Blackberry protocol
+is the webpage by the Cassis project (found at
+http://off.net/cassis/protocol-description.html).
+
+The USB protocol is not nearly so well documented.  The best documentation
+available can be found in the Barry header files: protocol.h and
+protostructs.h.
+
+Translating the code into documentation (into a wiki, that will hopefully
+soon be available) is a great way to get involved in the project and
+learn a lot about the Blackberry from a low level.
+
+Unfortunately, Jedi mind tricks don't often work when trying to convince
+people to write documentation for me... :-)
+
+Estimated tasks:
+	- write, write, write
+Estimated time: 40 hours (documentation expands to fill available time...)
+
+
+
+Code cleanup
+------------
+Code can always be improved.  There are two big ways to help:
+
+	- write an application using the Barry library
+	- improve the Barry library itself and send patches
+
+By writing an application, you can provide crucial feedback on the ease
+of use of the Barry API.  I'm very eager for such feedback.
+
+Secondly, there is currently a lot of code ducplication in the record
+classes, and a careful refactoring is required.  I would be open to a class
+hierarchy, with possibly private or protected inheritance.  My primary
+concern is object safety when using the record classes as objects in
+STL containers, with a secondary concern to make it easier to
+abstractly work with a record.  This implies a careful mix of
+virtual functions and a generic record base class.  Patches in this
+area will be thoughtfully considered.
+
+Estimated tasks (refactoring):
+	- design safe hierarchy
+	- move common code to base class
+	- make sure all record classes use the common record API
+	- test
+Estimated time: 7 hours
+
+
+
+C API wrapper
+-------------
+For those that write applications in C, a C API wrapper has been started
+in the cbarry.h header.  It has not yet been implemented, but should be
+straightforward.
+
+Estimated tasks:
+	- finish some API design work (head not fully complete)
+	- implement all functions (about 50)
+	- write test application, or test suite, for C API
+Estimated time: unknown
+
+
+
+Python wrappers and example code
+--------------------------------
+For those that write applications in Python, a SWIG wrapper has been
+started by H Miz Jones.  This is partially functional, and involves
+working with the Barry API, and may introduce changes to it depending
+how hard it is to translate things to the Python world.
+
+The SWIG wrapper scripts have not yet been publically released, but
+please contact me if you are interested.
+
+Estimated tasks:
+	- finish C++ / Python integration (possible template issues)
+	- finish SWIG wrapper
+Estimated time: unknown
+
+
+
+Command line backup and restore
+-------------------------------
+The only command line backup currently available is the one in btool,
+using the -f and -s switches.  This does not backup exact data from
+the device, but parses it, stores it in the Boost serialization format,
+and then reverses the process for restore.  This is a great test
+for the Barry library, but not so great for backup, since not all
+databases can be parsed.
+
+There is already an exact backup and restore interface with the GUI, but
+there is a lot of useful functionality trapped in a layer of GUI
+that could be just as useful from the command line.  Tasks such as a nightly
+cron backup of any Blackberry devices attached to the system would be more
+easily done via command line.
+
+You could add command line arguments to the barrybackup program to skip
+the GUI (tricky and possibly error prone), or you could pull the backup
+functionality into a standalone command line utility (more work, but smarter
+in the long run).  This is mostly a code refactoring job, consisting of
+all working code that's already there, and I know there are people
+who would thank you. :-)
+
+Estimated tasks:
+	- split out tar and backup functionality code into shared library
+	- write and test command line tool
+Estimated time: 6 hours
+
+
+
+Misc Low Level Todo Items:
+--------------------------
 - test whether sorting of contact records is required before
 	uploading data to the device... test whether it is ok
 	to upload a GroupLink item in the middle of a contact
