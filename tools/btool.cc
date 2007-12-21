@@ -74,7 +74,7 @@ void Usage()
    << "                Unmap: ldif name alone\n"
    << "   -M        List current LDIF mapping\n"
    << "   -p pin    PIN of device to talk with\n"
-   << "             If only one device plugged in, this flag is optional\n"
+   << "             If only one device is plugged in, this flag is optional\n"
    << "   -P pass   Simplistic method to specify device password\n"
    << "   -s db     Save database 'db' TO device from data loaded from -f file\n"
    << "   -S        Show list of supported database parsers\n"

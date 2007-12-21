@@ -1,5 +1,7 @@
 Release: version 0.12 - 2007/12/??
 ------------------------------------------------------------------------------
+2007/12/21
+	- applied wording correction patch to btool from Matt LaPlante
 2007/12/07
 	- changed hard coded databases names in btool to calls to
 		<recordclass>::GetDBName()
