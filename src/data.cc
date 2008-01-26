@@ -42,9 +42,11 @@ inline bool IsHexData(const std::string &s)
 		if( *str != ' ' )
 			return false;
 
-	for( int i = 0; i < 8 && *str; str++, i++ )
-		if( !isdigit(*str) && !(*str >= 'a' && *str <= 'f') )
+	for( int i = 0; i < 8 && *str; str++, i++ ) {
+		const char *hexchars = "0123456789abcdef";
+		if( strchr(hexchars, *str) == NULL )
 			return false;
+	}
 
 	if( *str != ':' )
 		return false;
@@ -188,10 +190,11 @@ void Data::DumpHexLine(ostream &os, size_t index, size_t size) const
 
 	// printable data
 	if( bPrintAscii ) {
+		locale loc = os.getloc();
 		os << ' ';
 		for( size_t i = 0; i < size && (index+i) < GetSize(); i++ ) {
-			int c = GetData()[index + i];
-			os << setbase(10) << (char) (isprint(c) ? c : '.');
+			ostream::traits_type::char_type c = GetData()[index + i];
+			os << setbase(10) << (char) (isprint(c, loc) ? c : '.');
 		}
 	}
 

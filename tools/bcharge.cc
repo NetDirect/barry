@@ -107,6 +107,52 @@ void pearl_mode(struct usb_dev_handle *handle)
 	}
 }
 
+int find_mass_storage_interface(struct usb_dev_handle *handle)
+{
+	// search the configuration descriptor for a Mass Storage
+	// interface (class 8)
+	struct usb_device *dev = usb_device(handle);
+	struct usb_config_descriptor *cfg = dev ? dev->config : 0;
+
+	if( cfg ) {
+
+		for( unsigned i = 0; cfg->interface && i < cfg->bNumInterfaces; i++ ) {
+			struct usb_interface *iface = &cfg->interface[i];
+			for( int a = 0; iface->altsetting && a < iface->num_altsetting; a++ ) {
+				struct usb_interface_descriptor *id = &iface->altsetting[a];
+				if( id->bInterfaceClass == USB_CLASS_MASS_STORAGE )
+					return id->bInterfaceNumber;
+			}
+		}
+	}
+
+	// if we get here, then we didn't find the Mass Storage interface
+	// ... this should never happen, but if it does, assume
+	// the device is s showing product ID 0006, and the Mass Storage
+	// interface is interface #0
+	printf("Can't find Mass Storage interface, assuming 0.\n");
+	return 0;
+}
+
+void driver_conflict(struct usb_dev_handle *handle)
+{
+	// this is called if the first usb_set_configuration()
+	// failed... this most probably means that usb_storage
+	// has already claimed the Mass Storage interface,
+	// in which case we politely tell it to away.
+
+#if LIBUSB_HAS_DETACH_KERNEL_DRIVER_NP
+	printf("Detecting possible kernel driver conflict, trying to resolve...\n");
+
+	int iface = find_mass_storage_interface(handle);
+	if( usb_detach_kernel_driver_np(handle, iface) < 0 )
+		printf("usb_detach_kernel_driver_np() failed: %s\n", usb_strerror());
+
+	if( usb_set_configuration(handle, BLACKBERRY_CONFIGURATION) < 0 )
+		printf("usb_set_configuration() failed: %s\n", usb_strerror());
+#endif
+}
+
 // returns true if device mode was modified, false otherwise
 bool process(struct usb_device *dev, bool is_pearl)
 {
@@ -153,13 +199,25 @@ bool process(struct usb_device *dev, bool is_pearl)
 
 	// apply changes
 	if( apply ) {
-		// usb_set_configuration may fail here, and that's ok...
-		// likely means the device is in the process of resetting
-		usb_set_configuration(handle, BLACKBERRY_CONFIGURATION);
+		if( usb_set_configuration(handle, BLACKBERRY_CONFIGURATION) < 0 )
+			driver_conflict(handle);
 
 		// the Blackberry Pearl doesn't reset itself after the above,
 		// so do it ourselves
 		if( is_pearl || force_dual ) {
+			//
+			// It has been observed that the 8830 behaves both like
+			// a Pearl device (in that it has mass storage +
+			// database modes) as well as a Classic device in
+			// that it resets itself and doesn't need an explicit
+			// reset call.
+			//
+			// In order to deal with this, we insert a brief sleep.
+			// If it is an 8830, it will reset itself and the
+			// following reset call will fail.  If it is a Pearl,
+			// the reset will work as normal.
+			//
+			sleep(1);
 			if( usb_reset(handle) < 0 ) {
 				printf("\nusb_reset failed: %s\n", usb_strerror());
 			}

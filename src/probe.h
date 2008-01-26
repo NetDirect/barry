@@ -46,17 +46,25 @@ class Probe
 {
 	std::vector<ProbeResult> m_results;
 
+	std::vector<std::string> m_fail_msgs;
+	int m_fail_count;
+
 	bool CheckSize(const Data &data, unsigned int required);
 	bool ParsePIN(const Data &data, ProbeResult &result);
 	bool ParseDesc(const Data &data, ProbeResult &result);
 
 protected:
+	void ProbeMatching(int vendor, int product,
+		const char *busname, const char *devname);
 	void ProbeDevice(Usb::DeviceIDType devid);
 
 public:
-	Probe();
+	Probe(const char *busname = 0, const char *devname = 0);
 
 	int GetCount() const { return m_results.size(); }
+	int GetFailCount() const { return m_fail_count; }
+
+	const std::string& GetFailMsg(int index) const { return m_fail_msgs[index]; }
 	const ProbeResult& Get(int index) const { return m_results[index]; }
 
 	int FindActive(uint32_t pin = 0) const;	// returns -1 if pin not found

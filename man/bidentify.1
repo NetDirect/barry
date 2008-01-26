@@ -1,0 +1,72 @@
+.\"                                      Hey, EMACS: -*- nroff -*-
+.\" First parameter, NAME, should be all caps
+.\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
+.\" other parameters are allowed: see man(7), man(1)
+.TH BIDENTIFY 1 "November 30, 2007"
+.\" Please adjust this date whenever revising the manpage.
+.\"
+.\" Some roff macros, for reference:
+.\" .nh        disable hyphenation
+.\" .hy        enable hyphenation
+.\" .ad l      left justify
+.\" .ad b      justify to both left and right margins
+.\" .nf        disable filling
+.\" .fi        enable filling
+.\" .br        insert line break
+.\" .sp <n>    insert n+1 empty lines
+.\" for manpage-specific macros, see man(7)
+.SH NAME
+.B bidentify
+\- Barry Project's program to identify BlackBerry handhelds
+.SH SYNOPSIS
+.B bidentify 
+[-B busname][-N devname][-h][-v]
+.SH DESCRIPTION
+.PP
+.B bidentify
+scans the USB system for available BlackBerry devices and probes each
+one it finds, then sends the identifying information to stdout in a
+computer-friendly format.
+.SH OPTIONS
+.TP
+.B \-B busname
+Specify the USB bus to search for Blackberry devices on.  This is the
+first number displayed in the output from the lsusb command, such as 002.
+If the busname is numeric on your system, 2 and 002 are equal.  See
+also the \-N option, which can be used together with this option
+to precisely select the device to work with.
+.TP
+.B \-N devname
+Specify the USB device name.  This is the second number displayed in the
+output from the lsusb command, such as 005.  If the device name is numeric
+on your system, 5 and 005 are equal.  See also the \-B option.
+.TP
+.B \-v
+Dump verbose protocol data during operation.
+.TP
+.B \-h, \-\-help
+Show summary of options.
+
+
+.SH RETURN STATUS
+If
+.B bidentify
+detects a BlackBerry device, but cannot access it for some reason, it
+will write an error message to stderr describing the access problem,
+and return a count of the number of such failed devices as the error code.
+A return code of 0 means there were no BlackBerry devices found that
+could not be probed.
+
+In the event of a fatal error, the message will be written to stderr,
+with an error code of 1.
+
+
+.SH AUTHOR
+.nh
+.B bidentify 
+is part of the Barry project.
+This manual page was written by Chris Frey.
+.SH SEE ALSO
+.PP
+http://www.netdirect.ca/software/packages/barry/index.php
+

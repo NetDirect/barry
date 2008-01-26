@@ -25,7 +25,7 @@ See the code for more detailed information.</p>
 <p>The USB captures were performed on a Windows XP Pro system running UsbSnoop
 from <a href="http://benoit.papillault.free.fr/usbsnoop/index.php">http://benoit.papillault.free.fr/usbsnoop/index.php</a></p>
 
-<p>You can use the convo.awk and translate.cc tools to turn these very verbose
+<p>You can use the convo.awk and btranslate.cc tools to turn these very verbose
 logs into something more manageable.  Other than the normal USB control
 commands at the beginning of each conversation, it was found that only
 USB Bulk Transfers were used.</p>

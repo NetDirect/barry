@@ -32,6 +32,8 @@
 #include "record-internal.h"
 #include "strnlen.h"
 #include <iomanip>
+#include <errno.h>
+#include <string.h>
 
 using namespace Usb;
 
@@ -114,26 +116,45 @@ bool Probe::ParseDesc(const Data &data, ProbeResult &result)
 	return true;
 }
 
-Probe::Probe()
+Probe::Probe(const char *busname, const char *devname)
+	: m_fail_count(0)
+{
+	// let the programmer pass in "" as well as 0
+	if( busname && !strlen(busname) )
+		busname = 0;
+	if( devname && !strlen(devname) )
+		devname = 0;
+
+	// Search for standard product ID first
+	ProbeMatching(VENDOR_RIM, PRODUCT_RIM_BLACKBERRY, busname, devname);
+
+	// Search for Pearl devices second
+	//
+	// productID 6 devices (PRODUCT_RIM_PEARL) do not expose
+	// the USB class 255 interface we need, but only the
+	// Mass Storage one.  Here we search for PRODUCT_RIM_PEARL_DUAL,
+	// (ID 4) which has both enabled.
+	ProbeMatching(VENDOR_RIM, PRODUCT_RIM_PEARL_DUAL, busname, devname);
+}
+
+void Probe::ProbeMatching(int vendor, int product,
+			const char *busname, const char *devname)
 {
 	Usb::DeviceIDType devid;
 
-	// Search for standard product ID first
-	{
-		Match match(VENDOR_RIM, PRODUCT_RIM_BLACKBERRY);
-		while( match.next_device(&devid) )
-			ProbeDevice(devid);
+	Match match(vendor, product, busname, devname);
+	while( match.next_device(&devid) ) try {
+		ProbeDevice(devid);
 	}
-
-	// Search for Pearl devices second
-	{
-		// productID 6 devices (PRODUCT_RIM_PEARL) do not expose
-		// the USB class 255 interface we need, but only the
-		// Mass Storage one.  Here we search for PRODUCT_RIM_PEARL_DUAL,
-		// (ID 4) which has both enabled.
-		Match match(VENDOR_RIM, PRODUCT_RIM_PEARL_DUAL);
-		while( match.next_device(&devid) )
-			ProbeDevice(devid);
+	catch( Usb::Error &e ) {
+		dout("Usb::Error exception caught: " << e.what());
+		if( e.libusb_errcode() == -EBUSY ) {
+			m_fail_count++;
+			m_fail_msgs.push_back(e.what());
+		}
+		else {
+			throw;
+		}
 	}
 }
 
@@ -189,11 +210,20 @@ void Probe::ProbeDevice(Usb::DeviceIDType devid)
 //				dev.Reset();
 //				sleep(5);
 
-			if( !dev.SetConfiguration(BLACKBERRY_CONFIGURATION) )
+			unsigned char cfg;
+			if( !dev.GetConfiguration(cfg) )
 				throw Usb::Error(dev.GetLastError(),
-					"Probe: SetConfiguration failed");
+					"Probe: GetConfiguration failed");
+			if( cfg != BLACKBERRY_CONFIGURATION ) {
+				if( !dev.SetConfiguration(BLACKBERRY_CONFIGURATION) )
+					throw Usb::Error(dev.GetLastError(),
+						"Probe: SetConfiguration failed");
+			}
 
 			Interface iface(dev, InterfaceNumber);
+
+			dev.ClearHalt(ep.read);
+			dev.ClearHalt(ep.write);
 
 			Data data;
 			dev.BulkDrain(ep.read);

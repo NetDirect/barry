@@ -2,7 +2,7 @@
 .\" First parameter, NAME, should be all caps
 .\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
 .\" other parameters are allowed: see man(7), man(1)
-.TH BTOOL 1 "August 21, 2007"
+.TH BTOOL 1 "November 30, 2007"
 .\" Please adjust this date whenever revising the manpage.
 .\"
 .\" Some roff macros, for reference:
@@ -20,7 +20,7 @@
 \- Barry Project's program to interface with BlackBerry handheld
 .SH SYNOPSIS
 .B btool 
-[-c dn][-C dnattr][-d db [-f file][-r#][-R#]-D#]][-h][-l][-L][-m cmd][-M][-p pin][-s db -f file][-S][-t][-v][-X]
+[-B busname][-N devname][-c dn][-C dnattr][-d db [-f file][-r#][-R#]-D#]][-h][-l][-L][-m cmd][-M][-p pin][-s db -f file][-S][-t][-v][-X]
 .SH DESCRIPTION
 .PP
 .B btool
@@ -33,6 +33,13 @@ experimental and you \fBuse at own risk\fP.
 Be sure your device is backed up by another program
 if it contains important data.
 .SH OPTIONS
+.TP
+.B \-B busname
+Specify the USB bus to search for Blackberry devices on.  This is the
+first number displayed in the output from the lsusb command, such as 002.
+If the busname is numeric on your system, 2 and 002 are equal.  See
+also the \-N option, which can be used together with this option
+to precisely select the device to work with.
 .TP
 .B \-c dn
 Convert address book database to LDIF format, using the
@@ -89,6 +96,11 @@ The -m option can be specified multiple times to create the desired mapping.
 .TP
 .B \-M
 List current LDIF mapping to stdout.
+.TP
+.B \-N devname
+Specify the USB device name.  This is the second number displayed in the
+output from the lsusb command, such as 005.  If the device name is numeric
+on your system, 5 and 005 are equal.  See also the \-B option.
 .TP
 .B \-p pin
 PIN of device to talk with.  Only needed if you have more than one Blackberry

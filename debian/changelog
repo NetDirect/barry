@@ -1,8 +1,21 @@
+barry (0.12-1) unstable; urgency=low
+
+   * version bump
+
+ -- Chris Frey <cdfrey@foursquare.net>  Fri, 07 Dec 2007 16:25:11 -0500
+
+barry (0.11-1) unstable; urgency=low
+
+   * version bump
+
+ -- Chris Frey <cdfrey@foursquare.net>  Fri, 30 Nov 2007 22:35:11 -0500
+
 barry (0.10-1) unstable; urgency=low
 
    * renamed ktrans and translate to bktrans and btranslate
+   * added bidentify
 
- -- Chris Frey <cdfrey@foursquare.net>  Fri, 12 Oct 2007 15:49:11 -0500
+ -- Chris Frey <cdfrey@foursquare.net>  Fri, 30 Nov 2007 15:49:11 -0500
 
 barry (0.9-1) unstable; urgency=low
 

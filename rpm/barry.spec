@@ -21,7 +21,7 @@
 
 Summary: BlackBerry(tm) Desktop for Linux
 Name: barry
-Version: 0.10
+Version: 0.12
 Release: 1
 Group: Applications/Productivity
 License: GPL
@@ -176,10 +176,12 @@ cd ../
 %attr(0755,root,root) %{_sbindir}/breset
 %attr(0755,root,root) %{_sbindir}/pppob
 %attr(0755,root,root) %{_bindir}/btool
+%attr(0755,root,root) %{_bindir}/bidentify
 %attr(0755,root,root) %{_bindir}/upldif
 %attr(0755,root,root) %{_bindir}/bktrans
 %attr(0755,root,root) %{_bindir}/btranslate
 %attr(0644,root,root) %{_mandir}/man1/btool*
+%attr(0644,root,root) %{_mandir}/man1/bidentify*
 %attr(0644,root,root) %{_mandir}/man1/bcharge*
 %attr(0644,root,root) %config %{_sysconfdir}/udev/rules.d/*
 %attr(0644,root,root) %config %{_sysconfdir}/security/console.perms.d/*
@@ -213,9 +215,16 @@ cd ../
 /sbin/ldconfig
 
 %changelog
-* Fri Oct 12 2007 Chris Frey <cdfrey@foursquare.net> 0.10-1
+* Fri Dec 07 2007 Chris Frey <cdfrey@foursquare.net> 0.12-1
+- version bump
+
+* Fri Nov 30 2007 Chris Frey <cdfrey@foursquare.net> 0.11-1
+- version bump
+
+* Fri Nov 30 2007 Chris Frey <cdfrey@foursquare.net> 0.10-1
 - version bump
 - removed ktrans and translate from rpm package
+- added bidentify
 
 * Thu Aug 09 2007 Chris Frey <cdfrey@foursquare.net> 0.9-1
 - version bump

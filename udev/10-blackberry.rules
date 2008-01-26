@@ -1,6 +1,19 @@
 #
 # Blackberry devices
 #
+# Note: the following rules may appear wasteful, in that bcharge is run
+#       twice: once for changing the mode, and once again after the
+#       device resets itself to enter this mode.  This is required
+#       in order to support older kernels (approx. 2.6.20 to 2.6.22) with
+#       CONFIG_USB_SUSPEND enabled.  The second time bcharge is run
+#       is when the -p argument comes into play, adjusting the device's
+#       autosuspend settings.
+#
+# Note2: the SUBSYSTEM and ENV{DEVTYPE} checks are to prevent bcharge from
+#       running each time a new endpoint is discovered by udev.
+#
+
+#
 # Older devices that only use 0x0001 (no USB Mass Storage)
 #
 

@@ -29,7 +29,7 @@ TAG="$4"
 set -e
 
 cp "$TARPATH" "$CHROOT/$TARGET/usr/src/redhat/SOURCES"
-cp "$SPECPATH" "$CHROOT/$TARGET/usr/src/redhat/SPECS"
+cp "$SPECPATH" "$CHROOT/$TARGET/usr/src/redhat/SPECS/barry.spec"
 chroot "$CHROOT/$TARGET" /bin/sh -lc "rm -f /usr/src/redhat/RPMS/i386/* /usr/src/redhat/SRPMS/* && cd /usr/src/redhat/SPECS && rpmbuild --target i386 -ba barry.spec --with gui --with opensync && cd /usr/src/redhat/RPMS/i386"
 mkdir -p "build/$TARGET"
 cp "$CHROOT/$TARGET/usr/src/redhat/RPMS/i386/"* "build/$TARGET"
