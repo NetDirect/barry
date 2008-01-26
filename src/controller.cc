@@ -20,22 +20,21 @@
 */
 
 #include "controller.h"
-#include "common.h"
-#include "protocol.h"
-#include "protostructs.h"
-#include "error.h"
-#include "data.h"
-#include "parser.h"
-#include "builder.h"
-#include "endian.h"
-#include "packet.h"
+//#include "common.h"
+//#include "protocol.h"
+//#include "protostructs.h"
+//#include "error.h"
+//#include "data.h"
+//#include "parser.h"
+//#include "builder.h"
+//#include "endian.h"
+//#include "packet.h"
 
 #define __DEBUG_MODE__
 #include "debug.h"
 
-#include <sstream>
-
-#include <iomanip>
+//#include <sstream>
+//#include <iomanip>
 
 namespace Barry {
 

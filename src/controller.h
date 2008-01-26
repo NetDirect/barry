@@ -23,10 +23,10 @@
 #define __BARRY_CONTROLLER_H__
 
 #include "usbwrap.h"
-#include "probe.h"
 #include "socket.h"
-#include "record.h"
-#include "data.h"
+//#include "probe.h"
+//#include "record.h"
+//#include "data.h"
 
 /// Project namespace, containing all related functions and classes.
 /// This is the only namespace applications should be concerned with,
@@ -54,6 +54,7 @@ namespace Mode {
 ///	- Probe the USB bus for matching devices with the Probe class
 ///	- Pass one of the probe results into the Controller constructor
 ///		to connect
+fixme... openmode is no longer appropriate
 ///	- Call OpenMode() to select the desired mode.  This will fill all
 ///		internal data structures for that mode, such as the
 ///		Database Database in Desktop mode.
@@ -64,8 +65,8 @@ namespace Mode {
 ///
 class Controller
 {
-	friend class Barry::Mode::Desktop;
-	friend class Barry::Mode::Serial;
+//	friend class Barry::Mode::Desktop;
+//	friend class Barry::Mode::Serial;
 
 public:
 	/// Handheld mode type

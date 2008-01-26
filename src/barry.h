@@ -38,6 +38,7 @@
 #include "probe.h"			// device prober class
 #include "dataqueue.h"
 #include "socket.h"
+#include "router.h"
 #include "protocol.h"			// application-safe header
 #include "parser.h"
 #include "builder.h"

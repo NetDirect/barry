@@ -45,7 +45,7 @@ public:
 	typedef std::map<uint16_t, QueuePairPtr>	SocketQueueMap;
 
 private:
-	Usb::Device &m_dev;
+	Usb::Device *m_dev;
 	int m_writeEp, m_readEp;
 
 	bool m_interest;	// true if at least one socket has an interest.
@@ -65,10 +65,18 @@ protected:
 	// from its destructor.
 	void ReturnBuffer(Data *buf);
 
+	static void SimpleReadThread(void *userptr);
+
 public:
 //	SocketRoutingQueue(Usb::Device &dev, int writeEp, int readEp);
 	SocketRoutingQueue();
 	~SocketRoutingQueue();
+
+	// These functions connect the router to an external Usb::Device
+	// object.  Normally this is handled automatically by the
+	// Controller class, but are public here in case they are needed.
+	void SetUsbDevice(Usb::Device *dev);
+	void ClearUsbDevice();
 
 	// This class starts out with no buffers, and will grow one buffer
 	// at a time if needed.  Call this to allocate count buffers
@@ -116,6 +124,13 @@ public:
 	// packet and route it to the correct queue.  Returns after every
 	// read, even if a handler is associated with a queue.
 	void DoRead(int timeout = -1);
+
+	// Utility function to make it easier for the user to create the
+	// USB pure-read thread.  If the user wants anything more complicated
+	// in this background thread, he can implement it himself and call
+	// the above DoRead() in a loop.  If only the basics are needed,
+	// then this makes it easy.
+	bool SpinoffSimpleReadThread();
 };
 
 

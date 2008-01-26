@@ -74,6 +74,7 @@ include_barry_HEADERS = barry.h \
 	r_servicebook.h \
 	r_task.h \
 	dataqueue.h \
+	router.h \
 	socket.h \
 	time.h \
 	usbwrap.h \
