@@ -33,7 +33,6 @@
 using namespace std;
 using namespace Barry;
 
-volatile bool read_finished = false;
 bool data_dump = false;
 
 void Usage()
@@ -50,16 +49,6 @@ void Usage()
    << "             If only one device plugged in, this flag is optional\n"
    << "   -v        Dump protocol data during operation (debugging only!)\n"
    << endl;
-}
-
-void *UsbReadThread(void *userptr)
-{
-	SocketRoutingQueue *q = (SocketRoutingQueue *)userptr;
-
-	// read from USB and write to stdout until finished
-	while( !read_finished ) {
-		q->DoRead(2000);	// FIXME - timeout in milliseconds?
-	}
 }
 
 void SerialDataCallback(Data *data)
@@ -131,17 +120,12 @@ int main(int argc, char *argv[])
 			return 1;
 		}
 
-		// Create our socket router
+		// Create our socket router and start thread to handle
+		// the USB reading, instead of creating our own thread.
 		SocketRoutingQueue router;
+		router.SpinoffSimpleReadThread();
 
-		// Start USB read thread, to handle all routing
-		pthread_t usb_read_thread;
-		if( pthread_create(&usb_read_thread, NULL, UsbReadThread, &router) ) {
-			cerr << "Error creating USB read thread." << endl;
-			return 1;
-		}
-
-		// Create our controller object
+		// Create our controller object using our threaded router.
 		Controller con(probe.Get(activeDevice), router);
 
 		// Open serial mode... the callback handles reading from
@@ -158,11 +142,6 @@ int main(int argc, char *argv[])
 				con.SerialWrite(data); // FIXME - does this copy data?
 			}
 		}
-
-
-		// flag end / kill read thread
-		read_finished = true;
-		pthread_join(usb_read_thread, NULL);
 
 	}
 	catch( std::exception &e ) {

@@ -49,10 +49,9 @@ namespace Mode {
 ///
 /// To use this class, use the following steps:
 ///
-///	- Probe the USB bus for matching devices with the Probe class
-///	- Pass one of the probe results into the Controller constructor
-///		to connect
-///	- Pass the Controller object into the Desktop ctor
+///	- Create a Controller object (see Controller class for more details)
+///	- Create this Mode::Desktop object, passing in the Controller
+///		object during construction
 ///	- Call Open() to open database socket 
 select the desired mode.  This will fill all
 ///		internal data structures for that mode, such as the

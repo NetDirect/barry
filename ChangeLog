@@ -4,6 +4,11 @@ Branch: barry-b1-socket-arch
 		- merged HEAD changes
 		- added router.cc and continued work on new arch
 		- merged HEAD changes for 2008 copyright statements
+		- added scoped_lock.h
+		- added ErrnoError exception class
+		- documented Controller / SocketRoutingQueue behaviour
+		- more router implementation
+		- simplified pppob
 	2007/11/22
 		- merged HEAD changes
 	2007/10/25

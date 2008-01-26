@@ -1,10 +1,10 @@
 ///
-/// \file	error.cc
-///		Common exception classes for the Barry library
+/// \file	scoped_lock.h
+///		Simple scope class for dealing with pthread mutex locking.
 ///
 
 /*
-    Copyright (C) 2005-2008, Net Direct Inc. (http://www.netdirect.ca/)
+    Copyright (C) 2008, Net Direct Inc. (http://www.netdirect.ca/)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -19,28 +19,40 @@
     root directory of this project for more details.
 */
 
-#include "error.h"
-#include <sstream>
+#ifndef __BARRY_SCOPED_LOCK_H__
+#define __BARRY_SCOPED_LOCK_H__
 
-using namespace std;
+#include <pthread.h>
 
 namespace Barry {
 
-std::string BadSize::GetMsg(unsigned int p, unsigned int d, unsigned int r)
+class scoped_lock
 {
-	std::ostringstream oss;
-	oss << "Bad packet size. Packet: " << p
-	    << ". DataSize(): " << d
-	    << ". Required size: " << r;
-	return oss.str();
-}
+	pthread_mutex_t *m_mutex;
 
-std::string GetMsg(const std::string &msg, int err)
-{
-	std::ostringstream oss;
-	oss << msg << ": (errno " << err << ") " << strerror(err);
-	return oss.str();
-}
+public:
+	scoped_lock(pthread_mutex_t &mutex)
+		: m_mutex(&mutex)
+	{
+		while( pthread_mutex_lock(m_mutex) != 0 )
+			;
+	}
+
+	~scoped_lock()
+	{
+		unlock();
+	}
+
+	void unlock()
+	{
+		if( m_mutex ) {
+			pthread_mutex_unlock(m_mutex);
+			m_mutex = 0;
+		}
+	}
+};
 
 } // namespace Barry
+
+#endif
 

@@ -47,21 +47,24 @@ namespace Mode {
 // Controller class
 //
 /// The main interface class.  This class coordinates the communication to
-/// a single handheld.
+/// a single handheld.  This class also owns the only Usb::Device object
+/// the handheld.  All other classes reference this one for the low level
+/// device object.  This class owns the only SocketZero object as well,
+/// which is the object that any SocketRoutingQueue is plugged into
+/// if constructed that way.
 ///
 /// To use this class, use the following steps:
 ///
 ///	- Probe the USB bus for matching devices with the Probe class
+///	- Create an optional SocketRoutingQueue object and create a
+///		read thread for it, or use its default read thread.
 ///	- Pass one of the probe results into the Controller constructor
-///		to connect
-fixme... openmode is no longer appropriate
-///	- Call OpenMode() to select the desired mode.  This will fill all
-///		internal data structures for that mode, such as the
-///		Database Database in Desktop mode.
-///		NOTE: only Desktop mode is currently implemented.
-///	- Call GetDBDB() to get the device's database database
-///	- Call GetDBID() to get a database ID by name
-///	- In Desktop mode, call LoadDatabase() to retrieve and store a database
+///		to connect to the USB device.  Pass the routing queue
+///		to the Controller constructor here too, if needed.
+///	- Create the Mode object of your choice.  See m_desktop.h
+///		and m_serial.h for these mode classes.  You pass
+///		your controller object into these mode constructors
+///		to create the mode.
 ///
 class Controller
 {

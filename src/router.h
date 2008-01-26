@@ -59,24 +59,33 @@ private:
 	DataQueue m_default;
 	SocketQueueMap m_socketQueues;
 
+	// thread state
+	pthread_t m_usb_read_thread;
+	volatile bool m_continue_reading;// set to true when the thread is created,
+				// then set to false in the destructor
+				// to signal the end of the thread
+				// and handle the join
+
 protected:
 	// Provides a method of returning a buffer to the free queue
 	// after processing.  The DataHandle class calls this automatically
 	// from its destructor.
 	void ReturnBuffer(Data *buf);
 
-	static void SimpleReadThread(void *userptr);
+	// Thread function for the simple read behaviour... thread is
+	// created in the SpinoffSimpleReadThread() member below.
+	static void *SimpleReadThread(void *userptr);
 
 public:
-//	SocketRoutingQueue(Usb::Device &dev, int writeEp, int readEp);
 	SocketRoutingQueue();
 	~SocketRoutingQueue();
 
 	// These functions connect the router to an external Usb::Device
 	// object.  Normally this is handled automatically by the
 	// Controller class, but are public here in case they are needed.
-	void SetUsbDevice(Usb::Device *dev);
+	void SetUsbDevice(Usb::Device *dev, int writeEp, int readEp);
 	void ClearUsbDevice();
+	bool UsbDeviceReady();
 
 	// This class starts out with no buffers, and will grow one buffer
 	// at a time if needed.  Call this to allocate count buffers
@@ -123,6 +132,9 @@ public:
 	// Called by the application's "read thread" to read the next usb
 	// packet and route it to the correct queue.  Returns after every
 	// read, even if a handler is associated with a queue.
+	// Note: this function is safe to call before SetUsbDevice() is
+	// called... it just doesn't do anything if there is no usb
+	// device to work with.
 	void DoRead(int timeout = -1);
 
 	// Utility function to make it easier for the user to create the
@@ -130,7 +142,8 @@ public:
 	// in this background thread, he can implement it himself and call
 	// the above DoRead() in a loop.  If only the basics are needed,
 	// then this makes it easy.
-	bool SpinoffSimpleReadThread();
+	// Throws Barry::ErrnoError on thread creation error.
+	void SpinoffSimpleReadThread();
 };
 
 
