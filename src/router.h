@@ -135,6 +135,8 @@ public:
 	// Note: this function is safe to call before SetUsbDevice() is
 	// called... it just doesn't do anything if there is no usb
 	// device to work with.
+	//
+	// Timeout is in milliseconds.
 	void DoRead(int timeout = -1);
 
 	// Utility function to make it easier for the user to create the

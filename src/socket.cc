@@ -21,23 +21,19 @@
 
 #include "socket.h"
 #include "usbwrap.h"
+#include "data.h"
 #include "protocol.h"
 #include "protostructs.h"
-#include "debug.h"
-#include "data.h"
-#include "error.h"
-#include "packet.h"
 #include "endian.h"
+#include "debug.h"
+#include "packet.h"
 #include <openssl/sha.h>
 #include <sstream>
-#include <iomanip>
-
 
 using namespace Usb;
 
 
 namespace Barry {
-
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -70,7 +66,7 @@ SocketZero::~SocketZero()
 // appends fragment to whole... if whole is empty, simply copies, and
 // sets command to DATA instead of FRAGMENTED.  Always updates the
 // packet size of whole, to reflect the total size
-void Socket::AppendFragment(Data &whole, const Data &fragment)
+void SocketZero::AppendFragment(Data &whole, const Data &fragment)
 {
 	if( whole.GetSize() == 0 ) {
 		// empty, so just copy
@@ -92,13 +88,13 @@ void Socket::AppendFragment(Data &whole, const Data &fragment)
 	wpack->size = htobs((uint16_t) whole.GetSize());
 	wpack->command = SB_COMMAND_DB_DATA;
 	// don't need to call ReleaseBuffer here, since we're not changing
-	// the real size size
+	// the real data size, and ReleaseBuffer was called above during copy
 }
 
 // If offset is 0, starts fresh, taking the first fragment packet size chunk
 // out of whole and creating a sendable packet in fragment.  Returns the
 // next offset if there is still more data, or 0 if finished.
-unsigned int Socket::MakeNextFragment(const Data &whole, Data &fragment, unsigned int offset)
+unsigned int SocketZero::MakeNextFragment(const Data &whole, Data &fragment, unsigned int offset)
 {
 	// sanity check
 	if( whole.GetSize() < SB_FRAG_HEADER_SIZE ) {
@@ -560,18 +556,30 @@ Socket::~Socket()
 	}
 }
 
-void Socket::Close()
-{
-	m_zero->Close(*this);
-}
 
 ////////////////////////////////////
-// Socket private API
+// Socket protected API
 
 void Socket::CheckSequence(const Data &seq)
 {
 	m_zero->CheckSequence(m_socket, seq);
 }
+
+void Socket::ForceClosed()
+{
+	m_socket = 0;
+	m_closeFlag = 0;
+}
+
+
+////////////////////////////////////
+// Socket public API
+
+void Socket::Close()
+{
+	m_zero->Close(*this);
+}
+
 
 //
 // Send
@@ -609,7 +617,7 @@ void Socket::Send(Data &send, Data &receive, int timeout)
 
 void Socket::Send(Barry::Packet &packet, int timeout)
 {
-	Send(packet, timeout);
+	Send(packet.m_send, packet.m_receive, timeout);
 }
 
 void Socket::Receive(Data &receive, int timeout)
@@ -656,7 +664,7 @@ void Socket::Packet(Data &send, Data &receive, int timeout)
 		Data outFrag;
 
 		do {
-			offset = MakeNextFragment(send, outFrag, offset);
+			offset = SocketZero::MakeNextFragment(send, outFrag, offset);
 			Send(outFrag, inFrag, timeout);
 
 			MAKE_PACKET(rpack, inFrag);
@@ -706,7 +714,7 @@ void Socket::Packet(Data &send, Data &receive, int timeout)
 
 			case SB_COMMAND_DB_DATA:
 				if( frag ) {
-					AppendFragment(receive, inFrag);
+					SocketZero::AppendFragment(receive, inFrag);
 				}
 				else {
 					receive = inFrag;
@@ -715,7 +723,7 @@ void Socket::Packet(Data &send, Data &receive, int timeout)
 				break;
 
 			case SB_COMMAND_DB_FRAGMENTED:
-				AppendFragment(receive, inFrag);
+				SocketZero::AppendFragment(receive, inFrag);
 				frag = true;
 				break;
 

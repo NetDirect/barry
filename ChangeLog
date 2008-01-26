@@ -9,6 +9,10 @@ Branch: barry-b1-socket-arch
 		- documented Controller / SocketRoutingQueue behaviour
 		- more router implementation
 		- simplified pppob
+		- audit and cleanup of socket.{h,cc} code... looks ready
+			for testing now, once things compile again
+		- removed FIXME in router.*
+		- removed pthread header from pppob as it is not needed
 	2007/11/22
 		- merged HEAD changes
 	2007/10/25

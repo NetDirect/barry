@@ -120,15 +120,9 @@ class Socket
 	uint16_t m_socket;
 	uint8_t m_closeFlag;
 
-private:
-	void AppendFragment(Data &whole, const Data &fragment);
-	unsigned int MakeNextFragment(const Data &whole, Data &fragment, unsigned int offset = 0);
+protected:
 	void CheckSequence(const Data &seq);
-	void ForceClosed()
-	{
-		m_socket = 0;
-		m_closeFlag = 0;
-	}
+	void ForceClosed();
 
 	Socket(SocketZero &zero, uint16_t socket, uint8_t closeFlag);
 

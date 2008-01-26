@@ -58,7 +58,7 @@ void *SocketRoutingQueue::SimpleReadThread(void *userptr)
 
 	// read from USB and write to stdout until finished
 	while( q->m_continue_reading ) {
-		q->DoRead(2000);	// FIXME - timeout in milliseconds?
+		q->DoRead(2000);	// timeout in milliseconds
 	}
 }
 
@@ -95,6 +95,9 @@ bool SocketRoutingQueue::UsbDeviceReady()
 // Note: this function is safe to call before SetUsbDevice() is
 // called... it just doesn't do anything if there is no usb
 // device to work with.
+//
+// Timeout is in milliseconds.
+//
 void SocketRoutingQueue::DoRead(int timeout = -1)
 {
 	scoped_lock lock(&m_mutex);

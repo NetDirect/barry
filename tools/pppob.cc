@@ -27,7 +27,6 @@
 #include <vector>
 #include <string>
 #include <getopt.h>
-#include <pthread.h>
 
 
 using namespace std;
