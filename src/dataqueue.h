@@ -64,7 +64,9 @@ public:
 	Data* pop();
 
 	// Pops the next element off the front of the queue, and
-	// waits until one exists if empty.
+	// waits until one exists if empty.  If still no data
+	// on timeout, returns null.
+	// (unlock the access mutex while waiting!)
 	Data* wait_pop(int timeout = -1);
 
 	bool empty() const;	// return true if empty

@@ -25,6 +25,7 @@
 #include <stdint.h>
 #include <map>
 #include <tr1/memory>
+#include <stdexcept>
 #include <pthread.h>
 #include "dataqueue.h"
 
@@ -45,13 +46,13 @@ public:
 	typedef std::map<uint16_t, QueuePairPtr>	SocketQueueMap;
 
 private:
-	Usb::Device *m_dev;
-	int m_writeEp, m_readEp;
+	Usb::Device * volatile m_dev;
+	volatile int m_writeEp, m_readEp;
 
-	bool m_interest;	// true if at least one socket has an interest.
+	volatile bool m_interest; // true if at least one socket has an interest.
 				// used to optimize the reading
 
-	pthread_mutex_t m_mutex;// controls access to local data, but not
+	mutable pthread_mutex_t m_mutex;// controls access to local data, but not
 				// DataQueues, as they have their own
 				// locking per queue
 
@@ -137,7 +138,10 @@ public:
 	// device to work with.
 	//
 	// Timeout is in milliseconds.
-	void DoRead(int timeout = -1);
+	//
+	// Returns false in the case of USB errors, and puts the error
+	// message in msg.
+	bool DoRead(std::string &msg, int timeout = -1);
 
 	// Utility function to make it easier for the user to create the
 	// USB pure-read thread.  If the user wants anything more complicated
@@ -149,12 +153,27 @@ public:
 };
 
 
-
+//
+// DataHandle
+//
+/// std::auto_ptr like class that handles pointers to Data, but instead of
+/// freeing them completely, the Data objects are turned to the
+/// SocketRoutingQueue from whence they came.
+///
 class DataHandle
 {
 private:
 	SocketRoutingQueue &m_queue;
-	Data *m_data;
+	mutable Data *m_data;
+
+protected:
+	void clear()
+	{
+		if( m_data ) {
+			m_queue.ReturnBuffer(m_data);
+			m_data = 0;
+		}
+	}
 
 public:
 	DataHandle(SocketRoutingQueue &q, Data *data)
@@ -167,13 +186,25 @@ public:
 		: m_queue(other.m_queue)
 		, m_data(other.m_data)
 	{
-		m_data = 0;
+		// we now own the pointer
+		other.m_data = 0;
 	}
 
 	~DataHandle()
 	{
-		if( m_data )
-			m_queue.ReturnBuffer(m_data);
+		clear();
+	}
+
+	Data* get()
+	{
+		return m_data;
+	}
+
+	Data* release()	// no longer owns the pointer
+	{
+		Data *ret = m_data;
+		m_data = 0;
+		return ret;
 	}
 
 	Data* operator->()
@@ -186,7 +217,23 @@ public:
 		return m_data;
 	}
 
-	DataHandle& operator=(const DataHandle &other);
+	DataHandle& operator=(const DataHandle &other)
+	{
+		if( &m_queue != &other.m_queue )
+			throw std::logic_error("Trying to copy DataHandles of different queus!");
+
+		// remove our current data
+		clear();
+
+		// accept the new
+		m_data = other.m_data;
+
+		// we now own it
+		other.m_data = 0;
+
+		return *this;
+	}
+
 };
 
 

@@ -1,5 +1,8 @@
 Branch: barry-b1-socket-arch
 ------------------------------------------------------------------------------
+	2008/01/26
+		- implemented router.{h,cc}... looks ready for testing,
+			once things compile again
 	2008/01/25
 		- merged HEAD changes
 		- added router.cc and continued work on new arch

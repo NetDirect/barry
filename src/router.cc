@@ -21,6 +21,13 @@
 
 #include "router.h"
 #include "scoped_lock.h"
+#include "data.h"
+#include "protostructs.h"
+#include "usbwrap.h"
+#include "endian.h"
+#include "debug.h"
+
+namespace Barry {
 
 ///////////////////////////////////////////////////////////////////////////////
 // SocketRoutingQueue constructors
@@ -30,9 +37,9 @@ SocketRoutingQueue::SocketRoutingQueue()
 	, m_writeEp(0)
 	, m_readEp(0)
 	, m_interest(false)
-	, m_mutex(PTHREAD_MUTEX_INITIALIZER)
 	, m_continue_reading(false)
 {
+	pthread_mutex_init(&m_mutex, NULL);
 }
 
 SocketRoutingQueue::~SocketRoutingQueue()
@@ -48,6 +55,18 @@ SocketRoutingQueue::~SocketRoutingQueue()
 // protected members
 
 //
+// ReturnBuffer
+//
+/// Provides a method of returning a buffer to the free queue
+/// after processing.  The DataHandle class calls this automatically
+/// from its destructor.
+void SocketRoutingQueue::ReturnBuffer(Data *buf)
+{
+	// don't need to lock here, since m_free handles its own locking
+	m_free.push(buf);
+}
+
+//
 // SimpleReadThread()
 //
 /// Convenience thread to handle USB read activity.
@@ -57,9 +76,13 @@ void *SocketRoutingQueue::SimpleReadThread(void *userptr)
 	SocketRoutingQueue *q = (SocketRoutingQueue *)userptr;
 
 	// read from USB and write to stdout until finished
+	std::string msg;
 	while( q->m_continue_reading ) {
-		q->DoRead(2000);	// timeout in milliseconds
+		if( !q->DoRead(msg, 2000) ) {	// timeout in milliseconds
+			eout("Error in SimpleReadThread: " << msg);
+		}
 	}
+	return 0;
 }
 
 
@@ -71,7 +94,7 @@ void *SocketRoutingQueue::SimpleReadThread(void *userptr)
 // Controller class, but are public here in case they are needed.
 void SocketRoutingQueue::SetUsbDevice(Usb::Device *dev, int writeEp, int readEp)
 {
-	scoped_lock lock(&m_mutex);
+	scoped_lock lock(m_mutex);
 	m_dev = dev;
 	m_writeEp = writeEp;
 	m_readEp = readEp;
@@ -79,35 +102,306 @@ void SocketRoutingQueue::SetUsbDevice(Usb::Device *dev, int writeEp, int readEp)
 
 void SocketRoutingQueue::ClearUsbDevice()
 {
-	scoped_lock lock(&m_mutex);
+	scoped_lock lock(m_mutex);
 	m_dev = 0;
 }
 
 bool SocketRoutingQueue::UsbDeviceReady()
 {
-	scoped_lock lock(&m_mutex);
+	scoped_lock lock(m_mutex);
 	return m_dev != 0;
 }
 
-// Called by the application's "read thread" to read the next usb
-// packet and route it to the correct queue.  Returns after every
-// read, even if a handler is associated with a queue.
-// Note: this function is safe to call before SetUsbDevice() is
-// called... it just doesn't do anything if there is no usb
-// device to work with.
 //
-// Timeout is in milliseconds.
+// AllocateBuffers
 //
-void SocketRoutingQueue::DoRead(int timeout = -1)
+/// This class starts out with no buffers, and will grow one buffer
+/// at a time if needed.  Call this to allocate count buffers
+/// all at once and place them on the free queue.
+void SocketRoutingQueue::AllocateBuffers(int count)
 {
-	scoped_lock lock(&m_mutex);
+	for( int i = 0; i < count; i++ ) {
+		// m_free handles its own locking
+		m_free.push( new Data );
+	}
+}
+
+//
+// DefaultRead (both variations)
+//
+/// Returns the data for the next unregistered socket.
+/// Blocks until timeout or data is available.
+/// Returns false (or null pointer) on timeout and no data.
+/// With the return version of the function, there is no
+/// copying performed.
+///
+/// This version performs a copy.
+///
+bool SocketRoutingQueue::DefaultRead(Data &receive, int timeout)
+{
+	DataHandle buf = DefaultRead(timeout);
+	if( !buf.get() )
+		return false;
+
+	// copy to desired buffer
+	receive = *buf.get();
+	return true;
+}
+
+///
+/// This version does not perform a copy.
+///
+DataHandle SocketRoutingQueue::DefaultRead(int timeout)
+{
+	// m_default handles its own locking
+	Data *buf = m_default.wait_pop(timeout);
+	return DataHandle(*this, buf);
+}
+
+//
+// RegisterInterest
+//
+/// Register an interest in data from a certain socket.  To read
+/// from that socket, use the SocketRead() function from then on.
+///
+/// Any non-registered socket goes in the default queue
+/// and must be read by DefaultRead()
+///
+/// If not null, handler is called when new data is read.  It will
+/// be called in the same thread instance that DoRead() is called from.
+/// Handler is passed the DataQueue Data pointer, and so no
+/// copying is done.  Once the handler returns, the data is
+/// considered processed and not added to the interested queue,
+/// but instead returned to m_free.
+///
+/// Throws std::logic_error if already registered.
+///
+void SocketRoutingQueue::RegisterInterest(uint16_t socket, SocketDataHandler handler)
+{
+	// modifying our own std::map, need a lock
+	scoped_lock lock(m_mutex);
+
+	SocketQueueMap::iterator qi = m_socketQueues.find(socket);
+	if( qi != m_socketQueues.end() )
+		throw std::logic_error("RegisterInterest requesting a previously registered socket.");
+
+	m_socketQueues[socket] = QueuePairPtr( new QueuePair(handler, DataQueue()) );
+	m_interest = true;
+}
+
+//
+// UnregisterInterest
+//
+/// Unregisters interest in data from the given socket, and discards
+/// any existing data in its interest queue.  Any new incoming data
+/// for this socket will be placed in the default queue.
+///
+void SocketRoutingQueue::UnregisterInterest(uint16_t socket)
+{
+	// modifying our own std::map, need a lock
+	scoped_lock lock(m_mutex);
+
+	SocketQueueMap::iterator qi = m_socketQueues.find(socket);
+	if( qi == m_socketQueues.end() )
+		return;	// nothing registered, done
+
+	// salvage all our data buffers
+	while( Data *buf = qi->second->second.pop() ) {
+		m_free.push(buf);
+	}
+
+	// remove the QueuePairPtr from the map
+	m_socketQueues.erase( qi );
+
+	// check the interest flag
+	m_interest = m_socketQueues.size() > 0;
+}
+
+//
+// SocketRead
+//
+/// Reads data from the interested socket cache.  Can only read
+/// from sockets that have been previously registered.
+///
+/// Blocks until timeout or data is available.
+///
+/// Returns false (or null pointer) on timeout and no data.
+/// With the return version of the function, there is no
+/// copying performed.
+///
+/// Throws std::logic_error if a socket was requested that was
+/// not previously registered.
+///
+/// Copying is performed with this function.
+///
+bool SocketRoutingQueue::SocketRead(uint16_t socket, Data &receive, int timeout)
+{
+	DataHandle buf = SocketRead(socket, timeout);
+	if( !buf.get() )
+		return false;
+
+	// copy to desired buffer
+	receive = *buf.get();
+	return true;
+}
+
+///
+/// Copying is not performed with this function.
+///
+/// Throws std::logic_error if a socket was requested that was
+/// not previously registered.
+///
+DataHandle SocketRoutingQueue::SocketRead(uint16_t socket, int timeout)
+{
+	QueuePairPtr qpp;
+	DataQueue *dq = 0;
+
+	// accessing our own std::map, need a lock
+	{
+		scoped_lock lock(m_mutex);
+		SocketQueueMap::iterator qi = m_socketQueues.find(socket);
+		if( qi == m_socketQueues.end() )
+			throw std::logic_error("SocketRead requested data from unregistered socket.");
+
+		// got our queue, save the whole QueuePairPtr (shared_ptr),
+		// and unlock, since we will be waiting on the DataQueue,
+		// not the socketQueues map
+		//
+		// This is safe, since even if UnregisterInterest is called,
+		// our pointer won't be deleted until our shared_ptr
+		// (QueuePairPtr) goes out of scope.
+		qpp = qi->second;
+		dq = &qpp->second;
+	}
+
+	// get data from DataQueue
+	Data *buf = dq->wait_pop(timeout);
+
+	// specifically delete our copy of shared pointer, in a locked
+	// environment
+	{
+		scoped_lock lock(m_mutex);
+		qpp.reset();
+	}
+
+	return DataHandle(*this, buf);
+}
+
+// Returns true if data is available for that socket.
+bool SocketRoutingQueue::IsAvailable(uint16_t socket) const
+{
+	scoped_lock lock(m_mutex);
+	SocketQueueMap::const_iterator qi = m_socketQueues.find(socket);
+	if( qi == m_socketQueues.end() )
+		return false;
+	return qi->second->second.size() > 0;
+}
+
+//
+// DoRead
+//
+/// Called by the application's "read thread" to read the next usb
+/// packet and route it to the correct queue.  Returns after every
+/// read, even if a handler is associated with a queue.
+/// Note: this function is safe to call before SetUsbDevice() is
+/// called... it just doesn't do anything if there is no usb
+/// device to work with.
+///
+/// Timeout is in milliseconds.
+///
+/// Returns false in the case of USB errors and puts the error message
+/// in msg.
+///
+bool SocketRoutingQueue::DoRead(std::string &msg, int timeout)
+{
+	Usb::Device * volatile dev = 0;
+	int readEp;
+	DataHandle buf(*this, 0);
 
 	// if we are not connected to a USB device yet, just wait
-	if( !m_dev ) {
-		lock.unlock();	// unlock early, since we're sleeping
-		sleep(timeout / 1000 + 1);
-		return;
+	{
+		scoped_lock lock(m_mutex);
+
+		if( !m_dev ) {
+			lock.unlock();	// unlock early, since we're sleeping
+			sleep(timeout / 1000 + 1);
+			return true;
+		}
+
+		dev = m_dev;
+		readEp = m_readEp;
+
+		// fetch a free buffer
+		Data *raw = m_free.pop();
+		if( !raw )
+			buf = DataHandle(*this, new Data);
+		else
+			buf = DataHandle(*this, raw);
 	}
+
+	// take a chance and do the read unlocked, as this has the potential
+	// for blocking for a while
+	try {
+
+		Data &data = *buf.get();
+
+		if( !dev->BulkRead(readEp, data, timeout) )
+			return true;	// no data, done!
+
+		MAKE_PACKET(pack, data);
+
+		// make sure the size is right
+		if( data.GetSize() < sizeof(pack->socket) )
+			return true;	// bad size, just skip
+
+		// extract the socket from the packet
+		uint16_t socket = btohs(pack->socket);
+
+		// we have data, now lock up again to place it
+		// in the right queue
+		scoped_lock lock(m_mutex);
+
+		// search for registration of socket
+		if( m_interest ) {
+			SocketQueueMap::iterator qi = m_socketQueues.find(socket);
+			if( qi != m_socketQueues.end() ) {
+				SocketDataHandler sdh = qi->second->first;
+
+				// is there a handler?
+				if( sdh ) {
+					// unlock & let the handler process it
+					lock.unlock();
+					(*sdh)(buf.get());
+					return true;
+				}
+				else {
+					qi->second->second.push(buf.release());
+					return true;
+				}
+			}
+
+			// fall through
+		}
+
+		// safe to unlock now, we are done with the map
+		lock.unlock();
+
+		// if we get here, send to default queue
+		m_default.push(buf.release());
+		return true;
+
+	}
+	catch( Usb::Timeout & ) {
+		// this is expected... just ignore
+	}
+	catch( Usb::Error &ue ) {
+		// this is unexpected, but we're in a thread here...
+		// return false and the caller decide how to handle it
+		msg = ue.what();
+		return false;
+	}
+
+	return true;
 }
 
 void SocketRoutingQueue::SpinoffSimpleReadThread()
@@ -124,4 +418,6 @@ void SocketRoutingQueue::SpinoffSimpleReadThread()
 		throw Barry::ErrnoError("SocketRoutingQueue: Error creating USB read thread.", ret);
 	}
 }
+
+} // namespace Barry
 
