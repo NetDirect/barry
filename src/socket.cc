@@ -39,6 +39,21 @@ namespace Barry {
 //////////////////////////////////////////////////////////////////////////////
 // SocketZero class
 
+SocketZero::SocketZero(	SocketRoutingQueue &queue,
+			int writeEndpoint,
+			uint8_t zeroSocketSequenceStart)
+	: m_dev(0),
+	m_queue(&queue),
+	m_writeEp(writeEndpoint),
+	m_readEp(0),
+	m_zeroSocketSequence(zeroSocketSequenceStart),
+	m_sequenceId(0),
+	m_halfOpen(false),
+	m_challengeSeed(0),
+	m_remainingTries(0)
+{
+}
+
 SocketZero::SocketZero(	Device &dev,
 			int writeEndpoint, int readEndpoint,
 			uint8_t zeroSocketSequenceStart)

@@ -52,11 +52,11 @@ void Usage()
 
 void SerialDataCallback(Data *data)
 {
-	int todo = data.GetSize();
-	const unsigned char *buf = data.GetData();
+	int todo = data->GetSize();
+	const unsigned char *buf = data->GetData();
 
 	if( todo && data_dump )
-		cerr << "ReadThread:\n" << data << endl;
+		cerr << "ReadThread:\n" << *data << endl;
 
 	while( todo ) {
 		int written = write(1, buf, todo);
@@ -127,9 +127,11 @@ int main(int argc, char *argv[])
 		// Create our controller object using our threaded router.
 		Controller con(probe.Get(activeDevice), router);
 
+/*
 		// Open serial mode... the callback handles reading from
 		// USB and writing to stdout
-		Mode::Serial serial(con, SerialDataCallback);
+//		Mode::Serial serial(con, SerialDataCallback);
+		Mode::Serial serial(con);
 
 		// Read from stdin and write to USB, until
 		// stdin is closed
@@ -138,9 +140,11 @@ int main(int argc, char *argv[])
 		while( (bytes_read = read(0, data.GetBuffer(), data.GetBufSize())) != 0 ) {
 			if( bytes_read > 0 ) {
 				data.ReleaseBuffer(bytes_read);
-				con.SerialWrite(data); // FIXME - does this copy data?
+				serial.SerialWrite(data); // FIXME - does this copy data?
 			}
 		}
+
+*/
 
 	}
 	catch( std::exception &e ) {

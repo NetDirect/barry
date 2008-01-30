@@ -66,7 +66,7 @@ private:
 	void SendPasswordHash(uint16_t socket, const char *password, Data &receive);
 
 public:
-	explicit SocketZero(SocketRoutingQueue &queue,
+	explicit SocketZero(SocketRoutingQueue &queue, int writeEndpoint,
 		uint8_t zeroSocketSequenceStart = 0);
 	SocketZero(Usb::Device &dev, int writeEndpoint, int readEndpoint,
 		uint8_t zeroSocketSequenceStart = 0);

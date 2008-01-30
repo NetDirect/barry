@@ -81,16 +81,17 @@ void Upload(const Barry::ProbeResult &device, const Barry::Calendar &cal)
 {
 	// connect to address book
 	Controller con(device);
-	con.OpenMode(Controller::Desktop);
-	unsigned int id = con.GetDBID("Calendar");
+	Mode::Desktop desktop(con);
+	desktop.Open();
+	unsigned int id = desktop.GetDBID("Calendar");
 
 	// find out what records are already there, and make new record ID
 	RecordStateTable table;
-	con.GetRecordStateTable(id, table);
+	desktop.GetRecordStateTable(id, table);
 	uint32_t recordId = table.MakeNewRecordId();
 
 	// add it
-	con.AddRecordByType(recordId, cal);
+	desktop.AddRecordByType(recordId, cal);
 	cout << "Added successfully: " << endl << cal << endl;
 }
 

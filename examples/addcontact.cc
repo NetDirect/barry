@@ -64,16 +64,17 @@ void Upload(const Barry::ProbeResult &device, const Barry::Contact &contact)
 {
 	// connect to address book
 	Controller con(device);
-	con.OpenMode(Controller::Desktop);
-	unsigned int id = con.GetDBID("Address Book");
+	Mode::Desktop desktop(con);
+	desktop.Open();
+	unsigned int id = desktop.GetDBID("Address Book");
 
 	// find out what records are already there, and make new record ID
 	RecordStateTable table;
-	con.GetRecordStateTable(id, table);
+	desktop.GetRecordStateTable(id, table);
 	uint32_t recordId = table.MakeNewRecordId();
 
 	// add it
-	con.AddRecordByType(recordId, contact);
+	desktop.AddRecordByType(recordId, contact);
 	cout << "Added successfully." << endl;
 }
 

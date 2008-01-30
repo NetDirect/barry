@@ -66,7 +66,7 @@ Controller::Controller(const ProbeResult &device, SocketRoutingQueue &queue)
 	: m_dev(device.m_dev)
 	, m_iface(0)
 	, m_pin(device.m_pin)
-	, m_zero(queue, device.m_zeroSocketSequence)
+	, m_zero(queue, device.m_ep.write, device.m_zeroSocketSequence)
 	, m_queue(&queue)
 {
 	SetupUsb(device);

@@ -167,10 +167,11 @@ int main(int argc, char *argv[])
 		Barry::Controller con(probe.Get(activeDevice));
 
 		// make sure we're in desktop mode
-		con.OpenMode(Controller::Desktop);
+		Barry::Mode::Desktop desktop(con);
+		desktop.Open();
 
 		// upload all records to device
-		con.SaveDatabaseByType<Barry::Contact>(contactStore);
+		desktop.SaveDatabaseByType<Barry::Contact>(contactStore);
 
 	}
 	catch( Usb::Error &ue) {

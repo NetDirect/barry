@@ -623,6 +623,7 @@ int main(int argc, char *argv[])
 			     << (unsigned int) device.m_ep.write << endl;
 		}
 		Barry::Controller con(device);
+		Barry::Mode::Desktop desktop(con);
 
 		//
 		// execute each mode that was turned on
@@ -632,8 +633,8 @@ int main(int argc, char *argv[])
 		// Dump list of all databases to stdout
 		if( show_dbdb ) {
 			// open desktop mode socket
-			con.OpenMode(Controller::Desktop, password.c_str());
-			cout << con.GetDBDB() << endl;
+			desktop.Open(password.c_str());
+			cout << desktop.GetDBDB() << endl;
 		}
 
 		// Dump list of Contact field names
@@ -654,14 +655,14 @@ int main(int argc, char *argv[])
 		// This uses the Controller convenience templates
 		if( ldif_contacts ) {
 			// make sure we're in desktop mode
-			con.OpenMode(Controller::Desktop, password.c_str());
+			desktop.Open(password.c_str());
 
 			// create a storage functor object that accepts
 			// Barry::Contact objects as input
 			Contact2Ldif storage(ldif);
 
 			// load all the Contact records into storage
-			con.LoadDatabaseByType<Barry::Contact>(storage);
+			desktop.LoadDatabaseByType<Barry::Contact>(storage);
 		}
 
 		// Dump record state table to stdout
@@ -673,10 +674,10 @@ int main(int argc, char *argv[])
 
 			vector<string>::iterator b = dbNames.begin();
 			for( ; b != dbNames.end(); b++ ) {
-				con.OpenMode(Controller::Desktop, password.c_str());
-				unsigned int id = con.GetDBID(*b);
+				desktop.Open(password.c_str());
+				unsigned int id = desktop.GetDBID(*b);
 				RecordStateTable state;
-				con.GetRecordStateTable(id, state);
+				desktop.GetRecordStateTable(id, state);
 				cout << "Record state table for: " << *b << endl;
 				cout << state;
 			}
@@ -690,20 +691,20 @@ int main(int argc, char *argv[])
 				return 1;
 			}
 
-			con.OpenMode(Controller::Desktop, password.c_str());
-			unsigned int id = con.GetDBID(dbNames[0]);
+			desktop.Open(password.c_str());
+			unsigned int id = desktop.GetDBID(dbNames[0]);
 			auto_ptr<Parser> parse = GetParser(dbNames[0],filename);
 
 			for( unsigned int i = 0; i < stCommands.size(); i++ ) {
-				con.GetRecord(id, stCommands[i].index, *parse.get());
+				desktop.GetRecord(id, stCommands[i].index, *parse.get());
 
 				if( stCommands[i].flag == 'r' && stCommands[i].clear ) {
 					cout << "Clearing record's dirty flags..." << endl;
-					con.ClearDirty(id, stCommands[i].index);
+					desktop.ClearDirty(id, stCommands[i].index);
 				}
 
 				if( stCommands[i].flag == 'D' ) {
-					con.DeleteRecord(id, stCommands[i].index);
+					desktop.DeleteRecord(id, stCommands[i].index);
 				}
 			}
 
@@ -717,10 +718,10 @@ int main(int argc, char *argv[])
 			vector<string>::iterator b = dbNames.begin();
 
 			for( ; b != dbNames.end(); b++ ) {
-				con.OpenMode(Controller::Desktop, password.c_str());
+				desktop.Open(password.c_str());
 				auto_ptr<Parser> parse = GetParser(*b,filename);
-				unsigned int id = con.GetDBID(*b);
-				con.LoadDatabase(id, *parse.get());
+				unsigned int id = desktop.GetDBID(*b);
+				desktop.LoadDatabase(id, *parse.get());
 			}
 		}
 
@@ -730,11 +731,11 @@ int main(int argc, char *argv[])
 			vector<string>::iterator b = saveDbNames.begin();
 
 			for( ; b != saveDbNames.end(); b++ ) {
-				con.OpenMode(Controller::Desktop, password.c_str());
+				desktop.Open(password.c_str());
 				auto_ptr<Builder> build =
 					GetBuilder(*b, filename);
-				unsigned int id = con.GetDBID(*b);
-				con.SaveDatabase(id, *build);
+				unsigned int id = desktop.GetDBID(*b);
+				desktop.SaveDatabase(id, *build);
 			}
 		}
 

@@ -9,6 +9,9 @@ Branch: barry-b1-socket-arch
 		- finished controller.{h,cc}, ready for testing
 		- finished m_desktop.{h,cc}, ready for testing
 		- added skeleton m_serial.cc
+		- the base library and utilities compile again!
+		- added constructor for SocketZero(queue)
+		- fixed ErrnoError::GetMsg()
 	2008/01/26
 		- implemented router.{h,cc}... looks ready for testing,
 			once things compile again

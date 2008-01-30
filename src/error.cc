@@ -35,7 +35,7 @@ std::string BadSize::GetMsg(unsigned int p, unsigned int d, unsigned int r)
 	return oss.str();
 }
 
-std::string GetMsg(const std::string &msg, int err)
+std::string ErrnoError::GetMsg(const std::string &msg, int err)
 {
 	std::ostringstream oss;
 	oss << msg << ": (errno " << err << ") " << strerror(err);
