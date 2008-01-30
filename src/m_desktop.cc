@@ -20,54 +20,52 @@
 */
 
 #include "m_desktop.h"
+#include "data.h"
+#include "protocol.h"
+#include "protostructs.h"
+#include "packet.h"
+#include "endian.h"
 #include "error.h"
+#include "usbwrap.h"
+#include "controller.h"
 #include <stdexcept>
 #include <sstream>
+
+#include "debug.h"
 
 namespace Barry { namespace Mode {
 
 
 ///////////////////////////////////////////////////////////////////////////////
-// protected members
+// Desktop Mode class
 
-unsigned int Desktop::GetCommand(CommandType ct)
+Desktop::Desktop(Controller &con)
+	: m_con(con)
+	, m_ModeSocket(0)
 {
-	unsigned int cmd = 0;
-	char *cmdName = "Unknown";
-
-	switch( ct )
-	{
-	case DatabaseAccess:
-		cmdName = "Database Access";
-		cmd = m_commandTable.GetCommand(cmdName);
-		break;
-	default:
-		throw std::logic_error("Controller: unknown command type");
-	}
-
-	if( cmd == 0 ) {
-		std::ostringstream oss;
-		oss << "Controller: unable to get command code: " << cmdName;
-		throw Error(oss.str());
-	}
-
-	return cmd;
 }
+
+Desktop::~Desktop()
+{
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// protected members
 
 void Desktop::LoadCommandTable()
 {
 	char rawCommand[] = { 6, 0, 0x0a, 0, 0x40, 0, 0, 1, 0, 0 };
-	*((uint16_t*) rawCommand) = htobs(m_socket.GetSocket());
+	*((uint16_t*) rawCommand) = htobs(m_socket->GetSocket());
 
 	Data command(rawCommand, sizeof(rawCommand));
 	Data response;
 
 	try {
-		m_socket.Packet(command, response);
+		m_socket->Packet(command, response);
 
 		MAKE_PACKET(rpack, response);
 		while( rpack->command != SB_COMMAND_DB_DONE ) {
-			m_socket.NextRecord(response);
+			m_socket->NextRecord(response);
 
 			rpack = (const Protocol::Packet *) response.GetData();
 			if( rpack->command == SB_COMMAND_DB_DATA && btohs(rpack->size) > 10 ) {
@@ -94,7 +92,7 @@ void Desktop::LoadDBDB()
 	DBPacket packet(*this, command, response);
 	packet.GetDBDB();
 
-	m_socket.Packet(packet);
+	m_socket->Packet(packet);
 
 	while( packet.Command() != SB_COMMAND_DB_DONE ) {
 		if( packet.Command() == SB_COMMAND_DB_DATA ) {
@@ -103,7 +101,7 @@ void Desktop::LoadDBDB()
 		}
 
 		// advance!
-		m_socket.NextRecord(response);
+		m_socket->NextRecord(response);
 	}
 }
 
@@ -111,6 +109,74 @@ void Desktop::LoadDBDB()
 
 ///////////////////////////////////////////////////////////////////////////////
 // public API
+
+//
+// Open
+//
+/// Select device mode.  This is required before using any other mode-based
+/// operations, such as GetDBDB() and LoadDatabase().
+///
+/// This function opens a socket to the device for communicating in Desktop
+/// mode.  If the device requires it, specify the password with a const char*
+/// string in password.  The password will not be stored in memory
+/// inside this class, only a hash will be generated from it.  After
+/// using the hash, the hash memory will be set to 0.  The application
+/// is responsible for safely handling the raw password data.
+///
+/// You can retry the password by catching Barry::BadPassword and
+/// calling RetryPassword() with the new password.
+///
+/// \exception	Barry::Error
+///		Thrown on protocol error.
+///
+/// \exception	std::logic_error()
+///		Thrown if unsupported mode is requested, or if socket
+///		already open.
+///
+/// \exception	Barry::BadPassword
+///		Thrown when password is invalid or if not enough retries
+///		left in the device.
+///
+void Desktop::Open(const char *password)
+{
+	if( m_ModeSocket ) {
+		m_socket->Close();
+		m_socket.reset();
+		m_ModeSocket = 0;
+	}
+
+	m_ModeSocket = m_con.SelectMode(Controller::Desktop);
+	RetryPassword(password);
+}
+
+//
+// RetryPassword
+//
+/// Retry a failed password attempt from the first call to Open().
+/// Only call this function in response to Barry::BadPassword exceptions
+/// that are thrown from Open().
+///
+/// \exception	Barry::Error
+///		Thrown on protocol error.
+///
+/// \exception	std::logic_error()
+///		Thrown if in unsupported mode, or if socket already open.
+///
+/// \exception	Barry::BadPassword
+///		Thrown when password is invalid or if not enough retries
+///		left in the device.
+///
+void Desktop::RetryPassword(const char *password)
+{
+	if( m_socket.get() != 0 )
+		throw std::logic_error("Socket alreay open in RetryPassword");
+
+	m_socket = m_con.m_zero.Open(m_ModeSocket, password);
+
+	// get command table and database database
+	LoadCommandTable();
+	LoadDBDB();
+}
 
 //
 // GetDBID
@@ -134,94 +200,33 @@ unsigned int Desktop::GetDBID(const std::string &name) const
 }
 
 //
-// OpenMode
+// GetDBCommand
 //
-/// Select device mode.  This is required before using any other mode-based
-/// operations, such as GetDBDB() and LoadDatabase().  Currently only
-/// Desktop mode is supported, but the following modes are available.
-/// (See ModeType)
+/// Get database command from command table.  Must call Open()
+/// before this.
 ///
-///	- Controller::Bypass
-///	- Controller::Desktop
-///	- Controller::JavaLoader
-///
-/// This function opens a socket to the device when in Desktop mode.
-/// If the device requires it, specify the password with a conat char*
-/// string in password.  The password will not be stored in memory
-/// inside this class, only a hash will be generated from it.  After
-/// using the hash, the hash memory will be set to 0.  The application
-/// is responsible for safely handling the raw password data.
-///
-/// You can retry the password by catching Barry::BadPassword and
-/// calling RetryPassword() with the new password.
-///
-/// \exception	Barry::Error
-///		Thrown on protocol error.
-///
-/// \exception	std::logic_error()
-///		Thrown if unsupported mode is requested, or if socket
-///		already open.
-///
-/// \exception	Barry::BadPassword
-///		Thrown when password is invalid or if not enough retries
-///		left in the device.
-///
-void Desktop::OpenMode(ModeType mode, const char *password)
+unsigned int Desktop::GetDBCommand(CommandType ct)
 {
-	if( m_mode != mode ) {
-		m_socket.Close();
-		m_tmpModeSocket = SelectMode(mode);
-		m_mode = mode;
+	unsigned int cmd = 0;
+	char *cmdName = "Unknown";
 
-		RetryPassword(password);
-	}
-}
-
-//
-// RetryPassword
-//
-/// Retry a failed password attempt from the first call to OpenMode().
-/// Only call this function on Barry::BadPassword exceptions thrown
-/// from OpenMode().
-///
-/// \exception	Barry::Error
-///		Thrown on protocol error.
-///
-/// \exception	std::logic_error()
-///		Thrown if in unsupported mode, or if socket already open.
-///
-/// \exception	Barry::BadPassword
-///		Thrown when password is invalid or if not enough retries
-///		left in the device.
-///
-void Desktop::RetryPassword(const char *password)
-{
-	if( m_socket.GetSocket() != 0 )
-		throw std::logic_error("Socket alreay open in RetryPassword");
-
-	m_halfOpen = true;
-	m_socket.Open(m_tmpModeSocket, password);
-	m_halfOpen = false;
-
-	switch( m_mode )
+	switch( ct )
 	{
-	case Desktop:
-		// get command table
-		LoadCommandTable();
-
-		// get database database
-		LoadDBDB();
+	case DatabaseAccess:
+		cmdName = "Database Access";
+		cmd = m_commandTable.GetCommand(cmdName);
 		break;
-
-	case UsbSerData:
-		// open the SerCtrl mode as well
-		uint16_t modeSocket = SelectMode(UsbSerCtrl);
-		m_serCtrlSocket.Open(modeSocket);
-		break;
-
 	default:
-		throw std::logic_error("Mode not implemented");
+		throw std::logic_error("Controller: unknown command type");
 	}
+
+	if( cmd == 0 ) {
+		std::ostringstream oss;
+		oss << "Controller: unable to get command code: " << cmdName;
+		throw Error(oss.str());
+	}
+
+	return cmd;
 }
 
 //
@@ -233,9 +238,6 @@ void Desktop::RetryPassword(const char *password)
 ///
 void Desktop::GetRecordStateTable(unsigned int dbId, RecordStateTable &result)
 {
-	if( m_mode != Desktop )
-		throw std::logic_error("Wrong mode in GetRecordStateTable");
-
 	dout("Database ID: " << dbId);
 
 	// start fresh
@@ -245,12 +247,12 @@ void Desktop::GetRecordStateTable(unsigned int dbId, RecordStateTable &result)
 	DBPacket packet(*this, command, response);
 	packet.GetRecordStateTable(dbId);
 
-	m_socket.Packet(packet);
+	m_socket->Packet(packet);
 	result.Parse(response);
 
 	// flush the command sequence
 	while( packet.Command() != SB_COMMAND_DB_DONE )
-		m_socket.NextRecord(response);
+		m_socket->NextRecord(response);
 }
 
 //
@@ -263,9 +265,6 @@ void Desktop::GetRecordStateTable(unsigned int dbId, RecordStateTable &result)
 //
 void Desktop::AddRecord(unsigned int dbId, Builder &build)
 {
-	if( m_mode != Desktop )
-		throw std::logic_error("Wrong mode in GetRecord");
-
 	dout("Database ID: " << dbId);
 
 	Data command, response;
@@ -275,7 +274,7 @@ void Desktop::AddRecord(unsigned int dbId, Builder &build)
 
 		std::ostringstream oss;
 
-		m_socket.Packet(packet);
+		m_socket->Packet(packet);
 
 		// successful packet transfer, so check the network return code
 		if( packet.Command() != SB_COMMAND_DB_DONE ) {
@@ -304,16 +303,13 @@ void Desktop::GetRecord(unsigned int dbId,
 			   unsigned int stateTableIndex,
 			   Parser &parser)
 {
-	if( m_mode != Desktop )
-		throw std::logic_error("Wrong mode in GetRecord");
-
 	dout("Database ID: " << dbId);
 
 	Data command, response;
 	DBPacket packet(*this, command, response);
 	packet.GetRecordByIndex(dbId, stateTableIndex);
 
-	m_socket.Packet(packet);
+	m_socket->Packet(packet);
 
 	// perform copious packet checks
 	if( response.GetSize() < SB_PACKET_RESPONSE_HEADER_SIZE ) {
@@ -342,7 +338,7 @@ void Desktop::GetRecord(unsigned int dbId,
 
 	// flush the command sequence
 	while( packet.Command() != SB_COMMAND_DB_DONE )
-		m_socket.NextRecord(response);
+		m_socket->NextRecord(response);
 }
 
 //
@@ -354,9 +350,6 @@ void Desktop::GetRecord(unsigned int dbId,
 void Desktop::SetRecord(unsigned int dbId, unsigned int stateTableIndex,
 			   Builder &build)
 {
-	if( m_mode != Desktop )
-		throw std::logic_error("Wrong mode in SetRecord");
-
 	dout("Database ID: " << dbId << " Index: " << stateTableIndex);
 
 	Data command, response;
@@ -367,7 +360,7 @@ void Desktop::SetRecord(unsigned int dbId, unsigned int stateTableIndex,
 		throw std::logic_error("Controller: no data available in SetRecord");
 	}
 
-	m_socket.Packet(packet);
+	m_socket->Packet(packet);
 
 	std::ostringstream oss;
 
@@ -393,20 +386,17 @@ void Desktop::SetRecord(unsigned int dbId, unsigned int stateTableIndex,
 ///
 void Desktop::ClearDirty(unsigned int dbId, unsigned int stateTableIndex)
 {
-	if( m_mode != Desktop )
-		throw std::logic_error("Wrong mode in ClearDirty");
-
 	dout("Database ID: " << dbId);
 
 	Data command, response;
 	DBPacket packet(*this, command, response);
 	packet.SetRecordFlags(dbId, stateTableIndex, 0);
 
-	m_socket.Packet(packet);
+	m_socket->Packet(packet);
 
 	// flush the command sequence
 	while( packet.Command() != SB_COMMAND_DB_DONE )
-		m_socket.NextRecord(response);
+		m_socket->NextRecord(response);
 }
 
 //
@@ -416,20 +406,17 @@ void Desktop::ClearDirty(unsigned int dbId, unsigned int stateTableIndex)
 ///
 void Desktop::DeleteRecord(unsigned int dbId, unsigned int stateTableIndex)
 {
-	if( m_mode != Desktop )
-		throw std::logic_error("Wrong mode in DeleteRecord");
-
 	dout("Database ID: " << dbId);
 
 	Data command, response;
 	DBPacket packet(*this, command, response);
 	packet.DeleteRecordByIndex(dbId, stateTableIndex);
 
-	m_socket.Packet(packet);
+	m_socket->Packet(packet);
 
 	// flush the command sequence
 	while( packet.Command() != SB_COMMAND_DB_DONE )
-		m_socket.NextRecord(response);
+		m_socket->NextRecord(response);
 }
 
 //
@@ -457,16 +444,13 @@ void Desktop::DeleteRecord(unsigned int dbId, unsigned int stateTableIndex)
 ///
 void Desktop::LoadDatabase(unsigned int dbId, Parser &parser)
 {
-	if( m_mode != Desktop )
-		throw std::logic_error("Wrong mode in LoadDatabase");
-
 	dout("Database ID: " << dbId);
 
 	Data command, response;
 	DBPacket packet(*this, command, response);
 	packet.GetRecords(dbId);
 
-	m_socket.Packet(packet);
+	m_socket->Packet(packet);
 
 	while( packet.Command() != SB_COMMAND_DB_DONE ) {
 		if( packet.Command() == SB_COMMAND_DB_DATA ) {
@@ -476,15 +460,12 @@ void Desktop::LoadDatabase(unsigned int dbId, Parser &parser)
 		}
 
 		// advance!
-		m_socket.NextRecord(response);
+		m_socket->NextRecord(response);
 	}
 }
 
 void Desktop::SaveDatabase(unsigned int dbId, Builder &builder)
 {
-	if( m_mode != Desktop )
-		throw std::logic_error("Wrong mode in SaveDatabase");
-
 	dout("Database ID: " << dbId);
 
 	// Protocol note: so far in testing, this CLEAR_DATABASE operation is
@@ -499,7 +480,7 @@ void Desktop::SaveDatabase(unsigned int dbId, Builder &builder)
 	packet.ClearDatabase(dbId);
 
 	// wait up to a minute here for old, slower devices with lots of data
-	m_socket.Packet(packet, 60000);
+	m_socket->Packet(packet, 60000);
 	if( packet.ReturnCode() != 0 ) {
 		std::ostringstream oss;
 		oss << "Controller: could not clear database: (command: "
@@ -519,7 +500,7 @@ void Desktop::SaveDatabase(unsigned int dbId, Builder &builder)
 	while( packet.SetRecord(dbId, builder) ) {
 		dout("Database ID: " << dbId);
 
-		m_socket.Packet(packet, first ? 60000 : -1);
+		m_socket->Packet(packet, first ? 60000 : -1);
 		first = false;
 
 		std::ostringstream oss;

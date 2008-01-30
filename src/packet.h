@@ -34,6 +34,7 @@ namespace Barry {
 class Parser;
 class Builder;
 class SocketZero;
+class Socket;
 namespace Mode {
 	class Desktop;
 }

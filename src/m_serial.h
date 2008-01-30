@@ -22,32 +22,29 @@
 #ifndef __BARRY_M_SERIAL_H__
 #define __BARRY_M_SERIAL_H__
 
-#include "usbwrap.h"
-#include "probe.h"
+//#include "usbwrap.h"
+//#include "probe.h"
 #include "socket.h"
-#include "record.h"
+//#include "record.h"
 #include "data.h"
 
 namespace Barry {
+
+// forward declarations
+class Controller;
 
 namespace Mode {
 
 class Serial
 {
-//	friend class Barry::DBPacket;
-
 private:
 	Controller &m_con;
 
 	SocketHandle m_socket;
+//	SocketHandle m_serCtrlSocket;
 
 	// UsbSerData cache
 	Data m_writeCache, m_readCache;
-
-	// tracking of open socket, and the need to reset
-//	bool m_halfOpen;
-
-protected:
 
 public:
 	Serial(Controller &con);
@@ -65,7 +62,7 @@ public:
 	void SerialWrite(const Data &data);
 };
 
-} // namespace Barry
+}} // namespace Barry::Mode
 
 #endif
 

@@ -108,6 +108,7 @@ libbarry_la_SOURCES = time.cc \
 	packet.cc packet.h \
 	controller.cc \
 	m_desktop.cc \
+	m_serial.cc \
 	version.cc \
 	protostructs.h \
 	debug.h \

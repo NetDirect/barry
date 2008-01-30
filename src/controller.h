@@ -24,9 +24,6 @@
 
 #include "usbwrap.h"
 #include "socket.h"
-//#include "probe.h"
-//#include "record.h"
-//#include "data.h"
 
 /// Project namespace, containing all related functions and classes.
 /// This is the only namespace applications should be concerned with,
@@ -34,13 +31,12 @@
 namespace Barry {
 
 // forward declarations
-class Parser;
-class Builder;
-class DBPacket;
+class ProbeResult;
+class SocketRoutingQueue;
 
 namespace Mode {
 	class Desktop;
-	class Serial;
+//	class Serial;
 }
 
 //
@@ -68,13 +64,13 @@ namespace Mode {
 ///
 class Controller
 {
-//	friend class Barry::Mode::Desktop;
+	friend class Barry::Mode::Desktop;
 //	friend class Barry::Mode::Serial;
 
 public:
 	/// Handheld mode type
 	enum ModeType {
-		Unspecified,		//< default on start up
+		Unspecified,		//< default on start up (unused)
 		Bypass,			//< unsupported, unknown
 		Desktop,		//< desktop mode required for database
 					//< operation
@@ -89,21 +85,10 @@ private:
 	uint32_t m_pin;
 
 	SocketZero m_zero;
-//	SocketHandle m_serCtrlSocket;
+	SocketRoutingQueue *m_queue;
 
-//	CommandTable m_commandTable;
-//	DatabaseDatabase m_dbdb;
-
-//	ModeType m_mode;
-
-//	uint16_t m_tmpModeSocket;		// socket recommended by device
-						// when mode was selected
-
-	// UsbSerData cache
-//	Data m_writeCache, m_readCache;
-
-	// tracking of open Desktop socket, and the need to reset
-//	bool m_halfOpen;
+private:
+	void SetupUsb(const ProbeResult &device);
 
 protected:
 	uint16_t SelectMode(ModeType mode);	// returns mode socket

@@ -22,22 +22,14 @@
 #ifndef __BARRY_M_DESKTOP_H__
 #define __BARRY_M_DESKTOP_H__
 
-//#include "controller.h"
-//#include "usbwrap.h"
-//#include "probe.h"
 #include "socket.h"
 #include "record.h"
-//#include "data.h"
 
-/// Project namespace, containing all related functions and classes.
-/// This is the only namespace applications should be concerned with,
-/// for now.
 namespace Barry {
 
 // forward declarations
 class Parser;
 class Builder;
-class DBPacket;
 class Controller;
 
 namespace Mode {
@@ -52,19 +44,13 @@ namespace Mode {
 ///	- Create a Controller object (see Controller class for more details)
 ///	- Create this Mode::Desktop object, passing in the Controller
 ///		object during construction
-///	- Call Open() to open database socket 
-select the desired mode.  This will fill all
-///		internal data structures for that mode, such as the
-///		Database Database in Desktop mode.
-///		NOTE: only Desktop mode is currently implemented.
+///	- Call Open() to open database socket and finish constructing.
 ///	- Call GetDBDB() to get the device's database database
 ///	- Call GetDBID() to get a database ID by name
-///	- In Desktop mode, call LoadDatabase() to retrieve and store a database
+///	- Call LoadDatabase() to retrieve and store a database
 ///
 class Desktop
 {
-	friend class Barry::DBPacket;
-
 public:
 	enum CommandType { Unknown, DatabaseAccess };
 
@@ -79,12 +65,7 @@ private:
 	uint16_t m_ModeSocket;			// socket recommended by device
 						// when mode was selected
 
-	// tracking of open Desktop socket, and the need to reset
-//	bool m_halfOpen;
-
 protected:
-	unsigned int GetCommand(CommandType ct);
-
 	void LoadCommandTable();
 	void LoadDBDB();
 
@@ -93,17 +74,19 @@ public:
 	~Desktop();
 
 	//////////////////////////////////
+	// primary operations - required before anything else
+
+	void Open(const char *password = 0);
+	void RetryPassword(const char *password);
+
+	//////////////////////////////////
 	// meta access
 
 	/// Returns DatabaseDatabase object for this connection.
 	/// Must call Open() first, which loads the DBDB.
 	const DatabaseDatabase& GetDBDB() const { return m_dbdb; }
 	unsigned int GetDBID(const std::string &name) const;
-
-	//////////////////////////////////
-	// general operations
-	void Open(const char *password = 0);
-	void RetryPassword(const char *password);
+	unsigned int GetDBCommand(CommandType ct);
 
 	//////////////////////////////////
 	// Desktop mode - database specific
