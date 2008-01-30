@@ -608,7 +608,7 @@ void Socket::Close()
 void Socket::Send(Data &send, int timeout)
 {
 	// force the socket number to this socket
-	if( send.GetSize() >= SB_SOCKET_PACKET_HEADER_SIZE ) {
+	if( send.GetSize() >= SB_PACKET_HEADER_SIZE ) {
 		MAKE_PACKETPTR_BUF(spack, send.GetBuffer());
 		spack->socket = htobs(m_socket);
 	}

@@ -65,6 +65,11 @@ private:
 	void SendOpen(uint16_t socket, Data &receive);
 	void SendPasswordHash(uint16_t socket, const char *password, Data &receive);
 
+	// Raw send and receive functions, used for all low level
+	// communication to the USB level.
+	void RawSend(Data &send, int timeout = -1);
+	void RawReceive(Data &receive, int timeout = -1);
+
 public:
 	explicit SocketZero(SocketRoutingQueue &queue, int writeEndpoint,
 		uint8_t zeroSocketSequenceStart = 0);
@@ -76,11 +81,6 @@ public:
 
 	void SetRoutingQueue(SocketRoutingQueue &queue);
 	void UnlinkRoutingQueue();
-
-	// Raw send and receive functions, used for all low level
-	// communication to the USB level.
-	void RawSend(Data &send, int timeout = -1);
-	void RawReceive(Data &receive, int timeout = -1);
 
 	// Send functions for socket 0 only.
 	// These functions will overwrite:

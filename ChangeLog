@@ -13,6 +13,9 @@ Branch: barry-b1-socket-arch
 		- added constructor for SocketZero(queue)
 		- fixed ErrnoError::GetMsg()
 		- updated GUI and opensync plugin to compile with new API
+		- moved Raw Send/Receive socket functions to private
+		- fixed packet header size bug in socket that caused
+			socket ID override to be skipped
 	2008/01/26
 		- implemented router.{h,cc}... looks ready for testing,
 			once things compile again
