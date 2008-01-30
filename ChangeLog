@@ -12,6 +12,7 @@ Branch: barry-b1-socket-arch
 		- the base library and utilities compile again!
 		- added constructor for SocketZero(queue)
 		- fixed ErrnoError::GetMsg()
+		- updated GUI and opensync plugin to compile with new API
 	2008/01/26
 		- implemented router.{h,cc}... looks ready for testing,
 			once things compile again

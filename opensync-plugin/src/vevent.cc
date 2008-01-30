@@ -515,7 +515,7 @@ char* VEventConverter::GetRecordData(BarryEnvironment *env, unsigned int dbId,
 
 	VEventConverter cal2event;
 	RecordParser<Calendar, VEventConverter> parser(cal2event);
-	env->m_pCon->GetRecord(dbId, index, parser);
+	env->m_pDesktop->GetRecord(dbId, index, parser);
 	return cal2event.ExtractData();
 }
 
@@ -556,13 +556,13 @@ bool VEventConverter::CommitRecordData(BarryEnvironment *env, unsigned int dbId,
 
 	if( add ) {
 		trace.log("adding record");
-		env->m_pCon->AddRecord(dbId, builder);
+		env->m_pDesktop->AddRecord(dbId, builder);
 	}
 	else {
 		trace.log("setting record");
-		env->m_pCon->SetRecord(dbId, StateIndex, builder);
+		env->m_pDesktop->SetRecord(dbId, StateIndex, builder);
 		trace.log("clearing dirty flag");
-		env->m_pCon->ClearDirty(dbId, StateIndex);
+		env->m_pDesktop->ClearDirty(dbId, StateIndex);
 	}
 
 	return true;

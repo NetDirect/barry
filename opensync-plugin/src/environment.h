@@ -86,6 +86,7 @@ public:
 	// device communication
 	Barry::ProbeResult m_ProbeResult;
 	Barry::Controller *m_pCon;
+	Barry::Mode::Desktop *m_pDesktop;
 
 	// sync data
 	DatabaseSyncState m_CalendarSync, m_ContactsSync;

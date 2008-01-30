@@ -62,7 +62,7 @@ void GetChanges(OSyncContext *ctx, BarryEnvironment *env,
 	// shortcut references
 	using namespace Barry;
 	using Barry::RecordStateTable;
-	Controller &con = *env->m_pCon;
+	Mode::Desktop &desktop = *env->m_pDesktop;
 
 	// find the matching cache, state table, and id map for this change
 	DatabaseSyncState::cache_type &cache = pSync->m_Cache;
@@ -77,9 +77,9 @@ void GetChanges(OSyncContext *ctx, BarryEnvironment *env,
 	}
 
 	// fetch state table
-	unsigned int dbId = con.GetDBID(DBDBName);
+	unsigned int dbId = desktop.GetDBID(DBDBName);
 	RecordStateTable &table = pSync->m_Table;
-	con.GetRecordStateTable(dbId, table);
+	desktop.GetRecordStateTable(dbId, table);
 
 	// cycle through the state table...
 	//    - if not in cache, it is added.
@@ -210,11 +210,11 @@ bool FinishSync(OSyncContext *ctx, BarryEnvironment *env, DatabaseSyncState *pSy
 		return true;
 	}
 
-	Barry::Controller &con = *env->m_pCon;
+	Barry::Mode::Desktop &desktop = *env->m_pDesktop;
 
 	// get the state table again, so we can update
 	// the cache properly
-	con.GetRecordStateTable(pSync->m_dbId, pSync->m_Table);
+	desktop.GetRecordStateTable(pSync->m_dbId, pSync->m_Table);
 
 	// update the cache
 	if( !pSync->SaveCache() ) {
@@ -403,7 +403,7 @@ static osync_bool commit_change(OSyncContext *ctx, OSyncChange *change)
 		DatabaseSyncState::cache_type &cache = pSync->m_Cache;
 		Barry::RecordStateTable &table = pSync->m_Table;
 		idmap &map = pSync->m_IdMap;
-		Barry::Controller &con = *env->m_pCon;
+		Barry::Mode::Desktop &desktop = *env->m_pDesktop;
 		unsigned int dbId = pSync->m_dbId;
 
 
@@ -436,7 +436,7 @@ static osync_bool commit_change(OSyncContext *ctx, OSyncChange *change)
 		switch( osync_change_get_changetype(change) )
 		{
 		case CHANGE_DELETED:
-			con.DeleteRecord(dbId, StateIndex);
+			desktop.DeleteRecord(dbId, StateIndex);
 			cache.erase(RecordId);
 			map.UnmapUid(uid);
 			break;
