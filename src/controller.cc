@@ -46,6 +46,7 @@ Controller::Controller(const ProbeResult &device)
 	, m_iface(0)
 	, m_pin(device.m_pin)
 	, m_zero(m_dev, device.m_ep.write, device.m_ep.read, device.m_zeroSocketSequence)
+	, m_queue(0)
 {
 	SetupUsb(device);
 }

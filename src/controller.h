@@ -85,7 +85,7 @@ private:
 	uint32_t m_pin;
 
 	SocketZero m_zero;
-	SocketRoutingQueue *m_queue;
+	SocketRoutingQueue *m_queue;	//< ptr to external object; no delete
 
 private:
 	void SetupUsb(const ProbeResult &device);
