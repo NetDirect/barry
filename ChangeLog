@@ -16,6 +16,14 @@ Branch: barry-b1-socket-arch
 		- moved Raw Send/Receive socket functions to private
 		- fixed packet header size bug in socket that caused
 			socket ID override to be skipped
+		- fixed incorrect use of gettimeofday()
+		- fixed race condition where Controller could destroy
+			the Usb::Device object before the SocketRoutingQueue
+			was done with it
+		- fixed segfault in SocketZero::RawSend() when a router
+			was in use
+		- fixed Open() bugs in btool... Open() must be outside of loops
+		- btool uses the router thread now, for testing
 	2008/01/26
 		- implemented router.{h,cc}... looks ready for testing,
 			once things compile again

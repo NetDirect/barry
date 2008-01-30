@@ -611,6 +611,10 @@ int main(int argc, char *argv[])
 			return 0;
 		}
 
+		// Create our socket router and thread
+		SocketRoutingQueue router;
+		router.SpinoffSimpleReadThread();
+
 		// Create our controller object
 		Barry::ProbeResult device = probe.Get(activeDevice);
 		if( epp_override ) {
@@ -622,7 +626,7 @@ int main(int argc, char *argv[])
 			     << (unsigned int) device.m_ep.read << ","
 			     << (unsigned int) device.m_ep.write << endl;
 		}
-		Barry::Controller con(device);
+		Barry::Controller con(device, router);
 		Barry::Mode::Desktop desktop(con);
 
 		//
@@ -672,9 +676,10 @@ int main(int argc, char *argv[])
 				return 1;
 			}
 
+			desktop.Open(password.c_str());
+
 			vector<string>::iterator b = dbNames.begin();
 			for( ; b != dbNames.end(); b++ ) {
-				desktop.Open(password.c_str());
 				unsigned int id = desktop.GetDBID(*b);
 				RecordStateTable state;
 				desktop.GetRecordStateTable(id, state);
@@ -717,8 +722,8 @@ int main(int argc, char *argv[])
 		if( dbNames.size() ) {
 			vector<string>::iterator b = dbNames.begin();
 
+			desktop.Open(password.c_str());
 			for( ; b != dbNames.end(); b++ ) {
-				desktop.Open(password.c_str());
 				auto_ptr<Parser> parse = GetParser(*b,filename);
 				unsigned int id = desktop.GetDBID(*b);
 				desktop.LoadDatabase(id, *parse.get());
@@ -730,8 +735,8 @@ int main(int argc, char *argv[])
 		if( saveDbNames.size() ) {
 			vector<string>::iterator b = saveDbNames.begin();
 
+			desktop.Open(password.c_str());
 			for( ; b != saveDbNames.end(); b++ ) {
-				desktop.Open(password.c_str());
 				auto_ptr<Builder> build =
 					GetBuilder(*b, filename);
 				unsigned int id = desktop.GetDBID(*b);

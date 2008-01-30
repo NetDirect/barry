@@ -306,6 +306,8 @@ void SocketZero::UnlinkRoutingQueue()
 
 void SocketZero::RawSend(Data &send, int timeout)
 {
+	Usb::Device *dev = m_queue ? m_queue->GetUsbDevice() : m_dev;
+
 	// Special case: it seems that sending packets with a size that's an
 	// exact multiple of 0x40 causes the device to get confused.
 	//
@@ -319,10 +321,10 @@ void SocketZero::RawSend(Data &send, int timeout)
 		packet.buffer[2] = 0;		// zero the top byte
 		Data sizeCommand(&packet, 3);
 
-		m_dev->BulkWrite(m_writeEp, sizeCommand);
+		dev->BulkWrite(m_writeEp, sizeCommand);
 	}
 
-	m_dev->BulkWrite(m_writeEp, send);
+	dev->BulkWrite(m_writeEp, send);
 }
 
 void SocketZero::RawReceive(Data &receive, int timeout)

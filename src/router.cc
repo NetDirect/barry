@@ -26,6 +26,7 @@
 #include "usbwrap.h"
 #include "endian.h"
 #include "debug.h"
+#include <unistd.h>
 
 namespace Barry {
 
@@ -40,6 +41,9 @@ SocketRoutingQueue::SocketRoutingQueue()
 	, m_continue_reading(false)
 {
 	pthread_mutex_init(&m_mutex, NULL);
+
+	pthread_mutex_init(&m_readwaitMutex, NULL);
+	pthread_cond_init(&m_readwaitCond, NULL);
 }
 
 SocketRoutingQueue::~SocketRoutingQueue()
@@ -78,7 +82,7 @@ void *SocketRoutingQueue::SimpleReadThread(void *userptr)
 	// read from USB and write to stdout until finished
 	std::string msg;
 	while( q->m_continue_reading ) {
-		if( !q->DoRead(msg, 2000) ) {	// timeout in milliseconds
+		if( !q->DoRead(msg, 1000) ) {	// timeout in milliseconds
 			eout("Error in SimpleReadThread: " << msg);
 		}
 	}
@@ -104,6 +108,12 @@ void SocketRoutingQueue::ClearUsbDevice()
 {
 	scoped_lock lock(m_mutex);
 	m_dev = 0;
+	lock.unlock();
+
+	// wait for the DoRead cycle to finish, so the external
+	// Usb::Device object doesn't close before we're done with it
+	scoped_lock wait(m_readwaitMutex);
+	pthread_cond_wait(&m_readwaitCond, &m_readwaitMutex);
 }
 
 bool SocketRoutingQueue::UsbDeviceReady()
@@ -316,6 +326,21 @@ bool SocketRoutingQueue::IsAvailable(uint16_t socket) const
 ///
 bool SocketRoutingQueue::DoRead(std::string &msg, int timeout)
 {
+	class ReadWaitSignal
+	{
+		pthread_mutex_t &m_Mutex;
+		pthread_cond_t &m_Cond;
+	public:
+		ReadWaitSignal(pthread_mutex_t &mut, pthread_cond_t &cond)
+			: m_Mutex(mut), m_Cond(cond)
+			{}
+		~ReadWaitSignal()
+		{
+			scoped_lock wait(m_Mutex);
+			pthread_cond_signal(&m_Cond);
+		}
+	} readwait(m_readwaitMutex, m_readwaitCond);
+
 	Usb::Device * volatile dev = 0;
 	int readEp;
 	DataHandle buf(*this, 0);
@@ -326,7 +351,9 @@ bool SocketRoutingQueue::DoRead(std::string &msg, int timeout)
 
 		if( !m_dev ) {
 			lock.unlock();	// unlock early, since we're sleeping
-			sleep(timeout / 1000 + 1);
+			// sleep only a short time, since things could be
+			// in the process of setup or teardown
+			usleep(125000);
 			return true;
 		}
 

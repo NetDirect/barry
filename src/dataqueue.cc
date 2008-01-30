@@ -130,10 +130,9 @@ Data* DataQueue::wait_pop(int timeout)
 	else {
 		// timeout in conditional wait
 		struct timeval now;
-		struct timezone zone;
 		struct timespec to;
 
-		gettimeofday(&now, &zone);
+		gettimeofday(&now, NULL);
 		to.tv_sec = now.tv_sec + timeout / 1000;
 		to.tv_nsec = (now.tv_usec + timeout % 1000 * 1000) * 1000;
 

@@ -56,6 +56,9 @@ private:
 				// DataQueues, as they have their own
 				// locking per queue
 
+	pthread_mutex_t m_readwaitMutex;
+	pthread_cond_t m_readwaitCond;
+
 	DataQueue m_free;
 	DataQueue m_default;
 	SocketQueueMap m_socketQueues;
@@ -87,6 +90,7 @@ public:
 	void SetUsbDevice(Usb::Device *dev, int writeEp, int readEp);
 	void ClearUsbDevice();
 	bool UsbDeviceReady();
+	Usb::Device* GetUsbDevice() { return m_dev; }
 
 	// This class starts out with no buffers, and will grow one buffer
 	// at a time if needed.  Call this to allocate count buffers
