@@ -206,9 +206,7 @@ void SocketRoutingQueue::UnregisterInterest(uint16_t socket)
 		return;	// nothing registered, done
 
 	// salvage all our data buffers
-	while( Data *buf = qi->second->second.pop() ) {
-		m_free.push(buf);
-	}
+	m_free.append_from( qi->second->second );
 
 	// remove the QueuePairPtr from the map
 	m_socketQueues.erase( qi );
@@ -270,6 +268,10 @@ DataHandle SocketRoutingQueue::SocketRead(uint16_t socket, int timeout)
 		// This is safe, since even if UnregisterInterest is called,
 		// our pointer won't be deleted until our shared_ptr
 		// (QueuePairPtr) goes out of scope.
+		//
+		// The remaining problem is that wait_pop() might wait
+		// forever if there is no timeout... c'est la vie.
+		// Should'a used a timeout. :-)
 		qpp = qi->second;
 		dq = &qpp->second;
 	}

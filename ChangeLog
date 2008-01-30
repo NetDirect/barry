@@ -1,5 +1,10 @@
 Branch: barry-b1-socket-arch
 ------------------------------------------------------------------------------
+	2008/01/30
+		- implemented dataqueue.{h,cc}... looks ready for testing,
+			once things compile again
+		- changed free list copy in router.cc to use
+			DataQueue::append_from()
 	2008/01/26
 		- implemented router.{h,cc}... looks ready for testing,
 			once things compile again

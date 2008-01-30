@@ -34,18 +34,19 @@ class Data;
 //
 /// This class provides a thread aware fifo queue for Data objects,
 /// providing memory management for all Data object pointers it contains.
-/// k
 ///
 /// It uses similar member names as std::queue<>, for consistency.
 ///
 class DataQueue
 {
+	typedef std::queue<Data*>			queue_type;
+
 	pthread_mutex_t m_waitMutex;
 	pthread_cond_t m_waitCond;
 
-	pthread_mutex_t m_accessMutex;	// locked for each access of m_queue
+	mutable pthread_mutex_t m_accessMutex;	// locked for each access of m_queue
 
-	std::queue<Data*> m_queue;
+	queue_type m_queue;
 
 public:
 	DataQueue();
@@ -60,14 +61,20 @@ public:
 	// Pops the next element off the front of the queue.
 	// Returns 0 if empty.
 	// The queue no longer owns this pointer upon return.
-	// In the case of an exception, 
 	Data* pop();
 
 	// Pops the next element off the front of the queue, and
 	// waits until one exists if empty.  If still no data
 	// on timeout, returns null.
-	// (unlock the access mutex while waiting!)
+	// Timeout specified in milliseconds.  Default is wait forever.
 	Data* wait_pop(int timeout = -1);
+
+	// Pops all data from other and appends it to this.
+	// After calling this function, other will be empty, and
+	// this will contain all its data.
+	// In the case of an exception, any uncopied data will
+	// remain in other.
+	void append_from(DataQueue &other);
 
 	bool empty() const;	// return true if empty
 	size_t size() const;

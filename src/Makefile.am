@@ -93,6 +93,7 @@ libbarry_la_SOURCES = time.cc \
 	ldif.cc \
 	socket.cc \
 	router.cc \
+	dataqueue.cc \
 	protocol.cc \
 	record.cc \
 	r_calendar.cc \
