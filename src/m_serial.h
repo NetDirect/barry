@@ -22,10 +22,7 @@
 #ifndef __BARRY_M_SERIAL_H__
 #define __BARRY_M_SERIAL_H__
 
-//#include "usbwrap.h"
-//#include "probe.h"
 #include "socket.h"
-//#include "record.h"
 #include "data.h"
 
 namespace Barry {
@@ -37,17 +34,32 @@ namespace Mode {
 
 class Serial
 {
+public:
+	typedef void (*DeviceDataCallback)(void *context, const unsigned char *data, int len);
+
 private:
 	Controller &m_con;
 
-	SocketHandle m_socket;
-//	SocketHandle m_serCtrlSocket;
+	SocketHandle m_data;
+	SocketHandle m_ctrl;
+
+	uint16_t m_ModeSocket;			// socket recommended by device
+						// when mode was selected
+	uint16_t m_CtrlSocket;
 
 	// UsbSerData cache
-	Data m_writeCache, m_readCache;
+	Data m_writeCache;
+//	Data m_readCache;
+
+	// external callbacks
+	DeviceDataCallback m_callback;
+	void *m_callback_context;
+
+protected:
+	static void DataCallback(void *context, Data *data);
 
 public:
-	Serial(Controller &con);
+	Serial(Controller &con, DeviceDataCallback callback, void *callback_context);
 	~Serial();
 
 	//////////////////////////////////
@@ -58,8 +70,8 @@ public:
 	//////////////////////////////////
 	// UsbSerData mode - modem specific
 
-	void SerialRead(Data &data, int timeout); // can be called from separate thread
-	void SerialWrite(const Data &data);
+//	void Read(Data &data, int timeout); // can be called from separate thread
+	void Write(const Data &data);
 };
 
 }} // namespace Barry::Mode

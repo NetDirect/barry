@@ -120,6 +120,8 @@ class Socket
 	uint16_t m_socket;
 	uint8_t m_closeFlag;
 
+	bool m_registered;
+
 protected:
 	void CheckSequence(const Data &seq);
 	void ForceClosed();
@@ -153,6 +155,12 @@ public:
 
 	// some handy wrappers for the Packet() interface
 	void NextRecord(Data &receive);
+
+	// Register a callback for incoming data from the device.
+	// This function assumes that this socket is based on a socketZero
+	// that has a SocketRoutingQueue, otherwise throws logic_error.
+	void RegisterInterest(SocketRoutingQueue::SocketDataHandler handler, void *context);
+	void UnregisterInterest();
 };
 
 

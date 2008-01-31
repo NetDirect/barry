@@ -40,10 +40,20 @@ class SocketRoutingQueue
 	friend class DataHandle;
 
 public:
-	typedef void (*SocketDataHandler)(Data*);	//< See RegisterInterest() for information on this callback.
-	typedef std::pair<SocketDataHandler, DataQueue>	QueuePair;
-	typedef std::tr1::shared_ptr<QueuePair>		QueuePairPtr;
-	typedef std::map<uint16_t, QueuePairPtr>	SocketQueueMap;
+	typedef void (*SocketDataHandler)(void *ctx, Data*);	//< See RegisterInterest() for information on this callback.
+	struct QueueEntry
+	{
+		SocketDataHandler m_handler;
+		void *m_context;
+		DataQueue m_queue;
+
+		QueueEntry(SocketDataHandler h, void *c)
+			: m_handler(h)
+			, m_context(c)
+			{}
+	};
+	typedef std::tr1::shared_ptr<QueueEntry>	QueueEntryPtr;
+	typedef std::map<uint16_t, QueueEntryPtr>	SocketQueueMap;
 
 private:
 	Usb::Device * volatile m_dev;
@@ -81,7 +91,7 @@ protected:
 	static void *SimpleReadThread(void *userptr);
 
 public:
-	SocketRoutingQueue();
+	SocketRoutingQueue(int prealloc_buffer_count = 4);
 	~SocketRoutingQueue();
 
 	// These functions connect the router to an external Usb::Device
@@ -115,7 +125,7 @@ public:
 	// copying is done.  Once the handler returns, the data is
 	// considered processed and not added to the interested queue,
 	// but instead returned to m_free.
-	void RegisterInterest(uint16_t socket, SocketDataHandler handler = 0);
+	void RegisterInterest(uint16_t socket, SocketDataHandler handler = 0, void *context = 0);
 
 	// Unregisters interest in data from the given socket, and discards
 	// any existing data in its interest queue.  Any new incoming data

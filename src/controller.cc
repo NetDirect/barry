@@ -173,6 +173,10 @@ uint16_t Controller::SelectMode(ModeType mode)
 		strcpy(modeName, "RIM_UsbSerData");
 		break;
 
+	case UsbSerCtrl:
+		strcpy(modeName, "RIM_UsbSerCtrl");
+		break;
+
 	default:
 		throw std::logic_error("Controller: Invalid mode in SelectMode");
 		break;

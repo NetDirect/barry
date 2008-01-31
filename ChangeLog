@@ -24,6 +24,15 @@ Branch: barry-b1-socket-arch
 			was in use
 		- fixed Open() bugs in btool... Open() must be outside of loops
 		- btool uses the router thread now, for testing
+		- partially implemented m_serial.{h,cc}... needs testing
+		- added automatic buffer allocation to SocketRoutingQueue
+			constructor
+		- made AllocateBuffers() a little smarter, so it was not
+			pure appending
+		- added a context data pointer to the SocketRoutingQueue
+			RegisterInterest callback
+		- added RegisterInterest functionality to Socket class
+		- added exceptions on router read errors in socketzero
 	2008/01/26
 		- implemented router.{h,cc}... looks ready for testing,
 			once things compile again

@@ -33,7 +33,7 @@ namespace Barry {
 ///////////////////////////////////////////////////////////////////////////////
 // SocketRoutingQueue constructors
 
-SocketRoutingQueue::SocketRoutingQueue()
+SocketRoutingQueue::SocketRoutingQueue(int prealloc_buffer_count)
 	: m_dev(0)
 	, m_writeEp(0)
 	, m_readEp(0)
@@ -44,6 +44,8 @@ SocketRoutingQueue::SocketRoutingQueue()
 
 	pthread_mutex_init(&m_readwaitMutex, NULL);
 	pthread_cond_init(&m_readwaitCond, NULL);
+
+	AllocateBuffers(prealloc_buffer_count);
 }
 
 SocketRoutingQueue::~SocketRoutingQueue()
@@ -127,10 +129,15 @@ bool SocketRoutingQueue::UsbDeviceReady()
 //
 /// This class starts out with no buffers, and will grow one buffer
 /// at a time if needed.  Call this to allocate count buffers
-/// all at once and place them on the free queue.
+/// all at once and place them on the free queue.  After calling
+/// this function, at least count buffers will exist in the free
+/// queue.  If there are already count buffers, none will be added.
+///
 void SocketRoutingQueue::AllocateBuffers(int count)
 {
-	for( int i = 0; i < count; i++ ) {
+	int todo = count - m_free.size();
+
+	for( int i = 0; i < todo; i++ ) {
 		// m_free handles its own locking
 		m_free.push( new Data );
 	}
@@ -186,7 +193,9 @@ DataHandle SocketRoutingQueue::DefaultRead(int timeout)
 ///
 /// Throws std::logic_error if already registered.
 ///
-void SocketRoutingQueue::RegisterInterest(uint16_t socket, SocketDataHandler handler)
+void SocketRoutingQueue::RegisterInterest(uint16_t socket,
+					  SocketDataHandler handler,
+					  void *context)
 {
 	// modifying our own std::map, need a lock
 	scoped_lock lock(m_mutex);
@@ -195,7 +204,7 @@ void SocketRoutingQueue::RegisterInterest(uint16_t socket, SocketDataHandler han
 	if( qi != m_socketQueues.end() )
 		throw std::logic_error("RegisterInterest requesting a previously registered socket.");
 
-	m_socketQueues[socket] = QueuePairPtr( new QueuePair(handler, DataQueue()) );
+	m_socketQueues[socket] = QueueEntryPtr( new QueueEntry(handler, context) );
 	m_interest = true;
 }
 
@@ -216,9 +225,9 @@ void SocketRoutingQueue::UnregisterInterest(uint16_t socket)
 		return;	// nothing registered, done
 
 	// salvage all our data buffers
-	m_free.append_from( qi->second->second );
+	m_free.append_from( qi->second->m_queue );
 
-	// remove the QueuePairPtr from the map
+	// remove the QueueEntryPtr from the map
 	m_socketQueues.erase( qi );
 
 	// check the interest flag
@@ -261,7 +270,7 @@ bool SocketRoutingQueue::SocketRead(uint16_t socket, Data &receive, int timeout)
 ///
 DataHandle SocketRoutingQueue::SocketRead(uint16_t socket, int timeout)
 {
-	QueuePairPtr qpp;
+	QueueEntryPtr qep;
 	DataQueue *dq = 0;
 
 	// accessing our own std::map, need a lock
@@ -271,19 +280,19 @@ DataHandle SocketRoutingQueue::SocketRead(uint16_t socket, int timeout)
 		if( qi == m_socketQueues.end() )
 			throw std::logic_error("SocketRead requested data from unregistered socket.");
 
-		// got our queue, save the whole QueuePairPtr (shared_ptr),
+		// got our queue, save the whole QueueEntryPtr (shared_ptr),
 		// and unlock, since we will be waiting on the DataQueue,
 		// not the socketQueues map
 		//
 		// This is safe, since even if UnregisterInterest is called,
 		// our pointer won't be deleted until our shared_ptr
-		// (QueuePairPtr) goes out of scope.
+		// (QueueEntryPtr) goes out of scope.
 		//
 		// The remaining problem is that wait_pop() might wait
 		// forever if there is no timeout... c'est la vie.
 		// Should'a used a timeout. :-)
-		qpp = qi->second;
-		dq = &qpp->second;
+		qep = qi->second;
+		dq = &qep->m_queue;
 	}
 
 	// get data from DataQueue
@@ -293,7 +302,7 @@ DataHandle SocketRoutingQueue::SocketRead(uint16_t socket, int timeout)
 	// environment
 	{
 		scoped_lock lock(m_mutex);
-		qpp.reset();
+		qep.reset();
 	}
 
 	return DataHandle(*this, buf);
@@ -306,7 +315,7 @@ bool SocketRoutingQueue::IsAvailable(uint16_t socket) const
 	SocketQueueMap::const_iterator qi = m_socketQueues.find(socket);
 	if( qi == m_socketQueues.end() )
 		return false;
-	return qi->second->second.size() > 0;
+	return qi->second->m_queue.size() > 0;
 }
 
 //
@@ -394,17 +403,18 @@ bool SocketRoutingQueue::DoRead(std::string &msg, int timeout)
 		if( m_interest ) {
 			SocketQueueMap::iterator qi = m_socketQueues.find(socket);
 			if( qi != m_socketQueues.end() ) {
-				SocketDataHandler sdh = qi->second->first;
+				SocketDataHandler sdh = qi->second->m_handler;
+				void *ctx = qi->second->m_context;
 
 				// is there a handler?
 				if( sdh ) {
 					// unlock & let the handler process it
 					lock.unlock();
-					(*sdh)(buf.get());
+					(*sdh)(ctx, buf.get());
 					return true;
 				}
 				else {
-					qi->second->second.push(buf.release());
+					qi->second->m_queue.push(buf.release());
 					return true;
 				}
 			}

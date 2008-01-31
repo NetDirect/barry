@@ -330,7 +330,8 @@ void SocketZero::RawSend(Data &send, int timeout)
 void SocketZero::RawReceive(Data &receive, int timeout)
 {
 	if( m_queue ) {
-		m_queue->DefaultRead(receive, timeout);
+		if( !m_queue->DefaultRead(receive, timeout) )
+			throw Timeout("SocketZero::RawReceive: queue DefaultRead returned false (likely a timeout)");
 	}
 	else {
 		m_dev->BulkRead(m_readEp, receive, timeout);
@@ -557,6 +558,7 @@ Socket::Socket( SocketZero &zero,
 	: m_zero(&zero)
 	, m_socket(socket)
 	, m_closeFlag(closeFlag)
+	, m_registered(false)
 {
 }
 
@@ -594,6 +596,7 @@ void Socket::ForceClosed()
 
 void Socket::Close()
 {
+	UnregisterInterest();
 	m_zero->Close(*this);
 }
 
@@ -639,7 +642,18 @@ void Socket::Send(Barry::Packet &packet, int timeout)
 
 void Socket::Receive(Data &receive, int timeout)
 {
-	m_zero->RawReceive(receive, timeout);
+	if( m_registered ) {
+		if( m_zero->m_queue ) {
+			if( !m_zero->m_queue->SocketRead(m_socket, receive, timeout) )
+				throw Timeout("Socket::Receive: queue SocketRead returned false (likely a timeout)");
+		}
+		else {
+			throw std::logic_error("NULL queue pointer in a registered socket read.");
+		}
+	}
+	else {
+		m_zero->RawReceive(receive, timeout);
+	}
 }
 
 // sends the send packet down to the device, fragmenting if
@@ -791,6 +805,28 @@ void Socket::NextRecord(Data &receive)
 
 	Data command(&packet, 7);
 	Packet(command, receive);
+}
+
+void Socket::RegisterInterest(SocketRoutingQueue::SocketDataHandler handler,
+				void *context)
+{
+	if( !m_zero->m_queue )
+		throw std::logic_error("SocketRoutingQueue required in SocketZero in order to call Socket::RegisterInterest()");
+
+	if( m_registered )
+		throw std::logic_error("Socket already registered in Socket::RegisterInterest()!");
+
+	m_zero->m_queue->RegisterInterest(m_socket, handler, context);
+	m_registered = true;
+}
+
+void Socket::UnregisterInterest()
+{
+	if( m_registered ) {
+		if( m_zero->m_queue )
+			m_zero->m_queue->UnregisterInterest(m_socket);
+		m_registered = false;
+	}
 }
 
 

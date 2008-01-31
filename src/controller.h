@@ -36,7 +36,7 @@ class SocketRoutingQueue;
 
 namespace Mode {
 	class Desktop;
-//	class Serial;
+	class Serial;
 }
 
 //
@@ -65,7 +65,7 @@ namespace Mode {
 class Controller
 {
 	friend class Barry::Mode::Desktop;
-//	friend class Barry::Mode::Serial;
+	friend class Barry::Mode::Serial;
 
 public:
 	/// Handheld mode type
@@ -92,12 +92,13 @@ private:
 
 protected:
 	uint16_t SelectMode(ModeType mode);	// returns mode socket
-	SocketRoutingQueue* GetRoutingQueue();
 
 public:
 	explicit Controller(const ProbeResult &device);
 	Controller(const ProbeResult &device, SocketRoutingQueue &queue);
 	~Controller();
+
+	bool HasQueue() const { return m_queue; }
 };
 
 } // namespace Barry
