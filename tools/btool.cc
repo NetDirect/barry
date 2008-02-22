@@ -575,7 +575,11 @@ int main(int argc, char *argv[])
 		for( int i = 0; i < probe.GetCount(); i++ ) {
 			if( ldif_contacts )
 				cout << "# ";
-			cout << probe.Get(i) << endl;
+			if( data_dump )
+				probe.Get(i).DumpAll(cout);
+			else
+				cout << probe.Get(i);
+			cout << endl;
 			if( probe.Get(i).m_pin == pin )
 				activeDevice = i;
 		}
