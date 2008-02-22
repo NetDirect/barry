@@ -1,5 +1,16 @@
 Branch: barry-b1-socket-arch
 ------------------------------------------------------------------------------
+	2008/02/22
+		- fixed const char warnings from newer gcc compilers
+		- controller object now saves a copy of the probe result
+			and provides an API to retrieve it
+		- added sanity checks to m_serial.cc
+		- fixed probe behaviour so that a USB probe on an endpoint
+			that doesn't respond won't halt everything
+		- refactored some of the probe code, and added checks for
+			IP modem endpoints
+		- added Probe::DumpAll()
+		- added Open() call to pppob.cc (not yet complete)
 	2008/01/30
 		- implemented dataqueue.{h,cc}... looks ready for testing,
 			once things compile again
