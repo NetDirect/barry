@@ -24,6 +24,7 @@
 
 #include "usbwrap.h"
 #include "socket.h"
+#include "probe.h"
 
 /// Project namespace, containing all related functions and classes.
 /// This is the only namespace applications should be concerned with,
@@ -31,7 +32,6 @@
 namespace Barry {
 
 // forward declarations
-class ProbeResult;
 class SocketRoutingQueue;
 
 namespace Mode {
@@ -80,6 +80,7 @@ public:
 	};
 
 private:
+	ProbeResult m_result;
 	Usb::Device m_dev;
 	Usb::Interface *m_iface;
 	uint32_t m_pin;
@@ -99,6 +100,8 @@ public:
 	~Controller();
 
 	bool HasQueue() const { return m_queue; }
+
+	const ProbeResult& GetProbeResult() const { return m_result; }
 };
 
 } // namespace Barry

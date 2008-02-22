@@ -42,7 +42,8 @@ namespace Barry {
 ///				Probe class.
 ///
 Controller::Controller(const ProbeResult &device)
-	: m_dev(device.m_dev)
+	: m_result(device)
+	, m_dev(device.m_dev)
 	, m_iface(0)
 	, m_pin(device.m_pin)
 	, m_zero(m_dev, device.m_ep.write, device.m_ep.read, device.m_zeroSocketSequence)
@@ -63,7 +64,8 @@ Controller::Controller(const ProbeResult &device)
 ///				from sockets.
 ///
 Controller::Controller(const ProbeResult &device, SocketRoutingQueue &queue)
-	: m_dev(device.m_dev)
+	: m_result(device)
+	, m_dev(device.m_dev)
 	, m_iface(0)
 	, m_pin(device.m_pin)
 	, m_zero(queue, device.m_ep.write, device.m_zeroSocketSequence)
