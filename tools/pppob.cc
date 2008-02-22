@@ -127,6 +127,7 @@ int main(int argc, char *argv[])
 		// Open serial mode... the callback handles reading from
 		// USB and writing to stdout
 		Mode::Serial serial(con, SerialDataCallback, 0);
+		serial.Open();
 
 		// Read from stdin and write to USB, until
 		// stdin is closed
