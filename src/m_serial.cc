@@ -72,7 +72,7 @@ void Serial::Open(const char *password)
 	}
 
 	m_ModeSocket = m_con.SelectMode(Controller::UsbSerData);
-	m_CtrlSocket = m_con.SelectMode(Controller::UsbSerCtrl);
+//	m_CtrlSocket = m_con.SelectMode(Controller::UsbSerCtrl);
 	RetryPassword(password);
 }
 
@@ -84,7 +84,7 @@ void Serial::RetryPassword(const char *password)
 		throw std::logic_error("Socket already open in Serial::RetryPassword");
 
 	m_data = m_con.m_zero.Open(m_ModeSocket, password);
-	m_ctrl = m_con.m_zero.Open(m_CtrlSocket, password);
+//	m_ctrl = m_con.m_zero.Open(m_CtrlSocket, password);
 
 	// register callback for incoming data, for speed
 	m_data->RegisterInterest(DataCallback, this);
@@ -103,6 +103,9 @@ void Serial::Write(const Data &data)
 {
 	if( data.GetSize() <= 0 )
 		return;	// nothing to do
+
+	if( !m_data.get() )
+		throw std::logic_error("Must call Open() before Write() in Mode::Serial");
 
 	// make room in write cache buffer for the 4 byte header
 	int size = data.GetSize() + 4;
