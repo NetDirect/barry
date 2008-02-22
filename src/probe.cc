@@ -64,7 +64,13 @@ namespace {
 	{
 		dev.BulkWrite(ep.write, Intro_Sends[IntroIndex],
 			GetSize(Intro_Sends[IntroIndex]));
-		dev.BulkRead(ep.read, response);
+		try {
+			dev.BulkRead(ep.read, response, 500);
+		}
+		catch( Usb::Timeout &to ) {
+			ddout("BulkRead: " << to.what());
+			return false;
+		}
 		ddout("BulkRead (" << (unsigned int)ep.read << "):\n" << response);
 		return true;
 	}
@@ -89,7 +95,7 @@ bool Probe::CheckSize(const Data &data, unsigned int required)
 	return true;
 }
 
-bool Probe::ParsePIN(const Data &data, ProbeResult &result)
+bool Probe::ParsePIN(const Data &data, uint32_t &pin)
 {
 	// validate response data
 	const unsigned char *pd = data.GetData();
@@ -98,20 +104,20 @@ bool Probe::ParsePIN(const Data &data, ProbeResult &result)
 		return false;
 
 	// capture the PIN
-	result.m_pin = btohl(*((uint32_t *) &pd[16]));
+	pin = btohl(*((uint32_t *) &pd[16]));
 
 	return true;
 }
 
-bool Probe::ParseDesc(const Data &data, ProbeResult &result)
+bool Probe::ParseDesc(const Data &data, std::string &desc)
 {
 	if( !CheckSize(data, 29) )
 		return false;
 
 	// capture the description
-	const char *desc = (const char*) &data.GetData()[28];
+	const char *d = (const char*) &data.GetData()[28];
 	int maxlen = data.GetSize() - 28;
-	result.m_description.assign(desc, strnlen(desc, maxlen));
+	desc.assign(d, strnlen(d, maxlen));
 
 	return true;
 }
@@ -165,18 +171,18 @@ void Probe::ProbeDevice(Usb::DeviceIDType devid)
 	ConfigDesc &config = discover.configs[BLACKBERRY_CONFIGURATION];
 
 	// search for interface class
-	InterfaceDiscovery::base_type::iterator i = config.interfaces.begin();
-	for( ; i != config.interfaces.end(); i++ ) {
-		if( i->second.desc.bInterfaceClass == BLACKBERRY_DB_CLASS )
+	InterfaceDiscovery::base_type::iterator idi = config.interfaces.begin();
+	for( ; idi != config.interfaces.end(); idi++ ) {
+		if( idi->second.desc.bInterfaceClass == BLACKBERRY_DB_CLASS )
 			break;
 	}
-	if( i == config.interfaces.end() ) {
+	if( idi == config.interfaces.end() ) {
 		dout("Probe: Interface with BLACKBERRY_DB_CLASS ("
 			<< BLACKBERRY_DB_CLASS << ") not found.");
 		return;	// not found
 	}
 
-	unsigned char InterfaceNumber = i->second.desc.bInterfaceNumber;
+	unsigned char InterfaceNumber = idi->second.desc.bInterfaceNumber;
 	dout("Probe: using InterfaceNumber: " << (unsigned int) InterfaceNumber);
 
 	// check endpoint validity
@@ -194,94 +200,46 @@ void Probe::ProbeDevice(Usb::DeviceIDType devid)
 	result.m_interface = InterfaceNumber;
 	result.m_zeroSocketSequence = 0;
 
+	// open device
+	Device dev(devid);
+//	dev.Reset();
+//	sleep(5);
+
+	//  make sure we're talking to the right config
+	unsigned char cfg;
+	if( !dev.GetConfiguration(cfg) )
+		throw Usb::Error(dev.GetLastError(),
+			"Probe: GetConfiguration failed");
+	if( cfg != BLACKBERRY_CONFIGURATION ) {
+		if( !dev.SetConfiguration(BLACKBERRY_CONFIGURATION) )
+			throw Usb::Error(dev.GetLastError(),
+				"Probe: SetConfiguration failed");
+	}
+
+	// open interface
+	Interface iface(dev, InterfaceNumber);
+
 	// find the first bulk read/write endpoint pair that answers
 	// to our probe commands
 	// Start with second pair, since evidence indicates the later pairs
 	// are the ones we need.
-	for(size_t i = ed.GetEndpointPairs().size() > 1 ? 1 : 0;
+	size_t i;
+	for(i = ed.GetEndpointPairs().size() > 1 ? 1 : 0;
 	    i < ed.GetEndpointPairs().size();
 	    i++ )
 	{
 		const EndpointPair &ep = ed.GetEndpointPairs()[i];
 		if( ep.type == USB_ENDPOINT_TYPE_BULK ) {
-			result.m_ep = ep;
 
-			Device dev(devid);
-//				dev.Reset();
-//				sleep(5);
-
-			unsigned char cfg;
-			if( !dev.GetConfiguration(cfg) )
-				throw Usb::Error(dev.GetLastError(),
-					"Probe: GetConfiguration failed");
-			if( cfg != BLACKBERRY_CONFIGURATION ) {
-				if( !dev.SetConfiguration(BLACKBERRY_CONFIGURATION) )
-					throw Usb::Error(dev.GetLastError(),
-						"Probe: SetConfiguration failed");
+			uint32_t pin;
+			uint8_t zeroSocketSequence;
+			std::string desc;
+			if( ProbePair(dev, ep, pin, desc, zeroSocketSequence) ) {
+				result.m_ep = ep;
+				result.m_description = desc;
+				result.m_zeroSocketSequence = zeroSocketSequence;
+				break;
 			}
-
-			Interface iface(dev, InterfaceNumber);
-
-			dev.ClearHalt(ep.read);
-			dev.ClearHalt(ep.write);
-
-			Data data;
-			dev.BulkDrain(ep.read);
-			if( !Intro(0, ep, dev, data) ) {
-				dout("Probe: Intro(0) failed");
-				continue;
-			}
-
-			SocketZero socket(dev, ep.write, ep.read);
-
-			Data send, receive;
-			ZeroPacket packet(send, receive);
-
-			// unknown attribute: 0x14 / 0x01
-			packet.GetAttribute(SB_OBJECT_INITIAL_UNKNOWN,
-				SB_ATTR_INITIAL_UNKNOWN);
-			socket.Send(packet);
-
-			// fetch PIN
-			packet.GetAttribute(SB_OBJECT_PROFILE, SB_ATTR_PROFILE_PIN);
-			socket.Send(packet);
-			if( packet.ObjectID() != SB_OBJECT_PROFILE ||
-			    packet.AttributeID() != SB_ATTR_PROFILE_PIN ||
-			    !ParsePIN(receive, result) )
-			{
-				dout("Probe: unable to fetch PIN");
-				continue;
-			}
-
-			// fetch Description
-			packet.GetAttribute(SB_OBJECT_PROFILE, SB_ATTR_PROFILE_DESC);
-			socket.Send(packet);
-			// response ObjectID does not match request... :-/
-			if( // packet.ObjectID() != SB_OBJECT_PROFILE ||
-			    packet.AttributeID() != SB_ATTR_PROFILE_DESC ||
-			    !ParseDesc(receive, result) )
-			{
-				dout("Probe: unable to fetch description");
-				// this is a relatively new feature, so don't
-				// fail here... just blank the description
-				result.m_description.clear();
-			}
-
-			// more unknowns:
-			for( uint16_t attr = 5; attr < 9; attr++ ) {
-				packet.GetAttribute(SB_OBJECT_SOCKET_UNKNOWN, attr);
-				socket.Send(packet);
-				// FIXME parse these responses, if they turn
-				// out to be important
-			}
-
-
-			// all info obtained, add to list
-			result.m_zeroSocketSequence = socket.GetZeroSocketSequence();
-			m_results.push_back(result);
-			ddout("Using ReadEndpoint: " << (unsigned int)result.m_ep.read);
-			ddout("      WriteEndpoint: " << (unsigned int)result.m_ep.write);
-			break;
 		}
 		else {
 			dout("Probe: Skipping non-bulk endpoint pair (offset: "
@@ -289,8 +247,109 @@ void Probe::ProbeDevice(Usb::DeviceIDType devid)
 		}
 	}
 
-	if( !result.m_ep.IsComplete() )
+	// check for ip modem endpoints
+	i++;
+	if( i < ed.GetEndpointPairs().size() ) {
+		const EndpointPair &ep = ed.GetEndpointPairs()[i];
+		if( ProbeModem(dev, ep) ) {
+			result.m_epModem = ep;
+		}
+	}
+
+	// add to list
+	if( result.m_ep.IsComplete() ) {
+		m_results.push_back(result);
+		ddout("Using ReadEndpoint: " << (unsigned int)result.m_ep.read);
+		ddout("      WriteEndpoint: " << (unsigned int)result.m_ep.write);
+	}
+	else {
 		ddout("Unable to discover endpoint pair for one device.");
+	}
+}
+
+bool Probe::ProbePair(Usb::Device &dev,
+			const Usb::EndpointPair &ep,
+			uint32_t &pin,
+			std::string &desc,
+			uint8_t &zeroSocketSequence)
+{
+	dev.ClearHalt(ep.read);
+	dev.ClearHalt(ep.write);
+
+	Data data;
+	dev.BulkDrain(ep.read);
+	if( !Intro(0, ep, dev, data) ) {
+		dout("Probe: Intro(0) failed");
+		return false;
+	}
+
+	SocketZero socket(dev, ep.write, ep.read);
+
+	Data send, receive;
+	ZeroPacket packet(send, receive);
+
+	// unknown attribute: 0x14 / 0x01
+	packet.GetAttribute(SB_OBJECT_INITIAL_UNKNOWN,
+		SB_ATTR_INITIAL_UNKNOWN);
+	socket.Send(packet);
+
+	// fetch PIN
+	packet.GetAttribute(SB_OBJECT_PROFILE, SB_ATTR_PROFILE_PIN);
+	socket.Send(packet);
+	if( packet.ObjectID() != SB_OBJECT_PROFILE ||
+	    packet.AttributeID() != SB_ATTR_PROFILE_PIN ||
+	    !ParsePIN(receive, pin) )
+	{
+		dout("Probe: unable to fetch PIN");
+		return false;
+	}
+
+	// fetch Description
+	packet.GetAttribute(SB_OBJECT_PROFILE, SB_ATTR_PROFILE_DESC);
+	socket.Send(packet);
+	// response ObjectID does not match request... :-/
+	if( // packet.ObjectID() != SB_OBJECT_PROFILE ||
+	    packet.AttributeID() != SB_ATTR_PROFILE_DESC ||
+	    !ParseDesc(receive, desc) )
+	{
+		dout("Probe: unable to fetch description");
+	}
+
+	// more unknowns:
+	for( uint16_t attr = 5; attr < 9; attr++ ) {
+		packet.GetAttribute(SB_OBJECT_SOCKET_UNKNOWN, attr);
+		socket.Send(packet);
+		// FIXME parse these responses, if they turn
+		// out to be important
+	}
+
+	// all info obtained!
+	zeroSocketSequence = socket.GetZeroSocketSequence();
+	return true;
+}
+
+// Thanks to Jason Scott (bb_usb.c) for reverse engineering this
+bool Probe::ProbeModem(Usb::Device &dev, const Usb::EndpointPair &ep)
+{
+	int num_read;
+	char data[255];
+	int local_errno;
+
+	num_read = usb_control_msg(dev.GetHandle(),
+		/* bmRequestType */ USB_ENDPOINT_IN | USB_TYPE_VENDOR | USB_RECIP_DEVICE,
+		/* bRequest */ 0xa5,
+		/* wValue */ 0,
+		/* wIndex */ 1,
+		/* data */ data,
+		/* wLength */ sizeof(data),
+		/* timeout */ 2000);
+	local_errno = errno;
+	if( num_read > 1 ) {
+		if( data[0] == 0x02 ) {
+			return true;
+		}
+	}
+	return false;
 }
 
 int Probe::FindActive(uint32_t pin) const
@@ -307,6 +366,16 @@ int Probe::FindActive(uint32_t pin) const
 
 	// PIN not found
 	return -1;
+}
+
+void ProbeResult::DumpAll(std::ostream &os) const
+{
+	os << *this
+	   << ", Interface: 0x" << std::hex << (unsigned int) m_interface
+	   << ", Endpoints: (read: 0x" << std::hex << (unsigned int) m_ep.read
+		<< ", write: 0x" << std::hex << (unsigned int) m_ep.write
+		<< ", type: 0x" << std::hex << (unsigned int) m_ep.type
+	   << ", ZeroSocketSequence: 0x" << std::hex << (unsigned int) m_zeroSocketSequence;
 }
 
 std::ostream& operator<< (std::ostream &os, const ProbeResult &pr)
