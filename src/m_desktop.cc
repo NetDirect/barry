@@ -208,7 +208,7 @@ unsigned int Desktop::GetDBID(const std::string &name) const
 unsigned int Desktop::GetDBCommand(CommandType ct)
 {
 	unsigned int cmd = 0;
-	char *cmdName = "Unknown";
+	const char *cmdName = "Unknown";
 
 	switch( ct )
 	{

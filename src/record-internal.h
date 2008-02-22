@@ -66,9 +66,9 @@ template <class RecordT>
 struct FieldLink
 {
 	int type;
-	char *name;
-	char *ldif;
-	char *objectClass;
+	const char *name;
+	const char *ldif;
+	const char *objectClass;
 	std::string RecordT::* strMember;	// FIXME - find a more general
 	EmailAddress RecordT::* addrMember;	// way to do this...
 	time_t RecordT::* timeMember;

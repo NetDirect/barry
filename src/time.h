@@ -58,7 +58,7 @@ struct TimeZone
 	unsigned short Code;
 	signed short HourOffset;
 	signed short MinOffset;
-	char *Name;
+	const char *Name;
 };
 
 // FIXME - put this somewhere for both C and C++
