@@ -113,7 +113,7 @@ This package contains the opensync plugin.
 
 %build
 # main tree
-%{configure} --with-boost=%{_prefix}
+%{configure} --with-boost
 %{__make} %{?_smp_mflags}
 
 # gui tree
