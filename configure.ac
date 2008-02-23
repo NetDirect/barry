@@ -31,7 +31,7 @@ AC_ARG_WITH(libusb,
 
 AC_ARG_WITH(boost,
 	AC_HELP_STRING(--with-boost[=path],
-		[root path of boost installation (no arg defaults to 'yes' and uses system path]),
+		[root path of boost installation (no arg defaults to 'yes' and uses --includedir and --libdir)]),
 	use_boost=$withval,  use_boost=no ) 
 
 if test x"$use_boost" != "xyes" ; then
@@ -41,8 +41,8 @@ if test x"$use_boost" != "xyes" ; then
 		BOOST_ENABLED="true"
 	fi
 else
-	BOOST_LIB_PATH="/usr/lib"
-	BOOST_INC_PATH="/usr/include"
+	BOOST_LIB_PATH="${libdir}"
+	BOOST_INC_PATH="${includedir}"
 	BOOST_ENABLED="true"	
 fi
 

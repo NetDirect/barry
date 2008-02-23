@@ -1,5 +1,10 @@
 Release: version 0.12 - 2008/02/??
 ------------------------------------------------------------------------------
+2008/02/22
+	- fixed configure.ac's --with-boost option, so that without args,
+		it defaults to using --includedir and --libdir settings,
+		instead of hardcoding /usr/include and /usr/lib... this
+		should allow smarter compiling on 64 bit systems
 2008/01/25
 	- fixed locale issues in src/data.cc
 	- updated copyright statments for 2008
