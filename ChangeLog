@@ -6,6 +6,9 @@ Release: version 0.12 - 2008/02/??
 		instead of hardcoding /usr/include and /usr/lib... this
 		should allow smarter compiling on 64 bit systems
 	- updated RPM spec file to use new --with-boost behaviour
+	- ahem, fixed configure.ac again... don't use --includedir and
+		--libdir, as those are install targets... oops.
+		Don't add path overrides at all if not specified.
 2008/01/25
 	- fixed locale issues in src/data.cc
 	- updated copyright statments for 2008

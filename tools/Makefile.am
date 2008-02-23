@@ -11,12 +11,13 @@ sbin_PROGRAMS = bcharge breset pppob
 btool_SOURCES = btool.cc
 btool_LDADD = ../src/libbarry.la $(LIBUSB_LIBS)
 if WITH_BOOST
+if WITH_BOOST_PATHS
 btool_CXXFLAGS = -D__BARRY_BOOST_MODE__ -D_REENTRANT -I@BOOST_INC_PATH@ $(AM_CXXFLAGS)
 btool_LDFLAGS = -L@BOOST_LIB_PATH@
-#btool_LIBADD = libboost_serialization-gcc-mt.a
-#btool_LDADD += @BOOST_LIB_PATH@/libboost_serialization.a
+else
+btool_CXXFLAGS = -D__BARRY_BOOST_MODE__ -D_REENTRANT $(AM_CXXFLAGS)
+endif
 btool_LDADD += -lboost_serialization
-#LDBOOST = ../../../../boost/rootdir/lib/libboost_serialization-gcc-mt-1_33_1.a
 endif
 
 bidentify_SOURCES = bidentify.cc
