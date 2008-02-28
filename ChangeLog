@@ -2,6 +2,8 @@ Release: version 0.12 - 2008/02/??
 ------------------------------------------------------------------------------
 2008/02/28
 	- committed Chris Burgess's update to the roadmap document
+	- applied Paul Dugas's x86-64 build patch, except the
+		tar.bz2/tar.gz change
 2008/02/22
 	- fixed configure.ac's --with-boost option, so that without args,
 		it defaults to using --includedir and --libdir settings,
