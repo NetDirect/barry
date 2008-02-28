@@ -2,7 +2,7 @@
 
 <? include ("barry.inc"); ?>
 
-<div class="subHeader">Milestone 1</div>
+<div class="subHeader">Milestone 1 - mostly complete</div>
 <ul>
 	<li> autoconf the project
 	<li> handle USB interface and configuration numbers dynamically
@@ -13,7 +13,7 @@
 	<li> use SWIG to make the API available in Python
 </ul>
 
-<div class="subHeader">Milestone 2</div>
+<div class="subHeader">Milestone 2 - complete for all but email</div>
 <ul>
 <li> reliable command line backup and restore of:
 	<ul>
@@ -23,7 +23,7 @@
 	</ul>
 </ul>
 
-<div class="subHeader">Milestone 3</div>
+<div class="subHeader">Milestone 3 - complete</div>
 <ul>
 	<li> reliable command line backup and restore of:
 	<ul>
@@ -88,28 +88,28 @@
 	<li> reliable command line backup and restore of Java program modules
 </ul>
 
-<div class="subHeader">Milestone 5</div>
+<div class="subHeader">Milestone 5 - currently implemented through OpenSync</div>
 <ul>
 	<li>design and implement sync functionality (must support data from any external data source)
 	<li>command line sync tool
 </ul>
 
-<div class="subHeader">Milestone 6</div>
+<div class="subHeader">Milestone 6 - currently implemented through OpenSync</div>
 <ul>
 	<li>GUI sync tool
 </ul>
 
-<div class="subHeader">Milestone 7</div>
+<div class="subHeader">Milestone 7 - currently implemented through OpenSync</div>
 <ul>
 	<li>Evolution sync
 </ul>
 
-<div class="subHeader">Milestone 8</div>
+<div class="subHeader">Milestone 8 - currently implemented through OpenSync</div>
 <ul>
 	<li>Mozilla sync
 </ul>
 
-<div class="subHeader">Milestone 9</div>
+<div class="subHeader">Milestone 9 - currently implemented through OpenSync</div>
 <ul>
 	<li>LDAP sync
 </ul>
