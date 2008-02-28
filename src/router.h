@@ -53,7 +53,8 @@ public:
 			{}
 	};
 	typedef std::tr1::shared_ptr<QueueEntry>	QueueEntryPtr;
-	typedef std::map<uint16_t, QueueEntryPtr>	SocketQueueMap;
+	typedef uint16_t				SocketId;
+	typedef std::map<SocketId, QueueEntryPtr>	SocketQueueMap;
 
 private:
 	Usb::Device * volatile m_dev;
@@ -125,12 +126,12 @@ public:
 	// copying is done.  Once the handler returns, the data is
 	// considered processed and not added to the interested queue,
 	// but instead returned to m_free.
-	void RegisterInterest(uint16_t socket, SocketDataHandler handler = 0, void *context = 0);
+	void RegisterInterest(SocketId socket, SocketDataHandler handler = 0, void *context = 0);
 
 	// Unregisters interest in data from the given socket, and discards
 	// any existing data in its interest queue.  Any new incoming data
 	// for this socket will be placed in the default queue.
-	void UnregisterInterest(uint16_t socket);
+	void UnregisterInterest(SocketId socket);
 
 	// Reads data from the interested socket cache.  Can only read
 	// from sockets that have been previously registered.
@@ -138,11 +139,11 @@ public:
 	// Returns false (or null pointer) on timeout and no data.
 	// With the return version of the function, there is no
 	// copying performed.
-	bool SocketRead(uint16_t socket, Data &receive, int timeout = -1);
-	DataHandle SocketRead(uint16_t socket, int timeout = -1);
+	bool SocketRead(SocketId socket, Data &receive, int timeout = -1);
+	DataHandle SocketRead(SocketId socket, int timeout = -1);
 
 	// Returns true if data is available for that socket.
-	bool IsAvailable(uint16_t socket) const;
+	bool IsAvailable(SocketId socket) const;
 
 	// Called by the application's "read thread" to read the next usb
 	// packet and route it to the correct queue.  Returns after every

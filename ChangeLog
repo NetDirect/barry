@@ -4,6 +4,8 @@ Branch: barry-b1-socket-arch
 		- fixed variable size issues in btranslate.cc, evident with
 			some compilers on 64 bit systems
 		- merged HEAD changes
+		- added comments for threaded usage in usbwrap.h
+		- changed router to use SocketId typedef, for clarity
 	2008/02/22
 		- fixed const char warnings from newer gcc compilers
 		- controller object now saves a copy of the probe result

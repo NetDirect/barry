@@ -109,7 +109,9 @@ public:
 
 	Usb::DeviceIDType GetID() const { return m_id; }
 	Usb::DeviceHandleType GetHandle() const { return m_handle; }
-	int GetLastError() const { return m_lasterror; }
+	int GetLastError() const { return m_lasterror; } //< not thread safe...
+		//< use the error code stored in the exceptions to track
+		//< errors in threaded usage
 
 
 	/////////////////////////////

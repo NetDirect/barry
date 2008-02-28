@@ -1,5 +1,5 @@
 ///
-/// \file	router.h
+/// \file	router.cc
 ///		Support classes for the pluggable socket routing system.
 ///
 
@@ -193,7 +193,7 @@ DataHandle SocketRoutingQueue::DefaultRead(int timeout)
 ///
 /// Throws std::logic_error if already registered.
 ///
-void SocketRoutingQueue::RegisterInterest(uint16_t socket,
+void SocketRoutingQueue::RegisterInterest(SocketId socket,
 					  SocketDataHandler handler,
 					  void *context)
 {
@@ -215,7 +215,7 @@ void SocketRoutingQueue::RegisterInterest(uint16_t socket,
 /// any existing data in its interest queue.  Any new incoming data
 /// for this socket will be placed in the default queue.
 ///
-void SocketRoutingQueue::UnregisterInterest(uint16_t socket)
+void SocketRoutingQueue::UnregisterInterest(SocketId socket)
 {
 	// modifying our own std::map, need a lock
 	scoped_lock lock(m_mutex);
@@ -251,7 +251,7 @@ void SocketRoutingQueue::UnregisterInterest(uint16_t socket)
 ///
 /// Copying is performed with this function.
 ///
-bool SocketRoutingQueue::SocketRead(uint16_t socket, Data &receive, int timeout)
+bool SocketRoutingQueue::SocketRead(SocketId socket, Data &receive, int timeout)
 {
 	DataHandle buf = SocketRead(socket, timeout);
 	if( !buf.get() )
@@ -268,7 +268,7 @@ bool SocketRoutingQueue::SocketRead(uint16_t socket, Data &receive, int timeout)
 /// Throws std::logic_error if a socket was requested that was
 /// not previously registered.
 ///
-DataHandle SocketRoutingQueue::SocketRead(uint16_t socket, int timeout)
+DataHandle SocketRoutingQueue::SocketRead(SocketId socket, int timeout)
 {
 	QueueEntryPtr qep;
 	DataQueue *dq = 0;
@@ -309,7 +309,7 @@ DataHandle SocketRoutingQueue::SocketRead(uint16_t socket, int timeout)
 }
 
 // Returns true if data is available for that socket.
-bool SocketRoutingQueue::IsAvailable(uint16_t socket) const
+bool SocketRoutingQueue::IsAvailable(SocketId socket) const
 {
 	scoped_lock lock(m_mutex);
 	SocketQueueMap::const_iterator qi = m_socketQueues.find(socket);
