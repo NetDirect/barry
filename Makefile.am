@@ -6,7 +6,8 @@ EXTRA_DIST = COPYING ChangeLog README \
 	hotplug \
 	maintainer \
 	rpm \
-	udev
+	udev \
+	modprobe
 
 SUBDIRS = . src tools examples man
 # conditionally configured nested subdirectories are listed in $(subdirs)
