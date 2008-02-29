@@ -945,6 +945,26 @@ VFormatAttribute *vformat_find_attribute(VFormat *vcard, const char *name, int n
 	return NULL;
 }	
 
+/*
+VFormatAttribute *vformat_find_attribute_next(VFormatAttribute *last,
+						const char *name,
+						int nth)
+{
+	GList *attributes = last ? last->next : 0;
+	GList *a = NULL;
+	int i = 0;
+	for (a = attributes; a; a = a->next) {
+		VFormatAttribute *attr = a->data;
+		if (!g_ascii_strcasecmp(vformat_attribute_get_name(attr), name)) {
+			if( i == nth )
+				return attr;
+			i++;
+		}	
+	}
+	return NULL;
+}
+*/
+
 char *vformat_to_string (VFormat *evc, VFormatType type)
 {
 	osync_trace(TRACE_ENTRY, "%s(%p, %i)", __func__, type);
