@@ -6,7 +6,7 @@ AC_INIT([barry], [0.12], [barry-devel@lists.sourceforge.net])
 #AM_CONFIG_HEADER(config.h)
 AC_CONFIG_SRCDIR([src/barry.h])
 AC_CONFIG_HEADERS([config.h:config.h.in])
-AM_INIT_AUTOMAKE
+AM_INIT_AUTOMAKE([dist-bzip2])
 
 AC_USE_SYSTEM_EXTENSIONS
 

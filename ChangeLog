@@ -1,5 +1,8 @@
 Release: version 0.12 - 2008/02/??
 ------------------------------------------------------------------------------
+2008/02/29
+	- changed configure.ac to use bzip2 for "make dist".. thanks to
+		Paul Dugas for the tip
 2008/02/28
 	- committed Chris Burgess's update to the roadmap document
 	- applied Paul Dugas's x86-64 build patch, except the
