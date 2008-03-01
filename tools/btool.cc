@@ -324,6 +324,7 @@ void ShowParsers()
 	<< "   PIN Messages\n"
 	<< "   Saved Email Messages\n"
 	<< "   Folders\n"
+	<< "   Time Zones (read only)\n"
 	<< "\n"
 	<< "Supported Database builders:\n"
 	<< "   Address Book\n"
