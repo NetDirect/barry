@@ -261,6 +261,11 @@ auto_ptr<Parser> GetParser(const string &name, const string &filename)
 			new RecordParser<Folder, Store<Folder> > (
 				new Store<Folder>(filename, false)));
 	}
+	else if( name == Timezone::GetDBName() ) {
+		return auto_ptr<Parser>(
+				new RecordParser<Timezone, Store<Timezone> > (
+						new Store<Timezone>(filename, false)));
+	}
 	else {
 		// unknown database, use null parser
 		return auto_ptr<Parser>( new DataDumpParser );

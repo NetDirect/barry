@@ -261,6 +261,24 @@ void serialize(ArchiveT &ar, Barry::Folder &f, const unsigned int ver)
 	}
 }
 
+template <class ArchiveT>
+void serialize(ArchiveT &ar, Barry::Timezone &t, const unsigned int ver)
+{
+	ar & make_nvp("Index", t.Index);
+	ar & make_nvp("TimeZoneName", t.TimeZoneName);
+	ar & make_nvp("Offset", t.Offset);
+	ar & make_nvp("OffsetFraction", t.OffsetFraction);
+	ar & make_nvp("Left", t.Left);
+	ar & make_nvp("UseDST", t.UseDST);
+	ar & make_nvp("DSTOffset", t.DSTOffset);
+	ar & make_nvp("StartMonth", t.StartMonth);
+	ar & make_nvp("EndMonth", t.EndMonth);
+
+	if( ver < BARRY_POD_MAP_VERSION) {
+		ar & make_nvp("Unknowns", t.Unknowns);
+	}
+}
+
 }} // namespace boost::serialization
 
 #endif

@@ -1,5 +1,7 @@
-Release: version 0.12 - 2008/02/??
+Release: version 0.12 - 2008/03/??
 ------------------------------------------------------------------------------
+2008/03/01
+	- applied Time Zone parsing patches from Brian Edginton
 2008/02/29
 	- changed configure.ac to use bzip2 for "make dist".. thanks to
 		Paul Dugas for the tip
