@@ -35,6 +35,7 @@ class Timezone
 {
 public:
 	typedef std::vector<UnknownField>			UnknownsType;
+
 	uint8_t RecType;
 	uint32_t RecordId;
 
@@ -47,9 +48,9 @@ public:
 	uint32_t EndMonth;
 	bool Left;
 	bool UseDST;
-	
-	
+
 	std::string TimeZoneName;
+
 	UnknownsType Unknowns;
 	
 public:

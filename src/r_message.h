@@ -54,7 +54,6 @@ public:
 	std::string Subject;
 	std::string Body;
 	std::string Attachment;
-	std::vector<UnknownField> Unknowns;
 	uint32_t MessageRecordId;
 	uint32_t MessageReplyTo;
 	time_t MessageDateSent;
@@ -83,6 +82,8 @@ public:
 		UnknownSensitivity
 	};
 	MessageSensitivityType MessageSensitivity;
+
+	std::vector<UnknownField> Unknowns;
 
 protected:
 	std::string SimpleEmailAddress() const;
