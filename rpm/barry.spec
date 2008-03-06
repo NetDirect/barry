@@ -176,11 +176,13 @@ cd ../
 %attr(0755,root,root) %{_sbindir}/breset
 %attr(0755,root,root) %{_sbindir}/pppob
 %attr(0755,root,root) %{_bindir}/btool
+%attr(0755,root,root) %{_bindir}/bs11nread
 %attr(0755,root,root) %{_bindir}/bidentify
 %attr(0755,root,root) %{_bindir}/upldif
 %attr(0755,root,root) %{_bindir}/bktrans
 %attr(0755,root,root) %{_bindir}/btranslate
 %attr(0644,root,root) %{_mandir}/man1/btool*
+%attr(0644,root,root) %{_mandir}/man1/bs11nread*
 %attr(0644,root,root) %{_mandir}/man1/bidentify*
 %attr(0644,root,root) %{_mandir}/man1/bcharge*
 %attr(0644,root,root) %config %{_sysconfdir}/udev/rules.d/*
