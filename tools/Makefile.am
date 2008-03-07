@@ -5,7 +5,10 @@ INCLUDES = $(LIBUSB_CFLAGS)
 #AM_CXXFLAGS = -ansi -Wall -fno-strict-aliasing -g
 AM_CXXFLAGS = -ansi -Wall -g
 
-bin_PROGRAMS = btool bs11nread bidentify upldif btranslate bktrans
+bin_PROGRAMS = btool bidentify upldif btranslate bktrans
+if WITH_BOOST
+bin_PROGRAMS += bs11nread
+endif
 sbin_PROGRAMS = bcharge breset pppob
 
 btool_SOURCES = btool.cc
