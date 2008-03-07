@@ -25,7 +25,7 @@ endif
 
 if WITH_BOOST
 bs11nread_SOURCES = bs11nread.cc
-bs11nread_LDADD = ../src/libbarry.la $(LIBUSB_LIBS)
+bs11nread_LDADD = ../src/libbarry.la $(LIBUSB_LIBS) -lpthread
 if WITH_BOOST_PATHS
 bs11nread_CXXFLAGS = -D_REENTRANT -I@BOOST_INC_PATH@ $(AM_CXXFLAGS)
 bs11nread_LDFLAGS = -L@BOOST_LIB_PATH@
