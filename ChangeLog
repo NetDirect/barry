@@ -1,5 +1,8 @@
 Release: version 0.12 - 2008/03/??
 ------------------------------------------------------------------------------
+2008/03/07
+	- updated the install.php web page with Paul Dugas's notes on
+		building RPM's from CVS
 2008/03/06
 	- changed format of Boost serialization file output from btool,
 		so that the database name is stored as the first line
