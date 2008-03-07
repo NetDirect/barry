@@ -5,7 +5,7 @@ INCLUDES = $(LIBUSB_CFLAGS)
 #AM_CXXFLAGS = -ansi -Wall -fno-strict-aliasing -g
 AM_CXXFLAGS = -ansi -Wall -g
 
-bin_PROGRAMS = btool bidentify upldif btranslate bktrans
+bin_PROGRAMS = btool bs11nread bidentify upldif btranslate bktrans
 sbin_PROGRAMS = bcharge breset pppob
 
 btool_SOURCES = btool.cc
@@ -18,6 +18,18 @@ else
 btool_CXXFLAGS = -D__BARRY_BOOST_MODE__ -D_REENTRANT $(AM_CXXFLAGS)
 endif
 btool_LDADD += -lboost_serialization
+endif
+
+if WITH_BOOST
+bs11nread_SOURCES = bs11nread.cc
+bs11nread_LDADD = ../src/libbarry.la $(LIBUSB_LIBS)
+if WITH_BOOST_PATHS
+bs11nread_CXXFLAGS = -D_REENTRANT -I@BOOST_INC_PATH@ $(AM_CXXFLAGS)
+bs11nread_LDFLAGS = -L@BOOST_LIB_PATH@
+else
+bs11nread_CXXFLAGS = -D_REENTRANT $(AM_CXXFLAGS)
+endif
+bs11nread_LDADD += -lboost_serialization
 endif
 
 bidentify_SOURCES = bidentify.cc

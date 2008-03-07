@@ -1,5 +1,7 @@
 Branch: barry-b1-socket-arch
 ------------------------------------------------------------------------------
+	2008/03/07
+		- merged HEAD changes
 	2008/02/28
 		- fixed variable size issues in btranslate.cc, evident with
 			some compilers on 64 bit systems

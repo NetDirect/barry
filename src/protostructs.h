@@ -82,6 +82,7 @@ struct CommonField
 		int32_t		min1900;
 		uint16_t	code;
 		uint8_t		raw[1];
+		int16_t		int16;
 
 	} __attribute__ ((packed)) u;
 

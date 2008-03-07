@@ -232,6 +232,7 @@ std::ostream& operator<<(std::ostream &os, const PostalAddress &msga);
 #include "r_pin_message.h"
 #include "r_saved_message.h"
 #include "r_folder.h"
+#include "r_timezone.h"
 
 #endif
 

@@ -130,6 +130,8 @@ struct Store
 				// filename is available, attempt to load
 				cout << "Loading: " << filename << endl;
 				ifstream ifs(filename.c_str());
+				std::string dbName;
+				getline(ifs, dbName);
 				boost::archive::text_iarchive ia(ifs);
 				ia >> records;
 				cout << records.size()
@@ -162,6 +164,7 @@ struct Store
 				cout << "Saving: " << filename << endl;
 				const std::vector<Record> &r = records;
 				ofstream ofs(filename.c_str());
+				ofs << Record::GetDBName() << endl;
 				boost::archive::text_oarchive oa(ofs);
 				oa << r;
 				cout << dec << r.size() << " records saved to '"
@@ -261,6 +264,11 @@ auto_ptr<Parser> GetParser(const string &name, const string &filename)
 			new RecordParser<Folder, Store<Folder> > (
 				new Store<Folder>(filename, false)));
 	}
+	else if( name == Timezone::GetDBName() ) {
+		return auto_ptr<Parser>(
+			new RecordParser<Timezone, Store<Timezone> > (
+				new Store<Timezone>(filename, false)));
+	}
 	else {
 		// unknown database, use null parser
 		return auto_ptr<Parser>( new DataDumpParser );
@@ -319,6 +327,7 @@ void ShowParsers()
 	<< "   PIN Messages\n"
 	<< "   Saved Email Messages\n"
 	<< "   Folders\n"
+	<< "   Time Zones (read only)\n"
 	<< "\n"
 	<< "Supported Database builders:\n"
 	<< "   Address Book\n"

@@ -73,6 +73,7 @@ include_barry_HEADERS = barry.h \
 	r_saved_message.h \
 	r_servicebook.h \
 	r_task.h \
+	r_timezone.h \
 	dataqueue.h \
 	router.h \
 	socket.h \
@@ -105,6 +106,7 @@ libbarry_la_SOURCES = time.cc \
 	r_saved_message.cc \
 	r_servicebook.cc \
 	r_task.cc \
+	r_timezone.cc \
 	packet.cc packet.h \
 	controller.cc \
 	m_desktop.cc \

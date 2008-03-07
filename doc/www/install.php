@@ -112,6 +112,28 @@ to list the Database Database.</p>
 <p>Enjoy!</p>
 
 
+<div class="subHeader">Building Barry RPMs from CVS</div>
+
+<p> Paul Dugas reports on the mailing list that he uses the following
+steps for building RPMs from CVS:</p>
+
+<pre>
+	$ cd ~/work
+	$ cvs ... login
+	$ cvs ... co barry
+	$ cd barry
+	$ ./buildgen.sh
+	$ ./configure
+	$ make dist
+	$ rpmbuild -tb barry-0.12.tar.gz --with gui --with opensync
+
+	I prefer running rpmbuild from the tarball as it's typically the way
+	non-developers would build them.  I have ~/.rpmmacros setting %_topdir
+	to %(echo $HOME)/.rpmbuild so the RPM building can run as me and not
+	root.  The resulting RPMs end up in ~/.rpmbuild/RPMS/x86_64.
+</pre>
+
+
 <div class="subHeader">Dependency Packages for Common Distros</div>
 
 <p>The following is a list of packages you'll need to install to build Barry,
