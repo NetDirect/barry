@@ -57,12 +57,12 @@ unsigned short vCalendar::GetWeekDayIndex(const char *dayname)
 bool vCalendar::HasMultipleVEvents() const
 {
 	int count = 0;
-	VFormat *format = const_cast<VFormat*>(Format());
-	GList *attrs = format ? vformat_get_attributes(format) : 0;
+	b_VFormat *format = const_cast<b_VFormat*>(Format());
+	GList *attrs = format ? b_vformat_get_attributes(format) : 0;
 	for( ; attrs; attrs = attrs->next ) {
-		VFormatAttribute *attr = (VFormatAttribute*) attrs->data;
-		if( strcasecmp(vformat_attribute_get_name(attr), "BEGIN") == 0 &&
-		    strcasecmp(vformat_attribute_get_nth_value(attr, 0), "VEVENT") == 0 )
+		b_VFormatAttribute *attr = (b_VFormatAttribute*) attrs->data;
+		if( strcasecmp(b_vformat_attribute_get_name(attr), "BEGIN") == 0 &&
+		    strcasecmp(b_vformat_attribute_get_nth_value(attr, 0), "VEVENT") == 0 )
 		{
 			count++;
 		}
@@ -235,7 +235,7 @@ const std::string& vCalendar::ToVCal(const Barry::Calendar &cal)
 
 	// start fresh
 	Clear();
-	SetFormat( vformat_new() );
+	SetFormat( b_vformat_new() );
 	if( !Format() )
 		throw ConvertError("resource error allocating vformat");
 
@@ -277,7 +277,7 @@ const std::string& vCalendar::ToVCal(const Barry::Calendar &cal)
 	AddAttr(NewAttr("END", "VEVENT"));
 
 	// generate the raw VCALENDAR data
-	m_gCalData = vformat_to_string(Format(), VFORMAT_EVENT_20);
+	m_gCalData = b_vformat_to_string(Format(), VFORMAT_EVENT_20);
 	m_vCalData = m_gCalData;
 
 	trace.logf("ToVCal, resulting vcal data: %s", m_vCalData.c_str());
@@ -304,7 +304,7 @@ const Barry::Calendar& vCalendar::ToBarry(const char *vcal, uint32_t RecordId)
 	m_vCalData = vcal;
 
 	// create format parser structures
-	SetFormat( vformat_new_from_string(vcal) );
+	SetFormat( b_vformat_new_from_string(vcal) );
 	if( !Format() )
 		throw ConvertError("resource error allocating vformat");
 

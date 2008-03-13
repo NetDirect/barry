@@ -40,12 +40,12 @@ typedef enum {
 	VFORMAT_EVENT_20,
 	VFORMAT_TODO_10,
 	VFORMAT_TODO_20
-} VFormatType;
+} b_VFormatType;
 
-typedef struct VFormat {
-	//VFormatType type;
+typedef struct b_VFormat {
+	//b_VFormatType type;
 	GList *attributes;
-} VFormat;
+} b_VFormat;
 
 #define CRLF "\r\n"
 
@@ -54,28 +54,28 @@ typedef enum {
 	VF_ENCODING_BASE64, /* base64 */
 	VF_ENCODING_QP,     /* quoted-printable */
 	VF_ENCODING_8BIT
-} VFormatEncoding;
+} b_VFormatEncoding;
 
-typedef struct VFormatAttribute {
+typedef struct b_VFormatAttribute {
 	char  *block;       /* "vtimezone/standard", or "vevent", depending on
 				current begin/end location... may be null */
 	char  *group;
 	char  *name;
-	GList *params; /* VFormatParam */
+	GList *params; /* b_VFormatParam */
 	GList *values;
 	GList *decoded_values;
-	VFormatEncoding encoding;
+	b_VFormatEncoding encoding;
 	gboolean encoding_set;
-} VFormatAttribute;
+} b_VFormatAttribute;
 
-typedef struct VFormatParam {
+typedef struct b_VFormatParam {
 	char     *name;
 	GList    *values;  /* GList of char*'s*/
-} VFormatParam;
+} b_VFormatParam;
 
 
-/*VFormat *vcard_new(VFormatType type);
-VFormat *vcard_new_from_string (const char *str, VFormatType type);
+/*b_VFormat *vcard_new(b_VFormatType type);
+b_VFormat *vcard_new_from_string (const char *str, b_VFormatType type);
 //char *vcard_to_string(VFormat *card, VFormatType format);
 
 VFormat *vnote_new(void);
@@ -92,73 +92,73 @@ VFormat *vtodo_new_from_string(const char *str);*/
 //char *vtodo_to_string(VFormat *todo);
 
 /* mostly for debugging */
-VFormat *vformat_new(void);
-VFormat *vformat_new_from_string(const char *str);
-void vformat_dump_structure(VFormat *format);
-char *vformat_to_string(VFormat *evc, VFormatType type);
-time_t vformat_time_to_unix(const char *inptime);
-void vformat_free(VFormat *format);
+b_VFormat *b_vformat_new(void);
+b_VFormat *b_vformat_new_from_string(const char *str);
+void b_vformat_dump_structure(b_VFormat *format);
+char *b_vformat_to_string(b_VFormat *evc, b_VFormatType type);
+time_t b_vformat_time_to_unix(const char *inptime);
+void b_vformat_free(b_VFormat *format);
 
 /* attributes */
-VFormatAttribute *vformat_attribute_new               (const char *attr_group, const char *attr_name);
-void             vformat_attribute_free              (VFormatAttribute *attr);
-VFormatAttribute *vformat_attribute_copy              (VFormatAttribute *attr);
-void             vformat_remove_attributes           (VFormat *vformat, const char *attr_group, const char *attr_name);
-void             vformat_remove_attribute            (VFormat *vformat, VFormatAttribute *attr);
-void             vformat_add_attribute               (VFormat *vformat, VFormatAttribute *attr);
-void             vformat_add_attribute_with_value    (VFormat *vformat, VFormatAttribute *attr, const char *value);
-void             vformat_add_attribute_with_values   (VFormat *vformat, VFormatAttribute *attr, ...);
-void             vformat_attribute_add_value         (VFormatAttribute *attr, const char *value);
-void             vformat_attribute_set_value         (VFormatAttribute *attr, int nth, const char *value);
-void             vformat_attribute_add_value_decoded (VFormatAttribute *attr, const char *value, int len);
-void             vformat_attribute_add_values        (VFormatAttribute *attr, ...);
-void             vformat_attribute_remove_values     (VFormatAttribute *attr);
-void             vformat_attribute_remove_params     (VFormatAttribute *attr);
-VFormatAttribute *vformat_find_attribute             (VFormat *evc, const char *name, int nth, const char *block);
+b_VFormatAttribute *b_vformat_attribute_new               (const char *attr_group, const char *attr_name);
+void             b_vformat_attribute_free              (b_VFormatAttribute *attr);
+b_VFormatAttribute *b_vformat_attribute_copy              (b_VFormatAttribute *attr);
+void             b_vformat_remove_attributes           (b_VFormat *vformat, const char *attr_group, const char *attr_name);
+void             b_vformat_remove_attribute            (b_VFormat *vformat, b_VFormatAttribute *attr);
+void             b_vformat_add_attribute               (b_VFormat *vformat, b_VFormatAttribute *attr);
+void             b_vformat_add_attribute_with_value    (b_VFormat *vformat, b_VFormatAttribute *attr, const char *value);
+void             b_vformat_add_attribute_with_values   (b_VFormat *vformat, b_VFormatAttribute *attr, ...);
+void             b_vformat_attribute_add_value         (b_VFormatAttribute *attr, const char *value);
+void             b_vformat_attribute_set_value         (b_VFormatAttribute *attr, int nth, const char *value);
+void             b_vformat_attribute_add_value_decoded (b_VFormatAttribute *attr, const char *value, int len);
+void             b_vformat_attribute_add_values        (b_VFormatAttribute *attr, ...);
+void             b_vformat_attribute_remove_values     (b_VFormatAttribute *attr);
+void             b_vformat_attribute_remove_params     (b_VFormatAttribute *attr);
+b_VFormatAttribute *b_vformat_find_attribute             (b_VFormat *evc, const char *name, int nth, const char *block);
 
 /* attribute parameters */
-VFormatParam* vformat_attribute_param_new             (const char *param_name);
-void                  vformat_attribute_param_free            (VFormatParam *param);
-VFormatParam* vformat_attribute_param_copy            (VFormatParam *param);
-void                  vformat_attribute_add_param             (VFormatAttribute *attr, VFormatParam *param);
-VFormatParam *vformat_attribute_find_param(VFormatAttribute *attr, const char *name);
-void                  vformat_attribute_add_param_with_value  (VFormatAttribute *attr, const char *name, const char *value);
-void                  vformat_attribute_add_param_with_values (VFormatAttribute *attr,
-							       VFormatParam *param, ...);
+b_VFormatParam* b_vformat_attribute_param_new             (const char *param_name);
+void                  b_vformat_attribute_param_free            (b_VFormatParam *param);
+b_VFormatParam* b_vformat_attribute_param_copy            (b_VFormatParam *param);
+void                  b_vformat_attribute_add_param             (b_VFormatAttribute *attr, b_VFormatParam *param);
+b_VFormatParam *b_vformat_attribute_find_param(b_VFormatAttribute *attr, const char *name);
+void                  b_vformat_attribute_add_param_with_value  (b_VFormatAttribute *attr, const char *name, const char *value);
+void                  b_vformat_attribute_add_param_with_values (b_VFormatAttribute *attr,
+							       b_VFormatParam *param, ...);
 
-void                  vformat_attribute_param_add_value       (VFormatParam *param,
+void                  b_vformat_attribute_param_add_value       (b_VFormatParam *param,
 							       const char *value);
-void                  vformat_attribute_param_add_values      (VFormatParam *param,
+void                  b_vformat_attribute_param_add_values      (b_VFormatParam *param,
 							       ...);
-void                  vformat_attribute_param_remove_values   (VFormatParam *param);
-gboolean vformat_attribute_has_param(VFormatAttribute *attr, const char *name);
+void                  b_vformat_attribute_param_remove_values   (b_VFormatParam *param);
+gboolean b_vformat_attribute_has_param(b_VFormatAttribute *attr, const char *name);
 
-/* VFormat* accessors.  nothing returned from these functions should be
+/* b_VFormat* accessors.  nothing returned from these functions should be
    freed by the caller. */
-GList*           vformat_get_attributes       (VFormat *vformat);
-const char*      vformat_attribute_get_group  (VFormatAttribute *attr);
-const char*      vformat_attribute_get_name   (VFormatAttribute *attr);
-const char*      vformat_attribute_get_block  (VFormatAttribute *attr);
-GList*           vformat_attribute_get_values (VFormatAttribute *attr);  /* GList elements are of type char* */
-GList*           vformat_attribute_get_values_decoded (VFormatAttribute *attr); /* GList elements are of type GString* */
-const char *vformat_attribute_get_nth_value(VFormatAttribute *attr, int nth);
+GList*           b_vformat_get_attributes       (b_VFormat *vformat);
+const char*      b_vformat_attribute_get_group  (b_VFormatAttribute *attr);
+const char*      b_vformat_attribute_get_name   (b_VFormatAttribute *attr);
+const char*      b_vformat_attribute_get_block  (b_VFormatAttribute *attr);
+GList*           b_vformat_attribute_get_values (b_VFormatAttribute *attr);  /* GList elements are of type char* */
+GList*           b_vformat_attribute_get_values_decoded (b_VFormatAttribute *attr); /* GList elements are of type GString* */
+const char *b_vformat_attribute_get_nth_value(b_VFormatAttribute *attr, int nth);
 
 /* special accessors for single valued attributes */
-gboolean              vformat_attribute_is_single_valued      (VFormatAttribute *attr);
-char*                 vformat_attribute_get_value             (VFormatAttribute *attr);
-GString*              vformat_attribute_get_value_decoded     (VFormatAttribute *attr);
+gboolean              b_vformat_attribute_is_single_valued      (b_VFormatAttribute *attr);
+char*                 b_vformat_attribute_get_value             (b_VFormatAttribute *attr);
+GString*              b_vformat_attribute_get_value_decoded     (b_VFormatAttribute *attr);
 
-GList*           vformat_attribute_get_params       (VFormatAttribute *attr);
-const char*      vformat_attribute_param_get_name   (VFormatParam *param);
-GList*           vformat_attribute_param_get_values (VFormatParam *param);
-const char *vformat_attribute_param_get_nth_value(VFormatParam *param, int nth);
+GList*           b_vformat_attribute_get_params       (b_VFormatAttribute *attr);
+const char*      b_vformat_attribute_param_get_name   (b_VFormatParam *param);
+GList*           b_vformat_attribute_param_get_values (b_VFormatParam *param);
+const char *b_vformat_attribute_param_get_nth_value(b_VFormatParam *param, int nth);
 
 /* special TYPE= parameter predicate (checks for TYPE=@typestr */
-gboolean         vformat_attribute_has_type         (VFormatAttribute *attr, const char *typestr);
+gboolean         b_vformat_attribute_has_type         (b_VFormatAttribute *attr, const char *typestr);
 
 /* Utility functions. */
-char*            vformat_escape_string (const char *str, VFormatType type);
-char*            vformat_unescape_string (const char *str);
+char*            b_vformat_escape_string (const char *str, b_VFormatType type);
+char*            b_vformat_unescape_string (const char *str);
 
 #ifdef __cplusplus
 }
