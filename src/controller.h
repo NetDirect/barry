@@ -22,6 +22,7 @@
 #ifndef __BARRY_CONTROLLER_H__
 #define __BARRY_CONTROLLER_H__
 
+#include "dll.h"
 #include "usbwrap.h"
 #include "probe.h"
 #include "socket.h"
@@ -57,7 +58,7 @@ class DBPacket;
 ///	- Call GetDBID() to get a database ID by name
 ///	- In Desktop mode, call LoadDatabase() to retrieve and store a database
 ///
-class Controller
+class BXEXPORT Controller
 {
 	friend class Barry::DBPacket;
 

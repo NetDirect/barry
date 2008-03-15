@@ -22,9 +22,11 @@
 #ifndef __BARRY_VERSION_H__
 #define __BARRY_VERSION_H__
 
+#include "dll.h"
+
 namespace Barry {
 
-const char* Version(int &major, int &minor);
+BXEXPORT const char* Version(int &major, int &minor);
 
 } // namespace Barry
 

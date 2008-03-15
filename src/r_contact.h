@@ -22,6 +22,7 @@
 #ifndef __BARRY_RECORD_CONTACT_H__
 #define __BARRY_RECORD_CONTACT_H__
 
+#include "dll.h"
 #include "record.h"
 #include <iosfwd>
 #include <string>
@@ -36,7 +37,7 @@ namespace Barry {
 //        operators in the future.
 //
 
-struct ContactGroupLink
+struct BXEXPORT ContactGroupLink
 {
 	uint32_t Link;
 	uint16_t Unknown;
@@ -52,7 +53,7 @@ typedef std::vector<std::string> CategoryList;
 /// \addtogroup RecordParserClasses
 /// @{
 
-class Contact
+class BXEXPORT Contact
 {
 public:
 	typedef Barry::CategoryList			CategoryList;
@@ -148,7 +149,7 @@ public:
 	static void CategoryList2Str(const Barry::CategoryList &list, std::string &str);
 };
 
-inline std::ostream& operator<< (std::ostream &os, const Contact &contact) {
+BXEXPORT inline std::ostream& operator<< (std::ostream &os, const Contact &contact) {
 	contact.Dump(os);
 	return os;
 }

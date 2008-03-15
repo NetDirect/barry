@@ -25,6 +25,7 @@
 /*
  * Supporting C headers
  */
+#include "dll.h"
 #include <stdint.h>
 #include <time.h>
 
@@ -127,88 +128,88 @@ typedef void (*fill_record_callback_t)(int record_type,
 #define BARRY_SERVICEBOOK_CONFIG_FORMAT	0x010409	/* number */
 
 /* Initialization */
-void barry_init(int data_dump_mode);
-const char *barry_version(int *major, int *minor);
+BXEXPORT void barry_init(int data_dump_mode);
+BXEXPORT const char *barry_version(int *major, int *minor);
 
 /* Error string retrieval */
-const char *barry_get_last_error();
+BXEXPORT const char *barry_get_last_error();
 
 /* Probe API */
-probe_handle_t barry_probe(void);
-void barry_probe_close(probe_handle_t handle);
-int barry_probe_count(probe_handle_t handle);
-int barry_probe_find_active(probe_handle_t handle, uint32_t pin);
-void barry_probe_result(probe_handle_t handle, int index,
+BXEXPORT probe_handle_t barry_probe(void);
+BXEXPORT void barry_probe_close(probe_handle_t handle);
+BXEXPORT int barry_probe_count(probe_handle_t handle);
+BXEXPORT int barry_probe_find_active(probe_handle_t handle, uint32_t pin);
+BXEXPORT void barry_probe_result(probe_handle_t handle, int index,
 	struct ProbeResult *result);
 
 /* Controller API */
-con_handle_t barry_con_open(struct ProbeResult *result);
-void barry_con_close(con_handle_t handle);
-int barry_con_mode(con_handle_t handle, int mode);
-int barry_con_get_dbid(con_handle_t handle, const char *dbname);
-int barry_con_get_db_count(con_handle_t handle);
-int barry_con_get_db_info(con_handle_t handle, int index,
+BXEXPORT con_handle_t barry_con_open(struct ProbeResult *result);
+BXEXPORT void barry_con_close(con_handle_t handle);
+BXEXPORT int barry_con_mode(con_handle_t handle, int mode);
+BXEXPORT int barry_con_get_dbid(con_handle_t handle, const char *dbname);
+BXEXPORT int barry_con_get_db_count(con_handle_t handle);
+BXEXPORT int barry_con_get_db_info(con_handle_t handle, int index,
 	unsigned int *number, unsigned int *record_count,
 	char *name, int name_buf_size);
-int barry_con_add_record(con_handle_t handle, unsigned int dbid,
+BXEXPORT int barry_con_add_record(con_handle_t handle, unsigned int dbid,
 	record_handle_t rec);
-int barry_con_get_record(con_handle_t handle, unsigned int dbid,
+BXEXPORT int barry_con_get_record(con_handle_t handle, unsigned int dbid,
 	unsigned int state_table_index, record_handle_t *rec);
-int barry_con_set_record(con_handle_t handle, unsigned int dbid,
+BXEXPORT int barry_con_set_record(con_handle_t handle, unsigned int dbid,
 	unsigned int state_table_index, record_handle_t rec);
-int barry_con_clear_dirty(con_handle_t handle, unsigned int dbid,
+BXEXPORT int barry_con_clear_dirty(con_handle_t handle, unsigned int dbid,
 	unsigned int state_table_index);
-int barry_con_delete_record(con_handle_t handle, unsigned int dbid,
+BXEXPORT int barry_con_delete_record(con_handle_t handle, unsigned int dbid,
 	unsigned int state_table_index);
-int barry_con_load_database(con_handle_t handle, unsigned int dbid,
+BXEXPORT int barry_con_load_database(con_handle_t handle, unsigned int dbid,
 	process_record_callback_t callback);
-int barry_con_save_database(con_handle_t handle, unsigned int dbid,
+BXEXPORT int barry_con_save_database(con_handle_t handle, unsigned int dbid,
 	fill_record_callback_t callback);
 
 /* State table API */
-state_table_handle_t barry_get_state_table(con_handle_t handle,
+BXEXPORT state_table_handle_t barry_get_state_table(con_handle_t handle,
 	unsigned int dbid);
-void barry_free_state_table(state_table_handle_t handle);
-int barry_make_new_record_id(state_table_handle_t handle);
-int barry_get_state_count(state_handle_t handle);
-int barry_get_state(state_table_handle_t handle, unsigned int index,
+BXEXPORT void barry_free_state_table(state_table_handle_t handle);
+BXEXPORT int barry_make_new_record_id(state_table_handle_t handle);
+BXEXPORT int barry_get_state_count(state_handle_t handle);
+BXEXPORT int barry_get_state(state_table_handle_t handle, unsigned int index,
 	uint32_t *record_id, int *dirty_flag);
 	/* note: not every index from 0 to "state_count" is guaranteed to
 	   exist... check the return value */
-int barry_get_state_by_record_id(state_table_handle_t handle, unsigned int rec,
+BXEXPORT int barry_get_state_by_record_id(state_table_handle_t handle, unsigned int rec,
 	unsigned int *index, int *dirty_flag);
 
 /* Record API */
-record_handle_t barry_create_record(int record_type);
-void barry_free_record(record_handle_t handle);
-uint32_t barry_rec_get_num(record_handle_t handle, int field_type);
-int barry_rec_set_num(record_handle_t handle, int field_type, uint32_t val);
-const char *barry_rec_get_str(record_handle_t handle, int field_type);
-int barry_rec_set_str(record_handle_t handle, int field_type, const char *str);
-const char *barry_rec_get_raw(record_handle_t handle, int field_type,
+BXEXPORT record_handle_t barry_create_record(int record_type);
+BXEXPORT void barry_free_record(record_handle_t handle);
+BXEXPORT uint32_t barry_rec_get_num(record_handle_t handle, int field_type);
+BXEXPORT int barry_rec_set_num(record_handle_t handle, int field_type, uint32_t val);
+BXEXPORT const char *barry_rec_get_str(record_handle_t handle, int field_type);
+BXEXPORT int barry_rec_set_str(record_handle_t handle, int field_type, const char *str);
+BXEXPORT const char *barry_rec_get_raw(record_handle_t handle, int field_type,
 	int *raw_size);
-int barry_rec_set_raw(record_handle_t handle, int field_type,
+BXEXPORT int barry_rec_set_raw(record_handle_t handle, int field_type,
 	const char *buf, int size);
-time_t barry_rec_get_time(record_handle_t handle, int field_type);
-int barry_rec_set_time(record_handle_t handle, int field_type, time_t t);
+BXEXPORT time_t barry_rec_get_time(record_handle_t handle, int field_type);
+BXEXPORT int barry_rec_set_time(record_handle_t handle, int field_type, time_t t);
 
 /* Calendar record special API */
-int barry_calendar_set_daily(record_handle_t handle);
-int barry_calendar_set_monthly_by_date(record_handle_t handle,
+BXEXPORT int barry_calendar_set_daily(record_handle_t handle);
+BXEXPORT int barry_calendar_set_monthly_by_date(record_handle_t handle,
 	int day_of_month);
-int barry_calendar_set_monthly_by_day(record_handle_t handle,
+BXEXPORT int barry_calendar_set_monthly_by_day(record_handle_t handle,
 	int day_of_week, int week_of_month);
-int barry_calendar_set_yearly_by_date(record_handle_t handle,
+BXEXPORT int barry_calendar_set_yearly_by_date(record_handle_t handle,
 	int day_of_month, int month_of_year);
-int barry_calendar_set_yearly_by_day(record_handle_t handle,
+BXEXPORT int barry_calendar_set_yearly_by_day(record_handle_t handle,
 	int day_of_week, int week_of_month, int month_of_year);
-int barry_calendar_set_weekly(record_handle_t handle, int weekday_bits);
-int barry_calendar_get_fixme_need_read_access_to_this
+BXEXPORT int barry_calendar_set_weekly(record_handle_t handle, int weekday_bits);
+BXEXPORT int barry_calendar_get_fixme_need_read_access_to_this
 
 /* Time zone API */
-const TimeZone* barry_get_time_zone_table();
-const TimeZone* barry_get_time_zone(unsigned short code);
-unsigned short barry_get_time_zone_code(signed short hour_offset,
+BXEXPORT const TimeZone* barry_get_time_zone_table();
+BXEXPORT const TimeZone* barry_get_time_zone(unsigned short code);
+BXEXPORT unsigned short barry_get_time_zone_code(signed short hour_offset,
 	signed short min_offset);	/* returns TIME_ZONE_CODE_ERR on error*/
 
 #ifdef __cplusplus

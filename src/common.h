@@ -22,6 +22,8 @@
 #ifndef __BARRY_COMMON_H__
 #define __BARRY_COMMON_H__
 
+#include "dll.h"
+
 #define VENDOR_RIM		0x0fca
 #define PRODUCT_RIM_BLACKBERRY	0x0001
 #define PRODUCT_RIM_PEARL_DUAL	0x0004
@@ -32,7 +34,7 @@
 
 namespace Barry {
 
-void Init(bool data_dump_mode = false);
+BXEXPORT void Init(bool data_dump_mode = false);
 
 } // namespace Barry
 

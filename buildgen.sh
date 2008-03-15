@@ -1,5 +1,13 @@
 #!/bin/sh
 
+doconf() {
+	aclocal -I $1 && \
+		libtoolize --force --copy && \
+		autoheader && \
+		automake --add-missing --copy --foreign && \
+		autoconf
+}
+
 #
 # Generates the build system.
 #
@@ -43,7 +51,13 @@ elif [ "$1" = "ctags" ] ; then
 		(cd $OS_DIR && ctags -R -a -f ~/tags-barry --tag-relative=yes)
 	fi
 else
-	autoreconf -if
-	#autoreconf -ifv
+	#autoreconf -if --include=config
+	#autoreconf -ifv --include=config
+
+	# autoreconf doesn't seem to support custom .m4 files in config/ (???)
+	# so... do it ourselves
+	doconf m4
+	(cd gui && doconf ../m4)
+	(cd opensync-plugin && doconf ../m4)
 fi
 

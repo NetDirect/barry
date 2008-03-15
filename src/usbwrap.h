@@ -23,6 +23,7 @@
 #ifndef __SB_USBWRAP_H__
 #define __SB_USBWRAP_H__
 
+#include "dll.h"
 #include <usb.h>
 #include <vector>
 #include <map>
@@ -40,7 +41,7 @@ namespace Usb {
 /// @{
 
 /// Thrown on low level USB errors.
-class Error : public Barry::Error
+class BXEXPORT Error : public Barry::Error
 {
 	int m_libusb_errcode;
 
@@ -52,7 +53,7 @@ public:
 	int libusb_errcode() const { return m_libusb_errcode; }
 };
 
-class Timeout : public Error
+class BXEXPORT Timeout : public Error
 {
 public:
 	Timeout(const std::string &str) : Error(str) {}
@@ -67,7 +68,7 @@ public:
 typedef struct usb_device*			DeviceIDType;
 typedef struct usb_dev_handle*			DeviceHandleType;
 
-class Match
+class BXEXPORT Match
 {
 private:
 	struct usb_bus *m_busses;
@@ -91,7 +92,7 @@ public:
 };
 
 
-class Device
+class BXEXPORT Device
 {
 private:
 	Usb::DeviceIDType m_id;
@@ -138,7 +139,7 @@ public:
 	bool GetConfiguration(unsigned char &cfg);
 };
 
-class Interface
+class BXEXPORT Interface
 {
 	Device &m_dev;
 	int m_iface;
@@ -151,7 +152,7 @@ public:
 
 
 // Map of Endpoint numbers (not indexes) to endpoint descriptors
-struct EndpointPair
+struct BXEXPORT EndpointPair
 {
 	unsigned char read;
 	unsigned char write;
@@ -162,7 +163,7 @@ struct EndpointPair
 	bool IsComplete() const { return read && write && IsTypeSet(); }
 };
 
-class EndpointDiscovery : public std::map<unsigned char, usb_endpoint_descriptor>
+class BXEXPORT EndpointDiscovery : public std::map<unsigned char, usb_endpoint_descriptor>
 {
 	friend class InterfaceDiscovery;
 
@@ -174,7 +175,7 @@ private:
 	bool m_valid;
 	endpoint_array_type m_endpoints;
 
-	bool Discover(struct usb_interface_descriptor *interface, int epcount);
+	BXLOCAL bool Discover(struct usb_interface_descriptor *interface, int epcount);
 
 public:
 	EndpointDiscovery() : m_valid(false) {}
@@ -187,13 +188,13 @@ public:
 
 
 // Map of Interface numbers (not indexes) to interface descriptors and endpoint map
-struct InterfaceDesc
+struct BXEXPORT InterfaceDesc
 {
 	usb_interface_descriptor desc;
 	EndpointDiscovery endpoints;
 };
 
-class InterfaceDiscovery : public std::map<int, InterfaceDesc>
+class BXEXPORT InterfaceDiscovery : public std::map<int, InterfaceDesc>
 {
 public:
 	typedef std::map<int, InterfaceDesc>			base_type;
@@ -201,7 +202,7 @@ public:
 private:
 	bool m_valid;
 
-	bool DiscoverInterface(struct usb_interface *interface);
+	BXLOCAL bool DiscoverInterface(struct usb_interface *interface);
 
 public:
 	InterfaceDiscovery() : m_valid(false) {}
@@ -214,13 +215,13 @@ public:
 
 
 // Map of Config numbers (not indexes) to config descriptors and interface map
-struct ConfigDesc
+struct BXEXPORT ConfigDesc
 {
 	usb_config_descriptor desc;
 	InterfaceDiscovery interfaces;
 };
 
-class ConfigDiscovery : public std::map<unsigned char, ConfigDesc>
+class BXEXPORT ConfigDiscovery : public std::map<unsigned char, ConfigDesc>
 {
 public:
 	typedef std::map<unsigned char, ConfigDesc>		base_type;
@@ -238,7 +239,7 @@ public:
 
 
 // Discovers all configurations, interfaces, and endpoints for a given device
-class DeviceDiscovery
+class BXEXPORT DeviceDiscovery
 {
 	bool m_valid;
 
