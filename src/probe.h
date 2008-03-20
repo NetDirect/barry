@@ -39,6 +39,9 @@ struct ProbeResult
 	uint8_t m_zeroSocketSequence;
 	std::string m_description;
 
+	ProbeResult()
+		: m_dev(0), m_interface(0), m_pin(0), m_zeroSocketSequence(0)
+		{}
 	void DumpAll(std::ostream &os) const;
 };
 

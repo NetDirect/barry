@@ -236,6 +236,7 @@ void Probe::ProbeDevice(Usb::DeviceIDType devid)
 			std::string desc;
 			if( ProbePair(dev, ep, pin, desc, zeroSocketSequence) ) {
 				result.m_ep = ep;
+				result.m_pin = pin;
 				result.m_description = desc;
 				result.m_zeroSocketSequence = zeroSocketSequence;
 				break;

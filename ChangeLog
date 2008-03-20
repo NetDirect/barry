@@ -1,5 +1,9 @@
 Branch: barry-b1-socket-arch
 ------------------------------------------------------------------------------
+	2008/03/20
+		- fixed bug in probe class, which missed storing the PIN
+			number in ProbeResult
+		- also added ProbeResult constructor
 	2008/03/07
 		- merged HEAD changes
 		- added threads library to new bs11nread build
