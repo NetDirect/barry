@@ -5,6 +5,7 @@ Release: version 0.12 - 2008/03/??
 		to avoid the CVS directories
 	- added support for building Debian source packages with proper
 		diff.gz and dsc files
+	- fixed find warning in maintainer/make-rpm.sh
 2008/03/13
 	- renamed all vformat_ and VFormat symbols in opensync plugin's
 		copy of vformat code, so they don't conflict with the
