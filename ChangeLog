@@ -6,6 +6,8 @@ Release: version 0.12 - 2008/03/??
 	- added support for building Debian source packages with proper
 		diff.gz and dsc files
 	- fixed find warning in maintainer/make-rpm.sh
+	- added support for Ubuntu binary packages to the maintainer build
+		scripts
 2008/03/13
 	- renamed all vformat_ and VFormat symbols in opensync plugin's
 		copy of vformat code, so they don't conflict with the
