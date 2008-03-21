@@ -4,6 +4,14 @@ Branch: barry-b1-socket-arch
 		- fixed bug in probe class, which missed storing the PIN
 			number in ProbeResult
 		- also added ProbeResult constructor
+		- merged changes from visibility branch:
+			- GCC visibility support, limiting what symbols are
+			  visible in the shared library, libbarry... this makes
+			  a drastic reduction in the symbol table, and should
+			  avoid future name clashes with other libraries such
+			  as opensync
+			  See: http://gcc.gnu.org/wiki/Visibility
+			- vformat_() function name changes
 	2008/03/07
 		- merged HEAD changes
 		- added threads library to new bs11nread build

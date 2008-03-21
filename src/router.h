@@ -22,6 +22,7 @@
 #ifndef __BARRY_ROUTER_H__
 #define __BARRY_ROUTER_H__
 
+#include "dll.h"
 #include <stdint.h>
 #include <map>
 #include <tr1/memory>
@@ -35,7 +36,7 @@ namespace Barry {
 
 class DataHandle;
 
-class SocketRoutingQueue
+class BXEXPORT SocketRoutingQueue
 {
 	friend class DataHandle;
 
@@ -175,7 +176,7 @@ public:
 /// freeing them completely, the Data objects are turned to the
 /// SocketRoutingQueue from whence they came.
 ///
-class DataHandle
+class BXEXPORT DataHandle
 {
 private:
 	SocketRoutingQueue &m_queue;

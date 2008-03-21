@@ -37,7 +37,7 @@ std::string vAttr::GetName()
 	if( !m_attr )
 		return ret;
 
-	const char *name = vformat_attribute_get_name(m_attr);
+	const char *name = b_vformat_attribute_get_name(m_attr);
 	if( name )
 		ret = name;
 	return ret;
@@ -49,11 +49,11 @@ std::string vAttr::GetValue(int nth)
 	const char *value = 0;
 
 	if( m_attr ) {
-		if( vformat_attribute_is_single_valued(m_attr) ) {
-			value = vformat_attribute_get_value(m_attr);
+		if( b_vformat_attribute_is_single_valued(m_attr) ) {
+			value = b_vformat_attribute_get_value(m_attr);
 		}
 		else {
-			value = vformat_attribute_get_nth_value(m_attr, nth);
+			value = b_vformat_attribute_get_nth_value(m_attr, nth);
 		}
 	}
 
@@ -70,11 +70,11 @@ std::string vAttr::GetParam(const char *name, int nth)
 	if( !m_attr )
 		return ret;
 
-	VFormatParam *param = vformat_attribute_find_param(m_attr, name);
+	b_VFormatParam *param = b_vformat_attribute_find_param(m_attr, name);
 	if( !param )
 		return ret;
 
-	const char *value = vformat_attribute_param_get_nth_value(param, nth);
+	const char *value = b_vformat_attribute_param_get_nth_value(param, nth);
 	if( value )
 		ret = value;
 
@@ -93,14 +93,14 @@ vBase::vBase()
 vBase::~vBase()
 {
 	if( m_format ) {
-		vformat_free(m_format);
+		b_vformat_free(m_format);
 	}
 }
 
-void vBase::SetFormat(VFormat *format)
+void vBase::SetFormat(b_VFormat *format)
 {
 	if( m_format ) {
-		vformat_free(m_format);
+		b_vformat_free(m_format);
 		m_format = 0;
 	}
 	m_format = format;
@@ -109,7 +109,7 @@ void vBase::SetFormat(VFormat *format)
 void vBase::Clear()
 {
 	if( m_format ) {
-		vformat_free(m_format);
+		b_vformat_free(m_format);
 		m_format = 0;
 	}
 }
@@ -120,7 +120,7 @@ vAttrPtr vBase::NewAttr(const char *name)
 
 	trace.logf("creating valueless attr: %s", name);
 
-	vAttrPtr attr(vformat_attribute_new(NULL, name));
+	vAttrPtr attr(b_vformat_attribute_new(NULL, name));
 	if( !attr.Get() )
 		throw ConvertError("resource error allocating vformat attribute");
 	return attr;
@@ -141,11 +141,11 @@ some vCard values are positional (like name), so blank should be allowed...
 
 	trace.logf("creating attr: %s, %s", name, value);
 
-	vAttrPtr attr(vformat_attribute_new(NULL, name));
+	vAttrPtr attr(b_vformat_attribute_new(NULL, name));
 	if( !attr.Get() )
 		throw ConvertError("resource error allocating vformat attribute");
 
-	vformat_attribute_add_value(attr.Get(), value);
+	b_vformat_attribute_add_value(attr.Get(), value);
 	return attr;
 }
 
@@ -158,7 +158,7 @@ void vBase::AddAttr(vAttrPtr attr)
 		return;
 	}
 
-	vformat_add_attribute(m_format, attr.Extract());
+	b_vformat_add_attribute(m_format, attr.Extract());
 }
 
 void vBase::AddValue(vAttrPtr &attr, const char *value)
@@ -174,7 +174,7 @@ void vBase::AddValue(vAttrPtr &attr, const char *value)
 		return;
 	}
 */
-	vformat_attribute_add_value(attr.Get(), value);
+	b_vformat_attribute_add_value(attr.Get(), value);
 }
 
 void vBase::AddParam(vAttrPtr &attr, const char *name, const char *value)
@@ -192,9 +192,9 @@ void vBase::AddParam(vAttrPtr &attr, const char *name, const char *value)
 	}
 */
 
-	VFormatParam *pParam = vformat_attribute_param_new(name);
-	vformat_attribute_param_add_value(pParam, value);
-	vformat_attribute_add_param(attr.Get(), pParam);
+	b_VFormatParam *pParam = b_vformat_attribute_param_new(name);
+	b_vformat_attribute_param_add_value(pParam, value);
+	b_vformat_attribute_add_param(attr.Get(), pParam);
 }
 
 std::string vBase::GetAttr(const char *attrname, const char *block)
@@ -207,15 +207,15 @@ std::string vBase::GetAttr(const char *attrname, const char *block)
 
 	bool needs_freeing = false;
 
-	VFormatAttribute *attr = vformat_find_attribute(m_format, attrname, 0, block);
+	b_VFormatAttribute *attr = b_vformat_find_attribute(m_format, attrname, 0, block);
 	if( attr ) {
-		if( vformat_attribute_is_single_valued(attr) ) {
-			value = vformat_attribute_get_value(attr);
+		if( b_vformat_attribute_is_single_valued(attr) ) {
+			value = b_vformat_attribute_get_value(attr);
 			needs_freeing = true;
 		}
 		else {
 			// FIXME, this is hardcoded
-			value = vformat_attribute_get_nth_value(attr, 0);
+			value = b_vformat_attribute_get_nth_value(attr, 0);
 		}
 	}
 
@@ -234,6 +234,6 @@ vAttr vBase::GetAttrObj(const char *attrname, int nth, const char *block)
 	Trace trace("vBase::GetAttrObj");
 	trace.logf("getting attr: %s", attrname);
 
-	return vAttr(vformat_find_attribute(m_format, attrname, nth, block));
+	return vAttr(b_vformat_find_attribute(m_format, attrname, nth, block));
 }
 

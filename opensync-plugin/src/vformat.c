@@ -35,11 +35,11 @@
 
 static size_t base64_encode_step(unsigned char *in, size_t len, gboolean break_lines, unsigned char *out, int *state, int *save);
 static size_t base64_decode_step(unsigned char *in, size_t len, unsigned char *out, int *state, unsigned int *save);
-size_t base64_decode_simple (char *data, size_t len);
-char  *base64_encode_simple (const char *data, size_t len);
+static size_t base64_decode_simple (char *data, size_t len);
+static char  *base64_encode_simple (const char *data, size_t len);
 
-size_t quoted_decode_simple (char *data, size_t len);
-char *quoted_encode_simple (const unsigned char *string, int len);
+static size_t quoted_decode_simple (char *data, size_t len);
+static char *quoted_encode_simple (const unsigned char *string, int len);
 
 
 /**
@@ -55,7 +55,7 @@ static int _helper_is_base64(const char *check_string)
 	return (0);
 }
 
-time_t vformat_time_to_unix(const char *inptime)
+time_t b_vformat_time_to_unix(const char *inptime)
 {	
 	char *date = NULL;
 	char *time = NULL;
@@ -215,11 +215,11 @@ static void _skip_until (char **p, char *s)
 	*p = lp;
 }
 
-static void _read_attribute_value_add (VFormatAttribute *attr, GString *str, GString *charset)
+static void _read_attribute_value_add (b_VFormatAttribute *attr, GString *str, GString *charset)
 {
 	/* don't convert empty strings */
 	if (str->len == 0) {
-		vformat_attribute_add_value(attr, str->str);
+		b_vformat_attribute_add_value(attr, str->str);
 		return;
 	}      	
 
@@ -243,12 +243,12 @@ static void _read_attribute_value_add (VFormatAttribute *attr, GString *str, GSt
                 if (iconv(cd, &inbuf, &inbytesleft, &p, &outbytesleft) != (size_t)(-1)) {
 #endif
                         *p = 0;
-                        vformat_attribute_add_value(attr, outbuf);
+                        b_vformat_attribute_add_value(attr, outbuf);
 
                 } else {
 
                         /* hmm, should not happen */
-                        vformat_attribute_add_value(attr, str->str);
+                        b_vformat_attribute_add_value(attr, str->str);
 
                 }
 	
@@ -259,7 +259,7 @@ static void _read_attribute_value_add (VFormatAttribute *attr, GString *str, GSt
 		/* no CHARSET was given, if inbuf is already UTF-8 we add str->str */
 		if (g_utf8_validate (inbuf, -1, NULL)) {
 
-			vformat_attribute_add_value (attr, str->str);	
+			b_vformat_attribute_add_value (attr, str->str);	
 
                 } else {
 
@@ -271,11 +271,11 @@ static void _read_attribute_value_add (VFormatAttribute *attr, GString *str, GSt
                         if (iconv(cd, &inbuf, &inbytesleft, &p, &outbytesleft) != (size_t)(-1)) {
 #endif
                                 *p = 0;
-                                vformat_attribute_add_value (attr, outbuf);
+                                b_vformat_attribute_add_value (attr, outbuf);
 
                         } else {
 
-                                vformat_attribute_add_value (attr, str->str);
+                                b_vformat_attribute_add_value (attr, str->str);
 
                         }
 		
@@ -289,7 +289,7 @@ static void _read_attribute_value_add (VFormatAttribute *attr, GString *str, GSt
 
 }
 
-static void _read_attribute_value (VFormatAttribute *attr, char **p, int format_encoding, GString *charset)
+static void _read_attribute_value (b_VFormatAttribute *attr, char **p, int format_encoding, GString *charset)
 {
 	char *lp = *p;
 	GString *str;
@@ -431,11 +431,11 @@ static void _read_attribute_value (VFormatAttribute *attr, char **p, int format_
 	*p = lp;
 }
 
-static void _read_attribute_params(VFormatAttribute *attr, char **p, int *format_encoding, GString **charset)
+static void _read_attribute_params(b_VFormatAttribute *attr, char **p, int *format_encoding, GString **charset)
 {
 	char *lp = *p;
 	GString *str;
-	VFormatParam *param = NULL;
+	b_VFormatParam *param = NULL;
 	gboolean in_quote = FALSE;
 	str = g_string_new ("");
 	
@@ -456,7 +456,7 @@ static void _read_attribute_params(VFormatAttribute *attr, char **p, int *format
 		 */
 		else if (*lp == '=') {
 			if (str->len > 0) {
-				param = vformat_attribute_param_new (str->str);
+				param = b_vformat_attribute_param_new (str->str);
 				g_string_assign (str, "");
 				lp = g_utf8_next_char (lp);
 			}
@@ -477,7 +477,7 @@ static void _read_attribute_params(VFormatAttribute *attr, char **p, int *format
 
 			if (param) {
 				if (str->len > 0) {
-					vformat_attribute_param_add_value (param, str->str);
+					b_vformat_attribute_param_add_value (param, str->str);
 					g_string_assign (str, "");
 					if (!colon)
 						lp = g_utf8_next_char (lp);
@@ -492,7 +492,7 @@ static void _read_attribute_params(VFormatAttribute *attr, char **p, int *format
 					 * the parameter then skip past the character.
 					 */
 					if (!param->values) {
-						vformat_attribute_param_free (param);
+						b_vformat_attribute_param_free (param);
 						param = NULL;
 						if (!colon)
 							lp = g_utf8_next_char (lp);
@@ -503,16 +503,16 @@ static void _read_attribute_params(VFormatAttribute *attr, char **p, int *format
 				    && !g_ascii_strcasecmp (param->name, "encoding")) {
 					if (!g_ascii_strcasecmp (param->values->data, "quoted-printable")) {
 						*format_encoding = VF_ENCODING_QP;
-						vformat_attribute_param_free (param);
+						b_vformat_attribute_param_free (param);
 						param = NULL;
 					} else if ( _helper_is_base64(param->values->data)) { 
 						*format_encoding = VF_ENCODING_BASE64;
-//						vformat_attribute_param_free (param);
+//						b_vformat_attribute_param_free (param);
 //						param = NULL;
 					}
 				} else if (param && !g_ascii_strcasecmp(param->name, "charset")) {
 					*charset = g_string_new(param->values->data);
-					vformat_attribute_param_free (param);	
+					b_vformat_attribute_param_free (param);	
 					param = NULL;
 				}	
 			}
@@ -537,8 +537,8 @@ static void _read_attribute_params(VFormatAttribute *attr, char **p, int *format
 					}
 
 					if (param_name) {
-						param = vformat_attribute_param_new (param_name);
-						vformat_attribute_param_add_value (param, str->str);
+						param = b_vformat_attribute_param_new (param_name);
+						b_vformat_attribute_param_add_value (param, str->str);
 					}
 					g_string_assign (str, "");
 					if (!colon)
@@ -562,7 +562,7 @@ static void _read_attribute_params(VFormatAttribute *attr, char **p, int *format
 				}
 			}
 			if (param && !comma) {
-				vformat_attribute_add_param (attr, param);
+				b_vformat_attribute_add_param (attr, param);
 				param = NULL;
 			}
 			if (colon)
@@ -583,11 +583,11 @@ static void _read_attribute_params(VFormatAttribute *attr, char **p, int *format
 
 /* reads an entire attribute from the input buffer, leaving p pointing
    at the start of the next line (past the \r\n) */
-static VFormatAttribute *_read_attribute (char **p)
+static b_VFormatAttribute *_read_attribute (char **p)
 {
 	char *attr_group = NULL;
 	char *attr_name = NULL;
-	VFormatAttribute *attr = NULL;
+	b_VFormatAttribute *attr = NULL;
 	GString *str, *charset = NULL;
 	char *lp = *p;
 	
@@ -647,7 +647,7 @@ static VFormatAttribute *_read_attribute (char **p)
 		goto lose;
 	}
 
-	attr = vformat_attribute_new (attr_group, attr_name);
+	attr = b_vformat_attribute_new (attr_group, attr_name);
 	g_free (attr_group);
 	g_free (attr_name);
 
@@ -671,11 +671,11 @@ static VFormatAttribute *_read_attribute (char **p)
 	return attr;
  lose:
 	if (attr)
-		vformat_attribute_free (attr);
+		b_vformat_attribute_free (attr);
 	return NULL;
 }
 
-void open_block(char **block, const char *block_name)
+static void open_block(char **block, const char *block_name)
 {
 	char *start = *block ? *block : "";
 	char *result = NULL;
@@ -686,7 +686,7 @@ void open_block(char **block, const char *block_name)
 	*block = result;
 }
 
-void close_block(char **block, const char *block_name)
+static void close_block(char **block, const char *block_name)
 {
 	int name_len = strlen(block_name);
 	int block_len = *block ? strlen(*block) : 0;
@@ -711,16 +711,16 @@ void close_block(char **block, const char *block_name)
  * validator.  Almost nothing is considered a fatal error.  We always
  * try to return *something*.
  */
-static void _parse(VFormat *evc, const char *str)
+static void _parse(b_VFormat *evc, const char *str)
 {
 	char *buf = g_strdup (str);
 	char *p, *end;
-	VFormatAttribute *attr;
+	b_VFormatAttribute *attr;
 
 	/* first validate the string is valid utf8 */
 	if (!g_utf8_validate (buf, -1, (const char **)&end)) {
 		/* if the string isn't valid, we parse as much as we can from it */
-		osync_trace(TRACE_INTERNAL, "invalid utf8 passed to VFormat.  Limping along.");
+		osync_trace(TRACE_INTERNAL, "invalid utf8 passed to b_VFormat.  Limping along.");
 		*end = '\0';
 	}
 	
@@ -736,25 +736,25 @@ static void _parse(VFormat *evc, const char *str)
 		osync_trace(TRACE_INTERNAL, "vformat began without a BEGIN\n");
 	}
 	if (attr && !g_ascii_strcasecmp (attr->name, "begin"))
-		vformat_attribute_free (attr);
+		b_vformat_attribute_free (attr);
 	else if (attr)
-		vformat_add_attribute (evc, attr);
+		b_vformat_add_attribute (evc, attr);
 
 	char *block = NULL;
 	while (*p) {
-		VFormatAttribute *next_attr = _read_attribute (&p);
+		b_VFormatAttribute *next_attr = _read_attribute (&p);
 
 		if (next_attr) {
 			if( g_ascii_strcasecmp(next_attr->name, "begin") == 0 ) {
 				// add to block hierarchy string
-				char *value = vformat_attribute_get_value(next_attr);
+				char *value = b_vformat_attribute_get_value(next_attr);
 				open_block(&block, value);
 				//osync_trace(TRACE_INTERNAL, "open block: %s", block);
 				g_free(value);
 			}
 			else if( g_ascii_strcasecmp(next_attr->name, "end") == 0 ) {
 				// close off the block
-				char *value = vformat_attribute_get_value(next_attr);
+				char *value = b_vformat_attribute_get_value(next_attr);
 				close_block(&block, value);
 				//osync_trace(TRACE_INTERNAL, "close block: %s", block);
 				g_free(value);
@@ -764,7 +764,7 @@ static void _parse(VFormat *evc, const char *str)
 			next_attr->block = g_strdup(block);
 
 			// add!
-			vformat_add_attribute (evc, next_attr);
+			b_vformat_add_attribute (evc, next_attr);
 			attr = next_attr;
 		}
 	}
@@ -777,7 +777,7 @@ static void _parse(VFormat *evc, const char *str)
 	g_free (block);
 }
 
-char *vformat_escape_string (const char *s, VFormatType type)
+char *b_vformat_escape_string (const char *s, b_VFormatType type)
 {
 	GString *str;
 	const char *p;
@@ -829,7 +829,7 @@ char *vformat_escape_string (const char *s, VFormatType type)
 }
 
 char*
-vformat_unescape_string (const char *s)
+b_vformat_unescape_string (const char *s)
 {
 	GString *str;
 	const char *p;
@@ -868,7 +868,7 @@ vformat_unescape_string (const char *s)
 }
 
 void
-vformat_construct (VFormat *evc, const char *str)
+b_vformat_construct (b_VFormat *evc, const char *str)
 {
 	g_return_if_fail (str != NULL);
 
@@ -876,29 +876,29 @@ vformat_construct (VFormat *evc, const char *str)
 		_parse (evc, str);
 }
 
-void vformat_free(VFormat *format)
+void b_vformat_free(b_VFormat *format)
 {
-	g_list_foreach (format->attributes, (GFunc)vformat_attribute_free, NULL);
+	g_list_foreach (format->attributes, (GFunc)b_vformat_attribute_free, NULL);
 	g_list_free (format->attributes);
 	g_free(format);
 }
 
-VFormat *vformat_new_from_string (const char *str)
+b_VFormat *b_vformat_new_from_string (const char *str)
 {
 	g_return_val_if_fail (str != NULL, NULL);
-	VFormat *evc = g_malloc0(sizeof(VFormat));
+	b_VFormat *evc = g_malloc0(sizeof(b_VFormat));
 
-	vformat_construct (evc, str);
+	b_vformat_construct (evc, str);
 
 	return evc;
 }
 
-VFormat *vformat_new(void)
+b_VFormat *b_vformat_new(void)
 {
-	return vformat_new_from_string ("");
+	return b_vformat_new_from_string ("");
 }
 
-int _block_match(VFormatAttribute *attr, const char *block)
+static int _block_match(b_VFormatAttribute *attr, const char *block)
 {
 	// a block matches if the end of the attribute's block
 	// string matches a case insensitive compare with block
@@ -927,14 +927,14 @@ int _block_match(VFormatAttribute *attr, const char *block)
 	return g_ascii_strcasecmp(&attr->block[attr_len - block_len], block) == 0;
 }
 
-VFormatAttribute *vformat_find_attribute(VFormat *vcard, const char *name, int nth, const char *block)
+b_VFormatAttribute *b_vformat_find_attribute(b_VFormat *vcard, const char *name, int nth, const char *block)
 {
-	GList *attributes = vformat_get_attributes(vcard);
+	GList *attributes = b_vformat_get_attributes(vcard);
 	GList *a = NULL;
 	int i = 0;
 	for (a = attributes; a; a = a->next) {
-		VFormatAttribute *attr = a->data;
-		if (!g_ascii_strcasecmp(vformat_attribute_get_name(attr), name)) {
+		b_VFormatAttribute *attr = a->data;
+		if (!g_ascii_strcasecmp(b_vformat_attribute_get_name(attr), name)) {
 			if( block == NULL || _block_match(attr, block) ) {
 				if( i == nth )
 					return attr;
@@ -946,7 +946,7 @@ VFormatAttribute *vformat_find_attribute(VFormat *vcard, const char *name, int n
 }	
 
 /*
-VFormatAttribute *vformat_find_attribute_next(VFormatAttribute *last,
+b_VFormatAttribute *b_vformat_find_attribute_next(b_VFormatAttribute *last,
 						const char *name,
 						int nth)
 {
@@ -954,8 +954,8 @@ VFormatAttribute *vformat_find_attribute_next(VFormatAttribute *last,
 	GList *a = NULL;
 	int i = 0;
 	for (a = attributes; a; a = a->next) {
-		VFormatAttribute *attr = a->data;
-		if (!g_ascii_strcasecmp(vformat_attribute_get_name(attr), name)) {
+		b_VFormatAttribute *attr = a->data;
+		if (!g_ascii_strcasecmp(b_vformat_attribute_get_name(attr), name)) {
 			if( i == nth )
 				return attr;
 			i++;
@@ -965,7 +965,7 @@ VFormatAttribute *vformat_find_attribute_next(VFormatAttribute *last,
 }
 */
 
-char *vformat_to_string (VFormat *evc, VFormatType type)
+char *b_vformat_to_string (b_VFormat *evc, b_VFormatType type)
 {
 	osync_trace(TRACE_ENTRY, "%s(%p, %i)", __func__, type);
 	GList *l;
@@ -995,7 +995,7 @@ char *vformat_to_string (VFormat *evc, VFormatType type)
 
 	for (l = evc->attributes; l; l = l->next) {
 		GList *p;
-		VFormatAttribute *attr = l->data;
+		b_VFormatAttribute *attr = l->data;
 		GString *attr_str;
 		int l;
 		int format_encoding = VF_ENCODING_RAW;
@@ -1014,7 +1014,7 @@ char *vformat_to_string (VFormat *evc, VFormatType type)
 		attr_str = g_string_append (attr_str, attr->name);
 		/* handle the parameters */
 		for (p = attr->params; p; p = p->next) {
-			VFormatParam *param = p->data;
+			b_VFormatParam *param = p->data;
 			/* 5.8.2:
 			 * param        = param-name "=" param-value *("," param-value)
 			 */
@@ -1092,7 +1092,7 @@ char *vformat_to_string (VFormat *evc, VFormatType type)
 				  strstr (value, "BYDAY") == v->data) {
 				attr_str = g_string_append (attr_str, value);
 			} else {
-				escaped_value = vformat_escape_string (value, type);
+				escaped_value = b_vformat_escape_string (value, type);
 				attr_str = g_string_append (attr_str, escaped_value);
 			}
 
@@ -1212,26 +1212,26 @@ char *vformat_to_string (VFormat *evc, VFormatType type)
 	return g_string_free (str, FALSE);
 }
 
-void vformat_dump_structure (VFormat *evc)
+void b_vformat_dump_structure (b_VFormat *evc)
 {
 	GList *a;
 	GList *v;
 	int i;
 
-	printf ("VFormat\n");
+	printf ("b_VFormat\n");
 	for (a = evc->attributes; a; a = a->next) {
 		GList *p;
-		VFormatAttribute *attr = a->data;
+		b_VFormatAttribute *attr = a->data;
 		printf ("+-- %s\n", attr->name);
 		if (attr->params) {
 			printf ("    +- params=\n");
 
 			for (p = attr->params, i = 0; p; p = p->next, i++) {
-				VFormatParam *param = p->data;
+				b_VFormatParam *param = p->data;
 				printf ("    |   [%d] = %s", i,param->name);
 				printf ("(");
 				for (v = param->values; v; v = v->next) {
-					char *value = vformat_escape_string ((char*)v->data, VFORMAT_CARD_21);
+					char *value = b_vformat_escape_string ((char*)v->data, VFORMAT_CARD_21);
 					printf ("%s", value);
 					if (v->next)
 						printf (",");
@@ -1248,11 +1248,11 @@ void vformat_dump_structure (VFormat *evc)
 	}
 }
 
-VFormatAttribute *vformat_attribute_new (const char *attr_group, const char *attr_name)
+b_VFormatAttribute *b_vformat_attribute_new (const char *attr_group, const char *attr_name)
 {
-	VFormatAttribute *attr;
+	b_VFormatAttribute *attr;
 
-	attr = g_new0 (VFormatAttribute, 1);
+	attr = g_new0 (b_VFormatAttribute, 1);
 
 	attr->group = g_strdup (attr_group);
 	attr->name = g_strdup (attr_name);
@@ -1261,7 +1261,7 @@ VFormatAttribute *vformat_attribute_new (const char *attr_group, const char *att
 }
 
 void
-vformat_attribute_free (VFormatAttribute *attr)
+b_vformat_attribute_free (b_VFormatAttribute *attr)
 {
 	g_return_if_fail (attr != NULL);
 
@@ -1269,35 +1269,35 @@ vformat_attribute_free (VFormatAttribute *attr)
 	g_free (attr->group);
 	g_free (attr->name);
 
-	vformat_attribute_remove_values (attr);
+	b_vformat_attribute_remove_values (attr);
 
-	vformat_attribute_remove_params (attr);
+	b_vformat_attribute_remove_params (attr);
 
 	g_free (attr);
 }
 
-VFormatAttribute*
-vformat_attribute_copy (VFormatAttribute *attr)
+b_VFormatAttribute*
+b_vformat_attribute_copy (b_VFormatAttribute *attr)
 {
-	VFormatAttribute *a;
+	b_VFormatAttribute *a;
 	GList *p;
 
 	g_return_val_if_fail (attr != NULL, NULL);
 
-	a = vformat_attribute_new (vformat_attribute_get_group (attr),
-				   vformat_attribute_get_name (attr));
+	a = b_vformat_attribute_new (b_vformat_attribute_get_group (attr),
+				   b_vformat_attribute_get_name (attr));
 
 	for (p = attr->values; p; p = p->next)
-		vformat_attribute_add_value (a, p->data);
+		b_vformat_attribute_add_value (a, p->data);
 
 	for (p = attr->params; p; p = p->next)
-		vformat_attribute_add_param (a, vformat_attribute_param_copy (p->data));
+		b_vformat_attribute_add_param (a, b_vformat_attribute_param_copy (p->data));
 
 	return a;
 }
 
 void
-vformat_remove_attributes (VFormat *evc, const char *attr_group, const char *attr_name)
+b_vformat_remove_attributes (b_VFormat *evc, const char *attr_group, const char *attr_name)
 {
 	GList *attr;
 
@@ -1306,7 +1306,7 @@ vformat_remove_attributes (VFormat *evc, const char *attr_group, const char *att
 	attr = evc->attributes;
 	while (attr) {
 		GList *next_attr;
-		VFormatAttribute *a = attr->data;
+		b_VFormatAttribute *a = attr->data;
 
 		next_attr = attr->next;
 
@@ -1317,7 +1317,7 @@ vformat_remove_attributes (VFormat *evc, const char *attr_group, const char *att
 			/* matches, remove/delete the attribute */
 			evc->attributes = g_list_remove_link (evc->attributes, attr);
 
-			vformat_attribute_free (a);
+			b_vformat_attribute_free (a);
 		}
 
 		attr = next_attr;
@@ -1325,16 +1325,16 @@ vformat_remove_attributes (VFormat *evc, const char *attr_group, const char *att
 }
 
 void
-vformat_remove_attribute (VFormat *evc, VFormatAttribute *attr)
+b_vformat_remove_attribute (b_VFormat *evc, b_VFormatAttribute *attr)
 {
 	g_return_if_fail (attr != NULL);
 
 	evc->attributes = g_list_remove (evc->attributes, attr);
-	vformat_attribute_free (attr);
+	b_vformat_attribute_free (attr);
 }
 
 void
-vformat_add_attribute (VFormat *evc, VFormatAttribute *attr)
+b_vformat_add_attribute (b_VFormat *evc, b_VFormatAttribute *attr)
 {
 	g_return_if_fail (attr != NULL);
 
@@ -1342,18 +1342,18 @@ vformat_add_attribute (VFormat *evc, VFormatAttribute *attr)
 }
 
 void
-vformat_add_attribute_with_value (VFormat *VFormat,
-				  VFormatAttribute *attr, const char *value)
+b_vformat_add_attribute_with_value (b_VFormat *b_VFormat,
+				  b_VFormatAttribute *attr, const char *value)
 {
 	g_return_if_fail (attr != NULL);
 
-	vformat_attribute_add_value (attr, value);
+	b_vformat_attribute_add_value (attr, value);
 
-	vformat_add_attribute (VFormat, attr);
+	b_vformat_add_attribute (b_VFormat, attr);
 }
 
 void
-vformat_add_attribute_with_values (VFormat *VFormat, VFormatAttribute *attr, ...)
+b_vformat_add_attribute_with_values (b_VFormat *b_VFormat, b_VFormatAttribute *attr, ...)
 {
 	va_list ap;
 	char *v;
@@ -1363,16 +1363,16 @@ vformat_add_attribute_with_values (VFormat *VFormat, VFormatAttribute *attr, ...
 	va_start (ap, attr);
 
 	while ((v = va_arg (ap, char*))) {
-		vformat_attribute_add_value (attr, v);
+		b_vformat_attribute_add_value (attr, v);
 	}
 
 	va_end (ap);
 
-	vformat_add_attribute (VFormat, attr);
+	b_vformat_add_attribute (b_VFormat, attr);
 }
 
 void
-vformat_attribute_add_value (VFormatAttribute *attr, const char *value)
+b_vformat_attribute_add_value (b_VFormatAttribute *attr, const char *value)
 {
 	g_return_if_fail (attr != NULL);
 
@@ -1380,7 +1380,7 @@ vformat_attribute_add_value (VFormatAttribute *attr, const char *value)
 }
 
 void
-vformat_attribute_add_value_decoded (VFormatAttribute *attr, const char *value, int len)
+b_vformat_attribute_add_value_decoded (b_VFormatAttribute *attr, const char *value, int len)
 {
 	g_return_if_fail (attr != NULL);
 
@@ -1393,7 +1393,7 @@ vformat_attribute_add_value_decoded (VFormatAttribute *attr, const char *value, 
 			GString *decoded = g_string_new_len (value, len);
 	
 			/* make sure the decoded list is up to date */
-			vformat_attribute_get_values_decoded (attr);
+			b_vformat_attribute_get_values_decoded (attr);
 	
 			attr->values = g_list_append (attr->values, b64_data);
 			attr->decoded_values = g_list_append (attr->decoded_values, decoded);
@@ -1404,7 +1404,7 @@ vformat_attribute_add_value_decoded (VFormatAttribute *attr, const char *value, 
 			GString *decoded = g_string_new (value);
 	
 			/* make sure the decoded list is up to date */
-			vformat_attribute_get_values_decoded (attr);
+			b_vformat_attribute_get_values_decoded (attr);
 	
 			attr->values = g_list_append (attr->values, qp_data);
 			attr->decoded_values = g_list_append (attr->decoded_values, decoded);
@@ -1415,7 +1415,7 @@ vformat_attribute_add_value_decoded (VFormatAttribute *attr, const char *value, 
 			GString *decoded = g_string_new (value);
 	
 			/* make sure the decoded list is up to date */
-			vformat_attribute_get_values_decoded (attr);
+			b_vformat_attribute_get_values_decoded (attr);
 	
 			attr->values = g_list_append (attr->values, data);
 			attr->decoded_values = g_list_append (attr->decoded_values, decoded);
@@ -1425,7 +1425,7 @@ vformat_attribute_add_value_decoded (VFormatAttribute *attr, const char *value, 
 }
 
 void
-vformat_attribute_add_values (VFormatAttribute *attr, ...)
+b_vformat_attribute_add_values (b_VFormatAttribute *attr, ...)
 {
 	va_list ap;
 	char *v;
@@ -1435,7 +1435,7 @@ vformat_attribute_add_values (VFormatAttribute *attr, ...)
 	va_start (ap, attr);
 
 	while ((v = va_arg (ap, char*))) {
-		vformat_attribute_add_value (attr, v);
+		b_vformat_attribute_add_value (attr, v);
 	}
 
 	va_end (ap);
@@ -1448,7 +1448,7 @@ free_gstring (GString *str)
 }
 
 void
-vformat_attribute_remove_values (VFormatAttribute *attr)
+b_vformat_attribute_remove_values (b_VFormatAttribute *attr)
 {
 	g_return_if_fail (attr != NULL);
 
@@ -1462,11 +1462,11 @@ vformat_attribute_remove_values (VFormatAttribute *attr)
 }
 
 void
-vformat_attribute_remove_params (VFormatAttribute *attr)
+b_vformat_attribute_remove_params (b_VFormatAttribute *attr)
 {
 	g_return_if_fail (attr != NULL);
 
-	g_list_foreach (attr->params, (GFunc)vformat_attribute_param_free, NULL);
+	g_list_foreach (attr->params, (GFunc)b_vformat_attribute_param_free, NULL);
 	g_list_free (attr->params);
 	attr->params = NULL;
 
@@ -1475,47 +1475,47 @@ vformat_attribute_remove_params (VFormatAttribute *attr)
 	attr->encoding = VF_ENCODING_RAW;
 }
 
-VFormatParam*
-vformat_attribute_param_new (const char *name)
+b_VFormatParam*
+b_vformat_attribute_param_new (const char *name)
 {
-	VFormatParam *param = g_new0 (VFormatParam, 1);
+	b_VFormatParam *param = g_new0 (b_VFormatParam, 1);
 	param->name = g_strdup (name);
 
 	return param;
 }
 
 void
-vformat_attribute_param_free (VFormatParam *param)
+b_vformat_attribute_param_free (b_VFormatParam *param)
 {
 	g_return_if_fail (param != NULL);
 
 	g_free (param->name);
 
-	vformat_attribute_param_remove_values (param);
+	b_vformat_attribute_param_remove_values (param);
 
 	g_free (param);
 }
 
-VFormatParam*
-vformat_attribute_param_copy (VFormatParam *param)
+b_VFormatParam*
+b_vformat_attribute_param_copy (b_VFormatParam *param)
 {
-	VFormatParam *p;
+	b_VFormatParam *p;
 	GList *l;
 
 	g_return_val_if_fail (param != NULL, NULL);
 
-	p = vformat_attribute_param_new (vformat_attribute_param_get_name (param));
+	p = b_vformat_attribute_param_new (b_vformat_attribute_param_get_name (param));
 
 	for (l = param->values; l; l = l->next) {
-		vformat_attribute_param_add_value (p, l->data);
+		b_vformat_attribute_param_add_value (p, l->data);
 	}
 
 	return p;
 }
 
 void
-vformat_attribute_add_param (VFormatAttribute *attr,
-			     VFormatParam *param)
+b_vformat_attribute_add_param (b_VFormatAttribute *attr,
+			     b_VFormatParam *param)
 {
 	g_return_if_fail (attr != NULL);
 	g_return_if_fail (param != NULL);
@@ -1550,12 +1550,12 @@ vformat_attribute_add_param (VFormatAttribute *attr,
 	}
 }
 
-VFormatParam *vformat_attribute_find_param(VFormatAttribute *attr, const char *name)
+b_VFormatParam *b_vformat_attribute_find_param(b_VFormatAttribute *attr, const char *name)
 {
 	g_return_val_if_fail (attr != NULL, NULL);
 	GList *p = NULL;
 	for (p = attr->params; p; p = p->next) {
-		VFormatParam *param = p->data;
+		b_VFormatParam *param = p->data;
 		if (!g_ascii_strcasecmp (param->name, name))
 			return param;
 	}
@@ -1563,7 +1563,7 @@ VFormatParam *vformat_attribute_find_param(VFormatAttribute *attr, const char *n
 }
 
 void
-vformat_attribute_set_value (VFormatAttribute *attr,
+b_vformat_attribute_set_value (b_VFormatAttribute *attr,
 				int nth, const char *value)
 {
 	GList *param = g_list_nth(attr->values, nth);
@@ -1572,7 +1572,7 @@ vformat_attribute_set_value (VFormatAttribute *attr,
 }
 
 void
-vformat_attribute_param_add_value (VFormatParam *param,
+b_vformat_attribute_param_add_value (b_VFormatParam *param,
 				   const char *value)
 {
 	g_return_if_fail (param != NULL);
@@ -1581,7 +1581,7 @@ vformat_attribute_param_add_value (VFormatParam *param,
 }
 
 void
-vformat_attribute_param_add_values (VFormatParam *param,
+b_vformat_attribute_param_add_values (b_VFormatParam *param,
 				    ...)
 {
 	va_list ap;
@@ -1592,14 +1592,14 @@ vformat_attribute_param_add_values (VFormatParam *param,
 	va_start (ap, param);
 
 	while ((v = va_arg (ap, char*))) {
-		vformat_attribute_param_add_value (param, v);
+		b_vformat_attribute_param_add_value (param, v);
 	}
 
 	va_end (ap);
 }
 
 void
-vformat_attribute_add_param_with_value (VFormatAttribute *attr, const char *name, const char *value)
+b_vformat_attribute_add_param_with_value (b_VFormatAttribute *attr, const char *name, const char *value)
 {
 	g_return_if_fail (attr != NULL);
 	g_return_if_fail (name != NULL);
@@ -1607,16 +1607,16 @@ vformat_attribute_add_param_with_value (VFormatAttribute *attr, const char *name
 	if (!value)
 		return;
 	
-	VFormatParam *param = vformat_attribute_param_new(name);
+	b_VFormatParam *param = b_vformat_attribute_param_new(name);
 
-	vformat_attribute_param_add_value (param, value);
+	b_vformat_attribute_param_add_value (param, value);
 
-	vformat_attribute_add_param (attr, param);
+	b_vformat_attribute_add_param (attr, param);
 }
 
 void
-vformat_attribute_add_param_with_values (VFormatAttribute *attr,
-					 VFormatParam *param, ...)
+b_vformat_attribute_add_param_with_values (b_VFormatAttribute *attr,
+					 b_VFormatParam *param, ...)
 {
 	va_list ap;
 	char *v;
@@ -1627,16 +1627,16 @@ vformat_attribute_add_param_with_values (VFormatAttribute *attr,
 	va_start (ap, param);
 
 	while ((v = va_arg (ap, char*))) {
-		vformat_attribute_param_add_value (param, v);
+		b_vformat_attribute_param_add_value (param, v);
 	}
 
 	va_end (ap);
 
-	vformat_attribute_add_param (attr, param);
+	b_vformat_attribute_add_param (attr, param);
 }
 
 void
-vformat_attribute_param_remove_values (VFormatParam *param)
+b_vformat_attribute_param_remove_values (b_VFormatParam *param)
 {
 	g_return_if_fail (param != NULL);
 
@@ -1646,13 +1646,13 @@ vformat_attribute_param_remove_values (VFormatParam *param)
 }
 
 GList*
-vformat_get_attributes (VFormat *format)
+b_vformat_get_attributes (b_VFormat *format)
 {
 	return format->attributes;
 }
 
 const char*
-vformat_attribute_get_group (VFormatAttribute *attr)
+b_vformat_attribute_get_group (b_VFormatAttribute *attr)
 {
 	g_return_val_if_fail (attr != NULL, NULL);
 
@@ -1660,7 +1660,7 @@ vformat_attribute_get_group (VFormatAttribute *attr)
 }
 
 const char*
-vformat_attribute_get_name (VFormatAttribute *attr)
+b_vformat_attribute_get_name (b_VFormatAttribute *attr)
 {
 	g_return_val_if_fail (attr != NULL, NULL);
 
@@ -1668,7 +1668,7 @@ vformat_attribute_get_name (VFormatAttribute *attr)
 }
 
 const char*
-vformat_attribute_get_block (VFormatAttribute *attr)
+b_vformat_attribute_get_block (b_VFormatAttribute *attr)
 {
 	g_return_val_if_fail (attr != NULL, NULL);
 
@@ -1676,7 +1676,7 @@ vformat_attribute_get_block (VFormatAttribute *attr)
 }
 
 GList*
-vformat_attribute_get_values (VFormatAttribute *attr)
+b_vformat_attribute_get_values (b_VFormatAttribute *attr)
 {
 	g_return_val_if_fail (attr != NULL, NULL);
 
@@ -1684,7 +1684,7 @@ vformat_attribute_get_values (VFormatAttribute *attr)
 }
 
 GList*
-vformat_attribute_get_values_decoded (VFormatAttribute *attr)
+b_vformat_attribute_get_values_decoded (b_VFormatAttribute *attr)
 {
 	g_return_val_if_fail (attr != NULL, NULL);
 
@@ -1721,7 +1721,7 @@ vformat_attribute_get_values_decoded (VFormatAttribute *attr)
 }
 
 gboolean
-vformat_attribute_is_single_valued (VFormatAttribute *attr)
+b_vformat_attribute_is_single_valued (b_VFormatAttribute *attr)
 {
 	g_return_val_if_fail (attr != NULL, FALSE);
 
@@ -1733,32 +1733,32 @@ vformat_attribute_is_single_valued (VFormatAttribute *attr)
 }
 
 char*
-vformat_attribute_get_value (VFormatAttribute *attr)
+b_vformat_attribute_get_value (b_VFormatAttribute *attr)
 {
 	GList *values;
 
 	g_return_val_if_fail (attr != NULL, NULL);
 
-	values = vformat_attribute_get_values (attr);
+	values = b_vformat_attribute_get_values (attr);
 
-	if (!vformat_attribute_is_single_valued (attr))
-		osync_trace(TRACE_INTERNAL, "vformat_attribute_get_value called on multivalued attribute");
+	if (!b_vformat_attribute_is_single_valued (attr))
+		osync_trace(TRACE_INTERNAL, "b_vformat_attribute_get_value called on multivalued attribute");
 
 	return values ? g_strdup ((char*)values->data) : NULL;
 }
 
 GString*
-vformat_attribute_get_value_decoded (VFormatAttribute *attr)
+b_vformat_attribute_get_value_decoded (b_VFormatAttribute *attr)
 {
 	GList *values;
 	GString *str = NULL;
 
 	g_return_val_if_fail (attr != NULL, NULL);
 
-	values = vformat_attribute_get_values_decoded (attr);
+	values = b_vformat_attribute_get_values_decoded (attr);
 
-	if (!vformat_attribute_is_single_valued (attr))
-		osync_trace(TRACE_INTERNAL, "vformat_attribute_get_value_decoded called on multivalued attribute");
+	if (!b_vformat_attribute_is_single_valued (attr))
+		osync_trace(TRACE_INTERNAL, "b_vformat_attribute_get_value_decoded called on multivalued attribute");
 
 	if (values)
 		str = values->data;
@@ -1766,9 +1766,9 @@ vformat_attribute_get_value_decoded (VFormatAttribute *attr)
 	return str ? g_string_new_len (str->str, str->len) : NULL;
 }
 
-const char *vformat_attribute_get_nth_value(VFormatAttribute *attr, int nth)
+const char *b_vformat_attribute_get_nth_value(b_VFormatAttribute *attr, int nth)
 {
-	GList *values = vformat_attribute_get_values_decoded(attr);
+	GList *values = b_vformat_attribute_get_values_decoded(attr);
 	if (!values)
 		return NULL;
 	GString *retstr = (GString *)g_list_nth_data(values, nth);
@@ -1776,7 +1776,7 @@ const char *vformat_attribute_get_nth_value(VFormatAttribute *attr, int nth)
 		return NULL;
 	
 	if (!g_utf8_validate(retstr->str, -1, NULL)) {
-		values = vformat_attribute_get_values(attr);
+		values = b_vformat_attribute_get_values(attr);
 		if (!values)
 			return NULL;
 		return g_list_nth_data(values, nth);
@@ -1786,7 +1786,7 @@ const char *vformat_attribute_get_nth_value(VFormatAttribute *attr, int nth)
 }
 
 gboolean
-vformat_attribute_has_type (VFormatAttribute *attr, const char *typestr)
+b_vformat_attribute_has_type (b_VFormatAttribute *attr, const char *typestr)
 {
 	GList *params;
 	GList *p;
@@ -1794,13 +1794,13 @@ vformat_attribute_has_type (VFormatAttribute *attr, const char *typestr)
 	g_return_val_if_fail (attr != NULL, FALSE);
 	g_return_val_if_fail (typestr != NULL, FALSE);
 
-	params = vformat_attribute_get_params (attr);
+	params = b_vformat_attribute_get_params (attr);
 
 	for (p = params; p; p = p->next) {
-		VFormatParam *param = p->data;
+		b_VFormatParam *param = p->data;
 
-		if (!strcasecmp (vformat_attribute_param_get_name (param), "TYPE")) {
-			GList *values = vformat_attribute_param_get_values (param);
+		if (!strcasecmp (b_vformat_attribute_param_get_name (param), "TYPE")) {
+			GList *values = b_vformat_attribute_param_get_values (param);
 			GList *v;
 
 			for (v = values; v; v = v->next) {
@@ -1814,23 +1814,23 @@ vformat_attribute_has_type (VFormatAttribute *attr, const char *typestr)
 }
 
 
-gboolean vformat_attribute_has_param(VFormatAttribute *attr, const char *name)
+gboolean b_vformat_attribute_has_param(b_VFormatAttribute *attr, const char *name)
 {
 	g_return_val_if_fail (attr != NULL, FALSE);
 	g_return_val_if_fail (name != NULL, FALSE);
 	
-	GList *params = vformat_attribute_get_params(attr);
+	GList *params = b_vformat_attribute_get_params(attr);
 	GList *p;
 	for (p = params; p; p = p->next) {
-		VFormatParam *param = p->data;
-		if (!strcasecmp(name, vformat_attribute_param_get_name(param)))
+		b_VFormatParam *param = p->data;
+		if (!strcasecmp(name, b_vformat_attribute_param_get_name(param)))
 			return TRUE;
 	}
 	return FALSE;
 }
 
 GList*
-vformat_attribute_get_params (VFormatAttribute *attr)
+b_vformat_attribute_get_params (b_VFormatAttribute *attr)
 {
 	g_return_val_if_fail (attr != NULL, NULL);
 
@@ -1838,7 +1838,7 @@ vformat_attribute_get_params (VFormatAttribute *attr)
 }
 
 const char*
-vformat_attribute_param_get_name (VFormatParam *param)
+b_vformat_attribute_param_get_name (b_VFormatParam *param)
 {
 	g_return_val_if_fail (param != NULL, NULL);
 
@@ -1846,17 +1846,17 @@ vformat_attribute_param_get_name (VFormatParam *param)
 }
 
 GList*
-vformat_attribute_param_get_values (VFormatParam *param)
+b_vformat_attribute_param_get_values (b_VFormatParam *param)
 {
 	g_return_val_if_fail (param != NULL, NULL);
 
 	return param->values;
 }
 
-const char *vformat_attribute_param_get_nth_value(VFormatParam *param, int nth)
+const char *b_vformat_attribute_param_get_nth_value(b_VFormatParam *param, int nth)
 {
 	const char *ret = NULL;
-	GList *values = vformat_attribute_param_get_values(param);
+	GList *values = b_vformat_attribute_param_get_values(param);
 	if (!values)
 		return NULL;
 	ret = g_list_nth_data(values, nth);
@@ -2043,7 +2043,7 @@ static size_t base64_decode_step(unsigned char *in, size_t len, unsigned char *o
 	return outptr-out;
 }
 
-char *base64_encode_simple (const char *data, size_t len)
+static char *base64_encode_simple (const char *data, size_t len)
 {
 	unsigned char *out;
 	int state = 0, outlen;
@@ -2058,7 +2058,7 @@ char *base64_encode_simple (const char *data, size_t len)
 	return (char *)out;
 }
 
-size_t base64_decode_simple (char *data, size_t len)
+static size_t base64_decode_simple (char *data, size_t len)
 {
 	int state = 0;
 	unsigned int save = 0;
@@ -2069,7 +2069,7 @@ size_t base64_decode_simple (char *data, size_t len)
 					(unsigned char *)data, &state, &save);
 }
 
-char *quoted_encode_simple(const unsigned char *string, int len)
+static char *quoted_encode_simple(const unsigned char *string, int len)
 {
 	GString *tmp = g_string_new("");
 	
@@ -2089,7 +2089,7 @@ char *quoted_encode_simple(const unsigned char *string, int len)
 }
 
 
-size_t quoted_decode_simple (char *data, size_t len)
+static size_t quoted_decode_simple (char *data, size_t len)
 {
 	g_return_val_if_fail (data != NULL, 0);
 

@@ -22,6 +22,7 @@
 #ifndef __BARRY_PARSER_H__
 #define __BARRY_PARSER_H__
 
+#include "dll.h"
 #include "data.h"
 #include "protocol.h"
 #include <stdint.h>		// for uint32_t
@@ -44,7 +45,7 @@ namespace Barry {
 /// with the Packet class, calls each of the virtual functions below
 /// in the same order.
 ///
-class Parser
+class BXEXPORT Parser
 {
 public:
 	Parser() {}

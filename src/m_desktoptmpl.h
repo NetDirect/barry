@@ -22,14 +22,15 @@
 #ifndef __BARRY_M_DESKTOPTMPL_H__
 #define __BARRY_M_DESKTOPTMPL_H__
 
+#include "dll.h"
 #include "m_desktop.h"
 #include "parser.h"
 #include "builder.h"
 
 namespace Barry { namespace Mode {
 
-void LoadDatabase(unsigned int dbId, Parser &parser);
-void SaveDatabase(unsigned int dbId, Builder &builder);
+BXEXPORT void LoadDatabase(unsigned int dbId, Parser &parser);
+BXEXPORT void SaveDatabase(unsigned int dbId, Builder &builder);
 
 template <class RecordT, class StorageT>
 void Desktop::LoadDatabaseByType(StorageT &store)

@@ -22,6 +22,7 @@
 #ifndef __BARRY_SOCKET_H__
 #define __BARRY_SOCKET_H__
 
+#include "dll.h"
 #include <stdint.h>
 #include <queue>
 #include <memory>
@@ -40,7 +41,7 @@ namespace Barry {
 class Socket;
 typedef std::auto_ptr<Socket>	SocketHandle;
 
-class SocketZero
+class BXEXPORT SocketZero
 {
 	friend class Socket;
 
@@ -112,7 +113,7 @@ public:
 ///
 /// Requires an active Usb::Device object to work on.
 ///
-class Socket
+class BXEXPORT Socket
 {
 	friend class SocketZero;
 

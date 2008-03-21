@@ -22,6 +22,7 @@
 #ifndef __BARRY_LDIF_H__
 #define __BARRY_LDIF_H__
 
+#include "dll.h"
 #include <string>
 #include <map>
 
@@ -60,7 +61,7 @@ namespace Barry {
 /// and can be overridden by a derived class.  This includes the heuristics
 /// functions, which are called by DumpLdif().
 ///
-class ContactLdif
+class BXEXPORT ContactLdif
 {
 public:
 	typedef std::string (ContactLdif::*GetFunctionType)(const Barry::Contact&) const;
@@ -228,7 +229,7 @@ public:
 	static bool NeedsEncoding(const std::string &str);
 };
 
-inline std::ostream& operator<< (std::ostream &os, const ContactLdif &ldif) {
+BXEXPORT inline std::ostream& operator<< (std::ostream &os, const ContactLdif &ldif) {
 	ldif.DumpMap(os);
 	return os;
 }

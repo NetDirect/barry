@@ -22,6 +22,7 @@
 #ifndef __BARRY_CONTROLLER_H__
 #define __BARRY_CONTROLLER_H__
 
+#include "dll.h"
 #include "usbwrap.h"
 #include "socket.h"
 #include "probe.h"
@@ -62,7 +63,7 @@ namespace Mode {
 ///		your controller object into these mode constructors
 ///		to create the mode.
 ///
-class Controller
+class BXEXPORT Controller
 {
 	friend class Barry::Mode::Desktop;
 	friend class Barry::Mode::Serial;

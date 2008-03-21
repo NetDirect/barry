@@ -134,7 +134,7 @@ const std::string& vCard::ToVCard(const Barry::Contact &con)
 
 	// start fresh
 	Clear();
-	SetFormat( vformat_new() );
+	SetFormat( b_vformat_new() );
 	if( !Format() )
 		throw ConvertError("resource error allocating vformat");
 
@@ -204,7 +204,7 @@ const std::string& vCard::ToVCard(const Barry::Contact &con)
 		AddCategories(con.Categories);
 
 	// generate the raw VCARD data
-	m_gCardData = vformat_to_string(Format(), VFORMAT_CARD_30);
+	m_gCardData = b_vformat_to_string(Format(), VFORMAT_CARD_30);
 	m_vCardData = m_gCardData;
 
 	trace.logf("ToVCard, resulting vcard data: %s", m_vCardData.c_str());
@@ -227,7 +227,7 @@ const Barry::Contact& vCard::ToBarry(const char *vcard, uint32_t RecordId)
 	m_vCardData = vcard;
 
 	// create format parser structures
-	SetFormat( vformat_new_from_string(vcard) );
+	SetFormat( b_vformat_new_from_string(vcard) );
 	if( !Format() )
 		throw ConvertError("resource error allocating vformat");
 

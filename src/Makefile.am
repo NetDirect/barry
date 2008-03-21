@@ -31,7 +31,14 @@ DEFAULT_INCLUDES = -I$(top_builddir)
 #INCLUDES = @PACKAGE_CXXFLAGS@ -I@LIBUSB_INC_PATH@
 INCLUDES = $(LIBUSB_CFLAGS) $(OPENSSL_CFLAGS)
 #AM_CXXFLAGS = -ansi -Wall -fno-strict-aliasing -g -D__DEBUG_MODE__
+AM_CFLAGS = -Wall -fno-strict-aliasing -g
 AM_CXXFLAGS = -ansi -Wall -fno-strict-aliasing -g
+AM_LDFLAGS =
+if WITH_GCCVISIBILITY
+AM_CFLAGS += -D__BARRY_HAVE_GCCVISIBILITY__ -fvisibility=hidden
+AM_CXXFLAGS += -D__BARRY_HAVE_GCCVISIBILITY__ -fvisibility=hidden -fvisibility-inlines-hidden
+AM_LDFLAGS += -fvisibility=hidden -fvisibility-inlines-hidden
+endif
 include_barrydir = ${includedir}/barry
 
 ##
@@ -51,6 +58,7 @@ include_barrydir = ${includedir}/barry
 lib_LTLIBRARIES = libbarry.la
 
 include_barry_HEADERS = barry.h \
+	dll.h \
 	builder.h \
 	common.h \
 	controller.h \

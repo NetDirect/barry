@@ -24,6 +24,7 @@
 #ifndef __BARRY_TIME_H__
 #define __BARRY_TIME_H__
 
+#include "dll.h"
 #include <time.h>
 #include <stdint.h>
 
@@ -48,12 +49,12 @@ namespace Barry {
 
 typedef long min1900_t;
 
-min1900_t time2min(time_t t);
-time_t min2time(min1900_t m);
+BXEXPORT min1900_t time2min(time_t t);
+BXEXPORT time_t min2time(min1900_t m);
 
 // FIXME - turn TimeZone into a C typedef and wrap this in extern "C"
 // so the data can be used in both C and C++ libraries
-struct TimeZone
+struct BXEXPORT TimeZone
 {
 	unsigned short Code;
 	signed short HourOffset;
@@ -64,14 +65,14 @@ struct TimeZone
 // FIXME - put this somewhere for both C and C++
 #define TIME_ZONE_CODE_ERR	0xffff
 
-const TimeZone* GetTimeZoneTable();
-const TimeZone* GetTimeZone(unsigned short Code);
-unsigned short GetTimeZoneCode(signed short HourOffset,
+BXEXPORT const TimeZone* GetTimeZoneTable();
+BXEXPORT const TimeZone* GetTimeZone(unsigned short Code);
+BXEXPORT unsigned short GetTimeZoneCode(signed short HourOffset,
 	signed short MinOffset = 0);
 	
 // Message time conversion stuff
-time_t DayToDate( unsigned short Day );
-time_t Message2Time(uint16_t r_date, uint16_t r_time);
+BXEXPORT time_t DayToDate( unsigned short Day );
+BXEXPORT time_t Message2Time(uint16_t r_date, uint16_t r_time);
 
 } // namespace Barry
 

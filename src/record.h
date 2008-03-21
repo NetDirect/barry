@@ -27,6 +27,7 @@
 #ifndef __BARRY_RECORD_H__
 #define __BARRY_RECORD_H__
 
+#include "dll.h"
 #include <iosfwd>
 #include <string>
 #include <vector>
@@ -45,13 +46,13 @@ namespace Barry {
 
 
 
-struct CommandTableCommand
+struct BXEXPORT CommandTableCommand
 {
 	unsigned int Code;
 	std::string Name;
 };
 
-class CommandTable
+class BXEXPORT CommandTable
 {
 public:
 	typedef CommandTableCommand Command;
@@ -60,7 +61,7 @@ public:
 	CommandArrayType Commands;
 
 private:
-	const unsigned char* ParseField(const unsigned char *begin,
+	BXLOCAL const unsigned char* ParseField(const unsigned char *begin,
 		const unsigned char *end);
 public:
 	CommandTable();
@@ -76,14 +77,14 @@ public:
 	void Dump(std::ostream &os) const;
 };
 
-inline std::ostream& operator<< (std::ostream &os, const CommandTable &command) {
+BXEXPORT inline std::ostream& operator<< (std::ostream &os, const CommandTable &command) {
 	command.Dump(os);
 	return os;
 }
 
 
 
-struct RecordStateTableState
+struct BXEXPORT RecordStateTableState
 {
 	unsigned int Index;
 	uint32_t RecordId;
@@ -92,7 +93,7 @@ struct RecordStateTableState
 	std::string Unknown2;
 };
 
-class RecordStateTable
+class BXEXPORT RecordStateTable
 {
 public:
 	typedef RecordStateTableState State;
@@ -105,7 +106,7 @@ private:
 	mutable IndexType m_LastNewRecordId;
 
 private:
-	const unsigned char* ParseField(const unsigned char *begin,
+	BXLOCAL const unsigned char* ParseField(const unsigned char *begin,
 		const unsigned char *end);
 
 public:
@@ -121,21 +122,21 @@ public:
 	void Dump(std::ostream &os) const;
 };
 
-inline std::ostream& operator<< (std::ostream &os, const RecordStateTable &rst) {
+BXEXPORT inline std::ostream& operator<< (std::ostream &os, const RecordStateTable &rst) {
 	rst.Dump(os);
 	return os;
 }
 
 
 
-struct DatabaseItem
+struct BXEXPORT DatabaseItem
 {
 	unsigned int Number;
 	unsigned int RecordCount;
 	std::string Name;
 };
 
-class DatabaseDatabase
+class BXEXPORT DatabaseDatabase
 {
 public:
 	typedef DatabaseItem Database;
@@ -165,19 +166,19 @@ public:
 	void Dump(std::ostream &os) const;
 };
 
-inline std::ostream& operator<<(std::ostream &os, const DatabaseDatabase &dbdb) {
+BXEXPORT inline std::ostream& operator<<(std::ostream &os, const DatabaseDatabase &dbdb) {
 	dbdb.Dump(os);
 	return os;
 }
 
-struct UnknownField
+struct BXEXPORT UnknownField
 {
 	uint8_t type;
 	std::string data;
 };
-std::ostream& operator<< (std::ostream &os, const std::vector<UnknownField> &unknowns);
+BXEXPORT std::ostream& operator<< (std::ostream &os, const std::vector<UnknownField> &unknowns);
 
-struct EmailAddress
+struct BXEXPORT EmailAddress
 {
 	std::string Name;
 	std::string Email;
@@ -188,9 +189,9 @@ struct EmailAddress
 		Email.clear();
 	}
 };
-std::ostream& operator<<(std::ostream &os, const EmailAddress &msga);
+BXEXPORT std::ostream& operator<<(std::ostream &os, const EmailAddress &msga);
 
-struct PostalAddress
+struct BXEXPORT PostalAddress
 {
 	std::string
 		Address1,
@@ -208,7 +209,7 @@ struct PostalAddress
 		Address3.size() || City.size() || Province.size() ||
 		PostalCode.size() || Country.size(); }
 };
-std::ostream& operator<<(std::ostream &os, const PostalAddress &msga);
+BXEXPORT std::ostream& operator<<(std::ostream &os, const PostalAddress &msga);
 
 
 /// \addtogroup RecordParserClasses

@@ -22,6 +22,7 @@
 #ifndef __BARRY_M_SERIAL_H__
 #define __BARRY_M_SERIAL_H__
 
+#include "dll.h"
 #include "socket.h"
 #include "data.h"
 
@@ -32,7 +33,7 @@ class Controller;
 
 namespace Mode {
 
-class Serial
+class BXEXPORT Serial
 {
 public:
 	typedef void (*DeviceDataCallback)(void *context, const unsigned char *data, int len);

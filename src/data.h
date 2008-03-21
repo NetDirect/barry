@@ -22,12 +22,13 @@
 #ifndef __SB_DATA_H__
 #define __SB_DATA_H__
 
+#include "dll.h"
 #include <iosfwd>
 #include <vector>
 
 namespace Barry {
 
-class Data
+class BXEXPORT Data
 {
 	unsigned char *m_data;
 	size_t m_bufsize;		//< size of m_data buffer allocated
@@ -77,15 +78,15 @@ public:
 	static bool PrintAscii() { return bPrintAscii; }
 };
 
-std::istream& operator>> (std::istream &is, Data &data);
-std::ostream& operator<< (std::ostream &os, const Data &data);
+BXEXPORT std::istream& operator>> (std::istream &is, Data &data);
+BXEXPORT std::ostream& operator<< (std::ostream &os, const Data &data);
 
 
-class Diff
+class BXEXPORT Diff
 {
 	const Data &m_old, &m_new;
 
-	void Compare(std::ostream &os, size_t index, size_t size) const;
+	BXLOCAL void Compare(std::ostream &os, size_t index, size_t size) const;
 
 public:
 	Diff(const Data &old, const Data &new_);
@@ -93,12 +94,12 @@ public:
 	void Dump(std::ostream &os) const;
 };
 
-std::ostream& operator<< (std::ostream &os, const Diff &diff);
+BXEXPORT std::ostream& operator<< (std::ostream &os, const Diff &diff);
 
 
 // utility functions
-bool LoadDataArray(const std::string &filename, std::vector<Data> &array);
-bool ReadDataArray(std::istream &is, std::vector<Data> &array);
+BXEXPORT bool LoadDataArray(const std::string &filename, std::vector<Data> &array);
+BXEXPORT bool ReadDataArray(std::istream &is, std::vector<Data> &array);
 
 } // namespace Barry
 

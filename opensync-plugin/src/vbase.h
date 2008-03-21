@@ -111,20 +111,20 @@ public:
 	}
 };
 
-typedef vSmartPtr<VFormatAttribute, VFormatAttribute, &vformat_attribute_free> vAttrPtr;
-typedef vSmartPtr<VFormatParam, VFormatParam, &vformat_attribute_param_free> vParamPtr;
+typedef vSmartPtr<b_VFormatAttribute, b_VFormatAttribute, &b_vformat_attribute_free> vAttrPtr;
+typedef vSmartPtr<b_VFormatParam, b_VFormatParam, &b_vformat_attribute_param_free> vParamPtr;
 typedef vSmartPtr<char, void, &g_free> gStringPtr;
 
 
 //
 // vAttr
 //
-/// Class for reading a VFormatAttribute.  Reading does not require
+/// Class for reading a b_VFormatAttribute.  Reading does not require
 /// memory management, so none is done.
 ///
 class vAttr
 {
-	VFormatAttribute *m_attr;
+	b_VFormatAttribute *m_attr;
 
 public:
 	vAttr()
@@ -132,18 +132,18 @@ public:
 	{
 	}
 
-	vAttr(VFormatAttribute *attr)
+	vAttr(b_VFormatAttribute *attr)
 		: m_attr(attr)
 	{
 	}
 
-	vAttr& operator=(VFormatAttribute *attr)
+	vAttr& operator=(b_VFormatAttribute *attr)
 	{
 		m_attr = attr;
 		return *this;
 	}
 
-	VFormatAttribute* Get() { return m_attr; }
+	b_VFormatAttribute* Get() { return m_attr; }
 
 	// These functions do not throw an error if the value
 	// is NULL or does not exist (for example, if you ask for
@@ -162,7 +162,7 @@ public:
 class vBase
 {
 	// internal data for managing the vformat
-	VFormat *m_format;
+	b_VFormat *m_format;
 
 public:
 	// FIXME - if you put this class in the Barry library,
@@ -177,9 +177,9 @@ protected:
 	vBase();
 	virtual ~vBase();
 
-	VFormat* Format() { return m_format; }
-	const VFormat* Format() const { return m_format; }
-	void SetFormat(VFormat *format);
+	b_VFormat* Format() { return m_format; }
+	const b_VFormat* Format() const { return m_format; }
+	void SetFormat(b_VFormat *format);
 
 	void Clear();
 

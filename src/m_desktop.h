@@ -22,6 +22,7 @@
 #ifndef __BARRY_M_DESKTOP_H__
 #define __BARRY_M_DESKTOP_H__
 
+#include "dll.h"
 #include "socket.h"
 #include "record.h"
 
@@ -49,7 +50,7 @@ namespace Mode {
 ///	- Call GetDBID() to get a database ID by name
 ///	- Call LoadDatabase() to retrieve and store a database
 ///
-class Desktop
+class BXEXPORT Desktop
 {
 public:
 	enum CommandType { Unknown, DatabaseAccess };
