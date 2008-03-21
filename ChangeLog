@@ -1,5 +1,10 @@
 Release: version 0.12 - 2008/03/??
 ------------------------------------------------------------------------------
+2008/03/21
+	- changed maintainer script to use CVS export instead of checkout,
+		to avoid the CVS directories
+	- added support for building Debian source packages with proper
+		diff.gz and dsc files
 2008/03/13
 	- renamed all vformat_ and VFormat symbols in opensync plugin's
 		copy of vformat code, so they don't conflict with the

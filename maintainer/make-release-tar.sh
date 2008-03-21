@@ -42,10 +42,10 @@ cd build || exit 1
 set -e
 
 if [ "$3" != "HEAD" ] ; then
-	cvs -z3 -d "$CVSROOT" co -d $DIRNAME -r $TAGNAME "$CVSREP"
+	cvs -z3 -d "$CVSROOT" export -d $DIRNAME -r $TAGNAME "$CVSREP"
 	echo "Fetched tag: $TAGNAME"
 else
-	cvs -z3 -d "$CVSROOT" co -d $DIRNAME "$CVSREP"
+	cvs -z3 -d "$CVSROOT" export -d $DIRNAME -r HEAD "$CVSREP"
 	echo "Fetched HEAD"
 fi
 (cd $DIRNAME/doc/www && ./static.sh)
@@ -53,5 +53,17 @@ fi
 #(cd $DIRNAME/gui && ./buildgen.sh)
 #(cd $DIRNAME/opensync-plugin && ./buildgen.sh)
 rm -rf "$DIRNAME/autom4te.cache" "$DIRNAME/gui/autom4te.cache" "$DIRNAME/opensync-plugin/autom4te.cache"
-tar --exclude=CVS -cvf - $DIRNAME | bzip2 -9c > barry-$1.$2.tar.bz2
+tar -cvf - $DIRNAME | bzip2 -9c > barry-$1.$2.tar.bz2
+
+# Create Debian source package, by creating a patched and "orig" set of trees.
+#
+# The following dance is to keep the .orig.tar.gz containing barry-0.12/
+# as the directory, and not something like barry-0.12.orig/ which gets
+# corrected by Debian tools.  If there is a better way, please send a patch.
+cp -a $DIRNAME $DIRNAME.patched
+rm -rf $DIRNAME/debian
+tar -cf - $DIRNAME | gzip -9c > barry_$1.$2.orig.tar.gz
+rm -rf $DIRNAME
+mv $DIRNAME.patched $DIRNAME
+dpkg-source -b $DIRNAME barry_$1.$2.orig.tar.gz
 
