@@ -8,6 +8,12 @@ LIBS = @TREE_BUILD_LDFLAGS@
 
 AM_CFLAGS = -Wall -Werror
 AM_CXXFLAGS = -Wall -Werror
+AM_LDFLAGS =
+if WITH_GCCVISIBILITY
+AM_CFLAGS += -D__BARRY_HAVE_GCCVISIBILITY__ -fvisibility=hidden
+AM_CXXFLAGS += -D__BARRY_HAVE_GCCVISIBILITY__ -fvisibility=hidden -fvisibility-inlines-hidden
+AM_LDFLAGS += -fvisibility=hidden -fvisibility-inlines-hidden
+endif
 
 EXTRA_DIST = barry_sync.h
 

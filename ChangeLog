@@ -1,5 +1,7 @@
 Release: version 0.12 - 2008/03/??
 ------------------------------------------------------------------------------
+2008/03/20
+	- added GCC visibility support to opensync plugin
 2008/03/14
 	- added GCC visibility support, limiting what symbols are visible
 		in the shared library, libbarry... this makes a drastic

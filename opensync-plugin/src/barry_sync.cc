@@ -21,6 +21,7 @@
 
 #include <opensync/opensync.h>
 #include <barry/barry.h>
+#include <barry/dll.h>
 #include "barry_sync.h"
 #include "environment.h"
 #include "vevent.h"
@@ -41,7 +42,7 @@ extern "C" {
 	static void sync_done(OSyncContext *ctx);
 	static void disconnect(OSyncContext *ctx);
 	static void finalize(void *data);
-	void get_info(OSyncEnv *env);
+	BXEXPORT void get_info(OSyncEnv *env);
 }
 
 
