@@ -1,4 +1,4 @@
-Release: version 0.12 - 2008/03/??
+Release: version 0.12 - 2008/03/21
 ------------------------------------------------------------------------------
 2008/03/21
 	- changed maintainer script to use CVS export instead of checkout,
