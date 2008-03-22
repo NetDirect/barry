@@ -23,6 +23,7 @@
 #ifndef __BARRY_RECORD_MEMO_H__
 #define __BARRY_RECORD_MEMO_H__
 
+#include "dll.h"
 #include "record.h"
 #include <vector>
 #include <string>
@@ -30,7 +31,7 @@
 
 namespace Barry {
 
-class Memo
+class BXEXPORT Memo
 {
 public:
 	typedef std::vector<UnknownField>       UnknownsType;
@@ -71,7 +72,7 @@ public:
 	static uint8_t GetDefaultRecType() { return 0; }    // or 0?
 };
 
-inline std::ostream& operator<<(std::ostream &os, const Memo &msg) {
+BXEXPORT inline std::ostream& operator<<(std::ostream &os, const Memo &msg) {
 	msg.Dump(os);
 	return os;
 }

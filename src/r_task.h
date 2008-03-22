@@ -23,6 +23,7 @@
 #ifndef __BARRY_RECORD_TASK_H__
 #define __BARRY_RECORD_TASK_H__
 
+#include "dll.h"
 #include "record.h"
 #include <vector>
 #include <string>
@@ -30,7 +31,7 @@
 
 namespace Barry {
 
-class Task
+class BXEXPORT Task
 {
 public:
 	typedef std::vector<UnknownField>			UnknownsType;
@@ -131,7 +132,7 @@ public:
 
 };
 
-inline std::ostream& operator<<(std::ostream &os, const Task &msg) {
+BXEXPORT inline std::ostream& operator<<(std::ostream &os, const Task &msg) {
 	msg.Dump(os);
 	return os;
 }

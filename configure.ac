@@ -10,13 +10,27 @@ AM_INIT_AUTOMAKE([dist-bzip2])
 
 AC_USE_SYSTEM_EXTENSIONS
 
+#
 # Checks for programs.
+#
 AC_PROG_CC
 AC_PROG_CXX
 AC_PROG_MAKE_SET
 AC_PROG_LIBTOOL
 
+AX_C_CHECK_FLAG([-fvisibility=hidden], [], [],
+	[HAVE_C_GCCVISIBILITY=1],
+	[HAVE_C_GCCVISIBILITY=0])
+AX_CXX_CHECK_FLAG([-fvisibility=hidden], [], [],
+	[HAVE_CXX_GCCVISIBILITY=1],
+	[HAVE_CXX_GCCVISIBILITY=0])
+AM_CONDITIONAL([WITH_GCCVISIBILITY], [test "$HAVE_C_GCCVISIBILITY" = "1" -a "$HAVE_CXX_GCCVISIBILITY" = "1"])
+
 AC_LANG([C++])
+
+#
+# Checks for libraries.
+#
 
 # generates LIBUSB_CFLAGS and LIBUSB_LIBS for us
 PKG_CHECK_MODULES([LIBUSB], [libusb],
@@ -59,17 +73,21 @@ AC_SUBST(LIBUSB_LIBS)
 AM_CONDITIONAL([WITH_BOOST], [test "$BOOST_ENABLED" = "true"])
 AM_CONDITIONAL([WITH_BOOST_PATHS], [test -n "$BOOST_LIB_PATH"])
 
-# Checks for libraries.
 #AC_CHECK_LIB([IOKit], [main])
 AC_CHECK_LIB([pthread], [main])
 #AC_CHECK_LIB([libusb], [libusb_init])
 
+
+#
 # Checks for header files.
+#
 AC_HEADER_DIRENT
 AC_HEADER_STDC
 AC_CHECK_HEADERS([assert.h stdint.h time.h])
 
+#
 # Checks for typedefs, structures, and compiler characteristics.
+#
 #AC_TYPE_SIZE_T
 AC_HEADER_TIME
 AC_STRUCT_TM
@@ -80,6 +98,7 @@ AC_STRUCT_TM
 
 # checks that are buggy and need a C compiler only
 AC_LANG([C])
+# AC_FUNC_STRNLEN changes linker options for us, and depends on a src/strnlen.c
 AC_FUNC_STRNLEN
 if test $ac_cv_func_strnlen_working = yes ; then
 	AC_DEFINE([HAVE_WORKING_STRNLEN], 1,

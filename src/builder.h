@@ -22,9 +22,7 @@
 #ifndef __BARRY_BUILDER_H__
 #define __BARRY_BUILDER_H__
 
-//#include "data.h"
-//#include "protocol.h"
-//#include "debug.h"
+#include "dll.h"
 
 namespace Barry {
 
@@ -36,7 +34,7 @@ namespace Barry {
 /// This defines the API used by the Controller and Packet classes
 /// for building a raw device record to write to the device.
 ///
-class Builder
+class BXEXPORT Builder
 {
 public:
 	Builder() {}

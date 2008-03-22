@@ -10,6 +10,11 @@ Release: version 0.13 - 2008/04/??
 		- rpm/barry.spec
 		- debian/changelog
 		- opensync-plugin/src/barry_sync.cc
+	- added GCC visibility support, limiting what symbols are visible
+		in the shared library, libbarry... this makes a drastic
+		reduction in the symbol table, and should avoid future
+		name clashes with other libraries such as opensync
+		See: http://gcc.gnu.org/wiki/Visibility
 
 Release: version 0.12 - 2008/03/21
 ------------------------------------------------------------------------------

@@ -22,6 +22,7 @@
 #ifndef __BARRY_RECORD_CALENDAR_H__
 #define __BARRY_RECORD_CALENDAR_H__
 
+#include "dll.h"
 #include "record.h"
 #include <iosfwd>
 #include <string>
@@ -41,7 +42,7 @@ namespace Barry {
 /// \addtogroup RecordParserClasses
 /// @{
 
-class Calendar
+class BXEXPORT Calendar
 {
 public:
 	typedef std::vector<UnknownField>		UnknownsType;
@@ -182,7 +183,7 @@ public:
 	static uint8_t GetDefaultRecType() { return 5; }	// or 0?
 };
 
-inline std::ostream& operator<<(std::ostream &os, const Calendar &msg) {
+BXEXPORT inline std::ostream& operator<<(std::ostream &os, const Calendar &msg) {
 	msg.Dump(os);
 	return os;
 }

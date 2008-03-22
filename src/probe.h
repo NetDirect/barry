@@ -22,6 +22,7 @@
 #ifndef __BARRY_PROBE_H__
 #define __BARRY_PROBE_H__
 
+#include "dll.h"
 #include "usbwrap.h"
 #include <vector>
 #include <iosfwd>
@@ -29,7 +30,7 @@
 
 namespace Barry {
 
-struct ProbeResult
+struct BXEXPORT ProbeResult
 {
 	Usb::DeviceIDType m_dev;
 	unsigned char m_interface;
@@ -39,19 +40,19 @@ struct ProbeResult
 	std::string m_description;
 };
 
-std::ostream& operator<< (std::ostream &os, const ProbeResult &pr);
+BXEXPORT std::ostream& operator<< (std::ostream &os, const ProbeResult &pr);
 
 
-class Probe
+class BXEXPORT Probe
 {
 	std::vector<ProbeResult> m_results;
 
 	std::vector<std::string> m_fail_msgs;
 	int m_fail_count;
 
-	bool CheckSize(const Data &data, unsigned int required);
-	bool ParsePIN(const Data &data, ProbeResult &result);
-	bool ParseDesc(const Data &data, ProbeResult &result);
+	BXLOCAL bool CheckSize(const Data &data, unsigned int required);
+	BXLOCAL bool ParsePIN(const Data &data, ProbeResult &result);
+	BXLOCAL bool ParseDesc(const Data &data, ProbeResult &result);
 
 protected:
 	void ProbeMatching(int vendor, int product,

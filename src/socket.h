@@ -22,6 +22,7 @@
 #ifndef __BARRY_SOCKET_H__
 #define __BARRY_SOCKET_H__
 
+#include "dll.h"
 #include <stdint.h>
 
 // forward declarations
@@ -44,7 +45,7 @@ namespace Barry {
 ///
 /// Requires an active Usb::Device object to work on.
 ///
-class Socket
+class BXEXPORT Socket
 {
 	Usb::Device &m_dev;
 	int m_writeEp, m_readEp;
@@ -64,12 +65,12 @@ class Socket
 private:
 	// sends 'send' data to device, and waits for response, using
 	// "read first, write second" order observed in capture
-	void AppendFragment(Data &whole, const Data &fragment);
-	unsigned int MakeNextFragment(const Data &whole, Data &fragment, unsigned int offset = 0);
-	void CheckSequence(const Data &seq);
+	BXLOCAL void AppendFragment(Data &whole, const Data &fragment);
+	BXLOCAL unsigned int MakeNextFragment(const Data &whole, Data &fragment, unsigned int offset = 0);
+	BXLOCAL void CheckSequence(const Data &seq);
 
-	void SendOpen(uint16_t socket, Data &receive);
-	void SendPasswordHash(uint16_t socket, const char *password, Data &receive);
+	BXLOCAL void SendOpen(uint16_t socket, Data &receive);
+	BXLOCAL void SendPasswordHash(uint16_t socket, const char *password, Data &receive);
 
 public:
 	Socket(Usb::Device &dev, int writeEndpoint, int readEndpoint,

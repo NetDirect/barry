@@ -23,6 +23,7 @@
 #ifndef __BARRY_RECORD_FOLDER_H__
 #define __BARRY_RECORD_FOLDER_H__
 
+#include "dll.h"
 #include "record.h"
 #include <vector>
 #include <string>
@@ -30,7 +31,7 @@
 
 namespace Barry {
 
-class Folder
+class BXEXPORT Folder
 {
 public:
 	typedef std::vector<UnknownField>			UnknownsType;
@@ -84,7 +85,7 @@ public:
 
 };
 
-inline std::ostream& operator<<(std::ostream &os, const Folder &msg) {
+BXEXPORT inline std::ostream& operator<<(std::ostream &os, const Folder &msg) {
 	msg.Dump(os);
 	return os;
 }

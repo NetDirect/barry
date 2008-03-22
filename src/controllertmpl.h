@@ -22,14 +22,15 @@
 #ifndef __BARRY_CONTROLLERTMPL_H__
 #define __BARRY_CONTROLLERTMPL_H__
 
+#include "dll.h"
 #include "controller.h"
 #include "parser.h"
 #include "builder.h"
 
 namespace Barry {
 
-void LoadDatabase(unsigned int dbId, Parser &parser);
-void SaveDatabase(unsigned int dbId, Builder &builder);
+BXEXPORT void LoadDatabase(unsigned int dbId, Parser &parser);
+BXEXPORT void SaveDatabase(unsigned int dbId, Builder &builder);
 
 template <class RecordT, class StorageT>
 void Controller::LoadDatabaseByType(StorageT &store)

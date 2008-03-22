@@ -22,6 +22,7 @@
 #ifndef __BARRY_ERROR_H__
 #define __BARRY_ERROR_H__
 
+#include "dll.h"
 #include <stdexcept>
 
 namespace Barry {
@@ -35,7 +36,7 @@ namespace Barry {
 /// The base class for any future derived exceptions.
 /// Can be thrown on any protocol error.
 ///
-class Error : public std::runtime_error
+class BXEXPORT Error : public std::runtime_error
 {
 public:
 	Error(const std::string &str) : std::runtime_error(str) {}
@@ -56,7 +57,7 @@ public:
 ///		will return true.
 ///		
 ///
-class BadPassword : public Barry::Error
+class BXEXPORT BadPassword : public Barry::Error
 {
 	int m_remaining_tries;
 	bool m_out_of_tries;
@@ -77,13 +78,13 @@ public:
 //
 /// Unexpected packet size, or not enough data.
 ///
-class BadSize : public Barry::Error
+class BXEXPORT BadSize : public Barry::Error
 {
 	unsigned int m_packet_size,
 		m_data_buf_size,
 		m_required_size;
 
-	static std::string GetMsg(unsigned int p, unsigned int d, unsigned int r);
+	BXLOCAL static std::string GetMsg(unsigned int p, unsigned int d, unsigned int r);
 
 public:
 	BadSize(unsigned int packet_size,

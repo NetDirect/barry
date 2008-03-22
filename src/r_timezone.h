@@ -23,6 +23,7 @@
 #ifndef __BARRY_RECORD_TIMEZONE_H__
 #define __BARRY_RECORD_TIMEZONE_H__
 
+#include "dll.h"
 #include "record.h"
 #include <vector>
 #include <string>
@@ -31,7 +32,7 @@
 namespace Barry
 {
 
-class Timezone
+class BXEXPORT Timezone
 {
 public:
 	typedef std::vector<UnknownField>			UnknownsType;
@@ -79,7 +80,7 @@ public:
 	static uint8_t GetDefaultRecType() { return 2; }
 };
 
-inline std::ostream& operator<<(std::ostream &os, const Timezone &msg) {
+BXEXPORT inline std::ostream& operator<<(std::ostream &os, const Timezone &msg) {
 	msg.Dump(os);
 	return os;
 }

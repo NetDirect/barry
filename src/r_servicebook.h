@@ -23,6 +23,7 @@
 #ifndef __BARRY_RECORD_SERVICEBOOK_H__
 #define __BARRY_RECORD_SERVICEBOOK_H__
 
+#include "dll.h"
 #include "record.h"
 #include <iosfwd>
 #include <string>
@@ -43,7 +44,7 @@ namespace Barry {
 
 // This is a packed field, which is a group of fields packed in
 // variable length records inside one larger field of a normal record.
-class ServiceBookConfig
+class BXEXPORT ServiceBookConfig
 {
 public:
 	typedef std::vector<UnknownField>		UnknownsType;
@@ -71,13 +72,13 @@ public:
 	void Dump(std::ostream &os) const;
 };
 
-inline std::ostream& operator<<(std::ostream &os, const ServiceBookConfig &msg) {
+BXEXPORT inline std::ostream& operator<<(std::ostream &os, const ServiceBookConfig &msg) {
 	msg.Dump(os);
 	return os;
 }
 
 
-class ServiceBook
+class BXEXPORT ServiceBook
 {
 	int NameType, DescType, UniqueIdType;
 
@@ -126,7 +127,7 @@ public:
 	static uint8_t GetDefaultRecType() { return 0; }
 };
 
-inline std::ostream& operator<<(std::ostream &os, const ServiceBook &msg) {
+BXEXPORT inline std::ostream& operator<<(std::ostream &os, const ServiceBook &msg) {
 	msg.Dump(os);
 	return os;
 }

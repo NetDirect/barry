@@ -22,6 +22,7 @@
 #ifndef __BARRY_RECORD_MESSAGE_H__
 #define __BARRY_RECORD_MESSAGE_H__
 
+#include "dll.h"
 #include "record.h"
 #include <iosfwd>
 #include <string>
@@ -39,7 +40,7 @@ namespace Barry {
 /// \addtogroup RecordParserClasses
 /// @{
 
-class Message
+class BXEXPORT Message
 {
 public:
 	uint8_t RecType;
@@ -117,7 +118,7 @@ public:
 	static uint8_t GetDefaultRecType() { return 0; }
 };
 
-inline std::ostream& operator<<(std::ostream &os, const Message &msg) {
+BXEXPORT inline std::ostream& operator<<(std::ostream &os, const Message &msg) {
 	msg.Dump(os);
 	return os;
 }
