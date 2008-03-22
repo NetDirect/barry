@@ -15,7 +15,7 @@ if [ -z "$1" -o -z "$2" -o -z "$3" -o -z "$4" ] ; then
 	echo "such as fc5 or fc6."
 	echo
 	echo "Available chroot targets:"
-	find $CHROOT -type d -maxdepth 1 -print | sed "s/^.*\//	/"
+	find $CHROOT -maxdepth 1 -type d -print | sed "s/^.*\//	/"
 	echo
 	exit 1
 fi

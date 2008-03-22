@@ -1,5 +1,7 @@
 Branch: barry-b1-socket-arch
 ------------------------------------------------------------------------------
+	2008/03/22
+		- merged HEAD changes
 	2008/03/20
 		- fixed bug in probe class, which missed storing the PIN
 			number in ProbeResult

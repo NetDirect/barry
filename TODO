@@ -54,29 +54,6 @@ Estimated time:   simple way: 10 hours if lucky
 
 
 
-Reverse engineer the new TimeZones database
--------------------------------------------
-This is a relatively light but important project for those that want to
-get their feet wet.
-
-In relation to the above opensync porting, the new TimeZones database
-found in devices such as the BlackBerry 8830, will need to be reverse
-engineered in order to fully support timezone conversions.
-
-I have sample data of these databases in hex dump format for anyone
-who wishes to take a stab at it.  If you have a newer device,
-you can retrieve this data yourself using:
-
-	btool -d "Time Zones"
-
-Estimated tasks:
-	- reverse engineer the record
-	- write and test the parser
-	- no builder needed, as it is a read-only database
-Estimated time: 4 hours
-
-
-
 Reverse engineering java loader protocol
 ----------------------------------------
 This has not been done by any opensource Blackberry project out there,
