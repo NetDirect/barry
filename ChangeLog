@@ -1,5 +1,7 @@
 Release: version 0.13 - 2008/04/??
 ------------------------------------------------------------------------------
+2008/03/22
+	- removed TimeZones from TODO list, as it is done
 2008/03/21
 	- version bump:
 		- configure.ac
