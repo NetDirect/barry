@@ -329,7 +329,7 @@ bool Probe::ProbePair(Usb::Device &dev,
 	return true;
 }
 
-// Thanks to Jason Scott (bb_usb.c) for reverse engineering this
+// Thanks to Rick Scott (XmBlackBerry:bb_usb.c) for reverse engineering this
 bool Probe::ProbeModem(Usb::Device &dev, const Usb::EndpointPair &ep)
 {
 	int num_read;
