@@ -1,5 +1,9 @@
 Branch: barry-b1-socket-arch
 ------------------------------------------------------------------------------
+	2008/03/27
+		- changed Barry::Init() so programmer can choose where
+			debug and exception information goes, instead of
+			always to stdout
 	2008/03/22
 		- merged HEAD changes
 	2008/03/20

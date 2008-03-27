@@ -23,6 +23,7 @@
 #define __BARRY_COMMON_H__
 
 #include "dll.h"
+#include <iostream>
 
 #define VENDOR_RIM		0x0fca
 #define PRODUCT_RIM_BLACKBERRY	0x0001
@@ -34,7 +35,7 @@
 
 namespace Barry {
 
-BXEXPORT void Init(bool data_dump_mode = false);
+BXEXPORT void Init(bool data_dump_mode = false, std::ostream *debugStream = &std::cout);
 
 } // namespace Barry
 

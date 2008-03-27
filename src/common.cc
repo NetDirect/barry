@@ -26,6 +26,8 @@ namespace Barry {
 
 bool __data_dump_mode__;
 
+std::ostream *DebugStream = &std::cout;
+
 //
 // Init
 //
@@ -36,12 +38,13 @@ bool __data_dump_mode__;
 ///				will be sent to stdout via the C++ std::cout
 ///				stream.
 ///
-void Init(bool data_dump_mode)
+void Init(bool data_dump_mode, std::ostream *debugStream)
 {
 	if( data_dump_mode )
 		usb_set_debug(9);
 	usb_init();
 	__data_dump_mode__ = data_dump_mode;
+	DebugStream = debugStream;
 }
 
 } // namespace Barry

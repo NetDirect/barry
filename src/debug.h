@@ -19,10 +19,11 @@
 
 namespace Barry {
 extern bool __data_dump_mode__;
+extern std::ostream *DebugStream;
 }
 
 // data dump output - controlled by command line -v switch
-#define ddout(x)	if(Barry::__data_dump_mode__) std::cout << x << std::endl
+#define ddout(x)	if(Barry::__data_dump_mode__) (*Barry::DebugStream) << x << std::endl
 
 #ifdef __DEBUG_MODE__
 	// debugging on
@@ -30,14 +31,14 @@ extern bool __data_dump_mode__;
 	#undef eout
 
 	// low level debug output
-	#define dout(x)  	if(Barry::__data_dump_mode__) std::cout << x << std::endl
+	#define dout(x)  	if(Barry::__data_dump_mode__) (*Barry::DebugStream) << x << std::endl
 //	#define dout(x)
 
 	// exception output
-	#define eout(x)  	std::cout << x << std::endl
+	#define eout(x)  	(*Barry::DebugStream) << x << std::endl
 
 	// easy exception output
-	#define eeout(c, r)	std::cout << "Sent packet:\n" << c << "\n" << "Response packet:\n" << r << "\n"
+	#define eeout(c, r)	(*Barry::DebugStream) << "Sent packet:\n" << c << "\n" << "Response packet:\n" << r << "\n"
 
 	// handle assert()
 	#undef NDEBUG
@@ -48,8 +49,8 @@ extern bool __data_dump_mode__;
 	#undef eout
 
 	#define dout(x)
-	#define eout(x)  	std::cout << x << std::endl
-	#define eeout(c, r)	std::cout << "Sent packet:\n" << c << "\n" << "Response packet:\n" << r << "\n"
+	#define eout(x)  	(*Barry::DebugStream) << x << std::endl
+	#define eeout(c, r)	(*Barry::DebugStream) << "Sent packet:\n" << c << "\n" << "Response packet:\n" << r << "\n"
 
 	// handle assert() as well
 	#define NDEBUG
