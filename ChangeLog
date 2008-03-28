@@ -1,5 +1,8 @@
 Release: version 0.13 - 2008/04/??
 ------------------------------------------------------------------------------
+2008/03/27
+	- added support for Blackberry 8120, which has a unique Product ID
+		Sourceforge tracker ID: 1829537
 2008/03/22
 	- removed TimeZones from TODO list, as it is done
 2008/03/21
