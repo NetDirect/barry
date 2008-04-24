@@ -229,9 +229,9 @@ bool Device::BulkWrite(int ep, const Barry::Data &data, int timeout)
 		if( ret < 0 && ret != -EINTR && ret != -EAGAIN ) {
 			m_lasterror = ret;
 			if( ret == -ETIMEDOUT )
-				throw Timeout(ret, "Timeout in usb_bulk_read");
+				throw Timeout(ret, "Timeout in usb_bulk_write");
 			else
-				throw Error(ret, "Error in usb_bulk_read");
+				throw Error(ret, "Error in usb_bulk_write");
 		}
 	} while( ret == -EINTR || ret == -EAGAIN );
 
