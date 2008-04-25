@@ -49,6 +49,7 @@
 #include "m_desktoptmpl.h"
 #include "m_serial.h"
 #include "version.h"
+#include "log.h"
 
 #ifdef __BARRY_BOOST_MODE__
 // Boost serialization seems to be picky about header order, do them all here

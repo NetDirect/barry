@@ -68,6 +68,7 @@ include_barry_HEADERS = barry.h \
 	data.h \
 	error.h \
 	ldif.h \
+	log.h \
 	parser.h \
 	probe.h \
 	protocol.h \
@@ -100,6 +101,7 @@ libbarry_la_SOURCES = time.cc \
 	common.cc \
 	error.cc \
 	ldif.cc \
+	log.cc \
 	socket.cc \
 	router.cc \
 	dataqueue.cc \

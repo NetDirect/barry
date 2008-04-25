@@ -1,10 +1,10 @@
 ///
-/// \file	common.h
-///		General header for the Barry library
+/// \file	log.cc
+///		General Barry interface routines
 ///
 
 /*
-    Copyright (C) 2005-2008, Net Direct Inc. (http://www.netdirect.ca/)
+    Copyright (C) 2008, Net Direct Inc. (http://www.netdirect.ca/)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -19,26 +19,36 @@
     root directory of this project for more details.
 */
 
-#ifndef __BARRY_COMMON_H__
-#define __BARRY_COMMON_H__
-
-#include "dll.h"
-#include <iostream>
-
-#define VENDOR_RIM		0x0fca
-#define PRODUCT_RIM_BLACKBERRY	0x0001
-#define PRODUCT_RIM_PEARL_DUAL	0x0004
-#define PRODUCT_RIM_PEARL	0x0006
-
-#define BLACKBERRY_CONFIGURATION	1
-#define BLACKBERRY_DB_CLASS		0xff
+#include "log.h"
+#include <pthread.h>
 
 namespace Barry {
 
-/// See also the LogLock class.
-BXEXPORT void Init(bool data_dump_mode = false, std::ostream *logStream = &std::cout);
+extern bool __data_dump_mode__;
+extern std::ostream *LogStream;
+extern pthread_mutex_t LogStreamMutex;
+
+LogLock::LogLock()
+{
+	while( pthread_mutex_lock(&LogStreamMutex) != 0 )
+		;
+}
+
+LogLock::~LogLock()
+{
+	pthread_mutex_unlock(&LogStreamMutex);
+}
+
+
+bool LogVerbose()
+{
+	return __data_dump_mode__;
+}
+
+std::ostream* GetLogStream()
+{
+	return LogStream;
+}
 
 } // namespace Barry
-
-#endif
 
