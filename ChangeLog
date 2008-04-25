@@ -2,6 +2,8 @@ Branch: barry-b1-socket-arch
 ------------------------------------------------------------------------------
 	2008/04/25
 		- added thread-safe logging mechanism
+		- added preliminary IP modem support... requires a recent
+			device... serial mode is not yet supported
 	2008/03/27
 		- changed Barry::Init() so programmer can choose where
 			debug and exception information goes, instead of

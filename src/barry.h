@@ -47,6 +47,7 @@
 #include "controller.h"
 #include "m_desktop.h"
 #include "m_desktoptmpl.h"
+#include "m_ipmodem.h"
 #include "m_serial.h"
 #include "version.h"
 #include "log.h"

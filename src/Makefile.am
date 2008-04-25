@@ -64,6 +64,7 @@ include_barry_HEADERS = barry.h \
 	controller.h \
 	m_desktop.h \
 	m_desktoptmpl.h \
+	m_ipmodem.h \
 	m_serial.h \
 	data.h \
 	error.h \
@@ -120,6 +121,7 @@ libbarry_la_SOURCES = time.cc \
 	packet.cc packet.h \
 	controller.cc \
 	m_desktop.cc \
+	m_ipmodem.cc \
 	m_serial.cc \
 	version.cc \
 	protostructs.h \

@@ -37,6 +37,7 @@ class SocketRoutingQueue;
 
 namespace Mode {
 	class Desktop;
+	class IpModem;
 	class Serial;
 }
 
@@ -66,6 +67,7 @@ namespace Mode {
 class BXEXPORT Controller
 {
 	friend class Barry::Mode::Desktop;
+	friend class Barry::Mode::IpModem;
 	friend class Barry::Mode::Serial;
 
 public:

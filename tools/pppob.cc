@@ -27,6 +27,10 @@
 #include <vector>
 #include <string>
 #include <getopt.h>
+#include <sys/select.h>
+#include <sys/time.h>
+#include <sys/types.h>
+#include <unistd.h>
 
 
 using namespace std;
@@ -53,7 +57,7 @@ void Usage()
 void SerialDataCallback(void *context, const unsigned char *data, int len)
 {
 	if( len && data_dump )
-		cerr << "ReadThread:\n" << Data(data, len) << endl;
+		barryverbose("ReadThread:\n" << Data(data, len));
 
 	while( len ) {
 		int written = write(1, data, len);
@@ -62,7 +66,7 @@ void SerialDataCallback(void *context, const unsigned char *data, int len)
 			data += written;
 		}
 		else {
-			cerr << "Error in write()" << endl;
+			barryverbose("Error in write()");
 		}
 	}
 }
@@ -101,7 +105,10 @@ int main(int argc, char *argv[])
 
 		// Initialize the barry library.  Must be called before
 		// anything else.
-		Barry::Init(data_dump);
+		// Log to stderr, since stdout is for data in this program.
+//		std::ofstream log("/tmp/log", ios::app);
+//		Barry::Init(data_dump, &log);
+		Barry::Init(data_dump, &std::cerr);
 
 		// Probe the USB bus for Blackberry devices and display.
 		// If user has specified a PIN, search for it in the
@@ -116,6 +123,8 @@ int main(int argc, char *argv[])
 			return 1;
 		}
 
+/*
+// for serial mode, not yet supported
 		// Create our socket router and start thread to handle
 		// the USB reading, instead of creating our own thread.
 		SocketRoutingQueue router;
@@ -124,21 +133,57 @@ int main(int argc, char *argv[])
 		// Create our controller object using our threaded router.
 		Controller con(probe.Get(activeDevice), router);
 
+		// Open desktop mode... this handles the password side
+		// of things
+//		Mode::Desktop desktop(con);
+//		desktop.Open();	// FIXME - support password here?
+
+*/
+
+		// Create our controller object using our threaded router.
+		Controller con(probe.Get(activeDevice));
+
 		// Open serial mode... the callback handles reading from
 		// USB and writing to stdout
-		Mode::Serial serial(con, SerialDataCallback, 0);
-		serial.Open();
+		Mode::IpModem modem(con, SerialDataCallback, 0);
+		modem.Open();
 
 		// Read from stdin and write to USB, until
 		// stdin is closed
 		Data data;
 		int bytes_read;
-		while( (bytes_read = read(0, data.GetBuffer(), data.GetBufSize())) != 0 ) {
-			if( bytes_read > 0 ) {
-				data.ReleaseBuffer(bytes_read);
-				serial.Write(data); // FIXME - does this copy data?
+		fd_set rfds;
+		struct timeval tv;
+		int ret;
+
+		FD_ZERO(&rfds);
+
+		for(;;) {
+			// Need to use select() here, so that pppd doesn't
+			// hang when it tries to set the line discipline
+			// on our stdin.
+
+			FD_SET(0, &rfds);
+			tv.tv_sec = 30;
+			tv.tv_usec = 0;
+
+			ret = select(1, &rfds, NULL, NULL, &tv);
+			if( ret == -1 ) {
+				perror("select()");
+			}
+			else if( ret && FD_ISSET(0, &rfds) ) {
+				bytes_read = read(0, data.GetBuffer(), data.GetBufSize());
+				if( bytes_read == 0 )
+					break;
+
+				if( bytes_read > 0 ) {
+					data.ReleaseBuffer(bytes_read);
+					modem.Write(data);
+				}
 			}
 		}
+
+		barryverbose("Exiting");
 
 	}
 	catch( std::exception &e ) {
