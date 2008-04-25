@@ -2,11 +2,14 @@
 The Barry library has the following exception hierarchy:
 
 - std::exception
+	- std::logic_error
 	- std::runtime_error
 		- Barry::Error
 			- Usb::Error
 				- Usb::Timeout
 			- Barry::BadPassword
+			- Barry::BadSize
+			- Barry::ErrnoError
 
 Usb::Error
 	All specific USB error exceptions will be derived from
@@ -18,11 +21,18 @@ Barry::Error
 	All specific Barry error exceptions will be derived from
 	this class.  This can be thrown from anywhere inside Barry.
 
+std::bad_alloc
+	There is also the remote possibility that there will be memory
+	exceptions from a call to 'new'.  In that case, std::bad_alloc
+	will be thrown by the standard C++ libraries.  Barry does not
+	catch these errors.
 
-There is also the remote possibility that there will be memory exceptions
-from a call to 'new'.  In that case, std::bad_alloc will be thrown
-by the standard C++ libraries.  Barry does not catch these errors.
+std::logic_error
+	Assert-like errors will cause std::logic_error to be thrown.
+	Barry does sometimes throw these, but they should be be
+	exceedingly rare.
 
-All of the above exceptions are derived from std::exception, so they
-can all be caught in one statement for the efficient and lazy. :-)
+All of the above exceptions (from std, Barry, and Usb namespaces)
+are derived from std::exception, so they can all be caught in one
+statement for the efficient and lazy. :-)
 

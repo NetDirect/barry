@@ -43,7 +43,7 @@ void PrintHex(const char *str)
 	str += 14;
 	char *endpos = (char*) str;
 	while( *endpos ) {
-		int c = (int) strtol(str, &endpos, 16);
+		long c = strtol(str, &endpos, 16);
 		if( c == LONG_MIN || c == LONG_MAX )
 			break;
 		if( isprint(c) )
@@ -64,7 +64,7 @@ int main()
 		cin.getline(buff, sizeof(buff));
 		if( IsHexData(buff) ) {
 			// strip whitespace
-			int sln = strlen(buff);
+			size_t sln = strlen(buff);
 			while( sln && (buff[sln] == 0 || isspace(buff[sln])) ){
 				buff[sln--] = 0;
 			}

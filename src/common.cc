@@ -21,10 +21,16 @@
 
 #include "common.h"
 #include <usb.h>
+#include <pthread.h>
+#include "debug.h"
 
 namespace Barry {
 
 bool __data_dump_mode__;
+
+std::ostream *LogStream = &std::cout;
+pthread_mutex_t LogStreamMutex;
+
 
 //
 // Init
@@ -35,13 +41,19 @@ bool __data_dump_mode__;
 /// \param[in]	data_dump_mode	If set to true, the protocol conversation
 ///				will be sent to stdout via the C++ std::cout
 ///				stream.
+/// \param[in]	LogStream	Pointer to std::ostream object to use for
+///				debug output and logging.  Defaults to
+///				std::cout.
 ///
-void Init(bool data_dump_mode)
+void Init(bool data_dump_mode, std::ostream *logStream)
 {
 	if( data_dump_mode )
 		usb_set_debug(9);
 	usb_init();
+
 	__data_dump_mode__ = data_dump_mode;
+	LogStream = logStream;
+	pthread_mutex_init(&LogStreamMutex, NULL);
 }
 
 } // namespace Barry

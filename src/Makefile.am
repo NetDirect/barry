@@ -62,10 +62,14 @@ include_barry_HEADERS = barry.h \
 	builder.h \
 	common.h \
 	controller.h \
-	controllertmpl.h \
+	m_desktop.h \
+	m_desktoptmpl.h \
+	m_ipmodem.h \
+	m_serial.h \
 	data.h \
 	error.h \
 	ldif.h \
+	log.h \
 	parser.h \
 	probe.h \
 	protocol.h \
@@ -80,6 +84,8 @@ include_barry_HEADERS = barry.h \
 	r_servicebook.h \
 	r_task.h \
 	r_timezone.h \
+	dataqueue.h \
+	router.h \
 	socket.h \
 	time.h \
 	usbwrap.h \
@@ -96,7 +102,10 @@ libbarry_la_SOURCES = time.cc \
 	common.cc \
 	error.cc \
 	ldif.cc \
+	log.cc \
 	socket.cc \
+	router.cc \
+	dataqueue.cc \
 	protocol.cc \
 	record.cc \
 	r_calendar.cc \
@@ -111,6 +120,9 @@ libbarry_la_SOURCES = time.cc \
 	r_timezone.cc \
 	packet.cc packet.h \
 	controller.cc \
+	m_desktop.cc \
+	m_ipmodem.cc \
+	m_serial.cc \
 	version.cc \
 	protostructs.h \
 	debug.h \

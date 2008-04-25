@@ -36,8 +36,14 @@ struct BXEXPORT ProbeResult
 	unsigned char m_interface;
 	uint32_t m_pin;
 	Usb::EndpointPair m_ep;
+	Usb::EndpointPair m_epModem;
 	uint8_t m_zeroSocketSequence;
 	std::string m_description;
+
+	ProbeResult()
+		: m_dev(0), m_interface(0), m_pin(0), m_zeroSocketSequence(0)
+		{}
+	void DumpAll(std::ostream &os) const;
 };
 
 BXEXPORT std::ostream& operator<< (std::ostream &os, const ProbeResult &pr);
@@ -51,13 +57,16 @@ class BXEXPORT Probe
 	int m_fail_count;
 
 	BXLOCAL bool CheckSize(const Data &data, unsigned int required);
-	BXLOCAL bool ParsePIN(const Data &data, ProbeResult &result);
-	BXLOCAL bool ParseDesc(const Data &data, ProbeResult &result);
+	BXLOCAL bool ParsePIN(const Data &data, uint32_t &pin);
+	BXLOCAL bool ParseDesc(const Data &data, std::string &desc);
 
 protected:
 	void ProbeMatching(int vendor, int product,
 		const char *busname, const char *devname);
 	void ProbeDevice(Usb::DeviceIDType devid);
+	bool ProbePair(Usb::Device &dev, const Usb::EndpointPair &ep,
+		uint32_t &pin, std::string &desc, uint8_t &zeroSocketSequence);
+	bool ProbeModem(Usb::Device &dev, const Usb::EndpointPair &ep);
 
 public:
 	Probe(const char *busname = 0, const char *devname = 0);

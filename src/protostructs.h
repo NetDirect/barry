@@ -588,10 +588,10 @@ struct Packet
 // Macros
 #define COMMAND(data)				(((const Barry::Protocol::Packet *)data.GetData())->command)
 #define IS_COMMAND(data, cmd)			(COMMAND(data) == cmd)
-#define MAKE_PACKET(var, data)			const Barry::Protocol::Packet *var = (const Barry::Protocol::Packet *) data.GetData()
+#define MAKE_PACKET(var, data)			const Barry::Protocol::Packet *var = (const Barry::Protocol::Packet *) (data).GetData()
 #define MAKE_PACKETPTR_BUF(var, ptr)		Barry::Protocol::Packet *var = (Barry::Protocol::Packet *)ptr
-#define MAKE_RECORD(type,var,data,off)		type *var = (type *) (data.GetData() + (off))
-#define MAKE_RECORD_PTR(type,var,data,off)	type *var = (type *) (data + (off))
+#define MAKE_RECORD(type,var,data,off)		type *var = (type *) ((data).GetData() + (off))
+#define MAKE_RECORD_PTR(type,var,data,off)	type *var = (type *) ((data) + (off))
 
 // fragmentation protocol
 // send DATA first, then keep sending DATA packets, FRAGMENTing

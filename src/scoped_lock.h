@@ -1,10 +1,10 @@
 ///
-/// \file	controllertmpl.h
-///		Ease of use templates for the controller class
+/// \file	scoped_lock.h
+///		Simple scope class for dealing with pthread mutex locking.
 ///
 
 /*
-    Copyright (C) 2005-2008, Net Direct Inc. (http://www.netdirect.ca/)
+    Copyright (C) 2008, Net Direct Inc. (http://www.netdirect.ca/)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -19,10 +19,40 @@
     root directory of this project for more details.
 */
 
-#ifndef __BARRY_CONTROLLERTMPL_H__
-#define __BARRY_CONTROLLERTMPL_H__
+#ifndef __BARRY_SCOPED_LOCK_H__
+#define __BARRY_SCOPED_LOCK_H__
 
-// this can be deleted
+#include <pthread.h>
+
+namespace Barry {
+
+class scoped_lock
+{
+	pthread_mutex_t *m_mutex;
+
+public:
+	scoped_lock(pthread_mutex_t &mutex)
+		: m_mutex(&mutex)
+	{
+		while( pthread_mutex_lock(m_mutex) != 0 )
+			;
+	}
+
+	~scoped_lock()
+	{
+		unlock();
+	}
+
+	void unlock()
+	{
+		if( m_mutex ) {
+			pthread_mutex_unlock(m_mutex);
+			m_mutex = 0;
+		}
+	}
+};
+
+} // namespace Barry
 
 #endif
 

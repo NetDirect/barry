@@ -1,5 +1,112 @@
 Release: version 0.13 - 2008/04/??
 ------------------------------------------------------------------------------
+2008/04/25
+	- major merge of barry-b1-socket-arch-branch into MAIN.
+	  The following is the changelog from that branch, which is now MAIN.
+
+	2008/04/25
+		- added thread-safe logging mechanism
+		- added preliminary IP modem support... requires a recent
+			device... serial mode is not yet supported
+		- merged HEAD changes
+	2008/03/27
+		- changed Barry::Init() so programmer can choose where
+			debug and exception information goes, instead of
+			always to stdout
+	2008/03/22
+		- merged HEAD changes
+	2008/03/20
+		- fixed bug in probe class, which missed storing the PIN
+			number in ProbeResult
+		- also added ProbeResult constructor
+		- merged changes from visibility branch:
+			- GCC visibility support, limiting what symbols are
+			  visible in the shared library, libbarry... this makes
+			  a drastic reduction in the symbol table, and should
+			  avoid future name clashes with other libraries such
+			  as opensync
+			  See: http://gcc.gnu.org/wiki/Visibility
+			- vformat_() function name changes
+	2008/03/07
+		- merged HEAD changes
+		- added threads library to new bs11nread build
+	2008/02/28
+		- fixed variable size issues in btranslate.cc, evident with
+			some compilers on 64 bit systems
+		- merged HEAD changes
+		- added comments for threaded usage in usbwrap.h
+		- changed router to use SocketId typedef, for clarity
+	2008/02/22
+		- fixed const char warnings from newer gcc compilers
+		- controller object now saves a copy of the probe result
+			and provides an API to retrieve it
+		- added sanity checks to m_serial.cc
+		- fixed probe behaviour so that a USB probe on an endpoint
+			that doesn't respond won't halt everything
+		- refactored some of the probe code, and added checks for
+			IP modem endpoints
+		- added Probe::DumpAll()
+		- added Open() call to pppob.cc (not yet complete)
+	2008/01/30
+		- implemented dataqueue.{h,cc}... looks ready for testing,
+			once things compile again
+		- changed free list copy in router.cc to use
+			DataQueue::append_from()
+		- finished packet.{h,cc} implementation, ready for testing
+		- finished controller.{h,cc}, ready for testing
+		- finished m_desktop.{h,cc}, ready for testing
+		- added skeleton m_serial.cc
+		- the base library and utilities compile again!
+		- added constructor for SocketZero(queue)
+		- fixed ErrnoError::GetMsg()
+		- updated GUI and opensync plugin to compile with new API
+		- moved Raw Send/Receive socket functions to private
+		- fixed packet header size bug in socket that caused
+			socket ID override to be skipped
+		- fixed incorrect use of gettimeofday()
+		- fixed race condition where Controller could destroy
+			the Usb::Device object before the SocketRoutingQueue
+			was done with it
+		- fixed segfault in SocketZero::RawSend() when a router
+			was in use
+		- fixed Open() bugs in btool... Open() must be outside of loops
+		- btool uses the router thread now, for testing
+		- partially implemented m_serial.{h,cc}... needs testing
+		- added automatic buffer allocation to SocketRoutingQueue
+			constructor
+		- made AllocateBuffers() a little smarter, so it was not
+			pure appending
+		- added a context data pointer to the SocketRoutingQueue
+			RegisterInterest callback
+		- added RegisterInterest functionality to Socket class
+		- added exceptions on router read errors in socketzero
+	2008/01/26
+		- implemented router.{h,cc}... looks ready for testing,
+			once things compile again
+	2008/01/25
+		- merged HEAD changes
+		- added router.cc and continued work on new arch
+		- merged HEAD changes for 2008 copyright statements
+		- added scoped_lock.h
+		- added ErrnoError exception class
+		- documented Controller / SocketRoutingQueue behaviour
+		- more router implementation
+		- simplified pppob
+		- audit and cleanup of socket.{h,cc} code... looks ready
+			for testing now, once things compile again
+		- removed FIXME in router.*
+		- removed pthread header from pppob as it is not needed
+	2007/11/22
+		- merged HEAD changes
+	2007/10/25
+		- merged HEAD changes
+	2007/10/19
+		- branch started, to track development of the new socket
+			architecture, and new mode architecture, needed
+			to support GPRS modem support, and threaded
+			USB access
+		- committed work-in-progress... does not compile
+
 2008/04/10
 	- added Tasks and Memos to TODO list
 2008/03/27

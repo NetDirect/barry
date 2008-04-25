@@ -12,7 +12,7 @@ endif
 sbin_PROGRAMS = bcharge breset pppob
 
 btool_SOURCES = btool.cc
-btool_LDADD = ../src/libbarry.la $(LIBUSB_LIBS)
+btool_LDADD = ../src/libbarry.la $(LIBUSB_LIBS) -lpthread
 if WITH_BOOST
 if WITH_BOOST_PATHS
 btool_CXXFLAGS = -D__BARRY_BOOST_MODE__ -D_REENTRANT -I@BOOST_INC_PATH@ $(AM_CXXFLAGS)
@@ -25,7 +25,7 @@ endif
 
 if WITH_BOOST
 bs11nread_SOURCES = bs11nread.cc
-bs11nread_LDADD = ../src/libbarry.la $(LIBUSB_LIBS)
+bs11nread_LDADD = ../src/libbarry.la $(LIBUSB_LIBS) -lpthread
 if WITH_BOOST_PATHS
 bs11nread_CXXFLAGS = -D_REENTRANT -I@BOOST_INC_PATH@ $(AM_CXXFLAGS)
 bs11nread_LDFLAGS = -L@BOOST_LIB_PATH@
@@ -36,15 +36,15 @@ bs11nread_LDADD += -lboost_serialization
 endif
 
 bidentify_SOURCES = bidentify.cc
-bidentify_LDADD = ../src/libbarry.la $(LIBUSB_LIBS)
+bidentify_LDADD = ../src/libbarry.la $(LIBUSB_LIBS) -lpthread
 
 upldif_SOURCES = upldif.cc
-upldif_LDADD = ../src/libbarry.la $(LIBUSB_LIBS)
+upldif_LDADD = ../src/libbarry.la $(LIBUSB_LIBS) -lpthread
 
 btranslate_SOURCES = btranslate.cc
 
 bktrans_SOURCES = bktrans.cc
-bktrans_LDADD = ../src/libbarry.la
+bktrans_LDADD = ../src/libbarry.la -lpthread
 
 bcharge_SOURCES = bcharge.cc
 bcharge_LDADD = $(LIBUSB_LIBS)

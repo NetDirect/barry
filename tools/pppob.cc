@@ -27,13 +27,16 @@
 #include <vector>
 #include <string>
 #include <getopt.h>
-#include <pthread.h>
+#include <sys/select.h>
+#include <sys/time.h>
+#include <sys/types.h>
+#include <unistd.h>
 
 
 using namespace std;
 using namespace Barry;
 
-volatile bool read_finished = false;
+bool data_dump = false;
 
 void Usage()
 {
@@ -51,45 +54,21 @@ void Usage()
    << endl;
 }
 
-void *UsbReadThread(void *userptr)
+void SerialDataCallback(void *context, const unsigned char *data, int len)
 {
-	try {
+	if( len && data_dump )
+		barryverbose("ReadThread:\n" << Data(data, len));
 
-		Data data;
-		Controller *con = (Controller *)userptr;
-
-		// read from USB and write to stdout until finished
-		while( !read_finished ) {
-
-			try {
-				con->SerialRead(data, 60000);
-
-				int todo = data.GetSize();
-				const unsigned char *buf = data.GetData();
-
-				while( todo ) {
-					int written = write(1, buf, todo);
-					if( written > 0 ) {
-						todo -= written;
-						buf += written;
-					}
-					else {
-						cerr << "Error in write()" << endl;
-					}
-				}
-			}
-			catch( Usb::Timeout & ) {
-				// timeouts are allowed
-			}
-
+	while( len ) {
+		int written = write(1, data, len);
+		if( written > 0 ) {
+			len -= written;
+			data += written;
 		}
-
+		else {
+			barryverbose("Error in write()");
+		}
 	}
-	catch( std::exception &e ) {
-		cerr << "Exception caught in UsbReadThread(): " << e.what() << endl;
-	}
-
-	return 0;
 }
 
 int main(int argc, char *argv[])
@@ -100,7 +79,6 @@ int main(int argc, char *argv[])
 	try {
 
 		uint32_t pin = 0;
-		bool data_dump = false;
 
 		// process command line options
 		for(;;) {
@@ -127,7 +105,10 @@ int main(int argc, char *argv[])
 
 		// Initialize the barry library.  Must be called before
 		// anything else.
-		Barry::Init(data_dump);
+		// Log to stderr, since stdout is for data in this program.
+//		std::ofstream log("/tmp/log", ios::app);
+//		Barry::Init(data_dump, &log);
+		Barry::Init(data_dump, &std::cerr);
 
 		// Probe the USB bus for Blackberry devices and display.
 		// If user has specified a PIN, search for it in the
@@ -142,34 +123,67 @@ int main(int argc, char *argv[])
 			return 1;
 		}
 
-		// Create our controller object
-		Barry::Controller con(probe.Get(activeDevice));
+/*
+// for serial mode, not yet supported
+		// Create our socket router and start thread to handle
+		// the USB reading, instead of creating our own thread.
+		SocketRoutingQueue router;
+		router.SpinoffSimpleReadThread();
 
-		// open serial mode socket
-		con.OpenMode(Controller::UsbSerData);
+		// Create our controller object using our threaded router.
+		Controller con(probe.Get(activeDevice), router);
 
-		// start USB read thread
-		pthread_t usb_read_thread;
-		if( pthread_create(&usb_read_thread, NULL, UsbReadThread, &con) ) {
-			cerr << "Error creating USB read thread." << endl;
-			return 1;
-		}
+		// Open desktop mode... this handles the password side
+		// of things
+//		Mode::Desktop desktop(con);
+//		desktop.Open();	// FIXME - support password here?
 
-		// read from stdin and write to USB, until
+*/
+
+		// Create our controller object using our threaded router.
+		Controller con(probe.Get(activeDevice));
+
+		// Open serial mode... the callback handles reading from
+		// USB and writing to stdout
+		Mode::IpModem modem(con, SerialDataCallback, 0);
+		modem.Open();
+
+		// Read from stdin and write to USB, until
 		// stdin is closed
 		Data data;
 		int bytes_read;
-		while( (bytes_read = read(0, data.GetBuffer(), data.GetBufSize())) != 0 ) {
-			if( bytes_read > 0 ) {
-				data.ReleaseBuffer(bytes_read);
-				con.SerialWrite(data);
+		fd_set rfds;
+		struct timeval tv;
+		int ret;
+
+		FD_ZERO(&rfds);
+
+		for(;;) {
+			// Need to use select() here, so that pppd doesn't
+			// hang when it tries to set the line discipline
+			// on our stdin.
+
+			FD_SET(0, &rfds);
+			tv.tv_sec = 30;
+			tv.tv_usec = 0;
+
+			ret = select(1, &rfds, NULL, NULL, &tv);
+			if( ret == -1 ) {
+				perror("select()");
+			}
+			else if( ret && FD_ISSET(0, &rfds) ) {
+				bytes_read = read(0, data.GetBuffer(), data.GetBufSize());
+				if( bytes_read == 0 )
+					break;
+
+				if( bytes_read > 0 ) {
+					data.ReleaseBuffer(bytes_read);
+					modem.Write(data);
+				}
 			}
 		}
 
-
-		// flag end / kill read thread
-		read_finished = true;
-		pthread_join(usb_read_thread, NULL);
+		barryverbose("Exiting");
 
 	}
 	catch( std::exception &e ) {

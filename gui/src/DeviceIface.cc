@@ -30,6 +30,7 @@
 
 DeviceInterface::DeviceInterface()
 	: m_con(0)
+	, m_desktop(0)
 	, m_dbnameMutex(new Glib::Mutex) // this is just in an effort to
 					 // avoid gtkmm headers in
 					 // DeviceIface.h
@@ -41,6 +42,7 @@ DeviceInterface::DeviceInterface()
 
 DeviceInterface::~DeviceInterface()
 {
+	delete m_desktop;
 	delete m_con;
 	delete m_dbnameMutex;
 }
@@ -67,8 +69,8 @@ void DeviceInterface::BackupThread()
 			SetThreadDBName(*name);
 
 			// call the controller to do the work
-			unsigned int dbId = m_con->GetDBID(*name);
-			m_con->LoadDatabase(dbId, *this);
+			unsigned int dbId = m_desktop->GetDBID(*name);
+			m_desktop->LoadDatabase(dbId, *this);
 		}
 
 	}
@@ -108,9 +110,9 @@ void DeviceInterface::RestoreThread()
 		while( !m_end_of_tar ) {
 			try {
 				// call the controller to do the work
-				unsigned int dbId = m_con->GetDBID(m_current_dbname);
+				unsigned int dbId = m_desktop->GetDBID(m_current_dbname);
 				m_AppComm.m_erase_db->emit();
-				m_con->SaveDatabase(dbId, *this);
+				m_desktop->SaveDatabase(dbId, *this);
 			}
 			catch( Barry::Error &be ) {
 				// save thread error
@@ -161,13 +163,13 @@ void DeviceInterface::RestoreAndBackupThread()
 
 		// cycle until m_end_of_tar
 		while( !m_end_of_tar ) {
-			unsigned int dbId = m_con->GetDBID(m_current_dbname);
+			unsigned int dbId = m_desktop->GetDBID(m_current_dbname);
 
 			try {
 
 				// do restore first
 				m_AppComm.m_erase_db->emit();
-				m_con->SaveDatabase(dbId, *this);
+				m_desktop->SaveDatabase(dbId, *this);
 
 			}
 			catch( Barry::Error &be ) {
@@ -187,7 +189,7 @@ void DeviceInterface::RestoreAndBackupThread()
 			}
 
 			// then the backup, even if restore fails
-			m_con->LoadDatabase(dbId, *this);
+			m_desktop->LoadDatabase(dbId, *this);
 
 		}
 
@@ -298,7 +300,8 @@ bool DeviceInterface::Connect(const Barry::ProbeResult &dev)
 	try {
 		Disconnect();
 		m_con = new Barry::Controller(dev);
-		m_con->OpenMode(Barry::Controller::Desktop);
+		m_desktop = new Barry::Mode::Desktop(*m_con);
+		m_desktop->Open();
 		return true;
 	}
 	catch( Barry::BadPassword & ) {
@@ -319,7 +322,7 @@ bool DeviceInterface::Connect(const Barry::ProbeResult &dev)
 bool DeviceInterface::Password(const char *password)
 {
 	try {
-		m_con->RetryPassword(password);
+		m_desktop->RetryPassword(password);
 		return true;
 	}
 	catch( Barry::BadPassword & ) {
@@ -334,6 +337,9 @@ bool DeviceInterface::Password(const char *password)
 
 void DeviceInterface::Disconnect()
 {
+	delete m_desktop;
+	m_desktop = 0;
+
 	delete m_con;
 	m_con = 0;
 }
@@ -345,8 +351,8 @@ int DeviceInterface::GetDeviceRecordTotal(const ConfigFile::DBListType &backupLi
 	int count = 0;
 
 	Barry::DatabaseDatabase::DatabaseArrayType::const_iterator
-		i = m_con->GetDBDB().Databases.begin();
-	for( ; i != m_con->GetDBDB().Databases.end(); ++i ) {
+		i = m_desktop->GetDBDB().Databases.begin();
+	for( ; i != m_desktop->GetDBDB().Databases.end(); ++i ) {
 		if( backupList.IsSelected(i->Name) ) {
 			count += i->RecordCount;
 		}

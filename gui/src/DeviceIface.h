@@ -77,6 +77,7 @@ public:
 
 private:
 	Barry::Controller *m_con;
+	Barry::Mode::Desktop *m_desktop;
 	std::string m_last_error;
 	std::string m_last_thread_error;
 
@@ -126,7 +127,7 @@ public:
 	bool Password(const char *password);
 	void Disconnect();
 
-	const Barry::DatabaseDatabase& GetDBDB() const { return m_con->GetDBDB(); }
+	const Barry::DatabaseDatabase& GetDBDB() const { return m_desktop->GetDBDB(); }
 	int GetDeviceRecordTotal(const ConfigFile::DBListType &backupList) const;
 
 	void QuitThread()	{ m_thread_quit = true; }

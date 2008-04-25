@@ -100,6 +100,26 @@ public:
 	unsigned int required_size() const { return m_required_size; }
 };
 
+//
+// ErrnoError
+//
+/// System error that provides an errno error code.
+///
+class ErrnoError : public Barry::Error
+{
+	int m_errno;
+
+	static std::string GetMsg(const std::string &msg, int err);
+
+public:
+	ErrnoError(const std::string &msg, int err)
+		: Barry::Error(GetMsg(msg, err))
+		, m_errno(err)
+		{}
+
+	int error_code() const { return m_errno; }
+};
+
 /// @}
 
 } // namespace Barry

@@ -24,12 +24,80 @@
 
 #include "dll.h"
 #include <stdint.h>
+#include <queue>
+#include <memory>
+#include "router.h"
 
 // forward declarations
 namespace Usb { class Device; }
-namespace Barry { class Data; class Packet; }
+namespace Barry {
+	class Data;
+	class Packet;
+	class SocketRoutingQueue;
+}
 
 namespace Barry {
+
+class Socket;
+typedef std::auto_ptr<Socket>	SocketHandle;
+
+class BXEXPORT SocketZero
+{
+	friend class Socket;
+
+	Usb::Device *m_dev;
+	SocketRoutingQueue *m_queue;
+	int m_writeEp, m_readEp;
+	uint8_t m_zeroSocketSequence;
+
+	uint32_t m_sequenceId;
+
+	// half open socket stata, for passwords
+	bool m_halfOpen;
+	uint32_t m_challengeSeed;
+	unsigned int m_remainingTries;
+
+private:
+	static void AppendFragment(Data &whole, const Data &fragment);
+	static unsigned int MakeNextFragment(const Data &whole, Data &fragment,
+		unsigned int offset = 0);
+	void CheckSequence(uint16_t socket, const Data &seq);
+
+	void SendOpen(uint16_t socket, Data &receive);
+	void SendPasswordHash(uint16_t socket, const char *password, Data &receive);
+
+	// Raw send and receive functions, used for all low level
+	// communication to the USB level.
+	void RawSend(Data &send, int timeout = -1);
+	void RawReceive(Data &receive, int timeout = -1);
+
+public:
+	explicit SocketZero(SocketRoutingQueue &queue, int writeEndpoint,
+		uint8_t zeroSocketSequenceStart = 0);
+	SocketZero(Usb::Device &dev, int writeEndpoint, int readEndpoint,
+		uint8_t zeroSocketSequenceStart = 0);
+	~SocketZero();
+
+	uint8_t GetZeroSocketSequence() const { return m_zeroSocketSequence; }
+
+	void SetRoutingQueue(SocketRoutingQueue &queue);
+	void UnlinkRoutingQueue();
+
+	// Send functions for socket 0 only.
+	// These functions will overwrite:
+	//     - the zeroSocketSequence byte *inside* the packet
+	//     - the socket number to 0
+	//
+	void Send(Data &send, int timeout = -1);	// send only
+	void Send(Data &send, Data &receive, int timeout = -1); // send+recv
+	void Send(Barry::Packet &packet, int timeout = -1);
+//	void Receive(Data &receive, int timeout = -1);
+
+	// Opens a new socket and returns a Socket object to manage it
+	SocketHandle Open(uint16_t socket, const char *password = 0);
+	void Close(Socket &socket);
+};
+
 
 //
 // Socket class
@@ -47,40 +115,26 @@ namespace Barry {
 ///
 class BXEXPORT Socket
 {
-	Usb::Device &m_dev;
-	int m_writeEp, m_readEp;
-	uint16_t m_socket;		// defaults to 0, which is valid,
-					// since socket 0 is always open
-					// If this is not 0, then class will
-					// deal with closing automatically.
-	uint8_t m_zeroSocketSequence;
-	uint8_t m_flag;
-	uint32_t m_sequenceId;
+	friend class SocketZero;
 
-	// half open socket stata, for passwords
-	bool m_halfOpen;
-	uint32_t m_challengeSeed;
-	unsigned int m_remainingTries;
+	SocketZero *m_zero;
+	uint16_t m_socket;
+	uint8_t m_closeFlag;
 
-private:
-	// sends 'send' data to device, and waits for response, using
-	// "read first, write second" order observed in capture
-	BXLOCAL void AppendFragment(Data &whole, const Data &fragment);
-	BXLOCAL unsigned int MakeNextFragment(const Data &whole, Data &fragment, unsigned int offset = 0);
-	BXLOCAL void CheckSequence(const Data &seq);
+	bool m_registered;
 
-	BXLOCAL void SendOpen(uint16_t socket, Data &receive);
-	BXLOCAL void SendPasswordHash(uint16_t socket, const char *password, Data &receive);
+protected:
+	void CheckSequence(const Data &seq);
+	void ForceClosed();
+
+	Socket(SocketZero &zero, uint16_t socket, uint8_t closeFlag);
 
 public:
-	Socket(Usb::Device &dev, int writeEndpoint, int readEndpoint,
-		uint8_t zeroSocketSequenceStart = 0);
 	~Socket();
 
 	uint16_t GetSocket() const { return m_socket; }
-	uint8_t GetZeroSocketSequence() const { return m_zeroSocketSequence; }
+	uint8_t GetCloseFlag() const { return m_closeFlag; }
 
-	void Open(uint16_t socket, const char *password = 0);
 	void Close();
 
 	// Send and Receive are available before Open...
@@ -102,6 +156,12 @@ public:
 
 	// some handy wrappers for the Packet() interface
 	void NextRecord(Data &receive);
+
+	// Register a callback for incoming data from the device.
+	// This function assumes that this socket is based on a socketZero
+	// that has a SocketRoutingQueue, otherwise throws logic_error.
+	void RegisterInterest(SocketRoutingQueue::SocketDataHandler handler, void *context);
+	void UnregisterInterest();
 };
 
 
