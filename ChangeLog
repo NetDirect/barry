@@ -1,6 +1,8 @@
 Release: version 0.13 - 2008/04/??
 ------------------------------------------------------------------------------
 2008/04/25
+	- updated NEWS file
+2008/04/25
 	- major merge of barry-b1-socket-arch-branch into MAIN.
 	  The following is the changelog from that branch, which is now MAIN.
 

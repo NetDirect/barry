@@ -1,5 +1,29 @@
+May 2008
+==============================================================================
+
+API Change
+----------
+
+As of version 0.13, the Barry API has changed to use a hierarchy of Mode
+classes instead of using the Controller class to switch modes or select
+them.  These new Mode classes are in a new namespace called Mode.
+
+In theory, these modes can be operational at the same time, such as
+Desktop, Serial, and IpModem.  Eventually, a JavaLoader mode may also
+be available.
+
+Please see the example code in the examples directory for sample code
+and usage.
+
+IP Modem support
+----------------
+
+Version 0.13 has preliminary IP Modem support.  You will need a newer
+Blackberry device to make use of this.
+
+
 December 2006
-=============
+==============================================================================
 
 Note: as of version 0.4, Barry depends on the stable version of libusb,
 not the devel tarball available on the Barry sourceforge site.  Install
