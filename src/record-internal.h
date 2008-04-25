@@ -76,6 +76,21 @@ struct FieldLink
 	std::string PostalAddress::* postField;
 };
 
+template <class RecordT>
+struct Utf8FieldLink
+{
+	int type;
+	char *name;
+	char *ldif;
+	char *objectClass;
+	std::string RecordT::* strMember;	// FIXME - find a more general
+	EmailAddress RecordT::* addrMember;	// way to do this...
+	time_t RecordT::* timeMember;
+	PostalAddress RecordT::* postMember;
+	std::string PostalAddress::* postField;
+	bool utf8Needed;
+};
+
 void BuildField1900(Data &data, size_t &size, uint8_t type, time_t t);
 void BuildField(Data &data, size_t &size, uint8_t type, char c);
 void BuildField(Data &data, size_t &size, uint8_t type, uint16_t value);
