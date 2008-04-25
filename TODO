@@ -54,6 +54,26 @@ Estimated time:   simple way: 10 hours if lucky
 
 
 
+Adding support for Tasks database to opensync plugin
+----------------------------------------------------
+This will require research into the proper vformat for tasks.  If
+the above port to 0.40 is complete, then use the XML format.  If not,
+then find the appropriate v-format.
+
+Estimated time: 16 hours
+Depending on: ideally, wait for 0.40 XML format support
+
+
+
+Adding support for Memos (notes) to opensync plugin
+---------------------------------------------------
+Same as above, for Tasks.  If done together, may be able to save some time.
+
+Estimated time: 16 hours
+Depending on: ideally, wait for 0.40 XML format support
+
+
+
 Reverse engineering java loader protocol
 ----------------------------------------
 This has not been done by any opensource Blackberry project out there,

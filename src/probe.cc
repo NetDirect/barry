@@ -141,6 +141,9 @@ Probe::Probe(const char *busname, const char *devname)
 	// Mass Storage one.  Here we search for PRODUCT_RIM_PEARL_DUAL,
 	// (ID 4) which has both enabled.
 	ProbeMatching(VENDOR_RIM, PRODUCT_RIM_PEARL_DUAL, busname, devname);
+	// And a special case, which behaves similar to the PEARL_DUAL,
+	// but with a unique Product ID.
+	ProbeMatching(VENDOR_RIM, PRODUCT_RIM_PEARL_8120, busname, devname);
 }
 
 void Probe::ProbeMatching(int vendor, int product,
