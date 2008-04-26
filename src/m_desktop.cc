@@ -80,7 +80,7 @@ void Desktop::LoadCommandTable()
 
 	}
 	catch( Usb::Error & ) {
-		eout("Controller: error getting command table");
+		eout("Desktop: error getting command table");
 		eeout(command, response);
 		throw;
 	}
@@ -194,7 +194,7 @@ unsigned int Desktop::GetDBID(const std::string &name) const
 	unsigned int ID = 0;
 	// FIXME - this needs a better error handler...
 	if( !m_dbdb.GetDBNumber(name, ID) ) {
-		throw Error("Controller: database name not found: " + name);
+		throw Error("Desktop: database name not found: " + name);
 	}
 	return ID;
 }
@@ -217,12 +217,12 @@ unsigned int Desktop::GetDBCommand(CommandType ct)
 		cmd = m_commandTable.GetCommand(cmdName);
 		break;
 	default:
-		throw std::logic_error("Controller: unknown command type");
+		throw std::logic_error("Desktop: unknown command type");
 	}
 
 	if( cmd == 0 ) {
 		std::ostringstream oss;
-		oss << "Controller: unable to get command code: " << cmdName;
+		oss << "Desktop: unable to get command code: " << cmdName;
 		throw Error(oss.str());
 	}
 
@@ -278,13 +278,13 @@ void Desktop::AddRecord(unsigned int dbId, Builder &build)
 
 		// successful packet transfer, so check the network return code
 		if( packet.Command() != SB_COMMAND_DB_DONE ) {
-			oss << "Controller: device responded with unexpected packet command code: "
+			oss << "Desktop: device responded with unexpected packet command code: "
 			    << "0x" << std::hex << packet.Command();
 			throw Error(oss.str());
 		}
 
 		if( packet.ReturnCode() != 0 ) {
-			oss << "Controller: device responded with error code (command: "
+			oss << "Desktop: device responded with error code (command: "
 			    << packet.Command() << ", code: "
 			    << packet.ReturnCode() << ")";
 			throw Error(oss.str());
@@ -316,7 +316,7 @@ void Desktop::GetRecord(unsigned int dbId,
 		eeout(command, response);
 
 		std::ostringstream oss;
-		oss << "Controller: invalid response packet size of "
+		oss << "Desktop: invalid response packet size of "
 		    << std::dec << response.GetSize();
 		eout(oss.str());
 		throw Error(oss.str());
@@ -325,7 +325,7 @@ void Desktop::GetRecord(unsigned int dbId,
 		eeout(command, response);
 
 		std::ostringstream oss;
-		oss << "Controller: unexpected command of 0x"
+		oss << "Desktop: unexpected command of 0x"
 		    << std::setbase(16) << packet.Command()
 		    << " instead of expected 0x"
 		    << std::setbase(16) << (unsigned int)SB_COMMAND_DB_DATA;
@@ -357,7 +357,7 @@ void Desktop::SetRecord(unsigned int dbId, unsigned int stateTableIndex,
 
 	// loop until builder object has no more data
 	if( !packet.SetRecordByIndex(dbId, stateTableIndex, build) ) {
-		throw std::logic_error("Controller: no data available in SetRecord");
+		throw std::logic_error("Desktop: no data available in SetRecord");
 	}
 
 	m_socket->Packet(packet);
@@ -366,13 +366,13 @@ void Desktop::SetRecord(unsigned int dbId, unsigned int stateTableIndex,
 
 	// successful packet transfer, so check the network return code
 	if( packet.Command() != SB_COMMAND_DB_DONE ) {
-		oss << "Controller: device responded with unexpected packet command code: "
+		oss << "Desktop: device responded with unexpected packet command code: "
 		    << "0x" << std::hex << packet.Command();
 		throw Error(oss.str());
 	}
 
 	if( packet.ReturnCode() != 0 ) {
-		oss << "Controller: device responded with error code (command: "
+		oss << "Desktop: device responded with error code (command: "
 		    << packet.Command() << ", code: "
 		    << packet.ReturnCode() << ")";
 		throw Error(oss.str());
@@ -483,7 +483,7 @@ void Desktop::SaveDatabase(unsigned int dbId, Builder &builder)
 	m_socket->Packet(packet, 60000);
 	if( packet.ReturnCode() != 0 ) {
 		std::ostringstream oss;
-		oss << "Controller: could not clear database: (command: "
+		oss << "Desktop: could not clear database: (command: "
 		    << "0x" << std::hex << packet.Command() << ", code: "
 		    << "0x" << std::hex << packet.ReturnCode() << ")";
 		throw Error(oss.str());
@@ -492,7 +492,7 @@ void Desktop::SaveDatabase(unsigned int dbId, Builder &builder)
 	// check response to clear command was successful
 	if( packet.Command() != SB_COMMAND_DB_DONE ) {
 		eeout(command, response);
-		throw Error("Controller: error clearing database, bad response");
+		throw Error("Desktop: error clearing database, bad response");
 	}
 
 	// loop until builder object has no more data
@@ -506,13 +506,13 @@ void Desktop::SaveDatabase(unsigned int dbId, Builder &builder)
 		std::ostringstream oss;
 		// successful packet transfer, so check the network return code
 		if( packet.Command() != SB_COMMAND_DB_DONE ) {
-			oss << "Controller: device responded with unexpected packet command code: "
+			oss << "Desktop: device responded with unexpected packet command code: "
 			    << "0x" << std::hex << packet.Command();
 			throw Error(oss.str());
 		}
 
 		if( packet.ReturnCode() != 0 ) {
-			oss << "Controller: device responded with error code (command: "
+			oss << "Desktop: device responded with error code (command: "
 			    << packet.Command() << ", code: "
 			    << packet.ReturnCode() << ")";
 			throw Error(oss.str());
