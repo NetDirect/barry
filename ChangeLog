@@ -1,8 +1,8 @@
 Release: version 0.13 - 2008/04/??
 ------------------------------------------------------------------------------
 2008/04/26
-	- started documentation in doc/www, putting the commonly asked
-		questions right on the front page, and making it more
+	- started documentation overhaul in doc/www, putting the commonly
+		asked questions right on the front page, and making it more
 		goal-oriented, so it is hopefully easier to use
 2008/04/25
 	- updated NEWS file
