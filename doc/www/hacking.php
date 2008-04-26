@@ -46,6 +46,8 @@ engineering the protocol.</p>
 
 <div class="subHeader">Some notes on code architecture</div>
 
+<p><i>Note: this is currently out of date.</i></p>
+
 <p>Lowest level:
 <ul>
         Lowest level is the libusb software.
