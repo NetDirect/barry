@@ -1,3 +1,5 @@
+ACLOCAL_FLAGS = -I ../m4
+
 SUBDIRS = src
 
 EXTRA_DIST = \
