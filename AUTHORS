@@ -46,6 +46,9 @@ Contributors (code and otherwise) in alphabetical order by last name:
 		- GPRS modem behaviour
 	Peter Silva <Peter.A.Silva@gmail.com>
 		- debian packaging
+	Jason Thomas <jason@debian.org>
+		- autoconf / build system patch
+		- debian package patch
 	Niels de Vos <nixpanic@users.sourceforge.net>
 		- debian package patches
 
