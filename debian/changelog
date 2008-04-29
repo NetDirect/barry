@@ -1,3 +1,13 @@
+barry (0.13-1.1) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * Makefile.am and opensync-plugin/Makefile: add ACLOCAL_FLAGS for autoreconf
+  * debian/control: add build-depends: autoconf, automake, libtool,
+    libglib2.0-dev
+  * debian/control: change build-depends: libopensync0 to libopensync0-dev 
+
+ -- Jason Thomas <jason@debian.org>  Tue, 29 Apr 2008 17:28:34 +1000
+
 barry (0.13-1) unstable; urgency=low
 
    * version bump
