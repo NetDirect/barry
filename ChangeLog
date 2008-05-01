@@ -2,6 +2,9 @@ Release: version 0.13 - 2008/05/??
 ------------------------------------------------------------------------------
 2008/05/01
 	- updated doc/TroubleShooting.txt
+	- removed usb_control message check from IpModem endpoint probing
+		in src/probe.cc, since some devices, like the 8700
+		have both RIM_UsbSerData mode and IpModem mode.
 2008/04/29
 	- applied Jason Thomas's ACLOCAL_FLAGS patch to make autoreconf
 		work again... Thanks!

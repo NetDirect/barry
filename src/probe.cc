@@ -332,28 +332,41 @@ bool Probe::ProbePair(Usb::Device &dev,
 	return true;
 }
 
-// Thanks to Rick Scott (XmBlackBerry:bb_usb.c) for reverse engineering this
 bool Probe::ProbeModem(Usb::Device &dev, const Usb::EndpointPair &ep)
 {
-	int num_read;
-	char data[255];
-	int local_errno;
+	//
+	// This check is not needed for all devices.  Some devices,
+	// like the 8700 have both the RIM_UsbSerData mode and IpModem mode.
+	//
+	// If this function is called, then we have extra endpoints,
+	// so might as well try them.
+	//
+	// FIXME - someday, we might wish to confirm that the endpoints
+	// work as a modem, and return true/false based on that test.
+	//
+	return true;
 
-	num_read = usb_control_msg(dev.GetHandle(),
-		/* bmRequestType */ USB_ENDPOINT_IN | USB_TYPE_VENDOR | USB_RECIP_DEVICE,
-		/* bRequest */ 0xa5,
-		/* wValue */ 0,
-		/* wIndex */ 1,
-		/* data */ data,
-		/* wLength */ sizeof(data),
-		/* timeout */ 2000);
-	local_errno = errno;
-	if( num_read > 1 ) {
-		if( data[0] == 0x02 ) {
-			return true;
-		}
-	}
-	return false;
+
+// Thanks to Rick Scott (XmBlackBerry:bb_usb.c) for reverse engineering this
+//	int num_read;
+//	char data[255];
+//	int local_errno;
+//
+//	num_read = usb_control_msg(dev.GetHandle(),
+//		/* bmRequestType */ USB_ENDPOINT_IN | USB_TYPE_VENDOR | USB_RECIP_DEVICE,
+//		/* bRequest */ 0xa5,
+//		/* wValue */ 0,
+//		/* wIndex */ 1,
+//		/* data */ data,
+//		/* wLength */ sizeof(data),
+//		/* timeout */ 2000);
+//	local_errno = errno;
+//	if( num_read > 1 ) {
+//		if( data[0] == 0x02 ) {
+//			return true;
+//		}
+//	}
+//	return false;
 }
 
 int Probe::FindActive(uint32_t pin) const
