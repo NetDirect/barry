@@ -156,7 +156,6 @@ void serialize(ArchiveT &ar, Barry::Calendar &c, const unsigned int ver)
 	ar & make_nvp("RecType", c.RecType);
 	ar & make_nvp("RecordId", c.RecordId);
 
-	ar & make_nvp("Recurring", c.Recurring);
 	ar & make_nvp("AllDayEvent", c.AllDayEvent);
 
 	ar & make_nvp("Subject", c.Subject);
@@ -176,6 +175,12 @@ void serialize(ArchiveT &ar, Barry::Calendar &c, const unsigned int ver)
 	ar & make_nvp("RecurringEndTime", c.RecurringEndTime);
 	ar & make_nvp("Perpetual", c.Perpetual);
 	ar & make_nvp("TimeZoneCode", c.TimeZoneCode);
+
+	ar & make_nvp("DayOfWeek", c.DayOfWeek);
+	ar & make_nvp("WeekOfMonth", c.WeekOfMonth);
+	ar & make_nvp("DayOfMonth", c.DayOfMonth);
+	ar & make_nvp("MonthOfYear", c.MonthOfYear);
+	ar & make_nvp("WeekDays", c.WeekDays);
 
 	if( ver < BARRY_POD_MAP_VERSION ) {
 		ar & make_nvp("Unknowns", c.Unknowns);
