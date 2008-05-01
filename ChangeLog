@@ -1,5 +1,7 @@
-Release: version 0.13 - 2008/04/??
+Release: version 0.13 - 2008/05/??
 ------------------------------------------------------------------------------
+2008/05/01
+	- updated doc/TroubleShooting.txt
 2008/04/29
 	- applied Jason Thomas's ACLOCAL_FLAGS patch to make autoreconf
 		work again... Thanks!

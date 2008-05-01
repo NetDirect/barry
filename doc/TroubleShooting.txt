@@ -47,6 +47,10 @@ A:	This is a bug in the udev script, which causes the bcharge program
 	udev script example in Barry CVS.  This corrected script
 	will be included in the Barry 0.8 release.
 
+	Alternative issue: You may have the berry_charge kernel module
+	running, in which case you need to choose which method you wish
+	to use.  Do not run both berry_charge and bcharge.
+
 
 -------------------------------------------------------------------------------
 Q:	btool is giving me errors, saying it can't find my device, or
