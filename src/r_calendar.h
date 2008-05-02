@@ -132,6 +132,8 @@ public:
 					// seems to have little use, but
 					// set to your current time zone
 					// as a good default
+	bool TimeZoneValid;		// true if the record contained a
+					// time zone code
 
 	unsigned short			// recurring details, depending on type
 		DayOfWeek,		// 0-6

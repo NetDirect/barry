@@ -10,6 +10,7 @@ Release: version 0.13 - 2008/05/??
 		so that when building records, it doesn't get processed
 		like a null terminated string... also added more
 		BuildField() helper functions for accuracy
+	- fixed missing fields in the Calendar record build process
 2008/04/29
 	- applied Jason Thomas's ACLOCAL_FLAGS patch to make autoreconf
 		work again... Thanks!

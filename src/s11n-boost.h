@@ -175,6 +175,7 @@ void serialize(ArchiveT &ar, Barry::Calendar &c, const unsigned int ver)
 	ar & make_nvp("RecurringEndTime", c.RecurringEndTime);
 	ar & make_nvp("Perpetual", c.Perpetual);
 	ar & make_nvp("TimeZoneCode", c.TimeZoneCode);
+	ar & make_nvp("TimeZoneValid", c.TimeZoneValid);
 
 	ar & make_nvp("DayOfWeek", c.DayOfWeek);
 	ar & make_nvp("WeekOfMonth", c.WeekOfMonth);

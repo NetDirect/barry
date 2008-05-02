@@ -362,6 +362,16 @@ void Calendar::BuildFields(Data &data, size_t &offset) const
 		}
 	}
 
+	// handle special cases
+
+	// FIXME - need to build CALFC_RECURRENCE_DATA as well
+
+	if( TimeZoneValid )
+		BuildField(data, offset, CALFC_TIMEZONE_CODE, TimeZoneCode);
+
+	BuildField(data, offset, CALFC_FREEBUSY_FLAG, (char)FreeBusyFlag);
+	BuildField(data, offset, CALFC_CLASS_FLAG, (char)ClassFlag);
+
 	// and finally save unknowns
 	UnknownsType::const_iterator
 		ub = Unknowns.begin(), ue = Unknowns.end();
@@ -391,6 +401,7 @@ void Calendar::Clear()
 	RecurringEndTime = 0;
 	Perpetual = false;
 	TimeZoneCode = GetTimeZoneCode(0, 0);	// default to GMT
+	TimeZoneValid = false;
 	DayOfWeek = WeekOfMonth = DayOfMonth = MonthOfYear = 0;
 	WeekDays = 0;
 
@@ -415,6 +426,8 @@ void Calendar::Dump(std::ostream &os) const
 	os << "   All Day Event: " << (AllDayEvent ? "yes" : "no") << "\n";
 	os << "   Class: " << ClassTypes[ClassFlag] << "\n";
 	os << "   Free/Busy: " << FreeBusy[FreeBusyFlag] << "\n";
+	if( TimeZoneValid )
+		os << "   Time Zone: " << GetTimeZone(TimeZoneCode)->Name << "\n";
 
 	// cycle through the type table
 	for(	const FieldLink<Calendar> *b = CalendarFieldLinks;
