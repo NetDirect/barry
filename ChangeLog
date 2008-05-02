@@ -1,5 +1,10 @@
 Release: version 0.13 - 2008/05/??
 ------------------------------------------------------------------------------
+2008/05/02
+	- removed -fvisibility-inlines-hidden compile options since some
+		distros have old or broken compilers or libraries where
+		the build breaks looking for STL templates (Ubuntu 7.10,
+		I'm looking at you...)
 2008/05/01
 	- updated doc/TroubleShooting.txt
 	- removed usb_control message check from IpModem endpoint probing

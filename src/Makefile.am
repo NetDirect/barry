@@ -36,8 +36,10 @@ AM_CXXFLAGS = -ansi -Wall -fno-strict-aliasing -g
 AM_LDFLAGS =
 if WITH_GCCVISIBILITY
 AM_CFLAGS += -D__BARRY_HAVE_GCCVISIBILITY__ -fvisibility=hidden
-AM_CXXFLAGS += -D__BARRY_HAVE_GCCVISIBILITY__ -fvisibility=hidden -fvisibility-inlines-hidden
-AM_LDFLAGS += -fvisibility=hidden -fvisibility-inlines-hidden
+#AM_CXXFLAGS += -D__BARRY_HAVE_GCCVISIBILITY__ -fvisibility=hidden -fvisibility-inlines-hidden
+AM_CXXFLAGS += -D__BARRY_HAVE_GCCVISIBILITY__ -fvisibility=hidden
+#AM_LDFLAGS += -fvisibility=hidden -fvisibility-inlines-hidden
+AM_LDFLAGS += -fvisibility=hidden
 endif
 include_barrydir = ${includedir}/barry
 
