@@ -76,6 +76,22 @@ void BuildField(Data &data, size_t &size, uint8_t type, char c)
 	size += fieldsize;
 }
 
+void BuildField(Data &data, size_t &size, uint8_t type, uint16_t value)
+{
+	size_t strsize = 2;
+	size_t fieldsize = COMMON_FIELD_HEADER_SIZE + strsize;
+	unsigned char *pd = data.GetBuffer(size + fieldsize) + size;
+	CommonField *field = (CommonField *) pd;
+
+	field->size = htobs(strsize);
+	field->type = type;
+
+	uint16_t store = htobs(value);
+	memcpy(field->u.raw, &store, strsize);
+
+	size += fieldsize;
+}
+
 void BuildField(Data &data, size_t &size, uint8_t type, const std::string &str)
 {
 	// include null terminator
@@ -95,6 +111,12 @@ void BuildField(Data &data, size_t &size, uint8_t type,
 	memcpy(field->u.raw, buf, bufsize);
 
 	size += fieldsize;
+}
+
+void BuildField(Data &data, size_t &size, const Barry::UnknownField &field)
+{
+	BuildField(data, size, field.type,
+		field.data.raw_data.data(), field.data.raw_data.size());
 }
 
 void BuildField(Data &data, size_t &size, uint8_t type, const Barry::Protocol::GroupLink &link)

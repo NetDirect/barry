@@ -171,10 +171,20 @@ BXEXPORT inline std::ostream& operator<<(std::ostream &os, const DatabaseDatabas
 	return os;
 }
 
+struct UnknownData
+{
+	std::string raw_data;
+
+	const std::string::value_type* data() const { return raw_data.data(); }
+	std::string::size_type size() const { return raw_data.size(); }
+	void assign(const std::string::value_type *s, std::string::size_type n)
+		{ raw_data.assign(s, n); }
+};
+
 struct BXEXPORT UnknownField
 {
 	uint8_t type;
-	std::string data;
+	UnknownData data;
 };
 BXEXPORT std::ostream& operator<< (std::ostream &os, const std::vector<UnknownField> &unknowns);
 

@@ -49,7 +49,7 @@ template <class ArchiveT>
 void serialize(ArchiveT &ar, Barry::UnknownField &uf, const unsigned int ver)
 {
 	ar & make_nvp("type", uf.type);
-	ar & make_nvp("data", uf.data);
+	ar & make_nvp("data", uf.data.raw_data);
 }
 
 template <class ArchiveT>

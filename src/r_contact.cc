@@ -315,7 +315,7 @@ void Contact::BuildFields(Data &data, size_t &offset) const
 	UnknownsType::const_iterator
 		ub = Unknowns.begin(), ue = Unknowns.end();
 	for( ; ub != ue; ub++ ) {
-		BuildField(data, offset, ub->type, ub->data.c_str(), ub->data.size());
+		BuildField(data, offset, *ub);
 	}
 
 	data.ReleaseBuffer(offset);

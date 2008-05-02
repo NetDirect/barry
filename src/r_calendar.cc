@@ -366,7 +366,7 @@ void Calendar::BuildFields(Data &data, size_t &offset) const
 	UnknownsType::const_iterator
 		ub = Unknowns.begin(), ue = Unknowns.end();
 	for( ; ub != ue; ub++ ) {
-		BuildField(data, offset, ub->type, ub->data);
+		BuildField(data, offset, *ub);
 	}
 
 	data.ReleaseBuffer(offset);

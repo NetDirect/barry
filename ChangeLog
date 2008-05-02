@@ -6,6 +6,10 @@ Release: version 0.13 - 2008/05/??
 		in src/probe.cc, since some devices, like the 8700
 		have both RIM_UsbSerData mode and IpModem mode.
 	- fixed serialization code for Calendar record class, in s11n-boost.h
+	- made UnknownField's data member into its own type,
+		so that when building records, it doesn't get processed
+		like a null terminated string... also added more
+		BuildField() helper functions for accuracy
 2008/04/29
 	- applied Jason Thomas's ACLOCAL_FLAGS patch to make autoreconf
 		work again... Thanks!
