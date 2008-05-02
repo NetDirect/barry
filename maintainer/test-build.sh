@@ -23,5 +23,5 @@ TARGET="$2"
 set -e
 
 cp "$TARPATH" "$CHROOT/$TARGET/tmp"
-chroot "$CHROOT/$TARGET" su - "$BUILDUSER" -c /bin/sh -lc "rm -rf testbuild && mkdir testbuild && cd testbuild && tar xjvf \"/tmp/$TARNAME\" && cd * && ./configure --prefix=/home/$BUILDUSER/testbuild/rootdir && make install && cd gui && export PKG_CONFIG_PATH=/home/$BUILDUSER/testbuild/rootdir/lib/pkgconfig:\$PKG_CONFIG_PATH && ./configure --prefix=/home/$BUILDUSER/testbuild/rootdir && make install && cd ../../rootdir && find && echo \"Press enter to continue...\" && read && cd ../.. && rm -rf testbuild"
+chroot "$CHROOT/$TARGET" su - "$BUILDUSER" -c /bin/sh -lc "rm -rf testbuild && mkdir testbuild && cd testbuild && tar xjvf \"/tmp/$TARNAME\" && cd * && ./configure --prefix=/home/$BUILDUSER/testbuild/rootdir && make install && cd gui && export PKG_CONFIG_PATH=/home/$BUILDUSER/testbuild/rootdir/lib/pkgconfig:\$PKG_CONFIG_PATH && ./configure --prefix=/home/$BUILDUSER/testbuild/rootdir && make install && cd ../opensync-plugin && ./configure --prefix=/home/$BUILDUSER/testbuild/rootdir && make && cd ../../rootdir && find && echo \"Press enter to continue...\" && read && cd ../.. && rm -rf testbuild"
 

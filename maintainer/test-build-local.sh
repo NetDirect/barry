@@ -27,19 +27,29 @@ set -e
 cd
 rm -rf testbuild
 mkdir testbuild
+
 cd testbuild
 tar xjvf $TARFULLPATH
+
 cd *
 ./configure --prefix=/home/$BUILDUSER/testbuild/rootdir
 make install
+
 cd gui
 export PKG_CONFIG_PATH=/home/$BUILDUSER/testbuild/rootdir/lib/pkgconfig
 ./configure --prefix=/home/$BUILDUSER/testbuild/rootdir
 make install
+
+cd ../opensync-plugin
+./configure --prefix=/home/$BUILDUSER/testbuild/rootdir
+make
+#make install	# not included, since opensync's install dest depends on target
+
 cd ../../rootdir
 find
 echo "Press enter to continue..."
 read
+
 cd ../..
 rm -rf testbuild
 

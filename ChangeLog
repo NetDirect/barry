@@ -7,6 +7,8 @@ Release: version 0.13 - 2008/05/??
 		I'm looking at you...)
 	- changed brecsum so usage information is displayed automatically
 		if no command line arguments are specified
+	- added opensync-plugin to maintainer test scripts, and added
+		ubuntu710 to the test build sequence
 2008/05/01
 	- updated doc/TroubleShooting.txt
 	- removed usb_control message check from IpModem endpoint probing

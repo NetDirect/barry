@@ -11,8 +11,9 @@ set -e
 
 # Make sure it compiles cleanly on all handy systems
 #./test-build.sh build/barry-$1.$2.tar.bz2 fedora4
-./test-build.sh build/barry-$1.$2.tar.bz2 fedora5
-./test-build.sh build/barry-$1.$2.tar.bz2 fedora6
+#./test-build.sh build/barry-$1.$2.tar.bz2 fedora5
+./test-build.sh build/barry-$1.$2.tar.bz2 ubuntu710
 ./test-build.sh build/barry-$1.$2.tar.bz2 fedora7
 ./test-build.sh build/barry-$1.$2.tar.bz2 opensuse10.2
+./test-build.sh build/barry-$1.$2.tar.bz2 fedora6
 
