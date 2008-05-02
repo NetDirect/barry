@@ -5,7 +5,7 @@ INCLUDES = $(LIBUSB_CFLAGS)
 #AM_CXXFLAGS = -ansi -Wall -fno-strict-aliasing -g
 AM_CXXFLAGS = -ansi -Wall -g
 
-bin_PROGRAMS = btool bidentify upldif btranslate bktrans
+bin_PROGRAMS = btool bidentify upldif btranslate bktrans brecsum
 if WITH_BOOST
 bin_PROGRAMS += bs11nread
 endif
@@ -54,4 +54,8 @@ breset_LDADD = $(LIBUSB_LIBS)
 
 pppob_SOURCES = pppob.cc
 pppob_LDADD = ../src/libbarry.la $(LIBUSB_LIBS) -lpthread
+
+brecsum_CXXFLAGS = $(OPENSSL_CFLAGS)
+brecsum_SOURCES = brecsum.cc
+brecsum_LDADD = ../src/libbarry.la $(LIBUSB_LIBS) $(OPENSSL_LIBS) -lpthread
 

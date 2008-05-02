@@ -13,6 +13,8 @@ Release: version 0.13 - 2008/05/??
 	- fixed missing fields in the Calendar record build process
 	- added Calendar to list of Builders in tools/btool...
 		it is now possible to run: btool -s "Calendar" -f datafile
+	- added tools/brecsum program, which calculates SHA1 checksums
+		on database records, for testing
 2008/04/29
 	- applied Jason Thomas's ACLOCAL_FLAGS patch to make autoreconf
 		work again... Thanks!
