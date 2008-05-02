@@ -1,6 +1,7 @@
 debian/tmp/usr/bin/btool
 debian/tmp/usr/bin/bs11nread
 debian/tmp/usr/bin/bidentify
+debian/tmp/usr/bin/brecsum
 debian/tmp/usr/bin/bktrans
 debian/tmp/usr/bin/upldif
 debian/tmp/usr/bin/btranslate

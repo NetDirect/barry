@@ -15,6 +15,7 @@ Release: version 0.13 - 2008/05/??
 		it is now possible to run: btool -s "Calendar" -f datafile
 	- added tools/brecsum program, which calculates SHA1 checksums
 		on database records, for testing
+	- added brecsum to debian and rpm builds
 2008/04/29
 	- applied Jason Thomas's ACLOCAL_FLAGS patch to make autoreconf
 		work again... Thanks!

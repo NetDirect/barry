@@ -178,6 +178,7 @@ cd ../
 %attr(0755,root,root) %{_bindir}/btool
 %attr(0755,root,root) %{_bindir}/bs11nread
 %attr(0755,root,root) %{_bindir}/bidentify
+%attr(0755,root,root) %{_bindir}/brecsum
 %attr(0755,root,root) %{_bindir}/upldif
 %attr(0755,root,root) %{_bindir}/bktrans
 %attr(0755,root,root) %{_bindir}/btranslate
@@ -219,6 +220,7 @@ cd ../
 %changelog
 * Fri Mar 21 2008 Chris Frey <cdfrey@foursquare.net> 0.13-1
 - version bump
+- added brecsum
 
 * Fri Dec 07 2007 Chris Frey <cdfrey@foursquare.net> 0.12-1
 - version bump
