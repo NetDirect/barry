@@ -5,6 +5,8 @@ Release: version 0.13 - 2008/05/??
 		distros have old or broken compilers or libraries where
 		the build breaks looking for STL templates (Ubuntu 7.10,
 		I'm looking at you...)
+	- changed brecsum so usage information is displayed automatically
+		if no command line arguments are specified
 2008/05/01
 	- updated doc/TroubleShooting.txt
 	- removed usb_control message check from IpModem endpoint probing

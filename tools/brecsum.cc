@@ -111,6 +111,12 @@ int main(int argc, char *argv[])
 			}
 		}
 
+		// Display usage info if user appears confused
+		if( !dbNames.size() ) {
+			Usage();
+			return 0;
+		}
+
 		// Initialize the barry library.  Must be called before
 		// anything else.
 		Barry::Init(data_dump);
