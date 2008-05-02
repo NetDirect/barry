@@ -248,7 +248,7 @@ void Calendar::ParseRecurrenceData(const void *data)
 
 // this function assumes there is CALENDAR_RECURRENCE_DATA_FIELD_SIZE bytes
 // available in data
-void Calendar::BuildRecurrenceData(void *data)
+void Calendar::BuildRecurrenceData(void *data) const
 {
 	if( !Recurring )
 		throw Error("Calendar::BuildRecurrenceData: Attempting to build recurrence data on non-recurring record.");
@@ -364,7 +364,12 @@ void Calendar::BuildFields(Data &data, size_t &offset) const
 
 	// handle special cases
 
-	// FIXME - need to build CALFC_RECURRENCE_DATA as well
+	if( Recurring ) {
+		CalendarRecurrenceDataField recur;
+		BuildRecurrenceData(&recur);
+		BuildField(data, offset, CALFC_RECURRENCE_DATA,
+			&recur, CALENDAR_RECURRENCE_DATA_FIELD_SIZE);
+	}
 
 	if( TimeZoneValid )
 		BuildField(data, offset, CALFC_TIMEZONE_CODE, TimeZoneCode);

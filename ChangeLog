@@ -16,6 +16,14 @@ Release: version 0.13 - 2008/05/??
 	- added tools/brecsum program, which calculates SHA1 checksums
 		on database records, for testing
 	- added brecsum to debian and rpm builds
+	- added recurrence builder function to Calendar record builder code
+		which completes builder support
+		Checksums from the following commands now match:
+			brecsum -d Calendar > sum1.txt
+			btool -d Calendar -f calendar.dat
+			btool -s Calendar -f calendar.dat
+			brecsum -d Calendar > sum2.txt
+			diff -u <(sort sum1.txt) <(sort sum2.txt)
 2008/04/29
 	- applied Jason Thomas's ACLOCAL_FLAGS patch to make autoreconf
 		work again... Thanks!

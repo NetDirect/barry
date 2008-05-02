@@ -158,7 +158,7 @@ public:
 	const unsigned char* ParseField(const unsigned char *begin,
 		const unsigned char *end);
 	void ParseRecurrenceData(const void *data);
-	void BuildRecurrenceData(void *data);
+	void BuildRecurrenceData(void *data) const;
 
 public:
 	Calendar();
