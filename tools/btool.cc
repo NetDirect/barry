@@ -283,16 +283,16 @@ auto_ptr<Builder> GetBuilder(const string &name, const string &filename)
 			new RecordBuilder<Contact, Store<Contact> > (
 				new Store<Contact>(filename, true)));
 	}
+	else if( name == Calendar::GetDBName() ) {
+		return auto_ptr<Builder>(
+			new RecordBuilder<Calendar, Store<Calendar> > (
+				new Store<Calendar>(filename, true)));
+	}
 /*
 	else if( name == "Messages" ) {
 		return auto_ptr<Parser>(
 			new RecordParser<Message, Store<Message> > (
 				new Store<Message>(filename, true)));
-	}
-	else if( name == "Calendar" ) {
-		return auto_ptr<Parser>(
-			new RecordParser<Calendar, Store<Calendar> > (
-				new Store<Calendar>(filename, true)));
 	}
 	else if( name == "Service Book" ) {
 		return auto_ptr<Parser>(
@@ -331,6 +331,7 @@ void ShowParsers()
 	<< "\n"
 	<< "Supported Database builders:\n"
 	<< "   Address Book\n"
+	<< "   Calendar\n"
 	<< endl;
 }
 
