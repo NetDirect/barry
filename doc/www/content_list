@@ -6,4 +6,6 @@ requirements
 dependencies
 install
 cvs
+patches
+codingguide
 

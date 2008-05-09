@@ -11,15 +11,25 @@ detailed information on the software that Barry needs.</p>
 
 <div class="subHeader">Getting the Source</div>
 
-<p>You can get the source code by downloading the tarball from the
-<a href="http://sourceforge.net/project/showfiles.php?group_id=153722">download page</a></li>...</p>
+<p>There are 3 ways to get the source code:
+<ul>
+	<li>download the release tarball from the
+		<a href="http://sourceforge.net/project/showfiles.php?group_id=153722">download page</a></li>
+	<li>download the development tree
+		<a href="http://sourceforge.net/cvs/?group_id=153722">using CVS</a></li>
+	<li>download the development tree
+		<a href="http://repo.or.cz/w/barry.git">using git</a></li>
+</ul>
+</p>
 
-<p>... Or a better option is to download it directly from CVS.</p>
+
+<div class="subHeader">Using CVS</div>
 
 <p>Up to date instructions for connecting to Sourceforge CVS repositories
 are available on the
 <a href="http://sourceforge.net/cvs/?group_id=153722">CVS page</a>.  This
 usually involves commands like this:
+
 <pre>
 	cvs -d:pserver:anonymous@barry.cvs.sourceforge.net:/cvsroot/barry login
 	(press enter when it asks for password)
@@ -37,14 +47,41 @@ your source tree periodically, do the following:
 </p>
 
 
+<div class="subHeader">Using git</div>
 
-<div class="subHeader">Preparing CVS Sources for Configure</div>
+<p>The same development tree is also available via git, and can be browsed
+on the web at the <a href="http://repo.or.cz/w/barry.git">Barry git page</a>.
+You can clone the repository like this:
 
-<p>If you're using the CVS tree, you'll need to build the usual ./configure
-script before you can proceed.  To do this, you will need autoconf, automake,
-and libtool as stated on the dependencies page.  The correct sequence
-of commands to build ./configure is already stored in the ./buildgen.sh
-shell script in the root level directory of the Barry tree.
+<pre>
+	git clone git://repo.or.cz/barry.git barry
+</pre>
+</p>
+
+<p>This will place the Barry sources in the barry directory.  To update
+your source tree periodically, do the following:
+
+<pre>
+	cd barry
+	./buildgen.sh cleanall      (optional)
+	git checkout master
+	git pull origin
+</pre>
+</p>
+
+
+
+
+
+<div class="subHeader">Preparing Development Sources for Configure</div>
+
+<p>If you're using a development tree, you'll need to build the usual
+./configure script before you can proceed.  To do this, you will need
+autoconf, automake, and libtool as stated on the dependencies page.
+The correct sequence of commands to build ./configure is already stored
+in the ./buildgen.sh shell script in the root level directory of the
+Barry tree.
+
 <pre>
 	cd barry
 	./buildgen.sh

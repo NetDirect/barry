@@ -1,5 +1,8 @@
 Release: version 0.13 - 2008/05/??
 ------------------------------------------------------------------------------
+2008/05/09
+	- continuing to update html documentation in preparation for
+		0.13 release
 2008/05/02
 	- removed -fvisibility-inlines-hidden compile options since some
 		distros have old or broken compilers or libraries where

@@ -1,0 +1,123 @@
+<? createHeader("Submitting Patches"); ?>
+
+<? include ("barry.inc"); ?>
+
+
+<div class="subHeader">Coding Guidelines</div>
+
+<p>If you are submitting code, please have a look at the
+<? createLink("codingguide", "Coding Guidelines page"); ?>.</p>
+
+<p>Please keep some things in mind when preparing your patches
+for submission:
+<ul>
+	<li>use one patch per logical change</li>
+	<li>test all coding changes</li>
+	<li>include some commentary above your patch in your email</li>
+	<li>when mailing patches, try to keep one patch per email</li>
+	<li>do not cut and paste patches... either read them in
+		directly to your mail body (preferred),
+		or send as an attachment</li>
+	<li>add a [PATCH] prefix to your subject line</li>
+</ul>
+
+
+<div class="subHeader">Generating Patches</div>
+
+<p>Generating patches depends on the method you used to get the source code.
+<ul>
+	<li>If you are using a tarball, expand the tarball once into
+		a pristine directory, and again into your "working
+		directory."  When you are finished and
+		ready to patch, do:
+<pre>
+	cd barry-work
+	./buildgen.sh cleanall
+	cd ..
+	diff -ruN barry-orig barry-work > patchfile
+</pre>
+	</li>
+
+	<li>If you are using CVS, make your changes in your working
+		directory, and then do:
+<pre>
+	cd barry-cvs
+	./buildgen.sh cleanall
+	cvs diff -u > patchfile
+	grep ^? patchfile
+</pre>
+		Any new files that you've added to your tree will need
+		to be attached to your patch email, as CVS has no
+		way to add files without write access to the repository.
+		<br/><br/></li>
+
+	<li>If you are using the normal git tree, you can make your changes
+		in your own branch, and then:
+<pre>
+	cd barry-git
+	git diff origin/master..mybranch > patchfile
+</pre>
+	</li>
+
+</ul>
+
+
+<div class="subHeader">Methods for Submitting Patches</div>
+
+<p>Submitting changes can happen in one of three methods:
+
+<ul>
+	<li>Send a patch to the
+	<a href="http://sourceforge.net/mail/?group_id=153722">mailing list</a>.
+	</li>
+
+	<li>Publish your own git repository (perhaps on
+		<a href="http://repo.or.cz/">repo.or.cz</a>)
+		and notify the mailing list, indicating the
+		branch you want people to pull from when
+		you're ready.</li>
+
+	<li>Use the "mob" branch on <a href="http://repo.or.cz/w/barry.git">
+		Barry's git repository</a>, and....
+		send a notification to the mailing list.</li>
+</ul>
+</p>
+
+
+<div class="subHeader">Using the Mob Branch</div>
+
+<p>The public git repository service at repo.or.cz provides an interesting
+feature, which allows anyone to push to a "mob" branch of a repository,
+if so configured by the admin.</p>
+
+<p> It would go something like this:
+<pre>
+        # clone with mob user
+        git clone git+ssh://mob@repo.or.cz/srv/git/barry.git barry
+
+        cd barry
+        git checkout -b mob origin/mob
+        git diff origin/master..mob             # make sure master == mob
+        &lt;make changes&gt;
+        git add ... && git commit
+        git push origin mob
+        &lt;send email to the list, include the SHA1 sum of the commit&gt;
+</pre>
+</p>
+
+<p> This is a novel idea, as well as a security risk for anyone who blindly
+runs whatever is in the mob branch.  Hence the recommended diff check
+above, to make sure you're working on an official branch.</p>
+
+<p> The mob user can only push to the mob branch, so all other branches
+are read-only, and have been reviewed at least once by the project
+maintainer.</p>
+
+<p>  But the mob branch frees people up to use git, who may not have
+their own hosting, or who may not want to bother setting up their
+own git repo.  People can use it to collaborate on a feature as well.
+Let your imagination run wild.</p>
+
+<p>You can read more about the ideas behind the mob branch at
+<a href="http://repo.or.cz/mob.html">the repo.or.cz mob page</a></p>
+

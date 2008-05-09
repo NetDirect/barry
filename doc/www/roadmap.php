@@ -25,62 +25,7 @@
 
 <div class="subHeader">Milestone 3 - complete</div>
 <ul>
-	<li> reliable command line backup and restore of:
-	<ul>
-		<li> Content Store
-		<li> AutoText
-		<li> Trusted Key Store
-		<li> Service Book
-		<li> Handheld Configuration
-		<li> Handheld Agent
-		<li> Default Service Selector
-		<li> Handheld Key Store
-		<li> Firewall Options
-		<li> KeyStoreManager
-		<li> Policy
-		<li> Device Options
-		<li> Options
-		<li> Key Store Options
-		<li> RMS Databases
-		<li> TLS Options
-		<li> Random Pool
-		<li> WTLS Options
-		<li> MemoPad Options
-		<li> Memos
-		<li> Browser Bookmarks
-		<li> Browser Messages
-		<li> Browser Data Cache
-		<li> Browser Channels
-		<li> Browser Folders
-		<li> Browser Options
-		<li> WAP Push Messages
-		<li> Browser Urls
-		<li> Calendar Options
-		<li> Alarm Options
-		<li> Profiles Options
-		<li> Profiles
-		<li> Categories
-		<li> Message List Options
-
-		<li> SMS Messages
-		<li> Phone Options
-		<li> Searches
-		<li> Ribbon Bar Positions
-		<li> Tasks Options
-		<li> Folder Id
-		<li> Folders
-		<li> Purged Messages
-		<li> Recipient Cache
-		<li> Tasks
-		<li> Address Book Options
-		<li> Phone Call Logs
-		<li> Phone Hotlist
-		<li> Attachment Options
-		<li> Attachment Data
-		<li> Browser Push Options
-		<li> Help Options
-		<li> Quick Contacts
-	</ul>
+	<li> reliable backup and restore of all databases </li>
 </ul>
 
 <div class="subHeader">Milestone 4</div>

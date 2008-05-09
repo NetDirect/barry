@@ -34,7 +34,7 @@ usefulness.  For example, it is possible to:
 
 <p>
 <ul>
-	<li>Latest release: <b>0.12</b></li>
+	<li>Latest release: <b>0.13</b></li>
 	<li>Download source and binary packages from
 		<a href="http://sourceforge.net/project/showfiles.php?group_id=153722">Sourceforge</a></li>
 	<li>General <a href="http://sourceforge.net/projects/barry/">Sourceforge project page</a></li>
@@ -52,6 +52,7 @@ usefulness.  For example, it is possible to:
 	<li><? createLink("modem", "Use my Blackberry as a modem to surf the net"); ?></li>
 	<li><? createLink("troubleshooting", "Find troubleshooting help"); ?></li>
 	<li><? createLink("bugs", "Report a bug"); ?></li>
+	<li><? createLink("patches", "Submit a patch"); ?></li>
 	<li><? createLink("contact", "Contact the developers"); ?></li>
 </ul>
 </p>

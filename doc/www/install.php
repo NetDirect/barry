@@ -18,8 +18,11 @@ detailed information on the software that Barry needs.</p>
 the filenames:
 <ul>
 	<li><b>ubuntu710</b> - Ubuntu Gutsy Gibbon, 7.10</li>
+	<li><b>ubuntu804</b> - Ubuntu Hardy Heron, 8.04</li>
+	<li><b>ubuntu80464</b> - Ubuntu Hardy Heron, 8.04, 64 bit</li>
 	<li><b>fc6</b> - Fedora Core 6</li>
 	<li><b>fc7</b> - Fedora Core 7</li>
+	<li><b>fc8</b> - Fedora Core 8</li>
 	<li><b>suse10</b> - OpenSuSE 10.2</li>
 	<li>the non-tagged deb files are for Debian Stable, 4.0</li>
 </ul>
