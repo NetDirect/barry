@@ -1,5 +1,8 @@
 Release: version 0.13 - 2008/05/??
 ------------------------------------------------------------------------------
+2008/05/10
+	- modified the planned version numbering scheme in doc/VersionNotes,
+		so that a 1.0 is possible, with 1.50 as the devel series
 2008/05/09
 	- continuing to update html documentation in preparation for
 		0.13 release

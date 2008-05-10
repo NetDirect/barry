@@ -12,14 +12,28 @@ and most recent.
 Therefore Barry will be versioned the same way, the major version
 number indicating a backward incompatible change to the library.
 
-Alpha development will occur on major version 0, incrementing the
-minor version only until stability is reached.  This version will be
-declared stable, a new development branch will be started with major
-version 1, and patches to stable will increment its minor number.
 
-Development will then continue on odd numbered major versions with incompatible
-changes allowed.  When stable, version 1.x will become 2.0, and the
-3.x branch will be opened.
+Version Numbering Plan:
+-----------------------
+
+	Alpha development will occur on major version 0, incrementing the
+	minor version only until stability is reached.
+	
+	When the 0.x series is stable, as a special case, the highest
+	stable 0.x version will be released as version 1.00.  User-
+	readable version strings in the library and applications will
+	be changed to 1.00, 1.01, 1.02, 1.05, etc, but the library
+	version in src/Makefile.am will stay on the 0.x series.
+	
+	Bugfix releases for this stable series will continue from there,
+	using 1.01 in user strings, and 0.x in the src/Makefile.am.
+
+	A new development branch will be started with the version 1.50,
+	and both src/Makefile.am and the user strings will match again.
+
+	From then on, development will continue on odd numbered major
+	versions with incompatible changes allowed.  When stable, version
+	1.x will become 2.0, and the 3.x branch will be opened.
 
 Due to limitations in remaining portable across as many operating systems
 as possible, Barry will discontinue its 3-number version scheme as of
