@@ -24,6 +24,7 @@
 #define __BARRY_M_IPMODEM_H__
 
 #include "dll.h"
+#include "modem.h"
 #include "usbwrap.h"
 #include "data.h"
 #include "pppfilter.h"
@@ -36,7 +37,7 @@ class Controller;
 
 namespace Mode {
 
-class BXEXPORT IpModem
+class BXEXPORT IpModem : public Modem
 {
 public:
 	typedef void (*DeviceDataCallback)(void *context, const unsigned char *data, int len);
@@ -64,7 +65,7 @@ public:
 
 	//////////////////////////////////
 	// general operations
-	void Open();
+	void Open(const char *password = 0);
 
 	//////////////////////////////////
 	// UsbSerData mode - modem specific

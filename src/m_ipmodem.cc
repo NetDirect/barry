@@ -92,7 +92,7 @@ void *IpModem::DataReadThread(void *userptr)
 //////////////////////////////////////////////////////////////////////////////
 // public API
 
-void IpModem::Open()
+void IpModem::Open(const char *)	// password is ignored for IpModem
 {
 	// check that we have endpoints for the modem
 	const Usb::EndpointPair &pair = m_con.GetProbeResult().m_epModem;
