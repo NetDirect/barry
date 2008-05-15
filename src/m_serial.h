@@ -23,8 +23,10 @@
 #define __BARRY_M_SERIAL_H__
 
 #include "dll.h"
+#include "modem.h"
 #include "socket.h"
 #include "data.h"
+#include "pppfilter.h"
 
 namespace Barry {
 
@@ -33,7 +35,7 @@ class Controller;
 
 namespace Mode {
 
-class BXEXPORT Serial
+class BXEXPORT Serial : public Modem
 {
 public:
 	typedef void (*DeviceDataCallback)(void *context, const unsigned char *data, int len);
@@ -48,8 +50,10 @@ private:
 						// when mode was selected
 	uint16_t m_CtrlSocket;
 
+	// PPP filtering
+	PppFilter m_filter;
+
 	// UsbSerData cache
-	Data m_writeCache;
 //	Data m_readCache;
 
 	// external callbacks
@@ -58,6 +62,7 @@ private:
 
 protected:
 	static void DataCallback(void *context, Data *data);
+	static void CtrlCallback(void *context, Data *data);
 
 public:
 	Serial(Controller &con, DeviceDataCallback callback, void *callback_context);
@@ -65,14 +70,16 @@ public:
 
 	//////////////////////////////////
 	// general operations
-	void Open(const char *password = 0);	// FIXME password needed?
+	void Open(const char *password = 0);	// FIXME password needed?  if not,
+						// then we can remove it from
+						// the Modem base class
 	void RetryPassword(const char *password);
 
 	//////////////////////////////////
 	// UsbSerData mode - modem specific
 
 //	void Read(Data &data, int timeout); // can be called from separate thread
-	void Write(const Data &data);
+	void Write(const Data &data, int timeout = -1);
 };
 
 }} // namespace Barry::Mode
