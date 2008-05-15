@@ -76,6 +76,7 @@ include_barry_HEADERS = barry.h \
 	probe.h \
 	protocol.h \
 	record.h \
+	modem.h \
 	r_calendar.h \
 	r_contact.h \
 	r_folder.h \

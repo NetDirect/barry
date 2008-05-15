@@ -8,6 +8,8 @@ Release: version 0.13 - 2008/05/??
 		copying, and clarified why there is no GetBuffer()
 	- added ProbeResult::HasIpModem() to determine whether
 		IpModem endpoints are available
+	- added pure virtual Modem base class for common
+		modem-oriented API (only Open and Write so far)
 2008/05/10
 	- modified the planned version numbering scheme in doc/VersionNotes,
 		so that a 1.0 is possible, with 1.50 as the devel series
