@@ -39,9 +39,18 @@ private:
 	bool m_ppp_mode;
 	unsigned char m_last;
 
+	BXLOCAL const Data& GetBuffer() const;	// not implemented, since
+		// Write can return either m_writeBuf or data, and
+		// so this would be useless and unsafe
+
+	BXLOCAL void Filter(Data &dest, const Data &src, unsigned int destoffset);
+
 public:
 	PppFilter();
+
+	bool PppMode() const { return m_ppp_mode; }
 	const Data& Write(const Data &data);
+	Data& Write(const Data &data, unsigned int prepend);
 };
 
 } // namespace Barry
