@@ -26,6 +26,7 @@
 #include <fstream>
 #include <vector>
 #include <string>
+#include <memory>
 #include <getopt.h>
 #include <sys/select.h>
 #include <sys/time.h>
@@ -48,8 +49,10 @@ void Usage()
    << "        Copyright 2007-2008, Net Direct Inc. (http://www.netdirect.ca/)\n"
    << "        Using: " << Version << "\n"
    << "\n"
+   << "   -l file   Direct pppob log output to file (useful with -v)\n"
    << "   -p pin    PIN of device to talk with\n"
    << "             If only one device plugged in, this flag is optional\n"
+   << "   -s        Use Serial mode instead of IpModem\n"
    << "   -v        Dump protocol data during operation (debugging only!)\n"
    << endl;
 }
@@ -71,6 +74,44 @@ void SerialDataCallback(void *context, const unsigned char *data, int len)
 	}
 }
 
+void ProcessStdin(Modem &modem)
+{
+	// Read from stdin and write to USB, until
+	// stdin is closed
+	Data data;
+	int bytes_read;
+	fd_set rfds;
+	struct timeval tv;
+	int ret;
+
+	FD_ZERO(&rfds);
+
+	for(;;) {
+		// Need to use select() here, so that pppd doesn't
+		// hang when it tries to set the line discipline
+		// on our stdin.
+
+		FD_SET(0, &rfds);
+		tv.tv_sec = 30;
+		tv.tv_usec = 0;
+
+		ret = select(1, &rfds, NULL, NULL, &tv);
+		if( ret == -1 ) {
+			perror("select()");
+		}
+		else if( ret && FD_ISSET(0, &rfds) ) {
+			bytes_read = read(0, data.GetBuffer(), data.GetBufSize());
+			if( bytes_read == 0 )
+				break;
+
+			if( bytes_read > 0 ) {
+				data.ReleaseBuffer(bytes_read);
+				modem.Write(data);
+			}
+		}
+	}
+}
+
 int main(int argc, char *argv[])
 {
 	cout.sync_with_stdio(true);	// leave this on, since libusb uses
@@ -79,17 +120,27 @@ int main(int argc, char *argv[])
 	try {
 
 		uint32_t pin = 0;
+		bool force_serial = false;
+		std::string logfile;
 
 		// process command line options
 		for(;;) {
-			int cmd = getopt(argc, argv, "p:v");
+			int cmd = getopt(argc, argv, "l:p:sv");
 			if( cmd == -1 )
 				break;
 
 			switch( cmd )
 			{
+			case 'l':	// Verbose log file
+				logfile = optarg;
+				break;
+
 			case 'p':	// Blackberry PIN
 				pin = strtoul(optarg, NULL, 16);
+				break;
+
+			case 's':	// Use Serial mode
+				force_serial = true;
 				break;
 
 			case 'v':	// data dump on
@@ -106,9 +157,14 @@ int main(int argc, char *argv[])
 		// Initialize the barry library.  Must be called before
 		// anything else.
 		// Log to stderr, since stdout is for data in this program.
-//		std::ofstream log("/tmp/log", ios::app);
-//		Barry::Init(data_dump, &log);
-		Barry::Init(data_dump, &std::cerr);
+		std::auto_ptr<std::ofstream> log;
+		if( logfile.size() ) {
+			log.reset( new std::ofstream(logfile.c_str(), ios::app) );
+			Barry::Init(data_dump, log.get());
+		}
+		else {
+			Barry::Init(data_dump, &std::cerr);
+		}
 
 		// Probe the USB bus for Blackberry devices and display.
 		// If user has specified a PIN, search for it in the
@@ -123,65 +179,48 @@ int main(int argc, char *argv[])
 			return 1;
 		}
 
-/*
-// for serial mode, not yet supported
-		// Create our socket router and start thread to handle
-		// the USB reading, instead of creating our own thread.
-		SocketRoutingQueue router;
-		router.SpinoffSimpleReadThread();
+		const ProbeResult &device = probe.Get(activeDevice);
 
-		// Create our controller object using our threaded router.
-		Controller con(probe.Get(activeDevice), router);
+		if( !force_serial && device.HasIpModem() ) {
+			barryverbose("Using IpModem mode...");
 
-		// Open desktop mode... this handles the password side
-		// of things
-//		Mode::Desktop desktop(con);
-//		desktop.Open();	// FIXME - support password here?
+			// Create our controller object using our threaded router.
+			Controller con(probe.Get(activeDevice));
 
-*/
+			// Open serial mode... the callback handles reading from
+			// USB and writing to stdout
+			Mode::IpModem modem(con, SerialDataCallback, 0);
+			modem.Open();
 
-		// Create our controller object using our threaded router.
-		Controller con(probe.Get(activeDevice));
-
-		// Open serial mode... the callback handles reading from
-		// USB and writing to stdout
-		Mode::IpModem modem(con, SerialDataCallback, 0);
-		modem.Open();
-
-		// Read from stdin and write to USB, until
-		// stdin is closed
-		Data data;
-		int bytes_read;
-		fd_set rfds;
-		struct timeval tv;
-		int ret;
-
-		FD_ZERO(&rfds);
-
-		for(;;) {
-			// Need to use select() here, so that pppd doesn't
-			// hang when it tries to set the line discipline
-			// on our stdin.
-
-			FD_SET(0, &rfds);
-			tv.tv_sec = 30;
-			tv.tv_usec = 0;
-
-			ret = select(1, &rfds, NULL, NULL, &tv);
-			if( ret == -1 ) {
-				perror("select()");
-			}
-			else if( ret && FD_ISSET(0, &rfds) ) {
-				bytes_read = read(0, data.GetBuffer(), data.GetBufSize());
-				if( bytes_read == 0 )
-					break;
-
-				if( bytes_read > 0 ) {
-					data.ReleaseBuffer(bytes_read);
-					modem.Write(data);
-				}
-			}
+			ProcessStdin(modem);
 		}
+		else {
+			barryverbose("Using Serial mode...");
+
+			// Create our socket router and start thread to handle
+			// the USB reading, instead of creating our own thread.
+			SocketRoutingQueue router;
+			router.SpinoffSimpleReadThread();
+
+			// Create our controller object using our threaded router.
+			Controller con(probe.Get(activeDevice), router);
+
+			// Open desktop mode... this handles the password side
+			// of things
+			Mode::Desktop desktop(con);
+			desktop.Open();	// FIXME - support password here?
+
+			sleep(5);
+
+			// Open serial connection
+			Mode::Serial modem(con, SerialDataCallback, 0);
+			modem.Open();
+
+			sleep(5);
+
+			ProcessStdin(modem);
+		}
+
 
 		barryverbose("Exiting");
 

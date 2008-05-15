@@ -14,6 +14,8 @@ Release: version 0.13 - 2008/05/??
 	- experimental implementation for Mode::Serial,
 		which is now derived from Barry::Modem,
 		and uses PppFilter
+	- pppob now supports IpModem and Serial modes, and logging
+		to file instead of stderr
 2008/05/10
 	- modified the planned version numbering scheme in doc/VersionNotes,
 		so that a 1.0 is possible, with 1.50 as the devel series
