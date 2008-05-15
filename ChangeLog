@@ -1,5 +1,7 @@
 Release: version 0.13 - 2008/05/??
 ------------------------------------------------------------------------------
+2008/05/15
+	- mention CVS and git on main documentation "how to" list
 2008/05/10
 	- modified the planned version numbering scheme in doc/VersionNotes,
 		so that a 1.0 is possible, with 1.50 as the devel series

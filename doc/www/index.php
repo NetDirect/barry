@@ -46,7 +46,7 @@ usefulness.  For example, it is possible to:
 <p>How do I...
 <ul>
 	<li><? createLink("install", "Install Barry from binary packages"); ?></li>
-	<li><? createLink("cvs", "Install Barry from CVS"); ?></li>
+	<li><? createLink("cvs", "Install Barry from CVS or git"); ?></li>
 	<li><? createLink("backups", "Make backups of my Blackberry data"); ?></li>
 	<li><? createLink("sync", "Sync my Blackberry with Evolution"); ?></li>
 	<li><? createLink("modem", "Use my Blackberry as a modem to surf the net"); ?></li>
