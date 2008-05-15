@@ -44,6 +44,7 @@ struct BXEXPORT ProbeResult
 		: m_dev(0), m_interface(0), m_pin(0), m_zeroSocketSequence(0)
 		{}
 	void DumpAll(std::ostream &os) const;
+	bool HasIpModem() const { return m_epModem.IsComplete(); }
 };
 
 BXEXPORT std::ostream& operator<< (std::ostream &os, const ProbeResult &pr);
