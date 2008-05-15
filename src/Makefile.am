@@ -92,6 +92,7 @@ include_barry_HEADERS = barry.h \
 	time.h \
 	usbwrap.h \
 	version.h \
+	pppfilter.h \
 	s11n-boost.h
 
 
@@ -126,6 +127,7 @@ libbarry_la_SOURCES = time.cc \
 	m_ipmodem.cc \
 	m_serial.cc \
 	version.cc \
+	pppfilter.cc \
 	protostructs.h \
 	debug.h \
 	endian.h

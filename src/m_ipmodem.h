@@ -26,6 +26,7 @@
 #include "dll.h"
 #include "usbwrap.h"
 #include "data.h"
+#include "pppfilter.h"
 #include <pthread.h>
 
 namespace Barry {
@@ -44,15 +45,11 @@ private:
 	Controller &m_con;
 	Usb::Device &m_dev;
 
-	Data m_writeBuf;			// used for 0x7e handling
+	PppFilter m_filter;			// used for 0x7e handling
 
 	// thread data
 	volatile bool m_continue_reading;
 	pthread_t m_modem_read_thread;
-
-	// write flags
-	bool m_ppp_mode;
-	unsigned char m_last;
 
 	// external callbacks
 	DeviceDataCallback m_callback;

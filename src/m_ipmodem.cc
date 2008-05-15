@@ -23,8 +23,6 @@ IpModem::IpModem(Controller &con,
 	: m_con(con)
 	, m_dev(con.m_dev)
 	, m_continue_reading(false)
-	, m_ppp_mode(false)
-	, m_last(0x7e)
 	, m_callback(callback)
 	, m_callback_context(callback_context)
 {
@@ -133,48 +131,8 @@ void IpModem::Write(const Data &data, int timeout)
 
 //	m_dev.ClearHalt(m_con.GetProbeResult().m_epModem.write);
 
-	const unsigned char *b = data.GetData(), *e = data.GetData() + data.GetSize();
-
-	if( !m_ppp_mode ) {
-		if( *b == 0x7e ) {
-			m_ppp_mode = true;
-			// fall through
-		}
-		else {
-			m_dev.BulkWrite(m_con.GetProbeResult().m_epModem.write,
-				data, timeout);
-			return;
-		}
-	}
-
-	size_t needed = data.GetSize() / 2 * 3 + 4;	// worst case
-	unsigned char *buf = m_writeBuf.GetBuffer(needed);
-	unsigned char *put = buf;
-
-	while( b != e ) {
-		// if last character was 0x7e, then next one must be, or else we
-		// insert it ourselves
-		if( m_last == 0x7e ) {
-			m_last = 0;
-			if( *b != 0x7e )
-				*put++ = 0x7e;
-			else
-				*put++ = *b++;
-		}
-
-		// copy all non-0x7e chars verbatim
-		while( b != e && *b != 0x7e ) {
-			*put++ = *b++;
-		}
-
-		if( b != e ) {	// if b!=e then *b == 0x7e and must keep going
-			*put++ = *b++;
-			m_last = 0x7e;
-		}
-	}
-
-	m_writeBuf.ReleaseBuffer(put - buf);
-	m_dev.BulkWrite(m_con.GetProbeResult().m_epModem.write, m_writeBuf, timeout);
+	m_dev.BulkWrite(m_con.GetProbeResult().m_epModem.write,
+		m_filter.Write(data), timeout);
 }
 
 }} // namespace Barry::Mode
