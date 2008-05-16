@@ -82,6 +82,8 @@ void Usage()
    << "   -T db     Show record state table for given database\n"
    << "   -v        Dump protocol data during operation\n"
    << "   -X        Reset device\n"
+   << "   -z        Use non-threaded sockets\n"
+   << "   -Z        Use threaded socket router (default)\n"
    << "\n"
    << " -d Command modifiers:   (can be used multiple times for more than 1 record)\n"
    << "\n"
@@ -420,6 +422,7 @@ int main(int argc, char *argv[])
 			list_contact_fields = false,
 			list_ldif_map = false,
 			epp_override = false,
+			threaded_sockets = true,
 			record_state = false;
 		string ldifBaseDN, ldifDnAttr;
 		string filename;
@@ -432,7 +435,7 @@ int main(int argc, char *argv[])
 
 		// process command line options
 		for(;;) {
-			int cmd = getopt(argc, argv, "B:c:C:d:D:e:f:hlLm:MN:p:P:r:R:Ss:tT:vX");
+			int cmd = getopt(argc, argv, "B:c:C:d:D:e:f:hlLm:MN:p:P:r:R:Ss:tT:vXzZ");
 			if( cmd == -1 )
 				break;
 
@@ -540,6 +543,14 @@ int main(int argc, char *argv[])
 				reset_device = true;
 				break;
 
+			case 'z':	// non-threaded sockets
+				threaded_sockets = false;
+				break;
+
+			case 'Z':	// threaded socket router
+				threaded_sockets = true;
+				break;
+
 			case 'h':	// help
 			default:
 				Usage();
@@ -625,11 +636,7 @@ int main(int argc, char *argv[])
 			return 0;
 		}
 
-		// Create our socket router and thread
-		SocketRoutingQueue router;
-		router.SpinoffSimpleReadThread();
-
-		// Create our controller object
+		// Override device endpoints if user asks
 		Barry::ProbeResult device = probe.Get(activeDevice);
 		if( epp_override ) {
 			device.m_ep.read = epOverride.read;
@@ -640,7 +647,29 @@ int main(int argc, char *argv[])
 			     << (unsigned int) device.m_ep.read << ","
 			     << (unsigned int) device.m_ep.write << endl;
 		}
-		Barry::Controller con(device, router);
+
+		//
+		// Create our controller object
+		//
+		// Order is important in the following auto_ptr<> objects,
+		// since Controller must get destroyed before router.
+		// Normally you'd pick one method, and not bother
+		// with auto_ptr<> and so the normal C++ constructor
+		// rules would guarantee this safety for you, but
+		// here we want the user to pick.
+		//
+		auto_ptr<SocketRoutingQueue> router;
+		auto_ptr<Barry::Controller> pcon;
+		if( threaded_sockets ) {
+			router.reset( new SocketRoutingQueue );
+			router->SpinoffSimpleReadThread();
+			pcon.reset( new Barry::Controller(device, *router) );
+		}
+		else {
+			pcon.reset( new Barry::Controller(device) );
+		}
+
+		Barry::Controller &con = *pcon;
 		Barry::Mode::Desktop desktop(con);
 
 		//
