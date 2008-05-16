@@ -18,6 +18,8 @@ Release: version 0.13 - 2008/05/??
 		the non-threaded/threaded behaviour, respectively;
 		and updated the man page
 	- removed debug sleep() calls from pppob
+	- added SIGINT signal handler so pppob shutsdown gracefully when
+		pppd is killed
 2008/05/15
 	- mention CVS and git on main documentation "how to" list
 	- moved PPP filter logic into its own class

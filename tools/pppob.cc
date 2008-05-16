@@ -32,12 +32,14 @@
 #include <sys/time.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <signal.h>
 
 
 using namespace std;
 using namespace Barry;
 
 bool data_dump = false;
+volatile bool signal_end = false;
 
 void Usage()
 {
@@ -55,6 +57,11 @@ void Usage()
    << "   -s        Use Serial mode instead of IpModem\n"
    << "   -v        Dump protocol data during operation (debugging only!)\n"
    << endl;
+}
+
+void signal_handler(int signum)
+{
+	signal_end = true;
 }
 
 void SerialDataCallback(void *context, const unsigned char *data, int len)
@@ -84,9 +91,12 @@ void ProcessStdin(Modem &modem)
 	struct timeval tv;
 	int ret;
 
-	FD_ZERO(&rfds);
+	// Handle interrupt signals from pppd
+	signal_end = false;
+	signal(SIGINT, &signal_handler);
 
-	for(;;) {
+	FD_ZERO(&rfds);
+	while( signal_end == false ) {
 		// Need to use select() here, so that pppd doesn't
 		// hang when it tries to set the line discipline
 		// on our stdin.
