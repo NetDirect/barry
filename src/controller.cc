@@ -49,6 +49,7 @@ Controller::Controller(const ProbeResult &device)
 	, m_zero(m_dev, device.m_ep.write, device.m_ep.read, device.m_zeroSocketSequence)
 	, m_queue(0)
 {
+	dout("Controller: Using non-threaded sockets");
 	SetupUsb(device);
 }
 
@@ -71,6 +72,8 @@ Controller::Controller(const ProbeResult &device, SocketRoutingQueue &queue)
 	, m_zero(queue, device.m_ep.write, device.m_zeroSocketSequence)
 	, m_queue(&queue)
 {
+	dout("Controller: Using threaded socket router");
+
 	SetupUsb(device);
 
 	// set the queue to use our device
