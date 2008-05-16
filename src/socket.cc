@@ -158,11 +158,6 @@ unsigned int SocketZero::MakeNextFragment(const Data &whole, Data &fragment, uns
 //
 void SocketZero::CheckSequence(uint16_t socket, const Data &seq)
 {
-//	if( m_socket == 0 ) {
-//		// don't do any sequence checking on socket 0
-//		return;
-//	}
-
 	MAKE_PACKET(spack, seq);
 	if( (unsigned int) seq.GetSize() < SB_SEQUENCE_PACKET_SIZE ) {
 		eout("Short sequence packet:\n" << seq);
@@ -329,15 +324,42 @@ void SocketZero::RawSend(Data &send, int timeout)
 
 void SocketZero::RawReceive(Data &receive, int timeout)
 {
-	if( m_queue ) {
-		if( !m_queue->DefaultRead(receive, timeout) )
-			throw Timeout("SocketZero::RawReceive: queue DefaultRead returned false (likely a timeout)");
+	do {
+		if( m_queue ) {
+			if( !m_queue->DefaultRead(receive, timeout) )
+				throw Timeout("SocketZero::RawReceive: queue DefaultRead returned false (likely a timeout)");
+		}
+		else {
+			m_dev->BulkRead(m_readEp, receive, timeout);
+		}
+		ddout("SocketZero::RawReceive: Endpoint " << m_readEp
+			<< "\nReceived:\n" << receive);
+	} while( SequencePacket(receive) );
+}
+
+//
+// SequencePacket
+//
+/// Returns true if this is a sequence packet that should be ignored.
+/// This function is used in SocketZero::RawReceive() in order
+/// to determine whether to keep reading or not.  By default,
+/// this function checks whether the packet is a sequence packet
+/// or not, and returns true if so.  Also, if it is a sequence
+/// packet, it checks the validity of the sequence number.
+///
+/// If sequence packets become important in the future, this
+/// function could be changed to call a user-defined callback,
+/// in order to handle these things out of band.
+///
+bool SocketZero::SequencePacket(const Data &data)
+{
+	if( data.GetSize() >= MIN_PACKET_SIZE ) {
+		if( IS_COMMAND(data, SB_COMMAND_SEQUENCE_HANDSHAKE) ) {
+			CheckSequence(0, data);
+			return true;
+		}
 	}
-	else {
-		m_dev->BulkRead(m_readEp, receive, timeout);
-	}
-	ddout("SocketZero::RawReceive: Endpoint " << m_readEp
-		<< "\nReceived:\n" << receive);
+	return false;	// not a sequence packet
 }
 
 void SocketZero::Send(Data &send, int timeout)

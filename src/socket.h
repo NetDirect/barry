@@ -71,6 +71,9 @@ private:
 	void RawSend(Data &send, int timeout = -1);
 	void RawReceive(Data &receive, int timeout = -1);
 
+protected:
+	bool SequencePacket(const Data &data);
+
 public:
 	explicit SocketZero(SocketRoutingQueue &queue, int writeEndpoint,
 		uint8_t zeroSocketSequenceStart = 0);

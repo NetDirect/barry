@@ -1,5 +1,14 @@
 Release: version 0.13 - 2008/05/??
 ------------------------------------------------------------------------------
+2008/05/16
+	- put sequence packet check directly in the SocketZero::RawReceive()
+		function, which now localizes all sequence packet
+		handling and checking, as well as avoids packet
+		order problems when multiple sockets are in use,
+		such as with pppob...
+		FIXME - this localized sequence checking may make all
+		the calls to CheckSequence() obsolete which
+		should probably be cleaned up someday, if so.
 2008/05/15
 	- mention CVS and git on main documentation "how to" list
 	- moved PPP filter logic into its own class
