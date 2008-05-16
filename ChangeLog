@@ -17,6 +17,7 @@ Release: version 0.13 - 2008/05/??
 	- added -z and -Z command line options to btool to control
 		the non-threaded/threaded behaviour, respectively;
 		and updated the man page
+	- removed debug sleep() calls from pppob
 2008/05/15
 	- mention CVS and git on main documentation "how to" list
 	- moved PPP filter logic into its own class

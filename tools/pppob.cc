@@ -210,13 +210,9 @@ int main(int argc, char *argv[])
 			Mode::Desktop desktop(con);
 			desktop.Open();	// FIXME - support password here?
 
-			sleep(5);
-
 			// Open serial connection
 			Mode::Serial modem(con, SerialDataCallback, 0);
 			modem.Open();
-
-			sleep(5);
 
 			ProcessStdin(modem);
 		}
