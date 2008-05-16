@@ -9,6 +9,8 @@ Release: version 0.13 - 2008/05/??
 		FIXME - this localized sequence checking may make all
 		the calls to CheckSequence() obsolete which
 		should probably be cleaned up someday, if so.
+	- reorganized src/socket.cc to match class private/public
+		order (no code change, only move)
 2008/05/15
 	- mention CVS and git on main documentation "how to" list
 	- moved PPP filter logic into its own class

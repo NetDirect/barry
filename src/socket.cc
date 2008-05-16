@@ -284,21 +284,6 @@ void SocketZero::SendPasswordHash(uint16_t socket, const char *password, Data &r
 	// receive now holds the Password response
 }
 
-
-///////////////////////////////////////
-// SocketZero public API
-
-void SocketZero::SetRoutingQueue(SocketRoutingQueue &queue)
-{
-	// replace the current queue pointer
-	m_queue = &queue;
-}
-
-void SocketZero::UnlinkRoutingQueue()
-{
-	m_queue = 0;
-}
-
 void SocketZero::RawSend(Data &send, int timeout)
 {
 	Usb::Device *dev = m_queue ? m_queue->GetUsbDevice() : m_dev;
@@ -360,6 +345,21 @@ bool SocketZero::SequencePacket(const Data &data)
 		}
 	}
 	return false;	// not a sequence packet
+}
+
+
+///////////////////////////////////////
+// SocketZero public API
+
+void SocketZero::SetRoutingQueue(SocketRoutingQueue &queue)
+{
+	// replace the current queue pointer
+	m_queue = &queue;
+}
+
+void SocketZero::UnlinkRoutingQueue()
+{
+	m_queue = 0;
 }
 
 void SocketZero::Send(Data &send, int timeout)
