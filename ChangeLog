@@ -4,6 +4,8 @@ Release: version 0.13 - 2008/05/??
 	- added sample ppp options files for Verizon Blackberries
 		Sample files from Michael L. Stokes
 	- updated AUTHORS
+	- renamed sample ppp peer files, in preparation for installing
+		them automatically in binary packages
 2008/05/16
 	- put sequence packet check directly in the SocketZero::RawReceive()
 		function, which now localizes all sequence packet
