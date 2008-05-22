@@ -8,7 +8,7 @@
 # build a library of peer files for different carriers.
 #
 
-connect "chat -v 'ABORT' 'ERROR' '' 'AT&F' 'OK' 'ATZ' 'OK' 'ATI' 'OK' 'AT+CNUM' 'OK' 'AT+CSQ' 'OK' 'AT+CREG?' 'OK' 'AT+CGDCONT?' 'OK' 'AT+CGQREQ?' 'OK' 'AT+CGQMIN?' 'OK' 'AT+CGATT?' 'OK' 'AT+CGREG?' 'OK' 'AT+CGDCONT=1,\"IP\",\"internet.com\"' 'OK' 'ATDT*99#' 'CONNECT'"
+connect "/usr/sbin/chat -f /etc/chatscripts/barry-rogers.chat"
 
 #
 # authentication options - no need for ISP to authenticate to us, but

@@ -7,6 +7,7 @@ Release: version 0.13 - 2008/05/??
 	- renamed sample ppp peer files, in preparation for installing
 		them automatically in binary packages
 	- modified verizon options file to use pppob
+	- split the sample rogers options file into options and chat files
 2008/05/16
 	- put sequence packet check directly in the SocketZero::RawReceive()
 		function, which now localizes all sequence packet
