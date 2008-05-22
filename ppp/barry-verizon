@@ -1,10 +1,10 @@
 debug debug debug
 nodetach
-/dev/pts/2
+pty "/usr/sbin/pppob"
 #added MLS
 mtu 1492
 115200
-connect "/usr/sbin/chat -f /etc/chatscripts/blackberry"
+connect "/usr/sbin/chat -f /etc/chatscripts/barry-verizon.chat"
 nomultilink
 defaultroute
 noipdefault
