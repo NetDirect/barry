@@ -1,0 +1,23 @@
+debug debug debug
+nodetach
+/dev/pts/2
+#added MLS
+mtu 1492
+115200
+connect "/usr/sbin/chat -f /etc/chatscripts/blackberry"
+nomultilink
+defaultroute
+noipdefault
+ipcp-restart 7
+ipcp-accept-local
+ipcp-accept-remote
+# added so not to disconnect after a few minutes
+lcp-echo-interval 0
+lcp-echo-failure 999
+modem
+noauth
+nocrtscts
+novj
+usepeerdns
+user ""
+password ""
