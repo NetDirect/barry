@@ -46,6 +46,8 @@ Contributors (code and otherwise) in alphabetical order by last name:
 		- GPRS modem behaviour
 	Peter Silva <Peter.A.Silva@gmail.com>
 		- debian packaging
+	Michael L. Stokes <stokes@aris.net>
+		- sample ppp files for Verizon devices
 	Jason Thomas <jason@debian.org>
 		- autoconf / build system patch
 		- debian package patch
