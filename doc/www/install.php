@@ -23,6 +23,7 @@ the filenames:
 	<li><b>fc6</b> - Fedora Core 6</li>
 	<li><b>fc7</b> - Fedora Core 7</li>
 	<li><b>fc8</b> - Fedora Core 8</li>
+	<li><b>fc9</b> - Fedora Core 9</li>
 	<li><b>suse10</b> - OpenSuSE 10.2</li>
 	<li>the non-tagged deb files are for Debian Stable, 4.0</li>
 </ul>
