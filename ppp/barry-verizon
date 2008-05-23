@@ -1,23 +1,46 @@
-debug debug debug
-nodetach
-pty "/usr/sbin/pppob"
-#added MLS
-mtu 1492
-115200
+#
+# This file contains options for Verizon Blackberries
+#
+# It is based on a file reported to work, but edited for Barry.
+#
+
 connect "/usr/sbin/chat -f /etc/chatscripts/barry-verizon.chat"
-nomultilink
+
+noauth
+user ""
+password ""
+
 defaultroute
+usepeerdns
+
 noipdefault
+nodetach
+novj
+#nodeflate
+#nobsdcomp
+#noaccomp
+#default-asyncmap
+nocrtscts
+#nopcomp
+#nomagic
+
+#passive
+
+nomultilink
 ipcp-restart 7
 ipcp-accept-local
 ipcp-accept-remote
 # added so not to disconnect after a few minutes
 lcp-echo-interval 0
 lcp-echo-failure 999
-modem
-noauth
-nocrtscts
-novj
-usepeerdns
-user ""
-password ""
+
+mtu 1492
+
+debug
+#debug debug debug
+
+pty "/usr/sbin/pppob"
+
+#115200
+#modem
+

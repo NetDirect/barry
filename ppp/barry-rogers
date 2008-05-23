@@ -20,12 +20,17 @@ password wap
 name wapuser
 
 #
+# handle the default route and DNS
+#
+#nodefaultroute
+defaultroute
+usepeerdns
+
+#
 # disable unsupported options
 #
 noipdefault
 nodetach
-#nodefaultroute
-defaultroute
 novj
 nodeflate
 nobsdcomp
@@ -72,5 +77,4 @@ pty "/usr/sbin/pppob"
 #modem
 ## refused anyway, no point in trying every time
 #novj
-#usepeerdns
 

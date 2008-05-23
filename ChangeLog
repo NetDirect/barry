@@ -2,6 +2,9 @@ Release: version 0.13 - 2008/05/??
 ------------------------------------------------------------------------------
 2008/05/23
 	- added ppp/README
+	- reorganized sample ppp options files so they are easier to compare,
+		enabled "usepeerdns" in both, and disabled the speed
+		setting in barry-verizon
 2008/05/22
 	- added sample ppp options files for Verizon Blackberries
 		Sample files from Michael L. Stokes
