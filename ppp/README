@@ -1,0 +1,21 @@
+This directory contains sample options files for pppd, as well as their
+associated chatscript files.  They are named for the various Blackberry
+vendors that have different connect sequences for tethered modems.
+
+Each file is tagged with the name "barry" as well, so they can be
+installed in /etc/ppp/peers someday, to make all this automated
+and easy.
+
+It is a good idea to review these options files to make sure they
+suit your system.  Particularly the defaultroute options, and their
+various security implications.  You may wish to read the following URLs
+
+	http://fixunix.com/ppp/62469-dial-up-route-problem-2.html
+	http://groups.google.com/group/comp.os.linux.misc/browse_thread/thread/11fb49a3c035573/7d7e19b2e4820b0c
+	http://linuxgazette.net/issue77/lechnyr.html
+
+
+Chris Frey
+<cdfrey@foursquare.net>
+May 2008
+
