@@ -1,5 +1,7 @@
 Release: version 0.13 - 2008/05/??
 ------------------------------------------------------------------------------
+2008/05/24
+	- added minimum g++ version to website dependency docs
 2008/05/23
 	- added ppp/README
 	- reorganized sample ppp options files so they are easier to compare,

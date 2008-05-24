@@ -25,7 +25,7 @@ the reason for it.  Some are only needed for building the source, and
 some are only needed for building CVS.
 
 <ul>
-	<li><b>C and C++ compilers</b> (source build)</li>
+	<li><b>C and C++ compilers</b> - 4.1.x or higher, for the tr1 includes (source build)</li>
 	<li><b>pkg-config</b> (source build: so configure can autodetect library locations) </li>
 	<li><b>libusb, stable (0.1.x)</b> - found at <a href="http://libusb.sourceforge.net">http://libusb.sourceforge.net/</a> </li>
 	<li><b>openssl</b> (needed for password hashing) - found at <a href="http://www.openssl.org/">http://www.openssl.org/</a></li>
