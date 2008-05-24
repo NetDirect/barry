@@ -8,6 +8,7 @@ Release: version 0.13 - 2008/05/??
 	- updates to website documentation
 		- added FC9 to distro list
 		- added page for BarryBackup
+		- added page for USB modem / pppob
 2008/05/22
 	- added sample ppp options files for Verizon Blackberries
 		Sample files from Michael L. Stokes
