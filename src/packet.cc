@@ -30,6 +30,7 @@
 #include "parser.h"
 #include "builder.h"
 #include "error.h"
+#include <string.h>
 
 #define __DEBUG_MODE__
 #include "debug.h"

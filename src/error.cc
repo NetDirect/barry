@@ -21,6 +21,7 @@
 
 #include "error.h"
 #include <sstream>
+#include <string.h>
 
 using namespace std;
 

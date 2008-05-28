@@ -2,6 +2,8 @@ Release: version 0.13 - 2008/05/??
 ------------------------------------------------------------------------------
 2008/05/27
 	- fixed missing #includes in src/data.cc
+	- fixed compile errors in library, utils, and plugin when compiling
+		with new gcc 4.3.x... gui not yet finished
 2008/05/24
 	- added minimum g++ version to website dependency docs
 2008/05/23

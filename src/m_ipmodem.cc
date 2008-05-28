@@ -9,6 +9,7 @@
 #include "data.h"
 #include "debug.h"
 #include <sstream>
+#include <string.h>
 
 namespace Barry { namespace Mode {
 

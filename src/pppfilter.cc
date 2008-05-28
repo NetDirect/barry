@@ -7,6 +7,7 @@
 ///
 
 #include "pppfilter.h"
+#include <string.h>
 
 namespace Barry {
 

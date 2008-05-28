@@ -17,6 +17,9 @@
 #include <iostream>
 #include <iomanip>
 #include <sstream>
+#include <string.h>
+#include <stdlib.h>
+#include <limits.h>
 
 using namespace std;
 

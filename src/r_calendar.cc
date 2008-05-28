@@ -30,6 +30,7 @@
 #include <ostream>
 #include <iomanip>
 #include <time.h>
+#include <string.h>
 #include <stdexcept>
 
 #define __DEBUG_MODE__

@@ -26,6 +26,7 @@
 #include "protostructs.h"
 #include "data.h"
 #include "endian.h"
+#include <string.h>
 
 #define __DEBUG_MODE__
 #include "debug.h"
