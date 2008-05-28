@@ -1,5 +1,7 @@
 Release: version 0.13 - 2008/05/??
 ------------------------------------------------------------------------------
+2008/05/27
+	- fixed missing #includes in src/data.cc
 2008/05/24
 	- added minimum g++ version to website dependency docs
 2008/05/23
