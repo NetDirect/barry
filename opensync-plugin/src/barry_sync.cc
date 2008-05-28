@@ -29,9 +29,7 @@
 #include <string>
 #include <glib.h>
 #include <stdint.h>
-//#include <stdlib.h>
-//#include <string.h>
-//#include <assert.h>
+#include <string.h>
 
 // All functions that are callable from outside must look like C
 extern "C" {

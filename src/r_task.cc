@@ -28,6 +28,7 @@
 #include "debug.h"
 #include <ostream>
 #include <iomanip>
+#include <string.h>
 
 using namespace std;
 using namespace Barry::Protocol;

@@ -25,6 +25,7 @@
 #include "vformat.h"		// comes from opensync, but not a public header yet
 #include <stdint.h>
 #include <glib.h>
+#include <strings.h>
 #include <sstream>
 
 

@@ -25,6 +25,8 @@
 #include <iomanip>
 #include <string>
 #include <stdexcept>
+#include <string.h>
+#include <stdlib.h>
 
 //#define __DEBUG_MODE__
 #include "debug.h"

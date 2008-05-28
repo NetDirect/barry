@@ -29,6 +29,7 @@
 #include "builder.h"
 #include "endian.h"
 #include "packet.h"
+#include <string.h>
 
 #define __DEBUG_MODE__
 #include "debug.h"

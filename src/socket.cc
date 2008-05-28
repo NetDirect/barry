@@ -30,6 +30,7 @@
 #include "endian.h"
 #include <openssl/sha.h>
 #include <sstream>
+#include <string.h>
 
 
 using namespace Usb;
