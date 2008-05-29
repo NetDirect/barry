@@ -7,6 +7,7 @@ Release: version 0.13 - 2008/05/??
 	- added -P option to pppob to specify password
 	- updated pppob manpage with -P option
 	- fixed missing -P option in btool manpage
+	- updated rpm spec file history
 2008/05/27
 	- fixed missing #includes in src/data.cc
 	- fixed compile errors in library, utils, and plugin when compiling

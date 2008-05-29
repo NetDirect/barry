@@ -228,9 +228,10 @@ cd ../
 /sbin/ldconfig
 
 %changelog
-* Fri Mar 21 2008 Chris Frey <cdfrey@foursquare.net> 0.13-1
+* Thu May 29 2008 Chris Frey <cdfrey@foursquare.net> 0.13-1
 - version bump
 - added brecsum
+- added ppp options and chat scripts
 
 * Fri Dec 07 2007 Chris Frey <cdfrey@foursquare.net> 0.12-1
 - version bump
