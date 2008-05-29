@@ -2,6 +2,7 @@
 
 <? include ("barry.inc"); ?>
 
+FIXME - add what to do if using binary packages
 
 <div class="subHeader">Introduction</div>
 
@@ -21,7 +22,31 @@ page for more details.</p>
 </p>
 
 
-<div class="subHeader">Configuring PPPD</div>
+<div class="subHeader">If You Installed Barry's Binary Packages...</div>
+
+<p>If you installed Barry's binary packages, specifically barry-util,
+then default ppp options and chat scripts are installed automatically
+for you.  Currently there are scripts available for the following
+providers:
+<ul>
+	<li> Rogers </li>
+	<li> Verizon </li>
+</ul>
+</p>
+
+<p>For example, to run the default Rogers connection script, use the
+following command as root:</p>
+<pre>
+	pppd call barry-rogers
+</pre>
+
+<p>If none of the default script work, see the Troubleshooting section
+below.</p>
+
+
+<div class="subHeader">If You Installed Barry From Source...</div>
+
+<b>Configuring PPPD</b>
 
 <p>Sample configurations are provided in the source tarball, and if you are
 using a binary package, they should already be installed for you under
@@ -37,7 +62,7 @@ making sure that the paths are referencing the correct files.
 </p>
 
 
-<div class="subHeader">Establishing a Connection</div>
+<b>Establishing a Connection</b>
 
 <p>If you named your options file "barry-rogers", then to connect to the
 internet, run:</p>
