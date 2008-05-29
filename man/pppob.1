@@ -20,7 +20,7 @@
 \- Barry Project's program to access the Blackberry modem for pppd
 .SH SYNOPSIS
 .B pppob 
-[-l filename][-p pin][-s][-v]
+[-l filename][-p pin][-P password][-s][-v]
 .SH DESCRIPTION
 .PP
 .B pppob
@@ -36,6 +36,10 @@ filename instead of stderr.
 .B \-p pin
 PIN of device to talk with.  Only needed if you have more than one Blackberry
 connected at once.
+.TP
+.B \-P password
+Simplistic method to specify device password.  In a real application, this
+would be done using a more secure prompt.
 .TP
 .B \-s
 Use Serial mode instead of the default IpModem mode.  Older Blackberries
