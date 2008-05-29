@@ -26,6 +26,7 @@
 #include <iomanip>
 #include <sstream>
 #include <time.h>
+#include <string.h>
 #include <stdlib.h>
 
 DeviceInterface::DeviceInterface()
