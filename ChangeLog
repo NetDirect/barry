@@ -4,6 +4,7 @@ Release: version 0.13 - 2008/05/??
 	- fixed compile errors in gui when compiling with gcc 4.3.x
 	- added ppp options and chatscript files to RPM build
 	- updated docs with binary package default PPP scripts
+	- added -P option to pppob to specify password
 2008/05/27
 	- fixed missing #includes in src/data.cc
 	- fixed compile errors in library, utils, and plugin when compiling

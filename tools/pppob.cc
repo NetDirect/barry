@@ -54,6 +54,7 @@ void Usage()
    << "   -l file   Direct pppob log output to file (useful with -v)\n"
    << "   -p pin    PIN of device to talk with\n"
    << "             If only one device plugged in, this flag is optional\n"
+   << "   -P pass   Simplistic method to specify device password\n"
    << "   -s        Use Serial mode instead of IpModem\n"
    << "   -v        Dump protocol data during operation (debugging only!)\n"
    << endl;
@@ -132,10 +133,11 @@ int main(int argc, char *argv[])
 		uint32_t pin = 0;
 		bool force_serial = false;
 		std::string logfile;
+		std::string password;
 
 		// process command line options
 		for(;;) {
-			int cmd = getopt(argc, argv, "l:p:sv");
+			int cmd = getopt(argc, argv, "l:p:P:sv");
 			if( cmd == -1 )
 				break;
 
@@ -147,6 +149,10 @@ int main(int argc, char *argv[])
 
 			case 'p':	// Blackberry PIN
 				pin = strtoul(optarg, NULL, 16);
+				break;
+
+			case 'P':	// Device password
+				password = optarg;
 				break;
 
 			case 's':	// Use Serial mode
@@ -197,6 +203,16 @@ int main(int argc, char *argv[])
 			// Create our controller object using our threaded router.
 			Controller con(probe.Get(activeDevice));
 
+			// Open desktop mode... this handles the password side
+			// of things
+			Mode::Desktop desktop(con);
+			if( password.size() ) {
+				// attempt to open the desktop with password,
+				// if supplied, in case this behaves similarly
+				// to Serial mode with respect to authentication
+				desktop.Open(password.c_str());
+			}
+
 			// Open serial mode... the callback handles reading from
 			// USB and writing to stdout
 			Mode::IpModem modem(con, SerialDataCallback, 0);
@@ -218,7 +234,7 @@ int main(int argc, char *argv[])
 			// Open desktop mode... this handles the password side
 			// of things
 			Mode::Desktop desktop(con);
-			desktop.Open();	// FIXME - support password here?
+			desktop.Open(password.c_str());
 
 			// Open serial connection
 			Mode::Serial modem(con, SerialDataCallback, 0);
