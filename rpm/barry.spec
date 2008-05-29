@@ -141,6 +141,12 @@ cd ../
 %{__cp} udev/10-blackberry.perms %{buildroot}%{_sysconfdir}/security/console.perms.d/
 %{__mkdir_p} %{buildroot}%{_sysconfdir}/modprobe.d
 %{__cp} modprobe/blacklist-berry_charge %{buildroot}%{_sysconfdir}/modprobe.d/
+%{__mkdir_p} %{buildroot}%{_sysconfdir}/ppp/peers
+%{__cp} ppp/barry-rogers %{buildroot}%{_sysconfdir}/ppp/peers/
+%{__cp} ppp/barry-verizon %{buildroot}%{_sysconfdir}/ppp/peers/
+%{__mkdir_p} %{buildroot}%{_sysconfdir}/chatscripts
+%{__cp} ppp/barry-rogers.chat %{buildroot}%{_sysconfdir}/chatscripts/
+%{__cp} ppp/barry-verizon.chat %{buildroot}%{_sysconfdir}/chatscripts/
 
 # gui tree
 %if %{with_gui}
@@ -189,6 +195,10 @@ cd ../
 %attr(0644,root,root) %config %{_sysconfdir}/udev/rules.d/*
 %attr(0644,root,root) %config %{_sysconfdir}/security/console.perms.d/*
 %attr(0644,root,root) %config %{_sysconfdir}/modprobe.d/blacklist-berry_charge
+%attr(0644,root,root) %config %{_sysconfdir}/ppp/peers/barry-rogers
+%attr(0644,root,root) %config %{_sysconfdir}/ppp/peers/barry-verizon
+%attr(0640,root,root) %config %{_sysconfdir}/chatscripts/barry-rogers.chat
+%attr(0640,root,root) %config %{_sysconfdir}/chatscripts/barry-verizon.chat
 %doc COPYING
 
 %if %{with_gui}
