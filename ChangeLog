@@ -8,6 +8,7 @@ Release: version 0.13 - 2008/05/??
 	- updated pppob manpage with -P option
 	- fixed missing -P option in btool manpage
 	- updated rpm spec file history
+	- added pppob manpage to rpm spec file
 2008/05/27
 	- fixed missing #includes in src/data.cc
 	- fixed compile errors in library, utils, and plugin when compiling

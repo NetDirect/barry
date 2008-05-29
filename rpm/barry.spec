@@ -192,6 +192,7 @@ cd ../
 %attr(0644,root,root) %{_mandir}/man1/bs11nread*
 %attr(0644,root,root) %{_mandir}/man1/bidentify*
 %attr(0644,root,root) %{_mandir}/man1/bcharge*
+%attr(0644,root,root) %{_mandir}/man1/pppob*
 %attr(0644,root,root) %config %{_sysconfdir}/udev/rules.d/*
 %attr(0644,root,root) %config %{_sysconfdir}/security/console.perms.d/*
 %attr(0644,root,root) %config %{_sysconfdir}/modprobe.d/blacklist-berry_charge
@@ -232,6 +233,7 @@ cd ../
 - version bump
 - added brecsum
 - added ppp options and chat scripts
+- added pppob manpage
 
 * Fri Dec 07 2007 Chris Frey <cdfrey@foursquare.net> 0.12-1
 - version bump
