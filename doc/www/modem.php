@@ -2,7 +2,6 @@
 
 <? include ("barry.inc"); ?>
 
-FIXME - add what to do if using binary packages
 
 <div class="subHeader">Introduction</div>
 
