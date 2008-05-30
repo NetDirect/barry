@@ -1,5 +1,7 @@
 Release: version 0.13 - 2008/05/??
 ------------------------------------------------------------------------------
+2008/05/30
+	- added Ubuntu 8.04 to release build scripts
 2008/05/29
 	- fixed compile errors in gui when compiling with gcc 4.3.x
 	- added ppp options and chatscript files to RPM build

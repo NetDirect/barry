@@ -10,6 +10,7 @@ fi
 set -e
 
 # Build the DEB's
+./make-deb.sh build/barry-$1.$2.tar.bz2 ubuntu804 ubuntu804
 ./make-deb.sh build/barry-$1.$2.tar.bz2 ubuntu710 ubuntu710
 # Build the RPM's
 ./make-rpm.sh build/barry-$1.$2.tar.bz2 ../rpm/barry.spec fedora7 fc7
