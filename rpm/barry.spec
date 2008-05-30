@@ -193,6 +193,9 @@ cd ../
 %attr(0644,root,root) %{_mandir}/man1/bidentify*
 %attr(0644,root,root) %{_mandir}/man1/bcharge*
 %attr(0644,root,root) %{_mandir}/man1/pppob*
+%attr(0644,root,root) %{_mandir}/man1/brecsum*
+%attr(0644,root,root) %{_mandir}/man1/breset*
+%attr(0644,root,root) %{_mandir}/man1/upldif*
 %attr(0644,root,root) %config %{_sysconfdir}/udev/rules.d/*
 %attr(0644,root,root) %config %{_sysconfdir}/security/console.perms.d/*
 %attr(0644,root,root) %config %{_sysconfdir}/modprobe.d/blacklist-berry_charge
@@ -207,6 +210,7 @@ cd ../
 %defattr(-,root,root)
 %attr(0755,root,root) %{_bindir}/barrybackup
 %attr(0644,root,root) %{_datadir}/barry/glade/*.glade
+%attr(0644,root,root) %{_mandir}/man1/barrybackup*
 %doc COPYING
 %endif
 
@@ -233,7 +237,7 @@ cd ../
 - version bump
 - added brecsum
 - added ppp options and chat scripts
-- added pppob manpage
+- added manpages for pppob, brecsum, breset, upldif, barrybackup
 
 * Fri Dec 07 2007 Chris Frey <cdfrey@foursquare.net> 0.12-1
 - version bump

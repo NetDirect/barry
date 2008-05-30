@@ -12,6 +12,7 @@ Release: version 0.13 - 2008/05/??
 	- added manpages for brecsum, breset, upldif, and barrybackup,
 		and updated the build process to support them.
 		Also updated date for pppob manpage.
+	- updated rpm spec file with new manpages
 2008/05/27
 	- fixed missing #includes in src/data.cc
 	- fixed compile errors in library, utils, and plugin when compiling
