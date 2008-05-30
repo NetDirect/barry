@@ -35,12 +35,13 @@ void Usage()
 {
    cerr
    << "upldif - Command line LDIF uploader\n"
-   << "        Copyright 2006-2008, Net Direct Inc. (http://www.netdirect.ca/)\n\n"
+   << "         Copyright 2006-2008, Net Direct Inc. (http://www.netdirect.ca/)\n\n"
    << "   -p pin    PIN of device to talk with\n"
    << "             If only one device plugged in, this flag is optional\n"
    << "   -u        Do the upload.  If not specified, only dumps parsed\n"
    << "             LDIF data to stdout.\n"
    << "   -v        Dump protocol data during operation\n"
+   << "   -h        This help output\n"
    << endl;
 }
 
