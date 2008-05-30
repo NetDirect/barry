@@ -10,6 +10,10 @@ debian/tmp/usr/sbin/bcharge
 debian/tmp/usr/sbin/pppob
 debian/tmp/usr/share/man/man1/bcharge.1
 debian/tmp/usr/share/man/man1/bidentify.1
-debian/tmp/usr/share/man/man1/btool.1
+debian/tmp/usr/share/man/man1/brecsum.1
+debian/tmp/usr/share/man/man1/breset.1
 debian/tmp/usr/share/man/man1/bs11nread.1
+debian/tmp/usr/share/man/man1/btool.1
+debian/tmp/usr/share/man/man1/pppob.1
+debian/tmp/usr/share/man/man1/upldif.1
 

@@ -1,8 +1,10 @@
 barry (0.13-1.2) unstable; urgency=low
 
   * added brecsum
+  * added ppp options and chat scripts
+  * fixed lintian description warnings
 
- -- Chris Frey <cdfrey@foursquare.net>  Thu, 01 May 2008 21:49:11 -0400
+ -- Chris Frey <cdfrey@foursquare.net>  Thu, 29 May 2008 21:49:11 -0400
 
 barry (0.13-1.1) unstable; urgency=low
 

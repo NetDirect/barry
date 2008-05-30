@@ -16,6 +16,12 @@ Release: version 0.13 - 2008/05/??
 	- added ProductID code 0x8004 to breset.cc
 	- minor whitespace and usage text fix in upldif.cc
 	- deleted old src/Makefile.orig
+	- updated Debian binary package:
+		- added manpages for brecsum, breset, pppob, upldif,
+			and barrybackup
+		- added ppp options and chat scripts, with postinit
+			script to set permissions
+		- fixed descriptions in control file to avoid lintian warnings
 2008/05/27
 	- fixed missing #includes in src/data.cc
 	- fixed compile errors in library, utils, and plugin when compiling
