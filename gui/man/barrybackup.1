@@ -1,0 +1,89 @@
+.\"                                      Hey, EMACS: -*- nroff -*-
+.\" First parameter, NAME, should be all caps
+.\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
+.\" other parameters are allowed: see man(7), man(1)
+.TH BARRYBACKUP 1 "May 29, 2008"
+.\" Please adjust this date whenever revising the manpage.
+.\"
+.\" Some roff macros, for reference:
+.\" .nh        disable hyphenation
+.\" .hy        enable hyphenation
+.\" .ad l      left justify
+.\" .ad b      justify to both left and right margins
+.\" .nf        disable filling
+.\" .fi        enable filling
+.\" .br        insert line break
+.\" .sp <n>    insert n+1 empty lines
+.\" for manpage-specific macros, see man(7)
+.SH NAME
+.B barrybackup
+\- Barry Project's backup program for the BlackBerry handheld
+.SH SYNOPSIS
+.B barrybackup 
+[-?][-d]
+.SH DESCRIPTION
+.PP
+.B barrybackup
+is a GUI application for backing up and restoring Blackberry handheld
+databases.
+
+The application allows for filtering of databases for both backup
+and restore, so not all databases need to be backed up at once,
+nor all restored.
+
+Backups and configuration files are stored by default in the user's
+home directory, under ~/.barry/backup/PIN.  The backup files are
+compressed tarballs containing specially named files for each record
+of the databases.
+.SH OPTIONS
+.TP
+.B \-d
+.B \-\-debug-output
+Enables low level protocol debug output written to stdout/stderr.
+.TP
+.B \-\-display=DISPLAY
+Specify which X display to use.
+.TP
+.B \-?
+.B \-\-help
+Show summary of options.
+.TP
+.B \-v
+Dump verbose protocol data during operation.
+.TP
+.B \-h, \-\-help
+Show summary of options.
+
+.SH TAR FORMAT
+Backups are stored in tar format, compressed with gzip.  Backup files
+are named with the following pattern:
+
+	PIN-YYYYMMDD-HHMMSS.tar.gz
+
+Each record is appended to the tar file using the following pattern
+for the filename:
+
+	DBname/RecordID RecordTypeID
+
+That is, the database name is used as the directory name, and
+the filename contains the record ID and record type ID separated
+by a space.
+
+Database names can contain spaces.
+
+Record IDs are generally unique, but not all Blackberry devices
+mandate this, so it is possible, but rare, to have two records
+in the tar file with the same filename.  This is ok.  The only problem you'd
+see is if you expanded such a tar file to a filesystem.  The restore
+process just reads in the filename sequentially and writes them to
+the device, so duplicate record IDs are not a problem.
+
+.SH AUTHOR
+.nh
+.B barrybackup 
+is part of the Barry project.
+This manual page was written by Chris Frey.
+.SH SEE ALSO
+.PP
+http://www.netdirect.ca/software/packages/barry/index.php
+

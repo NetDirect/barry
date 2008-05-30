@@ -9,6 +9,9 @@ Release: version 0.13 - 2008/05/??
 	- fixed missing -P option in btool manpage
 	- updated rpm spec file history
 	- added pppob manpage to rpm spec file
+	- added manpages for brecsum, breset, upldif, and barrybackup,
+		and updated the build process to support them.
+		Also updated date for pppob manpage.
 2008/05/27
 	- fixed missing #includes in src/data.cc
 	- fixed compile errors in library, utils, and plugin when compiling

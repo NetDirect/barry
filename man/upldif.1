@@ -1,0 +1,63 @@
+.\"                                      Hey, EMACS: -*- nroff -*-
+.\" First parameter, NAME, should be all caps
+.\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
+.\" other parameters are allowed: see man(7), man(1)
+.TH UPLDIF 1 "May 29, 2008"
+.\" Please adjust this date whenever revising the manpage.
+.\"
+.\" Some roff macros, for reference:
+.\" .nh        disable hyphenation
+.\" .hy        enable hyphenation
+.\" .ad l      left justify
+.\" .ad b      justify to both left and right margins
+.\" .nf        disable filling
+.\" .fi        enable filling
+.\" .br        insert line break
+.\" .sp <n>    insert n+1 empty lines
+.\" for manpage-specific macros, see man(7)
+.SH NAME
+.B upldif
+\- Barry Project's LDIF contact uploader
+.SH SYNOPSIS
+.B upldif 
+[-p pin][-u][-h][-v]
+.SH DESCRIPTION
+.PP
+.B upldif
+reads a list of contacts in LDAP LDIF format from stdin, and
+overwrites the Blackberry's Address Book database with those
+contents.
+.SH OPTIONS
+.TP
+.B \-p pin
+Specify the PIN of the device to talk to.  Only needed if there are
+multiple Blackberries plugged into your system at once.
+.TP
+.B \-u
+Actually do the upload.  If not specified, upldif only dumps the parsed
+LDIF data to stdout for verification.
+
+Note! If this option is specified, all existing contacts on your
+Blackberry will be deleted and replaced with the LDIF contacts.
+.TP
+.B \-v
+Dump verbose protocol data during operation.
+.TP
+.B \-h, \-\-help
+Show summary of options.
+
+
+.SH RETURN STATUS
+In the event of a fatal error, the message will be written to stderr,
+with an error code of 1.
+
+
+.SH AUTHOR
+.nh
+.B upldif 
+is part of the Barry project.
+This manual page was written by Chris Frey.
+.SH SEE ALSO
+.PP
+http://www.netdirect.ca/software/packages/barry/index.php
+
