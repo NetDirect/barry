@@ -23,6 +23,33 @@ detailed information on the software that Barry needs.</p>
 </p>
 
 
+<div class="subHeader">Using The Tarball Release</div>
+
+<p>There are multiple source packages available on the Sourceforge download page.
+The main tarball is always the tar.bz2 package.  This contains everything in
+CVS, including pre-built configure scripts and website documentation.</p>
+
+<p>As an alternative, the tar.gz packages are Debian-specific.  This comes as
+an "orig" tarball, with the debian/ subdirectory contained in the diff.gz file.
+A .dsc file is included as well, for ease of Debian package building.  These
+files can be expanded into a Debian style source tree with the following
+command, for example:
+<pre>
+	dpkg-source -x barry_0.13-1.dsc
+</pre>
+</p>
+
+<p>Once the tar.gz and diff.gz files are combined, you will have a tree
+identical to what comes with the tar.bz2 package.</p>
+
+<p>See <i>Building the Source</i> below for instructions on building the
+resulting tree.</p>
+
+<p>Finally, there are rpm source packages, in the form of src.rpm files.
+This can be installed and built as usual, using the rpm and rpmbuild
+commands.</p>
+
+
 <div class="subHeader">Using CVS</div>
 
 <p>Up to date instructions for connecting to Sourceforge CVS repositories
@@ -188,7 +215,7 @@ steps for building RPMs from CVS:</p>
 </pre>
 
 
-<div class="subHeader">Building Barry DEBs from CVS</div>
+<div class="subHeader">Building Barry DEBs from Source</div>
 
 <p>Once you have ./configure generated as detailed above, you can
 create Debian-style binary packages for your system by running the

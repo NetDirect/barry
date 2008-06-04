@@ -2,6 +2,10 @@ Release: version 0.13 - 2008/06/??
 ------------------------------------------------------------------------------
 2008/06/04
 	- added notes to web documentation for OpenBSD
+	- documentation updates:
+		- changed git patch command to use format-patch
+		- added instructions for building from tarball
+		- added bugs.php and contact.php pages
 2008/05/30
 	- added Ubuntu 8.04 to release build scripts
 2008/05/29

@@ -51,12 +51,14 @@ for submission:
 		way to add files without write access to the repository.
 		<br/><br/></li>
 
-	<li>If you are using the normal git tree, you can make your changes
-		in your own branch, and then:
+	<li>If you are using the git tree, you can make your changes
+		in your own branch, and then create patches for each
+		commit you've made:
 <pre>
 	cd barry-git
-	git diff origin/master..mybranch > patchfile
+	git format-patch origin/master
 </pre>
+
 	</li>
 
 </ul>
