@@ -2,6 +2,8 @@
 
 <? include ("barry.inc"); ?>
 
+<div class="subHeader">::::::: Linux ::::::::::::::</div>
+
 <div class="subHeader">Charging and the Kernel</div>
 
 <p>One of the main features of Barry is the ability to control the charging
@@ -76,4 +78,16 @@ have permissions to write to the USB device files setup by the kernel.</p>
 		support is needed by Barry if you have this package
 		installed.</li>
 </ul>
+
+
+
+<div class="subHeader">::::::: OpenBSD ::::::::::::::</div>
+
+<div class="subHeader">Uberry Module and Ugen</div>
+
+<p>The uberry kernel module conflicts with the ugen interface that
+libusb uses to talk to the device.  To work around this, you will
+need to boot your kernel with "boot -c" and disable the uberry module.<p>
+
+<p>Suggestions for better ways to work around this conflict are welcome.</p>
 

@@ -2,7 +2,7 @@
 
 <? include ("barry.inc"); ?>
 
-<div class="subHeader">Distro Specific</div>
+<div class="subHeader">System Specific</div>
 
 <p>Fedora systems:
 <ul>
@@ -15,6 +15,16 @@
 <ul>
 	<li><b>fakeroot</b> - optional program to assist building your own
 		Debian binary packages without root privileges</li>
+</ul>
+</p>
+
+<p>OpenBSD systems:
+<ul>
+	<li><b>Uberry</b> - the uberry kernel module conflicts with the ugen
+		interface that libusb uses to talk to the device.  To work
+		around this, you will need to boot your kernel with "boot -c"
+		and disable the uberry module.  Suggestions for better ways
+		to work around this conflict are welcome.</li>
 </ul>
 </p>
 
