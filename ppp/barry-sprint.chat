@@ -1,0 +1,14 @@
+#
+# This sample chat script was reported to the mailing list by Andy Herkey,
+# for his Sprint provider.
+#
+# Please send all working peer files to cdfrey@foursquare.net, so we can
+# build a library of peer files for different carriers.
+#
+ABORT ERROR
+'' AT&F
+OK ATZ
+OK ATI
+OK ATDT#777
+CONNECT
+

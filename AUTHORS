@@ -27,6 +27,8 @@ Contributors (code and otherwise) in alphabetical order by last name:
 	Ron Gage <ron@rongage.org>
 		- CVS testing
 		- reverse engineering Service Book record
+	Andy Herkey <a.herkey@comcast.net>
+		- sample ppp chat script for Sprint
 	Jonathan Hudson <jh+barry@daria.co.uk>
 		- big endian testing and patches
 	Duncan Mak

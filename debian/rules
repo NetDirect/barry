@@ -32,9 +32,9 @@ install/barry-util::
 	install -m 0644 $(CURDIR)/modprobe/blacklist-berry_charge $(CURDIR)/debian/barry-util/etc/modprobe.d/blacklist-berry_charge
 	# Install default ppp options and chat scripts
 	install -d $(CURDIR)/debian/barry-util/etc/ppp/peers
-	install -m 0644 $(CURDIR)/ppp/barry-rogers $(CURDIR)/ppp/barry-verizon $(CURDIR)/debian/barry-util/etc/ppp/peers
+	install -m 0644 $(CURDIR)/ppp/barry-rogers $(CURDIR)/ppp/barry-verizon $(CURDIR)/ppp/barry-sprint $(CURDIR)/debian/barry-util/etc/ppp/peers
 	install -d $(CURDIR)/debian/barry-util/etc/chatscripts
-	install -m 0640 $(CURDIR)/ppp/barry-rogers.chat $(CURDIR)/ppp/barry-verizon.chat $(CURDIR)/debian/barry-util/etc/chatscripts
+	install -m 0640 $(CURDIR)/ppp/barry-rogers.chat $(CURDIR)/ppp/barry-verizon.chat $(CURDIR)/ppp/barry-sprint.chat $(CURDIR)/debian/barry-util/etc/chatscripts
 
 post-patches::
 	@test -x $(DEB_SRCDIR)/configure && echo "allready autoreconf" || (cd $(DEB_SRCDIR) && autoreconf -i)
