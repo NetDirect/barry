@@ -65,7 +65,17 @@ Date:   Thu Apr 21 12:33:22 2005 -0700
 
 #include "sha1.h"
 
+namespace Barry {
+
 static void shaHashBlock(SHA_CTX *ctx);
+
+void SHA1(const void *dataIn, int len, unsigned char *hashout)
+{
+	SHA_CTX ctx;
+	SHA1_Init(&ctx);
+	SHA1_Update(&ctx, dataIn, len);
+	SHA1_Final(hashout, &ctx);
+}
 
 void SHA1_Init(SHA_CTX *ctx) {
   int i;
@@ -178,5 +188,7 @@ static void shaHashBlock(SHA_CTX *ctx) {
   ctx->H[2] += C;
   ctx->H[3] += D;
   ctx->H[4] += E;
+}
+
 }
 

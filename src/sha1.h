@@ -62,13 +62,28 @@ Date:   Thu Apr 21 12:33:22 2005 -0700
 
 */
 
-typedef struct {
+#ifndef __BARRY_SHA1_H__
+#define __BARRY_SHA1_H__
+
+#include "dll.h"
+
+#define SHA_DIGEST_LENGTH 20
+
+namespace Barry {
+
+struct BXEXPORT SHA_CTX {
   unsigned int H[5];
   unsigned int W[80];
   int lenW;
   unsigned int sizeHi,sizeLo;
-} SHA_CTX;
+};
 
-void SHA1_Init(SHA_CTX *ctx);
-void SHA1_Update(SHA_CTX *ctx, const void *dataIn, int len);
-void SHA1_Final(unsigned char hashout[20], SHA_CTX *ctx);
+BXEXPORT void SHA1(const void *dataIn, int len, unsigned char *hashout);
+BXEXPORT void SHA1_Init(SHA_CTX *ctx);
+BXEXPORT void SHA1_Update(SHA_CTX *ctx, const void *dataIn, int len);
+BXEXPORT void SHA1_Final(unsigned char hashout[20], SHA_CTX *ctx);
+
+}
+
+#endif
+
