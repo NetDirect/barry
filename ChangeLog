@@ -2,6 +2,7 @@ Release: version 0.13 - 2008/06/??
 ------------------------------------------------------------------------------
 2008/06/06
 	- added timeout argument to Device::BulkDrain()
+	- added mozilla's sha1 code from git
 2008/06/04
 	- added notes to web documentation for OpenBSD
 	- documentation updates:

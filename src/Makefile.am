@@ -129,6 +129,7 @@ libbarry_la_SOURCES = time.cc \
 	m_serial.cc \
 	version.cc \
 	pppfilter.cc \
+	sha1.cc \
 	protostructs.h \
 	debug.h \
 	endian.h
@@ -137,6 +138,7 @@ libbarry_la_LDFLAGS = -version-info ${LIB_BARRY_VERSION}
 
 noinst_HEADERS = cbarry.h \
 	record-internal.h \
+	sha1.h \
 	strnlen.h
 
 EXTRA_DIST = convo.awk \
