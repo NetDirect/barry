@@ -132,7 +132,7 @@ public:
 	bool InterruptRead(int ep, Barry::Data &data, int timeout = -1);
 	bool InterruptWrite(int ep, const Barry::Data &data, int timeout = -1);
 
-	void BulkDrain(int ep);
+	void BulkDrain(int ep, int timeout = 100);
 
 
 	/////////////////////////////

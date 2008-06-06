@@ -309,11 +309,11 @@ bool Device::InterruptWrite(int ep, const Barry::Data &data, int timeout)
 /// Reads anything available on the given endpoint, with a low timeout,
 /// in order to clear any pending reads.
 ///
-void Device::BulkDrain(int ep)
+void Device::BulkDrain(int ep, int timeout)
 {
 	try {
 		Barry::Data data;
-		while( BulkRead(ep, data, 100) )
+		while( BulkRead(ep, data, timeout) )
 		;
 	}
 	catch( Usb::Error & ) {}
