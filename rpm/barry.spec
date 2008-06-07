@@ -29,7 +29,7 @@ Source: %{name}-%{version}.tar.bz2
 URL: http://www.netdirect.ca/downloads/barry
 Vendor: Net Direct Inc.
 BuildRoot: %{_tmppath}/%{name}-%{release}-%{version}-root
-BuildRequires: libusb-devel, gcc-c++, pkgconfig, boost-devel, openssl-devel
+BuildRequires: libusb-devel, gcc-c++, pkgconfig, boost-devel
 
 %define barryroot %{_builddir}/%{name}-%{version}
 
@@ -41,7 +41,7 @@ is a registered trademark of Research in Motion Limited.)
 %package -n libbarry
 Summary: BlackBerry(tm) Desktop for Linux - libbarry libraries
 Group: Development/Libraries
-Requires: libusb openssl boost
+Requires: libusb boost
 
 %description -n libbarry
 Barry is a desktop toolset for managing your BlackBerry(tm) device. (BlackBerry
@@ -55,7 +55,7 @@ likely want to also install barry-util and barry-gui.
 %package -n libbarry-devel
 Summary: BlackBerry(tm) Desktop for Linux - libbarry libraries
 Group: Development/Libraries
-Requires: libbarry libusb-devel openssl-devel boost-devel
+Requires: libbarry libusb-devel boost-devel
 
 %description -n libbarry-devel
 Barry is a desktop toolset for managing your BlackBerry(tm) device. (BlackBerry

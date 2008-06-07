@@ -48,7 +48,6 @@ any dev or devel packages that come along with them.
 	libxml2			Required by OpenSync
 	libbarry 0.x		In the same tarball as this code.
 	libusb			Required by libbarry
-	openssl			Required by libbarry
 
 In addition to libopensync, you will need a plugin for your desktop
 software of choice, or for other handheld devices, such as the Palm.

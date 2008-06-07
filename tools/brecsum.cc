@@ -21,7 +21,6 @@
 */
 
 #include <barry/barry.h>
-#include <openssl/sha.h>
 #include <iomanip>
 #include <iostream>
 #include <vector>

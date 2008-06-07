@@ -29,7 +29,8 @@ LIB_BARRY_VERSION = 0:13:0
 # needed for config.h
 DEFAULT_INCLUDES = -I$(top_builddir)
 #INCLUDES = @PACKAGE_CXXFLAGS@ -I@LIBUSB_INC_PATH@
-INCLUDES = $(LIBUSB_CFLAGS) $(OPENSSL_CFLAGS)
+#INCLUDES = $(LIBUSB_CFLAGS) $(OPENSSL_CFLAGS)
+INCLUDES = $(LIBUSB_CFLAGS)
 #AM_CXXFLAGS = -ansi -Wall -fno-strict-aliasing -g -D__DEBUG_MODE__
 AM_CFLAGS = -Wall -fno-strict-aliasing -g
 AM_CXXFLAGS = -ansi -Wall -fno-strict-aliasing -g
@@ -133,7 +134,8 @@ libbarry_la_SOURCES = time.cc \
 	protostructs.h \
 	debug.h \
 	endian.h
-libbarry_la_LIBADD = $(LTLIBOBJS) $(LIBUSB_LIBS) $(OPENSSL_LIBS)
+#libbarry_la_LIBADD = $(LTLIBOBJS) $(LIBUSB_LIBS) $(OPENSSL_LIBS)
+libbarry_la_LIBADD = $(LTLIBOBJS) $(LIBUSB_LIBS)
 libbarry_la_LDFLAGS = -version-info ${LIB_BARRY_VERSION}
 
 noinst_HEADERS = cbarry.h \

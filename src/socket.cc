@@ -27,7 +27,7 @@
 #include "endian.h"
 #include "debug.h"
 #include "packet.h"
-#include <openssl/sha.h>
+#include "sha1.h"
 #include <sstream>
 #include <string.h>
 

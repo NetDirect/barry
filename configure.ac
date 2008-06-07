@@ -60,7 +60,7 @@ else
 	BOOST_ENABLED="true"	
 fi
 
-PKG_CHECK_MODULES([OPENSSL], [openssl])
+#PKG_CHECK_MODULES([OPENSSL], [openssl])
 
 pkgconfigdir=${libdir}/pkgconfig
 AC_SUBST(pkgconfigdir)

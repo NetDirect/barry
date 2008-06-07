@@ -3,6 +3,12 @@ Release: version 0.13 - 2008/06/??
 2008/06/06
 	- added timeout argument to Device::BulkDrain()
 	- added mozilla's sha1 code from git
+	- removed openssl dependency due to license issues
+		Debian and Ubuntu have checks in their lintian tool that
+		check for GPL+OpenSSL linkage.  In order to remove any
+		potential obstacles to future inclusion in those distros,
+		the dependency is removed here in favour of the small
+		mozilla implementation which is GPL.
 2008/06/04
 	- added notes to web documentation for OpenBSD
 	- documentation updates:

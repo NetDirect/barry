@@ -55,7 +55,8 @@ breset_LDADD = $(LIBUSB_LIBS)
 pppob_SOURCES = pppob.cc
 pppob_LDADD = ../src/libbarry.la $(LIBUSB_LIBS) -lpthread
 
-brecsum_CXXFLAGS = $(OPENSSL_CFLAGS)
+#brecsum_CXXFLAGS = $(OPENSSL_CFLAGS)
 brecsum_SOURCES = brecsum.cc
-brecsum_LDADD = ../src/libbarry.la $(LIBUSB_LIBS) $(OPENSSL_LIBS) -lpthread
+#brecsum_LDADD = ../src/libbarry.la $(LIBUSB_LIBS) $(OPENSSL_LIBS) -lpthread
+brecsum_LDADD = ../src/libbarry.la $(LIBUSB_LIBS) -lpthread
 
