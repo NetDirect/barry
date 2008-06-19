@@ -73,6 +73,7 @@ public:
 	void Open(const char *password = 0);	// FIXME password needed?  if not,
 						// then we can remove it from
 						// the Modem base class
+	void Close();
 	void RetryPassword(const char *password);
 
 	//////////////////////////////////

@@ -114,6 +114,11 @@ void Serial::Open(const char *password)
 	m_ctrl->Send(block);
 }
 
+void Serial::Close()
+{
+	ddout("Serial:: Closing connection.");
+}
+
 /*
 // FIXME - if this behaviour is truly common between modes, create
 // a common base class for this.

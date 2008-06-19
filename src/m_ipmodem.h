@@ -56,6 +56,8 @@ private:
 	DeviceDataCallback m_callback;
 	void *m_callback_context;
 
+	bool SendPassword(const char *password = 0);
+
 protected:
 	static void *DataReadThread(void *userptr);
 
@@ -66,7 +68,7 @@ public:
 	//////////////////////////////////
 	// general operations
 	void Open(const char *password = 0);
-
+	void Close();
 	//////////////////////////////////
 	// UsbSerData mode - modem specific
 
