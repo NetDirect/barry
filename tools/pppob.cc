@@ -205,16 +205,6 @@ int main(int argc, char *argv[])
 			// Create our controller object using our threaded router.
 			Controller con(probe.Get(activeDevice));
 
-			// Open desktop mode... this handles the password side
-			// of things
-			//Mode::Desktop desktop(con);
-			//if( password.size() ) {
-				// attempt to open the desktop with password,
-				// if supplied, in case this behaves similarly
-				// to Serial mode with respect to authentication
-				//desktop.Open(password.c_str());
-			//}
-
 			// Open serial mode... the callback handles reading from
 			// USB and writing to stdout
 			Mode::IpModem modem(con, SerialDataCallback, 0);
