@@ -276,7 +276,11 @@ void IpModem::Write(const Data &data, int timeout)
 		return;	// nothing to do
 
 	// according to Rick Scott the m_filter is not needed with the ip modem
-	m_dev.BulkWrite(m_con.GetProbeResult().m_epModem.write, data, timeout);
+	// but with the 8320 with Rogers, it doesn't seem to connect without it
+	// If this is a performance problem, perhaps make this a runtime
+	// option.
+	m_dev.BulkWrite(m_con.GetProbeResult().m_epModem.write,
+		m_filter.Write(data), timeout);
 }
 
 void IpModem::Close()
