@@ -227,7 +227,7 @@ void IpModem::Open(const char *password)
 	m_dev.ClearHalt(pair.read);
 	m_dev.ClearHalt(pair.write);
 
-	if( !password ) {
+	if( !password || strlen(password) == 0 ) {
 		Data block(start, sizeof(start));
 		Write(block);
 	}
@@ -276,7 +276,7 @@ void IpModem::Write(const Data &data, int timeout)
 		return;	// nothing to do
 
 	// according to Rick Scott the m_filter is not needed with the ip modem
-	m_dev.BulkWrite(m_con.GetProbeResult().m_epModem. write, data, timeout);
+	m_dev.BulkWrite(m_con.GetProbeResult().m_epModem.write, data, timeout);
 }
 
 void IpModem::Close()

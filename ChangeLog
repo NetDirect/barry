@@ -11,6 +11,7 @@ Release: version 0.13 - 2008/06/??
 		- added data size checks to SendPassword()
 		- removed catch(...)
 		- renamed class variable session_key to match others
+		- added check to skip password if "" is passed in
 2008/06/06
 	- added timeout argument to Device::BulkDrain()
 	- added mozilla's sha1 code from git
