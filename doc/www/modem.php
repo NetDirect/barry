@@ -76,7 +76,12 @@ Debian uses "pon" and "poff".</p>
 
 <div class="subHeader">Troubleshooting</div>
 
-<p>If you run into trouble, the first task is to increase debug output
+<p>Some devices don't respond to the PPP commands at first, but after
+the battery is removed and reinserted, modem functionality works.  This is
+likely due to the protocol not being completely understood, but resetting
+the device in this manner is enough of a workaround to get it working.</p>
+
+<p>If you still run into trouble, the first task is to increase debug output
 and to log it.  PPPD supports increased logging if you add the following
 lines to the options file:</p>
 <pre>

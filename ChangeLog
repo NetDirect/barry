@@ -1,5 +1,7 @@
 Release: version 0.13 - 2008/06/??
 ------------------------------------------------------------------------------
+2008/06/19
+	- added modem reset workaround to web documentation page
 2008/06/06
 	- added timeout argument to Device::BulkDrain()
 	- added mozilla's sha1 code from git
