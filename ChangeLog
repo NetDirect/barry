@@ -15,6 +15,7 @@ Release: version 0.13 - 2008/06/??
 		- added check to skip password if "" is passed in
 		- added the m_filter for ipmodem PPP 0x7e filtering
 		  back, since the 8320 w/ rogers seems to need it
+	- updated AUTHORS
 2008/06/06
 	- added timeout argument to Device::BulkDrain()
 	- added mozilla's sha1 code from git
