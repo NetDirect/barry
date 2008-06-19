@@ -57,6 +57,7 @@ private:
 	void *m_callback_context;
 
 	bool SendPassword(const char *password = 0);
+	unsigned char session_key[8];// = { 0x00, 0, 0, 0, 0, 0, 0, 0 };
 
 protected:
 	static void *DataReadThread(void *userptr);

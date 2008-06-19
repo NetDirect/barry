@@ -2,6 +2,7 @@ Release: version 0.13 - 2008/06/??
 ------------------------------------------------------------------------------
 2008/06/19
 	- applied Andy Herkey's ipmodem password patch, round 1
+	- applied Andy Herkey's ipmodem password patch, round 2
 2008/06/06
 	- added timeout argument to Device::BulkDrain()
 	- added mozilla's sha1 code from git

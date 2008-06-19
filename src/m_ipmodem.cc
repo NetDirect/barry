@@ -26,16 +26,14 @@
 #include "debug.h"
 #include <sstream>
 #include <string.h>
-#include <openssl/sha.h>
+#include "sha1.h"
 
 namespace Barry { namespace Mode {
 
 const char special_flag[] = { 0x78, 0x56, 0x34, 0x12 };	// 0x12345678
-const char start[] = { 0x01, 0, 0, 0, 0x78, 0x56, 0x34, 0x12 };
-const char pw_start[] = { 0x01, 0, 0, 0, 1, 0, 0, 0, 0x78, 0x56, 0x34, 0x12 };
-
-// Global variable ok?
-unsigned char session_key[] = { 0x00, 0, 0, 0, 0, 0, 0, 0 };
+const char start[] 	  = { 0x01, 0, 0, 0, 0x78, 0x56, 0x34, 0x12 };
+const char pw_start[] 	  = { 0x01, 0, 0, 0, 1, 0, 0, 0, 0x78, 0x56, 0x34, 0x12 };
+const char stop[] 	  = { 0x01, 0, 0, 0, 0, 0, 0, 0, 0x78, 0x56, 0x34, 0x12 };
 
 //////////////////////////////////////////////////////////////////////////////
 // Mode::IpModem class
@@ -49,29 +47,27 @@ IpModem::IpModem(Controller &con,
 	, m_callback(callback)
 	, m_callback_context(callback_context)
 {
+	memset(session_key, 0, sizeof(session_key));
 }
 
 IpModem::~IpModem()
 {
-	// thread running?
-	if( m_continue_reading ) {
-		m_continue_reading = false;
-		pthread_join(m_modem_read_thread, NULL);
-	}
+	Close();
 }
 
 bool IpModem::SendPassword(const char *password)
 {
-	if( strlen(password) == 0  ) {
-		throw BadPassword("No password specified.", 0, false);
+	if( *password == 0  ) {
+		throw BadPassword("No password provided.", 0, false);
 	}
-	int timeout = -1;
+
 	int read_ep  = m_con.GetProbeResult().m_epModem.read;
 	int write_ep = m_con.GetProbeResult().m_epModem.write;
 	Data data;
 
-	m_dev.BulkWrite(write_ep, pw_start, sizeof(pw_start), timeout);
-	m_dev.BulkRead(read_ep, data, 5000);
+	m_dev.BulkWrite(write_ep, pw_start, sizeof(pw_start));
+	m_dev.BulkRead(read_ep, data);
+	ddout("IPModem read packet.\n" << data);
 
 	// Need to add checks for other packet types.
 	// check for 02 00 00 00 SS SS SS SS RR 00 00 00 0a 00 00 00 PP PP PP PP PP 00 00 00 78 56 34 12
@@ -114,16 +110,21 @@ bool IpModem::SendPassword(const char *password)
 		memcpy(&pw_response[24], special_flag, sizeof(special_flag));
 
 		// Send the password response packet
-		m_dev.BulkWrite(write_ep, pw_response, sizeof(pw_response), timeout);
-		m_dev.BulkRead(read_ep, data, 5000);
+		m_dev.BulkWrite(write_ep, pw_response, sizeof(pw_response));
+		m_dev.BulkRead(read_ep, data);
+		ddout("IPModem read password response.\n" << data);
 
 		// check response 04 00 00 00 .......
-		// the seed is incremented, retries are reset to 10 when the password is accepted.
-                if( data.GetData()[0] == 0x04  && data.GetData()[8] == 0x0a ) {
+		// On the 8703e the seed is incremented, retries are reset to 10 when the password is accepted.
+		// if( data.GetData()[0] == 0x04  && data.GetData()[8] == 0x0a ) {
+                if( data.GetData()[0] == 0x04 ) {
+			if( memcmp(data.GetData() + 4, seed, sizeof(seed)) == 0 ) {
+				ddout("IPModem invalid password.\n" << data);
+				throw BadPassword("Password rejected by device.", data.GetData()[8], false);
+			}
 			ddout("IPModem password accepted.\n");
-
 			// send "start"? packet
-			m_dev.BulkWrite(write_ep, pw_start, sizeof(pw_start), timeout);
+			m_dev.BulkWrite(write_ep, pw_start, sizeof(pw_start));
 
 			// send packet with the last 8 bytes of the password hash (session_key?)
 			//unsigned char pw_response[SHA_DIGEST_LENGTH + 8];
@@ -134,7 +135,7 @@ bool IpModem::SendPassword(const char *password)
 			memcpy(&pw_response[16], pwdigest + 12, 8);
 			//memcpy(&pw_response[16], session_key, 8);
 			memcpy(&pw_response[24], special_flag, sizeof(special_flag));
-			m_dev.BulkWrite(write_ep, pw_response, sizeof(pw_response), timeout);
+			m_dev.BulkWrite(write_ep, pw_response, sizeof(pw_response));
 
 			// blank password hashes as we don't need these anymore
 			memset(pwdigest, 0, sizeof(pwdigest));
@@ -142,11 +143,9 @@ bool IpModem::SendPassword(const char *password)
 			// The modem should be ready to accept AT commands
 			return true;
 		}
-		else {  //FIXME need to clean up better....
-			// Wrong packet or invalid password
-			ddout("IPModem invalid password.\n" << data);
-			throw Barry::Error("IpModem:: Error invalid password.");
-		}
+		// Unknown packet
+		ddout("IPModem Error unknown packet.\n" << data);
+		
 	}
 	return false;
 }
@@ -171,6 +170,7 @@ void *IpModem::DataReadThread(void *userptr)
 			if( data.GetSize() > 4 &&
 			    memcmp(data.GetData() + data.GetSize() - 4, special_flag, sizeof(special_flag)) == 0 ) {
 				// log, then drop it on the floor for now
+				ddout("IPModem special packet:\n" << data);
 				continue;
 			}
 
@@ -206,6 +206,9 @@ void *IpModem::DataReadThread(void *userptr)
 
 void IpModem::Open(const char *password)
 {
+	int read_ep  = m_con.GetProbeResult().m_epModem.read;
+	int write_ep = m_con.GetProbeResult().m_epModem.write;
+	Data data;
 	// check that we have endpoints for the modem
 	const Usb::EndpointPair &pair = m_con.GetProbeResult().m_epModem;
 	if( !pair.IsComplete() ) {
@@ -222,14 +225,36 @@ void IpModem::Open(const char *password)
 	m_dev.ClearHalt(pair.read);
 	m_dev.ClearHalt(pair.write);
 
-	if( strlen(password) != 0 ) {
+	if( *password == 0 ) {
+		Data block(start, sizeof(start));
+		Write(block);
+	}
+	else {
 		if( !SendPassword(password) ) {
 			throw Barry::Error("IpModem:: Error sending password.");
 		}
 	}
-	else {
-		Data block(start, sizeof(start));
-		Write(block);
+
+	// see if the modem will respond to commands
+	const char modem_command[] = { "AT\r" };
+	m_dev.BulkWrite(write_ep, modem_command, sizeof(modem_command));
+	m_dev.BulkRead(read_ep, data);
+	ddout("IPModem:: AT command response.\n" << data);
+	switch(data.GetData()[0])
+	{
+	case 0x02:	// password seed received
+		throw BadPassword("This device requested a password.", data.GetData()[8], false);
+
+	case 0x04:	// command accepted
+		break;
+
+	case 0x07:	// device is password protected?
+		throw BadPassword("This device requires a password.", 0, false);
+
+	default: 	// ???
+		ddout("IPModem:: unknown AT command response.\n");
+		break;
+
 	}
 
 	// spawn read thread
@@ -246,10 +271,8 @@ void IpModem::Write(const Data &data, int timeout)
 	if( data.GetSize() == 0 )
 		return;	// nothing to do
 
-//	m_dev.ClearHalt(m_con.GetProbeResult().m_epModem.write);
-
-	m_dev.BulkWrite(m_con.GetProbeResult().m_epModem.write,
-		m_filter.Write(data), timeout);
+	// according to Rick Scott the m_filter is not needed with the ip modem
+	m_dev.BulkWrite(m_con.GetProbeResult().m_epModem. write, data, timeout);
 }
 
 void IpModem::Close()
@@ -260,42 +283,19 @@ void IpModem::Close()
 	// the whole device.
 	// This works on a BB 8703e a with password. other BB's??
 	unsigned char end[28];
-	int timeout = -1;
 	int read_ep  = m_con.GetProbeResult().m_epModem.read;
 	int write_ep = m_con.GetProbeResult().m_epModem.write;
 	Data data;
 
-	ddout("IpModem:: Closing connection.");
-
-	// Wait a bit for the modem to stop sending data
-	// before stopping the read thread.
-	sleep(4);
-
-	// stop the read thread
-	if( m_continue_reading ) {
-		m_continue_reading = false;
-		pthread_join(m_modem_read_thread, NULL);
-	}
-
 	//0 0 0 0 b0 0 0 0 0 0 0 0 0 c2 1 0 + session_key + special_flag
+	ddout("IpModem:: Closing connection.");
 	memset(end, 0, sizeof(end));
 	end[4]  = 0xb0;
 	end[13] = 0xc2;
 	end[14] = 0x01;
 	memcpy(&end[16], session_key,  sizeof(session_key));
 	memcpy(&end[24], special_flag, sizeof(special_flag));
-	m_dev.BulkWrite(write_ep, end, sizeof(end), timeout);
-
-	//FIXME move try-catch-read to a drainRead function
-	//	since we're just throwing the packets away
-	try {
-		m_dev.BulkRead(read_ep, data, 5000);
-		ddout("IPModem read packet:\n" << data);
-	}
-	catch( Usb::Timeout &to ) {
-		// do nothing on timeouts
-		ddout("Timeout in DataReadThread!");
-	}
+	m_dev.BulkWrite(write_ep, end, sizeof(end));
 
 	//0 0 0 0 20 0 0 0 3 0 0 0 0 c2 1 0 + session_key + special_flag
 	memset(end, 0, sizeof(end));
@@ -305,45 +305,34 @@ void IpModem::Close()
 	end[14] = 0x01;
 	memcpy(&end[16], session_key,  sizeof(session_key));
 	memcpy(&end[24], special_flag, sizeof(special_flag));
-	m_dev.BulkWrite(write_ep, end, sizeof(end), timeout);
-	try {
-		m_dev.BulkRead(read_ep, data, 5000);
-		ddout("IPModem read packet:\n" << data);
-	}
-	catch( Usb::Timeout &to ) {
-		// do nothing on timeouts
-		ddout("Timeout in DataReadThread!");
-	}
+	m_dev.BulkWrite(write_ep, end, sizeof(end));
 
 	//0 0 0 0 30 0 0 0 0 0 0 0 0 c2 1 0 + session_key + special_flag
+	// The session_key is set to 0x0's when there is no password.
 	memset(end, 0, sizeof(end));
 	end[4]  = 0x30;
 	end[13] = 0xc2;
 	end[14] = 0x01;
 	memcpy(&end[16], session_key,  sizeof(session_key));
 	memcpy(&end[24], special_flag, sizeof(special_flag));
-	m_dev.BulkWrite(write_ep, end, sizeof(end), timeout);
+	m_dev.BulkWrite(write_ep, end, sizeof(end));
+	m_dev.BulkWrite(write_ep, stop, sizeof(stop));
 	try {
 		m_dev.BulkRead(read_ep, data, 5000);
-		ddout("IPModem read packet:\n" << data);
+		ddout("IPModem:: Close read packet:\n" << data);
 	}
 	catch( Usb::Timeout &to ) {
-		// do nothing on timeouts
-		ddout("Timeout in DataReadThread!");
+	//	// do nothing on timeouts
+		ddout("IPModem:: Close Read Timeout");
 	}
+	// stop the read thread
+	if( m_continue_reading ) {
+		m_continue_reading = false;
+		pthread_join(m_modem_read_thread, NULL);
+	}
+	ddout("IPmodem:: Closed!");
 
-	const char stop[] = { 0x01, 0, 0, 0, 0, 0, 0, 0, 0x78, 0x56, 0x34, 0x12 };
-	m_dev.BulkWrite(write_ep, stop, sizeof(stop), timeout);
-	try {
-		m_dev.BulkRead(read_ep, data, 5000);
-		ddout("IPModem read packet:\n" << data);
-	}
-	catch( Usb::Timeout &to ) {
-		// do nothing on timeouts
-		ddout("Timeout in DataReadThread!");
-	}
 }
-
 
 }} // namespace Barry::Mode
 
