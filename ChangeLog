@@ -2,6 +2,19 @@ Release: version 0.13 - 2008/06/??
 ------------------------------------------------------------------------------
 2008/06/19
 	- added modem reset workaround to web documentation page
+	- applied Andy Herkey's ipmodem password patch, round 1
+	- applied Andy Herkey's ipmodem password patch, round 2
+	- cleaning up some rough edges to the ipmodem patches:
+		- removed commented out code in pppob.cc
+		- added BXLOCAL to private member SendPasword()
+		- added try/catch in IpModem destructor
+		- removed FIXME comment about endian issues
+		- added data size checks to SendPassword()
+		- removed catch(...)
+		- renamed class variable session_key to match others
+		- added check to skip password if "" is passed in
+		- added the m_filter for ipmodem PPP 0x7e filtering
+		  back, since the 8320 w/ rogers seems to need it
 2008/06/06
 	- added timeout argument to Device::BulkDrain()
 	- added mozilla's sha1 code from git

@@ -35,6 +35,7 @@ public:
 	virtual ~Modem() {}
 
 	virtual void Open(const char *password = 0) = 0;
+	virtual void Close() = 0;
 	virtual void Write(const Data &data, int timeout = -1) = 0;
 };
 

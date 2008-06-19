@@ -56,6 +56,11 @@ private:
 	DeviceDataCallback m_callback;
 	void *m_callback_context;
 
+	unsigned char m_session_key[8];		// = { 0x00, 0, 0, 0, 0, 0, 0, 0 };
+
+private:
+	BXLOCAL bool SendPassword(const char *password = 0);
+
 protected:
 	static void *DataReadThread(void *userptr);
 
@@ -66,6 +71,7 @@ public:
 	//////////////////////////////////
 	// general operations
 	void Open(const char *password = 0);
+	void Close();
 
 	//////////////////////////////////
 	// UsbSerData mode - modem specific
