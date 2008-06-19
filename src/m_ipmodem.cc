@@ -47,17 +47,22 @@ IpModem::IpModem(Controller &con,
 	, m_callback(callback)
 	, m_callback_context(callback_context)
 {
-	memset(session_key, 0, sizeof(session_key));
+	memset(m_session_key, 0, sizeof(m_session_key));
 }
 
 IpModem::~IpModem()
 {
-	Close();
+	try {
+		Close();
+	} catch( std::exception &e ) {
+		dout("Exception caught in IpModem destructor, ignoring: "
+			<< e.what());
+	}
 }
 
 bool IpModem::SendPassword(const char *password)
 {
-	if( *password == 0  ) {
+	if( !password || strlen(password) == 0  ) {
 		throw BadPassword("No password provided.", 0, false);
 	}
 
@@ -71,7 +76,7 @@ bool IpModem::SendPassword(const char *password)
 
 	// Need to add checks for other packet types.
 	// check for 02 00 00 00 SS SS SS SS RR 00 00 00 0a 00 00 00 PP PP PP PP PP 00 00 00 78 56 34 12
-        if( data.GetSize() > 4 && data.GetData()[0] == 0x02  &&
+        if( data.GetSize() >= 9 && data.GetData()[0] == 0x02  &&
 	    memcmp(data.GetData() + data.GetSize() - 4, special_flag, sizeof(special_flag))== 0 ) {
 		// Got a password request packet
 		ddout("IPModem password request packet:\n" << data);
@@ -96,7 +101,7 @@ bool IpModem::SendPassword(const char *password)
 		SHA1((unsigned char *) password, strlen(password), pwdigest);
 
 		// prefix the resulting hash with the provided seed
-		memcpy(&seed[0], data.GetData() + 4, sizeof(uint32_t));	// FIXME for endian support?
+		memcpy(&seed[0], data.GetData() + 4, sizeof(uint32_t));
 		memcpy(&prefixedhash[0], &seed, sizeof(uint32_t));
 		memcpy(&prefixedhash[4], pwdigest, SHA_DIGEST_LENGTH);
 
@@ -117,7 +122,7 @@ bool IpModem::SendPassword(const char *password)
 		// check response 04 00 00 00 .......
 		// On the 8703e the seed is incremented, retries are reset to 10 when the password is accepted.
 		// if( data.GetData()[0] == 0x04  && data.GetData()[8] == 0x0a ) {
-                if( data.GetData()[0] == 0x04 ) {
+                if( data.GetSize() >= 9 && data.GetData()[0] == 0x04 ) {
 			if( memcmp(data.GetData() + 4, seed, sizeof(seed)) == 0 ) {
 				ddout("IPModem invalid password.\n" << data);
 				throw BadPassword("Password rejected by device.", data.GetData()[8], false);
@@ -129,23 +134,23 @@ bool IpModem::SendPassword(const char *password)
 			// send packet with the last 8 bytes of the password hash (session_key?)
 			//unsigned char pw_response[SHA_DIGEST_LENGTH + 8];
 			unsigned char pw_rsphdr[] = { 0x00, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0xc2, 1, 0 };
-			//unsigned char session_key[8];
-			memcpy(&session_key[0], pwdigest + 12, 8);
+			memcpy(&m_session_key[0], pwdigest + 12, sizeof(m_session_key));
 			memcpy(&pw_response[0], pw_rsphdr, sizeof(pw_rsphdr));
 			memcpy(&pw_response[16], pwdigest + 12, 8);
-			//memcpy(&pw_response[16], session_key, 8);
+			//memcpy(&pw_response[16], m_session_key, 8);
 			memcpy(&pw_response[24], special_flag, sizeof(special_flag));
 			m_dev.BulkWrite(write_ep, pw_response, sizeof(pw_response));
 
 			// blank password hashes as we don't need these anymore
 			memset(pwdigest, 0, sizeof(pwdigest));
 			memset(prefixedhash, 0, sizeof(prefixedhash));
+
 			// The modem should be ready to accept AT commands
 			return true;
 		}
+
 		// Unknown packet
 		ddout("IPModem Error unknown packet.\n" << data);
-		
 	}
 	return false;
 }
@@ -193,9 +198,6 @@ void *IpModem::DataReadThread(void *userptr)
 		catch( std::exception &e ) {
 			eout("Exception in IpModem::DataReadThread: " << e.what());
 		}
-		catch( ... ) {
-			eout("Unknown exception in IpModem::DataReadThread, ignoring!");
-		}
 	}
 
 	return 0;
@@ -225,7 +227,7 @@ void IpModem::Open(const char *password)
 	m_dev.ClearHalt(pair.read);
 	m_dev.ClearHalt(pair.write);
 
-	if( *password == 0 ) {
+	if( !password ) {
 		Data block(start, sizeof(start));
 		Write(block);
 	}
@@ -240,21 +242,23 @@ void IpModem::Open(const char *password)
 	m_dev.BulkWrite(write_ep, modem_command, sizeof(modem_command));
 	m_dev.BulkRead(read_ep, data);
 	ddout("IPModem:: AT command response.\n" << data);
-	switch(data.GetData()[0])
-	{
-	case 0x02:	// password seed received
-		throw BadPassword("This device requested a password.", data.GetData()[8], false);
+	if( data.GetSize() >= 1 ) {
+		switch(data.GetData()[0])
+		{
+		case 0x02:	// password seed received
+			throw BadPassword("This device requested a password.",
+				data.GetSize() >= 9 ? data.GetData()[8] : 0, false);
 
-	case 0x04:	// command accepted
-		break;
+		case 0x04:	// command accepted
+			break;
 
-	case 0x07:	// device is password protected?
-		throw BadPassword("This device requires a password.", 0, false);
+		case 0x07:	// device is password protected?
+			throw BadPassword("This device requires a password.", 0, false);
 
-	default: 	// ???
-		ddout("IPModem:: unknown AT command response.\n");
-		break;
-
+		default: 	// ???
+			ddout("IPModem:: unknown AT command response.\n");
+			break;
+		}
 	}
 
 	// spawn read thread
@@ -293,7 +297,7 @@ void IpModem::Close()
 	end[4]  = 0xb0;
 	end[13] = 0xc2;
 	end[14] = 0x01;
-	memcpy(&end[16], session_key,  sizeof(session_key));
+	memcpy(&end[16], m_session_key,  sizeof(m_session_key));
 	memcpy(&end[24], special_flag, sizeof(special_flag));
 	m_dev.BulkWrite(write_ep, end, sizeof(end));
 
@@ -303,7 +307,7 @@ void IpModem::Close()
 	end[8]  = 0x03;
 	end[13] = 0xc2;
 	end[14] = 0x01;
-	memcpy(&end[16], session_key,  sizeof(session_key));
+	memcpy(&end[16], m_session_key,  sizeof(m_session_key));
 	memcpy(&end[24], special_flag, sizeof(special_flag));
 	m_dev.BulkWrite(write_ep, end, sizeof(end));
 
@@ -313,7 +317,7 @@ void IpModem::Close()
 	end[4]  = 0x30;
 	end[13] = 0xc2;
 	end[14] = 0x01;
-	memcpy(&end[16], session_key,  sizeof(session_key));
+	memcpy(&end[16], m_session_key,  sizeof(m_session_key));
 	memcpy(&end[24], special_flag, sizeof(special_flag));
 	m_dev.BulkWrite(write_ep, end, sizeof(end));
 	m_dev.BulkWrite(write_ep, stop, sizeof(stop));
@@ -322,7 +326,7 @@ void IpModem::Close()
 		ddout("IPModem:: Close read packet:\n" << data);
 	}
 	catch( Usb::Timeout &to ) {
-	//	// do nothing on timeouts
+		// do nothing on timeouts
 		ddout("IPModem:: Close Read Timeout");
 	}
 	// stop the read thread
