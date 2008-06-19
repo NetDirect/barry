@@ -5,6 +5,7 @@ Release: version 0.13 - 2008/06/??
 	- applied Andy Herkey's ipmodem password patch, round 2
 	- cleaning up some rough edges to the ipmodem patches:
 		- removed commented out code in pppob.cc
+		- added BXLOCAL to private member SendPasword()
 2008/06/06
 	- added timeout argument to Device::BulkDrain()
 	- added mozilla's sha1 code from git
