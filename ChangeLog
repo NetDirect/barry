@@ -1,5 +1,7 @@
 Release: version 0.13 - 2008/06/??
 ------------------------------------------------------------------------------
+2008/06/21
+	- added beginnings of a build system test script
 2008/06/20
 	- updated modem web documentation page with Sprint option, as
 		well as listing some network security concerns
