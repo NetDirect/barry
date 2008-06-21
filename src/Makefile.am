@@ -95,6 +95,7 @@ include_barry_HEADERS = barry.h \
 	usbwrap.h \
 	version.h \
 	pppfilter.h \
+	sha1.h \
 	s11n-boost.h
 
 
@@ -140,7 +141,6 @@ libbarry_la_LDFLAGS = -version-info ${LIB_BARRY_VERSION}
 
 noinst_HEADERS = cbarry.h \
 	record-internal.h \
-	sha1.h \
 	strnlen.h
 
 EXTRA_DIST = convo.awk \
