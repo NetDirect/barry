@@ -145,8 +145,7 @@ noinst_HEADERS = cbarry.h \
 
 EXTRA_DIST = convo.awk \
 	Doxyfile \
-	legal.txt \
-	Makefile.orig
+	legal.txt
 
 ##if DO_TEST
 ##	bin_PROGRAMS += test-base64 test-data test-time
