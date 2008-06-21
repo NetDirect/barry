@@ -29,6 +29,7 @@ for you.  Currently there are scripts available for the following
 providers:
 <ul>
 	<li> Rogers </li>
+	<li> Sprint </li>
 	<li> Verizon </li>
 </ul>
 </p>
@@ -71,6 +72,24 @@ internet, run:</p>
 
 <p>Some systems may provide wrapper scripts for running pppd.  For example,
 Debian uses "pon" and "poff".</p>
+
+
+
+<div class="subHeader">Security Concerns</div>
+
+<p>Depending on your provider, you may or may not have a firewall installed
+when you connect to the internet through a tethered modem.  Keep an eye on
+your open ports, and remember that connecting to the internet this way
+may not be the same as the network you are used to.</p>
+
+<p>Also keep in mind that if your system is configured to forward packets
+and you have pppd setup to replace your current default route, and you
+are still connected to an internal network (say, via ethernet), this could
+allow outside connections to be routed to your internal network.  The
+default pppd options files installed by Barry do not use the
+<b>replacedefaultroute</b> setting for this reason.  Contact your
+network administrator for assistance on configuring your mobile
+network setups.</p>
 
 
 

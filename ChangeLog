@@ -1,5 +1,8 @@
 Release: version 0.13 - 2008/06/??
 ------------------------------------------------------------------------------
+2008/06/20
+	- updated modem web documentation page with Sprint option, as
+		well as listing some network securing concerns
 2008/06/19
 	- added modem reset workaround to web documentation page
 	- applied Andy Herkey's ipmodem password patch, round 1
