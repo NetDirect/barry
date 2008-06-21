@@ -39,7 +39,7 @@ OSYNCSOURCE="$1"
 
 if [ -z "$OSYNCSOURCE" -a -f ~/.barrytest ] ; then
 	read OSYNCROOTDIR < ~/.barrytest
-elif [ -n "$OSYNCSOURCE" ] ; then 
+elif [ -n "$OSYNCSOURCE" ] ; then
 	echo "Extracting opensync sources and building..."
 	(cd build && tar xjf "$OSYNCSOURCE" && \
 		cd libopensync-0.22 && \
