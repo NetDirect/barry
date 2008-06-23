@@ -1,5 +1,8 @@
 Release: version 0.13 - 2008/06/??
 ------------------------------------------------------------------------------
+2008/06/23
+	- changed test/buildtest.sh so it is safe to run from outside
+		the directory that contains it
 2008/06/21
 	- added beginnings of a build system test script
 	- fixed sha1.h so it is installed by src/Makefile.am

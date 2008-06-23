@@ -21,6 +21,18 @@ if [ "$1" = "-h" ] ; then
 	exit 1
 fi
 
+#
+# Jump to directory that script is located, if necessary
+#
+
+if [ "$(dirname $0)" != "." ] ; then
+	cd "$(pwd)/$(dirname $0)"
+	echo "You ran the script outside the directory it is in."
+	echo "Changing directory to: $(pwd)"
+	echo "If this is not desired, abort now..."
+	sleep 1s
+fi
+
 if [ -d "build" ] ; then
 	echo "'build' directory already exists, exiting..."
 	exit 1
