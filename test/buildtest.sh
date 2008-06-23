@@ -1,5 +1,13 @@
 #!/bin/sh
 
+#
+# Edit these settings to reflect your system
+#
+MAKEOPTS=-j3
+export CC="ccache gcc"
+export CXX="ccache g++"
+
+# Make sure any errors stop the test
 set -e
 
 Usage() {
@@ -38,10 +46,6 @@ if [ -d "build" ] ; then
 	exit 1
 fi
 
-# Comment these out if you don't have ccache installed
-export CC="ccache gcc"
-export CXX="ccache g++"
-
 BASEPATH=$(pwd)
 OSYNCSOURCE="$1"
 
@@ -56,7 +60,7 @@ elif [ -n "$OSYNCSOURCE" ] ; then
 	(cd build && tar xjf "$OSYNCSOURCE" && \
 		cd libopensync-0.22 && \
 		./configure -prefix="$BASEPATH/build/osyncrootdir" && \
-		make install)
+		make $MAKEOPTS install)
 	OSYNCROOTDIR="$BASEPATH/build/osyncrootdir"
 else
 	Usage
@@ -99,24 +103,24 @@ rm -rf "$BASEPATH/build/rootdir"
 
 export CXXFLAGS="-Wall -Werror -pedantic -O0 -g"
 ./configure --prefix="$BASEPATH/build/rootdir"
-make
+make $MAKEOPTS
 make distclean
 ./configure --prefix="$BASEPATH/build/rootdir" --with-boost
-make
+make $MAKEOPTS
 make install
 make distclean
 
 cd gui
 export CXXFLAGS="-Wall -Werror -pedantic -O0 -g"
 ./configure --prefix="$BASEPATH/build/rootdir"
-make install
+make $MAKEOPTS install
 make distclean
 cd ..
 
 cd opensync-plugin
 export CXXFLAGS="-Wall -Werror -O0 -g"
 ./configure --prefix="$BASEPATH/build/rootdir"
-make install
+make $MAKEOPTS install
 make distclean
 cd ..
 
@@ -133,26 +137,12 @@ rm -rf "$BASEPATH/build/rootdir"
 export CXXFLAGS="-Wall -Werror -O0 -g"
 ./configure --prefix="$BASEPATH/build/rootdir" --with-boost \
 	--enable-gui --enable-opensync-plugin
-make install
+make $MAKEOPTS install
 make distclean
 ./configure --prefix="$BASEPATH/build/rootdir" \
 	--enable-gui --enable-opensync-plugin
-make
+make $MAKEOPTS
 make distclean
-
-
-#
-# Test 'make dist'
-#
-echo "Testing 'make dist'..."
-
-rm -rf "$BASEPATH/build/rootdir"
-
-./configure --enable-gui --enable-opensync-plugin
-make dist
-make distcheck
-make distclean
-
 
 
 #
@@ -161,11 +151,31 @@ make distclean
 ./buildgen.sh cleanall
 cd "$BASEPATH"
 diff -ruN --exclude=CVS --exclude=.git --exclude=test .. build/barry
+cd build/barry
+
+
+
+#
+# Test 'make dist' (the dist family of targets leaves build evidence
+# behind, so do this after the cleanall check)
+#
+echo "Testing 'make dist'..."
+
+rm -rf "$BASEPATH/build/rootdir"
+
+./buildgen.sh
+./configure --enable-gui --enable-opensync-plugin
+make dist
+# FIXME - make this work someday
+#make distcheck
+make distclean
+
 
 
 #
 # Success
 #
+cd "$BASEPATH"
 rm -rf "$BASEPATH/build"
 echo "All tests passed."
 

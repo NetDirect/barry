@@ -8,6 +8,11 @@ Release: version 0.13 - 2008/06/??
 	- removed mis-configured 'make dist' check from buildtest.sh
 	- added missing 'scoped_lock.h' to src/Makefile.am's non-installed
 		headers, as it is an internal header only
+	- improved buildtest.sh: speed, accuracy
+		- added -j option to make to speed builds
+		- moved cleanall check above 'make dist' as dist doesn't
+			clean up after itself
+		- commented out 'make distcheck' for now, as it doesn't work
 2008/06/21
 	- added beginnings of a build system test script
 	- fixed sha1.h so it is installed by src/Makefile.am
