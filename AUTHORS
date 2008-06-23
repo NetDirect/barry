@@ -24,6 +24,8 @@ Contributors (code and otherwise) in alphabetical order by last name:
 		- udev script updates
 		- CVS testing
 		- RPM spec files
+	David Everly <deckrider@users.sourceforge.net>
+		- inspiration for 'make distcheck' fixes
 	Ron Gage <ron@rongage.org>
 		- CVS testing
 		- reverse engineering Service Book record
