@@ -13,6 +13,11 @@ Release: version 0.13 - 2008/06/??
 		- moved cleanall check above 'make dist' as dist doesn't
 			clean up after itself
 		- commented out 'make distcheck' for now, as it doesn't work
+	- added DISTCHECK_CONFIGURE_FLAGS to root Makefile.am, similar to
+		David Everly's patch in tracker # 1973536
+		Thanks David!  'make distcheck' now works, but only in
+		an environment like buildtest.sh creates.
+		Also, buildtest.sh passes all tests now, including distcheck.
 2008/06/21
 	- added beginnings of a build system test script
 	- fixed sha1.h so it is installed by src/Makefile.am

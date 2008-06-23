@@ -166,8 +166,7 @@ rm -rf "$BASEPATH/build/rootdir"
 ./buildgen.sh
 ./configure --enable-gui --enable-opensync-plugin
 make dist
-# FIXME - make this work someday
-#make distcheck
+make distcheck
 make distclean
 
 
