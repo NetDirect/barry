@@ -5,6 +5,7 @@ Release: version 0.13 - 2008/06/??
 		the directory that contains it
 	- added note to patch webpage regarding testing patches to the
 		build system
+	- removed mis-configured 'make dist' check from buildtest.sh
 2008/06/21
 	- added beginnings of a build system test script
 	- fixed sha1.h so it is installed by src/Makefile.am

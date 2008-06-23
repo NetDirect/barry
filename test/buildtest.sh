@@ -148,11 +148,6 @@ echo "Testing 'make dist'..."
 
 rm -rf "$BASEPATH/build/rootdir"
 
-./configure
-make dist
-make distcheck
-make distclean
-
 ./configure --enable-gui --enable-opensync-plugin
 make dist
 make distcheck
