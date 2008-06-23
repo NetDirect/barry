@@ -13,6 +13,10 @@ for submission:
 <ul>
 	<li>use one patch per logical change</li>
 	<li>test all coding changes</li>
+	<ul>
+		<li>If it is a change to the build system, make sure that
+			the test/buildtest.sh script still works.</li>
+	</ul>
 	<li>include some commentary above your patch in your email</li>
 	<li>when mailing patches, try to keep one patch per email</li>
 	<li>do not cut and paste patches... either read them in
