@@ -132,6 +132,7 @@ libbarry_la_SOURCES = time.cc \
 	version.cc \
 	pppfilter.cc \
 	sha1.cc \
+	scoped_lock.h \
 	protostructs.h \
 	debug.h \
 	endian.h
