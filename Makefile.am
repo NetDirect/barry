@@ -8,9 +8,11 @@ EXTRA_DIST = COPYING ChangeLog README \
 	doc \
 	hotplug \
 	maintainer \
+	modprobe \
+	ppp \
 	rpm \
-	udev \
-	modprobe
+	test \
+	udev
 
 SUBDIRS = . src tools examples man
 # conditionally configured nested subdirectories are listed in $(subdirs)
