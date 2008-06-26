@@ -3,6 +3,7 @@ Release: version 0.13 - 2008/06/??
 2008/06/26
 	- updated udev rules to recognize devices with the 8004 Product ID
 	- fixed bug in test/buildtest.sh when opensync is not pre-built
+	- fixed more lintian warnings on Ubuntu
 2008/06/23
 	- changed test/buildtest.sh so it is safe to run from outside
 		the directory that contains it

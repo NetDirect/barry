@@ -16,8 +16,9 @@ Description: Library for using the BlackBerry handheld on Linux
 
 Package: libbarry-dbg
 Section: libs
+Priority: extra
 Architecture: any
-Depends:
+Depends: libbarry
 Description: Library for using the BlackBerry handheld on Linux
  Barry is a GPL C++ library for interfacing with the RIM BlackBerry Handheld.
  .
@@ -46,8 +47,9 @@ Description: Command line utilities for working with the RIM BlackBerry Handheld
 
 Package: barry-util-dbg
 Section: utils
+Priority: extra
 Architecture: any
-Depends: 
+Depends: barry-util
 Description: Command line utilities for working with the RIM BlackBerry Handheld
  Barry is a GPL C++ library for interfacing with the RIM BlackBerry Handheld.
  .
@@ -57,16 +59,17 @@ Package: barrybackup-gui
 Section: utils
 Architecture: any
 Depends: ${shlibs:Depends}
-Description: GTK based GUI for backing up the RIM BlackBerry Handheld
+Description: GTK+ based GUI for backing up the RIM BlackBerry Handheld
  Barry is a GPL C++ library for interfacing with the RIM BlackBerry Handheld.
  .
  This package contains a GUI application for making backups and restores.
 
 Package: barrybackup-gui-dbg
 Section: utils
+Priority: extra
 Architecture: any
-Depends: 
-Description: GTK based GUI for backing up the RIM BlackBerry Handheld
+Depends: barrybackup-gui
+Description: GTK+ based GUI for backing up the RIM BlackBerry Handheld
  Barry is a GPL C++ library for interfacing with the RIM BlackBerry Handheld.
  .
  This package contains the debug version of the backup GUI.
@@ -82,8 +85,9 @@ Description: Opensync Blackberry plugin, based on the Barry project
 
 Package: libopensync-plugin-barry-dbg
 Section: libs
+Priority: extra
 Architecture: any
-Depends: libopensync0 (>= 0.22), libopensync0 (<< 0.30)
+Depends: libopensync0 (>= 0.22), libopensync0 (<< 0.30), libopensync-plugin-barry
 Description: Opensync Blackberry plugin, based on the Barry project
  Barry is a GPL C++ library for interfacing with the RIM BlackBerry Handheld.
  .
