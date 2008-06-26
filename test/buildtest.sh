@@ -49,6 +49,8 @@ fi
 BASEPATH=$(pwd)
 OSYNCSOURCE="$1"
 
+mkdir -p build
+
 #
 # First, build opensync in a local directory
 #
