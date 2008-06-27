@@ -46,7 +46,7 @@ below.</p>
 
 <div class="subHeader">If You Installed Barry From Source...</div>
 
-<b>Configuring PPPD</b>
+<p><b>Configuring PPPD</b></p>
 
 <p>Sample configurations are provided in the source tarball, and if you are
 using a binary package, they should already be installed for you under
@@ -62,7 +62,7 @@ making sure that the paths are referencing the correct files.
 </p>
 
 
-<b>Establishing a Connection</b>
+<p><b>Establishing a Connection</b></p>
 
 <p>If you named your options file "barry-rogers", then to connect to the
 internet, run:</p>
