@@ -5,6 +5,7 @@ Release: version 0.13 - 2008/06/??
 	- fixed bug in test/buildtest.sh when opensync is not pre-built
 	- fixed more lintian warnings on Ubuntu
 	- fixed tiny subheadings in modem web document
+	- added syncing howto web document
 2008/06/23
 	- changed test/buildtest.sh so it is safe to run from outside
 		the directory that contains it
