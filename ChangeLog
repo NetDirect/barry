@@ -8,6 +8,8 @@ Release: version 0.13 - 2008/06/??
 	- added syncing howto web document
 	- updated TODO list, adding Troubleshooting item, and morphing
 		the modem item into the RPC daemon item
+	- moved old doc/TroubleShooting.txt document to web, and updated
+		it in the process
 2008/06/23
 	- changed test/buildtest.sh so it is safe to run from outside
 		the directory that contains it
