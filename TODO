@@ -7,7 +7,16 @@ please ask on the mailing list as well.
 
 - Chris
 <cdfrey@foursquare.net>
-December 2007
+June 2008
+
+
+
+Flesh out the Troubleshooting web doc
+-------------------------------------
+Every stumbling block that users run into should either be fixed
+in the code or binary package, or documented in a Troubleshooting
+document.  This troubleshooting document is already started, but
+contributions are welcome from all users!
 
 
 
@@ -86,19 +95,9 @@ Estimated time: open ended
 
 
 
-Adding GPRS / CDMA modem support
---------------------------------
-Barry has had plans to include modem support for a few months now, but
-it has not yet percolated to the surface.
-
-The primary source for modem protocol specifics is the XmBlackBerry
-project (http://sourceforge.net/projects/XmBlackBerry).  Barry's
-goal is to create a standalone pppob utility that can be configured
-with pppd similarly to pppoe.
-
-The tricky part of modem support is that it requires threading support,
-especially if you intend to use the database at the same time.
-This leads to some architectural challenges that need to be dealt with:
+Multi-program Database and Modem Access
+---------------------------------------
+The architectural challenge:
 
 	As Barry is not a single application, how do you access the
 	database while pppob is using the modem?
@@ -115,33 +114,14 @@ needs.  For example, one application may register an interest in
 database messages, another in javaloader messages, and another in the
 multiple modem socket messages.
 
-There is currently a development branch in CVS that intends to support
-optional threading support in the Barry library, so that at least
-it should be possible to use both the database and the modem in the
-same application.
-
-Estimated tasks (assuming threading support is finished):
-	- copy protocol specifics from XmBlackBerry
-	- add Serial class for controller interface
-	- write and test pppob
-	- write pppob manpage
-Estimated time: 8 hours
-
-
-
-Finish the threaded architecture changes in CVS branch
-------------------------------------------------------
-For the reasons outlined above, for modem support, this CVS branch
-needs to be finished.  For more information, contact the mailing list.
+There is currently no support for this RPC daemon, but threading
+support already exists.
 
 Estimated tasks:
-	- write SocketRouting code
-	- refactor the controller class into RAII behaving
-		mode classes, such as Desktop, Serial, and
-		Javaloader, that operate on top of Controller
-	- testing threaded and non-threaded behaviour
-	- testing performance impact
-Estimated time: 20 hours
+	- design suitable RPC system
+	- implement support in the Barry library so it works
+		with and without a daemon, using the same API
+Estimated time: open ended
 
 
 
