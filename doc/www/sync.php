@@ -200,8 +200,14 @@ command:</p>
 
 <p><b>If OpenSync hangs...</b></p>
 
-<p>Opensync supports a detailed level of logging.  If you set the
-environment variable <b>OSYNC_TRACE</b> to the path of an empty
+<p>If the hang lasts only for about 30 seconds, then it is likely the
+USB conversation that is timing out.  Enable the <b>DebugMode</b>
+keyword in the Barry plugin configuration above, and send the last
+few screens of output to the
+<?createLink("contact", "mailing list"); ?>.</p>
+
+<p>Otherwise, Opensync supports a detailed level of logging.  If you set
+the environment variable <b>OSYNC_TRACE</b> to the path of an empty
 directory, Opensync will write detailed logs for every thread
 used during the syncing process.  These logs quickly get out of
 hand, so delete them before each test run.</p>
