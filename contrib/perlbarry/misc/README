@@ -14,13 +14,12 @@ reipd:         reconstructs an .ipd file to <BASENAME>.ipd2. Argument to
 backup:        backs up each DB in phone, or each DB given on command line,
                to file <DB>/<RECORD> (in binary format). data is same as
                barrybackup data, but with a 15 byte header (and not
-               tar-gzipped). REQUIRES patched btool.
+               tar-gzipped).
 
 convert-dumps: converts "btool -n -d <DBNAME>" output, or .dump files from
                "dump-simple", into individual binary files.
 
 dump-simple:   backs up each DB in phone to file <DB>.dump
-               REQUIRES patched btool.
 
 split-jpeg:    takes resulting files of "convert-dumps Content_Store" and
                outputs any jpeg files into current directory, as well as
