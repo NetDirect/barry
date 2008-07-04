@@ -219,7 +219,7 @@ public:
 	}
 };
 
-auto_ptr<Parser> GetParser(const string &name, const string &filename, const bool &null_parser)
+auto_ptr<Parser> GetParser(const string &name, const string &filename, bool null_parser)
 {
 	if( null_parser ) {
 		// use null parser
