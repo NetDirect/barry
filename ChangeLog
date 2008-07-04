@@ -14,6 +14,7 @@ Release: version 0.13 - 2008/07/??
 		- now that btool patch is applied, don't need it in contrib
 	- removed openssl from dependencies documentation, as barry now
 		has its own sha1 code
+	- added libtool to dependencies documentation
 2008/06/26
 	- updated udev rules to recognize devices with the 8004 Product ID
 	- fixed bug in test/buildtest.sh when opensync is not pre-built

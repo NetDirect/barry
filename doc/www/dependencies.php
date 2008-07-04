@@ -42,6 +42,7 @@ some are only needed for building CVS.
 	<li><b>boost</b> version 1.33 or higher (optional, needed for the serialization library, which you need if you want to save downloads for later uploads to the device, using btool) <a href="http://www.boost.org/">http://www.boost.org</a></li>
 	<li><b>automake</b> version 1.9 (CVS builds only) </li>
 	<li><b>autoconf</b> version 2.61 (CVS builds only) </li>
+	<li><b>libtool</b> version 1.5.22 (CVS builds only) </li>
 	<li><b>doxygen</b> suggested version 1.4.5, only for building API documentation</li>
 	<li><b>gtkmm, glademm, glibmm</b> C++ versions of the GTK libraries (needed for the barrybackup GUI)</li>
 	<li><b>libtar</b> (barrybackup GUI) </li>
