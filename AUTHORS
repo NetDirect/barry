@@ -56,6 +56,8 @@ Contributors (code and otherwise) in alphabetical order by last name:
 	Jason Thomas <jason@debian.org>
 		- autoconf / build system patch
 		- debian package patch
+	Ashley Willis <barry@venamous.net>
+		- btool null parser patch
 	Niels de Vos <nixpanic@users.sourceforge.net>
 		- debian package patches
 
