@@ -38,6 +38,14 @@ usefulness.  For example, it is possible to:
 	<li>Download source and binary packages from
 		<a href="http://sourceforge.net/project/showfiles.php?group_id=153722">Sourceforge</a></li>
 	<li>General <a href="http://sourceforge.net/projects/barry/">Sourceforge project page</a></li>
+	<li>Known Issues:
+	<ul>
+		<li>Restoring backups for some databases on newer Blackberries doesn't work (for example, on the 8120, 8700g)</li>
+		<li>Syncing is not supported on Fedora Core 9, since they packaged the OpenSync 0.3x devel tree</li>
+		<li>Password support when using Blackberry as modem is experimental</li>
+		<li>Accessing the database (such as during a backup) while copying files using usb_storage may cause some Blackberries to spontaneously reboot</li>
+	</ul>
+	</li>
 </ul>
 </p>
 
