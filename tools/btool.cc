@@ -74,6 +74,7 @@ void Usage()
    << "                Map: ldif,read,write - maps ldif to read/write Contact fields\n"
    << "                Unmap: ldif name alone\n"
    << "   -M        List current LDIF mapping\n"
+   << "   -n        Use null parser on all databases.\n"
    << "   -p pin    PIN of device to talk with\n"
    << "             If only one device is plugged in, this flag is optional\n"
    << "   -P pass   Simplistic method to specify device password\n"
@@ -218,10 +219,14 @@ public:
 	}
 };
 
-auto_ptr<Parser> GetParser(const string &name, const string &filename)
+auto_ptr<Parser> GetParser(const string &name, const string &filename, const bool &null_parser)
 {
+	if( null_parser ) {
+		// use null parser
+		return auto_ptr<Parser>( new DataDumpParser );
+	}
 	// check for recognized database names
-	if( name == Contact::GetDBName() ) {
+	else if( name == Contact::GetDBName() ) {
 		return auto_ptr<Parser>(
 			new RecordParser<Contact, Store<Contact> > (
 				new Store<Contact>(filename, false)));
@@ -424,7 +429,8 @@ int main(int argc, char *argv[])
 			list_ldif_map = false,
 			epp_override = false,
 			threaded_sockets = true,
-			record_state = false;
+			record_state = false,
+			null_parser = false;
 		string ldifBaseDN, ldifDnAttr;
 		string filename;
 		string password;
@@ -436,7 +442,7 @@ int main(int argc, char *argv[])
 
 		// process command line options
 		for(;;) {
-			int cmd = getopt(argc, argv, "B:c:C:d:D:e:f:hlLm:MN:p:P:r:R:Ss:tT:vXzZ");
+			int cmd = getopt(argc, argv, "B:c:C:d:D:e:f:hlLm:MnN:p:P:r:R:Ss:tT:vXzZ");
 			if( cmd == -1 )
 				break;
 
@@ -495,6 +501,10 @@ int main(int argc, char *argv[])
 
 			case 'M':	// List LDIF map
 				list_ldif_map = true;
+				break;
+
+			case 'n':	// use null parser
+				null_parser = true;
 				break;
 
 			case 'N':	// Devname
@@ -742,7 +752,7 @@ int main(int argc, char *argv[])
 
 			desktop.Open(password.c_str());
 			unsigned int id = desktop.GetDBID(dbNames[0]);
-			auto_ptr<Parser> parse = GetParser(dbNames[0],filename);
+			auto_ptr<Parser> parse = GetParser(dbNames[0],filename,null_parser);
 
 			for( unsigned int i = 0; i < stCommands.size(); i++ ) {
 				desktop.GetRecord(id, stCommands[i].index, *parse.get());
@@ -768,7 +778,7 @@ int main(int argc, char *argv[])
 
 			desktop.Open(password.c_str());
 			for( ; b != dbNames.end(); b++ ) {
-				auto_ptr<Parser> parse = GetParser(*b,filename);
+				auto_ptr<Parser> parse = GetParser(*b,filename,null_parser);
 				unsigned int id = desktop.GetDBID(*b);
 				desktop.LoadDatabase(id, *parse.get());
 			}

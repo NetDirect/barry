@@ -4,6 +4,8 @@ Release: version 0.13 - 2008/07/??
 	- added "known issues" section to main www doc page
 	- fixed virtual function mis-name bug in btool's null parser
 	- added -i option to brecsum, to include record IDs in the sums
+	- applied Ashley Willis's btool 0.12 null parser patch to CVS, which 
+		required some manual porting changes...
 2008/06/26
 	- updated udev rules to recognize devices with the 8004 Product ID
 	- fixed bug in test/buildtest.sh when opensync is not pre-built
