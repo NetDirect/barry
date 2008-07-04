@@ -38,7 +38,6 @@ some are only needed for building CVS.
 	<li><b>C and C++ compilers</b> - 4.1.x or higher, for the tr1 includes (source build)</li>
 	<li><b>pkg-config</b> (source build: so configure can autodetect library locations) </li>
 	<li><b>libusb, stable (0.1.x)</b> - found at <a href="http://libusb.sourceforge.net">http://libusb.sourceforge.net/</a> </li>
-	<li><b>openssl</b> (needed for password hashing) - found at <a href="http://www.openssl.org/">http://www.openssl.org/</a></li>
 	<li><b>pthread</b>
 	<li><b>boost</b> version 1.33 or higher (optional, needed for the serialization library, which you need if you want to save downloads for later uploads to the device, using btool) <a href="http://www.boost.org/">http://www.boost.org</a></li>
 	<li><b>automake</b> version 1.9 (CVS builds only) </li>
@@ -93,7 +92,6 @@ distributions should have similar package names.
 <ul>
 	<li> pkgconfig </li>
 	<li> libusb-devel </li>
-	<li> openssl-devel </li>
 	<li> boost-devel (optional) </li>
 	<li> libtar (libtar-devel on Fedora 6) </li>
 	<li> gtkmm24-devel </li>
