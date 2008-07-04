@@ -205,9 +205,9 @@ class DataDumpParser : public Barry::Parser
 	uint32_t m_id;
 
 public:
-	virtual void SetUniqueId(uint32_t id)
+	virtual void SetIds(uint8_t RecType, uint32_t UniqueId)
 	{
-		m_id = id;
+		m_id = UniqueId;
 	}
 
 	virtual void ParseFields(const Barry::Data &data, size_t &offset)
