@@ -43,6 +43,7 @@ void Usage()
    << "   -d db     Read database 'db' and sum all its records.\n"
    << "             Can be used multiple times to fetch more than one DB\n"
    << "   -h        This help\n"
+   << "   -i        Include Type and Unique record IDs in the checksums\n"
    << "   -p pin    PIN of device to talk with\n"
    << "             If only one device is plugged in, this flag is optional\n"
    << "   -P pass   Simplistic method to specify device password\n"
@@ -52,11 +53,37 @@ void Usage()
 
 class ChecksumParser : public Barry::Parser
 {
+	bool m_IncludeIds;
+	SHA_CTX m_ctx;
+
 public:
+	explicit ChecksumParser(bool IncludeIds)
+		: m_IncludeIds(IncludeIds)
+	{}
+
+	virtual void Clear()
+	{
+		SHA1_Init(&m_ctx);
+	}
+
+	virtual void SetIds(uint8_t RecType, uint32_t UniqueId)
+	{
+		if( m_IncludeIds ) {
+			SHA1_Update(&m_ctx, &RecType, sizeof(RecType));
+			SHA1_Update(&m_ctx, &UniqueId, sizeof(UniqueId));
+		}
+	}
 	virtual void ParseFields(const Barry::Data &data, size_t &offset)
 	{
+		int len = data.GetSize() - offset;
+		SHA1_Update(&m_ctx, data.GetData() + offset, len);
+		offset += len;
+	}
+
+	virtual void Store()
+	{
 		unsigned char sha1[SHA_DIGEST_LENGTH];
-		SHA1(data.GetData() + offset, data.GetSize() - offset, sha1);
+		SHA1_Final(sha1, &m_ctx);
 
 		for( int i = 0; i < SHA_DIGEST_LENGTH; i++ ) {
 			cout << hex << setfill('0') << setw(2)
@@ -75,13 +102,14 @@ int main(int argc, char *argv[])
 
 		uint32_t pin = 0;
 		bool
-			data_dump = false;
+			data_dump = false,
+			include_ids = false;
 		string password;
 		vector<string> dbNames;
 
 		// process command line options
 		for(;;) {
-			int cmd = getopt(argc, argv, "d:hp:P:v");
+			int cmd = getopt(argc, argv, "d:hip:P:v");
 			if( cmd == -1 )
 				break;
 
@@ -89,6 +117,10 @@ int main(int argc, char *argv[])
 			{
 			case 'd':	// show dbname
 				dbNames.push_back(string(optarg));
+				break;
+
+			case 'i':	// Include IDs
+				include_ids = true;
 				break;
 
 			case 'p':	// Blackberry PIN
@@ -135,7 +167,7 @@ int main(int argc, char *argv[])
 		// Sum all specified databases
 		if( dbNames.size() ) {
 			vector<string>::iterator b = dbNames.begin();
-			ChecksumParser parser;
+			ChecksumParser parser(include_ids);
 
 			desktop.Open(password.c_str());
 			for( ; b != dbNames.end(); b++ ) {
