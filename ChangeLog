@@ -8,6 +8,8 @@ Release: version 0.13 - 2008/07/??
 		required some manual porting changes...
 		- removed bool reference argument in GetParser()
 	- updated AUTHORS
+	- applied Ashley Willis's perlbarry package, putting it in the
+		new contrib/ directory
 2008/06/26
 	- updated udev rules to recognize devices with the 8004 Product ID
 	- fixed bug in test/buildtest.sh when opensync is not pre-built

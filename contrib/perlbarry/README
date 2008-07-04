@@ -1,0 +1,23 @@
+HOMEPAGE: http://www.venamous.net/perlprogs/
+
+These are the three most useful programs. See misc/ for more.
+All development and testing done with barry-0.12.
+
+NOTE: btool must be patched for this to work properly. In the parent
+directory of btool-0.12, do "patch -p 0 < [PATH_TO]/btool.patch".
+
+##################
+
+ipd2tgz:       converts file <BASENAME>.ipd to <BASENAME>.tar.gz, in the
+               format of barrybackup.
+
+barrybkup:     backs up each DB in phone, or each DB given on command line,
+               to file ~/.barry/backup/<PIN>/<PIN>-<DATE>-<TIME>.tar.gz
+               (identical output as the barrybackup GUI). Useful for
+               automating backups which can be restored with the GUI
+               barrybackup. REQUIRES patched btool.
+               TODO: get list from ~/.barry/backup/<PIN>/config
+
+bimages:       downloads all JPEG files in 'Content Store' to current
+               directory. 
+               TODO: option to delete images from phone after downloading.

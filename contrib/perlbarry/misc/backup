@@ -1,0 +1,81 @@
+#!/usr/bin/perl
+
+# backup version 0.1
+
+# Copyright (C) 2008, ashley willis <barry@venamous.net>
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+# or FITNESS FOR A PARTICULAR PURPOSE.
+# 
+# See the GNU General Public License in the COPYING file at the
+# root directory of this project for more details.
+
+# backs up each DB in phone, or each DB given on command line, to file
+# <DB>/<RECORD> (in binary format). data is same as barrybackup data, but
+# with a 15 byte header (and not tar-gzipped).
+
+`bcharge`;		# inits phone
+
+if (@ARGV) {
+  @list = @ARGV;
+  $arg = 1;
+}
+else {
+  @list = `btool -t`;	# gets list of databases
+}
+$i = 0;
+#print "@list\n";
+
+foreach (@list) {
+  if ($arg) {
+    $found = 1;
+    $db[$i] = $_;
+  }
+  elsif (s/    Database: 0x[\da-f][\da-f]? '//) {
+    $found = 1;
+    ($db[$i], $records[$i]) = split(/' \(records: /);
+    $records[$i] =~ s/\)$//;
+  }
+  else {
+    $found = 0;
+  }
+  if ($found) {
+    print "### $i $db[$i] ###\n";
+    $hex = `btool -n -d "$db[$i]"`;
+    #print "### CONVERTING ###\n";
+    convert($hex);
+    #print "### DONE ###\n";
+    $i++;
+  }
+  
+}
+print "count=$i\n";
+
+sub convert() {
+  $file = $db[$i];
+  mkdir($file);
+  $record = 0;
+  @hex = split(/\n/, $_[0]);
+  foreach (@hex) {
+    if (s/^Raw record dump for record: //) {
+      chomp;
+      ($record) and close (OUT);
+      $record++;
+      open(OUT, ">$file/$record");
+    }
+    if (/^    0/) {
+      s/^    0[\da-f]{7}: //;
+      s/  .*$//;
+      s/ //g;
+      $out = pack("H*", $_);
+      print OUT $out;
+    }
+  }
+  close(OUT);
+}

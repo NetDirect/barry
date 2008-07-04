@@ -1,0 +1,6 @@
+GENERAL:   * add an option to change output of btool so we don't have to
+             convert the hex to binary in perl.
+
+bimages:   * add an option to delete images from phone after downloading.
+
+barrybkup: * get DB list from ~/.barry/backup/<PIN>/config
