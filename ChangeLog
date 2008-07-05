@@ -2,6 +2,7 @@ Release: version 0.13 - 2008/07/??
 ------------------------------------------------------------------------------
 2008/07/05
 	- removed old, unused spec file and scripts for bcharge-only release
+	- fixed rpm build instructions in web docs
 2008/07/04
 	- added "known issues" section to main www doc page
 	- fixed virtual function mis-name bug in btool's null parser

@@ -204,9 +204,9 @@ steps for building RPMs from CVS:</p>
 	$ cvs ... co barry
 	$ cd barry
 	$ ./buildgen.sh
-	$ ./configure
+	$ ./configure --enable-gui --enable-opensync-plugin
 	$ make dist
-	$ rpmbuild -tb barry-0.12.tar.gz --with gui --with opensync
+	$ rpmbuild -tb barry-0.12.tar.gz
 
 	I prefer running rpmbuild from the tarball as it's typically the way
 	non-developers would build them.  I have ~/.rpmmacros setting %_topdir
