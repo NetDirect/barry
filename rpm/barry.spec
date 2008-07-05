@@ -1,23 +1,14 @@
-## pass in '--with gui' to build the GUI tools
-# ex.: rpmbuild -ba barry.spec --with gui
-#
-## pass in '--with opensync' to build the opensync plugin
-# ex.: rpmbuild -ba barry.spec --with opensync
+# always build with GUI
+%define with_gui 1
 
-#
-# When building on SuSE, remove the "-devel" on the following packages:
-#   libusb-devel
-#   gtkmm24-devel
-#
-# SuSE also seems to name libglademm24 differently:
-#   libglademm
-#
+# Fedora 9 doesn't support opensync 0.22
+%if 0%{?fc9}
+	%define with_opensync 0
+%else
+	%define with_opensync 1
+%endif
 
-# newer bcond_with() macros are not available on RHEL4/CentOS4 and below
-%{?_with_gui: %define with_gui 1}
-%{!?_with_gui: %define with_gui 0}
-%{?_with_opensync: %define with_opensync 1}
-%{!?_with_opensync: %define with_opensync 0}
+
 
 Summary: BlackBerry(tm) Desktop for Linux
 Name: barry
@@ -29,7 +20,12 @@ Source: %{name}-%{version}.tar.bz2
 URL: http://www.netdirect.ca/downloads/barry
 Vendor: Net Direct Inc.
 BuildRoot: %{_tmppath}/%{name}-%{release}-%{version}-root
+
+%if 0%{?suse_version}
+BuildRequires: libusb, gcc-c++, pkgconfig, boost-devel
+%else
 BuildRequires: libusb-devel, gcc-c++, pkgconfig, boost-devel
+%endif
 
 %define barryroot %{_builddir}/%{name}-%{version}
 
@@ -55,7 +51,11 @@ likely want to also install barry-util and barry-gui.
 %package -n libbarry-devel
 Summary: BlackBerry(tm) Desktop for Linux - libbarry libraries
 Group: Development/Libraries
+%if 0%{?suse_version}
+Requires: libbarry libusb boost-devel
+%else
 Requires: libbarry libusb-devel boost-devel
+%endif
 
 %description -n libbarry-devel
 Barry is a desktop toolset for managing your BlackBerry(tm) device. (BlackBerry
@@ -83,8 +83,13 @@ to access the data on the device in many ways.
 %package gui
 Summary: BlackBerry(tm) Desktop for Linux - bcharge, btool, breset and others
 Group: Applications/Productivity
+%if 0%{?suse_version}
+Requires: libbarry gtkmm2 libglademm libtar
+BuildRequires: gtkmm2-devel libglademm-devel libtar-devel
+%else
 Requires: libbarry gtkmm24 libglademm24 libtar
 BuildRequires: gtkmm24-devel libglademm24-devel libtar-devel
+%endif
 
 %description gui
 Barry is a desktop toolset for managing your BlackBerry(tm) device. (BlackBerry
@@ -242,6 +247,7 @@ cd ../
 - added brecsum
 - added ppp options and chat scripts
 - added manpages for pppob, brecsum, breset, upldif, barrybackup
+- spec file now assumes gui and opensync, with conditional checks depending on host
 
 * Fri Dec 07 2007 Chris Frey <cdfrey@foursquare.net> 0.12-1
 - version bump

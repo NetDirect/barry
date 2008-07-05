@@ -15,6 +15,9 @@ Release: version 0.13 - 2008/07/??
 	- removed openssl from dependencies documentation, as barry now
 		has its own sha1 code
 	- added libtool to dependencies documentation
+	- rpm/barry.spec file now assumes gui and opensync, with conditional
+		checks depending which system it is being built on...
+		--with gui and --with opensync are no longer needed.
 2008/06/26
 	- updated udev rules to recognize devices with the 8004 Product ID
 	- fixed bug in test/buildtest.sh when opensync is not pre-built
