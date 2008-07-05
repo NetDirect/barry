@@ -453,15 +453,12 @@ SocketHandle SocketZero::Open(uint16_t socket, const char *password)
 			throw BadPassword("No password specified.", m_remainingTries, false);
 		}
 
-		// only allow password attempts if there are 6 or more
-		// tries remaining... we want to give the user at least
-		// 5 chances on a Windows machine before the device
-		// commits suicide.
-		if( m_remainingTries < 6 ) {
-			throw BadPassword("Fewer than 6 password tries "
-				"remaining in device. Refusing to proceed, "
-				"to avoid device zapping itself.  Use a "
-				"Windows client, or re-cradle the device.",
+		// only allow password attempts if there are
+		// BARRY_MIN_PASSWORD_TRIES or more tries remaining...
+		// we want to give the user at least some chance on a
+		// Windows machine before the device commits suicide.
+		if( m_remainingTries < BARRY_MIN_PASSWORD_TRIES ) {
+			throw BadPassword("Fewer than " BARRY_MIN_PASSWORD_TRIES_ASC " password tries remaining in device. Refusing to proceed, to avoid device zapping itself.  Use a Windows client, or re-cradle the device.",
 				m_remainingTries,
 				true);
 		}

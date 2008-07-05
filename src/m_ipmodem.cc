@@ -82,11 +82,8 @@ bool IpModem::SendPassword(const char *password)
 		ddout("IPModem password request packet:\n" << data);
 
 		// Check how many retries are left
-		if( data.GetData()[8] < 6 ) {
-			throw BadPassword("Fewer than 6 password tries "
-				"remaining in device. Refusing to proceed, "
-				"to avoid device zapping itself.  Use a "
-				"Windows client, or re-cradle the device.",
+		if( data.GetData()[8] < BARRY_MIN_PASSWORD_TRIES ) {
+			throw BadPassword("Fewer than " BARRY_MIN_PASSWORD_TRIES_ASC " password tries remaining in device. Refusing to proceed, to avoid device zapping itself.  Use a Windows client, or re-cradle the device.",
 				data.GetData()[8],
 				true);
 		}

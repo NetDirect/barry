@@ -34,6 +34,11 @@
 #define BLACKBERRY_CONFIGURATION	1
 #define BLACKBERRY_DB_CLASS		0xff
 
+// minimum number of password tries remaining at which Barry gives up
+// for safety
+#define BARRY_MIN_PASSWORD_TRIES	3
+#define BARRY_MIN_PASSWORD_TRIES_ASC	"3"
+
 namespace Barry {
 
 /// See also the LogLock class.

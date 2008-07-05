@@ -53,8 +53,8 @@ public:
 ///	- device rejected the available password
 ///	- too few remaining tries left... Barry will refuse to keep
 ///		trying passwords if there are fewer than
-///		6 tries remaining.  In this case, out_of_tries()
-///		will return true.
+///		BARRY_MIN_PASSWORD_TRIES tries remaining.  In this case,
+///		out_of_tries() will return true.
 ///		
 ///
 class BXEXPORT BadPassword : public Barry::Error
