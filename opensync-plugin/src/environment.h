@@ -82,6 +82,7 @@ public:
 	std::string m_ConfigData;
 	uint32_t m_pin;
 	bool m_DebugMode;
+	std::string m_password;
 
 	// device communication
 	Barry::ProbeResult m_ProbeResult;

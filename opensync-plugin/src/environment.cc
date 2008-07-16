@@ -174,6 +174,7 @@ BarryEnvironment::BarryEnvironment(OSyncMember *pm)
 	: member(pm),
 	m_pin(-1),
 	m_DebugMode(false),
+	m_password(""),
 	m_pCon(0),
 	m_pDesktop(0),
 	m_CalendarSync(pm, "calendar"),
@@ -192,7 +193,7 @@ void BarryEnvironment::DoConnect()
 	// Create controller
 	m_pCon = new Barry::Controller(m_ProbeResult);
 	m_pDesktop = new Barry::Mode::Desktop(*m_pCon);
-	m_pDesktop->Open();
+	m_pDesktop->Open(m_password.c_str());
 
 	// Save the DBIDs and DBNames of the databases we will work with
 	m_CalendarSync.m_dbName = Barry::Calendar::GetDBName();
@@ -337,6 +338,10 @@ void BarryEnvironment::ParseConfig(const char *data, int size)
 				m_ContactsSync.m_Sync = true;
 				trace.log("contacts syncing enabled");
 			}
+		}
+		else if ( key == "Password" ) {
+			ils >> m_password;
+			trace.log("using password from config file");
 		}
 	}
 }
