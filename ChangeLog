@@ -5,6 +5,7 @@ Release: version 0.13 - 2008/07/??
 		manually to latest upcoming 0.13)
 	- updated AUTHORS
 	- added password documentation to sample barry-sync module config
+	- updated web docs with new password sample config
 2008/07/05
 	- removed old, unused spec file and scripts for bcharge-only release
 	- fixed rpm build instructions in web docs

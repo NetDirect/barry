@@ -108,10 +108,14 @@ that comes with Barry is shown below:</p>
 	#      sync calendar - 1 to sync calendar, 0 to skip
 	#      sync contacts - 1 to sync contacts, 0 to skip
 	#
+	# Password secret  - If present, specifies the device's password in plaintext
+	#
 
 	#DebugMode
 
 	Device 3009efe3 1 1
+
+	#Password secret
 </pre>
 
 <p>Edit the device's PIN number, and save.  You're now ready to run your
