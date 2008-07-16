@@ -36,6 +36,8 @@ Contributors (code and otherwise) in alphabetical order by last name:
 		- big endian testing and patches
 	Duncan Mak
 		- modern udev updates
+	David Mansfield <barry@dm.cobite.com>
+		- opensync password patch
 	Peter McAlpine <peter@aoeu.ca>
 		- autoconf patches
 	Alan Miller <Alan.Miller@synopsys.com>
