@@ -4,6 +4,7 @@ Release: version 0.13 - 2008/07/??
 	- applied David Mansfield's opensync module password patch (ported
 		manually to latest upcoming 0.13)
 	- updated AUTHORS
+	- added password documentation to sample barry-sync module config
 2008/07/05
 	- removed old, unused spec file and scripts for bcharge-only release
 	- fixed rpm build instructions in web docs
