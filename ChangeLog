@@ -1,5 +1,7 @@
 Release: version 0.13 - 2008/07/??
 ------------------------------------------------------------------------------
+2008/07/24
+	- added g++ (>= 4.1) to Debian build dependency list
 2008/07/16
 	- applied David Mansfield's opensync module password patch (ported
 		manually to latest upcoming 0.13)
