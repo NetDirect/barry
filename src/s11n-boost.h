@@ -65,7 +65,7 @@ void serialize(ArchiveT &ar, Barry::Contact &c, const unsigned int ver)
 	ar & make_nvp("RecType", c.RecType);
 	ar & make_nvp("RecordId", c.RecordId);
 
-	ar & make_nvp("Email", c.Email);
+	ar & make_nvp("EmailAddresses", c.EmailAddresses);
 	ar & make_nvp("Phone", c.Phone);
 	ar & make_nvp("Fax", c.Fax);
 	ar & make_nvp("WorkPhone", c.WorkPhone);

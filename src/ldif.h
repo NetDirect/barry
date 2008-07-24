@@ -119,6 +119,9 @@ protected:
 	void DoWrite(Barry::Contact &con, const std::string &attr,
 		const std::string &data);
 
+	// Array getter state
+	mutable unsigned int m_emailIndex;
+
 	// name heuristics
 	std::string m_cn, m_displayName, m_sn, m_givenName;
 
@@ -176,6 +179,13 @@ public:
 	virtual std::string PostalAddress(const Barry::Contact &con) const;
 	virtual std::string FullName(const Barry::Contact &con) const;
 	virtual std::string FQDN(const Barry::Contact &con) const;
+
+	//
+	// Array modifier functions for above Access functions
+	//
+
+	virtual bool IsArrayFunc(GetFunctionType getf) const;
+	void ClearArrayState() const;
 
 	//
 	// Write functions

@@ -38,7 +38,14 @@ void ReadInput(Barry::Contact &contact)
 	ReadLine("First Name", contact.FirstName);
 	ReadLine("Last Name", contact.LastName);
 	ReadLine("Job Title", contact.JobTitle);
-	ReadLine("Email Address", contact.Email);
+
+	string email;
+	do {
+		ReadLine("Email Address (blank to end)", email);
+		if( email.size() )
+			contact.EmailAddresses.push_back(email);
+	} while( email.size() );
+
 	ReadLine("Main Phone Number", contact.Phone);
 	ReadLine("Home Phone Number", contact.HomePhone);
 	ReadLine("Work Phone Number", contact.WorkPhone);

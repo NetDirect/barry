@@ -280,7 +280,7 @@ bool ContactLdif::SetObjectOrder(const LdifAttribute &name, int order)
 
 std::string ContactLdif::Email(const Barry::Contact &con) const
 {
-	return con.Email;
+	return con.GetEmail(m_emailIndex++);
 }
 
 std::string ContactLdif::Phone(const Barry::Contact &con) const
@@ -416,9 +416,22 @@ std::string ContactLdif::FQDN(const Barry::Contact &con) const
 	return FQDN;
 }
 
+bool ContactLdif::IsArrayFunc(GetFunctionType getf) const
+{
+	// Currently, only the Email getter has array data
+	if( getf == &ContactLdif::Email )
+		return true;
+	return false;
+}
+
+void ContactLdif::ClearArrayState() const
+{
+	m_emailIndex = 0;
+}
+
 void ContactLdif::SetEmail(Barry::Contact &con, const std::string &val) const
 {
-	con.Email = val;
+	con.EmailAddresses.push_back(val);
 }
 
 void ContactLdif::SetPhone(Barry::Contact &con, const std::string &val) const
@@ -603,6 +616,10 @@ bool ContactLdif::RunHeuristics(Barry::Contact &con)
 void ContactLdif::DumpLdif(std::ostream &os,
 		       const Barry::Contact &con) const
 {
+	// start fresh
+	ClearArrayState();
+
+	// setup stream state
 	std::ios::fmtflags oldflags = os.setf(std::ios::left);
 	char fill = os.fill(' ');
 
@@ -618,12 +635,16 @@ void ContactLdif::DumpLdif(std::ostream &os,
 		++b )
 	{
 		// print only fields with data
-		const std::string field = (this->*(b->second.read))(con);
-		if( field.size() ) {
-			os << b->first.name << MakeLdifData(field) << "\n";
-			if( b->first.objectClass.size() )
-				os << "objectClass: " << b->first.objectClass << "\n";
-		}
+		std::string field;
+
+		do {
+			field = (this->*(b->second.read))(con);
+			if( field.size() ) {
+				os << b->first.name << MakeLdifData(field) << "\n";
+				if( b->first.objectClass.size() )
+					os << "objectClass: " << b->first.objectClass << "\n";
+			}
+		} while( IsArrayFunc(b->second.read) && field.size() );
 	}
 
 	os << "objectClass: inetOrgPerson\n";

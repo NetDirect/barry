@@ -94,7 +94,6 @@ namespace Barry {
 
 // Contact code to field table
 FieldLink<Contact> ContactFieldLinks[] = {
-   { CFC_EMAIL,        "Email",      "mail",0,            &Contact::Email, 0, 0 },
    { CFC_PHONE,        "Phone",      0,0,                 &Contact::Phone, 0, 0 },
    { CFC_FAX,          "Fax",        "facsimileTelephoneNumber",0, &Contact::Fax, 0, 0 },
    { CFC_WORK_PHONE,   "WorkPhone",  "telephoneNumber",0, &Contact::WorkPhone, 0, 0 },
@@ -184,6 +183,11 @@ const unsigned char* Contact::ParseField(const unsigned char *begin,
 	// if not found in the type table, check for special handling
 	switch( field->type )
 	{
+	case CFC_EMAIL: {
+		EmailAddresses.push_back( ParseFieldString(field) );
+		}
+		return begin;
+
 	case CFC_NAME: {
 		// can be used multiple times, for first/last names
 		std::string *name;
@@ -275,6 +279,14 @@ void Contact::BuildFields(Data &data, size_t &offset) const
 		BuildField(data, offset, CFC_NAME, LastName);
 	}
 
+	// add all email addresses
+	EmailList::const_iterator eai = EmailAddresses.begin();
+	for( ; eai != EmailAddresses.end(); ++eai ) {
+		if( eai->size() ) {
+			BuildField(data, offset, CFC_EMAIL, *eai);
+		}
+	}
+
 	// cycle through the type table
 	for(	FieldLink<Contact> *b = ContactFieldLinks;
 		b->type != CFC_INVALID_FIELD;
@@ -325,7 +337,7 @@ void Contact::Clear()
 {
 	RecType = Contact::GetDefaultRecType();
 
-	Email.clear();
+	EmailAddresses.clear();
 	Phone.clear();
 	Fax.clear();
 	WorkPhone.clear();
@@ -377,6 +389,20 @@ std::string Contact::GetFullName() const
 	return Full;
 }
 
+//
+// GetEmail
+//
+/// Helper function that always returns a valid string.  The string
+/// may be empty if there is no address at the specified index.
+///
+const std::string& Contact::GetEmail(unsigned int index) const
+{
+	static const std::string blank;
+	if( index < EmailAddresses.size() )
+		return EmailAddresses[index];
+	return blank;
+}
+
 void Contact::Dump(std::ostream &os) const
 {
 	ios::fmtflags oldflags = os.setf(ios::left);
@@ -390,6 +416,14 @@ void Contact::Dump(std::ostream &os) const
 	os << ": " << FirstName << "\n";
 	os << "    " << setw(20) << "LastName";
 	os << ": " << LastName << "\n";
+
+	// cycle through email addresses
+	EmailList::const_iterator eai = EmailAddresses.begin();
+	for( ; eai != EmailAddresses.end(); ++eai ) {
+		if( eai->size() ) {
+			os << "    Email               : " << *eai << "\n";
+		}
+	}
 
 	// cycle through the type table
 	for(	FieldLink<Contact> *b = ContactFieldLinks;

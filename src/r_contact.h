@@ -60,12 +60,14 @@ public:
 	typedef ContactGroupLink			GroupLink;
 	typedef std::vector<GroupLink>			GroupLinksType;
 	typedef std::vector<UnknownField>		UnknownsType;
+	typedef std::string				EmailType;
+	typedef std::vector<EmailType>			EmailList;
 
 	// contact specific data
 	uint8_t RecType;
 	uint32_t RecordId;
+	EmailList EmailAddresses;
 	std::string
-		Email,
 		Phone,
 		Fax,
 		WorkPhone,
@@ -118,6 +120,7 @@ public:
 
 	uint32_t GetID() const { return RecordId; }
 	std::string GetFullName() const;
+	const std::string& GetEmail(unsigned int index = 0) const;
 
 	// Parser / Builder API (see parser.h / builder.h)
 	uint8_t GetRecType() const { return RecType; }
