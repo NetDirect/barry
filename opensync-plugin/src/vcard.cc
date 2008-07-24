@@ -176,10 +176,20 @@ const std::string& vCard::ToVCard(const Barry::Contact &con)
 	AddPhoneCond("cell", con.MobilePhone);
 	AddPhoneCond("msg", con.Pager);
 
-	if( con.Email.size() ) {
-		vAttrPtr email = NewAttr("EMAIL", con.Email.c_str());
-		AddParam(email, "TYPE", "internet");
-		AddAttr(email);
+	// add all email addresses, marking first one as "pref"
+	Barry::Contact::EmailList::const_iterator eai = con.EmailAddresses.begin();
+	for( unsigned int i = 0; eai != con.EmailAddresses.end(); ++eai, ++i ) {
+		const std::string& e = con.GetEmail(i);
+		if( e.size() ) {
+			vAttrPtr email = NewAttr("EMAIL", e.c_str());
+			if( i == 0 ) {
+				AddParam(email, "TYPE", "internet,pref");
+			}
+			else {
+				AddParam(email, "TYPE", "internet");
+			}
+			AddAttr(email);
+		}
 	}
 
 	if( con.JobTitle.size() ) {
@@ -286,10 +296,9 @@ const Barry::Contact& vCard::ToBarry(const char *vcard, uint32_t RecordId)
 			con.Pager = tel.GetValue();
 	}
 
-	// scan for all email addresses... save the first one found
-	// by default, then overwrite it with any following email
-	// address if its type is set to "pref"... i.e. we want
-	// the preferred email address here.
+	// scan for all email addresses... append addresses to the
+	// list by default, but prepend if its type is set to "pref"
+	// i.e. we want the preferred email address first
 	vAttr email = GetAttrObj("EMAIL");
 	for( int i = 0; email.Get(); email = GetAttrObj("EMAIL", ++i) )
 	{
@@ -300,7 +309,10 @@ const Barry::Contact& vCard::ToBarry(const char *vcard, uint32_t RecordId)
 		bool x400 = strstr(type.c_str(), "x400");
 
 		if( of_interest && !x400 ) {
-			con.Email = GetAttr("EMAIL");
+			con.EmailAddresses.insert(con.EmailAddresses.begin(), email.GetValue());
+		}
+		else {
+			con.EmailAddresses.push_back( email.GetValue() );
 		}
 	}
 
