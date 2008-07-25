@@ -1,0 +1,21 @@
+debug debug debug
+nodetach
+
+pty "/usr/sbin/pppob"
+connect "/usr/sbin/chat -f /etc/chatscripts/blackberry.chat"
+user "gprs"
+password "gprs"
+
+defaultroute
+usepeerdns
+noipdefault
+nodetach
+novj
+nocrtscts
+nomultilink
+ipcp-restart 7
+ipcp-accept-local
+ipcp-accept-remote
+lcp-echo-interval 0
+lcp-echo-failure 999
+mtu 1492
