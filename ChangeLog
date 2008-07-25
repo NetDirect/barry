@@ -1,5 +1,10 @@
 Release: version 0.13 - 2008/07/??
 ------------------------------------------------------------------------------
+2008/07/25
+	- applied barry-unbind-storage.sh script from Niels de Vos...
+		added to contrib for now, in the interests of getting
+		version 0.13 released soon... we can work on integrating
+		this better in 0.14, which hopefully won't take so long :-)
 2008/07/24
 	- added g++ (>= 4.1) to Debian build dependency list
 	- added support to base library and utilities for multiple email
