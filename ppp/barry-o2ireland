@@ -2,7 +2,7 @@ debug debug debug
 nodetach
 
 pty "/usr/sbin/pppob"
-connect "/usr/sbin/chat -f /etc/chatscripts/blackberry.chat"
+connect "/usr/sbin/chat -f /etc/chatscripts/barry-o2ireland.chat"
 user "gprs"
 password "gprs"
 

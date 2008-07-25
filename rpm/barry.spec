@@ -150,10 +150,12 @@ cd ../
 %{__cp} ppp/barry-rogers %{buildroot}%{_sysconfdir}/ppp/peers/
 %{__cp} ppp/barry-verizon %{buildroot}%{_sysconfdir}/ppp/peers/
 %{__cp} ppp/barry-sprint %{buildroot}%{_sysconfdir}/ppp/peers/
+%{__cp} ppp/barry-o2ireland %{buildroot}%{_sysconfdir}/ppp/peers/
 %{__mkdir_p} %{buildroot}%{_sysconfdir}/chatscripts
 %{__cp} ppp/barry-rogers.chat %{buildroot}%{_sysconfdir}/chatscripts/
 %{__cp} ppp/barry-verizon.chat %{buildroot}%{_sysconfdir}/chatscripts/
 %{__cp} ppp/barry-sprint.chat %{buildroot}%{_sysconfdir}/chatscripts/
+%{__cp} ppp/barry-o2ireland.chat %{buildroot}%{_sysconfdir}/chatscripts/
 
 # gui tree
 %if %{with_gui}
@@ -209,9 +211,11 @@ cd ../
 %attr(0644,root,root) %config %{_sysconfdir}/ppp/peers/barry-rogers
 %attr(0644,root,root) %config %{_sysconfdir}/ppp/peers/barry-verizon
 %attr(0644,root,root) %config %{_sysconfdir}/ppp/peers/barry-sprint
+%attr(0644,root,root) %config %{_sysconfdir}/ppp/peers/barry-o2ireland
 %attr(0640,root,root) %config %{_sysconfdir}/chatscripts/barry-rogers.chat
 %attr(0640,root,root) %config %{_sysconfdir}/chatscripts/barry-verizon.chat
 %attr(0640,root,root) %config %{_sysconfdir}/chatscripts/barry-sprint.chat
+%attr(0640,root,root) %config %{_sysconfdir}/chatscripts/barry-o2ireland.chat
 %doc COPYING
 
 %if %{with_gui}
