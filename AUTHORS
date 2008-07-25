@@ -34,6 +34,8 @@ Contributors (code and otherwise) in alphabetical order by last name:
 		- ipmodem password patches
 	Jonathan Hudson <jh+barry@daria.co.uk>
 		- big endian testing and patches
+	Simon Kenyon <simon@koala.ie>
+		- ppp chat scripts for O2 Ireland
 	Duncan Mak
 		- modern udev updates
 	David Mansfield <barry@dm.cobite.com>
