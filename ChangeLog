@@ -1,5 +1,7 @@
 Release: version 0.13 - 2008/07/??
 ------------------------------------------------------------------------------
+2008/07/26
+	- updated AUTHORS
 2008/07/25
 	- applied barry-unbind-storage.sh script from Niels de Vos...
 		added to contrib for now, in the interests of getting
