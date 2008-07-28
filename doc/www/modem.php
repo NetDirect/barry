@@ -28,6 +28,7 @@ then default ppp options and chat scripts are installed automatically
 for you.  Currently there are scripts available for the following
 providers:
 <ul>
+	<li> O2 Ireland </li>
 	<li> Rogers </li>
 	<li> Sprint </li>
 	<li> Verizon </li>
