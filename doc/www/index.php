@@ -112,3 +112,19 @@ check out our <? createLink("design", "design notes"); ?>.
 want to take Barry. Check out our <? createLink("roadmap", "roadmap"); ?>
 to see what's happening.</p>
 
+<div class="subHeader">External Links</div>
+
+<p>Barry users and others have contributed documentation and have
+put these howto's on the web.  Below is a list of some of these pages.
+These sites are not associated with NetDirect, and some of the information
+may be out of date, but they may still be helpful to new users.</P>
+
+<p>
+<ul>
+	<li><a href="http://www.chipbennett.net/wordpress/index.php/2008/05/synchronizing-a-blackberry-in-linux/">Synchronizing a Blackberry In Linux</a>, by Chip Bennett</li>
+	<li><a href="http://www.linux.com/feature/123251">Syncing your Blackberry on Linux</a>, by Joe Barr</li>
+	<li><a href="http://off.net/cassis/protocol-description.html">The RIM Blackberry Serial Protocol</a>, by Phil Schwan, Mike Shaver, and Ian Goldberg, of the Cassis project</li>
+	<li><a href="http://www.blackberryforums.com/blackberry-guides/2019-user-howto-use-blackberry-modem-laptop.html">HOWTO: Blackberry as Modem for Laptop</a>, by Mark Rejhon, (not Linux specific)</li>
+</ul>
+</p>
+
