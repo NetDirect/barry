@@ -1,5 +1,12 @@
 Release: version 0.13 - 2008/07/??
 ------------------------------------------------------------------------------
+2008/07/28
+	- web doc updates:
+		- removed extraneous "experimental" wording
+		- added section for external links to main index page
+		- fixed doc bug about how to install libtar
+		- added O2 Ireland to list of modem scripts
+		- removed ubuntu80464 and fc6 from binary package list
 2008/07/26
 	- updated AUTHORS
 2008/07/25
