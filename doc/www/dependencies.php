@@ -71,8 +71,8 @@ distro bugs.  You just want it to work!  For such systems, I usually
 grab the libtar source RPM package from
 <a href="ftp://ftp.nrc.ca/pub/systems/linux/redhat/fedora/linux/releases/8/Everything/source/SRPMS/libtar-1.2.11-9.fc8.src.rpm">here</a> and then run:
 <pre>
-rpm -i libtar-1.2.11-9.fc8.src.rpm
 (become root)
+rpm -i libtar-1.2.11-9.fc8.src.rpm
 cd /usr/src/packages/SPECS
 rpmbuild -ba libtar.spec
 rpm -i ../RPMS/*/libtar*rpm
