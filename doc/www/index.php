@@ -43,7 +43,7 @@ usefulness.  For example, it is possible to:
 		<li>Restoring backups for some databases on newer Blackberries doesn't work (for example, on the 8120, 8700g)</li>
 		<li>Syncing is not supported on Fedora Core 9, since they packaged the OpenSync 0.3x devel tree</li>
 		<li>Password support when using Blackberry as modem is experimental</li>
-		<li>Accessing the database (such as during a backup) while copying files using usb_storage may cause some Blackberries to spontaneously reboot</li>
+		<li>Accessing the database (such as during a backup) while copying files using the usb_storage kernel module may cause some Blackberries to spontaneously reboot</li>
 	</ul>
 	</li>
 </ul>
