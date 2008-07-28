@@ -19,8 +19,6 @@ the filenames:
 <ul>
 	<li><b>ubuntu710</b> - Ubuntu Gutsy Gibbon, 7.10</li>
 	<li><b>ubuntu804</b> - Ubuntu Hardy Heron, 8.04</li>
-	<li><b>ubuntu80464</b> - Ubuntu Hardy Heron, 8.04, 64 bit</li>
-	<li><b>fc6</b> - Fedora Core 6</li>
 	<li><b>fc7</b> - Fedora Core 7</li>
 	<li><b>fc8</b> - Fedora Core 8</li>
 	<li><b>fc9</b> - Fedora Core 9</li>
