@@ -25,8 +25,8 @@ usefulness.  For example, it is possible to:
 		a GUI</li>
 	<li> synchronize contacts and calendar items using the
 		<a href="http://www.opensync.org/">OpenSync</a>
-		framework (experimental) </li>
-	<li> use the Blackberry as a modem (experimental) </li>
+		framework</li>
+	<li> use the Blackberry as a modem</li>
 </ul>
 </p>
 
