@@ -76,6 +76,18 @@ Debian uses "pon" and "poff".</p>
 
 
 
+<div class="subHeader">If Your Device Needs a Password...</div>
+
+<p>If your device requires a password, you can specify this on the <b>pppob</b>
+command line.  For example, if you are using the <i>barry-rogers</i>
+PPP script, edit your /etc/ppp/peers/barry-rogers file, so that the
+<b>pty</b> option says something like this:
+</p>
+<pre>
+	pty "/usr/sbin/pppob -P password"
+</pre>
+
+
 <div class="subHeader">Security Concerns</div>
 
 <p>Depending on your provider, you may or may not have a firewall installed
