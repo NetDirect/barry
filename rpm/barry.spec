@@ -12,7 +12,7 @@
 
 Summary: BlackBerry(tm) Desktop for Linux
 Name: barry
-Version: 0.13
+Version: 0.14
 Release: 1
 Group: Applications/Productivity
 License: GPL
@@ -246,6 +246,9 @@ cd ../
 /sbin/ldconfig
 
 %changelog
+* Fri Aug 01 2008 Chris Frey <cdfrey@foursquare.net> 0.14-1
+- version bump
+
 * Thu May 29 2008 Chris Frey <cdfrey@foursquare.net> 0.13-1
 - version bump
 - added brecsum

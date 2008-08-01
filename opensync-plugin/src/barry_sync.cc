@@ -546,7 +546,7 @@ void get_info(OSyncEnv *env)
 	OSyncPluginInfo *info = osync_plugin_new_info(env);
 	
 	info->name = "barry-sync";
-	info->longname = "Barry OpenSync plugin v0.13 for the Blackberry handheld";
+	info->longname = "Barry OpenSync plugin v0.14 for the Blackberry handheld";
 	info->description = "Plugin to synchronize calendar and contact entries on USB Blackberry handhelds";
 	info->version = 1;		// API version (opensync api?)
 	info->is_threadsafe = TRUE;
