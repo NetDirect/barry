@@ -11,6 +11,7 @@ Release: version 0.14 - 2008/08/??
 		- debian/changelog
 		- opensync-plugin/src/barry_sync.cc
 	- updated web docs showing how to set the password when using modem
+	- added section to docs on how to test the modem connection
 
 Release: version 0.13 - 2008/07/28
 ------------------------------------------------------------------------------

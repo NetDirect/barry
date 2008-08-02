@@ -88,6 +88,23 @@ PPP script, edit your /etc/ppp/peers/barry-rogers file, so that the
 </pre>
 
 
+<div class="subHeader">Testing Your Connection</div>
+
+<p>PPP will display some messages on stdout as it connects.  On success,
+you should see IP address negotiation and the resulting IP address for your
+machine.  PPP will then just wait for network activity.</p>
+
+<p>When testing to see if this works, use your web browser.  The usual
+method of using <b>ping</b> does not work reliably, and some providers
+may have this blocked.</p>
+
+<p>Check your routing table to make sure that the new default gateway
+is there.</p>
+<pre>
+	/sbin/route -n
+</pre>
+
+
 <div class="subHeader">Security Concerns</div>
 
 <p>Depending on your provider, you may or may not have a firewall installed
