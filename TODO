@@ -83,6 +83,14 @@ Depending on: ideally, wait for 0.40 XML format support
 
 
 
+Adding support for recurring calendar items to opensync plugin
+--------------------------------------------------------------
+See vCalendar::RecurToBarryCal() in the opensync sources, and compare
+with RecurToVCal().  See also iCal format RFC's.
+http://tools.ietf.org/html/rfc2445
+
+
+
 Reverse engineering java loader protocol
 ----------------------------------------
 This has not been done by any opensource Blackberry project out there,

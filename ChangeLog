@@ -5,6 +5,7 @@ Release: version 0.14 - 2008/08/??
 		attributes... this should fix the endless loop / memory
 		exhaustion that some people have been seeing
 		Thanks to Lee Dixon for reporting this bug in detail!
+	- added TODO list item for implementing recurring calendar items
 2008/08/01
 	- version bump:
 		- configure.ac
