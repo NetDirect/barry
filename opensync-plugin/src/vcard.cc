@@ -149,8 +149,26 @@ const std::string& vCard::ToVCard(const Barry::Contact &con)
 	AddAttr(NewAttr("PRODID", "-//OpenSync//NONSGML Barry Contact Record//EN"));
 
 	std::string fullname = con.GetFullName();
-	if( fullname.size() )
+	if( fullname.size() ) {
 		AddAttr(NewAttr("FN", fullname.c_str()));
+	}
+	else {
+		//
+		// RFC 2426, 3.1.1 states that FN MUST be present in the
+		// vcard object.  If there is no name available, then we use
+		// the Company name if available.  It should be, since the
+		// Blackberry requires either name or Company in order to
+		// create a new address.
+		//
+		// If Company is blank too, then we insert "(Blank Name)"
+		//
+		if( con.Company.c_str() ) {
+			AddAttr(NewAttr("FN", con.Company.c_str()));
+		}
+		else {
+			AddAttr(NewAttr("FN", "(Blank Name)"));
+		}
+	}
 
 	if( con.FirstName.size() || con.LastName.size() ) {
 		vAttrPtr name = NewAttr("N");		// RFC 2426, 3.1.2
@@ -251,12 +269,12 @@ const Barry::Contact& vCard::ToBarry(const char *vcard, uint32_t RecordId)
 	con.SetIds(Barry::Contact::GetDefaultRecType(), RecordId);
 
 	vAttr name = GetAttrObj("N");
-	if( !name.Get() )
-		throw ConvertError("no FN field in VCARD data");
-						// RFC 2426, 3.1.2
-	con.LastName = name.GetValue(0);	// Family Name
-	con.FirstName = name.GetValue(1);	// Given Name
-	con.Prefix = name.GetValue(3);		// Honorific Prefixes
+	if( name.Get() ) {
+							// RFC 2426, 3.1.2
+		con.LastName = name.GetValue(0);	// Family Name
+		con.FirstName = name.GetValue(1);	// Given Name
+		con.Prefix = name.GetValue(3);		// Honorific Prefixes
+	}
 
 	vAttr adr = GetAttrObj("ADR");
 	for( int i = 0; adr.Get(); adr = GetAttrObj("ADR", ++i) )
@@ -329,6 +347,11 @@ const Barry::Contact& vCard::ToBarry(const char *vcard, uint32_t RecordId)
 	vAttr cat = GetAttrObj("CATEGORIES");
 	if( cat.Get() )
 		ParseCategories(cat, con.Categories);
+
+	// Last sanity check: Blackberry requires that at least
+	// name or Company has data.
+	if( !con.GetFullName().size() && !con.Company.size() )
+		throw ConvertError("FN and ORG fields both blank in VCARD data");
 
 	return m_BarryContact;
 }

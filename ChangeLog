@@ -3,6 +3,18 @@ Release: version 0.14 - 2008/08/??
 2008/08/07
 	- fixed bug in m_ipmodem.cc that included a null terminator in
 		first AT command
+	- fixed RFC 2426 conformance bug...  RFC 2426, 3.1.1 states that FN
+		MUST be present in the vcard object.  If there is no name
+		available, then we use the Company name if available.  It
+		should be, since the Blackberry requires either name or Company
+		in order to create a new address.  If Company is blank too, then
+		we insert "(Blank Name)".
+		- On the flip side of this same bug, it is possible to receive
+			non-conformant vcard data from evolution / opensync
+			that does not include FN.  Since the Blackberry
+			doesn't require this information, remove the
+			exception, and only throw an exception if FN
+			or Company are both blank.
 2008/08/06
 	- fixed bug in vAttr::GetValue that ignored index for single valued
 		attributes... this should fix the endless loop / memory
