@@ -1,5 +1,8 @@
 Release: version 0.14 - 2008/08/??
 ------------------------------------------------------------------------------
+2008/08/07
+	- fixed bug in m_ipmodem.cc that included a null terminator in
+		first AT command
 2008/08/06
 	- fixed bug in vAttr::GetValue that ignored index for single valued
 		attributes... this should fix the endless loop / memory

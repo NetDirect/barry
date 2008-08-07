@@ -236,7 +236,7 @@ void IpModem::Open(const char *password)
 
 	// see if the modem will respond to commands
 	const char modem_command[] = { "AT\r" };
-	m_dev.BulkWrite(write_ep, modem_command, sizeof(modem_command));
+	m_dev.BulkWrite(write_ep, modem_command, strlen(modem_command));
 	m_dev.BulkRead(read_ep, data);
 	ddout("IPModem:: AT command response.\n" << data);
 	if( data.GetSize() >= 1 ) {
