@@ -8,6 +8,7 @@ The Barry library has the following exception hierarchy:
 			- Usb::Error
 				- Usb::Timeout
 			- Barry::BadPassword
+			- Barry::BadData
 			- Barry::BadSize
 			- Barry::ErrnoError
 

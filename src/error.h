@@ -74,6 +74,20 @@ public:
 };
 
 //
+// BadData
+//
+/// Thrown by record classes if their data is invalid and cannot be
+/// uploaded to the Blackberry.
+///
+class BXEXPORT BadData : public Barry::Error
+{
+public:
+	BadData(const std::string &str)
+		: Barry::Error(str)
+		{}
+};
+
+//
 // BadSize
 //
 /// Unexpected packet size, or not enough data.

@@ -261,6 +261,11 @@ void Contact::BuildFields(Data &data, size_t &offset) const
 {
 	data.Zap();
 
+	// Sanity check: the Blackberry requires at least a name or
+	// a company name for each address record.
+	if( !GetFullName().size() && !Company.size() )
+		throw BadData("Contact must have name or company name.");
+
 	// check if this is a group link record, and if so, output
 	// the group flag
 	if( GroupLinks.size() )
