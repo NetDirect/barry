@@ -15,6 +15,10 @@ Release: version 0.14 - 2008/08/??
 			doesn't require this information, remove the
 			exception, and only throw an exception if FN
 			or Company are both blank.
+		- REVERT: removed the Company and "(Blank Name)" workarounds,
+			and just produce an invalid vcard if no full name,
+			since with multiple syncing, this will come back
+			to bite us with duplicated Company name data
 	- added sanity check to contact class for blank name and company
 	- added BadData exception class, and documented it
 2008/08/06

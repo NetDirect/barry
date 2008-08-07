@@ -155,19 +155,14 @@ const std::string& vCard::ToVCard(const Barry::Contact &con)
 	else {
 		//
 		// RFC 2426, 3.1.1 states that FN MUST be present in the
-		// vcard object.  If there is no name available, then we use
-		// the Company name if available.  It should be, since the
-		// Blackberry requires either name or Company in order to
-		// create a new address.
+		// vcard object.  Unfortunately, the Blackberry doesn't
+		// require a name, only a name or company name.
 		//
-		// If Company is blank too, then we insert "(Blank Name)"
+		// In this case we do nothing, and generate an invalid
+		// vcard, since if we try to fix our output here, we'll
+		// likely end up with duplicated company names in the
+		// Blackberry record after a few syncs.
 		//
-		if( con.Company.c_str() ) {
-			AddAttr(NewAttr("FN", con.Company.c_str()));
-		}
-		else {
-			AddAttr(NewAttr("FN", "(Blank Name)"));
-		}
 	}
 
 	if( con.FirstName.size() || con.LastName.size() ) {
