@@ -6,19 +6,31 @@ barry (0.14-pre20080807) unstable; urgency=low
 
 barry (0.13-1.2) unstable; urgency=low
 
+  [ Jose Carlos Garcia Sogo ]
+  * debian/control:
+    + Change maintainer
+    + Bump Standards-Version to 3.8.0
+  * debian/changelog:
+    + Merge different versions in 0.13-* packages in a new 0.13-1 one, so it
+    can be uploaded into Debian
+  
+  [ Chris Frey ]
+  * From 0.13-1.1 upstream package
   * added brecsum
   * added ppp options and chat scripts
   * fixed lintian description warnings
 
- -- Chris Frey <cdfrey@foursquare.net>  Thu, 29 May 2008 21:49:11 -0400
-
-barry (0.13-1.1) unstable; urgency=low
-
-  * Non-maintainer upload.
+  [ Jason Thomas ]
   * Makefile.am and opensync-plugin/Makefile: add ACLOCAL_FLAGS for autoreconf
   * debian/control: add build-depends: autoconf, automake, libtool,
     libglib2.0-dev
   * debian/control: change build-depends: libopensync0 to libopensync0-dev 
+
+ -- Jose Carlos Garcia Sogo <jsogo@debian.org>  Sun, 10 Aug 2008 20:17:34 +0200
+
+barry (0.13-1.1) unstable; urgency=low
+
+  * Non-maintainer upload.
 
  -- Jason Thomas <jason@debian.org>  Tue, 29 Apr 2008 17:28:34 +1000
 
