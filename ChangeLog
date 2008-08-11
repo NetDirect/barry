@@ -1,5 +1,9 @@
 Release: version 0.14 - 2008/08/??
 ------------------------------------------------------------------------------
+2008/08/11
+	- applied Lee Dixon's Birthday field and opensync patch
+		- fixed coding format issues
+	- updated AUTHORS
 2008/08/07
 	- fixed bug in m_ipmodem.cc that included a null terminator in
 		first AT command

@@ -11,6 +11,8 @@ Contributors (code and otherwise) in alphabetical order by last name:
 	Ian Darwin <ian@darwinsys.com>
 		- documentation fixes and additions
 		- OpenBSD port maintainer
+	Lee Dixon <jleedixon@gmail.com>
+		- Birthday field and opensync patch
 	Paul Dugas <paul@dugas.cc>
 		- x86_64 build fix
 	Brian Edginton <edge@edginton.net>
