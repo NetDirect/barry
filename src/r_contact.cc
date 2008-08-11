@@ -370,7 +370,7 @@ void Contact::Clear()
 	UserDefined3.clear();
 	UserDefined4.clear();
 	Image.clear();
-        Birthday.clear();
+	Birthday.clear();
 
 	WorkAddress.Clear();
 	HomeAddress.Clear();

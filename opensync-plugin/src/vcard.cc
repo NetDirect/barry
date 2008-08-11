@@ -129,15 +129,14 @@ void vCard::ParseCategories(vAttr &cat, Barry::CategoryList &cats)
 // for VCard YYYYMMDD
 std::string vCard::ParseBarryDate( const std::string& s )
 {
-  std::string dateStr;
-  int m, d, y;
-  if( 3==sscanf( s.c_str(), "%d/%d/%d", &d, &m, &y ) )
-  {
-    char buf[32];
-    sprintf( buf, "%4d%02d%02d", y, m, d );
-    dateStr.assign( buf );
-  }
-  return dateStr;
+	std::string dateStr;
+	int m, d, y;
+	if( 3 == sscanf(s.c_str(), "%d/%d/%d", &d, &m, &y) ) {
+		char buf[32];
+		sprintf( buf, "%4d%02d%02d", y, m, d );
+		dateStr.assign( buf );
+	}
+	return dateStr;
 }
 
 
@@ -145,18 +144,16 @@ std::string vCard::ParseBarryDate( const std::string& s )
 // for Barry DD/MM/YY
 std::string vCard::ParseVCardDate( const std::string& s )
 {
-  std::string dateStr;
-  if( s.size() )
-  {
-    int m, d, y;
-    if( 3==sscanf( s.c_str(), "%4d%2d%2d", &y, &m, &d ) )
-    {
-      char buf[32];
-      sprintf( buf, "%02d/%02d/%04d", d, m, y );
-      dateStr.assign( buf );
-    }
-  }
-  return dateStr;
+	std::string dateStr;
+	if( s.size() ) {
+		int m, d, y;
+		if( 3==sscanf(s.c_str(), "%4d%2d%2d", &y, &m, &d) ) {
+			char buf[32];
+			sprintf( buf, "%02d/%02d/%04d", d, m, y );
+			dateStr.assign( buf );
+		}
+	}
+	return dateStr;
 }
 
 
@@ -257,8 +254,8 @@ const std::string& vCard::ToVCard(const Barry::Contact &con)
 		AddAttr(org);
 	}
 
-        if( con.Birthday.size() )
-          AddAttr(NewAttr("BDAY", ParseBarryDate( con.Birthday ).c_str() ));
+	if( con.Birthday.size() )
+		AddAttr(NewAttr("BDAY", ParseBarryDate(con.Birthday).c_str()));
 
 	if( con.Notes.size() )
 		AddAttr(NewAttr("NOTE", con.Notes.c_str()));
@@ -378,7 +375,7 @@ const Barry::Contact& vCard::ToBarry(const char *vcard, uint32_t RecordId)
 	con.Company = GetAttr("ORG");
 	con.Notes = GetAttr("NOTE");
 	con.URL = GetAttr("URL");
-        con.Birthday = ParseVCardDate( GetAttr("BDAY") );
+	con.Birthday = ParseVCardDate( GetAttr("BDAY") );
 
 	vAttr cat = GetAttrObj("CATEGORIES");
 	if( cat.Get() )

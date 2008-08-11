@@ -55,8 +55,8 @@ protected:
 	void ParseAddress(vAttr &adr, Barry::PostalAddress &address);
 	void ParseCategories(vAttr &cat, Barry::CategoryList &cats);
 
-        std::string ParseBarryDate( const std::string& s );
-        std::string ParseVCardDate( const std::string& s );
+	std::string ParseBarryDate( const std::string& s );
+	std::string ParseVCardDate( const std::string& s );
 public:
 	vCard();
 	~vCard();
