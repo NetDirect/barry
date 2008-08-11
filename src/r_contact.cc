@@ -90,6 +90,7 @@ namespace Barry {
 #define CFC_HOME_POSTAL_CODE	71	// 0x47
 #define CFC_HOME_COUNTRY	72	// 0x48
 #define CFC_IMAGE		77	// 0x4D
+#define CFC_BIRTHDAY		82	// 0x52
 #define CFC_INVALID_FIELD	255
 
 // Contact code to field table
@@ -131,6 +132,7 @@ FieldLink<Contact> ContactFieldLinks[] = {
    { CFC_HOME_POSTAL_CODE, "HomePostalCode", 0,0,         0, 0, 0, &Contact::HomeAddress, &PostalAddress::PostalCode, },
    { CFC_HOME_COUNTRY, "HomeCountry",0,0,                 0, 0, 0, &Contact::HomeAddress, &PostalAddress::Country, },
    { CFC_IMAGE,        "Image",      0,0,                 &Contact::Image, 0, 0 },
+   { CFC_BIRTHDAY,     "Birthday",      0,0,              &Contact::Birthday, 0, 0 },
    { CFC_INVALID_FIELD,"EndOfList",  0, 0, 0 }
 };
 
@@ -368,6 +370,7 @@ void Contact::Clear()
 	UserDefined3.clear();
 	UserDefined4.clear();
 	Image.clear();
+        Birthday.clear();
 
 	WorkAddress.Clear();
 	HomeAddress.Clear();

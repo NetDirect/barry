@@ -92,7 +92,8 @@ public:
 		UserDefined2,
 		UserDefined3,
 		UserDefined4,
-		Image;
+		Image,
+                Birthday;
 
 	PostalAddress WorkAddress;
 	PostalAddress HomeAddress;
