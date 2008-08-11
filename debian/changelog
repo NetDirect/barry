@@ -10,6 +10,8 @@ barry (0.13-1.2) unstable; urgency=low
   * debian/control:
     + Change maintainer
     + Bump Standards-Version to 3.8.0
+    + Rename libbary to libbary0 to follow policy.
+    + Add a dependency on exact binary:Version for each -dbg and -dev package
   * debian/changelog:
     + Merge different versions in 0.13-* packages in a new 0.13-1 one, so it
     can be uploaded into Debian
