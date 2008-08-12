@@ -22,6 +22,7 @@
 
 #include <barry/barry.h>
 #include <iostream>
+#include <iomanip>
 
 using namespace std;
 using namespace Barry;
@@ -61,6 +62,7 @@ void ReadInput(Barry::Contact &contact)
 	ReadLine("Country", contact.WorkAddress.Country);
 	ReadLine("Postal / Zip Code", contact.WorkAddress.PostalCode);
 	ReadLine("Notes", contact.Notes);
+	ReadLine("Birthday", contact.Birthday);
 
 	string categories;
 	ReadLine("Categories", categories);
@@ -95,6 +97,10 @@ int main(int argc, char *argv[])
 		if( probe.GetCount() == 0 ) {
 			cout << "No Blackberry found!" << endl;
 			return 1;
+		}
+		else {
+			cout << "Using PIN: " << std::hex
+			     << probe.Get(0).m_pin << endl;
 		}
 
 
