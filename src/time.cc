@@ -226,8 +226,8 @@ time_t Message2Time(uint16_t r_date, uint16_t r_time)
 	dout("Message2Time result: " << ctime(&result));
 	return result;
 }
-	
-	
+
+
 } // namespace Barry
 
 
