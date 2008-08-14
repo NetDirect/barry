@@ -115,12 +115,12 @@ int main(int argc, char *argv[])
 	OptionContext option_context("Backup program for the Blackberry Handheld");
 	option_context.add_group(option_group);
 
-	Gtk::Main app(argc, argv, option_context);
-	Glib::add_exception_handler( sigc::ptr_fun(main_exception_handler) );
-
-	Barry::Init(debug_flag);
-
 	try {
+
+		Gtk::Main app(argc, argv, option_context);
+		Glib::add_exception_handler( sigc::ptr_fun(main_exception_handler) );
+
+		Barry::Init(debug_flag);
 
 		Glib::RefPtr<Gnome::Glade::Xml> refXml = LoadXml("BackupWindow.glade");
 
@@ -130,6 +130,14 @@ int main(int argc, char *argv[])
 
 		Gtk::Main::run(*pWnd);
 
+	}
+	catch( Glib::OptionError &oe ) {
+		// Ouch!  Not all glibmm versions provide an
+		// easy way to display the official help... so we
+		// at least point the user in the right direction.
+		std::cerr << oe.what() << std::endl;
+		std::cerr << "Try --help or --help-all" << std::endl;
+		return 1;
 	}
 	catch(...) {
 		main_exception_handler();
