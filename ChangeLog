@@ -3,6 +3,7 @@ Release: version 0.14 - 2008/08/??
 2008/08/14
 	- added exception handler for invalid command line options in GUI
 	- fixed barrybackup man page, removing bad -v option
+	- added distro section to AUTHORS
 2008/08/12
 	- added Birthday field to examples/addcontact.cc for testing
 2008/08/11

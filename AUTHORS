@@ -69,3 +69,16 @@ Contributors (code and otherwise) in alphabetical order by last name:
 		- debian package patches
 		- usb_storage unbind script
 
+
+
+Official Distro Package Maintainers:
+------------------------------------
+
+The following people and distributions include Barry as an official package
+in their repositories.  If you use one of these distros, Barry may already
+be integrated into your system, and tested, thanks to these people.
+They have also made their presence known on the mailing list, and can be
+contacted there.
+
+	Mandriva	Adam Williamson <awilliamson@mandriva.com>
+
