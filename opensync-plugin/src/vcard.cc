@@ -125,38 +125,6 @@ void vCard::ParseCategories(vAttr &cat, Barry::CategoryList &cats)
 }
 
 
-// Parse a Barry date in the form of DD/MM/YY into the format
-// for VCard YYYYMMDD
-std::string vCard::ParseBarryDate( const std::string& s )
-{
-	std::string dateStr;
-	int m, d, y;
-	if( 3 == sscanf(s.c_str(), "%d/%d/%d", &d, &m, &y) ) {
-		char buf[32];
-		sprintf( buf, "%4d%02d%02d", y, m, d );
-		dateStr.assign( buf );
-	}
-	return dateStr;
-}
-
-
-// Parse a VCard date in the form of YYYYMMDD into the format
-// for Barry DD/MM/YY
-std::string vCard::ParseVCardDate( const std::string& s )
-{
-	std::string dateStr;
-	if( s.size() ) {
-		int m, d, y;
-		if( 3==sscanf(s.c_str(), "%4d%2d%2d", &y, &m, &d) ) {
-			char buf[32];
-			sprintf( buf, "%02d/%02d/%04d", d, m, y );
-			dateStr.assign( buf );
-		}
-	}
-	return dateStr;
-}
-
-
 
 // Main conversion routine for converting from Barry::Contact to
 // a vCard string of data.
@@ -254,8 +222,8 @@ const std::string& vCard::ToVCard(const Barry::Contact &con)
 		AddAttr(org);
 	}
 
-	if( con.Birthday.size() )
-		AddAttr(NewAttr("BDAY", ParseBarryDate(con.Birthday).c_str()));
+	if( con.Birthday.HasData() )
+		AddAttr(NewAttr("BDAY", con.Birthday.ToYYYYMMDD().c_str()));
 
 	if( con.Notes.size() )
 		AddAttr(NewAttr("NOTE", con.Notes.c_str()));
@@ -375,7 +343,8 @@ const Barry::Contact& vCard::ToBarry(const char *vcard, uint32_t RecordId)
 	con.Company = GetAttr("ORG");
 	con.Notes = GetAttr("NOTE");
 	con.URL = GetAttr("URL");
-	con.Birthday = ParseVCardDate( GetAttr("BDAY") );
+	if( GetAttr("BDAY").size() && !con.Birthday.FromYYYYMMDD( GetAttr("BDAY") ) )
+		throw ConvertError("Unable to parse BDAY field");
 
 	vAttr cat = GetAttrObj("CATEGORIES");
 	if( cat.Get() )
