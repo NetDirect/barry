@@ -1,6 +1,6 @@
 ///
 /// \file	time.h
-///		Conversion between time_t and cenmin_t and back.
+///		Time related conversion routines.
 ///		time_t is the POSIX time.
 ///		min1900_t is the minutes from Jan 1, 1900
 ///
