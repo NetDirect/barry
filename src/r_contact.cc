@@ -91,6 +91,7 @@ namespace Barry {
 #define CFC_HOME_COUNTRY	72	// 0x48
 #define CFC_IMAGE		77	// 0x4D
 #define CFC_BIRTHDAY		82	// 0x52
+#define CFC_ANNIVERSARY		83	// 0x53
 #define CFC_INVALID_FIELD	255
 
 // Contact code to field table
@@ -132,7 +133,6 @@ FieldLink<Contact> ContactFieldLinks[] = {
    { CFC_HOME_POSTAL_CODE, "HomePostalCode", 0,0,         0, 0, 0, &Contact::HomeAddress, &PostalAddress::PostalCode, },
    { CFC_HOME_COUNTRY, "HomeCountry",0,0,                 0, 0, 0, &Contact::HomeAddress, &PostalAddress::Country, },
    { CFC_IMAGE,        "Image",      0,0,                 &Contact::Image, 0, 0 },
-   { CFC_BIRTHDAY,     "Birthday",      0,0,              &Contact::Birthday, 0, 0 },
    { CFC_INVALID_FIELD,"EndOfList",  0, 0, 0 }
 };
 
@@ -222,6 +222,18 @@ const unsigned char* Contact::ParseField(const unsigned char *begin,
 	case CFC_CATEGORY: {
 		std::string catstring = ParseFieldString(field);
 		CategoryStr2List(catstring, Categories);
+		}
+		return begin;
+
+	case CFC_BIRTHDAY: {
+		std::string bstring = ParseFieldString(field);
+		Birthday.FromBBString(bstring);
+		}
+		return begin;
+
+	case CFC_ANNIVERSARY: {
+		std::string astring = ParseFieldString(field);
+		Anniversary.FromBBString(astring);
 		}
 		return begin;
 	}
@@ -324,11 +336,18 @@ void Contact::BuildFields(Data &data, size_t &offset) const
 		BuildField(data, offset, CFC_GROUP_LINK, link);
 	}
 
+	// save categories
 	if( Categories.size() ) {
 		string store;
 		CategoryList2Str(Categories, store);
 		BuildField(data, offset, CFC_CATEGORY, store);
 	}
+
+	// save Birthday and Anniversary
+	if( Birthday.HasData() )
+		BuildField(data, offset, CFC_BIRTHDAY, Birthday.ToBBString());
+	if( Anniversary.HasData() )
+		BuildField(data, offset, CFC_ANNIVERSARY, Anniversary.ToBBString());
 
 	// and finally save unknowns
 	UnknownsType::const_iterator
@@ -370,7 +389,9 @@ void Contact::Clear()
 	UserDefined3.clear();
 	UserDefined4.clear();
 	Image.clear();
-	Birthday.clear();
+
+	Birthday.Clear();
+	Anniversary.Clear();
 
 	WorkAddress.Clear();
 	HomeAddress.Clear();
@@ -457,6 +478,14 @@ void Contact::Dump(std::ostream &os) const
 		string display;
 		CategoryList2Str(Categories, display);
 		os << "    Categories          : " << display << "\n";
+	}
+
+	// print Birthday and Anniversary
+	if( Birthday.HasData() ) {
+		os << "    Birthday            : " << Birthday << "\n";
+	}
+	if( Anniversary.HasData() ) {
+		os << "    Anniversary         : " << Anniversary << "\n";
 	}
 
 	// print any group links
