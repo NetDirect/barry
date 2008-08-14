@@ -34,6 +34,19 @@ void ReadLine(const char *prompt, std::string &data)
 	getline(cin, data);
 }
 
+void ReadDate(const char *prompt, Barry::Date &date)
+{
+	string datestr;
+
+	for( ;; ) {
+		ReadLine(prompt, datestr);
+		if( date.FromYYYYMMDD(datestr) )
+			break;
+
+		cout << "Unable to parse date, try again" << endl;
+	}
+}
+
 void ReadInput(Barry::Contact &contact)
 {
 	ReadLine("First Name", contact.FirstName);
@@ -62,7 +75,9 @@ void ReadInput(Barry::Contact &contact)
 	ReadLine("Country", contact.WorkAddress.Country);
 	ReadLine("Postal / Zip Code", contact.WorkAddress.PostalCode);
 	ReadLine("Notes", contact.Notes);
-	ReadLine("Birthday", contact.Birthday);
+
+	ReadDate("Birthday (YYYYMMDD format)", contact.Birthday);
+	ReadDate("Anniversary (YYYYMMDD format)", contact.Anniversary);
 
 	string categories;
 	ReadLine("Categories", categories);
