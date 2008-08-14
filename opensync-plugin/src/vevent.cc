@@ -321,6 +321,11 @@ const Barry::Calendar& vCalendar::ToBarry(const char *vcal, uint32_t RecordId)
 	}
 	vAttr trigger_obj = GetAttrObj("TRIGGER", 0, "/valarm");
 
+	string location = GetAttr("LOCATION", "/vevent");
+	trace.logf("LOCATION attr retrieved: %s", location.c_str());
+
+	string notes = GetAttr("DESCRIPTION", "/vevent");
+	trace.logf("DESCRIPTION attr retrieved: %s", notes.c_str());
 
 
 	//
@@ -362,6 +367,8 @@ const Barry::Calendar& vCalendar::ToBarry(const char *vcal, uint32_t RecordId)
 	}
 
 	rec.Subject = subject;
+	rec.Location = location;
+	rec.Notes = notes;
 
 	// convert trigger time into notification time
 	// assume no notification, by default

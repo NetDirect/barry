@@ -9,6 +9,8 @@ Release: version 0.14 - 2008/08/??
 		support.  Birthday and Anniversary fields now use a new
 		Date struct, and Barry validates the data to some extent.
 		- updated example code and opensync plugin to match
+	- applied Lee Dixon's Location and Description plugin patch,
+		with minor whitespace edits
 2008/08/12
 	- added Birthday field to examples/addcontact.cc for testing
 2008/08/11
