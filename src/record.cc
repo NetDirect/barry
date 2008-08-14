@@ -32,7 +32,7 @@
 #include "time.h"
 #include "error.h"
 #include "endian.h"
-#include <ostream>
+#include <sstream>
 #include <iomanip>
 #include <time.h>
 #include <string.h>
@@ -560,6 +560,93 @@ void PostalAddress::Clear()
 
 std::ostream& operator<<(std::ostream &os, const PostalAddress &post) {
 	os << post.GetLabel();
+	return os;
+}
+
+
+
+///////////////////////////////////////////////////////////////////////////////
+// Date class
+
+Date::Date(const struct tm *timep)
+{
+	FromTm(timep);
+}
+
+void Date::Clear()
+{
+	Month = Day = Year = 0;
+}
+
+void Date::ToTm(struct tm *timep) const
+{
+	memset(timep, 0, sizeof(tm));
+	timep->tm_year = Year - 1900;
+	timep->tm_mon = Month;
+	timep->tm_mday = Day;
+}
+
+std::string Date::ToYYYYMMDD() const
+{
+	std::ostringstream oss;
+	oss	<< setw(4) << Year
+		<< setw(2) << Month + 1
+		<< setw(2) << Day;
+	return oss.str();
+}
+
+//
+// ToBBString
+//
+/// The Blackberry stores Birthday and Anniversary date fields
+/// with the format: DD/MM/YYYY
+///
+std::string Date::ToBBString() const
+{
+	std::ostringstream oss;
+	oss	<< setw(2) << Day
+		<< Month + 1
+		<< Year;
+	return oss.str();
+}
+
+bool Date::FromTm(const struct tm *timep)
+{
+	Year = timep->tm_year + 1900;
+	Month = timep->tm_mon;
+	Day = timep->tm_mday;
+	return true;
+}
+
+bool Date::FromBBString(const std::string &str)
+{
+	int m, d, y;
+	if( 3 == sscanf(str.c_str(), "%d/%d/%d", &d, &m, &y) ) {
+		Year = y;
+		Month = m - 1;
+		Day = d;
+		return true;
+	}
+	return false;
+}
+
+bool Date::FromYYYYMMDD(const std::string &str)
+{
+	int m, d, y;
+	if( 3 == sscanf(str.c_str(), "%4d%2d%2d", &y, &m, &d) ) {
+		Year = y;
+		Month = m - 1;
+		Day = d;
+		return true;
+	}
+	return false;
+}
+
+std::ostream& operator<<(std::ostream &os, const Date &date)
+{
+	os	<< setw(4) << date.Year << '/'
+		<< setw(2) << date.Month << '/'
+		<< setw(2) << date.Day;
 	return os;
 }
 

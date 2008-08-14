@@ -221,6 +221,29 @@ struct BXEXPORT PostalAddress
 };
 BXEXPORT std::ostream& operator<<(std::ostream &os, const PostalAddress &msga);
 
+struct BXEXPORT Date
+{
+	int Month;			// 0 to 11
+	int Day;			// 1 to 31
+	int Year;			// exact number, eg. 2008
+
+	Date() : Month(0), Day(0), Year(0) {}
+	explicit Date(const struct tm *timep);
+
+	bool HasData() const { return Month || Day || Year; }
+	void Clear();
+
+	void ToTm(struct tm *timep) const;
+	std::string ToYYYYMMDD() const;
+	std::string ToBBString() const;	// converts to Blackberry string
+					// format of DD/MM/YYYY
+
+	bool FromTm(const struct tm *timep);
+	bool FromBBString(const std::string &str);
+	bool FromYYYYMMDD(const std::string &str);
+};
+BXEXPORT std::ostream& operator<<(std::ostream &os, const Date &date);
+
 
 /// \addtogroup RecordParserClasses
 ///		Parser and data storage classes.  These classes take a
