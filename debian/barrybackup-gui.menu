@@ -1,6 +1,6 @@
 ?package(barrybackup-gui):\
   needs="X11"\
-  section="Apps/Tools"\
+  section="Applications/Tools"\
   title="Barry Backup"\
   command="/usr/bin/barrybackup"\
   hints="Blackberry Backup Utility"\
