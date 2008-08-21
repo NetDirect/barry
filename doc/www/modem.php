@@ -31,6 +31,7 @@ providers:
 	<li> O2 Ireland </li>
 	<li> Rogers </li>
 	<li> Sprint </li>
+	<li> T-Mobile US </li>
 	<li> Verizon </li>
 </ul>
 </p>
