@@ -49,6 +49,8 @@ Contributors (code and otherwise) in alphabetical order by last name:
 	Martin Owens <doctormo@gmail.com>
 		- integration with HAL, udev, opensync, and Conduit
 		- low level USB testing
+	Mick Reed <oregon.mick@gmail.com>
+		- ppp chat scripts for T-Mobile US
 	Simon Ruggier <simon80@gmail.com>
 		- autoconf / build system patch
 		- modprobe advice for bcharge/berry_charge conflict
