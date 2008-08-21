@@ -1,5 +1,7 @@
 Release: version 0.14 - 2008/08/??
 ------------------------------------------------------------------------------
+2008/08/21
+	- applied ppp chat script patch from Mick Reed
 2008/08/14
 	- added exception handler for invalid command line options in GUI
 	- fixed barrybackup man page, removing bad -v option

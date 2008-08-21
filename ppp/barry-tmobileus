@@ -1,0 +1,43 @@
+#
+# This file contains options for T-Mobile US Blackberries
+#
+# It is based on a file reported to work, but edited for Barry.
+#
+
+connect "/usr/sbin/chat -f /etc/chatscripts/barry-tmobileus.chat"
+
+# You may not need to auth.  If you do, use your user/pass from www.t-mobile.com.
+#noauth
+user ""
+password ""
+
+defaultroute
+usepeerdns
+
+noipdefault
+nodetach
+novj
+noaccomp
+nocrtscts
+nopcomp
+nomagic
+
+nomultilink
+ipcp-restart 7
+ipcp-accept-local
+ipcp-accept-remote
+
+# added so not to disconnect after a few minutes
+lcp-echo-interval 0
+lcp-echo-failure 999
+
+mtu 1492
+debug
+debug debug debug
+
+pty "/usr/sbin/pppob"
+
+# 921600 Works For Me (TM) but won't "speed up" your connection.
+# 115200 also works.
+921600
+local
