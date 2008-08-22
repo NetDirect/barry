@@ -1,13 +1,10 @@
 #!/bin/sh
 
-if [ -z "$1" -o -z "$2" ] ; then
+if [ -z "$1" -o -z "$2" -o -z "$3" ] ; then
 	echo
-	echo "Usage: ./release.sh MAJOR MINOR HEAD"
+	echo "Usage: ./release.sh MAJOR MINOR commit"
 	echo
-	echo "Set the environment var CVSROOT to use a different repository."
-	echo "Set CVSREP to a different directory if needed."
-	echo
-	echo "Creates the release tarball from CVS sources, tests the compile"
+	echo "Creates the release tarball from git sources, tests the compile"
 	echo "on local machine, fedora4, fedora5, fedora6."
 	echo
 	echo "Note: You may wish to direct the output to a file, for"
@@ -19,7 +16,7 @@ fi
 set -e
 
 # Create the tarball
-./make-release-tar.sh $1 $2 $3
+./git-release-tar.sh $1 $2 $3
 
 # Build as root first, so all prompts are finished at the start,
 # for the chroot systems...

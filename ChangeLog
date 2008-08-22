@@ -7,6 +7,10 @@ Release: version 0.14 - 2008/08/??
 	- updated AUTHORS
 	- clarified sync docs regarding slow-sync... avoid it if possible
 	- tuned doxygen config, and moved generated files to doc/www/doxygen
+	- added git-release-tar.sh, replacing CVS's make-release-tar.sh
+		Also added doxygen to the release tarball creation, so
+		the source code's doxygen documentation is automatically
+		generated upon release.
 2008/08/14
 	- added exception handler for invalid command line options in GUI
 	- fixed barrybackup man page, removing bad -v option
