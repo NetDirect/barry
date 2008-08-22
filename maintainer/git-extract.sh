@@ -2,7 +2,7 @@
 
 if [ -z "$1" -o -z "$2" -o -z "$3" ] ; then
 	echo
-	echo "Usage: ./git-release-tar.sh MAJOR MINOR commit"
+	echo "Usage: ./git-extract.sh MAJOR MINOR commit"
 	echo
 	echo "MAJOR is the desired major version number"
 	echo "MINOR is the desired minor version number"
@@ -17,7 +17,7 @@ if [ -z "$1" -o -z "$2" -o -z "$3" ] ; then
 	echo
 	echo "Example:  mkdir /tmp/play"
 	echo "          cd /tmp/play"
-	echo "          /path/to/git/repo/barry/maintainer/git-release-tar.sh 0 14 master"
+	echo "          /path/to/git/repo/barry/maintainer/git-extract.sh 0 14 master"
 	echo
 	echo "This will create /tmp/play/build containing the results, and"
 	echo "use /path/to/git/repo as the repository."
@@ -26,16 +26,18 @@ if [ -z "$1" -o -z "$2" -o -z "$3" ] ; then
 fi
 
 DIRNAME="barry-$1.$2"
-TAGNAME="barry-$1_$2"
 MAJOR="$1"
 MINOR="$2"
 COMMIT="$3"
-SCRIPT="$4"
-RUNDIR="$(cd "$(dirname "$0")" && pwd)"
+RUNDIR="$(dirname "$0")/.."
 
 set -e
 
-"$RUNDIR/git-extract.sh" $MAJOR $MINOR $COMMIT
-(cd build/$DIRNAME && "$RUNDIR/tar-prepare.sh")
-(cd build && "$RUNDIR/tar-create.sh" $MAJOR $MINOR)
+echo "Using git dir: $RUNDIR"
+sleep 3s
+
+mkdir build
+(cd "$RUNDIR" && git-archive --format=tar --prefix=$DIRNAME/ $COMMIT) |\
+	tar -x -C build -f -
+echo "Extracted $COMMIT..."
 
