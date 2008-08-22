@@ -1,0 +1,11 @@
+These scripts are external to the Barry project, and don't make
+any sense except on my development machine.  This is just a place
+to store them, so they are somehow attached to Barry.
+
+Any general use scripts should be put in the maintainer/ directory,
+or written as a test script.
+
+Chris Frey
+cdfrey@foursquare.net
+2008/08/21
+
