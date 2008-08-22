@@ -47,7 +47,7 @@ bool reset(struct usb_device *dev)
 	if( !handle )
 		return false;
 
-	bool ret = usb_reset(handle) < 0;
+	bool ret = usb_reset(handle) == 0;
 	usb_close(handle);
 	return ret;
 }
