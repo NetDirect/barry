@@ -233,8 +233,11 @@ software supports a Speed field, which the Blackberry does not, then
 with OpenSync 0.22, these records will look different, and duplicates will
 be created.</p>
 
-<p>Often it is better to avoid slow-syncing, and re-create your sync
-configuration from scratch, as documented above.</p>
+<p>This bug should be <a href="http://www.opensync.org/ticket/636">fixed
+in the upcoming OpenSync 0.40.</a></p>
+
+<p>In the meantime, it is much better to avoid slow-syncing, and re-create
+your sync configuration from scratch, as documented above.</p>
 
 <p>If you know that one side is authoritative (for example, you may know
 that your Blackberry has the most up to date set of data), delete all
