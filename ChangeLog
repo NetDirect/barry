@@ -5,6 +5,7 @@ Release: version 0.14 - 2008/08/??
 	- updated RPM and Debian packages with new tmobileus ppp scripts
 	- added T-Mobile US to web documentation
 	- updated AUTHORS
+	- clarified sync docs regarding slow-sync... avoid it if possible
 2008/08/14
 	- added exception handler for invalid command line options in GUI
 	- fixed barrybackup man page, removing bad -v option

@@ -225,18 +225,20 @@ to the lead developer.</p>
 
 <p><b>If you get a load of duplicates...</b></p>
 
-<p>Sometimes this can be remedied by doing a slow sync with the --slow-sync
-option.  Normally slow syncs are done automatically if a sync failed
-part way through, or it was interrupted.  Try stopping the problematic
-sync, and starting again.</p>
+<p>If the sync has crashed, note that OpenSync will know this and attempt
+a slow-sync automatically the next time you run the sync.  If there is
+a mismatch in supported fields, this can cause duplicates to be created
+on one or possibly both sides of the sync.  For example, if your desktop
+software supports a Speed field, which the Blackberry does not, then
+with OpenSync 0.22, these records will look different, and duplicates will
+be created.</p>
 
-<p>Sometimes the cache data may be corrupt or confused.  In this case,
-you will need to delete the Opensync group, and recreate and reconfigure
-it as documented above.  This may cause a number of conflicts
-that will need to be manually corrected during the sync.  If you know
-that one side is authoritative (for example, you may know that your
-Blackberry has the most up to date set of data), delete all the data
-from the opposite data source, and sync again.</p>
+<p>Often it is better to avoid slow-syncing, and re-create your sync
+configuration from scratch, as documented above.</p>
+
+<p>If you know that one side is authoritative (for example, you may know
+that your Blackberry has the most up to date set of data), delete all
+the data from the opposite data source, reconfigure, and sync again.</p>
 
 <p>If all else fails, restore your backups and start fresh.</p>
 
