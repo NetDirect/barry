@@ -13,7 +13,7 @@ read
 # Note: This push only updates non-CVS branches, and master.
 #       To push other CVS branches, do it manually, with git-patch-cvs.sh
 
-git push --tags origin master i18n
+git push --tags origin master i18n scripts
 
 
 echo "Press enter when ready for git push to repo.or.cz..."
@@ -30,7 +30,7 @@ read
 #
 #git push --all repo.or.cz
 #git push --tags repo.or.cz master i18n
-git push repo.or.cz master i18n
+git push repo.or.cz master i18n scripts
 
 echo "================= NOTE: if you want to push a tag, do it manually!"
 
