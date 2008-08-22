@@ -11,6 +11,7 @@ cd maintainer
 ./git-extract.sh $1 $2 $3
 (cd build/barry* && "$SCRIPTDIR/debian-snap.sh" $1 $2)
 (cd build/barry* && "$SCRIPTDIR/rpm-snap.sh" $1 $2)
+sleep 2s
 (cd build/barry* && ../../tar-prepare.sh)
 (cd build && ../tar-create.sh $1 $2)
 
