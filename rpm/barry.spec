@@ -252,6 +252,7 @@ cd ../
 %changelog
 * Fri Aug 01 2008 Chris Frey <cdfrey@foursquare.net> 0.14-1
 - version bump
+- added new ppp chat script for T-Mobile US
 
 * Thu May 29 2008 Chris Frey <cdfrey@foursquare.net> 0.13-1
 - version bump
