@@ -310,6 +310,13 @@ void BackupWindow::on_backup()
 		return;
 	}
 
+	// anything to do?
+	if( m_pConfig->GetBackupList().size() == 0 ) {
+		Gtk::MessageDialog msg("No databases selected in configuration.");
+		msg.run();
+		return;
+	}
+
 	// prepare for the progress bar
 	m_recordTotal = m_dev.GetDeviceRecordTotal(m_pConfig->GetBackupList());
 	m_finishedRecords = 0;
@@ -317,7 +324,7 @@ void BackupWindow::on_backup()
 
 	// anything to do?
 	if( m_recordTotal == 0 ) {
-		Gtk::MessageDialog msg("No databases selected in configuration.");
+		Gtk::MessageDialog msg("There are no records available in the selected databases.");
 		msg.run();
 		return;
 	}

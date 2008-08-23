@@ -11,6 +11,9 @@ Release: version 0.14 - 2008/08/??
 			-dbg and -dev package
 		- Bump Standards-Version to 3.8.0
 	- updated AUTHORS
+	- clarified barrybackup error message when no records available
+		Added a check so that "no databases selected" and
+		"no records available" are two distinct error messages.
 2008/08/21
 	- applied ppp chat script patch from Mick Reed
 	- updated RPM and Debian packages with new tmobileus ppp scripts
