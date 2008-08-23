@@ -1,3 +1,19 @@
+August 2008
+==============================================================================
+
+Binary Package Rename
+---------------------
+
+As of version 0.14, the binary package names for libbarry (both RPM and DEB)
+have been renamed to libbarry0, to match the commonly accepted procedure
+of most distributions.
+
+This change may cause package conflicts if you are not careful during
+the upgrade.  Please be sure to remove old Barry packages before
+installing version 0.14.
+
+
+
 May 2008
 ==============================================================================
 
