@@ -3,6 +3,13 @@ Release: version 0.14 - 2008/08/??
 2008/08/22
 	- fixed logic error in breset that displayed error on success
 		Thanks to Richard Esplin for reporting this bug.
+	- applied commit's from Jose Carlos Garcia Sogo's debian git repo
+		git://git.debian.org/git/users/jsogo/barry.git
+		- Add binary dependency of libbarry-dev on libusb-dev
+		- Rename libbarry to libbarry0, per debian policy
+		- Add exact dependency on binary:Version for every
+			-dbg and -dev package
+		- Bump Standards-Version to 3.8.0
 2008/08/21
 	- applied ppp chat script patch from Mick Reed
 	- updated RPM and Debian packages with new tmobileus ppp scripts
