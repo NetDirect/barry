@@ -34,12 +34,12 @@ Barry is a desktop toolset for managing your BlackBerry(tm) device. (BlackBerry
 is a registered trademark of Research in Motion Limited.)
 
 
-%package -n libbarry
+%package -n libbarry0
 Summary: BlackBerry(tm) Desktop for Linux - libbarry libraries
 Group: Development/Libraries
 Requires: libusb boost
 
-%description -n libbarry
+%description -n libbarry0
 Barry is a desktop toolset for managing your BlackBerry(tm) device. (BlackBerry
 is a registered trademark of Research in Motion Limited.)
 
@@ -52,9 +52,9 @@ likely want to also install barry-util and barry-gui.
 Summary: BlackBerry(tm) Desktop for Linux - libbarry libraries
 Group: Development/Libraries
 %if 0%{?suse_version}
-Requires: libbarry libusb boost-devel
+Requires: libbarry0 libusb boost-devel
 %else
-Requires: libbarry libusb-devel boost-devel
+Requires: libbarry0 libusb-devel boost-devel
 %endif
 
 %description -n libbarry-devel
@@ -67,7 +67,7 @@ This package contains the development library files for Barry, libbarry.
 %package util
 Summary: BlackBerry(tm) Desktop for Linux - bcharge, btool, breset and others
 Group: Applications/Productivity
-Requires: libbarry
+Requires: libbarry0
 Conflicts: barry-bcharge
 
 %description util
@@ -84,10 +84,10 @@ to access the data on the device in many ways.
 Summary: BlackBerry(tm) Desktop for Linux - bcharge, btool, breset and others
 Group: Applications/Productivity
 %if 0%{?suse_version}
-Requires: libbarry gtkmm2 libglademm libtar
+Requires: libbarry0 gtkmm2 libglademm libtar
 BuildRequires: gtkmm2-devel libglademm-devel libtar-devel
 %else
-Requires: libbarry gtkmm24 libglademm24 libtar
+Requires: libbarry0 gtkmm24 libglademm24 libtar
 BuildRequires: gtkmm24-devel libglademm24-devel libtar-devel
 %endif
 
@@ -103,7 +103,7 @@ This package contains the GUI applications built on top of libbarry.
 %package opensync
 Summary: BlackBerry(tm) Desktop for Linux - opensync plugin
 Group: Applications/Productivity
-Requires: libbarry, libopensync >= 0.22
+Requires: libbarry0, libopensync >= 0.22
 BuildRequires: libopensync-devel
 
 %description opensync
@@ -173,7 +173,7 @@ cd opensync-plugin/
 cd ../
 %endif
 
-%files -n libbarry
+%files -n libbarry0
 %defattr(-,root,root)
 %attr(-,root,root) %{_libdir}/*.so*
 %doc AUTHORS ChangeLog COPYING NEWS README
@@ -243,16 +243,17 @@ cd ../
 [ "%{buildroot}" != "/" ] && %{__rm} -rf %{buildroot}
 [ "%{barryroot}" != "/" ] && %{__rm} -rf %{barryroot}
 
-%post -n libbarry
+%post -n libbarry0
 /sbin/ldconfig
 
-%postun -n libbarry
+%postun -n libbarry0
 /sbin/ldconfig
 
 %changelog
-* Fri Aug 01 2008 Chris Frey <cdfrey@foursquare.net> 0.14-1
+* Fri Aug 23 2008 Chris Frey <cdfrey@foursquare.net> 0.14-1
 - version bump
 - added new ppp chat script for T-Mobile US
+- renamed libbarry to libbarry0
 
 * Thu May 29 2008 Chris Frey <cdfrey@foursquare.net> 0.13-1
 - version bump
