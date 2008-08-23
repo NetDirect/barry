@@ -15,7 +15,7 @@
 Summary: BlackBerry(tm) Desktop for Linux
 Name: barry
 Version: 0.14
-Release: pre20080807
+Release: 1
 Group: Applications/Productivity
 License: GPL
 Source: %{name}-%{version}.tar.bz2
