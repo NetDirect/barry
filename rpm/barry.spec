@@ -1,3 +1,5 @@
+%dump
+
 # always build with GUI
 %define with_gui 1
 
