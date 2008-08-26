@@ -20,6 +20,27 @@ contributions are welcome from all users!
 
 
 
+Fix i18n bug in current 0.22 opensync plugin
+--------------------------------------------
+For some reason, contacts with international characters in the names
+do not come through properly during the sync.  The names are truncated
+at the character.
+
+It appears consistent that the Blackberry uses the CP1252 charset,
+a.k.a. WINDOWS-1252, which is like ISO-8859-1, except that characters
+0x80 to 0x9F are used as characters instead of escape codes.
+
+This knowledge needs to be passed on to opensync in the data format.
+This may be as simple as adding a proper charset field to the vCard data,
+but it definitely needs testing and a patch.
+
+See this mailing list thread:
+http://sourceforge.net/mailarchive/message.php?msg_id=20080418033504.GA12750%40foursquare.net
+
+Estimated time: a few dedicated hours in the best case
+
+
+
 Porting opensync plugin to opensync 0.40
 ----------------------------------------
 There's two options to this item:
@@ -146,6 +167,19 @@ would be seamless whether plugged in via USB or Bluetooth.
 Estimated tasks:
 	- research and design serial protocol stack to reuse as much
 		library code as possible
+Estimated time: unknown
+
+
+
+Add internationalization (i18n) support to the backup GUI and tools
+-------------------------------------------------------------------
+Translations are needed for the GUI and command line tool prompts, as
+well as support in the code for this translation.
+
+Estimated tasks:
+	- update the code to support i18n
+	- translate to languages of interest
+
 Estimated time: unknown
 
 
