@@ -7,7 +7,33 @@ please ask on the mailing list as well.
 
 - Chris
 <cdfrey@foursquare.net>
-June 2008
+
+
+
+An automated test suite
+-----------------------
+Testing Barry will be a challenge, since an actual device is required
+for a large bulk of tests.  Ideally, it should be easy for someone to
+make a full backup of their device, donate it to science, and then
+restore their settings and data, since not everyone has a pure device
+for testing.
+
+Things that need automated testing:
+
+	- test all possible compile options (finished, see test/)
+	- test parsing of all supported records
+	- test building of all supported records
+	- test backup and restore, of random sets of databases, as well
+		as the "all databases" set
+	- test LDAP / LDIF conversions
+	- test test Boost serialization backups and restore
+	- make sure it is possible to create records with the same
+		SHA1 sums, purely programmatically
+	- test syncing of all fields, including international data / charsets
+	- test password support, and password safety catch (bad passwd X times)
+	- test modem functionality
+
+Estimated time: open ended
 
 
 
@@ -316,6 +342,8 @@ functionality into a standalone command line utility (more work, but smarter
 in the long run).  This is mostly a code refactoring job, consisting of
 all working code that's already there, and I know there are people
 who would thank you. :-)
+
+Note: see also the perl scripts in contrib/
 
 Estimated tasks:
 	- split out tar and backup functionality code into shared library

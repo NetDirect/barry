@@ -2,6 +2,7 @@ Release: version 0.14 - 2008/08/??
 ------------------------------------------------------------------------------
 2008/08/26
 	- updated TODO list with i18n opensync bug and general i18n support
+	- added test suite to TODO list
 2008/08/23
 	- renamed libbarry to libbarry0 in rpm/barry.spec
 	- added %dump to rpm/barry.spec to match the OBS version
