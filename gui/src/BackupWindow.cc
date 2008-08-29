@@ -22,6 +22,7 @@
 #include "BackupWindow.h"
 #include "DeviceSelectDlg.h"
 #include "PasswordDlg.h"
+#include "PromptDlg.h"
 #include "ConfigDlg.h"
 #include "util.h"
 #include <gtkmm/aboutdialog.h>
@@ -40,6 +41,7 @@ BackupWindow::BackupWindow(BaseObjectType *cobject,
 	, m_pStatusBar(0)
 	, m_pBackupButton(0)
 	, m_pRestoreButton(0)
+	, m_pDeviceNameLabel(0)
 	, m_scanned(false)
 	, m_working(false)
 {
@@ -64,6 +66,7 @@ BackupWindow::BackupWindow(BaseObjectType *cobject,
 	m_xml->get_widget("statusbar1", m_pStatusBar);
 	m_xml->get_widget("entry1", m_pPINEntry);
 	m_xml->get_widget("entry2", m_pDatabaseEntry);
+	m_xml->get_widget("DeviceNameLabel", m_pDeviceNameLabel);
 
 	// setup widget signals
 	m_pBackupButton->signal_clicked().connect(
@@ -225,8 +228,38 @@ sac_retry:
 
 	// open configuration now that we know which device we're talking to
 	m_pConfig.reset( new ConfigFile(oss.str(), m_dev.GetDBDB()) );
+	CheckDeviceName();
+	SetDeviceName(m_pConfig->GetDeviceName());
 
 	m_pStatusBar->pop();
+}
+
+void BackupWindow::CheckDeviceName()
+{
+	if( !m_pConfig->HasDeviceName() ) {
+		PromptDlg dlg;
+		dlg.SetPrompt("Unnamed device found. Please enter a name for it:");
+		if( dlg.run() == Gtk::RESPONSE_OK ) {
+			m_pConfig->SetDeviceName(dlg.GetAnswer());
+		}
+		else {
+			m_pConfig->SetDeviceName(" ");
+		}
+		if( !m_pConfig->Save() ) {
+			Gtk::MessageDialog msg("Error saving config: " +
+				m_pConfig->get_last_error());
+			msg.run();
+		}
+	}
+}
+
+void BackupWindow::SetDeviceName(const std::string &name)
+{
+	// format the device name prompt
+	std::ostringstream dn;
+	dn << "Device: <i>" << m_pConfig->GetDeviceName() << "</i>";
+	m_pDeviceNameLabel->set_label(dn.str());
+
 }
 
 void BackupWindow::SetWorkingMode(const std::string &taskname)
@@ -329,6 +362,16 @@ void BackupWindow::on_backup()
 		return;
 	}
 
+	// prompt for a backup label, if so configured
+	std::string backupLabel;
+	if( m_pConfig->PromptBackupLabel() ) {
+		PromptDlg dlg;
+		dlg.SetPrompt("Please enter a label for this backup:");
+		if( dlg.run() == Gtk::RESPONSE_OK ) {
+			backupLabel = dlg.GetAnswer();
+		}
+	}
+
 	// start the thread
 	m_working = m_dev.StartBackup(
 		DeviceInterface::AppComm(&m_signal_progress,
@@ -336,7 +379,7 @@ void BackupWindow::on_backup()
 					&m_signal_done,
 					&m_signal_erase_db),
 		m_pConfig->GetBackupList(), m_pConfig->GetPath(),
-		m_pConfig->GetPIN());
+		m_pConfig->GetPIN(), backupLabel);
 	if( !m_working ) {
 		Gtk::MessageDialog msg("Error starting backup thread: " +
 			m_dev.get_last_error());
@@ -428,11 +471,14 @@ void BackupWindow::on_edit_config()
 	if( dlg.run() == Gtk::RESPONSE_OK ) {
 		m_pConfig->SetBackupList(dlg.GetBackupList());
 		m_pConfig->SetRestoreList(dlg.GetRestoreList());
+		m_pConfig->SetDeviceName(dlg.GetDeviceName());
+		m_pConfig->SetPromptBackupLabel(dlg.GetPromptBackupLabel());
 		if( !m_pConfig->Save() ) {
 			Gtk::MessageDialog msg("Error saving config: " +
 				m_pConfig->get_last_error());
 			msg.run();
 		}
+		SetDeviceName(m_pConfig->GetDeviceName());
 	}
 }
 

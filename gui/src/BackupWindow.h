@@ -51,6 +51,7 @@ class BackupWindow : public Gtk::Window
 	Gtk::Statusbar *m_pStatusBar;
 	Gtk::Entry *m_pPINEntry, *m_pDatabaseEntry;
 	Gtk::Button *m_pBackupButton, *m_pRestoreButton;
+	Gtk::Label *m_pDeviceNameLabel;
 
 	// state
 	bool m_scanned;
@@ -59,6 +60,8 @@ class BackupWindow : public Gtk::Window
 
 protected:
 	void ScanAndConnect();
+	void CheckDeviceName();
+	void SetDeviceName(const std::string &name);
 	void SetWorkingMode(const std::string &taskname);
 	void ClearWorkingMode();
 	void UpdateProgress();

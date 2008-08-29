@@ -108,7 +108,7 @@ protected:
 	void RestoreAndBackupThread();
 
 	// helpers
-	std::string MakeFilename(const std::string &pin);
+	std::string MakeFilename(const std::string &pin, const std::string &label = "");
 	int CountFiles(reuse::TarFile &tar, const ConfigFile::DBListType &restoreList);
 	bool SplitTarPath(const std::string &tarpath, std::string &dbname,
 		std::string &dbid_text, uint8_t &dbrectype, uint32_t &dbid);
@@ -137,7 +137,8 @@ public:
 
 	bool StartBackup(AppComm comm,
 		const ConfigFile::DBListType &backupList,
-		const std::string &directory, const std::string &pin);
+		const std::string &directory, const std::string &pin,
+		const std::string &backupLabel);
 	bool StartRestore(AppComm comm,
 		const ConfigFile::DBListType &restoreList,
 		const std::string &tarfilename, int *pRecordCount = 0);

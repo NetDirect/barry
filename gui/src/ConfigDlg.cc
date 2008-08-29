@@ -26,15 +26,21 @@
 
 ConfigDlg::ConfigDlg(const Barry::DatabaseDatabase &dbdb,
 		     const ConfigFile &config)
-	: m_dbdb(dbdb),
-	m_backupList(config.GetBackupList()),
-	m_restoreList(config.GetRestoreList())
+	: m_dbdb(dbdb)
+	, m_backupList(config.GetBackupList())
+	, m_restoreList(config.GetRestoreList())
 {
 	Glib::RefPtr<Gnome::Glade::Xml> xml = LoadXml("ConfigDlg.glade");
 
 	Gtk::Dialog *pD = 0;
 	xml->get_widget("ConfigDlg", pD);
 	m_pDialog.reset(pD);
+
+	xml->get_widget("DeviceName", m_pDeviceNameEntry);
+	m_pDeviceNameEntry->set_text(config.GetDeviceName());
+
+	xml->get_widget("PromptBackupLabel", m_pPromptBackupLabelCheck);
+	m_pPromptBackupLabelCheck->set_active(config.PromptBackupLabel());
 
 	Gtk::Button *pButton = 0;
 	xml->get_widget("configure_backup", pButton);
@@ -53,7 +59,10 @@ ConfigDlg::~ConfigDlg()
 
 int ConfigDlg::run()
 {
-	return m_pDialog->run();
+	int r_val = m_pDialog->run();
+	m_deviceName = m_pDeviceNameEntry->get_text();
+	m_promptBackupLabel = m_pPromptBackupLabelCheck->get_active();
+	return r_val;
 }
 
 void ConfigDlg::on_configure_backup()

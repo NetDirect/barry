@@ -51,6 +51,7 @@ ConfigFile::ConfigFile(const std::string &pin,
 		       const Barry::DatabaseDatabase &db)
 	: m_pin(pin)
 	, m_loaded(false)
+	, m_promptBackupLabel(false)
 {
 	if( m_pin.size() == 0 )
 		throw ConfigFileError("Configfile: empty pin");
@@ -116,6 +117,23 @@ void ConfigFile::Load()
 			pList = 0;
 
 			// add all remaining keyword checks here
+			if( keyword == "device_name" ) {
+				iss >> std::ws;
+				std::getline(iss, m_deviceName);
+				if( m_deviceName.size() == 0 ) {
+					// if there is a device_name setting,
+					// then this value must hold something,
+					// so that the user can ignore this
+					// field, and not get pestered all
+					// the time
+					m_deviceName = " ";
+				}
+			}
+			else if( keyword == "prompt_backup_label" ) {
+				int flag;
+				iss >> flag;
+				m_promptBackupLabel = flag;
+			}
 		}
 	}
 
@@ -150,6 +168,12 @@ bool ConfigFile::Save()
 	for( DBListType::iterator i = m_restoreList.begin(); i != m_restoreList.end(); ++i ) {
 		out << " " << *i << std::endl;
 	}
+
+	if( m_deviceName.size() ) {
+		out << "device_name " << m_deviceName << std::endl;
+	}
+
+	out << "prompt_backup_label " << (m_promptBackupLabel ? 1 : 0) << std::endl;
 
 	if( !out ) {
 		m_last_error = "Error during write.  Config may be incomplete.";
@@ -199,5 +223,18 @@ void ConfigFile::SetRestoreList(const DBListType &list)
 {
 	m_restoreList = list;
 	m_loaded = true;
+}
+
+void ConfigFile::SetDeviceName(const std::string &name)
+{
+	if( name.size() )
+		m_deviceName = name;
+	else
+		m_deviceName = " ";
+}
+
+void ConfigFile::SetPromptBackupLabel(bool prompt)
+{
+	m_promptBackupLabel = prompt;
 }
 

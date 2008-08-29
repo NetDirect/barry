@@ -11,6 +11,7 @@ dist_glade_DATA = \
 	DeviceSelectDlg.glade \
 	DatabaseSelectDlg.glade \
 	PasswordDlg.glade \
+	PromptDlg.glade \
 	ConfigDlg.glade
 
 bin_PROGRAMS = barrybackup
@@ -21,6 +22,7 @@ barrybackup_SOURCES = \
 	DeviceSelectDlg.cc \
 	DatabaseSelectDlg.cc \
 	PasswordDlg.cc \
+	PromptDlg.cc \
 	ConfigDlg.cc \
 	ConfigFile.cc \
 	DeviceIface.cc \
@@ -36,6 +38,7 @@ noinst_HEADERS= \
 	DeviceIface.h \
 	DeviceSelectDlg.h \
 	PasswordDlg.h \
+	PromptDlg.h \
 	tarfile.h \
 	util.h
 

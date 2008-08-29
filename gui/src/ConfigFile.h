@@ -53,6 +53,10 @@ private:
 	// configuration data
 	DBListType m_backupList;
 	DBListType m_restoreList;
+	std::string m_deviceName;
+	bool m_promptBackupLabel;	// if true, prompt the user on every
+					// backup for a string to label the
+					// backup file with
 
 protected:
 	void BuildFilename();
@@ -79,6 +83,9 @@ public:
 	const std::string& GetFilename() const { return m_filename; }
 	const DBListType& GetBackupList() const { return m_backupList; }
 	const DBListType& GetRestoreList() const { return m_restoreList; }
+	const std::string& GetDeviceName() const { return m_deviceName; }
+	bool HasDeviceName() const { return m_deviceName.size(); }
+	bool PromptBackupLabel() const { return m_promptBackupLabel; }
 
 	//
 	// operations
@@ -95,6 +102,9 @@ public:
 	/// Sets list with new config
 	void SetBackupList(const DBListType &list);
 	void SetRestoreList(const DBListType &list);
+
+	void SetDeviceName(const std::string &name);
+	void SetPromptBackupLabel(bool prompt = true);
 };
 
 #endif

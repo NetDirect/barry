@@ -219,10 +219,23 @@ void DeviceInterface::RestoreAndBackupThread()
 	m_AppComm.Invalidate();
 }
 
-std::string DeviceInterface::MakeFilename(const std::string &pin)
+std::string DeviceInterface::MakeFilename(const std::string &pin,
+					  const std::string &label)
 {
 	time_t t = time(NULL);
 	struct tm *lt = localtime(&t);
+
+	std::string fileLabel = label;
+	if( fileLabel.size() ) {
+		// prepend a hyphen
+		fileLabel.insert(fileLabel.begin(), '-');
+
+		// change all spaces in label to underscores
+		for( size_t i = 0; i < fileLabel.size(); i++ ) {
+			if( fileLabel[i] == ' ' )
+				fileLabel[i] = '_';
+		}
+	}
 
 	std::ostringstream tarfilename;
 	tarfilename << pin << "-"
@@ -233,6 +246,7 @@ std::string DeviceInterface::MakeFilename(const std::string &pin)
 		<< std::setw(2) << std::setfill('0') << lt->tm_hour
 		<< std::setw(2) << std::setfill('0') << lt->tm_min
 		<< std::setw(2) << std::setfill('0') << lt->tm_sec
+		<< fileLabel
 		<< ".tar.gz";
 	return tarfilename.str();
 }
@@ -371,14 +385,15 @@ std::string DeviceInterface::GetThreadDBName() const
 bool DeviceInterface::StartBackup(AppComm comm,
 				  const ConfigFile::DBListType &backupList,
 				  const std::string &directory,
-				  const std::string &pin)
+				  const std::string &pin,
+				  const std::string &backupLabel)
 {
 	if( m_AppComm.IsValid() )
 		return False("Thread already running.");
 
 	try {
 
-		std::string filename = directory + "/" + MakeFilename(pin);
+		std::string filename = directory + "/" + MakeFilename(pin, backupLabel);
 		m_tarback.reset( new reuse::TarFile(filename.c_str(), true, &reuse::gztar_ops_nonthread, true) );
 
 	}

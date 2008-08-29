@@ -1,5 +1,10 @@
 Release: version 0.14 - 2008/08/??
 ------------------------------------------------------------------------------
+2008/08/29
+	- added device name and backup label support to the GUI
+		It is now possible to name devices, instead of just
+		operating by PIN number, and it is possible to now
+		add a text label to the backup tar filenames.
 2008/08/26
 	- updated TODO list with i18n opensync bug and general i18n support
 	- added test suite to TODO list
