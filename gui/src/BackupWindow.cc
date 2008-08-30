@@ -366,9 +366,13 @@ void BackupWindow::on_backup()
 	std::string backupLabel;
 	if( m_pConfig->PromptBackupLabel() ) {
 		PromptDlg dlg;
-		dlg.SetPrompt("Please enter a label for this backup:");
+		dlg.SetPrompt("Please enter a label for this backup (blank is ok):");
 		if( dlg.run() == Gtk::RESPONSE_OK ) {
 			backupLabel = dlg.GetAnswer();
+		}
+		else {
+			// user cancelled
+			return;
 		}
 	}
 
