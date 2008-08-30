@@ -65,11 +65,18 @@ protected:
 	bool CheckPath();
 
 public:
+	/// Loads config file for the given pin, and ends up in an
+	/// unenlightened state.  Throws ConfigFileError on error,
+	/// but it is not an error if the config does not exist.
+	/// Never use this if you have a DatabaseDatabase object!
+	/// This ctor is only for temporary loading of config data.
+	explicit ConfigFile(const std::string &pin);
+
 	/// Opens and loads config file for given pin, and calls Enlighten
 	/// Throws ConfigFileError on error.  Should never fail unless
 	/// passed a bad pin, or if unable to get current user info.
-	explicit ConfigFile(const std::string &pin,
-		const Barry::DatabaseDatabase &db);
+	ConfigFile(const std::string &pin, const Barry::DatabaseDatabase &db);
+
 	~ConfigFile();
 
 	//

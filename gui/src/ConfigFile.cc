@@ -44,6 +44,27 @@ ConfigFile::ConfigFileError::ConfigFileError(const char *msg, int err)
 {
 }
 
+
+//////////////////////////////////////////////////////////////////////////////
+// ConfigFile class members
+
+/// Loads config file for the given pin, and ends up in an
+/// unenlightened state.  Throws ConfigFileError on error,
+/// but it is not an error if the config does not exist.
+/// Never use this if you have a DatabaseDatabase object!
+/// This ctor is only for temporary loading of config data.
+ConfigFile::ConfigFile(const std::string &pin)
+	: m_pin(pin)
+	, m_loaded(false)
+	, m_promptBackupLabel(false)
+{
+	if( m_pin.size() == 0 )
+		throw ConfigFileError("Configfile: empty pin");
+
+	BuildFilename();
+	Load();
+}
+
 /// Opens and loads config file for given pin, and calls Enlighten
 /// Throws ConfigFileError on error.  Should never fail unless
 /// passed a bad pin.

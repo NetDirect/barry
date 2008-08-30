@@ -21,8 +21,10 @@
 */
 
 #include "DeviceSelectDlg.h"
+#include "ConfigFile.h"
 #include "util.h"
 #include <barry/barry.h>
+#include <string>
 #include <sstream>
 #include <iostream>
 
@@ -53,6 +55,18 @@ void DeviceSelectDlg::LoadTree(const Barry::Probe &probe)
 
 		std::ostringstream oss;
 		oss << std::hex << probe.Get(i).m_pin;
+
+		// temporarily load the config for the given pin
+		// and append device name to oss stream
+		try {
+			ConfigFile config(oss.str());
+			if( config.GetDeviceName().size() )
+				oss << " - " << config.GetDeviceName();
+		}
+		catch( ConfigFile::ConfigFileError & ) {
+			// just throw it away
+		}
+
 		(*row)[m_Columns.m_pin_text] = oss.str();
 	}
 	m_pTree->set_model(m_pListStore);

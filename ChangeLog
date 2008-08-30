@@ -5,6 +5,7 @@ Release: version 0.14 - 2008/08/??
 		It is now possible to name devices, instead of just
 		operating by PIN number, and it is possible to now
 		add a text label to the backup tar filenames.
+	- added the device names to the device selection dialog
 2008/08/26
 	- updated TODO list with i18n opensync bug and general i18n support
 	- added test suite to TODO list
