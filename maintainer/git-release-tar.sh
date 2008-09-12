@@ -30,7 +30,6 @@ TAGNAME="barry-$1_$2"
 MAJOR="$1"
 MINOR="$2"
 COMMIT="$3"
-SCRIPT="$4"
 RUNDIR="$(cd "$(dirname "$0")" && pwd)"
 
 set -e
