@@ -1,47 +1,39 @@
-
-- bump version numbers in:
-	- configure.ac
-	- src/Makefile.am
-	- src/version.cc
-	- gui/src/BackupWindow.cc (about dialog)
-	- src/Doxygen
-	- rpm/barry*.spec
-	- debian/changelog
-	- opensync.../barry_sync.cc
-- checkout pure CVS and test building everything
-- checkout pure CVS and:
-	- ./buildgen.sh in root
-	- ./buildgen.sh in opensync-plugin
-	- ./buildgen.sh in gui
-	- remove all autom4te.cache directories
-- tar, and release
-
-Future considerations:
-	- update library's doxygen developer reference on main site,
-		either http://barry.sourceforge.net/ or
-		http://www.netdirect.ca/...somewhere/barry-docs/
-	- update binary packages for each release:
-		- libbarry (deb and rpm)
-		- libbarry-dev.deb and libbarry-devel.rpm
-		- libbarry-doc (deb and rpm) (doxygen tree docs, same as above
-			website)
-		- barry (or barry-tools?)
-			(command line tools, including bcharge)
-			(deb and rpm)
-		- barry-backup (GUI backup tool, deb and rpm)
-		- barry-opensync-plugin (deb and rpm)
-	- how many systems do we support?
-		- depends on g++ available on each platform, and which
-			compiler the supporting libs are compiled with
-			- for example, if gtkmm is compiled with g++-3.3,
-				barry and barry-backup should be too
-		- systems:
-			- debian stable (sarge at the moment, but new stable
-				is coming)
-			- fedora 4(?), 5, 6
-				- need to check the compiler ABI's to reduce
-					the number of packages needed
-			- ubuntu
-				- only if debian stable packages don't work by
-					default on both
+Barry Release Checklist:
+------------------------
+- bump version numbers in
+		- configure.ac
+		- src/Makefile.am
+		- src/version.cc
+		- gui/src/BackupWindow.cc (about dialog)
+		- src/Doxyfile
+		- rpm/barry.spec
+		- debian/changelog
+		- opensync-plugin/src/barry_sync.cc
+- run all tests on a clean git tree, including build test script
+- write release notes, including contributors, known issues, new
+	features and bugs fixed
+	- include mention of distros that support Barry:
+		(see AUTHORS file for distro list)
+- web docs:
+	- bump version number
+	- update known issues list
+	- check that all external links work, and point to proper content
+	- upload latest web docs to netdirect project page
+	- upload latest doxygen docs to netdirect project page
+- snip this version's changelog history into its own file
+- tag CVS and git repositories with latest version
+- run maintainer/release.sh
+- pristine-tar the debian and bz2 release tarballs into git repo and tag them
+- upload packages to SourceForge
+- update OpenSUSE Build Service with release tarballs
+- submit tracker news item at SourceForge
+- send announcement to devel and announce mailing list, including:
+	- release notes
+	- changelog
+	- URLs to sourceforge and OpenSUSE Build Service binary packages
+	- CVS and git URLs
+	- URL to netdirect doc page
+- email Chris when new Barry is released
+- update Freshmeat entry
+- update source project, bumping revision numbers in source code
 
