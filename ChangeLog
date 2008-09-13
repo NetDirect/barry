@@ -17,6 +17,7 @@ Release: version 0.14 - 2008/09/??
 		release.sh top level script, when using git
 	- removed CVS-style ID code from contrib/barry-unbind-storage.sh
 		since it made it look like cdfrey wrote it
+	- removed doc/CodingStyle.txt as it is now documented in html
 2008/08/29
 	- added device name and backup label support to the GUI
 		It is now possible to name devices, instead of just
