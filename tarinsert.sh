@@ -30,6 +30,7 @@ set -e
 
 git tag $(basename $2)
 git checkout master
+git clean -xdf
 git branch -D tarinsert
 echo "Done!"
 
