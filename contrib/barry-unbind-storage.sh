@@ -1,5 +1,4 @@
 #!/bin/sh
-# $Id$
 #
 # Unbinding usb-storage from the BlackBarry.
 #
