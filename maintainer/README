@@ -7,3 +7,10 @@ The top level scripts are:
 	test.sh    - does simple makes on all testable systems, and
 		     prompts after each so you can examine the output
 
+If using git, use:
+
+	tagged-release.sh - Run above release.sh first to flush out any
+		bugs, and if successful, tag the tree and start over with
+		this script, which also updates the git repo with official
+		tarball data.
+

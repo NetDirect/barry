@@ -13,6 +13,8 @@ Release: version 0.14 - 2008/09/??
 	- added umask to maintainer/git-extract.sh, so it works even without
 		a pre-configured git
 	- updated maintainer/tar-prepare.sh to match the new Doxyfile
+	- added maintainer/tagged-release.sh, as replacement for the
+		release.sh top level script, when using git
 2008/08/29
 	- added device name and backup label support to the GUI
 		It is now possible to name devices, instead of just
