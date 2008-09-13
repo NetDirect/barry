@@ -10,6 +10,8 @@ Release: version 0.14 - 2008/09/??
 	- moved src/Doxyfile to ./Doxyfile to avoid ".." in the config...
 		the ".." paths confused doxygen and caused it to generate
 		non-relative paths in the documentation.
+	- added umask to maintainer/git-extract.sh, so it works even without
+		a pre-configured git
 2008/08/29
 	- added device name and backup label support to the GUI
 		It is now possible to name devices, instead of just
