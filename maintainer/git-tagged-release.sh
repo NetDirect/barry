@@ -52,6 +52,12 @@ fi
 
 set -e
 
+# Are we in a Barry root tree?
+if ! [ -f AUTHORS -a -f ChangeLog -a -f COPYING -a -f buildgen.sh ] ; then
+	echo "Can't find Barry files. Please run from root of Barry tree."
+	exit 1
+fi
+
 mkdir maintainer/build
 
 # generate tarball trees
