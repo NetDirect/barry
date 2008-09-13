@@ -60,6 +60,10 @@ fi
 
 mkdir maintainer/build
 
+# start fresh
+git checkout -f master
+git clean -xdf
+
 # generate tarball trees
 git checkout -b git-tagged-tar "$COMMIT"
 maintainer/tar-prepare.sh
@@ -92,5 +96,6 @@ pristine-tar -m "Release tarball barry_$MAJOR.$MINOR.orig.tar.gz" commit \
 
 # cleanup
 git checkout master
+git clean -xdf
 git branch -D git-tagged-tar
 
