@@ -23,7 +23,7 @@ fi
 (cd doc/www && ./static.sh)
 
 # Generate doxygen docs
-(cd src && doxygen && rm -f doxygen.log)
+(doxygen && rm -f doxygen.log)
 
 # Generate configure scripts
 ./buildgen.sh
