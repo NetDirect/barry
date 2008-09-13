@@ -1,9 +1,0 @@
-?package(barrybackup-gui):\
-  needs="X11"\
-  section="Apps/Tools"\
-  title="Barry Backup"\
-  command="/usr/bin/barrybackup"\
-  hints="Blackberry Backup Utility"\
-
-#  icon="/usr/share/pixmaps/xzgv.xpm"
-
