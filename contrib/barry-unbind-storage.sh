@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id$
+# $Id: barry-unbind-storage.sh,v 1.1 2008/07/25 04:15:06 cdfrey Exp $
 #
 # Unbinding usb-storage from the BlackBarry.
 #
