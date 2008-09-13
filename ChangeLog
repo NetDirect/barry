@@ -1,5 +1,8 @@
 Release: version 0.14 - 2008/09/??
 ------------------------------------------------------------------------------
+2008/09/13
+	- added notes in ReleaseChecklist.txt regarding the new tarball
+		tags in the git repos
 2008/09/12
 	- updated doc/ReleaseChecklist.txt
 	- moving items from private todo list to TODO file

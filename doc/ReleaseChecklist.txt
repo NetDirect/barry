@@ -37,3 +37,25 @@ Barry Release Checklist:
 - update Freshmeat entry
 - update source project, bumping revision numbers in source code
 
+
+A note on the tags in Barry's git repository:
+---------------------------------------------
+Each release will now have at least 3 tags.  For example, if releasing
+version 0.14, the tags will be:
+
+	barry-0.14		Tag on master branch, signifying the
+				development point that the release occured
+	barry-0.14.tar.bz2	Contains the exact contents of the
+				full tar.bz2 release tarball.  If you
+				look far enough in the history logs, you will
+				find the barry-0.14 tag.
+	barry_0.14.orig.tar.gz	Contains the exact contents of the debian
+				source package tarball.  Again, barry-0.14
+				will be in this tag's history.
+
+Basically, the first tag contains only the source code, and no generated
+files.  The second tag (tar.bz2) contains the source code and all
+generated files.  And the third tag (orig) contains all of tar.bz2
+*except* the debian/ directory.  They are arranged so all history
+merges back into the main non-generated source development tree.
+
