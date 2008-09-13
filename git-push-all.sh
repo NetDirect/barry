@@ -33,4 +33,5 @@ read
 git push repo.or.cz master i18n scripts
 
 echo "================= NOTE: if you want to push a tag, do it manually!"
+echo "Example: git push repo.or.cz barry-0.13"
 
