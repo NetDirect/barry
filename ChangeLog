@@ -1,5 +1,7 @@
 Release: version 0.14 - 2008/09/??
 ------------------------------------------------------------------------------
+2008/09/18
+	- fixed git command line in git-extract.sh for new 1.6.0.x behaviour
 2008/09/13
 	- added notes in ReleaseChecklist.txt regarding the new tarball
 		tags in the git repos

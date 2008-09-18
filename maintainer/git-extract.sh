@@ -38,7 +38,7 @@ sleep 3s
 
 mkdir build
 umask 0022
-(cd "$RUNDIR" && git-archive --format=tar --prefix=$DIRNAME/ $COMMIT) |\
+(cd "$RUNDIR" && git archive --format=tar --prefix=$DIRNAME/ $COMMIT) |\
 	tar -x -C build -f -
 echo "Extracted $COMMIT..."
 
