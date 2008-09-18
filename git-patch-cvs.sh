@@ -15,7 +15,7 @@ if [ -z "$1" -o -z "$2" -o -z "$3" ] ; then
 	exit 1
 fi
 
-git-cherry "$1" "$2" | \
+git cherry "$1" "$2" | \
 	sed -n 's/^+ //p' | \
-	xargs -L 1 git-cvsexportcommit -cvp -w "$3"
+	xargs -L 1 git cvsexportcommit -cvp -w "$3"
 
