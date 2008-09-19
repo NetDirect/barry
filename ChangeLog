@@ -1,5 +1,7 @@
-Release: version 0.14 - 2008/09/??
+Release: version 0.14 - 2008/09/19
 ------------------------------------------------------------------------------
+2008/09/19
+	- fixed git-tagged-release.sh to not delete its own results... oops
 2008/09/18
 	- fixed git command line in git-extract.sh for new 1.6.0.x behaviour
 2008/09/13

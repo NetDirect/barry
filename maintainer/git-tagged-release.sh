@@ -58,11 +58,11 @@ if ! [ -f AUTHORS -a -f ChangeLog -a -f COPYING -a -f buildgen.sh ] ; then
 	exit 1
 fi
 
-mkdir maintainer/build
-
 # start fresh
 git checkout -f master
 git clean -xdf
+
+mkdir maintainer/build
 
 # generate tarball trees
 git checkout -b git-tagged-tar "$COMMIT"
@@ -96,6 +96,5 @@ pristine-tar -m "Release tarball barry_$MAJOR.$MINOR.orig.tar.gz" commit \
 
 # cleanup
 git checkout master
-git clean -xdf
 git branch -D git-tagged-tar
 
