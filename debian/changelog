@@ -20,8 +20,8 @@ barry (0.13-1.2) unstable; urgency=low
   * debian/changelog:
     + Merge different versions in 0.13-* packages in a new 0.13-1 one, so it
     can be uploaded into Debian
-  * barrybackup-gui.menu: use Applications menu, as per Policy
-
+  * barrybackup-gui.menu: use Applications/Mobile Devices menu, as per Policy
+  
   [ Chris Frey ]
   * From 0.13-1.1 upstream package
   * added brecsum
