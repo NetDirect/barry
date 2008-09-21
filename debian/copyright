@@ -3,11 +3,22 @@ Fri, 29 Dec 2006 20:34:01 -0500.
 
 It was downloaded from http://sourceforge.net/projects/barry
 
-Copyright Holder: Net Direct Inc. (http://www.netdirect.ca/)
+Upstream Authors:
+    Chris Frey <cdfrey@foursquare.net>
+
+
+Copyright:
+    Copyright (C) 2005-2008, Net Direct Inc. (http://www.netdirect.ca/)
+    Copyright (C) 2007-2008, Chris Frey <cdfrey@foursquare.net>
+    Copyright (C) 2008, Brian Edginton (edge@edginton.net)
+    Copyright (C) 1995-9 by Cryptography Research, Inc.
+    Copyright (C) 2003 Ximian, Inc. 2005 Armin Bauer
+ For scripts in contrib/ directory:
+    Copyright (C) 2008  Niels de Vos <nixpanic@users.sourceforge.net>
+    Copyright (C) 2008, ashley willis <barry@venamous.net>
+
 
 License:
-   Copyright (C) 2005-2008, Net Direct Inc. (http://www.netdirect.ca/)
-
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
    the Free Software Foundation; either version 2 of the License, or
@@ -20,3 +31,20 @@ License:
 On Debian systems, the complete text of the GNU General
 Public License can be found in `/usr/share/common-licenses/GPL'.
 
+ For opensync-plugin/src/vformat.[c,h]:
+   This library is free software; you can redistribute it and/or
+   modify it under the terms of the GNU Lesser General Public
+   License as published by the Free Software Foundation; either
+   version 2.1 of the License, or (at your option) any later version.
+ 
+   This library is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Lesser General Public License for more details.
+ 
+   You should have received a copy of the GNU Lesser General Public
+   License along with this library; if not, write to the Free Software
+   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
+
+On Debian systems, the complete text of the GNU Lesser General
+Public License can be found in `/usr/share/common-licenses/LGPL'.

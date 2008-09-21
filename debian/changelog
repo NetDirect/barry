@@ -7,6 +7,10 @@ barry (0.15-0) unstable; urgency=low
 barry (0.13-1.2) unstable; urgency=low
 
   [ Jose Carlos Garcia Sogo ]
+  * Upload to Debian (Closes: #450504)
+  * debian/copyright:
+    + Add copyright holders
+    + Add LGPL as license for vformat.[c,h] files
   * debian/control:
     + Change maintainer
     + Bump Standards-Version to 3.8.0
