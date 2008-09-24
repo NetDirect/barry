@@ -145,7 +145,6 @@ noinst_HEADERS = cbarry.h \
 	strnlen.h
 
 EXTRA_DIST = convo.awk \
-	Doxyfile \
 	legal.txt
 
 ##if DO_TEST

@@ -2,7 +2,7 @@ DISTCHECK_CONFIGURE_FLAGS = --enable-gui --enable-opensync-plugin
 
 ACLOCAL_FLAGS = -I m4
 
-EXTRA_DIST = COPYING ChangeLog README \
+EXTRA_DIST = COPYING ChangeLog README Doxyfile \
 	buildgen.sh \
 	data \
 	doc \
