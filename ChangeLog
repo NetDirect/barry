@@ -1,5 +1,8 @@
-Release: version 0.14 - 2008/09/19
+Release: version 0.14 - 2008/09/24
 ------------------------------------------------------------------------------
+2008/09/24
+	- changed Debian changelog version to 0.14-0 to make room for
+		official Debian packages which start at 0.14-1
 2008/09/19
 	- fixed git-tagged-release.sh to not delete its own results... oops
 2008/09/18
