@@ -5,7 +5,7 @@ Barry Release Checklist:
 		- src/Makefile.am
 		- src/version.cc
 		- gui/src/BackupWindow.cc (about dialog)
-		- src/Doxyfile
+		- Doxyfile
 		- rpm/barry.spec
 		- debian/changelog
 		- opensync-plugin/src/barry_sync.cc

@@ -1,3 +1,16 @@
+Release: version 0.15 - 2008/10/??
+------------------------------------------------------------------------------
+2008/09/24
+	- version bump:
+		- configure.ac
+		- src/Makefile.am
+		- src/version.cc
+		- gui/src/BackupWindow.cc
+		- Doxyfile
+		- rpm/barry.spec
+		- debian/changelog
+		- opensync-plugin/src/barry_sync.cc
+
 Release: version 0.14 - 2008/09/24
 ------------------------------------------------------------------------------
 2008/09/24
