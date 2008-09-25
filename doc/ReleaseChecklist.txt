@@ -31,7 +31,6 @@ Barry Release Checklist:
 	- release notes
 	- changelog
 	- URLs to sourceforge and OpenSUSE Build Service binary packages
-	- CVS and git URLs
 	- URL to netdirect doc page
 - update Freshmeat entry
 - update source project, bumping revision numbers in source code
