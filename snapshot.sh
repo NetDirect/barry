@@ -2,9 +2,18 @@
 
 # Meant to be run from within a git repository.
 
+if [ -z "$1" -o -z "$2" -o -z "$3" ] ; then
+	echo "Usage:  run from within a git repository, as:"
+	echo
+	echo "     snapshot.sh MAJOR MINOR commit"
+	echo
+	echo "Results will be located in maintainer/build"
+	exit 1
+fi
+
 set -e
 
-# Do a little dance to find the full path to debian-snap.sh
+# Do a little dance to find the full path to snapshot.sh
 SCRIPTDIR="$(cd "$(dirname "$0")" && pwd)"
 
 cd maintainer
