@@ -15,7 +15,7 @@
 Summary: BlackBerry(tm) Desktop for Linux
 Name: barry
 Version: 0.14
-Release: 1
+Release: 0
 Group: Applications/Productivity
 License: GPL
 Source: %{name}-%{version}.tar.bz2
@@ -252,7 +252,7 @@ cd ../
 /sbin/ldconfig
 
 %changelog
-* Fri Aug 23 2008 Chris Frey <cdfrey@foursquare.net> 0.14-1
+* Wed Sep 24 2008 Chris Frey <cdfrey@foursquare.net> 0.14-0
 - version bump
 - added new ppp chat script for T-Mobile US
 - renamed libbarry to libbarry0
