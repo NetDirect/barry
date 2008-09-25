@@ -71,10 +71,11 @@ reverse engineer the battery charging handshake via USB.</p>
 </ul>
 </p>
 
-<p>Some helpful lists:
+<p>Some helpful pages:
 <ul>
 	<li><? createLink("requirements", "System requirements"); ?></li>
 	<li><? createLink("dependencies", "Software dependencies"); ?></li>
+	<li><a href="doxygen/html/index.html">Barry's Doxygen documentation</a></li>
 </ul>
 </p>
 

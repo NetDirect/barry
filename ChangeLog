@@ -10,6 +10,7 @@ Release: version 0.15 - 2008/10/??
 		- rpm/barry.spec
 		- debian/changelog
 		- opensync-plugin/src/barry_sync.cc
+	- added link to doxygen documentation to www index.php
 
 Release: version 0.14 - 2008/09/24
 ------------------------------------------------------------------------------
