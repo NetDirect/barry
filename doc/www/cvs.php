@@ -141,8 +141,8 @@ located there automatically.  Make sure you have the needed software
 dependencies installed beforehand.</p>
 
 <p> If you want to generate doxygen documentation, run 'doxygen' from
-within the src/ directory.  The resulting files will be in doc/doxygen/html/.
-Doxygen 1.4.5 has been used to do this, but presumably more recent versions
+root source directory.  The resulting files will be in doc/www/doxygen/html/.
+Doxygen 1.5.1 has been used to do this, but presumably more recent versions
 will work as well.</p>
 
 
@@ -158,7 +158,7 @@ btool:
 	./configure --with-boost=/usr --enable-gui --enable-opensync-plugin
 	make
 	make install
-	cd src && doxygen
+	doxygen
 </pre>
 
 <p>This will give you a set of command line tools (bcharge, btool, breset,
@@ -191,6 +191,27 @@ and copy the file modprobe/blacklist-berry_charge to
 --prefix option on the ./configure command line, you will need to update
 your 10-blackberry.rules file to match.</p>
 
+
+<div class="subHeader">Configure PPP chat scripts for your system</div>
+
+<p>The source tree comes with sample PPP chat scripts for using your
+Blackberry as a modem.  These sample scripts are located under ppp/ in
+your source directory.
+The binary packages install all the ppp options files under /etc/ppp/peers/
+and all the chat scripts (with the *.chat extensions) under
+/etc/chatscripts/.  These directories are important, since the pppd
+program expects to find options files under peers/ and the options files
+reference the chatscripts.</p>
+
+<p>Copy the above samples to their appropriate directories to install
+modem support for your system.  Make sure you have pppd installed as well.</p>
+
+<p>If you install Barry in a location other than /usr, you will need
+to edit the options files to correct the hard coded paths in these
+files.  The files assume that pppob is located in /usr/sbin/pppob.</p>
+
+<p>See the <? createLink("modem", "modem usage"); ?> page for more
+information on using your Blackberry as a modem.</p>
 
 
 <div class="subHeader">Building Barry RPMs from CVS</div>

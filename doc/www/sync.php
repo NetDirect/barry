@@ -126,7 +126,7 @@ first sync.</p>
 
 <p>It is recommended that Evolution's backend servers be shutdown before
 the sync is performed.  Therefore, make sure you've closed Evolution,
-and run the following commands to sync, using group you just configured:</p>
+and run the following commands to sync, using the group you just configured:</p>
 
 <pre>
 	evolution --force-shutdown

@@ -7,17 +7,21 @@
 <p>Linux users who also use a BlackBerry &trade; now have an option for
 managing their BlackBerry directly from Linux.</p>
 
-<p>Barry is an Open Source application that will allow synchronization,
+<p>Barry is an Open Source application that will provide synchronization,
 backup, restore and program management for BlackBerry &trade; devices.
 Barry is primarily developed on Linux, but is intended as a cross platform
-library and application set, targetting Linux, BSD, 32/64bit, and big/little
+library and application set, targeting Linux, BSD, 32/64bit, and big/little
 endian systems.
 </p>
 
-<p>Barry is currently in early development, but is reaching stages of
-usefulness.  For example, it is possible to:
+<p>The Barry project began in October 2005 and has steadily added features
+and polish to Blackberry usage on Linux ever since.  We were the first to
+reverse engineer the battery charging handshake via USB.</p>
+
+<p>Today, it is possible to:
 
 <ul>
+	<li> charge your Blackberry's battery from your USB port </li>
 	<li> retrieve Address Book, Email, Calendar, Service Book, Memos,
 		Tasks, PIN Messages, Saved Email, and Folders </li>
 	<li> export Address Book contacts in text or LDAP LDIF format </li>
@@ -34,16 +38,18 @@ usefulness.  For example, it is possible to:
 
 <p>
 <ul>
-	<li>Latest release: <b>0.13</b></li>
+	<li>Latest release: <b>0.14</b></li>
 	<li>Download source and binary packages from
-		<a href="http://sourceforge.net/project/showfiles.php?group_id=153722">Sourceforge</a></li>
+		<a href="http://sourceforge.net/project/showfiles.php?group_id=153722">Sourceforge</a> or the <a href="http://download.opensuse.org/repositories/home:/ndprojects/">OpenSUSE Build Service</a></li>
 	<li>General <a href="http://sourceforge.net/projects/barry/">Sourceforge project page</a></li>
+	<li><a href="http://repo.or.cz/w/barry.git">Barry git repo</a></li>
 	<li>Known Issues:
 	<ul>
 		<li>Restoring backups for some databases on newer Blackberries doesn't work (for example, on the 8120, 8700g)</li>
 		<li>Syncing is not supported on Fedora Core 9, since they packaged the OpenSync 0.3x devel tree</li>
 		<li>Password support when using Blackberry as modem is experimental</li>
 		<li>Accessing the database (such as during a backup) while copying files using the usb_storage kernel module may cause some Blackberries to spontaneously reboot</li>
+		<li>The opensync plugin does not handle international characters well.</li>
 	</ul>
 	</li>
 </ul>

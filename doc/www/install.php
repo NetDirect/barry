@@ -12,10 +12,10 @@ detailed information on the software that Barry needs.</p>
 <div class="subHeader">Binary Packages</div>
 
 <p>Download the matching packages for your system from the
-<a href="http://sourceforge.net/project/showfiles.php?group_id=153722">Sourceforge download page</a>.</p>
+<a href="http://sourceforge.net/project/showfiles.php?group_id=153722">Sourceforge download page</a> or the <a href="http://download.opensuse.org/repositories/home:/ndprojects/">OpenSUSE Build Service page</a>.</p>
 
-<p>Packages are available for multiple distros, and are indicated by
-the filenames:
+<p>On Sourceforge, packages are available for multiple distros, and are
+indicated by the filenames:
 <ul>
 	<li><b>ubuntu710</b> - Ubuntu Gutsy Gibbon, 7.10</li>
 	<li><b>ubuntu804</b> - Ubuntu Hardy Heron, 8.04</li>
@@ -27,11 +27,14 @@ the filenames:
 </ul>
 </p>
 
+<p>On OBS, packages are located in subdirectories per distro.  Be sure to
+select the correct platform, whether 32 bit or 64 bit.</p>
+
 <p>Barry is split up into multiple binary packages.  For example,
 if you want the GUI backup program, you will also need the Barry library.
 For non-development systems, you will need:
 <ul>
-	<li>libbarry</li>
+	<li>libbarry0</li>
 	<li>barry-util</li>
 	<li>barrybackup-gui</li>
 	<li>barry-opensync (libopensync-plugin-barry on Debian systems)</li>

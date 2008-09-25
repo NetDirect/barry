@@ -17,6 +17,10 @@ GUI can be found on the <? createLink("install", "Install"); ?> page.</p>
 finds one, it assumes that is the device you want to work with.  If it
 finds two, it prompts you to select the device to backup.</p>
 
+<p>When connecting to a device for the first time, you are prompted to
+give the device a name.  This will be linked to the device's PIN number
+for easy identification later.</p>
+
 <p>The main screen presents you with two options: Backup and Restore.</p>
 
 <img src="backup.png" border=1 />
@@ -24,6 +28,9 @@ finds two, it prompts you to select the device to backup.</p>
 <p>When backing up your device, your data is saved in a compressed tar file
 in your home directory, under ~/.barry, organized by PIN number.  Each tar
 backup file is given a timestamp in its filename.</p>
+
+<p>When the backup starts, you are prompted to give the backup an optional
+name.  If you specify a name, it will be used as part of the tar filename.</p>
 
 
 
@@ -54,12 +61,13 @@ the Restore Configuration dialog, as described below.</p>
 
 <p>Configuration is performed via the Edit menu, and provides two
 filters for determining what databases are accessed during backup and
-restore operations.</p>
+restore operations.  You can also change the device name here, and turn
+off the backup name prompt.</p>
 
 <img src="config.png" border=1 />
 
-<p>Each button provides essentially the same dialog, containing a list
-of databases available on your device, as well as checkboxes to
+<p>Each configure button provides essentially the same dialog, containing a
+list of databases available on your device, as well as checkboxes to
 enable them.</p>
 
 <p>For the backup filter, only the enabled databases will be saved.
