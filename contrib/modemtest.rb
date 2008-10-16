@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 #Change the $PPP variable to point to where pppob is installed.
-$PPP="/usr/local/sbin/pppob -l /tmp/modemtest.log"
+$PPP="/usr/local/sbin/pppob -vP xxxxx -l /tmp/modemtest.log"
 
 class IPmodem
 
@@ -36,13 +36,50 @@ class IPmodem
    end
 end
 
-
-commands = [ "AT", "AT&F", "ATZ", "ATE0V1", "ATS0=0", "ATE0V1", "ATI1",
-             "AT+CIMI", "AT+CGMI", "AT+CGDCONT?", "AT+GMI", "AT+GMM",
-             "AT+GMR", "AT+GSN", "AT+CBC", "AT+CBIP", "AT+GCAP=?", "AT+CSQ",
-             "AT+CSQ?", "AT+CSQ=?", "AT+CSS", "AT+CSS?", "AT+CSS=?",
-             "AT+CCED?", "AT+ESR", "AT+CIND=?", "AT+FCLASS=?", "AT&V",
-             "AT+CGMR", "AT+CAD?", "AT$QCMIPGETP=1" ]
+commands = [
+	"+++AT",
+	"AT",
+	"AT&F",
+	"ATZ",
+	"ATS0=0",
+	"ATE0",
+	"ATE0V1",
+	"ATE0V1Q0X4",
+	"AT+CRC=1",
+	"AT+SPSERVICE",
+	"AT+SPSERVICE",
+	"AT$QCMIPP?",
+	"AT$QCMIPP=?",
+	"AT+CSQ",
+	"AT+CSQ?",
+	"AT+CSQ=?",
+	"AT+CSS",
+	"AT+CSS?",
+	"AT+CSS=?",
+	"ATI1",
+	"ATI2",
+	"ATI3",
+	"AT+CAD?",
+	"AT+CIMI",
+	"AT+CGMI",
+	"AT+CGMR",
+	"AT+CGDCONT?",
+	"AT+GMI",
+	"AT+GMM",
+	"AT+GMR",
+	"AT+GSN",
+	"AT+CBC",
+	"AT+CBIP",
+	"AT+CCED?",
+	"AT+ESR",
+	"AT+CIND=?",
+	"AT+FCLASS=?",
+	"AT+GCAP=?",
+	"AT$SPMDN?",
+	"AT$QCMIPGETP=1",
+	"AT&V",
+	"ATH"
+]
 
 modem = IPmodem.new
 puts("Testing the Blackberry Modem by sending AT commands through pppob.") 
@@ -55,5 +92,3 @@ commands.each {|c|
          puts("--------------------------------------------")
 
          }
-
-
