@@ -1,5 +1,8 @@
 Release: version 0.15 - 2008/10/??
 ------------------------------------------------------------------------------
+2008/10/16
+	- applied Andy Herkey's modemtest.rb ruby script to contrib/
+		from his Aug 9, 2008 email to the mailing list
 2008/09/24
 	- version bump:
 		- configure.ac
