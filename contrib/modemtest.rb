@@ -1,5 +1,30 @@
 #!/usr/bin/env ruby
 
+#
+#    Copyright (C) 2008, Andy Herkey <a.herkey@comcast.net>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+#
+#    See the GNU General Public License in the COPYING file at the
+#    root directory of this project for more details.
+#
+#
+
+#
+# The purpose of this script is to try a large batch of known AT
+# commands, and report which ones work with your Blackberry
+# modem / provider.  There will be output written to stdout
+# as well as a file created in /tmp/modemtest.log which holds
+# the raw pppob traffic log.
+#
+
 #Change the $PPP variable to point to where pppob is installed.
 $PPP="/usr/local/sbin/pppob -vP xxxxx -l /tmp/modemtest.log"
 
