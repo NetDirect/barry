@@ -5,6 +5,7 @@ Release: version 0.15 - 2008/10/??
 		from his Aug 9, 2008 email to the mailing list
 	- applied Andy Herkey's new modemtest.rb script to contrib/
 		from his Oct 8, 2008 email to the mailing list
+	- added password pass-through code for pppob -s mode
 2008/09/24
 	- version bump:
 		- configure.ac

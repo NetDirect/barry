@@ -231,7 +231,7 @@ int main(int argc, char *argv[])
 
 			// Open serial connection
 			Mode::Serial modem(con, SerialDataCallback, 0);
-			modem.Open();
+			modem.Open(password.c_str());
 
 			ProcessStdin(modem);
 		}
