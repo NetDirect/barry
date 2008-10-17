@@ -8,6 +8,11 @@ Release: version 0.15 - 2008/10/??
 	- added password pass-through code for pppob -s mode
 	- clarified front page www doc, adding date of last release
 		and license
+	- cherry-picked changes from Jose Carlos Garcia Sogo's debian git repo
+		- debian/rules was stripping wrong library names
+		- FSF address was incorrect (also updated other source
+			files throughout the tree myself)
+		- more complete debian/copyright file
 2008/09/24
 	- version bump:
 		- configure.ac
