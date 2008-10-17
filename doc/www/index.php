@@ -38,7 +38,8 @@ reverse engineer the battery charging handshake via USB.</p>
 
 <p>
 <ul>
-	<li>Latest release: <b>0.14</b></li>
+	<li>Latest release: <b>0.14</b>, released on 2008/09/24</li>
+	<li>License: GPL v2 or later</li>
 	<li>Download source and binary packages from
 		<a href="http://sourceforge.net/project/showfiles.php?group_id=153722">Sourceforge</a> or the <a href="http://download.opensuse.org/repositories/home:/ndprojects/">OpenSUSE Build Service</a></li>
 	<li>General <a href="http://sourceforge.net/projects/barry/">Sourceforge project page</a></li>
