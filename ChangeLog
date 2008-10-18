@@ -2,6 +2,9 @@ Release: version 0.15 - 2008/10/??
 ------------------------------------------------------------------------------
 2008/10/18
 	- updated copyright notice and help text in contrib/modemtest.rb
+	- changed barry-verizon.chat script according to Andy Herkey's
+		recommendation... this worked much better for Michael L.
+		Stokes, since his provider was getting stuck on the ATZ
 2008/10/16
 	- applied Andy Herkey's modemtest.rb ruby script to contrib/
 		from his Aug 9, 2008 email to the mailing list
