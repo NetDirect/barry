@@ -34,6 +34,7 @@ Contributors (code and otherwise) in alphabetical order by last name:
 	Andy Herkey <a.herkey@comcast.net>
 		- sample ppp chat script for Sprint
 		- ipmodem password patches
+		- contrib/modemtest.rb
 	Jonathan Hudson <jh+barry@daria.co.uk>
 		- big endian testing and patches
 	Simon Kenyon <simon@koala.ie>
