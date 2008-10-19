@@ -74,7 +74,7 @@ Description: GTK+ based GUI for backing up the RIM BlackBerry Handheld
  .
  This package contains the debug version of the backup GUI.
 
-Package: libopensync-plugin-barry
+Package: opensync-plugin-barry
 Section: libs
 Architecture: any
 Depends: libopensync0 (>= 0.22), libopensync0 (<< 0.30), ${shlibs:Depends}
@@ -83,11 +83,11 @@ Description: Opensync Blackberry plugin, based on the Barry project
  .
  This package contains an opensync plugin for use with libopensync 0.22.
 
-Package: libopensync-plugin-barry-dbg
+Package: opensync-plugin-barry-dbg
 Section: libs
 Priority: extra
 Architecture: any
-Depends: libopensync0 (>= 0.22), libopensync0 (<< 0.30), libopensync-plugin-barry (= ${binary:Version})
+Depends: libopensync0 (>= 0.22), libopensync0 (<< 0.30), opensync-plugin-barry (= ${binary:Version})
 Description: Opensync Blackberry plugin, based on the Barry project
  Barry is a GPL C++ library for interfacing with the RIM BlackBerry Handheld.
  .
