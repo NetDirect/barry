@@ -14,7 +14,7 @@ Description: Library for using the BlackBerry handheld on Linux
  .
  This package contains shared libraries.
 
-Package: libbarry-dbg
+Package: libbarry0-dbg
 Section: libs
 Priority: extra
 Architecture: any
