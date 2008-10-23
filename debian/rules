@@ -35,6 +35,12 @@ install/barry-util::
 	install -m 0644 $(CURDIR)/ppp/barry-rogers $(CURDIR)/ppp/barry-verizon $(CURDIR)/ppp/barry-sprint $(CURDIR)/ppp/barry-o2ireland $(CURDIR)/ppp/barry-tmobileus $(CURDIR)/debian/barry-util/etc/ppp/peers
 	install -d $(CURDIR)/debian/barry-util/etc/chatscripts
 	install -m 0640 $(CURDIR)/ppp/barry-rogers.chat $(CURDIR)/ppp/barry-verizon.chat $(CURDIR)/ppp/barry-sprint.chat $(CURDIR)/ppp/barry-o2ireland.chat $(CURDIR)/ppp/barry-tmobileus.chat $(CURDIR)/debian/barry-util/etc/chatscripts
+	# Install hal fdi config
+	install -d $(CURDIR)/debian/barry-util/usr/share/hal/fdi/information/10freedesktop
+	install -m 0644 $(CURDIR)/hal/10-blackberry.fdi $(CURDIR)/debian/barry-util/usr/share/hal/fdi/information/10freedesktop
+	# Install hal support script
+	install -d $(CURDIR)/debian/barry-util/usr/bin
+	install -m 0755 $(CURDIR)/hal/hal-blackberry $(CURDIR)/debian/barry-util/usr/bin
 
 post-patches::
 	@test -x $(DEB_SRCDIR)/configure && echo "allready autoreconf" || (cd $(DEB_SRCDIR) && autoreconf -i)

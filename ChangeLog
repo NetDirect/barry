@@ -3,6 +3,7 @@ Release: version 0.15 - 2008/10/??
 2008/10/22
 	- applied HAL FDI scripts and configuration from Martin Owens
 	- updated AUTHORS file
+	- added HAL FDI and python script to Debian package install
 2008/10/18
 	- updated copyright notice and help text in contrib/modemtest.rb
 	- changed barry-verizon.chat script according to Andy Herkey's
