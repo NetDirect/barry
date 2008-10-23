@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deviceinfo version="0.2">
+  <device>
+    <match key="info.subsystem" string="usb">
+      <match key="usb.vendor_id" int="0xfca">
+
+        <match key="usb.product_id" int="0x01">
+          <match key="usb.interface.protocol" int="0xff">
+            <append key="info.capabilities" type="strlist">sync</append>
+            <merge key="usb.interface.description" type="string">Blackberry Data Provider</merge>
+            <merge key="info.category" type="string">phone</merge>
+			<merge key="sync.protocol" type="string">rim-blackberry</merge>
+            
+            <append key="info.callouts.add" type="strlist">hal-blackberry</append>
+          </match>
+        </match>
+
+        <match key="usb.product_id" int="0x04">
+          <match key="usb.interface.protocol" int="0xff">
+            <append key="info.capabilities" type="strlist">sync</append>
+            <merge key="usb.product" type="string">Blackberry Data Provider</merge>
+            <merge key="info.category" type="string">phone</merge>
+            <merge key="sync.protocol" type="string">rim-blackberry</merge>
+
+            <append key="info.callouts.add" type="strlist">hal-blackberry</append>
+          </match>
+        </match>
+
+      </match>
+    </match>
+  </device>
+</deviceinfo>

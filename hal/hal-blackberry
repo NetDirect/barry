@@ -1,0 +1,43 @@
+#!/usr/bin/python
+
+import sys, os
+import dbus, dbus.glib
+import commands
+
+class HalBlackberry:
+	def __init__(self):
+		self._dbus   = dbus.SystemBus()
+		self._serv   = self._dbus.get_object( 'org.freedesktop.Hal', '/org/freedesktop/Hal/Manager' )
+		self._hal    = dbus.Interface( self._serv, 'org.freedesktop.Hal.Manager' )
+		self._device = None
+		self.get_properties()
+		self.gatherInfo()
+
+	def get_properties(self):
+		self.udi    = os.getenv("UDI", "")
+		self.busnum = self.get_property( 'usb.bus_number' )
+		self.devnum = self.get_property( 'usb.linux.device_number' )
+
+	def get_property(self, name):
+		return self.device().GetProperty(name, dbus_interface="org.freedesktop.Hal.Device")
+
+	def gatherInfo(self):
+		text = commands.getoutput("/usr/bin/bidentify -B %i -N %i" % (self.busnum, self.devnum))
+		sys.stderr.write("Found '%s' at %s, %s\n" % (text, self.busnum, self.devnum))
+		b = text.split(", ")
+		desc = b[1]
+		pin  = b[0]
+		
+		self.set_property("sync.serial", pin)
+		self.set_property("info.product", desc)
+
+	def set_property(self, name, value):
+		return self.device().SetPropertyString(name, value, dbus_interface="org.freedesktop.Hal.Device")
+
+	def device(self):
+		if not self._device:
+			self._device = self._dbus.get_object("org.freedesktop.Hal", self.udi)
+		return self._device
+
+h = HalBlackberry()
+
