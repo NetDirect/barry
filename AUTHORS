@@ -50,6 +50,7 @@ Contributors (code and otherwise) in alphabetical order by last name:
 	Martin Owens <doctormo@gmail.com>
 		- integration with HAL, udev, opensync, and Conduit
 		- low level USB testing
+		- hal FDI scripts and configuration
 	Mick Reed <oregon.mick@gmail.com>
 		- ppp chat scripts for T-Mobile US
 	Simon Ruggier <simon80@gmail.com>
