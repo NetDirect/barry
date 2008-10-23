@@ -9,7 +9,7 @@
             <append key="info.capabilities" type="strlist">sync</append>
             <merge key="usb.interface.description" type="string">Blackberry Data Provider</merge>
             <merge key="info.category" type="string">phone</merge>
-			<merge key="sync.protocol" type="string">rim-blackberry</merge>
+            <merge key="sync.protocol" type="string">rim-blackberry</merge>
             
             <append key="info.callouts.add" type="strlist">hal-blackberry</append>
           </match>
