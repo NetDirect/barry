@@ -71,13 +71,42 @@ std::string vAttr::GetParam(const char *name, int nth)
 	if( !m_attr )
 		return ret;
 
-	b_VFormatParam *param = b_vformat_attribute_find_param(m_attr, name);
+	b_VFormatParam *param = b_vformat_attribute_find_param(m_attr, name, 0);
 	if( !param )
 		return ret;
 
 	const char *value = b_vformat_attribute_param_get_nth_value(param, nth);
 	if( value )
 		ret = value;
+
+	return ret;
+}
+
+/// Does an exhaustive search through the attribute, searching for all 
+/// param values that exist for the given name, and returns all values
+/// in a comma delimited string.
+std::string vAttr::GetAllParams(const char *name)
+{
+	std::string ret;
+
+	if( !m_attr )
+		return ret;
+
+	b_VFormatParam *param = 0;
+	for( int level = 0;
+	     (param = b_vformat_attribute_find_param(m_attr, name, level));
+	     level++ )
+	{
+		const char *value = 0;
+		for( int nth = 0;
+		     (value = b_vformat_attribute_param_get_nth_value(param, nth));
+		     nth++ )
+		{
+			if( ret.size() )
+				ret += ",";
+			ret += value;
+		}
+	}
 
 	return ret;
 }

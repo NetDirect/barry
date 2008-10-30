@@ -91,6 +91,16 @@ void vCard::AddCategories(const Barry::CategoryList &categories)
 	AddAttr(cat);
 }
 
+/// Add phone conditionally, only if phone has data in it.  This version
+/// does not add a TYPE parameter to the item.
+void vCard::AddPhoneCond(const std::string &phone)
+{
+	if( phone.size() ) {
+		vAttrPtr tel = NewAttr("TEL", phone.c_str());
+		AddAttr(tel);
+	}
+}
+
 /// Add phone conditionally, only if phone has data in it
 void vCard::AddPhoneCond(const char *rfc_type, const std::string &phone)
 {
@@ -182,14 +192,18 @@ const std::string& vCard::ToVCard(const Barry::Contact &con)
 	if( con.HomeAddress.HasData() )
 		AddAddress("home", con.HomeAddress);
 
-	// add all applicable phone numbers... can't add the WorkPhone2
-	// since VCARD30 TEL fields only take one number, as far as I know
+	// add all applicable phone numbers... there can be multiple
+	// TEL fields, even with the same TYPE value... therefore, the
+	// second TEL field with a TYPE=work, will be stored in WorkPhone2
 	AddPhoneCond("pref", con.Phone);
 	AddPhoneCond("fax", con.Fax);
 	AddPhoneCond("work", con.WorkPhone);
+	AddPhoneCond("work", con.WorkPhone2);
 	AddPhoneCond("home", con.HomePhone);
+	AddPhoneCond("home", con.HomePhone2);
 	AddPhoneCond("cell", con.MobilePhone);
-	AddPhoneCond("msg", con.Pager);
+	AddPhoneCond("pager", con.Pager);
+	AddPhoneCond(con.OtherPhone);
 
 	// add all email addresses, marking first one as "pref"
 	Barry::Contact::EmailList::const_iterator eai = con.EmailAddresses.begin();
@@ -279,7 +293,7 @@ const Barry::Contact& vCard::ToBarry(const char *vcard, uint32_t RecordId)
 	vAttr adr = GetAttrObj("ADR");
 	for( int i = 0; adr.Get(); adr = GetAttrObj("ADR", ++i) )
 	{
-		std::string type = adr.GetParam("TYPE");
+		std::string type = adr.GetAllParams("TYPE");
 		ToLower(type);
 
 		// do not use "else" here, since TYPE can have multiple keys
@@ -290,28 +304,76 @@ const Barry::Contact& vCard::ToBarry(const char *vcard, uint32_t RecordId)
 	}
 
 
-	// add all applicable phone numbers... can't add the WorkPhone2
-	// since VCARD30 TEL fields only take one number, as far as I know
+	// add all applicable phone numbers... there can be multiple
+	// TEL fields, even with the same TYPE value... therefore, the
+	// second TEL field with a TYPE=work, will be stored in WorkPhone2
 	vAttr tel = GetAttrObj("TEL");
 	for( int i = 0; tel.Get(); tel = GetAttrObj("TEL", ++i) )
 	{
-		std::string stype = tel.GetParam("TYPE");
-		ToLower(stype);
-		const char *type = stype.c_str();
+		// grab all parameter values for this param name
+		std::string stype = tel.GetAllParams("TYPE");
 
-		// do not use "else" here, since TYPE can have multiple keys
-		if( strstr(type, "pref") )
+		// turn to lower case for comparison
+		// FIXME - is this i18n safe?
+		ToLower(stype);
+
+		// state
+		const char *type = stype.c_str();
+		bool used = false;
+
+		// Do not use "else" here, since TYPE can have multiple keys
+		// Instead, only fill in a field if it is empty
+		if( strstr(type, "pref") && con.Phone.size() == 0 ) {
 			con.Phone = tel.GetValue();
-		if( strstr(type, "fax") )
+			used = true;
+		}
+
+		if( strstr(type, "fax") && con.Fax.size() == 0 ) {
 			con.Fax = tel.GetValue();
-		if( strstr(type, "work") )
-			con.WorkPhone = tel.GetValue();
-		if( strstr(type, "home") )
-			con.HomePhone = tel.GetValue();
-		if( strstr(type, "cell") )
+			used = true;
+		}
+
+		if( strstr(type, "work") ) {
+			if( con.WorkPhone.size() == 0 ) {
+				con.WorkPhone = tel.GetValue();
+				used = true;
+			}
+			else if( con.WorkPhone2.size() == 0 ) {
+				con.WorkPhone2 = tel.GetValue();
+				used = true;
+			}
+		}
+
+		if( strstr(type, "home") ) {
+			if( con.HomePhone.size() == 0 ) {
+				con.HomePhone = tel.GetValue();
+				used = true;
+			}
+			else if( con.HomePhone2.size() == 0 ) {
+				con.HomePhone2 = tel.GetValue();
+				used = true;
+			}
+		}
+
+		if( strstr(type, "cell") && con.MobilePhone.size() == 0 ) {
 			con.MobilePhone = tel.GetValue();
-		if( strstr(type, "msg") )
+			used = true;
+		}
+
+		if( (strstr(type, "pager") || strstr(type, "msg")) && con.Pager.size() == 0 ) {
 			con.Pager = tel.GetValue();
+			used = true;
+		}
+
+		// if this value has not been claimed by any of the
+		// cases above, claim it now as "OtherPhone"
+		if( !used && con.OtherPhone.size() == 0 ) {
+			con.OtherPhone = tel.GetValue();
+		}
+	}
+	// Final check: If Phone is blank, and OtherPhone has a value, swap.
+	if( con.OtherPhone.size() && !con.Phone.size() ) {
+		con.Phone.swap(con.OtherPhone);
 	}
 
 	// scan for all email addresses... append addresses to the
@@ -320,7 +382,7 @@ const Barry::Contact& vCard::ToBarry(const char *vcard, uint32_t RecordId)
 	vAttr email = GetAttrObj("EMAIL");
 	for( int i = 0; email.Get(); email = GetAttrObj("EMAIL", ++i) )
 	{
-		std::string type = email.GetParam("TYPE");
+		std::string type = email.GetAllParams("TYPE");
 		ToLower(type);
 
 		bool of_interest = (i == 0 || strstr(type.c_str(), "pref"));

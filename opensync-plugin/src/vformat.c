@@ -1550,14 +1550,18 @@ b_vformat_attribute_add_param (b_VFormatAttribute *attr,
 	}
 }
 
-b_VFormatParam *b_vformat_attribute_find_param(b_VFormatAttribute *attr, const char *name)
+b_VFormatParam *b_vformat_attribute_find_param(b_VFormatAttribute *attr, const char *name, int level)
 {
 	g_return_val_if_fail (attr != NULL, NULL);
 	GList *p = NULL;
 	for (p = attr->params; p; p = p->next) {
 		b_VFormatParam *param = p->data;
-		if (!g_ascii_strcasecmp (param->name, name))
-			return param;
+		if (!g_ascii_strcasecmp (param->name, name)) {
+			if( level == 0 )
+				return param;
+			else
+				level--;
+		}
 	}
 	return NULL;
 }

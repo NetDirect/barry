@@ -151,6 +151,7 @@ public:
 	std::string GetName();
 	std::string GetValue(int nth = 0);
 	std::string GetParam(const char *name, int nth = 0);
+	std::string GetAllParams(const char *name);
 };
 
 

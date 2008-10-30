@@ -121,7 +121,7 @@ b_VFormatParam* b_vformat_attribute_param_new             (const char *param_nam
 void                  b_vformat_attribute_param_free            (b_VFormatParam *param);
 b_VFormatParam* b_vformat_attribute_param_copy            (b_VFormatParam *param);
 void                  b_vformat_attribute_add_param             (b_VFormatAttribute *attr, b_VFormatParam *param);
-b_VFormatParam *b_vformat_attribute_find_param(b_VFormatAttribute *attr, const char *name);
+b_VFormatParam *b_vformat_attribute_find_param(b_VFormatAttribute *attr, const char *name, int level);
 void                  b_vformat_attribute_add_param_with_value  (b_VFormatAttribute *attr, const char *name, const char *value);
 void                  b_vformat_attribute_add_param_with_values (b_VFormatAttribute *attr,
 							       b_VFormatParam *param, ...);

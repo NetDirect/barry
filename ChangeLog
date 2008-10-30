@@ -1,5 +1,17 @@
 Release: version 0.15 - 2008/10/??
 ------------------------------------------------------------------------------
+2008/10/30
+	- added support for multiple work/home phone numbers to the
+		opensync plugin.
+		- Thanks to Richard Esplin for his test data.
+		- This fix has a conflict when a cell phone number is
+			marked as the preferred contact as well.
+			See http://sourceforge.net/mailarchive/message.php?msg_name=20081030231045.GA28989%40foursquare.net
+			for the full details.
+		- This fix also changes the VCARD output... pager phone
+			numbers are given the TYPE code of "pager"
+			instead of "msg".
+		- Added OtherPhone field as well
 2008/10/22
 	- applied HAL FDI scripts and configuration from Martin Owens
 	- updated AUTHORS file
