@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deviceinfo version="0.2">
   <device>
+    <!-- Some old systems don't have info.subsystem yet, only info.bus.
+         Just ignore this match level, since the usb. items below should
+	 be enough to filter things out.
     <match key="info.subsystem" string="usb">
+    -->
       <match key="usb.vendor_id" int="0xfca">
 
         <match key="usb.product_id" int="0x01">
@@ -27,6 +31,6 @@
         </match>
 
       </match>
-    </match>
+    <!-- </match> -->
   </device>
 </deviceinfo>
