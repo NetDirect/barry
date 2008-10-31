@@ -160,6 +160,12 @@ cd ../
 %{__cp} ppp/barry-sprint.chat %{buildroot}%{_sysconfdir}/chatscripts/
 %{__cp} ppp/barry-o2ireland.chat %{buildroot}%{_sysconfdir}/chatscripts/
 %{__cp} ppp/barry-tmobileus.chat %{buildroot}%{_sysconfdir}/chatscripts/
+# Install hal fdi config
+%{__mkdir_p} %{buildroot}%{_datadir}/hal/fdi/information/10freedesktop
+%{__cp} hal/10-blackberry.fdi %{buildroot}%{_datadir}/hal/fdi/information/10freedesktop
+# Install hal support script
+%{__mkdir_p} %{buildroot}%{_bindir}
+%{__cp} hal/hal-blackberry %{buildroot}%{_bindir}
 
 # gui tree
 %if %{with_gui}
@@ -201,6 +207,7 @@ cd ../
 %attr(0755,root,root) %{_bindir}/upldif
 %attr(0755,root,root) %{_bindir}/bktrans
 %attr(0755,root,root) %{_bindir}/btranslate
+%attr(0755,root,root) %{_bindir}/hal-blackberry
 %attr(0644,root,root) %{_mandir}/man1/btool*
 %attr(0644,root,root) %{_mandir}/man1/bs11nread*
 %attr(0644,root,root) %{_mandir}/man1/bidentify*
@@ -209,6 +216,7 @@ cd ../
 %attr(0644,root,root) %{_mandir}/man1/brecsum*
 %attr(0644,root,root) %{_mandir}/man1/breset*
 %attr(0644,root,root) %{_mandir}/man1/upldif*
+%attr(0644,root,root) %{_datadir}/hal/fdi/information/10freedesktop/10-blackberry.fdi
 %attr(0644,root,root) %config %{_sysconfdir}/udev/rules.d/*
 %attr(0644,root,root) %config %{_sysconfdir}/security/console.perms.d/*
 %attr(0644,root,root) %config %{_sysconfdir}/modprobe.d/blacklist-berry_charge
@@ -252,8 +260,9 @@ cd ../
 /sbin/ldconfig
 
 %changelog
-* Wed Sep 24 2008 Chris Frey <cdfrey@foursquare.net> 0.15-0
+* Fri Oct 31 2008 Chris Frey <cdfrey@foursquare.net> 0.15-0
 - version bump
+- added HAL FDI scripts
 
 * Wed Sep 24 2008 Chris Frey <cdfrey@foursquare.net> 0.14-0
 - version bump

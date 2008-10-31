@@ -5,6 +5,7 @@ Release: version 0.15 - 2008/10/??
 		this should let the FDI work on old and new systems.
 		HAL version 0.5.8 (used by Debian Etch) has the deprecated
 		info.bus property, and doesn't have info.subsystem yet.
+	- added HAL FDI scripts to rpm/barry.spec
 2008/10/30
 	- added support for multiple work/home phone numbers to the
 		opensync plugin.
