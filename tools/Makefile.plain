@@ -1,9 +1,13 @@
 all:	btool-plain bcharge
 
+# This only works if you have installed the Barry development library files
 btool-plain: btool.cc
-	g++ -I../rootdir/include -I../../external/rootdir/libusb/include \
-		-o btool-plain btool.cc -L../rootdir/lib -lbarry
+	g++ -o btool-plain btool.cc -lbarry
 
+# This works whether Barry is installed or not.
 bcharge: bcharge.cc
 	g++ -Wall -o bcharge bcharge.cc -lusb
+
+clean:
+	rm -f bcharge btool-plain
 
