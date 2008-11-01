@@ -10,6 +10,9 @@ if WITH_BOOST
 bin_PROGRAMS += bs11nread
 endif
 sbin_PROGRAMS = bcharge breset pppob
+if WITH_FUSE
+sbin_PROGRAMS += bfuse
+endif
 
 btool_SOURCES = btool.cc
 btool_LDADD = ../src/libbarry.la $(LIBUSB_LIBS) -lpthread
@@ -59,4 +62,10 @@ pppob_LDADD = ../src/libbarry.la $(LIBUSB_LIBS) -lpthread
 brecsum_SOURCES = brecsum.cc
 #brecsum_LDADD = ../src/libbarry.la $(LIBUSB_LIBS) $(OPENSSL_LIBS) -lpthread
 brecsum_LDADD = ../src/libbarry.la $(LIBUSB_LIBS) -lpthread
+
+if WITH_FUSE
+bfuse_SOURCES = bfuse.cc
+bfuse_CXXFLAGS = $(FUSE_CFLAGS)
+bfuse_LDADD = ../src/libbarry.la $(FUSE_LIBS) -lpthread
+endif
 

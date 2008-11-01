@@ -62,6 +62,11 @@ fi
 
 #PKG_CHECK_MODULES([OPENSSL], [openssl])
 
+PKG_CHECK_MODULES([FUSE], [fuse >= 2.5],
+	[FUSE_FOUND=1],
+	[echo "FUSE library not found, skipping fuse module."; FUSE_FOUND=0]
+	)
+
 pkgconfigdir=${libdir}/pkgconfig
 AC_SUBST(pkgconfigdir)
 
@@ -72,6 +77,7 @@ AC_SUBST(LIBUSB_LIBS)
 
 AM_CONDITIONAL([WITH_BOOST], [test "$BOOST_ENABLED" = "true"])
 AM_CONDITIONAL([WITH_BOOST_PATHS], [test -n "$BOOST_LIB_PATH"])
+AM_CONDITIONAL([WITH_FUSE], [test "$FUSE_FOUND" = "1"])
 
 #AC_CHECK_LIB([IOKit], [main])
 AC_CHECK_LIB([pthread], [main])
