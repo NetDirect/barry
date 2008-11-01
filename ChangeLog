@@ -1,5 +1,7 @@
 Release: version 0.15 - 2008/10/??
 ------------------------------------------------------------------------------
+2008/11/01
+	- added FUSE filesystem "driver"
 2008/10/31
 	- commented out the info.subsystem match level in HAL FDI file...
 		this should let the FDI work on old and new systems.
