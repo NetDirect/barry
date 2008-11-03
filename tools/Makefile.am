@@ -9,10 +9,10 @@ bin_PROGRAMS = btool bidentify upldif btranslate bktrans brecsum
 if WITH_BOOST
 bin_PROGRAMS += bs11nread
 endif
-sbin_PROGRAMS = bcharge breset pppob
 if WITH_FUSE
-sbin_PROGRAMS += bfuse
+bin_PROGRAMS += bfuse
 endif
+sbin_PROGRAMS = bcharge breset pppob
 
 btool_SOURCES = btool.cc
 btool_LDADD = ../src/libbarry.la $(LIBUSB_LIBS) -lpthread
