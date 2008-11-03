@@ -35,6 +35,7 @@
 #include <errno.h>
 #include <sys/types.h>
 #include <fcntl.h>
+#include <string.h>
 
 using namespace std;
 using namespace std::tr1;
