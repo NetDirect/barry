@@ -2,6 +2,7 @@ Release: version 0.15 - 2008/10/??
 ------------------------------------------------------------------------------
 2008/11/13
 	- added comment to src/r_contact.h deprecating the Phone field
+	- updated Doxyfile to 1.5.1
 2008/11/03
 	- forgot #include <string.h> for memcpy/memset in tools/bfuse.cc
 	- moved bfuse install point from /usr/sbin to /usr/bin
