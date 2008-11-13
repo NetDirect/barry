@@ -53,6 +53,11 @@ typedef std::vector<std::string> CategoryList;
 /// \addtogroup RecordParserClasses
 /// @{
 
+//
+// Contact record class
+//
+/// Represents a single record in the Address Book Blackberry database.
+///
 class BXEXPORT Contact
 {
 public:
@@ -67,8 +72,21 @@ public:
 	uint8_t RecType;
 	uint32_t RecordId;
 	EmailList EmailAddresses;
+
+	//
+	// Record fields
+	//
+
+	/// This field, Phone, is deprecated.  It is possible
+	/// to write to this field to the Blackberry,
+	/// but modern devices won't let you add it
+	/// through their GUIs.  This field only seems
+	/// to exist on the 7750.  While other devices
+	/// accept the field and display it, it is
+	/// not accessible by default.
+	std::string Phone;
+
 	std::string
-		Phone,
 		Fax,
 		WorkPhone,
 		HomePhone,
