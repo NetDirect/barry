@@ -32,24 +32,66 @@ namespace Barry { class Data; }
 
 namespace Barry {
 
-// also acts as a null parser
 //
 // Parser class
 //
-/// Base class for the parser hierarchy.  If in debug mode, this
-/// class can be used as a null parser.  Call Init() and the protocol
-/// will be dumped to stdout and no parsing will be done.
+/// Base class for the parser hierarchy.
 ///
 /// This class provides the interface that the Controller class uses
 /// to pass raw data it reads from the device.  The Controller, along
 /// with the Packet class, calls each of the virtual functions below
 /// in the same order.
 ///
+/// This class is kept as a pure abstract class, in order to make sure
+/// that the compiler will catch any API changes, for code derived
+/// from it.
+///
 class BXEXPORT Parser
 {
 public:
 	Parser() {}
 	virtual ~Parser() {}
+
+	/// Reset and prepare for a new raw data packet
+	virtual void Clear() = 0;
+
+	/// Stores the IDs
+	virtual void SetIds(uint8_t RecType, uint32_t UniqueId) = 0;
+
+	/// Called to parse the header portion of the raw data packet.
+	/// data contains the entire packet, and offset contains the
+	/// location at which to start parsing.
+	virtual void ParseHeader(const Data &data, size_t &offset) = 0;
+
+	/// Called to parse sub fields in the raw data packet.
+	/// The same data is passed as was passed in ParseHeader,
+	/// only the offset will be updated if it was advanced during
+	/// the header parsing.
+	virtual void ParseFields(const Data &data, size_t &offset) = 0;
+
+	/// Called at the very end of record parsing, and used to
+	/// store the final packet somewhere, either in memory, disk, etc.
+	virtual void Store() = 0;
+};
+
+
+//
+// NullParser class
+//
+/// If in debug mode, this class can be used as a null parser.
+/// Call Init() and the protocol will be dumped to stdout and
+/// no parsing will be done.
+///
+/// Do NOT derive your own personal parser classes from this,
+/// unless you are perfectly confident that you will catch
+/// future API changes on the devel tree without the compiler's
+/// help.
+///
+class BXEXPORT NullParser : public Parser
+{
+public:
+	NullParser() {}
+	virtual ~NullParser() {}
 
 	/// Reset and prepare for a new raw data packet
 	virtual void Clear() {}

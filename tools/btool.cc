@@ -206,10 +206,14 @@ class DataDumpParser : public Barry::Parser
 	uint32_t m_id;
 
 public:
+	virtual void Clear() {}
+
 	virtual void SetIds(uint8_t RecType, uint32_t UniqueId)
 	{
 		m_id = UniqueId;
 	}
+
+	virtual void ParseHeader(const Data &, size_t &) {}
 
 	virtual void ParseFields(const Barry::Data &data, size_t &offset)
 	{
@@ -217,6 +221,8 @@ public:
 			<< std::hex << m_id << std::endl;
 		std::cout << data << std::endl;
 	}
+
+	virtual void Store() {}
 };
 
 auto_ptr<Parser> GetParser(const string &name, const string &filename, bool null_parser)

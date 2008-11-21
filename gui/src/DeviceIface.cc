@@ -508,6 +508,10 @@ bool DeviceInterface::StartRestoreAndBackup(AppComm comm,
 //////////////////////////////////////////////////////////////////////////////
 // Barry::Parser overrides
 
+void DeviceInterface::Clear()
+{
+}
+
 void DeviceInterface::SetIds(uint8_t RecType, uint32_t UniqueId)
 {
 	m_rec_type = RecType;
@@ -517,6 +521,10 @@ void DeviceInterface::SetIds(uint8_t RecType, uint32_t UniqueId)
 	m_tar_id_text = oss.str();
 	if( m_tar_id_text.size() == 0 )
 		throw std::runtime_error("No unique ID available!");
+}
+
+void DeviceInterface::ParseHeader(const Barry::Data &data, size_t &offset)
+{
 }
 
 void DeviceInterface::ParseFields(const Barry::Data &data, size_t &offset)

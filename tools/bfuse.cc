@@ -107,10 +107,14 @@ public:
 	{
 	}
 
+	virtual void Clear() {}
+
 	virtual void SetIds(uint8_t RecType, uint32_t UniqueId)
 	{
 		m_id = UniqueId;
 	}
+
+	virtual void ParseHeader(const Barry::Data &, size_t &) {}
 
 	virtual void ParseFields(const Barry::Data &data, size_t &offset)
 	{
@@ -118,6 +122,8 @@ public:
 			<< std::hex << m_id << std::endl;
 		m_os << data << std::endl;
 	}
+
+	virtual void Store() {}
 };
 
 template <class Record>

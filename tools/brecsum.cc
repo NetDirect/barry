@@ -73,6 +73,12 @@ public:
 			SHA1_Update(&m_ctx, &UniqueId, sizeof(UniqueId));
 		}
 	}
+
+	virtual void ParseHeader(const Barry::Data &, size_t &)
+	{
+		// do nothing here, parse it all at once in ParseFields
+	}
+
 	virtual void ParseFields(const Barry::Data &data, size_t &offset)
 	{
 		int len = data.GetSize() - offset;

@@ -151,7 +151,9 @@ public:
 		int *pRecordCount = 0);
 
 	// Barry::Parser overrides
+	virtual void Clear();
 	virtual void SetIds(uint8_t RecType, uint32_t UniqueId);
+	virtual void ParseHeader(const Barry::Data &data, size_t &offset);
 	virtual void ParseFields(const Barry::Data &data, size_t &offset);
 	virtual void Store();
 
