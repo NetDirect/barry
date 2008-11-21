@@ -51,7 +51,7 @@ IConverter::~IConverter()
 std::string IConverter::Convert(iconv_t cd, const std::string &str) const
 {
 	size_t target = str.size() * 2;
-	char *out = 0;
+	char *out = 0, *outstart = 0;
 	size_t outbytesleft = 0;
 	std::string ret;
 
@@ -61,7 +61,7 @@ std::string IConverter::Convert(iconv_t cd, const std::string &str) const
 
 		const char *in = str.data();
 		size_t inbytesleft = str.size();
-		out = (char*) m_buffer.GetBuffer(target);
+		out = outstart = (char*) m_buffer.GetBuffer(target);
 		outbytesleft = m_buffer.GetBufSize();
 
 		iconv(cd, NULL, NULL, NULL, NULL);	// reset cd's state
@@ -90,7 +90,7 @@ std::string IConverter::Convert(iconv_t cd, const std::string &str) const
 	}
 
 	// store any available converted data
-	ret.assign(out, m_buffer.GetBufSize() - outbytesleft);
+	ret.assign(outstart, out - outstart);
 	return ret;
 }
 
