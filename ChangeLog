@@ -2,6 +2,7 @@ Release: version 0.15 - 2008/10/??
 ------------------------------------------------------------------------------
 2008/11/21
 	- updated man/btool.1 with new -i option
+	- fixed bug where opensync plugin didn't pass IConverter to Desktop
 2008/11/20
 	- changed Parser base class to pure abstract... this is so that
 		future API changes to the Parse base class will be

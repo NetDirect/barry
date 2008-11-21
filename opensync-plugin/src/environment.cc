@@ -193,7 +193,7 @@ void BarryEnvironment::DoConnect()
 {
 	// Create controller
 	m_pCon = new Barry::Controller(m_ProbeResult);
-	m_pDesktop = new Barry::Mode::Desktop(*m_pCon);
+	m_pDesktop = new Barry::Mode::Desktop(*m_pCon, m_IConverter);
 	m_pDesktop->Open(m_password.c_str());
 
 	// Save the DBIDs and DBNames of the databases we will work with
