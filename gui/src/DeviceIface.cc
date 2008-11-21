@@ -527,7 +527,9 @@ void DeviceInterface::ParseHeader(const Barry::Data &data, size_t &offset)
 {
 }
 
-void DeviceInterface::ParseFields(const Barry::Data &data, size_t &offset)
+void DeviceInterface::ParseFields(const Barry::Data &data,
+				  size_t &offset,
+				  const Barry::IConverter *ic)
 {
 	m_record_data.assign((const char*)data.GetData() + offset, data.GetSize() - offset);
 }
@@ -619,7 +621,8 @@ void DeviceInterface::BuildHeader(Barry::Data &data, size_t &offset)
 	// nothing to do
 }
 
-void DeviceInterface::BuildFields(Barry::Data &data, size_t &offset)
+void DeviceInterface::BuildFields(Barry::Data &data, size_t &offset,
+				  const Barry::IConverter *ic)
 {
 	int packet_size = offset + m_record_data.size();
 	unsigned char *buf = data.GetBuffer(packet_size);

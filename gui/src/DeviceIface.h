@@ -154,7 +154,8 @@ public:
 	virtual void Clear();
 	virtual void SetIds(uint8_t RecType, uint32_t UniqueId);
 	virtual void ParseHeader(const Barry::Data &data, size_t &offset);
-	virtual void ParseFields(const Barry::Data &data, size_t &offset);
+	virtual void ParseFields(const Barry::Data &data, size_t &offset,
+		const Barry::IConverter *ic);
 	virtual void Store();
 
 	// Barry::Builder overrides
@@ -162,7 +163,7 @@ public:
 	virtual uint8_t GetRecType() const;
 	virtual uint32_t GetUniqueId() const;
 	virtual void BuildHeader(Barry::Data &data, size_t &offset);
-	virtual void BuildFields(Barry::Data &data, size_t &offset);
+	virtual void BuildFields(Barry::Data &data, size_t &offset, const Barry::IConverter *ic);
 	void SkipCurrentDB() throw();	// helper function for halding restore errors
 };
 
