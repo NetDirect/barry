@@ -33,6 +33,9 @@
 
 namespace Barry {
 
+// forward declarations
+class IConverter;
+
 //
 // NOTE:  All classes here must be container-safe!  Perhaps add sorting
 //        operators in the future.
@@ -92,7 +95,7 @@ public:
 
 public:
 	const unsigned char* ParseField(const unsigned char *begin,
-		const unsigned char *end);
+		const unsigned char *end, const IConverter *ic = 0);
 
 public:
 	PINMessage();
@@ -103,9 +106,9 @@ public:
 	uint32_t GetUniqueId() const { return RecordId; }
 	void SetIds(uint8_t Type, uint32_t Id) { RecType = Type; RecordId = Id; }
 	void ParseHeader(const Data &data, size_t &offset);
-	void ParseFields(const Data &data, size_t &offset);
+	void ParseFields(const Data &data, size_t &offset, const IConverter *ic = 0);
 	void BuildHeader(Data &data, size_t &offset) const;
-	void BuildFields(Data &data, size_t &offset) const;
+	void BuildFields(Data &data, size_t &offset, const IConverter *ic = 0) const;
 
 	void Clear();
 

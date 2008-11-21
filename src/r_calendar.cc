@@ -82,7 +82,8 @@ Calendar::~Calendar()
 }
 
 const unsigned char* Calendar::ParseField(const unsigned char *begin,
-					  const unsigned char *end)
+					  const unsigned char *end,
+					  const IConverter *ic)
 {
 	const CommonField *field = (const CommonField *) begin;
 
@@ -318,10 +319,10 @@ void Calendar::ParseHeader(const Data &data, size_t &offset)
 	// no header in Calendar records
 }
 
-void Calendar::ParseFields(const Data &data, size_t &offset)
+void Calendar::ParseFields(const Data &data, size_t &offset, const IConverter *ic)
 {
 	const unsigned char *finish = ParseCommonFields(*this,
-		data.GetData() + offset, data.GetData() + data.GetSize());
+		data.GetData() + offset, data.GetData() + data.GetSize(), ic);
 	offset += finish - (data.GetData() + offset);
 }
 
@@ -335,7 +336,7 @@ void Calendar::BuildHeader(Data &data, size_t &offset) const
 //
 /// Build fields part of record.
 ///
-void Calendar::BuildFields(Data &data, size_t &offset) const
+void Calendar::BuildFields(Data &data, size_t &offset, const IConverter *ic) const
 {
 	data.Zap();
 

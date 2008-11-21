@@ -116,7 +116,8 @@ public:
 
 	virtual void ParseHeader(const Barry::Data &, size_t &) {}
 
-	virtual void ParseFields(const Barry::Data &data, size_t &offset)
+	virtual void ParseFields(const Barry::Data &data, size_t &offset,
+				const Barry::IConverter *ic)
 	{
 		m_os << "Raw record dump for record: "
 			<< std::hex << m_id << std::endl;

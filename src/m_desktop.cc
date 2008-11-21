@@ -42,6 +42,14 @@ namespace Barry { namespace Mode {
 Desktop::Desktop(Controller &con)
 	: m_con(con)
 	, m_ModeSocket(0)
+	, m_ic(0)
+{
+}
+
+Desktop::Desktop(Controller &con, const IConverter &ic)
+	: m_con(con)
+	, m_ModeSocket(0)
+	, m_ic(&ic)
 {
 }
 
@@ -229,6 +237,11 @@ unsigned int Desktop::GetDBCommand(CommandType ct)
 	return cmd;
 }
 
+void Desktop::SetIConverter(const IConverter &ic)
+{
+	m_ic = &ic;
+}
+
 //
 // GetRecordStateTable
 //
@@ -270,7 +283,7 @@ void Desktop::AddRecord(unsigned int dbId, Builder &build)
 	Data command, response;
 	DBPacket packet(*this, command, response);
 
-	if( packet.SetRecord(dbId, build) ) {
+	if( packet.SetRecord(dbId, build, m_ic) ) {
 
 		std::ostringstream oss;
 
@@ -334,7 +347,7 @@ void Desktop::GetRecord(unsigned int dbId,
 	}
 
 	// grab that data
-	packet.Parse(parser);
+	packet.Parse(parser, m_ic);
 
 	// flush the command sequence
 	while( packet.Command() != SB_COMMAND_DB_DONE )
@@ -356,7 +369,7 @@ void Desktop::SetRecord(unsigned int dbId, unsigned int stateTableIndex,
 	DBPacket packet(*this, command, response);
 
 	// loop until builder object has no more data
-	if( !packet.SetRecordByIndex(dbId, stateTableIndex, build) ) {
+	if( !packet.SetRecordByIndex(dbId, stateTableIndex, build, m_ic) ) {
 		throw std::logic_error("Desktop: no data available in SetRecord");
 	}
 
@@ -456,7 +469,7 @@ void Desktop::LoadDatabase(unsigned int dbId, Parser &parser)
 		if( packet.Command() == SB_COMMAND_DB_DATA ) {
 			// this size is the old header size, since using
 			// old command above
-			packet.Parse(parser);
+			packet.Parse(parser, m_ic);
 		}
 
 		// advance!
@@ -497,7 +510,7 @@ void Desktop::SaveDatabase(unsigned int dbId, Builder &builder)
 
 	// loop until builder object has no more data
 	bool first = true;
-	while( packet.SetRecord(dbId, builder) ) {
+	while( packet.SetRecord(dbId, builder, m_ic) ) {
 		dout("Database ID: " << dbId);
 
 		m_socket->Packet(packet, first ? 60000 : -1);

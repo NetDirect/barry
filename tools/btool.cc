@@ -68,6 +68,8 @@ void Usage()
    << "   -f file   Filename to save or load handheld data to/from\n"
 #endif
    << "   -h        This help\n"
+   << "   -i cs     International charset for string conversions\n"
+   << "             Valid values here are available with 'iconv --list'\n"
    << "   -l        List devices\n"
    << "   -L        List Contact field names\n"
    << "   -m        Map LDIF name to Contact field / Unmap LDIF name\n"
@@ -215,7 +217,8 @@ public:
 
 	virtual void ParseHeader(const Data &, size_t &) {}
 
-	virtual void ParseFields(const Barry::Data &data, size_t &offset)
+	virtual void ParseFields(const Barry::Data &data, size_t &offset,
+				const IConverter *ic)
 	{
 		std::cout << "Raw record dump for record: "
 			<< std::hex << m_id << std::endl;
@@ -442,13 +445,14 @@ int main(int argc, char *argv[])
 		string password;
 		string busname;
 		string devname;
+		string iconvCharset;
 		vector<string> dbNames, saveDbNames, mapCommands;
 		vector<StateTableCommand> stCommands;
 		Usb::EndpointPair epOverride;
 
 		// process command line options
 		for(;;) {
-			int cmd = getopt(argc, argv, "B:c:C:d:D:e:f:hlLm:MnN:p:P:r:R:Ss:tT:vXzZ");
+			int cmd = getopt(argc, argv, "B:c:C:d:D:e:f:hi:lLm:MnN:p:P:r:R:Ss:tT:vXzZ");
 			if( cmd == -1 )
 				break;
 
@@ -493,6 +497,11 @@ int main(int argc, char *argv[])
 				return 1;
 #endif
 				break;
+
+			case 'i':	// international charset (iconv)
+				iconvCharset = optarg;
+				break;
+
 			case 'l':	// list only
 				list_only = true;
 				break;
@@ -578,6 +587,12 @@ int main(int argc, char *argv[])
 		// Initialize the barry library.  Must be called before
 		// anything else.
 		Barry::Init(data_dump);
+
+		// Create an IConverter object if needed
+		auto_ptr<IConverter> ic;
+		if( iconvCharset.size() ) {
+			ic.reset( new IConverter(iconvCharset.c_str(), true) );
+		}
 
 		// LDIF class... only needed if ldif output turned on
 		ContactLdif ldif(ldifBaseDN);
@@ -687,7 +702,7 @@ int main(int argc, char *argv[])
 		}
 
 		Barry::Controller &con = *pcon;
-		Barry::Mode::Desktop desktop(con);
+		Barry::Mode::Desktop desktop(con, *ic);
 
 		//
 		// execute each mode that was turned on

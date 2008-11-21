@@ -28,7 +28,10 @@
 #include <stdint.h>		// for uint32_t
 
 // forward declarations
-namespace Barry { class Data; }
+namespace Barry {
+	class Data;
+	class IConverter;
+}
 
 namespace Barry {
 
@@ -67,7 +70,8 @@ public:
 	/// The same data is passed as was passed in ParseHeader,
 	/// only the offset will be updated if it was advanced during
 	/// the header parsing.
-	virtual void ParseFields(const Data &data, size_t &offset) = 0;
+	virtual void ParseFields(const Data &data, size_t &offset,
+		const IConverter *ic) = 0;
 
 	/// Called at the very end of record parsing, and used to
 	/// store the final packet somewhere, either in memory, disk, etc.
@@ -108,7 +112,8 @@ public:
 	/// The same data is passed as was passed in ParseHeader,
 	/// only the offset will be updated if it was advanced during
 	/// the header parsing.
-	virtual void ParseFields(const Data &data, size_t &offset) {}
+	virtual void ParseFields(const Data &data, size_t &offset,
+		const IConverter *ic) {}
 
 	/// Called at the very end of record parsing, and used to
 	/// store the final packet somewhere, either in memory, disk, etc.
@@ -189,9 +194,10 @@ public:
 		m_rec.ParseHeader(data, offset);
 	}
 
-	virtual void ParseFields(const Data &data, size_t &offset)
+	virtual void ParseFields(const Data &data, size_t &offset,
+				 const IConverter *ic)
 	{
-		m_rec.ParseFields(data, offset);
+		m_rec.ParseFields(data, offset, ic);
 	}
 
 	virtual void Store()

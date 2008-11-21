@@ -33,18 +33,24 @@
 #include "record.h"
 
 // forward declarations
-namespace Barry { class Data; }
+namespace Barry {
+	class Data;
+	class IConverter;
+}
 
 namespace Barry {
 
 template <class RecordT>
-const unsigned char*  ParseCommonFields(RecordT &rec, const void *begin, const void *end)
+const unsigned char*  ParseCommonFields(RecordT &rec,
+					const void *begin,
+					const void *end,
+					const IConverter *ic = 0)
 {
 	const unsigned char *b = (const unsigned char*) begin;
 	const unsigned char *e = (const unsigned char*) end;
 
 	while( (b + COMMON_FIELD_HEADER_SIZE) < e )
-		b = rec.ParseField(b, e);
+		b = rec.ParseField(b, e, ic);
 	return b;
 }
 

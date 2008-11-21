@@ -79,7 +79,8 @@ public:
 		// do nothing here, parse it all at once in ParseFields
 	}
 
-	virtual void ParseFields(const Barry::Data &data, size_t &offset)
+	virtual void ParseFields(const Barry::Data &data, size_t &offset,
+				const Barry::IConverter *ic)
 	{
 		int len = data.GetSize() - offset;
 		SHA1_Update(&m_ctx, data.GetData() + offset, len);

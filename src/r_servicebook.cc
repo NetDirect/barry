@@ -64,7 +64,8 @@ ServiceBookConfig::~ServiceBookConfig()
 }
 
 const unsigned char* ServiceBookConfig::ParseField(const unsigned char *begin,
-						   const unsigned char *end)
+						   const unsigned char *end,
+						   const IConverter *ic)
 {
 	const void *raw;
 	uint16_t size, type;
@@ -144,10 +145,10 @@ void ServiceBookConfig::ParseHeader(const Data &data, size_t &offset)
 	}
 }
 
-void ServiceBookConfig::ParseFields(const Data &data, size_t &offset)
+void ServiceBookConfig::ParseFields(const Data &data, size_t &offset, const IConverter *ic)
 {
 	const unsigned char *finish = ParseCommonFields(*this,
-		data.GetData() + offset, data.GetData() + data.GetSize());
+		data.GetData() + offset, data.GetData() + data.GetSize(), ic);
 	offset += finish - (data.GetData() + offset);
 }
 
@@ -167,7 +168,7 @@ void ServiceBookConfig::BuildHeader(Data &data, size_t &offset) const
 //
 /// Build fields part of record
 ///
-void ServiceBookConfig::BuildFields(Data &data, size_t &offset) const
+void ServiceBookConfig::BuildFields(Data &data, size_t &offset, const IConverter *ic) const
 {
 	throw std::logic_error("ServiceBookConfig::Build not yet implemented");
 }
@@ -242,7 +243,8 @@ ServiceBook::~ServiceBook()
 }
 
 const unsigned char* ServiceBook::ParseField(const unsigned char *begin,
-					  const unsigned char *end)
+					     const unsigned char *end,
+					     const IConverter *ic)
 {
 	const CommonField *field = (const CommonField *) begin;
 
@@ -328,10 +330,10 @@ void ServiceBook::ParseHeader(const Data &data, size_t &offset)
 	// no header in this record (?)
 }
 
-void ServiceBook::ParseFields(const Data &data, size_t &offset)
+void ServiceBook::ParseFields(const Data &data, size_t &offset, const IConverter *ic)
 {
 	const unsigned char *finish = ParseCommonFields(*this,
-		data.GetData() + offset, data.GetData() + data.GetSize());
+		data.GetData() + offset, data.GetData() + data.GetSize(), ic);
 	offset += finish - (data.GetData() + offset);
 }
 
@@ -345,7 +347,7 @@ void ServiceBook::BuildHeader(Data &data, size_t &offset) const
 //
 /// Build fields part of record
 ///
-void ServiceBook::BuildFields(Data &data, size_t &offset) const
+void ServiceBook::BuildFields(Data &data, size_t &offset, const IConverter *ic) const
 {
 	throw std::logic_error("ServiceBook::BuildFields not yet implemented");
 }

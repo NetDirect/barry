@@ -97,7 +97,8 @@ Message::~Message()
 }
 
 const unsigned char* Message::ParseField(const unsigned char *begin,
-					 const unsigned char *end)
+					 const unsigned char *end,
+					 const IConverter *ic)
 {
 	const CommonField *field = (const CommonField *) begin;
 
@@ -230,10 +231,10 @@ void Message::ParseHeader(const Data &data, size_t &offset)
 	offset += MESSAGE_RECORD_HEADER_SIZE;
 }
 
-void Message::ParseFields(const Data &data, size_t &offset)
+void Message::ParseFields(const Data &data, size_t &offset, const IConverter *ic)
 {
 	const unsigned char *finish = ParseCommonFields(*this,
-		data.GetData() + offset, data.GetData() + data.GetSize());
+		data.GetData() + offset, data.GetData() + data.GetSize(), ic);
 	offset += finish - (data.GetData() + offset);
 }
 
@@ -242,7 +243,7 @@ void Message::BuildHeader(Data &data, size_t &offset) const
 	throw std::logic_error("Message::BuildHeader not yet implemented");
 }
 
-void Message::BuildFields(Data &data, size_t &offset) const
+void Message::BuildFields(Data &data, size_t &offset, const IConverter *ic) const
 {
 	throw std::logic_error("Message::BuildFields not yet implemented");
 }

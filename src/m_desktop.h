@@ -32,6 +32,7 @@ namespace Barry {
 class Parser;
 class Builder;
 class Controller;
+class IConverter;
 
 namespace Mode {
 
@@ -66,12 +67,16 @@ private:
 	uint16_t m_ModeSocket;			// socket recommended by device
 						// when mode was selected
 
+	// external objects (optional, can be null)
+	const IConverter *m_ic;
+
 protected:
 	void LoadCommandTable();
 	void LoadDBDB();
 
 public:
 	Desktop(Controller &con);
+	Desktop(Controller &con, const IConverter &ic);
 	~Desktop();
 
 	//////////////////////////////////
@@ -88,6 +93,8 @@ public:
 	const DatabaseDatabase& GetDBDB() const { return m_dbdb; }
 	unsigned int GetDBID(const std::string &name) const;
 	unsigned int GetDBCommand(CommandType ct);
+
+	void SetIConverter(const IConverter &ic);
 
 	//////////////////////////////////
 	// Desktop mode - database specific

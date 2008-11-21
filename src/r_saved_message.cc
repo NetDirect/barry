@@ -98,7 +98,8 @@ SavedMessage::~SavedMessage()
 }
 
 const unsigned char* SavedMessage::ParseField(const unsigned char *begin,
-					      const unsigned char *end)
+					      const unsigned char *end,
+					      const IConverter *ic)
 {
 	const CommonField *field = (const CommonField *) begin;
 
@@ -218,10 +219,10 @@ void SavedMessage::ParseHeader(const Data &data, size_t &offset)
 	offset += MESSAGE_RECORD_HEADER_SIZE;
 }
 
-void SavedMessage::ParseFields(const Data &data, size_t &offset)
+void SavedMessage::ParseFields(const Data &data, size_t &offset, const IConverter *ic)
 {
 	const unsigned char *finish = ParseCommonFields(*this,
-		data.GetData() + offset, data.GetData() + data.GetSize());
+		data.GetData() + offset, data.GetData() + data.GetSize(), ic);
 	offset += finish - (data.GetData() + offset);
 }
 
@@ -230,7 +231,7 @@ void SavedMessage::BuildHeader(Data &data, size_t &offset) const
 	throw std::logic_error("SavedMessage::BuildHeader not yet implemented");
 }
 
-void SavedMessage::BuildFields(Data &data, size_t &offset) const
+void SavedMessage::BuildFields(Data &data, size_t &offset, const IConverter *ic) const
 {
 	throw std::logic_error("SavedMessage::BuildFields not yet implemented");
 }

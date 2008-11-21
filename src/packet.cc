@@ -320,7 +320,7 @@ void DBPacket::GetRecordByIndex(unsigned int dbId, unsigned int stateTableIndex)
 ///		- false means no data available from Builder object
 ///
 bool DBPacket::SetRecordByIndex(unsigned int dbId, unsigned int stateTableIndex,
-			      Builder &build)
+			      Builder &build, const IConverter *ic)
 {
 	// get new data if available
 	if( !build.Retrieve(dbId) )
@@ -328,7 +328,7 @@ bool DBPacket::SetRecordByIndex(unsigned int dbId, unsigned int stateTableIndex,
 
 	// build packet data
 	size_t header_size = SB_PACKET_COMMAND_HEADER_SIZE + DBC_INDEXED_UPLOAD_HEADER_SIZE;
-	build.BuildFields(m_send, header_size);
+	build.BuildFields(m_send, header_size, ic);
 	size_t total_size = m_send.GetSize();
 
 	// fill in the header values
@@ -385,7 +385,7 @@ void DBPacket::GetRecords(unsigned int dbId)
 ///		- true means success
 ///		- false means no data available from Builder object
 ///
-bool DBPacket::SetRecord(unsigned int dbId, Builder &build)
+bool DBPacket::SetRecord(unsigned int dbId, Builder &build, const IConverter *ic)
 {
 	// get new data if available
 	if( !build.Retrieve(dbId) )
@@ -394,7 +394,7 @@ bool DBPacket::SetRecord(unsigned int dbId, Builder &build)
 	// build packet data
 	size_t header_size = SB_PACKET_COMMAND_HEADER_SIZE + DBC_TAGGED_UPLOAD_HEADER_SIZE;
 	build.BuildHeader(m_send, header_size);
-	build.BuildFields(m_send, header_size);
+	build.BuildFields(m_send, header_size, ic);
 	size_t total_size = m_send.GetSize();
 
 	// fill in the header values
@@ -456,7 +456,7 @@ unsigned int DBPacket::DBOperation() const
 /// \returns	bool	true - packet was recognized and parse was attempted
 ///			false - packet was not recognized
 ///
-bool DBPacket::Parse(Parser &parser)
+bool DBPacket::Parse(Parser &parser, const IConverter *ic)
 {
 	size_t offset = 0;
 	MAKE_PACKET(rpack, m_receive);
@@ -475,7 +475,7 @@ bool DBPacket::Parse(Parser &parser)
 			btohl(rpack->u.db.u.response.u.tagged.uniqueId));
 
 		parser.ParseHeader(m_receive, offset);
-		parser.ParseFields(m_receive, offset);
+		parser.ParseFields(m_receive, offset, ic);
 		parser.Store();
 		return true;
 

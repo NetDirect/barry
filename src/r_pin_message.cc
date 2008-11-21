@@ -92,7 +92,8 @@ PINMessage::~PINMessage()
 }
 
 const unsigned char* PINMessage::ParseField(const unsigned char *begin,
-					 const unsigned char *end)
+					    const unsigned char *end,
+					    const IConverter *ic)
 {
 	const CommonField *field = (const CommonField *) begin;
 
@@ -223,10 +224,10 @@ void PINMessage::ParseHeader(const Data &data, size_t &offset)
 	offset += MESSAGE_RECORD_HEADER_SIZE;
 }
 
-void PINMessage::ParseFields(const Data &data, size_t &offset)
+void PINMessage::ParseFields(const Data &data, size_t &offset, const IConverter *ic)
 {
 	const unsigned char *finish = ParseCommonFields(*this,
-		data.GetData() + offset, data.GetData() + data.GetSize());
+		data.GetData() + offset, data.GetData() + data.GetSize(), ic);
 	offset += finish - (data.GetData() + offset);
 }
 
@@ -235,7 +236,7 @@ void PINMessage::BuildHeader(Data &data, size_t &offset) const
 	throw std::logic_error("PINMessage::BuildHeader not yet implemented");
 }
 
-void PINMessage::BuildFields(Data &data, size_t &offset) const
+void PINMessage::BuildFields(Data &data, size_t &offset, const IConverter *ic) const
 {
 	throw std::logic_error("PINMessage::BuildFields not yet implemented");
 }

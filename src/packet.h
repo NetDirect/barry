@@ -35,6 +35,7 @@ class Parser;
 class Builder;
 class SocketZero;
 class Socket;
+class IConverter;
 namespace Mode {
 	class Desktop;
 }
@@ -143,9 +144,9 @@ public:
 	void SetRecordFlags(unsigned int dbId, unsigned int stateTableIndex, uint8_t flag1);
 	void DeleteRecordByIndex(unsigned int dbId, unsigned int stateTableIndex);
 	void GetRecordByIndex(unsigned int dbId, unsigned int stateTableIndex);
-	bool SetRecordByIndex(unsigned int dbId, unsigned int stateTableIndex, Builder &build);
+	bool SetRecordByIndex(unsigned int dbId, unsigned int stateTableIndex, Builder &build, const IConverter *ic);
 	void GetRecords(unsigned int dbId);
-	bool SetRecord(unsigned int dbId, Builder &build);
+	bool SetRecord(unsigned int dbId, Builder &build, const IConverter *ic);
 
 
 	//////////////////////////////////
@@ -155,7 +156,7 @@ public:
 	unsigned int ReturnCode() const;	// throws FIXME if packet doesn't support it
 	unsigned int DBOperation() const; // throws Error on size trouble
 
-	bool Parse(Parser &parser);	// switches based on last m_send command
+	bool Parse(Parser &parser, const IConverter *ic); // switches based on last m_send command
 
 	// response parsers
 };

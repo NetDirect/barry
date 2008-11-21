@@ -75,7 +75,8 @@ Task::~Task()
 }
 
 const unsigned char* Task::ParseField(const unsigned char *begin,
-				      const unsigned char *end)
+				      const unsigned char *end,
+				      const IConverter *ic)
 {
 	const CommonField *field = (const CommonField *) begin;
 
@@ -312,10 +313,10 @@ void Task::ParseHeader(const Data &data, size_t &offset)
 	// no header in Task records
 }
 
-void Task::ParseFields(const Data &data, size_t &offset)
+void Task::ParseFields(const Data &data, size_t &offset, const IConverter *ic)
 {
 	const unsigned char *finish = ParseCommonFields(*this,
-	data.GetData() + offset, data.GetData() + data.GetSize());
+		data.GetData() + offset, data.GetData() + data.GetSize(), ic);
 	offset += finish - (data.GetData() + offset);
 }
 

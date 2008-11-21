@@ -82,7 +82,8 @@ Folder::~Folder()
 }
 
 const unsigned char* Folder::ParseField(const unsigned char *begin,
-				      const unsigned char *end)
+					const unsigned char *end,
+					const IConverter *ic)
 {
 	const CommonField *field = (const CommonField *) begin;
 
@@ -141,10 +142,10 @@ void Folder::ParseHeader(const Data &data, size_t &offset)
 	// no header in Folder records
 }
 
-void Folder::ParseFields(const Data &data, size_t &offset)
+void Folder::ParseFields(const Data &data, size_t &offset, const IConverter *ic)
 {
 	const unsigned char *finish = ParseCommonFields(*this,
-	data.GetData() + offset, data.GetData() + data.GetSize());
+		data.GetData() + offset, data.GetData() + data.GetSize(), ic);
 	offset += finish - (data.GetData() + offset);
 }
 

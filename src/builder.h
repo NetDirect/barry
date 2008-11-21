@@ -26,6 +26,9 @@
 
 namespace Barry {
 
+// forward declarations
+class IConverter;
+
 //
 // Builder class
 //
@@ -59,7 +62,8 @@ public:
 	/// in data, using offset to know where to write.  Be sure to
 	/// update offset, and be sure to adjust the size of the data
 	/// packet (possibly with Data::ReleaseBuffer()).
-	virtual void BuildFields(Data &data, size_t &offset) = 0;
+	virtual void BuildFields(Data &data, size_t &offset,
+		const IConverter *ic) = 0;
 };
 
 
@@ -130,9 +134,9 @@ public:
 		m_rec.BuildHeader(data, offset);
 	}
 
-	virtual void BuildFields(Data &data, size_t &offset)
+	virtual void BuildFields(Data &data, size_t &offset, const IConverter *ic)
 	{
-		m_rec.BuildFields(data, offset);
+		m_rec.BuildFields(data, offset, ic);
 	}
 };
 
