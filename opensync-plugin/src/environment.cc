@@ -175,6 +175,7 @@ BarryEnvironment::BarryEnvironment(OSyncMember *pm)
 	m_pin(-1),
 	m_DebugMode(false),
 	m_password(""),
+	m_IConverter("UTF-8"),
 	m_pCon(0),
 	m_pDesktop(0),
 	m_CalendarSync(pm, "calendar"),

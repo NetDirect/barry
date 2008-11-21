@@ -85,6 +85,7 @@ public:
 	std::string m_password;
 
 	// device communication
+	Barry::IConverter m_IConverter;
 	Barry::ProbeResult m_ProbeResult;
 	Barry::Controller *m_pCon;
 	Barry::Mode::Desktop *m_pDesktop;
