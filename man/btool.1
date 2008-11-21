@@ -2,7 +2,7 @@
 .\" First parameter, NAME, should be all caps
 .\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
 .\" other parameters are allowed: see man(7), man(1)
-.TH BTOOL 1 "May 16, 2008"
+.TH BTOOL 1 "November 21, 2008"
 .\" Please adjust this date whenever revising the manpage.
 .\"
 .\" Some roff macros, for reference:
@@ -69,6 +69,14 @@ You should never need to use this option, as endpoints are autodetected.
 .B \-f file
 Filename to write or read handheld data to/from.  Used in conjunction with
 the -d and -s options, respectively.
+.TP
+.B \-i charset
+Specifies the iconv charset to use for converting international strings.
+The Blackberry uses the WINDOWS-1252 charset, which is incompatible with
+the more common code pages used in Linux.  The most useful charset to use
+with this option is UTF-8, and is highly recommended.  Any other charset
+available via 'iconv --list' can be used here too, but may not be
+successful for some character conversions.
 .TP
 .B \-l
 Lists attached Blackberry devices, and their PIN numbers.
