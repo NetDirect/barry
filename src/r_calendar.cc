@@ -105,7 +105,7 @@ const unsigned char* Calendar::ParseField(const unsigned char *begin,
 			if( b->strMember ) {
 				std::string &s = this->*(b->strMember);
 				s = ParseFieldString(field);
-				if( b->utf8Needed && ic )
+				if( b->iconvNeeded && ic )
 					s = ic->FromBB(s);
 				return begin;	// done!
 			}
@@ -358,7 +358,7 @@ void Calendar::BuildFields(Data &data, size_t &offset, const IConverter *ic) con
 		if( b->strMember ) {
 			const std::string &s = this->*(b->strMember);
 			if( s.size() )
-				BuildField(data, offset, b->type, (b->utf8Needed && ic) ? ic->ToBB(s) : s);
+				BuildField(data, offset, b->type, (b->iconvNeeded && ic) ? ic->ToBB(s) : s);
 		}
 		else if( b->timeMember ) {
 			time_t t = this->*(b->timeMember);

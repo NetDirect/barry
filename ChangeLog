@@ -4,6 +4,7 @@ Release: version 0.15 - 2008/10/??
 	- updated man/btool.1 with new -i option
 	- fixed bug where opensync plugin didn't pass IConverter to Desktop
 	- added IConverter support to r_calendar.cc
+	- renamed utf8Needed to iconvNeeded, for consistency
 2008/11/20
 	- changed Parser base class to pure abstract... this is so that
 		future API changes to the Parse base class will be

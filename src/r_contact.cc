@@ -171,14 +171,14 @@ const unsigned char* Contact::ParseField(const unsigned char *begin,
 			if( b->strMember ) {
 				std::string &s = this->*(b->strMember);
 				s = ParseFieldString(field);
-				if( b->utf8Needed && ic )
+				if( b->iconvNeeded && ic )
 					s = ic->FromBB(s);
 				return begin;	// done!
 			}
 			else if( b->postMember && b->postField ) {
 				std::string &s = (this->*(b->postMember)).*(b->postField);
 				s = ParseFieldString(field);
-				if( b->utf8Needed && ic )
+				if( b->iconvNeeded && ic )
 					s = ic->FromBB(s);
 				return begin;
 			}
@@ -330,14 +330,14 @@ void Contact::BuildFields(Data &data, size_t &offset, const IConverter *ic) cons
 		if( b->strMember ) {
 			const std::string &field = this->*(b->strMember);
 			if( field.size() ) {
-				std::string s = (b->utf8Needed && ic) ? ic->ToBB(field) : field;
+				std::string s = (b->iconvNeeded && ic) ? ic->ToBB(field) : field;
 				BuildField(data, offset, b->type, s);
 			}
 		}
 		else if( b->postMember && b->postField ) {
 			const std::string &field = (this->*(b->postMember)).*(b->postField);
 			if( field.size() ) {
-				std::string s = (b->utf8Needed && ic) ? ic->ToBB(field) : field;
+				std::string s = (b->iconvNeeded && ic) ? ic->ToBB(field) : field;
 				BuildField(data, offset, b->type, s);
 			}
 		}
