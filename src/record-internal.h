@@ -80,6 +80,7 @@ struct FieldLink
 	time_t RecordT::* timeMember;
 	PostalAddress RecordT::* postMember;
 	std::string PostalAddress::* postField;
+	bool utf8Needed;
 };
 
 void BuildField1900(Data &data, size_t &size, uint8_t type, time_t t);

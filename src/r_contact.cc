@@ -27,6 +27,7 @@
 #include "time.h"
 #include "error.h"
 #include "endian.h"
+#include "iconv.h"
 #include <ostream>
 #include <iomanip>
 #include <time.h>
@@ -96,44 +97,44 @@ namespace Barry {
 
 // Contact code to field table
 static FieldLink<Contact> ContactFieldLinks[] = {
-   { CFC_PHONE,        "Phone",      0,0,                 &Contact::Phone, 0, 0 },
-   { CFC_FAX,          "Fax",        "facsimileTelephoneNumber",0, &Contact::Fax, 0, 0 },
-   { CFC_WORK_PHONE,   "WorkPhone",  "telephoneNumber",0, &Contact::WorkPhone, 0, 0 },
-   { CFC_HOME_PHONE,   "HomePhone",  "homePhone",0,       &Contact::HomePhone, 0, 0 },
-   { CFC_MOBILE_PHONE, "MobilePhone","mobile",0,          &Contact::MobilePhone, 0, 0 },
-   { CFC_PAGER,        "Pager",      "pager",0,           &Contact::Pager, 0, 0 },
-   { CFC_PIN,          "PIN",        0,0,                 &Contact::PIN, 0, 0 },
-   { CFC_RADIO,        "Radio",      0,0,                 &Contact::Radio, 0, 0 },
-   { CFC_WORK_PHONE_2, "WorkPhone2", 0,0,                 &Contact::WorkPhone2, 0, 0 },
-   { CFC_HOME_PHONE_2, "HomePhone2", 0,0,                 &Contact::HomePhone2, 0, 0 },
-   { CFC_OTHER_PHONE,  "OtherPhone", 0,0,                 &Contact::OtherPhone, 0, 0 },
-   { CFC_COMPANY,      "Company",    "o",0,               &Contact::Company, 0, 0 },
-   { CFC_DEFAULT_COMM_METHOD,"DefaultCommMethod",0,0,     &Contact::DefaultCommunicationsMethod, 0, 0 },
-   { CFC_ADDRESS1,     "WorkAddress1",   0,0,             0, 0, 0, &Contact::WorkAddress, &PostalAddress::Address1 },
-   { CFC_ADDRESS2,     "WorkAddress2",   0,0,             0, 0, 0, &Contact::WorkAddress, &PostalAddress::Address2 },
-   { CFC_ADDRESS3,     "WorkAddress3",   0,0,             0, 0, 0, &Contact::WorkAddress, &PostalAddress::Address3 },
-   { CFC_CITY,         "WorkCity",       "l",0,           0, 0, 0, &Contact::WorkAddress, &PostalAddress::City },
-   { CFC_PROVINCE,     "WorkProvince",   "st",0,          0, 0, 0, &Contact::WorkAddress, &PostalAddress::Province },
-   { CFC_POSTAL_CODE,  "WorkPostalCode", "postalCode",0,  0, 0, 0, &Contact::WorkAddress, &PostalAddress::PostalCode },
-   { CFC_COUNTRY,      "WorkCountry",    "c", "country",  0, 0, 0, &Contact::WorkAddress, &PostalAddress::Country },
-   { CFC_TITLE,        "JobTitle",   "title",0,           &Contact::JobTitle, 0, 0 },
-   { CFC_PUBLIC_KEY,   "PublicKey",  0,0,                 &Contact::PublicKey, 0, 0 },
-   { CFC_URL,          "URL",        0,0,                 &Contact::URL, 0, 0 },
-   { CFC_PREFIX,       "Prefix",     0,0,                 &Contact::Prefix, 0, 0 },
-   { CFC_HOME_ADDRESS1,"HomeAddress1", 0,0,               0, 0, 0, &Contact::HomeAddress, &PostalAddress::Address1, },
-   { CFC_HOME_ADDRESS2,"HomeAddress2", 0,0,               0, 0, 0, &Contact::HomeAddress, &PostalAddress::Address2, },
-   { CFC_HOME_ADDRESS3,"HomeAddress3", 0,0,               0, 0, 0, &Contact::HomeAddress, &PostalAddress::Address3, },
-   { CFC_NOTES,        "Notes",      0,0,                 &Contact::Notes, 0, 0 },
-   { CFC_USER_DEFINED_1, "UserDefined1", 0,0,             &Contact::UserDefined1, 0, 0 },
-   { CFC_USER_DEFINED_2, "UserDefined2", 0,0,             &Contact::UserDefined2, 0, 0 },
-   { CFC_USER_DEFINED_3, "UserDefined3", 0,0,             &Contact::UserDefined3, 0, 0 },
-   { CFC_USER_DEFINED_4, "UserDefined4", 0,0,             &Contact::UserDefined4, 0, 0 },
-   { CFC_HOME_CITY,    "HomeCity",   0,0,                 0, 0, 0, &Contact::HomeAddress, &PostalAddress::City, },
-   { CFC_HOME_PROVINCE,"HomeProvince", 0,0,               0, 0, 0, &Contact::HomeAddress, &PostalAddress::Province, },
-   { CFC_HOME_POSTAL_CODE, "HomePostalCode", 0,0,         0, 0, 0, &Contact::HomeAddress, &PostalAddress::PostalCode, },
-   { CFC_HOME_COUNTRY, "HomeCountry",0,0,                 0, 0, 0, &Contact::HomeAddress, &PostalAddress::Country, },
-   { CFC_IMAGE,        "Image",      0,0,                 &Contact::Image, 0, 0 },
-   { CFC_INVALID_FIELD,"EndOfList",  0, 0, 0 }
+   { CFC_PHONE,        "Phone",      0,0,                 &Contact::Phone, 0, 0, 0, 0, true },
+   { CFC_FAX,          "Fax",        "facsimileTelephoneNumber",0, &Contact::Fax, 0, 0, 0, 0, true },
+   { CFC_WORK_PHONE,   "WorkPhone",  "telephoneNumber",0, &Contact::WorkPhone, 0, 0, 0, 0, true },
+   { CFC_HOME_PHONE,   "HomePhone",  "homePhone",0,       &Contact::HomePhone, 0, 0, 0, 0, true },
+   { CFC_MOBILE_PHONE, "MobilePhone","mobile",0,          &Contact::MobilePhone, 0, 0, 0, 0, true },
+   { CFC_PAGER,        "Pager",      "pager",0,           &Contact::Pager, 0, 0, 0, 0, true },
+   { CFC_PIN,          "PIN",        0,0,                 &Contact::PIN, 0, 0, 0, 0, true },
+   { CFC_RADIO,        "Radio",      0,0,                 &Contact::Radio, 0, 0, 0, 0, true },
+   { CFC_WORK_PHONE_2, "WorkPhone2", 0,0,                 &Contact::WorkPhone2, 0, 0, 0, 0, true },
+   { CFC_HOME_PHONE_2, "HomePhone2", 0,0,                 &Contact::HomePhone2, 0, 0, 0, 0, true },
+   { CFC_OTHER_PHONE,  "OtherPhone", 0,0,                 &Contact::OtherPhone, 0, 0, 0, 0, true },
+   { CFC_COMPANY,      "Company",    "o",0,               &Contact::Company, 0, 0, 0, 0, true },
+   { CFC_DEFAULT_COMM_METHOD,"DefaultCommMethod",0,0,     &Contact::DefaultCommunicationsMethod, 0, 0, 0, 0, true },
+   { CFC_ADDRESS1,     "WorkAddress1",   0,0,             0, 0, 0, &Contact::WorkAddress, &PostalAddress::Address1, true },
+   { CFC_ADDRESS2,     "WorkAddress2",   0,0,             0, 0, 0, &Contact::WorkAddress, &PostalAddress::Address2, true },
+   { CFC_ADDRESS3,     "WorkAddress3",   0,0,             0, 0, 0, &Contact::WorkAddress, &PostalAddress::Address3, true },
+   { CFC_CITY,         "WorkCity",       "l",0,           0, 0, 0, &Contact::WorkAddress, &PostalAddress::City, true },
+   { CFC_PROVINCE,     "WorkProvince",   "st",0,          0, 0, 0, &Contact::WorkAddress, &PostalAddress::Province, true },
+   { CFC_POSTAL_CODE,  "WorkPostalCode", "postalCode",0,  0, 0, 0, &Contact::WorkAddress, &PostalAddress::PostalCode, true },
+   { CFC_COUNTRY,      "WorkCountry",    "c", "country",  0, 0, 0, &Contact::WorkAddress, &PostalAddress::Country, true },
+   { CFC_TITLE,        "JobTitle",   "title",0,           &Contact::JobTitle, 0, 0, 0, 0, true },
+   { CFC_PUBLIC_KEY,   "PublicKey",  0,0,                 &Contact::PublicKey, 0, 0, 0, 0, false },
+   { CFC_URL,          "URL",        0,0,                 &Contact::URL, 0, 0, 0, 0, true },
+   { CFC_PREFIX,       "Prefix",     0,0,                 &Contact::Prefix, 0, 0, 0, 0, true },
+   { CFC_HOME_ADDRESS1,"HomeAddress1", 0,0,               0, 0, 0, &Contact::HomeAddress, &PostalAddress::Address1, true },
+   { CFC_HOME_ADDRESS2,"HomeAddress2", 0,0,               0, 0, 0, &Contact::HomeAddress, &PostalAddress::Address2, true },
+   { CFC_HOME_ADDRESS3,"HomeAddress3", 0,0,               0, 0, 0, &Contact::HomeAddress, &PostalAddress::Address3, true },
+   { CFC_NOTES,        "Notes",      0,0,                 &Contact::Notes, 0, 0, 0, 0, true },
+   { CFC_USER_DEFINED_1, "UserDefined1", 0,0,             &Contact::UserDefined1, 0, 0, 0, 0, true },
+   { CFC_USER_DEFINED_2, "UserDefined2", 0,0,             &Contact::UserDefined2, 0, 0, 0, 0, true },
+   { CFC_USER_DEFINED_3, "UserDefined3", 0,0,             &Contact::UserDefined3, 0, 0, 0, 0, true },
+   { CFC_USER_DEFINED_4, "UserDefined4", 0,0,             &Contact::UserDefined4, 0, 0, 0, 0, true },
+   { CFC_HOME_CITY,    "HomeCity",   0,0,                 0, 0, 0, &Contact::HomeAddress, &PostalAddress::City, true },
+   { CFC_HOME_PROVINCE,"HomeProvince", 0,0,               0, 0, 0, &Contact::HomeAddress, &PostalAddress::Province, true },
+   { CFC_HOME_POSTAL_CODE, "HomePostalCode", 0,0,         0, 0, 0, &Contact::HomeAddress, &PostalAddress::PostalCode, true },
+   { CFC_HOME_COUNTRY, "HomeCountry",0,0,                 0, 0, 0, &Contact::HomeAddress, &PostalAddress::Country, true },
+   { CFC_IMAGE,        "Image",      0,0,                 &Contact::Image, 0, 0, 0, 0, false },
+   { CFC_INVALID_FIELD,"EndOfList",  0, 0, 0, 0, 0, 0, 0, false }
 };
 
 Contact::Contact()
@@ -170,11 +171,15 @@ const unsigned char* Contact::ParseField(const unsigned char *begin,
 			if( b->strMember ) {
 				std::string &s = this->*(b->strMember);
 				s = ParseFieldString(field);
+				if( b->utf8Needed && ic )
+					s = ic->FromBB(s);
 				return begin;	// done!
 			}
 			else if( b->postMember && b->postField ) {
 				std::string &s = (this->*(b->postMember)).*(b->postField);
 				s = ParseFieldString(field);
+				if( b->utf8Needed && ic )
+					s = ic->FromBB(s);
 				return begin;
 			}
 			else {
@@ -187,7 +192,10 @@ const unsigned char* Contact::ParseField(const unsigned char *begin,
 	switch( field->type )
 	{
 	case CFC_EMAIL: {
-		EmailAddresses.push_back( ParseFieldString(field) );
+		std::string s = ParseFieldString(field);
+		if( ic )
+			s = ic->FromBB(s);
+		EmailAddresses.push_back( s );
 		}
 		return begin;
 
@@ -205,6 +213,8 @@ const unsigned char* Contact::ParseField(const unsigned char *begin,
 		}
 
 		*name = ParseFieldString(field);
+		if( ic )
+			*name = ic->FromBB(*name);
 		}
 		return begin;
 
@@ -222,6 +232,8 @@ const unsigned char* Contact::ParseField(const unsigned char *begin,
 
 	case CFC_CATEGORY: {
 		std::string catstring = ParseFieldString(field);
+		if( ic )
+			catstring = ic->FromBB(catstring);
 		CategoryStr2List(catstring, Categories);
 		}
 		return begin;
@@ -287,23 +299,25 @@ void Contact::BuildFields(Data &data, size_t &offset, const IConverter *ic) cons
 		BuildField(data, offset, CFC_GROUP_FLAG, 'G');
 
 	// special fields not in type table
-	if( FirstName.size() )
-		BuildField(data, offset, CFC_NAME, FirstName);
+	if( FirstName.size() ) {
+		std::string s = ic ? ic->ToBB(FirstName) : FirstName;
+		BuildField(data, offset, CFC_NAME, s);
+	}
 	if( LastName.size() ) {
 		if( !FirstName.size() ) {
 			// order matters with first/last name, and if
 			// last name exists, and first name doesn't,
 			// insert blank first name ahead of it
-			BuildField(data, offset, CFC_NAME, FirstName);
+			BuildField(data, offset, CFC_NAME, "");
 		}
-		BuildField(data, offset, CFC_NAME, LastName);
+		BuildField(data, offset, CFC_NAME, ic ? ic->ToBB(LastName) : LastName);
 	}
 
 	// add all email addresses
 	EmailList::const_iterator eai = EmailAddresses.begin();
 	for( ; eai != EmailAddresses.end(); ++eai ) {
 		if( eai->size() ) {
-			BuildField(data, offset, CFC_EMAIL, *eai);
+			BuildField(data, offset, CFC_EMAIL, ic ? ic->ToBB(*eai) : *eai);
 		}
 	}
 
@@ -316,13 +330,15 @@ void Contact::BuildFields(Data &data, size_t &offset, const IConverter *ic) cons
 		if( b->strMember ) {
 			const std::string &field = this->*(b->strMember);
 			if( field.size() ) {
-				BuildField(data, offset, b->type, field);
+				std::string s = (b->utf8Needed && ic) ? ic->ToBB(field) : field;
+				BuildField(data, offset, b->type, s);
 			}
 		}
 		else if( b->postMember && b->postField ) {
 			const std::string &field = (this->*(b->postMember)).*(b->postField);
 			if( field.size() ) {
-				BuildField(data, offset, b->type, field);
+				std::string s = (b->utf8Needed && ic) ? ic->ToBB(field) : field;
+				BuildField(data, offset, b->type, s);
 			}
 		}
 	}
@@ -341,7 +357,7 @@ void Contact::BuildFields(Data &data, size_t &offset, const IConverter *ic) cons
 	if( Categories.size() ) {
 		string store;
 		CategoryList2Str(Categories, store);
-		BuildField(data, offset, CFC_CATEGORY, store);
+		BuildField(data, offset, CFC_CATEGORY, ic ? ic->ToBB(store) : store);
 	}
 
 	// save Birthday and Anniversary
