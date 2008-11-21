@@ -68,14 +68,14 @@ public:
 	typedef std::string				EmailType;
 	typedef std::vector<EmailType>			EmailList;
 
+	//
+	// Record fields
+	//
+
 	// contact specific data
 	uint8_t RecType;
 	uint32_t RecordId;
 	EmailList EmailAddresses;
-
-	//
-	// Record fields
-	//
 
 	/// This field, Phone, is deprecated.  It is possible
 	/// to write to this field to the Blackberry,
