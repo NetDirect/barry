@@ -27,6 +27,7 @@
 #include "time.h"
 #include "error.h"
 #include "endian.h"
+#include "iconv.h"
 #include <ostream>
 #include <iomanip>
 #include <time.h>
@@ -63,13 +64,13 @@ namespace Barry {
 #define CALFC_END			0xffff
 
 static FieldLink<Calendar> CalendarFieldLinks[] = {
-   { CALFC_SUBJECT,    "Subject",    0, 0,    &Calendar::Subject, 0, 0 },
-   { CALFC_NOTES,      "Notes",      0, 0,    &Calendar::Notes, 0, 0 },
-   { CALFC_LOCATION,   "Location",   0, 0,    &Calendar::Location, 0, 0 },
-   { CALFC_NOTIFICATION_TIME,"Notification Time",0,0, 0, 0, &Calendar::NotificationTime },
-   { CALFC_START_TIME, "Start Time", 0, 0,    0, 0, &Calendar::StartTime },
-   { CALFC_END_TIME,   "End Time",   0, 0,    0, 0, &Calendar::EndTime },
-   { CALFC_END,        "End of List",0, 0,    0, 0, 0 }
+   { CALFC_SUBJECT,    "Subject",    0, 0,    &Calendar::Subject, 0, 0, 0, 0, true },
+   { CALFC_NOTES,      "Notes",      0, 0,    &Calendar::Notes, 0, 0, 0, 0, true },
+   { CALFC_LOCATION,   "Location",   0, 0,    &Calendar::Location, 0, 0, 0, 0, true },
+   { CALFC_NOTIFICATION_TIME,"Notification Time",0,0, 0, 0, &Calendar::NotificationTime, 0, 0, false },
+   { CALFC_START_TIME, "Start Time", 0, 0,    0, 0, &Calendar::StartTime, 0, 0, false },
+   { CALFC_END_TIME,   "End Time",   0, 0,    0, 0, &Calendar::EndTime, 0, 0, false },
+   { CALFC_END,        "End of List",0, 0,    0, 0, 0, 0, 0, false }
 };
 
 Calendar::Calendar()
@@ -104,6 +105,8 @@ const unsigned char* Calendar::ParseField(const unsigned char *begin,
 			if( b->strMember ) {
 				std::string &s = this->*(b->strMember);
 				s = ParseFieldString(field);
+				if( b->utf8Needed && ic )
+					s = ic->FromBB(s);
 				return begin;	// done!
 			}
 			else if( b->timeMember && btohs(field->size) == 4 ) {
@@ -355,7 +358,7 @@ void Calendar::BuildFields(Data &data, size_t &offset, const IConverter *ic) con
 		if( b->strMember ) {
 			const std::string &s = this->*(b->strMember);
 			if( s.size() )
-				BuildField(data, offset, b->type, s);
+				BuildField(data, offset, b->type, (b->utf8Needed && ic) ? ic->ToBB(s) : s);
 		}
 		else if( b->timeMember ) {
 			time_t t = this->*(b->timeMember);
