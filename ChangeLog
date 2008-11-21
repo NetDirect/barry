@@ -10,8 +10,6 @@ Release: version 0.15 - 2008/10/??
 		WINDOWS-1252 charset to/from UTF-8 and more
 	- fixed bug in IConverter that saved end of string instead of
 		beginning
-	- reorganized barry.h app header and record.h header, so that
-		internal builds have fewer dependencies
 	- large parser/builder API change, adding IConverter support
 		This change starts at the top (Mode::Desktop) which
 		takes an optional IConverter object for parsing and

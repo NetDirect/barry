@@ -21,7 +21,6 @@
 
 #include "ldif.h"
 #include "record.h"
-#include "r_contact.h"
 #include "base64.h"
 #include <stdexcept>
 #include <iostream>

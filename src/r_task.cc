@@ -21,7 +21,6 @@
 */
 
 #include "r_task.h"
-#include "r_calendar.h"			// for CAL_* defines
 #include "record-internal.h"
 #include "protostructs.h"
 #include "data.h"

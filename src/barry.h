@@ -58,31 +58,17 @@
 #include "protocol.h"			// application-safe header
 #include "parser.h"
 #include "builder.h"
+#include "record.h"
 #include "ldif.h"
 #include "controller.h"
 #include "m_desktop.h"
+#include "m_desktoptmpl.h"
 #include "m_ipmodem.h"
 #include "m_serial.h"
 #include "version.h"
 #include "log.h"
 #include "sha1.h"
 #include "iconv.h"
-#include "record.h"
-
-// Include all parser classes, to make it easy for the application to use.
-#include "r_calendar.h"
-#include "r_contact.h"
-#include "r_memo.h"
-#include "r_message.h"
-#include "r_servicebook.h"
-#include "r_task.h"
-#include "r_pin_message.h"
-#include "r_saved_message.h"
-#include "r_folder.h"
-#include "r_timezone.h"
-
-// Include the template helpers after the record classes
-#include "m_desktoptmpl.h"
 
 #ifdef __BARRY_BOOST_MODE__
 // Boost serialization seems to be picky about header order, do them all here
