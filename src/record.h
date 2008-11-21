@@ -256,17 +256,5 @@ BXEXPORT std::ostream& operator<<(std::ostream &os, const Date &date);
 
 } // namespace Barry
 
-// Include all parser classes, to make it easy for the application to use.
-#include "r_calendar.h"
-#include "r_contact.h"
-#include "r_memo.h"
-#include "r_message.h"
-#include "r_servicebook.h"
-#include "r_task.h"
-#include "r_pin_message.h"
-#include "r_saved_message.h"
-#include "r_folder.h"
-#include "r_timezone.h"
-
 #endif
 
