@@ -39,6 +39,8 @@
 #define BARRY_MIN_PASSWORD_TRIES	3
 #define BARRY_MIN_PASSWORD_TRIES_ASC	"3"
 
+#define BLACKBERRY_CHARSET "WINDOWS-1252"
+
 namespace Barry {
 
 /// See also the LogLock class.

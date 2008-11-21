@@ -96,6 +96,7 @@ include_barry_HEADERS = barry.h \
 	version.h \
 	pppfilter.h \
 	sha1.h \
+	iconv.h \
 	s11n-boost.h
 
 
@@ -132,6 +133,7 @@ libbarry_la_SOURCES = time.cc \
 	version.cc \
 	pppfilter.cc \
 	sha1.cc \
+	iconv.cc \
 	scoped_lock.h \
 	protostructs.h \
 	debug.h \
