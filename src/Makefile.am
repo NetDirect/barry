@@ -32,8 +32,8 @@ DEFAULT_INCLUDES = -I$(top_builddir)
 #INCLUDES = $(LIBUSB_CFLAGS) $(OPENSSL_CFLAGS)
 INCLUDES = $(LIBUSB_CFLAGS)
 #AM_CXXFLAGS = -ansi -Wall -fno-strict-aliasing -g -D__DEBUG_MODE__
-AM_CFLAGS = -Wall -fno-strict-aliasing -g
-AM_CXXFLAGS = -ansi -Wall -fno-strict-aliasing -g
+AM_CFLAGS = -Wall -fno-strict-aliasing -g -D__BARRY_LIBRARY_BUILD__
+AM_CXXFLAGS = -ansi -Wall -fno-strict-aliasing -g -D__BARRY_LIBRARY_BUILD__
 AM_LDFLAGS =
 if WITH_GCCVISIBILITY
 AM_CFLAGS += -D__BARRY_HAVE_GCCVISIBILITY__ -fvisibility=hidden
