@@ -49,7 +49,7 @@ namespace Barry
 
 #define TZFC_END		0xffff
 
-FieldLink<Timezone> TimezoneFieldLinks[] = {
+static FieldLink<Timezone> TimezoneFieldLinks[] = {
 	{ TZFC_NAME,      "Name",        0, 0, &Timezone::TimeZoneName, 0, 0 },
 	{ TZFC_END,       "End of List", 0, 0, 0, 0, 0 },
 };

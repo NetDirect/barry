@@ -54,7 +54,7 @@ namespace Barry {
 #define TSKFC_CATEGORIES	0x11
 #define TSKFC_END		0xffff
 
-FieldLink<Task> TaskFieldLinks[] = {
+static FieldLink<Task> TaskFieldLinks[] = {
 	{ TSKFC_TITLE,      "Summary",     0, 0, &Task::Summary, 0, 0 },
 	{ TSKFC_NOTES,      "Notes",       0, 0, &Task::Notes, 0, 0 },
 	{ TSKFC_START_TIME, "Start Time",  0, 0, 0, 0, &Task::StartTime },

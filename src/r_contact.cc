@@ -95,7 +95,7 @@ namespace Barry {
 #define CFC_INVALID_FIELD	255
 
 // Contact code to field table
-FieldLink<Contact> ContactFieldLinks[] = {
+static FieldLink<Contact> ContactFieldLinks[] = {
    { CFC_PHONE,        "Phone",      0,0,                 &Contact::Phone, 0, 0 },
    { CFC_FAX,          "Fax",        "facsimileTelephoneNumber",0, &Contact::Fax, 0, 0 },
    { CFC_WORK_PHONE,   "WorkPhone",  "telephoneNumber",0, &Contact::WorkPhone, 0, 0 },

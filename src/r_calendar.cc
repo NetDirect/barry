@@ -62,7 +62,7 @@ namespace Barry {
 #define CALFC_ALLDAYEVENT_FLAG		0xff
 #define CALFC_END			0xffff
 
-FieldLink<Calendar> CalendarFieldLinks[] = {
+static FieldLink<Calendar> CalendarFieldLinks[] = {
    { CALFC_SUBJECT,    "Subject",    0, 0,    &Calendar::Subject, 0, 0 },
    { CALFC_NOTES,      "Notes",      0, 0,    &Calendar::Notes, 0, 0 },
    { CALFC_LOCATION,   "Location",   0, 0,    &Calendar::Location, 0, 0 },

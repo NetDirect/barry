@@ -48,7 +48,7 @@ namespace Barry {
 // service book packed field codes
 #define SBFCC_END			0xffff
 
-FieldLink<ServiceBookConfig> ServiceBookConfigFieldLinks[] = {
+static FieldLink<ServiceBookConfig> ServiceBookConfigFieldLinks[] = {
 //   { SBFC_DSID,        "DSID",       0, 0,    &ServiceBook::DSID, 0, 0 },
    { SBFCC_END,         "End of List",0, 0,    0, 0, 0 }
 };
@@ -222,7 +222,7 @@ void ServiceBookConfig::Dump(std::ostream &os) const
 #define SBFC_USER_ID			0xa3
 #define SBFC_END			0xffff
 
-FieldLink<ServiceBook> ServiceBookFieldLinks[] = {
+static FieldLink<ServiceBook> ServiceBookFieldLinks[] = {
    { SBFC_HIDDEN_NAME, "Hidden Name",0, 0,    &ServiceBook::HiddenName, 0, 0 },
    { SBFC_DSID,        "DSID",       0, 0,    &ServiceBook::DSID, 0, 0 },
    { SBFC_END,         "End of List",0, 0,    0, 0, 0 }

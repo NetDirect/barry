@@ -43,7 +43,7 @@ namespace Barry {
 #define MEMFC_CATEGORY		0x04
 #define MEMFC_END		0xffff
 
-FieldLink<Memo> MemoFieldLinks[] = {
+static FieldLink<Memo> MemoFieldLinks[] = {
 	{ MEMFC_TITLE,     "Title",       0, 0, &Memo::Title, 0, 0 },
 	{ MEMFC_BODY,      "Body",        0, 0, &Memo::Body, 0, 0 },
 	{ MEMFC_CATEGORY,  "Category",    0, 0, &Memo::Category, 0, 0 },

@@ -73,7 +73,7 @@ namespace Barry {
 #define MESSAGE_TRUNCATED	0x0020
 #define MESSAGE_SAVED_DELETED	0x0080
 
-FieldLink<PINMessage> PINMessageFieldLinks[] = {
+static FieldLink<PINMessage> PINMessageFieldLinks[] = {
    { PNMFC_TO,      "To",          0, 0,    0, &PINMessage::To,  0 },
    { PNMFC_CC,      "Cc",          0, 0,    0, &PINMessage::Cc, 0 },
    { PNMFC_BCC,     "Bcc",         0, 0,    0, &PINMessage::Bcc, 0 },

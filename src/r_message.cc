@@ -74,7 +74,7 @@ namespace Barry {
 #define MESSAGE_TRUNCATED	0x0020
 #define MESSAGE_SAVED_DELETED	0x0080
 
-FieldLink<Message> MessageFieldLinks[] = {
+static FieldLink<Message> MessageFieldLinks[] = {
    { MFC_TO,            "To",           0, 0,    0, &Message::To, 0 },
    { MFC_CC,            "Cc",           0, 0,    0, &Message::Cc, 0 },
    { MFC_BCC,           "Bcc",          0, 0,    0, &Message::Bcc, 0 },

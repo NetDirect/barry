@@ -75,7 +75,7 @@ namespace Barry {
 #define MESSAGE_TRUNCATED	0x0020
 #define MESSAGE_SAVED_DELETED	0x0080
 
-FieldLink<SavedMessage> SavedMessageFieldLinks[] = {
+static FieldLink<SavedMessage> SavedMessageFieldLinks[] = {
    { SEMFC_TO,         "To",          0, 0,    0, &SavedMessage::To, 0 },
    { SEMFC_CC,         "Cc",          0, 0,    0, &SavedMessage::Cc, 0 },
    { SEMFC_BCC,        "Bcc",         0, 0,    0, &SavedMessage::Bcc, 0 },

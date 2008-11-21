@@ -66,7 +66,7 @@ namespace Barry {
 #define SEPARATOR	0x2f
 #define ROOT_SEPARATOR	0x3a
 
-FieldLink<Folder> FolderFieldLinks[] = {
+static FieldLink<Folder> FolderFieldLinks[] = {
 	{ FFC_NAME,      "FolderName",   0, 0, &Folder::FolderName, 0, 0 },
 	{ FFC_END,       "End of List",  0, 0, 0, 0, 0 },
 };
