@@ -119,7 +119,7 @@ public:
 //
 /// System error that provides an errno error code.
 ///
-class ErrnoError : public Barry::Error
+class BXEXPORT ErrnoError : public Barry::Error
 {
 	int m_errno;
 
