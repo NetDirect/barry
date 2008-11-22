@@ -13,6 +13,7 @@ Release: version 0.15 - 2008/10/??
 	- added TODO item for password support in Opensync... try to avoid
 		storing the password in the sync config in plain text
 	- fixed dll export bug on ErrnoError exception class
+	- added BadPackedFormat exception for internal use
 2008/11/21
 	- updated man/btool.1 with new -i option
 	- fixed bug where opensync plugin didn't pass IConverter to Desktop

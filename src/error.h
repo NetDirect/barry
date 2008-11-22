@@ -134,6 +134,26 @@ public:
 	int error_code() const { return m_errno; }
 };
 
+//
+// BadPackedFormat
+//
+/// Thrown by record classes that don't recognize a given packed format code.
+/// This exception is mostly handled internally, but is published here
+/// just in case it escapes.
+///
+class BXEXPORT BadPackedFormat : public Barry::Error
+{
+	uint8_t m_format;
+
+public:
+	BadPackedFormat(uint8_t format)
+		: Barry::Error("Bad packed format - internal exception")
+		, m_format(format)
+		{}
+
+	uint8_t format() const { return m_format; }
+};
+
 /// @}
 
 } // namespace Barry
