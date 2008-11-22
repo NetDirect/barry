@@ -27,6 +27,7 @@
 #include "time.h"
 #include "error.h"
 #include "endian.h"
+#include "iconv.h"
 #include <ostream>
 #include <iomanip>
 #include <time.h>
@@ -75,16 +76,16 @@ namespace Barry {
 #define MESSAGE_SAVED_DELETED	0x0080
 
 static FieldLink<Message> MessageFieldLinks[] = {
-   { MFC_TO,            "To",           0, 0,    0, &Message::To, 0 },
-   { MFC_CC,            "Cc",           0, 0,    0, &Message::Cc, 0 },
-   { MFC_BCC,           "Bcc",          0, 0,    0, &Message::Bcc, 0 },
-   { MFC_SENDER,        "Sender",       0, 0,    0, &Message::Sender, 0 },
-   { MFC_FROM,          "From",         0, 0,    0, &Message::From, 0 },
-   { MFC_REPLY_TO,      "ReplyTo",      0, 0,    0, &Message::ReplyTo, 0 },
-   { MFC_SUBJECT,       "Subject",      0, 0,    &Message::Subject, 0, 0 },
-   { MFC_BODY,          "Body",         0, 0,    &Message::Body, 0, 0 },
-   { MFC_ATTACHMENT,    "Attachment",   0, 0,    &Message::Attachment, 0, 0 },
-   { MFC_END,           "End of List",  0, 0,    0, 0, 0 }
+   { MFC_TO,         "To",           0, 0, 0, &Message::To, 0, 0, 0, true },
+   { MFC_CC,         "Cc",           0, 0, 0, &Message::Cc, 0, 0, 0, true },
+   { MFC_BCC,        "Bcc",          0, 0, 0, &Message::Bcc, 0, 0, 0, true },
+   { MFC_SENDER,     "Sender",       0, 0, 0, &Message::Sender, 0, 0, 0, true },
+   { MFC_FROM,       "From",         0, 0, 0, &Message::From, 0, 0, 0, true },
+   { MFC_REPLY_TO,   "ReplyTo",      0, 0, 0, &Message::ReplyTo, 0, 0, 0, true },
+   { MFC_SUBJECT,    "Subject",      0, 0, &Message::Subject, 0, 0, 0, 0, true },
+   { MFC_BODY,       "Body",         0, 0, &Message::Body, 0, 0, 0, 0, true },
+   { MFC_ATTACHMENT, "Attachment",   0, 0, &Message::Attachment, 0, 0, 0, 0, false },
+   { MFC_END,        "End of List",  0, 0, 0, 0, 0, 0, 0, false }
 };
 
 Message::Message()
@@ -120,6 +121,8 @@ const unsigned char* Message::ParseField(const unsigned char *begin,
 				// parse regular string
 				std::string &s = this->*(b->strMember);
 				s = ParseFieldString(field);
+				if( b->iconvNeeded && ic )
+					s = ic->FromBB(s);
 				return begin;	// done!
 			}
 			else if( b->addrMember ) {
@@ -128,12 +131,22 @@ const unsigned char* Message::ParseField(const unsigned char *begin,
 				const char *fa = (const char*)field->u.addr.addr;
 				std::string dual(fa, btohs(field->size) - sizeof(field->u.addr.unknown));
 
-				// assign first string, using null terminator...letting std::string add it for us if it doesn't exist
+				// assign first string, using null terminator
+				// letting std::string add it for us if it
+				// doesn't exist
 				EmailAddress &a = this->*(b->addrMember);
 				a.Name = dual.c_str();
 
-				// assign second string, using first size as starting point
+				// assign second string, using first size
+				// as starting point
 				a.Email = dual.c_str() + a.Name.size() + 1;
+
+				// and finally i18n convert if needed
+				if( b->iconvNeeded && ic ) {
+					a.Name = ic->FromBB(a.Name);
+					a.Email = ic->FromBB(a.Email);
+				}
+
 				return begin;
 			}
 		}
