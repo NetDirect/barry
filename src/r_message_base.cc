@@ -208,7 +208,7 @@ void MessageBase::ParseHeader(const Data &data, size_t &offset)
 		}
 		else
 			MessagePriority = UnknownPriority;
-	} 
+	}
 
 	// Sensitivity
 	MessageSensitivity = NormalSensitivity;
@@ -331,11 +331,11 @@ std::string MessageBase::SimpleFromAddress() const
 // dump message in mbox format
 void MessageBase::Dump(std::ostream &os) const
 {
-	static const char *MessageImportance[] = 
+	static const char *MessageImportance[] =
 		{ "Low", "Normal", "High", "Unknown Priority" };
-	static const char *MessageSensitivityString[] = 
+	static const char *MessageSensitivityString[] =
 		{ "Normal", "Personal", "Private", "Confidential", "Unknown Sensivity" };
-	
+
 	os << "From " << SimpleFromAddress() << "  " << ctime( &MessageDateReceived );
 
 /*
