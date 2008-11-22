@@ -9,6 +9,7 @@ Release: version 0.15 - 2008/10/??
 		addresses per email, as well as giving IConverter support
 		to all message classes.
 	- deleted empty *.cc files from project
+	- updated TODO file, removing opensync i18n bug
 2008/11/21
 	- updated man/btool.1 with new -i option
 	- fixed bug where opensync plugin didn't pass IConverter to Desktop
