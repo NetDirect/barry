@@ -26,6 +26,7 @@
 #include "data.h"
 #include "time.h"
 #include "debug.h"
+#include "iconv.h"
 #include <ostream>
 #include <iomanip>
 
@@ -67,8 +68,8 @@ namespace Barry {
 #define ROOT_SEPARATOR	0x3a
 
 static FieldLink<Folder> FolderFieldLinks[] = {
-	{ FFC_NAME,      "FolderName",   0, 0, &Folder::FolderName, 0, 0 },
-	{ FFC_END,       "End of List",  0, 0, 0, 0, 0 },
+    { FFC_NAME, "FolderName",  0, 0, &Folder::FolderName, 0, 0, 0, 0, true },
+    { FFC_END,  "End of List", 0, 0, 0, 0, 0, 0, 0, false },
 };
 
 Folder::Folder()
@@ -104,6 +105,8 @@ const unsigned char* Folder::ParseField(const unsigned char *begin,
 			if( b->strMember ) {
 				std::string &s = this->*(b->strMember);
 				s = ParseFieldString(field);
+				if( b->iconvNeeded && ic )
+					s = ic->FromBB(s);
 				return begin;   // done!
 			}
 			else if( b->timeMember && btohs(field->size) == 4 ) {
