@@ -25,6 +25,7 @@
 #include "protostructs.h"
 #include "data.h"
 #include "time.h"
+#include "iconv.h"
 #include <ostream>
 #include <iomanip>
 
@@ -44,10 +45,10 @@ namespace Barry {
 #define MEMFC_END		0xffff
 
 static FieldLink<Memo> MemoFieldLinks[] = {
-	{ MEMFC_TITLE,     "Title",       0, 0, &Memo::Title, 0, 0 },
-	{ MEMFC_BODY,      "Body",        0, 0, &Memo::Body, 0, 0 },
-	{ MEMFC_CATEGORY,  "Category",    0, 0, &Memo::Category, 0, 0 },
-	{ MEMFC_END,       "End of List", 0, 0, 0, 0, 0 }
+    { MEMFC_TITLE,     "Title",       0, 0, &Memo::Title, 0, 0, 0, 0, true },
+    { MEMFC_BODY,      "Body",        0, 0, &Memo::Body, 0, 0, 0, 0, true },
+    { MEMFC_CATEGORY,  "Category",    0, 0, &Memo::Category, 0, 0, 0, 0, true },
+    { MEMFC_END,       "End of List", 0, 0, 0, 0, 0, 0, 0, false }
 };
 
 Memo::Memo()
@@ -90,6 +91,8 @@ const unsigned char* Memo::ParseField(const unsigned char *begin,
 			if( b->strMember ) {
 				std::string &s = this->*(b->strMember);
 				s = ParseFieldString(field);
+				if( b->iconvNeeded && ic )
+					s = ic->FromBB(s);
 				return begin;   // done!
 			}
 			else if( b->timeMember && btohs(field->size) == 4 ) {
