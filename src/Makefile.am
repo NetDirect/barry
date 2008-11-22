@@ -82,6 +82,7 @@ include_barry_HEADERS = barry.h \
 	r_contact.h \
 	r_folder.h \
 	r_memo.h \
+	r_message_base.h \
 	r_message.h \
 	r_pin_message.h \
 	r_saved_message.h \
@@ -102,7 +103,6 @@ include_barry_HEADERS = barry.h \
 
 libbarry_la_SOURCES = time.cc \
 	base64.cc base64.h \
-	parser.cc \
 	data.cc \
 	usbwrap.cc \
 	probe.cc \
@@ -119,9 +119,7 @@ libbarry_la_SOURCES = time.cc \
 	r_contact.cc \
 	r_folder.cc \
 	r_memo.cc \
-	r_message.cc \
-	r_pin_message.cc \
-	r_saved_message.cc \
+	r_message_base.cc \
 	r_servicebook.cc \
 	r_task.cc \
 	r_timezone.cc \

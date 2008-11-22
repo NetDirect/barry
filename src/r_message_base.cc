@@ -1,12 +1,11 @@
 ///
-/// \file	r_saved_message.cc
-///		Blackberry database record parser class for saved email
-///		message records.
+/// \file	r_message_base.cc
+///		Base class for email-oriented Blackberry database records
 ///
 
 /*
     Copyright (C) 2005-2008, Net Direct Inc. (http://www.netdirect.ca/)
-    Copyright (C) 2005-2007, Brian Edginton (edge@edginton.net)
+    Copyright (C) 2007, Brian Edginton (edge@edginton.net)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -21,17 +20,15 @@
     root directory of this project for more details.
 */
 
-#include "r_saved_message.h"
+#include "r_message_base.h"
 #include "record-internal.h"
-#include "protocol.h"
 #include "protostructs.h"
 #include "data.h"
 #include "time.h"
-#include "error.h"
 #include "endian.h"
+#include "iconv.h"
 #include <ostream>
 #include <iomanip>
-#include <time.h>
 #include <stdexcept>
 
 #define __DEBUG_MODE__
@@ -47,17 +44,19 @@ namespace Barry {
 
 
 // Email / message field codes
-#define SEMFC_TO		0x01		// can occur multiple times
-#define SEMFC_CC		0x02		// ditto
-#define SEMFC_BCC		0x03		// ditto
-#define SEMFC_SENDER		0x04
-#define SEMFC_FROM		0x05
-#define SEMFC_REPLY_TO		0x06
-#define SEMFC_SUBJECT		0x0b
-#define SEMFC_BODY		0x0c
-#define SEMFC_ATTACHMENT	0x16
-#define SEMFC_RECORDID		0x4b
-#define SEMFC_END		0xffff
+#define MBFC_TO			0x01	// can occur multiple times
+#define MBFC_CC			0x02	// ditto
+#define MBFC_BCC		0x03	// ditto
+#define MBFC_SENDER		0x04
+#define MBFC_FROM		0x05
+#define MBFC_REPLY_TO		0x06
+#define MBFC_SUBJECT		0x0b
+#define MBFC_BODY		0x0c
+#define MBFC_REPLY_UNKNOWN	0x12	// This shows up as 0x00 on replies
+					// but we don't do much with it now
+#define MBFC_ATTACHMENT		0x16
+#define MBFC_RECORDID		0x4b	// Internal Message ID, mimics header RecNumber
+#define MBFC_END		0xffff
 
 #define PRIORITY_MASK		0x003f
 #define PRIORITY_HIGH		0x0008
@@ -75,31 +74,31 @@ namespace Barry {
 #define MESSAGE_TRUNCATED	0x0020
 #define MESSAGE_SAVED_DELETED	0x0080
 
-static FieldLink<SavedMessage> SavedMessageFieldLinks[] = {
-   { SEMFC_TO,         "To",          0, 0,    0, &SavedMessage::To, 0 },
-   { SEMFC_CC,         "Cc",          0, 0,    0, &SavedMessage::Cc, 0 },
-   { SEMFC_BCC,        "Bcc",         0, 0,    0, &SavedMessage::Bcc, 0 },
-   { SEMFC_SENDER,     "Sender",      0, 0,    0, &SavedMessage::Sender, 0 },
-   { SEMFC_FROM,       "From",        0, 0,    0, &SavedMessage::From, 0 },
-   { SEMFC_REPLY_TO,   "ReplyTo",     0, 0,    0, &SavedMessage::ReplyTo, 0 },
-   { SEMFC_SUBJECT,    "Subject",     0, 0,    &SavedMessage::Subject, 0, 0 },
-   { SEMFC_BODY,       "Body",        0, 0,    &SavedMessage::Body, 0, 0 },
-   { SEMFC_ATTACHMENT, "Attachment",  0, 0,    &SavedMessage::Attachment, 0, 0 },
-   { SEMFC_END,        "End of List", 0, 0,    0, 0, 0 }
+static FieldLink<MessageBase> MessageBaseFieldLinks[] = {
+   { MBFC_TO,         "To",           0, 0, 0, &MessageBase::To, 0, 0, 0, true },
+   { MBFC_CC,         "Cc",           0, 0, 0, &MessageBase::Cc, 0, 0, 0, true },
+   { MBFC_BCC,        "Bcc",          0, 0, 0, &MessageBase::Bcc, 0, 0, 0, true },
+   { MBFC_SENDER,     "Sender",       0, 0, 0, &MessageBase::Sender, 0, 0, 0, true },
+   { MBFC_FROM,       "From",         0, 0, 0, &MessageBase::From, 0, 0, 0, true },
+   { MBFC_REPLY_TO,   "ReplyTo",      0, 0, 0, &MessageBase::ReplyTo, 0, 0, 0, true },
+   { MBFC_SUBJECT,    "Subject",      0, 0, &MessageBase::Subject, 0, 0, 0, 0, true },
+   { MBFC_BODY,       "Body",         0, 0, &MessageBase::Body, 0, 0, 0, 0, true },
+   { MBFC_ATTACHMENT, "Attachment",   0, 0, &MessageBase::Attachment, 0, 0, 0, 0, false },
+   { MBFC_END,        "End of List",  0, 0, 0, 0, 0, 0, 0, false }
 };
 
-SavedMessage::SavedMessage()
+MessageBase::MessageBase()
 {
 	Clear();
 }
 
-SavedMessage::~SavedMessage()
+MessageBase::~MessageBase()
 {
 }
 
-const unsigned char* SavedMessage::ParseField(const unsigned char *begin,
-					      const unsigned char *end,
-					      const IConverter *ic)
+const unsigned char* MessageBase::ParseField(const unsigned char *begin,
+					 const unsigned char *end,
+					 const IConverter *ic)
 {
 	const CommonField *field = (const CommonField *) begin;
 
@@ -112,8 +111,8 @@ const unsigned char* SavedMessage::ParseField(const unsigned char *begin,
 		return begin;
 
 	// cycle through the type table
-	for(	FieldLink<SavedMessage> *b = SavedMessageFieldLinks;
-		b->type != SEMFC_END;
+	for(	FieldLink<MessageBase> *b = MessageBaseFieldLinks;
+		b->type != MBFC_END;
 		b++ )
 	{
 		if( b->type == field->type ) {
@@ -121,6 +120,8 @@ const unsigned char* SavedMessage::ParseField(const unsigned char *begin,
 				// parse regular string
 				std::string &s = this->*(b->strMember);
 				s = ParseFieldString(field);
+				if( b->iconvNeeded && ic )
+					s = ic->FromBB(s);
 				return begin;	// done!
 			}
 			else if( b->addrMember ) {
@@ -129,22 +130,43 @@ const unsigned char* SavedMessage::ParseField(const unsigned char *begin,
 				const char *fa = (const char*)field->u.addr.addr;
 				std::string dual(fa, btohs(field->size) - sizeof(field->u.addr.unknown));
 
-				// assign first string, using null terminator...letting std::string add it for us if it doesn't exist
-				EmailAddress &a = this->*(b->addrMember);
+				// assign first string, using null terminator
+				// letting std::string add it for us if it
+				// doesn't exist
+				EmailAddress a;
 				a.Name = dual.c_str();
 
-				// assign second string, using first size as starting point
+				// assign second string, using first size
+				// as starting point
 				a.Email = dual.c_str() + a.Name.size() + 1;
+
+				// if the address is non-empty, add to list
+				if( a.size() ) {
+					// i18n convert if needed
+					if( b->iconvNeeded && ic ) {
+						a.Name = ic->FromBB(a.Name);
+						a.Email = ic->FromBB(a.Email);
+					}
+
+					EmailAddressList &al = this->*(b->addrMember);
+					al.push_back(a);
+				}
+
 				return begin;
 			}
 		}
 	}
 
 	// handle special cases
+	char swallow;
 	switch( field->type )
 	{
-	case SEMFC_RECORDID:
+	case MBFC_RECORDID:
 		MessageRecordId = btohl(field->u.uint32);
+		return begin;
+
+	case MBFC_REPLY_UNKNOWN:	// FIXME - not available in SavedMessage?
+		swallow = field->u.raw[0];
 		return begin;
 	}
 
@@ -157,7 +179,17 @@ const unsigned char* SavedMessage::ParseField(const unsigned char *begin,
 	return begin;
 }
 
-void SavedMessage::ParseHeader(const Data &data, size_t &offset)
+uint8_t MessageBase::GetRecType() const
+{
+	throw std::logic_error("MessageBase::GetRecType() called, and not supported by the USB protocol.  Should never get called.");
+}
+
+uint32_t MessageBase::GetUniqueId() const
+{
+	throw std::logic_error("MessageBase::GetUniqueId() called, and not supported by the USB protocol.  Should never get called.");
+}
+
+void MessageBase::ParseHeader(const Data &data, size_t &offset)
 {
 	Protocol::CheckSize(data, offset + MESSAGE_RECORD_HEADER_SIZE);
 
@@ -177,8 +209,10 @@ void SavedMessage::ParseHeader(const Data &data, size_t &offset)
 		else
 			MessagePriority = UnknownPriority;
 	} 
+
 	// Sensitivity
 	MessageSensitivity = NormalSensitivity;
+
 	if( priority & SENSITIVE_MASK ) {
 		if(( priority & SENSITIVE_CONFIDENTIAL ) == SENSITIVE_CONFIDENTIAL ) {
 			MessageSensitivity = Confidential;
@@ -192,26 +226,39 @@ void SavedMessage::ParseHeader(const Data &data, size_t &offset)
 		else
 			MessageSensitivity = UnknownSensitivity;
 	}
-	// X-rim-org-message-ref-id		// NOTE: I'm cheating a bit here and using this as a reply-to
-	if( mr->inReplyTo )			// It's actually sent by BB with the actual UID in every message
+
+	// X-rim-org-message-ref-id
+	// NOTE: I'm cheating a bit here and using this as a reply-to
+	// It's actually sent by BB with the actual UID in every message
+	if( mr->inReplyTo )
 		MessageReplyTo = btohl(mr->inReplyTo);
 
 	// Status Flags
 	uint32_t flags = btohl(mr->flags);
+
+	// NOTE: A lot of these flags are 'backwards' but this seemed
+	// like the most logical way to interpret them for now
 	if( !( flags & MESSAGE_READ ))
-		MessageRead = true;		// NOTE: A lot of these flags are 'backwards' but this seemed
-						// like the most logical way to interpret them for now
+		MessageRead = true;
+
+	// NOTE: This is a reply, the original message's flags are not changed
+	// the inReplyTo field is updated with the original messages's UID
 	if(( flags & MESSAGE_REPLY ) == MESSAGE_REPLY )
-		MessageReply = true;		// NOTE: This is a reply, the original message's flags are not changed
-						// the inReplyTo field is updated with the original messages's UID
+		MessageReply = true;
+
+	// NOTE: This bit is unset on truncation, around 4096 on my 7100g
+	// NOTE: bit 0x400 is set on REALLY huge messages, haven't tested
+	//       the exact size yet
 	if( !( flags & MESSAGE_TRUNCATED ))
-		MessageTruncated = true;	// NOTE: This bit is unset on truncation, around 4096 on my 7100g
-						// NOTE: bit 0x400 is set on REALLY huge messages, haven't tested
-						//       the exact size yet
+		MessageTruncated = true;
+
+	// NOTE: Saved to 'saved' folder
 	if( !( flags & MESSAGE_SAVED ))
-		MessageSaved = true;		// NOTE: Saved to 'saved' folder
+		MessageSaved = true;
+
+	// NOTE: Saved to 'saved' folder and then deleted from inbox
 	if( !( flags & MESSAGE_SAVED_DELETED ))
-		MessageSavedDeleted = true;	// NOTE: Saved to 'saved' folder and then deleted from inbox
+		MessageSavedDeleted = true;
 
 	MessageDateSent = Message2Time(mr->dateSent, mr->timeSent);
 	MessageDateReceived = Message2Time(mr->dateReceived, mr->timeReceived);
@@ -219,24 +266,24 @@ void SavedMessage::ParseHeader(const Data &data, size_t &offset)
 	offset += MESSAGE_RECORD_HEADER_SIZE;
 }
 
-void SavedMessage::ParseFields(const Data &data, size_t &offset, const IConverter *ic)
+void MessageBase::ParseFields(const Data &data, size_t &offset, const IConverter *ic)
 {
 	const unsigned char *finish = ParseCommonFields(*this,
 		data.GetData() + offset, data.GetData() + data.GetSize(), ic);
 	offset += finish - (data.GetData() + offset);
 }
 
-void SavedMessage::BuildHeader(Data &data, size_t &offset) const
+void MessageBase::BuildHeader(Data &data, size_t &offset) const
 {
-	throw std::logic_error("SavedMessage::BuildHeader not yet implemented");
+	throw std::logic_error("MessageBase::BuildHeader not yet implemented");
 }
 
-void SavedMessage::BuildFields(Data &data, size_t &offset, const IConverter *ic) const
+void MessageBase::BuildFields(Data &data, size_t &offset, const IConverter *ic) const
 {
-	throw std::logic_error("SavedMessage::BuildFields not yet implemented");
+	throw std::logic_error("MessageBase::BuildFields not yet implemented");
 }
 
-void SavedMessage::Clear()
+void MessageBase::Clear()
 {
 	From.clear();
 	To.clear();
@@ -244,6 +291,7 @@ void SavedMessage::Clear()
 	Bcc.clear();
 	Sender.clear();
 	ReplyTo.clear();
+
 	Subject.clear();
 	Body.clear();
 	Attachment.clear();
@@ -257,24 +305,53 @@ void SavedMessage::Clear()
 	MessageReply = false;
 	MessageSaved = false;
 	MessageSavedDeleted = false;
+
+	MessagePriority = NormalPriority;
+	MessageSensitivity = NormalSensitivity;
+
 	Unknowns.clear();
 }
 
+std::string MessageBase::SimpleFromAddress() const
+{
+	if( From.size() ) {
+		// remove all spaces from the email
+		std::string ret;
+		for( size_t i = 0; i < From[0].Email.size(); i++ )
+			if( From[0].Email[i] != ' ' )
+				ret += From[0].Email[i];
+
+		return ret;
+	}
+	else {
+		return "unknown";
+	}
+}
+
 // dump message in mbox format
-void SavedMessage::Dump(std::ostream &os) const
+void MessageBase::Dump(std::ostream &os) const
 {
 	static const char *MessageImportance[] = 
 		{ "Low", "Normal", "High", "Unknown Priority" };
 	static const char *MessageSensitivityString[] = 
 		{ "Normal", "Personal", "Private", "Confidential", "Unknown Sensivity" };
 	
-	os << "From " << (From.Email.size() ? From.Email.c_str() : "unknown")
-	   << "  " << ctime( &MessageDateSent );
+	os << "From " << SimpleFromAddress() << "  " << ctime( &MessageDateReceived );
+
+/*
+FIXME
+// savedmessage prints like this:
+os << "From " << SimpleFromAddress() << "  " << ctime( &MessageDateSent );
+// pinmessage prints like this:
+os << "From " << SimpleFromAddress() << "  " << ctime( &MessageDateSent );
+*/
+
 	os << "X-Record-ID: (" << setw(8) << std::hex << MessageRecordId << ")\n";
+
 	if( MessageReplyTo )
 		os << "X-rim-org-msg-ref-id: " << std::dec << MessageReplyTo << "\n";
 	if( MessageSaved )
-		os << "Message Status: Saved\n";
+		os << "X-Message-Status: Saved\n";
 	else if( MessageRead )
 		os << "Message Status: Opened\n";
 	if( MessagePriority != NormalPriority )
@@ -282,16 +359,17 @@ void SavedMessage::Dump(std::ostream &os) const
 	if( MessageSensitivity != NormalSensitivity )
 		os << "Sensitivity: " << MessageSensitivityString[MessageSensitivity] << "\n";
 	os << "Date: " << ctime(&MessageDateSent);
-	os << "From: " << From << "\n";
-	if( To.Email.size() )
+	if( From.size() )
+		os << "From: " << From[0] << "\n";
+	if( To.size() )
 		os << "To: " << To << "\n";
-	if( Cc.Email.size() )
+	if( Cc.size() )
 		os << "Cc: " << Cc << "\n";
-	if( Bcc.Email.size() )
+	if( Bcc.size() )
 		os << "Bcc: " << Bcc << "\n";
-	if( Sender.Email.size() )
+	if( Sender.size() )
 		os << "Sender: " << Sender << "\n";
-	if( ReplyTo.Email.size())
+	if( ReplyTo.size())
 		os << "Reply To: " << ReplyTo << "\n";
 	if( Subject.size() )
 		os << "Subject: " << Subject << "\n";
@@ -306,13 +384,13 @@ void SavedMessage::Dump(std::ostream &os) const
 			os << *i;
 	}
 	os << "\n";
+
 	if( Attachment.size() )
-		os << "Attachments: " << Attachment << "\n";
-	
+		os << "Attachments: " << Data(Attachment.data(), Attachment.size()) << "\n";
+
 	os << Unknowns;
 	os << "\n\n";
 }
-
 
 } // namespace Barry
 

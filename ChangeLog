@@ -1,5 +1,14 @@
 Release: version 0.15 - 2008/10/??
 ------------------------------------------------------------------------------
+2008/11/22
+	- large refactoring of all message/email record classes, and more
+		There is now a MessageBase base class, which combines
+		common email record parsing code in one class.  This base
+		class is reused by all the specific messages record classes.
+		This commit also includes support for multiple email
+		addresses per email, as well as giving IConverter support
+		to all message classes.
+	- deleted empty *.cc files from project
 2008/11/21
 	- updated man/btool.1 with new -i option
 	- fixed bug where opensync plugin didn't pass IConverter to Desktop

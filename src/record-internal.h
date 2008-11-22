@@ -76,7 +76,7 @@ struct FieldLink
 	const char *ldif;
 	const char *objectClass;
 	std::string RecordT::* strMember;	// FIXME - find a more general
-	EmailAddress RecordT::* addrMember;	// way to do this...
+	EmailAddressList RecordT::* addrMember;	// way to do this...
 	time_t RecordT::* timeMember;
 	PostalAddress RecordT::* postMember;
 	std::string PostalAddress::* postField;

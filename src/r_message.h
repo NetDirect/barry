@@ -23,17 +23,9 @@
 #define __BARRY_RECORD_MESSAGE_H__
 
 #include "dll.h"
-#include "record.h"
-#include <iosfwd>
-#include <string>
-#include <vector>
-#include <map>
-#include <stdint.h>
+#include "r_message_base.h"
 
 namespace Barry {
-
-// forward declarations
-class IConverter;
 
 //
 // NOTE:  All classes here must be container-safe!  Perhaps add sorting
@@ -43,79 +35,9 @@ class IConverter;
 /// \addtogroup RecordParserClasses
 /// @{
 
-class BXEXPORT Message
+class BXEXPORT Message : public MessageBase
 {
 public:
-	uint8_t RecType;
-	uint32_t RecordId;
-
-	EmailAddress From;
-	EmailAddress To;
-	EmailAddress Cc;
-	EmailAddress Bcc;
-	EmailAddress Sender;
-	EmailAddress ReplyTo;
-	std::string Subject;
-	std::string Body;
-	std::string Attachment;
-	uint32_t MessageRecordId;
-	uint32_t MessageReplyTo;
-	time_t MessageDateSent;
-	time_t MessageDateReceived;
-
-	// Message Flags
-	bool	MessageTruncated;
-	bool	MessageRead;
-	bool	MessageReply;
-	bool	MessageSaved;
-	bool	MessageSavedDeleted;
-
-	enum MessagePriorityType {
-		LowPriority = 0,
-		NormalPriority,
-		HighPriority,
-		UnknownPriority
-	};
-	MessagePriorityType MessagePriority;
-
-	enum MessageSensitivityType {
-		NormalSensitivity = 0,
-		Personal,
-		Private,
-		Confidential,
-		UnknownSensitivity
-	};
-	MessageSensitivityType MessageSensitivity;
-
-	std::vector<UnknownField> Unknowns;
-
-protected:
-	std::string SimpleEmailAddress() const;
-
-public:
-	const unsigned char* ParseField(const unsigned char *begin,
-		const unsigned char *end, const IConverter *ic = 0);
-
-public:
-	Message();
-	~Message();
-
-	// Parser / Builder API (see parser.h / builder.h)
-	uint8_t GetRecType() const;
-	uint32_t GetUniqueId() const;	// empty API, not required by protocol
-	void SetIds(uint8_t Type, uint32_t Id){ RecType = Type; RecordId = Id; }
-	void ParseHeader(const Data &data, size_t &offset);
-	void ParseFields(const Data &data, size_t &offset, const IConverter *ic = 0);
-	void BuildHeader(Data &data, size_t &offset) const;
-	void BuildFields(Data &data, size_t &offset, const IConverter *ic = 0) const;
-
-	void Clear();
-
-	void Dump(std::ostream &os) const;
-
-	// sorting
-	bool operator<(const Message &other) const { return Subject < other.Subject; }
-
 	// database name
 	static const char * GetDBName() { return "Messages"; }
 	static uint8_t GetDefaultRecType() { return 0; }
