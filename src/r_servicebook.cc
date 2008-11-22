@@ -28,6 +28,7 @@
 #include "time.h"
 #include "error.h"
 #include "endian.h"
+#include "iconv.h"
 #include <ostream>
 #include <iomanip>
 #include <time.h>
@@ -40,7 +41,6 @@ using namespace std;
 using namespace Barry::Protocol;
 
 namespace Barry {
-
 
 ///////////////////////////////////////////////////////////////////////////////
 // ServiceBookConfig class
@@ -72,6 +72,7 @@ const unsigned char* ServiceBookConfig::ParseField(const unsigned char *begin,
 
 	switch( Format )
 	{
+	case 0x01:
 	case 0x02:
 		{
 			const PackedField_02 *field = (const PackedField_02 *) begin;
@@ -93,7 +94,9 @@ const unsigned char* ServiceBookConfig::ParseField(const unsigned char *begin,
 		break;
 
 	default:
-		eout("Unknown packed field format" << Format);
+		eout("------> Unknown packed field format: 0x" << std::hex <<
+			(unsigned int) Format);
+		throw BadPackedFormat(Format);
 		return begin + 1;
 	}
 
@@ -223,17 +226,97 @@ void ServiceBookConfig::Dump(std::ostream &os) const
 #define SBFC_USER_ID			0xa3
 #define SBFC_END			0xffff
 
-static FieldLink<ServiceBook> ServiceBookFieldLinks[] = {
-   { SBFC_HIDDEN_NAME, "Hidden Name",0, 0,    &ServiceBook::HiddenName, 0, 0 },
-   { SBFC_DSID,        "DSID",       0, 0,    &ServiceBook::DSID, 0, 0 },
-   { SBFC_END,         "End of List",0, 0,    0, 0, 0 }
+// private data class, containing internal structures
+class ServiceBookData
+{
+public:
+	FieldLink<ServiceBook> *m_typeSet;
+	ServiceBookData(FieldLink<ServiceBook> *typeSet) : m_typeSet(typeSet) {}
 };
 
+// The Old/New tables contain the same fields, but use different
+// type codes.  Keeping them separate yet linked makes it possible
+// to convert between old and new type codes, while hopefully keeping
+// things generic.
+static FieldLink<ServiceBook> ServiceBookOldFieldLinks[] = {
+   { SBFC_OLD_NAME,      "Old Name", 0, 0,     &ServiceBook::Name, 0, 0, 0, 0, true },
+   { SBFC_OLD_DESC,      "Old Desc", 0, 0,     &ServiceBook::Description, 0, 0, 0, 0, true },
+   { SBFC_OLD_UNIQUE_ID, "Old UniqueId", 0, 0, &ServiceBook::UniqueId, 0, 0, 0, 0, false },
+   { SBFC_END,           "End of List", 0, 0,  0, 0, 0, 0, 0, false }
+};
+
+static FieldLink<ServiceBook> ServiceBookNewFieldLinks[] = {
+   { SBFC_NAME,        "Name", 0, 0,         &ServiceBook::Name, 0, 0, 0, 0, true },
+   { SBFC_DESCRIPTION, "Description", 0, 0,  &ServiceBook::Description, 0, 0, 0, 0, true },
+   { SBFC_UNIQUE_ID,   "UniqueId", 0, 0,     &ServiceBook::UniqueId, 0, 0, 0, 0, false },
+   { SBFC_END,         "End of List", 0, 0,  0, 0, 0, 0, 0, false }
+};
+
+// This table holds all
+static FieldLink<ServiceBook> ServiceBookFieldLinks[] = {
+   { SBFC_HIDDEN_NAME, "Hidden Name",0, 0, &ServiceBook::HiddenName, 0, 0, 0, 0, true },
+   { SBFC_DSID,        "DSID",       0, 0, &ServiceBook::DSID, 0, 0, 0, 0, false },
+   { SBFC_CONTENT_ID,  "ContentId",  0, 0, &ServiceBook::ContentId, 0, 0, 0, 0, false },
+   { SBFC_BES_DOMAIN,  "BES Domain", 0, 0, &ServiceBook::BesDomain, 0, 0, 0, 0, false },
+   { SBFC_END,         "End of List",0, 0, 0, 0, 0, 0, 0, false }
+};
+
+// Array of conflicting tables only
+static FieldLink<ServiceBook> *ServiceBookLinkTable[] = {
+   ServiceBookOldFieldLinks,
+   ServiceBookNewFieldLinks,
+   0
+};
+
+#define FIELDLINK_END 0xffff
+
+template <class RecordT>
+FieldLink<RecordT>* ParseFieldByTable(RecordT *rec,
+				      const CommonField *field,
+				      const IConverter *ic,
+				      FieldLink<RecordT> *links)
+{
+	// cycle through the type table
+	for( FieldLink<RecordT> *b = links; b->type != FIELDLINK_END; b++ ) {
+		if( b->type == field->type ) {
+			if( b->strMember ) {
+				std::string &s = rec->*(b->strMember);
+				if( s.size() ) {
+					dout(RecordT::GetDBName() << ": field '" << b->name << "' already has data (" << s << "). Overwriting.");
+				}
+				s = ParseFieldString(field);
+				if( b->iconvNeeded && ic )
+					s = ic->FromBB(s);
+				return links;
+			}
+			else if( b->timeMember && btohs(field->size) == 4 ) {
+				time_t &t = rec->*(b->timeMember);
+				t = min2time(field->u.min1900);
+				return links;
+			}
+		}
+	}
+	return 0;
+}
+
+template <class RecordT>
+FieldLink<RecordT>* ParseFieldByTable(RecordT *rec,
+				      const CommonField *field,
+				      const IConverter *ic,
+				      FieldLink<RecordT> **b)
+{
+	for( ; *b; b++ ) {
+		FieldLink<RecordT> *link =
+			ParseFieldByTable<RecordT>(rec, field, ic, *b);
+		if( link )
+			return link;
+	}
+	return 0;
+}
+
 ServiceBook::ServiceBook()
-	: NameType(SBFC_OLD_NAME),
-	DescType(SBFC_OLD_DESC),
-	UniqueIdType(SBFC_OLD_UNIQUE_ID),
-	RecordId(0)
+	: m_data( new ServiceBookData(ServiceBookOldFieldLinks) )
+	, RecordId(0)
 {
 	Clear();
 }
@@ -256,63 +339,37 @@ const unsigned char* ServiceBook::ParseField(const unsigned char *begin,
 	if( !btohs(field->size) )	// if field has no size, something's up
 		return begin;
 
-	// cycle through the type table
-	for(	FieldLink<ServiceBook> *b = ServiceBookFieldLinks;
-		b->type != SBFC_END;
-		b++ )
-	{
-		if( b->type == field->type ) {
-			if( b->strMember ) {
-				std::string &s = this->*(b->strMember);
-				s = ParseFieldString(field);
-				return begin;	// done!
-			}
-			else if( b->timeMember && btohs(field->size) == 4 ) {
-				time_t &t = this->*(b->timeMember);
-				t = min2time(field->u.min1900);
-				return begin;
-			}
+	// cycle through the type tables
+	FieldLink<ServiceBook> *typeSet =
+		ParseFieldByTable(this, field, ic, ServiceBookLinkTable);
+	if( typeSet ) {
+		if( m_data->m_typeSet && m_data->m_typeSet != typeSet ) {
+			dout("ServiceBook record has a mix of old and new field types.");
 		}
+		m_data->m_typeSet = typeSet;
+		return begin;
+	}
+	else {
+		if( ParseFieldByTable(this, field, ic, ServiceBookFieldLinks) )
+			return begin;	// done!
 	}
 
 	// handle special cases
 	switch( field->type )
 	{
-	case SBFC_OLD_NAME:		// strings with old/new type codes
-	case SBFC_NAME:
-		Name = ParseFieldString(field);
-		NameType = field->type;
-		return begin;
-
-	case SBFC_OLD_DESC:
-	case SBFC_DESCRIPTION:
-		Description = ParseFieldString(field);
-		DescType = field->type;
-		return begin;
-
-	case SBFC_OLD_UNIQUE_ID:
-	case SBFC_UNIQUE_ID:
-		UniqueId = ParseFieldString(field);
-		UniqueIdType = field->type;
-		return begin;
-
-	case SBFC_CONTENT_ID:
-		ContentId = ParseFieldString(field);
-		return begin;
-
-	case SBFC_BES_DOMAIN:
-		BesDomain = ParseFieldString(field);
-		return begin;
-
 	case SBFC_CONFIG:
-		{
+		try {
 			Data config((const void *)field->u.raw, btohs(field->size));
 			size_t offset = 0;
 			Config.ParseHeader(config, offset);
 			Config.ParseFields(config, offset);
+			return begin;	// success
 		}
-		break;	// break here so raw packet is still visible in dump
-//		return begin;
+		catch( BadPackedFormat & ) {
+			// break here so unprocessed raw packet is still
+			// visible in dump
+			break;
+		}
 	}
 
 	// if still not handled, add to the Unknowns list
@@ -354,44 +411,43 @@ void ServiceBook::BuildFields(Data &data, size_t &offset, const IConverter *ic) 
 
 void ServiceBook::Clear()
 {
+	m_data->m_typeSet = ServiceBookOldFieldLinks;
 	Unknowns.clear();
 	Config.Clear();
 }
 
+inline void FormatStr(std::ostream &os, const char *name, const std::string &str)
+{
+	if( str.size() ) {
+		os << "   " << setw(20) << name;
+		os << ": " << str << "\n";
+	}
+}
+
 void ServiceBook::Dump(std::ostream &os) const
 {
+	ios::fmtflags oldflags = os.setf(ios::left);
+	char fill = os.fill(' ');
+
 	os << "ServiceBook entry: 0x" << setbase(16) << RecordId
 		<< " (" << (unsigned int)RecType << ")\n";
 
-	// cycle through the type table
-	for(	const FieldLink<ServiceBook> *b = ServiceBookFieldLinks;
-		b->type != SBFC_END;
-		b++ )
-	{
-		if( b->strMember ) {
-			const std::string &s = this->*(b->strMember);
-			if( s.size() )
-				os << "   " << b->name << ": " << s << "\n";
-		}
-		else if( b->timeMember ) {
-			time_t t = this->*(b->timeMember);
-			if( t > 0 )
-				os << "   " << b->name << ": " << ctime(&t);
-		}
-	}
-
-	// special cases
-	if( UniqueId.size() )
-		os << "   Unique ID: " << UniqueId << "\n";
-	if( ContentId.size() )
-		os << "   Content ID: " << ContentId << "\n";
-	if( BesDomain.size() )
-		os << "   (BES) Domain: " << BesDomain << "\n";
+	FormatStr(os, "Name", Name);
+	FormatStr(os, "Hidden Name", HiddenName);
+	FormatStr(os, "Description", Description);
+	FormatStr(os, "DSID", DSID);
+	FormatStr(os, "Unique ID", UniqueId);
+	FormatStr(os, "Content ID", ContentId);
+	FormatStr(os, "(BES) Domain", BesDomain);
 
 	os << Config;
 
 	// print any unknowns
 	os << Unknowns;
+
+	// cleanup the stream
+	os.flags(oldflags);
+	os.fill(fill);
 }
 
 } // namespace Barry

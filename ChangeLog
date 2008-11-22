@@ -14,6 +14,17 @@ Release: version 0.15 - 2008/10/??
 		storing the password in the sync config in plain text
 	- fixed dll export bug on ErrnoError exception class
 	- added BadPackedFormat exception for internal use
+	- ServiceBook: added IConverter support, and general cleanup
+		Refactored ServiceBook class and added some experimental
+		template functions to generalize the FieldLink table
+		processing.  If possible, this needs to be expanded
+		to the general record classes, to reduce the amount of
+		code duplication during processing of FieldLinks and
+		CommonField structures.
+		Also, ServiceBook deals with packed fields, which should
+		also be extrapolated for general use, and reused if
+		possible for the new "Calendar - All" Blackberry databases
+		that are coming out on the new devices and firmare.
 2008/11/21
 	- updated man/btool.1 with new -i option
 	- fixed bug where opensync plugin didn't pass IConverter to Desktop

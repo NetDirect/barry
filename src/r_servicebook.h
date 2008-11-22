@@ -81,9 +81,11 @@ BXEXPORT inline std::ostream& operator<<(std::ostream &os, const ServiceBookConf
 }
 
 
+class ServiceBookData;
+
 class BXEXPORT ServiceBook
 {
-	int NameType, DescType, UniqueIdType;
+	ServiceBookData *m_data;
 
 public:
 	typedef std::vector<UnknownField>		UnknownsType;
