@@ -509,6 +509,15 @@ std::ostream& operator<<(std::ostream &os, const EmailAddress &msga) {
 	return os;
 }
 
+std::ostream& operator<<(std::ostream &os, const EmailAddressList &elist) {
+	for( EmailAddressList::const_iterator i = elist.begin(); i != elist.end(); ++i ) {
+		if( i != elist.begin() )
+			os << ", ";
+		os << *i;
+	}
+	return os;
+}
+
 
 ///////////////////////////////////////////////////////////////////////////////
 // PostalAddress class

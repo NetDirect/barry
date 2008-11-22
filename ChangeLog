@@ -8,6 +8,7 @@ Release: version 0.15 - 2008/10/??
 	- added IConverter support to r_folder.cc
 	- added IConverter support to r_memo.cc
 	- added IConverter support to r_message.cc
+	- added EmailAddressList, in preparation for multi-address email
 2008/11/20
 	- changed Parser base class to pure abstract... this is so that
 		future API changes to the Parse base class will be

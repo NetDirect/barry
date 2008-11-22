@@ -198,8 +198,16 @@ struct BXEXPORT EmailAddress
 		Name.clear();
 		Email.clear();
 	}
+
+	size_t size() const
+	{
+		return Name.size() + Email.size();
+	}
 };
 BXEXPORT std::ostream& operator<<(std::ostream &os, const EmailAddress &msga);
+
+typedef std::vector<EmailAddress>	EmailAddressList;
+BXEXPORT std::ostream& operator<<(std::ostream &os, const EmailAddressList &elist);
 
 struct BXEXPORT PostalAddress
 {
