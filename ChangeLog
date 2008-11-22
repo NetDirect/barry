@@ -10,6 +10,8 @@ Release: version 0.15 - 2008/10/??
 		to all message classes.
 	- deleted empty *.cc files from project
 	- updated TODO file, removing opensync i18n bug
+	- added TODO item for password support in Opensync... try to avoid
+		storing the password in the sync config in plain text
 2008/11/21
 	- updated man/btool.1 with new -i option
 	- fixed bug where opensync plugin didn't pass IConverter to Desktop

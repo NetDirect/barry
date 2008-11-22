@@ -10,6 +10,17 @@ please ask on the mailing list as well.
 
 
 
+Look into password support in the OpenSync framework
+----------------------------------------------------
+Currently, if a Blackberry uses a password, in order to sync it,
+you need to store the password in plaintext in the sync configuration.
+This is less than ideal.
+
+Ideally, opensync should prompt for the password, so that this is a
+part of the user interface.  Someone needs to research OpenSync, and if
+there is support for passwords in the plugin API, implement it for Barry
+
+
 Reverse engineer date/time functions
 ------------------------------------
 The date/time calculations in src/time.cc:Message2Time() are still not
