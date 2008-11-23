@@ -51,6 +51,7 @@ Contributors (code and otherwise) in alphabetical order by last name:
 		- integration with HAL, udev, opensync, and Conduit
 		- low level USB testing
 		- hal FDI scripts and configuration
+		- documentation of Content Store and SMS Messages formats
 	Mick Reed <oregon.mick@gmail.com>
 		- ppp chat scripts for T-Mobile US
 	Simon Ruggier <simon80@gmail.com>
