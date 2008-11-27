@@ -32,9 +32,9 @@ install/barry-util::
 	install -m 0644 $(CURDIR)/modprobe/blacklist-berry_charge $(CURDIR)/debian/barry-util/etc/modprobe.d/blacklist-berry_charge
 	# Install default ppp options and chat scripts
 	install -d $(CURDIR)/debian/barry-util/etc/ppp/peers
-	install -m 0644 $(CURDIR)/ppp/barry-rogers $(CURDIR)/ppp/barry-verizon $(CURDIR)/ppp/barry-sprint $(CURDIR)/ppp/barry-o2ireland $(CURDIR)/ppp/barry-tmobileus $(CURDIR)/debian/barry-util/etc/ppp/peers
+	install -m 0644 $(CURDIR)/ppp/barry-rogers $(CURDIR)/ppp/barry-verizon $(CURDIR)/ppp/barry-sprint $(CURDIR)/ppp/barry-o2ireland $(CURDIR)/ppp/barry-tmobileus $(CURDIR)/ppp/barry-att_cingular $(CURDIR)/debian/barry-util/etc/ppp/peers
 	install -d $(CURDIR)/debian/barry-util/etc/chatscripts
-	install -m 0640 $(CURDIR)/ppp/barry-rogers.chat $(CURDIR)/ppp/barry-verizon.chat $(CURDIR)/ppp/barry-sprint.chat $(CURDIR)/ppp/barry-o2ireland.chat $(CURDIR)/ppp/barry-tmobileus.chat $(CURDIR)/debian/barry-util/etc/chatscripts
+	install -m 0640 $(CURDIR)/ppp/barry-rogers.chat $(CURDIR)/ppp/barry-verizon.chat $(CURDIR)/ppp/barry-sprint.chat $(CURDIR)/ppp/barry-o2ireland.chat $(CURDIR)/ppp/barry-tmobileus.chat $(CURDIR)/ppp/barry-att_cingular.chat $(CURDIR)/debian/barry-util/etc/chatscripts
 	# Install hal fdi config
 	install -d $(CURDIR)/debian/barry-util/usr/share/hal/fdi/information/10freedesktop
 	install -m 0644 $(CURDIR)/hal/10-blackberry.fdi $(CURDIR)/debian/barry-util/usr/share/hal/fdi/information/10freedesktop
