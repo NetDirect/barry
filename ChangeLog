@@ -1,5 +1,8 @@
 Release: version 0.15 - 2008/10/??
 ------------------------------------------------------------------------------
+2008/11/27
+	- applied ppp chat script patch for AT&T Cingular from
+		Richard Esplin
 2008/11/23
 	- applied 'patch' of Martin Owens' Content Store documentation
 	- updated AUTHORS

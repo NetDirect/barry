@@ -1,0 +1,26 @@
+# Chatscript for ATT / Cingular
+# Licensed under the same terms as libbarry.
+#
+# Please send all working peer files to cdfrey@foursquare.net, so we can
+# build a library of peer files for different carriers.
+
+# Google says this info is important for ATT/Cingular:
+# Modem Initialization String: AT +CGDCONT=1,"IP","wap.cingular"
+# Dial-up Phone Number: *99#
+# Dial-up username/password: blank/blank
+
+SAY 'Setting abort string\n'
+ABORT ERROR
+
+SAY 'Initializing modem\n'
+OK AT
+OK ATZ
+
+SAY 'Carrier Information\n'
+OK AT+CGDCONT=1,"IP","wap.cingular"
+OK ATI
+OK ATDT*99#
+
+SAY 'Connecting\n'
+CONNECT
+
