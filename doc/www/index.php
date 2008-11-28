@@ -40,10 +40,18 @@ reverse engineer the battery charging handshake via USB.</p>
 <ul>
 	<li>Latest release: <b>0.14</b>, released on 2008/09/24</li>
 	<li>License: GPL v2 or later</li>
-	<li>Download source and binary packages from
+	<li>Download official source and binary packages from
 		<a href="http://sourceforge.net/project/showfiles.php?group_id=153722">Sourceforge</a> or the <a href="http://download.opensuse.org/repositories/home:/ndprojects/">OpenSUSE Build Service</a></li>
 	<li>General <a href="http://sourceforge.net/projects/barry/">Sourceforge project page</a></li>
 	<li><a href="http://repo.or.cz/w/barry.git">Barry git repo</a></li>
+	<li>Additional binary packages for the following distributions are available from various volunteers:
+		<ul>
+			<li><a href="http://packages.debian.org/unstable/main/barry-util">Debian, in the unstable tree, packaged by Jose Carlos Garcia Sogo</a></li>
+			<li><a href="http://koji.fedoraproject.org/koji/buildinfo?buildID=69415">Fedora, packaged by Christopher D. Stover</a>, and the related RPM <a href="http://cvs.fedoraproject.org/viewvc/rpms/barry/">CVS</a></li>
+			<li><a href="">Mandriva, packaged by Adam Williamson</a>, and the related RPM <a href="http://svn.mandriva.com/cgi-bin/viewvc.cgi/packages/cooker/barry/current/">SVN</a></li>
+			<li><a href="http://launchpad.net/~doctormo/+archive">Ubuntu, packaged by Martin Owens</a></li>
+		</ul>
+	</li>
 	<li>Known Issues:
 	<ul>
 		<li>Restoring backups for some databases on newer Blackberries doesn't work (for example, on the 8120, 8700g)</li>
