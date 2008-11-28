@@ -48,7 +48,7 @@ reverse engineer the battery charging handshake via USB.</p>
 		<ul>
 			<li><a href="http://packages.debian.org/unstable/main/barry-util">Debian, in the unstable tree, packaged by Jose Carlos Garcia Sogo</a></li>
 			<li><a href="http://koji.fedoraproject.org/koji/buildinfo?buildID=69415">Fedora, packaged by Christopher D. Stover</a>, and the related RPM <a href="http://cvs.fedoraproject.org/viewvc/rpms/barry/">CVS</a></li>
-			<li><a href="">Mandriva, packaged by Adam Williamson</a>, and the related RPM <a href="http://svn.mandriva.com/cgi-bin/viewvc.cgi/packages/cooker/barry/current/">SVN</a></li>
+			<li>Mandriva, packaged by Adam Williamson, and the related RPM <a href="http://svn.mandriva.com/cgi-bin/viewvc.cgi/packages/cooker/barry/current/">SVN</a></li>
 			<li><a href="http://launchpad.net/~doctormo/+archive">Ubuntu, packaged by Martin Owens</a></li>
 		</ul>
 	</li>
