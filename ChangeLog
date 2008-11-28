@@ -5,6 +5,7 @@ Release: version 0.15 - 2008/10/??
 		Richard Esplin
 	- added new chat scripts to debian and rpm packages
 	- added known sources of additional Barry binary packages to index.php
+	- turned on call/caller graph support in Doxygen output
 2008/11/23
 	- applied 'patch' of Martin Owens' Content Store documentation
 	- updated AUTHORS
