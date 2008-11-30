@@ -1,5 +1,9 @@
 Release: version 0.15 - 2008/10/??
 ------------------------------------------------------------------------------
+2008/11/30
+	- moved Product ID constants into a single place (src/common.h)
+		and updated bcharge
+	- added Product ID 8007 for the Blackberry Storm... needs testing
 2008/11/27
 	- applied ppp chat script patch for AT&T Cingular from
 		Richard Esplin

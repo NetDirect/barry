@@ -30,9 +30,15 @@
 #define PRODUCT_RIM_PEARL_DUAL	0x0004
 #define PRODUCT_RIM_PEARL_8120	0x8004
 #define PRODUCT_RIM_PEARL	0x0006
+#define PRODUCT_RIM_STORM	0x8007
 
+#define BLACKBERRY_INTERFACE		0
 #define BLACKBERRY_CONFIGURATION	1
 #define BLACKBERRY_DB_CLASS		0xff
+
+#define IPRODUCT_RIM_HANDHELD		2
+#define IPRODUCT_RIM_MASS_STORAGE	4
+#define IPRODUCT_RIM_COMPOSITE		5
 
 // minimum number of password tries remaining at which Barry gives up
 // for safety

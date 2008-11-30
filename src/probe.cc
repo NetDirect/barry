@@ -144,6 +144,9 @@ Probe::Probe(const char *busname, const char *devname)
 	// And a special case, which behaves similar to the PEARL_DUAL,
 	// but with a unique Product ID.
 	ProbeMatching(VENDOR_RIM, PRODUCT_RIM_PEARL_8120, busname, devname);
+
+	// And one more time, for the Blackberry Storm
+	ProbeMatching(VENDOR_RIM, PRODUCT_RIM_STORM, busname, devname);
 }
 
 void Probe::ProbeMatching(int vendor, int product,

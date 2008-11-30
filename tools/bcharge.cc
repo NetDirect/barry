@@ -39,19 +39,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <string>
-
-#define VENDOR_RIM		0x0fca
-#define PRODUCT_RIM_BLACKBERRY	0x0001
-#define PRODUCT_RIM_PEARL_DUAL	0x0004
-#define PRODUCT_RIM_PEARL_8120	0x8004
-#define PRODUCT_RIM_PEARL	0x0006
-
-#define IPRODUCT_RIM_HANDHELD		2
-#define IPRODUCT_RIM_MASS_STORAGE	4
-#define IPRODUCT_RIM_COMPOSITE		5
-
-#define BLACKBERRY_INTERFACE		0
-#define BLACKBERRY_CONFIGURATION	1
+#include <barry/common.h>
 
 bool old_style_pearl = false;
 bool force_dual = false;
@@ -402,6 +390,8 @@ int main(int argc, char *argv[])
 
 				case PRODUCT_RIM_PEARL_DUAL:
 				case PRODUCT_RIM_PEARL:
+				case PRODUCT_RIM_PEARL_8120:
+				case PRODUCT_RIM_STORM:
 					if( !process(dev, true) )
 						resume();
 					break;
