@@ -86,6 +86,29 @@ All USB data going through the usbdevfs interface (this includes all data
 transferred through libusb) will be logged from the kernel.  This shows up
 in dmesg output, and /var/log/kern.log on most systems.
 
+The sheer amount of data that can be generated in this manner can sometimes
+overwhelm the dmesg kernel buffer, and some USB messages can be lost.  There
+are two adjustments you can make to combat this.
+
+	1) I compile a custom kernel with CONFIG_LOG_BUF_SHIFT=21,
+		the largest I can make it.  I also have a custom
+		patch that limits the size of the USB capture data.
+		This patch for kernel 2.6.26.8 is included in the doc/
+		directory, and should be relatively easy to apply to
+		other kernel versions.
+
+	2) Some distributions have syslog configured to send kernel messages
+		to multiple logfile destinations.  Change this to only
+		one location, and disable any setting that forces a sync
+		after each log message.  This will boost logging speed, and
+		reduce the chances of missing messages.
+
+		Normally, this involves a syslog.conf line like this:
+			kern.*               -/var/log/kern.log
+
+		You may only want to disable the sync temporarily, as normally,
+		you want to guarantee that important kernel messages get saved.
+
 The data captured is very raw, in disorganized hex.  Use the ktrans
 program in the tools/ directory to convert it to something readable.
 
@@ -103,5 +126,4 @@ from:
 Happy Hacking!
 
 Chris Frey <cdfrey@foursquare.net>
-February 2007
 

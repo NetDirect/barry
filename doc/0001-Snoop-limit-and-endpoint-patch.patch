@@ -1,0 +1,75 @@
+From 97beaf75f426ed04e4cc20dd2f65f7e2ce65ece7 Mon Sep 17 00:00:00 2001
+From: Chris Frey <cdfrey@foursquare.net>
+Date: Fri, 31 Oct 2008 03:44:35 -0400
+Subject: [PATCH] Snoop limit and endpoint patch
+
+Puts a limit on the amount of data pushed into the printk log,
+limiting it to the actual size of the USB urbs, not the whole
+buffer.
+
+This patch also adds some missed endpoint values to the logs.
+---
+ drivers/usb/core/devio.c |   19 +++++++++++++------
+ 1 files changed, 13 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/usb/core/devio.c b/drivers/usb/core/devio.c
+index de17738..aca73ae 100644
+--- a/drivers/usb/core/devio.c
++++ b/drivers/usb/core/devio.c
+@@ -288,7 +288,7 @@ static inline struct async *async_getpending(struct dev_state *ps,
+ 
+ static void snoop_urb(struct urb *urb, void __user *userurb)
+ {
+-	int j;
++	int j, len;
+ 	unsigned char *data = urb->transfer_buffer;
+ 
+ 	if (!usbfs_snoop)
+@@ -301,7 +301,12 @@ static void snoop_urb(struct urb *urb, void __user *userurb)
+ 		 urb->transfer_buffer_length);
+ 	dev_info(&urb->dev->dev, "actual_length=%d\n", urb->actual_length);
+ 	dev_info(&urb->dev->dev, "data: ");
+-	for (j = 0; j < urb->transfer_buffer_length; ++j)
++
++	len = urb->actual_length;
++	if( len > urb->transfer_buffer_length )
++		len = urb->transfer_buffer_length;
++
++	for (j = 0; j < len; ++j)
+ 		printk("%02x ", data[j]);
+ 	printk("\n");
+ }
+@@ -759,8 +764,8 @@ static int proc_bulk(struct dev_state *ps, void __user *arg)
+ 			kfree(tbuf);
+ 			return -EINVAL;
+ 		}
+-		snoop(&dev->dev, "bulk read: len=0x%02x timeout=%04d\n",
+-			bulk.len, bulk.timeout);
++		snoop(&dev->dev, "bulk read: ep=0x%02x, len=0x%02x timeout=%04d\n",
++			bulk.ep, bulk.len, bulk.timeout);
+ 		usb_unlock_device(dev);
+ 		i = usb_bulk_msg(dev, pipe, tbuf, len1, &len2, tmo);
+ 		usb_lock_device(dev);
+@@ -783,8 +788,8 @@ static int proc_bulk(struct dev_state *ps, void __user *arg)
+ 				return -EFAULT;
+ 			}
+ 		}
+-		snoop(&dev->dev, "bulk write: len=0x%02x timeout=%04d\n",
+-			bulk.len, bulk.timeout);
++		snoop(&dev->dev, "bulk write: ep=0x%02x, len=0x%02x timeout=%04d\n",
++			bulk.ep, bulk.len, bulk.timeout);
+ 		if (usbfs_snoop) {
+ 			dev_info(&dev->dev, "bulk write: data: ");
+ 			for (j = 0; j < len1; ++j)
+@@ -1161,6 +1166,8 @@ static int proc_do_submiturb(struct dev_state *ps, struct usbdevfs_urb *uurb,
+ 			return -EFAULT;
+ 		}
+ 	}
++	snoop(&ps->dev->dev, "submit urb: bEndpoint %02x\n",
++		uurb->endpoint);
+ 	snoop_urb(as->urb, as->userurb);
+ 	async_newpending(as);
+ 	if ((ret = usb_submit_urb(as->urb, GFP_KERNEL))) {
+-- 
+1.6.0.3
+
