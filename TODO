@@ -10,6 +10,15 @@ please ask on the mailing list as well.
 
 
 
+Add support for the Blackberry Storm
+------------------------------------
+The new Blackberry Storm, model 9530, appears to have a different database
+protocol.  This will likely be an ongoing effort to add support for this
+device, or at least find a way to use the old protocol with it.
+
+Search the mailing list archives for "Storm" or "9530".
+
+
 Look into password support in the OpenSync framework
 ----------------------------------------------------
 Currently, if a Blackberry uses a password, in order to sync it,

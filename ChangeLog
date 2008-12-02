@@ -4,6 +4,7 @@ Release: version 0.15 - 2008/10/??
 	- added more notes to doc/USB-capture.txt, documenting my kernel
 		setup for capturing USB traffic, and added size-limiting
 		kernel patch
+	- added TODO list item for the Blackberry Storm
 2008/11/30
 	- moved Product ID constants into a single place (src/common.h)
 		and updated bcharge
