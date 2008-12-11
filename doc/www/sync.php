@@ -84,9 +84,9 @@ its configuration in the form of XML.  For example:</p>
 
 <pre>
 	&lt;config&gt;
-	   &lt;address_path&gt;file:///home/cdfrey/.evolution/addressbook/local/system&lt;address_path&gt;
-	   &lt;calendar_path&gt;file:///home/cdfrey/.evolution/calendar/local/system&lt;calendar_path&gt;
-	   &lt;tasks_path&gt;file:///home/cdfrey/.evolution/tasks/local/system&lt;tasks_path&gt;
+	   &lt;address_path&gt;file:///home/cdfrey/.evolution/addressbook/local/system&lt;/address_path&gt;
+	   &lt;calendar_path&gt;file:///home/cdfrey/.evolution/calendar/local/system&lt;/calendar_path&gt;
+	   &lt;tasks_path&gt;file:///home/cdfrey/.evolution/tasks/local/system&lt;/tasks_path&gt;
 	&lt;config&gt;
 </pre>
 

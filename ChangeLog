@@ -1,5 +1,8 @@
 Release: version 0.15 - 2008/10/??
 ------------------------------------------------------------------------------
+2008/12/11
+	- fixed missing slash in config sample in doc/www/sync.php
+		Thanks to sourceforge tracker #2413683 for reporting
 2008/12/01
 	- added more notes to doc/USB-capture.txt, documenting my kernel
 		setup for capturing USB traffic, and added size-limiting
