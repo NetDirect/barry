@@ -61,6 +61,9 @@ class IPmodem
    end
 end
 
+#
+# Note: AT+CLAC should list all available commands
+#
 commands = [
 	"+++AT",
 	"AT",
