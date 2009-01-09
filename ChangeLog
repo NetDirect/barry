@@ -3,6 +3,7 @@ Release: version 0.15 - 2009/01/??
 2009/01/09
 	- added AT+CLAC note to contrib/modemtest.rb, recording tidbit
 		from mailing list
+	- updated copyright dates for 2009
 2008/12/11
 	- fixed missing slash in config sample in doc/www/sync.php
 		Thanks to sourceforge tracker #2413683 for reporting
