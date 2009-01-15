@@ -63,7 +63,7 @@ JavaLoader::~JavaLoader()
 // Open
 //
 /// Select device mode.  This is required before using any other mode-based
-/// operations, such as GetDBDB() and LoadDatabase().
+/// operations.
 ///
 /// This function opens a socket to the device for communicating in Desktop
 /// mode.  If the device requires it, specify the password with a const char*
@@ -137,14 +137,14 @@ void JavaLoader::StartStream()
 	*((uint16_t*) rawCommand1) = htobs(m_socket->GetSocket());
 
 	Data command1(rawCommand1, sizeof(rawCommand1));
-	Data response1;
+	Data response;
 
 	try {
-		m_socket->Packet(command1, response1);
+		m_socket->Packet(command1, response);
 	}
 	catch( Usb::Error & ) {
-		eout("JavaLoader: error getting command table");
-		eeout(command1, response1);
+		eout("JavaLoader: command1 error");
+		eeout(command1, response);
 		throw;
 	}
 
@@ -153,16 +153,15 @@ void JavaLoader::StartStream()
 	*((uint16_t*) rawCommand2) = htobs(m_socket->GetSocket());
 
 	Data command2(rawCommand2, sizeof(rawCommand2));
-	Data response2;
 
 	try {
 		m_socket->SetSequencePacket(false);
-		m_socket->Packet(command2, response2);
+		m_socket->Packet(command2, response);
 		m_socket->SetSequencePacket(true);
 	}
 	catch( Usb::Error & ) {
-		eout("JavaLoader: error getting command table");
-		eeout(command2, response2);
+		eout("JavaLoader: command2 error");
+		eeout(command2, response);
 		throw;
 	}
 
@@ -171,14 +170,13 @@ void JavaLoader::StartStream()
 	*((uint16_t*) rawCommand3) = htobs(m_socket->GetSocket());
 
 	Data command3(rawCommand3, sizeof(rawCommand3));
-	Data response3;
 
 	try {
-		m_socket->Packet(command3, response3);
+		m_socket->Packet(command3, response);
 	}
 	catch( Usb::Error & ) {
-		eout("JavaLoader: error getting command table");
-		eeout(command1, response1);
+		eout("JavaLoader: command3 error");
+		eeout(command1, response);
 		throw;
 	}
 }
@@ -216,11 +214,9 @@ void JavaLoader::StartStream()
 //   00000064   B8 BC C0 A1  C0 14 00 81  00 00 01 01  04 0E 3F 6D  00 02 00 6D  ..............?m...m
 void JavaLoader::SendStream(char *buffer, int buffsize)
 {
-	int size;
 	int bytesent = 0;
 
 	unsigned char rawCommand6[] = { 4, 0, 0x08, 0, 0x68, 0, 0xf8, 0x07 };
-	char rawCommand7[2044];
 
 
 	// 4°/
@@ -228,38 +224,32 @@ void JavaLoader::SendStream(char *buffer, int buffsize)
 	*((uint16_t*) rawCommand4) = htobs(m_socket->GetSocket());
 
 	Data command4(rawCommand4, sizeof(rawCommand4));
-	Data response4;
+	Data response;
 
 	try {
 		m_socket->SetSequencePacket(false);
-		m_socket->Packet(command4, response4);
+		m_socket->Packet(command4, response);
 		m_socket->SetSequencePacket(true);
 	}
 	catch( Usb::Error & ) {
-		eout("JavaLoader: error getting command table");
-		eeout(command4, response4);
+		eout("JavaLoader: command4 error");
+		eeout(command4, response);
 		throw;
 	}
 
 	// 5°/
-	size = 0xFF & (buffsize >> 24);
-	size |= 0xFF00 & (buffsize >> 8);
-	size |= 0xFF0000 & (buffsize << 8);
-	size |= 0xFF000000 & (buffsize << 24);
-
 	char rawCommand5[] = { 4, 0, 0x08, 0, 0, 0, 0x00, 0x00 };
 	*((uint16_t*) rawCommand5) = htobs(m_socket->GetSocket());
-	*(((uint32_t*) rawCommand5) + 1) = htobs(size);
+	*(((uint32_t*) rawCommand5) + 1) = htobl(buffsize);
 
 	Data command5(rawCommand5, sizeof(rawCommand5));
-	Data response5;
 
 	try {
-		m_socket->Packet(command5, response5);
+		m_socket->Packet(command5, response);
 	}
 	catch( Usb::Error & ) {
-		eout("JavaLoader: error getting command table");
-		eeout(command5, response5);
+		eout("JavaLoader: command5 error");
+		eeout(command5, response);
 		throw;
 	}
 
@@ -267,13 +257,14 @@ void JavaLoader::SendStream(char *buffer, int buffsize)
 	// Read the buffer...
 	while (bytesent < buffsize) {
 		// Read data buffer
-		size = 0;
+		int size;
 
 		if (buffsize - bytesent > 0x7f8)
 			size = 0x7f8;
 		else
 			size = buffsize - bytesent;
 
+		char rawCommand7[0x7f8 + 4];
 		memcpy(&rawCommand7[4], buffer, size);
 
 
@@ -284,16 +275,15 @@ void JavaLoader::SendStream(char *buffer, int buffsize)
 		*(((uint16_t*) rawCommand6) + 3) = htobs(size);
 
 		Data command6(rawCommand6, sizeof(rawCommand6));
-		Data response6;
 
 		try {
 			m_socket->SetSequencePacket(false);
-			m_socket->Packet(command6, response6);
+			m_socket->Packet(command6, response);
 			m_socket->SetSequencePacket(true);
 		}
 		catch( Usb::Error & ) {
-			eout("JavaLoader: error getting command table");
-			eeout(command6, response6);
+			eout("JavaLoader: command6 error");
+			eeout(command6, response);
 			throw;
 		}
 
@@ -303,15 +293,14 @@ void JavaLoader::SendStream(char *buffer, int buffsize)
 		*((uint16_t*) rawCommand7) = htobs(m_socket->GetSocket());
 		*(((uint16_t*) rawCommand7) + 1) = htobs(size + 4);
 
-		Data command7(rawCommand7, size + 4); //sizeof(rawCommand7));
-		Data response7;
+		Data command7(rawCommand7, size + 4);
 
 		try {
-			m_socket->PacketData(command7, response7);
+			m_socket->PacketData(command7, response);
 		}
 		catch( Usb::Error & ) {
-			eout("JavaLoader: error getting command table");
-			eeout(command7, response7);
+			eout("JavaLoader: command7 error");
+			eeout(command7, response);
 			throw;
 		}
 
@@ -326,18 +315,18 @@ void JavaLoader::SendStream(char *buffer, int buffsize)
 void JavaLoader::StopStream(void)
 {
 	// 7°/
-	unsigned char rawCommand7[] = { 4, 0, 0x08, 0, 0x8d, 0, 0, 0 };
-	*((uint16_t*) rawCommand7) = htobs(m_socket->GetSocket());
+	unsigned char rawCommand[] = { 4, 0, 0x08, 0, 0x8d, 0, 0, 0 };
+	*((uint16_t*) rawCommand) = htobs(m_socket->GetSocket());
 
-	Data command7(rawCommand7, sizeof(rawCommand7));
-	Data response7;
+	Data command(rawCommand, sizeof(rawCommand));
+	Data response;
 
 	try {
-		m_socket->Packet(command7, response7);
+		m_socket->Packet(command, response);
 	}
 	catch( Usb::Error & ) {
-		eout("JavaLoader: error getting command table");
-		eeout(command7, response7);
+		eout("JavaLoader: stop command error");
+		eeout(command, response);
 		throw;
 	}
 }

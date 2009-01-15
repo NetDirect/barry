@@ -35,6 +35,16 @@ Release: version 0.15 - 2009/01/??
 		- fixed compiler warnings when comparing signed/unsigned,
 			and changed file operation types from plain int
 			to size_t/off_t
+	- changes to src/m_javaloader.cc:
+		- fixed comments to remove Desktop-oriented notes
+		- moved variables closer to their use point
+		- removed the duplicated response Data objects in favour
+			of just one (each default Data object uses 0x4000
+			bytes of heap)
+		- removed manual endian swap in favour of htobl()
+		- removed unused CommandType and m_commandTable members
+		- fixed exception error messages to indicate command #
+			instead of Desktop message
 2009/01/09
 	- added AT+CLAC note to contrib/modemtest.rb, recording tidbit
 		from mailing list

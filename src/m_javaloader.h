@@ -39,9 +39,9 @@ class Controller;
 namespace Mode {
 
 //
-// Desktop class
+// JavaLoader class
 //
-/// The main interface class to the device databases.
+/// The main interface class to the java program loader protocol
 ///
 /// To use this class, use the following steps:
 ///
@@ -53,20 +53,13 @@ namespace Mode {
 ///
 class BXEXPORT JavaLoader
 {
-public:
-	enum CommandType { Unknown, DatabaseAccess };
-
 private:
 	Controller &m_con;
 
 	SocketHandle m_socket;
 
-	CommandTable m_commandTable;
-
 	uint16_t m_ModeSocket;			// socket recommended by device
 						// when mode was selected
-
-protected:
 
 public:
 	JavaLoader(Controller &con);
