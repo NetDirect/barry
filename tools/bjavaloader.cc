@@ -119,7 +119,7 @@ void SendAppFile(Barry::Mode::JavaLoader *javaloader, const char *filename)
 	}
 
 	filesize = sb.st_size;
-	if( filesize > (off_t)((size_t)-1) ) {
+	if( (unsigned long)filesize > (size_t)-1 ) {
 		throw runtime_error("Filesize larger than max fread()... contact Barry developers.");
 	}
 

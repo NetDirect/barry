@@ -46,6 +46,7 @@ Release: version 0.15 - 2009/01/??
 		- fixed exception error messages to indicate command #
 			instead of Desktop message
 	- added eout() data dump to socket::Packet() unknown send error
+	- fixed my incorrect off_t/size_t check in bjavaloader.cc
 2009/01/09
 	- added AT+CLAC note to contrib/modemtest.rb, recording tidbit
 		from mailing list
