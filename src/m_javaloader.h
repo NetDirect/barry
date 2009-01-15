@@ -5,9 +5,9 @@
 
 /*
     Copyright (C) 2005-2009, Net Direct Inc. (http://www.netdirect.ca/)
-	Copyright (C) 2008-2009, Nicolas VIVIEN
+    Copyright (C) 2008-2009, Nicolas VIVIEN
 
-	Some parts are inspired from m_desktop.h
+        Some parts are inspired from m_desktop.h
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by

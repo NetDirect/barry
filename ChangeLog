@@ -2,6 +2,20 @@ Release: version 0.15 - 2009/01/??
 ------------------------------------------------------------------------------
 2009/01/14
 	- applied Nicolas Vivien's bjavaloader patch
+	- small fixups to above patch:
+		- moved cod.h from installable headers to internal headers
+		- whitespace edits
+		- copyright statement tweaks
+		- added blog URLs to copyright list in cod.h where parts
+			of the structs appear to come from
+		- removed unused variables to compile with strict settings
+		- changed char to unsigned char to fix strict compiler
+			warnings
+		- removed duplicated a/b from Socket messages, and moved
+			read/write text to front, in socket.cc
+		- added NetDirect copyright notice to bjavaloader.cc, since
+			it is based on btool.cc
+		- removed unused boost-specific code from bjavaloader.cc
 2009/01/09
 	- added AT+CLAC note to contrib/modemtest.rb, recording tidbit
 		from mailing list

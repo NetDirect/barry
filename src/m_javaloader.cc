@@ -5,9 +5,9 @@
 
 /*
     Copyright (C) 2005-2009, Net Direct Inc. (http://www.netdirect.ca/)
-	Copyright (C) 2008-2009, Nicolas VIVIEN
+    Copyright (C) 2008-2009, Nicolas VIVIEN
 
-	Some parts are inspired from m_desktop.h
+        Some parts are inspired from m_desktop.h
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -141,8 +141,6 @@ void JavaLoader::StartStream()
 
 	try {
 		m_socket->Packet(command1, response1);
-
-		MAKE_PACKET(rpack, response1);
 	}
 	catch( Usb::Error & ) {
 		eout("JavaLoader: error getting command table");
@@ -161,8 +159,6 @@ void JavaLoader::StartStream()
 		m_socket->SetSequencePacket(false);
 		m_socket->Packet(command2, response2);
 		m_socket->SetSequencePacket(true);
-
-		MAKE_PACKET(rpack, response2);
 	}
 	catch( Usb::Error & ) {
 		eout("JavaLoader: error getting command table");
@@ -179,8 +175,6 @@ void JavaLoader::StartStream()
 
 	try {
 		m_socket->Packet(command3, response3);
-
-		MAKE_PACKET(rpack, response3);
 	}
 	catch( Usb::Error & ) {
 		eout("JavaLoader: error getting command table");
@@ -225,7 +219,7 @@ void JavaLoader::SendStream(char *buffer, int buffsize)
 	int size;
 	int bytesent = 0;
 
-	char rawCommand6[] = { 4, 0, 0x08, 0, 0x68, 0, 0xf8, 0x07 };
+	unsigned char rawCommand6[] = { 4, 0, 0x08, 0, 0x68, 0, 0xf8, 0x07 };
 	char rawCommand7[2044];
 
 
@@ -240,8 +234,6 @@ void JavaLoader::SendStream(char *buffer, int buffsize)
 		m_socket->SetSequencePacket(false);
 		m_socket->Packet(command4, response4);
 		m_socket->SetSequencePacket(true);
-		
-		MAKE_PACKET(rpack, response4);
 	}
 	catch( Usb::Error & ) {
 		eout("JavaLoader: error getting command table");
@@ -264,8 +256,6 @@ void JavaLoader::SendStream(char *buffer, int buffsize)
 
 	try {
 		m_socket->Packet(command5, response5);
-
-		MAKE_PACKET(rpack, response5);
 	}
 	catch( Usb::Error & ) {
 		eout("JavaLoader: error getting command table");
@@ -300,8 +290,6 @@ void JavaLoader::SendStream(char *buffer, int buffsize)
 			m_socket->SetSequencePacket(false);
 			m_socket->Packet(command6, response6);
 			m_socket->SetSequencePacket(true);
-
-			MAKE_PACKET(rpack, response6);
 		}
 		catch( Usb::Error & ) {
 			eout("JavaLoader: error getting command table");
@@ -320,8 +308,6 @@ void JavaLoader::SendStream(char *buffer, int buffsize)
 
 		try {
 			m_socket->PacketData(command7, response7);
-
-			MAKE_PACKET(rpack, response7);
 		}
 		catch( Usb::Error & ) {
 			eout("JavaLoader: error getting command table");
@@ -340,7 +326,7 @@ void JavaLoader::SendStream(char *buffer, int buffsize)
 void JavaLoader::StopStream(void)
 {
 	// 7°/
-	char rawCommand7[] = { 4, 0, 0x08, 0, 0x8d, 0, 0, 0 };
+	unsigned char rawCommand7[] = { 4, 0, 0x08, 0, 0x8d, 0, 0, 0 };
 	*((uint16_t*) rawCommand7) = htobs(m_socket->GetSocket());
 
 	Data command7(rawCommand7, sizeof(rawCommand7));
@@ -348,11 +334,9 @@ void JavaLoader::StopStream(void)
 
 	try {
 		m_socket->Packet(command7, response7);
-
-		MAKE_PACKET(rpack, response7);
 	}
 	catch( Usb::Error & ) {
-		eout("Desktop: error getting command table");
+		eout("JavaLoader: error getting command table");
 		eeout(command7, response7);
 		throw;
 	}

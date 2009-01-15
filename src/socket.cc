@@ -694,8 +694,6 @@ void Socket::Receive(Data &receive, int timeout)
 // ^^^^^ socket
 void Socket::PacketData(Data &send, Data &receive, int timeout)
 {
-	MAKE_PACKET(spack, send);
-
 	if( ( send.GetSize() < MIN_PACKET_DATA_SIZE ) ||
 		( send.GetSize() > MAX_PACKET_DATA_SIZE ) ) {
 		// we don't do that around here
@@ -823,7 +821,7 @@ void Socket::Packet(Data &send, Data &receive, int timeout)
 
 				default: {
 					std::ostringstream oss;
-					oss << "Socket: (a) unhandled packet in Packet() (send): 0x" << std::hex << (unsigned int)rpack->command;
+					oss << "Socket: (send) unhandled packet in Packet(): 0x" << std::hex << (unsigned int)rpack->command;
 					eout(oss.str());
 					throw Error(oss.str());
 					}
@@ -882,7 +880,7 @@ void Socket::Packet(Data &send, Data &receive, int timeout)
 
 			default: {
 				std::ostringstream oss;
-				oss << "Socket: (b) unhandled packet in Packet() (read): 0x" << std::hex << (unsigned int)rpack->command;
+				oss << "Socket: (read) unhandled packet in Packet(): 0x" << std::hex << (unsigned int)rpack->command;
 				eout(oss.str());
 				throw Error(oss.str());
 				}

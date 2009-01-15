@@ -1,7 +1,13 @@
-/*
-	Copyright (C) 2008-2009, Nicolas VIVIEN
+///
+/// \file	bjavaloader.cc
+///		
+///
 
-	Some parts are inspired from btools.cc
+/*
+    Copyright (C) 2008-2009, Nicolas VIVIEN
+    Copyright (C) 2005-2009, Net Direct Inc. (http://www.netdirect.ca/)
+
+        Some parts are inspired from btool.cc
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -41,16 +47,9 @@ void Usage()
 
    cerr
    << "bjavaloader - Command line USB Blackberry Java Loader\n"
-   << "        Copyright 2009-2010, Nicolas VIVIEN.\n"
-   << "        Some parts are inspired from btools.\n"
+   << "        Copyright 2008-2009, Nicolas VIVIEN.\n"
+   << "        Copyright 2005-2009, Net Direct Inc. (http://www.netdirect.ca/)\n"
    << "        Using: " << Version << "\n"
-   << "        Compiled "
-#ifdef __BARRY_BOOST_MODE__
-   << "with"
-#else
-   << "without"
-#endif
-   << " Boost support\n"
    << "\n"
    << "   -B bus    Specify which USB bus to search on\n"
    << "   -N dev    Specify which system device, using system specific string\n"

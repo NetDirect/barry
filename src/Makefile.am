@@ -99,8 +99,7 @@ include_barry_HEADERS = barry.h \
 	pppfilter.h \
 	sha1.h \
 	iconv.h \
-	s11n-boost.h \
-	cod.h
+	s11n-boost.h
 
 
 libbarry_la_SOURCES = time.cc \
@@ -138,6 +137,7 @@ libbarry_la_SOURCES = time.cc \
 	scoped_lock.h \
 	protostructs.h \
 	debug.h \
+	cod.h \
 	endian.h
 #libbarry_la_LIBADD = $(LTLIBOBJS) $(LIBUSB_LIBS) $(OPENSSL_LIBS)
 libbarry_la_LIBADD = $(LTLIBOBJS) $(LIBUSB_LIBS)
