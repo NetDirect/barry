@@ -51,7 +51,8 @@ SocketZero::SocketZero(	SocketRoutingQueue &queue,
 	m_sequenceId(0),
 	m_halfOpen(false),
 	m_challengeSeed(0),
-	m_remainingTries(0)
+	m_remainingTries(0),
+	m_sequencePacket(true)
 {
 }
 
@@ -66,7 +67,8 @@ SocketZero::SocketZero(	Device &dev,
 	m_sequenceId(0),
 	m_halfOpen(false),
 	m_challengeSeed(0),
-	m_remainingTries(0)
+	m_remainingTries(0),
+	m_sequencePacket(true)
 {
 }
 
@@ -339,6 +341,12 @@ void SocketZero::RawReceive(Data &receive, int timeout)
 ///
 bool SocketZero::SequencePacket(const Data &data)
 {
+	// Begin -- Test quiet durty :(
+	if (m_sequencePacket == false) {
+		return false;
+	}
+	// End -- Test quiet durty :(
+
 	if( data.GetSize() >= MIN_PACKET_SIZE ) {
 		if( IS_COMMAND(data, SB_COMMAND_SEQUENCE_HANDSHAKE) ) {
 			CheckSequence(0, data);
@@ -676,6 +684,75 @@ void Socket::Receive(Data &receive, int timeout)
 	}
 }
 
+
+// sends the send packet down to the device
+// Blocks until response received or timed out in Usb::Device
+// This function sends only Data (and not a command)
+// 04 00 FC 07 DE CO FF FF 00 00 00 
+//             ^^^^^............... data
+//       ^^^^^ size
+// ^^^^^ socket
+void Socket::PacketData(Data &send, Data &receive, int timeout)
+{
+	MAKE_PACKET(spack, send);
+
+	if( ( send.GetSize() < MIN_PACKET_DATA_SIZE ) ||
+		( send.GetSize() > MAX_PACKET_DATA_SIZE ) ) {
+		// we don't do that around here
+		throw std::logic_error("Socket: unknown send data in PacketData()");
+	}
+
+	Data inFrag;
+	receive.Zap();
+
+	// send non-fragmented
+	Send(send, inFrag, timeout);
+
+	bool done = false;
+	int blankCount = 0;
+	while( !done ) {
+		MAKE_PACKET(rpack, inFrag);
+
+		// check the packet's validity
+		if( inFrag.GetSize() > 0 ) {
+			blankCount = 0;
+
+			Protocol::CheckSize(inFrag);
+
+			switch( rpack->command )
+			{
+			case 0x1:			// To wait a friendly name :)
+			case 0x64:			// To wait a friendly name :)
+			case 0x65:			// To wait a friendly name :)
+				done = true;
+				break;
+
+			default: {
+				std::ostringstream oss;
+				oss << "Socket: (b) unhandled packet in PacketData() (read): 0x" << std::hex << (unsigned int)rpack->command;
+				eout(oss.str());
+				throw Error(oss.str());
+				}
+				break;
+			}
+		}
+		else {
+			blankCount++;
+			//std::cerr << "Blank! " << blankCount << std::endl;
+			if( blankCount == 10 ) {
+				// only ask for more data on stalled sockets
+				// for so long
+				throw Error("Socket: 10 blank packets received");
+			}
+		}
+
+		if( !done ) {
+			// not done yet, ask for another read
+			Receive(inFrag);
+		}
+	}
+}
+
 // sends the send packet down to the device, fragmenting if
 // necessary, and returns the response in receive, defragmenting
 // if needed
@@ -694,13 +771,22 @@ void Socket::Packet(Data &send, Data &receive, int timeout)
 */
 
 	MAKE_PACKET(spack, send);
+// Begin -- I comment the code. Indeed, for JavaLoader we have new unknown command...
 	if( send.GetSize() < MIN_PACKET_SIZE ||
 	    (spack->command != SB_COMMAND_DB_DATA &&
-	     spack->command != SB_COMMAND_DB_DONE) )
+	     spack->command != SB_COMMAND_DB_DONE &&
+		 spack->command != SB_COMMAND_JL_UNKOWN1 &&
+		 spack->command != SB_COMMAND_JL_UNKOWN2 &&
+		 spack->command != SB_COMMAND_JL_UNKOWN3 &&
+		 spack->command != SB_COMMAND_JL_UNKOWN4 &&
+		 spack->command != SB_COMMAND_JL_UNKOWN5 &&
+		 spack->command != SB_COMMAND_JL_UNKOWN6 &&
+		 spack->command != SB_COMMAND_JL_UNKOWN7))
 	{
 		// we don't do that around here
 		throw std::logic_error("Socket: unknown send data in Packet()");
 	}
+// End -- I comment the code. Indeed, for JavaLoader we have new unknown command...
 
 	Data inFrag;
 	receive.Zap();
@@ -728,13 +814,16 @@ void Socket::Packet(Data &send, Data &receive, int timeout)
 
 				switch( rpack->command )
 				{
+				case 0x1:			// To wait a friendly name :)
+					break;
+
 				case SB_COMMAND_SEQUENCE_HANDSHAKE:
 					CheckSequence(inFrag);
 					break;
 
 				default: {
 					std::ostringstream oss;
-					oss << "Socket: unhandled packet in Packet() (send): 0x" << std::hex << (unsigned int)rpack->command;
+					oss << "Socket: (a) unhandled packet in Packet() (send): 0x" << std::hex << (unsigned int)rpack->command;
 					eout(oss.str());
 					throw Error(oss.str());
 					}
@@ -761,6 +850,8 @@ void Socket::Packet(Data &send, Data &receive, int timeout)
 			{
 			case SB_COMMAND_SEQUENCE_HANDSHAKE:
 				CheckSequence(inFrag);
+				if (m_zero->GetSequencePacket() == false)
+					done = true;
 				break;
 
 			case SB_COMMAND_DB_DATA:
@@ -783,9 +874,15 @@ void Socket::Packet(Data &send, Data &receive, int timeout)
 				done = true;
 				break;
 
+			case 0x1:			// To wait a friendly name :)
+			case 0x64:			// To wait a friendly name :)
+			case 0x65:			// To wait a friendly name :)
+				done = true;
+				break;
+
 			default: {
 				std::ostringstream oss;
-				oss << "Socket: unhandled packet in Packet() (read): 0x" << std::hex << (unsigned int)rpack->command;
+				oss << "Socket: (b) unhandled packet in Packet() (read): 0x" << std::hex << (unsigned int)rpack->command;
 				eout(oss.str());
 				throw Error(oss.str());
 				}

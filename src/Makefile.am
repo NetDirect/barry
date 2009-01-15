@@ -69,6 +69,7 @@ include_barry_HEADERS = barry.h \
 	m_desktoptmpl.h \
 	m_ipmodem.h \
 	m_serial.h \
+	m_javaloader.h \
 	data.h \
 	error.h \
 	ldif.h \
@@ -98,7 +99,8 @@ include_barry_HEADERS = barry.h \
 	pppfilter.h \
 	sha1.h \
 	iconv.h \
-	s11n-boost.h
+	s11n-boost.h \
+	cod.h
 
 
 libbarry_la_SOURCES = time.cc \
@@ -128,6 +130,7 @@ libbarry_la_SOURCES = time.cc \
 	m_desktop.cc \
 	m_ipmodem.cc \
 	m_serial.cc \
+	m_javaloader.cc \
 	version.cc \
 	pppfilter.cc \
 	sha1.cc \

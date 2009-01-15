@@ -24,6 +24,14 @@ BEGIN {
 	print $0;
 }
 
+/endpoint 0x00000002/ {
+	# only copy data going to the output endpoint
+	if( direction == 0 ) {
+		docopy = 1;
+		printf "\nsep: 2\n";
+	}
+}
+
 /endpoint 0x00000005/ {
 	# only copy data going to the output endpoint
 	if( direction == 0 ) {

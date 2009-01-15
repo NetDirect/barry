@@ -57,6 +57,8 @@ class BXEXPORT SocketZero
 	uint32_t m_challengeSeed;
 	unsigned int m_remainingTries;
 
+	bool m_sequencePacket;
+
 private:
 	static void AppendFragment(Data &whole, const Data &fragment);
 	static unsigned int MakeNextFragment(const Data &whole, Data &fragment,
@@ -73,6 +75,8 @@ private:
 
 protected:
 	bool SequencePacket(const Data &data);
+	void SetSequencePacket(bool flag) { m_sequencePacket = flag; }
+	bool GetSequencePacket() { return m_sequencePacket; }
 
 public:
 	explicit SocketZero(SocketRoutingQueue &queue, int writeEndpoint,
@@ -157,6 +161,10 @@ public:
 	void Packet(Data &send, Data &receive, int timeout = -1);
 	void Packet(Barry::Packet &packet, int timeout = -1);
 
+	// Use this function to send data packet instead of Packet function
+	// Indeed, Packet function is used to send command (and not data)
+	void PacketData(Data &send, Data &receive, int timeout = -1);
+
 	// some handy wrappers for the Packet() interface
 	void NextRecord(Data &receive);
 
@@ -165,6 +173,11 @@ public:
 	// that has a SocketRoutingQueue, otherwise throws logic_error.
 	void RegisterInterest(SocketRoutingQueue::SocketDataHandler handler, void *context);
 	void UnregisterInterest();
+
+
+	// This function is quickly written
+	// It's very durty :( (but it's usefull to test...)
+	void SetSequencePacket(bool flag) { m_zero->SetSequencePacket(flag); }
 };
 
 

@@ -1,0 +1,137 @@
+COD file structure
+==================
+
+To write the javeloader application, I need to understand the format of COD file.
+
+
+C structures :
+--------------
+
+typedef struct {
+
+} codfile_header_t;
+
+typedef struct {
+	int		flashid;
+	uint	section_number;		//always 0
+	uint	vtable_pointer;		//always 0
+	time_t	timestamp;
+	uint	user_version;
+	uint	fieldref_pointer;
+	ushort	maxtype_list_size;
+	short	reserved;			//always 0xFF
+	int		data_section;		//always 0xFFFF
+	int		module_info;		//always 0xFFFF
+	ushort	version;
+	ushort	code_size;
+	ushort	data_size;
+	ushort	flags;
+} code_header_t;
+
+sizeof(code_header_t) = 0×2C;
+
+
+typedef struct {
+	ubyte 	flags;
+	ubyte 	version;
+	ushort 	num_icalls;
+	ubyte 	num_modules;
+	ubyte 	num_classes ;
+	ushort 	exported_string_offset;
+	ushort 	data_bytes_offset;
+	ushort 	empty_field;
+	ushort 	class_definitions;
+	ushort 	array_of_unknow_fields[14];
+	ushort 	aliases;
+	ushort 	array_of_unknow_fields[22];
+} data_header_t;
+
+sizeof(data_header_t) = 0×34;
+
+
+Scheme :
+--------
+
++------------------------------------------+
+| COD file header (1)                      |
++------------------------------------------+
+|   Code segment header                    |
+|     size = sizeof(code_header_t) = 0x2C  |
++------------------------------------------+
+|   Code segment                           |
+|     size = code_header_t.code_size       |
++------------------------------------------+
+|   Data segment header                    |
+|     size = sizeof(data_header_t) = 0x34  |
++------------------------------------------+
+|   Data segment                           |
+|     size = code_header_t.data_size       |
++------------------------------------------+
++------------------------------------------+
+| COD file header (2)                      |
++------------------------------------------+
+|   Code segment header                    |
+.                                          .
+.                                          .
+.                                          .
++------------------------------------------+
+
+
+Sample (from Opera.cod) :
+-------------------------
+
+00000000   50 4B 03 04  0A 00 00 00  00 00-AB 5C  6A 39-BE 5C  58 D1 CC 0D  PK.........\j9.\X...
+                                                            COD size ^^^^^
+00000014   01 00 CC 0D  01 00 19 00  04 00                                  ..........
+           ^^^^^ ^^^^^^^^^^^^        ^^ empty byte (after the string)
+                   COD size   ^^ size of string
+00000014                                   6F 70  65 72 65 74  74 65 2D 68            operette-h
+                                           [..............................
+00000028   69 66 69 2D  34 2E 32 62  65 74 61 2E  63 6F 64 FE  CA 00 00     ifi-4.2beta.cod....
+           ................string........................] [..........] empty
+00000028                                                                DE                     .
+0000003C   C0 FF FF 00  00 00 00 00  00 00 00 E0  0E 18 49 00  00 00 00 00  ..............I.....
+00000050   00 00 00 22  00 FF FF FF  FF FF FF FF  FF FF FF 4E  00 08 DC 98  ..."...........N....
+
+[...]
+
+00010DD8   A2 03 0C 0E  08 02 04 FD  A2 03 4E 08  00 07 96 A3  03 1D 48 34  ..........N.......H4
+00010DEC   12 08 01 03  B5 A3 03 08  04 04 E8 A3  03 25 08 05  03 A7 A4 03  .............%......
+00010E00   00 00 00 00  00 00 00                                            .......
+00010E00                         50  4B 03 04 0A  00 00 00 00  00 AB 5C 6A         PK.........\j
+00010E14   39-D1 BD FC  C9-1C DD 00  00-1C DD 00  00-1B 00 00  00           9................
+                                                     ^^ size of string
+00010E14                                                          6F 70 65                   ope
+00010E28   72 65 74 74  65 2D 68 69  66 69 2D 34  2E 32 62 65  74 61 2D 31  rette-hifi-4.2beta-1
+00010E3C   2E 63 6F 64                                                      .cod
+00010E3C                DE C0 FF FF  00 00 00 00  00 00 00 00  E0 0E 18 49      ...............I
+00010E50   00 00 00 00  00 00 00 00  1F 00 FF FF  FF FF FF FF  FF FF FF FF  ....................
+00010E64   4E 00 D8 A1  18 3B 01 00  50 29 DE 29  06 80 F8 01  15 0D FF 00  N....;..P).)........
+00010E78   00 20 0C FF  FF 4D 0C 46  2F 15 0D FF  FF 79 0E FF  FF 82 0E FF  . ...M.F/....y......
+00010E8C   FF 62 07 50  29 50 29 23  11 18 00 05  13 00 08 0E  6E 02 01 0A  .b.P)P)#........n...
+00010EA0   00 28 CC 0C  01 FF FF 02  69 00 03 00  6D 00 03 00  A0 04 DF A1  .(......i...m.......
+00010EB4   0A 6D 00 03  00 04 FF 01  00 01 55 28  1C 17 07 00  AE 11 CF 56  .m........U(.......V
+
+[...]
+
+0001EB54   00 00 00 00  00 00 00 00  50 4B 03 04  0A 00 00 00  00 00 AB 5C  ........PK.........\
+0001EB68   6A 39-24 41  BE 50 5C B0  00 00 5C B0  00-00-1B-00- 00-00 6F 70  j9$A.P\...\.......op
+0001EB7C   65 72 65 74  74 65 2D 68  69 66 69 2D  34 2E 32 62  65 74 61 2D  erette-hifi-4.2beta-
+0001EB90   32 2E 63 6F  64 DE C0 FF  FF 00 00 00  00 00 00 00  00 E0 0E 18  2.cod...............
+
+
+Sample (from Metro.cod) :
+-------------------------
+
+00000000   50 4B 03 04  0A 00 00 00  00 00-A0 00  51 35-BA 9F  99 5D-30 CE  PK..........Q5...]0.
+00000014   00 00-30 CE  00-00-15-00--04-00-4D 65  74 72 6F 56  69 65 77 65  ..0.......MetroViewe
+00000028   72 2E 50 61  72 69 73 2E  63 6F 64 FE  CA 00 00 DE  C0 FF FF 00  r.Paris.cod.........
+0000003C   00 00 00 00  00 00 00 0F  10 34 45 00  00 00 00 00  00 00 00 21  .........4E........!
+
+
+0000CE54   6F 90 02 03  0F 03 A8 0F  03 04 00 02  AA 10 00 00  00 00 00 50  o..................P
+0000CE68   4B 03 04 0A  00 00 00 00  00 A0 00 51  35 7A C4 FE  22-34 B3-00  K..........Q5z.."4..
+0000CE7C   00-34 B3-00--00-17-00-00--00-4D 65 74  72 6F 56 69  65 77 65 72  .4.......MetroViewer
+0000CE90   2E 50 61 72  69 73 2D 31  2E 63 6F 64  DE C0 FF FF  00 00 00 00  .Paris-1.cod........
+0000CEA4   00 00 00 00  0F 10 34 45  00 00 00 00  00 00 00 00  05 00 FF FF  ......4E............
+

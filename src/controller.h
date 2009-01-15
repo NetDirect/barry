@@ -39,6 +39,7 @@ namespace Mode {
 	class Desktop;
 	class IpModem;
 	class Serial;
+	class JavaLoader;
 }
 
 //
@@ -69,6 +70,7 @@ class BXEXPORT Controller
 	friend class Barry::Mode::Desktop;
 	friend class Barry::Mode::IpModem;
 	friend class Barry::Mode::Serial;
+	friend class Barry::Mode::JavaLoader;
 
 public:
 	/// Handheld mode type
@@ -77,7 +79,7 @@ public:
 		Bypass,			//< unsupported, unknown
 		Desktop,		//< desktop mode required for database
 					//< operation
-		JavaLoader,		//< unsupported
+		JavaLoader,		//< experimental
 		UsbSerData,		//< GPRS modem support over USB
 		UsbSerCtrl		//< internally used behind the scenes
 	};

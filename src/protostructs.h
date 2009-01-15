@@ -556,12 +556,15 @@ struct Packet
 #define SB_PACKET_HEADER_SIZE			(sizeof(Barry::Protocol::Packet) - sizeof(Barry::Protocol::Packet::PacketData))
 
 // minimum required sizes for various responses
-#define MIN_PACKET_SIZE		6
+//#define MIN_PACKET_SIZE		6
+// WARNING : For JavaLoader we have some packet with 5 size !
+#define MIN_PACKET_SIZE				5
+#define MIN_PACKET_DATA_SIZE		4
 
 
 // maximum sizes
-#define MAX_PACKET_SIZE		0x400	// anything beyond this needs to be
-					// fragmented
+#define MAX_PACKET_SIZE				0x400	// anything beyond this needs to be fragmented
+#define MAX_PACKET_DATA_SIZE		0x7FF	// for data packet (JavaLoader)
 
 /////////////////////////////////////////////////////////////////////////////
 //
