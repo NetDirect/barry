@@ -59,7 +59,7 @@ private:
 	unsigned char m_session_key[8];		// = { 0x00, 0, 0, 0, 0, 0, 0, 0 };
 
 private:
-	BXLOCAL bool SendPassword(const char *password = 0);
+	BXLOCAL bool SendPassword(const char *password = 0, uint32_t seed = 0);
 
 protected:
 	static void *DataReadThread(void *userptr);

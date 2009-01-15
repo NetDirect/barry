@@ -60,95 +60,78 @@ IpModem::~IpModem()
 	}
 }
 
-bool IpModem::SendPassword(const char *password)
+bool IpModem::SendPassword( const char *password, uint32_t seed )
 {
+	int read_ep  = m_con.GetProbeResult().m_epModem.read;
+	int write_ep = m_con.GetProbeResult().m_epModem.write;
+	unsigned char pwdigest[SHA_DIGEST_LENGTH];
+	unsigned char prefixedhash[SHA_DIGEST_LENGTH + 4];
+	unsigned char pw_response[SHA_DIGEST_LENGTH + 8];
+	uint32_t new_seed;
+	Data data;
+
 	if( !password || strlen(password) == 0  ) {
 		throw BadPassword("No password provided.", 0, false);
 	}
 
-	int read_ep  = m_con.GetProbeResult().m_epModem.read;
-	int write_ep = m_con.GetProbeResult().m_epModem.write;
-	Data data;
+	// Build the password hash
+	// first, hash the password by itself
+	SHA1((unsigned char *) password, strlen(password), pwdigest);
 
-	m_dev.BulkWrite(write_ep, pw_start, sizeof(pw_start));
+	// prefix the resulting hash with the provided seed
+	memcpy(&prefixedhash[0], &seed, sizeof(uint32_t));
+	memcpy(&prefixedhash[4], pwdigest, SHA_DIGEST_LENGTH);
+
+	// hash again
+	SHA1((unsigned char *) prefixedhash, SHA_DIGEST_LENGTH + 4, pwdigest);
+
+	// Build the response packet
+	const char pw_rsphdr[]  = { 0x03, 0x00, 0x00, 0x00 };
+	memcpy(&pw_response[0], pw_rsphdr, sizeof(pw_rsphdr));
+	memcpy(&pw_response[4], pwdigest, SHA_DIGEST_LENGTH);
+	memcpy(&pw_response[24], special_flag, sizeof(special_flag));
+
+	// Send the password response packet
+	m_dev.BulkWrite(write_ep, pw_response, sizeof(pw_response));
 	m_dev.BulkRead(read_ep, data);
-	ddout("IPModem read packet.\n" << data);
+	ddout("IPModem: Read password response.\n" << data);
 
-	// Need to add checks for other packet types.
-	// check for 02 00 00 00 SS SS SS SS RR 00 00 00 0a 00 00 00 PP PP PP PP PP 00 00 00 78 56 34 12
-        if( data.GetSize() >= 9 && data.GetData()[0] == 0x02  &&
-	    memcmp(data.GetData() + data.GetSize() - 4, special_flag, sizeof(special_flag))== 0 ) {
-		// Got a password request packet
-		ddout("IPModem password request packet:\n" << data);
-
-		// Check how many retries are left
-		if( data.GetData()[8] < BARRY_MIN_PASSWORD_TRIES ) {
-			throw BadPassword("Fewer than " BARRY_MIN_PASSWORD_TRIES_ASC " password tries remaining in device. Refusing to proceed, to avoid device zapping itself.  Use a Windows client, or re-cradle the device.",
-				data.GetData()[8],
-				true);
+	// Added for the BB Storm 9000's second password request
+	if( data.GetSize() >= 16 && data.GetData()[0] == 0x00 ) {
+		try {
+			m_dev.BulkRead(read_ep, data, 500);
+			ddout("IPModem: Null Response Packet:\n" << data);
 		}
+		catch( Usb::Timeout &to ) {
+			// do nothing on timeouts
+			ddout("IPModem: Null Response Timeout");
+		}
+	}
 
-		// Build the password hash
-		unsigned char pwdigest[SHA_DIGEST_LENGTH];
-		unsigned char prefixedhash[SHA_DIGEST_LENGTH + 4];
-		unsigned char pw_response[SHA_DIGEST_LENGTH + 8];
-		unsigned char seed[4];
-
-		// first, hash the password by itself
-		SHA1((unsigned char *) password, strlen(password), pwdigest);
-
-		// prefix the resulting hash with the provided seed
-		memcpy(&seed[0], data.GetData() + 4, sizeof(uint32_t));
-		memcpy(&prefixedhash[0], &seed, sizeof(uint32_t));
-		memcpy(&prefixedhash[4], pwdigest, SHA_DIGEST_LENGTH);
-
-		// hash again
-		SHA1((unsigned char *) prefixedhash, SHA_DIGEST_LENGTH + 4, pwdigest);
-
-		// Build the response packet
-		const char pw_rsphdr[]  = { 0x03, 0x00, 0x00, 0x00 };
-		memcpy(&pw_response[0], pw_rsphdr, sizeof(pw_rsphdr));
-		memcpy(&pw_response[4], pwdigest, SHA_DIGEST_LENGTH);
-		memcpy(&pw_response[24], special_flag, sizeof(special_flag));
-
-		// Send the password response packet
-		m_dev.BulkWrite(write_ep, pw_response, sizeof(pw_response));
-		m_dev.BulkRead(read_ep, data);
-		ddout("IPModem read password response.\n" << data);
-
-		// check response 04 00 00 00 .......
-		// On the 8703e the seed is incremented, retries are reset to 10 when the password is accepted.
-		// if( data.GetData()[0] == 0x04  && data.GetData()[8] == 0x0a ) {
-                if( data.GetSize() >= 9 && data.GetData()[0] == 0x04 ) {
-			if( memcmp(data.GetData() + 4, seed, sizeof(seed)) == 0 ) {
-				ddout("IPModem invalid password.\n" << data);
-				throw BadPassword("Password rejected by device.", data.GetData()[8], false);
-			}
-			ddout("IPModem password accepted.\n");
-			// send "start"? packet
-			m_dev.BulkWrite(write_ep, pw_start, sizeof(pw_start));
-
-			// send packet with the last 8 bytes of the password hash (session_key?)
-			//unsigned char pw_response[SHA_DIGEST_LENGTH + 8];
-			unsigned char pw_rsphdr[] = { 0x00, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0xc2, 1, 0 };
+	// check response 04 00 00 00 .......
+	// On the 8703e the seed is incremented, retries are reset to 10 when the password is accepted.
+	// If data.GetData() + 4 is = to the orginal seed +1 or 00 00 00 00 then the password was acceppted.
+	// When data.GetData() + 4 is not 00 00 00 00 then data.GetData()[8] contains the number of password retrys left.
+	if( data.GetSize() >= 9 && data.GetData()[0] == 0x04 ) {
+		memcpy(&new_seed, data.GetData() + 4, sizeof(uint32_t));
+		seed++;
+		if( seed == new_seed || new_seed == 0 ) {
+			ddout("IPModem: Password accepted.\n");
+			// Create session key - last 8 bytes of the password hash
 			memcpy(&m_session_key[0], pwdigest + 12, sizeof(m_session_key));
-			memcpy(&pw_response[0], pw_rsphdr, sizeof(pw_rsphdr));
-			memcpy(&pw_response[16], pwdigest + 12, 8);
-			//memcpy(&pw_response[16], m_session_key, 8);
-			memcpy(&pw_response[24], special_flag, sizeof(special_flag));
-			m_dev.BulkWrite(write_ep, pw_response, sizeof(pw_response));
 
 			// blank password hashes as we don't need these anymore
 			memset(pwdigest, 0, sizeof(pwdigest));
 			memset(prefixedhash, 0, sizeof(prefixedhash));
-
-			// The modem should be ready to accept AT commands
 			return true;
 		}
-
-		// Unknown packet
-		ddout("IPModem Error unknown packet.\n" << data);
+		else {
+			ddout("IPModem: Invalid password.\n" << data);
+			throw BadPassword("Password rejected by device.", data.GetData()[8], false);
+		}
 	}
+	// Unknown packet
+	ddout("IPModem: Error unknown packet.\n" << data);
 	return false;
 }
 
@@ -172,7 +155,7 @@ void *IpModem::DataReadThread(void *userptr)
 			if( data.GetSize() > 4 &&
 			    memcmp(data.GetData() + data.GetSize() - 4, special_flag, sizeof(special_flag)) == 0 ) {
 				// log, then drop it on the floor for now
-				ddout("IPModem special packet:\n" << data);
+				ddout("IPModem: Special packet:\n" << data);
 				continue;
 			}
 
@@ -190,7 +173,7 @@ void *IpModem::DataReadThread(void *userptr)
 		}
 		catch( Usb::Timeout &to ) {
 			// do nothing on timeouts
-			ddout("Timeout in DataReadThread!");
+			ddout("IPModem: Timeout in DataReadThread!");
 		}
 		catch( std::exception &e ) {
 			eout("Exception in IpModem::DataReadThread: " << e.what());
@@ -207,7 +190,10 @@ void IpModem::Open(const char *password)
 {
 	int read_ep  = m_con.GetProbeResult().m_epModem.read;
 	int write_ep = m_con.GetProbeResult().m_epModem.write;
+	unsigned char response[28];
+	uint32_t seed;
 	Data data;
+
 	// check that we have endpoints for the modem
 	const Usb::EndpointPair &pair = m_con.GetProbeResult().m_epModem;
 	if( !pair.IsComplete() ) {
@@ -224,28 +210,110 @@ void IpModem::Open(const char *password)
 	m_dev.ClearHalt(pair.read);
 	m_dev.ClearHalt(pair.write);
 
-	if( !password || strlen(password) == 0 ) {
-		Data block(start, sizeof(start));
-		Write(block);
+	// Send stop command
+	ddout("IPModem: Sending Stop Response:\n");
+	m_dev.BulkWrite(write_ep, stop, sizeof(stop));
+	try {
+		m_dev.BulkRead(read_ep, data, 500);
+		ddout("IPModem: Stop Response Packet:\n" << data);
 	}
-	else {
-		if( !SendPassword(password) ) {
-			throw Barry::Error("IpModem:: Error sending password.");
+	catch( Usb::Timeout &to ) {
+		// do nothing on timeouts
+		ddout("IPModem: Stop Response Timeout");
+	}
+
+	// Send start commands to figure out if the device needs a password.
+	ddout("IPModem: Sending Start Response:\n");
+	m_dev.BulkWrite(write_ep, pw_start, sizeof(pw_start));
+	m_dev.BulkRead(read_ep, data, 5000);
+	ddout("IPModem: Start Response Packet:\n" << data);
+
+	// check for 02 00 00 00 SS SS SS SS RR 00 00 00 0a 00 00 00 PP PP PP PP PP 00 00 00 78 56 34 12
+        if( data.GetSize() >= 9 && data.GetData()[0] == 0x02  &&
+	    memcmp(data.GetData() + data.GetSize() - 4, special_flag, sizeof(special_flag))== 0 ) {
+		// Got a password request packet
+		ddout("IPModem: Password request packet:\n" << data);
+
+		// Check how many retries are left
+		if( data.GetData()[8] < BARRY_MIN_PASSWORD_TRIES ) {
+			throw BadPassword("Fewer than " BARRY_MIN_PASSWORD_TRIES_ASC " password tries remaining in device. Refusing to proceed, to avoid device zapping itself.  Use a Windows client, or re-cradle the device.",
+				data.GetData()[8],
+				true);
 		}
+		memcpy(&seed, data.GetData() + 4, sizeof(uint32_t));
+		// Send password
+		if( !SendPassword(password, seed) ) {
+			throw Barry::Error("IpModem: Error sending password.");
+		}
+
+		// Re-send "start" packet
+		ddout("IPModem: Re-sending Start Response:\n");
+		m_dev.BulkWrite(write_ep, pw_start, sizeof(pw_start));
+		m_dev.BulkRead(read_ep, data);
+		ddout("IPModem: Start Response Packet:\n" << data);
+
+		// send packet with the session_key
+		unsigned char response_header[] = { 0x00, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0xc2, 1, 0 };
+		memcpy(&response[0], response_header, sizeof(response_header));
+		memcpy(&response[16], m_session_key,  sizeof(m_session_key));
+		memcpy(&response[24], special_flag, sizeof(special_flag));
+		ddout("IPModem: Sending Session key:\n");
+		m_dev.BulkWrite(write_ep, response, sizeof(response));
+		if( data.GetSize() >= 16 ) {
+			switch(data.GetData()[0])
+			{
+			case 0x00:	// Null packet
+				break;
+
+			case 0x02:	// password seed received
+				memcpy(&seed, data.GetData() + 4, sizeof(uint32_t));
+				if( !SendPassword( password, seed ) ) {
+					throw Barry::Error("IpModem: Error sending password.");
+				}
+				break;
+			case 0x04:	// command accepted
+				break;
+
+			default: 	// ???
+				ddout("IPModem: Unknown response.\n");
+				break;
+			}
+		}
+
 	}
 
 	// see if the modem will respond to commands
 	const char modem_command[] = { "AT\r" };
+	//ddout("IPModem: Test command response.\n" << data);
 	m_dev.BulkWrite(write_ep, modem_command, strlen(modem_command));
 	m_dev.BulkRead(read_ep, data);
-	ddout("IPModem:: AT command response.\n" << data);
+	ddout("IPModem: Test command response.\n" << data);
 	if( data.GetSize() >= 1 ) {
 		switch(data.GetData()[0])
 		{
-		case 0x02:	// password seed received
-			throw BadPassword("This device requested a password.",
-				data.GetSize() >= 9 ? data.GetData()[8] : 0, false);
+		case 0x00:	// Null packet
+			try {
+				m_dev.BulkRead(read_ep, data, 5000);
+				ddout("IPModem: AT Response Packet:\n" << data);
+			}
+			catch( Usb::Timeout &to ) {
+				// do nothing on timeouts
+				ddout("IPModem: AT Response Timeout");
+			}
+			break;
 
+		case 0x02:	// password seed received
+			if( !password || strlen(password) == 0 ) {
+				throw BadPassword("This device requested a password.",
+					data.GetSize() >= 9 ? data.GetData()[8] : 0, false);
+			}
+			else {	// added for the Storm 9000
+				memcpy(&seed, data.GetData() + 4, sizeof(uint32_t));
+				if( !SendPassword( password, seed ) ) {
+					throw Barry::Error("IpModem: Error sending password.");
+				}
+			}
+			break;
 		case 0x04:	// command accepted
 			break;
 
@@ -253,17 +321,18 @@ void IpModem::Open(const char *password)
 			throw BadPassword("This device requires a password.", 0, false);
 
 		default: 	// ???
-			ddout("IPModem:: unknown AT command response.\n");
+			ddout("IPModem: Unknown AT command response.\n");
 			break;
 		}
 	}
+	ddout("IPModem: Modem Ready.\n");
 
 	// spawn read thread
 	m_continue_reading = true;
 	int ret = pthread_create(&m_modem_read_thread, NULL, &IpModem::DataReadThread, this);
 	if( ret ) {
 		m_continue_reading = false;
-		throw Barry::ErrnoError("IpModem:: Error creating USB read thread.", ret);
+		throw Barry::ErrnoError("IpModem: Error creating USB read thread.", ret);
 	}
 }
 
@@ -293,7 +362,7 @@ void IpModem::Close()
 	Data data;
 
 	//0 0 0 0 b0 0 0 0 0 0 0 0 0 c2 1 0 + session_key + special_flag
-	ddout("IpModem:: Closing connection.");
+	ddout("IpModem: Closing connection.");
 	memset(end, 0, sizeof(end));
 	end[4]  = 0xb0;
 	end[13] = 0xc2;
@@ -324,18 +393,18 @@ void IpModem::Close()
 	m_dev.BulkWrite(write_ep, stop, sizeof(stop));
 	try {
 		m_dev.BulkRead(read_ep, data, 5000);
-		ddout("IPModem:: Close read packet:\n" << data);
+		ddout("IPModem: Close read packet:\n" << data);
 	}
 	catch( Usb::Timeout &to ) {
 		// do nothing on timeouts
-		ddout("IPModem:: Close Read Timeout");
+		ddout("IPModem: Close Read Timeout");
 	}
 	// stop the read thread
 	if( m_continue_reading ) {
 		m_continue_reading = false;
 		pthread_join(m_modem_read_thread, NULL);
 	}
-	ddout("IPmodem:: Closed!");
+	ddout("IPmodem: Closed!");
 
 }
 
