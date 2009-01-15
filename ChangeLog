@@ -63,6 +63,7 @@ Release: version 0.15 - 2009/01/??
 		and I don't think that byte is actually a command, but
 		really part of the uint32_t size
 		- Also fixed one remaining 0 command, to use PacketData()
+	- applied Andy Herkey's ipmodem password patch for the Bold
 2009/01/09
 	- added AT+CLAC note to contrib/modemtest.rb, recording tidbit
 		from mailing list
