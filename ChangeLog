@@ -42,6 +42,15 @@ Release: version 0.15 - 2009/01/??
 			of just one (each default Data object uses 0x4000
 			bytes of heap)
 		- removed manual endian swap in favour of htobl()
+			- oops... this size field is actually big endian.
+			  Since all Barry code assumes that Blackberry
+			  protocol traffic is little endian, a special
+			  case needs to be added in m_javaloader.cc for
+			  this field.  The special case uses autoconf's
+			  endian define.
+			- fixed long long problem in endian.h (ISO C++
+			  compilers don't support long long) and made
+			  the bswap() functions always available
 		- removed unused CommandType and m_commandTable members
 		- fixed exception error messages to indicate command #
 			instead of Desktop message
