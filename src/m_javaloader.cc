@@ -172,7 +172,7 @@ void JavaLoader::StartStream()
 	Data command3(rawCommand3, sizeof(rawCommand3));
 
 	try {
-		m_socket->Packet(command3, response);
+		m_socket->PacketData(command3, response);
 	}
 	catch( Usb::Error & ) {
 		eout("JavaLoader: command3 error");

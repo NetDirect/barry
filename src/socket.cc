@@ -778,8 +778,7 @@ void Socket::Packet(Data &send, Data &receive, int timeout)
 		 spack->command != SB_COMMAND_JL_UNKOWN3 &&
 		 spack->command != SB_COMMAND_JL_UNKOWN4 &&
 		 spack->command != SB_COMMAND_JL_UNKOWN5 &&
-		 spack->command != SB_COMMAND_JL_UNKOWN6 &&
-		 spack->command != SB_COMMAND_JL_UNKOWN7))
+		 spack->command != SB_COMMAND_JL_UNKOWN6))
 	{
 		// we don't do that around here
 		eout("unknown send data in Packet(): " << send);

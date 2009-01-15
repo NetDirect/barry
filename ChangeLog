@@ -58,6 +58,11 @@ Release: version 0.15 - 2009/01/??
 			file size, since there is no command
 	- added eout() data dump to socket::Packet() unknown send error
 	- fixed my incorrect off_t/size_t check in bjavaloader.cc
+	- removed the '0' JL_UNKNOWN4 command from src/protocol.h,
+		since the PacketData() change above now handles that,
+		and I don't think that byte is actually a command, but
+		really part of the uint32_t size
+		- Also fixed one remaining 0 command, to use PacketData()
 2009/01/09
 	- added AT+CLAC note to contrib/modemtest.rb, recording tidbit
 		from mailing list
