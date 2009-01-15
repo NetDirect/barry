@@ -45,6 +45,7 @@ Release: version 0.15 - 2009/01/??
 		- removed unused CommandType and m_commandTable members
 		- fixed exception error messages to indicate command #
 			instead of Desktop message
+	- added eout() data dump to socket::Packet() unknown send error
 2009/01/09
 	- added AT+CLAC note to contrib/modemtest.rb, recording tidbit
 		from mailing list

@@ -782,6 +782,7 @@ void Socket::Packet(Data &send, Data &receive, int timeout)
 		 spack->command != SB_COMMAND_JL_UNKOWN7))
 	{
 		// we don't do that around here
+		eout("unknown send data in Packet(): " << send);
 		throw std::logic_error("Socket: unknown send data in Packet()");
 	}
 // End -- I comment the code. Indeed, for JavaLoader we have new unknown command...
