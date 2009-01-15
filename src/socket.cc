@@ -727,7 +727,7 @@ void Socket::PacketData(Data &send, Data &receive, int timeout)
 
 			default: {
 				std::ostringstream oss;
-				oss << "Socket: (b) unhandled packet in PacketData() (read): 0x" << std::hex << (unsigned int)rpack->command;
+				oss << "Socket: (read) unhandled packet in PacketData(): 0x" << std::hex << (unsigned int)rpack->command;
 				eout(oss.str());
 				throw Error(oss.str());
 				}
