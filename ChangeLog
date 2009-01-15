@@ -16,6 +16,25 @@ Release: version 0.15 - 2009/01/??
 		- added NetDirect copyright notice to bjavaloader.cc, since
 			it is based on btool.cc
 		- removed unused boost-specific code from bjavaloader.cc
+	- more fixes to above patch: (bjavaloader.cc specifically)
+		- moved cod.h back to installable headers, since tools/
+			programs depend on it... this should be fixed
+			or put in the library as a COD-reading API
+			so that applications don't need to worry about
+			packed files, etc.
+		- fixed potential buffer overflow: removed buffer read used
+			to skip ahead in file, and replaced with fseek()
+		- changed SendAppFile() to report errors by exception
+			instead of by return value, which wasn't checked
+			anyway... and C++'d the file handle closing
+		- removed unused StateTableCommand, leftover from btool
+		- added check for unlikely case of COD file being larger
+			than size_t, breaking the fread() assumption
+			for the type == 0xC0DE case
+		- added checks for fread() failures
+		- fixed compiler warnings when comparing signed/unsigned,
+			and changed file operation types from plain int
+			to size_t/off_t
 2009/01/09
 	- added AT+CLAC note to contrib/modemtest.rb, recording tidbit
 		from mailing list

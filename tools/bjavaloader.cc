@@ -74,17 +74,6 @@ void Usage()
 }
 
 
-struct StateTableCommand
-{
-	char flag;
-	bool clear;
-	unsigned int index;
-
-	StateTableCommand(char f, bool c, unsigned int i)
-		: flag(f), clear(c), index(i) {}
-};
-
-
 bool ParseEpOverride(const char *arg, Usb::EndpointPair *epp)
 {
 	int read, write;
@@ -98,34 +87,50 @@ bool ParseEpOverride(const char *arg, Usb::EndpointPair *epp)
 	return true;
 }
 
+class AutoClose
+{
+	FILE *fp;
 
-int SendAppFile(Barry::Mode::JavaLoader *javaloader, const char *filename)
+public:
+	AutoClose(FILE *fh) : fp(fh) {}
+	~AutoClose()
+	{
+		fclose(fp);
+	}
+};
+
+void SendAppFile(Barry::Mode::JavaLoader *javaloader, const char *filename)
 {
 	FILE *fp;
 
 	char *data = NULL;
-	char buffer[255];
 
 	codfile_header_t header;
 
-	int n;
-	int skip;
-	int filesize;
+	size_t n;
+	size_t skip;
+	off_t filesize;
 	struct stat sb;
-	
+
 
 	// Get file size
-	if (stat(filename, &sb) == -1)
-		return 1;
+	if (stat(filename, &sb) == -1) {
+		throw runtime_error(string("Can't stat: ") + filename);
+	}
 
 	filesize = sb.st_size;
-
+	if( filesize > (off_t)((size_t)-1) ) {
+		throw runtime_error("Filesize larger than max fread()... contact Barry developers.");
+	}
 
 	// Open file
 	fp = fopen(filename, "rb");
 
-	if (fp == NULL)
-		return -1;
+	if (fp == NULL) {
+		throw runtime_error(string("Can't open: ") + filename);
+	}
+
+	AutoClose ac(fp);
 
 	// Start
 	javaloader->StartStream();
@@ -139,16 +144,23 @@ int SendAppFile(Barry::Mode::JavaLoader *javaloader, const char *filename)
 	
 		// Is a COD file packed (a big COD file) ?
 		if (header.type == 0x4B50) {
-			skip = header.strsize + header.strfree;
-
-			fread(buffer, sizeof(char), skip, fp);
-
 			if (header.size1 != header.size2)
 				continue;
-		
+
+			skip = header.strsize + header.strfree;
+
+			if( fseek(fp, skip, SEEK_CUR) != 0 ) {
+				throw runtime_error("Can't skip COD header");
+			}
+
+			// this is a one-time program, so allocate and
+			// don't worry about freeing
 			data = (char *) realloc(data, header.size1 * sizeof(char));
 
-			fread(data, sizeof(char), header.size1, fp);
+			n = fread(data, sizeof(char), header.size1, fp);
+			if( n != header.size1 ) {
+				throw runtime_error("Can't read packed COD header");
+			}
 
 			javaloader->SendStream(data, (int) header.size1);
 		}
@@ -158,8 +170,11 @@ int SendAppFile(Barry::Mode::JavaLoader *javaloader, const char *filename)
 
 			data = (char *) malloc(filesize * sizeof(char));
 
-			fread(data, sizeof(char), filesize, fp);
-			
+			n = fread(data, sizeof(char), filesize, fp);
+			if( (off_t) n != filesize ) {
+				throw runtime_error("Can't read COD data");
+			}
+
 			// Open stream
 			javaloader->SendStream(data, filesize);
 		}
@@ -167,10 +182,6 @@ int SendAppFile(Barry::Mode::JavaLoader *javaloader, const char *filename)
 
 	// Stop
 	javaloader->StopStream();
-
-	fclose(fp);
-
-	return 0;
 }
 
 
@@ -192,7 +203,6 @@ int main(int argc, char *argv[])
 		string busname;
 		string devname;
 		string iconvCharset;
-		vector<StateTableCommand> stCommands;
 		Usb::EndpointPair epOverride;
 
 		// process command line options
