@@ -1,5 +1,15 @@
 Release: version 0.15 - 2009/01/??
 ------------------------------------------------------------------------------
+2009/01/15
+	- applied Andy Herkey's ipmodem password patch for the Bold
+	- minor fixes to above patch, and in addition to above patch:
+		- use sizeof(seed), instead of type, in case of future changes
+		- removed commented out code
+		- added the null password check back to SendPassword(),
+		  for historical reasons
+		- removed the null and zero default arguments to
+		  SendPassword(), since they make no sense
+		- added define for session key size, and added size check
 2009/01/14
 	- applied Nicolas Vivien's bjavaloader patch
 	- small fixups to above patch:
@@ -63,7 +73,6 @@ Release: version 0.15 - 2009/01/??
 		and I don't think that byte is actually a command, but
 		really part of the uint32_t size
 		- Also fixed one remaining 0 command, to use PacketData()
-	- applied Andy Herkey's ipmodem password patch for the Bold
 2009/01/09
 	- added AT+CLAC note to contrib/modemtest.rb, recording tidbit
 		from mailing list

@@ -62,6 +62,10 @@ IpModem::~IpModem()
 
 bool IpModem::SendPassword( const char *password, uint32_t seed )
 {
+	if( !password || strlen(password) == 0  ) {
+		throw BadPassword("Logic error: No password provided in SendPassword.", 0, false);
+	}
+
 	int read_ep  = m_con.GetProbeResult().m_epModem.read;
 	int write_ep = m_con.GetProbeResult().m_epModem.write;
 	unsigned char pwdigest[SHA_DIGEST_LENGTH];
@@ -108,17 +112,30 @@ bool IpModem::SendPassword( const char *password, uint32_t seed )
 		}
 	}
 
+	//
 	// check response 04 00 00 00 .......
-	// On the 8703e the seed is incremented, retries are reset to 10 when the password is accepted.
-	// If data.GetData() + 4 is = to the orginal seed +1 or 00 00 00 00 then the password was acceppted.
-	// When data.GetData() + 4 is not 00 00 00 00 then data.GetData()[8] contains the number of password retrys left.
+	// On the 8703e the seed is incremented, retries are reset to 10
+	// when the password is accepted.
+	//
+	// If data.GetData() + 4 is = to the orginal seed +1 or 00 00 00 00
+	// then the password was acceppted.
+	//
+	// When data.GetData() + 4 is not 00 00 00 00 then data.GetData()[8]
+	// contains the number of password retrys left.
+	//
 	if( data.GetSize() >= 9 && data.GetData()[0] == 0x04 ) {
 		memcpy(&new_seed, data.GetData() + 4, sizeof(uint32_t));
 		seed++;
 		if( seed == new_seed || new_seed == 0 ) {
 			ddout("IPModem: Password accepted.\n");
+
+#if SHA_DIGEST_LENGTH < SB_IPMODEM_SESSION_KEY_LENGTH
+#error Session key field must be smaller than SHA digest
+#endif
 			// Create session key - last 8 bytes of the password hash
-			memcpy(&m_session_key[0], pwdigest + 12, sizeof(m_session_key));
+			memcpy(&m_session_key[0],
+				pwdigest + SHA_DIGEST_LENGTH - sizeof(m_session_key),
+				sizeof(m_session_key));
 
 			// blank password hashes as we don't need these anymore
 			memset(pwdigest, 0, sizeof(pwdigest));
@@ -240,7 +257,7 @@ void IpModem::Open(const char *password)
 				data.GetData()[8],
 				true);
 		}
-		memcpy(&seed, data.GetData() + 4, sizeof(uint32_t));
+		memcpy(&seed, data.GetData() + 4, sizeof(seed));
 		// Send password
 		if( !SendPassword(password, seed) ) {
 			throw Barry::Error("IpModem: Error sending password.");
@@ -284,7 +301,6 @@ void IpModem::Open(const char *password)
 
 	// see if the modem will respond to commands
 	const char modem_command[] = { "AT\r" };
-	//ddout("IPModem: Test command response.\n" << data);
 	m_dev.BulkWrite(write_ep, modem_command, strlen(modem_command));
 	m_dev.BulkRead(read_ep, data);
 	ddout("IPModem: Test command response.\n" << data);
@@ -308,7 +324,7 @@ void IpModem::Open(const char *password)
 					data.GetSize() >= 9 ? data.GetData()[8] : 0, false);
 			}
 			else {	// added for the Storm 9000
-				memcpy(&seed, data.GetData() + 4, sizeof(uint32_t));
+				memcpy(&seed, data.GetData() + 4, sizeof(seed));
 				if( !SendPassword( password, seed ) ) {
 					throw Barry::Error("IpModem: Error sending password.");
 				}

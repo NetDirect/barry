@@ -30,6 +30,8 @@
 #include "pppfilter.h"
 #include <pthread.h>
 
+#define SB_IPMODEM_SESSION_KEY_LENGTH 8
+
 namespace Barry {
 
 // forward declarations
@@ -56,10 +58,10 @@ private:
 	DeviceDataCallback m_callback;
 	void *m_callback_context;
 
-	unsigned char m_session_key[8];		// = { 0x00, 0, 0, 0, 0, 0, 0, 0 };
+	unsigned char m_session_key[SB_IPMODEM_SESSION_KEY_LENGTH]; // = { 0x00, 0, 0, 0, 0, 0, 0, 0 };
 
 private:
-	BXLOCAL bool SendPassword(const char *password = 0, uint32_t seed = 0);
+	BXLOCAL bool SendPassword(const char *password, uint32_t seed);
 
 protected:
 	static void *DataReadThread(void *userptr);
