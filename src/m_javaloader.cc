@@ -245,7 +245,7 @@ void JavaLoader::SendStream(char *buffer, int buffsize)
 	Data command5(rawCommand5, sizeof(rawCommand5));
 
 	try {
-		m_socket->Packet(command5, response);
+		m_socket->PacketData(command5, response);
 	}
 	catch( Usb::Error & ) {
 		eout("JavaLoader: command5 error");
