@@ -33,6 +33,7 @@
 #include "controller.h"
 #include <stdexcept>
 #include <sstream>
+#include <string.h>
 
 #include "debug.h"
 

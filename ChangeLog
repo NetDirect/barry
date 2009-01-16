@@ -10,6 +10,7 @@ Release: version 0.15 - 2009/01/??
 		- removed the null and zero default arguments to
 		  SendPassword(), since they make no sense
 		- added define for session key size, and added size check
+	- added missing string.h header to src/m_javaloader.cc
 2009/01/14
 	- applied Nicolas Vivien's bjavaloader patch
 	- small fixups to above patch:
