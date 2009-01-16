@@ -3,6 +3,7 @@ Release: version 0.15 - 2009/01/??
 2009/01/16
 	- made maintainer script make-deb-local.sh more robust
 	- added list of target binary packages in ReleaseChecklist.txt
+	- changed to more general Fedora link to Chris Stover's packages
 2009/01/15
 	- applied Andy Herkey's ipmodem password patch for the Bold
 	- minor fixes to above patch, and in addition to above patch:
