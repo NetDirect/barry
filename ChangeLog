@@ -11,6 +11,7 @@ Release: version 0.15 - 2009/01/??
 		  SendPassword(), since they make no sense
 		- added define for session key size, and added size check
 	- added missing string.h header to src/m_javaloader.cc
+	- updated Debian and RPM packages to include bjavaloader
 2009/01/14
 	- applied Nicolas Vivien's bjavaloader patch
 	- small fixups to above patch:

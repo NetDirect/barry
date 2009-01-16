@@ -203,6 +203,7 @@ cd ../
 %attr(0755,root,root) %{_sbindir}/breset
 %attr(0755,root,root) %{_sbindir}/pppob
 %attr(0755,root,root) %{_bindir}/btool
+%attr(0755,root,root) %{_bindir}/bjavaloader
 %attr(0755,root,root) %{_bindir}/bs11nread
 %attr(0755,root,root) %{_bindir}/bidentify
 %attr(0755,root,root) %{_bindir}/brecsum
@@ -264,9 +265,10 @@ cd ../
 /sbin/ldconfig
 
 %changelog
-* Fri Oct 31 2008 Chris Frey <cdfrey@foursquare.net> 0.15-0
+* Thu Jan 15 2009 Chris Frey <cdfrey@foursquare.net> 0.15-0
 - version bump
 - added HAL FDI scripts
+- added bjavaloader
 
 * Wed Sep 24 2008 Chris Frey <cdfrey@foursquare.net> 0.14-0
 - version bump
