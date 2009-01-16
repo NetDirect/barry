@@ -24,9 +24,15 @@ set -e
 
 # Build package in /usr/src so that the dbg packages refer to the source
 # code in a user-friendly place.
+
+# start clean
+rm -rf "/usr/src/barry-$MAJOR.$MINOR"
+
 tar -C /usr/src -xjvf "$TARPATH"
 (cd "/usr/src/barry-$MAJOR.$MINOR" && fakeroot -- debian/rules binary)
-mkdir "build/$TARGET"
+mkdir -p "build/$TARGET"
 mv /usr/src/*barry*deb "build/$TARGET"
+
+# end clean
 rm -rf "/usr/src/barry-$MAJOR.$MINOR"
 
