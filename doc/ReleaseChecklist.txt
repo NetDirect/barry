@@ -25,6 +25,10 @@ Barry Release Checklist:
 - run maintainer/tagged-release.sh
 - manually push tags to repo.or.cz
 - upload packages to SourceForge
+	- Ubuntu: 7.10, 8.04, 8.10
+	- Fedora: 8, 9, 10
+	- Debian: stable (etch)
+	- openSUSE: 10.1, (11.1??)
 - update OpenSUSE Build Service with release tarballs
 - submit tracker news item at SourceForge
 - send announcement to devel and announce mailing list, including:
