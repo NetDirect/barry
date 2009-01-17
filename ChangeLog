@@ -2,6 +2,11 @@ Release: version 0.15 - 2009/01/??
 ------------------------------------------------------------------------------
 2009/01/17
 	- refactored pthread timeout creation into ThreadTimeout() function
+	- added experimental handshaking to IpModem.  This is in response
+		to Bill Paul's email regarding what he was seeing in the
+		logs with the special code packets which we dropped
+		on the floor.  This code is to test whether this handshaking
+		theory is true.
 2009/01/16
 	- made maintainer script make-deb-local.sh more robust
 	- added list of target binary packages in ReleaseChecklist.txt

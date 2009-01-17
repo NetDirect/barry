@@ -24,9 +24,13 @@
 #include "controller.h"
 #include "data.h"
 #include "debug.h"
+#include "time.h"
+#include "scoped_lock.h"
 #include <sstream>
 #include <string.h>
 #include "sha1.h"
+
+#define SB_IPMODEM_WRITE_TIMEOUT 1000
 
 namespace Barry { namespace Mode {
 
@@ -40,14 +44,20 @@ const char stop[] 	  = { 0x01, 0, 0, 0, 0, 0, 0, 0, 0x78, 0x56, 0x34, 0x12 };
 
 IpModem::IpModem(Controller &con,
 		DeviceDataCallback callback,
-		void *callback_context)
+		void *callback_context,
+		bool wait_for_special_code)
 	: m_con(con)
 	, m_dev(con.m_dev)
+	, m_wait_for_special_code(wait_for_special_code)
 	, m_continue_reading(false)
+	, m_special_code_seen(false)
 	, m_callback(callback)
 	, m_callback_context(callback_context)
 {
 	memset(m_session_key, 0, sizeof(m_session_key));
+
+	pthread_mutex_init(&m_special_code_mutex, NULL);
+	pthread_cond_init(&m_special_code_cond, NULL);
 }
 
 IpModem::~IpModem()
@@ -173,6 +183,14 @@ void *IpModem::DataReadThread(void *userptr)
 			    memcmp(data.GetData() + data.GetSize() - 4, special_flag, sizeof(special_flag)) == 0 ) {
 				// log, then drop it on the floor for now
 				ddout("IPModem: Special packet:\n" << data);
+
+				// signal that we've seen the latest code
+				{
+					scoped_lock lock(ipmodem->m_special_code_mutex);
+					ipmodem->m_special_code_seen = true;
+				}
+
+				pthread_cond_signal(&ipmodem->m_special_code_cond);
 				continue;
 			}
 
@@ -356,6 +374,21 @@ void IpModem::Write(const Data &data, int timeout)
 {
 	if( data.GetSize() == 0 )
 		return;	// nothing to do
+
+	if( m_wait_for_special_code ) {
+		scoped_lock wait(m_special_code_mutex);
+		if( !m_special_code_seen ) {
+			// wait for new code to come in first, signalling
+			// that the device is ready for new data
+			struct timespec to;
+			pthread_cond_timedwait(&m_special_code_cond,
+				&m_special_code_mutex,
+				ThreadTimeout(SB_IPMODEM_WRITE_TIMEOUT, &to));
+		}
+
+		// we assume it is now safe to write
+		m_special_code_seen = false;
+	}
 
 	// according to Rick Scott the m_filter is not needed with the ip modem
 	// but with the 8320 with Rogers, it doesn't seem to connect without it

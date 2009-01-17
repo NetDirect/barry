@@ -51,6 +51,7 @@ void Usage()
    << "        Copyright 2007-2009, Net Direct Inc. (http://www.netdirect.ca/)\n"
    << "        Using: " << Version << "\n"
    << "\n"
+   << "   -c        Enable logic to wait for special codes before writing PPP data\n"
    << "   -l file   Direct pppob log output to file (useful with -v)\n"
    << "   -p pin    PIN of device to talk with\n"
    << "             If only one device plugged in, this flag is optional\n"
@@ -133,18 +134,23 @@ int main(int argc, char *argv[])
 	try {
 
 		uint32_t pin = 0;
-		bool force_serial = false;
+		bool	force_serial = false,
+			code_wait = false;
 		std::string logfile;
 		std::string password;
 
 		// process command line options
 		for(;;) {
-			int cmd = getopt(argc, argv, "l:p:P:sv");
+			int cmd = getopt(argc, argv, "cl:p:P:sv");
 			if( cmd == -1 )
 				break;
 
 			switch( cmd )
 			{
+			case 'c':	// Code wait
+				code_wait = true;
+				break;
+
 			case 'l':	// Verbose log file
 				logfile = optarg;
 				break;
@@ -207,7 +213,7 @@ int main(int argc, char *argv[])
 
 			// Open serial mode... the callback handles reading from
 			// USB and writing to stdout
-			Mode::IpModem modem(con, SerialDataCallback, 0);
+			Mode::IpModem modem(con, SerialDataCallback, 0, code_wait);
 			modem.Open(password.c_str());
 
 			ProcessStdin(modem);
