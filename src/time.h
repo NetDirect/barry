@@ -25,6 +25,7 @@
 #define __BARRY_TIME_H__
 
 #include "dll.h"
+#include <sys/time.h>		// for struct timespec
 #include <time.h>
 #include <stdint.h>
 
@@ -73,6 +74,9 @@ BXEXPORT unsigned short GetTimeZoneCode(signed short HourOffset,
 // Message time conversion stuff
 BXEXPORT time_t DayToDate( unsigned short Day );
 BXEXPORT time_t Message2Time(uint16_t r_date, uint16_t r_time);
+
+// Thread timeout creation
+BXEXPORT struct timespec* ThreadTimeout(int timeout_ms, struct timespec *spec);
 
 } // namespace Barry
 

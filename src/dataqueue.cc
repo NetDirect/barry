@@ -22,8 +22,7 @@
 #include "dataqueue.h"
 #include "scoped_lock.h"
 #include "data.h"
-#include <sys/time.h>
-#include <time.h>
+#include "time.h"
 
 namespace Barry {
 
@@ -145,15 +144,10 @@ Data* DataQueue::wait_pop(int timeout)
 	}
 	else {
 		// timeout in conditional wait
-		struct timeval now;
 		struct timespec to;
-
-		gettimeofday(&now, NULL);
-		to.tv_sec = now.tv_sec + timeout / 1000;
-		to.tv_nsec = (now.tv_usec + timeout % 1000 * 1000) * 1000;
-
 		scoped_lock wait(m_waitMutex);
-		pthread_cond_timedwait(&m_waitCond, &m_waitMutex, &to);
+		pthread_cond_timedwait(&m_waitCond, &m_waitMutex,
+			ThreadTimeout(timeout, &to));
 	}
 
 	scoped_lock access(m_accessMutex);

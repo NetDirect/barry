@@ -1,5 +1,7 @@
 Release: version 0.15 - 2009/01/??
 ------------------------------------------------------------------------------
+2009/01/17
+	- refactored pthread timeout creation into ThreadTimeout() function
 2009/01/16
 	- made maintainer script make-deb-local.sh more robust
 	- added list of target binary packages in ReleaseChecklist.txt

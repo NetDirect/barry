@@ -227,6 +227,30 @@ time_t Message2Time(uint16_t r_date, uint16_t r_time)
 	return result;
 }
 
+//
+// ThreadTimeout
+//
+/// Creates a pthread_cond_timedwait() compatible timespec struct,
+/// based on a given timeout in milliseconds.  Note that the resulting
+/// timespec is time-sensitive: the 'timer' starts as soon as this function
+/// returns, since timespec is a specific time in the future,
+/// and ThreadTimeout() calculates it based on the current time.
+///
+/// Returns the spec pointer, to make it easy to use with
+/// pthread_cond_timedwait()
+///
+BXEXPORT struct timespec* ThreadTimeout(int timeout_ms, struct timespec *spec)
+{
+	struct timeval now;
+	gettimeofday(&now, NULL);
+
+	spec->tv_sec = now.tv_sec + timeout_ms / 1000;
+	spec->tv_nsec = (now.tv_usec + timeout_ms % 1000 * 1000) * 1000;
+
+	return spec;
+}
+
+
 
 } // namespace Barry
 
