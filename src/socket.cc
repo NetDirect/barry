@@ -725,7 +725,7 @@ void Socket::PacketData(Data &send, Data &receive, int timeout)
 				done = true;
 				break;
 
-			case SB_DATA_JL_UNVALID: {
+			case SB_DATA_JL_INVALID: {
 				std::ostringstream oss;
 				oss << "Your Java application has been refused by your device !";
 				eout(oss.str());
@@ -781,12 +781,12 @@ void Socket::Packet(Data &send, Data &receive, int timeout)
 	if( send.GetSize() < MIN_PACKET_SIZE ||
 	    (spack->command != SB_COMMAND_DB_DATA &&
 	     spack->command != SB_COMMAND_DB_DONE &&
-		 spack->command != SB_COMMAND_JL_UNKOWN1 &&
-		 spack->command != SB_COMMAND_JL_UNKOWN2 &&
-		 spack->command != SB_COMMAND_JL_UNKOWN3 &&
-		 spack->command != SB_COMMAND_JL_UNKOWN4 &&
-		 spack->command != SB_COMMAND_JL_UNKOWN5 &&
-		 spack->command != SB_COMMAND_JL_UNKOWN6))
+		 spack->command != SB_COMMAND_JL_UNKNOWN1 &&
+		 spack->command != SB_COMMAND_JL_UNKNOWN2 &&
+		 spack->command != SB_COMMAND_JL_UNKNOWN3 &&
+		 spack->command != SB_COMMAND_JL_UNKNOWN4 &&
+		 spack->command != SB_COMMAND_JL_UNKNOWN5 &&
+		 spack->command != SB_COMMAND_JL_UNKNOWN6))
 	{
 		// we don't do that around here
 		eout("unknown send data in Packet(): " << send);

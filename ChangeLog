@@ -1,5 +1,9 @@
 Release: version 0.15 - 2009/01/??
 ------------------------------------------------------------------------------
+2009/01/20
+	- applied Nicolas Vivien's javaloader patch, fixing constant defines
+		and other small fixes
+	- minor whitespace and spelling fixes to above patch
 2009/01/17
 	- refactored pthread timeout creation into ThreadTimeout() function
 	- added experimental handshaking to IpModem.  This is in response
