@@ -720,9 +720,17 @@ void Socket::PacketData(Data &send, Data &receive, int timeout)
 			switch( rpack->command )
 			{
 			case 0x1:			// To wait a friendly name :)
-			case 0x64:			// To wait a friendly name :)
 			case 0x65:			// To wait a friendly name :)
+			case SB_DATA_JL_SUCCESS:
 				done = true;
+				break;
+
+			case SB_DATA_JL_UNVALID: {
+				std::ostringstream oss;
+				oss << "Your Java application has been refused by your device !";
+				eout(oss.str());
+				throw Error(oss.str());
+				}
 				break;
 
 			default: {
@@ -872,10 +880,18 @@ void Socket::Packet(Data &send, Data &receive, int timeout)
 				done = true;
 				break;
 
-			case 0x1:			// To wait a friendly name :)
-			case 0x64:			// To wait a friendly name :)
+			case SB_COMMAND_JL_READY:		// To wait a friendly name :)
+			case SB_COMMAND_JL_ACK:			// To wait a friendly name :)
 			case 0x65:			// To wait a friendly name :)
 				done = true;
+				break;
+
+			case SB_COMMAND_JL_ERROR: {
+				std::ostringstream oss;
+				oss << "Device can't install the application. Check that the application isn't already installed !";
+				eout(oss.str());
+				throw Error(oss.str());
+				}
 				break;
 
 			default: {

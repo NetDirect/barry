@@ -38,12 +38,22 @@
 #define SB_COMMAND_DB_DATA		0x40
 #define SB_COMMAND_DB_FRAGMENTED	0x60
 #define SB_COMMAND_DB_DONE		0x41
+
+// JavaLoader command
 #define SB_COMMAND_JL_UNKOWN1		0x64
 #define SB_COMMAND_JL_UNKOWN2		0x70
 #define SB_COMMAND_JL_UNKOWN3		0x63
 #define SB_COMMAND_JL_UNKOWN4		0x67
 #define SB_COMMAND_JL_UNKOWN5		0x68
 #define SB_COMMAND_JL_UNKOWN6		0x8d
+// JavaLoader response
+#define SB_COMMAND_JL_ACK			0x64
+#define SB_COMMAND_JL_READY			0x01
+#define SB_COMMAND_JL_ERROR			0x78	// Device has accepted the application, but it can't installed !
+
+// JavaLoader data
+#define SB_DATA_JL_SUCCESS			0x64	// Device has accepted the data packet
+#define SB_DATA_JL_UNVALID			0x68	// Device returns this code if the application isn't valid.
 
 
 // mode constants

@@ -80,7 +80,7 @@ URB 39 : <<<
  
 URB 41 : >>>
     00000000: 04 00 08 00 67 01 04 00                          ....g...
-                          ^^ : command
+                          ^^ : command to send the stream total size
                     ^^^^^ : packet size
               ^^^^^ : socket ID
  
@@ -91,8 +91,7 @@ Start of data stream.
 
 URB 43 : >>>
     00000000: 04 00 08 00 00 00 1e d0                          ........
-                             ?? ^^^^^ : Application size (maybe 3 bytes)
-                          ^^ : command
+                          ^^^^^^^^^^^ : Application size (maybe 4 bytes)
                     ^^^^^ : packet size
               ^^^^^ : socket ID
  
@@ -255,6 +254,13 @@ URB 47 : <<<
  
 URB 49 : <<<
     00000000: 04 00 08 00 64 00 00 00                          ....d...
+                          ^^ : error code (0x64 == good / 0x68 == bad)
+                     ^^^^ : packet size
+              ^^^^^ : socket ID
+
+The returned code permits you to know if the device has accepted the last data packet.
+0x64 : OK
+0x68 : NOK ; You have got an error. (COD file is corrupted ?)
  
 Data header packet.
 

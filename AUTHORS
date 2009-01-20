@@ -69,7 +69,7 @@ Contributors (code and otherwise) in alphabetical order by last name:
 	Jason Thomas <jason@debian.org>
 		- autoconf / build system patch
 		- debian package patch
-	Nicolas VIVIEN <nicolas AT vivien.fr>
+	Nicolas VIVIEN <nicolas@vivien.fr>
 		- bjavaloader support
 	Ashley Willis <barry@venamous.net>
 		- btool null parser patch
