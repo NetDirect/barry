@@ -286,35 +286,34 @@ void IpModem::Open(const char *password)
 		m_dev.BulkWrite(write_ep, pw_start, sizeof(pw_start));
 		m_dev.BulkRead(read_ep, data);
 		ddout("IPModem: Start Response Packet:\n" << data);
+	}
 
-		// send packet with the session_key
-		unsigned char response_header[] = { 0x00, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0xc2, 1, 0 };
-		memcpy(&response[0], response_header, sizeof(response_header));
-		memcpy(&response[16], m_session_key,  sizeof(m_session_key));
-		memcpy(&response[24], special_flag, sizeof(special_flag));
-		ddout("IPModem: Sending Session key:\n");
-		m_dev.BulkWrite(write_ep, response, sizeof(response));
-		if( data.GetSize() >= 16 ) {
-			switch(data.GetData()[0])
-			{
-			case 0x00:	// Null packet
-				break;
+	// send packet with the session_key
+	unsigned char response_header[] = { 0x00, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0xc2, 1, 0 };
+	memcpy(&response[0], response_header, sizeof(response_header));
+	memcpy(&response[16], m_session_key,  sizeof(m_session_key));
+	memcpy(&response[24], special_flag, sizeof(special_flag));
+	ddout("IPModem: Sending Session key:\n");
+	m_dev.BulkWrite(write_ep, response, sizeof(response));
+	if( data.GetSize() >= 16 ) {
+		switch(data.GetData()[0])
+		{
+		case 0x00:	// Null packet
+			break;
 
-			case 0x02:	// password seed received
-				memcpy(&seed, data.GetData() + 4, sizeof(uint32_t));
-				if( !SendPassword( password, seed ) ) {
-					throw Barry::Error("IpModem: Error sending password.");
-				}
-				break;
-			case 0x04:	// command accepted
-				break;
-
-			default: 	// ???
-				ddout("IPModem: Unknown response.\n");
-				break;
+		case 0x02:	// password seed received
+			memcpy(&seed, data.GetData() + 4, sizeof(uint32_t));
+			if( !SendPassword( password, seed ) ) {
+				throw Barry::Error("IpModem: Error sending password.");
 			}
-		}
+			break;
+		case 0x04:	// command accepted
+			break;
 
+		default: 	// ???
+			ddout("IPModem: Unknown response.\n");
+			break;
+		}
 	}
 
 	// see if the modem will respond to commands
