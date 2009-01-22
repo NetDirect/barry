@@ -26,6 +26,7 @@
 #include "protostructs.h"
 #include "data.h"
 #include "time.h"
+#include "iconv.h"
 #include "debug.h"
 #include <ostream>
 #include <iomanip>
@@ -56,13 +57,13 @@ namespace Barry {
 #define TSKFC_END		0xffff
 
 static FieldLink<Task> TaskFieldLinks[] = {
-	{ TSKFC_TITLE,      "Summary",     0, 0, &Task::Summary, 0, 0 },
-	{ TSKFC_NOTES,      "Notes",       0, 0, &Task::Notes, 0, 0 },
-	{ TSKFC_START_TIME, "Start Time",  0, 0, 0, 0, &Task::StartTime },
-	{ TSKFC_DUE_TIME,   "Due Time",    0, 0, 0, 0, &Task::DueTime },
-	{ TSKFC_ALARM_TIME, "Alarm Time",  0, 0, 0, 0, &Task::AlarmTime },
-	{ TSKFC_CATEGORIES, "Categories",  0, 0, &Task::Categories, 0, 0 },
-	{ TSKFC_END,        "End of List", 0, 0, 0, 0, 0 },
+   { TSKFC_TITLE,      "Summary",     0, 0, &Task::Summary, 0, 0, 0, 0, true },
+   { TSKFC_NOTES,      "Notes",       0, 0, &Task::Notes, 0, 0, 0, 0, true },
+   { TSKFC_START_TIME, "Start Time",  0, 0, 0, 0, &Task::StartTime, 0, 0, false },
+   { TSKFC_DUE_TIME,   "Due Time",    0, 0, 0, 0, &Task::DueTime, 0, 0, false },
+   { TSKFC_ALARM_TIME, "Alarm Time",  0, 0, 0, 0, &Task::AlarmTime, 0, 0, false },
+   { TSKFC_CATEGORIES, "Categories",  0, 0, &Task::Categories, 0, 0, 0, 0, false },
+   { TSKFC_END,        "End of List", 0, 0, 0, 0, 0, 0, 0, false },
 };
 
 Task::Task()
@@ -104,6 +105,8 @@ const unsigned char* Task::ParseField(const unsigned char *begin,
 			if( b->strMember ) {
 				std::string &s = this->*(b->strMember);
 				s = ParseFieldString(field);
+				if( b->iconvNeeded && ic )
+					s = ic->FromBB(s);
 				return begin;   // done!
 			}
 			else if( b->timeMember && btohs(field->size) == 4 ) {

@@ -25,6 +25,7 @@
 #include "protostructs.h"
 #include "data.h"
 #include "time.h"
+#include "iconv.h"
 #include "debug.h"
 #include <ostream>
 #include <iomanip>
@@ -43,15 +44,15 @@ namespace Barry
 #define TZFC_NAME		0x02
 #define TZFC_OFFSET		0x03
 #define TZFC_DST		0x04
-#define TZFC_STARTMONTH	0x06
-#define TZFC_ENDMONTH	0x0B
+#define TZFC_STARTMONTH		0x06
+#define TZFC_ENDMONTH		0x0B
 #define TZFC_TZTYPE		0x64
 
 #define TZFC_END		0xffff
 
 static FieldLink<Timezone> TimezoneFieldLinks[] = {
-	{ TZFC_NAME,      "Name",        0, 0, &Timezone::TimeZoneName, 0, 0 },
-	{ TZFC_END,       "End of List", 0, 0, 0, 0, 0 },
+   { TZFC_NAME,   "Name",        0, 0, &Timezone::TimeZoneName, 0, 0, 0, 0, true },
+   { TZFC_END,    "End of List", 0, 0, 0, 0, 0, 0, 0, false },
 };
 
 Timezone::Timezone()
@@ -93,6 +94,8 @@ const unsigned char* Timezone::ParseField(const unsigned char *begin,
 			if( b->strMember ) {
 				std::string &s = this->*(b->strMember);
 				s = ParseFieldString(field);
+				if( b->iconvNeeded && ic )
+					s = ic->FromBB(s);
 				return begin;   // done!
 			}
 		}
