@@ -1,5 +1,8 @@
 Release: version 0.15 - 2009/01/??
 ------------------------------------------------------------------------------
+2009/01/22
+	- reverted experimental handshaking in IpModem, since the session_key
+		patch fixed Bill Paul's issue
 2009/01/20
 	- applied Nicolas Vivien's javaloader patch, fixing constant defines
 		and other small fixes

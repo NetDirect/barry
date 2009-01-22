@@ -50,14 +50,9 @@ private:
 
 	PppFilter m_filter;			// used for 0x7e handling
 
-	bool m_wait_for_special_code;
-
 	// thread data
 	volatile bool m_continue_reading;
 	pthread_t m_modem_read_thread;
-	pthread_mutex_t m_special_code_mutex;
-	pthread_cond_t m_special_code_cond;
-	volatile bool m_special_code_seen;
 
 	// external callbacks
 	DeviceDataCallback m_callback;
@@ -72,8 +67,7 @@ protected:
 	static void *DataReadThread(void *userptr);
 
 public:
-	IpModem(Controller &con, DeviceDataCallback callback, void *callback_context,
-		bool wait_for_special_code = false);
+	IpModem(Controller &con, DeviceDataCallback callback, void *callback_context);
 	~IpModem();
 
 	//////////////////////////////////
