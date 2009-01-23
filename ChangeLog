@@ -8,6 +8,7 @@ Release: version 0.15 - 2009/01/??
 	- removed unused ClassType variable from Task record class
 	- refactored Calendar and Task record classes, creating new
 		RecurBase to handle recurrence data
+	- removed FIXME in Socket::Packet(), since socket is set in Send()
 2009/01/20
 	- applied Nicolas Vivien's javaloader patch, fixing constant defines
 		and other small fixes

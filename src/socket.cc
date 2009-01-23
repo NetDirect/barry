@@ -765,17 +765,6 @@ void Socket::PacketData(Data &send, Data &receive, int timeout)
 // Blocks until response received or timed out in Usb::Device
 void Socket::Packet(Data &send, Data &receive, int timeout)
 {
-/*
-// FIXME - this might be a good idea someday, or perhaps provide a wrapper
-// function that forces the socket number to the correct current value,
-// but putting it here means a copy on every packet.
-
-	// force socket to our socket
-	Data send = sendorig;
-	Barry::Protocol::Packet *sspack = (Barry::Protocol::Packet *)send.GetBuffer(2);
-	sspack->socket = htobs(GetSocket());
-*/
-
 	MAKE_PACKET(spack, send);
 // Begin -- I comment the code. Indeed, for JavaLoader we have new unknown command...
 	if( send.GetSize() < MIN_PACKET_SIZE ||
