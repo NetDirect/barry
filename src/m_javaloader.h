@@ -74,8 +74,10 @@ public:
 	//////////////////////////////////
 	// API
 	void StartStream();
-	void SendStream(char *buffer, int size);
 	void StopStream(void);
+
+	// mid-stream operations
+	void SendStream(char *buffer, int size);
 };
 
 }} // namespace Barry::Mode
