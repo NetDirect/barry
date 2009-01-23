@@ -81,7 +81,7 @@ void ZeroPacket::GetAttribute(unsigned int object, unsigned int attribute)
 	MAKE_PACKETPTR_BUF(cpack, m_send.GetBuffer(size));
 	Protocol::Packet &packet = *cpack;
 
-	packet.socket = 0;
+	// socket class sets socket for us
 	packet.size = htobs(size);
 	packet.command = SB_COMMAND_FETCH_ATTRIBUTE;
 	packet.u.socket.socket = htobs(0x00ff);	// default non-socket request
@@ -164,8 +164,7 @@ void DBPacket::ClearDatabase(unsigned int dbId)
 	MAKE_PACKETPTR_BUF(cpack, m_send.GetBuffer(9));
 	Protocol::Packet &packet = *cpack;
 
-	// socket class should override this for us
-//	packet.socket = htobs(m_con.m_socket->GetSocket());
+	// socket class sets socket for us
 	packet.size = htobs(9);
 	packet.command = SB_COMMAND_DB_DATA;
 	packet.u.db.tableCmd = m_con.GetDBCommand(Mode::Desktop::DatabaseAccess);
@@ -188,8 +187,7 @@ void DBPacket::GetDBDB()
 	MAKE_PACKETPTR_BUF(cpack, m_send.GetBuffer(7));
 	Protocol::Packet &packet = *cpack;
 
-	// socket class should override this for us
-//	packet.socket = htobs(m_con.m_socket->GetSocket());
+	// socket class sets socket for us
 	packet.size = htobs(7);
 	packet.command = SB_COMMAND_DB_DATA;
 	packet.u.db.tableCmd = m_con.GetDBCommand(Mode::Desktop::DatabaseAccess);
@@ -212,8 +210,7 @@ void DBPacket::GetRecordStateTable(unsigned int dbId)
 	MAKE_PACKETPTR_BUF(cpack, m_send.GetBuffer(9));
 	Protocol::Packet &packet = *cpack;
 
-	// socket class should override this for us
-//	packet.socket = htobs(m_con.m_socket->GetSocket());
+	// socket class sets socket for us
 	packet.size = htobs(9);
 	packet.command = SB_COMMAND_DB_DATA;
 	packet.u.db.tableCmd = m_con.GetDBCommand(Mode::Desktop::DatabaseAccess);
@@ -242,8 +239,7 @@ void DBPacket::SetRecordFlags(unsigned int dbId, unsigned int stateTableIndex,
 	MAKE_PACKETPTR_BUF(cpack, m_send.GetBuffer(size));
 	Protocol::Packet &packet = *cpack;
 
-	// socket class should override this for us
-//	packet.socket = htobs(m_con.m_socket->GetSocket());
+	// socket class sets socket for us
 	packet.size = htobs(size);
 	packet.command = SB_COMMAND_DB_DATA;
 	packet.u.db.tableCmd = m_con.GetDBCommand(Mode::Desktop::DatabaseAccess);
@@ -270,8 +266,7 @@ void DBPacket::DeleteRecordByIndex(unsigned int dbId, unsigned int stateTableInd
 	MAKE_PACKETPTR_BUF(cpack, m_send.GetBuffer(size));
 	Protocol::Packet &packet = *cpack;
 
-	// socket class should override this for us
-//	packet.socket = htobs(m_con.m_socket->GetSocket());
+	// socket class sets socket for us
 	packet.size = htobs(size);
 	packet.command = SB_COMMAND_DB_DATA;
 	packet.u.db.tableCmd = m_con.GetDBCommand(Mode::Desktop::DatabaseAccess);
@@ -295,8 +290,7 @@ void DBPacket::GetRecordByIndex(unsigned int dbId, unsigned int stateTableIndex)
 	MAKE_PACKETPTR_BUF(cpack, m_send.GetBuffer(11));
 	Protocol::Packet &packet = *cpack;
 
-	// socket class should override this for us
-//	packet.socket = htobs(m_con.m_socket->GetSocket());
+	// socket class sets socket for us
 	packet.size = htobs(11);
 	packet.command = SB_COMMAND_DB_DATA;
 	packet.u.db.tableCmd = m_con.GetDBCommand(Mode::Desktop::DatabaseAccess);
@@ -335,8 +329,7 @@ bool DBPacket::SetRecordByIndex(unsigned int dbId, unsigned int stateTableIndex,
 	MAKE_PACKETPTR_BUF(cpack, m_send.GetBuffer(total_size));
 	Protocol::Packet &packet = *cpack;
 
-	// socket class should override this for us
-//	packet.socket = htobs(m_con.m_socket->GetSocket());
+	// socket class sets socket for us
 	packet.size = htobs(total_size);
 	packet.command = SB_COMMAND_DB_DATA;
 	packet.u.db.tableCmd = m_con.GetDBCommand(Mode::Desktop::DatabaseAccess);
@@ -362,8 +355,7 @@ void DBPacket::GetRecords(unsigned int dbId)
 	MAKE_PACKETPTR_BUF(cpack, m_send.GetBuffer(9));
 	Protocol::Packet &packet = *cpack;
 
-	// socket class should override this for us
-//	packet.socket = htobs(m_con.m_socket->GetSocket());
+	// socket class sets socket for us
 	packet.size = htobs(9);
 	packet.command = SB_COMMAND_DB_DATA;
 	packet.u.db.tableCmd = m_con.GetDBCommand(Mode::Desktop::DatabaseAccess);
@@ -401,8 +393,7 @@ bool DBPacket::SetRecord(unsigned int dbId, Builder &build, const IConverter *ic
 	MAKE_PACKETPTR_BUF(cpack, m_send.GetBuffer(total_size));
 	Protocol::Packet &packet = *cpack;
 
-	// socket class should override this for us
-//	packet.socket = htobs(m_con.m_socket->GetSocket());
+	// socket class sets socket for us
 	packet.size = htobs(total_size);
 	packet.command = SB_COMMAND_DB_DATA;
 	packet.u.db.tableCmd = m_con.GetDBCommand(Mode::Desktop::DatabaseAccess);
