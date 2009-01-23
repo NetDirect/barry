@@ -42,9 +42,6 @@ class IConverter;
 //        operators in the future.
 //
 
-/// \addtogroup RecordParserClasses
-/// @{
-
 class BXEXPORT MessageBase
 {
 public:
@@ -105,10 +102,11 @@ public:
 	const unsigned char* ParseField(const unsigned char *begin,
 		const unsigned char *end, const IConverter *ic = 0);
 
-public:
+protected:
 	MessageBase();
 	~MessageBase();
 
+public:
 	// Parser / Builder API (see parser.h / builder.h)
 	uint8_t GetRecType() const;
 	uint32_t GetUniqueId() const;	// empty API, not required by protocol
@@ -133,8 +131,6 @@ BXEXPORT inline std::ostream& operator<<(std::ostream &os, const MessageBase &ms
 	msg.Dump(os);
 	return os;
 }
-
-/// @}
 
 } // namespace Barry
 

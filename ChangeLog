@@ -4,6 +4,7 @@ Release: version 0.15 - 2009/01/??
 	- reverted experimental handshaking in IpModem, since the session_key
 		patch fixed Bill Paul's issue
 	- finished adding IConverter support to r_task and r_timezone
+	- removed r_message_base.h from doxygen RecordParserClasses group
 2009/01/20
 	- applied Nicolas Vivien's javaloader patch, fixing constant defines
 		and other small fixes
