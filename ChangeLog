@@ -6,6 +6,8 @@ Release: version 0.15 - 2009/01/??
 	- finished adding IConverter support to r_task and r_timezone
 	- removed r_message_base.h from doxygen RecordParserClasses group
 	- removed unused ClassType variable from Task record class
+	- refactored Calendar and Task record classes, creating new
+		RecurBase to handle recurrence data
 2009/01/20
 	- applied Nicolas Vivien's javaloader patch, fixing constant defines
 		and other small fixes

@@ -25,6 +25,7 @@
 
 #include "dll.h"
 #include "record.h"
+#include "r_recur_base.h"
 #include <vector>
 #include <string>
 #include <stdint.h>
@@ -34,10 +35,11 @@ namespace Barry {
 // forward declarations
 class IConverter;
 
-class BXEXPORT Task
+class BXEXPORT Task : public RecurBase
 {
 public:
-	typedef std::vector<UnknownField>			UnknownsType;
+	typedef std::vector<UnknownField>		UnknownsType;
+
 	uint8_t RecType;
 	uint32_t RecordId;
 
@@ -59,31 +61,6 @@ public:
 	};
 	AlarmFlagType AlarmType;
 
-	unsigned short Interval;
-	enum RecurringCodeType {
-		Day = 1,		//< eg. every day
-					//< set: nothing
-		MonthByDate = 3,	//< eg. every month on the 12th
-					//< set: DayOfMonth
-		MonthByDay = 4,		//< eg. every month on 3rd Wed
-					//< set: DayOfWeek and WeekOfMonth
-		YearByDate = 5,		//< eg. every year on March 5
-					//< set: DayOfMonth and MonthOfYear
-		YearByDay = 6,		//< eg. every year on 3rd Wed of Jan
-					//< set: DayOfWeek, WeekOfMonth, and
-					//<      MonthOfYear
-		Week = 12		//< eg. every week on Mon and Fri
-					//< set: WeekDays
-	};
-	RecurringCodeType RecurringType;
-	time_t RecurringEndTime;	
-	unsigned short			// recurring details, depending on type
-		DayOfWeek,		// 0-6
-		WeekOfMonth,		// 1-5
-		DayOfMonth,		// 1-31
-		MonthOfYear;		// 1-12
-	unsigned char WeekDays;		// bitmask, bit 0 = sunday
-
 	enum PriorityFlagType
 	{
 		High = 0,
@@ -102,10 +79,9 @@ public:
 	};
 	StatusFlagType StatusFlag;
 
-	bool Recurring;
-	bool Perpetual;
 	bool DueDateFlag;	// true if due date is set
 
+	// unknown
 	UnknownsType Unknowns;
 
 public:	
@@ -114,8 +90,6 @@ public:
 
 	const unsigned char* ParseField(const unsigned char *begin,
 		const unsigned char *end, const IConverter *ic = 0);
-	void ParseRecurrenceData(const void *data);
-	void BuildRecurrenceData(void *data);
 	uint8_t GetRecType() const { return RecType; }
 	uint32_t GetUniqueId() const { return RecordId; }
 	void SetIds(uint8_t Type, uint32_t Id) { RecType = Type; RecordId = Id; }

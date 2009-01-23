@@ -49,7 +49,6 @@ namespace Barry {
 #define TSKFC_DUE_FLAG		0x08
 #define TSKFC_STATUS		0x09
 #define TSKFC_PRIORITY		0x0a
-#define TSKFC_RECURRENCE_DATA	0x0c
 #define TSKFC_ALARM_TYPE	0x0e
 #define TSKFC_ALARM_TIME	0x0f
 #define TSKFC_TIMEZONE_CODE	0x10
@@ -146,16 +145,6 @@ const unsigned char* Task::ParseField(const unsigned char *begin,
 		}
 		return begin;
 
-	case TSKFC_RECURRENCE_DATA:
-		if( btohs(field->size) >= CALENDAR_RECURRENCE_DATA_FIELD_SIZE ) {
-			Recurring = true;
-			ParseRecurrenceData(&field->u.raw[0]);
-		}
-		else {
-			throw Error("Task::ParseField: not enough data in recurrence data field");
-		}
-		return begin;
-
 	case TSKFC_DUE_FLAG:
 		DueDateFlag = field->u.raw[0];
 		return begin;		
@@ -170,6 +159,10 @@ const unsigned char* Task::ParseField(const unsigned char *begin,
 		return begin;
 	}
 
+	// base class handles recurring data
+	if( RecurBase::ParseField(field->type, field->u.raw, btohs(field->size), ic) )
+		return begin;
+
 	// if still not handled, add to the Unknowns list
 	UnknownField uf;
 	uf.type = field->type;
@@ -178,137 +171,6 @@ const unsigned char* Task::ParseField(const unsigned char *begin,
 
 	// return new pointer for next field
 	return begin;
-}
-
-// this function assumes the size has already been checked
-void Task::ParseRecurrenceData(const void *data)
-{
-	const CalendarRecurrenceDataField *rec =
-		(const CalendarRecurrenceDataField*) data;
-
-	Interval = btohs(rec->interval);
-	if( Interval < 1 )
-		Interval = 1;	// must always be >= 1
-
-	if( rec->endTime == 0xffffffff ) {
-		Perpetual = true;
-	}
-	else {
-		RecurringEndTime = min2time(rec->endTime);
-		Perpetual = false;
-	}
-
-	switch( rec->type )
-	{
-	case CRDF_TYPE_DAY:
-		RecurringType = Day;
-		// no extra data
-		break;
-
-	case CRDF_TYPE_MONTH_BY_DATE:
-		RecurringType = MonthByDate;
-		DayOfMonth = rec->u.month_by_date.monthDay;
-		break;
-
-	case CRDF_TYPE_MONTH_BY_DAY:
-		RecurringType = MonthByDay;
-		DayOfWeek = rec->u.month_by_day.weekDay;
-		WeekOfMonth = rec->u.month_by_day.week;
-		break;
-
-	case CRDF_TYPE_YEAR_BY_DATE:
-		RecurringType = YearByDate;
-		DayOfMonth = rec->u.year_by_date.monthDay;
-		MonthOfYear = rec->u.year_by_date.month;
-		break;
-
-	case CRDF_TYPE_YEAR_BY_DAY:
-		RecurringType = YearByDay;
-		DayOfWeek = rec->u.year_by_day.weekDay;
-		WeekOfMonth = rec->u.year_by_day.week;
-		MonthOfYear = rec->u.year_by_day.month;
-		break;
-
-	case CRDF_TYPE_WEEK:
-		RecurringType = Week;
-
-		// Note: this simple copy is only possible since
-		// the CAL_WD_* constants are the same as CRDF_WD_* constants.
-		// If this ever changes, this code will need to change.
-		WeekDays = rec->u.week.days;
-		break;
-
-	default:
-		eout("Unknown recurrence data type: 0x"
-			<< setbase(16) << (unsigned int) rec->type);
-		throw Error("Unknown recurrence data type");
-	}
-}
-
-// this function assumes there is CALENDAR_RECURRENCE_DATA_FIELD_SIZE bytes
-// available in data
-void Task::BuildRecurrenceData(void *data)
-{
-	if( !Recurring )
-		throw Error("Task::BuildRecurrenceData: Attempting to build recurrence data on non-recurring record.");
-
-	CalendarRecurrenceDataField *rec = (CalendarRecurrenceDataField*) data;
-
-	// set all to zero
-	memset(data, 0, CALENDAR_RECURRENCE_DATA_FIELD_SIZE);
-
-	rec->interval = htobs(Interval);
-	rec->startTime = time2min(StartTime);
-	if( Perpetual )
-		rec->endTime = 0xffffffff;
-	else
-		rec->endTime = time2min(RecurringEndTime);
-
-	switch( RecurringType )
-	{
-	case Day:
-		rec->type = CRDF_TYPE_DAY;
-		// no extra data
-		break;
-
-	case MonthByDate:
-		rec->type = CRDF_TYPE_MONTH_BY_DATE;
-		rec->u.month_by_date.monthDay = DayOfMonth;
-		break;
-
-	case MonthByDay:
-		rec->type = CRDF_TYPE_MONTH_BY_DAY;
-		rec->u.month_by_day.weekDay = DayOfWeek;
-		rec->u.month_by_day.week = WeekOfMonth;
-		break;
-
-	case YearByDate:
-		rec->type = CRDF_TYPE_YEAR_BY_DATE;
-		rec->u.year_by_date.monthDay = DayOfMonth;
-		rec->u.year_by_date.month = MonthOfYear;
-		break;
-
-	case YearByDay:
-		rec->type = CRDF_TYPE_YEAR_BY_DAY;
-		rec->u.year_by_day.weekDay = DayOfWeek;
-		rec->u.year_by_day.week = WeekOfMonth;
-		rec->u.year_by_day.month = MonthOfYear;
-		break;
-
-	case Week:
-		rec->type = CRDF_TYPE_WEEK;
-
-		// Note: this simple copy is only possible since
-		// the CAL_WD_* constants are the same as CRDF_WD_* constants.
-		// If this ever changes, this code will need to change.
-		rec->u.week.days = WeekDays;
-		break;
-
-	default:
-		eout("Task::BuildRecurrenceData: "
-		"Unknown recurrence data type: " << rec->type);
-		throw Error("Task::BuildRecurrenceData: Unknown recurrence data type");
-	}
 }
 
 void Task::ParseHeader(const Data &data, size_t &offset)
@@ -325,6 +187,8 @@ void Task::ParseFields(const Data &data, size_t &offset, const IConverter *ic)
 
 void Task::Clear()
 {
+	RecurBase::Clear();
+
 	Summary.clear();
 	Notes.clear();
 	Categories.clear();
@@ -336,9 +200,7 @@ void Task::Clear()
 
 	TaskType = 0;
 
-	Perpetual = false;
 	DueDateFlag = false;
-	Recurring = false;
 
 	TimeZoneCode = GetTimeZoneCode( 0, 0 );
 
