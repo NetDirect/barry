@@ -47,7 +47,7 @@ Specific command for JavaLoder.
 
 URB 33 : >>>
     00000000: 04 00 08 00 64 00 00 00                          ....d...
-                          ^^ : command
+                          ^^ : command
                     ^^^^^ : packet size
               ^^^^^ : socket ID
  
@@ -59,7 +59,7 @@ URB 34 : <<<
  
 URB 36 : >>>
     00000000: 04 00 08 00 70 00 01 00                          ....p...
-                          ^^ : command
+                          ^^ : command
                     ^^^^^ : packet size
               ^^^^^ : socket ID
 
@@ -68,7 +68,7 @@ URB 35 : <<<
  
 URB 38 : >>>
     00000000: 04 00 05 00 00                                   .....
-                          ^^ : command
+                          ^^ : command
                     ^^^^^ : packet size
               ^^^^^ : socket ID
  
@@ -80,7 +80,7 @@ URB 39 : <<<
  
 URB 41 : >>>
     00000000: 04 00 08 00 67 01 04 00                          ....g...
-                          ^^ : command to send the stream total size
+                          ^^ : command to send the stream total size
                     ^^^^^ : packet size
               ^^^^^ : socket ID
  
@@ -107,7 +107,7 @@ URB 46 : >>>
     00000000: 04 00 08 00 68 00 f8 07                          ....h...
                                 ^^^^^ : data size for the next packet
                              ^^ : always 0x00
-                          ^^ : command
+                          ^^ : command
                     ^^^^^ : packet size
               ^^^^^ : socket ID
  
@@ -268,7 +268,7 @@ URB 51 : >>>
     00000000: 04 00 08 00 68 00 f8 07                          ....h...
                                 ^^^^^ : data size for the next packet
                              ^^ : always 0x00
-                          ^^ : command
+                          ^^ : command
                     ^^^^^ : packet size
               ^^^^^ : socket ID
  
@@ -422,7 +422,7 @@ URB 56 : >>>
     00000000: 04 00 08 00 68 00 f8 07                          ....h...
                                 ^^^^^ : data size for the next packet
                              ^^ : always 0x00
-                          ^^ : command
+                          ^^ : command
                     ^^^^^ : packet size
               ^^^^^ : socket ID
  
@@ -576,7 +576,7 @@ URB 61 : >>>
     00000000: 04 00 08 00 68 00 e8 06                          ....h...
                                 ^^^^^ : data size for the next packet
                              ^^ : always 0x00
-                          ^^ : command
+                          ^^ : command
                     ^^^^^ : packet size
               ^^^^^ : socket ID
  
@@ -711,7 +711,7 @@ End of data stream.
 
 URB 66 : >>>
     00000000: 04 00 08 00 8d 00 00 00                          ........
-                          ^^ : command
+                          ^^ : command
                     ^^^^^ : packet size
               ^^^^^ : socket ID
  

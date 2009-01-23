@@ -28,7 +28,7 @@ typedef struct {
 	ushort	flags;
 } code_header_t;
 
-sizeof(code_header_t) = 0×2C;
+sizeof(code_header_t) = 0x2C;
 
 
 typedef struct {
@@ -46,7 +46,7 @@ typedef struct {
 	ushort 	array_of_unknow_fields[22];
 } data_header_t;
 
-sizeof(data_header_t) = 0×34;
+sizeof(data_header_t) = 0x34;
 
 
 Scheme :
