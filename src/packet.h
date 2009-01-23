@@ -24,7 +24,9 @@
 #ifndef __BARRY_PACKET_H__
 #define __BARRY_PACKET_H__
 
+#include <string>
 #include <stdint.h>
+#include "protocol.h"
 
 namespace Barry { class Data; }
 
@@ -38,6 +40,7 @@ class Socket;
 class IConverter;
 namespace Mode {
 	class Desktop;
+	class JavaLoader;
 }
 
 class Packet
@@ -70,7 +73,7 @@ public:
 /// This class relies on 2 external objects: a send and receive Data buffer.
 ///
 /// Note that the receive buffer may be modified
-/// during a packet send, and this DBPacket class provides API helpers
+/// during a packet send, and this class provides API helpers
 /// to analyze the results.
 ///
 class ZeroPacket : public Packet
@@ -160,6 +163,66 @@ public:
 
 	// response parsers
 };
+
+
+//
+// JLPacket class
+//
+/// Provides an API for building and analyzing raw Javaloader protocol packets.
+/// This class relies on 3 external objects:
+/// a command send Data buffer (which can be fairly small), a data
+/// or argument send Data buffer, and a receive data buffer.  Socket and
+/// connection details are retrieved on a readonly basis from the
+/// Mode::JavaLoader object, but all buffers can be modified.
+///
+/// Note that the receive buffer may be modified
+/// during a packet send, and this JLPacket class provides API helpers
+/// to analyze the results.
+///
+class JLPacket : public Packet
+{
+	friend class Socket;
+
+private:
+	Data &m_cmd, &m_data;
+	int m_last_set_size;
+
+public:
+	JLPacket(Data &cmd, Data &send, Data &receive);
+	~JLPacket();
+
+	//////////////////////////////////
+	// meta access
+
+	bool HasData() const	{ return m_last_set_size == 2; }
+
+	//////////////////////////////////
+	// packet building
+
+	// commands that correspond to the operation
+	// constants in protocol.h
+
+	// returns 1 or 2 depending on whether cmd or cmd+send are available
+	int SimpleCmd(uint8_t cmd, uint8_t unknown = 0, uint16_t size = 0);
+	int Hello()		{ return SimpleCmd(SB_COMMAND_JL_HELLO); }
+	int Goodbye()		{ return SimpleCmd(SB_COMMAND_JL_GOODBYE); }
+	int SetUnknown1();
+	int SetCodFilename(const std::string &filename);
+	int SetCodSize(off_t size);
+	int SetTime(time_t when);
+	int GetScreenshot()	{ return SimpleCmd(SB_COMMAND_JL_GET_SCREENSHOT); }
+	int DeviceInfo()	{ return SimpleCmd(SB_COMMAND_JL_DEVICE_INFO); }
+	int OsMetrics()		{ return SimpleCmd(SB_COMMAND_JL_OS_METRICS); }
+	int BootromMetrics()	{ return SimpleCmd(SB_COMMAND_JL_BOOTROM_METRICS); }
+	int GetDirectory()	{ return SimpleCmd(SB_COMMAND_JL_GET_DIRECTORY); }
+
+	//////////////////////////////////
+	// response analysis
+
+	// JL command response functions
+	unsigned int ExpectedSize() const;	// throws
+};
+
 
 } // namespace Barry
 

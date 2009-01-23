@@ -475,5 +475,121 @@ bool DBPacket::Parse(Parser &parser, const IConverter *ic)
 	}
 }
 
+
+
+//////////////////////////////////////////////////////////////////////////////
+// JLPacket class
+
+JLPacket::JLPacket(Data &cmd, Data &send, Data &receive)
+	: Packet(send, receive)
+	, m_cmd(cmd)
+	, m_data(send)
+	, m_last_set_size(0)
+{
+}
+
+JLPacket::~JLPacket()
+{
+}
+
+// returns 1 or 2 depending on whether cmd or cmd+send are available
+int JLPacket::SimpleCmd(uint8_t cmd, uint8_t unknown, uint16_t size)
+{
+	MAKE_JLPACKETPTR_BUF(cpack, m_cmd.GetBuffer(8));
+	Protocol::JLPacket &packet = *cpack;
+
+	// socket class sets socket for us
+	packet.size = htobs(8);
+	packet.u.command.command = cmd;
+	packet.u.command.unknown = unknown;
+	packet.u.command.size = htobs(size);
+
+	m_cmd.ReleaseBuffer(8);
+
+	return m_last_set_size = 1;
+}
+
+int JLPacket::SetUnknown1()
+{
+	SimpleCmd(SB_COMMAND_JL_SET_UNKNOWN1, 0, 1);
+
+	MAKE_JLPACKETPTR_BUF(dpack, m_data.GetBuffer(5));
+	Protocol::JLPacket &data = *dpack;
+
+	// socket class sets socket for us
+	data.size = htobs(5);
+	data.u.raw[0] = 0;
+
+	m_data.ReleaseBuffer(5);
+
+	return m_last_set_size = 2;
+}
+
+int JLPacket::SetCodFilename(const std::string &filename)
+{
+	SimpleCmd(SB_COMMAND_JL_SET_COD_FILENAME, 0, filename.size());
+
+	size_t total = filename.size() + 4;
+
+	MAKE_JLPACKETPTR_BUF(dpack, m_data.GetBuffer(total));
+	Protocol::JLPacket &data = *dpack;
+
+	// socket class sets socket for us
+	data.size = htobs(total);
+	memcpy(&data.u.filename, filename.data(), filename.size());
+
+	m_data.ReleaseBuffer(total);
+
+	return m_last_set_size = 2;
+}
+
+int JLPacket::SetCodSize(off_t size)
+{
+	SimpleCmd(SB_COMMAND_JL_SET_COD_SIZE, 1, 4);
+
+	MAKE_JLPACKETPTR_BUF(dpack, m_data.GetBuffer(8));
+	Protocol::JLPacket &data = *dpack;
+
+	// socket class sets socket for us
+	data.size = htobs(8);
+
+// Blackberry expects the size in big endian format here.
+// All the 'htob*()' functions assume Blackberry data is
+// little endian, so do it manually here.
+#ifdef WORDS_BIGENDIAN
+	data.u.cod_size = size;
+#else
+	data.u.cod_size = bswap_32(size);
+#endif
+
+	m_data.ReleaseBuffer(8);
+
+	return m_last_set_size = 2;
+}
+
+int JLPacket::SetTime(time_t when)
+{
+	SimpleCmd(SB_COMMAND_JL_SET_TIME, 0, 4);
+
+	MAKE_JLPACKETPTR_BUF(dpack, m_data.GetBuffer(8));
+	Protocol::JLPacket &data = *dpack;
+
+	// socket class sets socket for us
+	data.size = htobs(8);
+
+// Blackberry expects the size in big endian format here.
+// All the 'htob*()' functions assume Blackberry data is
+// little endian, so do it manually here.
+#ifdef WORDS_BIGENDIAN
+	data.u.timestamp = when;
+#else
+	data.u.timestamp = bswap_32(when);
+#endif
+
+	m_data.ReleaseBuffer(8);
+
+	return m_last_set_size = 2;
+}
+
 } // namespace Barry
 

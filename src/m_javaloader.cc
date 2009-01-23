@@ -33,6 +33,7 @@
 #include "controller.h"
 #include <stdexcept>
 #include <sstream>
+#include <iomanip>
 #include <string.h>
 
 #include "debug.h"
@@ -141,7 +142,7 @@ void JavaLoader::StartStream()
 	Data response;
 
 	try {
-		m_socket->Packet(command1, response);
+		m_socket->PacketData(command1, response);
 	}
 	catch( Usb::Error & ) {
 		eout("JavaLoader: command1 error");
@@ -157,7 +158,7 @@ void JavaLoader::StartStream()
 
 	try {
 		m_socket->SetSequencePacket(false);
-		m_socket->Packet(command2, response);
+		m_socket->PacketData(command2, response);
 		m_socket->SetSequencePacket(true);
 	}
 	catch( Usb::Error & ) {
@@ -229,7 +230,7 @@ void JavaLoader::SendStream(char *buffer, int buffsize)
 
 	try {
 		m_socket->SetSequencePacket(false);
-		m_socket->Packet(command4, response);
+		m_socket->PacketData(command4, response);
 		m_socket->SetSequencePacket(true);
 	}
 	catch( Usb::Error & ) {
@@ -286,7 +287,7 @@ void JavaLoader::SendStream(char *buffer, int buffsize)
 
 		try {
 			m_socket->SetSequencePacket(false);
-			m_socket->Packet(command6, response);
+			m_socket->PacketData(command6, response);
 			m_socket->SetSequencePacket(true);
 		}
 		catch( Usb::Error & ) {
@@ -328,14 +329,21 @@ void JavaLoader::StopStream(void)
 
 	Data command(rawCommand, sizeof(rawCommand));
 	Data response;
+	m_socket->PacketData(command, response);
+}
 
-	try {
-		m_socket->Packet(command, response);
-	}
-	catch( Usb::Error & ) {
-		eout("JavaLoader: stop command error");
-		eeout(command, response);
-		throw;
+void JavaLoader::SetTime(time_t when)
+{
+	Data cmd(-1, 8), data(-1, 8), response;
+
+	JLPacket packet(cmd, data, response);
+	packet.SetTime(when);
+	m_socket->Packet(packet);
+	if( packet.Command() != SB_COMMAND_JL_ACK ) {
+		std::ostringstream oss;
+		oss << "JavaLoader: unexpected packet command code: 0x"
+			<< std::hex << packet.Command();
+		throw Error(oss.str());
 	}
 }
 

@@ -719,15 +719,29 @@ void Socket::PacketData(Data &send, Data &receive, int timeout)
 
 			switch( rpack->command )
 			{
-			case 0x1:			// To wait a friendly name :)
-			case 0x65:			// To wait a friendly name :)
-			case SB_DATA_JL_SUCCESS:
+			case SB_COMMAND_SEQUENCE_HANDSHAKE:
+				CheckSequence(inFrag);
+				if (m_zero->GetSequencePacket() == false)
+					done = true;
+				break;
+
+			case SB_COMMAND_JL_READY:
+			case SB_COMMAND_JL_ACK:
+			case SB_COMMAND_JL_HELLO_ACK:
 				done = true;
 				break;
 
 			case SB_DATA_JL_INVALID: {
 				std::ostringstream oss;
 				oss << "Your Java application has been refused by your device !";
+				eout(oss.str());
+				throw Error(oss.str());
+				}
+				break;
+
+			case SB_COMMAND_JL_ERROR: {
+				std::ostringstream oss;
+				oss << "Device can't install the application. Check that the application isn't already installed !";
 				eout(oss.str());
 				throw Error(oss.str());
 				}
@@ -763,25 +777,21 @@ void Socket::PacketData(Data &send, Data &receive, int timeout)
 // necessary, and returns the response in receive, defragmenting
 // if needed
 // Blocks until response received or timed out in Usb::Device
+//
+// This is primarily for Desktop Database packets... Javaloader
+// packets use PacketData().
+//
 void Socket::Packet(Data &send, Data &receive, int timeout)
 {
 	MAKE_PACKET(spack, send);
-// Begin -- I comment the code. Indeed, for JavaLoader we have new unknown command...
 	if( send.GetSize() < MIN_PACKET_SIZE ||
 	    (spack->command != SB_COMMAND_DB_DATA &&
-	     spack->command != SB_COMMAND_DB_DONE &&
-		 spack->command != SB_COMMAND_JL_UNKNOWN1 &&
-		 spack->command != SB_COMMAND_JL_UNKNOWN2 &&
-		 spack->command != SB_COMMAND_JL_UNKNOWN3 &&
-		 spack->command != SB_COMMAND_JL_UNKNOWN4 &&
-		 spack->command != SB_COMMAND_JL_UNKNOWN5 &&
-		 spack->command != SB_COMMAND_JL_UNKNOWN6))
+	     spack->command != SB_COMMAND_DB_DONE) )
 	{
 		// we don't do that around here
 		eout("unknown send data in Packet(): " << send);
 		throw std::logic_error("Socket: unknown send data in Packet()");
 	}
-// End -- I comment the code. Indeed, for JavaLoader we have new unknown command...
 
 	Data inFrag;
 	receive.Zap();
@@ -809,9 +819,6 @@ void Socket::Packet(Data &send, Data &receive, int timeout)
 
 				switch( rpack->command )
 				{
-				case 0x1:			// To wait a friendly name :)
-					break;
-
 				case SB_COMMAND_SEQUENCE_HANDSHAKE:
 					CheckSequence(inFrag);
 					break;
@@ -845,8 +852,6 @@ void Socket::Packet(Data &send, Data &receive, int timeout)
 			{
 			case SB_COMMAND_SEQUENCE_HANDSHAKE:
 				CheckSequence(inFrag);
-				if (m_zero->GetSequencePacket() == false)
-					done = true;
 				break;
 
 			case SB_COMMAND_DB_DATA:
@@ -867,20 +872,6 @@ void Socket::Packet(Data &send, Data &receive, int timeout)
 			case SB_COMMAND_DB_DONE:
 				receive = inFrag;
 				done = true;
-				break;
-
-			case SB_COMMAND_JL_READY:		// To wait a friendly name :)
-			case SB_COMMAND_JL_ACK:			// To wait a friendly name :)
-			case 0x65:			// To wait a friendly name :)
-				done = true;
-				break;
-
-			case SB_COMMAND_JL_ERROR: {
-				std::ostringstream oss;
-				oss << "Device can't install the application. Check that the application isn't already installed !";
-				eout(oss.str());
-				throw Error(oss.str());
-				}
 				break;
 
 			default: {
@@ -912,6 +903,19 @@ void Socket::Packet(Data &send, Data &receive, int timeout)
 void Socket::Packet(Barry::Packet &packet, int timeout)
 {
 	Packet(packet.m_send, packet.m_receive, timeout);
+}
+
+void Socket::Packet(Barry::JLPacket &packet, int timeout)
+{
+	if( packet.HasData() ) {
+		SetSequencePacket(false);
+		PacketData(packet.m_cmd, packet.m_receive, timeout);
+		SetSequencePacket(true);
+		PacketData(packet.m_data, packet.m_receive, timeout);
+	}
+	else {
+		PacketData(packet.m_cmd, packet.m_receive, timeout);
+	}
 }
 
 void Socket::NextRecord(Data &receive)

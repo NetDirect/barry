@@ -535,6 +535,42 @@ struct DBAccess
 
 
 ///////////////////////////////////////////////////////////////////////////////
+// Javaloader protocol structure
+
+struct JLCommand
+{
+	uint8_t		command;
+	uint8_t		unknown;	// nearly always 0, might be top half of command
+	uint16_t	size;
+} __attribute__ ((packed));
+#define SB_JLCOMMAND_HEADER_SIZE		(sizeof(Barry::Protocol::JLCommand))
+
+struct JLResponse
+{
+	uint8_t		command;
+	uint8_t		unknown;
+	uint16_t	expect;
+} __attribute__ ((packed));
+#define SB_JLRESPONSE_HEADER_SIZE		(sizeof(Barry::Protocol::JLResponse))
+
+struct JLPacket
+{
+	uint16_t	socket;
+	uint16_t	size;		// total size of data packet
+
+	union PacketData
+	{
+		JLCommand	command;
+		JLResponse	response;
+		uint8_t		raw[1];
+		char		filename[1];
+		uint32_t	cod_size;
+		uint32_t	timestamp;
+	} __attribute__ ((packed)) u;
+
+} __attribute__ ((packed));
+
+///////////////////////////////////////////////////////////////////////////////
 // Main packet struct
 
 struct Packet
@@ -591,6 +627,7 @@ struct Packet
 #define IS_COMMAND(data, cmd)			(COMMAND(data) == cmd)
 #define MAKE_PACKET(var, data)			const Barry::Protocol::Packet *var = (const Barry::Protocol::Packet *) (data).GetData()
 #define MAKE_PACKETPTR_BUF(var, ptr)		Barry::Protocol::Packet *var = (Barry::Protocol::Packet *)ptr
+#define MAKE_JLPACKETPTR_BUF(var, ptr)		Barry::Protocol::JLPacket *var = (Barry::Protocol::JLPacket *)ptr
 #define MAKE_RECORD(type,var,data,off)		type *var = (type *) ((data).GetData() + (off))
 #define MAKE_RECORD_PTR(type,var,data,off)	type *var = (type *) ((data) + (off))
 

@@ -78,6 +78,7 @@ public:
 
 	// mid-stream operations
 	void SendStream(char *buffer, int size);
+	void SetTime(time_t when);
 };
 
 }} // namespace Barry::Mode

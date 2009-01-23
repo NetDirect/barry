@@ -33,6 +33,7 @@ namespace Usb { class Device; }
 namespace Barry {
 	class Data;
 	class Packet;
+	class JLPacket;
 	class SocketRoutingQueue;
 }
 
@@ -160,6 +161,7 @@ public:
 	// Blocks until response received or timed out in Usb::Device
 	void Packet(Data &send, Data &receive, int timeout = -1);
 	void Packet(Barry::Packet &packet, int timeout = -1);
+	void Packet(Barry::JLPacket &packet, int timeout = -1);
 
 	// Use this function to send data packet instead of Packet function
 	// Indeed, Packet function is used to send command (and not data)

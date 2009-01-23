@@ -4,6 +4,16 @@ Release: version 0.15 - 2009/01/??
 	- removed default argument to CheckSize() so all code specifies
 		the size it really needs
 	- fixed bug in ParseData() that didn't copy data to receive arg
+	- adding additional javaloader commands and refactoring
+		this is a work in progress:
+		- added JLPacket class, encapsulating javaloader protocol
+		- added new defines for more JL commands
+		- refactored socket class, using PacketData()
+			for JL, and Packet() for Desktop (still needs
+			some work to be really clean)
+		- began implementing new commands (SetTime())
+		- thanks to Rick Scott for his reverse engineering effort
+			in XmBlackBerry, which inspired this code
 2009/01/22
 	- reverted experimental handshaking in IpModem, since the session_key
 		patch fixed Bill Paul's issue

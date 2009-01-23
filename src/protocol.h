@@ -39,13 +39,21 @@
 #define SB_COMMAND_DB_FRAGMENTED	0x60
 #define SB_COMMAND_DB_DONE		0x41
 
-// JavaLoader command
-#define SB_COMMAND_JL_UNKNOWN1		0x64
-#define SB_COMMAND_JL_UNKNOWN2		0x70
+// JavaLoader commands
+#define SB_COMMAND_JL_HELLO		0x64	// This could be a general ACK in both directions
+#define SB_COMMAND_JL_HELLO_ACK		0x65	// From device after host HELLO
+#define SB_COMMAND_JL_GOODBYE		0x8d
+#define SB_COMMAND_JL_SET_UNKNOWN1	0x70	// Initial sequence, 0
+#define SB_COMMAND_JL_SET_COD_FILENAME	0x80
+#define SB_COMMAND_JL_SET_COD_SIZE	0x67	// Always big endian
+#define SB_COMMAND_JL_SEND_DATA		0x68
+#define SB_COMMAND_JL_SET_TIME		0x7c
+#define SB_COMMAND_JL_GET_SCREENSHOT	0x87
+#define SB_COMMAND_JL_DEVICE_INFO	0x71
+#define SB_COMMAND_JL_OS_METRICS	0x78
+#define SB_COMMAND_JL_BOOTROM_METRICS	0x79
+#define SB_COMMAND_JL_GET_DIRECTORY	0x6d
 #define SB_COMMAND_JL_UNKNOWN3		0x63
-#define SB_COMMAND_JL_UNKNOWN4		0x67
-#define SB_COMMAND_JL_UNKNOWN5		0x68
-#define SB_COMMAND_JL_UNKNOWN6		0x8d
 // JavaLoader response
 #define SB_COMMAND_JL_ACK		0x64
 #define SB_COMMAND_JL_READY		0x01
