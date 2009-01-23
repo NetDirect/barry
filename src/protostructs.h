@@ -555,10 +555,8 @@ struct Packet
 } __attribute__ ((packed));
 #define SB_PACKET_HEADER_SIZE			(sizeof(Barry::Protocol::Packet) - sizeof(Barry::Protocol::Packet::PacketData))
 
-// minimum required sizes for various responses
-//#define MIN_PACKET_SIZE		6
 // WARNING : For JavaLoader we have some packet with 5 size !
-#define MIN_PACKET_SIZE				5
+#define MIN_PACKET_SIZE			5
 #define MIN_PACKET_DATA_SIZE		4
 
 
@@ -608,7 +606,7 @@ struct Packet
 
 
 // checks packet size and throws BError if not right
-void CheckSize(const Barry::Data &packet, size_t requiredsize = MIN_PACKET_SIZE);
+void CheckSize(const Barry::Data &packet, size_t requiredsize);
 unsigned int GetSize(const Barry::Data &packet);
 
 }} // namespace Barry::Protocol

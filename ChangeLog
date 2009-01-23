@@ -1,5 +1,8 @@
 Release: version 0.15 - 2009/01/??
 ------------------------------------------------------------------------------
+2009/01/23
+	- removed default argument to CheckSize() so all code specifies
+		the size it really needs
 2009/01/22
 	- reverted experimental handshaking in IpModem, since the session_key
 		patch fixed Bill Paul's issue

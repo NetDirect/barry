@@ -49,7 +49,7 @@ namespace Barry {
 ///
 unsigned int Packet::Command() const
 {
-	Protocol::CheckSize(m_receive);
+	Protocol::CheckSize(m_receive, SB_PACKET_HEADER_SIZE);
 	MAKE_PACKET(rpack, m_receive);
 	return rpack->command;
 }

@@ -218,7 +218,7 @@ void SocketZero::SendOpen(uint16_t socket, Data &receive)
 	}
 
 	// check sequence ID
-	Protocol::CheckSize(receive);
+	Protocol::CheckSize(receive, SB_PACKET_HEADER_SIZE);
 	if( IS_COMMAND(receive, SB_COMMAND_SEQUENCE_HANDSHAKE) ) {
 		CheckSequence(0, receive);
 
@@ -276,7 +276,7 @@ void SocketZero::SendPasswordHash(uint16_t socket, const char *password, Data &r
 	send.Zap();
 
 	// check sequence ID
-	Protocol::CheckSize(receive);
+	Protocol::CheckSize(receive, SB_PACKET_HEADER_SIZE);
 	if( IS_COMMAND(receive, SB_COMMAND_SEQUENCE_HANDSHAKE) ) {
 		CheckSequence(0, receive);
 
@@ -539,7 +539,7 @@ void SocketZero::Close(Socket &socket)
 	}
 
 	// starting fresh, reset sequence ID
-	Protocol::CheckSize(response);
+	Protocol::CheckSize(response, SB_PACKET_HEADER_SIZE);
 	if( IS_COMMAND(response, SB_COMMAND_SEQUENCE_HANDSHAKE) ) {
 		CheckSequence(0, response);
 
@@ -715,7 +715,7 @@ void Socket::PacketData(Data &send, Data &receive, int timeout)
 		if( inFrag.GetSize() > 0 ) {
 			blankCount = 0;
 
-			Protocol::CheckSize(inFrag);
+			Protocol::CheckSize(inFrag, SB_PACKET_HEADER_SIZE);
 
 			switch( rpack->command )
 			{
@@ -805,7 +805,7 @@ void Socket::Packet(Data &send, Data &receive, int timeout)
 			// processing below
 			if( offset && inFrag.GetSize() > 0 ) {
 
-				Protocol::CheckSize(inFrag);
+				Protocol::CheckSize(inFrag, SB_PACKET_HEADER_SIZE);
 
 				switch( rpack->command )
 				{
@@ -839,7 +839,7 @@ void Socket::Packet(Data &send, Data &receive, int timeout)
 		if( inFrag.GetSize() > 0 ) {
 			blankCount = 0;
 
-			Protocol::CheckSize(inFrag);
+			Protocol::CheckSize(inFrag, SB_PACKET_HEADER_SIZE);
 
 			switch( rpack->command )
 			{
