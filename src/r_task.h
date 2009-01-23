@@ -84,7 +84,6 @@ public:
 		MonthOfYear;		// 1-12
 	unsigned char WeekDays;		// bitmask, bit 0 = sunday
 
-	int ClassType;
 	enum PriorityFlagType
 	{
 		High = 0,

@@ -262,7 +262,6 @@ void serialize(ArchiveT &ar, Barry::Task &t, const unsigned int ver)
 	ar & make_nvp("MonthOfYear", t.MonthOfYear);
 	ar & make_nvp("WeekDays", t.WeekDays);
 
-	ar & make_nvp("ClassType", t.ClassType);
 	ar & make_nvp("PriorityFlag", t.PriorityFlag);
 	ar & make_nvp("StatusFlag", t.StatusFlag);
 	ar & make_nvp("Recurring", t.Recurring);
