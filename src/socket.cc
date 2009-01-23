@@ -700,7 +700,7 @@ void Socket::PacketData(Data &send, Data &receive, int timeout)
 		throw std::logic_error("Socket: unknown send data in PacketData()");
 	}
 
-	Data inFrag;
+	Data &inFrag = receive;
 	receive.Zap();
 
 	// send non-fragmented
