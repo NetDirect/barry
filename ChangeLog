@@ -17,6 +17,8 @@ Release: version 0.15 - 2009/01/??
 	- refactored packet.cc to make JLPacket even tighter
 	- updated doc/USB-capture.txt with link to vusb-analyzer
 		Thanks to Martin Owens for the link.
+	- added a set of be_*() endian swap functions, for big endian data
+		JavaLoader code seems to use big endian a lot.
 2009/01/22
 	- reverted experimental handshaking in IpModem, since the session_key
 		patch fixed Bill Paul's issue
