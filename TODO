@@ -9,6 +9,33 @@ please ask on the mailing list as well.
 <cdfrey@foursquare.net>
 
 
+Next Release Checklist
+==============================================================================
+Target: release version 0.15
+	- finish javaloader support, implementing all known commands
+	- polish up bfuse, and add feature to split out fields
+	- add record classes for Content Store, SMS Messages, based on
+		Martin Owens' doc/barry-research.ods
+	- test and fix all build and functionality issues on:
+		- Fedora 10
+		- Ubuntu 8.10
+		- Debian lenny and unstable
+			- see sknauert's email
+		- openSUSE 11.1
+			- see mailing list reports
+	- catchup on sourceforge tracker items
+	- document modem HOWTO for FreeBSD (see Bill Paul's emails)
+	- review all website documentation before release
+	- make sure all manpages are up to date, including bjavaloader
+
+Target: release version 0.16
+	- port opensync plugin to 0.4x
+
+
+
+
+General Features
+==============================================================================
 
 Add support for the Blackberry Storm
 ------------------------------------
