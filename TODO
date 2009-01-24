@@ -9,10 +9,16 @@ please ask on the mailing list as well.
 <cdfrey@foursquare.net>
 
 
-Next Release Checklist
+Next Release Checklist (- todo, + done, x skipped)
 ==============================================================================
 Target: release version 0.15
 	- finish javaloader support, implementing all known commands
+		+ write COD to device
+		+ list
+		+ set time
+		- device-info
+		- screenshot
+		- is there a way to delete COD files too?
 	- polish up bfuse, and add feature to split out fields
 	- add record classes for Content Store, SMS Messages, based on
 		Martin Owens' doc/barry-research.ods
