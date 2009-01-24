@@ -51,41 +51,16 @@ void Usage()
    << "        Copyright 2005-2009, Net Direct Inc. (http://www.netdirect.ca/)\n"
    << "        Using: " << Version << "\n"
    << "\n"
-   << "   -B bus    Specify which USB bus to search on\n"
-   << "   -N dev    Specify which system device, using system specific string\n"
-   << "\n"
-   << "   -e epp    Override endpoint pair detection.  'epp' is a single\n"
-   << "             string separated by a comma, holding the read,write\n"
-   << "             endpoint pair.  Example: -e 83,5\n"
-   << "             Note: Endpoints are specified in hex.\n"
-   << "             You should never need to use this option.\n"
+   << "   -f file   Load a new application\n"
    << "   -h        This help\n"
-   << "   -l        List devices\n"
    << "   -p pin    PIN of device to talk with\n"
    << "             If only one device is plugged in, this flag is optional\n"
    << "   -P pass   Simplistic method to specify device password\n"
-   << "   -f file   Load a new application\n"
    << "   -v        Dump protocol data during operation\n"
-   << "   -X        Reset device\n"
-   << "   -z        Use non-threaded sockets\n"
-   << "   -Z        Use threaded socket router (default)\n"
    << "\n"
    << endl;
 }
 
-
-bool ParseEpOverride(const char *arg, Usb::EndpointPair *epp)
-{
-	int read, write;
-	char comma;
-	istringstream iss(arg);
-	iss >> hex >> read >> comma >> write;
-	if( !iss )
-		return false;
-	epp->read = read;
-	epp->write = write;
-	return true;
-}
 
 class AutoClose
 {
@@ -194,10 +169,7 @@ int main(int argc, char *argv[])
 
 		uint32_t pin = 0;
 		bool load = false,
-			list_only = false,
-			data_dump = false,
-			epp_override = false,
-			threaded_sockets = true;
+			data_dump = false;
 		string password;
 		string filename;
 		string busname;
@@ -207,28 +179,12 @@ int main(int argc, char *argv[])
 
 		// process command line options
 		for(;;) {
-			int cmd = getopt(argc, argv, "B:e:f:hlN:p:P:R:vzZ");
+			int cmd = getopt(argc, argv, "f:hlp:P:v");
 			if( cmd == -1 )
 				break;
 
 			switch( cmd )
 			{
-			case 'B':	// busname
-				busname = optarg;
-				break;
-
-			case 'e':	// endpoint override
-				if( !ParseEpOverride(optarg, &epOverride) ) {
-					Usage();
-					return 1;
-				}
-				epp_override = true;
-				break;
-
-			case 'N':	// Devname
-				devname = optarg;
-				break;
-
 			case 'p':	// Blackberry PIN
 				pin = strtoul(optarg, NULL, 16);
 				break;
@@ -242,20 +198,8 @@ int main(int argc, char *argv[])
 				filename = optarg;
 				break;
 
-			case 'l':	// list only
-				list_only = true;
-				break;
-
 			case 'v':	// data dump on
 				data_dump = true;
-				break;
-
-			case 'z':	// non-threaded sockets
-				threaded_sockets = false;
-				break;
-
-			case 'Z':	// threaded socket router
-				threaded_sockets = true;
 				break;
 
 			case 'h':	// help
@@ -272,88 +216,15 @@ int main(int argc, char *argv[])
 		// Probe the USB bus for Blackberry devices and display.
 		// If user has specified a PIN, search for it in the
 		// available device list here as well
-		Barry::Probe probe(busname.c_str(), devname.c_str());
-		int activeDevice = -1;
-
-		// show any errors during probe first
-		if( probe.GetFailCount() ) {
-			cout << "Blackberry device errors with errors during probe:" << endl;
-			for( int i = 0; i < probe.GetFailCount(); i++ ) {
-				cout << probe.GetFailMsg(i) << endl;
-			}
-		}
-
-
-		// show all successfully found devices
-		cout << "Blackberry devices found:" << endl;
-		for( int i = 0; i < probe.GetCount(); i++ ) {
-			if( data_dump )
-				probe.Get(i).DumpAll(cout);
-			else
-				cout << probe.Get(i);
-			cout << endl;
-			if( probe.Get(i).m_pin == pin )
-				activeDevice = i;
-		}
-
-		if( list_only )
-			return 0;	// done
-
+		Barry::Probe probe;
+		int activeDevice = probe.FindActive(pin);
 		if( activeDevice == -1 ) {
-			if( pin == 0 ) {
-				// can we default to single device?
-				if( probe.GetCount() == 1 )
-					activeDevice = 0;
-				else {
-					cerr << "No device selected" << endl;
-					return 1;
-				}
-			}
-			else {
-				cerr << "PIN " << setbase(16) << pin
-					<< " not found" << endl;
-				return 1;
-			}
+			cerr << "No device selected, or PIN not found" << endl;
+			return 1;
 		}
 
-		cout << "Using device (PIN): " << setbase(16)
-			<< probe.Get(activeDevice).m_pin << endl;
-
-		// Override device endpoints if user asks
-		Barry::ProbeResult device = probe.Get(activeDevice);
-		if( epp_override ) {
-			device.m_ep.read = epOverride.read;
-			device.m_ep.write = epOverride.write;
-			device.m_ep.type = 2;	// FIXME - override this too?
-			cout << "Endpoint pair (read,write) overridden with: "
-			     << hex
-			     << (unsigned int) device.m_ep.read << ","
-			     << (unsigned int) device.m_ep.write << endl;
-		}
-
-
-		//
 		// Create our controller object
-		//
-		// Order is important in the following auto_ptr<> objects,
-		// since Controller must get destroyed before router.
-		// Normally you'd pick one method, and not bother
-		// with auto_ptr<> and so the normal C++ constructor
-		// rules would guarantee this safety for you, but
-		// here we want the user to pick.
-		//
-		auto_ptr<SocketRoutingQueue> router;
-		auto_ptr<Barry::Controller> pcon;
-		if( threaded_sockets ) {
-			router.reset( new SocketRoutingQueue );
-			router->SpinoffSimpleReadThread();
-			pcon.reset( new Barry::Controller(device, *router) );
-		}
-		else {
-			pcon.reset( new Barry::Controller(device) );
-		}
-
-		Barry::Controller &con = *pcon;
+		Barry::Controller con(probe.Get(activeDevice));
 		Barry::Mode::JavaLoader javaloader(con);
 
 		//
@@ -362,7 +233,7 @@ int main(int argc, char *argv[])
 		javaloader.Open(password.c_str());
 
 		// Send the file
-		if (load == true)
+		if( load )
 			SendAppFile(&javaloader, filename.c_str());
 	}
 	catch( Usb::Error &ue) {
