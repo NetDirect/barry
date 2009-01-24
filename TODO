@@ -30,7 +30,8 @@ Target: release version 0.15
 		- openSUSE 11.1
 			- see mailing list reports
 	- catchup on sourceforge tracker items
-	- document modem HOWTO for FreeBSD (see Bill Paul's emails)
+	- incorporate Bill Paul's modem HOWTO for FreeBSD into web docs
+		(see list emails)
 	- review all website documentation before release
 	- make sure all manpages are up to date, including bjavaloader
 
