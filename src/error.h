@@ -98,16 +98,23 @@ class BXEXPORT BadSize : public Barry::Error
 		m_data_buf_size,
 		m_required_size;
 
+	BXLOCAL static std::string GetMsg(const char *msg, unsigned int d, unsigned int r);
 	BXLOCAL static std::string GetMsg(unsigned int p, unsigned int d, unsigned int r);
 
 public:
+	BadSize(const char *msg, unsigned int data_size, unsigned int required_size)
+		: Barry::Error(GetMsg(msg, data_size, required_size))
+		, m_packet_size(0)
+		, m_data_buf_size(data_size)
+		, m_required_size(required_size)
+		{}
 	BadSize(unsigned int packet_size,
 		unsigned int data_buf_size,
 		unsigned int required_size)
-		: Barry::Error(GetMsg(packet_size, data_buf_size, required_size)),
-		m_packet_size(packet_size),
-		m_data_buf_size(data_buf_size),
-		m_required_size(required_size)
+		: Barry::Error(GetMsg(packet_size, data_buf_size, required_size))
+		, m_packet_size(packet_size)
+		, m_data_buf_size(data_buf_size)
+		, m_required_size(required_size)
 		{}
 	unsigned int packet_size() const { return m_packet_size; }
 	unsigned int data_buf_size() const { return m_data_buf_size; }

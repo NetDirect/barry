@@ -27,6 +27,14 @@ using namespace std;
 
 namespace Barry {
 
+std::string BadSize::GetMsg(const char *msg, unsigned int d, unsigned int r)
+{
+	std::ostringstream oss;
+	oss << msg << ": Bad packet size, not enough data: DataSize(): " << d
+	    << ". Required size: " << r;
+	return oss.str();
+}
+
 std::string BadSize::GetMsg(unsigned int p, unsigned int d, unsigned int r)
 {
 	std::ostringstream oss;
