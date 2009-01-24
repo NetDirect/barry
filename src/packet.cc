@@ -524,15 +524,15 @@ int JLPacket::SimpleData(const void *data, uint16_t size)
 	return m_last_set_size = 2;
 }
 
+int JLPacket::BigEndianData(uint16_t value)
+{
+	value = be_htobs(value);
+	return SimpleData(&value, sizeof(value));
+}
+
 int JLPacket::BigEndianData(uint32_t value)
 {
-// Blackberry expects the size in big endian format here.
-// All the 'htob*()' functions assume Blackberry data is
-// little endian, so do it manually here.
-#ifndef WORDS_BIGENDIAN
-	value = bswap_32(value);
-#endif
-
+	value = be_htobl(value);
 	return SimpleData(&value, sizeof(value));
 }
 
@@ -552,13 +552,13 @@ int JLPacket::SetCodFilename(const std::string &filename)
 int JLPacket::SetCodSize(off_t size)
 {
 	SimpleCmd(SB_COMMAND_JL_SET_COD_SIZE, 1, 4);
-	return BigEndianData(size);
+	return BigEndianData((uint32_t)size);
 }
 
 int JLPacket::SetTime(time_t when)
 {
 	SimpleCmd(SB_COMMAND_JL_SET_TIME, 0, 4);
-	return BigEndianData(when);
+	return BigEndianData((uint32_t)when);
 }
 
 } // namespace Barry

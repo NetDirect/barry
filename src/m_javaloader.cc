@@ -242,14 +242,7 @@ void JavaLoader::SendStream(char *buffer, int buffsize)
 	// 5°/
 	char rawCommand5[] = { 4, 0, 0x08, 0, 0, 0, 0x00, 0x00 };
 	*((uint16_t*) rawCommand5) = htobs(m_socket->GetSocket());
-// Blackberry expects the size in big endian format here.
-// All the 'htob*()' functions assume Blackberry data is
-// little endian, so do it manually here.
-#ifdef WORDS_BIGENDIAN
-	*(((uint32_t*) rawCommand5) + 1) = buffsize;
-#else
-	*(((uint32_t*) rawCommand5) + 1) = bswap_32(buffsize);
-#endif
+	*(((uint32_t*) rawCommand5) + 1) = be_htobl(buffsize);
 
 	Data command5(rawCommand5, sizeof(rawCommand5));
 
