@@ -348,7 +348,10 @@ bool SocketZero::SequencePacket(const Data &data)
 	// End -- Test quiet durty :(
 
 	if( data.GetSize() >= MIN_PACKET_SIZE ) {
-		if( IS_COMMAND(data, SB_COMMAND_SEQUENCE_HANDSHAKE) ) {
+		MAKE_PACKET(rpack, data);
+		if( rpack->socket == 0 &&
+		    rpack->command == SB_COMMAND_SEQUENCE_HANDSHAKE )
+		{
 			CheckSequence(0, data);
 			return true;
 		}

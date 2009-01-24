@@ -2,6 +2,8 @@ Release: version 0.15 - 2009/01/??
 ------------------------------------------------------------------------------
 2009/01/24
 	- added another ctor to BadSize exception class
+	- fixed bug in SocketZero where it checked sequence on packets
+		from non-zero sockets
 2009/01/23
 	- removed default argument to CheckSize() so all code specifies
 		the size it really needs
