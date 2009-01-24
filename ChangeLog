@@ -14,6 +14,7 @@ Release: version 0.15 - 2009/01/??
 		- began implementing new commands (SetTime())
 		- thanks to Rick Scott for his reverse engineering effort
 			in XmBlackBerry, which inspired this code
+	- refactored packet.cc to make JLPacket even tighter
 2009/01/22
 	- reverted experimental handshaking in IpModem, since the session_key
 		patch fixed Bill Paul's issue

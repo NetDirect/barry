@@ -204,6 +204,9 @@ public:
 
 	// returns 1 or 2 depending on whether cmd or cmd+send are available
 	int SimpleCmd(uint8_t cmd, uint8_t unknown = 0, uint16_t size = 0);
+	int SimpleData(const void *data, uint16_t size);
+	int BigEndianData(uint32_t value);
+
 	int Hello()		{ return SimpleCmd(SB_COMMAND_JL_HELLO); }
 	int Goodbye()		{ return SimpleCmd(SB_COMMAND_JL_GOODBYE); }
 	int SetUnknown1();
