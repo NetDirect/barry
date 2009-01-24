@@ -195,6 +195,7 @@ public:
 	// meta access
 
 	bool HasData() const	{ return m_last_set_size == 2; }
+	Data& GetReceive()	{ return m_receive; }
 
 	//////////////////////////////////
 	// packet building

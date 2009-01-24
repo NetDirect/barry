@@ -38,8 +38,67 @@
 
 #include "debug.h"
 
-namespace Barry { namespace Mode {
+namespace Barry {
 
+JLDirectory::JLDirectory()
+	: m_idTable(0)
+	, m_count(0)
+{
+}
+
+JLDirectory::~JLDirectory()
+{
+	delete [] m_idTable;
+}
+
+void JLDirectory::ParseTable(const Data &table_packet)
+{
+	delete [] m_idTable;
+	m_idTable = 0;
+
+	size_t count = table_packet.GetSize() / 2;
+	m_idTable = new uint16_t[count];
+
+	uint16_t *item = (uint16_t*) table_packet.GetData();
+	for( size_t i = 0; i < count; i++, item++ ) {
+		m_idTable[i] = be_btohs(*item);
+	}
+}
+
+void JLDirectoryEntry::Parse(uint16_t id, const Data &entry_packet)
+{
+	size_t needed = SB_JLDIRENTRY_HEADER_SIZE;
+	Protocol::CheckSize(entry_packet, needed);
+
+	const unsigned char *ptr = entry_packet.GetData();
+	Protocol::JLDirEntry *entry = (Protocol::JLDirEntry*) ptr;
+
+	Id = id;
+	Timestamp = be_btohl(entry->timestamp);
+
+	uint16_t len = be_btohs(entry->filename_size);
+	Protocol::CheckSize(entry_packet, needed + len);
+	Name.assign((char *)entry->filename, len);
+
+	// need parsed data + string size
+	ptr += needed + len;
+	needed += len + 2;
+	Protocol::CheckSize(entry_packet, needed);
+
+	len = be_btohs( *((uint16_t*)(ptr)) );
+	ptr += sizeof(uint16_t);
+	Protocol::CheckSize(entry_packet, needed + len);
+	Version.assign((char*)ptr, len);
+
+	// need parsed data + string size
+	ptr += len;
+	needed += len + sizeof(uint32_t);
+	Protocol::CheckSize(entry_packet, needed);
+	CodSize = be_btohl( *((uint32_t*)(ptr)) );
+}
+
+
+namespace Mode {
 
 ///////////////////////////////////////////////////////////////////////////////
 // JavaLoader Mode class
@@ -333,12 +392,73 @@ void JavaLoader::SetTime(time_t when)
 	packet.SetTime(when);
 	m_socket->Packet(packet);
 	if( packet.Command() != SB_COMMAND_JL_ACK ) {
-		std::ostringstream oss;
-		oss << "JavaLoader: unexpected packet command code: 0x"
-			<< std::hex << packet.Command();
-		throw Error(oss.str());
+		ThrowJLError("JavaLoader::SetTime", packet.Command());
 	}
 }
+
+void JavaLoader::ThrowJLError(const std::string &msg, uint8_t cmd)
+{
+	std::ostringstream oss;
+	oss << msg << ": unexpected packet command code: 0x"
+		<< std::hex << (unsigned int) cmd;
+	throw Error(oss.str());
+}
+
+void JavaLoader::GetDirectoryEntries(JLPacket &packet,
+				     uint8_t entry_cmd,
+				     JLDirectory &dir,
+				     bool include_subdirs)
+{
+	JLDirectory::TableIterator i = dir.TableBegin(), e = dir.TableEnd();
+	for( ; i != e; ++i ) {
+		packet.GetDirEntry(entry_cmd, *i);
+		m_socket->Packet(packet);
+		if( packet.Command() != SB_COMMAND_JL_ACK ) {
+			ThrowJLError("JavaLoader::GetDirectoryEntries", packet.Command());
+		}
+
+		Data &response = packet.GetReceive();
+		m_socket->Receive(response);
+		JLDirectoryEntry entry;
+		Protocol::CheckSize(response, 4);
+		entry.Parse(*i, Data(response.GetData() + 4, response.GetSize() - 4));
+
+		if( include_subdirs ) {
+			packet.GetSubDir(*i);
+			GetDir(packet, SB_COMMAND_JL_GET_SUBDIR_ENTRY, entry.SubDir, false);
+		}
+
+		// add to list
+		dir.push_back(entry);
+	}
+}
+
+void JavaLoader::GetDir(JLPacket &packet,
+			uint8_t entry_cmd,
+			JLDirectory &dir,
+			bool include_subdirs)
+{
+	m_socket->Packet(packet);
+	if( packet.Command() != SB_COMMAND_JL_ACK ) {
+		ThrowJLError("JavaLoader::GetDir", packet.Command());
+	}
+
+	Data &response = packet.GetReceive();
+	m_socket->Receive(response);
+	Protocol::CheckSize(response, 4);
+	dir.ParseTable(Data(response.GetData() + 4, response.GetSize() - 4));
+	GetDirectoryEntries(packet, entry_cmd, dir, include_subdirs);
+}
+
+void JavaLoader::GetDirectory(JLDirectory &dir, bool include_subdirs)
+{
+	Data cmd(-1, 8), data(-1, 8), response;
+	JLPacket packet(cmd, data, response);
+
+	packet.GetDirectory();
+	GetDir(packet, SB_COMMAND_JL_GET_DIR_ENTRY, dir, include_subdirs);
+}
+
 
 }} // namespace Barry::Mode
 

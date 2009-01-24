@@ -36,6 +36,49 @@ class Parser;
 class Builder;
 class Controller;
 
+class JLDirectoryEntry;
+
+class JLDirectory : public std::vector<JLDirectoryEntry>
+{
+public:
+	typedef std::vector<JLDirectoryEntry>	BaseType;
+	typedef uint16_t*			TableIterator;
+	typedef BaseType::iterator		BaseIterator;
+
+private:
+	uint16_t *m_idTable;
+	int m_count;
+
+public:
+	JLDirectory();
+	~JLDirectory();
+
+	TableIterator TableBegin() { return m_idTable; }
+	TableIterator TableEnd()   { return m_idTable ? m_idTable + m_count : 0; }
+
+	void ParseTable(const Data &table_packet);
+
+	void Dump(std::ostream &os) const;
+};
+
+class JLDirectoryEntry
+{
+public:
+	uint16_t Id;
+	std::string Name;
+	std::string Version;
+	uint32_t CodSize;
+	time_t Timestamp;
+
+	JLDirectory SubDir;
+
+public:
+	void Parse(uint16_t id, const Data &entry_packet);
+
+	void Dump(std::ostream &os) const;
+};
+
+
 namespace Mode {
 
 //
@@ -61,6 +104,13 @@ private:
 	uint16_t m_ModeSocket;			// socket recommended by device
 						// when mode was selected
 
+protected:
+	void GetDirectoryEntries(JLPacket &packet, uint8_t entry_cmd,
+		JLDirectory &dir, bool include_subdirs);
+	void GetDir(JLPacket &packet, uint8_t entry_cmd, JLDirectory &dir,
+		bool include_subdirs);
+	void ThrowJLError(const std::string &msg, uint8_t cmd);
+
 public:
 	JavaLoader(Controller &con);
 	~JavaLoader();
@@ -79,6 +129,7 @@ public:
 	// mid-stream operations
 	void SendStream(char *buffer, int size);
 	void SetTime(time_t when);
+	void GetDirectory(JLDirectory &dir, bool include_subdirs);
 };
 
 }} // namespace Barry::Mode
