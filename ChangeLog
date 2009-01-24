@@ -4,6 +4,12 @@ Release: version 0.15 - 2009/01/??
 	- added another ctor to BadSize exception class
 	- fixed bug in SocketZero where it checked sequence on packets
 		from non-zero sockets
+	- javaloader list mode updates:
+		- added Dump() code to directory classes
+		- fixed size issue with JLDirEntry header size define
+		- fixed size checks in entry parser
+		- fixed copy before in JLDirectory, now uses vector
+		- moved bjavaloader's Start/StopStream calls to main()
 2009/01/23
 	- removed default argument to CheckSize() so all code specifies
 		the size it really needs

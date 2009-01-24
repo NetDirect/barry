@@ -548,7 +548,7 @@ struct JLDirEntry
 	// uint32_t	cod_size;
 
 } __attribute__ ((packed));
-#define SB_JLDIRENTRY_HEADER_SIZE		(sizeof(Barry::Protocol::JLDirEntry))
+#define SB_JLDIRENTRY_HEADER_SIZE		(sizeof(Barry::Protocol::JLDirEntry) - 1)
 
 struct JLCommand
 {

@@ -53,6 +53,7 @@ void Usage()
    << "\n"
    << "   -f file   Load a new application\n"
    << "   -h        This help\n"
+   << "   -l        List COD files in device (use twice to list submodules)\n"
    << "   -p pin    PIN of device to talk with\n"
    << "             If only one device is plugged in, this flag is optional\n"
    << "   -P pass   Simplistic method to specify device password\n"
@@ -107,9 +108,6 @@ void SendAppFile(Barry::Mode::JavaLoader *javaloader, const char *filename)
 
 	AutoClose ac(fp);
 
-	// Start
-	javaloader->StartStream();
-
 	// Read the file
 	while (!feof(fp)) {
 		n = fread(&header, sizeof(codfile_header_t), 1, fp);
@@ -154,9 +152,6 @@ void SendAppFile(Barry::Mode::JavaLoader *javaloader, const char *filename)
 			javaloader->SendStream(data, filesize);
 		}
 	}
-
-	// Stop
-	javaloader->StopStream();
 }
 
 
@@ -169,6 +164,8 @@ int main(int argc, char *argv[])
 
 		uint32_t pin = 0;
 		bool load = false,
+			list_java = false,
+			list_sub = false,
 			data_dump = false;
 		string password;
 		string filename;
@@ -196,6 +193,13 @@ int main(int argc, char *argv[])
 			case 'f':	// Filename
 				load = true;
 				filename = optarg;
+				break;
+
+			case 'l':	// list device COD files
+				if( !list_java )
+					list_java = true;
+				else
+					list_sub = true;
 				break;
 
 			case 'v':	// data dump on
@@ -231,10 +235,21 @@ int main(int argc, char *argv[])
 		// execute each mode that was turned on
 		//
 		javaloader.Open(password.c_str());
+		javaloader.StartStream();
 
 		// Send the file
 		if( load )
 			SendAppFile(&javaloader, filename.c_str());
+
+		if( list_java ) {
+			JLDirectory dir;
+			javaloader.GetDirectory(dir, list_sub);
+			cout << dir;
+		}
+
+		// Stop
+		javaloader.StopStream();
+
 	}
 	catch( Usb::Error &ue) {
 		std::cerr << "Usb::Error caught: " << ue.what() << endl;

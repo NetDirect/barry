@@ -38,31 +38,41 @@ class Controller;
 
 class JLDirectoryEntry;
 
-class JLDirectory : public std::vector<JLDirectoryEntry>
+class BXEXPORT JLDirectory : public std::vector<JLDirectoryEntry>
 {
 public:
 	typedef std::vector<JLDirectoryEntry>	BaseType;
-	typedef uint16_t*			TableIterator;
 	typedef BaseType::iterator		BaseIterator;
+	typedef std::vector<uint16_t>		TableType;
+	typedef TableType::iterator		TableIterator;
 
 private:
-	uint16_t *m_idTable;
-	int m_count;
+	TableType m_idTable;
+
+	int m_level;
 
 public:
-	JLDirectory();
+	JLDirectory(int level = 0);
 	~JLDirectory();
 
-	TableIterator TableBegin() { return m_idTable; }
-	TableIterator TableEnd()   { return m_idTable ? m_idTable + m_count : 0; }
+	int Level() const { return m_level; }
+	TableIterator TableBegin() { return m_idTable.begin(); }
+	TableIterator TableEnd()   { return m_idTable.end(); }
 
 	void ParseTable(const Data &table_packet);
 
 	void Dump(std::ostream &os) const;
 };
+BXEXPORT inline std::ostream& operator<<(std::ostream &os, const JLDirectory &d) {
+	d.Dump(os);
+	return os;
+}
 
-class JLDirectoryEntry
+class BXEXPORT JLDirectoryEntry
 {
+private:
+	int m_level;
+
 public:
 	uint16_t Id;
 	std::string Name;
@@ -73,10 +83,16 @@ public:
 	JLDirectory SubDir;
 
 public:
+	explicit JLDirectoryEntry(int level);
+
 	void Parse(uint16_t id, const Data &entry_packet);
 
 	void Dump(std::ostream &os) const;
 };
+BXEXPORT inline std::ostream& operator<<(std::ostream &os, const JLDirectoryEntry &e) {
+	e.Dump(os);
+	return os;
+}
 
 
 namespace Mode {

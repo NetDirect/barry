@@ -38,37 +38,65 @@
 
 #include "debug.h"
 
+using namespace std;
+
 namespace Barry {
 
-JLDirectory::JLDirectory()
-	: m_idTable(0)
-	, m_count(0)
+
+///////////////////////////////////////////////////////////////////////////////
+// JLDirectory class
+
+JLDirectory::JLDirectory(int level)
+	: m_level(level)
 {
 }
 
 JLDirectory::~JLDirectory()
 {
-	delete [] m_idTable;
 }
 
 void JLDirectory::ParseTable(const Data &table_packet)
 {
-	delete [] m_idTable;
-	m_idTable = 0;
+	m_idTable.clear();
 
 	size_t count = table_packet.GetSize() / 2;
-	m_idTable = new uint16_t[count];
-
 	uint16_t *item = (uint16_t*) table_packet.GetData();
 	for( size_t i = 0; i < count; i++, item++ ) {
-		m_idTable[i] = be_btohs(*item);
+		m_idTable.push_back( be_btohs(*item) );
 	}
+}
+
+void JLDirectory::Dump(std::ostream &os) const
+{
+	int indent = m_level * 2;
+
+	os << setfill(' ') << setw(indent) << "";
+	os << "Directory: " << m_idTable.size() << "/" << size() << " entries\n";
+
+	const_iterator i = begin(), e = end();
+	for( ; i != e; ++i ) {
+		os << setfill(' ') << setw(indent + 2) << "";
+		os << *i << "\n";
+	}
+}
+
+
+
+///////////////////////////////////////////////////////////////////////////////
+// JLDirectoryEntry class
+
+JLDirectoryEntry::JLDirectoryEntry(int level)
+	: m_level(level)
+	, SubDir(level + 1)
+{
 }
 
 void JLDirectoryEntry::Parse(uint16_t id, const Data &entry_packet)
 {
 	size_t needed = SB_JLDIRENTRY_HEADER_SIZE;
-	Protocol::CheckSize(entry_packet, needed);
+	size_t have = entry_packet.GetSize();
+	if( have < needed )
+		throw BadSize("JLDE:Parse(1)", have, needed);
 
 	const unsigned char *ptr = entry_packet.GetData();
 	Protocol::JLDirEntry *entry = (Protocol::JLDirEntry*) ptr;
@@ -77,24 +105,49 @@ void JLDirectoryEntry::Parse(uint16_t id, const Data &entry_packet)
 	Timestamp = be_btohl(entry->timestamp);
 
 	uint16_t len = be_btohs(entry->filename_size);
-	Protocol::CheckSize(entry_packet, needed + len);
+	needed += len;
+	if( have < needed )
+		throw BadSize("JLDE:Parse(2)", have, needed);
 	Name.assign((char *)entry->filename, len);
 
 	// need parsed data + string size
-	ptr += needed + len;
-	needed += len + 2;
-	Protocol::CheckSize(entry_packet, needed);
+	ptr += needed;
+	needed += 2;
+	if( have < needed )
+		throw BadSize("JLDE:Parse(3)", have, needed);
 
 	len = be_btohs( *((uint16_t*)(ptr)) );
 	ptr += sizeof(uint16_t);
-	Protocol::CheckSize(entry_packet, needed + len);
+	needed += len;
+	if( have < needed )
+		throw BadSize("JLDE:Parse(4)", have, needed);
 	Version.assign((char*)ptr, len);
 
 	// need parsed data + string size
 	ptr += len;
-	needed += len + sizeof(uint32_t);
-	Protocol::CheckSize(entry_packet, needed);
+	needed += sizeof(uint32_t);
+	if( have < needed )
+		throw BadSize("JLDE:Parse(5)", have, needed);
 	CodSize = be_btohl( *((uint32_t*)(ptr)) );
+}
+
+void JLDirectoryEntry::Dump(std::ostream &os) const
+{
+	os << left << setfill(' ') << setw(50) << Name;
+
+	os << "\n";
+	os << left << setw(28) << " ";
+
+	os << "0x" << setfill('0') << setw(4) << hex << Id;
+	os << " " << setw(10) << Version;
+	os << " " << setw(7) << std::dec << CodSize;
+
+	std::string ts = ctime(&Timestamp);
+	ts.erase(ts.size() - 1);
+	os << " " << ts;
+
+	if( SubDir.size() )
+		os << "\n" << SubDir;
 }
 
 
@@ -419,7 +472,7 @@ void JavaLoader::GetDirectoryEntries(JLPacket &packet,
 
 		Data &response = packet.GetReceive();
 		m_socket->Receive(response);
-		JLDirectoryEntry entry;
+		JLDirectoryEntry entry(dir.Level());
 		Protocol::CheckSize(response, 4);
 		entry.Parse(*i, Data(response.GetData() + 4, response.GetSize() - 4));
 
