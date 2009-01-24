@@ -219,6 +219,8 @@ public:
 	int OsMetrics()		{ return SimpleCmd(SB_COMMAND_JL_OS_METRICS); }
 	int BootromMetrics()	{ return SimpleCmd(SB_COMMAND_JL_BOOTROM_METRICS); }
 	int GetDirectory()	{ return SimpleCmd(SB_COMMAND_JL_GET_DIRECTORY); }
+	int GetSubDir(uint16_t id);
+	int GetDirEntry(uint8_t entry_cmd, uint16_t id);
 
 	//////////////////////////////////
 	// response analysis

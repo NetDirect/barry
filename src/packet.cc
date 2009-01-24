@@ -561,5 +561,17 @@ int JLPacket::SetTime(time_t when)
 	return BigEndianData((uint32_t)when);
 }
 
+int JLPacket::GetSubDir(uint16_t id)
+{
+	SimpleCmd(SB_COMMAND_JL_GET_SUBDIR, 0, 2);
+	return BigEndianData(id);
+}
+
+int JLPacket::GetDirEntry(uint8_t entry_cmd, uint16_t id)
+{
+	SimpleCmd(entry_cmd, 0, 2);
+	return BigEndianData(id);
+}
+
 } // namespace Barry
 

@@ -537,6 +537,19 @@ struct DBAccess
 ///////////////////////////////////////////////////////////////////////////////
 // Javaloader protocol structure
 
+struct JLDirEntry
+{
+	uint16_t	unknown;
+	uint32_t	timestamp;
+	uint16_t	filename_size;
+	uint8_t		filename[1];
+	// the rest of the packet is variable length
+	// another string for version, then:
+	// uint32_t	cod_size;
+
+} __attribute__ ((packed));
+#define SB_JLDIRENTRY_HEADER_SIZE		(sizeof(Barry::Protocol::JLDirEntry))
+
 struct JLCommand
 {
 	uint8_t		command;

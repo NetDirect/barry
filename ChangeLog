@@ -21,6 +21,7 @@ Release: version 0.15 - 2009/01/??
 		JavaLoader code seems to use big endian a lot.
 	- simplified bjavaloader.cc's command line args to make room for more
 	- cleaned up big endian code to use new be_* swap macros
+	- added protocol and packet code for directory / subdir commands
 2009/01/22
 	- reverted experimental handshaking in IpModem, since the session_key
 		patch fixed Bill Paul's issue
