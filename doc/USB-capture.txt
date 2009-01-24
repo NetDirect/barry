@@ -123,6 +123,22 @@ from:
 	http://www.vmware.com/download/server/
 
 
+Capturing: The VMWare way
+-------------------------
+
+If you're running VMWare anyway, it has a built-in capability to log USB
+traffic.
+
+In addition, the Virtual USB Analyzer project provides a graphical way
+of viewing USB traffic, and can be found here:
+
+	http://vusb-analyzer.sourceforge.net/
+
+There is a tutorial there, describing how to configure VMWare to log USB
+traffic, and how to make use of those logs with vusb-analyzer.
+
+
+
 Happy Hacking!
 
 Chris Frey <cdfrey@foursquare.net>

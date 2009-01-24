@@ -15,6 +15,8 @@ Release: version 0.15 - 2009/01/??
 		- thanks to Rick Scott for his reverse engineering effort
 			in XmBlackBerry, which inspired this code
 	- refactored packet.cc to make JLPacket even tighter
+	- updated doc/USB-capture.txt with link to vusb-analyzer
+		Thanks to Martin Owens for the link.
 2009/01/22
 	- reverted experimental handshaking in IpModem, since the session_key
 		patch fixed Bill Paul's issue
