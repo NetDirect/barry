@@ -4,6 +4,7 @@ Release: version 0.15 - 2009/01/??
 	- applied patch from Josh Kropf making bjavaloader's syntax more
 		compatible with the windows version, to make cross
 		platform build scripts possible
+	- applied Josh Kropf's settime syntax patch
 2009/01/24
 	- added another ctor to BadSize exception class
 	- fixed bug in SocketZero where it checked sequence on packets
