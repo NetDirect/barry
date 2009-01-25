@@ -31,13 +31,20 @@
 #include <sstream>
 #include <vector>
 #include <string>
+#include <cstring>
 #include <algorithm>
 #include <getopt.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#define CMD_LIST "dir"
-#define CMD_LOAD "load"
+// supported javaloader commands
+#define CMD_LIST    "dir"
+#define CMD_LOAD    "load"
+#define CMD_SETTIME "settime"
+
+// time string format specifier and user friendly description
+#define TIME_FMT         "%Y-%m-%d %H:%M:%S"
+#define TIME_FMT_EXAMPLE "yyyy-mm-dd HH:MM:SS"
 
 using namespace std;
 using namespace Barry;
@@ -67,6 +74,10 @@ void Usage()
    << "\n"
    << "   " << CMD_LOAD << " <.cod file> ...\n"
    << "      Loads modules onto the handheld\n"
+   << "\n"
+   << "   " << CMD_SETTIME << " [" << TIME_FMT_EXAMPLE << "]\n"
+   << "      Sets the time on the handheld to the current time\n"
+   << "      Or the time specified as an argument to " << CMD_SETTIME << "\n"
    << endl;
 }
 
@@ -82,6 +93,31 @@ public:
 		fclose(fp);
 	}
 };
+
+void SetTime(Barry::Mode::JavaLoader *javaloader, const char *timestr)
+{
+	time_t when;
+	
+	if( timestr ) {
+		struct tm timeinfo;
+		
+		// parse time string
+		char *p = strptime(timestr, TIME_FMT, &timeinfo);
+		
+		// NULL is return when strptime fails to match all of the format
+		// string, and returns a pointer to the NULL byte at the end of
+		// the input string on success
+		if( p == NULL || p != (timestr + strlen(timestr)) ) {
+			throw runtime_error(string("Unable to parse time string: ") + timestr);
+		}
+		
+		when = mktime(&timeinfo);
+	} else { // time string is NULL, get current time
+		time(&when);
+	}
+	
+	javaloader->SetTime(when);
+}
 
 void SendAppFile(Barry::Mode::JavaLoader *javaloader, const char *filename)
 {
@@ -260,21 +296,27 @@ int main(int argc, char *argv[])
 			cout << dir;
 		} else if( cmd == CMD_LOAD ) {
 			if( params.size() == 0 ) {
-				// FIXME is this necessary?
-				javaloader.StopStream();
-				
 				cerr << "specify at least one .cod file to load" << endl;
 				Usage();
-				
 				return 1;
 			}
 			
-			vector<string>::iterator i = params.begin();
-			for( ; i != params.end(); ++i ) {
+			vector<string>::iterator i = params.begin(), end = params.end();
+			for( ; i != end; ++i ) {
 				cout << "loading " << (*i) << "... ";
 				SendAppFile(&javaloader, (*i).c_str());
 				cout << "done." << endl;
 			}
+		} else if( cmd == CMD_SETTIME ) {
+			if( params.size() > 0 ) {
+				SetTime(&javaloader, params[0].c_str());
+			} else {
+				SetTime(&javaloader, NULL);
+			}
+		} else {
+			cerr << "invalid command \"" << cmd << "\"" << endl;
+			Usage();
+			return 1;
 		}
 
 		// Stop
