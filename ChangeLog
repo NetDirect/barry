@@ -6,6 +6,8 @@ Release: version 0.15 - 2009/01/??
 		platform build scripts possible
 	- applied Josh Kropf's settime syntax patch
 	- clarified timezone behaviour in javaloader settime
+	- added flag to JavaLoader mode class, so StopStream() is called
+		automatically in the destructor if not called manually
 2009/01/24
 	- added another ctor to BadSize exception class
 	- fixed bug in SocketZero where it checked sequence on packets

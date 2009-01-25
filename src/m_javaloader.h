@@ -120,6 +120,8 @@ private:
 	uint16_t m_ModeSocket;			// socket recommended by device
 						// when mode was selected
 
+	bool m_StreamStarted;
+
 protected:
 	void GetDirectoryEntries(JLPacket &packet, uint8_t entry_cmd,
 		JLDirectory &dir, bool include_subdirs);

@@ -159,11 +159,14 @@ namespace Mode {
 JavaLoader::JavaLoader(Controller &con)
 	: m_con(con)
 	, m_ModeSocket(0)
+	, m_StreamStarted(false)
 {
 }
 
 JavaLoader::~JavaLoader()
 {
+	if( m_StreamStarted )
+		StopStream();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -293,6 +296,8 @@ void JavaLoader::StartStream()
 		eeout(command1, response);
 		throw;
 	}
+
+	m_StreamStarted = true;
 }
 
 
@@ -435,6 +440,8 @@ void JavaLoader::StopStream(void)
 	Data command(rawCommand, sizeof(rawCommand));
 	Data response;
 	m_socket->PacketData(command, response);
+
+	m_StreamStarted = false;
 }
 
 void JavaLoader::SetTime(time_t when)
