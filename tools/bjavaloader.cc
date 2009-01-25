@@ -36,6 +36,8 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
+#define CMD_LIST "dir"
+#define CMD_LOAD "load"
 
 using namespace std;
 using namespace Barry;
@@ -51,14 +53,20 @@ void Usage()
    << "        Copyright 2005-2009, Net Direct Inc. (http://www.netdirect.ca/)\n"
    << "        Using: " << Version << "\n"
    << "\n"
-   << "   -f file   Load a new application\n"
    << "   -h        This help\n"
-   << "   -l        List COD files in device (use twice to list submodules)\n"
+   << "   -s        List sibling in module list\n"
    << "   -p pin    PIN of device to talk with\n"
    << "             If only one device is plugged in, this flag is optional\n"
    << "   -P pass   Simplistic method to specify device password\n"
    << "   -v        Dump protocol data during operation\n"
    << "\n"
+   << "commands\n"
+   << "\n"
+   << "   " << CMD_LIST << endl
+   << "      Lists modules on the handheld\n"
+   << "\n"
+   << "   " << CMD_LOAD << " <.cod file> ...\n"
+   << "      Loads modules onto the handheld\n"
    << endl;
 }
 
@@ -163,12 +171,10 @@ int main(int argc, char *argv[])
 	try {
 
 		uint32_t pin = 0;
-		bool load = false,
-			list_java = false,
-			list_sub = false,
+		bool list_siblings = false,
 			data_dump = false;
 		string password;
-		string filename;
+		vector<string> params;
 		string busname;
 		string devname;
 		string iconvCharset;
@@ -176,7 +182,7 @@ int main(int argc, char *argv[])
 
 		// process command line options
 		for(;;) {
-			int cmd = getopt(argc, argv, "f:hlp:P:v");
+			int cmd = getopt(argc, argv, "hsp:P:v");
 			if( cmd == -1 )
 				break;
 
@@ -190,16 +196,8 @@ int main(int argc, char *argv[])
 				password = optarg;
 				break;
 
-			case 'f':	// Filename
-				load = true;
-				filename = optarg;
-				break;
-
-			case 'l':	// list device COD files
-				if( !list_java )
-					list_java = true;
-				else
-					list_sub = true;
+			case 's':	// turn on listing of sibling modules
+				list_siblings = true;
 				break;
 
 			case 'v':	// data dump on
@@ -211,6 +209,25 @@ int main(int argc, char *argv[])
 				Usage();
 				return 0;
 			}
+		}
+		
+		argc -= optind;
+		argv += optind;
+
+		if( argc < 1 ) {
+			cerr << "missing command" << endl;
+			Usage();
+			return 1;
+		}
+		
+		// Fetch command from remaining arguments
+		string cmd = argv[0];
+		argc --;
+		argv ++;
+
+		// Put the remaining arguments into an array
+		for (; argc > 0; argc --, argv ++) {
+			params.push_back(string(argv[0]));
 		}
 
 		// Initialize the barry library.  Must be called before
@@ -237,14 +254,27 @@ int main(int argc, char *argv[])
 		javaloader.Open(password.c_str());
 		javaloader.StartStream();
 
-		// Send the file
-		if( load )
-			SendAppFile(&javaloader, filename.c_str());
-
-		if( list_java ) {
+		if( cmd == CMD_LIST ) {
 			JLDirectory dir;
-			javaloader.GetDirectory(dir, list_sub);
+			javaloader.GetDirectory(dir, list_siblings);
 			cout << dir;
+		} else if( cmd == CMD_LOAD ) {
+			if( params.size() == 0 ) {
+				// FIXME is this necessary?
+				javaloader.StopStream();
+				
+				cerr << "specify at least one .cod file to load" << endl;
+				Usage();
+				
+				return 1;
+			}
+			
+			vector<string>::iterator i = params.begin();
+			for( ; i != params.end(); ++i ) {
+				cout << "loading " << (*i) << "... ";
+				SendAppFile(&javaloader, (*i).c_str());
+				cout << "done." << endl;
+			}
 		}
 
 		// Stop
