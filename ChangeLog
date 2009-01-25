@@ -5,6 +5,7 @@ Release: version 0.15 - 2009/01/??
 		compatible with the windows version, to make cross
 		platform build scripts possible
 	- applied Josh Kropf's settime syntax patch
+	- clarified timezone behaviour in javaloader settime
 2009/01/24
 	- added another ctor to BadSize exception class
 	- fixed bug in SocketZero where it checked sequence on packets

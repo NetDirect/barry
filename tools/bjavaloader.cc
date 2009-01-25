@@ -78,6 +78,7 @@ void Usage()
    << "   " << CMD_SETTIME << " [" << TIME_FMT_EXAMPLE << "]\n"
    << "      Sets the time on the handheld to the current time\n"
    << "      Or the time specified as an argument to " << CMD_SETTIME << "\n"
+   << "      If given as argument, current system timezone is assumed\n"
    << endl;
 }
 
