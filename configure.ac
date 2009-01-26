@@ -83,6 +83,8 @@ AM_CONDITIONAL([WITH_FUSE], [test "$FUSE_FOUND" = "1"])
 AC_CHECK_LIB([pthread], [main])
 #AC_CHECK_LIB([libusb], [libusb_init])
 
+AM_ICONV
+
 
 #
 # Checks for header files.

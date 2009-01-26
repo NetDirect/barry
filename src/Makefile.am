@@ -142,7 +142,7 @@ libbarry_la_SOURCES = time.cc \
 	debug.h \
 	endian.h
 #libbarry_la_LIBADD = $(LTLIBOBJS) $(LIBUSB_LIBS) $(OPENSSL_LIBS)
-libbarry_la_LIBADD = $(LTLIBOBJS) $(LIBUSB_LIBS)
+libbarry_la_LIBADD = $(LTLIBOBJS) $(LIBUSB_LIBS) @LTLIBICONV@
 libbarry_la_LDFLAGS = -version-info ${LIB_BARRY_VERSION}
 
 noinst_HEADERS = cbarry.h \

@@ -3,6 +3,11 @@ Release: version 0.15 - 2009/01/??
 2009/01/26
 	- added template wrapper for iconv() due to casting differences on
 		various platforms... thanks to Bill Paul for FreeBSD testing
+	- added AM_ICONV automake/autoconf check to configure.ac
+		This should take care of checking for libc or library
+		iconv installs, and checking the iconv() prototype for whether
+		const is needed or not.  This removes the need for the
+		template added earlier.
 2009/01/25
 	- applied patch from Josh Kropf making bjavaloader's syntax more
 		compatible with the windows version, to make cross
