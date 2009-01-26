@@ -48,6 +48,22 @@ IConverter::~IConverter()
 	iconv_close(m_to);
 }
 
+//
+// Not all versions of iconv have the same prototype for the second
+// argument, and since going from char** to const char** is illegal
+// without an explicit cast, we use a template to do it.
+//
+template <class T>
+size_t iconv_wrapper(size_t (*iconv_ptr)(iconv_t, T, size_t*, char**, size_t*),
+	iconv_t cd,
+	const char **inbuf,
+	size_t *inbytesleft,
+	char **outbuf,
+	size_t *outbytesleft)
+{
+	return (*iconv_ptr)(cd, (T)inbuf, inbytesleft, outbuf, outbytesleft);
+}
+
 std::string IConverter::Convert(iconv_t cd, const std::string &str) const
 {
 	size_t target = str.size() * 2;
@@ -65,7 +81,7 @@ std::string IConverter::Convert(iconv_t cd, const std::string &str) const
 		outbytesleft = m_buffer.GetBufSize();
 
 		iconv(cd, NULL, NULL, NULL, NULL);	// reset cd's state
-		size_t status = iconv(cd, (char**)&in, &inbytesleft, &out, &outbytesleft);
+		size_t status = iconv_wrapper(&iconv, cd, &in, &inbytesleft, &out, &outbytesleft);
 
 		if( status == (size_t)(-1) ) {
 			if( errno == E2BIG && tries < 2 ) {

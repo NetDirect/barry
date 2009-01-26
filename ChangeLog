@@ -1,5 +1,8 @@
 Release: version 0.15 - 2009/01/??
 ------------------------------------------------------------------------------
+2009/01/26
+	- added template wrapper for iconv() due to casting differences on
+		various platforms... thanks to Bill Paul for FreeBSD testing
 2009/01/25
 	- applied patch from Josh Kropf making bjavaloader's syntax more
 		compatible with the windows version, to make cross
