@@ -1,5 +1,8 @@
 Release: version 0.15 - 2009/01/??
 ------------------------------------------------------------------------------
+2009/01/27
+	- added config.rpath, needed by new AM_ICONV check
+		Thanks to Bill Paul for debugging this.
 2009/01/26
 	- added template wrapper for iconv() due to casting differences on
 		various platforms... thanks to Bill Paul for FreeBSD testing
