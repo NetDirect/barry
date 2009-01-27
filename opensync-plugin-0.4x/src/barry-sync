@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<config version="1.0">
+  <AdvancedOptions>
+    <AdvancedOption>
+      <DisplayName>PIN number</DisplayName>
+      <MaxOccurs>2147483647</MaxOccurs>
+      <MaxSize>2147483647</MaxSize>
+      <Name>PinCode</Name>
+      <Type>string</Type>
+      <Value></Value>
+    </AdvancedOption>
+    <AdvancedOption>
+      <DisplayName>Debug mode</DisplayName>
+      <MaxOccurs>2147483647</MaxOccurs>
+      <MaxSize>2147483647</MaxSize>
+      <Name>Debug</Name>
+      <Type>bool</Type>
+      <Value>1</Value>
+    </AdvancedOption>
+  </AdvancedOptions>
+  <Authentication>
+    <Password></Password>
+  </Authentication>
+  <Resources>
+    <Resource>
+      <Enabled>1</Enabled>
+      <Formats>
+        <Format>
+          <Name>vcard30</Name>
+        </Format>
+      </Formats>
+      <Name>Contacts</Name>
+      <ObjType>contact</ObjType>
+    </Resource>
+    <Resource>
+      <Enabled>1</Enabled>
+      <Formats>
+        <Format>
+          <Name>vevent20</Name>
+        </Format>
+      </Formats>
+      <Name>Event</Name>
+      <ObjType>event</ObjType>
+    </Resource>
+   </Resources>
+</config>
+

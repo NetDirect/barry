@@ -1,0 +1,85 @@
+
+*****************************************************************************
+*  CAUTION: This is alpha software.  Please make complete backups of your   *
+*           Blackberry device before experimenting.  While the author has   *
+*           had good success with this software, that is no guarantee that  *
+*           you will.  Please make backups.                                 *
+*****************************************************************************
+
+Development note: this plugin is in flux, not only from pure development,
+	but also because the OpenSync libraries themselves are getting
+	close to releasing version 0.4x, which changes some internals
+	from 0.22.  This plugin is currently based on 0.4x, but that may
+	change in the future.
+
+Introduction:
+-------------
+This directory contains a plugin for the OpenSync framework, which can
+be used to synchronize between handhelds and desktop management software,
+such as Evolution and Mozilla Sunbird.
+
+Please note that this plugin has the potential to not only change the
+data in your Blackberry handheld, but also, through sending sync ADD,
+MODIFY and DELETE changes, can change the data in your address book
+and calendar in your desktop software of choice.  As this plugin is
+in development, please exercise caution, and make backups of your
+Blackberry (see the ../gui directory) *and* backups of your desktop
+software's data.
+
+
+You can find more information on the OpenSync framework, as well
+as tarballs for the version 0.4x library and plugins, at the following
+website:
+
+	http://www.opensync.org/
+
+
+
+Library Dependencies:
+---------------------
+
+You will need the following packages installed on your system, including
+any dev or devel packages that come along with them.
+
+	pkg-config		Used by the configure scripts
+	libopensync-0.4x	OpenSync framework library
+	sqlite			Required by OpenSync
+	glib2			Required by OpenSync
+	libxml2			Required by OpenSync
+	libbarry 0.x		In the same tarball as this code.
+	libusb			Required by libbarry
+
+In addition to libopensync, you will need a plugin for your desktop
+software of choice, or for other handheld devices, such as the Palm.
+Please see the OpenSync website for a list of available plugins.
+
+If you've installed Barry or OpenSync in a non-standard spot, use something
+like the following:
+
+	export PKG_CONFIG_PATH="/home/cdfrey/Barry/lib/pkgconfig:/home/cdfrey/software/lib/pkgconfig"
+	./configure --prefix=/home/cdfrey/Barry
+
+
+
+Installation:
+-------------
+
+	cd opensync-plugin
+	./configure
+
+		(pkg-config will be used to find required libraries...
+		make sure they are installed in standard locations,
+		or that PKG_CONFIG_PATH is set appropriately)
+
+	make
+	su
+	make install
+
+
+Please report any bugs you find to the Barry mailing list.
+
+Thanks!
+
+Last modified : January 2009
+Written : August 2007
+

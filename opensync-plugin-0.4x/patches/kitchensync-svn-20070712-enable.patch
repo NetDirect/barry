@@ -1,0 +1,22 @@
+Chris Frey <cdfrey@foursquare.net>
+
+This patch enables objtypes, which is useful when running the file-sync
+plugin from the KitchenSync GUI.  Without this patch, syncing
+against a file-sync for testing tends to end up with an empty
+file-sync directory.
+
+This patch applies to the 2007/07/12 snapshot of the KitchenSync SVN tree.
+
+
+Index: kitchensync/src/syncprocess.cpp
+===================================================================
+--- kitchensync/src/syncprocess.cpp	(revision 687137)
++++ kitchensync/src/syncprocess.cpp	(working copy)
+@@ -98,6 +98,7 @@
+        *
+        * mGroup.setObjectTypeEnabled( objectTypes[ i ], true );
+        */
++       mGroup.setObjectTypeEnabled( objectTypes[ i ], true );
+     } else {
+       kdDebug() << "Disabled object type: " <<  objectTypes[ i ] << endl;
+       mGroup.setObjectTypeEnabled( objectTypes[ i ], false );
