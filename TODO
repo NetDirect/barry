@@ -29,6 +29,7 @@ Target: release version 0.15
 			- see sknauert's email
 		- openSUSE 11.1
 			- see mailing list reports
+		- give openBSD a test compile
 	- catchup on sourceforge tracker items
 	- incorporate Bill Paul's modem HOWTO for FreeBSD into web docs
 		(see list emails)
