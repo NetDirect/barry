@@ -146,6 +146,7 @@ Release: version 0.15 - 2009/01/??
 	- added USB capture log archive page to www docs
 	- added config.rpath, needed by new AM_ICONV check
 		Thanks to Bill Paul for debugging this.
+	- applied Nicolas Vivien's opensync plugin 0.4x patch
 2009/01/26
 	- added template wrapper for iconv() due to casting differences on
 		various platforms... thanks to Bill Paul for FreeBSD testing
