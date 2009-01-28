@@ -117,6 +117,10 @@ in helping decipher data, we have a
 <? createLink("hacking", "Barry hacking document"); ?> that will help you.
 </p>
 
+<p>If you are interested in the low level USB protocol, you can download,
+or contribute, USB logs to the
+<? createLink("logs", "USB capture log archive"); ?>.</p>
+
 <div class="subHeader">Design</div>
 
 <p>If you are interested in helping out or just interested in how it works,
