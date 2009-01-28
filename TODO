@@ -191,18 +191,6 @@ http://tools.ietf.org/html/rfc2445
 
 
 
-Reverse engineering java loader protocol
-----------------------------------------
-This has not been done by any opensource Blackberry project out there,
-to my knowledge, and would be most useful to Blackberry application
-developers.
-
-If you are a Blackberry app developer, this may interest you.
-
-Estimated time: open ended
-
-
-
 Multi-program Database and Modem Access
 ---------------------------------------
 The architectural challenge:
