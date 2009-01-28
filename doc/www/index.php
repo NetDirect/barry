@@ -139,6 +139,7 @@ may be out of date, but they may still be helpful to new users.</P>
 <ul>
 	<li><a href="http://www.chipbennett.net/wordpress/index.php/2008/05/synchronizing-a-blackberry-in-linux/">Synchronizing a Blackberry In Linux</a>, by Chip Bennett</li>
 	<li><a href="http://www.linux.com/feature/123251">Syncing your Blackberry on Linux</a>, by Joe Barr</li>
+	<li><a href="http://www.slashdev.ca/2008/04/03/blackberry-development-using-linux/">Blackberry development using Linux</a>, by Josh Kropf</li>
 	<li><a href="http://off.net/cassis/protocol-description.html">The RIM Blackberry Serial Protocol</a>, by Phil Schwan, Mike Shaver, and Ian Goldberg, of the Cassis project</li>
 	<li><a href="http://www.blackberryforums.com/blackberry-guides/2019-user-howto-use-blackberry-modem-laptop.html">HOWTO: Blackberry as Modem for Laptop</a>, by Mark Rejhon, (not Linux specific)</li>
 </ul>
