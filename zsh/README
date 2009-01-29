@@ -1,7 +1,7 @@
 Barry ZSH autocompletion
 ========================
 
-If you use ZSH and you whish that ZSH is able to autocomplet the barry
+If you use ZSH and you wish that ZSH is able to autocomplete the barry
 command lines, you have to add the files :
 	_bjavaloader
 	_btool
