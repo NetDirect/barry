@@ -219,6 +219,11 @@ void GetScreenshot(Barry::Mode::JavaLoader *javaloader, const char *filename)
 	JLScreenInfo info;
 
 	FILE *fp = fopen(filename, "wb");
+	if (fp == NULL) {
+		throw runtime_error(string("Can't open: ") + filename);
+	}
+
+	AutoClose ac(fp);
 
 
 	// Take a screenshot
@@ -314,8 +319,6 @@ void GetScreenshot(Barry::Mode::JavaLoader *javaloader, const char *filename)
 			fwrite(pixel, sizeof(char), 4, fp);
 		}
 	}
-
-	fclose(fp);
 }
 
 

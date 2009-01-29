@@ -21,6 +21,8 @@ Release: version 0.15 - 2009/01/??
 		- whitespace fixes
 		- removed unneeded packet.GetReceive(), since response
 		  buffer is the same as what GetReceive() returns
+		- used AutoClose for fopen() calls in bjavaloader.cc
+		  for exception safety
 2009/01/27
 	- added link Josh Kropf's 'Blackberry development in linux' blog
 		post to doc/www/index.php
