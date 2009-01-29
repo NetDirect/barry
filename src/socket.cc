@@ -730,7 +730,7 @@ void Socket::PacketData(Data &send, Data &receive, int timeout)
 				done = true;
 				break;
 
-			case SB_COMMAND_JL_GET_SS_ENTRY:	// This response means that the next packet is the stream
+			case SB_COMMAND_JL_GET_DATA_ENTRY:	// This response means that the next packet is the stream
 				done = true;
 				break;
 

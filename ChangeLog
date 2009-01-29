@@ -14,6 +14,9 @@ Release: version 0.15 - 2009/01/??
 		- add command GetScreenShot to JLPacket class
 		- add JLScreenInfo to protocol structures
 	- updated AUTHORS
+	- minor tweaks to Nicolas's screenshot+zsh patch:
+		- renamed DIR_ENTRY and SS_ENTRY to DATA_ENTRY constant
+		  as suggested by comments
 2009/01/27
 	- added link Josh Kropf's 'Blackberry development in linux' blog
 		post to doc/www/index.php

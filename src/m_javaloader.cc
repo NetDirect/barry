@@ -529,7 +529,7 @@ void JavaLoader::GetDirectory(JLDirectory &dir, bool include_subdirs)
 	JLPacket packet(cmd, data, response);
 
 	packet.GetDirectory();
-	GetDir(packet, SB_COMMAND_JL_GET_DIR_ENTRY, dir, include_subdirs);
+	GetDir(packet, SB_COMMAND_JL_GET_DATA_ENTRY, dir, include_subdirs);
 }
 
 
@@ -608,7 +608,7 @@ char * JavaLoader::GetScreenshot(JLScreenInfo &info, char *buffer, size_t *buffs
 		if( packet.Command() == SB_COMMAND_JL_ACK )
 			return buffer;
 
-		if( packet.Command() != SB_COMMAND_JL_GET_SS_ENTRY ) {
+		if( packet.Command() != SB_COMMAND_JL_GET_DATA_ENTRY ) {
 			ThrowJLError("JavaLoader::GetScreenShot ", packet.Command());
 		}
 
