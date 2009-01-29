@@ -23,6 +23,8 @@ Release: version 0.15 - 2009/01/??
 		  buffer is the same as what GetReceive() returns
 		- used AutoClose for fopen() calls in bjavaloader.cc
 		  for exception safety
+		- removed manual buffer handling in favour of Data object
+		  in JavaLoader::GetScreenshot()
 2009/01/27
 	- added link Josh Kropf's 'Blackberry development in linux' blog
 		post to doc/www/index.php

@@ -554,15 +554,19 @@ void JavaLoader::GetDirectory(JLDirectory &dir, bool include_subdirs)
 //        ^^^^^ : packet size (0x07FC = 0x7F8 + 4)
 //  ^^^^^ : socket
 //
-char * JavaLoader::GetScreenshot(JLScreenInfo &info, char *buffer, size_t *buffsize)
+//
+// GetScreenshot
+//
+/// Downloads screenshot from device, and fills info with size data
+/// and the given Data buffer image with the bitmap.
+///
+void JavaLoader::GetScreenshot(JLScreenInfo &info, Data &image)
 {
-	size_t expect = 0;
-	size_t bytereceived = 0;
+	// start fresh
+	image.Zap();
 
 	Data cmd(-1, 8), data(-1, 8), response;
 	JLPacket packet(cmd, data, response);
-
-	*buffsize = 0;
 
 	// Send the screenshot command :
 	//    00000000: 04 00 08 00 87 00 04 00
@@ -605,14 +609,14 @@ char * JavaLoader::GetScreenshot(JLScreenInfo &info, char *buffer, size_t *buffs
 		//   04 00 08 00 6e 00 f8 07
 
 		if( packet.Command() == SB_COMMAND_JL_ACK )
-			return buffer;
+			return;
 
 		if( packet.Command() != SB_COMMAND_JL_GET_DATA_ENTRY ) {
 			ThrowJLError("JavaLoader::GetScreenShot ", packet.Command());
 		}
 
 		// Read the size of next packet
-		expect = packet.Size();
+		size_t expect = packet.Size();
 
 
 		// Read the stream
@@ -622,7 +626,7 @@ char * JavaLoader::GetScreenshot(JLScreenInfo &info, char *buffer, size_t *buffs
 		// Save data in buffer
 		Protocol::CheckSize(response, 4);
 		const unsigned char *pd = response.GetData();
-		bytereceived = (size_t) response.GetSize() - 4;
+		size_t bytereceived = response.GetSize() - 4;
 
 
 		// Check the size read into the previous packet
@@ -632,15 +636,12 @@ char * JavaLoader::GetScreenshot(JLScreenInfo &info, char *buffer, size_t *buffs
 
 
 		// Copy data
-		buffer = (char *) realloc(buffer, (*buffsize) + bytereceived);
-
-		memcpy(buffer + (*buffsize), pd + 4, bytereceived);
+		unsigned char *buffer = image.GetBuffer(image.GetSize() + bytereceived);
+		memcpy(buffer + image.GetSize(), pd + 4, bytereceived);
 
 		// New size
-		(*buffsize) += bytereceived;
+		image.ReleaseBuffer(image.GetSize() + bytereceived);
 	}
-
-	return 0;
 }
 
 

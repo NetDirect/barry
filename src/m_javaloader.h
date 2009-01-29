@@ -159,7 +159,7 @@ public:
 	void SendStream(char *buffer, int size);
 	void SetTime(time_t when);
 	void GetDirectory(JLDirectory &dir, bool include_subdirs);
-	char *GetScreenshot(JLScreenInfo &info, char *buffer, size_t *size);
+	void GetScreenshot(JLScreenInfo &info, Data &image);
 };
 
 }} // namespace Barry::Mode

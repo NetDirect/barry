@@ -207,17 +207,6 @@ void SendAppFile(Barry::Mode::JavaLoader *javaloader, const char *filename)
 
 void GetScreenshot(Barry::Mode::JavaLoader *javaloader, const char *filename)
 {
-	size_t buffsize;
-	char *buffer = NULL;
-	short *data = NULL;
-	short value;
-	char pixel[4];
-
-	int width;
-	int height;
-
-	JLScreenInfo info;
-
 	FILE *fp = fopen(filename, "wb");
 	if (fp == NULL) {
 		throw runtime_error(string("Can't open: ") + filename);
@@ -228,14 +217,15 @@ void GetScreenshot(Barry::Mode::JavaLoader *javaloader, const char *filename)
 
 	// Take a screenshot
 	//   - info object contains the screenshot properties (width, height...)
-	//   - buffer will be allocated by the GetScreenshot function and contains the raw data.
-	//   - buffsize will be returnes by the GetScreenshot function. buffsize is the size of buffer.
-	buffer = javaloader->GetScreenshot(info, buffer, &buffsize);
+	//   - image will be filled with the raw pixel screenshot data
+	JLScreenInfo info;
+	Data image;
+	javaloader->GetScreenshot(info, image);
 
 
 	// Read screen info
-	width = info.width;
-	height = info.height;
+	int width = info.width;
+	int height = info.height;
 
 
 	// Build header BMP file
@@ -296,24 +286,25 @@ void GetScreenshot(Barry::Mode::JavaLoader *javaloader, const char *filename)
 
 
 	// I work with 2 bytes (see the pixel format)
-	data = (short *) buffer;
+	const short *data = (short *) image.GetData();
 
 	// For each pixel
+	char pixel[4];
 	for (size_t j=0; j<(size_t)height; j++) {
 		for (size_t i=0; i<(size_t)width; i++) {
 			// Read one pixel in the picture
-			value = data[(buffsize/2 - 1) - ((width-1 - i) + (width * j))];
+			short value = data[(image.GetSize()/2 - 1) - ((width-1 - i) + (width * j))];
 
-			// Pixel format used by the handled is : 16 bits
+			// Pixel format used by the handheld is : 16 bits
 			// MSB < .... .... .... .... > LSB
 			//                    ^^^^^^ : Blue (between 0x00 and 0x1F)
 			//             ^^^^^^^ : Green (between 0x00 and 0x3F)
 			//       ^^^^^^ : Red (between 0x00 and 0x1F)
 
-			pixel[3] = 0x00;										// alpha
-			pixel[2] = (((value >> 11) & 0x1F) * 0xFF) / 0x1F;		// red
-			pixel[1] = (((value >> 5) & 0x3F) * 0xFF) / 0x3F;		// green
-			pixel[0] = ((value & 0x1F) * 0xFF) / 0x1F;				// blue
+			pixel[3] = 0x00;					// alpha
+			pixel[2] = (((value >> 11) & 0x1F) * 0xFF) / 0x1F;	// red
+			pixel[1] = (((value >> 5) & 0x3F) * 0xFF) / 0x3F;	// green
+			pixel[0] = ((value & 0x1F) * 0xFF) / 0x1F;		// blue
 
 			// Write the pixel (4 bytes)
 			fwrite(pixel, sizeof(char), 4, fp);
