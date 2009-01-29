@@ -14,6 +14,9 @@ Release: version 0.15 - 2009/01/??
 		iconv installs, and checking the iconv() prototype for whether
 		const is needed or not.  This removes the need for the
 		template added earlier.
+	- add Nicolas Vivien's screenshot patch
+	- add command GetScreenShot to JLPacket class
+	- add JLScreenInfo to protocol structures
 2009/01/25
 	- applied patch from Josh Kropf making bjavaloader's syntax more
 		compatible with the windows version, to make cross

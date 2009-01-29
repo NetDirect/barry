@@ -492,6 +492,14 @@ JLPacket::~JLPacket()
 {
 }
 
+unsigned int JLPacket::Size()
+{
+	Protocol::CheckSize(m_receive, SB_JLRESPONSE_HEADER_SIZE);
+	MAKE_JLPACKET(rpack, m_receive);
+	return btohs(rpack->u.response.expect);
+}
+
+
 // returns 1 or 2 depending on whether cmd or cmd+send are available
 int JLPacket::SimpleCmd(uint8_t cmd, uint8_t unknown, uint16_t size)
 {
@@ -571,6 +579,12 @@ int JLPacket::GetDirEntry(uint8_t entry_cmd, uint16_t id)
 {
 	SimpleCmd(entry_cmd, 0, 2);
 	return BigEndianData(id);
+}
+
+int JLPacket::GetScreenshot()
+{
+	SimpleCmd(SB_COMMAND_JL_GET_SCREENSHOT, 0, 4);
+	return BigEndianData((uint32_t) 0);
 }
 
 } // namespace Barry

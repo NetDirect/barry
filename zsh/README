@@ -1,0 +1,10 @@
+Barry ZSH autocompletion
+========================
+
+If you use ZSH and you whish that ZSH is able to autocomplet the barry
+command lines, you have to add the files :
+	_bjavaloader
+	_btool
+into the directory :
+	/usr/share/zsh/functions/Completion/Unix
+

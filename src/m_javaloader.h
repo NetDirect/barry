@@ -95,6 +95,17 @@ BXEXPORT inline std::ostream& operator<<(std::ostream &os, const JLDirectoryEntr
 }
 
 
+class BXEXPORT JLScreenInfo {
+public:
+	uint16_t width;
+	uint16_t height;
+
+public:
+	JLScreenInfo();
+	~JLScreenInfo();
+};
+
+
 namespace Mode {
 
 //
@@ -148,6 +159,7 @@ public:
 	void SendStream(char *buffer, int size);
 	void SetTime(time_t when);
 	void GetDirectory(JLDirectory &dir, bool include_subdirs);
+	char *GetScreenshot(JLScreenInfo &info, char *buffer, size_t *size);
 };
 
 }} // namespace Barry::Mode

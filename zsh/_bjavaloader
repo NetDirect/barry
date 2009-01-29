@@ -1,0 +1,58 @@
+#compdef bjavaloader
+
+local _bjavaloader_options
+
+local ret=1
+local state line cmds
+
+
+_bjavaloader_options=(
+	'-h[Show the most relevant command line options]' \
+	'-s[List sibling in module list]' \
+	'-p[PIN of device to talk with]' \
+	'-P[PIN of device to talk with (optional)]' \
+	'-v[Dump protocol data during operation]' \
+	'1: :->cmds' \
+	'*: :->args'
+)
+
+
+_arguments -C -s "$_bjavaloader_options[@]" && ret=0
+
+case $state in
+	cmds)
+		cmds=(dir load screenshot settime)
+		_describe -t commands 'bjavaloader command' cmds && ret=0
+	;;
+
+	args)
+		case $line[1] in
+			load)
+				_arguments -C -A '-*' -s \
+					- recur \
+					'*:directory:_path_files -/' \
+					- nonrecur \
+					'*:COD files:_path_files -g "*.cod(-.)"' && ret=0
+			;;
+
+			screenshot)
+				_arguments -C -A '-*' -s \
+					- recur \
+					'*:directory:_path_files -/' \
+					- nonrecur \
+					'*:BMP files:_path_files -g "*.bmp(-.)"' && ret=0
+			;;
+
+			settime)
+				_message 'time format [yyyy-mm-dd HH:MM:SS]' && ret=0
+			;;
+
+			(*|dir))
+				_message 'no more arguments' && ret=0
+			;;
+		esac
+	;;
+esac
+
+return ret
+

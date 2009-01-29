@@ -25,6 +25,7 @@
 
 #include <barry/barry.h>
 #include <barry/cod.h>
+#include <barry/bmp.h>
 #include <iomanip>
 #include <iostream>
 #include <fstream>
@@ -38,9 +39,10 @@
 #include <sys/stat.h>
 
 // supported javaloader commands
-#define CMD_LIST    "dir"
-#define CMD_LOAD    "load"
-#define CMD_SETTIME "settime"
+#define CMD_LIST        "dir"
+#define CMD_LOAD        "load"
+#define CMD_SCREENSHOT  "screenshot"
+#define CMD_SETTIME     "settime"
 
 // time string format specifier and user friendly description
 #define TIME_FMT         "%Y-%m-%d %H:%M:%S"
@@ -74,6 +76,9 @@ void Usage()
    << "\n"
    << "   " << CMD_LOAD << " <.cod file> ...\n"
    << "      Loads modules onto the handheld\n"
+   << "\n"
+   << "   " << CMD_SCREENSHOT << " <.bmp file> ...\n"
+   << "      Make a screenshot of handheld\n"
    << "\n"
    << "   " << CMD_SETTIME << " [" << TIME_FMT_EXAMPLE << "]\n"
    << "      Sets the time on the handheld to the current time\n"
@@ -200,6 +205,120 @@ void SendAppFile(Barry::Mode::JavaLoader *javaloader, const char *filename)
 }
 
 
+void GetScreenshot(Barry::Mode::JavaLoader *javaloader, const char *filename)
+{
+	size_t buffsize;
+	char *buffer = NULL;
+	short *data = NULL;
+	short value;
+	char pixel[4];
+
+	int width;
+	int height;
+
+	JLScreenInfo info;
+
+	FILE *fp = fopen(filename, "wb");
+
+
+	// Take a screenshot
+	//   - info object contains the screenshot properties (width, height...)
+	//   - buffer will be allocated by the GetScreenshot function and contains the raw data.
+	//   - buffsize will be returnes by the GetScreenshot function. buffsize is the size of buffer.
+	buffer = javaloader->GetScreenshot(info, buffer, &buffsize);
+
+
+	// Read screen info
+	width = info.width;
+	height = info.height;
+
+
+	// Build header BMP file
+	bmp_file_header_t fileheader;
+
+	// BMP
+	fileheader.bfType[0] = 'B';
+	fileheader.bfType[1] = 'M';
+
+	// Size of file
+	fileheader.bfSize = sizeof(bmp_file_header_t) + sizeof(bmp_info_header_t);
+	fileheader.bfSize += 4 * width * height;
+
+	// Always 0x00
+	fileheader.bfReserved1 = 0;
+	fileheader.bfReserved2 = 0;
+
+	// Offset to find the data
+	fileheader.bfOffBits = sizeof(bmp_file_header_t) + sizeof(bmp_info_header_t);
+
+
+	// Build info BMP file
+	bmp_info_header_t infoheader;
+
+	// Size of info section
+	infoheader.biSize = sizeof(bmp_info_header_t);
+
+	// Width x Height
+	infoheader.biWidth = width;
+	infoheader.biHeight = height;
+
+	// Planes number
+	infoheader.biPlanes = 0x01;
+
+	// Bit count
+	infoheader.biBitCount = 0x20;
+
+	// Compression : No
+	infoheader.biCompression = 0;
+
+	// Size of image
+	infoheader.biSizeImage = 4 * width * height;
+
+	// Pels Per Meter
+	infoheader.biXPelsPerMeter = 0;
+	infoheader.biYPelsPerMeter = 0;
+
+	// Color palette used : None
+	infoheader.biClrUsed = 0;
+
+	// Color palette important : None
+	infoheader.biClrImportant = 0;
+	
+
+	// Print header BMP file and info header
+	fwrite(&fileheader, sizeof(bmp_file_header_t), 1, fp);
+	fwrite(&infoheader, sizeof(bmp_info_header_t), 1, fp);
+
+
+	// I work with 2 bytes (see the pixel format)
+	data = (short *) buffer;
+
+	// For each pixel
+	for (size_t j=0; j<(size_t)height; j++) {
+		for (size_t i=0; i<(size_t)width; i++) {
+			// Read one pixel in the picture
+			value = data[(buffsize/2 - 1) - ((width-1 - i) + (width * j))];
+
+			// Pixel format used by the handled is : 16 bits
+			// MSB < .... .... .... .... > LSB
+			//                    ^^^^^^ : Blue (between 0x00 and 0x1F)
+			//             ^^^^^^^ : Green (between 0x00 and 0x3F)
+			//       ^^^^^^ : Red (between 0x00 and 0x1F)
+
+			pixel[3] = 0x00;										// alpha
+			pixel[2] = (((value >> 11) & 0x1F) * 0xFF) / 0x1F;		// red
+			pixel[1] = (((value >> 5) & 0x3F) * 0xFF) / 0x3F;		// green
+			pixel[0] = ((value & 0x1F) * 0xFF) / 0x1F;				// blue
+
+			// Write the pixel (4 bytes)
+			fwrite(pixel, sizeof(char), 4, fp);
+		}
+	}
+
+	fclose(fp);
+}
+
+
 int main(int argc, char *argv[])
 {
 	cout.sync_with_stdio(true);	// leave this on, since libusb uses
@@ -308,6 +427,14 @@ int main(int argc, char *argv[])
 				SendAppFile(&javaloader, (*i).c_str());
 				cout << "done." << endl;
 			}
+		} else if( cmd == CMD_SCREENSHOT ) {
+			if( params.size() == 0 ) {
+				cerr << "specify a .bmp filename" << endl;
+				Usage();
+				return 1;
+			}
+
+			GetScreenshot(&javaloader, params[0].c_str());
 		} else if( cmd == CMD_SETTIME ) {
 			if( params.size() > 0 ) {
 				SetTime(&javaloader, params[0].c_str());

@@ -690,11 +690,6 @@ void Socket::Receive(Data &receive, int timeout)
 
 // sends the send packet down to the device
 // Blocks until response received or timed out in Usb::Device
-// This function sends only Data (and not a command)
-// 04 00 FC 07 DE CO FF FF 00 00 00 
-//             ^^^^^............... data
-//       ^^^^^ size
-// ^^^^^ socket
 void Socket::PacketData(Data &send, Data &receive, int timeout)
 {
 	if( ( send.GetSize() < MIN_PACKET_DATA_SIZE ) ||
@@ -711,11 +706,12 @@ void Socket::PacketData(Data &send, Data &receive, int timeout)
 
 	bool done = false;
 	int blankCount = 0;
-	while( !done ) {
-		MAKE_PACKET(rpack, inFrag);
 
+	while( !done ) {
 		// check the packet's validity
 		if( inFrag.GetSize() > 0 ) {
+			MAKE_PACKET(rpack, inFrag);
+
 			blankCount = 0;
 
 			Protocol::CheckSize(inFrag, SB_PACKET_HEADER_SIZE);
@@ -731,6 +727,10 @@ void Socket::PacketData(Data &send, Data &receive, int timeout)
 			case SB_COMMAND_JL_READY:
 			case SB_COMMAND_JL_ACK:
 			case SB_COMMAND_JL_HELLO_ACK:
+				done = true;
+				break;
+
+			case SB_COMMAND_JL_GET_SS_ENTRY:	// This response means that the next packet is the stream
 				done = true;
 				break;
 

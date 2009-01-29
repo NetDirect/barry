@@ -44,6 +44,19 @@ namespace Barry {
 
 
 ///////////////////////////////////////////////////////////////////////////////
+// JLScreenInfo class
+
+JLScreenInfo::JLScreenInfo()
+{
+}
+
+JLScreenInfo::~JLScreenInfo()
+{
+}
+
+
+
+///////////////////////////////////////////////////////////////////////////////
 // JLDirectory class
 
 JLDirectory::JLDirectory(int level)
@@ -517,6 +530,119 @@ void JavaLoader::GetDirectory(JLDirectory &dir, bool include_subdirs)
 
 	packet.GetDirectory();
 	GetDir(packet, SB_COMMAND_JL_GET_DIR_ENTRY, dir, include_subdirs);
+}
+
+
+// This function permits to receive a ScreenShot (maybe other...)
+// WARNING : Before, you have to call the "Start" function,
+//           After, you have to call the "Stop" function.
+//
+// From the USB traces, the max size of packet is : 0x07FC
+// When you are ready, we send the packet :
+//  04 00 08 00 68 00 00 00
+// Then, we receive an acknoledge and the data.
+// The data is composed of two packets : header and content.
+// Packet header :
+//  04 00 08 00 6E 00 F8 07
+//                    ^^^^^ : size + 4 bytes
+//              ^^ : command
+//        ^^^^^ : size of packet header
+//  ^^^^^ : socket
+// Packet content : 
+//  04 00 FC 07 DB 9D 95 2B 57 .... E6 FD
+//              ^^^^^ ............. ^^^^^ : data (the file content)
+//        ^^^^^ : packet size (0x07FC = 0x7F8 + 4)
+//  ^^^^^ : socket
+//
+char * JavaLoader::GetScreenshot(JLScreenInfo &info, char *buffer, size_t *buffsize)
+{
+	size_t expect = 0;
+	size_t bytereceived = 0;
+
+	Data cmd(-1, 8), data(-1, 8), response;
+	JLPacket packet(cmd, data, response);
+
+	*buffsize = 0;
+
+	// Send the screenshot command :
+	//    00000000: 04 00 08 00 87 00 04 00
+	packet.GetScreenshot();
+
+	m_socket->Packet(packet);
+
+	if( packet.Command() != SB_COMMAND_JL_ACK ) {
+		ThrowJLError("JavaLoader::GetScreenshot", packet.Command());
+	}
+
+	// Get Info :
+	//    00000000: 04 00 14 00 00 05 46 00 40 03 01 68 01 e0 00 10  ......F.@..h....
+	//                                            ^^^^^x^^^^^ : width x height
+	//                    ^^^^^ : packet size
+	//              ^^^^^ : socket ID
+	//    00000010: 00 00 00 00                                      ....
+
+	response = packet.GetReceive();
+	m_socket->Receive(response);
+	Protocol::CheckSize(response, 4);
+
+	// Parse response...
+	MAKE_JLPACKET(rpack, response);
+	
+	info.width = be_btohs(rpack->u.screeninfo.width);
+	info.height = be_btohs(rpack->u.screeninfo.height);
+
+
+	// Read stream
+	for (;;) {
+		// Send the packet :
+		//   04 00 08 00 68 00 00 00
+		packet.GetData();
+
+		m_socket->Packet(packet);
+
+		// Read and parse the response
+		//   04 00 08 00 64 00 00 00 
+		// or 
+		//   04 00 08 00 6e 00 f8 07
+
+		if( packet.Command() == SB_COMMAND_JL_ACK )
+			return buffer;
+
+		if( packet.Command() != SB_COMMAND_JL_GET_SS_ENTRY ) {
+			ThrowJLError("JavaLoader::GetScreenShot ", packet.Command());
+		}
+
+		// Read the size of next packet
+		expect = packet.Size();
+
+
+		// Read the stream
+		response = packet.GetReceive();
+		m_socket->Receive(response);
+		Protocol::CheckSize(response, 4);
+
+
+		// Save data in buffer
+		const unsigned char *pd = response.GetData();
+		bytereceived = (size_t) response.GetSize() - 4;
+
+
+		// Check the size read into the previous packet
+		if( expect != bytereceived ) {
+			ThrowJLError("JavaLoader::GetScreenShot expect", expect);
+		}
+
+
+		// Copy data
+		buffer = (char *) realloc(buffer, (*buffsize) + bytereceived);
+
+		memcpy(buffer + (*buffsize), pd + 4, bytereceived);
+
+		// New size
+		(*buffsize) += bytereceived;
+	}
+
+	return 0;
 }
 
 

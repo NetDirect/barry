@@ -101,6 +101,7 @@ include_barry_HEADERS = barry.h \
 	sha1.h \
 	iconv.h \
 	cod.h \
+	bmp.h \
 	s11n-boost.h
 
 

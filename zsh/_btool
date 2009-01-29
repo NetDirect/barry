@@ -1,0 +1,52 @@
+#compdef btool
+
+local _btool_options
+
+local state
+
+
+_btool_options=(
+	'-h[Show the most relevant command line options]' \
+	'-B=[Specify which USB bus to search on]:USB bus:' \
+	'-N=[Specify which system device, using system specific string]:Device:' \
+	'-c=[Convert address book database to LDIF format, using the specified base DN]:LDIF format:' \
+	'-C=[LDIF attribute name to use when building the FQDN]:LDIF attribute:' \
+	'-d=[Load database FROM device and dump to screen]:Database:' \
+	'-e=[Override endpoint pair detection]:Endpoint:' \
+	'-i=[International charset for string conversions]:International charset:->iconv' \
+	'-l[List devices]' \
+	'-L[List Contact field names]' \
+	'-m[Map LDIF name to Contact field / Unmap LDIF name]' \
+	'-M[List current LDIF mapping]' \
+	'-n[Use null parser on all databases]' \
+	'-p=[PIN of device to talk with]:PIN:' \
+	'-P=[Simplistic method to specify device password]:Password:' \
+	'-s=[Save database TO device from data loaded from -f file]:Database:' \
+	'-S[Show list of supported database parsers]' \
+	'-t[Show database database table]' \
+	'-T=[Show record state table for given database]:Database:' \
+	'-v[Dump protocol data during operation]' \
+	'-X[Reset device]' \
+	'-z[Use non-threaded sockets]' \
+	'-Z[Use threaded socket router (default)]'
+)
+
+
+_btool_iconv() {
+	local result
+
+	result=( ${${${(f)"$(_call_program codesets iconv --list)"}## #}%//} )
+
+	compadd -a "$@" - result
+}
+
+
+_arguments -C -s "$_btool_options[@]" && return 0
+
+
+case $state in
+	iconv)
+		_btool_iconv && return 0
+	;;
+esac
+
