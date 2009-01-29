@@ -654,7 +654,7 @@ struct Packet
 #define COMMAND(data)				(((const Barry::Protocol::Packet *)data.GetData())->command)
 #define IS_COMMAND(data, cmd)			(COMMAND(data) == cmd)
 #define MAKE_PACKET(var, data)			const Barry::Protocol::Packet *var = (const Barry::Protocol::Packet *) (data).GetData()
-#define MAKE_JLPACKET(var, data)			const Barry::Protocol::JLPacket *var = (const Barry::Protocol::JLPacket *) (data).GetData()
+#define MAKE_JLPACKET(var, data)		const Barry::Protocol::JLPacket *var = (const Barry::Protocol::JLPacket *) (data).GetData()
 #define MAKE_PACKETPTR_BUF(var, ptr)		Barry::Protocol::Packet *var = (Barry::Protocol::Packet *)ptr
 #define MAKE_JLPACKETPTR_BUF(var, ptr)		Barry::Protocol::JLPacket *var = (Barry::Protocol::JLPacket *)ptr
 #define MAKE_RECORD(type,var,data,off)		type *var = (type *) ((data).GetData() + (off))

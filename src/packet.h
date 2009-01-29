@@ -216,7 +216,7 @@ public:
 	int SetCodSize(off_t size);
 	int SetTime(time_t when);
 	int GetScreenshot();
-	int GetData() { return SimpleCmd(SB_COMMAND_JL_SEND_DATA); }
+	int GetData()		{ return SimpleCmd(SB_COMMAND_JL_SEND_DATA); }
 	int DeviceInfo()	{ return SimpleCmd(SB_COMMAND_JL_DEVICE_INFO); }
 	int OsMetrics()		{ return SimpleCmd(SB_COMMAND_JL_OS_METRICS); }
 	int BootromMetrics()	{ return SimpleCmd(SB_COMMAND_JL_BOOTROM_METRICS); }

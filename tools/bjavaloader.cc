@@ -39,10 +39,10 @@
 #include <sys/stat.h>
 
 // supported javaloader commands
-#define CMD_LIST        "dir"
-#define CMD_LOAD        "load"
-#define CMD_SCREENSHOT  "screenshot"
-#define CMD_SETTIME     "settime"
+#define CMD_LIST	"dir"
+#define CMD_LOAD	"load"
+#define CMD_SCREENSHOT	"screenshot"
+#define CMD_SETTIME	"settime"
 
 // time string format specifier and user friendly description
 #define TIME_FMT         "%Y-%m-%d %H:%M:%S"
