@@ -17,6 +17,7 @@ Release: version 0.15 - 2009/01/??
 	- minor tweaks to Nicolas's screenshot+zsh patch:
 		- renamed DIR_ENTRY and SS_ENTRY to DATA_ENTRY constant
 		  as suggested by comments
+		- fixed some packet size checks
 2009/01/27
 	- added link Josh Kropf's 'Blackberry development in linux' blog
 		post to doc/www/index.php

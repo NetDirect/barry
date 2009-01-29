@@ -494,7 +494,7 @@ JLPacket::~JLPacket()
 
 unsigned int JLPacket::Size()
 {
-	Protocol::CheckSize(m_receive, SB_JLRESPONSE_HEADER_SIZE);
+	Protocol::CheckSize(m_receive, SB_JLPACKET_HEADER_SIZE + SB_JLRESPONSE_HEADER_SIZE);
 	MAKE_JLPACKET(rpack, m_receive);
 	return btohs(rpack->u.response.expect);
 }

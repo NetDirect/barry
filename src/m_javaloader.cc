@@ -583,11 +583,11 @@ char * JavaLoader::GetScreenshot(JLScreenInfo &info, char *buffer, size_t *buffs
 
 	response = packet.GetReceive();
 	m_socket->Receive(response);
-	Protocol::CheckSize(response, 4);
 
 	// Parse response...
+	Protocol::CheckSize(response, SB_JLPACKET_HEADER_SIZE + SB_JLSCREENINFO_SIZE);
 	MAKE_JLPACKET(rpack, response);
-	
+
 	info.width = be_btohs(rpack->u.screeninfo.width);
 	info.height = be_btohs(rpack->u.screeninfo.height);
 
@@ -619,10 +619,10 @@ char * JavaLoader::GetScreenshot(JLScreenInfo &info, char *buffer, size_t *buffs
 		// Read the stream
 		response = packet.GetReceive();
 		m_socket->Receive(response);
-		Protocol::CheckSize(response, 4);
 
 
 		// Save data in buffer
+		Protocol::CheckSize(response, 4);
 		const unsigned char *pd = response.GetData();
 		bytereceived = (size_t) response.GetSize() - 4;
 

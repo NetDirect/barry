@@ -577,7 +577,7 @@ struct JLScreenInfo
 	uint16_t	unknown5;
 	uint16_t	unknown6;
 } __attribute__ ((packed));
-#define SB_JLSCREENINFO_HEADER_SIZE		(sizeof(Barry::Protocol::JLScreenInfo))
+#define SB_JLSCREENINFO_SIZE			(sizeof(Barry::Protocol::JLScreenInfo))
 
 struct JLPacket
 {
@@ -596,6 +596,7 @@ struct JLPacket
 	} __attribute__ ((packed)) u;
 
 } __attribute__ ((packed));
+#define SB_JLPACKET_HEADER_SIZE		(sizeof(Barry::Protocol::JLPacket) - sizeof(Barry::Protocol::JLPacket::PacketData))
 
 ///////////////////////////////////////////////////////////////////////////////
 // Main packet struct
