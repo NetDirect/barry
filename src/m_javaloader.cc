@@ -581,7 +581,6 @@ char * JavaLoader::GetScreenshot(JLScreenInfo &info, char *buffer, size_t *buffs
 	//              ^^^^^ : socket ID
 	//    00000010: 00 00 00 00                                      ....
 
-	response = packet.GetReceive();
 	m_socket->Receive(response);
 
 	// Parse response...
@@ -617,7 +616,6 @@ char * JavaLoader::GetScreenshot(JLScreenInfo &info, char *buffer, size_t *buffs
 
 
 		// Read the stream
-		response = packet.GetReceive();
 		m_socket->Receive(response);
 
 

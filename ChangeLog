@@ -19,6 +19,8 @@ Release: version 0.15 - 2009/01/??
 		  as suggested by comments
 		- fixed some packet size checks
 		- whitespace fixes
+		- removed unneeded packet.GetReceive(), since response
+		  buffer is the same as what GetReceive() returns
 2009/01/27
 	- added link Josh Kropf's 'Blackberry development in linux' blog
 		post to doc/www/index.php
