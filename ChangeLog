@@ -1,5 +1,19 @@
 Release: version 0.15 - 2009/01/??
 ------------------------------------------------------------------------------
+2009/01/29
+	- applied screenshot and zsh patch from Nicolas Vivien
+	  His git log, as posted to the mailing list, was:
+		Remove bscreenshot binary
+		Add screenshot option to bjavaloader binary
+		Add comments in the code
+		Use defines beside of integer constant
+		Use b2hons to be compliant with evrywhat host
+		ZSH scripts completion
+		Use BMP structs beside of unreadable buffer !
+	  His changelog notes:
+		- add command GetScreenShot to JLPacket class
+		- add JLScreenInfo to protocol structures
+	- updated AUTHORS
 2009/01/27
 	- added link Josh Kropf's 'Blackberry development in linux' blog
 		post to doc/www/index.php
@@ -14,9 +28,6 @@ Release: version 0.15 - 2009/01/??
 		iconv installs, and checking the iconv() prototype for whether
 		const is needed or not.  This removes the need for the
 		template added earlier.
-	- add Nicolas Vivien's screenshot patch
-	- add command GetScreenShot to JLPacket class
-	- add JLScreenInfo to protocol structures
 2009/01/25
 	- applied patch from Josh Kropf making bjavaloader's syntax more
 		compatible with the windows version, to make cross

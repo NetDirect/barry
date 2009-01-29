@@ -74,6 +74,8 @@ Contributors (code and otherwise) in alphabetical order by last name:
 		- debian package patch
 	Nicolas VIVIEN <nicolas@vivien.fr>
 		- bjavaloader support
+		- screenshot support
+		- zsh command completion scripts
 	Ashley Willis <barry@venamous.net>
 		- btool null parser patch
 		- perlbarry contrib package
