@@ -24,9 +24,9 @@ Vendor: Net Direct Inc.
 BuildRoot: %{_tmppath}/%{name}-%{release}-%{version}-root
 
 %if 0%{?suse_version}
-BuildRequires: libusb, gcc-c++, pkgconfig, boost-devel
+BuildRequires: libusb, gcc-c++, pkgconfig, boost-devel, fuse-devel
 %else
-BuildRequires: libusb-devel, gcc-c++, pkgconfig, boost-devel
+BuildRequires: libusb-devel, gcc-c++, pkgconfig, boost-devel, fuse-devel
 %endif
 
 %define barryroot %{_builddir}/%{name}-%{version}
@@ -203,6 +203,7 @@ cd ../
 %attr(0755,root,root) %{_sbindir}/breset
 %attr(0755,root,root) %{_sbindir}/pppob
 %attr(0755,root,root) %{_bindir}/btool
+%attr(0755,root,root) %{_bindir}/bfuse
 %attr(0755,root,root) %{_bindir}/bjavaloader
 %attr(0755,root,root) %{_bindir}/bs11nread
 %attr(0755,root,root) %{_bindir}/bidentify
