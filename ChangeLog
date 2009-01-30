@@ -30,6 +30,7 @@ Release: version 0.15 - 2009/01/??
 		errors and codes in the JavaLoader class, not the low-
 		level Socket class.
 	- added erase and force erase support to bjavaloader, library, and zsh
+		- force erase is experimental
 2009/01/27
 	- added link Josh Kropf's 'Blackberry development in linux' blog
 		post to doc/www/index.php

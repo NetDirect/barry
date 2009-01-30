@@ -18,7 +18,7 @@ Target: release version 0.15
 		+ set time
 		- device-info
 		+ screenshot
-		- delete COD files (javaloader erase)
+		+ delete COD files (javaloader erase)
 	- polish up bfuse, and add feature to split out fields
 	- add record classes for Content Store, SMS Messages, based on
 		Martin Owens' doc/barry-research.ods
