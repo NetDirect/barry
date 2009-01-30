@@ -1,0 +1,66 @@
+.\"                                      Hey, EMACS: -*- nroff -*-
+.\" First parameter, NAME, should be all caps
+.\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
+.\" other parameters are allowed: see man(7), man(1)
+.TH BFUSE 1 "January 30, 2009"
+.\" Please adjust this date whenever revising the manpage.
+.\"
+.\" Some roff macros, for reference:
+.\" .nh        disable hyphenation
+.\" .hy        enable hyphenation
+.\" .ad l      left justify
+.\" .ad b      justify to both left and right margins
+.\" .nf        disable filling
+.\" .fi        enable filling
+.\" .br        insert line break
+.\" .sp <n>    insert n+1 empty lines
+.\" for manpage-specific macros, see man(7)
+.SH NAME
+.B bfuse
+\- Create a FUSE filesystem out of BlackBerry databases.
+.SH SYNOPSIS
+.B bfuse
+mountpoint [options]
+.SH DESCRIPTION
+.PP
+.B bfuse
+connects to your BlackBerry and turns its databases into
+a mounted filesystem using the FUSE filesystem library.  As such,
+it has a few basic arguments, and a list of common options supported
+by FUSE.
+.PP
+The device will remain in Desktop mode for as long as bfuse runs.
+.PP
+For more information on FUSE options, see
+http://fuse.sourceforge.net/
+
+.SH OPTIONS
+.TP
+.B \--o opt
+FUSE mount options.
+.TP
+.B \-h
+Display a command help summary.
+.TP
+.B \-V
+Display version information, including Barry library, FUSE library, and
+kernel interface.
+.TP
+.B \-d
+Enable debug output.  Implies '-f'.
+.TP
+.B \-f
+Operate in the foreground.
+.TP
+.B \-s
+Disable multi-threaded operation.
+
+.SH AUTHOR
+.nh
+.B bfuse
+is part of the Barry project and was written Chris Frey, as was
+this manual page.
+.SH SEE ALSO
+.PP
+http://www.netdirect.ca/software/packages/barry/index.php
+

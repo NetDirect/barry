@@ -11,6 +11,7 @@ Release: version 0.15 - 2009/01/??
 		- moved codfile_*_t structs to internal header
 		- also fixed command line status output when exceptions
 		  are caught (unrelated fix)
+	- added / updated manpages: bfuse, bjavaloader, btool
 2009/01/29
 	- applied screenshot and zsh patch from Nicolas Vivien
 	  His git log, as posted to the mailing list, was:

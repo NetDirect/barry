@@ -212,6 +212,8 @@ cd ../
 %attr(0755,root,root) %{_bindir}/btranslate
 %attr(0755,root,root) %{_bindir}/hal-blackberry
 %attr(0644,root,root) %{_mandir}/man1/btool*
+%attr(0644,root,root) %{_mandir}/man1/bfuse*
+%attr(0644,root,root) %{_mandir}/man1/bjavaloader*
 %attr(0644,root,root) %{_mandir}/man1/bs11nread*
 %attr(0644,root,root) %{_mandir}/man1/bidentify*
 %attr(0644,root,root) %{_mandir}/man1/bcharge*
