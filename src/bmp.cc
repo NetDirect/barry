@@ -1,5 +1,5 @@
 ///
-/// \file	bmp.h
+/// \file	bmp.cc
 ///		BMP conversion routines
 ///
 

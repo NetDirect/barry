@@ -35,6 +35,7 @@ namespace Barry {
 class Parser;
 class Builder;
 class Controller;
+class CodFile;
 
 class JLDirectoryEntry;
 
@@ -157,7 +158,8 @@ public:
 	void StopStream(void);
 
 	// mid-stream operations
-	void SendStream(char *buffer, int size);
+	void SendStream(const unsigned char *buffer, int size);
+	void LoadApp(Barry::CodFile &cod);
 	void SetTime(time_t when);
 	void GetDirectory(JLDirectory &dir, bool include_subdirs);
 	void GetScreenshot(JLScreenInfo &info, Data &image);

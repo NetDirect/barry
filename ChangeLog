@@ -1,5 +1,16 @@
 Release: version 0.15 - 2009/01/??
 ------------------------------------------------------------------------------
+2009/01/30
+	- moved Nicolas Vivien's codfile code into library class API
+		- this change avoids having packed structs exposed in
+		  installable header files, and gives the library
+		  user an easy way to work with COD files
+		- added CodFile class
+		- added JavaLoader::LoadApp(CodFile&)
+		- cleaned up bjavaloader to use new API
+		- moved codfile_*_t structs to internal header
+		- also fixed command line status output when exceptions
+		  are caught (unrelated fix)
 2009/01/29
 	- applied screenshot and zsh patch from Nicolas Vivien
 	  His git log, as posted to the mailing list, was:

@@ -24,18 +24,12 @@
 
 
 #include <barry/barry.h>
-#include <barry/cod.h>
-#include <iomanip>
 #include <iostream>
-#include <fstream>
-#include <sstream>
 #include <vector>
 #include <string>
 #include <cstring>
 #include <algorithm>
 #include <getopt.h>
-#include <sys/types.h>
-#include <sys/stat.h>
 
 // supported javaloader commands
 #define CMD_LIST	"dir"
@@ -131,83 +125,9 @@ void SetTime(Barry::Mode::JavaLoader *javaloader, const char *timestr)
 
 void SendAppFile(Barry::Mode::JavaLoader *javaloader, const char *filename)
 {
-	FILE *fp;
-
-	char *data = NULL;
-
-	codfile_header_t header;
-
-	size_t n;
-	size_t skip;
-	off_t filesize;
-	struct stat sb;
-
-
-	// Get file size
-	if (stat(filename, &sb) == -1) {
-		throw runtime_error(string("Can't stat: ") + filename);
-	}
-
-	filesize = sb.st_size;
-	if( (unsigned long)filesize > (size_t)-1 ) {
-		throw runtime_error("Filesize larger than max fread()... contact Barry developers.");
-	}
-
-	// Open file
-	fp = fopen(filename, "rb");
-
-	if (fp == NULL) {
-		throw runtime_error(string("Can't open: ") + filename);
-	}
-
-	AutoClose ac(fp);
-
-	// Read the file
-	while (!feof(fp)) {
-		n = fread(&header, sizeof(codfile_header_t), 1, fp);
-
-		if (n != 1)
-			continue;
-	
-		// Is a COD file packed (a big COD file) ?
-		if (header.type == 0x4B50) {
-			if (header.size1 != header.size2)
-				continue;
-
-			skip = header.strsize + header.strfree;
-
-			if( fseek(fp, skip, SEEK_CUR) != 0 ) {
-				throw runtime_error("Can't skip COD header");
-			}
-
-			// this is a one-time program, so allocate and
-			// don't worry about freeing
-			data = (char *) realloc(data, header.size1 * sizeof(char));
-
-			n = fread(data, sizeof(char), header.size1, fp);
-			if( n != header.size1 ) {
-				throw runtime_error("Can't read packed COD header");
-			}
-
-			javaloader->SendStream(data, (int) header.size1);
-		}
-		// Is a simple COD file (a small COD file) ?
-		else if (header.type == 0xC0DE) {
-			rewind(fp);
-
-			data = (char *) malloc(filesize * sizeof(char));
-
-			n = fread(data, sizeof(char), filesize, fp);
-			if( (off_t) n != filesize ) {
-				throw runtime_error("Can't read COD data");
-			}
-
-			// Open stream
-			javaloader->SendStream(data, filesize);
-		}
-	}
+	CodFile cf(filename);
+	javaloader->LoadApp(cf);
 }
-
 
 void GetScreenshot(Barry::Mode::JavaLoader *javaloader, const char *filename)
 {
@@ -394,14 +314,17 @@ int main(int argc, char *argv[])
 
 	}
 	catch( Usb::Error &ue) {
+		std::cout << endl;	// flush any normal output first
 		std::cerr << "Usb::Error caught: " << ue.what() << endl;
 		return 1;
 	}
 	catch( Barry::Error &se ) {
+		std::cout << endl;
 		std::cerr << "Barry::Error caught: " << se.what() << endl;
 		return 1;
 	}
 	catch( std::exception &e ) {
+		std::cout << endl;
 		std::cerr << "std::exception caught: " << e.what() << endl;
 		return 1;
 	}

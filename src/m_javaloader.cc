@@ -31,6 +31,7 @@
 #include "error.h"
 #include "usbwrap.h"
 #include "controller.h"
+#include "cod.h"
 #include <stdexcept>
 #include <sstream>
 #include <iomanip>
@@ -344,7 +345,7 @@ void JavaLoader::StartStream()
 //   0000003C   00 00 00 00  00 00 00 0F  10 34 45 00  00 00 00 00  00 00 00 21  .........4E........!
 //   00000050   00 FF FF FF  FF FF FF FF  FF FF FF 4E  00 9C 08 68  C5 00 00 F0  ...........N...h....
 //   00000064   B8 BC C0 A1  C0 14 00 81  00 00 01 01  04 0E 3F 6D  00 02 00 6D  ..............?m...m
-void JavaLoader::SendStream(char *buffer, int buffsize)
+void JavaLoader::SendStream(const unsigned char *buffer, int buffsize)
 {
 	int bytesent = 0;
 
@@ -442,6 +443,12 @@ void JavaLoader::SendStream(char *buffer, int buffsize)
 	}
 }
 
+void JavaLoader::LoadApp(CodFile &cod)
+{
+	while( cod.ReadNext() ) {
+		SendStream(cod.GetBlock().GetData(), cod.GetBlock().GetSize());
+	}
+}
 
 // This command is sent to avert that the data stream is finished
 void JavaLoader::StopStream(void)

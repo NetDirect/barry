@@ -108,6 +108,7 @@ noinst_HEADERS = cbarry.h \
 	base64.h \
 	record-internal.h \
 	bmp-internal.h \
+	cod-internal.h \
 	packet.h \
 	scoped_lock.h \
 	protostructs.h \
@@ -121,6 +122,7 @@ EXTRA_DIST = convo.awk \
 libbarry_la_SOURCES = time.cc \
 	base64.cc \
 	bmp.cc \
+	cod.cc \
 	data.cc \
 	usbwrap.cc \
 	probe.cc \
