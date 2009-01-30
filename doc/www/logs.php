@@ -80,6 +80,10 @@ in case you wish to get in touch with them.
 		<li><a href="yaklin/javaloader.force.erase.net_rim_bb_search.net_rim_bb_timezones.net_rim_bb_voice.sniff.txt.bz2">javaloader.force.erase.net_rim_bb_search.net_rim_bb_timezones.net_rim_bb_voice.sniff.txt.bz2</a></li>
 		<li><a href="yaklin/javaloader.wipe.sniff.txt.bz2">javaloader.wipe.sniff.txt.bz2</a></li>
 		<li><a href="yaklin/javaload_multiple_files.txt.bz2">javaload_multiple_files.txt.bz2</a> (large! about 20MB)</li>
+		<li><a href="yaklin/1-LoadMFI.txt.bz2">1-LoadMFI.txt.bz2</a></li>
+		<li><a href="yaklin/3-LoadVSM.txt.bz2">3-LoadVSM.txt.bz2</a></li>
+		<li><a href="yaklin/2-RetrieveSomeInfo.txt.bz2">2-RetrieveSomeInfo.txt.bz2</a></li>
+		<li><a href="yaklin/4-LoadSFI.txt.bz2">4-LoadSFI.txt.bz2</a></li>
 	</ul>
 	</li>
 
