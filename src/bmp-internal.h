@@ -43,7 +43,7 @@ typedef struct BXLOCAL {
 	uint32_t biHeight;			// Height of image
 	uint16_t biPlanes;			//
 	uint16_t biBitCount;			//
-	uint32_t biCompression;			// 
+	uint32_t biCompression;			//
 	uint32_t biSizeImage;			// Size of raw data
 	uint32_t biXPelsPerMeter;		//
 	uint32_t biYPelsPerMeter;		//
