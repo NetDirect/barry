@@ -31,6 +31,9 @@ Release: version 0.15 - 2009/01/??
 		level Socket class.
 	- added erase and force erase support to bjavaloader, library, and zsh
 		- force erase is experimental
+	- applied documentation patch from Robert Yaklin on VSM file format
+		- did slight formatting changes before applying, for 80
+		  columns, and set file to unix format instead of DOS
 2009/01/27
 	- added link Josh Kropf's 'Blackberry development in linux' blog
 		post to doc/www/index.php
