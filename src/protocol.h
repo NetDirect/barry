@@ -56,11 +56,15 @@
 #define SB_COMMAND_JL_GET_DATA_ENTRY	0x6e	// Used for both DIR and SCREENSHOT
 #define SB_COMMAND_JL_GET_SUBDIR	0x7f
 #define SB_COMMAND_JL_GET_SUBDIR_ENTRY	0x7d
+#define SB_COMMAND_JL_ERASE		0x69
+#define SB_COMMAND_JL_FORCE_ERASE	0x7b
 #define SB_COMMAND_JL_UNKNOWN3		0x63
 // JavaLoader response
 #define SB_COMMAND_JL_ACK		0x64
 #define SB_COMMAND_JL_READY		0x01
 #define SB_COMMAND_JL_ERROR		0x78	// Device has accepted the application, but it can't installed !
+#define SB_COMMAND_JL_COD_IN_USE	0x6c	// Perhaps "BUSY" is also a good name?
+#define SB_COMMAND_JL_COD_NOT_FOUND	0x69
 
 // JavaLoader data
 #define SB_DATA_JL_SUCCESS		0x64	// Device has accepted the data packet

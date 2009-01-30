@@ -40,6 +40,7 @@
 
 // supported javaloader commands
 #define CMD_LIST	"dir"
+#define CMD_ERASE	"erase"
 #define CMD_LOAD	"load"
 #define CMD_SCREENSHOT	"screenshot"
 #define CMD_SETTIME	"settime"
@@ -62,6 +63,7 @@ void Usage()
    << "        Copyright 2005-2009, Net Direct Inc. (http://www.netdirect.ca/)\n"
    << "        Using: " << Version << "\n"
    << "\n"
+   << "   -f        Force erase, if module is in use\n"
    << "   -h        This help\n"
    << "   -s        List sibling in module list\n"
    << "   -p pin    PIN of device to talk with\n"
@@ -71,11 +73,14 @@ void Usage()
    << "\n"
    << "commands\n"
    << "\n"
-   << "   " << CMD_LIST << endl
+   << "   " << CMD_LIST << " [-s]\n"
    << "      Lists modules on the handheld\n"
    << "\n"
    << "   " << CMD_LOAD << " <.cod file> ...\n"
    << "      Loads modules onto the handheld\n"
+   << "\n"
+   << "   " << CMD_ERASE << " [-f] <module name> ...\n"
+   << "      Erase module from handheld\n"
    << "\n"
    << "   " << CMD_SCREENSHOT << " <.bmp file> ...\n"
    << "      Make a screenshot of handheld\n"
@@ -322,6 +327,7 @@ int main(int argc, char *argv[])
 
 		uint32_t pin = 0;
 		bool list_siblings = false,
+			force_erase = false,
 			data_dump = false;
 		string password;
 		vector<string> params;
@@ -332,7 +338,7 @@ int main(int argc, char *argv[])
 
 		// process command line options
 		for(;;) {
-			int cmd = getopt(argc, argv, "hsp:P:v");
+			int cmd = getopt(argc, argv, "fhsp:P:v");
 			if( cmd == -1 )
 				break;
 
@@ -344,6 +350,10 @@ int main(int argc, char *argv[])
 
 			case 'P':	// Device password
 				password = optarg;
+				break;
+
+			case 'f':	// turn on 'force' mode for erase
+				force_erase = true;
 				break;
 
 			case 's':	// turn on listing of sibling modules
@@ -408,7 +418,8 @@ int main(int argc, char *argv[])
 			JLDirectory dir;
 			javaloader.GetDirectory(dir, list_siblings);
 			cout << dir;
-		} else if( cmd == CMD_LOAD ) {
+		}
+		else if( cmd == CMD_LOAD ) {
 			if( params.size() == 0 ) {
 				cerr << "specify at least one .cod file to load" << endl;
 				Usage();
@@ -421,7 +432,25 @@ int main(int argc, char *argv[])
 				SendAppFile(&javaloader, (*i).c_str());
 				cout << "done." << endl;
 			}
-		} else if( cmd == CMD_SCREENSHOT ) {
+		}
+		else if( cmd == CMD_ERASE ) {
+			if( params.size() == 0 ) {
+				cerr << "specify at least one module to erase" << endl;
+				Usage();
+				return 1;
+			}
+
+			vector<string>::iterator i = params.begin(), end = params.end();
+			for( ; i != end; ++i ) {
+				cout << "erasing: " << (*i) << "... ";
+				if( force_erase )
+					javaloader.ForceErase((*i));
+				else
+					javaloader.Erase((*i));
+				cout << "done." << endl;
+			}
+		}
+		else if( cmd == CMD_SCREENSHOT ) {
 			if( params.size() == 0 ) {
 				cerr << "specify a .bmp filename" << endl;
 				Usage();
@@ -429,13 +458,15 @@ int main(int argc, char *argv[])
 			}
 
 			GetScreenshot(&javaloader, params[0].c_str());
-		} else if( cmd == CMD_SETTIME ) {
+		}
+		else if( cmd == CMD_SETTIME ) {
 			if( params.size() > 0 ) {
 				SetTime(&javaloader, params[0].c_str());
 			} else {
 				SetTime(&javaloader, NULL);
 			}
-		} else {
+		}
+		else {
 			cerr << "invalid command \"" << cmd << "\"" << endl;
 			Usage();
 			return 1;

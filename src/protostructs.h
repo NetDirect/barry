@@ -593,6 +593,7 @@ struct JLPacket
 		char			filename[1];
 		uint32_t		cod_size;
 		uint32_t		timestamp;
+		uint16_t		id;
 	} __attribute__ ((packed)) u;
 
 } __attribute__ ((packed));

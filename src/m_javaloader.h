@@ -139,6 +139,7 @@ protected:
 	void GetDir(JLPacket &packet, uint8_t entry_cmd, JLDirectory &dir,
 		bool include_subdirs);
 	void ThrowJLError(const std::string &msg, uint8_t cmd);
+	void DoErase(uint8_t cmd, const std::string &cod_name);
 
 public:
 	JavaLoader(Controller &con);
@@ -160,6 +161,8 @@ public:
 	void SetTime(time_t when);
 	void GetDirectory(JLDirectory &dir, bool include_subdirs);
 	void GetScreenshot(JLScreenInfo &info, Data &image);
+	void Erase(const std::string &cod_name);
+	void ForceErase(const std::string &cod_name);
 };
 
 }} // namespace Barry::Mode

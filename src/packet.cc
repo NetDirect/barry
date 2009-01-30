@@ -587,5 +587,11 @@ int JLPacket::GetScreenshot()
 	return BigEndianData((uint32_t) 0);
 }
 
+int JLPacket::Erase(uint16_t cmd, uint16_t id)
+{
+	SimpleCmd(cmd, 0, 2);
+	return BigEndianData(id);
+}
+
 } // namespace Barry
 

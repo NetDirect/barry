@@ -223,13 +223,11 @@ public:
 	int GetDirectory()	{ return SimpleCmd(SB_COMMAND_JL_GET_DIRECTORY); }
 	int GetSubDir(uint16_t id);
 	int GetDirEntry(uint8_t entry_cmd, uint16_t id);
+	int Erase(uint16_t cmd, uint16_t id);
 
 	//////////////////////////////////
 	// response analysis
 	unsigned int Size();
-
-	// JL command response functions
-	unsigned int ExpectedSize() const;	// throws
 };
 
 

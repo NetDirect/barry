@@ -7,6 +7,7 @@ local state line cmds
 
 
 _bjavaloader_options=(
+	'-f[Force erase, if module is in use]' \
 	'-h[Show the most relevant command line options]' \
 	'-s[List sibling in module list]' \
 	'-p[PIN of device to talk with]' \
@@ -21,7 +22,7 @@ _arguments -C -s "$_bjavaloader_options[@]" && ret=0
 
 case $state in
 	cmds)
-		cmds=(dir load screenshot settime)
+		cmds=(dir load erase screenshot settime)
 		_describe -t commands 'bjavaloader command' cmds && ret=0
 	;;
 

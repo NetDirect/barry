@@ -644,6 +644,53 @@ void JavaLoader::GetScreenshot(JLScreenInfo &info, Data &image)
 	}
 }
 
+void JavaLoader::DoErase(uint8_t cmd, const std::string &cod_name)
+{
+	Data command(-1, 8), data(-1, 8), response;
+
+	JLPacket packet(command, data, response);
+
+	// set filename, device responds with an ID
+	packet.SetCodFilename(cod_name);
+	m_socket->Packet(packet);
+	if( packet.Command() == SB_COMMAND_JL_COD_NOT_FOUND ) {
+		throw Error(string("JavaLoader::DoErase: module ") + cod_name + " not found");
+	}
+	if( packet.Command() != SB_COMMAND_JL_ACK ) {
+		ThrowJLError("JavaLoader::DoErase", packet.Command());
+	}
+
+	// make sure there is an ID coming
+	if( packet.Size() != 2 )
+		throw Error("JavaLoader::DoErase: expected code not available");
+
+	// get ID
+	m_socket->Receive(response);
+	Protocol::CheckSize(response, SB_JLPACKET_HEADER_SIZE + sizeof(uint16_t));
+	MAKE_JLPACKET(jpack, response);
+	uint16_t id = be_btohs(jpack->u.id);
+
+	// send erase command, with application ID
+	packet.Erase(cmd, id);
+	m_socket->Packet(packet);
+	if( packet.Command() == SB_COMMAND_JL_COD_IN_USE ) {
+		throw Error("JavaLoader::DoErase: COD file in use.");
+	}
+	if( packet.Command() != SB_COMMAND_JL_ACK ) {
+		ThrowJLError("JavaLoader::DoErase", packet.Command());
+	}
+}
+
+void JavaLoader::Erase(const std::string &cod_name)
+{
+	DoErase(SB_COMMAND_JL_ERASE, cod_name);
+}
+
+void JavaLoader::ForceErase(const std::string &cod_name)
+{
+	DoErase(SB_COMMAND_JL_FORCE_ERASE, cod_name);
+}
+
 
 }} // namespace Barry::Mode
 
