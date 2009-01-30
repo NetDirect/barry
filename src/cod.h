@@ -24,6 +24,7 @@
 
 #include "dll.h"
 #include "data.h"
+#include <sys/types.h>
 #include <stdio.h>
 
 #define CODFILE_TYPE_PACKED	0x4B50
