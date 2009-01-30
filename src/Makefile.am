@@ -104,9 +104,21 @@ include_barry_HEADERS = barry.h \
 	bmp.h \
 	s11n-boost.h
 
+noinst_HEADERS = cbarry.h \
+	base64.h \
+	record-internal.h \
+	packet.h \
+	scoped_lock.h \
+	protostructs.h \
+	debug.h \
+	endian.h \
+	strnlen.h
+
+EXTRA_DIST = convo.awk \
+	legal.txt
 
 libbarry_la_SOURCES = time.cc \
-	base64.cc base64.h \
+	base64.cc \
 	data.cc \
 	usbwrap.cc \
 	probe.cc \
@@ -128,7 +140,7 @@ libbarry_la_SOURCES = time.cc \
 	r_servicebook.cc \
 	r_task.cc \
 	r_timezone.cc \
-	packet.cc packet.h \
+	packet.cc \
 	controller.cc \
 	m_desktop.cc \
 	m_ipmodem.cc \
@@ -137,21 +149,10 @@ libbarry_la_SOURCES = time.cc \
 	version.cc \
 	pppfilter.cc \
 	sha1.cc \
-	iconv.cc \
-	scoped_lock.h \
-	protostructs.h \
-	debug.h \
-	endian.h
+	iconv.cc
 #libbarry_la_LIBADD = $(LTLIBOBJS) $(LIBUSB_LIBS) $(OPENSSL_LIBS)
 libbarry_la_LIBADD = $(LTLIBOBJS) $(LIBUSB_LIBS) @LTLIBICONV@
 libbarry_la_LDFLAGS = -version-info ${LIB_BARRY_VERSION}
-
-noinst_HEADERS = cbarry.h \
-	record-internal.h \
-	strnlen.h
-
-EXTRA_DIST = convo.awk \
-	legal.txt
 
 ##if DO_TEST
 ##	bin_PROGRAMS += test-base64 test-data test-time

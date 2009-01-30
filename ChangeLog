@@ -36,6 +36,7 @@ Release: version 0.15 - 2009/01/??
 		  columns, and set file to unix format instead of DOS
 	- added links to new USB capture logs from Robert Yaklin to
 		logs.php doc page
+	- cleaned up src/Makefile.am, regarding non-install headers
 2009/01/27
 	- added link Josh Kropf's 'Blackberry development in linux' blog
 		post to doc/www/index.php
