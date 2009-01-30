@@ -68,6 +68,7 @@
 #include "log.h"
 #include "sha1.h"
 #include "iconv.h"
+#include "bmp.h"
 #include "record.h"
 
 // Include the template helpers after the record classes

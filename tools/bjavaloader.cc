@@ -25,7 +25,6 @@
 
 #include <barry/barry.h>
 #include <barry/cod.h>
-#include <barry/bmp.h>
 #include <iomanip>
 #include <iostream>
 #include <fstream>
@@ -212,13 +211,6 @@ void SendAppFile(Barry::Mode::JavaLoader *javaloader, const char *filename)
 
 void GetScreenshot(Barry::Mode::JavaLoader *javaloader, const char *filename)
 {
-	FILE *fp = fopen(filename, "wb");
-	if (fp == NULL) {
-		throw runtime_error(string("Can't open: ") + filename);
-	}
-
-	AutoClose ac(fp);
-
 
 	// Take a screenshot
 	//   - info object contains the screenshot properties (width, height...)
@@ -228,93 +220,18 @@ void GetScreenshot(Barry::Mode::JavaLoader *javaloader, const char *filename)
 	javaloader->GetScreenshot(info, image);
 
 
-	// Read screen info
-	int width = info.width;
-	int height = info.height;
+	// Convert to BMP format
+	Data bitmap(-1, GetTotalBitmapSize(info));
+	ScreenshotToBitmap(info, image, bitmap);
 
-
-	// Build header BMP file
-	bmp_file_header_t fileheader;
-
-	// BMP
-	fileheader.bfType[0] = 'B';
-	fileheader.bfType[1] = 'M';
-
-	// Size of file
-	fileheader.bfSize = sizeof(bmp_file_header_t) + sizeof(bmp_info_header_t);
-	fileheader.bfSize += 4 * width * height;
-
-	// Always 0x00
-	fileheader.bfReserved1 = 0;
-	fileheader.bfReserved2 = 0;
-
-	// Offset to find the data
-	fileheader.bfOffBits = sizeof(bmp_file_header_t) + sizeof(bmp_info_header_t);
-
-
-	// Build info BMP file
-	bmp_info_header_t infoheader;
-
-	// Size of info section
-	infoheader.biSize = sizeof(bmp_info_header_t);
-
-	// Width x Height
-	infoheader.biWidth = width;
-	infoheader.biHeight = height;
-
-	// Planes number
-	infoheader.biPlanes = 0x01;
-
-	// Bit count
-	infoheader.biBitCount = 0x20;
-
-	// Compression : No
-	infoheader.biCompression = 0;
-
-	// Size of image
-	infoheader.biSizeImage = 4 * width * height;
-
-	// Pels Per Meter
-	infoheader.biXPelsPerMeter = 0;
-	infoheader.biYPelsPerMeter = 0;
-
-	// Color palette used : None
-	infoheader.biClrUsed = 0;
-
-	// Color palette important : None
-	infoheader.biClrImportant = 0;
-	
-
-	// Print header BMP file and info header
-	fwrite(&fileheader, sizeof(bmp_file_header_t), 1, fp);
-	fwrite(&infoheader, sizeof(bmp_info_header_t), 1, fp);
-
-
-	// I work with 2 bytes (see the pixel format)
-	const short *data = (short *) image.GetData();
-
-	// For each pixel
-	char pixel[4];
-	for (size_t j=0; j<(size_t)height; j++) {
-		for (size_t i=0; i<(size_t)width; i++) {
-			// Read one pixel in the picture
-			short value = data[(image.GetSize()/2 - 1) - ((width-1 - i) + (width * j))];
-
-			// Pixel format used by the handheld is : 16 bits
-			// MSB < .... .... .... .... > LSB
-			//                    ^^^^^^ : Blue (between 0x00 and 0x1F)
-			//             ^^^^^^^ : Green (between 0x00 and 0x3F)
-			//       ^^^^^^ : Red (between 0x00 and 0x1F)
-
-			pixel[3] = 0x00;					// alpha
-			pixel[2] = (((value >> 11) & 0x1F) * 0xFF) / 0x1F;	// red
-			pixel[1] = (((value >> 5) & 0x3F) * 0xFF) / 0x3F;	// green
-			pixel[0] = ((value & 0x1F) * 0xFF) / 0x1F;		// blue
-
-			// Write the pixel (4 bytes)
-			fwrite(pixel, sizeof(char), 4, fp);
-		}
+	// Write BMP file
+	FILE *fp = fopen(filename, "wb");
+	if (fp == NULL) {
+		throw runtime_error(string("Can't open: ") + filename);
 	}
+	AutoClose ac(fp);
+
+	fwrite(bitmap.GetData(), bitmap.GetSize(), 1, fp);
 }
 
 
