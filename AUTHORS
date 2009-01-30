@@ -76,12 +76,14 @@ Contributors (code and otherwise) in alphabetical order by last name:
 		- bjavaloader support
 		- screenshot support
 		- zsh command completion scripts
-	Ashley Willis <barry@venamous.net>
-		- btool null parser patch
-		- perlbarry contrib package
 	Niels de Vos <nixpanic@users.sourceforge.net>
 		- debian package patches
 		- usb_storage unbind script
+	Ashley Willis <barry@venamous.net>
+		- btool null parser patch
+		- perlbarry contrib package
+	Robert Yaklin <ryaklin@gmail.com>
+		- VSM file format documentation
 
 
 
