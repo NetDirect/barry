@@ -75,7 +75,7 @@ void Usage()
    << "   " << CMD_ERASE << " [-f] <module name> ...\n"
    << "      Erase module from handheld\n"
    << "\n"
-   << "   " << CMD_SCREENSHOT << " <.bmp file> ...\n"
+   << "   " << CMD_SCREENSHOT << " <.bmp file>\n"
    << "      Make a screenshot of handheld\n"
    << "\n"
    << "   " << CMD_SETTIME << " [" << TIME_FMT_EXAMPLE << "]\n"
