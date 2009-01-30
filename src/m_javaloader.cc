@@ -698,6 +698,38 @@ void JavaLoader::ForceErase(const std::string &cod_name)
 	DoErase(SB_COMMAND_JL_FORCE_ERASE, cod_name);
 }
 
+void JavaLoader::GetEventlog()
+{
+	Data command(-1, 8), data(-1, 8), response;
+	JLPacket packet(command, data, response);
+
+	packet.GetEventlog();
+
+	m_socket->Packet(packet);
+
+	if( packet.Command() != SB_COMMAND_JL_ACK ) {
+		ThrowJLError("JavaLoader::GetEventlog", packet.Command());
+	}
+
+	m_socket->Receive(response);
+	Protocol::CheckSize(response, SB_JLPACKET_HEADER_SIZE + sizeof(uint16_t));
+	MAKE_JLPACKET(jpack, response);
+
+	uint16_t count = jpack->u.response.expect;
+
+//	while( count > 0 ) {
+		packet.GetEventlogEntry();
+
+		m_socket->Packet(packet);
+
+		if( packet.Command() != SB_COMMAND_JL_ACK ) {
+			ThrowJLError("JavaLoader::GetEventlog", packet.Command());
+		}
+
+		m_socket->Receive(response);
+		cout << response << endl;
+//	}
+}
 
 }} // namespace Barry::Mode
 

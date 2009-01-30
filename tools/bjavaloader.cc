@@ -37,6 +37,7 @@
 #define CMD_LOAD	"load"
 #define CMD_SCREENSHOT	"screenshot"
 #define CMD_SETTIME	"settime"
+#define CMD_EVENTLOG    "eventlog"
 
 // time string format specifier and user friendly description
 #define TIME_FMT         "%Y-%m-%d %H:%M:%S"
@@ -302,6 +303,9 @@ int main(int argc, char *argv[])
 			} else {
 				SetTime(&javaloader, NULL);
 			}
+		}
+		else if( cmd == CMD_EVENTLOG ) {
+			javaloader.GetEventlog();
 		}
 		else {
 			cerr << "invalid command \"" << cmd << "\"" << endl;

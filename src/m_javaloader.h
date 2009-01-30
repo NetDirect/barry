@@ -165,6 +165,7 @@ public:
 	void GetScreenshot(JLScreenInfo &info, Data &image);
 	void Erase(const std::string &cod_name);
 	void ForceErase(const std::string &cod_name);
+	void GetEventlog();
 };
 
 }} // namespace Barry::Mode

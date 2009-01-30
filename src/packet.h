@@ -224,6 +224,8 @@ public:
 	int GetSubDir(uint16_t id);
 	int GetDirEntry(uint8_t entry_cmd, uint16_t id);
 	int Erase(uint16_t cmd, uint16_t id);
+	int GetEventlog()	{ return SimpleCmd(SB_COMMAND_JL_GET_LOG); }
+	int GetEventlogEntry();
 
 	//////////////////////////////////
 	// response analysis
