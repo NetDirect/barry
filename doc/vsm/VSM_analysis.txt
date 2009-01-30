@@ -1,3 +1,6 @@
+Analysis of the file format for Vendor Splash Media files
+=========================================================
+
 VSM files start with the bytes 01 00 00 bc which appear to be nothing
 more than a magic number. Changing any of these first four bytes causes
 the file to not be recognized as a VSM file.
