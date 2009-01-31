@@ -1,5 +1,7 @@
 Release: version 0.15 - 2009/01/??
 ------------------------------------------------------------------------------
+2009/01/31
+	- applied patch of binary VSM file from Robert Yaklin
 2009/01/30
 	- moved Nicolas Vivien's codfile code into library class API
 		- this change avoids having packed structs exposed in
