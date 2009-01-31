@@ -38,6 +38,7 @@
 #define CMD_SCREENSHOT	"screenshot"
 #define CMD_SETTIME	"settime"
 #define CMD_EVENTLOG    "eventlog"
+#define CMD_CLEAR_LOG   "cleareventlog"
 
 // time string format specifier and user friendly description
 #define TIME_FMT         "%Y-%m-%d %H:%M:%S"
@@ -75,6 +76,12 @@ void Usage()
    << "\n"
    << "   " << CMD_ERASE << " [-f] <module name> ...\n"
    << "      Erase module from handheld\n"
+   << "\n"
+   << "   " << CMD_EVENTLOG << "\n"
+   << "      Retrives the handheld event log\n"
+   << "\n"
+   << "   " << CMD_CLEAR_LOG << "\n"
+   << "      Clears the handheld event log\n"
    << "\n"
    << "   " << CMD_SCREENSHOT << " <.bmp file>\n"
    << "      Make a screenshot of handheld\n"
@@ -305,7 +312,12 @@ int main(int argc, char *argv[])
 			}
 		}
 		else if( cmd == CMD_EVENTLOG ) {
-			javaloader.GetEventlog();
+			JLEventlog log;
+			javaloader.GetEventlog(log);
+			cout << log;
+		}
+		else if( cmd == CMD_CLEAR_LOG ) {
+			javaloader.ClearEventlog();
 		}
 		else {
 			cerr << "invalid command \"" << cmd << "\"" << endl;

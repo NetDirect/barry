@@ -579,6 +579,14 @@ struct JLScreenInfo
 } __attribute__ ((packed));
 #define SB_JLSCREENINFO_SIZE			(sizeof(Barry::Protocol::JLScreenInfo))
 
+struct JLEventlogEntry
+{
+	uint16_t	size;
+	// remainder of packet is variable
+	// it contains the log data as an ASCII (UTF-8?) string
+} __attribute__ ((packed));
+#define SB_JLEVENTLOG_ENTRY_SIZE		(sizeof(Barry::Protocol::JLEventlogEntry))
+
 struct JLPacket
 {
 	uint16_t	socket;
@@ -589,6 +597,7 @@ struct JLPacket
 		JLCommand		command;
 		JLResponse		response;
 		JLScreenInfo		screeninfo;
+		JLEventlogEntry		logentry;
 		uint8_t			raw[1];
 		char			filename[1];
 		uint32_t		cod_size;

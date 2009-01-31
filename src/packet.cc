@@ -593,10 +593,10 @@ int JLPacket::Erase(uint16_t cmd, uint16_t id)
 	return BigEndianData(id);
 }
 
-int JLPacket::GetEventlogEntry()
+int JLPacket::GetEventlogEntry(uint16_t entry_num)
 {
 	SimpleCmd(SB_COMMAND_JL_GET_LOG_ENTRY, 0, 2);
-	return BigEndianData((uint16_t)2);
+	return BigEndianData(entry_num);
 }
 
 } // namespace Barry

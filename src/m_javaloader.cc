@@ -164,6 +164,68 @@ void JLDirectoryEntry::Dump(std::ostream &os) const
 		os << "\n" << SubDir;
 }
 
+void JLEventlog::Dump(std::ostream &os) const
+{
+	const_iterator i = begin(), e = end();
+	for( ; i != e; ++i ) {
+		(*i).Dump(os);
+	}
+}
+
+void JLEventlogEntry::Parse(uint16_t size, const char* buf)
+{
+	// example of a single log entry
+	//guid:92E11214401C3 time:0x11F133E6470 severity:0 type:2 app:UI data:GS-D 2c89868b
+	
+	std::string src = std::string(buf, size);
+	std::istringstream ss(src);
+	
+	ss.ignore(5); // skip "guid:"
+	ss >> guid;
+	if( ss.fail() )
+		throw BadData("JLEventlogEntry:Parse bad guid field");
+	
+	ss.ignore(6); // skip " time:"
+	ss >> hex >> timestamp;
+	if( ss.fail() )
+		throw BadData("JLEventlogEntry:Parse bad time field");
+
+	ss.ignore(10); // skip " severity:"
+	ss >> (unsigned int&)severity;
+	if( ss.fail() )
+		throw BadData("JLEventlogEntry:Parse bad severity field");
+
+	ss.ignore(6); // skip " type:"
+	ss >> (unsigned int&)type;
+	if( ss.fail() )
+		throw BadData("JLEventlogEntry:Parse bad type field");
+
+	ss.ignore(5); // skip " app:"
+	ss >> app;
+	if( ss.fail() )
+		throw BadData("JLEventlogEntry:Parse bad app field");
+
+	ss.ignore(6); // skip " data:"
+	
+	// use stringbuf to extract rest of data from stream
+	stringbuf databuf;
+	ss >> &databuf;
+	if( ss.fail() )
+		throw BadData("JLEventlogEntry:Parse bad data field");
+
+	data = databuf.str();
+}
+
+
+void JLEventlogEntry::Dump(std::ostream &os) const
+{
+	os << "guid:"      << guid;
+	os << " time:"     << hex << timestamp;
+	os << " severity:" << severity; //TODO it might make sense to format
+	os << " type:"     << type;     //severity and type as meaningful names
+	os << " app:"      << app;
+	os << " data:"     << data << endl;
+}
 
 namespace Mode {
 
@@ -698,7 +760,7 @@ void JavaLoader::ForceErase(const std::string &cod_name)
 	DoErase(SB_COMMAND_JL_FORCE_ERASE, cod_name);
 }
 
-void JavaLoader::GetEventlog()
+void JavaLoader::GetEventlog(JLEventlog &log)
 {
 	Data command(-1, 8), data(-1, 8), response;
 	JLPacket packet(command, data, response);
@@ -713,12 +775,13 @@ void JavaLoader::GetEventlog()
 
 	m_socket->Receive(response);
 	Protocol::CheckSize(response, SB_JLPACKET_HEADER_SIZE + sizeof(uint16_t));
+	
+	// number of eventlog entries
 	MAKE_JLPACKET(jpack, response);
+	uint16_t count = be_btohs(jpack->u.response.expect);
 
-	uint16_t count = jpack->u.response.expect;
-
-//	while( count > 0 ) {
-		packet.GetEventlogEntry();
+	for( uint16_t i = 0; i < count; ++ i ) {
+		packet.GetEventlogEntry(i);
 
 		m_socket->Packet(packet);
 
@@ -727,8 +790,29 @@ void JavaLoader::GetEventlog()
 		}
 
 		m_socket->Receive(response);
-		cout << response << endl;
-//	}
+		Protocol::CheckSize(response, SB_JLPACKET_HEADER_SIZE + SB_JLEVENTLOG_ENTRY_SIZE);
+		
+		MAKE_JLPACKET(jpack, response);
+		uint16_t size = be_btohs(jpack->u.logentry.size);
+		
+		JLEventlogEntry entry;
+		entry.Parse(size, (const char *)(response.GetData() + 6));
+		
+		log.push_back(entry);
+	}
+}
+
+void JavaLoader::ClearEventlog()
+{
+	Data command(-1, 8), data(-1, 8), response;
+	JLPacket packet(command, data, response);
+
+	packet.ClearEventlog();
+	m_socket->Packet(packet);
+
+	if( packet.Command() != SB_COMMAND_JL_ACK ) {
+		ThrowJLError("JavaLoader::ClearEventlog", packet.Command());
+	}
 }
 
 }} // namespace Barry::Mode

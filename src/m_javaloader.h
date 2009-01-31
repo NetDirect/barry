@@ -39,6 +39,8 @@ class CodFile;
 
 class JLDirectoryEntry;
 
+class JLEventlogEntry;
+
 class BXEXPORT JLDirectory : public std::vector<JLDirectoryEntry>
 {
 public:
@@ -107,6 +109,48 @@ public:
 };
 
 
+class BXEXPORT JLEventlog : public std::vector<JLEventlogEntry>
+{
+public:
+	void Dump(std::ostream &os) const;
+};
+BXEXPORT inline std::ostream& operator<<(std::ostream &os, const JLEventlog &log) {
+	log.Dump(os);
+	return os;
+}
+
+
+class BXEXPORT JLEventlogEntry
+{
+public:
+	typedef enum {
+		ALWAYS_LOG,
+		SEVERE_ERROR,
+		ERROR,
+		WARNING,
+		INFORMATION,
+		DEBUG_INFO
+	} Severity_t;
+
+	typedef enum {
+		NUMBER = 1,
+		STRING,
+		EXCEPTION
+	} ViewerType_t;
+
+	std::string  guid;
+	uint64_t     timestamp; //FIXME what is this? time since epoch? eg: 0x11F133E6470
+	Severity_t   severity;
+	ViewerType_t type;
+	std::string  app;
+	std::string  data;
+
+	void Parse(uint16_t size, const char* str);
+	
+	void Dump(std::ostream &os) const;
+};
+
+
 namespace Mode {
 
 //
@@ -165,7 +209,8 @@ public:
 	void GetScreenshot(JLScreenInfo &info, Data &image);
 	void Erase(const std::string &cod_name);
 	void ForceErase(const std::string &cod_name);
-	void GetEventlog();
+	void GetEventlog(JLEventlog &log);
+	void ClearEventlog();
 };
 
 }} // namespace Barry::Mode

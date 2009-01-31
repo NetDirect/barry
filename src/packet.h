@@ -225,7 +225,8 @@ public:
 	int GetDirEntry(uint8_t entry_cmd, uint16_t id);
 	int Erase(uint16_t cmd, uint16_t id);
 	int GetEventlog()	{ return SimpleCmd(SB_COMMAND_JL_GET_LOG); }
-	int GetEventlogEntry();
+	int GetEventlogEntry(uint16_t entry_num);
+	int ClearEventlog()	{ return SimpleCmd(SB_COMMAND_JL_CLEAR_LOG); }
 
 	//////////////////////////////////
 	// response analysis
