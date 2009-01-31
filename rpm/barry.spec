@@ -69,7 +69,7 @@ This package contains the development library files for Barry, libbarry.
 %package util
 Summary: BlackBerry(tm) Desktop for Linux - bcharge, btool, breset and others
 Group: Applications/Productivity
-Requires: libbarry0
+Requires: libbarry0 fuse
 Conflicts: barry-bcharge
 
 %description util
@@ -271,7 +271,7 @@ cd ../
 * Thu Jan 15 2009 Chris Frey <cdfrey@foursquare.net> 0.15-0
 - version bump
 - added HAL FDI scripts
-- added bjavaloader
+- added bjavaloader and bfuse
 
 * Wed Sep 24 2008 Chris Frey <cdfrey@foursquare.net> 0.14-0
 - version bump
