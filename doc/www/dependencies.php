@@ -49,6 +49,7 @@ some are only needed for building CVS.
 	<li><b>zlib</b> (barrybackup GUI) </li>
 	<li><b>libopensync</b> version 0.22 <i>only</i> (needed for syncing) </li>
 	<li><b>sqlite, glib2, libxml2</b> (needed for syncing, required by OpenSync) </li>
+	<li><b>libfuse</b> version 2.5 or higher (optional)</li>
 </ul>
 </p>
 

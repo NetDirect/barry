@@ -13,6 +13,7 @@ Release: version 0.15 - 2009/01/??
 		  are caught (unrelated fix)
 	- added / updated manpages: bfuse, bjavaloader, btool
 	- added fuse to build dependencies for rpm and deb packages
+	- updated web docs, adding libfuse to dependencies page
 2009/01/29
 	- applied screenshot and zsh patch from Nicolas Vivien
 	  His git log, as posted to the mailing list, was:
