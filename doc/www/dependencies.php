@@ -50,6 +50,9 @@ some are only needed for building CVS.
 	<li><b>libopensync</b> version 0.22 <i>only</i> (needed for syncing) </li>
 	<li><b>sqlite, glib2, libxml2</b> (needed for syncing, required by OpenSync) </li>
 	<li><b>libfuse</b> version 2.5 or higher (optional)</li>
+	<li><b>libiconv</b>, needed for international charset conversions... most
+		Linux distros have this as part of libc.  If you are using another
+		OS such as FreeBSD, you'll have to install this separately.</li>
 </ul>
 </p>
 
