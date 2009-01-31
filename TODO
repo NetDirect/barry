@@ -34,7 +34,7 @@ Target: release version 0.15
 	- incorporate Bill Paul's modem HOWTO for FreeBSD into web docs
 		(see list emails)
 	- review all website documentation before release
-	- make sure all manpages are up to date, including bjavaloader
+	+ make sure all manpages are up to date, including bjavaloader
 
 Target: release version 0.16
 	- port opensync plugin to 0.4x
