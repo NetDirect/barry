@@ -30,6 +30,7 @@
 #include <cstring>
 #include <algorithm>
 #include <getopt.h>
+#include <fstream>
 
 // supported javaloader commands
 #define CMD_LIST	"dir"
@@ -39,6 +40,7 @@
 #define CMD_SETTIME	"settime"
 #define CMD_EVENTLOG	"eventlog"
 #define CMD_CLEAR_LOG	"cleareventlog"
+#define CMD_SAVE        "save"
 
 // time string format specifier and user friendly description
 #define TIME_FMT         "%Y-%m-%d %H:%M:%S"
@@ -73,6 +75,9 @@ void Usage()
    << "\n"
    << "   " << CMD_LOAD << " <.cod file> ...\n"
    << "      Loads modules onto the handheld\n"
+   << "\n"
+   << "   " << CMD_SAVE << " <module name> ...\n"
+   << "      Retrieves modules from the handheld\n"
    << "\n"
    << "   " << CMD_ERASE << " [-f] <module name> ...\n"
    << "      Erase module from handheld\n"
@@ -160,6 +165,34 @@ void GetScreenshot(Barry::Mode::JavaLoader *javaloader, const char *filename)
 	AutoClose ac(fp);
 
 	fwrite(bitmap.GetData(), bitmap.GetSize(), 1, fp);
+}
+
+void SaveModule(Barry::Mode::JavaLoader *javaloader, const char *filename)
+{
+	string fname(filename), module;
+	
+	size_t ext_index = fname.rfind(".cod");
+	if( ext_index != string::npos ) {
+		// filename contains .cod extension, strip it for module name
+		module = fname.substr(0, ext_index);
+	}
+	else {
+		// filename does not contain .cod extension, use it as module name
+		module = fname;
+		// append extension to file name
+		fname.append(".cod");
+	}
+	
+	ofstream file(fname.c_str(), ios::binary | ios::trunc);
+	try {
+		javaloader->Save(module.c_str(), file);
+		file.close();
+	}
+	catch( std::exception &e ) {
+		if( file.is_open() )
+			file.close();
+		throw e;
+	}
 }
 
 
@@ -318,6 +351,20 @@ int main(int argc, char *argv[])
 		}
 		else if( cmd == CMD_CLEAR_LOG ) {
 			javaloader.ClearEventlog();
+		}
+		else if( cmd == CMD_SAVE ) {
+			if( params.size() == 0 ) {
+				cerr << "specify at least one module to save" << endl;
+				Usage();
+				return 1;
+			}
+			
+			vector<string>::iterator i = params.begin(), end = params.end();
+			for( ; i != end; ++i ) {
+				cout << "saving: " << (*i) << "... ";
+				SaveModule(&javaloader, (*i).c_str());
+				cout << "done." << endl;
+			}
 		}
 		else {
 			cerr << "invalid command \"" << cmd << "\"" << endl;

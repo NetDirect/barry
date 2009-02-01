@@ -193,6 +193,7 @@ protected:
 		bool include_subdirs);
 	void ThrowJLError(const std::string &msg, uint8_t cmd);
 	void DoErase(uint8_t cmd, const std::string &cod_name);
+	void SaveData(JLPacket &packet, uint16_t, std::ostream &output);
 
 public:
 	JavaLoader(Controller &con);
@@ -219,6 +220,7 @@ public:
 	void ForceErase(const std::string &cod_name);
 	void GetEventlog(JLEventlog &log);
 	void ClearEventlog();
+	void Save(const std::string &cod_name, std::ostream &output);
 };
 
 }} // namespace Barry::Mode

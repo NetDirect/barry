@@ -62,6 +62,7 @@
 #define SB_COMMAND_JL_GET_LOG		0x73
 #define SB_COMMAND_JL_GET_LOG_ENTRY	0x74
 #define SB_COMMAND_JL_CLEAR_LOG		0x88
+#define SB_COMMAND_JL_SAVE_MODULE	0x7e
 
 // JavaLoader response
 #define SB_COMMAND_JL_ACK		0x64

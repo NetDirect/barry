@@ -599,5 +599,11 @@ int JLPacket::GetEventlogEntry(uint16_t entry_num)
 	return BigEndianData(entry_num);
 }
 
+int JLPacket::SaveModule(uint16_t id)
+{
+	SimpleCmd(SB_COMMAND_JL_SAVE_MODULE, 0, 2);
+	return BigEndianData(id);
+}
+
 } // namespace Barry
 

@@ -227,6 +227,7 @@ public:
 	int GetEventlog()	{ return SimpleCmd(SB_COMMAND_JL_GET_LOG); }
 	int GetEventlogEntry(uint16_t entry_num);
 	int ClearEventlog()	{ return SimpleCmd(SB_COMMAND_JL_CLEAR_LOG); }
+	int SaveModule(uint16_t id);
 
 	//////////////////////////////////
 	// response analysis
