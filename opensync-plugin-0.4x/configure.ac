@@ -36,10 +36,10 @@ PKG_CHECK_MODULES([BARRY], [libbarry-0 libusb])
 AC_SUBST(TREE_BUILD_CXXFLAGS)
 AC_SUBST(TREE_BUILD_LDFLAGS)
 
-OPENSYNC_CONFIGDIR=$(pkg-config --variable=configdir opensync-1.0)
-OPENSYNC_PLUGINDIR=$(pkg-config --variable=plugindir opensync-1.0)
-OPENSYNC_FORMATSDIR=$(pkg-config --variable=formatsdir opensync-1.0)
-OPENSYNC_HEADERDIR=$(pkg-config --variable=headerdir opensync-1.0)
+OPENSYNC_CONFIGDIR=$(pkg-config --variable=configdir libopensync)
+OPENSYNC_PLUGINDIR=$(pkg-config --variable=plugindir libopensync)
+OPENSYNC_FORMATSDIR=$(pkg-config --variable=formatsdir libopensync)
+OPENSYNC_HEADERDIR=$(pkg-config --variable=headerdir libopensync)
 
 AC_SUBST(OPENSYNC_CONFIGDIR) ## This is the place where you can install the default configuration files of your plugin
 AC_SUBST(OPENSYNC_PLUGINDIR) ## This is the dir where you plugin will be installed

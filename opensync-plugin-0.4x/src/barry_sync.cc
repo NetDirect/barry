@@ -4,6 +4,7 @@
 //
 
 /*
+	Copyright (C) 2009, Nicolas VIVIEN (opensync plugin porting on opensync 0.4x)
     Copyright (C) 2006-2009, Net Direct Inc. (http://www.netdirect.ca/)
 
     This program is free software; you can redistribute it and/or modify
@@ -41,16 +42,18 @@
 
 // All functions that are callable from outside must look like C
 extern "C" {
+	BXEXPORT int get_version(void);
 	static void *initialize(OSyncPlugin *plugin, OSyncPluginInfo *info, OSyncError **error);
-	static osync_bool discover(void *userdata, OSyncPluginInfo *info, OSyncError **error);
-	static void connect(void *userdata, OSyncPluginInfo *info, OSyncContext *ctx);
-	static void get_changes(void *userdata, OSyncPluginInfo *info, OSyncContext *ctx);
-	static void commit_change(void *userdata, OSyncPluginInfo *info, OSyncContext *ctx, OSyncChange *change);
-	static void sync_done(void *userdata, OSyncPluginInfo *info, OSyncContext *ctx);
-	static void disconnect(void *userdata, OSyncPluginInfo *info, OSyncContext *ctx);
+	static osync_bool discover(OSyncPluginInfo *info, void *userdata, OSyncError **error);
+	static void connect(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncContext *ctx, void *userdata);
+	static void get_changes(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncContext *ctx, osync_bool slow_sync, void *userdata);
+	static void commit_change(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncContext *ctx, OSyncChange *change, void *userdata);
+	static void sync_done(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncContext *ctx, void *userdata);
+	static void disconnect(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncContext *ctx, void *userdata);
 	static void finalize(void *userdata);
 	BXEXPORT osync_bool get_sync_info(OSyncPluginEnv *env, OSyncError **error);
 }
+
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -276,12 +279,16 @@ bool FinishSync(OSyncContext *ctx, BarryEnvironment *env, DatabaseSyncState *pSy
 
 static bool barry_contact_initialize(DatabaseSyncState *env, OSyncPluginInfo *info, OSyncError **error)
 {
+	Trace trace("contact initialize");
+
 	OSyncObjTypeSink *sink = osync_plugin_info_find_objtype(info, "contact");
 	if (!sink)
 		return false;
 	osync_bool sinkEnabled = osync_objtype_sink_is_enabled(sink);
 	if (!sinkEnabled)
 		return false;
+
+	trace.log("contact enabled");
 	
 	OSyncObjTypeSinkFunctions functions;
 	memset(&functions, 0, sizeof(functions));
@@ -304,6 +311,7 @@ static bool barry_contact_initialize(DatabaseSyncState *env, OSyncPluginInfo *in
 		OSyncObjFormatSink *objformatsink = (OSyncObjFormatSink *) r->data;
 
 		if(!strcmp("vcard30", osync_objformat_sink_get_objformat(objformatsink))) {
+			trace.log("vcard30 found in barry-sync");
 			hasObjFormat = true;
 			break;
 		}
@@ -320,12 +328,16 @@ static bool barry_contact_initialize(DatabaseSyncState *env, OSyncPluginInfo *in
 
 	osync_objtype_sink_set_functions(sink, functions, NULL);
 
+	trace.log("contact initialize OK");
+
 	return true;
 }
 
 
 static bool barry_calendar_initialize(DatabaseSyncState *env, OSyncPluginInfo *info, OSyncError **error)
 {
+	Trace trace("calendar initialize");
+
 	OSyncObjTypeSink *sink = osync_plugin_info_find_objtype(info, "event");
 	if (!sink)
 		return false;
@@ -333,6 +345,8 @@ static bool barry_calendar_initialize(DatabaseSyncState *env, OSyncPluginInfo *i
 	if (!sinkEnabled)
 		return false;
 	
+	trace.log("calendar enabled");
+
 	OSyncObjTypeSinkFunctions functions;
 	memset(&functions, 0, sizeof(functions));
 
@@ -439,19 +453,31 @@ static void *initialize(OSyncPlugin *plugin, OSyncPluginInfo *info, OSyncError *
 		/*
 		 * Process Ressource options
 		 */
-		if (!barry_calendar_initialize(&env->m_CalendarSync, info, error)) {
+		trace.log("Process Ressource options...");
+
+		if (barry_calendar_initialize(&env->m_CalendarSync, info, error)) {
 			env->m_CalendarSync.LoadCache();
 			env->m_CalendarSync.LoadMap();
-		}		
-		else
-			env->m_CalendarSync.m_Sync = false;
 
-		if (!barry_contact_initialize(&env->m_ContactsSync, info, error)) {
+			env->m_CalendarSync.m_Sync = true;
+		}		
+		else {
+			trace.log("No sync Calendar");
+
+			env->m_CalendarSync.m_Sync = false;
+		}
+
+		if (barry_contact_initialize(&env->m_ContactsSync, info, error)) {
 			env->m_ContactsSync.LoadCache();
 			env->m_ContactsSync.LoadMap();
+
+			env->m_ContactsSync.m_Sync = true;
 		}		
-		else
+		else {
+			trace.log("No sync Contact");
+
 			env->m_ContactsSync.m_Sync = false;
+		}
 	
 
 		return (void *) env;
@@ -464,8 +490,10 @@ static void *initialize(OSyncPlugin *plugin, OSyncPluginInfo *info, OSyncError *
 }
 
 
-static osync_bool discover(void *userdata, OSyncPluginInfo *info, OSyncError **error)
+static osync_bool discover(OSyncPluginInfo *info, void *userdata, OSyncError **error)
 {
+	Trace trace("discover");
+
 	int i, numobjs = osync_plugin_info_num_objtypes(info);
     
 	for (i = 0; i < numobjs; i++) {
@@ -487,7 +515,7 @@ static osync_bool discover(void *userdata, OSyncPluginInfo *info, OSyncError **e
 }
 
 
-static void connect(void *userdata, OSyncPluginInfo *info, OSyncContext *ctx)
+static void connect(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncContext *ctx, void *userdata)
 {
 	Trace trace("connect");
 
@@ -507,25 +535,33 @@ static void connect(void *userdata, OSyncPluginInfo *info, OSyncContext *ctx)
 		}
 		env->m_ProbeResult = probe.Get(nIndex);
 
+		trace.log("connecting...");
+
 		env->Connect(probe.Get(nIndex));
+
+		trace.log("connected !");
 
 		// Success!
 		osync_context_report_success(ctx);
-
 	}
 	// Don't let exceptions escape to the C modules
 	catch( std::bad_alloc &ba ) {
+		trace.log("bad alloc");
+
 		osync_context_report_error(ctx, OSYNC_ERROR_INITIALIZATION,
 			"Unable to allocate memory for controller: %s", ba.what());
 	}
 	catch( std::exception &e ) {
+		trace.log("exception");
+
 		osync_context_report_error(ctx, OSYNC_ERROR_INITIALIZATION,
 			"%s", e.what());
 	}
+
+	trace.log("exit connect");
 }
 
-
-static void get_changes(void *userdata, OSyncPluginInfo *info, OSyncContext *ctx)
+static void get_changes(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncContext *ctx, osync_bool slow_sync, void *userdata)
 {
 	Trace trace("get_changeinfo");
 
@@ -554,7 +590,7 @@ static void get_changes(void *userdata, OSyncPluginInfo *info, OSyncContext *ctx
 	}
 }
 
-static void commit_change(void *userdata, OSyncPluginInfo *info, OSyncContext *ctx, OSyncChange *change)
+static void commit_change(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncContext *ctx, OSyncChange *change, void *userdata)
 {
 	Trace trace("commit_change");
 
@@ -683,7 +719,7 @@ static void commit_change(void *userdata, OSyncPluginInfo *info, OSyncContext *c
 	}
 }
 
-static void sync_done(void *userdata, OSyncPluginInfo *info, OSyncContext *ctx)
+static void sync_done(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncContext *ctx, void *userdata)
 {
 	//
 	// This function will only be called if the sync was successfull
@@ -714,7 +750,7 @@ static void sync_done(void *userdata, OSyncPluginInfo *info, OSyncContext *ctx)
 	}
 }
 
-static void disconnect(void *userdata, OSyncPluginInfo *info, OSyncContext *ctx)
+static void disconnect(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncContext *ctx, void *userdata)
 {
 	Trace trace("disconnect");
 
@@ -738,6 +774,8 @@ static void finalize(void *userdata)
 
 osync_bool get_sync_info(OSyncPluginEnv *env, OSyncError **error)
 {
+	Trace trace("get_sync_info");
+
 	// Create a new OpenSync plugin
 	OSyncPlugin *plugin = osync_plugin_new(error);
 

@@ -58,6 +58,8 @@ bool DatabaseSyncState::LoadCache()
 {
 	Trace trace("LoadCache", m_Desc.c_str());
 
+	trace.log(m_CacheFilename.c_str());
+
 	m_Cache.clear();
 	std::ifstream ifs(m_CacheFilename.c_str());
 	if( !ifs )
@@ -284,15 +286,22 @@ DatabaseSyncState* BarryEnvironment::GetSyncObject(OSyncChange *change)
 
 	const char *name = osync_change_get_objtype(change);
 
+	trace.logf("osync_change_get_objtype returns %s", name);
+
 	if( strcmp(name, "event") == 0 ) {
+		trace.log("return calendar object");
+
 		return &m_CalendarSync;
 	}
 	else if( strcmp(name, "contact") == 0 ) {
+		trace.log("return contact object");
+
 		return &m_ContactsSync;
 	}
-	else {
-		return 0;
-	}
+
+	trace.log("return none");
+
+	return 0;
 }
 
 

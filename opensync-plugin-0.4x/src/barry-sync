@@ -3,22 +3,19 @@
   <AdvancedOptions>
     <AdvancedOption>
       <DisplayName>PIN number</DisplayName>
-      <MaxOccurs>2147483647</MaxOccurs>
-      <MaxSize>2147483647</MaxSize>
       <Name>PinCode</Name>
       <Type>string</Type>
       <Value></Value>
     </AdvancedOption>
     <AdvancedOption>
       <DisplayName>Debug mode</DisplayName>
-      <MaxOccurs>2147483647</MaxOccurs>
-      <MaxSize>2147483647</MaxSize>
       <Name>Debug</Name>
       <Type>bool</Type>
       <Value>1</Value>
     </AdvancedOption>
   </AdvancedOptions>
   <Authentication>
+	<Username></Username>
     <Password></Password>
   </Authentication>
   <Resources>
