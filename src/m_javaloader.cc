@@ -947,7 +947,7 @@ void JavaLoader::Save(const std::string &cod_name, std::ostream &output)
 	Protocol::CheckSize(response, SB_JLPACKET_HEADER_SIZE + expect);
 	
 	size_t count = expect / 2;
-	uint16_t *ids = new uint16_t[count];
+	uint16_t ids[count];
 	
 	// copy array of module ID's since we reuse the response packet buffer
 	memcpy(ids, response.GetData() + SB_JLPACKET_HEADER_SIZE, sizeof(uint16_t)*count);
