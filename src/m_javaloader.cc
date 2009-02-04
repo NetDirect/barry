@@ -946,11 +946,14 @@ void JavaLoader::Save(const std::string &cod_name, std::ostream &output)
 	m_socket->Receive(response);
 	Protocol::CheckSize(response, SB_JLPACKET_HEADER_SIZE + expect);
 	
-	uint16_t *ids = (uint16_t*) (response.GetData() + SB_JLPACKET_HEADER_SIZE);
 	size_t count = expect / 2;
+	uint16_t *ids = new uint16_t[count];
 	
-	for( size_t i = 0; i < count; i++, ids++ ) {
-		SaveData(packet, be_btohs(*ids), output);
+	// copy array of module ID's since we reuse the response packet buffer
+	memcpy(ids, response.GetData() + SB_JLPACKET_HEADER_SIZE, sizeof(uint16_t)*count);
+	
+	for( size_t i = 0; i < count; i++ ) {
+		SaveData(packet, be_btohs(ids[i]), output);
 	}
 }
 
