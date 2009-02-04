@@ -35,6 +35,7 @@
 #include <stdexcept>
 #include <sstream>
 #include <iomanip>
+#include <vector>
 #include <string.h>
 
 #include "debug.h"
@@ -878,9 +879,9 @@ void JavaLoader::SaveData(JLPacket &packet, uint16_t id, std::ostream &output)
 	// get total size of cod file or this sibling cod file
 	Data &response = packet.GetReceive();
 	m_socket->Receive(response);
-	Protocol::CheckSize(response, SB_JLPACKET_HEADER_SIZE + sizeof(uint32_t));
-	MAKE_JLPACKET(jpack, response);
-	uint32_t total_size = be_btohl(jpack->u.cod_size);
+//	Protocol::CheckSize(response, SB_JLPACKET_HEADER_SIZE + sizeof(uint32_t));
+//	MAKE_JLPACKET(jpack, response);
+//	uint32_t total_size = be_btohl(jpack->u.cod_size); // unused variable
 
 	for( ;; ) {
 		packet.GetData();
@@ -946,12 +947,13 @@ void JavaLoader::Save(const std::string &cod_name, std::ostream &output)
 	m_socket->Receive(response);
 	Protocol::CheckSize(response, SB_JLPACKET_HEADER_SIZE + expect);
 
-	size_t count = expect / 2;
-	uint16_t ids[count];
-
 	// copy array of module ID's since we reuse the response packet buffer
-	memcpy(ids, response.GetData() + SB_JLPACKET_HEADER_SIZE, sizeof(uint16_t)*count);
+	size_t count = expect / 2;
+	const uint16_t *begin = (const uint16_t*) (response.GetData() + SB_JLPACKET_HEADER_SIZE);
+	const uint16_t *end = begin + count;
+	vector<uint16_t> ids(begin, end);
 
+	// save each block of data
 	for( size_t i = 0; i < count; i++ ) {
 		SaveData(packet, be_btohs(ids[i]), output);
 	}
