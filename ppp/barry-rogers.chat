@@ -13,7 +13,8 @@ OK ATZ
 OK ATI
 OK AT+CNUM
 OK AT+CSQ
-OK AT+CREG?
+# Some Blackberries reboot on this command
+#OK AT+CREG?
 OK AT+CGDCONT?
 OK AT+CGQREQ?
 OK AT+CGQMIN?
