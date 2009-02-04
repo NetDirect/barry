@@ -585,7 +585,7 @@ struct JLEventlogEntry
 	// remainder of packet is variable
 	// it contains the log data as an ASCII (UTF-8?) string
 } __attribute__ ((packed));
-#define SB_JLEVENTLOG_ENTRY_SIZE		(sizeof(Barry::Protocol::JLEventlogEntry))
+#define SB_JLEVENTLOG_ENTRY_HEADER_SIZE		(sizeof(Barry::Protocol::JLEventlogEntry))
 
 struct JLPacket
 {

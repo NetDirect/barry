@@ -164,6 +164,10 @@ void JLDirectoryEntry::Dump(std::ostream &os) const
 		os << "\n" << SubDir;
 }
 
+
+///////////////////////////////////////////////////////////////////////////////
+// JLEventlog class
+
 void JLEventlog::Dump(std::ostream &os) const
 {
 	const_iterator i = begin(), e = end();
@@ -171,6 +175,10 @@ void JLEventlog::Dump(std::ostream &os) const
 		(*i).Dump(os);
 	}
 }
+
+
+///////////////////////////////////////////////////////////////////////////////
+// JLEventlogEntry class
 
 void JLEventlogEntry::Parse(uint16_t size, const char* buf)
 {
@@ -181,27 +189,27 @@ void JLEventlogEntry::Parse(uint16_t size, const char* buf)
 	std::istringstream ss(src);
 
 	ss.ignore(5); // skip "guid:"
-	ss >> guid;
+	ss >> Guid;
 	if( ss.fail() )
 		throw BadData("JLEventlogEntry:Parse bad guid field");
 
 	ss.ignore(6); // skip " time:"
-	ss >> hex >> timestamp;
+	ss >> hex >> Timestamp;
 	if( ss.fail() )
 		throw BadData("JLEventlogEntry:Parse bad time field");
 
 	ss.ignore(10); // skip " severity:"
-	ss >> (unsigned int&)severity;
+	ss >> (unsigned int&)Severity;
 	if( ss.fail() )
 		throw BadData("JLEventlogEntry:Parse bad severity field");
 
 	ss.ignore(6); // skip " type:"
-	ss >> (unsigned int&)type;
+	ss >> (unsigned int&)Type;
 	if( ss.fail() )
 		throw BadData("JLEventlogEntry:Parse bad type field");
 
 	ss.ignore(5); // skip " app:"
-	ss >> app;
+	ss >> App;
 	if( ss.fail() )
 		throw BadData("JLEventlogEntry:Parse bad app field");
 
@@ -213,19 +221,22 @@ void JLEventlogEntry::Parse(uint16_t size, const char* buf)
 	if( ss.fail() )
 		throw BadData("JLEventlogEntry:Parse bad data field");
 
-	data = databuf.str();
+	Data = databuf.str();
 }
 
 
 void JLEventlogEntry::Dump(std::ostream &os) const
 {
-	os << "guid:"      << guid;
-	os << " time:"     << hex << timestamp;
-	os << " severity:" << severity; //TODO it might make sense to format
-	os << " type:"     << type;     //severity and type as meaningful names
-	os << " app:"      << app;
-	os << " data:"     << data << endl;
+	os << "guid:"      << Guid;
+	os << " time:"     << hex << Timestamp;
+	os << " severity:" << Severity; //TODO it might make sense to format
+	os << " type:"     << Type;     //severity and type as meaningful names
+	os << " app:"      << App;
+	os << " data:"     << Data << endl;
 }
+
+
+
 
 namespace Mode {
 
@@ -790,13 +801,13 @@ void JavaLoader::GetEventlog(JLEventlog &log)
 		}
 
 		m_socket->Receive(response);
-		Protocol::CheckSize(response, SB_JLPACKET_HEADER_SIZE + SB_JLEVENTLOG_ENTRY_SIZE);
+		Protocol::CheckSize(response, SB_JLPACKET_HEADER_SIZE + SB_JLEVENTLOG_ENTRY_HEADER_SIZE);
 
 		MAKE_JLPACKET(jpack, response);
 		uint16_t size = be_btohs(jpack->u.logentry.size);
 
 		JLEventlogEntry entry;
-		entry.Parse(size, (const char *)(response.GetData() + 6));
+		entry.Parse(size, (const char *)(response.GetData() + SB_JLPACKET_HEADER_SIZE + SB_JLEVENTLOG_ENTRY_HEADER_SIZE));
 
 		log.push_back(entry);
 	}

@@ -138,12 +138,12 @@ public:
 		EXCEPTION
 	} ViewerType_t;
 
-	std::string  guid;
-	uint64_t     timestamp; //FIXME what is this? time since epoch? eg: 0x11F133E6470
-	Severity_t   severity;
-	ViewerType_t type;
-	std::string  app;
-	std::string  data;
+	std::string  Guid;
+	uint64_t     Timestamp; //FIXME what is this? time since epoch? eg: 0x11F133E6470
+	Severity_t   Severity;
+	ViewerType_t Type;
+	std::string  App;
+	std::string  Data;
 
 	void Parse(uint16_t size, const char* str);
 

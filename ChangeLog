@@ -3,6 +3,11 @@ Release: version 0.15 - 2009/01/??
 2009/02/03
 	- commented out AT+CREG? in barry-rogers.chat, since it causes some
 		Blackberry devices to reboot
+	- applied Josh Kropf's eventlog and clear eventlog patches
+		- capitalized JLEventlogEntry fields, to match other
+		  record classes
+		- use constant when parsing entry
+		- renamed a define
 2009/01/31
 	- applied patch of binary VSM file from Robert Yaklin
 2009/01/30

@@ -37,8 +37,8 @@
 #define CMD_LOAD	"load"
 #define CMD_SCREENSHOT	"screenshot"
 #define CMD_SETTIME	"settime"
-#define CMD_EVENTLOG    "eventlog"
-#define CMD_CLEAR_LOG   "cleareventlog"
+#define CMD_EVENTLOG	"eventlog"
+#define CMD_CLEAR_LOG	"cleareventlog"
 
 // time string format specifier and user friendly description
 #define TIME_FMT         "%Y-%m-%d %H:%M:%S"
