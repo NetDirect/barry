@@ -68,7 +68,7 @@ public:
 	void Clear();
 
 	void Dump(std::ostream &os) const;
-	
+
 	bool operator<(const Memo &other) const { return Title < other.Title; }
 	// database name
 	static const char * GetDBName() { return "Memos"; }

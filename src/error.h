@@ -55,7 +55,7 @@ public:
 ///		trying passwords if there are fewer than
 ///		BARRY_MIN_PASSWORD_TRIES tries remaining.  In this case,
 ///		out_of_tries() will return true.
-///		
+///
 ///
 class BXEXPORT BadPassword : public Barry::Error
 {

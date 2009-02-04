@@ -444,14 +444,14 @@ struct MessageRecord
 	uint32_t	field7;		// always 0x00000000
 	uint32_t	field8;		// always 0x00000000
 	uint16_t	field9;		// always 0x0000
-	
+
 	uint16_t	dateReceived;	// the first two of these time fields are always the same
 	uint16_t	timeReceived;	//
 	uint16_t	dateDuplicate;	// On mail sent from the BB all three fields are identical
 	uint16_t	timeDuplicate;	// (time sent)
-	uint16_t	dateSent;	
+	uint16_t	dateSent;
 	uint16_t	timeSent;
-	
+
 	uint16_t	priority;	// priority field
 	uint32_t	field14;	// always 0x00000000
 	uint32_t	field15;	// always 0x00000000
@@ -465,7 +465,7 @@ struct MessageRecord
 	uint32_t	inReplyTo;	// reply to message?
 	uint32_t	field22;	// always 0x00000000
 	uint16_t	field23;	// FIXME
-	
+
 	uint32_t	folderOne;	// these are the 'folders' the message is in
 	uint32_t	folderTwo;	//
 
@@ -475,8 +475,8 @@ struct MessageRecord
 					// 0x3 pin send
 					// 0x2 on pin recv
 	uint16_t	field27;	// set to 0x00000004 on PIN reply, 0x00000005 otherwise
-	uint32_t	headerUID;	// yet another copy of the UID (RecId)	
-	
+	uint32_t	headerUID;	// yet another copy of the UID (RecId)
+
 	uint32_t	field29;	// always 0x00000000
 	uint16_t	field30;	// always 0x0002
 	uint16_t	field31;	// always 0x00000000

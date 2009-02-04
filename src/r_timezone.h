@@ -55,12 +55,12 @@ public:
 	std::string TimeZoneName;
 
 	UnknownsType Unknowns;
-	
+
 public:
-	
+
 	Timezone();
 	virtual ~Timezone();
-	
+
 	const unsigned char* ParseField(const unsigned char *begin,
 		const unsigned char *end, const IConverter *ic = 0);
 	void ParseRecurrenceData(const void *data);

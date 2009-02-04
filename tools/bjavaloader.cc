@@ -1,6 +1,6 @@
 ///
 /// \file	bjavaloader.cc
-///		
+///
 ///
 
 /*
@@ -109,25 +109,25 @@ public:
 void SetTime(Barry::Mode::JavaLoader *javaloader, const char *timestr)
 {
 	time_t when;
-	
+
 	if( timestr ) {
 		struct tm timeinfo;
-		
+
 		// parse time string
 		char *p = strptime(timestr, TIME_FMT, &timeinfo);
-		
+
 		// NULL is return when strptime fails to match all of the format
 		// string, and returns a pointer to the NULL byte at the end of
 		// the input string on success
 		if( p == NULL || p != (timestr + strlen(timestr)) ) {
 			throw runtime_error(string("Unable to parse time string: ") + timestr);
 		}
-		
+
 		when = mktime(&timeinfo);
 	} else { // time string is NULL, get current time
 		time(&when);
 	}
-	
+
 	javaloader->SetTime(when);
 }
 
@@ -215,7 +215,7 @@ int main(int argc, char *argv[])
 				return 0;
 			}
 		}
-		
+
 		argc -= optind;
 		argv += optind;
 
@@ -224,7 +224,7 @@ int main(int argc, char *argv[])
 			Usage();
 			return 1;
 		}
-		
+
 		// Fetch command from remaining arguments
 		string cmd = argv[0];
 		argc --;
@@ -270,7 +270,7 @@ int main(int argc, char *argv[])
 				Usage();
 				return 1;
 			}
-			
+
 			vector<string>::iterator i = params.begin(), end = params.end();
 			for( ; i != end; ++i ) {
 				cout << "loading " << (*i) << "... ";

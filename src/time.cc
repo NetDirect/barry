@@ -187,7 +187,7 @@ time_t DayToDate( unsigned short Day )
 {
 	struct tm *now, then;
 	time_t t = time( NULL );
-	
+
 	now = localtime( &t ); // need this to get year
 	// set to Jan 1 midnight, this year;
 	then.tm_sec = 0;
@@ -200,7 +200,7 @@ time_t DayToDate( unsigned short Day )
 	t = mktime(&then);
 	t -= 60*60;			// need to subract an hour
 	t += Day * 24 * 60 * 60;	// Add the day converted to seconds
-	
+
 	return t;
 }
 

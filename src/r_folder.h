@@ -40,11 +40,11 @@ public:
 	typedef std::vector<UnknownField>			UnknownsType;
 	uint8_t RecType;
 	uint32_t RecordId;
-	
+
 	std::string FolderName;
 	uint16_t	FolderNumber;	// Not unique, used for ordering of subfolders - NOT level
 	uint16_t	FolderLevel;	// From parent
-	
+
 	enum FolderTypeEnum {
 		FolderSubtree = 0,
 		FolderDeleted,
@@ -55,7 +55,7 @@ public:
 		FolderDraft = 0x0a
 	};
 	FolderTypeEnum FolderType;
-	
+
 	enum FolderStatusType {
 		FolderOrphan = 0x50,
 		FolderUnfiled,
@@ -64,7 +64,7 @@ public:
 
 	UnknownsType Unknowns;
 
-public:	
+public:
 	Folder();
 	~Folder();
 

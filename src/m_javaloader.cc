@@ -176,15 +176,15 @@ void JLEventlogEntry::Parse(uint16_t size, const char* buf)
 {
 	// example of a single log entry
 	//guid:92E11214401C3 time:0x11F133E6470 severity:0 type:2 app:UI data:GS-D 2c89868b
-	
+
 	std::string src = std::string(buf, size);
 	std::istringstream ss(src);
-	
+
 	ss.ignore(5); // skip "guid:"
 	ss >> guid;
 	if( ss.fail() )
 		throw BadData("JLEventlogEntry:Parse bad guid field");
-	
+
 	ss.ignore(6); // skip " time:"
 	ss >> hex >> timestamp;
 	if( ss.fail() )
@@ -206,7 +206,7 @@ void JLEventlogEntry::Parse(uint16_t size, const char* buf)
 		throw BadData("JLEventlogEntry:Parse bad app field");
 
 	ss.ignore(6); // skip " data:"
-	
+
 	// use stringbuf to extract rest of data from stream
 	stringbuf databuf;
 	ss >> &databuf;
@@ -775,7 +775,7 @@ void JavaLoader::GetEventlog(JLEventlog &log)
 
 	m_socket->Receive(response);
 	Protocol::CheckSize(response, SB_JLPACKET_HEADER_SIZE + sizeof(uint16_t));
-	
+
 	// number of eventlog entries
 	MAKE_JLPACKET(jpack, response);
 	uint16_t count = be_btohs(jpack->u.response.expect);
@@ -791,13 +791,13 @@ void JavaLoader::GetEventlog(JLEventlog &log)
 
 		m_socket->Receive(response);
 		Protocol::CheckSize(response, SB_JLPACKET_HEADER_SIZE + SB_JLEVENTLOG_ENTRY_SIZE);
-		
+
 		MAKE_JLPACKET(jpack, response);
 		uint16_t size = be_btohs(jpack->u.logentry.size);
-		
+
 		JLEventlogEntry entry;
 		entry.Parse(size, (const char *)(response.GetData() + 6));
-		
+
 		log.push_back(entry);
 	}
 }

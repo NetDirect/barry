@@ -106,7 +106,7 @@ void serialize(ArchiveT &ar, Barry::Contact &c, const unsigned int ver)
 	ar & make_nvp("HomePostalCode", c.HomeAddress.PostalCode);
 	ar & make_nvp("HomeCountry", c.HomeAddress.Country);
 	ar & make_nvp("Image", c.Image);
-	
+
 	if( ver < BARRY_POD_MAP_VERSION ) {
 		ar & make_nvp("GroupLinks", c.GroupLinks);
 		ar & make_nvp("Unknowns", c.Unknowns);
@@ -165,10 +165,10 @@ void serialize(ArchiveT &ar, Barry::Calendar &c, const unsigned int ver)
 	ar & make_nvp("NotificationTime", c.NotificationTime);
 	ar & make_nvp("StartTime", c.StartTime);
 	ar & make_nvp("EndTime", c.EndTime);
-	
+
 	ar & make_nvp("FreeBusyFlag", c.FreeBusyFlag);
 	ar & make_nvp("ClassFlag", c.ClassFlag);
-	
+
 	ar & make_nvp("Recurring", c.Recurring);
 	ar & make_nvp("RecurringType", c.RecurringType);
 	ar & make_nvp("Interval", c.Interval);
@@ -228,7 +228,7 @@ void serialize(ArchiveT &ar, Barry::Memo &m, const unsigned int ver)
 	ar & make_nvp("Title", m.Title);
 	ar & make_nvp("Body", m.Body);
 	ar & make_nvp("Category", m.Category);
-	
+
 	if( ver < BARRY_POD_MAP_VERSION ) {
 		ar & make_nvp( "Unknowns", m.Unknowns);
 	}
@@ -249,7 +249,7 @@ void serialize(ArchiveT &ar, Barry::Task &t, const unsigned int ver)
 	ar & make_nvp("StartTime", t.StartTime);
 	ar & make_nvp("DueTime", t.DueTime);
 	ar & make_nvp("AlarmTime", t.AlarmTime);
-	
+
 	ar & make_nvp("TimeZoneCode", t.TimeZoneCode);
 
 	ar & make_nvp("AlarmType", t.AlarmType);

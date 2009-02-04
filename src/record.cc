@@ -552,7 +552,7 @@ std::string PostalAddress::GetLabel() const
 		address += "\n";
 	if( PostalCode.size() )
 		address += PostalCode;
-	
+
 	return address;
 }
 

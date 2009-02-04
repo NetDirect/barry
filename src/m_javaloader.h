@@ -146,7 +146,7 @@ public:
 	std::string  data;
 
 	void Parse(uint16_t size, const char* str);
-	
+
 	void Dump(std::ostream &os) const;
 };
 

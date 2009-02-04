@@ -544,20 +544,20 @@ void get_info(OSyncEnv *env)
 
 	// Create first plugin
 	OSyncPluginInfo *info = osync_plugin_new_info(env);
-	
+
 	info->name = "barry-sync";
 	info->longname = "Barry OpenSync plugin v0.15 for the Blackberry handheld";
 	info->description = "Plugin to synchronize calendar and contact entries on USB Blackberry handhelds";
 	info->version = 1;		// API version (opensync api?)
 	info->is_threadsafe = TRUE;
-	
+
 	info->functions.initialize = initialize;
 	info->functions.connect = connect;
 	info->functions.sync_done = sync_done;
 	info->functions.disconnect = disconnect;
 	info->functions.finalize = finalize;
 	info->functions.get_changeinfo = get_changeinfo;
-	
+
 	// If you like, you can overwrite the default timeouts of your plugin
 	// The default is set to 60 sec. Note that this MUST NOT be used to
 	// wait for expected timeouts (Lets say while waiting for a webserver).

@@ -44,7 +44,7 @@ static std::string GetErrorString(int libusb_errcode, const std::string &str)
 {
 	std::ostringstream oss;
 	oss << "(";
-	
+
 	if( libusb_errcode ) {
 		oss << std::setbase(10) << libusb_errcode << ", ";
 	}

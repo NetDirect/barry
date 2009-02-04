@@ -70,7 +70,7 @@ BXEXPORT const TimeZone* GetTimeZoneTable();
 BXEXPORT const TimeZone* GetTimeZone(unsigned short Code);
 BXEXPORT unsigned short GetTimeZoneCode(signed short HourOffset,
 	signed short MinOffset = 0);
-	
+
 // Message time conversion stuff
 BXEXPORT time_t DayToDate( unsigned short Day );
 BXEXPORT time_t Message2Time(uint16_t r_date, uint16_t r_time);

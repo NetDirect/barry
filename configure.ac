@@ -57,7 +57,7 @@ if test x"$use_boost" != "xyes" ; then
 else
 	BOOST_LIB_PATH=""
 	BOOST_INC_PATH=""
-	BOOST_ENABLED="true"	
+	BOOST_ENABLED="true"
 fi
 
 #PKG_CHECK_MODULES([OPENSSL], [openssl])

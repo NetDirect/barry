@@ -56,12 +56,12 @@ static int _helper_is_base64(const char *check_string)
 }
 
 time_t b_vformat_time_to_unix(const char *inptime)
-{	
+{
 	char *date = NULL;
 	char *time = NULL;
 	char *ftime = NULL;
 	if ((ftime = g_strrstr(inptime, "T"))) {
-		
+
 		date = g_strndup(inptime, ftime - inptime);
 		if (ftime[3] == ':')
 			time = g_strndup(ftime + 1, 8);
@@ -70,7 +70,7 @@ time_t b_vformat_time_to_unix(const char *inptime)
 	} else {
 		date = g_strdup(inptime);
 	}
-	
+
 	struct tm btime;
 	memset(&btime, 0, sizeof(struct tm));
 	btime.tm_isdst = -1;
@@ -84,7 +84,7 @@ time_t b_vformat_time_to_unix(const char *inptime)
 		btime.tm_mon = date[4] * 10 + date[5] - '0' * 11 - 1;
 		btime.tm_mday = date[6] * 10 + date[7] - '0' * 11;
 	}
-		
+
 	if (time && strlen(time) == 8) {
 		//Time
 		btime.tm_hour = time[0] * 10 + time[1] - '0' * 11;
@@ -95,7 +95,7 @@ time_t b_vformat_time_to_unix(const char *inptime)
 		btime.tm_min = time[2] * 10 + time[3] - '0' * 11;
 		btime.tm_sec = time[4] * 10 + time[5] - '0' * 11;
 	}
-	
+
 	time_t utime = mktime(&btime);
 	return utime;
 }
@@ -108,30 +108,30 @@ static char *_fold_lines (char *buf)
 	char *next, *next2, *q;
 	gboolean newline = TRUE;
 	gboolean quotedprintable = FALSE;
-	
+
 	/*
 	 *  We're pretty liberal with line folding here. We handle
 	 *  lines folded with \r\n<WS>, \n\r<WS>, \n<WS>, =\r\n and =\n\r.
 	 *  We also turn single \r's and \n's not followed by <WS> into \r\n's.
 	 */
-	
+
 	while (*p) {
 
 		/* search new lines for quoted printable encoding */
 		if (newline) {
 			for (q=p; *q != '\n' && *q != '\0'; q++)
 				line = g_string_append_unichar (line, g_utf8_get_char (q));
-		
+
 			if (strstr(line->str, "ENCODING=QUOTED-PRINTABLE"))
 				quotedprintable = TRUE;
-			
+
 			g_string_free(line, TRUE);
 			line = g_string_new ("");
 
 			newline = FALSE;
 		}
 
-				
+
 		if ((quotedprintable && *p == '=') || *p == '\r' || *p == '\n') {
 			next = g_utf8_next_char (p);
 			if (*next == '\n' || *next == '\r') {
@@ -149,7 +149,7 @@ static char *_fold_lines (char *buf)
 			else if (*p == '=') {
 				str = g_string_append_unichar (str, g_utf8_get_char (p));
 				p = g_utf8_next_char (p);
-			}	
+			}
 			else if (*next == ' ' || *next == '\t') {
 				p = g_utf8_next_char (next);
 			}
@@ -196,7 +196,7 @@ static void _skip_until (char **p, char *s)
 	char *lp;
 
 	lp = *p;
-	
+
 	while (*lp != '\r' && *lp != '\0') {
 		gboolean s_matches = FALSE;
 		char *ls;
@@ -221,7 +221,7 @@ static void _read_attribute_value_add (b_VFormatAttribute *attr, GString *str, G
 	if (str->len == 0) {
 		b_vformat_attribute_add_value(attr, str->str);
 		return;
-	}      	
+	}
 
 	char *inbuf, *outbuf, *p;
 	size_t inbytesleft, outbytesleft;
@@ -251,7 +251,7 @@ static void _read_attribute_value_add (b_VFormatAttribute *attr, GString *str, G
                         b_vformat_attribute_add_value(attr, str->str);
 
                 }
-	
+
 		iconv_close(cd);
 
 	} else {
@@ -259,7 +259,7 @@ static void _read_attribute_value_add (b_VFormatAttribute *attr, GString *str, G
 		/* no CHARSET was given, if inbuf is already UTF-8 we add str->str */
 		if (g_utf8_validate (inbuf, -1, NULL)) {
 
-			b_vformat_attribute_add_value (attr, str->str);	
+			b_vformat_attribute_add_value (attr, str->str);
 
                 } else {
 
@@ -278,7 +278,7 @@ static void _read_attribute_value_add (b_VFormatAttribute *attr, GString *str, G
                                 b_vformat_attribute_add_value (attr, str->str);
 
                         }
-		
+
 			iconv_close(cd);
 
 		}
@@ -299,10 +299,10 @@ static void _read_attribute_value (b_VFormatAttribute *attr, char **p, int forma
 	while (*lp != '\r' && *lp != '\0') {
 		if (*lp == '=' && format_encoding == VF_ENCODING_QP) {
 			char a, b, x1=0, x2=0;
-		
+
 			if ((a = *(++lp)) == '\0') break;
 			if ((b = *(++lp)) == '\0') break;
-			
+
 			if (isalnum(a)) {
 				if (isalnum(b)) {
 					/* e.g. ...N=C3=BCrnberg\r\n
@@ -321,16 +321,16 @@ static void _read_attribute_value (b_VFormatAttribute *attr, char **p, int forma
 					if (*(++tmplp) == '\r' && *(++tmplp) == '\n' && isalnum(*(++tmplp))) {
 						x1 = a;
 						x2 = *tmplp;
-						lp = tmplp;	
-					}	
+						lp = tmplp;
+					}
 				}
 				else {
 					/* append malformed input, and
 				   	   continue parsing */
 					str = g_string_append_c(str, a);
 					str = g_string_append_c(str, b);
-				}	
-			}	
+				}
+			}
 			else if (a == '=') {
 				char *tmplp = lp;
 				char c, d, e;
@@ -347,7 +347,7 @@ static void _read_attribute_value (b_VFormatAttribute *attr, char **p, int forma
 				   	   continue parsing */
 					str = g_string_append_c(str, a);
 					str = g_string_append_c(str, b);
-				}	
+				}
 			}
 			else {
 				/* append malformed input, and
@@ -363,9 +363,9 @@ static void _read_attribute_value (b_VFormatAttribute *attr, char **p, int forma
 
 				c = (((a>='a'?a-'a'+10:a-'0')&0x0f) << 4)
 					| ((b>='a'?b-'a'+10:b-'0')&0x0f);
-				
+
 				str = g_string_append_c (str, c);
-			}	
+			}
 			lp++;
 			x1 = x2 = 0;
 		}
@@ -438,7 +438,7 @@ static void _read_attribute_params(b_VFormatAttribute *attr, char **p, int *form
 	b_VFormatParam *param = NULL;
 	gboolean in_quote = FALSE;
 	str = g_string_new ("");
-	
+
 	while (*lp != '\0') {
 		if (*lp == '"') {
 			in_quote = !in_quote;
@@ -512,9 +512,9 @@ static void _read_attribute_params(b_VFormatAttribute *attr, char **p, int *form
 					}
 				} else if (param && !g_ascii_strcasecmp(param->name, "charset")) {
 					*charset = g_string_new(param->values->data);
-					b_vformat_attribute_param_free (param);	
+					b_vformat_attribute_param_free (param);
 					param = NULL;
-				}	
+				}
 			}
 			else {
 				if (str->len > 0) {
@@ -590,7 +590,7 @@ static b_VFormatAttribute *_read_attribute (char **p)
 	b_VFormatAttribute *attr = NULL;
 	GString *str, *charset = NULL;
 	char *lp = *p;
-	
+
 	gboolean is_qp = FALSE;
 
 	/* first read in the group/name */
@@ -723,7 +723,7 @@ static void _parse(b_VFormat *evc, const char *str)
 		osync_trace(TRACE_INTERNAL, "invalid utf8 passed to b_VFormat.  Limping along.");
 		*end = '\0';
 	}
-	
+
 	buf = _fold_lines (buf);
 
 	p = buf;
@@ -731,7 +731,7 @@ static void _parse(b_VFormat *evc, const char *str)
 	attr = _read_attribute (&p);
 	if (!attr)
 		attr = _read_attribute (&p);
-	
+
 	if (!attr || attr->group || g_ascii_strcasecmp (attr->name, "begin")) {
 		osync_trace(TRACE_INTERNAL, "vformat began without a BEGIN\n");
 	}
@@ -940,10 +940,10 @@ b_VFormatAttribute *b_vformat_find_attribute(b_VFormat *vcard, const char *name,
 					return attr;
 				i++;
 			}
-		}	
+		}
 	}
 	return NULL;
-}	
+}
 
 /*
 b_VFormatAttribute *b_vformat_find_attribute_next(b_VFormatAttribute *last,
@@ -959,7 +959,7 @@ b_VFormatAttribute *b_vformat_find_attribute_next(b_VFormatAttribute *last,
 			if( i == nth )
 				return attr;
 			i++;
-		}	
+		}
 	}
 	return NULL;
 }
@@ -1150,7 +1150,7 @@ char *b_vformat_to_string (b_VFormat *evc, b_VFormatType type)
 		 * not bytes.  In particular, it would be an error to put a line break
 		 * within a UTF-8 character.
 		*/
-		
+
 		l = 0;
 		do {
 			if (g_utf8_strlen(attr_str->str, attr_str->len) - l > 75) {
@@ -1207,7 +1207,7 @@ char *b_vformat_to_string (b_VFormat *evc, b_VFormatType type)
 			str = g_string_append (str, "END:VNOTE\r\n");
 			break;
 	}
-	
+
 	osync_trace(TRACE_EXIT, "%s(%p, %i)", __func__, type);
 	return g_string_free (str, FALSE);
 }
@@ -1391,10 +1391,10 @@ b_vformat_attribute_add_value_decoded (b_VFormatAttribute *attr, const char *val
 		case VF_ENCODING_BASE64: {
 			char *b64_data = base64_encode_simple (value, len);
 			GString *decoded = g_string_new_len (value, len);
-	
+
 			/* make sure the decoded list is up to date */
 			b_vformat_attribute_get_values_decoded (attr);
-	
+
 			attr->values = g_list_append (attr->values, b64_data);
 			attr->decoded_values = g_list_append (attr->decoded_values, decoded);
 			break;
@@ -1402,10 +1402,10 @@ b_vformat_attribute_add_value_decoded (b_VFormatAttribute *attr, const char *val
 		case VF_ENCODING_QP: {
 			char *qp_data = quoted_encode_simple ((unsigned char*)value, len);
 			GString *decoded = g_string_new (value);
-	
+
 			/* make sure the decoded list is up to date */
 			b_vformat_attribute_get_values_decoded (attr);
-	
+
 			attr->values = g_list_append (attr->values, qp_data);
 			attr->decoded_values = g_list_append (attr->decoded_values, decoded);
 			break;
@@ -1413,10 +1413,10 @@ b_vformat_attribute_add_value_decoded (b_VFormatAttribute *attr, const char *val
 		case VF_ENCODING_8BIT: {
 			char *data = g_strdup(value);
 			GString *decoded = g_string_new (value);
-	
+
 			/* make sure the decoded list is up to date */
 			b_vformat_attribute_get_values_decoded (attr);
-	
+
 			attr->values = g_list_append (attr->values, data);
 			attr->decoded_values = g_list_append (attr->decoded_values, decoded);
 			break;
@@ -1571,7 +1571,7 @@ b_vformat_attribute_set_value (b_VFormatAttribute *attr,
 				int nth, const char *value)
 {
 	GList *param = g_list_nth(attr->values, nth);
-	g_free(param->data);	
+	g_free(param->data);
 	param->data = g_strdup(value);
 }
 
@@ -1607,10 +1607,10 @@ b_vformat_attribute_add_param_with_value (b_VFormatAttribute *attr, const char *
 {
 	g_return_if_fail (attr != NULL);
 	g_return_if_fail (name != NULL);
-	
+
 	if (!value)
 		return;
-	
+
 	b_VFormatParam *param = b_vformat_attribute_param_new(name);
 
 	b_vformat_attribute_param_add_value (param, value);
@@ -1778,14 +1778,14 @@ const char *b_vformat_attribute_get_nth_value(b_VFormatAttribute *attr, int nth)
 	GString *retstr = (GString *)g_list_nth_data(values, nth);
 	if (!retstr)
 		return NULL;
-	
+
 	if (!g_utf8_validate(retstr->str, -1, NULL)) {
 		values = b_vformat_attribute_get_values(attr);
 		if (!values)
 			return NULL;
 		return g_list_nth_data(values, nth);
 	}
-	
+
 	return retstr->str;
 }
 
@@ -1822,7 +1822,7 @@ gboolean b_vformat_attribute_has_param(b_VFormatAttribute *attr, const char *nam
 {
 	g_return_val_if_fail (attr != NULL, FALSE);
 	g_return_val_if_fail (name != NULL, FALSE);
-	
+
 	GList *params = b_vformat_attribute_get_params(attr);
 	GList *p;
 	for (p = params; p; p = p->next) {
@@ -1945,7 +1945,7 @@ static size_t base64_encode_step(unsigned char *in, size_t len, gboolean break_l
 		case 2:	c1 = ((unsigned char *)save)[1];
 			c2 = ((unsigned char *)save)[2]; goto skip2;
 		}
-		
+
 		/* yes, we jump into the loop, no i'm not going to change it, it's beautiful! */
 		while (inptr < inend) {
 			c1 = *inptr++;
@@ -2001,7 +2001,7 @@ static size_t base64_decode_step(unsigned char *in, size_t len, unsigned char *o
 {
 	unsigned char base64_rank[256];
 	base64_init((char*)base64_rank);
-	
+
 	register unsigned char *inptr, *outptr;
 	unsigned char *inend, c;
 	register unsigned int v;
@@ -2076,7 +2076,7 @@ static size_t base64_decode_simple (char *data, size_t len)
 static char *quoted_encode_simple(const unsigned char *string, int len)
 {
 	GString *tmp = g_string_new("");
-	
+
 	int i = 0;
 	while(string[i] != 0) {
 		if (string[i] > 127 || string[i] == 13 || string[i] == 10 || string[i] == '=') {
@@ -2086,7 +2086,7 @@ static char *quoted_encode_simple(const unsigned char *string, int len)
 		}
 		i++;
 	}
-	
+
 	char *ret = tmp->str;
 	g_string_free(tmp, FALSE);
 	return ret;
@@ -2109,17 +2109,17 @@ static size_t quoted_decode_simple (char *data, size_t len)
 		int i = strcspn(string->str, "=");
 		if (i >= strlen(string->str))
 			break;
-		
+
 		strcpy(hex, "0x");
 		strncat(hex, &string->str[i + 1], 2);
 		char rep = ((int)(strtod(hex, NULL)));
 		g_string_erase(string, i, 2);
 		g_string_insert_c(string, i, rep);
 	}
-	
+
 	memset(data, 0, strlen(data));
 	strcpy(data, string->str);
 	g_string_free(string, 1);
-	
+
 	return strlen(data);
 }

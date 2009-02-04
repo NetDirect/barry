@@ -41,7 +41,7 @@ rest of a record is a series of fields, each with a 3 byte header:
 Field Header
         04 00             sz - size in bytes (2 bytes), excluding header.
 	09                field type (1 byte)
-        <value>           sz bytes, in the value format.	
+        <value>           sz bytes, in the value format.
 
 field types:
 type         value       Meaning of field

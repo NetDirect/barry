@@ -147,7 +147,7 @@ const unsigned char* Task::ParseField(const unsigned char *begin,
 
 	case TSKFC_DUE_FLAG:
 		DueDateFlag = field->u.raw[0];
-		return begin;		
+		return begin;
 
 	case TSKFC_ALARM_TYPE:
 		if( field->u.raw[0] > Relative ) {
@@ -307,7 +307,7 @@ void Task::Dump(std::ostream &os) const
 			os << "      Ends: never\n";
 		else
 			os << "      Ends: " << ctime(&RecurringEndTime);
-	}		
+	}
 
 	os << Unknowns;
 	os << "\n\n";

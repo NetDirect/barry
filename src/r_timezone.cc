@@ -77,7 +77,7 @@ const unsigned char* Timezone::ParseField(const unsigned char *begin,
 
 	if( !btohs(field->size) )   // if field has no size, something's up
 		return begin;
-	
+
 	if( field->type == TZFC_TZTYPE ) {
 		if( ( TZType = field->u.uint32 ) != 1 ) {
 			throw Error("Timezone::ParseField: Timezone Type is not valid");
@@ -106,7 +106,7 @@ const unsigned char* Timezone::ParseField(const unsigned char *begin,
 	case TZFC_INDEX:
 		Index = btohl(field->u.uint32);
 		return begin;
-		
+
 	case TZFC_OFFSET:
 		Offset = btohs(field->u.int16);
 		if (Offset < 0) {
@@ -121,23 +121,23 @@ const unsigned char* Timezone::ParseField(const unsigned char *begin,
 			Left = false;
 		}
 		return begin;
-		
+
 	case TZFC_DST:
 		DSTOffset = btohl(field->u.uint32);
 		if (DSTOffset) {
 			UseDST = true;
 		}
 		return begin;
-		
+
 	case TZFC_STARTMONTH:
 		StartMonth = btohl(field->u.uint32);
 		return begin;
-		
+
 	case TZFC_ENDMONTH:
 		EndMonth = btohl(field->u.uint32);
 		return begin;
 	}
-	
+
 	// if still not handled, add to the Unknowns list
 	UnknownField uf;
 	uf.type = field->type;
@@ -163,7 +163,7 @@ void Timezone::ParseFields(const Data &data, size_t &offset, const IConverter *i
 void Timezone::Clear()
 {
 	TimeZoneName.clear();
-	
+
 	Index = 0;
 	Left = false;
 	UseDST = false;
@@ -182,7 +182,7 @@ void Timezone::Dump(std::ostream &os) const
 			"Jan", "Feb", "Mar", "Apr", "May",
 			"Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
 	};
-	
+
 	os << "Task entry: 0x" << setbase(16) << RecordId
 	   << " (" << (unsigned int)RecType << ")\n";
 

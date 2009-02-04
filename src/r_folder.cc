@@ -95,7 +95,7 @@ const unsigned char* Folder::ParseField(const unsigned char *begin,
 
 	if( !btohs(field->size) )   // if field has no size, something's up
 		return begin;
-	
+
 	// cycle through the type table
 	for(    FieldLink<Folder> *b = FolderFieldLinks;
 		b->type != FFC_END;
@@ -163,7 +163,7 @@ void Folder::Dump(std::ostream &os) const
 {
 	static const char *FolderTypeString[] = { "Subtree", "Deleted", "Inbox", "Outbox", "Sent", "Other"};
 //	static const char *FolderStatusString[] = { "Orphan", "Unfiled", "Filed" };
-	
+
 	os << "Folder Records\n\n";
 	os << "Folder Name: " << FolderName << "\n";
 	os << "Folder Type: ";

@@ -127,7 +127,7 @@ BXEXPORT void ScreenshotToBitmap(const JLScreenInfo &info,
 
 	// Color palette important : None
 	infoheader->biClrImportant = 0;
-	
+
 
 	// I work with 2 bytes (see the pixel format)
 	const uint16_t *data = (const uint16_t*) screenshot.GetData();

@@ -84,7 +84,7 @@ public:
 	// unknown
 	UnknownsType Unknowns;
 
-public:	
+public:
 	Task();
 	~Task();
 

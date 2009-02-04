@@ -34,7 +34,7 @@ class base64_input
 public:
 	base64_input(const std::string &input)
 		: begin(input.begin()), end(input.end()) {}
-	
+
 	int operator()()
 	{
 		if (begin == end) {

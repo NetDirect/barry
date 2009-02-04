@@ -27,7 +27,7 @@ class HalBlackberry:
 		b = text.split(", ")
 		desc = b[1]
 		pin  = b[0]
-		
+
 		self.set_property("sync.serial", pin)
 		self.set_property("info.product", desc)
 
