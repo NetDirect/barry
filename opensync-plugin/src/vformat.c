@@ -5,19 +5,19 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * Author: Chris Toshok (toshok@ximian.com)
  * Author: Armin Bauer (armin.bauer@opensync.org)
- * 
+ *
  */
 
 #include "vformat.h"
@@ -44,12 +44,12 @@ static char *quoted_encode_simple (const unsigned char *string, int len);
 
 /**
  * _helper_is_base64 is helper function to check i a string is "b" or "base64"
- * @param check_string string that should be compared with "b" or "base64" 
+ * @param check_string string that should be compared with "b" or "base64"
  * @return 0 if check_string is not base64  and 1 if it is
  */
 static int _helper_is_base64(const char *check_string)
 {
-	if(!g_ascii_strcasecmp ((char *) check_string, "BASE64") || 
+	if(!g_ascii_strcasecmp ((char *) check_string, "BASE64") ||
 	   !g_ascii_strcasecmp ((char *) check_string, "b") )
 		return (1);
 	return (0);
@@ -109,9 +109,9 @@ static char *_fold_lines (char *buf)
 	gboolean newline = TRUE;
 	gboolean quotedprintable = FALSE;
 	
-	/* 
+	/*
 	 *  We're pretty liberal with line folding here. We handle
-	 *  lines folded with \r\n<WS>, \n\r<WS>, \n<WS>, =\r\n and =\n\r. 
+	 *  lines folded with \r\n<WS>, \n\r<WS>, \n<WS>, =\r\n and =\n\r.
 	 *  We also turn single \r's and \n's not followed by <WS> into \r\n's.
 	 */
 	
@@ -505,7 +505,7 @@ static void _read_attribute_params(b_VFormatAttribute *attr, char **p, int *form
 						*format_encoding = VF_ENCODING_QP;
 						b_vformat_attribute_param_free (param);
 						param = NULL;
-					} else if ( _helper_is_base64(param->values->data)) { 
+					} else if ( _helper_is_base64(param->values->data)) {
 						*format_encoding = VF_ENCODING_BASE64;
 //						b_vformat_attribute_param_free (param);
 //						param = NULL;
@@ -547,7 +547,7 @@ static void _read_attribute_params(b_VFormatAttribute *attr, char **p, int *form
 				else {
 					/* we've got an attribute with a truly empty
 					   attribute parameter.  So it's of the form:
-					   
+
 					   ATTR;[PARAM=value;]*;[PARAM=value;]*:
 
 					   (note the extra ';')
@@ -805,7 +805,7 @@ char *b_vformat_escape_string (const char *s, b_VFormatType type)
 				str = g_string_append_c (str, *p);
 			break;
 		case '\\':
-			/** 
+			/**
 			 * We won't escape backslashes
 			 * on vcard 2.1, unless it is in the end of a value.
 			 * See comments above for a better explanation
@@ -1018,7 +1018,7 @@ char *b_vformat_to_string (b_VFormat *evc, b_VFormatType type)
 			/* 5.8.2:
 			 * param        = param-name "=" param-value *("," param-value)
 			 */
-			if( type == VFORMAT_CARD_30 || type == VFORMAT_TODO_20 
+			if( type == VFORMAT_CARD_30 || type == VFORMAT_TODO_20
 			    || type == VFORMAT_EVENT_20) {
 
 				/**
@@ -1060,7 +1060,7 @@ char *b_vformat_to_string (b_VFormat *evc, b_VFormatType type)
 				 * have a "TYPE=" parameter
 				**/
 				gboolean must_have_type = FALSE;
-				if (!g_ascii_strcasecmp (attr->name, "PHOTO") || !g_ascii_strcasecmp (attr->name, "LOGO") || !g_ascii_strcasecmp (attr->name, "SOUND") ) 
+				if (!g_ascii_strcasecmp (attr->name, "PHOTO") || !g_ascii_strcasecmp (attr->name, "LOGO") || !g_ascii_strcasecmp (attr->name, "SOUND") )
 					must_have_type = TRUE;
 				if ( must_have_type || g_ascii_strcasecmp (param->name, "TYPE") )
 					attr_str = g_string_append (attr_str, param->name);
@@ -1088,7 +1088,7 @@ char *b_vformat_to_string (b_VFormat *evc, b_VFormatType type)
 			char *value = v->data;
 			char *escaped_value = NULL;
 
-			if (!g_ascii_strcasecmp (attr->name, "RRULE") && 
+			if (!g_ascii_strcasecmp (attr->name, "RRULE") &&
 				  strstr (value, "BYDAY") == v->data) {
 				attr_str = g_string_append (attr_str, value);
 			} else {
@@ -1177,10 +1177,10 @@ char *b_vformat_to_string (b_VFormat *evc, b_VFormatType type)
 		/**
 		 * base64= <MIME RFC 1521 base64 text>
 		 * the end of the text is marked with two CRLF sequences
-		 * this results in one blank line before the start of the 
+		 * this results in one blank line before the start of the
 		 * next property
 		**/
-		if( format_encoding == VF_ENCODING_BASE64 
+		if( format_encoding == VF_ENCODING_BASE64
 		   && (type == VFORMAT_CARD_21))
 			attr_str = g_string_append (attr_str, CRLF);
 

@@ -260,11 +260,11 @@ bool power_write(const std::string &file, const std::string &value)
 // Version 2.6.22 adds variables internal to the system called
 // autosuspend_disabled and autoresume_disabled.  These are controlled by the
 // /sys/class/usb_device/*/device/power/level file.  (See below)
-// 
+//
 // Here's a summary of files under device/power.  These may or may not exist
 // depending on your kernel version and configuration.
-// 
-// 
+//
+//
 //        autosuspend
 //                -1 or 0 means off, depending on kernel,
 //                otherwise it is the number of seconds to

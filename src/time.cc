@@ -180,9 +180,9 @@ unsigned short GetTimeZoneCode(signed short HourOffset,
 /// the year.
 ///
 /// FIXME This function assumes the year hasn't changed,
-/// but I don't have enough information to determine 
+/// but I don't have enough information to determine
 /// where the year is in this header info
-/// 
+///
 time_t DayToDate( unsigned short Day )
 {
 	struct tm *now, then;

@@ -547,7 +547,7 @@ Release: version 0.13 - 2008/07/28
 	- added "known issues" section to main www doc page
 	- fixed virtual function mis-name bug in btool's null parser
 	- added -i option to brecsum, to include record IDs in the sums
-	- applied Ashley Willis's btool 0.12 null parser patch to CVS, which 
+	- applied Ashley Willis's btool 0.12 null parser patch to CVS, which
 		required some manual porting changes...
 		- removed bool reference argument in GetParser()
 	- updated AUTHORS
@@ -1862,7 +1862,7 @@ Release: version 0.5 - 2007/01/26
 ------------------------------------------------------------------------------
 2007/01/26
 	- added missing errno.h header to gui/src/util.cc
-	- lots more endian fixes after testing on iMac  
+	- lots more endian fixes after testing on iMac
 	- iostream output size fixes
 	- added option to btool to reset the device via software
 	- beefed up exception handling in barrybackup
@@ -2291,7 +2291,7 @@ Release: version 0.0.2 - 2006/10/12
 2005/12/07
 	- added -fno-strict-aliasing to compiler flags so gcc-4.0.x won't
 		optimize away protocol struct casts
-		see: 
+		see:
 		http://gcc.gnu.org/bugzilla/show_bug.cgi?id=25235
 		http://mail-index.netbsd.org/tech-kern/2003/08/11/0001.html
 		http://groups.google.ca/group/comp.lang.c++.moderated/ \

@@ -446,7 +446,7 @@ struct MessageRecord
 	uint16_t	field9;		// always 0x0000
 	
 	uint16_t	dateReceived;	// the first two of these time fields are always the same
-	uint16_t	timeReceived;	// 
+	uint16_t	timeReceived;	//
 	uint16_t	dateDuplicate;	// On mail sent from the BB all three fields are identical
 	uint16_t	timeDuplicate;	// (time sent)
 	uint16_t	dateSent;	
@@ -468,7 +468,7 @@ struct MessageRecord
 	
 	uint32_t	folderOne;	// these are the 'folders' the message is in
 	uint32_t	folderTwo;	//
-	 
+
 	uint16_t	replyMessageFlags;	// 0xfffe on recvd messages
 					// 0x001b on reply
 					// 0x0015 on send

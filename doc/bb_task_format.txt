@@ -4,25 +4,25 @@ BlackBerry Task Database Record format.
 This information is result of many btool -d Tasks dumps from a single BB 8700R.
 firmware v4.1.0.351 (platform 2.0.0.143)
 
-It would be interesting to receive btool -d Tasks dumps from other blackberries 
+It would be interesting to receive btool -d Tasks dumps from other blackberries
 to see if strings which appear constant, really are.
 
 
 Task Header, fixed length, 0xe bytes long.
 
 00000000: 09 00 43 00 40 03 44 02 01 00 53 32 2f 0a 01 01  ..C.@.D...S2/...
-          _____ _____ ??????????? _____ ??????????? __ __ 
+          _____ _____ ??????????? _____ ??????????? __ __
 	  rec   rec               task
 	  type  len               index#
                       u1                UniqueID?   u2
 
-00000010: 00 01 74 
-          ????????  
+00000010: 00 01 74
+          ????????
 
-	  
+
 rec type   - always 09 00  I guess this is a 'Task' Record type?
 rec len    - length of this record in bytes, including header.
-u1	   - always 40 03 44 02  unknown... 
+u1	   - always 40 03 44 02  unknown...
 task index - the record number within the data base.
              determines posting order in the device (That is, if you
 	     change sort order, the indices of tasks will be modified.
@@ -50,13 +50,13 @@ value        format.
 11           string      Categories, comma separated.
 10           4tz         timezone for deadlines, reminders etc...
 0f           min1900_t   reminder by date (the minute when to remind.)
-0e           4byte       relative reminder flag 2 = true?, 
+0e           4byte       relative reminder flag 2 = true?,
                          this field is absent if reminder is not relative.
 0a 	     4byte       priority  (0-high,1-normal,2-low)
 09           4byte       status (0-not started, 1-in progress, 2-completed, 3-Waiting, 4-Defered)
 08           4boolean    0-no due date, 1 there is a due date.
 06           min1900_t   ???
-05           min1900_t   due date 
+05           min1900_t   due date
 03           string      Note: (value of notes.)
 02           string      Title (the name of the task.)
 01           byte        always 0x74, unknown...
@@ -71,7 +71,7 @@ string
   -- null terminated string.
 
 4tz:
-  -- 32-bit LSB integer, values documented in doc/TimeZones.txt. 
+  -- 32-bit LSB integer, values documented in doc/TimeZones.txt.
 	ie.  0x23 is eastern time.
 
 min1900_t:
@@ -85,9 +85,9 @@ Recurrence:
   -- Recurrence is systematically mis-spelled in the protocol description document
 
 Order of fields... as observed in dump, do not know if it is significant, given fields
-are so self-descriptive. 
+are so self-descriptive.
 
-<header> <2-title> <9-status> <a-priority> <10-timezone> <6-??> <8-due_flag> 
-   [ <5-due_date> ] [ [ <e-relative_reminder_flag> ] <f-reminder_date> ] 
+<header> <2-title> <9-status> <a-priority> <10-timezone> <6-??> <8-due_flag>
+   [ <5-due_date> ] [ [ <e-relative_reminder_flag> ] <f-reminder_date> ]
    [ <11-categories> ] <3-Note>
-   
+

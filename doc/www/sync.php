@@ -218,7 +218,7 @@ hand, so delete them before each test run.</p>
 
 <p>Some of these logs may contain private data, so before posting
 them on the mailing list, or on a website, you may wish to
-double check.  You can also 
+double check.  You can also
 <?createLink("contact", "email them privately"); ?>
 to the lead developer.</p>
 

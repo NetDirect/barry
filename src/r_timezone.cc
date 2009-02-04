@@ -180,7 +180,7 @@ void Timezone::Dump(std::ostream &os) const
 {
 	static const char *month[] = {
 			"Jan", "Feb", "Mar", "Apr", "May",
-			"Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" 
+			"Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
 	};
 	
 	os << "Task entry: 0x" << setbase(16) << RecordId

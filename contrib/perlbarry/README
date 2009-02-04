@@ -16,5 +16,5 @@ barrybkup:     backs up each DB in phone, or each DB given on command line,
                TODO: get list from ~/.barry/backup/<PIN>/config
 
 bimages:       downloads all JPEG files in 'Content Store' to current
-               directory. 
+               directory.
                TODO: option to delete images from phone after downloading.

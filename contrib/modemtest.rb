@@ -39,7 +39,7 @@ class IPmodem
    end
 
    def write( data )
-      @connectionHandle.write( data ) 
+      @connectionHandle.write( data )
    end
 
    def read()
@@ -110,7 +110,7 @@ commands = [
 ]
 
 modem = IPmodem.new
-puts("Testing the Blackberry Modem by sending AT commands through pppob.") 
+puts("Testing the Blackberry Modem by sending AT commands through pppob.")
 printf("Starting %s: %s",$PPP,modem.read())
 puts("--------------------------------------------")
 

@@ -273,7 +273,7 @@ void Desktop::GetRecordStateTable(unsigned int dbId, RecordStateTable &result)
 //
 /// Adds a record to the specified database.  RecordId is
 /// retrieved from build, and duplicate IDs are allowed by the device
-/// (i.e. you can have two records with the same ID) 
+/// (i.e. you can have two records with the same ID)
 /// but *not* recommended!
 //
 void Desktop::AddRecord(unsigned int dbId, Builder &build)

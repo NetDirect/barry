@@ -20,7 +20,7 @@ barry (0.13-1.2) unstable; urgency=low
   * debian/changelog:
     + Merge different versions in 0.13-* packages in a new 0.13-1 one, so it
     can be uploaded into Debian
-  
+
   [ Chris Frey ]
   * From 0.13-1.1 upstream package
   * added brecsum
@@ -31,7 +31,7 @@ barry (0.13-1.2) unstable; urgency=low
   * Makefile.am and opensync-plugin/Makefile: add ACLOCAL_FLAGS for autoreconf
   * debian/control: add build-depends: autoconf, automake, libtool,
     libglib2.0-dev
-  * debian/control: change build-depends: libopensync0 to libopensync0-dev 
+  * debian/control: change build-depends: libopensync0 to libopensync0-dev
 
  -- Jose Carlos Garcia Sogo <jsogo@debian.org>  Sun, 10 Aug 2008 20:17:34 +0200
 
@@ -86,7 +86,7 @@ barry (0.8-1) unstable; urgency=low
 
 barry (0.6-1) unstable; urgency=low
 
-   * adapted for Debian Etch.  has a newer version of udev, and plugdev 
+   * adapted for Debian Etch.  has a newer version of udev, and plugdev
      available.  Also added btool in addition to only bcharge available
 
  -- Peter Silva <Peter.A.Silva@gmail.com>  Fri, 06 Apr 2007 00:00:01 -0500

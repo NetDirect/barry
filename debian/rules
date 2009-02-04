@@ -17,8 +17,8 @@ DEB_BUILDDIR = .
 DEB_DESTDIR = $(CURDIR)/debian/tmp
 #To register a debug library package libfoo-dbg for libfoo (which needs unstripped '.so') in compat mode 4:
 DEB_DH_STRIP_ARGS := --dbg-package=libbarry0 --dbg-package=libbarry-dev --dbg-package=barry-util --dbg-package=barrybackup-gui --dbg-package=libopensync-plugin-barry
-#CDBS automatically handles common flags to pass to the configure script, 
-#but it is possible to give some extra parameters : 
+#CDBS automatically handles common flags to pass to the configure script,
+#but it is possible to give some extra parameters :
 DEB_CONFIGURE_EXTRA_FLAGS := --with-boost=/usr --enable-gui --enable-opensync-plugin
 COMMON_CONFIGURE_FLAGS := --prefix=/usr
 DEB_INSTALL_DOCS_ALL =
@@ -46,7 +46,7 @@ post-patches::
 	@test -x $(DEB_SRCDIR)/configure && echo "allready autoreconf" || (cd $(DEB_SRCDIR) && autoreconf -i)
 
 clean::
-	-@rm -f $(DEB_SRCDIR)/config.guess $(DEB_SRCDIR)/config.sub $(DEB_SRCDIR)/ltmain.sh $(DEB_SRCDIR)/aclocal.m4 
+	-@rm -f $(DEB_SRCDIR)/config.guess $(DEB_SRCDIR)/config.sub $(DEB_SRCDIR)/ltmain.sh $(DEB_SRCDIR)/aclocal.m4
 	-@rm -f $(DEB_SRCDIR)/config.h.in $(DEB_SRCDIR)/mkinstalldirs $(DEB_SRCDIR)/install-sh
 	-@rm -f $(DEB_SRCDIR)/missing $(DEB_SRCDIR)/depcomp $(DEB_SRCDIR)/configure $(DEB_SRCDIR)/subdirs
 	-@rm -rf build/ $(DEB_SRCDIR)/configure.files $(DEB_SRCDIR)/stamp-h.in

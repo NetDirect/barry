@@ -46,7 +46,7 @@ AC_ARG_WITH(libusb,
 AC_ARG_WITH(boost,
 	AC_HELP_STRING(--with-boost[=path],
 		[root path of boost installation (no arg defaults to 'yes' and uses system paths)]),
-	use_boost=$withval,  use_boost=no ) 
+	use_boost=$withval,  use_boost=no )
 
 if test x"$use_boost" != "xyes" ; then
 	if test x"$use_boost" != "xno" ; then

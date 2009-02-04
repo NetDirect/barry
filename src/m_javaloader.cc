@@ -390,7 +390,7 @@ void JavaLoader::StartStream()
 //  ^^^^^ : socket
 // Response :
 //  00 00 0C 00 13 04 01 00 0A 00 00 00
-// Packet format : 
+// Packet format :
 //  04 00 FC 07 DB 9D 95 2B 57 .... E6 FD
 //              ^^^^^ ............. ^^^^^ : data (the file content)
 //        ^^^^^ : packet size
@@ -617,7 +617,7 @@ void JavaLoader::GetDirectory(JLDirectory &dir, bool include_subdirs)
 //              ^^ : command
 //        ^^^^^ : size of packet header
 //  ^^^^^ : socket
-// Packet content : 
+// Packet content :
 //  04 00 FC 07 DB 9D 95 2B 57 .... E6 FD
 //              ^^^^^ ............. ^^^^^ : data (the file content)
 //        ^^^^^ : packet size (0x07FC = 0x7F8 + 4)
@@ -673,8 +673,8 @@ void JavaLoader::GetScreenshot(JLScreenInfo &info, Data &image)
 		m_socket->Packet(packet);
 
 		// Read and parse the response
-		//   04 00 08 00 64 00 00 00 
-		// or 
+		//   04 00 08 00 64 00 00 00
+		// or
 		//   04 00 08 00 6e 00 f8 07
 
 		if( packet.Command() == SB_COMMAND_JL_ACK )

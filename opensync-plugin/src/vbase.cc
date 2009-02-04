@@ -82,7 +82,7 @@ std::string vAttr::GetParam(const char *name, int nth)
 	return ret;
 }
 
-/// Does an exhaustive search through the attribute, searching for all 
+/// Does an exhaustive search through the attribute, searching for all
 /// param values that exist for the given name, and returns all values
 /// in a comma delimited string.
 std::string vAttr::GetAllParams(const char *name)
