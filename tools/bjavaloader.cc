@@ -170,7 +170,7 @@ void GetScreenshot(Barry::Mode::JavaLoader *javaloader, const char *filename)
 void SaveModule(Barry::Mode::JavaLoader *javaloader, const char *filename)
 {
 	string fname(filename), module;
-	
+
 	size_t ext_index = fname.rfind(".cod");
 	if( ext_index != string::npos ) {
 		// filename contains .cod extension, strip it for module name
@@ -182,7 +182,7 @@ void SaveModule(Barry::Mode::JavaLoader *javaloader, const char *filename)
 		// append extension to file name
 		fname.append(".cod");
 	}
-	
+
 	ofstream file(fname.c_str(), ios::binary | ios::trunc);
 	try {
 		javaloader->Save(module.c_str(), file);
@@ -358,7 +358,7 @@ int main(int argc, char *argv[])
 				Usage();
 				return 1;
 			}
-			
+
 			vector<string>::iterator i = params.begin(), end = params.end();
 			for( ; i != end; ++i ) {
 				cout << "saving: " << (*i) << "... ";

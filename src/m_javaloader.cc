@@ -870,18 +870,18 @@ void JavaLoader::SaveData(JLPacket &packet, uint16_t id, std::ostream &output)
 {
 	packet.SaveModule(id);
 	m_socket->Packet(packet);
-	
+
 	if( packet.Command() != SB_COMMAND_JL_ACK ) {
 		ThrowJLError("JavaLoader::SaveData", packet.Command());
 	}
-	
+
 	// get total size of cod file or this sibling cod file
 	Data &response = packet.GetReceive();
 	m_socket->Receive(response);
 	Protocol::CheckSize(response, SB_JLPACKET_HEADER_SIZE + sizeof(uint32_t));
 	MAKE_JLPACKET(jpack, response);
 	uint32_t total_size = be_btohl(jpack->u.cod_size);
-	
+
 	for( ;; ) {
 		packet.GetData();
 		m_socket->Packet(packet);
@@ -898,7 +898,7 @@ void JavaLoader::SaveData(JLPacket &packet, uint16_t id, std::ostream &output)
 
 		m_socket->Receive(response);
 		Protocol::CheckSize(response, SB_JLPACKET_HEADER_SIZE + expect);
-		
+
 		output.write((const char *)response.GetData() + SB_JLPACKET_HEADER_SIZE, expect);
 	}
 }
@@ -912,15 +912,15 @@ void JavaLoader::Save(const std::string &cod_name, std::ostream &output)
 	// set filename, device responds with an ID
 	packet.SetCodFilename(cod_name);
 	m_socket->Packet(packet);
-	
+
 	if( packet.Command() == SB_COMMAND_JL_COD_NOT_FOUND ) {
 		throw Error(string("JavaLoader::Save: module ") + cod_name + " not found");
 	}
-	
+
 	if( packet.Command() != SB_COMMAND_JL_ACK ) {
 		ThrowJLError("JavaLoader::Save", packet.Command());
 	}
-	
+
 	// make sure there is an ID coming
 	if( packet.Size() != 2 )
 		throw Error("JavaLoader::Save: expected module ID");
@@ -930,28 +930,28 @@ void JavaLoader::Save(const std::string &cod_name, std::ostream &output)
 	Protocol::CheckSize(response, SB_JLPACKET_HEADER_SIZE + sizeof(uint16_t));
 	MAKE_JLPACKET(jpack, response);
 	uint16_t id = be_btohs(jpack->u.id);
-	
+
 	// get list of sibling modules
 	packet.GetSubDir(id);
 	m_socket->Packet(packet);
-	
+
 	if( packet.Command() != SB_COMMAND_JL_ACK ) {
 		ThrowJLError("JavaLoader::Save", packet.Command());
 	}
-	
+
 	// expected number of module ID's
 	unsigned int expect = packet.Size();
-	
+
 	// get list of sibling module ID's
 	m_socket->Receive(response);
 	Protocol::CheckSize(response, SB_JLPACKET_HEADER_SIZE + expect);
-	
+
 	size_t count = expect / 2;
 	uint16_t ids[count];
-	
+
 	// copy array of module ID's since we reuse the response packet buffer
 	memcpy(ids, response.GetData() + SB_JLPACKET_HEADER_SIZE, sizeof(uint16_t)*count);
-	
+
 	for( size_t i = 0; i < count; i++ ) {
 		SaveData(packet, be_btohs(ids[i]), output);
 	}
