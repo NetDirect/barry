@@ -76,22 +76,22 @@ public:
 	bool	MessageSaved;
 	bool	MessageSavedDeleted;
 
-	enum MessagePriorityType {
+	enum PriorityType {
 		LowPriority = 0,
 		NormalPriority,
 		HighPriority,
 		UnknownPriority
 	};
-	MessagePriorityType MessagePriority;
+	PriorityType Priority;
 
-	enum MessageSensitivityType {
+	enum SensitivityType {
 		NormalSensitivity = 0,
 		Personal,
 		Private,
 		Confidential,
 		UnknownSensitivity
 	};
-	MessageSensitivityType MessageSensitivity;
+	SensitivityType Sensitivity;
 
 	std::vector<UnknownField> Unknowns;
 

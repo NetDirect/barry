@@ -196,35 +196,35 @@ void MessageBase::ParseHeader(const Data &data, size_t &offset)
 	MAKE_RECORD(const Barry::Protocol::MessageRecord, mr, data, offset);
 
 	// Priority
-	MessagePriority = NormalPriority;
+	Priority = NormalPriority;
 
 	uint16_t priority = btohs(mr->priority);  // deal with endian swap once
 	if( priority & PRIORITY_MASK ) {
 		if( priority & PRIORITY_HIGH ) {
-			MessagePriority = HighPriority;
+			Priority = HighPriority;
 		}
 		else if( priority & PRIORITY_LOW ) {
-			MessagePriority = LowPriority;
+			Priority = LowPriority;
 		}
 		else
-			MessagePriority = UnknownPriority;
+			Priority = UnknownPriority;
 	}
 
 	// Sensitivity
-	MessageSensitivity = NormalSensitivity;
+	Sensitivity = NormalSensitivity;
 
 	if( priority & SENSITIVE_MASK ) {
 		if(( priority & SENSITIVE_CONFIDENTIAL ) == SENSITIVE_CONFIDENTIAL ) {
-			MessageSensitivity = Confidential;
+			Sensitivity = Confidential;
 		}
 		else if(( priority & SENSITIVE_PRIVATE ) == SENSITIVE_PRIVATE ) {
-			MessageSensitivity = Private;
+			Sensitivity = Private;
 		}
 		else if(( priority & SENSITIVE_PERSONAL ) == SENSITIVE_PERSONAL ) {
-			MessageSensitivity = Personal;
+			Sensitivity = Personal;
 		}
 		else
-			MessageSensitivity = UnknownSensitivity;
+			Sensitivity = UnknownSensitivity;
 	}
 
 	// X-rim-org-message-ref-id
@@ -306,8 +306,8 @@ void MessageBase::Clear()
 	MessageSaved = false;
 	MessageSavedDeleted = false;
 
-	MessagePriority = NormalPriority;
-	MessageSensitivity = NormalSensitivity;
+	Priority = NormalPriority;
+	Sensitivity = NormalSensitivity;
 
 	Unknowns.clear();
 }
@@ -331,9 +331,9 @@ std::string MessageBase::SimpleFromAddress() const
 // dump message in mbox format
 void MessageBase::Dump(std::ostream &os) const
 {
-	static const char *MessageImportance[] =
+	static const char *Importance[] =
 		{ "Low", "Normal", "High", "Unknown Priority" };
-	static const char *MessageSensitivityString[] =
+	static const char *SensitivityString[] =
 		{ "Normal", "Personal", "Private", "Confidential", "Unknown Sensivity" };
 
 	os << "From " << SimpleFromAddress() << "  " << ctime( &MessageDateReceived );
@@ -354,10 +354,10 @@ os << "From " << SimpleFromAddress() << "  " << ctime( &MessageDateSent );
 		os << "X-Message-Status: Saved\n";
 	else if( MessageRead )
 		os << "Message Status: Opened\n";
-	if( MessagePriority != NormalPriority )
-		os << "Importance: " << MessageImportance[MessagePriority] << "\n";
-	if( MessageSensitivity != NormalSensitivity )
-		os << "Sensitivity: " << MessageSensitivityString[MessageSensitivity] << "\n";
+	if( Priority != NormalPriority )
+		os << "Importance: " << Importance[Priority] << "\n";
+	if( Sensitivity != NormalSensitivity )
+		os << "Sensitivity: " << SensitivityString[Sensitivity] << "\n";
 	os << "Date: " << ctime(&MessageDateSent);
 	if( From.size() )
 		os << "From: " << From[0] << "\n";

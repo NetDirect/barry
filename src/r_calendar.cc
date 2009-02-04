@@ -44,6 +44,39 @@ namespace Barry {
 
 
 ///////////////////////////////////////////////////////////////////////////////
+// Calendar class, static members
+
+//
+// Note! These functions currently only pass the same values through.
+//       In actuality, these are technically two different values:
+//       one on the raw protocol side, and the other part of the
+//       guaranteed Barry API.  If the Blackberry ever changes the
+//       meanings for these codes, do the translation here.
+//
+
+Calendar::FreeBusyFlagType Calendar::FreeBusyFlagProto2Rec(uint8_t f)
+{
+	return (FreeBusyFlagType)f;
+}
+
+uint8_t Calendar::FreeBusyFlagRec2Proto(FreeBusyFlagType f)
+{
+	return f;
+}
+
+Calendar::ClassFlagType Calendar::ClassFlagProto2Rec(uint8_t f)
+{
+	return (ClassFlagType)f;
+}
+
+uint8_t Calendar::ClassFlagRec2Proto(ClassFlagType f)
+{
+	return f;
+}
+
+
+
+///////////////////////////////////////////////////////////////////////////////
 // Calendar class
 
 // calendar field codes
@@ -151,17 +184,17 @@ const unsigned char* Calendar::ParseField(const unsigned char *begin,
 		return begin;
 
 	case CALFC_FREEBUSY_FLAG:
-		FreeBusyFlag = (FreeBusyFlagType)field->u.raw[0];
-		if( FreeBusyFlag > OutOfOffice ) {
+		if( field->u.raw[0] > CR_FREEBUSY_RANGE_HIGH ) {
 			throw Error("Calendar::ParseField: FreeBusyFlag out of range" );
 		}
+		FreeBusyFlag = FreeBusyFlagProto2Rec(field->u.raw[0]);
 		return begin;
 
 	case CALFC_CLASS_FLAG:
-		ClassFlag = (ClassFlagType)field->u.raw[0];
-		if( ClassFlag > Private ) {
+		if( field->u.raw[0] > CR_CLASS_RANGE_HIGH ) {
 			throw Error("Calendar::ParseField: ClassFlag out of range" );
 		}
+		ClassFlag = ClassFlagProto2Rec(field->u.raw[0]);
 		return begin;
 	}
 
@@ -240,8 +273,8 @@ void Calendar::BuildFields(Data &data, size_t &offset, const IConverter *ic) con
 	if( TimeZoneValid )
 		BuildField(data, offset, CALFC_TIMEZONE_CODE, TimeZoneCode);
 
-	BuildField(data, offset, CALFC_FREEBUSY_FLAG, (char)FreeBusyFlag);
-	BuildField(data, offset, CALFC_CLASS_FLAG, (char)ClassFlag);
+	BuildField(data, offset, CALFC_FREEBUSY_FLAG, FreeBusyFlagRec2Proto(FreeBusyFlag));
+	BuildField(data, offset, CALFC_CLASS_FLAG, ClassFlagRec2Proto(ClassFlag));
 
 	// and finally save unknowns
 	UnknownsType::const_iterator

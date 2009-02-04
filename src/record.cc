@@ -65,6 +65,11 @@ void BuildField1900(Data &data, size_t &size, uint8_t type, time_t t)
 
 void BuildField(Data &data, size_t &size, uint8_t type, char c)
 {
+	BuildField(data, size, type, (uint8_t)c);
+}
+
+void BuildField(Data &data, size_t &size, uint8_t type, uint8_t c)
+{
 	size_t strsize = 1;
 	size_t fieldsize = COMMON_FIELD_HEADER_SIZE + strsize;
 	unsigned char *pd = data.GetBuffer(size + fieldsize) + size;

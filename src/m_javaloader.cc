@@ -178,6 +178,38 @@ void JLEventlog::Dump(std::ostream &os) const
 
 
 ///////////////////////////////////////////////////////////////////////////////
+// JLEventlogEntry class, static members
+
+//
+// Note! These functions currently only pass the same values through.
+//       In actuality, these are technically two different values:
+//       one on the raw protocol side, and the other part of the
+//       guaranteed Barry API.  If the Blackberry ever changes the
+//       meanings for these codes, do the translation here.
+//
+
+JLEventlogEntry::Severity_t JLEventlogEntry::SeverityProto2Rec(unsigned int s)
+{
+	return (Severity_t)s;
+}
+
+unsigned int JLEventlogEntry::SeverityRec2Proto(Severity_t s)
+{
+	return s;
+}
+
+JLEventlogEntry::ViewerType_t JLEventlogEntry::ViewerTypeProto2Rec(unsigned int v)
+{
+	return (ViewerType_t)v;
+}
+
+unsigned int JLEventlogEntry::ViewerTypeRec2Proto(ViewerType_t v)
+{
+	return v;
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
 // JLEventlogEntry class
 
 void JLEventlogEntry::Parse(uint16_t size, const char* buf)
@@ -199,12 +231,16 @@ void JLEventlogEntry::Parse(uint16_t size, const char* buf)
 		throw BadData("JLEventlogEntry:Parse bad time field");
 
 	ss.ignore(10); // skip " severity:"
-	ss >> (unsigned int&)Severity;
+	unsigned int severity;
+	ss >> severity;
+	Severity = SeverityProto2Rec(severity);
 	if( ss.fail() )
 		throw BadData("JLEventlogEntry:Parse bad severity field");
 
 	ss.ignore(6); // skip " type:"
-	ss >> (unsigned int&)Type;
+	unsigned int type;
+	ss >> type;
+	Type = ViewerTypeProto2Rec(type);
 	if( ss.fail() )
 		throw BadData("JLEventlogEntry:Parse bad type field");
 
@@ -227,10 +263,14 @@ void JLEventlogEntry::Parse(uint16_t size, const char* buf)
 
 void JLEventlogEntry::Dump(std::ostream &os) const
 {
+	static const char *SeverityNames[] = { "Always Log", "Severe Error", "Error",
+		"Warning", "Information", "Debug Info"};
+	static const char *ViewerTypes[] = { "", "Number", "String", "Exception" };
+
 	os << "guid:"      << Guid;
 	os << " time:"     << hex << Timestamp;
-	os << " severity:" << Severity; //TODO it might make sense to format
-	os << " type:"     << Type;     //severity and type as meaningful names
+	os << " severity:" << SeverityNames[Severity];
+	os << " type:"     << ViewerTypes[Type];
 	os << " app:"      << App;
 	os << " data:"     << Data << endl;
 }

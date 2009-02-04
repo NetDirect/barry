@@ -108,6 +108,13 @@ public:
 	// unknown
 	UnknownsType Unknowns;
 
+protected:
+	static FreeBusyFlagType FreeBusyFlagProto2Rec(uint8_t f);
+	static uint8_t FreeBusyFlagRec2Proto(FreeBusyFlagType f);
+
+	static ClassFlagType ClassFlagProto2Rec(uint8_t f);
+	static uint8_t ClassFlagRec2Proto(ClassFlagType f);
+
 public:
 	const unsigned char* ParseField(const unsigned char *begin,
 		const unsigned char *end, const IConverter *ic = 0);

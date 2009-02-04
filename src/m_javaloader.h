@@ -145,6 +145,14 @@ public:
 	std::string  App;
 	std::string  Data;
 
+protected:
+	static Severity_t SeverityProto2Rec(unsigned int s);
+	static unsigned int SeverityRec2Proto(Severity_t s);
+
+	static ViewerType_t ViewerTypeProto2Rec(unsigned int v);
+	static unsigned int ViewerTypeRec2Proto(ViewerType_t v);
+
+public:
 	void Parse(uint16_t size, const char* str);
 
 	void Dump(std::ostream &os) const;

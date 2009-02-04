@@ -35,6 +35,30 @@ using namespace Barry::Protocol;
 
 namespace Barry {
 
+
+///////////////////////////////////////////////////////////////////////////////
+// Folder Class, static members
+
+//
+// Note! These functions currently only pass the same values through.
+//       In actuality, these are technically two different values:
+//       one on the raw protocol side, and the other part of the
+//       guaranteed Barry API.  If the Blackberry ever changes the
+//       meanings for these codes, do the translation here.
+//
+
+Folder::FolderType Folder::TypeProto2Rec(uint8_t t)
+{
+	return (FolderType)t;
+}
+
+uint8_t Folder::TypeRec2Proto(FolderType t)
+{
+	return t;
+}
+
+
+
 ///////////////////////////////////////////////////////////////////////////////
 // Folder Class
 
@@ -46,21 +70,7 @@ namespace Barry {
 #define FFC_ADDRESS1	0x0d
 #define FFC_ADDRESS2	0x0e
 #define FFC_TYPE	0x0f
-#define FFC_END	0xffff
-
-// Folder Types
-#define SUBTREE	0x00
-#define DELETED	0x01
-#define INBOX		0x02
-#define OUTBOX		0x03
-#define SENT		0x04
-#define OTHER		0x05
-#define DRAFT		0x0a
-
-// Folder Status
-#define ORPHAN		0x50
-#define UNFILED	0x51
-#define FILED		0x52
+#define FFC_END		0xffff
 
 #define INVALID 	-1
 
@@ -68,7 +78,7 @@ namespace Barry {
 #define ROOT_SEPARATOR	0x3a
 
 static FieldLink<Folder> FolderFieldLinks[] = {
-    { FFC_NAME, "FolderName",  0, 0, &Folder::FolderName, 0, 0, 0, 0, true },
+    { FFC_NAME, "FolderName",  0, 0, &Folder::Name, 0, 0, 0, 0, true },
     { FFC_END,  "End of List", 0, 0, 0, 0, 0, 0, 0, false },
 };
 
@@ -120,13 +130,13 @@ const unsigned char* Folder::ParseField(const unsigned char *begin,
 	switch( field->type )
 	{
 	case FFC_TYPE:
-		FolderType = (FolderTypeEnum)field->u.raw[0];
+		Type = TypeProto2Rec(field->u.raw[0]);
 		return begin;
 	case FFC_NUMBER:
-		FolderNumber = field->u.raw[0];	// two's complement
+		Number = field->u.raw[0];	// two's complement
 		return begin;
 	case FFC_LEVEL:
-		FolderLevel = field->u.raw[0];
+		Level = field->u.raw[0];
 		return begin;
 	}
 
@@ -154,9 +164,9 @@ void Folder::ParseFields(const Data &data, size_t &offset, const IConverter *ic)
 
 void Folder::Clear()
 {
-	FolderName.clear();
+	Name.clear();
 	Unknowns.clear();
-	FolderType = FolderSubtree;
+	Type = FolderSubtree;
 }
 
 void Folder::Dump(std::ostream &os) const
@@ -165,16 +175,16 @@ void Folder::Dump(std::ostream &os) const
 //	static const char *FolderStatusString[] = { "Orphan", "Unfiled", "Filed" };
 
 	os << "Folder Records\n\n";
-	os << "Folder Name: " << FolderName << "\n";
+	os << "Folder Name: " << Name << "\n";
 	os << "Folder Type: ";
-	if( FolderType < FolderDraft )
-		os << FolderTypeString[FolderType] << "\n";
-	else if( FolderType == FolderDraft )
+	if( Type < FolderDraft )
+		os << FolderTypeString[Type] << "\n";
+	else if( Type == FolderDraft )
 		os << "Draft\n";
 	else
-		os << "Unknown (" << std::hex << FolderType << ")\n";
-	os << "Folder Number: " << std::dec << FolderNumber << "\n";
-	os << "Folder Level: " << std::dec << FolderLevel << "\n";
+		os << "Unknown (" << std::hex << Type << ")\n";
+	os << "Folder Number: " << std::dec << Number << "\n";
+	os << "Folder Level: " << std::dec << Level << "\n";
 	os << "\n";
 	os << Unknowns;
 	os << "\n\n";

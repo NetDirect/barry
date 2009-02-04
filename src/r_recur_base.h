@@ -96,6 +96,8 @@ public:
 
 protected:
 	void ParseRecurrenceData(const void *data);
+	static unsigned char WeekDayProto2Rec(uint8_t raw_field);
+	static uint8_t WeekDayRec2Proto(unsigned char weekdays);
 
 protected:
 	RecurBase();

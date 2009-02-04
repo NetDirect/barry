@@ -84,6 +84,16 @@ public:
 	// unknown
 	UnknownsType Unknowns;
 
+protected:
+	static AlarmFlagType AlarmProto2Rec(uint8_t a);
+	static uint8_t AlarmRec2Proto(AlarmFlagType a);
+
+	static PriorityFlagType PriorityProto2Rec(uint8_t p);
+	static uint8_t PriorityRec2Proto(PriorityFlagType p);
+
+	static StatusFlagType StatusProto2Rec(uint8_t s);
+	static uint8_t StatusRec2Proto(StatusFlagType s);
+
 public:
 	Task();
 	~Task();

@@ -142,8 +142,8 @@ void serialize(ArchiveT &ar, Barry::Message &m, const unsigned int ver)
 	ar & make_nvp("MessageSaved", m.MessageSaved);
 	ar & make_nvp("MessageSavedDeleted", m.MessageSavedDeleted);
 
-	ar & make_nvp("MessagePriority", m.MessagePriority);
-	ar & make_nvp("MessageSensitivity", m.MessageSensitivity);
+	ar & make_nvp("MessagePriority", m.Priority);
+	ar & make_nvp("MessageSensitivity", m.Sensitivity);
 
 	if( ver < BARRY_POD_MAP_VERSION ) {
 		ar & make_nvp("Unknowns", m.Unknowns);
@@ -296,8 +296,8 @@ void serialize(ArchiveT &ar, Barry::PINMessage &p, const unsigned int ver)
 	ar & make_nvp("MessageSaved", p.MessageSaved);
 	ar & make_nvp("MessageSavedDeleted", p.MessageSavedDeleted);
 
-	ar & make_nvp("MessagePriority", p.MessagePriority);
-	ar & make_nvp("MessageSensitivity", p.MessageSensitivity);
+	ar & make_nvp("MessagePriority", p.Priority);
+	ar & make_nvp("MessageSensitivity", p.Sensitivity);
 
 	if(ver < BARRY_POD_MAP_VERSION) {
 		ar & make_nvp("Unknowns", p.Unknowns);
@@ -330,8 +330,8 @@ void serialize(ArchiveT &ar, Barry::SavedMessage &m, const unsigned int ver)
 	ar & make_nvp("MessageSaved", m.MessageSaved);
 	ar & make_nvp("MessageSavedDeleted", m.MessageSavedDeleted);
 
-	ar & make_nvp("MessagePriority", m.MessagePriority);
-	ar & make_nvp("MessageSensitivity", m.MessageSensitivity);
+	ar & make_nvp("MessagePriority", m.Priority);
+	ar & make_nvp("MessageSensitivity", m.Sensitivity);
 
 	if( ver < BARRY_POD_MAP_VERSION ) {
 		ar & make_nvp("Unknowns", m.Unknowns);
@@ -344,10 +344,10 @@ void serialize(ArchiveT &ar, Barry::Folder &f, const unsigned int ver)
 	ar & make_nvp("RecType", f.RecType);
 	ar & make_nvp("RecordId", f.RecordId);
 
-	ar & make_nvp("FolderName", f.FolderName);
-	ar & make_nvp("FolderNumber", f.FolderNumber);
-	ar & make_nvp("FolderLevel", f.FolderLevel);
-	ar & make_nvp("FolderType", f.FolderType);
+	ar & make_nvp("FolderName", f.Name);
+	ar & make_nvp("FolderNumber", f.Number);
+	ar & make_nvp("FolderLevel", f.Level);
+	ar & make_nvp("FolderType", f.Type);
 
 	if( ver < BARRY_POD_MAP_VERSION ) {
 		ar & make_nvp( "Unknowns", f.Unknowns);

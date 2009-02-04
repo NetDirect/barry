@@ -222,6 +222,63 @@ struct CalendarRecurrenceDataField  // as documented in the Cassis project spec
 } __attribute__ ((packed));
 #define CALENDAR_RECURRENCE_DATA_FIELD_SIZE	sizeof(Barry::Protocol::CalendarRecurrenceDataField)
 
+//
+// Calendar record: field constants
+//
+
+#define CR_FREEBUSY_FREE		0
+#define CR_FREEBUSY_TENTATIVE		1
+#define CR_FREEBUSY_BUSY		2
+#define CR_FREEBUSY_OUT_OF_OFFICE	3
+#define CR_FREEBUSY_RANGE_LOW		0
+#define CR_FREEBUSY_RANGE_HIGH		3
+
+#define CR_CLASS_PUBLIC			0
+#define CR_CLASS_CONFIDENTIAL		1
+#define CR_CLASS_PRIVATE		2
+#define CR_CLASS_RANGE_LOW		0
+#define CR_CLASS_RANGE_HIGH		2
+
+
+//
+// Task record: field constants
+//
+
+#define TR_ALARM_DATE			1
+#define TR_ALARM_RELATIVE		2
+#define TR_ALARM_RANGE_LOW		1
+#define TR_ALARM_RANGE_HIGH		2
+
+#define TR_PRIORITY_HIGH		0
+#define TR_PRIORITY_NORMAL		1
+#define TR_PRIORITY_LOW			2
+#define TR_PRIORITY_RANGE_LOW		0
+#define TR_PRIORITY_RANGE_HIGH		2
+
+#define TR_STATUS_NOT_STARTED		0
+#define TR_STATUS_IN_PROGRESS		1
+#define TR_STATUS_COMPLETED		2
+#define TR_STATUS_WAITING		3
+#define TR_STATUS_DEFERRED		4
+#define TR_STATUS_RANGE_LOW		0
+#define TR_STATUS_RANGE_HIGH		4
+
+
+//
+// Folder record: field constants
+//
+
+#define FR_TYPE_SUBTREE			0x00
+#define FR_TYPE_DELETED			0x01
+#define FR_TYPE_INBOX			0x02
+#define FR_TYPE_OUTBOX			0x03
+#define FR_TYPE_SENT			0x04
+#define FR_TYPE_OTHER			0x05
+#define FR_TYPE_DRAFT			0x0a
+
+#define FR_STATUS_ORPHAN		0x50
+#define FR_STATUS_UNFILED		0x51
+#define FR_STATUS_FILED			0x52
 
 
 ///////////////////////////////////////////////////////////////////////////////

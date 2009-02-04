@@ -39,6 +39,26 @@ namespace Barry {
 
 
 ///////////////////////////////////////////////////////////////////////////////
+// RecurBase class, static members
+
+unsigned char RecurBase::WeekDayProto2Rec(uint8_t raw_field)
+{
+	// Note: this simple copy is only possible since
+	// the CAL_WD_* constants are the same as CRDF_WD_* constants.
+	// If this ever changes, this code will need to change.
+	return raw_field;
+}
+
+uint8_t RecurBase::WeekDayRec2Proto(unsigned char weekdays)
+{
+	// Note: this simple copy is only possible since
+	// the CAL_WD_* constants are the same as CRDF_WD_* constants.
+	// If this ever changes, this code will need to change.
+	return weekdays;
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
 // RecurBase class
 
 RecurBase::RecurBase()
@@ -125,11 +145,7 @@ void RecurBase::ParseRecurrenceData(const void *data)
 
 	case CRDF_TYPE_WEEK:
 		RecurringType = Week;
-
-		// Note: this simple copy is only possible since
-		// the CAL_WD_* constants are the same as CRDF_WD_* constants.
-		// If this ever changes, this code will need to change.
-		WeekDays = rec->u.week.days;
+		WeekDays = WeekDayProto2Rec(rec->u.week.days);
 		break;
 
 	default:
@@ -193,11 +209,7 @@ void RecurBase::BuildRecurrenceData(time_t StartTime, void *data) const
 
 	case Week:
 		rec->type = CRDF_TYPE_WEEK;
-
-		// Note: this simple copy is only possible since
-		// the CAL_WD_* constants are the same as CRDF_WD_* constants.
-		// If this ever changes, this code will need to change.
-		rec->u.week.days = WeekDays;
+		rec->u.week.days = WeekDayRec2Proto(WeekDays);
 		break;
 
 	default:

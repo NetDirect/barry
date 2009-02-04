@@ -37,6 +37,49 @@ using namespace Barry::Protocol;
 
 namespace Barry {
 
+
+///////////////////////////////////////////////////////////////////////////////
+// Task Class, static members
+
+//
+// Note! These functions currently only pass the same values through.
+//       In actuality, these are technically two different values:
+//       one on the raw protocol side, and the other part of the
+//       guaranteed Barry API.  If the Blackberry ever changes the
+//       meanings for these codes, do the translation here.
+//
+
+Task::AlarmFlagType Task::AlarmProto2Rec(uint8_t a)
+{
+	return (AlarmFlagType)a;
+}
+
+uint8_t Task::AlarmRec2Proto(AlarmFlagType a)
+{
+	return a;
+}
+
+Task::PriorityFlagType Task::PriorityProto2Rec(uint8_t p)
+{
+	return (PriorityFlagType)p;
+}
+
+uint8_t Task::PriorityRec2Proto(PriorityFlagType p)
+{
+	return p;
+}
+
+Task::StatusFlagType Task::StatusProto2Rec(uint8_t s)
+{
+	return (StatusFlagType)s;
+}
+
+uint8_t Task::StatusRec2Proto(StatusFlagType s)
+{
+	return s;
+}
+
+
 ///////////////////////////////////////////////////////////////////////////////
 // Task Class
 
@@ -119,20 +162,20 @@ const unsigned char* Task::ParseField(const unsigned char *begin,
 	switch( field->type )
 	{
 	case TSKFC_PRIORITY:
-		if( field->u.raw[0] > Low ) {
+		if( field->u.raw[0] > TR_PRIORITY_RANGE_HIGH ) {
 			throw Error( "Task::ParseField: priority field out of bounds" );
 		}
 		else {
-			PriorityFlag = (PriorityFlagType)field->u.raw[0];
+			PriorityFlag = PriorityProto2Rec(field->u.raw[0]);
 		}
 		return begin;
 
 	case TSKFC_STATUS:
-		if( field->u.raw[0] > Deferred ) {
+		if( field->u.raw[0] > TR_STATUS_RANGE_HIGH ) {
 			throw Error( "Task::ParseField: priority field out of bounds" );
 		}
 		else {
-			StatusFlag = (StatusFlagType)field->u.raw[0];
+			StatusFlag = StatusProto2Rec(field->u.raw[0]);
 		}
 		return begin;
 
@@ -150,11 +193,11 @@ const unsigned char* Task::ParseField(const unsigned char *begin,
 		return begin;
 
 	case TSKFC_ALARM_TYPE:
-		if( field->u.raw[0] > Relative ) {
+		if( field->u.raw[0] > TR_ALARM_RANGE_HIGH ) {
 			throw Error("Task::ParseField: AlarmType out of bounds" );
 		}
 		else {
-			AlarmType = (AlarmFlagType)field->u.raw[0];
+			AlarmType = AlarmProto2Rec(field->u.raw[0]);
 		}
 		return begin;
 	}

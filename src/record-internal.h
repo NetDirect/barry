@@ -85,6 +85,7 @@ struct FieldLink
 
 void BuildField1900(Data &data, size_t &size, uint8_t type, time_t t);
 void BuildField(Data &data, size_t &size, uint8_t type, char c);
+void BuildField(Data &data, size_t &size, uint8_t type, uint8_t c);
 void BuildField(Data &data, size_t &size, uint8_t type, uint16_t value);
 void BuildField(Data &data, size_t &size, uint8_t type, const std::string &str);
 void BuildField(Data &data, size_t &size, uint8_t type, const void *buf, size_t bufsize);

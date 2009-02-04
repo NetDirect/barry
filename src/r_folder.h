@@ -41,11 +41,11 @@ public:
 	uint8_t RecType;
 	uint32_t RecordId;
 
-	std::string FolderName;
-	uint16_t	FolderNumber;	// Not unique, used for ordering of subfolders - NOT level
-	uint16_t	FolderLevel;	// From parent
+	std::string Name;
+	uint16_t Number;	// Not unique, used for ordering of subfolders - NOT level
+	uint16_t Level;	// From parent
 
-	enum FolderTypeEnum {
+	enum FolderType {
 		FolderSubtree = 0,
 		FolderDeleted,
 		FolderInbox,
@@ -54,7 +54,7 @@ public:
 		FolderOther,
 		FolderDraft = 0x0a
 	};
-	FolderTypeEnum FolderType;
+	FolderType Type;
 
 	enum FolderStatusType {
 		FolderOrphan = 0x50,
@@ -63,6 +63,10 @@ public:
 	};
 
 	UnknownsType Unknowns;
+
+protected:
+	static FolderType TypeProto2Rec(uint8_t t);
+	static uint8_t TypeRec2Proto(FolderType t);
 
 public:
 	Folder();
@@ -80,7 +84,7 @@ public:
 	void Clear();
 
 	void Dump(std::ostream &os) const;
-	bool operator<(const Folder &other) const { return FolderName < other.FolderName; }
+	bool operator<(const Folder &other) const { return Name < other.Name; }
 
 	// database name
 	static const char * GetDBName() { return "Folders"; }
