@@ -42,6 +42,8 @@ Contributors (code and otherwise) in alphabetical order by last name:
 		- ppp chat scripts for O2 Ireland
 	Josh Kropf <josh@slashdev.ca>
 		- bjavaloader command syntax changes
+		- dump eventlog and clear eventlog support
+		- bjavaloader save module support
 	Duncan Mak
 		- modern udev updates
 	David Mansfield <barry@dm.cobite.com>
