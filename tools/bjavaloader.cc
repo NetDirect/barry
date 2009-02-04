@@ -40,7 +40,7 @@
 #define CMD_SETTIME	"settime"
 #define CMD_EVENTLOG	"eventlog"
 #define CMD_CLEAR_LOG	"cleareventlog"
-#define CMD_SAVE        "save"
+#define CMD_SAVE	"save"
 
 // time string format specifier and user friendly description
 #define TIME_FMT         "%Y-%m-%d %H:%M:%S"
@@ -184,15 +184,7 @@ void SaveModule(Barry::Mode::JavaLoader *javaloader, const char *filename)
 	}
 
 	ofstream file(fname.c_str(), ios::binary | ios::trunc);
-	try {
-		javaloader->Save(module.c_str(), file);
-		file.close();
-	}
-	catch( std::exception &e ) {
-		if( file.is_open() )
-			file.close();
-		throw e;
-	}
+	javaloader->Save(module.c_str(), file);
 }
 
 

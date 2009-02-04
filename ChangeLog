@@ -1,5 +1,10 @@
 Release: version 0.15 - 2009/01/??
 ------------------------------------------------------------------------------
+2009/02/04
+	- applied Josh Kropf's save module patch
+		- minor whitespace fixes
+		- removed unneeded exception (fstream closes files
+		  automatically on exit of scope, or exception)
 2009/02/03
 	- commented out AT+CREG? in barry-rogers.chat, since it causes some
 		Blackberry devices to reboot
