@@ -404,6 +404,11 @@ void SocketZero::Send(Barry::Packet &packet, int timeout)
 	Send(packet.m_send, packet.m_receive, timeout);
 }
 
+void SocketZero::Receive(Data &receive, int timeout)
+{
+	RawReceive(receive, timeout);
+}
+
 
 //
 // Open

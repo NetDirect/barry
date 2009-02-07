@@ -76,10 +76,10 @@ private:
 
 protected:
 	bool SequencePacket(const Data &data);
-	void SetSequencePacket(bool flag) { m_sequencePacket = flag; }
 	bool GetSequencePacket() { return m_sequencePacket; }
 
 public:
+	void SetSequencePacket(bool flag) { m_sequencePacket = flag; }
 	explicit SocketZero(SocketRoutingQueue &queue, int writeEndpoint,
 		uint8_t zeroSocketSequenceStart = 0);
 	SocketZero(Usb::Device &dev, int writeEndpoint, int readEndpoint,
@@ -99,7 +99,7 @@ public:
 	void Send(Data &send, int timeout = -1);	// send only
 	void Send(Data &send, Data &receive, int timeout = -1); // send+recv
 	void Send(Barry::Packet &packet, int timeout = -1);
-//	void Receive(Data &receive, int timeout = -1);
+	void Receive(Data &receive, int timeout = -1);
 
 	// Opens a new socket and returns a Socket object to manage it
 	SocketHandle Open(uint16_t socket, const char *password = 0);

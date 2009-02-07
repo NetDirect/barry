@@ -205,6 +205,16 @@ uint16_t Controller::SelectMode(ModeType mode)
 			throw Error("Controller: mode not selected");
 		}
 
+		if (mode == Desktop) {
+			// On the BlackBerry Storm, I have to read a packet
+			// after opening a socket. (only for Desktop mode)
+			// Otherwise, barrybackup and opensync-plugin can crash (timeout)
+			// I don't know why ! Maybe a bug on the handle.
+			m_zero.SetSequencePacket(false);
+			m_zero.Receive(response);
+			m_zero.SetSequencePacket(true);
+		}
+
 		// return the socket that the device is expecting us to use
 		return btohs(modepack->u.socket.socket);
 	}
