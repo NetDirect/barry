@@ -93,6 +93,7 @@ namespace Barry {
 #define CFC_IMAGE		77	// 0x4D
 #define CFC_BIRTHDAY		82	// 0x52
 #define CFC_ANNIVERSARY		83	// 0x53
+#define CFC_UNIQUEID		85	// 0x55
 #define CFC_INVALID_FIELD	255
 
 // Contact code to field table
@@ -312,6 +313,18 @@ void Contact::BuildFields(Data &data, size_t &offset, const IConverter *ic) cons
 		}
 		BuildField(data, offset, CFC_NAME, ic ? ic->ToBB(LastName) : LastName);
 	}
+
+//	FIXME
+//	// add unknown data
+//	char buffer[] = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
+//	BuildField(data, offset, 0x54, buffer, 8);
+
+	// With the BlackBerry Storm, I have to add this entry.
+	// Otherwise the uniqueId of this contact is reseted !
+	// The device seems accept the multiple contact with the same uniqueId,
+	// but the synchronization process uses this uniqueId to identify the contact.
+	// add uniqueId
+	BuildField(data, offset, CFC_UNIQUEID, RecordId);
 
 	// add all email addresses
 	EmailList::const_iterator eai = EmailAddresses.begin();
