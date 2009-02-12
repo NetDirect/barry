@@ -209,7 +209,7 @@ uint16_t Controller::SelectMode(ModeType mode)
 			// On the BlackBerry Storm, I have to read a packet
 			// after opening a socket. (only for Desktop mode)
 			// Otherwise, barrybackup and opensync-plugin can crash (timeout)
-			// I don't know why ! Maybe a bug on the handle.
+			// I don't know why ! Maybe a bug on the handheld.
 			m_zero.SetSequencePacket(false);
 			m_zero.Receive(response);
 			m_zero.SetSequencePacket(true);
