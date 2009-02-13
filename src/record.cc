@@ -510,7 +510,7 @@ std::ostream& operator<< (std::ostream &os, const std::vector<UnknownField> &unk
 // EmailAddress class
 
 std::ostream& operator<<(std::ostream &os, const EmailAddress &msga) {
-	os << msga.Name.c_str() << " <" << msga.Email.c_str() << ">";
+	os << msga.Name << " <" << msga.Email << ">";
 	return os;
 }
 
