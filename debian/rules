@@ -26,7 +26,7 @@ DEB_INSTALL_DOCS_ALL =
 install/barry-util::
 	# Install udev rules for the barry-util package
 	install -d $(CURDIR)/debian/barry-util/etc/udev/rules.d
-	install -m 0644 $(CURDIR)/udev/10-blackberry.rules.Debian $(CURDIR)/debian/barry-util/etc/udev/rules.d/10-blackberry.rules
+	install -m 0644 $(CURDIR)/udev/debian/10-blackberry.rules $(CURDIR)/debian/barry-util/etc/udev/rules.d/10-blackberry.rules
 	# Install modprobe blacklist file for bcharge, into barry-util package
 	install -d $(CURDIR)/debian/barry-util/etc/modprobe.d
 	install -m 0644 $(CURDIR)/modprobe/blacklist-berry_charge $(CURDIR)/debian/barry-util/etc/modprobe.d/blacklist-berry_charge

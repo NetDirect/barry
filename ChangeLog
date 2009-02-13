@@ -5,6 +5,7 @@ Release: version 0.15 - 2009/01/??
 	- added support for Calendar fields: Organizer, Accepted, Invited
 	- reorganized the udev/ script directory, based on distro,
 		and added a specific rules file for openSUSE 11.1
+	- updated Debian and RPM binary scripts to point to correct udev files
 2009/02/04
 	- applied Josh Kropf's save module patch
 		- minor whitespace fixes

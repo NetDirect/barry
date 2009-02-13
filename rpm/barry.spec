@@ -143,9 +143,14 @@ cd ../
 # main tree
 %{__make} DESTDIR=%{buildroot} install
 %{__mkdir_p} %{buildroot}%{_sysconfdir}/udev/rules.d
-%{__cp} udev/10-blackberry.rules %{buildroot}%{_sysconfdir}/udev/rules.d/
 %{__mkdir_p} %{buildroot}%{_sysconfdir}/security/console.perms.d
-%{__cp} udev/10-blackberry.perms %{buildroot}%{_sysconfdir}/security/console.perms.d/
+%if 0%{?suse_version} == 1110
+%{__cp} udev/opensuse-11.1/65-blackberry.rules %{buildroot}%{_sysconfdir}/udev/rules.d/
+%{__cp} udev/opensuse-11.1/10-blackberry.perms %{buildroot}%{_sysconfdir}/security/console.perms.d/
+%else
+%{__cp} udev/fedora/10-blackberry.rules %{buildroot}%{_sysconfdir}/udev/rules.d/
+%{__cp} udev/fedora/10-blackberry.perms %{buildroot}%{_sysconfdir}/security/console.perms.d/
+%endif
 %{__mkdir_p} %{buildroot}%{_sysconfdir}/modprobe.d
 %{__cp} modprobe/blacklist-berry_charge %{buildroot}%{_sysconfdir}/modprobe.d/
 %{__mkdir_p} %{buildroot}%{_sysconfdir}/ppp/peers
@@ -272,6 +277,7 @@ cd ../
 - version bump
 - added HAL FDI scripts
 - added bjavaloader and bfuse
+- updated for udev directory reorganization in Barry source tree
 
 * Wed Sep 24 2008 Chris Frey <cdfrey@foursquare.net> 0.14-0
 - version bump
