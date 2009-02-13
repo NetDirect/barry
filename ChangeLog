@@ -2,6 +2,7 @@ Release: version 0.15 - 2009/01/??
 ------------------------------------------------------------------------------
 2009/02/13
 	- removed unneeded call to .c_str() in EmailAddress stream operator
+	- added support for Calendar fields: Organizer, Accepted, Invited
 2009/02/04
 	- applied Josh Kropf's save module patch
 		- minor whitespace fixes

@@ -62,6 +62,9 @@ public:
 	time_t NotificationTime;	// 0 means notification is off
 	time_t StartTime;
 	time_t EndTime;
+	EmailAddressList Organizer;
+	EmailAddressList AcceptedBy;
+	EmailAddressList Invited;		// list of invited people (email a
 
 	///
 	/// Free Busy Flag

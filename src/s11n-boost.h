@@ -166,6 +166,10 @@ void serialize(ArchiveT &ar, Barry::Calendar &c, const unsigned int ver)
 	ar & make_nvp("StartTime", c.StartTime);
 	ar & make_nvp("EndTime", c.EndTime);
 
+	ar & make_nvp("Organizer", c.Organizer);
+	ar & make_nvp("AcceptedBy", c.AcceptedBy);
+	ar & make_nvp("Invited", c.Invited);
+
 	ar & make_nvp("FreeBusyFlag", c.FreeBusyFlag);
 	ar & make_nvp("ClassFlag", c.ClassFlag);
 

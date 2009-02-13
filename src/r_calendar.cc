@@ -87,7 +87,10 @@ uint8_t Calendar::ClassFlagRec2Proto(ClassFlagType f)
 #define CALFC_NOTIFICATION_TIME		0x05
 #define CALFC_START_TIME		0x06
 #define CALFC_END_TIME			0x07
+#define CALFC_ACCEPTED_BY		0x0b
 #define CALFC_VERSION_DATA		0x10
+#define CALFC_INVITED			0x15
+#define CALFC_ORGANIZER			0x16
 #define CALFC_NOTIFICATION_DATA		0x1a
 #define CALFC_FREEBUSY_FLAG		0x1c
 #define CALFC_TIMEZONE_CODE		0x1e	// only seems to show up if recurring
@@ -102,6 +105,9 @@ static FieldLink<Calendar> CalendarFieldLinks[] = {
    { CALFC_NOTIFICATION_TIME,"Notification Time",0,0, 0, 0, &Calendar::NotificationTime, 0, 0, false },
    { CALFC_START_TIME, "Start Time", 0, 0,    0, 0, &Calendar::StartTime, 0, 0, false },
    { CALFC_END_TIME,   "End Time",   0, 0,    0, 0, &Calendar::EndTime, 0, 0, false },
+   { CALFC_ORGANIZER,  "Organizer",  0, 0,    0, &Calendar::Organizer, 0, 0, 0, true },
+   { CALFC_ACCEPTED_BY,"Accepted By",0, 0,    0, &Calendar::AcceptedBy, 0, 0, 0, true },
+   { CALFC_INVITED,    "Invited",    0, 0,    0, &Calendar::Invited, 0, 0, 0, true },
    { CALFC_END,        "End of List",0, 0,    0, 0, 0, 0, 0, false }
 };
 
@@ -145,6 +151,40 @@ const unsigned char* Calendar::ParseField(const unsigned char *begin,
 				time_t &t = this->*(b->timeMember);
 				dout("min1900: " << field->u.min1900);
 				t = min2time(field->u.min1900);
+				return begin;
+			}
+			else if( b->addrMember ) {
+				//
+				// parse email address
+				// get dual addr+name string first
+				// Note: this is a different format than
+				// used in r_message*.cc
+				//
+				std::string dual((const char*)field->u.raw, btohs(field->size));
+
+				EmailAddress a;
+
+				// assign first string, using null terminator
+				// letting std::string add it for us if it
+				// doesn't exist
+				a.Email = dual.c_str();
+
+				// assign second string, using first size
+				// as starting point
+				a.Name = dual.c_str() + a.Email.size() + 1;
+
+				// if the address is non-empty, add to list
+				if( a.size() ) {
+					// i18n convert if needed
+					if( b->iconvNeeded && ic ) {
+						a.Name = ic->FromBB(a.Name);
+						a.Email = ic->FromBB(a.Email);
+					}
+
+					EmailAddressList &al = this->*(b->addrMember);
+					al.push_back(a);
+				}
+
 				return begin;
 			}
 		}
@@ -260,6 +300,37 @@ void Calendar::BuildFields(Data &data, size_t &offset, const IConverter *ic) con
 			if( t > 0 )
 				BuildField1900(data, offset, b->type, t);
 		}
+		else if( b->addrMember ) {
+			const EmailAddressList &al = this->*(b->addrMember);
+			EmailAddressList::const_iterator lb = al.begin(), le = al.end();
+
+			// add all entries in list
+			for( ; lb != le; ++lb ) {
+
+				// skip empty entries
+				if( !lb->size() )
+					continue;
+
+				std::string Name = lb->Name,
+					Email = lb->Email;
+
+				// do i18n conversion only if needed
+				if( b->iconvNeeded && ic ) {
+					Name = ic->ToBB(Name);
+					Email = ic->ToBB(Email);
+				}
+
+				//
+				// Build an addr+name field, each string
+				// null terminated.
+				// Note: this is a different format than
+				// what is used in r_message*.cc
+				//
+				std::string field(lb->Email.c_str(), lb->Email.size() + 1);
+				field.append(lb->Name.c_str(), lb->Name.size() + 1);
+				BuildField(data, offset, b->type, field.data(), field.size());
+			}
+		}
 	}
 
 	// handle special cases
@@ -340,6 +411,17 @@ void Calendar::Dump(std::ostream &os) const
 				os << "   " << b->name << ": " << ctime(&t);
 			else
 				os << "   " << b->name << ": disabled\n";
+		}
+		else if( b->addrMember ) {
+			const EmailAddressList &al = this->*(b->addrMember);
+			EmailAddressList::const_iterator lb = al.begin(), le = al.end();
+
+			for( ; lb != le; ++lb ) {
+				if( !lb->size() )
+					continue;
+
+				os << "   " << b->name << ": " << *lb << "\n";
+			}
 		}
 	}
 
