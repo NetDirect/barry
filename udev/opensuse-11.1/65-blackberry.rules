@@ -1,0 +1,37 @@
+#
+# Blackberry devices
+#
+# Note: the following rules may appear wasteful, in that bcharge is run
+#       twice: once for changing the mode, and once again after the
+#       device resets itself to enter this mode.  This is required
+#       in order to support older kernels (approx. 2.6.20 to 2.6.22) with
+#       CONFIG_USB_SUSPEND enabled.  The second time bcharge is run
+#       is when the -p argument comes into play, adjusting the device's
+#       autosuspend settings.
+#
+# Note2: the SUBSYSTEM and ENV{DEVTYPE} checks are to prevent bcharge from
+#       running each time a new endpoint is discovered by udev.
+#       Both SUBSYSTEM and ENV{DEVTYPE} are included so that the version
+#       of udev on your system doesn't matter.
+#
+
+#
+# Older devices that only use 0x0001 (no USB Mass Storage)
+#
+
+BUS=="usb", SUBSYSTEM=="usb_device", ACTION=="add", SYSFS{idVendor}=="0fca", SYSFS{idProduct}=="0001", SYMLINK+="bb-%k", GROUP="dialout", MODE="0660", RUN="/usr/sbin/bcharge -p %p"
+
+BUS=="usb", ENV{DEVTYPE}=="usb_device", ACTION=="add", SYSFS{idVendor}=="0fca", SYSFS{idProduct}=="0001", SYMLINK+="bb-%k", GROUP="dialout", MODE="0660", RUN="/usr/sbin/bcharge -p %p"
+
+#
+# Newer devices with USB Mass Storage, 0x8004 + 0x0006 + 0x0004.
+#
+
+BUS=="usb", SUBSYSTEM=="usb_device", ACTION=="add", SYSFS{idVendor}=="0fca", SYSFS{idProduct}=="0006", GROUP="dialout", MODE="0660", RUN="/usr/sbin/bcharge"
+BUS=="usb", SUBSYSTEM=="usb_device", ACTION=="add", SYSFS{idVendor}=="0fca", SYSFS{idProduct}=="8004", GROUP="dialout", MODE="0660", RUN="/usr/sbin/bcharge"
+BUS=="usb", SUBSYSTEM=="usb_device", ACTION=="add", SYSFS{idVendor}=="0fca", SYSFS{idProduct}=="0004", SYMLINK+="bb-%k", GROUP="dialout", MODE="0660", RUN="/usr/sbin/bcharge -p %p"
+
+BUS=="usb", ENV{DEVTYPE}=="usb_device", ACTION=="add", SYSFS{idVendor}=="0fca", SYSFS{idProduct}=="0006", GROUP="dialout", MODE="0660", RUN="/usr/sbin/bcharge"
+BUS=="usb", ENV{DEVTYPE}=="usb_device", ACTION=="add", SYSFS{idVendor}=="0fca", SYSFS{idProduct}=="8004", GROUP="dialout", MODE="0660", RUN="/usr/sbin/bcharge"
+BUS=="usb", ENV{DEVTYPE}=="usb_device", ACTION=="add", SYSFS{idVendor}=="0fca", SYSFS{idProduct}=="0004", SYMLINK+="bb-%k", GROUP="dialout", MODE="0660", RUN="/usr/sbin/bcharge -p %p"
+
