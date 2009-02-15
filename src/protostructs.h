@@ -399,6 +399,13 @@ struct ModeSelect
 	} __attribute__ ((packed)) response;
 } __attribute__ ((packed));
 
+struct Echo
+{
+	uint64_t	ticks;			// number of microseconds since
+						// host system startup
+} __attribute__ ((packed));
+#define ECHO_COMMAND_SIZE		(sizeof(Barry::Protocol::Echo))
+
 
 ///////////////////////////////////////////////////////////////////////////////
 // Protocol command structures
@@ -417,6 +424,7 @@ struct SocketCommand
 		AttributeFetch		fetch;
 		ModeSelect		mode;
 		uint8_t			raw[1];
+		Echo			echo;
 
 	} __attribute__ ((packed)) u;
 } __attribute__ ((packed));

@@ -23,6 +23,10 @@
 #define __BARRY_PROTOCOL_H__
 
 // packet commands (Packet.command: has response codes too)
+#define SB_COMMAND_ECHO			0x01
+#define SB_COMMAND_ECHO_REPLY		0x02
+#define SB_COMMAND_RESET		0x03
+#define SB_COMMAND_RESET_REPLY		0x04
 #define SB_COMMAND_FETCH_ATTRIBUTE	0x05
 #define SB_COMMAND_FETCHED_ATTRIBUTE	0x06
 #define SB_COMMAND_SELECT_MODE		0x07
@@ -67,7 +71,7 @@
 // JavaLoader response
 #define SB_COMMAND_JL_ACK		0x64
 #define SB_COMMAND_JL_READY		0x01
-#define SB_COMMAND_JL_ERROR		0x78	// Device has accepted the application, but it can't installed !
+#define SB_COMMAND_JL_RESET_REQUIRED	0x78	// Occurs after GOODBYE when handheld reset is required
 #define SB_COMMAND_JL_COD_IN_USE	0x6c	// Perhaps "BUSY" is also a good name?
 #define SB_COMMAND_JL_COD_NOT_FOUND	0x69
 

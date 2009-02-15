@@ -91,6 +91,8 @@ public:
 	// packet building
 
 	void GetAttribute(unsigned int object, unsigned int attribute);
+	void Echo(uint64_t us_ticks);
+	void Reset();
 
 
 	//////////////////////////////////
@@ -102,6 +104,7 @@ public:
 	unsigned int RemainingTries() const;
 	unsigned int SocketResponse() const;
 	unsigned char SocketSequence() const;
+	uint8_t CommandResponse() const;
 };
 
 

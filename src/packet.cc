@@ -92,6 +92,42 @@ void ZeroPacket::GetAttribute(unsigned int object, unsigned int attribute)
 	m_send.ReleaseBuffer(size);
 }
 
+//
+// Echo
+//
+/// Builds command packet for sending echo request.  The parameter
+/// to this command is the number of microseconds elapsed since host
+/// computer startup.
+///
+void ZeroPacket::Echo(uint64_t us_ticks)
+{
+	size_t size = SB_SOCKET_PACKET_HEADER_SIZE + ECHO_COMMAND_SIZE;
+	MAKE_PACKETPTR_BUF(cpack, m_send.GetBuffer(size));
+	Protocol::Packet &packet = *cpack;
+
+	packet.size = htobs(size);
+	packet.command = SB_COMMAND_ECHO;
+	packet.u.socket.socket = htobs(0x00ff);	// default non-socket request
+	packet.u.socket.sequence = 0;		// filled in by Socket class
+	packet.u.socket.u.echo.ticks = htobl(us_ticks);
+
+	m_send.ReleaseBuffer(size);
+}
+
+void ZeroPacket::Reset()
+{
+	size_t size = SB_SOCKET_PACKET_HEADER_SIZE;
+	MAKE_PACKETPTR_BUF(cpack, m_send.GetBuffer(size));
+	Protocol::Packet &packet = *cpack;
+
+	packet.size = htobs(size);
+	packet.command = SB_COMMAND_RESET;
+	packet.u.socket.socket = htobs(0x00ff);	// default non-socket request
+	packet.u.socket.sequence = 0;		// filled in by Socket class
+
+	m_send.ReleaseBuffer(size);
+}
+
 unsigned int ZeroPacket::ObjectID() const
 {
 	Protocol::CheckSize(m_receive, SB_SOCKET_PACKET_HEADER_SIZE);
@@ -135,6 +171,13 @@ unsigned char ZeroPacket::SocketSequence() const
 	Protocol::CheckSize(m_receive, SB_SOCKET_PACKET_HEADER_SIZE);
 	MAKE_PACKET(rpack, m_receive);
 	return rpack->u.socket.sequence;	// sequence is a byte
+}
+
+uint8_t ZeroPacket::CommandResponse() const
+{
+	Protocol::CheckSize(m_receive, SB_SOCKET_PACKET_HEADER_SIZE);
+	MAKE_PACKET(rpack, m_receive);
+	return rpack->command;
 }
 
 

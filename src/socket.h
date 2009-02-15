@@ -60,6 +60,8 @@ class BXEXPORT SocketZero
 
 	bool m_sequencePacket;
 
+	bool m_resetOnClose;
+
 private:
 	static void AppendFragment(Data &whole, const Data &fragment);
 	static unsigned int MakeNextFragment(const Data &whole, Data &fragment,
@@ -79,6 +81,7 @@ protected:
 	bool GetSequencePacket() { return m_sequencePacket; }
 
 public:
+	void SetResetOnClose(bool flag) { m_resetOnClose = flag; }
 	void SetSequencePacket(bool flag) { m_sequencePacket = flag; }
 	explicit SocketZero(SocketRoutingQueue &queue, int writeEndpoint,
 		uint8_t zeroSocketSequenceStart = 0);

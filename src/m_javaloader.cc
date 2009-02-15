@@ -564,18 +564,35 @@ void JavaLoader::LoadApp(CodFile &cod)
 	}
 }
 
-// This command is sent to avert that the data stream is finished
-void JavaLoader::StopStream(void)
+//
+// StopStream
+//
+/// Must be called at the end of a JavaLoader session.  The JL_GOODBYE
+/// command is sent to the device.  When the device responds with
+/// RESET_REQUIRED the device reset command will be sent when the
+/// socket is closed.
+///
+/// \return true when a device reset was required
+///
+bool JavaLoader::StopStream()
 {
-	// 7°/
-	unsigned char rawCommand[] = { 4, 0, 0x08, 0, 0x8d, 0, 0, 0 };
-	*((uint16_t*) rawCommand) = htobs(m_socket->GetSocket());
+	Data cmd(-1, 8), data(-1, 8), response;
 
-	Data command(rawCommand, sizeof(rawCommand));
-	Data response;
-	m_socket->PacketData(command, response);
+	JLPacket packet(cmd, data, response);
+	packet.Goodbye();
+	m_socket->Packet(packet);
 
 	m_StreamStarted = false;
+
+	if( packet.Command() == SB_COMMAND_JL_RESET_REQUIRED ) {
+		m_con.m_zero.SetResetOnClose(true);
+		return true;
+	}
+	else if( packet.Command() != SB_COMMAND_JL_ACK ) {
+		ThrowJLError("JavaLoader::StopStream", packet.Command());
+	}
+
+	return false;
 }
 
 void JavaLoader::SetTime(time_t when)

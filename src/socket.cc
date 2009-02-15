@@ -68,7 +68,8 @@ SocketZero::SocketZero(	Device &dev,
 	m_halfOpen(false),
 	m_challengeSeed(0),
 	m_remainingTries(0),
-	m_sequencePacket(true)
+	m_sequencePacket(true),
+	m_resetOnClose(false)
 {
 }
 
@@ -568,6 +569,17 @@ void SocketZero::Close(Socket &socket)
 		throw Error("Socket: Bad CLOSED packet in Close");
 	}
 
+	if( m_resetOnClose ) {
+		Data send, receive;
+		ZeroPacket reset_packet(send, receive);
+		reset_packet.Reset();
+
+		Send(reset_packet);
+		if( reset_packet.CommandResponse() != SB_COMMAND_RESET_REPLY ) {
+			throw Error("Socket: Missing RESET_REPLY in Close");
+		}
+	}
+
 //	// and finally, there always seems to be an extra read of
 //	// an empty packet at the end... just throw it away
 //	try {
@@ -732,6 +744,7 @@ void Socket::PacketData(Data &send, Data &receive, int timeout)
 			case SB_COMMAND_JL_READY:
 			case SB_COMMAND_JL_ACK:
 			case SB_COMMAND_JL_HELLO_ACK:
+			case SB_COMMAND_JL_RESET_REQUIRED:
 				done = true;
 				break;
 
@@ -742,14 +755,6 @@ void Socket::PacketData(Data &send, Data &receive, int timeout)
 			case SB_DATA_JL_INVALID: {
 				std::ostringstream oss;
 				oss << "Your Java application has been refused by your device !";
-				eout(oss.str());
-				throw Error(oss.str());
-				}
-				break;
-
-			case SB_COMMAND_JL_ERROR: {
-				std::ostringstream oss;
-				oss << "Device can't install the application. Check that the application isn't already installed !";
 				eout(oss.str());
 				throw Error(oss.str());
 				}

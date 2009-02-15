@@ -208,7 +208,7 @@ public:
 	//////////////////////////////////
 	// API
 	void StartStream();
-	void StopStream(void);
+	bool StopStream();
 
 	// mid-stream operations
 	void SendStream(const unsigned char *buffer, int size);
