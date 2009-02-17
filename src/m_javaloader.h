@@ -36,6 +36,7 @@ class Parser;
 class Builder;
 class Controller;
 class CodFile;
+class CodFileBuilder;
 
 class JLDirectoryEntry;
 
@@ -193,7 +194,8 @@ protected:
 		bool include_subdirs);
 	void ThrowJLError(const std::string &msg, uint8_t cmd);
 	void DoErase(uint8_t cmd, const std::string &cod_name);
-	void SaveData(JLPacket &packet, uint16_t, std::ostream &output);
+	void SaveData(JLPacket &packet, uint16_t, CodFileBuilder &builder,
+		std::ostream &output);
 
 public:
 	JavaLoader(Controller &con);

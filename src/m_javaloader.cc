@@ -884,7 +884,7 @@ void JavaLoader::ClearEventlog()
 	}
 }
 
-void JavaLoader::SaveData(JLPacket &packet, uint16_t id, std::ostream &output)
+void JavaLoader::SaveData(JLPacket &packet, uint16_t id, CodFileBuilder &builder, std::ostream &output)
 {
 	packet.SaveModule(id);
 	m_socket->Packet(packet);
@@ -896,29 +896,40 @@ void JavaLoader::SaveData(JLPacket &packet, uint16_t id, std::ostream &output)
 	// get total size of cod file or this sibling cod file
 	Data &response = packet.GetReceive();
 	m_socket->Receive(response);
-//	Protocol::CheckSize(response, SB_JLPACKET_HEADER_SIZE + sizeof(uint32_t));
-//	MAKE_JLPACKET(jpack, response);
-//	uint32_t total_size = be_btohl(jpack->u.cod_size); // unused variable
+	Protocol::CheckSize(response, SB_JLPACKET_HEADER_SIZE + sizeof(uint32_t));
+	MAKE_JLPACKET(jpack, response);
+	uint32_t total_size = be_btohl(jpack->u.cod_size);
+
+	// allocate buffer to hold data for this sibling
+	Data buffer(-1, total_size);
+	uint32_t offset = 0;
 
 	for( ;; ) {
 		packet.GetData();
 		m_socket->Packet(packet);
 
 		if( packet.Command() == SB_COMMAND_JL_ACK )
-			return;
+			break;
 
 		if( packet.Command() != SB_COMMAND_JL_GET_DATA_ENTRY ) {
 			ThrowJLError("JavaLoader::SaveData", packet.Command());
 		}
 
-		// expected size of data in resonse packet
+		// expected size of data in response packet
 		unsigned int expect = packet.Size();
 
 		m_socket->Receive(response);
 		Protocol::CheckSize(response, SB_JLPACKET_HEADER_SIZE + expect);
 
-		output.write((const char *)response.GetData() + SB_JLPACKET_HEADER_SIZE, expect);
+		memcpy(buffer.GetBuffer() + offset,
+			response.GetData() + SB_JLPACKET_HEADER_SIZE,
+			expect);
+
+		offset += expect;
 	}
+
+	builder.WriteNextHeader(output, buffer.GetData(), total_size);
+	output.write((const char *)buffer.GetData(), total_size);
 }
 
 void JavaLoader::Save(const std::string &cod_name, std::ostream &output)
@@ -970,10 +981,14 @@ void JavaLoader::Save(const std::string &cod_name, std::ostream &output)
 	const uint16_t *end = begin + count;
 	vector<uint16_t> ids(begin, end);
 
+	CodFileBuilder builder(cod_name, count);
+
 	// save each block of data
 	for( size_t i = 0; i < count; i++ ) {
-		SaveData(packet, be_btohs(ids[i]), output);
+		SaveData(packet, be_btohs(ids[i]), builder, output);
 	}
+
+	builder.WriteFooter(output);
 }
 
 }} // namespace Barry::Mode

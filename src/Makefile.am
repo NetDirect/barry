@@ -155,7 +155,7 @@ libbarry_la_SOURCES = time.cc \
 	sha1.cc \
 	iconv.cc
 #libbarry_la_LIBADD = $(LTLIBOBJS) $(LIBUSB_LIBS) $(OPENSSL_LIBS)
-libbarry_la_LIBADD = $(LTLIBOBJS) $(LIBUSB_LIBS) @LTLIBICONV@
+libbarry_la_LIBADD = $(LTLIBOBJS) $(LIBUSB_LIBS) $(ZLIB_LIBS) @LTLIBICONV@
 libbarry_la_LDFLAGS = -version-info ${LIB_BARRY_VERSION}
 
 ##if DO_TEST

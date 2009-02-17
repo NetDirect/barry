@@ -67,6 +67,11 @@ PKG_CHECK_MODULES([FUSE], [fuse >= 2.5],
 	[echo "FUSE library not found, skipping fuse module."; FUSE_FOUND=0]
 	)
 
+PKG_CHECK_MODULES([ZLIB], [zlib],
+	[AC_DEFINE([HAVE_ZLIB], [1], [Use crc32 when generating packed .cod files])],
+	[echo "WARING: zlib not found... packed .cod files will fail crc checks"]
+	)
+
 pkgconfigdir=${libdir}/pkgconfig
 AC_SUBST(pkgconfigdir)
 
