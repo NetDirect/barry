@@ -45,11 +45,16 @@ extern "C" {
 	BXEXPORT int get_version(void);
 	static void *initialize(OSyncPlugin *plugin, OSyncPluginInfo *info, OSyncError **error);
 	static osync_bool discover(OSyncPluginInfo *info, void *userdata, OSyncError **error);
+
+	static void contact_get_changes(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncContext *ctx, osync_bool slow_sync, void *userdata);
+	static void contact_sync_done(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncContext *ctx, void *userdata);
+
+	static void event_get_changes(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncContext *ctx, osync_bool slow_sync, void *userdata);
+	static void event_sync_done(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncContext *ctx, void *userdata);
+
 	static void connect(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncContext *ctx, void *userdata);
-	static void get_changes(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncContext *ctx, osync_bool slow_sync, void *userdata);
-	static void commit_change(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncContext *ctx, OSyncChange *change, void *userdata);
-	static void sync_done(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncContext *ctx, void *userdata);
 	static void disconnect(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncContext *ctx, void *userdata);
+	static void commit_change(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncContext *ctx, OSyncChange *change, void *userdata);
 	static void finalize(void *userdata);
 	BXEXPORT osync_bool get_sync_info(OSyncPluginEnv *env, OSyncError **error);
 }
@@ -295,9 +300,9 @@ static bool barry_contact_initialize(DatabaseSyncState *env, OSyncPluginInfo *in
 
 	functions.connect = connect;
 	functions.disconnect = disconnect;
-	functions.get_changes = get_changes;
+	functions.get_changes = contact_get_changes;
 	functions.commit = commit_change; 
-	functions.sync_done = sync_done;
+	functions.sync_done = contact_sync_done;
 
 	OSyncPluginConfig *config = osync_plugin_info_get_config(info);
 	OSyncPluginResource *resource = osync_plugin_config_find_active_resource(config, "contact");
@@ -352,9 +357,9 @@ static bool barry_calendar_initialize(DatabaseSyncState *env, OSyncPluginInfo *i
 
 	functions.connect = connect;
 	functions.disconnect = disconnect;
-	functions.get_changes = get_changes;
+	functions.get_changes = event_get_changes;
 	functions.commit = commit_change; 
-	functions.sync_done = sync_done;
+	functions.sync_done = event_sync_done;
 
 	OSyncPluginConfig *config = osync_plugin_info_get_config(info);
 	OSyncPluginResource *resource = osync_plugin_config_find_active_resource(config, "event");
@@ -479,10 +484,25 @@ static void *initialize(OSyncPlugin *plugin, OSyncPluginInfo *info, OSyncError *
 			env->m_ContactsSync.m_Sync = false;
 		}
 	
-
 		return (void *) env;
 	}
+	// Don't let exceptions escape to the C modules
+	catch( std::bad_alloc &ba ) {
+		trace.log("bad alloc");
+
+//		osync_context_report_error(ctx, OSYNC_ERROR_INITIALIZATION,
+//			"Unable to allocate memory for controller: %s", ba.what());
+
+		delete env;
+
+		return NULL;
+	}
 	catch( std::exception &e ) {
+		trace.log("exception");
+
+//		osync_context_report_error(ctx, OSYNC_ERROR_INITIALIZATION,
+//			"%s", e.what());
+
 		delete env;
 
 		return NULL;
@@ -520,66 +540,78 @@ static void connect(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncContext 
 	Trace trace("connect");
 
 	try {
-
 		// Each time you get passed a context (which is used to track
 		// calls to your plugin) you can get the data your returned in
 		// initialize via this call:
 		BarryEnvironment *env = (BarryEnvironment *) userdata;
 
-		// Probe for available devices
-		Barry::Probe probe;
-		int nIndex = probe.FindActive(env->m_pin);
-		if( nIndex == -1 ) {
-			osync_context_report_error(ctx, OSYNC_ERROR_NO_CONNECTION, "Unable to find PIN %lx", env->m_pin);
-			return;
+		// I have to test if the device is already connected.
+		// Indeed, if I sync both contact and event, the connect function is called two times.
+		if (!env->isConnected()) {
+			// Probe for available devices
+			Barry::Probe probe;
+			int nIndex = probe.FindActive(env->m_pin);
+			if( nIndex == -1 ) {
+//				osync_context_report_error(ctx, OSYNC_ERROR_NO_CONNECTION, "Unable to find PIN %lx", env->m_pin);
+				return;
+			}
+			env->m_ProbeResult = probe.Get(nIndex);
+
+			trace.log("connecting...");
+
+			env->Connect(probe.Get(nIndex));
+
+			trace.log("connected !");
 		}
-		env->m_ProbeResult = probe.Get(nIndex);
-
-		trace.log("connecting...");
-
-		env->Connect(probe.Get(nIndex));
-
-		trace.log("connected !");
 
 		// Success!
 		osync_context_report_success(ctx);
+
+		trace.log("connect success");
 	}
 	// Don't let exceptions escape to the C modules
 	catch( std::bad_alloc &ba ) {
-		trace.log("bad alloc");
-
 		osync_context_report_error(ctx, OSYNC_ERROR_INITIALIZATION,
 			"Unable to allocate memory for controller: %s", ba.what());
 	}
 	catch( std::exception &e ) {
-		trace.log("exception");
-
 		osync_context_report_error(ctx, OSYNC_ERROR_INITIALIZATION,
 			"%s", e.what());
 	}
-
-	trace.log("exit connect");
 }
 
-static void get_changes(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncContext *ctx, osync_bool slow_sync, void *userdata)
+
+static void contact_get_changes(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncContext *ctx, osync_bool slow_sync, void *userdata)
 {
-	Trace trace("get_changeinfo");
+	Trace trace("contact_get_changeinfo");
 
 	try {
-
 		BarryEnvironment *env = (BarryEnvironment *) userdata;
 
-		if( env->m_CalendarSync.m_Sync ) {
-			GetChanges(info, ctx, env, &env->m_CalendarSync,
-				"Calendar", "event", "vevent20",
-				&VEventConverter::GetRecordData);
-		}
+		GetChanges(info, ctx, env, &env->m_ContactsSync,
+			"Address Book", "contact", "vcard30",
+			&VCardConverter::GetRecordData);
 
-		if( env->m_ContactsSync.m_Sync ) {
-			GetChanges(info, ctx, env, &env->m_ContactsSync,
-				"Address Book", "contact", "vcard30",
-				&VCardConverter::GetRecordData);
-		}
+		// Success!
+		osync_context_report_success(ctx);
+	}
+
+	// don't let exceptions escape to the C modules
+	catch( std::exception &e ) {
+		osync_context_report_error(ctx, OSYNC_ERROR_IO_ERROR, "%s", e.what());
+	}
+}
+
+static void event_get_changes(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncContext *ctx, osync_bool slow_sync, void *userdata)
+{
+	Trace trace("event_get_changeinfo");
+
+	try {
+		BarryEnvironment *env = (BarryEnvironment *) userdata;
+
+		GetChanges(info, ctx, env, &env->m_CalendarSync,
+			"Calendar", "event", "vevent20",
+			&VEventConverter::GetRecordData);
 
 		// Success!
 		osync_context_report_success(ctx);
@@ -589,6 +621,7 @@ static void get_changes(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncCont
 		osync_context_report_error(ctx, OSYNC_ERROR_IO_ERROR, "%s", e.what());
 	}
 }
+
 
 static void commit_change(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncContext *ctx, OSyncChange *change, void *userdata)
 {
@@ -719,13 +752,14 @@ static void commit_change(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncCo
 	}
 }
 
-static void sync_done(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncContext *ctx, void *userdata)
+
+static void contact_sync_done(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncContext *ctx, void *userdata)
 {
 	//
 	// This function will only be called if the sync was successfull
 	//
 
-	Trace trace("sync_done");
+	Trace trace("contact_sync_done");
 
 	try {
 
@@ -737,8 +771,7 @@ static void sync_done(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncContex
 		env->Reconnect();
 
 		// do cleanup for each database
-		if( FinishSync(ctx, env, &env->m_CalendarSync) &&
-		    FinishSync(ctx, env, &env->m_ContactsSync) )
+		if( FinishSync(ctx, env, &env->m_ContactsSync) )
 		{
 			// Success
 			osync_context_report_success(ctx);
@@ -750,23 +783,56 @@ static void sync_done(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncContex
 	}
 }
 
+
+static void event_sync_done(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncContext *ctx, void *userdata)
+{
+	//
+	// This function will only be called if the sync was successfull
+	//
+
+	Trace trace("event_sync_done");
+
+	try {
+
+		BarryEnvironment *env = (BarryEnvironment *) userdata;
+
+		// we reconnect to the device here, since dirty flags
+		// for records we've just touched do not show up until
+		// a disconnect... as far as I can tell.
+		env->Reconnect();
+
+		// do cleanup for each database
+		if( FinishSync(ctx, env, &env->m_CalendarSync) )
+		{
+			// Success
+			osync_context_report_success(ctx);
+		}
+
+	}
+	catch( std::exception &e ) {
+		osync_context_report_error(ctx, OSYNC_ERROR_IO_ERROR, "%s", e.what());
+	}
+}
+
+
 static void disconnect(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncContext *ctx, void *userdata)
 {
-	Trace trace("disconnect");
-
-	// Disconnect the controller, which closes our connection
-	BarryEnvironment *env = (BarryEnvironment *) userdata;
-	env->Disconnect();
+	Trace trace("contact_disconnect");
 
 	// Done!
 	osync_context_report_success(ctx);
 }
+
 
 static void finalize(void *userdata)
 {
 	Trace trace("finalize");
 
 	BarryEnvironment *env = (BarryEnvironment *) userdata;
+
+	// Disconnect the controller, which closes our connection
+	if (env->isConnected())
+		env->Disconnect();
 
 	delete env;
 }

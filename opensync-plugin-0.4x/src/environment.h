@@ -108,6 +108,7 @@ public:
 	void Connect(const Barry::ProbeResult &result);
 	void Reconnect();
 	void Disconnect();
+	bool isConnected();
 
 	DatabaseSyncState* GetSyncObject(OSyncChange *change);
 

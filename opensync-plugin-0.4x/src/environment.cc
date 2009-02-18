@@ -251,6 +251,14 @@ void BarryEnvironment::Disconnect()
 	m_pCon = 0;
 }
 
+bool BarryEnvironment::isConnected()
+{
+	if (m_pCon != 0)
+		return true;
+
+	return false;
+}
+
 void BarryEnvironment::ClearDirtyFlags(Barry::RecordStateTable &table,
 				const std::string &dbname)
 {
