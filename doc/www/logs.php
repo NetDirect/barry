@@ -43,13 +43,19 @@ in case you wish to get in touch with them.
 	</ul>
 
 	<ul>
+		<li><a href="kropf/deviceinfo.usb.gz">deviceinfo.usb.gz</a> - device info</li>
+		<li><a href="kropf/deviceinfo.txt">deviceinfo.txt</a> - output from device info command</li>
 		<li><a href="kropf/erase.usb.gz">erase.usb.gz</a> - erase module</li>
 		<li><a href="kropf/erase-error-inuse.usb.gz">erase-error-inuse.usb.gz</a> - attempt to erase module that is in use resulting in an error</li>
 		<li><a href="kropf/erase-inuse.usb.gz">erase-inuse.usb.gz</a> - forcefully erase module in use</li>
+		<li><a href="kropf/javaloader-reset.txt">javaloader-reset.txt</a> - annotated portion of the javaloader USB dump relating to device reset with descriptions of the various packets</li>
 		<li><a href="kropf/load.usb.gz">load.usb.gz</a> - load module</li>
 		<li><a href="kropf/load-inuse.usb.gz">load-inuse.usb.gz</a> - load and replace in use module</li>
 		<li><a href="kropf/save.usb.gz">save.usb.gz</a> - save module</li>
+		<li><a href="kropf/save-large.usb.gz">save-large.usb.gz</a> - save large module (107748 bytes) with siblings</li>
+		<li><a href="kropf/save-very-large.usb.gz">save-very-large.usb.gz</a> - save very large module (655796 bytes) with siblings</li>
 		<li><a href="kropf/eventlog.usb.gz">eventlog.usb.gz</a> - dump eventlog</li>
+		<li><a href="kropf/eventlog-with-exception.usb.gz">eventlog-with-exception.usb.gz</a> - dump eventlog that contains an uncaught exception</li>
 		<li><a href="kropf/cleareventlog.usb.gz">cleareventlog.usb.gz</a> - clear eventlog</li>
 		<li><a href="kropf/screenshot.usb.gz">screenshot.usb.gz</a> - save screenshot as bmp</li>
 	</ul>

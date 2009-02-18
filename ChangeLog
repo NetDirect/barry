@@ -1,5 +1,7 @@
 Release: version 0.15 - 2009/01/??
 ------------------------------------------------------------------------------
+2009/02/18
+	- updated USB capture logs archive page with new logs from Josh Kropf
 2009/02/17
 	- applied Josh Kropf's patch adding support for forced erase and
 		load while module in use, properly handling when the
