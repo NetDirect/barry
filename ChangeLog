@@ -1,5 +1,9 @@
 Release: version 0.15 - 2009/01/??
 ------------------------------------------------------------------------------
+2009/02/17
+	- applied Josh Kropf's patch adding support for forced erase and
+		load while module in use, properly handling when the
+		device requests a reset
 2009/02/15
 	- applied Nicolas Vivien's RecordId patch for Contact class...
 		this updates Barry to deal with the new record ID behaviour
