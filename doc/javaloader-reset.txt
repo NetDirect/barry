@@ -1,0 +1,88 @@
+>>> Send packet
+<<< Receive packet
+
+The following series of packets occur after SB_COMMAND_CLOSE_SOCKET when
+either loading or forcefully erasing a module that is in use (busy).  This
+sequence is strikingly similar to the one used by cfp.exe utility when it
+resets the handheld.  It also resembles the sequence used to probe for
+devices.
+
+The entire sequence is actually not necessary.  The final packet is the
+only one required to cause the device to reset.  However, this document
+helps to serve as documentation for several previously unknown packets.
+
+The meaning of several packets was discovered by analyzing the debug
+logs created by RIM's own USB driver on windows.  Debug logging is turned
+on by setting two registry keys.
+
+>>> 00000000: 00 00 10 00 01 ff 00 03 bb 35 2d b9 01 00 00 00  .........5-.....
+              ^^^^^ socket number
+                    ^^^^^ size of packet
+                          ^^ echo command
+                             this looks to be a simple echo command
+                             ^^^^^ SB_MODE_REQUEST_SOCKET in barry
+                                   ^^ socket sequence
+                                      ^^^^^^^^^^^^^^^^^^^^^^^
+                                      these 8 bytes seem to always increase with
+                                      each execution of javaloader... if the
+                                      value is interpreted as a time span in
+                                      microseconds it is very close to the
+                                      duration since system startup
+<<< 00000000: 00 00 10 00 02 ff 00 03 bb 35 2d b9 01 00 00 00  .........5-.....
+                          ^^ echo response
+
+
+>>> 00000000: 00 00 0c 00 05 ff 00 04 14 00 01 00              ............
+                          ^^ fetch attribute
+                             ^^^^^ SB_MODE_REQUEST_SOCKET
+                                   ^^ socket sequence
+                                      ^^^^^ SB_OBJECT_INITIAL_UNKNOWN
+                                            ^^^^^ SB_ATTR_INITIAL_UNKNOWN
+<<< 00000000: 00 00 20 00 06 ff 00 04 14 00 01 00 3c 41 30 3e  .. .........<A0>
+                                                  ^^ begin 20 byte device GUID
+<<< 00000010: 1e 47 24 0d 99 92 3f b1 38 d6 a3 6e 75 cd c9 d7  .G$...?.8..nu...
+
+
+>>> 00000000: 00 00 0c 00 05 ff 00 05 08 00 04 00              ............
+                                      ^^^^^ SB_OBJECT_PROFILE
+                                            ^^^^^ SB_ATTR_PROFILE_PIN (Network and PPIN?)
+<<< 00000000: 00 00 14 00 06 ff 00 05 08 00 04 00 03 00 00 00  ................
+<<< 00000010: 2e 36 61 20                                      .6a 
+
+
+>>> 00000000: 00 00 0c 00 05 ff 00 06 04 00 05 00              ............
+                                      ^^^^^ SB_OBJECT_SOCKET_UNKNOWN
+                                            ^^^^^ unknown (Emulator ID?)
+<<< 00000000: 00 00 0c 00 06 ff 00 06 00 00 00 00              ............
+
+
+>>> 00000000: 00 00 0c 00 05 ff 00 07 04 00 06 00              ............
+                                      ^^^^^ SB_OBJECT_SOCKET_UNKNOWN
+                                            ^^^^^ unknown (USB Serial Interface Version?)
+<<< 00000000: 00 00 0c 00 06 ff 00 07 00 00 00 00              ............
+
+
+>>> 00000000: 00 00 0c 00 05 ff 00 08 04 00 07 00              ............
+                                      ^^^^^ SB_OBJECT_SOCKET_UNKNOWN
+                                            ^^^^^ unknown (MUX Version Successful)
+<<< 00000000: 00 00 10 00 06 ff 00 08 04 00 07 00 00 02 00 00  ................
+                                                  ^^^^^^^^^^^ MUX version = 200
+
+
+>>> 00000000: 00 00 0c 00 05 ff 00 09 04 00 08 00              ............
+                                      ^^^^^ SB_OBJECT_SOCKET_UNKNOWN
+                                            ^^^^^ unknown (EVDO Modem Version?)
+<<< 00000000: 00 00 0c 00 06 ff 00 09 00 00 00 00              ............
+
+
+>>> 00000000: 00 00 0c 00 05 ff 00 0a 04 00 0a 00              ............
+                                      ^^^^^ SB_OBJECT_SOCKET_UNKNOWN
+                                            ^^^^^ unknown (ESN?)
+<<< 00000000: 00 00 0c 00 06 ff 00 0a 00 00 00 00              ............
+
+
+>>> 00000000: 00 00 08 00 03 ff 00 0b                          ........
+                          ^^ reset command
+<<< 00000000: 00 00 08 00 04 ff 00 0b                          ........
+                          ^^ reset response
+
