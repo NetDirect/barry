@@ -196,7 +196,7 @@ void CodFileBuilder::WriteFooter(std::ostream &output)
 
 	end.this_disk_entry_count = htobs(m_current_module);
 	end.total_entry_count = htobs(m_current_module);
-	end.directory_length = m_directory.str().length();
+	end.directory_length = htobl(m_directory.str().length());
 
 	// current stream pointer is relative offset to start of directory
 	end.directory_offset = output.tellp();
