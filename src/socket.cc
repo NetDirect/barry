@@ -752,12 +752,8 @@ void Socket::PacketData(Data &send, Data &receive, int timeout)
 				done = true;
 				break;
 
-			case SB_DATA_JL_INVALID: {
-				std::ostringstream oss;
-				oss << "Your Java application has been refused by your device !";
-				eout(oss.str());
-				throw Error(oss.str());
-				}
+			case SB_DATA_JL_INVALID:
+				throw Error("file is not a valid Java code file");
 				break;
 
 			default:
