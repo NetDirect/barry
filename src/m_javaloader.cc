@@ -377,52 +377,21 @@ void JavaLoader::RetryPassword(const char *password)
 // These commands are sent to prepare the data stream
 void JavaLoader::StartStream()
 {
-	// 1°/
-	char rawCommand1[] = { 4, 0, 0x08, 0, 0x64, 0, 0, 0 };
-	*((uint16_t*) rawCommand1) = htobs(m_socket->GetSocket());
+	Data cmd(-1, 8), data(-1, 8), response;
+	JLPacket packet(cmd, data, response);
 
-	Data command1(rawCommand1, sizeof(rawCommand1));
-	Data response;
+	packet.Hello();
+	m_socket->Packet(packet);
 
-	try {
-		m_socket->PacketData(command1, response);
-	}
-	catch( Usb::Error & ) {
-		eout("JavaLoader: command1 error");
-		eeout(command1, response);
-		throw;
+	if( packet.Command() != SB_COMMAND_JL_HELLO_ACK ) {
+		ThrowJLError("JavaLoader::StartStream Hello", packet.Command());
 	}
 
-	// 2°/
-	char rawCommand2[] = { 4, 0, 0x08, 0, 0x70, 0, 0x01, 0 };
-	*((uint16_t*) rawCommand2) = htobs(m_socket->GetSocket());
+	packet.SetUnknown1();
+	m_socket->Packet(packet);
 
-	Data command2(rawCommand2, sizeof(rawCommand2));
-
-	try {
-		m_socket->SetSequencePacket(false);
-		m_socket->PacketData(command2, response);
-		m_socket->SetSequencePacket(true);
-	}
-	catch( Usb::Error & ) {
-		eout("JavaLoader: command2 error");
-		eeout(command2, response);
-		throw;
-	}
-
-	// 3°/
-	char rawCommand3[] = { 4, 0, 0x05, 0, 0 };
-	*((uint16_t*) rawCommand3) = htobs(m_socket->GetSocket());
-
-	Data command3(rawCommand3, sizeof(rawCommand3));
-
-	try {
-		m_socket->PacketData(command3, response);
-	}
-	catch( Usb::Error & ) {
-		eout("JavaLoader: command3 error");
-		eeout(command1, response);
-		throw;
+	if( packet.Command() != SB_COMMAND_JL_ACK ) {
+		ThrowJLError("JavaLoader::StartStream Unknown1", packet.Command());
 	}
 
 	m_StreamStarted = true;
