@@ -138,6 +138,21 @@ There is a tutorial there, describing how to configure VMWare to log USB
 traffic, and how to make use of those logs with vusb-analyzer.
 
 
+Capturing: The RIM way
+----------------------
+
+It was reported on the mailing list that it is possible to add the
+following entries to the Windows Registry to cause RIM's software
+to create verbose logs in your temp directory.  Apparently this also
+enables sniffing the communication with the BlackBerry simulator.
+
+Windows Registry Editor Version 5.00
+
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\RimUsb\Parameters]
+"FileDump"=dword:00000001
+"ServiceDebug"=dword:ffffffff
+
+
 
 Happy Hacking!
 
