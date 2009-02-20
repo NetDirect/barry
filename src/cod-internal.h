@@ -5,6 +5,7 @@
 
 /*
     Copyright (C) 2008-2009, Nicolas VIVIEN
+    Copyright (C) 2009, Josh Kropf
     See also:
         http://drbolsen.wordpress.com/2006/07/26/blackberry-cod-file-format/
         http://drbolsen.wordpress.com/2006/08/11/10/
@@ -31,6 +32,8 @@
 #include <stdint.h>
 #include <sys/types.h>
 
+#define CODFILE_TYPE_SIMPLE	{0xDE, 0xC0}
+#define CODFILE_TYPE_PKZIP	{0x50, 0x4B}
 #define PKZIP_LOCAL_FILE_SIG	{0x50, 0x4B, 0x03, 0x04}
 #define PKZIP_DIRECTORY_SIG	{0x50, 0x4B, 0x01, 0x02}
 #define PKZIP_END_DIRECTORY_SIG	{0x50, 0x4B, 0x05, 0x06}

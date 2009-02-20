@@ -6,6 +6,7 @@
 /*
     Copyright (C) 2009, Net Direct Inc. (http://www.netdirect.ca/)
     Copyright (C) 2008-2009, Nicolas VIVIEN
+    Copyright (C) 2009, Josh Kropf
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -42,6 +43,8 @@ namespace Barry {
 
 size_t SeekNextCod(std::istream &input)
 {
+	char codtype_simple[] = CODFILE_TYPE_SIMPLE;
+	char codtype_pkzip[] = CODFILE_TYPE_PKZIP;
 	char local_file_sig[] = PKZIP_LOCAL_FILE_SIG;
 	char directory_sig[] = PKZIP_DIRECTORY_SIG;
 
@@ -57,26 +60,29 @@ size_t SeekNextCod(std::istream &input)
 		throw Error("SeekNextCod: EOF while reading file signature");
 	}
 
-	if( memcmp(signature, local_file_sig, sizeof(signature)) == 0 ) {
-		pkzip_local_header_t header;
+	if( memcmp(signature, codtype_pkzip, sizeof(codtype_pkzip)) == 0 ) {
 
-		if( input.read((char *)&header, sizeof(pkzip_local_header_t)).eof() ) {
-			throw Error("SeekNextCod: EOF while reading PKZIP header");
+		if( memcmp(signature, local_file_sig, sizeof(signature)) == 0 ) {
+			pkzip_local_header_t header;
+
+			if( input.read((char *)&header, sizeof(pkzip_local_header_t)).eof() ) {
+				throw Error("SeekNextCod: EOF while reading PKZIP header");
+			}
+
+			// skip cod file name and extra field, we don't need them
+			size_t skip_len = header.file_name_length + header.extra_field_length;
+			if( input.ignore(skip_len).eof() ) {
+				throw Error("SeekNextCod: EOF while skipping unused fields");
+			}
+
+			return btohl(header.compressed_size);
 		}
-
-		// skip cod file name and extra field, we don't need them
-		size_t skip_len = header.file_name_length + header.extra_field_length;
-		if( input.ignore(skip_len).eof() ) {
-			throw Error("SeekNextCod: EOF while skipping unused fields");
+		else if( memcmp(signature, directory_sig, sizeof(signature)) == 0 ) {
+			// done reading when central directory is reached
+			return 0;
 		}
-
-		return btohl(header.compressed_size);
 	}
-	else if( memcmp(signature, directory_sig, sizeof(signature)) == 0 ) {
-		// done reading when central directory is reached
-		return 0;
-	}
-	else {
+	else if( memcmp(signature, codtype_simple, sizeof(codtype_simple)) == 0 ) {
 		// find and return size of cod file
 		if( input.seekg(0, ios::end).fail() ) {
 			throw Error("SeekNextCod: seek to end failed");
@@ -90,6 +96,11 @@ size_t SeekNextCod(std::istream &input)
 
 		return size;
 	}
+	else {
+		throw Error("SeekNextCod: unknown COD file signature");
+	}
+
+	return 0;
 }
 
 
@@ -188,8 +199,6 @@ void CodFileBuilder::WriteFooter(std::ostream &output)
 		return;
 	}
 
-	char sig[] = PKZIP_END_DIRECTORY_SIG;
-
 	pkzip_end_directory_t end;
 	memset(&end, 0, sizeof(pkzip_end_directory_t));
 
@@ -199,6 +208,8 @@ void CodFileBuilder::WriteFooter(std::ostream &output)
 
 	// current stream pointer is relative offset to start of directory
 	end.directory_offset = output.tellp();
+
+	char sig[] = PKZIP_END_DIRECTORY_SIG;
 
 	output.write(m_directory.str().data(), m_directory.str().length());
 	output.write(sig, sizeof(sig));
