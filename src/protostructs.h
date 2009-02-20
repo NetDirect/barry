@@ -700,8 +700,8 @@ struct Packet
 
 
 // maximum sizes
-#define MAX_PACKET_SIZE				0x400	// anything beyond this needs to be fragmented
-#define MAX_PACKET_DATA_SIZE		0x7FF	// for data packet (JavaLoader)
+#define MAX_PACKET_SIZE			0x400	// anything beyond this needs to be fragmented
+#define MAX_PACKET_DATA_SIZE		0x7FC	// for data packet (JavaLoader)
 
 /////////////////////////////////////////////////////////////////////////////
 //

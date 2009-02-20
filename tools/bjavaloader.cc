@@ -138,8 +138,8 @@ void SetTime(Barry::Mode::JavaLoader *javaloader, const char *timestr)
 
 void SendAppFile(Barry::Mode::JavaLoader *javaloader, const char *filename)
 {
-	CodFile cf(filename);
-	javaloader->LoadApp(cf);
+	ifstream file(filename);
+	javaloader->LoadApp(file);
 }
 
 void GetScreenshot(Barry::Mode::JavaLoader *javaloader, const char *filename)

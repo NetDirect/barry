@@ -648,5 +648,11 @@ int JLPacket::SaveModule(uint16_t id)
 	return BigEndianData(id);
 }
 
+int JLPacket::PutData(const void *data, uint16_t size)
+{
+	SimpleCmd(SB_COMMAND_JL_SEND_DATA, 0, size);
+	return SimpleData(data, size);
+}
+
 } // namespace Barry
 

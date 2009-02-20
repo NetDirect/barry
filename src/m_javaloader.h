@@ -213,8 +213,8 @@ public:
 	bool StopStream();
 
 	// mid-stream operations
-	void SendStream(const unsigned char *buffer, int size);
-	void LoadApp(Barry::CodFile &cod);
+	void SendStream(std::istream &input, size_t module_size);
+	void LoadApp(std::istream &input);
 	void SetTime(time_t when);
 	void GetDirectory(JLDirectory &dir, bool include_subdirs);
 	void GetScreenshot(JLScreenInfo &info, Data &image);

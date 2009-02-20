@@ -428,108 +428,47 @@ void JavaLoader::StartStream()
 //   0000003C   00 00 00 00  00 00 00 0F  10 34 45 00  00 00 00 00  00 00 00 21  .........4E........!
 //   00000050   00 FF FF FF  FF FF FF FF  FF FF FF 4E  00 9C 08 68  C5 00 00 F0  ...........N...h....
 //   00000064   B8 BC C0 A1  C0 14 00 81  00 00 01 01  04 0E 3F 6D  00 02 00 6D  ..............?m...m
-void JavaLoader::SendStream(const unsigned char *buffer, int buffsize)
+void JavaLoader::SendStream(std::istream &input, size_t module_size)
 {
-	int bytesent = 0;
+	char buffer[MAX_PACKET_DATA_SIZE - SB_JLPACKET_HEADER_SIZE];
+	size_t max_data_size = sizeof(buffer);
 
-	unsigned char rawCommand6[] = { 4, 0, 0x08, 0, 0x68, 0, 0xf8, 0x07 };
+	size_t remaining = module_size;
 
+	Data cmd(-1, 8), data(-1, 8), response;
+	JLPacket packet(cmd, data, response);
 
-	// 4°/
-	char rawCommand4[] = { 4, 0, 0x08, 0, 0x67, 0x01, 0x04, 0 };
-	*((uint16_t*) rawCommand4) = htobs(m_socket->GetSocket());
+	packet.SetCodSize(module_size);
+	m_socket->Packet(packet);
 
-	Data command4(rawCommand4, sizeof(rawCommand4));
-	Data response;
-
-	try {
-		m_socket->SetSequencePacket(false);
-		m_socket->PacketData(command4, response);
-		m_socket->SetSequencePacket(true);
-	}
-	catch( Usb::Error & ) {
-		eout("JavaLoader: command4 error");
-		eeout(command4, response);
-		throw;
+	if( packet.Command() != SB_COMMAND_JL_ACK ) {
+		ThrowJLError("JavaLoader::SendStream set code size", packet.Command());
 	}
 
-	// 5°/
-	char rawCommand5[] = { 4, 0, 0x08, 0, 0, 0, 0x00, 0x00 };
-	*((uint16_t*) rawCommand5) = htobs(m_socket->GetSocket());
-	*(((uint32_t*) rawCommand5) + 1) = be_htobl(buffsize);
+	while( remaining > 0 ) {
+		size_t size = min(remaining, max_data_size);
 
-	Data command5(rawCommand5, sizeof(rawCommand5));
-
-	try {
-		m_socket->PacketData(command5, response);
-	}
-	catch( Usb::Error & ) {
-		eout("JavaLoader: command5 error");
-		eeout(command5, response);
-		throw;
-	}
-
-
-	// Read the buffer...
-	while (bytesent < buffsize) {
-		// Read data buffer
-		int size;
-
-		if (buffsize - bytesent > 0x7f8)
-			size = 0x7f8;
-		else
-			size = buffsize - bytesent;
-
-		char rawCommand7[0x7f8 + 4];
-		memcpy(&rawCommand7[4], buffer, size);
-
-
-		// 1st packet
-		//------------
-		// Packet Header
-		*((uint16_t*) rawCommand6) = htobs(m_socket->GetSocket());
-		*(((uint16_t*) rawCommand6) + 3) = htobs(size);
-
-		Data command6(rawCommand6, sizeof(rawCommand6));
-
-		try {
-			m_socket->SetSequencePacket(false);
-			m_socket->PacketData(command6, response);
-			m_socket->SetSequencePacket(true);
-		}
-		catch( Usb::Error & ) {
-			eout("JavaLoader: command6 error");
-			eeout(command6, response);
-			throw;
+		input.read(buffer, size);
+		if( input.fail() || input.gcount() != size ) {
+			throw Error("JavaLoader::SendStream input stream read failed");
 		}
 
-		// 2nd packet
-		//------------
-		// Packet data
-		*((uint16_t*) rawCommand7) = htobs(m_socket->GetSocket());
-		*(((uint16_t*) rawCommand7) + 1) = htobs(size + 4);
+		packet.PutData(buffer, size);
+		m_socket->Packet(packet);
 
-		Data command7(rawCommand7, size + 4);
-
-		try {
-			m_socket->PacketData(command7, response);
-		}
-		catch( Usb::Error & ) {
-			eout("JavaLoader: command7 error");
-			eeout(command7, response);
-			throw;
+		if( packet.Command() != SB_COMMAND_JL_ACK ) {
+			ThrowJLError("JavaLoader::SendStream send data", packet.Command());
 		}
 
-		// Next...
-		bytesent += size;
-		buffer += size;
+		remaining -= size;
 	}
 }
 
-void JavaLoader::LoadApp(CodFile &cod)
+void JavaLoader::LoadApp(std::istream &input)
 {
-	while( cod.ReadNext() ) {
-		SendStream(cod.GetBlock().GetData(), cod.GetBlock().GetSize());
+	uint32_t module_size;
+	while( (module_size = SeekNextCod(input)) != 0 ) {
+		SendStream(input, module_size);
 	}
 }
 

@@ -25,12 +25,8 @@
 #include "dll.h"
 #include "data.h"
 #include <sys/types.h>
-#include <stdio.h>
 #include <iostream>
 #include <sstream>
-
-#define CODFILE_TYPE_PACKED	0x4B50
-#define CODFILE_TYPE_SIMPLE	0xC0DE
 
 namespace Barry {
 
@@ -49,7 +45,7 @@ namespace Barry {
 ///
 /// \return size of next packed .cod file, or 0 finished reading .cod files
 ///
-uint32_t SeekNextCod(std::istream &input);
+size_t SeekNextCod(std::istream &input);
 
 
 ///
@@ -91,28 +87,6 @@ public:
 	/// \param output stream to write to
 	///
 	void WriteFooter(std::ostream &output);
-};
-
-class BXEXPORT CodFile
-{
-	FILE *m_fp;
-	off_t m_filesize;
-	Data m_header;
-	Data m_block;
-
-public:
-	explicit CodFile(const char *filename);
-	~CodFile();
-
-	/// Returns true if block successfully read
-	bool ReadNext();
-
-	//
-	// Access current block
-	//
-	uint16_t GetType() const;
-	const Data& GetHeader()		{ return m_header; }
-	const Data& GetBlock()		{ return m_block; }
 };
 
 }
