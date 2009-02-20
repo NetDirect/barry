@@ -1,0 +1,52 @@
+Date: Thu, 28 Sep 2006 20:40:13 -0500
+From: Ron Gage <ron@rongage.org>
+User-Agent: Thunderbird 1.5.0.7 (X11/20060909)
+To: barry-devel-bounces@lists.sourceforge.net
+Subject: Partial decoding autotext database
+
+Just picking on the low hanging fruit...
+
+This is an autotext entry that translates 'eyt' with yet using AutoCase,
+english language...
+
+   00000000: 06 00 32 00 40 03 44 02 6d 00 c2 1a e1 72 01 04  ..2.@.D.m....r..
+   00000010: 00 01 65 79 74 00 04 00 02 79 65 74 00 04 00 04  ..eyt....yet....
+   00000020: 00 00 00 00 04 00 05 00 00 00 00 04 00 06 00 00  ................
+   00000030: 6e 65                                            ne
+
+Same database with AutoCase changed to Specified Case:
+
+   00000000: 06 00 32 00 40 03 44 02 6c 00 64 02 66 18 01 04  ..2.@.D.l.d.f...
+   00000010: 00 01 65 79 74 00 04 00 02 79 65 74 00 04 00 04  ..eyt....yet....
+   00000020: 00 00 00 00 04 00 05 01 00 00 00 04 00 06 00 00  ................
+   00000030: 6e 65                                            ne
+
+From here, we can see field type 1 is the "from" entry, field 2 is the
+"to" entry, don't know about field 4 yet or field 6, but field 5
+represents the AutoCase option (1 == on).
+
+Field type 4 is the language field - 0xffffffff == All Locales, 0x0 ==
+English.  Field type 6 appears to be a locale modifier in byte-reversed
+order.  This shows the language record set to "English(US)".
+
+   00000000: 06 00 32 00 40 03 44 02 6c 00 66 02 66 18 01 04  ..2.@.D.l.f.f...
+   00000010: 00 01 65 79 74 00 04 00 02 79 65 74 00 04 00 04  ..eyt....yet....
+   00000020: 00 00 00 00 04 00 05 01 00 00 00 04 00 06 53 55  ..............SU
+   00000030: 6e 65                                            ne
+
+The last 2 characters are part of the locale definition - giving a
+locale string of US-en.
+
+Note that when the language (field 4) is set to "All Locales", field 6
+is entirely null:
+
+   00000000: 06 00 36 00 40 03 44 02 03 00 6f 1a e1 72 01 06  ..6.@.D...o..r..
+   00000010: 00 01 68 74 74 70 73 00 06 00 02 68 74 74 70 73  ..https....https
+   00000020: 00 04 00 04 ff ff ff ff 04 00 05 01 00 00 00 04  ................
+   00000030: 00 06 00 00 00 00                                ......
+
+
+That's it for tonight - got other things to do for the night.
+
+Ron Gage
+

@@ -1,0 +1,140 @@
+These messages come from these threads:
+http://sourceforge.net/mailarchive/forum.php?thread_name=20060610014753.GB27404%40foursquare.net&forum_name=barry-devel
+http://sourceforge.net/mailarchive/forum.php?thread_name=20060616183827.GA31426%40foursquare.net&forum_name=barry-devel
+
+
+
+From: ron@rongage.org
+To: barry-devel@lists.sourceforge.net
+Date: Thu, 15 Jun 2006 15:52:18 -0400
+Subject: Re: Service Book parser
+
+Quoting Chris Frey <cdfrey@foursquare.net>:
+
+> On Fri, Jun 09, 2006 at 10:29:57PM -0400, Ron Gage wrote:
+>>         Type: 0xa3 Data:
+>>     00000000: 4e 00 00 00                                      N...
+>> Corresponds to User ID
+>
+> Is this a string that you entered?  My test blackberry doesn't show 
+> this type.
+
+
+The UserID is now confirmed to be an index value into the SQL database.  This
+value directly corresponds to the ID field in the UserConfig table on the
+BesMGNT database.
+
+More later - the UserConfig table appears to be the big one - where the crypt
+keys are kept amongst other things.  Digging deeper...
+
+Ron
+
+From: ron@rongage.org
+To: barry-devel@lists.sourceforge.net
+Date: Thu, 15 Jun 2006 15:31:03 -0400
+Subject: Re: Service Book parser
+
+Quoting Chris Frey <cdfrey@foursquare.net>:
+
+> On Fri, Jun 09, 2006 at 10:29:57PM -0400, Ron Gage wrote:
+>> Haven't had much chance to correlate this to all the Service Books yet -
+>> it IS getting late here...
+>>
+>> I have partially decoded the Desktop[CICAL] Service Book:
+>
+> Thanks!
+>
+> Btw, What is a DSID?
+>
+Not sure at this point.  Possibly crypt related.  Just reporting what
+is on the
+screen of my 7290.
+
+
+>
+>>         Type: 0xa3 Data:
+>>     00000000: 4e 00 00 00                                      N...
+>> Corresponds to User ID
+>
+> Is this a string that you entered?  My test blackberry doesn't show 
+> this type.
+
+Probably related to the user id index on the BES server.  UserID on the
+service
+book page is a straight forward integer.
+
+>
+>
+>>         Type: 0x6 Data:
+>>     00000000: 53 30 30 30 30 30 30 30                          S0000000
+>> Corresponds to UID - aka the SRP of the BES server
+>
+> On my test device, this shows as "ff ff ff ff" in all records.
+>
+>
+Is your test device registered with a BES server or with BB's internet
+service?
+
+Ron
+
+
+From: ron@rongage.org
+To: barry-devel@lists.sourceforge.net
+Date: Fri, 16 Jun 2006 15:51:26 -0400
+Subject: Re: more ServiceBook parsing
+
+Quoting Chris Frey <cdfrey@foursquare.net>:
+
+> Hi,
+>
+> I've committed some more code to CVS to parse the service book fields.  I've
+> tested this against a 72xx device and an 8700r, and the type codes for
+> similar fields are different.
+>
+> I just noticed that the large "type 0x9" field has more variable length
+> fields inside it.  I'll have to parse that out as well.
+>
+> - Chris
+>
+Even more on the 0xa field...
+
+On my BES server, with probably 2-3 exceptions, all users have this same value
+in bytes 4-12 of the CurrentKey field.
+
+A capabilities field perchance?
+
+
+
+From: ron@rongage.org
+To: barry-devel@lists.sourceforge.net
+Date: Fri, 16 Jun 2006 15:30:29 -0400
+Subject: Re: more ServiceBook parsing
+
+Quoting Chris Frey <cdfrey@foursquare.net>:
+
+> Hi,
+>
+> I've committed some more code to CVS to parse the service book fields.  I've
+> tested this against a 72xx device and an 8700r, and the type codes for
+> similar fields are different.
+>
+> I just noticed that the large "type 0x9" field has more variable length
+> fields inside it.  I'll have to parse that out as well.
+>
+> - Chris
+>
+>
+More on the significance of the 0xc data type (it's nice to have access
+to a BES
+server, with credentials to the SQL database...)
+
+In the BesMGMT database, in the UserConfig table, there is a column (type
+varbinary[72]) called CurrentKey.  The value in the 0xc data type corresponds
+directly to bytes 4 through 12 of this CurrentKey value.
+
+Data type 0xa3 is listed on the handheld as "UserID" - this value directly
+corresponds to the "ID" index value in the UserConfig table of the BesMGMT
+database on the BES server.
+
+Ron
+
