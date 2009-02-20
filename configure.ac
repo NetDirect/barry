@@ -69,7 +69,9 @@ PKG_CHECK_MODULES([FUSE], [fuse >= 2.5],
 
 PKG_CHECK_MODULES([ZLIB], [zlib],
 	[AC_DEFINE([HAVE_ZLIB], [1], [Use crc32 when generating packed .cod files])],
-	[echo "WARING: zlib not found... packed .cod files will fail crc checks"]
+	[echo "*****************************************************************"
+	echo "WARNING: zlib not found... packed .cod files will fail crc checks"]
+	echo "*****************************************************************"
 	)
 
 pkgconfigdir=${libdir}/pkgconfig
