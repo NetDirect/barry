@@ -4,6 +4,17 @@ Release: version 0.15 - 2009/01/??
 	- clarified bjavaloader save behaviour
 	- updated bjavaloader man page
 	- added maintainer/build as exception for test/buildtest.sh
+	- merge opensync-0.4x branch into master:
+		2009/02/20
+			- removed nested m4 in preparation for merge into
+			  main Barry tree
+		2009/02/18
+			- applied Nicolas Vivien's opensync-0.4x
+			  Calendar+Contact patch
+		2009/02/01
+			- applied Nicolas Vivien's opensync-0.4x
+			  porting update patch
+	- removed unneeded ChangeLog.osync
 2009/02/19
 	- pulled from Josh Kropf: 9b63a99867b3314b8d42212cac05a6f28860d37b
 		- saving large modules in pkzip format
