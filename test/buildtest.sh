@@ -79,7 +79,7 @@ echo "Using opensync rootdir: $OSYNCROOTDIR"
 mkdir -p build/barry
 (tar -C .. --exclude=CVS --exclude=.git --exclude=test/build -cf - . | \
 	tar -C build/barry -xf -)
-diff -ruN --exclude=CVS --exclude=.git --exclude=test .. build/barry
+diff -ruN --exclude=CVS --exclude=.git --exclude=test --exclude=build .. build/barry
 
 
 
@@ -152,7 +152,7 @@ make distclean
 #
 ./buildgen.sh cleanall
 cd "$BASEPATH"
-diff -ruN --exclude=CVS --exclude=.git --exclude=test .. build/barry
+diff -ruN --exclude=CVS --exclude=.git --exclude=test --exclude=build .. build/barry
 cd build/barry
 
 
