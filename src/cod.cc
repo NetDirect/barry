@@ -77,11 +77,7 @@ size_t SeekNextCod(std::istream &input)
 		return 0;
 	}
 	else {
-		// stream does not contain packed cod files, unget the 4 bytes
-		for( unsigned int i=0; i<sizeof(signature); ++i ) input.unget();
-
 		// find and return size of cod file
-
 		if( input.seekg(0, ios::end).fail() ) {
 			throw Error("SeekNextCod: seek to end failed");
 		}
