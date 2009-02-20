@@ -35,7 +35,6 @@ namespace Barry {
 class Parser;
 class Builder;
 class Controller;
-class CodFile;
 class CodFileBuilder;
 
 class JLDirectoryEntry;
