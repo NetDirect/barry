@@ -829,15 +829,17 @@ void JavaLoader::SaveData(JLPacket &packet, uint16_t id, CodFileBuilder &builder
 		m_socket->Receive(response);
 		Protocol::CheckSize(response, SB_JLPACKET_HEADER_SIZE + expect);
 
-		memcpy(buffer.GetBuffer() + offset,
+		memcpy(buffer.GetBuffer(offset + expect) + offset,
 			response.GetData() + SB_JLPACKET_HEADER_SIZE,
 			expect);
 
 		offset += expect;
 	}
 
-	builder.WriteNextHeader(output, buffer.GetData(), total_size);
-	output.write((const char *)buffer.GetData(), total_size);
+	buffer.ReleaseBuffer(offset);
+
+	builder.WriteNextHeader(output, buffer.GetData(), buffer.GetSize());
+	output.write((const char *)buffer.GetData(), buffer.GetSize());
 }
 
 void JavaLoader::Save(const std::string &cod_name, std::ostream &output)
