@@ -67,13 +67,6 @@ PKG_CHECK_MODULES([FUSE], [fuse >= 2.5],
 	[echo "FUSE library not found, skipping fuse module."; FUSE_FOUND=0]
 	)
 
-PKG_CHECK_MODULES([ZLIB], [zlib],
-	[AC_DEFINE([HAVE_ZLIB], [1], [Use crc32 when generating packed .cod files])],
-	[echo "*****************************************************************"
-	echo "WARNING: zlib not found... packed .cod files will fail crc checks"]
-	echo "*****************************************************************"
-	)
-
 pkgconfigdir=${libdir}/pkgconfig
 AC_SUBST(pkgconfigdir)
 
@@ -87,8 +80,30 @@ AM_CONDITIONAL([WITH_BOOST_PATHS], [test -n "$BOOST_LIB_PATH"])
 AM_CONDITIONAL([WITH_FUSE], [test "$FUSE_FOUND" = "1"])
 
 #AC_CHECK_LIB([IOKit], [main])
-AC_CHECK_LIB([pthread], [main])
 #AC_CHECK_LIB([libusb], [libusb_init])
+AC_CHECK_LIB([pthread], [main])
+
+AC_ARG_WITH(zlib,
+	AC_HELP_STRING(--with-zlib, [force usage of zlib, and halt if not available]),
+	force_zlib=$withval, force_zlib=no )
+
+AC_CHECK_LIB([z], [crc32],
+	[
+		AC_DEFINE([HAVE_ZLIB], [1], [Use crc32 when generating packed .cod files])
+		AC_ARG_VAR([ZLIB_LIBS], [Linker options for zlib])
+		ZLIB_LIBS="-lz"
+	],
+	[
+		echo "*****************************************************************"
+		echo "WARNING: zlib not found... packed .cod files will fail crc checks"
+		echo "*****************************************************************"
+		AC_ARG_VAR([ZLIB_LIBS], [Linker options for zlib])
+		ZLIB_LIBS=""
+		if test "x$force_zlib" != xno ; then
+			AC_MSG_FAILURE([--with-zlib specified, but zlib not found])
+		fi
+	]
+	)
 
 AM_ICONV
 

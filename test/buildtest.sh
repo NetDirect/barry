@@ -107,7 +107,7 @@ export CXXFLAGS="-Wall -Werror -pedantic -O0 -g"
 ./configure --prefix="$BASEPATH/build/rootdir"
 make $MAKEOPTS
 make distclean
-./configure --prefix="$BASEPATH/build/rootdir" --with-boost
+./configure --prefix="$BASEPATH/build/rootdir" --with-boost --with-zlib
 make $MAKEOPTS
 make install
 make distclean

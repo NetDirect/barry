@@ -19,7 +19,7 @@ DEB_DESTDIR = $(CURDIR)/debian/tmp
 DEB_DH_STRIP_ARGS := --dbg-package=libbarry0 --dbg-package=libbarry-dev --dbg-package=barry-util --dbg-package=barrybackup-gui --dbg-package=libopensync-plugin-barry
 #CDBS automatically handles common flags to pass to the configure script,
 #but it is possible to give some extra parameters :
-DEB_CONFIGURE_EXTRA_FLAGS := --with-boost=/usr --enable-gui --enable-opensync-plugin
+DEB_CONFIGURE_EXTRA_FLAGS := --with-boost=/usr --with-zlib --enable-gui --enable-opensync-plugin
 COMMON_CONFIGURE_FLAGS := --prefix=/usr
 DEB_INSTALL_DOCS_ALL =
 

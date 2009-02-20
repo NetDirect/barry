@@ -32,6 +32,12 @@ Release: version 0.15 - 2009/01/??
 			and back to beginning anyway.
 		- Added copyright line for Josh Kropf in cod.cc and
 			cod-internal.h
+		- Fixed incorrect zlib check, since zlib doesn't support
+			pkg-config on most systems yet.  Changed it to
+			use AC_CHECK_LIB, and added a --with-zlib configure
+			option which will cause configure to halt if
+			zlib is not available.  Added --with-zlib to
+			binary package builds, and to build test script.
 	- added zlib to rpm and deb build requirements list
 2009/02/18
 	- updated USB capture logs archive page with new logs from Josh Kropf
