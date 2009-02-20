@@ -1,4 +1,4 @@
-DISTCHECK_CONFIGURE_FLAGS = --enable-gui --enable-opensync-plugin
+DISTCHECK_CONFIGURE_FLAGS = --enable-gui --enable-opensync-plugin --enable-opensync-plugin-4x
 
 ACLOCAL_FLAGS = -I m4
 
@@ -29,7 +29,7 @@ clean-local:
 
 # these directories will be tested for during make dist to warn if they are
 # missing - a new nested package should be added both here and in configure.ac
-CONDITIONAL_SUBDIRS = gui opensync-plugin
+CONDITIONAL_SUBDIRS = gui opensync-plugin opensync-plugin-0.4x
 dist-hook:
 	rm -rf `find $(distdir) -name CVS`
 	@for subdir in $(CONDITIONAL_SUBDIRS); do \

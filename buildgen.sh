@@ -16,9 +16,11 @@ if [ "$1" = "cleanall" ] ; then
 	make distclean
 	(cd gui && make distclean)
 	(cd opensync-plugin && make distclean)
+	(cd opensync-plugin-0.4x && make distclean)
 	./buildgen.sh clean
 	(cd gui && ./buildgen.sh clean)
 	(cd opensync-plugin && ./buildgen.sh clean)
+	(cd opensync-plugin-0.4x && ./buildgen.sh clean)
 elif [ "$1" = "clean" ] ; then
 	rm -rf autom4te.cache
 	rm -f Makefile.in aclocal.m4 config.guess config.h.in config.sub \
@@ -32,7 +34,9 @@ elif [ "$1" = "clean" ] ; then
 		tools/bcharge
 	# clean up ctags trails
 	rm -f src/tags tools/tags examples/tags \
-		gui/src/tags opensync-plugin/src/tags
+		gui/src/tags \
+		opensync-plugin/src/tags \
+		opensync-plugin-0.4x/src/tags
 elif [ "$1" = "ctags" ] ; then
 	echo "Building ctags..."
 	(cd src && ctags -R)
@@ -40,6 +44,7 @@ elif [ "$1" = "ctags" ] ; then
 	(cd examples && ctags -R)
 	(cd gui/src && ctags -R)
 	(cd opensync-plugin/src && ctags -R)
+	(cd opensync-plugin-0.4x/src && ctags -R)
 	# and one with everything
 	ctags -R -f ~/tags-barry --tag-relative=yes
 	# add opensync library as well (yes, I know this only works for my
@@ -59,5 +64,6 @@ else
 	doconf m4
 	(cd gui && doconf ../m4)
 	(cd opensync-plugin && doconf ../m4)
+	(cd opensync-plugin-0.4x && doconf ../m4)
 fi
 

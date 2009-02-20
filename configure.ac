@@ -170,7 +170,11 @@ AC_ARG_ENABLE([opensync-plugin], [AC_HELP_STRING([--enable-opensync-plugin], [bu
 if test "$enable_opensync_plugin" = yes; then
 	AC_CONFIG_SUBDIRS([opensync-plugin])
 fi
-if test "$enable_gui" = yes || test "$enable_opensync_plugin" = yes; then
+AC_ARG_ENABLE([opensync-plugin-4x], [AC_HELP_STRING([--enable-opensync-plugin-4x], [build the opensync 0.4x plugin])])
+if test "$enable_opensync_plugin_4x" = yes; then
+	AC_CONFIG_SUBDIRS([opensync-plugin-0.4x])
+fi
+if test "$enable_gui" = yes || test "$enable_opensync_plugin" = yes || test "$enable_opensync_plugin_4x" = yes; then
 	export TREE_BUILD_CXXFLAGS="-I`pwd`"
 	export TREE_BUILD_LDFLAGS="-L`pwd`/src"
 	export PKG_CONFIG_PATH="`pwd`:$PKG_CONFIG_PATH"

@@ -15,6 +15,8 @@ Release: version 0.15 - 2009/01/??
 			- applied Nicolas Vivien's opensync-0.4x
 			  porting update patch
 	- removed unneeded ChangeLog.osync
+	- added opensync-plugin-0.4x to top level configure, but not to
+		binary packages
 2009/02/19
 	- pulled from Josh Kropf: 9b63a99867b3314b8d42212cac05a6f28860d37b
 		- saving large modules in pkzip format
