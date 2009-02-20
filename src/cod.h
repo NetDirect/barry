@@ -54,7 +54,7 @@ size_t SeekNextCod(std::istream &input);
 ///
 class BXEXPORT CodFileBuilder
 {
-	const std::string &m_module_name;
+	std::string m_module_name;
 
 	size_t m_module_count;
 	unsigned int m_current_module;
