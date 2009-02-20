@@ -200,7 +200,7 @@ void CodFileBuilder::WriteFooter(std::ostream &output)
 	// current stream pointer is relative offset to start of directory
 	end.directory_offset = output.tellp();
 
-	output.write(m_directory.str().c_str(), m_directory.str().length());
+	output.write(m_directory.str().data(), m_directory.str().length());
 	output.write(sig, sizeof(sig));
 	output.write((char *)&end, sizeof(pkzip_end_directory_t));
 }
