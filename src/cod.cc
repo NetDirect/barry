@@ -43,7 +43,7 @@ namespace Barry {
 
 size_t SeekNextCod(std::istream &input)
 {
-	char codtype_simple[] = CODFILE_TYPE_SIMPLE;
+	unsigned char codtype_simple[] = CODFILE_TYPE_SIMPLE;
 	char codtype_pkzip[] = CODFILE_TYPE_PKZIP;
 	char local_file_sig[] = PKZIP_LOCAL_FILE_SIG;
 	char directory_sig[] = PKZIP_DIRECTORY_SIG;

@@ -449,7 +449,7 @@ void JavaLoader::SendStream(std::istream &input, size_t module_size)
 		size_t size = min(remaining, max_data_size);
 
 		input.read(buffer, size);
-		if( input.fail() || input.gcount() != size ) {
+		if( input.fail() || (size_t)input.gcount() != size ) {
 			throw Error("JavaLoader::SendStream input stream read failed");
 		}
 
