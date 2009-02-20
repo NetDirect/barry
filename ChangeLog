@@ -1,5 +1,34 @@
 Release: version 0.15 - 2009/01/??
 ------------------------------------------------------------------------------
+2009/02/19
+	- pulled from Josh Kropf: 9b63a99867b3314b8d42212cac05a6f28860d37b
+		- saving large modules in pkzip format
+		- cleaned up StartStream function; use JLPacket instance
+		- refactored SendStream; use JLPacket instance and use simple
+			function for seeking to next cod file in input stream
+	- made following changes to Josh Kropf's patches
+		- Added CODFILE_TYPE_SIMPLE check back in
+		- Minor change of c_str() to data() where a null terminator
+			is not needed
+		- Fixed unlikely buffer overflow in m_javaloader.cc
+			Goal: never trust outside sources of
+			information (including that from the device) when
+			managing our own buffers.
+		- Removed CodFile forward declaration, since class does not
+			exist anymore
+		- Fixed typo in configure.ac, and made missing zlib warning
+			more emphatic
+		- Added clarifying comment to CodFileBuilder
+		- Fixed potential reference bug in CodFileBuilder constructor
+			It is possible that the const std::string& passed
+			into the constructor is a temporary, so make a copy
+			of it instead of just holding a reference.
+		- Removed multi-unget call in cod.cc -- only one unget() is
+			guaranteed in C++.  It appears that the unget is
+			unnecessary, since the following code seeks to end
+			and back to beginning anyway.
+		- Added copyright line for Josh Kropf in cod.cc and
+			cod-internal.h
 2009/02/18
 	- updated USB capture logs archive page with new logs from Josh Kropf
 	- applied as patch Josh Kropf's annotated javaloader-reset.txt log
