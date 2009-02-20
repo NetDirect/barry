@@ -71,6 +71,9 @@ public:
 	/// an entry to the central directory.  If the module count used to
 	/// create CodFileBuilder is equal to one, the call is ignored.
 	///
+	/// Note: it is the caller's responsibility to write the actual
+	/// COD file data after calling this function.
+	///
 	/// \param output stream to write to
 	///
 	/// \param buffer buffered .cod file data, input to CRC-32 function
