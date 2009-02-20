@@ -24,9 +24,9 @@ Vendor: Net Direct Inc.
 BuildRoot: %{_tmppath}/%{name}-%{release}-%{version}-root
 
 %if 0%{?suse_version}
-BuildRequires: libusb, gcc-c++, pkgconfig, boost-devel, fuse-devel
+BuildRequires: libusb, gcc-c++, pkgconfig, boost-devel, fuse-devel, zlib-devel
 %else
-BuildRequires: libusb-devel, gcc-c++, pkgconfig, boost-devel, fuse-devel
+BuildRequires: libusb-devel, gcc-c++, pkgconfig, boost-devel, fuse-devel, zlib-devel
 %endif
 
 %define barryroot %{_builddir}/%{name}-%{version}
@@ -278,6 +278,7 @@ cd ../
 - added HAL FDI scripts
 - added bjavaloader and bfuse
 - updated for udev directory reorganization in Barry source tree
+- added zlib-devel to BuildRequires list
 
 * Wed Sep 24 2008 Chris Frey <cdfrey@foursquare.net> 0.14-0
 - version bump

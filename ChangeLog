@@ -29,6 +29,7 @@ Release: version 0.15 - 2009/01/??
 			and back to beginning anyway.
 		- Added copyright line for Josh Kropf in cod.cc and
 			cod-internal.h
+	- added zlib to rpm and deb build requirements list
 2009/02/18
 	- updated USB capture logs archive page with new logs from Josh Kropf
 	- applied as patch Josh Kropf's annotated javaloader-reset.txt log
