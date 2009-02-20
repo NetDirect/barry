@@ -2,7 +2,7 @@
 .\" First parameter, NAME, should be all caps
 .\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
 .\" other parameters are allowed: see man(7), man(1)
-.TH BJAVALOADER 1 "January 30, 2009"
+.TH BJAVALOADER 1 "February 20, 2009"
 .\" Please adjust this date whenever revising the manpage.
 .\"
 .\" Some roff macros, for reference:
@@ -61,13 +61,28 @@ the -s option, submodules are included, and can take a long time to display.
 .B load <.cod filename> ...
 Loads one or more COD application files into the device.
 .TP
+.B save <module name> ...
+Retrieves modules from the handheld and writes them to .cod files with the
+same name as the module.  Note that this will overwrite any existing .cod
+file in the current directory.
+.TP
 .B erase [-f] <module name> ...
 Delete the specified application module(s).  The module name can be determined
 using the 'dir' command.  When used with the -f option, the module is erased
-even if in use (experimental).
+even if in use, and the device will be reset.
+.TP
+.B eventlog
+Retrives the handheld event log and prints it on stdout.
+.TP
+.B cleareventlog
+Clears the handheld event log.
 .TP
 .B screenshot <.bmp filename>
 Capture current screen image and save in BMP format.
+.TP
+.B settime [yyyy-mm-dd HH:MM:SS]
+Sets the time on the handheld to the current time, or the specified time.
+If time is given as an argument, the current system timezone is assumed.
 
 .SH AUTHOR
 .nh
@@ -78,4 +93,6 @@ written by Chris Frey.
 .SH SEE ALSO
 .PP
 http://www.netdirect.ca/software/packages/barry/index.php
+
+
 

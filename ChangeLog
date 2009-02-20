@@ -2,6 +2,7 @@ Release: version 0.15 - 2009/01/??
 ------------------------------------------------------------------------------
 2009/02/20
 	- clarified bjavaloader save behaviour
+	- updated bjavaloader man page
 2009/02/19
 	- pulled from Josh Kropf: 9b63a99867b3314b8d42212cac05a6f28860d37b
 		- saving large modules in pkzip format
