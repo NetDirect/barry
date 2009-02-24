@@ -1,5 +1,7 @@
 Release: version 0.15 - 2009/01/??
 ------------------------------------------------------------------------------
+2009/02/24
+	- added note about novj option issue in barry-att_cingular
 2009/02/20
 	- clarified bjavaloader save behaviour
 	- updated bjavaloader man page

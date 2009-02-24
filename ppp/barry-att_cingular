@@ -24,7 +24,6 @@ usepeerdns
 # Disable unsupported options
 noipdefault
 nodetach
-novj
 nodeflate
 nobsdcomp
 noaccomp
@@ -32,6 +31,13 @@ noaccomp
 nocrtscts
 nopcomp
 nomagic
+
+# This is disabled by default for a Barry config, but this
+# has caused connection issues in the past.  If you are unable
+# to get an ip with your provider, try commenting this out.
+# See:
+# http://www.mail-archive.com/barry-devel@lists.sourceforge.net/msg01871.html
+novj
 
 passive
 
