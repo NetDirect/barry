@@ -46,13 +46,16 @@ some are only needed for building CVS.
 	<li><b>doxygen</b> suggested version 1.4.5, only for building API documentation</li>
 	<li><b>gtkmm, glademm, glibmm</b> C++ versions of the GTK libraries (needed for the barrybackup GUI)</li>
 	<li><b>libtar</b> (barrybackup GUI) </li>
-	<li><b>zlib</b> (barrybackup GUI) </li>
+	<li><b>zlib</b>, needed for CRC32 checksums in library COD file support,
+		and used by the barrybackup GUI</li>
 	<li><b>libopensync</b> version 0.22 <i>only</i> (needed for syncing) </li>
 	<li><b>sqlite, glib2, libxml2</b> (needed for syncing, required by OpenSync) </li>
 	<li><b>libfuse</b> version 2.5 or higher (optional)</li>
 	<li><b>libiconv</b>, needed for international charset conversions... most
 		Linux distros have this as part of libc.  If you are using another
 		OS such as FreeBSD, you'll have to install this separately.</li>
+	<li><b>gettext</b>, needed for the iconv.m4 file, on some systems,
+		when building from CVS to generate configure.</li>
 </ul>
 </p>
 
