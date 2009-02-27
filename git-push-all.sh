@@ -13,12 +13,15 @@ read
 # Note: This push only updates non-CVS branches, and master.
 #       To push other CVS branches, do it manually, with git-patch-cvs.sh
 
-git push --tags origin master scripts pristine-tar opensync-0.4x
+git push --tags origin master scripts pristine-tar
 
-
-echo "Press enter when ready for git push to repo.or.cz..."
+echo "Press enter when ready for git push sourceforge.net..."
 read
+git push sourceforge.net master scripts pristine-tar
 
+
+echo "Press enter when ready for git push repo.or.cz..."
+read
 #
 # Now update repo.or.cz.  We can be more liberal here, since repo.or.cz
 # _should_ contain everything that can be considered public.
@@ -30,8 +33,9 @@ read
 #
 #git push --all repo.or.cz
 #git push --tags repo.or.cz master i18n
-git push repo.or.cz master scripts pristine-tar opensync-0.4x
+git push repo.or.cz master scripts pristine-tar
 
-echo "================= NOTE: if you want to push a tag, do it manually!"
+echo "================= NOTE: if you want to push a tag, do it manually"
+echo "=================       for both repo.or.cz and sourceforge.net!"
 echo "Example: git push repo.or.cz barry-0.13"
 
