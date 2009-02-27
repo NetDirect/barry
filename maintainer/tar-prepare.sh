@@ -29,5 +29,9 @@ fi
 ./buildgen.sh
 
 # Clean up the extraneous autoconf clutter
-rm -rf autom4te.cache gui/autom4te.cache opensync-plugin/autom4te.cache
+rm -rf \
+	autom4te.cache \
+	gui/autom4te.cache \
+	opensync-plugin/autom4te.cache \
+	opensync-plugin-0.4x/autom4te.cache
 

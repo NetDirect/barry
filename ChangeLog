@@ -1,5 +1,7 @@
 Release: version 0.15 - 2009/01/??
 ------------------------------------------------------------------------------
+2009/02/26
+	- added opensync-0.4x to tar-prepare.sh maintainer script
 2009/02/24
 	- added note about novj option issue in barry-att_cingular
 	- added gettext to documentation dependency list (for iconv.m4)
