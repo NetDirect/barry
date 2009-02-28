@@ -1,57 +1,107 @@
 #compdef bjavaloader
 
-local _bjavaloader_options
-
 local ret=1
-local state line cmds
+local state cmds
 
+
+local _bjavaloader_commands
+local _bjavaloader_options
+local _bjavaloader_dir
+local _bjavaloader_erase
+
+
+_bjavaloader_commands=(
+	'clearevetlog:Clears the handheld event log'
+	'dir:Lists modules on the handheld'
+	'eventlog:Retrieves the handheld event log'
+	'load:Loads modules onto the handheld'
+	'erase:Erase module from handheld'
+	'save:Retrieves modules from the handheld'
+	'screenshot:Make a screenshot of handheld'
+	'settime:Sets the time on the handheld'
+)
 
 _bjavaloader_options=(
-	'-f[Force erase, if module is in use]' \
 	'-h[Show the most relevant command line options]' \
-	'-s[List sibling in module list]' \
-	'-p[PIN of device to talk with]' \
-	'-P[PIN of device to talk with (optional)]' \
+	'-p[PIN of device to talk with]:PIN device' \
+	'-P[PIN of device to talk with (optional)]:PIN device' \
 	'-v[Dump protocol data during operation]' \
-	'1: :->cmds' \
-	'*: :->args'
+	'*::arg:->cmd_or_options'
+)
+
+_bjavaloader_dir=(
+	'-s[List sibling in module list]' \
+)
+
+_bjavaloader_erase=(
+	'-f[Force to erase an application current running]'
 )
 
 
-_arguments -C -s "$_bjavaloader_options[@]" && ret=0
 
-case $state in
-	cmds)
-		cmds=(dir load erase screenshot settime)
-		_describe -t commands 'bjavaloader command' cmds && ret=0
-	;;
+declare -A opt_args
 
-	args)
-		case $line[1] in
-			load)
-				_arguments -C -A '-*' -s \
-					- recur \
-					'*:directory:_path_files -/' \
-					- nonrecur \
-					'*:COD files:_path_files -g "*.cod(-.)"' && ret=0
-			;;
 
-			screenshot)
-				_arguments -C -A '-*' -s \
-					- recur \
-					'*:directory:_path_files -/' \
-					- nonrecur \
-					'*:BMP files:_path_files -g "*.bmp(-.)"' && ret=0
-			;;
+_arguments -C -s "$_bjavaloader_options[@]" && return 0
 
-			settime)
-				_message 'time format [yyyy-mm-dd HH:MM:SS]' && ret=0
-			;;
 
-			(*|dir))
-				_message 'no more arguments' && ret=0
-			;;
-		esac
+case "$state" in
+	cmd_or_options)
+		if (( CURRENT == 1)); then
+			_describe -t commands 'bjavaloader command' _bjavaloader_commands && ret=0
+		else
+			case $words[1] in
+				cleareventlog)
+					_message 'no more arguments' && ret=0
+				;;
+
+				dir)
+					_message 'no more arguments' && ret=0
+
+					_arguments -C -A '-*' -s \
+						"$_bjavaloader_dir[@]" && ret=0
+				;;
+
+				erase)
+					_message 'modules name from the handheld'
+
+					_arguments -C -A '-*' -s \
+						"$_bjavaloader_erase[@]" \
+						- recur \
+						'*:directory:_path_files -/' \
+						- nonrecur \
+						'*:COD files:_path_files -g "*.cod(-.)"' && ret=0
+				;;
+
+				eventlog)
+					_message 'no more arguments' && ret=0
+				;;
+
+				load)
+					_arguments -C -A '-*' -s \
+						- recur \
+						'*:directory:_path_files -/' \
+						- nonrecur \
+						'*:COD files:_path_files -g "*.cod(-.)"' && ret=0
+				;;
+
+				save)
+					_message 'modules name from the handheld' && ret=0
+				;;
+
+				screenshot)
+					_arguments -C -A '-*' -s \
+						- recur \
+						'*:directory:_path_files -/' \
+						- nonrecur \
+						'*:BMP files:_path_files -g "*.bmp(-.)"' && ret=0
+				;;
+
+				settime)
+					_message 'time format [yyyy-mm-dd HH:MM:SS]' && ret=0
+				;;
+			esac
+		fi
 	;;
 esac
 
