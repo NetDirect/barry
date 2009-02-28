@@ -84,7 +84,7 @@ void Usage()
    << "      Erase module from handheld\n"
    << "\n"
    << "   " << CMD_EVENTLOG << "\n"
-   << "      Retrives the handheld event log\n"
+   << "      Retrieves the handheld event log\n"
    << "\n"
    << "   " << CMD_CLEAR_LOG << "\n"
    << "      Clears the handheld event log\n"
