@@ -282,7 +282,7 @@ bool FinishSync(OSyncContext *ctx, BarryEnvironment *env, DatabaseSyncState *pSy
 }
 
 
-static bool barry_contact_initialize(DatabaseSyncState *env, OSyncPluginInfo *info, OSyncError **error)
+static bool barry_contact_initialize(BarryEnvironment *env, OSyncPluginInfo *info, OSyncError **error)
 {
 	Trace trace("contact initialize");
 
@@ -329,9 +329,9 @@ static bool barry_contact_initialize(DatabaseSyncState *env, OSyncPluginInfo *in
 //	OSyncFormatEnv *formatenv = osync_plugin_info_get_format_env(info);
 
 //	env->format = osync_format_env_find_objformat(formatenv, "vcard30");
-	env->sink = sink;
+	env->m_ContactsSync.sink = sink;
 
-	osync_objtype_sink_set_functions(sink, functions, NULL);
+	osync_objtype_sink_set_functions(sink, functions, env);
 
 	trace.log("contact initialize OK");
 
@@ -339,7 +339,7 @@ static bool barry_contact_initialize(DatabaseSyncState *env, OSyncPluginInfo *in
 }
 
 
-static bool barry_calendar_initialize(DatabaseSyncState *env, OSyncPluginInfo *info, OSyncError **error)
+static bool barry_calendar_initialize(BarryEnvironment *env, OSyncPluginInfo *info, OSyncError **error)
 {
 	Trace trace("calendar initialize");
 
@@ -385,9 +385,9 @@ static bool barry_calendar_initialize(DatabaseSyncState *env, OSyncPluginInfo *i
 //	OSyncFormatEnv *formatenv = osync_plugin_info_get_format_env(info);
 
 //	env->format = osync_format_env_find_objformat(formatenv, "vevent20");
-	env->sink = sink;
+	env->m_CalendarSync.sink = sink;
 
-	osync_objtype_sink_set_functions(sink, functions, NULL);
+	osync_objtype_sink_set_functions(sink, functions, env);
 
 	return true;
 }
@@ -460,7 +460,7 @@ static void *initialize(OSyncPlugin *plugin, OSyncPluginInfo *info, OSyncError *
 		 */
 		trace.log("Process Ressource options...");
 
-		if (barry_calendar_initialize(&env->m_CalendarSync, info, error)) {
+		if (barry_calendar_initialize(env, info, error)) {
 			env->m_CalendarSync.LoadCache();
 			env->m_CalendarSync.LoadMap();
 
@@ -472,7 +472,7 @@ static void *initialize(OSyncPlugin *plugin, OSyncPluginInfo *info, OSyncError *
 			env->m_CalendarSync.m_Sync = false;
 		}
 
-		if (barry_contact_initialize(&env->m_ContactsSync, info, error)) {
+		if (barry_contact_initialize(env, info, error)) {
 			env->m_ContactsSync.LoadCache();
 			env->m_ContactsSync.LoadMap();
 
@@ -538,6 +538,8 @@ static osync_bool discover(OSyncPluginInfo *info, void *userdata, OSyncError **e
 static void connect(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncContext *ctx, void *userdata)
 {
 	Trace trace("connect");
+
+	trace.logf("%s(%p, %p, %p, %p)\n", __func__, sink, info, ctx, userdata);
 
 	try {
 		// Each time you get passed a context (which is used to track
@@ -824,11 +826,11 @@ static void disconnect(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncConte
 }
 
 
-static void finalize(void *userdata)
+static void finalize(void *data)
 {
 	Trace trace("finalize");
 
-	BarryEnvironment *env = (BarryEnvironment *) userdata;
+	BarryEnvironment *env = (BarryEnvironment *) data;
 
 	// Disconnect the controller, which closes our connection
 	if (env->isConnected())
