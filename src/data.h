@@ -68,7 +68,8 @@ public:
 
 	void AppendHexString(const char *str);
 
-	void Zap();
+	void QuickZap();
+	void Zap();	// does a memset too
 
 	Data& operator=(const Data &other);
 

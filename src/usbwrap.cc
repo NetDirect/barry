@@ -202,6 +202,7 @@ bool Device::BulkRead(int ep, Barry::Data &data, int timeout)
 {
 	int ret;
 	do {
+		data.QuickZap();
 		ret = usb_bulk_read(m_handle, ep,
 			(char*) data.GetBuffer(), data.GetBufSize(),
 			timeout == -1 ? m_timeout : timeout);
@@ -266,6 +267,7 @@ bool Device::InterruptRead(int ep, Barry::Data &data, int timeout)
 {
 	int ret;
 	do {
+		data.QuickZap();
 		ret = usb_interrupt_read(m_handle, ep,
 			(char*) data.GetBuffer(), data.GetBufSize(),
 			timeout == -1 ? m_timeout : timeout);
