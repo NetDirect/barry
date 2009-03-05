@@ -5,6 +5,7 @@ Release: version 0.15 - 2009/01/??
 		Fortunately, these didn't affect my timeout testing.
 	- added Data::QuickZap(), so that usb read errors don't
 		return old data
+	- inlined Data::QuickZap()
 2009/03/03
 	- applied Nicolas Vivien's opensync-0.4x API patch
 2009/02/28

@@ -68,7 +68,8 @@ public:
 
 	void AppendHexString(const char *str);
 
-	void QuickZap();
+	/// set buffer to 0 size, but don't bother overwriting memory with 0
+	void QuickZap() { m_datasize = 0; }
 	void Zap();	// does a memset too
 
 	Data& operator=(const Data &other);

@@ -259,12 +259,6 @@ void Data::AppendHexString(const char *str)
 	}
 }
 
-/// set buffer to 0 size, but don't bother overwriting memory with 0
-void Data::QuickZap()
-{
-	m_datasize = 0;
-}
-
 /// set buffer to 0 and remove all data
 void Data::Zap()
 {
