@@ -6,6 +6,10 @@ Release: version 0.15 - 2009/01/??
 	- added Data::QuickZap(), so that usb read errors don't
 		return old data
 	- inlined Data::QuickZap()
+	- added usb_set_altinterface() call to Interface class
+		This should hopefully workaround the change in 2.6.28
+		kernels where set_interface is not called by the kernel
+		automatically anymore.
 2009/03/03
 	- applied Nicolas Vivien's opensync-0.4x API patch
 2009/02/28

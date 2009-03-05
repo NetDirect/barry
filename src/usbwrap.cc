@@ -348,6 +348,13 @@ Interface::Interface(Device &dev, int iface)
 	int ret = usb_claim_interface(dev.GetHandle(), iface);
 	if( ret < 0 )
 		throw Error(ret, "claim interface failed");
+
+	// kernels >= 2.6.28 don't set the interface the same as
+	// previous versions did, and the Blackberry gets confused
+	// if it isn't explicitly set
+	ret = usb_set_altinterface(dev.GetHandle(), iface);
+	if( ret < 0 )
+		throw Error(ret, "set alt interface failed");
 }
 
 Interface::~Interface()
