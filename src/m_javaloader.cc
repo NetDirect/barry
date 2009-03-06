@@ -562,11 +562,16 @@ void JavaLoader::GetDir(JLPacket &packet,
 		ThrowJLError("JavaLoader::GetDir", packet.Command());
 	}
 
-	Data &response = packet.GetReceive();
-	m_socket->Receive(response);
-	Protocol::CheckSize(response, 4);
-	dir.ParseTable(Data(response.GetData() + 4, response.GetSize() - 4));
-	GetDirectoryEntries(packet, entry_cmd, dir, include_subdirs);
+	// ack response will contain length of module ID array in next packet
+	unsigned int expect = packet.Size();
+
+	if( expect > 0 ) {
+		Data &response = packet.GetReceive();
+		m_socket->Receive(response);
+		Protocol::CheckSize(response, 4);
+		dir.ParseTable(Data(response.GetData() + 4, response.GetSize() - 4));
+		GetDirectoryEntries(packet, entry_cmd, dir, include_subdirs);
+	}
 }
 
 void JavaLoader::GetDirectory(JLDirectory &dir, bool include_subdirs)
