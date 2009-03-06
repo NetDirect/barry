@@ -1,5 +1,10 @@
 Release: version 0.15 - 2009/01/??
 ------------------------------------------------------------------------------
+2009/03/05
+	- pulled from Josh Kropf: b3d3a6f48fe008e8842c057df4a653a04b9c56ce
+		- compile fix when using __DEBUG_MODE__
+		- fixed timeout when calling JavaLoader::GetDir on device
+			with zero modules
 2009/03/04
 	- fixed embarrassing incorrect exception messages in usbwrap.cc
 		Fortunately, these didn't affect my timeout testing.
