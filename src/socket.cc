@@ -189,7 +189,7 @@ void SocketZero::CheckSequence(uint16_t socket, const Data &seq)
 			}
 			else {
 				dout("Bad sequence on socket 0: expected: "
-					<< msequenceId
+					<< m_sequenceId
 					<< ". Packet sequence: " << sequenceId);
 			}
 		}
