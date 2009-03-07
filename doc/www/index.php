@@ -141,7 +141,7 @@ may be out of date, but they may still be helpful to new users.</P>
 
 <p>
 <ul>
-	<li><a href="http://www.chipbennett.net/wordpress/index.php/2008/05/synchronizing-a-blackberry-in-linux/">Synchronizing a Blackberry In Linux</a>, by Chip Bennett (2008/05/31</li>
+	<li><a href="http://www.chipbennett.net/wordpress/index.php/2008/05/synchronizing-a-blackberry-in-linux/">Synchronizing a Blackberry In Linux</a>, by Chip Bennett (2008/05/31)</li>
 	<li><a href="http://www.linux.com/feature/123251">Syncing your Blackberry on Linux</a>, by Joe Barr (2007/12/21)</li>
 </ul>
 <ul>
