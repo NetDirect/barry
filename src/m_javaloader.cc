@@ -285,8 +285,7 @@ namespace Mode {
 // JavaLoader Mode class
 
 JavaLoader::JavaLoader(Controller &con)
-	: m_con(con)
-	, m_ModeSocket(0)
+	: Mode(con, Controller::JavaLoader)
 	, m_StreamStarted(false)
 {
 }
@@ -304,75 +303,11 @@ JavaLoader::~JavaLoader()
 ///////////////////////////////////////////////////////////////////////////////
 // public API
 
-//
-// Open
-//
-/// Select device mode.  This is required before using any other mode-based
-/// operations.
-///
-/// This function opens a socket to the device for communicating in Desktop
-/// mode.  If the device requires it, specify the password with a const char*
-/// string in password.  The password will not be stored in memory
-/// inside this class, only a hash will be generated from it.  After
-/// using the hash, the hash memory will be set to 0.  The application
-/// is responsible for safely handling the raw password data.
-///
-/// You can retry the password by catching Barry::BadPassword and
-/// calling RetryPassword() with the new password.
-///
-/// \exception	Barry::Error
-///		Thrown on protocol error.
-///
-/// \exception	std::logic_error()
-///		Thrown if unsupported mode is requested, or if socket
-///		already open.
-///
-/// \exception	Barry::BadPassword
-///		Thrown when password is invalid or if not enough retries
-///		left in the device.
-///
-void JavaLoader::Open(const char *password)
+void JavaLoader::OnOpen()
 {
-	if( m_ModeSocket ) {
-		m_socket->Close();
-		m_socket.reset();
-		m_ModeSocket = 0;
-	}
-
-	m_ModeSocket = m_con.SelectMode(Controller::JavaLoader);
-	RetryPassword(password);
-}
-
-//
-// RetryPassword
-//
-/// Retry a failed password attempt from the first call to Open().
-/// Only call this function in response to Barry::BadPassword exceptions
-/// that are thrown from Open().
-///
-/// \exception	Barry::Error
-///		Thrown on protocol error.
-///
-/// \exception	std::logic_error()
-///		Thrown if in unsupported mode, or if socket already open.
-///
-/// \exception	Barry::BadPassword
-///		Thrown when password is invalid or if not enough retries
-///		left in the device.
-///
-void JavaLoader::RetryPassword(const char *password)
-{
-	if( m_socket.get() != 0 )
-		throw std::logic_error("Socket alreay open in RetryPassword");
-
-	m_socket = m_con.m_zero.Open(m_ModeSocket, password);
-
-	{
 	Data response;
 	m_socket->Receive(response, -1);
-	}
 }
-
 
 // These commands are sent to prepare the data stream
 void JavaLoader::StartStream()

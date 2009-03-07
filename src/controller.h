@@ -36,7 +36,7 @@ namespace Barry {
 class SocketRoutingQueue;
 
 namespace Mode {
-	class Desktop;
+	class Mode;
 	class IpModem;
 	class Serial;
 	class JavaLoader;
@@ -67,7 +67,7 @@ namespace Mode {
 ///
 class BXEXPORT Controller
 {
-	friend class Barry::Mode::Desktop;
+	friend class Barry::Mode::Mode;
 	friend class Barry::Mode::IpModem;
 	friend class Barry::Mode::Serial;
 	friend class Barry::Mode::JavaLoader;

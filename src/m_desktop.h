@@ -23,6 +23,7 @@
 #define __BARRY_M_DESKTOP_H__
 
 #include "dll.h"
+#include "m_mode_base.h"
 #include "socket.h"
 #include "record.h"
 
@@ -31,7 +32,6 @@ namespace Barry {
 // forward declarations
 class Parser;
 class Builder;
-class Controller;
 class IConverter;
 
 namespace Mode {
@@ -51,21 +51,14 @@ namespace Mode {
 ///	- Call GetDBID() to get a database ID by name
 ///	- Call LoadDatabase() to retrieve and store a database
 ///
-class BXEXPORT Desktop
+class BXEXPORT Desktop : public Mode
 {
 public:
 	enum CommandType { Unknown, DatabaseAccess };
 
 private:
-	Controller &m_con;
-
-	SocketHandle m_socket;
-
 	CommandTable m_commandTable;
 	DatabaseDatabase m_dbdb;
-
-	uint16_t m_ModeSocket;			// socket recommended by device
-						// when mode was selected
 
 	// external objects (optional, can be null)
 	const IConverter *m_ic;
@@ -74,16 +67,15 @@ protected:
 	void LoadCommandTable();
 	void LoadDBDB();
 
+	//////////////////////////////////
+	// overrides
+
+	virtual void OnOpen();
+
 public:
 	Desktop(Controller &con);
 	Desktop(Controller &con, const IConverter &ic);
 	~Desktop();
-
-	//////////////////////////////////
-	// primary operations - required before anything else
-
-	void Open(const char *password = 0);
-	void RetryPassword(const char *password);
 
 	//////////////////////////////////
 	// meta access

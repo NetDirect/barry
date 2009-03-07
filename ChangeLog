@@ -1,5 +1,7 @@
 Release: version 0.15 - 2009/01/??
 ------------------------------------------------------------------------------
+2009/03/07
+	- added Mode base class for common mode class code
 2009/03/06
 	- reorganized external links by date and topic, and added link
 		to Nicolas Vivien's Blackberry on Linux documentation

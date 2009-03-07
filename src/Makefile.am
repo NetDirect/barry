@@ -65,6 +65,7 @@ include_barry_HEADERS = barry.h \
 	builder.h \
 	common.h \
 	controller.h \
+	m_mode_base.h \
 	m_desktop.h \
 	m_desktoptmpl.h \
 	m_ipmodem.h \
@@ -146,6 +147,7 @@ libbarry_la_SOURCES = time.cc \
 	r_timezone.cc \
 	packet.cc \
 	controller.cc \
+	m_mode_base.cc \
 	m_desktop.cc \
 	m_ipmodem.cc \
 	m_serial.cc \

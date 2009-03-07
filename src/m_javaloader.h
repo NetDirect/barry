@@ -26,6 +26,7 @@
 #define __BARRY_M_JAVALOADER_H__
 
 #include "dll.h"
+#include "m_mode_base.h"
 #include "socket.h"
 #include "record.h"
 
@@ -174,16 +175,9 @@ namespace Mode {
 ///	- Call Open() to open database socket and finish constructing.
 ///	- Call LoadDatabase() to retrieve and store a database
 ///
-class BXEXPORT JavaLoader
+class BXEXPORT JavaLoader : public Mode
 {
 private:
-	Controller &m_con;
-
-	SocketHandle m_socket;
-
-	uint16_t m_ModeSocket;			// socket recommended by device
-						// when mode was selected
-
 	bool m_StreamStarted;
 
 protected:
@@ -196,15 +190,14 @@ protected:
 	void SaveData(JLPacket &packet, uint16_t, CodFileBuilder &builder,
 		std::ostream &output);
 
+	//////////////////////////////////
+	// overrides
+
+	virtual void OnOpen();
+
 public:
 	JavaLoader(Controller &con);
 	~JavaLoader();
-
-	//////////////////////////////////
-	// primary operations - required before anything else
-
-	void Open(const char *password = 0);
-	void RetryPassword(const char *password);
 
 	//////////////////////////////////
 	// API
