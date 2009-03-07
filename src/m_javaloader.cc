@@ -277,6 +277,32 @@ void JLEventlogEntry::Dump(std::ostream &os) const
 }
 
 
+///////////////////////////////////////////////////////////////////////////////
+// JLDeviceInfo class
+
+void JLDeviceInfo::Dump(std::ostream &os) const
+{
+	os << left << setfill(' ') << setw(17) << "Hardware Id:";
+	os << "0x" << hex << HardwareId << endl;
+
+	os << left << setfill(' ') << setw(17) << "PIN:";
+	os << "0x" << hex << Pin << endl;
+
+	os << left << setfill(' ') << setw(17) << "OS Version:";
+	os << dec << OsVersion.Major << '.' << OsVersion.Minor << '.' << OsVersion.SubMinor << '.' << OsVersion.Build << endl;
+
+	os << left << setfill(' ') << setw(17) << "VM Version:";
+	os << dec << VmVersion.Major << '.' << VmVersion.Minor << '.' << VmVersion.SubMinor << '.' << VmVersion.Build << endl;
+
+	os << left << setfill(' ') << setw(17) << "Radio ID:";
+	os << "0x" << hex << RadioId << endl;
+
+	os << left << setfill(' ') << setw(17) << "Vendor ID:";
+	os << dec << VendorId << endl;
+
+	os << left << setfill(' ') << setw(17) << "Active WAFs:";
+	os << "0x" << hex << ActiveWafs << endl;
+}
 
 
 namespace Mode {
@@ -839,6 +865,33 @@ void JavaLoader::Save(const std::string &cod_name, std::ostream &output)
 	}
 
 	builder.WriteFooter(output);
+}
+
+void JavaLoader::DeviceInfo(JLDeviceInfo &info)
+{
+	Data command(-1, 8), data(-1, 8), response;
+	JLPacket packet(command, data, response);
+
+	packet.DeviceInfo();
+
+	m_socket->Packet(packet);
+
+	if( packet.Command() != SB_COMMAND_JL_ACK ) {
+		ThrowJLError("JavaLoader::DeviceInfo", packet.Command());
+	}
+
+	m_socket->Receive(response);
+
+	Protocol::CheckSize(response, SB_JLPACKET_HEADER_SIZE + SB_JLDEVICEINFO_SIZE);
+	MAKE_JLPACKET(rpack, response);
+
+	info.HardwareId = be_btohl(rpack->u.devinfo.hardware_id);
+	info.Pin = be_btohl(rpack->u.devinfo.pin);
+	info.OsVersion = be_btohl(rpack->u.devinfo.os_version);
+	info.VmVersion = be_btohl(rpack->u.devinfo.vm_version);
+	info.RadioId = be_btohl(rpack->u.devinfo.radio_id);
+	info.VendorId = be_btohl(rpack->u.devinfo.vendor_id);
+	info.ActiveWafs = be_btohl(rpack->u.devinfo.active_wafs);
 }
 
 }} // namespace Barry::Mode

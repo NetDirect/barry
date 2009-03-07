@@ -41,6 +41,7 @@
 #define CMD_EVENTLOG	"eventlog"
 #define CMD_CLEAR_LOG	"cleareventlog"
 #define CMD_SAVE	"save"
+#define CMD_DEVICEINFO	"deviceinfo"
 
 // time string format specifier and user friendly description
 #define TIME_FMT         "%Y-%m-%d %H:%M:%S"
@@ -72,6 +73,9 @@ void Usage()
    << "\n"
    << "   " << CMD_LIST << " [-s]\n"
    << "      Lists modules on the handheld\n"
+   << "\n"
+   << "   " << CMD_DEVICEINFO << "\n"
+   << "      Provides information on the handheld\n"
    << "\n"
    << "   " << CMD_LOAD << " <.cod file> ...\n"
    << "      Loads modules onto the handheld\n"
@@ -358,6 +362,11 @@ int main(int argc, char *argv[])
 				SaveModule(&javaloader, (*i).c_str());
 				cout << "done." << endl;
 			}
+		}
+		else if( cmd == CMD_DEVICEINFO ) {
+			JLDeviceInfo info;
+			javaloader.DeviceInfo(info);
+			cout << info;
 		}
 		else {
 			cerr << "invalid command \"" << cmd << "\"" << endl;

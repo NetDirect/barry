@@ -160,6 +160,42 @@ public:
 };
 
 
+class BXEXPORT JLDeviceInfo
+{
+public:
+	struct VersionQuad {
+		VersionQuad() { }
+		VersionQuad(uint32_t v) {
+			Major = (v & 0xff000000) >> 24;
+			Minor = (v & 0xff0000) >> 16;
+			SubMinor = (v & 0xff00) >> 8;
+			Build = (v & 0xff);
+		}
+
+		unsigned int Major;
+		unsigned int Minor;
+		unsigned int SubMinor;
+		unsigned int Build;
+	};
+
+public:
+	uint32_t	HardwareId;
+	uint32_t	Pin;
+	VersionQuad	OsVersion;
+	VersionQuad	VmVersion;
+	uint32_t	RadioId;
+	uint32_t	VendorId;
+	uint32_t	ActiveWafs;
+
+public:
+	void Dump(std::ostream &os) const;
+};
+BXEXPORT inline std::ostream& operator<<(std::ostream &os, const JLDeviceInfo &info) {
+	info.Dump(os);
+	return os;
+}
+
+
 namespace Mode {
 
 //
@@ -215,6 +251,7 @@ public:
 	void GetEventlog(JLEventlog &log);
 	void ClearEventlog();
 	void Save(const std::string &cod_name, std::ostream &output);
+	void DeviceInfo(JLDeviceInfo &info);
 };
 
 }} // namespace Barry::Mode

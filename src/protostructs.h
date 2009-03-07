@@ -652,6 +652,19 @@ struct JLEventlogEntry
 } __attribute__ ((packed));
 #define SB_JLEVENTLOG_ENTRY_HEADER_SIZE		(sizeof(Barry::Protocol::JLEventlogEntry))
 
+struct JLDeviceInfo
+{
+	uint32_t	hardware_id;
+	uint32_t	pin;
+	uint32_t	os_version;
+	uint32_t	vm_version;
+	uint32_t	radio_id;
+	uint32_t	vendor_id;
+	uint32_t	active_wafs;
+	uint8_t		unknown[4];
+} __attribute__ ((packed));
+#define SB_JLDEVICEINFO_SIZE			(sizeof(Barry::Protocol::JLDeviceInfo))
+
 struct JLPacket
 {
 	uint16_t	socket;
@@ -663,6 +676,7 @@ struct JLPacket
 		JLResponse		response;
 		JLScreenInfo		screeninfo;
 		JLEventlogEntry		logentry;
+		JLDeviceInfo		devinfo;
 		uint8_t			raw[1];
 		char			filename[1];
 		uint32_t		cod_size;
