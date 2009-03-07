@@ -37,6 +37,8 @@
 #include <iomanip>
 #include <vector>
 #include <string.h>
+#include <time.h>
+#include <stdio.h>
 
 #include "debug.h"
 
@@ -227,7 +229,7 @@ void JLEventlogEntry::Parse(uint16_t size, const char* buf)
 		throw BadData("JLEventlogEntry:Parse bad guid field");
 
 	ss.ignore(6); // skip " time:"
-	ss >> hex >> Timestamp;
+	ss >> hex >> MSTimestamp;
 	if( ss.fail() )
 		throw BadData("JLEventlogEntry:Parse bad time field");
 
@@ -261,6 +263,22 @@ void JLEventlogEntry::Parse(uint16_t size, const char* buf)
 	Data = databuf.str();
 }
 
+std::string JLEventlogEntry::GetFormattedTimestamp() const
+{
+	char buf[21];
+	struct tm split;
+	time_t timestamp = (time_t) (MSTimestamp / 1000);
+
+	if( localtime_r(&timestamp, &split) == NULL )
+		return "";
+
+	if( strftime(buf, sizeof(buf), "%Y/%m/%d %H:%M:%S.", &split) == 0 )
+		return "";
+
+	std::ostringstream oss;
+	oss << buf << (MSTimestamp % 1000);
+	return oss.str();
+}
 
 void JLEventlogEntry::Dump(std::ostream &os) const
 {
@@ -269,7 +287,7 @@ void JLEventlogEntry::Dump(std::ostream &os) const
 	static const char *ViewerTypes[] = { "", "Number", "String", "Exception" };
 
 	os << "guid:"      << Guid;
-	os << " time:"     << hex << Timestamp;
+	os << " time:"     << GetFormattedTimestamp();
 	os << " severity:" << SeverityNames[Severity];
 	os << " type:"     << ViewerTypes[Type];
 	os << " app:"      << App;

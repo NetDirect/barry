@@ -140,12 +140,12 @@ public:
 		EXCEPTION
 	} ViewerType_t;
 
-	std::string  Guid;
-	uint64_t     Timestamp; //FIXME what is this? time since epoch? eg: 0x11F133E6470
-	Severity_t   Severity;
-	ViewerType_t Type;
-	std::string  App;
-	std::string  Data;
+	std::string	Guid;
+	uint64_t	MSTimestamp;	// time_t in milliseconds
+	Severity_t	Severity;
+	ViewerType_t	Type;
+	std::string	App;
+	std::string	Data;
 
 protected:
 	static Severity_t SeverityProto2Rec(unsigned int s);
@@ -156,6 +156,8 @@ protected:
 
 public:
 	void Parse(uint16_t size, const char* str);
+
+	std::string GetFormattedTimestamp() const;
 
 	void Dump(std::ostream &os) const;
 };

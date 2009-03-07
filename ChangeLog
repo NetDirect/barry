@@ -31,6 +31,9 @@ Release: version 0.15 - 2009/01/??
 	- added confirmation step to bjavaloader wipe, so it is harder to
 		accidentally wipe your device
 	- applied zsh patch from Nicolas Vivien for bjavaloader wipe
+2009/03
+	- changes inspired from Rick Scott's XmBlackberry
+		- event log timestamp is a time_t in milliseconds
 2009/03/07
 	- added Mode base class for common mode class code
 2009/03/06
