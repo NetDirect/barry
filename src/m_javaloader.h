@@ -29,6 +29,7 @@
 #include "m_mode_base.h"
 #include "socket.h"
 #include "record.h"
+#include "data.h"
 
 namespace Barry {
 
@@ -186,6 +187,8 @@ public:
 	uint32_t	RadioId;
 	uint32_t	VendorId;
 	uint32_t	ActiveWafs;
+	Data		OsMetrics;
+	Data		BootromMetrics;
 
 public:
 	void Dump(std::ostream &os) const;
