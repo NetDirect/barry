@@ -5,7 +5,7 @@ INCLUDES = $(LIBUSB_CFLAGS)
 #AM_CXXFLAGS = -ansi -Wall -fno-strict-aliasing -g
 AM_CXXFLAGS = -ansi -Wall -g
 
-bin_PROGRAMS = btool bidentify bjavaloader upldif btranslate bktrans brecsum
+bin_PROGRAMS = btool bidentify bjavaloader upldif btranslate bktrans brecsum brimtrans
 if WITH_BOOST
 bin_PROGRAMS += bs11nread
 endif
@@ -72,3 +72,4 @@ bfuse_CXXFLAGS = $(FUSE_CFLAGS)
 bfuse_LDADD = ../src/libbarry.la $(FUSE_LIBS) -lpthread
 endif
 
+brimtrans_SOURCES = brimtrans.cc
