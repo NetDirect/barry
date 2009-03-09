@@ -255,6 +255,7 @@ public:
 	void ClearEventlog();
 	void Save(const std::string &cod_name, std::ostream &output);
 	void DeviceInfo(JLDeviceInfo &info);
+	void Wipe(bool apps = true, bool fs = true);
 };
 
 }} // namespace Barry::Mode

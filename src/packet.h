@@ -232,6 +232,8 @@ public:
 	int ClearEventlog()	{ return SimpleCmd(SB_COMMAND_JL_CLEAR_LOG); }
 	int SaveModule(uint16_t id);
 	int PutData(const void *data, uint16_t size);
+	int WipeApps()		{ return SimpleCmd(SB_COMMAND_JL_WIPE_APPS); }
+	int WipeFs()		{ return SimpleCmd(SB_COMMAND_JL_WIPE_FS); }
 
 	//////////////////////////////////
 	// response analysis
