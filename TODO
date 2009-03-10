@@ -17,7 +17,7 @@ Target: release version 0.15
 		+ list
 		+ save
 		+ set time
-		- device-info
+		+ device-info
 		+ screenshot
 		+ delete COD files (javaloader erase)
 	- test and fix all build and functionality issues on:
