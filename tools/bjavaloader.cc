@@ -89,6 +89,10 @@ void Usage()
    << "\n"
    << "   " << CMD_WIPE << " [-a | -i]\n"
    << "      Wipes the handheld\n"
+   << "      Use Caution: Wiping filesystem will remove all data\n"
+   << "                   such as messages, contacts, etc.\n"
+   << "                   Wiping applications will remove all .cod files\n"
+   << "                   on the device, including OS .cod files.\n"
    << "\n"
    << "   " << CMD_ERASE << " [-f] <module name> ...\n"
    << "      Erase module from handheld\n"
@@ -385,7 +389,20 @@ int main(int argc, char *argv[])
 			cout << info;
 		}
 		else if( cmd == CMD_WIPE ) {
-			javaloader.Wipe(wipe_apps, wipe_fs);
+			cout
+				<< "Use Caution: Wiping filesystem will remove all data\n"
+				<< "             such as messages, contacts, etc.\n"
+				<< "             Wiping applications will remove all .cod files\n"
+				<< "             on the device, including OS .cod files.\n\n"
+				<< "Continue with wipe? (yes/no) ";
+			string confirm;
+			getline(cin, confirm);
+			if( confirm == "yes" ) {
+				javaloader.Wipe(wipe_apps, wipe_fs);
+			}
+			else {
+				cout << "Response of 'yes' not received, aborting." << endl;
+			}
 		}
 		else {
 			cerr << "invalid command \"" << cmd << "\"" << endl;

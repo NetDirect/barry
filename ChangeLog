@@ -5,6 +5,10 @@ Release: version 0.15 - 2009/01/??
 		added deviceinfo support to bjavaloader
 	- pulled from Josh Kropf: 272f371e8bb95b6c41a8293de657da45a782736f
 		new tool: brimtrans for dealing with RIM USB logs
+	- pulled from Josh Kropf: 7ed1df560ea7cc6a2205d8f8627c00c7aaed2294
+		added wipe support to bjavaloader
+	- added confirmation step to bjavaloader wipe, so it is harder to
+		accidentally wipe your device
 2009/03/07
 	- added Mode base class for common mode class code
 2009/03/06
