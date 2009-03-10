@@ -42,6 +42,7 @@
 #define CMD_CLEAR_LOG	"cleareventlog"
 #define CMD_SAVE	"save"
 #define CMD_DEVICEINFO	"deviceinfo"
+#define CMD_WIPE	"wipe"
 
 // time string format specifier and user friendly description
 #define TIME_FMT         "%Y-%m-%d %H:%M:%S"
@@ -61,6 +62,8 @@ void Usage()
    << "        Copyright 2005-2009, Net Direct Inc. (http://www.netdirect.ca/)\n"
    << "        Using: " << Version << "\n"
    << "\n"
+   << "   -a        Wipe applications only\n"
+   << "   -i        Wipe filesystem only\n"
    << "   -f        Force erase, if module is in use\n"
    << "   -h        This help\n"
    << "   -s        List sibling in module list\n"
@@ -83,6 +86,9 @@ void Usage()
    << "   " << CMD_SAVE << " <module name> ...\n"
    << "      Retrieves modules from the handheld and writes to .cod file\n"
    << "      Note: will overwrite existing files!\n"
+   << "\n"
+   << "   " << CMD_WIPE << " [-a | -i]\n"
+   << "      Wipes the handheld\n"
    << "\n"
    << "   " << CMD_ERASE << " [-f] <module name> ...\n"
    << "      Erase module from handheld\n"
@@ -203,7 +209,9 @@ int main(int argc, char *argv[])
 		uint32_t pin = 0;
 		bool list_siblings = false,
 			force_erase = false,
-			data_dump = false;
+			data_dump = false,
+			wipe_apps = true,
+			wipe_fs = true;
 		string password;
 		vector<string> params;
 		string busname;
@@ -213,7 +221,7 @@ int main(int argc, char *argv[])
 
 		// process command line options
 		for(;;) {
-			int cmd = getopt(argc, argv, "fhsp:P:v");
+			int cmd = getopt(argc, argv, "aifhsp:P:v");
 			if( cmd == -1 )
 				break;
 
@@ -237,6 +245,14 @@ int main(int argc, char *argv[])
 
 			case 'v':	// data dump on
 				data_dump = true;
+				break;
+
+			case 'a':	// wipe apps only
+				wipe_fs = false;
+				break;
+
+			case 'i':	// wipe filesystem
+				wipe_apps = false;
 				break;
 
 			case 'h':	// help
@@ -367,6 +383,9 @@ int main(int argc, char *argv[])
 			JLDeviceInfo info;
 			javaloader.DeviceInfo(info);
 			cout << info;
+		}
+		else if( cmd == CMD_WIPE ) {
+			javaloader.Wipe(wipe_apps, wipe_fs);
 		}
 		else {
 			cerr << "invalid command \"" << cmd << "\"" << endl;

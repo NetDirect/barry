@@ -934,5 +934,29 @@ void JavaLoader::DeviceInfo(JLDeviceInfo &info)
 	info.BootromMetrics.ReleaseBuffer(size);
 }
 
+void JavaLoader::Wipe(bool apps, bool fs)
+{
+	Data command(-1, 8), data(-1, 8), response;
+	JLPacket packet(command, data, response);
+
+	if( apps ) {
+		packet.WipeApps();
+		m_socket->Packet(packet);
+
+		if( packet.Command() != SB_COMMAND_JL_ACK ) {
+			ThrowJLError("JavaLoader::WipeApps", packet.Command());
+		}
+	}
+
+	if( fs ) {
+		packet.WipeFs();
+		m_socket->Packet(packet);
+
+		if( packet.Command() != SB_COMMAND_JL_ACK ) {
+			ThrowJLError("JavaLoader::WipeFs", packet.Command());
+		}
+	}
+}
+
 }} // namespace Barry::Mode
 
