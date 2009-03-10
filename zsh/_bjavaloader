@@ -8,6 +8,7 @@ local _bjavaloader_commands
 local _bjavaloader_options
 local _bjavaloader_dir
 local _bjavaloader_erase
+local _bjavaloader_wipe
 
 
 _bjavaloader_commands=(
@@ -19,6 +20,7 @@ _bjavaloader_commands=(
 	'save:Retrieves modules from the handheld'
 	'screenshot:Make a screenshot of handheld'
 	'settime:Sets the time on the handheld'
+	'wipe:Wipes the handheld'
 )
 
 _bjavaloader_options=(
@@ -35,6 +37,11 @@ _bjavaloader_dir=(
 
 _bjavaloader_erase=(
 	'-f[Force to erase an application current running]'
+)
+
+_bjavaloader_wipe=(
+	'-a[Wipe applications only]' \
+	'-f[Wipe filesystem only]'
 )
 
 
@@ -99,6 +106,13 @@ case "$state" in
 
 				settime)
 					_message 'time format [yyyy-mm-dd HH:MM:SS]' && ret=0
+				;;
+
+				wipe)
+					_message 'no more arguments' && ret=0
+
+					_arguments -C -A '-*' -s \
+						"$_bjavaloader_wipe[@]" && ret=0
 				;;
 			esac
 		fi
