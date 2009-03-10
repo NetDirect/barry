@@ -1,5 +1,10 @@
 Release: version 0.15 - 2009/01/??
 ------------------------------------------------------------------------------
+2009/03/10
+	- pulled from Josh Kropf: d6c3173ccd87c6223647950963da79331a68d712
+		added deviceinfo support to bjavaloader
+	- pulled from Josh Kropf: 272f371e8bb95b6c41a8293de657da45a782736f
+		new tool: brimtrans for dealing with RIM USB logs
 2009/03/07
 	- added Mode base class for common mode class code
 2009/03/06
