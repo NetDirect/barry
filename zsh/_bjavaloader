@@ -13,6 +13,7 @@ local _bjavaloader_wipe
 
 _bjavaloader_commands=(
 	'clearevetlog:Clears the handheld event log'
+	'deviceinfo:Provides information on the handheld'
 	'dir:Lists modules on the handheld'
 	'eventlog:Retrieves the handheld event log'
 	'load:Loads modules onto the handheld'
@@ -41,7 +42,7 @@ _bjavaloader_erase=(
 
 _bjavaloader_wipe=(
 	'-a[Wipe applications only]' \
-	'-f[Wipe filesystem only]'
+	'-i[Wipe filesystem only]'
 )
 
 
@@ -59,6 +60,10 @@ case "$state" in
 		else
 			case $words[1] in
 				cleareventlog)
+					_message 'no more arguments' && ret=0
+				;;
+
+				deviceinfo)
 					_message 'no more arguments' && ret=0
 				;;
 
