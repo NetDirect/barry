@@ -28,8 +28,8 @@ software's data.
 
 
 You can find more information on the OpenSync framework, as well
-as tarballs for the version 0.4x library and plugins, at the following
-website:
+as tarballs for the version 0.4x library and plugins when they become
+available, at the following website:
 
 	http://www.opensync.org/
 
@@ -42,6 +42,7 @@ You will need the following packages installed on your system, including
 any dev or devel packages that come along with them.
 
 	pkg-config		Used by the configure scripts
+	cmake 2.4.4		Used to build OpenSync
 	libopensync-0.4x	OpenSync framework library
 	sqlite			Required by OpenSync
 	glib2			Required by OpenSync
@@ -61,25 +62,72 @@ like the following:
 
 
 
-Installation:
--------------
+Opensync 0.3x/0.4x build and test environment:
+----------------------------------------------
 
-	cd opensync-plugin
-	./configure
+The opensync 0.3x/0.4x build tree is still a moving target.  To test this
+plugin, with, for example, Evolution, you will need the following SVN repos:
 
-		(pkg-config will be used to find required libraries...
-		make sure they are installed in standard locations,
-		or that PKG_CONFIG_PATH is set appropriately)
+	libopensync
+		http://svn.opensync.org/trunk
 
+	vformat plugin
+		http://svn.opensync.org/format-plugins/vformat
+
+	xmlformat plugin
+		http://svn.opensync.org/format-plugins/xmlformat/trunk
+
+	file-sync plugin (needed for plain format)
+		http://svn.opensync.org/plugins/file-sync
+
+	evolution plugin
+		http://svn.opensync.org/plugins/evolution2
+
+	osynctool (command line)
+		http://svn.opensync.org/osynctool/trunk
+
+Using cmake, compile them in the above listed order, using the following
+set of commands:
+
+	mkdir build
+	cd build
+	cmake -DCMAKE_INSTALL_PREFIX=/home/cdfrey/rootdir ..
 	make
-	su
 	make install
 
+Build the Barry plugin:
+
+	cd opensync-plugin-0.4x
+	export PKG_CONFIG_PATH=/home/cdfrey/rootdir/lib/pkgconfig
+	./configure --prefix=/home/cdfrey/rootdir
+	make
+	make install
+
+Then setup your syncing target and sync:
+
+	cd /home/cdfrey/rootdir/bin
+	evolution --force-shutdown
+	./osynctool --delgroup EvoBarry
+	./osynctool --addgroup EvoBarry
+	evolution --force-shutdown
+	./osynctool --addmember EvoBarry evo2-sync
+	./osynctool --addmember EvoBarry barry-sync
+	evolution --force-shutdown
+	./osynctool --configure EvoBarry 1
+	./osynctool --configure EvoBarry 2
+	evolution --force-shutdown
+	./osynctool --discover EvoBarry
+	evolution --force-shutdown
+	./osynctool --showgroup EvoBarry
+	evolution --force-shutdown
+	./osynctool --sync EvoBarry
+
+As you can see, the evolution plugin is rather picky about running alone,
+so be liberal with the force-shutdown commands. :-)
 
 Please report any bugs you find to the Barry mailing list.
 
 Thanks!
 
-Last modified : January 2009
-Written : August 2007
+January 2009
 

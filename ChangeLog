@@ -1,5 +1,7 @@
 Release: version 0.15 - 2009/01/??
 ------------------------------------------------------------------------------
+2009/03/11
+	- updated opensync-plugin-0.4x/README with build help
 2009/03/10
 	- pulled from Josh Kropf: d6c3173ccd87c6223647950963da79331a68d712
 		added deviceinfo support to bjavaloader
