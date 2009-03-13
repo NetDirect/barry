@@ -69,10 +69,10 @@ git checkout -b git-tagged-tar "$COMMIT"
 maintainer/tar-prepare.sh
 git add .
 git commit -m "Tarball tree for barry-$MAJOR.$MINOR.tar.bz2"
-git tag "barry-$MAJOR.$MINOR.tar.bz2"
+git tag -s "barry-$MAJOR.$MINOR.tar.bz2"
 git rm -r debian
 git commit -m "Tarball tree for barry_$MAJOR.$MINOR.orig.tar.gz"
-git tag "barry_$MAJOR.$MINOR.orig.tar.gz"
+git tag -s "barry_$MAJOR.$MINOR.orig.tar.gz"
 
 # generate bzip2 tarball
 git archive --prefix="$DIRNAME/" "barry-$MAJOR.$MINOR.tar.bz2" | \

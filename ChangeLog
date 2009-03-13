@@ -1,5 +1,7 @@
 Release: version 0.15 - 2009/01/??
 ------------------------------------------------------------------------------
+2009/03/13
+	- added git tag signing to maintainer scripts
 2009/03/11
 	- updated opensync-plugin-0.4x/README with build help
 2009/03/10
