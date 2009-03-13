@@ -21,7 +21,7 @@ Barry Release Checklist:
 	- upload latest web docs to netdirect project page
 	- upload latest doxygen docs to netdirect project page
 - snip this version's changelog history into its own file
-- tag CVS and git repositories with latest version
+- tag CVS repo and sign-tag git repo with latest version
 - run maintainer/tagged-release.sh
 - manually push tags to repo.or.cz
 - upload packages to SourceForge
