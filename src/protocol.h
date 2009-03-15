@@ -69,6 +69,7 @@
 #define SB_COMMAND_JL_SAVE_MODULE	0x7e
 #define SB_COMMAND_JL_WIPE_APPS		0x6a
 #define SB_COMMAND_JL_WIPE_FS		0x6b
+#define SB_COMMAND_JL_LOG_STRACES	0x8e
 
 // JavaLoader response
 #define SB_COMMAND_JL_ACK		0x64

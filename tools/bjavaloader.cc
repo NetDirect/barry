@@ -43,6 +43,7 @@
 #define CMD_SAVE	"save"
 #define CMD_DEVICEINFO	"deviceinfo"
 #define CMD_WIPE	"wipe"
+#define CMD_LOGSTRACES	"logstacktraces"
 
 // time string format specifier and user friendly description
 #define TIME_FMT         "%Y-%m-%d %H:%M:%S"
@@ -102,6 +103,9 @@ void Usage()
    << "\n"
    << "   " << CMD_CLEAR_LOG << "\n"
    << "      Clears the handheld event log\n"
+   << "\n"
+   << "   " << CMD_LOGSTRACES << "\n"
+   << "      Dump the stack traces for all threads to the event log\n"
    << "\n"
    << "   " << CMD_SCREENSHOT << " <.bmp file>\n"
    << "      Make a screenshot of handheld\n"
@@ -368,6 +372,9 @@ int main(int argc, char *argv[])
 		}
 		else if( cmd == CMD_CLEAR_LOG ) {
 			javaloader.ClearEventlog();
+		}
+		else if( cmd == CMD_LOGSTRACES ) {
+			javaloader.LogStackTraces();
 		}
 		else if( cmd == CMD_SAVE ) {
 			if( params.size() == 0 ) {
