@@ -43,6 +43,7 @@ Contributors (code and otherwise) in alphabetical order by last name:
 	Josh Kropf <josh@slashdev.ca>
 		- bjavaloader command syntax changes
 		- dump eventlog and clear eventlog support
+		- logstacktraces support
 		- bjavaloader save module support
 		- forced erase and load while module in use
 		- packed module support in pkzip format
