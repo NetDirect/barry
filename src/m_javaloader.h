@@ -256,6 +256,7 @@ public:
 	void Save(const std::string &cod_name, std::ostream &output);
 	void DeviceInfo(JLDeviceInfo &info);
 	void Wipe(bool apps = true, bool fs = true);
+	void LogStackTraces();
 };
 
 }} // namespace Barry::Mode

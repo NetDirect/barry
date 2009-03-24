@@ -958,5 +958,18 @@ void JavaLoader::Wipe(bool apps, bool fs)
 	}
 }
 
+void JavaLoader::LogStackTraces()
+{
+	Data command(-1, 8), data(-1, 8), response;
+	JLPacket packet(command, data, response);
+
+	packet.LogStackTraces();
+	m_socket->Packet(packet);
+
+	if( packet.Command() != SB_COMMAND_JL_ACK ) {
+		ThrowJLError("JavaLoader::LogStackTraces", packet.Command());
+	}
+}
+
 }} // namespace Barry::Mode
 

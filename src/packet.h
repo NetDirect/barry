@@ -234,6 +234,7 @@ public:
 	int PutData(const void *data, uint16_t size);
 	int WipeApps()		{ return SimpleCmd(SB_COMMAND_JL_WIPE_APPS); }
 	int WipeFs()		{ return SimpleCmd(SB_COMMAND_JL_WIPE_FS); }
+	int LogStackTraces()	{ return SimpleCmd(SB_COMMAND_JL_LOG_STRACES); }
 
 	//////////////////////////////////
 	// response analysis
