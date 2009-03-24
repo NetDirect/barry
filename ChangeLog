@@ -1,5 +1,7 @@
 Release: version 0.15 - 2009/01/??
 ------------------------------------------------------------------------------
+2009/03/24
+	- fixed typo in zsh/_bjavaloader thanks to feedback from Nicolas V.
 2009/03/13
 	- added git tag signing to maintainer scripts
 	- added signed tagging to release checklist doc

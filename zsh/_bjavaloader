@@ -12,7 +12,7 @@ local _bjavaloader_wipe
 
 
 _bjavaloader_commands=(
-	'clearevetlog:Clears the handheld event log'
+	'cleareventlog:Clears the handheld event log'
 	'deviceinfo:Provides information on the handheld'
 	'dir:Lists modules on the handheld'
 	'eventlog:Retrieves the handheld event log'
