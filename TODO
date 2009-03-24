@@ -51,6 +51,14 @@ Target: release version 0.16
 General Features
 ==============================================================================
 
+Add support for the new " - All" databases
+------------------------------------------
+New Blackberry devices appear to support a set of mixed databases, such as
+Calendar, Calendar - All, etc.  The format of these new "All" databases
+is not yet fully known, but needs to be supported as these databases become
+more popular.
+
+
 Add support for the Blackberry Storm
 ------------------------------------
 The new Blackberry Storm, model 9530, appears to have a different database
