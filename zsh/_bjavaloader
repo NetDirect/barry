@@ -15,9 +15,10 @@ _bjavaloader_commands=(
 	'cleareventlog:Clears the handheld event log'
 	'deviceinfo:Provides information on the handheld'
 	'dir:Lists modules on the handheld'
+	'erase:Erase module from handheld'
 	'eventlog:Retrieves the handheld event log'
 	'load:Loads modules onto the handheld'
-	'erase:Erase module from handheld'
+	'logstacktraces:Dump the stack traces for all threads to the event log'
 	'save:Retrieves modules from the handheld'
 	'screenshot:Make a screenshot of handheld'
 	'settime:Sets the time on the handheld'
@@ -95,6 +96,10 @@ case "$state" in
 						'*:directory:_path_files -/' \
 						- nonrecur \
 						'*:COD files:_path_files -g "*.cod(-.)"' && ret=0
+				;;
+
+				logstacktraces)
+					_message 'no more arguments' && ret=0
 				;;
 
 				save)
