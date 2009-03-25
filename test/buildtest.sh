@@ -103,7 +103,7 @@ echo "Individual package build test..."
 
 rm -rf "$BASEPATH/build/rootdir"
 
-export CXXFLAGS="-Wall -Werror -pedantic -O0 -g"
+export CXXFLAGS="-Wall -Werror -O0 -g"
 ./configure --prefix="$BASEPATH/build/rootdir"
 make $MAKEOPTS
 make distclean
