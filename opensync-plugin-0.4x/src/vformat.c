@@ -33,8 +33,8 @@
 #include <iconv.h>
 #include <opensync/opensync.h>
 
-static size_t base64_encode_step(unsigned char *in, size_t len, gboolean break_lines, unsigned char *out, int *state, int *save);
-static size_t base64_decode_step(unsigned char *in, size_t len, unsigned char *out, int *state, unsigned int *save);
+static size_t base64_encode_step(const unsigned char *in, size_t len, gboolean break_lines, unsigned char *out, int *state, int *save);
+static size_t base64_decode_step(const unsigned char *in, size_t len, unsigned char *out, int *state, unsigned int *save);
 static size_t base64_decode_simple (char *data, size_t len);
 static char  *base64_encode_simple (const char *data, size_t len);
 
@@ -1884,7 +1884,7 @@ static void base64_init(char *rank)
 
 /* call this when finished encoding everything, to
    flush off the last little bit */
-static size_t base64_encode_close(unsigned char *in, size_t inlen, gboolean break_lines, unsigned char *out, int *state, int *save)
+static size_t base64_encode_close(const unsigned char *in, size_t inlen, gboolean break_lines, unsigned char *out, int *state, int *save)
 {
 	int c1, c2;
 	unsigned char *outptr = out;
@@ -1923,9 +1923,10 @@ static size_t base64_encode_close(unsigned char *in, size_t inlen, gboolean brea
   output at a time, saves left-over state in state and save (initialise to
   0 on first invocation).
 */
-static size_t base64_encode_step(unsigned char *in, size_t len, gboolean break_lines, unsigned char *out, int *state, int *save)
+static size_t base64_encode_step(const unsigned char *in, size_t len, gboolean break_lines, unsigned char *out, int *state, int *save)
 {
-	register unsigned char *inptr, *outptr;
+	register const unsigned char *inptr;
+	register unsigned char *outptr;
 
 	if (len<=0)
 		return 0;
@@ -1934,7 +1935,7 @@ static size_t base64_encode_step(unsigned char *in, size_t len, gboolean break_l
 	outptr = out;
 
 	if (len + ((char *)save)[0] > 2) {
-		unsigned char *inend = in+len-2;
+		const unsigned char *inend = in+len-2;
 		register int c1, c2, c3;
 		register int already;
 
@@ -1997,13 +1998,15 @@ static size_t base64_encode_step(unsigned char *in, size_t len, gboolean break_l
  *
  * Decodes a chunk of base64 encoded data
  **/
-static size_t base64_decode_step(unsigned char *in, size_t len, unsigned char *out, int *state, unsigned int *save)
+static size_t base64_decode_step(const unsigned char *in, size_t len, unsigned char *out, int *state, unsigned int *save)
 {
 	unsigned char base64_rank[256];
 	base64_init((char*)base64_rank);
 	
-	register unsigned char *inptr, *outptr;
-	unsigned char *inend, c;
+	register const unsigned char *inptr;
+	register unsigned char *outptr;
+	const unsigned char *inend;
+	unsigned char c;
 	register unsigned int v;
 	int i;
 
@@ -2056,7 +2059,7 @@ static char *base64_encode_simple (const char *data, size_t len)
 	g_return_val_if_fail (data != NULL, NULL);
 
 	out = g_malloc (len * 4 / 3 + 5);
-	outlen = base64_encode_close ((unsigned char *)data, len, FALSE,
+	outlen = base64_encode_close ((const unsigned char *)data, len, FALSE,
 				      out, &state, (int*)&save);
 	out[outlen] = '\0';
 	return (char *)out;
@@ -2069,7 +2072,7 @@ static size_t base64_decode_simple (char *data, size_t len)
 
 	g_return_val_if_fail (data != NULL, 0);
 
-	return base64_decode_step ((unsigned char *)data, len,
+	return base64_decode_step ((const unsigned char *)data, len,
 					(unsigned char *)data, &state, &save);
 }
 
