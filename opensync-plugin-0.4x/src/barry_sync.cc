@@ -433,7 +433,7 @@ static void *initialize(OSyncPlugin *plugin, OSyncPluginInfo *info, OSyncError *
 			const char *name = osync_plugin_advancedoption_get_name(option);
 	
 			if (!strcmp(name, "PinCode")) {
-				env->m_pin = atoi(val);
+				env->m_pin = strtol(val, NULL, 16);
 			}
 			else if (!strcmp(name, "Debug")) {
 				env->m_DebugMode = (!strcmp(val, "1")) ? true : false;
@@ -857,7 +857,7 @@ osync_bool get_sync_info(OSyncPluginEnv *env, OSyncError **error)
 	osync_plugin_set_name(plugin, "barry-sync");
 	osync_plugin_set_longname(plugin, "Barry OpenSync plugin v0.15 for the Blackberry handheld");
 	osync_plugin_set_description(plugin, "Plugin to synchronize calendar and contact entries on USB Blackberry handhelds");
-	
+
 	// Set the callback functions
 	osync_plugin_set_initialize(plugin, initialize);
 	osync_plugin_set_finalize(plugin, finalize);
