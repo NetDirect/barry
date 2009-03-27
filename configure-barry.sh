@@ -3,7 +3,7 @@
 CHOICE="system"
 
 #export CXXFLAGS="-Wall -Werror -pedantic -O0 -g -pg"
-export CXXFLAGS="-Wall -Werror -pedantic -O0 -g"
+export CXXFLAGS="-Wall -Werror -O0 -g"
 #export CXX="g++-3.3"
 #export CXX="g++-3.4"
 #export CXX="g++-4.1"
