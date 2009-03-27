@@ -489,6 +489,11 @@ void Contact::Dump(std::ostream &os) const
 		b->type != CFC_INVALID_FIELD;
 		b++ )
 	{
+		// special case: don't dump the raw image data, but
+		// leave that for a special hex dump
+		if( b->type == CFC_IMAGE )
+			continue;
+
 		const std::string *pField = 0;
 		if( b->strMember ) {
 			pField = &(this->*(b->strMember));
@@ -525,6 +530,13 @@ void Contact::Dump(std::ostream &os) const
 		os << "    GroupLinks:\n";
 	for( ; gb != ge; gb++ ) {
 		os << "        ID: 0x" << setbase(16) << gb->Link << "\n";
+	}
+
+	// print Image in hex dump format, if available
+	if( Image.size() ) {
+		Data image(Image.data(), Image.size());
+		os << "    Photo image:\n";
+		os << image << "\n";
 	}
 
 	// and finally print unknowns
