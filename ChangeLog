@@ -4,6 +4,8 @@ Release: version 0.15 - 2009/01/??
 	- changed PIN format from decimal to hex in opensync-0.4x plugin
 		config
 	- added special case so photo data does not print raw in btool dumps
+	- fixed call to trace.logf() in plugin code... should never call
+		a printf-like function unless you use a constant "%s"
 2009/03/24
 	- fixed typo in zsh/_bjavaloader thanks to feedback from Nicolas V.
 	- pulled from Josh Kropf: 75b1a89e8b1eb9d89bcd8b5ecbed9a47af5a8930
