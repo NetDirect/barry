@@ -1036,7 +1036,7 @@ char *b_vformat_to_string (b_VFormat *evc, b_VFormatType type)
 					if (_helper_is_base64((const char *) v->data)) {
 						format_encoding = VF_ENCODING_BASE64;
 						/*Only the "B" encoding of [RFC 2047] is an allowed*/
-						v->data="B";
+						v->data=g_strdup("B");
 					}
 					/**
 					 * QUOTED-PRINTABLE inline encoding has been
@@ -1073,7 +1073,7 @@ char *b_vformat_to_string (b_VFormat *evc, b_VFormatType type)
 					// check for base64 encoding
 					if (_helper_is_base64((const char *) v->data)) {
 						format_encoding = VF_ENCODING_BASE64;
-						v->data="BASE64";
+						v->data=g_strdup("BASE64");
 					}
 					attr_str = g_string_append (attr_str, v->data);
 					if (v->next)
