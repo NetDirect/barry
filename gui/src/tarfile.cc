@@ -24,6 +24,7 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <string.h>
+#include <stdlib.h>
 
 namespace reuse {
 
@@ -151,7 +152,9 @@ bool TarFile::ReadNextFile(std::string &tarpath, std::string &data)
 		return False("Only regular files are supported inside a tarball.");
 	}
 
-	tarpath = th_get_pathname(m_tar);
+	char *pathname = th_get_pathname(m_tar);
+	tarpath = pathname;
+	free(pathname);
 	size_t size = th_get_size(m_tar);
 
 	// read the data in blocks until finished
@@ -194,7 +197,9 @@ bool TarFile::ReadNextFilenameOnly(std::string &tarpath)
 		return False("Only regular files are supported inside a tarball.");
 	}
 
-	tarpath = th_get_pathname(m_tar);
+	char *pathname = th_get_pathname(m_tar);
+	tarpath = pathname;
+	free(pathname);
 
 	if( tar_skip_regfile(m_tar) != 0 ) {
 		return False("Unable to skip tar file", errno);
