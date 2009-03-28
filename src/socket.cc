@@ -52,7 +52,8 @@ SocketZero::SocketZero(	SocketRoutingQueue &queue,
 	m_halfOpen(false),
 	m_challengeSeed(0),
 	m_remainingTries(0),
-	m_sequencePacket(true)
+	m_sequencePacket(true),
+	m_resetOnClose(false)
 {
 }
 
