@@ -31,6 +31,7 @@
 #include <algorithm>
 #include <getopt.h>
 #include <fstream>
+#include <string.h>
 
 // supported javaloader commands
 #define CMD_LIST	"dir"
@@ -136,6 +137,7 @@ void SetTime(Barry::Mode::JavaLoader *javaloader, const char *timestr)
 
 	if( timestr ) {
 		struct tm timeinfo;
+		memset(&timeinfo, 0, sizeof(timeinfo));
 
 		// parse time string
 		char *p = strptime(timestr, TIME_FMT, &timeinfo);
