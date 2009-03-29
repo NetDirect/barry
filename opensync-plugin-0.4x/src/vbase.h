@@ -150,6 +150,7 @@ public:
 	// value #5 and there are only 4).
 	std::string GetName();
 	std::string GetValue(int nth = 0);
+	std::string GetDecodedValue();
 	std::string GetParam(const char *name, int nth = 0);
 	std::string GetAllParams(const char *name);
 };
@@ -188,6 +189,7 @@ protected:
 	vAttrPtr NewAttr(const char *name, const char *value);
 	void AddAttr(vAttrPtr attr);
 	void AddValue(vAttrPtr &attr, const char *value);
+	void AddEncodedValue(vAttrPtr &attr, b_VFormatEncoding encoding, const char *value, int len);
 	void AddParam(vAttrPtr &attr, const char *name, const char *value);
 
 	std::string GetAttr(const char *attrname, const char *block = 0);
