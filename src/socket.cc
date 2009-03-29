@@ -813,36 +813,56 @@ void Socket::Packet(Data &send, Data &receive, int timeout)
 		unsigned int offset = 0;
 		Data outFrag;
 
+		// You haven't to sequence packet while the whole packet isn't sent
+		//  a) No sequence received packet
+		//  b) 1°) Sent framgment 1/N
+		//     2°) Sent framgment 2/N
+		//         ...
+		//     N°) Before sent fragment N/N, I enable the sequence packet process.
+		//         Sent framgment N/N
+		SetSequencePacket(false);
+
 		do {
 			offset = SocketZero::MakeNextFragment(send, outFrag, offset);
+
+			// Is last packet ?
+			MAKE_PACKET(spack, outFrag);
+
+			if (spack->command != SB_COMMAND_DB_FRAGMENTED)
+				SetSequencePacket(true);
+
 			Send(outFrag, inFrag, timeout);
 
-			MAKE_PACKET(rpack, inFrag);
 			// only process sequence handshakes... once we
 			// get to the last fragment, we fall through to normal
 			// processing below
-			if( offset && inFrag.GetSize() > 0 ) {
+			if (spack->command != SB_COMMAND_DB_FRAGMENTED) {
+				MAKE_PACKET(rpack, inFrag);
 
-				Protocol::CheckSize(inFrag, SB_PACKET_HEADER_SIZE);
+				if( offset && inFrag.GetSize() > 0 ) {
+					Protocol::CheckSize(inFrag, SB_PACKET_HEADER_SIZE);
 
-				switch( rpack->command )
-				{
-				case SB_COMMAND_SEQUENCE_HANDSHAKE:
-					CheckSequence(inFrag);
-					break;
-
-				default: {
-					std::ostringstream oss;
-					oss << "Socket: (send) unhandled packet in Packet(): 0x" << std::hex << (unsigned int)rpack->command;
-					eout(oss.str());
-					throw Error(oss.str());
+					switch( rpack->command )
+					{
+					case SB_COMMAND_SEQUENCE_HANDSHAKE:
+						CheckSequence(inFrag);
+						break;
+	
+					default: {
+						std::ostringstream oss;
+						oss << "Socket: (send) unhandled packet in Packet(): 0x" << std::hex << (unsigned int)rpack->command;
+						eout(oss.str());
+						throw Error(oss.str());
+						}
+						break;
 					}
-					break;
 				}
 			}
 
-
 		} while( offset > 0 );
+
+		// To be sure that it's clean...
+		SetSequencePacket(true);
 	}
 
 	bool done = false, frag = false;
