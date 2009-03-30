@@ -421,18 +421,18 @@ const Barry::Contact& vCard::ToBarry(const char *vcard, uint32_t RecordId)
 	vAttr photo = GetAttrObj("PHOTO");
 	if (photo.Get()) {
 		std::string sencoding = photo.GetAllParams("ENCODING");
-		
+
 		ToLower(sencoding);
 
 		const char *encoding = sencoding.c_str();
 
-		if (!strstr(encoding, "b")) {
-			photo.Get()->encoding = VF_ENCODING_BASE64;
+		if (strstr(encoding, "quoted-printable")) {
+			photo.Get()->encoding = VF_ENCODING_QP;
 		
 			con.Image = photo.GetDecodedValue();
 		}
-		else if (!strstr(encoding, "quoted-printable")) {
-			photo.Get()->encoding = VF_ENCODING_QP;
+		else if (strstr(encoding, "b")) {
+			photo.Get()->encoding = VF_ENCODING_BASE64;
 		
 			con.Image = photo.GetDecodedValue();
 		}
@@ -606,15 +606,21 @@ bool VCardConverter::CommitRecordData(BarryEnvironment *env, unsigned int dbId,
 
 	Barry::RecordBuilder<Barry::Contact, VCardConverter> builder(convert);
 
-	if( add ) {
-		trace.log("adding record");
-		env->m_pDesktop->AddRecord(dbId, builder);
+	try {
+		if( add ) {
+			trace.log("adding record");
+			env->m_pDesktop->AddRecord(dbId, builder);
+		}
+		else {
+			trace.log("setting record");
+			env->m_pDesktop->SetRecord(dbId, StateIndex, builder);
+			trace.log("clearing dirty flag");
+			env->m_pDesktop->ClearDirty(dbId, StateIndex);
+		}
 	}
-	else {
-		trace.log("setting record");
-		env->m_pDesktop->SetRecord(dbId, StateIndex, builder);
-		trace.log("clearing dirty flag");
-		env->m_pDesktop->ClearDirty(dbId, StateIndex);
+	catch (Barry::Error &e ) {
+		trace.logf("ERROR: VCardConverter::CommitRecordData - Format error");
+		return false;
 	}
 
 	return true;

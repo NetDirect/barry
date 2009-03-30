@@ -565,15 +565,21 @@ bool VEventConverter::CommitRecordData(BarryEnvironment *env, unsigned int dbId,
 
 	Barry::RecordBuilder<Barry::Calendar, VEventConverter> builder(convert);
 
-	if( add ) {
-		trace.log("adding record");
-		env->m_pDesktop->AddRecord(dbId, builder);
+	try {
+		if( add ) {
+			trace.log("adding record");
+			env->m_pDesktop->AddRecord(dbId, builder);
+		}
+		else {
+			trace.log("setting record");
+			env->m_pDesktop->SetRecord(dbId, StateIndex, builder);
+			trace.log("clearing dirty flag");
+			env->m_pDesktop->ClearDirty(dbId, StateIndex);
+		}
 	}
-	else {
-		trace.log("setting record");
-		env->m_pDesktop->SetRecord(dbId, StateIndex, builder);
-		trace.log("clearing dirty flag");
-		env->m_pDesktop->ClearDirty(dbId, StateIndex);
+	catch (Barry::Error &e ) {
+		trace.logf("ERROR: VEventConverter::CommitRecordData - Format error");
+		return false;
 	}
 
 	return true;
