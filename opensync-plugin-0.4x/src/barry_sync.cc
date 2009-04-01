@@ -84,14 +84,12 @@ void GetChanges(OSyncPluginInfo *info, OSyncContext *ctx, BarryEnvironment *env,
 
 	// find the matching cache, state table, and id map for this change
 	DatabaseSyncState::cache_type &cache = pSync->m_Cache;
-	idmap &map = pSync->m_IdMap;
 
 	// check if slow sync has been requested, and if so, empty the
 	// cache and id map and start fresh
 	if (slow_sync) {
 		trace.log("GetChanges: slow sync request detected, clearing cache and id map");
 		cache.clear();
-		map.clear();
 	}
 
 	// fetch state table
@@ -114,7 +112,7 @@ void GetChanges(OSyncPluginInfo *info, OSyncContext *ctx, BarryEnvironment *env,
 		const RecordStateTable::IndexType &index = i->first;
 		const RecordStateTable::State &state = i->second;
 
-		// search the idmap for the UID
+		// convert record ID to uid string
 		std::string uid = pSync->Map2Uid(state.RecordId);
 
 		// search the cache
@@ -163,9 +161,6 @@ void GetChanges(OSyncPluginInfo *info, OSyncContext *ctx, BarryEnvironment *env,
 			osync_context_report_change(ctx, change);
 
 			osync_change_unref(change);
-
-			// map our IDs for later
-			map.Map(uid, state.RecordId);
 		}
 	}
 
@@ -176,7 +171,7 @@ void GetChanges(OSyncPluginInfo *info, OSyncContext *ctx, BarryEnvironment *env,
 	for( ; c != cache.end(); ++c ) {
 		uint32_t recordId = c->first;
 
-		// search the idmap for the UID
+		// convert record ID to uid string
 		std::string uid = pSync->Map2Uid(recordId);
 
 		// search the state table
@@ -265,14 +260,6 @@ bool FinishSync(OSyncContext *ctx, BarryEnvironment *env, DatabaseSyncState *pSy
 	if( !pSync->SaveCache() ) {
 		osync_context_report_error(ctx, OSYNC_ERROR_IO_ERROR,
 			"Error saving calendar cache");
-		return false;
-	}
-
-	// save the id map
-	pSync->CleanupMap();
-	if( !pSync->SaveMap() ) {
-		osync_context_report_error(ctx, OSYNC_ERROR_IO_ERROR,
-			"Error saving calendar id map");
 		return false;
 	}
 
@@ -456,7 +443,6 @@ static void *initialize(OSyncPlugin *plugin, OSyncPluginInfo *info, OSyncError *
 
 		if (barry_calendar_initialize(env, info, error)) {
 			env->m_CalendarSync.LoadCache();
-			env->m_CalendarSync.LoadMap();
 
 			env->m_CalendarSync.m_Sync = true;
 		}		
@@ -468,7 +454,6 @@ static void *initialize(OSyncPlugin *plugin, OSyncPluginInfo *info, OSyncError *
 
 		if (barry_contact_initialize(env, info, error)) {
 			env->m_ContactsSync.LoadCache();
-			env->m_ContactsSync.LoadMap();
 
 			env->m_ContactsSync.m_Sync = true;
 		}		
@@ -526,13 +511,11 @@ static void connect(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncContext 
 	trace.logf("%s(%p, %p, %p, %p)\n", __func__, sink, info, ctx, userdata);
 
 	try {
-		// Each time you get passed a context (which is used to track
-		// calls to your plugin) you can get the data your returned in
-		// initialize via this call:
 		BarryEnvironment *env = (BarryEnvironment *) userdata;
 
 		// I have to test if the device is already connected.
-		// Indeed, if I sync both contact and event, the connect function is called two times.
+		// Indeed, if I sync both contact and event, the connect
+		// function is called two times.
 		if (!env->isConnected()) {
 			// Probe for available devices
 			Barry::Probe probe;
@@ -648,26 +631,40 @@ static void commit_change(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncCo
 		// make references instead of pointers
 		DatabaseSyncState::cache_type &cache = pSync->m_Cache;
 		Barry::RecordStateTable &table = pSync->m_Table;
-		idmap &map = pSync->m_IdMap;
 		Barry::Mode::Desktop &desktop = *env->m_pDesktop;
 		unsigned int dbId = pSync->m_dbId;
 
 
-		// extract RecordId from change's UID,
-		// and update the ID map if necessary
-		const char *uid = osync_change_get_uid(change);
-		trace.logf("uid from change: %s", uid);
-		if( strlen(uid) == 0 ) {
-			osync_context_report_error(ctx, OSYNC_ERROR_GENERIC,
-				"uid from change object is blank!");
-		}
-		unsigned long RecordId = pSync->GetMappedRecordId(uid);
-
-		// search for the RecordId in the state table, to find the
-		// index... we only need the index if we are deleting or
-		// modifying
+		// either generate or retrieve the record ID, based on type
 		Barry::RecordStateTable::IndexType StateIndex;
-		if( osync_change_get_changetype(change) != OSYNC_CHANGE_TYPE_ADDED ) {
+		unsigned long RecordId = 0;
+		if( osync_change_get_changetype(change) == OSYNC_CHANGE_TYPE_ADDED ) {
+			// create new ID for this record
+			RecordId = table.MakeNewRecordId();
+
+			// tell opensync to save our ID
+			char *puid = g_strdup_printf("%lu", RecordId);
+			osync_change_set_uid(change, puid);
+			g_free(puid);
+		}
+		else {
+			// extract RecordId from change's UID,
+			const char *uid = osync_change_get_uid(change);
+			trace.logf("uid from change: %s", uid);
+
+			// convert existing UID string to RecordId
+			if( strlen(uid) == 0 ||
+			    sscanf(uid, "%lu", &RecordId) != 0 ||
+			    RecordId == 0)
+			{
+				trace.logf("Unable to extract a valid record ID from: %s", uid);
+				osync_context_report_error(ctx, OSYNC_ERROR_IO_ERROR, "Unable to extract a valid record ID from: %s", uid);
+				return;
+			}
+
+			// search for the RecordId in the state table, to find the
+			// index... we only need the index if we are deleting or
+			// modifying
 			if( !table.GetIndex(RecordId, &StateIndex) ) {
 				osync_context_report_error(ctx, OSYNC_ERROR_GENERIC,
 					"unable to get state table index for RecordId: %lu",
@@ -675,6 +672,7 @@ static void commit_change(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncCo
 				return;
 			}
 		}
+
 
 		std::string errmsg;
 		bool status;
@@ -687,7 +685,6 @@ static void commit_change(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncCo
 		case OSYNC_CHANGE_TYPE_DELETED:
 			desktop.DeleteRecord(dbId, StateIndex);
 			cache.erase(RecordId);
-			map.UnmapUid(uid);
 			break;
 
 		case OSYNC_CHANGE_TYPE_ADDED:
@@ -698,7 +695,6 @@ static void commit_change(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncCo
 			if( !status ) {
 				trace.logf("CommitData() for ADDED state returned false: %s", errmsg.c_str());
 				osync_context_report_error(ctx, OSYNC_ERROR_PARAMETER, "%s", errmsg.c_str());
-				map.UnmapUid(uid);
 				return;
 			}
 			cache[RecordId] = false;
@@ -712,7 +708,6 @@ static void commit_change(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncCo
 			if( !status ) {
 				trace.logf("CommitData() for MODIFIED state returned false: %s", errmsg.c_str());
 				osync_context_report_error(ctx, OSYNC_ERROR_PARAMETER, "%s", errmsg.c_str());
-				map.UnmapUid(uid);
 				return;
 			}
 			break;
@@ -730,12 +725,6 @@ static void commit_change(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncCo
 	}
 	catch( std::exception &e ) {
 		osync_context_report_error(ctx, OSYNC_ERROR_IO_ERROR, "%s", e.what());
-
-		// we don't worry about unmapping ids here, as there
-		// is still a possibility that the record was added...
-		// plus, the map might not get written out to disk anyway
-		// in a plugin error state
-
 		return;
 	}
 }

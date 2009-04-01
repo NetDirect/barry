@@ -31,7 +31,6 @@ barry_sync_la_SOURCES = \
 	vbase.cc vbase.h \
 	vevent.cc vevent.h \
 	vcard.cc vcard.h \
-	idmap.cc idmap.h \
 	vformat.c vformat.h \
 	trace.h
 

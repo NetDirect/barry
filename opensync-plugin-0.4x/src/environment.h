@@ -26,7 +26,6 @@
 #include <barry/barry.h>
 #include <string>
 #include <glib.h>
-#include "idmap.h"
 
 
 struct DatabaseSyncState
@@ -43,10 +42,6 @@ public:
 	// cache data
 	std::string m_CacheFilename;
 	cache_type m_Cache;
-
-	// id map data
-	std::string m_MapFilename;
-	idmap m_IdMap;
 
 	// device data
 	unsigned int m_dbId;
@@ -65,14 +60,7 @@ public:
 	bool LoadCache();
 	bool SaveCache();
 
-	bool LoadMap();
-	bool SaveMap();
-
-	void CleanupMap();
-	void ClearDirtyFlags();
-
 	std::string Map2Uid(uint32_t recordId) const;
-	unsigned long GetMappedRecordId(const std::string &uid);
 };
 
 
@@ -101,7 +89,6 @@ protected:
 	void DoConnect();
 
 public:
-//	BarryEnvironment(OSyncMember *pm);
 	BarryEnvironment(OSyncPluginInfo *info);
 	~BarryEnvironment();
 

@@ -44,9 +44,8 @@ DatabaseSyncState::DatabaseSyncState(OSyncPluginInfo *info, const char *descript
 	m_Sync(false),
 	m_Desc(description)
 {
-	m_CacheFilename = m_MapFilename = osync_plugin_info_get_configdir(info);
+	m_CacheFilename = osync_plugin_info_get_configdir(info);
 	m_CacheFilename += "/barry_" + m_Desc + "_cache.txt";
-	m_MapFilename += "/barry_" + m_Desc + "_idmap.txt";
 }
 
 DatabaseSyncState::~DatabaseSyncState()
@@ -95,82 +94,17 @@ bool DatabaseSyncState::SaveCache()
 	return !ofs.bad() && !ofs.fail();
 }
 
-bool DatabaseSyncState::LoadMap()
-{
-	return m_IdMap.Load(m_MapFilename.c_str());
-}
-
-bool DatabaseSyncState::SaveMap()
-{
-	return m_IdMap.Save(m_MapFilename.c_str());
-}
-
-// cycle through the map and search the state table for each rid,
-// and remove any that do not exist
-void DatabaseSyncState::CleanupMap()
-{
-	idmap::iterator i = m_IdMap.begin();
-	for( ; i != m_IdMap.end(); ++i ) {
-		if( !m_Table.GetIndex(i->second) ) {
-			// Record Id does not exist in state table, so it is
-			// not needed anymore in the ID map
-			m_IdMap.Unmap(i);
-		}
-	}
-}
-
 //
 // Map2Uid
 //
-/// Searches for the given record ID, and returns the mapped UID.  If not
-/// found, it creates a new UID and returns it without mapping it.
+/// Converts record ID to string, since opensync 0.4x keeps the
+/// same UID as we give it.
 ///
 std::string DatabaseSyncState::Map2Uid(uint32_t recordId) const
 {
-	// search the idmap for the UID
-	std::string uid;
-	idmap::const_iterator mapped_id;
-	if( m_IdMap.RidExists(recordId, &mapped_id) ) {
-		uid = mapped_id->first;
-	}
-	else {
-		// not mapped, map it ourselves
-		char *puid = g_strdup_printf("%s-%u", m_Desc.c_str(), recordId);
-		uid = puid;
-		g_free(puid);
-	}
-	return uid;
-}
-
-unsigned long DatabaseSyncState::GetMappedRecordId(const std::string &uid)
-{
-	Trace trace("DatabaseSyncState::GetMappedRecordId()", m_Desc.c_str());
-
-	// if already in map, use the matching rid
-	idmap::const_iterator it;
-	if( m_IdMap.UidExists(uid, &it) ) {
-		trace.logf("found existing uid in map: %lu", it->second);
-		return it->second;
-	}
-
-	// nothing in the map, so try to convert the string to a number
-	unsigned long RecordId;
-	if( sscanf(uid.c_str(), "%lu", &RecordId) != 0 ) {
-		trace.logf("parsed uid as: %lu", RecordId);
-		if( m_IdMap.Map(uid, RecordId) != m_IdMap.end() )
-			return RecordId;
-
-		trace.logf("parsed uid already exists in map, skipping");
-	}
-
-	// create one of our own, if we get here...
-	// do this in a loop to keep going until we find an ID that's unique
-	do {
-		RecordId = m_Table.MakeNewRecordId();
-	} while( m_IdMap.Map(uid, RecordId) == m_IdMap.end() );
-
-	trace.logf("made new record id: %lu", RecordId);
-	return RecordId;
+	std::ostringstream oss;
+	oss << std::dec << recordId;
+	return oss.str();
 }
 
 
@@ -310,10 +244,4 @@ DatabaseSyncState* BarryEnvironment::GetSyncObject(OSyncChange *change)
 
 	return 0;
 }
-
-
-//void BarryEnvironment::BuildConfig()
-//{
-//	FIXME - build back into one long string
-//}
 
