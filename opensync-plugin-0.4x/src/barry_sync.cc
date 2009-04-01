@@ -70,7 +70,8 @@ void GetChanges(OSyncPluginInfo *info, OSyncContext *ctx, BarryEnvironment *env,
 		DatabaseSyncState *pSync,
 		const char *DBDBName,
 		const char *ObjTypeName, const char *FormatName,
-		GetData_t getdata)
+		GetData_t getdata,
+		osync_bool slow_sync)
 {
 	Trace trace("GetChanges");
 
@@ -87,7 +88,7 @@ void GetChanges(OSyncPluginInfo *info, OSyncContext *ctx, BarryEnvironment *env,
 
 	// check if slow sync has been requested, and if so, empty the
 	// cache and id map and start fresh
-	if (osync_objtype_sink_get_slowsync(pSync->sink)) {
+	if (slow_sync) {
 		trace.log("GetChanges: slow sync request detected, clearing cache and id map");
 		cache.clear();
 		map.clear();
@@ -591,7 +592,8 @@ static void contact_get_changes(OSyncObjTypeSink *sink, OSyncPluginInfo *info, O
 
 		GetChanges(info, ctx, env, &env->m_ContactsSync,
 			"Address Book", "contact", "vcard30",
-			&VCardConverter::GetRecordData);
+			&VCardConverter::GetRecordData,
+			slow_sync);
 
 		// Success!
 		osync_context_report_success(ctx);
@@ -612,7 +614,8 @@ static void event_get_changes(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSy
 
 		GetChanges(info, ctx, env, &env->m_CalendarSync,
 			"Calendar", "event", "vevent20",
-			&VEventConverter::GetRecordData);
+			&VEventConverter::GetRecordData,
+			slow_sync);
 
 		// Success!
 		osync_context_report_success(ctx);
