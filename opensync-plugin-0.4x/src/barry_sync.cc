@@ -294,15 +294,12 @@ static bool barry_contact_initialize(BarryEnvironment *env, OSyncPluginInfo *inf
 		return false;
 
 	trace.log("contact enabled");
-	
-	OSyncObjTypeSinkFunctions functions;
-	memset(&functions, 0, sizeof(functions));
 
-	functions.connect = connect;
-	functions.disconnect = disconnect;
-	functions.get_changes = contact_get_changes;
-	functions.commit = commit_change; 
-	functions.sync_done = contact_sync_done;
+	osync_objtype_sink_set_connect_func(sink, connect);
+	osync_objtype_sink_set_disconnect_func(sink, disconnect);
+	osync_objtype_sink_set_get_changes_func(sink, contact_get_changes);
+	osync_objtype_sink_set_commit_func(sink, commit_change);
+	osync_objtype_sink_set_sync_done_func(sink, contact_sync_done);
 
 	OSyncPluginConfig *config = osync_plugin_info_get_config(info);
 	OSyncPluginResource *resource = osync_plugin_config_find_active_resource(config, "contact");
@@ -331,7 +328,7 @@ static bool barry_contact_initialize(BarryEnvironment *env, OSyncPluginInfo *inf
 //	env->format = osync_format_env_find_objformat(formatenv, "vcard30");
 	env->m_ContactsSync.sink = sink;
 
-	osync_objtype_sink_set_functions(sink, functions, env);
+	osync_objtype_sink_set_userdata(sink, env);
 
 	trace.log("contact initialize OK");
 
@@ -352,14 +349,11 @@ static bool barry_calendar_initialize(BarryEnvironment *env, OSyncPluginInfo *in
 	
 	trace.log("calendar enabled");
 
-	OSyncObjTypeSinkFunctions functions;
-	memset(&functions, 0, sizeof(functions));
-
-	functions.connect = connect;
-	functions.disconnect = disconnect;
-	functions.get_changes = event_get_changes;
-	functions.commit = commit_change; 
-	functions.sync_done = event_sync_done;
+	osync_objtype_sink_set_connect_func(sink, connect);
+	osync_objtype_sink_set_disconnect_func(sink, disconnect);
+	osync_objtype_sink_set_get_changes_func(sink, event_get_changes);
+	osync_objtype_sink_set_commit_func(sink, commit_change);
+	osync_objtype_sink_set_sync_done_func(sink, event_sync_done);
 
 	OSyncPluginConfig *config = osync_plugin_info_get_config(info);
 	OSyncPluginResource *resource = osync_plugin_config_find_active_resource(config, "event");
@@ -387,7 +381,7 @@ static bool barry_calendar_initialize(BarryEnvironment *env, OSyncPluginInfo *in
 //	env->format = osync_format_env_find_objformat(formatenv, "vevent20");
 	env->m_CalendarSync.sink = sink;
 
-	osync_objtype_sink_set_functions(sink, functions, env);
+	osync_objtype_sink_set_userdata(sink, env);
 
 	return true;
 }
