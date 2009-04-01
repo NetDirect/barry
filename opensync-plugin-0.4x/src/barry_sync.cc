@@ -508,10 +508,10 @@ static osync_bool discover(OSyncPluginInfo *info, void *userdata, OSyncError **e
 {
 	Trace trace("discover");
 
-	int i, numobjs = osync_plugin_info_num_objtypes(info);
-    
-	for (i = 0; i < numobjs; i++) {
-    	OSyncObjTypeSink *sink = osync_plugin_info_nth_objtype(info, i);
+	OSyncList *s, *sinks;
+	sinks = osync_plugin_info_get_objtype_sinks(info);
+	for (s = sinks; s; s = s->next) {
+		OSyncObjTypeSink *sink = (OSyncObjTypeSink*) s->data;
 
 		osync_objtype_sink_set_available(sink, true);
 	}
