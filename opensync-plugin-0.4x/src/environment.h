@@ -33,16 +33,7 @@ struct DatabaseSyncState
 public:
 	OSyncObjTypeSink *sink;
 
-	// cache is a map of record ID to bool... the bool doesn't mean
-	// anything... the mere existence of the ID means it belongs
-	// in the cache
-	typedef std::map<uint32_t, bool>			cache_type;
-
 public:
-	// cache data
-	std::string m_CacheFilename;
-	cache_type m_Cache;
-
 	// device data
 	unsigned int m_dbId;
 	std::string m_dbName;
@@ -56,9 +47,6 @@ private:
 public:
 	DatabaseSyncState(OSyncPluginInfo *info, const char *description);
 	~DatabaseSyncState();
-
-	bool LoadCache();
-	bool SaveCache();
 
 	std::string Map2Uid(uint32_t recordId) const;
 };
@@ -98,8 +86,6 @@ public:
 	bool isConnected();
 
 	DatabaseSyncState* GetSyncObject(OSyncChange *change);
-
-	void BuildConfig();
 
 	void ClearDirtyFlags(Barry::RecordStateTable &table, const std::string &dbname);
 	void ClearCalendarDirtyFlags();

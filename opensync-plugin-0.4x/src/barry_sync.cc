@@ -38,6 +38,7 @@
 #include <glib.h>
 #include <stdint.h>
 #include <string.h>
+#include <errno.h>
 
 // All functions that are callable from outside must look like C
 extern "C" {
@@ -65,8 +66,31 @@ extern "C" {
 // Support functions and classes
 //
 
+// Generates a "hash" by grabbing the existing hash
+// of the given uid, and adding 1 to it if dirty.
+std::string GenerateHash(OSyncHashTable *hashtable,
+			const std::string &uid,
+			bool dirty)
+{
+	unsigned long hashcount = 0;
 
-void GetChanges(OSyncPluginInfo *info, OSyncContext *ctx, BarryEnvironment *env,
+	const char *hash = osync_hashtable_get_hash(hashtable, uid.c_str());
+	if( hash ) {
+		errno = 0;
+		hashcount = strtoul(hash, NULL, 10);
+		if( errno )
+			throw std::runtime_error("Error converting string to unsigned long: " + std::string(hash));
+	}
+
+	hashcount += (dirty ? 1 : 0);
+
+	std::ostringstream oss;
+	oss << std::dec << hashcount;
+	return oss.str();
+}
+
+void GetChanges(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncContext *ctx,
+		BarryEnvironment *env,
 		DatabaseSyncState *pSync,
 		const char *DBDBName,
 		const char *ObjTypeName, const char *FormatName,
@@ -82,14 +106,29 @@ void GetChanges(OSyncPluginInfo *info, OSyncContext *ctx, BarryEnvironment *env,
 	using Barry::RecordStateTable;
 	Mode::Desktop &desktop = *env->m_pDesktop;
 
-	// find the matching cache, state table, and id map for this change
-	DatabaseSyncState::cache_type &cache = pSync->m_Cache;
+	// find hash table
+	//
+	// Note: Since the Blackberry tracks dirty flags for us, we don't
+	//       need the hash table to help determine what records have
+	//       changed, and therefore we don't need to actually load
+	//       all the record data across USB either.
+	//
+	//       The hashtable only needs the hash to change when data
+	//       has changed, so we set each change object's hash to:
+	//             last_hash + (dirty ? 1 : 0)
+	//
+	OSyncHashTable *hashtable = osync_objtype_sink_get_hashtable(sink);
 
-	// check if slow sync has been requested, and if so, empty the
-	// cache and id map and start fresh
+	// check if slow sync has been requested
 	if (slow_sync) {
-		trace.log("GetChanges: slow sync request detected, clearing cache and id map");
-		cache.clear();
+		trace.log("GetChanges: slow sync request detected");
+
+		if( osync_hashtable_slowsync(hashtable, &error) ) {
+			osync_context_report_osyncerror(ctx, error);
+			trace.logf("GetChanges: slow sync error: %s", osync_error_print(&error));
+			osync_error_unref(&error);
+			return;
+		}
 	}
 
 	// fetch state table
@@ -99,12 +138,10 @@ void GetChanges(OSyncPluginInfo *info, OSyncContext *ctx, BarryEnvironment *env,
 
 	OSyncFormatEnv *formatenv = osync_plugin_info_get_format_env(info);
 
-//	OSyncObjTypeSink *sink = osync_plugin_info_get_sink(info);
 
-
-	// cycle through the state table...
-	//    - if not in cache, it is added.
-	//    - if in cache, check Blackberry's dirty flag
+	// cycle through the state table... for each record in the state
+	// table, register a change and the fake hash (see note above)
+	// and let the hash table determine what changetype it is
 	RecordStateTable::StateMapType::const_iterator i = table.StateMap.begin();
 	for( ; i != table.StateMap.end(); ++i ) {
 
@@ -115,115 +152,112 @@ void GetChanges(OSyncPluginInfo *info, OSyncContext *ctx, BarryEnvironment *env,
 		// convert record ID to uid string
 		std::string uid = pSync->Map2Uid(state.RecordId);
 
-		// search the cache
-		DatabaseSyncState::cache_type::const_iterator c = cache.find(state.RecordId);
-		if( c == cache.end() ) {
-			// not in cache, this is a new item
-			trace.log("found an ADDED change");
-			change = osync_change_new(&error);
-			osync_change_set_changetype(change, OSYNC_CHANGE_TYPE_ADDED);
-		}
-		else {
-			// in the cache... dirty?
-			if( state.Dirty ) {
-				// modified
-				trace.log("found a MODIFIED change");
-				change = osync_change_new(&error);
-				osync_change_set_changetype(change, OSYNC_CHANGE_TYPE_MODIFIED);
-			}
-			else {
-				trace.log("no change detected");
-			}
+		// create change to pass to hashtable
+		change = osync_change_new(&error);
+		if( !change ) {
+			osync_context_report_osyncwarning(ctx, error);
+			osync_error_unref(&error);
+			continue;
 		}
 
-		// finish filling out the change object
-		if( change ) {
-//			osync_change_set_member(change, env->member);
-//			osync_change_set_objformat_string(change, FormatName);
+		// setup change, just enough for hashtable use
+		osync_change_set_uid(change, uid.c_str());
+		trace.logf("change record ID: %s", uid.c_str());
+		std::string hash = GenerateHash(hashtable, uid, state.Dirty);
+		osync_change_set_hash(change, hash.c_str());
 
-			osync_change_set_uid(change, uid.c_str());
-			trace.logf("change record ID: %s", uid.c_str());
 
-			OSyncObjFormat *format = osync_format_env_find_objformat(formatenv, FormatName);
+		// let hashtable determine what's going to happen
+		OSyncChangeType changetype = osync_hashtable_get_changetype(hashtable, change);
+		osync_change_set_changetype(change, changetype);
 
-			// Now you can set the data for the object
-			// Set the last argument to FALSE if the real data
-			// should be queried later in a "get_data" function
-			char *data = (*getdata)(env, dbId, index);
-			OSyncData *odata = osync_data_new(data, strlen(data), format, &error);
+		// let hashtable know we've processed this change
+		osync_hashtable_update_change(hashtable, change);
 
-//			osync_data_set_objtype(odata, osync_objtype_sink_get_name(sink));
 
-			osync_change_set_data(change, odata);
-			osync_data_unref(odata);
-
-			// just report the change via
-			osync_context_report_change(ctx, change);
-
+		// Decision time: if nothing has changed, skip
+		if( changetype == OSYNC_CHANGE_TYPE_UNMODIFIED ) {
 			osync_change_unref(change);
+			continue;
 		}
+
+
+		//
+		// finish filling out the change object
+		//
+
+		// Now you can set the data for the object
+		// Set the last argument to FALSE if the real data
+		// should be queried later in a "get_data" function
+		OSyncObjFormat *format = osync_format_env_find_objformat(formatenv, FormatName);
+		char *data = (*getdata)(env, dbId, index);
+		OSyncData *odata = osync_data_new(data, strlen(data), format, &error);
+
+		osync_change_set_data(change, odata);
+		osync_data_unref(odata);
+
+		// just report the change via
+		osync_context_report_change(ctx, change);
+
+		osync_change_unref(change);
 	}
 
-	// now cycle through the cache... any objects in the cache
-	// but not found in the state table means that they have been
-	// deleted in the device
-	DatabaseSyncState::cache_type::const_iterator c = cache.begin();
-	for( ; c != cache.end(); ++c ) {
-		uint32_t recordId = c->first;
+	// the hashtable can now give us a linked list of deleted
+	// entries, after the above processing
+	OSyncList *u, *uids = osync_hashtable_get_deleted(hashtable);
+	for( u = uids; u; u = u->next) {
 
-		// convert record ID to uid string
-		std::string uid = pSync->Map2Uid(recordId);
+		const char *uid = (const char*) u->data;
+		uint32_t recordId = strtoul(uid, NULL, 10);
 
 		// search the state table
 		i = table.StateMap.begin();
 		for( ; i != table.StateMap.end(); ++i ) {
 
-			if( i->second.RecordId == recordId )
-				break;	// found
+			if( i->second.RecordId == recordId ) {
+				throw std::runtime_error("Found deleted record ID in state map! " + std::string(uid));
+			}
 		}
 
-		// check if not found...
-		if( i == table.StateMap.end() ) {
-			// register a DELETE, no data
-			trace.log("found DELETE change");
+		// register a DELETE, no data
+		trace.log("found DELETE change");
 
-			OSyncChange *change = osync_change_new(&error);
+		OSyncChange *change = osync_change_new(&error);
+		if( !change ) {
+			osync_context_report_osyncwarning(ctx, error);
+			osync_error_unref(&error);
+			continue;
+		}
 
-			osync_change_set_changetype(change, OSYNC_CHANGE_TYPE_DELETED);
+		osync_change_set_uid(change, uid);
+		trace.log(uid);
+		osync_change_set_changetype(change, OSYNC_CHANGE_TYPE_DELETED);
 
-//			osync_change_set_member(change, env->member);
-//			osync_change_set_objformat_string(change, FormatName);
+//		osync_change_set_objformat_string(change, FormatName);
 
-			osync_change_set_uid(change, uid.c_str());
-			trace.log(uid.c_str());
-
-			OSyncObjFormat *format = osync_format_env_find_objformat(formatenv, FormatName);
-
-			OSyncData *odata = osync_data_new(NULL, 0, format, &error);
-
-//			osync_data_set_objtype(odata, osync_objtype_sink_get_name(sink));
-
-			osync_change_set_data(change, odata);
-			osync_data_unref(odata);
-
-			// report the change
-			osync_context_report_change(ctx, change);
-	
+		OSyncObjFormat *format = osync_format_env_find_objformat(formatenv, FormatName);
+		OSyncData *odata = osync_data_new(NULL, 0, format, &error);
+		if( !odata ) {
 			osync_change_unref(change);
+			osync_context_report_osyncwarning(ctx, error);
+			osync_error_unref(&error);
+			continue;
 		}
+
+		osync_data_set_objtype(odata, osync_objtype_sink_get_name(sink));
+
+		osync_change_set_data(change, odata);
+		osync_data_unref(odata);
+
+		// report the change
+		osync_context_report_change(ctx, change);
+
+		// tell hashtable we've processed this item
+		osync_hashtable_update_change(hashtable, change);
+
+		osync_change_unref(change);
 	}
-
-	// finally, cycle through the state map again, and overwrite the
-	// cache with the current state table. Memory only... if successful,
-	// it will be written back to disk later on.
-
-	// start fresh
-	cache.clear();
-
-	for( i = table.StateMap.begin(); i != table.StateMap.end(); ++i ) {
-		const RecordStateTable::State &state = i->second;
-		cache[state.RecordId] = false;
-	}
+	osync_list_free(uids);
 }
 
 CommitData_t GetCommitFunction(OSyncChange *change)
@@ -255,13 +289,6 @@ bool FinishSync(OSyncContext *ctx, BarryEnvironment *env, DatabaseSyncState *pSy
 	// get the state table again, so we can update
 	// the cache properly
 	desktop.GetRecordStateTable(pSync->m_dbId, pSync->m_Table);
-
-	// update the cache
-	if( !pSync->SaveCache() ) {
-		osync_context_report_error(ctx, OSYNC_ERROR_IO_ERROR,
-			"Error saving calendar cache");
-		return false;
-	}
 
 	// clear all dirty flags in device
 	env->ClearDirtyFlags(pSync->m_Table, pSync->m_dbName);
@@ -317,6 +344,8 @@ static bool barry_contact_initialize(BarryEnvironment *env, OSyncPluginInfo *inf
 
 	osync_objtype_sink_set_userdata(sink, env);
 
+	osync_objtype_sink_enable_hashtable(sink, TRUE);
+
 	trace.log("contact initialize OK");
 
 	return true;
@@ -369,6 +398,8 @@ static bool barry_calendar_initialize(BarryEnvironment *env, OSyncPluginInfo *in
 	env->m_CalendarSync.sink = sink;
 
 	osync_objtype_sink_set_userdata(sink, env);
+
+	osync_objtype_sink_enable_hashtable(sink, TRUE);
 
 	return true;
 }
@@ -442,24 +473,18 @@ static void *initialize(OSyncPlugin *plugin, OSyncPluginInfo *info, OSyncError *
 		trace.log("Process Ressource options...");
 
 		if (barry_calendar_initialize(env, info, error)) {
-			env->m_CalendarSync.LoadCache();
-
 			env->m_CalendarSync.m_Sync = true;
 		}		
 		else {
 			trace.log("No sync Calendar");
-
 			env->m_CalendarSync.m_Sync = false;
 		}
 
 		if (barry_contact_initialize(env, info, error)) {
-			env->m_ContactsSync.LoadCache();
-
 			env->m_ContactsSync.m_Sync = true;
 		}		
 		else {
 			trace.log("No sync Contact");
-
 			env->m_ContactsSync.m_Sync = false;
 		}
 	
@@ -557,7 +582,7 @@ static void contact_get_changes(OSyncObjTypeSink *sink, OSyncPluginInfo *info, O
 	try {
 		BarryEnvironment *env = (BarryEnvironment *) userdata;
 
-		GetChanges(info, ctx, env, &env->m_ContactsSync,
+		GetChanges(sink, info, ctx, env, &env->m_ContactsSync,
 			"Address Book", "contact", "vcard30",
 			&VCardConverter::GetRecordData,
 			slow_sync);
@@ -579,7 +604,7 @@ static void event_get_changes(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSy
 	try {
 		BarryEnvironment *env = (BarryEnvironment *) userdata;
 
-		GetChanges(info, ctx, env, &env->m_CalendarSync,
+		GetChanges(sink, info, ctx, env, &env->m_CalendarSync,
 			"Calendar", "event", "vevent20",
 			&VEventConverter::GetRecordData,
 			slow_sync);
@@ -605,6 +630,8 @@ static void commit_change(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncCo
 
 		BarryEnvironment *env = (BarryEnvironment *) userdata;
 
+		OSyncHashTable *hashtable = osync_objtype_sink_get_hashtable(sink);
+
 		// find the needed commit function, based on objtype of the change
 		CommitData_t CommitData = GetCommitFunction(change);
 		if( !CommitData ) {
@@ -629,7 +656,6 @@ static void commit_change(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncCo
 		}
 
 		// make references instead of pointers
-		DatabaseSyncState::cache_type &cache = pSync->m_Cache;
 		Barry::RecordStateTable &table = pSync->m_Table;
 		Barry::Mode::Desktop &desktop = *env->m_pDesktop;
 		unsigned int dbId = pSync->m_dbId;
@@ -684,7 +710,6 @@ static void commit_change(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncCo
 		{
 		case OSYNC_CHANGE_TYPE_DELETED:
 			desktop.DeleteRecord(dbId, StateIndex);
-			cache.erase(RecordId);
 			break;
 
 		case OSYNC_CHANGE_TYPE_ADDED:
@@ -697,7 +722,7 @@ static void commit_change(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncCo
 				osync_context_report_error(ctx, OSYNC_ERROR_PARAMETER, "%s", errmsg.c_str());
 				return;
 			}
-			cache[RecordId] = false;
+			osync_change_set_hash(change, "0");
 			break;
 
 		case OSYNC_CHANGE_TYPE_MODIFIED:
@@ -710,12 +735,16 @@ static void commit_change(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncCo
 				osync_context_report_error(ctx, OSYNC_ERROR_PARAMETER, "%s", errmsg.c_str());
 				return;
 			}
+			osync_change_set_hash(change, "0");
 			break;
 
 		default:
 			trace.log("Unknown change type");
 			break;
 		}
+
+		// Update hashtable
+		osync_hashtable_update_change(hashtable, change);
 
 		// Answer the call
 		osync_context_report_success(ctx);

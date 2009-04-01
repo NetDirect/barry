@@ -44,54 +44,10 @@ DatabaseSyncState::DatabaseSyncState(OSyncPluginInfo *info, const char *descript
 	m_Sync(false),
 	m_Desc(description)
 {
-	m_CacheFilename = osync_plugin_info_get_configdir(info);
-	m_CacheFilename += "/barry_" + m_Desc + "_cache.txt";
 }
 
 DatabaseSyncState::~DatabaseSyncState()
 {
-}
-
-bool DatabaseSyncState::LoadCache()
-{
-	Trace trace("LoadCache", m_Desc.c_str());
-
-	trace.log(m_CacheFilename.c_str());
-
-	m_Cache.clear();
-	std::ifstream ifs(m_CacheFilename.c_str());
-	if( !ifs )
-		return false;
-
-	while( ifs ) {
-		uint32_t recordId = 0;
-		ifs >> recordId;
-		if( recordId ) {
-			m_Cache[recordId] = false;
-		}
-	}
-
-	if( !ifs.eof() ) {
-		m_Cache.clear();	// assume full sync
-		trace.log("Load failed!");
-		return false;
-	}
-	return true;
-}
-
-bool DatabaseSyncState::SaveCache()
-{
-	Trace trace("SaveCache", m_Desc.c_str());
-
-	std::ofstream ofs(m_CacheFilename.c_str());
-	if( !ofs )
-		return false;
-
-	cache_type::const_iterator i = m_Cache.begin();
-	for( ; i != m_Cache.end(); ++i ) {
-		ofs << i->first << std::endl;
-	}
-	return !ofs.bad() && !ofs.fail();
 }
 
 //
