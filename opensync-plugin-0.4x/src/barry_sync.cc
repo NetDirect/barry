@@ -482,23 +482,13 @@ static void *initialize(OSyncPlugin *plugin, OSyncPluginInfo *info, OSyncError *
 	}
 	// Don't let exceptions escape to the C modules
 	catch( std::bad_alloc &ba ) {
-		trace.log("bad alloc");
-
-//		osync_context_report_error(ctx, OSYNC_ERROR_INITIALIZATION,
-//			"Unable to allocate memory for controller: %s", ba.what());
-
+		trace.logf("Unable to allocate memory for controller: %s", ba.what());
 		delete env;
-
 		return NULL;
 	}
 	catch( std::exception &e ) {
-		trace.log("exception");
-
-//		osync_context_report_error(ctx, OSYNC_ERROR_INITIALIZATION,
-//			"%s", e.what());
-
+		trace.logf("exception: %s", e.what());
 		delete env;
-
 		return NULL;
 	}
 }
@@ -548,7 +538,7 @@ static void connect(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncContext 
 			Barry::Probe probe;
 			int nIndex = probe.FindActive(env->m_pin);
 			if( nIndex == -1 ) {
-//				osync_context_report_error(ctx, OSYNC_ERROR_NO_CONNECTION, "Unable to find PIN %lx", env->m_pin);
+				osync_context_report_error(ctx, OSYNC_ERROR_NO_CONNECTION, "Unable to find PIN %lx", env->m_pin);
 				return;
 			}
 			env->m_ProbeResult = probe.Get(nIndex);
@@ -567,11 +557,11 @@ static void connect(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncContext 
 	}
 	// Don't let exceptions escape to the C modules
 	catch( std::bad_alloc &ba ) {
-		osync_context_report_error(ctx, OSYNC_ERROR_INITIALIZATION,
+		osync_context_report_error(ctx, OSYNC_ERROR_NO_CONNECTION,
 			"Unable to allocate memory for controller: %s", ba.what());
 	}
 	catch( std::exception &e ) {
-		osync_context_report_error(ctx, OSYNC_ERROR_INITIALIZATION,
+		osync_context_report_error(ctx, OSYNC_ERROR_NO_CONNECTION,
 			"%s", e.what());
 	}
 }
