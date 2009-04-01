@@ -1,5 +1,12 @@
 Release: version 0.15 - 2009/01/??
 ------------------------------------------------------------------------------
+2009/03/31
+	- opensync 0.4x changes due to upstream API updates
+		- removed deprecated opensync header
+		- updated 0.4x plugin to use new slow-sync API
+		- updated 0.4x plugin to use new function registration and
+			user data API
+		- updated 0.4x plugin to use new sink list (API change)
 2009/03/27
 	- changed PIN format from decimal to hex in opensync-0.4x plugin
 		config
