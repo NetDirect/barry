@@ -123,7 +123,7 @@ void GetChanges(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncContext *ctx
 	if (slow_sync) {
 		trace.log("GetChanges: slow sync request detected");
 
-		if( osync_hashtable_slowsync(hashtable, &error) ) {
+		if( !osync_hashtable_slowsync(hashtable, &error) ) {
 			std::ostringstream oss;
 			oss << "GetChanges: slow sync error: " << osync_error_print(&error);
 			osync_error_unref(&error);
