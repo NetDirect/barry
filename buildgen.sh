@@ -43,17 +43,32 @@ elif [ "$1" = "ctags" ] ; then
 	(cd tools && ctags -R)
 	(cd examples && ctags -R)
 	(cd gui/src && ctags -R)
-	(cd opensync-plugin/src && ctags -R)
-	(cd opensync-plugin-0.4x/src && ctags -R)
+	if [ "$2" = "0.22" ] ; then
+		(cd opensync-plugin/src && ctags -R)
+	fi
+	if [ "$2" = "0.4x" ] ; then
+		(cd opensync-plugin-0.4x/src && ctags -R)
+	fi
 	# and one with everything
 	ctags -R -f ~/tags-barry --tag-relative=yes
-	# add opensync library as well (yes, I know this only works for my
-	# setup... sorry) :-)
-	#OS_DIR=~/software/opensync/svn
-	OS_DIR=~/software/opensync/0.22
-	if [ -d $OS_DIR ] ; then
-		echo "Detected opensync source tree, building ctags on it..."
-		(cd $OS_DIR && ctags -R -a -f ~/tags-barry --tag-relative=yes)
+
+	if [ "$2" = "0.22" ] ; then
+		# add opensync library as well (yes, I know this only works for my
+		# setup... sorry) :-)
+		#OS_DIR=~/software/opensync/svn
+		OS_DIR=~/software/opensync/0.22
+		if [ -d $OS_DIR ] ; then
+			echo "Detected opensync source tree, building ctags on it..."
+			(cd $OS_DIR && ctags -R -a -f ~/tags-barry --tag-relative=yes)
+		fi
+	fi
+
+	if [ "$2" = "0.4x" ] ; then
+		OS_DIR=~/software/opensync/git
+		if [ -d $OS_DIR ] ; then
+			echo "Detected opensync source tree, building ctags on it..."
+			(cd $OS_DIR && ctags -R -a -f ~/tags-barry --tag-relative=yes)
+		fi
 	fi
 else
 	#autoreconf -if --include=config

@@ -3,6 +3,7 @@ Release: version 0.15 - 2009/01/??
 2009/04/02
 	- fixed double-free bug in opensync 0.4x plugin
 		Can only report error or success once in a change.
+	- updated buildgen.sh to handle ctags for multiple opensyncs
 2009/04/01
 	- opensync 0.4x changes due to upstream API updates
 		- removed idmap and cache code, in favour of opensync's
