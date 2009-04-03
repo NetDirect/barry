@@ -3,6 +3,9 @@ Release: version 0.15 - 2009/01/??
 2009/04/03
 	- removed 0.22 opensync patches from 0.4x tree
 	- applied opensync Photo support patches from Nicolas Vivien
+	- renamed SequencePacket() to HideSequencePacket() for clarity
+		This is a temporary measure... this sequence packet
+		code needs to be cleaned up.
 2009/04/02
 	- fixed double-free bug in opensync 0.4x plugin
 		Can only report error or success once in a change.

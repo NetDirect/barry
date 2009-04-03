@@ -58,7 +58,7 @@ class BXEXPORT SocketZero
 	uint32_t m_challengeSeed;
 	unsigned int m_remainingTries;
 
-	bool m_sequencePacket;
+	bool m_hideSequencePacket;
 
 	bool m_resetOnClose;
 
@@ -78,11 +78,11 @@ private:
 
 protected:
 	bool SequencePacket(const Data &data);
-	bool GetSequencePacket() { return m_sequencePacket; }
+	bool IsSequencePacketHidden() { return m_hideSequencePacket; }
 
 public:
 	void SetResetOnClose(bool flag) { m_resetOnClose = flag; }
-	void SetSequencePacket(bool flag) { m_sequencePacket = flag; }
+	void HideSequencePacket(bool flag) { m_hideSequencePacket = flag; }
 	explicit SocketZero(SocketRoutingQueue &queue, int writeEndpoint,
 		uint8_t zeroSocketSequenceStart = 0);
 	SocketZero(Usb::Device &dev, int writeEndpoint, int readEndpoint,
@@ -182,7 +182,7 @@ public:
 
 	// This function is quickly written
 	// It's very durty :( (but it's usefull to test...)
-	void SetSequencePacket(bool flag) { m_zero->SetSequencePacket(flag); }
+	void HideSequencePacket(bool flag) { m_zero->HideSequencePacket(flag); }
 };
 
 

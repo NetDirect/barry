@@ -210,9 +210,9 @@ uint16_t Controller::SelectMode(ModeType mode)
 			// after opening a socket. (only for Desktop mode)
 			// Otherwise, barrybackup and opensync-plugin can crash (timeout)
 			// I don't know why ! Maybe a bug on the handheld.
-			m_zero.SetSequencePacket(false);
+			m_zero.HideSequencePacket(false);
 			m_zero.Receive(response);
-			m_zero.SetSequencePacket(true);
+			m_zero.HideSequencePacket(true);
 		}
 
 		// return the socket that the device is expecting us to use

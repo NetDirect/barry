@@ -52,7 +52,7 @@ SocketZero::SocketZero(	SocketRoutingQueue &queue,
 	m_halfOpen(false),
 	m_challengeSeed(0),
 	m_remainingTries(0),
-	m_sequencePacket(true),
+	m_hideSequencePacket(true),
 	m_resetOnClose(false)
 {
 }
@@ -69,7 +69,7 @@ SocketZero::SocketZero(	Device &dev,
 	m_halfOpen(false),
 	m_challengeSeed(0),
 	m_remainingTries(0),
-	m_sequencePacket(true),
+	m_hideSequencePacket(true),
 	m_resetOnClose(false)
 {
 }
@@ -344,7 +344,7 @@ void SocketZero::RawReceive(Data &receive, int timeout)
 bool SocketZero::SequencePacket(const Data &data)
 {
 	// Begin -- Test quiet durty :(
-	if (m_sequencePacket == false) {
+	if (m_hideSequencePacket == false) {
 		return false;
 	}
 	// End -- Test quiet durty :(
@@ -738,7 +738,7 @@ void Socket::PacketData(Data &send, Data &receive, int timeout)
 			{
 			case SB_COMMAND_SEQUENCE_HANDSHAKE:
 				CheckSequence(inFrag);
-				if (m_zero->GetSequencePacket() == false)
+				if (!m_zero->IsSequencePacketHidden())
 					done = true;
 				break;
 
@@ -820,7 +820,7 @@ void Socket::Packet(Data &send, Data &receive, int timeout)
 		//         ...
 		//     N°) Before sent fragment N/N, I enable the sequence packet process.
 		//         Sent framgment N/N
-		SetSequencePacket(false);
+		HideSequencePacket(false);
 
 		do {
 			offset = SocketZero::MakeNextFragment(send, outFrag, offset);
@@ -829,7 +829,7 @@ void Socket::Packet(Data &send, Data &receive, int timeout)
 			MAKE_PACKET(spack, outFrag);
 
 			if (spack->command != SB_COMMAND_DB_FRAGMENTED)
-				SetSequencePacket(true);
+				HideSequencePacket(true);
 
 			Send(outFrag, inFrag, timeout);
 
@@ -862,7 +862,7 @@ void Socket::Packet(Data &send, Data &receive, int timeout)
 		} while( offset > 0 );
 
 		// To be sure that it's clean...
-		SetSequencePacket(true);
+		HideSequencePacket(true);
 	}
 
 	bool done = false, frag = false;
@@ -936,9 +936,9 @@ void Socket::Packet(Barry::Packet &packet, int timeout)
 void Socket::Packet(Barry::JLPacket &packet, int timeout)
 {
 	if( packet.HasData() ) {
-		SetSequencePacket(false);
+		HideSequencePacket(false);
 		PacketData(packet.m_cmd, packet.m_receive, timeout);
-		SetSequencePacket(true);
+		HideSequencePacket(true);
 		PacketData(packet.m_data, packet.m_receive, timeout);
 	}
 	else {
