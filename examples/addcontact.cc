@@ -22,6 +22,7 @@
 
 #include <barry/barry.h>
 #include <iostream>
+#include <fstream>
 #include <iomanip>
 
 using namespace std;
@@ -40,6 +41,12 @@ void ReadDate(const char *prompt, Barry::Date &date)
 
 	for( ;; ) {
 		ReadLine(prompt, datestr);
+		if( !datestr.size() ) {
+			// blank
+			date.Clear();
+			break;
+		}
+
 		if( date.FromYYYYMMDD(datestr) )
 			break;
 
@@ -82,6 +89,21 @@ void ReadInput(Barry::Contact &contact)
 	string categories;
 	ReadLine("Categories", categories);
 	Contact::CategoryStr2List(categories, contact.Categories);
+
+	string image_path;
+	ReadLine("Photo path", image_path);
+	if( image_path.size() ) {
+		ifstream in(image_path.c_str());
+		char block[4096];
+
+		contact.Image.clear();
+		while( in.read(block, sizeof(block)) ) {
+			contact.Image.append(block, in.gcount());
+		}
+	}
+	else {
+		cout << "Can't open: " << image_path << endl;
+	}
 }
 
 void Upload(const Barry::ProbeResult &device, const Barry::Contact &contact)
