@@ -847,7 +847,7 @@ void Socket::Packet(Data &send, Data &receive, int timeout)
 					case SB_COMMAND_SEQUENCE_HANDSHAKE:
 						CheckSequence(inFrag);
 						break;
-	
+
 					default: {
 						std::ostringstream oss;
 						oss << "Socket: (send) unhandled packet in Packet(): 0x" << std::hex << (unsigned int)rpack->command;

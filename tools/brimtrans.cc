@@ -67,7 +67,7 @@ int main(int argc, char* argv[])
 			event->push_back(trim_data_line(line.erase(0, 3)));
 		}
 	}
-	
+
 	if( event != NULL ) {
 		dump(*event);
 		delete event;

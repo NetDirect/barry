@@ -331,7 +331,7 @@ static bool barry_contact_initialize(BarryEnvironment *env, OSyncPluginInfo *inf
 	OSyncPluginResource *resource = osync_plugin_config_find_active_resource(config, "contact");
 
 	OSyncList *objformatsinks = osync_plugin_resource_get_objformat_sinks(resource);
-	
+
 	bool hasObjFormat = false;
 
 	OSyncList *r;
@@ -344,7 +344,7 @@ static bool barry_contact_initialize(BarryEnvironment *env, OSyncPluginInfo *inf
 			break;
 		}
 	}
-	
+
 	if (!hasObjFormat) {
 		return false;
 	}
@@ -374,7 +374,7 @@ static bool barry_calendar_initialize(BarryEnvironment *env, OSyncPluginInfo *in
 	osync_bool sinkEnabled = osync_objtype_sink_is_enabled(sink);
 	if (!sinkEnabled)
 		return false;
-	
+
 	trace.log("calendar enabled");
 
 	osync_objtype_sink_set_connect_func(sink, connect);
@@ -387,7 +387,7 @@ static bool barry_calendar_initialize(BarryEnvironment *env, OSyncPluginInfo *in
 	OSyncPluginResource *resource = osync_plugin_config_find_active_resource(config, "event");
 
 	OSyncList *objformatsinks = osync_plugin_resource_get_objformat_sinks(resource);
-	
+
 	bool hasObjFormat = false;
 
 	OSyncList *r;
@@ -399,7 +399,7 @@ static bool barry_calendar_initialize(BarryEnvironment *env, OSyncPluginInfo *in
 			break;
 		}
 	}
-	
+
 	if (!hasObjFormat) {
 		return false;
 	}
@@ -447,15 +447,15 @@ static void *initialize(OSyncPlugin *plugin, OSyncPluginInfo *info, OSyncError *
 		}
 
 		/*
-		 * Process plugin specific advanced options 
+		 * Process plugin specific advanced options
 		 */
 		OSyncList *optslist = osync_plugin_config_get_advancedoptions(config);
 		for (; optslist; optslist = optslist->next) {
 			OSyncPluginAdvancedOption *option = (OSyncPluginAdvancedOption *) optslist->data;
-	
+
 			const char *val = osync_plugin_advancedoption_get_value(option);
 			const char *name = osync_plugin_advancedoption_get_name(option);
-	
+
 			if (!strcmp(name, "PinCode")) {
 				env->m_pin = strtol(val, NULL, 16);
 			}
@@ -486,7 +486,7 @@ static void *initialize(OSyncPlugin *plugin, OSyncPluginInfo *info, OSyncError *
 
 		if (barry_calendar_initialize(env, info, error)) {
 			env->m_CalendarSync.m_Sync = true;
-		}		
+		}
 		else {
 			trace.log("No sync Calendar");
 			env->m_CalendarSync.m_Sync = false;
@@ -494,12 +494,12 @@ static void *initialize(OSyncPlugin *plugin, OSyncPluginInfo *info, OSyncError *
 
 		if (barry_contact_initialize(env, info, error)) {
 			env->m_ContactsSync.m_Sync = true;
-		}		
+		}
 		else {
 			trace.log("No sync Contact");
 			env->m_ContactsSync.m_Sync = false;
 		}
-	
+
 		return (void *) env;
 	}
 	// Don't let exceptions escape to the C modules

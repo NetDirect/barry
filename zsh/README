@@ -10,6 +10,6 @@ into the directory :
 
 You can also add into your $HOME a new directory :
 	$HOME/.zsh/completions
-then add this path at the $FPATH environment variable : 
+then add this path at the $FPATH environment variable :
 	export $FPATH=$PATH:$HOME/.zsh/completions
 

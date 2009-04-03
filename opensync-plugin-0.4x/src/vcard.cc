@@ -428,12 +428,12 @@ const Barry::Contact& vCard::ToBarry(const char *vcard, uint32_t RecordId)
 
 		if (strstr(encoding, "quoted-printable")) {
 			photo.Get()->encoding = VF_ENCODING_QP;
-		
+
 			con.Image = photo.GetDecodedValue();
 		}
 		else if (strstr(encoding, "b")) {
 			photo.Get()->encoding = VF_ENCODING_BASE64;
-		
+
 			con.Image = photo.GetDecodedValue();
 		}
 		// Else
