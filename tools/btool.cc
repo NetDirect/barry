@@ -276,6 +276,11 @@ auto_ptr<Parser> GetParser(const string &name, const string &filename, bool null
 			new RecordParser<SavedMessage, Store<SavedMessage> > (
 				new Store<SavedMessage>(filename, false)));
 	}
+	else if( name == Sms::GetDBName() ) {
+		return auto_ptr<Parser>(
+			new RecordParser<Sms, Store<Sms> > (
+				new Store<Sms>(filename, false)));
+	}
 	else if( name == Folder::GetDBName() ) {
 		return auto_ptr<Parser>(
 			new RecordParser<Folder, Store<Folder> > (
@@ -343,6 +348,7 @@ void ShowParsers()
 	<< "   Tasks\n"
 	<< "   PIN Messages\n"
 	<< "   Saved Email Messages\n"
+	<< "   SMS Messages\n"
 	<< "   Folders\n"
 	<< "   Time Zones (read only)\n"
 	<< "\n"

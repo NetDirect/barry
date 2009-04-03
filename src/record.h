@@ -274,6 +274,7 @@ BXEXPORT std::ostream& operator<<(std::ostream &os, const Date &date);
 #include "r_task.h"
 #include "r_pin_message.h"
 #include "r_saved_message.h"
+#include "r_sms.h"
 #include "r_folder.h"
 #include "r_timezone.h"
 #endif
