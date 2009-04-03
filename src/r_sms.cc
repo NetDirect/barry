@@ -45,21 +45,21 @@ namespace Barry {
 #define SMSFC_CONTENT 0x04
 #define SMSFC_END 0xffff
 
-static FieldLink<SMS> SMSFieldLinks[] = {
-	{SMSFC_CONTENT, "Content", 0, 0, &SMS::Content, 0, 0, 0, 0, true},
+static FieldLink<Sms> SMSFieldLinks[] = {
+	{SMSFC_CONTENT, "Content", 0, 0, &Sms::Content, 0, 0, 0, 0, true},
 	{SMSFC_END, "End of List", 0, 0, 0, 0, 0, 0, 0, false},
 };
 
-SMS::SMS()
+Sms::Sms()
 {
 	Clear();
 }
 
-SMS::~SMS()
+Sms::~Sms()
 {
 }
 
-const unsigned char* SMS::ParseField(const unsigned char *begin,
+const unsigned char* Sms::ParseField(const unsigned char *begin,
 				     const unsigned char *end,
 				     const IConverter *ic)
 {
@@ -74,7 +74,7 @@ const unsigned char* SMS::ParseField(const unsigned char *begin,
 		return begin;
 
 	// cycle through the type table
-	for(FieldLink<SMS> *b = SMSFieldLinks;
+	for(FieldLink<Sms> *b = SMSFieldLinks;
 		b->type != SMSFC_END;
 		b++)
 		if (b->type == field->type)
@@ -105,9 +105,9 @@ const unsigned char* SMS::ParseField(const unsigned char *begin,
 			
 			ErrorId = *((uint32_t *) (str + 9));
 			
-			TimeStamp = *((uint64_t *) (str + 13));
+			Timestamp = *((uint64_t *) (str + 13));
 			
-			SentTimeStamp += *((uint64_t *) (str + 21));
+			SentTimestamp += *((uint64_t *) (str + 21));
 			
 			Encoding = (EncodingType)str[29];
 			
@@ -130,19 +130,19 @@ const unsigned char* SMS::ParseField(const unsigned char *begin,
 	return begin;
 }
 
-void SMS::ParseHeader(const Data &data, size_t &offset)
+void Sms::ParseHeader(const Data &data, size_t &offset)
 {
 	// no header in SMS records
 }
 
-void SMS::ParseFields(const Data &data, size_t &offset, const IConverter *ic)
+void Sms::ParseFields(const Data &data, size_t &offset, const IConverter *ic)
 {
 	const unsigned char *finish = ParseCommonFields(*this,
 		data.GetData() + offset, data.GetData() + data.GetSize(), ic);
 	offset += finish - (data.GetData() + offset);
 }
 
-void SMS::Clear()
+void Sms::Clear()
 {
 	MessageStatus = (MessageType)0;
 	DeliveryStatus = (DeliveryType)0;
@@ -150,7 +150,7 @@ void SMS::Clear()
 	
 	IsNew = NewConversation = Saved = Deleted = Opened = false;
 	
-	TimeStamp = SentTimeStamp = 0;
+	Timestamp = SentTimestamp = 0;
 	ErrorId = 0;
 	
 	PhoneNumbers.clear();
@@ -159,16 +159,16 @@ void SMS::Clear()
 	Unknowns.clear();
 }
 
-void SMS::Dump(std::ostream &os) const
+void Sms::Dump(std::ostream &os) const
 {
 
 	os << "Task entry: 0x" << setbase(16) << RecordId
 		<< " (" << (unsigned int)RecType << ")\n";
-	time_t t = TimeStamp / 1000;
+	time_t t = Timestamp / 1000;
 	os << "Time: " << ctime(&t);
 	if (MessageStatus == Received)
 	{
-		t = SentTimeStamp / 1000;
+		t = SentTimestamp / 1000;
 		os << "Sent at: " << ctime(&t);
 		// FIXME - since the ISP may use a time zone other than UTC, this time probably has an offset.
 	}

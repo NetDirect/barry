@@ -34,7 +34,7 @@ namespace Barry {
 // forward declarations
 class IConverter;
 
-class BXEXPORT SMS
+class BXEXPORT Sms
 {
 public:
 	typedef std::vector<UnknownField> UnknownsType;
@@ -64,8 +64,8 @@ public:
 	bool Deleted;
 	bool Opened;
 	
-	uint64_t TimeStamp;
-	uint64_t SentTimeStamp;
+	uint64_t Timestamp;
+	uint64_t SentTimestamp;
 	
 	enum EncodingType
 	{
@@ -83,8 +83,8 @@ public:
 	UnknownsType Unknowns;
 
 public:
-	SMS();
-	~SMS();
+	Sms();
+	~Sms();
 
 	const unsigned char* ParseField(const unsigned char *begin, const unsigned char *end, const IConverter *ic = 0);
 	uint8_t GetRecType() const { return RecType; }
@@ -103,7 +103,7 @@ public:
 	static uint8_t GetDefaultRecType() { return 5; }
 };
 
-BXEXPORT inline std::ostream& operator<<(std::ostream &os, const SMS &msg) {
+BXEXPORT inline std::ostream& operator<<(std::ostream &os, const Sms &msg) {
 	msg.Dump(os);
 	return os;
 }

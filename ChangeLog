@@ -9,6 +9,7 @@ Release: version 0.15 - 2009/01/??
 	- added Photo support to examples/addcontact.cc
 	- removed try/catch from vcard/vevent, pending feedback from Nicolas
 	- applied Ryan Li's SMS record parsing patch
+		- changed capitalization to match other code
 	- updated AUTHORS
 2009/04/02
 	- fixed double-free bug in opensync 0.4x plugin
