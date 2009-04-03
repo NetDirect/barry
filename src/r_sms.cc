@@ -109,15 +109,15 @@ const unsigned char* Sms::ParseField(const unsigned char *begin,
 				MessageStatus = Draft;
 			else
 				MessageStatus = Sent; //consider all others as sent.
-			
+
 			ErrorId = *((uint32_t *) (str + 9));
-			
+
 			Timestamp = *((uint64_t *) (str + 13));
-			
+
 			SentTimestamp += *((uint64_t *) (str + 21));
-			
+
 			Encoding = (EncodingType)str[29];
-			
+
 			return begin;
 		}
 
@@ -156,15 +156,15 @@ void Sms::Clear()
 	MessageStatus = Unknown;
 	DeliveryStatus = NoReport;
 	Encoding = SevenBit;
-	
+
 	IsNew = NewConversation = Saved = Deleted = Opened = false;
-	
+
 	Timestamp = SentTimestamp = 0;
 	ErrorId = 0;
-	
+
 	PhoneNumbers.clear();
 	Content.clear();
-	
+
 	Unknowns.clear();
 }
 

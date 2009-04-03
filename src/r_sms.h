@@ -38,7 +38,7 @@ class BXEXPORT Sms
 {
 public:
 	typedef std::vector<UnknownField> UnknownsType;
-	
+
 	uint8_t RecType;
 	uint32_t RecordId;
 
@@ -50,7 +50,7 @@ public:
 		Draft
 	};
 	MessageType MessageStatus;
-	
+
 	enum DeliveryType
 	{
 		NoReport = 0,
@@ -58,16 +58,16 @@ public:
 		Succedded
 	};
 	DeliveryType DeliveryStatus;
-	
+
 	bool IsNew;
 	bool NewConversation;
 	bool Saved;
 	bool Deleted;
 	bool Opened;
-	
+
 	uint64_t Timestamp;
 	uint64_t SentTimestamp;
-	
+
 	enum EncodingType
 	{
 		SevenBit = 0,
@@ -75,12 +75,12 @@ public:
 		UCS2
 	};
 	EncodingType Encoding;
-	
+
 	uint32_t ErrorId;
-	
+
 	std::vector<std::string> PhoneNumbers;
 	std::string Content;
-	
+
 	UnknownsType Unknowns;
 
 public:
