@@ -10,6 +10,7 @@ Release: version 0.15 - 2009/01/??
 	- removed try/catch from vcard/vevent, pending feedback from Nicolas
 	- applied Ryan Li's SMS record parsing patch
 		- changed capitalization to match other code
+		- added Sms to s11n-boost.h and required operator
 	- updated AUTHORS
 2009/04/02
 	- fixed double-free bug in opensync 0.4x plugin

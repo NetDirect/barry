@@ -343,6 +343,35 @@ void serialize(ArchiveT &ar, Barry::SavedMessage &m, const unsigned int ver)
 }
 
 template <class ArchiveT>
+void serialize(ArchiveT &ar, Barry::Sms &m, const unsigned int ver)
+{
+	ar & make_nvp("RecType", m.RecType);
+	ar & make_nvp("RecordId", m.RecordId);
+
+	ar & make_nvp("MessageStatus", m.MessageStatus);
+	ar & make_nvp("DeliveryStatus", m.DeliveryStatus);
+
+	ar & make_nvp("IsNew", m.IsNew);
+	ar & make_nvp("NewConversation", m.NewConversation);
+	ar & make_nvp("Saved", m.Saved);
+	ar & make_nvp("Deleted", m.Deleted);
+	ar & make_nvp("Opened", m.Opened);
+
+	ar & make_nvp("Timestamp", m.Timestamp);
+	ar & make_nvp("SentTimestamp", m.SentTimestamp);
+
+	ar & make_nvp("Encoding", m.Encoding);
+	ar & make_nvp("ErrorId", m.ErrorId);
+
+	ar & make_nvp("PhoneNumbers", m.PhoneNumbers);
+	ar & make_nvp("Content", m.Content);
+
+	if( ver < BARRY_POD_MAP_VERSION ) {
+		ar & make_nvp("Unknowns", m.Unknowns);
+	}
+}
+
+template <class ArchiveT>
 void serialize(ArchiveT &ar, Barry::Folder &f, const unsigned int ver)
 {
 	ar & make_nvp("RecType", f.RecType);
