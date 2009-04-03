@@ -77,7 +77,8 @@ const unsigned char* Sms::ParseField(const unsigned char *begin,
 	for(FieldLink<Sms> *b = SMSFieldLinks;
 		b->type != SMSFC_END;
 		b++)
-		if (b->type == field->type)
+	{
+		if (b->type == field->type) {
 			if (b->strMember) {
 				std::string &s = this->*(b->strMember);
 				s = ParseFieldString(field);
@@ -85,6 +86,9 @@ const unsigned char* Sms::ParseField(const unsigned char *begin,
 					s = ic->FromBB(s);
 				return begin;   // done!
 			}
+		}
+	}
+
 	// handle special cases
 	switch (field->type)
 	{
@@ -149,9 +153,9 @@ void Sms::ParseFields(const Data &data, size_t &offset, const IConverter *ic)
 
 void Sms::Clear()
 {
-	MessageStatus = (MessageType)0;
-	DeliveryStatus = (DeliveryType)0;
-	Encoding = (EncodingType)0;
+	MessageStatus = Received;
+	DeliveryStatus = NoReport;
+	Encoding = SevenBit;
 	
 	IsNew = NewConversation = Saved = Deleted = Opened = false;
 	
