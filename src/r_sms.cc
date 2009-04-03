@@ -171,32 +171,38 @@ void Sms::Clear()
 void Sms::Dump(std::ostream &os) const
 {
 
-	os << "Task entry: 0x" << setbase(16) << RecordId
+	os << "SMS record: 0x" << setbase(16) << RecordId
 		<< " (" << (unsigned int)RecType << ")\n";
 	time_t t = Timestamp / 1000;
-	os << "Time: " << ctime(&t);
+	os << "   Time: " << ctime(&t);
+
 	if (MessageStatus == Received)
 	{
 		t = SentTimestamp / 1000;
-		os << "Sent at: " << ctime(&t);
+		os << "   Sent at: " << ctime(&t);
 		// FIXME - since the ISP may use a time zone other than UTC, this time probably has an offset.
 	}
+
 	if (ErrorId)
-		os << "Send Error: 0x" << setbase(16) << ErrorId << "\n";
+		os << "   Send Error: 0x" << setbase(16) << ErrorId << "\n";
+
 	switch (MessageStatus)
 	{
 		case Received:
-			os << "Received From:" << "\n";
+			os << "   Received From:" << "\n";
 			break;
 		case Sent:
-			os << "Sent to:" << "\n";
+			os << "   Sent to:" << "\n";
 			break;
 		case Draft:
-			os << "Draft for:" << "\n";
+			os << "   Draft for:" << "\n";
 			break;
 	}
+
 	for (std::vector<std::string>::const_iterator Iterator = PhoneNumbers.begin(); Iterator < PhoneNumbers.end(); ++Iterator)
-		os << *Iterator << "\n";
+		os << "      " << *Iterator << "\n";
+
+	os << "   ";
 	if (IsNew)
 		os << "New ";
 	if (Opened)
@@ -206,11 +212,8 @@ void Sms::Dump(std::ostream &os) const
 	if (Deleted)
 		os << "Deleted ";
 	if (IsNew || Opened || Saved || Deleted || NewConversation)
-		os << "Message";
-	if (NewConversation)
-		os << "that starts a new conversation";
-	os << "\n";
-	os << "Content:" << Content << "\n";
+		os << "Message" << (NewConversation ? " that starts a new conversation" : "") << "\n";
+	os << "   Content: " << Content << "\n";
 	os << "\n";
 }
 

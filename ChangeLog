@@ -14,6 +14,7 @@ Release: version 0.15 - 2009/01/??
 		- added Sms to btool.cc, record.h, and Makefile.am
 		- added size checks to the parser code
 		- cleaned up brackets and casting
+		- made dump output prettier (at least to me) :-)
 	- updated AUTHORS
 2009/04/02
 	- fixed double-free bug in opensync 0.4x plugin
