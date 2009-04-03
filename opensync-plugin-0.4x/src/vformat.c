@@ -967,7 +967,7 @@ b_VFormatAttribute *b_vformat_find_attribute_next(b_VFormatAttribute *last,
 
 char *b_vformat_to_string (b_VFormat *evc, b_VFormatType type)
 {
-	osync_trace(TRACE_ENTRY, "%s(%p, %i)", __func__, type);
+	osync_trace(TRACE_ENTRY, "%s(%p, %i)", __func__, evc, type);
 	GList *l;
 	GList *v;
 
@@ -1208,7 +1208,7 @@ char *b_vformat_to_string (b_VFormat *evc, b_VFormatType type)
 			break;
 	}
 	
-	osync_trace(TRACE_EXIT, "%s(%p, %i)", __func__, type);
+	osync_trace(TRACE_EXIT, "%s", __func__);
 	return g_string_free (str, FALSE);
 }
 
