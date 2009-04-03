@@ -90,6 +90,9 @@ const unsigned char* Sms::ParseField(const unsigned char *begin,
 	{
 		case SMSFC_METADATA:
 		{
+			if( btohs(field->size) < 30 )
+				break;	// not enough data
+
 			const unsigned char *str = (const unsigned char *)field->u.raw;
 			NewConversation = str[1] & 0x20;
 			Saved = str[1] & 0x10;
@@ -113,10 +116,12 @@ const unsigned char* Sms::ParseField(const unsigned char *begin,
 			
 			return begin;
 		}
+
 		case SMSFC_PHONE_NUMBER:
 			const char *str = (const char *)field->u.raw;
 			uint16_t len = btohs(field->size);
-			PhoneNumbers.push_back(std::string(str + 4, len - 4));
+			if( len >= 4 )
+				PhoneNumbers.push_back(std::string(str + 4, len - 4));
 			return begin;
 	}
 
