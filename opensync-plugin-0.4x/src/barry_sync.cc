@@ -151,9 +151,6 @@ void GetChanges(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncContext *ctx
 		const RecordStateTable::IndexType &index = i->first;
 		const RecordStateTable::State &state = i->second;
 
-		// convert record ID to uid string
-		std::string uid = pSync->Map2Uid(state.RecordId);
-
 		// create change to pass to hashtable
 		change = osync_change_new(&error);
 		if( !change ) {
@@ -161,6 +158,9 @@ void GetChanges(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncContext *ctx
 			osync_error_unref(&error);
 			continue;
 		}
+
+		// convert record ID to uid string
+		std::string uid = pSync->Map2Uid(state.RecordId);
 
 		// setup change, just enough for hashtable use
 		osync_change_set_uid(change, uid.c_str());
@@ -194,6 +194,16 @@ void GetChanges(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncContext *ctx
 		OSyncObjFormat *format = osync_format_env_find_objformat(formatenv, FormatName);
 		char *data = (*getdata)(env, dbId, index);
 		OSyncData *odata = osync_data_new(data, strlen(data), format, &error);
+
+		if (!odata) {
+			osync_change_unref(change);
+			osync_context_report_osyncwarning(ctx, error);
+			osync_error_unref(&error);
+			continue;
+		}
+
+// FIXME ? Is this line is usefull ?
+//		osync_data_set_objtype(odata, osync_objtype_sink_get_name(sink));
 
 		osync_change_set_data(change, odata);
 		osync_data_unref(odata);
