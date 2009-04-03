@@ -153,7 +153,7 @@ void Sms::ParseFields(const Data &data, size_t &offset, const IConverter *ic)
 
 void Sms::Clear()
 {
-	MessageStatus = Received;
+	MessageStatus = Unknown;
 	DeliveryStatus = NoReport;
 	Encoding = SevenBit;
 	

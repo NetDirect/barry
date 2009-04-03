@@ -44,7 +44,8 @@ public:
 
 	enum MessageType
 	{
-		Received = 0,
+		Unknown = 0,
+		Received,
 		Sent,
 		Draft
 	};
