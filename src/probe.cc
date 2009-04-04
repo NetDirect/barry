@@ -122,9 +122,15 @@ bool Probe::ParseDesc(const Data &data, std::string &desc)
 	return true;
 }
 
-Probe::Probe(const char *busname, const char *devname)
+Probe::Probe(const char *busname, const char *devname,
+		const Usb::EndpointPair *epp)
 	: m_fail_count(0)
+	, m_epp_override(epp)
 {
+	if( m_epp_override ) {
+		m_epp = *epp;
+	}
+
 	// let the programmer pass in "" as well as 0
 	if( busname && !strlen(busname) )
 		busname = 0;
@@ -225,41 +231,56 @@ void Probe::ProbeDevice(Usb::DeviceIDType devid)
 	// open interface
 	Interface iface(dev, InterfaceNumber);
 
-	// find the first bulk read/write endpoint pair that answers
-	// to our probe commands
-	// Start with second pair, since evidence indicates the later pairs
-	// are the ones we need.
-	size_t i;
-	for(i = ed.GetEndpointPairs().size() > 1 ? 1 : 0;
-	    i < ed.GetEndpointPairs().size();
-	    i++ )
-	{
-		const EndpointPair &ep = ed.GetEndpointPairs()[i];
-		if( ep.type == USB_ENDPOINT_TYPE_BULK ) {
-
-			uint32_t pin;
-			uint8_t zeroSocketSequence;
-			std::string desc;
-			if( ProbePair(dev, ep, pin, desc, zeroSocketSequence) ) {
-				result.m_ep = ep;
-				result.m_pin = pin;
-				result.m_description = desc;
-				result.m_zeroSocketSequence = zeroSocketSequence;
-				break;
-			}
-		}
-		else {
-			dout("Probe: Skipping non-bulk endpoint pair (offset: "
-				<< i-1 << ") ");
+	if( m_epp_override ) {
+		// user has given us endpoints to try... so try them
+		uint32_t pin;
+		uint8_t zeroSocketSequence;
+		std::string desc;
+		if( ProbePair(dev, m_epp, pin, desc, zeroSocketSequence) ) {
+			// looks good, finish filling out the result
+			result.m_ep = m_epp;
+			result.m_pin = pin;
+			result.m_description = desc;
+			result.m_zeroSocketSequence = zeroSocketSequence;
 		}
 	}
+	else {
+		// find the first bulk read/write endpoint pair that answers
+		// to our probe commands
+		// Start with second pair, since evidence indicates the later pairs
+		// are the ones we need.
+		size_t i;
+		for(i = ed.GetEndpointPairs().size() > 1 ? 1 : 0;
+		    i < ed.GetEndpointPairs().size();
+		    i++ )
+		{
+			const EndpointPair &ep = ed.GetEndpointPairs()[i];
+			if( ep.type == USB_ENDPOINT_TYPE_BULK ) {
 
-	// check for ip modem endpoints
-	i++;
-	if( i < ed.GetEndpointPairs().size() ) {
-		const EndpointPair &ep = ed.GetEndpointPairs()[i];
-		if( ProbeModem(dev, ep) ) {
-			result.m_epModem = ep;
+				uint32_t pin;
+				uint8_t zeroSocketSequence;
+				std::string desc;
+				if( ProbePair(dev, ep, pin, desc, zeroSocketSequence) ) {
+					result.m_ep = ep;
+					result.m_pin = pin;
+					result.m_description = desc;
+					result.m_zeroSocketSequence = zeroSocketSequence;
+					break;
+				}
+			}
+			else {
+				dout("Probe: Skipping non-bulk endpoint pair (offset: "
+					<< i-1 << ") ");
+			}
+		}
+
+		// check for ip modem endpoints
+		i++;
+		if( i < ed.GetEndpointPairs().size() ) {
+			const EndpointPair &ep = ed.GetEndpointPairs()[i];
+			if( ProbeModem(dev, ep) ) {
+				result.m_epModem = ep;
+			}
 		}
 	}
 

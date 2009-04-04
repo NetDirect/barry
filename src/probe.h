@@ -57,6 +57,9 @@ class BXEXPORT Probe
 	std::vector<std::string> m_fail_msgs;
 	int m_fail_count;
 
+	bool m_epp_override;
+	Usb::EndpointPair m_epp;
+
 	BXLOCAL bool CheckSize(const Data &data, unsigned int required);
 	BXLOCAL bool ParsePIN(const Data &data, uint32_t &pin);
 	BXLOCAL bool ParseDesc(const Data &data, std::string &desc);
@@ -70,7 +73,8 @@ protected:
 	bool ProbeModem(Usb::Device &dev, const Usb::EndpointPair &ep);
 
 public:
-	Probe(const char *busname = 0, const char *devname = 0);
+	Probe(const char *busname = 0, const char *devname = 0,
+		const Usb::EndpointPair *epp = 0);
 
 	int GetCount() const { return m_results.size(); }
 	int GetFailCount() const { return m_fail_count; }

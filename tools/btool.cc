@@ -612,7 +612,8 @@ int main(int argc, char *argv[])
 		// Probe the USB bus for Blackberry devices and display.
 		// If user has specified a PIN, search for it in the
 		// available device list here as well
-		Barry::Probe probe(busname.c_str(), devname.c_str());
+		Barry::Probe probe(busname.c_str(), devname.c_str(),
+			epp_override ? &epOverride : 0);
 		int activeDevice = -1;
 
 		// show any errors during probe first
