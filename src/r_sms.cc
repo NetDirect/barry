@@ -189,13 +189,16 @@ void Sms::Dump(std::ostream &os) const
 	switch (MessageStatus)
 	{
 		case Received:
-			os << "   Received From:" << "\n";
+			os << "   Received From:\n";
 			break;
 		case Sent:
-			os << "   Sent to:" << "\n";
+			os << "   Sent to:\n";
 			break;
 		case Draft:
-			os << "   Draft for:" << "\n";
+			os << "   Draft for:\n";
+			break;
+		case Unknown:
+			os << "   Unknown status for:\n";
 			break;
 	}
 
