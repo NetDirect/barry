@@ -391,6 +391,7 @@ int main(int argc, char *argv[])
 				case PRODUCT_RIM_PEARL_DUAL:
 				case PRODUCT_RIM_PEARL:
 				case PRODUCT_RIM_PEARL_8120:
+				case PRODUCT_RIM_PEARL_FLIP:
 				case PRODUCT_RIM_STORM:
 					if( !process(dev, true) )
 						resume();
