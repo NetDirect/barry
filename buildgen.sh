@@ -58,7 +58,7 @@ elif [ "$1" = "ctags" ] ; then
 		#OS_DIR=~/software/opensync/svn
 		OS_DIR=~/software/opensync/0.22
 		if [ -d $OS_DIR ] ; then
-			echo "Detected opensync source tree, building ctags on it..."
+			echo "Detected 0.22 opensync source tree, building ctags on it..."
 			(cd $OS_DIR && ctags -R -a -f ~/tags-barry --tag-relative=yes)
 		fi
 	fi
@@ -66,7 +66,7 @@ elif [ "$1" = "ctags" ] ; then
 	if [ "$2" = "0.4x" ] ; then
 		OS_DIR=~/software/opensync/git
 		if [ -d $OS_DIR ] ; then
-			echo "Detected opensync source tree, building ctags on it..."
+			echo "Detected 0.4x opensync source tree, building ctags on it..."
 			(cd $OS_DIR && ctags -R -a -f ~/tags-barry --tag-relative=yes)
 		fi
 	fi
