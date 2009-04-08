@@ -29,10 +29,67 @@
 
 namespace Barry {
 
+class IConverter;
+
+//
+// IConvHandle class
+//
+/// Wrapper class for a two-way iconv_t handle pair.  Automatically
+/// handles closing in the destructor.
+//
+class BXEXPORT IConvHandle
+{
+	friend class IConverter;
+
+	iconv_t m_handle;
+
+private:
+	// private constructor, used only by IConverter
+	IConvHandle(const char *fromcode, const char *tocode);
+
+public:
+	// custom conversions from any to IConverter's 'tocode'
+	IConvHandle(const char *fromcode, const IConverter &ic);
+	// custom conversions from IConverter's 'tocode' to any
+	IConvHandle(const IConverter &ic, const char *tocode);
+	~IConvHandle();
+};
+
+//
+// IConverter
+//
+/// Main charset conversion class, primarily focused on converting
+/// between the Blackberry charset and an application-specified one.
+/// Additional conversions are possible through custom IConvHandle,
+/// but the goal of this class design is to deal with _one_
+/// application defined charset, and provide a means to convert
+/// to/from that charset to/from any other charset needed by
+/// the Blackberry.
+///
+/// By default, this class assumes the Blackberry's charset is
+/// WINDOWS-1252, but some data, such as SMS message bodies, can have
+/// custom charsets as specified by the records.  To convert from
+/// such a custom charset, use:
+///
+///      // application sets up IConverter
+///      IConverter ic("UTF-8");
+///
+///      // somewhere in the library, needing to convert
+///      // from UCS2 to whatever the application selected
+///      IConvHandle ucs2("UCS2", ic);
+///      application_string = ic.Convert(ucs2, ucs2_string_data);
+///
+///      // and to convert back...
+///      IConvHandle ucs2_reverse(ic, "UCS2");
+///      ucs2_string = ic.Convert(ucs2_reverse, application_string_data);
+///
 class BXEXPORT IConverter
 {
-	iconv_t m_from;
-	iconv_t m_to;
+	friend class IConvHandle;
+
+	IConvHandle m_from;
+	IConvHandle m_to;
+	std::string m_tocode;
 
 	// internal buffer for fast conversions
 	mutable Data m_buffer;
@@ -51,6 +108,11 @@ public:
 
 	std::string FromBB(const std::string &str) const;
 	std::string ToBB(const std::string &str) const;
+
+	// Custom override functions, meant for converting between
+	// non-BLACKBERRY_CHARSET charsets and the tocode set by the
+	// IConverter constructor
+	std::string Convert(const IConvHandle &custom, const std::string &str) const;
 };
 
 } // namespace Barry

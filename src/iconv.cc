@@ -27,26 +27,52 @@
 
 namespace Barry {
 
-IConverter::IConverter(const char *tocode, bool throw_on_conv_err)
-	: m_throw_on_conv_err(throw_on_conv_err)
-{
-	m_from = iconv_open(tocode, BLACKBERRY_CHARSET);
-	if( m_from == (iconv_t)(-1) ) {
-		throw ErrnoError("iconv_open failed (from)", errno);
-	}
+//////////////////////////////////////////////////////////////////////////////
+// IConvHandle class
 
-	m_to = iconv_open(BLACKBERRY_CHARSET, tocode);
-	if( m_to == (iconv_t)(-1) ) {
-		ErrnoError err("iconv_open failed (to)", errno);
-		iconv_close(m_from);
-		throw err;
+IConvHandle::IConvHandle(const char *fromcode, const char *tocode)
+{
+	m_handle = iconv_open(tocode, fromcode);
+	if( m_handle == (iconv_t)(-1) ) {
+		throw ErrnoError(std::string("iconv_open failed: from ") + fromcode + " to " + tocode, errno);
 	}
+}
+
+IConvHandle::IConvHandle(const char *fromcode, const IConverter &ic)
+{
+	m_handle = iconv_open(ic.m_tocode.c_str(), fromcode);
+	if( m_handle == (iconv_t)(-1) ) {
+		throw ErrnoError(std::string("iconv_open failed: from ") + fromcode + " to " + ic.m_tocode, errno);
+	}
+}
+
+IConvHandle::IConvHandle(const IConverter &ic, const char *tocode)
+{
+	m_handle = iconv_open(tocode, ic.m_tocode.c_str());
+	if( m_handle == (iconv_t)(-1) ) {
+		throw ErrnoError(std::string("iconv_open failed: from ") + ic.m_tocode + " to " + tocode, errno);
+	}
+}
+
+IConvHandle::~IConvHandle()
+{
+	iconv_close(m_handle);
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
+// IConvHandle class
+
+IConverter::IConverter(const char *tocode, bool throw_on_conv_err)
+	: m_from(BLACKBERRY_CHARSET, tocode)
+	, m_to(tocode, BLACKBERRY_CHARSET)
+	, m_tocode(tocode)
+	, m_throw_on_conv_err(throw_on_conv_err)
+{
 }
 
 IConverter::~IConverter()
 {
-	iconv_close(m_from);
-	iconv_close(m_to);
 }
 
 std::string IConverter::Convert(iconv_t cd, const std::string &str) const
@@ -97,12 +123,17 @@ std::string IConverter::Convert(iconv_t cd, const std::string &str) const
 
 std::string IConverter::FromBB(const std::string &str) const
 {
-	return Convert(m_from, str);
+	return Convert(m_from.m_handle, str);
 }
 
 std::string IConverter::ToBB(const std::string &str) const
 {
-	return Convert(m_to, str);
+	return Convert(m_to.m_handle, str);
+}
+
+std::string IConverter::Convert(const IConvHandle &custom, const std::string &str) const
+{
+	return Convert(custom.m_handle, str);
 }
 
 } // namespace Barry
