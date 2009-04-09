@@ -3,6 +3,7 @@ Release: version 0.15 - 2009/01/??
 2009/06/08
 	- added IConvHandle, making it possible to support more than one
 		charset in Blackberry data
+	- removed patches from opensync-plugin-0.4x 'make dist' target
 2009/04/06
 	- updated man/bjavaloader.1
 2009/04/04
