@@ -57,7 +57,7 @@ public:
 		Failed,
 		Succedded
 	};
-	DeliveryType DeliveryStatus;
+	DeliveryType DeliveryStatus; // not implemented yet
 
 	bool IsNew;
 	bool NewConversation;
@@ -65,27 +65,32 @@ public:
 	bool Deleted;
 	bool Opened;
 
-	uint64_t Timestamp;
-	uint64_t SentTimestamp;
+	uint64_t Timestamp; // milliseconds from Jan 1, 1970
+	uint64_t ServiceCenterTimestamp; // not applicable for non-incoming messages
 
-	enum EncodingType
+	enum DataCodingSchemeType
 	{
 		SevenBit = 0,
-		VCard,
+		EightBit,
 		UCS2
 	};
-	EncodingType Encoding;
+	DataCodingSchemeType DataCodingScheme;
 
 	uint32_t ErrorId;
 
-	std::vector<std::string> PhoneNumbers;
-	std::string Content;
+	std::vector<std::string> Addresses;
+	std::string Body;
 
 	UnknownsType Unknowns;
 
 public:
 	Sms();
 	~Sms();
+
+	time_t GetTime() const;
+	time_t GetServiceCenterTime() const;
+	void SetTime(const time_t timestamp, unsigned int milliseconds = 0);
+	void SetServiceCenterTime(const time_t timestamp, unsigned int milliseconds = 0);
 
 	const unsigned char* ParseField(const unsigned char *begin, const unsigned char *end, const IConverter *ic = 0);
 	uint8_t GetRecType() const { return RecType; }

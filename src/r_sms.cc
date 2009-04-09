@@ -37,18 +37,58 @@ using namespace Barry::Protocol;
 namespace Barry {
 
 ///////////////////////////////////////////////////////////////////////////////
-// SMS Class
+// Sms Class
 
 // SMS Field Codes
 #define SMSFC_METADATA 0x01
-#define SMSFC_PHONE_NUMBER 0x02
-#define SMSFC_CONTENT 0x04
-#define SMSFC_END 0xffff
+#define SMSFC_ADDRESS 0x02
+#define SMSFC_BODY 0x04
 
-static FieldLink<Sms> SMSFieldLinks[] = {
-	{SMSFC_CONTENT, "Content", 0, 0, &Sms::Content, 0, 0, 0, 0, true},
-	{SMSFC_END, "End of List", 0, 0, 0, 0, 0, 0, 0, false},
-};
+// SMS Field Sizes and Header Sizes
+#define SMS_METADATA_SIZE 0x40
+#define SMS_ADDRESS_HEADER_SIZE 0x04
+
+// SMS Field Indices
+#define SMS_FLAGS 0x01
+#define SMS_NEW 0x02
+#define SMS_STATUS 0x05
+#define SMS_ERRORID 0x09
+#define SMS_TIMESTAMP 0x0d
+#define SMS_SERVICE_CENTER_TIMESTAMP 0x15
+#define SMS_DCS 0x1d
+
+// SMS Flags and Field Values
+#define SMS_FLG_NEW_CONVERSATION 0x20
+#define SMS_FLG_SAVED 0x10
+#define SMS_FLG_DELETED 0x08
+#define SMS_FLG_OPENED 0x01
+#define SMS_STA_RECEIVED 0x000007ff
+#define SMS_STA_DRAFT 0x7fffffff
+#define SMS_DCS_7BIT 0x00
+#define SMS_DCS_8BIT 0x01
+#define SMS_DCS_UCS2 0x02
+
+#define MILLISECONDS_IN_A_SECOND 1000
+
+time_t Sms::GetTime() const
+{
+	return (time_t)(Timestamp / MILLISECONDS_IN_A_SECOND);
+}
+
+time_t Sms::GetServiceCenterTime() const
+{
+	return (time_t)(ServiceCenterTimestamp / MILLISECONDS_IN_A_SECOND);
+}
+
+void Sms::SetTime(const time_t timestamp, const unsigned milliseconds)
+{
+	Timestamp = (uint64_t)timestamp * MILLISECONDS_IN_A_SECOND + milliseconds;
+}
+
+void Sms::SetServiceCenterTime(const time_t timestamp, const unsigned milliseconds)
+{
+	ServiceCenterTimestamp = (uint64_t)timestamp * MILLISECONDS_IN_A_SECOND + milliseconds;
+}
 
 Sms::Sms()
 {
@@ -67,66 +107,91 @@ const unsigned char* Sms::ParseField(const unsigned char *begin,
 
 	// advance and check size
 	begin += COMMON_FIELD_HEADER_SIZE + btohs(field->size);
-	if (begin > end)       // if begin==end, we are ok
+	if (begin > end) // if begin==end, we are ok
 		return begin;
 
-	if (!btohs(field->size))   // if field has no size, something's up
+	if (!btohs(field->size)) // if field has no size, something's up
 		return begin;
 
-	// cycle through the type table
-	for(FieldLink<Sms> *b = SMSFieldLinks;
-		b->type != SMSFC_END;
-		b++)
-	{
-		if (b->type == field->type) {
-			if (b->strMember) {
-				std::string &s = this->*(b->strMember);
-				s = ParseFieldString(field);
-				if (b->iconvNeeded && ic)
-					s = ic->FromBB(s);
-				return begin;   // done!
-			}
-		}
-	}
-
-	// handle special cases
 	switch (field->type)
 	{
 		case SMSFC_METADATA:
 		{
-			if( btohs(field->size) < 30 )
-				break;	// not enough data
+			if (btohs(field->size) != SMS_METADATA_SIZE)
+				break; // size not match
 
-			const unsigned char *str = (const unsigned char *)field->u.raw;
-			NewConversation = str[1] & 0x20;
-			Saved = str[1] & 0x10;
-			Deleted = str[1] & 0x08;
-			Opened = str[1] & 0x01;
-			IsNew = str[2];
-			if (*((uint32_t *) (str + 5)) == 0x000007ff)
-				MessageStatus = Received;
-			else if (*((uint32_t *) (str + 5)) == 0x7fffffff)
-				MessageStatus = Draft;
-			else
-				MessageStatus = Sent; //consider all others as sent.
+			const unsigned char *metadata = (const unsigned char *)field->u.raw;
 
-			ErrorId = *((uint32_t *) (str + 9));
+			NewConversation = metadata[SMS_FLAGS] & SMS_FLG_NEW_CONVERSATION;
+			Saved = metadata[SMS_FLAGS] & SMS_FLG_SAVED;
+			Deleted = metadata[SMS_FLAGS] & SMS_FLG_DELETED;
+			Opened = metadata[SMS_FLAGS] & SMS_FLG_OPENED;
 
-			Timestamp = *((uint64_t *) (str + 13));
+			IsNew = metadata[SMS_NEW];
 
-			SentTimestamp += *((uint64_t *) (str + 21));
+			uint32_t status = *((uint32_t *) (metadata + SMS_STATUS));
+			switch (status)
+			{
+				case SMS_STA_RECEIVED:
+					MessageStatus = Received;
+					break;
+				case SMS_STA_DRAFT:
+					MessageStatus = Draft;
+					break;
+				default:
+					MessageStatus = Sent; // consider all others as sent
+			}
 
-			Encoding = (EncodingType)str[29];
+			ErrorId = *((uint32_t *) (metadata + SMS_ERRORID));
+
+			Timestamp = *((uint64_t *) (metadata + SMS_TIMESTAMP));
+
+			ServiceCenterTimestamp = *((uint64_t *) (metadata + SMS_SERVICE_CENTER_TIMESTAMP));
+
+			switch (metadata[SMS_DCS])
+			{
+				case SMS_DCS_7BIT:
+					DataCodingScheme = SevenBit;
+					break;
+				case SMS_DCS_8BIT:
+					DataCodingScheme = EightBit;
+					break;
+				case SMS_DCS_UCS2:
+					DataCodingScheme = UCS2;
+					break;
+				default:
+					DataCodingScheme = SevenBit; // consider all unknowns as 7bit
+			}
 
 			return begin;
 		}
 
-		case SMSFC_PHONE_NUMBER:
-			const char *str = (const char *)field->u.raw;
-			uint16_t len = btohs(field->size);
-			if( len >= 4 )
-				PhoneNumbers.push_back(std::string(str + 4, len - 4));
+		case SMSFC_ADDRESS:
+		{
+			uint16_t length = btohs(field->size);
+			if (length < SMS_ADDRESS_HEADER_SIZE + 1) // trailing '\0'
+				break; // too short
+
+			length -= SMS_ADDRESS_HEADER_SIZE;
+			const char *address = (const char *)field->u.raw + SMS_ADDRESS_HEADER_SIZE;
+			Addresses.push_back(std::string(address, length));
 			return begin;
+		}
+
+		case SMSFC_BODY:
+		{
+			const char *body_begin = (const char *)field->u.raw;
+			Body = std::string(body_begin, body_begin + btohs(field->size));
+			if (DataCodingScheme == UCS2)
+			{
+				if (ic)
+				{
+					IConvHandle ucs2("UCS-2BE", *ic);
+					Body = ic->Convert(ucs2, Body);
+				}
+			}
+			return begin;
+		}
 	}
 
 	// if still not handled, add to the Unknowns list
@@ -155,15 +220,15 @@ void Sms::Clear()
 {
 	MessageStatus = Unknown;
 	DeliveryStatus = NoReport;
-	Encoding = SevenBit;
+	DataCodingScheme = SevenBit;
 
 	IsNew = NewConversation = Saved = Deleted = Opened = false;
 
-	Timestamp = SentTimestamp = 0;
+	Timestamp = ServiceCenterTimestamp = 0;
 	ErrorId = 0;
 
-	PhoneNumbers.clear();
-	Content.clear();
+	Addresses.clear();
+	Body.clear();
 
 	Unknowns.clear();
 }
@@ -173,52 +238,58 @@ void Sms::Dump(std::ostream &os) const
 
 	os << "SMS record: 0x" << setbase(16) << RecordId
 		<< " (" << (unsigned int)RecType << ")\n";
-	time_t t = Timestamp / 1000;
-	os << "   Time: " << ctime(&t);
+	time_t t = GetTime();
+	os << "\tTimestamp: " << ctime(&t);
 
 	if (MessageStatus == Received)
 	{
-		t = SentTimestamp / 1000;
-		os << "   Sent at: " << ctime(&t);
-		// FIXME - since the ISP may use a time zone other than UTC, this time probably has an offset.
+		t = GetServiceCenterTime();
+		os << "\tService Center Timestamp: " << ctime(&t);
 	}
 
 	if (ErrorId)
-		os << "   Send Error: 0x" << setbase(16) << ErrorId << "\n";
+		os << "\tSend Error: 0x" << setbase(16) << ErrorId << "\n";
 
 	switch (MessageStatus)
 	{
 		case Received:
-			os << "   Received From:\n";
+			os << "\tReceived From:\n";
 			break;
 		case Sent:
-			os << "   Sent to:\n";
+			os << "\tSent to:\n";
 			break;
 		case Draft:
-			os << "   Draft for:\n";
+			os << "\tDraft for:\n";
 			break;
 		case Unknown:
-			os << "   Unknown status for:\n";
+			os << "\tUnknown status for:\n";
 			break;
 	}
 
-	for (std::vector<std::string>::const_iterator Iterator = PhoneNumbers.begin(); Iterator < PhoneNumbers.end(); ++Iterator)
-		os << "      " << *Iterator << "\n";
+	os << "\t";
+	for (std::vector<std::string>::const_iterator Iterator = Addresses.begin(); Iterator < Addresses.end(); ++Iterator)
+	{
+		if (Iterator != Addresses.begin())
+			os << ", ";
+		os << *Iterator;
+	}
+	os << "\n";
 
-	os << "   ";
-	if (IsNew)
-		os << "New ";
-	if (Opened)
-		os << "Opened ";
-	if (Saved)
-		os << "Saved ";
-	if (Deleted)
-		os << "Deleted ";
 	if (IsNew || Opened || Saved || Deleted || NewConversation)
+	{
+		os << "\t";
+		if (IsNew)
+			os << "New ";
+		if (Opened)
+			os << "Opened ";
+		if (Saved)
+			os << "Saved ";
+		if (Deleted)
+			os << "Deleted ";
 		os << "Message" << (NewConversation ? " that starts a new conversation" : "") << "\n";
-	os << "   Content: " << Content << "\n";
+	}
+	os << "\tContent: " << Body << "\n";
 	os << "\n";
 }
 
 } // namespace Barry
-

@@ -358,13 +358,13 @@ void serialize(ArchiveT &ar, Barry::Sms &m, const unsigned int ver)
 	ar & make_nvp("Opened", m.Opened);
 
 	ar & make_nvp("Timestamp", m.Timestamp);
-	ar & make_nvp("SentTimestamp", m.SentTimestamp);
+	ar & make_nvp("ServiceCenterTimestamp", m.ServiceCenterTimestamp);
 
-	ar & make_nvp("Encoding", m.Encoding);
+	ar & make_nvp("DataCodingScheme", m.DataCodingScheme);
 	ar & make_nvp("ErrorId", m.ErrorId);
 
-	ar & make_nvp("PhoneNumbers", m.PhoneNumbers);
-	ar & make_nvp("Content", m.Content);
+	ar & make_nvp("Addresses", m.Addresses);
+	ar & make_nvp("Body", m.Body);
 
 	if( ver < BARRY_POD_MAP_VERSION ) {
 		ar & make_nvp("Unknowns", m.Unknowns);
