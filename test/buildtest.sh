@@ -16,11 +16,15 @@ Usage() {
 	echo "Usage:"
 	echo "       ./buildtest.sh /path/to/libopensync-0.22.tar.bz2"
 	echo
-	echo "Or, write a ~/.barrytest file that contains the directory"
-	echo "you used as a --prefix when building your own libopensync."
+	echo "Or, write a ~/.barrytest2 file that contains shell commands"
+	echo "setting OSYNCROOTDIR to the directory you used as a --prefix"
+	echo "when building your own libopensync."
+	echo
 	echo "Note that this directory must be writable by the user that"
 	echo "runs the test, as the plugin will be installed during the"
 	echo "build test."
+	echo
+	echo "You can also set OSYNCROOTDIR_0_40 to the 0.4x opensync directory."
 	echo
 }
 
@@ -52,12 +56,20 @@ OSYNCSOURCE="$1"
 mkdir -p build
 
 #
+# Do we have a ~/.barrytest2 config?
+#
+if [ -f ~/.barrytest2 ] ; then
+	. ~/.barrytest2
+fi
+
+
+#
 # First, build opensync in a local directory
 #
 
-if [ -z "$OSYNCSOURCE" -a -f ~/.barrytest ] ; then
-	read OSYNCROOTDIR < ~/.barrytest
-elif [ -n "$OSYNCSOURCE" ] ; then
+if [ -n "$OSYNCROOTDIR" ] ; then
+	echo "Using opensync rootdir: $OSYNCROOTDIR"
+elif [ -z "$OSYNCROOTDIR" -a -n "$OSYNCSOURCE" ] ; then
 	echo "Extracting opensync sources and building..."
 	(cd build && tar xjf "$OSYNCSOURCE" && \
 		cd libopensync-0.22 && \
@@ -68,7 +80,10 @@ else
 	Usage
 	exit 1
 fi
-echo "Using opensync rootdir: $OSYNCROOTDIR"
+
+if [ -n "$OSYNCROOTDIR_0_40" ] ; then
+	echo "Using opensync-0.4x rootdir: $OSYNCROOTDIR_0_40"
+fi
 
 
 
@@ -87,7 +102,7 @@ diff -ruN --exclude=CVS --exclude=.git --exclude=test --exclude=build .. build/b
 # Prepare for Barry building
 #
 cd build/barry
-export PKG_CONFIG_PATH="$BASEPATH/build/rootdir/lib/pkgconfig:$OSYNCROOTDIR/lib/pkgconfig"
+export PKG_CONFIG_PATH="$BASEPATH/build/rootdir/lib/pkgconfig:$OSYNCROOTDIR/lib/pkgconfig:$OSYNCROOTDIR_0_40/lib/pkgconfig"
 
 
 #
@@ -115,14 +130,24 @@ make distclean
 cd gui
 export CXXFLAGS="-Wall -Werror -pedantic -O0 -g"
 ./configure --prefix="$BASEPATH/build/rootdir"
-make $MAKEOPTS install
+make $MAKEOPTS
+make install
 make distclean
 cd ..
 
 cd opensync-plugin
 export CXXFLAGS="-Wall -Werror -O0 -g"
 ./configure --prefix="$BASEPATH/build/rootdir"
-make $MAKEOPTS install
+make $MAKEOPTS
+make install
+make distclean
+cd ..
+
+cd opensync-plugin-0.4x
+export CXXFLAGS="-Wall -Werror -O0 -g"
+./configure --prefix="$BASEPATH/build/rootdir"
+make $MAKEOPTS
+make install
 make distclean
 cd ..
 
@@ -138,11 +163,11 @@ rm -rf "$BASEPATH/build/rootdir"
 
 export CXXFLAGS="-Wall -Werror -O0 -g"
 ./configure --prefix="$BASEPATH/build/rootdir" --with-boost \
-	--enable-gui --enable-opensync-plugin
+	--enable-gui --enable-opensync-plugin --enable-opensync-plugin-4x
 make $MAKEOPTS install
 make distclean
 ./configure --prefix="$BASEPATH/build/rootdir" \
-	--enable-gui --enable-opensync-plugin
+	--enable-gui --enable-opensync-plugin --enable-opensync-plugin-4x
 make $MAKEOPTS
 make distclean
 
@@ -166,7 +191,7 @@ echo "Testing 'make dist'..."
 rm -rf "$BASEPATH/build/rootdir"
 
 ./buildgen.sh
-./configure --enable-gui --enable-opensync-plugin
+./configure --enable-gui --enable-opensync-plugin --enable-opensync-plugin-4x
 make dist
 make distcheck
 make distclean
