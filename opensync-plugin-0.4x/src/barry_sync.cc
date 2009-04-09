@@ -527,6 +527,7 @@ static osync_bool discover(OSyncPluginInfo *info, void *userdata, OSyncError **e
 
 		osync_objtype_sink_set_available(sink, true);
 	}
+	osync_list_free(sinks);
 
 	OSyncVersion *version = osync_version_new(error);
 	osync_version_set_plugin(version, "Barry");
