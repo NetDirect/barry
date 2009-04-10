@@ -1,5 +1,7 @@
 Release: version 0.15 - 2009/01/??
 ------------------------------------------------------------------------------
+2009/04/10
+	- added brimtrans to rpm spec file and debian install
 2009/04/09
 	- fixed OSyncList* leak in 0.4x plugin from call to
 		osync_plugin_info_get_objtype_sinks()

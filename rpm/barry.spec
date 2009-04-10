@@ -216,6 +216,7 @@ cd ../
 %attr(0755,root,root) %{_bindir}/upldif
 %attr(0755,root,root) %{_bindir}/bktrans
 %attr(0755,root,root) %{_bindir}/btranslate
+%attr(0755,root,root) %{_bindir}/brimtrans
 %attr(0755,root,root) %{_bindir}/hal-blackberry
 %attr(0644,root,root) %{_mandir}/man1/btool*
 %attr(0644,root,root) %{_mandir}/man1/bfuse*
@@ -273,12 +274,13 @@ cd ../
 /sbin/ldconfig
 
 %changelog
-* Thu Jan 15 2009 Chris Frey <cdfrey@foursquare.net> 0.15-0
+* Fri Apr 10 2009 Chris Frey <cdfrey@foursquare.net> 0.15-0
 - version bump
 - added HAL FDI scripts
 - added bjavaloader and bfuse
 - updated for udev directory reorganization in Barry source tree
 - added zlib-devel to BuildRequires list
+- added brimtrans
 
 * Wed Sep 24 2008 Chris Frey <cdfrey@foursquare.net> 0.14-0
 - version bump
