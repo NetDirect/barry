@@ -693,7 +693,7 @@ static void commit_change(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncCo
 
 			// convert existing UID string to RecordId
 			if( strlen(uid) == 0 ||
-			    sscanf(uid, "%lu", &RecordId) != 0 ||
+			    sscanf(uid, "%lu", &RecordId) != 1 ||
 			    RecordId == 0)
 			{
 				trace.logf("Unable to extract a valid record ID from: %s", uid);
