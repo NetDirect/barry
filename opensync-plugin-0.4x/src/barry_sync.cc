@@ -40,6 +40,8 @@
 #include <string.h>
 #include <errno.h>
 
+typedef vSmartPtr<OSyncList, OSyncList, &osync_list_free> AutoOSyncList;
+
 // All functions that are callable from outside must look like C
 extern "C" {
 	BXEXPORT int get_version(void);
@@ -216,8 +218,8 @@ void GetChanges(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncContext *ctx
 
 	// the hashtable can now give us a linked list of deleted
 	// entries, after the above processing
-	OSyncList *u, *uids = osync_hashtable_get_deleted(hashtable);
-	for( u = uids; u; u = u->next) {
+	AutoOSyncList uids = osync_hashtable_get_deleted(hashtable);
+	for( OSyncList *u = uids.Get(); u; u = u->next) {
 
 		const char *uid = (const char*) u->data;
 		uint32_t recordId = strtoul(uid, NULL, 10);
@@ -269,7 +271,6 @@ void GetChanges(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncContext *ctx
 
 		osync_change_unref(change);
 	}
-	osync_list_free(uids);
 }
 
 CommitData_t GetCommitFunction(OSyncChange *change)
@@ -330,12 +331,12 @@ static bool barry_contact_initialize(BarryEnvironment *env, OSyncPluginInfo *inf
 	OSyncPluginConfig *config = osync_plugin_info_get_config(info);
 	OSyncPluginResource *resource = osync_plugin_config_find_active_resource(config, "contact");
 
-	OSyncList *objformatsinks = osync_plugin_resource_get_objformat_sinks(resource);
+	AutoOSyncList objformatsinks = osync_plugin_resource_get_objformat_sinks(resource);
 
 	bool hasObjFormat = false;
 
 	OSyncList *r;
-	for(r = objformatsinks;r;r = r->next) {
+	for(r = objformatsinks.Get();r;r = r->next) {
 		OSyncObjFormatSink *objformatsink = (OSyncObjFormatSink *) r->data;
 
 		if(!strcmp("vcard30", osync_objformat_sink_get_objformat(objformatsink))) {
@@ -386,12 +387,12 @@ static bool barry_calendar_initialize(BarryEnvironment *env, OSyncPluginInfo *in
 	OSyncPluginConfig *config = osync_plugin_info_get_config(info);
 	OSyncPluginResource *resource = osync_plugin_config_find_active_resource(config, "event");
 
-	OSyncList *objformatsinks = osync_plugin_resource_get_objformat_sinks(resource);
+	AutoOSyncList objformatsinks = osync_plugin_resource_get_objformat_sinks(resource);
 
 	bool hasObjFormat = false;
 
 	OSyncList *r;
-	for(r = objformatsinks;r;r = r->next) {
+	for(r = objformatsinks.Get();r;r = r->next) {
 		OSyncObjFormatSink *objformatsink = (OSyncObjFormatSink *) r->data;
 
 		if(!strcmp("vevent20", osync_objformat_sink_get_objformat(objformatsink))) {
@@ -449,9 +450,9 @@ static void *initialize(OSyncPlugin *plugin, OSyncPluginInfo *info, OSyncError *
 		/*
 		 * Process plugin specific advanced options
 		 */
-		OSyncList *optslist = osync_plugin_config_get_advancedoptions(config);
-		for (; optslist; optslist = optslist->next) {
-			OSyncPluginAdvancedOption *option = (OSyncPluginAdvancedOption *) optslist->data;
+		AutoOSyncList optslist = osync_plugin_config_get_advancedoptions(config);
+		for (OSyncList *o = optslist.Get(); o; o = o->next) {
+			OSyncPluginAdvancedOption *option = (OSyncPluginAdvancedOption *) o->data;
 
 			const char *val = osync_plugin_advancedoption_get_value(option);
 			const char *name = osync_plugin_advancedoption_get_name(option);
@@ -520,14 +521,12 @@ static osync_bool discover(OSyncPluginInfo *info, void *userdata, OSyncError **e
 {
 	Trace trace("discover");
 
-	OSyncList *s, *sinks;
-	sinks = osync_plugin_info_get_objtype_sinks(info);
-	for (s = sinks; s; s = s->next) {
+	AutoOSyncList sinks = osync_plugin_info_get_objtype_sinks(info);
+	for (OSyncList *s = sinks.Get(); s; s = s->next) {
 		OSyncObjTypeSink *sink = (OSyncObjTypeSink*) s->data;
 
 		osync_objtype_sink_set_available(sink, true);
 	}
-	osync_list_free(sinks);
 
 	OSyncVersion *version = osync_version_new(error);
 	osync_version_set_plugin(version, "Barry");

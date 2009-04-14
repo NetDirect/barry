@@ -2,6 +2,8 @@ Release: version 0.15 - 2009/01/??
 ------------------------------------------------------------------------------
 2009/04/14
 	- applied Nicolas Vivien's sscanf patch (opensync-0.4x)
+	- wrapped OSyncList in vSmartPtr<> to automatically handle
+		all calls to new osync_list_free() API
 2009/04/10
 	- added brimtrans to rpm spec file and debian install
 2009/04/09
