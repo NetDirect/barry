@@ -64,6 +64,36 @@ struct MessageAddress				// used for Message records
 } __attribute__ ((packed));
 
 
+///////////////////////////////////////////////////////////////////////////////
+// SMS Message field and record structures
+
+struct SMSMetaData
+{
+	uint8_t		unknown;
+	uint8_t		flags;
+#define SMS_FLG_NEW_CONVERSATION 0x20
+#define SMS_FLG_SAVED 0x10
+#define SMS_FLG_DELETED 0x08
+#define SMS_FLG_OPENED 0x01
+
+	uint8_t		new_flag;
+	uint16_t	unknown2;
+	uint32_t	status;
+#define SMS_STA_RECEIVED 0x000007ff
+#define SMS_STA_DRAFT 0x7fffffff
+
+	uint32_t	error_id;
+	uint64_t	timestamp;
+	uint64_t	service_center_timestamp;
+	uint8_t		dcs;
+#define SMS_DCS_7BIT 0x00
+#define SMS_DCS_8BIT 0x01
+#define SMS_DCS_UCS2 0x02
+
+} __attribute__ ((packed));
+#define SMS_METADATA_SIZE	(sizeof(Barry::Protocol::SMSMetaData))
+
+
 
 ///////////////////////////////////////////////////////////////////////////////
 // Record Field Formats
@@ -78,6 +108,7 @@ struct CommonField
 
 		GroupLink	link;
 		MessageAddress	addr;
+		SMSMetaData	sms_metadata;
 		uint32_t	uint32;
 		int32_t		min1900;
 		uint16_t	code;

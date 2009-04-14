@@ -45,28 +45,7 @@ namespace Barry {
 #define SMSFC_BODY 0x04
 
 // SMS Field Sizes and Header Sizes
-#define SMS_METADATA_SIZE 0x40
 #define SMS_ADDRESS_HEADER_SIZE 0x04
-
-// SMS Field Indices
-#define SMS_FLAGS 0x01
-#define SMS_NEW 0x02
-#define SMS_STATUS 0x05
-#define SMS_ERRORID 0x09
-#define SMS_TIMESTAMP 0x0d
-#define SMS_SERVICE_CENTER_TIMESTAMP 0x15
-#define SMS_DCS 0x1d
-
-// SMS Flags and Field Values
-#define SMS_FLG_NEW_CONVERSATION 0x20
-#define SMS_FLG_SAVED 0x10
-#define SMS_FLG_DELETED 0x08
-#define SMS_FLG_OPENED 0x01
-#define SMS_STA_RECEIVED 0x000007ff
-#define SMS_STA_DRAFT 0x7fffffff
-#define SMS_DCS_7BIT 0x00
-#define SMS_DCS_8BIT 0x01
-#define SMS_DCS_UCS2 0x02
 
 #define MILLISECONDS_IN_A_SECOND 1000
 
@@ -117,19 +96,19 @@ const unsigned char* Sms::ParseField(const unsigned char *begin,
 	{
 		case SMSFC_METADATA:
 		{
-			if (btohs(field->size) != SMS_METADATA_SIZE)
+			if (btohs(field->size) < SMS_METADATA_SIZE)
 				break; // size not match
 
-			const unsigned char *metadata = (const unsigned char *)field->u.raw;
+			const SMSMetaData &metadata = field->u.sms_metadata;
+			NewConversation = metadata.flags & SMS_FLG_NEW_CONVERSATION;
+			Saved = metadata.flags & SMS_FLG_SAVED;
+			Deleted = metadata.flags & SMS_FLG_DELETED;
+			Opened = metadata.flags & SMS_FLG_OPENED;
 
-			NewConversation = metadata[SMS_FLAGS] & SMS_FLG_NEW_CONVERSATION;
-			Saved = metadata[SMS_FLAGS] & SMS_FLG_SAVED;
-			Deleted = metadata[SMS_FLAGS] & SMS_FLG_DELETED;
-			Opened = metadata[SMS_FLAGS] & SMS_FLG_OPENED;
+			IsNew = metadata.new_flag;
 
-			IsNew = metadata[SMS_NEW];
+			uint32_t status = btohl(metadata.status);
 
-			uint32_t status = *((uint32_t *) (metadata + SMS_STATUS));
 			switch (status)
 			{
 				case SMS_STA_RECEIVED:
@@ -142,13 +121,12 @@ const unsigned char* Sms::ParseField(const unsigned char *begin,
 					MessageStatus = Sent; // consider all others as sent
 			}
 
-			ErrorId = *((uint32_t *) (metadata + SMS_ERRORID));
+			ErrorId = btohl(metadata.error_id);
 
-			Timestamp = *((uint64_t *) (metadata + SMS_TIMESTAMP));
+			Timestamp = btohll(metadata.timestamp);
+			ServiceCenterTimestamp = btohll(metadata.service_center_timestamp);
 
-			ServiceCenterTimestamp = *((uint64_t *) (metadata + SMS_SERVICE_CENTER_TIMESTAMP));
-
-			switch (metadata[SMS_DCS])
+			switch (metadata.dcs)
 			{
 				case SMS_DCS_7BIT:
 					DataCodingScheme = SevenBit;

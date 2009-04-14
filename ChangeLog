@@ -5,6 +5,9 @@ Release: version 0.15 - 2009/01/??
 	- wrapped OSyncList in vSmartPtr<> to automatically handle
 		all calls to new osync_list_free() API
 	- applied Ryan Li's updated SMS parser patch
+		- moved SMS metadata structure into its own struct
+			in protostructs.h
+		- fixed some endian conversion errors
 2009/04/10
 	- added brimtrans to rpm spec file and debian install
 2009/04/09
