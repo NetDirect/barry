@@ -27,6 +27,7 @@
 #include "time.h"
 #include "debug.h"
 #include "iconv.h"
+#include "strnlen.h"
 #include <ostream>
 #include <iomanip>
 #include <string.h>
@@ -152,7 +153,7 @@ const unsigned char* Sms::ParseField(const unsigned char *begin,
 
 			length -= SMS_ADDRESS_HEADER_SIZE;
 			const char *address = (const char *)field->u.raw + SMS_ADDRESS_HEADER_SIZE;
-			Addresses.push_back(std::string(address, length));
+			Addresses.push_back(std::string(address, strnlen(address, length)));
 			return begin;
 		}
 

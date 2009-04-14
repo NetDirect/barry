@@ -8,6 +8,8 @@ Release: version 0.15 - 2009/01/??
 		- moved SMS metadata structure into its own struct
 			in protostructs.h
 		- fixed some endian conversion errors
+		- added strnlen() call to avoid null terminators in
+			the Addresses strings
 2009/04/10
 	- added brimtrans to rpm spec file and debian install
 2009/04/09
