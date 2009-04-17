@@ -34,17 +34,18 @@
 #include <string.h>
 
 // supported javaloader commands
-#define CMD_LIST	"dir"
-#define CMD_ERASE	"erase"
-#define CMD_LOAD	"load"
-#define CMD_SCREENSHOT	"screenshot"
-#define CMD_SETTIME	"settime"
-#define CMD_EVENTLOG	"eventlog"
-#define CMD_CLEAR_LOG	"cleareventlog"
-#define CMD_SAVE	"save"
-#define CMD_DEVICEINFO	"deviceinfo"
-#define CMD_WIPE	"wipe"
-#define CMD_LOGSTRACES	"logstacktraces"
+#define CMD_LIST		"dir"
+#define CMD_ERASE		"erase"
+#define CMD_LOAD		"load"
+#define CMD_SCREENSHOT		"screenshot"
+#define CMD_SETTIME		"settime"
+#define CMD_EVENTLOG		"eventlog"
+#define CMD_CLEAR_LOG		"cleareventlog"
+#define CMD_SAVE		"save"
+#define CMD_DEVICEINFO		"deviceinfo"
+#define CMD_WIPE		"wipe"
+#define CMD_LOGSTRACES		"logstacktraces"
+#define CMD_RESETFACTORY	"resettofactory"
 
 // time string format specifier and user friendly description
 #define TIME_FMT         "%Y-%m-%d %H:%M:%S"
@@ -95,6 +96,9 @@ void Usage()
    << "                   such as messages, contacts, etc.\n"
    << "                   Wiping applications will remove all .cod files\n"
    << "                   on the device, including OS .cod files.\n"
+   << "\n"
+   << "   " << CMD_RESETFACTORY << "\n"
+   << "      Reset IT policy to factory defaults\n"
    << "\n"
    << "   " << CMD_ERASE << " [-f] <module name> ...\n"
    << "      Erase module from handheld\n"
@@ -412,6 +416,9 @@ int main(int argc, char *argv[])
 			else {
 				cout << "Response of 'yes' not received, aborting." << endl;
 			}
+		}
+		else if( cmd == CMD_RESETFACTORY ) {
+			javaloader.ResetToFactory();
 		}
 		else {
 			cerr << "invalid command \"" << cmd << "\"" << endl;

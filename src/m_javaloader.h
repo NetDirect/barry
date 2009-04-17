@@ -259,6 +259,7 @@ public:
 	void DeviceInfo(JLDeviceInfo &info);
 	void Wipe(bool apps = true, bool fs = true);
 	void LogStackTraces();
+	void ResetToFactory();
 };
 
 }} // namespace Barry::Mode
