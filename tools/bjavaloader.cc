@@ -99,6 +99,9 @@ void Usage()
    << "\n"
    << "   " << CMD_RESETFACTORY << "\n"
    << "      Reset IT policy to factory defaults\n"
+   << "      Use Caution: Resetting IT policy to factory defaults will\n"
+   << "                   also perform a filesystem wipe which will remove\n"
+   << "                   all data such as messages, contacts, etc.\n"
    << "\n"
    << "   " << CMD_ERASE << " [-f] <module name> ...\n"
    << "      Erase module from handheld\n"
@@ -418,7 +421,19 @@ int main(int argc, char *argv[])
 			}
 		}
 		else if( cmd == CMD_RESETFACTORY ) {
-			javaloader.ResetToFactory();
+			cout
+				<< "Use Caution: Resetting IT policy to factory defaults will\n"
+				<< "             also perform a filesystem wipe which will remove\n"
+				<< "             all data such as messages, contacts, etc.\n\n"
+				<< "Continue with wipe? (yes/no) ";
+			string confirm;
+			getline(cin, confirm);
+			if( confirm == "yes" ) {
+				javaloader.ResetToFactory();
+			}
+			else {
+				cout << "Response of 'yes' not received, aborting." << endl;
+			}
 		}
 		else {
 			cerr << "invalid command \"" << cmd << "\"" << endl;
