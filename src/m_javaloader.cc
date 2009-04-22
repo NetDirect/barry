@@ -989,5 +989,18 @@ void JavaLoader::LogStackTraces()
 	}
 }
 
+void JavaLoader::ResetToFactory()
+{
+	Data command(-1, 8), data(-1, 8), response;
+	JLPacket packet(command, data, response);
+
+	packet.ResetToFactory();
+	m_socket->Packet(packet);
+
+	if( packet.Command() != SB_COMMAND_JL_ACK ) {
+		ThrowJLError("JavaLoader::ResetToFactory", packet.Command());
+	}
+}
+
 }} // namespace Barry::Mode
 

@@ -235,6 +235,7 @@ public:
 	int WipeApps()		{ return SimpleCmd(SB_COMMAND_JL_WIPE_APPS); }
 	int WipeFs()		{ return SimpleCmd(SB_COMMAND_JL_WIPE_FS); }
 	int LogStackTraces()	{ return SimpleCmd(SB_COMMAND_JL_LOG_STRACES); }
+	int ResetToFactory()	{ return SimpleCmd(SB_COMMAND_JL_RESET_FACTORY); }
 
 	//////////////////////////////////
 	// response analysis

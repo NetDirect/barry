@@ -757,6 +757,10 @@ void Socket::PacketData(Data &send, Data &receive, int timeout)
 				throw Error("file is not a valid Java code file");
 				break;
 
+			case SB_COMMAND_JL_NOT_SUPPORTED:
+				throw Error("device does not support requested command");
+				break;
+
 			default:
 				// unknown packet, pass it up to the
 				// next higher code layer
