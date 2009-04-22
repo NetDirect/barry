@@ -24,6 +24,7 @@
 
 #include "dll.h"
 #include <stdexcept>
+#include <stdint.h>
 
 namespace Barry {
 

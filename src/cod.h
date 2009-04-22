@@ -25,6 +25,7 @@
 #include "dll.h"
 #include "data.h"
 #include <sys/types.h>
+#include <stdint.h>
 #include <iostream>
 #include <sstream>
 
