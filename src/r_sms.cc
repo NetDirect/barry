@@ -159,6 +159,17 @@ const unsigned char* Sms::ParseField(const unsigned char *begin,
 
 		case SMSFC_BODY:
 		{
+			//
+			// Some SMS bodies contain a null terminator
+			// in the middle, and it is unknown at the moment
+			// why this is.  For regular 8bit char strings,
+			// we just strip out the nulls.  For UCS2
+			// 16bit char strings, we strip out the
+			// 16bit nulls.
+			//
+			// Any further information on why these null
+			// terminators appear is welcome.
+			//
 			const char *str = (const char *)field->u.raw;
 			uint16_t maxlen = btohs(field->size);
 			if (DataCodingScheme != UCS2) {
@@ -172,7 +183,7 @@ const unsigned char* Sms::ParseField(const unsigned char *begin,
 				}
 			}
 			else {
-				for (uint16_t i = 0; i < maxlen; i += 2) {
+				for (uint16_t i = 0; maxlen && i < (maxlen-1); i += 2) {
 					if (str[i] || str[i + 1]) // if not null, push it
 						Body += std::string(str + i, 2);
 				}
