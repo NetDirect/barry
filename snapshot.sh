@@ -23,6 +23,7 @@ cd maintainer
 sleep 2s
 (cd build/barry* && ../../tar-prepare.sh)
 (cd build && ../tar-create.sh $1 $2)
+(cd build && ../deb-src-create.sh $1 $2)
 
 echo
 echo "***********************************************************"
