@@ -37,4 +37,5 @@ set -e
 "$RUNDIR/git-extract.sh" $MAJOR $MINOR $COMMIT
 (cd build/$DIRNAME && "$RUNDIR/tar-prepare.sh")
 (cd build && "$RUNDIR/tar-create.sh" $MAJOR $MINOR)
+(cd build && "$RUNDIR/deb-src-create.sh" $MAJOR $MINOR)
 

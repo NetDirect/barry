@@ -8,6 +8,8 @@ Release: version 0.15 - 2009/01/??
 		- fixed potential single byte buffer overflow
 	- pulled from Josh Kropf: 8266c95a94
 		added "reset to factory" command to bjavaloader
+	- split creation of deb src tarballs into separate script
+		instead of tar-create.sh
 2009/04/14
 	- applied Nicolas Vivien's sscanf patch (opensync-0.4x)
 	- wrapped OSyncList in vSmartPtr<> to automatically handle

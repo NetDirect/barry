@@ -22,15 +22,3 @@ set -e
 # Create official release tarball
 tar -cvf - $DIRNAME | bzip2 -9c > barry-$MAJOR.$MINOR.tar.bz2
 
-# Create Debian source package, by creating a patched and "orig" set of trees.
-#
-# The following dance is to keep the .orig.tar.gz containing barry-0.12/
-# as the directory, and not something like barry-0.12.orig/ which gets
-# corrected by Debian tools.  If there is a better way, please send a patch.
-cp -a $DIRNAME $DIRNAME.patched
-rm -rf $DIRNAME/debian
-tar -cf - $DIRNAME | gzip -9c > barry_$MAJOR.$MINOR.orig.tar.gz
-rm -rf $DIRNAME
-mv $DIRNAME.patched $DIRNAME
-dpkg-source -b $DIRNAME barry_$MAJOR.$MINOR.orig.tar.gz
-
