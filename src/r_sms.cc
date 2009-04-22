@@ -161,22 +161,23 @@ const unsigned char* Sms::ParseField(const unsigned char *begin,
 		{
 			const char *str = (const char *)field->u.raw;
 			uint16_t maxlen = btohs(field->size);
-			if (DataCodingScheme != UCS2)
-			{
-				for (uint16_t i = 0; i < maxlen; ++i)
+			if (DataCodingScheme != UCS2) {
+				for (uint16_t i = 0; i < maxlen; ++i) {
 					if (str[i]) // if not null, push it
 						Body += str[i];
-				if (ic)
+				}
+
+				if (ic) {
 					Body = ic->FromBB(Body);
+				}
 			}
-			else
-			{
-				for (uint16_t i = 0; i < maxlen; i += 2)
+			else {
+				for (uint16_t i = 0; i < maxlen; i += 2) {
 					if (str[i] || str[i + 1]) // if not null, push it
 						Body += std::string(str + i, 2);
+				}
 
-				if (ic)
-				{
+				if (ic) {
 					IConvHandle ucs2("UCS-2BE", *ic);
 					Body = ic->Convert(ucs2, Body);
 				}
