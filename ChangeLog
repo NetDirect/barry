@@ -6,6 +6,8 @@ Release: version 0.15 - 2009/01/??
 		- fixed code formatting issues
 		- added comment on why we're stripping out nulls
 		- fixed potential single byte buffer overflow
+	- pulled from Josh Kropf: 8266c95a94
+		added "reset to factory" command to bjavaloader
 2009/04/14
 	- applied Nicolas Vivien's sscanf patch (opensync-0.4x)
 	- wrapped OSyncList in vSmartPtr<> to automatically handle
