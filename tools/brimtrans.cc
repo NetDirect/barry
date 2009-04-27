@@ -28,6 +28,7 @@
 #include <vector>
 #include <list>
 #include <cctype>
+#include <stdint.h>
 
 using namespace std;
 
