@@ -154,7 +154,17 @@ bool TarFile::ReadNextFile(std::string &tarpath, std::string &data)
 
 	char *pathname = th_get_pathname(m_tar);
 	tarpath = pathname;
-	free(pathname);
+	//
+	// FIXME (leak) - someday, when all distros use a patched version of
+	// libtar, we may be able to avoid this memory leak, but
+	// th_get_pathname() does not consistently return a user-freeable
+	// string on all distros.
+	//
+	// See the following links for more information:
+	//   https://bugs.launchpad.net/ubuntu/+source/libtar/+bug/41804
+	//   https://lists.feep.net:8080/pipermail/libtar/2006-April/000222.html
+	//
+//	free(pathname);
 	size_t size = th_get_size(m_tar);
 
 	// read the data in blocks until finished
@@ -199,7 +209,8 @@ bool TarFile::ReadNextFilenameOnly(std::string &tarpath)
 
 	char *pathname = th_get_pathname(m_tar);
 	tarpath = pathname;
-	free(pathname);
+	// See above FIXME (leak) comment
+//	free(pathname);
 
 	if( tar_skip_regfile(m_tar) != 0 ) {
 		return False("Unable to skip tar file", errno);

@@ -1,5 +1,8 @@
 Release: version 0.15 - 2009/01/??
 ------------------------------------------------------------------------------
+2009/04/27
+	- removed free() in tarfile.cc, since some distros have bugs in
+		th_get_pathname() that doesn't return a freeable string
 2009/04/22
 	- fixed some missing headers as reported by Christopher Stover
 	- applied Ryan Li's SMS body null terminator strip patch
