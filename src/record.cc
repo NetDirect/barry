@@ -36,6 +36,7 @@
 #include <iomanip>
 #include <time.h>
 #include <string.h>
+#include <stdio.h>			// for sscanf()
 #include <stdexcept>
 
 #define __DEBUG_MODE__
