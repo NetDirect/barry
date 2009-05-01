@@ -78,7 +78,7 @@ const unsigned char* Memo::ParseField(const unsigned char *begin,
 		if( ( MemoType = field->u.raw[0] ) != 'm' ) {
 			throw Error( "Memo::ParseField: MemoType is not 'm'" );
 		}
-	return begin;
+		return begin;
 	}
 
 
@@ -140,6 +140,9 @@ void Memo::BuildHeader(Data &data, size_t &offset) const
 void Memo::BuildFields(Data &data, size_t &offset, const IConverter *ic) const
 {
 	data.Zap();
+
+	// tack on the 'm' memo type field first
+	BuildField(data, offset, MEMFC_MEMO_TYPE, 'm');
 
 	// cycle through the type table
 	for(	FieldLink<Memo> *b = MemoFieldLinks;

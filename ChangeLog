@@ -2,6 +2,8 @@ Release: version 0.15 - 2009/01/??
 ------------------------------------------------------------------------------
 2009/05/01
 	- applied Nicolas Vivien's zsh patch
+	- applied Nicolas Vivien's memo sync patch
+		- added MEMO_TYPE 'm' to built memo record
 2009/04/27
 	- removed free() in tarfile.cc, since some distros have bugs in
 		th_get_pathname() that doesn't return a freeable string
