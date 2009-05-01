@@ -310,6 +310,11 @@ auto_ptr<Builder> GetBuilder(const string &name, const string &filename)
 			new RecordBuilder<Calendar, Store<Calendar> > (
 				new Store<Calendar>(filename, true)));
 	}
+	else if( name == Memo::GetDBName() ) {
+		return auto_ptr<Builder>(
+			new RecordBuilder<Memo, Store<Memo> > (
+				new Store<Memo>(filename, true)));
+	}
 /*
 	else if( name == "Messages" ) {
 		return auto_ptr<Parser>(
@@ -320,11 +325,6 @@ auto_ptr<Builder> GetBuilder(const string &name, const string &filename)
 		return auto_ptr<Parser>(
 			new RecordParser<ServiceBook, Store<ServiceBook> > (
 				new Store<ServiceBook>(filename, true)));
-	}
-	else if( name == "Memos" ) {
-		return auto_ptr<Parser>(
-			new RecordParser<Memo, Store<Memo> > (
-				new Store<Memo>(filename, true)));
 	}
 	else if( name == "Tasks" ) {
 		return auto_ptr<Parser>(
@@ -355,6 +355,7 @@ void ShowParsers()
 	<< "Supported Database builders:\n"
 	<< "   Address Book\n"
 	<< "   Calendar\n"
+	<< "   Memo\n"
 	<< endl;
 }
 
