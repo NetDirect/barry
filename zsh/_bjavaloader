@@ -19,6 +19,7 @@ _bjavaloader_commands=(
 	'eventlog:Retrieves the handheld event log'
 	'load:Loads modules onto the handheld'
 	'logstacktraces:Dump the stack traces for all threads to the event log'
+	'resettofactory:Reset IT policy to factory defaults'
 	'save:Retrieves modules from the handheld'
 	'screenshot:Make a screenshot of handheld'
 	'settime:Sets the time on the handheld'
@@ -26,15 +27,15 @@ _bjavaloader_commands=(
 )
 
 _bjavaloader_options=(
-	'-h[Show the most relevant command line options]' \
-	'-p[PIN of device to talk with]:PIN device' \
-	'-P[PIN of device to talk with (optional)]:PIN device' \
-	'-v[Dump protocol data during operation]' \
+	'-h[Show the most relevant command line options]'
+	'-p[PIN of device to talk with]:PIN device'
+	'-P[PIN of device to talk with (optional)]:PIN device'
+	'-v[Dump protocol data during operation]'
 	'*::arg:->cmd_or_options'
 )
 
 _bjavaloader_dir=(
-	'-s[List sibling in module list]' \
+	'-s[List sibling in module list]'
 )
 
 _bjavaloader_erase=(
@@ -42,7 +43,7 @@ _bjavaloader_erase=(
 )
 
 _bjavaloader_wipe=(
-	'-a[Wipe applications only]' \
+	'-a[Wipe applications only]'
 	'-i[Wipe filesystem only]'
 )
 
