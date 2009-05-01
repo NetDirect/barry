@@ -126,6 +126,55 @@ void Memo::ParseFields(const Data &data, size_t &offset, const IConverter *ic)
 }
 
 
+void Memo::BuildHeader(Data &data, size_t &offset) const
+{
+	// no header in Memo records
+}
+
+
+//
+// Build
+//
+/// Build fields part of record.
+///
+void Memo::BuildFields(Data &data, size_t &offset, const IConverter *ic) const
+{
+	data.Zap();
+
+	// cycle through the type table
+	for(	FieldLink<Memo> *b = MemoFieldLinks;
+		b->type != MEMFC_END;
+		b++ )
+	{
+		// print only fields with data
+		if( b->strMember ) {
+			const std::string &field = this->*(b->strMember);
+			if( field.size() ) {
+				std::string s = (b->iconvNeeded && ic) ? ic->ToBB(field) : field;
+				BuildField(data, offset, b->type, s);
+			}
+		}
+		else if( b->postMember && b->postField ) {
+			const std::string &field = (this->*(b->postMember)).*(b->postField);
+			if( field.size() ) {
+				std::string s = (b->iconvNeeded && ic) ? ic->ToBB(field) : field;
+				BuildField(data, offset, b->type, s);
+			}
+		}
+	}
+
+	// and finally save unknowns
+	UnknownsType::const_iterator
+		ub = Unknowns.begin(), ue = Unknowns.end();
+	for( ; ub != ue; ub++ ) {
+		BuildField(data, offset, *ub);
+	}
+
+	data.ReleaseBuffer(offset);
+}
+
+
+
 void Memo::Dump(std::ostream &os) const
 {
 	os << "Memo entry: 0x" << setbase(16) << RecordId

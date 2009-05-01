@@ -32,6 +32,7 @@ barry_sync_la_SOURCES = \
 	vevent.cc vevent.h \
 	vcard.cc vcard.h \
 	vformat.c vformat.h \
+	vjournal.c vjournal.h \
 	trace.h
 
 barry_sync_la_LDFLAGS = -avoid-version -export-dynamic -module

@@ -77,7 +77,8 @@ BarryEnvironment::BarryEnvironment(OSyncPluginInfo *info):
 	m_pCon(0),
 	m_pDesktop(0),
 	m_CalendarSync(info, "calendar"),
-	m_ContactsSync(info, "contacts")
+	m_ContactsSync(info, "contacts"),
+	m_JournalSync(info, "note")
 {
 }
 
@@ -100,6 +101,9 @@ void BarryEnvironment::DoConnect()
 
 	m_ContactsSync.m_dbId = m_pDesktop->GetDBID(Barry::Contact::GetDBName());
 	m_ContactsSync.m_dbName = Barry::Contact::GetDBName();
+
+	m_JournalSync.m_dbId = m_pDesktop->GetDBID(Barry::Memo::GetDBName());
+	m_JournalSync.m_dbName = Barry::Memo::GetDBName();
 }
 
 void BarryEnvironment::Connect(const Barry::ProbeResult &result)
@@ -177,6 +181,12 @@ void BarryEnvironment::ClearContactsDirtyFlags()
 	ClearDirtyFlags(m_ContactsSync.m_Table, Barry::Contact::GetDBName());
 }
 
+void BarryEnvironment::ClearJournalDirtyFlags()
+{
+	Trace trace("ClearJournalDirtyFlags");
+	ClearDirtyFlags(m_JournalSync.m_Table, Barry::Memo::GetDBName());
+}
+
 DatabaseSyncState* BarryEnvironment::GetSyncObject(OSyncChange *change)
 {
 	Trace trace("BarryEnvironment::GetSyncObject()");
@@ -194,6 +204,11 @@ DatabaseSyncState* BarryEnvironment::GetSyncObject(OSyncChange *change)
 		trace.log("return contact object");
 
 		return &m_ContactsSync;
+	}
+	else if( strcmp(name, "note") == 0 ) {
+		trace.log("return journal object");
+
+		return &m_JournalSync;
 	}
 
 	trace.log("return none");

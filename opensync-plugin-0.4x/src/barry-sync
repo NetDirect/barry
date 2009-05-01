@@ -39,6 +39,16 @@
       <Name>Event</Name>
       <ObjType>event</ObjType>
     </Resource>
+    <Resource>
+      <Enabled>1</Enabled>
+      <Formats>
+        <Format>
+          <Name>vjournal</Name>
+        </Format>
+      </Formats>
+      <Name>Memo</Name>
+      <ObjType>note</ObjType>
+    </Resource>
    </Resources>
 </config>
 
