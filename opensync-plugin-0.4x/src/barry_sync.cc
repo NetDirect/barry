@@ -533,7 +533,7 @@ static bool barry_todo_initialize(BarryEnvironment *env, OSyncPluginInfo *info, 
 //	OSyncFormatEnv *formatenv = osync_plugin_info_get_format_env(info);
 
 //	env->format = osync_format_env_find_objformat(formatenv, "vtodo20");
-	env->m_JournalSync.sink = sink;
+	env->m_TodoSync.sink = sink;
 
 	osync_objtype_sink_set_userdata(sink, env);
 

@@ -69,7 +69,7 @@ bool vJournal::HasMultipleVJournals() const
 // a vJournal string of data.
 const std::string& vJournal::ToMemo(const Barry::Memo &memo)
 {
-	Trace trace("vCalendar::ToMemo");
+	Trace trace("vJournal::ToMemo");
 	std::ostringstream oss;
 	memo.Dump(oss);
 	trace.logf("ToMemo, initial Barry record: %s", oss.str().c_str());
@@ -83,7 +83,7 @@ const std::string& vJournal::ToMemo(const Barry::Memo &memo)
 	// store the Barry object we're working with
 	m_BarryMemo = memo;
 
-	// begin building vCalendar data
+	// begin building vJournal data
 	AddAttr(NewAttr("PRODID", "-//OpenSync//NONSGML Barry Memo Record//EN"));
 	AddAttr(NewAttr("BEGIN", "VJOURNAL"));
 	AddAttr(NewAttr("SEQUENCE", "0"));
