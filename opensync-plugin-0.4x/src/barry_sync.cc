@@ -4,7 +4,7 @@
 //
 
 /*
-	Copyright (C) 2009, Nicolas VIVIEN (opensync plugin porting on opensync 0.4x)
+	Copyright (C) 2009, Nicolas VIVIEN (opensync plugin porting on opensync 0.4x ; Task & Memo support)
     Copyright (C) 2006-2009, Net Direct Inc. (http://www.netdirect.ca/)
 
     This program is free software; you can redistribute it and/or modify
@@ -31,6 +31,7 @@
 #include <barry/dll.h>
 #include "barry_sync.h"
 #include "environment.h"
+#include "vtodo.h"
 #include "vjournal.h"
 #include "vevent.h"
 #include "vcard.h"
@@ -57,6 +58,9 @@ extern "C" {
 
 	static void journal_get_changes(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncContext *ctx, osync_bool slow_sync, void *userdata);
 	static void journal_sync_done(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncContext *ctx, void *userdata);
+
+	static void todo_get_changes(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncContext *ctx, osync_bool slow_sync, void *userdata);
+	static void todo_sync_done(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncContext *ctx, void *userdata);
 
 	static void connect(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncContext *ctx, void *userdata);
 	static void disconnect(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncContext *ctx, void *userdata);
@@ -292,6 +296,9 @@ CommitData_t GetCommitFunction(OSyncChange *change)
 	else if( strcmp(name, "note") == 0 ) {
 		return &VJournalConverter::CommitRecordData;
 	}
+	else if( strcmp(name, "todo") == 0 ) {
+		return &VTodoConverter::CommitRecordData;
+	}
 	else {
 		trace.log("unknown !");
 		trace.log(name);
@@ -483,6 +490,59 @@ static bool barry_journal_initialize(BarryEnvironment *env, OSyncPluginInfo *inf
 }
 
 
+static bool barry_todo_initialize(BarryEnvironment *env, OSyncPluginInfo *info, OSyncError **error)
+{
+	Trace trace("todo initialize");
+
+	OSyncObjTypeSink *sink = osync_plugin_info_find_objtype(info, "todo");
+	if (!sink)
+		return false;
+	osync_bool sinkEnabled = osync_objtype_sink_is_enabled(sink);
+	if (!sinkEnabled)
+		return false;
+
+	trace.log("todo enabled");
+
+	osync_objtype_sink_set_connect_func(sink, connect);
+	osync_objtype_sink_set_disconnect_func(sink, disconnect);
+	osync_objtype_sink_set_get_changes_func(sink, todo_get_changes);
+	osync_objtype_sink_set_commit_func(sink, commit_change);
+	osync_objtype_sink_set_sync_done_func(sink, todo_sync_done);
+
+	OSyncPluginConfig *config = osync_plugin_info_get_config(info);
+	OSyncPluginResource *resource = osync_plugin_config_find_active_resource(config, "todo");
+
+	AutoOSyncList objformatsinks = osync_plugin_resource_get_objformat_sinks(resource);
+
+	bool hasObjFormat = false;
+
+	OSyncList *r;
+	for(r = objformatsinks.Get();r;r = r->next) {
+		OSyncObjFormatSink *objformatsink = (OSyncObjFormatSink *) r->data;
+
+		if(!strcmp("vtodo20", osync_objformat_sink_get_objformat(objformatsink))) {
+			hasObjFormat = true;
+			break;
+		}
+	}
+
+	if (!hasObjFormat) {
+		return false;
+	}
+
+//	OSyncFormatEnv *formatenv = osync_plugin_info_get_format_env(info);
+
+//	env->format = osync_format_env_find_objformat(formatenv, "vtodo20");
+	env->m_JournalSync.sink = sink;
+
+	osync_objtype_sink_set_userdata(sink, env);
+
+	osync_objtype_sink_enable_hashtable(sink, TRUE);
+
+	return true;
+}
+
+
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -572,6 +632,14 @@ static void *initialize(OSyncPlugin *plugin, OSyncPluginInfo *info, OSyncError *
 		else {
 			trace.log("No sync Journal");
 			env->m_JournalSync.m_Sync = false;
+		}
+
+		if (barry_todo_initialize(env, info, error)) {
+			env->m_TodoSync.m_Sync = true;
+		}
+		else {
+			trace.log("No sync Todo");
+			env->m_TodoSync.m_Sync = false;
 		}
 
 		return (void *) env;
@@ -714,6 +782,28 @@ static void journal_get_changes(OSyncObjTypeSink *sink, OSyncPluginInfo *info, O
 		GetChanges(sink, info, ctx, env, &env->m_JournalSync,
 			"Memos", "note", "vjournal",
 			&VJournalConverter::GetRecordData,
+			slow_sync);
+
+		// Success!
+		osync_context_report_success(ctx);
+	}
+	// don't let exceptions escape to the C modules
+	catch( std::exception &e ) {
+		osync_context_report_error(ctx, OSYNC_ERROR_IO_ERROR, "%s", e.what());
+	}
+}
+
+
+static void todo_get_changes(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncContext *ctx, osync_bool slow_sync, void *userdata)
+{
+	Trace trace("todo_get_changeinfo");
+
+	try {
+		BarryEnvironment *env = (BarryEnvironment *) userdata;
+
+		GetChanges(sink, info, ctx, env, &env->m_TodoSync,
+			"Tasks", "todo", "vtodo20",
+			&VTodoConverter::GetRecordData,
 			slow_sync);
 
 		// Success!
@@ -959,6 +1049,37 @@ static void journal_sync_done(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSy
 }
 
 
+static void todo_sync_done(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncContext *ctx, void *userdata)
+{
+	//
+	// This function will only be called if the sync was successfull
+	//
+
+	Trace trace("todo_sync_done");
+
+	try {
+
+		BarryEnvironment *env = (BarryEnvironment *) userdata;
+
+		// we reconnect to the device here, since dirty flags
+		// for records we've just touched do not show up until
+		// a disconnect... as far as I can tell.
+		env->Reconnect();
+
+		// do cleanup for each database
+		if( FinishSync(ctx, env, &env->m_TodoSync) )
+		{
+			// Success
+			osync_context_report_success(ctx);
+		}
+
+	}
+	catch( std::exception &e ) {
+		osync_context_report_error(ctx, OSYNC_ERROR_IO_ERROR, "%s", e.what());
+	}
+}
+
+
 static void disconnect(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncContext *ctx, void *userdata)
 {
 	Trace trace("contact_disconnect");
@@ -998,7 +1119,7 @@ osync_bool get_sync_info(OSyncPluginEnv *env, OSyncError **error)
 	// Describe our plugin
 	osync_plugin_set_name(plugin, "barry-sync");
 	osync_plugin_set_longname(plugin, "Barry OpenSync plugin v0.15 for the Blackberry handheld");
-	osync_plugin_set_description(plugin, "Plugin to synchronize note, calendar and contact entries on USB Blackberry handhelds");
+	osync_plugin_set_description(plugin, "Plugin to synchronize note, task, calendar and contact entries on USB Blackberry handhelds");
 
 	// Set the callback functions
 	osync_plugin_set_initialize(plugin, initialize);

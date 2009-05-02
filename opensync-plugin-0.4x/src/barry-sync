@@ -49,6 +49,16 @@
       <Name>Memo</Name>
       <ObjType>note</ObjType>
     </Resource>
+    <Resource>
+      <Enabled>1</Enabled>
+      <Formats>
+        <Format>
+          <Name>vtodo20</Name>
+        </Format>
+      </Formats>
+      <Name>Todo</Name>
+      <ObjType>todo</ObjType>
+    </Resource>
    </Resources>
 </config>
 

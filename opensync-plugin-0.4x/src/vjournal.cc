@@ -98,7 +98,7 @@ const std::string& vJournal::ToMemo(const Barry::Memo &memo)
 	m_gJournalData = b_vformat_to_string(Format(), VFORMAT_NOTE);
 	m_vJournalData = m_gJournalData;
 
-	trace.logf("ToVCal, resulting vmemo data: %s", m_vJournalData.c_str());
+	trace.logf("ToMemo, resulting vjournal data: %s", m_vJournalData.c_str());
 	return m_vJournalData;
 }
 

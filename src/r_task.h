@@ -52,7 +52,9 @@ public:
 	time_t StartTime;
 	time_t DueTime;
 	time_t AlarmTime;
-	int TimeZoneCode;
+	unsigned short TimeZoneCode;
+	bool TimeZoneValid;		// true if the record contained a
+					// time zone code
 
 	enum AlarmFlagType
 	{
@@ -106,6 +108,7 @@ public:
 	void ParseHeader(const Data &data, size_t &offset);
 	void ParseFields(const Data &data, size_t &offset, const IConverter *ic = 0);
 	void BuildHeader(Data &data, size_t &offset) const;
+	void BuildFields(Data &data, size_t &offset, const IConverter *ic = 0) const;
 
 	void Clear();
 

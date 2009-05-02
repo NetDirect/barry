@@ -33,7 +33,7 @@
 //////////////////////////////////////////////////////////////////////////////
 // Utility functions
 
-void ToLower(std::string &str)
+static void ToLower(std::string &str)
 {
 	size_t i = 0;
 	while( i < str.size() ) {

@@ -71,7 +71,7 @@ public:
 	Barry::Mode::Desktop *m_pDesktop;
 
 	// sync data
-	DatabaseSyncState m_CalendarSync, m_ContactsSync, m_JournalSync;
+	DatabaseSyncState m_CalendarSync, m_ContactsSync, m_JournalSync, m_TodoSync;
 
 protected:
 	void DoConnect();
@@ -91,6 +91,7 @@ public:
 	void ClearCalendarDirtyFlags();
 	void ClearContactsDirtyFlags();
 	void ClearJournalDirtyFlags();
+	void ClearTodoDirtyFlags();
 };
 
 #endif

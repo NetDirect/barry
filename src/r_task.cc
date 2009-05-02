@@ -228,6 +228,74 @@ void Task::ParseFields(const Data &data, size_t &offset, const IConverter *ic)
 	offset += finish - (data.GetData() + offset);
 }
 
+
+void Task::BuildHeader(Data &data, size_t &offset) const
+{
+	// no header in Task records
+}
+
+
+//
+// Build
+//
+/// Build fields part of record.
+///
+void Task::BuildFields(Data &data, size_t &offset, const IConverter *ic) const
+{
+	data.Zap();
+
+	// tack on the 't' task type field first
+	BuildField(data, offset, TSKFC_TASK_TYPE, 't');
+
+	// cycle through the type table
+	for(	FieldLink<Task> *b = TaskFieldLinks;
+		b->type != TSKFC_END;
+		b++ )
+	{
+		// print only fields with data
+		if( b->strMember ) {
+			const std::string &field = this->*(b->strMember);
+			if( field.size() ) {
+				std::string s = (b->iconvNeeded && ic) ? ic->ToBB(field) : field;
+				BuildField(data, offset, b->type, s);
+			}
+		}
+		else if( b->timeMember ) {
+			time_t t = this->*(b->timeMember);
+			if( t > 0 )
+				BuildField1900(data, offset, b->type, t);
+		}
+		else if( b->postMember && b->postField ) {
+			const std::string &field = (this->*(b->postMember)).*(b->postField);
+			if( field.size() ) {
+				std::string s = (b->iconvNeeded && ic) ? ic->ToBB(field) : field;
+				BuildField(data, offset, b->type, s);
+			}
+		}
+	}
+
+	BuildField(data, offset, TSKFC_STATUS, StatusRec2Proto(StatusFlag));
+	BuildField(data, offset, TSKFC_PRIORITY, PriorityRec2Proto(PriorityFlag));
+	BuildField(data, offset, TSKFC_ALARM_TYPE, AlarmRec2Proto(AlarmType));
+	
+	if ( DueDateFlag )
+		BuildField(data, offset, TSKFC_DUE_FLAG, (char) 1);
+
+	if( TimeZoneValid )
+		BuildField(data, offset, TSKFC_TIMEZONE_CODE, TimeZoneCode);
+
+	// and finally save unknowns
+	UnknownsType::const_iterator
+		ub = Unknowns.begin(), ue = Unknowns.end();
+	for( ; ub != ue; ub++ ) {
+		BuildField(data, offset, *ub);
+	}
+
+	data.ReleaseBuffer(offset);
+}
+
+
+
 void Task::Clear()
 {
 	RecurBase::Clear();
@@ -245,7 +313,8 @@ void Task::Clear()
 
 	DueDateFlag = false;
 
-	TimeZoneCode = GetTimeZoneCode( 0, 0 );
+	TimeZoneCode = GetTimeZoneCode( 0, 0 );	// default to GMT
+	TimeZoneValid = false;
 
 	Unknowns.clear();
 }
@@ -286,6 +355,8 @@ void Task::Dump(std::ostream &os) const
 	if( AlarmType ) {
 		os << "   Alarm Type: " << AlarmTypeName[AlarmType] << "\n";
 	}
+	if( TimeZoneValid )
+		os << "   Time Zone: " << GetTimeZone(TimeZoneCode)->Name << "\n";
 
 	// print recurrence data if available
 	os << "   Recurring: " << (Recurring ? "yes" : "no") << "\n";
