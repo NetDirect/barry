@@ -54,7 +54,7 @@ void Usage()
    << "   -N dev    Specify which system device, using system specific string\n"
    << "\n"
    << "   -a db     Clear database 'db' FROM device\n"
-   << "             Can be used multiple times to fetch more than one DB\n"
+   << "             Can be used multiple times to clear more than one DB\n"
    << "   -c dn     Convert address book database to LDIF format, using the\n"
    << "             specified baseDN\n"
    << "   -C dnattr LDIF attribute name to use when building the FQDN\n"
@@ -457,7 +457,7 @@ int main(int argc, char *argv[])
 		string busname;
 		string devname;
 		string iconvCharset;
-		vector<string> dbNames, saveDbNames, mapCommands;
+		vector<string> dbNames, saveDbNames, mapCommands, clearDbNames;
 		vector<StateTableCommand> stCommands;
 		Usb::EndpointPair epOverride;
 
@@ -471,7 +471,7 @@ int main(int argc, char *argv[])
 			{
 			case 'a':	// Clear Database
 				clear_database = true;
-				dbNames.push_back(string(optarg));
+				clearDbNames.push_back(string(optarg));
 				break;
 
 			case 'B':	// busname
@@ -810,16 +810,16 @@ int main(int argc, char *argv[])
 
 		// Clear databases
 		if (clear_database) {
-			if( dbNames.size() != 1 ) {
-				cout << "Must have 1 db name to process" << endl;
+			if( clearDbNames.size() == 0 ) {
+				cout << "No db names to clear" << endl;
 				return 1;
 			}
 
-			vector<string>::iterator b = dbNames.begin();
+			vector<string>::iterator b = clearDbNames.begin();
 
 			desktop.Open(password.c_str());
 
-			for( ; b != dbNames.end(); b++ ) {
+			for( ; b != clearDbNames.end(); b++ ) {
 				unsigned int id = desktop.GetDBID(*b);
 				cout << "Clearing all recordss from " << (*b) << "..." << endl;
 				desktop.ClearDatabase(id);
