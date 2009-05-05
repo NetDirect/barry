@@ -9,6 +9,8 @@ Release: version 0.15 - 2009/01/??
 		  to eliminate chance of mixing -d and -a argument
 		  types and losing data
 		- reverted VNOTE change in vformat.c
+		- added VFORMAT_JOURNAL support to vformat.c based on
+		  r2795 of the opensync vformat plugin
 	- fixed some TimeZoneValid flag mistakes in Task and Calendar
 	- display DueDateFlag in src/r_task.cc
 	- changed vtodo.cc so DTSTART is only set if available in BB data

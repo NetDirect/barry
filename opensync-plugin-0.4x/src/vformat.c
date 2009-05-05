@@ -986,6 +986,7 @@ char *b_vformat_to_string (b_VFormat *evc, b_VFormatType type)
 			break;
 		case VFORMAT_TODO_20:
 		case VFORMAT_EVENT_20:
+		case VFORMAT_JOURNAL:
 			str = g_string_append (str, "BEGIN:VCALENDAR\r\nVERSION:2.0\r\n");
 			break;
 		case VFORMAT_NOTE:
@@ -1019,7 +1020,7 @@ char *b_vformat_to_string (b_VFormat *evc, b_VFormatType type)
 			 * param        = param-name "=" param-value *("," param-value)
 			 */
 			if( type == VFORMAT_CARD_30 || type == VFORMAT_TODO_20
-			    || type == VFORMAT_EVENT_20) {
+			    || type == VFORMAT_EVENT_20 || type == VFORMAT_JOURNAL) {
 
 				/**
 				 * Character set can only be specified on the CHARSET
@@ -1201,6 +1202,7 @@ char *b_vformat_to_string (b_VFormat *evc, b_VFormatType type)
 			break;
 		case VFORMAT_TODO_20:
 		case VFORMAT_EVENT_20:
+		case VFORMAT_JOURNAL:
 			str = g_string_append (str, "END:VCALENDAR\r\n");
 			break;
 		case VFORMAT_NOTE:
