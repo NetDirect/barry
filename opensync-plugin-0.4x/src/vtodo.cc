@@ -68,7 +68,7 @@ bool vTodo::HasMultipleVTodos() const
 	for( ; attrs; attrs = attrs->next ) {
 		b_VFormatAttribute *attr = (b_VFormatAttribute*) attrs->data;
 		if( strcasecmp(b_vformat_attribute_get_name(attr), "BEGIN") == 0 &&
-		    strcasecmp(b_vformat_attribute_get_nth_value(attr, 0), "VTOTO") == 0 )
+		    strcasecmp(b_vformat_attribute_get_nth_value(attr, 0), "VTODO") == 0 )
 		{
 			count++;
 		}
