@@ -103,6 +103,7 @@ public:
 
 	// pure load/save operations
 	void LoadDatabase(unsigned int dbId, Parser &parser);
+	void ClearDatabase(unsigned int dbId);
 	void SaveDatabase(unsigned int dbId, Builder &builder);
 
 	template <class RecordT, class StorageT> void LoadDatabaseByType(StorageT &store);

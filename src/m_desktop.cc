@@ -412,6 +412,31 @@ void Desktop::LoadDatabase(unsigned int dbId, Parser &parser)
 	}
 }
 
+void Desktop::ClearDatabase(unsigned int dbId)
+{
+	dout("Database ID: " << dbId);
+
+	Data command, response;
+	DBPacket packet(*this, command, response);
+	packet.ClearDatabase(dbId);
+
+	// wait up to a minute here for old, slower devices with lots of data
+	m_socket->Packet(packet, 60000);
+	if( packet.ReturnCode() != 0 ) {
+		std::ostringstream oss;
+		oss << "Desktop: could not clear database: (command: "
+		    << "0x" << std::hex << packet.Command() << ", code: "
+		    << "0x" << std::hex << packet.ReturnCode() << ")";
+		throw Error(oss.str());
+	}
+
+	// check response to clear command was successful
+	if( packet.Command() != SB_COMMAND_DB_DONE ) {
+		eeout(command, response);
+		throw Error("Desktop: error clearing database, bad response");
+	}
+}
+
 void Desktop::SaveDatabase(unsigned int dbId, Builder &builder)
 {
 	dout("Database ID: " << dbId);

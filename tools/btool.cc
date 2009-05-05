@@ -53,6 +53,8 @@ void Usage()
    << "   -B bus    Specify which USB bus to search on\n"
    << "   -N dev    Specify which system device, using system specific string\n"
    << "\n"
+   << "   -a db     Clear database 'db' FROM device\n"
+   << "             Can be used multiple times to fetch more than one DB\n"
    << "   -c dn     Convert address book database to LDIF format, using the\n"
    << "             specified baseDN\n"
    << "   -C dnattr LDIF attribute name to use when building the FQDN\n"
@@ -447,6 +449,7 @@ int main(int argc, char *argv[])
 			epp_override = false,
 			threaded_sockets = true,
 			record_state = false,
+			clear_database = false,
 			null_parser = false;
 		string ldifBaseDN, ldifDnAttr;
 		string filename;
@@ -460,12 +463,17 @@ int main(int argc, char *argv[])
 
 		// process command line options
 		for(;;) {
-			int cmd = getopt(argc, argv, "B:c:C:d:D:e:f:hi:lLm:MnN:p:P:r:R:Ss:tT:vXzZ");
+			int cmd = getopt(argc, argv, "a:B:c:C:d:D:e:f:hi:lLm:MnN:p:P:r:R:Ss:tT:vXzZ");
 			if( cmd == -1 )
 				break;
 
 			switch( cmd )
 			{
+			case 'a':	// Clear Database
+				clear_database = true;
+				dbNames.push_back(string(optarg));
+				break;
+
 			case 'B':	// busname
 				busname = optarg;
 				break;
@@ -795,6 +803,26 @@ int main(int argc, char *argv[])
 				if( stCommands[i].flag == 'D' ) {
 					desktop.DeleteRecord(id, stCommands[i].index);
 				}
+			}
+
+			return 0;
+		}
+
+		// Clear databases
+		if (clear_database) {
+			if( dbNames.size() != 1 ) {
+				cout << "Must have 1 db name to process" << endl;
+				return 1;
+			}
+
+			vector<string>::iterator b = dbNames.begin();
+
+			desktop.Open(password.c_str());
+
+			for( ; b != dbNames.end(); b++ ) {
+				unsigned int id = desktop.GetDBID(*b);
+				cout << "Clearing all recordss from " << (*b) << "..." << endl;
+				desktop.ClearDatabase(id);
 			}
 
 			return 0;
