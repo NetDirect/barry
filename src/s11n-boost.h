@@ -255,6 +255,7 @@ void serialize(ArchiveT &ar, Barry::Task &t, const unsigned int ver)
 	ar & make_nvp("AlarmTime", t.AlarmTime);
 
 	ar & make_nvp("TimeZoneCode", t.TimeZoneCode);
+	ar & make_nvp("TimeZoneValid", t.TimeZoneValid);
 
 	ar & make_nvp("AlarmType", t.AlarmType);
 	ar & make_nvp("Interval", t.Interval);

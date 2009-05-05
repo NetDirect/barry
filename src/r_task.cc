@@ -182,6 +182,7 @@ const unsigned char* Task::ParseField(const unsigned char *begin,
 	case TSKFC_TIMEZONE_CODE:
 		if( btohs(field->size) == 4 ) {
 			TimeZoneCode = btohs(field->u.code);
+			TimeZoneValid = true;
 		}
 		else {
 			throw Error("Task::ParseField: not enough data in time zone code field");

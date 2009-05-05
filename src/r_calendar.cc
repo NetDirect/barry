@@ -217,6 +217,7 @@ const unsigned char* Calendar::ParseField(const unsigned char *begin,
 		if( btohs(field->size) == 2 ) {
 			// good data
 			TimeZoneCode = btohs(field->u.code);
+			TimeZoneValid = true;
 		}
 		else {
 			throw Error("Calendar::ParseField: not enough data in time zone code field");
