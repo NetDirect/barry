@@ -10,6 +10,7 @@ Release: version 0.15 - 2009/01/??
 		  types and losing data
 	- fixed some TimeZoneValid flag mistakes in Task and Calendar
 	- display DueDateFlag in src/r_task.cc
+	- changed vtodo.cc so DTSTART is only set if available in BB data
 2009/05/01
 	- applied Nicolas Vivien's zsh patch
 	- applied Nicolas Vivien's memo sync patch

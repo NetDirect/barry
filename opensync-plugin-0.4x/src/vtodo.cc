@@ -121,11 +121,13 @@ const std::string& vTodo::ToTask(const Barry::Task &task)
 		AddAttr(NewAttr("PRIORITY", "7"));
 	
 	// StartTime
-	gStringPtr start(osync_time_unix2vtime(&task.StartTime));
-	AddAttr(NewAttr("DTSTART", start.Get()));
+	if( task.StartTime ) {
+		gStringPtr start(osync_time_unix2vtime(&task.StartTime));
+		AddAttr(NewAttr("DTSTART", start.Get()));
+	}
 
 	// DueTime DueFlag
-	if (task.DueDateFlag) {
+	if( task.DueDateFlag ) {
 		gStringPtr due(osync_time_unix2vtime(&task.DueTime));
 		AddAttr(NewAttr("DUE", due.Get()));
 	}
