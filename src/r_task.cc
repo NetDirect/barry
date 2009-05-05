@@ -351,6 +351,7 @@ void Task::Dump(std::ostream &os) const
 		}
 	}
 
+	os << "   Due Date Flag: " << (DueDateFlag ? "true" : "false") << "\n";
 	os << "   Priority: " << PriorityName[PriorityFlag] << "\n";
 	os << "   Status: " << StatusName[StatusFlag] << "\n";
 	if( AlarmType ) {
