@@ -989,8 +989,7 @@ char *b_vformat_to_string (b_VFormat *evc, b_VFormatType type)
 			str = g_string_append (str, "BEGIN:VCALENDAR\r\nVERSION:2.0\r\n");
 			break;
 		case VFORMAT_NOTE:
-//			str = g_string_append (str, "BEGIN:VNOTE\r\nVERSION:1.1\r\n");
-			str = g_string_append (str, "BEGIN:VCALENDAR\r\nVERSION:2.0\r\n");
+			str = g_string_append (str, "BEGIN:VNOTE\r\nVERSION:1.1\r\n");
 			break;
 	}
 
@@ -1205,8 +1204,7 @@ char *b_vformat_to_string (b_VFormat *evc, b_VFormatType type)
 			str = g_string_append (str, "END:VCALENDAR\r\n");
 			break;
 		case VFORMAT_NOTE:
-			str = g_string_append (str, "END:VCALENDAR\r\n");
-//			str = g_string_append (str, "END:VNOTE\r\n");
+			str = g_string_append (str, "END:VNOTE\r\n");
 			break;
 	}
 
