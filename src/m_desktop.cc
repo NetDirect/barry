@@ -448,25 +448,10 @@ void Desktop::SaveDatabase(unsigned int dbId, Builder &builder)
 	//                there is a real SET_RECORD... all I know is from
 	//                the Windows USB captures, which uses this same
 	//                technique.
+	ClearDatabase(dbId);
+
 	Data command, response;
 	DBPacket packet(*this, command, response);
-	packet.ClearDatabase(dbId);
-
-	// wait up to a minute here for old, slower devices with lots of data
-	m_socket->Packet(packet, 60000);
-	if( packet.ReturnCode() != 0 ) {
-		std::ostringstream oss;
-		oss << "Desktop: could not clear database: (command: "
-		    << "0x" << std::hex << packet.Command() << ", code: "
-		    << "0x" << std::hex << packet.ReturnCode() << ")";
-		throw Error(oss.str());
-	}
-
-	// check response to clear command was successful
-	if( packet.Command() != SB_COMMAND_DB_DONE ) {
-		eeout(command, response);
-		throw Error("Desktop: error clearing database, bad response");
-	}
 
 	// loop until builder object has no more data
 	bool first = true;

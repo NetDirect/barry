@@ -3,6 +3,8 @@ Release: version 0.15 - 2009/01/??
 2009/05/05
 	- applied Nicolas Vivien's task sync patches, with btool updates
 		- fixed "VTOTO" typo
+		- now that there's a Desktop::ClearDatabase() call,
+		  use it in SaveDatabase() to reduce code duplication
 2009/05/01
 	- applied Nicolas Vivien's zsh patch
 	- applied Nicolas Vivien's memo sync patch
