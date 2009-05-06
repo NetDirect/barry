@@ -82,6 +82,7 @@ include_barry_HEADERS = barry.h \
 	modem.h \
 	r_recur_base.h \
 	r_calendar.h \
+	r_calllog.h \
 	r_contact.h \
 	r_folder.h \
 	r_memo.h \
@@ -139,6 +140,7 @@ libbarry_la_SOURCES = time.cc \
 	record.cc \
 	r_recur_base.cc \
 	r_calendar.cc \
+	r_calllog.cc \
 	r_contact.cc \
 	r_folder.cc \
 	r_memo.cc \

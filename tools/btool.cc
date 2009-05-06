@@ -252,6 +252,11 @@ auto_ptr<Parser> GetParser(const string &name, const string &filename, bool null
 			new RecordParser<Calendar, Store<Calendar> > (
 				new Store<Calendar>(filename, false)));
 	}
+	else if( name == CallLog::GetDBName() ) {
+		return auto_ptr<Parser>(
+			new RecordParser<CallLog, Store<CallLog> > (
+				new Store<CallLog>(filename, false)));
+	}
 	else if( name == ServiceBook::GetDBName() ) {
 		return auto_ptr<Parser>(
 			new RecordParser<ServiceBook, Store<ServiceBook> > (
@@ -345,6 +350,7 @@ void ShowParsers()
 	<< "   Address Book\n"
 	<< "   Messages\n"
 	<< "   Calendar\n"
+	<< "   Phone Call Logs\n"
 	<< "   Service Book\n"
 	<< "   Memos\n"
 	<< "   Tasks\n"
