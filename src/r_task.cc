@@ -279,7 +279,7 @@ void Task::BuildFields(Data &data, size_t &offset, const IConverter *ic) const
 	BuildField(data, offset, TSKFC_STATUS, StatusRec2Proto(StatusFlag));
 	BuildField(data, offset, TSKFC_PRIORITY, PriorityRec2Proto(PriorityFlag));
 	BuildField(data, offset, TSKFC_ALARM_TYPE, AlarmRec2Proto(AlarmType));
-	
+
 	if ( DueDateFlag )
 		BuildField(data, offset, TSKFC_DUE_FLAG, (char) 1);
 

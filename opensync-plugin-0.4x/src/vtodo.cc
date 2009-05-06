@@ -119,7 +119,7 @@ const std::string& vTodo::ToTask(const Barry::Task &task)
 		AddAttr(NewAttr("PRIORITY", "5"));
 	else
 		AddAttr(NewAttr("PRIORITY", "7"));
-	
+
 	// StartTime
 	if( task.StartTime ) {
 		gStringPtr start(osync_time_unix2vtime(&task.StartTime));
