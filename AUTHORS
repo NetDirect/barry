@@ -89,6 +89,7 @@ Contributors (code and otherwise) in alphabetical order by last name:
 		- photo sync support
 		- memo sync support
 		- task sync support
+		- call log parser
 	Niels de Vos <nixpanic@users.sourceforge.net>
 		- debian package patches
 		- usb_storage unbind script
