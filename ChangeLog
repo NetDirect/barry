@@ -8,6 +8,7 @@ Release: version 0.15 - 2009/01/??
 		- added CallLog to s11n-boost.h
 		- added size checks to parser
 		- removed CallLogType, since it is protocol specific
+		- added and tidied comments
 2009/05/05
 	- applied Nicolas Vivien's task sync patches, with btool updates
 		- fixed "VTOTO" typo

@@ -42,26 +42,33 @@ public:
 	uint8_t RecType;
 	uint32_t RecordId;
 
-	uint32_t Duration;
-	uint64_t Timestamp;
+	uint32_t Duration;		//< duration of call in seconds
+	uint64_t Timestamp;		//< timestamp of call in milliseconds
+					//< use GetTime() to convert to
+					//< a time_t
 	std::string ContactName;
 	std::string PhoneNumber;
 
 	enum DirectionFlagType
 	{
-		Receiver = 0,		// We have received a call
-		Emitter,			// We have composed a call
-		Failed,				// We have missing a call and the emitter is arrived on our answering machine
-		Missing				// We have missing a call. The emitter has stopped the communication.
+		Receiver = 0,		//< We have received a call
+		Emitter,		//< We have composed a call
+		Failed,			//< We have missing a call and the
+					//< emitter is arrived on our
+					//< answering machine
+		Missing			//< We have missing a call. The
+					//< emitter has stopped the
+					//< communication.
 	};
 	DirectionFlagType DirectionFlag;
 
 	enum StatusFlagType
 	{
-		OK = 0,				//
-		Busy,				// We have sent the emitter on our answering machine
-		NetError,			// Network communication error
-		Unknown				// Not supported by Barry CallLog parser
+		OK = 0,			//
+		Busy,			//< We have sent the emitter on our
+					//< answering machine
+		NetError,		//< Network communication error
+		Unknown			//< Not supported by Barry CallLog parser
 	};
 	StatusFlagType StatusFlag;
 
@@ -78,9 +85,9 @@ public:
 	enum PhoneInfoFlagType
 	{
 		InfoUndefined = 0,
-		InfoKnown,				// PhoneNumber should be set
-		InfoUnknown,			// PhoneNumber isn't set
-		InfoPrivate				// PhoneNumber is private
+		InfoKnown,		//< PhoneNumber should be set
+		InfoUnknown,		//< PhoneNumber isn't set
+		InfoPrivate		//< PhoneNumber is private
 	};
 	PhoneInfoFlagType PhoneInfoFlag;
 
@@ -117,7 +124,7 @@ public:
 
 	// database name
 	static const char * GetDBName() { return "Phone Call Logs"; }
-	static uint8_t GetDefaultRecType() { return 0; }    // or 0?
+	static uint8_t GetDefaultRecType() { return 0; }
 };
 
 BXEXPORT inline std::ostream& operator<<(std::ostream &os, const CallLog &msg) {

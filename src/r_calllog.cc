@@ -114,6 +114,8 @@ const unsigned char* CallLog::ParseField(const unsigned char *begin,
 		return begin;
 	}
 
+	// this is always the same as the RecordID from the lower level
+	// protocol, so we throw this away for now
 	if( field->type == CLLFC_UNIQUEID)
 		return begin;
 
