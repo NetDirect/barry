@@ -4,6 +4,8 @@ Release: version 0.15 - 2009/01/??
 	- going through www documentation, updating for 0.15
 	- updated man/btool.1 with new -a option
 	- updated TODO list with new reality
+	- applied Nicolas Vivien's phone call log parser patches
+		- added CallLog to s11n-boost.h
 2009/05/05
 	- applied Nicolas Vivien's task sync patches, with btool updates
 		- fixed "VTOTO" typo

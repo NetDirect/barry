@@ -193,6 +193,28 @@ void serialize(ArchiveT &ar, Barry::Calendar &c, const unsigned int ver)
 }
 
 template <class ArchiveT>
+void serialize(ArchiveT &ar, Barry::CallLog &c, const unsigned int ver)
+{
+	ar & make_nvp("RecType", c.RecType);
+	ar & make_nvp("RecordId", c.RecordId);
+
+	ar & make_nvp("CallLogType", c.CallLogType);
+	ar & make_nvp("Duration", c.Duration);
+	ar & make_nvp("Timestamp", c.Timestamp);
+	ar & make_nvp("ContactName", c.ContactName);
+	ar & make_nvp("PhoneNumber", c.PhoneNumber);
+
+	ar & make_nvp("DirectionFlag", c.DirectionFlag);
+	ar & make_nvp("StatusFlag", c.StatusFlag);
+	ar & make_nvp("PhoneTypeFlag", c.PhoneTypeFlag);
+	ar & make_nvp("PhoneInfoFlag", c.PhoneInfoFlag);
+
+	if( ver < BARRY_POD_MAP_VERSION ) {
+		ar & make_nvp("Unknowns", c.Unknowns);
+	}
+}
+
+template <class ArchiveT>
 void serialize(ArchiveT &ar, Barry::ServiceBookConfig &c, const unsigned int ver)
 {
 	ar & make_nvp("Format", c.Format);
