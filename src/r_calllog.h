@@ -1,6 +1,6 @@
 ///
-/// \file	r_memo.h
-///		Record parsing class for the memo database.
+/// \file	r_calllog.h
+///		Record parsing class for call logs
 ///
 
 /*
