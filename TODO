@@ -59,26 +59,6 @@ is not yet fully known, but needs to be supported as these databases become
 more popular.
 
 
-Add support for the Blackberry Storm
-------------------------------------
-The new Blackberry Storm, model 9530, appears to have a different database
-protocol.  This will likely be an ongoing effort to add support for this
-device, or at least find a way to use the old protocol with it.
-
-Search the mailing list archives for "Storm" or "9530".
-
-
-Look into password support in the OpenSync framework
-----------------------------------------------------
-Currently, if a Blackberry uses a password, in order to sync it,
-you need to store the password in plaintext in the sync configuration.
-This is less than ideal.
-
-Ideally, opensync should prompt for the password, so that this is a
-part of the user interface.  Someone needs to research OpenSync, and if
-there is support for passwords in the plugin API, implement it for Barry
-
-
 Reverse engineer date/time functions
 ------------------------------------
 The date/time calculations in src/time.cc:Message2Time() are still not
@@ -136,25 +116,13 @@ contributions are welcome from all users!
 
 Porting opensync plugin to opensync 0.40
 ----------------------------------------
-There's two options to this item:
+The main porting effort is mostly complete (pending changes in the
+opensync API once the official 0.40 is released).
 
-	- simple way
-	- proper way
-
-The difference between opensync 0.22 and 0.40 involves some API changes.
-You should be able to note the changes in the example plugin code once
-0.40 is released.
-
-The simple way involves merely updating Barry's opensync plugin to match
-the new API.  This shouldn't be too difficult, but you may run across
-some small surprises.
-
-The proper way involves:
+The XML way involves:
 
 	- switching from the vcard/vevent formats to the opensync XML
 		formats
-	- switching from storing state information in text files to
-		storing it in the built in database (optional)
 	- making use of the new opensync time APIs to properly support
 		timezones for all time operations
 
@@ -163,37 +131,11 @@ the burden of raw data parsing and formatting from the plugin itself,
 and make use of the more tested opensync library.  Any bugs fixed
 in opensync's parsers will automatically fix bugs in the Barry plugin.
 
-Switching state storage formats may allow for greater flexibility
-in supporting multiple devices.  This needs more research, but it
-is the "way things are done" in opensync, and likely worth moving
-in that direction.
-
 Support for timezones will likely stress the opensync API as well as
 the Barry API, but definitely needs to be done for completeness on both
 sides of the equation.
 
-Estimated time:   simple way: 10 hours if lucky
-                  proper way: open ended
-
-
-
-Adding support for Tasks database to opensync plugin
-----------------------------------------------------
-This will require research into the proper vformat for tasks.  If
-the above port to 0.40 is complete, then use the XML format.  If not,
-then find the appropriate v-format.
-
-Estimated time: 16 hours
-Depending on: ideally, wait for 0.40 XML format support
-
-
-
-Adding support for Memos (notes) to opensync plugin
----------------------------------------------------
-Same as above, for Tasks.  If done together, may be able to save some time.
-
-Estimated time: 16 hours
-Depending on: ideally, wait for 0.40 XML format support
+Estimated time:   open ended
 
 
 

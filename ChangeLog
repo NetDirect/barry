@@ -3,6 +3,7 @@ Release: version 0.15 - 2009/01/??
 2009/05/06
 	- going through www documentation, updating for 0.15
 	- updated man/btool.1 with new -a option
+	- updated TODO list with new reality
 2009/05/05
 	- applied Nicolas Vivien's task sync patches, with btool updates
 		- fixed "VTOTO" typo
