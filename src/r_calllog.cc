@@ -303,14 +303,18 @@ void CallLog::Dump(std::ostream &os) const
 
 void CallLog::Clear()
 {
-	PhoneNumber.clear();
-	ContactName.clear();
+	RecType = CallLog::GetDefaultRecType();
 
+	Duration = 0;
 	Timestamp = 0;
-	DirectionFlag = (DirectionFlagType) 0;
-	StatusFlag = (StatusFlagType) 0;
-	PhoneTypeFlag = (PhoneTypeFlagType) 0;
-	PhoneInfoFlag = (PhoneInfoFlagType) 0;
+
+	ContactName.clear();
+	PhoneNumber.clear();
+
+	DirectionFlag = Barry::CallLog::Receiver;
+	StatusFlag = Barry::CallLog::Unknown;
+	PhoneTypeFlag = Barry::CallLog::TypeUnknown;
+	PhoneInfoFlag = Barry::CallLog::InfoUndefined;
 
 	Unknowns.clear();
 }

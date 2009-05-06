@@ -9,6 +9,9 @@ Release: version 0.15 - 2009/01/??
 		- added size checks to parser
 		- removed CallLogType, since it is protocol specific
 		- added and tidied comments
+		- made CallLog::Clear() match the class declaration order,
+		  fixed missing member, and used enum names to set
+		  enum defaults
 2009/05/05
 	- applied Nicolas Vivien's task sync patches, with btool updates
 		- fixed "VTOTO" typo
