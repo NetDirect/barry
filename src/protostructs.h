@@ -109,6 +109,7 @@ struct CommonField
 		GroupLink	link;
 		MessageAddress	addr;
 		SMSMetaData	sms_metadata;
+		uint64_t	timestamp;
 		uint32_t	uint32;
 		int32_t		min1900;
 		uint16_t	code;
@@ -298,11 +299,19 @@ struct CalendarRecurrenceDataField  // as documented in the Cassis project spec
 // Phone Call Logs record: field constants
 // 
 //
-#define CLL_STATUS_CALL_RECEIVED	0
-#define CLL_STATUS_CALL_SENT		1
-#define CLL_STATUS_CALL_FAILED		2
-#define CLL_STATUS_RANGE_LOW		0
-#define CLL_STATUS_RANGE_HIGH		2
+#define CLL_DIRECTION_RECEIVER		0
+#define CLL_DIRECTION_EMITTER		1
+#define CLL_DIRECTION_FAILED		2
+#define CLL_DIRECTION_MISSING		3
+#define CLL_DIRECTION_RANGE_LOW		0
+#define CLL_DIRECTION_RANGE_HIGH	3
+
+#define CLL_PHONETYPE_UNDEFINED		0
+#define CLL_PHONETYPE_OFFICE		1
+#define CLL_PHONETYPE_HOME			2
+#define CLL_PHONETYPE_MOBILE		3
+#define CLL_PHONETYPE_RANGE_LOW		0
+#define CLL_PHONETYPE_RANGE_HIGH	3
 
 //
 // Folder record: field constants

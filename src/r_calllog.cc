@@ -34,12 +34,29 @@ using namespace Barry::Protocol;
 
 namespace Barry {
 
-CallLog::StatusFlagType CallLog::StatusProto2Rec(uint8_t s)
+#define MILLISECONDS_IN_A_SECOND 1000
+
+time_t CallLog::GetTime() const
 {
-	return (StatusFlagType)s;
+	return (time_t)(Timestamp / MILLISECONDS_IN_A_SECOND);
 }
 
-uint8_t CallLog::StatusRec2Proto(StatusFlagType s)
+CallLog::DirectionFlagType CallLog::DirectionProto2Rec(uint8_t s)
+{
+	return (DirectionFlagType)s;
+}
+
+uint8_t CallLog::DirectionRec2Proto(DirectionFlagType s)
+{
+	return s;
+}
+
+CallLog::PhoneTypeFlagType CallLog::PhoneTypeProto2Rec(uint8_t s)
+{
+	return (PhoneTypeFlagType)s;
+}
+
+uint8_t CallLog::PhoneTypeRec2Proto(PhoneTypeFlagType s)
 {
 	return s;
 }
@@ -50,18 +67,21 @@ uint8_t CallLog::StatusRec2Proto(StatusFlagType s)
 
 // CallLog Field Codes
 #define CLLFC_CALLLOG_TYPE		0x01
-#define CLLFC_STATUS			0x02
-#define CLLFC_PHONE				0x0c
-#define CLLFC_NAME				0x1f
-#define CLLFC_TIME				0x05
+#define CLLFC_DIRECTION			0x02
+#define CLLFC_DURATION			0x03
+#define CLLFC_TIMESTAMP			0x04
+#define CLLFC_STATUS			0x06
 #define CLLFC_UNIQUEID			0x07
+#define CLLFC_PHONE_TYPE		0x0b
+#define CLLFC_PHONE_NUMBER		0x0c
+#define CLLFC_PHONE_INFO		0x0d
+#define CLLFC_CONTACT_NAME		0x1f
 #define CLLFC_END				0xffff
 
 static FieldLink<CallLog> CallLogFieldLinks[] = {
-    { CLLFC_PHONE,     "Phone number",  0, 0, &CallLog::Phone, 0, 0, 0, 0, true },
-    { CLLFC_NAME,      "Contact name",  0, 0, &CallLog::Name, 0, 0, 0, 0, true },
-//	{ CLLFC_TIME,      "Time",          0, 0, 0, 0, &CallLog::Time, 0, 0, false },
-    { CLLFC_END,       "End of List",   0, 0, 0, 0, 0, 0, 0, false }
+    { CLLFC_PHONE_NUMBER,	"Phone number",  0, 0, &CallLog::PhoneNumber, 0, 0, 0, 0, true },
+    { CLLFC_CONTACT_NAME,	"Contact name",  0, 0, &CallLog::ContactName, 0, 0, 0, 0, true },
+    { CLLFC_END,			"End of List",   0, 0, 0, 0, 0, 0, 0, false }
 };
 
 CallLog::CallLog()
@@ -119,17 +139,61 @@ const unsigned char* CallLog::ParseField(const unsigned char *begin,
 	}
 
 	// handle special cases
-//	switch( field->type )
-//	{
-//	case CLLFC_STATUS:
-//		if( field->u.raw[0] > CLL_STATUS_RANGE_HIGH ) {
-//			throw Error( "CallLog::ParseField: status field out of bounds" );
-//		}
-//		else {
-//			StatusFlag = StatusProto2Rec(field->u.raw[0]);
-//		}
-//		return begin;
-//	}
+	switch( field->type )
+	{
+	case CLLFC_STATUS:
+		switch (field->u.raw[0]) {
+		case 0x00:
+			StatusFlag = Barry::CallLog::OK;
+			break;
+		case 0x01:
+			StatusFlag = Barry::CallLog::Busy;
+			break;
+		case 0x09:
+			StatusFlag = Barry::CallLog::NetError;
+			break;
+		default:
+			StatusFlag = Barry::CallLog::Unknown;
+		}
+		return begin;
+	case CLLFC_DIRECTION:
+		if( field->u.raw[0] > CLL_DIRECTION_RANGE_HIGH ) {
+			throw Error( "CallLog::ParseField: direction field out of bounds" );
+		}
+		else {
+			DirectionFlag = DirectionProto2Rec(field->u.raw[0]);
+		}
+		return begin;
+	case CLLFC_PHONE_TYPE:
+		if( field->u.raw[0] > CLL_PHONETYPE_RANGE_HIGH ) {
+			PhoneTypeFlag = Barry::CallLog::TypeUnknown;
+		}
+		else {
+			PhoneTypeFlag = PhoneTypeProto2Rec(field->u.raw[0]);
+		}
+		return begin;
+	case CLLFC_PHONE_INFO:
+		switch (field->u.raw[0]) {
+		case 0x03:
+			PhoneInfoFlag = Barry::CallLog::InfoKnown;
+			break;
+		case 0x80:
+			PhoneInfoFlag = Barry::CallLog::InfoUnknown;
+			break;
+		case 0x40:
+			PhoneInfoFlag = Barry::CallLog::InfoPrivate;
+			break;
+		default:
+			PhoneInfoFlag = Barry::CallLog::InfoUndefined;
+		}
+		return begin;
+	case CLLFC_DURATION:
+		Duration = btohl(field->u.uint32);
+		return begin;
+	case CLLFC_TIMESTAMP:
+		Timestamp = btohll(field->u.timestamp);
+		return begin;
+	}
 
 	// if still not handled, add to the Unknowns list
 	UnknownField uf;
@@ -153,15 +217,51 @@ void CallLog::ParseFields(const Data &data, size_t &offset, const IConverter *ic
 	offset += finish - (data.GetData() + offset);
 }
 
-
 void CallLog::Dump(std::ostream &os) const
 {
-	static const char *StatusName[] = { "Received", "Sent", "Failed" };
+	uint32_t timestamp = Duration;
+	int32_t days, hours, minutes, secondes;
+
+	static const char *DirectionName[] = { "Received", "Sent", "Call Missing (Messagerie)", "Call Missing" };
+	static const char *StatusName[] = { "OK", "Busy", "Error", "Not supported by Barry" };
+	static const char *PhoneInfoName[] = { "Undefined", "Known phone number", "Unknown phone number", "Private phone number" };
+	static const char *PhoneTypeName[] = { "Unknown", "Office", "Home", "Mobile", "Not supported by Barry" };
 
 	os << "CallLog entry: 0x" << setbase(16) << RecordId
 	   << " (" << (unsigned int)RecType << ")\n";
 
-//	os << "   Status: " << StatusName[StatusFlag] << "\n";
+	time_t t = GetTime();
+	os << "   Timestamp: " << ctime(&t);
+	os << "   Direction: " << DirectionName[DirectionFlag] << "\n";
+	os << "   Status: " << StatusName[StatusFlag] << "\n";
+	os << "   Phone info: " << PhoneInfoName[PhoneInfoFlag] << "\n";
+	os << "   Phone type: " << PhoneTypeName[PhoneTypeFlag] << "\n";
+
+	os << "   Duration: ";
+
+	// Days :
+	days = (int) (timestamp / (60 * 60 * 24));
+	timestamp = timestamp - (days * (60 * 60 * 24));
+	// Hours :
+	hours = (int) (timestamp / (60 * 60));
+	timestamp = timestamp - (hours * (60 * 60));
+	// Minutes :
+	minutes = (int) (timestamp / 60);
+	timestamp = timestamp - (minutes * 60);
+	// Secondes :
+	secondes = timestamp;
+
+	if (days > 1)
+		os << setbase(10) << days << " days ";
+	else if (days > 0)
+		os << setbase(10) << days << " day ";
+
+	os << setfill ('0') << setw(2) << setbase(10) << hours;
+	os << ":";
+	os << setfill ('0') << setw(2) << setbase(10) << minutes;
+	os << ":";
+	os << setfill ('0') << setw(2) << setbase(10) << secondes;
+	os << "\n";
 
 	// cycle through the type table
 	for(	const FieldLink<CallLog> *b = CallLogFieldLinks;
@@ -189,12 +289,15 @@ void CallLog::Dump(std::ostream &os) const
 
 void CallLog::Clear()
 {
-	Phone.clear();
-	Name.clear();
+	PhoneNumber.clear();
+	ContactName.clear();
 
-	Time = 0;
+	Timestamp = 0;
 	CallLogType = 0;
-	StatusFlag = (StatusFlagType)0;
+	DirectionFlag = (DirectionFlagType) 0;
+	StatusFlag = (StatusFlagType) 0;
+	PhoneTypeFlag = (PhoneTypeFlagType) 0;
+	PhoneInfoFlag = (PhoneInfoFlagType) 0;
 
 	Unknowns.clear();
 }

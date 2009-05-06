@@ -43,23 +43,58 @@ public:
 	uint32_t RecordId;
 
 	uint8_t CallLogType;
-	time_t Time;
-	std::string Name;
-	std::string Phone;
+	uint32_t Duration;
+	uint64_t Timestamp;
+	std::string ContactName;
+	std::string PhoneNumber;
+
+	enum DirectionFlagType
+	{
+		Receiver = 0,		// We have received a call
+		Emitter,			// We have composed a call
+		Failed,				// We have missing a call and the emitter is arrived on our answering machine
+		Missing				// We have missing a call. The emitter has stopped the communication.
+	};
+	DirectionFlagType DirectionFlag;
 
 	enum StatusFlagType
 	{
-		Received = 0,
-		Sent,
-		Failed
+		OK = 0,				//
+		Busy,				// We have sent the emitter on our answering machine
+		NetError,			// Network communication error
+		Unknown				// Not supported by Barry CallLog parser
 	};
 	StatusFlagType StatusFlag;
+
+	enum PhoneTypeFlagType
+	{
+		TypeUndefined = 0,
+		TypeOffice,
+		TypeHome,
+		TypeMobile,
+		TypeUnknown		// To be completed (Office2, Home2, Pager ???)
+	};
+	PhoneTypeFlagType PhoneTypeFlag;
+
+	enum PhoneInfoFlagType
+	{
+		InfoUndefined = 0,
+		InfoKnown,				// PhoneNumber should be set
+		InfoUnknown,			// PhoneNumber isn't set
+		InfoPrivate				// PhoneNumber is private
+	};
+	PhoneInfoFlagType PhoneInfoFlag;
 
 	UnknownsType Unknowns;
 
 protected:
-	static StatusFlagType StatusProto2Rec(uint8_t s);
-	static uint8_t StatusRec2Proto(StatusFlagType s);
+	time_t GetTime() const;
+
+	static DirectionFlagType DirectionProto2Rec(uint8_t s);
+	static uint8_t DirectionRec2Proto(DirectionFlagType s);
+
+	static PhoneTypeFlagType PhoneTypeProto2Rec(uint8_t s);
+	static uint8_t PhoneTypeRec2Proto(PhoneTypeFlagType s);
 
 public:
 	CallLog();
@@ -79,7 +114,7 @@ public:
 	void Dump(std::ostream &os) const;
 
 	// Sorting
-	bool operator<(const CallLog &other) const { return Time < other.Time; }
+	bool operator<(const CallLog &other) const { return Timestamp < other.Timestamp; }
 
 	// database name
 	static const char * GetDBName() { return "Phone Call Logs"; }
