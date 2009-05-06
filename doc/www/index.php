@@ -24,7 +24,7 @@ reverse engineer the battery charging handshake via USB.</p>
 	<li> charge your Blackberry's battery from your USB port </li>
 	<li> parse the following database records: Address Book, Email,
 		Calendar, Service Book, Memos, Tasks, PIN Messages,
-		Saved Email, and Folders </li>
+		Saved Email, Folders, and Phone Call Logs </li>
 	<li> build the following database records: Address Book, Calendar,
 		Memos, Tasks </li>
 	<li> export Address Book contacts in text or LDAP LDIF format </li>
