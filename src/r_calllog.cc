@@ -108,7 +108,7 @@ const unsigned char* CallLog::ParseField(const unsigned char *begin,
 		return begin;
 
 	if( field->type == CLLFC_CALLLOG_TYPE ) {
-		if( ( CallLogType = field->u.raw[0] ) != 'p' ) {
+		if( field->u.raw[0] != 'p' ) {
 			throw Error( "CallLog::ParseField: CallLogType is not 'p'" );
 		}
 		return begin;
@@ -305,7 +305,6 @@ void CallLog::Clear()
 	ContactName.clear();
 
 	Timestamp = 0;
-	CallLogType = 0;
 	DirectionFlag = (DirectionFlagType) 0;
 	StatusFlag = (StatusFlagType) 0;
 	PhoneTypeFlag = (PhoneTypeFlagType) 0;

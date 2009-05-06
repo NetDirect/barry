@@ -42,7 +42,6 @@ public:
 	uint8_t RecType;
 	uint32_t RecordId;
 
-	uint8_t CallLogType;
 	uint32_t Duration;
 	uint64_t Timestamp;
 	std::string ContactName;

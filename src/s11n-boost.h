@@ -198,7 +198,6 @@ void serialize(ArchiveT &ar, Barry::CallLog &c, const unsigned int ver)
 	ar & make_nvp("RecType", c.RecType);
 	ar & make_nvp("RecordId", c.RecordId);
 
-	ar & make_nvp("CallLogType", c.CallLogType);
 	ar & make_nvp("Duration", c.Duration);
 	ar & make_nvp("Timestamp", c.Timestamp);
 	ar & make_nvp("ContactName", c.ContactName);
