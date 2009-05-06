@@ -57,7 +57,7 @@ where data from your Blackberry will end up, and any data in these
 databases will be synced to your Blackberry as well.</p>
 
 <p><b>Note:</b> Only Contacts and Calendar items are currently supported
-in the Barry Opensync plugin.</p>
+in the Barry Opensync 0.22 plugin.</p>
 
 
 <div class="subHeader">Preparing OpenSync</div>
@@ -136,13 +136,6 @@ and run the following commands to sync, using the group you just configured:</p>
 <p>Status messages will appear at each stage of the sync: each plugin
 fetches new records, the conflict resolution is performed by the Opensync
 engine, and new records are written to each plugin.</p>
-
-
-<div class="subHeader">Known Issues</div>
-
-<p>There is a known issue with international characters in contact names.
-The name is truncated at the umlaut, or similar character.  This is
-probably a bug in the Barry plugin, and should be fixed shortly.</p>
 
 
 <div class="subHeader">Troubleshooting</div>

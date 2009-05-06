@@ -7,7 +7,8 @@
 
 <p>Backups are currently performed using the Barry Backup GUI program, located
 in the gui/ directory of the source tarball.  Instructions for building the
-GUI can be found on the <? createLink("install", "Install"); ?> page.</p>
+GUI can be found on the <? createLink("install", "Install"); ?> and
+<? createLink("cvs", "CVS"); ?> pages.</p>
 
 
 <div class="subHeader">Backup Interface</div>

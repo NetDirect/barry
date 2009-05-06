@@ -19,11 +19,13 @@ indicated by the filenames:
 <ul>
 	<li><b>ubuntu710</b> - Ubuntu Gutsy Gibbon, 7.10</li>
 	<li><b>ubuntu804</b> - Ubuntu Hardy Heron, 8.04</li>
+	<li><b>ubuntu904</b> - Ubuntu Jaunty, 9.04</li>
 	<li><b>fc7</b> - Fedora Core 7</li>
 	<li><b>fc8</b> - Fedora Core 8</li>
 	<li><b>fc9</b> - Fedora Core 9</li>
+	<li><b>fc10</b> - Fedora Core 10</li>
 	<li><b>suse10</b> - OpenSuSE 10.2</li>
-	<li>the non-tagged deb files are for Debian Stable, 4.0</li>
+	<li>the non-tagged deb files are for Debian Stable 5.0, Lenny</li>
 </ul>
 </p>
 
@@ -47,6 +49,9 @@ packages:
 	<li>libbarry-dev</li>
 </ul>
 </p>
+
+<p>Note that there are only binary packages available for opensync 0.22,
+since opensync 0.4x is not yet officially released.</p>
 
 <p>You will also notice on the above Sourceforge download site, that there
 is a separate section for debug packages.  These packages are only

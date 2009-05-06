@@ -22,8 +22,11 @@ reverse engineer the battery charging handshake via USB.</p>
 
 <ul>
 	<li> charge your Blackberry's battery from your USB port </li>
-	<li> retrieve Address Book, Email, Calendar, Service Book, Memos,
-		Tasks, PIN Messages, Saved Email, and Folders </li>
+	<li> parse the following database records: Address Book, Email,
+		Calendar, Service Book, Memos, Tasks, PIN Messages,
+		Saved Email, and Folders </li>
+	<li> build the following database records: Address Book, Calendar,
+		Memos, Tasks </li>
 	<li> export Address Book contacts in text or LDAP LDIF format </li>
 	<li> make full data backups and restores of your device using
 		a GUI</li>
@@ -31,6 +34,10 @@ reverse engineer the battery charging handshake via USB.</p>
 		<a href="http://www.opensync.org/">OpenSync</a>
 		framework</li>
 	<li> use the Blackberry as a modem</li>
+	<li> install and manage Java applications from the command line </li>
+	<li> take screenshots of your device </li>
+	<li> set the device time from the command line </li>
+	<li> ... and more </li>
 </ul>
 </p>
 
@@ -38,7 +45,7 @@ reverse engineer the battery charging handshake via USB.</p>
 
 <p>
 <ul>
-	<li>Latest release: <b>0.14</b>, released on 2008/09/24</li>
+	<li>Latest release: <b>0.15</b>, released on 2009/05/??</li>
 	<li>License: GPL v2 or later</li>
 	<li>Download official source and binary packages from
 		<a href="http://sourceforge.net/project/showfiles.php?group_id=153722">Sourceforge</a> or the <a href="http://download.opensuse.org/repositories/home:/ndprojects/">OpenSUSE Build Service</a></li>
@@ -55,10 +62,8 @@ reverse engineer the battery charging handshake via USB.</p>
 	<li>Known Issues:
 	<ul>
 		<li>Restoring backups for some databases on newer Blackberries doesn't work (for example, on the 8120, 8700g)</li>
-		<li>Syncing is not supported on Fedora Core 9, since they packaged the OpenSync 0.3x devel tree</li>
-		<li>Password support when using Blackberry as modem is experimental</li>
+		<li>Syncing is not supported on Fedora Core 9, since they packaged the OpenSync 0.3x devel tree (experimental support for the latest opensync SVN tree is included with a new plugin)</li>
 		<li>Accessing the database (such as during a backup) while copying files using the usb_storage kernel module may cause some Blackberries to spontaneously reboot</li>
-		<li>The opensync plugin does not handle international characters well.</li>
 	</ul>
 	</li>
 </ul>

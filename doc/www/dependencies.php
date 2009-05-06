@@ -48,7 +48,7 @@ some are only needed for building CVS.
 	<li><b>libtar</b> (barrybackup GUI) </li>
 	<li><b>zlib</b>, needed for CRC32 checksums in library COD file support,
 		and used by the barrybackup GUI</li>
-	<li><b>libopensync</b> version 0.22 <i>only</i> (needed for syncing) </li>
+	<li><b>libopensync</b> version 0.22 or, optionally, if building from source, latest opensync SVN tree </li>
 	<li><b>sqlite, glib2, libxml2</b> (needed for syncing, required by OpenSync) </li>
 	<li><b>libfuse</b> version 2.5 or higher (optional)</li>
 	<li><b>libiconv</b>, needed for international charset conversions... most
@@ -76,11 +76,11 @@ fixed.</p>
 <p>Of course, you probably don't want to read the intricate details of
 distro bugs.  You just want it to work!  For such systems, I usually
 grab the libtar source RPM package from
-<a href="ftp://ftp.nrc.ca/pub/systems/linux/redhat/fedora/linux/releases/8/Everything/source/SRPMS/libtar-1.2.11-9.fc8.src.rpm">here</a> and then run:
+<a href="ftp://ftp.nrc.ca/pub/systems/linux/redhat/fedora/linux/releases/10/Everything/source/SRPMS/libtar-1.2.11-11.fc10.src.rpm">here</a> and then run:
 <pre>
-(become root)
-rpm -i libtar-1.2.11-9.fc8.src.rpm
-cd /usr/src/packages/SPECS
+rpmdev-setuptree (if this is your first time)
+rpm -i libtar-1.2.11-11.fc10.src.rpm
+cd ~/rpmbuild/SPECS
 rpmbuild -ba libtar.spec
 rpm -i ../RPMS/*/libtar*rpm
 </pre>
@@ -95,17 +95,20 @@ distributions should have similar package names.
 
 <ul>
 
-<p><b>Fedora 5 and 6:</b></p>
+<p><b>Fedora 10:</b></p>
 <p>Use the yum package manager to install the following:
 <ul>
 	<li> pkgconfig </li>
 	<li> libusb-devel </li>
 	<li> boost-devel (optional) </li>
-	<li> libtar (libtar-devel on Fedora 6) </li>
+	<li> libtar-devel </li>
 	<li> gtkmm24-devel </li>
 	<li> glibmm24-devel </li>
 	<li> libglademm24-devel </li>
+	<li> fuse-devel </li>
 	<li> zlib-devel </li>
+	<li> gettext-devel </li>
+	<li> opensync 0.22 is not available in Fedora 10 </li>
 </ul>
 
 <p><b>Debian stable:</b></p>
@@ -113,13 +116,15 @@ distributions should have similar package names.
 <ul>
 	<li> pkg-config </li>
 	<li> libusb-dev </li>
-	<li> libssl-dev </li>
 	<li> libboost-serialization-dev </li>
 	<li> libtar-dev </li>
 	<li> libgtkmm-2.4-dev </li>
 	<li> libglibmm-2.4-dev </li>
 	<li> libglademm-2.4-dev </li>
+	<li> libfuse-dev </li>
 	<li> zlib1g-dev </li>
+	<li> gettext </li>
+	<li> libopensync0-dev </li>
 </ul>
 
 </ul>

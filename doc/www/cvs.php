@@ -35,7 +35,7 @@ A .dsc file is included as well, for ease of Debian package building.  These
 files can be expanded into a Debian style source tree with the following
 command, for example:
 <pre>
-	dpkg-source -x barry_0.13-1.dsc
+	dpkg-source -x barry_0.15-0.dsc
 </pre>
 </p>
 
@@ -45,8 +45,8 @@ identical to what comes with the tar.bz2 package.</p>
 <p>See <i>Building the Source</i> below for instructions on building the
 resulting tree.</p>
 
-<p>Finally, there are rpm source packages, in the form of src.rpm files.
-This can be installed and built as usual, using the rpm and rpmbuild
+<p>Alternatively, there are rpm source packages, in the form of src.rpm files.
+These packages can be installed and built as usual, using the rpm and rpmbuild
 commands.</p>
 
 
@@ -162,9 +162,10 @@ btool:
 </pre>
 
 <p>This will give you a set of command line tools (bcharge, btool, breset,
-bidentify, pppob), as well as the backup GUI (barrybackup), and will install the
-opensync plugin into the system directory for opensync plugins (usually
-/usr/lib/opensync/plugins).  Available man pages are also installed.</p>
+bidentify, bjavaloader, pppob), as well as the backup GUI (barrybackup),
+and will install the opensync plugin into the system directory for opensync
+plugins (usually /usr/lib/opensync/plugins).  Available man pages are also
+installed.</p>
 
 <p>You can use 'btool' to explore your device from the command line.
 Use the -h switch for help on its command line options.  Some good ones to
@@ -176,13 +177,13 @@ to list the Database Database.</p>
 
 <p>The makefiles do not install udev rules automatically.  There are sample
 udev rules files in the udev/ directory.  For a Debian system, copy the
-udev/10-blackberry.rules.Debian file to /etc/udev/rules.d/10-blackberry.rules,
+udev/debian/10-blackberry.rules file to /etc/udev/rules.d/10-blackberry.rules,
 and copy the file modprobe/blacklist-berry_charge to
 /etc/modprobe.d/blacklist-berry_charge.
 <pre>
 	cd barry
 	(become root)
-	cp udev/10-blackberry.rules.Debian /etc/udev/rules.d/10-blackberry.rules
+	cp udev/debian/10-blackberry.rules /etc/udev/rules.d/10-blackberry.rules
 	cp modprobe/blacklist-berry_charge /etc/modprobe.d/blacklist-berry_charge
 </pre>
 </p>
