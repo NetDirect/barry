@@ -76,12 +76,12 @@ uint8_t CallLog::PhoneTypeRec2Proto(PhoneTypeFlagType s)
 #define CLLFC_PHONE_NUMBER		0x0c
 #define CLLFC_PHONE_INFO		0x0d
 #define CLLFC_CONTACT_NAME		0x1f
-#define CLLFC_END				0xffff
+#define CLLFC_END			0xffff
 
 static FieldLink<CallLog> CallLogFieldLinks[] = {
     { CLLFC_PHONE_NUMBER,	"Phone number",  0, 0, &CallLog::PhoneNumber, 0, 0, 0, 0, true },
     { CLLFC_CONTACT_NAME,	"Contact name",  0, 0, &CallLog::ContactName, 0, 0, 0, 0, true },
-    { CLLFC_END,			"End of List",   0, 0, 0, 0, 0, 0, 0, false }
+    { CLLFC_END,		"End of List",   0, 0, 0, 0, 0, 0, 0, false }
 };
 
 CallLog::CallLog()
@@ -142,6 +142,7 @@ const unsigned char* CallLog::ParseField(const unsigned char *begin,
 	switch( field->type )
 	{
 	case CLLFC_STATUS:
+		// single byte... size check above checks for non-zero already
 		switch (field->u.raw[0]) {
 		case 0x00:
 			StatusFlag = Barry::CallLog::OK;
@@ -156,6 +157,7 @@ const unsigned char* CallLog::ParseField(const unsigned char *begin,
 			StatusFlag = Barry::CallLog::Unknown;
 		}
 		return begin;
+
 	case CLLFC_DIRECTION:
 		if( field->u.raw[0] > CLL_DIRECTION_RANGE_HIGH ) {
 			throw Error( "CallLog::ParseField: direction field out of bounds" );
@@ -164,6 +166,7 @@ const unsigned char* CallLog::ParseField(const unsigned char *begin,
 			DirectionFlag = DirectionProto2Rec(field->u.raw[0]);
 		}
 		return begin;
+
 	case CLLFC_PHONE_TYPE:
 		if( field->u.raw[0] > CLL_PHONETYPE_RANGE_HIGH ) {
 			PhoneTypeFlag = Barry::CallLog::TypeUnknown;
@@ -172,6 +175,7 @@ const unsigned char* CallLog::ParseField(const unsigned char *begin,
 			PhoneTypeFlag = PhoneTypeProto2Rec(field->u.raw[0]);
 		}
 		return begin;
+
 	case CLLFC_PHONE_INFO:
 		switch (field->u.raw[0]) {
 		case 0x03:
@@ -187,12 +191,20 @@ const unsigned char* CallLog::ParseField(const unsigned char *begin,
 			PhoneInfoFlag = Barry::CallLog::InfoUndefined;
 		}
 		return begin;
+
 	case CLLFC_DURATION:
-		Duration = btohl(field->u.uint32);
-		return begin;
+		if( btohs(field->size) >= sizeof(field->u.uint32) ) {
+			Duration = btohl(field->u.uint32);
+			return begin;
+		}
+		break;
+
 	case CLLFC_TIMESTAMP:
-		Timestamp = btohll(field->u.timestamp);
-		return begin;
+		if( btohs(field->size) >= sizeof(field->u.timestamp) ) {
+			Timestamp = btohll(field->u.timestamp);
+			return begin;
+		}
+		break;
 	}
 
 	// if still not handled, add to the Unknowns list
