@@ -2,7 +2,7 @@
 .\" First parameter, NAME, should be all caps
 .\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
 .\" other parameters are allowed: see man(7), man(1)
-.TH BTOOL 1 "November 21, 2008"
+.TH BTOOL 1 "May 6, 2008"
 .\" Please adjust this date whenever revising the manpage.
 .\"
 .\" Some roff macros, for reference:
@@ -20,7 +20,7 @@
 \- Barry Project's program to interface with BlackBerry handheld
 .SH SYNOPSIS
 .B btool
-[-B busname][-N devname][-c dn][-C dnattr][-d db [-f file][-r#][-R#]-D#]][-h][-l][-L][-m cmd][-M][-p pin][-P password][-s db -f file][-S][-t][-v][-X][-z][-Z]
+[-B busname][-N devname][-a db][-c dn][-C dnattr][-d db [-f file][-r#][-R#]-D#]][-h][-l][-L][-m cmd][-M][-p pin][-P password][-s db -f file][-S][-t][-v][-X][-z][-Z]
 .SH DESCRIPTION
 .PP
 .B btool
@@ -40,6 +40,10 @@ first number displayed in the output from the lsusb command, such as 002.
 If the busname is numeric on your system, 2 and 002 are equal.  See
 also the \-N option, which can be used together with this option
 to precisely select the device to work with.
+.TP
+.B \-a db
+Delete all records from specified database.  This can be used multiple
+times to clear multiple databases.
 .TP
 .B \-c dn
 Convert address book database to LDIF format, using the
