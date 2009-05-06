@@ -88,7 +88,8 @@ uint8_t Task::StatusRec2Proto(StatusFlagType s)
 #define TSKFC_TITLE		0x02
 #define TSKFC_NOTES		0x03
 #define TSKFC_DUE_TIME		0x05
-#define TSKFC_START_TIME	0x06
+#define TSKFC_START_TIME	0x06	// This is fuzzy... most devices seem
+					// to anchor this value == to DUE_TIME
 #define TSKFC_DUE_FLAG		0x08
 #define TSKFC_STATUS		0x09
 #define TSKFC_PRIORITY		0x0a
