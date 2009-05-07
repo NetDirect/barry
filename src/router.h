@@ -236,7 +236,7 @@ public:
 	DataHandle& operator=(const DataHandle &other)
 	{
 		if( &m_queue != &other.m_queue )
-			throw std::logic_error("Trying to copy DataHandles of different queus!");
+			throw std::logic_error("Trying to copy DataHandles of different queues!");
 
 		// remove our current data
 		clear();
