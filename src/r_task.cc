@@ -249,6 +249,18 @@ void Task::BuildFields(Data &data, size_t &offset, const IConverter *ic) const
 	// tack on the 't' task type field first
 	BuildField(data, offset, TSKFC_TASK_TYPE, 't');
 
+	BuildField(data, offset, TSKFC_STATUS, StatusRec2Proto(StatusFlag));
+	BuildField(data, offset, TSKFC_PRIORITY, PriorityRec2Proto(PriorityFlag));
+	BuildField(data, offset, TSKFC_ALARM_TYPE, AlarmRec2Proto(AlarmType));
+
+	if ( DueDateFlag )
+		BuildField(data, offset, TSKFC_DUE_FLAG, (char) 1);
+	else
+		BuildField(data, offset, TSKFC_DUE_FLAG, (char) 0);
+
+	if( TimeZoneValid )
+		BuildField(data, offset, TSKFC_TIMEZONE_CODE, TimeZoneCode);
+
 	// cycle through the type table
 	for(	FieldLink<Task> *b = TaskFieldLinks;
 		b->type != TSKFC_END;
@@ -275,16 +287,6 @@ void Task::BuildFields(Data &data, size_t &offset, const IConverter *ic) const
 			}
 		}
 	}
-
-	BuildField(data, offset, TSKFC_STATUS, StatusRec2Proto(StatusFlag));
-	BuildField(data, offset, TSKFC_PRIORITY, PriorityRec2Proto(PriorityFlag));
-	BuildField(data, offset, TSKFC_ALARM_TYPE, AlarmRec2Proto(AlarmType));
-
-	if ( DueDateFlag )
-		BuildField(data, offset, TSKFC_DUE_FLAG, (char) 1);
-
-	if( TimeZoneValid )
-		BuildField(data, offset, TSKFC_TIMEZONE_CODE, TimeZoneCode);
 
 	// and finally save unknowns
 	UnknownsType::const_iterator
