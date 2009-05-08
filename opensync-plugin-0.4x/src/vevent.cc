@@ -30,6 +30,7 @@
 #include <glib.h>
 #include <strings.h>
 #include <sstream>
+#include <vector>
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -57,6 +58,54 @@ unsigned short vCalendar::GetWeekDayIndex(const char *dayname)
 	}
 	return 0;
 }
+
+std::vector<std::string> vCalendar::GetDOWList(const std::string& str)
+{
+	std::vector<std::string> tokens;
+	std::string::size_type delimPos = 0, tokenPos = 0, pos = 0;
+
+	if(str.length()<1) {
+		return tokens;
+	}
+	
+	while(1) {
+		delimPos = str.find_first_of(',', pos);
+		tokenPos = str.find_first_not_of(',', pos);
+
+		if(std::string::npos != delimPos) {
+			if(std::string::npos != tokenPos) {
+				if(tokenPos<delimPos) {
+					tokens.push_back(str.substr(pos,delimPos-pos));
+				} else {
+					tokens.push_back("");
+				}
+			} else {
+				tokens.push_back("");
+			}
+			pos = delimPos+1;
+		} else {
+			if(std::string::npos != tokenPos){
+				tokens.push_back(str.substr(pos));
+			} else {
+				tokens.push_back("");
+			}
+			break;
+		}
+	}
+	return tokens;
+}
+
+
+unsigned short vCalendar::GetMonthWeekNumFromBYDAY(const std::string& ByDay)
+{
+	return atoi(ByDay.substr(0,ByDay.length()-2).c_str());
+}
+
+unsigned short vCalendar::GetWeekDayIndexFromBYDAY(const std::string& ByDay)
+{
+	return GetWeekDayIndex(ByDay.substr(ByDay.length()-2).c_str());
+}
+
 
 bool vCalendar::HasMultipleVEvents() const
 {
@@ -88,64 +137,68 @@ void vCalendar::RecurToVCal()
 	switch( cal.RecurringType )
 	{
 	case Calendar::Day:		// eg. every day
-		AddParam(attr, "FREQ", "DAILY");
+		//AddParam(attr, "FREQ", "DAILY");
+		AddValue(attr,"FREQ=DAILY");
 		break;
 
 	case Calendar::MonthByDate:	// eg. every month on the 12th
 					// see: DayOfMonth
-		AddParam(attr, "FREQ", "MONTHLY");
+		//AddParam(attr, "FREQ", "MONTHLY");
+		AddValue(attr,"FREQ=MONTHLY");
 		{
 			ostringstream oss;
-			oss << cal.DayOfMonth;
-			AddParam(attr, "BYMONTHDAY", oss.str().c_str());
+			oss << "BYMONTHDAY=" << cal.DayOfMonth;
+			AddValue(attr, oss.str().c_str());
 		}
 		break;
 
 	case Calendar::MonthByDay:	// eg. every month on 3rd Wed
 					// see: DayOfWeek and WeekOfMonth
-		AddParam(attr, "FREQ", "MONTHLY");
+		AddValue(attr, "FREQ=MONTHLY");
 		if( cal.DayOfWeek <= 6 ) {	// DayOfWeek is unsigned
 			ostringstream oss;
-			oss << cal.WeekOfMonth << WeekDays[cal.DayOfWeek];
-			AddParam(attr, "BYDAY", oss.str().c_str());
+			oss << "BYDAY=" << cal.WeekOfMonth << WeekDays[cal.DayOfWeek];
+			AddValue(attr, oss.str().c_str());
 		}
 		break;
 
 	case Calendar::YearByDate:	// eg. every year on March 5
 					// see: DayOfMonth and MonthOfYear
-		AddParam(attr, "FREQ", "YEARLY");
+		AddValue(attr, "FREQ=YEARLY");
 		{
 			ostringstream oss;
-			oss << cal.MonthOfYear;
-			AddParam(attr, "BYMONTH", oss.str().c_str());
+			oss << "BYMONTH=" << cal.MonthOfYear;
+			AddValue(attr, oss.str().c_str());
+
 		}
 		{
 			ostringstream oss;
-			oss << cal.DayOfMonth;
-			AddParam(attr, "BYMONTHDAY", oss.str().c_str());
+			oss << "BYMONTHDAY=" << cal.DayOfMonth;
+			AddValue(attr, oss.str().c_str());
 		}
 		break;
 
 	case Calendar::YearByDay:	// eg. every year on 3rd Wed of Jan
 					// see: DayOfWeek, WeekOfMonth, and
 					//      MonthOfYear
-		AddParam(attr, "FREQ", "YEARLY");
+		AddValue(attr, "FREQ=YEARLY");
 		if( cal.DayOfWeek <= 6 ) {	// DayOfWeek is unsigned
 			ostringstream oss;
-			oss << cal.WeekOfMonth << WeekDays[cal.DayOfWeek];
-			AddParam(attr, "BYDAY", oss.str().c_str());
+			oss << "BYDAY=" << cal.WeekOfMonth << WeekDays[cal.DayOfWeek];
+			AddValue(attr, oss.str().c_str());
 
 			oss.str("");
-			oss << cal.MonthOfYear;
-			AddParam(attr, "BYMONTH", oss.str().c_str());
+			oss << "BYMONTH=" << cal.MonthOfYear;
+			AddValue(attr, oss.str().c_str());
 		}
 		break;
 
 	case Calendar::Week:		// eg. every week on Mon and Fri
 					// see: WeekDays
-		AddParam(attr, "FREQ", "WEEKLY");
+		AddValue(attr, "FREQ=WEEKLY");
 		{
 			ostringstream oss;
+			oss << "BYDAY=";
 			for( int i = 0, bm = 1, cnt = 0; i < 7; i++, bm <<= 1 ) {
 				if( cal.WeekDays & bm ) {
 					if( cnt )
@@ -154,7 +207,7 @@ void vCalendar::RecurToVCal()
 					cnt++;
 				}
 			}
-			AddParam(attr, "BYDAY", oss.str().c_str());
+			AddValue(attr, oss.str().c_str());
 		}
 		break;
 
@@ -165,12 +218,14 @@ void vCalendar::RecurToVCal()
 	// add some common parameters
 	if( cal.Interval > 1 ) {
 		ostringstream oss;
-		oss << cal.Interval;
-		AddParam(attr, "INTERVAL", oss.str().c_str());
+		oss << "INTERVAL=" << cal.Interval;
+		AddValue(attr, oss.str().c_str());
 	}
 	if( !cal.Perpetual ) {
 		gStringPtr rend(osync_time_unix2vtime(&cal.RecurringEndTime));
-		AddParam(attr, "UNTIL", rend.Get());
+		ostringstream oss;
+		oss << "UNTIL=" << rend.Get();
+		AddValue(attr, oss.str().c_str());
 	}
 
 	AddAttr(attr);
@@ -221,11 +276,183 @@ void vCalendar::RecurToVCal()
 
 }
 
-void vCalendar::RecurToBarryCal()
+void vCalendar::RecurToBarryCal(vAttr& rrule)
 {
-	// FIXME - needs to be implemented
+	using namespace Barry;
+	using namespace std;
+	Barry::Calendar &cal = m_BarryCal;
+	Trace trace("vCalendar::RecurToBarryCal");
+	std::map<std::string,unsigned char> pmap;
+	pmap["SU"] = CAL_WD_SUN;
+	pmap["MO"] = CAL_WD_MON;
+	pmap["TU"] = CAL_WD_TUE;
+	pmap["WE"] = CAL_WD_WED;
+	pmap["TH"] = CAL_WD_THU;
+	pmap["FR"] = CAL_WD_FRI;
+	pmap["SA"] = CAL_WD_SAT;
 
-	// GetWeekDayIndex()
+
+	int i=0;
+	unsigned int count=0;
+	string val;
+	std::map<std::string,std::string> args;
+	do {
+		val=rrule.GetValue(i++);
+		if(val.length()==0) {
+			break;
+		}
+		string n=val.substr(0,val.find("="));
+		string v=val.substr(val.find("=")+1);
+		args[n]=v;
+		trace.logf("RecurToBarryCal: |%s|%s|",n.c_str(),v.c_str());
+	} while(1);
+	
+	// now process the inferval.
+	
+	time_t now = time(NULL);
+	int zoneoffset = osync_time_timezone_diff(localtime(&now));
+
+	cal.Recurring=TRUE;
+	
+	if(args.find(string("INTERVAL"))!=args.end()) {
+		cal.Interval = atoi(args["INTERVAL"].c_str());
+	}
+	if(args.find(string("UNTIL"))!=args.end()) {
+		cal.Perpetual = FALSE;
+		cal.RecurringEndTime=osync_time_vtime2unix(args["UNTIL"].c_str(), zoneoffset);
+	} else {
+		// if we do not also have COUNT, then we must be forerver
+		if(args.find(string("COUNT"))==args.end()) {
+			cal.Perpetual=TRUE;
+		} else {
+			// we do have COUNT. This means we won't have UNTIL. So we need to
+			// process the RecurringEndTime from the current start date. Set the count level to
+			// something other than zero to indicate we need to process it as the exact end date will
+			// depend upon the frequency.
+			count=atoi(args["COUNT"].c_str());
+		}
+	}
+	
+	// we need these if COUNT is true, or if we are a yearly job.
+	
+	time_t time = cal.StartTime;
+	
+	// TO-DO: we must process COUNT in terms of an end date if we have it.
+
+	// Now deal with the freq
+
+	if(args.find(string("FREQ"))!=args.end()) {
+		if(args["FREQ"]==string("DAILY")) {
+			cal.RecurringType=Calendar::Day;
+		} else {
+			if(args["FREQ"]==string("WEEKLY")) {
+				cal.RecurringType=Calendar::Week;
+				// we must have a dayofweek entry
+				if(args.find(string("BYDAY"))!=args.end()) {
+					std::vector<std::string> v=GetDOWList(args["BYDAY"]);
+					// iterate along our vector and convert
+					for(unsigned int idx=0;idx<v.size();idx++) {
+						cal.WeekDays|=pmap[v[idx]];
+					}
+				} else {
+					// handle error here
+					trace.logf("RecurToBarryCal: no BYDAY on weekly event");
+				}
+				if(count) {
+					// need to process end date. This is easy for weeks,
+					// as a number of weeks can be reduced to seconds simply.
+					cal.RecurringEndTime=time +((count-1)*60*60*24*7);
+				}
+			} else {
+				if(args["FREQ"]=="MONTHLY") {
+					if(args.find(string("BYMONTHDAY"))!=args.end()) {
+						cal.RecurringType=Calendar::MonthByDate;
+						cal.DayOfMonth=atoi(args["BYMONTHDAY"].c_str());
+					} else {
+						if(args.find(string("BYDAY"))!=args.end()) {
+							cal.RecurringType=Calendar::MonthByDay;
+							cal.WeekOfMonth=GetMonthWeekNumFromBYDAY(args["BYDAY"]);
+							cal.DayOfWeek=GetWeekDayIndexFromBYDAY(args["BYDAY"]);
+						} else {
+							trace.logf("RecurToBarryCal: No qualifier on MONTHLY freq");
+						}
+					}
+					if(count) {
+						// Nasty. We need to convert to struct tm, do some modulo-12 addition
+						// then back to time_t
+						struct tm datestruct;
+						gmtime_r(&time,&datestruct);
+						// now do some modulo-12 on the month and year 
+						// We could end up with an illegal date if the day of month is >28 and
+						// the resulting month falls on a February. We don't need to worry about
+						// day of week as mktime() clobbers it.
+						datestruct.tm_year += (datestruct.tm_mon+count)/12;
+						datestruct.tm_mon = (datestruct.tm_mon+count)%12;
+						if(datestruct.tm_mday>28 && datestruct.tm_mon==1) {
+							// force it to 1st Mar
+							// TODO Potential bug on leap years
+							datestruct.tm_mon=2;
+							datestruct.tm_mday=1;
+						}
+						if(datestruct.tm_mday==31 && (datestruct.tm_mon==8 ||
+						                              datestruct.tm_mon==3 ||
+						                              datestruct.tm_mon==5 ||
+													  datestruct.tm_mon==10)) {
+							datestruct.tm_mon+=1;
+							datestruct.tm_mday=1;
+						}
+						cal.RecurringEndTime=mktime(&datestruct);
+					}
+				} else {
+					if(args["FREQ"]=="YEARLY") {
+						if(args.find(string("BYMONTH"))!=args.end()) {
+							cal.MonthOfYear=atoi(args["BYMONTH"].c_str());
+							if(args.find(string("BYMONTHDAY"))!=args.end()) {
+								cal.RecurringType=Calendar::YearByDate;
+								cal.DayOfMonth=atoi(args["BYMONTHDAY"].c_str());
+							} else {
+								if(args.find(string("BYDAY"))!=args.end()) {
+									cal.RecurringType=Calendar::YearByDay;
+									cal.WeekOfMonth=GetMonthWeekNumFromBYDAY(args["BYDAY"]);
+									cal.DayOfWeek=GetWeekDayIndexFromBYDAY(args["BYDAY"]);
+								} else {
+									trace.logf("RecurToBarryCal: No qualifier on YEARLY freq");
+								}
+							}
+						} else {
+							// otherwise use the start date and translate to a BYMONTHDAY.
+							// cal.StartTime has already been processed when we get here
+							// we need month of year, and day of month.
+							struct tm datestruct;
+							gmtime_r(&time,&datestruct);
+							cal.RecurringType=Calendar::YearByDate;
+							cal.MonthOfYear=datestruct.tm_mon;
+							cal.DayOfMonth=datestruct.tm_mday;
+						}
+					}
+					if(count) {
+						// convert to struct tm, then simply add to the year.
+						struct tm datestruct;
+						gmtime_r(&time,&datestruct);
+						datestruct.tm_year += count;
+						cal.RecurringEndTime=mktime(&datestruct);
+					}
+				}
+			}
+		}
+	} else {
+		trace.logf("RecurToBarryCal: No frequency specified!");
+	}
+
+//	unsigned char WeekDays;		// bitmask, bit 0 = sunday
+//
+//		#define CAL_WD_SUN	0x01
+//		#define CAL_WD_MON	0x02
+//		#define CAL_WD_TUE	0x04
+//		#define CAL_WD_WED	0x08
+//		#define CAL_WD_THU	0x10
+//		#define CAL_WD_FRI	0x20
+//		#define CAL_WD_SAT	0x40
 }
 
 // Main conversion routine for converting from Barry::Calendar to
@@ -330,6 +557,8 @@ const Barry::Calendar& vCalendar::ToBarry(const char *vcal, uint32_t RecordId)
 	string notes = GetAttr("DESCRIPTION", "/vevent");
 	trace.logf("DESCRIPTION attr retrieved: %s", notes.c_str());
 
+	vAttr rrule = GetAttrObj("RRULE",0,"/vevent");
+
 
 	//
 	// Now, run checks and convert into Barry object
@@ -372,6 +601,10 @@ const Barry::Calendar& vCalendar::ToBarry(const char *vcal, uint32_t RecordId)
 	rec.Subject = subject;
 	rec.Location = location;
 	rec.Notes = notes;
+
+	if(rrule.Get()) {
+		RecurToBarryCal(rrule);
+	}
 
 	// convert trigger time into notification time
 	// assume no notification, by default
