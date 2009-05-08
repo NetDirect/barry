@@ -5,6 +5,7 @@ Release: version 0.15 - 2009/01/??
 		- did not include the pure upper case changes, since
 		  it is an RFC bug in SynCE
 		  see http://www.mail-archive.com/barry-devel@lists.sourceforge.net/msg01109.html
+	- updated AUTHORS
 2009/05/06
 	- going through www documentation, updating for 0.15
 	- updated man/btool.1 with new -a option

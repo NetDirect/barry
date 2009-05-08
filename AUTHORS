@@ -31,6 +31,8 @@ Contributors (code and otherwise) in alphabetical order by last name:
 	Ron Gage <ron@rongage.org>
 		- CVS testing
 		- reverse engineering Service Book record
+	Dr. J A Gow <J.A.Gow@wellfrazzled.com>
+		- recurring calendar item sync support
 	Andy Herkey <a.herkey@comcast.net>
 		- sample ppp chat script for Sprint
 		- ipmodem password patches
