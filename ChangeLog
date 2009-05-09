@@ -8,6 +8,7 @@ Release: version 0.15 - 2009/01/??
 		- added starttime to RecurToBarryCal() args, to make the
 		  prerequisites clear (StartTime must be determined before
 		  recurrence is parsed)
+		- added check that COUNT is not zero (RFC requirement)
 	- updated AUTHORS
 2009/05/06
 	- going through www documentation, updating for 0.15

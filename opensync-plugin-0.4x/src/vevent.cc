@@ -325,11 +325,16 @@ void vCalendar::RecurToBarryCal(vAttr& rrule, time_t starttime)
 		if(args.find(string("COUNT"))==args.end()) {
 			cal.Perpetual=TRUE;
 		} else {
-			// we do have COUNT. This means we won't have UNTIL. So we need to
-			// process the RecurringEndTime from the current start date. Set the count level to
-			// something other than zero to indicate we need to process it as the exact end date will
+			// we do have COUNT. This means we won't have UNTIL.
+			// So we need to process the RecurringEndTime from
+			// the current start date. Set the count level to
+			// something other than zero to indicate we need
+			// to process it as the exact end date will
 			// depend upon the frequency.
 			count=atoi(args["COUNT"].c_str());
+			if( count == 0 ) {
+				throw std::runtime_error("Invalid COUNT in recurring rule: " + args["COUNT"]);
+			}
 		}
 	}
 	
