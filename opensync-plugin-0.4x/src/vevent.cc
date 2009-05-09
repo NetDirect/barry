@@ -344,113 +344,109 @@ void vCalendar::RecurToBarryCal(vAttr& rrule, time_t starttime)
 
 	// Now deal with the freq
 
-	if(args.find(string("FREQ"))!=args.end()) {
-		if(args["FREQ"]==string("DAILY")) {
-			cal.RecurringType=Calendar::Day;
+	if(args.find(string("FREQ"))==args.end()) {
+		trace.logf("RecurToBarryCal: No frequency specified!");
+		return;
+	}
+
+	if(args["FREQ"]==string("DAILY")) {
+		cal.RecurringType=Calendar::Day;
+
+	} else if(args["FREQ"]==string("WEEKLY")) {
+		cal.RecurringType=Calendar::Week;
+		// we must have a dayofweek entry
+		if(args.find(string("BYDAY"))!=args.end()) {
+			std::vector<std::string> v=GetDOWList(args["BYDAY"]);
+			// iterate along our vector and convert
+			for(unsigned int idx=0;idx<v.size();idx++) {
+				cal.WeekDays|=pmap[v[idx]];
+			}
 		} else {
-			if(args["FREQ"]==string("WEEKLY")) {
-				cal.RecurringType=Calendar::Week;
-				// we must have a dayofweek entry
-				if(args.find(string("BYDAY"))!=args.end()) {
-					std::vector<std::string> v=GetDOWList(args["BYDAY"]);
-					// iterate along our vector and convert
-					for(unsigned int idx=0;idx<v.size();idx++) {
-						cal.WeekDays|=pmap[v[idx]];
-					}
-				} else {
-					// handle error here
-					trace.logf("RecurToBarryCal: no BYDAY on weekly event");
-				}
-				if(count) {
-					// need to process end date. This is easy
-					// for weeks, as a number of weeks can be
-					// reduced to seconds simply.
-					cal.RecurringEndTime=starttime +((count-1)*60*60*24*7);
-				}
+			// handle error here
+			trace.logf("RecurToBarryCal: no BYDAY on weekly event");
+		}
+		if(count) {
+			// need to process end date. This is easy
+			// for weeks, as a number of weeks can be
+			// reduced to seconds simply.
+			cal.RecurringEndTime=starttime +((count-1)*60*60*24*7);
+		}
+	} else if(args["FREQ"]=="MONTHLY") {
+		if(args.find(string("BYMONTHDAY"))!=args.end()) {
+			cal.RecurringType=Calendar::MonthByDate;
+			cal.DayOfMonth=atoi(args["BYMONTHDAY"].c_str());
+		} else {
+			if(args.find(string("BYDAY"))!=args.end()) {
+				cal.RecurringType=Calendar::MonthByDay;
+				cal.WeekOfMonth=GetMonthWeekNumFromBYDAY(args["BYDAY"]);
+				cal.DayOfWeek=GetWeekDayIndexFromBYDAY(args["BYDAY"]);
 			} else {
-				if(args["FREQ"]=="MONTHLY") {
-					if(args.find(string("BYMONTHDAY"))!=args.end()) {
-						cal.RecurringType=Calendar::MonthByDate;
-						cal.DayOfMonth=atoi(args["BYMONTHDAY"].c_str());
-					} else {
-						if(args.find(string("BYDAY"))!=args.end()) {
-							cal.RecurringType=Calendar::MonthByDay;
-							cal.WeekOfMonth=GetMonthWeekNumFromBYDAY(args["BYDAY"]);
-							cal.DayOfWeek=GetWeekDayIndexFromBYDAY(args["BYDAY"]);
-						} else {
-							trace.logf("RecurToBarryCal: No qualifier on MONTHLY freq");
-						}
-					}
-					if(count) {
-						// Nasty. We need to convert to struct tm,
-						// do some modulo-12 addition then back
-						// to time_t
-						struct tm datestruct;
-						localtime_r(&starttime,&datestruct);
-						// now do some modulo-12 on the month and year 
-						// We could end up with an illegal date if
-						// the day of month is >28 and the resulting
-						// month falls on a February. We don't need
-						// to worry about day of week as mktime()
-						// clobbers it.
-						datestruct.tm_year += (datestruct.tm_mon+count)/12;
-						datestruct.tm_mon = (datestruct.tm_mon+count)%12;
-						if(datestruct.tm_mday>28 && datestruct.tm_mon==1) {
-							// force it to 1st Mar
-							// TODO Potential bug on leap years
-							datestruct.tm_mon=2;
-							datestruct.tm_mday=1;
-						}
-						if(datestruct.tm_mday==31 && (datestruct.tm_mon==8 ||
-						                              datestruct.tm_mon==3 ||
-						                              datestruct.tm_mon==5 ||
-													  datestruct.tm_mon==10)) {
-							datestruct.tm_mon+=1;
-							datestruct.tm_mday=1;
-						}
-						cal.RecurringEndTime=mktime(&datestruct);
-					}
-				} else {
-					if(args["FREQ"]=="YEARLY") {
-						if(args.find(string("BYMONTH"))!=args.end()) {
-							cal.MonthOfYear=atoi(args["BYMONTH"].c_str());
-							if(args.find(string("BYMONTHDAY"))!=args.end()) {
-								cal.RecurringType=Calendar::YearByDate;
-								cal.DayOfMonth=atoi(args["BYMONTHDAY"].c_str());
-							} else {
-								if(args.find(string("BYDAY"))!=args.end()) {
-									cal.RecurringType=Calendar::YearByDay;
-									cal.WeekOfMonth=GetMonthWeekNumFromBYDAY(args["BYDAY"]);
-									cal.DayOfWeek=GetWeekDayIndexFromBYDAY(args["BYDAY"]);
-								} else {
-									trace.logf("RecurToBarryCal: No qualifier on YEARLY freq");
-								}
-							}
-						} else {
-							// otherwise use the start date and translate
-							// to a BYMONTHDAY.
-							// cal.StartTime has already been processed
-							// when we get here we need month of year,
-							// and day of month.
-							struct tm datestruct;
-							localtime_r(&starttime,&datestruct);
-							cal.RecurringType=Calendar::YearByDate;
-							cal.MonthOfYear=datestruct.tm_mon;
-							cal.DayOfMonth=datestruct.tm_mday;
-						}
-					}
-					if(count) {
-						// convert to struct tm, then simply add to the year.
-						struct tm datestruct;
-						localtime_r(&starttime,&datestruct);
-						datestruct.tm_year += count;
-						cal.RecurringEndTime=mktime(&datestruct);
-					}
-				}
+				trace.logf("RecurToBarryCal: No qualifier on MONTHLY freq");
 			}
 		}
-	} else {
-		trace.logf("RecurToBarryCal: No frequency specified!");
+		if(count) {
+			// Nasty. We need to convert to struct tm,
+			// do some modulo-12 addition then back
+			// to time_t
+			struct tm datestruct;
+			localtime_r(&starttime,&datestruct);
+			// now do some modulo-12 on the month and year
+			// We could end up with an illegal date if
+			// the day of month is >28 and the resulting
+			// month falls on a February. We don't need
+			// to worry about day of week as mktime()
+			// clobbers it.
+			datestruct.tm_year += (datestruct.tm_mon+count)/12;
+			datestruct.tm_mon = (datestruct.tm_mon+count)%12;
+			if(datestruct.tm_mday>28 && datestruct.tm_mon==1) {
+				// force it to 1st Mar
+				// TODO Potential bug on leap years
+				datestruct.tm_mon=2;
+				datestruct.tm_mday=1;
+			}
+			if(datestruct.tm_mday==31 && (datestruct.tm_mon==8 ||
+						      datestruct.tm_mon==3 ||
+						      datestruct.tm_mon==5 ||
+										  datestruct.tm_mon==10)) {
+				datestruct.tm_mon+=1;
+				datestruct.tm_mday=1;
+			}
+			cal.RecurringEndTime=mktime(&datestruct);
+		}
+	} else if(args["FREQ"]=="YEARLY") {
+		if(args.find(string("BYMONTH"))!=args.end()) {
+			cal.MonthOfYear=atoi(args["BYMONTH"].c_str());
+			if(args.find(string("BYMONTHDAY"))!=args.end()) {
+				cal.RecurringType=Calendar::YearByDate;
+				cal.DayOfMonth=atoi(args["BYMONTHDAY"].c_str());
+			} else {
+				if(args.find(string("BYDAY"))!=args.end()) {
+					cal.RecurringType=Calendar::YearByDay;
+					cal.WeekOfMonth=GetMonthWeekNumFromBYDAY(args["BYDAY"]);
+					cal.DayOfWeek=GetWeekDayIndexFromBYDAY(args["BYDAY"]);
+				} else {
+					trace.logf("RecurToBarryCal: No qualifier on YEARLY freq");
+				}
+			}
+		} else {
+			// otherwise use the start date and translate
+			// to a BYMONTHDAY.
+			// cal.StartTime has already been processed
+			// when we get here we need month of year,
+			// and day of month.
+			struct tm datestruct;
+			localtime_r(&starttime,&datestruct);
+			cal.RecurringType=Calendar::YearByDate;
+			cal.MonthOfYear=datestruct.tm_mon;
+			cal.DayOfMonth=datestruct.tm_mday;
+		}
+		if(count) {
+			// convert to struct tm, then simply add to the year.
+			struct tm datestruct;
+			localtime_r(&starttime,&datestruct);
+			datestruct.tm_year += count;
+			cal.RecurringEndTime=mktime(&datestruct);
+		}
 	}
 
 //	unsigned char WeekDays;		// bitmask, bit 0 = sunday

@@ -12,6 +12,9 @@ Release: version 0.15 - 2009/01/??
 		- fixed timezone drift: using gmtime() + mktime() uses two
 		  different timezones... use localtime() + mktime()  instead
 		- comment resizing
+		- reformatted if/else FREQ tests into a more readable
+		  sequence, and fixed a logic error in the yearly count
+		  advance, which should only happen when FREQ == YEARLY
 	- updated AUTHORS
 2009/05/06
 	- going through www documentation, updating for 0.15
