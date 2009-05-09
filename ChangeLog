@@ -1,5 +1,8 @@
 Release: version 0.15 - 2009/01/??
 ------------------------------------------------------------------------------
+2009/05/09
+	- applied Nicolas Vivien's Task builder patch for the Storm
+		and Bookmark documentation patch
 2009/05/08
 	- applied most of Dr. J A Gow's recurring iCal sync patch
 		- did not include the pure upper case changes, since
