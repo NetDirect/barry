@@ -384,7 +384,7 @@ void vCalendar::RecurToBarryCal(vAttr& rrule, time_t starttime)
 						// Nasty. We need to convert to struct tm, do some modulo-12 addition
 						// then back to time_t
 						struct tm datestruct;
-						gmtime_r(&starttime,&datestruct);
+						localtime_r(&starttime,&datestruct);
 						// now do some modulo-12 on the month and year 
 						// We could end up with an illegal date if the day of month is >28 and
 						// the resulting month falls on a February. We don't need to worry about
@@ -427,7 +427,7 @@ void vCalendar::RecurToBarryCal(vAttr& rrule, time_t starttime)
 							// cal.StartTime has already been processed when we get here
 							// we need month of year, and day of month.
 							struct tm datestruct;
-							gmtime_r(&starttime,&datestruct);
+							localtime_r(&starttime,&datestruct);
 							cal.RecurringType=Calendar::YearByDate;
 							cal.MonthOfYear=datestruct.tm_mon;
 							cal.DayOfMonth=datestruct.tm_mday;
@@ -436,7 +436,7 @@ void vCalendar::RecurToBarryCal(vAttr& rrule, time_t starttime)
 					if(count) {
 						// convert to struct tm, then simply add to the year.
 						struct tm datestruct;
-						gmtime_r(&starttime,&datestruct);
+						localtime_r(&starttime,&datestruct);
 						datestruct.tm_year += count;
 						cal.RecurringEndTime=mktime(&datestruct);
 					}

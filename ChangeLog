@@ -9,6 +9,8 @@ Release: version 0.15 - 2009/01/??
 		  prerequisites clear (StartTime must be determined before
 		  recurrence is parsed)
 		- added check that COUNT is not zero (RFC requirement)
+		- fixed timezone drift: using gmtime() + mktime() uses two
+		  different timezones... use localtime() + mktime()  instead
 	- updated AUTHORS
 2009/05/06
 	- going through www documentation, updating for 0.15
