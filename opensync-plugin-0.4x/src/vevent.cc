@@ -276,7 +276,7 @@ void vCalendar::RecurToVCal()
 
 }
 
-void vCalendar::RecurToBarryCal(vAttr& rrule)
+void vCalendar::RecurToBarryCal(vAttr& rrule, time_t starttime)
 {
 	using namespace Barry;
 	using namespace std;
@@ -334,9 +334,7 @@ void vCalendar::RecurToBarryCal(vAttr& rrule)
 	}
 	
 	// we need these if COUNT is true, or if we are a yearly job.
-	
-	time_t time = cal.StartTime;
-	
+
 	// TO-DO: we must process COUNT in terms of an end date if we have it.
 
 	// Now deal with the freq
@@ -361,7 +359,7 @@ void vCalendar::RecurToBarryCal(vAttr& rrule)
 				if(count) {
 					// need to process end date. This is easy for weeks,
 					// as a number of weeks can be reduced to seconds simply.
-					cal.RecurringEndTime=time +((count-1)*60*60*24*7);
+					cal.RecurringEndTime=starttime +((count-1)*60*60*24*7);
 				}
 			} else {
 				if(args["FREQ"]=="MONTHLY") {
@@ -381,7 +379,7 @@ void vCalendar::RecurToBarryCal(vAttr& rrule)
 						// Nasty. We need to convert to struct tm, do some modulo-12 addition
 						// then back to time_t
 						struct tm datestruct;
-						gmtime_r(&time,&datestruct);
+						gmtime_r(&starttime,&datestruct);
 						// now do some modulo-12 on the month and year 
 						// We could end up with an illegal date if the day of month is >28 and
 						// the resulting month falls on a February. We don't need to worry about
@@ -424,7 +422,7 @@ void vCalendar::RecurToBarryCal(vAttr& rrule)
 							// cal.StartTime has already been processed when we get here
 							// we need month of year, and day of month.
 							struct tm datestruct;
-							gmtime_r(&time,&datestruct);
+							gmtime_r(&starttime,&datestruct);
 							cal.RecurringType=Calendar::YearByDate;
 							cal.MonthOfYear=datestruct.tm_mon;
 							cal.DayOfMonth=datestruct.tm_mday;
@@ -433,7 +431,7 @@ void vCalendar::RecurToBarryCal(vAttr& rrule)
 					if(count) {
 						// convert to struct tm, then simply add to the year.
 						struct tm datestruct;
-						gmtime_r(&time,&datestruct);
+						gmtime_r(&starttime,&datestruct);
 						datestruct.tm_year += count;
 						cal.RecurringEndTime=mktime(&datestruct);
 					}
@@ -603,7 +601,7 @@ const Barry::Calendar& vCalendar::ToBarry(const char *vcal, uint32_t RecordId)
 	rec.Notes = notes;
 
 	if(rrule.Get()) {
-		RecurToBarryCal(rrule);
+		RecurToBarryCal(rrule, rec.StartTime);
 	}
 
 	// convert trigger time into notification time

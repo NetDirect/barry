@@ -54,8 +54,7 @@ class vCalendar : public vBase
 
 protected:
 	void RecurToVCal();
-	//void RecurToBarryCal();
-	void RecurToBarryCal(vAttr& rrule);
+	void RecurToBarryCal(vAttr& rrule, time_t starttime);
 	
 	static unsigned short GetWeekDayIndex(const char *dayname);
 	bool HasMultipleVEvents() const;
