@@ -47,7 +47,7 @@ class vCalendar : public vBase
 	Barry::Calendar m_BarryCal;
 
 	static const char *WeekDays[7];
-	
+
 	std::vector<std::string> GetDOWList(const std::string& str);
 	unsigned short GetMonthWeekNumFromBYDAY(const std::string& ByDay);
 	unsigned short GetWeekDayIndexFromBYDAY(const std::string& ByDay);
@@ -55,7 +55,7 @@ class vCalendar : public vBase
 protected:
 	void RecurToVCal();
 	void RecurToBarryCal(vAttr& rrule, time_t starttime);
-	
+
 	static unsigned short GetWeekDayIndex(const char *dayname);
 	bool HasMultipleVEvents() const;
 

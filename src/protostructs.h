@@ -295,9 +295,9 @@ struct CalendarRecurrenceDataField  // as documented in the Cassis project spec
 #define TR_STATUS_RANGE_LOW		0
 #define TR_STATUS_RANGE_HIGH		4
 
-// 
+//
 // Phone Call Logs record: field constants
-// 
+//
 //
 #define CLL_DIRECTION_RECEIVER		0
 #define CLL_DIRECTION_EMITTER		1

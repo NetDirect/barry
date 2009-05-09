@@ -67,7 +67,7 @@ std::vector<std::string> vCalendar::GetDOWList(const std::string& str)
 	if(str.length()<1) {
 		return tokens;
 	}
-	
+
 	while(1) {
 		delimPos = str.find_first_of(',', pos);
 		tokenPos = str.find_first_not_of(',', pos);
@@ -306,14 +306,14 @@ void vCalendar::RecurToBarryCal(vAttr& rrule, time_t starttime)
 		args[n]=v;
 		trace.logf("RecurToBarryCal: |%s|%s|",n.c_str(),v.c_str());
 	} while(1);
-	
+
 	// now process the inferval.
-	
+
 	time_t now = time(NULL);
 	int zoneoffset = osync_time_timezone_diff(localtime(&now));
 
 	cal.Recurring=TRUE;
-	
+
 	if(args.find(string("INTERVAL"))!=args.end()) {
 		cal.Interval = atoi(args["INTERVAL"].c_str());
 	}
@@ -337,7 +337,7 @@ void vCalendar::RecurToBarryCal(vAttr& rrule, time_t starttime)
 			}
 		}
 	}
-	
+
 	// we need these if COUNT is true, or if we are a yearly job.
 
 	// TO-DO: we must process COUNT in terms of an end date if we have it.
