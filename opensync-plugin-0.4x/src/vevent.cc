@@ -362,8 +362,9 @@ void vCalendar::RecurToBarryCal(vAttr& rrule, time_t starttime)
 					trace.logf("RecurToBarryCal: no BYDAY on weekly event");
 				}
 				if(count) {
-					// need to process end date. This is easy for weeks,
-					// as a number of weeks can be reduced to seconds simply.
+					// need to process end date. This is easy
+					// for weeks, as a number of weeks can be
+					// reduced to seconds simply.
 					cal.RecurringEndTime=starttime +((count-1)*60*60*24*7);
 				}
 			} else {
@@ -381,14 +382,17 @@ void vCalendar::RecurToBarryCal(vAttr& rrule, time_t starttime)
 						}
 					}
 					if(count) {
-						// Nasty. We need to convert to struct tm, do some modulo-12 addition
-						// then back to time_t
+						// Nasty. We need to convert to struct tm,
+						// do some modulo-12 addition then back
+						// to time_t
 						struct tm datestruct;
 						localtime_r(&starttime,&datestruct);
 						// now do some modulo-12 on the month and year 
-						// We could end up with an illegal date if the day of month is >28 and
-						// the resulting month falls on a February. We don't need to worry about
-						// day of week as mktime() clobbers it.
+						// We could end up with an illegal date if
+						// the day of month is >28 and the resulting
+						// month falls on a February. We don't need
+						// to worry about day of week as mktime()
+						// clobbers it.
 						datestruct.tm_year += (datestruct.tm_mon+count)/12;
 						datestruct.tm_mon = (datestruct.tm_mon+count)%12;
 						if(datestruct.tm_mday>28 && datestruct.tm_mon==1) {
@@ -423,9 +427,11 @@ void vCalendar::RecurToBarryCal(vAttr& rrule, time_t starttime)
 								}
 							}
 						} else {
-							// otherwise use the start date and translate to a BYMONTHDAY.
-							// cal.StartTime has already been processed when we get here
-							// we need month of year, and day of month.
+							// otherwise use the start date and translate
+							// to a BYMONTHDAY.
+							// cal.StartTime has already been processed
+							// when we get here we need month of year,
+							// and day of month.
 							struct tm datestruct;
 							localtime_r(&starttime,&datestruct);
 							cal.RecurringType=Calendar::YearByDate;
