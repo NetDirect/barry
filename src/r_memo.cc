@@ -156,11 +156,10 @@ void Memo::BuildFields(Data &data, size_t &offset, const IConverter *ic) const
 	BuildField(data, offset, MEMFC_MEMO_TYPE, 'm');
 
 	// Categories
-
-	if(Categories.size()>0) {
+	if( Categories.size() ) {
 		string store;
 		Categories.CategoryList2Str(store);
-		BuildField(data, offset, MEMFC_CATEGORY, store);
+		BuildField(data, offset, MEMFC_CATEGORY, ic ? ic->ToBB(store) : store);
 	}
 
 	// cycle through the type table
@@ -203,6 +202,11 @@ void Memo::Dump(std::ostream &os) const
 	   << " (" << (unsigned int)RecType << ")\n";
 	os << "    Title: " << Title << "\n";
 	os << "    Body: " << Body << "\n";
+	if( Categories.size() ) {
+		string display;
+		Categories.CategoryList2Str(display);
+		os << "    Categories: " << display << "\n";
+	}
 
 	os << Unknowns;
 	os << "\n\n";

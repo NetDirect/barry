@@ -3,6 +3,10 @@ Release: version 0.15 - 2009/01/??
 2009/05/12
 	- applied Dr. J A Gow's category patches (task + memo)
 		- fixed compile error when using Boost
+		- cleaned up Categories handling:
+			- s11n-boost.h
+			- Dump() should be consistent across Calendar, Memo, Task
+			- fixed i18n support to category names
 	- moved CategoryList to its own class, and removed duplicated
 		string conversion code
 	- removed protocol-specific MemoType and TaskType fields from

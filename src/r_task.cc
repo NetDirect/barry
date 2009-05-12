@@ -105,7 +105,6 @@ static FieldLink<Task> TaskFieldLinks[] = {
    { TSKFC_START_TIME, "Start Time",  0, 0, 0, 0, &Task::StartTime, 0, 0, false },
    { TSKFC_DUE_TIME,   "Due Time",    0, 0, 0, 0, &Task::DueTime, 0, 0, false },
    { TSKFC_ALARM_TIME, "Alarm Time",  0, 0, 0, 0, &Task::AlarmTime, 0, 0, false },
-//   { TSKFC_CATEGORIES, "Categories",  0, 0, &Task::Categories, 0, 0, 0, 0, false },
    { TSKFC_END,        "End of List", 0, 0, 0, 0, 0, 0, 0, false },
 };
 
@@ -297,11 +296,10 @@ void Task::BuildFields(Data &data, size_t &offset, const IConverter *ic) const
 	}
 
 	// Categories
-
-	if(Categories.size()>0) {
+	if( Categories.size() ) {
 		string store;
 		Categories.CategoryList2Str(store);
-		BuildField(data, offset, TSKFC_CATEGORIES, store);
+		BuildField(data, offset, TSKFC_CATEGORIES, ic ? ic->ToBB(store) : store);
 	}
 
 	// and finally save unknowns
@@ -440,6 +438,12 @@ void Task::Dump(std::ostream &os) const
 			os << "      Ends: never\n";
 		else
 			os << "      Ends: " << ctime(&RecurringEndTime);
+	}
+
+	if( Categories.size() ) {
+		string display;
+		Categories.CategoryList2Str(display);
+		os << "    Categories: " << display << "\n";
 	}
 
 	os << Unknowns;
