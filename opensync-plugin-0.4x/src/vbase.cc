@@ -291,7 +291,7 @@ std::string vBase::GetAttr(const char *attrname, const char *block)
 	return ret;
 }
 
-std::vector<std::string> vBase::GetValueVector(const char * attrname, const char * block)
+std::vector<std::string> vBase::GetValueVector(const char *attrname, const char *block)
 {
 	Trace trace("vBase::GetValueVector");
 	trace.logf("getting value vector for: %s", attrname);
@@ -307,13 +307,13 @@ std::vector<std::string> vBase::GetValueVector(const char * attrname, const char
 			needs_freeing = true;
 		} else {
 			// nasty, but avoids tweaking vformat.
-			int idx=0;
+			int idx = 0;
 			do {
-				value=b_vformat_attribute_get_nth_value(attr,idx++);
-				if(value) {
+				value = b_vformat_attribute_get_nth_value(attr, idx++);
+				if( value ) {
 					ret.push_back(value);
 				}
-			} while(value);
+			} while( value );
 		}
 	}
 
@@ -336,27 +336,27 @@ std::vector<std::string> vBase::Tokenize(const std::string& str, const char deli
 	std::vector<std::string> tokens;
 	std::string::size_type delimPos = 0, tokenPos = 0, pos = 0;
 
-	if(str.length()<1) {
+	if( str.length() < 1 ) {
 		return tokens;
 	}
 
-	while(1) {
+	while( 1 ) {
 		delimPos = str.find_first_of(delim, pos);
 		tokenPos = str.find_first_not_of(delim, pos);
 
-		if(std::string::npos != delimPos) {
-			if(std::string::npos != tokenPos) {
-				if(tokenPos<delimPos) {
-					tokens.push_back(str.substr(pos,delimPos-pos));
+		if( std::string::npos != delimPos ) {
+			if( std::string::npos != tokenPos ) {
+				if( tokenPos < delimPos ) {
+					tokens.push_back(str.substr(pos, delimPos-pos));
 				} else {
 					tokens.push_back("");
 				}
 			} else {
 				tokens.push_back("");
 			}
-			pos = delimPos+1;
+			pos = delimPos + 1;
 		} else {
-			if(std::string::npos != tokenPos){
+			if( std::string::npos != tokenPos ){
 				tokens.push_back(str.substr(pos));
 			} else {
 				tokens.push_back("");
@@ -367,14 +367,15 @@ std::vector<std::string> vBase::Tokenize(const std::string& str, const char deli
 	return tokens;
 }
 
-std::string vBase::ToStringList(const std::vector<std::string>& list, const char delim)
+std::string vBase::ToStringList(const std::vector<std::string> &list, const char delim)
 {
 	std::string str;
-	for(unsigned int idx=0;idx<list.size();idx++) {
-		if(idx) {
-			str+=delim;
+	for( unsigned int idx = 0; idx < list.size(); idx++ ) {
+		if( idx ) {
+			str += delim;
 		}
 		str += list[idx];
 	}
 	return str;
 }
+

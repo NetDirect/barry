@@ -101,7 +101,7 @@ const std::string& vTodo::ToTask(const Barry::Task &task)
 	AddAttr(NewAttr("SEQUENCE", "0"));
 	AddAttr(NewAttr("SUMMARY", task.Summary.c_str()));
 	AddAttr(NewAttr("DESCRIPTION", task.Notes.c_str()));
-	AddAttr(NewAttr("CATEGORIES",ToStringList(task.Categories).c_str()));
+	AddAttr(NewAttr("CATEGORIES", ToStringList(task.Categories).c_str()));
 
 	// Status
 	if (task.StatusFlag == Barry::Task::InProgress)

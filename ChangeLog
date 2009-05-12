@@ -7,6 +7,7 @@ Release: version 0.15 - 2009/01/??
 			- s11n-boost.h
 			- Dump() should be consistent across Calendar, Memo, Task
 			- fixed i18n support to category names
+		- cleaned up code formatting to match surrounding code
 	- moved CategoryList to its own class, and removed duplicated
 		string conversion code
 	- removed protocol-specific MemoType and TaskType fields from
