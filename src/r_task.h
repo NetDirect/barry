@@ -43,7 +43,6 @@ public:
 	uint8_t RecType;
 	uint32_t RecordId;
 
-	uint8_t TaskType;
 	std::string Summary;
 	std::string Notes;
 	CategoryList Categories;

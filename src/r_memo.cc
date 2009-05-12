@@ -74,7 +74,7 @@ const unsigned char* Memo::ParseField(const unsigned char *begin,
 		return begin;
 
 	if( field->type == MEMFC_MEMO_TYPE ) {
-		if( ( MemoType = field->u.raw[0] ) != 'm' ) {
+		if( field->u.raw[0] != 'm' ) {
 			throw Error( "Memo::ParseField: MemoType is not 'm'" );
 		}
 		return begin;
@@ -213,8 +213,6 @@ void Memo::Clear()
 	Title.clear();
 	Body.clear();
 	Categories.clear();
-
-	MemoType = 0;
 
 	Unknowns.clear();
 }

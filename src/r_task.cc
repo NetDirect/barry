@@ -133,7 +133,7 @@ const unsigned char* Task::ParseField(const unsigned char *begin,
 		return begin;
 
 	if( field->type == TSKFC_TASK_TYPE ) {
-		if( ( TaskType = field->u.raw[0] ) != 't' ) {
+		if( field->u.raw[0] != 't' ) {
 			throw Error("Task::ParseField: Task Type is not 't'");
 		}
 		return begin;
@@ -328,8 +328,6 @@ void Task::Clear()
 	PriorityFlag = (PriorityFlagType)0;
 	StatusFlag = (StatusFlagType)0;
 	AlarmType = (AlarmFlagType)0;
-
-	TaskType = 0;
 
 	DueDateFlag = false;
 

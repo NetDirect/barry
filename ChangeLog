@@ -5,6 +5,8 @@ Release: version 0.15 - 2009/01/??
 		- fixed compile error when using Boost
 	- moved CategoryList to its own class, and removed duplicated
 		string conversion code
+	- removed protocol-specific MemoType and TaskType fields from
+		their corresponding record classes
 2009/05/09
 	- applied Nicolas Vivien's Task builder patch for the Storm
 		and Bookmark documentation patch

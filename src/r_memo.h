@@ -42,7 +42,6 @@ public:
 	uint8_t RecType;
 	uint32_t RecordId;
 
-	uint8_t MemoType;
 	std::string Title;
 	std::string Body;
 	CategoryList Categories;

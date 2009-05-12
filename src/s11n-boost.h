@@ -256,7 +256,6 @@ void serialize(ArchiveT &ar, Barry::Memo &m, const unsigned int ver)
 	ar & make_nvp("RecType", m.RecType);
 	ar & make_nvp("RecordId", m.RecordId);
 
-	ar & make_nvp("MemoType", m.MemoType);
 	ar & make_nvp("Title", m.Title);
 	ar & make_nvp("Body", m.Body);
 	ar & make_nvp("Categories", m.Categories);
@@ -272,7 +271,6 @@ void serialize(ArchiveT &ar, Barry::Task &t, const unsigned int ver)
 	ar & make_nvp("RecType", t.RecType);
 	ar & make_nvp("RecordId", t.RecordId);
 
-	ar & make_nvp("TaskType", t.TaskType);
 	ar & make_nvp("Summary", t.Summary);
 	ar & make_nvp("Notes", t.Notes);
 	ar & make_nvp("Categories", t.Categories);
