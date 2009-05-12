@@ -101,6 +101,7 @@ const std::string& vTodo::ToTask(const Barry::Task &task)
 	AddAttr(NewAttr("SEQUENCE", "0"));
 	AddAttr(NewAttr("SUMMARY", task.Summary.c_str()));
 	AddAttr(NewAttr("DESCRIPTION", task.Notes.c_str()));
+	AddAttr(NewAttr("CATEGORIES",ToStringList(task.Categories).c_str()));
 
 	// Status
 	if (task.StatusFlag == Barry::Task::InProgress)
@@ -190,6 +191,7 @@ const Barry::Task& vTodo::ToBarry(const char *vtodo, uint32_t RecordId)
 	string due = GetAttr("DUE", "/vtodo");
 	trace.logf("DUE attr retrieved: %s", due.c_str());
 
+
 	//
 	// Now, run checks and convert into Barry object
 	//
@@ -208,6 +210,10 @@ const Barry::Task& vTodo::ToBarry(const char *vtodo, uint32_t RecordId)
 
 	Barry::Task &rec = m_BarryTask;
 	rec.SetIds(Barry::Task::GetDefaultRecType(), RecordId);
+
+	// Categories
+
+	rec.Categories=GetValueVector("CATEGORIES","/vtodo");
 
 	// SUMMARY & DESCRIPTION fields
 	rec.Summary = summary;

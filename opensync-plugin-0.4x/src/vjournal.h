@@ -33,6 +33,7 @@
 // forward declarations
 class BarryEnvironment;
 
+
 //
 // vJournal
 //

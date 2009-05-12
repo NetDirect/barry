@@ -48,7 +48,6 @@ class vCalendar : public vBase
 
 	static const char *WeekDays[7];
 
-	std::vector<std::string> GetDOWList(const std::string& str);
 	unsigned short GetMonthWeekNumFromBYDAY(const std::string& ByDay);
 	unsigned short GetWeekDayIndexFromBYDAY(const std::string& ByDay);
 

@@ -105,7 +105,7 @@ static FieldLink<Task> TaskFieldLinks[] = {
    { TSKFC_START_TIME, "Start Time",  0, 0, 0, 0, &Task::StartTime, 0, 0, false },
    { TSKFC_DUE_TIME,   "Due Time",    0, 0, 0, 0, &Task::DueTime, 0, 0, false },
    { TSKFC_ALARM_TIME, "Alarm Time",  0, 0, 0, 0, &Task::AlarmTime, 0, 0, false },
-   { TSKFC_CATEGORIES, "Categories",  0, 0, &Task::Categories, 0, 0, 0, 0, false },
+//   { TSKFC_CATEGORIES, "Categories",  0, 0, &Task::Categories, 0, 0, 0, 0, false },
    { TSKFC_END,        "End of List", 0, 0, 0, 0, 0, 0, 0, false },
 };
 
@@ -202,8 +202,16 @@ const unsigned char* Task::ParseField(const unsigned char *begin,
 			AlarmType = AlarmProto2Rec(field->u.raw[0]);
 		}
 		return begin;
+		
+	case TSKFC_CATEGORIES:
+		{
+			std::string catstring = ParseFieldString(field);
+			if( ic )
+				catstring = ic->FromBB(catstring);
+			CategoryStr2List(catstring,Categories);
+		}
+		return begin;
 	}
-
 	// base class handles recurring data
 	if( RecurBase::ParseField(field->type, field->u.raw, btohs(field->size), ic) )
 		return begin;
@@ -286,6 +294,14 @@ void Task::BuildFields(Data &data, size_t &offset, const IConverter *ic) const
 				BuildField(data, offset, b->type, s);
 			}
 		}
+	}
+	
+	// Categories
+
+	if(Categories.size()>0) {
+		string store;
+		CategoryList2Str(Categories, store);
+		BuildField(data, offset, TSKFC_CATEGORIES, store);
 	}
 
 	// and finally save unknowns
@@ -431,6 +447,56 @@ void Task::Dump(std::ostream &os) const
 	os << Unknowns;
 	os << "\n\n";
 }
+
+void Task::CategoryStr2List(const std::string &str,Barry::CategoryList &list)
+{
+	// start fresh
+	
+	list.clear();
+
+	if( !str.size() )
+		return;
+
+	// parse the comma-delimited string to a list, stripping away
+	// any white space around each category name
+	string::size_type start = 0, end = 0, delim = str.find(',', start);
+	while( start != string::npos ) {
+		if( delim == string::npos )
+			end = str.size() - 1;
+		else
+			end = delim - 1;
+
+		// strip surrounding whitespace
+		while( str[start] == ' ' )
+			start++;
+		while( end && str[end] == ' ' )
+			end--;
+
+		if( start <= end ) {
+			string token = str.substr(start, end-start+1);
+			list.push_back(token);
+		}
+
+		// next
+		start = delim;
+		if( start != string::npos )
+			start++;
+		delim = str.find(',', start);
+	}
+}
+
+void Task::CategoryList2Str(const Barry::CategoryList &list, std::string &str)
+{
+	str.clear();
+
+	Barry::CategoryList::const_iterator i = list.begin();
+	for( ; i != list.end(); ++i ) {
+		if( str.size() )
+			str += ",";
+		str += *i;
+	}
+}
+
 
 } // namespace Barry
 

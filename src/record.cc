@@ -620,9 +620,10 @@ void Date::ToTm(struct tm *timep) const
 std::string Date::ToYYYYMMDD() const
 {
 	std::ostringstream oss;
-	oss	<< setw(4) << Year
-		<< setw(2) << Month + 1
-		<< setw(2) << Day;
+	// setfill and setw not sticky.
+	oss	<< setw(4) << setfill('0') << Year
+		<< setw(2) << setfill('0') << Month + 1
+		<< setw(2) << setfill('0') << Day;
 	return oss.str();
 }
 
@@ -635,9 +636,10 @@ std::string Date::ToYYYYMMDD() const
 std::string Date::ToBBString() const
 {
 	std::ostringstream oss;
-	oss	<< setw(2) << Day
-		<< Month + 1
-		<< Year;
+	// setw() ain't 'sticky'!
+	oss	<< setw(2) << setfill('0') << Day << '/'
+		<< setw(2) << setfill('0') << Month + 1 << '/'
+		<< setw(2) << setfill('0') << Year;
 	return oss.str();
 }
 

@@ -23,6 +23,7 @@
 #define __BARRY_SYNC_VBASE_H__
 
 #include <string>
+#include <vector>
 #include <stdexcept>
 #include "vformat.h"
 
@@ -193,7 +194,12 @@ protected:
 	void AddParam(vAttrPtr &attr, const char *name, const char *value);
 
 	std::string GetAttr(const char *attrname, const char *block = 0);
+	std::vector<std::string> GetValueVector(const char * attrname, const char * block=0);
 	vAttr GetAttrObj(const char *attrname, int nth = 0, const char *block = 0);
+	
+	std::vector<std::string> Tokenize(const std::string& str, const char delim=',');
+	std::string ToStringList(const std::vector<std::string>& list, const char delim=',');
+
 };
 
 #endif

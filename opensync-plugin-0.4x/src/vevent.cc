@@ -59,43 +59,6 @@ unsigned short vCalendar::GetWeekDayIndex(const char *dayname)
 	return 0;
 }
 
-std::vector<std::string> vCalendar::GetDOWList(const std::string& str)
-{
-	std::vector<std::string> tokens;
-	std::string::size_type delimPos = 0, tokenPos = 0, pos = 0;
-
-	if(str.length()<1) {
-		return tokens;
-	}
-
-	while(1) {
-		delimPos = str.find_first_of(',', pos);
-		tokenPos = str.find_first_not_of(',', pos);
-
-		if(std::string::npos != delimPos) {
-			if(std::string::npos != tokenPos) {
-				if(tokenPos<delimPos) {
-					tokens.push_back(str.substr(pos,delimPos-pos));
-				} else {
-					tokens.push_back("");
-				}
-			} else {
-				tokens.push_back("");
-			}
-			pos = delimPos+1;
-		} else {
-			if(std::string::npos != tokenPos){
-				tokens.push_back(str.substr(pos));
-			} else {
-				tokens.push_back("");
-			}
-			break;
-		}
-	}
-	return tokens;
-}
-
-
 unsigned short vCalendar::GetMonthWeekNumFromBYDAY(const std::string& ByDay)
 {
 	return atoi(ByDay.substr(0,ByDay.length()-2).c_str());
@@ -356,7 +319,7 @@ void vCalendar::RecurToBarryCal(vAttr& rrule, time_t starttime)
 		cal.RecurringType=Calendar::Week;
 		// we must have a dayofweek entry
 		if(args.find(string("BYDAY"))!=args.end()) {
-			std::vector<std::string> v=GetDOWList(args["BYDAY"]);
+			std::vector<std::string> v=Tokenize(args["BYDAY"]);
 			// iterate along our vector and convert
 			for(unsigned int idx=0;idx<v.size();idx++) {
 				cal.WeekDays|=pmap[v[idx]];

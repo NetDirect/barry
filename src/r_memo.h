@@ -34,6 +34,8 @@ namespace Barry {
 // forward declarations
 class IConverter;
 
+typedef std::vector<std::string> CategoryList;
+
 class BXEXPORT Memo
 {
 public:
@@ -45,13 +47,21 @@ public:
 	uint8_t MemoType;
 	std::string Title;
 	std::string Body;
-	std::string Category;
+	CategoryList Categories;
 
 	UnknownsType Unknowns;
 
 public:
 	const unsigned char* ParseField(const unsigned char *begin,
 		const unsigned char *end, const IConverter *ic = 0);
+
+protected:
+	// these two are common with Contact and duplicated. TODO: Should really make them
+	// functions, or hive them off up the object hierarchy. But there is no hierarchy 
+
+	static void CategoryStr2List(const std::string &str, Barry::CategoryList &list);
+	static void CategoryList2Str(const Barry::CategoryList &list, std::string &str);
+
 
 public:
 	Memo();

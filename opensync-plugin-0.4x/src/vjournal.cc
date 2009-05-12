@@ -89,6 +89,8 @@ const std::string& vJournal::ToMemo(const Barry::Memo &memo)
 	AddAttr(NewAttr("SEQUENCE", "0"));
 	AddAttr(NewAttr("SUMMARY", memo.Title.c_str()));
 	AddAttr(NewAttr("DESCRIPTION", memo.Body.c_str()));
+	AddAttr(NewAttr("CATEGORIES",ToStringList(memo.Categories).c_str()));
+
 
 	// FIXME - add a truly globally unique "UID" string?
 
@@ -147,6 +149,7 @@ const Barry::Memo& vJournal::ToBarry(const char *vjournal, uint32_t RecordId)
 
 	rec.Title = title;
 	rec.Body = body;
+	rec.Categories=GetValueVector("CATEGORIES","/vjournal");
 
 	std::ostringstream oss;
 	m_BarryMemo.Dump(oss);
@@ -321,4 +324,3 @@ bool VJournalConverter::CommitRecordData(BarryEnvironment *env, unsigned int dbI
 
 	return true;
 }
-
