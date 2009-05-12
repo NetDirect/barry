@@ -51,8 +51,6 @@ struct BXEXPORT ContactGroupLink
 	{}
 };
 
-typedef std::vector<std::string> CategoryList;
-
 /// \addtogroup RecordParserClasses
 /// @{
 
@@ -171,8 +169,6 @@ public:
 
 	// helpers
 	static void SplitName(const std::string &full, std::string &first, std::string &last);
-	static void CategoryStr2List(const std::string &str, Barry::CategoryList &list);
-	static void CategoryList2Str(const Barry::CategoryList &list, std::string &str);
 };
 
 BXEXPORT inline std::ostream& operator<< (std::ostream &os, const Contact &contact) {

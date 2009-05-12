@@ -252,6 +252,22 @@ struct BXEXPORT Date
 };
 BXEXPORT std::ostream& operator<<(std::ostream &os, const Date &date);
 
+class BXEXPORT CategoryList : public std::vector<std::string>
+{
+public:
+	/// Parses the given comma delimited category string into
+	/// this CategoryList object, appending each token to the vector.
+	/// Will clear vector beforehand.
+	void CategoryStr2List(const std::string &str);
+
+	/// Turns the current vectory into a comma delimited category
+	/// string suitable for use in Calendar, Task, and Memo
+	/// protocol values.
+	void CategoryList2Str(std::string &str) const;
+
+	using std::vector<std::string>::operator=;
+};
+
 
 /// \addtogroup RecordParserClasses
 ///		Parser and data storage classes.  These classes take a

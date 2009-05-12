@@ -47,7 +47,6 @@ namespace Barry {
 static FieldLink<Memo> MemoFieldLinks[] = {
     { MEMFC_TITLE,     "Title",       0, 0, &Memo::Title, 0, 0, 0, 0, true },
     { MEMFC_BODY,      "Body",        0, 0, &Memo::Body, 0, 0, 0, 0, true },
-//    { MEMFC_CATEGORY,  "Category",    0, 0, &Memo::Category, 0, 0, 0, 0, true },
     { MEMFC_END,       "End of List", 0, 0, 0, 0, 0, 0, 0, false }
 };
 
@@ -110,7 +109,7 @@ const unsigned char* Memo::ParseField(const unsigned char *begin,
 			std::string catstring = ParseFieldString(field);
 			if( ic )
 				catstring = ic->FromBB(catstring);
-			CategoryStr2List(catstring,Categories);
+			Categories.CategoryStr2List(catstring);
 		}
 		return begin;
 	}
@@ -160,7 +159,7 @@ void Memo::BuildFields(Data &data, size_t &offset, const IConverter *ic) const
 
 	if(Categories.size()>0) {
 		string store;
-		CategoryList2Str(Categories, store);
+		Categories.CategoryList2Str(store);
 		BuildField(data, offset, MEMFC_CATEGORY, store);
 	}
 
@@ -218,55 +217,6 @@ void Memo::Clear()
 	MemoType = 0;
 
 	Unknowns.clear();
-}
-
-void Memo::CategoryStr2List(const std::string &str,Barry::CategoryList &list)
-{
-	// start fresh
-
-	list.clear();
-
-	if( !str.size() )
-		return;
-
-	// parse the comma-delimited string to a list, stripping away
-	// any white space around each category name
-	string::size_type start = 0, end = 0, delim = str.find(',', start);
-	while( start != string::npos ) {
-		if( delim == string::npos )
-			end = str.size() - 1;
-		else
-			end = delim - 1;
-
-		// strip surrounding whitespace
-		while( str[start] == ' ' )
-			start++;
-		while( end && str[end] == ' ' )
-			end--;
-
-		if( start <= end ) {
-			string token = str.substr(start, end-start+1);
-			list.push_back(token);
-		}
-
-		// next
-		start = delim;
-		if( start != string::npos )
-			start++;
-		delim = str.find(',', start);
-	}
-}
-
-void Memo::CategoryList2Str(const Barry::CategoryList &list, std::string &str)
-{
-	str.clear();
-
-	Barry::CategoryList::const_iterator i = list.begin();
-	for( ; i != list.end(); ++i ) {
-		if( str.size() )
-			str += ",";
-		str += *i;
-	}
 }
 
 

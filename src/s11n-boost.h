@@ -60,6 +60,13 @@ void serialize(ArchiveT &ar, Barry::Contact::GroupLink &g, const unsigned int ve
 }
 
 template <class ArchiveT>
+void serialize(ArchiveT &ar, Barry::CategoryList &cl, const unsigned int ver)
+{
+	std::vector<std::string> &sl = cl;
+	ar & make_nvp("CategoryList", sl);
+}
+
+template <class ArchiveT>
 void serialize(ArchiveT &ar, Barry::Contact &c, const unsigned int ver)
 {
 	ar & make_nvp("RecType", c.RecType);

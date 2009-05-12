@@ -88,7 +88,7 @@ void ReadInput(Barry::Contact &contact)
 
 	string categories;
 	ReadLine("Categories", categories);
-	Contact::CategoryStr2List(categories, contact.Categories);
+	contact.Categories.CategoryStr2List(categories);
 
 	string image_path;
 	ReadLine("Photo path", image_path);

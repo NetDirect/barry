@@ -235,7 +235,7 @@ const unsigned char* Contact::ParseField(const unsigned char *begin,
 		std::string catstring = ParseFieldString(field);
 		if( ic )
 			catstring = ic->FromBB(catstring);
-		CategoryStr2List(catstring, Categories);
+		Categories.CategoryStr2List(catstring);
 		}
 		return begin;
 
@@ -369,7 +369,7 @@ void Contact::BuildFields(Data &data, size_t &offset, const IConverter *ic) cons
 	// save categories
 	if( Categories.size() ) {
 		string store;
-		CategoryList2Str(Categories, store);
+		Categories.CategoryList2Str(store);
 		BuildField(data, offset, CFC_CATEGORY, ic ? ic->ToBB(store) : store);
 	}
 
@@ -511,7 +511,7 @@ void Contact::Dump(std::ostream &os) const
 
 	if( Categories.size() ) {
 		string display;
-		CategoryList2Str(Categories, display);
+		Categories.CategoryList2Str(display);
 		os << "    Categories          : " << display << "\n";
 	}
 
@@ -561,56 +561,6 @@ void Contact::SplitName(const std::string &full, std::string &first, std::string
 	else {
 		// no space, assume only first name
 		first = full.substr(0);
-	}
-}
-
-void Contact::CategoryStr2List(const std::string &str,
-			       Barry::CategoryList &list)
-{
-	// start fresh
-	list.clear();
-
-	if( !str.size() )
-		return;
-
-	// parse the comma-delimited string to a list, stripping away
-	// any white space around each category name
-	string::size_type start = 0, end = 0, delim = str.find(',', start);
-	while( start != string::npos ) {
-		if( delim == string::npos )
-			end = str.size() - 1;
-		else
-			end = delim - 1;
-
-		// strip surrounding whitespace
-		while( str[start] == ' ' )
-			start++;
-		while( end && str[end] == ' ' )
-			end--;
-
-		if( start <= end ) {
-			string token = str.substr(start, end-start+1);
-			list.push_back(token);
-		}
-
-		// next
-		start = delim;
-		if( start != string::npos )
-			start++;
-		delim = str.find(',', start);
-	}
-}
-
-void Contact::CategoryList2Str(const Barry::CategoryList &list,
-			       std::string &str)
-{
-	str.clear();
-
-	Barry::CategoryList::const_iterator i = list.begin();
-	for( ; i != list.end(); ++i ) {
-		if( str.size() )
-			str += ", ";
-		str += *i;
 	}
 }
 

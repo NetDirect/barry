@@ -684,6 +684,62 @@ std::ostream& operator<<(std::ostream &os, const Date &date)
 }
 
 
+///////////////////////////////////////////////////////////////////////////////
+// CategoryList class
+
+/// Parses the given comma delimited category string into
+/// this CategoryList object, appending each token to the vector.
+/// Will clear vector beforehand.
+void CategoryList::CategoryStr2List(const std::string &str)
+{
+	// start fresh
+	clear();
+
+	if( !str.size() )
+		return;
+
+	// parse the comma-delimited string to a list, stripping away
+	// any white space around each category name
+	string::size_type start = 0, end = 0, delim = str.find(',', start);
+	while( start != string::npos ) {
+		if( delim == string::npos )
+			end = str.size() - 1;
+		else
+			end = delim - 1;
+
+		// strip surrounding whitespace
+		while( str[start] == ' ' )
+			start++;
+		while( end && str[end] == ' ' )
+			end--;
+
+		if( start <= end ) {
+			string token = str.substr(start, end-start+1);
+			push_back(token);
+		}
+
+		// next
+		start = delim;
+		if( start != string::npos )
+			start++;
+		delim = str.find(',', start);
+	}
+}
+
+/// Turns the current vectory into a comma delimited category
+/// string suitable for use in Calendar, Task, and Memo protocol values.
+void CategoryList::CategoryList2Str(std::string &str) const
+{
+	str.clear();
+
+	Barry::CategoryList::const_iterator i = begin();
+	for( ; i != end(); ++i ) {
+		if( str.size() )
+			str += ", ";
+		str += *i;
+	}
+}
+
 
 } // namespace Barry
 

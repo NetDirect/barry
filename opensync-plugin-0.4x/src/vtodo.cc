@@ -213,7 +213,7 @@ const Barry::Task& vTodo::ToBarry(const char *vtodo, uint32_t RecordId)
 
 	// Categories
 
-	rec.Categories=GetValueVector("CATEGORIES","/vtodo");
+	rec.Categories = GetValueVector("CATEGORIES","/vtodo");
 
 	// SUMMARY & DESCRIPTION fields
 	rec.Summary = summary;

@@ -149,7 +149,7 @@ const Barry::Memo& vJournal::ToBarry(const char *vjournal, uint32_t RecordId)
 
 	rec.Title = title;
 	rec.Body = body;
-	rec.Categories=GetValueVector("CATEGORIES","/vjournal");
+	rec.Categories = GetValueVector("CATEGORIES","/vjournal");
 
 	std::ostringstream oss;
 	m_BarryMemo.Dump(oss);
