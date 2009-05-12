@@ -252,7 +252,7 @@ void serialize(ArchiveT &ar, Barry::Memo &m, const unsigned int ver)
 	ar & make_nvp("MemoType", m.MemoType);
 	ar & make_nvp("Title", m.Title);
 	ar & make_nvp("Body", m.Body);
-	ar & make_nvp("Category", m.Category);
+	ar & make_nvp("Categories", m.Categories);
 
 	if( ver < BARRY_POD_MAP_VERSION ) {
 		ar & make_nvp( "Unknowns", m.Unknowns);
