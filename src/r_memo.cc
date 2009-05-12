@@ -223,7 +223,7 @@ void Memo::Clear()
 void Memo::CategoryStr2List(const std::string &str,Barry::CategoryList &list)
 {
 	// start fresh
-	
+
 	list.clear();
 
 	if( !str.size() )

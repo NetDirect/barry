@@ -316,7 +316,7 @@ std::vector<std::string> vBase::GetValueVector(const char * attrname, const char
 			} while(value);
 		}
 	}
-	
+
 	if( needs_freeing )
 		g_free((char *)value);
 
@@ -339,7 +339,7 @@ std::vector<std::string> vBase::Tokenize(const std::string& str, const char deli
 	if(str.length()<1) {
 		return tokens;
 	}
-	
+
 	while(1) {
 		delimPos = str.find_first_of(delim, pos);
 		tokenPos = str.find_first_not_of(delim, pos);

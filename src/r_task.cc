@@ -202,7 +202,7 @@ const unsigned char* Task::ParseField(const unsigned char *begin,
 			AlarmType = AlarmProto2Rec(field->u.raw[0]);
 		}
 		return begin;
-		
+
 	case TSKFC_CATEGORIES:
 		{
 			std::string catstring = ParseFieldString(field);
@@ -295,7 +295,7 @@ void Task::BuildFields(Data &data, size_t &offset, const IConverter *ic) const
 			}
 		}
 	}
-	
+
 	// Categories
 
 	if(Categories.size()>0) {
@@ -451,7 +451,7 @@ void Task::Dump(std::ostream &os) const
 void Task::CategoryStr2List(const std::string &str,Barry::CategoryList &list)
 {
 	// start fresh
-	
+
 	list.clear();
 
 	if( !str.size() )
