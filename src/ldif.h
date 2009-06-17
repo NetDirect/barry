@@ -177,6 +177,7 @@ public:
 	virtual std::string Notes(const Barry::Contact &con) const;
 	// calculated values...
 	virtual std::string WorkPostalAddress(const Barry::Contact &con) const;
+	virtual std::string HomePostalAddress(const Barry::Contact &con) const;
 	virtual std::string FullName(const Barry::Contact &con) const;
 	virtual std::string FQDN(const Barry::Contact &con) const;
 
@@ -214,6 +215,7 @@ public:
 	virtual void SetPublicKey(Barry::Contact &con, const std::string &val) const;
 	virtual void SetNotes(Barry::Contact &con, const std::string &val) const;
 	virtual void SetWorkPostalAddress(Barry::Contact &con, const std::string &val) const;
+	virtual void SetHomePostalAddress(Barry::Contact &con, const std::string &val) const;
 	virtual void SetFullName(Barry::Contact &con, const std::string &val) const;
 	virtual void SetFQDN(Barry::Contact &con, const std::string &val) const;
 

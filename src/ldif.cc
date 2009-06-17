@@ -80,6 +80,8 @@ const ContactLdif::NameToFunc ContactLdif::FieldMap[] = {
 		&ContactLdif::Notes, &ContactLdif::SetNotes },
 	{ "WorkPostalAddress", "Mailing Work address (includes address lines, city, province, country, and postal code)",
 		&ContactLdif::WorkPostalAddress, &ContactLdif::SetWorkPostalAddress },
+	{ "HomePostalAddress", "Mailing home address (includes address lines, city, province, country, and postal code)",
+		&ContactLdif::HomePostalAddress, &ContactLdif::SetHomePostalAddress },
 	{ "FullName", "First + Last names",
 		&ContactLdif::FullName, &ContactLdif::SetFullName },
 	{ "FQDN", "Fully qualified domain name",
@@ -137,6 +139,7 @@ ContactLdif::ContactLdif(const std::string &baseDN)
 	Map("givenName", &ContactLdif::FirstName, &ContactLdif::SetFirstName);
 	Map("street", &ContactLdif::WorkAddress1, &ContactLdif::SetWorkAddress1);
 	Map("postalAddress", &ContactLdif::WorkPostalAddress, &ContactLdif::SetWorkPostalAddress);
+	Map("homePostalAddress", &ContactLdif::HomePostalAddress, &ContactLdif::SetHomePostalAddress);
 	Map("note", &ContactLdif::Notes, &ContactLdif::SetNotes);
 
 	// add heuristics hooks
@@ -394,6 +397,11 @@ std::string ContactLdif::WorkPostalAddress(const Barry::Contact &con) const
 	return con.WorkAddress.GetLabel();
 }
 
+std::string ContactLdif::HomePostalAddress(const Barry::Contact &con) const
+{
+	return con.HomeAddress.GetLabel();
+}
+
 std::string ContactLdif::FullName(const Barry::Contact &con) const
 {
 	return con.GetFullName();
@@ -542,9 +550,16 @@ void ContactLdif::SetNotes(Barry::Contact &con, const std::string &val) const
 
 void ContactLdif::SetWorkPostalAddress(Barry::Contact &con, const std::string &val) const
 {
-	// fixme;
-//	throw std::runtime_error("SetPostalAddress() not implemented");
-//	std::cout << "SetPostalAddress() not implemented: " << val << std::endl;
+	// FIXME;
+//	throw std::runtime_error("SetWorkPostalAddress() not implemented");
+//	std::cout << "SetWorkPostalAddress() not implemented: " << val << std::endl;
+}
+
+void ContactLdif::SetHomePostalAddress(Barry::Contact &con, const std::string &val) const
+{
+	// FIXME;
+//	throw std::runtime_error("SetHomePostalAddress() not implemented");
+//	std::cout << "SetHomePostalAddress() not implemented: " << val << std::endl;
 }
 
 void ContactLdif::SetFullName(Barry::Contact &con, const std::string &val) const
