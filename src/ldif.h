@@ -165,18 +165,18 @@ public:
 	virtual std::string LastName(const Barry::Contact &con) const;
 	virtual std::string Company(const Barry::Contact &con) const;
 	virtual std::string DefaultCommunicationsMethod(const Barry::Contact &con) const;
-	virtual std::string Address1(const Barry::Contact &con) const;
-	virtual std::string Address2(const Barry::Contact &con) const;
-	virtual std::string Address3(const Barry::Contact &con) const;
-	virtual std::string City(const Barry::Contact &con) const;
-	virtual std::string Province(const Barry::Contact &con) const;
-	virtual std::string PostalCode(const Barry::Contact &con) const;
-	virtual std::string Country(const Barry::Contact &con) const;
+	virtual std::string WorkAddress1(const Barry::Contact &con) const;
+	virtual std::string WorkAddress2(const Barry::Contact &con) const;
+	virtual std::string WorkAddress3(const Barry::Contact &con) const;
+	virtual std::string WorkCity(const Barry::Contact &con) const;
+	virtual std::string WorkProvince(const Barry::Contact &con) const;
+	virtual std::string WorkPostalCode(const Barry::Contact &con) const;
+	virtual std::string WorkCountry(const Barry::Contact &con) const;
 	virtual std::string JobTitle(const Barry::Contact &con) const;
 	virtual std::string PublicKey(const Barry::Contact &con) const;
 	virtual std::string Notes(const Barry::Contact &con) const;
 	// calculated values...
-	virtual std::string PostalAddress(const Barry::Contact &con) const;
+	virtual std::string WorkPostalAddress(const Barry::Contact &con) const;
 	virtual std::string FullName(const Barry::Contact &con) const;
 	virtual std::string FQDN(const Barry::Contact &con) const;
 
@@ -203,17 +203,17 @@ public:
 	virtual void SetLastName(Barry::Contact &con, const std::string &val) const;
 	virtual void SetCompany(Barry::Contact &con, const std::string &val) const;
 	virtual void SetDefaultCommunicationsMethod(Barry::Contact &con, const std::string &val) const;
-	virtual void SetAddress1(Barry::Contact &con, const std::string &val) const;
-	virtual void SetAddress2(Barry::Contact &con, const std::string &val) const;
-	virtual void SetAddress3(Barry::Contact &con, const std::string &val) const;
-	virtual void SetCity(Barry::Contact &con, const std::string &val) const;
-	virtual void SetProvince(Barry::Contact &con, const std::string &val) const;
-	virtual void SetPostalCode(Barry::Contact &con, const std::string &val) const;
-	virtual void SetCountry(Barry::Contact &con, const std::string &val) const;
+	virtual void SetWorkAddress1(Barry::Contact &con, const std::string &val) const;
+	virtual void SetWorkAddress2(Barry::Contact &con, const std::string &val) const;
+	virtual void SetWorkAddress3(Barry::Contact &con, const std::string &val) const;
+	virtual void SetWorkCity(Barry::Contact &con, const std::string &val) const;
+	virtual void SetWorkProvince(Barry::Contact &con, const std::string &val) const;
+	virtual void SetWorkPostalCode(Barry::Contact &con, const std::string &val) const;
+	virtual void SetWorkCountry(Barry::Contact &con, const std::string &val) const;
 	virtual void SetJobTitle(Barry::Contact &con, const std::string &val) const;
 	virtual void SetPublicKey(Barry::Contact &con, const std::string &val) const;
 	virtual void SetNotes(Barry::Contact &con, const std::string &val) const;
-	virtual void SetPostalAddress(Barry::Contact &con, const std::string &val) const;
+	virtual void SetWorkPostalAddress(Barry::Contact &con, const std::string &val) const;
 	virtual void SetFullName(Barry::Contact &con, const std::string &val) const;
 	virtual void SetFQDN(Barry::Contact &con, const std::string &val) const;
 

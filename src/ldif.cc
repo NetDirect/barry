@@ -58,28 +58,28 @@ const ContactLdif::NameToFunc ContactLdif::FieldMap[] = {
 		&ContactLdif::Company, &ContactLdif::SetCompany },
 	{ "DefaultCommunicationsMethod", "Default communications method",
 		&ContactLdif::DefaultCommunicationsMethod, &ContactLdif::SetDefaultCommunicationsMethod },
-	{ "Address1", "Address, line 1",
-		&ContactLdif::Address1, &ContactLdif::SetAddress1 },
-	{ "Address2", "Address, line 2",
-		&ContactLdif::Address2, &ContactLdif::SetAddress2 },
-	{ "Address3", "Address, line 3",
-		&ContactLdif::Address3, &ContactLdif::SetAddress3 },
-	{ "City", "City",
-		&ContactLdif::City, &ContactLdif::SetCity },
-	{ "Province", "Province / State",
-		&ContactLdif::Province, &ContactLdif::SetProvince },
-	{ "PostalCode", "Postal / ZIP code",
-		&ContactLdif::PostalCode, &ContactLdif::SetPostalCode },
-	{ "Country", "Country",
-		&ContactLdif::Country, &ContactLdif::SetCountry },
+	{ "WorkAddress1", "Work Address, line 1",
+		&ContactLdif::WorkAddress1, &ContactLdif::SetWorkAddress1 },
+	{ "WorkAddress2", "Work Address, line 2",
+		&ContactLdif::WorkAddress2, &ContactLdif::SetWorkAddress2 },
+	{ "WorkAddress3", "Work Address, line 3",
+		&ContactLdif::WorkAddress3, &ContactLdif::SetWorkAddress3 },
+	{ "WorkCity", "WorkCity",
+		&ContactLdif::WorkCity, &ContactLdif::SetWorkCity },
+	{ "WorkProvince", "WorkProvince / State",
+		&ContactLdif::WorkProvince, &ContactLdif::SetWorkProvince },
+	{ "WorkPostalCode", "Work Postal / ZIP code",
+		&ContactLdif::WorkPostalCode, &ContactLdif::SetWorkPostalCode },
+	{ "WorkCountry", "WorkCountry",
+		&ContactLdif::WorkCountry, &ContactLdif::SetWorkCountry },
 	{ "JobTitle", "Job Title",
 		&ContactLdif::JobTitle, &ContactLdif::SetJobTitle },
 	{ "PublicKey", "Public key",
 		&ContactLdif::PublicKey, &ContactLdif::SetPublicKey },
 	{ "Notes", "Notes",
 		&ContactLdif::Notes, &ContactLdif::SetNotes },
-	{ "PostalAddress", "Mailing address (includes address lines, city, province, country, and postal code)",
-		&ContactLdif::PostalAddress, &ContactLdif::SetPostalAddress },
+	{ "WorkPostalAddress", "Mailing Work address (includes address lines, city, province, country, and postal code)",
+		&ContactLdif::WorkPostalAddress, &ContactLdif::SetWorkPostalAddress },
 	{ "FullName", "First + Last names",
 		&ContactLdif::FullName, &ContactLdif::SetFullName },
 	{ "FQDN", "Fully qualified domain name",
@@ -122,11 +122,11 @@ ContactLdif::ContactLdif(const std::string &baseDN)
 	Map("homePhone", &ContactLdif::HomePhone, &ContactLdif::SetHomePhone);
 	Map("mobile", &ContactLdif::MobilePhone, &ContactLdif::SetMobilePhone);
 	Map("pager", &ContactLdif::Pager, &ContactLdif::SetPager);
-	Map("l", &ContactLdif::City, &ContactLdif::SetCity);
-	Map("st", &ContactLdif::Province, &ContactLdif::SetProvince);
-	Map("postalCode", &ContactLdif::PostalCode, &ContactLdif::SetPostalCode);
+	Map("l", &ContactLdif::WorkCity, &ContactLdif::SetWorkCity);
+	Map("st", &ContactLdif::WorkProvince, &ContactLdif::SetWorkProvince);
+	Map("postalCode", &ContactLdif::WorkPostalCode, &ContactLdif::SetWorkPostalCode);
 	Map("o", &ContactLdif::Company, &ContactLdif::SetCompany);
-	Map("c", &ContactLdif::Country, &ContactLdif::SetCountry);
+	Map("c", &ContactLdif::WorkCountry, &ContactLdif::SetWorkCountry);
 	SetObjectClass("c", "country");
 
 	Map("title", &ContactLdif::JobTitle, &ContactLdif::SetJobTitle);
@@ -135,8 +135,8 @@ ContactLdif::ContactLdif(const std::string &baseDN)
 	Map("cn", &ContactLdif::FullName, &ContactLdif::SetFullName);
 	Map("sn", &ContactLdif::LastName, &ContactLdif::SetLastName);
 	Map("givenName", &ContactLdif::FirstName, &ContactLdif::SetFirstName);
-	Map("street", &ContactLdif::Address1, &ContactLdif::SetAddress1);
-	Map("postalAddress", &ContactLdif::PostalAddress, &ContactLdif::SetPostalAddress);
+	Map("street", &ContactLdif::WorkAddress1, &ContactLdif::SetWorkAddress1);
+	Map("postalAddress", &ContactLdif::WorkPostalAddress, &ContactLdif::SetWorkPostalAddress);
 	Map("note", &ContactLdif::Notes, &ContactLdif::SetNotes);
 
 	// add heuristics hooks
@@ -339,37 +339,37 @@ std::string ContactLdif::DefaultCommunicationsMethod(const Barry::Contact &con) 
 	return con.DefaultCommunicationsMethod;
 }
 
-std::string ContactLdif::Address1(const Barry::Contact &con) const
+std::string ContactLdif::WorkAddress1(const Barry::Contact &con) const
 {
 	return con.WorkAddress.Address1;
 }
 
-std::string ContactLdif::Address2(const Barry::Contact &con) const
+std::string ContactLdif::WorkAddress2(const Barry::Contact &con) const
 {
 	return con.WorkAddress.Address2;
 }
 
-std::string ContactLdif::Address3(const Barry::Contact &con) const
+std::string ContactLdif::WorkAddress3(const Barry::Contact &con) const
 {
 	return con.WorkAddress.Address3;
 }
 
-std::string ContactLdif::City(const Barry::Contact &con) const
+std::string ContactLdif::WorkCity(const Barry::Contact &con) const
 {
 	return con.WorkAddress.City;
 }
 
-std::string ContactLdif::Province(const Barry::Contact &con) const
+std::string ContactLdif::WorkProvince(const Barry::Contact &con) const
 {
 	return con.WorkAddress.Province;
 }
 
-std::string ContactLdif::PostalCode(const Barry::Contact &con) const
+std::string ContactLdif::WorkPostalCode(const Barry::Contact &con) const
 {
 	return con.WorkAddress.PostalCode;
 }
 
-std::string ContactLdif::Country(const Barry::Contact &con) const
+std::string ContactLdif::WorkCountry(const Barry::Contact &con) const
 {
 	return con.WorkAddress.Country;
 }
@@ -389,7 +389,7 @@ std::string ContactLdif::Notes(const Barry::Contact &con) const
 	return con.Notes;
 }
 
-std::string ContactLdif::PostalAddress(const Barry::Contact &con) const
+std::string ContactLdif::WorkPostalAddress(const Barry::Contact &con) const
 {
 	return con.WorkAddress.GetLabel();
 }
@@ -490,37 +490,37 @@ void ContactLdif::SetDefaultCommunicationsMethod(Barry::Contact &con, const std:
 	con.DefaultCommunicationsMethod = val;
 }
 
-void ContactLdif::SetAddress1(Barry::Contact &con, const std::string &val) const
+void ContactLdif::SetWorkAddress1(Barry::Contact &con, const std::string &val) const
 {
 	con.WorkAddress.Address1 = val;
 }
 
-void ContactLdif::SetAddress2(Barry::Contact &con, const std::string &val) const
+void ContactLdif::SetWorkAddress2(Barry::Contact &con, const std::string &val) const
 {
 	con.WorkAddress.Address2 = val;
 }
 
-void ContactLdif::SetAddress3(Barry::Contact &con, const std::string &val) const
+void ContactLdif::SetWorkAddress3(Barry::Contact &con, const std::string &val) const
 {
 	con.WorkAddress.Address3 = val;
 }
 
-void ContactLdif::SetCity(Barry::Contact &con, const std::string &val) const
+void ContactLdif::SetWorkCity(Barry::Contact &con, const std::string &val) const
 {
 	con.WorkAddress.City = val;
 }
 
-void ContactLdif::SetProvince(Barry::Contact &con, const std::string &val) const
+void ContactLdif::SetWorkProvince(Barry::Contact &con, const std::string &val) const
 {
 	con.WorkAddress.Province = val;
 }
 
-void ContactLdif::SetPostalCode(Barry::Contact &con, const std::string &val) const
+void ContactLdif::SetWorkPostalCode(Barry::Contact &con, const std::string &val) const
 {
 	con.WorkAddress.PostalCode = val;
 }
 
-void ContactLdif::SetCountry(Barry::Contact &con, const std::string &val) const
+void ContactLdif::SetWorkCountry(Barry::Contact &con, const std::string &val) const
 {
 	con.WorkAddress.Country = val;
 }
@@ -540,7 +540,7 @@ void ContactLdif::SetNotes(Barry::Contact &con, const std::string &val) const
 	con.Notes = val;
 }
 
-void ContactLdif::SetPostalAddress(Barry::Contact &con, const std::string &val) const
+void ContactLdif::SetWorkPostalAddress(Barry::Contact &con, const std::string &val) const
 {
 	// fixme;
 //	throw std::runtime_error("SetPostalAddress() not implemented");
