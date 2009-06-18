@@ -24,6 +24,7 @@
 
 #include <opensync/opensync.h>
 #include <stdarg.h>
+#include <stdio.h>
 
 class Trace
 {
