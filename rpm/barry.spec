@@ -160,6 +160,7 @@ cd ../
 %{__cp} ppp/barry-o2ireland %{buildroot}%{_sysconfdir}/ppp/peers/
 %{__cp} ppp/barry-tmobileus %{buildroot}%{_sysconfdir}/ppp/peers/
 %{__cp} ppp/barry-att_cingular %{buildroot}%{_sysconfdir}/ppp/peers/
+%{__cp} ppp/barry-chinamobile %{buildroot}%{_sysconfdir}/ppp/peers/
 %{__mkdir_p} %{buildroot}%{_sysconfdir}/chatscripts
 %{__cp} ppp/barry-rogers.chat %{buildroot}%{_sysconfdir}/chatscripts/
 %{__cp} ppp/barry-verizon.chat %{buildroot}%{_sysconfdir}/chatscripts/
@@ -167,6 +168,7 @@ cd ../
 %{__cp} ppp/barry-o2ireland.chat %{buildroot}%{_sysconfdir}/chatscripts/
 %{__cp} ppp/barry-tmobileus.chat %{buildroot}%{_sysconfdir}/chatscripts/
 %{__cp} ppp/barry-att_cingular.chat %{buildroot}%{_sysconfdir}/chatscripts/
+%{__cp} ppp/barry-chinamobile.chat %{buildroot}%{_sysconfdir}/chatscripts/
 # Install hal fdi config
 %{__mkdir_p} %{buildroot}%{_datadir}/hal/fdi/information/10freedesktop
 %{__cp} hal/10-blackberry.fdi %{buildroot}%{_datadir}/hal/fdi/information/10freedesktop
@@ -238,12 +240,14 @@ cd ../
 %attr(0644,root,root) %config %{_sysconfdir}/ppp/peers/barry-o2ireland
 %attr(0644,root,root) %config %{_sysconfdir}/ppp/peers/barry-tmobileus
 %attr(0644,root,root) %config %{_sysconfdir}/ppp/peers/barry-att_cingular
+%attr(0644,root,root) %config %{_sysconfdir}/ppp/peers/barry-chinamobile
 %attr(0640,root,root) %config %{_sysconfdir}/chatscripts/barry-rogers.chat
 %attr(0640,root,root) %config %{_sysconfdir}/chatscripts/barry-verizon.chat
 %attr(0640,root,root) %config %{_sysconfdir}/chatscripts/barry-sprint.chat
 %attr(0640,root,root) %config %{_sysconfdir}/chatscripts/barry-o2ireland.chat
 %attr(0640,root,root) %config %{_sysconfdir}/chatscripts/barry-tmobileus.chat
 %attr(0640,root,root) %config %{_sysconfdir}/chatscripts/barry-att_cingular.chat
+%attr(0640,root,root) %config %{_sysconfdir}/chatscripts/barry-chinamobile.chat
 %doc COPYING
 
 %if %{with_gui}
