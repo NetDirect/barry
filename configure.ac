@@ -61,6 +61,18 @@ else
 	BOOST_ENABLED="true"
 fi
 
+if test x"$use_boost" != "xno" ; then
+	AC_CHECK_LIB(boost_serialization, main,
+				 [BOOST_LDADD="-lboost_serialization"],
+				 [
+				  	AC_CHECK_LIB(boost_serialization-mt, main,
+								 [BOOST_LDADD="-lboost_serialization-mt"],
+								 [AC_MSG_ERROR(boost_serialization not found)]
+								 )
+				])
+fi
+
+
 #PKG_CHECK_MODULES([OPENSSL], [openssl])
 
 PKG_CHECK_MODULES([FUSE], [fuse >= 2.5],
@@ -73,6 +85,8 @@ AC_SUBST(pkgconfigdir)
 
 AC_SUBST(BOOST_LIB_PATH)
 AC_SUBST(BOOST_INC_PATH)
+AC_SUBST(BOOST_LDADD)
+
 AC_SUBST(LIBUSB_CFLAGS)
 AC_SUBST(LIBUSB_LIBS)
 

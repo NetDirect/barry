@@ -23,7 +23,7 @@ btool_LDFLAGS = -L@BOOST_LIB_PATH@
 else
 btool_CXXFLAGS = -D__BARRY_BOOST_MODE__ -D_REENTRANT $(AM_CXXFLAGS)
 endif
-btool_LDADD += -lboost_serialization
+btool_LDADD += @BOOST_LDADD@
 endif
 
 if WITH_BOOST
@@ -35,7 +35,7 @@ bs11nread_LDFLAGS = -L@BOOST_LIB_PATH@
 else
 bs11nread_CXXFLAGS = -D_REENTRANT $(AM_CXXFLAGS)
 endif
-bs11nread_LDADD += -lboost_serialization
+bs11nread_LDADD += @BOOST_LDADD@
 endif
 
 bidentify_SOURCES = bidentify.cc
