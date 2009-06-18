@@ -92,6 +92,7 @@ Contributors (code and otherwise) in alphabetical order by last name:
 		- memo sync support
 		- task sync support
 		- call log parser
+		- ldif converter patches
 	Niels de Vos <nixpanic@users.sourceforge.net>
 		- debian package patches
 		- usb_storage unbind script

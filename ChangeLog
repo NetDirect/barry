@@ -2,6 +2,9 @@ Release: version 0.15 - 2009/01/??
 ------------------------------------------------------------------------------
 2009/06/18
 	- added non-backward-compatibility note to man/btool.1
+	- applied Nicolas Vivien's LDIF patches, clarifying split
+		between work and home addresses, and adding support
+		for the homePostalAddress LDAP field
 2009/05/12
 	- applied Dr. J A Gow's category patches (task + memo)
 		- fixed compile error when using Boost
