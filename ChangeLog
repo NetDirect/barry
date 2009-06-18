@@ -8,7 +8,7 @@ Release: version 0.15 - 2009/01/??
 	- fixed missing #includes for Fedora 11.  Thanks to
 		Nathanael Noblet for reporting this.
 	- applied Ryan Li's PPP chat script for China Mobile
-	- added barry-chinamobile chat script to RPM
+	- added barry-chinamobile chat script to RPM and Debian packages
 2009/05/12
 	- applied Dr. J A Gow's category patches (task + memo)
 		- fixed compile error when using Boost
