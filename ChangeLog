@@ -7,6 +7,7 @@ Release: version 0.15 - 2009/01/??
 		for the homePostalAddress LDAP field
 	- fixed missing #includes for Fedora 11.  Thanks to
 		Nathanael Noblet for reporting this.
+	- applied Ryan Li's PPP chat script for China Mobile
 2009/05/12
 	- applied Dr. J A Gow's category patches (task + memo)
 		- fixed compile error when using Boost

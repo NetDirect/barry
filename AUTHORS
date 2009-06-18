@@ -52,6 +52,7 @@ Contributors (code and otherwise) in alphabetical order by last name:
 		- packed module support in pkzip format
 	Ryan Li <ryan@ryanium.com>
 		- SMS record parsing
+		- China mobile chat script
 	Duncan Mak
 		- modern udev updates
 	David Mansfield <barry@dm.cobite.com>

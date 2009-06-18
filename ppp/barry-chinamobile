@@ -1,0 +1,34 @@
+connect "/usr/sbin/chat -f /etc/chatscripts/barry-chinamobile.chat"
+
+noauth
+user ""
+password ""
+
+defaultroute
+usepeerdns
+
+noipdefault
+nodetach
+novj
+nodeflate
+nobsdcomp
+noaccomp
+nocrtscts
+nomultilink
+nopcomp
+nomagic
+
+passive
+
+ipcp-restart 7
+ipcp-accept-local
+ipcp-accept-remote
+
+lcp-echo-interval 0
+lcp-echo-failure 999
+
+mtu 1492
+
+debug
+
+pty "/usr/sbin/pppob"
