@@ -63,13 +63,13 @@ fi
 
 if test x"$use_boost" != "xno" ; then
 	AC_CHECK_LIB(boost_serialization, main,
-				 [BOOST_LDADD="-lboost_serialization"],
-				 [
-				  	AC_CHECK_LIB(boost_serialization-mt, main,
-								 [BOOST_LDADD="-lboost_serialization-mt"],
-								 [AC_MSG_ERROR(boost_serialization not found)]
-								 )
-				])
+		[BOOST_LDADD="-lboost_serialization"],
+		[
+			AC_CHECK_LIB(boost_serialization-mt, main,
+				[BOOST_LDADD="-lboost_serialization-mt"],
+				[AC_MSG_ERROR(boost_serialization not found)]
+				)
+		])
 fi
 
 
