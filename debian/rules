@@ -29,7 +29,7 @@ install/barry-util::
 	install -m 0644 $(CURDIR)/udev/debian/10-blackberry.rules $(CURDIR)/debian/barry-util/etc/udev/rules.d/10-blackberry.rules
 	# Install modprobe blacklist file for bcharge, into barry-util package
 	install -d $(CURDIR)/debian/barry-util/etc/modprobe.d
-	install -m 0644 $(CURDIR)/modprobe/blacklist-berry_charge $(CURDIR)/debian/barry-util/etc/modprobe.d/blacklist-berry_charge
+	install -m 0644 $(CURDIR)/modprobe/blacklist-berry_charge.conf $(CURDIR)/debian/barry-util/etc/modprobe.d/blacklist-berry_charge.conf
 	# Install default ppp options and chat scripts
 	install -d $(CURDIR)/debian/barry-util/etc/ppp/peers
 	install -m 0644 $(CURDIR)/ppp/barry-rogers $(CURDIR)/ppp/barry-verizon $(CURDIR)/ppp/barry-sprint $(CURDIR)/ppp/barry-o2ireland $(CURDIR)/ppp/barry-tmobileus $(CURDIR)/ppp/barry-att_cingular $(CURDIR)/ppp/barry-chinamobile $(CURDIR)/debian/barry-util/etc/ppp/peers

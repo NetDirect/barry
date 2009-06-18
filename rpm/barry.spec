@@ -152,7 +152,7 @@ cd ../
 %{__cp} udev/fedora/10-blackberry.perms %{buildroot}%{_sysconfdir}/security/console.perms.d/
 %endif
 %{__mkdir_p} %{buildroot}%{_sysconfdir}/modprobe.d
-%{__cp} modprobe/blacklist-berry_charge %{buildroot}%{_sysconfdir}/modprobe.d/
+%{__cp} modprobe/blacklist-berry_charge.conf %{buildroot}%{_sysconfdir}/modprobe.d/
 %{__mkdir_p} %{buildroot}%{_sysconfdir}/ppp/peers
 %{__cp} ppp/barry-rogers %{buildroot}%{_sysconfdir}/ppp/peers/
 %{__cp} ppp/barry-verizon %{buildroot}%{_sysconfdir}/ppp/peers/
@@ -233,7 +233,7 @@ cd ../
 %attr(0644,root,root) %{_datadir}/hal/fdi/information/10freedesktop/10-blackberry.fdi
 %attr(0644,root,root) %config %{_sysconfdir}/udev/rules.d/*
 %attr(0644,root,root) %config %{_sysconfdir}/security/console.perms.d/*
-%attr(0644,root,root) %config %{_sysconfdir}/modprobe.d/blacklist-berry_charge
+%attr(0644,root,root) %config %{_sysconfdir}/modprobe.d/blacklist-berry_charge.conf
 %attr(0644,root,root) %config %{_sysconfdir}/ppp/peers/barry-rogers
 %attr(0644,root,root) %config %{_sysconfdir}/ppp/peers/barry-verizon
 %attr(0644,root,root) %config %{_sysconfdir}/ppp/peers/barry-sprint

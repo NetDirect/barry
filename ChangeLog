@@ -9,6 +9,9 @@ Release: version 0.15 - 2009/01/??
 		Nathanael Noblet for reporting this.
 	- applied Ryan Li's PPP chat script for China Mobile
 	- added barry-chinamobile chat script to RPM and Debian packages
+	- renamed blacklist-berry_charge to blacklist-berry_charge.conf
+		for Debian sid and Fedora 11.  Thanks to Rodrigo Linfati
+		for reporting.
 2009/05/12
 	- applied Dr. J A Gow's category patches (task + memo)
 		- fixed compile error when using Boost
