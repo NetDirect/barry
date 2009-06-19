@@ -12,10 +12,7 @@ export CXXFLAGS="-Wall -Werror -O0 -g"
 export CC="ccache gcc"
 export CXX="ccache g++"
 
-#export BOOSTOPT=""
-#export BOOSTOPT="--with-boost"
-#export BOOSTOPT="--with-boost=/home/cdfrey/software/boost/rootdir-gcc-3.3"
-export BOOSTOPT="--with-boost=/home/cdfrey/software/boost/rootdir-gcc-4.1"
+export BOOSTOPT="--enable-boost"
 
 if [ -n "$1" ] ; then
 	CHOICE="$1"
