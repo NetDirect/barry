@@ -155,7 +155,7 @@ btool:
 	cd barry
 	./buildgen.sh cleanall         (this will make a pristine tree)
 	./buildgen.sh                  (this creates configure)
-	./configure --with-boost=/usr --enable-gui --enable-opensync-plugin
+	./configure --enable-boost --enable-gui --enable-opensync-plugin
 	make
 	make install
 	doxygen
