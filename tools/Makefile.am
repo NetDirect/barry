@@ -15,27 +15,17 @@ endif
 sbin_PROGRAMS = bcharge breset pppob
 
 btool_SOURCES = btool.cc
-btool_LDADD = ../src/libbarry.la $(LIBUSB_LIBS) -lpthread
+btool_LDADD = ../src/libbarry.la $(LIBUSB_LIBS) -lpthread @BOOST_LDADD@
 if WITH_BOOST
-if WITH_BOOST_PATHS
-btool_CXXFLAGS = -D__BARRY_BOOST_MODE__ -D_REENTRANT -I@BOOST_INC_PATH@ $(AM_CXXFLAGS)
-btool_LDFLAGS = -L@BOOST_LIB_PATH@
-else
-btool_CXXFLAGS = -D__BARRY_BOOST_MODE__ -D_REENTRANT $(AM_CXXFLAGS)
+btool_CXXFLAGS = -D__BARRY_BOOST_MODE__ -D_REENTRANT @BOOST_INC_PATH@ $(AM_CXXFLAGS)
 endif
-btool_LDADD += @BOOST_LDADD@
-endif
+btool_LDFLAGS = @BOOST_LIB_PATH@
 
 if WITH_BOOST
 bs11nread_SOURCES = bs11nread.cc
-bs11nread_LDADD = ../src/libbarry.la $(LIBUSB_LIBS) -lpthread
-if WITH_BOOST_PATHS
-bs11nread_CXXFLAGS = -D_REENTRANT -I@BOOST_INC_PATH@ $(AM_CXXFLAGS)
-bs11nread_LDFLAGS = -L@BOOST_LIB_PATH@
-else
-bs11nread_CXXFLAGS = -D_REENTRANT $(AM_CXXFLAGS)
-endif
-bs11nread_LDADD += @BOOST_LDADD@
+bs11nread_LDADD = ../src/libbarry.la $(LIBUSB_LIBS) -lpthread @BOOST_LDADD@
+bs11nread_CXXFLAGS = -D_REENTRANT @BOOST_INC_PATH@ $(AM_CXXFLAGS)
+bs11nread_LDFLAGS = @BOOST_LIB_PATH@
 endif
 
 bidentify_SOURCES = bidentify.cc
@@ -73,3 +63,4 @@ bfuse_LDADD = ../src/libbarry.la $(FUSE_LIBS) -lpthread
 endif
 
 brimtrans_SOURCES = brimtrans.cc
+
