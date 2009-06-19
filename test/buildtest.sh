@@ -122,7 +122,7 @@ export CXXFLAGS="-Wall -Werror -O0 -g"
 ./configure --prefix="$BASEPATH/build/rootdir"
 make $MAKEOPTS
 make distclean
-./configure --prefix="$BASEPATH/build/rootdir" --with-boost --with-zlib
+./configure --prefix="$BASEPATH/build/rootdir" --enable-boost --with-zlib
 make $MAKEOPTS
 make install
 make distclean
@@ -162,7 +162,7 @@ echo "Single build test..."
 rm -rf "$BASEPATH/build/rootdir"
 
 export CXXFLAGS="-Wall -Werror -O0 -g"
-./configure --prefix="$BASEPATH/build/rootdir" --with-boost \
+./configure --prefix="$BASEPATH/build/rootdir" --enable-boost \
 	--enable-gui --enable-opensync-plugin --enable-opensync-plugin-4x
 make $MAKEOPTS install
 make distclean
