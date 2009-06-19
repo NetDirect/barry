@@ -1,5 +1,27 @@
 Release: version 0.15 - 2009/01/??
 ------------------------------------------------------------------------------
+2009/06/19
+	- reworked autoconf rules to handle every kind of Boost dependency:
+		- let user enable/disable from configure, default to
+			disable, but error if enabled and not available
+		- let user specify separate include and lib paths, since
+			some Boost installations have an additional
+			boost-1.34.1 style directory in them
+			- default to no path overrides, using system defaults
+		- let user specify name of serialization library, since
+			the name of the library can change whether you're
+			building from source or not
+			- default to searching for boost_serialization or
+				boost_serialization-mt, and error if not found
+		- New configure switches are:
+		  --enable-boost                   Handles enable/disable
+		  --with-boost-include=path        Override the include path
+		  --with-boost-lib=path            Override the lib path
+		  --with-boost-serialization=name  Override the name of
+		                                   serialization library
+		                                   to link with
+	- updated documentation, build test, and binary packages to use
+		new switches
 2009/06/18
 	- added non-backward-compatibility note to man/btool.1
 	- applied Nicolas Vivien's LDIF patches, clarifying split
@@ -12,6 +34,8 @@ Release: version 0.15 - 2009/01/??
 	- renamed blacklist-berry_charge to blacklist-berry_charge.conf
 		for Debian sid and Fedora 11.  Thanks to Rodrigo Linfati
 		for reporting.
+	- applied Nicolas Vivien's autoconf patch to automatically
+		search for boost_serialization or boost_serialization-mt
 2009/05/12
 	- applied Dr. J A Gow's category patches (task + memo)
 		- fixed compile error when using Boost
