@@ -9,6 +9,7 @@ Release: version 0.15 - 2009/01/??
 		packet commands.  This is seen in Windows traffic as well,
 		so should not be considered an error.  Thanks to Josh Kropf
 		for confirming this protocol behaviour.
+	- updated socket.cc to use new BadPacket exception where appropriate
 2009/06/19
 	- reworked autoconf rules to handle every kind of Boost dependency:
 		- let user enable/disable from configure, default to

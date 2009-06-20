@@ -567,7 +567,7 @@ void SocketZero::Close(Socket &socket)
 		socket.ForceClosed();
 
 		eout("Packet:\n" << response);
-		throw Error("Socket: Bad CLOSED packet in Close");
+		throw BadPacket(rpack->command, "Socket: Bad CLOSED packet in Close");
 	}
 
 	if( m_resetOnClose ) {
@@ -577,7 +577,8 @@ void SocketZero::Close(Socket &socket)
 
 		Send(reset_packet);
 		if( reset_packet.CommandResponse() != SB_COMMAND_RESET_REPLY ) {
-			throw Error("Socket: Missing RESET_REPLY in Close");
+			throw BadPacket(reset_packet.CommandResponse(),
+				"Socket: Missing RESET_REPLY in Close");
 		}
 	}
 
