@@ -11,6 +11,8 @@ The Barry library has the following exception hierarchy:
 			- Barry::BadData
 			- Barry::BadSize
 			- Barry::ErrnoError
+			- Barry::BadPackedFormat
+			- Barry::BadPacket
 
 Usb::Error
 	All specific USB error exceptions will be derived from

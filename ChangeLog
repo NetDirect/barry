@@ -1,5 +1,8 @@
 Release: version 0.15 - 2009/01/??
 ------------------------------------------------------------------------------
+2009/06/20
+	- added BadPacket exception, for socket errors that need to meddle
+		with the response code
 2009/06/19
 	- reworked autoconf rules to handle every kind of Boost dependency:
 		- let user enable/disable from configure, default to

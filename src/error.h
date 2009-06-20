@@ -162,6 +162,26 @@ public:
 	uint8_t format() const { return m_format; }
 };
 
+//
+// BadPacket
+//
+/// Thrown by the socket class if a packet command's response indicates
+/// an error.  Some commands may be able to recover inside the library,
+/// so a special exception is used, that includes the response code.
+///
+class BXEXPORT BadPacket : public Barry::Error
+{
+	uint8_t m_response;
+
+public:
+	BadPacket(uint8_t response, const std::string &msg)
+		: Barry::Error(msg)
+		, m_response(response)
+		{}
+
+	uint8_t response() const { return m_response; }
+};
+
 /// @}
 
 } // namespace Barry
