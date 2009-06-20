@@ -10,6 +10,8 @@ Release: version 0.15 - 2009/01/??
 		so should not be considered an error.  Thanks to Josh Kropf
 		for confirming this protocol behaviour.
 	- updated socket.cc to use new BadPacket exception where appropriate
+	- pulled from Josh Kropf: 0f1cca2fa69d0810d439ade4fb3dd0dfa15c89a6
+		- fixed size issue with deviceinfo command on 7130 devices
 2009/06/19
 	- reworked autoconf rules to handle every kind of Boost dependency:
 		- let user enable/disable from configure, default to
