@@ -473,7 +473,17 @@ bool JavaLoader::StopStream()
 
 	JLPacket packet(cmd, data, response);
 	packet.Goodbye();
-	m_socket->Packet(packet);
+	try {
+		m_socket->Packet(packet);
+	} catch( BadPacket &bp ) {
+		// on some devices, such as the 7750 and the 7130,
+		// the Goodbye command receives NOT_SUPPORTED
+		// instead of the usual ACK... this is not an
+		// error, so catch that case here and ignore it.
+		// otherwise, throw it to higher levels
+		if( bp.response() != SB_COMMAND_JL_NOT_SUPPORTED )
+			throw;
+	}
 
 	m_StreamStarted = false;
 
@@ -481,7 +491,9 @@ bool JavaLoader::StopStream()
 		m_con.m_zero.SetResetOnClose(true);
 		return true;
 	}
-	else if( packet.Command() != SB_COMMAND_JL_ACK ) {
+	else if( packet.Command() != SB_COMMAND_JL_ACK &&
+		 packet.Command() != SB_COMMAND_JL_NOT_SUPPORTED )
+	{
 		ThrowJLError("JavaLoader::StopStream", packet.Command());
 	}
 

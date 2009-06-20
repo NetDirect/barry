@@ -3,6 +3,12 @@ Release: version 0.15 - 2009/01/??
 2009/06/20
 	- added BadPacket exception, for socket errors that need to meddle
 		with the response code
+	- added special case for JavaLoader's Goodbye packet
+		On older devices, such as the 7750 and 7130, they respond
+		with a NOT_SUPPORTED error instead of an ACK, for Goodbye
+		packet commands.  This is seen in Windows traffic as well,
+		so should not be considered an error.  Thanks to Josh Kropf
+		for confirming this protocol behaviour.
 2009/06/19
 	- reworked autoconf rules to handle every kind of Boost dependency:
 		- let user enable/disable from configure, default to

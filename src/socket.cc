@@ -754,11 +754,11 @@ void Socket::PacketData(Data &send, Data &receive, int timeout)
 				break;
 
 			case SB_DATA_JL_INVALID:
-				throw Error("file is not a valid Java code file");
+				throw BadPacket(rpack->command, "file is not a valid Java code file");
 				break;
 
 			case SB_COMMAND_JL_NOT_SUPPORTED:
-				throw Error("device does not support requested command");
+				throw BadPacket(rpack->command, "device does not support requested command");
 				break;
 
 			default:
