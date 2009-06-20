@@ -710,7 +710,9 @@ struct JLDeviceInfo
 	uint32_t	radio_id;
 	uint32_t	vendor_id;
 	uint32_t	active_wafs;
-	uint8_t		unknown[4];
+	// older devices (such as 7130) don't this extra data in the
+	// device info packet and will therefore fail the size check
+	//uint8_t		raw[1];
 } __attribute__ ((packed));
 #define SB_JLDEVICEINFO_SIZE			(sizeof(Barry::Protocol::JLDeviceInfo))
 
