@@ -51,6 +51,18 @@ Target: release version 0.16
 General Features
 ==============================================================================
 
+Command line tool to parse backups
+----------------------------------
+Add the ability to feed raw database data into the parser from various
+formats, so that you can test parser code, and get human readable output
+without a Blackberry device attached.
+
+Ideally, this tool should be able to read tarball backups from barrybackup,
+and read only the database(s) of interest.  There should be a sort of
+plugin method for reading data from multiple sources: Windows backup
+files, barrybackup files, btool save files, ldap, text, etc.
+
+
 Add support for the new " - All" databases
 ------------------------------------------
 New Blackberry devices appear to support a set of mixed databases, such as
