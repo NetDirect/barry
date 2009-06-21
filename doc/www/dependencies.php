@@ -36,6 +36,7 @@ some are only needed for building CVS.
 
 <ul>
 	<li><b>C and C++ compilers</b> - 4.1.x or higher, for the tr1 includes (source build)</li>
+	<li><b>ccache</b> - completely optional, but useful if you plan on compiling repeatedly</li>
 	<li><b>pkg-config</b> (source build: so configure can autodetect library locations) </li>
 	<li><b>libusb, stable (0.1.x)</b> - found at <a href="http://libusb.sourceforge.net">http://libusb.sourceforge.net/</a> </li>
 	<li><b>pthread</b>
@@ -56,6 +57,7 @@ some are only needed for building CVS.
 		OS such as FreeBSD, you'll have to install this separately.</li>
 	<li><b>gettext</b>, needed for the iconv.m4 file, on some systems,
 		when building from CVS to generate configure.</li>
+	<li><b>php</b>, needed for generating static HTML documentation (CVS builds only) </li>
 </ul>
 </p>
 
@@ -95,10 +97,11 @@ distributions should have similar package names.
 
 <ul>
 
-<p><b>Fedora 10:</b></p>
+<p><b>Fedora 11:</b></p>
 <p>Use the yum package manager to install the following:
 <ul>
 	<li> pkgconfig </li>
+	<li> libtool </li>
 	<li> libusb-devel </li>
 	<li> boost-devel (optional) </li>
 	<li> libtar-devel </li>
@@ -108,13 +111,17 @@ distributions should have similar package names.
 	<li> fuse-devel </li>
 	<li> zlib-devel </li>
 	<li> gettext-devel </li>
-	<li> opensync 0.22 is not available in Fedora 10 </li>
+	<li> libopensync-devel (0.22) </li>
+	<li> ccache (optional) </li>
+	<li> doxygen (optional) </li>
+	<li> php-cli (optional, for generating docs) </li>
 </ul>
 
 <p><b>Debian stable:</b></p>
 <p>Use the apt-get package manager to install the following:
 <ul>
 	<li> pkg-config </li>
+	<li> libtool </li>
 	<li> libusb-dev </li>
 	<li> libboost-serialization-dev </li>
 	<li> libtar-dev </li>
@@ -125,6 +132,9 @@ distributions should have similar package names.
 	<li> zlib1g-dev </li>
 	<li> gettext </li>
 	<li> libopensync0-dev </li>
+	<li> ccache (optional) </li>
+	<li> doxygen (optional) </li>
+	<li> php5-cli (optional, for generating docs) </li>
 </ul>
 
 </ul>

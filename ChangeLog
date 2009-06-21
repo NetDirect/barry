@@ -1,5 +1,7 @@
 Release: version 0.15 - 2009/01/??
 ------------------------------------------------------------------------------
+2009/06/21
+	- updated dependencies documentation page
 2009/06/20
 	- added BadPacket exception, for socket errors that need to meddle
 		with the response code
