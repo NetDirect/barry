@@ -1,8 +1,11 @@
 #!/bin/sh
 
+libtoolit() {
+	libtoolize --force --copy
+}
+
 doconf() {
 	aclocal -I $1 && \
-		libtoolize --force --copy && \
 		autoheader && \
 		automake --add-missing --copy --foreign && \
 		autoconf
@@ -74,8 +77,22 @@ else
 	#autoreconf -if --include=config
 	#autoreconf -ifv --include=config
 
-	# autoreconf doesn't seem to support custom .m4 files in config/ (???)
-	# so... do it ourselves
+	# If we let autoreconf do this, it will run libtoolize after
+	# creating some or all of the configure files.  For example,
+	# it might copy files into ../m4 again while processing the
+	# opensync-plugin/ directory, making those files newer than
+	# the gui/configure file.  This will cause configure to
+	# be regenerated (incorrectly) during the make step on some
+	# systems (Fedora 11).
+	#
+	# So... we do the libtool stuff all at once at the beginning,
+	# then the rest.
+	libtoolit m4
+	(cd gui && libtoolit ../m4)
+	(cd opensync-plugin && libtoolit ../m4)
+	(cd opensync-plugin-0.4x && libtoolit ../m4)
+
+	# Now for aclocal, autoheader, automake, and autoconf
 	doconf m4
 	(cd gui && doconf ../m4)
 	(cd opensync-plugin && doconf ../m4)

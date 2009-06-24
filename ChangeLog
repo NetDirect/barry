@@ -2,6 +2,12 @@ Release: version 0.15 - 2009/01/??
 ------------------------------------------------------------------------------
 2009/06/24
 	- cleaning up autoconf warnings on Fedora 11
+	- changed buildgen.sh to run libtoolize first for all subprojects,
+		otherwise, a later project's run may copy files into ../m4
+		after having created configure for a previous project.
+		This would cause a makefile discrepency during the build
+		on some systems (Fedora 11), and cause configure to be
+		incorrectly regenerated mid-build, due to timestamps.
 2009/06/21
 	- updated dependencies documentation page
 2009/06/20
