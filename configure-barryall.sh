@@ -12,6 +12,7 @@ export PKG_CONFIG_PATH=/home/cdfrey/software/opensync/git/rootdir/lib/pkgconfig
 
 ./configure \
 	--prefix=/home/cdfrey/Contract/netdirect/syncberry/cvs/barry1/rootdir \
+	--enable-boost \
 	--enable-gui \
 	--enable-opensync-plugin \
 	--enable-opensync-plugin-4x
