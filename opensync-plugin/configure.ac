@@ -2,9 +2,11 @@ dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
 AC_INIT([Barry OpenSync Plugin], 0.2, [], barryplugin)
-AM_INIT_AUTOMAKE(foreign)
 AC_CONFIG_SRCDIR(src/barry_sync.cc)
 AC_CONFIG_HEADER(config.h)
+AC_CONFIG_AUX_DIR([..])
+AC_CONFIG_MACRO_DIR([../m4])
+AM_INIT_AUTOMAKE(foreign)
 
 pkg_modules="opensync-1.0 glib-2.0"
 PKG_CHECK_MODULES(PACKAGE, [$pkg_modules])

@@ -1,5 +1,7 @@
 Release: version 0.15 - 2009/01/??
 ------------------------------------------------------------------------------
+2009/06/24
+	- cleaning up autoconf warnings on Fedora 11
 2009/06/21
 	- updated dependencies documentation page
 2009/06/20
