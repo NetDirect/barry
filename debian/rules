@@ -36,8 +36,8 @@ install/barry-util::
 	install -d $(CURDIR)/debian/barry-util/etc/chatscripts
 	install -m 0640 $(CURDIR)/ppp/barry-rogers.chat $(CURDIR)/ppp/barry-verizon.chat $(CURDIR)/ppp/barry-sprint.chat $(CURDIR)/ppp/barry-o2ireland.chat $(CURDIR)/ppp/barry-tmobileus.chat $(CURDIR)/ppp/barry-att_cingular.chat $(CURDIR)/ppp/barry-chinamobile.chat $(CURDIR)/debian/barry-util/etc/chatscripts
 	# Install hal fdi config
-	install -d $(CURDIR)/debian/barry-util/usr/share/hal/fdi/information/10freedesktop
-	install -m 0644 $(CURDIR)/hal/10-blackberry.fdi $(CURDIR)/debian/barry-util/usr/share/hal/fdi/information/10freedesktop
+	install -d $(CURDIR)/debian/barry-util/usr/share/hal/fdi/information/20thirdparty
+	install -m 0644 $(CURDIR)/hal/10-blackberry.fdi $(CURDIR)/debian/barry-util/usr/share/hal/fdi/information/20thirdparty
 	# Install hal support script
 	install -d $(CURDIR)/debian/barry-util/usr/bin
 	install -m 0755 $(CURDIR)/hal/hal-blackberry $(CURDIR)/debian/barry-util/usr/bin

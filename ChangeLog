@@ -1,5 +1,10 @@
 Release: version 0.15 - 2009/01/??
 ------------------------------------------------------------------------------
+2009/06/26
+	- fixed install location of hal fdi files in debian and rpm
+		HAL reserves /usr/share/hal/fdi/information/10freedesktop
+		for files that the project itself distributes, so
+		we get to use 20thirdparty.
 2009/06/24
 	- cleaning up autoconf warnings on Fedora 11
 	- changed buildgen.sh to run libtoolize first for all subprojects,
