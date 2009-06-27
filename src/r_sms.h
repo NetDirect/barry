@@ -104,6 +104,8 @@ public:
 
 	void Dump(std::ostream &os) const;
 
+	static std::string ConvertGsmToUtf8(const std::string &);
+
 	// sorting - put group links at the end
 	bool operator<(const Sms &other) const {
 		return Timestamp < other.Timestamp;
