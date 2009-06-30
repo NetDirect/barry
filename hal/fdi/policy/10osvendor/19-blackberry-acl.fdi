@@ -8,7 +8,7 @@
         <match key="usb_device.vendor_id" int="0xfca">
           <append key="info.capabilities" type="strlist">access_control</append>
           <merge key="access_control.file" type="copy_property">linux.device_file</merge>
-          <merge key="access_control.type" type="string">scanner</merge>
+          <merge key="access_control.type" type="string">pda</merge>
         </match>
       </match>
     </match>
