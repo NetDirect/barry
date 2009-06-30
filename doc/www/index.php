@@ -24,7 +24,7 @@ reverse engineer the battery charging handshake via USB.</p>
 	<li> charge your Blackberry's battery from your USB port </li>
 	<li> parse the following database records: Address Book, Email,
 		Calendar, Service Book, Memos, Tasks, PIN Messages,
-		Saved Email, Folders, and Phone Call Logs </li>
+		Saved Email, Folders, Phone Call Logs, and SMS messages </li>
 	<li> build the following database records: Address Book, Calendar,
 		Memos, Tasks </li>
 	<li> export Address Book contacts in text or LDAP LDIF format </li>
@@ -45,7 +45,7 @@ reverse engineer the battery charging handshake via USB.</p>
 
 <p>
 <ul>
-	<li>Latest release: <b>0.15</b>, released on 2009/05/??</li>
+	<li>Latest release: <b>0.15</b>, released on 2009/07/??</li>
 	<li>License: GPL v2 or later</li>
 	<li>Download official source and binary packages from
 		<a href="http://sourceforge.net/project/showfiles.php?group_id=153722">Sourceforge</a> or the <a href="http://download.opensuse.org/repositories/home:/ndprojects/">OpenSUSE Build Service</a></li>
@@ -56,13 +56,12 @@ reverse engineer the battery charging handshake via USB.</p>
 			<li><a href="http://packages.debian.org/unstable/main/barry-util">Debian, in the unstable tree, packaged by Jose Carlos Garcia Sogo</a></li>
 			<li><a href="http://koji.fedoraproject.org/koji/packageinfo?packageID=7118">Fedora, packaged by Christopher D. Stover</a>, and the related RPM <a href="http://cvs.fedoraproject.org/viewvc/rpms/barry/">CVS</a></li>
 			<li>Mandriva, packaged by Adam Williamson, and the related RPM <a href="http://svn.mandriva.com/cgi-bin/viewvc.cgi/packages/cooker/barry/current/">SVN</a></li>
-			<li><a href="http://launchpad.net/~doctormo/+archive">Ubuntu, packaged by Martin Owens</a></li>
 		</ul>
 	</li>
 	<li>Known Issues:
 	<ul>
 		<li>Restoring backups for some databases on newer Blackberries doesn't work (for example, on the 8120, 8700g)</li>
-		<li>Syncing is not supported on Fedora Core 9, since they packaged the OpenSync 0.3x devel tree (experimental support for the latest opensync SVN tree is included with a new plugin)</li>
+		<li>Syncing is not supported on Fedora Core 9 or 10, since they packaged the OpenSync 0.3x devel tree (experimental support for the latest opensync SVN tree is included with a new plugin)</li>
 		<li>Accessing the database (such as during a backup) while copying files using the usb_storage kernel module may cause some Blackberries to spontaneously reboot</li>
 	</ul>
 	</li>

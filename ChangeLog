@@ -1,5 +1,11 @@
 Release: version 0.15 - 2009/01/??
 ------------------------------------------------------------------------------
+2009/06/30
+	- documentation updates
+		- added SMS to list of parsers in documentation
+		- updated sync notes for Fedora 9 and 10 in documentation
+		- removed Martin Owen's PPA binary package link, since
+			I can't find the binaries anymore
 2009/06/26
 	- fixed install location of hal fdi files in debian and rpm
 		HAL reserves /usr/share/hal/fdi/information/10freedesktop
