@@ -62,6 +62,7 @@ ConfigFile::ConfigFile(const std::string &pin)
 		throw ConfigFileError("Configfile: empty pin");
 
 	BuildFilename();
+	BuildDefaultPath(); // this handles the situation that path is not set
 	Load();
 }
 
@@ -78,6 +79,7 @@ ConfigFile::ConfigFile(const std::string &pin,
 		throw ConfigFileError("Configfile: empty pin");
 
 	BuildFilename();
+	BuildDefaultPath();
 	Load();
 	Enlighten(db);
 }
@@ -93,10 +95,18 @@ void ConfigFile::BuildFilename()
 	if( !pw )
 		throw ConfigFileError("BuildFilename: getpwuid failed", errno);
 
+	m_filename = pw->pw_dir;
+	m_filename += "/.barry/backup/";
+	m_filename += m_pin;
+	m_filename += "/config";
+}
+
+void ConfigFile::BuildDefaultPath()
+{
+	struct passwd *pw = getpwuid(getuid());
 	m_path = pw->pw_dir;
 	m_path += "/.barry/backup/";
 	m_path += m_pin;
-	m_filename = m_path + "/config";
 }
 
 void ConfigFile::Clear()
@@ -150,6 +160,12 @@ void ConfigFile::Load()
 					m_deviceName = " ";
 				}
 			}
+			else if( keyword == "backup_path" ) {
+				iss >> std::ws;
+				std::getline(iss, m_path);
+				if( (m_path.size() == 0) || !(::CheckPath(m_path)))
+					BuildDefaultPath();
+			}
 			else if( keyword == "prompt_backup_label" ) {
 				int flag;
 				iss >> flag;
@@ -192,6 +208,10 @@ bool ConfigFile::Save()
 
 	if( m_deviceName.size() ) {
 		out << "device_name " << m_deviceName << std::endl;
+	}
+
+	if( m_path.size() ) {
+		out << "backup_path " << m_path << std::endl;
 	}
 
 	out << "prompt_backup_label " << (m_promptBackupLabel ? 1 : 0) << std::endl;
@@ -252,6 +272,14 @@ void ConfigFile::SetDeviceName(const std::string &name)
 		m_deviceName = name;
 	else
 		m_deviceName = " ";
+}
+
+void ConfigFile::SetBackupPath(const std::string &path)
+{
+	if( path.size() && ::CheckPath(path) )
+		m_path = path;
+	else
+		BuildDefaultPath();
 }
 
 void ConfigFile::SetPromptBackupLabel(bool prompt)

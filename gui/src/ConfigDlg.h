@@ -39,11 +39,13 @@ class ConfigDlg
 	std::auto_ptr<Gtk::Dialog> m_pDialog;
 	Gtk::Entry *m_pDeviceNameEntry;
 	Gtk::CheckButton *m_pPromptBackupLabelCheck;
+	Gtk::FileChooserButton *m_pBackupPath;
 
 	// config data
 	ConfigFile::DBListType m_backupList;
 	ConfigFile::DBListType m_restoreList;
 	std::string m_deviceName;
+	std::string m_backupPath;
 	bool m_promptBackupLabel;
 
 public:
@@ -54,6 +56,7 @@ public:
 	const ConfigFile::DBListType& GetBackupList() const { return m_backupList; }
 	const ConfigFile::DBListType& GetRestoreList() const { return m_restoreList; }
 	const std::string& GetDeviceName() const { return m_deviceName; }
+	const std::string& GetBackupPath() const { return m_backupPath; }
 	bool GetPromptBackupLabel() const { return m_promptBackupLabel; }
 
 	int run();

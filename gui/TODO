@@ -23,7 +23,7 @@ Required functionality:
 	Save... file chooser box in that directory.  If there are '/'
 	chars in the filename, attempt to chdir() there and open
 	Save... file chooser there.
-- add option in config dialog to set a different default backup
++ add option in config dialog to set a different default backup
 	directory instead of ~/.barry/backup/<pin>/
 - add code to detect when user is trying to quit or close window with X
 	while a backup/restore is still running and give them the

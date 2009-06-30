@@ -57,9 +57,9 @@ private:
 	bool m_promptBackupLabel;	// if true, prompt the user on every
 					// backup for a string to label the
 					// backup file with
-
 protected:
 	void BuildFilename();
+	void BuildDefaultPath();
 	void Clear();
 	void Load();
 	bool CheckPath();
@@ -111,6 +111,7 @@ public:
 	void SetRestoreList(const DBListType &list);
 
 	void SetDeviceName(const std::string &name);
+	void SetBackupPath(const std::string &path);
 	void SetPromptBackupLabel(bool prompt = true);
 };
 

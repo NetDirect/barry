@@ -476,6 +476,7 @@ void BackupWindow::on_edit_config()
 		m_pConfig->SetBackupList(dlg.GetBackupList());
 		m_pConfig->SetRestoreList(dlg.GetRestoreList());
 		m_pConfig->SetDeviceName(dlg.GetDeviceName());
+		m_pConfig->SetBackupPath(dlg.GetBackupPath());
 		m_pConfig->SetPromptBackupLabel(dlg.GetPromptBackupLabel());
 		if( !m_pConfig->Save() ) {
 			Gtk::MessageDialog msg("Error saving config: " +
