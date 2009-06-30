@@ -171,7 +171,9 @@ cd ../
 %{__cp} ppp/barry-chinamobile.chat %{buildroot}%{_sysconfdir}/chatscripts/
 # Install hal fdi config
 %{__mkdir_p} %{buildroot}%{_datadir}/hal/fdi/information/10freedesktop
-%{__cp} hal/10-blackberry.fdi %{buildroot}%{_datadir}/hal/fdi/information/10freedesktop
+%{__mkdir_p} %{buildroot}%{_datadir}/hal/fdi/policy/10osvendor
+%{__cp} hal/fdi/information/10freedesktop/10-blackberry.fdi %{buildroot}%{_datadir}/hal/fdi/information/10freedesktop
+%{__cp} hal/fdi/policy/10osvendor/19-blackberry-acl.fdi %{buildroot}%{_datadir}/hal/fdi/policy/10osvendor
 # Install hal support script
 %{__mkdir_p} %{buildroot}%{_bindir}
 %{__cp} hal/hal-blackberry %{buildroot}%{_bindir}
@@ -231,6 +233,7 @@ cd ../
 %attr(0644,root,root) %{_mandir}/man1/breset*
 %attr(0644,root,root) %{_mandir}/man1/upldif*
 %attr(0644,root,root) %{_datadir}/hal/fdi/information/10freedesktop/10-blackberry.fdi
+%attr(0644,root,root) %{_datadir}/hal/fdi/policy/10osvendor/19-blackberry-acl.fdi
 %attr(0644,root,root) %config %{_sysconfdir}/udev/rules.d/*
 %attr(0644,root,root) %config %{_sysconfdir}/security/console.perms.d/*
 %attr(0644,root,root) %config %{_sysconfdir}/modprobe.d/blacklist-berry_charge.conf

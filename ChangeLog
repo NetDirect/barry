@@ -7,6 +7,16 @@ Release: version 0.15 - 2009/01/??
 		- removed Martin Owen's PPA binary package link, since
 			I can't find the binaries anymore
 	- reverted commit 2d0e60d1: put hal fdi files back
+	- updated HAL FDI files for Fedora 11
+		- duplicated directory hierarchy under hal
+		- added 19-blackberry-acl.fdi to add the access_control
+			capability to blackberry devices when they are
+			plugged in.  As long as this file is under
+			the 10osvendor directory, then
+			20-acl-management.fdi runs after it, adding
+			the hal-acl-tool callout, which does the low
+			level getfacl/setfacl work on the /dev/bus/usb/*/*
+			device file.
 2009/06/26
 	- fixed install location of hal fdi files in debian and rpm
 		HAL reserves /usr/share/hal/fdi/information/10freedesktop
