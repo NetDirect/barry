@@ -276,7 +276,7 @@ void Sms::Dump(std::ostream &os) const
 	for (std::vector<std::string>::const_iterator i = Addresses.begin(); i < Addresses.end(); ++i) {
 		if (i != Addresses.begin())
 			os << ", ";
-		os << *Iterator;
+		os << *i;
 	}
 	os << "\n";
 
