@@ -21,7 +21,7 @@ fi
 if [ "$CHOICE" = "devel" ] ; then
 echo "Configuring for: devel"
 ./configure \
-	--prefix=/home/cdfrey/Contract/netdirect/syncberry/cvs/barry1/rootdir \
+	--prefix=/home/cdfrey/Contract/netdirect/syncberry/cvs/rootdir \
 	--with-libusb=/home/cdfrey/Contract/netdirect/syncberry/cvs/external/rootdir/libusb \
 	$BOOSTOPT
 fi
@@ -30,7 +30,7 @@ fi
 if [ "$CHOICE" = "system" ] ; then
 echo "Configuring for: system"
 ./configure \
-	--prefix=/home/cdfrey/Contract/netdirect/syncberry/cvs/barry1/rootdir \
+	--prefix=/home/cdfrey/Contract/netdirect/syncberry/cvs/rootdir \
 	$BOOSTOPT
 fi
 
@@ -38,7 +38,7 @@ fi
 if [ "$CHOICE" = "stable" ] ; then
 echo "Configuring for: stable"
 ./configure \
-	--prefix=/home/cdfrey/Contract/netdirect/syncberry/cvs/barry1/rootdir \
+	--prefix=/home/cdfrey/Contract/netdirect/syncberry/cvs/rootdir \
 	--with-libusb=/home/cdfrey/Contract/netdirect/syncberry/cvs/external/rootdir/libusb-stable \
 	$BOOSTOPT
 fi
