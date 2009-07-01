@@ -21,6 +21,7 @@ Release: version 0.15 - 2009/01/??
 	http://lists.freedesktop.org/archives/devkit-devel/2009-June/000247.html
 	- changed hal fdi policy to use "pda" instead of "scanner"
 	- applied Ryan Li's 7-bit GSM conversion patch for SMS records
+	- applied Ryan Li's barrybackup patch: can now select backup path
 2009/06/26
 	- fixed install location of hal fdi files in debian and rpm
 		HAL reserves /usr/share/hal/fdi/information/10freedesktop
