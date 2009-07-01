@@ -186,14 +186,15 @@ const unsigned char* Sms::ParseField(const unsigned char *begin,
 			}
 			if (ic) {
 				if (DataCodingScheme == SevenBit) {
-						IConvHandle utf8("UTF-8", *ic);
-						Body = ic->Convert(utf8, ConvertGsmToUtf8(Body)); // convert the Body string from GSM 03.38 defined to UTF-8
+					// SevenBit -> UTF-8 -> ic's tocode
+					IConvHandle utf8("UTF-8", *ic);
+					Body = ic->Convert(utf8, ConvertGsmToUtf8(Body)); // convert the Body string from GSM 03.38 defined to UTF-8
 				}
 				else if (DataCodingScheme == EightBit)
-						Body = ic->FromBB(Body);
+					Body = ic->FromBB(Body);
 				else {
-						IConvHandle ucs2("UCS-2BE", *ic);
-						Body = ic->Convert(ucs2, Body);
+					IConvHandle ucs2("UCS-2BE", *ic);
+					Body = ic->Convert(ucs2, Body);
 				}
 			}
 			return begin;
@@ -315,7 +316,7 @@ std::string Sms::ConvertGsmToUtf8(const std::string &s)
 	// According to the official specification, when not
 	// able to handle it, it should be treated simply as
 	// a space, which is denoted in UTF-8 as "\x20".
-	// 
+	//
 	static const std::string GsmTable[0x80] = {
 	//  0x0,        0x1,        0x2,        0x3,        0x4,        0x5,        0x6,        0x7
 		"\x40",     "\xc2\xa3", "\x24",     "\xc2\xa5", "\xc3\xa8", "\xc3\xa9", "\xc3\xb9", "\xc3\xac", // 0x00
@@ -380,3 +381,4 @@ std::string Sms::ConvertGsmToUtf8(const std::string &s)
 }
 
 } // namespace Barry
+
