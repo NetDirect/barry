@@ -2,6 +2,7 @@ Release: version 0.15 - 2009/01/??
 ------------------------------------------------------------------------------
 2009/07/02
 	- added Martin Owens' new Ubuntu PPA link to docs
+	- added DEPUTY documentation and updated AUTHORS
 2009/06/30
 	- documentation updates
 		- added SMS to list of parsers in documentation

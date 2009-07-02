@@ -1,0 +1,147 @@
+From: Chris Frey <cdfrey@foursquare.net>
+Date: Thu, 2 Jul 2009 18:18:32 -0400
+To: barry-devel@lists.sourceforge.net
+Subject: Be a Barry Deputy (or, How to volunteer)
+
+Hi folks,
+
+I know there are people who want to volunteer, but sometimes don't know
+exactly what to do.  Sometimes, they know what to do, but they have to
+wait on me for some critical architecture.  And other times, they do
+something, I see their efforts, and then I forget their names in the
+future when similar tasks arise.  I do my best, but sometimes it is easy
+to overlook some facts or details, and it is not meant to be taken
+personally.
+
+As project lead, it is my duty to make volunteering as easy and clear
+as possible.  And volunteers should be recognized for their work.
+
+I've come up with a list of roles that people can volunteer for.  The idea
+behind these roles is that a number of volunteers can be my eyes and
+ears in areas that I don't have the time to monitor consistently.
+Also, to support the notion that "with many eyes, all bugs are shallow."
+
+These roles will be added to the end of the AUTHORS file.  Each role
+can be filled with one or more people, working as a team.  They then
+report to the mailing list, to keep me up to speed, or to feed patches
+or testing data to me.
+
+I'll add people's names to the AUTHORS file the first time they report
+on one of these roles and request to be added to the list.  Being on
+the list means you intend to continue volunteering for that role.
+
+Suggestions are welcome.
+
+- Chris
+
+
+
+The List:
+
+Devel Distro Testers
+--------------------
+	Some distros release very early, and it is possible to follow
+	along their development cycle.  These distros include Fedora,
+	Ubuntu, and Debian.  There have already been some people reporting
+	bugs on pre-release versions of distros, and that has been very
+	helpful in ironing out kernel bugs, etc.  I'd like to make this
+	a formal role for those who already live on the bleeding edge.
+
+	These deputies would test the latest stable version and the
+	git version of Barry on pre-released distros and report any
+	bugs they find to the mailing list, along with patches if
+	available, and links to documentation if something new is being
+	introduced in that distro.
+
+
+Compile Checkers
+----------------
+	These deputies would simply checkout the latest git tree and
+	compile everything, on as many machines as they have, and
+	report any compile errors to the list.  This could be
+	automated as well.
+
+
+Documentation Page Maintainer
+-----------------------------
+	These deputies would claim one page from the web docs or
+	one man page, and keep it up to date with any changes in
+	the related program.  Sometimes new features in command line
+	tools such as btool, bjavaloader, etc. get lost in the
+	cracks, and don't get documented right away in the man page.
+	These deputies would watch for changes in the program options,
+	and either submit a patch to the docs, or just a reminder
+	that we've forgotten something.
+
+
+Downstream Monitors
+-------------------
+	These deputies would watch the downstream distro packager repos
+	and report any relevant patch and send it to the list.
+	This is to avoid bugs being fixed in a distro package
+	but not upstream.
+
+	Not all patches are suitable upstream, but I can easily decide
+	that if I know about the patches.
+
+	They could also report relevant bugs they see in downstream
+	bug trackers, and report them to the mailing list.
+
+	And finally, on distros such as Debian stable (when it becomes an
+	issue), they can submit small maintenance patches for fixes in
+	upstream that can be used downstream.  Examples of such changes
+	are ppp modem fixes, new chatscripts, or new Product IDs.
+
+
+Windows World Spies
+-------------------
+	These deputies would test every feature on new Blackberry models
+	and desktop software, and report what can be done with them
+	that you can't do on the previous model.
+
+	There should be a document listing all these features so
+	we know what to test against.
+
+
+Tech Support Liaison Officers
+-----------------------------
+	These deputies would camp out on their favourite web forum
+	(sourceforge tracker included) answering questions, and
+	repost them on the mailing list if they don't have an answer
+	themselves.
+
+
+Purity Advisors
+---------------
+	These deputies would watch for the latest developments in distros
+	and report if Barry's binary packaging is doing something
+	that is out of date or deprecated, and how it should be
+	done better.  For example, they could run lintian on Ubuntu,
+	or report RPM build errors on strict OpenSUSE builds, or
+	report general directions such as the recent deprecation of HAL.
+
+
+External Link Maintainer
+------------------------
+	These deputies would maintain a web doc page of external links
+	of documentation, reverse engineering blogs, and anything
+	technical related to the Blackberry... and encourage
+	such links to be posted to the mailing list.  If others shared
+	such links on the mailing list, they would pick them up and
+	update the documentation.
+
+
+Device Compatibility List
+-------------------------
+	This deputy would maintain a list of Blackberry devies known
+	to work or not work with Barry.  Reports from testers would
+	be incorporated into a single page summary that would include:
+		- device model
+		- version of firmware
+		- version of Barry
+		- distro
+		- what databases are reliable for backup and restore
+		- what devices charge well
+		- name of tester, and link to their original mailing list
+			report
+
