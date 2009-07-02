@@ -69,7 +69,7 @@ struct MessageAddress				// used for Message records
 
 struct SMSMetaData
 {
-	uint8_t		unknown;
+	uint8_t		recv; // if received, this is set to 1; otherwise 0
 	uint8_t		flags;
 #define SMS_FLG_NEW_CONVERSATION 0x20
 #define SMS_FLG_SAVED 0x10
@@ -77,7 +77,7 @@ struct SMSMetaData
 #define SMS_FLG_OPENED 0x01
 
 	uint8_t		new_flag;
-	uint16_t	unknown2;
+	uint16_t	zero; // constantly 0
 	uint32_t	status;
 #define SMS_STA_RECEIVED 0x000007ff
 #define SMS_STA_DRAFT 0x7fffffff

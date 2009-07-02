@@ -54,7 +54,7 @@ id#   var    format   worked-out  meaning(variable)/value(constant)
 05    yes    4byte    no          error id, 00 00 00 00=NO ERROR, 84 34 00 00=Unidentified Subscriber
 06    yes    8byte    yes         8byteInt representing UNIX time(in milliseconds), first 4 bytes=uniqueID
 07    yes    8byte    yes         representing sent time(like #06), probably not in UTC.
-08    yes    byte     yes         Data Encoding: 00=7bit, 01=VCARD, 02=UCS2
+08    yes    byte     yes         Data Coding Scheme: 00=7bit, 01=VCARD, 02=UCS2
 09    yes    2byte    no          00 00=SENT/DRAFT, 04 00=RECV, sometimes all 04 00, probably garbage information
 0a    yes    4byte    yes         00 00 00 00=TEXT, 02 00 00 04=SEND AS FAX3, 03 00 00 04=SEND AS FAX4,
                                   04 00 00 04=SEND AS VOICE, 05 00 00 04=SEND AS ERMES
