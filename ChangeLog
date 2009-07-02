@@ -1,10 +1,12 @@
 Release: version 0.15 - 2009/01/??
 ------------------------------------------------------------------------------
+2009/07/02
+	- added Martin Owens' new Ubuntu PPA link to docs
 2009/06/30
 	- documentation updates
 		- added SMS to list of parsers in documentation
 		- updated sync notes for Fedora 9 and 10 in documentation
-		- removed Martin Owen's PPA binary package link, since
+		- removed Martin Owens' PPA binary package link, since
 			I can't find the binaries anymore
 	- reverted commit 2d0e60d1: put hal fdi files back
 	- updated HAL FDI files for Fedora 11
