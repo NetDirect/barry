@@ -20,7 +20,6 @@
 */
 
 #include "BackupWindow.h"
-#include "DeviceSelectDlg.h"
 #include "PasswordDlg.h"
 #include "PromptDlg.h"
 #include "ConfigDlg.h"
@@ -41,8 +40,10 @@ BackupWindow::BackupWindow(BaseObjectType *cobject,
 	, m_pStatusBar(0)
 	, m_pBackupButton(0)
 	, m_pRestoreButton(0)
-	, m_pDeviceNameLabel(0)
+	, m_pDeviceList(0)
+	, m_active_device(-1)
 	, m_scanned(false)
+	, m_connected(false)
 	, m_working(false)
 {
 	// setup menu signals
@@ -60,19 +61,20 @@ BackupWindow::BackupWindow(BaseObjectType *cobject,
 		sigc::mem_fun(*this, &BackupWindow::on_help_about));
 
 	// get various widget pointers we will use later
+	m_xml->get_widget("DeviceList", m_pDeviceList);
 	m_xml->get_widget("BackupButton", m_pBackupButton);
 	m_xml->get_widget("RestoreButton", m_pRestoreButton);
-	m_xml->get_widget("progressbar1", m_pProgressBar);
-	m_xml->get_widget("statusbar1", m_pStatusBar);
-	m_xml->get_widget("entry1", m_pPINEntry);
-	m_xml->get_widget("entry2", m_pDatabaseEntry);
-	m_xml->get_widget("DeviceNameLabel", m_pDeviceNameLabel);
+	m_xml->get_widget("ProgressBar", m_pProgressBar);
+	m_xml->get_widget("StatusBar", m_pStatusBar);
+	m_xml->get_widget("DatabaseEntry", m_pDatabaseEntry);
 
 	// setup widget signals
 	m_pBackupButton->signal_clicked().connect(
 		sigc::mem_fun(*this, &BackupWindow::on_backup));
 	m_pRestoreButton->signal_clicked().connect(
 		sigc::mem_fun(*this, &BackupWindow::on_restore));
+	m_pDeviceList->signal_changed().connect(
+		sigc::mem_fun(*this, &BackupWindow::on_device_change));
 
 	// setup thread dispatcher signals
 	m_signal_progress.connect(
@@ -104,54 +106,57 @@ BackupWindow::~BackupWindow()
 	m_signal_handler_connection.disconnect();
 }
 
-void BackupWindow::ScanAndConnect()
+void BackupWindow::Scan()
 {
-	m_pStatusBar->push("Scanning for devices...");
-	m_pStatusBar->show_now();
+	StatusBarHandler sbh(m_pStatusBar, "Scanning for devices...");
 
-	int tries = 0;
+	m_pProbe.reset(new Barry::Probe);
+	
+	m_pListStore = Gtk::ListStore::create(m_Columns);
+	m_pDeviceList->set_model(m_pListStore);
+	if( m_pProbe->GetCount() > 0 ) {
+		for( int i = 0; i < m_pProbe->GetCount(); ++i ) {
+			Gtk::TreeModel::iterator row = m_pListStore->append();
+			(*row)[m_Columns.m_pin] = m_pProbe->Get(i).m_pin;
+			std::ostringstream oss;
+			oss << std::hex << m_pProbe->Get(i).m_pin;
 
-sac_retry:
-	tries++;
-	Barry::Probe probe;
-	uint32_t pin = 0;
-	int nSelection = -1;
+			// load the config for current pin
+			// and append device name to oss stream
+			try {
+				ConfigFile config(oss.str());
+				if( config.GetDeviceName().size() )
+					oss << " (" << config.GetDeviceName() << ")";
+			}
+			catch( ConfigFile::ConfigFileError & ) {
+				// just throw it away
+			}
 
-	if( probe.GetCount() > 1 ) {
-		DeviceSelectDlg dlg(probe);
-		if( dlg.run() == Gtk::RESPONSE_OK ) {
-			pin = dlg.GetPIN();
-			nSelection = probe.FindActive(pin);
+			(*row)[m_Columns.m_pin_text] = oss.str();
 		}
-		else {
-			// no selection, exit
-			hide();
-			return;
-		}
+		// show devices in DeviceList
+		m_pDeviceList->pack_start(m_Columns.m_pin_text);
+		m_pDeviceList->unset_active();
 	}
-	else if( probe.GetCount() == 1 ) {
-		// default to first
-		pin = probe.Get(0).m_pin;
-		nSelection = 0;
-	}
-	else {
-		Gtk::MessageDialog msg("No BlackBerry devices found.");
-		msg.run();
-		hide();
-		return;
-	}
+	// all devices loaded
+	m_scanned = true;
+}
 
-	if( nSelection == -1 ) {
-		Gtk::MessageDialog msg("Internal error: unable to find pin.");
-		msg.run();
-		hide();
+void BackupWindow::Connect()
+{
+	m_connected = false;
+	StatusBarHandler sbh(m_pStatusBar, "Connecting to Device...");
+	static int tries(0);
+	++tries;
+	if( m_active_device < 0 )
 		return;
-	}
+	if( !m_scanned )
+		Scan();
 
 	bool out_of_tries = false, password_required = false;
 	int remaining_tries = 0;
 	try {
-		if( !m_dev.Connect(probe.Get(nSelection)) ) {
+		if( !m_dev.Connect(m_pProbe->Get(m_active_device)) ) {
 			Gtk::MessageDialog msg(m_dev.get_last_error());
 			msg.run();
 			hide();
@@ -164,16 +169,17 @@ sac_retry:
 		password_required = true;
 	}
 	catch( Barry::BadSize &bs ) {
-		std::cerr << "Barry::BadSize caught in ScanAndConnect: "
+		std::cerr << "Barry::BadSize caught in Connect: "
 			<< bs.what() << std::endl;
-		if( tries < 2 ) {
+		if( tries < 3 ) {
 			// BadSize during connect at startup usually means
 			// the device didn't shutdown properly, so try
 			// a reset or two before we give up
-			Usb::Device dev(probe.Get(nSelection).m_dev);
+			Usb::Device dev(m_pProbe->Get(m_active_device).m_dev);
 			dev.Reset();
 			sleep(2);
-			goto sac_retry;
+			Connect();
+			return;
 		}
 		else {
 			Gtk::MessageDialog msg(bs.what());
@@ -201,7 +207,7 @@ sac_retry:
 			}
 			else {
 				// user cancelled
-				hide();
+				m_pDeviceList->unset_active();
 				return;
 			}
 		}
@@ -223,15 +229,14 @@ sac_retry:
 	}
 
 	std::ostringstream oss;
-	oss << std::hex << pin;
-	m_pPINEntry->set_text(oss.str());
+	oss << std::hex << m_pProbe->Get(m_active_device).m_pin;
 
 	// open configuration now that we know which device we're talking to
 	m_pConfig.reset( new ConfigFile(oss.str(), m_dev.GetDBDB()) );
 	CheckDeviceName();
-	SetDeviceName(m_pConfig->GetDeviceName());
 
-	m_pStatusBar->pop();
+	// successfully connected to a device
+	m_connected = true;
 }
 
 void BackupWindow::CheckDeviceName()
@@ -251,15 +256,6 @@ void BackupWindow::CheckDeviceName()
 			msg.run();
 		}
 	}
-}
-
-void BackupWindow::SetDeviceName(const std::string &name)
-{
-	// format the device name prompt
-	std::ostringstream dn;
-	dn << "Device: <i>" << m_pConfig->GetDeviceName() << "</i>";
-	m_pDeviceNameLabel->set_label(dn.str());
-
 }
 
 void BackupWindow::SetWorkingMode(const std::string &taskname)
@@ -300,7 +296,15 @@ void BackupWindow::UpdateProgress()
 	m_pDatabaseEntry->set_text(m_dev.GetThreadDBName());
 }
 
-
+bool BackupWindow::CheckWorkingDevice()
+{
+	if( !m_connected ) {
+		Gtk::MessageDialog msg("No Working Device!");
+		msg.run();
+		return false;
+	}
+	return true;
+}
 
 void BackupWindow::signal_exception_handler()
 {
@@ -329,6 +333,8 @@ void BackupWindow::signal_exception_handler()
 
 void BackupWindow::on_backup()
 {
+	if( !CheckWorkingDevice() )
+		return;
 	// already working?
 	if( m_working ) {
 		Gtk::MessageDialog msg("Thread already in progress.");
@@ -421,6 +427,8 @@ bool BackupWindow::PromptForRestoreTarball(std::string &restoreFilename,
 
 void BackupWindow::on_restore()
 {
+	if( !CheckWorkingDevice() )
+		return;
 	// already working?
 	if( m_working ) {
 		Gtk::MessageDialog msg("Thread already in progress.");
@@ -463,14 +471,28 @@ std::cerr << "m_recordTotal for restore: " << m_recordTotal << std::endl;
 	SetWorkingMode("Restore");
 }
 
+void BackupWindow::on_device_change()
+{
+	if( m_connected )
+		m_dev.Disconnect();
+	// Gtk::ComboBox uses 1 as the base index,
+	// while Barry::Probe uses 0
+	m_active_device = m_pDeviceList->get_active() - 1;
+	Connect();
+}
+
 void BackupWindow::on_file_quit()
 {
-	m_dev.Disconnect();
+	// if there's an active device, disconnect it
+	if( m_connected )
+		m_dev.Disconnect();
 	hide();
 }
 
 void BackupWindow::on_edit_config()
 {
+	if( !CheckWorkingDevice() )
+		return;
 	ConfigDlg dlg(m_dev.GetDBDB(), *m_pConfig);
 	if( dlg.run() == Gtk::RESPONSE_OK ) {
 		m_pConfig->SetBackupList(dlg.GetBackupList());
@@ -483,7 +505,6 @@ void BackupWindow::on_edit_config()
 				m_pConfig->get_last_error());
 			msg.run();
 		}
-		SetDeviceName(m_pConfig->GetDeviceName());
 	}
 }
 
@@ -520,10 +541,7 @@ void BackupWindow::on_help_about()
 
 bool BackupWindow::on_startup()
 {
-	if( !m_scanned ) {
-		ScanAndConnect();
-		m_scanned = true;
-	}
+	Scan();
 	return false;
 }
 

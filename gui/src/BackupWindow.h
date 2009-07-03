@@ -27,11 +27,27 @@
 
 class BackupWindow : public Gtk::Window
 {
+	// columns in DeviceList
+	class Columns : public Gtk::TreeModel::ColumnRecord
+	{
+	public:
+		Gtk::TreeModelColumn<Glib::ustring> m_pin_text;
+		Gtk::TreeModelColumn<uint32_t> m_pin;
+
+		Columns()
+		{
+			add(m_pin_text);
+			add(m_pin);
+		}
+	};
 	// external data
 	const Glib::RefPtr<Gnome::Glade::Xml> &m_xml;
 
 	// Interface to Blackberry
 	DeviceInterface m_dev;
+
+	// Probe
+	std::auto_ptr<Barry::Probe> m_pProbe;
 
 	// signal exception handling connection
 	sigc::connection m_signal_handler_connection;
@@ -49,17 +65,43 @@ class BackupWindow : public Gtk::Window
 	// Widget objects
 	Gtk::ProgressBar *m_pProgressBar;
 	Gtk::Statusbar *m_pStatusBar;
-	Gtk::Entry *m_pPINEntry, *m_pDatabaseEntry;
+	Gtk::Entry *m_pDatabaseEntry;
 	Gtk::Button *m_pBackupButton, *m_pRestoreButton;
-	Gtk::Label *m_pDeviceNameLabel;
+	Gtk::ComboBox *m_pDeviceList;
+	
+	// objects used by DeviceList
+	Gtk::TreeView *m_pTree;
+	Columns m_Columns;
+	Glib::RefPtr<Gtk::ListStore> m_pListStore;
+
+	// index of active device
+	int m_active_device;
 
 	// state
 	bool m_scanned;
+	bool m_connected;
 	bool m_working;		// true if backup or restore in progress
 	bool m_thread_error;
 
 protected:
-	void ScanAndConnect();
+	// this class is used by functions to
+	// prevent abnormal returns from
+	// failing to update the status bar
+	class StatusBarHandler
+	{
+		Gtk::Statusbar *psb;
+	public:
+		StatusBarHandler(Gtk::Statusbar *pStatusBar, const std::string Message) : psb(pStatusBar)
+		{
+			psb->push(Message);
+		}
+		~StatusBarHandler()
+		{
+			psb->pop();
+		}
+	};
+	void Scan();
+	void Connect();
 	void CheckDeviceName();
 	void SetDeviceName(const std::string &name);
 	void SetWorkingMode(const std::string &taskname);
@@ -67,6 +109,7 @@ protected:
 	void UpdateProgress();
 	bool PromptForRestoreTarball(std::string &restoreFilename,
 		const std::string &start_path);
+	bool CheckWorkingDevice();
 
 public:
 	BackupWindow(BaseObjectType *cobject, const Glib::RefPtr<Gnome::Glade::Xml> &xml);
@@ -78,6 +121,7 @@ public:
 	// signal handlers
 	void on_backup();
 	void on_restore();
+	void on_device_change();
 	void on_file_quit();
 	void on_edit_config();
 	void on_help_about();

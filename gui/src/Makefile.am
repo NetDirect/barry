@@ -8,7 +8,6 @@ AM_CPPFLAGS = -DBARRYBACKUP_GLADEDIR='"$(gladedir)"'
 
 dist_glade_DATA = \
 	BackupWindow.glade \
-	DeviceSelectDlg.glade \
 	DatabaseSelectDlg.glade \
 	PasswordDlg.glade \
 	PromptDlg.glade \
@@ -19,7 +18,6 @@ bin_PROGRAMS = barrybackup
 barrybackup_SOURCES = \
 	main.cc \
 	BackupWindow.cc \
-	DeviceSelectDlg.cc \
 	DatabaseSelectDlg.cc \
 	PasswordDlg.cc \
 	PromptDlg.cc \
@@ -36,7 +34,6 @@ noinst_HEADERS= \
 	ConfigFile.h \
 	DatabaseSelectDlg.h \
 	DeviceIface.h \
-	DeviceSelectDlg.h \
 	PasswordDlg.h \
 	PromptDlg.h \
 	tarfile.h \
