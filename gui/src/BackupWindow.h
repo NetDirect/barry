@@ -63,10 +63,12 @@ class BackupWindow : public Gtk::Window
 	std::string m_modeName;
 
 	// Widget objects
+	Gtk::MenuItem *m_pEditConfig;
 	Gtk::ProgressBar *m_pProgressBar;
 	Gtk::Statusbar *m_pStatusBar;
 	Gtk::Entry *m_pDatabaseEntry;
 	Gtk::Button *m_pBackupButton, *m_pRestoreButton;
+	Gtk::Label *m_pDeviceLabel;
 	Gtk::ComboBox *m_pDeviceList;
 	
 	// objects used by DeviceList
@@ -76,6 +78,9 @@ class BackupWindow : public Gtk::Window
 
 	// index of active device
 	int m_active_device;
+	
+	// num of devices
+	int m_device_num;
 
 	// state
 	bool m_scanned;
@@ -84,22 +89,6 @@ class BackupWindow : public Gtk::Window
 	bool m_thread_error;
 
 protected:
-	// this class is used by functions to
-	// prevent abnormal returns from
-	// failing to update the status bar
-	class StatusBarHandler
-	{
-		Gtk::Statusbar *psb;
-	public:
-		StatusBarHandler(Gtk::Statusbar *pStatusBar, const std::string Message) : psb(pStatusBar)
-		{
-			psb->push(Message);
-		}
-		~StatusBarHandler()
-		{
-			psb->pop();
-		}
-	};
 	void Scan();
 	void Connect();
 	void CheckDeviceName();
@@ -110,6 +99,8 @@ protected:
 	bool PromptForRestoreTarball(std::string &restoreFilename,
 		const std::string &start_path);
 	bool CheckWorkingDevice();
+	void ResetDeviceList();
+	void SetActiveDevice(unsigned int index, bool setList = true);
 
 public:
 	BackupWindow(BaseObjectType *cobject, const Glib::RefPtr<Gnome::Glade::Xml> &xml);
@@ -132,3 +123,20 @@ public:
 	void on_thread_erase_db();
 };
 
+// this class is used by functions to
+// prevent abnormal returns from
+// failing to update the status bar
+class StatusBarHandler
+{
+	Gtk::Statusbar *psb;
+	public:
+	StatusBarHandler(Gtk::Statusbar *pStatusBar, const std::string Message) : psb(pStatusBar)
+	{
+		psb->push(Message);
+		psb->show_now();
+	}
+	~StatusBarHandler()
+	{
+		psb->pop();
+	}
+};

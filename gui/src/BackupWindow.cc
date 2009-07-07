@@ -36,12 +36,15 @@ BackupWindow::BackupWindow(BaseObjectType *cobject,
 	, m_xml(xml)
 	, m_recordTotal(0)
 	, m_finishedRecords(0)
+	, m_pEditConfig(0)
 	, m_pProgressBar(0)
 	, m_pStatusBar(0)
 	, m_pBackupButton(0)
 	, m_pRestoreButton(0)
+	, m_pDeviceLabel(0)
 	, m_pDeviceList(0)
 	, m_active_device(-1)
+	, m_device_num(0)
 	, m_scanned(false)
 	, m_connected(false)
 	, m_working(false)
@@ -61,6 +64,8 @@ BackupWindow::BackupWindow(BaseObjectType *cobject,
 		sigc::mem_fun(*this, &BackupWindow::on_help_about));
 
 	// get various widget pointers we will use later
+	m_xml->get_widget("menu_edit_config", m_pEditConfig);
+	m_xml->get_widget("DeviceLabel", m_pDeviceLabel);
 	m_xml->get_widget("DeviceList", m_pDeviceList);
 	m_xml->get_widget("BackupButton", m_pBackupButton);
 	m_xml->get_widget("RestoreButton", m_pRestoreButton);
@@ -111,39 +116,50 @@ void BackupWindow::Scan()
 	StatusBarHandler sbh(m_pStatusBar, "Scanning for devices...");
 
 	m_pProbe.reset(new Barry::Probe);
-	
+
+	m_pDeviceList->unset_model();
 	m_pListStore = Gtk::ListStore::create(m_Columns);
 	m_pDeviceList->set_model(m_pListStore);
-	if( m_pProbe->GetCount() > 0 ) {
-		for( int i = 0; i < m_pProbe->GetCount(); ++i ) {
-			Gtk::TreeModel::iterator row = m_pListStore->append();
-			(*row)[m_Columns.m_pin] = m_pProbe->Get(i).m_pin;
-			std::ostringstream oss;
-			oss << std::hex << m_pProbe->Get(i).m_pin;
 
-			// load the config for current pin
-			// and append device name to oss stream
-			try {
-				ConfigFile config(oss.str());
-				if( config.GetDeviceName().size() )
-					oss << " (" << config.GetDeviceName() << ")";
-			}
-			catch( ConfigFile::ConfigFileError & ) {
-				// just throw it away
-			}
+	m_device_num = m_pProbe->GetCount();
 
-			(*row)[m_Columns.m_pin_text] = oss.str();
+	for( unsigned int i = 0; i < m_device_num; ++i ) {
+		Gtk::TreeModel::iterator row = m_pListStore->append();
+		(*row)[m_Columns.m_pin] = m_pProbe->Get(i).m_pin;
+		std::ostringstream oss;
+		oss << std::hex << m_pProbe->Get(i).m_pin;
+
+		// load the config for current pin
+		// and append device name to oss stream
+		try {
+			ConfigFile config(oss.str());
+			if( config.GetDeviceName().size() )
+				oss << " (" << config.GetDeviceName() << ")";
 		}
-		// show devices in DeviceList
-		m_pDeviceList->pack_start(m_Columns.m_pin_text);
-		m_pDeviceList->unset_active();
+		catch( ConfigFile::ConfigFileError & ) {
+			// just throw it away
+		}
+
+		(*row)[m_Columns.m_pin_text] = oss.str();
 	}
+	// show devices in DeviceList
+	m_pDeviceList->pack_start(m_Columns.m_pin_text);
+
+	ResetDeviceList();
+
 	// all devices loaded
 	m_scanned = true;
+
+	// if only one device plugged in,
+	// connect to it.
+	if( m_device_num == 1 )
+		SetActiveDevice(0);
 }
 
 void BackupWindow::Connect()
 {
+	if( m_connected )
+		m_dev.Disconnect();
 	m_connected = false;
 	StatusBarHandler sbh(m_pStatusBar, "Connecting to Device...");
 	static int tries(0);
@@ -304,6 +320,36 @@ bool BackupWindow::CheckWorkingDevice()
 		return false;
 	}
 	return true;
+}
+
+void BackupWindow::ResetDeviceList()
+{
+	m_pDeviceList->unset_active();
+
+	if( m_device_num > 0 )
+		m_pDeviceLabel->set_label("Please select a device:");
+	else
+		m_pDeviceLabel->set_label("No devices.");
+
+	m_pBackupButton->set_sensitive(false);
+	m_pRestoreButton->set_sensitive(false);
+	m_pEditConfig->set_sensitive(false);
+}
+
+void BackupWindow::SetActiveDevice(unsigned int index, bool setList)
+{
+	if( index >= m_device_num )
+		return;
+	if( setList ) {
+		m_pDeviceList->set_active(index);
+		return;
+	}
+		
+	m_active_device = index;
+	m_pDeviceLabel->set_label("Device:");
+	m_pBackupButton->set_sensitive(true);
+	m_pRestoreButton->set_sensitive(true);
+	m_pEditConfig->set_sensitive(true);
 }
 
 void BackupWindow::signal_exception_handler()
@@ -475,9 +521,7 @@ void BackupWindow::on_device_change()
 {
 	if( m_connected )
 		m_dev.Disconnect();
-	// Gtk::ComboBox uses 1 as the base index,
-	// while Barry::Probe uses 0
-	m_active_device = m_pDeviceList->get_active() - 1;
+	SetActiveDevice(m_pDeviceList->get_active_row_number(), false);
 	Connect();
 }
 

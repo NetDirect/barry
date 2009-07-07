@@ -5,6 +5,7 @@
   <widget class="GtkWindow" id="BackupWindow">
     <property name="width_request">275</property>
     <property name="visible">True</property>
+    <property name="border_width">5</property>
     <property name="title" translatable="yes">Barry Backup</property>
     <property name="resizable">False</property>
     <property name="window_position">center</property>
@@ -109,12 +110,14 @@
                 </child>
               </widget>
               <packing>
+                <property name="padding">3</property>
                 <property name="position">0</property>
               </packing>
             </child>
             <child>
               <widget class="GtkHButtonBox" id="Operations">
                 <property name="visible">True</property>
+                <property name="spacing">5</property>
                 <property name="layout_style">start</property>
                 <child>
                   <widget class="GtkButton" id="BackupButton">
@@ -146,6 +149,7 @@
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">False</property>
+                <property name="padding">3</property>
                 <property name="position">1</property>
               </packing>
             </child>
@@ -156,6 +160,7 @@
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">False</property>
+                <property name="padding">5</property>
                 <property name="position">2</property>
               </packing>
             </child>
@@ -185,6 +190,7 @@
                 </child>
               </widget>
               <packing>
+                <property name="padding">3</property>
                 <property name="position">3</property>
               </packing>
             </child>
@@ -216,6 +222,7 @@
                 </child>
               </widget>
               <packing>
+                <property name="padding">3</property>
                 <property name="position">4</property>
               </packing>
             </child>
@@ -234,6 +241,7 @@
           <packing>
             <property name="expand">False</property>
             <property name="fill">False</property>
+            <property name="padding">3</property>
             <property name="position">2</property>
           </packing>
         </child>
