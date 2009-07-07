@@ -223,7 +223,7 @@ void BackupWindow::Connect()
 			}
 			else {
 				// user cancelled
-				m_pDeviceList->unset_active();
+				ResetDeviceList();
 				return;
 			}
 		}
