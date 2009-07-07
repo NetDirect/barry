@@ -114,20 +114,20 @@ BackupWindow::~BackupWindow()
 void BackupWindow::Scan()
 {
 	StatusBarHandler sbh(m_pStatusBar, "Scanning for devices...");
+	
+	m_dev.Probe();
 
-	m_pProbe.reset(new Barry::Probe);
+	m_device_num = m_dev.ProbeCount();
 
 	m_pDeviceList->unset_model();
 	m_pListStore = Gtk::ListStore::create(m_Columns);
 	m_pDeviceList->set_model(m_pListStore);
 
-	m_device_num = m_pProbe->GetCount();
-
 	for( unsigned int i = 0; i < m_device_num; ++i ) {
 		Gtk::TreeModel::iterator row = m_pListStore->append();
-		(*row)[m_Columns.m_pin] = m_pProbe->Get(i).m_pin;
+		(*row)[m_Columns.m_pin] = m_dev.GetPin(i);
 		std::ostringstream oss;
-		oss << std::hex << m_pProbe->Get(i).m_pin;
+		oss << std::hex << m_dev.GetPin(i);
 
 		// load the config for current pin
 		// and append device name to oss stream
@@ -172,7 +172,7 @@ void BackupWindow::Connect()
 	bool out_of_tries = false, password_required = false;
 	int remaining_tries = 0;
 	try {
-		if( !m_dev.Connect(m_pProbe->Get(m_active_device)) ) {
+		if( !m_dev.Connect(m_active_device) ) {
 			Gtk::MessageDialog msg(m_dev.get_last_error());
 			msg.run();
 			hide();
@@ -191,7 +191,7 @@ void BackupWindow::Connect()
 			// BadSize during connect at startup usually means
 			// the device didn't shutdown properly, so try
 			// a reset or two before we give up
-			Usb::Device dev(m_pProbe->Get(m_active_device).m_dev);
+			Usb::Device dev(m_dev.GetDev(m_active_device));
 			dev.Reset();
 			sleep(2);
 			Connect();
@@ -245,7 +245,7 @@ void BackupWindow::Connect()
 	}
 
 	std::ostringstream oss;
-	oss << std::hex << m_pProbe->Get(m_active_device).m_pin;
+	oss << std::hex << m_dev.GetPin(m_active_device);
 
 	// open configuration now that we know which device we're talking to
 	m_pConfig.reset( new ConfigFile(oss.str(), m_dev.GetDBDB()) );

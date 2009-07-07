@@ -310,6 +310,31 @@ void DeviceInterface::SetThreadDBName(const std::string &dbname)
 //////////////////////////////////////////////////////////////////////////////
 // Public API
 
+void DeviceInterface::Probe()
+{
+	m_probe.reset(new Barry::Probe);
+}
+
+unsigned int DeviceInterface::ProbeCount()
+{
+	return m_probe->GetCount();
+}
+
+uint32_t DeviceInterface::GetPin(unsigned int index)
+{
+	return m_probe->Get(index).m_pin;
+}
+
+Usb::DeviceIDType DeviceInterface::GetDev(unsigned int index)
+{
+	return m_probe->Get(index).m_dev;
+}
+
+bool DeviceInterface::Connect(unsigned int index)
+{
+	return Connect(m_probe->Get(index));
+}
+
 bool DeviceInterface::Connect(const Barry::ProbeResult &dev)
 {
 	try {

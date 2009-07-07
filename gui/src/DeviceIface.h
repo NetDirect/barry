@@ -84,6 +84,8 @@ private:
 	AppComm m_AppComm;
 	std::auto_ptr<reuse::TarFile> m_tar, m_tarback;
 
+	std::auto_ptr<Barry::Probe> m_probe;
+
 	// parser and builder data (only one side uses these at a time)
 	ConfigFile::DBListType m_dbList;
 	mutable Glib::Mutex *m_dbnameMutex;
@@ -123,6 +125,12 @@ public:
 	const std::string& get_last_error() const { return m_last_error; }
 	const std::string& get_last_thread_error() const { return m_last_thread_error; }
 
+	void Probe();
+	unsigned int ProbeCount();
+	uint32_t GetPin(unsigned int index);
+	Usb::DeviceIDType GetDev(unsigned int index);
+
+	bool Connect(unsigned int index);
 	bool Connect(const Barry::ProbeResult &dev);
 	bool Password(const char *password);
 	void Disconnect();

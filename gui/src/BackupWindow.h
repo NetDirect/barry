@@ -46,9 +46,6 @@ class BackupWindow : public Gtk::Window
 	// Interface to Blackberry
 	DeviceInterface m_dev;
 
-	// Probe
-	std::auto_ptr<Barry::Probe> m_pProbe;
-
 	// signal exception handling connection
 	sigc::connection m_signal_handler_connection;
 
