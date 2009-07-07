@@ -120,6 +120,7 @@ void BackupWindow::Scan()
 	m_device_num = m_dev.ProbeCount();
 
 	m_pDeviceList->unset_model();
+	m_pDeviceList->clear();
 	m_pListStore = Gtk::ListStore::create(m_Columns);
 	m_pDeviceList->set_model(m_pListStore);
 
