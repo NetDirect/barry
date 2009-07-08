@@ -44,7 +44,7 @@ BackupWindow::BackupWindow(BaseObjectType *cobject,
 	, m_pDeviceLabel(0)
 	, m_pDeviceList(0)
 	, m_active_device(-1)
-	, m_device_num(0)
+	, m_device_count(0)
 	, m_scanned(false)
 	, m_connected(false)
 	, m_working(false)
@@ -117,14 +117,14 @@ void BackupWindow::Scan()
 	
 	m_dev.Probe();
 
-	m_device_num = m_dev.ProbeCount();
+	m_device_count = m_dev.ProbeCount();
 
 	m_pDeviceList->unset_model();
 	m_pDeviceList->clear();
 	m_pListStore = Gtk::ListStore::create(m_Columns);
 	m_pDeviceList->set_model(m_pListStore);
 
-	for( unsigned int i = 0; i < m_device_num; ++i ) {
+	for( unsigned int i = 0; i < m_device_count; ++i ) {
 		Gtk::TreeModel::iterator row = m_pListStore->append();
 		(*row)[m_Columns.m_pin] = m_dev.GetPin(i);
 		std::ostringstream oss;
@@ -153,7 +153,7 @@ void BackupWindow::Scan()
 
 	// if only one device plugged in,
 	// connect to it.
-	if( m_device_num == 1 )
+	if( m_device_count == 1 )
 		SetActiveDevice(0);
 }
 
@@ -327,7 +327,7 @@ void BackupWindow::ResetDeviceList()
 {
 	m_pDeviceList->unset_active();
 
-	if( m_device_num > 0 )
+	if( m_device_count > 0 )
 		m_pDeviceLabel->set_label("Please select a device:");
 	else
 		m_pDeviceLabel->set_label("No devices.");
@@ -339,7 +339,7 @@ void BackupWindow::ResetDeviceList()
 
 void BackupWindow::SetActiveDevice(unsigned int index, bool setList)
 {
-	if( index >= m_device_num )
+	if( index >= m_device_count )
 		return;
 	if( setList ) {
 		m_pDeviceList->set_active(index);

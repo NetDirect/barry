@@ -76,8 +76,8 @@ class BackupWindow : public Gtk::Window
 	// index of active device
 	int m_active_device;
 	
-	// num of devices
-	int m_device_num;
+	// number of devices
+	int m_device_count;
 
 	// state
 	bool m_scanned;
