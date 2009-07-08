@@ -1,15 +1,10 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
+<!--Generated with glade3 3.4.5 on Tue Jul  7 20:00:15 2009 -->
 <glade-interface>
-  <!-- interface-requires gtk+ 2.16 -->
-  <!-- interface-naming-policy toplevel-contextual -->
   <widget class="GtkWindow" id="BackupWindow">
-    <property name="width_request">275</property>
     <property name="visible">True</property>
-    <property name="border_width">5</property>
     <property name="title" translatable="yes">Barry Backup</property>
-    <property name="resizable">False</property>
-    <property name="window_position">center</property>
-    <property name="default_width">275</property>
     <child>
       <widget class="GtkVBox" id="Main">
         <property name="visible">True</property>
@@ -25,8 +20,8 @@
                   <widget class="GtkMenu" id="menu_file_menu">
                     <child>
                       <widget class="GtkImageMenuItem" id="menu_file_quit">
-                        <property name="label">gtk-quit</property>
                         <property name="visible">True</property>
+                        <property name="label">gtk-quit</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
                       </widget>
@@ -75,82 +70,101 @@
           <packing>
             <property name="expand">False</property>
             <property name="fill">False</property>
-            <property name="position">0</property>
           </packing>
         </child>
         <child>
           <widget class="GtkVBox" id="Container">
             <property name="visible">True</property>
-            <property name="orientation">vertical</property>
             <child>
-              <widget class="GtkVBox" id="Device">
+              <widget class="GtkHBox" id="Controls">
                 <property name="visible">True</property>
-                <property name="orientation">vertical</property>
+                <property name="border_width">5</property>
+                <property name="spacing">8</property>
                 <child>
-                  <widget class="GtkLabel" id="DeviceLabel">
+                  <widget class="GtkVBox" id="Device">
                     <property name="visible">True</property>
-                    <property name="xalign">0</property>
-                    <property name="xpad">5</property>
-                    <property name="ypad">5</property>
-                    <property name="label" translatable="yes">Device:</property>
+                    <child>
+                      <widget class="GtkLabel" id="DeviceLabel">
+                        <property name="visible">True</property>
+                        <property name="xalign">0</property>
+                        <property name="xpad">5</property>
+                        <property name="ypad">5</property>
+                        <property name="label" translatable="yes">Device:</property>
+                      </widget>
+                    </child>
+                    <child>
+                      <widget class="GtkComboBox" id="DeviceList">
+                        <property name="width_request">250</property>
+                        <property name="visible">True</property>
+                        <property name="resize_mode">GTK_RESIZE_IMMEDIATE</property>
+                      </widget>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
                   </widget>
-                  <packing>
-                    <property name="position">0</property>
-                  </packing>
                 </child>
                 <child>
-                  <widget class="GtkComboBox" id="DeviceList">
+                  <widget class="GtkVBox" id="ButtonPositioner">
                     <property name="visible">True</property>
+                    <child>
+                      <widget class="GtkLabel" id="label1">
+                        <property name="visible">True</property>
+                      </widget>
+                    </child>
+                    <child>
+                      <widget class="GtkHButtonBox" id="Operations">
+                        <property name="visible">True</property>
+                        <property name="spacing">10</property>
+                        <property name="layout_style">GTK_BUTTONBOX_CENTER</property>
+                        <child>
+                          <widget class="GtkButton" id="BackupButton">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">True</property>
+                            <property name="label" translatable="yes">Backup</property>
+                            <property name="response_id">0</property>
+                          </widget>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">False</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <widget class="GtkButton" id="RestoreButton">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">True</property>
+                            <property name="label" translatable="yes">Restore...</property>
+                            <property name="response_id">0</property>
+                          </widget>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">False</property>
+                            <property name="position">1</property>
+                          </packing>
+                        </child>
+                      </widget>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
+                        <property name="padding">3</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
                   </widget>
                   <packing>
                     <property name="expand">False</property>
                     <property name="fill">False</property>
+                    <property name="padding">3</property>
                     <property name="position">1</property>
                   </packing>
                 </child>
               </widget>
               <packing>
                 <property name="padding">3</property>
-                <property name="position">0</property>
-              </packing>
-            </child>
-            <child>
-              <widget class="GtkHButtonBox" id="Operations">
-                <property name="visible">True</property>
-                <property name="spacing">5</property>
-                <property name="layout_style">start</property>
-                <child>
-                  <widget class="GtkButton" id="BackupButton">
-                    <property name="label" translatable="yes">Backup</property>
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="receives_default">True</property>
-                  </widget>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">False</property>
-                    <property name="position">0</property>
-                  </packing>
-                </child>
-                <child>
-                  <widget class="GtkButton" id="RestoreButton">
-                    <property name="label" translatable="yes">Restore...</property>
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="receives_default">True</property>
-                  </widget>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">False</property>
-                    <property name="position">1</property>
-                  </packing>
-                </child>
-              </widget>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">False</property>
-                <property name="padding">3</property>
-                <property name="position">1</property>
               </packing>
             </child>
             <child>
@@ -161,24 +175,21 @@
                 <property name="expand">False</property>
                 <property name="fill">False</property>
                 <property name="padding">5</property>
-                <property name="position">2</property>
+                <property name="position">1</property>
               </packing>
             </child>
             <child>
               <widget class="GtkVBox" id="Progress">
                 <property name="visible">True</property>
-                <property name="orientation">vertical</property>
+                <property name="border_width">5</property>
                 <child>
                   <widget class="GtkLabel" id="ProgressLabel">
                     <property name="visible">True</property>
                     <property name="xalign">0</property>
                     <property name="xpad">5</property>
-                    <property name="ypad">5</property>
+                    <property name="ypad">2</property>
                     <property name="label" translatable="yes">Progress</property>
                   </widget>
-                  <packing>
-                    <property name="position">0</property>
-                  </packing>
                 </child>
                 <child>
                   <widget class="GtkProgressBar" id="ProgressBar">
@@ -191,30 +202,26 @@
               </widget>
               <packing>
                 <property name="padding">3</property>
-                <property name="position">3</property>
+                <property name="position">2</property>
               </packing>
             </child>
             <child>
               <widget class="GtkVBox" id="Database">
                 <property name="visible">True</property>
-                <property name="orientation">vertical</property>
+                <property name="border_width">5</property>
                 <child>
                   <widget class="GtkLabel" id="DatabaseLabel">
                     <property name="visible">True</property>
                     <property name="xalign">0</property>
                     <property name="xpad">5</property>
-                    <property name="ypad">5</property>
+                    <property name="ypad">2</property>
                     <property name="label" translatable="yes">Database</property>
                   </widget>
-                  <packing>
-                    <property name="position">0</property>
-                  </packing>
                 </child>
                 <child>
                   <widget class="GtkEntry" id="DatabaseEntry">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
-                    <property name="invisible_char">&#x25CF;</property>
                   </widget>
                   <packing>
                     <property name="position">1</property>
@@ -223,7 +230,7 @@
               </widget>
               <packing>
                 <property name="padding">3</property>
-                <property name="position">4</property>
+                <property name="position">3</property>
               </packing>
             </child>
           </widget>
