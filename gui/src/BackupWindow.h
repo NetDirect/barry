@@ -67,7 +67,7 @@ class BackupWindow : public Gtk::Window
 	Gtk::Button *m_pBackupButton, *m_pRestoreButton;
 	Gtk::Label *m_pDeviceLabel;
 	Gtk::ComboBox *m_pDeviceList;
-	
+
 	// objects used by DeviceList
 	Gtk::TreeView *m_pTree;
 	Columns m_Columns;
@@ -75,7 +75,7 @@ class BackupWindow : public Gtk::Window
 
 	// index of active device
 	int m_active_device;
-	
+
 	// number of devices
 	unsigned int m_device_count;
 

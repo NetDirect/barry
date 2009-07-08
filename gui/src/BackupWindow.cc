@@ -114,7 +114,7 @@ BackupWindow::~BackupWindow()
 void BackupWindow::Scan()
 {
 	StatusBarHandler sbh(m_pStatusBar, "Scanning for devices...");
-	
+
 	m_dev.Probe();
 
 	m_device_count = m_dev.ProbeCount();
@@ -344,7 +344,7 @@ void BackupWindow::SetActiveDevice(unsigned int index, bool setList)
 		m_pDeviceList->set_active(index);
 		return;
 	}
-		
+
 	m_active_device = index;
 	m_pDeviceLabel->set_label("Device:");
 	m_pBackupButton->set_sensitive(true);
