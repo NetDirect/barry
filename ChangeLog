@@ -1,5 +1,25 @@
 Release: version 0.15 - 2009/01/??
 ------------------------------------------------------------------------------
+2009/07/07
+	- applied Ryan Li's GUI enhancement patches, which let the user
+		switch devices without restarting, with fixes:
+		- reorganized BackupWindow.glade for better spacing
+			- fixed width issue (main window was set to 275
+			  width, which made things too narrow on Debian
+			  Lenny
+			- moved buttons beside the drop down box, to
+			  mimic old GUI behaviour
+			- added space around the middle controls, but
+			  not around the menu bar or status bar, which
+			  should be right against the outer window.
+		- renamed m_device_num to m_device_count for clarity
+		- changed m_device_count to unsigned int to fix compiler
+		  warnings
+		- removed gtkmm call to unset_model()
+		  The function unset_model() is only available in gtkmm
+		  2.16, and Debian Lenny only has 2.12, and won't compile.
+		  Since set_model() automatically does the unset for us,
+		  just reorganize the calls so Lenny is supported.
 2009/07/06
 	- applied Ryan Li's SMS clarification patch
 2009/07/02
