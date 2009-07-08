@@ -119,10 +119,9 @@ void BackupWindow::Scan()
 
 	m_device_count = m_dev.ProbeCount();
 
-	m_pDeviceList->unset_model();
-	m_pDeviceList->clear();
 	m_pListStore = Gtk::ListStore::create(m_Columns);
 	m_pDeviceList->set_model(m_pListStore);
+	m_pDeviceList->clear();
 
 	for( unsigned int i = 0; i < m_device_count; ++i ) {
 		Gtk::TreeModel::iterator row = m_pListStore->append();
