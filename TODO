@@ -51,6 +51,21 @@ Target: release version 0.16
 General Features
 ==============================================================================
 
+Add HAL/dbus support to BarryBackup
+-----------------------------------
+The latest version of the backup program lists devices in a combo box,
+with a Reload button to handle new devices being plugged in.
+
+Add an optional feature to listen to HAL/dbus for device addition and
+removal and update the list automatically.  Note that this must be
+optional, since some systems may not have HAL available at compile time
+(such as FreeBSD) or perhaps at runtime (HAL may not be running),
+and so the Reload button must be available.
+
+Leave the Reload button even if HAL support is present, since the user
+may wish to control the list manually, or force a reload.
+
+
 Command line tool to parse backups
 ----------------------------------
 Add the ability to feed raw database data into the parser from various
