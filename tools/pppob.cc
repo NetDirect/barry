@@ -214,7 +214,12 @@ int main(int argc, char *argv[])
 			modem.Close();	// graceful close so we can restart without unplugging
 		}
 		else {
-			barryverbose("Using Serial mode...");
+			if( force_serial ) {
+				barryverbose("Using Serial mode per command line...");
+			}
+			else {
+				barryverbose("No IpModem mode available, using Serial mode...");
+			}
 
 			// Create our socket router and start thread to handle
 			// the USB reading, instead of creating our own thread.
