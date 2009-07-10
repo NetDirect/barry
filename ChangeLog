@@ -2,6 +2,7 @@ Release: version 0.15 - 2009/01/??
 ------------------------------------------------------------------------------
 2009/07/10
 	- changed pppob to report if Serial was fallback or command line
+	- started device compatibility list in web docs
 2009/07/07
 	- applied Ryan Li's GUI enhancement patches, which let the user
 		switch devices without restarting, with fixes:
