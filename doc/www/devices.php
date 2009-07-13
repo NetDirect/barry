@@ -25,11 +25,11 @@ it to the <? createLink("contact", "mailing list"); ?>.</p>
 </tr>
 <tr>
 	<td>Storm 9530</td>
-	<td>?</td>
+	<td>v4.7.0.48, v4.7.0.141, v4.7.0.151 (current)</td>
 	<td>0.15-git20090710</td>
 	<td>Debian Sid on Intel Core Duo 32 bits</td>
-	<td>?</td>
-	<td>?</td>
-	<td><a href="http://www.mail-archive.com/barry-devel@lists.sourceforge.net/msg02373.html">Nicolas Vivien</a></td>
+	<td>All</td>
+	<td>Yes, bcharge</td>
+	<td><a href="http://www.mail-archive.com/barry-devel@lists.sourceforge.net/msg02403.html">Nicolas Vivien</a></td>
 </table>
 
