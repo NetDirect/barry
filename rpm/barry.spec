@@ -17,9 +17,9 @@ Name: barry
 Version: 0.15
 Release: 0
 Group: Applications/Productivity
-License: GPL
+License: GPLv2+
 Source: %{name}-%{version}.tar.bz2
-URL: http://www.netdirect.ca/downloads/barry
+URL: http://www.netdirect.ca/software/packages/barry
 Vendor: Net Direct Inc.
 BuildRoot: %{_tmppath}/%{name}-%{release}-%{version}-root
 

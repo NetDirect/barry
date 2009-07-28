@@ -1,5 +1,7 @@
 Release: version 0.15 - 2009/01/??
 ------------------------------------------------------------------------------
+2009/07/28
+	- updated license and URL in barry.spec
 2009/07/10
 	- changed pppob to report if Serial was fallback or command line
 	- started device compatibility list in web docs
