@@ -1,5 +1,7 @@
 Release: version 0.15 - 2009/01/??
 ------------------------------------------------------------------------------
+2009/07/29
+	- added border to barrybackup doc images
 2009/07/28
 	- updated license and URL in barry.spec
 	- updated barrybackup Credits dialog to reference AUTHORS file
