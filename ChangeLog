@@ -9,6 +9,7 @@ Release: version 0.15 - 2009/01/??
 		updating the new NetDirect website
 	- commented out out-of-date docs in hacking.php
 	- marked milestone 4 complete (javaloader)
+	- linked device compatibility list from index.php
 2009/07/10
 	- changed pppob to report if Serial was fallback or command line
 	- started device compatibility list in web docs

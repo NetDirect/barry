@@ -90,6 +90,7 @@ reverse engineer the battery charging handshake via USB.</p>
 	<li><? createLink("requirements", "System requirements"); ?></li>
 	<li><? createLink("dependencies", "Software dependencies"); ?></li>
 	<li><? createFileLink("doxygen/html/index.html", "Barry's Doxygen documentation"); ?></li>
+	<li><? createLink("devices", "Device compatibility list"); ?></li>
 </ul>
 </p>
 
