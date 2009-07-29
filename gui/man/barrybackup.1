@@ -2,7 +2,7 @@
 .\" First parameter, NAME, should be all caps
 .\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
 .\" other parameters are allowed: see man(7), man(1)
-.TH BARRYBACKUP 1 "May 29, 2008"
+.TH BARRYBACKUP 1 "July 28, 2009"
 .\" Please adjust this date whenever revising the manpage.
 .\"
 .\" Some roff macros, for reference:
@@ -32,9 +32,11 @@ and restore, so not all databases need to be backed up at once,
 nor all restored.
 
 Backups and configuration files are stored by default in the user's
-home directory, under ~/.barry/backup/PIN.  The backup files are
-compressed tarballs containing specially named files for each record
-of the databases.
+home directory, under ~/.barry/backup/PIN.  This destination can be
+changed in the config dialogs, per device.
+
+The backup files are compressed tarballs containing specially named
+files for each record of the databases.
 .SH OPTIONS
 .TP
 .B \-d
@@ -55,7 +57,9 @@ Show summary of options.
 Backups are stored in tar format, compressed with gzip.  Backup files
 are named with the following pattern:
 
-	PIN-YYYYMMDD-HHMMSS.tar.gz
+	PIN-YYYYMMDD-HHMMSS[-tag_name].tar.gz
+
+The tag name is optional and is used to name a particular backup.
 
 Each record is appended to the tar file using the following pattern
 for the filename:
