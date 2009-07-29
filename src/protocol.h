@@ -85,6 +85,28 @@
 #define SB_DATA_JL_INVALID		0x68	// Device returns this code if the application isn't valid.
 
 
+// JavaDebug commands
+#define SB_COMMAND_JD_UNKNOWN01		0x53
+#define SB_COMMAND_JD_UNKNOWN02		0x01
+#define SB_COMMAND_JD_UNKNOWN03		0x6f
+#define SB_COMMAND_JD_UNKNOWN04		0x8a
+#define SB_COMMAND_JD_UNKNOWN05		0x90
+#define SB_COMMAND_JD_UNKNOWN06		0x44
+#define SB_COMMAND_JD_UNKNOWN07		0x45
+#define SB_COMMAND_JD_UNKNOWN08		0x54
+#define SB_COMMAND_JD_UNKNOWN09		0x33
+#define SB_COMMAND_JD_UNKNOWN10		0x46
+#define SB_COMMAND_JD_GET_MODULES_LIST	0x8d	// Get all Java modules list with their address and ID
+#define SB_COMMAND_JD_GET_CONSOLE_MSG	0x40	// Get console message
+#define SB_COMMAND_JD_GO		0x02	// Go
+#define SB_COMMAND_JD_GET_STATUS		0x06	// Get status
+#define SB_COMMAND_JD_SET_BREAKPOINT	0x21	// Set breakpoint
+#define SB_COMMAND_JD_RM_BREAKPOINT	0x22	// Remove breakpoint
+
+// JavaDebug response
+#define SB_COMMAND_JD_GET_DATA_ENTRY	0x06
+
+
 // mode constants
 #define SB_MODE_REQUEST_SOCKET		0x00ff
 

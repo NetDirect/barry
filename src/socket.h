@@ -34,6 +34,7 @@ namespace Barry {
 	class Data;
 	class Packet;
 	class JLPacket;
+	class JDPacket;
 	class SocketRoutingQueue;
 }
 
@@ -157,6 +158,7 @@ public:
 	void Send(Data &send, Data &receive, int timeout = -1); // send+recv
 	void Send(Barry::Packet &packet, int timeout = -1);
 	void Receive(Data &receive, int timeout = -1);
+	void ReceiveData(Data &receive, int timeout = -1);
 
 	// sends the send packet down to the device, fragmenting if
 	// necessary, and returns the response in receive, defragmenting
@@ -165,6 +167,11 @@ public:
 	void Packet(Data &send, Data &receive, int timeout = -1);
 	void Packet(Barry::Packet &packet, int timeout = -1);
 	void Packet(Barry::JLPacket &packet, int timeout = -1);
+	void Packet(Barry::JDPacket &packet, int timeout = -1);
+
+	// Use this function to send packet to JVM instead of Packet function
+	void InitSequence(int timeout = -1);
+	void PacketJVM(Data &send, Data &receive, int timeout = -1);
 
 	// Use this function to send data packet instead of Packet function
 	// Indeed, Packet function is used to send command (and not data)

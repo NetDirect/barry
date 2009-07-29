@@ -243,6 +243,67 @@ public:
 };
 
 
+//
+// JDPacket class
+//
+/// Provides an API for building and analyzing raw JavaDebug protocol packets.
+/// This class relies on 3 external objects:
+/// a command send Data buffer (which can be fairly small), a data
+/// or argument send Data buffer, and a receive data buffer.  Socket and
+/// connection details are retrieved on a readonly basis from the
+/// Mode::JavaDebug object, but all buffers can be modified.
+///
+/// Note that the receive buffer may be modified
+/// during a packet send, and this JDPacket class provides API helpers
+/// to analyze the results.
+///
+class JDPacket : public Packet
+{
+	friend class Socket;
+
+private:
+	Data &m_cmd;
+
+public:
+	JDPacket(Data &cmd, Data &receive);
+	~JDPacket();
+
+	//////////////////////////////////
+	// meta access
+
+	Data& GetReceive()	{ return m_receive; }
+
+	//////////////////////////////////
+	// packet building
+
+	// commands that correspond to the operation
+	// constants in protocol.h
+
+	// returns 1 or 2 depending on whether cmd or cmd+send are available
+	void SimpleCmd(uint8_t cmd);
+	void ComplexCmd(uint8_t cmd, const void *param, uint16_t size = 0);
+
+	void Unknown01();	// Command 0x53
+	void Unknown02();	// Command 0x01
+	void Unknown03();	// Command 0x6f
+	void Unknown04();	// Command 0x8a
+	void Unknown05();	// Command 0x90
+	void Unknown06();	// Command 0x44
+	void Unknown07();	// Command 0x45
+	void Unknown08();	// Command 0x54
+	void Unknown09();	// Command 0x33
+	void Unknown10();	// Command 0x46
+	void GetModulesList(uint32_t id);	// Command 0x8d
+	void GetConsoleMessage();
+	void Go();	// Command 0x02
+	void GetStatus();	// Command 0x06
+
+	//////////////////////////////////
+	// response analysis
+	unsigned int Size();
+};
+
+
 } // namespace Barry
 
 #endif

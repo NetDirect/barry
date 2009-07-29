@@ -654,5 +654,164 @@ int JLPacket::PutData(const void *data, uint16_t size)
 	return SimpleData(data, size);
 }
 
+
+//////////////////////////////////////////////////////////////////////////////
+// JDPacket class
+
+JDPacket::JDPacket(Data &send, Data &receive)
+	: Packet(send, receive)
+	, m_cmd(send)
+{
+}
+
+JDPacket::~JDPacket()
+{
+}
+
+
+unsigned int JDPacket::Size()
+{
+	Protocol::CheckSize(m_receive, SB_JDPACKET_HEADER_SIZE + sizeof(uint16_t));
+	MAKE_JDPACKET(rpack, m_receive);
+	return be_btohs(rpack->u.expect);
+}
+
+
+// Command format (param is optionnal) :
+// 00000000: 05 00 07 00 00 01 8a
+//                             ^^ : command
+//                       ^^^^^ : size of commd + param
+//                 ^^^^^ : packet size
+//           ^^^^^ : socket ID
+void JDPacket::SimpleCmd(uint8_t cmd)
+{
+	// 4 : socket id field + packet size field
+	// 2 : size field
+	// 1 : command field
+	const uint16_t total = 4 + 2 + 1;
+
+	MAKE_JDPACKETPTR_BUF(cpack, m_cmd.GetBuffer(total));
+	Protocol::JDPacket &packet = *cpack;
+
+	// socket class sets socket for us
+	packet.size = htobs(total);
+	packet.u.command.size = be_htobs(1);
+	packet.u.command.command = cmd;
+
+	m_cmd.ReleaseBuffer(total);
+}
+
+// Command with parameter format :
+// 00000000: 05 00 0b 00 00 05 8d 00 00 00 00
+//                                ^^^^^^^^^^^ : param
+//                             ^^ : command
+//                       ^^^^^ : size of commd + param
+//                 ^^^^^ : packet size
+//           ^^^^^ : socket ID
+void JDPacket::ComplexCmd(uint8_t cmd, const void *param, uint16_t size)
+{
+	// 4 : socket id field + packet size field
+	// 2 : size field
+	// 1 : command field
+	uint16_t total = 4 + 2 + 1 + size;
+
+	MAKE_JDPACKETPTR_BUF(cpack, m_cmd.GetBuffer(total));
+	Protocol::JDPacket &packet = *cpack;
+
+	// socket class sets socket for us
+	packet.size = htobs(total);
+	packet.u.command.size = be_htobs(1 + size);
+	packet.u.command.command = cmd;
+
+	if ((size > 0) && (param != NULL))
+		memcpy(cpack->u.command.raw, param, size);
+
+	m_cmd.ReleaseBuffer(total);
+}
+
+
+void JDPacket::Unknown01() {
+	SimpleCmd(SB_COMMAND_JD_UNKNOWN01);
+}
+
+
+void JDPacket::Unknown02() {
+	SimpleCmd(SB_COMMAND_JD_UNKNOWN02);
+}
+
+
+void JDPacket::Unknown03() {
+	SimpleCmd(SB_COMMAND_JD_UNKNOWN03);
+}
+
+
+void JDPacket::Unknown04() {
+	SimpleCmd(SB_COMMAND_JD_UNKNOWN04);
+}
+
+
+void JDPacket::Unknown05() {
+	SimpleCmd(SB_COMMAND_JD_UNKNOWN05);
+}
+
+
+void JDPacket::Unknown06() {
+	uint32_t param = 0;
+
+	ComplexCmd(SB_COMMAND_JD_UNKNOWN06, &param, sizeof(param));
+}
+
+
+void JDPacket::Unknown07() {
+	uint32_t param = 0;
+
+	ComplexCmd(SB_COMMAND_JD_UNKNOWN07, &param, sizeof(param));
+}
+
+
+void JDPacket::Unknown08() {
+	uint32_t param = 0;
+
+	ComplexCmd(SB_COMMAND_JD_UNKNOWN08, &param, sizeof(param));
+}
+
+
+void JDPacket::Unknown09() {
+	uint32_t param = be_htobl(0x09);
+
+	ComplexCmd(SB_COMMAND_JD_UNKNOWN09, &param, sizeof(param));
+}
+
+
+void JDPacket::Unknown10() {
+	uint32_t param = be_htobl(0x01);
+
+	ComplexCmd(SB_COMMAND_JD_UNKNOWN10, &param, sizeof(param));
+}
+
+
+void JDPacket::GetModulesList(uint32_t id) {
+	id = be_htobl(id);
+
+	ComplexCmd(SB_COMMAND_JD_GET_MODULES_LIST, &id, sizeof(id));
+}
+
+
+void JDPacket::GetConsoleMessage() {
+	SimpleCmd(SB_COMMAND_JD_GET_CONSOLE_MSG);
+}
+
+
+void JDPacket::Go()
+{
+	SimpleCmd(SB_COMMAND_JD_GO);
+}
+
+
+void JDPacket::GetStatus()
+{
+	SimpleCmd(SB_COMMAND_JD_GET_STATUS);
+}
+
 } // namespace Barry
 

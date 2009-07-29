@@ -5,7 +5,7 @@ INCLUDES = $(LIBUSB_CFLAGS)
 #AM_CXXFLAGS = -ansi -Wall -fno-strict-aliasing -g
 AM_CXXFLAGS = -ansi -Wall -g
 
-bin_PROGRAMS = btool bidentify bjavaloader upldif btranslate bktrans brecsum brimtrans
+bin_PROGRAMS = btool bidentify bjavaloader bjavadebug upldif btranslate bktrans brecsum brimtrans
 if WITH_BOOST
 bin_PROGRAMS += bs11nread
 endif
@@ -33,6 +33,9 @@ bidentify_LDADD = ../src/libbarry.la $(LIBUSB_LIBS) -lpthread
 
 bjavaloader_SOURCES = bjavaloader.cc
 bjavaloader_LDADD = ../src/libbarry.la $(LIBUSB_LIBS) -lpthread
+
+bjavadebug_SOURCES = bjavadebug.cc
+bjavadebug_LDADD = ../src/libbarry.la $(LIBUSB_LIBS) -lpthread
 
 upldif_SOURCES = upldif.cc
 upldif_LDADD = ../src/libbarry.la $(LIBUSB_LIBS) -lpthread

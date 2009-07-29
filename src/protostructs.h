@@ -738,6 +738,64 @@ struct JLPacket
 } __attribute__ ((packed));
 #define SB_JLPACKET_HEADER_SIZE		(sizeof(Barry::Protocol::JLPacket) - sizeof(Barry::Protocol::JLPacket::PacketData))
 
+
+///////////////////////////////////////////////////////////////////////////////
+// JavaDebug protocol structure
+
+struct JDCommand
+{
+	uint16_t	size;
+	uint8_t		command;
+	uint8_t		raw[1];
+} __attribute__ ((packed));
+#define SB_JDCOMMAND_HEADER_SIZE		(sizeof(Barry::Protocol::JDCommand))
+
+struct JDResponse
+{
+	uint8_t		command;
+	uint8_t		unknown;
+	uint16_t	expect;
+} __attribute__ ((packed));
+#define SB_JDRESPONSE_HEADER_SIZE		(sizeof(Barry::Protocol::JDResponse))
+
+struct JDModulesList
+{
+	uint32_t	nbr;
+	// remainder of packet is variable
+	// it contains the modules list 
+} __attribute__ ((packed));
+#define SB_JDMODULES_LIST_HEADER_SIZE		(sizeof(Barry::Protocol::JDModulesList))
+
+struct JDModulesEntry
+{
+	uint32_t	id;
+	uint32_t	address;
+	uint16_t	sizename;
+	// remainder of packet is variable
+	// it contains the module name
+} __attribute__ ((packed));
+#define SB_JDMODULES_ENTRY_HEADER_SIZE		(sizeof(Barry::Protocol::JDModulesEntry))
+
+struct JDPacket
+{
+	uint16_t	socket;
+	uint16_t	size;		// total size of data packet
+
+	union PacketData
+	{
+		JDCommand		command;
+		JDResponse		response;
+		JDModulesList	moduleslist;
+		uint16_t		expect;
+		uint16_t		msglength;
+		uint8_t			status;
+		uint8_t			raw[1];
+	} __attribute__ ((packed)) u;
+
+} __attribute__ ((packed));
+#define SB_JDPACKET_HEADER_SIZE		(sizeof(Barry::Protocol::JDPacket) - sizeof(Barry::Protocol::JDPacket::PacketData))
+
+
 ///////////////////////////////////////////////////////////////////////////////
 // Main packet struct
 
@@ -795,8 +853,10 @@ struct Packet
 #define IS_COMMAND(data, cmd)			(COMMAND(data) == cmd)
 #define MAKE_PACKET(var, data)			const Barry::Protocol::Packet *var = (const Barry::Protocol::Packet *) (data).GetData()
 #define MAKE_JLPACKET(var, data)		const Barry::Protocol::JLPacket *var = (const Barry::Protocol::JLPacket *) (data).GetData()
+#define MAKE_JDPACKET(var, data)		const Barry::Protocol::JDPacket *var = (const Barry::Protocol::JDPacket *) (data).GetData()
 #define MAKE_PACKETPTR_BUF(var, ptr)		Barry::Protocol::Packet *var = (Barry::Protocol::Packet *)ptr
 #define MAKE_JLPACKETPTR_BUF(var, ptr)		Barry::Protocol::JLPacket *var = (Barry::Protocol::JLPacket *)ptr
+#define MAKE_JDPACKETPTR_BUF(var, ptr)		Barry::Protocol::JDPacket *var = (Barry::Protocol::JDPacket *)ptr
 #define MAKE_RECORD(type,var,data,off)		type *var = (type *) ((data).GetData() + (off))
 #define MAKE_RECORD_PTR(type,var,data,off)	type *var = (type *) ((data) + (off))
 

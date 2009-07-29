@@ -71,6 +71,7 @@ include_barry_HEADERS = barry.h \
 	m_ipmodem.h \
 	m_serial.h \
 	m_javaloader.h \
+	m_javadebug.h \
 	data.h \
 	error.h \
 	ldif.h \
@@ -105,7 +106,9 @@ include_barry_HEADERS = barry.h \
 	iconv.h \
 	cod.h \
 	bmp.h \
-	s11n-boost.h
+	s11n-boost.h \
+	endian.h \
+	../config.h
 
 noinst_HEADERS = cbarry.h \
 	base64.h \
@@ -116,7 +119,6 @@ noinst_HEADERS = cbarry.h \
 	scoped_lock.h \
 	protostructs.h \
 	debug.h \
-	endian.h \
 	strnlen.h
 
 EXTRA_DIST = convo.awk \
@@ -156,6 +158,7 @@ libbarry_la_SOURCES = time.cc \
 	m_ipmodem.cc \
 	m_serial.cc \
 	m_javaloader.cc \
+	m_javadebug.cc \
 	version.cc \
 	pppfilter.cc \
 	sha1.cc \
