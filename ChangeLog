@@ -4,6 +4,9 @@ Release: version 0.15 - 2009/01/??
 	- updated license and URL in barry.spec
 	- updated barrybackup Credits dialog to reference AUTHORS file
 	- updated barrybackup.1 man page
+	- updated doc/www scripts to generate more dynamic pages,
+		so subheaders are not hard coded... this helps support
+		updating the new NetDirect website
 2009/07/10
 	- changed pppob to report if Serial was fallback or command line
 	- started device compatibility list in web docs

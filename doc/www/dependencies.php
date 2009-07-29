@@ -1,8 +1,8 @@
-<? createHeader("barry - Software dependencies"); ?>
-
 <? include ("barry.inc"); ?>
 
-<div class="subHeader">System Specific</div>
+<? createHeader("barry - Software dependencies"); ?>
+
+<? createSubHeader("System Specific"); ?>
 
 <p>Fedora systems:
 <ul>
@@ -28,7 +28,7 @@
 </ul>
 </p>
 
-<div class="subHeader">Master List of Dependencies</div>
+<? createSubHeader("Master List of Dependencies"); ?>
 
 <p>The following list contains all software that Barry depends on, and
 the reason for it.  Some are only needed for building the source, and
@@ -61,7 +61,7 @@ some are only needed for building CVS.
 </ul>
 </p>
 
-<div class="subHeader">The Case of the Broken libtar</div>
+<? createSubHeader("The Case of the Broken libtar"); ?>
 
 <p>Well meaning people, in efforts to port the libtar examples to 64-bit
 systems have introduced a bug that causes libtar to mismatch standard
@@ -89,7 +89,7 @@ rpm -i ../RPMS/*/libtar*rpm
 </p>
 
 
-<div class="subHeader">Dependency Packages for Common Distros</div>
+<? createSubHeader("Dependency Packages for Common Distros"); ?>
 
 <p>The following is a list of packages you'll need to install to build Barry
 from source, if you are using one of the below common distributions.  Other

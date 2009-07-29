@@ -1,9 +1,9 @@
-<? createHeader("Backing up your BlackBerry Data"); ?>
-
 <? include ("barry.inc"); ?>
 
+<? createHeader("Backing up your BlackBerry Data"); ?>
 
-<div class="subHeader">Introduction</div>
+
+<? createSubHeader("Introduction"); ?>
 
 <p>Backups are currently performed using the Barry Backup GUI program, located
 in the gui/ directory of the source tarball.  Instructions for building the
@@ -11,7 +11,7 @@ GUI can be found on the <? createLink("install", "Install"); ?> and
 <? createLink("cvs", "CVS"); ?> pages.</p>
 
 
-<div class="subHeader">Backup Interface</div>
+<? createSubHeader("Backup Interface"); ?>
 
 
 <p>When Backup starts, it scans the USB bus for Blackberry devices.  If it
@@ -24,7 +24,7 @@ for easy identification later.</p>
 
 <p>The main screen presents you with two options: Backup and Restore.</p>
 
-<img src="backup.png" border=1 />
+<? createImage("backup.png"); ?>
 
 <p>When backing up your device, your data is saved in a compressed tar file
 in your home directory, under ~/.barry, organized by PIN number.  Each tar
@@ -35,12 +35,12 @@ name.  If you specify a name, it will be used as part of the tar filename.</p>
 
 
 
-<div class="subHeader">Restore</div>
+<? createSubHeader("Restore"); ?>
 
 <p>Pressing the Restore button will show a File Open dialog, pointing
 to your ~/.barry directory, for the current device PIN.</p>
 
-<img src="restore.png" border=1 />
+<? createImage("restore.png"); ?>
 
 <p>You are not limited to the tar files in this directory, nor are you
 limited to backup files from the same device.  You can use this tool
@@ -58,14 +58,14 @@ the Restore Configuration dialog, as described below.</p>
 
 
 
-<div class="subHeader">Configuration</div>
+<? createSubHeader("Configuration"); ?>
 
 <p>Configuration is performed via the Edit menu, and provides two
 filters for determining what databases are accessed during backup and
 restore operations.  You can also change the device name here, and turn
 off the backup name prompt.</p>
 
-<img src="config.png" border=1 />
+<? createImage("config.png"); ?>
 
 <p>Each configure button provides essentially the same dialog, containing a
 list of databases available on your device, as well as checkboxes to
@@ -75,7 +75,7 @@ enable them.</p>
 For the restore filter, only the enabled databases will be restored,
 even if the backup file contains more data.</p>
 
-<img src="config-backup.png" border=1 />
+<? createImage("config-backup.png"); ?>
 
 <p>This configuration is saved per device PIN.  If you backup a different
 device, you will need to configure its backup strategy again.  You can only

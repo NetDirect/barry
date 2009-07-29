@@ -1,8 +1,8 @@
-<? createHeader("Hacking Barry"); ?>
-
 <? include ("barry.inc"); ?>
 
-<div class="subHeader">BlackBerry protocol</div>
+<? createHeader("Hacking Barry"); ?>
+
+<? createSubHeader("BlackBerry protocol"); ?>
 
 <p>No BlackBerry-related protocol project would be complete without referencing
 the fine documentation from the Cassis project, which tackled the earlier
@@ -20,7 +20,7 @@ See the code for more detailed information.</p>
 <p>Further documentation on the USB protocol is planned.  Stay tuned.</p>
 
 
-<div class="subHeader">Playing with the protocol</div>
+<? createSubHeader("Playing with the protocol"); ?>
 
 <p>The USB captures were performed on a Windows XP Pro system running UsbSnoop
 from <a href="http://benoit.papillault.free.fr/usbsnoop/index.php">http://benoit.papillault.free.fr/usbsnoop/index.php</a></p>
@@ -44,7 +44,7 @@ send patches and/or documentation to the
 engineering the protocol.</p>
 
 
-<div class="subHeader">Some notes on code architecture</div>
+<? createSubHeader("Some notes on code architecture"); ?>
 
 <p><i>Note: this is currently out of date.</i></p>
 

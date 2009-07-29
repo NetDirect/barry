@@ -1,8 +1,8 @@
-<? createHeader("barry - Design"); ?>
-
 <? include("barry.inc"); ?>
 
-<div class="subHeader">Architecture</div>
+<? createHeader("barry - Design"); ?>
+
+<? createSubHeader("Architecture"); ?>
 
 <p>Barry is designed to be modular in many ways.
 
@@ -22,7 +22,7 @@ Tasks, and Memos; and the OpenSync framework will provide the synchronization
 support for the other side othe equation. (Evolution, Sunbird, etc.)
 
 
-<div class="subHeader">Design Goals</div>
+<? createSubHeader("Design Goals"); ?>
 
 <p>Flexible Synchronization Targets: The main goal of barry is to
 synchronize data.  This is complicated by the fact that the data on a

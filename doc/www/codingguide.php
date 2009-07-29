@@ -1,9 +1,8 @@
-<? createHeader("Coding Guidelines"); ?>
-
 <? include ("barry.inc"); ?>
 
+<? createHeader("Coding Guidelines"); ?>
 
-<div class="subHeader">Style Guide</div>
+<? createSubHeader("Style Guide"); ?>
 
 <p>I use plain old vim for editing files.  As such, tabs are standard 8
 spaces wide.  When aligning the code, indents are always tabs.

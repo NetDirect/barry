@@ -19,6 +19,7 @@ Barry Release Checklist:
 	- update known issues list
 	- check that all external links work, and point to proper content
 	- upload latest web docs to netdirect project page
+		- run: ./static.sh netdirect
 	- upload latest doxygen docs to netdirect project page
 - snip this version's changelog history into its own file
 - tag CVS repo and sign-tag git repo with latest version

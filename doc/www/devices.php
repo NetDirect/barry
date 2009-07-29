@@ -1,9 +1,8 @@
-<? createHeader("Device Compatibility List"); ?>
-
 <? include ("barry.inc"); ?>
 
+<? createHeader("Device Compatibility List"); ?>
 
-<div class="subHeader">Device Compatibility List</div>
+<? createSubHeader("Device Compatibility List"); ?>
 
 <p>This list is intended as a rough guide and record of past success
 when using Barry with various versions of the BlackBerry handheld.

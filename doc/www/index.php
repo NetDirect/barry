@@ -1,8 +1,8 @@
-<? createHeader("barry - BlackBerry &trade; synchronization for Linux"); ?>
-
 <? include ("barry.inc"); ?>
 
-<div class="subHeader">Overview</div>
+<? createHeader("barry - BlackBerry &trade; synchronization for Linux"); ?>
+
+<? createSubHeader("Overview"); ?>
 
 <p>Linux users who also use a BlackBerry &trade; now have an option for
 managing their BlackBerry directly from Linux.</p>
@@ -69,7 +69,7 @@ reverse engineer the battery charging handshake via USB.</p>
 </ul>
 </p>
 
-<div class="subHeader">Getting Started</div>
+<? createSubHeader("Getting Started"); ?>
 
 <p>How do I...
 <ul>
@@ -89,12 +89,12 @@ reverse engineer the battery charging handshake via USB.</p>
 <ul>
 	<li><? createLink("requirements", "System requirements"); ?></li>
 	<li><? createLink("dependencies", "Software dependencies"); ?></li>
-	<li><a href="doxygen/html/index.html">Barry's Doxygen documentation</a></li>
+	<li><? createFileLink("doxygen/html/index.html", "Barry's Doxygen documentation"); ?></li>
 </ul>
 </p>
 
 
-<div class="subHeader">How to Help</div>
+<? createSubHeader("How to Help"); ?>
 
 <p>If you are a C++ programmer, grab the source from
 <? createLink("cvs", "CVS"); ?> and take a look at the TODO file.
@@ -126,18 +126,21 @@ in helping decipher data, we have a
 or contribute, USB logs to the
 <? createLink("logs", "USB capture log archive"); ?>.</p>
 
-<div class="subHeader">Design</div>
+
+<? createSubHeader("Design"); ?>
 
 <p>If you are interested in helping out or just interested in how it works,
 check out our <? createLink("design", "design notes"); ?>.
 
-<div class="subHeader">Roadmap</div>
+
+<? createSubHeader("Roadmap"); ?>
 
 <p>We have put together a document that describes where we are and where we
 want to take Barry. Check out our <? createLink("roadmap", "roadmap"); ?>
 to see what's happening.</p>
 
-<div class="subHeader">External Links</div>
+
+<? createSubHeader("External Links"); ?>
 
 <p>Barry users and others have contributed documentation and have
 put these howto's on the web.  Below is a list of some of these pages.

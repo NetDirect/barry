@@ -1,9 +1,8 @@
-<? createHeader("Syncing your BlackBerry with Evolution"); ?>
-
 <? include ("barry.inc"); ?>
 
+<? createHeader("Syncing your BlackBerry with Evolution"); ?>
 
-<div class="subHeader">Introduction</div>
+<? createSubHeader("Introduction"); ?>
 
 <p>This document describes the steps needed to sync your Blackberry with
 Evolution, using OpenSync version 0.22 and the command line tool
@@ -11,7 +10,7 @@ msynctool.  The concepts are similar with other Opensync plugins,
 and should be relatively straightforward to sync with other data sources.</p>
 
 
-<div class="subHeader">Overview</div>
+<? createSubHeader("Overview"); ?>
 
 <p>The first sync requires the following steps:
 <ul>
@@ -30,7 +29,7 @@ and should be relatively straightforward to sync with other data sources.</p>
 </p>
 
 
-<div class="subHeader">First Step</div>
+<? createSubHeader("First Step"); ?>
 
 <p>First step is to always make a backup of your data.  Use the GUI
 backup tool that comes with Barry, or the RIM Windows Desktop software,
@@ -44,7 +43,7 @@ See
 for step by step instructions on backing up your local Evolution data.</p>
 
 
-<div class="subHeader">Preparing Evolution</div>
+<? createSubHeader("Preparing Evolution"); ?>
 
 <p>If you've never run Evolution before, start Evolution and follow its
 initial configuration dialogs.  Once it is running, click on each of the
@@ -60,7 +59,7 @@ databases will be synced to your Blackberry as well.</p>
 in the Barry Opensync 0.22 plugin.</p>
 
 
-<div class="subHeader">Preparing OpenSync</div>
+<? createSubHeader("Preparing OpenSync"); ?>
 
 <p>Opensync organizes its sync configurations in the form of groups.  Each
 group contains two or more member plugins that will be synchronized.</p>
@@ -122,7 +121,7 @@ that comes with Barry is shown below:</p>
 first sync.</p>
 
 
-<div class="subHeader">Syncing!</div>
+<? createSubHeader("Syncing!"); ?>
 
 <p>It is recommended that Evolution's backend servers be shutdown before
 the sync is performed.  Therefore, make sure you've closed Evolution,
@@ -138,7 +137,7 @@ fetches new records, the conflict resolution is performed by the Opensync
 engine, and new records are written to each plugin.</p>
 
 
-<div class="subHeader">Troubleshooting</div>
+<? createSubHeader("Troubleshooting"); ?>
 
 <p>There are a number of things that can go wrong during a sync:
 <ul>

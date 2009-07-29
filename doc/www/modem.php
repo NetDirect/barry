@@ -1,9 +1,8 @@
-<? createHeader("Using your BlackBerry as a USB Modem"); ?>
-
 <? include ("barry.inc"); ?>
 
+<? createHeader("Using your BlackBerry as a USB Modem"); ?>
 
-<div class="subHeader">Introduction</div>
+<? createSubHeader("Introduction"); ?>
 
 <p>The Blackberry has the ability to act like a Hayes compatible modem,
 complete with AT commands.</p>
@@ -21,7 +20,7 @@ page for more details.</p>
 </p>
 
 
-<div class="subHeader">If You Installed Barry's Binary Packages...</div>
+<? createSubHeader("If You Installed Barry's Binary Packages..."); ?>
 
 <p>If you installed Barry's binary packages, specifically barry-util,
 then default ppp options and chat scripts are installed automatically
@@ -46,7 +45,7 @@ following command as root:</p>
 below.</p>
 
 
-<div class="subHeader">If You Installed Barry From Source...</div>
+<? createSubHeader("If You Installed Barry From Source..."); ?>
 
 <p><b>Configuring PPPD</b></p>
 
@@ -77,7 +76,7 @@ Debian uses "pon" and "poff".</p>
 
 
 
-<div class="subHeader">If Your Device Needs a Password...</div>
+<? createSubHeader("If Your Device Needs a Password..."); ?>
 
 <p>If your device requires a password, you can specify this on the <b>pppob</b>
 command line.  For example, if you are using the <i>barry-rogers</i>
@@ -89,7 +88,7 @@ PPP script, edit your /etc/ppp/peers/barry-rogers file, so that the
 </pre>
 
 
-<div class="subHeader">Testing Your Connection</div>
+<? createSubHeader("Testing Your Connection"); ?>
 
 <p>PPP will display some messages on stdout as it connects.  On success,
 you should see IP address negotiation and the resulting IP address for your
@@ -106,7 +105,7 @@ is there.</p>
 </pre>
 
 
-<div class="subHeader">Security Concerns</div>
+<? createSubHeader("Security Concerns"); ?>
 
 <p>Depending on your provider, you may or may not have a firewall installed
 when you connect to the internet through a tethered modem.  Keep an eye on
@@ -124,7 +123,7 @@ network setups.</p>
 
 
 
-<div class="subHeader">Troubleshooting</div>
+<? createSubHeader("Troubleshooting"); ?>
 
 <p>Some devices don't respond to the PPP commands at first, but after
 the battery is removed and reinserted, modem functionality works.  This is

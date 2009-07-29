@@ -1,10 +1,10 @@
-<? createHeader("barry - Requirements"); ?>
-
 <? include ("barry.inc"); ?>
 
-<div class="subHeader">::::::: Linux ::::::::::::::</div>
+<? createHeader("barry - Requirements"); ?>
 
-<div class="subHeader">Charging and the Kernel</div>
+<? createSubHeader("::::::: Linux ::::::::::::::"); ?>
+
+<? createSubHeader("Charging and the Kernel"); ?>
 
 <p>One of the main features of Barry is the ability to control the charging
 modes of the Blackberry, as well as changing configuration modes on
@@ -27,7 +27,7 @@ blacklist file that comes with the source tarball.</p>
 
 
 
-<div class="subHeader">Power and the Kernel</div>
+<? createSubHeader("Power and the Kernel"); ?>
 
 <p>Recent kernels also have the ability to put the USB bus and its devices
 into suspend mode.  Kernels included in Ubuntu 7.04 and
@@ -55,7 +55,7 @@ least one of the needed files are there.</p>
 </p>
 
 
-<div class="subHeader">Device Ownership and Permissions</div>
+<? createSubHeader("Device Ownership and Permissions"); ?>
 
 <p>The Barry toolset performs all its actions through the /proc and/or
 /sysfs filesystems, using the libusb library.  This requires that you
@@ -81,9 +81,9 @@ have permissions to write to the USB device files setup by the kernel.</p>
 
 
 
-<div class="subHeader">::::::: OpenBSD ::::::::::::::</div>
+<? createSubHeader("::::::: OpenBSD ::::::::::::::"); ?>
 
-<div class="subHeader">Uberry Module and Ugen</div>
+<? createSubHeader("Uberry Module and Ugen"); ?>
 
 <p>The uberry kernel module conflicts with the ugen interface that
 libusb uses to talk to the device.  To work around this, you will

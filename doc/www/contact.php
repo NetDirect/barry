@@ -1,9 +1,8 @@
-<? createHeader("Contacting the Developers"); ?>
-
 <? include ("barry.inc"); ?>
 
+<? createHeader("Contacting the Developers"); ?>
 
-<div class="subHeader">Email</div>
+<? createSubHeader("Email"); ?>
 
 <p>The <b><i>best</i></b> way to reach the Barry developers is through the
 <a href="http://sourceforge.net/mail/?group_id=153722">barry-devel mailing list</a>.
@@ -16,7 +15,7 @@ the version of the Barry package you are using when contacting Chris
 directly.</p>
 
 
-<div class="subHeader">Web</div>
+<? createSubHeader("Web"); ?>
 
 <p>If you cannot use email for some reason, you can also post support
 requests and bug reports on the Sourceforge

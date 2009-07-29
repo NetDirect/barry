@@ -1,15 +1,14 @@
-<? createHeader("Installing Barry Via Binary Packages"); ?>
-
 <? include ("barry.inc"); ?>
 
+<? createHeader("Installing Barry Via Binary Packages"); ?>
 
-<div class="subHeader">Dependencies</div>
+<? createSubHeader("Dependencies"); ?>
 
 <p>See the <? createLink("dependencies", "software dependencies"); ?> page for
 detailed information on the software that Barry needs.</p>
 
 
-<div class="subHeader">Binary Packages</div>
+<? createSubHeader("Binary Packages"); ?>
 
 <p>Download the matching packages for your system from the
 <a href="http://sourceforge.net/project/showfiles.php?group_id=153722">Sourceforge download page</a> or the <a href="http://download.opensuse.org/repositories/home:/ndprojects/">OpenSUSE Build Service page</a>.</p>

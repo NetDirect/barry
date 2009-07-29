@@ -1,8 +1,8 @@
-<? createHeader("Barry - Roadmap"); ?>
-
 <? include ("barry.inc"); ?>
 
-<div class="subHeader">Milestone 1 - mostly complete</div>
+<? createHeader("Barry - Roadmap"); ?>
+
+<? createSubHeader("Milestone 1 - mostly complete"); ?>
 <ul>
 	<li> autoconf the project
 	<li> handle USB interface and configuration numbers dynamically
@@ -13,7 +13,7 @@
 	<li> use SWIG to make the API available in Python
 </ul>
 
-<div class="subHeader">Milestone 2 - complete for all but email</div>
+<? createSubHeader("Milestone 2 - complete for all but email"); ?>
 <ul>
 <li> reliable command line backup and restore of:
 	<ul>
@@ -23,38 +23,38 @@
 	</ul>
 </ul>
 
-<div class="subHeader">Milestone 3 - complete</div>
+<? createSubHeader("Milestone 3 - complete"); ?>
 <ul>
 	<li> reliable backup and restore of all databases </li>
 </ul>
 
-<div class="subHeader">Milestone 4</div>
+<? createSubHeader("Milestone 4"); ?>
 <ul>
 	<li> reliable command line backup and restore of Java program modules
 </ul>
 
-<div class="subHeader">Milestone 5 - currently implemented through OpenSync</div>
+<? createSubHeader("Milestone 5 - currently implemented through OpenSync"); ?>
 <ul>
 	<li>design and implement sync functionality (must support data from any external data source)
 	<li>command line sync tool
 </ul>
 
-<div class="subHeader">Milestone 6 - currently implemented through OpenSync</div>
+<? createSubHeader("Milestone 6 - currently implemented through OpenSync"); ?>
 <ul>
 	<li>GUI sync tool
 </ul>
 
-<div class="subHeader">Milestone 7 - currently implemented through OpenSync</div>
+<? createSubHeader("Milestone 7 - currently implemented through OpenSync"); ?>
 <ul>
 	<li>Evolution sync
 </ul>
 
-<div class="subHeader">Milestone 8 - currently implemented through OpenSync</div>
+<? createSubHeader("Milestone 8 - currently implemented through OpenSync"); ?>
 <ul>
 	<li>Mozilla sync
 </ul>
 
-<div class="subHeader">Milestone 9 - currently implemented through OpenSync</div>
+<? createSubHeader("Milestone 9 - currently implemented through OpenSync"); ?>
 <ul>
 	<li>LDAP sync
 </ul>

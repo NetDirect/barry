@@ -1,9 +1,8 @@
-<? createHeader("Troubleshooting"); ?>
-
 <? include ("barry.inc"); ?>
 
+<? createHeader("Troubleshooting"); ?>
 
-<div class="subHeader">Common Issues When Working With Barry</div>
+<? createSubHeader("Common Issues When Working With Barry"); ?>
 
 
 <p><b>Q:</b> I have one of the newer Pearl devices, such as the 8120.

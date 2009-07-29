@@ -1,9 +1,8 @@
-<? createHeader("Reporting a Bug"); ?>
-
 <? include ("barry.inc"); ?>
 
+<? createHeader("Reporting a Bug"); ?>
 
-<div class="subHeader">Information to Report</div>
+<? createSubHeader("Information to Report"); ?>
 
 <p>When reporting a bug, it is helpful to include as much information as you
 can about your system, and the circumstances surrounding the bug.</p>

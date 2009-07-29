@@ -1,9 +1,8 @@
-<? createHeader("Submitting Patches"); ?>
-
 <? include ("barry.inc"); ?>
 
+<? createHeader("Submitting Patches"); ?>
 
-<div class="subHeader">Coding Guidelines</div>
+<? createSubHeader("Coding Guidelines"); ?>
 
 <p>If you are submitting code, please have a look at the
 <? createLink("codingguide", "Coding Guidelines page"); ?>.</p>
@@ -26,7 +25,7 @@ for submission:
 </ul>
 
 
-<div class="subHeader">Generating Patches</div>
+<? createSubHeader("Generating Patches"); ?>
 
 <p>Generating patches depends on the method you used to get the source code.
 <ul>
@@ -68,7 +67,7 @@ for submission:
 </ul>
 
 
-<div class="subHeader">Methods for Submitting Patches</div>
+<? createSubHeader("Methods for Submitting Patches"); ?>
 
 <p>Submitting changes can happen in one of three methods:
 
@@ -90,7 +89,7 @@ for submission:
 </p>
 
 
-<div class="subHeader">Using the Mob Branch</div>
+<? createSubHeader("Using the Mob Branch"); ?>
 
 <p>The public git repository service at repo.or.cz provides an interesting
 feature, which allows anyone to push to a "mob" branch of a repository,

@@ -1,15 +1,14 @@
-<? createHeader("Installing Barry"); ?>
-
 <? include ("barry.inc"); ?>
 
+<? createHeader("Installing Barry"); ?>
 
-<div class="subHeader">Dependencies</div>
+<? createSubHeader("Dependencies"); ?>
 
 <p>See the <? createLink("dependencies", "software dependencies"); ?> page for
 detailed information on the software that Barry needs.</p>
 
 
-<div class="subHeader">Getting the Source</div>
+<? createSubHeader("Getting the Source"); ?>
 
 <p>There are 3 ways to get the source code:
 <ul>
@@ -23,7 +22,7 @@ detailed information on the software that Barry needs.</p>
 </p>
 
 
-<div class="subHeader">Using The Tarball Release</div>
+<? createSubHeader("Using The Tarball Release"); ?>
 
 <p>There are multiple source packages available on the Sourceforge download page.
 The main tarball is always the tar.bz2 package.  This contains everything in
@@ -50,7 +49,7 @@ These packages can be installed and built as usual, using the rpm and rpmbuild
 commands.</p>
 
 
-<div class="subHeader">Using CVS</div>
+<? createSubHeader("Using CVS"); ?>
 
 <p>Up to date instructions for connecting to Sourceforge CVS repositories
 are available on the
@@ -74,7 +73,7 @@ your source tree periodically, do the following:
 </p>
 
 
-<div class="subHeader">Using git</div>
+<? createSubHeader("Using git"); ?>
 
 <p>The same development tree is also available via git, and can be browsed
 on the web at the <a href="http://repo.or.cz/w/barry.git">Barry git page</a>.
@@ -100,7 +99,7 @@ your source tree periodically, do the following:
 
 
 
-<div class="subHeader">Preparing Development Sources for Configure</div>
+<? createSubHeader("Preparing Development Sources for Configure"); ?>
 
 <p>If you're using a development tree, you'll need to build the usual
 ./configure script before you can proceed.  To do this, you will need
@@ -117,7 +116,7 @@ Barry tree.
 
 
 
-<div class="subHeader">Building the Source</div>
+<? createSubHeader("Building the Source"); ?>
 
 <p>At this point, or if you are using a source tarball, building Barry
 is a matter of the common set of commands:
@@ -147,7 +146,7 @@ will work as well.</p>
 
 
 
-<div class="subHeader">Build Everything!</div>
+<? createSubHeader("Build Everything!"); ?>
 
 <p>An example that will build everything, including the Boost features in
 btool:
@@ -173,7 +172,7 @@ start with are <code>-l</code> to list the devices found, and <code>-t</code>
 to list the Database Database.</p>
 
 
-<div class="subHeader">Configure udev to Run bcharge Automatically</div>
+<? createSubHeader("Configure udev to Run bcharge Automatically"); ?>
 
 <p>The makefiles do not install udev rules automatically.  There are sample
 udev rules files in the udev/ directory.  For a Debian system, copy the
@@ -193,7 +192,7 @@ and copy the file modprobe/blacklist-berry_charge to
 your 10-blackberry.rules file to match.</p>
 
 
-<div class="subHeader">Configure PPP chat scripts for your system</div>
+<? createSubHeader("Configure PPP chat scripts for your system"); ?>
 
 <p>The source tree comes with sample PPP chat scripts for using your
 Blackberry as a modem.  These sample scripts are located under ppp/ in
@@ -215,7 +214,7 @@ files.  The files assume that pppob is located in /usr/sbin/pppob.</p>
 information on using your Blackberry as a modem.</p>
 
 
-<div class="subHeader">Building Barry RPMs from CVS</div>
+<? createSubHeader("Building Barry RPMs from CVS"); ?>
 
 <p> Paul Dugas reports on the mailing list that he uses the following
 steps for building RPMs from CVS:</p>
@@ -237,7 +236,7 @@ steps for building RPMs from CVS:</p>
 </pre>
 
 
-<div class="subHeader">Building Barry DEBs from Source</div>
+<? createSubHeader("Building Barry DEBs from Source"); ?>
 
 <p>Once you have ./configure generated as detailed above, you can
 create Debian-style binary packages for your system by running the
