@@ -8,6 +8,7 @@ Release: version 0.15 - 2009/01/??
 		so subheaders are not hard coded... this helps support
 		updating the new NetDirect website
 	- commented out out-of-date docs in hacking.php
+	- marked milestone 4 complete (javaloader)
 2009/07/10
 	- changed pppob to report if Serial was fallback or command line
 	- started device compatibility list in web docs

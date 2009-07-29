@@ -28,7 +28,7 @@
 	<li> reliable backup and restore of all databases </li>
 </ul>
 
-<? createSubHeader("Milestone 4"); ?>
+<? createSubHeader("Milestone 4 - complete"); ?>
 <ul>
 	<li> reliable command line backup and restore of Java program modules
 </ul>
