@@ -571,6 +571,8 @@ void BackupWindow::on_help_about()
 
 	std::vector<std::string> authors;
 	authors.push_back("Chris Frey <cdfrey@foursquare.net>");
+	authors.push_back("and Barry contributors.  See AUTHORS file");
+	authors.push_back("for detailed contribution information.");
 
 	dlg.set_authors(authors);
 
