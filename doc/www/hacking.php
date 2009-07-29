@@ -43,6 +43,7 @@ send patches and/or documentation to the
 <p>See the doc/Hacking file for more information on getting started reverse
 engineering the protocol.</p>
 
+<!--
 
 <? createSubHeader("Some notes on code architecture"); ?>
 
@@ -178,6 +179,7 @@ engineering the protocol.</p>
 </table>
 </ul>
 
+-->
 
 <p>Enjoy!</p>
 
