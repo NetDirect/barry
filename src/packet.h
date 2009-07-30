@@ -293,9 +293,16 @@ public:
 	void Unknown08();	// Command 0x54
 	void Unknown09();	// Command 0x33
 	void Unknown10();	// Command 0x46
+	void Unknown11(uint32_t id);	// Command 0x0e
+	void Unknown12(uint32_t id);	// Command 0x50
+	void Unknown13(uint32_t id);	// Command 0x0d
+	void Unknown14(uint32_t id);	// Command 0x85
+	void Unknown15(uint32_t id);	// Command 0x84
 	void GetModulesList(uint32_t id);	// Command 0x8d
+	void GetThreadsList();	// Command 0x08
 	void GetConsoleMessage();
-	void Go();	// Command 0x02
+	void Go();	// Command mal formed :)
+	void Stop();	// Command 0x02
 	void GetStatus();	// Command 0x06
 
 	//////////////////////////////////

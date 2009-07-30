@@ -776,6 +776,28 @@ struct JDModulesEntry
 } __attribute__ ((packed));
 #define SB_JDMODULES_ENTRY_HEADER_SIZE		(sizeof(Barry::Protocol::JDModulesEntry))
 
+struct JDThreadsList
+{
+	uint32_t	nbr;
+	// remainder of packet is variable
+	// it contains the threads list 
+} __attribute__ ((packed));
+#define SB_JDTHREADS_LIST_HEADER_SIZE		(sizeof(Barry::Protocol::JDThreadsList))
+
+struct JDUnknown01
+{
+	uint8_t		byte;
+	uint32_t	address;
+} __attribute__ ((packed));
+#define SB_JDUNKNOWN01_HEADER_SIZE			(sizeof(Barry::Protocol::JDUnknown01))
+
+struct JDUnknown02
+{
+	uint32_t	address1;
+	uint32_t	address2;
+} __attribute__ ((packed));
+#define SB_JDUNKNOWN02_HEADER_SIZE			(sizeof(Barry::Protocol::JDUnknown02))
+
 struct JDPacket
 {
 	uint16_t	socket;
@@ -786,8 +808,13 @@ struct JDPacket
 		JDCommand		command;
 		JDResponse		response;
 		JDModulesList	moduleslist;
+		JDThreadsList	threadslist;
+		JDUnknown01		unknown01;
+		JDUnknown02		unknown02;
+		uint32_t		address;
 		uint16_t		expect;
 		uint16_t		msglength;
+		uint16_t		value;
 		uint8_t			status;
 		uint8_t			raw[1];
 	} __attribute__ ((packed)) u;

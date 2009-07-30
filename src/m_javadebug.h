@@ -37,6 +37,7 @@ class Builder;
 class Controller;
 
 class JDModulesEntry;
+class JDThreadsEntry;
 
 
 class BXEXPORT JDModulesList : public std::vector<JDModulesEntry>
@@ -61,6 +62,37 @@ public:
 
 public:
 	void Dump(std::ostream &os) const;
+};
+
+
+class BXEXPORT JDThreadsList : public std::vector<JDThreadsEntry>
+{
+public:
+	void Parse(const Data &entry_packet);
+
+	void Dump(std::ostream &os) const;
+};
+BXEXPORT inline std::ostream& operator<<(std::ostream &os, const JDThreadsList &list) {
+	list.Dump(os);
+	return os;
+}
+
+
+class BXEXPORT JDThreadsEntry
+{
+public:
+	uint32_t	Id;
+	uint8_t		Byte;
+	uint32_t	Address;
+	uint32_t	Unknown01;
+	uint32_t	Unknown02;
+	uint32_t	Unknown03;
+	uint32_t	Unknown04;
+	uint32_t	Unknown05;
+	uint32_t	Unknown06;
+
+public:
+	void Dump(std::ostream &os, int num) const;
 };
 
 
@@ -112,9 +144,11 @@ public:
 	void Unknown09();
 	void Unknown10();
 	void GetModulesList(JDModulesList &mylist);
+	void GetThreadsList(JDThreadsList &mylist);
 	int GetConsoleMessage(std::string &msg);
 	void GetStatus(int &status);
 	void Go();
+	void Stop();
 };
 
 }} // namespace Barry::Mode

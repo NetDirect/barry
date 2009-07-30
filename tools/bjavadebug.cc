@@ -122,10 +122,19 @@ int main(int argc, char *argv[])
 		javadebug.Unknown04();
 		javadebug.Unknown05();
 
-		cout << "Java Modules List :" << endl;
-		JDModulesList list;
-		javadebug.GetModulesList(list);
-		cout << list;
+		{
+			cout << "Java Modules List :" << endl;
+			JDModulesList list;
+			javadebug.GetModulesList(list);
+			cout << list;
+		}
+
+		{
+			cout << "Java Threads currently running :" << endl;
+			JDThreadsList list;
+			javadebug.GetThreadsList(list);
+			cout << list;
+		}
 
 		javadebug.Unknown06();
 		javadebug.Unknown07();

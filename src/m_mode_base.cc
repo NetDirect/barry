@@ -110,5 +110,14 @@ void Mode::OnOpen()
 }
 
 
+void Mode::Close()
+{
+	if( m_ModeSocket ) {
+		m_socket->Close();
+		m_socket.reset();
+		m_ModeSocket = 0;
+	}
+}
+
 }} // namespace Barry::Mode
 

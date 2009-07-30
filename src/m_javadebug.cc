@@ -95,33 +95,86 @@ void JDModulesList::Dump(std::ostream &os) const
 
 ///////////////////////////////////////////////////////////////////////////////
 // JDModulesEntry class
-/*
-void JDModulesEntry::Parse(uint16_t size, const char* buf)
-{
-	uint16_t len;
-	const char *ptr = NULL;
 
-	// Id of module
-	Id = (uint32_t) be_btohl(*buf);
-
-	// Address of module
-	Address = (uint32_t) be_btohl(*(buf + 4));
-
-	// Length of module name
-	len = (uint16_t) be_btohs(*(buf + 8));
-
-	// Name of module
-	ptr = buf + 8;
-	ptr += sizeof(uint16_t);
-
-	Name.assign((char*)ptr, len);
-}
-*/
 void JDModulesEntry::Dump(std::ostream &os) const
 {
 	os << " 0x" << setfill('0') << setw(8) << hex << Id << " |";
 	os << " 0x" << setfill('0') << setw(8) << hex << Address << " |";
 	os << " " << Name << endl;
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+// JDThreadsList class
+
+void JDThreadsList::Parse(const Data &entry_packet)
+{
+	uint16_t count = 0;
+
+	size_t size = entry_packet.GetSize();
+
+	while (count < size) {
+		uint16_t len = 0;
+	
+		const unsigned char *ptr = (entry_packet.GetData() + count);
+		uint32_t *e = (uint32_t *) ptr;
+
+		len = sizeof(uint32_t);
+
+		JDThreadsEntry entry;
+
+		entry.Id = be_btohl(*e);
+
+		push_back(entry);
+
+		count += len;
+	}
+}
+
+
+void JDThreadsList::Dump(std::ostream &os) const
+{
+	const_iterator i = begin(), e = end();
+
+	os << "   Thread   " << "|";
+	os << " Byte " << "|";
+	os << "  Address   " << "|";
+	os << " Unknown01  " << "|";
+	os << " Unknown02  " << "|";
+	os << " Unknown03  " << "|";
+	os << " Unknown04  " << "|";
+	os << " Unknown05  " << "|";
+	os << " Unknown06  " << "|";
+
+	os << "------------+";
+	os << "------+";
+	os << "------------+";
+	os << "------------+";
+	os << "------------+";
+	os << "------------+";
+	os << "------------+";
+	os << "------------+";
+	os << "-------------";
+	os << endl;
+
+	for(int k=0 ; i != e; ++i, k++ ) {
+		(*i).Dump(os, k);
+	}
+}
+
+
+void JDThreadsEntry::Dump(std::ostream &os, int num) const
+{
+	os << "   " << setfill(' ') << setw(8) << dec << num << " |";
+	os << " 0x" << setfill('0') << setw(8) << hex << (Id) << " |";
+	os << " 0x" << setfill('0') << setw(2) << hex << (Byte) << " |";
+	os << " 0x" << setfill('0') << setw(8) << hex << (Address) << " |";
+	os << " 0x" << setfill('0') << setw(8) << hex << (Unknown01) << " |";
+	os << " 0x" << setfill('0') << setw(8) << hex << (Unknown02) << " |";
+	os << " 0x" << setfill('0') << setw(8) << hex << (Unknown03) << " |";
+	os << " 0x" << setfill('0') << setw(8) << hex << (Unknown04) << " |";
+	os << " 0x" << setfill('0') << setw(8) << hex << (Unknown05) << " |";
+	os << " 0x" << setfill('0') << setw(8) << hex << (Unknown06) << endl;
 }
 
 
@@ -497,18 +550,18 @@ void JavaDebug::GetStatus(int &status)
 	// Send the command packet
 	packet.GetStatus();
 	
-	m_socket->Packet(packet);
+	m_socket->Packet(packet, 60000);
 
 	expect = packet.Size();
 
 	while (expect == 0) {
-		m_socket->Receive(packet.GetReceive());
+		m_socket->Receive(packet.GetReceive(), 60000);
 	
 		expect = packet.Size();
 	}
 
 	// Read the data stream
-	m_socket->ReceiveData(response);
+	m_socket->ReceiveData(response, 60000);
 
 	MAKE_JDPACKET(dpack, response);
 
@@ -540,7 +593,7 @@ int JavaDebug::GetConsoleMessage(std::string &message)
 	// Send the command packet
 	packet.GetConsoleMessage();
 	
-	m_socket->Packet(packet);
+	m_socket->Packet(packet, 60000);
 
 	expect = packet.Size();
 
@@ -548,7 +601,7 @@ int JavaDebug::GetConsoleMessage(std::string &message)
 		return -1;
 
 	// Read the data stream
-	m_socket->ReceiveData(response);
+	m_socket->ReceiveData(response, 60000);
 
 	MAKE_JDPACKET(dpack, response);
 
@@ -631,6 +684,191 @@ void JavaDebug::GetModulesList(JDModulesList &mylist)
 
 
 //
+// Get list of Java threads
+//
+void JavaDebug::GetThreadsList(JDThreadsList &mylist) 
+{
+	uint32_t size = 0;
+	uint32_t count = 0;
+	uint16_t expect = 0;
+
+	Data command(-1, 8), response;
+	JDPacket packet(command, response);
+
+	// Send the command packet
+	packet.GetThreadsList();
+	
+	m_socket->Packet(packet);
+
+	expect = packet.Size();
+
+	if (expect == 0)
+		return;
+
+	// Read the data stream
+	m_socket->ReceiveData(response);
+
+	MAKE_JDPACKET(dpack, response);
+
+	size_t bytereceived = response.GetSize() - 4;
+
+	// Check the size read into the previous packet
+	if( expect != bytereceived ) {
+		ThrowJDError("JavaDebug::GetThreadsList expect", expect);
+	}
+
+	// Number of threads entries in the list
+	count = be_btohl(dpack->u.threadslist.nbr);
+
+	// Size of threads list
+	// I remove the header of packet (contains the field 'number of threads')
+	size = bytereceived - SB_JDTHREADS_LIST_HEADER_SIZE;
+
+	// Parse the threads list
+	mylist.Parse(Data(response.GetData() + SB_JDPACKET_HEADER_SIZE + SB_JDTHREADS_LIST_HEADER_SIZE, size));
+
+	// Complete threads list
+	vector<JDThreadsEntry>::iterator b = mylist.begin();
+	for( ; b != mylist.end(); b++ ) {
+		JDThreadsEntry entry = (*b);
+
+		// 1°/
+		// Send the command packet
+		packet.Unknown11(entry.Id);
+	
+		m_socket->Packet(packet);
+
+		expect = packet.Size();
+
+		if (expect == 0)
+			return;
+
+		// Read the data stream
+		m_socket->ReceiveData(response);
+
+		dpack = (const Protocol::JDPacket *) response.GetData();
+
+		bytereceived = response.GetSize() - 4;
+
+		// Check the size read into the previous packet
+		if( expect != bytereceived ) {
+			ThrowJDError("JavaDebug::GetThreadsList (1) expect", expect);
+		}
+
+		// Save values
+		entry.Byte = dpack->u.unknown01.byte;
+		entry.Address = be_btohl(dpack->u.unknown01.address);
+
+		// 2°/
+		// Send the command packet
+		packet.Unknown12(entry.Address);
+	
+		m_socket->Packet(packet);
+
+		expect = packet.Size();
+
+		if (expect == 0)
+			return;
+
+		// Read the data stream
+		m_socket->ReceiveData(response);
+
+		dpack = (const Protocol::JDPacket *) response.GetData();
+
+		bytereceived = response.GetSize() - 4;
+
+		// Check the size read into the previous packet
+		if( expect != bytereceived ) {
+			ThrowJDError("JavaDebug::GetThreadsList (2) expect", expect);
+		}
+
+		// Save values
+		entry.Unknown01 = be_btohl(dpack->u.address);
+
+		// 3°/
+		// Send the command packet
+		packet.Unknown13(entry.Id);
+	
+		m_socket->Packet(packet);
+
+		expect = packet.Size();
+
+		if (expect == 0)
+			return;
+
+		// Read the data stream
+		m_socket->ReceiveData(response);
+
+		dpack = (const Protocol::JDPacket *) response.GetData();
+
+		bytereceived = response.GetSize() - 4;
+
+		// Check the size read into the previous packet
+		if( expect != bytereceived ) {
+			ThrowJDError("JavaDebug::GetThreadsList (2) expect", expect);
+		}
+
+		// Save values
+		entry.Unknown02 = be_btohl(dpack->u.address);
+
+		// 4°/
+		// Send the command packet
+		packet.Unknown14(entry.Id);
+	
+		m_socket->Packet(packet);
+
+		expect = packet.Size();
+
+		if (expect == 0)
+			return;
+
+		// Read the data stream
+		m_socket->ReceiveData(response);
+
+		dpack = (const Protocol::JDPacket *) response.GetData();
+
+		bytereceived = response.GetSize() - 4;
+
+		// Check the size read into the previous packet
+		if( expect != bytereceived ) {
+			ThrowJDError("JavaDebug::GetThreadsList (2) expect", expect);
+		}
+
+		// Save values
+		entry.Unknown03 = be_btohl(dpack->u.unknown02.address1);
+		entry.Unknown04 = be_btohl(dpack->u.unknown02.address2);
+
+		// 5°/
+		// Send the command packet
+		packet.Unknown15(entry.Id);
+	
+		m_socket->Packet(packet);
+
+		expect = packet.Size();
+
+		if (expect == 0)
+			return;
+
+		// Read the data stream
+		m_socket->ReceiveData(response);
+
+		dpack = (const Protocol::JDPacket *) response.GetData();
+
+		bytereceived = response.GetSize() - 4;
+
+		// Check the size read into the previous packet
+		if( expect != bytereceived ) {
+			ThrowJDError("JavaDebug::GetThreadsList (2) expect", expect);
+		}
+
+		// Save values
+		entry.Unknown05 = be_btohl(dpack->u.unknown02.address1);
+		entry.Unknown06 = be_btohl(dpack->u.unknown02.address2);
+	}
+}
+
+
+//
 // Go
 //
 void JavaDebug::Go()
@@ -642,6 +880,39 @@ void JavaDebug::Go()
 
 	// Send the command packet
 	packet.Go();
+	m_socket->Packet(packet);
+	expect = packet.Size();
+
+	while (expect == 0) {
+		m_socket->Receive(packet.GetReceive());
+	
+		expect = packet.Size();
+	}
+
+	// Read the data stream
+	m_socket->ReceiveData(response);
+
+	size_t bytereceived = response.GetSize() - 4;
+
+	// Check the size read into the previous packet
+	if( expect != bytereceived ) {
+		ThrowJDError("JavaDebug::Attach expect", expect);
+	}
+}
+
+
+//
+// Stop
+//
+void JavaDebug::Stop()
+{
+	uint16_t expect = 0;
+
+	Data command(-1, 8), response;
+	JDPacket packet(command, response);
+
+	// Send the command packet
+	packet.Stop();
 	m_socket->Packet(packet);
 	expect = packet.Size();
 

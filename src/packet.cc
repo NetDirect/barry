@@ -790,10 +790,50 @@ void JDPacket::Unknown10() {
 }
 
 
+void JDPacket::Unknown11(uint32_t id) {
+	id = be_htobl(id);
+
+	ComplexCmd(SB_COMMAND_JD_UNKNOWN11, &id, sizeof(id));
+}
+
+
+void JDPacket::Unknown12(uint32_t id) {
+	id = be_htobl(id);
+
+	ComplexCmd(SB_COMMAND_JD_UNKNOWN12, &id, sizeof(id));
+}
+
+
+void JDPacket::Unknown13(uint32_t id) {
+	id = be_htobl(id);
+
+	ComplexCmd(SB_COMMAND_JD_UNKNOWN13, &id, sizeof(id));
+}
+
+
+void JDPacket::Unknown14(uint32_t id) {
+	id = be_htobl(id);
+
+	ComplexCmd(SB_COMMAND_JD_UNKNOWN14, &id, sizeof(id));
+}
+
+
+void JDPacket::Unknown15(uint32_t id) {
+	id = be_htobl(id);
+
+	ComplexCmd(SB_COMMAND_JD_UNKNOWN15, &id, sizeof(id));
+}
+
+
 void JDPacket::GetModulesList(uint32_t id) {
 	id = be_htobl(id);
 
 	ComplexCmd(SB_COMMAND_JD_GET_MODULES_LIST, &id, sizeof(id));
+}
+
+
+void JDPacket::GetThreadsList() {
+	SimpleCmd(SB_COMMAND_JD_GET_THREADS_LIST);
 }
 
 
@@ -805,6 +845,23 @@ void JDPacket::GetConsoleMessage() {
 void JDPacket::Go()
 {
 	SimpleCmd(SB_COMMAND_JD_GO);
+}
+
+
+void JDPacket::Stop()
+{
+	// 4 : socket id field + packet size field
+	// 2 : value field
+	const uint16_t total = 4 + 2;
+
+	MAKE_JDPACKETPTR_BUF(cpack, m_cmd.GetBuffer(total));
+	Protocol::JDPacket &packet = *cpack;
+
+	// socket class sets socket for us
+	packet.size = htobs(total);
+	packet.u.value = be_htobs(0xa502);
+
+	m_cmd.ReleaseBuffer(total);
 }
 
 

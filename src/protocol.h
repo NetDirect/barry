@@ -96,7 +96,15 @@
 #define SB_COMMAND_JD_UNKNOWN08		0x54
 #define SB_COMMAND_JD_UNKNOWN09		0x33
 #define SB_COMMAND_JD_UNKNOWN10		0x46
+
+#define SB_COMMAND_JD_UNKNOWN11		0x0e
+#define SB_COMMAND_JD_UNKNOWN12		0x50
+#define SB_COMMAND_JD_UNKNOWN13		0x0d
+#define SB_COMMAND_JD_UNKNOWN14		0x85
+#define SB_COMMAND_JD_UNKNOWN15		0x84
+
 #define SB_COMMAND_JD_GET_MODULES_LIST	0x8d	// Get all Java modules list with their address and ID
+#define SB_COMMAND_JD_GET_THREADS_LIST	0x08	// Get all threads currently running in the virtual machine
 #define SB_COMMAND_JD_GET_CONSOLE_MSG	0x40	// Get console message
 #define SB_COMMAND_JD_GO		0x02	// Go
 #define SB_COMMAND_JD_GET_STATUS		0x06	// Get status
