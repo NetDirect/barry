@@ -540,7 +540,7 @@ void JavaDebug::Unknown10()
 //
 // Get Status
 //
-void JavaDebug::GetStatus(int &status)
+bool JavaDebug::GetStatus(int &status)
 {
 	uint16_t expect = 0;
 
@@ -550,18 +550,15 @@ void JavaDebug::GetStatus(int &status)
 	// Send the command packet
 	packet.GetStatus();
 	
-	m_socket->Packet(packet, 60000);
+	m_socket->Packet(packet);
 
 	expect = packet.Size();
 
-	while (expect == 0) {
-		m_socket->Receive(packet.GetReceive(), 60000);
-	
-		expect = packet.Size();
-	}
+	if (expect == 0)
+		return false;
 
 	// Read the data stream
-	m_socket->ReceiveData(response, 60000);
+	m_socket->ReceiveData(response);
 
 	MAKE_JDPACKET(dpack, response);
 
@@ -574,6 +571,51 @@ void JavaDebug::GetStatus(int &status)
 
 	// Return status
 	status = dpack->u.status;
+
+	return true;
+}
+
+
+//
+// Wait Status
+//
+bool JavaDebug::WaitStatus(int &status)
+{
+	uint16_t expect = 0;
+
+	Data command(-1, 8), response;
+	JDPacket packet(command, response);
+
+	// Prepare the command packet
+	packet.GetStatus();
+	
+	try {
+		m_socket->Receive(packet.GetReceive(), 100);
+	} catch (Usb::Timeout &to ) {
+		return false;
+	}
+	
+	expect = packet.Size();
+
+	if (expect == 0)
+		return false;
+
+	// Read the data stream
+	m_socket->ReceiveData(response);
+
+	MAKE_JDPACKET(dpack, response);
+
+	size_t bytereceived = response.GetSize() - 4;
+
+	// Check the size read into the previous packet
+	if( expect != bytereceived ) {
+		ThrowJDError("JavaDebug::GetModulesList expect", expect);
+	}
+
+	// Return status
+	status = dpack->u.status;
+
+	return true;
 }
 
 
@@ -593,7 +635,7 @@ int JavaDebug::GetConsoleMessage(std::string &message)
 	// Send the command packet
 	packet.GetConsoleMessage();
 	
-	m_socket->Packet(packet, 60000);
+	m_socket->Packet(packet);
 
 	expect = packet.Size();
 
@@ -601,7 +643,7 @@ int JavaDebug::GetConsoleMessage(std::string &message)
 		return -1;
 
 	// Read the data stream
-	m_socket->ReceiveData(response, 60000);
+	m_socket->ReceiveData(response);
 
 	MAKE_JDPACKET(dpack, response);
 

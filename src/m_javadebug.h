@@ -146,7 +146,8 @@ public:
 	void GetModulesList(JDModulesList &mylist);
 	void GetThreadsList(JDThreadsList &mylist);
 	int GetConsoleMessage(std::string &msg);
-	void GetStatus(int &status);
+	bool GetStatus(int &status);
+	bool WaitStatus(int &status);
 	void Go();
 	void Stop();
 };
