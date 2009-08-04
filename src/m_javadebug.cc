@@ -802,30 +802,34 @@ void JavaDebug::GetThreadsList(JDThreadsList &mylist)
 		entry.Address = be_btohl(dpack->u.unknown01.address);
 
 		// 2°/
-		// Send the command packet
-		packet.Unknown12(entry.Address);
+		if (entry.Address != 0) {
+			// Send the command packet
+			packet.Unknown12(entry.Address);
 	
-		m_socket->Packet(packet);
+			m_socket->Packet(packet);
 
-		expect = packet.Size();
+			expect = packet.Size();
 
-		if (expect == 0)
-			return;
+			if (expect == 0)
+				return;
 
-		// Read the data stream
-		m_socket->ReceiveData(response);
+			// Read the data stream
+			m_socket->ReceiveData(response);
 
-		dpack = (const Protocol::JDPacket *) response.GetData();
+			dpack = (const Protocol::JDPacket *) response.GetData();
 
-		bytereceived = response.GetSize() - 4;
+			bytereceived = response.GetSize() - 4;
 
-		// Check the size read into the previous packet
-		if( expect != bytereceived ) {
-			ThrowJDError("JavaDebug::GetThreadsList (2) expect", expect);
+			// Check the size read into the previous packet
+			if( expect != bytereceived ) {
+				ThrowJDError("JavaDebug::GetThreadsList (2) expect", expect);
+			}
+
+			// Save values
+			entry.Unknown01 = be_btohl(dpack->u.address);
 		}
-
-		// Save values
-		entry.Unknown01 = be_btohl(dpack->u.address);
+		else
+			entry.Unknown01 = 0;
 
 		// 3°/
 		// Send the command packet
