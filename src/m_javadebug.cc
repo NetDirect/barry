@@ -64,7 +64,7 @@ void JDModulesList::Parse(const Data &entry_packet)
 		JDModulesEntry entry;
 
 		entry.Id = be_btohl(e->id);
-		entry.Address = be_btohl(e->address);
+		entry.UniqueID = be_btohl(e->address);
 		(entry.Name).assign((char *) (ptr + SB_JDMODULES_ENTRY_HEADER_SIZE), be_btohs(e->sizename));
 
 		push_back(entry);
@@ -79,7 +79,7 @@ void JDModulesList::Dump(std::ostream &os) const
 	const_iterator i = begin(), e = end();
 
 	os << "     ID     " << "|";
-	os << "   Address  " << "|";
+	os << "  UniqueID  " << "|";
 	os << " Module Name" << endl;
 
 	os << "------------+";
@@ -99,7 +99,7 @@ void JDModulesList::Dump(std::ostream &os) const
 void JDModulesEntry::Dump(std::ostream &os) const
 {
 	os << " 0x" << setfill('0') << setw(8) << hex << Id << " |";
-	os << " 0x" << setfill('0') << setw(8) << hex << Address << " |";
+	os << " 0x" << setfill('0') << setw(8) << hex << UniqueID << " |";
 	os << " " << Name << endl;
 }
 

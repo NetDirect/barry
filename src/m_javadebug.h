@@ -57,7 +57,7 @@ class BXEXPORT JDModulesEntry
 {
 public:
 	uint32_t	Id;
-	uint32_t	Address;
+	uint32_t	UniqueID;
 	std::string	Name;
 
 public:
