@@ -742,75 +742,75 @@ struct JLPacket
 ///////////////////////////////////////////////////////////////////////////////
 // JavaDebug protocol structure
 
-struct JDCommand
+struct JVMCommand
 {
 	uint16_t	size;
 	uint8_t		command;
 	uint8_t		raw[1];
 } __attribute__ ((packed));
-#define SB_JDCOMMAND_HEADER_SIZE		(sizeof(Barry::Protocol::JDCommand))
+#define SB_JVMCOMMAND_HEADER_SIZE		(sizeof(Barry::Protocol::JVMCommand))
 
-struct JDResponse
+struct JVMResponse
 {
 	uint8_t		command;
 	uint8_t		unknown;
 	uint16_t	expect;
 } __attribute__ ((packed));
-#define SB_JDRESPONSE_HEADER_SIZE		(sizeof(Barry::Protocol::JDResponse))
+#define SB_JVMRESPONSE_HEADER_SIZE		(sizeof(Barry::Protocol::JVMResponse))
 
-struct JDModulesList
+struct JVMModulesList
 {
 	uint32_t	nbr;
 	// remainder of packet is variable
 	// it contains the modules list 
 } __attribute__ ((packed));
-#define SB_JDMODULES_LIST_HEADER_SIZE		(sizeof(Barry::Protocol::JDModulesList))
+#define SB_JVMMODULES_LIST_HEADER_SIZE		(sizeof(Barry::Protocol::JVMModulesList))
 
-struct JDModulesEntry
+struct JVMModulesEntry
 {
 	uint32_t	id;
-	uint32_t	address;
+	uint32_t	uniqueId;
 	uint16_t	sizename;
 	// remainder of packet is variable
 	// it contains the module name
 } __attribute__ ((packed));
-#define SB_JDMODULES_ENTRY_HEADER_SIZE		(sizeof(Barry::Protocol::JDModulesEntry))
+#define SB_JVMMODULES_ENTRY_HEADER_SIZE		(sizeof(Barry::Protocol::JVMModulesEntry))
 
-struct JDThreadsList
+struct JVMThreadsList
 {
 	uint32_t	nbr;
 	// remainder of packet is variable
 	// it contains the threads list 
 } __attribute__ ((packed));
-#define SB_JDTHREADS_LIST_HEADER_SIZE		(sizeof(Barry::Protocol::JDThreadsList))
+#define SB_JVMTHREADS_LIST_HEADER_SIZE		(sizeof(Barry::Protocol::JVMThreadsList))
 
-struct JDUnknown01
+struct JVMUnknown01
 {
 	uint8_t		byte;
 	uint32_t	address;
 } __attribute__ ((packed));
-#define SB_JDUNKNOWN01_HEADER_SIZE			(sizeof(Barry::Protocol::JDUnknown01))
+#define SB_JVMUNKNOWN01_HEADER_SIZE			(sizeof(Barry::Protocol::JVMUnknown01))
 
-struct JDUnknown02
+struct JVMUnknown02
 {
 	uint32_t	address1;
 	uint32_t	address2;
 } __attribute__ ((packed));
-#define SB_JDUNKNOWN02_HEADER_SIZE			(sizeof(Barry::Protocol::JDUnknown02))
+#define SB_JVMUNKNOWN02_HEADER_SIZE			(sizeof(Barry::Protocol::JVMUnknown02))
 
-struct JDPacket
+struct JVMPacket
 {
 	uint16_t	socket;
 	uint16_t	size;		// total size of data packet
 
 	union PacketData
 	{
-		JDCommand		command;
-		JDResponse		response;
-		JDModulesList	moduleslist;
-		JDThreadsList	threadslist;
-		JDUnknown01		unknown01;
-		JDUnknown02		unknown02;
+		JVMCommand		command;
+		JVMResponse		response;
+		JVMModulesList	moduleslist;
+		JVMThreadsList	threadslist;
+		JVMUnknown01		unknown01;
+		JVMUnknown02		unknown02;
 		uint32_t		address;
 		uint16_t		expect;
 		uint16_t		msglength;
@@ -820,7 +820,7 @@ struct JDPacket
 	} __attribute__ ((packed)) u;
 
 } __attribute__ ((packed));
-#define SB_JDPACKET_HEADER_SIZE		(sizeof(Barry::Protocol::JDPacket) - sizeof(Barry::Protocol::JDPacket::PacketData))
+#define SB_JVMPACKET_HEADER_SIZE		(sizeof(Barry::Protocol::JVMPacket) - sizeof(Barry::Protocol::JVMPacket::PacketData))
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -880,10 +880,10 @@ struct Packet
 #define IS_COMMAND(data, cmd)			(COMMAND(data) == cmd)
 #define MAKE_PACKET(var, data)			const Barry::Protocol::Packet *var = (const Barry::Protocol::Packet *) (data).GetData()
 #define MAKE_JLPACKET(var, data)		const Barry::Protocol::JLPacket *var = (const Barry::Protocol::JLPacket *) (data).GetData()
-#define MAKE_JDPACKET(var, data)		const Barry::Protocol::JDPacket *var = (const Barry::Protocol::JDPacket *) (data).GetData()
+#define MAKE_JVMPACKET(var, data)		const Barry::Protocol::JVMPacket *var = (const Barry::Protocol::JVMPacket *) (data).GetData()
 #define MAKE_PACKETPTR_BUF(var, ptr)		Barry::Protocol::Packet *var = (Barry::Protocol::Packet *)ptr
 #define MAKE_JLPACKETPTR_BUF(var, ptr)		Barry::Protocol::JLPacket *var = (Barry::Protocol::JLPacket *)ptr
-#define MAKE_JDPACKETPTR_BUF(var, ptr)		Barry::Protocol::JDPacket *var = (Barry::Protocol::JDPacket *)ptr
+#define MAKE_JVMPACKETPTR_BUF(var, ptr)		Barry::Protocol::JVMPacket *var = (Barry::Protocol::JVMPacket *)ptr
 #define MAKE_RECORD(type,var,data,off)		type *var = (type *) ((data).GetData() + (off))
 #define MAKE_RECORD_PTR(type,var,data,off)	type *var = (type *) ((data) + (off))
 

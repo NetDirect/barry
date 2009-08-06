@@ -1039,7 +1039,7 @@ void Socket::Packet(Barry::JLPacket &packet, int timeout)
 	}
 }
 
-void Socket::Packet(Barry::JDPacket &packet, int timeout)
+void Socket::Packet(Barry::JVMPacket &packet, int timeout)
 {
 	HideSequencePacket(false);
 	PacketJVM(packet.m_cmd, packet.m_receive, timeout);

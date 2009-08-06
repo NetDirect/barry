@@ -175,7 +175,7 @@ uint16_t Controller::SelectMode(ModeType mode)
 		strcpy(modeName, "RIM_JavaLoader");
 		break;
 
-	case JavaDebug:
+	case JVMDebug:
 		strcpy(modeName, "RIM_JVMDebug");
 		break;
 

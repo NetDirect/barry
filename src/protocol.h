@@ -85,34 +85,34 @@
 #define SB_DATA_JL_INVALID		0x68	// Device returns this code if the application isn't valid.
 
 
-// JavaDebug commands
-#define SB_COMMAND_JD_UNKNOWN01		0x53
-#define SB_COMMAND_JD_UNKNOWN02		0x01
-#define SB_COMMAND_JD_UNKNOWN03		0x6f
-#define SB_COMMAND_JD_UNKNOWN04		0x8a
-#define SB_COMMAND_JD_UNKNOWN05		0x90
-#define SB_COMMAND_JD_UNKNOWN06		0x44
-#define SB_COMMAND_JD_UNKNOWN07		0x45
-#define SB_COMMAND_JD_UNKNOWN08		0x54
-#define SB_COMMAND_JD_UNKNOWN09		0x33
-#define SB_COMMAND_JD_UNKNOWN10		0x46
+// JVMDebug commands
+#define SB_COMMAND_JVM_UNKNOWN01		0x53
+#define SB_COMMAND_JVM_UNKNOWN02		0x01
+#define SB_COMMAND_JVM_UNKNOWN03		0x6f
+#define SB_COMMAND_JVM_UNKNOWN04		0x8a
+#define SB_COMMAND_JVM_UNKNOWN05		0x90
+#define SB_COMMAND_JVM_UNKNOWN06		0x44
+#define SB_COMMAND_JVM_UNKNOWN07		0x45
+#define SB_COMMAND_JVM_UNKNOWN08		0x54
+#define SB_COMMAND_JVM_UNKNOWN09		0x33
+#define SB_COMMAND_JVM_UNKNOWN10		0x46
 
-#define SB_COMMAND_JD_UNKNOWN11		0x0e
-#define SB_COMMAND_JD_UNKNOWN12		0x50
-#define SB_COMMAND_JD_UNKNOWN13		0x0d
-#define SB_COMMAND_JD_UNKNOWN14		0x85
-#define SB_COMMAND_JD_UNKNOWN15		0x84
+#define SB_COMMAND_JVM_UNKNOWN11		0x0e
+#define SB_COMMAND_JVM_UNKNOWN12		0x50
+#define SB_COMMAND_JVM_UNKNOWN13		0x0d
+#define SB_COMMAND_JVM_UNKNOWN14		0x85
+#define SB_COMMAND_JVM_UNKNOWN15		0x84
 
-#define SB_COMMAND_JD_GET_MODULES_LIST	0x8d	// Get all Java modules list with their address and ID
-#define SB_COMMAND_JD_GET_THREADS_LIST	0x08	// Get all threads currently running in the virtual machine
-#define SB_COMMAND_JD_GET_CONSOLE_MSG	0x40	// Get console message
-#define SB_COMMAND_JD_GO		0x02	// Go
-#define SB_COMMAND_JD_GET_STATUS		0x06	// Get status
-#define SB_COMMAND_JD_SET_BREAKPOINT	0x21	// Set breakpoint
-#define SB_COMMAND_JD_RM_BREAKPOINT	0x22	// Remove breakpoint
+#define SB_COMMAND_JVM_GET_MODULES_LIST	0x8d	// Get all Java modules list with their address and ID
+#define SB_COMMAND_JVM_GET_THREADS_LIST	0x08	// Get all threads currently running in the virtual machine
+#define SB_COMMAND_JVM_GET_CONSOLE_MSG	0x40	// Get console message
+#define SB_COMMAND_JVM_GO				0x02	// Go
+#define SB_COMMAND_JVM_GET_STATUS		0x06	// Get status
+#define SB_COMMAND_JVM_SET_BREAKPOINT	0x21	// Set breakpoint
+#define SB_COMMAND_JVM_RM_BREAKPOINT	0x22	// Remove breakpoint
 
 // JavaDebug response
-#define SB_COMMAND_JD_GET_DATA_ENTRY	0x06
+#define SB_COMMAND_JVM_GET_DATA_ENTRY	0x06
 
 
 // mode constants

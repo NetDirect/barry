@@ -244,7 +244,7 @@ public:
 
 
 //
-// JDPacket class
+// JVMPacket class
 //
 /// Provides an API for building and analyzing raw JavaDebug protocol packets.
 /// This class relies on 3 external objects:
@@ -254,10 +254,10 @@ public:
 /// Mode::JavaDebug object, but all buffers can be modified.
 ///
 /// Note that the receive buffer may be modified
-/// during a packet send, and this JDPacket class provides API helpers
+/// during a packet send, and this JVMPacket class provides API helpers
 /// to analyze the results.
 ///
-class JDPacket : public Packet
+class JVMPacket : public Packet
 {
 	friend class Socket;
 
@@ -265,8 +265,8 @@ private:
 	Data &m_cmd;
 
 public:
-	JDPacket(Data &cmd, Data &receive);
-	~JDPacket();
+	JVMPacket(Data &cmd, Data &receive);
+	~JVMPacket();
 
 	//////////////////////////////////
 	// meta access

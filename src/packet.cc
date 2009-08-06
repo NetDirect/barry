@@ -656,23 +656,23 @@ int JLPacket::PutData(const void *data, uint16_t size)
 
 
 //////////////////////////////////////////////////////////////////////////////
-// JDPacket class
+// JVMPacket class
 
-JDPacket::JDPacket(Data &send, Data &receive)
+JVMPacket::JVMPacket(Data &send, Data &receive)
 	: Packet(send, receive)
 	, m_cmd(send)
 {
 }
 
-JDPacket::~JDPacket()
+JVMPacket::~JVMPacket()
 {
 }
 
 
-unsigned int JDPacket::Size()
+unsigned int JVMPacket::Size()
 {
-	Protocol::CheckSize(m_receive, SB_JDPACKET_HEADER_SIZE + sizeof(uint16_t));
-	MAKE_JDPACKET(rpack, m_receive);
+	Protocol::CheckSize(m_receive, SB_JVMPACKET_HEADER_SIZE + sizeof(uint16_t));
+	MAKE_JVMPACKET(rpack, m_receive);
 	return be_btohs(rpack->u.expect);
 }
 
@@ -683,15 +683,15 @@ unsigned int JDPacket::Size()
 //                       ^^^^^ : size of commd + param
 //                 ^^^^^ : packet size
 //           ^^^^^ : socket ID
-void JDPacket::SimpleCmd(uint8_t cmd)
+void JVMPacket::SimpleCmd(uint8_t cmd)
 {
 	// 4 : socket id field + packet size field
 	// 2 : size field
 	// 1 : command field
 	const uint16_t total = 4 + 2 + 1;
 
-	MAKE_JDPACKETPTR_BUF(cpack, m_cmd.GetBuffer(total));
-	Protocol::JDPacket &packet = *cpack;
+	MAKE_JVMPACKETPTR_BUF(cpack, m_cmd.GetBuffer(total));
+	Protocol::JVMPacket &packet = *cpack;
 
 	// socket class sets socket for us
 	packet.size = htobs(total);
@@ -708,15 +708,15 @@ void JDPacket::SimpleCmd(uint8_t cmd)
 //                       ^^^^^ : size of commd + param
 //                 ^^^^^ : packet size
 //           ^^^^^ : socket ID
-void JDPacket::ComplexCmd(uint8_t cmd, const void *param, uint16_t size)
+void JVMPacket::ComplexCmd(uint8_t cmd, const void *param, uint16_t size)
 {
 	// 4 : socket id field + packet size field
 	// 2 : size field
 	// 1 : command field
 	uint16_t total = 4 + 2 + 1 + size;
 
-	MAKE_JDPACKETPTR_BUF(cpack, m_cmd.GetBuffer(total));
-	Protocol::JDPacket &packet = *cpack;
+	MAKE_JVMPACKETPTR_BUF(cpack, m_cmd.GetBuffer(total));
+	Protocol::JVMPacket &packet = *cpack;
 
 	// socket class sets socket for us
 	packet.size = htobs(total);
@@ -730,132 +730,132 @@ void JDPacket::ComplexCmd(uint8_t cmd, const void *param, uint16_t size)
 }
 
 
-void JDPacket::Unknown01() {
-	SimpleCmd(SB_COMMAND_JD_UNKNOWN01);
+void JVMPacket::Unknown01() {
+	SimpleCmd(SB_COMMAND_JVM_UNKNOWN01);
 }
 
 
-void JDPacket::Unknown02() {
-	SimpleCmd(SB_COMMAND_JD_UNKNOWN02);
+void JVMPacket::Unknown02() {
+	SimpleCmd(SB_COMMAND_JVM_UNKNOWN02);
 }
 
 
-void JDPacket::Unknown03() {
-	SimpleCmd(SB_COMMAND_JD_UNKNOWN03);
+void JVMPacket::Unknown03() {
+	SimpleCmd(SB_COMMAND_JVM_UNKNOWN03);
 }
 
 
-void JDPacket::Unknown04() {
-	SimpleCmd(SB_COMMAND_JD_UNKNOWN04);
+void JVMPacket::Unknown04() {
+	SimpleCmd(SB_COMMAND_JVM_UNKNOWN04);
 }
 
 
-void JDPacket::Unknown05() {
-	SimpleCmd(SB_COMMAND_JD_UNKNOWN05);
+void JVMPacket::Unknown05() {
+	SimpleCmd(SB_COMMAND_JVM_UNKNOWN05);
 }
 
 
-void JDPacket::Unknown06() {
+void JVMPacket::Unknown06() {
 	uint32_t param = 0;
 
-	ComplexCmd(SB_COMMAND_JD_UNKNOWN06, &param, sizeof(param));
+	ComplexCmd(SB_COMMAND_JVM_UNKNOWN06, &param, sizeof(param));
 }
 
 
-void JDPacket::Unknown07() {
+void JVMPacket::Unknown07() {
 	uint32_t param = 0;
 
-	ComplexCmd(SB_COMMAND_JD_UNKNOWN07, &param, sizeof(param));
+	ComplexCmd(SB_COMMAND_JVM_UNKNOWN07, &param, sizeof(param));
 }
 
 
-void JDPacket::Unknown08() {
+void JVMPacket::Unknown08() {
 	uint32_t param = 0;
 
-	ComplexCmd(SB_COMMAND_JD_UNKNOWN08, &param, sizeof(param));
+	ComplexCmd(SB_COMMAND_JVM_UNKNOWN08, &param, sizeof(param));
 }
 
 
-void JDPacket::Unknown09() {
+void JVMPacket::Unknown09() {
 	uint32_t param = be_htobl(0x09);
 
-	ComplexCmd(SB_COMMAND_JD_UNKNOWN09, &param, sizeof(param));
+	ComplexCmd(SB_COMMAND_JVM_UNKNOWN09, &param, sizeof(param));
 }
 
 
-void JDPacket::Unknown10() {
+void JVMPacket::Unknown10() {
 	uint32_t param = be_htobl(0x01);
 
-	ComplexCmd(SB_COMMAND_JD_UNKNOWN10, &param, sizeof(param));
+	ComplexCmd(SB_COMMAND_JVM_UNKNOWN10, &param, sizeof(param));
 }
 
 
-void JDPacket::Unknown11(uint32_t id) {
+void JVMPacket::Unknown11(uint32_t id) {
 	id = be_htobl(id);
 
-	ComplexCmd(SB_COMMAND_JD_UNKNOWN11, &id, sizeof(id));
+	ComplexCmd(SB_COMMAND_JVM_UNKNOWN11, &id, sizeof(id));
 }
 
 
-void JDPacket::Unknown12(uint32_t id) {
+void JVMPacket::Unknown12(uint32_t id) {
 	id = be_htobl(id);
 
-	ComplexCmd(SB_COMMAND_JD_UNKNOWN12, &id, sizeof(id));
+	ComplexCmd(SB_COMMAND_JVM_UNKNOWN12, &id, sizeof(id));
 }
 
 
-void JDPacket::Unknown13(uint32_t id) {
+void JVMPacket::Unknown13(uint32_t id) {
 	id = be_htobl(id);
 
-	ComplexCmd(SB_COMMAND_JD_UNKNOWN13, &id, sizeof(id));
+	ComplexCmd(SB_COMMAND_JVM_UNKNOWN13, &id, sizeof(id));
 }
 
 
-void JDPacket::Unknown14(uint32_t id) {
+void JVMPacket::Unknown14(uint32_t id) {
 	id = be_htobl(id);
 
-	ComplexCmd(SB_COMMAND_JD_UNKNOWN14, &id, sizeof(id));
+	ComplexCmd(SB_COMMAND_JVM_UNKNOWN14, &id, sizeof(id));
 }
 
 
-void JDPacket::Unknown15(uint32_t id) {
+void JVMPacket::Unknown15(uint32_t id) {
 	id = be_htobl(id);
 
-	ComplexCmd(SB_COMMAND_JD_UNKNOWN15, &id, sizeof(id));
+	ComplexCmd(SB_COMMAND_JVM_UNKNOWN15, &id, sizeof(id));
 }
 
 
-void JDPacket::GetModulesList(uint32_t id) {
+void JVMPacket::GetModulesList(uint32_t id) {
 	id = be_htobl(id);
 
-	ComplexCmd(SB_COMMAND_JD_GET_MODULES_LIST, &id, sizeof(id));
+	ComplexCmd(SB_COMMAND_JVM_GET_MODULES_LIST, &id, sizeof(id));
 }
 
 
-void JDPacket::GetThreadsList() {
-	SimpleCmd(SB_COMMAND_JD_GET_THREADS_LIST);
+void JVMPacket::GetThreadsList() {
+	SimpleCmd(SB_COMMAND_JVM_GET_THREADS_LIST);
 }
 
 
-void JDPacket::GetConsoleMessage() {
-	SimpleCmd(SB_COMMAND_JD_GET_CONSOLE_MSG);
+void JVMPacket::GetConsoleMessage() {
+	SimpleCmd(SB_COMMAND_JVM_GET_CONSOLE_MSG);
 }
 
 
-void JDPacket::Go()
+void JVMPacket::Go()
 {
-	SimpleCmd(SB_COMMAND_JD_GO);
+	SimpleCmd(SB_COMMAND_JVM_GO);
 }
 
 
-void JDPacket::Stop()
+void JVMPacket::Stop()
 {
 	// 4 : socket id field + packet size field
 	// 2 : value field
 	const uint16_t total = 4 + 2;
 
-	MAKE_JDPACKETPTR_BUF(cpack, m_cmd.GetBuffer(total));
-	Protocol::JDPacket &packet = *cpack;
+	MAKE_JVMPACKETPTR_BUF(cpack, m_cmd.GetBuffer(total));
+	Protocol::JVMPacket &packet = *cpack;
 
 	// socket class sets socket for us
 	packet.size = htobs(total);
@@ -865,9 +865,9 @@ void JDPacket::Stop()
 }
 
 
-void JDPacket::GetStatus()
+void JVMPacket::GetStatus()
 {
-	SimpleCmd(SB_COMMAND_JD_GET_STATUS);
+	SimpleCmd(SB_COMMAND_JVM_GET_STATUS);
 }
 
 } // namespace Barry

@@ -1,5 +1,5 @@
 ///
-/// \file	bjavadebug.cc
+/// \file	bjvmdebug.cc
 ///
 ///
 
@@ -40,7 +40,7 @@ void Usage()
    const char *Version = Barry::Version(major, minor);
 
    cerr
-   << "bjavadebug - Command line USB Blackberry Java Debugger\n"
+   << "bjvmdebug - Command line USB Blackberry Java Debugger\n"
    << "        Copyright 2008-2009, Nicolas VIVIEN.\n"
    << "        Copyright 2005-2009, Net Direct Inc. (http://www.netdirect.ca/)\n"
    << "        Using: " << Version << "\n"
@@ -107,51 +107,51 @@ int main(int argc, char *argv[])
 
 		// Create our controller object
 		Barry::Controller con(probe.Get(activeDevice));
-		Barry::Mode::JavaDebug javadebug(con);
+		Barry::Mode::JVMDebug jvmdebug(con);
 
 		//
 		// execute each mode that was turned on
 		//
-		javadebug.Open(password.c_str());
-		javadebug.Attach();
+		jvmdebug.Open(password.c_str());
+		jvmdebug.Attach();
 
 		// ...Unit tests...
-		javadebug.Unknown01();
-		javadebug.Unknown02();
-		javadebug.Unknown03();
-		javadebug.Unknown04();
-		javadebug.Unknown05();
+		jvmdebug.Unknown01();
+		jvmdebug.Unknown02();
+		jvmdebug.Unknown03();
+		jvmdebug.Unknown04();
+		jvmdebug.Unknown05();
 
 		{
 			cout << "Java Modules List :" << endl;
-			JDModulesList list;
-			javadebug.GetModulesList(list);
+			JVMModulesList list;
+			jvmdebug.GetModulesList(list);
 			cout << list;
 		}
 
 		{
 			cout << "Java Threads currently running :" << endl;
-			JDThreadsList list;
-			javadebug.GetThreadsList(list);
+			JVMThreadsList list;
+			jvmdebug.GetThreadsList(list);
 			cout << list;
 		}
 
-		javadebug.Unknown06();
-		javadebug.Unknown07();
-		javadebug.Unknown08();
-		javadebug.Unknown09();
-		javadebug.Unknown10();
+		jvmdebug.Unknown06();
+		jvmdebug.Unknown07();
+		jvmdebug.Unknown08();
+		jvmdebug.Unknown09();
+		jvmdebug.Unknown10();
 
-		javadebug.Go();
+		jvmdebug.Go();
 
 		for (int i=0; i<20; i++) {
 			int ret;
 			string msg;
-			ret = javadebug.GetConsoleMessage(msg);
+			ret = jvmdebug.GetConsoleMessage(msg);
 
 			if (ret < 0) {
 				int status;
-				javadebug.GetStatus(status);
+				jvmdebug.GetStatus(status);
 			}
 			else {
 				cout << "JVM message : " << msg << endl;
@@ -159,7 +159,7 @@ int main(int argc, char *argv[])
 		}
 
 		// End of session
-		javadebug.Detach();
+		jvmdebug.Detach();
 	}
 	catch( Usb::Error &ue) {
 		std::cout << endl;	// flush any normal output first

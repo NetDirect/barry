@@ -1,6 +1,6 @@
 ///
-/// \file	m_javadebug.h
-///		Mode class for the JavaDebug mode
+/// \file	m_jvmdebug.h
+///		Mode class for the JVMDebug mode
 ///
 
 /*
@@ -20,8 +20,8 @@
     root directory of this project for more details.
 */
 
-#ifndef __BARRY_M_JAVADEBUG_H__
-#define __BARRY_M_JAVADEBUG_H__
+#ifndef __BARRY_M_JVMDEBUG_H__
+#define __BARRY_M_JVMDEBUG_H__
 
 #include "dll.h"
 #include "m_mode_base.h"
@@ -36,24 +36,24 @@ class Parser;
 class Builder;
 class Controller;
 
-class JDModulesEntry;
-class JDThreadsEntry;
+class JVMModulesEntry;
+class JVMThreadsEntry;
 
 
-class BXEXPORT JDModulesList : public std::vector<JDModulesEntry>
+class BXEXPORT JVMModulesList : public std::vector<JVMModulesEntry>
 {
 public:
 	void Parse(const Data &entry_packet);
 
 	void Dump(std::ostream &os) const;
 };
-BXEXPORT inline std::ostream& operator<<(std::ostream &os, const JDModulesList &list) {
+BXEXPORT inline std::ostream& operator<<(std::ostream &os, const JVMModulesList &list) {
 	list.Dump(os);
 	return os;
 }
 
 
-class BXEXPORT JDModulesEntry
+class BXEXPORT JVMModulesEntry
 {
 public:
 	uint32_t	Id;
@@ -65,20 +65,20 @@ public:
 };
 
 
-class BXEXPORT JDThreadsList : public std::vector<JDThreadsEntry>
+class BXEXPORT JVMThreadsList : public std::vector<JVMThreadsEntry>
 {
 public:
 	void Parse(const Data &entry_packet);
 
 	void Dump(std::ostream &os) const;
 };
-BXEXPORT inline std::ostream& operator<<(std::ostream &os, const JDThreadsList &list) {
+BXEXPORT inline std::ostream& operator<<(std::ostream &os, const JVMThreadsList &list) {
 	list.Dump(os);
 	return os;
 }
 
 
-class BXEXPORT JDThreadsEntry
+class BXEXPORT JVMThreadsEntry
 {
 public:
 	uint32_t	Id;
@@ -99,24 +99,24 @@ public:
 namespace Mode {
 
 //
-// JavaDebug class
+// JVMDebug class
 //
 /// The main interface class to the java program debugger protocol
 ///
 /// To use this class, use the following steps:
 ///
 ///	- Create a Controller object (see Controller class for more details)
-///	- Create this Mode::JavaDebug object, passing in the Controller
+///	- Create this Mode::JVMDebug object, passing in the Controller
 ///		object during construction
 ///	- Call Open() to open database socket and finish constructing.
 ///
-class BXEXPORT JavaDebug : public Mode
+class BXEXPORT JVMDebug : public Mode
 {
 private:
 	bool m_Attached;
 
 protected:
-	void ThrowJDError(const std::string &msg, uint8_t cmd);
+	void ThrowJVMError(const std::string &msg, uint8_t cmd);
 
 	//////////////////////////////////
 	// overrides
@@ -124,8 +124,8 @@ protected:
 	virtual void OnOpen();
 
 public:
-	JavaDebug(Controller &con);
-	~JavaDebug();
+	JVMDebug(Controller &con);
+	~JVMDebug();
 
 	//////////////////////////////////
 	// API
@@ -143,8 +143,8 @@ public:
 	void Unknown08();
 	void Unknown09();
 	void Unknown10();
-	void GetModulesList(JDModulesList &mylist);
-	void GetThreadsList(JDThreadsList &mylist);
+	void GetModulesList(JVMModulesList &mylist);
+	void GetThreadsList(JVMThreadsList &mylist);
 	int GetConsoleMessage(std::string &msg);
 	bool GetStatus(int &status);
 	bool WaitStatus(int &status);

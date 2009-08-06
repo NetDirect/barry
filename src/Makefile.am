@@ -71,7 +71,7 @@ include_barry_HEADERS = barry.h \
 	m_ipmodem.h \
 	m_serial.h \
 	m_javaloader.h \
-	m_javadebug.h \
+	m_jvmdebug.h \
 	data.h \
 	error.h \
 	ldif.h \
@@ -158,7 +158,7 @@ libbarry_la_SOURCES = time.cc \
 	m_ipmodem.cc \
 	m_serial.cc \
 	m_javaloader.cc \
-	m_javadebug.cc \
+	m_jvmdebug.cc \
 	version.cc \
 	pppfilter.cc \
 	sha1.cc \
