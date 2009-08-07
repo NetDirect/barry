@@ -1,0 +1,28 @@
+.: Test to get traces :.
+========================
+
+1°) Scheme
+
+  +-------+              +--------+         +------------+
+  |       |              |        |         | BlackBerry |
+  |  JDB  |== TCP / IP ==|  JDWP  |== USB ==|            |
+  |       |              |        |         |   device   |
+  +-------+              +--------+         +------------+
+
+2°) Plug your BlackBerry device
+
+3°) Install the BarryDemo application on your device (in using javaloader / bjavaloader)
+
+4°) Run tcpdump on the local interface
+
+5°) Run JDWP provided by RIM's tools (listen to port 8080)
+
+6°) Run JDB :
+  
+  $ jdb -connect com.sun.jdi.SocketAttach:hostname=localhost,port=8080
+
+  $ jdb> resume
+
+  $ jdb> exit
+
+

@@ -1,0 +1,19 @@
+.: JDB command :.
+=================
+
+jdb> suspend
+
+
+.: Dump :.
+==========
+
+Legend :
+  <<< : Data received from JDB
+  >>> : Data sent by wrapper JDWP
+
+
+---- command suspend ----
+
+<<<  00 00 00 0b 00 00 00 16  00 01 08                   ........ ...
+<<<  00 00 00 0b 00 00 00 16  80 00 00                   ........ ...
+

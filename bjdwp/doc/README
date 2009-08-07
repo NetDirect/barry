@@ -1,0 +1,99 @@
+                                 BJDWP Readme
+                                ==============
+
+Introduction
+------------
+
+With bjdwp you can debug with JDB your Java applications on your BlackBerry device.
+bjdwp is a wrapper between JDB and the JVM embedded in your device.
+bjdwp uses the barry library to comminucate with your device.
+
+
+Table of contents
+-----------------
+
+1. Note
+
+2. Requirements
+
+3. Compilation
+
+4. Usage
+ 4.1 Command line
+ 4.2 Options
+
+5. Status
+
+6. Licence
+
+
+  
+                          ==========================
+
+
+1. Note
+-------
+
+The JDWP application to debug Java applications for BlackBerry is currently being developed
+on Linux. This driver can do damages. Use this application only if you know what you are doing.
+
+
+2. Requirements
+---------------
+
+  - Barry and libbarry 0.15 or higher (with JavaDebug mode support)
+  - cmake
+
+
+3. Compilation
+--------------
+
+  $ ./configure
+  $ make
+  
+  To run the application, launch the binary in the "bin" directory
+
+  $ cd bin
+  $ ./bjdwp
+
+
+4. Usage
+--------
+
+4.1 Command line
+
+  1°) Plug your BlackBerry device
+
+  2°) Run bjdwp wrapper 
+
+    $ bjdwp localhost 8000
+
+  3°) Run JDB
+
+    $ jdb -connect com.sun.jdi.SocketAttach:hostname=localhost,port=8000
+
+
+4.2 Options
+
+  bjdwp accepts the same options that the tools btool, bjavaloader...
+
+    bjdwp [hpPv] <address> <port>
+
+     -h        This help\n"
+     -p pin    PIN of device to talk with\n"
+               If only one device is plugged in, this flag is optional\n"
+     -P pass   Simplistic method to specify device password\n"
+     -v        Dump protocol data during operation\n"
+
+
+5. Status
+---------
+
+  bjdwp isn't usable.
+
+
+6. Licence
+----------
+
+  bjdwp application is distributed under the licence GPL.
+
