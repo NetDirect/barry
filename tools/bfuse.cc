@@ -44,6 +44,10 @@ using namespace Barry;
 // Global filenames
 const char *error_log_filename = "error.log";
 
+// Global command line args
+string cmdline_pin;
+string cmdline_password;
+
 //
 // Data from the command line
 //
@@ -65,16 +69,23 @@ void Blurb()
    << "        Copyright 2008-2009, Net Direct Inc. (http://www.netdirect.ca/)\n"
    << "        Using: " << Version << "\n"
    << endl;
-/*
+}
+
+void Usage()
+{
+   cerr
    << "\n"
+   << "Barry specific options:\n"
+   << "   -p pin    PIN of device to talk with\n"
+   << "             If only one device is plugged in, this flag is optional\n"
+   << "   -P pass   Simplistic method to specify device password\n"
+   << endl;
+/*
    << "   -d db     Specify which database to mount.  If no -d options exist\n"
    << "             then all databases will be mounted.\n"
    << "             Can be used multiple times to mount more than one DB\n"
    << "   -h        This help\n"
    << "   -n        Use null parser on all databases.\n"
-   << "   -p pin    PIN of device to talk with\n"
-   << "             If only one device is plugged in, this flag is optional\n"
-   << "   -P pass   Simplistic method to specify device password\n"
 */
 }
 
@@ -548,8 +559,13 @@ public:
 
 	string m_error_log;
 
+	string m_limit_pin;		// only mount device with this pin
+	string m_password;		// use this password when connecting
+
 public:
-	Context()
+	Context(const string &limit_pin = "", const string &password = "")
+		: m_limit_pin(limit_pin)
+		, m_password(password)
 	{
 		g_dirmap["/"] = this;
 		g_filemap[string("/") + error_log_filename] = this;
@@ -616,14 +632,19 @@ public:
 			ostringstream oss;
 			oss << hex << m_probe->Get(i).m_pin;
 
+			// don't add a blank or pre-existing pin
 			if( !oss.str().size() || m_pinmap.find(oss.str()) != m_pinmap.end() ) {
-				// don't add a blank or pre-existing pin
+				continue;
+			}
+
+			// don't add non-PIN device if pin specified
+			if( m_limit_pin.size() && oss.str() != m_limit_pin ) {
 				continue;
 			}
 
 			DesktopConPtr dev = DesktopConPtr (
 				new DesktopCon(m_probe->Get(i), oss.str()) );
-			dev->Open();
+			dev->Open(m_password.c_str());
 			m_pinmap[ oss.str() ] = dev;
 		}
 	}
@@ -648,7 +669,7 @@ static void* bfuse_init()
 	Context *ctx = 0;
 
 	try {
-		ctx = new Context;
+		ctx = new Context(cmdline_pin, cmdline_password);
 		ctx->ProbeAll();
 	}
 	catch( std::exception &e ) {
@@ -737,39 +758,51 @@ int main(int argc, char *argv[])
 	bfuse_oper.open		= bfuse_open;
 	bfuse_oper.read		= bfuse_read;
 
-/*
-	// process command line options
-	for(;;) {
-		int cmd = getopt(argc, argv, "d:hnp:P:");
-		if( cmd == -1 )
-			break;
+	// process command line options before FUSE does
+	// FUSE does its own command line processing, and
+	// doesn't seem to have a way to plug into it,
+	// so do our own first
+	int fuse_argc = 0;
+	char **fuse_argv = new char*[argc];
 
-		switch( cmd )
-		{
-		case 'd':	// mount dbname
-			dbNames.push_back(string(optarg));
-			break;
+	for( int i = 0; i < argc; i++ ) {
+		if( argv[i][0] == '-' ) {
 
-		case 'n':	// use null parser
-			null_parser = true;
-			break;
+			switch( argv[i][1] )
+			{
+//			case 'd':	// mount dbname
+//				dbNames.push_back(string(optarg));
+//				break;
 
-		case 'p':	// Blackberry PIN
-			pin = strtoul(optarg, NULL, 16);
-			break;
+//			case 'n':	// use null parser
+//				null_parser = true;
+//				break;
 
-		case 'P':	// Device password
-			password = optarg;
-			break;
+			case 'p':	// Blackberry PIN
+				if( i+1 < argc ) {
+					cmdline_pin = argv[++i];
+				}
+				continue;
 
-		case 'h':	// help
-		default:
-			Usage();
-			return 0;
+			case 'P':	// Device password
+				if( i+1 < argc ) {
+					cmdline_password = argv[++i];
+				}
+				continue;
+
+			case 'h':	// help
+				Usage();
+				break;
+			}
 		}
-	}
-*/
 
-	return fuse_main(argc, argv, &bfuse_oper);
+		// if we get here, add this option to FUSE's
+		fuse_argv[fuse_argc] = argv[i];
+		fuse_argc++;
+	}
+
+	int ret = fuse_main(fuse_argc, fuse_argv, &bfuse_oper);
+	delete [] fuse_argv;
+	return ret;
 }
 
