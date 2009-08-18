@@ -2,7 +2,7 @@
 .\" First parameter, NAME, should be all caps
 .\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
 .\" other parameters are allowed: see man(7), man(1)
-.TH BFUSE 1 "January 30, 2009"
+.TH BFUSE 1 "August 17, 2009"
 .\" Please adjust this date whenever revising the manpage.
 .\"
 .\" Some roff macros, for reference:
@@ -34,7 +34,16 @@ The device will remain in Desktop mode for as long as bfuse runs.
 For more information on FUSE options, see
 http://fuse.sourceforge.net/
 
-.SH OPTIONS
+.SH BARRY OPTIONS
+.TP
+.B \--p pin
+Specify the PIN of the device you want to mount.  Default is to mount
+all available devices.
+.TP
+.B \--P password
+Simplistic method to specify the device password on the command line.
+
+.SH FUSE OPTIONS
 .TP
 .B \--o opt
 FUSE mount options.
