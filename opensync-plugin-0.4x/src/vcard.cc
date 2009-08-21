@@ -330,6 +330,23 @@ const Barry::Contact& vCard::ToBarry(const char *vcard, uint32_t RecordId)
 		const char *type = stype.c_str();
 		bool used = false;
 
+		// Check for possible TYPE conflicts:
+		//    pager can coexist with cell/pcs/car
+		//    fax conflicts with cell/pcs/car
+		//    fax conflicts with pager
+		bool mobile_type = strstr(type, "cell") ||
+			strstr(type, "pcs") ||
+			strstr(type, "car");
+		bool fax_type = strstr(type, "fax");
+		bool pager_type = strstr(type, "pager");
+		if( fax_type && (mobile_type || pager_type) ) {
+			// conflict found, log and skip
+			trace.logf("ToBarry: skipping phone number due to TYPE conflict: fax cannot coexist with %s: %s",
+				mobile_type ? "cell/pcs/car" : "pager",
+				type);
+			continue;
+		}
+
 		// If phone number has the "pref" flag
 		if( strstr(type, "pref") ) {
 			// Always use cell phone if the "pref" flag is set
@@ -351,7 +368,7 @@ const Barry::Contact& vCard::ToBarry(const char *vcard, uint32_t RecordId)
 			used = true;
 		}
 		// Mobile phone :
-		else if( strstr(type, "cell") && (strstr(type, "pref") || con.MobilePhone.size() == 0) ) {
+		else if( mobile_type && (strstr(type, "pref") || con.MobilePhone.size() == 0) ) {
 			con.MobilePhone = tel.GetValue();
 			used = true;
 		}
@@ -361,11 +378,8 @@ const Barry::Contact& vCard::ToBarry(const char *vcard, uint32_t RecordId)
 			used = true;
 		}
 		// Check for any TEL-ignore types, and use other phone field if possible 
-		// cell/pcs/car      MobilePhone field only
 		// bbs/video/modem   entire TEL ignored by Barry
 		// isdn              entire TEL ignored by Barry
-		else if( strstr(type, "pcs") || strstr(type, "car") ) {
-		}
 		else if( strstr(type, "bbs") || strstr(type, "video") || strstr(type, "modem") ) {
 		}
 		else if( strstr(type, "isdn") ) {
