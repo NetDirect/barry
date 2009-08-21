@@ -195,15 +195,15 @@ const std::string& vCard::ToVCard(const Barry::Contact &con)
 	// add all applicable phone numbers... there can be multiple
 	// TEL fields, even with the same TYPE value... therefore, the
 	// second TEL field with a TYPE=work, will be stored in WorkPhone2
-	AddPhoneCond("pref", con.Phone);
+	AddPhoneCond("voice,pref", con.Phone);
 	AddPhoneCond("fax", con.Fax);
-	AddPhoneCond("work", con.WorkPhone);
-	AddPhoneCond("work", con.WorkPhone2);
-	AddPhoneCond("home", con.HomePhone);
-	AddPhoneCond("home", con.HomePhone2);
-	AddPhoneCond("cell", con.MobilePhone);
-	AddPhoneCond("pager", con.Pager);
-	AddPhoneCond(con.OtherPhone);
+	AddPhoneCond("voice,work", con.WorkPhone);
+	AddPhoneCond("voice,work", con.WorkPhone2);
+	AddPhoneCond("voice,home", con.HomePhone);
+	AddPhoneCond("voice,home", con.HomePhone2);
+	AddPhoneCond("msg,cell", con.MobilePhone);
+	AddPhoneCond("msg,pager", con.Pager);
+	AddPhoneCond("voice", con.OtherPhone);
 
 	// add all email addresses, marking first one as "pref"
 	Barry::Contact::EmailList::const_iterator eai = con.EmailAddresses.begin();
@@ -321,48 +321,93 @@ const Barry::Contact& vCard::ToBarry(const char *vcard, uint32_t RecordId)
 		const char *type = stype.c_str();
 		bool used = false;
 
-		// Do not use "else" here, since TYPE can have multiple keys
-		// Instead, only fill in a field if it is empty
-		if( strstr(type, "pref") && con.Phone.size() == 0 ) {
-			con.Phone = tel.GetValue();
-			used = true;
+		// Check for possible TYPE conflicts:
+		//    pager can coexist with cell/pcs/car
+		//    fax conflicts with cell/pcs/car
+		//    fax conflicts with pager
+		bool mobile_type = strstr(type, "cell") ||
+			strstr(type, "pcs") ||
+			strstr(type, "car");
+		bool fax_type = strstr(type, "fax");
+		bool pager_type = strstr(type, "pager");
+		if( fax_type && (mobile_type || pager_type) ) {
+			// conflict found, log and skip
+			trace.logf("ToBarry: skipping phone number due to TYPE conflict: fax cannot coexist with %s: %s",
+				mobile_type ? "cell/pcs/car" : "pager",
+				type);
+			continue;
 		}
 
-		if( strstr(type, "fax") && con.Fax.size() == 0 ) {
+		// If phone number has the "pref" flag
+		if( strstr(type, "pref") ) {
+			// Always use cell phone if the "pref" flag is set
+			if( strstr(type, "cell") ) {
+				con.Phone = tel.GetValue();
+				used = true;
+			}
+			// Otherwise, the phone has to be "voice" type
+			else if( strstr(type, "voice") && con.Phone.size() == 0 ) {
+				con.Phone = tel.GetValue();
+				used = true;
+			}
+		}
+
+		// For each known phone type
+		// Fax :
+		if( strstr(type, "fax") && (strstr(type, "pref") || con.Fax.size() == 0) ) {
 			con.Fax = tel.GetValue();
 			used = true;
 		}
-
-		if( strstr(type, "work") ) {
-			if( con.WorkPhone.size() == 0 ) {
-				con.WorkPhone = tel.GetValue();
-				used = true;
-			}
-			else if( con.WorkPhone2.size() == 0 ) {
-				con.WorkPhone2 = tel.GetValue();
-				used = true;
-			}
-		}
-
-		if( strstr(type, "home") ) {
-			if( con.HomePhone.size() == 0 ) {
-				con.HomePhone = tel.GetValue();
-				used = true;
-			}
-			else if( con.HomePhone2.size() == 0 ) {
-				con.HomePhone2 = tel.GetValue();
-				used = true;
-			}
-		}
-
-		if( strstr(type, "cell") && con.MobilePhone.size() == 0 ) {
+		// Mobile phone :
+		else if( mobile_type && (strstr(type, "pref") || con.MobilePhone.size() == 0) ) {
 			con.MobilePhone = tel.GetValue();
 			used = true;
 		}
-
-		if( (strstr(type, "pager") || strstr(type, "msg")) && con.Pager.size() == 0 ) {
+		// Pager :
+		else if( strstr(type, "pager") && (strstr(type, "pref") || con.Pager.size() == 0) ) {
 			con.Pager = tel.GetValue();
 			used = true;
+		}
+		// Check for any TEL-ignore types, and use other phone field if possible 
+		// bbs/video/modem   entire TEL ignored by Barry
+		// isdn              entire TEL ignored by Barry
+		else if( strstr(type, "bbs") || strstr(type, "video") || strstr(type, "modem") ) {
+		}
+		else if( strstr(type, "isdn") ) {
+		}
+		// Voice telephone :
+		else { 
+			if( strstr(type, "work") ) {
+				if( strstr(type, "pref") ) {
+					con.WorkPhone2 = con.WorkPhone;
+					con.WorkPhone = tel.GetValue();
+					used = true;
+				}
+				else if( con.WorkPhone.size() == 0 ) {
+					con.WorkPhone = tel.GetValue();
+					used = true;
+				}
+				else if( con.WorkPhone2.size() == 0 ) {
+					con.WorkPhone2 = tel.GetValue();
+					used = true;
+				}
+			}
+
+			if( strstr(type, "home") ) {
+				if( strstr(type, "pref") ) {
+					con.HomePhone2 = con.HomePhone;
+					con.HomePhone = tel.GetValue();
+					used = true;
+				}
+				if( con.HomePhone.size() == 0 ) {
+					con.HomePhone = tel.GetValue();
+					used = true;
+				}
+				else if( con.HomePhone2.size() == 0 ) {
+					con.HomePhone2 = tel.GetValue();
+					used = true;
+				}
+			}
 		}
 
 		// if this value has not been claimed by any of the
