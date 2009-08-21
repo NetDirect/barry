@@ -308,10 +308,20 @@ const Barry::Contact& vCard::ToBarry(const char *vcard, uint32_t RecordId)
 	// TEL fields, even with the same TYPE value... therefore, the
 	// second TEL field with a TYPE=work, will be stored in WorkPhone2
 	vAttr tel = GetAttrObj("TEL");
+	int lastWorkEvolutionSlot = 99, lastHomeEvolutionSlot = 99;
 	for( int i = 0; tel.Get(); tel = GetAttrObj("TEL", ++i) )
 	{
 		// grab all parameter values for this param name
 		std::string stype = tel.GetAllParams("TYPE");
+
+		// grab evolution-specific parameter... evolution is too
+		// lazy to sort its VCARD output, but instead it does
+		// its own non-standard tagging... so we try to
+		// accommodate it, so Work and Home phone numbers keep
+		// their order if possible
+		int evolutionSlot = atoi(tel.GetAllParams("X-EVOLUTION-UI-SLOT").c_str());
+		if( evolutionSlot == 0 )
+			evolutionSlot = 99;
 
 		// turn to lower case for comparison
 		// FIXME - is this i18n safe?
@@ -378,7 +388,7 @@ const Barry::Contact& vCard::ToBarry(const char *vcard, uint32_t RecordId)
 		// Voice telephone :
 		else { 
 			if( strstr(type, "work") ) {
-				if( strstr(type, "pref") ) {
+				if( strstr(type, "pref") || evolutionSlot < lastWorkEvolutionSlot ) {
 					con.WorkPhone2 = con.WorkPhone;
 					con.WorkPhone = tel.GetValue();
 					used = true;
@@ -391,10 +401,13 @@ const Barry::Contact& vCard::ToBarry(const char *vcard, uint32_t RecordId)
 					con.WorkPhone2 = tel.GetValue();
 					used = true;
 				}
+
+				// remember slot
+				lastWorkEvolutionSlot = evolutionSlot;
 			}
 
 			if( strstr(type, "home") ) {
-				if( strstr(type, "pref") ) {
+				if( strstr(type, "pref") || evolutionSlot < lastHomeEvolutionSlot ) {
 					con.HomePhone2 = con.HomePhone;
 					con.HomePhone = tel.GetValue();
 					used = true;
@@ -407,6 +420,9 @@ const Barry::Contact& vCard::ToBarry(const char *vcard, uint32_t RecordId)
 					con.HomePhone2 = tel.GetValue();
 					used = true;
 				}
+
+				// remember slot
+				lastHomeEvolutionSlot = evolutionSlot;
 			}
 		}
 
