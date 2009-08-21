@@ -11,36 +11,31 @@ please ask on the mailing list as well.
 
 Next Release Checklist (- todo, + done, x skipped)
 ==============================================================================
-Target: release version 0.15
-	- finish javaloader support, implementing all known commands
-		+ write COD to device
-		+ list
-		+ save
-		+ set time
-		+ device-info
-		+ screenshot
-		+ delete COD files (javaloader erase)
+Target: release version 0.16 (Sept 3)
+	- incorporate Nicolas's java debugger patches
+	- incorporate barrybackup GUI changes by Ryan Li
+
+Target: release version 0.17 (Oct 1)
 	- test and fix all build and functionality issues on:
-		- Fedora 10
-		- Ubuntu 8.10
-		- Debian lenny
+		- Fedora 11
+		- Ubuntu 8.10, 9.04
 		- openSUSE 11.1
 			- see mailing list reports
 		- give openBSD a test compile
-	- catchup on sourceforge tracker items
-	- incorporate Bill Paul's modem HOWTO for FreeBSD into web docs
-		(see list emails)
-	- review all website documentation before release
+	- website documentation:
 		- add a more detailed set of instructions for how to
 			contribute to the project using git
 			(see email to Josh)
-	+ make sure all manpages are up to date, including bjavaloader
-	- include Nicolas's opensync plugin 0.4x branch
-		- update website documentation to indicate this is
-			an experimental plugin, since the main opensync
-			framework is not released yet
+		- incorporate Bill Paul's modem HOWTO for FreeBSD
+			into web docs (see list emails)
+		- add docs for opensync 0.4x plugin (note that it is
+			currently experimental, based on devel opensync)
 
-Target: release version 0.16
+Target: any release
+	- support our own repositories for apt and yum and zypper
+		to make installation easier
+
+Target: release version 0.18 (Nov 13)
 	- polish up bfuse, and add feature to split out fields
 	- add record classes for Content Store, SMS Messages, based on
 		Martin Owens' doc/barry-research.ods
