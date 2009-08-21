@@ -15,7 +15,7 @@ Barry Release Checklist:
 	- include mention of distros that support Barry:
 		(see AUTHORS file for distro list)
 - web docs:
-	- bump version number
+	- bump version number and release date on index.php
 	- update known issues list
 	- check that all external links work, and point to proper content
 	- upload latest web docs to netdirect project page
