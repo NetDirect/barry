@@ -1,5 +1,7 @@
 Release: version 0.15 - 2009/01/??
 ------------------------------------------------------------------------------
+2009/08/21
+	- updated www documentation for upcoming release
 2009/08/17
 	- added pin and password command line support to bfuse
 	- updated bfuse man page

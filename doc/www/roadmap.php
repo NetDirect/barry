@@ -2,60 +2,40 @@
 
 <? createHeader("Barry - Roadmap"); ?>
 
-<? createSubHeader("Milestone 1 - mostly complete"); ?>
+<p>This roadmap is taken from the
+<a href="http://repo.or.cz/w/barry.git?a=blob;f=TODO;hb=HEAD">TODO file</a>
+in the source tree, and while relatively up to date, the source tree is the
+definitive copy.</p>
+
+<? createSubHeader("Target: release version 0.16 (Sept 3)"); ?>
 <ul>
-	<li> autoconf the project
-	<li> handle USB interface and configuration numbers dynamically
-	<li> handle USB endpoint numbers dynamically (appears to use the endpoint numbers in ascending order: 1 read, 1 write)
-	<li> make the old/new DBDB commands dynamic
-	<li> flesh out LDIF support (should read/import them as well)
-	<li> reverse engineer email header data
-	<li> use SWIG to make the API available in Python
+	<li>incorporate Nicolas's java debugger patches</li>
+	<li>incorporate barrybackup GUI changes by Ryan Li</li>
 </ul>
 
-<? createSubHeader("Milestone 2 - complete for all but email"); ?>
+<? createSubHeader("Target: release version 0.17 (Oct 1)"); ?>
 <ul>
-<li> reliable command line backup and restore of:
+<li>test and fix all build and functionality issues on:</li>
 	<ul>
-		<li> Contacts / Address Book
-		<li> Calendar
-		<li> Email
+		<li>Fedora 11</li>
+		<li>Ubuntu 8.10, 9.04</li>
+		<li>openSUSE 11.1</li>
+		<li>openBSD</li>
+	</ul>
+<li>website documentation:</li>
+	<ul>
+		<li>add a more detailed set of instructions for how to
+			contribute to the project using git</li>
+		<li>incorporate Bill Paul's modem HOWTO for FreeBSD
+			into web docs</li>
+		<li>add docs for opensync 0.4x plugin</li>
 	</ul>
 </ul>
 
-<? createSubHeader("Milestone 3 - complete"); ?>
+<? createSubHeader("Target: release version 0.18 (Nov 13)"); ?>
 <ul>
-	<li> reliable backup and restore of all databases </li>
-</ul>
-
-<? createSubHeader("Milestone 4 - complete"); ?>
-<ul>
-	<li> reliable command line backup and restore of Java program modules
-</ul>
-
-<? createSubHeader("Milestone 5 - currently implemented through OpenSync"); ?>
-<ul>
-	<li>design and implement sync functionality (must support data from any external data source)
-	<li>command line sync tool
-</ul>
-
-<? createSubHeader("Milestone 6 - currently implemented through OpenSync"); ?>
-<ul>
-	<li>GUI sync tool
-</ul>
-
-<? createSubHeader("Milestone 7 - currently implemented through OpenSync"); ?>
-<ul>
-	<li>Evolution sync
-</ul>
-
-<? createSubHeader("Milestone 8 - currently implemented through OpenSync"); ?>
-<ul>
-	<li>Mozilla sync
-</ul>
-
-<? createSubHeader("Milestone 9 - currently implemented through OpenSync"); ?>
-<ul>
-	<li>LDAP sync
+	<li>polish up bfuse, and add feature to split out fields</li>
+	<li>add record classes for Content Store, SMS Messages, based on
+		Martin Owens' doc/barry-research.ods</li>
 </ul>
 

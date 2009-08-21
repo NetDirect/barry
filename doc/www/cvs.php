@@ -127,7 +127,7 @@ is a matter of the common set of commands:
 </pre>
 </p>
 
-<p> The top level configure script has two options:
+<p> The top level configure script has two sub-package options:
 <ul>
 	<li> --enable-gui </li>
 	<li> --enable-opensync-plugin </li>
@@ -140,9 +140,9 @@ located there automatically.  Make sure you have the needed software
 dependencies installed beforehand.</p>
 
 <p> If you want to generate doxygen documentation, run 'doxygen' from
-root source directory.  The resulting files will be in doc/www/doxygen/html/.
-Doxygen 1.5.1 has been used to do this, but presumably more recent versions
-will work as well.</p>
+the root source directory.  The resulting files will be in
+doc/www/doxygen/html/.  Doxygen 1.5.6 has been used to do this,
+but presumably more recent versions will work as well.</p>
 
 
 

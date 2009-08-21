@@ -56,7 +56,7 @@ but as soon as I plug my device into the USB port, the device reboots.</p>
 to be run 7 to 10 times back to back.  This confuses the BlackBerry
 enough to reset it.  As of 2007/07/28, there is a corrected
 udev script example in Barry CVS.  This corrected script
-will be included in the Barry 0.8 release.</p>
+was included in the Barry 0.8 release, and newer versions.</p>
 
 <p>Alternative issue: You may have the berry_charge kernel module
 running, in which case you need to choose which method you wish

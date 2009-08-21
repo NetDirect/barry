@@ -11,7 +11,7 @@ detailed information on the software that Barry needs.</p>
 <? createSubHeader("Binary Packages"); ?>
 
 <p>Download the matching packages for your system from the
-<a href="http://sourceforge.net/project/showfiles.php?group_id=153722">Sourceforge download page</a> or the <a href="http://download.opensuse.org/repositories/home:/ndprojects/">OpenSUSE Build Service page</a>.</p>
+<a href="http://sourceforge.net/project/showfiles.php?group_id=153722">Sourceforge download page</a>.</p>
 
 <p>On Sourceforge, packages are available for multiple distros, and are
 indicated by the filenames:
@@ -27,9 +27,6 @@ indicated by the filenames:
 	<li>the non-tagged deb files are for Debian Stable 5.0, Lenny</li>
 </ul>
 </p>
-
-<p>On OBS, packages are located in subdirectories per distro.  Be sure to
-select the correct platform, whether 32 bit or 64 bit.</p>
 
 <p>Barry is split up into multiple binary packages.  For example,
 if you want the GUI backup program, you will also need the Barry library.

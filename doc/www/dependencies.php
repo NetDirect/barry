@@ -38,13 +38,13 @@ some are only needed for building CVS.
 	<li><b>C and C++ compilers</b> - 4.1.x or higher, for the tr1 includes (source build)</li>
 	<li><b>ccache</b> - completely optional, but useful if you plan on compiling repeatedly</li>
 	<li><b>pkg-config</b> (source build: so configure can autodetect library locations) </li>
-	<li><b>libusb, stable (0.1.x)</b> - found at <a href="http://libusb.sourceforge.net">http://libusb.sourceforge.net/</a> </li>
+	<li><b>libusb, stable (0.1.x)</b> - found at <a href="http://www.libusb.org/">http://www.libusb.org/</a> </li>
 	<li><b>pthread</b>
 	<li><b>boost</b> version 1.33 or higher (optional, needed for the serialization library, which you need if you want to save downloads for later uploads to the device, using btool) <a href="http://www.boost.org/">http://www.boost.org</a></li>
 	<li><b>automake</b> version 1.9 (CVS builds only) </li>
 	<li><b>autoconf</b> version 2.61 (CVS builds only) </li>
 	<li><b>libtool</b> version 1.5.22 (CVS builds only) </li>
-	<li><b>doxygen</b> suggested version 1.4.5, only for building API documentation</li>
+	<li><b>doxygen</b> suggested version 1.5.6, only for building API documentation</li>
 	<li><b>gtkmm, glademm, glibmm</b> C++ versions of the GTK libraries (needed for the barrybackup GUI)</li>
 	<li><b>libtar</b> (barrybackup GUI) </li>
 	<li><b>zlib</b>, needed for CRC32 checksums in library COD file support,
@@ -57,7 +57,7 @@ some are only needed for building CVS.
 		OS such as FreeBSD, you'll have to install this separately.</li>
 	<li><b>gettext</b>, needed for the iconv.m4 file, on some systems,
 		when building from CVS to generate configure.</li>
-	<li><b>php</b>, needed for generating static HTML documentation (CVS builds only) </li>
+	<li><b>php5</b>, needed for generating static HTML documentation (CVS builds only) </li>
 </ul>
 </p>
 

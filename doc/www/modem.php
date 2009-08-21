@@ -27,6 +27,8 @@ then default ppp options and chat scripts are installed automatically
 for you.  Currently there are scripts available for the following
 providers:
 <ul>
+	<li> AT&amp;T Cingular </li>
+	<li> China Mobile </li>
 	<li> O2 Ireland </li>
 	<li> Rogers </li>
 	<li> Sprint </li>
@@ -41,7 +43,7 @@ following command as root:</p>
 	pppd call barry-rogers
 </pre>
 
-<p>If none of the default script work, see the Troubleshooting section
+<p>If none of the default scripts work, see the Troubleshooting section
 below.</p>
 
 
