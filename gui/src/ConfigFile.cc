@@ -53,12 +53,12 @@ ConfigFile::ConfigFileError::ConfigFileError(const char *msg, int err)
 /// but it is not an error if the config does not exist.
 /// Never use this if you have a DatabaseDatabase object!
 /// This ctor is only for temporary loading of config data.
-ConfigFile::ConfigFile(const std::string &pin)
+ConfigFile::ConfigFile(Pin pin)
 	: m_pin(pin)
 	, m_loaded(false)
 	, m_promptBackupLabel(false)
 {
-	if( m_pin.size() == 0 )
+	if( m_pin == 0 )
 		throw ConfigFileError("Configfile: empty pin");
 
 	BuildFilename();
@@ -69,13 +69,13 @@ ConfigFile::ConfigFile(const std::string &pin)
 /// Opens and loads config file for given pin, and calls Enlighten
 /// Throws ConfigFileError on error.  Should never fail unless
 /// passed a bad pin.
-ConfigFile::ConfigFile(const std::string &pin,
+ConfigFile::ConfigFile(Pin pin,
 		       const Barry::DatabaseDatabase &db)
 	: m_pin(pin)
 	, m_loaded(false)
 	, m_promptBackupLabel(false)
 {
-	if( m_pin.size() == 0 )
+	if( m_pin == 0 )
 		throw ConfigFileError("Configfile: empty pin");
 
 	BuildFilename();
@@ -97,7 +97,7 @@ void ConfigFile::BuildFilename()
 
 	m_filename = pw->pw_dir;
 	m_filename += "/.barry/backup/";
-	m_filename += m_pin;
+	m_filename += m_pin.str();
 	m_filename += "/config";
 }
 
@@ -106,7 +106,7 @@ void ConfigFile::BuildDefaultPath()
 	struct passwd *pw = getpwuid(getuid());
 	m_path = pw->pw_dir;
 	m_path += "/.barry/backup/";
-	m_path += m_pin;
+	m_path += m_pin.str();
 }
 
 void ConfigFile::Clear()

@@ -23,7 +23,10 @@ barrybackup_SOURCES = \
 	PromptDlg.cc \
 	ConfigDlg.cc \
 	ConfigFile.cc \
+	DeviceBus.cc \
 	DeviceIface.cc \
+	Thread.cc \
+	Pin.cc \
 	tarfile.cc \
 	tarfile-ops-nt.cc \
 	util.cc
@@ -33,9 +36,12 @@ noinst_HEADERS= \
 	ConfigDlg.h \
 	ConfigFile.h \
 	DatabaseSelectDlg.h \
+	DeviceBus.h \
 	DeviceIface.h \
 	PasswordDlg.h \
 	PromptDlg.h \
+	Thread.h \
+	Pin.h \
 	tarfile.h \
 	util.h
 

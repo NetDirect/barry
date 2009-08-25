@@ -27,6 +27,7 @@
 #include <memory>
 #include <stdint.h>
 #include "ConfigFile.h"
+#include "Pin.h"
 #include "tarfile.h"
 
 #define DI_THREAD_DONE 100
@@ -36,6 +37,19 @@ namespace Glib {
 	class Dispatcher;
 	class Mutex;
 }
+
+class Device
+{
+	Barry::ProbeResult result;
+
+public:
+	Device();
+	Device(Barry::ProbeResult);
+
+	Pin GetPIN() const { return Pin(result.m_pin); };
+
+	friend class DeviceInterface;
+};
 
 class DeviceInterface :
 	public Barry::Parser,
@@ -76,6 +90,7 @@ public:
 	};
 
 private:
+	Device *m_dev;
 	Barry::Controller *m_con;
 	Barry::Mode::Desktop *m_desktop;
 	std::string m_last_error;
@@ -83,8 +98,6 @@ private:
 
 	AppComm m_AppComm;
 	std::auto_ptr<reuse::TarFile> m_tar, m_tarback;
-
-	std::auto_ptr<Barry::Probe> m_probe;
 
 	// parser and builder data (only one side uses these at a time)
 	ConfigFile::DBListType m_dbList;
@@ -110,33 +123,29 @@ protected:
 	void RestoreAndBackupThread();
 
 	// helpers
-	std::string MakeFilename(const std::string &pin, const std::string &label = "");
-	int CountFiles(reuse::TarFile &tar, const ConfigFile::DBListType &restoreList);
+	std::string MakeFilename(const std::string &label = "") const;
+	int CountFiles(reuse::TarFile &tar, const ConfigFile::DBListType &restoreList) const;
 	bool SplitTarPath(const std::string &tarpath, std::string &dbname,
-		std::string &dbid_text, uint8_t &dbrectype, uint32_t &dbid);
+		std::string &dbid_text, uint8_t &dbrectype, uint32_t &dbid) const;
 
 	// Sets the name of the database the thread is currently working on
 	void SetThreadDBName(const std::string &dbname);
 
 public:
-	DeviceInterface();
+	DeviceInterface(Device *dev = 0);
 	~DeviceInterface();
 
 	const std::string& get_last_error() const { return m_last_error; }
 	const std::string& get_last_thread_error() const { return m_last_thread_error; }
 
-	void Probe();
-	unsigned int ProbeCount();
-	uint32_t GetPin(unsigned int index);
-	Usb::DeviceIDType GetDev(unsigned int index);
-
-	bool Connect(unsigned int index);
-	bool Connect(const Barry::ProbeResult &dev);
+	void Reset();
+	bool Connect();
 	bool Password(const char *password);
 	void Disconnect();
 
 	const Barry::DatabaseDatabase& GetDBDB() const { return m_desktop->GetDBDB(); }
-	int GetDeviceRecordTotal(const ConfigFile::DBListType &backupList) const;
+	unsigned int GetRecordTotal(const ConfigFile::DBListType &backupList) const;
+	unsigned int GetRecordTotal(const ConfigFile::DBListType &restoreList, const std::string &filename) const;
 
 	void QuitThread()	{ m_thread_quit = true; }
 
@@ -145,18 +154,16 @@ public:
 
 	bool StartBackup(AppComm comm,
 		const ConfigFile::DBListType &backupList,
-		const std::string &directory, const std::string &pin,
-		const std::string &backupLabel);
+		const std::string &directory, const std::string &backupLabel);
 	bool StartRestore(AppComm comm,
 		const ConfigFile::DBListType &restoreList,
-		const std::string &tarfilename, int *pRecordCount = 0);
+		const std::string &tarfilename);
 	// this is for debugging... starts a restore, and then does an
 	// immediate backup of the same DB before moving on to the next
 	bool StartRestoreAndBackup(AppComm comm,
 		const ConfigFile::DBListType &restoreAndBackupList,
 		const std::string &tarfilename,
-		const std::string &directory, const std::string &pin,
-		int *pRecordCount = 0);
+		const std::string &directory);
 
 	// Barry::Parser overrides
 	virtual void Clear();

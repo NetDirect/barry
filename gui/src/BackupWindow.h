@@ -22,82 +22,76 @@
 #include <gtkmm.h>
 #include <libglademm.h>
 #include <memory>
-#include "DeviceIface.h"
+#include <vector>
+#include "DeviceBus.h"
 #include "ConfigFile.h"
+#include "Thread.h"
 
 class BackupWindow : public Gtk::Window
 {
-	// columns in DeviceList
-	class Columns : public Gtk::TreeModel::ColumnRecord
-	{
-	public:
-		Gtk::TreeModelColumn<Glib::ustring> m_pin_text;
-		Gtk::TreeModelColumn<uint32_t> m_pin;
-
-		Columns()
-		{
-			add(m_pin_text);
-			add(m_pin);
-		}
-	};
 	// external data
 	const Glib::RefPtr<Gnome::Glade::Xml> &m_xml;
 
-	// Interface to Blackberry
-	DeviceInterface m_dev;
+	// dispatcher for updating thread info
+	Glib::Dispatcher m_signal_update;
+
+	// Bus of Blackberry devices
+	DeviceBus m_bus;
+
+	// vector for storing Threads
+	std::vector<std::tr1::shared_ptr<Thread> > m_threads;
 
 	// signal exception handling connection
 	sigc::connection m_signal_handler_connection;
 
-	// data
-	std::auto_ptr<ConfigFile> m_pConfig;
-	Glib::Dispatcher m_signal_progress;
-	Glib::Dispatcher m_signal_error;
-	Glib::Dispatcher m_signal_done;
-	Glib::Dispatcher m_signal_erase_db;
-	int m_recordTotal;
-	int m_finishedRecords;
-	std::string m_modeName;
-
 	// Widget objects
-	Gtk::MenuItem *m_pEditConfig;
-	Gtk::ProgressBar *m_pProgressBar;
-	Gtk::Statusbar *m_pStatusBar;
-	Gtk::Entry *m_pDatabaseEntry;
-	Gtk::Button *m_pBackupButton, *m_pRestoreButton;
+	Gtk::Statusbar *m_pStatusbar;
+	Gtk::Button *m_pBackupButton, *m_pRestoreButton, 
+		*m_pConfigButton, *m_pDisconnectButton, 
+		*m_pDisconnectAllButton, *m_pReloadButton;
 	Gtk::Label *m_pDeviceLabel;
-	Gtk::ComboBox *m_pDeviceList;
+	Gtk::TreeView *m_pDeviceList;
 
 	// objects used by DeviceList
-	Gtk::TreeView *m_pTree;
-	Columns m_Columns;
-	Glib::RefPtr<Gtk::ListStore> m_pListStore;
+	class Columns : public Gtk::TreeModel::ColumnRecord
+	{
+	public:
+		Gtk::TreeModelColumn<unsigned int> m_id;
+		Gtk::TreeModelColumn<Glib::ustring> m_pin;
+		Gtk::TreeModelColumn<Glib::ustring> m_name;
+		Gtk::TreeModelColumn<Glib::ustring> m_status;
+		Gtk::TreeModelColumn<unsigned int> m_percentage;
 
-	// index of active device
-	int m_active_device;
+		Columns()
+		{
+			add(m_id);
+			add(m_pin);
+			add(m_name);
+			add(m_status);
+			add(m_percentage);
+		}
+	};
+	Columns m_columns;
+	Glib::RefPtr<Gtk::ListStore> m_pListStore;
+	Glib::RefPtr<Gtk::TreeSelection> m_pDeviceSelection;
 
 	// number of devices
 	unsigned int m_device_count;
 
-	// state
+	// pointer to active Thread;
+	Thread *m_pActive;
+
+	// whether scanned
 	bool m_scanned;
-	bool m_connected;
-	bool m_working;		// true if backup or restore in progress
-	bool m_thread_error;
 
 protected:
 	void Scan();
-	void Connect();
-	void CheckDeviceName();
-	void SetDeviceName(const std::string &name);
-	void SetWorkingMode(const std::string &taskname);
-	void ClearWorkingMode();
-	void UpdateProgress();
+	bool Connect(Thread *);
+	void Disconnect(Thread *);
+	void CheckDeviceName(Thread *);
 	bool PromptForRestoreTarball(std::string &restoreFilename,
 		const std::string &start_path);
-	bool CheckWorkingDevice();
-	void ResetDeviceList();
-	void SetActiveDevice(unsigned int index, bool setList = true);
+	Thread *GetActive();
 
 public:
 	BackupWindow(BaseObjectType *cobject, const Glib::RefPtr<Gnome::Glade::Xml> &xml);
@@ -106,34 +100,19 @@ public:
 	// handler for exceptions that happen in signal calls
 	void signal_exception_handler();
 
+	// handler for treeview update requests
+	void treeview_update();
+
 	// signal handlers
 	void on_backup();
 	void on_restore();
+	void on_config();
+	void on_disconnect();
+	void on_disconnect_all();
+	void on_reload();
 	void on_device_change();
 	void on_file_quit();
-	void on_edit_config();
 	void on_help_about();
 	bool on_startup();
-	void on_thread_progress();
-	void on_thread_error();
-	void on_thread_done();
-	void on_thread_erase_db();
 };
 
-// this class is used by functions to
-// prevent abnormal returns from
-// failing to update the status bar
-class StatusBarHandler
-{
-	Gtk::Statusbar *psb;
-	public:
-	StatusBarHandler(Gtk::Statusbar *pStatusBar, const std::string Message) : psb(pStatusBar)
-	{
-		psb->push(Message);
-		psb->show_now();
-	}
-	~StatusBarHandler()
-	{
-		psb->pop();
-	}
-};

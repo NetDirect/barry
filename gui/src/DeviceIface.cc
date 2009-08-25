@@ -29,8 +29,9 @@
 #include <string.h>
 #include <stdlib.h>
 
-DeviceInterface::DeviceInterface()
-	: m_con(0)
+DeviceInterface::DeviceInterface(Device *dev)
+	: m_dev(dev)
+	, m_con(0)
 	, m_desktop(0)
 	, m_dbnameMutex(new Glib::Mutex) // this is just in an effort to
 					 // avoid gtkmm headers in
@@ -43,8 +44,7 @@ DeviceInterface::DeviceInterface()
 
 DeviceInterface::~DeviceInterface()
 {
-	delete m_desktop;
-	delete m_con;
+	Disconnect();
 	delete m_dbnameMutex;
 }
 
@@ -61,19 +61,16 @@ void DeviceInterface::BackupThread()
 	m_last_thread_error = "";
 
 	try {
-
 		// cycle through all database names in the dbList
 		// and store them all
 		ConfigFile::DBListType::const_iterator name = m_dbList.begin();
 		for( ; name != m_dbList.end(); ++name ) {
 			// save current db name
 			SetThreadDBName(*name);
-
 			// call the controller to do the work
 			unsigned int dbId = m_desktop->GetDBID(*name);
 			m_desktop->LoadDatabase(dbId, *this);
 		}
-
 	}
 	catch( Glib::Exception &e ) {
 		m_last_thread_error = e.what();
@@ -219,8 +216,7 @@ void DeviceInterface::RestoreAndBackupThread()
 	m_AppComm.Invalidate();
 }
 
-std::string DeviceInterface::MakeFilename(const std::string &pin,
-					  const std::string &label)
+std::string DeviceInterface::MakeFilename(const std::string &label) const
 {
 	time_t t = time(NULL);
 	struct tm *lt = localtime(&t);
@@ -238,7 +234,7 @@ std::string DeviceInterface::MakeFilename(const std::string &pin,
 	}
 
 	std::ostringstream tarfilename;
-	tarfilename << pin << "-"
+	tarfilename << m_dev->GetPIN().str() << "-"
 		<< std::setw(4) << std::setfill('0') << (lt->tm_year + 1900)
 		<< std::setw(2) << std::setfill('0') << (lt->tm_mon + 1)
 		<< std::setw(2) << std::setfill('0') << lt->tm_mday
@@ -252,7 +248,7 @@ std::string DeviceInterface::MakeFilename(const std::string &pin,
 }
 
 int DeviceInterface::CountFiles(reuse::TarFile &tar,
-				const ConfigFile::DBListType &restoreList)
+				const ConfigFile::DBListType &restoreList) const
 {
 	int count = 0;
 	std::string name, last_name;
@@ -280,7 +276,7 @@ bool DeviceInterface::SplitTarPath(const std::string &tarpath,
 				   std::string &dbname,
 				   std::string &dbid_text,
 				   uint8_t &dbrectype,
-				   uint32_t &dbid)
+				   uint32_t &dbid) const
 {
 	std::string::size_type pos = tarpath.rfind('/');
 	if( pos == std::string::npos )
@@ -306,40 +302,20 @@ void DeviceInterface::SetThreadDBName(const std::string &dbname)
 	m_current_dbname = dbname;
 }
 
-
 //////////////////////////////////////////////////////////////////////////////
 // Public API
 
-void DeviceInterface::Probe()
+void DeviceInterface::Reset()
 {
-	m_probe.reset(new Barry::Probe);
+	Usb::Device dev(m_dev->result.m_dev);
+	dev.Reset();
 }
 
-unsigned int DeviceInterface::ProbeCount()
-{
-	return m_probe->GetCount();
-}
-
-uint32_t DeviceInterface::GetPin(unsigned int index)
-{
-	return m_probe->Get(index).m_pin;
-}
-
-Usb::DeviceIDType DeviceInterface::GetDev(unsigned int index)
-{
-	return m_probe->Get(index).m_dev;
-}
-
-bool DeviceInterface::Connect(unsigned int index)
-{
-	return Connect(m_probe->Get(index));
-}
-
-bool DeviceInterface::Connect(const Barry::ProbeResult &dev)
+bool DeviceInterface::Connect()
 {
 	try {
 		Disconnect();
-		m_con = new Barry::Controller(dev);
+		m_con = new Barry::Controller(m_dev->result);
 		m_desktop = new Barry::Mode::Desktop(*m_con);
 		m_desktop->Open();
 		return true;
@@ -386,9 +362,9 @@ void DeviceInterface::Disconnect()
 
 // cycle through controller's DBDB and count the records in all the
 // databases selected in the backupList
-int DeviceInterface::GetDeviceRecordTotal(const ConfigFile::DBListType &backupList) const
+unsigned int DeviceInterface::GetRecordTotal(const ConfigFile::DBListType &backupList) const
 {
-	int count = 0;
+	unsigned int count = 0;
 
 	Barry::DatabaseDatabase::DatabaseArrayType::const_iterator
 		i = m_desktop->GetDBDB().Databases.begin();
@@ -396,6 +372,23 @@ int DeviceInterface::GetDeviceRecordTotal(const ConfigFile::DBListType &backupLi
 		if( backupList.IsSelected(i->Name) ) {
 			count += i->RecordCount;
 		}
+	}
+	return count;
+}
+
+unsigned int DeviceInterface::GetRecordTotal(const ConfigFile::DBListType &restoreList, const std::string &filename) const
+{
+	unsigned int count = 0;
+
+	std::auto_ptr<reuse::TarFile> tar;
+
+	try {
+		// do a scan through the tar file
+		tar.reset( new reuse::TarFile(filename.c_str(), false, &reuse::gztar_ops_nonthread, true) );
+		count = CountFiles(*tar, restoreList);
+	}
+	catch( reuse::TarFile::TarError &te ) {
+		// just throw it away
 	}
 	return count;
 }
@@ -410,17 +403,14 @@ std::string DeviceInterface::GetThreadDBName() const
 bool DeviceInterface::StartBackup(AppComm comm,
 				  const ConfigFile::DBListType &backupList,
 				  const std::string &directory,
-				  const std::string &pin,
 				  const std::string &backupLabel)
 {
 	if( m_AppComm.IsValid() )
 		return False("Thread already running.");
 
 	try {
-
-		std::string filename = directory + "/" + MakeFilename(pin, backupLabel);
+		std::string filename = directory + "/" + MakeFilename(backupLabel);
 		m_tarback.reset( new reuse::TarFile(filename.c_str(), true, &reuse::gztar_ops_nonthread, true) );
-
 	}
 	catch( reuse::TarFile::TarError &te ) {
 		return False(te.what());
@@ -437,23 +427,12 @@ bool DeviceInterface::StartBackup(AppComm comm,
 
 bool DeviceInterface::StartRestore(AppComm comm,
 				   const ConfigFile::DBListType &restoreList,
-				   const std::string &filename,
-				   int *pRecordCount)
+				   const std::string &filename)
 {
 	if( m_AppComm.IsValid() )
 		return False("Thread already running.");
 
 	try {
-		if( pRecordCount ) {
-			// caller is asking for a total, so we do a quick
-			// scan through the tar file first
-			m_tar.reset( new reuse::TarFile(filename.c_str(), false, &reuse::gztar_ops_nonthread, true) );
-			*pRecordCount = CountFiles(*m_tar, restoreList);
-
-			// close for next open
-			m_tar.reset();
-		}
-
 		// open for the main restore
 		m_tar.reset( new reuse::TarFile(filename.c_str(), false, &reuse::gztar_ops_nonthread, true) );
 
@@ -482,28 +461,17 @@ bool DeviceInterface::StartRestore(AppComm comm,
 bool DeviceInterface::StartRestoreAndBackup(AppComm comm,
 				const ConfigFile::DBListType &restoreAndBackupList,
 				const std::string &filename,
-				const std::string &directory, const std::string &pin,
-				int *pRecordCount)
+				const std::string &directory)
 {
 	if( m_AppComm.IsValid() )
 		return False("Thread already running.");
 
 	try {
-		if( pRecordCount ) {
-			// caller is asking for a total, so we do a quick
-			// scan through the tar file first
-			m_tar.reset( new reuse::TarFile(filename.c_str(), false, &reuse::gztar_ops_nonthread, true) );
-			*pRecordCount = CountFiles(*m_tar, restoreAndBackupList);
-
-			// close for next open
-			m_tar.reset();
-		}
-
 		// open for the main restore
 		m_tar.reset( new reuse::TarFile(filename.c_str(), false, &reuse::gztar_ops_nonthread, true) );
 
 		// open for secondary backup
-		std::string back = directory + "/" + MakeFilename(pin);
+		std::string back = directory + "/" + MakeFilename(m_dev->GetPIN().str());
 		m_tarback.reset( new reuse::TarFile(back.c_str(), true, &reuse::gztar_ops_nonthread, true) );
 
 	}
@@ -681,5 +649,13 @@ void DeviceInterface::SkipCurrentDB() throw()
 		std::cerr << "EXCEPTION IN SkipCurrentDB()!  "
 			"Please report to Barry mailing list." << std::endl;
 	}
+}
+
+Device::Device()
+{
+}
+
+Device::Device(Barry::ProbeResult pr) : result(pr)
+{
 }
 

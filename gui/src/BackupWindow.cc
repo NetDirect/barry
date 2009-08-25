@@ -34,69 +34,84 @@ BackupWindow::BackupWindow(BaseObjectType *cobject,
 			   const Glib::RefPtr<Gnome::Glade::Xml> &xml)
 	: Gtk::Window(cobject)
 	, m_xml(xml)
-	, m_recordTotal(0)
-	, m_finishedRecords(0)
-	, m_pEditConfig(0)
-	, m_pProgressBar(0)
-	, m_pStatusBar(0)
+	, m_pStatusbar(0)
 	, m_pBackupButton(0)
 	, m_pRestoreButton(0)
+	, m_pDisconnectButton(0)
+	, m_pReloadButton(0)
 	, m_pDeviceLabel(0)
 	, m_pDeviceList(0)
-	, m_active_device(-1)
 	, m_device_count(0)
+	, m_pActive(0)
 	, m_scanned(false)
-	, m_connected(false)
-	, m_working(false)
 {
+	m_signal_update.connect(
+		sigc::mem_fun(*this, &BackupWindow::treeview_update));
+
 	// setup menu signals
 	Gtk::MenuItem *pItem = 0;
 	m_xml->get_widget("menu_file_quit", pItem);
 	pItem->signal_activate().connect(
 		sigc::mem_fun(*this, &BackupWindow::on_file_quit));
 
-	m_xml->get_widget("menu_edit_config", pItem);
-	pItem->signal_activate().connect(
-		sigc::mem_fun(*this, &BackupWindow::on_edit_config));
-
 	m_xml->get_widget("menu_help_about", pItem);
 	pItem->signal_activate().connect(
 		sigc::mem_fun(*this, &BackupWindow::on_help_about));
 
 	// get various widget pointers we will use later
-	m_xml->get_widget("menu_edit_config", m_pEditConfig);
 	m_xml->get_widget("DeviceLabel", m_pDeviceLabel);
 	m_xml->get_widget("DeviceList", m_pDeviceList);
 	m_xml->get_widget("BackupButton", m_pBackupButton);
 	m_xml->get_widget("RestoreButton", m_pRestoreButton);
-	m_xml->get_widget("ProgressBar", m_pProgressBar);
-	m_xml->get_widget("StatusBar", m_pStatusBar);
-	m_xml->get_widget("DatabaseEntry", m_pDatabaseEntry);
+	m_xml->get_widget("ConfigButton", m_pConfigButton);
+	m_xml->get_widget("DisconnectButton", m_pDisconnectButton);
+	m_xml->get_widget("DisconnectAllButton", m_pDisconnectAllButton);
+	m_xml->get_widget("ReloadButton", m_pReloadButton);
+	m_xml->get_widget("Statusbar", m_pStatusbar);
+
+	// set up device list
+	m_pListStore = Gtk::ListStore::create(m_columns);
+	m_pDeviceList->set_model(m_pListStore);
+
+	m_pDeviceList->append_column("PIN", m_columns.m_pin);
+	m_pDeviceList->append_column("Name", m_columns.m_name);
+	m_pDeviceList->append_column("Status", m_columns.m_status);
+	Gtk::CellRendererProgress* cell = new Gtk::CellRendererProgress;
+	m_pDeviceList->append_column("Progress", *cell);
+	Gtk::TreeViewColumn* pColumn = m_pDeviceList->get_column(3);
+	pColumn->add_attribute(cell->property_value(), m_columns.m_percentage);
+
+	m_pDeviceList->get_column(0)->set_min_width(60);
+	m_pDeviceList->get_column(1)->set_min_width(100);
+	m_pDeviceList->get_column(2)->set_min_width(75);
+
+	for( unsigned int i = 0; i < 4; ++i )
+		m_pDeviceList->get_column(i)->set_resizable();
+
+	// set up device list selection
+	m_pDeviceSelection = m_pDeviceList->get_selection();
 
 	// setup widget signals
 	m_pBackupButton->signal_clicked().connect(
 		sigc::mem_fun(*this, &BackupWindow::on_backup));
 	m_pRestoreButton->signal_clicked().connect(
 		sigc::mem_fun(*this, &BackupWindow::on_restore));
-	m_pDeviceList->signal_changed().connect(
+	m_pConfigButton->signal_clicked().connect(
+		sigc::mem_fun(*this, &BackupWindow::on_config));
+	m_pDisconnectButton->signal_clicked().connect(
+		sigc::mem_fun(*this, &BackupWindow::on_disconnect));
+	m_pDisconnectAllButton->signal_clicked().connect(
+		sigc::mem_fun(*this, &BackupWindow::on_disconnect_all));
+	m_pReloadButton->signal_clicked().connect(
+		sigc::mem_fun(*this, &BackupWindow::on_reload));
+	m_pDeviceSelection->signal_changed().connect(
 		sigc::mem_fun(*this, &BackupWindow::on_device_change));
-
-	// setup thread dispatcher signals
-	m_signal_progress.connect(
-		sigc::mem_fun(*this, &BackupWindow::on_thread_progress));
-	m_signal_error.connect(
-		sigc::mem_fun(*this, &BackupWindow::on_thread_error));
-	m_signal_done.connect(
-		sigc::mem_fun(*this, &BackupWindow::on_thread_done));
-	m_signal_erase_db.connect(
-		sigc::mem_fun(*this, &BackupWindow::on_thread_erase_db));
 
 	// setup startup device scan
 	Glib::signal_timeout().connect(
 		sigc::mem_fun(*this, &BackupWindow::on_startup), 500);
 
-	m_pStatusBar->push("Ready");
-	m_pProgressBar->set_fraction(0.00);
+	m_pStatusbar->push("Ready");
 
 	// do this last so that any exceptions in the constructor
 	// won't cause a connected signal handler to a non-object
@@ -113,243 +128,150 @@ BackupWindow::~BackupWindow()
 
 void BackupWindow::Scan()
 {
-	StatusBarHandler sbh(m_pStatusBar, "Scanning for devices...");
+	m_pStatusbar->push("Scanning for devices...");
 
-	m_dev.Probe();
+	m_pListStore->clear();
+	m_threads.clear();
 
-	m_device_count = m_dev.ProbeCount();
+	m_bus.Probe();
+	m_device_count = m_bus.ProbeCount();
 
-	m_pListStore = Gtk::ListStore::create(m_Columns);
-	m_pDeviceList->set_model(m_pListStore);
-	m_pDeviceList->clear();
-
-	for( unsigned int i = 0; i < m_device_count; ++i ) {
-		Gtk::TreeModel::iterator row = m_pListStore->append();
-		(*row)[m_Columns.m_pin] = m_dev.GetPin(i);
+	if( m_device_count == 0 )
+		m_pDeviceLabel->set_label("No devices.");
+	else if( m_device_count == 1 )
+		m_pDeviceLabel->set_label("1 device:");
+	else
+	{
 		std::ostringstream oss;
-		oss << std::hex << m_dev.GetPin(i);
-
-		// load the config for current pin
-		// and append device name to oss stream
-		try {
-			ConfigFile config(oss.str());
-			if( config.GetDeviceName().size() )
-				oss << " (" << config.GetDeviceName() << ")";
-		}
-		catch( ConfigFile::ConfigFileError & ) {
-			// just throw it away
-		}
-
-		(*row)[m_Columns.m_pin_text] = oss.str();
+		oss << m_device_count << " devices:";
+		m_pDeviceLabel->set_label(oss.str());
 	}
-	// show devices in DeviceList
-	m_pDeviceList->pack_start(m_Columns.m_pin_text);
 
-	ResetDeviceList();
+	m_threads.resize(m_device_count);
+	for( unsigned int id = 0; id < m_device_count; ++id ) {
+		Device dev = m_bus.Get(id);
+		Gtk::TreeModel::iterator row = m_pListStore->append();
+		(*row)[m_columns.m_id] = id;
+
+		m_threads[id].reset(new Thread(dev, &m_signal_update));
+	}
 
 	// all devices loaded
 	m_scanned = true;
 
-	// if only one device plugged in,
-	// connect to it.
-	if( m_device_count == 1 )
-		SetActiveDevice(0);
+	m_pStatusbar->push("All devices loaded.");
+
+	// if one or more device plugged in,
+	// activate the first one
+	Gtk::TreeModel::iterator iter = m_pListStore->children().begin();
+	if( iter )
+		m_pDeviceSelection->select(iter);
 }
 
-void BackupWindow::Connect()
+bool BackupWindow::Connect(Thread *thread)
 {
-	if( m_connected )
-		m_dev.Disconnect();
-	m_connected = false;
-	StatusBarHandler sbh(m_pStatusBar, "Connecting to Device...");
+	if( thread->Connected() )
+		return true;
+
+	m_pStatusbar->push("Connecting to Device...");
 	static int tries(0);
-	++tries;
-	if( m_active_device < 0 )
-		return;
-	if( !m_scanned )
-		Scan();
 
-	bool out_of_tries = false, password_required = false;
-	int remaining_tries = 0;
-	try {
-		if( !m_dev.Connect(m_active_device) ) {
-			Gtk::MessageDialog msg(m_dev.get_last_error());
-			msg.run();
-			hide();
-			return;
-		}
-	}
-	catch( Barry::BadPassword &bp ) {
-		out_of_tries = bp.out_of_tries();
-		remaining_tries = bp.remaining_tries();
-		password_required = true;
-	}
-	catch( Barry::BadSize &bs ) {
-		std::cerr << "Barry::BadSize caught in Connect: "
-			<< bs.what() << std::endl;
-		if( tries < 3 ) {
-			// BadSize during connect at startup usually means
-			// the device didn't shutdown properly, so try
-			// a reset or two before we give up
-			Usb::Device dev(m_dev.GetDev(m_active_device));
-			dev.Reset();
-			sleep(2);
-			Connect();
-			return;
-		}
-		else {
-			Gtk::MessageDialog msg(bs.what());
-			msg.run();
-			hide();
-			return;
-		}
-	}
+	CheckDeviceName(thread);
 
-	if( password_required ) {
-		// try password repeatedly until out of tries or
-		// the user cancels... or success :-)
-
-		bool connected = false;
-		while( !connected && !out_of_tries ) try {
-			PasswordDlg dlg(remaining_tries);
-			if( dlg.run() == Gtk::RESPONSE_OK ) {
-				connected = m_dev.Password(dlg.GetPassword());
-				if( !connected ) {
-					Gtk::MessageDialog msg(m_dev.get_last_error());
-					msg.run();
-					hide();
-					return;
+	if( !thread->Connect() ) {
+		if( thread->PasswordRequired() ) {
+			bool connected = false;
+			while( !connected && !thread->PasswordOutOfTries() ) {
+				PasswordDlg dlg(thread->PasswordRemainingTries());
+				if( dlg.run() == Gtk::RESPONSE_OK )
+					connected = thread->Connect(dlg.GetPassword());
+				else { // user cancelled
+					thread->Reset();
+					m_pStatusbar->push("Connection cancelled.");
+					return false;
 				}
 			}
-			else {
-				// user cancelled
-				ResetDeviceList();
-				return;
-			}
-		}
-		catch( Barry::BadPassword &bp ) {
-			out_of_tries = bp.out_of_tries();
-			remaining_tries = bp.remaining_tries();
-			if( out_of_tries ) {
-				Gtk::MessageDialog msg(bp.what());
+			if( thread->PasswordOutOfTries() )
+			{
+				Gtk::MessageDialog msg(thread->BadPasswordError());
 				msg.run();
-				hide();
-				return;
+				m_pStatusbar->push("Cannot connect to " + thread->GetFullname() + ".");
+				return false;
 			}
 		}
-
-		if( !connected ) {
-			hide();
-			return;
-		}
-	}
-
-	std::ostringstream oss;
-	oss << std::hex << m_dev.GetPin(m_active_device);
-
-	// open configuration now that we know which device we're talking to
-	m_pConfig.reset( new ConfigFile(oss.str(), m_dev.GetDBDB()) );
-	CheckDeviceName();
-
-	// successfully connected to a device
-	m_connected = true;
-}
-
-void BackupWindow::CheckDeviceName()
-{
-	if( !m_pConfig->HasDeviceName() ) {
-		PromptDlg dlg;
-		dlg.SetPrompt("Unnamed device found. Please enter a name for it:");
-		if( dlg.run() == Gtk::RESPONSE_OK ) {
-			m_pConfig->SetDeviceName(dlg.GetAnswer());
+		else if( thread->BadSize() ) {
+			++tries;
+			if( tries < 3 ) {
+				std::cerr << thread->BadSizeError() << std::endl;
+				thread->Reset();
+				sleep(2);
+				return Connect(thread);
+			}
+			else {
+				Gtk::MessageDialog msg(thread->BadSizeError());
+				msg.run();
+				m_pStatusbar->push("Cannot connect to " + thread->GetFullname() + ".");
+				return false;
+			}
 		}
 		else {
-			m_pConfig->SetDeviceName(" ");
-		}
-		if( !m_pConfig->Save() ) {
-			Gtk::MessageDialog msg("Error saving config: " +
-				m_pConfig->get_last_error());
+			Gtk::MessageDialog msg(thread->LastInterfaceError());
 			msg.run();
+			m_pStatusbar->push("Cannot connect to " + thread->GetFullname() + ".");
+			return false;
 		}
 	}
-}
-
-void BackupWindow::SetWorkingMode(const std::string &taskname)
-{
-	m_working = true;
-	m_thread_error = false;
-	m_pBackupButton->set_sensitive(false);
-	m_pRestoreButton->set_sensitive(false);
-	m_pStatusBar->push(taskname + " in progress...");
-	m_pProgressBar->set_fraction(0.00);
-}
-
-void BackupWindow::ClearWorkingMode()
-{
-	m_working = false;
-	m_pBackupButton->set_sensitive(true);
-	m_pRestoreButton->set_sensitive(true);
-	m_pStatusBar->pop();
-	if( m_finishedRecords >= m_recordTotal ) {
-		// only reset the progress bar on success
-		m_pProgressBar->set_fraction(0.00);
-	}
-
-	std::ostringstream oss;
-	oss << m_finishedRecords << " total records processed.";
-	m_pDatabaseEntry->set_text(oss.str());
-}
-
-void BackupWindow::UpdateProgress()
-{
-	double done = (double)m_finishedRecords / m_recordTotal;
-	// never say 100% unless really done
-	if( done >= 1.0 && m_finishedRecords < m_recordTotal ) {
-		done = 0.99;
-	}
-	m_pProgressBar->set_fraction(done);
-
-	m_pDatabaseEntry->set_text(m_dev.GetThreadDBName());
-}
-
-bool BackupWindow::CheckWorkingDevice()
-{
-	if( !m_connected ) {
-		Gtk::MessageDialog msg("No Working Device!");
-		msg.run();
-		return false;
-	}
+	tries = 0;
+	m_pStatusbar->push("Connected to " + thread->GetFullname() + ".");
 	return true;
 }
 
-void BackupWindow::ResetDeviceList()
+void BackupWindow::Disconnect(Thread *thread)
 {
-	m_pDeviceList->unset_active();
-
-	if( m_device_count > 0 )
-		m_pDeviceLabel->set_label("Please select a device:");
-	else
-		m_pDeviceLabel->set_label("No devices.");
-
-	m_pBackupButton->set_sensitive(false);
-	m_pRestoreButton->set_sensitive(false);
-	m_pEditConfig->set_sensitive(false);
-}
-
-void BackupWindow::SetActiveDevice(unsigned int index, bool setList)
-{
-	if( index >= m_device_count )
-		return;
-	if( setList ) {
-		m_pDeviceList->set_active(index);
-		return;
+	if( thread->Working() ) {
+		Gtk::MessageDialog dialog(*this, thread->GetFullname() + " is working, "
+			"disconnecting from it may cause data corruption, are you sure to proceed?",
+			false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL);
+		if( dialog.run() == Gtk::RESPONSE_CANCEL )
+			return;
 	}
 
-	m_active_device = index;
-	m_pDeviceLabel->set_label("Device:");
-	m_pBackupButton->set_sensitive(true);
-	m_pRestoreButton->set_sensitive(true);
-	m_pEditConfig->set_sensitive(true);
+	if( thread->Connected() ) {
+		thread->Disconnect();
+		m_pStatusbar->push("Disconnected from " + thread->GetFullname() + ".");
+	}
+	else
+		m_pStatusbar->push("Not connected.");
+}
+
+void BackupWindow::CheckDeviceName(Thread *thread)
+{
+	if( !thread->HasDeviceName() ) {
+		PromptDlg dlg;
+		dlg.SetPrompt("Unnamed device found. Please enter a name for it:");
+		if( dlg.run() == Gtk::RESPONSE_OK ) {
+			thread->SetDeviceName(dlg.GetAnswer());
+		}
+		else {
+			thread->SetDeviceName(" ");
+		}
+		if( !thread->Save() ) {
+			Gtk::MessageDialog msg("Error saving config: " +
+				thread->LastConfigError());
+			msg.run();
+		}
+	}
+}
+
+Thread *BackupWindow::GetActive()
+{
+	Gtk::TreeModel::iterator row = m_pDeviceSelection->get_selected();
+	if( row ) {
+		unsigned int id = (*row)[m_columns.m_id];
+		return m_threads[id].get();
+	}
+	else
+		return 0;
 }
 
 void BackupWindow::signal_exception_handler()
@@ -377,46 +299,61 @@ void BackupWindow::signal_exception_handler()
 //////////////////////////////////////////////////////////////////////////////
 // signal handlers
 
+void BackupWindow::treeview_update()
+{
+	for( Gtk::TreeModel::iterator i = m_pListStore->children().begin();
+		i != m_pListStore->children().end(); ++i ) {
+		unsigned int id = (*i)[m_columns.m_id];
+		Thread *thread = m_threads[id].get();
+		(*i)[m_columns.m_pin] = thread->GetPIN().str();
+		(*i)[m_columns.m_name] = thread->GetDeviceName();
+		(*i)[m_columns.m_status] = thread->Status();
+		unsigned int finished(thread->GetRecordFinished()), total(thread->GetRecordTotal());
+		unsigned int percentage(0);
+		if( total == 0 || finished == total )
+			percentage = 100;
+		else {
+			percentage = 100 * finished / total;
+			if( percentage == 100 ) // never say 100% unless finished
+				percentage = 99;
+		}
+		(*i)[m_columns.m_percentage] = percentage;
+		if( thread->CheckFinishedMarker() )
+			m_pStatusbar->push("Operation on " + thread->GetFullname() + " finished!");
+	}
+}
+
 void BackupWindow::on_backup()
 {
-	if( !CheckWorkingDevice() )
+	Thread *thread = GetActive();
+
+	if( !thread || !Connect(thread) )
 		return;
+
 	// already working?
-	if( m_working ) {
+	if( thread->Working() ) {
 		Gtk::MessageDialog msg("Thread already in progress.");
 		msg.run();
 		return;
 	}
 
 	// make sure our target directory exists
-	if( !::CheckPath(m_pConfig->GetPath()) ) {
-		Gtk::MessageDialog msg("Could not create directory: " + m_pConfig->GetPath());
+	if( !::CheckPath(thread->GetPath()) ) {
+		Gtk::MessageDialog msg("Could not create directory: " + thread->GetPath());
 		msg.run();
 		return;
 	}
 
 	// anything to do?
-	if( m_pConfig->GetBackupList().size() == 0 ) {
+	if( thread->GetBackupList().size() == 0 ) {
 		Gtk::MessageDialog msg("No databases selected in configuration.");
-		msg.run();
-		return;
-	}
-
-	// prepare for the progress bar
-	m_recordTotal = m_dev.GetDeviceRecordTotal(m_pConfig->GetBackupList());
-	m_finishedRecords = 0;
-	m_modeName = "Backup";
-
-	// anything to do?
-	if( m_recordTotal == 0 ) {
-		Gtk::MessageDialog msg("There are no records available in the selected databases.");
 		msg.run();
 		return;
 	}
 
 	// prompt for a backup label, if so configured
 	std::string backupLabel;
-	if( m_pConfig->PromptBackupLabel() ) {
+	if( thread->PromptBackupLabel() ) {
 		PromptDlg dlg;
 		dlg.SetPrompt("Please enter a label for this backup (blank is ok):");
 		if( dlg.run() == Gtk::RESPONSE_OK ) {
@@ -429,21 +366,13 @@ void BackupWindow::on_backup()
 	}
 
 	// start the thread
-	m_working = m_dev.StartBackup(
-		DeviceInterface::AppComm(&m_signal_progress,
-					&m_signal_error,
-					&m_signal_done,
-					&m_signal_erase_db),
-		m_pConfig->GetBackupList(), m_pConfig->GetPath(),
-		m_pConfig->GetPIN(), backupLabel);
-	if( !m_working ) {
+	if( !thread->Backup(backupLabel) ) {
 		Gtk::MessageDialog msg("Error starting backup thread: " +
-			m_dev.get_last_error());
+			thread->LastInterfaceError());
 		msg.run();
 	}
-
-	// update the GUI
-	SetWorkingMode("Backup");
+	else
+		m_pStatusbar->push("Backup of " + thread->GetFullname() + " in progress...");
 }
 
 bool BackupWindow::PromptForRestoreTarball(std::string &restoreFilename,
@@ -473,83 +402,104 @@ bool BackupWindow::PromptForRestoreTarball(std::string &restoreFilename,
 
 void BackupWindow::on_restore()
 {
-	if( !CheckWorkingDevice() )
+	Thread *thread = GetActive();
+
+	if( !thread || !Connect(thread) )
 		return;
+
 	// already working?
-	if( m_working ) {
+	if( thread->Working() ) {
 		Gtk::MessageDialog msg("Thread already in progress.");
 		msg.run();
 		return;
 	}
 
 	std::string restoreFilename;
-	if( !PromptForRestoreTarball(restoreFilename, m_pConfig->GetPath()) )
+	if( !PromptForRestoreTarball(restoreFilename, thread->GetPath()) )
 		return;	// nothing to do
 
-	// prepare for the progress bar
-	m_finishedRecords = 0;
-	m_modeName = "Restore";
-
 	// start the thread
-	m_working = m_dev.StartRestore(
-		DeviceInterface::AppComm(&m_signal_progress,
-					&m_signal_error,
-					&m_signal_done,
-					&m_signal_erase_db),
-		m_pConfig->GetRestoreList(), restoreFilename, &m_recordTotal);
-//	m_working = m_dev.StartRestoreAndBackup(
-//		DeviceInterface::AppComm(&m_signal_progress,
-//					&m_signal_error,
-//					&m_signal_done,
-//					&m_signal_erase_db),
-//		m_pConfig->GetRestoreList(), restoreFilename,
-//		m_pConfig->GetPath(), m_pConfig->GetPIN(),
-//		&m_recordTotal);
-	if( !m_working ) {
+	// if( !thread->RestoreAndBackup(restoreFilename) ) {
+	if( !thread->Restore(restoreFilename) ) {
 		Gtk::MessageDialog msg("Error starting restore thread: " +
-			m_dev.get_last_error());
+			thread->LastInterfaceError());
 		msg.run();
 	}
+	else {
+		m_pStatusbar->push("Backup of " + thread->GetFullname() + " in progress...");
+	}
+}
 
-std::cerr << "m_recordTotal for restore: " << m_recordTotal << std::endl;
+void BackupWindow::on_disconnect()
+{
+	Disconnect(GetActive());
+}
 
-	// update the GUI
-	SetWorkingMode("Restore");
+void BackupWindow::on_disconnect_all()
+{
+	for( unsigned int i = 0; i < m_device_count; ++i )
+		Disconnect(m_threads[i].get());
 }
 
 void BackupWindow::on_device_change()
 {
-	if( m_connected )
-		m_dev.Disconnect();
-	SetActiveDevice(m_pDeviceList->get_active_row_number(), false);
-	Connect();
+	Thread *thread = GetActive();
+	if( m_pActive )
+		m_pActive->UnsetActive();
+	m_pActive = thread;
+	if( thread && Connect(thread) )
+		thread->SetActive();
 }
 
 void BackupWindow::on_file_quit()
 {
-	// if there's an active device, disconnect it
-	if( m_connected )
-		m_dev.Disconnect();
 	hide();
 }
 
-void BackupWindow::on_edit_config()
+void BackupWindow::on_config()
 {
-	if( !CheckWorkingDevice() )
+	Thread *thread = GetActive();
+
+	if( !thread || !Connect(thread) )
 		return;
-	ConfigDlg dlg(m_dev.GetDBDB(), *m_pConfig);
+
+	thread->LoadConfig();
+
+	ConfigDlg dlg(thread->GetDBDB(), *thread);
 	if( dlg.run() == Gtk::RESPONSE_OK ) {
-		m_pConfig->SetBackupList(dlg.GetBackupList());
-		m_pConfig->SetRestoreList(dlg.GetRestoreList());
-		m_pConfig->SetDeviceName(dlg.GetDeviceName());
-		m_pConfig->SetBackupPath(dlg.GetBackupPath());
-		m_pConfig->SetPromptBackupLabel(dlg.GetPromptBackupLabel());
-		if( !m_pConfig->Save() ) {
-			Gtk::MessageDialog msg("Error saving config: " +
-				m_pConfig->get_last_error());
-			msg.run();
-		}
+		thread->SetBackupList(dlg.GetBackupList());
+		thread->SetRestoreList(dlg.GetRestoreList());
+		thread->SetDeviceName(dlg.GetDeviceName());
+		thread->SetBackupPath(dlg.GetBackupPath());
+		thread->SetPromptBackupLabel(dlg.GetPromptBackupLabel());
+		if( !thread->Save() )
+			m_pStatusbar->push("Error saving config: " +
+				thread->LastConfigError());
+		else
+			m_pStatusbar->push("Config saved successfully.");
 	}
+	thread->LoadConfig();
+}
+
+void BackupWindow::on_reload()
+{
+	bool working(false);
+	for( unsigned int i = 0; i < m_device_count; ++i)
+		if( m_threads[i]->Working() ) {
+			working = true;
+			break;
+		}
+	if( working ) {
+		Gtk::MessageDialog dialog(*this, "One or more devices are working, "
+			"disconnecting from them may cause data corruption, "
+			"are you sure to proceed?",
+			false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL);
+		if( dialog.run() == Gtk::RESPONSE_OK )
+			Scan();
+	}
+
+	else
+		Scan();
 }
 
 void BackupWindow::on_help_about()
@@ -590,56 +540,4 @@ bool BackupWindow::on_startup()
 	Scan();
 	return false;
 }
-
-void BackupWindow::on_thread_progress()
-{
-	m_finishedRecords++;
-	UpdateProgress();
-}
-
-void BackupWindow::on_thread_error()
-{
-	m_thread_error = true;
-
-	Gtk::MessageDialog msg(m_modeName + " error: " + m_dev.get_last_thread_error());
-	msg.run();
-}
-
-void BackupWindow::on_thread_done()
-{
-	if( !m_thread_error ) {
-		Gtk::MessageDialog msg(m_modeName + " complete!");
-		msg.run();
-	}
-
-	// done!
-	ClearWorkingMode();
-	m_working = false;
-}
-
-void BackupWindow::on_thread_erase_db()
-{
-	std::string name = m_dev.GetThreadDBName();
-	m_pDatabaseEntry->set_text("Erasing database: " + name);
-}
-
-
-
-/*
-void on_showtext()
-{
-	Glib::ustring text = pEntry->get_text();
-	Gtk::MessageDialog dialog("This is the text entered: " + text);
-//		dialog.set_secondary_text(text);
-	dialog.run();
-}
-
-void on_close()
-{
-//		response(Gtk::RESPONSE_CLOSE);
-//		signal_delete_event().emit();
-//	Gtk::Main::quit();
-	hide();
-}
-*/
 
