@@ -14,6 +14,7 @@ Barry Release Checklist:
 	features and bugs fixed
 	- include mention of distros that support Barry:
 		(see AUTHORS file for distro list)
+	- include description at the top of what Barry is
 - web docs:
 	- bump version number and release date on index.php
 	- update known issues list
@@ -24,13 +25,12 @@ Barry Release Checklist:
 - snip this version's changelog history into its own file
 - tag CVS repo and sign-tag git repo with latest version
 - run maintainer/tagged-release.sh
-- manually push tags to repo.or.cz
+- manually push git tags to repo.or.cz and sourceforge.net
 - upload packages to SourceForge
-	- Ubuntu: 7.10, 8.04, 8.10
-	- Fedora: 8, 9, 10
-	- Debian: stable (etch)
-	- openSUSE: 10.1, (11.1??)
-- update OpenSUSE Build Service with release tarballs
+	- Ubuntu: 7.10, 8.04, 9.04
+	- Fedora: 7, 8, 9, 11
+	- Debian: stable (lenny)
+	- openSUSE: ?
 - submit tracker news item at SourceForge
 - send announcement to devel and announce mailing list, including:
 	- release notes
