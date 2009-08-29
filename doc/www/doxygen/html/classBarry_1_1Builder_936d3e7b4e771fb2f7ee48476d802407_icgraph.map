@@ -1,0 +1,4 @@
+<area shape="rect" href="$classBarry_1_1DBPacket.html#26c4025403d129f658c1919190c0a0f0" title="Builds a command packet in the m_send buffer for the SET_RECORD command code." alt="" coords="236,5,423,32">
+<area shape="rect" href="$classBarry_1_1DBPacket.html#7a41833dcc12c2823cd54991161e8d26" title="Builds a command packet in the m_send buffer for the SET_RECORD_BY_INDEX command..." alt="" coords="212,56,447,83">
+<area shape="rect" href="$classBarry_1_1Mode_1_1Desktop.html#0fec0d31ff496974acfc15fdc75f074a" title="Adds a record to the specified database." alt="" coords="497,5,716,32">
+<area shape="rect" href="$classBarry_1_1Mode_1_1Desktop.html#bf813b7fb04062515369209c8073dab0" title="Overwrites a specific record in the device as identified by the stateTableIndex." alt="" coords="499,56,715,83">

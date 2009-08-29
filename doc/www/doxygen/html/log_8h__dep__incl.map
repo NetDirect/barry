@@ -1,0 +1,28 @@
+<area shape="rect" href="$barry_8h.html" title="Main header file for applications." alt="" coords="1272,80,1331,107">
+<area shape="rect" href="$debug_8h-source.html" title="debug.h" alt="" coords="1355,80,1421,107">
+<area shape="rect" href="$log_8cc.html" title="General Barry interface routines." alt="" coords="1445,80,1501,107">
+<area shape="rect" href="$common_8cc.html" title="General Barry interface routines." alt="" coords="5,155,93,181">
+<area shape="rect" href="$controller_8cc.html" title="High level Barry API class." alt="" coords="117,155,208,181">
+<area shape="rect" href="$data_8cc.html" title="Classes to help manage pre&#45;determined data files." alt="" coords="232,155,296,181">
+<area shape="rect" href="$ldif_8cc.html" title="Routines for reading and writing LDAP LDIF data." alt="" coords="320,155,376,181">
+<area shape="rect" href="$m__desktop_8cc.html" title="Mode class for the Desktop mode." alt="" coords="400,155,504,181">
+<area shape="rect" href="$m__ipmodem_8cc.html" title="Mode class for GPRS modem mode (using endpoints on modern devices)." alt="" coords="528,155,637,181">
+<area shape="rect" href="$m__javaloader_8cc.html" title="Mode class for the JavaLoader mode." alt="" coords="661,155,776,181">
+<area shape="rect" href="$m__serial_8cc.html" title="Mode class for serial / GPRS modem mode." alt="" coords="800,155,888,181">
+<area shape="rect" href="$packet_8cc.html" title="Low level protocol packet builder class." alt="" coords="912,155,989,181">
+<area shape="rect" href="$probe_8cc.html" title="USB Blackberry detection routines." alt="" coords="1013,155,1085,181">
+<area shape="rect" href="$protocol_8cc.html" title="USB Blackberry bulk protocol API." alt="" coords="1109,155,1195,181">
+<area shape="rect" href="$r__calendar_8cc.html" title="Blackberry database record parser class for calendar records." alt="" coords="1219,155,1317,181">
+<area shape="rect" href="$r__contact_8cc.html" title="Blackberry database record parser class for contact records." alt="" coords="1341,155,1435,181">
+<area shape="rect" href="$r__folder_8cc.html" title="Record parsing class for the folders database." alt="" coords="1459,155,1539,181">
+<area shape="rect" href="$r__message__base_8cc.html" title="Base class for email&#45;oriented Blackberry database records." alt="" coords="1563,155,1701,181">
+<area shape="rect" href="$r__recur__base_8cc.html" title="Base class for recurring calendar event data." alt="" coords="1725,155,1840,181">
+<area shape="rect" href="$r__servicebook_8cc.html" title="Blackberry database record parser class for Service Book records." alt="" coords="1864,155,1984,181">
+<area shape="rect" href="$r__sms_8cc.html" title="Record parsing class for the SMS database." alt="" coords="2008,155,2083,181">
+<area shape="rect" href="$r__task_8cc.html" title="Record parsing class for the task database." alt="" coords="2107,155,2181,181">
+<area shape="rect" href="$r__timezone_8cc.html" title="Record parsing class for the timezone database." alt="" coords="2205,155,2309,181">
+<area shape="rect" href="$record_8cc.html" title="Blackberry database record classes." alt="" coords="2333,155,2408,181">
+<area shape="rect" href="$router_8cc.html" title="Support classes for the pluggable socket routing system." alt="" coords="2432,155,2504,181">
+<area shape="rect" href="$socket_8cc.html" title="Class wrapper to encapsulate the Blackberry USB logical socket." alt="" coords="2528,155,2605,181">
+<area shape="rect" href="$time_8cc.html" title="Conversion between time_t and cenmin_t and back." alt="" coords="2629,155,2693,181">
+<area shape="rect" href="$usbwrap_8cc.html" title="USB API wrapper." alt="" coords="2717,155,2805,181">

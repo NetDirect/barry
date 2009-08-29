@@ -1,0 +1,20 @@
+<area shape="rect" href="$socket_8h.html" title="Class wrapper to encapsulate the Blackberry USB logical socket." alt="" coords="380,80,452,107">
+<area shape="rect" href="$barry_8h.html" title="Main header file for applications." alt="" coords="337,453,396,480">
+<area shape="rect" href="$router_8cc.html" title="Support classes for the pluggable socket routing system." alt="" coords="476,80,548,107">
+<area shape="rect" href="$controller_8h.html" title="High level BlackBerry API class." alt="" coords="541,155,624,181">
+<area shape="rect" href="$m__desktop_8h.html" title="Mode class for the Desktop mode." alt="" coords="204,304,300,331">
+<area shape="rect" href="$m__javaloader_8h.html" title="Mode class for the JavaLoader mode." alt="" coords="847,304,953,331">
+<area shape="rect" href="$m__serial_8h.html" title="Mode class for serial / GPRS modem mode." alt="" coords="869,155,949,181">
+<area shape="rect" href="$probe_8cc.html" title="USB Blackberry detection routines." alt="" coords="331,155,403,181">
+<area shape="rect" href="$socket_8cc.html" title="Class wrapper to encapsulate the Blackberry USB logical socket." alt="" coords="427,155,504,181">
+<area shape="rect" href="$m__mode__base_8h.html" title="Base for mode classes." alt="" coords="673,229,791,256">
+<area shape="rect" href="$m__desktop_8cc.html" title="Mode class for the Desktop mode." alt="" coords="389,379,493,405">
+<area shape="rect" href="$m__javaloader_8cc.html" title="Mode class for the JavaLoader mode." alt="" coords="696,379,811,405">
+<area shape="rect" href="$controller_8cc.html" title="High level Barry API class." alt="" coords="425,229,516,256">
+<area shape="rect" href="$m__ipmodem_8cc.html" title="Mode class for GPRS modem mode (using endpoints on modern devices)." alt="" coords="540,229,649,256">
+<area shape="rect" href="$m__serial_8cc.html" title="Mode class for serial / GPRS modem mode." alt="" coords="865,229,953,256">
+<area shape="rect" href="$m__mode__base_8cc.html" title="Base for mode classes." alt="" coords="649,304,772,331">
+<area shape="rect" href="$m__desktoptmpl_8h.html" title="Ease of use templates for the Desktop mode class." alt="" coords="144,379,264,405">
+<area shape="rect" href="$packet_8cc.html" title="Low level protocol packet builder class." alt="" coords="288,379,365,405">
+<area shape="rect" href="$bmp_8h.html" title="BMP conversion routines." alt="" coords="885,379,941,405">
+<area shape="rect" href="$bmp_8cc.html" title="BMP conversion routines." alt="" coords="881,453,945,480">

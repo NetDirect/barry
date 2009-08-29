@@ -1,0 +1,18 @@
+<area shape="rect" href="$barry_8h.html" title="Main header file for applications." alt="" coords="364,379,423,405">
+<area shape="rect" href="$controller_8h.html" title="High level BlackBerry API class." alt="" coords="400,80,483,107">
+<area shape="rect" href="$m__desktop_8h.html" title="Mode class for the Desktop mode." alt="" coords="345,229,441,256">
+<area shape="rect" href="$m__javaloader_8h.html" title="Mode class for the JavaLoader mode." alt="" coords="836,229,943,256">
+<area shape="rect" href="$m__serial_8h.html" title="Mode class for serial / GPRS modem mode." alt="" coords="44,80,124,107">
+<area shape="rect" href="$probe_8cc.html" title="USB Blackberry detection routines." alt="" coords="887,80,959,107">
+<area shape="rect" href="$socket_8cc.html" title="Class wrapper to encapsulate the Blackberry USB logical socket." alt="" coords="983,80,1060,107">
+<area shape="rect" href="$m__mode__base_8h.html" title="Base for mode classes." alt="" coords="644,155,761,181">
+<area shape="rect" href="$m__desktop_8cc.html" title="Mode class for the Desktop mode." alt="" coords="108,304,212,331">
+<area shape="rect" href="$m__javaloader_8cc.html" title="Mode class for the JavaLoader mode." alt="" coords="704,304,819,331">
+<area shape="rect" href="$controller_8cc.html" title="High level Barry API class." alt="" coords="396,155,487,181">
+<area shape="rect" href="$m__ipmodem_8cc.html" title="Mode class for GPRS modem mode (using endpoints on modern devices)." alt="" coords="511,155,620,181">
+<area shape="rect" href="$m__serial_8cc.html" title="Mode class for serial / GPRS modem mode." alt="" coords="183,155,271,181">
+<area shape="rect" href="$m__mode__base_8cc.html" title="Base for mode classes." alt="" coords="639,229,761,256">
+<area shape="rect" href="$m__desktoptmpl_8h.html" title="Ease of use templates for the Desktop mode class." alt="" coords="236,304,356,331">
+<area shape="rect" href="$packet_8cc.html" title="Low level protocol packet builder class." alt="" coords="431,304,508,331">
+<area shape="rect" href="$bmp_8h.html" title="BMP conversion routines." alt="" coords="893,304,949,331">
+<area shape="rect" href="$bmp_8cc.html" title="BMP conversion routines." alt="" coords="889,379,953,405">

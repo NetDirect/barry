@@ -1,0 +1,8 @@
+<area shape="rect" href="$classBarry_1_1DBPacket.html#173b8eb90186edc54e8a679d7498bcb5" title="Builds a command packet in the send buffer for the GET_RECORDS command code." alt="" coords="295,31,489,57">
+<area shape="rect" href="$classBarry_1_1DBPacket.html#43b96166db565fb8b37085d06d3a446c" title="Parses the data in the receive buffer, and attempts to be smart about it, using the..." alt="" coords="312,132,472,159">
+<area shape="rect" href="$classBarry_1_1Mode_1_1Desktop.html#b1d7a169122aae509924729aedfeb24f" title="Get database command from command table." alt="" coords="540,5,793,32">
+<area shape="rect" href="$classBarry_1_1Parser.html#15acb3544613d43d8f928cd63a19022b" title="Reset and prepare for a new raw data packet." alt="" coords="599,56,735,83">
+<area shape="rect" href="$classBarry_1_1Parser.html#645718d87aaad3ee2c36664de05046d2" title="Called to parse sub fields in the raw data packet." alt="" coords="579,107,755,133">
+<area shape="rect" href="$classBarry_1_1Parser.html#2087d07fb5d8d57c934c4e60278f41d8" title="Called to parse the header portion of the raw data packet." alt="" coords="576,157,757,184">
+<area shape="rect" href="$classBarry_1_1Parser.html#95bfc4014e3e8ded94625f43d1d29800" title="Stores the IDs." alt="" coords="595,208,739,235">
+<area shape="rect" href="$classBarry_1_1Parser.html#bf8ab1598be74268ee486af938c527d4" title="Called at the very end of record parsing, and used to store the final packet somewhere..." alt="" coords="599,259,735,285">

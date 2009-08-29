@@ -1,0 +1,15 @@
+<area shape="rect" href="$dll_8h.html" title="Macros for handling DLL/library API visibility." alt="" coords="840,304,885,331">
+<area shape="rect" href="$record_8h.html" title="Blackberry database record classes." alt="" coords="969,80,1036,107">
+<area shape="rect" href="$r__calendar_8h.html" title="Blackberry database record parser class for calndar records." alt="" coords="327,155,417,181">
+<area shape="rect" href="$r__calllog_8h.html" title="Record parsing class for call logs." alt="" coords="1412,229,1492,256">
+<area shape="rect" href="$r__contact_8h.html" title="Blackberry database record parser class for contact records." alt="" coords="201,229,287,256">
+<area shape="rect" href="$r__message_8h.html" title="Blackberry database record parser class for email records." alt="" coords="849,155,945,181">
+<area shape="rect" href="$r__servicebook_8h.html" title="Blackberry database record parser class for the Service Book record." alt="" coords="65,229,177,256">
+<area shape="rect" href="$r__task_8h.html" title="Record parsing class for the task database." alt="" coords="969,155,1036,181">
+<area shape="rect" href="$r__pin__message_8h.html" title="Blackberry database record parser class for pin message records." alt="" coords="492,155,612,181">
+<area shape="rect" href="$r__saved__message_8h-source.html" title="r_saved_message.h" alt="" coords="687,155,825,181">
+<area shape="rect" href="$r__sms_8h-source.html" title="r_sms.h" alt="" coords="1103,229,1169,256">
+<area shape="rect" href="$r__folder_8h.html" title="Record parsing class for the Folder database." alt="" coords="1193,229,1268,256">
+<area shape="rect" href="$r__timezone_8h.html" title="Record parsing class for the timezone database." alt="" coords="1292,229,1388,256">
+<area shape="rect" href="$r__recur__base_8h.html" title="Base class for recurring calendar event data." alt="" coords="412,229,519,256">
+<area shape="rect" href="$r__message__base_8h.html" title="Base class for email&#45;oriented Blackberry database records." alt="" coords="593,229,724,256">

@@ -1,0 +1,15 @@
+<area shape="rect" href="$dll_8h.html" title="Macros for handling DLL/library API visibility." alt="" coords="607,304,652,331">
+<area shape="rect" href="$record_8h.html" title="Blackberry database record classes." alt="" coords="1001,80,1068,107">
+<area shape="rect" href="$r__calendar_8h.html" title="Blackberry database record parser class for calndar records." alt="" coords="1368,155,1459,181">
+<area shape="rect" href="$r__calllog_8h.html" title="Record parsing class for call logs." alt="" coords="589,229,669,256">
+<area shape="rect" href="$r__contact_8h.html" title="Blackberry database record parser class for contact records." alt="" coords="1728,229,1813,256">
+<area shape="rect" href="$r__memo_8h.html" title="Record parsing class for the memo database." alt="" coords="693,229,773,256">
+<area shape="rect" href="$r__message_8h.html" title="Blackberry database record parser class for email records." alt="" coords="180,155,276,181">
+<area shape="rect" href="$r__servicebook_8h.html" title="Blackberry database record parser class for the Service Book record." alt="" coords="1592,229,1704,256">
+<area shape="rect" href="$r__task_8h.html" title="Record parsing class for the task database." alt="" coords="1087,155,1153,181">
+<area shape="rect" href="$r__pin__message_8h.html" title="Blackberry database record parser class for pin message records." alt="" coords="300,155,420,181">
+<area shape="rect" href="$r__saved__message_8h-source.html" title="r_saved_message.h" alt="" coords="17,155,156,181">
+<area shape="rect" href="$r__sms_8h-source.html" title="r_sms.h" alt="" coords="797,229,864,256">
+<area shape="rect" href="$r__folder_8h.html" title="Record parsing class for the Folder database." alt="" coords="888,229,963,256">
+<area shape="rect" href="$r__timezone_8h.html" title="Record parsing class for the timezone database." alt="" coords="987,229,1083,256">
+<area shape="rect" href="$r__recur__base_8h.html" title="Base class for recurring calendar event data." alt="" coords="1360,229,1467,256">

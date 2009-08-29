@@ -1,0 +1,14 @@
+<area shape="rect" href="$barry_8h.html" title="Main header file for applications." alt="" coords="380,304,439,331">
+<area shape="rect" href="$m__mode__base_8h.html" title="Base for mode classes." alt="" coords="373,80,491,107">
+<area shape="rect" href="$m__desktop_8cc.html" title="Mode class for the Desktop mode." alt="" coords="23,229,127,256">
+<area shape="rect" href="$m__javaloader_8cc.html" title="Mode class for the JavaLoader mode." alt="" coords="577,229,692,256">
+<area shape="rect" href="$controller_8cc.html" title="High level Barry API class." alt="" coords="632,80,723,107">
+<area shape="rect" href="$m__ipmodem_8cc.html" title="Mode class for GPRS modem mode (using endpoints on modern devices)." alt="" coords="747,80,856,107">
+<area shape="rect" href="$m__serial_8cc.html" title="Mode class for serial / GPRS modem mode." alt="" coords="880,80,968,107">
+<area shape="rect" href="$m__desktop_8h.html" title="Mode class for the Desktop mode." alt="" coords="184,155,280,181">
+<area shape="rect" href="$m__javaloader_8h.html" title="Mode class for the JavaLoader mode." alt="" coords="451,155,557,181">
+<area shape="rect" href="$m__mode__base_8cc.html" title="Base for mode classes." alt="" coords="304,155,427,181">
+<area shape="rect" href="$m__desktoptmpl_8h.html" title="Ease of use templates for the Desktop mode class." alt="" coords="151,229,271,256">
+<area shape="rect" href="$packet_8cc.html" title="Low level protocol packet builder class." alt="" coords="295,229,372,256">
+<area shape="rect" href="$bmp_8h.html" title="BMP conversion routines." alt="" coords="497,229,553,256">
+<area shape="rect" href="$bmp_8cc.html" title="BMP conversion routines." alt="" coords="493,304,557,331">

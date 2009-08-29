@@ -1,0 +1,32 @@
+<area shape="rect" href="$m__desktop_8h.html" title="Mode class for the Desktop mode." alt="" coords="2663,80,2759,107">
+<area shape="rect" href="$controller_8h.html" title="High level BlackBerry API class." alt="" coords="2541,229,2624,256">
+<area shape="rect" href="$usbwrap_8h.html" title="USB API wrapper." alt="" coords="2424,379,2504,405">
+<area shape="rect" href="$error_8h.html" title="Common exception classes for the Barry library." alt="" coords="2613,453,2669,480">
+<area shape="rect" href="$data_8h.html" title="Class to deal with pre&#45;saved data files." alt="" coords="1848,453,1904,480">
+<area shape="rect" href="$protocol_8h.html" title="USB Blackberry bulk protocol API constants." alt="" coords="1331,155,1408,181">
+<area shape="rect" href="$protostructs_8h.html" title="USB Blackberry bulk protocol API." alt="" coords="1476,80,1577,107">
+<area shape="rect" href="$packet_8h.html" title="Low level protocol packet builder class." alt="" coords="1276,80,1348,107">
+<area shape="rect" href="$endian_8h.html" title="Endian conversion macros." alt="" coords="1724,80,1793,107">
+<area shape="rect" href="$debug_8h-source.html" title="debug.h" alt="" coords="3255,379,3321,405">
+<area shape="rect" href="$dll_8h.html" title="Macros for handling DLL/library API visibility." alt="" coords="2172,528,2217,555">
+<area shape="rect" href="$m__mode__base_8h.html" title="Base for mode classes." alt="" coords="2652,155,2769,181">
+<area shape="rect" href="$socket_8h.html" title="Class wrapper to encapsulate the Blackberry USB logical socket." alt="" coords="2845,379,2917,405">
+<area shape="rect" href="$record_8h.html" title="Blackberry database record classes." alt="" coords="895,304,961,331">
+<area shape="rect" href="$probe_8h.html" title="USB Blackberry detection routines." alt="" coords="2352,304,2416,331">
+<area shape="rect" href="$router_8h.html" title="Support classes for the pluggable socket routing system." alt="" coords="2987,453,3051,480">
+<area shape="rect" href="$dataqueue_8h.html" title="FIFO queue of Data objects." alt="" coords="2861,528,2952,555">
+<area shape="rect" href="$r__calendar_8h.html" title="Blackberry database record parser class for calndar records." alt="" coords="1371,379,1461,405">
+<area shape="rect" href="$r__calllog_8h.html" title="Record parsing class for call logs." alt="" coords="709,453,789,480">
+<area shape="rect" href="$r__contact_8h.html" title="Blackberry database record parser class for contact records." alt="" coords="1253,453,1339,480">
+<area shape="rect" href="$r__memo_8h.html" title="Record parsing class for the memo database." alt="" coords="245,453,325,480">
+<area shape="rect" href="$r__message_8h.html" title="Blackberry database record parser class for email records." alt="" coords="2253,379,2349,405">
+<area shape="rect" href="$r__servicebook_8h.html" title="Blackberry database record parser class for the Service Book record." alt="" coords="1117,453,1229,480">
+<area shape="rect" href="$r__task_8h.html" title="Record parsing class for the task database." alt="" coords="824,379,891,405">
+<area shape="rect" href="$r__pin__message_8h.html" title="Blackberry database record parser class for pin message records." alt="" coords="2109,379,2229,405">
+<area shape="rect" href="$r__saved__message_8h-source.html" title="r_saved_message.h" alt="" coords="1947,379,2085,405">
+<area shape="rect" href="$r__sms_8h-source.html" title="r_sms.h" alt="" coords="349,453,416,480">
+<area shape="rect" href="$r__folder_8h.html" title="Record parsing class for the Folder database." alt="" coords="440,453,515,480">
+<area shape="rect" href="$r__timezone_8h.html" title="Record parsing class for the timezone database." alt="" coords="589,453,685,480">
+<area shape="rect" href="$r__recur__base_8h.html" title="Base class for recurring calendar event data." alt="" coords="1363,453,1469,480">
+<area shape="rect" href="$common_8h.html" title="General header for the Barry library." alt="" coords="3197,453,3280,480">
+<area shape="rect" href="$log_8h.html" title="General header for the Barry library." alt="" coords="3125,453,3173,480">

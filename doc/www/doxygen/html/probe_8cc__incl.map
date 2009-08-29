@@ -1,0 +1,31 @@
+<area shape="rect" href="$common_8h.html" title="General header for the Barry library." alt="" coords="3211,155,3293,181">
+<area shape="rect" href="$probe_8h.html" title="USB Blackberry detection routines." alt="" coords="619,155,683,181">
+<area shape="rect" href="$usbwrap_8h.html" title="USB API wrapper." alt="" coords="621,229,701,256">
+<area shape="rect" href="$error_8h.html" title="Common exception classes for the Barry library." alt="" coords="699,304,755,331">
+<area shape="rect" href="$data_8h.html" title="Class to deal with pre&#45;saved data files." alt="" coords="880,304,936,331">
+<area shape="rect" href="$endian_8h.html" title="Endian conversion macros." alt="" coords="2776,155,2845,181">
+<area shape="rect" href="$debug_8h-source.html" title="debug.h" alt="" coords="3339,80,3405,107">
+<area shape="rect" href="$packet_8h.html" title="Low level protocol packet builder class." alt="" coords="3085,80,3157,107">
+<area shape="rect" href="$protocol_8h.html" title="USB Blackberry bulk protocol API constants." alt="" coords="3008,155,3085,181">
+<area shape="rect" href="$socket_8h.html" title="Class wrapper to encapsulate the Blackberry USB logical socket." alt="" coords="197,229,269,256">
+<area shape="rect" href="$record-internal_8h.html" title="Support functions, types, and templates for the general record parsing classes in..." alt="" coords="2629,80,2744,107">
+<area shape="rect" href="$strnlen_8h.html" title="Header for strnlen() call, for systems that don&#39;t have GNU." alt="" coords="2921,80,2993,107">
+<area shape="rect" href="$dll_8h.html" title="Macros for handling DLL/library API visibility." alt="" coords="1344,379,1389,405">
+<area shape="rect" href="$log_8h.html" title="General header for the Barry library." alt="" coords="3317,155,3365,181">
+<area shape="rect" href="$router_8h.html" title="Support classes for the pluggable socket routing system." alt="" coords="88,304,152,331">
+<area shape="rect" href="$dataqueue_8h.html" title="FIFO queue of Data objects." alt="" coords="33,379,124,405">
+<area shape="rect" href="$protostructs_8h.html" title="USB Blackberry bulk protocol API." alt="" coords="2600,155,2701,181">
+<area shape="rect" href="$record_8h.html" title="Blackberry database record classes." alt="" coords="1904,155,1971,181">
+<area shape="rect" href="$r__calendar_8h.html" title="Blackberry database record parser class for calndar records." alt="" coords="1512,229,1603,256">
+<area shape="rect" href="$r__calllog_8h.html" title="Record parsing class for call logs." alt="" coords="2408,304,2488,331">
+<area shape="rect" href="$r__contact_8h.html" title="Blackberry database record parser class for contact records." alt="" coords="1683,304,1768,331">
+<area shape="rect" href="$r__memo_8h.html" title="Record parsing class for the memo database." alt="" coords="2512,304,2592,331">
+<area shape="rect" href="$r__message_8h.html" title="Blackberry database record parser class for email records." alt="" coords="1317,229,1413,256">
+<area shape="rect" href="$r__servicebook_8h.html" title="Blackberry database record parser class for the Service Book record." alt="" coords="1264,304,1376,331">
+<area shape="rect" href="$r__task_8h.html" title="Record parsing class for the task database." alt="" coords="1904,229,1971,256">
+<area shape="rect" href="$r__pin__message_8h.html" title="Blackberry database record parser class for pin message records." alt="" coords="1123,229,1243,256">
+<area shape="rect" href="$r__saved__message_8h-source.html" title="r_saved_message.h" alt="" coords="960,229,1099,256">
+<area shape="rect" href="$r__sms_8h-source.html" title="r_sms.h" alt="" coords="2317,304,2384,331">
+<area shape="rect" href="$r__folder_8h.html" title="Record parsing class for the Folder database." alt="" coords="2616,304,2691,331">
+<area shape="rect" href="$r__timezone_8h.html" title="Record parsing class for the timezone database." alt="" coords="2197,304,2293,331">
+<area shape="rect" href="$r__recur__base_8h.html" title="Base class for recurring calendar event data." alt="" coords="1552,304,1659,331">

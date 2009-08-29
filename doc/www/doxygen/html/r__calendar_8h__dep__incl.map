@@ -1,0 +1,39 @@
+<area shape="rect" href="$record_8h.html" title="Blackberry database record classes." alt="" coords="1123,80,1189,107">
+<area shape="rect" href="$r__task_8cc.html" title="Record parsing class for the task database." alt="" coords="152,304,227,331">
+<area shape="rect" href="$r__calendar_8cc.html" title="Blackberry database record parser class for calendar records." alt="" coords="2025,229,2124,256">
+<area shape="rect" href="$m__desktop_8h.html" title="Mode class for the Desktop mode." alt="" coords="2215,155,2311,181">
+<area shape="rect" href="$barry_8h.html" title="Main header file for applications." alt="" coords="2459,304,2517,331">
+<area shape="rect" href="$r__recur__base_8h.html" title="Base class for recurring calendar event data." alt="" coords="187,155,293,181">
+<area shape="rect" href="$r__task_8h.html" title="Record parsing class for the task database." alt="" coords="156,229,223,256">
+<area shape="rect" href="$r__calllog_8h.html" title="Record parsing class for call logs." alt="" coords="1012,155,1092,181">
+<area shape="rect" href="$r__contact_8h.html" title="Blackberry database record parser class for contact records." alt="" coords="596,155,681,181">
+<area shape="rect" href="$ldif_8cc.html" title="Routines for reading and writing LDAP LDIF data." alt="" coords="247,229,303,256">
+<area shape="rect" href="$r__memo_8h.html" title="Record parsing class for the memo database." alt="" coords="1116,155,1196,181">
+<area shape="rect" href="$r__message__base_8h.html" title="Base class for email&#45;oriented Blackberry database records." alt="" coords="807,155,937,181">
+<area shape="rect" href="$r__servicebook_8h.html" title="Blackberry database record parser class for the Service Book record." alt="" coords="1220,155,1332,181">
+<area shape="rect" href="$r__sms_8h-source.html" title="r_sms.h" alt="" coords="1495,155,1561,181">
+<area shape="rect" href="$r__folder_8h.html" title="Record parsing class for the Folder database." alt="" coords="1585,155,1660,181">
+<area shape="rect" href="$r__timezone_8h.html" title="Record parsing class for the timezone database." alt="" coords="1684,155,1780,181">
+<area shape="rect" href="$m__javaloader_8h.html" title="Mode class for the JavaLoader mode." alt="" coords="2564,155,2671,181">
+<area shape="rect" href="$record-internal_8h.html" title="Support functions, types, and templates for the general record parsing classes in..." alt="" coords="1356,155,1471,181">
+<area shape="rect" href="$record_8cc.html" title="Blackberry database record classes." alt="" coords="1876,229,1951,256">
+<area shape="rect" href="$s11n-boost_8h.html" title="Non&#45;intrusive versions of serialization functions for the record classes." alt="" coords="1855,155,1951,181">
+<area shape="rect" href="$m__desktoptmpl_8h.html" title="Ease of use templates for the Desktop mode class." alt="" coords="2428,229,2548,256">
+<area shape="rect" href="$m__desktop_8cc.html" title="Mode class for the Desktop mode." alt="" coords="2300,229,2404,256">
+<area shape="rect" href="$packet_8cc.html" title="Low level protocol packet builder class." alt="" coords="2148,229,2225,256">
+<area shape="rect" href="$r__recur__base_8cc.html" title="Base class for recurring calendar event data." alt="" coords="17,229,132,256">
+<area shape="rect" href="$r__calllog_8cc.html" title="Record parsing class for the phone call logs database." alt="" coords="1033,229,1121,256">
+<area shape="rect" href="$r__contact_8cc.html" title="Blackberry database record parser class for contact records." alt="" coords="753,229,847,256">
+<area shape="rect" href="$r__memo_8cc.html" title="Record parsing class for the memo database." alt="" coords="1145,229,1231,256">
+<area shape="rect" href="$r__message_8h.html" title="Blackberry database record parser class for email records." alt="" coords="327,229,423,256">
+<area shape="rect" href="$r__pin__message_8h.html" title="Blackberry database record parser class for pin message records." alt="" coords="447,229,567,256">
+<area shape="rect" href="$r__saved__message_8h-source.html" title="r_saved_message.h" alt="" coords="591,229,729,256">
+<area shape="rect" href="$r__message__base_8cc.html" title="Base class for email&#45;oriented Blackberry database records." alt="" coords="871,229,1009,256">
+<area shape="rect" href="$r__servicebook_8cc.html" title="Blackberry database record parser class for Service Book records." alt="" coords="1255,229,1375,256">
+<area shape="rect" href="$r__sms_8cc.html" title="Record parsing class for the SMS database." alt="" coords="1545,229,1620,256">
+<area shape="rect" href="$r__folder_8cc.html" title="Record parsing class for the folders database." alt="" coords="1644,229,1724,256">
+<area shape="rect" href="$r__timezone_8cc.html" title="Record parsing class for the timezone database." alt="" coords="1748,229,1852,256">
+<area shape="rect" href="$bmp_8h.html" title="BMP conversion routines." alt="" coords="2623,229,2679,256">
+<area shape="rect" href="$m__javaloader_8cc.html" title="Mode class for the JavaLoader mode." alt="" coords="2703,229,2817,256">
+<area shape="rect" href="$bmp_8cc.html" title="BMP conversion routines." alt="" coords="2619,304,2683,331">
+<area shape="rect" href="$probe_8cc.html" title="USB Blackberry detection routines." alt="" coords="1399,229,1471,256">

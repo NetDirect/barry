@@ -1,0 +1,16 @@
+<area shape="rect" href="$m__ipmodem_8h.html" title="Mode class for GPRS modem mode (using endpoints on modern devices)." alt="" coords="980,155,1084,181">
+<area shape="rect" href="$data_8h.html" title="Class to deal with pre&#45;saved data files." alt="" coords="888,304,944,331">
+<area shape="rect" href="$controller_8h.html" title="High level BlackBerry API class." alt="" coords="660,80,743,107">
+<area shape="rect" href="$debug_8h-source.html" title="debug.h" alt="" coords="1457,229,1524,256">
+<area shape="rect" href="$sha1_8h-source.html" title="sha1.h" alt="" coords="1219,155,1277,181">
+<area shape="rect" href="$dll_8h.html" title="Macros for handling DLL/library API visibility." alt="" coords="959,379,1004,405">
+<area shape="rect" href="$modem_8h.html" title="Modem API base class for the various serial/modem modes available on the Blackberry..." alt="" coords="1069,229,1144,256">
+<area shape="rect" href="$usbwrap_8h.html" title="USB API wrapper." alt="" coords="661,229,741,256">
+<area shape="rect" href="$pppfilter_8h.html" title="Data filter class, to morph PPP data into something that the Blackberry / Rogers..." alt="" coords="917,229,995,256">
+<area shape="rect" href="$error_8h.html" title="Common exception classes for the Barry library." alt="" coords="477,304,533,331">
+<area shape="rect" href="$socket_8h.html" title="Class wrapper to encapsulate the Blackberry USB logical socket." alt="" coords="187,229,259,256">
+<area shape="rect" href="$probe_8h.html" title="USB Blackberry detection routines." alt="" coords="596,155,660,181">
+<area shape="rect" href="$router_8h.html" title="Support classes for the pluggable socket routing system." alt="" coords="237,304,301,331">
+<area shape="rect" href="$dataqueue_8h.html" title="FIFO queue of Data objects." alt="" coords="29,379,120,405">
+<area shape="rect" href="$common_8h.html" title="General header for the Barry library." alt="" coords="1320,304,1403,331">
+<area shape="rect" href="$log_8h.html" title="General header for the Barry library." alt="" coords="1427,304,1475,331">
