@@ -1,5 +1,7 @@
 Release: version 0.15 - 2009/01/??
 ------------------------------------------------------------------------------
+2009/08/28
+	- added binary build for Ubuntu 9.04 to maintainer scripts
 2009/08/27
 	- added binary build for Fedora 11 to maintainer scripts
 2009/08/21
