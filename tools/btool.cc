@@ -609,6 +609,11 @@ int main(int argc, char *argv[])
 		// Initialize the barry library.  Must be called before
 		// anything else.
 		Barry::Init(data_dump);
+		if( data_dump ) {
+			int major, minor;
+			const char *Version = Barry::Version(major, minor);
+			cout << Version << endl;
+		}
 
 		// Create an IConverter object if needed
 		auto_ptr<IConverter> ic;
