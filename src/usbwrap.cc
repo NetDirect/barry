@@ -176,7 +176,7 @@ Device::~Device()
 
 bool Device::SetConfiguration(unsigned char cfg)
 {
-	dout("usb_set_configuration(" << std::dec << m_handle << "," << std::dec << (unsigned int) cfg << ")");
+	dout("usb_set_configuration(" << std::dec << m_handle << ", 0x" << std::hex << (unsigned int) cfg << ")");
 	int ret = usb_set_configuration(m_handle, cfg);
 	m_lasterror = ret;
 	return ret >= 0;
@@ -184,7 +184,7 @@ bool Device::SetConfiguration(unsigned char cfg)
 
 bool Device::ClearHalt(int ep)
 {
-	dout("usb_clear_halt(" << std::dec << m_handle << "," << std::dec << ep << ")");
+	dout("usb_clear_halt(" << std::dec << m_handle << ", 0x" << std::hex << ep << ")");
 	int ret = usb_clear_halt(m_handle, ep);
 	m_lasterror = ret;
 	return ret >= 0;
@@ -221,7 +221,7 @@ bool Device::BulkRead(int ep, Barry::Data &data, int timeout)
 
 bool Device::BulkWrite(int ep, const Barry::Data &data, int timeout)
 {
-	ddout("BulkWrite to endpoint " << std::dec << ep << ":\n" << data);
+	ddout("BulkWrite to endpoint 0x" << std::hex << ep << ":\n" << data);
 	int ret;
 	do {
 		ret = usb_bulk_write(m_handle, ep,
@@ -243,7 +243,7 @@ bool Device::BulkWrite(int ep, const void *data, size_t size, int timeout)
 {
 #ifdef __DEBUG_MODE__
 	Barry::Data dump(data, size);
-	ddout("BulkWrite to endpoint " << std::dec << ep << ":\n" << dump);
+	ddout("BulkWrite to endpoint 0x" << std::hex << ep << ":\n" << dump);
 #endif
 
 	int ret;
@@ -286,7 +286,7 @@ bool Device::InterruptRead(int ep, Barry::Data &data, int timeout)
 
 bool Device::InterruptWrite(int ep, const Barry::Data &data, int timeout)
 {
-	ddout("InterruptWrite to endpoint " << std::dec << ep << ":\n" << data);
+	ddout("InterruptWrite to endpoint 0x" << std::hex << ep << ":\n" << data);
 
 	int ret;
 	do {
@@ -344,7 +344,7 @@ bool Device::GetConfiguration(unsigned char &cfg)
 Interface::Interface(Device &dev, int iface)
 	: m_dev(dev), m_iface(iface)
 {
-	dout("usb_claim_interface(" << dev.GetHandle() << "," << std::dec << iface << ")");
+	dout("usb_claim_interface(" << dev.GetHandle() << ", 0x" << std::hex << iface << ")");
 	int ret = usb_claim_interface(dev.GetHandle(), iface);
 	if( ret < 0 )
 		throw Error(ret, "claim interface failed");
@@ -359,7 +359,7 @@ Interface::Interface(Device &dev, int iface)
 
 Interface::~Interface()
 {
-	dout("usb_release_interface(" << m_dev.GetHandle() << "," << std::dec << m_iface << ")");
+	dout("usb_release_interface(" << m_dev.GetHandle() << ", 0x" << std::hex << m_iface << ")");
 	usb_release_interface(m_dev.GetHandle(), m_iface);
 }
 
@@ -385,21 +385,21 @@ bool EndpointDiscovery::Discover(struct usb_interface_descriptor *interface, int
 		// load descriptor
 		usb_endpoint_descriptor desc;
 		desc = interface->endpoint[i];
-		dout("      endpoint_desc #" << i << " loaded"
-			<< "\nbLength: " << (unsigned ) desc.bLength
-			<< "\nbDescriptorType: " << (unsigned ) desc.bDescriptorType
-			<< "\nbEndpointAddress: " << (unsigned ) desc.bEndpointAddress
-			<< "\nbmAttributes: " << (unsigned ) desc.bmAttributes
-			<< "\nwMaxPacketSize: " << (unsigned ) desc.wMaxPacketSize
-			<< "\nbInterval: " << (unsigned ) desc.bInterval
-			<< "\nbRefresh: " << (unsigned ) desc.bRefresh
-			<< "\nbSynchAddress: " << (unsigned ) desc.bSynchAddress
+		dout("      endpoint_desc #" << std::dec << i << " loaded"
+			<< "\nbLength: " << std::dec << (unsigned ) desc.bLength
+			<< "\nbDescriptorType: " << std::dec << (unsigned ) desc.bDescriptorType
+			<< "\nbEndpointAddress: 0x" << std::hex << (unsigned ) desc.bEndpointAddress
+			<< "\nbmAttributes: 0x" << std::hex << (unsigned ) desc.bmAttributes
+			<< "\nwMaxPacketSize: " << std::dec << (unsigned ) desc.wMaxPacketSize
+			<< "\nbInterval: " << std::dec << (unsigned ) desc.bInterval
+			<< "\nbRefresh: " << std::dec << (unsigned ) desc.bRefresh
+			<< "\nbSynchAddress: " << std::dec << (unsigned ) desc.bSynchAddress
 			<< "\n"
 			);
 
 		// add to the map
 		(*this)[desc.bEndpointAddress] = desc;
-		dout("      endpoint added to map with bEndpointAddress: " << (unsigned int)desc.bEndpointAddress);
+		dout("      endpoint added to map with bEndpointAddress: 0x" << std::hex << (unsigned int)desc.bEndpointAddress);
 
 		// parse the endpoint into read/write sets, if possible,
 		// going in discovery order...
@@ -412,7 +412,7 @@ bool EndpointDiscovery::Discover(struct usb_interface_descriptor *interface, int
 		if( desc.bEndpointAddress & USB_ENDPOINT_DIR_MASK ) {
 			// read endpoint
 			pair.read = desc.bEndpointAddress;
-			dout("        pair.read = " << (unsigned int)pair.read);
+			dout("        pair.read = 0x" << std::hex << (unsigned int)pair.read);
 			if( pair.IsTypeSet() && pair.type != type ) {
 				// if type is already set, we must start over
 				pair.write = 0;
@@ -421,7 +421,7 @@ bool EndpointDiscovery::Discover(struct usb_interface_descriptor *interface, int
 		else {
 			// write endpoint
 			pair.write = desc.bEndpointAddress;
-			dout("        pair.write = " << (unsigned int)pair.write);
+			dout("        pair.write = 0x" << std::hex << (unsigned int)pair.write);
 			if( pair.IsTypeSet() && pair.type != type ) {
 				// if type is already set, we must start over
 				pair.read = 0;
@@ -429,15 +429,15 @@ bool EndpointDiscovery::Discover(struct usb_interface_descriptor *interface, int
 		}
 		// save the type last
 		pair.type = type;
-		dout("        pair.type = " << (unsigned int)pair.type);
+		dout("        pair.type = 0x" << std::hex << (unsigned int)pair.type);
 
 		// if pair is complete, add to array
 		if( pair.IsComplete() ) {
 			m_endpoints.push_back(pair);
 			dout("        pair added! ("
-				<< "read: " << (unsigned int)pair.read << ","
-				<< "write: " << (unsigned int)pair.write << ","
-				<< "type: " << (unsigned int)pair.type << ")");
+				<< "read: 0x" << std::hex << (unsigned int)pair.read << ","
+				<< "write: 0x" << std::hex << (unsigned int)pair.write << ","
+				<< "type: 0x" << std::hex << (unsigned int)pair.type << ")");
 			pair = EndpointPair();	// clear
 		}
 	}
@@ -471,28 +471,28 @@ bool InterfaceDiscovery::DiscoverInterface(struct usb_interface *interface)
 		// load descriptor
 		InterfaceDesc desc;
 		desc.desc = interface->altsetting[i];
-		dout("    interface_desc #" << i << " loaded"
-			<< "\nbLength: " << (unsigned) desc.desc.bLength
-			<< "\nbDescriptorType: " << (unsigned) desc.desc.bDescriptorType
-			<< "\nbInterfaceNumber: " << (unsigned) desc.desc.bInterfaceNumber
-			<< "\nbAlternateSetting: " << (unsigned) desc.desc.bAlternateSetting
-			<< "\nbNumEndpoints: " << (unsigned) desc.desc.bNumEndpoints
-			<< "\nbInterfaceClass: " << (unsigned) desc.desc.bInterfaceClass
-			<< "\nbInterfaceSubClass: " << (unsigned) desc.desc.bInterfaceSubClass
-			<< "\nbInterfaceProtocol: " << (unsigned) desc.desc.bInterfaceProtocol
-			<< "\niInterface: " << (unsigned) desc.desc.iInterface
+		dout("    interface_desc #" << std::dec << i << " loaded"
+			<< "\nbLength: " << std::dec << (unsigned) desc.desc.bLength
+			<< "\nbDescriptorType: " << std::dec << (unsigned) desc.desc.bDescriptorType
+			<< "\nbInterfaceNumber: " << std::dec << (unsigned) desc.desc.bInterfaceNumber
+			<< "\nbAlternateSetting: " << std::dec << (unsigned) desc.desc.bAlternateSetting
+			<< "\nbNumEndpoints: " << std::dec << (unsigned) desc.desc.bNumEndpoints
+			<< "\nbInterfaceClass: " << std::dec << (unsigned) desc.desc.bInterfaceClass
+			<< "\nbInterfaceSubClass: " << std::dec << (unsigned) desc.desc.bInterfaceSubClass
+			<< "\nbInterfaceProtocol: " << std::dec << (unsigned) desc.desc.bInterfaceProtocol
+			<< "\niInterface: " << std::dec << (unsigned) desc.desc.iInterface
 			<< "\n"
 			);
 
 		// load all endpoints on this interface
 		if( !desc.endpoints.Discover(&desc.desc, desc.desc.bNumEndpoints) ) {
-			dout("    endpoint discovery failed for bInterfaceNumber: " << (unsigned int)desc.desc.bInterfaceNumber << ", not added to map.");
+			dout("    endpoint discovery failed for bInterfaceNumber: " << std::dec << (unsigned int)desc.desc.bInterfaceNumber << ", not added to map.");
 			return false;
 		}
 
 		// add to the map
 		(*this)[desc.desc.bInterfaceNumber] = desc;
-		dout("    interface added to map with bInterfaceNumber: " << (unsigned int)desc.desc.bInterfaceNumber);
+		dout("    interface added to map with bInterfaceNumber: " << std::dec << (unsigned int)desc.desc.bInterfaceNumber);
 	}
 	return true;
 }
@@ -534,15 +534,15 @@ bool ConfigDiscovery::Discover(Usb::DeviceIDType devid, int cfgcount)
 			return false;
 		}
 		desc.desc = devid->config[i];
-		dout("  config_desc #" << i << " loaded"
-			<< "\nbLength: " << (unsigned int) desc.desc.bLength
-			<< "\nbDescriptorType: " << (unsigned int) desc.desc.bDescriptorType
-			<< "\nwTotalLength: " << (unsigned int) desc.desc.wTotalLength
-			<< "\nbNumInterfaces: " << (unsigned int) desc.desc.bNumInterfaces
-			<< "\nbConfigurationValue: " << (unsigned int) desc.desc.bConfigurationValue
-			<< "\niConfiguration: " << (unsigned int) desc.desc.iConfiguration
-			<< "\nbmAttributes: " << (unsigned int) desc.desc.bmAttributes
-			<< "\nMaxPower: " << (unsigned int) desc.desc.MaxPower
+		dout("  config_desc #" << std::dec << i << " loaded"
+			<< "\nbLength: " << std::dec << (unsigned int) desc.desc.bLength
+			<< "\nbDescriptorType: " << std::dec << (unsigned int) desc.desc.bDescriptorType
+			<< "\nwTotalLength: " << std::dec << (unsigned int) desc.desc.wTotalLength
+			<< "\nbNumInterfaces: " << std::dec << (unsigned int) desc.desc.bNumInterfaces
+			<< "\nbConfigurationValue: " << std::dec << (unsigned int) desc.desc.bConfigurationValue
+			<< "\niConfiguration: " << std::dec << (unsigned int) desc.desc.iConfiguration
+			<< "\nbmAttributes: 0x" << std::hex << (unsigned int) desc.desc.bmAttributes
+			<< "\nMaxPower: " << std::dec << (unsigned int) desc.desc.MaxPower
 			<< "\n"
 			);
 
@@ -556,13 +556,13 @@ bool ConfigDiscovery::Discover(Usb::DeviceIDType devid, int cfgcount)
 
 		// load all interfaces on this configuration
 		if( !desc.interfaces.Discover(devid, i, desc.desc.bNumInterfaces) ) {
-			dout("  config discovery failed for bConfigurationValue: " << (unsigned int)desc.desc.bConfigurationValue << ", not added to map.");
+			dout("  config discovery failed for bConfigurationValue: " << std::dec << (unsigned int)desc.desc.bConfigurationValue << ", not added to map.");
 			return false;
 		}
 
 		// add to the map
 		(*this)[desc.desc.bConfigurationValue] = desc;
-		dout("  config added to map with bConfigurationValue: " << (unsigned int)desc.desc.bConfigurationValue);
+		dout("  config added to map with bConfigurationValue: " << std::dec << (unsigned int)desc.desc.bConfigurationValue);
 	}
 
 	return m_valid = true;
@@ -592,20 +592,20 @@ bool DeviceDiscovery::Discover(Usb::DeviceIDType devid)
 
 	desc = devid->descriptor;
 	dout("device_desc loaded"
-		<< "\nbLength: " << (unsigned int) desc.bLength
-		<< "\nbDescriptorType: " << (unsigned int) desc.bDescriptorType
-		<< "\nbcdUSB: " << (unsigned int) desc.bcdUSB
-		<< "\nbDeviceClass: " << (unsigned int) desc.bDeviceClass
-		<< "\nbDeviceSubClass: " << (unsigned int) desc.bDeviceSubClass
-		<< "\nbDeviceProtocol: " << (unsigned int) desc.bDeviceProtocol
-		<< "\nbMaxPacketSize0: " << (unsigned int) desc.bMaxPacketSize0
-		<< "\nidVendor: " << (unsigned int) desc.idVendor
-		<< "\nidProduct: " << (unsigned int) desc.idProduct
-		<< "\nbcdDevice: " << (unsigned int) desc.bcdDevice
-		<< "\niManufacturer: " << (unsigned int) desc.iManufacturer
-		<< "\niProduct: " << (unsigned int) desc.iProduct
-		<< "\niSerialNumber: " << (unsigned int) desc.iSerialNumber
-		<< "\nbNumConfigurations: " << (unsigned int) desc.bNumConfigurations
+		<< "\nbLength: " << std::dec << (unsigned int) desc.bLength
+		<< "\nbDescriptorType: " << std::dec << (unsigned int) desc.bDescriptorType
+		<< "\nbcdUSB: 0x" << std::hex << (unsigned int) desc.bcdUSB
+		<< "\nbDeviceClass: " << std::dec << (unsigned int) desc.bDeviceClass
+		<< "\nbDeviceSubClass: " << std::dec << (unsigned int) desc.bDeviceSubClass
+		<< "\nbDeviceProtocol: " << std::dec << (unsigned int) desc.bDeviceProtocol
+		<< "\nbMaxPacketSize0: " << std::dec << (unsigned int) desc.bMaxPacketSize0
+		<< "\nidVendor: 0x" << std::hex << (unsigned int) desc.idVendor
+		<< "\nidProduct: 0x" << std::hex << (unsigned int) desc.idProduct
+		<< "\nbcdDevice: 0x" << std::hex << (unsigned int) desc.bcdDevice
+		<< "\niManufacturer: " << std::dec << (unsigned int) desc.iManufacturer
+		<< "\niProduct: " << std::dec << (unsigned int) desc.iProduct
+		<< "\niSerialNumber: " << std::dec << (unsigned int) desc.iSerialNumber
+		<< "\nbNumConfigurations: " << std::dec << (unsigned int) desc.bNumConfigurations
 		<< "\n"
 	);
 

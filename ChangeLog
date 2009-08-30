@@ -3,6 +3,9 @@ Release: version 0.16 - 2009/09/??
 2009/08/30
 	- applied Martin Owens' ppa_build.sh patch
 	- added version output when -v is used in btool
+	- changed USB verbose bus tree dump (i.e. btool -v) so the
+		hex/decimal values look more like lsusb -v output,
+		for ease of debugging
 2009/08/29
 	- version bump:
 		- configure.ac
