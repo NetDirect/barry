@@ -1,6 +1,7 @@
 Release: version 0.16 - 2009/09/??
 ------------------------------------------------------------------------------
 2009/08/30
+	- applied Martin Owens' ppa_build.sh patch
 	- added version output when -v is used in btool
 2009/08/29
 	- version bump:
