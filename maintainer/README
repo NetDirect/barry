@@ -14,3 +14,8 @@ If using git, use:
 		this script, which also updates the git repo with official
 		tarball data.
 
+
+Miscellaneous scripts:
+
+	ppa_build.sh - used by Martin Owens for the PPA snapshots
+
