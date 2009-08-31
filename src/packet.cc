@@ -671,8 +671,8 @@ JVMPacket::~JVMPacket()
 
 unsigned int JVMPacket::Size()
 {
-	Protocol::CheckSize(m_receive, SB_JVMPACKET_HEADER_SIZE + sizeof(uint16_t));
 	MAKE_JVMPACKET(rpack, m_receive);
+	Protocol::CheckSize(m_receive, SB_JVMPACKET_HEADER_SIZE + sizeof(rpack->u.expect));
 	return be_btohs(rpack->u.expect);
 }
 
