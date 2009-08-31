@@ -30,17 +30,21 @@
 
 namespace Barry { namespace Protocol {
 
+// This function is only valid for Packet, JLPacket, and JVMPacket structs,
+// as long as they don't differ from each other in header layout, when
+// it comes to the .size field.  (see protostructs.h)
 void CheckSize(const Data &packet, size_t requiredsize)
 {
 	const Packet *p = (const Packet *) packet.GetData();
 
 	// when packets are larger than 0xFFFF bytes, packet->size is no
 	// longer reliable, so we go with the Data class size
-	if( (btohs(p->size) != packet.GetSize() && packet.GetSize() <= 0xFFFF) ||
+	if( (packet.GetSize() >= 4 && btohs(p->size) != packet.GetSize() && packet.GetSize() <= 0xFFFF) ||
 	    packet.GetSize() < requiredsize )
 
 	{
-		BadSize bs(btohs(p->size), packet.GetSize(), requiredsize);
+		BadSize bs(packet.GetSize() >= 4 ? btohs(p->size) : 0,
+			packet.GetSize(), requiredsize);
 		eout(bs.what());
 		eout(packet);
 		throw bs;
