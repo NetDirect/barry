@@ -13,6 +13,14 @@ Next Release Checklist (- todo, + done, x skipped)
 ==============================================================================
 Target: release version 0.16 (Sept 3)
 	- incorporate Nicolas's java debugger patches
+		- figure out a solution to the HideSequencePacket issue
+		- add copyright notices to all source code files
+		- write autoconf configure scripts and incorporate into
+			main configure and build system
+		- add build tests to test/buildtest.sh script
+		- fix any lingering compile problems and FIXMEs
+		- man page for bjdwp app
+		- www documentation for bjdwp app
 	- incorporate barrybackup GUI changes by Ryan Li
 
 Target: release version 0.17 (Oct 1)
