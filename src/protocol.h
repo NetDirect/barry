@@ -111,6 +111,8 @@
 #define SB_COMMAND_JVM_SET_BREAKPOINT	0x21	// Set breakpoint
 #define SB_COMMAND_JVM_RM_BREAKPOINT	0x22	// Remove breakpoint
 
+#define SB_COMMAND_JVM_STOP		0xa502
+
 // JavaDebug response
 #define SB_COMMAND_JVM_GET_DATA_ENTRY	0x06
 

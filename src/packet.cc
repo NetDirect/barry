@@ -859,7 +859,7 @@ void JVMPacket::Stop()
 
 	// socket class sets socket for us
 	packet.size = htobs(total);
-	packet.u.value = be_htobs(0xa502);
+	packet.u.value = be_htobs(SB_COMMAND_JVM_STOP);
 
 	m_cmd.ReleaseBuffer(total);
 }
