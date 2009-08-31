@@ -53,7 +53,7 @@ public:
 
 	void Open(const char *password = 0);
 	void RetryPassword(const char *password);
-	void Close();
+//	void Close();
 
 protected:
 	//////////////////////////////////
