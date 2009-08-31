@@ -2,6 +2,7 @@ Release: version 0.16 - 2009/09/??
 ------------------------------------------------------------------------------
 2009/08/31
 	- pulled from Nicolas Vivien's repo.or.cz repo: bjvmdebug support
+		With rebase changes and fixes to library.
 		Fixes to library:
 		- fixed buffer size checks in m_jvmdebug.cc
 		- used #defines instead of hard coded numbers where possible
@@ -11,6 +12,9 @@ Release: version 0.16 - 2009/09/??
 		- added #define for JVM STOP command
 		- removed unused Socket::PacketJVM() functions
 		- made sizeof check in JVMPacket::Size() more specific
+		Rebase changes:
+		- removed executable chmod bits from BarryDemo java samples
+		- removed copyrighted Sun documentation from bjdwp/doc/
 	- fixed longstanding buffer size check bug in CheckSize()
 	- updated AUTHORS
 2009/08/30
