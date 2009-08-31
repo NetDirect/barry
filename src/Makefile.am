@@ -106,9 +106,7 @@ include_barry_HEADERS = barry.h \
 	iconv.h \
 	cod.h \
 	bmp.h \
-	s11n-boost.h \
-	endian.h \
-	../config.h
+	s11n-boost.h
 
 noinst_HEADERS = cbarry.h \
 	base64.h \
@@ -119,6 +117,7 @@ noinst_HEADERS = cbarry.h \
 	scoped_lock.h \
 	protostructs.h \
 	debug.h \
+	endian.h \
 	strnlen.h
 
 EXTRA_DIST = convo.awk \
