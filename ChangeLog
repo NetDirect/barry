@@ -1,5 +1,17 @@
 Release: version 0.16 - 2009/09/??
 ------------------------------------------------------------------------------
+2009/08/31
+	- pulled from Nicolas Vivien's repo.or.cz repo: bjvmdebug support
+		Fixes to library:
+		- fixed buffer size checks in m_jvmdebug.cc
+		- used #defines instead of hard coded numbers where possible
+		- added FIXME to tidy up the Unknowns in the API
+		- commented out Mode::Close(): not convinced that applications
+			should have to worry about socket-level details
+		- added #define for JVM STOP command
+		- removed unused Socket::PacketJVM() functions
+		- made sizeof check in JVMPacket::Size() more specific
+	- fixed longstanding buffer size check bug in CheckSize()
 2009/08/30
 	- applied Martin Owens' ppa_build.sh patch
 	- added version output when -v is used in btool
