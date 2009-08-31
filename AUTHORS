@@ -95,6 +95,7 @@ Contributors (code and otherwise) in alphabetical order by last name:
 		- task sync support
 		- call log parser
 		- ldif converter patches
+		- JVM Debug support, and bjdwp
 	Niels de Vos <nixpanic@users.sourceforge.net>
 		- debian package patches
 		- usb_storage unbind script
