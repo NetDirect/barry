@@ -733,72 +733,6 @@ void Socket::InitSequence(int timeout)
 
 // sends the send packet down to the device
 // Blocks until response received or timed out in Usb::Device
-//
-// This function is used to send packet to JVM
-void Socket::PacketJVM(Data &send, Data &receive, int timeout)
-{
-	if( ( send.GetSize() < MIN_PACKET_DATA_SIZE ) ||
-		( send.GetSize() > MAX_PACKET_DATA_SIZE ) ) {
-		// we don't do that around here
-		throw std::logic_error("Socket: unknown send data in PacketJVM()");
-	}
-
-	Data &inFrag = receive;
-	receive.Zap();
-
-	// send non-fragmented
-	Send(send, inFrag, timeout);
-
-	bool done = false;
-	int blankCount = 0;
-
-	while( !done ) {
-		// check the packet's validity
-		if( inFrag.GetSize() > 6 ) {
-			MAKE_PACKET(rpack, inFrag);
-
-			blankCount = 0;
-
-			Protocol::CheckSize(inFrag, SB_PACKET_HEADER_SIZE);
-
-			switch( rpack->command )
-			{
-			case SB_COMMAND_SEQUENCE_HANDSHAKE:
-				CheckSequence(inFrag);
-				break;
-
-			default: {
-				std::ostringstream oss;
-				oss << "Socket: (read) unhandled packet in Packet(): 0x" << std::hex << (unsigned int)rpack->command;
-				eout(oss.str());
-				throw Error(oss.str());
-				}
-				break;
-			}
-		}
-		else if( inFrag.GetSize() == 6 ) {
-			done = true;
-		}
-		else {
-			blankCount++;
-
-			//std::cerr << "Blank! " << blankCount << std::endl;
-			if( blankCount == 10 ) {
-				// only ask for more data on stalled sockets
-				// for so long
-				throw Error("Socket: 10 blank packets received");
-			}
-		}
-
-		if( !done ) {
-			// not done yet, ask for another read
-			Receive(inFrag);
-		}
-	}
-}
-
-// sends the send packet down to the device
-// Blocks until response received or timed out in Usb::Device
 void Socket::PacketData(Data &send, Data &receive, int timeout)
 {
 	if( ( send.GetSize() < MIN_PACKET_DATA_SIZE ) ||
@@ -1039,13 +973,6 @@ void Socket::Packet(Barry::JLPacket &packet, int timeout)
 	else {
 		PacketData(packet.m_cmd, packet.m_receive, timeout);
 	}
-}
-
-void Socket::Packet(Barry::JVMPacket &packet, int timeout)
-{
-	HideSequencePacket(false);
-	PacketJVM(packet.m_cmd, packet.m_receive, timeout);
-	HideSequencePacket(true);
 }
 
 void Socket::NextRecord(Data &receive)
