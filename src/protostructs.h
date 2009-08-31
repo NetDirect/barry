@@ -807,8 +807,8 @@ struct JVMPacket
 	{
 		JVMCommand		command;
 		JVMResponse		response;
-		JVMModulesList	moduleslist;
-		JVMThreadsList	threadslist;
+		JVMModulesList		moduleslist;
+		JVMThreadsList		threadslist;
 		JVMUnknown01		unknown01;
 		JVMUnknown02		unknown02;
 		uint32_t		address;
