@@ -707,6 +707,7 @@ void Socket::Receive(Data &receive, int timeout)
 }
 
 
+// FIXME - find a better way to do this?
 void Socket::ReceiveData(Data &receive, int timeout)
 {
 	HideSequencePacket(false);
@@ -715,6 +716,7 @@ void Socket::ReceiveData(Data &receive, int timeout)
 }
 
 
+// FIXME - find a better way to do this?
 void Socket::InitSequence(int timeout)
 {
 	Data receive;
