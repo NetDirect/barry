@@ -11,7 +11,7 @@ please ask on the mailing list as well.
 
 Next Release Checklist (- todo, + done, x skipped)
 ==============================================================================
-Target: release version 0.16 (Sept 3)
+Target: release version 0.16 (Sept 10)
 	- incorporate Nicolas's java debugger patches
 		- figure out a solution to the HideSequencePacket issue
 		- add copyright notices to all source code files
