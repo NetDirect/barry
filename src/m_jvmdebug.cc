@@ -41,6 +41,7 @@
 #include "debug.h"
 
 using namespace std;
+using namespace Barry::Protocol;
 
 namespace Barry {
 
@@ -60,6 +61,8 @@ void JVMModulesList::Parse(const Data &entry_packet)
 		Protocol::JVMModulesEntry *e = (Protocol::JVMModulesEntry *) ptr;
 
 		len = SB_JVMMODULES_ENTRY_HEADER_SIZE + be_btohs(e->sizename);
+		if( (count + len) > size )
+			break;
 
 		JVMModulesEntry entry;
 
@@ -120,6 +123,8 @@ void JVMThreadsList::Parse(const Data &entry_packet)
 		uint32_t *e = (uint32_t *) ptr;
 
 		len = sizeof(uint32_t);
+		if( (count + len) > size )
+			break;
 
 		JVMThreadsEntry entry;
 
@@ -258,7 +263,7 @@ void JVMDebug::Unknown01()
 	// Read the data stream
 	m_socket->ReceiveData(response);
 
-	size_t bytereceived = response.GetSize() - 4;
+	size_t bytereceived = response.GetSize() - SB_JVMPACKET_HEADER_SIZE;
 
 	// Check the size read into the previous packet
 	if( expect != bytereceived ) {
@@ -288,7 +293,7 @@ void JVMDebug::Unknown02()
 	// Read the data stream
 	m_socket->ReceiveData(response);
 
-	size_t bytereceived = response.GetSize() - 4;
+	size_t bytereceived = response.GetSize() - SB_JVMPACKET_HEADER_SIZE;
 
 	// Check the size read into the previous packet
 	if( expect != bytereceived ) {
@@ -318,7 +323,7 @@ void JVMDebug::Unknown03()
 	// Read the data stream
 	m_socket->ReceiveData(response);
 
-	size_t bytereceived = response.GetSize() - 4;
+	size_t bytereceived = response.GetSize() - SB_JVMPACKET_HEADER_SIZE;
 
 	// Check the size read into the previous packet
 	if( expect != bytereceived ) {
@@ -348,7 +353,7 @@ void JVMDebug::Unknown04()
 	// Read the data stream
 	m_socket->ReceiveData(response);
 
-	size_t bytereceived = response.GetSize() - 4;
+	size_t bytereceived = response.GetSize() - SB_JVMPACKET_HEADER_SIZE;
 
 	// Check the size read into the previous packet
 	if( expect != bytereceived ) {
@@ -378,7 +383,7 @@ void JVMDebug::Unknown05()
 	// Read the data stream
 	m_socket->ReceiveData(response);
 
-	size_t bytereceived = response.GetSize() - 4;
+	size_t bytereceived = response.GetSize() - SB_JVMPACKET_HEADER_SIZE;
 
 	// Check the size read into the previous packet
 	if( expect != bytereceived ) {
@@ -408,7 +413,7 @@ void JVMDebug::Unknown06()
 	// Read the data stream
 	m_socket->ReceiveData(response);
 
-	size_t bytereceived = response.GetSize() - 4;
+	size_t bytereceived = response.GetSize() - SB_JVMPACKET_HEADER_SIZE;
 
 	// Check the size read into the previous packet
 	if( expect != bytereceived ) {
@@ -438,7 +443,7 @@ void JVMDebug::Unknown07()
 	// Read the data stream
 	m_socket->ReceiveData(response);
 
-	size_t bytereceived = response.GetSize() - 4;
+	size_t bytereceived = response.GetSize() - SB_JVMPACKET_HEADER_SIZE;
 
 	// Check the size read into the previous packet
 	if( expect != bytereceived ) {
@@ -468,7 +473,7 @@ void JVMDebug::Unknown08()
 	// Read the data stream
 	m_socket->ReceiveData(response);
 
-	size_t bytereceived = response.GetSize() - 4;
+	size_t bytereceived = response.GetSize() - SB_JVMPACKET_HEADER_SIZE;
 
 	// Check the size read into the previous packet
 	if( expect != bytereceived ) {
@@ -498,7 +503,7 @@ void JVMDebug::Unknown09()
 	// Read the data stream
 	m_socket->ReceiveData(response);
 
-	size_t bytereceived = response.GetSize() - 4;
+	size_t bytereceived = response.GetSize() - SB_JVMPACKET_HEADER_SIZE;
 
 	// Check the size read into the previous packet
 	if( expect != bytereceived ) {
@@ -528,7 +533,7 @@ void JVMDebug::Unknown10()
 	// Read the data stream
 	m_socket->ReceiveData(response);
 
-	size_t bytereceived = response.GetSize() - 4;
+	size_t bytereceived = response.GetSize() - SB_JVMPACKET_HEADER_SIZE;
 
 	// Check the size read into the previous packet
 	if( expect != bytereceived ) {
@@ -562,12 +567,15 @@ bool JVMDebug::GetStatus(int &status)
 
 	MAKE_JVMPACKET(dpack, response);
 
-	size_t bytereceived = response.GetSize() - 4;
+	size_t bytereceived = response.GetSize() - SB_JVMPACKET_HEADER_SIZE;
 
 	// Check the size read into the previous packet
 	if( expect != bytereceived ) {
 		ThrowJVMError("JVMDebug::GetModulesList expect", expect);
 	}
+
+	// Make sure we have a header to read
+	CheckSize(response, SB_JVMPACKET_HEADER_SIZE + sizeof(dpack->u.status));
 
 	// Return status
 	status = dpack->u.status;
@@ -605,12 +613,15 @@ bool JVMDebug::WaitStatus(int &status)
 
 	MAKE_JVMPACKET(dpack, response);
 
-	size_t bytereceived = response.GetSize() - 4;
+	size_t bytereceived = response.GetSize() - SB_JVMPACKET_HEADER_SIZE;
 
 	// Check the size read into the previous packet
 	if( expect != bytereceived ) {
 		ThrowJVMError("JVMDebug::GetModulesList expect", expect);
 	}
+
+	// Make sure we have a header to read
+	CheckSize(response, SB_JVMPACKET_HEADER_SIZE + sizeof(dpack->u.status));
 
 	// Return status
 	status = dpack->u.status;
@@ -647,12 +658,15 @@ int JVMDebug::GetConsoleMessage(std::string &message)
 
 	MAKE_JVMPACKET(dpack, response);
 
-	size_t bytereceived = response.GetSize() - 4;
+	size_t bytereceived = response.GetSize() - SB_JVMPACKET_HEADER_SIZE;
 
 	// Check the size read into the previous packet
 	if( expect != bytereceived ) {
 		ThrowJVMError("JVMDebug::GetModulesList expect", expect);
 	}
+
+	// Make sure we have a header to read
+	CheckSize(response, SB_JVMPACKET_HEADER_SIZE + sizeof(dpack->u.msglength));
 
 	// Length of message
 	uint16_t length = be_btohs(dpack->u.msglength);
@@ -660,8 +674,10 @@ int JVMDebug::GetConsoleMessage(std::string &message)
 	if (length == 0)
 		return -1;
 
+	CheckSize(response, SB_JVMPACKET_HEADER_SIZE + sizeof(dpack->u.msglength) + length);
+
 	// Parse the ID of nextmodules
-	const unsigned char *ptr = (response.GetData() + SB_JVMPACKET_HEADER_SIZE + sizeof(uint16_t));
+	const unsigned char *ptr = (response.GetData() + SB_JVMPACKET_HEADER_SIZE + sizeof(dpack->u.msglength));
 
 	message.assign((char *) ptr, length);
 
@@ -698,12 +714,16 @@ void JVMDebug::GetModulesList(JVMModulesList &mylist)
 
 		MAKE_JVMPACKET(dpack, response);
 
-		size_t bytereceived = response.GetSize() - 4;
+		size_t bytereceived = response.GetSize() - SB_JVMPACKET_HEADER_SIZE;
 
 		// Check the size read into the previous packet
 		if( expect != bytereceived ) {
 			ThrowJVMError("JVMDebug::GetModulesList expect", expect);
 		}
+
+		// Make sure there's enough for packet header + module list
+		// header + 4 bytes of ID
+		CheckSize(response, SB_JVMPACKET_HEADER_SIZE + SB_JVMMODULES_LIST_HEADER_SIZE + 4);
 
 		// Number of modules entries in the list
 		count = be_btohl(dpack->u.moduleslist.nbr);
@@ -717,7 +737,9 @@ void JVMDebug::GetModulesList(JVMModulesList &mylist)
 		mylist.Parse(Data(response.GetData() + SB_JVMPACKET_HEADER_SIZE + SB_JVMMODULES_LIST_HEADER_SIZE, size));
 
 		// Parse the ID of nextmodules
-		const unsigned char *ptr = (response.GetData() + SB_JVMPACKET_HEADER_SIZE + SB_JVMMODULES_LIST_HEADER_SIZE + size);
+		size_t id_offset = SB_JVMPACKET_HEADER_SIZE + SB_JVMMODULES_LIST_HEADER_SIZE + size;
+		const unsigned char *ptr = (response.GetData() + id_offset);
+		CheckSize(response, id_offset + sizeof(uint32_t));
 		uint32_t *poffset = (uint32_t *) ptr;
 
 		offset = be_btohl(*poffset);
@@ -752,12 +774,14 @@ void JVMDebug::GetThreadsList(JVMThreadsList &mylist)
 
 	MAKE_JVMPACKET(dpack, response);
 
-	size_t bytereceived = response.GetSize() - 4;
+	size_t bytereceived = response.GetSize() - SB_JVMPACKET_HEADER_SIZE;
 
 	// Check the size read into the previous packet
 	if( expect != bytereceived ) {
 		ThrowJVMError("JVMDebug::GetThreadsList expect", expect);
 	}
+
+	CheckSize(response, SB_JVMPACKET_HEADER_SIZE + SB_JVMTHREADS_LIST_HEADER_SIZE);
 
 	// Number of threads entries in the list
 	count = be_btohl(dpack->u.threadslist.nbr);
@@ -788,14 +812,16 @@ void JVMDebug::GetThreadsList(JVMThreadsList &mylist)
 		// Read the data stream
 		m_socket->ReceiveData(response);
 
-		dpack = (const Protocol::JVMPacket *) response.GetData();
+		MAKE_JVMPACKET(dpack, response);
 
-		bytereceived = response.GetSize() - 4;
+		bytereceived = response.GetSize() - SB_JVMPACKET_HEADER_SIZE;
 
 		// Check the size read into the previous packet
 		if( expect != bytereceived ) {
 			ThrowJVMError("JVMDebug::GetThreadsList (1) expect", expect);
 		}
+
+		CheckSize(response, SB_JVMPACKET_HEADER_SIZE + SB_JVMUNKNOWN01_HEADER_SIZE);
 
 		// Save values
 		entry.Byte = dpack->u.unknown01.byte;
@@ -816,16 +842,18 @@ void JVMDebug::GetThreadsList(JVMThreadsList &mylist)
 			// Read the data stream
 			m_socket->ReceiveData(response);
 
-			dpack = (const Protocol::JVMPacket *) response.GetData();
+			MAKE_JVMPACKET(dpack, response);
 
-			bytereceived = response.GetSize() - 4;
+			bytereceived = response.GetSize() - SB_JVMPACKET_HEADER_SIZE;
 
 			// Check the size read into the previous packet
 			if( expect != bytereceived ) {
 				ThrowJVMError("JVMDebug::GetThreadsList (2) expect", expect);
 			}
 
+
 			// Save values
+			CheckSize(response, SB_JVMPACKET_HEADER_SIZE + sizeof(dpack->u.address));
 			entry.Unknown01 = be_btohl(dpack->u.address);
 		}
 		else
@@ -847,7 +875,7 @@ void JVMDebug::GetThreadsList(JVMThreadsList &mylist)
 
 		dpack = (const Protocol::JVMPacket *) response.GetData();
 
-		bytereceived = response.GetSize() - 4;
+		bytereceived = response.GetSize() - SB_JVMPACKET_HEADER_SIZE;
 
 		// Check the size read into the previous packet
 		if( expect != bytereceived ) {
@@ -855,6 +883,7 @@ void JVMDebug::GetThreadsList(JVMThreadsList &mylist)
 		}
 
 		// Save values
+		CheckSize(response, SB_JVMPACKET_HEADER_SIZE + sizeof(dpack->u.address));
 		entry.Unknown02 = be_btohl(dpack->u.address);
 
 		// 4°/
@@ -873,7 +902,7 @@ void JVMDebug::GetThreadsList(JVMThreadsList &mylist)
 
 		dpack = (const Protocol::JVMPacket *) response.GetData();
 
-		bytereceived = response.GetSize() - 4;
+		bytereceived = response.GetSize() - SB_JVMPACKET_HEADER_SIZE;
 
 		// Check the size read into the previous packet
 		if( expect != bytereceived ) {
@@ -881,6 +910,7 @@ void JVMDebug::GetThreadsList(JVMThreadsList &mylist)
 		}
 
 		// Save values
+		CheckSize(response, SB_JVMPACKET_HEADER_SIZE + SB_JVMUNKNOWN02_HEADER_SIZE);
 		entry.Unknown03 = be_btohl(dpack->u.unknown02.address1);
 		entry.Unknown04 = be_btohl(dpack->u.unknown02.address2);
 
@@ -900,7 +930,7 @@ void JVMDebug::GetThreadsList(JVMThreadsList &mylist)
 
 		dpack = (const Protocol::JVMPacket *) response.GetData();
 
-		bytereceived = response.GetSize() - 4;
+		bytereceived = response.GetSize() - SB_JVMPACKET_HEADER_SIZE;
 
 		// Check the size read into the previous packet
 		if( expect != bytereceived ) {
@@ -908,6 +938,7 @@ void JVMDebug::GetThreadsList(JVMThreadsList &mylist)
 		}
 
 		// Save values
+		CheckSize(response, SB_JVMPACKET_HEADER_SIZE + SB_JVMUNKNOWN02_HEADER_SIZE);
 		entry.Unknown05 = be_btohl(dpack->u.unknown02.address1);
 		entry.Unknown06 = be_btohl(dpack->u.unknown02.address2);
 
@@ -941,7 +972,7 @@ void JVMDebug::Go()
 	// Read the data stream
 	m_socket->ReceiveData(response);
 
-	size_t bytereceived = response.GetSize() - 4;
+	size_t bytereceived = response.GetSize() - SB_JVMPACKET_HEADER_SIZE;
 
 	// Check the size read into the previous packet
 	if( expect != bytereceived ) {
@@ -974,7 +1005,7 @@ void JVMDebug::Stop()
 	// Read the data stream
 	m_socket->ReceiveData(response);
 
-	size_t bytereceived = response.GetSize() - 4;
+	size_t bytereceived = response.GetSize() - SB_JVMPACKET_HEADER_SIZE;
 
 	// Check the size read into the previous packet
 	if( expect != bytereceived ) {

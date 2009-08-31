@@ -84,7 +84,10 @@ public:
 	uint32_t	Id;
 	uint8_t		Byte;
 	uint32_t	Address;
-	uint32_t	Unknown01;
+	uint32_t	Unknown01;	// FIXME - perhaps should not expose
+					// these to the app level, until we
+					// have a name for them, since they
+					// might change without notice
 	uint32_t	Unknown02;
 	uint32_t	Unknown03;
 	uint32_t	Unknown04;
@@ -133,7 +136,8 @@ public:
 	void Detach();
 
 	// mid-attachment operations
-	void Unknown01();
+	void Unknown01();	// FIXME - make these into a proper API, or
+				// hide under protected:
 	void Unknown02();
 	void Unknown03();
 	void Unknown04();
