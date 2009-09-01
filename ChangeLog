@@ -1,5 +1,8 @@
 Release: version 0.16 - 2009/09/??
 ------------------------------------------------------------------------------
+2009/09/01
+	- applied chatscript patch from Andrew Nording
+		Sourceforge tracker #2848549
 2009/08/31
 	- pulled from Nicolas Vivien's repo.or.cz repo: bjvmdebug support
 		With rebase changes and fixes to library.
