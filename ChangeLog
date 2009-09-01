@@ -5,6 +5,9 @@ Release: version 0.16 - 2009/09/??
 		Sourceforge tracker #2848549
 	- added KPN chatscripts to DEB and RPM binary packages
 	- added KPN to script list in doc/www/modem.php
+	- pulled from Nicolas Vivien: a909925ef6bf3d75b1597a9ddd16f52201690cbb
+		Fixes for library and bjdwp documentation
+	- moved bjdwp/doc/* to doc/bjdwp/ to keep docs in one spot
 2009/08/31
 	- pulled from Nicolas Vivien's repo.or.cz repo: bjvmdebug support
 		With rebase changes and fixes to library.
