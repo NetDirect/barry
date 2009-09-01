@@ -24,6 +24,7 @@ Target: release version 0.16 (Sept 10)
 		- add bjdwp to debian and rpm binary packages
 	- incorporate barrybackup GUI changes by Ryan Li
 		- File | Quit in the middle of a backup shows no warning
+	- incorporate Martin Owens' Barry logo/icon into Barry
 
 Target: release version 0.17 (Oct 1)
 	- test and fix all build and functionality issues on:
