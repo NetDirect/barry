@@ -248,7 +248,7 @@ void BackupWindow::CheckDeviceName(Thread *thread)
 {
 	if( !thread->HasDeviceName() ) {
 		PromptDlg dlg;
-		dlg.SetPrompt("Unnamed device found. Please enter a name for it:");
+		dlg.SetPrompt("Unnamed device found (PIN: " + thread->GetPIN().str() + ").\r\nPlease enter a name for it:");
 		if( dlg.run() == Gtk::RESPONSE_OK ) {
 			thread->SetDeviceName(dlg.GetAnswer());
 		}
