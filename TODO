@@ -56,6 +56,19 @@ Target: release version 0.18 (Nov 13)
 General Features
 ==============================================================================
 
+Add media management via USB
+----------------------------
+The Windows version of desktop software has the ability to manage
+photos on the Blackberry that are not stored on a flash card, but
+are instead stored in the Blackberry's internal memory.
+
+It is challenging, on some devices, to even copy such photos and
+media to the flash card.
+
+Capture the USB traffic for this media management, and add support
+to Barry.
+
+
 Add HAL/dbus support to BarryBackup
 -----------------------------------
 The latest version of the backup program lists devices in a combo box,
