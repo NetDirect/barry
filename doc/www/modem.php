@@ -29,6 +29,7 @@ providers:
 <ul>
 	<li> AT&amp;T Cingular </li>
 	<li> China Mobile </li>
+	<li> KPN Nederland </li>
 	<li> O2 Ireland </li>
 	<li> Rogers </li>
 	<li> Sprint </li>
