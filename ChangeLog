@@ -17,6 +17,15 @@ Release: version 0.16 - 2009/09/??
 		- removed copyrighted Sun documentation from bjdwp/doc/
 	- fixed longstanding buffer size check bug in CheckSize()
 	- updated AUTHORS
+	- applied Ryan Li's latest threaded GUI patch (2009/08/25 email)
+		- gui: added a wrapper around pStatusbar->push() to avoid
+			the never ending push syndrome
+	- gui: added PIN to the "please name new device" dialog
+	- gui: added statusbar workaround: normally the statusbar shows
+		Ready after initialization, but since the initial Scan()
+		happens right away, and the statusbar doesn't seem to
+		update the screen until the handler is finished,
+		we update the status bar during init instead
 2009/08/30
 	- applied Martin Owens' ppa_build.sh patch
 	- added version output when -v is used in btool
