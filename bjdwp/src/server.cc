@@ -222,7 +222,7 @@ void JDWServer::attachToDevice() {
 
 void JDWServer::detachFromDevice() {
 	jvmdebug->Detach();
-	jvmdebug->Close();
+//	jvmdebug->Close();
 }
 
 
