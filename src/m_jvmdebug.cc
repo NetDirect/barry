@@ -212,6 +212,18 @@ void JVMDebug::OnOpen()
 	m_socket->InitSequence();
 }
 
+// FIXME - is this necessary?  and if it is, wouldn't it be better
+// in the m_jvmdebug mode class?  I'm not convinced that applications
+// should have to bother with socket-level details.
+void JVMDebug::Close()
+{
+	if( m_ModeSocket ) {
+		m_socket->Close();
+		m_socket.reset();
+		m_ModeSocket = 0;
+	}
+}
+
 //
 // Attach
 //

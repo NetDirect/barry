@@ -132,6 +132,8 @@ public:
 
 	//////////////////////////////////
 	// API
+	void Close();
+
 	void Attach();
 	void Detach();
 
