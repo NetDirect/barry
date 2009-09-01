@@ -21,6 +21,7 @@ Target: release version 0.16 (Sept 10)
 		- fix any lingering compile problems and FIXMEs
 		- man page for bjdwp app
 		- www documentation for bjdwp app
+		- add bjdwp to debian and rpm binary packages
 	- incorporate barrybackup GUI changes by Ryan Li
 
 Target: release version 0.17 (Oct 1)
