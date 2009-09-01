@@ -63,6 +63,8 @@ Contributors (code and otherwise) in alphabetical order by last name:
 		- autoconf patches
 	Alan Miller <Alan.Miller@synopsys.com>
 		- usb captures on Windows XP for password authentication
+	Andrew Nording (https://sourceforge.net/users/nording/)
+		- ppp chatscripts for KPN Nederland
 	Martin Owens <doctormo@gmail.com>
 		- integration with HAL, udev, opensync, and Conduit
 		- low level USB testing
