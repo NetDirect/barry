@@ -112,7 +112,11 @@ BackupWindow::BackupWindow(BaseObjectType *cobject,
 	Glib::signal_timeout().connect(
 		sigc::mem_fun(*this, &BackupWindow::on_startup), 500);
 
-	m_pStatusbar->push("Ready");
+	// workaround: normally this should say "Ready" but since
+	// the initial Scan() happens right away, and the statusbar
+	// doesn't seem to update the screen until the handler is
+	// finished, we update the status bar here instead
+	StatusbarSet("Scanning for devices...");
 
 	// do this last so that any exceptions in the constructor
 	// won't cause a connected signal handler to a non-object
