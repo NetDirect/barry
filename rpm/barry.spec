@@ -161,6 +161,7 @@ cd ../
 %{__cp} ppp/barry-tmobileus %{buildroot}%{_sysconfdir}/ppp/peers/
 %{__cp} ppp/barry-att_cingular %{buildroot}%{_sysconfdir}/ppp/peers/
 %{__cp} ppp/barry-chinamobile %{buildroot}%{_sysconfdir}/ppp/peers/
+%{__cp} ppp/barry-kpn %{buildroot}%{_sysconfdir}/ppp/peers/
 %{__mkdir_p} %{buildroot}%{_sysconfdir}/chatscripts
 %{__cp} ppp/barry-rogers.chat %{buildroot}%{_sysconfdir}/chatscripts/
 %{__cp} ppp/barry-verizon.chat %{buildroot}%{_sysconfdir}/chatscripts/
@@ -169,6 +170,7 @@ cd ../
 %{__cp} ppp/barry-tmobileus.chat %{buildroot}%{_sysconfdir}/chatscripts/
 %{__cp} ppp/barry-att_cingular.chat %{buildroot}%{_sysconfdir}/chatscripts/
 %{__cp} ppp/barry-chinamobile.chat %{buildroot}%{_sysconfdir}/chatscripts/
+%{__cp} ppp/barry-kpn.chat %{buildroot}%{_sysconfdir}/chatscripts/
 # Install hal fdi config
 %{__mkdir_p} %{buildroot}%{_datadir}/hal/fdi/information/10freedesktop
 %{__mkdir_p} %{buildroot}%{_datadir}/hal/fdi/policy/10osvendor
@@ -244,6 +246,7 @@ cd ../
 %attr(0644,root,root) %config %{_sysconfdir}/ppp/peers/barry-tmobileus
 %attr(0644,root,root) %config %{_sysconfdir}/ppp/peers/barry-att_cingular
 %attr(0644,root,root) %config %{_sysconfdir}/ppp/peers/barry-chinamobile
+%attr(0644,root,root) %config %{_sysconfdir}/ppp/peers/barry-kpn
 %attr(0640,root,root) %config %{_sysconfdir}/chatscripts/barry-rogers.chat
 %attr(0640,root,root) %config %{_sysconfdir}/chatscripts/barry-verizon.chat
 %attr(0640,root,root) %config %{_sysconfdir}/chatscripts/barry-sprint.chat
@@ -251,6 +254,7 @@ cd ../
 %attr(0640,root,root) %config %{_sysconfdir}/chatscripts/barry-tmobileus.chat
 %attr(0640,root,root) %config %{_sysconfdir}/chatscripts/barry-att_cingular.chat
 %attr(0640,root,root) %config %{_sysconfdir}/chatscripts/barry-chinamobile.chat
+%attr(0640,root,root) %config %{_sysconfdir}/chatscripts/barry-kpn.chat
 %doc COPYING
 
 %if %{with_gui}
@@ -283,6 +287,7 @@ cd ../
 %changelog
 * Sat Aug 29 2009 Chris Frey <cdfrey@foursquare.net> 0.16-0
 - version bump
+- added new ppp chat script for KPN Nederland
 
 * Fri Apr 10 2009 Chris Frey <cdfrey@foursquare.net> 0.15-0
 - version bump
