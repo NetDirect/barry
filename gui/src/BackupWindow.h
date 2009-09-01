@@ -84,6 +84,9 @@ class BackupWindow : public Gtk::Window
 	// whether scanned
 	bool m_scanned;
 
+	// statusbar message ID's
+	guint m_last_status_id;
+
 protected:
 	void Scan();
 	bool Connect(Thread *);
@@ -92,6 +95,7 @@ protected:
 	bool PromptForRestoreTarball(std::string &restoreFilename,
 		const std::string &start_path);
 	Thread *GetActive();
+	void StatusbarSet(const Glib::ustring& text);
 
 public:
 	BackupWindow(BaseObjectType *cobject, const Glib::RefPtr<Gnome::Glade::Xml> &xml);

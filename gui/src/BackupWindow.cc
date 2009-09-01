@@ -44,6 +44,7 @@ BackupWindow::BackupWindow(BaseObjectType *cobject,
 	, m_device_count(0)
 	, m_pActive(0)
 	, m_scanned(false)
+	, m_last_status_id(0)
 {
 	m_signal_update.connect(
 		sigc::mem_fun(*this, &BackupWindow::treeview_update));
@@ -128,7 +129,7 @@ BackupWindow::~BackupWindow()
 
 void BackupWindow::Scan()
 {
-	m_pStatusbar->push("Scanning for devices...");
+	StatusbarSet("Scanning for devices...");
 
 	m_pListStore->clear();
 	m_threads.clear();
@@ -159,7 +160,7 @@ void BackupWindow::Scan()
 	// all devices loaded
 	m_scanned = true;
 
-	m_pStatusbar->push("All devices loaded.");
+	StatusbarSet("All devices loaded.");
 
 	// if one or more device plugged in,
 	// activate the first one
@@ -173,7 +174,7 @@ bool BackupWindow::Connect(Thread *thread)
 	if( thread->Connected() )
 		return true;
 
-	m_pStatusbar->push("Connecting to Device...");
+	StatusbarSet("Connecting to Device...");
 	static int tries(0);
 
 	CheckDeviceName(thread);
@@ -187,7 +188,7 @@ bool BackupWindow::Connect(Thread *thread)
 					connected = thread->Connect(dlg.GetPassword());
 				else { // user cancelled
 					thread->Reset();
-					m_pStatusbar->push("Connection cancelled.");
+					StatusbarSet("Connection cancelled.");
 					return false;
 				}
 			}
@@ -195,7 +196,7 @@ bool BackupWindow::Connect(Thread *thread)
 			{
 				Gtk::MessageDialog msg(thread->BadPasswordError());
 				msg.run();
-				m_pStatusbar->push("Cannot connect to " + thread->GetFullname() + ".");
+				StatusbarSet("Cannot connect to " + thread->GetFullname() + ".");
 				return false;
 			}
 		}
@@ -210,19 +211,19 @@ bool BackupWindow::Connect(Thread *thread)
 			else {
 				Gtk::MessageDialog msg(thread->BadSizeError());
 				msg.run();
-				m_pStatusbar->push("Cannot connect to " + thread->GetFullname() + ".");
+				StatusbarSet("Cannot connect to " + thread->GetFullname() + ".");
 				return false;
 			}
 		}
 		else {
 			Gtk::MessageDialog msg(thread->LastInterfaceError());
 			msg.run();
-			m_pStatusbar->push("Cannot connect to " + thread->GetFullname() + ".");
+			StatusbarSet("Cannot connect to " + thread->GetFullname() + ".");
 			return false;
 		}
 	}
 	tries = 0;
-	m_pStatusbar->push("Connected to " + thread->GetFullname() + ".");
+	StatusbarSet("Connected to " + thread->GetFullname() + ".");
 	return true;
 }
 
@@ -238,10 +239,10 @@ void BackupWindow::Disconnect(Thread *thread)
 
 	if( thread->Connected() ) {
 		thread->Disconnect();
-		m_pStatusbar->push("Disconnected from " + thread->GetFullname() + ".");
+		StatusbarSet("Disconnected from " + thread->GetFullname() + ".");
 	}
 	else
-		m_pStatusbar->push("Not connected.");
+		StatusbarSet("Not connected.");
 }
 
 void BackupWindow::CheckDeviceName(Thread *thread)
@@ -272,6 +273,16 @@ Thread *BackupWindow::GetActive()
 	}
 	else
 		return 0;
+}
+
+void BackupWindow::StatusbarSet(const Glib::ustring& text)
+{
+	guint remove_id = m_last_status_id;
+	if( m_pStatusbar ) {
+		m_last_status_id = m_pStatusbar->push(text);
+		if( remove_id )
+			m_pStatusbar->remove_message(remove_id);
+	}
 }
 
 void BackupWindow::signal_exception_handler()
@@ -319,7 +330,7 @@ void BackupWindow::treeview_update()
 		}
 		(*i)[m_columns.m_percentage] = percentage;
 		if( thread->CheckFinishedMarker() )
-			m_pStatusbar->push("Operation on " + thread->GetFullname() + " finished!");
+			StatusbarSet("Operation on " + thread->GetFullname() + " finished!");
 	}
 }
 
@@ -372,7 +383,7 @@ void BackupWindow::on_backup()
 		msg.run();
 	}
 	else
-		m_pStatusbar->push("Backup of " + thread->GetFullname() + " in progress...");
+		StatusbarSet("Backup of " + thread->GetFullname() + " in progress...");
 }
 
 bool BackupWindow::PromptForRestoreTarball(std::string &restoreFilename,
@@ -426,7 +437,7 @@ void BackupWindow::on_restore()
 		msg.run();
 	}
 	else {
-		m_pStatusbar->push("Backup of " + thread->GetFullname() + " in progress...");
+		StatusbarSet("Backup of " + thread->GetFullname() + " in progress...");
 	}
 }
 
@@ -473,10 +484,10 @@ void BackupWindow::on_config()
 		thread->SetBackupPath(dlg.GetBackupPath());
 		thread->SetPromptBackupLabel(dlg.GetPromptBackupLabel());
 		if( !thread->Save() )
-			m_pStatusbar->push("Error saving config: " +
+			StatusbarSet("Error saving config: " +
 				thread->LastConfigError());
 		else
-			m_pStatusbar->push("Config saved successfully.");
+			StatusbarSet("Config saved successfully.");
 	}
 	thread->LoadConfig();
 }
