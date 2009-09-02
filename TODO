@@ -25,6 +25,11 @@ Target: release version 0.16 (Sept 10)
 	- incorporate barrybackup GUI changes by Ryan Li
 		- File | Quit in the middle of a backup shows no warning
 	- incorporate Martin Owens' Barry logo/icon into Barry
+		- connect icon with barrybackup
+		- add to documentation page?
+		- add to identi.ca barry group
+		- add to sourceforge
+		- add to repo.or.cz
 
 Target: release version 0.17 (Oct 1)
 	- test and fix all build and functionality issues on:
