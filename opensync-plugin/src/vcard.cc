@@ -254,6 +254,71 @@ const std::string& vCard::ToVCard(const Barry::Contact &con)
 	return m_vCardData;
 }
 
+//
+// NOTE:
+//	Treat the following pairs of variables like
+//	sliding buffers, where higher priority values
+//	can push existings values from 1 to 2, or from
+//	2 to oblivion:
+//
+//		HomePhone + HomePhone2
+//		WorkPhone + WorkPhone2
+//		Phone + OtherPhone
+//
+//
+// class SlidingPair
+//
+// This class handles the sliding pair logic for a pair of std::strings.
+//
+class SlidingPair
+{
+	std::string &m_first;
+	std::string &m_second;
+	int m_evolutionSlot1, m_evolutionSlot2;
+public:
+	static const int DefaultSlot = 99;
+	SlidingPair(std::string &first, std::string &second)
+		: m_first(first)
+		, m_second(second)
+		, m_evolutionSlot1(DefaultSlot)
+		, m_evolutionSlot2(DefaultSlot)
+	{
+	}
+
+	bool assign(const std::string &value, const char *type_str, int evolutionSlot)
+	{
+		bool used = false;
+
+		if( strstr(type_str, "pref") || evolutionSlot < m_evolutionSlot1 ) {
+			m_second = m_first;
+			m_evolutionSlot2 = m_evolutionSlot1;
+
+			m_first = value;
+			m_evolutionSlot1 = evolutionSlot;
+
+			used = true;
+		}
+		else if( evolutionSlot < m_evolutionSlot2 ) {
+			m_second = value;
+			m_evolutionSlot2 = evolutionSlot;
+			used = true;
+		}
+		else if( m_first.size() == 0 ) {
+			m_first = value;
+			m_evolutionSlot1 = evolutionSlot;
+			used = true;
+		}
+		else if( m_second.size() == 0 ) {
+			m_second = value;
+			m_evolutionSlot2 = evolutionSlot;
+			used = true;
+		}
+
+		return used;
+	}
+};
+
+
 // Main conversion routine for converting from vCard data string
 // to a Barry::Contact object.
 const Barry::Contact& vCard::ToBarry(const char *vcard, uint32_t RecordId)
@@ -304,11 +369,25 @@ const Barry::Contact& vCard::ToBarry(const char *vcard, uint32_t RecordId)
 	}
 
 
+	//
+	// NOTE:
+	//	Treat the following pairs of variables like
+	//	sliding buffers, where higher priority values
+	//	can push existings values from 1 to 2, or from
+	//	2 to oblivion:
+	//
+	//		HomePhone + HomePhone2
+	//		WorkPhone + WorkPhone2
+	//		Phone + OtherPhone
+	//
+	SlidingPair HomePair(con.HomePhone, con.HomePhone2);
+	SlidingPair WorkPair(con.WorkPhone, con.WorkPhone2);
+	SlidingPair OtherPair(con.Phone, con.OtherPhone);
+
 	// add all applicable phone numbers... there can be multiple
 	// TEL fields, even with the same TYPE value... therefore, the
 	// second TEL field with a TYPE=work, will be stored in WorkPhone2
 	vAttr tel = GetAttrObj("TEL");
-	int lastWorkEvolutionSlot = 99, lastHomeEvolutionSlot = 99;
 	for( int i = 0; tel.Get(); tel = GetAttrObj("TEL", ++i) )
 	{
 		// grab all parameter values for this param name
@@ -321,7 +400,7 @@ const Barry::Contact& vCard::ToBarry(const char *vcard, uint32_t RecordId)
 		// their order if possible
 		int evolutionSlot = atoi(tel.GetAllParams("X-EVOLUTION-UI-SLOT").c_str());
 		if( evolutionSlot == 0 )
-			evolutionSlot = 99;
+			evolutionSlot = SlidingPair::DefaultSlot;
 
 		// turn to lower case for comparison
 		// FIXME - is this i18n safe?
@@ -352,13 +431,11 @@ const Barry::Contact& vCard::ToBarry(const char *vcard, uint32_t RecordId)
 		if( strstr(type, "pref") ) {
 			// Always use cell phone if the "pref" flag is set
 			if( strstr(type, "cell") ) {
-				con.Phone = tel.GetValue();
-				used = true;
+				used = OtherPair.assign(tel.GetValue(), type, evolutionSlot);
 			}
 			// Otherwise, the phone has to be "voice" type
 			else if( strstr(type, "voice") && con.Phone.size() == 0 ) {
-				con.Phone = tel.GetValue();
-				used = true;
+				used = OtherPair.assign(tel.GetValue(), type, evolutionSlot);
 			}
 		}
 
@@ -388,53 +465,19 @@ const Barry::Contact& vCard::ToBarry(const char *vcard, uint32_t RecordId)
 		// Voice telephone :
 		else { 
 			if( strstr(type, "work") ) {
-				if( strstr(type, "pref") || evolutionSlot < lastWorkEvolutionSlot ) {
-					con.WorkPhone2 = con.WorkPhone;
-					con.WorkPhone = tel.GetValue();
-					used = true;
-				}
-				else if( con.WorkPhone.size() == 0 ) {
-					con.WorkPhone = tel.GetValue();
-					used = true;
-				}
-				else if( con.WorkPhone2.size() == 0 ) {
-					con.WorkPhone2 = tel.GetValue();
-					used = true;
-				}
-
-				// remember slot
-				lastWorkEvolutionSlot = evolutionSlot;
+				used = WorkPair.assign(tel.GetValue(), type, evolutionSlot);
 			}
 
 			if( strstr(type, "home") ) {
-				if( strstr(type, "pref") || evolutionSlot < lastHomeEvolutionSlot ) {
-					con.HomePhone2 = con.HomePhone;
-					con.HomePhone = tel.GetValue();
-					used = true;
-				}
-				if( con.HomePhone.size() == 0 ) {
-					con.HomePhone = tel.GetValue();
-					used = true;
-				}
-				else if( con.HomePhone2.size() == 0 ) {
-					con.HomePhone2 = tel.GetValue();
-					used = true;
-				}
-
-				// remember slot
-				lastHomeEvolutionSlot = evolutionSlot;
+				used = HomePair.assign(tel.GetValue(), type, evolutionSlot);
 			}
 		}
 
 		// if this value has not been claimed by any of the
 		// cases above, claim it now as "OtherPhone"
 		if( !used && con.OtherPhone.size() == 0 ) {
-			con.OtherPhone = tel.GetValue();
+			OtherPair.assign(tel.GetValue(), type, evolutionSlot);
 		}
-	}
-	// Final check: If Phone is blank, and OtherPhone has a value, swap.
-	if( con.OtherPhone.size() && !con.Phone.size() ) {
-		con.Phone.swap(con.OtherPhone);
 	}
 
 	// scan for all email addresses... append addresses to the

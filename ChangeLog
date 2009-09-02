@@ -1,5 +1,8 @@
 Release: version 0.16 - 2009/09/??
 ------------------------------------------------------------------------------
+2009/09/02
+	- fixed syncing of 8 contact phone numbers. Reported by
+		Ian B. MacDonald, 2009/08/22
 2009/09/01
 	- applied chatscript patch from Andrew Nording
 		Sourceforge tracker #2848549
