@@ -152,6 +152,8 @@ static void * acceptWrapper(void *data) {
 		s->acceptConnection();
 
 		s->attachToDevice();
+
+		s->initVisibleClassList();
 		
 		if (s->hello()) {
 			s->run();
@@ -352,6 +354,47 @@ bool JDWServer::stop() {
 }
 
 
+void JDWServer::initVisibleClassList() {
+	int index;
+
+	// Skip the cell '0'
+	// it's very ugly, but I want use an index started at '1' inside of '0'
+	// JDB works from '1' :(
+	JDGClassEntry e;
+	visibleClassList.push_back(e);
+
+	// Count and index the class (start to '1')
+	index = 1;
+	map<uint32_t, JDWAppInfo>::iterator it;
+
+	for (it = appList.begin(); it != appList.end(); it++) {
+		JDWAppInfo *appInfo = &(it->second);
+		JDGClassList *list = &(appInfo->classList);
+	
+		vector<JDGClassEntry>::iterator b;
+
+		for (b = list->begin(); b != list->end(); b++) {
+			// FIXME
+			// I don't from class field, we have to filter the class view by JDB
+//			if ((b->type != 0x824) && (b->type != 0x64)) {
+			if (b->id == 0xffffffff) {
+				b->index = -1;
+
+				continue;
+			}
+
+			b->index = index;
+
+			visibleClassList.push_back(*b);
+
+			index++;
+		}
+	}
+
+	visibleClassList.createDefaultEntries();
+}
+
+
 void JDWServer::CommandsetProcess(Data &cmd) {
 	MAKE_JDWPPACKET(rpack, cmd);
 
@@ -510,28 +553,9 @@ void JDWServer::CommandVersion(Data &cmd) {
 }
 
 
-//struct ClassesFormat {
-//	uint8_t refTypeTag;
-//	uint32_t typeID;
-//	const char *signature;
-//	uint32_t status;
-//};
-//	struct ClassesFormat myClasses[] = { 
-//		{ 0x01, 0x01, "Lcom/rim/resources/net_rim_rimsecuridlibRIMResources;", 0x04 },
-//		{ 0x01, 0x02, "Lnet/rim/device/cldc/impl/softtoken/rimsecuridlib/RimDatabaseFullException;", 0x04 },
-//		{ 0x01, 0x03, "Lnet/rim/device/cldc/impl/softtoken/rimsecuridlib/RimDecryptFailException;", 0x04 },
-//		{ 0x01, 0x04, "Lnet/rim/device/cldc/impl/softtoken/rimsecuridlib/RimDuplicateNameException;", 0x04 },
-//		{ 0x01, 0x05, "Lnet/rim/device/cldc/impl/softtoken/rimsecuridlib/RimDuplicateTokenException;", 0x04 },
-//		{ 0x01, 0x06, "Lnet/rim/device/cldc/impl/softtoken/rimsecuridlib/RimInvalidParamException;", 0x04 },
-//		{ 0x01, 0x07, "Lnet/rim/device/cldc/impl/softtoken/rimsecuridlib/RimSecurIDLib;", 0x04 },
-//		{ 0x01, 0x08, "Lnet/rim/device/cldc/impl/softtoken/rimsecuridlib/RimWrongDeviceIDException;", 0x04 },
-//		{ 0x01, 0x09, "Lnet/rim/device/cldc/impl/softtoken/rimsecuridlib/RimWrongFormFactorException;", 0x04 },
-//		{ 0xFF }
-//	};
-
-
 void JDWServer::CommandAllClasses(Data &cmd) {
-	int index;
+	int i;
+	int size;
 
 	JDWMessage msg(fd);
 
@@ -540,100 +564,23 @@ void JDWServer::CommandAllClasses(Data &cmd) {
 
 	size_t offset = JDWP_PACKET_HEADER_SIZE + JDWP_RESPONSE_HEADER_SIZE;
 
-	// Count and index the class (start to '1')
-	index = 1;
-	map<uint32_t, JDWAppInfo>::iterator it;
+	// Size of known class list
+	size = visibleClassList.size() - 1;
 
-	for (it = appList.begin(); it != appList.end(); it++) {
-		JDWAppInfo *appInfo = &(it->second);
-		JDGClassList *list = &(appInfo->classList);
-	
-		vector<JDGClassEntry>::iterator b;
-
-		for (b = list->begin(); b != list->end(); b++) {
-			// FIXME
-			// I don't from class field, we have to filter the class view by JDB
-			if (b->type != 0x824)
-				continue;
-
-			b->index = index++;
-		}
-	}
-
-	// Add '9' for the static class
-	AddDataInt(response, offset, be_htobl(index + 9 - 1));
+	AddDataInt(response, offset, be_htobl(size));
 
 	// Then, write the list of known class
-	for (it = appList.begin(); it != appList.end(); it++) {
-		JDWAppInfo *appInfo = &(it->second);
-		JDGClassList *list = &(appInfo->classList);
-	
-		vector<JDGClassEntry>::iterator b;
+	for (i=1; i<visibleClassList.size(); i++) {
+		string str = visibleClassList[i].getFullClassName();
 
-		for (b = list->begin(); b != list->end(); b++) {
-			// FIXME
-			// I don't from class field, we have to filter the class view by JDB
-			if (b->type != 0x824)
-				continue;
+		str = "L" + str + ";";
+		replace_if(str.begin(), str.end(), bind2nd(equal_to<char>(),'.'), '/');
 
-			string str = b->getFullClassName();
-
-			str = "L" + str + ";";
-//			replace_if(str.begin(), str.end(), bind2nd(equal_to<char>(),'.'), '/');
-cout << hex << b->index << "-" << str << "-" << endl;
-			AddDataByte(response, offset, 0x01);
-			AddDataInt(response, offset, b->index);
-			AddDataString(response, offset, str);
-			AddDataInt(response, offset, be_htobl(0x04));
-		}
+		AddDataByte(response, offset, 0x01);
+		AddDataInt(response, offset, i);	// Should be equal to visibleClassList[i].index
+		AddDataString(response, offset, str);
+		AddDataInt(response, offset, be_htobl(0x04));
 	}
-
-	// Then, write the default class (like RIM)
-	AddDataByte(response, offset, 0x01);
-	AddDataInt(response, offset, index++);
-	AddDataString(response, offset, "Lcom/rim/resources/net_rim_rimsecuridlibRIMResources;");
-	AddDataInt(response, offset, be_htobl(0x04));
-
-	AddDataByte(response, offset, 0x01);
-	AddDataInt(response, offset, index++);
-	AddDataString(response, offset, "Lnet/rim/device/cldc/impl/softtoken/rimsecuridlib/RimDatabaseFullException;");
-	AddDataInt(response, offset, be_htobl(0x04));
-
-	AddDataByte(response, offset, 0x01);
-	AddDataInt(response, offset, index++);
-	AddDataString(response, offset, "Lnet/rim/device/cldc/impl/softtoken/rimsecuridlib/RimDecryptFailException;");
-	AddDataInt(response, offset, be_htobl(0x04));
-
-	AddDataByte(response, offset, 0x01);
-	AddDataInt(response, offset, index++);
-	AddDataString(response, offset, "Lnet/rim/device/cldc/impl/softtoken/rimsecuridlib/RimDuplicateNameException;");
-	AddDataInt(response, offset, be_htobl(0x04));
-
-	AddDataByte(response, offset, 0x01);
-	AddDataInt(response, offset, index++);
-	AddDataString(response, offset, "Lnet/rim/device/cldc/impl/softtoken/rimsecuridlib/RimDuplicateTokenException;");
-	AddDataInt(response, offset, be_htobl(0x04));
-
-	AddDataByte(response, offset, 0x01);
-	AddDataInt(response, offset, index++);
-	AddDataString(response, offset, "Lnet/rim/device/cldc/impl/softtoken/rimsecuridlib/RimInvalidParamException;");
-	AddDataInt(response, offset, be_htobl(0x04));
-
-	AddDataByte(response, offset, 0x01);
-	AddDataInt(response, offset, index++);
-	AddDataString(response, offset, "Lnet/rim/device/cldc/impl/softtoken/rimsecuridlib/RimSecurIDLib;");
-	AddDataInt(response, offset, be_htobl(0x04));
-
-	AddDataByte(response, offset, 0x01);
-	AddDataInt(response, offset, index++);
-	AddDataString(response, offset, "Lnet/rim/device/cldc/impl/softtoken/rimsecuridlib/RimWrongDeviceIDException;");
-	AddDataInt(response, offset, be_htobl(0x04));
-
-	AddDataByte(response, offset, 0x01);
-	AddDataInt(response, offset, index++);
-	AddDataString(response, offset, "Lnet/rim/device/cldc/impl/softtoken/rimsecuridlib/RimWrongFormFactorException;");
-	AddDataInt(response, offset, be_htobl(0x04));
-
 
 	response.ReleaseBuffer(offset);
 

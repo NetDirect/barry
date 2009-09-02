@@ -15,9 +15,6 @@ namespace JDWP {
 //------------------
 
 
-// JDWAppInfo class
-//------------------
-
 void JDWAppInfo::load(JDGCodInfo &info)
 {
 	cout << "JDWAppInfo::load" << endl;

@@ -169,6 +169,65 @@ void JDGDebugFileEntry::Dump(std::ostream &os) const
 }
 
 
+// JDGClassList class
+//---------------------------
+
+
+void JDGClassList::createDefaultEntries() {
+	JDGClassEntry entry;
+
+	// 1
+	entry.classPath = "com.rim.resources";
+	entry.className = "net_rim_rimsecuridlibRIMResources";
+	push_back(entry);
+
+	// 2
+	entry.classPath = "net.rim.device.cldc.impl.softtoken.rimsecuridlib";
+	entry.className = "RimSecurIDLib";
+	push_back(entry);
+
+	// 3
+	entry.classPath = "net.rim.device.cldc.impl.softtoken.rimsecuridlib";
+	entry.className = "RimDatabaseFullException";
+	push_back(entry);
+
+	// 4
+	entry.classPath = "net.rim.device.cldc.impl.softtoken.rimsecuridlib";
+	entry.className = "RimDecryptFailException";
+	push_back(entry);
+
+	// 5
+	entry.classPath = "net.rim.device.cldc.impl.softtoken.rimsecuridlib";
+	entry.className = "RimDuplicateNameException";
+	push_back(entry);
+
+	// 6
+	entry.classPath = "net.rim.device.cldc.impl.softtoken.rimsecuridlib";
+	entry.className = "RimDuplicateTokenException";
+	push_back(entry);
+
+	// 7
+	entry.classPath = "net.rim.device.cldc.impl.softtoken.rimsecuridlib";
+	entry.className = "RimInvalidParamException";
+	push_back(entry);
+
+	// 8
+	entry.classPath = "net.rim.device.cldc.impl.softtoken.rimsecuridlib";
+	entry.className = "RimSecurIDLib";
+	push_back(entry);
+
+	// 9
+	entry.classPath = "net.rim.device.cldc.impl.softtoken.rimsecuridlib";
+	entry.className = "RimWrongDeviceIDException";
+	push_back(entry);
+
+	// 10
+	entry.classPath = "net.rim.device.cldc.impl.softtoken.rimsecuridlib";
+	entry.className = "RimWrongFormFactorException";
+	push_back(entry);
+}
+
+
 // JDGCodInfo class
 //------------------------
 
@@ -348,7 +407,8 @@ void JDGCodInfo::parseBoolean(ifstream &input)
 
 	string str = ParseString(input, len);
 
-	cout << "Boolean name : " << str << endl;
+	cout << "JDGCodInfo::parseBoolean" << endl;
+	cout << "  name : " << str << endl;
 }
 
 
@@ -358,7 +418,8 @@ void JDGCodInfo::parseByte(ifstream &input)
 
 	string str = ParseString(input, len);
 
-	cout << "Byte name : " << str << endl;
+	cout << "JDGCodInfo::parseByte" << endl;
+	cout << "  name : " << str << endl;
 }
 
 
@@ -368,7 +429,8 @@ void JDGCodInfo::parseChar(ifstream &input)
 
 	string str = ParseString(input, len);
 
-	cout << "Char name : " << str << endl;
+	cout << "JDGCodInfo::parseChar" << endl;
+	cout << "  name : " << str << endl;
 }
 
 
@@ -378,7 +440,8 @@ void JDGCodInfo::parseShort(ifstream &input)
 
 	string str = ParseString(input, len);
 
-	cout << "Short name : " << str << endl;
+	cout << "JDGCodInfo::parseShort" << endl;
+	cout << "  name : " << str << endl;
 }
 
 
@@ -388,7 +451,8 @@ void JDGCodInfo::parseInt(ifstream &input)
 
 	string str = ParseString(input, len);
 
-	cout << "Int name : " << str << endl;
+	cout << "JDGCodInfo::parseInt" << endl;
+	cout << "  name : " << str << endl;
 }
 
 
@@ -398,7 +462,8 @@ void JDGCodInfo::parseLong(ifstream &input)
 
 	string str = ParseString(input, len);
 
-	cout << "Long name : " << str << endl;
+	cout << "JDGCodInfo::parseLong" << endl;
+	cout << "  name : " << str << endl;
 }
 
 
@@ -437,7 +502,17 @@ void JDGCodInfo::parseClass(ifstream &input)
 
 	classList.push_back(object);
 
-	cout << "class added !" << endl;
+	cout << "  name : " << object.className << endl;
+	cout << "  path : " << object.classPath << endl;
+	cout << "  type : " << hex << object.type << endl;
+	cout << "  unknown02 : " << hex << object.unknown02 << endl;
+	cout << "  unknown03 : " << hex << object.unknown03 << endl;
+	cout << "  id : " << hex << object.id << endl;
+	cout << "  source file : " << object.sourceFile << endl;
+	cout << "  unknown05 : " << hex << object.unknown05 << endl;
+	cout << "  unknown06 : " << hex << object.unknown06 << endl;
+	cout << "  unknown07 : " << hex << object.unknown07 << endl;
+	cout << "  unknown08 : " << hex << object.unknown08 << endl;
 }
 
 
@@ -447,7 +522,8 @@ void JDGCodInfo::parseArray(ifstream &input)
 
 	string str = ParseString(input, len);
 
-	cout << "Array name : " << str << endl;
+	cout << "JDGCodInfo::parseArray" << endl;
+	cout << "  name : " << str << endl;
 }
 
 
@@ -457,7 +533,8 @@ void JDGCodInfo::parseVoid(ifstream &input)
 
 	string str = ParseString(input, len);
 
-	cout << "Void : " << str << endl;
+	cout << "JDGCodInfo::parseVoid" << endl;
+	cout << "  name : " << str << endl;
 }
 
 
@@ -467,7 +544,8 @@ void JDGCodInfo::parseDouble(ifstream &input)
 
 	string str = ParseString(input, len);
 
-	cout << "Double : " << str << endl;
+	cout << "JDGCodInfo::parseDouble" << endl;
+	cout << "  name : " << str << endl;
 }
 
 /*
