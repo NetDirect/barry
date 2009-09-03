@@ -1,5 +1,7 @@
 Release: version 0.16 - 2009/09/??
 ------------------------------------------------------------------------------
+2009/09/03
+	- added version output when -v is used in pppob
 2009/09/02
 	- fixed syncing of 8 contact phone numbers. Reported by
 		Ian B. MacDonald, 2009/08/22

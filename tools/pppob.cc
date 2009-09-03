@@ -184,6 +184,13 @@ int main(int argc, char *argv[])
 			Barry::Init(data_dump, &std::cerr);
 		}
 
+		// Display version if in data_dump mode
+		if( data_dump ) {
+			int major, minor;
+			const char *Version = Barry::Version(major, minor);
+			barryverbose(Version);
+		}
+
 		// Probe the USB bus for Blackberry devices and display.
 		// If user has specified a PIN, search for it in the
 		// available device list here as well
