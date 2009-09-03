@@ -39,6 +39,7 @@ Barry Release Checklist:
 	- URLs to sourceforge and OpenSUSE Build Service binary packages
 	- URL to netdirect doc page
 - update Freshmeat entry
+- send identi.ca/cdfrey and blog notices
 - update source project, bumping revision numbers in source code
 
 
