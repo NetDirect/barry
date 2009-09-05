@@ -468,11 +468,6 @@ void BackupWindow::on_device_change()
 		thread->SetActive();
 }
 
-void BackupWindow::on_file_quit()
-{
-	hide();
-}
-
 void BackupWindow::on_config()
 {
 	Thread *thread = GetActive();
@@ -517,6 +512,26 @@ void BackupWindow::on_reload()
 
 	else
 		Scan();
+}
+
+void BackupWindow::on_file_quit()
+{
+	bool working(false);
+	for( unsigned int i = 0; i < m_device_count; ++i)
+		if( m_threads[i]->Working() ) {
+			working = true;
+			break;
+		}
+	if( working ) {
+		Gtk::MessageDialog dialog(*this, "One or more devices are working, "
+			"quitting now may cause data corruption, "
+			"are you sure to proceed?",
+			false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL);
+		if( dialog.run() == Gtk::RESPONSE_OK )
+			hide();
+	}
+	else
+		hide();
 }
 
 void BackupWindow::on_help_about()
