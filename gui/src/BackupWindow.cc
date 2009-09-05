@@ -245,8 +245,9 @@ void BackupWindow::Disconnect(Thread *thread)
 		thread->Disconnect();
 		StatusbarSet("Disconnected from " + thread->GetFullname() + ".");
 	}
-	else
+	else {
 		StatusbarSet("Not connected.");
+	}
 }
 
 void BackupWindow::CheckDeviceName(Thread *thread)
@@ -275,8 +276,9 @@ Thread *BackupWindow::GetActive()
 		unsigned int id = (*row)[m_columns.m_id];
 		return m_threads[id].get();
 	}
-	else
+	else {
 		return 0;
+	}
 }
 
 void BackupWindow::StatusbarSet(const Glib::ustring& text)
@@ -386,8 +388,9 @@ void BackupWindow::on_backup()
 			thread->LastInterfaceError());
 		msg.run();
 	}
-	else
+	else {
 		StatusbarSet("Backup of " + thread->GetFullname() + " in progress...");
+	}
 }
 
 bool BackupWindow::PromptForRestoreTarball(std::string &restoreFilename,
@@ -496,11 +499,12 @@ void BackupWindow::on_config()
 void BackupWindow::on_reload()
 {
 	bool working(false);
-	for( unsigned int i = 0; i < m_device_count; ++i)
+	for( unsigned int i = 0; i < m_device_count; ++i) {
 		if( m_threads[i]->Working() ) {
 			working = true;
 			break;
 		}
+	}
 	if( working ) {
 		Gtk::MessageDialog dialog(*this, "One or more devices are working, "
 			"disconnecting from them may cause data corruption, "
@@ -509,19 +513,20 @@ void BackupWindow::on_reload()
 		if( dialog.run() == Gtk::RESPONSE_OK )
 			Scan();
 	}
-
-	else
+	else {
 		Scan();
+	}
 }
 
 void BackupWindow::on_file_quit()
 {
 	bool working(false);
-	for( unsigned int i = 0; i < m_device_count; ++i)
+	for( unsigned int i = 0; i < m_device_count; ++i) {
 		if( m_threads[i]->Working() ) {
 			working = true;
 			break;
 		}
+	}
 	if( working ) {
 		Gtk::MessageDialog dialog(*this, "One or more devices are working, "
 			"quitting now may cause data corruption, "
@@ -530,8 +535,9 @@ void BackupWindow::on_file_quit()
 		if( dialog.run() == Gtk::RESPONSE_OK )
 			hide();
 	}
-	else
+	else {
 		hide();
+	}
 }
 
 void BackupWindow::on_help_about()
