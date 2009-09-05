@@ -447,7 +447,9 @@ void BackupWindow::on_restore()
 
 void BackupWindow::on_disconnect()
 {
-	Disconnect(GetActive());
+	Thread *thread = GetActive();
+	if( thread )
+		Disconnect(thread);
 }
 
 void BackupWindow::on_disconnect_all()
