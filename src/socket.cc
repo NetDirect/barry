@@ -322,7 +322,8 @@ void SocketZero::RawReceive(Data &receive, int timeout)
 		else {
 			m_dev->BulkRead(m_readEp, receive, timeout);
 		}
-		ddout("SocketZero::RawReceive: Endpoint " << m_readEp
+		ddout("SocketZero::RawReceive: Endpoint "
+			<< (m_queue ? m_queue->GetReadEp() : m_readEp)
 			<< "\nReceived:\n" << receive);
 	} while( SequencePacket(receive) );
 }

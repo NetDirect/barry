@@ -96,6 +96,13 @@ public:
 	SocketRoutingQueue(int prealloc_buffer_count = 4);
 	~SocketRoutingQueue();
 
+	//
+	// data access
+	//
+	int GetWriteEp() const { return m_writeEp; }
+	int GetReadEp() const { return m_readEp; }
+
+
 	// These functions connect the router to an external Usb::Device
 	// object.  Normally this is handled automatically by the
 	// Controller class, but are public here in case they are needed.

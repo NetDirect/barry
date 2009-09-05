@@ -1,5 +1,9 @@
 Release: version 0.16 - 2009/09/??
 ------------------------------------------------------------------------------
+2009/09/04
+	- fixed socket RawReceive verbose log message
+		when reading from the default queue, the queue knows the
+		endpoint, not the socket object
 2009/09/03
 	- added version output when -v is used in pppob
 2009/09/02
