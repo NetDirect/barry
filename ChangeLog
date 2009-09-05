@@ -1,5 +1,12 @@
 Release: version 0.16 - 2009/09/??
 ------------------------------------------------------------------------------
+2009/09/05
+	- applied backup GUI patches from Ryan Li:
+		- resolved crash while disconnecting from no devices
+		- added confirmation dialog before quitting
+	- gui: handled case where the user exits via window manager Close
+		button
+		- also refactored 'working' confirmation logic
 2009/09/04
 	- fixed socket RawReceive verbose log message
 		when reading from the default queue, the queue knows the

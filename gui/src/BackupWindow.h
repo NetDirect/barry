@@ -96,6 +96,7 @@ protected:
 		const std::string &start_path);
 	Thread *GetActive();
 	void StatusbarSet(const Glib::ustring& text);
+	bool CheckWorking();	// returns true if ok to proceed
 
 public:
 	BackupWindow(BaseObjectType *cobject, const Glib::RefPtr<Gnome::Glade::Xml> &xml);
@@ -118,5 +119,8 @@ public:
 	void on_file_quit();
 	void on_help_about();
 	bool on_startup();
+
+	// virtual overrides
+	virtual bool on_delete_event(GdkEventAny *event);
 };
 

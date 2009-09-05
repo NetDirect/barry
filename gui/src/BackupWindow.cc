@@ -291,6 +291,30 @@ void BackupWindow::StatusbarSet(const Glib::ustring& text)
 	}
 }
 
+/// Returns true if ok to proceed (either nothing is currently 'working',
+/// or the user confirmed to do it anyway)
+bool BackupWindow::CheckWorking()
+{
+	bool working(false);
+	for( unsigned int i = 0; i < m_device_count; ++i) {
+		if( m_threads[i]->Working() ) {
+			working = true;
+			break;
+		}
+	}
+
+	if( working ) {
+		Gtk::MessageDialog dialog(*this, "One or more devices are working, "
+			"disconnecting now may cause data corruption. "
+			"Proceed anyway?",
+			false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL);
+		if( dialog.run() != Gtk::RESPONSE_OK )
+			return false;
+	}
+
+	return true;
+}
+
 void BackupWindow::signal_exception_handler()
 {
 	try {
@@ -498,44 +522,14 @@ void BackupWindow::on_config()
 
 void BackupWindow::on_reload()
 {
-	bool working(false);
-	for( unsigned int i = 0; i < m_device_count; ++i) {
-		if( m_threads[i]->Working() ) {
-			working = true;
-			break;
-		}
-	}
-	if( working ) {
-		Gtk::MessageDialog dialog(*this, "One or more devices are working, "
-			"disconnecting from them may cause data corruption, "
-			"are you sure to proceed?",
-			false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL);
-		if( dialog.run() == Gtk::RESPONSE_OK )
-			Scan();
-	}
-	else {
+	if( CheckWorking() ) {
 		Scan();
 	}
 }
 
 void BackupWindow::on_file_quit()
 {
-	bool working(false);
-	for( unsigned int i = 0; i < m_device_count; ++i) {
-		if( m_threads[i]->Working() ) {
-			working = true;
-			break;
-		}
-	}
-	if( working ) {
-		Gtk::MessageDialog dialog(*this, "One or more devices are working, "
-			"quitting now may cause data corruption, "
-			"are you sure to proceed?",
-			false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL);
-		if( dialog.run() == Gtk::RESPONSE_OK )
-			hide();
-	}
-	else {
+	if( CheckWorking() ) {
 		hide();
 	}
 }
@@ -577,5 +571,13 @@ bool BackupWindow::on_startup()
 {
 	Scan();
 	return false;
+}
+
+bool BackupWindow::on_delete_event(GdkEventAny *)
+{
+	if( CheckWorking() )
+		return false;	// allow closing of window via window manager
+	else
+		return true;	// stop the close
 }
 
