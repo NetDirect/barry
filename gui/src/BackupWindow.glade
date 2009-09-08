@@ -160,7 +160,7 @@
                         </child>
                         <child>
                           <widget class="GtkButton" id="ReloadButton">
-                            <property name="label" translatable="yes">Reload</property>
+                            <property name="label" translatable="yes">Rescan USB Bus</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
