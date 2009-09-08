@@ -2,6 +2,8 @@ Release: version 0.16 - 2009/09/??
 ------------------------------------------------------------------------------
 2009/09/08
 	- changed wording on GUI reload button to clarify what it does
+	- added documentation on how to change the theme for GTK+ apps
+		when not using the Gnome desktop environment
 2009/09/05
 	- applied backup GUI patches from Ryan Li:
 		- resolved crash while disconnecting from no devices

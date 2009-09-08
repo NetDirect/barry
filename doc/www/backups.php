@@ -11,6 +11,27 @@ GUI can be found on the <? createLink("install", "Install"); ?> and
 <? createLink("cvs", "CVS"); ?> pages.</p>
 
 
+<? createSubHeader("GTK+ Themes"); ?>
+
+<p>The Barry Backup GUI program is written using the GTK+ library.  If you
+do not use the Gnome desktop, then the default theme for GTK+ applications
+often looks terrible.</p>
+
+<p>Themes can be chosen for GTK+ apps without Gnome's settings
+or daemons interfering with your desktop of choice.</p>
+
+<p>Search under the /usr/share/themes directory for 'gtkrc' files.  Pick
+the one you like best, and then include it by reference in your .gtkrc-2.0
+config file in your home directory.</p>
+
+<p>For example, suppose you want to use the GTK+ Clearlooks theme.
+Your .gtkrc-2.0 file would contain:</p>
+
+<pre>
+	include "/usr/share/themes/Clearlooks/gtk-2.0/gtkrc"
+</pre>
+
+
 <? createSubHeader("Backup Interface"); ?>
 
 
