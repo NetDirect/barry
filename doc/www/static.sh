@@ -13,9 +13,17 @@ elif [ "$1" = "netdirect" ] ; then
 	cp *.png www.netdirect.ca/sites/www.netdirect.ca/files/images/barry
 
 	mkdir -p www.netdirect.ca/pastefiles
-	for f in `cat content_list` ; do
+
+	echo "For index files..."
+	for f in `cat content_list | grep index` ; do
 		echo "Generating $f.html"
 		cat php_conf2.php $f.php | php > www.netdirect.ca/pastefiles/$f.html
+	done
+
+	echo "For non-index files..."
+	for f in `cat content_list | grep -v index` ; do
+		echo "Generating $f.html"
+		cat php_conf3.php $f.php | php > www.netdirect.ca/pastefiles/$f.html
 	done
 fi
 
