@@ -1,5 +1,12 @@
 Release: version 0.16 - 2009/09/??
 ------------------------------------------------------------------------------
+2009/09/09
+	- fixed potential loss of serial data during PPP init
+		when seding the AT test, usually the OK response is
+		sent to the callback, but if the expected non-serial
+		response doesn't appear, the OK is lost... this fix
+		passes the OK to the callback, which fixes some chatscript
+		behaviour
 2009/09/08
 	- changed wording on GUI reload button to clarify what it does
 	- added documentation on how to change the theme for GTK+ apps

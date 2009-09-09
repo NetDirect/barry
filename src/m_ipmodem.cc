@@ -337,6 +337,12 @@ void IpModem::Open(const char *password)
 
 		default: 	// ???
 			ddout("IPModem: Unknown AT command response.\n");
+			// treat this unknown data as a serial response
+			if( m_callback ) {
+				(*m_callback)(m_callback_context,
+					data.GetData(),
+					data.GetSize());
+			}
 			break;
 		}
 	}
