@@ -32,31 +32,44 @@ Your .gtkrc-2.0 file would contain:</p>
 </pre>
 
 
-<? createSubHeader("Backup Interface"); ?>
+<? createSubHeader("Main Screen"); ?>
 
 
-<p>When Backup starts, it scans the USB bus for Blackberry devices.  If it
-finds one, it assumes that is the device you want to work with.  If it
-finds two, it prompts you to select the device to backup.</p>
+<p>When Backup starts, it scans the USB bus for all the Blackberry devices
+it can find and lists them in the main screen.  The first device listed
+is automatically connected and highlighted.</p>
+
+<p>You can connect to different devices on the fly by selecting the
+desired device in the list.  The currently highlighted device determines
+what device the buttons to the right will operate on.</p>
 
 <p>When connecting to a device for the first time, you are prompted to
 give the device a name.  This will be linked to the device's PIN number
 for easy identification later.</p>
 
-<p>The main screen presents you with two options: Backup and Restore.</p>
+<p>The main screen presents you with a number of options.</p>
 
 <? createImage("backup.png"); ?>
 
-<p>When backing up your device, your data is saved in a compressed tar file
-in your home directory, under ~/.barry, organized by PIN number.  Each tar
-backup file is given a timestamp in its filename.</p>
+
+
+<? createSubHeader("Backup Button"); ?>
+
+<p>The Backup button initiates the backup process for the currently selected
+device.  Multiple backups and restores can be run at once.</p>
+
+<p>When backing up your device, your data is saved by default in a
+compressed tar file in your home directory, under ~/.barry, organized by
+PIN number.  Each tar backup file is given a timestamp in its filename.
+The destination directory can be changed per device, using the Config...
+button.</p>
 
 <p>When the backup starts, you are prompted to give the backup an optional
 name.  If you specify a name, it will be used as part of the tar filename.</p>
 
 
 
-<? createSubHeader("Restore"); ?>
+<? createSubHeader("Restore Button"); ?>
 
 <p>Pressing the Restore button will show a File Open dialog, pointing
 to your ~/.barry directory, for the current device PIN.</p>
@@ -69,7 +82,9 @@ to copy data from one device to another.</p>
 
 <p>The restore is governed by your current configuration, which determines
 what databases are restored.  Any database that is restored will be
-completely erased before the backup data is re-written.</p>
+completely erased before the backup data is re-written.  If the source
+backup file contains no data for that database, then the database
+will merely be erased.</p>
 
 <p>There are some databases that are read-only on the BlackBerry.
 In addition, if your device is connected to a BES, you may not be
@@ -79,26 +94,46 @@ the Restore Configuration dialog, as described below.</p>
 
 
 
-<? createSubHeader("Configuration"); ?>
+<? createSubHeader("Config Button"); ?>
 
-<p>Configuration is performed via the Edit menu, and provides two
-filters for determining what databases are accessed during backup and
-restore operations.  You can also change the device name here, and turn
-off the backup name prompt.</p>
+<p>Pressing the Config button opens the config options dialog as shown
+below.</p>
 
 <? createImage("config.png"); ?>
 
-<p>Each configure button provides essentially the same dialog, containing a
-list of databases available on your device, as well as checkboxes to
-enable them.</p>
+<p>You can rename your device here, set a different backup target directory,
+and select whether backups should have labels or not.  If this checkbox
+is selected, you will be prompted for an optional label each time you
+create a new backup.</p>
 
-<p>For the backup filter, only the enabled databases will be saved.
-For the restore filter, only the enabled databases will be restored,
-even if the backup file contains more data.</p>
+<? createImage("label.png"); ?>
+
+<p>Both backup and restore operations have their own database filters
+which can be configured here.  For the backup filter, only the enabled
+databases will be saved.  For the restore filter, only the enabled
+databases will be restored, even if the backup file contains more data.</p>
+
+<p>Each filter configure button provides essentially the same dialog,
+containing a list of databases available on your device, as well as
+checkboxes to enable them.</p>
 
 <? createImage("config-backup.png"); ?>
 
 <p>This configuration is saved per device PIN.  If you backup a different
 device, you will need to configure its backup strategy again.  You can only
 change the configuration for the current device with these dialogs.</p>
+
+
+
+<? createSubHeader("Disconnect Buttons"); ?>
+
+<p>The Disconnect and Disconnect All buttons let you escape the device's
+Desktop mode while keeping the program running.  It is possible to disconnect
+during a backup or restore, but this may leave your device data in an
+unknown state.</p>
+
+<? createSubHeader("Rescan Button"); ?>
+
+<p>This button refreshes the device list, which is useful when a new device
+has been plugged in.</p>
 
