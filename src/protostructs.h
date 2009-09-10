@@ -740,7 +740,101 @@ struct JLPacket
 
 
 ///////////////////////////////////////////////////////////////////////////////
-// JavaDebug protocol structure
+// JavaDebug protocol structures
+
+namespace JDWP {
+
+	// Packet command
+	//----------------
+
+	struct PacketEventRequestSet {
+		uint8_t eventKind;
+		uint8_t suspendPolicy;
+		uint32_t modifiers;
+	} __attribute__ ((packed));
+
+
+	struct PacketEventRequest {
+		union PacketEventRequestData {
+			PacketEventRequestSet set;
+		} __attribute__ ((packed)) u;
+	} __attribute__ ((packed));
+
+
+	struct PacketCommand {
+		uint8_t commandset;
+		uint8_t command;
+
+		union PacketCommandData {
+			PacketEventRequest eventRequest;
+		} __attribute__ ((packed)) u;
+	} __attribute__ ((packed));
+	#define JDWP_COMMAND_HEADER_SIZE			(sizeof(Protocol::PacketCommand))
+
+
+	// Packet response
+	//-----------------
+
+	struct PacketVirtualMachineIDSizes {
+		uint32_t fieldIDSize;
+		uint32_t methodIDSize;
+		uint32_t objectIDSize;
+		uint32_t referenceTypeIDSize;
+		uint32_t frameIDSize;
+	} __attribute__ ((packed));
+
+	#define JDWP_PACKETVIRTUALMACHINEIDSIZES_DATA_SIZE		sizeof(Protocol::PacketVirtualMachineIDSizes)
+
+
+	struct PacketVirtualMachine {
+		union PacketVirtualMachineData {
+			PacketVirtualMachineIDSizes IDSizes;
+		} __attribute__ ((packed)) u;
+	} __attribute__ ((packed));
+
+
+	struct PacketResponse {
+		uint16_t errorcode;
+
+		union PacketResponseData {
+			PacketVirtualMachine virtualMachine;
+			uint32_t value;
+			uint8_t raw[1];
+		} __attribute__ ((packed)) u;
+	} __attribute__ ((packed));
+	#define JDWP_RESPONSE_HEADER_SIZE			(sizeof(Protocol::PacketResponse) - sizeof(Protocol::PacketResponse::PacketResponseData))
+
+
+	// Generic packet
+	//----------------
+
+	struct Packet {
+		uint32_t length;
+		uint32_t id;
+		uint8_t flags;
+
+		union PacketType {
+			PacketCommand command;
+			PacketResponse response;
+		} __attribute__ ((packed)) u;
+	} __attribute__ ((packed));
+	#define JDWP_PACKET_HEADER_SIZE			(sizeof(Protocol::Packet) - sizeof(Protocol::Packet::PacketType))
+
+
+	#define MAKE_JDWPPACKET(var, data)		const Protocol::Packet *var = (const Protocol::Packet *) (data).GetData()
+	#define MAKE_JDWPPACKETPTR_BUF(var, ptr)		Protocol::Packet *var = (Protocol::Packet *)ptr
+
+
+} // namespace JDWP
+
+struct JDWField {
+	uint32_t size;
+
+	union JDWFieldData {
+		uint8_t raw[1];
+	} __attribute__ ((packed)) u;
+} __attribute__ ((packed));
+#define JDWP_FIELD_HEADER_SIZE			(sizeof(JDWField) - sizeof(JDWField::JDWFieldData))
 
 struct JVMCommand
 {

@@ -34,17 +34,6 @@ using namespace Barry;
 namespace JDWP {
 
 
-typedef struct {
-	uint32_t size;
-
-	union JDWFieldData {
-		uint8_t raw[1];
-	} __attribute__ ((packed)) u;
-} __attribute__ ((packed)) JDWField;
-
-#define JDWP_FIELD_HEADER_SIZE 		(sizeof(JDWField) - sizeof(JDWField::JDWFieldData))
-
-
 void AddDataByte(Data &data, size_t &size, const uint8_t value)
 {
 	size_t fieldsize = sizeof(uint8_t);
