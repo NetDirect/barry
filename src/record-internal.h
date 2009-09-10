@@ -95,6 +95,13 @@ void BuildField(Data &data, size_t &size, uint8_t type, const Barry::Protocol::G
 std::string ParseFieldString(const Barry::Protocol::CommonField *field);
 std::string ParseFieldString(const void *data, uint16_t maxlen);
 
+
+// Functions to help build JDWP command packets
+void AddJDWByte(Barry::Data &data, size_t &size, const uint8_t value);
+void AddJDWInt(Barry::Data &data, size_t &size, const uint32_t value);
+void AddJDWChar(Barry::Data &data, size_t &size, const void *buf, size_t bufsize);
+void AddJDWString(Barry::Data &data, size_t &size, const std::string &str);
+
 } // namespace Barry
 
 #endif
