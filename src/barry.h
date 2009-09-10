@@ -73,6 +73,9 @@
 #include "cod.h"
 #include "record.h"
 
+// Include the JDW Debug Parser classes
+#include "dp_codinfo.h"
+
 // Include the template helpers after the record classes
 #include "m_desktoptmpl.h"
 

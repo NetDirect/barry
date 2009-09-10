@@ -23,6 +23,7 @@
 #define __BARRYJDG_CODINFO_H__
 
 
+#include "dll.h"
 #include <iosfwd>
 #include <string>
 #include <vector>
@@ -49,24 +50,7 @@ namespace Barry {
 namespace JDG {
 
 
-class JDGDebugFileList;
-class JDGDebugFileEntry;
-class JDGClassList;
-class JDGClassEntry;
-
-
-class JDGDebugFileList : public std::vector<JDGDebugFileEntry> {
-public:
-	void AddElement(uint32_t uniqueid, std::string appname, std::string filename);
-	void Dump(std::ostream &os) const;	
-};
-inline std::ostream& operator<<(std::ostream &os, const JDGDebugFileList &list) {
-	list.Dump(os);
-	return os;
-}
-
-
-class JDGDebugFileEntry {
+class BXEXPORT JDGDebugFileEntry {
 protected:
 
 public:
@@ -80,17 +64,18 @@ private:
 };
 
 
-class JDGClassList : public std::vector<JDGClassEntry> {
-protected:
-
+class BXEXPORT JDGDebugFileList : public std::vector<JDGDebugFileEntry> {
 public:
-	void createDefaultEntries();
-
-private:
+	void AddElement(uint32_t uniqueid, std::string appname, std::string filename);
+	void Dump(std::ostream &os) const;	
 };
+inline std::ostream& operator<<(std::ostream &os, const JDGDebugFileList &list) {
+	list.Dump(os);
+	return os;
+}
 
 
-class JDGClassEntry {
+class BXEXPORT JDGClassEntry {
 protected:
 
 public:
@@ -117,9 +102,20 @@ private:
 };
 
 
+class BXEXPORT JDGClassList : public std::vector<JDGClassEntry> {
+protected:
+
+public:
+	void createDefaultEntries();
+
+private:
+};
 
 
-class JDGCodInfo {
+
+
+
+class BXEXPORT JDGCodInfo {
 protected:
 
 public:
@@ -155,9 +151,9 @@ private:
 };
 
 
-void searchDebugFile(JDGDebugFileList &list);
-bool loadDebugInfo(JDGDebugFileList &list, const char *filename, JDGCodInfo &info);
-bool loadDebugInfo(JDGDebugFileList &list, const uint32_t uniqueId, const std::string module, JDGCodInfo &info);
+BXEXPORT void searchDebugFile(JDGDebugFileList &list);
+BXEXPORT bool loadDebugInfo(JDGDebugFileList &list, const char *filename, JDGCodInfo &info);
+BXEXPORT bool loadDebugInfo(JDGDebugFileList &list, const uint32_t uniqueId, const std::string module, JDGCodInfo &info);
 
 
 } // namespace JDG
