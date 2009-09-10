@@ -1,5 +1,5 @@
 /** 
- * @file codinfo.cc
+ * @file dp_codinfo.cc
  * @author Nicolas VIVIEN
  * @date 2009-08-01
  *
@@ -34,14 +34,15 @@
 
 #include <iostream>
 #include <sstream>
+#include <fstream>
 #include <iomanip>
 
 #include <sys/types.h>
 #include <dirent.h>
 #include <string.h>
 
-#include "parser.h"
-#include "codinfo.h"
+#include "dp_parser.h"
+#include "dp_codinfo.h"
 
 
 using namespace std;
@@ -65,7 +66,7 @@ void searchDebugFile(JDGDebugFileList &list)
 
 	path = opendir(".");
 
-	while (entry = readdir(path)) {
+	while( (entry = readdir(path)) ) {
 		int offset;
 
 		if (strlen(entry->d_name) < strlen(DEBUG_FILE_EXT))

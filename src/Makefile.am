@@ -58,7 +58,11 @@ include_barrydir = ${includedir}/barry
 
 #LDFLAGS = ../../external/rootdir/libusb/lib/libusb.a $(LDBOOST) -lpthread $(LDDEBUG)
 
-lib_LTLIBRARIES = libbarry.la
+#
+# libbarry - main USB protocol interface library
+# libbarrydp - '.debug' parser library
+#
+lib_LTLIBRARIES = libbarry.la libbarrydp.la
 
 include_barry_HEADERS = barry.h \
 	dll.h \
@@ -107,7 +111,8 @@ include_barry_HEADERS = barry.h \
 	iconv.h \
 	cod.h \
 	bmp.h \
-	s11n-boost.h
+	s11n-boost.h \
+	dp_codinfo.h
 
 noinst_HEADERS = cbarry.h \
 	base64.h \
@@ -119,7 +124,8 @@ noinst_HEADERS = cbarry.h \
 	protostructs.h \
 	debug.h \
 	endian.h \
-	strnlen.h
+	strnlen.h \
+	dp_parser.h
 
 EXTRA_DIST = convo.awk \
 	legal.txt
@@ -167,6 +173,12 @@ libbarry_la_SOURCES = time.cc \
 #libbarry_la_LIBADD = $(LTLIBOBJS) $(LIBUSB_LIBS) $(OPENSSL_LIBS)
 libbarry_la_LIBADD = $(LTLIBOBJS) $(LIBUSB_LIBS) $(ZLIB_LIBS) @LTLIBICONV@
 libbarry_la_LDFLAGS = -version-info ${LIB_BARRY_VERSION}
+
+libbarrydp_la_SOURCES = \
+	dp_parser.cc \
+	dp_codinfo.cc
+libbarrydp_la_LIBADD = libbarry.la
+libbarrydp_la_LDFLAGS = -version-info ${LIB_BARRY_VERSION}
 
 ##if DO_TEST
 ##	bin_PROGRAMS += test-base64 test-data test-time

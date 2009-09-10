@@ -1,5 +1,5 @@
 /** 
- * @file parser.h
+ * @file dp_parser.h
  * @author Nicolas VIVIEN
  * @date 2009-08-01
  *
@@ -31,55 +31,13 @@
 #ifndef __BARRYJDG_PARSER_H__
 #define __BARRYJDG_PARSER_H__
 
+#include <iosfwd>
 #include <string>
 #include <stdint.h>
-
 
 namespace Barry {
 
 namespace JDG {
-
-// The following is a byteswap.h replacement, for systems like Mac OS X.
-// It was taken from a patch to the GPL software cowpatty, patch
-// by user gm2net.
-// http://www.netstumbler.org/showpost.php?s=79764fd1526e4653d5cb4432225da6ee&p=190494&postcount=29
-
-//#warning "byteswap.h is an unportable GNU extension!  Don't use!"
-
-static inline unsigned short bswap_16(unsigned short x) {
-  return (x>>8) | (x<<8);
-}
-
-static inline unsigned int bswap_32(unsigned int x) {
-  return (bswap_16(x&0xffff)<<16) | (bswap_16(x>>16));
-}
-
-static inline uint64_t bswap_64(uint64_t x) {
-  return (((uint64_t)bswap_32(x&0xffffffffull))<<32) | (bswap_32(x>>32));
-}
-
-#ifndef WORDS_BIGENDIAN
-
-// For when Blackberry needs big endian (often in JavaLoader protocol)
-#define be_btohs(x) bswap_16(x)		// for uint16_t
-#define be_btohl(x) bswap_32(x)		// for uint32_t
-#define be_btohll(x) bswap_64(x)	// for uint64_t
-#define be_htobs(x) bswap_16(x)		// for uint16_t
-#define be_htobl(x) bswap_32(x)		// for uint32_t
-#define be_htobll(x) bswap_64(x)	// for uint64_t
-
-#else
-
-// For when Blackberry needs big endian (often in JavaLoader protocol)
-#define be_btohs(x) x			// for uint16_t
-#define be_btohl(x) x			// for uint32_t
-#define be_btohll(x) x			// for uint64_t
-#define be_htobs(x) x			// for uint16_t
-#define be_htobl(x) x			// for uint32_t
-#define be_htobll(x) x			// for uint64_t
-
-#endif
-
 
 std::string ParseString(std::istream &input, const int length);
 uint32_t ParseInteger(std::istream &input);

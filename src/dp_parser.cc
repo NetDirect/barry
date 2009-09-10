@@ -1,5 +1,5 @@
 /** 
- * @file parser.cc
+ * @file dp_parser.cc
  * @author Nicolas VIVIEN
  * @date 2009-08-01
  *
@@ -33,12 +33,10 @@
  */
 
 
-
 #include <iostream>
-
 #include <stdlib.h>
-
-#include "parser.h"
+#include "dp_parser.h"
+#include "endian.h"
 
 
 using namespace std;
