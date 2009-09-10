@@ -50,24 +50,15 @@ namespace JDG {
 string ParseString(istream &input, const int length) 
 {
 	int i;
-	char *s;
 	string str;
-
-	s = (char *) malloc((length + 1) * sizeof(char));
 
 	for (i=0; i<length; i++) {
 		uint16_t value;
 
 		input.read((char *) &value, sizeof(uint16_t));
 
-		s[i] = (char) be_btohs(value);
+		str += (char) be_btohs(value);
 	}
-
-	s[i] = '\0';
-
-	str = string(s);
-
-	free(s);
 
 	return str;
 }
