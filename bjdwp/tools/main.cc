@@ -1,6 +1,6 @@
 ///
 /// \file	main.cc
-///
+///		bjdwp command line tool
 ///
 
 /*

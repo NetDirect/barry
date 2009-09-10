@@ -15,7 +15,6 @@ Target: release version 0.16 (Oct 1)
 	+ incorporate barrybackup GUI changes by Ryan Li
 	- incorporate Nicolas's java debugger patches
 		- figure out a solution to the HideSequencePacket issue
-		- add copyright notices to all source code files
 		- write autoconf configure scripts and incorporate into
 			main configure and build system
 		- add build tests to test/buildtest.sh script

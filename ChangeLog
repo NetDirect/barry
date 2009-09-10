@@ -1,5 +1,10 @@
 Release: version 0.16 - 2009/09/??
 ------------------------------------------------------------------------------
+2009/09/10
+	- added copyright notices to all source files in bjdwp/
+		This is based on the initial README included in
+		the patches from Nicolas Vivien stating that bjdwp
+		was under the GPL.
 2009/09/09
 	- fixed potential loss of serial data during PPP init
 		when seding the AT test, usually the OK response is
