@@ -75,6 +75,23 @@ public:
 	Data& operator=(const Data &other);
 
 
+	//
+	// Utility functions
+	//
+	// Writing data... basically does a memcpy(dst,src,sizeof(src))
+	// for each type.  Does no endian conversions.
+	// dst is calculated as buffer + offset.
+	// The buffer is expanded automatically if needed.
+	// The offset is advanced by the size of the data.
+	//
+	void MemCpy(size_t &offset, const void *src, size_t size);
+	template <class ValueT>
+	void SetValue(size_t &offset, ValueT value)
+	{
+		this->MemCpy(offset, &value, sizeof(value));
+	}
+
+
 	// static functions
 	static void PrintAscii(bool setting) { bPrintAscii = setting; }
 	static bool PrintAscii() { return bPrintAscii; }

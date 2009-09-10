@@ -284,6 +284,13 @@ Data & Data::operator=(const Data &other)
 	return *this;
 }
 
+void Data::MemCpy(size_t &offset, const void *src, size_t size)
+{
+	unsigned char *pd = GetBuffer(offset + size) + offset;
+	memcpy(pd, src, size);
+	offset += size;
+}
+
 istream& operator>> (istream &is, Data &data)
 {
 	data.InputHexLine(is);
