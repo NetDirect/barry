@@ -1,6 +1,6 @@
 ///
-/// \file	handler.h
-///		Threaded handler class
+/// \file	threadwrap.h
+///		RAII Wrapper for a single thread.
 ///
 
 /*
@@ -19,27 +19,26 @@
     root directory of this project for more details.
 */
 
-#ifndef __BARRYJDWP_HANDLER_H__
-#define __BARRYJDWP_HANDLER_H__
+#ifndef __BARRY_THREADWRAP_H__
+#define __BARRY_THREADWRAP_H__
 
+#include <pthread.h>
 
-namespace JDWP {
+namespace Barry {
 
-class JDWHandler {
-protected:
-
-public:
-	JDWHandler(int socket, void *(*callback)(void *data), void *data);
-
-	void dispose();
-
+class Thread
+{
 private:
 	pthread_t thread;
 
-	~JDWHandler();
+public:
+	Thread(int socket, void *(*callback)(void *data), void *data);
+	~Thread();
+
+	void dispose();
 };
 
-} // namespace JDWP
+} // namespace Barry
 
 #endif
 

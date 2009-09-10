@@ -99,6 +99,7 @@ include_barry_HEADERS = barry.h \
 	router.h \
 	socket.h \
 	time.h \
+	threadwrap.h \
 	usbwrap.h \
 	version.h \
 	pppfilter.h \
@@ -137,6 +138,7 @@ libbarry_la_SOURCES = time.cc \
 	socket.cc \
 	router.cc \
 	dataqueue.cc \
+	threadwrap.cc \
 	protocol.cc \
 	record.cc \
 	r_recur_base.cc \

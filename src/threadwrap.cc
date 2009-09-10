@@ -1,6 +1,6 @@
 ///
-/// \file	handler.cc
-///		Thread handler class implementation
+/// \file	threadwrap.cc
+///		RAII Wrapper for a single thread.
 ///
 
 /*
@@ -19,36 +19,27 @@
     root directory of this project for more details.
 */
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdint.h>
-#include <signal.h>
-#include <pthread.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <netdb.h>
-
-#include "handler.h"
+#include "threadwrap.h"
 
 
-namespace JDWP {
+namespace Barry {
 
-JDWHandler::JDWHandler(int socket, void *(*callback)(void *data), void *data) {
+Thread::Thread(int socket, void *(*callback)(void *data), void *data)
+{
 	pthread_create(&thread, NULL, callback, data);
 }
 
 
-JDWHandler::~JDWHandler() {
+Thread::~Thread()
+{
 	pthread_join(thread, NULL);
 }
 
 
-void JDWHandler::dispose() {
+void Thread::dispose()
+{
 	pthread_cancel(thread);
 }
 
-} // namespace JDWP
+} // namespace Barry
 
