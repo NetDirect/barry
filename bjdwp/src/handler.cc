@@ -31,8 +31,6 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 
-#include <barry/endian.h>
-
 #include "handler.h"
 
 
