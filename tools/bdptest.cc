@@ -39,7 +39,7 @@
 #include <fstream>
 #include <string>
 
-#include <barry/jdwp/codinfo.h>
+#include <barry/barry.h>
 
 
 using namespace std;
