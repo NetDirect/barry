@@ -11,7 +11,8 @@ please ask on the mailing list as well.
 
 Next Release Checklist (- todo, + done, x skipped)
 ==============================================================================
-Target: release version 0.16 (Sept 10)
+Target: release version 0.16 (Oct 1)
+	+ incorporate barrybackup GUI changes by Ryan Li
 	- incorporate Nicolas's java debugger patches
 		- figure out a solution to the HideSequencePacket issue
 		- add copyright notices to all source code files
@@ -22,8 +23,6 @@ Target: release version 0.16 (Sept 10)
 		- man page for bjdwp app
 		- www documentation for bjdwp app
 		- add bjdwp to debian and rpm binary packages
-	- incorporate barrybackup GUI changes by Ryan Li
-		- File | Quit in the middle of a backup shows no warning
 	- incorporate Martin Owens' Barry logo/icon into Barry
 		- connect icon with barrybackup
 		- add to documentation page?
@@ -31,13 +30,7 @@ Target: release version 0.16 (Sept 10)
 		- add to sourceforge
 		- add to repo.or.cz
 
-Target: release version 0.17 (Oct 1)
-	- test and fix all build and functionality issues on:
-		- Fedora 11
-		- Ubuntu 8.10, 9.04
-		- openSUSE 11.1
-			- see mailing list reports
-		- give openBSD a test compile
+Target: release version 0.17 (Nov 1)
 	- website documentation:
 		- add a more detailed set of instructions for how to
 			contribute to the project using git
@@ -47,13 +40,21 @@ Target: release version 0.17 (Oct 1)
 		- add docs for opensync 0.4x plugin (note that it is
 			currently experimental, based on devel opensync)
 
-Target: any release
+Target: release version 0.18 (Dec 1)
+	- test and fix all build and functionality issues on:
+		- Fedora 11
+		- Fedora 12 (scheduled release on Nov 10)
+		- Ubuntu 8.10, 9.04
+		- Ubuntu 9.10 (scheduled release on Oct 29)
+		- openSUSE 11.1
+			- see mailing list reports
+		- give openBSD a test compile
 	- support our own repositories for apt and yum and zypper
 		to make installation easier
 
-Target: release version 0.18 (Nov 13)
+Target: release version 0.19 (Jan 1, 2010)
 	- polish up bfuse, and add feature to split out fields
-	- add record classes for Content Store, SMS Messages, based on
+	- add record classes for Content Store based on
 		Martin Owens' doc/barry-research.ods
 
 
