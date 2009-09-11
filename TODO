@@ -53,6 +53,8 @@ Target: release version 0.19 (Jan 1, 2010)
 	- polish up bfuse, and add feature to split out fields
 	- add record classes for Content Store based on
 		Martin Owens' doc/barry-research.ods
+	- look at incorporating contrib/ into main tree, or at least
+		into binary packages and tests
 
 
 
