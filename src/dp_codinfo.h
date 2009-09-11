@@ -27,6 +27,7 @@
 #include <iosfwd>
 #include <string>
 #include <vector>
+#include <stdint.h>
 
 
 namespace Barry {

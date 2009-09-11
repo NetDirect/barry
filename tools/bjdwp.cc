@@ -165,10 +165,10 @@ int main(int argc, char *argv[], char *envp[])
 
 void printMessage(const std::string &message)
 {
-	const int esc = 27;
+	const char esc = 27;
 	const int green = 32;
-	const int blue = 34; 
+	const int blue = 34;
 
-	printf("%c[%dmJVM>%c[%dm %s%c[%dm", esc, green, esc, blue, message.c_str(), esc, 0);
+	std::cout << esc << '[' << green << "mJVM>" << esc << '[' << blue << "m " << message << esc << "[0m";
 }
 
