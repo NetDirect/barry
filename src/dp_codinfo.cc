@@ -59,7 +59,7 @@ namespace JDG {
 #define DEBUG_FILE_EXT		".debug"
 
 
-void searchDebugFile(JDGDebugFileList &list)
+void searchDebugFile(DebugFileList &list)
 {
 	DIR *path;
 	struct dirent *entry;
@@ -77,7 +77,7 @@ void searchDebugFile(JDGDebugFileList &list)
 		if (!strcmp(entry->d_name + offset, DEBUG_FILE_EXT)) {
 			ifstream file(entry->d_name);
 
-			JDGCodInfo info;
+			CodInfo info;
 
 			// Parse header section
 			info.parseHeaderSection(file);
@@ -91,15 +91,15 @@ void searchDebugFile(JDGDebugFileList &list)
 }
 
 
-bool loadDebugInfo(JDGDebugFileList &list, const char *filename, JDGCodInfo &info)
+bool loadDebugInfo(DebugFileList &list, const char *filename, CodInfo &info)
 {
 	if (filename == NULL)
 		return false;
 
-	vector<JDGDebugFileEntry>::iterator b = list.begin();
+	vector<DebugFileEntry>::iterator b = list.begin();
 
 	for( ; b != list.end(); b++ ) {
-		JDGDebugFileEntry entry = (*b);
+		DebugFileEntry entry = (*b);
 
 		if (entry.fileName == string(filename)) {
 			info.loadDebugFile(filename);
@@ -111,12 +111,12 @@ bool loadDebugInfo(JDGDebugFileList &list, const char *filename, JDGCodInfo &inf
 }
 
 
-bool loadDebugInfo(JDGDebugFileList &list, const uint32_t uniqueId, const std::string module, JDGCodInfo &info)
+bool loadDebugInfo(DebugFileList &list, const uint32_t uniqueId, const std::string module, CodInfo &info)
 {
-	vector<JDGDebugFileEntry>::iterator b = list.begin();
+	vector<DebugFileEntry>::iterator b = list.begin();
 
 	for( ; b != list.end(); b++ ) {
-		JDGDebugFileEntry entry = (*b);
+		DebugFileEntry entry = (*b);
 
 		if ((entry.uniqueId == uniqueId) && (entry.appName == module)) {
 			info.loadDebugFile(entry.fileName.c_str());
@@ -128,12 +128,12 @@ bool loadDebugInfo(JDGDebugFileList &list, const uint32_t uniqueId, const std::s
 }
 
 
-// JDGDebugFileList class
+// DebugFileList class
 //------------------------
 
-void JDGDebugFileList::AddElement(uint32_t uniqueid, std::string appname, std::string filename)
+void DebugFileList::AddElement(uint32_t uniqueid, std::string appname, std::string filename)
 {
-	JDGDebugFileEntry entry;
+	DebugFileEntry entry;
 
 	entry.uniqueId = uniqueid;
 	entry.appName = appname;
@@ -143,7 +143,7 @@ void JDGDebugFileList::AddElement(uint32_t uniqueid, std::string appname, std::s
 }
 
 
-void JDGDebugFileList::Dump(std::ostream &os) const
+void DebugFileList::Dump(std::ostream &os) const
 {
 	const_iterator i = begin(), e = end();
 
@@ -162,7 +162,7 @@ void JDGDebugFileList::Dump(std::ostream &os) const
 }
 
 
-void JDGDebugFileEntry::Dump(std::ostream &os) const
+void DebugFileEntry::Dump(std::ostream &os) const
 {
 	os << " 0x" << setfill('0') << setw(8) << hex << uniqueId << " |";
 	os << " " << appName << setfill(' ') << setw(24) << " |";
@@ -170,12 +170,12 @@ void JDGDebugFileEntry::Dump(std::ostream &os) const
 }
 
 
-// JDGClassList class
+// ClassList class
 //---------------------------
 
 
-void JDGClassList::createDefaultEntries() {
-	JDGClassEntry entry;
+void ClassList::createDefaultEntries() {
+	ClassEntry entry;
 
 	// 1
 	entry.classPath = "com.rim.resources";
@@ -229,10 +229,10 @@ void JDGClassList::createDefaultEntries() {
 }
 
 
-// JDGCodInfo class
+// CodInfo class
 //------------------------
 
-bool JDGCodInfo::loadDebugFile(const char *filename)
+bool CodInfo::loadDebugFile(const char *filename)
 {
 	if (filename == NULL)
 		return false;
@@ -249,13 +249,13 @@ bool JDGCodInfo::loadDebugFile(const char *filename)
 }
 
 
-uint32_t JDGCodInfo::getUniqueId() 
+uint32_t CodInfo::getUniqueId() 
 {
 	return uniqueId;
 }
 
 
-string JDGCodInfo::getAppName() 
+string CodInfo::getAppName() 
 {
 	return appName;
 }
@@ -264,7 +264,7 @@ string JDGCodInfo::getAppName()
 // Private API - Section parsing
 //-------------------------------
 
-void JDGCodInfo::parseHeaderSection(ifstream &input) 
+void CodInfo::parseHeaderSection(ifstream &input) 
 {
 	uint32_t type;
 
@@ -280,7 +280,7 @@ void JDGCodInfo::parseHeaderSection(ifstream &input)
 }
 
 
-void JDGCodInfo::parseTypeSection(ifstream &input) 
+void CodInfo::parseTypeSection(ifstream &input) 
 {
 	uint32_t type;
 	uint32_t count;
@@ -310,7 +310,7 @@ void JDGCodInfo::parseTypeSection(ifstream &input)
 }
 
 
-uint32_t JDGCodInfo::parseNextHeaderField(ifstream &input) 
+uint32_t CodInfo::parseNextHeaderField(ifstream &input) 
 {
 	uint32_t type = ParseInteger(input);
 
@@ -331,7 +331,7 @@ uint32_t JDGCodInfo::parseNextHeaderField(ifstream &input)
 }
 
 
-uint32_t JDGCodInfo::parseNextTypeField(ifstream &input) 
+uint32_t CodInfo::parseNextTypeField(ifstream &input) 
 {
 	uint32_t type = ParseInteger(input);
 
@@ -388,13 +388,13 @@ uint32_t JDGCodInfo::parseNextTypeField(ifstream &input)
 }
 
 
-void JDGCodInfo::parseUniqueId(ifstream &input) 
+void CodInfo::parseUniqueId(ifstream &input) 
 {
 	uniqueId = ParseInteger(input);
 }
 
 
-void JDGCodInfo::parseAppName(ifstream &input) 
+void CodInfo::parseAppName(ifstream &input) 
 {
 	uint32_t len = ParseInteger(input);
 
@@ -402,79 +402,79 @@ void JDGCodInfo::parseAppName(ifstream &input)
 }
 
 
-void JDGCodInfo::parseBoolean(ifstream &input) 
+void CodInfo::parseBoolean(ifstream &input) 
 {
 	uint32_t len  = ParseInteger(input);
 
 	string str = ParseString(input, len);
 
-	cout << "JDGCodInfo::parseBoolean" << endl;
+	cout << "JDG::CodInfo::parseBoolean" << endl;
 	cout << "  name : " << str << endl;
 }
 
 
-void JDGCodInfo::parseByte(ifstream &input) 
+void CodInfo::parseByte(ifstream &input) 
 {
 	uint32_t len  = ParseInteger(input);
 
 	string str = ParseString(input, len);
 
-	cout << "JDGCodInfo::parseByte" << endl;
+	cout << "JDG::CodInfo::parseByte" << endl;
 	cout << "  name : " << str << endl;
 }
 
 
-void JDGCodInfo::parseChar(ifstream &input) 
+void CodInfo::parseChar(ifstream &input) 
 {
 	uint32_t len  = ParseInteger(input);
 
 	string str = ParseString(input, len);
 
-	cout << "JDGCodInfo::parseChar" << endl;
+	cout << "JDG::CodInfo::parseChar" << endl;
 	cout << "  name : " << str << endl;
 }
 
 
-void JDGCodInfo::parseShort(ifstream &input) 
+void CodInfo::parseShort(ifstream &input) 
 {
 	uint32_t len  = ParseInteger(input);
 
 	string str = ParseString(input, len);
 
-	cout << "JDGCodInfo::parseShort" << endl;
+	cout << "JDG::CodInfo::parseShort" << endl;
 	cout << "  name : " << str << endl;
 }
 
 
-void JDGCodInfo::parseInt(ifstream &input) 
+void CodInfo::parseInt(ifstream &input) 
 {
 	uint32_t len  = ParseInteger(input);
 
 	string str = ParseString(input, len);
 
-	cout << "JDGCodInfo::parseInt" << endl;
+	cout << "JDG::CodInfo::parseInt" << endl;
 	cout << "  name : " << str << endl;
 }
 
 
-void JDGCodInfo::parseLong(ifstream &input) 
+void CodInfo::parseLong(ifstream &input) 
 {
 	uint32_t len  = ParseInteger(input);
 
 	string str = ParseString(input, len);
 
-	cout << "JDGCodInfo::parseLong" << endl;
+	cout << "JDG::CodInfo::parseLong" << endl;
 	cout << "  name : " << str << endl;
 }
 
 
-void JDGCodInfo::parseClass(ifstream &input) 
+void CodInfo::parseClass(ifstream &input) 
 {
 	uint32_t len;
 
-	JDGClassEntry object;
+	ClassEntry object;
 
-	cout << "JDGCodInfo::parseClass" << endl;
+	cout << "JDG::CodInfo::parseClass" << endl;
 
 	len  = ParseInteger(input);
 
@@ -517,40 +517,40 @@ void JDGCodInfo::parseClass(ifstream &input)
 }
 
 
-void JDGCodInfo::parseArray(ifstream &input) 
+void CodInfo::parseArray(ifstream &input) 
 {
 	uint32_t len  = ParseInteger(input);
 
 	string str = ParseString(input, len);
 
-	cout << "JDGCodInfo::parseArray" << endl;
+	cout << "JDG::CodInfo::parseArray" << endl;
 	cout << "  name : " << str << endl;
 }
 
 
-void JDGCodInfo::parseVoid(ifstream &input) 
+void CodInfo::parseVoid(ifstream &input) 
 {
 	uint32_t len  = ParseInteger(input);
 
 	string str = ParseString(input, len);
 
-	cout << "JDGCodInfo::parseVoid" << endl;
+	cout << "JDG::CodInfo::parseVoid" << endl;
 	cout << "  name : " << str << endl;
 }
 
 
-void JDGCodInfo::parseDouble(ifstream &input) 
+void CodInfo::parseDouble(ifstream &input) 
 {
 	uint32_t len  = ParseInteger(input);
 
 	string str = ParseString(input, len);
 
-	cout << "JDGCodInfo::parseDouble" << endl;
+	cout << "JDG::CodInfo::parseDouble" << endl;
 	cout << "  name : " << str << endl;
 }
 
 /*
-void JDGCodInfo::parseType2(ifstream &input) {
+void CodInfo::parseType2(ifstream &input) {
 	uint32_t value;
 	uint32_t len  = ParseInteger(input);
 

@@ -217,7 +217,7 @@ void JDWServer::attachToDevice()
 	// Check debug info for each modules
 	vector<JVMModulesEntry>::iterator b = modulesList.begin();
 	for ( ; b != modulesList.end(); b++) {
-		JDG::JDGCodInfo codInfo;
+		JDG::CodInfo codInfo;
 
 		JVMModulesEntry entry = *b;
 		
@@ -377,7 +377,7 @@ void JDWServer::initVisibleClassList()
 	// Skip the cell '0'
 	// it's very ugly, but I want use an index started at '1' inside of '0'
 	// JDB works from '1' :(
-	JDG::JDGClassEntry e;
+	JDG::ClassEntry e;
 	visibleClassList.push_back(e);
 
 	// Count and index the class (start to '1')
@@ -386,9 +386,9 @@ void JDWServer::initVisibleClassList()
 
 	for (it = appList.begin(); it != appList.end(); it++) {
 		JDWAppInfo *appInfo = &(it->second);
-		JDG::JDGClassList *list = &(appInfo->classList);
+		JDG::ClassList *list = &(appInfo->classList);
 	
-		vector<JDG::JDGClassEntry>::iterator b;
+		vector<JDG::ClassEntry>::iterator b;
 
 		for (b = list->begin(); b != list->end(); b++) {
 			// FIXME

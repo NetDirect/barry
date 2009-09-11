@@ -39,9 +39,9 @@ public:
 	uint32_t uniqueId;
 	std::string appName;
 
-	Barry::JDG::JDGClassList classList;
+	Barry::JDG::ClassList classList;
 
-	void load(Barry::JDG::JDGCodInfo &info);
+	void load(Barry::JDG::CodInfo &info);
 };
 
 

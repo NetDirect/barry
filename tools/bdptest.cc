@@ -48,7 +48,7 @@ using namespace Barry;
 
 int main(int argc, char *argv[], char *envp[])
 {
-	JDG::JDGDebugFileList list;
+	JDG::DebugFileList list;
 
 	JDG::searchDebugFile(list);
 
@@ -57,7 +57,7 @@ int main(int argc, char *argv[], char *envp[])
 
 
 
-	JDG::JDGCodInfo info;
+	JDG::CodInfo info;
 
 	JDG::loadDebugInfo(list, argv[1], info);
 

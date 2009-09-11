@@ -50,7 +50,7 @@ namespace Barry {
 namespace JDG {
 
 
-class BXEXPORT JDGDebugFileEntry {
+class BXEXPORT DebugFileEntry {
 protected:
 
 public:
@@ -64,18 +64,18 @@ private:
 };
 
 
-class BXEXPORT JDGDebugFileList : public std::vector<JDGDebugFileEntry> {
+class BXEXPORT DebugFileList : public std::vector<DebugFileEntry> {
 public:
 	void AddElement(uint32_t uniqueid, std::string appname, std::string filename);
 	void Dump(std::ostream &os) const;	
 };
-inline std::ostream& operator<<(std::ostream &os, const JDGDebugFileList &list) {
+inline std::ostream& operator<<(std::ostream &os, const DebugFileList &list) {
 	list.Dump(os);
 	return os;
 }
 
 
-class BXEXPORT JDGClassEntry {
+class BXEXPORT ClassEntry {
 protected:
 
 public:
@@ -102,7 +102,7 @@ private:
 };
 
 
-class BXEXPORT JDGClassList : public std::vector<JDGClassEntry> {
+class BXEXPORT ClassList : public std::vector<ClassEntry> {
 protected:
 
 public:
@@ -115,13 +115,13 @@ private:
 
 
 
-class BXEXPORT JDGCodInfo {
+class BXEXPORT CodInfo {
 protected:
 
 public:
 	uint32_t uniqueId;
 	std::string appName;
-	JDGClassList classList;
+	ClassList classList;
 
 	bool loadDebugFile(const char *filename);
 
@@ -151,9 +151,9 @@ private:
 };
 
 
-BXEXPORT void searchDebugFile(JDGDebugFileList &list);
-BXEXPORT bool loadDebugInfo(JDGDebugFileList &list, const char *filename, JDGCodInfo &info);
-BXEXPORT bool loadDebugInfo(JDGDebugFileList &list, const uint32_t uniqueId, const std::string module, JDGCodInfo &info);
+BXEXPORT void searchDebugFile(DebugFileList &list);
+BXEXPORT bool loadDebugInfo(DebugFileList &list, const char *filename, CodInfo &info);
+BXEXPORT bool loadDebugInfo(DebugFileList &list, const uint32_t uniqueId, const std::string module, CodInfo &info);
 
 
 } // namespace JDG

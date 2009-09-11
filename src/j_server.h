@@ -49,10 +49,10 @@ private:
 	Barry::Mode::JVMDebug *jvmdebug;
 
 	Barry::JVMModulesList modulesList;				// List of COD applications installed on the device
-	Barry::JDG::JDGDebugFileList debugFileList;		// List of debug file on the host
+	Barry::JDG::DebugFileList debugFileList;		// List of debug file on the host
 
 	JDWAppList appList;								// List of BlackBerry application (an application contents several COD files)
-	Barry::JDG::JDGClassList visibleClassList;		// Visible class list from JDB
+	Barry::JDG::ClassList visibleClassList;		// Visible class list from JDB
 
 	std::auto_ptr<Thread> handler;
 	void (*printConsoleMessage)(std::string message);

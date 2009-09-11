@@ -31,7 +31,7 @@ namespace Barry { namespace JDWP {
 //------------------
 
 
-void JDWAppInfo::load(JDG::JDGCodInfo &info)
+void JDWAppInfo::load(JDG::CodInfo &info)
 {
 	dout("JDWAppInfo::load" << endl);
 
@@ -39,7 +39,7 @@ void JDWAppInfo::load(JDG::JDGCodInfo &info)
 	uniqueId = info.getUniqueId();
 
 	// Add Class (concat with a previous list)
-	JDG::JDGClassList *list = &(info.classList);
+	JDG::ClassList *list = &(info.classList);
 
 	classList.insert(classList.end(), list->begin(), list->end());
 }
