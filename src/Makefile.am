@@ -150,10 +150,13 @@ libbarry_la_SOURCES = time.cc \
 	r_recur_base.cc \
 	r_calendar.cc \
 	r_calllog.cc \
+	r_command.cc \
 	r_contact.cc \
+	r_dbdb.cc \
 	r_folder.cc \
 	r_memo.cc \
 	r_message_base.cc \
+	r_recordstate.cc \
 	r_servicebook.cc \
 	r_sms.cc \
 	r_task.cc \
