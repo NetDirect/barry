@@ -48,13 +48,14 @@ using namespace Barry;
 
 int main(int argc, char *argv[], char *envp[])
 {
+	Barry::Init(true, &cout);
+
 	JDG::DebugFileList list;
 
 	JDG::SearchDebugFile(list);
 
-	cout << "List of debug giles " << endl;
+	cout << "List of debug files " << endl;
 	cout << list << endl;
-
 
 
 	JDG::CodInfo info;

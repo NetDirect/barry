@@ -13,6 +13,8 @@ Release: version 0.16 - 2009/09/??
 		and easier to change types if needed
 	- added libbarrydp as dependency for libbarryjdwp
 	- replaced direct cout usage with dout() in dp_codinfo.cc
+		- added Barry::Init to bdptest.cc, defaulting to verbose
+		  mode, to keep the same behaviour as expected
 	- use more generic std::istream in dp_codinfo, instead of ifstream
 2009/09/10
 	- added copyright notices to all source files in bjdwp/
