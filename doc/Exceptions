@@ -13,6 +13,8 @@ The Barry library has the following exception hierarchy:
 			- Barry::ErrnoError
 			- Barry::BadPackedFormat
 			- Barry::BadPacket
+			- Barry::JDWP::Error
+			- Barry::JDWP::Timeout
 
 Usb::Error
 	All specific USB error exceptions will be derived from
