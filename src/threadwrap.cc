@@ -36,7 +36,7 @@ Thread::~Thread()
 }
 
 
-void Thread::dispose()
+void Thread::Dispose()
 {
 	pthread_cancel(thread);
 }

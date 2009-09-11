@@ -36,7 +36,7 @@ public:
 	Thread(int socket, void *(*callback)(void *data), void *data);
 	~Thread();
 
-	void dispose();
+	void Dispose();
 };
 
 } // namespace Barry

@@ -357,7 +357,7 @@ void JDWServer::Run()
 bool JDWServer::Stop()
 {
 	if (handler.get()) {
-		handler->dispose();
+		handler->Dispose();
 		handler.reset();
 	}
 
