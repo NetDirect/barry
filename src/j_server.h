@@ -35,26 +35,6 @@ namespace Barry { namespace JDWP {
 
 class BXEXPORT JDWServer
 {
-protected:
-
-public:
-	JDWServer(const char *address, int port);
-	~JDWServer();
-
-	void setDevice(Barry::Mode::JVMDebug *device);
-	void setPasswordDevice(std::string password);
-
-	void setConsoleCallback(void (*callback)(std::string message));
-
-	bool start();
-	void acceptConnection();
-	void attachToDevice();
-	void initVisibleClassList();
-	bool hello();
-	void run();
-	void detachFromDevice();
-	bool stop();
-
 private:
 	int fd;
 	int sockfd;
@@ -93,6 +73,26 @@ private:
 	void CommandSet(Barry::Data &cmd);
 
 //	void BackgroundDeviceProcess();
+
+protected:
+
+public:
+	JDWServer(const char *address, int port);
+	~JDWServer();
+
+	void setDevice(Barry::Mode::JVMDebug *device);
+	void setPasswordDevice(std::string password);
+
+	void setConsoleCallback(void (*callback)(std::string message));
+
+	bool start();
+	void acceptConnection();
+	void attachToDevice();
+	void initVisibleClassList();
+	bool hello();
+	void run();
+	void detachFromDevice();
+	bool stop();
 };
 
 }} // namespace Barry::JDWP

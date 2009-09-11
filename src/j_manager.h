@@ -30,20 +30,9 @@
 
 namespace Barry { namespace JDWP {
 
-class JDWAppList;
-class JDWAppInfo;
-
-
-class JDWAppList : public std::map<uint32_t, JDWAppInfo> {
-protected:
-
-public:
-
+class BXEXPORT JDWAppInfo
+{
 private:
-};
-
-
-class JDWAppInfo {
 protected:
 
 public:
@@ -53,8 +42,11 @@ public:
 	Barry::JDG::JDGClassList classList;
 
 	void load(Barry::JDG::JDGCodInfo &info);
+};
 
-private:
+
+class BXEXPORT JDWAppList : public std::map<uint32_t, JDWAppInfo>
+{
 };
 
 
