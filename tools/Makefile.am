@@ -11,6 +11,7 @@ bin_PROGRAMS = \
 	bjavaloader \
 	bjvmdebug \
 	bdptest \
+	bjdwp \
 	upldif \
 	btranslate \
 	bktrans \
@@ -50,6 +51,9 @@ bjvmdebug_LDADD = ../src/libbarry.la $(LIBUSB_LIBS) -lpthread
 
 bdptest_SOURCES = bdptest.cc
 bdptest_LDADD = ../src/libbarrydp.la
+
+bjdwp_SOURCES = bjdwp.cc
+bjdwp_LDADD = ../src/libbarry.la ../src/libbarrydp.la ../src/libbarryjdwp.la
 
 upldif_SOURCES = upldif.cc
 upldif_LDADD = ../src/libbarry.la $(LIBUSB_LIBS) -lpthread

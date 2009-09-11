@@ -21,20 +21,9 @@
 */
 
 
-#include <pthread.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <netdb.h>
-
+#include <barry/barry.h>
 #include <iostream>
 #include <string>
-
-#include <barry/barry.h>
-
-#include <barry/jdwp/server.h>
-
 
 using namespace std;
 using namespace Barry;
