@@ -72,6 +72,7 @@
 #include "bmp.h"
 #include "cod.h"
 #include "record.h"
+#include "threadwrap.h"
 
 // Include the JDW Debug Parser classes
 #include "dp_codinfo.h"

@@ -22,11 +22,12 @@
 #ifndef __BARRY_THREADWRAP_H__
 #define __BARRY_THREADWRAP_H__
 
+#include "dll.h"
 #include <pthread.h>
 
 namespace Barry {
 
-class Thread
+class BXEXPORT Thread
 {
 private:
 	pthread_t thread;
