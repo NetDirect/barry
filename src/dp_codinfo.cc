@@ -59,7 +59,7 @@ namespace JDG {
 #define DEBUG_FILE_EXT		".debug"
 
 
-void searchDebugFile(DebugFileList &list)
+void SearchDebugFile(DebugFileList &list)
 {
 	DIR *path;
 	struct dirent *entry;
@@ -80,10 +80,10 @@ void searchDebugFile(DebugFileList &list)
 			CodInfo info;
 
 			// Parse header section
-			info.parseHeaderSection(file);
+			info.ParseHeaderSection(file);
 
 			// Add element to list
-			list.AddElement(info.getUniqueId(), info.getAppName(), entry->d_name);
+			list.AddElement(info.GetUniqueId(), info.GetAppName(), entry->d_name);
 		}
 	}
 
@@ -91,7 +91,7 @@ void searchDebugFile(DebugFileList &list)
 }
 
 
-bool loadDebugInfo(DebugFileList &list, const char *filename, CodInfo &info)
+bool LoadDebugInfo(DebugFileList &list, const char *filename, CodInfo &info)
 {
 	if (filename == NULL)
 		return false;
@@ -102,7 +102,7 @@ bool loadDebugInfo(DebugFileList &list, const char *filename, CodInfo &info)
 		DebugFileEntry entry = (*b);
 
 		if (entry.fileName == string(filename)) {
-			info.loadDebugFile(filename);
+			info.LoadDebugFile(filename);
 			return true;
 		}
 	}
@@ -111,7 +111,7 @@ bool loadDebugInfo(DebugFileList &list, const char *filename, CodInfo &info)
 }
 
 
-bool loadDebugInfo(DebugFileList &list, const uint32_t uniqueId, const std::string module, CodInfo &info)
+bool LoadDebugInfo(DebugFileList &list, const uint32_t uniqueId, const std::string module, CodInfo &info)
 {
 	vector<DebugFileEntry>::iterator b = list.begin();
 
@@ -119,7 +119,7 @@ bool loadDebugInfo(DebugFileList &list, const uint32_t uniqueId, const std::stri
 		DebugFileEntry entry = (*b);
 
 		if ((entry.uniqueId == uniqueId) && (entry.appName == module)) {
-			info.loadDebugFile(entry.fileName.c_str());
+			info.LoadDebugFile(entry.fileName.c_str());
 			return true;
 		}
 	}
@@ -174,7 +174,7 @@ void DebugFileEntry::Dump(std::ostream &os) const
 //---------------------------
 
 
-void ClassList::createDefaultEntries()
+void ClassList::CreateDefaultEntries()
 {
 	ClassEntry entry;
 
@@ -233,7 +233,7 @@ void ClassList::createDefaultEntries()
 // CodInfo class
 //------------------------
 
-bool CodInfo::loadDebugFile(const char *filename)
+bool CodInfo::LoadDebugFile(const char *filename)
 {
 	if (filename == NULL)
 		return false;
@@ -241,22 +241,22 @@ bool CodInfo::loadDebugFile(const char *filename)
 	ifstream file(filename);
 
 	// Parse header file
-	parseHeaderSection(file);
+	ParseHeaderSection(file);
 
 	// Parse type area zone
-	parseTypeSection(file);
+	ParseTypeSection(file);
 
 	return true;
 }
 
 
-uint32_t CodInfo::getUniqueId() 
+uint32_t CodInfo::GetUniqueId() 
 {
 	return uniqueId;
 }
 
 
-string CodInfo::getAppName() 
+string CodInfo::GetAppName() 
 {
 	return appName;
 }
@@ -265,23 +265,23 @@ string CodInfo::getAppName()
 // Private API - Section parsing
 //-------------------------------
 
-void CodInfo::parseHeaderSection(ifstream &input) 
+void CodInfo::ParseHeaderSection(ifstream &input) 
 {
 	uint32_t type;
 
-	type = parseNextHeaderField(input);
+	type = ParseNextHeaderField(input);
 
 	if (type != COD_DEBUG_UNIQUEID_HEADERFIELD)
 		return;
 
-	type = parseNextHeaderField(input);
+	type = ParseNextHeaderField(input);
 
 	if (type != COD_DEBUG_APPNAME_HEADERFIELD)
 		return;
 }
 
 
-void CodInfo::parseTypeSection(ifstream &input) 
+void CodInfo::ParseTypeSection(ifstream &input) 
 {
 	uint32_t type;
 	uint32_t count;
@@ -294,7 +294,7 @@ void CodInfo::parseTypeSection(ifstream &input)
 	count = 0;
 
 	while (!input.eof()) {
-		type = parseNextTypeField(input);
+		type = ParseNextTypeField(input);
 
 		if (type == COD_DEBUG_NONE_FIELD)
 			break;
@@ -311,17 +311,17 @@ void CodInfo::parseTypeSection(ifstream &input)
 }
 
 
-uint32_t CodInfo::parseNextHeaderField(ifstream &input) 
+uint32_t CodInfo::ParseNextHeaderField(ifstream &input) 
 {
 	uint32_t type = ParseInteger(input);
 
 	switch (type) {
 	case COD_DEBUG_UNIQUEID_HEADERFIELD:
-		parseUniqueId(input);
+		ParseUniqueId(input);
 		break;
 
 	case COD_DEBUG_APPNAME_HEADERFIELD:
-		parseAppName(input);
+		ParseAppName(input);
 		break;
 
 	default:
@@ -332,7 +332,7 @@ uint32_t CodInfo::parseNextHeaderField(ifstream &input)
 }
 
 
-uint32_t CodInfo::parseNextTypeField(ifstream &input) 
+uint32_t CodInfo::ParseNextTypeField(ifstream &input) 
 {
 	uint32_t type = ParseInteger(input);
 
@@ -341,43 +341,43 @@ uint32_t CodInfo::parseNextTypeField(ifstream &input)
 		break;
 
 	case COD_DEBUG_BOOLEAN_FIELD:
-		parseBoolean(input);
+		ParseBoolean(input);
 		break;
 
 	case COD_DEBUG_BYTE_FIELD:
-		parseByte(input);
+		ParseByte(input);
 		break;
 
 	case COD_DEBUG_CHAR_FIELD:
-		parseChar(input);
+		ParseChar(input);
 		break;
 
 	case COD_DEBUG_SHORT_FIELD:
-		parseShort(input);
+		ParseShort(input);
 		break;
 
 	case COD_DEBUG_INT_FIELD:
-		parseInt(input);
+		ParseInt(input);
 		break;
 
 	case COD_DEBUG_LONG_FIELD:
-		parseLong(input);
+		ParseLong(input);
 		break;
 
 	case COD_DEBUG_CLASS_FIELD:
-		parseClass(input);
+		ParseClass(input);
 		break;
 
 	case COD_DEBUG_ARRAY_FIELD:
-		parseArray(input);
+		ParseArray(input);
 		break;
 
 	case COD_DEBUG_VOID_FIELD:
-		parseVoid(input);
+		ParseVoid(input);
 		break;
 
 	case COD_DEBUG_DOUBLE_FIELD:
-		parseDouble(input);
+		ParseDouble(input);
 		break;
 
 	default:
@@ -389,13 +389,13 @@ uint32_t CodInfo::parseNextTypeField(ifstream &input)
 }
 
 
-void CodInfo::parseUniqueId(ifstream &input) 
+void CodInfo::ParseUniqueId(ifstream &input) 
 {
 	uniqueId = ParseInteger(input);
 }
 
 
-void CodInfo::parseAppName(ifstream &input) 
+void CodInfo::ParseAppName(ifstream &input) 
 {
 	uint32_t len = ParseInteger(input);
 
@@ -403,79 +403,79 @@ void CodInfo::parseAppName(ifstream &input)
 }
 
 
-void CodInfo::parseBoolean(ifstream &input) 
+void CodInfo::ParseBoolean(ifstream &input) 
 {
 	uint32_t len  = ParseInteger(input);
 
 	string str = ParseString(input, len);
 
-	cout << "JDG::CodInfo::parseBoolean" << endl;
+	cout << "JDG::CodInfo::ParseBoolean" << endl;
 	cout << "  name : " << str << endl;
 }
 
 
-void CodInfo::parseByte(ifstream &input) 
+void CodInfo::ParseByte(ifstream &input) 
 {
 	uint32_t len  = ParseInteger(input);
 
 	string str = ParseString(input, len);
 
-	cout << "JDG::CodInfo::parseByte" << endl;
+	cout << "JDG::CodInfo::ParseByte" << endl;
 	cout << "  name : " << str << endl;
 }
 
 
-void CodInfo::parseChar(ifstream &input) 
+void CodInfo::ParseChar(ifstream &input) 
 {
 	uint32_t len  = ParseInteger(input);
 
 	string str = ParseString(input, len);
 
-	cout << "JDG::CodInfo::parseChar" << endl;
+	cout << "JDG::CodInfo::ParseChar" << endl;
 	cout << "  name : " << str << endl;
 }
 
 
-void CodInfo::parseShort(ifstream &input) 
+void CodInfo::ParseShort(ifstream &input) 
 {
 	uint32_t len  = ParseInteger(input);
 
 	string str = ParseString(input, len);
 
-	cout << "JDG::CodInfo::parseShort" << endl;
+	cout << "JDG::CodInfo::ParseShort" << endl;
 	cout << "  name : " << str << endl;
 }
 
 
-void CodInfo::parseInt(ifstream &input) 
+void CodInfo::ParseInt(ifstream &input) 
 {
 	uint32_t len  = ParseInteger(input);
 
 	string str = ParseString(input, len);
 
-	cout << "JDG::CodInfo::parseInt" << endl;
+	cout << "JDG::CodInfo::ParseInt" << endl;
 	cout << "  name : " << str << endl;
 }
 
 
-void CodInfo::parseLong(ifstream &input) 
+void CodInfo::ParseLong(ifstream &input) 
 {
 	uint32_t len  = ParseInteger(input);
 
 	string str = ParseString(input, len);
 
-	cout << "JDG::CodInfo::parseLong" << endl;
+	cout << "JDG::CodInfo::ParseLong" << endl;
 	cout << "  name : " << str << endl;
 }
 
 
-void CodInfo::parseClass(ifstream &input) 
+void CodInfo::ParseClass(ifstream &input) 
 {
 	uint32_t len;
 
 	ClassEntry object;
 
-	cout << "JDG::CodInfo::parseClass" << endl;
+	cout << "JDG::CodInfo::ParseClass" << endl;
 
 	len  = ParseInteger(input);
 
@@ -518,40 +518,40 @@ void CodInfo::parseClass(ifstream &input)
 }
 
 
-void CodInfo::parseArray(ifstream &input) 
+void CodInfo::ParseArray(ifstream &input) 
 {
 	uint32_t len  = ParseInteger(input);
 
 	string str = ParseString(input, len);
 
-	cout << "JDG::CodInfo::parseArray" << endl;
+	cout << "JDG::CodInfo::ParseArray" << endl;
 	cout << "  name : " << str << endl;
 }
 
 
-void CodInfo::parseVoid(ifstream &input) 
+void CodInfo::ParseVoid(ifstream &input) 
 {
 	uint32_t len  = ParseInteger(input);
 
 	string str = ParseString(input, len);
 
-	cout << "JDG::CodInfo::parseVoid" << endl;
+	cout << "JDG::CodInfo::ParseVoid" << endl;
 	cout << "  name : " << str << endl;
 }
 
 
-void CodInfo::parseDouble(ifstream &input) 
+void CodInfo::ParseDouble(ifstream &input) 
 {
 	uint32_t len  = ParseInteger(input);
 
 	string str = ParseString(input, len);
 
-	cout << "JDG::CodInfo::parseDouble" << endl;
+	cout << "JDG::CodInfo::ParseDouble" << endl;
 	cout << "  name : " << str << endl;
 }
 
 /*
-void CodInfo::parseType2(ifstream &input) {
+void CodInfo::ParseType2(ifstream &input) {
 	uint32_t value;
 	uint32_t len  = ParseInteger(input);
 

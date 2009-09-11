@@ -99,7 +99,7 @@ public:
 	uint32_t unknown07;
 	uint32_t unknown08;
 
-	std::string getFullClassName() { return classPath + "." + className; };
+	std::string GetFullClassName() { return classPath + "." + className; };
 };
 
 
@@ -109,7 +109,7 @@ private:
 protected:
 
 public:
-	void createDefaultEntries();
+	void CreateDefaultEntries();
 };
 
 
@@ -119,22 +119,22 @@ public:
 class BXEXPORT CodInfo
 {
 private:
-	uint32_t parseNextHeaderField(std::ifstream &input);
-	uint32_t parseNextTypeField(std::ifstream &input);
+	uint32_t ParseNextHeaderField(std::ifstream &input);
+	uint32_t ParseNextTypeField(std::ifstream &input);
 
-	void parseAppName(std::ifstream &input);
-	void parseUniqueId(std::ifstream &input);
+	void ParseAppName(std::ifstream &input);
+	void ParseUniqueId(std::ifstream &input);
 
-	void parseBoolean(std::ifstream &input);
-	void parseByte(std::ifstream &input);
-	void parseChar(std::ifstream &input);
-	void parseShort(std::ifstream &input);
-	void parseInt(std::ifstream &input);
-	void parseLong(std::ifstream &input);
-	void parseClass(std::ifstream &input);
-	void parseArray(std::ifstream &input);
-	void parseVoid(std::ifstream &input);
-	void parseDouble(std::ifstream &input);
+	void ParseBoolean(std::ifstream &input);
+	void ParseByte(std::ifstream &input);
+	void ParseChar(std::ifstream &input);
+	void ParseShort(std::ifstream &input);
+	void ParseInt(std::ifstream &input);
+	void ParseLong(std::ifstream &input);
+	void ParseClass(std::ifstream &input);
+	void ParseArray(std::ifstream &input);
+	void ParseVoid(std::ifstream &input);
+	void ParseDouble(std::ifstream &input);
 
 protected:
 
@@ -143,19 +143,19 @@ public:
 	std::string appName;
 	ClassList classList;
 
-	bool loadDebugFile(const char *filename);
+	bool LoadDebugFile(const char *filename);
 
-	void parseHeaderSection(std::ifstream &input);
-	void parseTypeSection(std::ifstream &input);
+	void ParseHeaderSection(std::ifstream &input);
+	void ParseTypeSection(std::ifstream &input);
 
-	uint32_t getUniqueId();
-	std::string getAppName();
+	uint32_t GetUniqueId();
+	std::string GetAppName();
 };
 
 
-BXEXPORT void searchDebugFile(DebugFileList &list);
-BXEXPORT bool loadDebugInfo(DebugFileList &list, const char *filename, CodInfo &info);
-BXEXPORT bool loadDebugInfo(DebugFileList &list, const uint32_t uniqueId, const std::string module, CodInfo &info);
+BXEXPORT void SearchDebugFile(DebugFileList &list);
+BXEXPORT bool LoadDebugInfo(DebugFileList &list, const char *filename, CodInfo &info);
+BXEXPORT bool LoadDebugInfo(DebugFileList &list, const uint32_t uniqueId, const std::string module, CodInfo &info);
 
 
 } // namespace JDG

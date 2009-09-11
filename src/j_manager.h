@@ -41,7 +41,7 @@ public:
 
 	Barry::JDG::ClassList classList;
 
-	void load(Barry::JDG::CodInfo &info);
+	void Load(Barry::JDG::CodInfo &info);
 };
 
 

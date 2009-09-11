@@ -130,18 +130,19 @@ int main(int argc, char *argv[], char *envp[])
 		JDWP::JDWServer server(address, port);
 
 		// Link device
-		server.setDevice(&jvmdebug);
-		server.setPasswordDevice(password);
+		server.SetDevice(&jvmdebug);
+		server.SetPasswordDevice(password);
 
 		// Redirect console message
-		server.setConsoleCallback(printMessage);
+		server.SetConsoleCallback(printMessage);
 
-		server.start();
+		server.Start();
 
+		// FIXME - is this needed... couldn't we do a join here?
 		while (true)
 			sleep(1);
 
-		server.stop();
+		server.Stop();
 	}
 	catch( Usb::Error &ue) {
 		std::cout << endl;	// flush any normal output first

@@ -80,19 +80,19 @@ public:
 	JDWServer(const char *address, int port);
 	~JDWServer();
 
-	void setDevice(Barry::Mode::JVMDebug *device);
-	void setPasswordDevice(std::string password);
+	void SetDevice(Barry::Mode::JVMDebug *device);
+	void SetPasswordDevice(std::string password);
 
-	void setConsoleCallback(void (*callback)(std::string message));
+	void SetConsoleCallback(void (*callback)(std::string message));
 
-	bool start();
-	void acceptConnection();
-	void attachToDevice();
-	void initVisibleClassList();
-	bool hello();
-	void run();
-	void detachFromDevice();
-	bool stop();
+	bool Start();
+	void AcceptConnection();
+	void AttachToDevice();
+	void InitVisibleClassList();
+	bool Hello();
+	void Run();
+	void DetachFromDevice();
+	bool Stop();
 };
 
 }} // namespace Barry::JDWP

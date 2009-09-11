@@ -54,35 +54,35 @@ JDWServer::JDWServer(const char *address, int port)
 	this->port = port;
 	this->printConsoleMessage = NULL;
 
-	searchDebugFile(debugFileList);
+	SearchDebugFile(debugFileList);
 }
 
 
 JDWServer::~JDWServer() 
 {
-	stop();
+	Stop();
 }
 
 
-void JDWServer::setDevice(Barry::Mode::JVMDebug *device) 
+void JDWServer::SetDevice(Barry::Mode::JVMDebug *device) 
 {
 	jvmdebug = device;
 }
 
 
-void JDWServer::setPasswordDevice(string password)
+void JDWServer::SetPasswordDevice(string password)
 {
 	this->password = password;
 }
 
 
-void JDWServer::setConsoleCallback(void (*callback)(string message))
+void JDWServer::SetConsoleCallback(void (*callback)(string message))
 {
 	printConsoleMessage = callback;
 }
 
 
-bool JDWServer::start() 
+bool JDWServer::Start() 
 {
 	int rc;
 
@@ -159,16 +159,16 @@ static void * acceptWrapper(void *data)
 	s = (JDWServer *) data;
 
 	while (1) {
-		s->acceptConnection();
+		s->AcceptConnection();
 
-		s->attachToDevice();
+		s->AttachToDevice();
 
-		s->initVisibleClassList();
+		s->InitVisibleClassList();
 		
-		if (s->hello()) {
-			s->run();
+		if (s->Hello()) {
+			s->Run();
 
-			s->detachFromDevice();
+			s->DetachFromDevice();
 		}
 	}
 
@@ -176,7 +176,7 @@ static void * acceptWrapper(void *data)
 }
 
 
-void JDWServer::acceptConnection()
+void JDWServer::AcceptConnection()
 {
 	size_t addrlen;
 
@@ -196,7 +196,7 @@ void JDWServer::acceptConnection()
 }
 
 
-void JDWServer::attachToDevice()
+void JDWServer::AttachToDevice()
 {
 	bool ret;
 
@@ -221,10 +221,10 @@ void JDWServer::attachToDevice()
 
 		JVMModulesEntry entry = *b;
 		
-		ret = loadDebugInfo(debugFileList, entry.UniqueID, entry.Name, codInfo);
+		ret = LoadDebugInfo(debugFileList, entry.UniqueID, entry.Name, codInfo);
 
 		if (ret == true) {
-			appList[entry.UniqueID].load(codInfo);
+			appList[entry.UniqueID].Load(codInfo);
 		}
 		else {
 			dout("No debug information found for '" << entry.Name);
@@ -234,7 +234,7 @@ void JDWServer::attachToDevice()
 }
 
 
-void JDWServer::detachFromDevice()
+void JDWServer::DetachFromDevice()
 {
 	jvmdebug->Detach();
 	jvmdebug->Close();
@@ -245,7 +245,7 @@ void JDWServer::detachFromDevice()
 
 
 
-bool JDWServer::hello()
+bool JDWServer::Hello()
 {
 	bool ret;
 
@@ -278,7 +278,7 @@ bool JDWServer::hello()
 }
 
 
-void JDWServer::run()
+void JDWServer::Run()
 {
 	string str;
 	JDWMessage msg(fd);
@@ -354,7 +354,7 @@ void JDWServer::run()
 }
 
 
-bool JDWServer::stop()
+bool JDWServer::Stop()
 {
 	if (handler.get()) {
 		handler->dispose();
@@ -370,7 +370,7 @@ bool JDWServer::stop()
 }
 
 
-void JDWServer::initVisibleClassList()
+void JDWServer::InitVisibleClassList()
 {
 	int index;
 
@@ -408,7 +408,7 @@ void JDWServer::initVisibleClassList()
 		}
 	}
 
-	visibleClassList.createDefaultEntries();
+	visibleClassList.CreateDefaultEntries();
 }
 
 
@@ -593,7 +593,7 @@ void JDWServer::CommandAllClasses(Data &cmd)
 
 	// Then, write the list of known class
 	for (i=1; i<visibleClassList.size(); i++) {
-		string str = visibleClassList[i].getFullClassName();
+		string str = visibleClassList[i].GetFullClassName();
 
 		str = "L" + str + ";";
 		replace_if(str.begin(), str.end(), bind2nd(equal_to<char>(),'.'), '/');

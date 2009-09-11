@@ -50,7 +50,7 @@ int main(int argc, char *argv[], char *envp[])
 {
 	JDG::DebugFileList list;
 
-	JDG::searchDebugFile(list);
+	JDG::SearchDebugFile(list);
 
 	cout << "List of debug giles " << endl;
 	cout << list << endl;
@@ -59,7 +59,7 @@ int main(int argc, char *argv[], char *envp[])
 
 	JDG::CodInfo info;
 
-	JDG::loadDebugInfo(list, argv[1], info);
+	JDG::LoadDebugInfo(list, argv[1], info);
 
 	return 0;
 }

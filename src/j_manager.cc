@@ -31,12 +31,12 @@ namespace Barry { namespace JDWP {
 //------------------
 
 
-void JDWAppInfo::load(JDG::CodInfo &info)
+void JDWAppInfo::Load(JDG::CodInfo &info)
 {
 	dout("JDWAppInfo::load" << endl);
 
 	// Assign uniqueId
-	uniqueId = info.getUniqueId();
+	uniqueId = info.GetUniqueId();
 
 	// Add Class (concat with a previous list)
 	JDG::ClassList *list = &(info.classList);
