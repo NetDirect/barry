@@ -19,7 +19,7 @@ SUBDIRS = . src tools examples man
 # conditionally configured nested subdirectories are listed in $(subdirs)
 SUBDIRS += $(subdirs)
 
-pkgconfig_DATA = libbarry-0.pc
+pkgconfig_DATA = libbarry-0.pc libbarrydp-0.pc libbarryjdwp-0.pc
 
 all-local:
 	rm -f $(top_builddir)/barry
