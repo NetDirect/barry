@@ -806,7 +806,7 @@ void JVMDebug::GetThreadsList(JVMThreadsList &mylist)
 	mylist.Parse(Data(response.GetData() + SB_JVMPACKET_HEADER_SIZE + SB_JVMTHREADS_LIST_HEADER_SIZE, size));
 
 	// Complete threads list
-	vector<JVMThreadsEntry>::iterator b = mylist.begin();
+	JVMThreadsList::iterator b = mylist.begin();
 	for( ; b != mylist.end(); b++ ) {
 		JVMThreadsEntry entry = (*b);
 

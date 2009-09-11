@@ -9,6 +9,8 @@ Release: version 0.16 - 2009/09/??
 	- moved #defines out of public dp_codinfo.h into dp_codinfo.cc
 		Applications probably don't care about these.
 	- changed string arguments to const references
+	- added STL-style typedefs to list classes to make looping easier
+		and easier to change types if needed
 2009/09/10
 	- added copyright notices to all source files in bjdwp/
 		This is based on the initial README included in

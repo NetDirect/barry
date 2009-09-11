@@ -112,7 +112,7 @@ bool LoadDebugInfo(DebugFileList &list, const char *filename, CodInfo &info)
 	if (filename == NULL)
 		return false;
 
-	vector<DebugFileEntry>::iterator b = list.begin();
+	DebugFileList::iterator b = list.begin();
 
 	for( ; b != list.end(); b++ ) {
 		DebugFileEntry entry = (*b);
@@ -129,7 +129,7 @@ bool LoadDebugInfo(DebugFileList &list, const char *filename, CodInfo &info)
 
 bool LoadDebugInfo(DebugFileList &list, const uint32_t uniqueId, const std::string module, CodInfo &info)
 {
-	vector<DebugFileEntry>::iterator b = list.begin();
+	DebugFileList::iterator b = list.begin();
 
 	for( ; b != list.end(); b++ ) {
 		DebugFileEntry entry = (*b);

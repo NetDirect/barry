@@ -51,6 +51,11 @@ public:
 class BXEXPORT DebugFileList : public std::vector<DebugFileEntry>
 {
 public:
+	typedef std::vector<DebugFileEntry>		base_type;
+	typedef base_type::iterator			iterator;
+	typedef base_type::const_iterator		const_iterator;
+
+public:
 	void AddElement(uint32_t uniqueid, const std::string &appname, const std::string &filename);
 	void Dump(std::ostream &os) const;	
 };
@@ -89,8 +94,10 @@ public:
 
 class BXEXPORT ClassList : public std::vector<ClassEntry>
 {
-private:
-protected:
+public:
+	typedef std::vector<ClassEntry>			base_type;
+	typedef base_type::iterator			iterator;
+	typedef base_type::const_iterator		const_iterator;
 
 public:
 	void CreateDefaultEntries();

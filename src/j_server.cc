@@ -215,7 +215,7 @@ void JDWServer::AttachToDevice()
 	dout(modulesList);
 
 	// Check debug info for each modules
-	vector<JVMModulesEntry>::iterator b = modulesList.begin();
+	JVMModulesList::iterator b = modulesList.begin();
 	for ( ; b != modulesList.end(); b++) {
 		JDG::CodInfo codInfo;
 
@@ -388,7 +388,7 @@ void JDWServer::InitVisibleClassList()
 		JDWAppInfo *appInfo = &(it->second);
 		JDG::ClassList *list = &(appInfo->classList);
 	
-		vector<JDG::ClassEntry>::iterator b;
+		JDG::ClassList::iterator b;
 
 		for (b = list->begin(); b != list->end(); b++) {
 			// FIXME
@@ -644,7 +644,7 @@ void JDWServer::CommandAllThreads(Data &cmd)
 	AddJDWInt(response, offset, be_htobl(list.size()));
 
 	// Send all threads ID
-	vector<JVMThreadsEntry>::iterator b = list.begin();
+	JVMThreadsList::iterator b = list.begin();
 	for( ; b != list.end(); b++ ) {
 		JVMThreadsEntry entry = *b;
 

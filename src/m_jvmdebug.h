@@ -43,6 +43,11 @@ class JVMThreadsEntry;
 class BXEXPORT JVMModulesList : public std::vector<JVMModulesEntry>
 {
 public:
+	typedef std::vector<JVMModulesEntry>		base_type;
+	typedef base_type::iterator			iterator;
+	typedef base_type::const_iterator		const_iterator;
+
+public:
 	void Parse(const Data &entry_packet);
 
 	void Dump(std::ostream &os) const;
@@ -67,6 +72,11 @@ public:
 
 class BXEXPORT JVMThreadsList : public std::vector<JVMThreadsEntry>
 {
+public:
+	typedef std::vector<JVMThreadsEntry>		base_type;
+	typedef base_type::iterator			iterator;
+	typedef base_type::const_iterator		const_iterator;
+
 public:
 	void Parse(const Data &entry_packet);
 
