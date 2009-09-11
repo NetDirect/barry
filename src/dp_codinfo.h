@@ -50,7 +50,9 @@ namespace Barry {
 namespace JDG {
 
 
-class BXEXPORT DebugFileEntry {
+class BXEXPORT DebugFileEntry
+{
+private:
 protected:
 
 public:
@@ -59,12 +61,11 @@ public:
 	uint32_t uniqueId;
 
 	void Dump(std::ostream &os) const;
-
-private:
 };
 
 
-class BXEXPORT DebugFileList : public std::vector<DebugFileEntry> {
+class BXEXPORT DebugFileList : public std::vector<DebugFileEntry>
+{
 public:
 	void AddElement(uint32_t uniqueid, std::string appname, std::string filename);
 	void Dump(std::ostream &os) const;	
@@ -75,7 +76,9 @@ inline std::ostream& operator<<(std::ostream &os, const DebugFileList &list) {
 }
 
 
-class BXEXPORT ClassEntry {
+class BXEXPORT ClassEntry
+{
+private:
 protected:
 
 public:
@@ -97,40 +100,24 @@ public:
 	uint32_t unknown08;
 
 	std::string getFullClassName() { return classPath + "." + className; };
-
-private:
 };
 
 
-class BXEXPORT ClassList : public std::vector<ClassEntry> {
+class BXEXPORT ClassList : public std::vector<ClassEntry>
+{
+private:
 protected:
 
 public:
 	void createDefaultEntries();
-
-private:
 };
 
 
 
 
 
-class BXEXPORT CodInfo {
-protected:
-
-public:
-	uint32_t uniqueId;
-	std::string appName;
-	ClassList classList;
-
-	bool loadDebugFile(const char *filename);
-
-	void parseHeaderSection(std::ifstream &input);
-	void parseTypeSection(std::ifstream &input);
-
-	uint32_t getUniqueId();
-	std::string getAppName();
-
+class BXEXPORT CodInfo
+{
 private:
 	uint32_t parseNextHeaderField(std::ifstream &input);
 	uint32_t parseNextTypeField(std::ifstream &input);
@@ -148,6 +135,21 @@ private:
 	void parseArray(std::ifstream &input);
 	void parseVoid(std::ifstream &input);
 	void parseDouble(std::ifstream &input);
+
+protected:
+
+public:
+	uint32_t uniqueId;
+	std::string appName;
+	ClassList classList;
+
+	bool loadDebugFile(const char *filename);
+
+	void parseHeaderSection(std::ifstream &input);
+	void parseTypeSection(std::ifstream &input);
+
+	uint32_t getUniqueId();
+	std::string getAppName();
 };
 
 

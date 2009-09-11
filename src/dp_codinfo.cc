@@ -174,7 +174,8 @@ void DebugFileEntry::Dump(std::ostream &os) const
 //---------------------------
 
 
-void ClassList::createDefaultEntries() {
+void ClassList::createDefaultEntries()
+{
 	ClassEntry entry;
 
 	// 1

@@ -26,9 +26,8 @@
 
 namespace Barry { namespace JDWP {
 
-class JDWMessage {
-protected:
-
+class JDWMessage
+{
 private:
 	int m_socket;
 
@@ -36,6 +35,8 @@ private:
 
 	void RawSend(Barry::Data &send, int timeout = -1);
 	bool RawReceive(Barry::Data &receive, int timeout = -1);
+
+protected:
 
 public:
 	JDWMessage(int socket);

@@ -59,11 +59,12 @@ public:
 
 
 
-class JDWP {
-protected:
-
+class JDWP
+{
 private:
 	int m_lasterror;
+
+protected:
 
 public:
 	JDWP();
