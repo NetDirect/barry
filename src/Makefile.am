@@ -194,7 +194,7 @@ libbarryjdwp_la_SOURCES = \
 	j_message.cc \
 	j_server.cc \
 	j_manager.cc
-libbarryjdwp_la_LIBADD = libbarry.la $(LIBUSB_LIBS)
+libbarryjdwp_la_LIBADD = libbarry.la libbarrydp.la $(LIBUSB_LIBS)
 libbarryjdwp_la_LDFLAGS = -version-info ${LIB_BARRY_VERSION}
 
 ##if DO_TEST
