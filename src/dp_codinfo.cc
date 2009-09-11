@@ -258,7 +258,7 @@ bool CodInfo::LoadDebugFile(const char *filename)
 
 	if (field == 0xA) {
 		// Parse ressource area zone
-		parseRessourceSection(file);
+		ParseResourceSection(file);
 	}
 	
 	return true;
@@ -326,7 +326,7 @@ void CodInfo::ParseTypeSection(ifstream &input)
 }
 
 
-void CodInfo::parseRessourceSection(ifstream &input)
+void CodInfo::ParseResourceSection(ifstream &input)
 {
 	uint32_t len;
 	uint32_t type;
