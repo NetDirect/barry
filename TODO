@@ -15,7 +15,6 @@ Target: release version 0.16 (Oct 1)
 	+ incorporate barrybackup GUI changes by Ryan Li
 	- incorporate Nicolas's java debugger patches
 		- figure out a solution to the HideSequencePacket issue
-		- add build tests to test/buildtest.sh script
 		- fix any lingering compile problems and FIXMEs
 		- man page for bjdwp app
 		- www documentation for bjdwp app
