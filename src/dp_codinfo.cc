@@ -32,8 +32,6 @@
  */
 
 
-#include <iostream>
-#include <sstream>
 #include <fstream>
 #include <iomanip>
 
@@ -43,6 +41,7 @@
 
 #include "dp_parser.h"
 #include "dp_codinfo.h"
+#include "debug.h"
 
 
 #define COD_DEBUG_APPNAME_HEADERFIELD		0x0
@@ -340,7 +339,7 @@ void CodInfo::ParseTypeSection(ifstream &input)
 	check = ParseInteger(input);
 
 	// Checking...
-	cout << "Nbr = " << dec << nbr << " / Count = " << dec << count << " / check = " << check << endl;
+	dout("Nbr = " << dec << nbr << " / Count = " << dec << count << " / check = " << check);
 }
 
 
@@ -369,11 +368,11 @@ void CodInfo::ParseResourceSection(ifstream &input)
 		unknown02 = ParseInteger(input);
 		unknown03 = ParseInteger(input);
 
-		cout << "JDGCodInfo::parseRessource" << endl;
-		cout << "  Name : " << name << endl;
-		cout << "  unknown01 : " << hex << unknown01 << endl;
-		cout << "  unknown02 : " << hex << unknown02 << endl;
-		cout << "  unknown03 : " << hex << unknown03 << endl;
+		dout("JDGCodInfo::parseRessource"
+			<< "\n  Name : " << name
+			<< "\n  unknown01 : " << hex << unknown01
+			<< "\n  unknown02 : " << hex << unknown02
+			<< "\n  unknown03 : " << hex << unknown03);
 	}
 
 	// type = 2
@@ -390,15 +389,15 @@ void CodInfo::ParseResourceSection(ifstream &input)
 	unknown06 = ParseInteger(input);
 	unknown07 = ParseInteger(input);
 
-	cout << "JDGCodInfo::parseRessource" << endl;
-	cout << "  Name : " << name << endl;
-	cout << "  unknown01 : " << hex << unknown01 << endl;
-	cout << "  unknown02 : " << hex << unknown02 << endl;
-	cout << "  unknown03 : " << hex << unknown03 << endl;
-	cout << "  unknown04 : " << hex << unknown04 << endl;
-	cout << "  unknown05 : " << hex << unknown05 << endl;
-	cout << "  unknown06 : " << hex << unknown06 << endl;
-	cout << "  unknown07 : " << hex << unknown07 << endl;
+	dout("JDGCodInfo::parseRessource"
+		<< "\n  Name : " << name
+		<< "\n  unknown01 : " << hex << unknown01
+		<< "\n  unknown02 : " << hex << unknown02
+		<< "\n  unknown03 : " << hex << unknown03
+		<< "\n  unknown04 : " << hex << unknown04
+		<< "\n  unknown05 : " << hex << unknown05
+		<< "\n  unknown06 : " << hex << unknown06
+		<< "\n  unknown07 : " << hex << unknown07);
 
 	// type = 1
 	type = ParseInteger(input);
@@ -411,12 +410,12 @@ void CodInfo::ParseResourceSection(ifstream &input)
 	unknown03 = ParseInteger(input);
 	unknown04 = ParseInteger(input);
 	
-	cout << "JDGCodInfo::parseRessource" << endl;
-	cout << "  Name : " << name << endl;
-	cout << "  unknown01 : " << hex << unknown01 << endl;
-	cout << "  unknown02 : " << hex << unknown02 << endl;
-	cout << "  unknown03 : " << hex << unknown03 << endl;
-	cout << "  unknown04 : " << hex << unknown04 << endl;
+	dout("JDGCodInfo::parseRessource"
+		<< "\n  Name : " << name
+		<< "\n  unknown01 : " << hex << unknown01
+		<< "\n  unknown02 : " << hex << unknown02
+		<< "\n  unknown03 : " << hex << unknown03
+		<< "\n  unknown04 : " << hex << unknown04);
 
 	// type = 0
 	type = ParseInteger(input);
@@ -430,13 +429,13 @@ void CodInfo::ParseResourceSection(ifstream &input)
 	unknown04 = ParseInteger(input);
 	unknown05 = ParseInteger(input);
 
-	cout << "JDGCodInfo::parseRessource" << endl;
-	cout << "  Name : " << name << endl;
-	cout << "  unknown01 : " << hex << unknown01 << endl;
-	cout << "  unknown02 : " << hex << unknown02 << endl;
-	cout << "  unknown03 : " << hex << unknown03 << endl;
-	cout << "  unknown04 : " << hex << unknown04 << endl;
-	cout << "  unknown05 : " << hex << unknown05 << endl;
+	dout("JDGCodInfo::parseRessource"
+		<< "\n  Name : " << name
+		<< "\n  unknown01 : " << hex << unknown01
+		<< "\n  unknown02 : " << hex << unknown02
+		<< "\n  unknown03 : " << hex << unknown03
+		<< "\n  unknown04 : " << hex << unknown04
+		<< "\n  unknown05 : " << hex << unknown05);
 }
 
 
@@ -515,7 +514,7 @@ uint32_t CodInfo::ParseNextTypeField(ifstream &input)
 		break;
 
 	default:
-		cout << "Type unknown ! " << hex << type << endl;
+		dout("Type unknown ! " << hex << type);
 		type = 0xFFFFFFFF;
 	}
 
@@ -543,8 +542,7 @@ void CodInfo::ParseBoolean(ifstream &input)
 
 	string str = ParseString(input, len);
 
-	cout << "JDG::CodInfo::ParseBoolean" << endl;
-	cout << "  name : " << str << endl;
+	dout("JDG::CodInfo::ParseBoolean\n  name : " << str);
 }
 
 
@@ -554,8 +552,7 @@ void CodInfo::ParseByte(ifstream &input)
 
 	string str = ParseString(input, len);
 
-	cout << "JDG::CodInfo::ParseByte" << endl;
-	cout << "  name : " << str << endl;
+	dout("JDG::CodInfo::ParseByte\n  name : " << str);
 }
 
 
@@ -565,8 +562,7 @@ void CodInfo::ParseChar(ifstream &input)
 
 	string str = ParseString(input, len);
 
-	cout << "JDG::CodInfo::ParseChar" << endl;
-	cout << "  name : " << str << endl;
+	dout("JDG::CodInfo::ParseChar\n  name : " << str);
 }
 
 
@@ -576,8 +572,7 @@ void CodInfo::ParseShort(ifstream &input)
 
 	string str = ParseString(input, len);
 
-	cout << "JDG::CodInfo::ParseShort" << endl;
-	cout << "  name : " << str << endl;
+	dout("JDG::CodInfo::ParseShort\n  name : " << str);
 }
 
 
@@ -587,8 +582,7 @@ void CodInfo::ParseInt(ifstream &input)
 
 	string str = ParseString(input, len);
 
-	cout << "JDG::CodInfo::ParseInt" << endl;
-	cout << "  name : " << str << endl;
+	dout("JDG::CodInfo::ParseInt\n  name : " << str);
 }
 
 
@@ -598,8 +592,7 @@ void CodInfo::ParseLong(ifstream &input)
 
 	string str = ParseString(input, len);
 
-	cout << "JDG::CodInfo::ParseLong" << endl;
-	cout << "  name : " << str << endl;
+	dout("JDG::CodInfo::ParseLong\n  name : " << str);
 }
 
 
@@ -609,7 +602,7 @@ void CodInfo::ParseClass(ifstream &input)
 
 	ClassEntry object;
 
-	cout << "JDG::CodInfo::ParseClass" << endl;
+	dout("JDG::CodInfo::ParseClass");
 
 	len  = ParseInteger(input);
 
@@ -638,17 +631,17 @@ void CodInfo::ParseClass(ifstream &input)
 
 	classList.push_back(object);
 
-	cout << "  name : " << object.className << endl;
-	cout << "  path : " << object.classPath << endl;
-	cout << "  type : " << hex << object.type << endl;
-	cout << "  unknown02 : " << hex << object.unknown02 << endl;
-	cout << "  unknown03 : " << hex << object.unknown03 << endl;
-	cout << "  id : " << hex << object.id << endl;
-	cout << "  source file : " << object.sourceFile << endl;
-	cout << "  unknown05 : " << hex << object.unknown05 << endl;
-	cout << "  unknown06 : " << hex << object.unknown06 << endl;
-	cout << "  unknown07 : " << hex << object.unknown07 << endl;
-	cout << "  unknown08 : " << hex << object.unknown08 << endl;
+	dout("\n  name : " << object.className
+		<< "\n  path : " << object.classPath
+		<< "\n  type : " << hex << object.type
+		<< "\n  unknown02 : " << hex << object.unknown02
+		<< "\n  unknown03 : " << hex << object.unknown03
+		<< "\n  id : " << hex << object.id
+		<< "\n  source file : " << object.sourceFile
+		<< "\n  unknown05 : " << hex << object.unknown05
+		<< "\n  unknown06 : " << hex << object.unknown06
+		<< "\n  unknown07 : " << hex << object.unknown07
+		<< "\n  unknown08 : " << hex << object.unknown08);
 }
 
 
@@ -658,8 +651,7 @@ void CodInfo::ParseArray(ifstream &input)
 
 	string str = ParseString(input, len);
 
-	cout << "JDG::CodInfo::ParseArray" << endl;
-	cout << "  name : " << str << endl;
+	dout("JDG::CodInfo::ParseArray\n  name : " << str);
 }
 
 
@@ -669,8 +661,7 @@ void CodInfo::ParseVoid(ifstream &input)
 
 	string str = ParseString(input, len);
 
-	cout << "JDG::CodInfo::ParseVoid" << endl;
-	cout << "  name : " << str << endl;
+	dout("JDG::CodInfo::ParseVoid\n  name : " << str);
 }
 
 
@@ -680,8 +671,7 @@ void CodInfo::ParseDouble(ifstream &input)
 
 	string str = ParseString(input, len);
 
-	cout << "JDG::CodInfo::ParseDouble" << endl;
-	cout << "  name : " << str << endl;
+	dout("JDG::CodInfo::ParseDouble\n  name : " << str);
 }
 
 /*
@@ -691,7 +681,7 @@ void CodInfo::ParseType2(ifstream &input) {
 
 	string str = ParseString(input, len);
 
-	cout << "Type2 : " << str << endl;
+	dout("Type2 : " << str);
 
 	value = ParseInteger(input);
 	value = ParseInteger(input);

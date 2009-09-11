@@ -12,6 +12,7 @@ Release: version 0.16 - 2009/09/??
 	- added STL-style typedefs to list classes to make looping easier
 		and easier to change types if needed
 	- added libbarrydp as dependency for libbarryjdwp
+	- replaced direct cout usage with dout() in dp_codinfo.cc
 2009/09/10
 	- added copyright notices to all source files in bjdwp/
 		This is based on the initial README included in
