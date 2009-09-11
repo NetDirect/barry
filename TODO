@@ -61,6 +61,13 @@ Target: release version 0.19 (Jan 1, 2010)
 General Features
 ==============================================================================
 
+Add firmware upgrade support via USB
+------------------------------------
+Duplicate the firmware upgrade functionality of the RIM Windows
+software.  There are USB captures of this in the USB Capture Log
+archive at http://www.netdirect.ca/software/packages/barry/logs.php
+
+
 Add media management via USB
 ----------------------------
 The Windows version of desktop software has the ability to manage

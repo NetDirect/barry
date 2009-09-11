@@ -4,6 +4,7 @@ Release: version 0.16 - 2009/09/??
 	- merged Nicolas Vivien's debug parser lib updates
 		with change:
 		- fixed API spelling typo and capitalization
+	- added firmware upgrade to TODO list
 2009/09/10
 	- added copyright notices to all source files in bjdwp/
 		This is based on the initial README included in
