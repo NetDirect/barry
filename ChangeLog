@@ -8,6 +8,8 @@ Release: version 0.16 - 2009/09/??
 	- added GPL license as file bjdwp/COPYING, since bjdwp is
 		somewhat standalone, like the plugins and the gui
 	- bjdwp: removed jdwplog() in favour of identical barryverbose()
+	- bjdwp: moved into main tree from bjdwp/ and created two new
+		libraries: libbarrydp and libbarryjdwp
 2009/09/09
 	- fixed potential loss of serial data during PPP init
 		when seding the AT test, usually the OK response is
