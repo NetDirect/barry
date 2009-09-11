@@ -20,13 +20,17 @@
 */
 
 #include "threadwrap.h"
+#include "error.h"
 
 
 namespace Barry {
 
 Thread::Thread(int socket, void *(*callback)(void *data), void *data)
 {
-	pthread_create(&thread, NULL, callback, data);
+	int ret = pthread_create(&thread, NULL, callback, data);
+	if( ret ) {
+		throw Barry::ErrnoError("Thread: pthread_create failed.", ret);
+	}
 }
 
 
@@ -38,7 +42,10 @@ Thread::~Thread()
 
 void Thread::Dispose()
 {
-	pthread_cancel(thread);
+	int ret = pthread_cancel(thread);
+	if( ret ) {
+		throw Barry::ErrnoError("Thread: pthread_cancel failed.", ret);
+	}
 }
 
 } // namespace Barry
