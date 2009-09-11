@@ -147,6 +147,7 @@ public:
 
 	void ParseHeaderSection(std::ifstream &input);
 	void ParseTypeSection(std::ifstream &input);
+	void parseRessourceSection(std::ifstream &input);
 
 	uint32_t GetUniqueId();
 	std::string GetAppName();
