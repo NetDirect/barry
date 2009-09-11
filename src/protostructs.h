@@ -769,7 +769,7 @@ namespace JDWP {
 			PacketEventRequest eventRequest;
 		} __attribute__ ((packed)) u;
 	} __attribute__ ((packed));
-	#define JDWP_COMMAND_HEADER_SIZE			(sizeof(Protocol::PacketCommand))
+	#define JDWP_COMMAND_HEADER_SIZE			(sizeof(Barry::Protocol::JDWP::PacketCommand))
 
 
 	// Packet response
@@ -783,7 +783,7 @@ namespace JDWP {
 		uint32_t frameIDSize;
 	} __attribute__ ((packed));
 
-	#define JDWP_PACKETVIRTUALMACHINEIDSIZES_DATA_SIZE		sizeof(Protocol::PacketVirtualMachineIDSizes)
+	#define JDWP_PACKETVIRTUALMACHINEIDSIZES_DATA_SIZE		sizeof(Barry::Protocol::JDWP::PacketVirtualMachineIDSizes)
 
 
 	struct PacketVirtualMachine {
@@ -802,7 +802,7 @@ namespace JDWP {
 			uint8_t raw[1];
 		} __attribute__ ((packed)) u;
 	} __attribute__ ((packed));
-	#define JDWP_RESPONSE_HEADER_SIZE			(sizeof(Protocol::PacketResponse) - sizeof(Protocol::PacketResponse::PacketResponseData))
+	#define JDWP_RESPONSE_HEADER_SIZE			(sizeof(Barry::Protocol::JDWP::PacketResponse) - sizeof(Barry::Protocol::JDWP::PacketResponse::PacketResponseData))
 
 
 	// Generic packet
@@ -818,11 +818,11 @@ namespace JDWP {
 			PacketResponse response;
 		} __attribute__ ((packed)) u;
 	} __attribute__ ((packed));
-	#define JDWP_PACKET_HEADER_SIZE			(sizeof(Protocol::Packet) - sizeof(Protocol::Packet::PacketType))
+	#define JDWP_PACKET_HEADER_SIZE			(sizeof(Barry::Protocol::JDWP::Packet) - sizeof(Barry::Protocol::JDWP::Packet::PacketType))
 
 
-	#define MAKE_JDWPPACKET(var, data)		const Protocol::Packet *var = (const Protocol::Packet *) (data).GetData()
-	#define MAKE_JDWPPACKETPTR_BUF(var, ptr)		Protocol::Packet *var = (Protocol::Packet *)ptr
+	#define MAKE_JDWPPACKET(var, data)		const Barry::Protocol::JDWP::Packet *var = (const Barry::Protocol::JDWP::Packet *) (data).GetData()
+	#define MAKE_JDWPPACKETPTR_BUF(var, ptr)		Barry::Protocol::JDWP::Packet *var = (Barry::Protocol::JDWP::Packet *)ptr
 
 
 } // namespace JDWP
@@ -834,7 +834,7 @@ struct JDWField {
 		uint8_t raw[1];
 	} __attribute__ ((packed)) u;
 } __attribute__ ((packed));
-#define JDWP_FIELD_HEADER_SIZE			(sizeof(JDWField) - sizeof(JDWField::JDWFieldData))
+#define JDWP_FIELD_HEADER_SIZE			(sizeof(Barry::Protocol::JDWField) - sizeof(Barry::Protocol::JDWField::JDWFieldData))
 
 struct JVMCommand
 {
