@@ -1,5 +1,5 @@
 ///
-/// \file	server.h
+/// \file	j_server.h
 ///		Java Debug server classes
 ///
 

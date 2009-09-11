@@ -1,5 +1,5 @@
 ///
-/// \file	jdwp.cc
+/// \file	j_jdwp.cc
 ///		JDWP socket communication implementation
 ///
 

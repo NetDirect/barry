@@ -1,5 +1,5 @@
 /** 
- * @file main.cc
+ * @file bdptest.cc
  * @author Nicolas VIVIEN
  * @date 2009-08-01
  *

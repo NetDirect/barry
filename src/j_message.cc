@@ -1,5 +1,5 @@
 ///
-/// \file	message.cc
+/// \file	j_message.cc
 ///		JDWP USB message implementation
 ///
 

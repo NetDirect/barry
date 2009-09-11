@@ -1,5 +1,5 @@
 ///
-/// \file	server.cc
+/// \file	j_server.cc
 ///		Server protocol implementation
 ///
 

@@ -1,5 +1,5 @@
 ///
-/// \file	jdwp.h
+/// \file	j_jdwp.h
 ///		JDWP classes
 ///
 

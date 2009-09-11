@@ -1,5 +1,5 @@
 ///
-/// \file	main.cc
+/// \file	bjdwp.cc
 ///		bjdwp command line tool
 ///
 

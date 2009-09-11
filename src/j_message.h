@@ -1,5 +1,5 @@
 ///
-/// \file	message.h
+/// \file	j_message.h
 ///		JDWP message classes
 ///
 
