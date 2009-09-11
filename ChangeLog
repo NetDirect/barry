@@ -6,6 +6,8 @@ Release: version 0.16 - 2009/09/??
 		- fixed API spelling typo and capitalization
 	- added firmware upgrade to TODO list
 	- added checks for pthread function errors in Thread class
+	- moved #defines out of public dp_codinfo.h into dp_codinfo.cc
+		Applications probably don't care about these.
 2009/09/10
 	- added copyright notices to all source files in bjdwp/
 		This is based on the initial README included in

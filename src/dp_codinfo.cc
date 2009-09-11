@@ -45,6 +45,22 @@
 #include "dp_codinfo.h"
 
 
+#define COD_DEBUG_APPNAME_HEADERFIELD		0x0
+#define COD_DEBUG_UNIQUEID_HEADERFIELD		0x8
+
+#define COD_DEBUG_NONE_FIELD			0x0
+#define COD_DEBUG_BOOLEAN_FIELD			0x1
+#define COD_DEBUG_BYTE_FIELD			0x2
+#define COD_DEBUG_CHAR_FIELD			0x3
+#define COD_DEBUG_SHORT_FIELD			0x4
+#define COD_DEBUG_INT_FIELD			0x5
+#define COD_DEBUG_LONG_FIELD			0x6
+#define COD_DEBUG_CLASS_FIELD			0x7
+#define COD_DEBUG_ARRAY_FIELD			0x8
+#define COD_DEBUG_VOID_FIELD			0xA
+#define COD_DEBUG_DOUBLE_FIELD			0xC
+
+
 using namespace std;
 
 
