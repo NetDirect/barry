@@ -147,7 +147,9 @@ bool LoadDebugInfo(DebugFileList &list, const uint32_t uniqueId, const std::stri
 // DebugFileList class
 //------------------------
 
-void DebugFileList::AddElement(uint32_t uniqueid, std::string appname, std::string filename)
+void DebugFileList::AddElement(uint32_t uniqueid,
+				const std::string &appname,
+				const std::string &filename)
 {
 	DebugFileEntry entry;
 

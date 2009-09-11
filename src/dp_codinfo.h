@@ -51,7 +51,7 @@ public:
 class BXEXPORT DebugFileList : public std::vector<DebugFileEntry>
 {
 public:
-	void AddElement(uint32_t uniqueid, std::string appname, std::string filename);
+	void AddElement(uint32_t uniqueid, const std::string &appname, const std::string &filename);
 	void Dump(std::ostream &os) const;	
 };
 inline std::ostream& operator<<(std::ostream &os, const DebugFileList &list) {
