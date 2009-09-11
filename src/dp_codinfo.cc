@@ -297,7 +297,7 @@ string CodInfo::GetAppName()
 // Private API - Section parsing
 //-------------------------------
 
-void CodInfo::ParseHeaderSection(ifstream &input) 
+void CodInfo::ParseHeaderSection(istream &input) 
 {
 	uint32_t type;
 
@@ -313,7 +313,7 @@ void CodInfo::ParseHeaderSection(ifstream &input)
 }
 
 
-void CodInfo::ParseTypeSection(ifstream &input) 
+void CodInfo::ParseTypeSection(istream &input) 
 {
 	uint32_t type;
 	uint32_t count;
@@ -343,7 +343,7 @@ void CodInfo::ParseTypeSection(ifstream &input)
 }
 
 
-void CodInfo::ParseResourceSection(ifstream &input)
+void CodInfo::ParseResourceSection(istream &input)
 {
 	uint32_t len;
 	uint32_t type;
@@ -444,7 +444,7 @@ void CodInfo::ParseResourceSection(ifstream &input)
 //-------------------------------
 
 
-uint32_t CodInfo::ParseNextHeaderField(ifstream &input) 
+uint32_t CodInfo::ParseNextHeaderField(istream &input) 
 {
 	uint32_t type = ParseInteger(input);
 
@@ -465,7 +465,7 @@ uint32_t CodInfo::ParseNextHeaderField(ifstream &input)
 }
 
 
-uint32_t CodInfo::ParseNextTypeField(ifstream &input) 
+uint32_t CodInfo::ParseNextTypeField(istream &input) 
 {
 	uint32_t type = ParseInteger(input);
 
@@ -522,13 +522,13 @@ uint32_t CodInfo::ParseNextTypeField(ifstream &input)
 }
 
 
-void CodInfo::ParseUniqueId(ifstream &input) 
+void CodInfo::ParseUniqueId(istream &input) 
 {
 	uniqueId = ParseInteger(input);
 }
 
 
-void CodInfo::ParseAppName(ifstream &input) 
+void CodInfo::ParseAppName(istream &input) 
 {
 	uint32_t len = ParseInteger(input);
 
@@ -536,7 +536,7 @@ void CodInfo::ParseAppName(ifstream &input)
 }
 
 
-void CodInfo::ParseBoolean(ifstream &input) 
+void CodInfo::ParseBoolean(istream &input) 
 {
 	uint32_t len  = ParseInteger(input);
 
@@ -546,7 +546,7 @@ void CodInfo::ParseBoolean(ifstream &input)
 }
 
 
-void CodInfo::ParseByte(ifstream &input) 
+void CodInfo::ParseByte(istream &input) 
 {
 	uint32_t len  = ParseInteger(input);
 
@@ -556,7 +556,7 @@ void CodInfo::ParseByte(ifstream &input)
 }
 
 
-void CodInfo::ParseChar(ifstream &input) 
+void CodInfo::ParseChar(istream &input) 
 {
 	uint32_t len  = ParseInteger(input);
 
@@ -566,7 +566,7 @@ void CodInfo::ParseChar(ifstream &input)
 }
 
 
-void CodInfo::ParseShort(ifstream &input) 
+void CodInfo::ParseShort(istream &input) 
 {
 	uint32_t len  = ParseInteger(input);
 
@@ -576,7 +576,7 @@ void CodInfo::ParseShort(ifstream &input)
 }
 
 
-void CodInfo::ParseInt(ifstream &input) 
+void CodInfo::ParseInt(istream &input) 
 {
 	uint32_t len  = ParseInteger(input);
 
@@ -586,7 +586,7 @@ void CodInfo::ParseInt(ifstream &input)
 }
 
 
-void CodInfo::ParseLong(ifstream &input) 
+void CodInfo::ParseLong(istream &input) 
 {
 	uint32_t len  = ParseInteger(input);
 
@@ -596,7 +596,7 @@ void CodInfo::ParseLong(ifstream &input)
 }
 
 
-void CodInfo::ParseClass(ifstream &input) 
+void CodInfo::ParseClass(istream &input) 
 {
 	uint32_t len;
 
@@ -645,7 +645,7 @@ void CodInfo::ParseClass(ifstream &input)
 }
 
 
-void CodInfo::ParseArray(ifstream &input) 
+void CodInfo::ParseArray(istream &input) 
 {
 	uint32_t len  = ParseInteger(input);
 
@@ -655,7 +655,7 @@ void CodInfo::ParseArray(ifstream &input)
 }
 
 
-void CodInfo::ParseVoid(ifstream &input) 
+void CodInfo::ParseVoid(istream &input) 
 {
 	uint32_t len  = ParseInteger(input);
 
@@ -665,7 +665,7 @@ void CodInfo::ParseVoid(ifstream &input)
 }
 
 
-void CodInfo::ParseDouble(ifstream &input) 
+void CodInfo::ParseDouble(istream &input) 
 {
 	uint32_t len  = ParseInteger(input);
 
@@ -675,7 +675,7 @@ void CodInfo::ParseDouble(ifstream &input)
 }
 
 /*
-void CodInfo::ParseType2(ifstream &input) {
+void CodInfo::ParseType2(istream &input) {
 	uint32_t value;
 	uint32_t len  = ParseInteger(input);
 

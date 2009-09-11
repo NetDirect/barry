@@ -110,22 +110,22 @@ public:
 class BXEXPORT CodInfo
 {
 private:
-	uint32_t ParseNextHeaderField(std::ifstream &input);
-	uint32_t ParseNextTypeField(std::ifstream &input);
+	uint32_t ParseNextHeaderField(std::istream &input);
+	uint32_t ParseNextTypeField(std::istream &input);
 
-	void ParseAppName(std::ifstream &input);
-	void ParseUniqueId(std::ifstream &input);
+	void ParseAppName(std::istream &input);
+	void ParseUniqueId(std::istream &input);
 
-	void ParseBoolean(std::ifstream &input);
-	void ParseByte(std::ifstream &input);
-	void ParseChar(std::ifstream &input);
-	void ParseShort(std::ifstream &input);
-	void ParseInt(std::ifstream &input);
-	void ParseLong(std::ifstream &input);
-	void ParseClass(std::ifstream &input);
-	void ParseArray(std::ifstream &input);
-	void ParseVoid(std::ifstream &input);
-	void ParseDouble(std::ifstream &input);
+	void ParseBoolean(std::istream &input);
+	void ParseByte(std::istream &input);
+	void ParseChar(std::istream &input);
+	void ParseShort(std::istream &input);
+	void ParseInt(std::istream &input);
+	void ParseLong(std::istream &input);
+	void ParseClass(std::istream &input);
+	void ParseArray(std::istream &input);
+	void ParseVoid(std::istream &input);
+	void ParseDouble(std::istream &input);
 
 protected:
 
@@ -136,9 +136,9 @@ public:
 
 	bool LoadDebugFile(const char *filename);
 
-	void ParseHeaderSection(std::ifstream &input);
-	void ParseTypeSection(std::ifstream &input);
-	void ParseResourceSection(std::ifstream &input);
+	void ParseHeaderSection(std::istream &input);
+	void ParseTypeSection(std::istream &input);
+	void ParseResourceSection(std::istream &input);
 
 	uint32_t GetUniqueId();
 	std::string GetAppName();
