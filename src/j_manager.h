@@ -1,5 +1,5 @@
 ///
-/// \file	manager.h
+/// \file	j_manager.h
 ///		Application management classes
 ///
 
@@ -22,12 +22,13 @@
 #ifndef __BARRYJDWP_MANAGER_H__
 #define __BARRYJDWP_MANAGER_H__
 
+#include "dll.h"
+#include "dp_codinfo.h"
+#include <stdint.h>
+#include <string>
 #include <map>
 
-#include <barry/jdwp/codinfo.h>
-
-
-namespace JDWP {
+namespace Barry { namespace JDWP {
 
 class JDWAppList;
 class JDWAppInfo;
@@ -57,7 +58,7 @@ private:
 };
 
 
-} // namespace JDWP
+}} // namespace Barry::JDWP
 
 
 #endif

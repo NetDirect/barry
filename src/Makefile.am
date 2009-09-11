@@ -61,8 +61,9 @@ include_barrydir = ${includedir}/barry
 #
 # libbarry - main USB protocol interface library
 # libbarrydp - '.debug' parser library
+# libbarryjdwp - java debug server library
 #
-lib_LTLIBRARIES = libbarry.la libbarrydp.la
+lib_LTLIBRARIES = libbarry.la libbarrydp.la libbarryjdwp.la
 
 include_barry_HEADERS = barry.h \
 	dll.h \
@@ -112,7 +113,9 @@ include_barry_HEADERS = barry.h \
 	cod.h \
 	bmp.h \
 	s11n-boost.h \
-	dp_codinfo.h
+	dp_codinfo.h \
+	j_manager.h \
+	j_server.h
 
 noinst_HEADERS = cbarry.h \
 	base64.h \
@@ -125,7 +128,9 @@ noinst_HEADERS = cbarry.h \
 	debug.h \
 	endian.h \
 	strnlen.h \
-	dp_parser.h
+	dp_parser.h \
+	j_message.h \
+	j_jdwp.h
 
 EXTRA_DIST = convo.awk \
 	legal.txt
@@ -182,6 +187,15 @@ libbarrydp_la_SOURCES = \
 	dp_codinfo.cc
 libbarrydp_la_LIBADD = libbarry.la
 libbarrydp_la_LDFLAGS = -version-info ${LIB_BARRY_VERSION}
+
+libbarryjdwp_la_SOURCES = \
+	j_record.cc \
+	j_jdwp.cc \
+	j_message.cc \
+	j_server.cc \
+	j_manager.cc
+libbarryjdwp_la_LIBADD = libbarry.la $(LIBUSB_LIBS)
+libbarryjdwp_la_LDFLAGS = -version-info ${LIB_BARRY_VERSION}
 
 ##if DO_TEST
 ##	bin_PROGRAMS += test-base64 test-data test-time

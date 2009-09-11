@@ -19,27 +19,12 @@
     root directory of this project for more details.
 */
 
-#include <stdlib.h>
-#include <stdint.h>
-#include <string.h>
-#include <unistd.h>
-#include <errno.h>
-#include <pthread.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <netdb.h>
-
-#include <barry/barry.h>
-
-#include "message.h"
+#include "j_message.h"
+#include "debug.h"
+#include "data.h"
 
 
-using namespace Barry;
-
-
-namespace JDWP {
+namespace Barry { namespace JDWP {
 
 
 JDWMessage::JDWMessage(int socket)
@@ -94,5 +79,5 @@ bool JDWMessage::Receive(Data &receive, int timeout)
 	return RawReceive(receive, timeout);
 }
 
-} // namespace JDWP
+}} // namespace Barry::JDWP
 

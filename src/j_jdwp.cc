@@ -19,24 +19,14 @@
     root directory of this project for more details.
 */
 
-#include <stdlib.h>
-#include <stdint.h>
-#include <string.h>
-#include <unistd.h>
+#include "j_jdwp.h"
+#include "data.h"
+#include <sstream>
+#include <iomanip>
 #include <errno.h>
-#include <pthread.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <netdb.h>
-
-#include <barry/barry.h>
-
-#include "jdwp.h"
 
 
-namespace JDWP {
+namespace Barry { namespace JDWP {
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -152,5 +142,5 @@ bool JDWP::Write(int socket, const void *data, size_t size, int timeout)
 	return ret >= 0;
 }
 
-} // namespace JDWP
+}} // namespace JDWP
 

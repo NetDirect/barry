@@ -22,11 +22,9 @@
 #ifndef __BARRYJDWP_MESSAGE_H__
 #define __BARRYJDWP_MESSAGE_H__
 
+#include "j_jdwp.h"
 
-#include "jdwp.h"
-
-
-namespace JDWP {
+namespace Barry { namespace JDWP {
 
 class JDWMessage {
 protected:
@@ -48,7 +46,7 @@ public:
 	bool Receive(Barry::Data &receive, int timeout = -1);
 };
 
-} // namespace JDWP
+}} // namespace Barry::JDWP
 
 #endif
 

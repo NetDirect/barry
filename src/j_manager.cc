@@ -1,5 +1,5 @@
 ///
-/// \file	manager.cc
+/// \file	j_manager.cc
 ///		Application management classes
 ///
 
@@ -19,36 +19,31 @@
     root directory of this project for more details.
 */
 
-#include <iostream>
-
-#include "manager.h"
-
-
-using namespace std;
-using namespace Barry;
-using namespace JDG;
+#include "j_manager.h"
+#include "dp_codinfo.h"
+#include "debug.h"
 
 
-namespace JDWP {
+namespace Barry { namespace JDWP {
 
 
 // JDWAppInfo class
 //------------------
 
 
-void JDWAppInfo::load(JDGCodInfo &info)
+void JDWAppInfo::load(JDG::JDGCodInfo &info)
 {
-	cout << "JDWAppInfo::load" << endl;
+	dout("JDWAppInfo::load" << endl);
 
 	// Assign uniqueId
 	uniqueId = info.getUniqueId();
 
 	// Add Class (concat with a previous list)
-	JDGClassList *list = &(info.classList);
+	JDG::JDGClassList *list = &(info.classList);
 
 	classList.insert(classList.end(), list->begin(), list->end());
 }
 
 
-} // namespace JDWP
+}} // namespace Barry::JDWP
 

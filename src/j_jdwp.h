@@ -22,12 +22,12 @@
 #ifndef __BARRYJDWP_JDWP_H__
 #define __BARRYJDWP_JDWP_H__
 
+#include "error.h"
 
-#include <barry/barry.h>
+namespace Barry {
 
-
-namespace Barry { class Data; }
-
+// forward declarations
+class Data;
 
 namespace JDWP {
 
@@ -74,7 +74,7 @@ public:
 	bool Write(int socket, const void *data, size_t size, int timeout = -1);
 };
 
-} // namespace JDWP
+}} // namespace Barry::JDWP
 
 #endif
 

@@ -19,38 +19,28 @@
     root directory of this project for more details.
 */
 
-#include <stdlib.h>
-#include <stdint.h>
-#include <string.h>
+#include "j_server.h"
+#include "protocol.h"
+#include "data.h"
+#include "endian.h"
+#include "debug.h"
+#include "j_message.h"
+#include "protostructs.h"
+#include "record-internal.h"
+
 #include <unistd.h>
 #include <fcntl.h>
-#include <pthread.h>
-#include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <netdb.h>
+#include <string.h>
 
 #include <algorithm>
-#include <functional>
-#include <vector>
-
-#include <barry/endian.h>
-#include <barry/barry.h>
-
-#include "message.h"
-#include "handler.h"
-#include "server.h"
-#include "protocol.h"
-#include "data.h"
-
 
 using namespace std;
-using namespace Barry;
-using namespace JDG;
 
-
-namespace JDWP {
+namespace Barry { namespace JDWP {
 
 static void * acceptWrapper(void *data);
 
@@ -58,9 +48,9 @@ static void * acceptWrapper(void *data);
 JDWServer::JDWServer(const char *address, int port)
 {
 	sockfd = -1;
-	handler = NULL;
+	handler.reset();
 
-	this->address = strdup(address);
+	this->address = address;
 	this->port = port;
 	this->printConsoleMessage = NULL;
 
@@ -71,8 +61,6 @@ JDWServer::JDWServer(const char *address, int port)
 JDWServer::~JDWServer() 
 {
 	stop();
-
-	free(address);
 }
 
 
@@ -104,13 +92,13 @@ bool JDWServer::start()
 
 	memset((char *) &sad, '\0', sizeof(struct sockaddr_in));
 
-	if (address == NULL)
+	if (!address.size())
 		sad.sin_addr.s_addr = INADDR_ANY;
 	else {
-		sad.sin_addr.s_addr = inet_addr(address);
+		sad.sin_addr.s_addr = inet_addr(address.c_str());
 
 		if (sad.sin_addr.s_addr == INADDR_NONE) {
-			hp = gethostbyname(address);
+			hp = gethostbyname(address.c_str());
 
 			if (hp == NULL) {
 				// TODO 
@@ -156,13 +144,14 @@ bool JDWServer::start()
 		exit(-1);
 	}
 
-	handler = new JDWHandler(sockfd, acceptWrapper, (void*) this);
+	handler.reset(new Thread(sockfd, acceptWrapper, (void*) this));
 
 	return true;
 }
 
 
-static void * acceptWrapper(void *data) {
+static void * acceptWrapper(void *data)
+{
 	JDWServer *s;
 
 	pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
@@ -187,7 +176,8 @@ static void * acceptWrapper(void *data) {
 }
 
 
-void JDWServer::acceptConnection() {
+void JDWServer::acceptConnection()
+{
 	size_t addrlen;
 
 	struct sockaddr *sa;
@@ -206,7 +196,8 @@ void JDWServer::acceptConnection() {
 }
 
 
-void JDWServer::attachToDevice() {
+void JDWServer::attachToDevice()
+{
 	bool ret;
 
 	targetrunning = false;
@@ -221,12 +212,12 @@ void JDWServer::attachToDevice() {
 	jvmdebug->Unknown05();
 
 	jvmdebug->GetModulesList(modulesList);
-	cout << modulesList;
+	dout(modulesList);
 
 	// Check debug info for each modules
 	vector<JVMModulesEntry>::iterator b = modulesList.begin();
 	for ( ; b != modulesList.end(); b++) {
-		JDGCodInfo codInfo;
+		JDG::JDGCodInfo codInfo;
 
 		JVMModulesEntry entry = *b;
 		
@@ -236,14 +227,15 @@ void JDWServer::attachToDevice() {
 			appList[entry.UniqueID].load(codInfo);
 		}
 		else {
-			cout << "No debug information found for '" << entry.Name;
-			cout << "' (" << hex << setfill('0') << setw(8) << entry.UniqueID << ")." << endl;
+			dout("No debug information found for '" << entry.Name);
+			dout("' (" << hex << setfill('0') << setw(8) << entry.UniqueID << ")." << endl)
 		}
 	}
 }
 
 
-void JDWServer::detachFromDevice() {
+void JDWServer::detachFromDevice()
+{
 	jvmdebug->Detach();
 	jvmdebug->Close();
 }
@@ -253,7 +245,8 @@ void JDWServer::detachFromDevice() {
 
 
 
-bool JDWServer::hello() {
+bool JDWServer::hello()
+{
 	bool ret;
 
 	Barry::Data response;
@@ -267,7 +260,7 @@ bool JDWServer::hello() {
 	}
 	while (!ret);
 
-	int size = response.GetSize();
+	size_t size = response.GetSize();
 	char *str = (char *) response.GetBuffer();
 
 	if (size != len)
@@ -285,7 +278,8 @@ bool JDWServer::hello() {
 }
 
 
-void JDWServer::run() {
+void JDWServer::run()
+{
 	string str;
 	JDWMessage msg(fd);
 
@@ -312,10 +306,10 @@ void JDWServer::run() {
 			
 					if (command.GetSize() > 0) {
 						// Convert to packet
-						rpack = (const Protocol::Packet *) command.GetData();
+						rpack = (const Barry::Protocol::JDWP::Packet *) command.GetData();
 
 						if (command.GetSize() != be_btohl(rpack->length)) {
-							cout << "Packet size error !!!" << endl;
+							dout("Packet size error !!!" << endl);
 
 							// TODO : add throw exception
 
@@ -341,10 +335,10 @@ void JDWServer::run() {
 
 			if (command.GetSize() > 0) {
 				// Convert to packet
-				rpack = (const Protocol::Packet *) command.GetData();
+				rpack = (const Barry::Protocol::JDWP::Packet *) command.GetData();
 
 				if (command.GetSize() != be_btohl(rpack->length)) {
-					cout << "Packet size error !!!" << endl;
+					dout("Packet size error !!!" << endl);
 
 					// TODO : add throw exception
 
@@ -360,10 +354,11 @@ void JDWServer::run() {
 }
 
 
-bool JDWServer::stop() {
-	if (handler) {
+bool JDWServer::stop()
+{
+	if (handler.get()) {
 		handler->dispose();
-		handler = 0;
+		handler.reset();
 	}
 
 	if (sockfd >= 0)
@@ -375,13 +370,14 @@ bool JDWServer::stop() {
 }
 
 
-void JDWServer::initVisibleClassList() {
+void JDWServer::initVisibleClassList()
+{
 	int index;
 
 	// Skip the cell '0'
 	// it's very ugly, but I want use an index started at '1' inside of '0'
 	// JDB works from '1' :(
-	JDGClassEntry e;
+	JDG::JDGClassEntry e;
 	visibleClassList.push_back(e);
 
 	// Count and index the class (start to '1')
@@ -390,9 +386,9 @@ void JDWServer::initVisibleClassList() {
 
 	for (it = appList.begin(); it != appList.end(); it++) {
 		JDWAppInfo *appInfo = &(it->second);
-		JDGClassList *list = &(appInfo->classList);
+		JDG::JDGClassList *list = &(appInfo->classList);
 	
-		vector<JDGClassEntry>::iterator b;
+		vector<JDG::JDGClassEntry>::iterator b;
 
 		for (b = list->begin(); b != list->end(); b++) {
 			// FIXME
@@ -416,7 +412,8 @@ void JDWServer::initVisibleClassList() {
 }
 
 
-void JDWServer::CommandsetProcess(Data &cmd) {
+void JDWServer::CommandsetProcess(Data &cmd)
+{
 	MAKE_JDWPPACKET(rpack, cmd);
 
 	switch (rpack->u.command.commandset) {
@@ -475,12 +472,13 @@ void JDWServer::CommandsetProcess(Data &cmd) {
 
 		default:
 			// TODO : add exception (or alert)
-			cout << "Commandset unknown !!!" << endl;
+			dout("Commandset unknown !!!" << endl);
 	}
 }
 
 
-void JDWServer::CommandsetVirtualMachineProcess(Data &cmd) {
+void JDWServer::CommandsetVirtualMachineProcess(Data &cmd)
+{
 	JDWMessage msg(fd);
 
 	MAKE_JDWPPACKET(rpack, cmd);
@@ -525,7 +523,8 @@ void JDWServer::CommandsetVirtualMachineProcess(Data &cmd) {
 }
 
 
-void JDWServer::CommandsetEventRequestProcess(Data &cmd) {
+void JDWServer::CommandsetEventRequestProcess(Data &cmd)
+{
 	JDWMessage msg(fd);
 
 	MAKE_JDWPPACKET(rpack, cmd);
@@ -538,7 +537,8 @@ void JDWServer::CommandsetEventRequestProcess(Data &cmd) {
 }
 
 
-void JDWServer::CommandVersion(Data &cmd) {
+void JDWServer::CommandVersion(Data &cmd)
+{
 	JDWMessage msg(fd);
 
 	// Build packet data
@@ -546,11 +546,11 @@ void JDWServer::CommandVersion(Data &cmd) {
 
 	size_t offset = JDWP_PACKET_HEADER_SIZE + JDWP_RESPONSE_HEADER_SIZE;
 
-	AddDataString(response, offset, string("RIM JVM"));
-	AddDataInt(response, offset, be_htobl(1));
-	AddDataInt(response, offset, be_htobl(4));
-	AddDataString(response, offset, string("1.4"));
-	AddDataString(response, offset, string("RIM JVM"));
+	AddJDWString(response, offset, string("RIM JVM"));
+	AddJDWInt(response, offset, be_htobl(1));
+	AddJDWInt(response, offset, be_htobl(4));
+	AddJDWString(response, offset, string("1.4"));
+	AddJDWString(response, offset, string("RIM JVM"));
 
 	response.ReleaseBuffer(offset);
 
@@ -559,7 +559,7 @@ void JDWServer::CommandVersion(Data &cmd) {
 
 	// Fill in the header values
 	MAKE_JDWPPACKETPTR_BUF(cpack, response.GetBuffer(total_size));
-	Protocol::Packet &packet = *cpack;
+	Barry::Protocol::JDWP::Packet &packet = *cpack;
 
 
 	MAKE_JDWPPACKET(rpack, cmd);
@@ -574,8 +574,9 @@ void JDWServer::CommandVersion(Data &cmd) {
 }
 
 
-void JDWServer::CommandAllClasses(Data &cmd) {
-	int i;
+void JDWServer::CommandAllClasses(Data &cmd)
+{
+	size_t i;
 	int size;
 
 	JDWMessage msg(fd);
@@ -588,7 +589,7 @@ void JDWServer::CommandAllClasses(Data &cmd) {
 	// Size of known class list
 	size = visibleClassList.size() - 1;
 
-	AddDataInt(response, offset, be_htobl(size));
+	AddJDWInt(response, offset, be_htobl(size));
 
 	// Then, write the list of known class
 	for (i=1; i<visibleClassList.size(); i++) {
@@ -597,10 +598,10 @@ void JDWServer::CommandAllClasses(Data &cmd) {
 		str = "L" + str + ";";
 		replace_if(str.begin(), str.end(), bind2nd(equal_to<char>(),'.'), '/');
 
-		AddDataByte(response, offset, 0x01);
-		AddDataInt(response, offset, i);	// Should be equal to visibleClassList[i].index
-		AddDataString(response, offset, str);
-		AddDataInt(response, offset, be_htobl(0x04));
+		AddJDWByte(response, offset, 0x01);
+		AddJDWInt(response, offset, i);	// Should be equal to visibleClassList[i].index
+		AddJDWString(response, offset, str);
+		AddJDWInt(response, offset, be_htobl(0x04));
 	}
 
 	response.ReleaseBuffer(offset);
@@ -610,7 +611,7 @@ void JDWServer::CommandAllClasses(Data &cmd) {
 
 	// Fill in the header values
 	MAKE_JDWPPACKETPTR_BUF(cpack, response.GetBuffer(total_size));
-	Protocol::Packet &packet = *cpack;
+	Barry::Protocol::JDWP::Packet &packet = *cpack;
 
 
 	MAKE_JDWPPACKET(rpack, cmd);
@@ -625,13 +626,14 @@ void JDWServer::CommandAllClasses(Data &cmd) {
 }
 
 
-void JDWServer::CommandAllThreads(Data &cmd) {
+void JDWServer::CommandAllThreads(Data &cmd)
+{
 	JDWMessage msg(fd);
 
 	// Get threads list from device
 	JVMThreadsList list;
 	jvmdebug->GetThreadsList(list);
-	cout << list;
+	dout(list);
 
 	// Build packet data
 	Data response;
@@ -639,14 +641,14 @@ void JDWServer::CommandAllThreads(Data &cmd) {
 	size_t offset = JDWP_PACKET_HEADER_SIZE + JDWP_RESPONSE_HEADER_SIZE;
 
 	// Indicate the number of element
-	AddDataInt(response, offset, be_htobl(list.size()));
+	AddJDWInt(response, offset, be_htobl(list.size()));
 
 	// Send all threads ID
 	vector<JVMThreadsEntry>::iterator b = list.begin();
 	for( ; b != list.end(); b++ ) {
 		JVMThreadsEntry entry = *b;
 
-		AddDataInt(response, offset, be_htobl(entry.Id));
+		AddJDWInt(response, offset, be_htobl(entry.Id));
 	}
 
 	response.ReleaseBuffer(offset);
@@ -656,7 +658,7 @@ void JDWServer::CommandAllThreads(Data &cmd) {
 
 	// Fill in the header values
 	MAKE_JDWPPACKETPTR_BUF(cpack, response.GetBuffer(total_size));
-	Protocol::Packet &packet = *cpack;
+	Barry::Protocol::JDWP::Packet &packet = *cpack;
 
 
 	MAKE_JDWPPACKET(rpack, cmd);
@@ -671,14 +673,15 @@ void JDWServer::CommandAllThreads(Data &cmd) {
 }
 
 
-void JDWServer::CommandIdSizes(Data &cmd) {
+void JDWServer::CommandIdSizes(Data &cmd)
+{
 	JDWMessage msg(fd);
 
 	MAKE_JDWPPACKET(rpack, cmd);
 
 	size_t size;
 
-	Protocol::Packet packet;
+	Barry::Protocol::JDWP::Packet packet;
 
 	size = JDWP_PACKET_HEADER_SIZE + JDWP_RESPONSE_HEADER_SIZE
 		+ JDWP_PACKETVIRTUALMACHINEIDSIZES_DATA_SIZE;
@@ -699,7 +702,8 @@ void JDWServer::CommandIdSizes(Data &cmd) {
 }
 
 
-void JDWServer::CommandSuspend(Data &cmd) {
+void JDWServer::CommandSuspend(Data &cmd)
+{
 	JDWMessage msg(fd);
 
 
@@ -711,7 +715,7 @@ void JDWServer::CommandSuspend(Data &cmd) {
 
 	size_t size;
 
-	Protocol::Packet packet;
+	Barry::Protocol::JDWP::Packet packet;
 
 	size = JDWP_PACKET_HEADER_SIZE + JDWP_RESPONSE_HEADER_SIZE;
 
@@ -726,7 +730,8 @@ void JDWServer::CommandSuspend(Data &cmd) {
 }
 
 
-void JDWServer::CommandResume(Data &cmd) {
+void JDWServer::CommandResume(Data &cmd)
+{
 	JDWMessage msg(fd);
 
 
@@ -743,7 +748,7 @@ void JDWServer::CommandResume(Data &cmd) {
 
 	size_t size;
 
-	Protocol::Packet packet;
+	Barry::Protocol::JDWP::Packet packet;
 
 	size = JDWP_PACKET_HEADER_SIZE + JDWP_RESPONSE_HEADER_SIZE;
 
@@ -758,7 +763,8 @@ void JDWServer::CommandResume(Data &cmd) {
 }
 
 
-void JDWServer::CommandClassPaths(Data &cmd) {
+void JDWServer::CommandClassPaths(Data &cmd)
+{
 	JDWMessage msg(fd);
 
 	// Build packet data
@@ -766,9 +772,9 @@ void JDWServer::CommandClassPaths(Data &cmd) {
 
 	size_t offset = JDWP_PACKET_HEADER_SIZE + JDWP_RESPONSE_HEADER_SIZE;
 
-	AddDataString(response, offset, string(""));
-	AddDataInt(response, offset, be_htobl(0));
-	AddDataInt(response, offset, be_htobl(0));
+	AddJDWString(response, offset, string(""));
+	AddJDWInt(response, offset, be_htobl(0));
+	AddJDWInt(response, offset, be_htobl(0));
 
 	response.ReleaseBuffer(offset);
 
@@ -777,7 +783,7 @@ void JDWServer::CommandClassPaths(Data &cmd) {
 
 	// Fill in the header values
 	MAKE_JDWPPACKETPTR_BUF(cpack, response.GetBuffer(total_size));
-	Protocol::Packet &packet = *cpack;
+	Barry::Protocol::JDWP::Packet &packet = *cpack;
 
 
 	MAKE_JDWPPACKET(rpack, cmd);
@@ -793,7 +799,8 @@ void JDWServer::CommandClassPaths(Data &cmd) {
 
 
 
-void JDWServer::CommandSet(Data &cmd) {
+void JDWServer::CommandSet(Data &cmd)
+{
 	static int value = 2;
 
 	JDWMessage msg(fd);
@@ -802,7 +809,7 @@ void JDWServer::CommandSet(Data &cmd) {
 
 	size_t size;
 
-	Protocol::Packet packet;
+	Barry::Protocol::JDWP::Packet packet;
 
 	size = JDWP_PACKET_HEADER_SIZE + JDWP_RESPONSE_HEADER_SIZE + sizeof(uint32_t);
 
@@ -820,5 +827,5 @@ void JDWServer::CommandSet(Data &cmd) {
 }
 
 
-} // namespace JDWP
+}} // namespace Barry::JDWP
 

@@ -77,6 +77,10 @@
 // Include the JDW Debug Parser classes
 #include "dp_codinfo.h"
 
+// Include the JDWP Server classes
+#include "j_manager.h"
+#include "j_server.h"
+
 // Include the template helpers after the record classes
 #include "m_desktoptmpl.h"
 

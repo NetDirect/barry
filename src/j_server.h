@@ -22,15 +22,19 @@
 #ifndef __BARRYJDWP_SERVER_H__
 #define __BARRYJDWP_SERVER_H__
 
-#include <barry/jdwp/codinfo.h>
+#include "dll.h"
+#include "j_manager.h"
+#include "dp_codinfo.h"
+#include "m_jvmdebug.h"
+#include "threadwrap.h"
+#include <string>
+#include <memory>
 
-#include "handler.h"
-#include "manager.h"
 
+namespace Barry { namespace JDWP {
 
-namespace JDWP {
-
-class JDWServer {
+class BXEXPORT JDWServer
+{
 protected:
 
 public:
@@ -55,7 +59,7 @@ private:
 	int fd;
 	int sockfd;
 
-	char *address;
+	std::string address;
 	int port;
 
 	bool loop;
@@ -70,7 +74,7 @@ private:
 	JDWAppList appList;								// List of BlackBerry application (an application contents several COD files)
 	Barry::JDG::JDGClassList visibleClassList;		// Visible class list from JDB
 
-	JDWHandler *handler;
+	std::auto_ptr<Thread> handler;
 	void (*printConsoleMessage)(std::string message);
 
 	void CommandsetProcess(Barry::Data &cmd);
@@ -91,7 +95,7 @@ private:
 //	void BackgroundDeviceProcess();
 };
 
-} // namespace JDWP
+}} // namespace Barry::JDWP
 
 #endif
 
