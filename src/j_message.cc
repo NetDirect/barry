@@ -40,10 +40,11 @@ JDWMessage::~JDWMessage()
 
 void JDWMessage::RawSend(Data &send, int timeout)
 {
-	m_jdwp.Write(m_socket, send, timeout);
+	bool ret = m_jdwp.Write(m_socket, send, timeout);
 
-	barryverbose("JDWMessage::RawSend: Socket ID " << m_socket
-			<< "\nSent:\n" << send);
+	if (ret)
+		barryverbose("JDWMessage::RawSend: Socket ID " << m_socket
+				<< "\nSent:\n" << send);
 }
 
 
@@ -53,7 +54,7 @@ bool JDWMessage::RawReceive(Data &receive, int timeout)
 
 	ret = m_jdwp.Read(m_socket, receive, timeout);
 
-	if (ret) 
+	if (ret)
 		barryverbose("JDWMessage::RawReceive: Socket ID " << m_socket
 				<< "\nReceived:\n" << receive);
 
