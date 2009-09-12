@@ -382,7 +382,7 @@ void JDWServer::InitVisibleClassList()
 
 	// Count and index the class (start to '1')
 	index = 1;
-	map<uint32_t, JDWAppInfo>::iterator it;
+	JDWAppList::iterator it;
 
 	for (it = appList.begin(); it != appList.end(); it++) {
 		JDWAppInfo *appInfo = &(it->second);

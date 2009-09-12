@@ -47,6 +47,10 @@ public:
 
 class BXEXPORT JDWAppList : public std::map<uint32_t, JDWAppInfo>
 {
+public:
+	typedef std::map<uint32_t, JDWAppInfo>		base_type;
+	typedef base_type::iterator			iterator;
+	typedef base_type::const_iterator		const_iterator;
 };
 
 
