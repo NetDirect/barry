@@ -16,6 +16,8 @@ Release: version 0.16 - 2009/09/??
 		- added Barry::Init to bdptest.cc, defaulting to verbose
 		  mode, to keep the same behaviour as expected
 	- use more generic std::istream in dp_codinfo, instead of ifstream
+	- use references with iterator looping to avoid copies, and
+		use const where appropriate
 2009/09/10
 	- added copyright notices to all source files in bjdwp/
 		This is based on the initial README included in

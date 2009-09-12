@@ -215,11 +215,11 @@ void JDWServer::AttachToDevice()
 	dout(modulesList);
 
 	// Check debug info for each modules
-	JVMModulesList::iterator b = modulesList.begin();
+	JVMModulesList::const_iterator b = modulesList.begin();
 	for ( ; b != modulesList.end(); b++) {
 		JDG::CodInfo codInfo;
 
-		JVMModulesEntry entry = *b;
+		const JVMModulesEntry &entry = *b;
 		
 		ret = LoadDebugInfo(debugFileList, entry.UniqueID, entry.Name, codInfo);
 
@@ -385,12 +385,12 @@ void JDWServer::InitVisibleClassList()
 	JDWAppList::iterator it;
 
 	for (it = appList.begin(); it != appList.end(); it++) {
-		JDWAppInfo *appInfo = &(it->second);
-		JDG::ClassList *list = &(appInfo->classList);
+		JDWAppInfo &appInfo = it->second;
+		JDG::ClassList &list = appInfo.classList;
 	
 		JDG::ClassList::iterator b;
 
-		for (b = list->begin(); b != list->end(); b++) {
+		for (b = list.begin(); b != list.end(); b++) {
 			// FIXME
 			// I don't from class field, we have to filter the class view by JDB
 //			if ((b->type != 0x824) && (b->type != 0x64)) {
@@ -644,9 +644,9 @@ void JDWServer::CommandAllThreads(Data &cmd)
 	AddJDWInt(response, offset, be_htobl(list.size()));
 
 	// Send all threads ID
-	JVMThreadsList::iterator b = list.begin();
+	JVMThreadsList::const_iterator b = list.begin();
 	for( ; b != list.end(); b++ ) {
-		JVMThreadsEntry entry = *b;
+		const JVMThreadsEntry &entry = *b;
 
 		AddJDWInt(response, offset, be_htobl(entry.Id));
 	}

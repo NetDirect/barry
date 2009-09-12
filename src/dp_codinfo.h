@@ -146,8 +146,8 @@ public:
 
 
 BXEXPORT void SearchDebugFile(DebugFileList &list);
-BXEXPORT bool LoadDebugInfo(DebugFileList &list, const char *filename, CodInfo &info);
-BXEXPORT bool LoadDebugInfo(DebugFileList &list, const uint32_t uniqueId, const std::string module, CodInfo &info);
+BXEXPORT bool LoadDebugInfo(const DebugFileList &list, const char *filename, CodInfo &info);
+BXEXPORT bool LoadDebugInfo(const DebugFileList &list, const uint32_t uniqueId, const std::string module, CodInfo &info);
 
 
 } // namespace JDG

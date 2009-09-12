@@ -106,17 +106,17 @@ void SearchDebugFile(DebugFileList &list)
 }
 
 
-bool LoadDebugInfo(DebugFileList &list, const char *filename, CodInfo &info)
+bool LoadDebugInfo(const DebugFileList &list, const char *filename, CodInfo &info)
 {
 	if (filename == NULL)
 		return false;
 
-	DebugFileList::iterator b = list.begin();
+	DebugFileList::const_iterator b = list.begin();
 
 	for( ; b != list.end(); b++ ) {
-		DebugFileEntry entry = (*b);
+		const DebugFileEntry &entry = (*b);
 
-		if (entry.fileName == string(filename)) {
+		if( entry.fileName == filename ) {
 			info.LoadDebugFile(filename);
 			return true;
 		}
@@ -126,12 +126,12 @@ bool LoadDebugInfo(DebugFileList &list, const char *filename, CodInfo &info)
 }
 
 
-bool LoadDebugInfo(DebugFileList &list, const uint32_t uniqueId, const std::string module, CodInfo &info)
+bool LoadDebugInfo(const DebugFileList &list, const uint32_t uniqueId, const std::string module, CodInfo &info)
 {
-	DebugFileList::iterator b = list.begin();
+	DebugFileList::const_iterator b = list.begin();
 
 	for( ; b != list.end(); b++ ) {
-		DebugFileEntry entry = (*b);
+		const DebugFileEntry &entry = (*b);
 
 		if ((entry.uniqueId == uniqueId) && (entry.appName == module)) {
 			info.LoadDebugFile(entry.fileName.c_str());
