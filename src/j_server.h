@@ -36,7 +36,7 @@ namespace Barry { namespace JDWP {
 class BXEXPORT JDWServer
 {
 private:
-	int fd;
+	int acceptfd;
 	int sockfd;
 
 	std::string address;

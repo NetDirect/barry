@@ -108,7 +108,7 @@ bool JDWP::Write(int socket, const Barry::Data &data, int timeout)
 	int ret;
 
 	do {
-		ret = write(socket,	(char*) data.GetData(), data.GetSize());
+		ret = write(socket, (char*) data.GetData(), data.GetSize());
 
 		if( ret < 0 && ret != -EINTR && ret != -EAGAIN ) {
 			m_lasterror = ret;

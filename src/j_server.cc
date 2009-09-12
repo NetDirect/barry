@@ -42,7 +42,7 @@ using namespace std;
 
 namespace Barry { namespace JDWP {
 
-static void * acceptWrapper(void *data);
+static void * acceptThread(void *data);
 
 
 JDWServer::JDWServer(const char *address, int port)
@@ -144,13 +144,13 @@ bool JDWServer::Start()
 		exit(-1);
 	}
 
-	handler.reset(new Thread(sockfd, acceptWrapper, (void*) this));
+	handler.reset(new Thread(sockfd, acceptThread, (void*) this));
 
 	return true;
 }
 
 
-static void * acceptWrapper(void *data)
+static void * acceptThread(void *data)
 {
 	JDWServer *s;
 
@@ -187,12 +187,11 @@ void JDWServer::AcceptConnection()
 
 	addrlen = sizeof(addr);
 
-	fd = accept(sockfd, sa, &addrlen);
-
-	fcntl(fd, F_SETFL, O_NONBLOCK);
-
-	if (fd < 0)
+	acceptfd = accept(sockfd, sa, &addrlen);
+	if( acceptfd < 0 )
 		return;
+
+	fcntl(acceptfd, F_SETFL, O_NONBLOCK);
 }
 
 
@@ -253,7 +252,7 @@ bool JDWServer::Hello()
 	
 	const size_t len = strlen(JDWP_HELLO_STRING);
 
-	JDWMessage msg(fd);
+	JDWMessage msg(acceptfd);
 
 	do {
 		ret = msg.Receive(response);
@@ -281,7 +280,7 @@ bool JDWServer::Hello()
 void JDWServer::Run()
 {
 	string str;
-	JDWMessage msg(fd);
+	JDWMessage msg(acceptfd);
 
 	Barry::Data command;
 
@@ -479,8 +478,6 @@ void JDWServer::CommandsetProcess(Data &cmd)
 
 void JDWServer::CommandsetVirtualMachineProcess(Data &cmd)
 {
-	JDWMessage msg(fd);
-
 	MAKE_JDWPPACKET(rpack, cmd);
 
 	switch (rpack->u.command.command) {
@@ -499,7 +496,7 @@ void JDWServer::CommandsetVirtualMachineProcess(Data &cmd)
 		case JDWP_CMD_DISPOSE:
 			loop = false;
 			targetrunning = false;
-			close(fd);
+			close(acceptfd);
 			break;
 
 		case JDWP_CMD_IDSIZES:
@@ -525,8 +522,6 @@ void JDWServer::CommandsetVirtualMachineProcess(Data &cmd)
 
 void JDWServer::CommandsetEventRequestProcess(Data &cmd)
 {
-	JDWMessage msg(fd);
-
 	MAKE_JDWPPACKET(rpack, cmd);
 
 	switch (rpack->u.command.command) {
@@ -539,7 +534,7 @@ void JDWServer::CommandsetEventRequestProcess(Data &cmd)
 
 void JDWServer::CommandVersion(Data &cmd)
 {
-	JDWMessage msg(fd);
+	JDWMessage msg(acceptfd);
 
 	// Build packet data
 	Data response;
@@ -579,7 +574,7 @@ void JDWServer::CommandAllClasses(Data &cmd)
 	size_t i;
 	int size;
 
-	JDWMessage msg(fd);
+	JDWMessage msg(acceptfd);
 
 	// Build packet data
 	Data response;
@@ -628,7 +623,7 @@ void JDWServer::CommandAllClasses(Data &cmd)
 
 void JDWServer::CommandAllThreads(Data &cmd)
 {
-	JDWMessage msg(fd);
+	JDWMessage msg(acceptfd);
 
 	// Get threads list from device
 	JVMThreadsList list;
@@ -675,7 +670,7 @@ void JDWServer::CommandAllThreads(Data &cmd)
 
 void JDWServer::CommandIdSizes(Data &cmd)
 {
-	JDWMessage msg(fd);
+	JDWMessage msg(acceptfd);
 
 	MAKE_JDWPPACKET(rpack, cmd);
 
@@ -704,7 +699,7 @@ void JDWServer::CommandIdSizes(Data &cmd)
 
 void JDWServer::CommandSuspend(Data &cmd)
 {
-	JDWMessage msg(fd);
+	JDWMessage msg(acceptfd);
 
 
 	// Suspend device
@@ -732,7 +727,7 @@ void JDWServer::CommandSuspend(Data &cmd)
 
 void JDWServer::CommandResume(Data &cmd)
 {
-	JDWMessage msg(fd);
+	JDWMessage msg(acceptfd);
 
 
 	// Resume device
@@ -765,7 +760,7 @@ void JDWServer::CommandResume(Data &cmd)
 
 void JDWServer::CommandClassPaths(Data &cmd)
 {
-	JDWMessage msg(fd);
+	JDWMessage msg(acceptfd);
 
 	// Build packet data
 	Data response;
@@ -803,7 +798,7 @@ void JDWServer::CommandSet(Data &cmd)
 {
 	static int value = 2;
 
-	JDWMessage msg(fd);
+	JDWMessage msg(acceptfd);
 
 	MAKE_JDWPPACKET(rpack, cmd);
 
