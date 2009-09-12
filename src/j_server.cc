@@ -197,7 +197,7 @@ bool JDWServer::AcceptConnection()
 {
 	struct sockaddr_in addr;
 	struct sockaddr *sa = (struct sockaddr*) &addr;
-	size_t addrlen = sizeof(addr);
+	socklen_t addrlen = sizeof(addr);
 
 	acceptfd = accept(sockfd, sa, &addrlen);
 	if( acceptfd < 0 )
