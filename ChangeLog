@@ -20,6 +20,7 @@ Release: version 0.16 - 2009/09/??
 		use const where appropriate
 	- added typedef for j_server.cc's ConsoleCallbackType
 	- tightened up member variable init and cleanup in JDWServer class
+	- added exceptions in JDWServer class where marked TODO
 2009/09/10
 	- added copyright notices to all source files in bjdwp/
 		This is based on the initial README included in
