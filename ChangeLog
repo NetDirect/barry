@@ -21,6 +21,9 @@ Release: version 0.16 - 2009/09/??
 	- added typedef for j_server.cc's ConsoleCallbackType
 	- tightened up member variable init and cleanup in JDWServer class
 	- added exceptions in JDWServer class where marked TODO
+	- made setup sequence dependent on previous steps, in acceptThread,
+		so that the logic doesn't assume success where it could
+		have failed
 2009/09/10
 	- added copyright notices to all source files in bjdwp/
 		This is based on the initial README included in

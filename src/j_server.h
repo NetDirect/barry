@@ -88,14 +88,15 @@ public:
 
 	void SetConsoleCallback(ConsoleCallbackType callback);
 
-	bool Start();
-	void AcceptConnection();
-	void AttachToDevice();
-	void InitVisibleClassList();
+	bool Start();		// starts new thread
+	bool AcceptConnection();
+	bool AttachToDevice();
+	bool InitVisibleClassList();
 	bool Hello();
 	void Run();
 	void DetachFromDevice();
-	bool Stop();
+	bool Stop();		// cancels thread if still running, and
+				// cleans up Start()
 };
 
 }} // namespace Barry::JDWP

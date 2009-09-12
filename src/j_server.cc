@@ -178,15 +178,12 @@ static void * acceptThread(void *data)
 	s = (JDWServer *) data;
 
 	while (1) {
-		s->AcceptConnection();
-
-		s->AttachToDevice();
-
-		s->InitVisibleClassList();
-		
-		if (s->Hello()) {
+		if( s->AcceptConnection() &&
+			s->AttachToDevice() &&
+			s->InitVisibleClassList() &&
+			s->Hello() )
+		{
 			s->Run();
-
 			s->DetachFromDevice();
 		}
 	}
@@ -195,29 +192,24 @@ static void * acceptThread(void *data)
 }
 
 
-void JDWServer::AcceptConnection()
+// Returns true if a new connection was accepted and established
+bool JDWServer::AcceptConnection()
 {
-	size_t addrlen;
-
-	struct sockaddr *sa;
 	struct sockaddr_in addr;
-
-	sa = (struct sockaddr*) &addr;
-
-	addrlen = sizeof(addr);
+	struct sockaddr *sa = (struct sockaddr*) &addr;
+	size_t addrlen = sizeof(addr);
 
 	acceptfd = accept(sockfd, sa, &addrlen);
 	if( acceptfd < 0 )
-		return;
+		return false;
 
 	fcntl(acceptfd, F_SETFL, O_NONBLOCK);
+	return true;
 }
 
 
-void JDWServer::AttachToDevice()
+bool JDWServer::AttachToDevice()
 {
-	bool ret;
-
 	targetrunning = false;
 
 	jvmdebug->Open(password.c_str());
@@ -238,8 +230,8 @@ void JDWServer::AttachToDevice()
 		JDG::CodInfo codInfo;
 
 		const JVMModulesEntry &entry = *b;
-		
-		ret = LoadDebugInfo(debugFileList, entry.UniqueID, entry.Name, codInfo);
+
+		bool ret = LoadDebugInfo(debugFileList, entry.UniqueID, entry.Name, codInfo);
 
 		if (ret == true) {
 			appList[entry.UniqueID].Load(codInfo);
@@ -249,6 +241,8 @@ void JDWServer::AttachToDevice()
 			dout("' (" << hex << setfill('0') << setw(8) << entry.UniqueID << ")." << endl)
 		}
 	}
+
+	return true;
 }
 
 
@@ -393,7 +387,7 @@ bool JDWServer::Stop()
 }
 
 
-void JDWServer::InitVisibleClassList()
+bool JDWServer::InitVisibleClassList()
 {
 	int index;
 
@@ -432,6 +426,8 @@ void JDWServer::InitVisibleClassList()
 	}
 
 	visibleClassList.CreateDefaultEntries();
+
+	return true;
 }
 
 
