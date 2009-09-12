@@ -35,6 +35,9 @@ namespace Barry { namespace JDWP {
 
 class BXEXPORT JDWServer
 {
+public:
+	typedef void (*ConsoleCallbackType)(const std::string &);
+
 private:
 	int acceptfd;
 	int sockfd;
@@ -55,7 +58,7 @@ private:
 	Barry::JDG::ClassList visibleClassList;		// Visible class list from JDB
 
 	std::auto_ptr<Thread> handler;
-	void (*printConsoleMessage)(std::string message);
+	ConsoleCallbackType printConsoleMessage;
 
 	void CommandsetProcess(Barry::Data &cmd);
 
@@ -83,7 +86,7 @@ public:
 	void SetDevice(Barry::Mode::JVMDebug *device);
 	void SetPasswordDevice(std::string password);
 
-	void SetConsoleCallback(void (*callback)(std::string message));
+	void SetConsoleCallback(ConsoleCallbackType callback);
 
 	bool Start();
 	void AcceptConnection();

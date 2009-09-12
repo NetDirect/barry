@@ -76,7 +76,7 @@ void JDWServer::SetPasswordDevice(string password)
 }
 
 
-void JDWServer::SetConsoleCallback(void (*callback)(string message))
+void JDWServer::SetConsoleCallback(ConsoleCallbackType callback)
 {
 	printConsoleMessage = callback;
 }

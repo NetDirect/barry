@@ -29,7 +29,7 @@ using namespace std;
 using namespace Barry;
 
 
-void printMessage(std::string message);
+void printMessage(const std::string &message);
 
 
 void Usage()
@@ -134,7 +134,7 @@ int main(int argc, char *argv[], char *envp[])
 		server.SetPasswordDevice(password);
 
 		// Redirect console message
-		server.SetConsoleCallback(printMessage);
+		server.SetConsoleCallback(&printMessage);
 
 		server.Start();
 
@@ -164,7 +164,7 @@ int main(int argc, char *argv[], char *envp[])
 }
 
 
-void printMessage(std::string message)
+void printMessage(const std::string &message)
 {
 	const int esc = 27;
 	const int green = 32;
