@@ -127,10 +127,9 @@ int main(int argc, char *argv[], char *envp[])
 		//---------------------
 
 		// Create JDWP server and configure
-		JDWP::JDWServer server(address, port);
+		JDWP::JDWServer server(jvmdebug, address, port);
 
 		// Link device
-		server.SetDevice(&jvmdebug);
 		server.SetPasswordDevice(password);
 
 		// Redirect console message

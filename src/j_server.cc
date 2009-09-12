@@ -27,6 +27,7 @@
 #include "j_message.h"
 #include "protostructs.h"
 #include "record-internal.h"
+#include "error.h"
 
 #include <unistd.h>
 #include <fcntl.h>
@@ -45,15 +46,17 @@ namespace Barry { namespace JDWP {
 static void * acceptThread(void *data);
 
 
-JDWServer::JDWServer(const char *address, int port)
+JDWServer::JDWServer(Barry::Mode::JVMDebug &device,
+			const char *address, int port)
+	: jvmdebug(&device)
+	, acceptfd(-1)
+	, sockfd(-1)
+	, address(address)
+	, port(port)
+	, loop(false)
+	, targetrunning(false)
+	, printConsoleMessage(0)
 {
-	sockfd = -1;
-	handler.reset();
-
-	this->address = address;
-	this->port = port;
-	this->printConsoleMessage = NULL;
-
 	SearchDebugFile(debugFileList);
 }
 
@@ -61,12 +64,6 @@ JDWServer::JDWServer(const char *address, int port)
 JDWServer::~JDWServer() 
 {
 	Stop();
-}
-
-
-void JDWServer::SetDevice(Barry::Mode::JVMDebug *device) 
-{
-	jvmdebug = device;
 }
 
 
@@ -355,15 +352,20 @@ void JDWServer::Run()
 
 bool JDWServer::Stop()
 {
-	if (handler.get()) {
+	if( handler.get() ) {
 		handler->Dispose();
 		handler.reset();
 	}
 
-	if (sockfd >= 0)
+	if( sockfd >= 0 ) {
 		close(sockfd);
+		sockfd = -1;
+	}
 
-	sockfd = -1;
+	if( acceptfd >= 0 ) {
+		close(acceptfd);
+		acceptfd = -1;
+	}
 
 	return true;
 }
@@ -497,6 +499,7 @@ void JDWServer::CommandsetVirtualMachineProcess(Data &cmd)
 			loop = false;
 			targetrunning = false;
 			close(acceptfd);
+			acceptfd = -1;
 			break;
 
 		case JDWP_CMD_IDSIZES:

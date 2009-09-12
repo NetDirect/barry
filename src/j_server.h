@@ -39,6 +39,8 @@ public:
 	typedef void (*ConsoleCallbackType)(const std::string &);
 
 private:
+	Barry::Mode::JVMDebug *jvmdebug;
+
 	int acceptfd;
 	int sockfd;
 
@@ -49,7 +51,6 @@ private:
 	bool targetrunning;
 
 	std::string password;
-	Barry::Mode::JVMDebug *jvmdebug;
 
 	Barry::JVMModulesList modulesList;				// List of COD applications installed on the device
 	Barry::JDG::DebugFileList debugFileList;		// List of debug file on the host
@@ -80,10 +81,9 @@ private:
 protected:
 
 public:
-	JDWServer(const char *address, int port);
+	JDWServer(Barry::Mode::JVMDebug &device, const char *address, int port);
 	~JDWServer();
 
-	void SetDevice(Barry::Mode::JVMDebug *device);
 	void SetPasswordDevice(std::string password);
 
 	void SetConsoleCallback(ConsoleCallbackType callback);

@@ -19,6 +19,7 @@ Release: version 0.16 - 2009/09/??
 	- use references with iterator looping to avoid copies, and
 		use const where appropriate
 	- added typedef for j_server.cc's ConsoleCallbackType
+	- tightened up member variable init and cleanup in JDWServer class
 2009/09/10
 	- added copyright notices to all source files in bjdwp/
 		This is based on the initial README included in
