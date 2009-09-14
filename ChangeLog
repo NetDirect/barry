@@ -1,5 +1,8 @@
 Release: version 0.16 - 2009/09/??
 ------------------------------------------------------------------------------
+2009/09/14
+	- merged Josh Kropf's compile fixes
+	- applied zsh missing bracket patch from Ryan Li
 2009/09/11
 	- merged Nicolas Vivien's debug parser lib updates
 		with change:
