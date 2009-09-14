@@ -32,7 +32,6 @@
 
 using namespace std;
 
-string trim_left(const string& source, const string& t = " ");
 string trim_right(const string& source , const string& t = " ");
 string trim_data_line(const string& line);
 void dump(const list<string>& event);
@@ -50,7 +49,7 @@ int main(int argc, char* argv[])
 		if( pos == string::npos )
 			continue;
 
-		line = trim_right(line.substr(pos + 2), "\n\r");
+		line = trim_right(line.substr(pos + 2), "\n\r ");
 
 		// each sequence of write/read packets begins with this line
 		if( line == "BbUsbDevice: WriteToDevice" ) {
@@ -75,12 +74,6 @@ int main(int argc, char* argv[])
 	}
 
 	return 0;
-}
-
-string trim_left(const string& source, const string& t)
-{
-	string str = source;
-	return str.erase(0 , source.find_first_not_of(t));
 }
 
 string trim_right(const string& source , const string& t)
