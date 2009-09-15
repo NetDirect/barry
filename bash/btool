@@ -29,7 +29,7 @@ _btool()
 			;;
 		-p)
 			COMPREPLY=( $( compgen -W \
-				'$( btool -l | tail --lines=+2 | sed -e "s/.*PIN: \(.*\),.*/\1/g" )' \
+				'$( bidentify | sed -e "s/,.*$//" )' \
 				-- "$cur" ) )
 			return 0
 			;;

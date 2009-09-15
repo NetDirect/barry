@@ -54,7 +54,7 @@ _bjavaloader()
 	case "$prev" in
 	-p)
 		COMPREPLY=( $( compgen -W \
-			'$( btool -l 2>&- | tail --lines=+2 | sed -e "s/.*PIN: \(.*\),.*/\1/g" )' \
+			'$( bidentify 2>&- | sed -e "s/,.*$//" )' \
 			-- "$cur" ) )
 		return 0
 		;;
