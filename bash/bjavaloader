@@ -1,0 +1,73 @@
+# -*- mode: shell-script; sh-basic-offset: 8; indent-tabs-mode: t -*-
+# ex: ts=8 sw=8 noet filetype=sh
+#
+# bjavaloader(1) completion by Ryan Li <ryan@ryanium.com>
+
+have bjavaloader &&
+_bjavaloader()
+{
+	local cur prev
+	local cmd
+	declare -i cmd
+
+	COMREPLY=()
+	cur=`_get_cword`
+	prev=${COMP_WORDS[COMP_CWORD-1]}
+
+	cmd=0
+
+	for (( i = 0; i < COMP_CWORD; ++i )); do
+		case ${COMP_WORDS[$i]} in
+		@(dir|deviceinfo|load|wipe|save|erase| \
+			eventlog|cleareventlog|logstacktraces|screenshot|settime))
+			cmd=1
+			;;
+		esac
+	done
+
+	if [[ "$cur" == -* ]]; then
+		if [[ $cmd -eq 0 ]]; then
+			COMPREPLY=( $( compgen -W '-h -p -P -v' -- "$cur" ) )
+		else
+		case "$prev" in
+		dir)
+			COMPREPLY=( $( compgen -W '-s' -- "$cur" ) )
+			return 0
+			;;
+		wipe)
+			COMPREPLY=( $( compgen -W '-a -i' -- "$cur" ) )
+			return 0
+			;;
+		erase)
+			COMPREPLY=( $( compgen -W '-f' -- "$cur" ) )
+			return 0
+			;;
+		*)
+			;;
+		esac
+		fi
+	elif [[ $cmd -eq 0 ]]; then
+		COMPREPLY=( $( compgen -W 'dir deviceinfo \
+			load wipe save erase eventlog cleareventlog \
+			logstacktraces screenshot settime' -- "$cur" ) )
+	fi
+	case "$prev" in
+	-p)
+		COMPREPLY=( $( compgen -W \
+			'$( btool -l 2>&- | tail --lines=+2 | sed -e "s/.*PIN: \(.*\),.*/\1/g" )' \
+			-- "$cur" ) )
+		return 0
+		;;
+	load)
+		_filedir cod
+		return 0
+		;;
+	screenshot)
+		_filedir bmp
+		return 0
+		;;
+	*)
+		;;
+	esac
+} &&
+complete -F _bjavaloader bjavaloader

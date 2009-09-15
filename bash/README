@@ -1,0 +1,14 @@
+Barry bash autocompletion
+========================
+
+The scripts in this directory are programmable
+completion functions for barry utils used in bash.
+To use them, simply copy the files in this directory
+except this README file to:
+	/etc/bash_completion.d/
+
+And to load manually, run the following command:
+	$ . /etc/bash_completion
+
+Programmable completion is for bash 3+ but is backwards
+compatiable with bash 2.05b.
