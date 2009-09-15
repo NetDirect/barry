@@ -1,5 +1,7 @@
 Release: version 0.16 - 2009/09/??
 ------------------------------------------------------------------------------
+2009/09/15
+	- merged Josh Kropf's brimtrans fix: 59abfa6959eb350221fa56a03ba5816
 2009/09/14
 	- merged Josh Kropf's compile fixes
 	- applied zsh missing bracket patch from Ryan Li
