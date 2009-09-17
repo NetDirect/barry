@@ -22,3 +22,9 @@ requests and bug reports on the Sourceforge
 <a href="http://sourceforge.net/tracker/?group_id=153722">tracker page</a>.
 </p>
 
+
+<? createSubHeader("IRC"); ?>
+
+<p>Barry developers and users occasionally hang out on the IRC channel
+#barry on irc.freenode.net.</p>
+

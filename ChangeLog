@@ -1,5 +1,7 @@
 Release: version 0.16 - 2009/09/??
 ------------------------------------------------------------------------------
+2009/09/17
+	- added IRC info to contact www doc page
 2009/09/16
 	- changed all the ancient SYSFS{} keynames into ATTRS{} keynames
 		in all udev rules files
