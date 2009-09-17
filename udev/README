@@ -1,39 +1,62 @@
-This describes the udev files in this directory and what they are used for:
-
-
 10-blackberry.rules
-10-blackberry.rules.Debian
 
-	udev rules for running bcharge when you plugin your Blackberry.
-	Creates symlinks as well.
+	These udev rules run bcharge on matching Blackberry devices
+	in order to enable 500mA battery charging mode.
 
-	The .Debian file is for Debian Etch, and sets the permissions
-	as well.  This should be the only file you need for Debian Etch.
+10-blackberry-perms.rules
 
-
-10-blackberry.perms
-
-	For RedHat/Fedora systems, this file goes into:
-
-		/etc/security/console.perms.d/
-
-	It will dynamically give ownership of the /dev/bb-* (well, the
-	target of those symlinks) to the logged in console or xconsole
-	user. The idea was taken from this page:
-
-	http://gentoo-wiki.com/HOWTO_Griffin_PowerMate_with_UDEV_and_Kernel_2.6.x
-
-	Search for 'New alternative'.
+	These udev rules set the resulting device mode to the
+	group 'plugdev' and mode '0660' so that Barry can access
+	the device without being root.
 
 
-99-barry-perms
+Commentary:
+-----------
 
-	For systems that don't support /etc/security/console.perms.d/,
-	this udev script utilizes a special group "barry" and sets
-	the devices to mode "0660".
+Yes, I tried to keep this in one file, but the prevailing winds of Linux
+keep this very hard to do.
 
-	You will need to create a "barry" group on your system to use this.
+When you run 'udevadm monitor --env' (udevmonitor on some systems)
+you will see UEVENT entries and UDEV entries.  The UEVENT entries
+represent kernel level events, generated when you plugin your device
+or remove it.  These kernel events are what udev daemons watch for.
 
+Udev then works on these events and generates "events" of its own.
+The results of these events are displayed in the monitor output
+as UDEV entries.
 
-May 2007
+It seems that the rules in the above rules files only match against
+the UEVENT kernel events.
+
+Therefore, the common idiom of:
+
+	SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device"
+
+is used to select a newly plugged in device.  Unfortunately, it doesn't
+seem that the /dev/bus/* device node exists yet at this point, since
+that appears to happen in /etc/udev/rules.d/50-udev.rules, and on some
+systems, *that* rule depends on SUBSYSTEM=="usb_device" to work.  This is
+not guaranteed to exist on all systems.
+
+Plus, if the kernel event SUBSYSTEM=="usb_device" does exist, it comes
+after the one above.
+
+So we have the following behaviour:
+
+	SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device" (always happens first)
+	SUBSYSTEM=="usb_device" (sometimes happens, and if so, happens last)
+	/dev/bus/* created (happens based on udev rules, which differ on
+				each system)
+
+So... for fans of cross-platform behaviour, and fans of the KISS method,
+this behaviour rules out SUBSYSTEM=="usb_device" as a valid keyword.  And
+since the /dev/bus/* (or /proc or whatevever) device node does not yet exist
+at the very beginning of this udev process, that means we have to do the
+power adjustment and the permissions in two udev steps.
+
+And now you know the rest of the story.
+
+- Chris
+
+Sept 2009
 

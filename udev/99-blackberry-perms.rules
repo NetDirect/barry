@@ -1,6 +1,11 @@
 #
-# To avoid other udev rules changing the permissions again on us, this filename
-# is '99-barry-perms'
+# This file sets the permissions of Blackberry devices, using a very
+# broad ruleset.  It runs no external commands, so this broad ruleset
+# should not impact performance at all.
 #
-ATTRS{idVendor}=="0fca", ATTRS{idProduct}=="0001", GROUP="barry", MODE="0660"
+ATTRS{idVendor}=="0fca", ATTRS{idProduct}=="0001", GROUP="plugdev", MODE="0660"
+ATTRS{idVendor}=="0fca", ATTRS{idProduct}=="0004", GROUP="plugdev", MODE="0660"
+ATTRS{idVendor}=="0fca", ATTRS{idProduct}=="0006", GROUP="plugdev", MODE="0660"
+ATTRS{idVendor}=="0fca", ATTRS{idProduct}=="8004", GROUP="plugdev", MODE="0660"
+ATTRS{idVendor}=="0fca", ATTRS{idProduct}=="8007", GROUP="plugdev", MODE="0660"
 

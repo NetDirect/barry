@@ -9,11 +9,21 @@
 #       is when the -p argument comes into play, adjusting the device's
 #       autosuspend settings.
 #
+# Note: SUBSYSTEM=="usb_device" is not reliably available on all kernels
+#       and all versions of udev, so instead we use the very first
+#       kernel message of: SUBSYSTEM=="usb", ENV{DEVTYPE}="usb_device"
+#       (See the output of 'udevadm monitor --kernel')
+#       Since the device is likely not created at this point, we
+#       can't set permissions... so permissions are handled in the
+#       generic 99-blackberry-perms.rules file.
+#
 
 #
 # Older devices that only use 0x0001 (no USB Mass Storage)
 #
-BUS=="usb", ENV{DEVTYPE}=="usb_device", ACTION=="add", ATTRS{idVendor}=="0fca", ATTRS{idProduct}=="0001", SYMLINK+="bb-%k", GROUP="plugdev", MODE="0660", RUN="/usr/sbin/bcharge -p %p"
+SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ACTION=="add", \
+	ATTR{idVendor}=="0fca", ATTR{idProduct}=="0001", \
+	RUN="/usr/sbin/bcharge -p %p"
 
 #
 # Newer devices with USB Mass Storage:
@@ -22,8 +32,20 @@ BUS=="usb", ENV{DEVTYPE}=="usb_device", ACTION=="add", ATTRS{idVendor}=="0fca", 
 #     0x0006 usually get transformed into 0x0004
 #
 
-BUS=="usb", ENV{DEVTYPE}=="usb_device", ACTION=="add", ATTRS{idVendor}=="0fca", ATTRS{idProduct}=="0006", GROUP="plugdev", MODE="0660", RUN="/usr/sbin/bcharge"
-BUS=="usb", ENV{DEVTYPE}=="usb_device", ACTION=="add", ATTRS{idVendor}=="0fca", ATTRS{idProduct}=="8007", GROUP="plugdev", MODE="0660", RUN="/usr/sbin/bcharge -p %p"
-BUS=="usb", ENV{DEVTYPE}=="usb_device", ACTION=="add", ATTRS{idVendor}=="0fca", ATTRS{idProduct}=="8004", GROUP="plugdev", MODE="0660", RUN="/usr/sbin/bcharge -p %p"
-BUS=="usb", ENV{DEVTYPE}=="usb_device", ACTION=="add", ATTRS{idVendor}=="0fca", ATTRS{idProduct}=="0004", SYMLINK+="bb-%k", GROUP="plugdev", MODE="0660", RUN="/usr/sbin/bcharge -p %p"
+# 0x0006 turns into 0x0004, so no need to fiddle with autosuspend here
+SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ACTION=="add", \
+	ATTR{idVendor}=="0fca", ATTR{idProduct}=="0006", \
+	RUN="/usr/sbin/bcharge"
+
+SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ACTION=="add", \
+	ATTR{idVendor}=="0fca", ATTR{idProduct}=="8007", \
+	RUN="/usr/sbin/bcharge -p %p"
+
+SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ACTION=="add", \
+	ATTR{idVendor}=="0fca", ATTR{idProduct}=="8004", \
+	RUN="/usr/sbin/bcharge -p %p"
+
+SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ACTION=="add", \
+	ATTR{idVendor}=="0fca", ATTR{idProduct}=="0004", \
+	RUN="/usr/sbin/bcharge -p %p"
 
