@@ -143,13 +143,13 @@ cd ../
 # main tree
 %{__make} DESTDIR=%{buildroot} install
 %{__mkdir_p} %{buildroot}%{_sysconfdir}/udev/rules.d
-%{__mkdir_p} %{buildroot}%{_sysconfdir}/security/console.perms.d
 %if 0%{?suse_version} == 1110
+%{__mkdir_p} %{buildroot}%{_sysconfdir}/security/console.perms.d
 %{__cp} udev/opensuse-11.1/65-blackberry.rules %{buildroot}%{_sysconfdir}/udev/rules.d/
 %{__cp} udev/opensuse-11.1/10-blackberry.perms %{buildroot}%{_sysconfdir}/security/console.perms.d/
 %else
-%{__cp} udev/fedora/10-blackberry.rules %{buildroot}%{_sysconfdir}/udev/rules.d/
-%{__cp} udev/fedora/10-blackberry.perms %{buildroot}%{_sysconfdir}/security/console.perms.d/
+%{__cp} udev/10-blackberry.rules %{buildroot}%{_sysconfdir}/udev/rules.d/
+%{__cp} udev/99-blackberry-perms.rules %{buildroot}%{_sysconfdir}/udev/rules.d/
 %endif
 %{__mkdir_p} %{buildroot}%{_sysconfdir}/modprobe.d
 %{__cp} modprobe/blacklist-berry_charge.conf %{buildroot}%{_sysconfdir}/modprobe.d/
@@ -237,7 +237,6 @@ cd ../
 %attr(0644,root,root) %{_datadir}/hal/fdi/information/10freedesktop/10-blackberry.fdi
 %attr(0644,root,root) %{_datadir}/hal/fdi/policy/10osvendor/19-blackberry-acl.fdi
 %attr(0644,root,root) %config %{_sysconfdir}/udev/rules.d/*
-%attr(0644,root,root) %config %{_sysconfdir}/security/console.perms.d/*
 %attr(0644,root,root) %config %{_sysconfdir}/modprobe.d/blacklist-berry_charge.conf
 %attr(0644,root,root) %config %{_sysconfdir}/ppp/peers/barry-rogers
 %attr(0644,root,root) %config %{_sysconfdir}/ppp/peers/barry-verizon
@@ -288,6 +287,7 @@ cd ../
 * Sat Aug 29 2009 Chris Frey <cdfrey@foursquare.net> 0.16-0
 - version bump
 - added new ppp chat script for KPN Nederland
+- using new udev rules set
 
 * Fri Apr 10 2009 Chris Frey <cdfrey@foursquare.net> 0.15-0
 - version bump

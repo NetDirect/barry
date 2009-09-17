@@ -9,6 +9,8 @@ Release: version 0.16 - 2009/09/??
 	- removed obsolete duplicate SUBSYSTEM keynames from udev rules
 	- created new cross-distro udev rules set, with documentation
 		in udev/README
+	- updated deb and rpm package rules with new udev rules set
+		note: opensuse needs work
 2009/09/15
 	- merged Josh Kropf's brimtrans fix: 59abfa6959eb350221fa56a03ba5816
 	- applied bash-completion scripts by Ryan Li
