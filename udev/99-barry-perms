@@ -2,5 +2,5 @@
 # To avoid other udev rules changing the permissions again on us, this filename
 # is '99-barry-perms'
 #
-SYSFS{idVendor}=="0fca", SYSFS{idProduct}=="0001", GROUP="barry", MODE="0660"
+ATTRS{idVendor}=="0fca", ATTRS{idProduct}=="0001", GROUP="barry", MODE="0660"
 

@@ -1,5 +1,8 @@
 Release: version 0.16 - 2009/09/??
 ------------------------------------------------------------------------------
+2009/09/16
+	- changed all the ancient SYSFS{} keynames into ATTRS{} keynames
+		in all udev rules files
 2009/09/15
 	- merged Josh Kropf's brimtrans fix: 59abfa6959eb350221fa56a03ba5816
 	- applied bash-completion scripts by Ryan Li
