@@ -24,14 +24,19 @@ BUS=="usb", SUBSYSTEM=="usb_device", ACTION=="add", ATTRS{idVendor}=="0fca", ATT
 BUS=="usb", ENV{DEVTYPE}=="usb_device", ACTION=="add", ATTRS{idVendor}=="0fca", ATTRS{idProduct}=="0001", SYMLINK+="bb-%k", RUN="/usr/sbin/bcharge -p %p"
 
 #
-# Newer devices with USB Mass Storage, 0x8004 + 0x0006 + 0x0004.
+# Newer devices with USB Mass Storage:
+#     0x8007 usually get transformed into 0x8004
+#     0x8004 sometimes get transformed into 0x0004
+#     0x0006 usually get transformed into 0x0004
 #
 
 BUS=="usb", SUBSYSTEM=="usb_device", ACTION=="add", ATTRS{idVendor}=="0fca", ATTRS{idProduct}=="0006", RUN="/usr/sbin/bcharge"
-BUS=="usb", SUBSYSTEM=="usb_device", ACTION=="add", ATTRS{idVendor}=="0fca", ATTRS{idProduct}=="8004", RUN="/usr/sbin/bcharge"
+BUS=="usb", SUBSYSTEM=="usb_device", ACTION=="add", ATTRS{idVendor}=="0fca", ATTRS{idProduct}=="8007", RUN="/usr/sbin/bcharge -p %p"
+BUS=="usb", SUBSYSTEM=="usb_device", ACTION=="add", ATTRS{idVendor}=="0fca", ATTRS{idProduct}=="8004", RUN="/usr/sbin/bcharge -p %p"
 BUS=="usb", SUBSYSTEM=="usb_device", ACTION=="add", ATTRS{idVendor}=="0fca", ATTRS{idProduct}=="0004", SYMLINK+="bb-%k", RUN="/usr/sbin/bcharge -p %p"
 
 BUS=="usb", ENV{DEVTYPE}=="usb_device", ACTION=="add", ATTRS{idVendor}=="0fca", ATTRS{idProduct}=="0006", RUN="/usr/sbin/bcharge"
-BUS=="usb", ENV{DEVTYPE}=="usb_device", ACTION=="add", ATTRS{idVendor}=="0fca", ATTRS{idProduct}=="8004", RUN="/usr/sbin/bcharge"
+BUS=="usb", ENV{DEVTYPE}=="usb_device", ACTION=="add", ATTRS{idVendor}=="0fca", ATTRS{idProduct}=="8007", RUN="/usr/sbin/bcharge -p %p"
+BUS=="usb", ENV{DEVTYPE}=="usb_device", ACTION=="add", ATTRS{idVendor}=="0fca", ATTRS{idProduct}=="8004", RUN="/usr/sbin/bcharge -p %p"
 BUS=="usb", ENV{DEVTYPE}=="usb_device", ACTION=="add", ATTRS{idVendor}=="0fca", ATTRS{idProduct}=="0004", SYMLINK+="bb-%k", RUN="/usr/sbin/bcharge -p %p"
 
