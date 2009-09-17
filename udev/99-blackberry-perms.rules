@@ -3,6 +3,8 @@
 # broad ruleset.  It runs no external commands, so this broad ruleset
 # should not impact performance at all.
 #
+# Note: for opensuse-11.1, use the group 'dialout'
+#
 ATTRS{idVendor}=="0fca", ATTRS{idProduct}=="0001", GROUP="plugdev", MODE="0660"
 ATTRS{idVendor}=="0fca", ATTRS{idProduct}=="0004", GROUP="plugdev", MODE="0660"
 ATTRS{idVendor}=="0fca", ATTRS{idProduct}=="0006", GROUP="plugdev", MODE="0660"

@@ -1,2 +1,0 @@
-<blackberry>=/dev/bb-*
-<console> 0660 <blackberry> 0660 root
