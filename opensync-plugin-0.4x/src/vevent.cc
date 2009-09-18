@@ -25,6 +25,7 @@
 #include "vevent.h"
 #include "environment.h"
 #include "trace.h"
+#include "tosserror.h"
 #include "vformat.h"		// comes from opensync, but not a public header yet
 #include <stdint.h>
 #include <glib.h>
@@ -91,6 +92,7 @@ void vCalendar::RecurToVCal()
 	using namespace Barry;
 	using namespace std;
 	Barry::Calendar &cal = m_BarryCal;
+	Trace trace("vCalendar::RecurToVCal");
 
 	if( !cal.Recurring )
 		return;
@@ -185,10 +187,13 @@ void vCalendar::RecurToVCal()
 		AddValue(attr, oss.str().c_str());
 	}
 	if( !cal.Perpetual ) {
-		gStringPtr rend(osync_time_unix2vtime(&cal.RecurringEndTime));
-		ostringstream oss;
-		oss << "UNTIL=" << rend.Get();
-		AddValue(attr, oss.str().c_str());
+		TossError te("RecurToVCal, RecurringEndTime 2 vtime", trace);
+		gStringPtr rend(osync_time_unix2vtime(&cal.RecurringEndTime, te));
+		if( !te.IsSet() ) {
+			ostringstream oss;
+			oss << "UNTIL=" << rend.Get();
+			AddValue(attr, oss.str().c_str());
+		}
 	}
 
 	AddAttr(attr);
@@ -270,10 +275,19 @@ void vCalendar::RecurToBarryCal(vAttr& rrule, time_t starttime)
 		trace.logf("RecurToBarryCal: |%s|%s|",n.c_str(),v.c_str());
 	} while(1);
 
-	// now process the inferval.
+	// now process the interval.
 
 	time_t now = time(NULL);
-	int zoneoffset = osync_time_timezone_diff(localtime(&now));
+	int zoneoffset;
+	
+	{
+		TossError te;
+		zoneoffset = osync_time_timezone_diff(localtime(&now), te);
+		if( te.IsSet() ) {
+			trace.log("RecurToBarryCal: Cannot find local timezone diff... assuming 0");
+			zoneoffset = 0;
+		}
+	}
 
 	cal.Recurring=TRUE;
 
@@ -281,8 +295,12 @@ void vCalendar::RecurToBarryCal(vAttr& rrule, time_t starttime)
 		cal.Interval = atoi(args["INTERVAL"].c_str());
 	}
 	if(args.find(string("UNTIL"))!=args.end()) {
+		TossError te;
 		cal.Perpetual = FALSE;
-		cal.RecurringEndTime=osync_time_vtime2unix(args["UNTIL"].c_str(), zoneoffset);
+		cal.RecurringEndTime=osync_time_vtime2unix(args["UNTIL"].c_str(), zoneoffset, te);
+		if( te.IsSet() ) {
+			trace.logf("osync_time_vtime2unix() failed: UNTIL = %s, zoneoffset = %d", args["UNTIL"].c_str(), zoneoffset);
+		}
 	} else {
 		// if we do not also have COUNT, then we must be forerver
 		if(args.find(string("COUNT"))==args.end()) {
@@ -449,9 +467,21 @@ const std::string& vCalendar::ToVCal(const Barry::Calendar &cal)
 	AddAttr(NewAttr("DESCRIPTION", cal.Notes.c_str()));
 	AddAttr(NewAttr("LOCATION", cal.Location.c_str()));
 
-	gStringPtr start(osync_time_unix2vtime(&cal.StartTime));
-	gStringPtr end(osync_time_unix2vtime(&cal.EndTime));
-	gStringPtr notify(osync_time_unix2vtime(&cal.NotificationTime));
+	// grab Start, End, and Notification time strings (with error checking)
+	TossError te;
+	gStringPtr start(osync_time_unix2vtime(&cal.StartTime, te));
+	if( te.IsSet() )
+		trace.logf("osync_time_unix2vtime failed: StartTime = %ld", (long)cal.StartTime);
+
+	te.Clear();
+	gStringPtr end(osync_time_unix2vtime(&cal.EndTime, te));
+	if( te.IsSet() )
+		trace.logf("osync_time_unix2vtime failed: EndTime = %ld", (long)cal.EndTime);
+
+	te.Clear();
+	gStringPtr notify(osync_time_unix2vtime(&cal.NotificationTime, te));
+	if( te.IsSet() )
+		trace.logf("osync_time_unix2vtime failed: NotificationTime = %ld", (long)cal.NotificationTime);
 
 	AddAttr(NewAttr("DTSTART", start.Get()));
 	AddAttr(NewAttr("DTEND", end.Get()));
@@ -542,14 +572,23 @@ const Barry::Calendar& vCalendar::ToBarry(const char *vcal, uint32_t RecordId)
 	// must be fixed.
 	//
 	time_t now = time(NULL);
-	int zoneoffset = osync_time_timezone_diff(localtime(&now));
+	int zoneoffset;
+	{
+		TossError te;
+		zoneoffset = osync_time_timezone_diff(localtime(&now), te);
+		if( te.IsSet() ) {
+			trace.log("ToBarry: Cannot find local timezone diff... assuming 0");
+			zoneoffset = 0;
+		}
+	}
 
 	Barry::Calendar &rec = m_BarryCal;
 	rec.SetIds(Barry::Calendar::GetDefaultRecType(), RecordId);
 
 	if( !start.size() )
 		throw ConvertError("Blank DTSTART");
-	rec.StartTime = osync_time_vtime2unix(start.c_str(), zoneoffset);
+	TossError te("ToBarry, StartTime 2 unix", trace);
+	rec.StartTime = osync_time_vtime2unix(start.c_str(), zoneoffset, te);
 
 	if( !end.size() ) {
 		// DTEND is actually optional!  According to the
@@ -563,7 +602,8 @@ const Barry::Calendar& vCalendar::ToBarry(const char *vcal, uint32_t RecordId)
 		rec.EndTime = rec.StartTime + 24 * 60 * 60;
 	}
 	else {
-		rec.EndTime = osync_time_vtime2unix(end.c_str(), zoneoffset);
+		TossError te("ToBarry, EndTime 2 unix", trace);
+		rec.EndTime = osync_time_vtime2unix(end.c_str(), zoneoffset, te);
 	}
 
 	rec.Subject = subject;
@@ -585,7 +625,8 @@ const Barry::Calendar& vCalendar::ToBarry(const char *vcal, uint32_t RecordId)
 			trace.logf("ERROR: no TRIGGER found in calendar entry, assuming notification time as 15 minutes before start.");
 		}
 		else if( trigger_type == "DATE-TIME" ) {
-			rec.NotificationTime = osync_time_vtime2unix(trigger.c_str(), zoneoffset);
+			TossError te("ToBarry, NotificationTime 2 unix", trace);
+			rec.NotificationTime = osync_time_vtime2unix(trigger.c_str(), zoneoffset, te);
 		}
 		else if( trigger_type == "DURATION" || trigger_type.size() == 0 ) {
 			// default is DURATION (RFC 4.8.6.3)

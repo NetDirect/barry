@@ -1,5 +1,10 @@
 Release: version 0.16 - 2009/09/??
 ------------------------------------------------------------------------------
+2009/09/18
+	- updated opensync 0.4x plugin to compile against latest SVN
+		- removed unneeded osync_error_unref() from get_sync_info()
+		- updated plugin to support the new OSyncError** arguments
+			scattered all over the code
 2009/09/17
 	- added IRC info to contact www doc page
 2009/09/16

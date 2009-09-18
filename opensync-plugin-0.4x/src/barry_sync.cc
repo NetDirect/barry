@@ -1124,7 +1124,11 @@ osync_bool get_sync_info(OSyncPluginEnv *env, OSyncError **error)
 	osync_plugin_set_finalize(plugin, finalize);
 	osync_plugin_set_discover(plugin, discover);
 
-	osync_plugin_env_register_plugin(env, plugin);
+	if( !osync_plugin_env_register_plugin(env, plugin, error) ) {
+		trace.log(osync_error_print(error));
+		return false;
+	}
+
 	osync_plugin_unref(plugin);
 
 	return true;

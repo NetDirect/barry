@@ -34,7 +34,8 @@ barry_sync_la_SOURCES = \
 	vjournal.cc vjournal.h \
 	vtodo.cc vtodo.h \
 	vformat.c vformat.h \
-	trace.h
+	trace.h \
+	tosserror.h
 
 barry_sync_la_LDFLAGS = -avoid-version -export-dynamic -module
 barry_sync_la_LIBADD = @PACKAGE_LIBS@ @LIBS@ @BARRY_LIBS@

@@ -26,6 +26,7 @@
 #include "vtodo.h"
 #include "environment.h"
 #include "trace.h"
+#include "tosserror.h"
 #include "vformat.h"		// comes from opensync, but not a public header yet
 #include <stdint.h>
 #include <glib.h>
@@ -123,13 +124,15 @@ const std::string& vTodo::ToTask(const Barry::Task &task)
 
 	// StartTime
 	if( task.StartTime ) {
-		gStringPtr start(osync_time_unix2vtime(&task.StartTime));
+		TossError te("ToTask, StartTime 2 vtime", trace);
+		gStringPtr start(osync_time_unix2vtime(&task.StartTime, te));
 		AddAttr(NewAttr("DTSTART", start.Get()));
 	}
 
 	// DueTime DueFlag
 	if( task.DueDateFlag ) {
-		gStringPtr due(osync_time_unix2vtime(&task.DueTime));
+		TossError te("ToTask, DueTime 2 vtime", trace);
+		gStringPtr due(osync_time_unix2vtime(&task.DueTime, te));
 		AddAttr(NewAttr("DUE", due.Get()));
 	}
 
@@ -205,7 +208,8 @@ const Barry::Task& vTodo::ToBarry(const char *vtodo, uint32_t RecordId)
 	// must be fixed.
 	//
 	time_t now = time(NULL);
-	int zoneoffset = osync_time_timezone_diff(localtime(&now));
+	TossError te("ToBarry, local timezone detection", trace);
+	int zoneoffset = osync_time_timezone_diff(localtime(&now), te);
 
 
 	Barry::Task &rec = m_BarryTask;
@@ -255,11 +259,15 @@ const Barry::Task& vTodo::ToBarry(const char *vtodo, uint32_t RecordId)
 
 
 	// STARTTIME & DUETIME
-	if (start.size())
-		rec.StartTime = osync_time_vtime2unix(start.c_str(), zoneoffset);
+	if (start.size()) {
+		TossError te("ToBarry, StartTime 2 unix", trace);
+		rec.StartTime = osync_time_vtime2unix(start.c_str(), zoneoffset, te);
+	}
+
 	if (due.size()) {
+		TossError te("ToBarry, DueTime 2 unix", trace);
 		rec.DueDateFlag = true;
-		rec.DueTime = osync_time_vtime2unix(due.c_str(), zoneoffset);
+		rec.DueTime = osync_time_vtime2unix(due.c_str(), zoneoffset, te);
 	}
 
 	std::ostringstream oss;
