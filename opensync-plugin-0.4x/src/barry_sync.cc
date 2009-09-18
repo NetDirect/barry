@@ -1109,10 +1109,8 @@ osync_bool get_sync_info(OSyncPluginEnv *env, OSyncError **error)
 
 	// Create a new OpenSync plugin
 	OSyncPlugin *plugin = osync_plugin_new(error);
-
-	if (!plugin) {
-		osync_error_unref(error);
-
+	if( !plugin ) {
+		trace.log(osync_error_print(error));
 		return false;
 	}
 
