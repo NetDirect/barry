@@ -1,0 +1,74 @@
+Requirements:
+=============
+
+Main overriding design goal: make it easy to use... sacrifice functionality
+	if you can't make it easy... add it later, but do the user-friendly
+	stuff now.
+
+- one front panel screen to manage your blackberries, with all
+	available main options as buttons on that front panel
+	including:
+
+	- backup and restore
+	- device switcher utility (basically an automated backup/restore?)
+	- javaloader (manage programs, as well as the extra javaloader commands)
+	- sync, with pre-defined list of applications:
+		- Evolution
+		- Sunbird
+		- Kontact
+	- for each supported application, automate the configuration
+		process as much as possible... make the user pick
+		the bare minimum!
+		for example, Evolution has a file:///... path in its
+		configuration in opensync 0.22 that can be auto-detected
+		and configured automatically
+
+	- media management (grab photos, etc) (will take longer
+		than the rest, since low level USB is needed)
+
+	- FUSE file browser via GUI
+
+- system tray status icon, with access to desktop app
+- show Barry logo 
+- cross platform
+	- Linux, multi-distro
+	- BSD?
+	- Mac OS X
+	- look into how OpenOffice/NeoOffice works and how
+	  Firefox manages cross-platform support
+- support both opensync versions: 0.22 and 0.4x
+
+
+API for supporting both opensync versions:
+==========================================
+
+Create a plugin system, loaded with dlopen(), with a similar API in each
+plugin.
+
+Common Functions:
+	- list available opensync plugins (this is a function at the
+		highest app level... since we are in charge of these
+		API plugin wrappers)
+	- list groups
+	- list plugins
+	- list objects
+	- add group / del group
+	- add member / del member (is del member available in 0.22?)
+	- configure member
+	- sync group
+	- logging output to a common directory (and zapping that log
+		directory before every sync)
+
+Possible Errors:
+	- conflicts during sync
+	- can't autodetect applications to sync with
+	- need for slow-sync?
+	- complete mess up
+		- this usually initiates a desire to redo an entire sync
+		  from scratch, blowing one side away and syncing completely
+		  from one direction
+
+FIXME - finish adding to these above lists after analyzing osynctool's source
+
+For 0.22, base functionality off msynctool code:
+
