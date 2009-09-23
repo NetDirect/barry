@@ -39,6 +39,7 @@ Target: release version 0.17 (Nov 1)
 			into web docs (see list emails)
 		- add docs for opensync 0.4x plugin (note that it is
 			currently experimental, based on devel opensync)
+		- add docs for using libmtp with the Storm to access media
 
 Target: release version 0.18 (Dec 1)
 	- test and fix all build and functionality issues on:
