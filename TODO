@@ -14,10 +14,11 @@ Next Release Checklist (- todo, + done, x skipped)
 Target: release version 0.16 (Oct 1)
 	+ incorporate barrybackup GUI changes by Ryan Li
 	- incorporate Nicolas's java debugger patches
-		- figure out a solution to the HideSequencePacket issue
-		- fix any lingering compile problems and FIXMEs
-		- man page for bjdwp app
-		- www documentation for bjdwp app
+		- man pages
+			- bjdwp
+			- bjvmdebug
+			- bdptest
+		- www documentation / howto for bjdwp and friends
 		- add bjdwp to debian and rpm binary packages
 	- incorporate Martin Owens' Barry logo/icon into Barry
 		- connect icon with barrybackup
@@ -25,8 +26,11 @@ Target: release version 0.16 (Oct 1)
 		- add to identi.ca barry group
 		- add to sourceforge
 		- add to repo.or.cz
+	- figure out the best way to include bash and zsh auto completion
+		in the binary packages
 
 Target: release version 0.17 (Nov 1)
+	- figure out a solution to the HideSequencePacket issue
 	- website documentation:
 		- add a more detailed set of instructions for how to
 			contribute to the project using git
