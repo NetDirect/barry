@@ -42,6 +42,8 @@ Main overriding design goal: make it easy to use... sacrifice functionality
 API for supporting both opensync versions:
 ==========================================
 
+Wait, can we load libopensync libraries themselves with dlopen?
+
 Create a plugin system, loaded with dlopen(), with a similar API in each
 plugin.
 
