@@ -19,8 +19,9 @@ AC_PROG_LIBTOOL
 AC_LANG([C++])
 
 PKG_CHECK_MODULES([BARRY], [libbarry-0 libusb])
-PKG_CHECK_MODULES([OPENSYNC22], [opensync-1.0 glib-2.0])
-PKG_CHECK_MODULES([OPENSYNC40], [libopensync1 glib-2.0])
+PKG_CHECK_MODULES([GLIB2], [glib-2.0])
+PKG_CHECK_MODULES([OPENSYNC22], [opensync-1.0])
+PKG_CHECK_MODULES([OPENSYNC40], [libopensync1])
 
 # Carry the special tree build environment variables from parent configure,
 # just in case user is doing a complete tree build with --enable-desktop
