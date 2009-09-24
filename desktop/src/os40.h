@@ -1,6 +1,6 @@
 ///
-/// \file	main.cc
-///		Program entry point for the desktop gui
+/// \file	os40.h
+///		Wrapper class for opensync 0.4x syncing behaviour
 ///
 
 /*
@@ -19,28 +19,19 @@
     root directory of this project for more details.
 */
 
-#include <iostream>
-#include <stdexcept>
-#include "os22.h"
-#include "os40.h"
+#ifndef __BARRYDESKTOP_OS40_H__
+#define __BARRYDESKTOP_OS40_H__
 
-using namespace std;
+#include "dlopen.h"
 
-int main()
+class OpenSync40 : public DlOpen
 {
-	try {
+public:
+	OpenSync40();
 
-		OpenSync22 os22;
-		cout << os22.osync_get_version() << endl;
+	// opensync 0.40 function pointers
+	const char* (*osync_get_version)();
+};
 
-		OpenSync40 os40;
-		cout << os40.osync_get_version() << endl;
-
-	} catch(std::exception &e ) {
-		cout << e.what() << endl;
-		return 1;
-	}
-
-	return 0;
-}
+#endif
 

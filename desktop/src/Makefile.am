@@ -10,6 +10,10 @@ AM_LDFLAGS =
 bin_PROGRAMS = barrydesktop
 
 barrydesktop_SOURCES = \
+	error.cc error.h \
+	dlopen.cc dlopen.h \
+	os22.cc os22.h \
+	os40.cc os40.h \
 	main.cc
 # -rdynamic is recommended by the dlopen() manpage
 barrydesktop_LDFLAGS = -rdynamic

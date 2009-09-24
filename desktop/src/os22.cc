@@ -1,6 +1,6 @@
 ///
-/// \file	main.cc
-///		Program entry point for the desktop gui
+/// \file	os22.cc
+///		Wrapper class for opensync 0.22 syncing behaviour
 ///
 
 /*
@@ -19,28 +19,22 @@
     root directory of this project for more details.
 */
 
-#include <iostream>
-#include <stdexcept>
 #include "os22.h"
-#include "os40.h"
+
+//#include <../opensync-1.0/opensync/opensync.h>
+//#include <../opensync-1.0/osengine/engine.h>
 
 using namespace std;
 
-int main()
+/////////////////////////////////////////////////////////////////////////////
+// OpenSync22 - public members
+
+OpenSync22::OpenSync22()
 {
-	try {
+	if( !Open("libosengine.so.0") )
+		throw DlError("Can't dlopen libosengine.so.0");
 
-		OpenSync22 os22;
-		cout << os22.osync_get_version() << endl;
-
-		OpenSync40 os40;
-		cout << os40.osync_get_version() << endl;
-
-	} catch(std::exception &e ) {
-		cout << e.what() << endl;
-		return 1;
-	}
-
-	return 0;
+	// load all required symbols
+	LoadSym(osync_get_version, "osync_get_version");
 }
 

@@ -1,6 +1,6 @@
 ///
-/// \file	main.cc
-///		Program entry point for the desktop gui
+/// \file	os40.cc
+///		Wrapper class for opensync 0.22 syncing behaviour
 ///
 
 /*
@@ -19,28 +19,22 @@
     root directory of this project for more details.
 */
 
-#include <iostream>
-#include <stdexcept>
-#include "os22.h"
 #include "os40.h"
+
+//#include <../libopensync1/opensync/opensync.h>
+//#include <../libopensync1/osengine/engine.h>
 
 using namespace std;
 
-int main()
+/////////////////////////////////////////////////////////////////////////////
+// OpenSync40 - public members
+
+OpenSync40::OpenSync40()
 {
-	try {
+	if( !Open("libopensync.so.1") )
+		throw DlError("Can't dlopen libopensync.so.1");
 
-		OpenSync22 os22;
-		cout << os22.osync_get_version() << endl;
-
-		OpenSync40 os40;
-		cout << os40.osync_get_version() << endl;
-
-	} catch(std::exception &e ) {
-		cout << e.what() << endl;
-		return 1;
-	}
-
-	return 0;
+	// load all required symbols
+	LoadSym(osync_get_version, "osync_get_version");
 }
 

@@ -1,6 +1,6 @@
 ///
-/// \file	main.cc
-///		Program entry point for the desktop gui
+/// \file	error.h
+///		Exception classes specific to the desktop
 ///
 
 /*
@@ -19,28 +19,30 @@
     root directory of this project for more details.
 */
 
-#include <iostream>
+#ifndef __BARRYDESKTOP_ERROR_H__
+#define __BARRYDESKTOP_ERROR_H__
+
 #include <stdexcept>
-#include "os22.h"
-#include "os40.h"
+#include <string>
 
-using namespace std;
+/// \addtogroup exceptions
+/// @{
 
-int main()
+//
+// DlError
+//
+/// Represents and stores the error message from the last
+/// dlopen() related error.
+///
+class DlError : public std::runtime_error
 {
-	try {
+	static std::string GetMsg(const std::string &msg);
 
-		OpenSync22 os22;
-		cout << os22.osync_get_version() << endl;
+public:
+	DlError(const std::string &msg);
+};
 
-		OpenSync40 os40;
-		cout << os40.osync_get_version() << endl;
+/// @}
 
-	} catch(std::exception &e ) {
-		cout << e.what() << endl;
-		return 1;
-	}
-
-	return 0;
-}
+#endif
 

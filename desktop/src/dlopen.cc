@@ -1,6 +1,6 @@
 ///
-/// \file	main.cc
-///		Program entry point for the desktop gui
+/// \file	dlopen.cc
+///		Base class wrapper for dlopen() behaviour
 ///
 
 /*
@@ -19,28 +19,42 @@
     root directory of this project for more details.
 */
 
+#include "dlopen.h"
 #include <iostream>
 #include <stdexcept>
-#include "os22.h"
-#include "os40.h"
+#include <string>
+#include <dlfcn.h>
+#include <string.h>
 
-using namespace std;
+/////////////////////////////////////////////////////////////////////////////
+// DlOpen class -- protected members
 
-int main()
+bool DlOpen::Open(const char *libname)
 {
-	try {
+	Shutdown();
+	m_handle = dlopen(libname, RTLD_LAZY | RTLD_GLOBAL);
+	return m_handle != NULL;
+}
 
-		OpenSync22 os22;
-		cout << os22.osync_get_version() << endl;
-
-		OpenSync40 os40;
-		cout << os40.osync_get_version() << endl;
-
-	} catch(std::exception &e ) {
-		cout << e.what() << endl;
-		return 1;
+void DlOpen::Shutdown()
+{
+	if( m_handle ) {
+		dlclose(m_handle);
+		m_handle = 0;
 	}
+}
 
-	return 0;
+
+/////////////////////////////////////////////////////////////////////////////
+// DlOpen class -- public members
+
+DlOpen::DlOpen()
+	: m_handle(0)
+{
+}
+
+DlOpen::~DlOpen()
+{
+	Shutdown();
 }
 

@@ -1,6 +1,6 @@
 ///
-/// \file	main.cc
-///		Program entry point for the desktop gui
+/// \file	error.cc
+///		Exception class implementations
 ///
 
 /*
@@ -19,28 +19,28 @@
     root directory of this project for more details.
 */
 
-#include <iostream>
-#include <stdexcept>
-#include "os22.h"
-#include "os40.h"
+#include "error.h"
+#include <dlfcn.h>
 
-using namespace std;
+/////////////////////////////////////////////////////////////////////////////
+// class DlError
 
-int main()
+std::string DlError::GetMsg(const std::string &msg)
 {
-	try {
-
-		OpenSync22 os22;
-		cout << os22.osync_get_version() << endl;
-
-		OpenSync40 os40;
-		cout << os40.osync_get_version() << endl;
-
-	} catch(std::exception &e ) {
-		cout << e.what() << endl;
-		return 1;
+	std::string ret = msg;
+	char *derr = dlerror();
+	if( derr == NULL ) {
+		ret += ": (dlerror returned NULL)";
 	}
+	else {
+		ret += ": ";
+		ret += derr;
+	}
+	return ret;
+}
 
-	return 0;
+DlError::DlError(const std::string &msg)
+	: std::runtime_error(DlError::GetMsg(msg.c_str()))
+{
 }
 
