@@ -61,10 +61,12 @@ cleangettext() {
 if [ "$1" = "cleanall" ] ; then
 	make distclean
 	(cd gui && make distclean)
+	(cd desktop && make distclean)
 	(cd opensync-plugin && make distclean)
 	(cd opensync-plugin-0.4x && make distclean)
 	./buildgen.sh clean
 	(cd gui && ./buildgen.sh clean)
+	(cd desktop && ./buildgen.sh clean)
 	(cd opensync-plugin && ./buildgen.sh clean)
 	(cd opensync-plugin-0.4x && ./buildgen.sh clean)
 	cleangettext
@@ -83,6 +85,7 @@ elif [ "$1" = "clean" ] ; then
 	# clean up ctags trails
 	rm -f src/tags tools/tags examples/tags \
 		gui/src/tags \
+		desktop/src/tags \
 		opensync-plugin/src/tags \
 		opensync-plugin-0.4x/src/tags
 elif [ "$1" = "ctags" ] ; then
@@ -91,6 +94,7 @@ elif [ "$1" = "ctags" ] ; then
 	(cd tools && ctags -R)
 	(cd examples && ctags -R)
 	(cd gui/src && ctags -R)
+	(cd desktop/src && ctags -R)
 	if [ "$2" = "0.22" ] ; then
 		(cd opensync-plugin/src && ctags -R)
 	fi
@@ -139,12 +143,14 @@ else
 	# then the rest.
 	libtoolit m4
 	(cd gui && libtoolit m4)
+	(cd desktop && libtoolit ../m4)
 	(cd opensync-plugin && libtoolit m4)
 	(cd opensync-plugin-0.4x && libtoolit m4)
 
 	# Now for aclocal, autoheader, automake, and autoconf
 	doconf m4
 	(cd gui && doconf m4)
+	(cd desktop && doconf ../m4)
 	(cd opensync-plugin && doconf m4)
 	(cd opensync-plugin-0.4x && doconf m4)
 fi
