@@ -6,7 +6,7 @@
 ///
 ///		This file is part of the Barry project:
 ///
-///		http://www.netdirect.ca/software/packages/barry/index.php
+///		http://www.netdirect.ca/software/packages/barry
 ///		http://sourceforge.net/projects/barry
 ///
 ///		Compile with the following command (needs libusb):
