@@ -1,5 +1,9 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
+#
+# Parts taken from the pkg.m4 file from pkg-config
+# Copyright 2004 Scott James Remnant <scott@netsplit.com>
+#
 
 AC_PREREQ(2.61)
 AC_INIT([barrydesktop], [0.1], [barry-devel@lists.sourceforge.net])
@@ -20,8 +24,31 @@ AC_LANG([C++])
 
 PKG_CHECK_MODULES([BARRY], [libbarry-0 libusb])
 PKG_CHECK_MODULES([GLIB2], [glib-2.0])
-PKG_CHECK_MODULES([OPENSYNC22], [opensync-1.0])
-PKG_CHECK_MODULES([OPENSYNC40], [libopensync1])
+PKG_CHECK_MODULES([OPENSYNC22], [opensync-1.0], [], [OS22NOTFOUND=yes])
+PKG_CHECK_MODULES([OPENSYNC40], [libopensync1], [], [OS40NOTFOUND=yes])
+
+if test "$OS22NOTFOUND" = "yes" -a "$OS40NOTFOUND" = "yes" ; then
+	AC_MSG_ERROR(dnl
+[
+Unable to find development libraries for either opensync 0.22 or 0.4x.
+
+Consider adjusting the PKG_CONFIG_PATH environment variable if you
+installed software in a non-standard prefix.
+
+Alternatively, you may set the environment variables:
+
+	OPENSYNC22_CFLAGS and OPENSYNC22_LIBS
+or
+	OPENSYNC40_CFLAGS and OPENSYNC40_LIBS
+
+to avoid the need to call pkg-config.
+
+See the pkg-config man page for more details.
+])
+fi
+
+AM_CONDITIONAL([WITH_OPENSYNC22], [test "$OS22NOTFOUND" != "yes"])
+AM_CONDITIONAL([WITH_OPENSYNC40], [test "$OS40NOTFOUND" != "yes"])
 
 # Carry the special tree build environment variables from parent configure,
 # just in case user is doing a complete tree build with --enable-desktop

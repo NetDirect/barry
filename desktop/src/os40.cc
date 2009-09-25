@@ -39,15 +39,6 @@
 using namespace std;
 using namespace Barry;
 
-std::ostream& operator<< (std::ostream &os, const string_list_type &list)
-{
-	string_list_type::const_iterator b = list.begin(), e = list.end();
-	for( ; b != e; ++b ) {
-		os << *b << endl;
-	}
-	return os;
-}
-
 class TossError
 {
 	OSyncError *m_error;
