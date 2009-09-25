@@ -23,14 +23,19 @@
 #define __BARRYDESKTOP_OS40_H__
 
 #include "dlopen.h"
+#include <memory>
+
+class OpenSync40Private;
 
 class OpenSync40 : public DlOpen
 {
+	// private opensync 0.40 function pointers and data
+	std::auto_ptr<OpenSync40Private> m_priv;
+
 public:
 	OpenSync40();
 
-	// opensync 0.40 function pointers
-	const char* (*osync_get_version)();
+	// general tool API (based on command line options from osynctool)
 };
 
 #endif
