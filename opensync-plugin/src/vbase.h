@@ -24,6 +24,7 @@
 
 #include <string>
 #include <stdexcept>
+#include <barry/vsmartptr.h>
 #include "vformat.h"
 
 // forward declarations
@@ -62,54 +63,6 @@ public:
 	bool operator==(const std::string &tzid) const;
 };
 
-
-// A special smart pointer for vformat pointer handling.
-// Behaves like std::auto_ptr<> in that only one object
-// at a time owns the pointer, and destruction frees it.
-template <class T, class FT, void (*FreeFunc)(FT *pt)>
-class vSmartPtr
-{
-	mutable T *m_pt;
-
-public:
-	vSmartPtr() : m_pt(0) {}
-	vSmartPtr(T *pt) : m_pt(pt) {}
-	vSmartPtr(const vSmartPtr &sp) : m_pt(sp.m_pt)
-	{
-		sp.m_pt = 0;
-	}
-	~vSmartPtr()
-	{
-		if( m_pt )
-			FreeFunc(m_pt);
-	}
-
-	vSmartPtr& operator=(T *pt)
-	{
-		Extract();
-		m_pt = pt;
-		return *this;
-	}
-
-	vSmartPtr& operator=(const vSmartPtr &sp)
-	{
-		Extract();
-		m_pt = sp.Extract();
-		return *this;
-	}
-
-	T* Extract()
-	{
-		T *rp = m_pt;
-		m_pt = 0;
-		return rp;
-	}
-
-	T* Get()
-	{
-		return m_pt;
-	}
-};
 
 typedef vSmartPtr<b_VFormatAttribute, b_VFormatAttribute, &b_vformat_attribute_free> vAttrPtr;
 typedef vSmartPtr<b_VFormatParam, b_VFormatParam, &b_vformat_attribute_param_free> vParamPtr;

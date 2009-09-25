@@ -73,6 +73,7 @@
 #include "cod.h"
 #include "record.h"
 #include "threadwrap.h"
+#include "vsmartptr.h"
 
 // Include the JDW Debug Parser classes
 #include "dp_codinfo.h"

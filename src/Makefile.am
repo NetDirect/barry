@@ -105,6 +105,7 @@ include_barry_HEADERS = barry.h \
 	socket.h \
 	time.h \
 	threadwrap.h \
+	vsmartptr.h \
 	usbwrap.h \
 	version.h \
 	pppfilter.h \
