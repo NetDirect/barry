@@ -9,6 +9,8 @@ Main overriding design goal: make it easy to use... sacrifice functionality
 	available main options as buttons on that front panel
 	including:
 
+	- easily readable header: "Barry Desktop Control Panel"
+
 	- backup and restore
 	- device switcher utility (basically an automated backup/restore?)
 	- javaloader (manage programs, as well as the extra javaloader commands)
@@ -27,6 +29,8 @@ Main overriding design goal: make it easy to use... sacrifice functionality
 		than the rest, since low level USB is needed)
 
 	- FUSE file browser via GUI
+
+	- button to launch browser to jump to netdirect.ca/barry ?
 
 - system tray status icon, with access to desktop app
 - show Barry logo 
