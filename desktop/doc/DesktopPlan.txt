@@ -43,6 +43,38 @@ Main overriding design goal: make it easy to use... sacrifice functionality
 - support both opensync versions: 0.22 and 0.4x
 
 
+Mainscreen Buttons:
+===================
+
+	Backup & Restore
+
+	Sync
+
+	Modem (configuration and going online/offline)
+
+	Javaloader (loading and saving applications)
+
+	Device Switch (a clone of a full backup and restore from one
+			device to another)
+
+	Browse Databases (browse database data like a filesystem hierarchy)
+
+	Media Management (access photos, music, etc. via three methods:
+
+		- MTP (Storm only)
+		- Mass Storage: the SD card filesystem
+		- proprietary USB protocol to access on-device
+		  memory storing pictures, sounds, etc (this is
+		  not yet implemented or reverse engineered)
+
+	Miscellaneous
+
+		- view device's event log
+		- clear device's event log
+		- take device screenshot
+		- set the device's time
+
+
 API for supporting both opensync versions:
 ==========================================
 
@@ -77,4 +109,90 @@ Possible Errors:
 FIXME - finish adding to these above lists after analyzing osynctool's source
 
 For 0.22, base functionality off msynctool code:
+
+
+
+
+Sync screen mock up:
+====================
+
+   +------------------------------------------------------------------------+
+   |                            Barry Sync                                  |
+   |                                                                        |
+   |                                                        [ Sync Now ]    |
+   |   Available Devices:                                                   |
+   |                                                                        |
+   |  +==================================================================+  |
+   |  |Sync |   PIN    |      Name      |Connected| Sync With | Engine   |  |
+   |  +-----+----------+----------------+---------+-----------+----------+  |
+   |  | [X] | 3009efe3 | Old Faithful   |  Yes    | Evolution | 0.40     |  |
+   |  | [ ] | 20634523 | Borrowed 8120  |  No     | Sunbird   | 0.22     |  |
+   |  | [ ] | 10235478 | <Unknown>      |  Yes    | ...       | ...      |  |
+   |  |     |          |                |         |           |          |  |
+   |  |     |          |                |         |           |          |  |
+   |  |     |          |                |         |           |          |  |
+   |  |     |          |                |         |           |          |  |
+   |  |     |          |                |         |           |          |  |
+   |                                                                        |
+   +------------------------------------------------------------------------+
+
+	- syncable devices can be skipped by unchecking in Sync column
+	- unconnected or unconfigured devices have Sync checkbox greyed out
+	- double click to configure a device
+	- should be possible in theory to add as many Apps to the Sync With
+		field as needed... it is all the same opensync group anyway
+
+Sync Now button:
+	- for each device:
+		- halt the App (can evolution --force-shutdown be used safetly
+			at any time?)
+		- run the engine's sync
+	- may be able to thread non-conflicting devices
+		- don't sync devices at the same time with the same apps
+			in their Sync With list
+
+Sync Recovery Options:
+	- start fresh: this keeps App's data and blanks the device
+		- be sure to warn the user his device will be blanked!
+		- when starting fresh, the desktop should remember the configs
+			on both sides and reconfigure automatically after
+			the zap
+
+Sync Config Constraints:
+	- a device can only be used in one opensync config
+	- an App can be used in multiple opensync configs
+	- each specific engine plugin will have an App config class for it
+		i.e. 0.22 barry-sync config class
+		     0.40 evo-sync config class
+		     0.22 evo-sync config class
+
+Sync Lists:
+	- List of devices, includes:
+		- all configured devices, from both engines, whether
+			plugged in or not
+		- all plugged devices
+		- get names for each device from barrybackup config data
+
+	- List of Apps
+		- depends on what is supported by barry desktop
+		+ and depends on what plugins are installed for each engine
+		+ and depends on what Apps are actually installed
+		  (does the list of available plugins provide this info?)
+
+	- List of engines
+		- desktop should remember what engines it knows about
+			so that if an engine disappears for some reason,
+			it can warn the user (but don't ever abort)
+		- if a known engine appears and then disappears, but
+			no devices were actually configured to use it,
+			don't warn so heavily
+Sync Config Storage:
+	- sync config (groups, members, plugins) only stored in opensync
+	- known engines stored in desktop cfg
+	- known plugins for each engine too
+	- but only remember the plugins and engines we actually use,
+		so the user isn't bothered needlessly
+	- desktop should remember which configs were unchecked, in the
+		Sync column above, so a user can easily stop syncing a
+		given device without having to delete the config
 
