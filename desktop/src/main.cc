@@ -26,15 +26,39 @@
 
 using namespace std;
 
+void Test22()
+{
+	OpenSync22 os22;
+	cout << os22.osync_get_version() << endl;
+}
+
+void Test40()
+{
+	OpenSync40 os40;
+	cout << os40.GetVersion() << endl;
+
+	string_list_type plugins;
+	os40.GetPluginNames(plugins);
+	cout << plugins << endl;
+}
+
 int main()
 {
 	try {
 
+		Test22();
+		Test40();
+
+		// test both at once
 		OpenSync22 os22;
 		cout << os22.osync_get_version() << endl;
 
 		OpenSync40 os40;
-		cout << os40.osync_get_version() << endl;
+		cout << os40.GetVersion() << endl;
+
+		string_list_type plugins;
+		os40.GetPluginNames(plugins);
+		cout << plugins << endl;
 
 	} catch(std::exception &e ) {
 		cout << e.what() << endl;

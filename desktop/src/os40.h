@@ -24,18 +24,34 @@
 
 #include "dlopen.h"
 #include <memory>
+#include <vector>
+#include <string>
+#include <iosfwd>
 
 class OpenSync40Private;
 
+typedef std::vector<std::string>		string_list_type;
+
+std::ostream& operator<< (std::ostream &os, const string_list_type &list);
+
 class OpenSync40 : public DlOpen
 {
+public:
+
+private:
 	// private opensync 0.40 function pointers and data
-	std::auto_ptr<OpenSync40Private> m_priv;
+	OpenSync40Private *m_priv;
+
+protected:
+	void SetupEnvironment(OpenSync40Private *p);
 
 public:
 	OpenSync40();
+	~OpenSync40();
 
 	// general tool API (based on command line options from osynctool)
+	const char* GetVersion();
+	void GetPluginNames(string_list_type &plugins);
 };
 
 #endif

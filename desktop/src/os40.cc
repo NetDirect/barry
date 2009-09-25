@@ -25,6 +25,8 @@
 */
 
 #include "os40.h"
+#include <barry/vsmartptr.h>
+#include <iostream>
 
 #include <../libopensync1/opensync/opensync.h>
 #include <../libopensync1/opensync/opensync-group.h>
@@ -35,18 +37,81 @@
 #include <../libopensync1/opensync/opensync-capabilities.h>
 
 using namespace std;
+using namespace Barry;
+
+std::ostream& operator<< (std::ostream &os, const string_list_type &list)
+{
+	string_list_type::const_iterator b = list.begin(), e = list.end();
+	for( ; b != e; ++b ) {
+		os << *b << endl;
+	}
+	return os;
+}
+
+class TossError
+{
+	OSyncError *m_error;
+	OpenSync40Private *m_priv;
+
+public:
+	// simple wrapper... unref's the error on destruction
+	TossError(OpenSync40Private *priv)
+		: m_error(0)
+		, m_priv(priv)
+	{
+	}
+
+	~TossError()
+	{
+		Clear();
+	}
+
+	/// Returns NULL if no error
+	const char* GetErrorMsg();
+	bool IsSet();
+	void Clear();
+
+	operator OSyncError**()
+	{
+		return &m_error;
+	}
+};
 
 class OpenSync40Private
 {
 public:
 	// function pointers
 	const char*		(*osync_get_version)();
+	const char*		(*osync_error_print)(OSyncError **error);
+	osync_bool		(*osync_error_is_set)(OSyncError **error);
+	void			(*osync_error_unref)(OSyncError **error);
 	OSyncGroupEnv*		(*osync_group_env_new)(OSyncError **error);
-	OSyncFormatEnv*		(*osync_format_env_new)(OSyncError **error)
-	OSyncPluginEnv*		(*osync_plugin_env_new)(OSyncError **error)
+	OSyncFormatEnv*		(*osync_format_env_new)(OSyncError **error);
+	OSyncPluginEnv*		(*osync_plugin_env_new)(OSyncError **error);
+	void			(*osync_group_env_unref)(OSyncGroupEnv *env);
+	void			(*osync_format_env_unref)(OSyncFormatEnv *env);
+	void			(*osync_plugin_env_unref)(OSyncPluginEnv *env);
+	osync_bool		(*osync_plugin_env_load)(OSyncPluginEnv *env,
+					const char *path, OSyncError **error);
+	OSyncList*		(*osync_plugin_env_get_plugins)(
+					OSyncPluginEnv *env);
+	const char*		(*osync_plugin_get_name)(OSyncPlugin *plugin);
+	void			(*osync_list_free)(OSyncList *list);
 	osync_bool		(*osync_group_env_load_groups)(
 					OSyncGroupEnv *env, const char *path,
 					OSyncError **error);
+
+	// data pointers
+	vLateSmartPtr<OSyncGroupEnv, void(*)(OSyncGroupEnv*)> group_env;
+	vLateSmartPtr<OSyncFormatEnv, void(*)(OSyncFormatEnv*)> format_env;
+	vLateSmartPtr<OSyncPluginEnv, void(*)(OSyncPluginEnv*)> plugin_env;
+
+	TossError error;
+
+	OpenSync40Private()
+		: error(this)
+	{
+	}
 };
 
 
@@ -65,13 +130,99 @@ OpenSync40::OpenSync40()
 	// we don't need to use try/catch here, since the base
 	// class destructor will clean up for us if LoadSym() throws
 	LoadSym(p->osync_get_version, "osync_get_version");
+	LoadSym(p->osync_error_print, "osync_error_print");
+	LoadSym(p->osync_error_is_set, "osync_error_is_set");
+	LoadSym(p->osync_error_unref, "osync_error_unref");
 	LoadSym(p->osync_group_env_new, "osync_group_env_new");
 	LoadSym(p->osync_format_env_new, "osync_format_env_new");
+	LoadSym(p->osync_plugin_env_new, "osync_plugin_env_new");
+	LoadSym(p->osync_group_env_unref, "osync_group_env_unref");
+	LoadSym(p->osync_format_env_unref, "osync_format_env_unref");
+	LoadSym(p->osync_plugin_env_unref, "osync_plugin_env_unref");
+	LoadSym(p->osync_plugin_env_load, "osync_plugin_env_load");
+	LoadSym(p->osync_plugin_env_get_plugins,"osync_plugin_env_get_plugins");
+	LoadSym(p->osync_plugin_get_name, "osync_plugin_get_name");
+	LoadSym(p->osync_list_free, "osync_list_free");
 	LoadSym(p->osync_group_env_load_groups, "osync_group_env_load_groups");
 
+	// fixup free pointers
+	p->group_env.SetFreeFunc(p->osync_group_env_unref);
+	p->format_env.SetFreeFunc(p->osync_format_env_unref);
+	p->plugin_env.SetFreeFunc(p->osync_plugin_env_unref);
+
+	// setup opensync support environment
+	SetupEnvironment(p.get());
+
 	// this pointer is ours now
-	m_priv = p;
+	m_priv = p.release();
 }
+
+OpenSync40::~OpenSync40()
+{
+	delete m_priv;
+	m_priv = 0;
+}
+
+void OpenSync40::SetupEnvironment(OpenSync40Private *p)
+{
+	p->group_env = p->osync_group_env_new(p->error);
+	if( !p->group_env.get() )
+		throw std::runtime_error(p->error.GetErrorMsg());
+
+	p->format_env = p->osync_format_env_new(p->error);
+	if( !p->format_env.get() )
+		throw std::runtime_error(p->error.GetErrorMsg());
+
+	p->plugin_env = p->osync_plugin_env_new(p->error);
+	if( !p->plugin_env.get() )
+		throw std::runtime_error(p->error.GetErrorMsg());
+}
+
+const char* OpenSync40::GetVersion()
+{
+	return m_priv->osync_get_version();
+}
+
+void OpenSync40::GetPluginNames(string_list_type &plugins)
+{
+	if( !m_priv->osync_plugin_env_load(m_priv->plugin_env.get(), NULL, m_priv->error) )
+		throw std::runtime_error(m_priv->error.GetErrorMsg());
+
+	OSyncPlugin *plugin;
+	OSyncList *plugin_list, *p;
+
+	plugin_list = m_priv->osync_plugin_env_get_plugins(m_priv->plugin_env.get());
+	for( p = plugin_list; p; p = p->next ) {
+		plugin = (OSyncPlugin *) p->data;
+		plugins.push_back(m_priv->osync_plugin_get_name(plugin));
+	}
+
+	m_priv->osync_list_free(plugin_list);
+}
+
+
+/////////////////////////////////////////////////////////////////////////////
+// TossError public members
+
+/// Returns NULL if no error
+const char* TossError::GetErrorMsg()
+{
+	return m_priv->osync_error_print(&m_error);
+}
+
+bool TossError::IsSet()
+{
+	return m_priv->osync_error_is_set(&m_error);
+}
+
+void TossError::Clear()
+{
+	if( m_error ) {
+		m_priv->osync_error_unref(&m_error);
+		m_error = 0;
+	}
+}
+
 
 /////////////////////////////////////////////////////////////////////////////
 // osynctool source
