@@ -151,6 +151,14 @@ make install
 make distclean
 cd ..
 
+cd desktop
+export CXXFLAGS="-Wall -Werror -O0 -g"
+./configure --prefix="$BASEPATH/build/rootdir"
+make $MAKEOPTS
+make install
+make distclean
+cd ..
+
 
 
 #
@@ -162,12 +170,19 @@ echo "Single build test..."
 rm -rf "$BASEPATH/build/rootdir"
 
 export CXXFLAGS="-Wall -Werror -O0 -g"
-./configure --prefix="$BASEPATH/build/rootdir" --enable-boost \
-	--enable-gui --enable-opensync-plugin --enable-opensync-plugin-4x
+./configure --prefix="$BASEPATH/build/rootdir" \
+	--enable-boost \
+	--enable-gui \
+	--enable-opensync-plugin \
+	--enable-opensync-plugin-4x \
+	--enable-desktop
 make $MAKEOPTS install
 make distclean
 ./configure --prefix="$BASEPATH/build/rootdir" \
-	--enable-gui --enable-opensync-plugin --enable-opensync-plugin-4x
+	--enable-gui \
+	--enable-opensync-plugin \
+	--enable-opensync-plugin-4x \
+	--enable-desktop
 make $MAKEOPTS
 make distclean
 
@@ -191,7 +206,11 @@ echo "Testing 'make dist'..."
 rm -rf "$BASEPATH/build/rootdir"
 
 ./buildgen.sh
-./configure --enable-gui --enable-opensync-plugin --enable-opensync-plugin-4x
+./configure \
+	--enable-gui \
+	--enable-opensync-plugin \
+	--enable-opensync-plugin-4x \
+	--enable-desktop
 make dist
 make distcheck
 make distclean
