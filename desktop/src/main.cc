@@ -21,44 +21,36 @@
 
 #include <iostream>
 #include <stdexcept>
+#include <barry/barry.h>
 #include "os22.h"
 #include "os40.h"
 
 using namespace std;
 
-void Test22()
+void Test(OpenSyncAPI &os)
 {
-	OpenSync22 os22;
-	cout << os22.osync_get_version() << endl;
-}
+	cout << "=======================================================\n";
+	cout << " Begin test run\n";
+	cout << "=======================================================\n";
 
-void Test40()
-{
-	OpenSync40 os40;
-	cout << os40.GetVersion() << endl;
+	cout << os.GetVersion() << endl;
 
 	string_list_type plugins;
-	os40.GetPluginNames(plugins);
+	os.GetPluginNames(plugins);
 	cout << plugins << endl;
 }
 
 int main()
 {
+	Barry::Init(true);
+
 	try {
 
-		Test22();
-		Test40();
-
-		// test both at once
 		OpenSync22 os22;
-		cout << os22.osync_get_version() << endl;
+		Test(os22);
 
 		OpenSync40 os40;
-		cout << os40.GetVersion() << endl;
-
-		string_list_type plugins;
-		os40.GetPluginNames(plugins);
-		cout << plugins << endl;
+		Test(os40);
 
 	} catch(std::exception &e ) {
 		cout << e.what() << endl;

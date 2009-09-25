@@ -14,6 +14,7 @@ barrydesktop_SOURCES = \
 	dlopen.cc dlopen.h \
 	os22.cc os22.h \
 	os40.cc os40.h \
+	osbase.h \
 	main.cc
 # -rdynamic is recommended by the dlopen() manpage
 barrydesktop_LDFLAGS = -rdynamic

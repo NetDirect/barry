@@ -20,11 +20,20 @@
 */
 
 #include "os22.h"
+#include <barry/barry.h>
+#include <memory>
 
 //#include <../opensync-1.0/opensync/opensync.h>
 //#include <../opensync-1.0/osengine/engine.h>
 
 using namespace std;
+
+class OpenSync22Private
+{
+public:
+	// function pointers
+	const char*		(*osync_get_version)();
+};
 
 /////////////////////////////////////////////////////////////////////////////
 // OpenSync22 - public members
@@ -34,7 +43,31 @@ OpenSync22::OpenSync22()
 	if( !Open("libosengine.so.0") )
 		throw DlError("Can't dlopen libosengine.so.0");
 
-	// load all required symbols
-	LoadSym(osync_get_version, "osync_get_version");
+	// store locally in case of constructor exception in LoadSym
+	std::auto_ptr<OpenSync22Private> p(new OpenSync22Private);
+
+	// load all required symbols...
+	// we don't need to use try/catch here, since the base
+	// class destructor will clean up for us if LoadSym() throws
+	LoadSym(p->osync_get_version, "osync_get_version");
+
+	// this pointer is ours now
+	m_priv = p.release();
+}
+
+OpenSync22::~OpenSync22()
+{
+	delete m_priv;
+	m_priv = 0;
+}
+
+const char* OpenSync22::GetVersion() const
+{
+	return m_priv->osync_get_version();
+}
+
+void OpenSync22::GetPluginNames(string_list_type &plugins)
+{
+	barryverbose("FIXME: OpenSync22::GetPluginNames() not implemented");
 }
 

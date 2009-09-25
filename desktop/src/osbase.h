@@ -1,6 +1,7 @@
 ///
-/// \file	os22.h
-///		Wrapper class for opensync 0.22 syncing behaviour
+/// \file	osbase.h
+///		Base API class for OpenSync interaction.
+///		This API will operate both 0.22 and 0.4x
 ///
 
 /*
@@ -19,25 +20,30 @@
     root directory of this project for more details.
 */
 
-#ifndef __BARRYDESKTOP_OS22_H__
-#define __BARRYDESKTOP_OS22_H__
+#ifndef __BARRYDESKTOP_OSBASE_H__
+#define __BARRYDESKTOP_OSBASE_H__
 
-#include "dlopen.h"
-#include "osbase.h"
+#include <vector>
+#include <string>
+#include <iosfwd>
 
-class OpenSync22Private;
+typedef std::vector<std::string>		string_list_type;
 
-class OpenSync22 : public DlOpen, public OpenSyncAPI
+std::ostream& operator<< (std::ostream &os, const string_list_type &list);
+
+class OpenSyncAPI
 {
-	OpenSync22Private *m_priv;
-
 public:
-	OpenSync22();
-	~OpenSync22();
+	OpenSyncAPI()
+	{
+	}
 
-	// Virtual API overrides
-	const char* GetVersion() const;
-	void GetPluginNames(string_list_type &plugins);
+	virtual ~OpenSyncAPI()
+	{
+	}
+
+	virtual const char* GetVersion() const = 0;
+	virtual void GetPluginNames(string_list_type &plugins) = 0;
 };
 
 #endif

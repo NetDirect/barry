@@ -23,18 +23,12 @@
 #define __BARRYDESKTOP_OS40_H__
 
 #include "dlopen.h"
+#include "osbase.h"
 #include <memory>
-#include <vector>
-#include <string>
-#include <iosfwd>
 
 class OpenSync40Private;
 
-typedef std::vector<std::string>		string_list_type;
-
-std::ostream& operator<< (std::ostream &os, const string_list_type &list);
-
-class OpenSync40 : public DlOpen
+class OpenSync40 : public DlOpen, public OpenSyncAPI
 {
 public:
 
@@ -50,7 +44,7 @@ public:
 	~OpenSync40();
 
 	// general tool API (based on command line options from osynctool)
-	const char* GetVersion();
+	const char* GetVersion() const;
 	void GetPluginNames(string_list_type &plugins);
 };
 

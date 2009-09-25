@@ -178,7 +178,7 @@ void OpenSync40::SetupEnvironment(OpenSync40Private *p)
 		throw std::runtime_error(p->error.GetErrorMsg());
 }
 
-const char* OpenSync40::GetVersion()
+const char* OpenSync40::GetVersion() const
 {
 	return m_priv->osync_get_version();
 }
