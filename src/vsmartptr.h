@@ -46,34 +46,50 @@ public:
 	}
 	~vSmartPtr()
 	{
-		if( m_pt )
-			FreeFunc(m_pt);
+		reset();
 	}
 
 	vSmartPtr& operator=(T *pt)
 	{
-		Extract();
-		m_pt = pt;
+		reset(pt);
 		return *this;
 	}
 
 	vSmartPtr& operator=(const vSmartPtr &sp)
 	{
-		Extract();
-		m_pt = sp.Extract();
+		reset(sp.release());
 		return *this;
 	}
 
+	// Some non-standard APIs used by Barry
 	T* Extract()
+	{
+		return this->release();
+	}
+
+	T* Get()
+	{
+		return this->get();
+	}
+
+	// std::auto_ptr<> style API
+	T* get()
+	{
+		return m_pt;
+	}
+
+	T* release()
 	{
 		T *rp = m_pt;
 		m_pt = 0;
 		return rp;
 	}
 
-	T* Get()
+	void reset(T *new_obj = 0)
 	{
-		return m_pt;
+		if( m_pt )
+			FreeFunc(m_pt);
+		m_pt = new_obj;
 	}
 };
 
