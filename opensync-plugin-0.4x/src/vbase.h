@@ -65,9 +65,9 @@ public:
 };
 
 
-typedef vSmartPtr<b_VFormatAttribute, b_VFormatAttribute, &b_vformat_attribute_free> vAttrPtr;
-typedef vSmartPtr<b_VFormatParam, b_VFormatParam, &b_vformat_attribute_param_free> vParamPtr;
-typedef vSmartPtr<char, void, &g_free> gStringPtr;
+typedef Barry::vSmartPtr<b_VFormatAttribute, b_VFormatAttribute, &b_vformat_attribute_free> vAttrPtr;
+typedef Barry::vSmartPtr<b_VFormatParam, b_VFormatParam, &b_vformat_attribute_param_free> vParamPtr;
+typedef Barry::vSmartPtr<char, void, &g_free> gStringPtr;
 
 
 //

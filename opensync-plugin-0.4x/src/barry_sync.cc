@@ -42,7 +42,7 @@
 #include <string.h>
 #include <errno.h>
 
-typedef vSmartPtr<OSyncList, OSyncList, &osync_list_free> AutoOSyncList;
+typedef Barry::vSmartPtr<OSyncList, OSyncList, &osync_list_free> AutoOSyncList;
 
 // All functions that are callable from outside must look like C
 extern "C" {

@@ -93,6 +93,96 @@ public:
 	}
 };
 
+//
+// vLateSmartPtr
+//
+/// Variation of the above smart pointer that allows the user to
+/// assign a free function after construction, in the case of
+/// dlopen()'d frees.
+///
+template <class T, class FreeFuncPtrT>
+class vLateSmartPtr
+{
+	mutable T *m_pt;
+	FreeFuncPtrT m_FreeFuncPtr;
+
+public:
+	explicit vLateSmartPtr(FreeFuncPtrT freefunc = 0)
+		: m_pt(0)
+		, m_FreeFuncPtr(freefunc)
+	{
+	}
+
+	vLateSmartPtr(T *pt, FreeFuncPtrT freefunc = 0)
+		: m_pt(pt)
+		, m_FreeFuncPtr(freefunc)
+	{
+	}
+
+	vLateSmartPtr(const vLateSmartPtr &sp)
+		: m_pt(sp.m_pt)
+		, m_FreeFuncPtr(sp.m_FreeFuncPtr)
+	{
+		sp.m_pt = 0;
+	}
+
+	~vLateSmartPtr()
+	{
+		reset();
+	}
+
+	void SetFreeFunc(FreeFuncPtrT freefunc)
+	{
+		m_FreeFuncPtr = freefunc;
+	}
+
+	vLateSmartPtr& operator=(T *pt)
+	{
+		reset(pt);
+		return *this;
+	}
+
+	vLateSmartPtr& operator=(const vLateSmartPtr &sp)
+	{
+		reset(sp.release());
+		m_FreeFuncPtr = sp.m_FreeFuncPtr;
+		return *this;
+	}
+
+	// Some non-standard APIs used by Barry
+	T* Extract()
+	{
+		return this->release();
+	}
+
+	T* Get()
+	{
+		return this->get();
+	}
+
+	// std::auto_ptr<> style API
+	T* get()
+	{
+		return m_pt;
+	}
+
+	T* release()
+	{
+		T *rp = m_pt;
+		m_pt = 0;
+		return rp;
+	}
+
+	void reset(T *new_obj = 0)
+	{
+		// don't check for null m_FreeFuncPtr, since
+		// that should be an obvious crash and requires fixing
+		if( m_pt )
+			(*m_FreeFuncPtr)(m_pt);
+		m_pt = new_obj;
+	}
+};
+
 /*
 
 Example usage:
