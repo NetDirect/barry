@@ -32,7 +32,7 @@
 bool DlOpen::Open(const char *libname)
 {
 	Shutdown();
-	m_handle = dlopen(libname, RTLD_LAZY | RTLD_GLOBAL);
+	m_handle = dlopen(libname, RTLD_NOW | RTLD_LOCAL);
 	return m_handle != NULL;
 }
 
