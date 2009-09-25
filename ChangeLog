@@ -1,5 +1,10 @@
 Release: version 0.16 - 2009/09/??
 ------------------------------------------------------------------------------
+2009/09/24
+	- updated various URLs to point to netdirect.ca
+	- lib: moved vSmartPtr<> from opensync plugin code to main library
+	- lib: fixed memory leaks in vSmartPtr (doh!)
+	- lib: added vLateSmartPtr<> for setting of FreeFunc after construction
 2009/09/18
 	- updated opensync 0.4x plugin to compile against latest SVN
 		- removed unneeded osync_error_unref() from get_sync_info()
