@@ -50,11 +50,11 @@ int main()
 
 	try {
 
-		OpenSync22 os22;
-		Test(os22);
-
 		OpenSync40 os40;
 		Test(os40);
+
+		OpenSync22 os22;
+		Test(os22);
 
 	} catch(std::exception &e ) {
 		cout << e.what() << endl;
