@@ -29,6 +29,8 @@ class OpenSync22Private;
 
 class OpenSync22 : public DlOpen, public OpenSyncAPI
 {
+	static bool symbols_loaded;
+
 	OpenSync22Private *m_priv;
 
 protected:
@@ -37,6 +39,8 @@ protected:
 public:
 	OpenSync22();
 	~OpenSync22();
+
+	static bool SymbolsLoaded() { return symbols_loaded; }
 
 	// Virtual API overrides
 	const char* GetVersion() const;

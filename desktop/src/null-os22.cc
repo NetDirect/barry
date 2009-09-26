@@ -24,6 +24,8 @@
 /////////////////////////////////////////////////////////////////////////////
 // OpenSync22 - public members
 
+bool OpenSync22::symbols_loaded = false;
+
 OpenSync22::OpenSync22()
 {
 	throw std::runtime_error("OpenSync 0.22 support was not compiled in.");

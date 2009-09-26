@@ -25,6 +25,7 @@
 */
 
 #include "os40.h"
+#include "os22.h"
 #include <barry/vsmartptr.h>
 #include <iostream>
 
@@ -117,6 +118,15 @@ public:
 
 OpenSync40::OpenSync40()
 {
+	// due to bugs in the way opensync 0.22 loads its modules,
+	// (i.e. it doesn't load the plugins using RTLD_LOCAL, and
+	// so libopensync.so.0 is loaded and pollutes the symbol table,
+	// causing symbol clashes) we need to make sure that
+	// OpenSync40 is only loaded first... if OpenSync22 was
+	// loaded first, we will fail, so error out
+	if( OpenSync22::SymbolsLoaded() )
+		throw std::logic_error("Always load OpenSync40 before OpenSync22, to avoid symbol table conflicts.");
+
 	if( !Open("libopensync.so.1") )
 		throw DlError("Can't dlopen libopensync.so.1");
 

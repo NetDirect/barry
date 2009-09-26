@@ -65,10 +65,15 @@ public:
 /////////////////////////////////////////////////////////////////////////////
 // OpenSync22 - public members
 
+bool OpenSync22::symbols_loaded = false;
+
 OpenSync22::OpenSync22()
 {
 	if( !Open("libosengine.so.0") )
 		throw DlError("Can't dlopen libosengine.so.0");
+
+	// the symbol table is now thoroughly polluted...
+	symbols_loaded = true;
 
 	// store locally in case of constructor exception in LoadSym
 	std::auto_ptr<OpenSync22Private> p(new OpenSync22Private);
