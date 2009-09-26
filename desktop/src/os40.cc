@@ -91,6 +91,12 @@ public:
 	osync_bool		(*osync_group_env_load_groups)(
 					OSyncGroupEnv *env, const char *path,
 					OSyncError **error);
+	osync_bool		(*osync_format_env_load_plugins)(
+					OSyncFormatEnv *env, const char *path,
+					OSyncError **error);
+	OSyncList*		(*osync_group_env_get_groups)(
+					OSyncGroupEnv *env);
+	const char*		(*osync_group_get_name)(OSyncGroup *group);
 
 	// data pointers
 	vLateSmartPtr<OSyncGroupEnv, void(*)(OSyncGroupEnv*)> group_env;
@@ -135,6 +141,9 @@ OpenSync40::OpenSync40()
 	LoadSym(p->osync_plugin_get_name, "osync_plugin_get_name");
 	LoadSym(p->osync_list_free, "osync_list_free");
 	LoadSym(p->osync_group_env_load_groups, "osync_group_env_load_groups");
+	LoadSym(p->osync_format_env_load_plugins, "osync_format_env_load_plugins");
+	LoadSym(p->osync_group_env_get_groups, "osync_group_env_get_groups");
+	LoadSym(p->osync_group_get_name, "osync_group_get_name");
 
 	// fixup free pointers
 	p->group_env.SetFreeFunc(p->osync_group_env_unref);
@@ -156,6 +165,7 @@ OpenSync40::~OpenSync40()
 
 void OpenSync40::SetupEnvironment(OpenSync40Private *p)
 {
+	// allocate group, format, and env
 	p->group_env = p->osync_group_env_new(p->error);
 	if( !p->group_env.get() )
 		throw std::runtime_error(p->error.GetErrorMsg());
@@ -167,6 +177,12 @@ void OpenSync40::SetupEnvironment(OpenSync40Private *p)
 	p->plugin_env = p->osync_plugin_env_new(p->error);
 	if( !p->plugin_env.get() )
 		throw std::runtime_error(p->error.GetErrorMsg());
+
+	// load group, format, and env
+	if( !p->osync_group_env_load_groups(p->group_env.get(), NULL, p->error) ||
+	    !p->osync_format_env_load_plugins(p->format_env.get(), NULL, p->error) ||
+	    !p->osync_plugin_env_load(p->plugin_env.get(), NULL, p->error) )
+		throw std::runtime_error(p->error.GetErrorMsg());
 }
 
 const char* OpenSync40::GetVersion() const
@@ -176,8 +192,8 @@ const char* OpenSync40::GetVersion() const
 
 void OpenSync40::GetPluginNames(string_list_type &plugins)
 {
-	if( !m_priv->osync_plugin_env_load(m_priv->plugin_env.get(), NULL, m_priv->error) )
-		throw std::runtime_error(m_priv->error.GetErrorMsg());
+	// start fresh
+	plugins.clear();
 
 	OSyncPlugin *plugin;
 	OSyncList *plugin_list, *p;
@@ -189,6 +205,22 @@ void OpenSync40::GetPluginNames(string_list_type &plugins)
 	}
 
 	m_priv->osync_list_free(plugin_list);
+}
+
+void OpenSync40::GetGroupNames(string_list_type &groups)
+{
+	// start fresh
+	groups.clear();
+
+	OSyncGroup *group;
+	OSyncList *g, *group_list = m_priv->osync_group_env_get_groups(m_priv->group_env.get());
+
+	for( g = group_list; g; g = g->next ) {
+		group = (OSyncGroup *) g->data;
+		groups.push_back(m_priv->osync_group_get_name(group));
+	}
+
+	m_priv->osync_list_free(group_list);
 }
 
 

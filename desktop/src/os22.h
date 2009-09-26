@@ -41,6 +41,7 @@ public:
 	// Virtual API overrides
 	const char* GetVersion() const;
 	void GetPluginNames(string_list_type &plugins);
+	void GetGroupNames(string_list_type &groups);
 };
 
 #endif

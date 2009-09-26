@@ -29,15 +29,19 @@ using namespace std;
 
 void Test(OpenSyncAPI &os)
 {
+	string_list_type list;
+
 	cout << "=======================================================\n";
 	cout << " Begin test run\n";
 	cout << "=======================================================\n";
 
 	cout << os.GetVersion() << endl;
 
-	string_list_type plugins;
-	os.GetPluginNames(plugins);
-	cout << plugins << endl;
+	os.GetPluginNames(list);
+	cout << "Plugins:\n" << list << endl;
+
+	os.GetGroupNames(list);
+	cout << "Groups:\n" << list << endl;
 }
 
 int main()

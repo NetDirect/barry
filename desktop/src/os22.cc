@@ -49,6 +49,9 @@ public:
 	const char*		(*osync_error_print)(OSyncError **error);
 	osync_bool		(*osync_env_initialize)(OSyncEnv *env,
 					OSyncError **error);
+	int			(*osync_env_num_groups)(OSyncEnv *env);
+	OSyncGroup*		(*osync_env_nth_group)(OSyncEnv *env, int nth);
+	const char*		(*osync_group_get_name)(OSyncGroup *group);
 
 	// data pointers
 	OSyncEnv *env;
@@ -84,6 +87,9 @@ OpenSync22::OpenSync22()
 	LoadSym(p->osync_error_free, "osync_error_free");
 	LoadSym(p->osync_error_print, "osync_error_print");
 	LoadSym(p->osync_env_initialize, "osync_env_initialize");
+	LoadSym(p->osync_env_num_groups, "osync_env_num_groups");
+	LoadSym(p->osync_env_nth_group, "osync_env_nth_group");
+	LoadSym(p->osync_group_get_name, "osync_group_get_name");
 
 	// do common initialization of opensync environment
 	SetupEnvironment(p.get());
@@ -140,11 +146,25 @@ const char* OpenSync22::GetVersion() const
 
 void OpenSync22::GetPluginNames(string_list_type &plugins)
 {
-	OSyncPlugin *p;
+	// start fresh
+	plugins.clear();
 
+	OSyncPlugin *p;
 	for( int i = 0; i < m_priv->osync_env_num_plugins(m_priv->env); i++) {
 		p = m_priv->osync_env_nth_plugin(m_priv->env, i);
 		plugins.push_back(m_priv->osync_plugin_get_name(p));
+	}
+}
+
+void OpenSync22::GetGroupNames(string_list_type &groups)
+{
+	// start fresh
+	groups.clear();
+
+	OSyncGroup *g;
+	for( int i = 0; i < m_priv->osync_env_num_groups(m_priv->env); i++ ) {
+		g = m_priv->osync_env_nth_group(m_priv->env, i);
+		groups.push_back(m_priv->osync_group_get_name(g));
 	}
 }
 

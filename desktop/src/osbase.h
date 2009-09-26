@@ -44,6 +44,7 @@ public:
 
 	virtual const char* GetVersion() const = 0;
 	virtual void GetPluginNames(string_list_type &plugins) = 0;
+	virtual void GetGroupNames(string_list_type &groups) = 0;
 };
 
 #endif

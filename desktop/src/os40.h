@@ -46,6 +46,7 @@ public:
 	// general tool API (based on command line options from osynctool)
 	const char* GetVersion() const;
 	void GetPluginNames(string_list_type &plugins);
+	void GetGroupNames(string_list_type &groups);
 };
 
 #endif
