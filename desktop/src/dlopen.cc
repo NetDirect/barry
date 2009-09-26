@@ -26,6 +26,8 @@
 #include <dlfcn.h>
 #include <string.h>
 
+using namespace std;
+
 /////////////////////////////////////////////////////////////////////////////
 // DlOpen class -- protected members
 
@@ -39,7 +41,10 @@ bool DlOpen::Open(const char *libname)
 void DlOpen::Shutdown()
 {
 	if( m_handle ) {
-		dlclose(m_handle);
+		if( dlclose(m_handle) != 0 ) {
+			cout << "ERROR: dlclose() return non-zero" << endl;
+			cout << dlerror() << endl;
+		}
 		m_handle = 0;
 	}
 }
