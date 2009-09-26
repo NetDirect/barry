@@ -34,6 +34,22 @@ if [ "$1" = "-h" ] ; then
 fi
 
 #
+# Check whether the desktop 0.22/0.4x optional build tests can be done
+#
+DESKTOP_OPTIONAL_BUILD_TEST=1
+if pkg-config --list-all |grep opensync ; then
+	DESKTOP_OPTIONAL_BUILD_TEST=0
+	echo
+	echo "A version of opensync is already installed on your"
+	echo "system in default directories.  Therefore the"
+	echo "tests of the optional desktop builds cannot be done,"
+	echo "and will therefore be skipped."
+	echo
+	echo "Press enter to continue..."
+	read
+fi
+
+#
 # Jump to directory that script is located, if necessary
 #
 
@@ -159,6 +175,35 @@ make install
 make distclean
 cd ..
 
+if [ "$DESKTOP_OPTIONAL_BUILD_TEST" = "1" ] ; then
+	BACKUP_PKG_CONFIG_PATH="$PKG_CONFIG_PATH"
+
+	echo "Testing optional desktop builds in 10 seconds..."
+	sleep 10s
+
+	cd desktop
+
+	# Test only 0.22
+	export PKG_CONFIG_PATH="$BASEPATH/build/rootdir/lib/pkgconfig:$OSYNCROOTDIR/lib/pkgconfig"
+
+	export CXXFLAGS="-Wall -Werror -O0 -g"
+	./configure --prefix="$BASEPATH/build/rootdir"
+	make $MAKEOPTS
+	make install
+	make distclean
+
+	# Test only 0.4x
+	export PKG_CONFIG_PATH="$BASEPATH/build/rootdir/lib/pkgconfig:$OSYNCROOTDIR_0_40/lib/pkgconfig"
+
+	export CXXFLAGS="-Wall -Werror -O0 -g"
+	./configure --prefix="$BASEPATH/build/rootdir"
+	make $MAKEOPTS
+	make install
+	make distclean
+
+	cd ..
+	export PKG_CONFIG_PATH="$BACKUP_PKG_CONFIG_PATH"
+fi
 
 
 #
