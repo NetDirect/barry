@@ -31,6 +31,9 @@ class OpenSync22 : public DlOpen, public OpenSyncAPI
 {
 	OpenSync22Private *m_priv;
 
+protected:
+	void SetupEnvironment(OpenSync22Private *p);
+
 public:
 	OpenSync22();
 	~OpenSync22();

@@ -26,8 +26,8 @@
 #include <barry/barry.h>
 #include <memory>
 
-//#include <../opensync-1.0/opensync/opensync.h>
-//#include <../opensync-1.0/osengine/engine.h>
+#include <../opensync-1.0/opensync/opensync.h>
+#include <../opensync-1.0/osengine/engine.h>
 
 using namespace std;
 
@@ -36,6 +36,27 @@ class OpenSync22Private
 public:
 	// function pointers
 	const char*		(*osync_get_version)();
+	OSyncEnv*		(*osync_env_new)();
+	void			(*osync_env_free)(OSyncEnv *env);
+	void			(*osync_env_set_option)(OSyncEnv *env,
+					const char *name, const char *value);
+	osync_bool		(*osync_env_finalize)(OSyncEnv *env,
+					OSyncError **error);
+	int			(*osync_env_num_plugins)(OSyncEnv *env);
+	OSyncPlugin*		(*osync_env_nth_plugin)(OSyncEnv *env, int nth);
+	const char*		(*osync_plugin_get_name)(OSyncPlugin *plugin);
+	void			(*osync_error_free)(OSyncError **error);
+	const char*		(*osync_error_print)(OSyncError **error);
+	osync_bool		(*osync_env_initialize)(OSyncEnv *env,
+					OSyncError **error);
+
+	// data pointers
+	OSyncEnv *env;
+
+	OpenSync22Private()
+		: env(0)
+	{
+	}
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -53,6 +74,19 @@ OpenSync22::OpenSync22()
 	// we don't need to use try/catch here, since the base
 	// class destructor will clean up for us if LoadSym() throws
 	LoadSym(p->osync_get_version, "osync_get_version");
+	LoadSym(p->osync_env_new, "osync_env_new");
+	LoadSym(p->osync_env_free, "osync_env_free");
+	LoadSym(p->osync_env_set_option, "osync_env_set_option");
+	LoadSym(p->osync_env_finalize, "osync_env_finalize");
+	LoadSym(p->osync_env_num_plugins, "osync_env_num_plugins");
+	LoadSym(p->osync_env_nth_plugin, "osync_env_nth_plugin");
+	LoadSym(p->osync_plugin_get_name, "osync_plugin_get_name");
+	LoadSym(p->osync_error_free, "osync_error_free");
+	LoadSym(p->osync_error_print, "osync_error_print");
+	LoadSym(p->osync_env_initialize, "osync_env_initialize");
+
+	// do common initialization of opensync environment
+	SetupEnvironment(p.get());
 
 	// this pointer is ours now
 	m_priv = p.release();
@@ -60,8 +94,43 @@ OpenSync22::OpenSync22()
 
 OpenSync22::~OpenSync22()
 {
+	// clean up opensync environment, closing plugins, etc.
+	if( m_priv->env ) {
+		m_priv->osync_env_finalize(m_priv->env, NULL);
+		m_priv->osync_env_free(m_priv->env);
+	}
+
+	// free private class data
 	delete m_priv;
 	m_priv = 0;
+}
+
+void OpenSync22::SetupEnvironment(OpenSync22Private *p)
+{
+	// we are fully responsible for this pointer, since
+	// we run inside the constructor... only on success
+	// will responsibility be transferred to the destructor
+	p->env = p->osync_env_new();
+	if( !p->env )
+		throw std::runtime_error("Error allocating opensync 0.22 environment");
+
+	p->osync_env_set_option(p->env, "GROUPS_DIRECTORY", NULL);
+	p->osync_env_set_option(p->env, "LOAD_GROUPS", "TRUE");
+	p->osync_env_set_option(p->env, "LOAD_PLUGINS", "TRUE");
+	p->osync_env_set_option(p->env, "LOAD_FORMATS", "TRUE");
+
+	OSyncError *error = NULL;
+	if( !p->osync_env_initialize(p->env, &error) ) {
+		// grab error message
+		std::runtime_error err(m_priv->osync_error_print(&error));
+
+		// cleanup
+		p->osync_error_free(&error);
+		p->osync_env_free(m_priv->env);
+
+		// throw
+		throw err;
+	}
 }
 
 const char* OpenSync22::GetVersion() const
@@ -71,7 +140,12 @@ const char* OpenSync22::GetVersion() const
 
 void OpenSync22::GetPluginNames(string_list_type &plugins)
 {
-	barryverbose("FIXME: OpenSync22::GetPluginNames() not implemented");
+	OSyncPlugin *p;
+
+	for( int i = 0; i < m_priv->osync_env_num_plugins(m_priv->env); i++) {
+		p = m_priv->osync_env_nth_plugin(m_priv->env, i);
+		plugins.push_back(m_priv->osync_plugin_get_name(p));
+	}
 }
 
 
