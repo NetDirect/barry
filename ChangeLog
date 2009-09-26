@@ -1,5 +1,8 @@
 Release: version 0.16 - 2009/09/??
 ------------------------------------------------------------------------------
+2009/09/26
+	- gui: fixed status text during restore (said "Backup" instead
+		of "Restore")
 2009/09/24
 	- updated various URLs to point to netdirect.ca
 	- lib: moved vSmartPtr<> from opensync plugin code to main library

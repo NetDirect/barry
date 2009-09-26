@@ -468,7 +468,7 @@ void BackupWindow::on_restore()
 		msg.run();
 	}
 	else {
-		StatusbarSet("Backup of " + thread->GetFullname() + " in progress...");
+		StatusbarSet("Restore of " + thread->GetFullname() + " in progress...");
 	}
 }
 
