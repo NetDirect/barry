@@ -26,8 +26,6 @@ barrydesktop_SOURCES += os40.cc
 else
 barrydesktop_SOURCES += null-os40.cc
 endif
-# -rdynamic is recommended by the dlopen() manpage
-barrydesktop_LDFLAGS = -rdynamic
 #barrydesktop_LDFLAGS = -avoid-version
 barrydesktop_LDADD = -ldl
 
