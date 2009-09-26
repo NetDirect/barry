@@ -12,6 +12,7 @@ bin_PROGRAMS = barrydesktop
 barrydesktop_SOURCES = \
 	error.cc error.h \
 	dlopen.cc dlopen.h \
+	util.cc util.h \
 	osbase.cc osbase.h \
 	os22.h \
 	os40.h \

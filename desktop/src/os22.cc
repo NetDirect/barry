@@ -23,8 +23,11 @@
 */
 
 #include "os22.h"
+#include "util.h"
 #include <barry/barry.h>
 #include <memory>
+#include <sys/stat.h>
+#include <sys/types.h>
 
 #include <../opensync-1.0/opensync/opensync.h>
 #include <../opensync-1.0/osengine/engine.h>
@@ -125,7 +128,11 @@ void OpenSync22::SetupEnvironment(OpenSync22Private *p)
 	if( !p->env )
 		throw std::runtime_error("Error allocating opensync 0.22 environment");
 
-	p->osync_env_set_option(p->env, "GROUPS_DIRECTORY", NULL);
+	string config_dir = GetHomeDir();
+	config_dir += "/.opensync-0.22-barrydesktop";
+	mkdir(config_dir.c_str(), 0755);
+
+	p->osync_env_set_option(p->env, "GROUPS_DIRECTORY", config_dir.c_str());
 	p->osync_env_set_option(p->env, "LOAD_GROUPS", "TRUE");
 	p->osync_env_set_option(p->env, "LOAD_PLUGINS", "TRUE");
 	p->osync_env_set_option(p->env, "LOAD_FORMATS", "TRUE");
