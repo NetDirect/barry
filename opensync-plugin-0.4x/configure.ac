@@ -8,7 +8,7 @@ AC_CONFIG_AUX_DIR([..])
 AC_CONFIG_MACRO_DIR([../m4])
 AM_INIT_AUTOMAKE(foreign)
 
-pkg_modules="libopensync glib-2.0"
+pkg_modules="libopensync1 glib-2.0"
 PKG_CHECK_MODULES(PACKAGE, [$pkg_modules])
 AC_SUBST(PACKAGE_CFLAGS)
 AC_SUBST(PACKAGE_LIBS)
@@ -38,10 +38,10 @@ PKG_CHECK_MODULES([BARRY], [libbarry-0 libusb])
 AC_SUBST(TREE_BUILD_CXXFLAGS)
 AC_SUBST(TREE_BUILD_LDFLAGS)
 
-OPENSYNC_CONFIGDIR=$(pkg-config --variable=configdir libopensync)
-OPENSYNC_PLUGINDIR=$(pkg-config --variable=plugindir libopensync)
-OPENSYNC_FORMATSDIR=$(pkg-config --variable=formatsdir libopensync)
-OPENSYNC_HEADERDIR=$(pkg-config --variable=headerdir libopensync)
+OPENSYNC_CONFIGDIR=$(pkg-config --variable=configdir libopensync1)
+OPENSYNC_PLUGINDIR=$(pkg-config --variable=plugindir libopensync1)
+OPENSYNC_FORMATSDIR=$(pkg-config --variable=formatsdir libopensync1)
+OPENSYNC_HEADERDIR=$(pkg-config --variable=headerdir libopensync1)
 
 AC_SUBST(OPENSYNC_CONFIGDIR) ## This is the place where you can install the default configuration files of your plugin
 AC_SUBST(OPENSYNC_PLUGINDIR) ## This is the dir where you plugin will be installed
