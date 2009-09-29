@@ -26,11 +26,8 @@
 
 #include "os40.h"
 #include "os22.h"
-#include "util.h"
 #include <barry/vsmartptr.h>
 #include <iostream>
-#include <sys/stat.h>
-#include <sys/types.h>
 
 #include <../libopensync1/opensync/opensync.h>
 #include <../libopensync1/opensync/opensync-group.h>
@@ -191,13 +188,8 @@ void OpenSync40::SetupEnvironment(OpenSync40Private *p)
 	if( !p->plugin_env.get() )
 		throw std::runtime_error(p->error.GetErrorMsg());
 
-	// create opensync configdir
-	string config_dir = GetHomeDir();
-	config_dir += "/.opensync-0.40-barrydesktop";
-	mkdir(config_dir.c_str(), 0755);
-
 	// load group, format, and env
-	if( !p->osync_group_env_load_groups(p->group_env.get(), config_dir.c_str(), p->error) ||
+	if( !p->osync_group_env_load_groups(p->group_env.get(), NULL, p->error) ||
 	    !p->osync_format_env_load_plugins(p->format_env.get(), NULL, p->error) ||
 	    !p->osync_plugin_env_load(p->plugin_env.get(), NULL, p->error) )
 		throw std::runtime_error(p->error.GetErrorMsg());
