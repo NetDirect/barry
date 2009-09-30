@@ -20,7 +20,10 @@
 */
 
 #include "osbase.h"
+#include "os22.h"
+#include "os40.h"
 #include <iostream>
+#include <barry/barry.h>
 
 using namespace std;
 
@@ -31,5 +34,68 @@ std::ostream& operator<< (std::ostream &os, const string_list_type &list)
 		os << *b << endl;
 	}
 	return os;
+}
+
+
+/////////////////////////////////////////////////////////////////////////////
+// OpenSyncAPISet public members
+
+OpenSyncAPISet::OpenSyncAPISet()
+{
+}
+
+OpenSyncAPISet::~OpenSyncAPISet()
+{
+	iterator b = begin(), e = end();
+	for( ; b != e; ++b ) {
+		delete *b;
+	}
+
+	base_type::clear();
+}
+
+// throws if not all can be opened
+void OpenSyncAPISet::OpenAll()
+{
+	push_back( new OpenSync40 );
+	push_back( new OpenSync22 );
+}
+
+// does not throw
+int OpenSyncAPISet::OpenAvailable()
+{
+	int loaded = 0;
+
+	try {
+		OpenSyncAPI *p = new OpenSync40;
+		push_back(p);
+		loaded++;
+	}
+	catch( std::exception &e ) {
+		barryverbose("Unable to load opensync 0.40: " << e.what());
+		push_back(0);
+	}
+
+	try {
+		OpenSyncAPI *p = new OpenSync22;
+		push_back(p);
+		loaded++;
+	}
+	catch( std::exception &e ) {
+		barryverbose("Unable to load opensync 0.22: " << e.what());
+		push_back(0);
+	}
+
+	return loaded;
+}
+
+OpenSyncAPI* OpenSyncAPISet::os40()
+{
+	return (*this)[0];
+}
+
+OpenSyncAPI* OpenSyncAPISet::os22()
+{
+	return (*this)[1];
 }
 

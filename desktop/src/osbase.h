@@ -47,5 +47,22 @@ public:
 	virtual void GetGroupNames(string_list_type &groups) = 0;
 };
 
+class OpenSyncAPISet : private std::vector<OpenSyncAPI*>
+{
+	typedef std::vector<OpenSyncAPI*>	base_type;
+
+public:
+	OpenSyncAPISet();
+	~OpenSyncAPISet();
+
+	void OpenAll();		// throws if not all can be opened
+	int OpenAvailable();	// opens only what is available and
+				// returns # of APIs successfully loaded.
+				// throws if some already loaded
+
+	OpenSyncAPI* os40();
+	OpenSyncAPI* os22();
+};
+
 #endif
 

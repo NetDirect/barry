@@ -21,6 +21,7 @@
 
 #include <iostream>
 #include <stdexcept>
+#include <memory>
 #include <barry/barry.h>
 #include "os22.h"
 #include "os40.h"
@@ -49,16 +50,19 @@ int main()
 	Barry::Init(true);
 
 	try {
+		OpenSyncAPISet set;
+		set.OpenAvailable();
 
-		OpenSync40 os40;
-		Test(os40);
+		if( set.os40() ) {
+			Test(*set.os40());
+		}
 
-		OpenSync22 os22;
-		Test(os22);
-
-	} catch(std::exception &e ) {
+		if( set.os22() ) {
+			Test(*set.os22());
+		}
+	}
+	catch( std::exception &e ) {
 		cout << e.what() << endl;
-		return 1;
 	}
 
 	return 0;
