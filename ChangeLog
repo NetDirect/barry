@@ -5,6 +5,7 @@ Release: version 0.16 - 2009/09/??
 		rename
 	- added bjdwp.1 manpage
 	- added bjdwp and manpage to rpm and debian packages
+	- added bash and zsh completion scripts to debian package
 2009/09/26
 	- gui: fixed status text during restore (said "Backup" instead
 		of "Restore")

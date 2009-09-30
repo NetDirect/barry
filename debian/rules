@@ -64,6 +64,12 @@ install/barry-util::
 	# Install hal support script
 	install -d $(CURDIR)/debian/barry-util/usr/bin
 	install -m 0755 $(CURDIR)/hal/hal-blackberry $(CURDIR)/debian/barry-util/usr/bin
+	# Install bash and zsh completion scripts
+	install -d $(CURDIR)/debian/barry-util/etc/bash_completion.d
+	install -m 0644 \
+		$(CURDIR)/bash/bjavaloader \
+		$(CURDIR)/bash/btool \
+		$(CURDIR)/debian/barry-util/etc/bash_completion.d
 
 post-patches::
 	@test -x $(DEB_SRCDIR)/configure && echo "allready autoreconf" || (cd $(DEB_SRCDIR) && autoreconf -i)
