@@ -142,6 +142,10 @@ cd ../
 %install
 # main tree
 %{__make} DESTDIR=%{buildroot} install
+# delete some test-only programs
+%{__rm} -f %{buildroot}%{_bindir}/bdptest
+%{__rm} -f %{buildroot}%{_bindir}/bjvmdebug
+# proceed as usual...
 %{__mkdir_p} %{buildroot}%{_sysconfdir}/udev/rules.d
 %if 0%{?suse_version} == 1110
 %{__mkdir_p} %{buildroot}%{_sysconfdir}/security/console.perms.d
@@ -216,6 +220,7 @@ cd ../
 %attr(0755,root,root) %{_bindir}/btool
 %attr(0755,root,root) %{_bindir}/bfuse
 %attr(0755,root,root) %{_bindir}/bjavaloader
+%attr(0755,root,root) %{_bindir}/bjdwp
 %attr(0755,root,root) %{_bindir}/bs11nread
 %attr(0755,root,root) %{_bindir}/bidentify
 %attr(0755,root,root) %{_bindir}/brecsum
@@ -227,6 +232,7 @@ cd ../
 %attr(0644,root,root) %{_mandir}/man1/btool*
 %attr(0644,root,root) %{_mandir}/man1/bfuse*
 %attr(0644,root,root) %{_mandir}/man1/bjavaloader*
+%attr(0644,root,root) %{_mandir}/man1/bjdwp*
 %attr(0644,root,root) %{_mandir}/man1/bs11nread*
 %attr(0644,root,root) %{_mandir}/man1/bidentify*
 %attr(0644,root,root) %{_mandir}/man1/bcharge*
@@ -284,10 +290,11 @@ cd ../
 /sbin/ldconfig
 
 %changelog
-* Sat Aug 29 2009 Chris Frey <cdfrey@foursquare.net> 0.16-0
+* Sat Sep 29 2009 Chris Frey <cdfrey@foursquare.net> 0.16-0
 - version bump
 - added new ppp chat script for KPN Nederland
 - using new udev rules set
+- added bjdwp and manpage, and removed some test-only programs
 
 * Fri Apr 10 2009 Chris Frey <cdfrey@foursquare.net> 0.15-0
 - version bump
