@@ -8,9 +8,9 @@
 
 Introduction:
 -------------
-Barry is a GPL C++ library to interface with USB BlackBerry handheld devices
-on Linux.  This is one of Net Direct Inc.'s (http://www.netdirect.ca/)
-open source projects.
+Barry is a GPL C++ library and application set to interface with
+USB BlackBerry handheld devices on Linux.  This is one of
+Net Direct Inc.'s (http://www.netdirect.ca/) open source projects.
 
 The SourceForge project page can be found at:
 	http://sourceforge.net/projects/barry/
@@ -19,11 +19,14 @@ The documentation page can be found at:
 	http://www.netdirect.ca/software/packages/barry
 	or
 	http://barry.sourceforge.net/  (redirect)
+	or
+	http://netdirect.ca/barry (redirect)
 
 The same documentation (and perhaps more up to date) can be found in the
-doc/www/ directory, starting with the file index.html.
+doc/www/ directory.  If you have php CLI installed, run the static.sh
+script to generate the HTML, then start reading at index.html.
 
 Enjoy!
 
-September 2007
+September 2009
 
