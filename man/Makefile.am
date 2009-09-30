@@ -3,6 +3,7 @@ dist_man_MANS = \
 	btool.1 \
 	bfuse.1 \
 	bjavaloader.1 \
+	bjdwp.1 \
 	bs11nread.1 \
 	bidentify.1 \
 	breset.1 \

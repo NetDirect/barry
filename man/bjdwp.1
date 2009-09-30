@@ -1,0 +1,79 @@
+.\"                                      Hey, EMACS: -*- nroff -*-
+.\" First parameter, NAME, should be all caps
+.\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
+.\" other parameters are allowed: see man(7), man(1)
+.TH BJDWP 1 "September 29, 2009"
+.\" Please adjust this date whenever revising the manpage.
+.\"
+.\" Some roff macros, for reference:
+.\" .nh        disable hyphenation
+.\" .hy        enable hyphenation
+.\" .ad l      left justify
+.\" .ad b      justify to both left and right margins
+.\" .nf        disable filling
+.\" .fi        enable filling
+.\" .br        insert line break
+.\" .sp <n>    insert n+1 empty lines
+.\" for manpage-specific macros, see man(7)
+.SH NAME
+.B bjdwp
+\- Command line USB Blackberry Java Debug Wire Protocol
+.SH SYNOPSIS
+.B bjdwp
+[-h][-p pin][-P password][-v] address port
+
+.SH DESCRIPTION
+.PP
+.B bjdwp
+is a program that supports the Java Debug Wire Protocol over USB,
+which enables debugging of Java programs directly on your Blackberry.
+
+Support is experimental, and development is focused primarily on the
+BlackBerry Storm.
+
+.SH OPTIONS
+.TP
+.B \-p pin
+PIN of device to talk with.  Only needed if you have more than one Blackberry
+connected at once.
+.TP
+.B \-P password
+Simplistic method to specify device password.  In a real application, this
+would be done using a more secure prompt.
+.TP
+.B \-v
+Dump verbose protocol data during operation.
+.TP
+.B \-h, \-\-help
+Show summary of options.
+
+.SH ARGUMENTS
+The following arguments are required, in order to provide a socket where
+the JDWP server will listen for connections from the debugger.
+.TP
+.B address
+Most often 'localhost' but can be any IP or hostname on the machine
+running bjdwp.
+.TP
+.B port
+Port to listen on.
+
+.SH EXAMPLES
+Start the server and the USB connection to the device:
+
+	bjdwp localhost 8000
+
+Then start your java debugger:
+
+	jdb -connect com.sun.jdi.SocketAttach:hostname=localhost,port=8000
+
+
+.SH AUTHOR
+.nh
+.B bjdwp
+was initially written for the Barry project by Nicolas VIVIEN.
+This manual page was written by Chris Frey.
+.SH SEE ALSO
+.PP
+http://www.netdirect.ca/software/packages/barry
+
