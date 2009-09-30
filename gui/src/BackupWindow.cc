@@ -563,7 +563,7 @@ void BackupWindow::on_help_about()
 	dlg.set_name("Barry Backup");
 	dlg.set_version("0.16");
 	dlg.set_comments(std::string("Using library: ") + BarryVersion);
-	dlg.set_website("http://www.netdirect.ca/software/packages/barry");
+	dlg.set_website("http://netdirect.ca/barry");
 	dlg.run();
 }
 
