@@ -1,2 +1,4 @@
 debian/tmp/usr/lib/libbarry.so.*
+debian/tmp/usr/lib/libbarrydp.so.*
+debian/tmp/usr/lib/libbarryjdwp.so.*
 
