@@ -183,6 +183,10 @@ cd ../
 # Install hal support script
 %{__mkdir_p} %{buildroot}%{_bindir}
 %{__cp} hal/hal-blackberry %{buildroot}%{_bindir}
+# Install bash completion scripts
+%{__mkdir_p} %{buildroot}%{_sysconfdir}/bash_completion.d
+%{__cp} bash/bjavaloader %{buildroot}%{_sysconfdir}/bash_completion.d
+%{__cp} bash/btool %{buildroot}%{_sysconfdir}/bash_completion.d
 
 # gui tree
 %if %{with_gui}
@@ -260,7 +264,10 @@ cd ../
 %attr(0640,root,root) %config %{_sysconfdir}/chatscripts/barry-att_cingular.chat
 %attr(0640,root,root) %config %{_sysconfdir}/chatscripts/barry-chinamobile.chat
 %attr(0640,root,root) %config %{_sysconfdir}/chatscripts/barry-kpn.chat
+%attr(0640,root,root) %config %{_sysconfdir}/bash_completion.d/bjavaloader
+%attr(0640,root,root) %config %{_sysconfdir}/bash_completion.d/btool
 %doc COPYING
+%doc zsh
 
 %if %{with_gui}
 %files gui
@@ -295,6 +302,7 @@ cd ../
 - added new ppp chat script for KPN Nederland
 - using new udev rules set
 - added bjdwp and manpage, and removed some test-only programs
+- added bash and zsh completion scripts
 
 * Fri Apr 10 2009 Chris Frey <cdfrey@foursquare.net> 0.15-0
 - version bump
