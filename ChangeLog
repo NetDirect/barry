@@ -2,7 +2,7 @@ Release: version 0.16 - 2009/09/??
 ------------------------------------------------------------------------------
 2009/09/30
 	- added PNG generated icon based on SVG source files
-	- added barry logo to barrybackup-gui Debian package
+	- added barry logo to barrybackup-gui Debian and RPM packages
 	- applied new barry logo and icon from Martin Owens
 2009/09/29
 	- os4x plugin: updated for the pkgconfig libopensync -> libopensync1

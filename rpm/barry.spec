@@ -29,6 +29,10 @@ BuildRequires: libusb, gcc-c++, pkgconfig, boost-devel, fuse-devel, zlib-devel
 BuildRequires: libusb-devel, gcc-c++, pkgconfig, boost-devel, fuse-devel, zlib-devel
 %endif
 
+%if %{with_gui}
+BuildRequires: desktop-file-utils
+%endif
+
 %define barryroot %{_builddir}/%{name}-%{version}
 
 %description
@@ -192,7 +196,13 @@ cd ../
 %if %{with_gui}
 cd gui/
 %{__make} DESTDIR=%{buildroot} install
+# Install barry logo icon
 cd ../
+%{__mkdir_p} %{buildroot}%{_datadir}/pixmaps
+%{__cp} logo/barry_logo_icon.png %{buildroot}%{_datadir}/pixmaps
+desktop-file-install --vendor netdirect \
+   --dir %{buildroot}%{_datadir}/applications \
+   rpm/barrybackup.desktop
 %endif
 
 # opensync tree
@@ -274,6 +284,8 @@ cd ../
 %defattr(-,root,root)
 %attr(0755,root,root) %{_bindir}/barrybackup
 %attr(0644,root,root) %{_datadir}/barry/glade/*.glade
+%attr(0644,root,root) %{_datadir}/pixmaps/barry_logo_icon.png
+%attr(0644,root,root) %{_datadir}/applications/*barrybackup*.desktop
 %attr(0644,root,root) %{_mandir}/man1/barrybackup*
 %doc COPYING
 %endif
@@ -303,6 +315,7 @@ cd ../
 - using new udev rules set
 - added bjdwp and manpage, and removed some test-only programs
 - added bash and zsh completion scripts
+- added .desktop file and icon for barrybackup
 
 * Fri Apr 10 2009 Chris Frey <cdfrey@foursquare.net> 0.15-0
 - version bump
