@@ -1,5 +1,8 @@
 Release: version 0.16 - 2009/09/??
 ------------------------------------------------------------------------------
+2009/09/29
+	- os4x plugin: updated for the pkgconfig libopensync -> libopensync1
+		rename
 2009/09/26
 	- gui: fixed status text during restore (said "Backup" instead
 		of "Restore")
