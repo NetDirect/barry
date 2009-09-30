@@ -71,6 +71,11 @@ install/barry-util::
 		$(CURDIR)/bash/btool \
 		$(CURDIR)/debian/barry-util/etc/bash_completion.d
 
+install/barrybackup-gui::
+	# Install barry icon
+	install -d $(CURDIR)/debian/barrybackup-gui/usr/share/pixmaps
+	install -m 0644 $(CURDIR)/logo/barry_logo_icon.png $(CURDIR)/debian/barrybackup-gui/usr/share/pixmaps
+
 post-patches::
 	@test -x $(DEB_SRCDIR)/configure && echo "allready autoreconf" || (cd $(DEB_SRCDIR) && autoreconf -i)
 
