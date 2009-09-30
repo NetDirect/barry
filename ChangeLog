@@ -1,5 +1,7 @@
 Release: version 0.16 - 2009/09/??
 ------------------------------------------------------------------------------
+2009/09/30
+	- added PNG generated icon based on SVG source files
 2009/09/29
 	- os4x plugin: updated for the pkgconfig libopensync -> libopensync1
 		rename
