@@ -225,6 +225,6 @@ void Thread::on_thread_done()
 void Thread::on_thread_erase_db()
 {
 	std::string name = m_interface.GetThreadDBName();
-	std::cerr << "Erasing database: " << name;
+	std::cerr << "Erasing database: " << name << std::endl;
 }
 
