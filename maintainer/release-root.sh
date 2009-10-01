@@ -30,5 +30,5 @@ set -e
 #
 # Build the OpenSUSE RPM's
 #
-./make-rpm.sh build/barry-$1.$2.tar.bz2 ../rpm/barry.spec opensuse10.2 suse10
+#./make-rpm.sh build/barry-$1.$2.tar.bz2 ../rpm/barry.spec opensuse10.2 suse10
 
