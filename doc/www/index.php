@@ -61,6 +61,9 @@ reverse engineer the battery charging handshake via USB.</p>
 	</li>
 	<li>Known Issues:
 	<ul>
+		<li>International characters in calendar and contact records
+			cause some devices to switch to a different low-level
+			protocol, which Barry does not yet support.</li>
 		<li>Restoring backups for some databases on newer Blackberries doesn't work (for example, on the 8120, 8700g)</li>
 		<li>Syncing is not supported on Fedora Core 9 or 10, since they packaged the OpenSync 0.3x devel tree (experimental support for the latest opensync SVN tree is included with a new plugin).  This has been fixed in Fedora 11, as they returned to version 0.22.</li>
 		<li>Accessing the database (such as during a backup) while copying files using the usb_storage kernel module may cause some Blackberries to spontaneously reboot</li>
