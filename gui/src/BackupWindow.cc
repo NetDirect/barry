@@ -28,6 +28,7 @@
 #include <iostream>
 #include <iomanip>
 #include <sstream>
+#include <string>
 #include <unistd.h>
 
 BackupWindow::BackupWindow(BaseObjectType *cobject,
@@ -359,8 +360,18 @@ void BackupWindow::treeview_update()
 				percentage = 99;
 		}
 		(*i)[m_columns.m_percentage] = percentage;
-		if( thread->CheckFinishedMarker() )
-			StatusbarSet("Operation on " + thread->GetFullname() + " finished!");
+		if( thread->CheckFinishedMarker() ) {
+			std::string op;
+
+			if( thread->GetThreadState() & THREAD_STATE_BACKUP )
+				op = "Backup";
+			else if( thread->GetThreadState() & THREAD_STATE_RESTORE )
+				op = "Restore";
+			else
+				op = "Operation";
+
+			StatusbarSet(op + " on " + thread->GetFullname() + " finished!");
+		}
 	}
 }
 

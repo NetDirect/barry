@@ -27,8 +27,18 @@
 #include "ConfigFile.h"
 #include "DeviceIface.h"
 
+// bit masks for various thread state
+#define THREAD_STATE_IDLE	0x01		// currently idle
+#define THREAD_STATE_BACKUP	0x02		// last operation requested
+						// was backup... if idle bit
+						// is 0, backup is still going
+#define THREAD_STATE_RESTORE	0x04		// last op was restore... same
+						// as backup
+
+
 class Thread : public ConfigFile
 {
+private:
 	Glib::Dispatcher m_signal_progress;
 	Glib::Dispatcher m_signal_error;
 	Glib::Dispatcher m_signal_done;
@@ -63,8 +73,8 @@ class Thread : public ConfigFile
 
 	// states
 	bool m_connected;
-	bool m_working;
 	bool m_error;
+	unsigned int m_thread_state;
 
 protected:
 	void SetStatus(std::string);
@@ -87,6 +97,7 @@ public:
 	bool CheckFinishedMarker();
 	unsigned int GetRecordFinished() const { return m_recordFinished; }
 	unsigned int GetRecordTotal() const { return m_recordTotal; }
+	unsigned int GetThreadState() const { return m_thread_state; }
 
 	void Reset() { m_interface.Reset(); }
 	bool Connect();
@@ -97,7 +108,7 @@ public:
 	void UnsetActive();
 
 	bool Connected() const { return m_connected; }
-	bool Working() const { return m_working; }
+	bool Working() const { return !(m_thread_state & THREAD_STATE_IDLE); }
 	bool Error() const { return m_error; }
 
 	bool PasswordRequired() const { return password_required; }

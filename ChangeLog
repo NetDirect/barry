@@ -8,6 +8,8 @@ Release: version 0.16 - 2009/09/??
 	- gui: fixed bug where actual finished records were overwritten
 		with the starting total... don't overwrite the actual
 		with the estimated
+	- gui: added thread state, to determine what operation finished
+		Also improved status message, specifying exact operation
 2009/09/29
 	- os4x plugin: updated for the pkgconfig libopensync -> libopensync1
 		rename

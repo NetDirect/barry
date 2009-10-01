@@ -38,8 +38,8 @@ Thread::Thread(Device dev, Glib::Dispatcher *update_signal)
 	, m_recordFinished(0)
 	, m_recordTotal(0)
 	, m_connected(false)
-	, m_working(false)
 	, m_error(false)
+	, m_thread_state(THREAD_STATE_IDLE)
 {
 	m_signal_progress.connect(
 		sigc::mem_fun(*this, &Thread::on_thread_progress));
@@ -126,44 +126,64 @@ void Thread::Disconnect()
 void Thread::UnsetActive()
 {
 	m_active = false;
-	if( !m_working )
+	if( !Working() )
 		Disconnect();
 }
 
 bool Thread::Backup(std::string label)
 {
+	// only start a backup if currently idle
+	if( Working() )
+		return false;
+
 	m_recordTotal = m_interface.GetRecordTotal(GetBackupList());
 	m_recordFinished = 0;
 
-	m_working = m_interface.StartBackup(
+	bool started = m_interface.StartBackup(
 		DeviceInterface::AppComm(&m_signal_progress,
 			&m_signal_error,
 			&m_signal_done,
 			&m_signal_erase_db),
 		GetBackupList(), GetPath(), label);
-	if( m_working )
+	if( started ) {
+		m_thread_state = THREAD_STATE_BACKUP;
 		SetStatus("Backup");
-	return m_working;
+	}
+	return started;
 }
 
 bool Thread::Restore(std::string filename)
 {
+	// only start a restore if currently idle
+	if( Working() )
+		return false;
+
 	m_recordTotal = m_interface.GetRecordTotal(GetRestoreList(), filename);
 	m_recordFinished = 0;
 
-	m_working = m_interface.StartRestore(
+	bool started = m_interface.StartRestore(
 		DeviceInterface::AppComm(&m_signal_progress,
 			&m_signal_error,
 			&m_signal_done,
 			&m_signal_erase_db),
 		GetRestoreList(), filename);
-	if( m_working )
+	if( started ) {
+		m_thread_state = THREAD_STATE_RESTORE;
 		SetStatus("Restore");
-	return m_working;
+	}
+	return started;
 }
 
 bool Thread::RestoreAndBackup(std::string filename)
 {
+	// only start a restore if currently idle
+	if( Working() )
+		return false;
+
+	// not supported
+	return false;
+
+/*
 	m_working = m_interface.StartRestoreAndBackup(
 		DeviceInterface::AppComm(&m_signal_progress,
 			&m_signal_error,
@@ -174,6 +194,7 @@ bool Thread::RestoreAndBackup(std::string filename)
 	if( m_working )
 		SetStatus("Restore & Backup");
 	return m_working;
+*/
 }
 
 void Thread::on_thread_progress()
@@ -185,6 +206,7 @@ void Thread::on_thread_progress()
 void Thread::on_thread_error()
 {
 	m_error = true;
+	m_thread_state |= THREAD_STATE_IDLE;
 
 	Gtk::MessageDialog msg(m_status + " error: " + m_interface.get_last_thread_error());
 	msg.run();
@@ -196,7 +218,7 @@ void Thread::on_thread_done()
 		SetStatus("Connected");
 	else
 		Disconnect();
-	m_working = false;
+	m_thread_state |= THREAD_STATE_IDLE;
 	m_finished_marker = true;
 }
 
