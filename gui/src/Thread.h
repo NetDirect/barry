@@ -83,10 +83,10 @@ public:
 	Pin GetPIN() { return m_dev.GetPIN(); }
 	std::string GetFullname();
 
-	std::string Status() { return m_status; }
+	std::string Status() const { return m_status; }
 	bool CheckFinishedMarker();
-	unsigned int GetRecordFinished() { return m_recordFinished; }
-	unsigned int GetRecordTotal() { return m_recordTotal; }
+	unsigned int GetRecordFinished() const { return m_recordFinished; }
+	unsigned int GetRecordTotal() const { return m_recordTotal; }
 
 	void Reset() { m_interface.Reset(); }
 	bool Connect();
@@ -96,17 +96,17 @@ public:
 	void SetActive() { m_active = true; }
 	void UnsetActive();
 
-	bool Connected() { return m_connected; }
-	bool Working() { return m_working; }
-	bool Error() { return m_error; }
+	bool Connected() const { return m_connected; }
+	bool Working() const { return m_working; }
+	bool Error() const { return m_error; }
 
-	bool PasswordRequired() { return password_required; }
-	bool PasswordOutOfTries() { return password_out_of_tries; }
-	unsigned int PasswordRemainingTries() { return password_remaining_tries; }
-	std::string BadPasswordError() { return bad_password_error; }
+	bool PasswordRequired() const { return password_required; }
+	bool PasswordOutOfTries() const { return password_out_of_tries; }
+	unsigned int PasswordRemainingTries() const { return password_remaining_tries; }
+	std::string BadPasswordError() const { return bad_password_error; }
 
-	bool BadSize() { return bad_size; }
-	std::string BadSizeError() { return bad_size_error; }
+	bool BadSize() const { return bad_size; }
+	std::string BadSizeError() const { return bad_size_error; }
 
 	bool Backup(std::string label);
 	bool Restore(std::string filename);
