@@ -29,6 +29,8 @@ Barry Release Checklist:
 - run maintainer/tagged-release.sh
 - manually push git tags to repo.or.cz and sourceforge.net
 - upload packages to SourceForge
+	ssh -x -a -2 -t USER,PROJECT@shell.sourceforge.net create
+	   then use sf-help for details
 	- Ubuntu: 7.10, 8.04, 9.04
 	- Fedora: 7, 8, 9, 11
 	- Debian: stable (lenny)
