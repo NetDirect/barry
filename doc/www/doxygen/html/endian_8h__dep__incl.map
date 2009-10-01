@@ -1,0 +1,32 @@
+<area shape="rect" href="$bmp_8cc.html" title="BMP conversion routines." alt="" coords="220,80,284,107">
+<area shape="rect" href="$cod_8cc.html" title="COD file API." alt="" coords="308,80,367,107">
+<area shape="rect" href="$controller_8cc.html" title="High level Barry API class." alt="" coords="391,80,481,107">
+<area shape="rect" href="$dp__parser_8cc.html" title="COD debug file parser RIM&#39;s JDE generates several files when you build a COD..." alt="" coords="505,80,601,107">
+<area shape="rect" href="$record-internal_8h.html" title="Support functions, types, and templates for the general record parsing classes in..." alt="" coords="828,80,943,107">
+<area shape="rect" href="$j__server_8cc.html" title="Server protocol implementation." alt="" coords="5,155,88,181">
+<area shape="rect" href="$probe_8cc.html" title="USB Blackberry detection routines." alt="" coords="112,155,184,181">
+<area shape="rect" href="$r__calendar_8cc.html" title="Blackberry database record parser class for calendar records." alt="" coords="208,155,307,181">
+<area shape="rect" href="$r__contact_8cc.html" title="Blackberry database record parser class for contact records." alt="" coords="331,155,424,181">
+<area shape="rect" href="$r__message__base_8cc.html" title="Base class for email&#45;oriented Blackberry database records." alt="" coords="1579,155,1717,181">
+<area shape="rect" href="$r__servicebook_8cc.html" title="Blackberry database record parser class for Service Book records." alt="" coords="1741,155,1861,181">
+<area shape="rect" href="$record_8cc.html" title="Misc." alt="" coords="1885,155,1960,181">
+<area shape="rect" href="$m__desktop_8cc.html" title="Mode class for the Desktop mode." alt="" coords="1119,80,1223,107">
+<area shape="rect" href="$m__javaloader_8cc.html" title="Mode class for the JavaLoader mode." alt="" coords="1247,80,1361,107">
+<area shape="rect" href="$m__jvmdebug_8cc.html" title="Mode class for the JVMDebug mode." alt="" coords="1385,80,1497,107">
+<area shape="rect" href="$m__serial_8cc.html" title="Mode class for serial / GPRS modem mode." alt="" coords="1521,80,1609,107">
+<area shape="rect" href="$packet_8cc.html" title="Low level protocol packet builder class." alt="" coords="1633,80,1711,107">
+<area shape="rect" href="$protocol_8cc.html" title="USB Blackberry bulk protocol API." alt="" coords="1735,80,1820,107">
+<area shape="rect" href="$r__recur__base_8cc.html" title="Base class for recurring calendar event data." alt="" coords="1844,80,1959,107">
+<area shape="rect" href="$router_8cc.html" title="Support classes for the pluggable socket routing system." alt="" coords="1983,80,2055,107">
+<area shape="rect" href="$socket_8cc.html" title="Class wrapper to encapsulate the Blackberry USB logical socket." alt="" coords="2079,80,2156,107">
+<area shape="rect" href="$time_8cc.html" title="Conversion between time_t and cenmin_t and back." alt="" coords="2180,80,2244,107">
+<area shape="rect" href="$j__record_8cc.html" title="Internal record manipulation functions for JDWP classes." alt="" coords="1469,155,1555,181">
+<area shape="rect" href="$r__calllog_8cc.html" title="Record parsing class for the phone call logs database." alt="" coords="448,155,536,181">
+<area shape="rect" href="$r__command_8cc.html" title="Internal implementation of CommandTable parser class." alt="" coords="560,155,667,181">
+<area shape="rect" href="$r__dbdb_8cc.html" title="DatabaseDatabase record parser class." alt="" coords="691,155,768,181">
+<area shape="rect" href="$r__folder_8cc.html" title="Record parsing class for the folders database." alt="" coords="792,155,872,181">
+<area shape="rect" href="$r__memo_8cc.html" title="Record parsing class for the memo database." alt="" coords="896,155,981,181">
+<area shape="rect" href="$r__recordstate_8cc.html" title="RecordStateTable database record parser class." alt="" coords="1005,155,1120,181">
+<area shape="rect" href="$r__sms_8cc.html" title="Record parsing class for the SMS database." alt="" coords="1144,155,1219,181">
+<area shape="rect" href="$r__task_8cc.html" title="Record parsing class for the task database." alt="" coords="1243,155,1317,181">
+<area shape="rect" href="$r__timezone_8cc.html" title="Record parsing class for the timezone database." alt="" coords="1341,155,1445,181">

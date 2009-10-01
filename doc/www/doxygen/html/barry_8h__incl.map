@@ -1,0 +1,35 @@
+<area shape="rect" href="$data_8h.html" title="Class to deal with pre&#45;saved data files." alt="" coords="1196,453,1252,480">
+<area shape="rect" href="$usbwrap_8h.html" title="USB API wrapper." alt="" coords="2115,453,2195,480">
+<area shape="rect" href="$error_8h.html" title="Common exception classes for the Barry library." alt="" coords="2541,528,2597,555">
+<area shape="rect" href="$common_8h.html" title="General header for the Barry library." alt="" coords="139,379,221,405">
+<area shape="rect" href="$probe_8h.html" title="USB Blackberry detection routines." alt="" coords="2200,379,2264,405">
+<area shape="rect" href="$dataqueue_8h.html" title="FIFO queue of Data objects." alt="" coords="3285,528,3376,555">
+<area shape="rect" href="$socket_8h.html" title="Class wrapper to encapsulate the Blackberry USB logical socket." alt="" coords="1928,379,2000,405">
+<area shape="rect" href="$router_8h.html" title="Support classes for the pluggable socket routing system." alt="" coords="2932,453,2996,480">
+<area shape="rect" href="$protocol_8h.html" title="USB Blackberry bulk protocol API constants." alt="" coords="552,229,629,256">
+<area shape="rect" href="$parser_8h.html" title="Virtual parser wrapper." alt="" coords="787,155,853,181">
+<area shape="rect" href="$builder_8h.html" title="Virtual protocol packet builder wrapper." alt="" coords="501,155,571,181">
+<area shape="rect" href="$ldif_8h.html" title="Routines for reading and writing LDAP LDIF data." alt="" coords="2784,453,2832,480">
+<area shape="rect" href="$controller_8h.html" title="High level BlackBerry API class." alt="" coords="1979,304,2061,331">
+<area shape="rect" href="$m__desktop_8h.html" title="Mode class for the Desktop mode." alt="" coords="1460,155,1556,181">
+<area shape="rect" href="$record_8h.html" title="Blackberry database record classes." alt="" coords="1923,453,1989,480">
+<area shape="rect" href="$m__ipmodem_8h.html" title="Mode class for GPRS modem mode (using endpoints on modern devices)." alt="" coords="969,304,1073,331">
+<area shape="rect" href="$m__serial_8h.html" title="Mode class for serial / GPRS modem mode." alt="" coords="741,304,821,331">
+<area shape="rect" href="$m__javaloader_8h.html" title="Mode class for the JavaLoader mode." alt="" coords="1616,155,1723,181">
+<area shape="rect" href="$m__jvmdebug_8h.html" title="Mode class for the JVMDebug mode." alt="" coords="1883,155,1989,181">
+<area shape="rect" href="$version_8h.html" title="Provide access to library version information." alt="" coords="13,229,88,256">
+<area shape="rect" href="$log_8h.html" title="General header for the Barry library." alt="" coords="655,80,703,107">
+<area shape="rect" href="$sha1_8h-source.html" title="sha1.h" alt="" coords="88,304,147,331">
+<area shape="rect" href="$iconv_8h.html" title="iconv wrapper class, and pluggable interface for records" alt="" coords="1363,379,1424,405">
+<area shape="rect" href="$bmp_8h.html" title="BMP conversion routines." alt="" coords="1397,80,1453,107">
+<area shape="rect" href="$cod_8h.html" title="COD file API." alt="" coords="325,379,379,405">
+<area shape="rect" href="$threadwrap_8h.html" title="RAII Wrapper for a single thread." alt="" coords="2973,229,3069,256">
+<area shape="rect" href="$vsmartptr_8h-source.html" title="vsmartptr.h" alt="" coords="3384,80,3469,107">
+<area shape="rect" href="$dp__codinfo_8h.html" title="Debug file parsing." alt="" coords="2461,453,2557,480">
+<area shape="rect" href="$j__manager_8h.html" title="Application management classes." alt="" coords="2683,379,2773,405">
+<area shape="rect" href="$j__server_8h.html" title="Java Debug server classes." alt="" coords="2452,80,2529,107">
+<area shape="rect" href="$m__desktoptmpl_8h.html" title="Ease of use templates for the Desktop mode class." alt="" coords="857,80,977,107">
+<area shape="rect" href="$dll_8h.html" title="Macros for handling DLL/library API visibility." alt="" coords="1380,603,1425,629">
+<area shape="rect" href="$m__mode__base_8h.html" title="Base for mode classes." alt="" coords="1629,229,1747,256">
+<area shape="rect" href="$modem_8h.html" title="Modem API base class for the various serial/modem modes available on the Blackberry..." alt="" coords="707,379,781,405">
+<area shape="rect" href="$pppfilter_8h.html" title="Data filter class, to morph PPP data into something that the Blackberry / Rogers..." alt="" coords="856,379,933,405">

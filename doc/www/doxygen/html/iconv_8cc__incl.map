@@ -1,0 +1,5 @@
+<area shape="rect" href="$iconv_8h.html" title="iconv wrapper class, and pluggable interface for records" alt="" coords="149,80,211,107">
+<area shape="rect" href="$common_8h.html" title="General header for the Barry library." alt="" coords="289,80,372,107">
+<area shape="rect" href="$error_8h.html" title="Common exception classes for the Barry library." alt="" coords="396,80,452,107">
+<area shape="rect" href="$dll_8h.html" title="Macros for handling DLL/library API visibility." alt="" coords="207,229,252,256">
+<area shape="rect" href="$data_8h.html" title="Class to deal with pre&#45;saved data files." alt="" coords="47,155,103,181">

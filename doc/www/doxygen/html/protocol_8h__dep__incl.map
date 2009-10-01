@@ -1,0 +1,18 @@
+<area shape="rect" href="$barry_8h.html" title="Main header file for applications." alt="" coords="48,229,107,256">
+<area shape="rect" href="$parser_8h.html" title="Virtual parser wrapper." alt="" coords="144,80,211,107">
+<area shape="rect" href="$packet_8cc.html" title="Low level protocol packet builder class." alt="" coords="212,155,289,181">
+<area shape="rect" href="$controller_8cc.html" title="High level Barry API class." alt="" coords="743,80,833,107">
+<area shape="rect" href="$j__server_8cc.html" title="Server protocol implementation." alt="" coords="857,80,940,107">
+<area shape="rect" href="$m__desktop_8cc.html" title="Mode class for the Desktop mode." alt="" coords="313,155,417,181">
+<area shape="rect" href="$packet_8h.html" title="Low level protocol packet builder class." alt="" coords="495,80,567,107">
+<area shape="rect" href="$m__javaloader_8cc.html" title="Mode class for the JavaLoader mode." alt="" coords="441,155,556,181">
+<area shape="rect" href="$m__jvmdebug_8cc.html" title="Mode class for the JVMDebug mode." alt="" coords="580,155,692,181">
+<area shape="rect" href="$probe_8cc.html" title="USB Blackberry detection routines." alt="" coords="716,155,788,181">
+<area shape="rect" href="$socket_8cc.html" title="Class wrapper to encapsulate the Blackberry USB logical socket." alt="" coords="812,155,889,181">
+<area shape="rect" href="$protocol_8cc.html" title="USB Blackberry bulk protocol API." alt="" coords="964,80,1049,107">
+<area shape="rect" href="$r__calendar_8cc.html" title="Blackberry database record parser class for calendar records." alt="" coords="1073,80,1172,107">
+<area shape="rect" href="$r__contact_8cc.html" title="Blackberry database record parser class for contact records." alt="" coords="1196,80,1289,107">
+<area shape="rect" href="$r__dbdb_8cc.html" title="DatabaseDatabase record parser class." alt="" coords="1313,80,1391,107">
+<area shape="rect" href="$r__servicebook_8cc.html" title="Blackberry database record parser class for Service Book records." alt="" coords="1415,80,1535,107">
+<area shape="rect" href="$record_8cc.html" title="Misc." alt="" coords="1559,80,1633,107">
+<area shape="rect" href="$m__desktoptmpl_8h.html" title="Ease of use templates for the Desktop mode class." alt="" coords="17,155,137,181">

@@ -1,0 +1,14 @@
+<area shape="rect" href="$m__desktop_8h.html" title="Mode class for the Desktop mode." alt="" coords="520,80,616,107">
+<area shape="rect" href="$m__javaloader_8h.html" title="Mode class for the JavaLoader mode." alt="" coords="97,80,204,107">
+<area shape="rect" href="$m__jvmdebug_8h.html" title="Mode class for the JVMDebug mode." alt="" coords="663,80,769,107">
+<area shape="rect" href="$m__mode__base_8cc.html" title="Base for mode classes." alt="" coords="793,80,916,107">
+<area shape="rect" href="$barry_8h.html" title="Main header file for applications." alt="" coords="587,229,645,256">
+<area shape="rect" href="$m__desktoptmpl_8h.html" title="Ease of use templates for the Desktop mode class." alt="" coords="508,155,628,181">
+<area shape="rect" href="$m__desktop_8cc.html" title="Mode class for the Desktop mode." alt="" coords="380,155,484,181">
+<area shape="rect" href="$packet_8cc.html" title="Low level protocol packet builder class." alt="" coords="279,155,356,181">
+<area shape="rect" href="$bmp_8h.html" title="BMP conversion routines." alt="" coords="9,155,65,181">
+<area shape="rect" href="$m__javaloader_8cc.html" title="Mode class for the JavaLoader mode." alt="" coords="140,155,255,181">
+<area shape="rect" href="$bmp_8cc.html" title="BMP conversion routines." alt="" coords="5,229,69,256">
+<area shape="rect" href="$j__server_8h.html" title="Java Debug server classes." alt="" coords="889,155,967,181">
+<area shape="rect" href="$m__jvmdebug_8cc.html" title="Mode class for the JVMDebug mode." alt="" coords="753,155,865,181">
+<area shape="rect" href="$j__server_8cc.html" title="Server protocol implementation." alt="" coords="887,229,969,256">

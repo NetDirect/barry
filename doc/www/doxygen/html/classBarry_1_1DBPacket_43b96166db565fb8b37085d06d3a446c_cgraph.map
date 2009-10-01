@@ -1,0 +1,5 @@
+<area shape="rect" href="$classBarry_1_1Parser.html#15acb3544613d43d8f928cd63a19022b" title="Reset and prepare for a new raw data packet." alt="" coords="239,5,375,32">
+<area shape="rect" href="$classBarry_1_1Parser.html#645718d87aaad3ee2c36664de05046d2" title="Called to parse sub fields in the raw data packet." alt="" coords="219,56,395,83">
+<area shape="rect" href="$classBarry_1_1Parser.html#2087d07fb5d8d57c934c4e60278f41d8" title="Called to parse the header portion of the raw data packet." alt="" coords="216,107,397,133">
+<area shape="rect" href="$classBarry_1_1Parser.html#95bfc4014e3e8ded94625f43d1d29800" title="Stores the IDs." alt="" coords="235,157,379,184">
+<area shape="rect" href="$classBarry_1_1Parser.html#bf8ab1598be74268ee486af938c527d4" title="Called at the very end of record parsing, and used to store the final packet somewhere..." alt="" coords="239,208,375,235">

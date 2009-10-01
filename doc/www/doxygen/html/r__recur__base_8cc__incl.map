@@ -1,0 +1,23 @@
+<area shape="rect" href="$r__recur__base_8h.html" title="Base class for recurring calendar event data." alt="" coords="567,80,673,107">
+<area shape="rect" href="$protostructs_8h.html" title="USB Blackberry bulk protocol API." alt="" coords="1925,80,2027,107">
+<area shape="rect" href="$error_8h.html" title="Common exception classes for the Barry library." alt="" coords="1956,304,2012,331">
+<area shape="rect" href="$endian_8h.html" title="Endian conversion macros." alt="" coords="2092,80,2161,107">
+<area shape="rect" href="$time_8h.html" title="Time related conversion routines." alt="" coords="2036,304,2092,331">
+<area shape="rect" href="$debug_8h-source.html" title="debug.h" alt="" coords="2341,229,2408,256">
+<area shape="rect" href="$dll_8h.html" title="Macros for handling DLL/library API visibility." alt="" coords="1420,379,1465,405">
+<area shape="rect" href="$record_8h.html" title="Blackberry database record classes." alt="" coords="865,155,932,181">
+<area shape="rect" href="$r__calendar_8h.html" title="Blackberry database record parser class for calndar records." alt="" coords="327,304,417,331">
+<area shape="rect" href="$r__calllog_8h.html" title="Record parsing class for call logs." alt="" coords="1215,304,1295,331">
+<area shape="rect" href="$r__contact_8h.html" title="Blackberry database record parser class for contact records." alt="" coords="441,304,527,331">
+<area shape="rect" href="$r__memo_8h.html" title="Record parsing class for the memo database." alt="" coords="1111,304,1191,331">
+<area shape="rect" href="$r__message_8h.html" title="Blackberry database record parser class for email records." alt="" coords="753,229,849,256">
+<area shape="rect" href="$r__servicebook_8h.html" title="Blackberry database record parser class for the Service Book record." alt="" coords="551,304,663,331">
+<area shape="rect" href="$r__task_8h.html" title="Record parsing class for the task database." alt="" coords="1409,304,1476,331">
+<area shape="rect" href="$r__pin__message_8h.html" title="Blackberry database record parser class for pin message records." alt="" coords="1023,229,1143,256">
+<area shape="rect" href="$r__saved__message_8h-source.html" title="r_saved_message.h" alt="" coords="1516,229,1655,256">
+<area shape="rect" href="$r__sms_8h-source.html" title="r_sms.h" alt="" coords="1319,304,1385,331">
+<area shape="rect" href="$r__folder_8h.html" title="Record parsing class for the Folder database." alt="" coords="1012,304,1087,331">
+<area shape="rect" href="$r__timezone_8h.html" title="Record parsing class for the timezone database." alt="" coords="892,304,988,331">
+<area shape="rect" href="$r__message__base_8h.html" title="Base class for email&#45;oriented Blackberry database records." alt="" coords="737,304,868,331">
+<area shape="rect" href="$common_8h.html" title="General header for the Barry library." alt="" coords="2231,304,2313,331">
+<area shape="rect" href="$log_8h.html" title="General header for the Barry library." alt="" coords="2337,304,2385,331">

@@ -1,0 +1,9 @@
+<area shape="rect" href="$classBarry_1_1Error.html" title="The base class for any future derived exceptions." alt="" coords="5,183,93,209">
+<area shape="rect" href="$classBarry_1_1BadData.html" title="Thrown by record classes if their data is invalid and cannot be uploaded to the Blackberry..." alt="" coords="171,5,280,32">
+<area shape="rect" href="$classBarry_1_1BadPackedFormat.html" title="Thrown by record classes that don&#39;t recognize a given packed format code." alt="" coords="141,56,309,83">
+<area shape="rect" href="$classBarry_1_1BadPacket.html" title="Thrown by the socket class if a packet command&#39;s response indicates an error..." alt="" coords="164,107,287,133">
+<area shape="rect" href="$classBarry_1_1BadPassword.html" title="A bad or unknown password when talking to the device." alt="" coords="156,157,295,184">
+<area shape="rect" href="$classBarry_1_1BadSize.html" title="Unexpected packet size, or not enough data." alt="" coords="171,208,280,235">
+<area shape="rect" href="$classBarry_1_1ErrnoError.html" title="System error that provides an errno error code." alt="" coords="165,259,285,285">
+<area shape="rect" href="$classBarry_1_1JDWP_1_1Error.html" title="Thrown on low level JDWP errors." alt="" coords="159,309,292,336">
+<area shape="rect" href="$classUsb_1_1Error.html" title="Thrown on low level USB errors." alt="" coords="185,360,265,387">

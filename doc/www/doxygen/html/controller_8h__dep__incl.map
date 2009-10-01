@@ -1,0 +1,18 @@
+<area shape="rect" href="$barry_8h.html" title="Main header file for applications." alt="" coords="383,304,441,331">
+<area shape="rect" href="$m__mode__base_8h.html" title="Base for mode classes." alt="" coords="504,80,621,107">
+<area shape="rect" href="$m__desktop_8cc.html" title="Mode class for the Desktop mode." alt="" coords="281,229,385,256">
+<area shape="rect" href="$m__javaloader_8cc.html" title="Mode class for the JavaLoader mode." alt="" coords="540,229,655,256">
+<area shape="rect" href="$m__jvmdebug_8cc.html" title="Mode class for the JVMDebug mode." alt="" coords="831,229,943,256">
+<area shape="rect" href="$controller_8cc.html" title="High level Barry API class." alt="" coords="815,80,905,107">
+<area shape="rect" href="$m__ipmodem_8cc.html" title="Mode class for GPRS modem mode (using endpoints on modern devices)." alt="" coords="929,80,1039,107">
+<area shape="rect" href="$m__serial_8cc.html" title="Mode class for serial / GPRS modem mode." alt="" coords="1063,80,1151,107">
+<area shape="rect" href="$m__desktop_8h.html" title="Mode class for the Desktop mode." alt="" coords="149,155,245,181">
+<area shape="rect" href="$m__javaloader_8h.html" title="Mode class for the JavaLoader mode." alt="" coords="371,155,477,181">
+<area shape="rect" href="$m__jvmdebug_8h.html" title="Mode class for the JVMDebug mode." alt="" coords="699,155,805,181">
+<area shape="rect" href="$m__mode__base_8cc.html" title="Base for mode classes." alt="" coords="501,155,624,181">
+<area shape="rect" href="$m__desktoptmpl_8h.html" title="Ease of use templates for the Desktop mode class." alt="" coords="137,229,257,256">
+<area shape="rect" href="$packet_8cc.html" title="Low level protocol packet builder class." alt="" coords="36,229,113,256">
+<area shape="rect" href="$bmp_8h.html" title="BMP conversion routines." alt="" coords="460,229,516,256">
+<area shape="rect" href="$bmp_8cc.html" title="BMP conversion routines." alt="" coords="465,304,529,331">
+<area shape="rect" href="$j__server_8h.html" title="Java Debug server classes." alt="" coords="729,229,807,256">
+<area shape="rect" href="$j__server_8cc.html" title="Server protocol implementation." alt="" coords="727,304,809,331">

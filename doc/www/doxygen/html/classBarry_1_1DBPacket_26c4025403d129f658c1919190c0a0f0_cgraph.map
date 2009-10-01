@@ -1,0 +1,6 @@
+<area shape="rect" href="$classBarry_1_1Builder.html#8414acbff050df62c01d8835115e6d18" title="Called to build the record field data." alt="" coords="285,5,456,32">
+<area shape="rect" href="$classBarry_1_1Builder.html#7fd24f3f6d34bd1a6e8875ce7c242e9b" title="Called before BuildFields() in order to build the header for this record." alt="" coords="281,56,460,83">
+<area shape="rect" href="$classBarry_1_1Mode_1_1Desktop.html#b1d7a169122aae509924729aedfeb24f" title="Get database command from command table." alt="" coords="244,107,497,133">
+<area shape="rect" href="$classBarry_1_1Builder.html#b586fc135c6fbe0d1f9019bc4a2639d0" title="Called to retrive the unique ID for this record." alt="" coords="281,157,460,184">
+<area shape="rect" href="$classBarry_1_1Builder.html#3f91d4f44e886ddf390a1726742f2e70" title="Barry::Builder::GetUniqueId" alt="" coords="281,208,460,235">
+<area shape="rect" href="$classBarry_1_1Builder.html#936d3e7b4e771fb2f7ee48476d802407" title="Called first in the sequence, to allow the application to load the needed data from..." alt="" coords="293,259,448,285">

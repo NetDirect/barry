@@ -1,0 +1,8 @@
+<area shape="rect" href="$dll_8h.html" title="Macros for handling DLL/library API visibility." alt="" coords="215,379,260,405">
+<area shape="rect" href="$controller_8h.html" title="High level BlackBerry API class." alt="" coords="183,80,265,107">
+<area shape="rect" href="$usbwrap_8h.html" title="USB API wrapper." alt="" coords="277,229,357,256">
+<area shape="rect" href="$socket_8h.html" title="Class wrapper to encapsulate the Blackberry USB logical socket." alt="" coords="608,229,680,256">
+<area shape="rect" href="$probe_8h.html" title="USB Blackberry detection routines." alt="" coords="192,155,256,181">
+<area shape="rect" href="$error_8h.html" title="Common exception classes for the Barry library." alt="" coords="403,304,459,331">
+<area shape="rect" href="$router_8h.html" title="Support classes for the pluggable socket routing system." alt="" coords="725,304,789,331">
+<area shape="rect" href="$dataqueue_8h.html" title="FIFO queue of Data objects." alt="" coords="848,379,939,405">

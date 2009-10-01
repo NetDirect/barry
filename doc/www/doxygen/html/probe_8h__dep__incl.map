@@ -1,0 +1,20 @@
+<area shape="rect" href="$barry_8h.html" title="Main header file for applications." alt="" coords="379,379,437,405">
+<area shape="rect" href="$controller_8h.html" title="High level BlackBerry API class." alt="" coords="512,80,595,107">
+<area shape="rect" href="$controller_8cc.html" title="High level Barry API class." alt="" coords="945,155,1036,181">
+<area shape="rect" href="$probe_8cc.html" title="USB Blackberry detection routines." alt="" coords="669,80,741,107">
+<area shape="rect" href="$m__mode__base_8h.html" title="Base for mode classes." alt="" coords="559,155,676,181">
+<area shape="rect" href="$m__desktop_8cc.html" title="Mode class for the Desktop mode." alt="" coords="389,304,493,331">
+<area shape="rect" href="$m__javaloader_8cc.html" title="Mode class for the JavaLoader mode." alt="" coords="936,304,1051,331">
+<area shape="rect" href="$m__jvmdebug_8cc.html" title="Mode class for the JVMDebug mode." alt="" coords="669,304,781,331">
+<area shape="rect" href="$m__ipmodem_8cc.html" title="Mode class for GPRS modem mode (using endpoints on modern devices)." alt="" coords="251,155,360,181">
+<area shape="rect" href="$m__serial_8cc.html" title="Mode class for serial / GPRS modem mode." alt="" coords="447,155,535,181">
+<area shape="rect" href="$m__desktop_8h.html" title="Mode class for the Desktop mode." alt="" coords="257,229,353,256">
+<area shape="rect" href="$m__javaloader_8h.html" title="Mode class for the JavaLoader mode." alt="" coords="764,229,871,256">
+<area shape="rect" href="$m__jvmdebug_8h.html" title="Mode class for the JVMDebug mode." alt="" coords="581,229,688,256">
+<area shape="rect" href="$m__mode__base_8cc.html" title="Base for mode classes." alt="" coords="435,229,557,256">
+<area shape="rect" href="$m__desktoptmpl_8h.html" title="Ease of use templates for the Desktop mode class." alt="" coords="245,304,365,331">
+<area shape="rect" href="$packet_8cc.html" title="Low level protocol packet builder class." alt="" coords="144,304,221,331">
+<area shape="rect" href="$bmp_8h.html" title="BMP conversion routines." alt="" coords="856,304,912,331">
+<area shape="rect" href="$bmp_8cc.html" title="BMP conversion routines." alt="" coords="852,379,916,405">
+<area shape="rect" href="$j__server_8h.html" title="Java Debug server classes." alt="" coords="568,304,645,331">
+<area shape="rect" href="$j__server_8cc.html" title="Server protocol implementation." alt="" coords="565,379,648,405">
