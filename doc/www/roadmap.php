@@ -7,13 +7,6 @@
 in the source tree, and while relatively up to date, the source tree is the
 definitive copy.</p>
 
-<? createSubHeader("Target: release version 0.16 (Oct 1)"); ?>
-<ul>
-	<li>incorporate barrybackup GUI changes by Ryan Li (done)</li>
-	<li>incorporate Nicolas's java debugger patches</li>
-	<li>incorporate Martin Owens' Barry logo/icon into Barry</li>
-</ul>
-
 <? createSubHeader("Target: release version 0.17 (Nov 1)"); ?>
 <ul>
 	<li>website documentation</li>
