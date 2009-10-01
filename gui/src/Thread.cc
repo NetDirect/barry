@@ -192,7 +192,6 @@ void Thread::on_thread_error()
 
 void Thread::on_thread_done()
 {
-	m_recordFinished = m_recordTotal;
 	if( m_active )
 		SetStatus("Connected");
 	else

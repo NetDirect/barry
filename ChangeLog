@@ -5,6 +5,9 @@ Release: version 0.16 - 2009/09/??
 	- added barry logo to barrybackup-gui Debian and RPM packages
 	- applied new barry logo and icon from Martin Owens
 	- gui: use short barry URL in About box
+	- gui: fixed bug where actual finished records were overwritten
+		with the starting total... don't overwrite the actual
+		with the estimated
 2009/09/29
 	- os4x plugin: updated for the pkgconfig libopensync -> libopensync1
 		rename
