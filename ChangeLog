@@ -10,6 +10,9 @@ Release: version 0.16 - 2009/09/??
 		with the estimated
 	- gui: added thread state, to determine what operation finished
 		Also improved status message, specifying exact operation
+	- gui: added code to check that actual # of backed up records
+		matches the total number reported by the device, and
+		display a warning to the user if they don't match
 2009/09/29
 	- os4x plugin: updated for the pkgconfig libopensync -> libopensync1
 		rename
