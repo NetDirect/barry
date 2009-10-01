@@ -1,8 +1,8 @@
-barry (0.16-0) unstable; urgency=low
+barry (0.17-0) unstable; urgency=low
 
   * version bump
 
- -- Chris Frey <cdfrey@foursquare.net>  Sat, 29 Aug 2009 03:20:16 -0400
+ -- Chris Frey <cdfrey@foursquare.net>  Thu, 01 Oct 2009 03:20:17 -0400
 
 barry (0.13-1.2) unstable; urgency=low
 

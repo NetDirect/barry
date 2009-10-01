@@ -1,3 +1,17 @@
+Release: version 0.17 - 2009/11/??
+------------------------------------------------------------------------------
+2009/10/01
+	- version bump:
+		- configure.ac
+		- src/Makefile.am
+		- src/version.cc
+		- gui/src/BackupWindow.cc
+		- Doxyfile
+		- rpm/barry.spec
+		- debian/changelog
+		- opensync-plugin/src/barry_sync.cc
+		- opensync-plugin-0.4x/src/barry_sync.cc
+
 Release: version 0.16 - 2009/10/01
 ------------------------------------------------------------------------------
 2009/09/30

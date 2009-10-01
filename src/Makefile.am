@@ -23,7 +23,7 @@
 # two digit version number, and leave age as 0, always.
 #
 # Only ever increment the first 2 numbers in this version:
-LIB_BARRY_VERSION = 0:16:0
+LIB_BARRY_VERSION = 0:17:0
 
 # Disable the default -I. -I$(srcdir) -I$(topdir), etc, but $(top_builddir) is
 # needed for config.h
