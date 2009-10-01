@@ -31,7 +31,7 @@ AM_CONDITIONAL([WITH_GCCVISIBILITY], [test "$HAVE_C_GCCVISIBILITY" = "1" -a "$HA
 
 AC_LANG([C++])
 
-PKG_CHECK_MODULES([BARRY], [libbarry-0 libusb])
+PKG_CHECK_MODULES([BARRY], [libbarry-0])
 
 # Carry the special tree build environment variables from parent configure,
 # just in case user is doing a complete tree build with --enable-opensync-plugin

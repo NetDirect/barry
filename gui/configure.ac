@@ -38,7 +38,7 @@ AC_ARG_WITH(libz,
 AC_SUBST(LIBZ_CFLAGS)
 AC_SUBST(LIBZ_LIBS)
 
-PKG_CHECK_MODULES([BARRY], [libbarry-0 libusb])
+PKG_CHECK_MODULES([BARRY], [libbarry-0])
 PKG_CHECK_MODULES([GTKMM], [gtkmm-2.4 libglademm-2.4 gthread-2.0])
 
 # Carry the special tree build environment variables from parent configure,

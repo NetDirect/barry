@@ -1,6 +1,7 @@
 Release: version 0.17 - 2009/11/??
 ------------------------------------------------------------------------------
 2009/10/01
+	- removed redundant library dependencies from autoconf build
 	- version bump:
 		- configure.ac
 		- src/Makefile.am
