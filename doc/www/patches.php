@@ -23,6 +23,37 @@ for submission:
 		or send as an attachment</li>
 	<li>add a [PATCH] prefix to your subject line</li>
 </ul>
+</p>
+
+
+<? createSubHeader("Why Submit Patches?"); ?>
+
+<p>Submitting your changes via patch is a good thing.  It may seem like
+an extra bit of work to create a patch and post it to the mailing list,
+or to make your work available in a public git repo, but there are good
+reasons why Open Source works that way:</p>
+
+<ul>
+	<li>Patches tell the maintainer that you <b>want</b> your change
+		to be added to the tree.  It is often too easy for busy
+		programmers to misunderstand someone's intentions if
+		they just send a random file.  If intentions are not
+		clear, work gets dropped on the floor.</li>
+	<li>Patches show that you have worked with the source code,
+		and hopefully have tested your change.</li>
+	<li>Patches show that you have given some thought to where
+		your changes should go in the tree.</li>
+	<li>Patches to a public mailing list encourage peer review, and show
+		that you are ok with your code being included in a public
+		project.</li>
+	<li>Patches to a public mailing list or a public repository become
+		part of history, showing who did what, and when.</li>
+	<li>Patches usually get top priority from developers.</li>
+	<li>Patches make life easier for the developers, freeing up their
+		time for more features and bug fixes.</li>
+	<li>Patches turn you into a developer.  Your name can be added
+		to the AUTHORS file.</li>
+</ul>
 
 
 <? createSubHeader("Generating Patches"); ?>
@@ -76,7 +107,8 @@ for submission:
 	<a href="http://sourceforge.net/mail/?group_id=153722">mailing list</a>.
 	</li>
 
-	<li>Publish your own git repository (perhaps on
+	<li>Publish your own git repository (perhaps by creating a
+		forked tree on
 		<a href="http://repo.or.cz/">repo.or.cz</a>)
 		and notify the mailing list, indicating the
 		branch you want people to pull from when
@@ -87,6 +119,20 @@ for submission:
 		send a notification to the mailing list.</li>
 </ul>
 </p>
+
+
+<? createSubHeader("Creating a Forked Tree on repo.or.cz"); ?>
+
+<p>The git repo site repo.or.cz lets anyone create a forked tree based
+off the official Barry repo.  This saves space on repo.or.cz, and
+adds your fork to a list at the bottom of the official Barry page.</p>
+
+<p>This way, users and developers can look at everyone's changes and
+test and mix them as needed.</p>
+
+<p>To create a forked tree, visit the <a href="http://repo.or.cz/w/barry.git">
+Barry repo</a> and click "fork" at the top.</p>
+
 
 
 <? createSubHeader("Using the Mob Branch"); ?>
