@@ -5,7 +5,7 @@
       <DisplayName>PIN number</DisplayName>
       <Name>PinCode</Name>
       <Type>string</Type>
-      <Value></Value>
+      <Value>3009efe3</Value>
     </AdvancedOption>
     <AdvancedOption>
       <DisplayName>Debug mode</DisplayName>
