@@ -1,6 +1,6 @@
 ///
-/// \file	main.cc
-///		Program entry point for the desktop gui
+/// \file	ostest.cc
+///		Test application for the OpenSync API
 ///
 
 /*

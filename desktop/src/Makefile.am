@@ -7,27 +7,31 @@ AM_CXXFLAGS = -ansi -Wall -g
 AM_CPPFLAGS =
 AM_LDFLAGS =
 
-bin_PROGRAMS = barrydesktop
+bin_PROGRAMS = barrydesktop ostest
 
 barrydesktop_SOURCES = \
+	barrydesktop.cc
+barrydesktop_LDADD = -ldl
+
+ostest_SOURCES = \
 	error.cc error.h \
 	dlopen.cc dlopen.h \
 	osbase.cc osbase.h \
 	os22.h \
 	os40.h \
-	main.cc
+	ostest.cc
 if WITH_OPENSYNC22
-barrydesktop_SOURCES += os22.cc
+ostest_SOURCES += os22.cc
 else
-barrydesktop_SOURCES += null-os22.cc
+ostest_SOURCES += null-os22.cc
 endif
 if WITH_OPENSYNC40
-barrydesktop_SOURCES += os40.cc
+ostest_SOURCES += os40.cc
 else
-barrydesktop_SOURCES += null-os40.cc
+ostest_SOURCES += null-os40.cc
 endif
-#barrydesktop_LDFLAGS = -avoid-version
-barrydesktop_LDADD = -ldl
+#ostest_LDFLAGS = -avoid-version
+ostest_LDADD = -ldl
 
 noinst_HEADERS =
 
