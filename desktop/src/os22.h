@@ -25,9 +25,11 @@
 #include "dlopen.h"
 #include "osbase.h"
 
+namespace OpenSync {
+
 class OpenSync22Private;
 
-class OpenSync22 : public DlOpen, public OpenSyncAPI
+class OpenSync22 : public DlOpen, public OpenSync::API
 {
 	static bool symbols_loaded;
 
@@ -49,6 +51,8 @@ public:
 	void GetMembers(const std::string &group_name,
 		member_list_type &members);
 };
+
+} // namespace OpenSync
 
 #endif
 

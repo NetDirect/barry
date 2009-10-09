@@ -27,6 +27,8 @@
 #include <string>
 #include <iosfwd>
 
+namespace OpenSync {
+
 struct GroupMember
 {
 	long id;
@@ -41,16 +43,17 @@ std::ostream& operator<< (std::ostream &os, const string_list_type &list);
 std::ostream& operator<< (std::ostream &os, const GroupMember &member);
 std::ostream& operator<< (std::ostream &os, const member_list_type &list);
 
-class OpenSyncAPI
+
+class API
 {
 public:
 
 public:
-	OpenSyncAPI()
+	API()
 	{
 	}
 
-	virtual ~OpenSyncAPI()
+	virtual ~API()
 	{
 	}
 
@@ -61,22 +64,24 @@ public:
 		member_list_type &members) = 0;
 };
 
-class OpenSyncAPISet : private std::vector<OpenSyncAPI*>
+class APISet : private std::vector<API*>
 {
-	typedef std::vector<OpenSyncAPI*>	base_type;
+	typedef std::vector<API*>		base_type;
 
 public:
-	OpenSyncAPISet();
-	~OpenSyncAPISet();
+	APISet();
+	~APISet();
 
 	void OpenAll();		// throws if not all can be opened
 	int OpenAvailable();	// opens only what is available and
 				// returns # of APIs successfully loaded.
 				// throws if some already loaded
 
-	OpenSyncAPI* os40();
-	OpenSyncAPI* os22();
+	API* os40();
+	API* os22();
 };
+
+} // namespace OpenSync
 
 #endif
 

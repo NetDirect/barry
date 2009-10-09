@@ -26,9 +26,11 @@
 #include "osbase.h"
 #include <memory>
 
+namespace OpenSync {
+
 class OpenSync40Private;
 
-class OpenSync40 : public DlOpen, public OpenSyncAPI
+class OpenSync40 : public DlOpen, public OpenSync::API
 {
 public:
 
@@ -50,6 +52,8 @@ public:
 	void GetMembers(const std::string &group_name,
 		member_list_type &members);
 };
+
+} // namespace OpenSync
 
 #endif
 

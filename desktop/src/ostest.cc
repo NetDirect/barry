@@ -27,8 +27,9 @@
 #include "os40.h"
 
 using namespace std;
+using namespace OpenSync;
 
-void Test(OpenSyncAPI &os)
+void Test(API &os)
 {
 	cout << "=======================================================\n";
 	cout << " Begin test run\n";
@@ -57,7 +58,7 @@ int main()
 	Barry::Init(true);
 
 	try {
-		OpenSyncAPISet set;
+		APISet set;
 		set.OpenAvailable();
 
 		if( set.os40() ) {

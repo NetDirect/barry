@@ -28,6 +28,8 @@
 
 using namespace std;
 
+namespace OpenSync {
+
 std::ostream& operator<< (std::ostream &os, const string_list_type &list)
 {
 	string_list_type::const_iterator b = list.begin(), e = list.end();
@@ -62,11 +64,11 @@ std::ostream& operator<< (std::ostream &os, const member_list_type &list)
 /////////////////////////////////////////////////////////////////////////////
 // OpenSyncAPISet public members
 
-OpenSyncAPISet::OpenSyncAPISet()
+APISet::APISet()
 {
 }
 
-OpenSyncAPISet::~OpenSyncAPISet()
+APISet::~APISet()
 {
 	iterator b = begin(), e = end();
 	for( ; b != e; ++b ) {
@@ -77,19 +79,19 @@ OpenSyncAPISet::~OpenSyncAPISet()
 }
 
 // throws if not all can be opened
-void OpenSyncAPISet::OpenAll()
+void APISet::OpenAll()
 {
 	push_back( new OpenSync40 );
 	push_back( new OpenSync22 );
 }
 
 // does not throw
-int OpenSyncAPISet::OpenAvailable()
+int APISet::OpenAvailable()
 {
 	int loaded = 0;
 
 	try {
-		OpenSyncAPI *p = new OpenSync40;
+		API *p = new OpenSync40;
 		push_back(p);
 		loaded++;
 	}
@@ -99,7 +101,7 @@ int OpenSyncAPISet::OpenAvailable()
 	}
 
 	try {
-		OpenSyncAPI *p = new OpenSync22;
+		API *p = new OpenSync22;
 		push_back(p);
 		loaded++;
 	}
@@ -111,13 +113,15 @@ int OpenSyncAPISet::OpenAvailable()
 	return loaded;
 }
 
-OpenSyncAPI* OpenSyncAPISet::os40()
+API* APISet::os40()
 {
 	return (*this)[0];
 }
 
-OpenSyncAPI* OpenSyncAPISet::os22()
+API* APISet::os22()
 {
 	return (*this)[1];
 }
+
+} // namespace OpenSync
 

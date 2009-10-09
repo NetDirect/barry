@@ -41,6 +41,8 @@
 using namespace std;
 using namespace Barry;
 
+namespace OpenSync {
+
 class TossError
 {
 	OSyncError *m_error;
@@ -310,6 +312,7 @@ void TossError::Clear()
 	}
 }
 
+} // namespace OpenSync
 
 /////////////////////////////////////////////////////////////////////////////
 // osynctool source

@@ -31,6 +31,8 @@
 
 using namespace std;
 
+namespace OpenSync {
+
 class OpenSync22Private
 {
 public:
@@ -216,6 +218,8 @@ void OpenSync22::GetMembers(const std::string &group_name,
 		members.push_back(new_member);
 	}
 }
+
+} // namespace OpenSync
 
 
 /////////////////////////////////////////////////////////////////////////////
