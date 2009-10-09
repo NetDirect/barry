@@ -30,19 +30,26 @@ using namespace std;
 
 void Test(OpenSyncAPI &os)
 {
-	string_list_type list;
-
 	cout << "=======================================================\n";
 	cout << " Begin test run\n";
 	cout << "=======================================================\n";
 
 	cout << os.GetVersion() << endl;
 
-	os.GetPluginNames(list);
-	cout << "Plugins:\n" << list << endl;
+	string_list_type slist;
+	os.GetPluginNames(slist);
+	cout << "Plugins:\n" << slist << endl;
 
-	os.GetGroupNames(list);
-	cout << "Groups:\n" << list << endl;
+	os.GetGroupNames(slist);
+	cout << "Groups:\n" << slist << endl;
+
+	for( string_list_type::iterator b = slist.begin(); b != slist.end(); ++ b) {
+		member_list_type mlist;
+		os.GetMembers(*b, mlist);
+		cout << "Members for group: " << *b << endl;
+		cout << "---------------------------------------\n";
+		cout << mlist << endl;
+	}
 }
 
 int main()

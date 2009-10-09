@@ -47,6 +47,8 @@ public:
 	const char* GetVersion() const;
 	void GetPluginNames(string_list_type &plugins);
 	void GetGroupNames(string_list_type &groups);
+	void GetMembers(const std::string &group_name,
+		member_list_type &members);
 };
 
 #endif

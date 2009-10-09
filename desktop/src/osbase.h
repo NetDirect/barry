@@ -27,12 +27,24 @@
 #include <string>
 #include <iosfwd>
 
+struct GroupMember
+{
+	long id;
+	std::string friendly_name;	// may not always have a name
+	std::string plugin_name;
+};
+
 typedef std::vector<std::string>		string_list_type;
+typedef std::vector<GroupMember>		member_list_type;
 
 std::ostream& operator<< (std::ostream &os, const string_list_type &list);
+std::ostream& operator<< (std::ostream &os, const GroupMember &member);
+std::ostream& operator<< (std::ostream &os, const member_list_type &list);
 
 class OpenSyncAPI
 {
+public:
+
 public:
 	OpenSyncAPI()
 	{
@@ -45,6 +57,8 @@ public:
 	virtual const char* GetVersion() const = 0;
 	virtual void GetPluginNames(string_list_type &plugins) = 0;
 	virtual void GetGroupNames(string_list_type &groups) = 0;
+	virtual void GetMembers(const std::string &group_name,
+		member_list_type &members) = 0;
 };
 
 class OpenSyncAPISet : private std::vector<OpenSyncAPI*>

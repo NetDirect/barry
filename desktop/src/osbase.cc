@@ -23,6 +23,7 @@
 #include "os22.h"
 #include "os40.h"
 #include <iostream>
+#include <iomanip>
 #include <barry/barry.h>
 
 using namespace std;
@@ -30,6 +31,27 @@ using namespace std;
 std::ostream& operator<< (std::ostream &os, const string_list_type &list)
 {
 	string_list_type::const_iterator b = list.begin(), e = list.end();
+	for( ; b != e; ++b ) {
+		os << *b << endl;
+	}
+	return os;
+}
+
+std::ostream& operator<< (std::ostream &os, const GroupMember &member)
+{
+	os << "Member ID: 0x" << hex << member.id
+	   << "\n   Plugin Name: " << member.plugin_name;
+	os << "\n   Friendly Name: ";
+	if( member.friendly_name.size() )
+		os << member.friendly_name;
+	else
+		os << "<not set>";
+	return os;
+}
+
+std::ostream& operator<< (std::ostream &os, const member_list_type &list)
+{
+	member_list_type::const_iterator b = list.begin(), e = list.end();
 	for( ; b != e; ++b ) {
 		os << *b << endl;
 	}

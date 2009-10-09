@@ -28,6 +28,7 @@
 #include "os22.h"
 #include <barry/vsmartptr.h>
 #include <iostream>
+#include <sstream>
 
 #include <../libopensync1/opensync/opensync.h>
 #include <../libopensync1/opensync/opensync-group.h>
@@ -98,6 +99,13 @@ public:
 	OSyncList*		(*osync_group_env_get_groups)(
 					OSyncGroupEnv *env);
 	const char*		(*osync_group_get_name)(OSyncGroup *group);
+	OSyncGroup*		(*osync_group_env_find_group)(
+					OSyncGroupEnv *env, const char *name);
+	OSyncList*		(*osync_group_get_members)(OSyncGroup *group);
+	const char*		(*osync_member_get_name)(OSyncMember *member);
+	long long int		(*osync_member_get_id)(OSyncMember *member);
+	const char*		(*osync_member_get_pluginname)(
+					OSyncMember *member);
 
 	// data pointers
 	vLateSmartPtr<OSyncGroupEnv, void(*)(OSyncGroupEnv*)> group_env;
@@ -154,6 +162,11 @@ OpenSync40::OpenSync40()
 	LoadSym(p->osync_format_env_load_plugins, "osync_format_env_load_plugins");
 	LoadSym(p->osync_group_env_get_groups, "osync_group_env_get_groups");
 	LoadSym(p->osync_group_get_name, "osync_group_get_name");
+	LoadSym(p->osync_group_env_find_group, "osync_group_env_find_group");
+	LoadSym(p->osync_group_get_members, "osync_group_get_members");
+	LoadSym(p->osync_member_get_name, "osync_member_get_name");
+	LoadSym(p->osync_member_get_id, "osync_member_get_id");
+	LoadSym(p->osync_member_get_pluginname, "osync_member_get_pluginname");
 
 	// fixup free pointers
 	p->group_env.SetFreeFunc(p->osync_group_env_unref);
@@ -231,6 +244,47 @@ void OpenSync40::GetGroupNames(string_list_type &groups)
 	}
 
 	m_priv->osync_list_free(group_list);
+}
+
+void OpenSync40::GetMembers(const std::string &group_name,
+			member_list_type &members)
+{
+	// start fresh
+	members.clear();
+
+	OSyncGroup *group = m_priv->osync_group_env_find_group(m_priv->group_env.get(), group_name.c_str());
+	if( !group ) {
+		ostringstream oss;
+		oss << "GetMembers: Unable to find group with name: " << group_name;
+		throw std::runtime_error(oss.str());
+	}
+
+	OSyncList *member_list = m_priv->osync_group_get_members(group);
+	for( OSyncList *m = member_list; m; m = m->next ) {
+		GroupMember new_member;
+		OSyncMember *member = (OSyncMember *) m->data;
+		const char *membername = m_priv->osync_member_get_name(member);
+		if (membername) {
+			new_member.friendly_name = membername;
+		}
+
+		new_member.id = m_priv->osync_member_get_id(member);
+		new_member.plugin_name = m_priv->osync_member_get_pluginname(member);
+
+		// we are switching opensync's long long int ID to
+		// our long... to double check they are equal after
+		// the conversion
+		if( new_member.id != m_priv->osync_member_get_id(member) ) {
+			m_priv->osync_list_free(member_list);
+			throw std::logic_error("OpenSync's member ID is too large to fit in OpenSyncAPI (40)");
+		}
+
+		// add to member list
+		members.push_back(new_member);
+	}
+
+	// cleanup
+	m_priv->osync_list_free(member_list);
 }
 
 
