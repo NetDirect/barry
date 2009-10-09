@@ -108,6 +108,12 @@ public:
 	long long int		(*osync_member_get_id)(OSyncMember *member);
 	const char*		(*osync_member_get_pluginname)(
 					OSyncMember *member);
+	OSyncList*		(*osync_format_env_get_objformats)(
+					OSyncFormatEnv *env);
+	const char*		(*osync_objformat_get_name)(
+					OSyncObjFormat *format);
+	const char*		(*osync_objformat_get_objtype)(
+					OSyncObjFormat *format);
 
 	// data pointers
 	vLateSmartPtr<OSyncGroupEnv, void(*)(OSyncGroupEnv*)> group_env;
@@ -169,6 +175,9 @@ OpenSync40::OpenSync40()
 	LoadSym(p->osync_member_get_name, "osync_member_get_name");
 	LoadSym(p->osync_member_get_id, "osync_member_get_id");
 	LoadSym(p->osync_member_get_pluginname, "osync_member_get_pluginname");
+	LoadSym(p->osync_format_env_get_objformats, "osync_format_env_get_objformats");
+	LoadSym(p->osync_objformat_get_name, "osync_objformat_get_name");
+	LoadSym(p->osync_objformat_get_objtype, "osync_objformat_get_objtype");
 
 	// fixup free pointers
 	p->group_env.SetFreeFunc(p->osync_group_env_unref);
@@ -287,6 +296,26 @@ void OpenSync40::GetMembers(const std::string &group_name,
 
 	// cleanup
 	m_priv->osync_list_free(member_list);
+}
+
+void OpenSync40::GetFormats(format_list_type &formats)
+{
+	// start fresh
+	formats.clear();
+
+	OSyncList *o, *list = m_priv->osync_format_env_get_objformats(m_priv->format_env.get());
+
+	for( o = list; o; o = o->next ) {
+		OSyncObjFormat *format = (OSyncObjFormat *) o->data;
+
+		Format new_format;
+		new_format.name = m_priv->osync_objformat_get_name(format);
+		new_format.object_type = m_priv->osync_objformat_get_objtype(format);
+
+		formats.push_back(new_format);
+	}
+
+	m_priv->osync_list_free(list);
 }
 
 

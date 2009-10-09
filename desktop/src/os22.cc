@@ -62,6 +62,18 @@ public:
 	long long int		(*osync_member_get_id)(OSyncMember *member);
 	const char*		(*osync_member_get_pluginname)(
 					OSyncMember *member);
+	OSyncFormatEnv*		(*osync_conv_env_new)(OSyncEnv *env);
+	void			(*osync_conv_env_free)(OSyncFormatEnv *env);
+	int			(*osync_conv_num_objtypes)(OSyncFormatEnv *env);
+	OSyncObjType*		(*osync_conv_nth_objtype)(OSyncFormatEnv *env,
+					int nth);
+	int			(*osync_conv_num_objformats)(
+					OSyncObjType *type);
+	OSyncObjFormat*		(*osync_conv_nth_objformat)(OSyncObjType *type,
+					int nth);
+	const char*		(*osync_objformat_get_name)(
+					OSyncObjFormat *format);
+	const char*		(*osync_objtype_get_name)(OSyncObjType *type);
 
 	// data pointers
 	OSyncEnv *env;
@@ -110,6 +122,14 @@ OpenSync22::OpenSync22()
 	LoadSym(p->osync_group_nth_member, "osync_group_nth_member");
 	LoadSym(p->osync_member_get_id, "osync_member_get_id");
 	LoadSym(p->osync_member_get_pluginname, "osync_member_get_pluginname");
+	LoadSym(p->osync_conv_env_new, "osync_conv_env_new");
+	LoadSym(p->osync_conv_env_free, "osync_conv_env_free");
+	LoadSym(p->osync_conv_num_objtypes, "osync_conv_num_objtypes");
+	LoadSym(p->osync_conv_nth_objtype, "osync_conv_nth_objtype");
+	LoadSym(p->osync_conv_num_objformats, "osync_conv_num_objformats");
+	LoadSym(p->osync_conv_nth_objformat, "osync_conv_nth_objformat");
+	LoadSym(p->osync_objformat_get_name, "osync_objformat_get_name");
+	LoadSym(p->osync_objtype_get_name, "osync_objtype_get_name");
 
 	// do common initialization of opensync environment
 	SetupEnvironment(p.get());
@@ -217,6 +237,38 @@ void OpenSync22::GetMembers(const std::string &group_name,
 		// add to member list
 		members.push_back(new_member);
 	}
+}
+
+void OpenSync22::GetFormats(format_list_type &formats)
+{
+	// start fresh
+	formats.clear();
+
+	// cycle through all object types and simulate a 0.4x-like
+	// list based on the attached formats
+
+	OSyncFormatEnv *fenv = m_priv->osync_conv_env_new(m_priv->env);
+	if( !fenv ) {
+		throw std::runtime_error("Unable to load format environment in GetFormats (22)");
+	}
+
+	for( int i = 0; i < m_priv->osync_conv_num_objtypes(fenv); i++ ) {
+		OSyncObjType *type = m_priv->osync_conv_nth_objtype(fenv, i);
+
+		for( int i = 0; i < m_priv->osync_conv_num_objformats(type); i++ ) {
+			OSyncObjFormat *format = m_priv->osync_conv_nth_objformat(type, i);
+			const char *objformat_name = m_priv->osync_objformat_get_name(format);
+
+			if( !formats.Find(objformat_name) ) {
+				Format new_format;
+				new_format.name = objformat_name;
+				new_format.object_type = m_priv->osync_objtype_get_name(type);
+				formats.push_back(new_format);
+			}
+		}
+	}
+
+	m_priv->osync_conv_env_free(fenv);
 }
 
 } // namespace OpenSync

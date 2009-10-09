@@ -37,6 +37,10 @@ void Test(API &os)
 
 	cout << os.GetVersion() << endl;
 
+	format_list_type flist;
+	os.GetFormats(flist);
+	cout << "Formats:\n" << flist << endl;
+
 	string_list_type slist;
 	os.GetPluginNames(slist);
 	cout << "Plugins:\n" << slist << endl;

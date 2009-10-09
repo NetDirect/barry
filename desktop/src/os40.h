@@ -51,6 +51,7 @@ public:
 	void GetGroupNames(string_list_type &groups);
 	void GetMembers(const std::string &group_name,
 		member_list_type &members);
+	void GetFormats(format_list_type &formats);
 };
 
 } // namespace OpenSync

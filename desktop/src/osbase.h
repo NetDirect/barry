@@ -36,18 +36,31 @@ struct GroupMember
 	std::string plugin_name;
 };
 
+struct Format
+{
+	std::string name;
+	std::string object_type;
+};
+
+struct FormatSet : public std::vector<Format>
+{
+	Format* Find(const char *name);
+};
+
 typedef std::vector<std::string>		string_list_type;
 typedef std::vector<GroupMember>		member_list_type;
+typedef FormatSet				format_list_type;
 
 std::ostream& operator<< (std::ostream &os, const string_list_type &list);
 std::ostream& operator<< (std::ostream &os, const GroupMember &member);
 std::ostream& operator<< (std::ostream &os, const member_list_type &list);
+std::ostream& operator<< (std::ostream &os, const Format &format);
+std::ostream& operator<< (std::ostream &os, const format_list_type &list);
 
 
 class API
 {
 public:
-
 public:
 	API()
 	{
@@ -62,6 +75,7 @@ public:
 	virtual void GetGroupNames(string_list_type &groups) = 0;
 	virtual void GetMembers(const std::string &group_name,
 		member_list_type &members) = 0;
+	virtual void GetFormats(format_list_type &formats) = 0;
 };
 
 class APISet : private std::vector<API*>

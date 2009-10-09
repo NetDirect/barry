@@ -60,6 +60,35 @@ std::ostream& operator<< (std::ostream &os, const member_list_type &list)
 	return os;
 }
 
+std::ostream& operator<< (std::ostream &os, const Format &format)
+{
+	os << "Format: " << format.name
+	   << " (Object Type: " << format.object_type << ")";
+	return os;
+}
+
+std::ostream& operator<< (std::ostream &os, const format_list_type &list)
+{
+	format_list_type::const_iterator b = list.begin(), e = list.end();
+	for( ; b != e; ++b ) {
+		os << *b << endl;
+	}
+	return os;
+}
+
+
+/////////////////////////////////////////////////////////////////////////////
+// FormatSet public members
+
+Format* FormatSet::Find(const char *name)
+{
+	iterator b = begin(), e = end();
+	for( ; b != e; ++b ) {
+		if( b->name == name )
+			return &(*b);
+	}
+	return 0;
+}
 
 /////////////////////////////////////////////////////////////////////////////
 // OpenSyncAPISet public members
