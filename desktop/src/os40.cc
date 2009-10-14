@@ -241,6 +241,26 @@ void OpenSync40::GetPluginNames(string_list_type &plugins)
 	m_priv->osync_list_free(plugin_list);
 }
 
+void OpenSync40::GetFormats(format_list_type &formats)
+{
+	// start fresh
+	formats.clear();
+
+	OSyncList *o, *list = m_priv->osync_format_env_get_objformats(m_priv->format_env.get());
+
+	for( o = list; o; o = o->next ) {
+		OSyncObjFormat *format = (OSyncObjFormat *) o->data;
+
+		Format new_format;
+		new_format.name = m_priv->osync_objformat_get_name(format);
+		new_format.object_type = m_priv->osync_objformat_get_objtype(format);
+
+		formats.push_back(new_format);
+	}
+
+	m_priv->osync_list_free(list);
+}
+
 void OpenSync40::GetGroupNames(string_list_type &groups)
 {
 	// start fresh
@@ -296,26 +316,6 @@ void OpenSync40::GetMembers(const std::string &group_name,
 
 	// cleanup
 	m_priv->osync_list_free(member_list);
-}
-
-void OpenSync40::GetFormats(format_list_type &formats)
-{
-	// start fresh
-	formats.clear();
-
-	OSyncList *o, *list = m_priv->osync_format_env_get_objformats(m_priv->format_env.get());
-
-	for( o = list; o; o = o->next ) {
-		OSyncObjFormat *format = (OSyncObjFormat *) o->data;
-
-		Format new_format;
-		new_format.name = m_priv->osync_objformat_get_name(format);
-		new_format.object_type = m_priv->osync_objformat_get_objtype(format);
-
-		formats.push_back(new_format);
-	}
-
-	m_priv->osync_list_free(list);
 }
 
 

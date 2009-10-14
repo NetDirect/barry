@@ -45,13 +45,25 @@ public:
 	OpenSync40();
 	~OpenSync40();
 
-	// general tool API (based on command line options from osynctool)
+	//
+	// Virtual API overrides
+	//
+
+	// General engine information
 	const char* GetVersion() const;
 	void GetPluginNames(string_list_type &plugins);
+	void GetFormats(format_list_type &formats);
+
+	// Information about configured groups
 	void GetGroupNames(string_list_type &groups);
 	void GetMembers(const std::string &group_name,
 		member_list_type &members);
-	void GetFormats(format_list_type &formats);
+
+	// Group configuration
+
+	// Member configuration
+
+	// Syncing
 };
 
 } // namespace OpenSync

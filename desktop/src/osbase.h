@@ -70,12 +70,22 @@ public:
 	{
 	}
 
+	// General engine information
 	virtual const char* GetVersion() const = 0;
 	virtual void GetPluginNames(string_list_type &plugins) = 0;
+	virtual void GetFormats(format_list_type &formats) = 0;
+
+	// Information about configured groups
 	virtual void GetGroupNames(string_list_type &groups) = 0;
 	virtual void GetMembers(const std::string &group_name,
 		member_list_type &members) = 0;
-	virtual void GetFormats(format_list_type &formats) = 0;
+
+	// Group configuration
+
+	// Member configuration
+
+	// Syncing
+//	virtual void Sync(const std::string &group_name) = 0;
 };
 
 class APISet : private std::vector<API*>
