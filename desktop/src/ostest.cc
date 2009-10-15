@@ -55,6 +55,39 @@ void Test(API &os)
 		cout << "---------------------------------------\n";
 		cout << mlist << endl;
 	}
+
+
+	const std::string group_name = "ostest_trial_group";
+
+	cout << "Testing with group_name: " << group_name << endl;
+
+	try { os.DeleteGroup(group_name); }
+	catch( std::runtime_error &re ) {
+		cout << "DeleteGroup: " << re.what() << endl;
+	}
+
+	os.AddGroup(group_name);
+	cout << "Added: " << group_name << endl;
+
+	try { os.AddGroup(group_name); }
+	catch( std::runtime_error &re ) {
+		cout << "AddGroup: " << re.what() << endl;
+	}
+
+	os.DeleteGroup(group_name);
+	cout << "Deleted: " << group_name << endl;
+
+	try {
+		os.DeleteGroup(group_name);
+		throw std::logic_error("DeleteGroup() succeeded incorrectly!");
+	}
+	catch( std::runtime_error &re ) {
+		cout << "DeleteGroup failed as expected" << endl;
+	}
+
+	cout << "=======================================================\n";
+	cout << " End test run\n";
+	cout << "=======================================================\n";
 }
 
 int main()
@@ -74,7 +107,7 @@ int main()
 		}
 	}
 	catch( std::exception &e ) {
-		cout << e.what() << endl;
+		cout << "TEST FAILED: " << e.what() << endl;
 	}
 
 	return 0;

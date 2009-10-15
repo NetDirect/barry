@@ -60,6 +60,8 @@ public:
 		member_list_type &members);
 
 	// Group configuration
+	void AddGroup(const std::string &group_name);
+	void DeleteGroup(const std::string &group_name);
 
 	// Member configuration
 

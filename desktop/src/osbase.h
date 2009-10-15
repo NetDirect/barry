@@ -81,6 +81,8 @@ public:
 		member_list_type &members) = 0;
 
 	// Group configuration
+	virtual void AddGroup(const std::string &group_name) = 0;
+	virtual void DeleteGroup(const std::string &group_name) = 0;
 
 	// Member configuration
 

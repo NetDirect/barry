@@ -114,6 +114,19 @@ public:
 					OSyncObjFormat *format);
 	const char*		(*osync_objformat_get_objtype)(
 					OSyncObjFormat *format);
+	OSyncGroup*		(*osync_group_new)(OSyncError **error);
+	void			(*osync_group_unref)(OSyncGroup *group);
+	void			(*osync_group_set_name)(OSyncGroup *group,
+					const char *name);
+	osync_bool		(*osync_group_env_add_group)(OSyncGroupEnv *env,
+					OSyncGroup *group,
+					OSyncError **error);
+	osync_bool		(*osync_group_save)(OSyncGroup *group,
+					OSyncError **error);
+	osync_bool		(*osync_group_delete)(OSyncGroup *group,
+					OSyncError **error);
+	void			(*osync_group_env_remove_group)(
+					OSyncGroupEnv *env, OSyncGroup *group);
 
 	// data pointers
 	vLateSmartPtr<OSyncGroupEnv, void(*)(OSyncGroupEnv*)> group_env;
@@ -178,6 +191,13 @@ OpenSync40::OpenSync40()
 	LoadSym(p->osync_format_env_get_objformats, "osync_format_env_get_objformats");
 	LoadSym(p->osync_objformat_get_name, "osync_objformat_get_name");
 	LoadSym(p->osync_objformat_get_objtype, "osync_objformat_get_objtype");
+	LoadSym(p->osync_group_new, "osync_group_new");
+	LoadSym(p->osync_group_unref, "osync_group_unref");
+	LoadSym(p->osync_group_set_name, "osync_group_set_name");
+	LoadSym(p->osync_group_env_add_group, "osync_group_env_add_group");
+	LoadSym(p->osync_group_save, "osync_group_save");
+	LoadSym(p->osync_group_delete, "osync_group_delete");
+	LoadSym(p->osync_group_env_remove_group,"osync_group_env_remove_group");
 
 	// fixup free pointers
 	p->group_env.SetFreeFunc(p->osync_group_env_unref);
@@ -316,6 +336,38 @@ void OpenSync40::GetMembers(const std::string &group_name,
 
 	// cleanup
 	m_priv->osync_list_free(member_list);
+}
+
+void OpenSync40::AddGroup(const std::string &group_name)
+{
+	OSyncGroup *group = m_priv->osync_group_new(m_priv->error);
+	if( !group )
+		throw std::runtime_error(m_priv->error.GetErrorMsg());
+
+	m_priv->osync_group_set_name(group, group_name.c_str());
+	if( !m_priv->osync_group_env_add_group(m_priv->group_env.get(), group, m_priv->error) ) {
+		m_priv->osync_group_unref(group);
+		throw std::runtime_error(m_priv->error.GetErrorMsg());
+	}
+
+	if( !m_priv->osync_group_save(group, m_priv->error) ) {
+		m_priv->osync_group_unref(group);
+		throw std::runtime_error(m_priv->error.GetErrorMsg());
+	}
+
+	m_priv->osync_group_unref(group);
+}
+
+void OpenSync40::DeleteGroup(const std::string &group_name)
+{
+	OSyncGroup *group = m_priv->osync_group_env_find_group(m_priv->group_env.get(), group_name.c_str());
+	if( !group )
+		throw std::runtime_error("Group not found: " + group_name);
+
+	if( !m_priv->osync_group_delete(group, m_priv->error) )
+		throw std::runtime_error(m_priv->error.GetErrorMsg());
+
+	m_priv->osync_group_env_remove_group(m_priv->group_env.get(), group);
 }
 
 
