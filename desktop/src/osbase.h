@@ -29,16 +29,16 @@
 
 namespace OpenSync {
 
-struct GroupMember
+struct Member
 {
 	long id;
 	std::string friendly_name;	// may not always have a name
 	std::string plugin_name;
 };
 
-struct MemberSet : public std::vector<GroupMember>
+struct MemberSet : public std::vector<Member>
 {
-	GroupMember* Find(const char *plugin_name);
+	Member* Find(const char *plugin_name);
 };
 
 struct Format
@@ -57,7 +57,7 @@ typedef MemberSet				member_list_type;
 typedef FormatSet				format_list_type;
 
 std::ostream& operator<< (std::ostream &os, const string_list_type &list);
-std::ostream& operator<< (std::ostream &os, const GroupMember &member);
+std::ostream& operator<< (std::ostream &os, const Member &member);
 std::ostream& operator<< (std::ostream &os, const member_list_type &list);
 std::ostream& operator<< (std::ostream &os, const Format &format);
 std::ostream& operator<< (std::ostream &os, const format_list_type &list);

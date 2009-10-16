@@ -341,7 +341,7 @@ void OpenSync40::GetMembers(const std::string &group_name,
 
 	OSyncList *member_list = m_priv->osync_group_get_members(group);
 	for( OSyncList *m = member_list; m; m = m->next ) {
-		GroupMember new_member;
+		Member new_member;
 		OSyncMember *member = (OSyncMember *) m->data;
 		const char *membername = m_priv->osync_member_get_name(member);
 		if (membername) {
@@ -450,7 +450,7 @@ void OpenSync40::DeleteMember(const std::string &group_name,
 {
 	member_list_type mlist;
 	GetMembers(group_name, mlist);
-	GroupMember *member = mlist.Find(plugin_name.c_str());
+	Member *member = mlist.Find(plugin_name.c_str());
 	if( !member )
 		throw std::runtime_error("Member not found: " + plugin_name);
 

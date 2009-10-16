@@ -275,7 +275,7 @@ void OpenSync22::GetMembers(const std::string &group_name,
 	for( int i = 0; i < m_priv->osync_group_num_members(group); i++ ) {
 		OSyncMember *member = m_priv->osync_group_nth_member(group, i);
 
-		GroupMember new_member;
+		Member new_member;
 
 		new_member.id = m_priv->osync_member_get_id(member);
 		new_member.plugin_name = m_priv->osync_member_get_pluginname(member);

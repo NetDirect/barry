@@ -39,7 +39,7 @@ std::ostream& operator<< (std::ostream &os, const string_list_type &list)
 	return os;
 }
 
-std::ostream& operator<< (std::ostream &os, const GroupMember &member)
+std::ostream& operator<< (std::ostream &os, const Member &member)
 {
 	os << "Member ID: 0x" << hex << member.id
 	   << "\n   Plugin Name: " << member.plugin_name;
@@ -80,7 +80,7 @@ std::ostream& operator<< (std::ostream &os, const format_list_type &list)
 /////////////////////////////////////////////////////////////////////////////
 // MemberSet public members
 
-GroupMember* MemberSet::Find(const char *plugin_name)
+Member* MemberSet::Find(const char *plugin_name)
 {
 	iterator b = begin(), e = end();
 	for( ; b != e; ++b ) {
