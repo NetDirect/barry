@@ -56,24 +56,62 @@ void Test(API &os)
 		cout << mlist << endl;
 	}
 
+	//
+	// Test Group / Members
+	//
 
 	const std::string group_name = "ostest_trial_group";
 
 	cout << "Testing with group_name: " << group_name << endl;
 
+	// start fresh
 	try { os.DeleteGroup(group_name); }
 	catch( std::runtime_error &re ) {
 		cout << "DeleteGroup: " << re.what() << endl;
 	}
 
+	// add group twice, to confirm behaviour
 	os.AddGroup(group_name);
 	cout << "Added: " << group_name << endl;
 
-	try { os.AddGroup(group_name); }
+	try {
+		os.AddGroup(group_name);
+		throw std::logic_error("AddGroup() succeeded incorrectly!");
+	}
 	catch( std::runtime_error &re ) {
 		cout << "AddGroup: " << re.what() << endl;
 	}
 
+	if( OpenSync40 *os40 = dynamic_cast<OpenSync40*>(&os) ) {
+		try { os40->DeleteMember(group_name, 1); }
+		catch( std::runtime_error &re ) {
+			cout << "DeleteMember: " << re.what() << endl;
+		}
+	}
+
+	// add member twice, to confirm behaviour
+	os.AddMember(group_name, "barry-sync", "Barry sync member");
+	os.AddMember(group_name, "evo2-sync", "Evolution sync member");
+	os.AddMember(group_name, "file-sync", "File sync member");
+
+	if( OpenSync40 *os40 = dynamic_cast<OpenSync40*>(&os) ) {
+		os40->DeleteMember(group_name, "file-sync");
+		try { os40->DeleteMember(group_name, "file-sync"); }
+		catch( std::runtime_error &re ) {
+			cout << "DeleteMember: " << re.what() << endl;
+		}
+	}
+
+	// Display our test group
+	{
+		member_list_type mlist;
+		os.GetMembers(group_name, mlist);
+		cout << "Members for group: " << group_name << endl;
+		cout << "---------------------------------------\n";
+		cout << mlist << endl;
+	}
+
+	// delete group twice, to confirm behaviour
 	os.DeleteGroup(group_name);
 	cout << "Deleted: " << group_name << endl;
 

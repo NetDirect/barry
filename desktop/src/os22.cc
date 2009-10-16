@@ -81,6 +81,13 @@ public:
 					OSyncError **error);
 	osync_bool		(*osync_group_delete)(OSyncGroup *group,
 					OSyncError **error);
+	OSyncMember*		(*osync_member_new)(OSyncGroup *group);
+	osync_bool		(*osync_member_instance_plugin)(
+					OSyncMember *member,
+					const char *pluginname,
+					OSyncError **error);
+	osync_bool		(*osync_member_save)(OSyncMember *member,
+					OSyncError **error);
 
 	// data pointers
 	OSyncEnv *env;
@@ -141,6 +148,9 @@ OpenSync22::OpenSync22()
 	LoadSym(p->osync_group_set_name, "osync_group_set_name");
 	LoadSym(p->osync_group_save, "osync_group_save");
 	LoadSym(p->osync_group_delete, "osync_group_delete");
+	LoadSym(p->osync_member_new, "osync_member_new");
+	LoadSym(p->osync_member_instance_plugin,"osync_member_instance_plugin");
+	LoadSym(p->osync_member_save, "osync_member_save");
 
 	// do common initialization of opensync environment
 	SetupEnvironment(p.get());
@@ -284,11 +294,10 @@ void OpenSync22::GetMembers(const std::string &group_name,
 
 void OpenSync22::AddGroup(const std::string &group_name)
 {
-	OSyncGroup *group = m_priv->osync_env_find_group(m_priv->env, group_name.c_str());
-	if( group )
+	if( m_priv->osync_env_find_group(m_priv->env, group_name.c_str()) )
 		throw std::runtime_error("Group already exists: " + group_name);
 
-	group = m_priv->osync_group_new(m_priv->env);
+	OSyncGroup *group = m_priv->osync_group_new(m_priv->env);
 	m_priv->osync_group_set_name(group, group_name.c_str());
 
 	OSyncError *error = NULL;
@@ -312,6 +321,30 @@ void OpenSync22::DeleteGroup(const std::string &group_name)
 	OSyncError *error = NULL;
 	if( !m_priv->osync_group_delete(group, &error) ) {
 		std::runtime_error err(string("Unable to delete group: ") + m_priv->osync_error_print(&error));
+		m_priv->osync_error_free(&error);
+		throw err;
+	}
+}
+
+void OpenSync22::AddMember(const std::string &group_name,
+			const std::string &plugin_name,
+			const std::string &member_name)
+{
+	OSyncGroup *group = m_priv->osync_env_find_group(m_priv->env, group_name.c_str());
+	if( !group )
+		throw std::runtime_error("Group not found: " + group_name);
+
+	OSyncMember *member = m_priv->osync_member_new(group);
+
+	OSyncError *error = NULL;
+	if( !m_priv->osync_member_instance_plugin(member, plugin_name.c_str(), &error) ) {
+		std::runtime_error err(string("Unable to connect plugin with member: ") + m_priv->osync_error_print(&error));
+		m_priv->osync_error_free(&error);
+		throw err;
+	}
+
+	if( !m_priv->osync_member_save(member, &error) ) {
+		std::runtime_error err(string("Unable to save member: ") + m_priv->osync_error_print(&error));
 		m_priv->osync_error_free(&error);
 		throw err;
 	}

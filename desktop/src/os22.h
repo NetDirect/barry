@@ -63,6 +63,10 @@ public:
 	void DeleteGroup(const std::string &group_name);
 
 	// Member configuration
+	void AddMember(const std::string &group_name,
+		const std::string &plugin_name,
+		const std::string &member_name);
+	// DeleteMember() not possible to implement in 0.22
 
 	// Syncing
 };

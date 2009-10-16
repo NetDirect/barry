@@ -127,6 +127,25 @@ public:
 					OSyncError **error);
 	void			(*osync_group_env_remove_group)(
 					OSyncGroupEnv *env, OSyncGroup *group);
+	OSyncPlugin*		(*osync_plugin_env_find_plugin)(
+					OSyncPluginEnv *env, const char *name);
+	void			(*osync_member_unref)(OSyncMember *member);
+	OSyncMember*		(*osync_member_new)(OSyncError **error);
+	void			(*osync_group_add_member)(OSyncGroup *group,
+					OSyncMember *member);
+	void			(*osync_member_set_pluginname)(
+					OSyncMember *member,
+					const char *pluginname);
+	void			(*osync_member_set_name)(OSyncMember *member,
+					const char *name);
+	osync_bool		(*osync_member_save)(OSyncMember *member,
+					OSyncError **error);
+	OSyncMember*		(*osync_group_find_member)(OSyncGroup *group,
+					long long int id);
+	osync_bool		(*osync_member_delete)(OSyncMember *member,
+					OSyncError **error);
+	void			(*osync_group_remove_member)(OSyncGroup *group,
+					OSyncMember *member);
 
 	// data pointers
 	vLateSmartPtr<OSyncGroupEnv, void(*)(OSyncGroupEnv*)> group_env;
@@ -198,6 +217,16 @@ OpenSync40::OpenSync40()
 	LoadSym(p->osync_group_save, "osync_group_save");
 	LoadSym(p->osync_group_delete, "osync_group_delete");
 	LoadSym(p->osync_group_env_remove_group,"osync_group_env_remove_group");
+	LoadSym(p->osync_plugin_env_find_plugin,"osync_plugin_env_find_plugin");
+	LoadSym(p->osync_member_unref, "osync_member_unref");
+	LoadSym(p->osync_member_new, "osync_member_new");
+	LoadSym(p->osync_group_add_member, "osync_group_add_member");
+	LoadSym(p->osync_member_set_pluginname, "osync_member_set_pluginname");
+	LoadSym(p->osync_member_set_name, "osync_member_set_name");
+	LoadSym(p->osync_member_save, "osync_member_save");
+	LoadSym(p->osync_group_find_member, "osync_group_find_member");
+	LoadSym(p->osync_member_delete, "osync_member_delete");
+	LoadSym(p->osync_group_remove_member, "osync_group_remove_member");
 
 	// fixup free pointers
 	p->group_env.SetFreeFunc(p->osync_group_env_unref);
@@ -368,6 +397,64 @@ void OpenSync40::DeleteGroup(const std::string &group_name)
 		throw std::runtime_error(m_priv->error.GetErrorMsg());
 
 	m_priv->osync_group_env_remove_group(m_priv->group_env.get(), group);
+}
+
+void OpenSync40::AddMember(const std::string &group_name,
+			const std::string &plugin_name,
+			const std::string &member_name)
+{
+	OSyncGroup *group = m_priv->osync_group_env_find_group(m_priv->group_env.get(), group_name.c_str());
+	if( !group )
+		throw std::runtime_error("Group not found: " + group_name);
+
+	OSyncPlugin *plugin = m_priv->osync_plugin_env_find_plugin(m_priv->plugin_env.get(), plugin_name.c_str());
+	if( !plugin )
+		throw std::runtime_error("Plugin not found: " + plugin_name);
+
+	vLateSmartPtr<OSyncMember, void(*)(OSyncMember*)> mptr(m_priv->osync_member_unref);
+	mptr = m_priv->osync_member_new(m_priv->error);
+	if( !mptr.get() )
+		throw std::runtime_error(m_priv->error.GetErrorMsg());
+
+	m_priv->osync_group_add_member(group, mptr.get());
+	m_priv->osync_member_set_pluginname(mptr.get(), plugin_name.c_str());
+
+	if( member_name.size() )
+		m_priv->osync_member_set_name(mptr.get(), member_name.c_str());
+
+	if( !m_priv->osync_member_save(mptr.get(), m_priv->error) )
+		throw std::runtime_error(m_priv->error.GetErrorMsg());
+}
+
+void OpenSync40::DeleteMember(const std::string &group_name, long member_id)
+{
+	OSyncGroup *group = m_priv->osync_group_env_find_group(m_priv->group_env.get(), group_name.c_str());
+	if( !group )
+		throw std::runtime_error("Group not found: " + group_name);
+
+	OSyncMember *member = m_priv->osync_group_find_member(group, member_id);
+	if( !member ) {
+		ostringstream oss;
+		oss << "Member " << member_id << " not found.";
+		throw std::runtime_error(oss.str());
+	}
+
+	if( !m_priv->osync_member_delete(member, m_priv->error) )
+		throw std::runtime_error(m_priv->error.GetErrorMsg());
+
+	m_priv->osync_group_remove_member(group, member);
+}
+
+void OpenSync40::DeleteMember(const std::string &group_name,
+				const std::string &plugin_name)
+{
+	member_list_type mlist;
+	GetMembers(group_name, mlist);
+	GroupMember *member = mlist.Find(plugin_name.c_str());
+	if( !member )
+		throw std::runtime_error("Member not found: " + plugin_name);
+
+	DeleteMember(group_name, member->id);
 }
 
 

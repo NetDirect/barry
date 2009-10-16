@@ -36,6 +36,11 @@ struct GroupMember
 	std::string plugin_name;
 };
 
+struct MemberSet : public std::vector<GroupMember>
+{
+	GroupMember* Find(const char *plugin_name);
+};
+
 struct Format
 {
 	std::string name;
@@ -48,7 +53,7 @@ struct FormatSet : public std::vector<Format>
 };
 
 typedef std::vector<std::string>		string_list_type;
-typedef std::vector<GroupMember>		member_list_type;
+typedef MemberSet				member_list_type;
 typedef FormatSet				format_list_type;
 
 std::ostream& operator<< (std::ostream &os, const string_list_type &list);
@@ -85,6 +90,9 @@ public:
 	virtual void DeleteGroup(const std::string &group_name) = 0;
 
 	// Member configuration
+	virtual void AddMember(const std::string &group_name,
+		const std::string &plugin_name,
+		const std::string &member_name) = 0;
 
 	// Syncing
 //	virtual void Sync(const std::string &group_name) = 0;

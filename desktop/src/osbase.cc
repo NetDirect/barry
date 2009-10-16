@@ -78,6 +78,19 @@ std::ostream& operator<< (std::ostream &os, const format_list_type &list)
 
 
 /////////////////////////////////////////////////////////////////////////////
+// MemberSet public members
+
+GroupMember* MemberSet::Find(const char *plugin_name)
+{
+	iterator b = begin(), e = end();
+	for( ; b != e; ++b ) {
+		if( b->plugin_name == plugin_name )
+			return &(*b);
+	}
+	return 0;
+}
+
+/////////////////////////////////////////////////////////////////////////////
 // FormatSet public members
 
 Format* FormatSet::Find(const char *name)
