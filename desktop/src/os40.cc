@@ -29,6 +29,9 @@
 #include <barry/vsmartptr.h>
 #include <iostream>
 #include <sstream>
+#include <fstream>
+#include <errno.h>
+#include <glib.h>
 
 #include <../libopensync1/opensync/opensync.h>
 #include <../libopensync1/opensync/opensync-group.h>
@@ -146,6 +149,21 @@ public:
 					OSyncError **error);
 	void			(*osync_group_remove_member)(OSyncGroup *group,
 					OSyncMember *member);
+	OSyncPluginConfig*	(*osync_plugin_config_new)(OSyncError **error);
+	osync_bool		(*osync_plugin_config_file_load)(
+					OSyncPluginConfig *config,
+					const char *path,
+					OSyncError **error);
+	void			(*osync_member_set_config)(OSyncMember *member,
+					OSyncPluginConfig *config);
+	OSyncPluginConfig*	(*osync_member_get_config_or_default)(
+					OSyncMember *member,
+					OSyncError **error);
+	osync_bool		(*osync_plugin_config_file_save)(
+					OSyncPluginConfig *config,
+					const char *path, OSyncError **error);
+	OSyncConfigurationType	(*osync_plugin_get_config_type)(
+					OSyncPlugin *plugin);
 
 	// data pointers
 	vLateSmartPtr<OSyncGroupEnv, void(*)(OSyncGroupEnv*)> group_env;
@@ -199,7 +217,8 @@ OpenSync40::OpenSync40()
 	LoadSym(p->osync_plugin_get_name, "osync_plugin_get_name");
 	LoadSym(p->osync_list_free, "osync_list_free");
 	LoadSym(p->osync_group_env_load_groups, "osync_group_env_load_groups");
-	LoadSym(p->osync_format_env_load_plugins, "osync_format_env_load_plugins");
+	LoadSym(p->osync_format_env_load_plugins,
+					"osync_format_env_load_plugins");
 	LoadSym(p->osync_group_env_get_groups, "osync_group_env_get_groups");
 	LoadSym(p->osync_group_get_name, "osync_group_get_name");
 	LoadSym(p->osync_group_env_find_group, "osync_group_env_find_group");
@@ -207,7 +226,8 @@ OpenSync40::OpenSync40()
 	LoadSym(p->osync_member_get_name, "osync_member_get_name");
 	LoadSym(p->osync_member_get_id, "osync_member_get_id");
 	LoadSym(p->osync_member_get_pluginname, "osync_member_get_pluginname");
-	LoadSym(p->osync_format_env_get_objformats, "osync_format_env_get_objformats");
+	LoadSym(p->osync_format_env_get_objformats,
+					"osync_format_env_get_objformats");
 	LoadSym(p->osync_objformat_get_name, "osync_objformat_get_name");
 	LoadSym(p->osync_objformat_get_objtype, "osync_objformat_get_objtype");
 	LoadSym(p->osync_group_new, "osync_group_new");
@@ -227,6 +247,15 @@ OpenSync40::OpenSync40()
 	LoadSym(p->osync_group_find_member, "osync_group_find_member");
 	LoadSym(p->osync_member_delete, "osync_member_delete");
 	LoadSym(p->osync_group_remove_member, "osync_group_remove_member");
+	LoadSym(p->osync_plugin_config_new, "osync_plugin_config_new");
+	LoadSym(p->osync_plugin_config_file_load,
+					"osync_plugin_config_file_load");
+	LoadSym(p->osync_member_set_config, "osync_member_set_config");
+	LoadSym(p->osync_member_get_config_or_default,
+					"osync_member_get_config_or_default");
+	LoadSym(p->osync_plugin_config_file_save,
+					"osync_plugin_config_file_save");
+	LoadSym(p->osync_plugin_get_config_type,"osync_plugin_get_config_type");
 
 	// fixup free pointers
 	p->group_env.SetFreeFunc(p->osync_group_env_unref);
@@ -455,6 +484,181 @@ void OpenSync40::DeleteMember(const std::string &group_name,
 		throw std::runtime_error("Member not found: " + plugin_name);
 
 	DeleteMember(group_name, member->id);
+}
+
+bool OpenSync40::IsConfigurable(const std::string &group_name,
+				long member_id)
+{
+	OSyncGroup *group = m_priv->osync_group_env_find_group(m_priv->group_env.get(), group_name.c_str());
+	if( !group )
+		throw std::runtime_error("Group not found: " + group_name);
+
+	OSyncMember *member = m_priv->osync_group_find_member(group, member_id);
+	if( !member ) {
+		ostringstream oss;
+		oss << "Member " << member_id << " not found.";
+		throw std::runtime_error(oss.str());
+	}
+
+	OSyncPlugin *plugin = m_priv->osync_plugin_env_find_plugin(m_priv->plugin_env.get(), m_priv->osync_member_get_pluginname(member));
+	if( !plugin )
+		throw std::runtime_error(string("Unable to find plugin with name: ") + m_priv->osync_member_get_pluginname(member));
+
+
+	OSyncConfigurationType type = m_priv->osync_plugin_get_config_type(plugin);
+	return type != OSYNC_PLUGIN_NO_CONFIGURATION;
+}
+
+class TempDir
+{
+	char *m_template;
+	int m_files;
+
+public:
+	TempDir();
+	~TempDir();
+
+	std::string GetDir() const { return m_template; }
+	std::string GetNewFilename();
+};
+
+TempDir::TempDir()
+	: m_template(0)
+	, m_files(0)
+{
+	m_template = g_strdup_printf("%s/opensyncapi-XXXXXX", g_get_tmp_dir());
+	if( mkdtemp(m_template) == NULL ) {
+		g_free(m_template);
+		throw std::runtime_error(std::string("Cannot create temp directory: ") + strerror(errno));
+	}
+}
+
+TempDir::~TempDir()
+{
+	// delete all files
+	for( int i = 0; i < m_files; i++ ) {
+		ostringstream oss;
+		oss << m_template << "/" << i;
+		remove(oss.str().c_str());
+	}
+
+	// delete directory
+	rmdir(m_template);
+
+	// cleanup memory
+	g_free(m_template);
+}
+
+std::string TempDir::GetNewFilename()
+{
+	ostringstream oss;
+	oss << m_template << "/" << m_files;
+	m_files++;
+	return oss.str();
+}
+
+std::string OpenSync40::GetConfiguration(const std::string &group_name,
+					long member_id)
+{
+	if( !IsConfigurable(group_name, member_id) ) {
+		ostringstream oss;
+		oss << "Member " << member_id << " of group '" << group_name << "' does not accept configuration.";
+		throw std::runtime_error(oss.str());
+	}
+
+	OSyncGroup *group = m_priv->osync_group_env_find_group(m_priv->group_env.get(), group_name.c_str());
+	if( !group )
+		throw std::runtime_error("Group not found: " + group_name);
+
+	OSyncMember *member = m_priv->osync_group_find_member(group, member_id);
+	if( !member ) {
+		ostringstream oss;
+		oss << "Member " << member_id << " not found.";
+		throw std::runtime_error(oss.str());
+	}
+
+	OSyncPlugin *plugin = m_priv->osync_plugin_env_find_plugin(m_priv->plugin_env.get(), m_priv->osync_member_get_pluginname(member));
+	if( !plugin )
+		throw std::runtime_error(string("Unable to find plugin with name: ") + m_priv->osync_member_get_pluginname(member));
+
+
+	OSyncPluginConfig *config = m_priv->osync_member_get_config_or_default(member, m_priv->error);
+	if( !config )
+		throw std::runtime_error(m_priv->error.GetErrorMsg());
+
+	// To emulate 0.22 behaviour, we need to use 0.4x save-to-file
+	// functions, and then load that from the file again, and
+	// return that string as the configuratin.
+
+	TempDir tempdir;
+
+	string filename = tempdir.GetNewFilename();
+
+	if( !m_priv->osync_plugin_config_file_save(config, filename.c_str(), m_priv->error) )
+		throw std::runtime_error(m_priv->error.GetErrorMsg());
+
+	ifstream in(filename.c_str());
+	string config_data;
+	char buf[4096];
+	while( in ) {
+		in.read(buf, sizeof(buf));
+		config_data.append(buf, in.gcount());
+	}
+
+	return config_data;
+}
+
+void OpenSync40::SetConfiguration(const std::string &group_name,
+				long member_id,
+				const std::string &config_data)
+{
+	if( !IsConfigurable(group_name, member_id) ) {
+		ostringstream oss;
+		oss << "Member " << member_id << " of group '" << group_name << "' does not accept configuration.";
+		throw std::runtime_error(oss.str());
+	}
+
+	OSyncGroup *group = m_priv->osync_group_env_find_group(m_priv->group_env.get(), group_name.c_str());
+	if( !group )
+		throw std::runtime_error("Group not found: " + group_name);
+
+	OSyncMember *member = m_priv->osync_group_find_member(group, member_id);
+	if( !member ) {
+		ostringstream oss;
+		oss << "Member " << member_id << " not found.";
+		throw std::runtime_error(oss.str());
+	}
+
+	OSyncPlugin *plugin = m_priv->osync_plugin_env_find_plugin(m_priv->plugin_env.get(), m_priv->osync_member_get_pluginname(member));
+	if( !plugin )
+		throw std::runtime_error(string("Unable to find plugin with name: ") + m_priv->osync_member_get_pluginname(member));
+
+
+	// To emulate 0.22 behaviour, we need to use 0.4x save-to-file
+	// functions, and then load that from the file again, and
+	// return that string as the configuratin.
+
+	TempDir tempdir;
+
+	string filename = tempdir.GetNewFilename();
+
+	// write config data to file
+	{
+		ofstream out(filename.c_str());
+		out << config_data;
+	}
+
+	// load brand new config from file
+	// if a new config object isn't created here, the loaded config
+	// will be added to the existing config
+	OSyncPluginConfig *new_config = m_priv->osync_plugin_config_new(m_priv->error);
+	if( !m_priv->osync_plugin_config_file_load(new_config, filename.c_str(), m_priv->error) )
+		throw std::runtime_error(m_priv->error.GetErrorMsg());
+
+	m_priv->osync_member_set_config(member, new_config);
+	
+	if( !m_priv->osync_member_save(member, m_priv->error))
+		throw std::runtime_error(m_priv->error.GetErrorMsg());
 }
 
 

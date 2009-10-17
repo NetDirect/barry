@@ -39,6 +39,7 @@ struct Member
 struct MemberSet : public std::vector<Member>
 {
 	Member* Find(const char *plugin_name);
+	long FindId(const char *plugin_name); // returns -1 if not found
 };
 
 struct Format
@@ -93,6 +94,12 @@ public:
 	virtual void AddMember(const std::string &group_name,
 		const std::string &plugin_name,
 		const std::string &member_name) = 0;
+	virtual bool IsConfigurable(const std::string &group_name,
+		long member_id) = 0;
+	virtual std::string GetConfiguration(const std::string &group_name,
+		long member_id) = 0;
+	virtual void SetConfiguration(const std::string &group_name,
+		long member_id, const std::string &config_data) = 0;
 
 	// Syncing
 //	virtual void Sync(const std::string &group_name) = 0;

@@ -25,6 +25,7 @@
 #include "os22.h"
 #include <barry/barry.h>
 #include <memory>
+#include <glib.h>
 
 #include <../opensync-1.0/opensync/opensync.h>
 #include <../opensync-1.0/osengine/engine.h>
@@ -88,6 +89,17 @@ public:
 					OSyncError **error);
 	osync_bool		(*osync_member_save)(OSyncMember *member,
 					OSyncError **error);
+	OSyncMember*		(*osync_member_from_id)(OSyncGroup *group,
+					int id);
+	osync_bool		(*osync_member_need_config)(OSyncMember *member,
+					OSyncConfigurationTypes *type,
+					OSyncError **error);
+	osync_bool		(*osync_member_get_config_or_default)(
+					OSyncMember *member,
+					char **data, int *size,
+					OSyncError **error);
+	void			(*osync_member_set_config)(OSyncMember *member,
+					const char *data, int size);
 
 	// data pointers
 	OSyncEnv *env;
@@ -151,6 +163,11 @@ OpenSync22::OpenSync22()
 	LoadSym(p->osync_member_new, "osync_member_new");
 	LoadSym(p->osync_member_instance_plugin,"osync_member_instance_plugin");
 	LoadSym(p->osync_member_save, "osync_member_save");
+	LoadSym(p->osync_member_from_id, "osync_member_from_id");
+	LoadSym(p->osync_member_need_config, "osync_member_need_config");
+	LoadSym(p->osync_member_get_config_or_default,
+					"osync_member_get_config_or_default");
+	LoadSym(p->osync_member_set_config, "osync_member_set_config");
 
 	// do common initialization of opensync environment
 	SetupEnvironment(p.get());
@@ -345,6 +362,97 @@ void OpenSync22::AddMember(const std::string &group_name,
 
 	if( !m_priv->osync_member_save(member, &error) ) {
 		std::runtime_error err(string("Unable to save member: ") + m_priv->osync_error_print(&error));
+		m_priv->osync_error_free(&error);
+		throw err;
+	}
+}
+
+bool OpenSync22::IsConfigurable(const std::string &group_name,
+				long member_id)
+{
+	OSyncGroup *group = m_priv->osync_env_find_group(m_priv->env, group_name.c_str());
+	if( !group )
+		throw std::runtime_error("Group not found: " + group_name);
+
+	OSyncMember *member = m_priv->osync_member_from_id(group, member_id);
+	if( !member ) {
+		ostringstream oss;
+		oss << "Member " << member_id << " not found.";
+		throw std::runtime_error(oss.str());
+	}
+
+	OSyncConfigurationTypes type = NO_CONFIGURATION;
+	OSyncError *error = NULL;
+	if( !m_priv->osync_member_need_config(member, &type, &error) ) {
+		std::runtime_error err(string("Unable to determine needed config: ") + m_priv->osync_error_print(&error));
+		m_priv->osync_error_free(&error);
+		throw err;
+	}
+
+	return type != NO_CONFIGURATION;
+}
+
+std::string OpenSync22::GetConfiguration(const std::string &group_name,
+					long member_id)
+{
+	if( !IsConfigurable(group_name, member_id) ) {
+		ostringstream oss;
+		oss << "Member " << member_id << " of group '" << group_name << "' does not accept configuration.";
+		throw std::runtime_error(oss.str());
+	}
+
+	OSyncGroup *group = m_priv->osync_env_find_group(m_priv->env, group_name.c_str());
+	if( !group )
+		throw std::runtime_error("Group not found: " + group_name);
+
+	OSyncMember *member = m_priv->osync_member_from_id(group, member_id);
+	if( !member ) {
+		ostringstream oss;
+		oss << "Member " << member_id << " not found.";
+		throw std::runtime_error(oss.str());
+	}
+
+	OSyncError *error = NULL;
+	char *data = NULL;
+	int size = 0;
+	if( !m_priv->osync_member_get_config_or_default(member, &data, &size, &error)) {
+		std::runtime_error err(string("Unable to retrieve config: ") + m_priv->osync_error_print(&error));
+		m_priv->osync_error_free(&error);
+		throw err;
+	}
+
+	std::string config(data, size);
+	g_free(data);
+
+	return config;
+}
+
+void OpenSync22::SetConfiguration(const std::string &group_name,
+				long member_id,
+				const std::string &config_data)
+{
+	if( !IsConfigurable(group_name, member_id) ) {
+		ostringstream oss;
+		oss << "Member " << member_id << " of group '" << group_name << "' does not accept configuration.";
+		throw std::runtime_error(oss.str());
+	}
+
+	OSyncGroup *group = m_priv->osync_env_find_group(m_priv->env, group_name.c_str());
+	if( !group )
+		throw std::runtime_error("Group not found: " + group_name);
+
+	OSyncMember *member = m_priv->osync_member_from_id(group, member_id);
+	if( !member ) {
+		ostringstream oss;
+		oss << "Member " << member_id << " not found.";
+		throw std::runtime_error(oss.str());
+	}
+
+	m_priv->osync_member_set_config(member, config_data.c_str(), config_data.size());
+
+	OSyncError *error = NULL;
+	if( !m_priv->osync_member_save(member, &error) ) {
+		std::runtime_error err(string("Unable to save member's config: ") + m_priv->osync_error_print(&error));
 		m_priv->osync_error_free(&error);
 		throw err;
 	}

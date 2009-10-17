@@ -102,14 +102,34 @@ void Test(API &os)
 		}
 	}
 
-	// Display our test group
-	{
-		member_list_type mlist;
-		os.GetMembers(group_name, mlist);
-		cout << "Members for group: " << group_name << endl;
-		cout << "---------------------------------------\n";
-		cout << mlist << endl;
-	}
+	// display our test group
+	member_list_type mlist;
+	os.GetMembers(group_name, mlist);
+	cout << "Members for group: " << group_name << endl;
+	cout << "---------------------------------------\n";
+	cout << mlist << endl;
+
+	// dump configurations
+	cout << group_name << "(1): " << (os.IsConfigurable(group_name, 1) ?
+			"configurable" : "not configurable") << endl;
+	cout << group_name << "(2): " << (os.IsConfigurable(group_name, 2) ?
+			"configurable" : "not configurable") << endl;
+
+	cout << "Member 1's configuration:\n";
+	cout << os.GetConfiguration(group_name, 1) << endl;
+	cout << "Member 2's configuration:\n";
+	cout << os.GetConfiguration(group_name, 2) << endl;
+
+	// add comment to bottom of barry-sync config
+	long id = mlist.FindId("barry-sync");
+	string barry_config = os.GetConfiguration(group_name, id);
+	if( dynamic_cast<OpenSync22*>(&os) )
+		barry_config += "\n# This is a test\n";
+	else
+		barry_config += "<!-- This is a test -->\n";
+	os.SetConfiguration(group_name, id, barry_config);
+	cout << "New config for member " << id << ":\n";
+	cout << os.GetConfiguration(group_name, id);
 
 	// delete group twice, to confirm behaviour
 	os.DeleteGroup(group_name);

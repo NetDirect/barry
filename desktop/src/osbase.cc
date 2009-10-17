@@ -90,6 +90,16 @@ Member* MemberSet::Find(const char *plugin_name)
 	return 0;
 }
 
+long MemberSet::FindId(const char *plugin_name)
+{
+	iterator b = begin(), e = end();
+	for( ; b != e; ++b ) {
+		if( b->plugin_name == plugin_name )
+			return b->id;
+	}
+	return -1;
+}
+
 /////////////////////////////////////////////////////////////////////////////
 // FormatSet public members
 

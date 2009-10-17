@@ -70,6 +70,12 @@ public:
 	void DeleteMember(const std::string &group_name, long member_id);
 	void DeleteMember(const std::string &group_name,
 		const std::string &plugin_name);
+	bool IsConfigurable(const std::string &group_name,
+		long member_id);
+	std::string GetConfiguration(const std::string &group_name,
+		long member_id);
+	void SetConfiguration(const std::string &group_name,
+		long member_id, const std::string &config_data);
 
 	// Syncing
 };
