@@ -26,6 +26,7 @@
 
 #include "os40.h"
 #include "os22.h"
+#include "tempdir.h"
 #include <barry/vsmartptr.h>
 #include <iostream>
 #include <sstream>
@@ -509,54 +510,6 @@ bool OpenSync40::IsConfigurable(const std::string &group_name,
 	return type != OSYNC_PLUGIN_NO_CONFIGURATION;
 }
 
-class TempDir
-{
-	char *m_template;
-	int m_files;
-
-public:
-	TempDir();
-	~TempDir();
-
-	std::string GetDir() const { return m_template; }
-	std::string GetNewFilename();
-};
-
-TempDir::TempDir()
-	: m_template(0)
-	, m_files(0)
-{
-	m_template = g_strdup_printf("%s/opensyncapi-XXXXXX", g_get_tmp_dir());
-	if( mkdtemp(m_template) == NULL ) {
-		g_free(m_template);
-		throw std::runtime_error(std::string("Cannot create temp directory: ") + strerror(errno));
-	}
-}
-
-TempDir::~TempDir()
-{
-	// delete all files
-	for( int i = 0; i < m_files; i++ ) {
-		ostringstream oss;
-		oss << m_template << "/" << i;
-		remove(oss.str().c_str());
-	}
-
-	// delete directory
-	rmdir(m_template);
-
-	// cleanup memory
-	g_free(m_template);
-}
-
-std::string TempDir::GetNewFilename()
-{
-	ostringstream oss;
-	oss << m_template << "/" << m_files;
-	m_files++;
-	return oss.str();
-}
-
 std::string OpenSync40::GetConfiguration(const std::string &group_name,
 					long member_id)
 {
@@ -590,7 +543,7 @@ std::string OpenSync40::GetConfiguration(const std::string &group_name,
 	// functions, and then load that from the file again, and
 	// return that string as the configuratin.
 
-	TempDir tempdir;
+	TempDir tempdir("opensyncapi");
 
 	string filename = tempdir.GetNewFilename();
 
@@ -638,7 +591,7 @@ void OpenSync40::SetConfiguration(const std::string &group_name,
 	// functions, and then load that from the file again, and
 	// return that string as the configuratin.
 
-	TempDir tempdir;
+	TempDir tempdir("opensyncapi");
 
 	string filename = tempdir.GetNewFilename();
 

@@ -16,6 +16,7 @@ barrydesktop_LDADD = -ldl
 ostest_SOURCES = \
 	error.cc error.h \
 	dlopen.cc dlopen.h \
+	tempdir.cc tempdir.h \
 	osbase.cc osbase.h \
 	os22.h \
 	os40.h \
