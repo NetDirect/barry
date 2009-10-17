@@ -37,6 +37,8 @@ class TempDir
 	char *m_template;
 	int m_files;
 
+	std::string MakeFilename(int file_id) const;
+
 public:
 	TempDir(const char *basename);
 	~TempDir();

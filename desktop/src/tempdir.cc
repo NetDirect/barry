@@ -44,9 +44,7 @@ TempDir::~TempDir()
 {
 	// delete all files
 	for( int i = 0; i < m_files; i++ ) {
-		std::ostringstream oss;
-		oss << m_template << "/" << i;
-		unlink(oss.str().c_str());
+		unlink(MakeFilename(i).c_str());
 	}
 
 	// delete directory
@@ -56,11 +54,15 @@ TempDir::~TempDir()
 	g_free(m_template);
 }
 
-std::string TempDir::GetNewFilename()
+std::string TempDir::MakeFilename(int file_id) const
 {
 	std::ostringstream oss;
-	oss << m_template << "/" << m_files;
-	m_files++;
+	oss << m_template << "/" << file_id;
 	return oss.str();
+}
+
+std::string TempDir::GetNewFilename()
+{
+	return MakeFilename(m_files++);
 }
 
