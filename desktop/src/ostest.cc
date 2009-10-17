@@ -131,6 +131,9 @@ void Test(API &os)
 	cout << "New config for member " << id << ":\n";
 	cout << os.GetConfiguration(group_name, id);
 
+	// discover
+	os.Discover(group_name);
+
 	// delete group twice, to confirm behaviour
 	os.DeleteGroup(group_name);
 	cout << "Deleted: " << group_name << endl;

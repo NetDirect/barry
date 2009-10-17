@@ -100,6 +100,7 @@ public:
 		long member_id) = 0;
 	virtual void SetConfiguration(const std::string &group_name,
 		long member_id, const std::string &config_data) = 0;
+	virtual void Discover(const std::string &group_name) = 0;
 
 	// Syncing
 //	virtual void Sync(const std::string &group_name) = 0;

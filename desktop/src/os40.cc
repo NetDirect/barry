@@ -165,6 +165,21 @@ public:
 					const char *path, OSyncError **error);
 	OSyncConfigurationType	(*osync_plugin_get_config_type)(
 					OSyncPlugin *plugin);
+	OSyncEngine*		(*osync_engine_new)(OSyncGroup *group,
+					OSyncError **error);
+	void			(*osync_engine_unref)(OSyncEngine *engine);
+	osync_bool		(*osync_engine_discover_and_block)(
+					OSyncEngine *engine,
+					OSyncMember *member,
+					OSyncError **error);
+	OSyncList*		(*osync_member_get_objtypes)(
+					OSyncMember *member);
+	unsigned int		(*osync_list_length)(const OSyncList *list);
+	void			(*osync_error_set)(OSyncError **error,
+					OSyncErrorType type,
+					const char *format, ...);
+	osync_bool		(*osync_engine_finalize)(OSyncEngine *engine,
+					OSyncError **error);
 
 	// data pointers
 	vLateSmartPtr<OSyncGroupEnv, void(*)(OSyncGroupEnv*)> group_env;
@@ -257,6 +272,14 @@ OpenSync40::OpenSync40()
 	LoadSym(p->osync_plugin_config_file_save,
 					"osync_plugin_config_file_save");
 	LoadSym(p->osync_plugin_get_config_type,"osync_plugin_get_config_type");
+	LoadSym(p->osync_engine_new, "osync_engine_new");
+	LoadSym(p->osync_engine_unref, "osync_engine_unref");
+	LoadSym(p->osync_engine_discover_and_block,
+					"osync_engine_discover_and_block");
+	LoadSym(p->osync_member_get_objtypes, "osync_member_get_objtypes");
+	LoadSym(p->osync_list_length, "osync_list_length");
+	LoadSym(p->osync_error_set, "osync_error_set");
+	LoadSym(p->osync_engine_finalize, "osync_engine_finalize");
 
 	// fixup free pointers
 	p->group_env.SetFreeFunc(p->osync_group_env_unref);
@@ -612,6 +635,48 @@ void OpenSync40::SetConfiguration(const std::string &group_name,
 	
 	if( !m_priv->osync_member_save(member, m_priv->error))
 		throw std::runtime_error(m_priv->error.GetErrorMsg());
+}
+
+void OpenSync40::Discover(const std::string &group_name)
+{
+	typedef Barry::vLateSmartPtr<OSyncEngine, void(*)(OSyncEngine*)> EngineHandle;
+	typedef Barry::vLateSmartPtr<OSyncList, void(*)(OSyncList*)> SyncListHandle;
+
+	OSyncGroup *group = m_priv->osync_group_env_find_group(m_priv->group_env.get(), group_name.c_str());
+	if( !group )
+		throw std::runtime_error("Group not found: " + group_name);
+
+	EngineHandle engine(m_priv->osync_engine_unref);
+	engine = m_priv->osync_engine_new(group, m_priv->error);
+	if( !engine.get() )
+		throw std::runtime_error(m_priv->error.GetErrorMsg());
+
+	SyncListHandle members(m_priv->osync_list_free);
+	members = m_priv->osync_group_get_members(group);
+	OSyncList *m = NULL;
+	for( m = members.get(); m; m = m->next ) {
+		OSyncMember *member = (OSyncMember *) m->data;
+
+		/* Discover the objtypes for the members */
+		if( !m_priv->osync_engine_discover_and_block(engine.get(), member, m_priv->error))
+			break;
+
+		SyncListHandle objtypes(m_priv->osync_list_free);
+		objtypes = m_priv->osync_member_get_objtypes(member);
+		if( m_priv->osync_list_length(objtypes.get()) == 0 ) {
+			m_priv->osync_error_set(m_priv->error, OSYNC_ERROR_GENERIC, "discover failed: no objtypes returned");
+			break;
+		}
+
+		if( !m_priv->osync_member_save(member, m_priv->error) )
+			break;
+	}
+
+	// check for error
+	if( m ) {
+		m_priv->osync_engine_finalize(engine.get(), m_priv->error);
+		throw std::runtime_error(m_priv->error.GetErrorMsg());
+	}
 }
 
 

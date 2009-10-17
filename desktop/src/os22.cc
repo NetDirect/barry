@@ -458,6 +458,11 @@ void OpenSync22::SetConfiguration(const std::string &group_name,
 	}
 }
 
+void OpenSync22::Discover(const std::string &group_name)
+{
+	// Discover is a successful noop on 0.22
+}
+
 } // namespace OpenSync
 
 

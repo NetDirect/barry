@@ -76,6 +76,7 @@ public:
 		long member_id);
 	void SetConfiguration(const std::string &group_name,
 		long member_id, const std::string &config_data);
+	void Discover(const std::string &group_name);
 
 	// Syncing
 };
