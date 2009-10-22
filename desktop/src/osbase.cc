@@ -233,6 +233,111 @@ std::ostream& SyncSummary::Dump(std::ostream &os) const
 
 
 /////////////////////////////////////////////////////////////////////////////
+// SyncStatus public members - default, CLI imeplementations
+
+SyncStatus::~SyncStatus()
+{
+}
+
+void SyncStatus::HandleConflict(SyncConflict &conflict)
+{
+	while( bool again = true ) {
+		again = false;
+		cout << "Conflicting items:\n" << conflict << endl;
+		cout << conflict.GetMenu();
+		string line;
+		getline(cin, line);
+		switch( line[0] )
+		{
+		case '1':
+		case '2':
+		case '3':
+		case '4':
+		case '5':
+		case '6':
+		case '7':
+		case '8':
+		case '9':
+			conflict.Select(atoi(line.c_str()) - 1);
+			break;
+		case 'A':
+			conflict.Abort();
+			break;
+		case 'D':
+			conflict.Duplicate();
+			break;
+		case 'I':
+			if( conflict.IsIgnoreSupported() )
+				conflict.Ignore();
+			break;
+		case 'N':
+			if( conflict.IsKeepNewerSupported() )
+				conflict.KeepNewer();
+			break;
+		default:
+			again = true;
+			break;
+		}
+	}
+}
+
+void SyncStatus::EntryStatus(const std::string &msg, bool error)
+{
+	if( error )
+		cout << "ERROR: ";
+	cout << msg << endl;
+}
+
+void SyncStatus::MappingStatus(const std::string &msg, bool error)
+{
+	if( error )
+		cout << "ERROR: ";
+	cout << msg << endl;
+}
+
+void SyncStatus::EngineStatus(const std::string &msg, bool error)
+{
+	if( error )
+		cout << "ERROR: ";
+	cout << msg << endl;
+}
+
+void SyncStatus::MemberStatus(long member_id,
+				const std::string &plugin_name,
+				const std::string &msg,
+				bool error)
+{
+	if( error )
+		cout << "ERROR: ";
+	cout << msg << endl;
+}
+
+void SyncStatus::CheckSummary(SyncSummary &summary)
+{
+	cout << "\nSynchronization Forecast Summary:\n";
+	cout << summary << endl;
+
+	cout << "Do you want to continue the synchronization? (N/y): ";
+	string line;
+	getline(cin, line);
+
+	// Abort if not got accepted with 'y'
+	if( line[0] != 'y') {
+		cout << "\nAborting! Synchronization got aborted by user!" << endl;
+		summary.Abort();
+	} else {
+		cout << "\nOK! Completing synchronization!" << endl;
+		summary.Continue();
+	}
+}
+
+void SyncStatus::ReportError(const std::string &msg)
+{
+	cout << "CALLBACK ERROR: " << msg << endl;
+}
+
+
+/////////////////////////////////////////////////////////////////////////////
 // OpenSyncAPISet public members
 
 APISet::APISet()
