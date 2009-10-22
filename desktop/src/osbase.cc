@@ -22,6 +22,7 @@
 #include "osbase.h"
 #include "os22.h"
 #include "os40.h"
+#include "osprivatebase.h"
 #include <iostream>
 #include <iomanip>
 #include <barry/barry.h>
@@ -112,6 +113,124 @@ Format* FormatSet::Find(const char *name)
 	}
 	return 0;
 }
+
+/////////////////////////////////////////////////////////////////////////////
+// SyncConflict public members
+
+SyncConflict::SyncConflict(SyncConflictPrivateBase &conflict)
+	: m_conflict(conflict)
+{
+}
+
+SyncConflict::~SyncConflict()
+{
+}
+
+bool SyncConflict::IsIgnoreSupported() const
+{
+	return m_conflict.IsIgnoreSupported();
+}
+
+bool SyncConflict::IsKeepNewerSupported() const
+{
+	return m_conflict.IsKeepNewerSupported();
+}
+
+std::string SyncConflict::GetMenu() const
+{
+	ostringstream oss;
+	oss << "Which entry do you want to use? [1-9] To select a side"
+	    << ", [A]bort"
+	    << ", [D]uplicate";
+
+	if( IsIgnoreSupported() )
+		oss << ", [I]gnore";
+
+	if( IsKeepNewerSupported() )
+		oss << ", Keep [N]ewer";
+
+	return oss.str();
+}
+
+void SyncConflict::Select(int change_index)
+{
+	m_conflict.Select(change_index);
+}
+
+void SyncConflict::Abort()
+{
+	m_conflict.Abort();
+}
+
+void SyncConflict::Duplicate()
+{
+	m_conflict.Duplicate();
+}
+
+void SyncConflict::Ignore()
+{
+	m_conflict.Ignore();
+}
+
+void SyncConflict::KeepNewer()
+{
+	m_conflict.KeepNewer();
+}
+
+std::ostream& SyncConflict::Dump(std::ostream &os) const
+{
+	const_iterator b = begin(), e = end();
+	for( ; b != e; ++b ) {
+		os << "Entry " << (b->id+1) << ":\n"
+		   << "Member: " << b->member_id << "(" << b->plugin_name << ")\n"
+		   << "UID: " << b->uid << "\n"
+		   << "Data: " << b->printable_data << "\n";
+	}
+	return os;
+}
+
+
+/////////////////////////////////////////////////////////////////////////////
+// SyncSummary public members
+
+SyncSummary::SyncSummary(SyncSummaryPrivateBase &summary)
+	: m_summary(summary)
+{
+}
+
+SyncSummary::~SyncSummary()
+{
+}
+
+void SyncSummary::Abort()
+{
+	m_summary.Abort();
+}
+
+void SyncSummary::Continue()
+{
+	m_summary.Continue();
+}
+
+std::ostream& SyncSummary::Dump(std::ostream &os) const
+{
+	string objtype_name;
+	const_iterator b = begin(), e = end();
+	for( ; b != e; ++b ) {
+		if( b->objtype_name != objtype_name ) {
+			objtype_name = b->objtype_name;
+			os << "Objtype: " << b->objtype_name << "\n";
+		}
+
+		os << "\tMember " << b->id << "(" << b->member_id << ") "
+		   << b->plugin_name
+		   << ": Adding(" << b->added << ") "
+		   << "Modifying(" << b->modified << ") "
+		   << "Deleting(" << b->deleted << ")\n";
+	}
+	return os;
+}
+
 
 /////////////////////////////////////////////////////////////////////////////
 // OpenSyncAPISet public members

@@ -64,6 +64,119 @@ std::ostream& operator<< (std::ostream &os, const Format &format);
 std::ostream& operator<< (std::ostream &os, const format_list_type &list);
 
 
+class SyncConflictPrivateBase;
+
+struct SyncChange
+{
+	int id;
+	long member_id;
+	std::string plugin_name;
+	std::string uid;
+	std::string printable_data;
+};
+
+class SyncConflict : public std::vector<SyncChange>
+{
+	SyncConflictPrivateBase &m_conflict;
+
+public:
+	SyncConflict(SyncConflictPrivateBase &conflict);
+	~SyncConflict();
+
+	bool IsIgnoreSupported() const;
+	bool IsKeepNewerSupported() const;
+
+	std::string GetMenu() const;
+	void Select(int change_index);
+	void Abort();
+	void Duplicate();
+	void Ignore();
+	void KeepNewer();
+
+	std::ostream& Dump(std::ostream &os) const;
+};
+
+inline std::ostream& operator<< (std::ostream &os, const SyncConflict &conflict)
+{
+	return conflict.Dump(os);
+}
+
+
+class SyncSummaryPrivateBase;
+
+struct SyncMemberSummary
+{
+	int id;
+	std::string objtype_name;
+	long member_id;
+	std::string plugin_name;
+	unsigned long added;
+	unsigned long modified;
+	unsigned long deleted;
+
+	SyncMemberSummary()
+		: added(0), modified(0), deleted(0)
+	{}
+};
+
+class SyncSummary : public std::vector<SyncMemberSummary>
+{
+	SyncSummaryPrivateBase &m_summary;
+
+public:
+	SyncSummary(SyncSummaryPrivateBase &summary);
+	~SyncSummary();
+
+	void Abort();
+	void Continue();
+
+	std::ostream& Dump(std::ostream &os) const;
+};
+
+inline std::ostream& operator<< (std::ostream &os, const SyncSummary &summary)
+{
+	return summary.Dump(os);
+}
+
+
+// notes: OpenSync::SyncStatus is a base class with all the opensync
+// callbacks as virtual functions, with reasonable defaults.  The
+// programmer can override any callbacks he so chooses as below.
+//
+// If a callback has state or information or requires a decision, it
+// passes in a reference to a base class (example below: SyncConflict).
+// This base class is really a reference to a derived class specific
+// to the 0.22 or 0.4x library API, and contains pointers to the
+// OpenSync40 or OpenSync22 classes and private structs, and handles
+// all cleanup of the state it holds.  Also, these classes hold
+// information in C++ style variables... for example SyncConflict
+// will hold a vector of objects that contain the osync change
+// information of each conflicting change, as well as a means to
+// access a pretty printed version.  No OpenSync constants will
+// be used in these objects.
+//
+// If abstracted enough, the override code should be dead simple,
+// like below, and also be generic enough to run on both 0.22 and
+// 0.4x libraries, dynamically. :-D
+//
+class SyncStatus
+{
+public:
+	virtual ~SyncStatus();
+
+	// virtual overrides
+	virtual void HandleConflict(SyncConflict &conflict);
+	virtual void EntryStatus(const std::string &msg, bool error);
+	virtual void MappingStatus(const std::string &msg, bool error);
+	virtual void EngineStatus(const std::string &msg, bool error);
+	virtual void MemberStatus(long member_id,
+		const std::string &plugin_name,
+		const std::string &msg, bool error);
+	virtual void CheckSummary(SyncSummary &summary);
+
+	virtual void ReportError(const std::string &msg);
+};
+
 class API
 {
 public:
@@ -103,7 +216,8 @@ public:
 	virtual void Discover(const std::string &group_name) = 0;
 
 	// Syncing
-//	virtual void Sync(const std::string &group_name) = 0;
+	virtual void Sync(const std::string &group_name,
+		SyncStatus &status_callback) = 0;
 };
 
 class APISet : private std::vector<API*>

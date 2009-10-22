@@ -26,6 +26,7 @@
 
 #include "os40.h"
 #include "os22.h"
+#include "osprivatebase.h"
 #include "tempdir.h"
 #include <barry/vsmartptr.h>
 #include <iostream>
@@ -46,6 +47,16 @@ using namespace std;
 using namespace Barry;
 
 namespace OpenSync {
+
+
+typedef Barry::vLateSmartPtr<OSyncEngine, void(*)(OSyncEngine*)> EngineHandle;
+typedef Barry::vLateSmartPtr<OSyncList, void(*)(OSyncList*)> SyncListHandle;
+
+
+//
+// Private class declarations
+//
+
 
 class TossError
 {
@@ -180,6 +191,112 @@ public:
 					const char *format, ...);
 	osync_bool		(*osync_engine_finalize)(OSyncEngine *engine,
 					OSyncError **error);
+	OSyncList*		(*osync_mapping_engine_get_changes)(
+					OSyncMappingEngine *engine);
+	osync_bool		(*osync_mapping_engine_supports_ignore)(
+					OSyncMappingEngine *engine);
+	osync_bool		(*osync_mapping_engine_supports_use_latest)(
+					OSyncMappingEngine *engine);
+	OSyncList*		(*osync_list_nth)(OSyncList *list,
+					unsigned int n);
+	osync_bool		(*osync_engine_mapping_solve)(
+					OSyncEngine *engine,
+					OSyncMappingEngine *mapping_engine,
+					OSyncChange *change,
+					OSyncError **error);
+	osync_bool		(*osync_engine_abort)(OSyncEngine *engine,
+					OSyncError **error);
+	osync_bool		(*osync_engine_mapping_duplicate)(
+					OSyncEngine *engine,
+					OSyncMappingEngine *mapping_engine,
+					OSyncError **error);
+	osync_bool		(*osync_engine_mapping_ignore_conflict)(
+					OSyncEngine *engine,
+					OSyncMappingEngine *mapping_engine,
+					OSyncError **error);
+	osync_bool		(*osync_engine_mapping_use_latest)(
+					OSyncEngine *engine,
+					OSyncMappingEngine *mapping_engine,
+					OSyncError **error);
+	OSyncChangeType		(*osync_change_get_changetype)(
+					OSyncChange *change);
+	OSyncMember*		(*osync_mapping_engine_change_find_member)(
+					OSyncMappingEngine *engine,
+					OSyncChange *change);
+	OSyncData*		(*osync_change_get_data)(OSyncChange *change);
+	char*			(*osync_data_get_printable)(OSyncData *data,
+					OSyncError **error);
+	void			(*osync_free)(void *ptr);
+	const char*		(*osync_change_get_uid)(OSyncChange *change);
+	osync_bool		(*osync_engine_continue)(OSyncEngine *engine,
+					OSyncError **error);
+	OSyncList*		(*osync_engine_get_objengines)(
+					OSyncEngine *engine);
+	OSyncList*		(*osync_obj_engine_get_members)(
+					OSyncObjEngine* engine);
+	const char*		(*osync_obj_engine_get_objtype)(
+					OSyncObjEngine *engine);
+	const OSyncList*	(*osync_obj_engine_get_mapping_entry_engines_of_member)(
+					OSyncObjEngine *engine,
+					OSyncMember *member);
+	osync_bool		(*osync_entry_engine_is_dirty)(
+					OSyncMappingEntryEngine *engine);
+	OSyncChangeType		(*osync_entry_engine_get_changetype)(
+					OSyncMappingEntryEngine *engine);
+	OSyncChange*		(*osync_engine_change_update_get_change)(
+					OSyncEngineChangeUpdate *update);
+	OSyncMember*		(*osync_engine_change_update_get_member)(
+					OSyncEngineChangeUpdate *update);
+	OSyncError*		(*osync_engine_change_update_get_error)(
+					OSyncEngineChangeUpdate *update);
+	OSyncEngineChangeEvent	(*osync_engine_change_update_get_event)(
+					OSyncEngineChangeUpdate *update);
+	OSyncObjFormat*		(*osync_change_get_objformat)(
+					OSyncChange *change);
+	OSyncError*		(*osync_engine_mapping_update_get_error)(
+					OSyncEngineMappingUpdate *update);
+	OSyncError*		(*osync_engine_update_get_error)(
+					OSyncEngineUpdate *update);
+	OSyncEngineEvent	(*osync_engine_update_get_event)(
+					OSyncEngineUpdate *update);
+	const char*		(*osync_engine_member_update_get_objtype)(
+					OSyncEngineMemberUpdate *update);
+	OSyncMember*		(*osync_engine_member_update_get_member)(
+					OSyncEngineMemberUpdate *update);
+	OSyncError*		(*osync_engine_member_update_get_error)(
+					OSyncEngineMemberUpdate *update);
+	OSyncEngineMemberEvent	(*osync_engine_member_update_get_event)(
+					OSyncEngineMemberUpdate *update);
+	void			(*osync_engine_set_conflict_callback)(
+					OSyncEngine *engine,
+					osync_conflict_cb callback,
+					void *user_data);
+	void			(*osync_engine_set_changestatus_callback)(
+					OSyncEngine *engine,
+					osync_status_change_cb callback,
+					void *user_data);
+	void			(*osync_engine_set_mappingstatus_callback)(
+					OSyncEngine *engine,
+					osync_status_mapping_cb callback,
+					void *user_data);
+	void			(*osync_engine_set_enginestatus_callback)(
+					OSyncEngine *engine,
+					osync_status_engine_cb callback,
+					void *user_data);
+	void			(*osync_engine_set_memberstatus_callback)(
+					OSyncEngine *engine,
+					osync_status_member_cb callback,
+					void *user_data);
+	void			(*osync_engine_set_multiply_callback)(
+					OSyncEngine *engine,
+					osync_multiply_cb callback,
+					void *user_data);
+	osync_bool		(*osync_engine_initialize)(OSyncEngine *engine,
+					OSyncError **error);
+	osync_bool		(*osync_engine_synchronize_and_block)(
+					OSyncEngine *engine,OSyncError **error);
+	OSyncEngineMappingEvent	(*osync_engine_mapping_update_get_event)(
+					OSyncEngineMappingUpdate *update);
 
 	// data pointers
 	vLateSmartPtr<OSyncGroupEnv, void(*)(OSyncGroupEnv*)> group_env;
@@ -194,9 +311,600 @@ public:
 	}
 };
 
+class SyncConflict40Private : public SyncConflictPrivateBase
+{
+	OpenSync40Private *m_priv;
+	OSyncEngine *m_engine;
+	OSyncMappingEngine *m_mapping;
+	OSyncList *m_changes;
+
+public:
+	SyncConflict40Private(OpenSync40Private *priv,
+		OSyncEngine *engine, OSyncMappingEngine *mapping);
+	~SyncConflict40Private();
+
+	virtual bool IsIgnoreSupported() const;
+	virtual bool IsKeepNewerSupported() const;
+
+	virtual void Select(int change_index);
+	virtual void Abort();
+	virtual void Duplicate();
+	virtual void Ignore();
+	virtual void KeepNewer();
+
+	void AppendChanges(std::vector<SyncChange> &list);
+};
+
+class SyncSummary40Private : public SyncSummaryPrivateBase
+{
+	OpenSync40Private *m_priv;
+	OSyncEngine *m_engine;
+
+public:
+	SyncSummary40Private(OpenSync40Private *priv, OSyncEngine *engine);
+	~SyncSummary40Private();
+
+	virtual void Abort();
+	virtual void Continue();
+
+	// returns true if any member is dirty
+	bool AppendMembers(std::vector<SyncMemberSummary> &list);
+};
+
+struct CallbackBundle
+{
+	OpenSync40Private *m_priv;
+	SyncStatus *m_status;
+
+	CallbackBundle(OpenSync40Private *priv, SyncStatus &status)
+		: m_priv(priv)
+		, m_status(&status)
+	{
+	}
+};
+
+void conflict_handler(OSyncEngine *, OSyncMappingEngine *, void *);
+void entry_status(OSyncEngineChangeUpdate *, void *);
+void mapping_status(OSyncEngineMappingUpdate *, void *);
+void engine_status(OSyncEngineUpdate *, void *);
+void member_status(OSyncEngineMemberUpdate *, void *);
+void multiply_summary(OSyncEngine *, void *);
+
 
 /////////////////////////////////////////////////////////////////////////////
-// OpenSync40 - public members
+// Static helper functions
+
+static const char *OSyncChangeType2String(OSyncChangeType type)
+{
+	switch (type) {
+		case OSYNC_CHANGE_TYPE_ADDED: return "ADDED";
+		case OSYNC_CHANGE_TYPE_UNMODIFIED: return "UNMODIFIED";
+		case OSYNC_CHANGE_TYPE_DELETED: return "DELETED";
+		case OSYNC_CHANGE_TYPE_MODIFIED: return "MODIFIED";
+		default:
+		case OSYNC_CHANGE_TYPE_UNKNOWN: return "?";
+	}
+	return NULL;
+}
+
+
+/////////////////////////////////////////////////////////////////////////////
+// SyncConflict40Private member functions
+
+SyncConflict40Private::SyncConflict40Private(OpenSync40Private *priv,
+			OSyncEngine *engine, OSyncMappingEngine *mapping)
+	: m_priv(priv)
+	, m_engine(engine)
+	, m_mapping(mapping)
+	, m_changes(0)
+{
+	m_changes = m_priv->osync_mapping_engine_get_changes(m_mapping);
+}
+
+SyncConflict40Private::~SyncConflict40Private()
+{
+	m_priv->osync_list_free(m_changes);
+}
+
+bool SyncConflict40Private::IsIgnoreSupported() const
+{
+	return m_priv->osync_mapping_engine_supports_ignore(m_mapping);
+}
+
+bool SyncConflict40Private::IsKeepNewerSupported() const
+{
+	return m_priv->osync_mapping_engine_supports_use_latest(m_mapping);
+}
+
+void SyncConflict40Private::Select(int change_index)
+{
+	OSyncList *c = m_priv->osync_list_nth(m_changes, change_index);
+	if( !c )
+		throw std::logic_error("Bad change_index");
+
+	OSyncChange *change = (OSyncChange *) c->data;
+
+	if( !m_priv->osync_engine_mapping_solve(m_engine, m_mapping,
+		change, m_priv->error) )
+	{
+		throw std::runtime_error(m_priv->error.GetErrorMsg());
+	}
+}
+
+void SyncConflict40Private::Abort()
+{
+	if( !m_priv->osync_engine_abort(m_engine, m_priv->error) ) {
+		ostringstream oss;
+		oss << "Problems while aborting: "
+			<< m_priv->error.GetErrorMsg();
+		throw std::runtime_error(oss.str());
+	}
+}
+
+void SyncConflict40Private::Duplicate()
+{
+	if( !m_priv->osync_engine_mapping_duplicate(m_engine, m_mapping, m_priv->error) )
+		throw std::runtime_error(m_priv->error.GetErrorMsg());
+}
+
+void SyncConflict40Private::Ignore()
+{
+	if( !IsIgnoreSupported() )
+		throw std::logic_error("Ignore not supported, yet Ignore() called.");
+
+	if( !m_priv->osync_engine_mapping_ignore_conflict(m_engine, m_mapping,
+		m_priv->error) )
+	{
+		throw std::runtime_error(m_priv->error.GetErrorMsg());
+	}
+}
+
+void SyncConflict40Private::KeepNewer()
+{
+	if( !IsKeepNewerSupported() )
+		throw std::logic_error("Keep Newer not supported, yet KeepNewer() called.");
+
+	if( !m_priv->osync_engine_mapping_use_latest(m_engine, m_mapping, m_priv->error) )
+		throw std::runtime_error(m_priv->error.GetErrorMsg());
+}
+
+void SyncConflict40Private::AppendChanges(std::vector<SyncChange> &list)
+{
+	int i = 0;
+	for( OSyncList *c = m_changes; c; c = c->next, i++ ) {
+		OSyncChange *change = (OSyncChange *) c->data;
+
+		if( m_priv->osync_change_get_changetype(change) != OSYNC_CHANGE_TYPE_UNKNOWN ) {
+			OSyncMember *member = m_priv->osync_mapping_engine_change_find_member(m_mapping, change);
+
+			OSyncData *data = m_priv->osync_change_get_data(change);
+
+			SyncChange entry;
+
+			char *printable = m_priv->osync_data_get_printable(data, m_priv->error);
+			if( printable )
+				entry.printable_data = printable;
+			m_priv->osync_free(printable);
+
+			if( m_priv->error.IsSet() )
+				throw std::runtime_error(m_priv->error.GetErrorMsg());
+
+			entry.id = i;
+			entry.member_id = m_priv->osync_member_get_id(member);
+			if( entry.member_id != m_priv->osync_member_get_id(member) )
+				throw std::logic_error("long can't hold long long");
+
+			entry.plugin_name = m_priv->osync_member_get_pluginname(member);
+			entry.uid = m_priv->osync_change_get_uid(change);
+
+			// add to list
+			list.push_back(entry);
+		}
+	}
+}
+
+
+/////////////////////////////////////////////////////////////////////////////
+// SyncSummary40Private member functions
+
+SyncSummary40Private::SyncSummary40Private(OpenSync40Private *priv,
+						OSyncEngine *engine)
+	: m_priv(priv)
+	, m_engine(engine)
+{
+}
+
+SyncSummary40Private::~SyncSummary40Private()
+{
+}
+
+void SyncSummary40Private::Abort()
+{
+	if( !m_priv->osync_engine_abort(m_engine, m_priv->error) )
+		throw std::runtime_error(m_priv->error.GetErrorMsg());
+}
+
+void SyncSummary40Private::Continue()
+{
+	if( !m_priv->osync_engine_continue(m_engine, m_priv->error) )
+		throw std::runtime_error(m_priv->error.GetErrorMsg());
+}
+
+bool SyncSummary40Private::AppendMembers(std::vector<SyncMemberSummary> &list)
+{
+	SyncListHandle objengines(m_priv->osync_list_free);
+	objengines = m_priv->osync_engine_get_objengines(m_engine);
+
+	int i = 0;
+	bool dirty = false;
+
+	for( OSyncList *o = objengines.get(); o; o = o->next ) {
+		OSyncObjEngine *objengine = (OSyncObjEngine *) o->data;
+
+
+
+
+
+		SyncListHandle members(m_priv->osync_list_free);
+		members = m_priv->osync_obj_engine_get_members(objengine);
+		for( OSyncList *m = members.get(); m; m = m->next ) {
+			OSyncMember *member = (OSyncMember *) m->data;
+
+			// Fill in common summary data
+			SyncMemberSummary entry;
+			entry.id = i;
+			entry.objtype_name = m_priv->osync_obj_engine_get_objtype(objengine);
+			entry.member_id = m_priv->osync_member_get_id(member);
+			if( entry.member_id != m_priv->osync_member_get_id(member) )
+				throw std::logic_error("long can't hold long long");
+
+			entry.plugin_name = m_priv->osync_member_get_pluginname(member);
+
+			const OSyncList *mapping_entry_engines = m_priv->osync_obj_engine_get_mapping_entry_engines_of_member(objengine, member);
+
+			// Calculate summary counts
+			for( const OSyncList *e = mapping_entry_engines; e; e = e->next ) {
+				OSyncMappingEntryEngine *entry_engine = (OSyncMappingEntryEngine*) e->data;
+
+				if( !m_priv->osync_entry_engine_is_dirty(entry_engine) )
+					continue;
+
+				dirty = true;
+
+				OSyncChangeType type = m_priv->osync_entry_engine_get_changetype(entry_engine);
+				switch (type)
+				{
+				case OSYNC_CHANGE_TYPE_ADDED:
+					entry.added++;
+					break;
+				case OSYNC_CHANGE_TYPE_MODIFIED:
+					entry.modified++;
+					break;
+				case OSYNC_CHANGE_TYPE_DELETED:
+					entry.deleted++;
+					break;
+				default:
+					break;
+				}
+			}
+
+			// Add entry to list
+			list.push_back(entry);
+
+		}
+	}
+
+	return dirty;
+}
+
+
+/////////////////////////////////////////////////////////////////////////////
+// Callback functions
+
+void conflict_handler(OSyncEngine *engine, OSyncMappingEngine *mapping,
+			void *cbdata)
+{
+	CallbackBundle *cb = (CallbackBundle*) cbdata;
+
+	try {
+		// build the SyncConflict object
+		SyncConflict40Private scp(cb->m_priv, engine, mapping);
+		SyncConflict conflict(scp);
+
+		// append all conflicting changes as vector objects in the same
+		// order as the opensync library mapping
+		scp.AppendChanges(conflict);
+
+		// call the status handler
+		cb->m_status->HandleConflict(conflict);
+	}
+	catch( std::exception &e ) {
+		cb->m_status->ReportError(
+			string("Conflict not resolved. ") + e.what());
+	}
+	catch( ... ) {
+		cb->m_status->ReportError(
+			"Unknown exception caught in conflict_handler()");
+	}
+}
+
+void entry_status(OSyncEngineChangeUpdate *status, void *cbdata)
+{
+	CallbackBundle *cb = (CallbackBundle*) cbdata;
+
+	try {
+		ostringstream oss;
+
+		OSyncChange *change = cb->m_priv->osync_engine_change_update_get_change(status);
+		OSyncMember *member = cb->m_priv->osync_engine_change_update_get_member(status);
+		OSyncError *error = cb->m_priv->osync_engine_change_update_get_error(status);
+
+		const char *action = NULL;
+		const char *direction = NULL;
+		const char *msg = NULL;
+		bool error_event = false;
+
+		switch( cb->m_priv->osync_engine_change_update_get_event(status) )
+		{
+		case OSYNC_ENGINE_CHANGE_EVENT_READ:
+			action = "Received an entry";
+			direction = "from";
+			msg = OSyncChangeType2String(cb->m_priv->osync_change_get_changetype(change));
+			break;
+
+		case OSYNC_ENGINE_CHANGE_EVENT_WRITTEN:
+			action = "Sent an entry";
+			direction = "to";
+			msg = OSyncChangeType2String(cb->m_priv->osync_change_get_changetype(change));
+			break;
+
+		case OSYNC_ENGINE_CHANGE_EVENT_ERROR:
+			error_event = true;
+			action = "Error for entry";
+			direction = "and";
+			msg = cb->m_priv->osync_error_print(&(error));
+			break;
+		}
+
+		if( action ) {
+			oss << action << " "
+			    << cb->m_priv->osync_change_get_uid(change)
+			    << "("
+			    << cb->m_priv->osync_objformat_get_name( cb->m_priv->osync_change_get_objformat(change))
+			    << ") " << direction << " member "
+			    << cb->m_priv->osync_member_get_id(member)
+			    << " ("
+			    << cb->m_priv->osync_member_get_pluginname(member)
+			    << "): "
+			    << msg;
+
+			// call the status handler
+			cb->m_status->EntryStatus(oss.str(), error_event);
+		}
+	}
+	catch( std::exception &e ) {
+		cb->m_status->ReportError(
+			string("entry_status error:") + e.what());
+	}
+	catch( ... ) {
+		cb->m_status->ReportError(
+			"Unknown exception caught in entry_status()");
+	}
+}
+
+void mapping_status(OSyncEngineMappingUpdate *status, void *cbdata)
+{
+	CallbackBundle *cb = (CallbackBundle*) cbdata;
+
+	try {
+		OSyncError *error = cb->m_priv->osync_engine_mapping_update_get_error(status);
+
+		ostringstream oss;
+		bool error_event = false;
+
+		switch( cb->m_priv->osync_engine_mapping_update_get_event(status) )
+		{
+		case OSYNC_ENGINE_MAPPING_EVENT_SOLVED:
+			oss << "Mapping solved";
+			break;
+
+		case OSYNC_ENGINE_MAPPING_EVENT_ERROR:
+			error_event = true;
+			oss << "Mapping error: "
+			    << cb->m_priv->osync_error_print(&(error));
+			break;
+		}
+
+		// call the status handler
+		if( oss.str().size() )
+			cb->m_status->MappingStatus(oss.str(), error_event);
+	}
+	catch( std::exception &e ) {
+		cb->m_status->ReportError(
+			string("mapping_status error: ") + e.what());
+	}
+	catch( ... ) {
+		cb->m_status->ReportError(
+			"Unknown exception caught in mapping_status()");
+	}
+}
+
+void engine_status(OSyncEngineUpdate *status, void *cbdata)
+{
+	CallbackBundle *cb = (CallbackBundle*) cbdata;
+
+	try {
+		OSyncError *error = cb->m_priv->osync_engine_update_get_error(status);
+
+		ostringstream oss;
+		bool error_event = false;
+
+		switch( cb->m_priv->osync_engine_update_get_event(status) )
+		{
+		case OSYNC_ENGINE_EVENT_CONNECTED:
+			oss << "All clients connected or error";
+			break;
+		case OSYNC_ENGINE_EVENT_CONNECT_DONE:
+			/* Not of interest for regular user. */
+			break;
+		case OSYNC_ENGINE_EVENT_READ:
+			oss << "All clients sent changes or error";
+			break;
+		case OSYNC_ENGINE_EVENT_MAPPED:
+			oss << "All changes got mapped";
+			break;
+		case OSYNC_ENGINE_EVENT_MULTIPLIED:
+			oss << "All changes got multiplied";
+			break;
+		case OSYNC_ENGINE_EVENT_PREPARED_WRITE:
+			oss << "All changes got prepared for write";
+			break;
+		case OSYNC_ENGINE_EVENT_PREPARED_MAP:
+			/* Not of interest for regular user. */
+			break;
+		case OSYNC_ENGINE_EVENT_WRITTEN:
+			oss << "All clients have written";
+			break;
+		case OSYNC_ENGINE_EVENT_DISCONNECTED:
+			oss << "All clients have disconnected";
+			break;
+		case OSYNC_ENGINE_EVENT_ERROR:
+			error_event = true;
+			oss << "The sync failed: " << cb->m_priv->osync_error_print(&(error));
+			break;
+		case OSYNC_ENGINE_EVENT_SUCCESSFUL:
+			oss << "The sync was successful";
+			break;
+		case OSYNC_ENGINE_EVENT_PREV_UNCLEAN:
+			oss << "The previous synchronization was unclean. Slow-syncing";
+			break;
+		case OSYNC_ENGINE_EVENT_END_CONFLICTS:
+			oss << "All conflicts have been reported";
+			break;
+		case OSYNC_ENGINE_EVENT_SYNC_DONE:
+			oss << "All clients reported sync done";
+			break;
+		}
+
+		// call the status handler
+		if( oss.str().size() )
+			cb->m_status->EngineStatus(oss.str(), error_event);
+	}
+	catch( std::exception &e ) {
+		cb->m_status->ReportError(
+			string("engine_status error: ") + e.what());
+	}
+	catch( ... ) {
+		cb->m_status->ReportError(
+			"Unknown exception caught in engine_status()");
+	}
+}
+
+void member_status(OSyncEngineMemberUpdate *status, void *cbdata)
+{
+	CallbackBundle *cb = (CallbackBundle*) cbdata;
+
+	try {
+		ostringstream oss;
+		bool error_event = false;
+		bool valid = true;
+
+		const char *objtype = cb->m_priv->osync_engine_member_update_get_objtype(status);
+		if( objtype == NULL )
+			oss << "Main sink";
+		else
+			oss << objtype << " sink";
+
+
+		OSyncMember *member = cb->m_priv->osync_engine_member_update_get_member(status);
+
+		oss << " of member "
+		    << cb->m_priv->osync_member_get_id(member)
+		    << " ("
+		    << cb->m_priv->osync_member_get_pluginname(member)
+		    << ")";
+
+		OSyncError *error = cb->m_priv->osync_engine_member_update_get_error(status);
+
+		switch( cb->m_priv->osync_engine_member_update_get_event(status) )
+		{
+		case OSYNC_ENGINE_MEMBER_EVENT_CONNECTED:
+			oss << " just connected";
+			break;
+		case OSYNC_ENGINE_MEMBER_EVENT_CONNECT_DONE:
+			// Special event - but not interesting for
+			// the normal user.
+			break;
+		case OSYNC_ENGINE_MEMBER_EVENT_DISCONNECTED:
+			oss << " just disconnected";
+			break;
+		case OSYNC_ENGINE_MEMBER_EVENT_READ:
+			oss << " just sent all changes";
+			break;
+		case OSYNC_ENGINE_MEMBER_EVENT_WRITTEN:
+			oss << " committed all changes";
+			break;
+		case OSYNC_ENGINE_MEMBER_EVENT_SYNC_DONE:
+			oss << " reported sync done";
+			break;
+		case OSYNC_ENGINE_MEMBER_EVENT_DISCOVERED:
+			oss << " discovered its objtypes";
+			break;
+		case OSYNC_ENGINE_MEMBER_EVENT_ERROR:
+			oss << " had an error: "
+			    << cb->m_priv->osync_error_print(&error);
+			break;
+		default:
+			valid = false;
+			break;
+		}
+
+		// call the status handler
+		if( oss.str().size() && valid ) {
+			cb->m_status->MemberStatus(
+				cb->m_priv->osync_member_get_id(member),
+				cb->m_priv->osync_member_get_pluginname(member),
+				oss.str(), error_event);
+		}
+	}
+	catch( std::exception &e ) {
+		cb->m_status->ReportError(
+			string("member_status error: ") + e.what());
+	}
+	catch( ... ) {
+		cb->m_status->ReportError(
+			"Unknown exception caught in member_status()");
+	}
+}
+
+void multiply_summary(OSyncEngine *engine, void *cbdata)
+{
+	CallbackBundle *cb = (CallbackBundle*) cbdata;
+
+	try {
+		// build the SyncSummary object
+		SyncSummary40Private ssp(cb->m_priv, engine);
+		SyncSummary summary(ssp);
+
+		// append a summary for each objtype member
+		if( ssp.AppendMembers(summary) ) {
+			// call the status handler only if dirty
+			cb->m_status->CheckSummary(summary);
+		}
+	}
+	catch( std::exception &e ) {
+		cb->m_status->ReportError(
+			string("Error handling summary. ") + e.what());
+	}
+	catch( ... ) {
+		cb->m_status->ReportError(
+			"Unknown exception caught in multiply_summary()");
+	}
+}
+
+
+/////////////////////////////////////////////////////////////////////////////
+// OpenSync40 (API override class) - public members
 
 OpenSync40::OpenSync40()
 {
@@ -234,7 +942,7 @@ OpenSync40::OpenSync40()
 	LoadSym(p->osync_list_free, "osync_list_free");
 	LoadSym(p->osync_group_env_load_groups, "osync_group_env_load_groups");
 	LoadSym(p->osync_format_env_load_plugins,
-					"osync_format_env_load_plugins");
+				"osync_format_env_load_plugins");
 	LoadSym(p->osync_group_env_get_groups, "osync_group_env_get_groups");
 	LoadSym(p->osync_group_get_name, "osync_group_get_name");
 	LoadSym(p->osync_group_env_find_group, "osync_group_env_find_group");
@@ -243,7 +951,7 @@ OpenSync40::OpenSync40()
 	LoadSym(p->osync_member_get_id, "osync_member_get_id");
 	LoadSym(p->osync_member_get_pluginname, "osync_member_get_pluginname");
 	LoadSym(p->osync_format_env_get_objformats,
-					"osync_format_env_get_objformats");
+				"osync_format_env_get_objformats");
 	LoadSym(p->osync_objformat_get_name, "osync_objformat_get_name");
 	LoadSym(p->osync_objformat_get_objtype, "osync_objformat_get_objtype");
 	LoadSym(p->osync_group_new, "osync_group_new");
@@ -265,21 +973,94 @@ OpenSync40::OpenSync40()
 	LoadSym(p->osync_group_remove_member, "osync_group_remove_member");
 	LoadSym(p->osync_plugin_config_new, "osync_plugin_config_new");
 	LoadSym(p->osync_plugin_config_file_load,
-					"osync_plugin_config_file_load");
+				"osync_plugin_config_file_load");
 	LoadSym(p->osync_member_set_config, "osync_member_set_config");
 	LoadSym(p->osync_member_get_config_or_default,
-					"osync_member_get_config_or_default");
+				"osync_member_get_config_or_default");
 	LoadSym(p->osync_plugin_config_file_save,
-					"osync_plugin_config_file_save");
+				"osync_plugin_config_file_save");
 	LoadSym(p->osync_plugin_get_config_type,"osync_plugin_get_config_type");
 	LoadSym(p->osync_engine_new, "osync_engine_new");
 	LoadSym(p->osync_engine_unref, "osync_engine_unref");
 	LoadSym(p->osync_engine_discover_and_block,
-					"osync_engine_discover_and_block");
+				"osync_engine_discover_and_block");
 	LoadSym(p->osync_member_get_objtypes, "osync_member_get_objtypes");
 	LoadSym(p->osync_list_length, "osync_list_length");
 	LoadSym(p->osync_error_set, "osync_error_set");
 	LoadSym(p->osync_engine_finalize, "osync_engine_finalize");
+	LoadSym(p->osync_mapping_engine_get_changes,
+				"osync_mapping_engine_get_changes");
+	LoadSym(p->osync_mapping_engine_supports_ignore,
+				"osync_mapping_engine_supports_ignore");
+	LoadSym(p->osync_mapping_engine_supports_use_latest,
+				"osync_mapping_engine_supports_use_latest");
+	LoadSym(p->osync_list_nth, "osync_list_nth");
+	LoadSym(p->osync_engine_mapping_solve, "osync_engine_mapping_solve");
+	LoadSym(p->osync_engine_abort, "osync_engine_abort");
+	LoadSym(p->osync_engine_mapping_duplicate,
+				"osync_engine_mapping_duplicate");
+	LoadSym(p->osync_engine_mapping_ignore_conflict,
+				"osync_engine_mapping_ignore_conflict");
+	LoadSym(p->osync_engine_mapping_use_latest,
+				"osync_engine_mapping_use_latest");
+	LoadSym(p->osync_change_get_changetype, "osync_change_get_changetype");
+	LoadSym(p->osync_mapping_engine_change_find_member,
+				"osync_mapping_engine_change_find_member");
+	LoadSym(p->osync_change_get_data, "osync_change_get_data");
+	LoadSym(p->osync_data_get_printable, "osync_data_get_printable");
+	LoadSym(p->osync_free, "osync_free");
+	LoadSym(p->osync_change_get_uid, "osync_change_get_uid");
+	LoadSym(p->osync_engine_continue, "osync_engine_continue");
+	LoadSym(p->osync_engine_get_objengines, "osync_engine_get_objengines");
+	LoadSym(p->osync_obj_engine_get_members,
+				"osync_obj_engine_get_members");
+	LoadSym(p->osync_obj_engine_get_objtype,
+				"osync_obj_engine_get_objtype");
+	LoadSym(p->osync_obj_engine_get_mapping_entry_engines_of_member,
+			"osync_obj_engine_get_mapping_entry_engines_of_member");
+	LoadSym(p->osync_entry_engine_is_dirty,"osync_entry_engine_is_dirty");
+	LoadSym(p->osync_entry_engine_get_changetype,
+				"osync_entry_engine_get_changetype");
+	LoadSym(p->osync_engine_change_update_get_change,
+				"osync_engine_change_update_get_change");
+	LoadSym(p->osync_engine_change_update_get_member,
+				"osync_engine_change_update_get_member");
+	LoadSym(p->osync_engine_change_update_get_error,
+				"osync_engine_change_update_get_error");
+	LoadSym(p->osync_engine_change_update_get_event,
+				"osync_engine_change_update_get_event");
+	LoadSym(p->osync_change_get_objformat, "osync_change_get_objformat");
+	LoadSym(p->osync_engine_mapping_update_get_error,
+				"osync_engine_mapping_update_get_error");
+	LoadSym(p->osync_engine_update_get_error,
+				"osync_engine_update_get_error");
+	LoadSym(p->osync_engine_update_get_event,
+				"osync_engine_update_get_event");
+	LoadSym(p->osync_engine_member_update_get_objtype,
+				"osync_engine_member_update_get_objtype");
+	LoadSym(p->osync_engine_member_update_get_member,
+				"osync_engine_member_update_get_member");
+	LoadSym(p->osync_engine_member_update_get_error,
+				"osync_engine_member_update_get_error");
+	LoadSym(p->osync_engine_member_update_get_event,
+				"osync_engine_member_update_get_event");
+	LoadSym(p->osync_engine_set_conflict_callback,
+				"osync_engine_set_conflict_callback");
+	LoadSym(p->osync_engine_set_changestatus_callback,
+				"osync_engine_set_changestatus_callback");
+	LoadSym(p->osync_engine_set_mappingstatus_callback,
+				"osync_engine_set_mappingstatus_callback");
+	LoadSym(p->osync_engine_set_enginestatus_callback,
+				"osync_engine_set_enginestatus_callback");
+	LoadSym(p->osync_engine_set_memberstatus_callback,
+				"osync_engine_set_memberstatus_callback");
+	LoadSym(p->osync_engine_set_multiply_callback,
+				"osync_engine_set_multiply_callback");
+	LoadSym(p->osync_engine_initialize, "osync_engine_initialize");
+	LoadSym(p->osync_engine_synchronize_and_block,
+				"osync_engine_synchronize_and_block");
+	LoadSym(p->osync_engine_mapping_update_get_event,
+				"osync_engine_mapping_update_get_event");
 
 	// fixup free pointers
 	p->group_env.SetFreeFunc(p->osync_group_env_unref);
@@ -639,9 +1420,6 @@ void OpenSync40::SetConfiguration(const std::string &group_name,
 
 void OpenSync40::Discover(const std::string &group_name)
 {
-	typedef Barry::vLateSmartPtr<OSyncEngine, void(*)(OSyncEngine*)> EngineHandle;
-	typedef Barry::vLateSmartPtr<OSyncList, void(*)(OSyncList*)> SyncListHandle;
-
 	OSyncGroup *group = m_priv->osync_group_env_find_group(m_priv->group_env.get(), group_name.c_str());
 	if( !group )
 		throw std::runtime_error("Group not found: " + group_name);
@@ -677,6 +1455,54 @@ void OpenSync40::Discover(const std::string &group_name)
 		m_priv->osync_engine_finalize(engine.get(), m_priv->error);
 		throw std::runtime_error(m_priv->error.GetErrorMsg());
 	}
+}
+
+void OpenSync40::Sync(const std::string &group_name,
+			SyncStatus &status_callback)
+{
+	OSyncGroup *group = m_priv->osync_group_env_find_group(m_priv->group_env.get(), group_name.c_str());
+	if( !group )
+		throw std::runtime_error("Group not found: " + group_name);
+
+	EngineHandle engine(m_priv->osync_engine_unref);
+	engine = m_priv->osync_engine_new(group, m_priv->error);
+	if( !engine.get() )
+		throw std::runtime_error(m_priv->error.GetErrorMsg());
+
+
+	CallbackBundle cbdata(m_priv, status_callback);
+
+	m_priv->osync_engine_set_conflict_callback(engine.get(), conflict_handler, &cbdata);
+	m_priv->osync_engine_set_changestatus_callback(engine.get(), entry_status, &cbdata);
+	m_priv->osync_engine_set_mappingstatus_callback(engine.get(), mapping_status, &cbdata);
+	m_priv->osync_engine_set_enginestatus_callback(engine.get(), engine_status, &cbdata);
+	m_priv->osync_engine_set_memberstatus_callback(engine.get(), member_status, &cbdata);
+	m_priv->osync_engine_set_multiply_callback(engine.get(), multiply_summary, &cbdata);
+
+
+	SyncListHandle members(m_priv->osync_list_free);
+	members = m_priv->osync_group_get_members(group);
+	OSyncList *m = NULL;
+	for( m = members.get(); m; m = m->next ) {
+		OSyncMember *member = (OSyncMember *) m->data;
+
+		SyncListHandle objtypes(m_priv->osync_list_free);
+		objtypes = m_priv->osync_member_get_objtypes(member);
+		if( m_priv->osync_list_length(objtypes.get()) == 0 ) {
+			cout << "Member " << m_priv->osync_member_get_id(member) << " has no objtypes. Has it already been discovered?" << endl;
+		}
+	}
+
+	if( !m_priv->osync_engine_initialize(engine.get(), m_priv->error) )
+		throw std::runtime_error(m_priv->error.GetErrorMsg());
+
+	if( !m_priv->osync_engine_synchronize_and_block(engine.get(), m_priv->error) ) {
+		m_priv->osync_engine_finalize(engine.get(), NULL);
+		throw std::runtime_error(m_priv->error.GetErrorMsg());
+	}
+
+	if( !m_priv->osync_engine_finalize(engine.get(), m_priv->error) )
+		throw std::runtime_error(m_priv->error.GetErrorMsg());
 }
 
 

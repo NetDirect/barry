@@ -17,7 +17,7 @@ ostest_SOURCES = \
 	error.cc error.h \
 	dlopen.cc dlopen.h \
 	tempdir.cc tempdir.h \
-	osbase.cc osbase.h \
+	osbase.cc osbase.h osprivatebase.h \
 	os22.h \
 	os40.h \
 	ostest.cc

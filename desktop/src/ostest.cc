@@ -29,6 +29,92 @@
 using namespace std;
 using namespace OpenSync;
 
+// notes: OpenSync::SyncStatus is a base class with all the opensync
+// callbacks as virtual functions, with reasonable defaults.  The
+// programmer can override any callbacks he so chooses as below.
+//
+// If a callback has state or information or requires a decision, it
+// passes in a reference to a base class (example below: SyncConflict).
+// This base class is really a reference to a derived class specific
+// to the 0.22 or 0.4x library API, and contains pointers to the
+// OpenSync40 or OpenSync22 classes and private structs, and handles
+// all cleanup of the state it holds.  Also, these classes hold
+// information in C++ style variables... for example SyncConflict
+// will hold a vector of objects that contain the osync change
+// information of each conflicting change, as well as a means to
+// access a pretty printed version.  No OpenSync constants will
+// be used in these objects.
+//
+// If abstracted enough, the override code should be dead simple,
+// like below, and also be generic enough to run on both 0.22 and
+// 0.4x libraries, dynamically. :-D
+//
+class SyncStatus : public OpenSync::SyncStatus
+{
+public:
+	// virtual overrides
+	virtual void HandleConflict(SyncConflict &conflict)
+	{
+		while( bool again = true ) {
+			again = false;
+			cout << "Conflicting items:\n" << conflict << endl;
+			cout << conflict.GetMenu();
+			string line;
+			getline(cin, line);
+			switch( line[0] )
+			{
+			case '1':
+			case '2':
+			case '3':
+			case '4':
+			case '5':
+			case '6':
+			case '7':
+			case '8':
+			case '9':
+				conflict.Select(atoi(line.c_str()) - 1);
+				break;
+			case 'A':
+				conflict.Abort();
+				break;
+			case 'D':
+				conflict.Duplicate();
+				break;
+			case 'I':
+				if( conflict.IsIgnoreSupported() )
+					conflict.Ignore();
+				break;
+			case 'N':
+				if( conflict.IsKeepNewerSupported() )
+					conflict.KeepNewer();
+				break;
+			default:
+				again = true;
+				break;
+			}
+		}
+	}
+
+	virtual void CheckSummary(SyncSummary &summary)
+	{
+		cout << "\nSynchronization Forecast Summary:\n";
+		cout << summary << endl;
+
+		cout << "Do you want to continue the synchronization? (N/y): ";
+		string line;
+		getline(cin, line);
+
+		/* Abort if not got accepted with 'y' */
+		if( line[0] != 'y') {
+			cout << "\nAborting! Synchronization got aborted by user!" << endl;
+			summary.Abort();
+		} else {
+			cout << "\nOK! Completing synchronization!" << endl;
+			summary.Continue();
+		}
+	}
+};
+
 void Test(API &os)
 {
 	cout << "=======================================================\n";

@@ -463,6 +463,11 @@ void OpenSync22::Discover(const std::string &group_name)
 	// Discover is a successful noop on 0.22
 }
 
+void OpenSync22::Sync(const std::string &group_name,
+			SyncStatus &status_callback)
+{
+}
+
 } // namespace OpenSync
 
 

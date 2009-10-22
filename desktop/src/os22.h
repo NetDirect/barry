@@ -76,6 +76,7 @@ public:
 	void Discover(const std::string &group_name);
 
 	// Syncing
+	void Sync(const std::string &group_name, SyncStatus &status_callback);
 };
 
 } // namespace OpenSync
