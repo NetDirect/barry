@@ -174,7 +174,7 @@ public:
 	osync_bool		(*osync_plugin_config_file_save)(
 					OSyncPluginConfig *config,
 					const char *path, OSyncError **error);
-	OSyncConfigurationType	(*osync_plugin_get_config_type)(
+	OSyncPluginConfigurationType (*osync_plugin_get_config_type)(
 					OSyncPlugin *plugin);
 	OSyncEngine*		(*osync_engine_new)(OSyncGroup *group,
 					OSyncError **error);
@@ -1310,7 +1310,7 @@ bool OpenSync40::IsConfigurable(const std::string &group_name,
 		throw std::runtime_error(string("Unable to find plugin with name: ") + m_priv->osync_member_get_pluginname(member));
 
 
-	OSyncConfigurationType type = m_priv->osync_plugin_get_config_type(plugin);
+	OSyncPluginConfigurationType type = m_priv->osync_plugin_get_config_type(plugin);
 	return type != OSYNC_PLUGIN_NO_CONFIGURATION;
 }
 
@@ -2620,7 +2620,7 @@ static osync_bool osynctool_configure_member(OSyncGroupEnv *env, OSyncPluginEnv 
 	OSyncGroup *group = NULL;
 	OSyncPlugin *plugin = NULL;
 	OSyncPluginConfig *config = NULL;
-	OSyncConfigurationType type = OSYNC_PLUGIN_NO_CONFIGURATION;
+	OSyncPluginConfigurationType type = OSYNC_PLUGIN_NO_CONFIGURATION;
 	
 	osync_trace(TRACE_ENTRY, "%s(%p, %p, %s, %s, %p)", __func__, env, pluginenv, groupname, memberid, error);
 	
