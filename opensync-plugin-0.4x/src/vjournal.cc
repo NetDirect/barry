@@ -297,7 +297,7 @@ bool VJournalConverter::CommitRecordData(BarryEnvironment *env, unsigned int dbI
 	else {
 		newRecordId = env->m_JournalSync.m_Table.StateMap[StateIndex].RecordId;
 	}
-	trace.logf("newRecordId: %lu", newRecordId);
+	trace.logf("newRecordId: %u", newRecordId);
 
 	VJournalConverter convert(newRecordId);
 	if( !convert.ParseData(data) ) {

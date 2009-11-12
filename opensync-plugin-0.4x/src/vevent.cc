@@ -793,7 +793,7 @@ bool VEventConverter::CommitRecordData(BarryEnvironment *env, unsigned int dbId,
 	else {
 		newRecordId = env->m_CalendarSync.m_Table.StateMap[StateIndex].RecordId;
 	}
-	trace.logf("newRecordId: %lu", newRecordId);
+	trace.logf("newRecordId: %u", newRecordId);
 
 	VEventConverter convert(newRecordId);
 	if( !convert.ParseData(data) ) {

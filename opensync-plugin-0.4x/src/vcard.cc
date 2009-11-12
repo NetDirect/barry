@@ -696,7 +696,7 @@ bool VCardConverter::CommitRecordData(BarryEnvironment *env, unsigned int dbId,
 	else {
 		newRecordId = env->m_ContactsSync.m_Table.StateMap[StateIndex].RecordId;
 	}
-	trace.logf("newRecordId: %lu", newRecordId);
+	trace.logf("newRecordId: %u", newRecordId);
 
 	VCardConverter convert(newRecordId);
 	if( !convert.ParseData(data) ) {

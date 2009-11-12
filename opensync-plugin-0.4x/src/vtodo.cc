@@ -416,7 +416,7 @@ bool VTodoConverter::CommitRecordData(BarryEnvironment *env, unsigned int dbId,
 	else {
 		newRecordId = env->m_TodoSync.m_Table.StateMap[StateIndex].RecordId;
 	}
-	trace.logf("newRecordId: %lu", newRecordId);
+	trace.logf("newRecordId: %u", newRecordId);
 
 	VTodoConverter convert(newRecordId);
 	if( !convert.ParseData(data) ) {
