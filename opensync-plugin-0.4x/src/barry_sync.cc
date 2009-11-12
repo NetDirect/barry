@@ -699,7 +699,7 @@ static void connect(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncContext 
 			Barry::Probe probe;
 			int nIndex = probe.FindActive(env->m_pin);
 			if( nIndex == -1 ) {
-				osync_context_report_error(ctx, OSYNC_ERROR_NO_CONNECTION, "Unable to find PIN %lx", env->m_pin);
+				osync_context_report_error(ctx, OSYNC_ERROR_NO_CONNECTION, "Unable to find PIN %x", env->m_pin);
 				return;
 			}
 			env->m_ProbeResult = probe.Get(nIndex);

@@ -856,7 +856,7 @@ b_vformat_unescape_string (const char *s)
 			  /* \t is (incorrectly) used by kOrganizer, so handle it here */
 			case 't': str = g_string_append_c (str, '\t'); break;
 			default:
-				osync_trace(TRACE_INTERNAL, "invalid escape, passing it through. escaped char was %s", *p);
+				osync_trace(TRACE_INTERNAL, "invalid escape, passing it through. escaped char was %c", *p);
 				str = g_string_append_c (str, '\\');
 				str = g_string_append_unichar (str, g_utf8_get_char(p));
 				break;
