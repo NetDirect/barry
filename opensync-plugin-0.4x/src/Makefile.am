@@ -34,6 +34,7 @@ barry_sync_la_SOURCES = \
 	vjournal.cc vjournal.h \
 	vtodo.cc vtodo.h \
 	vformat.c vformat.h \
+	format_check.h \
 	trace.h \
 	tosserror.h
 

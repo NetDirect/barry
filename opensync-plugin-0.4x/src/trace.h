@@ -25,6 +25,7 @@
 #include <opensync/opensync.h>
 #include <stdarg.h>
 #include <stdio.h>
+#include "format_check.h"
 
 class Trace
 {
@@ -53,7 +54,7 @@ public:
 		osync_trace(TRACE_INTERNAL, "barry_sync: %s", t);
 	}
 
-	void logf(const char *t, ...)
+	void logf(const char *t, ...) BARRY_GCC_FORMAT_CHECK(2, 3)
 	{
 		va_list vl;
 		va_start(vl, t);
