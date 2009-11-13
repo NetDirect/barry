@@ -120,7 +120,7 @@ public:
 					OSyncGroupEnv *env, const char *name);
 	OSyncList*		(*osync_group_get_members)(OSyncGroup *group);
 	const char*		(*osync_member_get_name)(OSyncMember *member);
-	long long int		(*osync_member_get_id)(OSyncMember *member);
+	osync_memberid		(*osync_member_get_id)(OSyncMember *member);
 	const char*		(*osync_member_get_pluginname)(
 					OSyncMember *member);
 	OSyncList*		(*osync_format_env_get_objformats)(
@@ -156,7 +156,7 @@ public:
 	osync_bool		(*osync_member_save)(OSyncMember *member,
 					OSyncError **error);
 	OSyncMember*		(*osync_group_find_member)(OSyncGroup *group,
-					long long int id);
+					osync_memberid id);
 	osync_bool		(*osync_member_delete)(OSyncMember *member,
 					OSyncError **error);
 	void			(*osync_group_remove_member)(OSyncGroup *group,
@@ -491,9 +491,6 @@ void SyncConflict40Private::AppendChanges(std::vector<SyncChange> &list)
 
 			entry.id = i;
 			entry.member_id = m_priv->osync_member_get_id(member);
-			if( entry.member_id != m_priv->osync_member_get_id(member) )
-				throw std::logic_error("long can't hold long long");
-
 			entry.plugin_name = m_priv->osync_member_get_pluginname(member);
 			entry.uid = m_priv->osync_change_get_uid(change);
 
@@ -555,9 +552,6 @@ bool SyncSummary40Private::AppendMembers(std::vector<SyncMemberSummary> &list)
 			entry.id = i;
 			entry.objtype_name = m_priv->osync_obj_engine_get_objtype(objengine);
 			entry.member_id = m_priv->osync_member_get_id(member);
-			if( entry.member_id != m_priv->osync_member_get_id(member) )
-				throw std::logic_error("long can't hold long long");
-
 			entry.plugin_name = m_priv->osync_member_get_pluginname(member);
 
 			const OSyncList *mapping_entry_engines = m_priv->osync_obj_engine_get_mapping_entry_engines_of_member(objengine, member);
@@ -1184,14 +1178,6 @@ void OpenSync40::GetMembers(const std::string &group_name,
 
 		new_member.id = m_priv->osync_member_get_id(member);
 		new_member.plugin_name = m_priv->osync_member_get_pluginname(member);
-
-		// we are switching opensync's long long int ID to
-		// our long... to double check they are equal after
-		// the conversion
-		if( new_member.id != m_priv->osync_member_get_id(member) ) {
-			m_priv->osync_list_free(member_list);
-			throw std::logic_error("OpenSync's member ID is too large to fit in OpenSyncAPI (40)");
-		}
 
 		// add to member list
 		members.push_back(new_member);
