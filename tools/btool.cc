@@ -28,6 +28,11 @@
 #include <string>
 #include <algorithm>
 #include <getopt.h>
+#include <config.h>
+#include <libintl.h>
+
+#define _(String) gettext (String)
+#define N_(String) String
 
 
 using namespace std;
@@ -439,6 +444,10 @@ bool ParseEpOverride(const char *arg, Usb::EndpointPair *epp)
 
 int main(int argc, char *argv[])
 {
+	setlocale (LC_ALL, "");
+	bindtextdomain (PACKAGE, LOCALEDIR);
+	textdomain (PACKAGE);
+
 	cout.sync_with_stdio(true);	// leave this on, since libusb uses
 					// stdio for debug messages
 

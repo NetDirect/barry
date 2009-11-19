@@ -39,7 +39,13 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <string>
+#include <config.h>
+#include <libintl.h>
 #include <barry/common.h>
+
+#define _(String) gettext (String)
+#define N_(String) String
+
 
 bool old_style_pearl = false;
 bool force_dual = false;
@@ -324,6 +330,10 @@ void resume()
 int main(int argc, char *argv[])
 {
 	struct usb_bus *busses;
+
+	setlocale (LC_ALL, "");
+	bindtextdomain (PACKAGE, LOCALEDIR);
+	textdomain (PACKAGE);
 
 	//
 	// allow -o command line switch to choose which mode to use for

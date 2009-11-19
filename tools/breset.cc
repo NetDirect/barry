@@ -31,6 +31,12 @@
 #include <usb.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <config.h>
+#include <locale.h>
+#include <libintl.h>
+
+#define _(String) gettext (String)
+#define N_(String) String
 
 #define VENDOR_RIM		0x0fca
 #define PRODUCT_RIM_BLACKBERRY	0x0001
@@ -55,6 +61,10 @@ bool reset(struct usb_device *dev)
 int main()
 {
 	struct usb_bus *busses;
+
+	setlocale (LC_ALL, "");
+	bindtextdomain (PACKAGE, LOCALEDIR);
+	textdomain (PACKAGE);
 
 	usb_init();
 	usb_find_busses();

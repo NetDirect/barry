@@ -29,6 +29,11 @@
 #include <list>
 #include <cctype>
 #include <stdint.h>
+#include <config.h>
+#include <libintl.h>
+
+#define _(String) gettext (String)
+#define N_(String) String
 
 using namespace std;
 
@@ -42,6 +47,11 @@ int main(int argc, char* argv[])
 {
 	list<string>* event = NULL;
 	string line;
+
+	setlocale (LC_ALL, "");
+	bindtextdomain (PACKAGE, LOCALEDIR);
+	textdomain (PACKAGE);
+
 	while( !getline(cin, line).eof() ) {
 		size_t pos = line.find_first_of(':');
 
