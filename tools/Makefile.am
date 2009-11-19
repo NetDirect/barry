@@ -5,6 +5,11 @@ INCLUDES = $(LIBUSB_CFLAGS)
 #AM_CXXFLAGS = -ansi -Wall -fno-strict-aliasing -g
 AM_CXXFLAGS = -ansi -Wall -g
 
+# To use gettext
+datadir = @datadir@
+localedir = $(datadir)/locale
+DEFS = -DLOCALEDIR=\"$(localedir)\" @DEFS@
+
 bin_PROGRAMS = \
 	btool \
 	bidentify \

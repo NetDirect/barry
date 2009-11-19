@@ -58,6 +58,11 @@ include_barrydir = ${includedir}/barry
 
 #LDFLAGS = ../../external/rootdir/libusb/lib/libusb.a $(LDBOOST) -lpthread $(LDDEBUG)
 
+# To use gettext
+datadir = @datadir@
+localedir = $(datadir)/locale
+DEFS = -DLOCALEDIR=\"$(localedir)\" @DEFS@
+
 #
 # libbarry - main USB protocol interface library
 # libbarrydp - '.debug' parser library

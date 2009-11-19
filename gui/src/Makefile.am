@@ -6,6 +6,11 @@ LIBS = $(TREE_BUILD_LDFLAGS) $(BARRY_LIBS) $(GTKMM_LIBS) $(LIBTAR_LIBS) $(LIBZ_L
 AM_CXXFLAGS = -ansi -Wall -g
 AM_CPPFLAGS = -DBARRYBACKUP_GLADEDIR='"$(gladedir)"'
 
+# To use gettext
+datadir = @datadir@
+localedir = $(datadir)/locale
+DEFS = -DLOCALEDIR=\"$(localedir)\" @DEFS@
+
 dist_glade_DATA = \
 	BackupWindow.glade \
 	DatabaseSelectDlg.glade \
