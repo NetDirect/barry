@@ -9,6 +9,8 @@ AC_CONFIG_HEADERS([config.h:config.h.in])
 AC_CONFIG_MACRO_DIR([m4])
 AM_INIT_AUTOMAKE([dist-bzip2])
 
+AM_GNU_GETTEXT([external])
+
 AC_USE_SYSTEM_EXTENSIONS
 
 #
