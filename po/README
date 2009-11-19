@@ -1,0 +1,26 @@
+HOWTO to add a new language or update translation
+=================================================
+
+To add a new language
+---------------------
+
+Sample to add spanish language
+
+  $ cd <barry>/po
+  $ msginit --locale=es --input=barry.pot
+  $ cat "es" >> LINGUAS
+  $ make update-po
+
+Then, send to barry team your work.
+
+To update tranlation
+--------------------
+
+You have to only edit a ".po" file.
+
+  $ cd <barry>/po
+  $ vi es.po
+  $ make update-po
+
+Then, send to barry team your work.
+
