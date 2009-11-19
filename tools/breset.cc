@@ -71,7 +71,7 @@ int main()
 	usb_find_devices();
 	busses = usb_get_busses();
 
-	printf("Scanning for Blackberry devices...\n");
+	printf(_("Scanning for Blackberry devices...\n"));
 	int found = 0;
 
 	struct usb_bus *bus;
@@ -85,16 +85,16 @@ int main()
 			     dev->descriptor.idProduct == PRODUCT_RIM_PEARL ||
 			     dev->descriptor.idProduct == PRODUCT_RIM_PEARL_8120 ||
 			     dev->descriptor.idProduct == PRODUCT_RIM_PEARL_DUAL ) ) {
-			    	printf("Found...");
-				printf("attempting to reset.\n");
+			    	printf(_("Found..."));
+				printf(_("attempting to reset.\n"));
 				if( reset(dev) )
 					found++;
 				else
-					printf("Can't reset device on bus %s, devnum %u\n", bus->dirname, (unsigned int) dev->devnum);
+					printf(_("Can't reset device on bus %s, devnum %u\n"), bus->dirname, (unsigned int) dev->devnum);
 			}
 		}
 	}
 
-	printf("%d device%s reset.\n", found, found > 1 ? "s" : "");
+	printf(_("%d device%s reset.\n"), found, found > 1 ? "s" : "");
 }
 
