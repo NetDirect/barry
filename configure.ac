@@ -221,7 +221,7 @@ AC_FUNC_SELECT_ARGTYPES
 AC_CHECK_FUNCS([bzero gettimeofday memset select strcasecmp strchr strerror strtol strtoul])
 AC_C_BIGENDIAN
 
-AC_CONFIG_FILES([Makefile
+AC_CONFIG_FILES([Makefile po/Makefile.in
                  src/Makefile
                  tools/Makefile
                  examples/Makefile

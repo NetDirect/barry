@@ -1,5 +1,7 @@
 Release: version 0.17 - 2009/11/??
 ------------------------------------------------------------------------------
+2009-11-19  
+	- gettextize by Nicolas VIVIEN
 2009/10/02
 	- doc: added list of reasons why to submit patches, and notes
 		on how to create a forked tree on repo.or.cz
