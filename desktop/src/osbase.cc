@@ -249,10 +249,11 @@ SyncStatus::~SyncStatus()
 
 void SyncStatus::HandleConflict(SyncConflict &conflict)
 {
-	while( bool again = true ) {
+	bool again = true;
+	while( again ) {
 		again = false;
 		cout << "Conflicting items:\n" << conflict << endl;
-		cout << conflict.GetMenu();
+		cout << conflict.GetMenu() << ": ";
 		string line;
 		getline(cin, line);
 		switch( line[0] )
@@ -269,18 +270,29 @@ void SyncStatus::HandleConflict(SyncConflict &conflict)
 			conflict.Select(atoi(line.c_str()) - 1);
 			break;
 		case 'A':
-			conflict.Abort();
+		case 'a':
+			if( conflict.IsAbortSupported() )
+				conflict.Abort();
+			else
+				cout << "Abort not supported!" << endl;
 			break;
 		case 'D':
+		case 'd':
 			conflict.Duplicate();
 			break;
 		case 'I':
+		case 'i':
 			if( conflict.IsIgnoreSupported() )
 				conflict.Ignore();
+			else
+				cout << "Ignore not supported!" << endl;
 			break;
 		case 'N':
+		case 'n':
 			if( conflict.IsKeepNewerSupported() )
 				conflict.KeepNewer();
+			else
+				cout << "Keep Newer not supported!" << endl;
 			break;
 		default:
 			again = true;
