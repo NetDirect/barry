@@ -32,10 +32,8 @@ using namespace OpenSync;
 void Test(API &os)
 {
 	cout << "=======================================================\n";
-	cout << " Begin test run\n";
+	cout << " Begin test run: " << os.GetVersion() << "\n";
 	cout << "=======================================================\n";
-
-	cout << os.GetVersion() << endl;
 
 	format_list_type flist;
 	os.GetFormats(flist);
@@ -89,12 +87,13 @@ void Test(API &os)
 		}
 	}
 
-	// add member twice, to confirm behaviour
 	os.AddMember(group_name, "barry-sync", "Barry sync member");
 	os.AddMember(group_name, "evo2-sync", "Evolution sync member");
-	os.AddMember(group_name, "file-sync", "File sync member");
 
+	// test deleting the member twice, to confirm behaviour
+	// only os40 has DeleteMember()
 	if( OpenSync40 *os40 = dynamic_cast<OpenSync40*>(&os) ) {
+		os.AddMember(group_name, "file-sync", "File sync member");
 		os40->DeleteMember(group_name, "file-sync");
 		try { os40->DeleteMember(group_name, "file-sync"); }
 		catch( std::runtime_error &re ) {
@@ -139,6 +138,15 @@ void Test(API &os)
 	os.Sync(group_name, status_callbacks);
 	os.Sync(group_name, status_callbacks);
 
+	// loop
+	string command;
+	while( (cout << "Enter 'q' to quit: "),
+		getline(cin, command),
+		command[0] != 'q' )
+	{
+		os.Sync(group_name, status_callbacks);
+	}
+
 	// delete group twice, to confirm behaviour
 	os.DeleteGroup(group_name);
 	cout << "Deleted: " << group_name << endl;
@@ -152,7 +160,7 @@ void Test(API &os)
 	}
 
 	cout << "=======================================================\n";
-	cout << " End test run\n";
+	cout << " End test run: " << os.GetVersion() << "\n";
 	cout << "=======================================================\n";
 }
 
