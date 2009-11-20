@@ -327,7 +327,7 @@ public:
 	virtual bool IsIgnoreSupported() const;
 	virtual bool IsKeepNewerSupported() const;
 
-	virtual void Select(int change_index);
+	virtual void Select(int change_id); // takes the id of SyncChange
 	virtual void Abort();
 	virtual void Duplicate();
 	virtual void Ignore();
@@ -422,11 +422,11 @@ bool SyncConflict40Private::IsKeepNewerSupported() const
 	return m_priv->osync_mapping_engine_supports_use_latest(m_mapping);
 }
 
-void SyncConflict40Private::Select(int change_index)
+void SyncConflict40Private::Select(int change_id)
 {
-	OSyncList *c = m_priv->osync_list_nth(m_changes, change_index);
+	OSyncList *c = m_priv->osync_list_nth(m_changes, change_id);
 	if( !c )
-		throw std::logic_error("Bad change_index");
+		throw std::logic_error("Bad change_id");
 
 	OSyncChange *change = (OSyncChange *) c->data;
 

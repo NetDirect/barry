@@ -88,7 +88,7 @@ public:
 	bool IsKeepNewerSupported() const;
 
 	std::string GetMenu() const;
-	void Select(int change_index);
+	void Select(int change_id);  // takes the id field of SyncChange
 	void Abort();
 	void Duplicate();
 	void Ignore();

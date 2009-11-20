@@ -37,7 +37,7 @@ public:
 	virtual bool IsIgnoreSupported() const = 0;
 	virtual bool IsKeepNewerSupported() const = 0;
 
-	virtual void Select(int change_index) = 0;
+	virtual void Select(int change_id) = 0;
 	virtual void Abort() = 0;
 	virtual void Duplicate() = 0;
 	virtual void Ignore() = 0;
