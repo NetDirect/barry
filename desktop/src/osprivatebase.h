@@ -33,6 +33,7 @@ class SyncConflictPrivateBase
 public:
 	virtual ~SyncConflictPrivateBase() {}
 
+	virtual bool IsAbortSupported() const = 0;
 	virtual bool IsIgnoreSupported() const = 0;
 	virtual bool IsKeepNewerSupported() const = 0;
 

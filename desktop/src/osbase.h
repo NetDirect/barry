@@ -83,6 +83,7 @@ public:
 	SyncConflict(SyncConflictPrivateBase &conflict);
 	~SyncConflict();
 
+	bool IsAbortSupported() const;
 	bool IsIgnoreSupported() const;
 	bool IsKeepNewerSupported() const;
 

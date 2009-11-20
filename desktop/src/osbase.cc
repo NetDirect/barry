@@ -126,6 +126,11 @@ SyncConflict::~SyncConflict()
 {
 }
 
+bool SyncConflict::IsAbortSupported() const
+{
+	return m_conflict.IsAbortSupported();
+}
+
 bool SyncConflict::IsIgnoreSupported() const
 {
 	return m_conflict.IsIgnoreSupported();
@@ -139,9 +144,12 @@ bool SyncConflict::IsKeepNewerSupported() const
 std::string SyncConflict::GetMenu() const
 {
 	ostringstream oss;
-	oss << "Which entry do you want to use? [1-9] To select a side"
-	    << ", [A]bort"
-	    << ", [D]uplicate";
+	oss << "Which entry do you want to use?\n[1-9] To select a side";
+
+	if( IsAbortSupported() )
+		oss << ", [A]bort";
+
+	oss << ", [D]uplicate";
 
 	if( IsIgnoreSupported() )
 		oss << ", [I]gnore";

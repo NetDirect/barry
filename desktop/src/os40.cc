@@ -323,6 +323,7 @@ public:
 		OSyncEngine *engine, OSyncMappingEngine *mapping);
 	~SyncConflict40Private();
 
+	virtual bool IsAbortSupported() const;
 	virtual bool IsIgnoreSupported() const;
 	virtual bool IsKeepNewerSupported() const;
 
@@ -404,6 +405,11 @@ SyncConflict40Private::SyncConflict40Private(OpenSync40Private *priv,
 SyncConflict40Private::~SyncConflict40Private()
 {
 	m_priv->osync_list_free(m_changes);
+}
+
+bool SyncConflict40Private::IsAbortSupported() const
+{
+	return true;
 }
 
 bool SyncConflict40Private::IsIgnoreSupported() const
