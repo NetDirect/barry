@@ -385,7 +385,6 @@ static const char *OSyncChangeType2String(OSyncChangeType type)
 		default:
 		case OSYNC_CHANGE_TYPE_UNKNOWN: return "?";
 	}
-	return NULL;
 }
 
 
@@ -853,6 +852,7 @@ void member_status(OSyncEngineMemberUpdate *status, void *cbdata)
 		case OSYNC_ENGINE_MEMBER_EVENT_ERROR:
 			oss << " had an error: "
 			    << cb->m_priv->osync_error_print(&error);
+			error_event = true;
 			break;
 		default:
 			valid = false;
