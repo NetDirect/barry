@@ -78,6 +78,7 @@
 #define SB_COMMAND_JL_RESET_REQUIRED	0x78	// Occurs after GOODBYE when handheld reset is required
 #define SB_COMMAND_JL_COD_IN_USE	0x6c	// Perhaps "BUSY" is also a good name?
 #define SB_COMMAND_JL_COD_NOT_FOUND	0x69
+#define SB_COMMAND_JL_NOT_ENOUGH_MEMORY 0x6a	// Occurs when the internal memory isn't enough to install the new COD file
 #define SB_COMMAND_JL_NOT_SUPPORTED	0x71	// Occurs when device does not support a command
 
 // JavaLoader data

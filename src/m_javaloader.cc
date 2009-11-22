@@ -441,6 +441,10 @@ void JavaLoader::SendStream(std::istream &input, size_t module_size)
 		packet.PutData(buffer, size);
 		m_socket->Packet(packet);
 
+		if( packet.Command() == SB_COMMAND_JL_NOT_ENOUGH_MEMORY ) {
+			throw Error("JavaLoader::SendStream not enough memory to install the application");
+		}
+
 		if( packet.Command() != SB_COMMAND_JL_ACK ) {
 			ThrowJLError("JavaLoader::SendStream send data", packet.Command());
 		}
