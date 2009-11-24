@@ -124,13 +124,13 @@ This package contains the opensync plugin.
 
 %build
 # main tree
-%{configure} --enable-boost --with-zlib
+%{configure} --enable-boost --enable-nls --with-zlib
 %{__make} %{?_smp_mflags}
 
 # gui tree
 %if %{with_gui}
 cd gui/
-%{configure} PKG_CONFIG_PATH="..:$PKG_CONFIG_PATH" CXXFLAGS="-I../.." LDFLAGS="-L../../src"
+%{configure} PKG_CONFIG_PATH="..:$PKG_CONFIG_PATH" CXXFLAGS="-I../.." LDFLAGS="-L../../src" --enable-nls
 %{__make} %{?_smp_mflags}
 cd ../
 %endif
@@ -138,7 +138,7 @@ cd ../
 # opensync tree
 %if %{with_opensync}
 cd opensync-plugin/
-%{configure} PKG_CONFIG_PATH="..:$PKG_CONFIG_PATH" CXXFLAGS="-I../.." LDFLAGS="-L../../src"
+%{configure} PKG_CONFIG_PATH="..:$PKG_CONFIG_PATH" CXXFLAGS="-I../.." LDFLAGS="-L../../src" --enable-nls
 %{__make} %{?_smp_mflags}
 cd ../
 %endif
@@ -254,6 +254,7 @@ cd ../
 %attr(0644,root,root) %{_mandir}/man1/brecsum*
 %attr(0644,root,root) %{_mandir}/man1/breset*
 %attr(0644,root,root) %{_mandir}/man1/upldif*
+%attr(0644,root,root) %{_datadir}/locale/*
 %attr(0644,root,root) %{_datadir}/hal/fdi/information/10freedesktop/10-blackberry.fdi
 %attr(0644,root,root) %{_datadir}/hal/fdi/policy/10osvendor/19-blackberry-acl.fdi
 %attr(0644,root,root) %config %{_sysconfdir}/udev/rules.d/*
@@ -311,6 +312,7 @@ cd ../
 %changelog
 * Thu Oct 01 2009 Chris Frey <cdfrey@foursquare.net> 0.17-0
 - version bump
+- added NLS support
 
 * Sat Sep 29 2009 Chris Frey <cdfrey@foursquare.net> 0.16-0
 - version bump

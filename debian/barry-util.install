@@ -23,4 +23,5 @@ debian/tmp/usr/share/man/man1/bjavaloader.1
 debian/tmp/usr/share/man/man1/bjdwp.1
 debian/tmp/usr/share/man/man1/pppob.1
 debian/tmp/usr/share/man/man1/upldif.1
+debian/tmp/usr/share/locale/*
 
