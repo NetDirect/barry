@@ -8,13 +8,13 @@ Sample to add spanish language
 
   $ cd <barry>/po
   $ msginit --locale=es --input=barry.pot
-  $ cat "es" >> LINGUAS
+  $ echo "es" >> LINGUAS
   $ make update-po
 
 Then, send to barry team your work.
 
-To update tranlation
---------------------
+To update translation
+---------------------
 
 You have to only edit a ".po" file.
 

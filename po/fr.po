@@ -1,7 +1,7 @@
 # French translations for barry package.
-# Copyright (C) 2009 Free Software Foundation, Inc.
+# Copyright (C) 2009 Net Direct, Inc.
 # This file is distributed under the same license as the barry package.
-# Nicolas <nicolas@vivien.fr>, 2009.
+# Nicolas <nicolas@vivien.fr>, 2009, French translation copyright
 #
 msgid ""
 msgstr ""

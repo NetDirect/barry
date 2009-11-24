@@ -1,7 +1,7 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR Free Software Foundation, Inc.
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# Barry pot file.
+# Copyright (C) 2009 Net Direct, Inc.
+# This file is distributed under the same license as the Barry package.
+# Chris Frey <cdfrey@foursquare.net>, 2009, among others.
 #
 #, fuzzy
 msgid ""
