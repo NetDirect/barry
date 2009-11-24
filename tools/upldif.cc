@@ -38,6 +38,7 @@ void Usage()
    << "         Copyright 2006-2009, Net Direct Inc. (http://www.netdirect.ca/)\n\n"
    << "   -p pin    PIN of device to talk with\n"
    << "             If only one device plugged in, this flag is optional\n"
+   << "   -P pass   Simplistic method to specify device password\n"
    << "   -u        Do the upload.  If not specified, only dumps parsed\n"
    << "             LDIF data to stdout.\n"
    << "   -v        Dump protocol data during operation\n"
@@ -114,6 +115,7 @@ int main(int argc, char *argv[])
 		uint32_t pin = 0;
 		bool	data_dump = false,
 			do_upload = false;
+		string password;
 
 		// process command line options
 		for(;;) {
@@ -125,6 +127,10 @@ int main(int argc, char *argv[])
 			{
 			case 'p':	// Blackberry PIN
 				pin = strtoul(optarg, NULL, 16);
+				break;
+
+			case 'P':	// Device password
+				password = optarg;
 				break;
 
 			case 'u':	// do upload
@@ -169,7 +175,7 @@ int main(int argc, char *argv[])
 
 		// make sure we're in desktop mode
 		Barry::Mode::Desktop desktop(con);
-		desktop.Open();
+		desktop.Open(password.c_str());
 
 		// upload all records to device
 		desktop.SaveDatabaseByType<Barry::Contact>(contactStore);
