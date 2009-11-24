@@ -119,7 +119,7 @@ int main(int argc, char *argv[])
 
 		// process command line options
 		for(;;) {
-			int cmd = getopt(argc, argv, "hp:uv");
+			int cmd = getopt(argc, argv, "hp:P:uv");
 			if( cmd == -1 )
 				break;
 
