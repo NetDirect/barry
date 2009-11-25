@@ -38,13 +38,9 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <config.h>
-#include <libintl.h>
+#include "i18n.h"
 
 #include <barry/barry.h>
-
-#define _(String) gettext (String)
-#define N_(String) String
 
 
 using namespace std;
@@ -53,9 +49,7 @@ using namespace Barry;
 
 int main(int argc, char *argv[], char *envp[])
 {
-	setlocale (LC_ALL, "");
-	bindtextdomain (PACKAGE, LOCALEDIR);
-	textdomain (PACKAGE);
+	INIT_I18N(PACKAGE);
 
 	Barry::Init(true, &cout);
 

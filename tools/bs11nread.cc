@@ -29,11 +29,7 @@
 #include <string>
 #include <algorithm>
 #include <getopt.h>
-#include <config.h>
-#include <libintl.h>
-
-#define _(String) gettext (String)
-#define N_(String) String
+#include "i18n.h"
 
 
 using namespace std;
@@ -117,9 +113,7 @@ void ShowParsers()
 
 int main(int argc, char *argv[])
 {
-	setlocale (LC_ALL, "");
-	bindtextdomain (PACKAGE, LOCALEDIR);
-	textdomain (PACKAGE);
+	INIT_I18N(PACKAGE);
 
 	try {
 		string filename;

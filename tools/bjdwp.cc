@@ -24,11 +24,7 @@
 #include <barry/barry.h>
 #include <iostream>
 #include <string>
-#include <config.h>
-#include <libintl.h>
-
-#define _(String) gettext (String)
-#define N_(String) String
+#include "i18n.h"
 
 using namespace std;
 using namespace Barry;
@@ -63,9 +59,7 @@ void Usage()
 
 int main(int argc, char *argv[], char *envp[])
 {
-	setlocale (LC_ALL, "");
-	bindtextdomain (PACKAGE, LOCALEDIR);
-	textdomain (PACKAGE);
+	INIT_I18N(PACKAGE);
 
 	try {
 		uint32_t pin = 0;

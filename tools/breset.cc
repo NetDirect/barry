@@ -31,12 +31,7 @@
 #include <usb.h>
 #include <stdio.h>
 #include <unistd.h>
-#include <config.h>
-#include <locale.h>
-#include <libintl.h>
-
-#define _(String) gettext (String)
-#define N_(String) String
+#include "i18n.h"
 
 #define VENDOR_RIM		0x0fca
 #define PRODUCT_RIM_BLACKBERRY	0x0001
@@ -62,9 +57,7 @@ int main()
 {
 	struct usb_bus *busses;
 
-	setlocale (LC_ALL, "");
-	bindtextdomain (PACKAGE, LOCALEDIR);
-	textdomain (PACKAGE);
+	INIT_I18N(PACKAGE);
 
 	usb_init();
 	usb_find_busses();

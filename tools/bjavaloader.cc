@@ -32,11 +32,7 @@
 #include <getopt.h>
 #include <fstream>
 #include <string.h>
-#include <config.h>
-#include <libintl.h>
-
-#define _(String) gettext (String)
-#define N_(String) String
+#include "i18n.h"
 
 // supported javaloader commands
 #define CMD_LIST		"dir"
@@ -223,9 +219,7 @@ void SaveModule(Barry::Mode::JavaLoader *javaloader, const char *filename)
 
 int main(int argc, char *argv[])
 {
-	setlocale (LC_ALL, "");
-	bindtextdomain (PACKAGE, LOCALEDIR);
-	textdomain (PACKAGE);
+	INIT_I18N(PACKAGE);
 
 	cout.sync_with_stdio(true);	// leave this on, since libusb uses
 					// stdio for debug messages

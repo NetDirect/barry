@@ -26,11 +26,7 @@
 #include <vector>
 #include <string>
 #include <getopt.h>
-#include <config.h>
-#include <libintl.h>
-
-#define _(String) gettext (String)
-#define N_(String) String
+#include "i18n.h"
 
 using namespace std;
 using namespace Barry;
@@ -111,9 +107,7 @@ std::ostream& operator<< (std::ostream &os, const Store<Record> &store)
 
 int main(int argc, char *argv[])
 {
-	setlocale (LC_ALL, "");
-	bindtextdomain (PACKAGE, LOCALEDIR);
-	textdomain (PACKAGE);
+	INIT_I18N(PACKAGE);
 
 	cout.sync_with_stdio(true);	// leave this on, since libusb uses
 					// stdio for debug messages

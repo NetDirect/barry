@@ -23,8 +23,6 @@
 #include <fuse.h>
 #include <fuse_opt.h>
 
-#include <config.h>
-#include <libintl.h>
 #include <barry/barry.h>
 #include <sstream>
 #include <getopt.h>
@@ -38,9 +36,7 @@
 #include <sys/types.h>
 #include <fcntl.h>
 #include <string.h>
-
-#define _(String) gettext (String)
-#define N_(String) String
+#include "i18n.h"
 
 using namespace std;
 using namespace std::tr1;
@@ -750,9 +746,7 @@ static struct fuse_operations bfuse_oper;
 
 int main(int argc, char *argv[])
 {
-	setlocale (LC_ALL, "");
-	bindtextdomain (PACKAGE, LOCALEDIR);
-	textdomain (PACKAGE);
+	INIT_I18N(PACKAGE);
 
 	cout.sync_with_stdio(true);	// leave this on, since libusb uses
 					// stdio for debug messages
