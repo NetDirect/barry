@@ -1,6 +1,10 @@
 Release: version 0.17 - 2009/11/??
 ------------------------------------------------------------------------------
-2009-11-19  
+2009/11/24
+	- added '-P' password option to upldif tool, and updated manpage
+		including applying Nicolas Vivien's bugfix patch
+	- applied Nicolas Vivien's "NOT_ENOUGH_MEMORY" javaloader patch
+2009/11/19  
 	- gettextize by Nicolas VIVIEN
 2009/10/02
 	- doc: added list of reasons why to submit patches, and notes
