@@ -78,7 +78,7 @@ int main()
 			     dev->descriptor.idProduct == PRODUCT_RIM_PEARL ||
 			     dev->descriptor.idProduct == PRODUCT_RIM_PEARL_8120 ||
 			     dev->descriptor.idProduct == PRODUCT_RIM_PEARL_DUAL ) ) {
-			    	printf(_("Found..."));
+				printf(_("Found..."));
 				printf(_("attempting to reset.\n"));
 				if( reset(dev) )
 					found++;
