@@ -1,3 +1,9 @@
+Note from the Barry maintainer:
+	This file describes gettext and internationalization features in
+	general, but does not necessarily match reality.  Barry does not
+	include the intl/ directory, for example.
+
+
 1 Notes on the Free Translation Project
 ***************************************
 
