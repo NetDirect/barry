@@ -54,8 +54,9 @@ void Usage()
    << "   -B bus    Specify which USB bus to search on\n"
    << "   -N dev    Specify which system device, using system specific string\n"
    << "\n"
-   << "   -a db     Clear database 'db' FROM device\n"
-   << "             Can be used multiple times to clear more than one DB\n"
+   << "   -a db     Erase / clear database 'db' FROM device, deleting all\n"
+   << "             its records.  Can be used multiple times to clear more\n"
+   << "             than one DB.\n"
    << "   -c dn     Convert address book database to LDIF format, using the\n"
    << "             specified baseDN\n"
    << "   -C dnattr LDIF attribute name to use when building the FQDN\n"
@@ -825,7 +826,7 @@ int main(int argc, char *argv[])
 		// Clear databases
 		if (clear_database) {
 			if( clearDbNames.size() == 0 ) {
-				cout << "No db names to clear" << endl;
+				cout << "No db names to erase" << endl;
 				return 1;
 			}
 
@@ -835,7 +836,7 @@ int main(int argc, char *argv[])
 
 			for( ; b != clearDbNames.end(); b++ ) {
 				unsigned int id = desktop.GetDBID(*b);
-				cout << "Clearing all recordss from " << (*b) << "..." << endl;
+				cout << "Deleting all records from " << (*b) << "..." << endl;
 				desktop.ClearDatabase(id);
 			}
 
