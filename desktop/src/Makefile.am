@@ -11,7 +11,8 @@ bin_PROGRAMS = barrydesktop ostest
 
 barrydesktop_SOURCES = \
 	barrydesktop.cc
-barrydesktop_LDADD = -ldl
+barrydesktop_LDADD = -ldl @WX_LIBS@
+barrydesktop_CXXFLAGS = $(AM_CXXFLAGS) @WX_CXXFLAGS@
 
 ostest_SOURCES = \
 	error.cc error.h \

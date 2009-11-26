@@ -55,6 +55,20 @@ AM_CONDITIONAL([WITH_OPENSYNC40], [test "$OS40NOTFOUND" != "yes"])
 AC_SUBST(TREE_BUILD_CXXFLAGS)
 AC_SUBST(TREE_BUILD_LDFLAGS)
 
+# Check for wxWidgets libraries
+AM_OPTIONS_WXCONFIG
+AM_PATH_WXCONFIG([2.8.0], [], [
+	AC_MSG_ERROR([
+	wxWidgets is required to build the Barry desktop,
+	but the wx-config script could not be found.
+
+	Please check that wx-config is in your path, that the directory
+	where wxWidgets libraries are installed (returned by the
+	'wx-config --libs' command) is in LD_LIBRARY_PATH, and that
+	wxWidgets is version 2.3.4 or above.
+	])
+	])
+
 # Checks for libraries.
 AC_CHECK_LIB([pthread], [main])
 
