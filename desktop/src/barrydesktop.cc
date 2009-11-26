@@ -28,6 +28,8 @@
 
 using namespace std;
 
+#define MAIN_HEADER_OFFSET 40
+
 //////////////////////////////////////////////////////////////////////////////
 // IDs for controls and menu items (no menus in this app yet)
 enum {
@@ -57,6 +59,27 @@ const wxChar *ButtonNames[] = {
 	0
 	};
 
+const wxChar *StateNames[] = {
+	_T("-normal.png"),
+	_T("-focus.png"),
+	_T("-pushed.png"),
+	0
+	};
+
+#define BUTTON_STATE_NORMAL	0
+#define BUTTON_STATE_FOCUS	1
+#define BUTTON_STATE_PUSHED	2
+
+wxString GetButtonFilename(int id, int state);
+
+wxString GetButtonFilename(int id, int state)
+{
+	wxString file = _T("../images/");
+	file += ButtonNames[id - MainMenu_FirstButton];
+	file += StateNames[state];
+	return file;
+}
+
 class PNGButton
 {
 	wxBitmap m_bitmaps[3]; // normal[0], focus[1], pushed[2]
@@ -67,12 +90,12 @@ class PNGButton
 	int m_state;	// index into m_bitmaps
 
 protected:
-	wxBitmap LoadButtonBitmap(const wxString &state);
+	wxBitmap LoadButtonBitmap(int state);
 
 public:
 	PNGButton(wxWindow *parent, int ID, int x, int y);
 
-	bool IsPushed() const { return m_state == 2; }
+	bool IsPushed() const { return m_state == BUTTON_STATE_PUSHED; }
 
 	void Init(wxDC &dc);
 	void Draw(wxDC &dc);
@@ -87,6 +110,7 @@ class BaseButtons
 private:
 	std::vector<PNGButton*> m_buttons;
 	PNGButton *m_current;
+	int m_buttonWidth, m_buttonHeight;
 
 protected:
 	PNGButton* CalculateHit(int x, int y);
@@ -112,7 +136,7 @@ private:
 	std::auto_ptr<BaseButtons> m_basebuttons;
 
 public:
-	BaseFrame();
+	BaseFrame(const wxImage &background);
 
 	void OnPaint(wxPaintEvent &event);
 	void OnMouseMotion(wxMouseEvent &event);
@@ -147,36 +171,32 @@ PNGButton::PNGButton(wxWindow *parent, int ID, int x, int y)
 	, m_state(0)
 {
 	// normal[0]
-	m_bitmaps[0] = LoadButtonBitmap(_T("-normal.png"));
+	m_bitmaps[BUTTON_STATE_NORMAL] = LoadButtonBitmap(BUTTON_STATE_NORMAL);
 
 	// focus[1]
-	m_bitmaps[1] = LoadButtonBitmap(_T("-focus.png"));
+	m_bitmaps[BUTTON_STATE_FOCUS] = LoadButtonBitmap(BUTTON_STATE_FOCUS);
 
 	// pushed[2]
-	m_bitmaps[2] = LoadButtonBitmap(_T("-pushed.png"));
+	m_bitmaps[BUTTON_STATE_PUSHED] = LoadButtonBitmap(BUTTON_STATE_PUSHED);
 }
 
-wxBitmap PNGButton::LoadButtonBitmap(const wxString &state)
+wxBitmap PNGButton::LoadButtonBitmap(int state)
 {
-	wxString file = _T("../images/");
-	file += ButtonNames[m_id - MainMenu_FirstButton];
-	file += state;
-
+	wxString file = GetButtonFilename(m_id, state);
 	wxImage image(file);
 	return wxBitmap(image);
 }
 
 void PNGButton::Init(wxDC &dc)
 {
-	int width = m_bitmaps[0].GetWidth();
-	int height = m_bitmaps[0].GetHeight();
+	int width = m_bitmaps[BUTTON_STATE_NORMAL].GetWidth();
+	int height = m_bitmaps[BUTTON_STATE_NORMAL].GetHeight();
 
 	m_background = wxBitmap(width, height);
 
 	wxMemoryDC grab_dc;
 	grab_dc.SelectObject(m_background);
-	grab_dc.Blit(0, 0, m_bitmaps[0].GetWidth(), m_bitmaps[0].GetHeight(),
-		&dc, m_x, m_y, wxCOPY, false);
+	grab_dc.Blit(0, 0, width, height, &dc, m_x, m_y, wxCOPY, false);
 }
 
 void PNGButton::Draw(wxDC &dc)
@@ -187,19 +207,19 @@ void PNGButton::Draw(wxDC &dc)
 
 void PNGButton::Normal(wxDC &dc)
 {
-	m_state = 0;
+	m_state = BUTTON_STATE_NORMAL;
 	Draw(dc);
 }
 
 void PNGButton::Focus(wxDC &dc)
 {
-	m_state = 1;
+	m_state = BUTTON_STATE_FOCUS;
 	Draw(dc);
 }
 
 void PNGButton::Push(wxDC &dc)
 {
-	m_state = 2;
+	m_state = BUTTON_STATE_PUSHED;
 	Draw(dc);
 }
 
@@ -207,7 +227,7 @@ void PNGButton::Click(wxDC &dc)
 {
 	if( IsPushed() ) {
 		// return to normal
-		m_state = 0;
+		m_state = BUTTON_STATE_NORMAL;
 		Draw(dc);
 
 		// send the event
@@ -222,13 +242,21 @@ void PNGButton::Click(wxDC &dc)
 BaseButtons::BaseButtons(wxWindow *parent)
 	: m_current(0)
 {
+	// first, discover the size of the average button
+	wxString file = GetButtonFilename(MainMenu_BackupAndRestore,
+					BUTTON_STATE_NORMAL);
+	wxImage sizer(file);
+	m_buttonWidth = sizer.GetWidth();
+	m_buttonHeight = sizer.GetHeight();
+
 	for( int i = MainMenu_FirstButton; i <= MainMenu_LastButton; i++ ) {
 		int row = (i - MainMenu_FirstButton) / 3;
 		int col = (i - MainMenu_FirstButton) % 3;
-		int y_offset = 40; // skip the header
+		int y_offset = MAIN_HEADER_OFFSET; // skip the header
 
 		PNGButton *button = new PNGButton(parent, i,
-			col * 200, row * 120 + y_offset);
+			col * m_buttonWidth,
+			row * m_buttonHeight + y_offset);
 
 		m_buttons.push_back(button);
 	}
@@ -245,13 +273,13 @@ BaseButtons::~BaseButtons()
 
 PNGButton* BaseButtons::CalculateHit(int x, int y)
 {
-	int col = x / 200;
+	int col = x / m_buttonWidth;
 	if( x < 0 || col < 0 || col > 2 )
 		return 0;
 
-	int y_offset = 40;	// graphic header size
+	int y_offset = MAIN_HEADER_OFFSET;	// graphic header size
 
-	int row = (y - y_offset) / 120;
+	int row = (y - y_offset) / m_buttonHeight;
 	if( y < y_offset || row < 0 || row > 2 )
 		return 0;
 
@@ -314,15 +342,14 @@ void BaseButtons::HandleUp(wxDC &dc, int x, int y)
 //////////////////////////////////////////////////////////////////////////////
 // BaseFrame
 
-BaseFrame::BaseFrame()
+BaseFrame::BaseFrame(const wxImage &background)
 	: wxFrame(NULL, wxID_ANY, _T("Barry Desktop"),
-		wxPoint(50, 50), wxSize(600, 400),
+		wxPoint(50, 50),
+		wxSize(background.GetWidth(), background.GetHeight()),
 		wxMINIMIZE_BOX | wxCAPTION | wxCLOSE_BOX | wxSYSTEM_MENU |
 		wxCLIP_CHILDREN)
 {
-	wxImage back(_T("../images/background.png"));
-	m_background.reset( new wxBitmap(back) );
-
+	m_background.reset( new wxBitmap(background) );
 	m_basebuttons.reset( new BaseButtons(this) );
 }
 
@@ -377,7 +404,8 @@ bool BarryDesktopApp::OnInit()
 	wxImage::AddHandler( new wxPNGHandler );
 
 	// Create the main frame window where all the action happens
-	BaseFrame *frame = new BaseFrame;
+	wxImage back(_T("../images/background.png"));
+	BaseFrame *frame = new BaseFrame(back);
 	SetTopWindow(frame);
 	frame->Show(true);
 
