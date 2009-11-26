@@ -45,28 +45,15 @@ enum {
 	MainMenu_LastButton = MainMenu_Misc
 };
 
-/*
-const char *ButtonNames[] = {
+const wxChar *ButtonNames[] = {
 	_T("backuprestore"),
 	_T("sync"),
 	_T("modem"),
 	_T("apploader"),
 	_T("deviceswitch"),
 	_T("browsedatabases"),
-	_T("MediaManagement"),
-	_T("Misc"),
-	0
-	};
-*/
-const wxChar *ButtonNames[] = {
-	_T("backuprestore"),
-	_T("backuprestore"),
-	_T("backuprestore"),
-	_T("backuprestore"),
-	_T("backuprestore"),
-	_T("backuprestore"),
-	_T("backuprestore"),
-	_T("backuprestore"),
+	_T("media"),
+	_T("misc"),
 	0
 	};
 
