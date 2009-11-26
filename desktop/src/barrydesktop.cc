@@ -246,13 +246,13 @@ BaseButtons::~BaseButtons()
 PNGButton* BaseButtons::CalculateHit(int x, int y)
 {
 	int col = x / 200;
-	if( col < 0 || col > 2 )
+	if( x < 0 || col < 0 || col > 2 )
 		return 0;
 
 	int y_offset = 40;	// graphic header size
 
 	int row = (y - y_offset) / 120;
-	if( row < 0 || row > 2 )
+	if( y < y_offset || row < 0 || row > 2 )
 		return 0;
 
 	unsigned int index = col + row * 3;
