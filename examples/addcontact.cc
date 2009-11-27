@@ -136,8 +136,8 @@ int main(int argc, char *argv[])
 			return 1;
 		}
 		else {
-			cout << "Using PIN: " << std::hex
-			     << probe.Get(0).m_pin << endl;
+			cout << "Using PIN: "
+			     << probe.Get(0).m_pin.str() << endl;
 		}
 
 

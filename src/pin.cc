@@ -1,5 +1,5 @@
 ///
-/// \file	Pin.cc
+/// \file	pin.cc
 ///		class for device PIN notation
 ///
 
@@ -20,11 +20,16 @@
 */
 
 #include <sstream>
-#include "Pin.h"
+#include "pin.h"
 
-std::string Pin::str()
+namespace Barry {
+
+std::string Pin::str() const
 {
 	std::ostringstream oss;
 	oss << std::hex << pin;
 	return oss.str();
 }
+
+}
+

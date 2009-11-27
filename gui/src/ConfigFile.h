@@ -24,8 +24,8 @@
 
 #include <string>
 #include <barry/record.h>
+#include <barry/pin.h>
 #include <stdexcept>
-#include "Pin.h"
 
 class ConfigFile
 {
@@ -45,7 +45,7 @@ public:
 
 private:
 	// meta data
-	Pin m_pin;
+	Barry::Pin m_pin;
 	std::string m_path;		// /path/to/config/dir  without trailing slash
 	std::string m_filename;		// /path/to/config/dir/filename
 	bool m_loaded;
@@ -71,12 +71,12 @@ public:
 	/// but it is not an error if the config does not exist.
 	/// Never use this if you have a DatabaseDatabase object!
 	/// This ctor is only for temporary loading of config data.
-	explicit ConfigFile(Pin pin);
+	explicit ConfigFile(Barry::Pin pin);
 
 	/// Opens and loads config file for given pin, and calls Enlighten
 	/// Throws ConfigFileError on error.  Should never fail unless
 	/// passed a bad pin, or if unable to get current user info.
-	ConfigFile(Pin pin, const Barry::DatabaseDatabase &db);
+	ConfigFile(Barry::Pin pin, const Barry::DatabaseDatabase &db);
 
 	~ConfigFile();
 

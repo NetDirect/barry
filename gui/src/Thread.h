@@ -90,7 +90,7 @@ public:
 
 	void LoadConfig();
 
-	Pin GetPIN() { return m_dev.GetPIN(); }
+	Barry::Pin GetPIN() { return m_dev.GetPIN(); }
 	std::string GetFullname();
 
 	std::string Status() const { return m_status; }

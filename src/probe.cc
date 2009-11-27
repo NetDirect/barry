@@ -395,7 +395,7 @@ bool Probe::ProbeModem(Usb::Device &dev, const Usb::EndpointPair &ep)
 //	return false;
 }
 
-int Probe::FindActive(uint32_t pin) const
+int Probe::FindActive(Barry::Pin pin) const
 {
 	for( int i = 0; i < GetCount(); i++ ) {
 		if( Get(i).m_pin == pin )
@@ -424,7 +424,7 @@ void ProbeResult::DumpAll(std::ostream &os) const
 std::ostream& operator<< (std::ostream &os, const ProbeResult &pr)
 {
 	os << "Device ID: " << pr.m_dev
-	   << std::hex << ". PIN: " << pr.m_pin
+	   << ". PIN: " << pr.m_pin.str()
 	   << ", Description: " << pr.m_description;
 	return os;
 }

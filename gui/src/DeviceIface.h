@@ -27,7 +27,6 @@
 #include <memory>
 #include <stdint.h>
 #include "ConfigFile.h"
-#include "Pin.h"
 #include "tarfile.h"
 
 #define DI_THREAD_DONE 100
@@ -46,7 +45,7 @@ public:
 	Device();
 	Device(Barry::ProbeResult);
 
-	Pin GetPIN() const { return Pin(result.m_pin); };
+	Barry::Pin GetPIN() const { return Barry::Pin(result.m_pin); };
 
 	friend class DeviceInterface;
 };

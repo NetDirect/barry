@@ -87,6 +87,7 @@ include_barry_HEADERS = barry.h \
 	ldif.h \
 	log.h \
 	parser.h \
+	pin.h \
 	probe.h \
 	protocol.h \
 	record.h \
@@ -147,6 +148,7 @@ libbarry_la_SOURCES = time.cc \
 	cod.cc \
 	data.cc \
 	usbwrap.cc \
+	pin.cc \
 	probe.cc \
 	common.cc \
 	error.cc \

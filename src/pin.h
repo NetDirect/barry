@@ -1,5 +1,5 @@
 ///
-/// \file	Pin.h
+/// \file	pin.h
 ///		class for device PIN notation
 ///
 
@@ -19,21 +19,32 @@
     root directory of this project for more details.
 */
 
-#ifndef __BARRYBACKUP_PIN_H__
-#define __BARRYBACKUP_PIN_H__
+#ifndef __BARRY_PIN_H__
+#define __BARRY_PIN_H__
 
+#include "dll.h"
 #include <stdint.h>
 #include <string>
 
-class Pin
+namespace Barry {
+
+class BXEXPORT Pin
 {
 	uint32_t pin;
 
 public:
 	Pin(uint32_t pin__ = 0) : pin(pin__) {}
 
-	std::string str();
-	bool operator==(uint32_t rhs) { return pin == rhs; }
+	std::string str() const;
+	uint32_t value() const { return pin; }
+
+	Pin& operator=(uint32_t p) { pin = p; return *this; }
+
+	bool operator==(uint32_t rhs) const { return pin == rhs; }
+	bool operator==(const Pin &rhs) const { return pin == rhs.pin; }
 };
 
+} // namespace Barry
+
 #endif
+

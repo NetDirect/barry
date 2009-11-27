@@ -25,6 +25,7 @@
 #include "dll.h"
 #include "usbwrap.h"
 #include "socket.h"
+#include "pin.h"
 #include "probe.h"
 
 /// Project namespace, containing all related functions and classes.
@@ -91,7 +92,7 @@ private:
 	ProbeResult m_result;
 	Usb::Device m_dev;
 	Usb::Interface *m_iface;
-	uint32_t m_pin;
+	Pin m_pin;
 
 	SocketZero m_zero;
 	SocketRoutingQueue *m_queue;	//< ptr to external object; no delete

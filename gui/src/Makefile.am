@@ -31,7 +31,6 @@ barrybackup_SOURCES = \
 	DeviceBus.cc \
 	DeviceIface.cc \
 	Thread.cc \
-	Pin.cc \
 	tarfile.cc \
 	tarfile-ops-nt.cc \
 	util.cc
@@ -46,7 +45,6 @@ noinst_HEADERS= \
 	PasswordDlg.h \
 	PromptDlg.h \
 	Thread.h \
-	Pin.h \
 	tarfile.h \
 	util.h
 

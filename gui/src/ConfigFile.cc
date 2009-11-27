@@ -53,7 +53,7 @@ ConfigFile::ConfigFileError::ConfigFileError(const char *msg, int err)
 /// but it is not an error if the config does not exist.
 /// Never use this if you have a DatabaseDatabase object!
 /// This ctor is only for temporary loading of config data.
-ConfigFile::ConfigFile(Pin pin)
+ConfigFile::ConfigFile(Barry::Pin pin)
 	: m_pin(pin)
 	, m_loaded(false)
 	, m_promptBackupLabel(false)
@@ -69,7 +69,7 @@ ConfigFile::ConfigFile(Pin pin)
 /// Opens and loads config file for given pin, and calls Enlighten
 /// Throws ConfigFileError on error.  Should never fail unless
 /// passed a bad pin.
-ConfigFile::ConfigFile(Pin pin,
+ConfigFile::ConfigFile(Barry::Pin pin,
 		       const Barry::DatabaseDatabase &db)
 	: m_pin(pin)
 	, m_loaded(false)

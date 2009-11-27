@@ -630,23 +630,22 @@ public:
 
 		// connect to all PINs found, and add them to our map
 		for( int i = 0; i < m_probe->GetCount(); i++ ) {
-			ostringstream oss;
-			oss << hex << m_probe->Get(i).m_pin;
+			string curpin = m_probe->Get(i).m_pin.str();
 
 			// don't add a blank or pre-existing pin
-			if( !oss.str().size() || m_pinmap.find(oss.str()) != m_pinmap.end() ) {
+			if( !curpin.size() || m_pinmap.find(curpin) != m_pinmap.end() ) {
 				continue;
 			}
 
 			// don't add non-PIN device if pin specified
-			if( m_limit_pin.size() && oss.str() != m_limit_pin ) {
+			if( m_limit_pin.size() && curpin != m_limit_pin ) {
 				continue;
 			}
 
 			DesktopConPtr dev = DesktopConPtr (
-				new DesktopCon(m_probe->Get(i), oss.str()) );
+				new DesktopCon(m_probe->Get(i), curpin) );
 			dev->Open(m_password.c_str());
-			m_pinmap[ oss.str() ] = dev;
+			m_pinmap[ curpin ] = dev;
 		}
 	}
 

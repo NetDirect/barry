@@ -30,6 +30,7 @@
 #include "socket.h"
 #include "record.h"
 #include "data.h"
+#include "pin.h"
 
 namespace Barry {
 
@@ -183,7 +184,7 @@ public:
 
 public:
 	uint32_t	HardwareId;
-	uint32_t	Pin;
+	struct Pin	Pin;
 	VersionQuad	OsVersion;
 	VersionQuad	VmVersion;
 	uint32_t	RadioId;

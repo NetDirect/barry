@@ -24,6 +24,7 @@
 
 #include "dll.h"
 #include "usbwrap.h"
+#include "pin.h"
 #include <vector>
 #include <iosfwd>
 #include <stdint.h>
@@ -34,7 +35,7 @@ struct BXEXPORT ProbeResult
 {
 	Usb::DeviceIDType m_dev;
 	unsigned char m_interface;
-	uint32_t m_pin;
+	Barry::Pin m_pin;
 	Usb::EndpointPair m_ep;
 	Usb::EndpointPair m_epModem;
 	uint8_t m_zeroSocketSequence;
@@ -82,7 +83,7 @@ public:
 	const std::string& GetFailMsg(int index) const { return m_fail_msgs[index]; }
 	const ProbeResult& Get(int index) const { return m_results[index]; }
 
-	int FindActive(uint32_t pin = 0) const;	// returns -1 if pin not found
+	int FindActive(Barry::Pin pin = 0) const; // returns -1 if pin not found
 						// or if no devices
 };
 
