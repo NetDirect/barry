@@ -1,10 +1,8 @@
 Feature TODO List:
 ==================
 - make it possible to turn debug output on and off in the library on the fly
-- add general desktop configuration class, so you can save things like
-	whether debug should be on or off... perhaps this should be a global
-	barry configuration, so that the gui can determine whether all
-	programs are verbose or not, etc.
+- consider moving the config file out of ~/.barry/backup/PIN and into
+	~/.barry/PIN, but leave ~/.barry/backup for the data
 - add Barry logo (top left) which, if clicked, shows a general system menu
 	containing items like:
 	- enable / disable USB debug logging
