@@ -26,6 +26,9 @@
 #include <barry/barry.h>
 #include <wx/wx.h>
 
+// include icons and logos
+#include "../images/barry_logo_icon.xpm"
+
 using namespace std;
 
 #define MAIN_HEADER_OFFSET 40
@@ -135,6 +138,7 @@ private:
 	std::auto_ptr<wxBitmap> m_background, m_button;
 	std::auto_ptr<BaseButtons> m_basebuttons;
 	int m_width, m_height;
+	wxBitmap m_barry_logo;
 
 public:
 	BaseFrame(const wxImage &background);
@@ -351,6 +355,7 @@ BaseFrame::BaseFrame(const wxImage &background)
 		wxCLIP_CHILDREN)
 	, m_width(background.GetWidth())
 	, m_height(background.GetHeight())
+	, m_barry_logo(barry_logo_icon_xpm)
 {
 	m_background.reset( new wxBitmap(background) );
 	m_basebuttons.reset( new BaseButtons(this) );
@@ -364,11 +369,13 @@ static bool init = false;
 	wxPaintDC dc(this);
 	dc.DrawBitmap(*m_background, 0, 0);
 
-	// paint the header
+	// paint the header: Barry logo
+	dc.DrawBitmap(m_barry_logo, 4, 4, true);
 
-	// FIXME - add a logo here, as a small XPM file in the corner
+	// paint the header: NetDirect logo
+	// FIXME
 
-	// paint the header text
+	// paint the header: text
 	auto_ptr<wxFont> font( wxFont::New(14,
 		wxFONTFAMILY_SWISS, wxFONTFLAG_ANTIALIASED,
 		_T("Luxi Sans")) );
