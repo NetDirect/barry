@@ -1,6 +1,5 @@
 Feature TODO List:
 ==================
-- make it possible to turn debug output on and off in the library on the fly
 - consider moving the config file out of ~/.barry/backup/PIN and into
 	~/.barry/PIN, but leave ~/.barry/backup for the data
 - add Barry logo (top left) which, if clicked, shows a general system menu
