@@ -51,6 +51,7 @@
 #include "usbwrap.h"			// to be moved to libusb someday
 #include "common.h"			// Init()
 #include "error.h"			// exceptions
+#include "configfile.h"
 #include "probe.h"			// device prober class
 #include "dataqueue.h"
 #include "socket.h"

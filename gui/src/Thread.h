@@ -24,7 +24,6 @@
 #define __BARRYBACKUP_THREAD_H__
 
 #include <gtkmm.h>
-#include "ConfigFile.h"
 #include "DeviceIface.h"
 
 // bit masks for various thread state
@@ -36,7 +35,7 @@
 						// as backup
 
 
-class Thread : public ConfigFile
+class Thread : public Barry::ConfigFile
 {
 private:
 	Glib::Dispatcher m_signal_progress;

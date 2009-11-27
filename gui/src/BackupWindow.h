@@ -24,7 +24,6 @@
 #include <memory>
 #include <vector>
 #include "DeviceBus.h"
-#include "ConfigFile.h"
 #include "Thread.h"
 
 class BackupWindow : public Gtk::Window

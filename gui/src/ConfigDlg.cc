@@ -25,7 +25,7 @@
 #include <barry/barry.h>
 
 ConfigDlg::ConfigDlg(const Barry::DatabaseDatabase &dbdb,
-		     const ConfigFile &config)
+		     const Barry::ConfigFile &config)
 	: m_dbdb(dbdb)
 	, m_backupList(config.GetBackupList())
 	, m_restoreList(config.GetRestoreList())

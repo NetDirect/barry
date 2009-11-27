@@ -27,7 +27,6 @@
 
 Glib::RefPtr<Gnome::Glade::Xml> LoadXml(const char *filename);
 std::string GetPath(const std::string &filename);
-bool CheckPath(const std::string &path, std::string *perr = 0);
 
 #endif
 

@@ -26,7 +26,6 @@
 #include <string>
 #include <memory>
 #include <stdint.h>
-#include "ConfigFile.h"
 #include "tarfile.h"
 
 #define DI_THREAD_DONE 100
@@ -99,7 +98,7 @@ private:
 	std::auto_ptr<reuse::TarFile> m_tar, m_tarback;
 
 	// parser and builder data (only one side uses these at a time)
-	ConfigFile::DBListType m_dbList;
+	Barry::ConfigFile::DBListType m_dbList;
 	mutable Glib::Mutex *m_dbnameMutex;
 	std::string m_current_dbname_not_thread_safe;
 	std::string m_current_dbname;
@@ -123,7 +122,7 @@ protected:
 
 	// helpers
 	std::string MakeFilename(const std::string &label = "") const;
-	int CountFiles(reuse::TarFile &tar, const ConfigFile::DBListType &restoreList) const;
+	int CountFiles(reuse::TarFile &tar, const Barry::ConfigFile::DBListType &restoreList) const;
 	bool SplitTarPath(const std::string &tarpath, std::string &dbname,
 		std::string &dbid_text, uint8_t &dbrectype, uint32_t &dbid) const;
 
@@ -143,8 +142,8 @@ public:
 	void Disconnect();
 
 	const Barry::DatabaseDatabase& GetDBDB() const { return m_desktop->GetDBDB(); }
-	unsigned int GetRecordTotal(const ConfigFile::DBListType &backupList) const;
-	unsigned int GetRecordTotal(const ConfigFile::DBListType &restoreList, const std::string &filename) const;
+	unsigned int GetRecordTotal(const Barry::ConfigFile::DBListType &backupList) const;
+	unsigned int GetRecordTotal(const Barry::ConfigFile::DBListType &restoreList, const std::string &filename) const;
 
 	void QuitThread()	{ m_thread_quit = true; }
 
@@ -152,15 +151,15 @@ public:
 	std::string GetThreadDBName() const;
 
 	bool StartBackup(AppComm comm,
-		const ConfigFile::DBListType &backupList,
+		const Barry::ConfigFile::DBListType &backupList,
 		const std::string &directory, const std::string &backupLabel);
 	bool StartRestore(AppComm comm,
-		const ConfigFile::DBListType &restoreList,
+		const Barry::ConfigFile::DBListType &restoreList,
 		const std::string &tarfilename);
 	// this is for debugging... starts a restore, and then does an
 	// immediate backup of the same DB before moving on to the next
 	bool StartRestoreAndBackup(AppComm comm,
-		const ConfigFile::DBListType &restoreAndBackupList,
+		const Barry::ConfigFile::DBListType &restoreAndBackupList,
 		const std::string &tarfilename,
 		const std::string &directory);
 

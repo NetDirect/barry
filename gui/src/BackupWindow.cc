@@ -405,7 +405,7 @@ void BackupWindow::on_backup()
 	}
 
 	// make sure our target directory exists
-	if( !::CheckPath(thread->GetPath()) ) {
+	if( !Barry::ConfigFile::CheckPath(thread->GetPath()) ) {
 		Gtk::MessageDialog msg("Could not create directory: " + thread->GetPath());
 		msg.run();
 		return;

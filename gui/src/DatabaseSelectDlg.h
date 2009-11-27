@@ -24,7 +24,7 @@
 
 #include <gtkmm.h>
 #include <memory>
-#include "ConfigFile.h"
+#include <barry/barry.h>
 
 namespace Barry {
 	class DatabaseDatabase;
@@ -53,7 +53,7 @@ class DatabaseSelectDlg
 	Glib::RefPtr<Gtk::ListStore> m_pListStore;
 
 	// data
-	ConfigFile::DBListType m_selections;
+	Barry::ConfigFile::DBListType m_selections;
 
 protected:
 	void LoadTree(const Barry::DatabaseDatabase &dbdb);
@@ -62,11 +62,11 @@ protected:
 
 public:
 	DatabaseSelectDlg(const Barry::DatabaseDatabase &dbdb,
-		const ConfigFile::DBListType &selections,
+		const Barry::ConfigFile::DBListType &selections,
 		const Glib::ustring &label);
 	~DatabaseSelectDlg();
 
-	const ConfigFile::DBListType& GetSelections() const { return m_selections; }
+	const Barry::ConfigFile::DBListType& GetSelections() const { return m_selections; }
 
 	int run();
 

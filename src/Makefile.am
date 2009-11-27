@@ -74,6 +74,7 @@ include_barry_HEADERS = barry.h \
 	dll.h \
 	builder.h \
 	common.h \
+	configfile.h \
 	controller.h \
 	m_mode_base.h \
 	m_desktop.h \
@@ -151,6 +152,7 @@ libbarry_la_SOURCES = time.cc \
 	pin.cc \
 	probe.cc \
 	common.cc \
+	configfile.cc \
 	error.cc \
 	ldif.cc \
 	log.cc \

@@ -24,7 +24,7 @@
 
 #include <gtkmm.h>
 #include <memory>
-#include "ConfigFile.h"
+#include <barry/barry.h>
 
 namespace Barry {
 	class DatabaseDatabase;
@@ -42,19 +42,19 @@ class ConfigDlg
 	Gtk::FileChooserButton *m_pBackupPath;
 
 	// config data
-	ConfigFile::DBListType m_backupList;
-	ConfigFile::DBListType m_restoreList;
+	Barry::ConfigFile::DBListType m_backupList;
+	Barry::ConfigFile::DBListType m_restoreList;
 	std::string m_deviceName;
 	std::string m_backupPath;
 	bool m_promptBackupLabel;
 
 public:
 	ConfigDlg(const Barry::DatabaseDatabase &dbdb,
-		const ConfigFile &config);
+		const Barry::ConfigFile &config);
 	~ConfigDlg();
 
-	const ConfigFile::DBListType& GetBackupList() const { return m_backupList; }
-	const ConfigFile::DBListType& GetRestoreList() const { return m_restoreList; }
+	const Barry::ConfigFile::DBListType& GetBackupList() const { return m_backupList; }
+	const Barry::ConfigFile::DBListType& GetRestoreList() const { return m_restoreList; }
 	const std::string& GetDeviceName() const { return m_deviceName; }
 	const std::string& GetBackupPath() const { return m_backupPath; }
 	bool GetPromptBackupLabel() const { return m_promptBackupLabel; }

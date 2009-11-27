@@ -1,6 +1,6 @@
 ///
-/// \file	ConfigFile.cc
-///		BarryBackup GUI configuraion class
+/// \file	configfile.cc
+///		Barry configuraion class, for one device PIN
 ///
 
 /*
@@ -19,14 +19,19 @@
     root directory of this project for more details.
 */
 
-#include "ConfigFile.h"
-#include "util.h"
+#include "configfile.h"
+#include "error.h"
+#include "r_message.h"
 #include <pwd.h>
 #include <string.h>
 #include <errno.h>
 #include <unistd.h>
 #include <fstream>
 #include <sstream>
+#include <sys/types.h>
+#include <sys/stat.h>
+
+namespace Barry {
 
 bool ConfigFile::DBListType::IsSelected(const std::string &dbname) const
 {
@@ -37,11 +42,6 @@ bool ConfigFile::DBListType::IsSelected(const std::string &dbname) const
 		}
 	}
 	return false;
-}
-
-ConfigFile::ConfigFileError::ConfigFileError(const char *msg, int err)
-	: std::runtime_error(std::string(msg) + ": " + strerror(err))
-{
 }
 
 
@@ -163,7 +163,7 @@ void ConfigFile::Load()
 			else if( keyword == "backup_path" ) {
 				iss >> std::ws;
 				std::getline(iss, m_path);
-				if( (m_path.size() == 0) || !(::CheckPath(m_path)))
+				if( (m_path.size() == 0) || !(CheckPath(m_path)))
 					BuildDefaultPath();
 			}
 			else if( keyword == "prompt_backup_label" ) {
@@ -181,7 +181,7 @@ void ConfigFile::Load()
 /// Returns false if unable to create path, true if ok.
 bool ConfigFile::CheckPath()
 {
-	return ::CheckPath(m_path, &m_last_error);
+	return CheckPath(m_path, &m_last_error);
 }
 
 /// Saves current config, overwriting or creating a config file
@@ -276,7 +276,7 @@ void ConfigFile::SetDeviceName(const std::string &name)
 
 void ConfigFile::SetBackupPath(const std::string &path)
 {
-	if( path.size() && ::CheckPath(path) )
+	if( path.size() && CheckPath(path) )
 		m_path = path;
 	else
 		BuildDefaultPath();
@@ -286,4 +286,43 @@ void ConfigFile::SetPromptBackupLabel(bool prompt)
 {
 	m_promptBackupLabel = prompt;
 }
+
+/// Checks that the path in path exists, and if not, creates it.
+/// Returns false if unable to create path, true if ok.
+bool ConfigFile::CheckPath(const std::string &path, std::string *perr)
+{
+	if( path.size() == 0 ) {
+		if( perr )
+			*perr = "path is empty!";
+		return false;
+	}
+
+	if( access(path.c_str(), F_OK) == 0 )
+		return true;
+
+	std::string base;
+	std::string::size_type slash = 0;
+	while( (slash = path.find('/', slash + 1)) != std::string::npos ) {
+		base = path.substr(0, slash);
+		if( access(base.c_str(), F_OK) != 0 ) {
+			if( mkdir(base.c_str(), 0755) == -1 ) {
+				if( perr ) {
+					*perr = "mkdir(" + base + ") failed: ";
+					*perr += strerror(errno);
+				}
+				return false;
+			}
+		}
+	}
+	if( mkdir(path.c_str(), 0755) == -1 ) {
+		if( perr ) {
+			*perr = "last mkdir(" + path + ") failed: ";
+			*perr += strerror(errno);
+		}
+		return false;
+	}
+	return true;
+}
+
+} // namespace Barry
 

@@ -1,6 +1,6 @@
 ///
-/// \file	ConfigFile.h
-///		BarryBackup GUI configuraion class
+/// \file	configfile.h
+///		Barry configuraion class, for one device PIN
 ///
 
 /*
@@ -19,28 +19,23 @@
     root directory of this project for more details.
 */
 
-#ifndef __BARRYBACKUP_CONFIGFILE_H__
-#define __BARRYBACKUP_CONFIGFILE_H__
+#ifndef __BARRY_CONFIGFILE_H__
+#define __BARRY_CONFIGFILE_H__
 
+#include "dll.h"
+#include "record.h"
+#include "pin.h"
 #include <string>
-#include <barry/record.h>
-#include <barry/pin.h>
-#include <stdexcept>
 
-class ConfigFile
+namespace Barry {
+
+class BXEXPORT ConfigFile
 {
 public:
 	class DBListType : public std::vector<std::string>
 	{
 	public:
 		bool IsSelected(const std::string &dbname) const;
-	};
-
-	class ConfigFileError : public std::runtime_error
-	{
-	public:
-		ConfigFileError(const char *msg) : std::runtime_error(msg) {}
-		ConfigFileError(const char *msg, int err);
 	};
 
 private:
@@ -113,7 +108,17 @@ public:
 	void SetDeviceName(const std::string &name);
 	void SetBackupPath(const std::string &path);
 	void SetPromptBackupLabel(bool prompt = true);
+
+	//
+	// Utility functions
+	//
+
+	/// Checks that the path in path exists, and if not, creates it.
+	/// Returns false if unable to create path, true if ok.
+	static bool CheckPath(const std::string &path, std::string *perr = 0);
 };
+
+} // namespace Barry
 
 #endif
 

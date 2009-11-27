@@ -25,7 +25,7 @@
 #include <sstream>
 
 DatabaseSelectDlg::DatabaseSelectDlg(const Barry::DatabaseDatabase &dbdb,
-				     const ConfigFile::DBListType &selections,
+				     const Barry::ConfigFile::DBListType &selections,
 				     const Glib::ustring &label)
 	: m_pTopLabel(0),
 	m_pTree(0),

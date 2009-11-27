@@ -20,8 +20,6 @@
 */
 
 #include "util.h"
-#include <sys/types.h>
-#include <sys/stat.h>
 #include <unistd.h>
 #include <errno.h>
 #include <string.h>
@@ -43,43 +41,6 @@ Glib::RefPtr<Gnome::Glade::Xml> LoadXml(const char *filename)
 	// this will throw XmlError on failure, and we let the caller worry
 	// about that
 	return Gnome::Glade::Xml::create(filename);
-}
-
-/// Checks that the path in path exists, and if not, creates it.
-/// Returns false if unable to create path, true if ok.
-bool CheckPath(const std::string &path, std::string *perr)
-{
-	if( path.size() == 0 ) {
-		if( perr )
-			*perr = "path is empty!";
-		return false;
-	}
-
-	if( access(path.c_str(), F_OK) == 0 )
-		return true;
-
-	std::string base;
-	std::string::size_type slash = 0;
-	while( (slash = path.find('/', slash + 1)) != std::string::npos ) {
-		base = path.substr(0, slash);
-		if( access(base.c_str(), F_OK) != 0 ) {
-			if( mkdir(base.c_str(), 0755) == -1 ) {
-				if( perr ) {
-					*perr = "mkdir(" + base + ") failed: ";
-					*perr += strerror(errno);
-				}
-				return false;
-			}
-		}
-	}
-	if( mkdir(path.c_str(), 0755) == -1 ) {
-		if( perr ) {
-			*perr = "last mkdir(" + path + ") failed: ";
-			*perr += strerror(errno);
-		}
-		return false;
-	}
-	return true;
 }
 
 std::string GetPath(const std::string &filename)

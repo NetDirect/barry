@@ -27,7 +27,6 @@ barrybackup_SOURCES = \
 	PasswordDlg.cc \
 	PromptDlg.cc \
 	ConfigDlg.cc \
-	ConfigFile.cc \
 	DeviceBus.cc \
 	DeviceIface.cc \
 	Thread.cc \
@@ -38,7 +37,6 @@ barrybackup_SOURCES = \
 noinst_HEADERS= \
 	BackupWindow.h \
 	ConfigDlg.h \
-	ConfigFile.h \
 	DatabaseSelectDlg.h \
 	DeviceBus.h \
 	DeviceIface.h \

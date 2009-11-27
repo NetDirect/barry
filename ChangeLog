@@ -1,5 +1,7 @@
 Release: version 0.17 - 2009/11/??
 ------------------------------------------------------------------------------
+2009/11/26
+	- moved the Pin and ConfigFile classes from gui/ to the library
 2009/11/24
 	- added '-P' password option to upldif tool, and updated manpage
 		including applying Nicolas Vivien's bugfix patch

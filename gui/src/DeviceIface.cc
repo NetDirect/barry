@@ -63,7 +63,7 @@ void DeviceInterface::BackupThread()
 	try {
 		// cycle through all database names in the dbList
 		// and store them all
-		ConfigFile::DBListType::const_iterator name = m_dbList.begin();
+		Barry::ConfigFile::DBListType::const_iterator name = m_dbList.begin();
 		for( ; name != m_dbList.end(); ++name ) {
 			// save current db name
 			SetThreadDBName(*name);
@@ -248,7 +248,7 @@ std::string DeviceInterface::MakeFilename(const std::string &label) const
 }
 
 int DeviceInterface::CountFiles(reuse::TarFile &tar,
-				const ConfigFile::DBListType &restoreList) const
+				const Barry::ConfigFile::DBListType &restoreList) const
 {
 	int count = 0;
 	std::string name, last_name;
@@ -362,7 +362,7 @@ void DeviceInterface::Disconnect()
 
 // cycle through controller's DBDB and count the records in all the
 // databases selected in the backupList
-unsigned int DeviceInterface::GetRecordTotal(const ConfigFile::DBListType &backupList) const
+unsigned int DeviceInterface::GetRecordTotal(const Barry::ConfigFile::DBListType &backupList) const
 {
 	unsigned int count = 0;
 
@@ -376,7 +376,7 @@ unsigned int DeviceInterface::GetRecordTotal(const ConfigFile::DBListType &backu
 	return count;
 }
 
-unsigned int DeviceInterface::GetRecordTotal(const ConfigFile::DBListType &restoreList, const std::string &filename) const
+unsigned int DeviceInterface::GetRecordTotal(const Barry::ConfigFile::DBListType &restoreList, const std::string &filename) const
 {
 	unsigned int count = 0;
 
@@ -401,7 +401,7 @@ std::string DeviceInterface::GetThreadDBName() const
 }
 
 bool DeviceInterface::StartBackup(AppComm comm,
-				  const ConfigFile::DBListType &backupList,
+				  const Barry::ConfigFile::DBListType &backupList,
 				  const std::string &directory,
 				  const std::string &backupLabel)
 {
@@ -426,7 +426,7 @@ bool DeviceInterface::StartBackup(AppComm comm,
 }
 
 bool DeviceInterface::StartRestore(AppComm comm,
-				   const ConfigFile::DBListType &restoreList,
+				   const Barry::ConfigFile::DBListType &restoreList,
 				   const std::string &filename)
 {
 	if( m_AppComm.IsValid() )
@@ -459,7 +459,7 @@ bool DeviceInterface::StartRestore(AppComm comm,
 }
 
 bool DeviceInterface::StartRestoreAndBackup(AppComm comm,
-				const ConfigFile::DBListType &restoreAndBackupList,
+				const Barry::ConfigFile::DBListType &restoreAndBackupList,
 				const std::string &filename,
 				const std::string &directory)
 {

@@ -133,6 +133,12 @@ class BXEXPORT ErrnoError : public Barry::Error
 
 	static std::string GetMsg(const std::string &msg, int err);
 
+protected:
+	ErrnoError(const std::string &msg) // for derived classes
+		: Barry::Error(msg)
+		, m_errno(0)
+		{}
+
 public:
 	ErrnoError(const std::string &msg, int err)
 		: Barry::Error(GetMsg(msg, err))
@@ -140,6 +146,21 @@ public:
 		{}
 
 	int error_code() const { return m_errno; }
+};
+
+//
+// ConfigFileError
+//
+/// Thrown by the ConfigFile class when encountering a serious system
+/// error while loading the global config file for a given PIN.
+///
+class ConfigFileError : public Barry::ErrnoError
+{
+public:
+	ConfigFileError(const char *msg) : Barry::ErrnoError(msg) {}
+	ConfigFileError(const char *msg, int err)
+		: Barry::ErrnoError(msg, err)
+		{}
 };
 
 //
