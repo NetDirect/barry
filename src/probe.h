@@ -41,6 +41,10 @@ struct BXEXPORT ProbeResult
 	uint8_t m_zeroSocketSequence;
 	std::string m_description;
 
+	// data from a possible ConfigFile (filled in automatically by
+	// the probe code if available)
+	std::string m_cfgDeviceName;
+
 	ProbeResult()
 		: m_dev(0), m_interface(0), m_pin(0), m_zeroSocketSequence(0)
 		{}

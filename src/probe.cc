@@ -31,6 +31,7 @@
 #include "protocol.h"
 #include "record-internal.h"
 #include "strnlen.h"
+#include "configfile.h"
 #include <iomanip>
 #include <errno.h>
 #include <string.h>
@@ -288,6 +289,17 @@ void Probe::ProbeDevice(Usb::DeviceIDType devid)
 
 	// add to list
 	if( result.m_ep.IsComplete() ) {
+		// before adding to list, try to load the device's
+		// friendly name from the configfile... but don't
+		// fail if we can't do it
+		try {
+			ConfigFile cfg(result.m_pin);
+			result.m_cfgDeviceName = cfg.GetDeviceName();
+		}
+		catch( Barry::ConfigFileError & ) {
+			// ignore...
+		}
+
 		m_results.push_back(result);
 		ddout("Using ReadEndpoint: " << (unsigned int)result.m_ep.read);
 		ddout("      WriteEndpoint: " << (unsigned int)result.m_ep.write);
@@ -426,6 +438,8 @@ std::ostream& operator<< (std::ostream &os, const ProbeResult &pr)
 	os << "Device ID: " << pr.m_dev
 	   << ". PIN: " << pr.m_pin.str()
 	   << ", Description: " << pr.m_description;
+	if( pr.m_cfgDeviceName.size() )
+		os << ", Name: " << pr.m_cfgDeviceName;
 	return os;
 }
 
