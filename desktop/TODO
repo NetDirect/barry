@@ -1,2 +1,22 @@
-See ../TODO
+Feature TODO List:
+==================
+- make it possible to turn debug output on and off in the library on the fly
+- add general desktop configuration class, so you can save things like
+	whether debug should be on or off... perhaps this should be a global
+	barry configuration, so that the gui can determine whether all
+	programs are verbose or not, etc.
+- add Barry logo (top left) which, if clicked, shows a general system menu
+	containing items like:
+	- enable / disable USB debug logging
+	- direct logging to a file
+	- reset current device, wait, and rescan
+- add netdirect logo and if clicked, open browser to http://netdirect.ca/barry
+- perhaps make mouse change its cursor when over these logos
+- move some of the ~/.barry/backup/PIN/config code into the library,
+	into Probe, and perhaps a class to manage this data
+- add code to scan the bus when desktop opens, and list devices in a
+	dropdown combobox in the bottom right corner
+- launch the BarryBackup GUI from the first button, and wait for its
+	exit, and don't let the backup button work if the GUI is still
+	running... let the others work though(?)
 
