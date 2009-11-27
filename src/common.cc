@@ -38,22 +38,63 @@ pthread_mutex_t LogStreamMutex;
 /// Barry library initializer.  Call this before anything else.
 /// This takes care of initializing the lower level libusb.
 ///
+/// This function is safe to be called multiple times.  The
+/// data_dump_mode and the log stream will be updated each time
+/// it is called, but the USB library will not be re-initialized.
+///
 /// \param[in]	data_dump_mode	If set to true, the protocol conversation
-///				will be sent to stdout via the C++ std::cout
-///				stream.
+///				will be sent to the logStream specified
+///				in the second argument.
 /// \param[in]	LogStream	Pointer to std::ostream object to use for
 ///				debug output and logging.  Defaults to
 ///				std::cout.
 ///
 void Init(bool data_dump_mode, std::ostream *logStream)
 {
+	static bool initialized = false;
+
+	// set usb debug mode first, so that USB's initialization
+	// is captured too
 	if( data_dump_mode )
 		usb_set_debug(9);
-	usb_init();
+
+	// perform one-time initalization
+	if( !initialized ) {
+		// if the environment variable USB_DEBUG is set, that
+		// level value will be used instead of our 9 above...
+		// if you need to *force* this to 9, call Verbose(true)
+		// after Init()
+		usb_init();
+
+		// only need to initialize this once
+		pthread_mutex_init(&LogStreamMutex, NULL);
+
+		// done
+		initialized = true;
+	}
 
 	__data_dump_mode__ = data_dump_mode;
 	LogStream = logStream;
-	pthread_mutex_init(&LogStreamMutex, NULL);
+}
+
+//
+// Verbose
+//
+/// This API call lets the application enable / disable verbose debug
+/// output on the fly.
+///
+/// \param[in]	data_dump_mode	If set to true, the protocol conversation
+///				will be sent to the logStream specified
+///				in the Barry::Init() call.
+///
+void Verbose(bool data_dump_mode)
+{
+	__data_dump_mode__ = data_dump_mode;
+
+	if( data_dump_mode )
+		usb_set_debug(9);
+	else
+		usb_set_debug(0);
 }
 
 } // namespace Barry

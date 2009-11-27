@@ -52,6 +52,7 @@ namespace Barry {
 
 /// See also the LogLock class.
 BXEXPORT void Init(bool data_dump_mode = false, std::ostream *logStream = &std::cout);
+BXEXPORT void Verbose(bool data_dump_mode = true);
 
 } // namespace Barry
 

@@ -1,5 +1,8 @@
 Release: version 0.17 - 2009/11/??
 ------------------------------------------------------------------------------
+2009/11/27
+	- made Barry::Init() safe to be called multiple times
+	- added Barry::Verbose() for controlling debug output on the fly
 2009/11/26
 	- moved the Pin and ConfigFile classes from gui/ to the library
 	- Probe now loads ConfigFile's device name if available
