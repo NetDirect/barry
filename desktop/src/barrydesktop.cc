@@ -134,6 +134,7 @@ private:
 private:
 	std::auto_ptr<wxBitmap> m_background, m_button;
 	std::auto_ptr<BaseButtons> m_basebuttons;
+	int m_width, m_height;
 
 public:
 	BaseFrame(const wxImage &background);
@@ -348,6 +349,8 @@ BaseFrame::BaseFrame(const wxImage &background)
 		wxSize(background.GetWidth(), background.GetHeight()),
 		wxMINIMIZE_BOX | wxCAPTION | wxCLOSE_BOX | wxSYSTEM_MENU |
 		wxCLIP_CHILDREN)
+	, m_width(background.GetWidth())
+	, m_height(background.GetHeight())
 {
 	m_background.reset( new wxBitmap(background) );
 	m_basebuttons.reset( new BaseButtons(this) );
@@ -357,15 +360,35 @@ void BaseFrame::OnPaint(wxPaintEvent &event)
 {
 static bool init = false;
 
+	// paint the background image
 	wxPaintDC dc(this);
 	dc.DrawBitmap(*m_background, 0, 0);
+
+	// paint the header
+
+	// FIXME - add a logo here, as a small XPM file in the corner
+
+	// paint the header text
+	auto_ptr<wxFont> font( wxFont::New(14,
+		wxFONTFAMILY_SWISS, wxFONTFLAG_ANTIALIASED,
+		_T("Luxi Sans")) );
+	dc.SetFont( *font );
+	dc.SetTextForeground( wxColour(0xd2, 0xaf, 0x0b) );
+	dc.SetTextBackground( wxColour(0, 0, 0, wxALPHA_TRANSPARENT) );
+
+	long width, height, descent;
+	wxString header = _T("Barry Desktop");
+	dc.GetTextExtent(header, &width, &height, &descent);
+	int x = m_width / 2 - width / 2;
+	int y = MAIN_HEADER_OFFSET / 2 - height / 2;
+	dc.DrawText(header, x, y);
+
+	// paint the buttons
 	if( !init ) {
 		m_basebuttons->InitAll(dc);
 		init = true;
 	}
 	m_basebuttons->DrawAll(dc);
-
-	// FIXME - add a logo here, as a small XPM file in the corner
 }
 
 void BaseFrame::OnMouseMotion(wxMouseEvent &event)
