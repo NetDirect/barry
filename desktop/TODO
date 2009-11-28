@@ -16,4 +16,7 @@ Feature TODO List:
 - launch the BarryBackup GUI from the first button, and wait for its
 	exit, and don't let the backup button work if the GUI is still
 	running... let the others work though(?)
+- take a screenshot of the active device and display it in the empty
+	space on the main screen (to show battery level, etc)
+- add a descriptive About box, similar to barrybackup
 
