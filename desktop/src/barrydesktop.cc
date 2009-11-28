@@ -557,10 +557,9 @@ void BaseFrame::OnBarryLogoClicked(wxCommandEvent &event)
 
 void BaseFrame::OnNetDirectLogoClicked(wxCommandEvent &event)
 {
-	// FIXME: fire up a browser to point to the Barry
-	// documentation at:
-	// http://netdirect.ca/barry
-	wxMessageBox(_T("OnNetDirectLogoClicked"));
+	// fire up a browser to point to the Barry documentation
+	wxBusyCursor wait;
+	::wxLaunchDefaultBrowser(_T("http://netdirect.ca/barry"));
 }
 
 void BaseFrame::OnAbout(wxCommandEvent &event)
