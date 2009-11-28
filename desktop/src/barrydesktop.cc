@@ -25,6 +25,7 @@
 #include <vector>
 #include <barry/barry.h>
 #include <wx/wx.h>
+#include <wx/aboutdlg.h>
 
 // include icons and logos
 #include "../images/barry_logo_icon.xpm"
@@ -564,7 +565,34 @@ void BaseFrame::OnNetDirectLogoClicked(wxCommandEvent &event)
 
 void BaseFrame::OnAbout(wxCommandEvent &event)
 {
-	wxMessageBox(_T("FIXME: About box needs to be implemented"));
+	wxAboutDialogInfo info;
+	info.SetName(_T("Barry Desktop"));
+	info.SetVersion(_T("0.17"));
+	info.SetDescription(_T("A Free Software graphical user interface for working with the BlackBerry(TM) handheld."));
+	info.SetCopyright(_T("Copyright (C) 2009, Net Direct Inc."));
+	info.SetWebSite(_T("http://netdirect.ca/barry"));
+	info.SetLicense(_T(
+"    This program is free software; you can redistribute it and/or modify\n"
+"    it under the terms of the GNU General Public License as published by\n"
+"    the Free Software Foundation; either version 2 of the License, or\n"
+"    (at your option) any later version.\n"
+"\n"
+"    This program is distributed in the hope that it will be useful,\n"
+"    but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
+"    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
+"\n"
+"    See the GNU General Public License in the COPYING file at the\n"
+"    root directory of this project for more details.\n"));
+
+	info.AddDeveloper(_T("Net Direct Inc."));
+	info.AddDeveloper(_T("Chris Frey <cdfrey@foursquare.net>"));
+	info.AddDeveloper(_T("See AUTHORS file for detailed"));
+	info.AddDeveloper(_T("contribution information."));
+
+	info.AddArtist(_T("Chris Frey - GUI interface"));
+	info.AddArtist(_T("Martin Owens - Barry logo"));
+
+	wxAboutBox(info);
 }
 
 void BaseFrame::OnExit(wxCommandEvent &event)

@@ -18,7 +18,6 @@ Feature TODO List:
 	running... let the others work though(?)
 - take a screenshot of the active device and display it in the empty
 	space on the main screen (to show battery level, etc)
-- add a descriptive About box, similar to barrybackup
 - make the images/ directory installable, like gui/ .glade files
 - load the images/ from installed directory, instead of hard coded ../
 
