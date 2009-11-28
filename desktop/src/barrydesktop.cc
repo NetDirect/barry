@@ -28,6 +28,7 @@
 
 // include icons and logos
 #include "../images/barry_logo_icon.xpm"
+#include "../images/logo_NetDirect.xpm"
 
 using namespace std;
 
@@ -53,7 +54,8 @@ enum {
 	MainMenu_LastButton = MainMenu_Misc,
 
 	// Clickable, "hot" images that do something
-	HotImage_BarryLogo
+	HotImage_BarryLogo,
+	HotImage_NetDirectLogo
 };
 
 const wxChar *ButtonNames[] = {
@@ -96,13 +98,15 @@ class ClickableImage
 	wxBitmap m_image;
 	int m_x, m_y;
 	bool m_focus;
+	wxCursor m_hover_cursor;
 
 protected:
 	bool CalculateHit(int x, int y);
 
 public:
 	ClickableImage(wxWindow *parent, const wxBitmap &image,
-		int ID, int x, int y);
+		int ID, int x, int y,
+		const wxCursor &hover = wxCursor(wxCURSOR_HAND));
 
 	void Draw(wxDC &dc);
 	void HandleMotion(wxDC &dc, int x, int y);
@@ -164,7 +168,7 @@ private:
 private:
 	std::auto_ptr<wxBitmap> m_background, m_button;
 	std::auto_ptr<BaseButtons> m_basebuttons;
-	std::auto_ptr<ClickableImage> m_barry_logo;
+	std::auto_ptr<ClickableImage> m_barry_logo, m_netdirect_logo;
 	std::auto_ptr<wxMenu> m_sysmenu;
 	int m_width, m_height;
 
@@ -177,6 +181,7 @@ public:
 	void OnLeftUp(wxMouseEvent &event);
 	void OnBackupRestore(wxCommandEvent &event);
 	void OnBarryLogoClicked(wxCommandEvent &event);
+	void OnNetDirectLogoClicked(wxCommandEvent &event);
 
 	// sys menu (triggered by the Barry logo)
 	void OnAbout(wxCommandEvent &event);
@@ -190,6 +195,7 @@ BEGIN_EVENT_TABLE(BaseFrame, wxFrame)
 	EVT_LEFT_UP	(BaseFrame::OnLeftUp)
 	EVT_BUTTON	(MainMenu_BackupAndRestore, BaseFrame::OnBackupRestore)
 	EVT_BUTTON	(HotImage_BarryLogo, BaseFrame::OnBarryLogoClicked)
+	EVT_BUTTON	(HotImage_NetDirectLogo, BaseFrame::OnNetDirectLogoClicked)
 	EVT_MENU	(SysMenu_About, BaseFrame::OnAbout)
 	EVT_MENU	(SysMenu_Exit, BaseFrame::OnExit)
 END_EVENT_TABLE()
@@ -207,13 +213,15 @@ public:
 ClickableImage::ClickableImage(wxWindow *parent,
 				const wxBitmap &image,
 				int ID,
-				int x, int y)
+				int x, int y,
+				const wxCursor &hover)
 	: m_parent(parent)
 	, m_id(ID)
 	, m_image(image)
 	, m_x(x)
 	, m_y(y)
 	, m_focus(false)
+	, m_hover_cursor(hover)
 {
 }
 
@@ -235,7 +243,7 @@ void ClickableImage::HandleMotion(wxDC &dc, int x, int y)
 
 	if( focus && !m_focus ) {
 		// newly in focus
-		m_parent->SetCursor(wxCursor(wxCURSOR_HAND));
+		m_parent->SetCursor(m_hover_cursor);
 	}
 	else if( m_focus && !focus ) {
 		// not in focus anymore
@@ -461,6 +469,12 @@ BaseFrame::BaseFrame(const wxImage &background)
 	m_basebuttons.reset( new BaseButtons(this) );
 	m_barry_logo.reset( new ClickableImage(this,
 		wxBitmap(barry_logo_icon_xpm), HotImage_BarryLogo, 4, 4) );
+	wxBitmap nd_logo(logo_NetDirect_xpm);
+	m_netdirect_logo.reset( new ClickableImage(this,
+		nd_logo, HotImage_NetDirectLogo,
+		m_width - 3 - nd_logo.GetWidth(),
+		(MAIN_HEADER_OFFSET - nd_logo.GetHeight()) / 2,
+		wxNullCursor));
 
 	// Create the Barry Logo popup system menu
 	m_sysmenu.reset( new wxMenu );
@@ -481,7 +495,7 @@ static bool init = false;
 	m_barry_logo->Draw(dc);
 
 	// paint the header: NetDirect logo
-	// FIXME
+	m_netdirect_logo->Draw(dc);
 
 	// paint the header: text
 	auto_ptr<wxFont> font( wxFont::New(14,
@@ -494,8 +508,8 @@ static bool init = false;
 	long width, height, descent;
 	wxString header = _T("Barry Desktop");
 	dc.GetTextExtent(header, &width, &height, &descent);
-	int x = m_width / 2 - width / 2;
-	int y = MAIN_HEADER_OFFSET / 2 - height / 2;
+	int x = (m_width - width) / 2;
+	int y = (MAIN_HEADER_OFFSET - height) / 2;
 	dc.DrawText(header, x, y);
 
 	// paint the buttons
@@ -511,6 +525,7 @@ void BaseFrame::OnMouseMotion(wxMouseEvent &event)
 	wxClientDC dc(this);
 	m_basebuttons->HandleMotion(dc, event.m_x, event.m_y);
 	m_barry_logo->HandleMotion(dc, event.m_x, event.m_y);
+	m_netdirect_logo->HandleMotion(dc, event.m_x, event.m_y);
 }
 
 void BaseFrame::OnLeftDown(wxMouseEvent &event)
@@ -518,6 +533,7 @@ void BaseFrame::OnLeftDown(wxMouseEvent &event)
 	wxClientDC dc(this);
 	m_basebuttons->HandleDown(dc, event.m_x, event.m_y);
 	m_barry_logo->HandleDown(dc, event.m_x, event.m_y);
+	m_netdirect_logo->HandleDown(dc, event.m_x, event.m_y);
 	event.Skip();
 }
 
@@ -526,6 +542,7 @@ void BaseFrame::OnLeftUp(wxMouseEvent &event)
 	wxClientDC dc(this);
 	m_basebuttons->HandleUp(dc, event.m_x, event.m_y);
 	m_barry_logo->HandleUp(dc, event.m_x, event.m_y);
+	m_netdirect_logo->HandleUp(dc, event.m_x, event.m_y);
 }
 
 void BaseFrame::OnBackupRestore(wxCommandEvent &event)
@@ -536,6 +553,14 @@ void BaseFrame::OnBackupRestore(wxCommandEvent &event)
 void BaseFrame::OnBarryLogoClicked(wxCommandEvent &event)
 {
 	PopupMenu(m_sysmenu.get(), 4, 20);
+}
+
+void BaseFrame::OnNetDirectLogoClicked(wxCommandEvent &event)
+{
+	// FIXME: fire up a browser to point to the Barry
+	// documentation at:
+	// http://netdirect.ca/barry
+	wxMessageBox(_T("OnNetDirectLogoClicked"));
 }
 
 void BaseFrame::OnAbout(wxCommandEvent &event)
