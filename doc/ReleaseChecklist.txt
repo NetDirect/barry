@@ -16,6 +16,7 @@ Barry Release Checklist:
 		- opensync-plugin/debian/control (libbarry-dev)
 		- opensync-plugin-0.4x/debian/control (libbarry-dev)
 		- files under po/
+		- desktop/src/barrydesktop.cc
 - test ABI / API and bump major or minor version as appropriate
 - run all tests on a clean git tree, including build test script
 - write release notes, including contributors, known issues, new
