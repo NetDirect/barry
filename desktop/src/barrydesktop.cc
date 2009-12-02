@@ -99,6 +99,7 @@ class ClickableImage
 	wxBitmap m_image;
 	int m_x, m_y;
 	bool m_focus;
+	bool m_event_on_up;
 	wxCursor m_hover_cursor;
 
 protected:
@@ -106,7 +107,7 @@ protected:
 
 public:
 	ClickableImage(wxWindow *parent, const wxBitmap &image,
-		int ID, int x, int y,
+		int ID, int x, int y, bool event_on_up = true,
 		const wxCursor &hover = wxCursor(wxCURSOR_HAND));
 
 	void Draw(wxDC &dc);
@@ -215,6 +216,7 @@ ClickableImage::ClickableImage(wxWindow *parent,
 				const wxBitmap &image,
 				int ID,
 				int x, int y,
+				bool event_on_up,
 				const wxCursor &hover)
 	: m_parent(parent)
 	, m_id(ID)
@@ -222,6 +224,7 @@ ClickableImage::ClickableImage(wxWindow *parent,
 	, m_x(x)
 	, m_y(y)
 	, m_focus(false)
+	, m_event_on_up(event_on_up)
 	, m_hover_cursor(hover)
 {
 }
@@ -257,20 +260,35 @@ void ClickableImage::HandleMotion(wxDC &dc, int x, int y)
 
 void ClickableImage::HandleDown(wxDC &dc, int x, int y)
 {
+	if( !m_event_on_up ) {
+		m_focus = CalculateHit(x, y);
+
+		if( m_focus ) {
+			// replace the cursor
+			m_parent->SetCursor(wxNullCursor);
+			m_focus = false;
+
+			// send the event
+			wxCommandEvent event(wxEVT_COMMAND_BUTTON_CLICKED,m_id);
+			m_parent->GetEventHandler()->ProcessEvent(event);
+		}
+	}
 }
 
 void ClickableImage::HandleUp(wxDC &dc, int x, int y)
 {
-	m_focus = CalculateHit(x, y);
+	if( m_event_on_up ) {
+		m_focus = CalculateHit(x, y);
 
-	if( m_focus ) {
-		// replace the cursor
-		m_parent->SetCursor(wxNullCursor);
-		m_focus = false;
+		if( m_focus ) {
+			// replace the cursor
+			m_parent->SetCursor(wxNullCursor);
+			m_focus = false;
 
-		// send the event
-		wxCommandEvent event(wxEVT_COMMAND_BUTTON_CLICKED, m_id);
-		m_parent->GetEventHandler()->ProcessEvent(event);
+			// send the event
+			wxCommandEvent event(wxEVT_COMMAND_BUTTON_CLICKED,m_id);
+			m_parent->GetEventHandler()->ProcessEvent(event);
+		}
 	}
 }
 
@@ -469,12 +487,13 @@ BaseFrame::BaseFrame(const wxImage &background)
 	m_background.reset( new wxBitmap(background) );
 	m_basebuttons.reset( new BaseButtons(this) );
 	m_barry_logo.reset( new ClickableImage(this,
-		wxBitmap(barry_logo_icon_xpm), HotImage_BarryLogo, 4, 4) );
+		wxBitmap(barry_logo_icon_xpm), HotImage_BarryLogo,
+		4, 4, false) );
 	wxBitmap nd_logo(logo_NetDirect_xpm);
 	m_netdirect_logo.reset( new ClickableImage(this,
 		nd_logo, HotImage_NetDirectLogo,
 		m_width - 3 - nd_logo.GetWidth(),
-		(MAIN_HEADER_OFFSET - nd_logo.GetHeight()) / 2,
+		(MAIN_HEADER_OFFSET - nd_logo.GetHeight()) / 2, true,
 		wxNullCursor));
 
 	// Create the Barry Logo popup system menu

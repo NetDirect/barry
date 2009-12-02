@@ -7,10 +7,6 @@ Feature TODO List:
 	- enable / disable USB debug logging
 	- direct logging to a file
 	- reset current device, wait, and rescan
-- add netdirect logo and if clicked, open browser to http://netdirect.ca/barry
-- perhaps make mouse change its cursor when over these logos
-- move some of the ~/.barry/backup/PIN/config code into the library,
-	into Probe, and perhaps a class to manage this data
 - add code to scan the bus when desktop opens, and list devices in a
 	dropdown combobox in the bottom right corner
 - launch the BarryBackup GUI from the first button, and wait for its
