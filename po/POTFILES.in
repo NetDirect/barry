@@ -9,14 +9,12 @@ gui/src/barry-gui.glade
 gui/src/PasswordDlg.cc
 gui/src/ConfigDlg.cc
 gui/src/tarfile-ops-nt.cc
-gui/src/Pin.cc
 gui/src/tarfile.cc
 gui/src/main.cc
 gui/src/PromptDlg.cc
 gui/src/BackupWindow.cc
 gui/src/DeviceIface.cc
 gui/src/util.cc
-gui/src/ConfigFile.cc
 gui/src/DeviceBus.cc
 gui/src/DatabaseSelectDlg.cc
 gui/src/Thread.cc

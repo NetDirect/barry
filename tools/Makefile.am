@@ -10,6 +10,9 @@ datadir = @datadir@
 localedir = $(datadir)/locale
 DEFS = -DLOCALEDIR=\"$(localedir)\" @DEFS@
 
+noinst_HEADERS = \
+	i18n.h
+
 bin_PROGRAMS = \
 	btool \
 	bidentify \
