@@ -1,0 +1,21 @@
+# List of source files which contain translatable strings.
+src/PasswordDlg.glade
+src/ConfigDlg.glade
+src/DatabaseSelectDlg.glade
+src/PromptDlg.glade
+src/BackupWindow.glade
+src/barry-gui.glade
+
+src/PasswordDlg.cc
+src/ConfigDlg.cc
+src/tarfile-ops-nt.cc
+src/tarfile.cc
+src/main.cc
+src/PromptDlg.cc
+src/BackupWindow.cc
+src/DeviceIface.cc
+src/util.cc
+src/DeviceBus.cc
+src/DatabaseSelectDlg.cc
+src/Thread.cc
+

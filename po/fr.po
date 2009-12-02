@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: barry 0.17\n"
-"Report-Msgid-Bugs-To: ndprojects@users.sourceforge.net\n"
-"POT-Creation-Date: 2009-11-19 23:12+0100\n"
+"Report-Msgid-Bugs-To: http://netdirect.ca/barry\n"
+"POT-Creation-Date: 2009-12-02 14:03+0100\n"
 "PO-Revision-Date: 2009-11-19 23:13+0100\n"
 "Last-Translator: Nicolas <nicolas@vivien.fr>\n"
 "Language-Team: French\n"
@@ -16,199 +16,27 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: gui/src/PasswordDlg.glade:8
-msgid "Password Required"
-msgstr "Saisissez un mot de passe"
-
-#: gui/src/PasswordDlg.glade:99
-msgid "Please enter device password: (5 tries remaining)"
-msgstr "Veuillez entre un mot de passe: (5 tentatives)"
-
-#: gui/src/ConfigDlg.glade:7
-msgid "Configuration of Current PIN"
-msgstr "Configuration du PIN code"
-
-#: gui/src/ConfigDlg.glade:33
-msgid "Backup path:"
-msgstr ""
-
-#: gui/src/ConfigDlg.glade:70
-msgid "Device name:"
-msgstr ""
-
-#: gui/src/ConfigDlg.glade:83
-msgid "Prompt for label on every backup."
-msgstr ""
-
-#: gui/src/ConfigDlg.glade:102
-msgid ""
-"Database restore filter.  Only databases selected in this list will be "
-"restored, even if more exist in the backup."
-msgstr ""
-
-#: gui/src/ConfigDlg.glade:118
-msgid "Device database backup list:"
-msgstr ""
-
-#: gui/src/ConfigDlg.glade:138 gui/src/ConfigDlg.glade:166
-msgid "Configure..."
-msgstr ""
-
-#: gui/src/DatabaseSelectDlg.glade:8
-msgid "Database Selection"
-msgstr ""
-
-#: gui/src/DatabaseSelectDlg.glade:100
-msgid "Select the device databases you wish to backup:"
-msgstr ""
-
-#: gui/src/DatabaseSelectDlg.glade:150
-msgid "Select _All"
-msgstr ""
-
-#: gui/src/DatabaseSelectDlg.glade:162
-msgid "_Deselect All"
-msgstr ""
-
-#: gui/src/PromptDlg.glade:8
-msgid "Question"
-msgstr ""
-
-#: gui/src/PromptDlg.glade:101
-msgid "Nice detailed question for the user to answer..."
-msgstr ""
-
-#: gui/src/BackupWindow.glade:7 gui/src/barry-gui.glade:8
-#: gui/src/barry-gui.glade:296 gui/src/barry-gui.glade:446
-msgid "Barry Backup"
-msgstr ""
-
-#: gui/src/BackupWindow.glade:18 gui/src/barry-gui.glade:33
-#: gui/src/barry-gui.glade:321 gui/src/barry-gui.glade:471
-msgid "_File"
-msgstr "_Fichier"
-
-#: gui/src/BackupWindow.glade:36 gui/src/barry-gui.glade:110
-#: gui/src/barry-gui.glade:365 gui/src/barry-gui.glade:515
-msgid "_Help"
-msgstr "_Aide"
-
-#: gui/src/BackupWindow.glade:72
-msgid "Device:"
-msgstr "_Périphérique:"
-
-#: gui/src/BackupWindow.glade:111 gui/src/barry-gui.glade:684
-msgid "Backup"
-msgstr "Sauvegarde"
-
-#: gui/src/BackupWindow.glade:124
-msgid "Restore..."
-msgstr "Restauration..."
-
-#: gui/src/BackupWindow.glade:137
-msgid "Config..."
-msgstr "Configuration..."
-
-#: gui/src/BackupWindow.glade:150
-msgid "Disconnect"
-msgstr "Déconnexion"
-
-#: gui/src/BackupWindow.glade:163
-msgid "Rescan USB Bus"
-msgstr "Rescanner le bus USB"
-
-#: gui/src/BackupWindow.glade:178
-msgid "Disconnect All"
-msgstr "Tout déconnecter"
-
-#: gui/src/barry-gui.glade:55
-msgid "_Device"
-msgstr "_Périphérique"
-
-#: gui/src/barry-gui.glade:64 gui/src/barry-gui.glade:147
-msgid "_Connect"
-msgstr "_Connecter"
-
-#: gui/src/barry-gui.glade:73 gui/src/barry-gui.glade:162
-msgid "_Disconnect"
-msgstr "_Déconnecter"
-
-#: gui/src/barry-gui.glade:88
-msgid "_Backup..."
-msgstr "_Sauvegarde..."
-
-#: gui/src/barry-gui.glade:97
-msgid "_Restore..."
-msgstr "_Restauration..."
-
-#: gui/src/barry-gui.glade:119 gui/src/barry-gui.glade:374
-#: gui/src/barry-gui.glade:524
-msgid "_About"
-msgstr "_A propos"
-
-#: gui/src/barry-gui.glade:190 gui/src/barry-gui.glade:403
-msgid "_Backup"
-msgstr "_Sauvegarde"
-
-#: gui/src/barry-gui.glade:205 gui/src/barry-gui.glade:415
-msgid "_Restore"
-msgstr "_Restauration"
-
-#: gui/src/barry-gui.glade:343 gui/src/barry-gui.glade:493
-msgid "_Edit"
-msgstr "_Edition"
-
-#: gui/src/barry-gui.glade:352 gui/src/barry-gui.glade:502
-msgid "_Config..."
-msgstr ""
-
-#: gui/src/barry-gui.glade:605
-msgid "Device PIN"
-msgstr ""
-
-#: gui/src/barry-gui.glade:627
-msgid "Progress"
-msgstr ""
-
-#: gui/src/barry-gui.glade:649
-msgid "Database"
-msgstr ""
-
-#: gui/src/barry-gui.glade:701
-msgid "Restore"
-msgstr ""
-
-#: gui/src/barry-gui.glade:736
-msgid "Device Selection"
-msgstr ""
-
-#: gui/src/barry-gui.glade:827
-msgid ""
-"Multiple BlackBerry devices have been found. Please select the one to work "
-"with:"
-msgstr ""
-
-#: tools/breset.cc:74
+#: tools/breset.cc:67
 #, c-format
 msgid "Scanning for Blackberry devices...\n"
 msgstr "Recherche de téléphone Blackberry...\n"
 
-#: tools/breset.cc:88
+#: tools/breset.cc:81
 #, c-format
 msgid "Found..."
 msgstr "Trouvé..."
 
-#: tools/breset.cc:89
+#: tools/breset.cc:82
 #, c-format
 msgid "attempting to reset.\n"
 msgstr "Réinitialisation en cours.\n"
 
-#: tools/breset.cc:93
+#: tools/breset.cc:86
 #, c-format
 msgid "Can't reset device on bus %s, devnum %u\n"
 msgstr "Impossible de réinitialiser le périphérique, bus %s, devnum %u\n"
 
-#: tools/breset.cc:98
+#: tools/breset.cc:91
 #, c-format
 msgid "%d device%s reset.\n"
 msgstr "%d périphérique%s réinitialisé.\n"

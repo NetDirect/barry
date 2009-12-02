@@ -1,0 +1,188 @@
+# French translations for barry-backup package.
+# Copyright (C) 2009 Net Direct, Inc.
+# This file is distributed under the same license as the barry-backup package.
+# Nicolas <nicolas@vivien.fr>, 2009.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: barry-backup 0.1\n"
+"Report-Msgid-Bugs-To: http://netdirect.ca/barry\n"
+"POT-Creation-Date: 2009-12-02 14:05+0100\n"
+"PO-Revision-Date: 2009-12-02 14:08+0100\n"
+"Last-Translator: Nicolas <nicolas@vivien.fr>\n"
+"Language-Team: French\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: src/PasswordDlg.glade:8
+msgid "Password Required"
+msgstr "Mot de passe requis"
+
+#: src/PasswordDlg.glade:99
+msgid "Please enter device password: (5 tries remaining)"
+msgstr "Veuillez saisir le mot de passe: (5 tentatives)"
+
+#: src/ConfigDlg.glade:7
+msgid "Configuration of Current PIN"
+msgstr "Configuration du PIN code"
+
+#: src/ConfigDlg.glade:33
+msgid "Backup path:"
+msgstr "Dossier de sauvegarde:"
+
+#: src/ConfigDlg.glade:70
+msgid "Device name:"
+msgstr "Nom du périphérique"
+
+#: src/ConfigDlg.glade:83
+msgid "Prompt for label on every backup."
+msgstr ""
+
+#: src/ConfigDlg.glade:102
+msgid ""
+"Database restore filter.  Only databases selected in this list will be "
+"restored, even if more exist in the backup."
+msgstr ""
+
+#: src/ConfigDlg.glade:118
+msgid "Device database backup list:"
+msgstr "Liste des bases de données à sauvegarder:"
+
+#: src/ConfigDlg.glade:138 src/ConfigDlg.glade:166
+msgid "Configure..."
+msgstr "Configuration..."
+
+#: src/DatabaseSelectDlg.glade:8
+msgid "Database Selection"
+msgstr "Sélection des bases de données"
+
+#: src/DatabaseSelectDlg.glade:100
+msgid "Select the device databases you wish to backup:"
+msgstr "Sélectionnez les bases de données que vous souhaitez sauvegarder:"
+
+#: src/DatabaseSelectDlg.glade:150
+msgid "Select _All"
+msgstr "Tout _Sélectionner"
+
+#: src/DatabaseSelectDlg.glade:162
+msgid "_Deselect All"
+msgstr "Tout _Déselectionner"
+
+#: src/PromptDlg.glade:8
+msgid "Question"
+msgstr "Question"
+
+#: src/PromptDlg.glade:101
+msgid "Nice detailed question for the user to answer..."
+msgstr ""
+
+#: src/BackupWindow.glade:7 src/barry-gui.glade:8 src/barry-gui.glade:296
+#: src/barry-gui.glade:446
+msgid "Barry Backup"
+msgstr "Barry Backup"
+
+#: src/BackupWindow.glade:18 src/barry-gui.glade:33 src/barry-gui.glade:321
+#: src/barry-gui.glade:471
+msgid "_File"
+msgstr "_Fichier"
+
+#: src/BackupWindow.glade:36 src/barry-gui.glade:110 src/barry-gui.glade:365
+#: src/barry-gui.glade:515
+msgid "_Help"
+msgstr "_Aide"
+
+#: src/BackupWindow.glade:72
+msgid "Device:"
+msgstr "Périphérique:"
+
+#: src/BackupWindow.glade:111 src/barry-gui.glade:684
+msgid "Backup"
+msgstr "Sauvegarder"
+
+#: src/BackupWindow.glade:124
+msgid "Restore..."
+msgstr "Restauration..."
+
+#: src/BackupWindow.glade:137
+msgid "Config..."
+msgstr "Configuration..."
+
+#: src/BackupWindow.glade:150
+msgid "Disconnect"
+msgstr "Déconnexion"
+
+#: src/BackupWindow.glade:163
+msgid "Rescan USB Bus"
+msgstr "Scanner le bus USB"
+
+#: src/BackupWindow.glade:178
+msgid "Disconnect All"
+msgstr "Tout Déconnecter"
+
+#: src/barry-gui.glade:55
+msgid "_Device"
+msgstr "_Périphérique"
+
+#: src/barry-gui.glade:64 src/barry-gui.glade:147
+msgid "_Connect"
+msgstr "_Connexion"
+
+#: src/barry-gui.glade:73 src/barry-gui.glade:162
+msgid "_Disconnect"
+msgstr "_Déconnexion"
+
+#: src/barry-gui.glade:88
+msgid "_Backup..."
+msgstr "_Sauvegarde..."
+
+#: src/barry-gui.glade:97
+msgid "_Restore..."
+msgstr "_Restauration..."
+
+#: src/barry-gui.glade:119 src/barry-gui.glade:374 src/barry-gui.glade:524
+msgid "_About"
+msgstr "_A propos"
+
+#: src/barry-gui.glade:190 src/barry-gui.glade:403
+msgid "_Backup"
+msgstr "_Sauvegarde"
+
+#: src/barry-gui.glade:205 src/barry-gui.glade:415
+msgid "_Restore"
+msgstr "_Restauration"
+
+#: src/barry-gui.glade:343 src/barry-gui.glade:493
+msgid "_Edit"
+msgstr "_Edition"
+
+#: src/barry-gui.glade:352 src/barry-gui.glade:502
+msgid "_Config..."
+msgstr "_Configuration..."
+
+#: src/barry-gui.glade:605
+msgid "Device PIN"
+msgstr "Code PIN"
+
+#: src/barry-gui.glade:627
+msgid "Progress"
+msgstr "Statut"
+
+#: src/barry-gui.glade:649
+msgid "Database"
+msgstr "Base de données"
+
+#: src/barry-gui.glade:701
+msgid "Restore"
+msgstr "Restauration"
+
+#: src/barry-gui.glade:736
+msgid "Device Selection"
+msgstr "Sélection du périphérique"
+
+#: src/barry-gui.glade:827
+msgid ""
+"Multiple BlackBerry devices have been found. Please select the one to work "
+"with:"
+msgstr "Plusieurs BlackBerry ont été trouvés. Veuillez en sélectionner un:"

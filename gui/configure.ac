@@ -10,6 +10,8 @@ AC_CONFIG_AUX_DIR([..])
 AC_CONFIG_MACRO_DIR([../m4])
 AM_INIT_AUTOMAKE
 
+AM_GNU_GETTEXT([external])
+
 # Checks for programs.
 AC_PROG_CC
 AC_PROG_CXX
@@ -76,7 +78,8 @@ AC_FUNC_SELECT_ARGTYPES
 AC_FUNC_STAT
 AC_CHECK_FUNCS([bzero gettimeofday memset select strcasecmp strchr strerror strtol strtoul])
 
-AC_CONFIG_FILES([Makefile
+AC_CONFIG_FILES([Makefile 
+                 po/Makefile.in
                  src/Makefile
                  man/Makefile])
 AC_OUTPUT

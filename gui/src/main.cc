@@ -27,6 +27,7 @@
 #include <barry/barry.h>
 #include "BackupWindow.h"
 #include "util.h"
+#include "i18n.h"
 
 //
 // The catch-all handler for exceptions that occur inside signals
@@ -91,6 +92,8 @@ void terminate_handler()
 
 int main(int argc, char *argv[])
 {
+	INIT_I18N(PACKAGE);
+
 	old_unexpected_handler = std::set_unexpected(&unexpected_handler);
 	old_terminate_handler = std::set_terminate(&terminate_handler);
 

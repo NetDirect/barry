@@ -1,5 +1,7 @@
 Release: version 0.17 - 2009/11/??
 ------------------------------------------------------------------------------
+2009/12/02
+	- gettextize BarryBackup by Nicolas VIVIEN
 2009/11/27
 	- made Barry::Init() safe to be called multiple times
 	- added Barry::Verbose() for controlling debug output on the fly
