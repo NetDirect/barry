@@ -4,11 +4,14 @@ Barry Release Checklist:
 		- configure.ac
 		- src/Makefile.am
 		- src/version.cc
+		- gui/configure.ac
 		- gui/src/BackupWindow.cc (about dialog)
 		- Doxyfile
 		- rpm/barry.spec
 		- debian/changelog
+		- opensync-plugin/configure.ac
 		- opensync-plugin/src/barry_sync.cc
+		- opensync-plugin/configure.ac
 		- opensync-plugin-0.4x/src/barry_sync.cc
 - run all tests on a clean git tree, including build test script
 - write release notes, including contributors, known issues, new

@@ -1,8 +1,8 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
-AC_PREREQ(2.59)
-AC_INIT([barry-backup], [0.1], [barry-devel@lists.sourceforge.net])
+AC_PREREQ(2.61)
+AC_INIT([barry-backup], [0.17], [barry-devel@lists.sourceforge.net])
 #AM_CONFIG_HEADER(config.h)
 AC_CONFIG_SRCDIR([src/main.cc])
 AC_CONFIG_HEADERS([config.h:config.h.in])

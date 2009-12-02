@@ -1,7 +1,7 @@
 dnl Process this file with autoconf to produce a configure script.
 
-AC_PREREQ(2.59)
-AC_INIT([Barry OpenSync Plugin], 0.2, [], barryplugin)
+AC_PREREQ(2.61)
+AC_INIT([Barry OpenSync Plugin 0.4x], [0.17], [barry-devel@lists.sourceforge.net])
 AC_CONFIG_SRCDIR(src/barry_sync.cc)
 AC_CONFIG_HEADER(config.h)
 AC_CONFIG_AUX_DIR([..])
