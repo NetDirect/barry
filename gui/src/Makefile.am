@@ -44,7 +44,8 @@ noinst_HEADERS= \
 	PromptDlg.h \
 	Thread.h \
 	tarfile.h \
-	util.h
+	util.h \
+	i18n.h
 
 EXTRA_DIST = barry-gui.glade
 
