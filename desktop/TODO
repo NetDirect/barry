@@ -1,14 +1,10 @@
 Feature TODO List:
 ==================
-- consider moving the config file out of ~/.barry/backup/PIN and into
-	~/.barry/PIN, but leave ~/.barry/backup for the data
-- add Barry logo (top left) which, if clicked, shows a general system menu
-	containing items like:
-	- enable / disable USB debug logging
-	- direct logging to a file
-	- reset current device, wait, and rescan
+- save 'verbose_logging' to global config
+- menu item: direct logging to a file
 - add code to scan the bus when desktop opens, and list devices in a
 	dropdown combobox in the bottom right corner
+- menu item: reset current device, wait, and rescan
 - launch the BarryBackup GUI from the first button, and wait for its
 	exit, and don't let the backup button work if the GUI is still
 	running... let the others work though(?)
