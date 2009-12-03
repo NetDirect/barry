@@ -10,6 +10,7 @@ The Barry library has the following exception hierarchy:
 			- Barry::BadPassword
 			- Barry::BadData
 			- Barry::BadSize
+			- Barry::ConfigFileError
 			- Barry::ErrnoError
 				- Barry::ConfigFileError
 			- Barry::BadPackedFormat
