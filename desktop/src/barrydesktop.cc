@@ -476,7 +476,7 @@ void BaseButtons::HandleUp(wxDC &dc, int x, int y)
 // BaseFrame
 
 BaseFrame::BaseFrame(const wxImage &background)
-	: wxFrame(NULL, wxID_ANY, _T("Barry Desktop"),
+	: wxFrame(NULL, wxID_ANY, _T("Barry Desktop Control Panel"),
 		wxPoint(50, 50),
 		wxSize(background.GetWidth(), background.GetHeight()),
 		wxMINIMIZE_BOX | wxCAPTION | wxCLOSE_BOX | wxSYSTEM_MENU |
@@ -526,7 +526,7 @@ static bool init = false;
 	dc.SetTextBackground( wxColour(0, 0, 0, wxALPHA_TRANSPARENT) );
 
 	long width, height, descent;
-	wxString header = _T("Barry Desktop");
+	wxString header = _T("Barry Desktop Control Panel");
 	dc.GetTextExtent(header, &width, &height, &descent);
 	int x = (m_width - width) / 2;
 	int y = (MAIN_HEADER_OFFSET - height) / 2;
@@ -585,7 +585,7 @@ void BaseFrame::OnNetDirectLogoClicked(wxCommandEvent &event)
 void BaseFrame::OnAbout(wxCommandEvent &event)
 {
 	wxAboutDialogInfo info;
-	info.SetName(_T("Barry Desktop"));
+	info.SetName(_T("Barry Desktop Control Panel"));
 	info.SetVersion(_T("0.17"));
 	info.SetDescription(_T("A Free Software graphical user interface for working with the BlackBerry(TM) handheld."));
 	info.SetCopyright(_T("Copyright (C) 2009, Net Direct Inc."));
