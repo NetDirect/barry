@@ -1,5 +1,7 @@
 Release: version 0.17 - 2009/11/??
 ------------------------------------------------------------------------------
+2009/12/03
+	- lib: added GetKey/SetKey support in GlobalConfigFile
 2009/12/02
 	- gettextize BarryBackup by Nicolas VIVIEN
 	- lib: added support for a global config file

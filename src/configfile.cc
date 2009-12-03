@@ -331,6 +331,19 @@ GlobalConfigFile::GlobalConfigFile()
 	Load();
 }
 
+GlobalConfigFile::GlobalConfigFile(const std::string &appname)
+	: m_loaded(false)
+	, m_appname(appname)
+	, m_verboseLogging(false)
+{
+	// there can be no spaces in the appname
+	if( m_appname.find(' ') != std::string::npos )
+		throw std::logic_error("App name must have no spaces.");
+
+	BuildFilename();
+	Load();
+}
+
 GlobalConfigFile::~GlobalConfigFile()
 {
 }
@@ -381,6 +394,14 @@ void GlobalConfigFile::Load()
 			iss >> flag;
 			m_verboseLogging = flag;
 		}
+		else {
+			// store any other keys as app keys
+			if( keyword.substr(0, 2) == "X-" ) {
+				iss >> std::ws;
+				std::getline(iss, line);
+				m_keymap[keyword] = line;
+			}
+		}
 	}
 
 	m_loaded = true;
@@ -404,11 +425,41 @@ bool GlobalConfigFile::Save()
 
 	out << "verbose_logging " << (m_verboseLogging ? 1 : 0) << std::endl;
 
+	// store all app keys
+	keymap_type::const_iterator ci = m_keymap.begin();
+	for( ; ci != m_keymap.end(); ++ci ) {
+		out << ci->first << " " << ci->second << std::endl;
+	}
+
 	if( !out ) {
 		m_last_error = "Error during write.  Config may be incomplete.";
 		return false;
 	}
 	return true;
+}
+
+void GlobalConfigFile::SetKey(const std::string &key, const std::string &value)
+{
+	if( !m_appname.size() )
+		throw std::logic_error("Cannot use SetKey() without specifying an appname in the constructor.");
+
+	if( value.find_first_of("\n\r") != std::string::npos )
+		throw std::logic_error("SetKey values may not contain newline characters.");
+
+	std::string fullkey = "X-" + m_appname + "-" + key;
+	m_keymap[fullkey] = value;
+}
+
+std::string GlobalConfigFile::GetKey(const std::string &key) const
+{
+	if( !m_appname.size() )
+		throw std::logic_error("Cannot use SetKey() without specifying an appname in the constructor.");
+
+	std::string fullkey = "X-" + m_appname + "-" + key;
+	keymap_type::const_iterator ci = m_keymap.find(fullkey);
+	if( ci == m_keymap.end() )
+		return "";
+	return ci->second;
 }
 
 void GlobalConfigFile::SetLastDevice(const Barry::Pin &pin)

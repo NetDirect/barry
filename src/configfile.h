@@ -131,15 +131,21 @@ public:
 class BXEXPORT GlobalConfigFile
 {
 private:
+	typedef std::map<std::string, std::string>		keymap_type;
+
 	// meta data
 	std::string m_path;	// /path/to/.barry   without trailing slash
 	std::string m_filename;	// /path/to/.barry/config
 	bool m_loaded;
 	std::string m_last_error;
+	std::string m_appname;
 
 	// global configuration data
 	Barry::Pin m_lastDevice;	// the last selected device in a GUI
 	bool m_verboseLogging;
+
+	// set/get key data
+	keymap_type m_keymap;
 
 protected:
 	void BuildFilename();
@@ -151,6 +157,13 @@ public:
 	/// Throws ConfigFileError on error, but it is not an error
 	/// if the config does not exist.
 	GlobalConfigFile();
+
+	/// Loads the global config file, as well as any application-specific
+	/// keywords and variables.  Use this if you wish to make use of
+	/// SetKey() and GetKey(), otherwise these functions will throw
+	/// and exception since they don't have an application name.
+	GlobalConfigFile(const std::string &appname);
+
 	~GlobalConfigFile();
 
 	//
@@ -172,6 +185,10 @@ public:
 
 	/// Save the current global config, overwriting or creating as needed
 	bool Save();
+
+	/// Throws std::logic_error if not constructed with an appname
+	void SetKey(const std::string &key, const std::string &value);
+	std::string GetKey(const std::string &key) const;
 
 	//
 	// Global Configuration setting
