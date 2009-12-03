@@ -692,8 +692,19 @@ void BaseFrame::OnExit(wxCommandEvent &event)
 
 void BarryDesktopApp::Probe()
 {
-	Barry::Probe probe;
-	m_results = probe.GetResults();
+	// start fresh
+	m_results.clear();
+
+	try {
+		// This can throw Usb::Error exceptions
+		Barry::Probe probe;
+		m_results = probe.GetResults();
+	}
+	catch( Usb::Error &e ) {
+		wxString msg = _T("A serious error occurred while probing the USB subsystem for BlackBerry devices: ");
+		msg += wxString(e.what(), wxConvUTF8);
+		wxMessageBox(msg);
+	}
 }
 
 bool BarryDesktopApp::OnInit()
