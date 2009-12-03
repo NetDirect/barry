@@ -1,6 +1,5 @@
 Feature TODO List:
 ==================
-- save 'verbose_logging' to global config
 - menu item: direct logging to a file
 - add code to scan the bus when desktop opens, and list devices in a
 	dropdown combobox in the bottom right corner

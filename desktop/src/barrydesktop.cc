@@ -216,10 +216,19 @@ END_EVENT_TABLE()
 
 class BarryDesktopApp : public wxApp
 {
+private:
+	Barry::GlobalConfigFile m_global_config;
+
 public:
+	// data access
+	Barry::GlobalConfigFile& GetGlobalConfig() { return m_global_config; }
+
+	// overrides
 	virtual bool OnInit();
 	virtual int OnExit();
 };
+
+DECLARE_APP(BarryDesktopApp)
 
 //////////////////////////////////////////////////////////////////////////////
 // ClickableImage
@@ -622,6 +631,7 @@ void BaseFrame::OnNetDirectLogoClicked(wxCommandEvent &event)
 void BaseFrame::OnVerboseLogging(wxCommandEvent &event)
 {
 	Barry::Verbose( !Barry::IsVerbose() );
+	wxGetApp().GetGlobalConfig().SetVerboseLogging( Barry::IsVerbose() );
 	UpdateMenuState();
 }
 
@@ -668,7 +678,7 @@ void BaseFrame::OnExit(wxCommandEvent &event)
 bool BarryDesktopApp::OnInit()
 {
 	// Initialize Barry and USB
-	Barry::Init(true);
+	Barry::Init(m_global_config.VerboseLogging());
 
 	// Add a PNG handler for loading buttons and backgrounds
 	wxImage::AddHandler( new wxPNGHandler );
@@ -684,6 +694,14 @@ bool BarryDesktopApp::OnInit()
 
 int BarryDesktopApp::OnExit()
 {
+	try {
+		m_global_config.Save();
+	}
+	catch( std::exception &e ) {
+		cerr << "Exception caught while saving config: "
+			<< e.what() << endl;
+	}
+
 	return 0;
 }
 
