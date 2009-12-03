@@ -21,6 +21,8 @@
 
 #include "os40.h"
 
+namespace OpenSync {
+
 /////////////////////////////////////////////////////////////////////////////
 // OpenSync40 - public members
 
@@ -43,5 +45,69 @@ const char* OpenSync40::GetVersion() const
 
 void OpenSync40::GetPluginNames(string_list_type &plugins)
 {
+}
+
+void OpenSync40::GetFormats(format_list_type &formats)
+{
+}
+
+void OpenSync40::GetGroupNames(string_list_type &groups)
+{
+}
+
+void OpenSync40::GetMembers(const std::string &group_name,
+				member_list_type &members)
+{
+}
+
+void OpenSync40::AddGroup(const std::string &group_name)
+{
+}
+
+void OpenSync40::DeleteGroup(const std::string &group_name)
+{
+}
+
+void OpenSync40::AddMember(const std::string &group_name,
+				const std::string &plugin_name,
+				const std::string &member_name)
+{
+}
+
+void OpenSync40::DeleteMember(const std::string &group_name, long member_id)
+{
+}
+
+void OpenSync40::DeleteMember(const std::string &group_name,
+				const std::string &plugin_name)
+{
+}
+
+bool OpenSync40::IsConfigurable(const std::string &group_name,
+				long member_id)
+{
+	return false;
+}
+
+std::string OpenSync40::GetConfiguration(const std::string &group_name,
+					long member_id)
+{
+	return "";
+}
+
+void OpenSync40::SetConfiguration(const std::string &group_name,
+			long member_id, const std::string &config_data)
+{
+}
+
+void OpenSync40::Discover(const std::string &group_name)
+{
+}
+
+void OpenSync40::Sync(const std::string &group_name,
+			SyncStatus &status_callback)
+{
+}
+
 }
 

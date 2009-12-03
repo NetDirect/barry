@@ -21,6 +21,8 @@
 
 #include "os22.h"
 
+namespace OpenSync {
+
 /////////////////////////////////////////////////////////////////////////////
 // OpenSync22 - public members
 
@@ -45,5 +47,60 @@ const char* OpenSync22::GetVersion() const
 
 void OpenSync22::GetPluginNames(string_list_type &plugins)
 {
+}
+
+void OpenSync22::GetFormats(format_list_type &formats)
+{
+}
+
+void OpenSync22::GetGroupNames(string_list_type &groups)
+{
+}
+
+void OpenSync22::GetMembers(const std::string &group_name,
+				member_list_type &members)
+{
+}
+
+void OpenSync22::AddGroup(const std::string &group_name)
+{
+}
+
+void OpenSync22::DeleteGroup(const std::string &group_name)
+{
+}
+
+void OpenSync22::AddMember(const std::string &group_name,
+				const std::string &plugin_name,
+				const std::string &member_name)
+{
+}
+
+bool OpenSync22::IsConfigurable(const std::string &group_name,
+				long member_id)
+{
+	return false;
+}
+
+std::string OpenSync22::GetConfiguration(const std::string &group_name,
+					long member_id)
+{
+	return "";
+}
+
+void OpenSync22::SetConfiguration(const std::string &group_name,
+			long member_id, const std::string &config_data)
+{
+}
+
+void OpenSync22::Discover(const std::string &group_name)
+{
+}
+
+void OpenSync22::Sync(const std::string &group_name,
+			SyncStatus &status_callback)
+{
+}
+
 }
 
