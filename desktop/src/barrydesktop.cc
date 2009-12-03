@@ -26,6 +26,7 @@
 #include <barry/barry.h>
 #include <wx/wx.h>
 #include <wx/aboutdlg.h>
+#include <wx/splash.h>
 
 // include icons and logos
 #include "../images/barry_logo_icon.xpm"
@@ -218,12 +219,26 @@ class BarryDesktopApp : public wxApp
 {
 private:
 	Barry::GlobalConfigFile m_global_config;
+	Barry::Probe::Results m_results;
 
 public:
+	//
 	// data access
+	//
 	Barry::GlobalConfigFile& GetGlobalConfig() { return m_global_config; }
+	const Barry::Probe::Results& GetResults() const { return m_results; }
 
+	//
+	// operations
+	//
+
+	/// Fills m_results with new data after a brand new scan.
+	/// Does not catch exceptions.
+	void Probe();
+
+	//
 	// overrides
+	//
 	virtual bool OnInit();
 	virtual int OnExit();
 };
@@ -675,17 +690,37 @@ void BaseFrame::OnExit(wxCommandEvent &event)
 //////////////////////////////////////////////////////////////////////////////
 // BarryDesktopApp
 
+void BarryDesktopApp::Probe()
+{
+	Barry::Probe probe;
+	m_results = probe.GetResults();
+}
+
 bool BarryDesktopApp::OnInit()
 {
+	// Add a PNG handler for loading buttons and backgrounds
+	wxImage::AddHandler( new wxPNGHandler );
+
+	wxImage scanpng(_T("../images/scanning.png"));
+	wxBitmap scanning(scanpng);
+	std::auto_ptr<wxSplashScreen> splash( new wxSplashScreen(
+		scanning, wxSPLASH_CENTRE_ON_SCREEN, 0,
+		NULL, -1, wxDefaultPosition, wxDefaultSize,
+		wxSIMPLE_BORDER | wxSTAY_ON_TOP) );
+	wxYield();
+
 	// Initialize Barry and USB
 	Barry::Init(m_global_config.VerboseLogging());
 
-	// Add a PNG handler for loading buttons and backgrounds
-	wxImage::AddHandler( new wxPNGHandler );
+	// Scan bus at the beginning so we know what devices we've got
+	Probe();
 
 	// Create the main frame window where all the action happens
 	wxImage back(_T("../images/background.png"));
 	BaseFrame *frame = new BaseFrame(back);
+
+	// Clean up the splash screen, and init the main frame
+	splash.reset();
 	SetTopWindow(frame);
 	frame->Show(true);
 
