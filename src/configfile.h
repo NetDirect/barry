@@ -53,12 +53,12 @@ private:
 	bool m_promptBackupLabel;	// if true, prompt the user on every
 					// backup for a string to label the
 					// backup file with
+
 protected:
 	void BuildFilename();
 	void BuildDefaultPath();
 	void Clear();
 	void Load();
-	bool CheckPath();
 
 public:
 	/// Loads config file for the given pin, and ends up in an
@@ -80,9 +80,14 @@ public:
 	//
 
 	const std::string& get_last_error() const { return m_last_error; }
+	bool IsConfigLoaded() const { return m_loaded; }
 
 	const std::string& GetPath() const { return m_path; }
-	const std::string& GetFilename() const { return m_filename; }
+//	const std::string& GetDeviceConfigFilename() const { return m_device_filename; }
+
+	//
+	// per-Device Configuration
+	//
 	const DBListType& GetBackupList() const { return m_backupList; }
 	const DBListType& GetRestoreList() const { return m_restoreList; }
 	const std::string& GetDeviceName() const { return m_deviceName; }
@@ -93,13 +98,18 @@ public:
 	// operations
 	//
 
-	/// Saves current config, overwriting or creating a config file
+	/// Saves current device's config, overwriting or creating a
+	/// config file
 	bool Save();
 
 	/// Compares a given databasedatabase from a real device with the
 	/// current config.  If not yet configured, initialize with valid
 	/// defaults.
 	void Enlighten(const Barry::DatabaseDatabase &db);
+
+	//
+	// per-Device Configuration setting
+	//
 
 	/// Sets list with new config
 	void SetBackupList(const DBListType &list);
@@ -116,6 +126,58 @@ public:
 	/// Checks that the path in path exists, and if not, creates it.
 	/// Returns false if unable to create path, true if ok.
 	static bool CheckPath(const std::string &path, std::string *perr = 0);
+};
+
+class BXEXPORT GlobalConfigFile
+{
+private:
+	// meta data
+	std::string m_path;	// /path/to/.barry   without trailing slash
+	std::string m_filename;	// /path/to/.barry/config
+	bool m_loaded;
+	std::string m_last_error;
+
+	// global configuration data
+	Barry::Pin m_lastDevice;	// the last selected device in a GUI
+	bool m_verboseLogging;
+
+protected:
+	void BuildFilename();
+	void Clear();
+	void Load();
+
+public:
+	/// Loads the global config file.
+	/// Throws ConfigFileError on error, but it is not an error
+	/// if the config does not exist.
+	GlobalConfigFile();
+	~GlobalConfigFile();
+
+	//
+	// data access
+	//
+
+	const std::string& get_last_error() const { return m_last_error; }
+	bool IsConfigLoaded() const { return m_loaded; }
+
+	//
+	// Global Configuration data access
+	//
+	Barry::Pin GetLastDevice() const { return m_lastDevice; }
+	bool VerboseLogging() const { return m_verboseLogging; }
+
+	//
+	// operations
+	//
+
+	/// Save the current global config, overwriting or creating as needed
+	bool Save();
+
+	//
+	// Global Configuration setting
+	//
+	void SetLastDevice(const Barry::Pin &pin);
+	void SetVerboseLogging(bool verbose = true);
 };
 
 } // namespace Barry

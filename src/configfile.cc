@@ -88,7 +88,6 @@ ConfigFile::~ConfigFile()
 {
 }
 
-
 void ConfigFile::BuildFilename()
 {
 	struct passwd *pw = getpwuid(getuid());
@@ -114,6 +113,8 @@ void ConfigFile::Clear()
 	m_loaded = false;
 	m_backupList.clear();
 	m_restoreList.clear();
+	m_deviceName.clear();
+	m_promptBackupLabel = false;
 }
 
 /// Attempt to load the configuration file, but do not fail if not available
@@ -177,17 +178,10 @@ void ConfigFile::Load()
 	m_loaded = true;
 }
 
-/// Checks that the path in m_path exists, and if not, creates it.
-/// Returns false if unable to create path, true if ok.
-bool ConfigFile::CheckPath()
-{
-	return CheckPath(m_path, &m_last_error);
-}
-
-/// Saves current config, overwriting or creating a config file
+/// Saves current device's config, overwriting or creating a config file
 bool ConfigFile::Save()
 {
-	if( !CheckPath() )
+	if( !CheckPath(m_path, &m_last_error) )
 		return false;
 
 	std::ofstream out(m_filename.c_str(), std::ios::out | std::ios::binary);
@@ -323,6 +317,110 @@ bool ConfigFile::CheckPath(const std::string &path, std::string *perr)
 	}
 	return true;
 }
+
+
+
+//////////////////////////////////////////////////////////////////////////////
+// GlobalConfigFile class members
+
+GlobalConfigFile::GlobalConfigFile()
+	: m_loaded(false)
+	, m_verboseLogging(false)
+{
+	BuildFilename();
+	Load();
+}
+
+GlobalConfigFile::~GlobalConfigFile()
+{
+}
+
+void GlobalConfigFile::BuildFilename()
+{
+	struct passwd *pw = getpwuid(getuid());
+	if( !pw )
+		throw ConfigFileError("BuildFilename: getpwuid failed", errno);
+
+	m_filename = pw->pw_dir;
+	m_filename += "/.barry/config";
+
+	// build the global path too, since this never changes
+	m_path = pw->pw_dir;
+	m_path += "/.barry";
+}
+
+void GlobalConfigFile::Clear()
+{
+	m_loaded = false;
+	m_lastDevice = 0;
+}
+
+void GlobalConfigFile::Load()
+{
+	// start fresh
+	Clear();
+
+	// open input file
+	std::ifstream in(m_filename.c_str(), std::ios::in | std::ios::binary);
+	if( !in )
+		return;
+
+	std::string line;
+
+	while( std::getline(in, line) ) {
+		std::string keyword;
+		std::istringstream iss(line);
+		iss >> keyword;
+
+		if( keyword == "last_device" ) {
+			iss >> std::ws;
+			iss >> m_lastDevice;
+		}
+		else if( keyword == "verbose_logging" ) {
+			int flag;
+			iss >> flag;
+			m_verboseLogging = flag;
+		}
+	}
+
+	m_loaded = true;
+}
+
+/// Save the current global config, overwriting or creating as needed
+bool GlobalConfigFile::Save()
+{
+	if( !ConfigFile::CheckPath(m_path, &m_last_error) )
+		return false;
+
+	std::ofstream out(m_filename.c_str(), std::ios::out | std::ios::binary);
+	if( !out ) {
+		m_last_error = "Unable to open " + m_filename + " for writing.";
+		return false;
+	}
+
+	if( !(m_lastDevice == 0) ) {
+		out << "last_device " << m_lastDevice.str() << std::endl;
+	}
+
+	out << "verbose_logging " << (m_verboseLogging ? 1 : 0) << std::endl;
+
+	if( !out ) {
+		m_last_error = "Error during write.  Config may be incomplete.";
+		return false;
+	}
+	return true;
+}
+
+void GlobalConfigFile::SetLastDevice(const Barry::Pin &pin)
+{
+	m_lastDevice = pin;
+}
+
+void GlobalConfigFile::SetVerboseLogging(bool verbose)
+{
+	m_verboseLogging = verbose;
+}
+
 
 } // namespace Barry
 

@@ -44,6 +44,10 @@ public:
 	bool operator==(const Pin &rhs) const { return pin == rhs.pin; }
 };
 
+// no ostream operator, since we want to encourage users to call str()...
+// but istream may be useful
+BXEXPORT std::istream& operator>>(std::istream &is, Pin &pin);
+
 } // namespace Barry
 
 #endif

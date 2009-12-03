@@ -9,6 +9,7 @@ Release: version 0.17 - 2009/11/??
 		This new global config file is for global defaults,
 		preferences, etc.
 	- lib: added IsVerbose() API call
+	- lib: added VerboseLogging setting to global config
 2009/11/27
 	- made Barry::Init() safe to be called multiple times
 	- added Barry::Verbose() for controlling debug output on the fly
