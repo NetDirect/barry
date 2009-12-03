@@ -717,7 +717,7 @@ bool BarryDesktopApp::OnInit()
 	std::auto_ptr<wxSplashScreen> splash( new wxSplashScreen(
 		scanning, wxSPLASH_CENTRE_ON_SCREEN, 0,
 		NULL, -1, wxDefaultPosition, wxDefaultSize,
-		wxSIMPLE_BORDER | wxSTAY_ON_TOP) );
+		wxSIMPLE_BORDER) );
 	wxYield();
 
 	// Initialize Barry and USB
