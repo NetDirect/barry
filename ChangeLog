@@ -2,6 +2,13 @@ Release: version 0.17 - 2009/11/??
 ------------------------------------------------------------------------------
 2009/12/02
 	- gettextize BarryBackup by Nicolas VIVIEN
+	- lib: added support for a global config file
+		Barry::ConfigFile now supports a per-device configuration (as
+		usual) as well as a global config file.  Both are loaded
+		by default, but they can be saved and loaded separately.
+		This new global config file is for global defaults,
+		preferences, etc.
+	- lib: added IsVerbose() API call
 2009/11/27
 	- made Barry::Init() safe to be called multiple times
 	- added Barry::Verbose() for controlling debug output on the fly

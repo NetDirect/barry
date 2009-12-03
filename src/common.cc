@@ -97,5 +97,15 @@ void Verbose(bool data_dump_mode)
 		usb_set_debug(0);
 }
 
+//
+// IsVerbose
+//
+/// Returns true if data dump mode is enabled.
+///
+bool IsVerbose()
+{
+	return __data_dump_mode__;
+}
+
 } // namespace Barry
 
