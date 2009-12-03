@@ -222,6 +222,8 @@ private:
 	Barry::Probe::Results m_results;
 
 public:
+	BarryDesktopApp();
+
 	//
 	// data access
 	//
@@ -689,6 +691,11 @@ void BaseFrame::OnExit(wxCommandEvent &event)
 
 //////////////////////////////////////////////////////////////////////////////
 // BarryDesktopApp
+
+BarryDesktopApp::BarryDesktopApp()
+	: m_global_config("BarryDesktop")
+{
+}
 
 void BarryDesktopApp::Probe()
 {
