@@ -10,6 +10,7 @@ Release: version 0.17 - 2009/11/??
 		preferences, etc.
 	- lib: added IsVerbose() API call
 	- lib: added VerboseLogging setting to global config
+	- lib: made Probe results more storage friendly
 2009/11/27
 	- made Barry::Init() safe to be called multiple times
 	- added Barry::Verbose() for controlling debug output on the fly

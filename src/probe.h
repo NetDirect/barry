@@ -57,7 +57,11 @@ BXEXPORT std::ostream& operator<< (std::ostream &os, const ProbeResult &pr);
 
 class BXEXPORT Probe
 {
-	std::vector<ProbeResult> m_results;
+public:
+	typedef std::vector<ProbeResult>		Results;
+
+private:
+	Results m_results;
 
 	std::vector<std::string> m_fail_msgs;
 	int m_fail_count;
@@ -81,6 +85,8 @@ public:
 	Probe(const char *busname = 0, const char *devname = 0,
 		const Usb::EndpointPair *epp = 0);
 
+	const Results& GetResults() const { return m_results; }
+
 	int GetCount() const { return m_results.size(); }
 	int GetFailCount() const { return m_fail_count; }
 
@@ -89,6 +95,7 @@ public:
 
 	int FindActive(Barry::Pin pin = 0) const; // returns -1 if pin not found
 						// or if no devices
+	static int FindActive(const Results &results, Barry::Pin pin = 0);
 };
 
 

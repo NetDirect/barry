@@ -409,13 +409,19 @@ bool Probe::ProbeModem(Usb::Device &dev, const Usb::EndpointPair &ep)
 
 int Probe::FindActive(Barry::Pin pin) const
 {
-	for( int i = 0; i < GetCount(); i++ ) {
-		if( Get(i).m_pin == pin )
+	return FindActive(m_results, pin);
+}
+
+int Probe::FindActive(const Barry::Probe::Results &results, Barry::Pin pin)
+{
+	Barry::Probe::Results::const_iterator ci = results.begin();
+	for( int i = 0; ci != results.end(); i++, ++ci ) {
+		if( ci->m_pin == pin )
 			return i;
 	}
 	if( pin == 0 ) {
 		// can we default to a single device?
-		if( GetCount() == 1 )
+		if( results.size() == 1 )
 			return 0;	// yes!
 	}
 
