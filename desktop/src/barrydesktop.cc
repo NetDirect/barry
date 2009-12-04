@@ -173,18 +173,47 @@ public:
 	void HandleUp(wxDC &dc, int x, int y);
 };
 
+class Mode
+{
+public:
+	Mode() {}
+	virtual ~Mode() {}
+
+	// events (called from BaseFrame)
+	virtual void OnPaint(wxDC &dc) {}
+	virtual void OnMouseMotion(wxDC &dc, int x, int y) {}
+	virtual void OnLeftDown(wxDC &dc, int x, int y) {}
+	virtual void OnLeftUp(wxDC &dc, int x, int y) {}
+};
+
+class MainMenuMode : public Mode
+{
+	std::auto_ptr<BaseButtons> m_basebuttons;
+
+public:
+	MainMenuMode(wxWindow *parent);
+
+	// events (called from BaseFrame)
+	void OnPaint(wxDC &dc);
+	void OnMouseMotion(wxDC &dc, int x, int y);
+	void OnLeftDown(wxDC &dc, int x, int y);
+	void OnLeftUp(wxDC &dc, int x, int y);
+};
+
 class BaseFrame : public wxFrame
 {
 private:
 	DECLARE_EVENT_TABLE()
 
 private:
-	std::auto_ptr<wxBitmap> m_background, m_button;
-	std::auto_ptr<BaseButtons> m_basebuttons;
+	std::auto_ptr<wxBitmap> m_background;
+	std::auto_ptr<MainMenuMode> m_main_menu_mode;
 	std::auto_ptr<ClickableImage> m_barry_logo, m_netdirect_logo;
 	std::auto_ptr<wxMenu> m_sysmenu;
 	std::auto_ptr<wxComboBox> m_device_combo;
 	int m_width, m_height;
+
+	Mode *m_current_mode;
 
 public:
 	BaseFrame(const wxImage &background);
@@ -542,6 +571,41 @@ void BaseButtons::HandleUp(wxDC &dc, int x, int y)
 }
 
 //////////////////////////////////////////////////////////////////////////////
+// MainMenuMode
+
+MainMenuMode::MainMenuMode(wxWindow *parent)
+	: m_basebuttons( new BaseButtons(parent) )
+{
+}
+
+void MainMenuMode::OnPaint(wxDC &dc)
+{
+static bool init = false;
+
+	// paint the buttons
+	if( !init ) {
+		m_basebuttons->InitAll(dc);
+		init = true;
+	}
+	m_basebuttons->DrawAll(dc);
+}
+
+void MainMenuMode::OnMouseMotion(wxDC &dc, int x, int y)
+{
+	m_basebuttons->HandleMotion(dc, x, y);
+}
+
+void MainMenuMode::OnLeftDown(wxDC &dc, int x, int y)
+{
+	m_basebuttons->HandleDown(dc, x, y);
+}
+
+void MainMenuMode::OnLeftUp(wxDC &dc, int x, int y)
+{
+	m_basebuttons->HandleUp(dc, x, y);
+}
+
+//////////////////////////////////////////////////////////////////////////////
 // BaseFrame
 
 BaseFrame::BaseFrame(const wxImage &background)
@@ -552,9 +616,11 @@ BaseFrame::BaseFrame(const wxImage &background)
 		wxCLIP_CHILDREN)
 	, m_width(background.GetWidth())
 	, m_height(background.GetHeight())
+	, m_current_mode(0)
 {
 	m_background.reset( new wxBitmap(background) );
-	m_basebuttons.reset( new BaseButtons(this) );
+	m_main_menu_mode.reset( new MainMenuMode(this) );
+	m_current_mode = m_main_menu_mode.get();
 	m_barry_logo.reset( new ClickableImage(this,
 		wxBitmap(barry_logo_icon_xpm), HotImage_BarryLogo,
 		4, 4, false) );
@@ -655,8 +721,6 @@ void BaseFrame::OnSize(wxSizeEvent &event)
 
 void BaseFrame::OnPaint(wxPaintEvent &event)
 {
-static bool init = false;
-
 	// paint the background image
 	wxPaintDC dc(this);
 	dc.DrawBitmap(*m_background, 0, 0);
@@ -682,37 +746,43 @@ static bool init = false;
 	int y = (MAIN_HEADER_OFFSET - height) / 2;
 	dc.DrawText(header, x, y);
 
-	// paint the buttons
-	if( !init ) {
-		m_basebuttons->InitAll(dc);
-		init = true;
-	}
-	m_basebuttons->DrawAll(dc);
+	// let the mode do its thing
+	if( m_current_mode )
+		m_current_mode->OnPaint(dc);
 }
 
 void BaseFrame::OnMouseMotion(wxMouseEvent &event)
 {
 	wxClientDC dc(this);
-	m_basebuttons->HandleMotion(dc, event.m_x, event.m_y);
 	m_barry_logo->HandleMotion(dc, event.m_x, event.m_y);
 	m_netdirect_logo->HandleMotion(dc, event.m_x, event.m_y);
+
+	// the mode
+	if( m_current_mode )
+		m_current_mode->OnMouseMotion(dc, event.m_x, event.m_y);
 }
 
 void BaseFrame::OnLeftDown(wxMouseEvent &event)
 {
 	wxClientDC dc(this);
-	m_basebuttons->HandleDown(dc, event.m_x, event.m_y);
 	m_barry_logo->HandleDown(dc, event.m_x, event.m_y);
 	m_netdirect_logo->HandleDown(dc, event.m_x, event.m_y);
 	event.Skip();
+
+	// the mode
+	if( m_current_mode )
+		m_current_mode->OnLeftDown(dc, event.m_x, event.m_y);
 }
 
 void BaseFrame::OnLeftUp(wxMouseEvent &event)
 {
 	wxClientDC dc(this);
-	m_basebuttons->HandleUp(dc, event.m_x, event.m_y);
 	m_barry_logo->HandleUp(dc, event.m_x, event.m_y);
 	m_netdirect_logo->HandleUp(dc, event.m_x, event.m_y);
+
+	// the mode
+	if( m_current_mode )
+		m_current_mode->OnLeftUp(dc, event.m_x, event.m_y);
 }
 
 void BaseFrame::OnBackupRestore(wxCommandEvent &event)
