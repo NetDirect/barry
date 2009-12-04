@@ -59,11 +59,15 @@ enum {
 	HotImage_BarryLogo,
 	HotImage_NetDirectLogo,
 
+	// Misc control IDs
+	Ctrl_DeviceCombo,
+
 	SysMenu_FirstItem,
 
 	SysMenu_VerboseLogging = SysMenu_FirstItem,
+	SysMenu_RescanUsb,
 
-	SysMenu_LastItem = SysMenu_VerboseLogging
+	SysMenu_LastItem = SysMenu_RescanUsb
 };
 
 const wxChar *ButtonNames[] = {
@@ -179,6 +183,7 @@ private:
 	std::auto_ptr<BaseButtons> m_basebuttons;
 	std::auto_ptr<ClickableImage> m_barry_logo, m_netdirect_logo;
 	std::auto_ptr<wxMenu> m_sysmenu;
+	std::auto_ptr<wxComboBox> m_device_combo;
 	int m_width, m_height;
 
 public:
@@ -186,8 +191,10 @@ public:
 
 	// utility functions
 	void UpdateMenuState();
+	void CreateDeviceCombo(Barry::Pin pin = Barry::Pin());
 
 	// events
+	void OnSize(wxSizeEvent &event);
 	void OnPaint(wxPaintEvent &event);
 	void OnMouseMotion(wxMouseEvent &event);
 	void OnLeftDown(wxMouseEvent &event);
@@ -195,14 +202,17 @@ public:
 	void OnBackupRestore(wxCommandEvent &event);
 	void OnBarryLogoClicked(wxCommandEvent &event);
 	void OnNetDirectLogoClicked(wxCommandEvent &event);
+	void OnDeviceComboChange(wxCommandEvent &event);
 
 	// sys menu (triggered by the Barry logo)
 	void OnVerboseLogging(wxCommandEvent &event);
+	void OnRescanUsb(wxCommandEvent &event);
 	void OnAbout(wxCommandEvent &event);
 	void OnExit(wxCommandEvent &event);
 };
 
 BEGIN_EVENT_TABLE(BaseFrame, wxFrame)
+	EVT_SIZE	(BaseFrame::OnSize)
 	EVT_PAINT	(BaseFrame::OnPaint)
 	EVT_MOTION	(BaseFrame::OnMouseMotion)
 	EVT_LEFT_DOWN	(BaseFrame::OnLeftDown)
@@ -210,7 +220,9 @@ BEGIN_EVENT_TABLE(BaseFrame, wxFrame)
 	EVT_BUTTON	(MainMenu_BackupAndRestore, BaseFrame::OnBackupRestore)
 	EVT_BUTTON	(HotImage_BarryLogo, BaseFrame::OnBarryLogoClicked)
 	EVT_BUTTON	(HotImage_NetDirectLogo, BaseFrame::OnNetDirectLogoClicked)
+	EVT_TEXT	(Ctrl_DeviceCombo, BaseFrame::OnDeviceComboChange)
 	EVT_MENU	(SysMenu_VerboseLogging, BaseFrame::OnVerboseLogging)
+	EVT_MENU	(SysMenu_RescanUsb, BaseFrame::OnRescanUsb)
 	EVT_MENU	(SysMenu_About, BaseFrame::OnAbout)
 	EVT_MENU	(SysMenu_Exit, BaseFrame::OnExit)
 END_EVENT_TABLE()
@@ -246,6 +258,25 @@ public:
 };
 
 DECLARE_APP(BarryDesktopApp)
+
+class UsbScanSplash
+{
+	std::auto_ptr<wxSplashScreen> m_splash;
+public:
+	UsbScanSplash()
+	{
+		wxImage scanpng(_T("../images/scanning.png"));
+		wxBitmap scanning(scanpng);
+		std::auto_ptr<wxSplashScreen> splash( new wxSplashScreen(
+			scanning, wxSPLASH_CENTRE_ON_SCREEN, 0,
+			NULL, -1, wxDefaultPosition, wxDefaultSize,
+			wxSIMPLE_BORDER) );
+		splash->Show(true);
+		wxGetApp().Yield();
+		wxGetApp().Yield();
+//		wxMilliSleep(500);
+	}
+};
 
 //////////////////////////////////////////////////////////////////////////////
 // ClickableImage
@@ -539,12 +570,14 @@ BaseFrame::BaseFrame(const wxImage &background)
 	m_sysmenu->Append( new wxMenuItem(m_sysmenu.get(),
 		SysMenu_VerboseLogging, _T("&Verbose Logging"),
 		_T("Enable low level USB debug output"), wxITEM_CHECK, NULL) );
+	m_sysmenu->Append(SysMenu_RescanUsb, _T("&Rescan USB"));
 	m_sysmenu->AppendSeparator();
 	m_sysmenu->Append(SysMenu_About, _T("&About..."));
 	m_sysmenu->AppendSeparator();
 	m_sysmenu->Append(wxID_EXIT, _T("E&xit"));
 
 	UpdateMenuState();
+	CreateDeviceCombo(wxGetApp().GetGlobalConfig().GetLastDevice());
 }
 
 void BaseFrame::UpdateMenuState()
@@ -564,6 +597,60 @@ void BaseFrame::UpdateMenuState()
 			break;
 		}
 	}
+}
+
+void BaseFrame::CreateDeviceCombo(Barry::Pin pin)
+{
+	const Barry::Probe::Results &results = wxGetApp().GetResults();
+
+	// default to:
+	//	no device selected, if multiple available and no default given
+	//	no devices available, if nothing there
+	//	the first device, if only one exists
+	int selected = 0;
+
+	// create a list of selections
+	wxArrayString devices;
+
+	// if there's more than one device, let the user pick "none"
+	if( results.size() > 1 ) {
+		devices.Add(_T("No device selected"));
+	}
+
+	// add one entry for each device
+	for( Barry::Probe::Results::const_iterator i = results.begin();
+				i != results.end(); ++i ) {
+		std::ostringstream oss;
+		oss << i->m_pin.str();
+		if( i->m_cfgDeviceName.size() ) {
+			oss << " (" << i->m_cfgDeviceName << ")";
+		}
+
+		// if this is the desired item, remember this selection
+		if( pin.valid() && i->m_pin == pin ) {
+			selected = devices.GetCount();
+		}
+
+		devices.Add(wxString(oss.str().c_str(), wxConvUTF8));
+	}
+
+	// if nothing is there, be descriptive
+	if( devices.GetCount() == 0 ) {
+		devices.Add(_T("No devices available"));
+	}
+
+	// create the combobox
+	int x = m_width - 300;
+	int y = m_height - (MAIN_HEADER_OFFSET - 5);
+	m_device_combo.reset( new wxComboBox(this, Ctrl_DeviceCombo, _T(""),
+		wxPoint(x, y), wxSize(290, -1), devices, wxCB_READONLY) );
+
+	// select the desired entry
+	m_device_combo->SetValue(devices[selected]);
+}
+
+void BaseFrame::OnSize(wxSizeEvent &event)
+{
 }
 
 void BaseFrame::OnPaint(wxPaintEvent &event)
@@ -645,11 +732,37 @@ void BaseFrame::OnNetDirectLogoClicked(wxCommandEvent &event)
 	::wxLaunchDefaultBrowser(_T("http://netdirect.ca/barry"));
 }
 
+void BaseFrame::OnDeviceComboChange(wxCommandEvent &event)
+{
+	// fetch newly selected device
+	wxString value = m_device_combo->GetValue();
+	istringstream iss(string(value.utf8_str()).substr(0,8));
+	Barry::Pin pin;
+	iss >> pin;
+
+	// any change?
+	if( pin == wxGetApp().GetGlobalConfig().GetLastDevice() )
+		return;	// nope
+
+	// save
+	wxGetApp().GetGlobalConfig().SetLastDevice(pin);
+
+	// FIXME - if inside a sub menu mode, we need to destroy the mode
+	// class and start fresh
+}
+
 void BaseFrame::OnVerboseLogging(wxCommandEvent &event)
 {
 	Barry::Verbose( !Barry::IsVerbose() );
 	wxGetApp().GetGlobalConfig().SetVerboseLogging( Barry::IsVerbose() );
 	UpdateMenuState();
+}
+
+void BaseFrame::OnRescanUsb(wxCommandEvent &event)
+{
+	std::auto_ptr<UsbScanSplash> splash( new UsbScanSplash );
+	wxGetApp().Probe();
+	CreateDeviceCombo(wxGetApp().GetGlobalConfig().GetLastDevice());
 }
 
 void BaseFrame::OnAbout(wxCommandEvent &event)
@@ -719,13 +832,7 @@ bool BarryDesktopApp::OnInit()
 	// Add a PNG handler for loading buttons and backgrounds
 	wxImage::AddHandler( new wxPNGHandler );
 
-	wxImage scanpng(_T("../images/scanning.png"));
-	wxBitmap scanning(scanpng);
-	std::auto_ptr<wxSplashScreen> splash( new wxSplashScreen(
-		scanning, wxSPLASH_CENTRE_ON_SCREEN, 0,
-		NULL, -1, wxDefaultPosition, wxDefaultSize,
-		wxSIMPLE_BORDER) );
-	wxYield();
+	std::auto_ptr<UsbScanSplash> splash( new UsbScanSplash );
 
 	// Initialize Barry and USB
 	Barry::Init(m_global_config.VerboseLogging());

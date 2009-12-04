@@ -1,8 +1,5 @@
 Feature TODO List:
 ==================
-- menu item: direct logging to a file
-- add code to scan the bus when desktop opens, and list devices in a
-	dropdown combobox in the bottom right corner
 - menu item: reset current device, wait, and rescan
 - launch the BarryBackup GUI from the first button, and wait for its
 	exit, and don't let the backup button work if the GUI is still
@@ -22,4 +19,10 @@ Sync:
 		sync without deleting all 4 databases... on 0.22 this
 		seems to cause opensync to go into a stupendously long
 		busy loop... maybe 0.4x is better
+
+Wishlist TODO List:
+===================
+- menu item: direct logging to a file
+	- or, log to a stringstream... this can always be added later if
+		grabbing the verbose data from stderr is not enough
 
