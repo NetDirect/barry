@@ -27,6 +27,7 @@
 #include <wx/wx.h>
 #include <wx/aboutdlg.h>
 #include <wx/splash.h>
+#include <wx/process.h>
 
 // include icons and logos
 #include "../images/barry_logo_icon.xpm"
@@ -59,8 +60,9 @@ enum {
 	HotImage_BarryLogo,
 	HotImage_NetDirectLogo,
 
-	// Misc control IDs
+	// Misc IDs
 	Ctrl_DeviceCombo,
+	Process_BackupAndRestore,
 
 	SysMenu_FirstItem,
 
@@ -102,6 +104,30 @@ wxString GetButtonFilename(int id, int state)
 	file += StateNames[state];
 	return file;
 }
+
+class StatusProcess : public wxProcess
+{
+	bool m_done;
+	int m_status;
+
+public:
+	StatusProcess(wxWindow *parent, int id)
+		: wxProcess(parent, id)
+		, m_done(false)
+		, m_status(0)
+	{
+	}
+
+	bool IsDone() const { return m_done; }
+	int GetStatus() const { return m_status; }
+
+	virtual void OnTerminate(int pid, int status)
+	{
+		m_status = status;
+		m_done = true;
+		wxProcess::OnTerminate(pid, status);
+	}
+};
 
 class ClickableImage
 {
@@ -211,6 +237,7 @@ private:
 	std::auto_ptr<ClickableImage> m_barry_logo, m_netdirect_logo;
 	std::auto_ptr<wxMenu> m_sysmenu;
 	std::auto_ptr<wxComboBox> m_device_combo;
+	std::auto_ptr<StatusProcess> m_backup_process;
 	int m_width, m_height;
 
 	Mode *m_current_mode;
@@ -229,6 +256,7 @@ public:
 	void OnLeftDown(wxMouseEvent &event);
 	void OnLeftUp(wxMouseEvent &event);
 	void OnBackupRestore(wxCommandEvent &event);
+	void OnTermBackupAndRestore(wxProcessEvent &event);
 	void OnBarryLogoClicked(wxCommandEvent &event);
 	void OnNetDirectLogoClicked(wxCommandEvent &event);
 	void OnDeviceComboChange(wxCommandEvent &event);
@@ -254,6 +282,7 @@ BEGIN_EVENT_TABLE(BaseFrame, wxFrame)
 	EVT_MENU	(SysMenu_RescanUsb, BaseFrame::OnRescanUsb)
 	EVT_MENU	(SysMenu_About, BaseFrame::OnAbout)
 	EVT_MENU	(SysMenu_Exit, BaseFrame::OnExit)
+	EVT_END_PROCESS	(Process_BackupAndRestore, BaseFrame::OnTermBackupAndRestore)
 END_EVENT_TABLE()
 
 class BarryDesktopApp : public wxApp
@@ -787,7 +816,34 @@ void BaseFrame::OnLeftUp(wxMouseEvent &event)
 
 void BaseFrame::OnBackupRestore(wxCommandEvent &event)
 {
-	wxMessageBox(_T("OnBackupRestore"));
+	if( m_backup_process.get() ) {
+		wxMessageBox(_T("The Backup program is already running!"), _T("Backup and Restore"), wxOK | wxICON_INFORMATION);
+		return;
+	}
+
+	m_backup_process.reset( new StatusProcess(this, Process_BackupAndRestore) );
+	const wxChar *argv[] = {
+		_T("barrybackup"),
+		NULL
+	};
+	long ret = wxExecute((wxChar**)argv, wxEXEC_ASYNC, m_backup_process.get());
+	cout << "wxExecute returned " << ret << endl;
+	if( ret == 0 ) {
+		m_backup_process.reset();
+		wxMessageBox(_T("Failed to run barrybackup. Please make sure it is installed and in your PATH."), _T("Backup and Restore"), wxOK | wxICON_ERROR);
+	}
+}
+
+void BaseFrame::OnTermBackupAndRestore(wxProcessEvent &event)
+{
+	cout << "OnTermBackupAndRestore(): done = "
+		<< (m_backup_process->IsDone() ? "true" : "false")
+		<< ", status = " << m_backup_process->GetStatus()
+		<< endl;
+	if( m_backup_process->IsDone() && m_backup_process->GetStatus() ) {
+		wxMessageBox(_T("Unable to run barrybackup, or it returned an error. Please make sure it is installed and in your PATH."), _T("Backup and Restore"), wxOK | wxICON_ERROR);
+	}
+	m_backup_process.reset();
 }
 
 void BaseFrame::OnBarryLogoClicked(wxCommandEvent &event)
@@ -893,7 +949,7 @@ void BarryDesktopApp::Probe()
 	catch( Usb::Error &e ) {
 		wxString msg = _T("A serious error occurred while probing the USB subsystem for BlackBerry devices: ");
 		msg += wxString(e.what(), wxConvUTF8);
-		wxMessageBox(msg);
+		wxMessageBox(msg, _T("USB Error"), wxOK | wxICON_ERROR);
 	}
 }
 
