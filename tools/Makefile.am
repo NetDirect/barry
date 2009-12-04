@@ -58,7 +58,7 @@ bjvmdebug_SOURCES = bjvmdebug.cc
 bjvmdebug_LDADD = ../src/libbarry.la $(LIBUSB_LIBS) -lpthread
 
 bdptest_SOURCES = bdptest.cc
-bdptest_LDADD = ../src/libbarrydp.la
+bdptest_LDADD = ../src/libbarry.la ../src/libbarrydp.la
 
 bjdwp_SOURCES = bjdwp.cc
 bjdwp_LDADD = ../src/libbarry.la ../src/libbarryjdwp.la

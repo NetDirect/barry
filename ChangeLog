@@ -1,5 +1,7 @@
 Release: version 0.17 - 2009/11/??
 ------------------------------------------------------------------------------
+2009/12/04
+	- tools: added libbarry to bdptest build (needed on opensuse?)
 2009/12/03
 	- lib: added GetKey/SetKey support in GlobalConfigFile
 2009/12/02
