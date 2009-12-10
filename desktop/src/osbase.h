@@ -234,6 +234,8 @@ public:
 				// returns # of APIs successfully loaded.
 				// throws if some already loaded
 
+	int GetAvailable() const;// returns # of APIs successfully loaded
+
 	API* os40();
 	API* os22();
 };

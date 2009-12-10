@@ -29,6 +29,8 @@
 #include <wx/splash.h>
 #include <wx/process.h>
 #include <wx/mstream.h>
+#include "os22.h"
+#include "os40.h"
 
 // include icons and logos
 #include "../images/barry_logo_icon.xpm"
@@ -342,6 +344,7 @@ class BarryDesktopApp : public wxApp
 private:
 	Barry::GlobalConfigFile m_global_config;
 	Barry::Probe::Results m_results;
+	std::auto_ptr<OpenSync::APISet> m_set;
 
 public:
 	BarryDesktopApp();
@@ -351,10 +354,13 @@ public:
 	//
 	Barry::GlobalConfigFile& GetGlobalConfig() { return m_global_config; }
 	const Barry::Probe::Results& GetResults() const { return m_results; }
+	OpenSync::APISet& GetOpenSync() { return *m_set; }
 
 	//
 	// operations
 	//
+
+	void ShowMissingOpenSyncMessage();
 
 	/// Fills m_results with new data after a brand new scan.
 	/// Does not catch exceptions.
@@ -673,6 +679,7 @@ void MainMenuMode::UpdateScreenshot(const Barry::Pin &pin)
 		if( pin.valid() ) {
 			int index = Barry::Probe::FindActive(wxGetApp().GetResults(), pin);
 			if( index != -1 ) {
+				wxBusyCursor wait;
 				m_screenshot = wxGetApp().GetScreenshot(wxGetApp().GetResults()[index]);
 			}
 		}
@@ -995,6 +1002,11 @@ void BaseFrame::OnBackupRestore(wxCommandEvent &event)
 
 void BaseFrame::OnSync(wxCommandEvent &event)
 {
+	if( wxGetApp().GetOpenSync().GetAvailable() == 0 ) {
+		wxGetApp().ShowMissingOpenSyncMessage();
+		return;
+	}
+
 	m_sync_mode.reset( new SyncMode(this) );
 	EnableBackButton(m_sync_mode.get());
 }
@@ -1110,6 +1122,7 @@ void BaseFrame::OnExit(wxCommandEvent &event)
 
 BarryDesktopApp::BarryDesktopApp()
 	: m_global_config("BarryDesktop")
+	, m_set( new OpenSync::APISet )
 {
 }
 
@@ -1157,6 +1170,11 @@ wxBitmap BarryDesktopApp::GetScreenshot(const Barry::ProbeResult &device) const
 	return wxBitmap(bmp);
 }
 
+void BarryDesktopApp::ShowMissingOpenSyncMessage()
+{
+	wxMessageBox(_T("No OpenSync libraries were found. Sync will be unavailable until you install OpenSync version 0.22 or version 0.4x on your system, along with the needed plugins."), _T("OpenSync Not Found"), wxOK | wxICON_INFORMATION);
+}
+
 bool BarryDesktopApp::OnInit()
 {
 	// Add a PNG handler for loading buttons and backgrounds
@@ -1169,6 +1187,11 @@ bool BarryDesktopApp::OnInit()
 
 	// Scan bus at the beginning so we know what devices we've got
 	Probe();
+
+	// Search for available OpenSync libraries
+	if( m_set->OpenAvailable() == 0 ) {
+		ShowMissingOpenSyncMessage();
+	}
 
 	// Create the main frame window where all the action happens
 	wxImage back(_T("../images/background.png"));

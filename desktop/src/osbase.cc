@@ -409,6 +409,11 @@ int APISet::OpenAvailable()
 	return loaded;
 }
 
+int APISet::GetAvailable() const
+{
+	return ((*this)[0] ? 1 : 0) + ((*this)[1] ? 1 : 0);
+}
+
 API* APISet::os40()
 {
 	return (*this)[0];

@@ -10,7 +10,23 @@ AM_LDFLAGS =
 bin_PROGRAMS = barrydesktop ostest
 
 barrydesktop_SOURCES = \
-	barrydesktop.cc
+	barrydesktop.cc \
+	error.cc error.h \
+	dlopen.cc dlopen.h \
+	tempdir.cc tempdir.h \
+	osbase.cc osbase.h osprivatebase.h \
+	os22.h \
+	os40.h 
+if WITH_OPENSYNC22
+barrydesktop_SOURCES += os22.cc
+else
+barrydesktop_SOURCES += null-os22.cc
+endif
+if WITH_OPENSYNC40
+barrydesktop_SOURCES += os40.cc
+else
+barrydesktop_SOURCES += null-os40.cc
+endif
 barrydesktop_LDADD = -ldl @WX_LIBS@
 barrydesktop_CXXFLAGS = $(AM_CXXFLAGS) @WX_CXXFLAGS@
 
