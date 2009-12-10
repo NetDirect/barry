@@ -57,6 +57,9 @@ enum {
 
 	MainMenu_LastButton = MainMenu_Misc,
 
+	// Main menu buttons that don't always exist
+	MainMenu_BackButton,
+
 	// Clickable, "hot" images that do something
 	HotImage_BarryLogo,
 	HotImage_NetDirectLogo,
@@ -64,6 +67,9 @@ enum {
 	// Misc IDs
 	Ctrl_DeviceCombo,
 	Process_BackupAndRestore,
+
+	// SyncMode IDs
+	SyncMode_SyncNowButton,
 
 	SysMenu_FirstItem,
 
@@ -207,6 +213,7 @@ public:
 	virtual ~Mode() {}
 
 	// events (called from BaseFrame)
+	virtual wxString GetTitleText() const { return _T("FIXME"); }
 	virtual void OnPaint(wxDC &dc) {}
 	virtual void OnMouseMotion(wxDC &dc, int x, int y) {}
 	virtual void OnLeftDown(wxDC &dc, int x, int y) {}
@@ -224,11 +231,42 @@ public:
 	void UpdateScreenshot(const Barry::Pin &pin);
 
 	// events (called from BaseFrame)
+	wxString GetTitleText() const
+	{
+		return _T("Barry Desktop Control Panel");
+	}
+
 	void OnPaint(wxDC &dc);
 	void OnMouseMotion(wxDC &dc, int x, int y);
 	void OnLeftDown(wxDC &dc, int x, int y);
 	void OnLeftUp(wxDC &dc, int x, int y);
 };
+
+class SyncMode : public wxEvtHandler, public Mode
+{
+private:
+	DECLARE_EVENT_TABLE()
+
+private:
+	wxWindow *m_parent;
+
+	// window controls
+	std::auto_ptr<wxButton> m_sync_now_button;
+
+public:
+	SyncMode(wxWindow *parent);
+	~SyncMode();
+
+	// virtual override events (derived from Mode)
+	wxString GetTitleText() const { return _T("Barry Sync"); }
+
+	// window events
+	void OnSyncNow(wxCommandEvent &event);
+};
+
+BEGIN_EVENT_TABLE(SyncMode, wxEvtHandler)
+	EVT_BUTTON	(SyncMode_SyncNowButton, SyncMode::OnSyncNow)
+END_EVENT_TABLE()
 
 class BaseFrame : public wxFrame
 {
@@ -237,11 +275,14 @@ private:
 
 private:
 	std::auto_ptr<wxBitmap> m_background;
-	std::auto_ptr<MainMenuMode> m_main_menu_mode;
+	std::auto_ptr<MainMenuMode> m_main_menu_mode;// only this mode is
+							// never reset()
+	std::auto_ptr<SyncMode> m_sync_mode;
 	std::auto_ptr<ClickableImage> m_barry_logo, m_netdirect_logo;
 	std::auto_ptr<wxMenu> m_sysmenu;
 	std::auto_ptr<wxComboBox> m_device_combo;
 	std::auto_ptr<StatusProcess> m_backup_process;
+	std::auto_ptr<wxButton> m_back_button;
 	int m_width, m_height;
 
 	Mode *m_current_mode;
@@ -253,6 +294,8 @@ public:
 	void UpdateMenuState();
 	void CreateDeviceCombo(Barry::Pin pin = Barry::Pin());
 	Barry::Pin GetCurrentComboPin();
+	void EnableBackButton(Mode *new_mode);
+	void DisableBackButton();	// also returns to the main menu
 
 	// events
 	void OnSize(wxSizeEvent &event);
@@ -261,6 +304,8 @@ public:
 	void OnLeftDown(wxMouseEvent &event);
 	void OnLeftUp(wxMouseEvent &event);
 	void OnBackupRestore(wxCommandEvent &event);
+	void OnSync(wxCommandEvent &event);
+	void OnBackButton(wxCommandEvent &event);
 	void OnTermBackupAndRestore(wxProcessEvent &event);
 	void OnBarryLogoClicked(wxCommandEvent &event);
 	void OnNetDirectLogoClicked(wxCommandEvent &event);
@@ -280,6 +325,8 @@ BEGIN_EVENT_TABLE(BaseFrame, wxFrame)
 	EVT_LEFT_DOWN	(BaseFrame::OnLeftDown)
 	EVT_LEFT_UP	(BaseFrame::OnLeftUp)
 	EVT_BUTTON	(MainMenu_BackupAndRestore, BaseFrame::OnBackupRestore)
+	EVT_BUTTON	(MainMenu_Sync, BaseFrame::OnSync)
+	EVT_BUTTON	(MainMenu_BackButton, BaseFrame::OnBackButton)
 	EVT_BUTTON	(HotImage_BarryLogo, BaseFrame::OnBarryLogoClicked)
 	EVT_BUTTON	(HotImage_NetDirectLogo, BaseFrame::OnNetDirectLogoClicked)
 	EVT_TEXT	(Ctrl_DeviceCombo, BaseFrame::OnDeviceComboChange)
@@ -669,6 +716,30 @@ void MainMenuMode::OnLeftUp(wxDC &dc, int x, int y)
 }
 
 //////////////////////////////////////////////////////////////////////////////
+// SyncMode
+
+SyncMode::SyncMode(wxWindow *parent)
+	: m_parent(parent)
+{
+	// connect ourselves to the parent's event handling chain
+	m_parent->PushEventHandler(this);
+
+	// create the window controls we need
+	m_sync_now_button.reset( new wxButton(parent, SyncMode_SyncNowButton,
+		_T("Sync Now"), wxPoint(450, 50), wxDefaultSize) );
+}
+
+SyncMode::~SyncMode()
+{
+	m_parent->PopEventHandler();
+}
+
+void SyncMode::OnSyncNow(wxCommandEvent &event)
+{
+	wxMessageBox(_T("Sync Now!"));
+}
+
+//////////////////////////////////////////////////////////////////////////////
 // BaseFrame
 
 BaseFrame::BaseFrame(const wxImage &background)
@@ -682,8 +753,11 @@ BaseFrame::BaseFrame(const wxImage &background)
 	, m_current_mode(0)
 {
 	m_background.reset( new wxBitmap(background) );
+
+	// the main menu mode always exists, but may not always be current
 	m_main_menu_mode.reset( new MainMenuMode(this) );
 	m_current_mode = m_main_menu_mode.get();
+
 	m_barry_logo.reset( new ClickableImage(this,
 		wxBitmap(barry_logo_icon_xpm), HotImage_BarryLogo,
 		4, 4, false) );
@@ -791,6 +865,42 @@ Barry::Pin BaseFrame::GetCurrentComboPin()
 	return pin;
 }
 
+void BaseFrame::EnableBackButton(Mode *new_mode)
+{
+	// create the button
+	int x = 10;
+	int y = m_height - (MAIN_HEADER_OFFSET - 5);
+
+	m_back_button.reset( new wxButton(this, MainMenu_BackButton,
+		_T("Main Menu"), wxPoint(x, y), wxDefaultSize,
+		wxBU_EXACTFIT) );
+
+	// set the new mode
+	m_current_mode = new_mode;
+
+	// destroy the device switcher combo box
+	m_device_combo.reset();
+
+	// repaint!
+	Refresh(false);
+}
+
+void BaseFrame::DisableBackButton()
+{
+	// destroy the back button
+	m_back_button.reset();
+
+	// delete all modes
+	m_sync_mode.reset();
+
+	// create the device switcher combo again
+	CreateDeviceCombo(wxGetApp().GetGlobalConfig().GetLastDevice());
+
+	// reset the current mode to main menu and repaint
+	m_current_mode = m_main_menu_mode.get();
+	Refresh(false);
+}
+
 void BaseFrame::OnSize(wxSizeEvent &event)
 {
 }
@@ -817,6 +927,8 @@ void BaseFrame::OnPaint(wxPaintEvent &event)
 
 	long width, height, descent;
 	wxString header = _T("Barry Desktop Control Panel");
+	if( m_current_mode )
+		header = m_current_mode->GetTitleText();
 	dc.GetTextExtent(header, &width, &height, &descent);
 	int x = (m_width - width) / 2;
 	int y = (MAIN_HEADER_OFFSET - height) / 2;
@@ -881,6 +993,17 @@ void BaseFrame::OnBackupRestore(wxCommandEvent &event)
 	}
 }
 
+void BaseFrame::OnSync(wxCommandEvent &event)
+{
+	m_sync_mode.reset( new SyncMode(this) );
+	EnableBackButton(m_sync_mode.get());
+}
+
+void BaseFrame::OnBackButton(wxCommandEvent &event)
+{
+	DisableBackButton();
+}
+
 void BaseFrame::OnTermBackupAndRestore(wxProcessEvent &event)
 {
 	cout << "OnTermBackupAndRestore(): done = "
@@ -934,9 +1057,15 @@ void BaseFrame::OnVerboseLogging(wxCommandEvent &event)
 
 void BaseFrame::OnRescanUsb(wxCommandEvent &event)
 {
-	std::auto_ptr<UsbScanSplash> splash( new UsbScanSplash );
-	wxGetApp().Probe();
-	CreateDeviceCombo(wxGetApp().GetGlobalConfig().GetLastDevice());
+	if( m_current_mode == m_main_menu_mode.get() ) {
+		std::auto_ptr<UsbScanSplash> splash( new UsbScanSplash );
+		wxGetApp().Probe();
+		CreateDeviceCombo(wxGetApp().GetGlobalConfig().GetLastDevice());
+	}
+	else {
+		// FIXME - tell the user we didn't do anything?
+		// or perhaps just disable rescan while in a mode
+	}
 }
 
 void BaseFrame::OnAbout(wxCommandEvent &event)
