@@ -1,8 +1,6 @@
 Feature TODO List:
 ==================
 - menu item: reset current device, wait, and rescan
-- take a screenshot of the active device and display it in the empty
-	space on the main screen (to show battery level, etc)
 - make the images/ directory installable, like gui/ .glade files
 - load the images/ from installed directory, instead of hard coded ../
 

@@ -28,6 +28,7 @@
 #include <wx/aboutdlg.h>
 #include <wx/splash.h>
 #include <wx/process.h>
+#include <wx/mstream.h>
 
 // include icons and logos
 #include "../images/barry_logo_icon.xpm"
@@ -215,9 +216,12 @@ public:
 class MainMenuMode : public Mode
 {
 	std::auto_ptr<BaseButtons> m_basebuttons;
+	wxBitmap m_screenshot;
 
 public:
 	MainMenuMode(wxWindow *parent);
+
+	void UpdateScreenshot(const Barry::Pin &pin);
 
 	// events (called from BaseFrame)
 	void OnPaint(wxDC &dc);
@@ -248,6 +252,7 @@ public:
 	// utility functions
 	void UpdateMenuState();
 	void CreateDeviceCombo(Barry::Pin pin = Barry::Pin());
+	Barry::Pin GetCurrentComboPin();
 
 	// events
 	void OnSize(wxSizeEvent &event);
@@ -307,6 +312,10 @@ public:
 	/// Fills m_results with new data after a brand new scan.
 	/// Does not catch exceptions.
 	void Probe();
+
+	/// Grabs a screenshot of the given device.
+	/// Can throw exceptions on error.
+	wxBitmap GetScreenshot(const Barry::ProbeResult &device) const;
 
 	//
 	// overrides
@@ -607,6 +616,26 @@ MainMenuMode::MainMenuMode(wxWindow *parent)
 {
 }
 
+void MainMenuMode::UpdateScreenshot(const Barry::Pin &pin)
+{
+	// clear existing screenshot
+	m_screenshot = wxBitmap();
+
+	// fetch the new device's screenshot
+	try {
+		if( pin.valid() ) {
+			int index = Barry::Probe::FindActive(wxGetApp().GetResults(), pin);
+			if( index != -1 ) {
+				m_screenshot = wxGetApp().GetScreenshot(wxGetApp().GetResults()[index]);
+			}
+		}
+	}
+	catch( Barry::Error & ) {
+		// don't worry if we can't get a screenshot... not all
+		// devices support it
+	}
+}
+
 void MainMenuMode::OnPaint(wxDC &dc)
 {
 static bool init = false;
@@ -617,6 +646,11 @@ static bool init = false;
 		init = true;
 	}
 	m_basebuttons->DrawAll(dc);
+
+	// paint the screenshot if available
+	if( m_screenshot.IsOk() ) {
+		dc.DrawBitmap(m_screenshot, 410, 290);
+	}
 }
 
 void MainMenuMode::OnMouseMotion(wxDC &dc, int x, int y)
@@ -742,6 +776,19 @@ void BaseFrame::CreateDeviceCombo(Barry::Pin pin)
 
 	// select the desired entry
 	m_device_combo->SetValue(devices[selected]);
+
+	// update the screenshot
+	m_main_menu_mode->UpdateScreenshot(GetCurrentComboPin());
+}
+
+Barry::Pin BaseFrame::GetCurrentComboPin()
+{
+	// fetch newly selected device
+	wxString value = m_device_combo->GetValue();
+	istringstream iss(string(value.utf8_str()).substr(0,8));
+	Barry::Pin pin;
+	iss >> pin;
+	return pin;
 }
 
 void BaseFrame::OnSize(wxSizeEvent &event)
@@ -860,11 +907,7 @@ void BaseFrame::OnNetDirectLogoClicked(wxCommandEvent &event)
 
 void BaseFrame::OnDeviceComboChange(wxCommandEvent &event)
 {
-	// fetch newly selected device
-	wxString value = m_device_combo->GetValue();
-	istringstream iss(string(value.utf8_str()).substr(0,8));
-	Barry::Pin pin;
-	iss >> pin;
+	Barry::Pin pin = GetCurrentComboPin();
 
 	// any change?
 	if( pin == wxGetApp().GetGlobalConfig().GetLastDevice() )
@@ -872,6 +915,11 @@ void BaseFrame::OnDeviceComboChange(wxCommandEvent &event)
 
 	// save
 	wxGetApp().GetGlobalConfig().SetLastDevice(pin);
+
+	// update the main mode's screenshot
+	m_main_menu_mode->UpdateScreenshot(pin);
+	if( m_current_mode == m_main_menu_mode.get() )
+		Refresh(false);
 
 	// FIXME - if inside a sub menu mode, we need to destroy the mode
 	// class and start fresh
@@ -951,6 +999,33 @@ void BarryDesktopApp::Probe()
 		msg += wxString(e.what(), wxConvUTF8);
 		wxMessageBox(msg, _T("USB Error"), wxOK | wxICON_ERROR);
 	}
+}
+
+wxBitmap BarryDesktopApp::GetScreenshot(const Barry::ProbeResult &device) const
+{
+	// FIXME - will need to eventually move the controller object
+	// into the main app, I think, and maybe the modes too, so
+	// that multiple menu commands can work simultaneously
+
+	Barry::Controller con(device);
+	Barry::Mode::JavaLoader javaloader(con);
+
+	javaloader.Open();
+	javaloader.StartStream();
+
+	Barry::JLScreenInfo info;
+	Barry::Data image;
+	javaloader.GetScreenshot(info, image);
+
+	// Convert to BMP format
+	Barry::Data bitmap(-1, GetTotalBitmapSize(info));
+	Barry::ScreenshotToBitmap(info, image, bitmap);
+
+	// Load as wxImage (sigh)
+	wxMemoryInputStream stream(bitmap.GetData(), bitmap.GetSize());
+	wxImage bmp(stream, wxBITMAP_TYPE_BMP);
+	bmp.Rescale(180, 100, wxIMAGE_QUALITY_HIGH);
+	return wxBitmap(bmp);
 }
 
 bool BarryDesktopApp::OnInit()
