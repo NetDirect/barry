@@ -6,6 +6,11 @@ Feature TODO List:
 
 Sync:
 -----
+- add a listctrl, supporting multiple selection of devices, and
+	remember which *devices* (PIN numbers) are selected, and
+	re-select them the next time Sync opens... this gets around
+	the lack of support in wxWidgets for a checkbox in the listctrl,
+	to select which device(s) to sync with the Sync Now button
 - add a feature that blanks the BlackBerry for a clean one-way sync...
 	be sure to warn the user strenuously, that for 0.22 the
 	Address Book and Calendar will be wiped, and for 0.4x the
