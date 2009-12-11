@@ -914,8 +914,10 @@ void BaseFrame::OnSize(wxSizeEvent &event)
 
 void BaseFrame::OnPaint(wxPaintEvent &event)
 {
-	// paint the background image
 	wxPaintDC dc(this);
+	dc.SetMapMode(wxMM_TEXT);
+
+	// paint the background image
 	dc.DrawBitmap(*m_background, 0, 0);
 
 	// paint the header: Barry logo
