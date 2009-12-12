@@ -178,11 +178,50 @@ public:
 	virtual void ReportError(const std::string &msg);
 };
 
+// forward declarations for the Converter class
+namespace OpenSync { namespace Config {
+	class Barry;
+	class Evolution;
+	class Unsupported;
+}}
+
+//
+// Converter
+//
+/// Base class for the converter api, which converts from/to a data-holding
+/// plugin configuration class to/from the API.
+///
+/// For 0.22, it will manually write the config fields into a std::string
+/// suitable for a call to API::SetConfiguration(), and then call
+/// SetConfiguration() itself.
+///
+/// For 0.4x, it may do the same thing, or might use the new 0.4x calls
+/// to set the individual fields through the low level opensync API.
+///
+/// The API class creates an instance of a matching derived class
+/// (for 0.22 or 0.4x, per the API itself), and returns a pointer
+/// whenever asked.
+///
+class Converter
+{
+public:
+	virtual std::string GetPluginName(const Barry &config) = 0;
+	virtual std::string GetPluginName(const Evolution &config) = 0;
+	virtual std::string GetPluginName(const Unsupported &config) = 0;
+
+	virtual void Load(Barry &config) = 0;
+	virtual void Load(Evolution &config) = 0;
+	virtual void Load(Unsupported &config) = 0;
+
+	virtual void Save(const Barry &config) = 0;
+	virtual void Save(const Evolution &config) = 0;
+	virtual void Save(const Unsupported &config) = 0;
+};
+
 class API
 {
 public:
-public:
-	API()
+	explicit API(Converter *converter)
 	{
 	}
 
@@ -204,8 +243,12 @@ public:
 	virtual void AddGroup(const std::string &group_name) = 0;
 	virtual void DeleteGroup(const std::string &group_name) = 0;
 
+	// Plugin configuration helper
+	virtual Converter* GetConverter() = 0;
+
 	// Member configuration
-	virtual void AddMember(const std::string &group_name,
+	// AddMember() returns new member_id?
+	virtual long AddMember(const std::string &group_name,
 		const std::string &plugin_name,
 		const std::string &member_name) = 0;
 	virtual bool IsConfigurable(const std::string &group_name,
