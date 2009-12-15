@@ -1,3 +1,20 @@
+2009/12/15
+
+Note: now that we primarily use git for version control, and CVS is
+just a backup, git supports specific authors per commit.  When accepting
+patches from others, I still use the "applied" language where appropriate,
+but also try to add people's names and email addresses directly into the
+commit, along with their exact patch.
+
+Of course, if I pull from a git repo, this happens automatically as well.
+
+- Chris
+
+
+
+
+
+
 Date: Fri, 25 May 2007 17:39:27 -0400
 From: Chris Frey <cdfrey@foursquare.net>
 To: barry-devel@lists.sourceforge.net
