@@ -5,6 +5,8 @@ Release: version 0.17 - 2009/11/??
 	- os22: fixed bug while loading opensync config file (may not load
 		the pin number correctly, or may rely on luck)
 	- added 'addmemo' example, to test newline behaviour
+	- lib: Memo::Dump() now translates \r chars into prettier output
+		Requested by Michael Brown
 2009/12/04
 	- tools: added libbarry to bdptest build (needed on opensuse?)
 2009/12/03
