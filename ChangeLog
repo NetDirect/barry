@@ -1,5 +1,9 @@
 Release: version 0.17 - 2009/11/??
 ------------------------------------------------------------------------------
+2009/12/15
+	- lib: added operator==() to ProbeResult, and operator!= to Pin
+	- os22: fixed bug while loading opensync config file (may not load
+		the pin number correctly, or may rely on luck)
 2009/12/04
 	- tools: added libbarry to bdptest build (needed on opensuse?)
 2009/12/03
