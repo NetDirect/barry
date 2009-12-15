@@ -44,6 +44,9 @@ public:
 
 	bool operator==(uint32_t rhs) const { return pin == rhs; }
 	bool operator==(const Pin &rhs) const { return pin == rhs.pin; }
+
+	bool operator!=(uint32_t rhs) const { return pin != rhs; }
+	bool operator!=(const Pin &rhs) const { return pin != rhs.pin; }
 };
 
 // no ostream operator, since we want to encourage users to call str()...
