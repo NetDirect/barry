@@ -50,6 +50,11 @@ struct BXEXPORT ProbeResult
 		{}
 	void DumpAll(std::ostream &os) const;
 	bool HasIpModem() const { return m_epModem.IsComplete(); }
+
+	bool operator==(const Barry::Pin &pin) const
+	{
+		return m_pin == pin;
+	}
 };
 
 BXEXPORT std::ostream& operator<< (std::ostream &os, const ProbeResult &pr);
