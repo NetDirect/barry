@@ -24,6 +24,7 @@
 #define __BARRY_DEVICE_SET_H__
 
 #include "osconfig.h"
+#include <iosfwd>
 
 //
 // DeviceEntry
@@ -45,14 +46,18 @@ private:
 
 	OpenSync::API *m_engine;		// may be 0
 
+	std::string m_device_name;
+
 protected:
 	OpenSync::Config::Barry* FindBarry();	// returns pointer to the Barry
 						// plugin object in m_group
 						// or 0 if not available
 
 public:
-	DeviceEntry(const Barry::ProbeResult *result, group_ptr group,
-		OpenSync::API *engine);
+	DeviceEntry(const Barry::ProbeResult *result,
+		group_ptr group,
+		OpenSync::API *engine,
+		const std::string &secondary_device_name = "");
 
 	Barry::Pin GetPin() const;
 	std::string GetDeviceName() const;
@@ -62,9 +67,12 @@ public:
 	const Barry::ProbeResult* GetProbeResult() { return m_result; }
 	OpenSync::Config::Group* GetConfigGroup() { return m_group.get(); }
 	OpenSync::API* GetEngine() { return m_engine; }
+	const OpenSync::API* GetEngine() const { return m_engine; }
 
 	void SetConfigGroup(group_ptr group, OpenSync::API *engine);
 };
+
+std::ostream& operator<< (std::ostream &os, const DeviceEntry &de);
 
 //
 // DeviceSet
@@ -117,6 +125,8 @@ public:
 
 	iterator FindPin(const Barry::Pin &pin);
 };
+
+std::ostream& operator<< (std::ostream &os, const DeviceSet &ds);
 
 #endif
 

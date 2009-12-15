@@ -25,9 +25,19 @@
 #include <barry/barry.h>
 #include "os22.h"
 #include "os40.h"
+#include "deviceset.h"
 
 using namespace std;
 using namespace OpenSync;
+
+void DeviceSetTest(APISet &set)
+{
+	DeviceSet dset(set);
+	cout << "========================================================\n";
+	cout << " Device Set results:\n";
+	cout << "========================================================\n";
+	cout << dset << endl;
+}
 
 void Test(API &os)
 {
@@ -172,6 +182,8 @@ int main()
 		APISet set;
 		set.OpenAvailable();
 
+		DeviceSetTest(set);
+
 		if( set.os40() ) {
 			Test(*set.os40());
 		}
@@ -179,6 +191,7 @@ int main()
 		if( set.os22() ) {
 			Test(*set.os22());
 		}
+
 	}
 	catch( std::exception &e ) {
 		cout << "TEST FAILED: " << e.what() << endl;

@@ -104,13 +104,14 @@ void Converter22::Load(Config::Barry &config, const Member &member)
 	//           - sync contacts
 
 	istringstream iss(cfg);
-	string line, key;
+	string line;
 	while( getline(iss, line) ) {
 
 		if( line[0] == '#' )
 			continue;
 
 		istringstream ils(line);
+		string key;
 		ils >> key;
 
 		if( key == "DebugMode" ) {

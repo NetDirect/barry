@@ -21,19 +21,29 @@
 */
 
 #include "deviceset.h"
+#include <barry/barry.h>
 #include <string.h>
 #include <algorithm>
+#include <iostream>
+#include <iomanip>
+
+using namespace std;
 
 //////////////////////////////////////////////////////////////////////////////
 // DeviceEntry class
 
 DeviceEntry::DeviceEntry(const Barry::ProbeResult *result,
 			group_ptr group,
-			OpenSync::API *engine)
+			OpenSync::API *engine,
+			const std::string &secondary_device_name)
 	: m_result(result)
 	, m_group(group)
 	, m_engine(engine)
+	, m_device_name(secondary_device_name)
 {
+	// just make sure that our device name has something in it
+	if( !m_device_name.size() && m_result )
+		m_device_name = m_result->m_cfgDeviceName;
 }
 
 // returns pointer to the Barry plugin object in m_group
@@ -75,11 +85,12 @@ Barry::Pin DeviceEntry::GetPin() const
 
 std::string DeviceEntry::GetDeviceName() const
 {
-	// load convenience values
-	if( m_result )
+	if( m_device_name.size() )
+		return m_device_name;
+	else if( m_result )
 		return m_result->m_cfgDeviceName;
-
-	return std::string();
+	else
+		return std::string();
 }
 
 void DeviceEntry::SetConfigGroup(group_ptr group,
@@ -87,6 +98,17 @@ void DeviceEntry::SetConfigGroup(group_ptr group,
 {
 	m_group = group;
 	m_engine = engine;
+}
+
+std::ostream& operator<< (std::ostream &os, const DeviceEntry &de)
+{
+	os << setfill(' ') << setw(8) << de.GetPin().str();
+	os << "|" << setfill(' ') << setw(35) << de.GetDeviceName();
+	os << "|" << setfill(' ') << setw(4) << (de.IsConnected() ? "yes" : "no");
+	os << "|" << setfill(' ') << setw(4) << (de.IsConfigured() ? "yes" : "no");
+	os << "|" << setfill(' ') << setw(7)
+		<< (de.GetEngine() ? de.GetEngine()->GetVersion() : "");
+	return os;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -153,18 +175,28 @@ void DeviceSet::LoadConfigured(OpenSync::API &api)
 				std::find(m_results.begin(), m_results.end(),
 					plugin.GetPin());
 			const Barry::ProbeResult *connected = 0;
+			string dev_name;
 			if( result != m_results.end() ) {
 				connected = &(*result);
+				dev_name = connected->m_cfgDeviceName;
+			}
+			else {
+				// the device is not connected, so do a
+				// special load of a possible device config
+				// to load the device name
+				Barry::ConfigFile cf(plugin.GetPin());
+				dev_name = cf.GetDeviceName();
 			}
 
 			// if no LoadError exceptions, add to configured list
-			push_back( DeviceEntry(connected, g, &api) );
+			push_back( DeviceEntry(connected, g, &api, dev_name) );
 
 		}
-		catch( Config::LoadError & ) {
+		catch( Config::LoadError &le ) {
 			// if we catch LoadError, it just means that this
 			// isn't a config that Barry Desktop can handle
-			// so just skip it
+			// so just log and skip it
+			barryverbose("DeviceSet::LoadConfigured: " << le.what());
 		}
 	}
 }
@@ -220,5 +252,15 @@ DeviceSet::iterator DeviceSet::FindPin(const Barry::Pin &pin)
 			return i;
 	}
 	return end();
+}
+
+std::ostream& operator<< (std::ostream &os, const DeviceSet &ds)
+{
+	os << "  PIN   |       Device Name                 |Con |Cfg |Engine\n";
+	os << "--------+-----------------------------------+----+----+-------\n";
+
+	for( DeviceSet::const_iterator i = ds.begin(); i != ds.end(); ++i )
+		os << *i << endl;
+	return os;
 }
 

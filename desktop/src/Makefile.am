@@ -38,6 +38,7 @@ ostest_SOURCES = \
 	error.cc error.h \
 	dlopen.cc dlopen.h \
 	tempdir.cc tempdir.h \
+	deviceset.cc deviceset.h \
 	osbase.cc osbase.h osprivatebase.h \
 	osconfig.cc osconfig.h \
 	osconv22.h \
