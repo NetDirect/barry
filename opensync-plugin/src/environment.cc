@@ -309,7 +309,7 @@ void BarryEnvironment::ParseConfig(const char *data, int size)
 	//           - sync contacts
 
 	std::istringstream iss(m_ConfigData);
-	std::string line, key;
+	std::string line;
 	while( std::getline(iss, line) ) {
 
 		if( line[0] == '#' )
@@ -318,6 +318,7 @@ void BarryEnvironment::ParseConfig(const char *data, int size)
 		std::istringstream ils(line);
 		int cal = 0, con = 0;
 
+		std::string key;
 		ils >> key;
 
 		if( key == "DebugMode" ) {
