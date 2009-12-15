@@ -235,7 +235,7 @@ public:
 class API
 {
 public:
-	explicit API()
+	API()
 	{
 	}
 
