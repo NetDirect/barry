@@ -26,11 +26,13 @@
 #include <vector>
 #include <string>
 #include <iosfwd>
+#include <tr1/memory>
 
 namespace OpenSync {
 
 struct Member
 {
+	std::string group_name;
 	long id;
 	std::string friendly_name;	// may not always have a name
 	std::string plugin_name;
@@ -38,6 +40,7 @@ struct Member
 
 struct MemberSet : public std::vector<Member>
 {
+	Member* Find(long id);
 	Member* Find(const char *plugin_name);
 	long FindId(const char *plugin_name); // returns -1 if not found
 };
@@ -179,11 +182,12 @@ public:
 };
 
 // forward declarations for the Converter class
-namespace OpenSync { namespace Config {
+namespace Config {
+	class Plugin;
 	class Barry;
 	class Evolution;
 	class Unsupported;
-}}
+}
 
 //
 // Converter
@@ -205,23 +209,33 @@ namespace OpenSync { namespace Config {
 class Converter
 {
 public:
-	virtual std::string GetPluginName(const Barry &config) = 0;
-	virtual std::string GetPluginName(const Evolution &config) = 0;
-	virtual std::string GetPluginName(const Unsupported &config) = 0;
+	typedef std::tr1::shared_ptr<OpenSync::Config::Plugin> plugin_ptr;
 
-	virtual void Load(Barry &config) = 0;
-	virtual void Load(Evolution &config) = 0;
-	virtual void Load(Unsupported &config) = 0;
+public:
+	virtual ~Converter() {}
 
-	virtual void Save(const Barry &config) = 0;
-	virtual void Save(const Evolution &config) = 0;
-	virtual void Save(const Unsupported &config) = 0;
+	virtual plugin_ptr CreateAndLoadPlugin(const Member &member) = 0;
+
+	virtual std::string GetPluginName(const Config::Barry &) = 0;
+	virtual std::string GetPluginName(const Config::Evolution &) = 0;
+	virtual std::string GetPluginName(const Config::Unsupported &) = 0;
+
+	virtual void Load(Config::Barry &config, const Member &member) = 0;
+	virtual void Load(Config::Evolution &config, const Member &member) = 0;
+	virtual void Load(Config::Unsupported &config, const Member &member) = 0;
+
+	virtual void Save(const Config::Barry &config,
+				const std::string &group_name) = 0;
+	virtual void Save(const Config::Evolution &config,
+				const std::string &group_name) = 0;
+	virtual void Save(const Config::Unsupported &config,
+				const std::string &group_name) = 0;
 };
 
 class API
 {
 public:
-	explicit API(Converter *converter)
+	explicit API()
 	{
 	}
 
@@ -244,7 +258,7 @@ public:
 	virtual void DeleteGroup(const std::string &group_name) = 0;
 
 	// Plugin configuration helper
-	virtual Converter* GetConverter() = 0;
+	virtual Converter& GetConverter() = 0;
 
 	// Member configuration
 	// AddMember() returns new member_id?

@@ -24,6 +24,7 @@
 
 #include "os22.h"
 #include "osprivatebase.h"
+#include "osconv22.h"
 #include <barry/barry.h>
 #include <barry/vsmartptr.h>
 #include <memory>
@@ -177,8 +178,11 @@ public:
 	// data pointers
 	OSyncEnv *env;
 
-	OpenSync22Private()
+	Converter22 converter;
+
+	OpenSync22Private(OpenSync22 &api)
 		: env(0)
+		, converter(api)
 	{
 	}
 };
@@ -645,7 +649,7 @@ OpenSync22::OpenSync22()
 	symbols_loaded = true;
 
 	// store locally in case of constructor exception in LoadSym
-	std::auto_ptr<OpenSync22Private> p(new OpenSync22Private);
+	std::auto_ptr<OpenSync22Private> p(new OpenSync22Private(*this));
 
 	// load all required symbols...
 	// we don't need to use try/catch here, since the base
@@ -848,6 +852,7 @@ void OpenSync22::GetMembers(const std::string &group_name,
 
 		Member new_member;
 
+		new_member.group_name = group_name;
 		new_member.id = m_priv->osync_member_get_id(member);
 		new_member.plugin_name = m_priv->osync_member_get_pluginname(member);
 
@@ -897,7 +902,12 @@ void OpenSync22::DeleteGroup(const std::string &group_name)
 	}
 }
 
-void OpenSync22::AddMember(const std::string &group_name,
+Converter& OpenSync22::GetConverter()
+{
+	return m_priv->converter;
+}
+
+long OpenSync22::AddMember(const std::string &group_name,
 			const std::string &plugin_name,
 			const std::string &member_name)
 {
@@ -919,6 +929,8 @@ void OpenSync22::AddMember(const std::string &group_name,
 		m_priv->osync_error_free(&error);
 		throw err;
 	}
+
+	return m_priv->osync_member_get_id(member);
 }
 
 bool OpenSync22::IsConfigurable(const std::string &group_name,

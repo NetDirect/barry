@@ -28,6 +28,7 @@
 #include "os22.h"
 #include "osprivatebase.h"
 #include "tempdir.h"
+#include "osconv40.h"
 #include <barry/vsmartptr.h>
 #include <iostream>
 #include <sstream>
@@ -304,9 +305,11 @@ public:
 	vLateSmartPtr<OSyncPluginEnv, void(*)(OSyncPluginEnv*)> plugin_env;
 
 	TossError error;
+	Converter40 converter;
 
-	OpenSync40Private()
+	OpenSync40Private(OpenSync40 &api)
 		: error(this)
+		, converter(api)
 	{
 	}
 };
@@ -921,7 +924,7 @@ OpenSync40::OpenSync40()
 		throw DlError("Can't dlopen libopensync.so.1");
 
 	// store locally in case of constructor exception in LoadSym
-	std::auto_ptr<OpenSync40Private> p(new OpenSync40Private);
+	std::auto_ptr<OpenSync40Private> p(new OpenSync40Private(*this));
 
 	// load all required symbols...
 	// we don't need to use try/catch here, since the base
@@ -1182,6 +1185,7 @@ void OpenSync40::GetMembers(const std::string &group_name,
 			new_member.friendly_name = membername;
 		}
 
+		new_member.group_name = group_name;
 		new_member.id = m_priv->osync_member_get_id(member);
 		new_member.plugin_name = m_priv->osync_member_get_pluginname(member);
 
@@ -1225,7 +1229,12 @@ void OpenSync40::DeleteGroup(const std::string &group_name)
 	m_priv->osync_group_env_remove_group(m_priv->group_env.get(), group);
 }
 
-void OpenSync40::AddMember(const std::string &group_name,
+Converter& OpenSync40::GetConverter()
+{
+	return m_priv->converter;
+}
+
+long OpenSync40::AddMember(const std::string &group_name,
 			const std::string &plugin_name,
 			const std::string &member_name)
 {
@@ -1250,6 +1259,8 @@ void OpenSync40::AddMember(const std::string &group_name,
 
 	if( !m_priv->osync_member_save(mptr.get(), m_priv->error) )
 		throw std::runtime_error(m_priv->error.GetErrorMsg());
+
+	return m_priv->osync_member_get_id(mptr.get());
 }
 
 void OpenSync40::DeleteMember(const std::string &group_name, long member_id)

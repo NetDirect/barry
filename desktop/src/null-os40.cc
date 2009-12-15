@@ -20,6 +20,7 @@
 */
 
 #include "os40.h"
+#include "osconv40.h"
 
 namespace OpenSync {
 
@@ -68,10 +69,16 @@ void OpenSync40::DeleteGroup(const std::string &group_name)
 {
 }
 
-void OpenSync40::AddMember(const std::string &group_name,
+Converter& OpenSync40::GetConverter()
+{
+	throw std::logic_error("Not supported on this system.");
+}
+
+long OpenSync40::AddMember(const std::string &group_name,
 				const std::string &plugin_name,
 				const std::string &member_name)
 {
+	return 0;
 }
 
 void OpenSync40::DeleteMember(const std::string &group_name, long member_id)
@@ -107,6 +114,65 @@ void OpenSync40::Discover(const std::string &group_name)
 void OpenSync40::Sync(const std::string &group_name,
 			SyncStatus &status_callback)
 {
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// Null Converter40
+
+Converter40::Converter40(OpenSync::OpenSync40 &api)
+	: m_api(api)
+{
+}
+
+Converter::plugin_ptr Converter40::CreateAndLoadPlugin(const Member &member)
+{
+	return Converter::plugin_ptr();
+}
+
+std::string Converter40::GetPluginName(const Config::Barry &)
+{
+	throw std::logic_error("Not supported on this system.");
+}
+
+std::string Converter40::GetPluginName(const Config::Evolution &)
+{
+	throw std::logic_error("Not supported on this system.");
+}
+
+std::string Converter40::GetPluginName(const Config::Unsupported &)
+{
+	throw std::logic_error("Not supported on this system.");
+}
+
+
+void Converter40::Load(Config::Barry &config, const Member &member)
+{
+	throw std::logic_error("Not supported on this system.");
+}
+
+void Converter40::Load(Config::Evolution &config, const Member &member)
+{
+	throw std::logic_error("Not supported on this system.");
+}
+
+void Converter40::Load(Config::Unsupported &config, const Member &member)
+{
+	throw std::logic_error("Not supported on this system.");
+}
+
+void Converter40::Save(const Config::Barry &config, const std::string &group_name)
+{
+	throw std::logic_error("Not supported on this system.");
+}
+
+void Converter40::Save(const Config::Evolution &config, const std::string &group_name)
+{
+	throw std::logic_error("Not supported on this system.");
+}
+
+void Converter40::Save(const Config::Unsupported &config, const std::string &group_name)
+{
+	throw std::logic_error("Not supported on this system.");
 }
 
 }

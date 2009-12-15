@@ -14,16 +14,20 @@ barrydesktop_SOURCES = \
 	error.cc error.h \
 	dlopen.cc dlopen.h \
 	tempdir.cc tempdir.h \
+	deviceset.cc deviceset.h \
 	osbase.cc osbase.h osprivatebase.h \
+	osconfig.cc osconfig.h \
+	osconv22.h \
+	osconv40.h \
 	os22.h \
 	os40.h 
 if WITH_OPENSYNC22
-barrydesktop_SOURCES += os22.cc
+barrydesktop_SOURCES += os22.cc osconv22.cc
 else
 barrydesktop_SOURCES += null-os22.cc
 endif
 if WITH_OPENSYNC40
-barrydesktop_SOURCES += os40.cc
+barrydesktop_SOURCES += os40.cc osconv40.cc
 else
 barrydesktop_SOURCES += null-os40.cc
 endif
@@ -35,16 +39,19 @@ ostest_SOURCES = \
 	dlopen.cc dlopen.h \
 	tempdir.cc tempdir.h \
 	osbase.cc osbase.h osprivatebase.h \
+	osconfig.cc osconfig.h \
+	osconv22.h \
+	osconv40.h \
 	os22.h \
 	os40.h \
 	ostest.cc
 if WITH_OPENSYNC22
-ostest_SOURCES += os22.cc
+ostest_SOURCES += os22.cc osconv22.cc
 else
 ostest_SOURCES += null-os22.cc
 endif
 if WITH_OPENSYNC40
-ostest_SOURCES += os40.cc
+ostest_SOURCES += os40.cc osconv40.cc
 else
 ostest_SOURCES += null-os40.cc
 endif

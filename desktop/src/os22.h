@@ -62,8 +62,11 @@ public:
 	void AddGroup(const std::string &group_name);
 	void DeleteGroup(const std::string &group_name);
 
+	// Plugin configuration helper
+	Converter& GetConverter();
+
 	// Member configuration
-	void AddMember(const std::string &group_name,
+	long AddMember(const std::string &group_name,
 		const std::string &plugin_name,
 		const std::string &member_name);
 	// DeleteMember() not possible to implement in 0.22

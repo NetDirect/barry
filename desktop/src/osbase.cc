@@ -81,6 +81,16 @@ std::ostream& operator<< (std::ostream &os, const format_list_type &list)
 /////////////////////////////////////////////////////////////////////////////
 // MemberSet public members
 
+Member* MemberSet::Find(long id)
+{
+	iterator b = begin(), e = end();
+	for( ; b != e; ++b ) {
+		if( b->id == id )
+			return &(*b);
+	}
+	return 0;
+}
+
 Member* MemberSet::Find(const char *plugin_name)
 {
 	iterator b = begin(), e = end();
