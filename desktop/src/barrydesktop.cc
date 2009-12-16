@@ -31,6 +31,7 @@
 #include <wx/mstream.h>
 #include "os22.h"
 #include "os40.h"
+#include "deviceset.h"
 
 // include icons and logos
 #include "../images/barry_logo_icon.xpm"
@@ -72,6 +73,7 @@ enum {
 
 	// SyncMode IDs
 	SyncMode_SyncNowButton,
+	SyncMode_DeviceList,
 
 	SysMenu_FirstItem,
 
@@ -252,8 +254,16 @@ private:
 private:
 	wxWindow *m_parent;
 
+	std::auto_ptr<DeviceSet> m_device_set;
+
 	// window controls
 	std::auto_ptr<wxButton> m_sync_now_button;
+	std::auto_ptr<wxListCtrl> m_device_list;
+	std::auto_ptr<wxStaticText> m_label;
+	std::auto_ptr<wxStaticBox> m_box;
+
+protected:
+	void FillDeviceList();
 
 public:
 	SyncMode(wxWindow *parent);
@@ -728,17 +738,111 @@ void MainMenuMode::OnLeftUp(wxDC &dc, int x, int y)
 SyncMode::SyncMode(wxWindow *parent)
 	: m_parent(parent)
 {
+	wxBusyCursor wait;
+
 	// connect ourselves to the parent's event handling chain
 	m_parent->PushEventHandler(this);
 
+	// create our list of devices
+	m_device_set.reset( new DeviceSet(wxGetApp().GetResults(),
+		wxGetApp().GetOpenSync()) );
+	barryverbose(*m_device_set);
+
+	// eliminate all duplicate device entries
+	DeviceSet::subset_type subset;
+	do {
+		subset = m_device_set->FindDuplicates();
+		if( subset.size() ) {
+			// build list of choices
+			wxArrayString choices;
+			DeviceSet::subset_type::iterator i = subset.begin();
+			for( ; i != subset.end(); ++i ) {
+				string desc = (*i)->GetIdentifyingString();
+				choices.Add( wxString(desc.c_str(), wxConvUTF8) );
+			}
+
+			// let the user choose
+			// FIXME - the width of the choice dialog is
+			// determined by the length of the string...
+			// which is less than ideal
+			int choice = wxGetSingleChoiceIndex(_T("Multiple configurations have been found with the same PIN.  Please select\nthe configuration that Barry Desktop should work with."),
+				_T("Duplicate PIN"),
+				choices, parent);
+
+			// remove everything except keep
+			if( choice != -1 ) {
+				subset.erase(subset.begin() + choice);
+			}
+
+			m_device_set->KillDuplicates(subset);
+
+			barryverbose(*m_device_set);
+		}
+	} while( subset.size() );
+
+	//
 	// create the window controls we need
+	//
+
+	// Sync Now button
 	m_sync_now_button.reset( new wxButton(parent, SyncMode_SyncNowButton,
 		_T("Sync Now"), wxPoint(450, 50), wxDefaultSize) );
+
+	// Device ListCtrl
+	m_box.reset( new wxStaticBox(parent, -1, _T("Device List"),
+		wxPoint(10, 180), wxSize(580, 220)) );
+
+	wxSize list_size(570, 190);
+	m_device_list.reset( new wxListCtrl(parent, SyncMode_DeviceList,
+		wxPoint(15, 200), list_size, wxLC_REPORT /*| wxLC_VRULES*/) );
+	m_device_list->InsertColumn(0, _T("PIN"),
+		wxLIST_FORMAT_LEFT, list_size.GetWidth() * 0.16);
+	m_device_list->InsertColumn(1, _T("Name"),
+		wxLIST_FORMAT_LEFT, list_size.GetWidth() * 0.35);
+	m_device_list->InsertColumn(2, _T("Connected"),
+		wxLIST_FORMAT_CENTRE, list_size.GetWidth() * 0.16);
+	m_device_list->InsertColumn(3, _T("Configured"),
+		wxLIST_FORMAT_CENTRE, list_size.GetWidth() * 0.16);
+	m_device_list->InsertColumn(4, _T("Engine"),
+		wxLIST_FORMAT_CENTRE, list_size.GetWidth() * 0.17);
+
+	// Static text
+	m_label.reset( new wxStaticText(parent, -1, _T("Static Text"),
+		wxPoint(15, 100)) );
+
+	FillDeviceList();
 }
 
 SyncMode::~SyncMode()
 {
 	m_parent->PopEventHandler();
+}
+
+void SyncMode::FillDeviceList()
+{
+	// start fresh
+	m_device_list->DeleteAllItems();
+
+	DeviceSet::const_iterator i = m_device_set->begin();
+	for( int index = 0; i != m_device_set->end(); ++i, index++ ) {
+		wxString text(i->GetPin().str().c_str(), wxConvUTF8);
+		long item = m_device_list->InsertItem(index, text);
+
+		text = wxString(i->GetDeviceName().c_str(), wxConvUTF8);
+		m_device_list->SetItem(item, 1, text);
+
+		text = i->IsConnected() ? _T("Yes") : _T("No");
+		m_device_list->SetItem(item, 2, text);
+
+		text = i->IsConfigured() ? _T("Yes") : _T("No");
+		m_device_list->SetItem(item, 3, text);
+
+		if( i->GetEngine() )
+			text = wxString(i->GetEngine()->GetVersion(), wxConvUTF8);
+		else
+			text = _T("");
+		m_device_list->SetItem(item, 4, text);
+	}
 }
 
 void SyncMode::OnSyncNow(wxCommandEvent &event)
