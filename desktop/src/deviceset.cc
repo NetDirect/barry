@@ -93,6 +93,26 @@ std::string DeviceEntry::GetDeviceName() const
 		return std::string();
 }
 
+std::string DeviceEntry::GetIdentifyingString() const
+{
+	ostringstream oss;
+
+	oss << GetPin().str();
+	string name = GetDeviceName();
+	if( name.size() )
+		oss << " (" << name << ")";
+
+	if( IsConfigured() )
+		oss << ", Group: " << GetConfigGroup()->GetGroupName();
+	else
+		oss << ", Not configured";
+
+	if( GetEngine() )
+		oss << ", Engine: " << GetEngine()->GetVersion();
+
+	return oss.str();
+}
+
 void DeviceEntry::SetConfigGroup(group_ptr group,
 				OpenSync::API *engine)
 {
@@ -254,13 +274,73 @@ DeviceSet::iterator DeviceSet::FindPin(const Barry::Pin &pin)
 	return end();
 }
 
+DeviceSet::subset_type DeviceSet::FindDuplicates()
+{
+	subset_type dups;
+
+	for( iterator i = begin(); i != end(); ++i ) {
+
+		// start with this PIN
+		dups.push_back(i);
+
+		// search for a duplicate, and add all dups found
+		for( iterator j = begin(); j != end(); ++j ) {
+			// skip ourselves
+			if( j == i )
+				continue;
+
+			if( i->GetPin() == j->GetPin() ) {
+				// found a duplicate
+				dups.push_back(j);
+			}
+		}
+
+		// if we have multiple iterators in dups, we're done
+		if( dups.size() > 1 )
+			return dups;
+
+		// else, start over
+		dups.clear();
+	}
+
+	return dups;
+}
+
+void DeviceSet::KillDuplicates(const subset_type &dups)
+{
+	// anything to do?
+	if( dups.size() == 0 )
+		return;	// nope
+
+	// only one?
+	if( dups.size() == 1 ) {
+		erase(dups[0]);
+		return;
+	}
+
+	// ok, we have multiple dups to erase, so we need to make
+	// a copy of ourselves and skip all matching iterators,
+	// then copy the result back to this
+	base_type copy;
+	for( iterator i = begin(); i != end(); ++i ) {
+		if( find(dups.begin(), dups.end(), i) == dups.end() ) {
+			// not in the dups list, copy it
+			copy.push_back(*i);
+		}
+	}
+
+	// copy back
+	clear();
+	base_type::operator=(copy);
+}
+
 std::ostream& operator<< (std::ostream &os, const DeviceSet &ds)
 {
 	os << "  PIN   |       Device Name                 |Con |Cfg |Engine\n";
 	os << "--------+-----------------------------------+----+----+-------\n";
 
 	for( DeviceSet::const_iterator i = ds.begin(); i != ds.end(); ++i )
-		os << *i << endl;
+		os << *i << "\n" << i->GetIdentifyingString() << endl;
 	return os;
 }
 

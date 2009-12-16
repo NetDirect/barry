@@ -64,8 +64,12 @@ public:
 	bool IsConnected() const { return m_result; }
 	bool IsConfigured() const { return m_group.get(); }
 
+	/// Returns a string uniquely identifying this DeviceEntry
+	std::string GetIdentifyingString() const;
+
 	const Barry::ProbeResult* GetProbeResult() { return m_result; }
 	OpenSync::Config::Group* GetConfigGroup() { return m_group.get(); }
+	const OpenSync::Config::Group* GetConfigGroup() const { return m_group.get(); }
 	OpenSync::API* GetEngine() { return m_engine; }
 	const OpenSync::API* GetEngine() const { return m_engine; }
 
@@ -105,6 +109,7 @@ public:
 	typedef std::vector<DeviceEntry>		base_type;
 	typedef base_type::iterator			iterator;
 	typedef base_type::const_iterator		const_iterator;
+	typedef std::vector<iterator>			subset_type;
 
 private:
 	OpenSync::APISet &m_apiset;
@@ -124,6 +129,23 @@ public:
 	DeviceSet(const Barry::Probe::Results &results, OpenSync::APISet &apiset);
 
 	iterator FindPin(const Barry::Pin &pin);
+
+	/// Searches for DeviceEntry's in the set that have the same
+	/// pin number.  This is most likely due to OpenSync having
+	/// multiple configurations with the same device.  This
+	/// function returns a vector of iterators into the DeviceSet,
+	/// or an empty vector if no duplicates are found.
+	///
+	/// You can solve the duplicate by erase()ing the chosen
+	/// iterator.  Call this function multiple times to find
+	/// all the duplicates.
+	subset_type FindDuplicates();
+
+	/// Safely removes all entries that are referenced by
+	/// the iterators in dups.  Note that a call to erase()
+	/// invalidates the other iterators, so this function
+	/// does it safely.
+	void KillDuplicates(const subset_type &dups);
 };
 
 std::ostream& operator<< (std::ostream &os, const DeviceSet &ds);
