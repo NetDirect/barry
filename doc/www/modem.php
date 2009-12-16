@@ -175,3 +175,49 @@ including:
 <p>The logs from pppob can be fairly large, so limit the size to a single
 run.</p>
 
+
+<? createSubHeader("Connecting via Bluetooth"); ?>
+
+<p>If your device has Bluetooth support, it is also possible to tether
+using Linux's own native Bluetooth serial drivers.  There are probably
+better tutorials on this already on the net, but here are a few notes
+from Michael Brown to help you get started.</p>
+
+<p><b>Bluetooth Config</b></p>
+
+<p>Put the following in your /etc/bluetooth/rfcomm.conf file, replacing
+the X's with your Bluetooth BADDR.</p>
+
+<pre>
+rfcomm0 {
+	bind yes;
+	device XX:XX:XX:XX:XX:XX;
+	channel 1;
+	comment "Blackberry Dialup";
+}
+</pre>
+
+<p><b>PPP Config</b></p>
+
+<p>Use the same peer file that you would use for the USB tethering above,
+but remove the pty line that points to /usr/sbin/pppob.  Since you are
+using the Bluetooth serial port, you don't need pppob.  Replace that
+line with the line of your newly configured rfcomm device.  You may
+also need to specify the baud rate.</p>
+
+<pre>
+/dev/rfcomm0
+115200
+</pre>
+
+<p><b>Chatscript Config</b></p>
+
+<p>No change is required.  Use the same chatscript you would use for
+USB above.</p>
+
+<p>Run as usual.  For example:</p>
+
+<pre>
+	pppd call barry-rogers
+</pre>
+
