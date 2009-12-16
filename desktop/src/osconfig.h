@@ -326,6 +326,7 @@ public:
 	bool HasBarryPlugins() const;
 	bool GroupExists(OpenSync::API &api) const;
 	int GetConnectedCount() const;
+	const std::string& GetGroupName() const { return m_group_name; }
 
 	/// Returns a reference to the (first) Barry plugin in the group.
 	/// Will throw std::logic_error if not found.
