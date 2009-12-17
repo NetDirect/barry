@@ -863,6 +863,11 @@ BaseFrame::BaseFrame(const wxImage &background)
 	, m_height(background.GetHeight())
 	, m_current_mode(0)
 {
+	// This is a workaround for different size behaviour
+	// in the GTK version of wxWidgets 2.9
+	SetClientSize(wxSize(background.GetWidth(), background.GetHeight()));
+
+	// load base bitmaps
 	m_background.reset( new wxBitmap(background) );
 
 	// the main menu mode always exists, but may not always be current
