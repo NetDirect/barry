@@ -124,6 +124,12 @@ Converter40::Converter40(OpenSync::OpenSync40 &api)
 {
 }
 
+bool Converter40::IsPluginSupported(const std::string &plugin_name,
+					std::string *appname) const
+{
+	return false;
+}
+
 Converter::plugin_ptr Converter40::CreateAndLoadPlugin(const Member &member)
 {
 	return Converter::plugin_ptr();

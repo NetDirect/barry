@@ -1,0 +1,76 @@
+///
+/// \file	GroupCfgDlg.h
+///		The configuration dialog used when a user double clicks
+///		on a device in the device list.  It lets the user choose
+///		the app to sync with Barry, as well as the engine to use.
+///
+
+/*
+    Copyright (C) 2009, Net Direct Inc. (http://www.netdirect.ca/)
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+    See the GNU General Public License in the COPYING file at the
+    root directory of this project for more details.
+*/
+
+#ifndef __BARRYDESKTOP_GROUPCFGDLG_H__
+#define __BARRYDESKTOP_GROUPCFGDLG_H__
+
+#include <wx/wx.h>
+#include "deviceset.h"
+
+class GroupCfgDlg : public wxDialog
+{
+	// external data sources
+	const DeviceEntry &m_device;
+	OpenSync::APISet &m_apiset;
+
+	// results of the configuration
+	DeviceEntry::group_ptr m_group;
+	OpenSync::API *m_engine;
+
+	// dialog controls
+	wxSizer *m_topsizer, *m_appsizer;
+	wxComboBox *m_engine_combo, *m_app_combo;
+	wxTextCtrl *m_password_edit;
+	wxCheckBox *m_debug_check;
+
+protected:
+	void CreateLayout();
+	void AddEngineSizer(wxSizer *sizer);
+	void AddConfigSizer(wxSizer *sizer);
+	void AddBarrySizer(wxSizer *sizer);
+	void AddAppSizer(wxSizer *sizer);
+	void UpdateAppSizer();		// called if engine changes, to update
+					// the app combo, etc, with available
+					// apps
+	void LoadAppNames(wxArrayString &appnames);
+	void AddButtonSizer(wxSizer *sizer);
+
+	void SelectCurrentEngine();
+	bool IsAppConfigured();		// returns true if it is safe to
+					// exit the dialog successfully, and
+					// there's no more that needs to be
+					// done before an opensync config save
+
+//	void OnEngineChange(blah);
+
+public:
+	GroupCfgDlg(wxWindow *parent, const DeviceEntry &device,
+		OpenSync::API *device_engine, OpenSync::APISet &apiset);
+
+	// results
+	DeviceEntry::group_ptr GetGroup() { return m_group; }
+	const OpenSync::API* GetEngine() const { return m_engine; }
+};
+
+#endif
+

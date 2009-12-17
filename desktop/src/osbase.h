@@ -214,6 +214,8 @@ public:
 public:
 	virtual ~Converter() {}
 
+	virtual bool IsPluginSupported(const std::string &plugin_name,
+		std::string *appname = 0) const = 0;
 	virtual plugin_ptr CreateAndLoadPlugin(const Member &member) = 0;
 
 	virtual std::string GetPluginName(const Config::Barry &) = 0;

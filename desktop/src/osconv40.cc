@@ -43,6 +43,23 @@ Converter40::Converter40(OpenSync::OpenSync40 &api)
 {
 }
 
+bool Converter40::IsPluginSupported(const std::string &plugin_name,
+					std::string *appname) const
+{
+	if( plugin_name == PLUGIN_BARRY ) {
+		if( appname )
+			*appname = Config::Barry::AppName();
+		return false;	// FIXME - not yet implemented
+	}
+	else if( plugin_name == PLUGIN_EVOLUTION ) {
+		if( appname )
+			*appname = Config::Evolution::AppName();
+		return false;	// FIXME - not yet implemented
+	}
+
+	return false;
+}
+
 Converter::plugin_ptr Converter40::CreateAndLoadPlugin(const Member &member)
 {
 	Converter::plugin_ptr ptr;

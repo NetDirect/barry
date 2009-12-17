@@ -29,9 +29,11 @@
 #include <wx/splash.h>
 #include <wx/process.h>
 #include <wx/mstream.h>
+#include "windowids.h"
 #include "os22.h"
 #include "os40.h"
 #include "deviceset.h"
+#include "GroupCfgDlg.h"
 
 // include icons and logos
 #include "../images/barry_logo_icon.xpm"
@@ -40,48 +42,6 @@
 using namespace std;
 
 #define MAIN_HEADER_OFFSET 40
-
-//////////////////////////////////////////////////////////////////////////////
-// IDs for controls and menu items (no menus in this app yet)
-enum {
-	SysMenu_Exit = wxID_EXIT,
-	SysMenu_About = wxID_ABOUT,
-
-	MainMenu_FirstButton = wxID_HIGHEST,
-
-	MainMenu_BackupAndRestore = MainMenu_FirstButton,
-	MainMenu_Sync,
-	MainMenu_Modem,
-	MainMenu_AppLoader,
-	MainMenu_DeviceSwitch,
-	MainMenu_BrowseDatabases,
-	MainMenu_MediaManagement,
-	MainMenu_Misc,
-
-	MainMenu_LastButton = MainMenu_Misc,
-
-	// Main menu buttons that don't always exist
-	MainMenu_BackButton,
-
-	// Clickable, "hot" images that do something
-	HotImage_BarryLogo,
-	HotImage_NetDirectLogo,
-
-	// Misc IDs
-	Ctrl_DeviceCombo,
-	Process_BackupAndRestore,
-
-	// SyncMode IDs
-	SyncMode_SyncNowButton,
-	SyncMode_DeviceList,
-
-	SysMenu_FirstItem,
-
-	SysMenu_VerboseLogging = SysMenu_FirstItem,
-	SysMenu_RescanUsb,
-
-	SysMenu_LastItem = SysMenu_RescanUsb
-};
 
 const wxChar *ButtonNames[] = {
 	_T("backuprestore"),
@@ -274,10 +234,12 @@ public:
 
 	// window events
 	void OnSyncNow(wxCommandEvent &event);
+	void OnConfigureDevice(wxListEvent &event);
 };
 
 BEGIN_EVENT_TABLE(SyncMode, wxEvtHandler)
 	EVT_BUTTON	(SyncMode_SyncNowButton, SyncMode::OnSyncNow)
+	EVT_LIST_ITEM_ACTIVATED(SyncMode_DeviceList, SyncMode::OnConfigureDevice)
 END_EVENT_TABLE()
 
 class BaseFrame : public wxFrame
@@ -740,6 +702,8 @@ SyncMode::SyncMode(wxWindow *parent)
 {
 	wxBusyCursor wait;
 
+	wxSize client_size = parent->GetClientSize();
+
 	// connect ourselves to the parent's event handling chain
 	m_parent->PushEventHandler(this);
 
@@ -784,17 +748,40 @@ SyncMode::SyncMode(wxWindow *parent)
 	// create the window controls we need
 	//
 
+#define BORDER_WIDTH		10	// border to edge of client size
+#define BORDER_HEIGHT		10
+#define GROUP_BORDER_WIDTH	8	// border between group & list
+#define GROUP_BORDER_TOP	20
+#define GROUP_BORDER_BOTTOM	8
+#define STATUS_HEIGHT		140	// space above list for status info
+					// does not include MAIN_HEADER_OFFSET
+
 	// Sync Now button
 	m_sync_now_button.reset( new wxButton(parent, SyncMode_SyncNowButton,
-		_T("Sync Now"), wxPoint(450, 50), wxDefaultSize) );
+		_T("Sync Now"), wxPoint(0, 0), wxDefaultSize) );
+	wxSize button_size = m_sync_now_button->GetSize();
+	int button_x = client_size.GetWidth() -
+			button_size.GetWidth() -
+			BORDER_WIDTH;
+	m_sync_now_button->Move(button_x, MAIN_HEADER_OFFSET + 10);
 
 	// Device ListCtrl
-	m_box.reset( new wxStaticBox(parent, -1, _T("Device List"),
-		wxPoint(10, 180), wxSize(580, 220)) );
+	int device_y = STATUS_HEIGHT + MAIN_HEADER_OFFSET;
+	wxPoint group_point(BORDER_WIDTH, device_y);
+	wxSize group_size(client_size.GetWidth() - BORDER_WIDTH*2,
+			client_size.GetHeight() - device_y -
+			MAIN_HEADER_OFFSET - BORDER_HEIGHT);
 
-	wxSize list_size(570, 190);
+	m_box.reset( new wxStaticBox(parent, -1, _T("Device List"),
+		group_point, group_size) );
+
+	wxPoint list_point(group_point.x + GROUP_BORDER_WIDTH,
+		group_point.y + GROUP_BORDER_TOP);
+	wxSize list_size(group_size.GetWidth() - GROUP_BORDER_WIDTH*2,
+		group_size.GetHeight() - GROUP_BORDER_TOP - GROUP_BORDER_BOTTOM);
+
 	m_device_list.reset( new wxListCtrl(parent, SyncMode_DeviceList,
-		wxPoint(15, 200), list_size, wxLC_REPORT /*| wxLC_VRULES*/) );
+		list_point, list_size, wxLC_REPORT /*| wxLC_VRULES*/) );
 	m_device_list->InsertColumn(0, _T("PIN"),
 		wxLIST_FORMAT_LEFT, list_size.GetWidth() * 0.16);
 	m_device_list->InsertColumn(1, _T("Name"),
@@ -848,6 +835,18 @@ void SyncMode::FillDeviceList()
 void SyncMode::OnSyncNow(wxCommandEvent &event)
 {
 	wxMessageBox(_T("Sync Now!"));
+}
+
+void SyncMode::OnConfigureDevice(wxListEvent &event)
+{
+//	wxString msg;
+//	msg.Printf(_T("OnConfigureDevice(%ld)"), event.GetIndex());
+//	wxMessageBox(msg);
+
+	GroupCfgDlg dlg(m_parent, (*m_device_set)[event.GetIndex()],
+		(*m_device_set)[event.GetIndex()].GetEngine(),
+		wxGetApp().GetOpenSync());
+	dlg.ShowModal();
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -36,6 +36,8 @@ protected:
 public:
 	Converter22(OpenSync::API &api);
 
+	virtual bool IsPluginSupported(const std::string &plugin_name,
+		std::string *appname = 0) const;
 	virtual plugin_ptr CreateAndLoadPlugin(const Member &member);
 
 	virtual std::string GetPluginName(const Config::Barry &);

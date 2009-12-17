@@ -11,6 +11,8 @@ bin_PROGRAMS = barrydesktop ostest
 
 barrydesktop_SOURCES = \
 	barrydesktop.cc \
+	windowids.h \
+	GroupCfgDlg.cc GroupCfgDlg.h \
 	error.cc error.h \
 	dlopen.cc dlopen.h \
 	tempdir.cc tempdir.h \

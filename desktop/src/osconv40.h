@@ -34,6 +34,8 @@ class Converter40 : public Converter
 public:
 	Converter40(OpenSync::OpenSync40 &api);
 
+	virtual bool IsPluginSupported(const std::string &plugin_name,
+		std::string *appname = 0) const;
 	virtual plugin_ptr CreateAndLoadPlugin(const Member &member);
 
 	virtual std::string GetPluginName(const Config::Barry &);

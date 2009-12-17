@@ -43,6 +43,23 @@ Converter22::Converter22(OpenSync::API &api)
 {
 }
 
+bool Converter22::IsPluginSupported(const std::string &plugin_name,
+					std::string *appname) const
+{
+	if( plugin_name == PLUGIN_BARRY ) {
+		if( appname )
+			*appname = Config::Barry::AppName();
+		return true;
+	}
+	else if( plugin_name == PLUGIN_EVOLUTION ) {
+		if( appname )
+			*appname = Config::Evolution::AppName();
+		return true;
+	}
+
+	return false;
+}
+
 Converter::plugin_ptr Converter22::CreateAndLoadPlugin(const Member &member)
 {
 	Converter::plugin_ptr ptr;

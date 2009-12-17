@@ -117,6 +117,12 @@ Converter22::Converter22(OpenSync::API &api)
 {
 }
 
+bool Converter22::IsPluginSupported(const std::string &plugin_name,
+					std::string *appname) const
+{
+	return false;
+}
+
 Converter::plugin_ptr Converter22::CreateAndLoadPlugin(const Member &member)
 {
 	return Converter::plugin_ptr();
