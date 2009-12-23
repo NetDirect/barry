@@ -1119,7 +1119,22 @@ void BaseFrame::OnSync(wxCommandEvent &event)
 		return;
 	}
 
-	m_sync_mode.reset( new SyncMode(this) );
+	try {
+		m_sync_mode.reset( new SyncMode(this) );
+	}
+	catch( std::exception &e ) {
+		wxString msg(_T(
+			"An error occurred that prevented the loading of Sync\n"
+			"mode.  This is most likely because a critical piece\n"
+			"of OpenSync is missing.  Check that all required\n"
+			"plugins are installed, and that tools like 'bidentify'\n"
+			"can find your BlackBerry successfully.\n\n"
+			"Error: "));
+		msg += wxString(e.what(), wxConvUTF8);
+		wxMessageBox(msg, _T("Sync Mode"), wxOK | wxICON_ERROR);
+		return;
+	}
+
 	EnableBackButton(m_sync_mode.get());
 }
 
