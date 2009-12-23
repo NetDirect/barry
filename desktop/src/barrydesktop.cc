@@ -704,9 +704,6 @@ SyncMode::SyncMode(wxWindow *parent)
 
 	wxSize client_size = parent->GetClientSize();
 
-	// connect ourselves to the parent's event handling chain
-	m_parent->PushEventHandler(this);
-
 	// create our list of devices
 	m_device_set.reset( new DeviceSet(wxGetApp().GetResults(),
 		wxGetApp().GetOpenSync()) );
@@ -798,6 +795,11 @@ SyncMode::SyncMode(wxWindow *parent)
 		wxPoint(15, 100)) );
 
 	FillDeviceList();
+
+	// connect ourselves to the parent's event handling chain
+	// do this last, so that we are guaranteed our destructor
+	// will run, in case of exceptions
+	m_parent->PushEventHandler(this);
 }
 
 SyncMode::~SyncMode()
