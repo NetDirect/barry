@@ -29,6 +29,8 @@
 
 class GroupCfgDlg : public wxDialog
 {
+	DECLARE_EVENT_TABLE()
+
 	// external data sources
 	const DeviceEntry &m_device;
 	OpenSync::APISet &m_apiset;
@@ -36,6 +38,13 @@ class GroupCfgDlg : public wxDialog
 	// results of the configuration
 	DeviceEntry::group_ptr m_group;
 	OpenSync::API *m_engine;
+
+	// in-process config results... i.e. the plugin config
+	// is stored here, and can be overwritten as the user
+	// keeps fiddling with the controls... at the end, if
+	// valid, this config is added to the group for a
+	// final configuration result
+	OpenSync::Config::Group::plugin_ptr m_plugin;
 
 	// dialog controls
 	wxSizer *m_topsizer, *m_appsizer;
@@ -70,6 +79,10 @@ public:
 	// results
 	DeviceEntry::group_ptr GetGroup() { return m_group; }
 	const OpenSync::API* GetEngine() const { return m_engine; }
+
+	// event handlers
+	void OnConfigureApp(wxCommandEvent &event);
+	void OnAppComboChange(wxCommandEvent &event);
 };
 
 #endif

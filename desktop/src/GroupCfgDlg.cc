@@ -23,9 +23,17 @@
 
 #include "GroupCfgDlg.h"
 #include "windowids.h"
+#include "configui.h"
 #include <string>
 
 using namespace std;
+
+BEGIN_EVENT_TABLE(GroupCfgDlg, wxDialog)
+	EVT_BUTTON	(Dialog_GroupCfg_AppConfigButton,
+				GroupCfgDlg::OnConfigureApp)
+	EVT_TEXT	(Dialog_GroupCfg_AppCombo,
+				GroupCfgDlg::OnAppComboChange)
+END_EVENT_TABLE()
 
 //////////////////////////////////////////////////////////////////////////////
 // GroupCfgDlg class
@@ -237,5 +245,37 @@ void GroupCfgDlg::SelectCurrentEngine()
 
 		UpdateAppSizer();
 	}
+}
+
+void GroupCfgDlg::OnConfigureApp(wxCommandEvent &event)
+{
+	wxString app = m_app_combo->GetValue();
+	if( app.size() == 0 ) {
+		wxMessageBox(_T("Please select an application."),
+			_T("Application Config"), wxOK | wxICON_ERROR, this);
+		return;
+	}
+
+	ConfigUI::ptr ui = ConfigUI::CreateConfigUI(std::string(app.utf8_str()));
+
+	if( !ui.get() ) {
+		wxMessageBox(_T("No configuration interface available for this Application."),
+			_T("Application Config"),
+			wxOK | wxICON_ERROR, this);
+		return;
+	}
+
+	if( ui->Configure(this) ) {
+		ConfigUI::plugin_ptr plugin = ui->GetPlugin();
+		if( plugin.get() ) {
+			m_plugin = plugin;
+		}
+	}
+}
+
+void GroupCfgDlg::OnAppComboChange(wxCommandEvent &event)
+{
+	// if the application changes, that invalidates our plugin config
+	m_plugin.reset();
 }
 

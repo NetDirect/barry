@@ -13,6 +13,8 @@ barrydesktop_SOURCES = \
 	barrydesktop.cc \
 	windowids.h \
 	GroupCfgDlg.cc GroupCfgDlg.h \
+	configui.h configui.cc \
+	CUI_Evolution.h CUI_Evolution.cc \
 	error.cc error.h \
 	dlopen.cc dlopen.h \
 	tempdir.cc tempdir.h \
