@@ -1,0 +1,2 @@
+ACTION=="add", SUBSYSTEM=="usb", ATTR{idVendor}=="0fca", ENV{ACL_MANAGE}="1"
+

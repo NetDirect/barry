@@ -3,11 +3,16 @@
 	These udev rules run bcharge on matching Blackberry devices
 	in order to enable 500mA battery charging mode.
 
-10-blackberry-perms.rules
+99-blackberry-perms.rules
 
 	These udev rules set the resulting device mode to the
 	group 'plugdev' and mode '0660' so that Barry can access
 	the device without being root.
+
+69-blackberry.rules
+
+	This is for Fedora 12 and friends who have updated to a different
+	udev rules directory layout.
 
 
 Commentary:

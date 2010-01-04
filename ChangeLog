@@ -1,5 +1,9 @@
-Release: version 0.17 - 2009/11/??
+Release: version 0.17 - 2010/01/??
 ------------------------------------------------------------------------------
+2010/01/04
+	- udev: added 69-blackberry.rules for Fedora 12 systems. Thanks
+		to Nathanael Noblet (list email dated 2009/12/30)
+		for hunting this down!
 2009/12/15
 	- lib: added operator==() to ProbeResult, and operator!= to Pin
 	- os22: fixed bug while loading opensync config file (may not load
