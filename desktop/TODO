@@ -6,6 +6,10 @@ Feature TODO List:
 
 Sync:
 -----
+- add an "Application(s)" column to the device list, so users can see
+	at a glance which apps are syncable
+- refactor the 'evolution --force-shutdown' execute call, so it is easily
+	useable for configuration and syncing
 - add a listctrl, supporting multiple selection of devices, and
 	remember which *devices* (PIN numbers) are selected, and
 	re-select them the next time Sync opens... this gets around
