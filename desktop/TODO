@@ -6,6 +6,9 @@ Feature TODO List:
 
 Sync:
 -----
+- when pressing the Sync button, if a device is selected that is not
+	yet configured, ask the user if they want to configure or cancel,
+	and let them jump directly into the configure mode
 - add an "Application(s)" column to the device list, so users can see
 	at a glance which apps are syncable
 - refactor the 'evolution --force-shutdown' execute call, so it is easily
