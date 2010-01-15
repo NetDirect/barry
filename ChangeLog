@@ -1,5 +1,10 @@
 Release: version 0.17 - 2010/01/??
 ------------------------------------------------------------------------------
+2010/01/15
+	- updated barry.spec to install 69-blackberry.rules on Fedora 12
+		note that this further breaks the opensuse build, but
+		that is not currently supported anyway, due to lack of time
+	- doc: added notes on tools to use for building RPMs in homedir
 2010/01/04
 	- udev: added 69-blackberry.rules for Fedora 12 systems. Thanks
 		to Nathanael Noblet (list email dated 2009/12/30)
