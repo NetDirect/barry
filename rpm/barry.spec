@@ -151,12 +151,10 @@ cd ../
 %{__rm} -f %{buildroot}%{_bindir}/bjvmdebug
 # proceed as usual...
 %{__mkdir_p} %{buildroot}%{_sysconfdir}/udev/rules.d
-%if 0%{?suse_version} == 1110
-%{__mkdir_p} %{buildroot}%{_sysconfdir}/security/console.perms.d
-%{__cp} udev/opensuse-11.1/65-blackberry.rules %{buildroot}%{_sysconfdir}/udev/rules.d/
-%{__cp} udev/opensuse-11.1/10-blackberry.perms %{buildroot}%{_sysconfdir}/security/console.perms.d/
-%else
 %{__cp} udev/10-blackberry.rules %{buildroot}%{_sysconfdir}/udev/rules.d/
+%if 0%{?fc12}
+%{__cp} udev/69-blackberry.rules %{buildroot}%{_sysconfdir}/udev/rules.d/
+%else
 %{__cp} udev/99-blackberry-perms.rules %{buildroot}%{_sysconfdir}/udev/rules.d/
 %endif
 %{__mkdir_p} %{buildroot}%{_sysconfdir}/modprobe.d
