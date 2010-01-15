@@ -58,6 +58,8 @@ some are only needed for building CVS.
 	<li><b>gettext</b>, needed for the iconv.m4 file, on some systems,
 		when building from CVS to generate configure.</li>
 	<li><b>php5</b>, needed for generating static HTML documentation (CVS builds only) </li>
+	<li><b>rpmdevtools and rpm-build</b>, if building RPMs yourself</li>
+	<li><b>fakeroot</b>, if building DEB packages yourself</li>
 </ul>
 </p>
 

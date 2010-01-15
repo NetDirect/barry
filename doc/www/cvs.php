@@ -235,6 +235,10 @@ steps for building RPMs from CVS:</p>
 	root.  The resulting RPMs end up in ~/.rpmbuild/RPMS/x86_64.
 </pre>
 
+<p> On an RPM based system, install <b>rpm-build</b> and <b>rpmdevtools</b>,
+then run <b>rpmdev-setuptree</b> to create an "rpmbuild" directory in your
+home directory. </p>
+
 
 <? createSubHeader("Building Barry DEBs from Source"); ?>
 
