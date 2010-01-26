@@ -7,7 +7,7 @@
 ///
 
 /*
-    Copyright (C) 2008-2009, Net Direct Inc. (http://www.netdirect.ca/)
+    Copyright (C) 2008-2010, Net Direct Inc. (http://www.netdirect.ca/)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by

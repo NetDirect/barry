@@ -4,7 +4,7 @@
 ///
 
 /*
-    Copyright (C) 2008-2009, Net Direct Inc. (http://www.netdirect.ca/)
+    Copyright (C) 2008-2010, Net Direct Inc. (http://www.netdirect.ca/)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -43,7 +43,7 @@ void Usage()
    cerr
    << "bs11nread - Reads a boost serialization file (from btool)\n"
    << "            and dumps data to stdout\n"
-   << "        Copyright 2008-2009, Net Direct Inc. (http://www.netdirect.ca/)\n"
+   << "        Copyright 2008-2010, Net Direct Inc. (http://www.netdirect.ca/)\n"
    << "        Using: " << Version << "\n"
    << "\n"
    << "   -f file   Filename to save or load handheld data to/from\n"

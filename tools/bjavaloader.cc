@@ -5,7 +5,7 @@
 
 /*
     Copyright (C) 2008-2009, Nicolas VIVIEN
-    Copyright (C) 2005-2009, Net Direct Inc. (http://www.netdirect.ca/)
+    Copyright (C) 2005-2010, Net Direct Inc. (http://www.netdirect.ca/)
 
         Some parts are inspired from btool.cc
 
@@ -63,7 +63,7 @@ void Usage()
    cerr
    << "bjavaloader - Command line USB Blackberry Java Loader\n"
    << "        Copyright 2008-2009, Nicolas VIVIEN.\n"
-   << "        Copyright 2005-2009, Net Direct Inc. (http://www.netdirect.ca/)\n"
+   << "        Copyright 2005-2010, Net Direct Inc. (http://www.netdirect.ca/)\n"
    << "        Using: " << Version << "\n"
    << "\n"
    << "   -a        Wipe applications only\n"

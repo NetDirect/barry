@@ -308,7 +308,7 @@ cd ../
 /sbin/ldconfig
 
 %changelog
-* Thu Oct 01 2009 Chris Frey <cdfrey@foursquare.net> 0.17-0
+* Tue Jan 26 2010 Chris Frey <cdfrey@foursquare.net> 0.17-0
 - version bump
 - added NLS support
 

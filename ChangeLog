@@ -2,6 +2,7 @@ Release: version 0.17 - 2010/01/??
 ------------------------------------------------------------------------------
 2010/01/26
 	- examples: added dbdump.cc example for extracting database data
+	- bumped the copyright dates for 2010
 2010/01/15
 	- updated barry.spec to install 69-blackberry.rules on Fedora 12
 		note that this further breaks the opensuse build, but

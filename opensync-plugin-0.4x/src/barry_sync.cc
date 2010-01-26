@@ -5,7 +5,7 @@
 
 /*
 	Copyright (C) 2009, Nicolas VIVIEN (opensync plugin porting on opensync 0.4x ; Task & Memo support)
-    Copyright (C) 2006-2009, Net Direct Inc. (http://www.netdirect.ca/)
+    Copyright (C) 2006-2010, Net Direct Inc. (http://www.netdirect.ca/)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by

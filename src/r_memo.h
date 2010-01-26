@@ -4,7 +4,7 @@
 ///
 
 /*
-    Copyright (C) 2005-2009, Net Direct Inc. (http://www.netdirect.ca/)
+    Copyright (C) 2005-2010, Net Direct Inc. (http://www.netdirect.ca/)
     Copyright (C) 2007, Brian Edginton
 
     This program is free software; you can redistribute it and/or modify
