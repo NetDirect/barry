@@ -366,7 +366,6 @@ public:
 		splash->Show(true);
 		wxGetApp().Yield();
 		wxGetApp().Yield();
-//		wxMilliSleep(500);
 	}
 };
 
