@@ -20,6 +20,7 @@ set -e
 #
 # Build the Fedora RPM's
 #
+./make-user-rpm.sh build/barry-$1.$2.tar.bz2 ../rpm/barry.spec fedora12 f12
 ./make-user-rpm.sh build/barry-$1.$2.tar.bz2 ../rpm/barry.spec fedora11 f11
 ./make-rpm.sh build/barry-$1.$2.tar.bz2 ../rpm/barry.spec fedora9 fc9
 ./make-rpm.sh build/barry-$1.$2.tar.bz2 ../rpm/barry.spec fedora8 fc8
