@@ -143,67 +143,69 @@ noinst_HEADERS = cbarry.h \
 EXTRA_DIST = convo.awk \
 	legal.txt
 
-libbarry_la_SOURCES = time.cc \
-	base64.cc \
-	bmp.cc \
-	cod.cc \
-	data.cc \
-	usbwrap.cc \
-	pin.cc \
-	probe.cc \
-	common.cc \
-	configfile.cc \
-	error.cc \
-	ldif.cc \
-	log.cc \
+libbarry_la_SOURCES = dll.h \
+	builder.h parser.h \
+	time.h time.cc \
+	base64.h base64.cc \
+	bmp.h bmp-internal.h bmp.cc \
+	cod.h cod-internal.h cod.cc \
+	data.h data.cc \
+	usbwrap.h usbwrap.cc \
+	pin.h pin.cc \
+	probe.h probe.cc \
+	common.h common.cc \
+	configfile.h configfile.cc \
+	error.h error.cc \
+	ldif.h ldif.cc \
+	log.h log.cc \
 	socket.cc \
 	router.cc \
 	dataqueue.cc \
 	threadwrap.cc \
-	protocol.cc \
-	record.cc \
-	r_recur_base.cc \
-	r_calendar.cc \
-	r_calllog.cc \
+	protocol.h protostructs.h protocol.cc \
+	record.h record-internal.h record.cc \
+	r_recur_base.h r_recur_base.cc \
+	r_calendar.h r_calendar.cc \
+	r_calllog.h r_calllog.cc \
 	r_command.cc \
-	r_contact.cc \
+	r_contact.h r_contact.cc \
 	r_dbdb.cc \
-	r_folder.cc \
-	r_memo.cc \
-	r_message_base.cc \
+	r_folder.h r_folder.cc \
+	r_memo.h r_memo.cc \
+	r_message_base.h r_message_base.cc \
 	r_recordstate.cc \
-	r_servicebook.cc \
-	r_sms.cc \
-	r_task.cc \
-	r_timezone.cc \
-	packet.cc \
-	controller.cc \
-	m_mode_base.cc \
-	m_desktop.cc \
-	m_ipmodem.cc \
-	m_serial.cc \
-	m_javaloader.cc \
-	m_jvmdebug.cc \
-	version.cc \
-	pppfilter.cc \
-	sha1.cc \
-	iconv.cc
+	r_servicebook.h r_servicebook.cc \
+	r_sms.h r_sms.cc \
+	r_task.h r_task.cc \
+	r_timezone.h r_timezone.cc \
+	packet.h packet.cc \
+	controller.h controller.cc \
+	m_mode_base.h m_mode_base.cc \
+	m_desktop.h m_desktop.cc \
+	m_ipmodem.h m_ipmodem.cc \
+	m_serial.h m_serial.cc \
+	m_javaloader.h m_javaloader.cc \
+	m_jvmdebug.h m_jvmdebug.cc \
+	version.h version.cc \
+	pppfilter.h pppfilter.cc \
+	sha1.h sha1.cc \
+	iconv.h iconv.cc
 #libbarry_la_LIBADD = $(LTLIBOBJS) $(LIBUSB_LIBS) $(OPENSSL_LIBS)
 libbarry_la_LIBADD = $(LTLIBOBJS) $(LIBUSB_LIBS) $(ZLIB_LIBS) @LTLIBICONV@
 libbarry_la_LDFLAGS = -version-info ${LIB_BARRY_VERSION}
 
 libbarrydp_la_SOURCES = \
-	dp_parser.cc \
-	dp_codinfo.cc
+	dp_parser.h dp_parser.cc \
+	dp_codinfo.h dp_codinfo.cc
 libbarrydp_la_LIBADD = libbarry.la
 libbarrydp_la_LDFLAGS = -version-info ${LIB_BARRY_VERSION}
 
 libbarryjdwp_la_SOURCES = \
 	j_record.cc \
-	j_jdwp.cc \
-	j_message.cc \
-	j_server.cc \
-	j_manager.cc
+	j_jdwp.h j_jdwp.cc \
+	j_message.h j_message.cc \
+	j_server.h j_server.cc \
+	j_manager.h j_manager.cc
 libbarryjdwp_la_LIBADD = libbarry.la libbarrydp.la $(LIBUSB_LIBS)
 libbarryjdwp_la_LDFLAGS = -version-info ${LIB_BARRY_VERSION}
 
