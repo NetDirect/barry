@@ -32,7 +32,7 @@ namespace Barry {
 class BXEXPORT ConfigFile
 {
 public:
-	class DBListType : public std::vector<std::string>
+	class BXEXPORT DBListType : public std::vector<std::string>
 	{
 	public:
 		bool IsSelected(const std::string &dbname) const;
