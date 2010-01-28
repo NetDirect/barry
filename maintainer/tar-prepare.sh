@@ -33,5 +33,6 @@ rm -rf \
 	autom4te.cache \
 	gui/autom4te.cache \
 	opensync-plugin/autom4te.cache \
-	opensync-plugin-0.4x/autom4te.cache
+	opensync-plugin-0.4x/autom4te.cache \
+	desktop/autom4te.cache
 
