@@ -74,6 +74,25 @@ Description: GTK+ based GUI for backing up the RIM BlackBerry Handheld
  .
  This package contains the debug version of the backup GUI.
 
+Package: barrydesktop
+Section: utils
+Architecture: any
+Depends: ${shlibs:Depends}
+Description: Desktop Panel GUI for the RIM BlackBerry Handheld
+ Barry is a GPL C++ library for interfacing with the RIM BlackBerry Handheld.
+ .
+ This package contains a GUI management application for backups, syncing, etc.
+
+Package: barrydesktop-dbg
+Section: utils
+Priority: extra
+Architecture: any
+Depends: ${shlibs:Depends}
+Description: Desktop Panel GUI for the RIM BlackBerry Handheld
+ Barry is a GPL C++ library for interfacing with the RIM BlackBerry Handheld.
+ .
+ This package contains the debug files for the Barry desktop.
+
 #Package: barry-doc
 #Architecture: all
 #Description: Documentation for barry

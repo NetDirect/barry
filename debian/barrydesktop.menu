@@ -1,0 +1,8 @@
+?package(barrydesktop-gui):\
+  needs="X11"\
+  section="Applications/Mobile Devices"\
+  title="Barry Desktop Panel"\
+  command="/usr/bin/barrydesktop"\
+  hints="Blackberry Management GUI"\
+  icon="/usr/share/pixmaps/barry_logo_icon.png"
+
