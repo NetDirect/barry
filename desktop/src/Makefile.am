@@ -7,7 +7,8 @@ AM_CXXFLAGS = -ansi -Wall -g
 AM_CPPFLAGS =
 AM_LDFLAGS =
 
-bin_PROGRAMS = barrydesktop ostest
+bin_PROGRAMS = barrydesktop
+noinst_PROGRAMS = ostest
 
 barrydesktop_SOURCES = \
 	barrydesktop.cc \
