@@ -123,6 +123,10 @@ distributions should have similar package names.
 <p>Use the apt-get package manager to install the following:
 <ul>
 	<li> pkg-config </li>
+	<li> fakeroot </li>
+	<li> cdbs </li>
+	<li> autoconf </li>
+	<li> automake </li>
 	<li> libtool </li>
 	<li> libusb-dev </li>
 	<li> libboost-serialization-dev </li>
