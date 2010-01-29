@@ -46,6 +46,10 @@ SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ACTION=="add", \
 	RUN="/usr/sbin/bcharge -p %p"
 
 SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ACTION=="add", \
+	ATTR{idVendor}=="0fca", ATTR{idProduct}=="8001", \
+	RUN="/usr/sbin/bcharge -p %p"
+
+SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ACTION=="add", \
 	ATTR{idVendor}=="0fca", ATTR{idProduct}=="0004", \
 	RUN="/usr/sbin/bcharge -p %p"
 

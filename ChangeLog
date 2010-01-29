@@ -1,5 +1,7 @@
 Release: version 0.17 - 2010/01/??
 ------------------------------------------------------------------------------
+2010/01/29
+	- added product ID 8001 (Pearl Flip) to udev rules
 2010/01/26
 	- examples: added dbdump.cc example for extracting database data
 	- bumped the copyright dates for 2010
