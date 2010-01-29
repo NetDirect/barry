@@ -10,6 +10,13 @@
 	%define with_opensync 1
 %endif
 
+# Fedora 12 has the desktop packages installed for our build system
+%if 0%{?fc12} || 0%{?fc13}
+	%define with_desktop 1
+%else
+	%define with_desktop 0
+%endif
+
 %if 0%{?fc12} || 0%{?fc13}
 	%define use_69_rules 1
 %else
@@ -36,6 +43,11 @@ BuildRequires: libusb-devel, gcc-c++, pkgconfig, boost-devel, fuse-devel, zlib-d
 
 %if %{with_gui}
 BuildRequires: desktop-file-utils
+%endif
+
+# desktop tree
+%if %{with_desktop}
+BuildRequires: wxGTK-devel
 %endif
 
 %define barryroot %{_builddir}/%{name}-%{version}
@@ -124,6 +136,21 @@ is a registered trademark of Research in Motion Limited.)
 This package contains the opensync plugin.
 %endif
 
+# desktop tree
+%if %{with_desktop}
+%package desktop
+Summary: BlackBerry(tm) Desktop Panel GUI for Linux
+Group: Applications/Productivity
+Requires: libbarry0, libopensync >= 0.22
+BuildRequires: wxGTK-devel
+
+%description desktop
+Barry is a desktop toolset for managing your BlackBerry(tm) device. (BlackBerry
+is a registered trademark of Research in Motion Limited.)
+
+This package contains the desktop panel GUI.
+%endif
+
 %prep
 %setup -q
 
@@ -143,6 +170,14 @@ cd ../
 # opensync tree
 %if %{with_opensync}
 cd opensync-plugin/
+%{configure} PKG_CONFIG_PATH="..:$PKG_CONFIG_PATH" CXXFLAGS="-I../.." LDFLAGS="-L../../src" --enable-nls
+%{__make} %{?_smp_mflags}
+cd ../
+%endif
+
+# desktop tree
+%if %{with_desktop}
+cd desktop/
 %{configure} PKG_CONFIG_PATH="..:$PKG_CONFIG_PATH" CXXFLAGS="-I../.." LDFLAGS="-L../../src" --enable-nls
 %{__make} %{?_smp_mflags}
 cd ../
@@ -221,6 +256,13 @@ desktop-file-install --vendor netdirect \
 # opensync tree
 %if %{with_opensync}
 cd opensync-plugin/
+%{__make} DESTDIR=%{buildroot} install
+cd ../
+%endif
+
+# desktop tree
+%if %{with_desktop}
+cd desktop/
 %{__make} DESTDIR=%{buildroot} install
 cd ../
 %endif
@@ -330,6 +372,15 @@ cd ../
 %doc COPYING
 %endif
 
+# desktop tree
+%if %{with_desktop}
+%files desktop
+%defattr(-,root,root)
+%attr(0755,root,root) %{_bindir}/barrydesktop
+%attr(0644,root,root) %{_mandir}/man1/barrydesktop*
+%doc COPYING
+%endif
+
 %clean
 [ "%{buildroot}" != "/" ] && %{__rm} -rf %{buildroot}
 [ "%{barryroot}" != "/" ] && %{__rm} -rf %{barryroot}
@@ -352,6 +403,8 @@ cd ../
 - added new ppp chat scripts for Orange Spain, Optus and Vodafone AU
 - added copy of barry-sprint as barry-telus
 - added brawchannel, btardump, bio, and balxparse
+- added desktop support
+- cleaned up desktop variables
 
 * Sat Sep 29 2009 Chris Frey <cdfrey@foursquare.net> 0.16-0
 - version bump
