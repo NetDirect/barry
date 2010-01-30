@@ -1,14 +1,11 @@
-
 [Desktop Entry]
-Version=1.0
 Encoding=UTF-8
 Name=Barry Backup
-Comment=Make backups of your BlackBerry databases
+Comment=Backup and restore databases on the BlackBerry Handheld
 Exec=barrybackup
 Icon=barry_logo_icon
 Terminal=false
 Type=Application
 StartupWMClass=barrybackup-gui
-StartupNotify=true
-X-Desktop-File-Install-Version=0.15
-Categories=Office;PDA;
+Categories=Utility;Backup;
+
