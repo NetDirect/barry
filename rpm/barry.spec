@@ -265,6 +265,10 @@ cd ../
 cd desktop/
 %{__make} DESTDIR=%{buildroot} install
 cd ../
+%{__cp} logo/barry_logo_icon.png %{buildroot}%{_datadir}/pixmaps/barry_desktop_icon.png
+desktop-file-install --vendor netdirect \
+   --dir %{buildroot}%{_datadir}/applications \
+   menu/barrydesktop.desktop
 %endif
 
 %files -n libbarry0
@@ -377,6 +381,8 @@ cd ../
 %files desktop
 %defattr(-,root,root)
 %attr(0755,root,root) %{_bindir}/barrydesktop
+%attr(0644,root,root) %{_datadir}/pixmaps/barry_desktop_icon.png
+%attr(0644,root,root) %{_datadir}/applications/*barrydesktop.desktop
 %attr(0644,root,root) %{_mandir}/man1/barrydesktop*
 %doc COPYING
 %endif

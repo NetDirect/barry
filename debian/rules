@@ -90,6 +90,17 @@ install/barrybackup-gui::
 	# Install barry icon
 	install -d $(CURDIR)/debian/barrybackup-gui/usr/share/pixmaps
 	install -m 0644 $(DEB_SRCDIR)/logo/barry_logo_icon.png $(CURDIR)/debian/barrybackup-gui/usr/share/pixmaps
+	# Install Gnome .desktop file
+	install -d $(CURDIR)/debian/barrybackup-gui/usr/share/applications
+	install -m 0644 $(DEB_SRCDIR)/menu/barrybackup.desktop $(CURDIR)/debian/barrybackup-gui/usr/share/applications
+
+install/barrydesktop::
+	# Install barry icon
+	install -d $(CURDIR)/debian/barrydesktop/usr/share/pixmaps
+	install -m 0644 $(DEB_SRCDIR)/logo/barry_logo_icon.png $(CURDIR)/debian/barrydesktop/usr/share/pixmaps/barry_desktop_icon.png
+	# Install Gnome .desktop file
+	install -d $(CURDIR)/debian/barrydesktop/usr/share/applications
+	install -m 0644 $(DEB_SRCDIR)/menu/barrydesktop.desktop $(CURDIR)/debian/barrydesktop/usr/share/applications
 
 post-patches::
 	@rm -f $(CURDIR)/deb_srcdir

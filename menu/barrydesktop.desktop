@@ -1,0 +1,11 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Barry Desktop Panel
+Comment=Manage BlackBerry devices from a central GUI.
+Exec=barrydesktop
+Icon=barry_desktop_icon
+Terminal=false
+Type=Application
+StartupWMClass=barrydesktop
+Categories=Utility;
+
