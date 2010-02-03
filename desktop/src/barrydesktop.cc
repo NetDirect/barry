@@ -477,7 +477,12 @@ wxBitmap PNGButton::LoadButtonBitmap(int state)
 {
 	wxString file = GetButtonFilename(m_id, state);
 	wxImage image(file);
-	return wxBitmap(image);
+	wxBitmap bmp(image);
+	if( !image.IsOk() || !bmp.IsOk() ) {
+		wxGetApp().Yield();
+		throw std::runtime_error("Cannot load button bitmap.");
+	}
+	return bmp;
 }
 
 void PNGButton::Init(wxDC &dc)
@@ -1321,6 +1326,10 @@ bool BarryDesktopApp::OnInit()
 
 	// Create the main frame window where all the action happens
 	wxImage back(_T("../images/background.png"));
+	if( !back.IsOk() ) {
+		Yield();
+		return false;
+	}
 	BaseFrame *frame = new BaseFrame(back);
 
 	// Clean up the splash screen, and init the main frame
