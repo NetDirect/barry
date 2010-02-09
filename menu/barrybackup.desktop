@@ -7,5 +7,5 @@ Icon=barry_logo_icon
 Terminal=false
 Type=Application
 StartupWMClass=barrybackup-gui
-Categories=Utility;Backup;
+Categories=Utility;
 
