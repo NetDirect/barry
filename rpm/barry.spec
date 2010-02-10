@@ -284,7 +284,7 @@ cd ../
 %attr(0755,root,root) %{_bindir}/barrybackup
 %attr(0644,root,root) %{_datadir}/barry/glade/*.glade
 %attr(0644,root,root) %{_datadir}/pixmaps/barry_logo_icon.png
-%attr(0644,root,root) %{_datadir}/applications/barrybackup.desktop
+%attr(0644,root,root) %{_datadir}/applications/*barrybackup.desktop
 %attr(0644,root,root) %{_mandir}/man1/barrybackup*
 %doc COPYING
 %endif
