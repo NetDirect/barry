@@ -111,6 +111,7 @@ void DeviceInterface::RestoreThread()
 				unsigned int dbId = m_desktop->GetDBID(m_current_dbname);
 				m_AppComm.m_erase_db->emit();
 				m_desktop->SaveDatabase(dbId, *this);
+				m_AppComm.m_restored_db->emit();
 			}
 			catch( Barry::Error &be ) {
 				// save thread error

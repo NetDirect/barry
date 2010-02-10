@@ -49,6 +49,8 @@ Thread::Thread(Device dev, Glib::Dispatcher *update_signal)
 		sigc::mem_fun(*this, &Thread::on_thread_done));
 	m_signal_erase_db.connect(
 		sigc::mem_fun(*this, &Thread::on_thread_erase_db));
+	m_signal_restored_db.connect(
+		sigc::mem_fun(*this, &Thread::on_thread_restored_db));
 
 	SetStatus("Ready");
 }
@@ -143,7 +145,8 @@ bool Thread::Backup(std::string label)
 		DeviceInterface::AppComm(&m_signal_progress,
 			&m_signal_error,
 			&m_signal_done,
-			&m_signal_erase_db),
+			&m_signal_erase_db,
+			&m_signal_restored_db),
 		GetBackupList(), GetPath(), label);
 	if( started ) {
 		m_thread_state = THREAD_STATE_BACKUP;
@@ -165,7 +168,8 @@ bool Thread::Restore(std::string filename)
 		DeviceInterface::AppComm(&m_signal_progress,
 			&m_signal_error,
 			&m_signal_done,
-			&m_signal_erase_db),
+			&m_signal_erase_db,
+			&m_signal_restored_db),
 		GetRestoreList(), filename);
 	if( started ) {
 		m_thread_state = THREAD_STATE_RESTORE;
@@ -224,7 +228,15 @@ void Thread::on_thread_done()
 
 void Thread::on_thread_erase_db()
 {
-	std::string name = m_interface.GetThreadDBName();
-	std::cerr << "Erasing database: " << name << std::endl;
+	m_erasing_db_name = m_interface.GetThreadDBName();
+	std::cerr << "Erasing database: " << m_erasing_db_name << std::endl;
+}
+
+void Thread::on_thread_restored_db()
+{
+	if( m_erasing_db_name.size() ) {
+		std::cerr << "Restored database: " << m_erasing_db_name << std::endl;
+		m_erasing_db_name.clear();
+	}
 }
 

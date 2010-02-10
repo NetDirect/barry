@@ -58,12 +58,18 @@ public:
 	{
 		Glib::Dispatcher *m_erase_db;	// to notify the app about the
 						// db erase stage of restore
+		Glib::Dispatcher *m_restored_db;// to notify the app that the
+						// previous erase_db was
+						// restored... do not rely
+						// on the current db name ==
+						// the name found at erase time
 		Glib::Dispatcher *m_progress;
 		Glib::Dispatcher *m_error;
 		Glib::Dispatcher *m_done;
 
 		AppComm() :
 			m_erase_db(0),
+			m_restored_db(0),
 			m_progress(0),
 			m_error(0),
 			m_done(0)
@@ -71,16 +77,18 @@ public:
 		AppComm(Glib::Dispatcher *progress,
 			Glib::Dispatcher *error,
 			Glib::Dispatcher *done,
-			Glib::Dispatcher *erase_db) :
+			Glib::Dispatcher *erase_db,
+			Glib::Dispatcher *restored_db) :
 			m_erase_db(erase_db),
+			m_restored_db(restored_db),
 			m_progress(progress),
 			m_error(error),
 			m_done(done)
 			{}
 		bool IsValid() const
-			{ return m_erase_db && m_progress && m_error && m_done; }
+			{ return m_erase_db && m_restored_db && m_progress && m_error && m_done; }
 		void Invalidate()
-			{ m_erase_db = m_progress = m_error = m_done = 0; }
+			{ m_erase_db = m_restored_db = m_progress = m_error = m_done = 0; }
 	};
 
 	class Quit	// quit exception to break out of upload/download

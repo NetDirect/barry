@@ -42,6 +42,7 @@ private:
 	Glib::Dispatcher m_signal_error;
 	Glib::Dispatcher m_signal_done;
 	Glib::Dispatcher m_signal_erase_db;
+	Glib::Dispatcher m_signal_restored_db;
 
 	Device m_dev;
 	DeviceInterface m_interface;
@@ -74,6 +75,7 @@ private:
 	bool m_connected;
 	bool m_error;
 	unsigned int m_thread_state;
+	std::string m_erasing_db_name;
 
 protected:
 	void SetStatus(std::string);
@@ -126,6 +128,7 @@ public:
 	void on_thread_error();
 	void on_thread_done();
 	void on_thread_erase_db();
+	void on_thread_restored_db();
 };
 
 #endif

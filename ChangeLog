@@ -1,5 +1,8 @@
 Release: version 0.17 - 2010/01/??
 ------------------------------------------------------------------------------
+2010/02/09
+	- added message during restore, to let user know that the erased
+		database was restored (requested by Pierre Pietri)
 2010/01/29
 	- added product ID 8001 (Pearl Flip) to udev rules
 2010/01/26
