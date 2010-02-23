@@ -66,15 +66,8 @@ const wxChar *StateNames[] = {
 #define BUTTON_STATE_FOCUS	1
 #define BUTTON_STATE_PUSHED	2
 
+wxString GetImageFilename(const wxString &filename);
 wxString GetButtonFilename(int id, int state);
-
-wxString GetButtonFilename(int id, int state)
-{
-	wxString file = _T("../images/");
-	file += ButtonNames[id - MainMenu_FirstButton];
-	file += StateNames[state];
-	return file;
-}
 
 class StatusProcess : public wxProcess
 {
@@ -357,7 +350,7 @@ class UsbScanSplash
 public:
 	UsbScanSplash()
 	{
-		wxImage scanpng(_T("../images/scanning.png"));
+		wxImage scanpng(GetImageFilename(_T("scanning.png")));
 		wxBitmap scanning(scanpng);
 		std::auto_ptr<wxSplashScreen> splash( new wxSplashScreen(
 			scanning, wxSPLASH_CENTRE_ON_SCREEN, 0,
@@ -368,6 +361,36 @@ public:
 		wxGetApp().Yield();
 	}
 };
+
+//////////////////////////////////////////////////////////////////////////////
+// Utility functions
+
+/// Returns full path and filename for given filename.
+/// 'filename' should have no directory component, as the
+/// directory will be prepended and returned.
+wxString GetImageFilename(const wxString &filename)
+{
+	// try the official install directory first
+	wxString file = _T(BARRYDESKTOP_IMAGEDIR);
+	file += filename;
+	if( wxFileExists(file) )
+		return file;
+
+	// oops, assume we're running from the build directory,
+	// and use the images dir
+	file = wxPathOnly(wxGetApp().argv[0]);
+	file += _T("/../images/");
+	file += filename;
+	return file;
+}
+
+wxString GetButtonFilename(int id, int state)
+{
+	return GetImageFilename(
+		wxString(ButtonNames[id - MainMenu_FirstButton]) + 
+		StateNames[state]
+		);
+}
 
 //////////////////////////////////////////////////////////////////////////////
 // ClickableImage
@@ -1325,7 +1348,7 @@ bool BarryDesktopApp::OnInit()
 	}
 
 	// Create the main frame window where all the action happens
-	wxImage back(_T("../images/background.png"));
+	wxImage back(GetImageFilename(_T("background.png")));
 	if( !back.IsOk() ) {
 		Yield();
 		return false;

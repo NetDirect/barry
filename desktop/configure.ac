@@ -69,6 +69,11 @@ AM_PATH_WXCONFIG([2.8.0], [], [
 	])
 	])
 
+# Setup imagedir, so src/Makefile.am can use it for the compile
+# and for the image file installations. (image_DATA)
+imagedir="$datadir/barry/desktop/images/"
+AC_SUBST(imagedir)
+
 # Checks for libraries.
 AC_CHECK_LIB([pthread], [main])
 
