@@ -19,6 +19,7 @@ src/threadwrap.cc
 src/r_servicebook.cc
 src/iconv.cc
 src/m_desktop.cc
+src/m_vnc_server.cc
 src/record.cc
 src/dp_codinfo.cc
 src/time.cc

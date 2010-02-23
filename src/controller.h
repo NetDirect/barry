@@ -85,7 +85,8 @@ public:
 		JavaLoader,		//< experimental
 		JVMDebug,		//< experimental
 		UsbSerData,		//< GPRS modem support over USB
-		UsbSerCtrl		//< internally used behind the scenes
+		UsbSerCtrl,		//< internally used behind the scenes
+		VNCServer		//< for VNC server redirection
 	};
 
 private:

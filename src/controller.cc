@@ -192,6 +192,10 @@ uint16_t Controller::SelectMode(ModeType mode)
 		strcpy(modeName, "RIM_UsbSerCtrl");
 		break;
 
+	case VNCServer:
+		strcpy(modeName, "VNC_Server");
+		break;
+
 	default:
 		throw std::logic_error("Controller: Invalid mode in SelectMode");
 		break;
