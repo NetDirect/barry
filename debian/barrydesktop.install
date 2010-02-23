@@ -1,3 +1,4 @@
 debian/tmp/usr/bin/barrydesktop
+debian/tmp/usr/share/barry/desktop/images/*
 debian/tmp/usr/share/man/man1/barrydesktop.1
 

@@ -1,8 +1,6 @@
 Feature TODO List:
 ==================
 - menu item: reset current device, wait, and rescan
-- make the images/ directory installable, like gui/ .glade files
-- load the images/ from installed directory, instead of hard coded ../
 
 Sync:
 -----
