@@ -381,6 +381,7 @@ desktop-file-install --vendor netdirect \
 %files desktop
 %defattr(-,root,root)
 %attr(0755,root,root) %{_bindir}/barrydesktop
+%attr(0644,root,root) %{_datadir}/barry/desktop/images/*.png
 %attr(0644,root,root) %{_datadir}/pixmaps/barry_desktop_icon.png
 %attr(0644,root,root) %{_datadir}/applications/*barrydesktop.desktop
 %attr(0644,root,root) %{_mandir}/man1/barrydesktop*
