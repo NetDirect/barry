@@ -4,7 +4,7 @@
 ///
 
 /*
-    Copyright (C) 2009, Net Direct Inc. (http://www.netdirect.ca/)
+    Copyright (C) 2009-2010, Net Direct Inc. (http://www.netdirect.ca/)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -1240,7 +1240,7 @@ void BaseFrame::OnAbout(wxCommandEvent &event)
 	info.SetName(_T("Barry Desktop Control Panel"));
 	info.SetVersion(_T("0.17"));
 	info.SetDescription(_T("A Free Software graphical user interface for working with the BlackBerry(TM) handheld."));
-	info.SetCopyright(_T("Copyright (C) 2009, Net Direct Inc."));
+	info.SetCopyright(_T("Copyright (C) 2009-2010, Net Direct Inc."));
 	info.SetWebSite(_T("http://netdirect.ca/barry"));
 	info.SetLicense(_T(
 "    This program is free software; you can redistribute it and/or modify\n"

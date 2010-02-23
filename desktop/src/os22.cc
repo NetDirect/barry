@@ -4,7 +4,7 @@
 ///
 
 /*
-    Copyright (C) 2009, Net Direct Inc. (http://www.netdirect.ca/)
+    Copyright (C) 2009-2010, Net Direct Inc. (http://www.netdirect.ca/)
 
     With code from msynctool: (GPL v2+)
     Copyright (C) 2004-2005  Armin Bauer <armin.bauer@opensync.org>
