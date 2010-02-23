@@ -86,7 +86,25 @@ namespace {
 	BEGIN_EVENT_TABLE(WaitDialog, wxDialog)
 		EVT_BUTTON	(wxID_CANCEL, WaitDialog::OnButton)
 	END_EVENT_TABLE()
+} // namespace
+
+//////////////////////////////////////////////////////////////////////////////
+// Static utility functions
+
+long Evolution::ForceShutdown()
+{
+	const wxChar *shutdown_argv[] = {
+		_T("evolution"),
+		_T("--force-shutdown"),
+		NULL
+	};
+	long ret = wxExecute((wxChar**)shutdown_argv, wxEXEC_SYNC);
+	wxSleep(2);
+	return ret;
 }
+
+//////////////////////////////////////////////////////////////////////////////
+// Evolution config UI class
 
 Evolution::Evolution()
 	: m_evolution(0)
@@ -125,21 +143,14 @@ bool Evolution::InitialRun()
 	if( choice == wxNO )
 		return false;
 
+	ForceShutdown();
+
 	// start Evolution, and wait for it to exit, showing a waiting
 	// message to the user
 	WaitDialog waitdlg(m_parent, _T("Waiting for Evolution to exit..."),
 		_T("Evolution Running"));
 
 	ExecCallback *callback = new ExecCallback(&waitdlg);
-
-	const wxChar *shutdown_argv[] = {
-		_T("evolution"),
-		_T("--force-shutdown"),
-		NULL
-	};
-	wxExecute((wxChar**)shutdown_argv, wxEXEC_SYNC);
-
-	wxSleep(2);
 
 	const wxChar *start_argv[] = {
 		_T("evolution"),

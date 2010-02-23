@@ -47,6 +47,9 @@ public:
 	// virtual overrides
 	virtual bool Configure(wxWindow *parent);
 	virtual plugin_ptr GetPlugin();
+
+	// static utility functions
+	static long ForceShutdown();
 };
 
 }
