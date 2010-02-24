@@ -299,6 +299,11 @@ void Group::Save(OpenSync::API &api)
 			throw SaveError(oss.str());
 		}
 	}
+	else {
+		// group does not exist, so create it if needed
+		if( size() )
+			api.AddGroup(m_group_name);
+	}
 
 	// cycle through all plugins and save them all
 	iterator b = begin(), e = end();
