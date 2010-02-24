@@ -88,4 +88,5 @@ tools/btool.cc
 tools/bfuse.cc
 tools/upldif.cc
 tools/bjavaloader.cc
+tools/bvncrelay.cc
 

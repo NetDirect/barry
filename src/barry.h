@@ -65,6 +65,7 @@
 #include "m_ipmodem.h"
 #include "m_serial.h"
 #include "m_javaloader.h"
+#include "m_vnc_server.h"
 #include "m_jvmdebug.h"
 #include "version.h"
 #include "log.h"
