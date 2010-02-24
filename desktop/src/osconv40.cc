@@ -80,19 +80,38 @@ Converter::plugin_ptr Converter40::CreateAndLoadPlugin(const Member &member)
 	return ptr;
 }
 
-std::string Converter40::GetPluginName(const Config::Barry &)
+std::string Converter40::GetPluginName(const Config::Barry &) const
 {
 	return PLUGIN_BARRY;
 }
 
-std::string Converter40::GetPluginName(const Config::Evolution &)
+std::string Converter40::GetPluginName(const Config::Evolution &) const
 {
 	return PLUGIN_EVOLUTION;
 }
 
-std::string Converter40::GetPluginName(const Config::Unsupported &)
+std::string Converter40::GetPluginName(const Config::Unsupported &) const
 {
 	return "unsupported-sync";
+}
+
+bool Converter40::IsConfigured(const Config::Barry &config) const
+{
+	return config.GetPin().valid();
+}
+
+bool Converter40::IsConfigured(const Config::Evolution &config) const
+{
+	// the 40 plugin supports all 4, so check all 4
+	return	config.GetAddressPath().size() &&
+		config.GetCalendarPath().size() &&
+		config.GetTasksPath().size() &&
+		config.GetMemosPath().size();
+}
+
+bool Converter40::IsConfigured(const Config::Unsupported &) const
+{
+	return false;
 }
 
 

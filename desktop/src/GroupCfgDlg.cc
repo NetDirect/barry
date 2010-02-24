@@ -64,7 +64,7 @@ GroupCfgDlg::GroupCfgDlg(wxWindow *parent,
 		m_engine = const_cast<OpenSync::API*> (m_device.GetEngine());
 	}
 
-	if( m_device.IsConfigured() ) {
+	if( m_device.GetConfigGroup() ) {
 		const Config::Group *group = m_device.GetConfigGroup();
 		// use existing group name, if available
 		m_group_name = group->GetGroupName();
@@ -331,6 +331,34 @@ void GroupCfgDlg::OnAppComboChange(wxCommandEvent &event)
 
 bool GroupCfgDlg::TransferDataFromWindow()
 {
+	// engine must be set!
+	if( !m_engine ) {
+		wxMessageBox(_T("Please select an engine."),
+			_T("Device Config"), wxOK | wxICON_ERROR, this);
+		return false;
+	}
+
+	// make sure the Barry plugin is configured
+	if( !m_barry_plugin.IsConfigured(*m_engine) ) {
+		wxMessageBox(_T("Barry doesn't have a PIN number.  This should never happen."),
+			_T("Device Config"), wxOK | wxICON_ERROR, this);
+		return false;
+	}
+
+	// make sure the application plugin is configured
+	if( !m_app_plugin.get() || !m_app_plugin->IsConfigured(*m_engine) ) {
+		// the app hasn't been configured yet, do it automatically
+		wxCommandEvent event;
+		OnConfigureApp(event);
+
+		if( !m_app_plugin.get() || !m_app_plugin->IsConfigured(*m_engine) ) {
+			wxMessageBox(_T("The application plugin is not fully configured."),
+				_T("Application Config"), wxOK | wxICON_ERROR, this);
+			return false;
+		}
+	}
+
+	// copy over barry specific settings
 	m_barry_plugin.SetPassword(string(m_password_edit->GetValue().utf8_str()));
 	m_barry_plugin.DebugMode(m_debug_check->GetValue());
 	return true;

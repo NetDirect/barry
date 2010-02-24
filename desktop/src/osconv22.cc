@@ -80,21 +80,39 @@ Converter::plugin_ptr Converter22::CreateAndLoadPlugin(const Member &member)
 	return ptr;
 }
 
-std::string Converter22::GetPluginName(const Config::Barry &)
+std::string Converter22::GetPluginName(const Config::Barry &) const
 {
 	return PLUGIN_BARRY;
 }
 
-std::string Converter22::GetPluginName(const Config::Evolution &)
+std::string Converter22::GetPluginName(const Config::Evolution &) const
 {
 	return PLUGIN_EVOLUTION;
 }
 
-std::string Converter22::GetPluginName(const Config::Unsupported &)
+std::string Converter22::GetPluginName(const Config::Unsupported &) const
 {
 	return "unsupported-sync";
 }
 
+bool Converter22::IsConfigured(const Config::Barry &config) const
+{
+	return config.GetPin().valid();
+}
+
+bool Converter22::IsConfigured(const Config::Evolution &config) const
+{
+	// the 22 barry plugin only supports address and calendar,
+	// but the evolution plugin seems to like these 3
+	return	config.GetAddressPath().size() &&
+		config.GetCalendarPath().size() &&
+		config.GetTasksPath().size();
+}
+
+bool Converter22::IsConfigured(const Config::Unsupported &) const
+{
+	return false;
+}
 
 void Converter22::Load(Config::Barry &config, const Member &member)
 {

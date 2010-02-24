@@ -176,6 +176,16 @@ bool Group::GroupExists(OpenSync::API &api) const
 	return std::find(groups.begin(), groups.end(), m_group_name) != groups.end();
 }
 
+bool Group::AllConfigured(OpenSync::API &api) const
+{
+	const_iterator b = begin(), e = end();
+	for( ; b != e; ++b ) {
+		if( !(*b)->IsConfigured(api) )
+			return false;
+	}
+	return true;
+}
+
 int Group::GetConnectedCount() const
 {
 	int count = 0;

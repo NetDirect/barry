@@ -62,7 +62,7 @@ public:
 	Barry::Pin GetPin() const;
 	std::string GetDeviceName() const;
 	bool IsConnected() const { return m_result; }
-	bool IsConfigured() const { return m_group.get(); }
+	bool IsConfigured() const { return m_group.get() && m_engine && m_group->AllConfigured(*m_engine); }
 
 	/// Returns a string uniquely identifying this DeviceEntry
 	std::string GetIdentifyingString() const;

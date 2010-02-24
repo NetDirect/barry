@@ -873,12 +873,35 @@ void SyncMode::OnConfigureDevice(wxListEvent &event)
 	GroupCfgDlg dlg(m_parent, entry, wxGetApp().GetOpenSync());
 	if( dlg.ShowModal() == wxID_OK && dlg.GetEngine() && dlg.GetGroup().get() ) {
 		// delete the old group
-		if( entry.IsConfigured() && entry.GetEngine() ) {
+		if( entry.GetEngine() &&
+		    entry.GetConfigGroup() &&
+		    entry.GetConfigGroup()->GroupExists(*entry.GetEngine()) )
+		{
 			entry.GetEngine()->DeleteGroup(entry.GetConfigGroup()->GetGroupName());
 		}
 
-		// save the new one
-		dlg.GetGroup()->Save(*dlg.GetEngine());
+		for( int attempt = 0; attempt < 2; attempt++ ) {
+			try {
+
+				// save the new one
+				dlg.GetGroup()->Save(*dlg.GetEngine());
+
+			}
+			catch( OpenSync::Config::SaveError &se ) {
+				cout << "Exception during save: " << se.what() << endl;
+				if( attempt < 2 ) {
+					cout << "Deleting group using alternate engine and resaving: " << entry.GetConfigGroup()->GetGroupName() << endl;
+					// delete and try again
+					dlg.GetEngine()->DeleteGroup(entry.GetConfigGroup()->GetGroupName());
+				}
+				else {
+					wxString msg = _T("Unable to save configuration for this device.\nError: ");
+					msg += wxString(se.what(), wxConvUTF8);
+					wxMessageBox(msg, _T("OpenSync Save Error"), wxOK | wxICON_ERROR);
+					return;
+				}
+			}
+		}
 
 		// update the device set
 		(*m_device_set)[event.GetIndex()].

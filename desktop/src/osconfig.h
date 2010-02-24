@@ -101,6 +101,11 @@ public:
 	//{
 	//	return api.GetConverter().GetPluginName(*this);
 	//}
+	virtual bool IsConfigured(OpenSync::API &api) const = 0;
+	// sample implementation:
+	//{
+	//	return api.GetConverter().IsConfigured(*this);
+	//}
 };
 
 class Unsupported : public Plugin
@@ -134,6 +139,10 @@ public:
 	virtual std::string GetPluginName(OpenSync::API &api) const
 	{
 		return api.GetConverter().GetPluginName(*this);
+	}
+	virtual bool IsConfigured(OpenSync::API &api) const
+	{
+		return api.GetConverter().IsConfigured(*this);
 	}
 
 	// statics
@@ -206,6 +215,10 @@ public:
 	{
 		return api.GetConverter().GetPluginName(*this);
 	}
+	virtual bool IsConfigured(OpenSync::API &api) const
+	{
+		return api.GetConverter().IsConfigured(*this);
+	}
 
 	// statics
 	static std::string AppName() { return "Barry"; }
@@ -261,6 +274,10 @@ public:
 	virtual std::string GetPluginName(OpenSync::API &api) const
 	{
 		return api.GetConverter().GetPluginName(*this);
+	}
+	virtual bool IsConfigured(OpenSync::API &api) const
+	{
+		return api.GetConverter().IsConfigured(*this);
 	}
 
 	// statics
@@ -330,6 +347,7 @@ public:
 	bool HasUnsupportedPlugins() const;
 	bool HasBarryPlugins() const;
 	bool GroupExists(OpenSync::API &api) const;
+	bool AllConfigured(OpenSync::API &api) const;
 	int GetConnectedCount() const;
 	const std::string& GetGroupName() const { return m_group_name; }
 

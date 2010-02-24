@@ -40,9 +40,13 @@ public:
 		std::string *appname = 0) const;
 	virtual plugin_ptr CreateAndLoadPlugin(const Member &member);
 
-	virtual std::string GetPluginName(const Config::Barry &);
-	virtual std::string GetPluginName(const Config::Evolution &);
-	virtual std::string GetPluginName(const Config::Unsupported &);
+	virtual std::string GetPluginName(const Config::Barry &) const;
+	virtual std::string GetPluginName(const Config::Evolution &) const;
+	virtual std::string GetPluginName(const Config::Unsupported &) const;
+
+	virtual bool IsConfigured(const Config::Barry &) const;
+	virtual bool IsConfigured(const Config::Evolution &) const;
+	virtual bool IsConfigured(const Config::Unsupported &) const;
 
 	virtual void Load(Config::Barry &config, const Member &member);
 	virtual void Load(Config::Evolution &config, const Member &member);
