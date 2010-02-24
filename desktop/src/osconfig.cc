@@ -189,14 +189,35 @@ int Group::GetConnectedCount() const
 
 OpenSync::Config::Barry& Group::GetBarryPlugin()
 {
-	iterator b = begin(), e = end();
+	return const_cast<OpenSync::Config::Barry&> ( const_cast<const Group*> (this)->GetBarryPlugin() );
+}
+
+const OpenSync::Config::Barry& Group::GetBarryPlugin() const
+{
+	const_iterator b = begin(), e = end();
 	for( ; b != e; ++b ) {
 		if( (*b)->GetAppName() == Config::Barry::AppName() )
-			return dynamic_cast<OpenSync::Config::Barry&> (*(*b));
+			return dynamic_cast<const OpenSync::Config::Barry&> (*(*b));
 	}
 
 	// not found
 	throw std::logic_error("No Barry Plugins in Group");
+}
+
+OpenSync::Config::Plugin* Group::GetNonBarryPlugin()
+{
+	return const_cast<OpenSync::Config::Plugin*> ( const_cast<const Group*> (this)->GetNonBarryPlugin() );
+}
+
+const OpenSync::Config::Plugin* Group::GetNonBarryPlugin() const
+{
+	const_iterator b = begin(), e = end();
+	for( ; b != e; ++b ) {
+		if( (*b)->GetAppName() != Config::Barry::AppName() )
+			return (*b).get();
+	}
+
+	return 0;
 }
 
 void Group::DisconnectMembers()

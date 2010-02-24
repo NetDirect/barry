@@ -336,6 +336,12 @@ public:
 	/// Returns a reference to the (first) Barry plugin in the group.
 	/// Will throw std::logic_error if not found.
 	OpenSync::Config::Barry& GetBarryPlugin();
+	const OpenSync::Config::Barry& GetBarryPlugin() const;
+
+	/// Returns a pointer to the first non-Barry plugin in the group.
+	/// Returns 0 if not found.
+	OpenSync::Config::Plugin* GetNonBarryPlugin();
+	const OpenSync::Config::Plugin* GetNonBarryPlugin() const;
 
 	/// Sets the member_id of all plugins to -1, thereby making them
 	/// appear like they have never been saved to an API before.
