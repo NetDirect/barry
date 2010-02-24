@@ -80,6 +80,8 @@ public:
 	// operations
 	//
 
+	virtual Plugin* Clone() const = 0;
+
 	/// IsUnsupported() returns true if the config format for this
 	/// plugin has no OpenSync::Config::* class to parse / handle it.
 	virtual bool IsUnsupported() const { return true; }
@@ -122,6 +124,7 @@ public:
 	void SetRawConfig(const std::string &c) { m_raw_config = c; }
 
 	// virtual overrides
+	virtual Unsupported* Clone() const { return new Unsupported(*this); }
 	virtual bool IsUnsupported() const { return true; }
 	virtual std::string GetAppName() const { return AppName(); }
 	virtual void Save(OpenSync::API &api, const std::string &group_name) const
@@ -192,6 +195,7 @@ public:
 	void SetPassword(const std::string &pass) { m_password = pass; }
 
 	// virtual overrides
+	virtual Barry* Clone() const { return new Barry(*this); }
 	virtual bool IsUnsupported() const { return false; }
 	virtual std::string GetAppName() const { return AppName(); }
 	virtual void Save(OpenSync::API &api, const std::string &group_name) const
@@ -247,6 +251,7 @@ public:
 	bool AutoDetect();	// throw if unable to detect??
 
 	// virtual overrides
+	virtual Evolution* Clone() const { return new Evolution(*this); }
 	virtual bool IsUnsupported() const { return false; }
 	virtual std::string GetAppName() const { return AppName(); }
 	virtual void Save(OpenSync::API &api, const std::string &group_name) const
