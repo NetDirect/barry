@@ -1256,12 +1256,13 @@ void BaseFrame::OnAbout(wxCommandEvent &event)
 "    root directory of this project for more details.\n"));
 
 	info.AddDeveloper(_T("Net Direct Inc."));
-	info.AddDeveloper(_T("Chris Frey <cdfrey@foursquare.net>"));
-	info.AddDeveloper(_T("See AUTHORS file for detailed"));
-	info.AddDeveloper(_T("contribution information."));
+//	info.AddDeveloper(_T("Chris Frey <cdfrey@foursquare.net>"));
+//	info.AddDeveloper(_T("See AUTHORS file for detailed"));
+//	info.AddDeveloper(_T("contribution information."));
 
 	info.AddArtist(_T("Chris Frey - GUI interface"));
 	info.AddArtist(_T("Martin Owens - Barry logo"));
+	info.AddArtist(_T("Tango Desktop Project - Public domain icons"));
 
 	wxAboutBox(info);
 }

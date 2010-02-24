@@ -171,7 +171,7 @@ public:
 		// likely safe to assume that something is horribly wrong.
 		// in the case where the Application wishes to add a new
 		// barry plugin, it should use the Pin constructor.
-		// if you *really* need to try to salvage and old
+		// if you *really* need to try to salvage an old
 		// corrupt config, you can always do the
 		// converter->Load(barry_obj) manually, and pick out
 		// the left overs.
@@ -307,7 +307,7 @@ public:
 	///
 	/// OSCG_THROW_ON_UNSUPPORTED - if set, the constructor will
 	///		throw LoadError if there is a plugin in the group
-	///		for which there is no corresponding Plugin
+	///		for which there is no corresponding Plugin-
 	///		derived class to handle it
 	/// OSCG_THROW_ON_NO_BARRY - if set, the constructor will
 	///		throw LoadError if there are no Barry plugins

@@ -170,7 +170,7 @@ bool Group::HasBarryPlugins() const
 
 bool Group::GroupExists(OpenSync::API &api) const
 {
-	// does 
+	// does m_group_name exist in the API list?
 	string_list_type groups;
 	api.GetGroupNames(groups);
 	return std::find(groups.begin(), groups.end(), m_group_name) != groups.end();

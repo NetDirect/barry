@@ -95,8 +95,9 @@ std::ostream& operator<< (std::ostream &os, const DeviceEntry &de);
 ///		- the app(s) it will sync with (in one sync group only)
 ///		- the version of the engine it is configured with
 ///
-/// If a device is configured in both 0.4x and 0.22, then the first one
-/// found is used.
+/// If a device is configured in both 0.4x and 0.22, or even in two
+/// groups in one engine, then all are loaded.  Use FindDuplicates()
+/// and KillDuplicates() to sort that out with the user's help.
 ///
 /// Since this class needs to open and parse a lot of information during
 /// construction anyway, it will store as much as possible, to allow for
