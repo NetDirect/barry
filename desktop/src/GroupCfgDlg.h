@@ -36,15 +36,17 @@ class GroupCfgDlg : public wxDialog
 	OpenSync::APISet &m_apiset;
 
 	// results of the configuration
+	std::string m_group_name;
 	DeviceEntry::group_ptr m_group;
-	OpenSync::API *m_engine;
 
 	// in-process config results... i.e. the plugin config
 	// is stored here, and can be overwritten as the user
 	// keeps fiddling with the controls... at the end, if
 	// valid, this config is added to the group for a
 	// final configuration result
-	OpenSync::Config::Group::plugin_ptr m_plugin;
+	OpenSync::API *m_engine;		// current engine
+	OpenSync::Config::Barry m_barry_plugin;
+	OpenSync::Config::Group::plugin_ptr m_app_plugin;
 
 	// dialog controls
 	wxSizer *m_topsizer, *m_appsizer;
@@ -65,24 +67,29 @@ protected:
 	void AddButtonSizer(wxSizer *sizer);
 
 	void SelectCurrentEngine();
+	void LoadBarryConfig();
+	void SelectApplication();
 	bool IsAppConfigured();		// returns true if it is safe to
 					// exit the dialog successfully, and
 					// there's no more that needs to be
 					// done before an opensync config save
 
-//	void OnEngineChange(blah);
-
 public:
 	GroupCfgDlg(wxWindow *parent, const DeviceEntry &device,
-		OpenSync::API *device_engine, OpenSync::APISet &apiset);
+		OpenSync::APISet &apiset);
 
 	// results
 	DeviceEntry::group_ptr GetGroup() { return m_group; }
-	const OpenSync::API* GetEngine() const { return m_engine; }
+	OpenSync::API* GetEngine() const { return m_engine; }
 
 	// event handlers
 	void OnConfigureApp(wxCommandEvent &event);
+	void OnEngineComboChange(wxCommandEvent &event);
 	void OnAppComboChange(wxCommandEvent &event);
+
+	// overrides
+	virtual bool TransferDataFromWindow();
+	int ShowModal();
 };
 
 #endif

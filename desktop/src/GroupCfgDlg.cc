@@ -27,10 +27,13 @@
 #include <string>
 
 using namespace std;
+using namespace OpenSync;
 
 BEGIN_EVENT_TABLE(GroupCfgDlg, wxDialog)
 	EVT_BUTTON	(Dialog_GroupCfg_AppConfigButton,
 				GroupCfgDlg::OnConfigureApp)
+	EVT_TEXT	(Dialog_GroupCfg_EngineCombo,
+				GroupCfgDlg::OnEngineComboChange)
 	EVT_TEXT	(Dialog_GroupCfg_AppCombo,
 				GroupCfgDlg::OnAppComboChange)
 END_EVENT_TABLE()
@@ -40,12 +43,12 @@ END_EVENT_TABLE()
 
 GroupCfgDlg::GroupCfgDlg(wxWindow *parent,
 			const DeviceEntry &device,
-			OpenSync::API *device_engine,
 			OpenSync::APISet &apiset)
 	: wxDialog(parent, Dialog_GroupCfg, _T("Device Sync Configuration"))
 	, m_device(device)
 	, m_apiset(apiset)
-	, m_engine(device_engine)
+	, m_engine(0)
+	, m_barry_plugin(m_device.GetPin())
 	, m_topsizer(0)
 	, m_appsizer(0)
 	, m_engine_combo(0)
@@ -53,29 +56,35 @@ GroupCfgDlg::GroupCfgDlg(wxWindow *parent,
 	, m_password_edit(0)
 	, m_debug_check(0)
 {
-	using namespace OpenSync;
+	// setup the raw GUI
+	CreateLayout();
 
-	// make a copy of our group config if it is available
+	// initialize current engine pointer
+	if( m_device.GetEngine() ) {
+		m_engine = const_cast<OpenSync::API*> (m_device.GetEngine());
+	}
+
 	if( m_device.IsConfigured() ) {
-		m_group.reset( new Config::Group( *m_device.GetConfigGroup() ) );
-		m_engine = device_engine; //m_device.GetEngine();
+		const Config::Group *group = m_device.GetConfigGroup();
+		// use existing group name, if available
+		m_group_name = group->GetGroupName();
+
+		// copy Barry plugin config, if available
+		if( group->HasBarryPlugins() )
+			m_barry_plugin = group->GetBarryPlugin();
+
+		// copy non-Barry plugin config, if available
+		const Config::Plugin *plugin = group->GetNonBarryPlugin();
+		if( plugin )
+			m_app_plugin.reset( plugin->Clone() );
 	}
 	else {
-		// start with an empty group
-		string group_name = "barrydesktop_" + m_device.GetPin().str();
-		m_group.reset( new Config::Group(group_name) );
-
-		m_engine = 0;
+		m_group_name = "barrydesktop_" + m_device.GetPin().str();
 	}
 
-	// make sure our group always has a Barry config
-	if( !m_group->HasBarryPlugins() ) {
-		m_group->AddPlugin( new Config::Barry(m_device.GetPin()) );
-	}
-
-	// setup the GUI side
-	CreateLayout();
 	SelectCurrentEngine();
+	LoadBarryConfig();
+	SelectApplication();
 }
 
 void GroupCfgDlg::CreateLayout()
@@ -193,7 +202,6 @@ void GroupCfgDlg::LoadAppNames(wxArrayString &appnames)
 		return;
 	}
 
-	using namespace OpenSync;
 	string_list_type plugins;
 	try {
 		m_engine->GetPluginNames(plugins);
@@ -247,6 +255,22 @@ void GroupCfgDlg::SelectCurrentEngine()
 	}
 }
 
+void GroupCfgDlg::LoadBarryConfig()
+{
+	Config::Barry &bp = m_barry_plugin;
+
+	m_password_edit->SetValue( wxString(bp.GetPassword().c_str(), wxConvUTF8) );
+	m_debug_check->SetValue( bp.IsDebugMode() );
+}
+
+void GroupCfgDlg::SelectApplication()
+{
+	if( m_app_plugin.get() ) {
+		m_app_combo->SetValue(
+			wxString(m_app_plugin->GetAppName().c_str(), wxConvUTF8));
+	}
+}
+
 void GroupCfgDlg::OnConfigureApp(wxCommandEvent &event)
 {
 	wxString app = m_app_combo->GetValue();
@@ -268,14 +292,63 @@ void GroupCfgDlg::OnConfigureApp(wxCommandEvent &event)
 	if( ui->Configure(this) ) {
 		ConfigUI::plugin_ptr plugin = ui->GetPlugin();
 		if( plugin.get() ) {
-			m_plugin = plugin;
+			m_app_plugin = plugin;
 		}
+	}
+}
+
+void GroupCfgDlg::OnEngineComboChange(wxCommandEvent &event)
+{
+	// update engine pointer
+	wxString newEngine = m_engine_combo->GetValue();
+	if( m_apiset.os22() && newEngine == wxString(m_apiset.os22()->GetVersion(), wxConvUTF8) ) {
+		m_engine = m_apiset.os22();
+	}
+	else if( m_apiset.os40() && newEngine == wxString(m_apiset.os40()->GetVersion(), wxConvUTF8) ) {
+		m_engine = m_apiset.os40();
+	}
+
+	// update the application list
+	UpdateAppSizer();
+
+	// if plugin can be configured in new engine, keep our current
+	// config, otherwise, reset
+	if( m_engine->GetConverter().IsPluginSupported(m_app_plugin->GetPluginName(*m_engine)) ) {
+		// update the app list
+		SelectApplication();
+	}
+	else {
+		// leave GUI as is, and zap our plugin data
+		m_app_plugin.reset();
 	}
 }
 
 void GroupCfgDlg::OnAppComboChange(wxCommandEvent &event)
 {
 	// if the application changes, that invalidates our plugin config
-	m_plugin.reset();
+	m_app_plugin.reset();
+}
+
+bool GroupCfgDlg::TransferDataFromWindow()
+{
+	m_barry_plugin.SetPassword(string(m_password_edit->GetValue().utf8_str()));
+	m_barry_plugin.DebugMode(m_debug_check->GetValue());
+	return true;
+}
+
+int GroupCfgDlg::ShowModal()
+{
+	int status = wxDialog::ShowModal();
+	if( status == wxID_OK && m_app_plugin.get() ) {
+		// construct a new group from user's results
+		m_group.reset( new Config::Group(m_group_name) );
+		m_group->AddPlugin( new Config::Barry(m_barry_plugin) );
+		m_group->AddPlugin( m_app_plugin->Clone() );
+		m_group->DisconnectMembers(); // just to be safe
+	}
+	else {
+		m_group.reset();
+	}
+	return status;
 }
 

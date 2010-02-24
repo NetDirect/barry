@@ -868,14 +868,25 @@ void SyncMode::OnSyncNow(wxCommandEvent &event)
 
 void SyncMode::OnConfigureDevice(wxListEvent &event)
 {
-//	wxString msg;
-//	msg.Printf(_T("OnConfigureDevice(%ld)"), event.GetIndex());
-//	wxMessageBox(msg);
+	DeviceEntry &entry = (*m_device_set)[event.GetIndex()];
 
-	GroupCfgDlg dlg(m_parent, (*m_device_set)[event.GetIndex()],
-		(*m_device_set)[event.GetIndex()].GetEngine(),
-		wxGetApp().GetOpenSync());
-	dlg.ShowModal();
+	GroupCfgDlg dlg(m_parent, entry, wxGetApp().GetOpenSync());
+	if( dlg.ShowModal() == wxID_OK && dlg.GetEngine() && dlg.GetGroup().get() ) {
+		// delete the old group
+		if( entry.IsConfigured() && entry.GetEngine() ) {
+			entry.GetEngine()->DeleteGroup(entry.GetConfigGroup()->GetGroupName());
+		}
+
+		// save the new one
+		dlg.GetGroup()->Save(*dlg.GetEngine());
+
+		// update the device set
+		(*m_device_set)[event.GetIndex()].
+			SetConfigGroup(dlg.GetGroup(), dlg.GetEngine());
+
+		// update!
+		FillDeviceList();
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
