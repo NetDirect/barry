@@ -36,6 +36,17 @@
 using namespace std;
 using namespace Barry;
 
+class TCPWriter : public Barry::Mode::VNCServerDataCallback
+{
+public:
+    void DataReceived(Data& data)
+    {
+        std::cerr << "From BB: ";
+        data.DumpHex(std::cerr);
+        std::cerr << "\n";
+    }
+};
+
 void Usage()
 {
    int major, minor;
@@ -141,17 +152,26 @@ int main(int argc, char *argv[])
 			return 1;
 		}
 
+        // Create the thing which will write onto TCP
+        TCPWriter tcpwriter;
+
+        // Start a thread to handle any data arriving from
+        // the BlackBerry.
+        auto_ptr<SocketRoutingQueue> router;
+        router.reset(new SocketRoutingQueue);
+        router->SpinoffSimpleReadThread();
+
 		// Create our controller object
-		Barry::Controller con(probe.Get(activeDevice));
-		Barry::Mode::VNCServer vncrelay(con);
+		Barry::Controller con(probe.Get(activeDevice), *router);
+		Barry::Mode::VNCServer vncrelay(con, tcpwriter);
 
 		//
 		// execute each mode that was turned on
 		//
 		vncrelay.Open(password.c_str());
 
-        // TODO - actually implement command
-
+        // Now start to read from TCP and get ready to write
+        // to the BlackBerry.
 	}
 	catch( Usb::Error &ue) {
 		std::cout << endl;	// flush any normal output first

@@ -30,6 +30,15 @@ namespace Barry {
 
 namespace Mode {
 
+// Callback from the VNC redirection session.
+
+class BXEXPORT VNCServerDataCallback
+{
+public:
+    virtual void DataReceived(Data& data) = 0;
+    virtual ~VNCServerDataCallback() {};
+};
+
 //
 // VNC Server class
 //
@@ -37,6 +46,7 @@ namespace Mode {
 ///
 /// To use this class, use the following steps:
 ///
+/// - Implement VNCServerDataCallback
 ///	- Create a Controller object (see Controller class for more details)
 ///	- Create this Mode::VNCServer object, passing in the Controller
 ///		object during construction
@@ -46,19 +56,20 @@ namespace Mode {
 ///
 class BXEXPORT VNCServer : public Mode
 {
-protected:
-	//////////////////////////////////
-	// overrides
-
-	virtual void OnOpen();
-
 public:
-	VNCServer(Controller &con);
+	VNCServer(Controller &con, VNCServerDataCallback& callback);
 	~VNCServer();
 
 	//////////////////////////////////
 	// VNC Server mode - VNC specific
 
+    // Send some data to the VNC server.
+    void Send(Data& data);
+
+    void HandleReceivedData(Data& data);
+
+private:
+    VNCServerDataCallback& Callback;
 
 };
 

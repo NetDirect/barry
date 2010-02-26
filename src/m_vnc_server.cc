@@ -35,13 +35,19 @@
 
 namespace Barry { namespace Mode {
 
+static void HandleReceivedDataCallback(void* ctx, Data* data)
+{
+    ((VNCServer*)ctx)->HandleReceivedData(*data);
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 // VNCServer Mode class
 
-VNCServer::VNCServer(Controller &con)
-	: Mode(con, Controller::VNCServer)
+VNCServer::VNCServer(Controller &con, VNCServerDataCallback& callback)
+	: Mode(con, Controller::VNCServer),
+      Callback(callback)
 {
+    m_socket->RegisterInterest(HandleReceivedDataCallback, this);
 }
 
 VNCServer::~VNCServer()
@@ -49,15 +55,17 @@ VNCServer::~VNCServer()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// protected members
-
-void VNCServer::OnOpen()
-{
-}
-
-///////////////////////////////////////////////////////////////////////////////
 // public API
 
+void VNCServer::Send(Data& data)
+{
+    m_socket->Send(data);
+}
+
+void VNCServer::HandleReceivedData(Data& data)
+{
+    Callback.DataReceived(data);
+}
 
 }} // namespace Barry::Mode
 
