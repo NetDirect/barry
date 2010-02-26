@@ -31,6 +31,11 @@
 #include <getopt.h>
 #include <fstream>
 #include <string.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+
 #include "i18n.h"
 
 using namespace std;
@@ -39,12 +44,38 @@ using namespace Barry;
 class TCPWriter : public Barry::Mode::VNCServerDataCallback
 {
 public:
+    void SetSocket(int socket, bool& keepGoing)
+    {
+        cfd = socket;
+        continuePtr = &keepGoing;
+    }
+    
     void DataReceived(Data& data)
     {
         std::cerr << "From BB: ";
         data.DumpHex(std::cerr);
         std::cerr << "\n";
+
+        size_t toWrite = data.GetSize();
+        size_t written = 0;
+
+        while (written < toWrite)
+        {
+            ssize_t writtenThisTime = write(cfd, &(data.GetData()[written]), toWrite - written);
+            if (writtenThisTime < 0)
+            {
+                *continuePtr = false;
+            }
+            else
+            {
+                written += writtenThisTime;
+            }
+        }
     }
+
+private:
+    bool* continuePtr;
+    int cfd;
 };
 
 void Usage()
@@ -65,6 +96,11 @@ void Usage()
    << "   -v        Dump protocol data during operation\n"
    << "\n"
    << endl;
+}
+
+static void handle_error(const char* text)
+{
+    throw new std::runtime_error(text);
 }
 
 
@@ -171,6 +207,54 @@ int main(int argc, char *argv[])
 
         // Now start to read from TCP and get ready to write
         // to the BlackBerry.
+        int sfd = socket(AF_INET, SOCK_STREAM, 0);
+        if (sfd == -1)
+            handle_error("socket");
+
+        sockaddr_in my_addr;
+        memset(&my_addr, 0, sizeof(struct sockaddr_in));
+                               /* Clear structure */
+        my_addr.sin_family = AF_INET;
+        my_addr.sin_port = 2000;
+        my_addr.sin_addr.s_addr = INADDR_ANY;
+    
+        if (bind(sfd, (struct sockaddr *) &my_addr,
+                sizeof(struct sockaddr_in)) == -1)
+            handle_error("bind");
+
+        if (listen(sfd, 1) == -1)
+            handle_error("listen");
+
+        /* Now we can accept incoming connections one
+           at a time using accept(2) */
+
+        sockaddr_in peer_addr;
+        socklen_t peer_addr_size = sizeof(struct sockaddr_in);
+        int cfd = accept(sfd, (struct sockaddr *) &peer_addr,
+                     &peer_addr_size);
+        if (cfd == -1)
+            handle_error("accept");
+
+
+        std::cerr << "Accepted\n";
+
+        bool running = true;
+        tcpwriter.SetSocket(cfd, running);
+
+        unsigned char buf[2000];
+        while (running)
+        {
+            size_t haveRead = read(cfd, buf, 2000);
+            if (haveRead > 0)
+            {
+                Data toWrite(buf, haveRead);
+                vncrelay.Send(toWrite);
+            }
+            else if (haveRead < 0)
+            {
+                running = false;
+            }
+        }
 	}
 	catch( Usb::Error &ue) {
 		std::cout << endl;	// flush any normal output first
