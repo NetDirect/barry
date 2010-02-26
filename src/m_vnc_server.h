@@ -68,6 +68,8 @@ public:
 
     void HandleReceivedData(Data& data);
 
+    void OnOpen();
+
 private:
     VNCServerDataCallback& Callback;
 

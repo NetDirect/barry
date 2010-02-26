@@ -47,11 +47,17 @@ VNCServer::VNCServer(Controller &con, VNCServerDataCallback& callback)
 	: Mode(con, Controller::VNCServer),
       Callback(callback)
 {
-    m_socket->RegisterInterest(HandleReceivedDataCallback, this);
 }
 
 VNCServer::~VNCServer()
 {
+}
+
+void VNCServer::OnOpen()
+{
+    std::cerr << "about to register interest\n";
+    m_socket->RegisterInterest(HandleReceivedDataCallback, this);
+    std::cerr << "registered interest\n";
 }
 
 ///////////////////////////////////////////////////////////////////////////////

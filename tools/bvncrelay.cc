@@ -64,7 +64,6 @@ void Usage()
    << "   -P pass   Simplistic method to specify device password\n"
    << "   -v        Dump protocol data during operation\n"
    << "\n"
-   << "commands\n"
    << endl;
 }
 
