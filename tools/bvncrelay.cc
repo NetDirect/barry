@@ -211,6 +211,8 @@ int main(int argc, char *argv[])
         if (sfd == -1)
             handle_error("socket");
 
+        cerr << "Listening on port 2000\n";
+
         sockaddr_in my_addr;
         memset(&my_addr, 0, sizeof(struct sockaddr_in));
                                /* Clear structure */
