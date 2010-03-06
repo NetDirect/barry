@@ -40,6 +40,8 @@ class TempDir
 	std::string MakeFilename(int file_id) const;
 
 public:
+	/// basename is a simple identifier, such as "barry"
+	/// The /tmp dir will be prepended automatically.
 	TempDir(const char *basename);
 	~TempDir();
 
