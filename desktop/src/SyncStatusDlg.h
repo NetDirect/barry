@@ -1,0 +1,110 @@
+///
+/// \file	SyncStatusDlg.h
+///		The dialog used during a sync, to display status messages
+///		and error messages, and handle sync conflicts via callback.
+///
+
+/*
+    Copyright (C) 2010, Net Direct Inc. (http://www.netdirect.ca/)
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+    See the GNU General Public License in the COPYING file at the
+    root directory of this project for more details.
+*/
+
+#ifndef __BARRYDESKTOP_SYNCSTATUSDLG_H__
+#define __BARRYDESKTOP_SYNCSTATUSDLG_H__
+
+#include <wx/wx.h>
+#include "ipc.h"
+#include "osbase.h"
+
+class StatusConnection : public wxConnection
+{
+	wxTextCtrl &m_status;
+
+public:
+	StatusConnection(wxTextCtrl &window);
+
+	bool OnPoke(const wxString &topic, const wxString &item,
+		wxChar *data, int size, wxIPCFormat format);
+};
+
+class ConflictConnection : public wxConnection
+{
+	wxWindow *m_parent;
+	SillyBuffer m_buf;
+
+	// conflict state machine
+	bool m_asking_user;
+	int m_current_sequenceID;
+	int m_current_offset;
+	int m_expected_total_changes;
+	std::string m_supported_commands;
+	std::vector<OpenSync::SyncChange> m_changes;
+
+public:
+	ConflictConnection(wxWindow *parent);
+
+	bool OnPoke(const wxString &topic, const wxString &item,
+		wxChar *data, int size, wxIPCFormat format);
+	wxChar* OnRequest(const wxString &topic, const wxString &item,
+		int *size, wxIPCFormat format);
+};
+
+class SyncStatusDlg
+	: public wxDialog
+	, public wxServer
+{
+	DECLARE_EVENT_TABLE()
+
+	// external data sources
+	const std::string &m_group_name;
+	OpenSync::API &m_engine;
+
+	// dialog controls
+//	wxSizer *m_topsizer, *m_appsizer;
+//	wxComboBox *m_engine_combo, *m_app_combo;
+//	wxTextCtrl *m_password_edit;
+	wxTextCtrl *m_status_edit;
+//	wxCheckBox *m_debug_check;
+	// Need: a pretty status edit box, to show all status messages,
+	//       and a Kill Sync button that kills the bsyncjail
+	//       process in the case of a hang
+
+protected:
+	void CreateLayout();
+	void AddEngineSizer(wxSizer *sizer);
+	void AddConfigSizer(wxSizer *sizer);
+	void AddBarrySizer(wxSizer *sizer);
+	void AddAppSizer(wxSizer *sizer);
+	void UpdateAppSizer();		// called if engine changes, to update
+					// the app combo, etc, with available
+					// apps
+	void LoadAppNames(wxArrayString &appnames);
+	void AddButtonSizer(wxSizer *sizer);
+
+public:
+	SyncStatusDlg(wxWindow *parent, const std::string &group_name,
+		OpenSync::API &engine);
+	~SyncStatusDlg();
+
+	// event handlers
+//	void OnConfigureApp(wxCommandEvent &event);
+//	void OnEngineComboChange(wxCommandEvent &event);
+//	void OnAppComboChange(wxCommandEvent &event);
+
+	// virtual overrides from wxServer
+	wxConnectionBase* OnAcceptConnection(const wxString &topic);
+};
+
+#endif
+

@@ -63,6 +63,8 @@ enum {
 	Dialog_GroupCfg_EngineCombo,
 	Dialog_GroupCfg_AppCombo,
 	Dialog_GroupCfg_AppConfigButton,
+	Dialog_SyncStatus,
+	Dialog_Conflict,
 
 	SysMenu_FirstItem,
 

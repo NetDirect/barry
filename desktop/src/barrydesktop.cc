@@ -34,6 +34,7 @@
 #include "os40.h"
 #include "deviceset.h"
 #include "GroupCfgDlg.h"
+#include "SyncStatusDlg.h"
 
 // include icons and logos
 #include "../images/barry_logo_icon.xpm"
@@ -272,6 +273,7 @@ public:
 	void OnLeftUp(wxMouseEvent &event);
 	void OnBackupRestore(wxCommandEvent &event);
 	void OnSync(wxCommandEvent &event);
+	void OnModem(wxCommandEvent &event);
 	void OnBackButton(wxCommandEvent &event);
 	void OnTermBackupAndRestore(wxProcessEvent &event);
 	void OnBarryLogoClicked(wxCommandEvent &event);
@@ -293,6 +295,7 @@ BEGIN_EVENT_TABLE(BaseFrame, wxFrame)
 	EVT_LEFT_UP	(BaseFrame::OnLeftUp)
 	EVT_BUTTON	(MainMenu_BackupAndRestore, BaseFrame::OnBackupRestore)
 	EVT_BUTTON	(MainMenu_Sync, BaseFrame::OnSync)
+	EVT_BUTTON	(MainMenu_Modem, BaseFrame::OnModem)
 	EVT_BUTTON	(MainMenu_BackButton, BaseFrame::OnBackButton)
 	EVT_BUTTON	(HotImage_BarryLogo, BaseFrame::OnBarryLogoClicked)
 	EVT_BUTTON	(HotImage_NetDirectLogo, BaseFrame::OnNetDirectLogoClicked)
@@ -863,7 +866,10 @@ void SyncMode::FillDeviceList()
 
 void SyncMode::OnSyncNow(wxCommandEvent &event)
 {
-	wxMessageBox(_T("Sync Now!"));
+	// FIXME - test code
+	DeviceEntry &entry = (*m_device_set)[0];
+	SyncStatusDlg dlg(m_parent, "group_name", *entry.GetEngine());
+	dlg.ShowModal();
 }
 
 void SyncMode::OnConfigureDevice(wxListEvent &event)
@@ -1197,6 +1203,10 @@ void BaseFrame::OnSync(wxCommandEvent &event)
 	}
 
 	EnableBackButton(m_sync_mode.get());
+}
+
+void BaseFrame::OnModem(wxCommandEvent &event)
+{
 }
 
 void BaseFrame::OnBackButton(wxCommandEvent &event)
