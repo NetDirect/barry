@@ -812,11 +812,11 @@ SyncMode::SyncMode(wxWindow *parent)
 	m_device_list->InsertColumn(0, _T("PIN"),
 		wxLIST_FORMAT_LEFT, list_size.GetWidth() * 0.16);
 	m_device_list->InsertColumn(1, _T("Name"),
-		wxLIST_FORMAT_LEFT, list_size.GetWidth() * 0.35);
+		wxLIST_FORMAT_LEFT, list_size.GetWidth() * 0.33);
 	m_device_list->InsertColumn(2, _T("Connected"),
 		wxLIST_FORMAT_CENTRE, list_size.GetWidth() * 0.16);
-	m_device_list->InsertColumn(3, _T("Configured"),
-		wxLIST_FORMAT_CENTRE, list_size.GetWidth() * 0.16);
+	m_device_list->InsertColumn(3, _T("Application"),
+		wxLIST_FORMAT_CENTRE, list_size.GetWidth() * 0.18);
 	m_device_list->InsertColumn(4, _T("Engine"),
 		wxLIST_FORMAT_CENTRE, list_size.GetWidth() * 0.17);
 
@@ -853,7 +853,12 @@ void SyncMode::FillDeviceList()
 		text = i->IsConnected() ? _T("Yes") : _T("No");
 		m_device_list->SetItem(item, 2, text);
 
-		text = i->IsConfigured() ? _T("Yes") : _T("No");
+		if( i->IsConfigured() ) {
+			text = wxString(i->GetAppNames().c_str(), wxConvUTF8);
+		}
+		else {
+			text = _T("(unconfigured)");
+		}
 		m_device_list->SetItem(item, 3, text);
 
 		if( i->GetEngine() )

@@ -351,6 +351,10 @@ public:
 	int GetConnectedCount() const;
 	const std::string& GetGroupName() const { return m_group_name; }
 
+	/// Returns comma separated string of application/plugin names,
+	/// excluding Barry
+	std::string GetAppNames() const;
+
 	/// Returns a reference to the (first) Barry plugin in the group.
 	/// Will throw std::logic_error if not found.
 	OpenSync::Config::Barry& GetBarryPlugin();

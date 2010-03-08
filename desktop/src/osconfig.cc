@@ -197,6 +197,23 @@ int Group::GetConnectedCount() const
 	return count;
 }
 
+std::string Group::GetAppNames() const
+{
+	std::string names;
+
+	const_iterator b = begin(), e = end();
+	for( ; b != e; ++b ) {
+		std::string name = (*b)->GetAppName();
+		if( name != Config::Barry::AppName() ) {
+			if( names.size() )
+				names += ", ";
+			names += name;
+		}
+	}
+
+	return names;
+}
+
 OpenSync::Config::Barry& Group::GetBarryPlugin()
 {
 	return const_cast<OpenSync::Config::Barry&> ( const_cast<const Group*> (this)->GetBarryPlugin() );

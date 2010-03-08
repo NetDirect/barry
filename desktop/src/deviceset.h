@@ -63,6 +63,7 @@ public:
 	std::string GetDeviceName() const;
 	bool IsConnected() const { return m_result; }
 	bool IsConfigured() const { return m_group.get() && m_engine && m_group->AllConfigured(*m_engine); }
+	std::string GetAppNames() const { return m_group.get() && m_engine ? m_group->GetAppNames() : ""; }
 
 	/// Returns a string uniquely identifying this DeviceEntry
 	std::string GetIdentifyingString() const;
