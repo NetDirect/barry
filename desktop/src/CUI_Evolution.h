@@ -44,9 +44,12 @@ protected:
 public:
 	Evolution();
 
-	// virtual overrides
+	// virtual overrides (ConfigUI)
+	virtual std::string AppName() const;
 	virtual bool Configure(wxWindow *parent);
 	virtual plugin_ptr GetPlugin();
+	virtual bool RunApp(wxWindow *parent);
+	virtual void PreSyncAppInit();
 
 	// static utility functions
 	static long ForceShutdown();

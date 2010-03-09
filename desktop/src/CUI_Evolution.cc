@@ -200,6 +200,11 @@ bool Evolution::InitialRun()
 	return false;
 }
 
+std::string Evolution::AppName() const
+{
+	return OpenSync::Config::Evolution::AppName();
+}
+
 bool Evolution::Configure(wxWindow *parent)
 {
 	m_parent = parent;
@@ -222,6 +227,20 @@ ConfigUI::plugin_ptr Evolution::GetPlugin()
 {
 	m_evolution = 0;
 	return m_container;
+}
+
+bool Evolution::RunApp(wxWindow *parent)
+{
+	const wxChar *start_argv[] = {
+		_T("evolution"),
+		NULL
+	};
+	return Run(parent, start_argv);
+}
+
+void Evolution::PreSyncAppInit()
+{
+	ForceShutdown();
 }
 
 } // namespace AppConfig
