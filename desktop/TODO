@@ -4,6 +4,14 @@ Feature TODO List:
 
 Sync:
 -----
+- add a "Run App" button on the main sync list screen that runs the
+	application of the currently selected device
+- add a "Zap Config" button that zaps the current opensync config for
+	the current device, and recreates it automatically, and warns
+	the user, and recommends that the user delete one side of the
+	sync... either all the app data or all the blackberry data...
+	and make it easy to zap the blackberry data
+- add support for parsing the XML conflict data from opensync
 - start thinking about sync status window, and sync conflict resolution
 - when pressing the Sync button, if a device is selected that is not
 	yet configured, ask the user if they want to configure or cancel,
