@@ -77,8 +77,12 @@ class SyncStatusDlg
 	wxTextCtrl *m_status_edit;
 //	wxCheckBox *m_debug_check;
 	// Need: a pretty status edit box, to show all status messages,
-	//       and a Kill Sync button that kills the bsyncjail
-	//       process in the case of a hang
+	//       and a "sync action" button that says "Kill Sync"
+	//       when running, and "Close" if not.
+	//       and a button "Restart Sync" button that is greyed out
+	//       when running, and a "Run App" button that is greyed out
+	//       when running... remember to warn against killing a
+	//       sync
 
 protected:
 	void CreateLayout();

@@ -80,7 +80,10 @@ bool ConflictConnection::OnPoke(const wxString &topic,
 				int size,
 				wxIPCFormat format)
 {
-	if( topic != TOPIC_STATUS )
+	cout << "Conflict::OnPoke: " << topic.utf8_str() << ", "
+		<< item.utf8_str() << endl;
+
+	if( topic != TOPIC_CONFLICT )
 		return false;
 
 	// if currently handling a user request, don't change
@@ -106,6 +109,12 @@ bool ConflictConnection::OnPoke(const wxString &topic,
 			m_expected_total_changes = 0;
 			return false;
 		}
+
+		cout << "New conflict item: " << m_current_sequenceID
+			<< ", " << m_current_offset << ", "
+			<< "expected changes: " << m_expected_total_changes
+			<< ", supported commands: " << m_supported_commands
+			<< endl;
 	}
 	else if( item == CONFLICT_ITEM_CHANGE ) {
 		int sequenceID = 0, offset = 0;
@@ -138,12 +147,22 @@ wxChar* ConflictConnection::OnRequest(const wxString &topic,
 					wxIPCFormat format)
 {
 	// make sure we are in a valid sequence
-	if( m_current_sequenceID == -1 || m_current_offset == -1 || m_expected_total_changes < 2)
+	if( m_current_sequenceID == -1 || m_current_offset == -1 || m_expected_total_changes < 2) {
+		cout << "Conflict: not in a valid sequence: "
+			<< m_current_sequenceID << ", "
+			<< m_current_offset << ", "
+			<< m_expected_total_changes << endl;
 		return NULL;
+	}
 
 	// make sure we have a valid set of changes
-	if( m_current_offset != m_expected_total_changes || (size_t)m_expected_total_changes != m_changes.size() )
+	if( m_current_offset != m_expected_total_changes || (size_t)m_expected_total_changes != m_changes.size() ) {
+		cout << "Conflict: not a valid set of changes: "
+			<< m_current_offset << ", "
+			<< m_expected_total_changes << ", "
+			<< m_changes.size() << endl;
 		return NULL;
+	}
 
 	m_asking_user = true;
 
@@ -193,14 +212,15 @@ SyncStatusDlg::SyncStatusDlg(wxWindow *parent,
 	// setup the raw GUI
 	CreateLayout();
 
-	// setup status stream
-//	blah;
-
-	// initialize sync thread
-//	blah;
-
 	// create the IPC server
 	wxServer::Create(SERVER_SERVICE_NAME);
+
+	// force shutdown of evolution (FIXME - only do the app-specific
+	// init process)
+//	blah;
+
+	// initialize sync jail process
+//	blah;
 }
 
 SyncStatusDlg::~SyncStatusDlg()
