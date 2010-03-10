@@ -112,6 +112,7 @@ public:
 	typedef base_type::iterator			iterator;
 	typedef base_type::const_iterator		const_iterator;
 	typedef std::vector<iterator>			subset_type;
+	typedef std::vector<const_iterator>		const_subset_type;
 
 private:
 	OpenSync::APISet &m_apiset;
@@ -131,6 +132,10 @@ public:
 	DeviceSet(const Barry::Probe::Results &results, OpenSync::APISet &apiset);
 
 	iterator FindPin(const Barry::Pin &pin);
+	const_iterator FindPin(const Barry::Pin &pin) const;
+	static const_subset_type::const_iterator FindPin(const const_subset_type &subset, const Barry::Pin &pin);
+	static std::string Subset2String(const const_subset_type &set);
+	const_subset_type String2Subset(const std::string &list) const;
 
 	/// Searches for DeviceEntry's in the set that have the same
 	/// pin number.  This is most likely due to OpenSync having

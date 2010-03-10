@@ -274,6 +274,60 @@ DeviceSet::iterator DeviceSet::FindPin(const Barry::Pin &pin)
 	return end();
 }
 
+DeviceSet::const_iterator DeviceSet::FindPin(const Barry::Pin &pin) const
+{
+	for( const_iterator i = begin(); i != end(); ++i ) {
+		if( i->GetPin() == pin )
+			return i;
+	}
+	return end();
+}
+
+DeviceSet::const_subset_type::const_iterator DeviceSet::FindPin(
+	const DeviceSet::const_subset_type &subset, const Barry::Pin &pin)
+{
+	for( const_subset_type::const_iterator i = subset.begin();
+		i != subset.end();
+		++i )
+	{
+		if( (*i)->GetPin() == pin )
+			return i;
+	}
+	return subset.end();
+}
+
+std::string DeviceSet::Subset2String(const DeviceSet::const_subset_type &set)
+{
+	std::string list;
+
+	const_subset_type::const_iterator i = set.begin();
+	for( ; i != set.end(); ++i ) {
+		if( list.size() )
+			list += " ";
+		list += (*i)->GetPin().str();
+	}
+	return list;
+}
+
+DeviceSet::const_subset_type DeviceSet::String2Subset(const std::string &list) const
+{
+	const_subset_type set;
+
+	istringstream iss(list);
+	Barry::Pin pin;
+
+	while( iss >> pin ) {
+		if( !pin.valid() )
+			continue;
+
+		// search for pin in device set
+		const_iterator i = FindPin(pin);
+		if( i != end() )
+			set.push_back(i);
+	}
+	return set;
+}
+
 DeviceSet::subset_type DeviceSet::FindDuplicates()
 {
 	subset_type dups;
