@@ -17,6 +17,7 @@ barrydesktop_SOURCES = \
 	SyncStatusDlg.cc SyncStatusDlg.h \
 	ConflictDlg.cc ConflictDlg.h \
 	configui.h configui.cc \
+	exechelper.h exechelper.cc \
 	CUI_Evolution.h CUI_Evolution.cc \
 	error.cc error.h \
 	dlopen.cc dlopen.h \

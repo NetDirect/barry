@@ -235,7 +235,7 @@ bool Evolution::RunApp(wxWindow *parent)
 		_T("evolution"),
 		NULL
 	};
-	return Run(parent, start_argv);
+	return Run(parent, AppName(), start_argv);
 }
 
 void Evolution::PreSyncAppInit()

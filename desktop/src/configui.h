@@ -28,6 +28,7 @@
 #include <tr1/memory>
 #include <string>
 #include "osconfig.h"
+#include "exechelper.h"
 
 //
 // ConfigUI
@@ -40,56 +41,12 @@
 /// configure the App.  If Configure() returns true, then call
 /// GetPlugin() to retrieve the fully configured plugin.
 ///
-class ConfigUI
+class ConfigUI : public ExecHelper
 {
 public:
 	typedef OpenSync::Config::Group::plugin_ptr		plugin_ptr;
 	typedef std::auto_ptr<ConfigUI>				configui_ptr;
 	typedef configui_ptr					ptr;
-
-protected:
-	// This funky class is required because wxProcess deletes itself,
-	// so that if ConfigUI is deleted before AppCallback, a segfault
-	// is not caused by the OnTerminate() call.
-	class AppCallback : public wxProcess
-	{
-		ConfigUI *m_container;
-	public:
-		AppCallback(ConfigUI *container)
-			: m_container(container)
-		{
-		}
-
-		void Detach()
-		{
-			m_container = 0;
-		}
-
-		// virtual overrides (wxProcess)
-		virtual void OnTerminate(int pid, int status)
-		{
-			if( m_container && this == m_container->m_app_callback ) {
-				if( pid == m_container->m_app_pid ) {
-					m_container->m_app_pid = -1;
-					m_container->m_app_status = status;
-				}
-
-				m_container->m_app_callback = 0;
-			}
-
-			// call the base to delete ourselves if needed
-			wxProcess::OnTerminate(pid, status);
-		}
-	};
-
-	AppCallback *m_app_callback;
-	int m_app_pid;
-	int m_app_status;
-
-protected:
-	// helper functions
-	bool Run(wxWindow *parent, const wxChar *start_argv[]);
-	void RunError(wxWindow *parent, const wxString &msg);
 
 public:
 	ConfigUI();
@@ -105,11 +62,6 @@ public:
 	/// be NULL if you don't want this class to pop up error messages
 	/// if unable to run the app
 	virtual bool RunApp(wxWindow *parent) = 0;
-	/// Returns true if App is currently running
-	virtual bool IsAppRunning();
-	virtual int GetAppStatus() const { return m_app_status; }
-	/// Sends a termination signal to the App, if running
-	virtual void KillApp(bool hardkill = false);
 	/// Performs any initialization steps that the App requires before
 	/// running the sync (for example, Evolution needs a --force-shutdown)
 	virtual void PreSyncAppInit() = 0;
