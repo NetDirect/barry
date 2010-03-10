@@ -33,6 +33,7 @@
 #include "os22.h"
 #include "os40.h"
 #include "deviceset.h"
+#include "configui.h"
 #include "GroupCfgDlg.h"
 #include "SyncStatusDlg.h"
 
@@ -209,15 +210,20 @@ private:
 	wxWindow *m_parent;
 
 	std::auto_ptr<DeviceSet> m_device_set;
+	ConfigUI::ptr m_cui;
 
 	// window controls
 	std::auto_ptr<wxButton> m_sync_now_button;
+	std::auto_ptr<wxButton> m_run_app_button;
 	std::auto_ptr<wxListCtrl> m_device_list;
 	std::auto_ptr<wxStaticText> m_label;
 	std::auto_ptr<wxStaticBox> m_box;
 
 protected:
 	void FillDeviceList();
+	void UpdateButtons();
+	DeviceSet::const_subset_type GetSelectedDevices();
+	void ReselectDevices(const DeviceSet::const_subset_type &set);
 
 public:
 	SyncMode(wxWindow *parent);
@@ -228,11 +234,16 @@ public:
 
 	// window events
 	void OnSyncNow(wxCommandEvent &event);
+	void OnRunApp(wxCommandEvent &event);
+	void OnListSelChange(wxListEvent &event);//to keep track of button state
 	void OnConfigureDevice(wxListEvent &event);
 };
 
 BEGIN_EVENT_TABLE(SyncMode, wxEvtHandler)
 	EVT_BUTTON	(SyncMode_SyncNowButton, SyncMode::OnSyncNow)
+	EVT_BUTTON	(SyncMode_RunAppButton, SyncMode::OnRunApp)
+	EVT_LIST_ITEM_SELECTED(SyncMode_DeviceList, SyncMode::OnListSelChange)
+	EVT_LIST_ITEM_DESELECTED(SyncMode_DeviceList, SyncMode::OnListSelChange)
 	EVT_LIST_ITEM_ACTIVATED(SyncMode_DeviceList, SyncMode::OnConfigureDevice)
 END_EVENT_TABLE()
 
@@ -792,6 +803,11 @@ SyncMode::SyncMode(wxWindow *parent)
 			BORDER_WIDTH;
 	m_sync_now_button->Move(button_x, MAIN_HEADER_OFFSET + 10);
 
+	// Run App button
+	m_run_app_button.reset( new wxButton(parent, SyncMode_RunAppButton,
+		_T("Run App"), wxPoint(0, 0), wxDefaultSize) );
+	m_run_app_button->Move(button_x, MAIN_HEADER_OFFSET + 10 + 10 + button_size.GetHeight());
+
 	// Device ListCtrl
 	int device_y = STATUS_HEIGHT + MAIN_HEADER_OFFSET;
 	wxPoint group_point(BORDER_WIDTH, device_y);
@@ -826,6 +842,10 @@ SyncMode::SyncMode(wxWindow *parent)
 
 	FillDeviceList();
 
+	// attempt to re-select the devices as we last saw them
+	ReselectDevices(m_device_set->String2Subset(wxGetApp().GetGlobalConfig().GetKey("SelectedDevices")));
+	UpdateButtons();
+
 	// connect ourselves to the parent's event handling chain
 	// do this last, so that we are guaranteed our destructor
 	// will run, in case of exceptions
@@ -835,6 +855,10 @@ SyncMode::SyncMode(wxWindow *parent)
 SyncMode::~SyncMode()
 {
 	m_parent->PopEventHandler();
+
+	// save selected devices for later
+	wxGetApp().GetGlobalConfig().SetKey("SelectedDevices",
+		DeviceSet::Subset2String(GetSelectedDevices()));
 }
 
 void SyncMode::FillDeviceList()
@@ -867,14 +891,116 @@ void SyncMode::FillDeviceList()
 			text = _T("");
 		m_device_list->SetItem(item, 4, text);
 	}
+
+	UpdateButtons();
+}
+
+void SyncMode::UpdateButtons()
+{
+	int selected_count = m_device_list->GetSelectedItemCount();
+
+	// update the SyncNow button (only on if anything is selected)
+	m_sync_now_button->Enable(selected_count > 0);
+
+	// if only one item is selected, enable RunApp button
+	bool enable_run_app = false;
+	if( selected_count == 1 ) {
+		// good, only one is selected, find out which one
+		long item = -1;
+		item = m_device_list->GetNextItem(item, wxLIST_NEXT_ALL,
+			wxLIST_STATE_SELECTED);
+
+		if( item != -1 ) {
+			DeviceEntry &entry = (*m_device_set)[item];
+			if( entry.GetAppNames().size() ) {
+				// has application configured!
+				enable_run_app = true;
+			}
+		}
+	}
+	m_run_app_button->Enable(enable_run_app);
+}
+
+DeviceSet::const_subset_type SyncMode::GetSelectedDevices()
+{
+	DeviceSet::const_subset_type subset;
+
+	long item = -1;
+	do {
+		item = m_device_list->GetNextItem(item, wxLIST_NEXT_ALL,
+			wxLIST_STATE_SELECTED);
+
+		if( item != -1 ) {
+			subset.push_back(m_device_set->begin() + item);
+		}
+	} while( item != -1 );
+
+	return subset;
+}
+
+void SyncMode::ReselectDevices(const DeviceSet::const_subset_type &set)
+{
+	for( long item = m_device_list->GetNextItem(-1); item != -1;
+		item = m_device_list->GetNextItem(item) )
+	{
+		bool selected = DeviceSet::FindPin(set, (*m_device_set)[item].GetPin()) != set.end();
+
+		m_device_list->SetItemState(item,
+			selected ? wxLIST_STATE_SELECTED : 0,
+			wxLIST_STATE_SELECTED);
+	}
 }
 
 void SyncMode::OnSyncNow(wxCommandEvent &event)
 {
-	// FIXME - test code
-	DeviceEntry &entry = (*m_device_set)[0];
-	SyncStatusDlg dlg(m_parent, "group_name", *entry.GetEngine());
+	DeviceSet::const_subset_type subset = GetSelectedDevices();
+	if( subset.size() == 0 )
+		return;	// nothing to do
+
+	// make sure an app is not running
+	if( m_cui.get() && m_cui->IsAppRunning() ) {
+		wxMessageBox(_T("An application is currently running."),
+			_T("Sync Error"), wxOK | wxICON_ERROR);
+		return;
+	}
+
+	SyncStatusDlg dlg(m_parent, subset);
 	dlg.ShowModal();
+}
+
+void SyncMode::OnRunApp(wxCommandEvent &event)
+{
+	// make sure it's not already running
+	if( m_cui.get() && m_cui->IsAppRunning() ) {
+		wxMessageBox(_T("An application is already running."),
+			_T("Run App Error"), wxOK | wxICON_ERROR);
+		return;
+	}
+
+	// find selected device
+	long item = -1;
+	item = m_device_list->GetNextItem(item, wxLIST_NEXT_ALL,
+		wxLIST_STATE_SELECTED);
+	if( item == -1 )
+		return;
+
+	// retrieve device's group config
+	DeviceEntry &entry = (*m_device_set)[item];
+	OpenSync::Config::Plugin *plugin = 0;
+	if( entry.GetConfigGroup() )
+		plugin = entry.GetConfigGroup()->GetNonBarryPlugin();
+	if( !plugin )
+		return;
+
+	// run the app
+	m_cui = ConfigUI::CreateConfigUI(plugin->GetAppName());
+	if( m_cui.get() )
+		m_cui->RunApp(m_parent);
+}
+
+void SyncMode::OnListSelChange(wxListEvent &event)
+{
+	UpdateButtons();
 }
 
 void SyncMode::OnConfigureDevice(wxListEvent &event)
@@ -919,7 +1045,9 @@ void SyncMode::OnConfigureDevice(wxListEvent &event)
 			SetConfigGroup(dlg.GetGroup(), dlg.GetEngine());
 
 		// update!
+		DeviceSet::const_subset_type subset = GetSelectedDevices();
 		FillDeviceList();
+		ReselectDevices(subset);
 	}
 }
 

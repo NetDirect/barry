@@ -26,6 +26,7 @@
 #include <wx/wx.h>
 #include "ipc.h"
 #include "osbase.h"
+#include "deviceset.h"
 
 class StatusConnection : public wxConnection
 {
@@ -67,8 +68,7 @@ class SyncStatusDlg
 	DECLARE_EVENT_TABLE()
 
 	// external data sources
-	const std::string &m_group_name;
-	OpenSync::API &m_engine;
+	DeviceSet::const_subset_type m_subset;
 
 	// dialog controls
 //	wxSizer *m_topsizer, *m_appsizer;
@@ -97,8 +97,8 @@ protected:
 	void AddButtonSizer(wxSizer *sizer);
 
 public:
-	SyncStatusDlg(wxWindow *parent, const std::string &group_name,
-		OpenSync::API &engine);
+	SyncStatusDlg(wxWindow *parent,
+		const DeviceSet::const_subset_type &subset);
 	~SyncStatusDlg();
 
 	// event handlers

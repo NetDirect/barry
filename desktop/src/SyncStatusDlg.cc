@@ -202,11 +202,9 @@ BEGIN_EVENT_TABLE(SyncStatusDlg, wxDialog)
 END_EVENT_TABLE()
 
 SyncStatusDlg::SyncStatusDlg(wxWindow *parent,
-				const std::string &group_name,
-				OpenSync::API &engine)
+				const DeviceSet::const_subset_type &subset)
 	: wxDialog(parent, Dialog_SyncStatus, _T("Device Sync Progress"))
-	, m_group_name(group_name)
-	, m_engine(engine)
+	, m_subset(subset)
 	, m_status_edit(0)
 {
 	// setup the raw GUI
@@ -243,3 +241,4 @@ wxConnectionBase* SyncStatusDlg::OnAcceptConnection(const wxString &topic)
 	else
 		return 0;
 }
+
