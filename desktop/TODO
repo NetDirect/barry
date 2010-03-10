@@ -4,31 +4,24 @@ Feature TODO List:
 
 Sync:
 -----
-- add a "Run App" button on the main sync list screen that runs the
-	application of the currently selected device
 - add a "Zap Config" button that zaps the current opensync config for
 	the current device, and recreates it automatically, and warns
 	the user, and recommends that the user delete one side of the
 	sync... either all the app data or all the blackberry data...
 	and make it easy to zap the blackberry data
+	- add a feature that blanks the BlackBerry for a clean one-way sync...
+		be sure to warn the user strenuously, that for 0.22 the
+		Address Book and Calendar will be wiped, and for 0.4x the
+		Address Book, Calendar, Memos, and Tasks will be wiped
+		- test 0.4x, and see if it is possible to do a clean one-way
+			sync without deleting all 4 databases... on 0.22 this
+			seems to cause opensync to go into a stupendously long
+			busy loop... maybe 0.4x is better
 - add support for parsing the XML conflict data from opensync
-- start thinking about sync status window, and sync conflict resolution
+- add a "Run App" button in the sync status window, in case of bad sync?
 - when pressing the Sync button, if a device is selected that is not
 	yet configured, ask the user if they want to configure or cancel,
 	and let them jump directly into the configure mode
-- add a listctrl, supporting multiple selection of devices, and
-	remember which *devices* (PIN numbers) are selected, and
-	re-select them the next time Sync opens... this gets around
-	the lack of support in wxWidgets for a checkbox in the listctrl,
-	to select which device(s) to sync with the Sync Now button
-- add a feature that blanks the BlackBerry for a clean one-way sync...
-	be sure to warn the user strenuously, that for 0.22 the
-	Address Book and Calendar will be wiped, and for 0.4x the
-	Address Book, Calendar, Memos, and Tasks will be wiped
-	- test 0.4x, and see if it is possible to do a clean one-way
-		sync without deleting all 4 databases... on 0.22 this
-		seems to cause opensync to go into a stupendously long
-		busy loop... maybe 0.4x is better
 
 Wishlist TODO List:
 ===================
