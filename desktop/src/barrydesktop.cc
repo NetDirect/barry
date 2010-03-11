@@ -222,8 +222,8 @@ private:
 protected:
 	void FillDeviceList();
 	void UpdateButtons();
-	DeviceSet::const_subset_type GetSelectedDevices();
-	void ReselectDevices(const DeviceSet::const_subset_type &set);
+	DeviceSet::subset_type GetSelectedDevices();
+	void ReselectDevices(const DeviceSet::subset_type &set);
 
 public:
 	SyncMode(wxWindow *parent);
@@ -923,9 +923,9 @@ void SyncMode::UpdateButtons()
 	m_run_app_button->Enable(enable_run_app);
 }
 
-DeviceSet::const_subset_type SyncMode::GetSelectedDevices()
+DeviceSet::subset_type SyncMode::GetSelectedDevices()
 {
-	DeviceSet::const_subset_type subset;
+	DeviceSet::subset_type subset;
 
 	long item = -1;
 	do {
@@ -940,7 +940,7 @@ DeviceSet::const_subset_type SyncMode::GetSelectedDevices()
 	return subset;
 }
 
-void SyncMode::ReselectDevices(const DeviceSet::const_subset_type &set)
+void SyncMode::ReselectDevices(const DeviceSet::subset_type &set)
 {
 	for( long item = m_device_list->GetNextItem(-1); item != -1;
 		item = m_device_list->GetNextItem(item) )
@@ -955,7 +955,7 @@ void SyncMode::ReselectDevices(const DeviceSet::const_subset_type &set)
 
 void SyncMode::OnSyncNow(wxCommandEvent &event)
 {
-	DeviceSet::const_subset_type subset = GetSelectedDevices();
+	DeviceSet::subset_type subset = GetSelectedDevices();
 	if( subset.size() == 0 )
 		return;	// nothing to do
 
@@ -1047,7 +1047,7 @@ void SyncMode::OnConfigureDevice(wxListEvent &event)
 			SetConfigGroup(dlg.GetGroup(), dlg.GetEngine());
 
 		// update!
-		DeviceSet::const_subset_type subset = GetSelectedDevices();
+		DeviceSet::subset_type subset = GetSelectedDevices();
 		FillDeviceList();
 		ReselectDevices(subset);
 	}

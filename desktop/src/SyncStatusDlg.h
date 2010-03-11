@@ -68,7 +68,7 @@ class SyncStatusDlg
 	DECLARE_EVENT_TABLE()
 
 	// external data sources
-	DeviceSet::const_subset_type m_subset;
+	DeviceSet::subset_type m_subset;
 
 	// dialog controls
 //	wxSizer *m_topsizer, *m_appsizer;
@@ -97,8 +97,7 @@ protected:
 	void AddButtonSizer(wxSizer *sizer);
 
 public:
-	SyncStatusDlg(wxWindow *parent,
-		const DeviceSet::const_subset_type &subset);
+	SyncStatusDlg(wxWindow *parent, const DeviceSet::subset_type &subset);
 	~SyncStatusDlg();
 
 	// event handlers

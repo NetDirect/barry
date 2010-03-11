@@ -202,7 +202,7 @@ BEGIN_EVENT_TABLE(SyncStatusDlg, wxDialog)
 END_EVENT_TABLE()
 
 SyncStatusDlg::SyncStatusDlg(wxWindow *parent,
-				const DeviceSet::const_subset_type &subset)
+				const DeviceSet::subset_type &subset)
 	: wxDialog(parent, Dialog_SyncStatus, _T("Device Sync Progress"))
 	, m_subset(subset)
 	, m_status_edit(0)

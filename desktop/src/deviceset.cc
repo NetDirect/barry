@@ -283,10 +283,10 @@ DeviceSet::const_iterator DeviceSet::FindPin(const Barry::Pin &pin) const
 	return end();
 }
 
-DeviceSet::const_subset_type::const_iterator DeviceSet::FindPin(
-	const DeviceSet::const_subset_type &subset, const Barry::Pin &pin)
+DeviceSet::subset_type::const_iterator DeviceSet::FindPin(
+	const DeviceSet::subset_type &subset, const Barry::Pin &pin)
 {
-	for( const_subset_type::const_iterator i = subset.begin();
+	for( subset_type::const_iterator i = subset.begin();
 		i != subset.end();
 		++i )
 	{
@@ -296,11 +296,11 @@ DeviceSet::const_subset_type::const_iterator DeviceSet::FindPin(
 	return subset.end();
 }
 
-std::string DeviceSet::Subset2String(const DeviceSet::const_subset_type &set)
+std::string DeviceSet::Subset2String(const DeviceSet::subset_type &set)
 {
 	std::string list;
 
-	const_subset_type::const_iterator i = set.begin();
+	subset_type::const_iterator i = set.begin();
 	for( ; i != set.end(); ++i ) {
 		if( list.size() )
 			list += " ";
@@ -309,9 +309,9 @@ std::string DeviceSet::Subset2String(const DeviceSet::const_subset_type &set)
 	return list;
 }
 
-DeviceSet::const_subset_type DeviceSet::String2Subset(const std::string &list) const
+DeviceSet::subset_type DeviceSet::String2Subset(const std::string &list)
 {
-	const_subset_type set;
+	subset_type set;
 
 	istringstream iss(list);
 	Barry::Pin pin;
@@ -321,7 +321,7 @@ DeviceSet::const_subset_type DeviceSet::String2Subset(const std::string &list) c
 			continue;
 
 		// search for pin in device set
-		const_iterator i = FindPin(pin);
+		iterator i = FindPin(pin);
 		if( i != end() )
 			set.push_back(i);
 	}
