@@ -21,11 +21,21 @@
 
 #include "exechelper.h"
 
-ExecHelper::ExecHelper()
-	: m_app_callback(0)
+TermCatcher::~TermCatcher()
+{
+	if( m_eh )
+		m_eh->m_catcher = 0;
+}
+
+ExecHelper::ExecHelper(TermCatcher *catcher)
+	: m_catcher(catcher)
+	, m_app_callback(0)
 	, m_app_pid(-1)
 	, m_app_status(-1)
 {
+	// link ourselves to the catcher... the catcher will unlink if necessary
+	if( m_catcher )
+		m_catcher->m_eh = this;
 }
 
 ExecHelper::~ExecHelper()
@@ -34,6 +44,8 @@ ExecHelper::~ExecHelper()
 		m_app_callback->Detach();
 		m_app_callback = 0;
 	}
+	if( m_catcher )
+		m_catcher->m_eh = 0;
 }
 
 void ExecHelper::RunError(wxWindow *parent, const wxString &msg)
@@ -47,7 +59,7 @@ void ExecHelper::RunError(wxWindow *parent, const wxString &msg)
 
 bool ExecHelper::Run(wxWindow *parent,
 			const std::string &appname,
-			const wxChar *start_argv[])
+			const wxString &command)
 {
 	if( IsAppRunning() ) {
 		RunError(parent, wxString(appname.c_str(), wxConvUTF8) +
@@ -56,21 +68,12 @@ bool ExecHelper::Run(wxWindow *parent,
 	}
 
 	m_app_callback = new AppCallback(this);
-	m_app_pid = wxExecute((wxChar**)start_argv, wxEXEC_ASYNC, m_app_callback);
+	m_app_pid = wxExecute(command, wxEXEC_ASYNC, m_app_callback);
 	if( m_app_pid <= 0 ) {
 		delete m_app_callback;
 		m_app_callback = 0;
 		m_app_pid = -1;
 
-		RunError(parent, _T("Failed to run ") +
-			wxString(appname.c_str(), wxConvUTF8) +
-			_T(". Please make sure it is installed and in your PATH."));
-		return false;
-	}
-
-	wxMilliSleep(250);
-	wxYield();
-	if( !m_app_callback && m_app_status != 0 ) {
 		RunError(parent, _T("Failed to run ") +
 			wxString(appname.c_str(), wxConvUTF8) +
 			_T(". Please make sure it is installed and in your PATH."));

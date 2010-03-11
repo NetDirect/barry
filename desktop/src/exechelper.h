@@ -25,11 +25,49 @@
 #include <wx/wx.h>
 #include <wx/process.h>
 
+class ExecHelper;
+
+class TermCatcher
+{
+	friend class ExecHelper;
+
+	ExecHelper *m_eh;
+
+public:
+	TermCatcher() : m_eh(0) {}
+	virtual ~TermCatcher();
+	virtual void ExecTerminated() = 0;
+};
+
+//
+// ExecHelper
+//
+/// Wrapper around the wxProcess class, that does much of the same
+/// stuff, but also stores the child process's status code without
+/// requiring a virtual override.
+///
+/// If ExecHelper is destroyed before the app exits, the callback
+/// will be "lost", but the AppCallback class will cleanup after itself.
+///
+/// If you specify a TermCatcher pointer, then as long as TermCatcher
+/// and ExecHelper exist, you will get an event via the virtual
+/// ExecTerminated() call.  If either ExecHelper or TermCatcher
+/// go out of scope before that happens, the callback will be "lost"
+/// but everything will be cleaned up automatically.
+///
+/// The idea: Create a class where your real work happens, and derive
+/// that class from TermCatcher.  Then create an instance
+/// of ExecHelper inside that class, and pass 'this' to its
+/// constructor.  If this is a dialog class that disappears
+/// before the app exits, the destructors will handle things automatically.
+///
 class ExecHelper
 {
+	friend class TermCatcher;
+
 protected:
 	// This funky class is required because wxProcess deletes itself,
-	// so that if ConfigUI is deleted before AppCallback, a segfault
+	// so that if ExecHelper is deleted before AppCallback, a segfault
 	// is not caused by the OnTerminate() call.
 	class AppCallback : public wxProcess
 	{
@@ -49,19 +87,33 @@ protected:
 		virtual void OnTerminate(int pid, int status)
 		{
 			if( m_container && this == m_container->m_app_callback ) {
-				if( pid == m_container->m_app_pid ) {
-					m_container->m_app_pid = -1;
-					m_container->m_app_status = status;
-				}
-
+				m_container->m_app_pid = -1;
+				m_container->m_app_status = status;
 				m_container->m_app_callback = 0;
+
+				// signal if legal
+				if( m_container->m_catcher ) {
+					try {
+						m_container->m_catcher->ExecTerminated();
+					}
+					catch( ... ) {
+						// we are fully responsible
+						// for cleaning ourselves up,
+						// so do that, and then re-
+						// throw, and hope for the
+						// best...
+						delete this;
+						throw;
+					}
+				}
 			}
 
-			// call the base to delete ourselves if needed
-			wxProcess::OnTerminate(pid, status);
+			// cleanup
+			delete this;
 		}
 	};
 
+	TermCatcher *m_catcher;
 	AppCallback *m_app_callback;
 	int m_app_pid;
 	int m_app_status;
@@ -71,7 +123,7 @@ protected:
 	void RunError(wxWindow *parent, const wxString &msg);
 
 public:
-	ExecHelper();
+	ExecHelper(TermCatcher *catcher = 0);
 	virtual ~ExecHelper();
 
 	/// Runs the Application, if not already running.. parent may
@@ -79,7 +131,7 @@ public:
 	/// if unable to run the app.  The 'appname' argument is a
 	/// user-friendly name for the application you are running.
 	virtual bool Run(wxWindow *parent, const std::string &appname,
-		const wxChar *start_argv[]);
+		const wxString &command);
 	/// Returns true if App is currently running
 	virtual bool IsAppRunning();
 	virtual int GetAppStatus() const { return m_app_status; }

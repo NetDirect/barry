@@ -231,11 +231,7 @@ ConfigUI::plugin_ptr Evolution::GetPlugin()
 
 bool Evolution::RunApp(wxWindow *parent)
 {
-	const wxChar *start_argv[] = {
-		_T("evolution"),
-		NULL
-	};
-	return Run(parent, AppName(), start_argv);
+	return Run(parent, AppName(), _T("evolution"));
 }
 
 void Evolution::PreSyncAppInit()
