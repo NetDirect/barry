@@ -414,17 +414,24 @@ int Probe::FindActive(Barry::Pin pin) const
 
 int Probe::FindActive(const Barry::Probe::Results &results, Barry::Pin pin)
 {
-	Barry::Probe::Results::const_iterator ci = results.begin();
-	for( int i = 0; ci != results.end(); i++, ++ci ) {
-		if( ci->m_pin == pin )
-			return i;
-	}
-	if( pin == 0 ) {
+	int i = Find(results, pin);
+
+	if( i == -1 && pin == 0 ) {
 		// can we default to a single device?
 		if( results.size() == 1 )
 			return 0;	// yes!
 	}
 
+	return i;
+}
+
+int Probe::Find(const Results &results, Barry::Pin pin)
+{
+	Barry::Probe::Results::const_iterator ci = results.begin();
+	for( int i = 0; ci != results.end(); i++, ++ci ) {
+		if( ci->m_pin == pin )
+			return i;
+	}
 	// PIN not found
 	return -1;
 }

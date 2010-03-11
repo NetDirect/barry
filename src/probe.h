@@ -101,6 +101,7 @@ public:
 	int FindActive(Barry::Pin pin = 0) const; // returns -1 if pin not found
 						// or if no devices
 	static int FindActive(const Results &results, Barry::Pin pin = 0);
+	static int Find(const Results &results, Barry::Pin pin = 0);
 };
 
 

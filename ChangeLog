@@ -1,5 +1,7 @@
 Release: version 0.17 - 2010/01/??
 ------------------------------------------------------------------------------
+2010/03/11
+	- added Probe::Find(), for simple searching of probe results
 2010/02/09
 	- added message during restore, to let user know that the erased
 		database was restored (requested by Pierre Pietri)
