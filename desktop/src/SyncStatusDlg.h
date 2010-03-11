@@ -27,8 +27,10 @@
 #include "ipc.h"
 #include "osbase.h"
 #include "deviceset.h"
+#include "exechelper.h"
+#include "optout.h"
 
-class StatusConnection : public wxConnection
+class StatusConnection : public wxConnection, public OptOut::Element
 {
 	wxTextCtrl &m_status;
 
@@ -39,7 +41,7 @@ public:
 		wxChar *data, int size, wxIPCFormat format);
 };
 
-class ConflictConnection : public wxConnection
+class ConflictConnection : public wxConnection, public OptOut::Element
 {
 	wxWindow *m_parent;
 	SillyBuffer m_buf;
@@ -64,11 +66,21 @@ public:
 class SyncStatusDlg
 	: public wxDialog
 	, public wxServer
+	, public TermCatcher
 {
 	DECLARE_EVENT_TABLE()
 
 	// external data sources
 	DeviceSet::subset_type m_subset;
+	DeviceSet::subset_type::iterator m_next_device;
+
+	// for handling bsyncjail
+	ExecHelper m_exec;
+	std::string m_device_id;
+
+	// connection holder, to make sure they get deleted if we
+	// go out of scope
+	OptOut::Vector<wxConnectionBase> m_connections;
 
 	// dialog controls
 //	wxSizer *m_topsizer, *m_appsizer;
@@ -96,17 +108,30 @@ protected:
 	void LoadAppNames(wxArrayString &appnames);
 	void AddButtonSizer(wxSizer *sizer);
 
+	// set buttons to "close" configuration
+	void SetClose();
+
+	void PrintBlack(const std::string &msg);
+	void PrintRed(const std::string &msg);
+
 public:
 	SyncStatusDlg(wxWindow *parent, const DeviceSet::subset_type &subset);
 	~SyncStatusDlg();
 
+	// operations
+	void StartNextSync();
+
 	// event handlers
+	void OnInitDialog(wxInitDialogEvent &event);
 //	void OnConfigureApp(wxCommandEvent &event);
 //	void OnEngineComboChange(wxCommandEvent &event);
 //	void OnAppComboChange(wxCommandEvent &event);
 
 	// virtual overrides from wxServer
 	wxConnectionBase* OnAcceptConnection(const wxString &topic);
+
+	// virtual overrides from TermCatcher
+	virtual void ExecTerminated();
 };
 
 #endif

@@ -20,13 +20,15 @@
     root directory of this project for more details.
 */
 
+#include "SyncStatusDlg.h"
+#include "ConflictDlg.h"
+#include "windowids.h"
+#include "configui.h"
+#include <wx/filename.h>
 #include <iostream>
 #include <sstream>
 #include <iomanip>
 #include <iterator>
-#include "SyncStatusDlg.h"
-#include "ConflictDlg.h"
-#include "windowids.h"
 
 using namespace std;
 
@@ -193,6 +195,7 @@ wxChar* ConflictConnection::OnRequest(const wxString &topic,
 // SyncStatus class
 
 BEGIN_EVENT_TABLE(SyncStatusDlg, wxDialog)
+	EVT_INIT_DIALOG	(SyncStatusDlg::OnInitDialog)
 //	EVT_BUTTON	(Dialog_GroupCfg_AppConfigButton,
 //				GroupCfgDlg::OnConfigureApp)
 //	EVT_TEXT	(Dialog_GroupCfg_EngineCombo,
@@ -203,8 +206,10 @@ END_EVENT_TABLE()
 
 SyncStatusDlg::SyncStatusDlg(wxWindow *parent,
 				const DeviceSet::subset_type &subset)
-	: wxDialog(parent, Dialog_SyncStatus, _T("Device Sync Progress"))
+	: wxDialog(parent, Dialog_SyncStatus, _T("Device Sync Progress"),
+		wxDefaultPosition, wxSize(500,200))
 	, m_subset(subset)
+	, m_next_device(m_subset.begin())
 	, m_status_edit(0)
 {
 	// setup the raw GUI
@@ -212,17 +217,11 @@ SyncStatusDlg::SyncStatusDlg(wxWindow *parent,
 
 	// create the IPC server
 	wxServer::Create(SERVER_SERVICE_NAME);
-
-	// force shutdown of evolution (FIXME - only do the app-specific
-	// init process)
-//	blah;
-
-	// initialize sync jail process
-//	blah;
 }
 
 SyncStatusDlg::~SyncStatusDlg()
 {
+	m_exec.KillApp();
 }
 
 void SyncStatusDlg::CreateLayout()
@@ -232,13 +231,114 @@ void SyncStatusDlg::CreateLayout()
 		wxTE_MULTILINE | wxTE_READONLY | wxTE_RICH);
 }
 
+void SyncStatusDlg::SetClose()
+{
+	// FIXME - set buttons to close configuration
+}
+
+void SyncStatusDlg::PrintBlack(const std::string &msg)
+{
+	m_status_edit->SetDefaultStyle(wxTextAttr(*wxBLACK));
+	m_status_edit->AppendText(_T("\n") + wxString(msg.c_str(), wxConvUTF8));
+}
+
+void SyncStatusDlg::PrintRed(const std::string &msg)
+{
+	m_status_edit->SetDefaultStyle(wxTextAttr(*wxRED));
+	m_status_edit->AppendText(_T("\n") + wxString(msg.c_str(), wxConvUTF8));
+}
+
+void SyncStatusDlg::StartNextSync()
+{
+	// anything to do?
+	if( m_next_device == m_subset.end() ) {
+		PrintBlack("No more devices to sync.");
+		SetClose();
+		return;
+	}
+
+	// grab all required information we need to sync
+	DeviceEntry &device = *(*m_next_device);
+	m_device_id = device.GetPin().str() + " (" + device.GetDeviceName() + ")";
+
+	if( !device.IsConfigured() ) {
+		PrintRed(m_device_id + " is not configured, skipping.");
+		++m_next_device;
+//		StartNextSync();
+		return;
+	}
+
+	OpenSync::API *engine = device.GetEngine();
+	OpenSync::Config::Group *group = device.GetConfigGroup();
+	string group_name = group->GetGroupName();
+
+	PrintRed("Starting sync for: " + m_device_id);
+
+	// for each plugin / app, perform the pre-sync steps
+	for( OpenSync::Config::Group::iterator i = group->begin();
+		i != group->end();
+		++i )
+	{
+		ConfigUI::ptr ui = ConfigUI::CreateConfigUI((*i)->GetAppName());
+		if( ui.get() ) {
+			ui->PreSyncAppInit();
+		}
+	}
+
+	// initialize sync jail process
+	if( m_exec.IsAppRunning() ) {
+		PrintRed("ERROR: App running in StartNextSync()");
+		SetClose();
+		return;
+	}
+
+	// assume that bsyncjail is in the same directory as barrydesktop
+	wxFileName path(wxTheApp->argv[0]);
+	wxString command = path.GetPath();
+	command += path.GetPathSeparator();
+	command += _T("bsyncjail ");
+	command += wxString(engine->GetVersion(), wxConvUTF8);
+	command += _T(" ");
+	command += wxString(group_name.c_str(), wxConvUTF8);
+
+	if( !m_exec.Run(NULL, "bsyncjail", command) ) {
+		PrintRed("ERROR: unable to start bsyncjail: " + string(command.utf8_str()));
+		SetClose();
+		return;
+	}
+
+return;
+	// sync is underway... advance to the next device
+	++m_next_device;
+}
+
+void SyncStatusDlg::OnInitDialog(wxInitDialogEvent &event)
+{
+	cout << "OnInitDialog" << endl;
+	StartNextSync();
+}
+
 wxConnectionBase* SyncStatusDlg::OnAcceptConnection(const wxString &topic)
 {
+	wxConnectionBase *con = 0;
+
 	if( topic == TOPIC_STATUS && m_status_edit )
-		return new StatusConnection(*m_status_edit);
+		con = new StatusConnection(*m_status_edit);
 	else if( topic == TOPIC_CONFLICT )
-		return new ConflictConnection(this);
-	else
-		return 0;
+		con = new ConflictConnection(this);
+
+	if( con )
+		m_connections.push_back( dynamic_cast<OptOut::Element*> (con) );
+
+	return con;
+}
+
+void SyncStatusDlg::ExecTerminated()
+{
+	ostringstream oss;
+	oss << "Sync finished: " << m_device_id;
+	PrintRed(oss.str());
+
+//	StartNextSync();
 }
 
