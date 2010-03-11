@@ -293,6 +293,7 @@ public:
 
 	// sys menu (triggered by the Barry logo)
 	void OnVerboseLogging(wxCommandEvent &event);
+	void OnResetDevice(wxCommandEvent &event);
 	void OnRescanUsb(wxCommandEvent &event);
 	void OnAbout(wxCommandEvent &event);
 	void OnExit(wxCommandEvent &event);
@@ -312,6 +313,7 @@ BEGIN_EVENT_TABLE(BaseFrame, wxFrame)
 	EVT_BUTTON	(HotImage_NetDirectLogo, BaseFrame::OnNetDirectLogoClicked)
 	EVT_TEXT	(Ctrl_DeviceCombo, BaseFrame::OnDeviceComboChange)
 	EVT_MENU	(SysMenu_VerboseLogging, BaseFrame::OnVerboseLogging)
+	EVT_MENU	(SysMenu_ResetDevice, BaseFrame::OnResetDevice)
 	EVT_MENU	(SysMenu_RescanUsb, BaseFrame::OnRescanUsb)
 	EVT_MENU	(SysMenu_About, BaseFrame::OnAbout)
 	EVT_MENU	(SysMenu_Exit, BaseFrame::OnExit)
@@ -1090,6 +1092,7 @@ BaseFrame::BaseFrame(const wxImage &background)
 	m_sysmenu->Append( new wxMenuItem(m_sysmenu.get(),
 		SysMenu_VerboseLogging, _T("&Verbose Logging"),
 		_T("Enable low level USB debug output"), wxITEM_CHECK, NULL) );
+	m_sysmenu->Append(SysMenu_ResetDevice, _T("Re&set Device"));
 	m_sysmenu->Append(SysMenu_RescanUsb, _T("&Rescan USB"));
 	m_sysmenu->AppendSeparator();
 	m_sysmenu->Append(SysMenu_About, _T("&About..."));
@@ -1396,6 +1399,18 @@ void BaseFrame::OnVerboseLogging(wxCommandEvent &event)
 	Barry::Verbose( !Barry::IsVerbose() );
 	wxGetApp().GetGlobalConfig().SetVerboseLogging( Barry::IsVerbose() );
 	UpdateMenuState();
+}
+
+void BaseFrame::OnResetDevice(wxCommandEvent &event)
+{
+	int i = Barry::Probe::Find(wxGetApp().GetResults(), GetCurrentComboPin());
+	if( i != -1 ) {
+		Usb::Device dev(wxGetApp().GetResults()[i].m_dev);
+		dev.Reset();
+		wxBusyCursor wait;
+		wxSleep(4);
+		OnRescanUsb(event);
+	}
 }
 
 void BaseFrame::OnRescanUsb(wxCommandEvent &event)

@@ -70,6 +70,7 @@ enum {
 	SysMenu_FirstItem,
 
 	SysMenu_VerboseLogging = SysMenu_FirstItem,
+	SysMenu_ResetDevice,
 	SysMenu_RescanUsb,
 
 	SysMenu_LastItem = SysMenu_RescanUsb
