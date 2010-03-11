@@ -122,14 +122,22 @@ bool BarrySyncJail::OnInit()
 
 	// load opensync engine
 	try {
-		if( g_argv_version == "22" )
+		if( g_argv_version == "0.22" )
 			m_engine.reset( new OpenSync::OpenSync22 );
-		else if( g_argv_version == "40" )
+		else {
 			m_engine.reset( new OpenSync::OpenSync40 );
+			if( g_argv_version != m_engine->GetVersion() )
+				throw std::runtime_error("Can't find matching engine for: " + g_argv_version);
+		}
 	}
 	catch( std::exception &e ) {
 		m_status_con->Poke(STATUS_ITEM_ERROR, sb.buf(e.what()));
 		cerr << e.what() << endl;
+		return false;
+	}
+
+	if( !m_engine.get() ) {
+		m_status_con->Poke(STATUS_ITEM_ERROR, sb.buf(string("Unknown engine number: ") + g_argv_version));
 		return false;
 	}
 
