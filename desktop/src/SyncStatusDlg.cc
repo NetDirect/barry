@@ -55,6 +55,22 @@ bool StatusConnection::OnPoke(const wxString &topic,
 		m_status.SetDefaultStyle(wxTextAttr(*wxRED));
 		m_status.AppendText(_T("\n") + wxString(data, size));
 	}
+	else if( item == STATUS_ITEM_ENTRY ) {
+		m_status.SetDefaultStyle(wxTextAttr(*wxBLUE));
+		m_status.AppendText(_T("\n") + wxString(data, size));
+	}
+	else if( item == STATUS_ITEM_MAPPING ) {
+		m_status.SetDefaultStyle(wxTextAttr(*wxBLUE));
+		m_status.AppendText(_T("\n") + wxString(data, size));
+	}
+	else if( item == STATUS_ITEM_ENGINE ) {
+		m_status.SetDefaultStyle(wxTextAttr(*wxGREEN));
+		m_status.AppendText(_T("\n") + wxString(data, size));
+	}
+	else if( item == STATUS_ITEM_MEMBER ) {
+		m_status.SetDefaultStyle(wxTextAttr(*wxCYAN));
+		m_status.AppendText(_T("\n") + wxString(data, size));
+	}
 	else {
 		// unknown item
 		m_status.SetDefaultStyle(wxTextAttr(*wxBLACK));
@@ -221,6 +237,7 @@ SyncStatusDlg::SyncStatusDlg(wxWindow *parent,
 
 SyncStatusDlg::~SyncStatusDlg()
 {
+	// make sure bsyncjail dies if we do
 	m_exec.KillApp();
 }
 
