@@ -39,6 +39,7 @@ ConfigUI::configui_ptr ConfigUI::CreateConfigUI(const std::string &appname)
 // ConfigUI class
 
 ConfigUI::ConfigUI()
+	: ExecHelper(0)
 {
 }
 

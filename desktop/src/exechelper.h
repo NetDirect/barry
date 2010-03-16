@@ -123,7 +123,9 @@ protected:
 	void RunError(wxWindow *parent, const wxString &msg);
 
 public:
-	ExecHelper(TermCatcher *catcher = 0);
+	/// It is safe to pass a NULL catcher here.  No default is
+	/// specified so that the compiler helps prevent forgetfulness.
+	ExecHelper(TermCatcher *catcher);
 	virtual ~ExecHelper();
 
 	/// Runs the Application, if not already running.. parent may

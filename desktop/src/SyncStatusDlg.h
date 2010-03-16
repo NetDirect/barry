@@ -75,7 +75,7 @@ class SyncStatusDlg
 	DeviceSet::subset_type::iterator m_next_device;
 
 	// for handling bsyncjail
-	ExecHelper m_exec;
+	ExecHelper m_jailexec;
 	std::string m_device_id;
 
 	// connection holder, to make sure they get deleted if we

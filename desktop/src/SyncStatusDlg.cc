@@ -226,6 +226,7 @@ SyncStatusDlg::SyncStatusDlg(wxWindow *parent,
 		wxDefaultPosition, wxSize(500,200))
 	, m_subset(subset)
 	, m_next_device(m_subset.begin())
+	, m_jailexec(0)
 	, m_status_edit(0)
 {
 	// setup the raw GUI
@@ -238,7 +239,7 @@ SyncStatusDlg::SyncStatusDlg(wxWindow *parent,
 SyncStatusDlg::~SyncStatusDlg()
 {
 	// make sure bsyncjail dies if we do
-	m_exec.KillApp();
+	m_jailexec.KillApp();
 }
 
 void SyncStatusDlg::CreateLayout()
@@ -303,7 +304,7 @@ void SyncStatusDlg::StartNextSync()
 	}
 
 	// initialize sync jail process
-	if( m_exec.IsAppRunning() ) {
+	if( m_jailexec.IsAppRunning() ) {
 		PrintRed("ERROR: App running in StartNextSync()");
 		SetClose();
 		return;
@@ -318,7 +319,7 @@ void SyncStatusDlg::StartNextSync()
 	command += _T(" ");
 	command += wxString(group_name.c_str(), wxConvUTF8);
 
-	if( !m_exec.Run(NULL, "bsyncjail", command) ) {
+	if( !m_jailexec.Run(NULL, "bsyncjail", command) ) {
 		PrintRed("ERROR: unable to start bsyncjail: " + string(command.utf8_str()));
 		SetClose();
 		return;
