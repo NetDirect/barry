@@ -4,6 +4,8 @@ Feature TODO List:
 
 Sync:
 -----
+- figure out why killing bsyncjail manually does not result in a
+	Terminate() message to barrydesktop :-(
 - add a "Zap Config" button that zaps the current opensync config for
 	the current device, and recreates it automatically, and warns
 	the user, and recommends that the user delete one side of the
