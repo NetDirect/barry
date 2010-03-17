@@ -40,6 +40,15 @@ public:
 
 	bool OnPoke(const wxString &topic, const wxString &item,
 		wxChar *data, int size, wxIPCFormat format);
+
+	// wxWidgets bug override - stop the 'delete this' behaviour,
+	// since sometimes events seem to come through after
+	// the delete... not sure why, and hard to debug.
+	// This is with wxWidgets 2.8.7.
+	//
+	// With this override, the container in SyncStatusDlg
+	// will handle all the deleting.
+	virtual bool OnDisconnect() { return true; }
 };
 
 class ConflictConnection : public wxConnection, public OptOut::Element
@@ -62,6 +71,15 @@ public:
 		wxChar *data, int size, wxIPCFormat format);
 	wxChar* OnRequest(const wxString &topic, const wxString &item,
 		int *size, wxIPCFormat format);
+
+	// wxWidgets bug override - stop the 'delete this' behaviour,
+	// since sometimes events seem to come through after
+	// the delete... not sure why, and hard to debug.
+	// This is with wxWidgets 2.8.7.
+	//
+	// With this override, the container in SyncStatusDlg
+	// will handle all the deleting.
+	virtual bool OnDisconnect() { return true; }
 };
 
 class SyncStatusDlg
