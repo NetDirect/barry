@@ -4,8 +4,10 @@ Feature TODO List:
 
 Sync:
 -----
-- figure out why killing bsyncjail manually does not result in a
-	Terminate() message to barrydesktop :-(
+- add support for re-starting the config, to make one side clean and the
+	other side authoritative, to recover from slow-syncs
+- add code to detect slow-syncs, in the jail and the server, so that
+	slow-syncs on 0.22 never actually run
 - add a "Zap Config" button that zaps the current opensync config for
 	the current device, and recreates it automatically, and warns
 	the user, and recommends that the user delete one side of the
