@@ -232,7 +232,7 @@ SyncStatusDlg::SyncStatusDlg(wxWindow *parent,
 		wxDefaultPosition, wxSize(500,500))
 	, m_subset(subset)
 	, m_next_device(m_subset.begin())
-	, m_jailexec(0)
+	, m_jailexec(this)
 	, m_topsizer(0)
 	, m_status_edit(0)
 	, m_runapp_button(0)
