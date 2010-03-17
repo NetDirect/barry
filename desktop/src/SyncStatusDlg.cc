@@ -233,6 +233,7 @@ SyncStatusDlg::SyncStatusDlg(wxWindow *parent,
 	, m_subset(subset)
 	, m_next_device(m_subset.begin())
 	, m_jailexec(this)
+	, m_killingjail(false)
 	, m_topsizer(0)
 	, m_status_edit(0)
 	, m_runapp_button(0)
@@ -336,6 +337,8 @@ void SyncStatusDlg::PrintRed(const std::string &msg)
 
 void SyncStatusDlg::StartNextSync()
 {
+	m_killingjail = false;
+
 	// anything to do?
 	if( m_next_device == m_subset.end() ) {
 		PrintBlack("No more devices to sync.");
@@ -438,12 +441,27 @@ void SyncStatusDlg::OnSyncAgain(wxCommandEvent &event)
 void SyncStatusDlg::OnKillClose(wxCommandEvent &event)
 {
 	if( m_jailexec.IsAppRunning() ) {
-		int choice = wxMessageBox(_T("This will kill the syncing child process, and will likely require a configuration reset.\n\nKill sync process anyway?"),
-			_T("Kill Sync"), wxYES_NO | wxICON_QUESTION);
+		int choice;
+		if( m_killingjail ) {
+			choice = wxMessageBox(_T("Already killing sync.  Kill again?"),
+				_T("Kill Sync"), wxYES_NO | wxICON_QUESTION);
+		}
+		else {
+			choice = wxMessageBox(_T("This will kill the syncing child process, and will likely require a configuration reset.\n\nKill sync process anyway?"),
+				_T("Kill Sync"), wxYES_NO | wxICON_QUESTION);
+		}
+
 		if( choice == wxYES ) {
-			m_jailexec.KillApp();
+			m_jailexec.KillApp(m_killingjail);
+			m_killingjail = true;
+
 			// jump to the end of the sync roster
 			m_next_device = m_subset.end();
+
+			// print a warning so the user know's what's going on
+			PrintRed("Killing sync... this may take a little while...");
+			PrintRed("Remember to re-plug your device.");
+
 			// let the terminate call clean up the buttons
 			return;
 		}
@@ -471,7 +489,11 @@ wxConnectionBase* SyncStatusDlg::OnAcceptConnection(const wxString &topic)
 void SyncStatusDlg::ExecTerminated()
 {
 	ostringstream oss;
-	oss << "Sync finished: " << m_device_id;
+	if( m_killingjail )
+		oss << "Sync terminated: ";
+	else
+		oss << "Sync finished: ";
+	oss << m_device_id;
 	PrintRed(oss.str());
 
 	StartNextSync();

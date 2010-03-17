@@ -96,6 +96,7 @@ class SyncStatusDlg
 	// for handling bsyncjail
 	ExecHelper m_jailexec;
 	std::string m_device_id;
+	bool m_killingjail;
 
 	// for handling run app
 	ConfigUI::ptr m_ui;
