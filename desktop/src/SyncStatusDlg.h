@@ -29,6 +29,7 @@
 #include "deviceset.h"
 #include "exechelper.h"
 #include "optout.h"
+#include "configui.h"
 
 class StatusConnection : public wxConnection, public OptOut::Element
 {
@@ -78,15 +79,20 @@ class SyncStatusDlg
 	ExecHelper m_jailexec;
 	std::string m_device_id;
 
+	// for handling run app
+	ConfigUI::ptr m_ui;
+
 	// connection holder, to make sure they get deleted if we
 	// go out of scope
 	OptOut::Vector<wxConnectionBase> m_connections;
 
 	// dialog controls
-//	wxSizer *m_topsizer, *m_appsizer;
+	wxSizer *m_topsizer;
+//	wxSizer *m_appsizer;
 //	wxComboBox *m_engine_combo, *m_app_combo;
 //	wxTextCtrl *m_password_edit;
 	wxTextCtrl *m_status_edit;
+	wxButton *m_runapp_button, *m_syncagain_button, *m_killclose_button;
 //	wxCheckBox *m_debug_check;
 	// Need: a pretty status edit box, to show all status messages,
 	//       and a "sync action" button that says "Kill Sync"
@@ -98,17 +104,12 @@ class SyncStatusDlg
 
 protected:
 	void CreateLayout();
-	void AddEngineSizer(wxSizer *sizer);
-	void AddConfigSizer(wxSizer *sizer);
-	void AddBarrySizer(wxSizer *sizer);
-	void AddAppSizer(wxSizer *sizer);
-	void UpdateAppSizer();		// called if engine changes, to update
-					// the app combo, etc, with available
-					// apps
-	void LoadAppNames(wxArrayString &appnames);
+	void AddStatusSizer(wxSizer *sizer);
 	void AddButtonSizer(wxSizer *sizer);
 
-	// set buttons to "close" configuration
+	// set buttons to "running" state
+	void SetRunning();
+	// set buttons to "close" state
 	void SetClose();
 
 	void PrintBlack(const std::string &msg);
@@ -123,6 +124,9 @@ public:
 
 	// event handlers
 	void OnInitDialog(wxInitDialogEvent &event);
+	void OnRunApp(wxCommandEvent &event);
+	void OnSyncAgain(wxCommandEvent &event);
+	void OnKillClose(wxCommandEvent &event);
 //	void OnConfigureApp(wxCommandEvent &event);
 //	void OnEngineComboChange(wxCommandEvent &event);
 //	void OnAppComboChange(wxCommandEvent &event);

@@ -212,6 +212,12 @@ wxChar* ConflictConnection::OnRequest(const wxString &topic,
 
 BEGIN_EVENT_TABLE(SyncStatusDlg, wxDialog)
 	EVT_INIT_DIALOG	(SyncStatusDlg::OnInitDialog)
+	EVT_BUTTON	(Dialog_SyncStatus_RunAppButton,
+				SyncStatusDlg::OnRunApp)
+	EVT_BUTTON	(Dialog_SyncStatus_SyncAgainButton,
+				SyncStatusDlg::OnSyncAgain)
+	EVT_BUTTON	(Dialog_SyncStatus_KillCloseButton,
+				SyncStatusDlg::OnKillClose)
 //	EVT_BUTTON	(Dialog_GroupCfg_AppConfigButton,
 //				GroupCfgDlg::OnConfigureApp)
 //	EVT_TEXT	(Dialog_GroupCfg_EngineCombo,
@@ -223,11 +229,15 @@ END_EVENT_TABLE()
 SyncStatusDlg::SyncStatusDlg(wxWindow *parent,
 				const DeviceSet::subset_type &subset)
 	: wxDialog(parent, Dialog_SyncStatus, _T("Device Sync Progress"),
-		wxDefaultPosition, wxSize(500,200))
+		wxDefaultPosition, wxSize(500,500))
 	, m_subset(subset)
 	, m_next_device(m_subset.begin())
 	, m_jailexec(0)
+	, m_topsizer(0)
 	, m_status_edit(0)
+	, m_runapp_button(0)
+	, m_syncagain_button(0)
+	, m_killclose_button(0)
 {
 	// setup the raw GUI
 	CreateLayout();
@@ -244,14 +254,72 @@ SyncStatusDlg::~SyncStatusDlg()
 
 void SyncStatusDlg::CreateLayout()
 {
-	m_status_edit = new wxTextCtrl(this, wxID_ANY, _T(""),
-		wxDefaultPosition, wxDefaultSize,
-		wxTE_MULTILINE | wxTE_READONLY | wxTE_RICH);
+	m_topsizer = new wxBoxSizer(wxVERTICAL);
+	AddStatusSizer(m_topsizer);
+	AddButtonSizer(m_topsizer);
+
+	SetSizer(m_topsizer);
+//	m_topsizer->SetSizeHints(this);
+	m_topsizer->Layout();
+}
+
+void SyncStatusDlg::AddStatusSizer(wxSizer *sizer)
+{
+	wxSizer *ss = new wxStaticBoxSizer(
+		new wxStaticBox(this, wxID_ANY, _T("Sync Progress")),
+		wxHORIZONTAL
+		);
+
+	ss->Add(
+		m_status_edit = new wxTextCtrl(this, wxID_ANY, _T(""),
+			wxDefaultPosition, wxDefaultSize,
+			wxTE_MULTILINE | wxTE_READONLY | wxTE_RICH),
+		1, wxALL | wxEXPAND, 2);
+
+	sizer->Add(ss, 1, wxTOP | wxLEFT | wxRIGHT | wxEXPAND, 5);
+}
+
+void SyncStatusDlg::AddButtonSizer(wxSizer *sizer)
+{
+	wxSizer *button = new wxBoxSizer(wxHORIZONTAL);
+
+	if( m_subset.size() == 1 ) {
+		button->Add(
+			m_runapp_button = new wxButton(this,
+				Dialog_SyncStatus_RunAppButton,
+				_T("Run App")),
+			0, wxALL, 3);
+	}
+	button->Add(
+		m_syncagain_button = new wxButton(this,
+			Dialog_SyncStatus_SyncAgainButton,
+			_T("Sync Again")),
+		0, wxALL, 3);
+	button->Add(
+		m_killclose_button = new wxButton(this,
+			Dialog_SyncStatus_KillCloseButton,
+			_T("Kill Sync")),
+		0, wxALL, 3);
+
+	sizer->Add(button, 0, wxALL | wxALIGN_RIGHT, 5);
+}
+
+void SyncStatusDlg::SetRunning()
+{
+	if( m_runapp_button )
+		m_runapp_button->Enable(false);
+	m_syncagain_button->Enable(false);
+	m_killclose_button->SetLabel(_T("Kill Sync"));
+	m_killclose_button->Enable(true);
 }
 
 void SyncStatusDlg::SetClose()
 {
-	// FIXME - set buttons to close configuration
+	if( m_runapp_button )
+		m_runapp_button->Enable(true);
+	m_syncagain_button->Enable(true);
+	m_killclose_button->SetLabel(_T("Close"));
+	m_killclose_button->Enable(true);
 }
 
 void SyncStatusDlg::PrintBlack(const std::string &msg)
@@ -273,6 +341,9 @@ void SyncStatusDlg::StartNextSync()
 		PrintBlack("No more devices to sync.");
 		SetClose();
 		return;
+	}
+	else {
+		SetRunning();
 	}
 
 	// grab all required information we need to sync
@@ -336,6 +407,52 @@ void SyncStatusDlg::OnInitDialog(wxInitDialogEvent &event)
 	StartNextSync();
 }
 
+void SyncStatusDlg::OnRunApp(wxCommandEvent &event)
+{
+	if( m_subset.size() != 1 )
+		return;
+
+	if( m_ui.get() && m_ui->IsAppRunning() ) {
+		wxMessageBox(_T("The application is already running."),
+			_T("Run Application"), wxOK | wxICON_ERROR);
+		return;
+	}
+
+	OpenSync::Config::Group *group = m_subset[0]->GetConfigGroup();
+	if( !group )
+		return;
+
+	m_ui = ConfigUI::CreateConfigUI(group->GetAppNames());
+	if( !m_ui.get() )
+		return;
+
+	m_ui->RunApp(this);
+}
+
+void SyncStatusDlg::OnSyncAgain(wxCommandEvent &event)
+{
+	m_next_device = m_subset.begin();
+	StartNextSync();
+}
+
+void SyncStatusDlg::OnKillClose(wxCommandEvent &event)
+{
+	if( m_jailexec.IsAppRunning() ) {
+		int choice = wxMessageBox(_T("This will kill the syncing child process, and will likely require a configuration reset.\n\nKill sync process anyway?"),
+			_T("Kill Sync"), wxYES_NO | wxICON_QUESTION);
+		if( choice == wxYES ) {
+			m_jailexec.KillApp();
+			// jump to the end of the sync roster
+			m_next_device = m_subset.end();
+			// let the terminate call clean up the buttons
+			return;
+		}
+	}
+	else {
+		EndModal(0);
+	}
+}
+
 wxConnectionBase* SyncStatusDlg::OnAcceptConnection(const wxString &topic)
 {
 	wxConnectionBase *con = 0;
@@ -357,6 +474,6 @@ void SyncStatusDlg::ExecTerminated()
 	oss << "Sync finished: " << m_device_id;
 	PrintRed(oss.str());
 
-//	StartNextSync();
+	StartNextSync();
 }
 

@@ -65,6 +65,9 @@ enum {
 	Dialog_GroupCfg_AppCombo,
 	Dialog_GroupCfg_AppConfigButton,
 	Dialog_SyncStatus,
+	Dialog_SyncStatus_RunAppButton,
+	Dialog_SyncStatus_SyncAgainButton,
+	Dialog_SyncStatus_KillCloseButton,
 	Dialog_Conflict,
 
 	SysMenu_FirstItem,
