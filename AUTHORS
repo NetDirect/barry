@@ -13,6 +13,8 @@ Contributors (code and otherwise) in alphabetical order by last name:
 		- OpenBSD port maintainer
 	Lee Dixon <jleedixon@gmail.com>
 		- Birthday field and opensync patch
+	Sujay D'Souza <sujay@win2ix.ca>
+		- chat script for fido
 	Paul Dugas <paul@dugas.cc>
 		- x86_64 build fix
 	Brian Edginton <edge@edginton.net>

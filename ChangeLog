@@ -1,5 +1,7 @@
 Release: version 0.17 - 2010/01/??
 ------------------------------------------------------------------------------
+2010/03/18
+	- added chat script for FIDO from Sujay D'Souza
 2010/03/11
 	- added Probe::Find(), for simple searching of probe results
 2010/02/09
