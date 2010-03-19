@@ -215,7 +215,9 @@ private:
 	// window controls
 	std::auto_ptr<wxBoxSizer> m_topsizer;
 	wxButton *m_sync_now_button;
+	wxButton *m_configure_button;
 	wxButton *m_run_app_button;
+	wxButton *m_1way_reset_button;
 	wxListCtrl *m_device_list;
 
 protected:
@@ -238,14 +240,18 @@ public:
 
 	// window events
 	void OnSyncNow(wxCommandEvent &event);
+	void OnConfigure(wxCommandEvent &event);
 	void OnRunApp(wxCommandEvent &event);
+	void On1WayReset(wxCommandEvent &event);
 	void OnListSelChange(wxListEvent &event);//to keep track of button state
 	void OnConfigureDevice(wxListEvent &event);
 };
 
 BEGIN_EVENT_TABLE(SyncMode, wxEvtHandler)
 	EVT_BUTTON	(SyncMode_SyncNowButton, SyncMode::OnSyncNow)
+	EVT_BUTTON	(SyncMode_ConfigureButton, SyncMode::OnConfigure)
 	EVT_BUTTON	(SyncMode_RunAppButton, SyncMode::OnRunApp)
+	EVT_BUTTON	(SyncMode_1WayResetButton, SyncMode::On1WayReset)
 	EVT_LIST_ITEM_SELECTED(SyncMode_DeviceList, SyncMode::OnListSelChange)
 	EVT_LIST_ITEM_DESELECTED(SyncMode_DeviceList, SyncMode::OnListSelChange)
 	EVT_LIST_ITEM_ACTIVATED(SyncMode_DeviceList, SyncMode::OnConfigureDevice)
@@ -827,6 +833,14 @@ SyncMode::SyncMode(wxWindow *parent)
 			SyncMode_RunAppButton, _T("Run App"),
 			wxDefaultPosition, footer),
 		0, wxRIGHT, 5 );
+	buttons->Add( m_configure_button = new wxButton(parent,
+			SyncMode_ConfigureButton, _T("Configure..."),
+			wxDefaultPosition, footer),
+		0, wxRIGHT, 5 );
+	buttons->Add( m_1way_reset_button = new wxButton(parent,
+			SyncMode_1WayResetButton, _T("1 Way Reset..."),
+			wxDefaultPosition, footer),
+		0, wxRIGHT, 5 );
 	m_topsizer->Add(buttons, 0, wxALL | wxALIGN_RIGHT, 5 );
 
 	// recalc size of children
@@ -907,6 +921,9 @@ void SyncMode::UpdateButtons()
 
 	// update the SyncNow button (only on if anything is selected)
 	m_sync_now_button->Enable(selected_count > 0);
+	m_configure_button->Enable(selected_count == 1);
+	m_run_app_button->Enable(selected_count == 1);
+	m_1way_reset_button->Enable(selected_count == 1);
 
 	// if only one item is selected, enable RunApp button
 	bool enable_run_app = false;
@@ -1049,6 +1066,13 @@ void SyncMode::OnSyncNow(wxCommandEvent &event)
 	dlg.ShowModal();
 }
 
+void SyncMode::OnConfigure(wxCommandEvent &event)
+{
+	int item = GetSelectedDevice();
+	if( item != -1 )
+		ConfigureDevice(item);
+}
+
 void SyncMode::OnRunApp(wxCommandEvent &event)
 {
 	// make sure it's not already running
@@ -1075,6 +1099,13 @@ void SyncMode::OnRunApp(wxCommandEvent &event)
 	m_cui = ConfigUI::CreateConfigUI(plugin->GetAppName());
 	if( m_cui.get() )
 		m_cui->RunApp(m_parent);
+}
+
+void SyncMode::On1WayReset(wxCommandEvent &event)
+{
+	int item = GetSelectedDevice();
+	if( item == -1 )
+		return;
 }
 
 void SyncMode::OnListSelChange(wxListEvent &event)

@@ -56,7 +56,9 @@ enum {
 
 	// SyncMode IDs
 	SyncMode_SyncNowButton,
+	SyncMode_ConfigureButton,
 	SyncMode_RunAppButton,
+	SyncMode_1WayResetButton,
 	SyncMode_DeviceList,
 
 	// Dialog IDs
