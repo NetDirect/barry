@@ -213,11 +213,10 @@ private:
 	ConfigUI::ptr m_cui;
 
 	// window controls
-	std::auto_ptr<wxButton> m_sync_now_button;
-	std::auto_ptr<wxButton> m_run_app_button;
-	std::auto_ptr<wxListCtrl> m_device_list;
-	std::auto_ptr<wxStaticText> m_label;
-	std::auto_ptr<wxStaticBox> m_box;
+	std::auto_ptr<wxBoxSizer> m_topsizer;
+	wxButton *m_sync_now_button;
+	wxButton *m_run_app_button;
+	wxListCtrl *m_device_list;
 
 protected:
 	void FillDeviceList();
@@ -793,45 +792,49 @@ SyncMode::SyncMode(wxWindow *parent)
 	// create the window controls we need
 	//
 
-#define BORDER_WIDTH		10	// border to edge of client size
-#define BORDER_HEIGHT		10
-#define GROUP_BORDER_WIDTH	8	// border between group & list
-#define GROUP_BORDER_TOP	20
-#define GROUP_BORDER_BOTTOM	8
-#define STATUS_HEIGHT		140	// space above list for status info
-					// does not include MAIN_HEADER_OFFSET
+	m_topsizer.reset( new wxBoxSizer(wxVERTICAL) );
 
-	// Sync Now button
-	m_sync_now_button.reset( new wxButton(parent, SyncMode_SyncNowButton,
-		_T("Sync Now"), wxPoint(0, 0), wxDefaultSize) );
-	wxSize button_size = m_sync_now_button->GetSize();
-	int button_x = client_size.GetWidth() -
-			button_size.GetWidth() -
-			BORDER_WIDTH;
-	m_sync_now_button->Move(button_x, MAIN_HEADER_OFFSET + 10);
+	// make space for the main header, which is not part of our
+	// work area
+	m_topsizer->AddSpacer(MAIN_HEADER_OFFSET);
 
-	// Run App button
-	m_run_app_button.reset( new wxButton(parent, SyncMode_RunAppButton,
-		_T("Run App"), wxPoint(0, 0), wxDefaultSize) );
-	m_run_app_button->Move(button_x, MAIN_HEADER_OFFSET + 10 + 10 + button_size.GetHeight());
+	// add status area
+	m_topsizer->AddSpacer(5);
+	m_topsizer->Add( m_sync_now_button = new wxButton(parent,
+			SyncMode_SyncNowButton, _T("Sync Now")),
+		0, wxRIGHT | wxALIGN_RIGHT, 10 );
+	m_topsizer->AddSpacer(70);
+//	m_label.reset( new wxStaticText(parent, -1, _T("Static Text"),
+//		wxPoint(15, 100)) );
 
-	// Device ListCtrl
-	int device_y = STATUS_HEIGHT + MAIN_HEADER_OFFSET;
-	wxPoint group_point(BORDER_WIDTH, device_y);
-	wxSize group_size(client_size.GetWidth() - BORDER_WIDTH*2,
-			client_size.GetHeight() - device_y -
-			MAIN_HEADER_OFFSET - BORDER_HEIGHT);
+	// add device list
+	wxStaticBoxSizer *box = new wxStaticBoxSizer(wxHORIZONTAL, parent,
+		_T("Device List"));
+	box->Add(
+		m_device_list = new wxListCtrl(parent, SyncMode_DeviceList,
+			wxDefaultPosition, wxDefaultSize,
+			wxLC_REPORT /*| wxLC_VRULES*/),
+		1, wxEXPAND | wxALL, 4 );
+	m_topsizer->Add(box, 1, wxEXPAND | wxLEFT | wxRIGHT, 10 );
+	m_topsizer->AddSpacer(5);
 
-	m_box.reset( new wxStaticBox(parent, -1, _T("Device List"),
-		group_point, group_size) );
+	// add bottom buttons - these go in the bottom FOOTER area
+	// so their heights must be fixed to MAIN_HEADER_OFFSET
+	// minus a border of 5px top and bottom
+	wxSize footer(-1, MAIN_HEADER_OFFSET - 5 - 5);
+	wxBoxSizer *buttons = new wxBoxSizer(wxHORIZONTAL);
+	buttons->Add( m_run_app_button = new wxButton(parent,
+			SyncMode_RunAppButton, _T("Run App"),
+			wxDefaultPosition, footer),
+		0, wxRIGHT, 5 );
+	m_topsizer->Add(buttons, 0, wxALL | wxALIGN_RIGHT, 5 );
 
-	wxPoint list_point(group_point.x + GROUP_BORDER_WIDTH,
-		group_point.y + GROUP_BORDER_TOP);
-	wxSize list_size(group_size.GetWidth() - GROUP_BORDER_WIDTH*2,
-		group_size.GetHeight() - GROUP_BORDER_TOP - GROUP_BORDER_BOTTOM);
+	// recalc size of children
+	m_topsizer->SetDimension(0, 0,
+		client_size.GetWidth(), client_size.GetHeight());
 
-	m_device_list.reset( new wxListCtrl(parent, SyncMode_DeviceList,
-		list_point, list_size, wxLC_REPORT /*| wxLC_VRULES*/) );
+	// insert list columns based on the new list size
+	wxSize list_size = m_device_list->GetSize();
 	m_device_list->InsertColumn(0, _T("PIN"),
 		wxLIST_FORMAT_LEFT, list_size.GetWidth() * 0.16);
 	m_device_list->InsertColumn(1, _T("Name"),
@@ -842,10 +845,6 @@ SyncMode::SyncMode(wxWindow *parent)
 		wxLIST_FORMAT_CENTRE, list_size.GetWidth() * 0.18);
 	m_device_list->InsertColumn(4, _T("Engine"),
 		wxLIST_FORMAT_CENTRE, list_size.GetWidth() * 0.17);
-
-	// Static text
-	m_label.reset( new wxStaticText(parent, -1, _T("Static Text"),
-		wxPoint(15, 100)) );
 
 	FillDeviceList();
 
