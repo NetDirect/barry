@@ -1222,13 +1222,14 @@ Barry::Pin BaseFrame::GetCurrentComboPin()
 
 void BaseFrame::EnableBackButton(Mode *new_mode)
 {
-	// create the button
-	int x = 10;
-	int y = m_height - (MAIN_HEADER_OFFSET - 5);
+	// create the button - this goes in the bottom FOOTER area
+	// so the height must be fixed to MAIN_HEADER_OFFSET
+	// minus a border of 5px top and bottom
+	wxPoint pos(10, m_height - (MAIN_HEADER_OFFSET - 5));
+	wxSize size(-1, MAIN_HEADER_OFFSET - 5 - 5);
 
 	m_back_button.reset( new wxButton(this, MainMenu_BackButton,
-		_T("Main Menu"), wxPoint(x, y), wxDefaultSize,
-		wxBU_EXACTFIT) );
+		_T("Main Menu"), pos, size) );
 
 	// set the new mode
 	m_current_mode = new_mode;
