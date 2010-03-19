@@ -31,12 +31,34 @@ class TermCatcher
 {
 	friend class ExecHelper;
 
+	wxEvtHandler *m_handler;
+	int m_id;
 	ExecHelper *m_eh;
 
 public:
-	TermCatcher() : m_eh(0) {}
+	TermCatcher(wxEvtHandler *handler = 0, int id = 0)
+		: m_handler(handler)
+		, m_id(id)
+		, m_eh(0)
+	{
+	}
+
 	virtual ~TermCatcher();
-	virtual void ExecTerminated() = 0;
+
+	// WARNING: this can be called from another thread when not
+	// using wxWidgets' exec code... it may not be possible to
+	// safely call GUI functions from this callback  on all platforms.
+	//
+	// By default it just posts a wxCommandEvent(wxEVT_NULL, windowid),
+	// which is thread-safe.  Add a EVT_CUSTOM(wxEVT_NULL, windowid, func)
+	// handler to your event table to handle this.
+	virtual void ExecTerminated()
+	{
+		if( m_handler ) {
+			wxCommandEvent cmd(wxEVT_NULL, m_id);
+			m_handler->AddPendingEvent(cmd);
+		}
+	}
 };
 
 //
