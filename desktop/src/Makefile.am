@@ -11,8 +11,16 @@ bin_PROGRAMS = barrydesktop bsyncjail
 noinst_PROGRAMS = ostest
 
 barrydesktop_SOURCES = \
-	barrydesktop.cc \
+	barrydesktop.cc barrydesktop.h \
 	windowids.h \
+	util.cc util.h \
+	ClickImage.cc ClickImage.h \
+	PNGButton.cc PNGButton.h \
+	BaseButtons.cc BaseButtons.h \
+	BaseFrame.cc BaseFrame.h \
+	Mode.h \
+	Mode_MainMenu.cc Mode_MainMenu.h \
+	Mode_Sync.cc Mode_Sync.h \
 	GroupCfgDlg.cc GroupCfgDlg.h \
 	SyncStatusDlg.cc SyncStatusDlg.h \
 	ConflictDlg.cc ConflictDlg.h \

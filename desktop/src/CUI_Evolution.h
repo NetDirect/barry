@@ -24,8 +24,9 @@
 
 #include "configui.h"
 #include "osconfig.h"
-#include <wx/wx.h>
 #include <memory>
+
+class wxWindow;
 
 namespace AppConfig {
 

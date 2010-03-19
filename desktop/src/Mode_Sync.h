@@ -1,0 +1,76 @@
+///
+/// \file	Mode_Sync.h
+///		Mode derived class for syncing
+///
+
+/*
+    Copyright (C) 2009-2010, Net Direct Inc. (http://www.netdirect.ca/)
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+    See the GNU General Public License in the COPYING file at the
+    root directory of this project for more details.
+*/
+
+#ifndef __BARRYDESKTOP_MODE_SYNC_H__
+#define __BARRYDESKTOP_MODE_SYNC_H__
+
+#include "Mode.h"
+#include "deviceset.h"
+#include "configui.h"
+
+class SyncMode : public wxEvtHandler, public Mode
+{
+private:
+	DECLARE_EVENT_TABLE()
+
+private:
+	wxWindow *m_parent;
+
+	std::auto_ptr<DeviceSet> m_device_set;
+	ConfigUI::ptr m_cui;
+
+	// window controls
+	std::auto_ptr<wxBoxSizer> m_topsizer;
+	wxButton *m_sync_now_button;
+	wxButton *m_configure_button;
+	wxButton *m_run_app_button;
+	wxButton *m_1way_reset_button;
+	wxListCtrl *m_device_list;
+
+protected:
+	void FillDeviceList();
+	void UpdateButtons();
+	DeviceSet::subset_type GetSelectedDevices();
+	void ReselectDevices(const DeviceSet::subset_type &set);
+	void ConfigureDevice(int device_index);
+	void RefillList();
+	int GetSelectedDevice();	// returns index, or -1 if none or
+					// more than one selected... also
+					// handles the message box
+
+public:
+	SyncMode(wxWindow *parent);
+	~SyncMode();
+
+	// virtual override events (derived from Mode)
+	wxString GetTitleText() const { return _T("Barry Sync"); }
+
+	// window events
+	void OnSyncNow(wxCommandEvent &event);
+	void OnConfigure(wxCommandEvent &event);
+	void OnRunApp(wxCommandEvent &event);
+	void On1WayReset(wxCommandEvent &event);
+	void OnListSelChange(wxListEvent &event);//to keep track of button state
+	void OnConfigureDevice(wxListEvent &event);
+};
+
+#endif
+
