@@ -49,14 +49,14 @@ public:
 	// using wxWidgets' exec code... it may not be possible to
 	// safely call GUI functions from this callback  on all platforms.
 	//
-	// By default it just posts a wxCommandEvent(wxEVT_NULL, windowid),
-	// which is thread-safe.  Add a EVT_CUSTOM(wxEVT_NULL, windowid, func)
+	// By default it just posts a wxProcessEvent(windowid, pid, status)
+	// which is thread-safe.  Add a EVT_END_PROCESS(windowid, func)
 	// handler to your event table to handle this.
-	virtual void ExecTerminated()
+	virtual void ExecTerminated(int pid, int status)
 	{
 		if( m_handler ) {
-			wxCommandEvent cmd(wxEVT_NULL, m_id);
-			m_handler->AddPendingEvent(cmd);
+			wxProcessEvent pe(m_id, pid, status);
+			m_handler->AddPendingEvent(pe);
 		}
 	}
 };
@@ -116,7 +116,7 @@ protected:
 				// signal if legal
 				if( m_container->m_catcher ) {
 					try {
-						m_container->m_catcher->ExecTerminated();
+						m_container->m_catcher->ExecTerminated(pid, status);
 					}
 					catch( ... ) {
 						// we are fully responsible

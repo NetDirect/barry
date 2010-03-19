@@ -227,7 +227,7 @@ BEGIN_EVENT_TABLE(SyncStatusDlg, wxDialog)
 				SyncStatusDlg::OnSyncAgain)
 	EVT_BUTTON	(Dialog_SyncStatus_KillCloseButton,
 				SyncStatusDlg::OnKillClose)
-	EVT_CUSTOM	(wxEVT_NULL, Dialog_SyncStatus_SyncTerminated,
+	EVT_END_PROCESS	(Dialog_SyncStatus_SyncTerminated,
 				SyncStatusDlg::OnExecTerminated)
 END_EVENT_TABLE()
 
@@ -426,7 +426,7 @@ void SyncStatusDlg::OnSlowSync()
 	KillSync();
 
 	PrintBlack("Slow syncs are known to be unreliable.");
-	PrintBlack("Do a one-sided reset, and sync fresh.");
+	PrintBlack("Do a 1 Way Reset, and sync again.");
 }
 
 void SyncStatusDlg::OnInitDialog(wxInitDialogEvent &event)
@@ -507,7 +507,7 @@ wxConnectionBase* SyncStatusDlg::OnAcceptConnection(const wxString &topic)
 	return con;
 }
 
-void SyncStatusDlg::OnExecTerminated(wxEvent &event)
+void SyncStatusDlg::OnExecTerminated(wxProcessEvent &event)
 {
 	ostringstream oss;
 	if( m_killingjail )

@@ -141,7 +141,7 @@ public:
 	void OnRunApp(wxCommandEvent &event);
 	void OnSyncAgain(wxCommandEvent &event);
 	void OnKillClose(wxCommandEvent &event);
-	void OnExecTerminated(wxEvent &event);
+	void OnExecTerminated(wxProcessEvent &event);
 
 	// virtual overrides from wxServer
 	wxConnectionBase* OnAcceptConnection(const wxString &topic);

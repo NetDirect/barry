@@ -65,9 +65,11 @@ BaseFrame::BaseFrame(const wxImage &background)
 		wxSize(background.GetWidth(), background.GetHeight()),
 		wxMINIMIZE_BOX | wxCAPTION | wxCLOSE_BOX | wxSYSTEM_MENU |
 		wxCLIP_CHILDREN)
+	, TermCatcher(this, Process_BackupAndRestore)
 	, m_width(background.GetWidth())
 	, m_height(background.GetHeight())
 	, m_current_mode(0)
+	, m_backup_process(this)
 {
 	// This is a workaround for different size behaviour
 	// in the GTK version of wxWidgets 2.9
@@ -301,22 +303,14 @@ void BaseFrame::OnLeftUp(wxMouseEvent &event)
 
 void BaseFrame::OnBackupRestore(wxCommandEvent &event)
 {
-	if( m_backup_process.get() ) {
-		wxMessageBox(_T("The Backup program is already running!"), _T("Backup and Restore"), wxOK | wxICON_INFORMATION);
+	if( m_backup_process.IsAppRunning() ) {
+		wxMessageBox(_T("The Backup program is already running!"),
+			_T("Backup and Restore"), wxOK | wxICON_INFORMATION);
 		return;
 	}
 
-	m_backup_process.reset( new StatusProcess(this, Process_BackupAndRestore) );
-	const wxChar *argv[] = {
-		_T("barrybackup"),
-		NULL
-	};
-	long ret = wxExecute((wxChar**)argv, wxEXEC_ASYNC, m_backup_process.get());
-	cout << "wxExecute returned " << ret << endl;
-	if( ret == 0 ) {
-		m_backup_process.reset();
-		wxMessageBox(_T("Failed to run barrybackup. Please make sure it is installed and in your PATH."), _T("Backup and Restore"), wxOK | wxICON_ERROR);
-	}
+	if( !m_backup_process.Run(this, "Backup and Restore", _T("barrybackup")) )
+		return;
 }
 
 void BaseFrame::OnSync(wxCommandEvent &event)
@@ -357,13 +351,15 @@ void BaseFrame::OnBackButton(wxCommandEvent &event)
 void BaseFrame::OnTermBackupAndRestore(wxProcessEvent &event)
 {
 	cout << "OnTermBackupAndRestore(): done = "
-		<< (m_backup_process->IsDone() ? "true" : "false")
-		<< ", status = " << m_backup_process->GetStatus()
+		<< (!m_backup_process.IsAppRunning() ? "true" : "false")
+		<< ", status = " << m_backup_process.GetAppStatus()
 		<< endl;
-	if( m_backup_process->IsDone() && m_backup_process->GetStatus() ) {
-		wxMessageBox(_T("Unable to run barrybackup, or it returned an error. Please make sure it is installed and in your PATH."), _T("Backup and Restore"), wxOK | wxICON_ERROR);
+	if( !m_backup_process.IsAppRunning() &&
+	    m_backup_process.GetAppStatus() )
+	{
+		wxMessageBox(_T("Unable to run barrybackup, or it returned an error. Please make sure it is installed and in your PATH."),
+			_T("Backup and Restore"), wxOK | wxICON_ERROR);
 	}
-	m_backup_process.reset();
 }
 
 void BaseFrame::OnBarryLogoClicked(wxCommandEvent &event)

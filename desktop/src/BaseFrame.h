@@ -26,6 +26,7 @@
 #include <wx/process.h>
 #include <memory>
 #include <barry/pin.h>
+#include "exechelper.h"
 
 #define MAIN_HEADER_OFFSET 40
 
@@ -34,31 +35,7 @@ class SyncMode;
 class ClickableImage;
 class Mode;
 
-class StatusProcess : public wxProcess
-{
-	bool m_done;
-	int m_status;
-
-public:
-	StatusProcess(wxWindow *parent, int id)
-		: wxProcess(parent, id)
-		, m_done(false)
-		, m_status(0)
-	{
-	}
-
-	bool IsDone() const { return m_done; }
-	int GetStatus() const { return m_status; }
-
-	virtual void OnTerminate(int pid, int status)
-	{
-		m_status = status;
-		m_done = true;
-		wxProcess::OnTerminate(pid, status);
-	}
-};
-
-class BaseFrame : public wxFrame
+class BaseFrame : public wxFrame, public TermCatcher
 {
 private:
 	DECLARE_EVENT_TABLE()
@@ -71,11 +48,12 @@ private:
 	std::auto_ptr<ClickableImage> m_barry_logo, m_netdirect_logo;
 	std::auto_ptr<wxMenu> m_sysmenu;
 	std::auto_ptr<wxComboBox> m_device_combo;
-	std::auto_ptr<StatusProcess> m_backup_process;
 	std::auto_ptr<wxButton> m_back_button;
 	int m_width, m_height;
 
 	Mode *m_current_mode;
+
+	ExecHelper m_backup_process;
 
 public:
 	BaseFrame(const wxImage &background);
