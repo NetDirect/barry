@@ -59,6 +59,13 @@ GroupCfgDlg::GroupCfgDlg(wxWindow *parent,
 	// setup the raw GUI
 	CreateLayout();
 
+	// set window title to device PIN and name
+	string label = "Configure Device - ";
+	label += m_device.GetPin().str();
+	if( m_device.GetDeviceName().size() )
+		label += " (" + m_device.GetDeviceName() + ")";
+	SetTitle(wxString(label.c_str(), wxConvUTF8));
+
 	// initialize current engine pointer
 	if( m_device.GetEngine() ) {
 		m_engine = const_cast<OpenSync::API*> (m_device.GetEngine());
