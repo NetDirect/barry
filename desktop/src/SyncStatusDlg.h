@@ -110,19 +110,8 @@ class SyncStatusDlg
 
 	// dialog controls
 	wxSizer *m_topsizer;
-//	wxSizer *m_appsizer;
-//	wxComboBox *m_engine_combo, *m_app_combo;
-//	wxTextCtrl *m_password_edit;
 	wxTextCtrl *m_status_edit;
 	wxButton *m_runapp_button, *m_syncagain_button, *m_killclose_button;
-//	wxCheckBox *m_debug_check;
-	// Need: a pretty status edit box, to show all status messages,
-	//       and a "sync action" button that says "Kill Sync"
-	//       when running, and "Close" if not.
-	//       and a button "Restart Sync" button that is greyed out
-	//       when running, and a "Run App" button that is greyed out
-	//       when running... remember to warn against killing a
-	//       sync
 
 protected:
 	void CreateLayout();
@@ -152,9 +141,6 @@ public:
 	void OnRunApp(wxCommandEvent &event);
 	void OnSyncAgain(wxCommandEvent &event);
 	void OnKillClose(wxCommandEvent &event);
-//	void OnConfigureApp(wxCommandEvent &event);
-//	void OnEngineComboChange(wxCommandEvent &event);
-//	void OnAppComboChange(wxCommandEvent &event);
 	void OnExecTerminated(wxEvent &event);
 
 	// virtual overrides from wxServer

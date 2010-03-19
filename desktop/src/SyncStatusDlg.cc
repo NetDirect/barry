@@ -227,12 +227,6 @@ BEGIN_EVENT_TABLE(SyncStatusDlg, wxDialog)
 				SyncStatusDlg::OnSyncAgain)
 	EVT_BUTTON	(Dialog_SyncStatus_KillCloseButton,
 				SyncStatusDlg::OnKillClose)
-//	EVT_BUTTON	(Dialog_GroupCfg_AppConfigButton,
-//				GroupCfgDlg::OnConfigureApp)
-//	EVT_TEXT	(Dialog_GroupCfg_EngineCombo,
-//				GroupCfgDlg::OnEngineComboChange)
-//	EVT_TEXT	(Dialog_GroupCfg_AppCombo,
-//				GroupCfgDlg::OnAppComboChange)
 	EVT_CUSTOM	(wxEVT_NULL, Dialog_SyncStatus_SyncTerminated,
 				SyncStatusDlg::OnExecTerminated)
 END_EVENT_TABLE()
@@ -378,7 +372,7 @@ void SyncStatusDlg::StartNextSync()
 	if( !device.IsConfigured() ) {
 		PrintRed(m_device_id + " is not configured, skipping.");
 		++m_next_device;
-//		StartNextSync();
+		StartNextSync();
 		return;
 	}
 
