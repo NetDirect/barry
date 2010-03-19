@@ -325,7 +325,7 @@ void SyncStatus::MappingStatus(const std::string &msg, bool error)
 	cout << msg << endl;
 }
 
-void SyncStatus::EngineStatus(const std::string &msg, bool error)
+void SyncStatus::EngineStatus(const std::string &msg, bool error, bool slowsync)
 {
 	if( error )
 		cout << "ERROR: ";

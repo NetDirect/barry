@@ -37,8 +37,10 @@ SillyBuffer sb;
 //////////////////////////////////////////////////////////////////////////////
 // StatusConnection class
 
-StatusConnection::StatusConnection(wxTextCtrl &window)
-	: m_status(window)
+StatusConnection::StatusConnection(SyncStatusDlg &dlg,
+				wxTextCtrl &window)
+	: m_dlg(dlg)
+	, m_status(window)
 {
 }
 
@@ -64,8 +66,15 @@ bool StatusConnection::OnPoke(const wxString &topic,
 		m_status.AppendText(_T("\n") + wxString(data, size));
 	}
 	else if( item == STATUS_ITEM_ENGINE ) {
-		m_status.SetDefaultStyle(wxTextAttr(*wxGREEN));
-		m_status.AppendText(_T("\n") + wxString(data, size));
+		wxString msg(data, size);
+		wxString key = ENGINE_STATUS_SLOW_SYNC;
+		if( msg.substr(0, key.size()) == key ) {
+			m_dlg.OnSlowSync();
+		}
+		else {
+			m_status.SetDefaultStyle(wxTextAttr(*wxGREEN));
+			m_status.AppendText(_T("\n") + wxString(data, size));
+		}
 	}
 	else if( item == STATUS_ITEM_MEMBER ) {
 		m_status.SetDefaultStyle(wxTextAttr(*wxCYAN));
@@ -335,6 +344,16 @@ void SyncStatusDlg::PrintRed(const std::string &msg)
 	m_status_edit->AppendText(_T("\n") + wxString(msg.c_str(), wxConvUTF8));
 }
 
+void SyncStatusDlg::KillSync()
+{
+	m_jailexec.KillApp(m_killingjail);
+	m_killingjail = true;
+
+	// jump to the end of the sync roster, so we don't start the
+	// next device
+	m_next_device = m_subset.end();
+}
+
 void SyncStatusDlg::StartNextSync()
 {
 	m_killingjail = false;
@@ -404,6 +423,15 @@ return;
 	++m_next_device;
 }
 
+void SyncStatusDlg::OnSlowSync()
+{
+	PrintRed("Slow sync detected!  Killing sync automatically.");
+	KillSync();
+
+	PrintBlack("Slow syncs are known to be unreliable.");
+	PrintBlack("Do a one-sided reset, and sync fresh.");
+}
+
 void SyncStatusDlg::OnInitDialog(wxInitDialogEvent &event)
 {
 	cout << "OnInitDialog" << endl;
@@ -452,11 +480,7 @@ void SyncStatusDlg::OnKillClose(wxCommandEvent &event)
 		}
 
 		if( choice == wxYES ) {
-			m_jailexec.KillApp(m_killingjail);
-			m_killingjail = true;
-
-			// jump to the end of the sync roster
-			m_next_device = m_subset.end();
+			KillSync();
 
 			// print a warning so the user know's what's going on
 			PrintRed("Killing sync... this may take a little while...");
@@ -476,7 +500,7 @@ wxConnectionBase* SyncStatusDlg::OnAcceptConnection(const wxString &topic)
 	wxConnectionBase *con = 0;
 
 	if( topic == TOPIC_STATUS && m_status_edit )
-		con = new StatusConnection(*m_status_edit);
+		con = new StatusConnection(*this, *m_status_edit);
 	else if( topic == TOPIC_CONFLICT )
 		con = new ConflictConnection(this);
 

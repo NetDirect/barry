@@ -172,7 +172,7 @@ public:
 	virtual void HandleConflict(OpenSync::SyncConflict &conflict);
 	virtual void EntryStatus(const std::string &msg, bool error);
 	virtual void MappingStatus(const std::string &msg, bool error);
-	virtual void EngineStatus(const std::string &msg, bool error);
+	virtual void EngineStatus(const std::string &msg, bool error, bool slowsync);
 	virtual void MemberStatus(long member_id,
 		const std::string &plugin_name,
 		const std::string &msg, bool error);

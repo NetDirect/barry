@@ -743,6 +743,7 @@ void engine_status(OSyncEngineUpdate *status, void *cbdata)
 
 		ostringstream oss;
 		bool error_event = false;
+		bool slow_sync = false;
 
 		switch( cb->m_priv->osync_engine_update_get_event(status) )
 		{
@@ -782,6 +783,7 @@ void engine_status(OSyncEngineUpdate *status, void *cbdata)
 			break;
 		case OSYNC_ENGINE_EVENT_PREV_UNCLEAN:
 			oss << "The previous synchronization was unclean. Slow-syncing";
+			slow_sync = true;
 			break;
 		case OSYNC_ENGINE_EVENT_END_CONFLICTS:
 			oss << "All conflicts have been reported";
@@ -793,7 +795,9 @@ void engine_status(OSyncEngineUpdate *status, void *cbdata)
 
 		// call the status handler
 		if( oss.str().size() )
-			cb->m_status->EngineStatus(oss.str(), error_event);
+			cb->m_status->EngineStatus(oss.str(),
+				error_event,
+				slow_sync);
 	}
 	catch( std::exception &e ) {
 		cb->m_status->ReportError(

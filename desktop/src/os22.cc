@@ -561,7 +561,9 @@ void engine_status(OSyncEngine *engine, OSyncEngineUpdate *status, void *cbdata)
 
 		// call the status handler
 		if( oss.str().size() )
-			cb->m_status->EngineStatus(oss.str(), error_event);
+			cb->m_status->EngineStatus(oss.str(),
+				error_event,
+				status->type == ENG_PREV_UNCLEAN);
 	}
 	catch( std::exception &e ) {
 		cb->m_status->ReportError(

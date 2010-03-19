@@ -37,6 +37,9 @@
 #define STATUS_ITEM_ENTRY	_T("Entry")
 #define STATUS_ITEM_MEMBER	_T("Member")
 
+// Special engine messages
+#define ENGINE_STATUS_SLOW_SYNC	_T("SLOW_SYNC: on")
+
 // Conflict items
 #define CONFLICT_ITEM_START	_T("Start")
 #define CONFLICT_ITEM_CHANGE	_T("Change")

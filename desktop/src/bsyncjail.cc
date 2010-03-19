@@ -79,7 +79,8 @@ public:
 	virtual void HandleConflict(OpenSync::SyncConflict &conflict);
 	virtual void EntryStatus(const std::string &msg, bool error);
 	virtual void MappingStatus(const std::string &msg, bool error);
-	virtual void EngineStatus(const std::string &msg, bool error);
+	virtual void EngineStatus(const std::string &msg, bool error,
+		bool slowsync);
 	virtual void MemberStatus(long member_id,
 		const std::string &plugin_name,
 		const std::string &msg, bool error);
@@ -289,12 +290,15 @@ void BarrySyncJail::MappingStatus(const std::string &msg, bool error)
 		m_status_con->Poke(STATUS_ITEM_MAPPING, sb.buf(msg));
 }
 
-void BarrySyncJail::EngineStatus(const std::string &msg, bool error)
+void BarrySyncJail::EngineStatus(const std::string &msg, bool error, bool slowsync)
 {
 	if( error )
 		ReportError(msg);
 	else
 		m_status_con->Poke(STATUS_ITEM_ENGINE, sb.buf(msg));
+
+	if( slowsync )
+		m_status_con->Poke(STATUS_ITEM_ENGINE, sb.buf(ENGINE_STATUS_SLOW_SYNC));
 }
 
 void BarrySyncJail::MemberStatus(long member_id,

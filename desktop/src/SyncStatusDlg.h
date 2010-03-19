@@ -31,12 +31,15 @@
 #include "optout.h"
 #include "configui.h"
 
+class SyncStatusDlg;
+
 class StatusConnection : public wxConnection, public OptOut::Element
 {
+	SyncStatusDlg &m_dlg;
 	wxTextCtrl &m_status;
 
 public:
-	StatusConnection(wxTextCtrl &window);
+	StatusConnection(SyncStatusDlg &dlg, wxTextCtrl &window);
 
 	bool OnPoke(const wxString &topic, const wxString &item,
 		wxChar *data, int size, wxIPCFormat format);
@@ -134,6 +137,8 @@ protected:
 	void PrintBlack(const std::string &msg);
 	void PrintRed(const std::string &msg);
 
+	void KillSync();
+
 public:
 	SyncStatusDlg(wxWindow *parent, const DeviceSet::subset_type &subset);
 	~SyncStatusDlg();
@@ -142,6 +147,7 @@ public:
 	void StartNextSync();
 
 	// event handlers
+	void OnSlowSync();	// called from StatusConnection
 	void OnInitDialog(wxInitDialogEvent &event);
 	void OnRunApp(wxCommandEvent &event);
 	void OnSyncAgain(wxCommandEvent &event);
