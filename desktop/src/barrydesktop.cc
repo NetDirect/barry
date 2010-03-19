@@ -224,6 +224,11 @@ protected:
 	void UpdateButtons();
 	DeviceSet::subset_type GetSelectedDevices();
 	void ReselectDevices(const DeviceSet::subset_type &set);
+	void ConfigureDevice(int device_index);
+	void RefillList();
+	int GetSelectedDevice();	// returns index, or -1 if none or
+					// more than one selected... also
+					// handles the message box
 
 public:
 	SyncMode(wxWindow *parent);
@@ -953,61 +958,16 @@ void SyncMode::ReselectDevices(const DeviceSet::subset_type &set)
 	}
 }
 
-void SyncMode::OnSyncNow(wxCommandEvent &event)
-{
-	DeviceSet::subset_type subset = GetSelectedDevices();
-	if( subset.size() == 0 )
-		return;	// nothing to do
-
-	// make sure an app is not running
-	if( m_cui.get() && m_cui->IsAppRunning() ) {
-		wxMessageBox(_T("An application is currently running."),
-			_T("Sync Error"), wxOK | wxICON_ERROR);
-		return;
-	}
-
-	SyncStatusDlg dlg(m_parent, subset);
-	dlg.ShowModal();
-}
-
-void SyncMode::OnRunApp(wxCommandEvent &event)
+void SyncMode::ConfigureDevice(int device_index)
 {
 	// make sure it's not already running
 	if( m_cui.get() && m_cui->IsAppRunning() ) {
-		wxMessageBox(_T("An application is already running."),
+		wxMessageBox(_T("An application is currently running."),
 			_T("Run App Error"), wxOK | wxICON_ERROR);
 		return;
 	}
 
-	// find selected device
-	long item = -1;
-	item = m_device_list->GetNextItem(item, wxLIST_NEXT_ALL,
-		wxLIST_STATE_SELECTED);
-	if( item == -1 )
-		return;
-
-	// retrieve device's group config
-	DeviceEntry &entry = (*m_device_set)[item];
-	OpenSync::Config::Plugin *plugin = 0;
-	if( entry.GetConfigGroup() )
-		plugin = entry.GetConfigGroup()->GetNonBarryPlugin();
-	if( !plugin )
-		return;
-
-	// run the app
-	m_cui = ConfigUI::CreateConfigUI(plugin->GetAppName());
-	if( m_cui.get() )
-		m_cui->RunApp(m_parent);
-}
-
-void SyncMode::OnListSelChange(wxListEvent &event)
-{
-	UpdateButtons();
-}
-
-void SyncMode::OnConfigureDevice(wxListEvent &event)
-{
-	DeviceEntry &entry = (*m_device_set)[event.GetIndex()];
+	DeviceEntry &entry = (*m_device_set)[device_index];
 
 	GroupCfgDlg dlg(m_parent, entry, wxGetApp().GetOpenSync());
 	if( dlg.ShowModal() == wxID_OK && dlg.GetEngine() && dlg.GetGroup().get() ) {
@@ -1043,14 +1003,89 @@ void SyncMode::OnConfigureDevice(wxListEvent &event)
 		}
 
 		// update the device set
-		(*m_device_set)[event.GetIndex()].
+		(*m_device_set)[device_index].
 			SetConfigGroup(dlg.GetGroup(), dlg.GetEngine());
 
 		// update!
-		DeviceSet::subset_type subset = GetSelectedDevices();
-		FillDeviceList();
-		ReselectDevices(subset);
+		RefillList();
 	}
+}
+
+void SyncMode::RefillList()
+{
+	DeviceSet::subset_type subset = GetSelectedDevices();
+	FillDeviceList();
+	ReselectDevices(subset);
+}
+
+int SyncMode::GetSelectedDevice()
+{
+	if( m_device_list->GetSelectedItemCount() != 1 ) {
+		wxMessageBox(_T("Please select one device from the list."),
+			_T("Device List"), wxOK | wxICON_ERROR);
+		return -1;
+	}
+
+	// find selected device
+	long item = -1;
+	item = m_device_list->GetNextItem(item, wxLIST_NEXT_ALL,
+		wxLIST_STATE_SELECTED);
+	return item;
+}
+
+void SyncMode::OnSyncNow(wxCommandEvent &event)
+{
+	DeviceSet::subset_type subset = GetSelectedDevices();
+	if( subset.size() == 0 )
+		return;	// nothing to do
+
+	// make sure an app is not running
+	if( m_cui.get() && m_cui->IsAppRunning() ) {
+		wxMessageBox(_T("An application is currently running."),
+			_T("Sync Error"), wxOK | wxICON_ERROR);
+		return;
+	}
+
+	SyncStatusDlg dlg(m_parent, subset);
+	dlg.ShowModal();
+}
+
+void SyncMode::OnRunApp(wxCommandEvent &event)
+{
+	// make sure it's not already running
+	if( m_cui.get() && m_cui->IsAppRunning() ) {
+		wxMessageBox(_T("An application is already running."),
+			_T("Run App Error"), wxOK | wxICON_ERROR);
+		return;
+	}
+
+	// find selected device
+	int item = GetSelectedDevice();
+	if( item == -1 )
+		return;
+
+	// retrieve device's group config
+	DeviceEntry &entry = (*m_device_set)[item];
+	OpenSync::Config::Plugin *plugin = 0;
+	if( entry.GetConfigGroup() )
+		plugin = entry.GetConfigGroup()->GetNonBarryPlugin();
+	if( !plugin )
+		return;
+
+	// run the app
+	m_cui = ConfigUI::CreateConfigUI(plugin->GetAppName());
+	if( m_cui.get() )
+		m_cui->RunApp(m_parent);
+}
+
+void SyncMode::OnListSelChange(wxListEvent &event)
+{
+	UpdateButtons();
+}
+
+void SyncMode::OnConfigureDevice(wxListEvent &event)
+{
+	ConfigureDevice(event.GetIndex());
 }
 
 //////////////////////////////////////////////////////////////////////////////
