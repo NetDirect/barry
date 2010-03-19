@@ -809,7 +809,7 @@ SyncMode::SyncMode(wxWindow *parent)
 	m_topsizer->Add( m_sync_now_button = new wxButton(parent,
 			SyncMode_SyncNowButton, _T("Sync Now")),
 		0, wxRIGHT | wxALIGN_RIGHT, 10 );
-	m_topsizer->AddSpacer(70);
+	m_topsizer->AddSpacer(90);
 //	m_label.reset( new wxStaticText(parent, -1, _T("Static Text"),
 //		wxPoint(15, 100)) );
 
@@ -821,8 +821,7 @@ SyncMode::SyncMode(wxWindow *parent)
 			wxDefaultPosition, wxDefaultSize,
 			wxLC_REPORT /*| wxLC_VRULES*/),
 		1, wxEXPAND | wxALL, 4 );
-	m_topsizer->Add(box, 1, wxEXPAND | wxLEFT | wxRIGHT, 10 );
-	m_topsizer->AddSpacer(5);
+	m_topsizer->Add(box, 1, wxEXPAND | wxLEFT | wxRIGHT | wxBOTTOM, 10 );
 
 	// add bottom buttons - these go in the bottom FOOTER area
 	// so their heights must be fixed to MAIN_HEADER_OFFSET
