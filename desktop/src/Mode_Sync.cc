@@ -98,9 +98,10 @@ SyncMode::SyncMode(wxWindow *parent)
 
 	// add status area
 	m_topsizer->AddSpacer(5);
-	m_topsizer->Add( m_sync_now_button = new wxButton(parent,
-			SyncMode_SyncNowButton, _T("Sync Now")),
-		0, wxRIGHT | wxALIGN_RIGHT, 10 );
+	m_sync_now_button.reset( new wxButton(parent,
+				SyncMode_SyncNowButton, _T("Sync Now")));
+	m_topsizer->Add( m_sync_now_button.get(),
+				0, wxRIGHT | wxALIGN_RIGHT, 10 );
 	m_topsizer->AddSpacer(90);
 //	m_label.reset( new wxStaticText(parent, -1, _T("Static Text"),
 //		wxPoint(15, 100)) );
@@ -108,11 +109,10 @@ SyncMode::SyncMode(wxWindow *parent)
 	// add device list
 	wxStaticBoxSizer *box = new wxStaticBoxSizer(wxHORIZONTAL, parent,
 		_T("Device List"));
-	box->Add(
-		m_device_list = new wxListCtrl(parent, SyncMode_DeviceList,
-			wxDefaultPosition, wxDefaultSize,
-			wxLC_REPORT /*| wxLC_VRULES*/),
-		1, wxEXPAND | wxALL, 4 );
+	m_device_list.reset (new wxListCtrl(parent, SyncMode_DeviceList,
+				wxDefaultPosition, wxDefaultSize,
+				wxLC_REPORT /*| wxLC_VRULES*/) );
+	box->Add( m_device_list.get(), 1, wxEXPAND | wxALL, 4 );
 	m_topsizer->Add(box, 1, wxEXPAND | wxLEFT | wxRIGHT | wxBOTTOM, 10 );
 
 	// add bottom buttons - these go in the bottom FOOTER area
@@ -120,18 +120,18 @@ SyncMode::SyncMode(wxWindow *parent)
 	// minus a border of 5px top and bottom
 	wxSize footer(-1, MAIN_HEADER_OFFSET - 5 - 5);
 	wxBoxSizer *buttons = new wxBoxSizer(wxHORIZONTAL);
-	buttons->Add( m_run_app_button = new wxButton(parent,
-			SyncMode_RunAppButton, _T("Run App"),
-			wxDefaultPosition, footer),
-		0, wxRIGHT, 5 );
-	buttons->Add( m_configure_button = new wxButton(parent,
-			SyncMode_ConfigureButton, _T("Configure..."),
-			wxDefaultPosition, footer),
-		0, wxRIGHT, 5 );
-	buttons->Add( m_1way_reset_button = new wxButton(parent,
-			SyncMode_1WayResetButton, _T("1 Way Reset..."),
-			wxDefaultPosition, footer),
-		0, wxRIGHT, 5 );
+	m_run_app_button.reset( new wxButton(parent,
+				SyncMode_RunAppButton, _T("Run App"),
+				wxDefaultPosition, footer));
+	m_configure_button.reset( new wxButton(parent,
+				SyncMode_ConfigureButton, _T("Configure..."),
+				wxDefaultPosition, footer) );
+	m_1way_reset_button.reset( new wxButton(parent,
+				SyncMode_1WayResetButton, _T("1 Way Reset..."),
+				wxDefaultPosition, footer) );
+	buttons->Add(m_run_app_button.get(), 0, wxRIGHT, 5 );
+	buttons->Add(m_configure_button.get(), 0, wxRIGHT, 5 );
+	buttons->Add(m_1way_reset_button.get(), 0, wxRIGHT, 5 );
 	m_topsizer->Add(buttons, 0, wxALL | wxALIGN_RIGHT, 5 );
 
 	// recalc size of children

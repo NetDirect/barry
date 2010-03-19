@@ -39,11 +39,11 @@ private:
 
 	// window controls
 	std::auto_ptr<wxBoxSizer> m_topsizer;
-	wxButton *m_sync_now_button;
-	wxButton *m_configure_button;
-	wxButton *m_run_app_button;
-	wxButton *m_1way_reset_button;
-	wxListCtrl *m_device_list;
+	std::auto_ptr<wxButton> m_sync_now_button;
+	std::auto_ptr<wxButton> m_configure_button;
+	std::auto_ptr<wxButton> m_run_app_button;
+	std::auto_ptr<wxButton> m_1way_reset_button;
+	std::auto_ptr<wxListCtrl> m_device_list;
 
 protected:
 	void FillDeviceList();
