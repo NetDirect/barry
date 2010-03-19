@@ -21,6 +21,12 @@
 
 #include "exechelper.h"
 
+#include <wx/tokenzr.h>
+
+#include <sys/wait.h>
+#include <sys/types.h>
+#include <unistd.h>
+
 TermCatcher::~TermCatcher()
 {
 	if( m_eh )
@@ -57,6 +63,78 @@ void ExecHelper::RunError(wxWindow *parent, const wxString &msg)
 		wxOK | wxICON_ERROR, parent);
 }
 
+int ExecHelper::Execute(bool use_wx,
+			const wxString &command,
+			AppCallback *cb)
+{
+	if( use_wx ) {
+		return wxExecute(command, wxEXEC_ASYNC, m_app_callback);
+	}
+
+	//
+	// use our own forking mechanism, due to bugs in wxWidgets :-(
+	//
+
+	class WaitThread : public wxThread
+	{
+		int m_pid;
+		AppCallback *m_callback;
+
+	public:
+		WaitThread(int pid, AppCallback *cb)
+			: m_pid(pid)
+			, m_callback(cb)
+		{
+		}
+
+		virtual void* Entry()
+		{
+			int status;
+			int pid = waitpid(m_pid, &status, 0);
+			if( pid == m_pid ) {
+				// our child finished
+				m_callback->OnTerminate(pid, status);
+			}
+
+			return 0;
+		}
+	};
+
+
+	// create child
+	int pid = fork();
+	if( pid == -1 ) {
+		// no child created
+		return -1;
+	}
+	else if( pid == 0 ) {
+		// we are the child
+
+		// parse the command line into an array
+		char *argv[100];
+		int argc = 0;
+		wxStringTokenizer t(command, _T(" "));
+		while( t.HasMoreTokens() && argc < 99 ) {
+			wxString token = t.GetNextToken();
+			std::string ctoken(token.utf8_str());
+			argv[argc] = new char[ctoken.size() + 1];
+			strcpy(argv[argc], ctoken.c_str());
+			argc++;
+		}
+		argv[argc] = 0;
+
+		execvp(argv[0], argv);
+		exit(-1);
+	}
+	else {
+		// we are the parent... start the wait thread
+		WaitThread *wt = new WaitThread(pid, cb);
+		wt->Create();
+		wt->Run();
+		return pid;
+	}
+}
+
 bool ExecHelper::Run(wxWindow *parent,
 			const std::string &appname,
 			const wxString &command)
@@ -68,7 +146,7 @@ bool ExecHelper::Run(wxWindow *parent,
 	}
 
 	m_app_callback = new AppCallback(this);
-	m_app_pid = wxExecute(command, wxEXEC_ASYNC, m_app_callback);
+	m_app_pid = Execute(false, command, m_app_callback);
 	if( m_app_pid <= 0 ) {
 		delete m_app_callback;
 		m_app_callback = 0;
@@ -91,7 +169,8 @@ bool ExecHelper::IsAppRunning()
 void ExecHelper::KillApp(bool hardkill)
 {
 	if( IsAppRunning() ) {
-		m_app_callback->Kill(m_app_pid, hardkill ? wxSIGKILL : wxSIGTERM);
+//		m_app_callback->Kill(m_app_pid, hardkill ? wxSIGKILL : wxSIGTERM);
+		kill(m_app_pid, hardkill ? SIGKILL : SIGTERM);
 		// let the callback handle the cleanup
 	}
 }

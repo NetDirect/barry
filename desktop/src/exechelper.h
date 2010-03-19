@@ -143,6 +143,7 @@ protected:
 protected:
 	// helper functions
 	void RunError(wxWindow *parent, const wxString &msg);
+	int Execute(bool use_wx, const wxString &command, AppCallback *cb);
 
 public:
 	/// It is safe to pass a NULL catcher here.  No default is
