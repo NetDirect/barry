@@ -233,12 +233,15 @@ BEGIN_EVENT_TABLE(SyncStatusDlg, wxDialog)
 //				GroupCfgDlg::OnEngineComboChange)
 //	EVT_TEXT	(Dialog_GroupCfg_AppCombo,
 //				GroupCfgDlg::OnAppComboChange)
+	EVT_CUSTOM	(wxEVT_NULL, Dialog_SyncStatus_SyncTerminated,
+				SyncStatusDlg::OnExecTerminated)
 END_EVENT_TABLE()
 
 SyncStatusDlg::SyncStatusDlg(wxWindow *parent,
 				const DeviceSet::subset_type &subset)
 	: wxDialog(parent, Dialog_SyncStatus, _T("Device Sync Progress"),
 		wxDefaultPosition, wxSize(500,500))
+	, TermCatcher(this, Dialog_SyncStatus_SyncTerminated)
 	, m_subset(subset)
 	, m_next_device(m_subset.begin())
 	, m_jailexec(this)
@@ -510,7 +513,7 @@ wxConnectionBase* SyncStatusDlg::OnAcceptConnection(const wxString &topic)
 	return con;
 }
 
-void SyncStatusDlg::ExecTerminated()
+void SyncStatusDlg::OnExecTerminated(wxEvent &event)
 {
 	ostringstream oss;
 	if( m_killingjail )

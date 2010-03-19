@@ -155,12 +155,10 @@ public:
 //	void OnConfigureApp(wxCommandEvent &event);
 //	void OnEngineComboChange(wxCommandEvent &event);
 //	void OnAppComboChange(wxCommandEvent &event);
+	void OnExecTerminated(wxEvent &event);
 
 	// virtual overrides from wxServer
 	wxConnectionBase* OnAcceptConnection(const wxString &topic);
-
-	// virtual overrides from TermCatcher
-	virtual void ExecTerminated();
 };
 
 #endif

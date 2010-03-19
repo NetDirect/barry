@@ -68,6 +68,7 @@ enum {
 	Dialog_SyncStatus_RunAppButton,
 	Dialog_SyncStatus_SyncAgainButton,
 	Dialog_SyncStatus_KillCloseButton,
+	Dialog_SyncStatus_SyncTerminated,
 	Dialog_Conflict,
 
 	SysMenu_FirstItem,
