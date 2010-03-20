@@ -106,6 +106,17 @@ public:
 	//{
 	//	return api.GetConverter().IsConfigured(*this);
 	//}
+
+	/// Support function for Group::Compare().  If plugin is the
+	/// same type as this, sametype is set to true.  If sametype
+	/// is true, and the data is functionally equivalent,
+	/// equal is set to true.  Returns (sametype && equal).
+	virtual bool Compare(const Plugin &plugin,
+				bool &sametype, bool &equal) const
+	{
+		sametype = equal = false;
+		return sametype && equal;
+	}
 };
 
 class Unsupported : public Plugin
@@ -219,6 +230,21 @@ public:
 	{
 		return api.GetConverter().IsConfigured(*this);
 	}
+	virtual bool Compare(const Plugin &plugin,
+				bool &sametype, bool &equal) const
+	{
+		sametype = equal = false;
+		const Barry *other = dynamic_cast<const Barry*> (&plugin);
+		if( other ) {
+			sametype = true;
+
+			if( m_debug_mode == other->m_debug_mode &&
+			    m_pin == other->m_pin &&
+			    m_password == other->m_password )
+				equal = true;
+		}
+		return sametype && equal;
+	}
 
 	// statics
 	static std::string AppName() { return "Barry"; }
@@ -278,6 +304,22 @@ public:
 	virtual bool IsConfigured(OpenSync::API &api) const
 	{
 		return api.GetConverter().IsConfigured(*this);
+	}
+	virtual bool Compare(const Plugin &plugin,
+				bool &sametype, bool &equal) const
+	{
+		sametype = equal = false;
+		const Evolution *other = dynamic_cast<const Evolution*> (&plugin);
+		if( other ) {
+			sametype = true;
+
+			if( m_address_path == other->m_address_path &&
+			    m_calendar_path == other->m_calendar_path &&
+			    m_tasks_path == other->m_tasks_path &&
+			    m_memos_path == other->m_memos_path )
+				equal = true;
+		}
+		return sametype && equal;
 	}
 
 	// statics
@@ -408,6 +450,15 @@ public:
 	/// delete it and start over.  Or load it, delete it (through the API),
 	/// disconnect it, and save it again.
 	void Save(OpenSync::API &api);
+
+	/// Compares against another group, including all the plugins,
+	/// and each plugin data.  Order of plugins in group does not
+	/// matter, nor do file-specific data, like member IDs.
+	/// If saving both groups would result in functionally equivalent
+	/// sync groups, then they are equal.  This is used to avoid
+	/// re-saving when not necessary.
+	/// Returns true if equal.
+	bool Compare(const Group &group) const;
 
 	/// Forget all plugins and delete them all
 	using base_type::clear;

@@ -371,5 +371,35 @@ void Group::Save(OpenSync::API &api)
 	}
 }
 
+bool Group::Compare(const Group &other) const
+{
+	// size of group equal?
+	if( size() != other.size() )
+		return false;
+
+	// name of group?
+	if( m_group_name != other.m_group_name )
+		return false;
+
+	// cycle through all plugins, searching for a match in other
+	const_iterator i = begin();
+	for( ; i != end(); ++i ) {
+		bool sametype, equal;
+		bool match = false;
+
+		// search other for a match
+		const_iterator oi = other.begin();
+		for( ; oi != other.end(); ++oi ) {
+			if( (match = (*i)->Compare(*(*oi), sametype, equal)) )
+				break;
+		}
+
+		if( !match )
+			return false;
+	}
+
+	return true;
+}
+
 }} // namespace OpenSync::Config
 
