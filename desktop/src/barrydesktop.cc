@@ -42,6 +42,10 @@ UsbScanSplash::UsbScanSplash()
 	wxGetApp().Yield();
 }
 
+UsbScanSplash::~UsbScanSplash()
+{
+}
+
 //////////////////////////////////////////////////////////////////////////////
 // BarryDesktopApp
 

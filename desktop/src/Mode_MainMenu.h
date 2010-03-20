@@ -38,6 +38,7 @@ class MainMenuMode : public Mode
 
 public:
 	MainMenuMode(wxWindow *parent);
+	~MainMenuMode();
 
 	void UpdateScreenshot(const Barry::Pin &pin);
 

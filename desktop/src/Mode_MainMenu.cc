@@ -32,6 +32,10 @@ MainMenuMode::MainMenuMode(wxWindow *parent)
 {
 }
 
+MainMenuMode::~MainMenuMode()
+{
+}
+
 void MainMenuMode::UpdateScreenshot(const Barry::Pin &pin)
 {
 	// clear existing screenshot

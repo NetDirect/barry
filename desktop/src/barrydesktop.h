@@ -36,6 +36,7 @@ class UsbScanSplash
 	std::auto_ptr<wxSplashScreen> m_splash;
 public:
 	UsbScanSplash();
+	~UsbScanSplash();
 };
 
 class BarryDesktopApp : public wxApp
