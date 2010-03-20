@@ -380,7 +380,7 @@ void SyncStatusDlg::StartNextSync()
 	OpenSync::Config::Group *group = device.GetConfigGroup();
 	string group_name = group->GetGroupName();
 
-	PrintRed("Starting sync for: " + m_device_id);
+	PrintBlack("Starting sync for: " + m_device_id);
 
 	// for each plugin / app, perform the pre-sync steps
 	for( OpenSync::Config::Group::iterator i = group->begin();
@@ -415,7 +415,6 @@ void SyncStatusDlg::StartNextSync()
 		return;
 	}
 
-return;
 	// sync is underway... advance to the next device
 	++m_next_device;
 }
@@ -515,7 +514,7 @@ void SyncStatusDlg::OnExecTerminated(wxProcessEvent &event)
 	else
 		oss << "Sync finished: ";
 	oss << m_device_id;
-	PrintRed(oss.str());
+	PrintBlack(oss.str());
 
 	StartNextSync();
 }
