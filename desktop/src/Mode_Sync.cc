@@ -277,12 +277,27 @@ void SyncMode::ConfigureDevice(int device_index)
 	DeviceEntry &entry = (*m_device_set)[device_index];
 
 	GroupCfgDlg dlg(m_parent, entry, wxGetApp().GetOpenSync());
-	if( dlg.ShowModal() == wxID_OK && dlg.GetEngine() && dlg.GetGroup().get() ) {
-		// delete the old group
+	if( dlg.ShowModal() == wxID_OK &&
+	    dlg.GetEngine() &&
+	    dlg.GetGroup().get() )
+	{
+		// does old group exist?
 		if( entry.GetEngine() &&
 		    entry.GetConfigGroup() &&
 		    entry.GetConfigGroup()->GroupExists(*entry.GetEngine()) )
 		{
+			// yes, is the new group equal?
+			string v1 = entry.GetEngine()->GetVersion();
+			string v2 = dlg.GetEngine()->GetVersion();
+			if( v1 == v2 && dlg.GetGroup()->Compare(*entry.GetConfigGroup()) ) {
+				// config is the same, don't bother saving again
+				cout << "Config is the same, skipping save" << endl;
+				return;
+			}
+
+			// group config changed, delete to start over,
+			// since new config might change engines...
+			// and we don't want to leave stuff behind
 			entry.GetEngine()->DeleteGroup(entry.GetConfigGroup()->GetGroupName());
 		}
 
