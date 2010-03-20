@@ -297,7 +297,9 @@ void BarrySyncJail::EngineStatus(const std::string &msg, bool error, bool slowsy
 	else
 		m_status_con->Poke(STATUS_ITEM_ENGINE, sb.buf(msg));
 
-	if( slowsync )
+	// slow sync on 0.22 is unreliable... send a special notice
+	// to the GUI
+	if( slowsync && !m_engine->IsSlowSyncSupported() )
 		m_status_con->Poke(STATUS_ITEM_ENGINE, sb.buf(ENGINE_STATUS_SLOW_SYNC));
 }
 
