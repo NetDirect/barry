@@ -249,6 +249,15 @@ public:
 	{
 	}
 
+	// Functional abilities information... this does not come from
+	// the engine itself, but is information the osbase library
+	// determines useful for applications to know
+	virtual bool IsSlowSyncSupported() const = 0;
+	virtual bool IsContactSyncSupported() const = 0;
+	virtual bool IsCalendarSyncSupported() const = 0;
+	virtual bool IsMemoSyncSupported() const = 0;
+	virtual bool IsTodoSyncSupported() const = 0;
+
 	// General engine information
 	virtual const char* GetVersion() const = 0;
 	virtual void GetPluginNames(string_list_type &plugins) = 0;

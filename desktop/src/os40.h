@@ -49,6 +49,15 @@ public:
 	// Virtual API overrides
 	//
 
+	// Functional abilities information... this does not come from
+	// the engine itself, but is information the osbase library
+	// determines useful for applications to know
+	bool IsSlowSyncSupported() const { return true; } // FIXME - is this right?
+	bool IsContactSyncSupported() const { return true; }
+	bool IsCalendarSyncSupported() const { return true; }
+	bool IsMemoSyncSupported() const { return true; }
+	bool IsTodoSyncSupported() const { return true; }
+
 	// General engine information
 	const char* GetVersion() const;
 	void GetPluginNames(string_list_type &plugins);
