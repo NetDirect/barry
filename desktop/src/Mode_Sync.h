@@ -55,6 +55,9 @@ protected:
 	int GetSelectedDevice();	// returns index, or -1 if none or
 					// more than one selected... also
 					// handles the message box
+	int GetAuthoritativeSide(int device_index);
+	bool ZapConflicts(int device_index, int authoritative_side);
+	void RewriteConfig(int device_index);
 
 public:
 	SyncMode(wxWindow *parent);

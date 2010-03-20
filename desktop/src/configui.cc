@@ -22,6 +22,7 @@
 #include "configui.h"
 #include "osconfig.h"
 #include "CUI_Evolution.h"
+#include "CUI_Barry.h"
 
 // Static factory function
 ConfigUI::configui_ptr ConfigUI::CreateConfigUI(const std::string &appname)
@@ -30,6 +31,9 @@ ConfigUI::configui_ptr ConfigUI::CreateConfigUI(const std::string &appname)
 
 	if( appname == OpenSync::Config::Evolution::AppName() ) {
 		ui.reset( new AppConfig::Evolution );
+	}
+	else if( appname == OpenSync::Config::Barry::AppName() ) {
+		ui.reset( new AppConfig::Barry );
 	}
 
 	return ui;

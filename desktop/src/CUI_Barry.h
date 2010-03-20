@@ -1,10 +1,10 @@
 ///
-/// \file	CUI_Evolution.h
-///		ConfigUI derived class to configure the Evolution App
+/// \file	CUI_Barry.h
+///		ConfigUI derived class to configure the Barry "App"
 ///
 
 /*
-    Copyright (C) 2009-2010, Net Direct Inc. (http://www.netdirect.ca/)
+    Copyright (C) 2010, Net Direct Inc. (http://www.netdirect.ca/)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -19,8 +19,8 @@
     root directory of this project for more details.
 */
 
-#ifndef __BARRY_CUI_EVOLUTION_H__
-#define __BARRY_CUI_EVOLUTION_H__
+#ifndef __BARRY_CUI_BARRY_H__
+#define __BARRY_CUI_BARRY_H__
 
 #include "configui.h"
 #include "osconfig.h"
@@ -30,20 +30,15 @@ class wxWindow;
 
 namespace AppConfig {
 
-class Evolution : public ConfigUI
+class Barry : public ConfigUI
 {
-	OpenSync::Config::Evolution *m_evolution;
-	plugin_ptr m_container;			// merely holds m_evolution
+	plugin_ptr m_container;
 
 	// convenience pointers
 	wxWindow *m_parent;
 
-protected:
-	bool AutoDetect();
-	bool InitialRun();
-
 public:
-	Evolution();
+	Barry();
 
 	// virtual overrides (ConfigUI)
 	virtual std::string AppName() const;
@@ -54,9 +49,6 @@ public:
 	virtual bool ZapData(wxWindow *parent,
 		OpenSync::Config::Group::plugin_ptr plugin,
 		OpenSync::API *engine);
-
-	// static utility functions
-	static long ForceShutdown();
 };
 
 }

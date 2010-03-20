@@ -239,5 +239,46 @@ void Evolution::PreSyncAppInit()
 	ForceShutdown();
 }
 
+bool Evolution::ZapData(wxWindow *parent,
+			OpenSync::Config::Group::plugin_ptr plugin,
+			OpenSync::API *engine)
+{
+	m_parent = parent;
+
+	// extract OpenSync::Config::Evolution from plugin
+	// this *can* throw an exception if the wrong plugin is
+	// passed in, but we want this... such an exception would
+	// represent a bug in the app, not a runtime error
+//	OpenSync::Config::Evolution &evo =
+//		dynamic_cast<OpenSync::Config::Evolution&>(*plugin);
+
+	if( IsAppRunning() ) {
+		wxMessageBox(_T("Evolution already running."),
+			_T("No Biscuit"), wxOK | wxICON_INFORMATION,
+			m_parent);
+		return false;
+	}
+
+	// tell the user what to do
+	wxString msg = _T(
+		"Starting Evolution.  Delete all contacts and calendar "
+		"entries manually (as well as memos and tasks if you are "
+		"syncing them too)."
+		);
+	int choice = wxMessageBox(msg, _T("Starting Evolution"),
+			wxOK | wxCANCEL | wxICON_QUESTION, m_parent);
+	if( choice != wxOK )
+		return false;
+
+	RunApp(parent);
+
+	// wait for app to finish... this is kinda lame, but
+	// we don't want other Zaps to happen before this is finished
+	while( IsAppRunning() )
+		wxMilliSleep(500);
+
+	return true;
+}
+
 } // namespace AppConfig
 

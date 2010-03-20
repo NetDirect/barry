@@ -355,6 +355,145 @@ int SyncMode::GetSelectedDevice()
 	return item;
 }
 
+//
+// Returns an index into the config group for the given device index
+// that represents the authoritative side of the sync.  This means
+// that during the 1-Way Reset, the plugin at this index must NOT
+// be zapped!  All the others must be zapped.
+//
+// Returns -1 if the user cancels, or if not enough data to decide.
+//
+int SyncMode::GetAuthoritativeSide(int device_index)
+{
+	// grab the device entry and group config
+	DeviceEntry &entry = (*m_device_set)[device_index];
+	OpenSync::Config::Group *group = entry.GetConfigGroup();
+	if( !group )
+		return -1;
+
+	// build message
+	wxString intro(_T(
+		"Which device / application should be considered\n"
+		"authoritative?\n"
+		"\n"
+		"All data in non-authoritative devices / applications\n"
+		"will be deleted in order to setup a straight copy on\n"
+		"the next sync."));
+
+	// build list of devices / applications
+	wxArrayString list;
+	OpenSync::Config::Group::iterator gi = group->begin();
+	for( ; gi != group->end(); ++gi ) {
+		// the Barry plugin is special
+		if( dynamic_cast<OpenSync::Config::Barry*>( (*gi).get() ) ) {
+			// this is a Barry plugin, so display the
+			// device name, not the plugin name
+			string device_name = entry.GetPin().str();
+			if( entry.GetDeviceName().size() )
+				device_name += " (" + entry.GetDeviceName() + ")";
+
+			list.Add( wxString(device_name.c_str(), wxConvUTF8) );
+		}
+		else {
+			// add the application name
+			list.Add( wxString((*gi)->GetAppName().c_str(),
+						wxConvUTF8) );
+		}
+	}
+
+	// ask the user
+	int choice = wxGetSingleChoiceIndex(intro,
+		_T("Select Authoritative Device / Application"),
+		list, m_parent);
+	return choice;
+}
+
+bool SyncMode::ZapConflicts(int device_index, int authoritative_side)
+{
+	// grab the device entry and group config
+	DeviceEntry &entry = (*m_device_set)[device_index];
+	OpenSync::Config::Group *group = entry.GetConfigGroup();
+	if( !group )
+		return false;
+
+	// cycle through list of sync plugins, zapping each
+	// non-authoritative one
+	OpenSync::Config::Group::iterator gi = group->begin();
+	for( int i = 0; gi != group->end(); ++gi, ++i ) {
+
+		// skip the authoritative plugin!
+		if( i == authoritative_side )
+			continue;
+
+		OpenSync::Config::Plugin &plugin = *(*gi);
+
+		// create a configUI object, for zapping
+		ConfigUI::ptr ui = ConfigUI::CreateConfigUI(plugin.GetAppName());
+		if( !ui.get() ) {
+			// no possibility for zapping here... so just
+			// assume that it doesn't need it for now...
+			// worst that can happen, should be it slow-syncs
+			// all the time
+			continue;
+		}
+
+		bool success = ui->ZapData(m_parent, *gi, entry.GetEngine());
+		if( !success ) {
+			// if the user cancels one, cancel all the rest
+			return false;
+		}
+	}
+
+	// if we reach this, we succeeded
+	return true;
+}
+
+void SyncMode::RewriteConfig(int device_index)
+{
+	// grab the device entry and group config
+	DeviceEntry &entry = (*m_device_set)[device_index];
+	OpenSync::Config::Group *group = entry.GetConfigGroup();
+	OpenSync::API *engine = entry.GetEngine();
+	if( !group || !engine )
+		return;
+
+	string group_name = group->GetGroupName();
+
+	try {
+		// delete the existing group name
+		engine->DeleteGroup(group_name);
+
+		// disconnect the plugins from the group, to
+		// make them "new" again
+		group->DisconnectMembers();
+
+		// save
+		group->Save(*engine);
+
+		// success!
+		cout << group_name << " group config rewritten" << endl;
+		return;
+	}
+	catch( std::runtime_error &re ) {
+		ostringstream oss;
+		oss << "Unable to rewrite config!  Start over manually. "
+			"Error: " << re.what();
+		wxString msg(oss.str().c_str(), wxConvUTF8);
+
+		wxMessageBox(msg, _T("Error Rewriting Config"),
+			wxOK | wxICON_ERROR, m_parent);
+	}
+
+	// if we get here, the group is in an undefined state,
+	// so delete it to make sure nothing odd is left behind
+	try {
+		engine->DeleteGroup(group_name);
+	}
+	catch( std::runtime_error &re ) {
+		cout << "Error while deleting undefined group '" << group_name << "': " << re.what() << endl;
+	}
+}
+
 void SyncMode::OnSyncNow(wxCommandEvent &event)
 {
 	DeviceSet::subset_type subset = GetSelectedDevices();
@@ -412,6 +551,25 @@ void SyncMode::On1WayReset(wxCommandEvent &event)
 	int item = GetSelectedDevice();
 	if( item == -1 )
 		return;
+
+	// let user pick the authoritative side of the sync
+	int side = GetAuthoritativeSide(item);
+	if( side == -1 )
+		return;
+
+	// zap the data of all remaining sync elements
+	if( !ZapConflicts(item, side) )
+		return;
+
+	// rewrite the config
+	RewriteConfig(item);
+
+	// reload the deviceset
+	RefillList();
+
+	// tell the user all's well
+	wxMessageBox(_T("1-Way Reset is complete, and ready to sync."),
+		_T("Reset Complete"), wxOK | wxICON_INFORMATION, m_parent);
 }
 
 void SyncMode::OnListSelChange(wxListEvent &event)

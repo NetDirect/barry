@@ -65,6 +65,12 @@ public:
 	/// Performs any initialization steps that the App requires before
 	/// running the sync (for example, Evolution needs a --force-shutdown)
 	virtual void PreSyncAppInit() = 0;
+	/// Presents the user with the warning / instructions for zapping
+	/// the data on this plugin.  Returns false if user aborted along
+	/// the way.
+	virtual bool ZapData(wxWindow *parent,
+		OpenSync::Config::Group::plugin_ptr plugin,
+		OpenSync::API *engine) = 0;
 
 	static configui_ptr CreateConfigUI(const std::string &appname);
 };

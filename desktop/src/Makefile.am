@@ -24,9 +24,10 @@ barrydesktop_SOURCES = \
 	GroupCfgDlg.cc GroupCfgDlg.h \
 	SyncStatusDlg.cc SyncStatusDlg.h \
 	ConflictDlg.cc ConflictDlg.h \
-	configui.h configui.cc \
-	exechelper.h exechelper.cc \
-	CUI_Evolution.h CUI_Evolution.cc \
+	configui.cc configui.h \
+	exechelper.cc exechelper.h \
+	CUI_Barry.cc CUI_Barry.h \
+	CUI_Evolution.cc CUI_Evolution.h \
 	error.cc error.h \
 	dlopen.cc dlopen.h \
 	tempdir.cc tempdir.h \
