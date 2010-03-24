@@ -163,6 +163,9 @@ bool ConflictConnection::OnPoke(const wxString &topic,
 			back_inserter(change.printable_data));
 
 		m_changes.push_back(change);
+		cout << "New conflict change: " << m_current_sequenceID
+			<< ", " << m_current_offset << ", data: "
+			<< change.printable_data << endl;
 	}
 
 	return true;
