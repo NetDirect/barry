@@ -291,7 +291,7 @@ void SyncMode::ConfigureDevice(int device_index)
 			string v2 = dlg.GetEngine()->GetVersion();
 			if( v1 == v2 && dlg.GetGroup()->Compare(*entry.GetConfigGroup()) ) {
 				// config is the same, don't bother saving again
-				cout << "Config is the same, skipping save" << endl;
+				barryverbose("Config is the same, skipping save");
 				return;
 			}
 
@@ -309,9 +309,9 @@ void SyncMode::ConfigureDevice(int device_index)
 
 			}
 			catch( OpenSync::Config::SaveError &se ) {
-				cout << "Exception during save: " << se.what() << endl;
+				barryverbose("Exception during save: " << se.what());
 				if( attempt < 2 ) {
-					cout << "Deleting group using alternate engine and resaving: " << entry.GetConfigGroup()->GetGroupName() << endl;
+					barryverbose("Deleting group using alternate engine and resaving: " << entry.GetConfigGroup()->GetGroupName());
 					// delete and try again
 					dlg.GetEngine()->DeleteGroup(entry.GetConfigGroup()->GetGroupName());
 				}
@@ -471,7 +471,7 @@ void SyncMode::RewriteConfig(int device_index)
 		group->Save(*engine);
 
 		// success!
-		cout << group_name << " group config rewritten" << endl;
+		barryverbose(group_name << " group config rewritten");
 		return;
 	}
 	catch( std::runtime_error &re ) {
@@ -490,7 +490,7 @@ void SyncMode::RewriteConfig(int device_index)
 		engine->DeleteGroup(group_name);
 	}
 	catch( std::runtime_error &re ) {
-		cout << "Error while deleting undefined group '" << group_name << "': " << re.what() << endl;
+		barryverbose("Error while deleting undefined group '" << group_name << "': " << re.what());
 	}
 }
 

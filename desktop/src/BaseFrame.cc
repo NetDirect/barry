@@ -350,10 +350,9 @@ void BaseFrame::OnBackButton(wxCommandEvent &event)
 
 void BaseFrame::OnTermBackupAndRestore(wxProcessEvent &event)
 {
-	cout << "OnTermBackupAndRestore(): done = "
+	barryverbose("OnTermBackupAndRestore(): done = "
 		<< (!m_backup_process.IsAppRunning() ? "true" : "false")
-		<< ", status = " << m_backup_process.GetAppStatus()
-		<< endl;
+		<< ", status = " << m_backup_process.GetAppStatus());
 	if( !m_backup_process.IsAppRunning() &&
 	    m_backup_process.GetAppStatus() )
 	{

@@ -140,11 +140,11 @@ bool Barry::ZapData(wxWindow *parent,
 
 		unsigned int dbid;
 		if( !dbdb.GetDBNumber(dbname, dbid) ) {
-			cout << "No database named '" << dbname << "' in device!" << endl;
+			barryverbose("No database named '" << dbname << "' in device!");
 			continue;
 		}
 
-		cout << "Clearing db: " << dbname << endl;
+		barryverbose("Clearing db: " << dbname);
 		desktop.ClearDatabase(dbid);
 	}
 

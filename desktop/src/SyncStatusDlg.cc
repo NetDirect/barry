@@ -107,8 +107,8 @@ bool ConflictConnection::OnPoke(const wxString &topic,
 				int size,
 				wxIPCFormat format)
 {
-	cout << "Conflict::OnPoke: " << topic.utf8_str() << ", "
-		<< item.utf8_str() << endl;
+	barryverbose("Conflict::OnPoke: " << topic.utf8_str() << ", "
+		<< item.utf8_str());
 
 	if( topic != TOPIC_CONFLICT )
 		return false;
@@ -137,11 +137,10 @@ bool ConflictConnection::OnPoke(const wxString &topic,
 			return false;
 		}
 
-		cout << "New conflict item: " << m_current_sequenceID
+		barryverbose("New conflict item: " << m_current_sequenceID
 			<< ", " << m_current_offset << ", "
 			<< "expected changes: " << m_expected_total_changes
-			<< ", supported commands: " << m_supported_commands
-			<< endl;
+			<< ", supported commands: " << m_supported_commands);
 	}
 	else if( item == CONFLICT_ITEM_CHANGE ) {
 		int sequenceID = 0, offset = 0;
@@ -163,9 +162,9 @@ bool ConflictConnection::OnPoke(const wxString &topic,
 			back_inserter(change.printable_data));
 
 		m_changes.push_back(change);
-		cout << "New conflict change: " << m_current_sequenceID
+		barryverbose("New conflict change: " << m_current_sequenceID
 			<< ", " << m_current_offset << ", data: "
-			<< change.printable_data << endl;
+			<< change.printable_data);
 	}
 
 	return true;
@@ -178,19 +177,19 @@ wxChar* ConflictConnection::OnRequest(const wxString &topic,
 {
 	// make sure we are in a valid sequence
 	if( m_current_sequenceID == -1 || m_current_offset == -1 || m_expected_total_changes < 2) {
-		cout << "Conflict: not in a valid sequence: "
+		barryverbose("Conflict: not in a valid sequence: "
 			<< m_current_sequenceID << ", "
 			<< m_current_offset << ", "
-			<< m_expected_total_changes << endl;
+			<< m_expected_total_changes);
 		return NULL;
 	}
 
 	// make sure we have a valid set of changes
 	if( m_current_offset != m_expected_total_changes || (size_t)m_expected_total_changes != m_changes.size() ) {
-		cout << "Conflict: not a valid set of changes: "
+		barryverbose("Conflict: not a valid set of changes: "
 			<< m_current_offset << ", "
 			<< m_expected_total_changes << ", "
-			<< m_changes.size() << endl;
+			<< m_changes.size());
 		return NULL;
 	}
 
@@ -433,7 +432,7 @@ void SyncStatusDlg::OnSlowSync()
 
 void SyncStatusDlg::OnInitDialog(wxInitDialogEvent &event)
 {
-	cout << "OnInitDialog" << endl;
+	barryverbose("OnInitDialog");
 	StartNextSync();
 }
 
