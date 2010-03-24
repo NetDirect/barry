@@ -91,7 +91,7 @@ struct SMSMetaData
 #define SMS_DCS_UCS2 0x02
 
 } __attribute__ ((packed));
-#define SMS_METADATA_SIZE	(sizeof(Barry::Protocol::SMSMetaData))
+#define SMS_METADATA_SIZE	(sizeof(::Barry::Protocol::SMSMetaData))
 
 
 
@@ -119,7 +119,7 @@ struct CommonField
 	} __attribute__ ((packed)) u;
 
 } __attribute__ ((packed));
-#define COMMON_FIELD_HEADER_SIZE	(sizeof(Barry::Protocol::CommonField) - sizeof(Barry::Protocol::CommonField::CommonFieldData))
+#define COMMON_FIELD_HEADER_SIZE	(sizeof(::Barry::Protocol::CommonField) - sizeof(::Barry::Protocol::CommonField::CommonFieldData))
 #define COMMON_FIELD_MIN1900_SIZE	(sizeof(int32_t))
 
 struct CommandTableField
@@ -128,7 +128,7 @@ struct CommandTableField
 	uint8_t		code;
 	uint8_t		name[1];
 } __attribute__ ((packed));
-#define COMMAND_FIELD_HEADER_SIZE	(sizeof(Barry::Protocol::CommandTableField) - 1)
+#define COMMAND_FIELD_HEADER_SIZE	(sizeof(::Barry::Protocol::CommandTableField) - 1)
 
 struct OldDBDBField
 {
@@ -141,7 +141,7 @@ struct OldDBDBField
 	uint16_t	nameSize;		// includes null terminator
 	uint8_t		name[1];
 } __attribute__ ((packed));
-#define OLD_DBDB_FIELD_HEADER_SIZE	(sizeof(Barry::Protocol::OldDBDBField) - 1)
+#define OLD_DBDB_FIELD_HEADER_SIZE	(sizeof(::Barry::Protocol::OldDBDBField) - 1)
 
 struct DBDBField
 {
@@ -158,7 +158,7 @@ struct DBDBField
 						// null terminated name, but
 						// is here for size calcs
 } __attribute__ ((packed));
-#define DBDB_FIELD_HEADER_SIZE	(sizeof(Barry::Protocol::DBDBField) - 1)
+#define DBDB_FIELD_HEADER_SIZE	(sizeof(::Barry::Protocol::DBDBField) - 1)
 
 struct RecordStateTableField
 {
@@ -252,7 +252,7 @@ struct CalendarRecurrenceDataField  // as documented in the Cassis project spec
 	} __attribute__ ((packed)) u;
 
 } __attribute__ ((packed));
-#define CALENDAR_RECURRENCE_DATA_FIELD_SIZE	sizeof(Barry::Protocol::CalendarRecurrenceDataField)
+#define CALENDAR_RECURRENCE_DATA_FIELD_SIZE	sizeof(::Barry::Protocol::CalendarRecurrenceDataField)
 
 //
 // Calendar record: field constants
@@ -340,7 +340,7 @@ struct PackedField_02
 	uint8_t		type;
 	uint8_t		raw[1];
 } __attribute__ ((packed));
-#define PACKED_FIELD_02_HEADER_SIZE	(sizeof(Barry::Protocol::PackedField_02) - 1)
+#define PACKED_FIELD_02_HEADER_SIZE	(sizeof(::Barry::Protocol::PackedField_02) - 1)
 
 struct PackedField_10
 {
@@ -348,7 +348,7 @@ struct PackedField_10
 	uint8_t		size;
 	uint8_t		raw[1];
 } __attribute__ ((packed));
-#define PACKED_FIELD_10_HEADER_SIZE	(sizeof(Barry::Protocol::PackedField_10) - 1)
+#define PACKED_FIELD_10_HEADER_SIZE	(sizeof(::Barry::Protocol::PackedField_10) - 1)
 
 
 
@@ -361,7 +361,7 @@ struct ServiceBookConfigField
 	uint8_t		format;
 	uint8_t		fields[1];
 } __attribute__ ((packed));
-#define SERVICE_BOOK_CONFIG_FIELD_HEADER_SIZE (sizeof(Barry::Protocol::ServiceBookConfigField) - 1)
+#define SERVICE_BOOK_CONFIG_FIELD_HEADER_SIZE (sizeof(::Barry::Protocol::ServiceBookConfigField) - 1)
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -372,7 +372,7 @@ struct DBC_Record
 	uint16_t	recordIndex;	// index comes from RecordStateTable
 	uint8_t		data[1];
 } __attribute__ ((packed));
-#define DBC_RECORD_HEADER_SIZE		(sizeof(Barry::Protocol::DBC_Record) - 1)
+#define DBC_RECORD_HEADER_SIZE		(sizeof(::Barry::Protocol::DBC_Record) - 1)
 
 struct DBC_RecordFlags
 {
@@ -380,7 +380,7 @@ struct DBC_RecordFlags
 	uint16_t	index;
 	uint8_t		unknown2[5];
 } __attribute__ ((packed));
-#define DBC_RECORD_FLAGS_SIZE		(sizeof(Barry::Protocol::DBC_RecordFlags))
+#define DBC_RECORD_FLAGS_SIZE		(sizeof(::Barry::Protocol::DBC_RecordFlags))
 
 struct DBC_TaggedUpload
 {
@@ -394,7 +394,7 @@ struct DBC_TaggedUpload
 	uint8_t		unknown2;
 	uint8_t		data[1];
 } __attribute__ ((packed));
-#define DBC_TAGGED_UPLOAD_HEADER_SIZE	(sizeof(Barry::Protocol::DBC_TaggedUpload) - 1)
+#define DBC_TAGGED_UPLOAD_HEADER_SIZE	(sizeof(::Barry::Protocol::DBC_TaggedUpload) - 1)
 
 struct DBC_IndexedUpload
 {
@@ -402,7 +402,7 @@ struct DBC_IndexedUpload
 	uint16_t	index;
 	uint8_t		data[1];
 } __attribute__ ((packed));
-#define DBC_INDEXED_UPLOAD_HEADER_SIZE	(sizeof(Barry::Protocol::DBC_IndexedUpload) - 1)
+#define DBC_INDEXED_UPLOAD_HEADER_SIZE	(sizeof(::Barry::Protocol::DBC_IndexedUpload) - 1)
 
 struct PasswordChallenge
 {
@@ -427,9 +427,9 @@ struct PasswordChallenge
 	} __attribute__ ((packed)) u;
 
 } __attribute__ ((packed));
-#define PASSWORD_CHALLENGE_HEADER_SIZE	(sizeof(Barry::Protocol::PasswordChallenge) - sizeof(Barry::Protocol::PasswordChallenge::Hash))
+#define PASSWORD_CHALLENGE_HEADER_SIZE	(sizeof(::Barry::Protocol::PasswordChallenge) - sizeof(::Barry::Protocol::PasswordChallenge::Hash))
 #define PASSWORD_CHALLENGE_SEED_SIZE	(PASSWORD_CHALLENGE_HEADER_SIZE + sizeof(uint32_t))
-#define PASSWORD_CHALLENGE_SIZE		(sizeof(Barry::Protocol::PasswordChallenge))
+#define PASSWORD_CHALLENGE_SIZE		(sizeof(::Barry::Protocol::PasswordChallenge))
 
 struct AttributeFetch
 {
@@ -437,7 +437,7 @@ struct AttributeFetch
 	uint16_t	attribute;
 	uint8_t		raw[1];			// used only in response
 } __attribute__ ((packed));
-#define ATTRIBUTE_FETCH_COMMAND_SIZE	(sizeof(Barry::Protocol::AttributeFetch) - 1)
+#define ATTRIBUTE_FETCH_COMMAND_SIZE	(sizeof(::Barry::Protocol::AttributeFetch) - 1)
 
 struct ModeSelect
 {
@@ -453,7 +453,7 @@ struct Echo
 	uint64_t	ticks;			// number of microseconds since
 						// host system startup
 } __attribute__ ((packed));
-#define ECHO_COMMAND_SIZE		(sizeof(Barry::Protocol::Echo))
+#define ECHO_COMMAND_SIZE		(sizeof(::Barry::Protocol::Echo))
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -477,7 +477,7 @@ struct SocketCommand
 
 	} __attribute__ ((packed)) u;
 } __attribute__ ((packed));
-#define SOCKET_COMMAND_HEADER_SIZE		(sizeof(Barry::Protocol::SocketCommand) - sizeof(Barry::Protocol::SocketCommand::PacketData))
+#define SOCKET_COMMAND_HEADER_SIZE		(sizeof(::Barry::Protocol::SocketCommand) - sizeof(::Barry::Protocol::SocketCommand::PacketData))
 
 struct SequenceCommand
 {
@@ -503,7 +503,7 @@ struct DBCommand
 
 	} __attribute__ ((packed)) u;
 } __attribute__ ((packed));
-#define DB_COMMAND_HEADER_SIZE		(sizeof(Barry::Protocol::DBCommand) - sizeof(Barry::Protocol::DBCommand::Parameters))
+#define DB_COMMAND_HEADER_SIZE		(sizeof(::Barry::Protocol::DBCommand) - sizeof(::Barry::Protocol::DBCommand::Parameters))
 
 
 
@@ -515,7 +515,7 @@ struct DBR_OldDBDBRecord
 	uint16_t	count;			// number of fields in record
 	OldDBDBField	field[1];
 } __attribute__ ((packed));
-#define OLD_DBDB_RECORD_HEADER_SIZE	(sizeof(Barry::Protocol::DBR_OldDBDBRecord) - sizeof(Barry::Protocol::OldDBDBField))
+#define OLD_DBDB_RECORD_HEADER_SIZE	(sizeof(::Barry::Protocol::DBR_OldDBDBRecord) - sizeof(::Barry::Protocol::OldDBDBField))
 
 struct DBR_DBDBRecord
 {
@@ -523,7 +523,7 @@ struct DBR_DBDBRecord
 	uint8_t		unknown[3];
 	DBDBField	field[1];
 } __attribute__ ((packed));
-#define DBDB_RECORD_HEADER_SIZE		(sizeof(Barry::Protocol::DBR_DBDBRecord) - sizeof(Barry::Protocol::DBDBField))
+#define DBDB_RECORD_HEADER_SIZE		(sizeof(::Barry::Protocol::DBR_DBDBRecord) - sizeof(::Barry::Protocol::DBDBField))
 
 // Records with a uniqueId.  This covers the following records:
 //
@@ -543,7 +543,7 @@ struct DBR_OldTaggedRecord
 		CommonField	field[1];
 	} __attribute__ ((packed)) u;
 } __attribute__ ((packed));
-#define DBR_OLD_TAGGED_RECORD_HEADER_SIZE (sizeof(Barry::Protocol::DBR_OldTaggedRecord) - sizeof(Barry::Protocol::DBR_OldTaggedRecord::TaggedData))
+#define DBR_OLD_TAGGED_RECORD_HEADER_SIZE (sizeof(::Barry::Protocol::DBR_OldTaggedRecord) - sizeof(::Barry::Protocol::DBR_OldTaggedRecord::TaggedData))
 
 struct MessageRecord
 {
@@ -600,7 +600,7 @@ struct MessageRecord
 	uint32_t	timeBlock;	// FIXME
 	CommonField	field[1];
 } __attribute__ ((packed));
-#define MESSAGE_RECORD_HEADER_SIZE (sizeof(Barry::Protocol::MessageRecord) - sizeof(Barry::Protocol::CommonField))
+#define MESSAGE_RECORD_HEADER_SIZE (sizeof(::Barry::Protocol::MessageRecord) - sizeof(::Barry::Protocol::CommonField))
 
 
 
@@ -621,7 +621,7 @@ struct DBResponse
 	} __attribute__ ((packed)) u;
 
 } __attribute__ ((packed));
-#define DB_RESPONSE_HEADER_SIZE		(sizeof(Barry::Protocol::DBResponse) - sizeof(Barry::Protocol::DBResponse::Parameters))
+#define DB_RESPONSE_HEADER_SIZE		(sizeof(::Barry::Protocol::DBResponse) - sizeof(::Barry::Protocol::DBResponse::Parameters))
 
 
 
@@ -643,7 +643,7 @@ struct DBAccess
 
 	} __attribute__ ((packed)) u;
 } __attribute__ ((packed));
-#define SB_DBACCESS_HEADER_SIZE			(sizeof(Barry::Protocol::DBAccess) - sizeof(Barry::Protocol::DBAccess::DBData))
+#define SB_DBACCESS_HEADER_SIZE			(sizeof(::Barry::Protocol::DBAccess) - sizeof(::Barry::Protocol::DBAccess::DBData))
 #define SB_DBACCESS_RETURN_CODE_SIZE		(1)
 
 
@@ -662,7 +662,7 @@ struct JLDirEntry
 	// uint32_t	cod_size;
 
 } __attribute__ ((packed));
-#define SB_JLDIRENTRY_HEADER_SIZE		(sizeof(Barry::Protocol::JLDirEntry) - 1)
+#define SB_JLDIRENTRY_HEADER_SIZE		(sizeof(::Barry::Protocol::JLDirEntry) - 1)
 
 struct JLCommand
 {
@@ -670,7 +670,7 @@ struct JLCommand
 	uint8_t		unknown;	// nearly always 0, might be top half of command
 	uint16_t	size;
 } __attribute__ ((packed));
-#define SB_JLCOMMAND_HEADER_SIZE		(sizeof(Barry::Protocol::JLCommand))
+#define SB_JLCOMMAND_HEADER_SIZE		(sizeof(::Barry::Protocol::JLCommand))
 
 struct JLResponse
 {
@@ -678,7 +678,7 @@ struct JLResponse
 	uint8_t		unknown;
 	uint16_t	expect;
 } __attribute__ ((packed));
-#define SB_JLRESPONSE_HEADER_SIZE		(sizeof(Barry::Protocol::JLResponse))
+#define SB_JLRESPONSE_HEADER_SIZE		(sizeof(::Barry::Protocol::JLResponse))
 
 struct JLScreenInfo
 {
@@ -691,7 +691,7 @@ struct JLScreenInfo
 	uint16_t	unknown5;
 	uint16_t	unknown6;
 } __attribute__ ((packed));
-#define SB_JLSCREENINFO_SIZE			(sizeof(Barry::Protocol::JLScreenInfo))
+#define SB_JLSCREENINFO_SIZE			(sizeof(::Barry::Protocol::JLScreenInfo))
 
 struct JLEventlogEntry
 {
@@ -699,7 +699,7 @@ struct JLEventlogEntry
 	// remainder of packet is variable
 	// it contains the log data as an ASCII (UTF-8?) string
 } __attribute__ ((packed));
-#define SB_JLEVENTLOG_ENTRY_HEADER_SIZE		(sizeof(Barry::Protocol::JLEventlogEntry))
+#define SB_JLEVENTLOG_ENTRY_HEADER_SIZE		(sizeof(::Barry::Protocol::JLEventlogEntry))
 
 struct JLDeviceInfo
 {
@@ -714,7 +714,7 @@ struct JLDeviceInfo
 	// device info packet and will therefore fail the size check
 	//uint8_t		raw[4];
 } __attribute__ ((packed));
-#define SB_JLDEVICEINFO_SIZE			(sizeof(Barry::Protocol::JLDeviceInfo))
+#define SB_JLDEVICEINFO_SIZE			(sizeof(::Barry::Protocol::JLDeviceInfo))
 
 struct JLPacket
 {
@@ -736,7 +736,7 @@ struct JLPacket
 	} __attribute__ ((packed)) u;
 
 } __attribute__ ((packed));
-#define SB_JLPACKET_HEADER_SIZE		(sizeof(Barry::Protocol::JLPacket) - sizeof(Barry::Protocol::JLPacket::PacketData))
+#define SB_JLPACKET_HEADER_SIZE		(sizeof(::Barry::Protocol::JLPacket) - sizeof(::Barry::Protocol::JLPacket::PacketData))
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -769,7 +769,7 @@ namespace JDWP {
 			PacketEventRequest eventRequest;
 		} __attribute__ ((packed)) u;
 	} __attribute__ ((packed));
-	#define JDWP_COMMAND_HEADER_SIZE			(sizeof(Barry::Protocol::JDWP::PacketCommand))
+	#define JDWP_COMMAND_HEADER_SIZE			(sizeof(::Barry::Protocol::JDWP::PacketCommand))
 
 
 	// Packet response
@@ -783,7 +783,7 @@ namespace JDWP {
 		uint32_t frameIDSize;
 	} __attribute__ ((packed));
 
-	#define JDWP_PACKETVIRTUALMACHINEIDSIZES_DATA_SIZE		sizeof(Barry::Protocol::JDWP::PacketVirtualMachineIDSizes)
+	#define JDWP_PACKETVIRTUALMACHINEIDSIZES_DATA_SIZE		sizeof(::Barry::Protocol::JDWP::PacketVirtualMachineIDSizes)
 
 
 	struct PacketVirtualMachine {
@@ -802,7 +802,7 @@ namespace JDWP {
 			uint8_t raw[1];
 		} __attribute__ ((packed)) u;
 	} __attribute__ ((packed));
-	#define JDWP_RESPONSE_HEADER_SIZE			(sizeof(Barry::Protocol::JDWP::PacketResponse) - sizeof(Barry::Protocol::JDWP::PacketResponse::PacketResponseData))
+	#define JDWP_RESPONSE_HEADER_SIZE			(sizeof(::Barry::Protocol::JDWP::PacketResponse) - sizeof(::Barry::Protocol::JDWP::PacketResponse::PacketResponseData))
 
 
 	// Generic packet
@@ -818,11 +818,11 @@ namespace JDWP {
 			PacketResponse response;
 		} __attribute__ ((packed)) u;
 	} __attribute__ ((packed));
-	#define JDWP_PACKET_HEADER_SIZE			(sizeof(Barry::Protocol::JDWP::Packet) - sizeof(Barry::Protocol::JDWP::Packet::PacketType))
+	#define JDWP_PACKET_HEADER_SIZE			(sizeof(::Barry::Protocol::JDWP::Packet) - sizeof(::Barry::Protocol::JDWP::Packet::PacketType))
 
 
-	#define MAKE_JDWPPACKET(var, data)		const Barry::Protocol::JDWP::Packet *var = (const Barry::Protocol::JDWP::Packet *) (data).GetData()
-	#define MAKE_JDWPPACKETPTR_BUF(var, ptr)		Barry::Protocol::JDWP::Packet *var = (Barry::Protocol::JDWP::Packet *)ptr
+	#define MAKE_JDWPPACKET(var, data)		const ::Barry::Protocol::JDWP::Packet *var = (const ::Barry::Protocol::JDWP::Packet *) (data).GetData()
+	#define MAKE_JDWPPACKETPTR_BUF(var, ptr)		::Barry::Protocol::JDWP::Packet *var = (::Barry::Protocol::JDWP::Packet *)ptr
 
 
 } // namespace JDWP
@@ -834,7 +834,7 @@ struct JDWField {
 		uint8_t raw[1];
 	} __attribute__ ((packed)) u;
 } __attribute__ ((packed));
-#define JDWP_FIELD_HEADER_SIZE			(sizeof(Barry::Protocol::JDWField) - sizeof(Barry::Protocol::JDWField::JDWFieldData))
+#define JDWP_FIELD_HEADER_SIZE			(sizeof(::Barry::Protocol::JDWField) - sizeof(::Barry::Protocol::JDWField::JDWFieldData))
 
 struct JVMCommand
 {
@@ -842,7 +842,7 @@ struct JVMCommand
 	uint8_t		command;
 	uint8_t		raw[1];
 } __attribute__ ((packed));
-#define SB_JVMCOMMAND_HEADER_SIZE		(sizeof(Barry::Protocol::JVMCommand))
+#define SB_JVMCOMMAND_HEADER_SIZE		(sizeof(::Barry::Protocol::JVMCommand))
 
 struct JVMResponse
 {
@@ -850,7 +850,7 @@ struct JVMResponse
 	uint8_t		unknown;
 	uint16_t	expect;
 } __attribute__ ((packed));
-#define SB_JVMRESPONSE_HEADER_SIZE		(sizeof(Barry::Protocol::JVMResponse))
+#define SB_JVMRESPONSE_HEADER_SIZE		(sizeof(::Barry::Protocol::JVMResponse))
 
 struct JVMModulesList
 {
@@ -858,7 +858,7 @@ struct JVMModulesList
 	// remainder of packet is variable
 	// it contains the modules list 
 } __attribute__ ((packed));
-#define SB_JVMMODULES_LIST_HEADER_SIZE		(sizeof(Barry::Protocol::JVMModulesList))
+#define SB_JVMMODULES_LIST_HEADER_SIZE		(sizeof(::Barry::Protocol::JVMModulesList))
 
 struct JVMModulesEntry
 {
@@ -868,7 +868,7 @@ struct JVMModulesEntry
 	// remainder of packet is variable
 	// it contains the module name
 } __attribute__ ((packed));
-#define SB_JVMMODULES_ENTRY_HEADER_SIZE		(sizeof(Barry::Protocol::JVMModulesEntry))
+#define SB_JVMMODULES_ENTRY_HEADER_SIZE		(sizeof(::Barry::Protocol::JVMModulesEntry))
 
 struct JVMThreadsList
 {
@@ -876,21 +876,21 @@ struct JVMThreadsList
 	// remainder of packet is variable
 	// it contains the threads list 
 } __attribute__ ((packed));
-#define SB_JVMTHREADS_LIST_HEADER_SIZE		(sizeof(Barry::Protocol::JVMThreadsList))
+#define SB_JVMTHREADS_LIST_HEADER_SIZE		(sizeof(::Barry::Protocol::JVMThreadsList))
 
 struct JVMUnknown01
 {
 	uint8_t		byte;
 	uint32_t	address;
 } __attribute__ ((packed));
-#define SB_JVMUNKNOWN01_HEADER_SIZE			(sizeof(Barry::Protocol::JVMUnknown01))
+#define SB_JVMUNKNOWN01_HEADER_SIZE			(sizeof(::Barry::Protocol::JVMUnknown01))
 
 struct JVMUnknown02
 {
 	uint32_t	address1;
 	uint32_t	address2;
 } __attribute__ ((packed));
-#define SB_JVMUNKNOWN02_HEADER_SIZE			(sizeof(Barry::Protocol::JVMUnknown02))
+#define SB_JVMUNKNOWN02_HEADER_SIZE			(sizeof(::Barry::Protocol::JVMUnknown02))
 
 struct JVMPacket
 {
@@ -914,7 +914,7 @@ struct JVMPacket
 	} __attribute__ ((packed)) u;
 
 } __attribute__ ((packed));
-#define SB_JVMPACKET_HEADER_SIZE		(sizeof(Barry::Protocol::JVMPacket) - sizeof(Barry::Protocol::JVMPacket::PacketData))
+#define SB_JVMPACKET_HEADER_SIZE		(sizeof(::Barry::Protocol::JVMPacket) - sizeof(::Barry::Protocol::JVMPacket::PacketData))
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -936,7 +936,7 @@ struct Packet
 
 	} __attribute__ ((packed)) u;
 } __attribute__ ((packed));
-#define SB_PACKET_HEADER_SIZE			(sizeof(Barry::Protocol::Packet) - sizeof(Barry::Protocol::Packet::PacketData))
+#define SB_PACKET_HEADER_SIZE			(sizeof(::Barry::Protocol::Packet) - sizeof(::Barry::Protocol::Packet::PacketData))
 
 // WARNING : For JavaLoader we have some packet with 5 size !
 #define MIN_PACKET_SIZE			5
@@ -963,21 +963,21 @@ struct Packet
 
 #define SB_PACKET_UPLOAD_HEADER_SIZE		(SB_PACKET_DBACCESS_HEADER_SIZE + UPLOAD_HEADER_SIZE)
 
-#define SB_SEQUENCE_PACKET_SIZE			(SB_PACKET_HEADER_SIZE + sizeof(Barry::Protocol::SequenceCommand))
+#define SB_SEQUENCE_PACKET_SIZE			(SB_PACKET_HEADER_SIZE + sizeof(::Barry::Protocol::SequenceCommand))
 #define SB_SOCKET_PACKET_HEADER_SIZE		(SB_PACKET_HEADER_SIZE + SOCKET_COMMAND_HEADER_SIZE)
-#define SB_MODE_PACKET_COMMAND_SIZE		(SB_SOCKET_PACKET_HEADER_SIZE + sizeof(Barry::Protocol::ModeSelect) - sizeof(Barry::Protocol::ModeSelect::ResponseBlock))
-#define SB_MODE_PACKET_RESPONSE_SIZE		(SB_SOCKET_PACKET_HEADER_SIZE + sizeof(Barry::Protocol::ModeSelect))
+#define SB_MODE_PACKET_COMMAND_SIZE		(SB_SOCKET_PACKET_HEADER_SIZE + sizeof(::Barry::Protocol::ModeSelect) - sizeof(::Barry::Protocol::ModeSelect::ResponseBlock))
+#define SB_MODE_PACKET_RESPONSE_SIZE		(SB_SOCKET_PACKET_HEADER_SIZE + sizeof(::Barry::Protocol::ModeSelect))
 
 
 // Macros
-#define COMMAND(data)				(((const Barry::Protocol::Packet *)data.GetData())->command)
+#define COMMAND(data)				(((const ::Barry::Protocol::Packet *)data.GetData())->command)
 #define IS_COMMAND(data, cmd)			(COMMAND(data) == cmd)
-#define MAKE_PACKET(var, data)			const Barry::Protocol::Packet *var = (const Barry::Protocol::Packet *) (data).GetData()
-#define MAKE_JLPACKET(var, data)		const Barry::Protocol::JLPacket *var = (const Barry::Protocol::JLPacket *) (data).GetData()
-#define MAKE_JVMPACKET(var, data)		const Barry::Protocol::JVMPacket *var = (const Barry::Protocol::JVMPacket *) (data).GetData()
-#define MAKE_PACKETPTR_BUF(var, ptr)		Barry::Protocol::Packet *var = (Barry::Protocol::Packet *)ptr
-#define MAKE_JLPACKETPTR_BUF(var, ptr)		Barry::Protocol::JLPacket *var = (Barry::Protocol::JLPacket *)ptr
-#define MAKE_JVMPACKETPTR_BUF(var, ptr)		Barry::Protocol::JVMPacket *var = (Barry::Protocol::JVMPacket *)ptr
+#define MAKE_PACKET(var, data)			const ::Barry::Protocol::Packet *var = (const ::Barry::Protocol::Packet *) (data).GetData()
+#define MAKE_JLPACKET(var, data)		const ::Barry::Protocol::JLPacket *var = (const ::Barry::Protocol::JLPacket *) (data).GetData()
+#define MAKE_JVMPACKET(var, data)		const ::Barry::Protocol::JVMPacket *var = (const ::Barry::Protocol::JVMPacket *) (data).GetData()
+#define MAKE_PACKETPTR_BUF(var, ptr)		::Barry::Protocol::Packet *var = (::Barry::Protocol::Packet *)ptr
+#define MAKE_JLPACKETPTR_BUF(var, ptr)		::Barry::Protocol::JLPacket *var = (::Barry::Protocol::JLPacket *)ptr
+#define MAKE_JVMPACKETPTR_BUF(var, ptr)		::Barry::Protocol::JVMPacket *var = (::Barry::Protocol::JVMPacket *)ptr
 #define MAKE_RECORD(type,var,data,off)		type *var = (type *) ((data).GetData() + (off))
 #define MAKE_RECORD_PTR(type,var,data,off)	type *var = (type *) ((data) + (off))
 

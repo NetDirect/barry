@@ -31,7 +31,7 @@ extern std::ostream *LogStream;
 #endif // __BARRY_DEBUG_H__
 
 // data dump output - controlled by command line -v switch
-#define ddout(x)	if(Barry::__data_dump_mode__) { Barry::LogLock lock; (*Barry::LogStream) << x << std::endl; }
+#define ddout(x)	if(::Barry::__data_dump_mode__) { ::Barry::LogLock lock; (*::Barry::LogStream) << x << std::endl; }
 
 #ifdef __DEBUG_MODE__
 	// debugging on
@@ -39,14 +39,14 @@ extern std::ostream *LogStream;
 	#undef eout
 
 	// low level debug output
-	#define dout(x)  	if(Barry::__data_dump_mode__) { Barry::LogLock lock; (*Barry::LogStream) << x << std::endl; }
+	#define dout(x)  	if(::Barry::__data_dump_mode__) { ::Barry::LogLock lock; (*::Barry::LogStream) << x << std::endl; }
 //	#define dout(x)
 
 	// exception output
-	#define eout(x)  	{ Barry::LogLock lock; (*Barry::LogStream) << x << std::endl; }
+	#define eout(x)  	{ ::Barry::LogLock lock; (*::Barry::LogStream) << x << std::endl; }
 
 	// easy exception output
-	#define eeout(c, r)	{ Barry::LogLock lock; (*Barry::LogStream) << "Sent packet:\n" << c << "\n" << "Response packet:\n" << r << "\n"; }
+	#define eeout(c, r)	{ ::Barry::LogLock lock; (*::Barry::LogStream) << "Sent packet:\n" << c << "\n" << "Response packet:\n" << r << "\n"; }
 
 	// handle assert()
 	#undef NDEBUG
@@ -57,8 +57,8 @@ extern std::ostream *LogStream;
 	#undef eout
 
 	#define dout(x)
-	#define eout(x)  	{ Barry::LogLock lock; (*Barry::LogStream) << x << std::endl; }
-	#define eeout(c, r)	{ Barry::LogLock lock; (*Barry::LogStream) << "Sent packet:\n" << c << "\n" << "Response packet:\n" << r << "\n"; }
+	#define eout(x)  	{ ::Barry::LogLock lock; (*::Barry::LogStream) << x << std::endl; }
+	#define eeout(c, r)	{ ::Barry::LogLock lock; (*::Barry::LogStream) << "Sent packet:\n" << c << "\n" << "Response packet:\n" << r << "\n"; }
 
 	// handle assert() as well
 	#define NDEBUG

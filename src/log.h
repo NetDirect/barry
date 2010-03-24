@@ -47,10 +47,10 @@ BXEXPORT std::ostream* GetLogStream();
 
 } // namespace Barry
 
-#define barrylog(x)	{ Barry::LogLock lock; (*Barry::GetLogStream()) << x << std::endl; }
+#define barrylog(x)	{ ::Barry::LogLock lock; (*::Barry::GetLogStream()) << x << std::endl; }
 
 // controlled by command line -v switch
-#define barryverbose(x)	if(Barry::LogVerbose()) { Barry::LogLock lock; (*Barry::GetLogStream()) << x << std::endl; }
+#define barryverbose(x)	if(::Barry::LogVerbose()) { ::Barry::LogLock lock; (*::Barry::GetLogStream()) << x << std::endl; }
 
 #endif // __BARRY_LOG_H__
 
