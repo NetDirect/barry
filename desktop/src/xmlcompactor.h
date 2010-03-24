@@ -30,6 +30,14 @@ class XmlCompactor
 	: public std::map<Glib::ustring, Glib::ustring>
 	, public xmlpp::DomParser
 {
+public:
+	typedef Glib::ustring				string_type;
+	typedef std::map<string_type, string_type>	base_map_type;
+	typedef xmlpp::DomParser			base_xml_type;
+	typedef base_map_type::iterator			iterator;
+	typedef base_map_type::const_iterator		const_iterator;
+
+private:
 	Glib::ustring m_skip_prefix;
 
 protected:
@@ -40,6 +48,7 @@ public:
 	XmlCompactor(const Glib::ustring &skip);
 
 	void Map();
+	Glib::ustring Value(const Glib::ustring &key);
 
 	void Dump(std::ostream &os) const;
 };

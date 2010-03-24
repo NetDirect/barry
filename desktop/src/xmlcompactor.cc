@@ -91,6 +91,14 @@ void XmlCompactor::Map()
 	DoMap(get_document()->get_root_node());
 }
 
+Glib::ustring XmlCompactor::Value(const Glib::ustring &key)
+{
+	iterator i = find(key);
+	if( i == end() )
+		return "";
+	return i->second;
+}
+
 void XmlCompactor::Dump(std::ostream &os) const
 {
 	for( const_iterator i = begin(); i != end(); ++i ) {
@@ -112,6 +120,10 @@ int main(int argc, char *argv[])
 		cout << parser << endl;
 	}
 	catch( Glib::ConvertError &e ) {
+		cerr << e.what() << endl;
+		return 1;
+	}
+	catch( std::exception &e ) {
 		cerr << e.what() << endl;
 		return 1;
 	}
