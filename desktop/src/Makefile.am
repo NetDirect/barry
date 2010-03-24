@@ -8,12 +8,13 @@ AM_CPPFLAGS = -DBARRYDESKTOP_IMAGEDIR='"$(imagedir)"'
 AM_LDFLAGS =
 
 bin_PROGRAMS = barrydesktop bsyncjail
-noinst_PROGRAMS = ostest
+noinst_PROGRAMS = ostest xmlcompactor
 
 barrydesktop_SOURCES = \
 	barrydesktop.cc barrydesktop.h \
 	windowids.h \
 	util.cc util.h \
+	xmlcompactor.cc xmlcompactor.h \
 	ClickImage.cc ClickImage.h \
 	PNGButton.cc PNGButton.h \
 	BaseButtons.cc BaseButtons.h \
@@ -48,8 +49,8 @@ barrydesktop_SOURCES += os40.cc osconv40.cc
 else
 barrydesktop_SOURCES += null-os40.cc
 endif
-barrydesktop_LDADD = -ldl @WX_LIBS@
-barrydesktop_CXXFLAGS = $(AM_CXXFLAGS) @WX_CXXFLAGS@
+barrydesktop_LDADD = -ldl @WX_LIBS@ $(LIBXMLPP_LIBS)
+barrydesktop_CXXFLAGS = $(AM_CXXFLAGS) @WX_CXXFLAGS@ $(LIBXMLPP_CFLAGS)
 
 bsyncjail_SOURCES = \
 	bsyncjail.cc \
@@ -99,6 +100,10 @@ ostest_SOURCES += null-os40.cc
 endif
 #ostest_LDFLAGS = -avoid-version
 ostest_LDADD = -ldl
+
+xmlcompactor_SOURCES = xmlcompactor.cc xmlcompactor.h
+xmlcompactor_CXXFLAGS = -DXMLCOMPACTOR $(AM_CXXFLAGS) $(LIBXMLPP_CFLAGS)
+xmlcompactor_LDADD = $(LIBXMLPP_LIBS)
 
 noinst_HEADERS =
 
