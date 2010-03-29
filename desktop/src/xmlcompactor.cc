@@ -31,8 +31,7 @@ std::ostream& operator<<(std::ostream &os, XmlCompactor &parser)
 	return os;
 }
 
-XmlCompactor::XmlCompactor(const Glib::ustring &skip)
-	: m_skip_prefix(skip)
+XmlCompactor::XmlCompactor()
 {
 }
 
@@ -70,25 +69,74 @@ Glib::ustring XmlCompactor::HackPath(const Glib::ustring &path)
 	return p;
 }
 
-void XmlCompactor::DoMap(xmlpp::Node *node)
+bool XmlCompactor::WalkNodes(xmlpp::Node *node, content_handler handler)
 {
 	xmlpp::ContentNode *content = dynamic_cast<xmlpp::ContentNode*>(node);
 	if( content ) {
 		if( content->is_white_space() )
-			return;	// skip whitespace between content
-		(*this)[HackPath(content->get_path())] = content->get_content();
+			return true;	// skip whitespace between content
+		if( !(this->*handler)(content) )
+			return false;	// handler had a problem,stop processing
 	}
 
 	xmlpp::Node::NodeList list = node->get_children();
 	xmlpp::Node::NodeList::iterator i = list.begin();
 	for( ; i != list.end(); ++i ) {
-		DoMap(*i);
+		if( !WalkNodes(*i, handler) )
+			return false;  // pass the "stop processing" msg down
 	}
+	return true;
 }
 
-void XmlCompactor::Map()
+bool XmlCompactor::DoMap(xmlpp::ContentNode *content)
 {
-	DoMap(get_document()->get_root_node());
+	(*this)[HackPath(content->get_path())] = content->get_content();
+	return true;
+}
+
+bool XmlCompactor::ComparePrefix(xmlpp::ContentNode *content)
+{
+	Glib::ustring path = content->get_path();
+
+	if( m_common_prefix.size() == 0 ) {
+		m_common_prefix = path;
+	}
+	else {
+		// find max length of matching strings
+		size_t len = min(m_common_prefix.size(), path.size());
+		size_t max = 0;
+		while( len-- ) {
+			if( m_common_prefix[max] != path[max] )
+				break;
+			max++;
+		}
+
+		if( max == 0 ) {
+			// there's no prefix available
+			m_common_prefix.clear();
+			return false;
+		}
+		else {
+			// snag the largest prefix!
+			m_common_prefix = m_common_prefix.substr(0, max);
+		}
+	}
+	return true;
+}
+
+Glib::ustring XmlCompactor::FindCommonPrefix()
+{
+	m_common_prefix.clear();
+	xmlpp::Node *root = get_document()->get_root_node();
+	WalkNodes(root, &XmlCompactor::ComparePrefix);
+	return m_common_prefix;
+}
+
+void XmlCompactor::Map(const Glib::ustring &skip)
+{
+	m_skip_prefix = skip;
+	xmlpp::Node *root = get_document()->get_root_node();
+	WalkNodes(root, &XmlCompactor::DoMap);
 }
 
 Glib::ustring XmlCompactor::Value(const Glib::ustring &key)
@@ -114,9 +162,10 @@ int main(int argc, char *argv[])
 		locale loc("");
 		cin.imbue( loc );
 		cout.imbue( loc );
-		XmlCompactor parser(argc >= 2 ? argv[1] : "");
+		XmlCompactor parser;
 		parser.parse_stream(cin);
-		parser.Map();
+		cerr << parser.FindCommonPrefix() << endl;
+		parser.Map(argc >= 2 ? argv[1] : "");
 		cout << parser << endl;
 	}
 	catch( Glib::ConvertError &e ) {

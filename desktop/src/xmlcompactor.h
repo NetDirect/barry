@@ -36,18 +36,26 @@ public:
 	typedef xmlpp::DomParser			base_xml_type;
 	typedef base_map_type::iterator			iterator;
 	typedef base_map_type::const_iterator		const_iterator;
+	typedef bool (XmlCompactor::*content_handler)(xmlpp::ContentNode*);
 
 private:
 	Glib::ustring m_skip_prefix;
+	Glib::ustring m_common_prefix;
 
 protected:
-	void DoMap(xmlpp::Node *node);
 	Glib::ustring HackPath(const Glib::ustring &path);
+	bool WalkNodes(xmlpp::Node *node, content_handler handler);
+	bool DoMap(xmlpp::ContentNode *content);
+	bool ComparePrefix(xmlpp::ContentNode *content);
 
 public:
-	XmlCompactor(const Glib::ustring &skip);
+	XmlCompactor();
 
-	void Map();
+	/// returns the common prefix of all entries, suitable for
+	/// use as an argument to Map()
+	Glib::ustring FindCommonPrefix();
+
+	void Map(const Glib::ustring &skip);
 	Glib::ustring Value(const Glib::ustring &key);
 
 	void Dump(std::ostream &os) const;
