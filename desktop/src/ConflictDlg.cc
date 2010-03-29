@@ -178,7 +178,10 @@ void ConflictDlg::CreateTable(wxSizer *sizer)
 
 	// use a slightly smaller font for all this data
 	wxFont font = GetFont();
-	font.SetPointSize( font.GetPointSize() - 2 );
+	// don't let the font get smaller than 6 point, unless the user's
+	// default font is smaller than 6
+	int base_size = std::min(font.GetPointSize(), 6);
+	font.SetPointSize( std::max(font.GetPointSize() - 2, base_size) );
 	m_data_list->SetFont(font);
 
 	// get the text extent width of the widest name in the change list
