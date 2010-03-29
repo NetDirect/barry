@@ -72,6 +72,7 @@ enum {
 	Dialog_SyncStatus_KillCloseButton,
 	Dialog_SyncStatus_SyncTerminated,
 	Dialog_Conflict,
+	Dialog_Conflict_DataList,
 
 	SysMenu_FirstItem,
 

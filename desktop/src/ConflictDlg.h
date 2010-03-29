@@ -25,15 +25,27 @@
 
 #include <wx/wx.h>
 #include <vector>
+#include <set>
 #include "osbase.h"
+#include "xmlcompactor.h"	// unfortunately this pulls in Glib and libxml++
 
 class ConflictDlg : public wxDialog
 {
+public:
+	typedef std::tr1::shared_ptr<XmlCompactor>	xml_ptr;
+	typedef std::vector<xml_ptr>			parsed_list;
+	typedef std::set<Glib::ustring>			key_set;
+
+private:
 	DECLARE_EVENT_TABLE()
 
 	// external data sources
 	const std::vector<OpenSync::SyncChange> &m_changes;
-	std::string m_supported_commands;
+	std::string m_supported_commands;	// a char string: "SDAIN"
+
+	// parsed data
+	parsed_list m_parsed;
+	key_set m_key_set;
 
 	// results
 	std::string m_command_string;	// eg. "S 1"
@@ -45,7 +57,8 @@ class ConflictDlg : public wxDialog
 					// or something else more complicated?
 
 	// dialog controls
-//	wxSizer *m_topsizer, *m_appsizer;
+	wxSizer *m_topsizer;
+	wxListCtrl *m_data_list;
 //	wxComboBox *m_engine_combo, *m_app_combo;
 //	wxTextCtrl *m_password_edit;
 //	wxTextCtrl *m_status_edit;
@@ -57,15 +70,17 @@ class ConflictDlg : public wxDialog
 
 protected:
 	void CreateLayout();
-	void AddEngineSizer(wxSizer *sizer);
-	void AddConfigSizer(wxSizer *sizer);
-	void AddBarrySizer(wxSizer *sizer);
-	void AddAppSizer(wxSizer *sizer);
-	void UpdateAppSizer();		// called if engine changes, to update
-					// the app combo, etc, with available
-					// apps
-	void LoadAppNames(wxArrayString &appnames);
-	void AddButtonSizer(wxSizer *sizer);
+	void CreateTable(wxSizer *sizer);
+	void CreateSelectorButtons(wxSizer *sizer);
+	void CreateAlternateButtons(wxSizer *sizer);
+
+	void ParseChanges();
+	void CreateKeyNameSet();
+	int GetWidestNameExtent(wxWindow *window);
+	int GetWidestDataExtent(wxWindow *window, int change_index);
+	void FillDataList();
+//	void LoadAppNames(wxArrayString &appnames);
+//	void AddButtonSizer(wxSizer *sizer);
 
 public:
 	ConflictDlg(wxWindow *parent, const std::string &supported_commands,
