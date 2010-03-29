@@ -78,6 +78,11 @@ protected:
 	void CreateKeyNameSet();
 	int GetWidestNameExtent(wxWindow *window);
 	int GetWidestDataExtent(wxWindow *window, int change_index);
+	Glib::ustring GetParsedData(int index, const Glib::ustring &key);
+	bool IsChanged(const Glib::ustring &key);
+	bool IsNew(const Glib::ustring &key);
+	bool IsEqual(const Glib::ustring &key);
+	void AddData(long item, const Glib::ustring &key);
 	void FillDataList();
 //	void LoadAppNames(wxArrayString &appnames);
 //	void AddButtonSizer(wxSizer *sizer);

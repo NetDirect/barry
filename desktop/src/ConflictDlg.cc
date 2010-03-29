@@ -217,31 +217,131 @@ void ConflictDlg::CreateAlternateButtons(wxSizer *sizer)
 {
 }
 
+Glib::ustring ConflictDlg::GetParsedData(int index, const Glib::ustring &key)
+{
+	Glib::ustring value;
+	XmlCompactor *xc = m_parsed[index].get();
+	XmlCompactor::iterator i = xc->find(key);
+	if( i != xc->end() )
+		value = i->second;
+	return value;
+}
+
+// returns true if all columns contain data, yet are different
+bool ConflictDlg::IsChanged(const Glib::ustring &key)
+{
+	if( m_parsed.size() == 0 )
+		return false;
+
+	Glib::ustring data = GetParsedData(0, key);
+	if( data.size() == 0 )
+		return false;	// empty fields are "new"
+
+	bool status = false;
+
+	for( size_t index = 1; index < m_parsed.size(); index++ ) {
+		Glib::ustring next = GetParsedData(index, key);
+		if( next.size() == 0 )
+			return false; // empty fields are still "new" :-)
+		if( data != next )
+			status = true;
+	}
+	return status;
+}
+
+// returns true if there is one different empty column
+bool ConflictDlg::IsNew(const Glib::ustring &key)
+{
+	if( m_parsed.size() == 0 )
+		return false;
+
+	bool equal = true, empty = false;
+
+	Glib::ustring data = GetParsedData(0, key);
+	if( data.size() == 0 )
+		empty = true;
+
+	for( size_t index = 1; index < m_parsed.size(); index++ ) {
+		Glib::ustring next = GetParsedData(index, key);
+		if( next.size() == 0 )
+			empty = true;
+		if( data != next )
+			equal = false;
+	}
+	return !equal && empty;
+}
+
+// returns true if all columns are equal, whether empty or not
+bool ConflictDlg::IsEqual(const Glib::ustring &key)
+{
+	if( m_parsed.size() == 0 )
+		return true;
+
+	Glib::ustring data = GetParsedData(0, key);
+	for( size_t index = 1; index < m_parsed.size(); index++ ) {
+		Glib::ustring next = GetParsedData(index, key);
+		if( data != next )
+			return false;
+	}
+	return true;
+}
+
+void ConflictDlg::AddData(long item, const Glib::ustring &key)
+{
+	// loop through each set of parsed changes, and find
+	// the key's data, if available, and add it to the
+	// matching column
+	for( size_t column = 1; column <= m_parsed.size(); column++ ) {
+		Glib::ustring data = GetParsedData(column-1, key);
+		wxString text(data.raw().c_str(), wxConvUTF8);
+		m_data_list->SetItem(item, column, text);
+	}
+}
+
 void ConflictDlg::FillDataList()
 {
 	// start fresh
 	m_data_list->DeleteAllItems();
 
-	// add an entry for each item in the m_key_set
+	// add an entry for each changed item in the m_key_set
 	key_set::iterator i = m_key_set.begin();
-	for( int index = 0; i != m_key_set.end(); ++i, index++ ) {
+	int list_index = 0;
+	for( ; i != m_key_set.end(); ++i, list_index++ ) {
+
+		// fill with changed items first
+		if( !IsChanged(*i) )
+			continue;
+
 		wxString label(i->raw().c_str(), wxConvUTF8);
+		long item = m_data_list->InsertItem(list_index, label);
+		AddData(item, *i);
+		m_data_list->SetItemTextColour(item, *wxRED);
+	}
 
-		long item = m_data_list->InsertItem(index, label);
+	// do it again, for the changed "new" items
+	i = m_key_set.begin();
+	for( ; i != m_key_set.end(); ++i, list_index++ ) {
 
-		// loop through each set of parsed changes, and find
-		// the key's data, if available, and add it to the
-		// matching column
-		for( size_t column = 1; column <= m_parsed.size(); column++ ) {
-			XmlCompactor *xc = m_parsed[column-1].get();
-			XmlCompactor::iterator match = xc->find(*i);
+		if( !IsNew(*i) )
+			continue;
 
-			if( match != xc->end() ) {
-				// found data for this column
-				wxString text(match->second.raw().c_str(), wxConvUTF8);
-				m_data_list->SetItem(item, column, text);
-			}
-		}
+		wxString label(i->raw().c_str(), wxConvUTF8);
+		long item = m_data_list->InsertItem(list_index, label);
+		AddData(item, *i);
+		m_data_list->SetItemTextColour(item, *wxBLUE);
+	}
+
+	// do it again, for the equal items
+	i = m_key_set.begin();
+	for( ; i != m_key_set.end(); ++i, list_index++ ) {
+
+		// fill with changed items first
+		if( !IsEqual(*i) )
+			continue;
+
+		wxString label(i->raw().c_str(), wxConvUTF8);
+		long item = m_data_list->InsertItem(list_index, label);
+		AddData(item, *i);
 	}
 }
 
