@@ -36,37 +36,53 @@ public:
 	typedef std::vector<xml_ptr>			parsed_list;
 	typedef std::set<Glib::ustring>			key_set;
 
+	// Stored by the caller to remember the "always" selection
+	// Pass it back into the dialog to have it automatically
+	// select for you.
+	struct AlwaysMemoryBlock
+	{
+		bool m_always;
+		long m_member_id;
+		std::string m_plugin_name;
+		std::string m_last_command;
+
+		void clear()
+		{
+			m_always = false;
+			m_member_id = -1;
+			m_plugin_name.clear();
+			m_last_command.clear();
+		}
+
+		AlwaysMemoryBlock()
+			: m_always(false)
+			, m_member_id(-1)
+		{
+		}
+	};
+
 private:
 	DECLARE_EVENT_TABLE()
 
 	// external data sources
 	const std::vector<OpenSync::SyncChange> &m_changes;
 	std::string m_supported_commands;	// a char string: "SDAIN"
+	AlwaysMemoryBlock &m_always;
 
 	// parsed data
 	parsed_list m_parsed;
 	key_set m_key_set;
 
 	// results
+	bool m_kill_sync;
 	std::string m_command_string;	// eg. "S 1"
-	bool m_always;			// let user pick to automatically
-					// repeat his last selection
-					// FIXME should we allow user to
-					// always pick the same plugin_name?
-					// or always the first choice?
-					// or something else more complicated?
+
+	// dialog position calculation helpers
+	int m_key_column_width;
 
 	// dialog controls
 	wxSizer *m_topsizer;
 	wxListCtrl *m_data_list;
-//	wxComboBox *m_engine_combo, *m_app_combo;
-//	wxTextCtrl *m_password_edit;
-//	wxTextCtrl *m_status_edit;
-//	wxCheckBox *m_debug_check;
-	// Need: a method to display a variable number of changes
-	//       and a variable number of buttons, to display the
-	//       supported commands (Select, Duplicate, Ignore, Abort,
-	//       Keep Newer, etc)
 
 protected:
 	void CreateLayout();
@@ -89,17 +105,27 @@ protected:
 
 public:
 	ConflictDlg(wxWindow *parent, const std::string &supported_commands,
-		const std::vector<OpenSync::SyncChange> &changes);
+		const std::vector<OpenSync::SyncChange> &changes,
+		AlwaysMemoryBlock &always);
 	~ConflictDlg();
 
 	// data access
 	const std::string& GetCommand() const { return m_command_string; }
-	bool IsAlways() const { return m_always; }
+	bool IsKillSync() const { return m_kill_sync; }
+	void Clear() { clear(); }
+	void clear();
+
+	// override, in order to force an answer
+	int ShowModal();
 
 	// event handlers
-//	void OnConfigureApp(wxCommandEvent &event);
-//	void OnEngineComboChange(wxCommandEvent &event);
-//	void OnAppComboChange(wxCommandEvent &event);
+	void OnColumnButton(wxCommandEvent &event);
+	void OnDuplicateButton(wxCommandEvent &event);
+	void OnAbortButton(wxCommandEvent &event);
+	void OnIgnoreButton(wxCommandEvent &event);
+	void OnKeepNewerButton(wxCommandEvent &event);
+	void OnKillSyncButton(wxCommandEvent &event);
+	void OnAlwaysCheckbox(wxCommandEvent &event);
 };
 
 #endif

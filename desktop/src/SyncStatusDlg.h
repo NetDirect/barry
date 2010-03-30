@@ -30,6 +30,7 @@
 #include "exechelper.h"
 #include "optout.h"
 #include "configui.h"
+#include "ConflictDlg.h"
 
 class SyncStatusDlg;
 
@@ -66,6 +67,9 @@ class ConflictConnection : public wxConnection, public OptOut::Element
 	int m_expected_total_changes;
 	std::string m_supported_commands;
 	std::vector<OpenSync::SyncChange> m_changes;
+
+	// "always" memory
+	ConflictDlg::AlwaysMemoryBlock m_always;
 
 public:
 	ConflictConnection(wxWindow *parent);

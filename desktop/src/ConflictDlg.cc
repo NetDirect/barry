@@ -22,26 +22,56 @@
 
 #include "ConflictDlg.h"
 #include "windowids.h"
+#include <iostream>
+#include <sstream>
+using namespace std;
 
 //////////////////////////////////////////////////////////////////////////////
 // ConflictDlg class
 
 BEGIN_EVENT_TABLE(ConflictDlg, wxDialog)
-//	EVT_BUTTON	(Dialog_GroupCfg_AppConfigButton,
-//				GroupCfgDlg::OnConfigureApp)
-//	EVT_TEXT	(Dialog_GroupCfg_EngineCombo,
-//				GroupCfgDlg::OnEngineComboChange)
-//	EVT_TEXT	(Dialog_GroupCfg_AppCombo,
-//				GroupCfgDlg::OnAppComboChange)
+	EVT_BUTTON	(Dialog_Conflict_ColumnButton1,
+				ConflictDlg::OnColumnButton)
+	EVT_BUTTON	(Dialog_Conflict_ColumnButton2,
+				ConflictDlg::OnColumnButton)
+	EVT_BUTTON	(Dialog_Conflict_ColumnButton3,
+				ConflictDlg::OnColumnButton)
+	EVT_BUTTON	(Dialog_Conflict_ColumnButton4,
+				ConflictDlg::OnColumnButton)
+	EVT_BUTTON	(Dialog_Conflict_ColumnButton5,
+				ConflictDlg::OnColumnButton)
+	EVT_BUTTON	(Dialog_Conflict_ColumnButton6,
+				ConflictDlg::OnColumnButton)
+	EVT_BUTTON	(Dialog_Conflict_ColumnButton7,
+				ConflictDlg::OnColumnButton)
+	EVT_BUTTON	(Dialog_Conflict_ColumnButton8,
+				ConflictDlg::OnColumnButton)
+	EVT_BUTTON	(Dialog_Conflict_ColumnButton9,
+				ConflictDlg::OnColumnButton)
+	EVT_BUTTON	(Dialog_Conflict_DuplicateButton,
+				ConflictDlg::OnDuplicateButton)
+	EVT_BUTTON	(Dialog_Conflict_AbortButton,
+				ConflictDlg::OnAbortButton)
+	EVT_BUTTON	(Dialog_Conflict_IgnoreButton,
+				ConflictDlg::OnIgnoreButton)
+	EVT_BUTTON	(Dialog_Conflict_KeepNewerButton,
+				ConflictDlg::OnKeepNewerButton)
+	EVT_BUTTON	(Dialog_Conflict_KillSyncButton,
+				ConflictDlg::OnKillSyncButton)
+	EVT_CHECKBOX	(Dialog_Conflict_AlwaysCheckbox,
+				ConflictDlg::OnAlwaysCheckbox)
 END_EVENT_TABLE()
 
 ConflictDlg::ConflictDlg(wxWindow *parent,
 			const std::string &supported_commands,
-			const std::vector<OpenSync::SyncChange> &changes)
+			const std::vector<OpenSync::SyncChange> &changes,
+			ConflictDlg::AlwaysMemoryBlock &always)
 	: wxDialog(parent, Dialog_Conflict, _T("Sync Conflict"))
 	, m_changes(changes)
 	, m_supported_commands(supported_commands)
-	, m_always(false)
+	, m_always(always)
+	, m_kill_sync(false)
+	, m_key_column_width(0)
 	, m_topsizer(0)
 	, m_data_list(0)
 {
@@ -159,7 +189,6 @@ void ConflictDlg::CreateLayout()
 {
 	m_topsizer = new wxBoxSizer(wxVERTICAL);
 	CreateTable(m_topsizer);
-	CreateSelectorButtons(m_topsizer);
 	CreateAlternateButtons(m_topsizer);
 
 	SetSizer(m_topsizer);
@@ -169,7 +198,7 @@ void ConflictDlg::CreateLayout()
 
 void ConflictDlg::CreateTable(wxSizer *sizer)
 {
-	wxStaticBoxSizer *box = new wxStaticBoxSizer(wxHORIZONTAL, this,
+	wxStaticBoxSizer *box = new wxStaticBoxSizer(wxVERTICAL, this,
 		_T("Conflicting Changes"));
 
 	m_data_list = new wxListCtrl(this, Dialog_Conflict_DataList,
@@ -186,6 +215,7 @@ void ConflictDlg::CreateTable(wxSizer *sizer)
 
 	// get the text extent width of the widest name in the change list
 	int widest = GetWidestNameExtent(m_data_list);
+	m_key_column_width = widest;
 
 	// insert 1 column for field names, and 1 each for each change
 	m_data_list->InsertColumn(0, _T(""), wxLIST_FORMAT_LEFT, widest);
@@ -193,11 +223,11 @@ void ConflictDlg::CreateTable(wxSizer *sizer)
 	for( size_t i = 1; i <= m_changes.size(); i++ ) {
 		wxString title(m_changes[i-1].plugin_name.c_str(), wxConvUTF8);
 		unsigned int width = GetWidestDataExtent(m_data_list, i-1);
+		width = std::min(width, 700 / m_changes.size());
 
 		// limit the width of the data to a total of 700 pixels
 		// for all the data columns, which is pretty wide...
-		m_data_list->InsertColumn(i, title, wxLIST_FORMAT_LEFT,
-			std::min(width, 700 / m_changes.size()));
+		m_data_list->InsertColumn(i, title, wxLIST_FORMAT_LEFT, width);
 		total_width += width;
 	}
 
@@ -206,15 +236,71 @@ void ConflictDlg::CreateTable(wxSizer *sizer)
 
 	// add to sizers
 	box->Add( m_data_list, 1, wxEXPAND | wxALL, 4 );
-	sizer->Add(box, 1, wxEXPAND | wxLEFT | wxRIGHT | wxBOTTOM, 10 );
+	CreateSelectorButtons(box);
+
+	sizer->Add(box, 1, wxEXPAND | wxLEFT | wxRIGHT | wxBOTTOM, 10);
 }
 
 void ConflictDlg::CreateSelectorButtons(wxSizer *sizer)
 {
+	if( m_supported_commands.find('S') == std::string::npos )
+		return;
+
+	wxBoxSizer *box = new wxBoxSizer(wxHORIZONTAL);
+
+	box->Add(m_key_column_width, -1, 0);
+	for( size_t i = 0; i < m_changes.size(); i++ ) {
+		wxString name(m_changes[i].plugin_name.c_str(), wxConvUTF8);
+		name.Prepend(_T("Use: "));
+		box->Add( new wxButton(this,
+				Dialog_Conflict_ColumnButton1 + i,
+				name),
+			1, wxTOP | wxBOTTOM, 5);
+	}
+
+	sizer->Add(box, 0, wxEXPAND | wxLEFT | wxRIGHT, 4);
 }
 
 void ConflictDlg::CreateAlternateButtons(wxSizer *sizer)
 {
+	wxBoxSizer *box = new wxBoxSizer(wxHORIZONTAL);
+
+	box->Add( new wxCheckBox(this, Dialog_Conflict_AlwaysCheckbox,
+			_T("Always use this choice")),
+		0, wxALIGN_CENTRE, 0);
+	box->Add( -1, -1, 1 );
+
+	if( m_supported_commands.find('D') != string::npos ) {
+		box->Add( new wxButton(this, Dialog_Conflict_DuplicateButton,
+					_T("Duplicate")),
+			0, wxLEFT , 5);
+	}
+
+	if( m_supported_commands.find('I') != string::npos ) {
+		box->Add( new wxButton(this, Dialog_Conflict_IgnoreButton,
+					_T("Ignore")),
+			0, wxLEFT, 5);
+	}
+
+	if( m_supported_commands.find('N') != string::npos ) {
+		box->Add( new wxButton(this, Dialog_Conflict_KeepNewerButton,
+					_T("Keep Newer")),
+			0, wxLEFT, 5);
+	}
+
+	if( m_supported_commands.find('A') != string::npos ) {
+		box->Add( new wxButton(this, Dialog_Conflict_AbortButton,
+					_T("Abort")),
+			0, wxLEFT, 5);
+	}
+	else {
+		// no abort available, so add a Kill Sync button
+		box->Add( new wxButton(this, Dialog_Conflict_KillSyncButton,
+					_T("Kill Sync")),
+			0, wxLEFT, 5);
+	}
+
+	sizer->Add(box, 0, wxEXPAND | wxLEFT | wxRIGHT | wxBOTTOM, 10);
 }
 
 Glib::ustring ConflictDlg::GetParsedData(int index, const Glib::ustring &key)
@@ -343,5 +429,103 @@ void ConflictDlg::FillDataList()
 		long item = m_data_list->InsertItem(list_index, label);
 		AddData(item, *i);
 	}
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// public members
+
+void ConflictDlg::clear()
+{
+	m_command_string.clear();
+	m_kill_sync = false;
+}
+
+int ConflictDlg::ShowModal()
+{
+	int ret = 0;
+
+	// start fresh
+	clear();
+
+	// is there an "always" answer we can use?
+	if( m_always.m_always ) {
+		if( m_always.m_last_command == "S" ) {
+			// find the change that has a matching member_id
+			// and plugin_name
+			for( size_t i = 0; i < m_changes.size(); i++ ) {
+				if( m_changes[i].member_id == m_always.m_member_id && m_changes[i].plugin_name == m_always.m_plugin_name ) {
+					ostringstream oss;
+					oss << "S " << m_changes[i].id;
+					m_command_string = oss.str();
+					return ret;
+				}
+			}
+		}
+		else {
+			m_command_string = m_always.m_last_command;
+			return ret; // done
+		}
+	}
+
+	// ok, no "always" data that works, so ask the user
+	do {
+		ret = wxDialog::ShowModal();
+	} while( m_command_string.size() == 0 && !m_kill_sync );
+
+	return ret;
+}
+
+void ConflictDlg::OnColumnButton(wxCommandEvent &event)
+{
+	int index = event.GetId() - Dialog_Conflict_ColumnButton1;
+
+	// store command in m_always
+	m_always.m_member_id = m_changes[index].member_id;
+	m_always.m_plugin_name = m_changes[index].plugin_name;
+	m_always.m_last_command = "S";
+
+	// build actual command
+	ostringstream oss;
+	oss << "S " << m_changes[index].id;
+	m_command_string = oss.str();
+
+	EndModal(event.GetId());
+}
+
+void ConflictDlg::OnDuplicateButton(wxCommandEvent &event)
+{
+	m_command_string = m_always.m_last_command = "D";
+	EndModal(event.GetId());
+}
+
+void ConflictDlg::OnAbortButton(wxCommandEvent &event)
+{
+	m_command_string = m_always.m_last_command = "A";
+	EndModal(event.GetId());
+}
+
+void ConflictDlg::OnIgnoreButton(wxCommandEvent &event)
+{
+	m_command_string = m_always.m_last_command = "I";
+	EndModal(event.GetId());
+}
+
+void ConflictDlg::OnKeepNewerButton(wxCommandEvent &event)
+{
+	m_command_string = m_always.m_last_command = "N";
+	EndModal(event.GetId());
+}
+
+void ConflictDlg::OnKillSyncButton(wxCommandEvent &event)
+{
+	m_command_string.clear();
+	m_always.m_last_command.clear();
+	m_kill_sync = true;
+	EndModal(event.GetId());
+}
+
+void ConflictDlg::OnAlwaysCheckbox(wxCommandEvent &event)
+{
+	m_always.m_always = event.IsChecked();
 }
 

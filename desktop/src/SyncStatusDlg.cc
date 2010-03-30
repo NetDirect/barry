@@ -196,21 +196,15 @@ wxChar* ConflictConnection::OnRequest(const wxString &topic,
 	m_asking_user = true;
 
 	// ask the user what to do
-	ConflictDlg dlg(m_parent, m_supported_commands, m_changes);
+	ConflictDlg dlg(m_parent, m_supported_commands, m_changes, m_always);
 	dlg.ShowModal();
-
-	ostringstream oss;
-	oss << m_current_sequenceID << " " << dlg.GetCommand();
-
-	// FIXME
-	//if( dlg.IsAlways() ) {
-		// save this command for repeated automatic action
-	//}
 
 	// done
 	m_asking_user = false;
 
 	// prepare response for client
+	ostringstream oss;
+	oss << m_current_sequenceID << " " << dlg.GetCommand();
 	m_buf.buf(oss.str());
 	// oddly, this is the size in bytes, not in wxChars
 	*size = (m_buf.size() + 1) * sizeof(wxChar);
