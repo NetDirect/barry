@@ -57,7 +57,7 @@ public:
 
 class ConflictConnection : public wxConnection, public OptOut::Element
 {
-	wxWindow *m_parent;
+	SyncStatusDlg &m_dlg;
 	SillyBuffer m_buf;
 
 	// conflict state machine
@@ -72,7 +72,7 @@ class ConflictConnection : public wxConnection, public OptOut::Element
 	ConflictDlg::AlwaysMemoryBlock m_always;
 
 public:
-	ConflictConnection(wxWindow *parent);
+	ConflictConnection(SyncStatusDlg &dlg);
 
 	bool OnPoke(const wxString &topic, const wxString &item,
 		wxChar *data, int size, wxIPCFormat format);
@@ -130,13 +130,14 @@ protected:
 	void PrintBlack(const std::string &msg);
 	void PrintRed(const std::string &msg);
 
-	void KillSync();
+	void UpdateTitle();
 
 public:
 	SyncStatusDlg(wxWindow *parent, const DeviceSet::subset_type &subset);
 	~SyncStatusDlg();
 
 	// operations
+	void KillSync();
 	void StartNextSync();
 
 	// event handlers

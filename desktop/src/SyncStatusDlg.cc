@@ -92,8 +92,8 @@ bool StatusConnection::OnPoke(const wxString &topic,
 //////////////////////////////////////////////////////////////////////////////
 // ConflictConnection class
 
-ConflictConnection::ConflictConnection(wxWindow *parent)
-	: m_parent(parent)
+ConflictConnection::ConflictConnection(SyncStatusDlg &dlg)
+	: m_dlg(dlg)
 	, m_asking_user(false)
 	, m_current_sequenceID(-1)
 	, m_current_offset(-1)
@@ -196,11 +196,18 @@ wxChar* ConflictConnection::OnRequest(const wxString &topic,
 	m_asking_user = true;
 
 	// ask the user what to do
-	ConflictDlg dlg(m_parent, m_supported_commands, m_changes, m_always);
+	ConflictDlg dlg(&m_dlg, m_supported_commands, m_changes, m_always);
 	dlg.ShowModal();
 
 	// done
 	m_asking_user = false;
+
+	// did the user ask to kill the sync?
+	if( dlg.IsKillSync() ) {
+		// die!
+		m_dlg.KillSync();
+		return NULL;
+	}
 
 	// prepare response for client
 	ostringstream oss;
@@ -314,6 +321,7 @@ void SyncStatusDlg::SetRunning()
 	m_syncagain_button->Enable(false);
 	m_killclose_button->SetLabel(_T("Kill Sync"));
 	m_killclose_button->Enable(true);
+	UpdateTitle();
 }
 
 void SyncStatusDlg::SetClose()
@@ -323,6 +331,7 @@ void SyncStatusDlg::SetClose()
 	m_syncagain_button->Enable(true);
 	m_killclose_button->SetLabel(_T("Close"));
 	m_killclose_button->Enable(true);
+	UpdateTitle();
 }
 
 void SyncStatusDlg::PrintBlack(const std::string &msg)
@@ -335,6 +344,20 @@ void SyncStatusDlg::PrintRed(const std::string &msg)
 {
 	m_status_edit->SetDefaultStyle(wxTextAttr(*wxRED));
 	m_status_edit->AppendText(_T("\n") + wxString(msg.c_str(), wxConvUTF8));
+}
+
+void SyncStatusDlg::UpdateTitle()
+{
+	if( m_next_device == m_subset.end() ) {
+		SetTitle(_T("Sync Progress Dialog"));
+	}
+	else {
+		ostringstream oss;
+		oss << "Syncing: " << (*m_next_device)->GetPin().str()
+		    << " with " << (*m_next_device)->GetAppNames();
+		wxString label(oss.str().c_str(), wxConvUTF8);
+		SetTitle(label);
+	}
 }
 
 void SyncStatusDlg::KillSync()
@@ -494,7 +517,7 @@ wxConnectionBase* SyncStatusDlg::OnAcceptConnection(const wxString &topic)
 	if( topic == TOPIC_STATUS && m_status_edit )
 		con = new StatusConnection(*this, *m_status_edit);
 	else if( topic == TOPIC_CONFLICT )
-		con = new ConflictConnection(this);
+		con = new ConflictConnection(*this);
 
 	if( con )
 		m_connections.push_back( dynamic_cast<OptOut::Element*> (con) );
