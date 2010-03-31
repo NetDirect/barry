@@ -4,6 +4,14 @@ Feature TODO List:
 
 Sync:
 -----
+- make sync status detail messages hidden by default, and just put
+	a simple progress display, with a "Show details..." button
+	or something
+- add config option: favour device, favour app, or ask me
+- add support for xml path mapping, (see horrendous conflict dialog for
+	calendar items)
+	- contact key info: name, company, phone number, email
+	- calendar key info: summary, dates, location, description
 - when a change is made to an existing config, under 0.22, warn the
 	user that a 1-Way Reset may be needed?
 - test 0.4x, and see if it is possible to do a clean one-way
