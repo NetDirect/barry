@@ -112,10 +112,15 @@ class SyncStatusDlg
 	// go out of scope
 	OptOut::Vector<wxConnectionBase> m_connections;
 
+	wxTimer m_timer;
+
 	// dialog controls
 	wxSizer *m_topsizer;
+	wxStaticText *m_short_status;
+	wxGauge *m_throbber;
 	wxTextCtrl *m_status_edit;
 	wxButton *m_runapp_button, *m_syncagain_button, *m_killclose_button;
+	wxButton *m_details_button;
 
 protected:
 	void CreateLayout();
@@ -127,9 +132,6 @@ protected:
 	// set buttons to "close" state
 	void SetClose();
 
-	void PrintBlack(const std::string &msg);
-	void PrintRed(const std::string &msg);
-
 	void UpdateTitle();
 
 public:
@@ -140,13 +142,21 @@ public:
 	void KillSync();
 	void StartNextSync();
 
+	void Print(const std::string &msg, const wxColour &colour);
+	void Print(const wxString &msg, const wxColour &colour);
+	void ShortPrint(const std::string &msg);
+	void ShortPrint(const wxString &msg);
+	void Throb();
+
 	// event handlers
 	void OnSlowSync();	// called from StatusConnection
 	void OnInitDialog(wxInitDialogEvent &event);
 	void OnRunApp(wxCommandEvent &event);
 	void OnSyncAgain(wxCommandEvent &event);
 	void OnKillClose(wxCommandEvent &event);
+	void OnShowDetails(wxCommandEvent &event);
 	void OnExecTerminated(wxProcessEvent &event);
+	void OnTimer(wxTimerEvent &event);
 
 	// virtual overrides from wxServer
 	wxConnectionBase* OnAcceptConnection(const wxString &topic);

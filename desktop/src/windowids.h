@@ -71,6 +71,8 @@ enum {
 	Dialog_SyncStatus_SyncAgainButton,
 	Dialog_SyncStatus_KillCloseButton,
 	Dialog_SyncStatus_SyncTerminated,
+	Dialog_SyncStatus_ShowDetailsButton,
+	Dialog_SyncStatus_Timer,
 	Dialog_Conflict,
 	Dialog_Conflict_DataList,
 	Dialog_Conflict_ColumnButton1,

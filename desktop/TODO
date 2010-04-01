@@ -4,9 +4,6 @@ Feature TODO List:
 
 Sync:
 -----
-- make sync status detail messages hidden by default, and just put
-	a simple progress display, with a "Show details..." button
-	or something
 - add config option: favour device, favour app, or ask me
 - add support for xml path mapping, (see horrendous conflict dialog for
 	calendar items)

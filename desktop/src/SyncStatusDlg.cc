@@ -53,37 +53,35 @@ bool StatusConnection::OnPoke(const wxString &topic,
 	if( topic != TOPIC_STATUS )
 		return false;
 
+	wxString msg(data, size);
+
 	if( item == STATUS_ITEM_ERROR ) {
-		m_status.SetDefaultStyle(wxTextAttr(*wxRED));
-		m_status.AppendText(_T("\n") + wxString(data, size));
+		m_dlg.Print(msg, *wxRED);
+		m_dlg.ShortPrint(msg);
 	}
 	else if( item == STATUS_ITEM_ENTRY ) {
-		m_status.SetDefaultStyle(wxTextAttr(*wxBLUE));
-		m_status.AppendText(_T("\n") + wxString(data, size));
+		m_dlg.Print(msg, *wxBLUE);
+		m_dlg.ShortPrint("Syncing entries...");
 	}
 	else if( item == STATUS_ITEM_MAPPING ) {
-		m_status.SetDefaultStyle(wxTextAttr(*wxBLUE));
-		m_status.AppendText(_T("\n") + wxString(data, size));
+		m_dlg.Print(msg, *wxBLUE);
 	}
 	else if( item == STATUS_ITEM_ENGINE ) {
-		wxString msg(data, size);
 		wxString key = ENGINE_STATUS_SLOW_SYNC;
 		if( msg.substr(0, key.size()) == key ) {
 			m_dlg.OnSlowSync();
 		}
 		else {
-			m_status.SetDefaultStyle(wxTextAttr(*wxGREEN));
-			m_status.AppendText(_T("\n") + wxString(data, size));
+			m_dlg.Print(msg, *wxGREEN);
+			m_dlg.ShortPrint(msg);
 		}
 	}
 	else if( item == STATUS_ITEM_MEMBER ) {
-		m_status.SetDefaultStyle(wxTextAttr(*wxCYAN));
-		m_status.AppendText(_T("\n") + wxString(data, size));
+		m_dlg.Print(msg, *wxCYAN);
 	}
 	else {
 		// unknown item
-		m_status.SetDefaultStyle(wxTextAttr(*wxBLACK));
-		m_status.AppendText(_T("\n") + wxString(data, size));
+		m_dlg.Print(msg, *wxBLACK);
 	}
 	return true;
 }
@@ -230,25 +228,33 @@ BEGIN_EVENT_TABLE(SyncStatusDlg, wxDialog)
 				SyncStatusDlg::OnSyncAgain)
 	EVT_BUTTON	(Dialog_SyncStatus_KillCloseButton,
 				SyncStatusDlg::OnKillClose)
+	EVT_BUTTON	(Dialog_SyncStatus_ShowDetailsButton,
+				SyncStatusDlg::OnShowDetails)
 	EVT_END_PROCESS	(Dialog_SyncStatus_SyncTerminated,
 				SyncStatusDlg::OnExecTerminated)
+	EVT_TIMER	(Dialog_SyncStatus_Timer,
+				SyncStatusDlg::OnTimer)
 END_EVENT_TABLE()
 
 SyncStatusDlg::SyncStatusDlg(wxWindow *parent,
 				const DeviceSet::subset_type &subset)
-	: wxDialog(parent, Dialog_SyncStatus, _T("Device Sync Progress"),
-		wxDefaultPosition, wxSize(500,500))
+	: wxDialog(parent, Dialog_SyncStatus, _T("Device Sync Progress"))
 	, TermCatcher(this, Dialog_SyncStatus_SyncTerminated)
 	, m_subset(subset)
 	, m_next_device(m_subset.begin())
 	, m_jailexec(this)
 	, m_killingjail(false)
+	, m_timer(this, Dialog_SyncStatus_Timer)
 	, m_topsizer(0)
+	, m_short_status(0)
+	, m_throbber(0)
 	, m_status_edit(0)
 	, m_runapp_button(0)
 	, m_syncagain_button(0)
 	, m_killclose_button(0)
 {
+	wxBusyCursor wait;
+
 	// setup the raw GUI
 	CreateLayout();
 
@@ -269,7 +275,7 @@ void SyncStatusDlg::CreateLayout()
 	AddButtonSizer(m_topsizer);
 
 	SetSizer(m_topsizer);
-//	m_topsizer->SetSizeHints(this);
+	m_topsizer->SetSizeHints(this);
 	m_topsizer->Layout();
 }
 
@@ -277,14 +283,28 @@ void SyncStatusDlg::AddStatusSizer(wxSizer *sizer)
 {
 	wxSizer *ss = new wxStaticBoxSizer(
 		new wxStaticBox(this, wxID_ANY, _T("Sync Progress")),
-		wxHORIZONTAL
+		wxVERTICAL
 		);
+
+	// add a set of short status and progress throbber
+	wxSizer *shorts = new wxBoxSizer(wxHORIZONTAL);
+	shorts->Add(
+		m_short_status = new wxStaticText(this, wxID_ANY, _T(""),
+			wxDefaultPosition, wxSize(350, -1),
+			wxALIGN_LEFT),
+		1, wxALIGN_CENTRE_VERTICAL | wxALL, 2);
+	shorts->Add(
+		m_throbber = new wxGauge(this, wxID_ANY, 0),
+		0, wxALL | wxEXPAND, 2);
+	ss->Add( shorts, 0, wxEXPAND, 0);
 
 	ss->Add(
 		m_status_edit = new wxTextCtrl(this, wxID_ANY, _T(""),
-			wxDefaultPosition, wxDefaultSize,
+			wxDefaultPosition, wxSize(475, 450),
 			wxTE_MULTILINE | wxTE_READONLY | wxTE_RICH),
-		1, wxALL | wxEXPAND, 2);
+		0, wxALL | wxEXPAND, 2);
+	// start with the details hidden
+	m_status_edit->Hide();
 
 	sizer->Add(ss, 1, wxTOP | wxLEFT | wxRIGHT | wxEXPAND, 5);
 }
@@ -292,6 +312,14 @@ void SyncStatusDlg::AddStatusSizer(wxSizer *sizer)
 void SyncStatusDlg::AddButtonSizer(wxSizer *sizer)
 {
 	wxSizer *button = new wxBoxSizer(wxHORIZONTAL);
+
+	button->Add(
+		m_details_button = new wxButton(this,
+			Dialog_SyncStatus_ShowDetailsButton,
+			_T("Show Details")),
+		0, wxALL, 3);
+
+	button->Add( -1, -1, 1 );
 
 	if( m_subset.size() == 1 ) {
 		button->Add(
@@ -311,7 +339,7 @@ void SyncStatusDlg::AddButtonSizer(wxSizer *sizer)
 			_T("Kill Sync")),
 		0, wxALL, 3);
 
-	sizer->Add(button, 0, wxALL | wxALIGN_RIGHT, 5);
+	sizer->Add(button, 0, wxALL | wxEXPAND, 5);
 }
 
 void SyncStatusDlg::SetRunning()
@@ -322,6 +350,10 @@ void SyncStatusDlg::SetRunning()
 	m_killclose_button->SetLabel(_T("Kill Sync"));
 	m_killclose_button->Enable(true);
 	UpdateTitle();
+
+	m_throbber->SetRange(10);
+	m_throbber->SetValue(0);
+	m_timer.Start(250);
 }
 
 void SyncStatusDlg::SetClose()
@@ -332,18 +364,36 @@ void SyncStatusDlg::SetClose()
 	m_killclose_button->SetLabel(_T("Close"));
 	m_killclose_button->Enable(true);
 	UpdateTitle();
+
+	m_throbber->SetRange(10);
+	m_throbber->SetValue(10);
+	m_timer.Stop();
 }
 
-void SyncStatusDlg::PrintBlack(const std::string &msg)
+void SyncStatusDlg::Print(const std::string &msg, const wxColour &colour)
 {
-	m_status_edit->SetDefaultStyle(wxTextAttr(*wxBLACK));
-	m_status_edit->AppendText(_T("\n") + wxString(msg.c_str(), wxConvUTF8));
+	Print(wxString(msg.c_str(), wxConvUTF8), colour);
 }
 
-void SyncStatusDlg::PrintRed(const std::string &msg)
+void SyncStatusDlg::Print(const wxString &msg, const wxColour &colour)
 {
-	m_status_edit->SetDefaultStyle(wxTextAttr(*wxRED));
-	m_status_edit->AppendText(_T("\n") + wxString(msg.c_str(), wxConvUTF8));
+	m_status_edit->SetDefaultStyle(wxTextAttr(colour));
+	m_status_edit->AppendText(_T("\n") + msg);
+}
+
+void SyncStatusDlg::ShortPrint(const std::string &msg)
+{
+	ShortPrint(wxString(msg.c_str(), wxConvUTF8));
+}
+
+void SyncStatusDlg::ShortPrint(const wxString &msg)
+{
+	m_short_status->SetLabel(msg);
+}
+
+void SyncStatusDlg::Throb()
+{
+	m_throbber->Pulse();
 }
 
 void SyncStatusDlg::UpdateTitle()
@@ -376,7 +426,7 @@ void SyncStatusDlg::StartNextSync()
 
 	// anything to do?
 	if( m_next_device == m_subset.end() ) {
-		PrintBlack("No more devices to sync.");
+		Print("No more devices to sync.", *wxBLACK);
 		SetClose();
 		return;
 	}
@@ -389,7 +439,7 @@ void SyncStatusDlg::StartNextSync()
 	m_device_id = device.GetPin().str() + " (" + device.GetDeviceName() + ")";
 
 	if( !device.IsConfigured() ) {
-		PrintRed(m_device_id + " is not configured, skipping.");
+		Print(m_device_id + " is not configured, skipping.", *wxRED);
 		++m_next_device;
 		StartNextSync();
 		return;
@@ -399,7 +449,9 @@ void SyncStatusDlg::StartNextSync()
 	OpenSync::Config::Group *group = device.GetConfigGroup();
 	string group_name = group->GetGroupName();
 
-	PrintBlack("Starting sync for: " + m_device_id);
+	string statusmsg = "Starting sync for: " + m_device_id;
+	Print(statusmsg, *wxBLACK);
+	ShortPrint(statusmsg);
 
 	// for each plugin / app, perform the pre-sync steps
 	for( OpenSync::Config::Group::iterator i = group->begin();
@@ -414,7 +466,9 @@ void SyncStatusDlg::StartNextSync()
 
 	// initialize sync jail process
 	if( m_jailexec.IsAppRunning() ) {
-		PrintRed("ERROR: App running in StartNextSync()");
+		string msg = "ERROR: App running in StartNextSync()";
+		Print(msg, *wxRED);
+		ShortPrint(msg);
 		SetClose();
 		return;
 	}
@@ -429,7 +483,8 @@ void SyncStatusDlg::StartNextSync()
 	command += wxString(group_name.c_str(), wxConvUTF8);
 
 	if( !m_jailexec.Run(NULL, "bsyncjail", command) ) {
-		PrintRed("ERROR: unable to start bsyncjail: " + string(command.utf8_str()));
+		Print("ERROR: unable to start bsyncjail: " + string(command.utf8_str()), *wxRED);
+		ShortPrint("ERROR: unable to start bsyncjail");
 		SetClose();
 		return;
 	}
@@ -440,11 +495,11 @@ void SyncStatusDlg::StartNextSync()
 
 void SyncStatusDlg::OnSlowSync()
 {
-	PrintRed("Slow sync detected!  Killing sync automatically.");
+	Print("Slow sync detected!  Killing sync automatically.", *wxRED);
 	KillSync();
 
-	PrintBlack("Slow syncs are known to be unreliable.");
-	PrintBlack("Do a 1 Way Reset, and sync again.");
+	Print("Slow syncs are known to be unreliable.", *wxBLACK);
+	Print("Do a 1 Way Reset, and sync again.", *wxBLACK);
 }
 
 void SyncStatusDlg::OnInitDialog(wxInitDialogEvent &event)
@@ -498,8 +553,8 @@ void SyncStatusDlg::OnKillClose(wxCommandEvent &event)
 			KillSync();
 
 			// print a warning so the user know's what's going on
-			PrintRed("Killing sync... this may take a little while...");
-			PrintRed("Remember to re-plug your device.");
+			Print("Killing sync... this may take a little while...", *wxRED);
+			Print("Remember to re-plug your device.", *wxRED);
 
 			// let the terminate call clean up the buttons
 			return;
@@ -507,6 +562,31 @@ void SyncStatusDlg::OnKillClose(wxCommandEvent &event)
 	}
 	else {
 		EndModal(0);
+	}
+}
+
+void SyncStatusDlg::OnShowDetails(wxCommandEvent &event)
+{
+	if( m_status_edit->IsShown() ) {
+		m_status_edit->Hide();
+		m_details_button->SetLabel(_T("Show Details"));
+	}
+	else {
+		m_status_edit->Show();
+		m_details_button->SetLabel(_T("Hide Details"));
+	}
+	m_topsizer->Fit(this);
+
+	// try to position the window in a readable spot
+	wxSize size = GetSize();
+	wxPoint pos = GetScreenPosition();
+	int screen_height = wxSystemSettings::GetMetric(wxSYS_SCREEN_Y);
+	if( (pos.y + size.GetHeight()) > screen_height &&
+	    size.GetHeight() < screen_height )
+	{
+		int wiggle_room = screen_height - size.GetHeight();
+		int y = wiggle_room / 2;
+		Move(pos.x, y);
 	}
 }
 
@@ -533,8 +613,14 @@ void SyncStatusDlg::OnExecTerminated(wxProcessEvent &event)
 	else
 		oss << "Sync finished: ";
 	oss << m_device_id;
-	PrintBlack(oss.str());
+	Print(oss.str(), *wxBLACK);
+	ShortPrint(oss.str());
 
 	StartNextSync();
+}
+
+void SyncStatusDlg::OnTimer(wxTimerEvent &event)
+{
+	Throb();
 }
 
