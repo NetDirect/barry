@@ -387,10 +387,11 @@ void GlobalConfigFile::Load()
 
 		if( keyword == "last_device" ) {
 			iss >> std::ws;
+			m_lastDevice.clear();
 			iss >> m_lastDevice;
 		}
 		else if( keyword == "verbose_logging" ) {
-			int flag;
+			int flag = 0;
 			iss >> flag;
 			m_verboseLogging = flag;
 		}
@@ -398,6 +399,7 @@ void GlobalConfigFile::Load()
 			// store any other keys as app keys
 			if( keyword.substr(0, 2) == "X-" ) {
 				iss >> std::ws;
+				line.clear();
 				std::getline(iss, line);
 				m_keymap[keyword] = line;
 			}
