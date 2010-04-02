@@ -37,6 +37,7 @@ public:
 
 	bool valid() const { return pin != 0; }
 
+	void clear() { pin = 0; }
 	std::string str() const;
 	uint32_t value() const { return pin; }
 
