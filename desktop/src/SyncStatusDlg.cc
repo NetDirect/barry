@@ -97,6 +97,13 @@ ConflictConnection::ConflictConnection(SyncStatusDlg &dlg)
 	, m_current_offset(-1)
 	, m_expected_total_changes(0)
 {
+	// check if there's a favoured plugin name from the DeviceEntry config
+	if( m_dlg.GetCurrentDevice() &&
+	    m_dlg.GetCurrentDevice()->GetExtras() )
+	{
+		m_always.m_favour_plugin_name = m_dlg.GetCurrentDevice()->
+					GetExtras()->m_favour_plugin_name;
+	}
 }
 
 bool ConflictConnection::OnPoke(const wxString &topic,
@@ -396,6 +403,13 @@ void SyncStatusDlg::Throb()
 	m_throbber->Pulse();
 }
 
+DeviceEntry* SyncStatusDlg::GetCurrentDevice()
+{
+	if( m_current_device == m_subset.end() )
+		return 0;
+	return &(*(*m_current_device));
+}
+
 void SyncStatusDlg::UpdateTitle()
 {
 	if( m_next_device == m_subset.end() ) {
@@ -417,7 +431,7 @@ void SyncStatusDlg::KillSync()
 
 	// jump to the end of the sync roster, so we don't start the
 	// next device
-	m_next_device = m_subset.end();
+	m_current_device = m_next_device = m_subset.end();
 }
 
 void SyncStatusDlg::StartNextSync()
@@ -435,12 +449,14 @@ void SyncStatusDlg::StartNextSync()
 	}
 
 	// grab all required information we need to sync
+	m_current_device = m_next_device;
 	DeviceEntry &device = *(*m_next_device);
 	m_device_id = device.GetPin().str() + " (" + device.GetDeviceName() + ")";
 
 	if( !device.IsConfigured() ) {
 		Print(m_device_id + " is not configured, skipping.", *wxRED);
 		++m_next_device;
+		m_current_device = m_subset.end();
 		StartNextSync();
 		return;
 	}
@@ -615,6 +631,8 @@ void SyncStatusDlg::OnExecTerminated(wxProcessEvent &event)
 	oss << m_device_id;
 	Print(oss.str(), *wxBLACK);
 	ShortPrint(oss.str());
+
+	m_current_device = m_subset.end();
 
 	StartNextSync();
 }

@@ -98,7 +98,7 @@ class SyncStatusDlg
 
 	// external data sources
 	DeviceSet::subset_type m_subset;
-	DeviceSet::subset_type::iterator m_next_device;
+	DeviceSet::subset_type::iterator m_next_device, m_current_device;
 
 	// for handling bsyncjail
 	ExecHelper m_jailexec;
@@ -147,6 +147,8 @@ public:
 	void ShortPrint(const std::string &msg);
 	void ShortPrint(const wxString &msg);
 	void Throb();
+
+	DeviceEntry* GetCurrentDevice();
 
 	// event handlers
 	void OnSlowSync();	// called from StatusConnection

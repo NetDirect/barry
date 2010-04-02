@@ -4,7 +4,6 @@ Feature TODO List:
 
 Sync:
 -----
-- add config option: favour device, favour app, or ask me
 - add support for xml path mapping, (see horrendous conflict dialog for
 	calendar items)
 	- contact key info: name, company, phone number, email

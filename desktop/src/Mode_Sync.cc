@@ -50,8 +50,9 @@ SyncMode::SyncMode(wxWindow *parent)
 	wxSize client_size = parent->GetClientSize();
 
 	// create our list of devices
-	m_device_set.reset( new DeviceSet(wxGetApp().GetResults(),
-		wxGetApp().GetOpenSync()) );
+	m_device_set.reset( new DeviceSet(wxGetApp().GetGlobalConfig(),
+					wxGetApp().GetOpenSync(),
+					wxGetApp().GetResults()) );
 	barryverbose(*m_device_set);
 
 	// eliminate all duplicate device entries
@@ -279,8 +280,11 @@ void SyncMode::ConfigureDevice(int device_index)
 	GroupCfgDlg dlg(m_parent, entry, wxGetApp().GetOpenSync());
 	if( dlg.ShowModal() == wxID_OK &&
 	    dlg.GetEngine() &&
-	    dlg.GetGroup().get() )
+	    dlg.GetGroup().get() &&
+	    dlg.GetExtras().get() )
 	{
+		bool skip_rewrite = false;
+
 		// does old group exist?
 		if( entry.GetEngine() &&
 		    entry.GetConfigGroup() &&
@@ -289,19 +293,22 @@ void SyncMode::ConfigureDevice(int device_index)
 			// yes, is the new group equal?
 			string v1 = entry.GetEngine()->GetVersion();
 			string v2 = dlg.GetEngine()->GetVersion();
-			if( v1 == v2 && dlg.GetGroup()->Compare(*entry.GetConfigGroup()) ) {
+			skip_rewrite = (v1 == v2 &&
+			      dlg.GetGroup()->Compare(*entry.GetConfigGroup()));
+
+			if( skip_rewrite )  {
 				// config is the same, don't bother saving again
 				barryverbose("Config is the same, skipping save");
-				return;
 			}
-
-			// group config changed, delete to start over,
-			// since new config might change engines...
-			// and we don't want to leave stuff behind
-			entry.GetEngine()->DeleteGroup(entry.GetConfigGroup()->GetGroupName());
+			else {
+				// group config changed, delete to start over,
+				// since new config might change engines...
+				// and we don't want to leave stuff behind
+				entry.GetEngine()->DeleteGroup(entry.GetConfigGroup()->GetGroupName());
+			}
 		}
 
-		for( int attempt = 0; attempt < 2; attempt++ ) {
+		for( int attempt = 0; !skip_rewrite && attempt < 2; attempt++ ) {
 			try {
 
 				// save the new one
@@ -324,9 +331,14 @@ void SyncMode::ConfigureDevice(int device_index)
 			}
 		}
 
+		// save the extras... this is cheap, so no need to check
+		// skip_rewrite
+		dlg.GetExtras()->Save(wxGetApp().GetGlobalConfig(),
+					dlg.GetGroup()->GetGroupName());
+
 		// update the device set
-		(*m_device_set)[device_index].
-			SetConfigGroup(dlg.GetGroup(), dlg.GetEngine());
+		(*m_device_set)[device_index].SetConfigGroup(
+			dlg.GetGroup(), dlg.GetEngine(), dlg.GetExtras());
 
 		// update!
 		RefillList();

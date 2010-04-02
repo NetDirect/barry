@@ -45,6 +45,7 @@ public:
 		long m_member_id;
 		std::string m_plugin_name;
 		std::string m_last_command;
+		std::string m_favour_plugin_name;
 
 		void clear()
 		{
@@ -52,6 +53,7 @@ public:
 			m_member_id = -1;
 			m_plugin_name.clear();
 			m_last_command.clear();
+			m_favour_plugin_name.clear();
 		}
 
 		AlwaysMemoryBlock()

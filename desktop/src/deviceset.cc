@@ -30,9 +30,48 @@
 using namespace std;
 
 //////////////////////////////////////////////////////////////////////////////
+// DeviceExtras class
+
+DeviceExtras::DeviceExtras(const Barry::Pin &pin)
+	: m_pin(pin)
+{
+}
+
+DeviceExtras::DeviceExtras(const Barry::Pin & pin,
+				const Barry::GlobalConfigFile &config,
+				const std::string &group_name)
+	: m_pin(pin)
+{
+	Load(config, group_name);
+}
+
+std::string DeviceExtras::MakeBaseKey(const std::string &group_name)
+{
+	ostringstream oss;
+	oss << m_pin.str() << "-" << group_name << "-";
+	return oss.str();
+}
+
+void DeviceExtras::Load(const Barry::GlobalConfigFile &config,
+			const std::string &group_name)
+{
+	string key = MakeBaseKey(group_name);
+	m_favour_plugin_name = config.GetKey(key + "FavourPlugin");
+}
+
+void DeviceExtras::Save(Barry::GlobalConfigFile &config,
+			const std::string &group_name)
+{
+	string key = MakeBaseKey(group_name);
+	config.SetKey(key + "FavourPlugin", m_favour_plugin_name);
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
 // DeviceEntry class
 
-DeviceEntry::DeviceEntry(const Barry::ProbeResult *result,
+DeviceEntry::DeviceEntry(const Barry::GlobalConfigFile &config,
+			const Barry::ProbeResult *result,
 			group_ptr group,
 			OpenSync::API *engine,
 			const std::string &secondary_device_name)
@@ -44,6 +83,13 @@ DeviceEntry::DeviceEntry(const Barry::ProbeResult *result,
 	// just make sure that our device name has something in it
 	if( !m_device_name.size() && m_result )
 		m_device_name = m_result->m_cfgDeviceName;
+
+	// load the extras if available
+	Barry::Pin pin = GetPin();
+	if( pin.valid() && IsConfigured() ) {
+		m_extras.reset( new DeviceExtras(pin, config,
+					m_group->GetGroupName()) );
+	}
 }
 
 // returns pointer to the Barry plugin object in m_group
@@ -114,10 +160,12 @@ std::string DeviceEntry::GetIdentifyingString() const
 }
 
 void DeviceEntry::SetConfigGroup(group_ptr group,
-				OpenSync::API *engine)
+				OpenSync::API *engine,
+				extras_ptr extras)
 {
 	m_group = group;
 	m_engine = engine;
+	m_extras = extras;
 }
 
 std::ostream& operator<< (std::ostream &os, const DeviceEntry &de)
@@ -135,8 +183,10 @@ std::ostream& operator<< (std::ostream &os, const DeviceEntry &de)
 // DeviceSet class
 
 /// Does a USB probe automatically
-DeviceSet::DeviceSet(OpenSync::APISet &apiset)
-	: m_apiset(apiset)
+DeviceSet::DeviceSet(const Barry::GlobalConfigFile &config,
+			OpenSync::APISet &apiset)
+	: m_config(config)
+	, m_apiset(apiset)
 {
 	Barry::Probe probe;
 	m_results = probe.GetResults();
@@ -144,9 +194,11 @@ DeviceSet::DeviceSet(OpenSync::APISet &apiset)
 }
 
 /// Skips the USB probe and uses the results set given
-DeviceSet::DeviceSet(const Barry::Probe::Results &results,
-				OpenSync::APISet &apiset)
-	: m_apiset(apiset)
+DeviceSet::DeviceSet(const Barry::GlobalConfigFile &config,
+			OpenSync::APISet &apiset,
+			const Barry::Probe::Results &results)
+	: m_config(config)
+	, m_apiset(apiset)
 	, m_results(results)
 {
 	LoadSet();
@@ -209,7 +261,8 @@ void DeviceSet::LoadConfigured(OpenSync::API &api)
 			}
 
 			// if no LoadError exceptions, add to configured list
-			push_back( DeviceEntry(connected, g, &api, dev_name) );
+			push_back( DeviceEntry(m_config, connected, g, &api,
+						dev_name) );
 
 		}
 		catch( Config::LoadError &le ) {
@@ -235,7 +288,8 @@ void DeviceSet::LoadUnconfigured()
 			// as an unconfigured item
 
 			// create the DeviceEntry with a null group_ptr
-			DeviceEntry item( &(*i), DeviceEntry::group_ptr(), 0 );
+			DeviceEntry item( m_config, &(*i),
+					DeviceEntry::group_ptr(), 0 );
 			push_back( item );
 		}
 	}

@@ -55,6 +55,7 @@ GroupCfgDlg::GroupCfgDlg(wxWindow *parent,
 	, m_app_combo(0)
 	, m_password_edit(0)
 	, m_debug_check(0)
+	, m_favour_radios(0)
 {
 	// setup the raw GUI
 	CreateLayout();
@@ -71,6 +72,7 @@ GroupCfgDlg::GroupCfgDlg(wxWindow *parent,
 		m_engine = const_cast<OpenSync::API*> (m_device.GetEngine());
 	}
 
+	// initialize local group and plugin data
 	if( m_device.GetConfigGroup() ) {
 		const Config::Group *group = m_device.GetConfigGroup();
 		// use existing group name, if available
@@ -89,9 +91,16 @@ GroupCfgDlg::GroupCfgDlg(wxWindow *parent,
 		m_group_name = "barrydesktop_" + m_device.GetPin().str();
 	}
 
+	// copy over the extras
+	if( m_device.GetExtras() ) {
+		const DeviceExtras *extras = m_device.GetExtras();
+		m_favour_plugin_name = extras->m_favour_plugin_name;
+	}
+
 	SelectCurrentEngine();
 	LoadBarryConfig();
 	SelectApplication();
+	SelectFavour();
 }
 
 void GroupCfgDlg::CreateLayout()
@@ -99,6 +108,7 @@ void GroupCfgDlg::CreateLayout()
 	m_topsizer = new wxBoxSizer(wxVERTICAL);
 	AddEngineSizer(m_topsizer);
 	AddConfigSizer(m_topsizer);
+	AddFavourSizer(m_topsizer);
 	AddButtonSizer(m_topsizer);
 
 	SetSizer(m_topsizer);
@@ -240,6 +250,20 @@ void GroupCfgDlg::LoadAppNames(wxArrayString &appnames)
 	}
 }
 
+void GroupCfgDlg::AddFavourSizer(wxSizer *sizer)
+{
+	wxArrayString labels;
+	labels.Add( _T("Favour device") );
+	labels.Add( _T("Favour application") );
+	labels.Add( _T("Ask me") );
+
+	sizer->Add( m_favour_radios = new wxRadioBox(this, wxID_ANY,
+			_T("To Resolve Conflicts:"),
+			wxDefaultPosition, wxDefaultSize,
+			labels, 1, wxRA_SPECIFY_ROWS),
+		0, wxTOP | wxLEFT | wxRIGHT | wxEXPAND, 10);
+}
+
 void GroupCfgDlg::AddButtonSizer(wxSizer *sizer)
 {
 	wxSizer *button = CreateSeparatedButtonSizer(wxOK | wxCANCEL);
@@ -275,6 +299,22 @@ void GroupCfgDlg::SelectApplication()
 	if( m_app_plugin.get() ) {
 		m_app_combo->SetValue(
 			wxString(m_app_plugin->GetAppName().c_str(), wxConvUTF8));
+	}
+}
+
+void GroupCfgDlg::SelectFavour()
+{
+	if( m_engine &&
+	    m_favour_plugin_name == Config::Barry::PluginName(*m_engine) )
+	{
+		m_favour_radios->SetSelection(0);
+	}
+	else if( m_engine && m_favour_plugin_name.size() ) {
+		m_favour_radios->SetSelection(1);
+	}
+	else {
+		// ask the user
+		m_favour_radios->SetSelection(2);
 	}
 }
 
@@ -368,6 +408,29 @@ bool GroupCfgDlg::TransferDataFromWindow()
 	// copy over barry specific settings
 	m_barry_plugin.SetPassword(string(m_password_edit->GetValue().utf8_str()));
 	m_barry_plugin.DebugMode(m_debug_check->GetValue());
+
+	// make sure conflict resolution is known
+	int findex = m_favour_radios->GetSelection();
+	switch( findex )
+	{
+	case 0:	// Favour device
+		m_favour_plugin_name = Config::Barry::PluginName(*m_engine);
+		break;
+
+	case 1:	// Favour application
+		m_favour_plugin_name = m_app_plugin->GetPluginName(*m_engine);
+		break;
+
+	case 2:	// Ask me
+		m_favour_plugin_name.clear();
+		break;
+
+	default: // borked
+		wxMessageBox(_T("Please select conflict resolution method."),
+			_T("Conflict Resolution"), wxOK | wxICON_ERROR, this);
+		return false;
+	}
+
 	return true;
 }
 
@@ -380,9 +443,14 @@ int GroupCfgDlg::ShowModal()
 		m_group->AddPlugin( new Config::Barry(m_barry_plugin) );
 		m_group->AddPlugin( m_app_plugin->Clone() );
 		m_group->DisconnectMembers(); // just to be safe
+
+		// don't forget the extras
+		m_extras.reset( new DeviceExtras(m_barry_plugin.GetPin()) );
+		m_extras->m_favour_plugin_name = m_favour_plugin_name;
 	}
 	else {
 		m_group.reset();
+		m_extras.reset();
 	}
 	return status;
 }

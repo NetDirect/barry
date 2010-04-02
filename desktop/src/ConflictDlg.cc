@@ -447,6 +447,19 @@ int ConflictDlg::ShowModal()
 	// start fresh
 	clear();
 
+	// is there a favoured plugin name?
+	if( m_always.m_favour_plugin_name.size() ) {
+		// find the matching plugin name
+		for( size_t i = 0; i < m_changes.size(); i++ ) {
+			if( m_changes[i].plugin_name == m_always.m_favour_plugin_name ) {
+				ostringstream oss;
+				oss << "S " << m_changes[i].id;
+				m_command_string = oss.str();
+				return ret;
+			}
+		}
+	}
+
 	// is there an "always" answer we can use?
 	if( m_always.m_always ) {
 		if( m_always.m_last_command == "S" ) {

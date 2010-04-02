@@ -38,6 +38,7 @@ class GroupCfgDlg : public wxDialog
 	// results of the configuration
 	std::string m_group_name;
 	DeviceEntry::group_ptr m_group;
+	DeviceEntry::extras_ptr m_extras;
 
 	// in-process config results... i.e. the plugin config
 	// is stored here, and can be overwritten as the user
@@ -47,12 +48,14 @@ class GroupCfgDlg : public wxDialog
 	OpenSync::API *m_engine;		// current engine
 	OpenSync::Config::Barry m_barry_plugin;
 	OpenSync::Config::Group::plugin_ptr m_app_plugin;
+	std::string m_favour_plugin_name;	// an extra
 
 	// dialog controls
 	wxSizer *m_topsizer, *m_appsizer;
 	wxComboBox *m_engine_combo, *m_app_combo;
 	wxTextCtrl *m_password_edit;
 	wxCheckBox *m_debug_check;
+	wxRadioBox *m_favour_radios;
 
 protected:
 	void CreateLayout();
@@ -64,11 +67,13 @@ protected:
 					// the app combo, etc, with available
 					// apps
 	void LoadAppNames(wxArrayString &appnames);
+	void AddFavourSizer(wxSizer *sizer);
 	void AddButtonSizer(wxSizer *sizer);
 
 	void SelectCurrentEngine();
 	void LoadBarryConfig();
 	void SelectApplication();
+	void SelectFavour();
 	bool IsAppConfigured();		// returns true if it is safe to
 					// exit the dialog successfully, and
 					// there's no more that needs to be
@@ -81,6 +86,7 @@ public:
 	// results
 	DeviceEntry::group_ptr GetGroup() { return m_group; }
 	OpenSync::API* GetEngine() const { return m_engine; }
+	DeviceEntry::extras_ptr GetExtras() { return m_extras; }
 
 	// event handlers
 	void OnConfigureApp(wxCommandEvent &event);

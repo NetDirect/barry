@@ -26,6 +26,47 @@
 #include "osconfig.h"
 #include <iosfwd>
 
+namespace Barry {
+	class GlobalConfigFile;
+}
+
+//
+// DeviceExtras
+//
+/// Config class to hold, load, and save device-related extras that are
+/// not saved in either the Barry::ConfigFile or the OpenSync group
+/// config.
+///
+/// These items are not stored in Barry::ConfigFile since they pertain
+/// to a particular OpenSync sync group.  The user may have groups
+/// configured outside of BarryDesktop.
+class DeviceExtras
+{
+	Barry::Pin m_pin;
+
+public:
+	// config data... The Extras
+	std::string m_favour_plugin_name;	// if empty, ask user
+
+protected:
+	std::string MakeBaseKey(const std::string &group_name);
+
+public:
+	explicit DeviceExtras(const Barry::Pin &pin);
+	DeviceExtras(const Barry::Pin& pin,
+		const Barry::GlobalConfigFile &config,
+		const std::string &group_name);
+
+	//
+	// operations
+	//
+	void Load(const Barry::GlobalConfigFile &config,
+		const std::string &group_name);
+	void Save(Barry::GlobalConfigFile &config,
+		const std::string &group_name);
+};
+
+
 //
 // DeviceEntry
 //
@@ -35,6 +76,7 @@ class DeviceEntry
 {
 public:
 	typedef std::tr1::shared_ptr<OpenSync::Config::Group>	group_ptr;
+	typedef std::tr1::shared_ptr<DeviceExtras>		extras_ptr;
 
 private:
 	// pointers to external data
@@ -43,8 +85,8 @@ private:
 	const Barry::ProbeResult *m_result;	// pointer to external data
 
 	group_ptr m_group;			// may contain 0
-
 	OpenSync::API *m_engine;		// may be 0
+	extras_ptr m_extras; // may contain 0
 
 	std::string m_device_name;
 
@@ -54,7 +96,8 @@ protected:
 						// or 0 if not available
 
 public:
-	DeviceEntry(const Barry::ProbeResult *result,
+	DeviceEntry(const Barry::GlobalConfigFile &config,
+		const Barry::ProbeResult *result,
 		group_ptr group,
 		OpenSync::API *engine,
 		const std::string &secondary_device_name = "");
@@ -74,7 +117,11 @@ public:
 	OpenSync::API* GetEngine() { return m_engine; }
 	const OpenSync::API* GetEngine() const { return m_engine; }
 
-	void SetConfigGroup(group_ptr group, OpenSync::API *engine);
+	DeviceExtras* GetExtras() { return m_extras.get(); }
+	const DeviceExtras* GetExtras() const { return m_extras.get(); }
+
+	void SetConfigGroup(group_ptr group, OpenSync::API *engine,
+		extras_ptr extras);
 };
 
 std::ostream& operator<< (std::ostream &os, const DeviceEntry &de);
@@ -114,6 +161,7 @@ public:
 	typedef std::vector<iterator>			subset_type;
 
 private:
+	const Barry::GlobalConfigFile &m_config;
 	OpenSync::APISet &m_apiset;
 	Barry::Probe::Results m_results;
 
@@ -125,10 +173,13 @@ protected:
 
 public:
 	/// Does a USB probe automatically
-	explicit DeviceSet(OpenSync::APISet &apiset);
+	DeviceSet(const Barry::GlobalConfigFile &config,
+		OpenSync::APISet &apiset);
 
 	/// Skips the USB probe and uses the results set given
-	DeviceSet(const Barry::Probe::Results &results, OpenSync::APISet &apiset);
+	DeviceSet(const Barry::GlobalConfigFile &config,
+		OpenSync::APISet &apiset,
+		const Barry::Probe::Results &results);
 
 	iterator FindPin(const Barry::Pin &pin);
 	const_iterator FindPin(const Barry::Pin &pin) const;

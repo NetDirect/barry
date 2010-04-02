@@ -30,9 +30,9 @@
 using namespace std;
 using namespace OpenSync;
 
-void DeviceSetTest(APISet &set)
+void DeviceSetTest(Barry::GlobalConfigFile &config, APISet &set)
 {
-	DeviceSet dset(set);
+	DeviceSet dset(config, set);
 	cout << "========================================================\n";
 	cout << " Device Set results:\n";
 	cout << "========================================================\n";
@@ -179,10 +179,12 @@ int main()
 	Barry::Init(true);
 
 	try {
+		Barry::GlobalConfigFile config("ostest");
+
 		APISet set;
 		set.OpenAvailable();
 
-		DeviceSetTest(set);
+		DeviceSetTest(config, set);
 
 		if( set.os40() ) {
 			Test(*set.os40());
