@@ -202,7 +202,9 @@ wxChar* ConflictConnection::OnRequest(const wxString &topic,
 
 	// ask the user what to do
 	ConflictDlg dlg(&m_dlg, m_supported_commands, m_changes, m_always);
+	m_dlg.StopTimer();
 	dlg.ShowModal();
+	m_dlg.StartTimer();
 
 	// done
 	m_asking_user = false;
@@ -360,7 +362,7 @@ void SyncStatusDlg::SetRunning()
 
 	m_throbber->SetRange(10);
 	m_throbber->SetValue(0);
-	m_timer.Start(250);
+	StartTimer();
 }
 
 void SyncStatusDlg::SetClose()
@@ -374,7 +376,7 @@ void SyncStatusDlg::SetClose()
 
 	m_throbber->SetRange(10);
 	m_throbber->SetValue(10);
-	m_timer.Stop();
+	StopTimer();
 }
 
 void SyncStatusDlg::Print(const std::string &msg, const wxColour &colour)
@@ -401,6 +403,16 @@ void SyncStatusDlg::ShortPrint(const wxString &msg)
 void SyncStatusDlg::Throb()
 {
 	m_throbber->Pulse();
+}
+
+void SyncStatusDlg::StartTimer()
+{
+	m_timer.Start(250);
+}
+
+void SyncStatusDlg::StopTimer()
+{
+	m_timer.Stop();
 }
 
 DeviceEntry* SyncStatusDlg::GetCurrentDevice()

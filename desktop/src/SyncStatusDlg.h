@@ -147,6 +147,8 @@ public:
 	void ShortPrint(const std::string &msg);
 	void ShortPrint(const wxString &msg);
 	void Throb();
+	void StartTimer();
+	void StopTimer();
 
 	DeviceEntry* GetCurrentDevice();
 
