@@ -137,6 +137,11 @@ void GroupCfgDlg::AddEngineSizer(wxSizer *sizer)
 		1, wxALL, 5);
 
 	sizer->Add(engine, 0, wxTOP | wxLEFT | wxRIGHT | wxEXPAND, 10);
+
+	// if only one engine is available, don't bother showing the combo
+	if( !m_apiset.os22() || !m_apiset.os40() ) {
+		sizer->Hide(engine, true);
+	}
 }
 
 void GroupCfgDlg::AddConfigSizer(wxSizer *sizer)

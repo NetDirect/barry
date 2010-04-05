@@ -4,8 +4,6 @@ Feature TODO List:
 
 Sync:
 -----
-- when configuring a device (GroupCfgDlg), hide the engine combobox
-	if there is only one engine available anyway
 - add support for xml path mapping, (see horrendous conflict dialog for
 	calendar items)
 	- contact key info: name, company, phone number, email
