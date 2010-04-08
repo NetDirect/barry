@@ -401,5 +401,19 @@ bool Group::Compare(const Group &other) const
 	return true;
 }
 
+Group::group_ptr Group::Clone() const
+{
+	group_ptr g( new Group(m_group_name) );
+
+	// clone all plugins
+	const_iterator b = begin(), e = end();
+	for( ; b != e; ++b ) {
+		plugin_ptr p( (*b)->Clone() );
+		g->push_back(p);
+	}
+
+	return g;
+}
+
 }} // namespace OpenSync::Config
 

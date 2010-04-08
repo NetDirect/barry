@@ -86,7 +86,7 @@ private:
 
 	group_ptr m_group;			// may contain 0
 	OpenSync::API *m_engine;		// may be 0
-	extras_ptr m_extras; // may contain 0
+	extras_ptr m_extras;			// may contain 0
 
 	std::string m_device_name;
 

@@ -341,6 +341,7 @@ class Group :
 {
 public:
 	typedef std::tr1::shared_ptr<OpenSync::Config::Plugin>	value_type;
+	typedef std::tr1::shared_ptr<Group>			group_ptr;
 	typedef value_type					plugin_ptr;
 	typedef std::vector<value_type>				base_type;
 	typedef base_type::iterator				iterator;
@@ -355,6 +356,10 @@ protected:
 		const member_list_type &members,
 		unsigned throw_mask);
 	bool GroupMatchesExistingConfig(OpenSync::API &api);
+
+	// not copyable... use Clone()
+	Group(const Group &other);
+	Group& operator=(const Group &other);
 
 public:
 // OpenSync Config Group Throw Masks
@@ -459,6 +464,9 @@ public:
 	/// re-saving when not necessary.
 	/// Returns true if equal.
 	bool Compare(const Group &group) const;
+
+	/// Clones this Group object and returns a group_ptr of the new one
+	group_ptr Clone() const;
 
 	/// Forget all plugins and delete them all
 	using base_type::clear;
