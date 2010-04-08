@@ -51,10 +51,10 @@ reverse engineer the battery charging handshake via USB.</p>
 		<a href="http://sourceforge.net/project/showfiles.php?group_id=153722">Sourceforge</a></li>
 	<li>General <a href="http://sourceforge.net/projects/barry/">Sourceforge project page</a></li>
 	<li><a href="http://repo.or.cz/w/barry.git">Barry git repo</a></li>
-	<li>Additional binary packages for the following distributions are available from various volunteers:
+	<li>Additional binary packages for the following distributions are available from various volunteers.  Note that these packages may already be available in your distro of choice, using the normal package managers.
 		<ul>
 			<li><a href="http://packages.debian.org/unstable/main/barry-util">Debian, in the unstable tree, packaged by Jose Carlos Garcia Sogo</a></li>
-			<li><a href="http://koji.fedoraproject.org/koji/packageinfo?packageID=7118">Fedora</a> (packaged by Nathanael Noblet) and the related RPM <a href="http://cvs.fedoraproject.org/viewvc/rpms/barry/">CVS</a></li>
+			<li><a href="http://download.fedora.redhat.com/pub/fedora/linux/releases/">Fedora</a> (packaged by Nathanael Noblet) and the related RPM <a href="http://cvs.fedoraproject.org/viewvc/rpms/barry/">CVS</a></li>
 			<li>Mandriva's RPM <a href="http://svn.mandriva.com/cgi-bin/viewvc.cgi/packages/cooker/barry/current/">SVN</a></li>
 			<li><a href="https://launchpad.net/~doctormo/+archive/barry-snapshot">Ubuntu, packaged by Martin Owens</a></li>
 		</ul>
