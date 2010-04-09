@@ -284,6 +284,7 @@ void SyncMode::ConfigureDevice(int device_index)
 	    dlg.GetExtras().get() )
 	{
 		bool skip_rewrite = false;
+		bool delete_old = false;
 
 		// does old group exist?
 		if( entry.GetEngine() &&
@@ -301,34 +302,50 @@ void SyncMode::ConfigureDevice(int device_index)
 				barryverbose("Config is the same, skipping save");
 			}
 			else {
-				// group config changed, delete to start over,
-				// since new config might change engines...
-				// and we don't want to leave stuff behind
-				entry.GetEngine()->DeleteGroup(entry.GetConfigGroup()->GetGroupName());
+				// clean up after ourselves... if the new
+				// config uses a different engine, delete
+				// the config on the old engine
+				if( entry.GetEngine() != dlg.GetEngine() ) {
+					delete_old = true;
+				}
 			}
 		}
 
-		for( int attempt = 0; !skip_rewrite && attempt < 2; attempt++ ) {
-			try {
+		if( !skip_rewrite ) try {
 
-				// save the new one
-				dlg.GetGroup()->Save(*dlg.GetEngine());
+			OpenSync::API *eng = dlg.GetEngine();
+			DeviceEntry::group_ptr grp = dlg.GetGroup();
 
-			}
-			catch( OpenSync::Config::SaveError &se ) {
-				barryverbose("Exception during save: " << se.what());
-				if( attempt < 2 ) {
-					barryverbose("Deleting group using alternate engine and resaving: " << entry.GetConfigGroup()->GetGroupName());
-					// delete and try again
-					dlg.GetEngine()->DeleteGroup(entry.GetConfigGroup()->GetGroupName());
+			// make sure that the save will be successful
+			if( grp->GroupExists(*eng) &&
+			    !grp->GroupMatchesExistingConfig(*eng) )
+			{
+				if( WarnAbout1WayReset() ) {
+					eng->DeleteGroup(grp->GetGroupName());
+					grp->DisconnectMembers();
 				}
 				else {
-					wxString msg = _T("Unable to save configuration for this device.\nError: ");
-					msg += wxString(se.what(), wxConvUTF8);
-					wxMessageBox(msg, _T("OpenSync Save Error"), wxOK | wxICON_ERROR);
+					// skip save
 					return;
 				}
 			}
+
+			if( delete_old ) {
+				barryverbose("Engine change detected in config: deleting old config '" << entry.GetConfigGroup()->GetGroupName() << "' from engine " << entry.GetEngine()->GetVersion() << " in order to save it to engine " << dlg.GetEngine()->GetVersion());
+				entry.GetEngine()->DeleteGroup(entry.GetConfigGroup()->GetGroupName());
+			}
+
+			// save the new one
+			dlg.GetGroup()->Save(*dlg.GetEngine());
+
+		}
+		catch( OpenSync::Config::SaveError &se ) {
+			barryverbose("Exception during save: " << se.what());
+			wxString msg = _T("Unable to save configuration for this device.\nError: ");
+			msg += wxString(se.what(), wxConvUTF8);
+			wxMessageBox(msg, _T("OpenSync Save Error"),
+				wxOK | wxICON_ERROR);
+			return;
 		}
 
 		// save the extras... this is cheap, so no need to check
@@ -504,6 +521,19 @@ void SyncMode::RewriteConfig(int device_index)
 	catch( std::runtime_error &re ) {
 		barryverbose("Error while deleting undefined group '" << group_name << "': " << re.what());
 	}
+}
+
+bool SyncMode::WarnAbout1WayReset()
+{
+	int answer = wxMessageBox( _T("The sync config you are about to save "
+		"is sufficiently different from the existing one that "
+		"a 1-Way Reset will be required.  You will need to "
+		"perform the reset at your earliest convenience, before "
+		"your next sync.\n\n"
+		"Continue anyway?"),
+		_T("1-Way Reset Warning"),
+		wxYES_NO | wxICON_QUESTION, m_parent);
+	return answer == wxYES;
 }
 
 void SyncMode::OnSyncNow(wxCommandEvent &event)

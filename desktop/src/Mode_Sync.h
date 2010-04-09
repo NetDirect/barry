@@ -58,6 +58,7 @@ protected:
 	int GetAuthoritativeSide(int device_index);
 	bool ZapConflicts(int device_index, int authoritative_side);
 	void RewriteConfig(int device_index);
+	bool WarnAbout1WayReset();
 
 public:
 	SyncMode(wxWindow *parent);

@@ -29,6 +29,10 @@
 
 class GroupCfgDlg : public wxDialog
 {
+	typedef OpenSync::Config::Group::plugin_ptr	plugin_ptr;
+	typedef std::map<std::string, plugin_ptr>	appcfg_map;
+	typedef std::map<OpenSync::API*, appcfg_map>	engapp_map;
+
 	DECLARE_EVENT_TABLE()
 
 	// external data sources
@@ -42,12 +46,15 @@ class GroupCfgDlg : public wxDialog
 
 	// in-process config results... i.e. the plugin config
 	// is stored here, and can be overwritten as the user
-	// keeps fiddling with the controls... at the end, if
-	// valid, this config is added to the group for a
-	// final configuration result
+	// keeps fiddling with the controls... a map of engines
+	// and apps is kept, so that if the user changes engine
+	// or app, and then changes back, his settings are not lost...
+	// this also means that pre-existing configs from outside
+	// the dialog are kept if possible, to help with re-saving
+	// of opensync configs
+	engapp_map m_plugins;			// map of engines/apps/plugins
 	OpenSync::API *m_engine;		// current engine
 	OpenSync::Config::Barry m_barry_plugin;
-	OpenSync::Config::Group::plugin_ptr m_app_plugin;
 	std::string m_favour_plugin_name;	// an extra
 
 	// dialog controls
@@ -72,12 +79,14 @@ protected:
 
 	void SelectCurrentEngine();
 	void LoadBarryConfig();
-	void SelectApplication();
+	void SelectApplication(const std::string appname);
 	void SelectFavour();
-	bool IsAppConfigured();		// returns true if it is safe to
-					// exit the dialog successfully, and
-					// there's no more that needs to be
-					// done before an opensync config save
+
+	std::string GetCurrentAppName() const;	// returns name of currently
+					// selected app, for the currently
+					// selected engine... if none selected,
+					// returns empty string (size() == 0)
+	plugin_ptr GetCurrentPlugin();
 
 public:
 	GroupCfgDlg(wxWindow *parent, const DeviceEntry &device,

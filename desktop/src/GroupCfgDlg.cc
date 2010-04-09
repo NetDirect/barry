@@ -57,6 +57,12 @@ GroupCfgDlg::GroupCfgDlg(wxWindow *parent,
 	, m_debug_check(0)
 	, m_favour_radios(0)
 {
+	std::string appname;
+
+	// make sure there is at least one engine
+	if( !apiset.os22() && !apiset.os40() )
+		throw std::logic_error("Must have at least one engine in GroupCfgDlg");
+
 	// setup the raw GUI
 	CreateLayout();
 
@@ -73,7 +79,7 @@ GroupCfgDlg::GroupCfgDlg(wxWindow *parent,
 	}
 
 	// initialize local group and plugin data
-	if( m_device.GetConfigGroup() ) {
+	if( m_engine && m_device.GetConfigGroup() ) {
 		const Config::Group *group = m_device.GetConfigGroup();
 		// use existing group name, if available
 		m_group_name = group->GetGroupName();
@@ -84,8 +90,10 @@ GroupCfgDlg::GroupCfgDlg(wxWindow *parent,
 
 		// copy non-Barry plugin config, if available
 		const Config::Plugin *plugin = group->GetNonBarryPlugin();
-		if( plugin )
-			m_app_plugin.reset( plugin->Clone() );
+		if( plugin ) {
+			appname = plugin->GetAppName();
+			m_plugins[m_engine][appname].reset( plugin->Clone() );
+		}
 	}
 	else {
 		m_group_name = "barrydesktop_" + m_device.GetPin().str();
@@ -99,7 +107,7 @@ GroupCfgDlg::GroupCfgDlg(wxWindow *parent,
 
 	SelectCurrentEngine();
 	LoadBarryConfig();
-	SelectApplication();
+	SelectApplication(appname);
 	SelectFavour();
 }
 
@@ -299,12 +307,9 @@ void GroupCfgDlg::LoadBarryConfig()
 	m_debug_check->SetValue( bp.IsDebugMode() );
 }
 
-void GroupCfgDlg::SelectApplication()
+void GroupCfgDlg::SelectApplication(const std::string appname)
 {
-	if( m_app_plugin.get() ) {
-		m_app_combo->SetValue(
-			wxString(m_app_plugin->GetAppName().c_str(), wxConvUTF8));
-	}
+	m_app_combo->SetValue(wxString(appname.c_str(), wxConvUTF8));
 }
 
 void GroupCfgDlg::SelectFavour()
@@ -323,16 +328,33 @@ void GroupCfgDlg::SelectFavour()
 	}
 }
 
-void GroupCfgDlg::OnConfigureApp(wxCommandEvent &event)
+std::string GroupCfgDlg::GetCurrentAppName() const
 {
 	wxString app = m_app_combo->GetValue();
+	return std::string(app.utf8_str());
+}
+
+GroupCfgDlg::plugin_ptr GroupCfgDlg::GetCurrentPlugin()
+{
+	string appname = GetCurrentAppName();
+	appcfg_map &cfgs = m_plugins[m_engine];
+	appcfg_map::iterator pi = cfgs.find(appname);
+	if( pi != cfgs.end() )
+		return pi->second;
+	else
+		return plugin_ptr();
+}
+
+void GroupCfgDlg::OnConfigureApp(wxCommandEvent &event)
+{
+	string app = GetCurrentAppName();
 	if( app.size() == 0 ) {
 		wxMessageBox(_T("Please select an application."),
 			_T("Application Config"), wxOK | wxICON_ERROR, this);
 		return;
 	}
 
-	ConfigUI::ptr ui = ConfigUI::CreateConfigUI(std::string(app.utf8_str()));
+	ConfigUI::ptr ui = ConfigUI::CreateConfigUI(app);
 
 	if( !ui.get() ) {
 		wxMessageBox(_T("No configuration interface available for this Application."),
@@ -341,16 +363,19 @@ void GroupCfgDlg::OnConfigureApp(wxCommandEvent &event)
 		return;
 	}
 
-	if( ui->Configure(this, m_app_plugin) ) {
+	if( ui->Configure(this, GetCurrentPlugin()) ) {
 		ConfigUI::plugin_ptr plugin = ui->GetPlugin();
 		if( plugin.get() ) {
-			m_app_plugin = plugin;
+			m_plugins[m_engine][app] = plugin;
 		}
 	}
 }
 
 void GroupCfgDlg::OnEngineComboChange(wxCommandEvent &event)
 {
+	// remember what plugin we're using
+	plugin_ptr old_app = GetCurrentPlugin();
+
 	// update engine pointer
 	wxString newEngine = m_engine_combo->GetValue();
 	if( m_apiset.os22() && newEngine == wxString(m_apiset.os22()->GetVersion(), wxConvUTF8) ) {
@@ -365,20 +390,18 @@ void GroupCfgDlg::OnEngineComboChange(wxCommandEvent &event)
 
 	// if plugin can be configured in new engine, keep our current
 	// config, otherwise, reset
-	if( m_engine->GetConverter().IsPluginSupported(m_app_plugin->GetPluginName(*m_engine)) ) {
+	if( old_app.get() && m_engine->GetConverter().IsPluginSupported(old_app->GetPluginName(*m_engine)) ) {
 		// update the app list
-		SelectApplication();
+		SelectApplication(old_app->GetAppName());
 	}
 	else {
 		// leave GUI as is, and zap our plugin data
-		m_app_plugin.reset();
+		SelectApplication("");
 	}
 }
 
 void GroupCfgDlg::OnAppComboChange(wxCommandEvent &event)
 {
-	// if the application changes, that invalidates our plugin config
-	m_app_plugin.reset();
 }
 
 bool GroupCfgDlg::TransferDataFromWindow()
@@ -398,12 +421,13 @@ bool GroupCfgDlg::TransferDataFromWindow()
 	}
 
 	// make sure the application plugin is configured
-	if( !m_app_plugin.get() || !m_app_plugin->IsConfigured(*m_engine) ) {
+	plugin_ptr app = GetCurrentPlugin();
+	if( !app.get() || !app->IsConfigured(*m_engine) ) {
 		// the app hasn't been configured yet, do it automatically
 		wxCommandEvent event;
 		OnConfigureApp(event);
 
-		if( !m_app_plugin.get() || !m_app_plugin->IsConfigured(*m_engine) ) {
+		if( !app.get() || !app->IsConfigured(*m_engine) ) {
 			wxMessageBox(_T("The application plugin is not fully configured."),
 				_T("Application Config"), wxOK | wxICON_ERROR, this);
 			return false;
@@ -423,7 +447,7 @@ bool GroupCfgDlg::TransferDataFromWindow()
 		break;
 
 	case 1:	// Favour application
-		m_favour_plugin_name = m_app_plugin->GetPluginName(*m_engine);
+		m_favour_plugin_name = app->GetPluginName(*m_engine);
 		break;
 
 	case 2:	// Ask me
@@ -442,12 +466,12 @@ bool GroupCfgDlg::TransferDataFromWindow()
 int GroupCfgDlg::ShowModal()
 {
 	int status = wxDialog::ShowModal();
-	if( status == wxID_OK && m_app_plugin.get() ) {
+	plugin_ptr app = GetCurrentPlugin();
+	if( status == wxID_OK && app.get() ) {
 		// construct a new group from user's results
 		m_group.reset( new Config::Group(m_group_name) );
-		m_group->AddPlugin( new Config::Barry(m_barry_plugin) );
-		m_group->AddPlugin( m_app_plugin->Clone() );
-		m_group->DisconnectMembers(); // just to be safe
+		m_group->AddPlugin( m_barry_plugin.Clone() );
+		m_group->AddPlugin( app->Clone() );
 
 		// don't forget the extras
 		m_extras.reset( new DeviceExtras(m_barry_plugin.GetPin()) );
