@@ -207,6 +207,11 @@ void BaseFrame::EnableBackButton(Mode *new_mode)
 	// destroy the device switcher combo box
 	m_device_combo.reset();
 
+	// without the device combo, there is no concept of a
+	// "current device" so temporarily disable the USB options
+	m_sysmenu->Enable(SysMenu_ResetDevice, false);
+	m_sysmenu->Enable(SysMenu_RescanUsb, false);
+
 	// repaint!
 	Refresh(false);
 }
@@ -221,6 +226,10 @@ void BaseFrame::DisableBackButton()
 
 	// create the device switcher combo again
 	CreateDeviceCombo(wxGetApp().GetGlobalConfig().GetLastDevice());
+
+	// enable the USB menu options
+	m_sysmenu->Enable(SysMenu_ResetDevice, true);
+	m_sysmenu->Enable(SysMenu_RescanUsb, true);
 
 	// reset the current mode to main menu and repaint
 	m_current_mode = m_main_menu_mode.get();
