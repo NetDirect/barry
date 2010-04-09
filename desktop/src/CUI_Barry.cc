@@ -37,7 +37,7 @@ std::string Barry::AppName() const
 	return OpenSync::Config::Barry::AppName();
 }
 
-bool Barry::Configure(wxWindow *parent)
+bool Barry::Configure(wxWindow *parent, plugin_ptr old_plugin)
 {
 	return false;
 }
@@ -58,7 +58,7 @@ void Barry::PreSyncAppInit()
 }
 
 bool Barry::ZapData(wxWindow *parent,
-			OpenSync::Config::Group::plugin_ptr plugin,
+			plugin_ptr plugin,
 			OpenSync::API *engine)
 {
 	m_parent = parent;

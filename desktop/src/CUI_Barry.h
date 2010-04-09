@@ -42,12 +42,11 @@ public:
 
 	// virtual overrides (ConfigUI)
 	virtual std::string AppName() const;
-	virtual bool Configure(wxWindow *parent);
+	virtual bool Configure(wxWindow *parent, plugin_ptr old_plugin);
 	virtual plugin_ptr GetPlugin();
 	virtual bool RunApp(wxWindow *parent);
 	virtual void PreSyncAppInit();
-	virtual bool ZapData(wxWindow *parent,
-		OpenSync::Config::Group::plugin_ptr plugin,
+	virtual bool ZapData(wxWindow *parent, plugin_ptr plugin,
 		OpenSync::API *engine);
 };
 

@@ -55,7 +55,8 @@ public:
 	/// Returns OpenSync::Config::*::AppName() for the specific app
 	virtual std::string AppName() const = 0;
 	/// Handles all the GUI work of configuring the App
-	virtual bool Configure(wxWindow *parent) = 0;
+	/// old_plugin may contain null if this is a first-time config
+	virtual bool Configure(wxWindow *parent, plugin_ptr old_plugin) = 0;
 	/// Returns a configured plugin object (after a successful Configure())
 	virtual plugin_ptr GetPlugin() = 0;
 	/// Runs the Application, if not already running.. parent may
@@ -68,8 +69,7 @@ public:
 	/// Presents the user with the warning / instructions for zapping
 	/// the data on this plugin.  Returns false if user aborted along
 	/// the way.
-	virtual bool ZapData(wxWindow *parent,
-		OpenSync::Config::Group::plugin_ptr plugin,
+	virtual bool ZapData(wxWindow *parent, plugin_ptr plugin,
 		OpenSync::API *engine) = 0;
 
 	static configui_ptr CreateConfigUI(const std::string &appname);

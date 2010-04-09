@@ -341,7 +341,7 @@ void GroupCfgDlg::OnConfigureApp(wxCommandEvent &event)
 		return;
 	}
 
-	if( ui->Configure(this) ) {
+	if( ui->Configure(this, m_app_plugin) ) {
 		ConfigUI::plugin_ptr plugin = ui->GetPlugin();
 		if( plugin.get() ) {
 			m_app_plugin = plugin;

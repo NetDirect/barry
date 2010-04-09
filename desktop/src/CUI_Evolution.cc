@@ -205,12 +205,19 @@ std::string Evolution::AppName() const
 	return OpenSync::Config::Evolution::AppName();
 }
 
-bool Evolution::Configure(wxWindow *parent)
+bool Evolution::Configure(wxWindow *parent, plugin_ptr old_plugin)
 {
 	m_parent = parent;
 
 	// create our plugin config
-	m_container.reset( m_evolution = new OpenSync::Config::Evolution );
+	m_evolution = dynamic_cast<OpenSync::Config::Evolution*> (old_plugin.get());
+	if( m_evolution ) {
+		m_evolution = m_evolution->Clone();
+	}
+	else {
+		m_evolution = new OpenSync::Config::Evolution;
+	}
+	m_container.reset( m_evolution );
 
 	// if auto detect fails, fall back to starting Evolution
 	// for the first time
@@ -240,7 +247,7 @@ void Evolution::PreSyncAppInit()
 }
 
 bool Evolution::ZapData(wxWindow *parent,
-			OpenSync::Config::Group::plugin_ptr plugin,
+			plugin_ptr plugin,
 			OpenSync::API *engine)
 {
 	m_parent = parent;
