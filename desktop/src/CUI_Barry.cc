@@ -61,6 +61,8 @@ bool Barry::ZapData(wxWindow *parent,
 			plugin_ptr plugin,
 			OpenSync::API *engine)
 {
+	try {
+
 	m_parent = parent;
 
 	// extract OpenSync::Config::Barry from plugin
@@ -149,6 +151,17 @@ bool Barry::ZapData(wxWindow *parent,
 	}
 
 	return true;
+
+	} catch( ::Barry::Error &e ) {
+		ostringstream oss;
+		oss << "Barry exception: " << e.what() << "\n\n"
+			"You may need to do a USB reset and rescan from the "
+			"main menu.";
+		wxString msg(oss.str().c_str(), wxConvUTF8);
+		wxMessageBox(msg, _T("Barry Exception"),
+			wxOK | wxICON_ERROR, m_parent);
+		return false;
+	}
 }
 
 }
