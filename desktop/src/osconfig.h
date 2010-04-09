@@ -355,7 +355,6 @@ protected:
 		const std::string &group_name,
 		const member_list_type &members,
 		unsigned throw_mask);
-	bool GroupMatchesExistingConfig(OpenSync::API &api);
 
 	// not copyable... use Clone()
 	Group(const Group &other);
@@ -444,6 +443,16 @@ public:
 	/// If you don't want to actually delete any members from any
 	/// existing configs, then DisconnectMembers() first.
 	void DeletePlugin(iterator i, OpenSync::API &api);
+
+	/// Returns true if it is possible to resave this
+	/// Group to the existing opensync config.  If this returns
+	/// false, and there are connected members, Save() will
+	/// throw.  Save() will automatically call this function
+	/// during saving.
+	///
+	/// Note: only call this if GroupExists() is true, otherwise,
+	/// this function is irrelevant.
+	bool GroupMatchesExistingConfig(OpenSync::API &api);
 
 	/// Save all plugins as members of the group.  If the group doesn't
 	/// exist, it will be created.  If the group does exist, and its
