@@ -127,8 +127,10 @@ bool Group::GroupMatchesExistingConfig(OpenSync::API &api)
 	//
 
 	// check totals match
-	if( (unsigned) GetConnectedCount() != members.size() )
+	if( (unsigned) GetConnectedCount() != members.size() ) {
+		barryverbose("Connected count of " << GetConnectedCount() << " does not match member count of " << members.size());
 		return false;
+	}
 
 	// cycle through our own vector, matching against each member_id
 	// in the members list
@@ -138,11 +140,17 @@ bool Group::GroupMatchesExistingConfig(OpenSync::API &api)
 			continue;
 
 		Member *m = members.Find( (*ci)->GetMemberId() );
-		if( !m )
+		if( !m ) {
+			barryverbose("Can't match member ID: " << (*ci)->GetMemberId() );
 			return false;
+		}
 
-		if( m->plugin_name != (*ci)->GetPluginName(api) )
+		if( m->plugin_name != (*ci)->GetPluginName(api) ) {
+			barryverbose("Plugin names don't match: "
+				<< m->plugin_name << ", "
+				<< (*ci)->GetPluginName(api));
 			return false;
+		}
 	}
 
 	return true;
@@ -273,6 +281,8 @@ void Group::Load(const std::string &src_group_name,
 	for( ; b != e; ++b ) {
 		Converter &converter = api.GetConverter();
 		Converter::plugin_ptr p = converter.CreateAndLoadPlugin(*b);
+		p->SetMemberId(b->id);
+
 		if( p->IsUnsupported() && (throw_mask & OSCG_THROW_ON_UNSUPPORTED) ) {
 			ostringstream oss;
 			oss << "Unsupported plugin '" << b->plugin_name << "' in group '" << src_group_name << "' and OSCG_THROW_ON_UNSUPPORTED is set.";
