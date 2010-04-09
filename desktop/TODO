@@ -8,13 +8,10 @@ Sync:
 	calendar items)
 	- contact key info: name, company, phone number, email
 	- calendar key info: summary, dates, location, description
-- when a change is made to an existing config, under 0.22, warn the
-	user that a 1-Way Reset may be needed?
 - test 0.4x, and see if it is possible to do a clean one-way
 	sync without deleting all 4 databases... on 0.22 this
 	seems to cause opensync to go into a stupendously long
 	busy loop... maybe 0.4x is better
-- add support for parsing the XML conflict data from opensync
 - when pressing the Sync button, if a device is selected that is not
 	yet configured, ask the user if they want to configure or cancel,
 	and let them jump directly into the configure mode
