@@ -1,5 +1,9 @@
 Release: version 0.17 - 2010/01/??
 ------------------------------------------------------------------------------
+2010/04/19
+	- lib: added LDIF mapping support for Contact::Image fields
+	- lib: fixed signed extension bug in base64 encoder
+	- sync: ported Photo support from 0.4x plugin to 0.22 plugin
 2010/03/30
 	- updated Fedora and Mandriva maintainer info
 2010/03/18
