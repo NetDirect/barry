@@ -246,6 +246,14 @@ const std::string& vCard::ToVCard(const Barry::Contact &con)
 	if( con.Categories.size() )
 		AddCategories(con.Categories);
 
+	// Image / Photo
+	if (con.Image.size()) {
+		vAttrPtr photo = NewAttr("PHOTO");
+		AddEncodedValue(photo, VF_ENCODING_BASE64, con.Image.c_str(), con.Image.size());
+		AddParam(photo, "ENCODING", "BASE64");
+		AddAttr(photo);
+	}
+
 	// generate the raw VCARD data
 	m_gCardData = b_vformat_to_string(Format(), VFORMAT_CARD_30);
 	m_vCardData = m_gCardData;
@@ -511,6 +519,29 @@ const Barry::Contact& vCard::ToBarry(const char *vcard, uint32_t RecordId)
 	con.URL = GetAttr("URL");
 	if( GetAttr("BDAY").size() && !con.Birthday.FromYYYYMMDD( GetAttr("BDAY") ) )
 		throw ConvertError("Unable to parse BDAY field");
+
+	// Photo vCard ?
+	vAttr photo = GetAttrObj("PHOTO");
+	if (photo.Get()) {
+		std::string sencoding = photo.GetAllParams("ENCODING");
+
+		ToLower(sencoding);
+
+		const char *encoding = sencoding.c_str();
+
+		if (strstr(encoding, "quoted-printable")) {
+			photo.Get()->encoding = VF_ENCODING_QP;
+
+			con.Image = photo.GetDecodedValue();
+		}
+		else if (strstr(encoding, "b")) {
+			photo.Get()->encoding = VF_ENCODING_BASE64;
+
+			con.Image = photo.GetDecodedValue();
+		}
+		// Else
+		// We ignore the photo, I don't know decoded !
+	}
 
 	vAttr cat = GetAttrObj("CATEGORIES");
 	if( cat.Get() )

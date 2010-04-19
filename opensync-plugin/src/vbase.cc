@@ -64,6 +64,23 @@ std::string vAttr::GetValue(int nth)
 	return ret;
 }
 
+std::string vAttr::GetDecodedValue()
+{
+	std::string ret;
+	GString *value = NULL;
+
+	if( m_attr ) {
+		if( b_vformat_attribute_is_single_valued(m_attr) ) {
+			value = b_vformat_attribute_get_value_decoded(m_attr);
+		}
+	}
+
+	if( value )
+		ret.assign(value->str, value->len);
+
+	return ret;
+}
+
 std::string vAttr::GetParam(const char *name, int nth)
 {
 	std::string ret;
@@ -205,6 +222,20 @@ void vBase::AddValue(vAttrPtr &attr, const char *value)
 	}
 */
 	b_vformat_attribute_add_value(attr.Get(), value);
+}
+
+void vBase::AddEncodedValue(vAttrPtr &attr, b_VFormatEncoding encoding, const char *value, int len)
+{
+	Trace trace("vBase::AddValue");
+	if( !attr.Get() ) {
+		trace.log("attribute pointer contains no data, skipping");
+		return;
+	}
+
+	attr.Get()->encoding = encoding;
+	attr.Get()->encoding_set = TRUE;
+
+	b_vformat_attribute_add_value_decoded(attr.Get(), value, len);
 }
 
 void vBase::AddParam(vAttrPtr &attr, const char *name, const char *value)
