@@ -175,6 +175,7 @@ public:
 	virtual std::string JobTitle(const Barry::Contact &con) const;
 	virtual std::string PublicKey(const Barry::Contact &con) const;
 	virtual std::string Notes(const Barry::Contact &con) const;
+	virtual std::string Image(const Barry::Contact &con) const;
 	// calculated values...
 	virtual std::string WorkPostalAddress(const Barry::Contact &con) const;
 	virtual std::string HomePostalAddress(const Barry::Contact &con) const;
@@ -214,6 +215,7 @@ public:
 	virtual void SetJobTitle(Barry::Contact &con, const std::string &val) const;
 	virtual void SetPublicKey(Barry::Contact &con, const std::string &val) const;
 	virtual void SetNotes(Barry::Contact &con, const std::string &val) const;
+	virtual void SetImage(Barry::Contact &con, const std::string &val) const;
 	virtual void SetWorkPostalAddress(Barry::Contact &con, const std::string &val) const;
 	virtual void SetHomePostalAddress(Barry::Contact &con, const std::string &val) const;
 	virtual void SetFullName(Barry::Contact &con, const std::string &val) const;

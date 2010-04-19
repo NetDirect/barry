@@ -78,6 +78,8 @@ const ContactLdif::NameToFunc ContactLdif::FieldMap[] = {
 		&ContactLdif::PublicKey, &ContactLdif::SetPublicKey },
 	{ "Notes", "Notes",
 		&ContactLdif::Notes, &ContactLdif::SetNotes },
+	{ "Image", "Contact photo",
+		&ContactLdif::Image, &ContactLdif::SetImage },
 	{ "WorkPostalAddress", "Mailing Work address (includes address lines, city, province, country, and postal code)",
 		&ContactLdif::WorkPostalAddress, &ContactLdif::SetWorkPostalAddress },
 	{ "HomePostalAddress", "Mailing home address (includes address lines, city, province, country, and postal code)",
@@ -141,6 +143,14 @@ ContactLdif::ContactLdif(const std::string &baseDN)
 	Map("postalAddress", &ContactLdif::WorkPostalAddress, &ContactLdif::SetWorkPostalAddress);
 	Map("homePostalAddress", &ContactLdif::HomePostalAddress, &ContactLdif::SetHomePostalAddress);
 	Map("note", &ContactLdif::Notes, &ContactLdif::SetNotes);
+	// FIXME - jpegPhoto looks like the only LDIF field for photo
+	// images... it is unknown which format will come from the
+	// BlackBerry in the Image field, so we can't guarantee
+	// that Image will be in JPG.  This mapping can be done manually
+	// from the btool command line with "-m jpegPhoto,Image,Image"
+	// Reading photos from LDIF should be fine, since the BlackBerry
+	// seems to handle most formats.
+//	Map("jpegPhoto", &ContactLdif::Image, &ContactLdif::SetImage);
 
 	// add heuristics hooks
 	Hook("cn", &m_cn);
@@ -392,6 +402,11 @@ std::string ContactLdif::Notes(const Barry::Contact &con) const
 	return con.Notes;
 }
 
+std::string ContactLdif::Image(const Barry::Contact &con) const
+{
+	return con.Image;
+}
+
 std::string ContactLdif::WorkPostalAddress(const Barry::Contact &con) const
 {
 	return con.WorkAddress.GetLabel();
@@ -546,6 +561,11 @@ void ContactLdif::SetPublicKey(Barry::Contact &con, const std::string &val) cons
 void ContactLdif::SetNotes(Barry::Contact &con, const std::string &val) const
 {
 	con.Notes = val;
+}
+
+void ContactLdif::SetImage(Barry::Contact &con, const std::string &val) const
+{
+	con.Image = val;
 }
 
 void ContactLdif::SetWorkPostalAddress(Barry::Contact &con, const std::string &val) const
