@@ -41,7 +41,7 @@ public:
 		if (begin == end) {
 			return EOF;
 		}
-		return *begin++;
+		return (int)((unsigned int)(unsigned char) *begin++);
 	}
 };
 
