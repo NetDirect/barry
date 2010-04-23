@@ -135,21 +135,35 @@ Converter::plugin_ptr Converter40::CreateAndLoadPlugin(const Member &member)
 	return Converter::plugin_ptr();
 }
 
-std::string Converter40::GetPluginName(const Config::Barry &)
+std::string Converter40::GetPluginName(const Config::Barry &) const
 {
 	throw std::logic_error("Not supported on this system.");
 }
 
-std::string Converter40::GetPluginName(const Config::Evolution &)
+std::string Converter40::GetPluginName(const Config::Evolution &) const
 {
 	throw std::logic_error("Not supported on this system.");
 }
 
-std::string Converter40::GetPluginName(const Config::Unsupported &)
+std::string Converter40::GetPluginName(const Config::Unsupported &) const
 {
 	throw std::logic_error("Not supported on this system.");
 }
 
+bool Converter40::IsConfigured(const Config::Barry &) const
+{
+	return false;
+}
+
+bool Converter40::IsConfigured(const Config::Evolution &) const
+{
+	return false;
+}
+
+bool Converter40::IsConfigured(const Config::Unsupported &) const
+{
+	return false;
+}
 
 void Converter40::Load(Config::Barry &config, const Member &member)
 {
