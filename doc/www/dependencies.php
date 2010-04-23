@@ -68,6 +68,7 @@ some are only needed for building CVS.
 	<li><b>libiconv</b>, needed for international charset conversions... most
 		Linux distros have this as part of libc.  If you are using another
 		OS such as FreeBSD, you'll have to install this separately.</li>
+	<li><b>libxml++</b> version 2.6 for the desktop</li>
 	<li><b>gettext</b>, needed for the iconv.m4 file, on some systems,
 		when building from CVS to generate configure.</li>
 	<li><b>php5</b>, needed for generating static HTML documentation (CVS builds only) </li>
@@ -128,6 +129,7 @@ maintainer/depscripts.</p>
 	<li> libglademm24-devel </li>
 	<li> fuse-devel </li>
 	<li> zlib-devel </li>
+	<li> libxml++-devel </li>
 	<li> gettext-devel </li>
 	<li> libopensync-devel (0.22) </li>
 	<li> ccache (optional) </li>
@@ -152,6 +154,7 @@ maintainer/depscripts.</p>
 	<li> libglibmm-2.4-dev </li>
 	<li> libglademm-2.4-dev </li>
 	<li> libfuse-dev </li>
+	<li> libxml++2.6-dev </li>
 	<li> zlib1g-dev </li>
 	<li> gettext </li>
 	<li> libopensync0-dev </li>
