@@ -344,8 +344,34 @@ void XmlNodeMap::ImportNodes(xmlpp::Node *node, bool purge)
 /// the unused mappings.
 void XmlNodeMap::PurgeEmpties()
 {
-	iterator new_end = remove_if(begin(), end(),
-		mem_fun_ref(&XmlNodeMapping::IsEmpty));
+//	iterator new_end = remove_if(begin(), end(),
+//		mem_fun_ref(&XmlNodeMapping::IsEmpty));
+
+	// -------------------------------------------------------
+	// not all compilers compile remove_if() for us, so do it
+	// manually: find the first empty
+	iterator new_end = begin();
+	for( ; new_end != end(); ++new_end ) {
+		if( new_end->IsEmpty() )
+			break;
+	}
+	if( new_end == end() )
+		return; // nothing is empty, nothing to purge
+
+	// copy the remainder, skipping the empties
+	iterator good = new_end;
+	++good;
+	for( ; good != end(); ++good ) {
+       		if( !good->IsEmpty() ) {
+			*new_end = *good;
+			++new_end;
+		}
+	}
+	// done re-implementation of remove_if()
+	// -------------------------------------------------------
+
+	// erase the junk at the end (need to call this whether
+	// you use remove_if() or not
 	erase(new_end, end());
 }
 
