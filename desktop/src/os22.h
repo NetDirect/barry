@@ -59,6 +59,7 @@ public:
 
 	// General engine information
 	const char* GetVersion() const;
+	const char* GetEngineName() const;
 	void GetPluginNames(string_list_type &plugins);
 	void GetFormats(format_list_type &formats);
 

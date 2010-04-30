@@ -44,6 +44,11 @@ const char* OpenSync40::GetVersion() const
 	return 0;
 }
 
+const char* OpenSync40::GetEngineName() const
+{
+	return "0.40";
+}
+
 void OpenSync40::GetPluginNames(string_list_type &plugins)
 {
 }

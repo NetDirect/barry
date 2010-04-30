@@ -260,6 +260,7 @@ public:
 
 	// General engine information
 	virtual const char* GetVersion() const = 0;
+	virtual const char* GetEngineName() const = 0; // "0.22" or "0.40", etc
 	virtual void GetPluginNames(string_list_type &plugins) = 0;
 	virtual void GetFormats(format_list_type &formats) = 0;
 

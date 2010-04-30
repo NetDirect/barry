@@ -46,6 +46,11 @@ const char* OpenSync22::GetVersion() const
 	return 0;
 }
 
+const char* OpenSync22::GetEngineName() const
+{
+	return "0.22";
+}
+
 void OpenSync22::GetPluginNames(string_list_type &plugins)
 {
 }
