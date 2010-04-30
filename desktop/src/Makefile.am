@@ -1,4 +1,6 @@
 
+SUBDIRS = . 0.22 0.40
+
 INCLUDES = $(TREE_BUILD_CXXFLAGS) $(BARRY_CFLAGS) $(OPENSYNC22_CFLAGS) $(OPENSYNC40_CFLAGS) $(GLIB2_CFLAGS)
 # opensync libraries are not included here... they are loaded with dlopen()
 LIBS = $(TREE_BUILD_LDFLAGS) $(BARRY_LIBS) $(GLIB2_LIBS)
@@ -8,13 +10,14 @@ AM_CPPFLAGS = -DBARRYDESKTOP_IMAGEDIR='"$(imagedir)"'
 AM_LDFLAGS =
 
 bin_PROGRAMS = barrydesktop bsyncjail
-noinst_PROGRAMS = ostest xmlcompactor
+noinst_PROGRAMS = ostest xmlcompactor xmlmap
 
 barrydesktop_SOURCES = \
 	barrydesktop.cc barrydesktop.h \
 	windowids.h \
 	util.cc util.h \
 	xmlcompactor.cc xmlcompactor.h \
+	xmlmap.cc xmlmap.h \
 	ClickImage.cc ClickImage.h \
 	PNGButton.cc PNGButton.h \
 	BaseButtons.cc BaseButtons.h \
@@ -104,6 +107,10 @@ ostest_LDADD = -ldl
 xmlcompactor_SOURCES = xmlcompactor.cc xmlcompactor.h
 xmlcompactor_CXXFLAGS = -DXMLCOMPACTOR $(AM_CXXFLAGS) $(LIBXMLPP_CFLAGS)
 xmlcompactor_LDADD = $(LIBXMLPP_LIBS)
+
+xmlmap_SOURCES = xmlmap.cc xmlmap.h
+xmlmap_CXXFLAGS = -DXMLMAP $(AM_CXXFLAGS) $(LIBXMLPP_CFLAGS)
+xmlmap_LDADD = $(LIBXMLPP_LIBS)
 
 noinst_HEADERS =
 

@@ -1,0 +1,135 @@
+# The order listed in this file is the order that the fields will be
+# stored when parsed into friendly lists.
+#
+#
+# Note: Type may be included in any of these:
+#
+# $ = use first value found
+# % = generate comma separated list of all values of that name
+# , = add comma after value if non-zero length
+# ( = enclose next variable or list in parentheses
+#
+Contact /contact/Name 0 $Prefix $FirstName $Additional $LastName $Suffix
+	FirstName
+	LastName
+	Additional
+	Prefix
+	Suffix
+#Contact /contact/FormattedName 0 $Content
+#	Content
+Contact /contact/Organization 0 $Name
+	Name
+	Department
+	Unit
+# Type not included in compare list, since it varies...
+Contact /contact/Telephone 0 $Content (%Type
+	Content
+Contact /contact/EMail 0 $Content (%Type
+	Content
+	Type
+Contact /contact/Categories 1 %Category
+	Category
+Contact /contact/Address 1 (%Type $PostalBox $Street, $City, $Region, $Country, $PostalCode
+	PostalBox
+	Street
+	City
+	Region
+	Country
+	PostalCode
+	ExtendedAddress
+	Type
+#Contact /contact/AddressLabel 1 $Content
+#	Content
+#	Type
+Contact /contact/Title 1 $Content
+	Content
+Contact /contact/Nickname 1 $Content
+	Content
+Contact /contact/Birthday 1 $Content
+	Content
+Contact /contact/Note 1 $Content
+	Content
+Contact /contact/Photo 1 Image Data
+	Content
+Contact /contact/Url 1 $Content
+	Content
+Contact /contact/Agent 1 $Content
+	Content
+Contact /contact/Mailer 1 $Content
+	Content
+Contact /contact/Timezone 1 $Content
+	Content
+Contact /contact/Location 1 $Latitude / $Longitude
+	Latitude
+	Longitude
+Contact /contact/Role 1 $Content
+	Content
+Contact /contact/Logo 1 Logo Data
+	Content
+Contact /contact/Class 1 $Content
+	Content
+
+
+# key event data: summary, dates, location, description
+Calendar /vcal/Summary 0 $Content
+	Content
+Calendar /vcal/Description 0 $Content
+	Content
+Calendar /vcal/Location 0 $Content
+	Content
+Calendar /vcal/Categories 1 %Category
+	Category
+Calendar /vcal/Method 1 $Content
+	Content
+Calendar /vcal/DateCalendarCreated 1 $Content
+	Content
+Calendar /vcal/PercentComplete 1 $Content
+	Content
+Calendar /vcal/DateCreated 1 $Content
+	Content
+Calendar /vcal/DateStarted 1 $Content
+	Content
+Calendar /vcal/RecurrenceRule 1 %Rule
+	Rule
+Calendar /vcal/Transparency 1 $Content
+	Content
+# FIXME - Alarm needs testing:
+Calendar /vcal/Alarm 1 $AlarmDescription
+	AlarmAction
+	AlarmDescription
+	AlarmTrigger
+Calendar /vcal/Class 1 $Content
+	Content
+Calendar /vcal/DateDue 1 $Content
+	Content
+Calendar /vcal/Url 1 $Content
+	Content
+Calendar /vcal/Priority 1 $Content
+	Content
+Calendar /vcal/Sequence 1 $Content
+	Content
+Calendar /vcal/RecurrenceDate 1 $Content
+	Content
+Calendar /vcal/Geo 1 $Latitude / $Longitude
+	Latitude
+	Longitude
+Calendar /vcal/Completed 1 $Content
+	Content
+Calendar /vcal/Organizer 1 $Content
+	Content
+Calendar /vcal/Status 1 $Content
+	Content
+Calendar /vcal/Duration 1 $Content
+	Content
+Calendar /vcal/Attach 1 Attach Data
+	Content
+Calendar /vcal/Attendee 1 $Content
+	Content
+Calendar /vcal/Contact 1 $Content
+	Content
+#Calendar /vcal/ExclusionDate 1 $Content
+#	Content
+#	Value
+Calendar /vcal/DateEnd 1 $Content
+	Content
+

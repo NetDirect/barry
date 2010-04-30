@@ -11,6 +11,8 @@ if [ "$1" = "clean" ] ; then
 		images/Makefile.in \
 		man/Makefile.in \
 		src/Makefile.in src/*.bak \
+		src/0.22/Makefile.in \
+		src/0.40/Makefile.in \
 		INSTALL \
 		config.h.in~
 else

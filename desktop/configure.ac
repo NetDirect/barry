@@ -73,7 +73,11 @@ AM_PATH_WXCONFIG([2.8.0], [], [
 # Setup imagedir, so src/Makefile.am can use it for the compile
 # and for the image file installations. (image_DATA)
 imagedir="$datadir/barry/desktop/images/"
+xmlmap22dir="$datadir/barry/desktop/0.22/"
+xmlmap40dir="$datadir/barry/desktop/0.40/"
 AC_SUBST(imagedir)
+AC_SUBST(xmlmap22dir)
+AC_SUBST(xmlmap40dir)
 
 # Checks for libraries.
 AC_CHECK_LIB([pthread], [main])
@@ -101,6 +105,8 @@ AC_CHECK_FUNCS([bzero gettimeofday memset select strcasecmp strchr strerror strt
 AC_CONFIG_FILES([Makefile
                  images/Makefile
                  src/Makefile
+                 src/0.22/Makefile
+                 src/0.40/Makefile
                  man/Makefile])
 AC_OUTPUT
 
