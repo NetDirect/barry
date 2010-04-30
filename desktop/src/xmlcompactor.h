@@ -37,6 +37,7 @@ public:
 	typedef base_map_type::iterator			iterator;
 	typedef base_map_type::const_iterator		const_iterator;
 	typedef bool (XmlCompactor::*content_handler)(xmlpp::ContentNode*);
+	typedef std::vector<Glib::ustring>		content_set;
 
 private:
 	Glib::ustring m_skip_prefix;
@@ -57,6 +58,12 @@ public:
 
 	void Map(const Glib::ustring &skip);
 	Glib::ustring Value(const Glib::ustring &key);
+
+	//
+	// XML-based helpers
+	//
+
+	content_set Find(const Glib::ustring &xpath) const;
 
 	void Dump(std::ostream &os) const;
 };

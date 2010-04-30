@@ -147,6 +147,27 @@ Glib::ustring XmlCompactor::Value(const Glib::ustring &key)
 	return i->second;
 }
 
+XmlCompactor::content_set XmlCompactor::Find(const Glib::ustring &xpath) const
+{
+	using namespace xmlpp;
+
+	content_set content;
+
+	Node *root = get_document()->get_root_node();
+	NodeSet nodes = root->find(xpath);
+
+	NodeSet::iterator ni = nodes.begin();
+	for( ; ni != nodes.end(); ++ni ) {
+		ContentNode *cn = dynamic_cast<ContentNode*> (*ni);
+
+		if( cn && !cn->is_white_space() ) {
+			content.push_back(cn->get_content());
+		}
+	}
+
+	return content;
+}
+
 void XmlCompactor::Dump(std::ostream &os) const
 {
 	for( const_iterator i = begin(); i != end(); ++i ) {
@@ -164,9 +185,22 @@ int main(int argc, char *argv[])
 		cout.imbue( loc );
 		XmlCompactor parser;
 		parser.parse_stream(cin);
-		cerr << parser.FindCommonPrefix() << endl;
+		cerr << "Common prefix: " << parser.FindCommonPrefix() << endl;
 		parser.Map(argc >= 2 ? argv[1] : "");
 		cout << parser << endl;
+		cout << endl;
+
+		for( int i = 2; i < argc; i++ ) {
+			XmlCompactor::content_set content = parser.Find(argv[i]);
+			cout << "XPath: " << argv[i] << endl;
+			cout << "Found " << content.size() << " values" << endl;
+
+			XmlCompactor::content_set::iterator ci = content.begin();
+			for( ; ci != content.end(); ++ci ) {
+				cout << "   " << (*ci) << endl;
+			}
+		}
+
 	}
 	catch( Glib::ConvertError &e ) {
 		cerr << e.what() << endl;
