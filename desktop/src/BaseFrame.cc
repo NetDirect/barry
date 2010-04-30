@@ -348,8 +348,141 @@ void BaseFrame::OnSync(wxCommandEvent &event)
 	EnableBackButton(m_sync_mode.get());
 }
 
+#include "ConflictDlg.h"
 void BaseFrame::OnModem(wxCommandEvent &event)
 {
+	OpenSync::SyncChange change;
+	change.id = 1;
+	change.member_id = 1;
+	change.plugin_name = "barry-sync";
+	change.uid = "12341524235234";
+	change.printable_data =
+"<contact>\n"
+"  <UnknownNode>\n"
+"    <NodeName>PRODID</NodeName>\n"
+"    <Content>-//OpenSync//NONSGML Barry Contact Record//EN</Content>\n"
+"  </UnknownNode>\n"
+"  <FormattedName>\n"
+"    <Content>Adame Brandee</Content>\n"
+"  </FormattedName>\n"
+"  <Name>\n"
+"    <LastName>Brandee</LastName>\n"
+"    <FirstName>Adame</FirstName>\n"
+"  </Name>\n"
+"  <AddressLabel>\n"
+"    <Content>71 Long St.\n"
+"Toronto ON Canada\n"
+"N0N 0N0</Content>\n"
+"    <Type>home</Type>\n"
+"  </AddressLabel>\n"
+"  <Address>\n"
+"    <Street>71 Long St.</Street>\n"
+"    <City>Toronto</City>\n"
+"    <Region>ON</Region>\n"
+"    <PostalCode>N0N 0N0</PostalCode>\n"
+"    <Country>Canada</Country>\n"
+"    <Type>home</Type>\n"
+"  </Address>\n"
+"  <Telephone>\n"
+"    <Content>+1 (416) 555-7711</Content>\n"
+"    <Type>voice</Type>\n"
+"    <Type>home</Type>\n"
+"  </Telephone>\n"
+"  <Telephone>\n"
+"    <Content>+1 (416) 955-7117</Content>\n"
+"    <Type>msg</Type>\n"
+"    <Type>cell</Type>\n"
+"  </Telephone>\n"
+"  <EMail>\n"
+"    <Content>abrandee@sympatico.ca</Content>\n"
+"    <Type>internet</Type>\n"
+"    <Type>pref</Type>\n"
+"  </EMail>\n"
+"  <Categories>\n"
+"    <Category>Personal</Category>\n"
+"  </Categories>\n"
+"  <Note>\n"
+"    <Content>Interweb salesman... 24/7</Content>\n"
+"  </Note>\n"
+"</contact>";
+
+	std::vector<OpenSync::SyncChange> changes;
+	changes.push_back(change);
+
+	change.id = 2;
+	change.member_id = 2;
+	change.plugin_name = "evo2-sync";
+	change.uid = "asdfioausdf_1235234as_asdf12341524235234";
+	change.printable_data =
+"<contact>\n"
+"  <Telephone>\n"
+"    <Content>+1 (416) 955-7117</Content>\n"
+"    <Type>CELL</Type>\n"
+"    <Slot>2</Slot>\n"
+"  </Telephone>\n"
+"  <Telephone>\n"
+"    <Content>+1 (416) 555-7711</Content>\n"
+"    <Type>HOME</Type>\n"
+"    <Type>VOICE</Type>\n"
+"    <Slot>1</Slot>\n"
+"  </Telephone>\n"
+"  <EMail>\n"
+"    <Content>abrandee@sympatico.ca</Content>\n"
+"    <Type>OTHER</Type>\n"
+"    <Slot>1</Slot>\n"
+"  </EMail>\n"
+"  <WantsHtml>\n"
+"    <Content>FALSE</Content>\n"
+"  </WantsHtml>\n"
+"  <Revision>\n"
+"    <Content>20100322T225303Z</Content>\n"
+"  </Revision>\n"
+"  <UnknownNode>\n"
+"    <NodeName>PRODID</NodeName>\n"
+"    <Content>-//OpenSync//NONSGML Barry Contact Record//EN</Content>\n"
+"  </UnknownNode>\n"
+"  <FormattedName>\n"
+"    <Content>Adam Brandeee</Content>\n"
+"  </FormattedName>\n"
+"  <Name>\n"
+"    <LastName>Brandeee</LastName>\n"
+"    <FirstName>Adam</FirstName>\n"
+"  </Name>\n"
+"  <AddressLabel>\n"
+"    <Content>71 Long St.\n"
+"Toronto, ON\n"
+"N0N 0N1\n"
+"Canada</Content>\n"
+"    <Type>home</Type>\n"
+"  </AddressLabel>\n"
+"  <Address>\n"
+"    <Street>71 Long St.</Street>\n"
+"    <City>Toronto</City>\n"
+"    <Region>ON</Region>\n"
+"    <PostalCode>N0N 0N1</PostalCode>\n"
+"    <Country>Canada</Country>\n"
+"    <Type>home</Type>\n"
+"  </Address>\n"
+"  <Categories>\n"
+"    <Category>Personal</Category>\n"
+"  </Categories>\n"
+"  <FileAs>\n"
+"    <Content>Brandeee, Adam</Content>\n"
+"  </FileAs>\n"
+"</contact>";
+
+	changes.push_back(change);
+
+	{
+		ConflictDlg::AlwaysMemoryBlock always;
+		ConflictDlg dlg(this, *wxGetApp().GetOpenSync().os22(),
+			"SDAIN", changes, always);
+		dlg.ShowModal();
+		wxString msg(dlg.GetCommand().c_str(), wxConvUTF8);
+		msg += _T(" ");
+		msg += always.m_always ? _T("always") : _T("not always");
+		wxMessageBox(msg);
+	}
 }
 
 void BaseFrame::OnBackButton(wxCommandEvent &event)
