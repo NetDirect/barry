@@ -124,6 +124,18 @@ void ConflictDlg::ParseChanges()
 {
 	m_maps.clear();
 
+	// create an xmlmap to start with, so we only parse the
+	// map file once
+	ostringstream oss;
+	oss << m_engine.GetEngineName() << "/xmlmap";
+	tr1::shared_ptr<XmlNodeMap> basemap;
+	try {
+		basemap.reset(new XmlNodeMap(GetBaseFilename(oss.str())) );
+	}
+	catch( std::runtime_error &e ) {
+		basemap.reset();
+	}
+
 	for( size_t i = 0; i < m_changes.size(); i++ ) {
 		XmlPair xp;
 		xp.dom.reset( new xmlpp::DomParser );
@@ -131,12 +143,12 @@ void ConflictDlg::ParseChanges()
 			(const unsigned char*) m_changes[i].printable_data.data(),
 			m_changes[i].printable_data.size());
 
-		ostringstream oss;
-		oss << m_engine.GetEngineName() << "/xmlmap";
-		xp.map.reset( new XmlNodeMap(GetBaseFilename(oss.str())) );
-		xp.map->ImportNodes(xp.dom->get_document()->get_root_node());
-		xp.map->PurgeEmpties();
-		xp.map->SortBySummary();
+		if( basemap.get() ) {
+			xp.map.reset( new XmlNodeMap(*basemap) );
+			xp.map->ImportNodes(xp.dom->get_document()->get_root_node());
+			xp.map->PurgeEmpties();
+			xp.map->SortBySummary();
+		}
 
 		m_maps.push_back(xp);
 	}
@@ -147,7 +159,7 @@ void ConflictDlg::CreateDifferingKeyNameSet()
 	// start fresh
 	m_differing_keys.clear();
 
-	if( !m_maps.size() )
+	if( !m_maps.size() || !m_maps[0].map.get() )
 		return;	// nothing to do
 
 	// find a list of all available key names
@@ -257,25 +269,30 @@ void ConflictDlg::CreateSummaryGroup(wxSizer *sizer, size_t change_index)
 	wxString name(m_changes[change_index].plugin_name.c_str(), wxConvUTF8);
 	wxStaticBoxSizer *box = new wxStaticBoxSizer(wxVERTICAL, this, name);
 
-	// add all priority 0 mappings
 	XmlNodeMap *xml = m_maps[change_index].map.get();
-	XmlNodeMap::iterator nmi = xml->begin(), nme = xml->priority_end();
-	for( ; nmi != nme; ++nmi ) {
-		AddMapping(box, *nmi, IsDifferent(*nmi));
+	if( xml ) {
+		// add all priority 0 mappings
+		XmlNodeMap::iterator nmi = xml->begin(), nme = xml->priority_end();
+		for( ; nmi != nme; ++nmi ) {
+			AddMapping(box, *nmi, IsDifferent(*nmi));
+		}
+
+		// add small separator (line?)
+		box->Add( new wxStaticLine(this), 0, wxEXPAND | wxALL, 5);
+
+		// add all differing mappings, in the map order, to preserve
+		// the map file's user-friendly display order
+		nmi = nme;	// start at priority_end() to skip priority 0
+		nme = xml->end();
+		for( ; nmi != nme; ++nmi ) {
+			if( !IsDifferent(*nmi) )
+				continue;
+
+			AddMapping(box, *nmi, true);
+		}
 	}
-
-	// add small separator (line?)
-	box->Add( new wxStaticLine(this), 0, wxEXPAND | wxALL, 5);
-
-	// add all differing mappings, in the map order, to preserve
-	// the map file's user-friendly display order
-	nmi = nme;	// start at priority_end() to skip priority 0
-	nme = xml->end();
-	for( ; nmi != nme; ++nmi ) {
-		if( !IsDifferent(*nmi) )
-			continue;
-
-		AddMapping(box, *nmi, true);
+	else {
+		AddEmptyNotice(box);
 	}
 
 	box->Add(0, 10, 0);
@@ -309,6 +326,19 @@ void ConflictDlg::CreateSummaryButtons(wxSizer *sizer, size_t change_index)
 bool ConflictDlg::IsDifferent(const XmlNodeMapping &mapping) const
 {
 	return m_differing_keys.find(mapping.KeyName()) != m_differing_keys.end();
+}
+
+void ConflictDlg::AddEmptyNotice(wxSizer *sizer)
+{
+	wxFont font = GetFont();
+	font.SetStyle( wxFONTSTYLE_ITALIC );
+
+	wxStaticText *text = new wxStaticText(this, wxID_ANY,
+		_T("No XML map found."),
+		wxDefaultPosition, wxDefaultSize,
+		wxALIGN_CENTRE | wxST_NO_AUTORESIZE);
+	text->SetFont(font);
+	sizer->Add( text, 0, wxEXPAND, 0);
 }
 
 void ConflictDlg::AddMapping(wxSizer *sizer,

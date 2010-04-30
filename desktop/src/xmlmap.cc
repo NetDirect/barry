@@ -277,6 +277,13 @@ XmlNodeMap::XmlNodeMap(const std::string &map_filename)
 	LoadMap(string(), map_filename);
 }
 
+// copy constructor - only copies the map data, not the node.
+// you must Import as usual
+XmlNodeMap::XmlNodeMap(const XmlNodeMap &other)
+{
+	operator=(other);
+}
+
 void XmlNodeMap::LoadMap(const std::string &type_name,
 			const std::string &map_filename)
 {
@@ -424,6 +431,22 @@ XmlNodeMap::iterator XmlNodeMap::priority_end(int stop_priority)
 			return i;
 	}
 	return i;
+}
+
+void XmlNodeMap::clear()
+{
+	for_each(begin(), end(), mem_fun_ref(&XmlNodeMapping::clear));
+}
+
+XmlNodeMap& XmlNodeMap::operator=(const XmlNodeMap &other)
+{
+	const_iterator i = other.begin();
+	for( ; i != other.end(); ++i ) {
+		ptr_type p( new XmlNodeMapping(*i) );
+		p->clear();
+		push_back(p);
+	}
+	return *this;
 }
 
 #ifdef XMLMAP

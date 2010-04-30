@@ -37,8 +37,8 @@ public:
 
 	struct XmlPair
 	{
-		ConflictDlg::dom_ptr dom;
-		ConflictDlg::map_ptr map;
+		ConflictDlg::dom_ptr dom;	// never null
+		ConflictDlg::map_ptr map;	// can contain null!
 	};
 
 	typedef std::vector<XmlPair>			mapped_list;
@@ -101,6 +101,7 @@ protected:
 	void CreateSummaryGroup(wxSizer *sizer, size_t change_index);
 	void CreateSummaryButtons(wxSizer *sizer, size_t change_index);
 	bool IsDifferent(const XmlNodeMapping &mapping) const;
+	void AddEmptyNotice(wxSizer *sizer);
 	void AddMapping(wxSizer *sizer, XmlNodeMapping &mapping,
 		bool differing);
 	void CreateAlternateButtons(wxSizer *sizer);

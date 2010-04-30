@@ -96,6 +96,7 @@ public:
 
 	const XmlNodeSummary& operator[] (int index) const;
 	size_t size() const { return m_summaries.size(); }
+	void clear() { m_summaries.clear(); }
 
 	bool operator== (const XmlNodeMapping &other) const;
 	bool operator!= (const XmlNodeMapping &other) const
@@ -140,6 +141,7 @@ public:
 	XmlNodeMap(const std::string &type_name,
 		const std::string &map_filename);
 	XmlNodeMap(const std::string &map_filename);
+	XmlNodeMap(const XmlNodeMap &other);
 
 	void ImportNodes(xmlpp::Node *node, bool purge = false);
 	void PurgeEmpties();
@@ -155,6 +157,9 @@ public:
 	const_iterator begin() const { return const_iterator(base_type::begin()); }
 	const_iterator end() const { return const_iterator(base_type::end()); }
 	iterator priority_end(int stop_priority = 1);
+	void clear();
+
+	XmlNodeMap& operator=(const XmlNodeMap &other);
 };
 
 #endif
