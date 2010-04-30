@@ -96,6 +96,15 @@ ConflictDlg::ConflictDlg(wxWindow *parent,
 	, m_kill_sync(false)
 	, m_topsizer(0)
 {
+	// the max text width is the maximum width that any line of text
+	// in a conflict summary can use... it is calculated with
+	// (screen_width - window_border_width*2) / change_count
+	m_max_text_width = (wxSystemSettings::GetMetric(wxSYS_SCREEN_X) -
+		wxSystemSettings::GetMetric(wxSYS_BORDER_X) * 2 -
+		10 * 2 -
+		5 * 2 * m_changes.size())
+		/ m_changes.size();
+
 	// first, parse all change data
 	ParseChanges();
 
@@ -335,6 +344,7 @@ void ConflictDlg::AddMapping(wxSizer *sizer,
 			if( differing )
 				text->SetFont(changed);
 		}
+		text->Wrap(m_max_text_width);
 
 		sizer->Add( text, 0, wxEXPAND, 0);
 	}

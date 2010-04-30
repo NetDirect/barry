@@ -88,6 +88,9 @@ private:
 	bool m_kill_sync;
 	std::string m_command_string;	// eg. "S 1"
 
+	// dialog sizing
+	int m_max_text_width;
+
 	// dialog controls
 	wxSizer *m_topsizer;
 
