@@ -382,6 +382,8 @@ desktop-file-install --vendor netdirect \
 %defattr(-,root,root)
 %attr(0755,root,root) %{_bindir}/barrydesktop
 %attr(0755,root,root) %{_bindir}/bsyncjail
+%attr(0644,root,root) %{_datadir}/barry/desktop/0.22/*
+%attr(0644,root,root) %{_datadir}/barry/desktop/0.40/*
 %attr(0644,root,root) %{_datadir}/barry/desktop/images/*.png
 %attr(0644,root,root) %{_datadir}/pixmaps/barry_desktop_icon.png
 %attr(0644,root,root) %{_datadir}/applications/*barrydesktop.desktop
