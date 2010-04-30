@@ -28,6 +28,7 @@
 #define BUTTON_STATE_FOCUS	1
 #define BUTTON_STATE_PUSHED	2
 
+std::string GetBaseFilename(const std::string &filename);
 wxString GetImageFilename(const wxString &filename);
 wxString GetButtonFilename(int id, int state);
 

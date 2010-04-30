@@ -70,11 +70,13 @@ AM_PATH_WXCONFIG([2.8.0], [], [
 	])
 	])
 
-# Setup imagedir, so src/Makefile.am can use it for the compile
-# and for the image file installations. (image_DATA)
+# Setup system directories, so src/Makefile.am can use them for the compile
+# and for the image/data file installations. (image_DATA)
+basedatadir="$datadir/barry/desktop/"
 imagedir="$datadir/barry/desktop/images/"
 xmlmap22dir="$datadir/barry/desktop/0.22/"
 xmlmap40dir="$datadir/barry/desktop/0.40/"
+AC_SUBST(basedatadir)
 AC_SUBST(imagedir)
 AC_SUBST(xmlmap22dir)
 AC_SUBST(xmlmap40dir)

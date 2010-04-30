@@ -45,6 +45,17 @@ const wxChar *StateNames[] = {
 //////////////////////////////////////////////////////////////////////////////
 // Utility functions
 
+std::string GetBaseFilename(const std::string &filename)
+{
+	std::string file = BARRYDESKTOP_BASEDATADIR;
+	file += filename;
+	if( wxFileExists(wxString(file.c_str(), wxConvUTF8)) )
+		return file;
+
+	// fall back to the devel tree
+	return filename;
+}
+
 /// Returns full path and filename for given filename.
 /// 'filename' should have no directory component, as the
 /// directory will be prepended and returned.
