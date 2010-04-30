@@ -22,32 +22,53 @@
 
 #include "ConflictDlg.h"
 #include "windowids.h"
+#include "util.h"
 #include <iostream>
 #include <sstream>
+#include <stdexcept>
+#include <wx/statline.h>
 using namespace std;
 
 //////////////////////////////////////////////////////////////////////////////
 // ConflictDlg class
 
 BEGIN_EVENT_TABLE(ConflictDlg, wxDialog)
-	EVT_BUTTON	(Dialog_Conflict_ColumnButton1,
-				ConflictDlg::OnColumnButton)
-	EVT_BUTTON	(Dialog_Conflict_ColumnButton2,
-				ConflictDlg::OnColumnButton)
-	EVT_BUTTON	(Dialog_Conflict_ColumnButton3,
-				ConflictDlg::OnColumnButton)
-	EVT_BUTTON	(Dialog_Conflict_ColumnButton4,
-				ConflictDlg::OnColumnButton)
-	EVT_BUTTON	(Dialog_Conflict_ColumnButton5,
-				ConflictDlg::OnColumnButton)
-	EVT_BUTTON	(Dialog_Conflict_ColumnButton6,
-				ConflictDlg::OnColumnButton)
-	EVT_BUTTON	(Dialog_Conflict_ColumnButton7,
-				ConflictDlg::OnColumnButton)
-	EVT_BUTTON	(Dialog_Conflict_ColumnButton8,
-				ConflictDlg::OnColumnButton)
-	EVT_BUTTON	(Dialog_Conflict_ColumnButton9,
-				ConflictDlg::OnColumnButton)
+	EVT_BUTTON	(Dialog_Conflict_ShowButton1,
+				ConflictDlg::OnShowButton)
+	EVT_BUTTON	(Dialog_Conflict_ShowButton2,
+				ConflictDlg::OnShowButton)
+	EVT_BUTTON	(Dialog_Conflict_ShowButton3,
+				ConflictDlg::OnShowButton)
+	EVT_BUTTON	(Dialog_Conflict_ShowButton4,
+				ConflictDlg::OnShowButton)
+	EVT_BUTTON	(Dialog_Conflict_ShowButton5,
+				ConflictDlg::OnShowButton)
+	EVT_BUTTON	(Dialog_Conflict_ShowButton6,
+				ConflictDlg::OnShowButton)
+	EVT_BUTTON	(Dialog_Conflict_ShowButton7,
+				ConflictDlg::OnShowButton)
+	EVT_BUTTON	(Dialog_Conflict_ShowButton8,
+				ConflictDlg::OnShowButton)
+	EVT_BUTTON	(Dialog_Conflict_ShowButton9,
+				ConflictDlg::OnShowButton)
+	EVT_BUTTON	(Dialog_Conflict_SelectButton1,
+				ConflictDlg::OnSelectButton)
+	EVT_BUTTON	(Dialog_Conflict_SelectButton2,
+				ConflictDlg::OnSelectButton)
+	EVT_BUTTON	(Dialog_Conflict_SelectButton3,
+				ConflictDlg::OnSelectButton)
+	EVT_BUTTON	(Dialog_Conflict_SelectButton4,
+				ConflictDlg::OnSelectButton)
+	EVT_BUTTON	(Dialog_Conflict_SelectButton5,
+				ConflictDlg::OnSelectButton)
+	EVT_BUTTON	(Dialog_Conflict_SelectButton6,
+				ConflictDlg::OnSelectButton)
+	EVT_BUTTON	(Dialog_Conflict_SelectButton7,
+				ConflictDlg::OnSelectButton)
+	EVT_BUTTON	(Dialog_Conflict_SelectButton8,
+				ConflictDlg::OnSelectButton)
+	EVT_BUTTON	(Dialog_Conflict_SelectButton9,
+				ConflictDlg::OnSelectButton)
 	EVT_BUTTON	(Dialog_Conflict_DuplicateButton,
 				ConflictDlg::OnDuplicateButton)
 	EVT_BUTTON	(Dialog_Conflict_AbortButton,
@@ -63,29 +84,27 @@ BEGIN_EVENT_TABLE(ConflictDlg, wxDialog)
 END_EVENT_TABLE()
 
 ConflictDlg::ConflictDlg(wxWindow *parent,
+			const OpenSync::API &engine,
 			const std::string &supported_commands,
 			const std::vector<OpenSync::SyncChange> &changes,
 			ConflictDlg::AlwaysMemoryBlock &always)
 	: wxDialog(parent, Dialog_Conflict, _T("Sync Conflict"))
+	, m_engine(engine)
 	, m_changes(changes)
 	, m_supported_commands(supported_commands)
 	, m_always(always)
 	, m_kill_sync(false)
-	, m_key_column_width(0)
 	, m_topsizer(0)
-	, m_data_list(0)
 {
 	// first, parse all change data
 	ParseChanges();
 
-	// create a global set of key names from all parsed changes
-	CreateKeyNameSet();
+	// create a global set of key names that contain differing data
+	// between changes
+	CreateDifferingKeyNameSet();
 
 	// setup the raw GUI
 	CreateLayout();
-
-	// fill the conflict list
-	FillDataList();
 }
 
 ConflictDlg::~ConflictDlg()
@@ -94,82 +113,86 @@ ConflictDlg::~ConflictDlg()
 
 void ConflictDlg::ParseChanges()
 {
-	m_parsed.clear();
+	m_maps.clear();
 
 	for( size_t i = 0; i < m_changes.size(); i++ ) {
-		xml_ptr parser( new XmlCompactor );
-		parser->parse_memory_raw(
+		XmlPair xp;
+		xp.dom.reset( new xmlpp::DomParser );
+		xp.dom->parse_memory_raw(
 			(const unsigned char*) m_changes[i].printable_data.data(),
 			m_changes[i].printable_data.size());
-		parser->Map(parser->FindCommonPrefix());
-		m_parsed.push_back(parser);
+
+		ostringstream oss;
+		oss << m_engine.GetEngineName() << "/xmlmap";
+		xp.map.reset( new XmlNodeMap(GetBaseFilename(oss.str())) );
+		xp.map->ImportNodes(xp.dom->get_document()->get_root_node());
+		xp.map->PurgeEmpties();
+		xp.map->SortBySummary();
+
+		m_maps.push_back(xp);
 	}
 }
 
-void ConflictDlg::CreateKeyNameSet()
+void ConflictDlg::CreateDifferingKeyNameSet()
 {
-	m_key_set.clear();
+	// start fresh
+	m_differing_keys.clear();
 
-	for( size_t i = 0; i < m_parsed.size(); i++ ) {
-		XmlCompactor::iterator xi = m_parsed[i]->begin();
-		for( ; xi != m_parsed[i]->end(); ++xi ) {
-			m_key_set.insert(xi->first);
+	if( !m_maps.size() )
+		return;	// nothing to do
+
+	// find a list of all available key names
+	key_set all_keys;	// set of all keys names from all xmlmaps
+	for( size_t i = 0; i < m_maps.size(); i++ ) {
+		XmlNodeMap::iterator mi = m_maps[i].map->begin(),
+			me = m_maps[i].map->end();
+
+		for( ; mi != me; ++mi ) {
+			all_keys.insert(mi->KeyName());
+		}
+
+	}
+
+	// cycle through all keys and find ones that have changes
+	for( key_set::iterator i = all_keys.begin(); i!=all_keys.end(); ++i ) {
+
+		// find the mapping from the first nodemap
+		XmlNodeMapping *first = m_maps[0].map->Find(*i);
+		if( !first ) {
+			// should never happen... node names come from
+			// the config, and so should always exist
+			throw std::logic_error("Missing KeyName in ConflictDlg::CreateDifferingKeyNameSet()");
+		}
+
+		// cycle through all remaining nodemaps, find the mapping that
+		// matches the keyname, and compare... if any do not
+		// exist, or do not match, add to the differing keys set
+		for( size_t j = 1; j < m_maps.size(); j++ ) {
+			XmlNodeMapping *next = m_maps[j].map->Find(*i);
+
+			// compare!
+			if( !next || *first != *next ) {
+				m_differing_keys.insert(*i);
+				break;
+			}
 		}
 	}
 }
 
-// cycle through the entire m_key_set, saving the largest
-// text extent found
-int ConflictDlg::GetWidestNameExtent(wxWindow *window)
-{
-	int largest = 0;
-	key_set::iterator i = m_key_set.begin();
-	for( ; i != m_key_set.end(); ++i ) {
-		int width, y;
-		window->GetTextExtent(wxString(i->raw().c_str(), wxConvUTF8), &width, &y);
-		if( width > largest )
-			largest = width;
-	}
-
-	return largest;
-}
-
-// cycle through every ->second data item in the XmlCompactor
-// to find the largest text extent
-int ConflictDlg::GetWidestDataExtent(wxWindow *window, int change_index)
-{
-	int largest = 0;
-	XmlCompactor *xc = m_parsed[change_index].get();
-	XmlCompactor::iterator i = xc->begin();
-
-	for( ; i != xc->end(); ++i ) {
-		int width, y;
-		window->GetTextExtent(
-			wxString(i->second.raw().c_str(), wxConvUTF8),
-			&width, &y);
-
-		if( width > largest )
-			largest = width;
-	}
-
-	return largest;
-}
-
 //
-// +----------------+----------------+---------------+---------------+
-// |                |  change 1      |   change 2    |   change 3    |
-// +----------------+----------------+---------------+---------------+
-// | Address/City   | Kitchener      |               | Kitchener     |
-// | Address/Country| Canada         | Canada        | Canada        |
-// .....
+//   +-barry-sync---------+ +-evo2-sync----------+ +-google-sync------+
+//   |                    | |                    | |                  |
+//   |  Adam Brandee      | | Adam Brandee       | | Adam Brandee     |
+//   |  IBM Canada        | |                    | | IBM Canada       | < red
+//   |  1-519-555-1212    | | 1-519-555-1212     | | 1-519-555-1111   | < red
+//   |  abramble@ibm.com  | | abramble@ibm.com   | | abramble@ibm.com |
+//   |       ----         | |       ----         | |       ----       |
+//   |  123 Big Street    | | 123 Big Street     | | 123 Long St.     | < red
+//   |                    | |                    | | Canada           | < red
+//   +--------------------+ +--------------------+ +------------------+
 //
-// Display a table like above, listing all map keys from all XML-parsed
-// change data, and if possible, highlight the rows with differences.
-// Or at least display the font in that row with a non-black colour.
+//     [See XML] [Select]     [See XML] [Select]     [See XML] [Select]
 //
-// Probably able to display this in a listctrl, but this makes it harder
-// to connect the buttons with the change columns.  Maybe you can do it
-// with some fancy math....
 //
 // At the bottom of the dialog, display the rest of the optional buttons,
 // like Duplicate, Abort, etc.  Also include a checkbox for "always"...
@@ -188,7 +211,7 @@ int ConflictDlg::GetWidestDataExtent(wxWindow *window, int change_index)
 void ConflictDlg::CreateLayout()
 {
 	m_topsizer = new wxBoxSizer(wxVERTICAL);
-	CreateTable(m_topsizer);
+	CreateSummaries(m_topsizer);
 	CreateAlternateButtons(m_topsizer);
 
 	SetSizer(m_topsizer);
@@ -196,69 +219,125 @@ void ConflictDlg::CreateLayout()
 	m_topsizer->Layout();
 }
 
-void ConflictDlg::CreateTable(wxSizer *sizer)
+void ConflictDlg::CreateSummaries(wxSizer *sizer)
 {
-	wxStaticBoxSizer *box = new wxStaticBoxSizer(wxVERTICAL, this,
-		_T("Conflicting Changes"));
-
-	m_data_list = new wxListCtrl(this, Dialog_Conflict_DataList,
-				wxDefaultPosition, wxDefaultSize,
-				wxLC_REPORT /*| wxLC_VRULES*/);
-
-	// use a slightly smaller font for all this data
-	wxFont font = GetFont();
-	// don't let the font get smaller than 6 point, unless the user's
-	// default font is smaller than 6
-	int base_size = std::min(font.GetPointSize(), 6);
-	font.SetPointSize( std::max(font.GetPointSize() - 2, base_size) );
-	m_data_list->SetFont(font);
-
-	// get the text extent width of the widest name in the change list
-	int widest = GetWidestNameExtent(m_data_list);
-	m_key_column_width = widest;
-
-	// insert 1 column for field names, and 1 each for each change
-	m_data_list->InsertColumn(0, _T(""), wxLIST_FORMAT_LEFT, widest);
-	int total_width = widest;
-	for( size_t i = 1; i <= m_changes.size(); i++ ) {
-		wxString title(m_changes[i-1].plugin_name.c_str(), wxConvUTF8);
-		unsigned int width = GetWidestDataExtent(m_data_list, i-1);
-		width = std::min(width, 700 / m_changes.size());
-
-		// limit the width of the data to a total of 700 pixels
-		// for all the data columns, which is pretty wide...
-		m_data_list->InsertColumn(i, title, wxLIST_FORMAT_LEFT, width);
-		total_width += width;
-	}
-
-	// make sure this doesn't go smaller than what we ask for
-	m_data_list->SetMinSize( wxSize(total_width, 300) );
-
-	// add to sizers
-	box->Add( m_data_list, 1, wxEXPAND | wxALL, 4 );
-	CreateSelectorButtons(box);
-
-	sizer->Add(box, 1, wxEXPAND | wxLEFT | wxRIGHT | wxBOTTOM, 10);
-}
-
-void ConflictDlg::CreateSelectorButtons(wxSizer *sizer)
-{
-	if( m_supported_commands.find('S') == std::string::npos )
-		return;
-
+	// this sizer is the horizontal box containing one
+	// "map summary" each
 	wxBoxSizer *box = new wxBoxSizer(wxHORIZONTAL);
 
-	box->Add(m_key_column_width, -1, 0);
-	for( size_t i = 0; i < m_changes.size(); i++ ) {
-		wxString name(m_changes[i].plugin_name.c_str(), wxConvUTF8);
-		name.Prepend(_T("Use: "));
-		box->Add( new wxButton(this,
-				Dialog_Conflict_ColumnButton1 + i,
-				name),
-			1, wxTOP | wxBOTTOM, 5);
+	for( size_t i = 0; i < m_maps.size(); i++ ) {
+		CreateSummary(box, i);
 	}
 
-	sizer->Add(box, 0, wxEXPAND | wxLEFT | wxRIGHT, 4);
+	sizer->Add(box, 0, wxEXPAND | wxALL, 5);
+}
+
+void ConflictDlg::CreateSummary(wxSizer *sizer, size_t change_index)
+{
+	// this sizer contains the summary box in the top and the
+	// buttons in the bottom
+	wxBoxSizer *box = new wxBoxSizer(wxVERTICAL);
+
+	CreateSummaryGroup(box, change_index);
+
+	sizer->Add(box, 1, wxEXPAND | wxLEFT | wxRIGHT, 5);
+}
+
+void ConflictDlg::CreateSummaryGroup(wxSizer *sizer, size_t change_index)
+{
+	wxString name(m_changes[change_index].plugin_name.c_str(), wxConvUTF8);
+	wxStaticBoxSizer *box = new wxStaticBoxSizer(wxVERTICAL, this, name);
+
+	// add all priority 0 mappings
+	XmlNodeMap *xml = m_maps[change_index].map.get();
+	XmlNodeMap::iterator nmi = xml->begin(), nme = xml->priority_end();
+	for( ; nmi != nme; ++nmi ) {
+		AddMapping(box, *nmi, IsDifferent(*nmi));
+	}
+
+	// add small separator (line?)
+	box->Add( new wxStaticLine(this), 0, wxEXPAND | wxALL, 5);
+
+	// add all differing mappings, in the map order, to preserve
+	// the map file's user-friendly display order
+	nmi = nme;	// start at priority_end() to skip priority 0
+	nme = xml->end();
+	for( ; nmi != nme; ++nmi ) {
+		if( !IsDifferent(*nmi) )
+			continue;
+
+		AddMapping(box, *nmi, true);
+	}
+
+	box->Add(0, 10, 0);
+	box->Add(0, 0, 1);
+	CreateSummaryButtons(box, change_index);
+
+	sizer->Add(box, 1, wxEXPAND | wxLEFT | wxRIGHT | wxBOTTOM, 0);
+}
+
+void ConflictDlg::CreateSummaryButtons(wxSizer *sizer, size_t change_index)
+{
+	wxBoxSizer *box = new wxBoxSizer(wxHORIZONTAL);
+
+	box->Add(0, 0, 1);
+	box->Add( new wxButton(this,
+			Dialog_Conflict_ShowButton1 + change_index,
+			_T("XML..."),
+			wxDefaultPosition, wxDefaultSize,
+			wxBU_EXACTFIT),
+		0, wxTOP | wxLEFT | wxRIGHT, 3);
+	box->Add( new wxButton(this,
+			Dialog_Conflict_SelectButton1 + change_index,
+			_T("Select"),
+			wxDefaultPosition, wxDefaultSize,
+			wxBU_EXACTFIT),
+		0, wxTOP | wxLEFT | wxRIGHT, 3);
+
+	sizer->Add(box, 0, wxEXPAND | wxLEFT | wxRIGHT | wxBOTTOM, 0);
+}
+
+bool ConflictDlg::IsDifferent(const XmlNodeMapping &mapping) const
+{
+	return m_differing_keys.find(mapping.KeyName()) != m_differing_keys.end();
+}
+
+void ConflictDlg::AddMapping(wxSizer *sizer,
+				XmlNodeMapping &mapping,
+				bool differing)
+{
+// display differing text in red?  Not sure how to do that... using italic
+
+	// use a big bold font for the high priority items
+	wxFont priority_font = GetFont();
+	priority_font.SetWeight( wxFONTWEIGHT_BOLD );
+
+	// italic for changed items
+	wxFont priority_changed = priority_font;
+	priority_changed.SetStyle( wxFONTSTYLE_ITALIC );
+
+	wxFont changed = GetFont();
+	changed.SetStyle( wxFONTSTYLE_ITALIC );
+
+	for( size_t i = 0; i < mapping.size(); i++ ) {
+		wxString data(mapping[i].Summary().raw().c_str(), wxConvUTF8);
+
+		wxStaticText *text = new wxStaticText(this, wxID_ANY, data,
+				wxDefaultPosition, wxDefaultSize,
+				wxALIGN_CENTRE | wxST_NO_AUTORESIZE);
+		if( mapping.Priority() == 0 ) {
+			if( differing )
+				text->SetFont(priority_changed);
+			else
+				text->SetFont(priority_font);
+		}
+		else {
+			if( differing )
+				text->SetFont(changed);
+		}
+
+		sizer->Add( text, 0, wxEXPAND, 0);
+	}
 }
 
 void ConflictDlg::CreateAlternateButtons(wxSizer *sizer)
@@ -300,136 +379,9 @@ void ConflictDlg::CreateAlternateButtons(wxSizer *sizer)
 			0, wxLEFT, 5);
 	}
 
-	sizer->Add(box, 0, wxEXPAND | wxLEFT | wxRIGHT | wxBOTTOM, 10);
+	sizer->Add(box, 0, wxEXPAND | wxALL, 10);
 }
 
-Glib::ustring ConflictDlg::GetParsedData(int index, const Glib::ustring &key)
-{
-	Glib::ustring value;
-	XmlCompactor *xc = m_parsed[index].get();
-	XmlCompactor::iterator i = xc->find(key);
-	if( i != xc->end() )
-		value = i->second;
-	return value;
-}
-
-// returns true if all columns contain data, yet are different
-bool ConflictDlg::IsChanged(const Glib::ustring &key)
-{
-	if( m_parsed.size() == 0 )
-		return false;
-
-	Glib::ustring data = GetParsedData(0, key);
-	if( data.size() == 0 )
-		return false;	// empty fields are "new"
-
-	bool status = false;
-
-	for( size_t index = 1; index < m_parsed.size(); index++ ) {
-		Glib::ustring next = GetParsedData(index, key);
-		if( next.size() == 0 )
-			return false; // empty fields are still "new" :-)
-		if( data != next )
-			status = true;
-	}
-	return status;
-}
-
-// returns true if there is one different empty column
-bool ConflictDlg::IsNew(const Glib::ustring &key)
-{
-	if( m_parsed.size() == 0 )
-		return false;
-
-	bool equal = true, empty = false;
-
-	Glib::ustring data = GetParsedData(0, key);
-	if( data.size() == 0 )
-		empty = true;
-
-	for( size_t index = 1; index < m_parsed.size(); index++ ) {
-		Glib::ustring next = GetParsedData(index, key);
-		if( next.size() == 0 )
-			empty = true;
-		if( data != next )
-			equal = false;
-	}
-	return !equal && empty;
-}
-
-// returns true if all columns are equal, whether empty or not
-bool ConflictDlg::IsEqual(const Glib::ustring &key)
-{
-	if( m_parsed.size() == 0 )
-		return true;
-
-	Glib::ustring data = GetParsedData(0, key);
-	for( size_t index = 1; index < m_parsed.size(); index++ ) {
-		Glib::ustring next = GetParsedData(index, key);
-		if( data != next )
-			return false;
-	}
-	return true;
-}
-
-void ConflictDlg::AddData(long item, const Glib::ustring &key)
-{
-	// loop through each set of parsed changes, and find
-	// the key's data, if available, and add it to the
-	// matching column
-	for( size_t column = 1; column <= m_parsed.size(); column++ ) {
-		Glib::ustring data = GetParsedData(column-1, key);
-		wxString text(data.raw().c_str(), wxConvUTF8);
-		m_data_list->SetItem(item, column, text);
-	}
-}
-
-void ConflictDlg::FillDataList()
-{
-	// start fresh
-	m_data_list->DeleteAllItems();
-
-	// add an entry for each changed item in the m_key_set
-	key_set::iterator i = m_key_set.begin();
-	int list_index = 0;
-	for( ; i != m_key_set.end(); ++i, list_index++ ) {
-
-		// fill with changed items first
-		if( !IsChanged(*i) )
-			continue;
-
-		wxString label(i->raw().c_str(), wxConvUTF8);
-		long item = m_data_list->InsertItem(list_index, label);
-		AddData(item, *i);
-		m_data_list->SetItemTextColour(item, *wxRED);
-	}
-
-	// do it again, for the changed "new" items
-	i = m_key_set.begin();
-	for( ; i != m_key_set.end(); ++i, list_index++ ) {
-
-		if( !IsNew(*i) )
-			continue;
-
-		wxString label(i->raw().c_str(), wxConvUTF8);
-		long item = m_data_list->InsertItem(list_index, label);
-		AddData(item, *i);
-		m_data_list->SetItemTextColour(item, *wxBLUE);
-	}
-
-	// do it again, for the equal items
-	i = m_key_set.begin();
-	for( ; i != m_key_set.end(); ++i, list_index++ ) {
-
-		// fill with changed items first
-		if( !IsEqual(*i) )
-			continue;
-
-		wxString label(i->raw().c_str(), wxConvUTF8);
-		long item = m_data_list->InsertItem(list_index, label);
-		AddData(item, *i);
-	}
-}
 
 //////////////////////////////////////////////////////////////////////////////
 // public members
@@ -488,9 +440,28 @@ int ConflictDlg::ShowModal()
 	return ret;
 }
 
-void ConflictDlg::OnColumnButton(wxCommandEvent &event)
+void ConflictDlg::OnShowButton(wxCommandEvent &event)
 {
-	int index = event.GetId() - Dialog_Conflict_ColumnButton1;
+	int index = event.GetId() - Dialog_Conflict_ShowButton1;
+	wxString xmldata(m_changes[index].printable_data.c_str(), wxConvUTF8);
+
+	// let's try this the quick manual way...
+	wxDialog dlg(this, wxID_ANY, _T("Raw Change Data"));
+	wxBoxSizer *box = new wxBoxSizer(wxVERTICAL);
+	box->Add( new wxTextCtrl(&dlg, wxID_ANY, xmldata,
+			wxDefaultPosition, wxSize(400, 400),
+			wxTE_MULTILINE | wxTE_READONLY),
+		1, wxEXPAND | wxTOP | wxLEFT | wxRIGHT, 10);
+	box->Add( dlg.CreateButtonSizer(wxOK), 0, wxEXPAND | wxALL, 10 );
+	dlg.SetSizer(box);
+	box->SetSizeHints(&dlg);
+	box->Layout();
+	dlg.ShowModal();
+}
+
+void ConflictDlg::OnSelectButton(wxCommandEvent &event)
+{
+	int index = event.GetId() - Dialog_Conflict_SelectButton1;
 
 	// store command in m_always
 	m_always.m_member_id = m_changes[index].member_id;

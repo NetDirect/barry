@@ -201,7 +201,13 @@ wxChar* ConflictConnection::OnRequest(const wxString &topic,
 	m_asking_user = true;
 
 	// ask the user what to do
-	ConflictDlg dlg(&m_dlg, m_supported_commands, m_changes, m_always);
+	if( !m_dlg.GetCurrentDevice() ) {
+		barryverbose("Conflict: current device is null");
+		return NULL;
+	}
+	OpenSync::API *engine = m_dlg.GetCurrentDevice()->GetEngine();
+	ConflictDlg dlg(&m_dlg, *engine, m_supported_commands,
+		m_changes, m_always);
 	m_dlg.StopTimer();
 	dlg.ShowModal();
 	m_dlg.StartTimer();

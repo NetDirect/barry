@@ -27,13 +27,21 @@
 #include <vector>
 #include <set>
 #include "osbase.h"
-#include "xmlcompactor.h"	// unfortunately this pulls in Glib and libxml++
+#include "xmlmap.h"
 
 class ConflictDlg : public wxDialog
 {
 public:
-	typedef std::tr1::shared_ptr<XmlCompactor>	xml_ptr;
-	typedef std::vector<xml_ptr>			parsed_list;
+	typedef std::tr1::shared_ptr<XmlNodeMap>	map_ptr;
+	typedef std::tr1::shared_ptr<xmlpp::DomParser>	dom_ptr;
+
+	struct XmlPair
+	{
+		ConflictDlg::dom_ptr dom;
+		ConflictDlg::map_ptr map;
+	};
+
+	typedef std::vector<XmlPair>			mapped_list;
 	typedef std::set<Glib::ustring>			key_set;
 
 	// Stored by the caller to remember the "always" selection
@@ -67,46 +75,39 @@ private:
 	DECLARE_EVENT_TABLE()
 
 	// external data sources
+	const OpenSync::API &m_engine;
 	const std::vector<OpenSync::SyncChange> &m_changes;
 	std::string m_supported_commands;	// a char string: "SDAIN"
 	AlwaysMemoryBlock &m_always;
 
-	// parsed data
-	parsed_list m_parsed;
-	key_set m_key_set;
+	// mapped data
+	mapped_list m_maps;
+	key_set m_differing_keys;
 
 	// results
 	bool m_kill_sync;
 	std::string m_command_string;	// eg. "S 1"
 
-	// dialog position calculation helpers
-	int m_key_column_width;
-
 	// dialog controls
 	wxSizer *m_topsizer;
-	wxListCtrl *m_data_list;
 
 protected:
 	void CreateLayout();
-	void CreateTable(wxSizer *sizer);
-	void CreateSelectorButtons(wxSizer *sizer);
+	void CreateSummaries(wxSizer *sizer);
+	void CreateSummary(wxSizer *sizer, size_t change_index);
+	void CreateSummaryGroup(wxSizer *sizer, size_t change_index);
+	void CreateSummaryButtons(wxSizer *sizer, size_t change_index);
+	bool IsDifferent(const XmlNodeMapping &mapping) const;
+	void AddMapping(wxSizer *sizer, XmlNodeMapping &mapping,
+		bool differing);
 	void CreateAlternateButtons(wxSizer *sizer);
 
 	void ParseChanges();
-	void CreateKeyNameSet();
-	int GetWidestNameExtent(wxWindow *window);
-	int GetWidestDataExtent(wxWindow *window, int change_index);
-	Glib::ustring GetParsedData(int index, const Glib::ustring &key);
-	bool IsChanged(const Glib::ustring &key);
-	bool IsNew(const Glib::ustring &key);
-	bool IsEqual(const Glib::ustring &key);
-	void AddData(long item, const Glib::ustring &key);
-	void FillDataList();
-//	void LoadAppNames(wxArrayString &appnames);
-//	void AddButtonSizer(wxSizer *sizer);
+	void CreateDifferingKeyNameSet();
 
 public:
-	ConflictDlg(wxWindow *parent, const std::string &supported_commands,
+	ConflictDlg(wxWindow *parent, const OpenSync::API &engine,
+		const std::string &supported_commands,
 		const std::vector<OpenSync::SyncChange> &changes,
 		AlwaysMemoryBlock &always);
 	~ConflictDlg();
@@ -121,7 +122,8 @@ public:
 	int ShowModal();
 
 	// event handlers
-	void OnColumnButton(wxCommandEvent &event);
+	void OnShowButton(wxCommandEvent &event);
+	void OnSelectButton(wxCommandEvent &event);
 	void OnDuplicateButton(wxCommandEvent &event);
 	void OnAbortButton(wxCommandEvent &event);
 	void OnIgnoreButton(wxCommandEvent &event);
