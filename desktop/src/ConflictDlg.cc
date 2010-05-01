@@ -180,9 +180,10 @@ void ConflictDlg::CreateDifferingKeyNameSet()
 		// find the mapping from the first nodemap
 		XmlNodeMapping *first = m_maps[0].map->Find(*i);
 		if( !first ) {
-			// should never happen... node names come from
-			// the config, and so should always exist
-			throw std::logic_error("Missing KeyName in ConflictDlg::CreateDifferingKeyNameSet()");
+			// if a key does not exist in this map, then
+			// it does in another, and therefore is "differing"
+			m_differing_keys.insert(*i);
+			continue;
 		}
 
 		// cycle through all remaining nodemaps, find the mapping that
