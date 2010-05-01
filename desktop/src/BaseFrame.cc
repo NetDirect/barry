@@ -44,6 +44,11 @@ BEGIN_EVENT_TABLE(BaseFrame, wxFrame)
 	EVT_BUTTON	(MainMenu_BackupAndRestore, BaseFrame::OnBackupRestore)
 	EVT_BUTTON	(MainMenu_Sync, BaseFrame::OnSync)
 	EVT_BUTTON	(MainMenu_Modem, BaseFrame::OnModem)
+	EVT_BUTTON	(MainMenu_AppLoader, BaseFrame::OnAppLoader)
+	EVT_BUTTON	(MainMenu_DeviceSwitch, BaseFrame::OnDeviceSwitch)
+	EVT_BUTTON	(MainMenu_BrowseDatabases, BaseFrame::OnBrowseDatabases)
+	EVT_BUTTON	(MainMenu_MediaManagement, BaseFrame::OnMediaManagement)
+	EVT_BUTTON	(MainMenu_Misc, BaseFrame::OnMisc)
 	EVT_BUTTON	(MainMenu_BackButton, BaseFrame::OnBackButton)
 	EVT_BUTTON	(HotImage_BarryLogo, BaseFrame::OnBarryLogoClicked)
 	EVT_BUTTON	(HotImage_NetDirectLogo, BaseFrame::OnNetDirectLogoClicked)
@@ -483,6 +488,161 @@ void BaseFrame::OnModem(wxCommandEvent &event)
 		msg += always.m_always ? _T("always") : _T("not always");
 		wxMessageBox(msg);
 	}
+}
+
+void BaseFrame::OnAppLoader(wxCommandEvent &event)
+{
+	OpenSync::SyncChange change;
+	change.id = 1;
+	change.member_id = 1;
+	change.plugin_name = "barry-sync";
+	change.uid = "12341524235234";
+	change.printable_data =
+"<vcal>\n"
+"  <Event>\n"
+"    <Sequence>\n"
+"      <Content>0</Content>\n"
+"    </Sequence>\n"
+"    <Summary>\n"
+"      <Content>Subject</Content>\n"
+"    </Summary>\n"
+"    <Description>\n"
+"      <Content>Bring burnt offering</Content>\n"
+"    </Description>\n"
+"    <Location>\n"
+"      <Content>Tent</Content>\n"
+"    </Location>\n"
+"    <DateStarted>\n"
+"      <Content>20100506T040000Z</Content>\n"
+"    </DateStarted>\n"
+"    <DateEnd>\n"
+"      <Content>20100507T040000Z</Content>\n"
+"    </DateEnd>\n"
+"    <Alarm>\n"
+"      <AlarmAction>AUDIO</AlarmAction>\n"
+"      <AlarmTrigger>\n"
+"        <Content>20100506T034500Z</Content>\n"
+"        <Value>DATE-TIME</Value>\n"
+"      </AlarmTrigger>\n"
+"    </Alarm>\n"
+"  </Event>\n"
+"</vcal>\n";
+
+	std::vector<OpenSync::SyncChange> changes;
+	changes.push_back(change);
+
+	change.id = 2;
+	change.member_id = 2;
+	change.plugin_name = "evo2-sync";
+	change.uid = "asdfioausdf_1235234as_asdf12341524235234";
+	change.printable_data =
+"<vcal>\n"
+"  <Method>\n"
+"    <Content>PUBLISH</Content>\n"
+"  </Method>\n"
+"  <Timezone>\n"
+"    <TimezoneID>/softwarestudio.org/Tzfile/America/Thunder_Bay</TimezoneID>\n"
+"    <Location>America/Thunder_Bay</Location>\n"
+"    <Standard>\n"
+"      <TimezoneName>EST</TimezoneName>\n"
+"      <DateStarted>19701107T010000</DateStarted>\n"
+"      <RecurrenceRule>\n"
+"        <Rule>FREQ=YEARLY</Rule>\n"
+"        <Rule>INTERVAL=1</Rule>\n"
+"        <Rule>BYDAY=2SU</Rule>\n"
+"        <Rule>BYMONTH=11</Rule>\n"
+"      </RecurrenceRule>\n"
+"      <TZOffsetFrom>-0400</TZOffsetFrom>\n"
+"      <TZOffsetTo>-0500</TZOffsetTo>\n"
+"    </Standard>\n"
+"    <DaylightSavings>\n"
+"      <TimezoneName>EDT</TimezoneName>\n"
+"      <DateStarted>19700313T030000</DateStarted>\n"
+"      <RecurrenceRule>\n"
+"        <Rule>FREQ=YEARLY</Rule>\n"
+"        <Rule>INTERVAL=1</Rule>\n"
+"        <Rule>BYDAY=2SU</Rule>\n"
+"        <Rule>BYMONTH=3</Rule>\n"
+"      </RecurrenceRule>\n"
+"      <TZOffsetFrom>-0500</TZOffsetFrom>\n"
+"      <TZOffsetTo>-0400</TZOffsetTo>\n"
+"    </DaylightSavings>\n"
+"  </Timezone>\n"
+"  <Event>\n"
+"    <Sequence>\n"
+"      <Content>1</Content>\n"
+"    </Sequence>\n"
+"    <Summary>\n"
+"      <Content>Celebration day</Content>\n"
+"    </Summary>\n"
+"    <Location>\n"
+"      <Content>Tent of</Content>\n"
+"    </Location>\n"
+"    <DateStarted>\n"
+"      <Content>20100506T000000</Content>\n"
+"      <TimezoneID>/softwarestudio.org/Tzfile/America/Thunder_Bay</TimezoneID>\n"
+"    </DateStarted>\n"
+"    <DateEnd>\n"
+"      <Content>20100507T000000</Content>\n"
+"      <TimezoneID>/softwarestudio.org/Tzfile/America/Thunder_Bay</TimezoneID>\n"
+"    </DateEnd>\n"
+"    <DateCalendarCreated>\n"
+"      <Content>20100430T214736Z</Content>\n"
+"    </DateCalendarCreated>\n"
+"    <DateCreated>\n"
+"      <Content>20100430T214736</Content>\n"
+"    </DateCreated>\n"
+"    <LastModified>\n"
+"      <Content>20100430T214927</Content>\n"
+"    </LastModified>\n"
+"    <Description>\n"
+"      <Content>Bring burnt offering</Content>\n"
+"    </Description>\n"
+"    <Class>\n"
+"      <Content>PUBLIC</Content>\n"
+"    </Class>\n"
+"    <Transparency>\n"
+"      <Content>OPAQUE</Content>\n"
+"    </Transparency>\n"
+"    <Alarm>\n"
+"      <AlarmAction>AUDIO</AlarmAction>\n"
+"      <AlarmTrigger>\n"
+"        <Content>20100506T034500Z</Content>\n"
+"        <Value>DATE-TIME</Value>\n"
+"      </AlarmTrigger>\n"
+"    </Alarm>\n"
+"  </Event>\n"
+"</vcal>\n";
+
+
+	changes.push_back(change);
+
+	{
+		ConflictDlg::AlwaysMemoryBlock always;
+		ConflictDlg dlg(this, *wxGetApp().GetOpenSync().os22(),
+			"SDAIN", changes, always);
+		dlg.ShowModal();
+		wxString msg(dlg.GetCommand().c_str(), wxConvUTF8);
+		msg += _T(" ");
+		msg += always.m_always ? _T("always") : _T("not always");
+		wxMessageBox(msg);
+	}
+}
+
+void BaseFrame::OnDeviceSwitch(wxCommandEvent &event)
+{
+}
+
+void BaseFrame::OnBrowseDatabases(wxCommandEvent &event)
+{
+}
+
+void BaseFrame::OnMediaManagement(wxCommandEvent &event)
+{
+}
+
+void BaseFrame::OnMisc(wxCommandEvent &event)
+{
 }
 
 void BaseFrame::OnBackButton(wxCommandEvent &event)
