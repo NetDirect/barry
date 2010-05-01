@@ -20,6 +20,7 @@
 */
 
 #include "CUI_Evolution.h"
+#include "os22.h"			// only for the dynamic_cast
 #include <wx/wx.h>
 #include <wx/process.h>
 
@@ -267,11 +268,19 @@ bool Evolution::ZapData(wxWindow *parent,
 	}
 
 	// tell the user what to do
-	wxString msg = _T(
+	wxString msg;
+	if( dynamic_cast<OpenSync::OpenSync22*>(engine) ) {
+		msg = _T(
+		"Starting Evolution.  Delete all contacts and calendar "
+		"entries manually.");
+	}
+	else {
+		msg = _T(
 		"Starting Evolution.  Delete all contacts and calendar "
 		"entries manually (as well as memos and tasks if you are "
 		"syncing them too)."
 		);
+	}
 	int choice = wxMessageBox(msg, _T("Starting Evolution"),
 			wxOK | wxCANCEL | wxICON_QUESTION, m_parent);
 	if( choice != wxOK )
