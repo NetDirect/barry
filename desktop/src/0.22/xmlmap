@@ -71,65 +71,65 @@ Contact /contact/Class 1 $Content
 
 
 # key event data: summary, dates, location, description
-Calendar /vcal/Summary 0 $Content
+Calendar /vcal/Event/Summary 0 $Content
 	Content
-Calendar /vcal/Description 0 $Content
+Calendar /vcal/Event/Description 0 $Content
 	Content
-Calendar /vcal/Location 0 $Content
+Calendar /vcal/Event/Location 0 $Content
 	Content
-Calendar /vcal/Categories 1 %Category
+Calendar /vcal/Event/DateCreated 1 Created: $Content
+	Content[timestamp]
+Calendar /vcal/Event/DateStarted 1 Started: $Content
+	Content[timestamp]
+Calendar /vcal/Event/DateDue 1 Due: $Content
+	Content[timestamp]
+Calendar /vcal/Event/Duration 1 Duration: $Content
+	Content
+Calendar /vcal/Event/DateEnd 1 End: $Content
+	Content[timestamp]
+Calendar /vcal/Event/Organizer 1 Organizer: $Content
+	Content
+Calendar /vcal/Event/Attendee 1 Attendee: $Content
+	Content
+Calendar /vcal/Event/Contact 1 Contact: $Content
+	Content
+Calendar /vcal/Event/Completed 1 $Content
+	Content
+Calendar /vcal/Event/Categories 1 %Category
 	Category
-Calendar /vcal/Method 1 $Content
+Calendar /vcal/Event/Method 1 $Content
 	Content
-Calendar /vcal/DateCalendarCreated 1 $Content
-	Content
-Calendar /vcal/PercentComplete 1 $Content
-	Content
-Calendar /vcal/DateCreated 1 $Content
-	Content
-Calendar /vcal/DateStarted 1 $Content
-	Content
-Calendar /vcal/RecurrenceRule 1 %Rule
-	Rule
-Calendar /vcal/Transparency 1 $Content
-	Content
+#Calendar /vcal/Event/DateCalendarCreated 1 CalCreated: $Content
+#	Content
+#Calendar /vcal/Event/PercentComplete 1 $Content
+#	Content
+#Calendar /vcal/RecurrenceRule 1 %Rule
+#	Rule
+#Calendar /vcal/Event/Transparency 1 $Content
+#	Content
 # FIXME - Alarm needs testing:
-Calendar /vcal/Alarm 1 $AlarmDescription
+Calendar /vcal/Event/Alarm 1 $AlarmDescription
 	AlarmAction
 	AlarmDescription
 	AlarmTrigger
-Calendar /vcal/Class 1 $Content
+Calendar /vcal/Event/Class 1 $Content
 	Content
-Calendar /vcal/DateDue 1 $Content
+Calendar /vcal/Event/Url 1 $Content
 	Content
-Calendar /vcal/Url 1 $Content
+Calendar /vcal/Event/Priority 1 $Content
 	Content
-Calendar /vcal/Priority 1 $Content
-	Content
-Calendar /vcal/Sequence 1 $Content
-	Content
-Calendar /vcal/RecurrenceDate 1 $Content
-	Content
-Calendar /vcal/Geo 1 $Latitude / $Longitude
+#Calendar /vcal/Event/Sequence 1 $Content
+#	Content
+#Calendar /vcal/RecurrenceDate 1 $Content
+#	Content
+Calendar /vcal/Event/Geo 1 $Latitude / $Longitude
 	Latitude
 	Longitude
-Calendar /vcal/Completed 1 $Content
+Calendar /vcal/Event/Status 1 $Content
 	Content
-Calendar /vcal/Organizer 1 $Content
-	Content
-Calendar /vcal/Status 1 $Content
-	Content
-Calendar /vcal/Duration 1 $Content
-	Content
-Calendar /vcal/Attach 1 Attach Data
-	Content
-Calendar /vcal/Attendee 1 $Content
-	Content
-Calendar /vcal/Contact 1 $Content
+Calendar /vcal/Event/Attach 1 Attach Data
 	Content
 #Calendar /vcal/ExclusionDate 1 $Content
 #	Content
 #	Value
-Calendar /vcal/DateEnd 1 $Content
-	Content
 
