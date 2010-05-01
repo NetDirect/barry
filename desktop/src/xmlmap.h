@@ -76,6 +76,10 @@ private:
 	compare_list m_compare_node_names;
 	summary_list m_summaries;
 
+protected:
+	static void SplitCompareName(const Glib::ustring &compare_name,
+		Glib::ustring &name, Glib::ustring &type);
+
 public:
 	XmlNodeMapping(const Glib::ustring &node_name, int priority,
 		const Glib::ustring &format);

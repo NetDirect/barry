@@ -18,6 +18,7 @@ barrydesktop_SOURCES = \
 	util.cc util.h \
 	xmlcompactor.cc xmlcompactor.h \
 	xmlmap.cc xmlmap.h \
+	utc_mktime.cc utc_mktime.h \
 	ClickImage.cc ClickImage.h \
 	PNGButton.cc PNGButton.h \
 	BaseButtons.cc BaseButtons.h \
@@ -108,7 +109,9 @@ xmlcompactor_SOURCES = xmlcompactor.cc xmlcompactor.h
 xmlcompactor_CXXFLAGS = -DXMLCOMPACTOR $(AM_CXXFLAGS) $(LIBXMLPP_CFLAGS)
 xmlcompactor_LDADD = $(LIBXMLPP_LIBS)
 
-xmlmap_SOURCES = xmlmap.cc xmlmap.h
+xmlmap_SOURCES = \
+	utc_mktime.cc utc_mktime.h \
+	xmlmap.cc xmlmap.h
 xmlmap_CXXFLAGS = -DXMLMAP $(AM_CXXFLAGS) $(LIBXMLPP_CFLAGS)
 xmlmap_LDADD = $(LIBXMLPP_LIBS)
 

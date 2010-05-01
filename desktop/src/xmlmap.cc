@@ -22,6 +22,7 @@
 */
 
 #include "xmlmap.h"
+#include "utc_mktime.h"
 #include <libxml++/libxml++.h>
 #include <iostream>
 #include <fstream>
@@ -191,6 +192,60 @@ const XmlNodeSummary& XmlNodeMapping::operator[] (int index) const
 	return m_summaries[index];
 }
 
+// Parse a compare_name in the format of "name[type]" into
+// its component parts, without the brackets.
+void XmlNodeMapping::SplitCompareName(const Glib::ustring &compare_name,
+					Glib::ustring &name,
+					Glib::ustring &type)
+{
+	size_t pos = compare_name.find('[');
+	if( pos == Glib::ustring::npos ) {
+		name = compare_name;
+		type.clear();
+	}
+	else {
+		name = compare_name.substr(0, pos);
+		pos++;
+		while( compare_name[pos] && compare_name[pos] != ']' ) {
+			type += compare_name[pos];
+			pos++;
+		}
+	}
+}
+
+bool Timestamp2Unix(const Glib::ustring &stamp, time_t &result)
+{
+	struct tm split;
+	if( !iso_timestamp_to_tm(stamp.c_str(), &split) )
+		return false;
+
+	split.tm_isdst = -1;
+
+	if( stamp.find('Z') == Glib::ustring::npos ) {
+		// no Z, time is localtime
+		result = mktime(&split);
+	}
+	else {
+		// Z, time is UTC
+		result = utc_mktime(&split);
+	}
+
+	return result != (time_t)-1;
+}
+
+bool TimestampsEqual(const Glib::ustring &content1,
+			const Glib::ustring &content2)
+{
+	time_t t1, t2;
+	if( !Timestamp2Unix(content1, t1) || !Timestamp2Unix(content2, t2) ) {
+		// could throw there, but this is just used to
+		// pretty up the display, so defaulting to false
+		// is fine
+		return false;
+	}
+	return t1 == t2;
+}
+
 bool XmlNodeMapping::operator== (const XmlNodeMapping &other) const
 {
 	// make sure mapfile data are the same
@@ -216,8 +271,23 @@ bool XmlNodeMapping::operator== (const XmlNodeMapping &other) const
 			other_sumi != other.m_summaries.end();
 			++sumi, ++other_sumi )
 		{
-			if( sumi->GetContent(*namei) != other_sumi->GetContent(*namei) )
-				return false;
+			Glib::ustring name, type;
+			SplitCompareName(*namei, name, type);
+
+			Glib::ustring
+				content1 = sumi->GetContent(name),
+				content2 = other_sumi->GetContent(name);
+
+			if( type == "timestamp" ) {
+				// compare content as timestamps
+				if( !TimestampsEqual(content1, content2) )
+					return false;
+			}
+			else {
+				// compare as raw strings
+				if( content1 != content2 )
+					return false;
+			}
 		}
 	}
 
