@@ -1,3 +1,8 @@
+Release TODO List:
+==================
+- package barrydesktop so that all .o files are included, to comply with
+	the LGPL (wxWidgets)
+
 Feature TODO List:
 ==================
 - menu item: reset current device, wait, and rescan
