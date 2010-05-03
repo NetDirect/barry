@@ -22,7 +22,7 @@
 */
 
 #include "xmlmap.h"
-#include "utc_mktime.h"
+#include "tzwrapper.h"
 #include <libxml++/libxml++.h>
 #include <iostream>
 #include <fstream>
@@ -216,19 +216,16 @@ void XmlNodeMapping::SplitCompareName(const Glib::ustring &compare_name,
 bool Timestamp2Unix(const Glib::ustring &stamp, time_t &result)
 {
 	struct tm split;
-	if( !iso_timestamp_to_tm(stamp.c_str(), &split) )
+	bool utc;
+	if( !reuse::iso_to_tm(stamp.c_str(), &split, utc) )
 		return false;
 
 	split.tm_isdst = -1;
 
-	if( stamp.find('Z') == Glib::ustring::npos ) {
-		// no Z, time is localtime
+	if( utc )
+		result = reuse::utc_mktime(&split);
+	else
 		result = mktime(&split);
-	}
-	else {
-		// Z, time is UTC
-		result = utc_mktime(&split);
-	}
 
 	return result != (time_t)-1;
 }
