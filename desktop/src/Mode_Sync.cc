@@ -141,16 +141,26 @@ SyncMode::SyncMode(wxWindow *parent)
 
 	// insert list columns based on the new list size
 	wxSize list_size = m_device_list->GetSize();
+	int timestamp_width = GetMaxTimestampWidth(m_device_list.get());
+	// FIXME - for some reason, even with the width calculated,
+	// when displayed in the listctrl, there's not enough space...
+	// possibly because there's space between columns... I don't
+	// know how to calculate the column inter-space size, so add
+	// a constant here :-(
+	timestamp_width += 8;
+	int usable_width = list_size.GetWidth() - timestamp_width;
 	m_device_list->InsertColumn(0, _T("PIN"),
-		wxLIST_FORMAT_LEFT, list_size.GetWidth() * 0.16);
+		wxLIST_FORMAT_LEFT, usable_width * 0.16);
 	m_device_list->InsertColumn(1, _T("Name"),
-		wxLIST_FORMAT_LEFT, list_size.GetWidth() * 0.33);
+		wxLIST_FORMAT_LEFT, usable_width * 0.34);
 	m_device_list->InsertColumn(2, _T("Connected"),
-		wxLIST_FORMAT_CENTRE, list_size.GetWidth() * 0.16);
+		wxLIST_FORMAT_CENTRE, usable_width * 0.16);
 	m_device_list->InsertColumn(3, _T("Application"),
-		wxLIST_FORMAT_CENTRE, list_size.GetWidth() * 0.18);
+		wxLIST_FORMAT_CENTRE, usable_width * 0.17);
 	m_device_list->InsertColumn(4, _T("Engine"),
-		wxLIST_FORMAT_CENTRE, list_size.GetWidth() * 0.17);
+		wxLIST_FORMAT_CENTRE, usable_width * 0.17);
+	m_device_list->InsertColumn(5, _T("Last Sync"),
+		wxLIST_FORMAT_CENTRE, timestamp_width);
 
 	FillDeviceList();
 
@@ -173,6 +183,36 @@ SyncMode::~SyncMode()
 		DeviceSet::Subset2String(GetSelectedDevices()));
 }
 
+std::string SyncMode::Timestamp(time_t last_sync)
+{
+	string ret;
+	struct tm local;
+	if( localtime_r(&last_sync, &local) != NULL ) {
+		char timestamp[20];
+		strftime(timestamp, sizeof(timestamp), "%b %d, %H:%M", &local);
+		ret = timestamp;
+	}
+	return ret;
+}
+
+int SyncMode::GetMaxTimestampWidth(wxWindow *win)
+{
+	int max_width = 0;
+	DeviceSet::const_iterator i = m_device_set->begin();
+	for( ; i != m_device_set->end(); ++i ) {
+		int this_width = 0;
+		int this_height = 0;
+		time_t last_sync = i->GetExtras()->m_last_sync_time;
+		if( last_sync ) {
+			win->GetTextExtent(wxString(Timestamp(last_sync).c_str(), wxConvUTF8), &this_width, &this_height);
+		}
+
+		max_width = max(max_width, this_width);
+	}
+
+	return max_width;
+}
+
 void SyncMode::FillDeviceList()
 {
 	// start fresh
@@ -180,15 +220,19 @@ void SyncMode::FillDeviceList()
 
 	DeviceSet::const_iterator i = m_device_set->begin();
 	for( int index = 0; i != m_device_set->end(); ++i, index++ ) {
+		// PIN number
 		wxString text(i->GetPin().str().c_str(), wxConvUTF8);
 		long item = m_device_list->InsertItem(index, text);
 
+		// Device name
 		text = wxString(i->GetDeviceName().c_str(), wxConvUTF8);
 		m_device_list->SetItem(item, 1, text);
 
+		// Connected?
 		text = i->IsConnected() ? _T("Yes") : _T("No");
 		m_device_list->SetItem(item, 2, text);
 
+		// Configured?
 		if( i->IsConfigured() ) {
 			text = wxString(i->GetAppNames().c_str(), wxConvUTF8);
 		}
@@ -197,11 +241,19 @@ void SyncMode::FillDeviceList()
 		}
 		m_device_list->SetItem(item, 3, text);
 
+		// Engine
 		if( i->GetEngine() )
 			text = wxString(i->GetEngine()->GetVersion(), wxConvUTF8);
 		else
 			text = _T("");
 		m_device_list->SetItem(item, 4, text);
+
+		// Last Sync
+		time_t last_sync = i->GetExtras()->m_last_sync_time;
+		if( last_sync ) {
+			wxString ts(Timestamp(last_sync).c_str(), wxConvUTF8);
+			m_device_list->SetItem(item, 5, ts);
+		}
 	}
 
 	UpdateButtons();
@@ -551,6 +603,9 @@ void SyncMode::OnSyncNow(wxCommandEvent &event)
 
 	SyncStatusDlg dlg(m_parent, subset);
 	dlg.ShowModal();
+
+	// update the timestamps
+	RefillList();
 }
 
 void SyncMode::OnConfigure(wxCommandEvent &event)

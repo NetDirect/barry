@@ -47,6 +47,7 @@ class DeviceExtras
 public:
 	// config data... The Extras
 	std::string m_favour_plugin_name;	// if empty, ask user
+	time_t m_last_sync_time;
 
 protected:
 	std::string MakeBaseKey(const std::string &group_name);

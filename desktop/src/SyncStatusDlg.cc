@@ -24,6 +24,7 @@
 #include "ConflictDlg.h"
 #include "windowids.h"
 #include "configui.h"
+#include "barrydesktop.h"
 #include <wx/filename.h>
 #include <iostream>
 #include <sstream>
@@ -442,6 +443,18 @@ void SyncStatusDlg::UpdateTitle()
 	}
 }
 
+void SyncStatusDlg::UpdateLastSyncTime()
+{
+	if( m_current_device != m_subset.end() &&
+	    (*m_current_device)->GetConfigGroup() )
+	{
+		(*m_current_device)->GetExtras()->m_last_sync_time = time(NULL);
+		(*m_current_device)->GetExtras()->Save(
+			wxGetApp().GetGlobalConfig(),
+			(*m_current_device)->GetConfigGroup()->GetGroupName());
+	}
+}
+
 void SyncStatusDlg::KillSync()
 {
 	m_jailexec.KillApp(m_killingjail);
@@ -649,6 +662,7 @@ void SyncStatusDlg::OnExecTerminated(wxProcessEvent &event)
 	oss << m_device_id;
 	Print(oss.str(), *wxBLACK);
 	ShortPrint(oss.str());
+	UpdateLastSyncTime();
 
 	m_current_device = m_subset.end();
 

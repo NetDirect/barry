@@ -133,6 +133,7 @@ protected:
 	void SetClose();
 
 	void UpdateTitle();
+	void UpdateLastSyncTime();
 
 public:
 	SyncStatusDlg(wxWindow *parent, const DeviceSet::subset_type &subset);

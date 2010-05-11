@@ -46,6 +46,9 @@ private:
 	std::auto_ptr<wxListCtrl> m_device_list;
 
 protected:
+	static std::string Timestamp(time_t last_sync);
+
+	int GetMaxTimestampWidth(wxWindow *win);
 	void FillDeviceList();
 	void UpdateButtons();
 	DeviceSet::subset_type GetSelectedDevices();

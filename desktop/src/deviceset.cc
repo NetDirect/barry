@@ -34,6 +34,7 @@ using namespace std;
 
 DeviceExtras::DeviceExtras(const Barry::Pin &pin)
 	: m_pin(pin)
+	, m_last_sync_time(0)
 {
 }
 
@@ -41,6 +42,7 @@ DeviceExtras::DeviceExtras(const Barry::Pin & pin,
 				const Barry::GlobalConfigFile &config,
 				const std::string &group_name)
 	: m_pin(pin)
+	, m_last_sync_time(0)
 {
 	Load(config, group_name);
 }
@@ -57,6 +59,9 @@ void DeviceExtras::Load(const Barry::GlobalConfigFile &config,
 {
 	string key = MakeBaseKey(group_name);
 	m_favour_plugin_name = config.GetKey(key + "FavourPlugin");
+
+	string num = config.GetKey(key + "LastSyncTime");
+	m_last_sync_time = atol(num.c_str());
 }
 
 void DeviceExtras::Save(Barry::GlobalConfigFile &config,
@@ -64,6 +69,10 @@ void DeviceExtras::Save(Barry::GlobalConfigFile &config,
 {
 	string key = MakeBaseKey(group_name);
 	config.SetKey(key + "FavourPlugin", m_favour_plugin_name);
+
+	ostringstream oss;
+	oss << m_last_sync_time;
+	config.SetKey(key + "LastSyncTime", oss.str());
 }
 
 
