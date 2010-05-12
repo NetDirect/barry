@@ -1,4 +1,9 @@
+# See the README file in the source tree for notes and documentation
+
 connect "/usr/sbin/chat -f /etc/chatscripts/barry-kpn.chat"
+pty "/usr/sbin/pppob"
+
+debug
 
 noauth
 user "KPN"
@@ -9,7 +14,6 @@ usepeerdns
 
 noipdefault
 nodetach
-novj
 nodeflate
 nobsdcomp
 noaccomp
@@ -17,18 +21,14 @@ nocrtscts
 nomultilink
 nopcomp
 nomagic
-
-passive
+novj
 
 ipcp-restart 7
 ipcp-accept-local
 ipcp-accept-remote
-
 lcp-echo-interval 0
 lcp-echo-failure 999
 
+passive
 mtu 1492
 
-debug
-
-pty "/usr/sbin/pppob"

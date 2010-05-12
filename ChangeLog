@@ -1,5 +1,10 @@
 Release: version 0.17 - 2010/01/??
 ------------------------------------------------------------------------------
+2010/05/11
+	- ppp: cleaned up ppp options files and put notes in README
+		Thanks to feedback from Matt Machado for Rogers specific
+		notes, and for recommendation to have one copy of
+		comments for the PPP options.
 2010/04/19
 	- lib: added LDIF mapping support for Contact::Image fields
 	- lib: fixed signed extension bug in base64 encoder

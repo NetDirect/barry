@@ -1,4 +1,9 @@
+# See the README file in the source tree for notes and documentation
+
 connect "/usr/sbin/chat -f /etc/chatscripts/barry-chinamobile.chat"
+pty "/usr/sbin/pppob"
+
+debug
 
 noauth
 user ""
@@ -9,26 +14,21 @@ usepeerdns
 
 noipdefault
 nodetach
-novj
 nodeflate
 nobsdcomp
 noaccomp
 nocrtscts
-nomultilink
 nopcomp
 nomagic
+novj
 
-passive
-
+nomultilink
 ipcp-restart 7
 ipcp-accept-local
 ipcp-accept-remote
-
 lcp-echo-interval 0
 lcp-echo-failure 999
 
+passive
 mtu 1492
 
-debug
-
-pty "/usr/sbin/pppob"

@@ -1,10 +1,9 @@
-#
-# This file contains options for Verizon Blackberries
-#
-# It is based on a file reported to work, but edited for Barry.
-#
+# See the README file in the source tree for notes and documentation
 
 connect "/usr/sbin/chat -f /etc/chatscripts/barry-verizon.chat"
+pty "/usr/sbin/pppob"
+
+debug
 
 noauth
 user ""
@@ -15,32 +14,15 @@ usepeerdns
 
 noipdefault
 nodetach
-novj
-#nodeflate
-#nobsdcomp
-#noaccomp
-#default-asyncmap
 nocrtscts
-#nopcomp
-#nomagic
-
-#passive
+novj
 
 nomultilink
 ipcp-restart 7
 ipcp-accept-local
 ipcp-accept-remote
-# added so not to disconnect after a few minutes
 lcp-echo-interval 0
 lcp-echo-failure 999
 
 mtu 1492
-
-debug
-#debug debug debug
-
-pty "/usr/sbin/pppob"
-
-#115200
-#modem
 

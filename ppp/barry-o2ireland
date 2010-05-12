@@ -1,21 +1,27 @@
-debug debug debug
-nodetach
+# See the README file in the source tree for notes and documentation
 
-pty "/usr/sbin/pppob"
 connect "/usr/sbin/chat -f /etc/chatscripts/barry-o2ireland.chat"
+pty "/usr/sbin/pppob"
+
+debug debug debug
+
 user "gprs"
 password "gprs"
 
 defaultroute
 usepeerdns
+
 noipdefault
 nodetach
-novj
 nocrtscts
+novj
+
 nomultilink
 ipcp-restart 7
 ipcp-accept-local
 ipcp-accept-remote
 lcp-echo-interval 0
 lcp-echo-failure 999
+
 mtu 1492
+

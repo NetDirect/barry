@@ -14,8 +14,97 @@ various security implications.  You may wish to read the following URLs
 	http://groups.google.com/group/comp.os.linux.misc/browse_thread/thread/11fb49a3c035573/7d7e19b2e4820b0c
 	http://linuxgazette.net/issue77/lechnyr.html
 
+Other options can be found at:
+    http://wiki.colar.net/tethering_with_blackberry_pearl_on_linux
 
-Chris Frey
-<cdfrey@foursquare.net>
-May 2008
+The original peer files were based on the XmBlackBerry peer file, but
+many have been added over the years for various ISPs.
+
+Please send all working peer files to cdfrey@foursquare.net, so we can
+build a library of peer files for different carriers.
+
+Peer File Option Notes:
+-----------------------
+
+#
+# the chat script and the USB link
+#
+connect "/usr/sbin/chat -f /etc/chatscripts/barry-rogers.chat"
+pty "/usr/sbin/pppob"
+
+#
+# decide the level of debug output you need
+#
+debug
+#debug debug debug
+
+#
+# authentication options - no need for ISP to authenticate to us, but
+#                          we may need a login here: user/password/name
+#
+# Rogers style:
+noauth
+user wapuser
+password wap
+name wapuser
+
+# or:
+
+# T-Mobile style:
+# You may not need to auth.  If you do, use your user/pass
+# from www.t-mobile.com.
+user ""
+password ""
+
+
+
+#
+# routing options
+#
+#nodefaultroute		# the safest, but least useful
+defaultroute
+usepeerdns
+
+#
+# options that are usually unsupported, so disable them
+#
+noipdefault
+nodetach
+nodeflate
+nobsdcomp
+noaccomp
+nocrtscts
+nopcomp
+nomagic
+#default-asyncmap	# does not usually need to be specified
+
+# This is disabled by default for a Barry config, but this
+# has caused connection issues in the past.  If you are unable
+# to get an ip with your provider, try commenting this out.
+# See:
+# http://www.mail-archive.com/barry-devel@lists.sourceforge.net/msg01871.html
+novj
+
+#nomultilink
+ipcp-restart 7
+ipcp-accept-local
+ipcp-accept-remote
+# need lcp-echo turned off, at least for tmobile, otherwise c0onnectin
+# disconnects after few mn of inactivity.
+# thanks to loon for this info
+lcp-echo-interval 0
+lcp-echo-failure 999
+
+#
+# limit size of packets, misc. options
+#
+passive
+mtu 1492
+
+#
+# unused options... modem and local are opposites, and determine how
+#		far pppd goes to use the line like a modem
+#
+#modem
+#local
 

@@ -1,60 +1,37 @@
+# See the README file in the source tree for notes and documentation
+
 # pppd peer file for ATT / Cingular
 # by Richard Esplin
 # Licensed under the same terms as libbarry.
-#
-# Some of these options found documented at:
-#    http://wiki.colar.net/tethering_with_blackberry_pearl_on_linux
-#
-# Please send all working peer files to cdfrey@foursquare.net, so we can
-# build a library of peer files for different carriers.
 
 connect "/usr/sbin/chat -f /etc/chatscripts/barry-att_cingular.chat"
+pty "/usr/sbin/pppob"
 
-# Authentication options - no need for ISP to authenticate to us, but
-#                          we may need a login here: user/password/name
+debug
+
 noauth
 user ""
 password ""
 
-# Handle the default route and DNS
-#nodefaultroute
 defaultroute
 usepeerdns
 
-# Disable unsupported options
 noipdefault
 nodetach
 nodeflate
 nobsdcomp
 noaccomp
-#default-asyncmap
 nocrtscts
 nopcomp
 nomagic
-
-# This is disabled by default for a Barry config, but this
-# has caused connection issues in the past.  If you are unable
-# to get an ip with your provider, try commenting this out.
-# See:
-# http://www.mail-archive.com/barry-devel@lists.sourceforge.net/msg01871.html
 novj
 
-passive
-
-#nomultilink
 ipcp-restart 7
 ipcp-accept-local
 ipcp-accept-remote
 lcp-echo-interval 0
 lcp-echo-failure 999
 
-# Limit size of packets
+passive
 mtu 1492
-
-# Verbosity
-debug
-#debug debug debug
-
-# Call pppob for the USB link
-pty "/usr/sbin/pppob"
 
