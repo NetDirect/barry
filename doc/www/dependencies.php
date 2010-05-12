@@ -74,6 +74,7 @@ some are only needed for building CVS.
 	<li><b>php5</b>, needed for generating static HTML documentation (CVS builds only) </li>
 	<li><b>rpmdevtools and rpm-build</b>, if building RPMs yourself</li>
 	<li><b>fakeroot</b>, if building DEB packages yourself</li>
+	<li><b>wxWidgets</b>, if building the Barry Desktop</li>
 </ul>
 </p>
 
@@ -135,6 +136,7 @@ maintainer/depscripts.</p>
 	<li> ccache (optional) </li>
 	<li> doxygen (optional) </li>
 	<li> php-cli (optional, for generating docs) </li>
+	<li> wxGTK-devel (optional, for Barry Desktop) </li>
 </ul>
 
 <p><b>Debian:</b></p>
@@ -161,6 +163,7 @@ maintainer/depscripts.</p>
 	<li> ccache (optional) </li>
 	<li> doxygen (optional) </li>
 	<li> php5-cli (optional, for generating docs) </li>
+	<li> libwxgtk2.8-dev and wx-common (optional, for Barry Desktop) </li>
 </ul>
 
 </ul>
