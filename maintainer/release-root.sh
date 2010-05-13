@@ -12,6 +12,7 @@ set -e
 #
 # Build the DEB's
 #
+./make-deb.sh build/barry-$1.$2.tar.bz2 ubuntu1004 ubuntu1004
 ./make-deb.sh build/barry-$1.$2.tar.bz2 ubuntu910 ubuntu910
 ./make-deb.sh build/barry-$1.$2.tar.bz2 ubuntu904 ubuntu904
 ./make-deb.sh build/barry-$1.$2.tar.bz2 ubuntu804 ubuntu804
