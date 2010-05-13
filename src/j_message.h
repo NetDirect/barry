@@ -31,7 +31,7 @@ class JDWMessage
 private:
 	int m_socket;
 
-	JDWP::JDWP m_jdwp;
+	JDWP m_jdwp;
 
 	void RawSend(Barry::Data &send, int timeout = -1);
 	bool RawReceive(Barry::Data &receive, int timeout = -1);

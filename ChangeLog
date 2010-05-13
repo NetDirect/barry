@@ -1,5 +1,10 @@
 Release: version 0.17 - 2010/01/??
 ------------------------------------------------------------------------------
+2010/05/13
+	- lib: fixed compile error in j_message.h
+		Thanks to Raymond Blostein for the bug report and the
+		link to the explanation of the C++ standard change:
+		https://bugs.launchpad.net/inkscape/+bug/522327/comments/1
 2010/05/11
 	- ppp: cleaned up ppp options files and put notes in README
 		Thanks to feedback from Matt Machado for Rogers specific
