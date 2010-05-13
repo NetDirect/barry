@@ -11,6 +11,7 @@
 
 #include "tzwrapper.h"
 #include <string.h>
+#include <stdio.h>
 
 namespace reuse {
 
