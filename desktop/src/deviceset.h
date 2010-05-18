@@ -123,6 +123,7 @@ public:
 
 	void SetConfigGroup(group_ptr group, OpenSync::API *engine,
 		extras_ptr extras);
+	void SetDeviceName(const std::string &name) { m_device_name = name; }
 };
 
 std::ostream& operator<< (std::ostream &os, const DeviceEntry &de);

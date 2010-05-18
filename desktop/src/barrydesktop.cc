@@ -99,6 +99,34 @@ wxBitmap BarryDesktopApp::GetScreenshot(const Barry::ProbeResult &device) const
 	return wxBitmap(bmp);
 }
 
+void BarryDesktopApp::SetDeviceName(Barry::Pin pin, const std::string &name)
+{
+	if( !pin.valid() )
+		return;
+
+	// load device config
+	Barry::ConfigFile cfg(pin);
+
+	// re-save device config
+	cfg.SetDeviceName(name);
+	cfg.Save();
+
+	// update our results if this device exists in our list
+	int index = Barry::Probe::Find(m_results, pin);
+	if( index != -1 ) {
+		m_results[index].m_cfgDeviceName = name;
+	}
+}
+
+std::string BarryDesktopApp::GetDeviceName(Barry::Pin pin) const
+{
+	string name;
+	int index = Barry::Probe::Find(m_results, pin);
+	if( index != -1 )
+		name = m_results[index].m_cfgDeviceName;
+	return name;
+}
+
 void BarryDesktopApp::ShowMissingOpenSyncMessage()
 {
 	wxMessageBox(_T("No OpenSync libraries were found. Sync will be unavailable until you install OpenSync version 0.22 or version 0.4x on your system, along with the needed plugins."), _T("OpenSync Not Found"), wxOK | wxICON_INFORMATION);

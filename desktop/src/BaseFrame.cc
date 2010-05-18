@@ -54,6 +54,7 @@ BEGIN_EVENT_TABLE(BaseFrame, wxFrame)
 	EVT_BUTTON	(HotImage_NetDirectLogo, BaseFrame::OnNetDirectLogoClicked)
 	EVT_TEXT	(Ctrl_DeviceCombo, BaseFrame::OnDeviceComboChange)
 	EVT_MENU	(SysMenu_VerboseLogging, BaseFrame::OnVerboseLogging)
+	EVT_MENU	(SysMenu_RenameDevice, BaseFrame::OnRenameDevice)
 	EVT_MENU	(SysMenu_ResetDevice, BaseFrame::OnResetDevice)
 	EVT_MENU	(SysMenu_RescanUsb, BaseFrame::OnRescanUsb)
 	EVT_MENU	(SysMenu_About, BaseFrame::OnAbout)
@@ -102,6 +103,7 @@ BaseFrame::BaseFrame(const wxImage &background)
 	m_sysmenu->Append( new wxMenuItem(m_sysmenu.get(),
 		SysMenu_VerboseLogging, _T("&Verbose Logging"),
 		_T("Enable low level USB debug output"), wxITEM_CHECK, NULL) );
+	m_sysmenu->Append(SysMenu_RenameDevice, _T("Re&name Device..."));
 	m_sysmenu->Append(SysMenu_ResetDevice, _T("Re&set Device"));
 	m_sysmenu->Append(SysMenu_RescanUsb, _T("&Rescan USB"));
 	m_sysmenu->AppendSeparator();
@@ -214,6 +216,7 @@ void BaseFrame::EnableBackButton(Mode *new_mode)
 
 	// without the device combo, there is no concept of a
 	// "current device" so temporarily disable the USB options
+	m_sysmenu->Enable(SysMenu_RenameDevice, false);
 	m_sysmenu->Enable(SysMenu_ResetDevice, false);
 	m_sysmenu->Enable(SysMenu_RescanUsb, false);
 
@@ -233,6 +236,8 @@ void BaseFrame::DisableBackButton()
 	CreateDeviceCombo(wxGetApp().GetGlobalConfig().GetLastDevice());
 
 	// enable the USB menu options
+	Barry::Pin pin = GetCurrentComboPin();
+	m_sysmenu->Enable(SysMenu_RenameDevice, pin.valid() );
 	m_sysmenu->Enable(SysMenu_ResetDevice, true);
 	m_sysmenu->Enable(SysMenu_RescanUsb, true);
 
@@ -686,6 +691,9 @@ void BaseFrame::OnDeviceComboChange(wxCommandEvent &event)
 	// save
 	wxGetApp().GetGlobalConfig().SetLastDevice(pin);
 
+	// update sys menu
+	m_sysmenu->Enable(SysMenu_RenameDevice, false);
+
 	// update the main mode's screenshot
 	m_main_menu_mode->UpdateScreenshot(pin);
 	if( m_current_mode == m_main_menu_mode.get() )
@@ -700,6 +708,36 @@ void BaseFrame::OnVerboseLogging(wxCommandEvent &event)
 	Barry::Verbose( !Barry::IsVerbose() );
 	wxGetApp().GetGlobalConfig().SetVerboseLogging( Barry::IsVerbose() );
 	UpdateMenuState();
+}
+
+void BaseFrame::OnRenameDevice(wxCommandEvent &event)
+{
+	Barry::Pin pin = GetCurrentComboPin();
+	if( !pin.valid() )
+		return;
+
+	// grab the current known name of the device
+	const Barry::Probe::Results &results = wxGetApp().GetResults();
+	int index = Barry::Probe::Find(results, pin);
+	if( index == -1 )
+		return;
+
+	wxString current_name(results[index].m_cfgDeviceName.c_str(), wxConvUTF8);
+	wxTextEntryDialog dlg(this,
+		_T("Please enter a name for the current device:"),
+		_T("Rename Device"),
+		current_name, wxTextEntryDialogStyle);
+
+	if( dlg.ShowModal() != wxID_OK )
+		return; // nothing to do
+	wxString name = dlg.GetValue();
+	if( name == current_name )
+		return; // nothing to do
+
+	wxGetApp().SetDeviceName(pin, string(name.utf8_str()));
+
+	// refill combo box
+	CreateDeviceCombo(wxGetApp().GetGlobalConfig().GetLastDevice());
 }
 
 void BaseFrame::OnResetDevice(wxCommandEvent &event)

@@ -40,6 +40,7 @@ class GroupCfgDlg : public wxDialog
 	OpenSync::APISet &m_apiset;
 
 	// results of the configuration
+	std::string m_device_name;
 	std::string m_group_name;
 	DeviceEntry::group_ptr m_group;
 	DeviceEntry::extras_ptr m_extras;
@@ -60,7 +61,7 @@ class GroupCfgDlg : public wxDialog
 	// dialog controls
 	wxSizer *m_topsizer, *m_appsizer;
 	wxComboBox *m_engine_combo, *m_app_combo;
-	wxTextCtrl *m_password_edit;
+	wxTextCtrl *m_password_edit, *m_name_edit;
 	wxCheckBox *m_debug_check;
 	wxRadioBox *m_favour_radios;
 
@@ -93,6 +94,7 @@ public:
 		OpenSync::APISet &apiset);
 
 	// results
+	std::string GetDeviceName() const { return m_device_name; }
 	DeviceEntry::group_ptr GetGroup() { return m_group; }
 	OpenSync::API* GetEngine() const { return m_engine; }
 	DeviceEntry::extras_ptr GetExtras() { return m_extras; }

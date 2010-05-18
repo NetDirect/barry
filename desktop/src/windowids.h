@@ -103,6 +103,7 @@ enum {
 	SysMenu_FirstItem,
 
 	SysMenu_VerboseLogging = SysMenu_FirstItem,
+	SysMenu_RenameDevice,
 	SysMenu_ResetDevice,
 	SysMenu_RescanUsb,
 

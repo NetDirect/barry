@@ -24,6 +24,7 @@
 #include "GroupCfgDlg.h"
 #include "windowids.h"
 #include "configui.h"
+#include "barrydesktop.h"
 #include <string>
 
 using namespace std;
@@ -54,6 +55,7 @@ GroupCfgDlg::GroupCfgDlg(wxWindow *parent,
 	, m_engine_combo(0)
 	, m_app_combo(0)
 	, m_password_edit(0)
+	, m_name_edit(0)
 	, m_debug_check(0)
 	, m_favour_radios(0)
 {
@@ -167,6 +169,15 @@ void GroupCfgDlg::AddBarrySizer(wxSizer *sizer)
 		new wxStaticBox(this, wxID_ANY, _T("Barry Config")),
 		wxVERTICAL
 		);
+
+	wxSizer *dname = new wxBoxSizer(wxHORIZONTAL);
+	dname->Add(
+		new wxStaticText(this, wxID_ANY, _T("Name:")),
+		0, wxALIGN_RIGHT | wxALIGN_CENTRE_VERTICAL, 2);
+	dname->Add(
+		m_name_edit = new wxTextCtrl(this, wxID_ANY, _T("")),
+		1, wxALIGN_LEFT, 0);
+	barry->Add(dname, 0, wxALL | wxEXPAND, 5);
 
 	wxSizer *password = new wxBoxSizer(wxHORIZONTAL);
 	password->Add(
@@ -303,7 +314,10 @@ void GroupCfgDlg::LoadBarryConfig()
 {
 	Config::Barry &bp = m_barry_plugin;
 
-	m_password_edit->SetValue( wxString(bp.GetPassword().c_str(), wxConvUTF8) );
+	wxString dname(wxGetApp().GetDeviceName(bp.GetPin()).c_str(), wxConvUTF8);
+
+	m_name_edit->SetValue(dname);
+	m_password_edit->SetValue(wxString(bp.GetPassword().c_str(), wxConvUTF8));
 	m_debug_check->SetValue( bp.IsDebugMode() );
 }
 
@@ -435,6 +449,7 @@ bool GroupCfgDlg::TransferDataFromWindow()
 	}
 
 	// copy over barry specific settings
+	m_device_name = string(m_name_edit->GetValue().utf8_str());
 	m_barry_plugin.SetPassword(string(m_password_edit->GetValue().utf8_str()));
 	m_barry_plugin.DebugMode(m_debug_check->GetValue());
 
@@ -459,6 +474,9 @@ bool GroupCfgDlg::TransferDataFromWindow()
 			_T("Conflict Resolution"), wxOK | wxICON_ERROR, this);
 		return false;
 	}
+
+	// save the new device name
+	wxGetApp().SetDeviceName(m_barry_plugin.GetPin(), m_device_name);
 
 	return true;
 }

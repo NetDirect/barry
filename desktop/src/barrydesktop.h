@@ -70,6 +70,13 @@ public:
 	/// Can throw exceptions on error.
 	wxBitmap GetScreenshot(const Barry::ProbeResult &device) const;
 
+	/// Sets the device name for the given device PIN.
+	/// If the PIN exists in m_results, the associated
+	/// m_results entry will be updated with the new device name,
+	/// so the next GetResults() will contain the new name.
+	void SetDeviceName(Barry::Pin pin, const std::string &name);
+	std::string GetDeviceName(Barry::Pin pin) const;
+
 	//
 	// overrides
 	//

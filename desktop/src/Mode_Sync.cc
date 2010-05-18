@@ -408,6 +408,7 @@ void SyncMode::ConfigureDevice(int device_index)
 		// update the device set
 		(*m_device_set)[device_index].SetConfigGroup(
 			dlg.GetGroup(), dlg.GetEngine(), dlg.GetExtras());
+		(*m_device_set)[device_index].SetDeviceName(dlg.GetDeviceName());
 
 		// update!
 		RefillList();

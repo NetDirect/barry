@@ -87,6 +87,7 @@ public:
 
 	// sys menu (triggered by the Barry logo)
 	void OnVerboseLogging(wxCommandEvent &event);
+	void OnRenameDevice(wxCommandEvent &event);
 	void OnResetDevice(wxCommandEvent &event);
 	void OnRescanUsb(wxCommandEvent &event);
 	void OnAbout(wxCommandEvent &event);
