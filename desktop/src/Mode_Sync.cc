@@ -202,9 +202,11 @@ int SyncMode::GetMaxTimestampWidth(wxWindow *win)
 	for( ; i != m_device_set->end(); ++i ) {
 		int this_width = 0;
 		int this_height = 0;
-		time_t last_sync = i->GetExtras()->m_last_sync_time;
-		if( last_sync ) {
-			win->GetTextExtent(wxString(Timestamp(last_sync).c_str(), wxConvUTF8), &this_width, &this_height);
+		if( i->GetExtras() ) {
+			time_t last_sync = i->GetExtras()->m_last_sync_time;
+			if( last_sync ) {
+				win->GetTextExtent(wxString(Timestamp(last_sync).c_str(), wxConvUTF8), &this_width, &this_height);
+			}
 		}
 
 		max_width = max(max_width, this_width);
@@ -249,10 +251,12 @@ void SyncMode::FillDeviceList()
 		m_device_list->SetItem(item, 4, text);
 
 		// Last Sync
-		time_t last_sync = i->GetExtras()->m_last_sync_time;
-		if( last_sync ) {
-			wxString ts(Timestamp(last_sync).c_str(), wxConvUTF8);
-			m_device_list->SetItem(item, 5, ts);
+		if( i->GetExtras() ) {
+			time_t last_sync = i->GetExtras()->m_last_sync_time;
+			if( last_sync ) {
+				wxString ts(Timestamp(last_sync).c_str(), wxConvUTF8);
+				m_device_list->SetItem(item, 5, ts);
+			}
 		}
 	}
 

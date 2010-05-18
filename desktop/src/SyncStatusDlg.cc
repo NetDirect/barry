@@ -446,7 +446,8 @@ void SyncStatusDlg::UpdateTitle()
 void SyncStatusDlg::UpdateLastSyncTime()
 {
 	if( m_current_device != m_subset.end() &&
-	    (*m_current_device)->GetConfigGroup() )
+	    (*m_current_device)->GetConfigGroup() &&
+	    (*m_current_device)->GetExtras() )
 	{
 		(*m_current_device)->GetExtras()->m_last_sync_time = time(NULL);
 		(*m_current_device)->GetExtras()->Save(
