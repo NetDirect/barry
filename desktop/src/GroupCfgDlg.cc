@@ -225,7 +225,7 @@ void GroupCfgDlg::UpdateAppSizer()
 			Dialog_GroupCfg_AppCombo, _T(""),
 			wxDefaultPosition, wxSize(200, -1), appnames,
 			wxCB_READONLY),
-		1, wxALL | wxALIGN_CENTRE, 5);
+		0, wxALL | wxALIGN_CENTRE, 5);
 	m_appsizer->Add(
 		new wxButton(this, Dialog_GroupCfg_AppConfigButton,
 			_T("&Configure...")),
