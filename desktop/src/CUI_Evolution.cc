@@ -192,9 +192,17 @@ bool Evolution::InitialRun()
 
 	// and finally, failure
 	wxMessageBox(_T("Failed to find Evolution's usual data locations.\n"
-		"Please contact the developers.\n"
+		"Please make sure the following directories are create by Evolution:\n"
 		"\n"
-		"http://netdirect.ca/barry"),
+		"      ~/.evolution/addressbook/local/system\n"
+		"      ~/.evolution/calendar/local/system\n"
+		"      ~/.evolution/tasks/local/system\n"
+		"      ~/.evolution/memos/local/system\n"
+		"\n"
+		"You may need to use each feature a bit before Evolution\n"
+		"creates these directories and the databases inside them.\n"
+		"Make sure you select the Personal folder in Contacts."
+		),
 		_T("Evolution Config"),
 		wxOK | wxICON_ERROR,
 		m_parent);
