@@ -487,6 +487,7 @@ void SyncStatusDlg::StartNextSync()
 
 	if( !device.IsConfigured() ) {
 		Print(m_device_id + " is not configured, skipping.", *wxRED);
+		ShortPrint("Skipping unconfigured: " + m_device_id);
 		++m_next_device;
 		m_current_device = m_subset.end();
 		StartNextSync();

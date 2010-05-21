@@ -54,6 +54,8 @@ protected:
 	DeviceSet::subset_type GetSelectedDevices();
 	void ReselectDevices(const DeviceSet::subset_type &set);
 	void ConfigureDevice(int device_index);
+	void ConfigureDevice(DeviceEntry &entry);
+	void CheckConfigured(DeviceSet::subset_type &subset);
 	void RefillList();
 	int GetSelectedDevice();	// returns index, or -1 if none or
 					// more than one selected... also

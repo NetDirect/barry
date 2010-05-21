@@ -152,11 +152,11 @@ SyncMode::SyncMode(wxWindow *parent)
 	m_device_list->InsertColumn(0, _T("PIN"),
 		wxLIST_FORMAT_LEFT, usable_width * 0.16);
 	m_device_list->InsertColumn(1, _T("Name"),
-		wxLIST_FORMAT_LEFT, usable_width * 0.34);
+		wxLIST_FORMAT_LEFT, usable_width * 0.33);
 	m_device_list->InsertColumn(2, _T("Connected"),
 		wxLIST_FORMAT_CENTRE, usable_width * 0.16);
 	m_device_list->InsertColumn(3, _T("Application"),
-		wxLIST_FORMAT_CENTRE, usable_width * 0.17);
+		wxLIST_FORMAT_CENTRE, usable_width * 0.18);
 	m_device_list->InsertColumn(4, _T("Engine"),
 		wxLIST_FORMAT_CENTRE, usable_width * 0.17);
 	m_device_list->InsertColumn(5, _T("Last Sync"),
@@ -239,7 +239,7 @@ void SyncMode::FillDeviceList()
 			text = wxString(i->GetAppNames().c_str(), wxConvUTF8);
 		}
 		else {
-			text = _T("(unconfigured)");
+			text = _T("(No config)");
 		}
 		m_device_list->SetItem(item, 3, text);
 
@@ -324,14 +324,18 @@ void SyncMode::ReselectDevices(const DeviceSet::subset_type &set)
 
 void SyncMode::ConfigureDevice(int device_index)
 {
+	DeviceEntry &entry = (*m_device_set)[device_index];
+	ConfigureDevice(entry);
+}
+
+void SyncMode::ConfigureDevice(DeviceEntry &entry)
+{
 	// make sure it's not already running
 	if( m_cui.get() && m_cui->IsAppRunning() ) {
 		wxMessageBox(_T("An application is currently running."),
 			_T("Run App Error"), wxOK | wxICON_ERROR);
 		return;
 	}
-
-	DeviceEntry &entry = (*m_device_set)[device_index];
 
 	GroupCfgDlg dlg(m_parent, entry, wxGetApp().GetOpenSync());
 	if( dlg.ShowModal() == wxID_OK &&
@@ -410,12 +414,38 @@ void SyncMode::ConfigureDevice(int device_index)
 					dlg.GetGroup()->GetGroupName());
 
 		// update the device set
-		(*m_device_set)[device_index].SetConfigGroup(
-			dlg.GetGroup(), dlg.GetEngine(), dlg.GetExtras());
-		(*m_device_set)[device_index].SetDeviceName(dlg.GetDeviceName());
+		entry.SetConfigGroup(dlg.GetGroup(), dlg.GetEngine(),
+			dlg.GetExtras());
+		entry.SetDeviceName(dlg.GetDeviceName());
 
 		// update!
 		RefillList();
+	}
+}
+
+void SyncMode::CheckConfigured(DeviceSet::subset_type &subset)
+{
+	for( DeviceSet::subset_type::iterator i = subset.begin();
+	     i != subset.end();
+	     ++i )
+	{
+		DeviceEntry &device = *(*i);
+		if( !device.IsConnected() )
+			continue;
+		if( device.IsConfigured() )
+			continue;
+
+		ostringstream msg;
+		msg << "Selected device " << device.GetPin().str()
+			<< " (" << device.GetDeviceName() << ")"
+			<< " is not yet configured.  Configure now?";
+
+		int response = wxMessageBox(
+			wxString(msg.str().c_str(),wxConvUTF8),
+			_T("Configure Now?"), wxYES_NO, m_parent);
+		if( response == wxYES ) {
+			ConfigureDevice(device);
+		}
 	}
 }
 
@@ -606,6 +636,10 @@ void SyncMode::OnSyncNow(wxCommandEvent &event)
 		return;
 	}
 
+	// check that all selections are configured
+	CheckConfigured(subset);
+
+	// do the sync
 	SyncStatusDlg dlg(m_parent, subset);
 	dlg.ShowModal();
 

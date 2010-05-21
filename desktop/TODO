@@ -17,9 +17,6 @@ Sync:
 	sync without deleting all 4 databases... on 0.22 this
 	seems to cause opensync to go into a stupendously long
 	busy loop... maybe 0.4x is better
-- when pressing the Sync button, if a device is selected that is not
-	yet configured, ask the user if they want to configure or cancel,
-	and let them jump directly into the configure mode
 
 Wishlist TODO List:
 ===================
