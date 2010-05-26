@@ -106,7 +106,7 @@ void BuildField(Data &data, size_t &size, uint8_t type, uint32_t value)
 	field->size = htobl(strsize);
 	field->type = type;
 
-	uint32_t store = htobs(value);
+	uint32_t store = htobl(value);
 	memcpy(field->u.raw, &store, strsize);
 
 	size += fieldsize;
