@@ -112,6 +112,22 @@ void BuildField(Data &data, size_t &size, uint8_t type, uint32_t value)
 	size += fieldsize;
 }
 
+void BuildField(Data &data, size_t &size, uint8_t type, uint64_t value)
+{
+	size_t strsize = 8;
+	size_t fieldsize = COMMON_FIELD_HEADER_SIZE + strsize;
+	unsigned char *pd = data.GetBuffer(size + fieldsize) + size;
+	CommonField *field = (CommonField *) pd;
+
+	field->size = htobl(strsize);
+	field->type = type;
+
+	uint64_t store = htobll(value);
+	memcpy(field->u.raw, &store, strsize);
+
+	size += fieldsize;
+}
+
 void BuildField(Data &data, size_t &size, uint8_t type, const std::string &str)
 {
 	// include null terminator

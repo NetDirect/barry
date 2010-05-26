@@ -110,6 +110,7 @@ struct CommonField
 		MessageAddress	addr;
 		SMSMetaData	sms_metadata;
 		uint64_t	timestamp;
+		uint64_t	uint64;
 		uint32_t	uint32;
 		int32_t		min1900;
 		uint16_t	code;
