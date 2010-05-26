@@ -722,6 +722,16 @@ bool VEventConverter::ParseData(const char *data)
 	return true;
 }
 
+bool VEventConverter::MergeData(const Barry::Calendar &origin) 
+{
+	// Save CalendarID value
+	// CalendarID field is used to link an entry event to an account mail
+	if (origin.CalendarID != m_Cal.CalendarID)
+		m_Cal.CalendarID = origin.CalendarID;
+
+	return true;
+}
+
 // Barry storage operator
 void VEventConverter::operator()(const Barry::Calendar &rec)
 {
@@ -733,8 +743,10 @@ void VEventConverter::operator()(const Barry::Calendar &rec)
 		m_Data = 0;
 	}
 
-	try {
+	// Keep a trace of Calendar object (need to merge with the new event)
+	m_Cal = rec;
 
+	try {
 		vCalendar vcal;
 		vcal.ToVCal(rec);
 		m_Data = vcal.ExtractVCal();
@@ -803,6 +815,21 @@ bool VEventConverter::CommitRecordData(BarryEnvironment *env, unsigned int dbId,
 		errmsg = oss.str();
 		trace.logf(errmsg.c_str());
 		return false;
+	}
+
+	// If we modify a data, we read at first its current value
+	// then we merge with the parsed value from the other opensync member
+	// Merge function is important because, we have to save some BlackBerry fields.
+	// Fix an issue with the new OS release who supports several calendar.
+	if( !add ) {
+		using namespace Barry;
+
+		VEventConverter cal2event;
+		RecordParser<Calendar, VEventConverter> parser(cal2event);
+		env->m_pDesktop->GetRecord(dbId, StateIndex, parser);
+		Calendar cal = cal2event.GetCalendar();
+
+		convert.MergeData(cal);
 	}
 
 	Barry::RecordBuilder<Barry::Calendar, VEventConverter> builder(convert);

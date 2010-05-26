@@ -95,6 +95,7 @@ uint8_t Calendar::ClassFlagRec2Proto(ClassFlagType f)
 #define CALFC_FREEBUSY_FLAG		0x1c
 #define CALFC_TIMEZONE_CODE		0x1e	// only seems to show up if recurring
 #define CALFC_CLASS_FLAG		0x28    // private flag from outlook
+#define CALFC_CALENDAR_ID		0x2b	// Calendar using (new devices have several calendar)
 #define CALFC_ALLDAYEVENT_FLAG		0xff
 #define CALFC_END			0xffff
 
@@ -112,6 +113,7 @@ static FieldLink<Calendar> CalendarFieldLinks[] = {
 };
 
 Calendar::Calendar()
+	: CalendarID(-1)
 {
 	Clear();
 }
@@ -231,6 +233,15 @@ const unsigned char* Calendar::ParseField(const unsigned char *begin,
 		FreeBusyFlag = FreeBusyFlagProto2Rec(field->u.raw[0]);
 		return begin;
 
+	case CALFC_CALENDAR_ID:
+		if( btohs(field->size) == 8 ) {
+			CalendarID = btohll(field->u.uint64);
+		}
+		else {
+			throw Error("Calendar::ParseField: size data unknown in calendar field");
+		}
+		return begin;
+
 	case CALFC_CLASS_FLAG:
 		if( field->u.raw[0] > CR_CLASS_RANGE_HIGH ) {
 			throw Error("Calendar::ParseField: ClassFlag out of range" );
@@ -348,6 +359,11 @@ void Calendar::BuildFields(Data &data, size_t &offset, const IConverter *ic) con
 	BuildField(data, offset, CALFC_FREEBUSY_FLAG, FreeBusyFlagRec2Proto(FreeBusyFlag));
 	BuildField(data, offset, CALFC_CLASS_FLAG, ClassFlagRec2Proto(ClassFlag));
 
+	// If CalendarID is defined and most of supported !
+	// (by default 0xffff ffff ffff ffff)
+	if( CalendarID != (uint64_t) -1 )
+		BuildField(data, offset, CALFC_CALENDAR_ID, CalendarID);
+
 	// and finally save unknowns
 	UnknownsType::const_iterator
 		ub = Unknowns.begin(), ue = Unknowns.end();
@@ -365,6 +381,7 @@ void Calendar::Clear()
 	RecType = Calendar::GetDefaultRecType();
 
 	AllDayEvent = false;
+	CalendarID = btohll((uint64_t) -1);
 	Subject.clear();
 	Notes.clear();
 	Location.clear();
@@ -390,6 +407,7 @@ void Calendar::Dump(std::ostream &os) const
 
 	os << "Calendar entry: 0x" << setbase(16) << RecordId
 		<< " (" << (unsigned int)RecType << ")\n";
+	os << "   Calendar ID: 0x" << setbase(16) << CalendarID << "\n";
 	os << "   All Day Event: " << (AllDayEvent ? "yes" : "no") << "\n";
 	os << "   Class: " << ClassTypes[ClassFlag] << "\n";
 	os << "   Free/Busy: " << FreeBusy[FreeBusyFlag] << "\n";

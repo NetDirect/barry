@@ -99,6 +99,7 @@ public:
 
 	ClassFlagType ClassFlag;
 
+	uint64_t CalendarID;	// Calendar ID (usefull if devices have several calendars)
 
 	unsigned short TimeZoneCode;	// the time zone originally used
 					// for the recurrence data...
