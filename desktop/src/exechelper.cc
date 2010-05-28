@@ -131,7 +131,7 @@ int ExecHelper::Execute(bool use_wx,
 		execvp(argv[0], argv);
 
 		cerr << "execvp() failed: " << strerror(errno) << endl;
-		for( int i = 0; ; i++ ) {
+		for( int i = 0; argv[i]; i++ ) {
 			cerr << argv[i] << " ";
 		}
 		cerr << endl;
