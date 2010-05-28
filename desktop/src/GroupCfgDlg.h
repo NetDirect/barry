@@ -39,6 +39,9 @@ class GroupCfgDlg : public wxDialog
 	const DeviceEntry &m_device;
 	OpenSync::APISet &m_apiset;
 
+	// misc flags
+	int m_app_count;
+
 	// results of the configuration
 	std::string m_device_name;
 	std::string m_group_name;

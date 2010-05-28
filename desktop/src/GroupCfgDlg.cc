@@ -48,6 +48,7 @@ GroupCfgDlg::GroupCfgDlg(wxWindow *parent,
 	: wxDialog(parent, Dialog_GroupCfg, _T("Device Sync Configuration"))
 	, m_device(device)
 	, m_apiset(apiset)
+	, m_app_count(0)
 	, m_engine(0)
 	, m_barry_plugin(m_device.GetPin())
 	, m_topsizer(0)
@@ -111,6 +112,11 @@ GroupCfgDlg::GroupCfgDlg(wxWindow *parent,
 	LoadBarryConfig();
 	SelectApplication(appname);
 	SelectFavour();
+
+	if( m_app_count == 0 ) {
+		wxMessageBox(_T("No supported applications found.  You may need to install some opensync plugins."),
+			_T("No App Found"), wxOK | wxICON_ERROR, this);
+	}
 }
 
 void GroupCfgDlg::CreateLayout()
@@ -252,13 +258,9 @@ void GroupCfgDlg::LoadAppNames(wxArrayString &appnames)
 		return;
 	}
 
-	if( plugins.size() == 0 ) {
-		appnames.Add(_T("No supported plugins available"));
-		return;
-	}
-
 	// cycle through all available plugins, and add the ones
 	// that we support
+	int added = 0;
 	string_list_type::const_iterator i = plugins.begin();
 	for( ; i != plugins.end(); ++i ) {
 		string appname;
@@ -270,7 +272,15 @@ void GroupCfgDlg::LoadAppNames(wxArrayString &appnames)
 				continue;
 
 			appnames.Add( wxString(appname.c_str(), wxConvUTF8) );
+			added++;
 		}
+	}
+
+	m_app_count = added;
+
+	if( m_app_count == 0 ) {
+		appnames.Add(_T("No supported plugins available"));
+		return;
 	}
 }
 
