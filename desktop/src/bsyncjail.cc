@@ -316,21 +316,22 @@ void BarrySyncJail::MemberStatus(long member_id,
 void BarrySyncJail::CheckSummary(OpenSync::SyncSummary &summary)
 {
 	// FIXME: not currently supported... abort every time
+	cerr << "FIXME: CheckSummary() not implemented, aborting" << endl;
 	summary.Abort();
 }
 
 void BarrySyncJail::ReportError(const std::string &msg)
 {
 	m_status_con->Poke(STATUS_ITEM_ERROR, sb.buf(msg));
+	cerr << "ReportError(): " << msg << endl;
 }
 
-
-
-//IMPLEMENT_APP_NO_MAIN(BarrySyncJail)
 
 int main(int argc, char *argv[])
 {
 	wxApp::CheckBuildOptions(WX_BUILD_OPTIONS_SIGNATURE, "bsyncjail");
+
+	cerr << "bsyncjail startup" << endl;
 
 	if( argc != 3 ) {
 		cerr << "This is a helper program for barrydesktop, and\n"
@@ -346,8 +347,6 @@ int main(int argc, char *argv[])
 		cerr << "Unable to initialize wxWidgets library, aborting." << endl;
 		return 1;
 	}
-
-//	return wxEntry(argc, argv);
 
 	BarrySyncJail app;
 	return app.OnExit();
