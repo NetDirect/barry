@@ -1,5 +1,7 @@
 Release: version 0.17 - 2010/01/??
 ------------------------------------------------------------------------------
+2010/05/28
+	- rpm: added Fedora 13 support, and cleaned up conditionals
 2010/05/13
 	- lib: fixed compile error in j_message.h
 		Thanks to Raymond Blostein for the bug report and the

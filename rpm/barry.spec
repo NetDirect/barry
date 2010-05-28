@@ -10,6 +10,11 @@
 	%define with_opensync 1
 %endif
 
+%if 0%{?fc12} || 0%{?fc13}
+	%define use_69_rules 1
+%else
+	%define use_69_rules 0
+%endif
 
 
 Summary: BlackBerry(tm) Desktop for Linux
@@ -152,7 +157,7 @@ cd ../
 # proceed as usual...
 %{__mkdir_p} %{buildroot}%{_sysconfdir}/udev/rules.d
 %{__cp} udev/10-blackberry.rules %{buildroot}%{_sysconfdir}/udev/rules.d/
-%if 0%{?fc12}
+%if %{use_69_rules}
 %{__cp} udev/69-blackberry.rules %{buildroot}%{_sysconfdir}/udev/rules.d/
 %else
 %{__cp} udev/99-blackberry-perms.rules %{buildroot}%{_sysconfdir}/udev/rules.d/
@@ -308,9 +313,11 @@ cd ../
 /sbin/ldconfig
 
 %changelog
-* Tue Jan 26 2010 Chris Frey <cdfrey@foursquare.net> 0.17-0
+* Fri May 28 2010 Chris Frey <cdfrey@foursquare.net> 0.17-0
 - version bump
 - added NLS support
+- cleaned up conditionals
+- added Fedora 13 support
 
 * Sat Sep 29 2009 Chris Frey <cdfrey@foursquare.net> 0.16-0
 - version bump
