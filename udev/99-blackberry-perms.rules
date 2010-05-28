@@ -5,10 +5,10 @@
 #
 # Note: for opensuse-11.1, use the group 'dialout'
 #
-ATTRS{idVendor}=="0fca", ATTRS{idProduct}=="0001", GROUP="plugdev", MODE="0660"
-ATTRS{idVendor}=="0fca", ATTRS{idProduct}=="0004", GROUP="plugdev", MODE="0660"
-ATTRS{idVendor}=="0fca", ATTRS{idProduct}=="0006", GROUP="plugdev", MODE="0660"
-ATTRS{idVendor}=="0fca", ATTRS{idProduct}=="8001", GROUP="plugdev", MODE="0660"
-ATTRS{idVendor}=="0fca", ATTRS{idProduct}=="8004", GROUP="plugdev", MODE="0660"
-ATTRS{idVendor}=="0fca", ATTRS{idProduct}=="8007", GROUP="plugdev", MODE="0660"
+ATTRS{idVendor}=="0fca", ATTRS{idProduct}=="0001", GROUP="plugdev", MODE="0664"
+ATTRS{idVendor}=="0fca", ATTRS{idProduct}=="0004", GROUP="plugdev", MODE="0664"
+ATTRS{idVendor}=="0fca", ATTRS{idProduct}=="0006", GROUP="plugdev", MODE="0664"
+ATTRS{idVendor}=="0fca", ATTRS{idProduct}=="8001", GROUP="plugdev", MODE="0664"
+ATTRS{idVendor}=="0fca", ATTRS{idProduct}=="8004", GROUP="plugdev", MODE="0664"
+ATTRS{idVendor}=="0fca", ATTRS{idProduct}=="8007", GROUP="plugdev", MODE="0664"
 
