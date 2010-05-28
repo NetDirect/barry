@@ -23,9 +23,14 @@
 
 #include <wx/tokenzr.h>
 
+#include <iostream>
+#include <string.h>
 #include <sys/wait.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <errno.h>
+
+using namespace std;
 
 TermCatcher::~TermCatcher()
 {
@@ -124,6 +129,8 @@ int ExecHelper::Execute(bool use_wx,
 		argv[argc] = 0;
 
 		execvp(argv[0], argv);
+
+		cerr << "execvp() failed: " << strerror(errno) << endl;
 		exit(-1);
 	}
 	else {
