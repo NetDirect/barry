@@ -525,7 +525,13 @@ void SyncStatusDlg::StartNextSync()
 	// assume that bsyncjail is in the same directory as barrydesktop
 	wxFileName path(wxTheApp->argv[0]);
 	wxString command = path.GetPath();
-	command += path.GetPathSeparator();
+	// if command is empty, there is no path to the 'barrydesktop'
+	// command, and therefore it was run via the PATH environment
+	// variable... if the PATH was good enough for 'barrydesktop',
+	// then it's good enough for 'bsyncjail' as well.  Skip the
+	// separator so that we don't try to run '/bsyncjail'
+	if( command.size() )
+		command += path.GetPathSeparator();
 	command += _T("bsyncjail ");
 	command += wxString(engine->GetVersion(), wxConvUTF8);
 	command += _T(" ");
