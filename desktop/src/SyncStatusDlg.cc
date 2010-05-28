@@ -662,6 +662,8 @@ void SyncStatusDlg::OnExecTerminated(wxProcessEvent &event)
 	else
 		oss << "Sync finished: ";
 	oss << m_device_id;
+	if( event.GetExitCode() )
+		oss << " with error " << event.GetExitCode();
 	Print(oss.str(), *wxBLACK);
 	ShortPrint(oss.str());
 	UpdateLastSyncTime();
