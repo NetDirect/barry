@@ -113,7 +113,6 @@ static FieldLink<Calendar> CalendarFieldLinks[] = {
 };
 
 Calendar::Calendar()
-	: CalendarID(-1)
 {
 	Clear();
 }
@@ -451,6 +450,137 @@ void Calendar::Dump(std::ostream &os) const
 	os << Unknowns;
 }
 
+///////////////////////////////////////////////////////////////////////////////
+// Calendar-All class
+
+// calendar-all field codes
+#define CALALLFC_CALENDAR_ID		0x02	// Calendar using (new devices have several calendar)
+#define CALALLFC_MAIL_ACCOUNT		0x03
+#define CALALLFC_UNIQUEID			0x05
+#define CALALLFC_CAL_OBJECT			0x0a
+#define CALALLFC_END				0xffff
+
+void CalendarAll::Clear()
+{
+	Calendar::Clear();
+
+	MailAccount.clear();
+}
+
+void CalendarAll::ParseHeader(const Data &data, size_t &offset)
+{
+	const unsigned char *b = (const unsigned char*) (data.GetData() + offset);
+	const unsigned char *e = (const unsigned char*) (data.GetData() + data.GetSize());
+
+	while( (b + COMMON_FIELD_HEADER_SIZE) < e ) {
+		const CommonField *field = (const CommonField *) b;
+
+		// advance and check size
+		b += COMMON_FIELD_HEADER_SIZE + btohs(field->size);
+		if( b > e )					// if begin==end, we are ok
+			continue;
+
+		if( !btohs(field->size) )	// if field has no size, something's up
+			continue;
+
+		// handle special cases
+		if( field->type == CALALLFC_CAL_OBJECT )
+		{
+			b -= btohs(field->size);
+			// end of header
+			break;
+		}
+
+		switch( field->type )
+		{
+		case CALALLFC_CALENDAR_ID:
+			if( btohs(field->size) == 8 ) {
+				CalendarID = btohll(field->u.uint64);
+			}
+			else {
+				throw Error("CalendarAll::ParseField: size data unknown in calendar field");
+			}
+			continue;
+
+		case CALALLFC_MAIL_ACCOUNT:
+			MailAccount = ParseFieldString(field);
+			continue;
+
+		case CALALLFC_UNIQUEID:
+			if( btohs(field->size) == 4 ) {
+				RecordId = btohl(field->u.uint32);
+			}
+			else {
+				throw Error("CalendarAll::ParseHeader: size data unknown in calendar field");
+			}
+			continue;
+		}
+
+		// if still not handled, add to the Unknowns list
+		UnknownField uf;
+		uf.type = field->type;
+		uf.data.assign((const char*)field->u.raw, btohs(field->size));
+		Unknowns.push_back(uf);
+	}
+
+	offset += b - (data.GetData() + offset);
+}
+
+void CalendarAll::Dump(std::ostream &os) const
+{
+	static const char *ClassTypes[] = { "Public", "Confidential", "Private" };
+	static const char *FreeBusy[] = { "Free", "Tentative", "Busy", "Out of Office" };
+
+// FIXME - need a "check all data" function that make sure that all
+// recurrence data is within range.  Then call that before using
+// the data, such as in Build and in Dump.
+
+	os << "Calendar entry: 0x" << setbase(16) << RecordId
+		<< " (" << (unsigned int)RecType << ")\n";
+	os << "   Calendar ID: 0x" << setbase(16) << CalendarID << "\n";
+	os << "   Mail Account: " << MailAccount << "\n";
+	os << "   All Day Event: " << (AllDayEvent ? "yes" : "no") << "\n";
+	os << "   Class: " << ClassTypes[ClassFlag] << "\n";
+	os << "   Free/Busy: " << FreeBusy[FreeBusyFlag] << "\n";
+	if( TimeZoneValid )
+		os << "   Time Zone: " << GetTimeZone(TimeZoneCode)->Name << "\n";
+
+	// cycle through the type table
+	for(	const FieldLink<Calendar> *b = CalendarFieldLinks;
+		b->type != CALFC_END;
+		b++ )
+	{
+		if( b->strMember ) {
+			const std::string &s = this->*(b->strMember);
+			if( s.size() )
+				os << "   " << b->name << ": " << s << "\n";
+		}
+		else if( b->timeMember ) {
+			time_t t = this->*(b->timeMember);
+			if( t > 0 )
+				os << "   " << b->name << ": " << ctime(&t);
+			else
+				os << "   " << b->name << ": disabled\n";
+		}
+		else if( b->addrMember ) {
+			const EmailAddressList &al = this->*(b->addrMember);
+			EmailAddressList::const_iterator lb = al.begin(), le = al.end();
+
+			for( ; lb != le; ++lb ) {
+				if( !lb->size() )
+					continue;
+
+				os << "   " << b->name << ": " << *lb << "\n";
+			}
+		}
+	}
+
+	// print recurrence data if available
+	RecurBase::Dump(os);
+
+	// print any unknowns
+	os << Unknowns;
+}
 
 } // namespace Barry
 

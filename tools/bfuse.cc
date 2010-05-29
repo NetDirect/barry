@@ -180,6 +180,11 @@ ParserPtr GetParser(const string &name, std::ostream &os, bool null_parser)
 			new RecordParser<Calendar, Store<Calendar> > (
 				new Store<Calendar>(os)));
 	}
+	else if( name == CalendarAll::GetDBName() ) {
+		return ParserPtr(
+			new RecordParser<CalendarAll, Store<CalendarAll> > (
+				new Store<CalendarAll>(os)));
+	}
 	else if( name == ServiceBook::GetDBName() ) {
 		return ParserPtr(
 			new RecordParser<ServiceBook, Store<ServiceBook> > (

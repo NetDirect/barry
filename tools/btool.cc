@@ -254,6 +254,11 @@ auto_ptr<Parser> GetParser(const string &name, const string &filename, bool null
 			new RecordParser<Calendar, Store<Calendar> > (
 				new Store<Calendar>(filename, false)));
 	}
+	else if( name == CalendarAll::GetDBName() ) {
+		return auto_ptr<Parser>(
+			new RecordParser<CalendarAll, Store<CalendarAll> > (
+				new Store<CalendarAll>(filename, false)));
+	}
 	else if( name == CallLog::GetDBName() ) {
 		return auto_ptr<Parser>(
 			new RecordParser<CallLog, Store<CallLog> > (
@@ -319,6 +324,11 @@ auto_ptr<Builder> GetBuilder(const string &name, const string &filename)
 			new RecordBuilder<Calendar, Store<Calendar> > (
 				new Store<Calendar>(filename, true)));
 	}
+	else if( name == CalendarAll::GetDBName() ) {
+		return auto_ptr<Builder>(
+			new RecordBuilder<CalendarAll, Store<CalendarAll> > (
+				new Store<CalendarAll>(filename, true)));
+	}
 	else if( name == Memo::GetDBName() ) {
 		return auto_ptr<Builder>(
 			new RecordBuilder<Memo, Store<Memo> > (
@@ -352,6 +362,7 @@ void ShowParsers()
 	<< "   Address Book\n"
 	<< "   Messages\n"
 	<< "   Calendar\n"
+	<< "   Calendar - All\n"
 	<< "   Phone Call Logs\n"
 	<< "   Service Book\n"
 	<< "   Memos\n"
@@ -365,6 +376,7 @@ void ShowParsers()
 	<< "Supported Database builders:\n"
 	<< "   Address Book\n"
 	<< "   Calendar\n"
+	<< "   Calendar - All\n"
 	<< "   Memo\n"
 	<< "   Task\n"
 	<< endl;

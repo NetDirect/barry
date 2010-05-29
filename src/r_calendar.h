@@ -1,6 +1,6 @@
 ///
 /// \file	r_calendar.h
-///		Blackberry database record parser class for calndar records.
+///		Blackberry database record parser class for calendar records.
 ///
 
 /*
@@ -152,6 +152,31 @@ BXEXPORT inline std::ostream& operator<<(std::ostream &os, const Calendar &msg) 
 	msg.Dump(os);
 	return os;
 }
+
+
+class BXEXPORT CalendarAll : public Calendar
+{
+public:
+	std::string MailAccount;
+
+public:
+	// Parser / Builder API (see parser.h / builder.h)
+	void ParseHeader(const Data &data, size_t &offset);
+
+	void Clear();
+
+	void Dump(std::ostream &os) const;
+
+public:
+	// database name
+	static const char * GetDBName() { return "Calendar - All"; }
+};
+
+BXEXPORT inline std::ostream& operator<<(std::ostream &os, const CalendarAll &msg) {
+	msg.Dump(os);
+	return os;
+}
+
 
 /// @}
 

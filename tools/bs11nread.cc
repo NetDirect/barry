@@ -85,6 +85,7 @@ void DumpDB(const string &filename)
 	Dump<Contact>		(dbName, ifs) ||
 	Dump<Message>		(dbName, ifs) ||
 	Dump<Calendar>		(dbName, ifs) ||
+	Dump<CalendarAll>	(dbName, ifs) ||
 	Dump<ServiceBook>	(dbName, ifs) ||
 	Dump<Memo>		(dbName, ifs) ||
 	Dump<Task>		(dbName, ifs) ||
@@ -101,6 +102,7 @@ void ShowParsers()
 	<< "   Address Book\n"
 	<< "   Messages\n"
 	<< "   Calendar\n"
+	<< "   Calendar - All\n"
 	<< "   Service Book\n"
 	<< "   Memos\n"
 	<< "   Tasks\n"

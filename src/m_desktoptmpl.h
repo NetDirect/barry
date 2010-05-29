@@ -57,6 +57,8 @@ void Desktop::LoadDatabaseByName(const std::string &name, StorageT &store)
 		LoadDatabaseByType<Message>(store);
 	else if( name == Calendar::GetDBName() )
 		LoadDatabaseByType<Calendar>(store);
+	else if( name == CalendarAll::GetDBName() )
+		LoadDatabaseByType<CalendarAll>(store);
 	else
 		throw Error("Unknown database name in LoadDatabaseByName: " + name);
 }
@@ -70,6 +72,8 @@ void Desktop::SaveDatabaseByName(const std::string &name, StorageT &store)
 		SaveDatabaseByType<Message>(store);
 	else if( name == Calendar::GetDBName() )
 		SaveDatabaseByType<Calendar>(store);
+	else if( name == CalendarAll::GetDBName() )
+		SaveDatabaseByType<CalendarAll>(store);
 	else
 		throw Error("Unknown database name in SaveDatabaseByName: " + name);
 }
