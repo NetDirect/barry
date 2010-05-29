@@ -424,7 +424,7 @@ bool VTodoConverter::CommitRecordData(BarryEnvironment *env, unsigned int dbId,
 		oss << "unable to parse change data for new RecordId: "
 		    << newRecordId << " data: " << data;
 		errmsg = oss.str();
-		trace.logf(errmsg.c_str());
+		trace.log(errmsg.c_str());
 		return false;
 	}
 
