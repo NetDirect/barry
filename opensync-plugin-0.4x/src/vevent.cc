@@ -827,9 +827,8 @@ bool VEventConverter::CommitRecordData(BarryEnvironment *env, unsigned int dbId,
 		VEventConverter cal2event;
 		RecordParser<Calendar, VEventConverter> parser(cal2event);
 		env->m_pDesktop->GetRecord(dbId, StateIndex, parser);
-		Calendar cal = cal2event.GetCalendar();
 
-		convert.MergeData(cal);
+		convert.MergeData(cal2event.GetCalendar());
 	}
 
 	Barry::RecordBuilder<Barry::Calendar, VEventConverter> builder(convert);
