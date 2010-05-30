@@ -185,6 +185,7 @@ void serialize(ArchiveT &ar, Barry::Calendar &c, const unsigned int ver)
 	ar & make_nvp("Interval", c.Interval);
 	ar & make_nvp("RecurringEndTime", c.RecurringEndTime);
 	ar & make_nvp("Perpetual", c.Perpetual);
+	ar & make_nvp("CalendarID", c.CalendarID);
 	ar & make_nvp("TimeZoneCode", c.TimeZoneCode);
 	ar & make_nvp("TimeZoneValid", c.TimeZoneValid);
 
@@ -197,6 +198,14 @@ void serialize(ArchiveT &ar, Barry::Calendar &c, const unsigned int ver)
 	if( ver < BARRY_POD_MAP_VERSION ) {
 		ar & make_nvp("Unknowns", c.Unknowns);
 	}
+}
+
+template <class ArchiveT>
+void serialize(ArchiveT &ar, Barry::CalendarAll &c, const unsigned int ver)
+{
+	serialize(ar, static_cast<Barry::Calendar&>(c), ver);
+
+	ar & make_nvp("MailAccount", c.MailAccount);
 }
 
 template <class ArchiveT>

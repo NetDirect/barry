@@ -1,5 +1,11 @@
 Release: version 0.17 - 2010/01/??
 ------------------------------------------------------------------------------
+2010/05/29
+	- applied 3 patches from Nicolas Vivien that add:
+		- Calendar - All parser
+		- special handling for syncing of multiple calendars
+		- compiler fixes
+	- lib: updated src/s11n-boost.h with new CalendarID and CalendarAll
 2010/05/28
 	- rpm: added Fedora 13 support, and cleaned up conditionals
 	- udev: fixed permissions issue, so device shows up in lsusb
