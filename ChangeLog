@@ -6,6 +6,12 @@ Release: version 0.17 - 2010/01/??
 		- special handling for syncing of multiple calendars
 		- compiler fixes
 	- lib: updated src/s11n-boost.h with new CalendarID and CalendarAll
+	- lib: refactored Calendar*::Dump() functions
+		note: this introduces a change in my earlier policy that
+		avoided virtual functions in the record classes...
+		the duplicate code overhead is just too heavy, and
+		I think I was wrong to be afraid of virtual functions
+		in containers anyway... vive la virtual! :-)
 2010/05/28
 	- rpm: added Fedora 13 support, and cleaned up conditionals
 	- udev: fixed permissions issue, so device shows up in lsusb

@@ -119,6 +119,8 @@ protected:
 	static ClassFlagType ClassFlagProto2Rec(uint8_t f);
 	static uint8_t ClassFlagRec2Proto(ClassFlagType f);
 
+	virtual void DumpSpecialFields(std::ostream &os) const;
+
 public:
 	const unsigned char* ParseField(const unsigned char *begin,
 		const unsigned char *end, const IConverter *ic = 0);
@@ -156,6 +158,9 @@ BXEXPORT inline std::ostream& operator<<(std::ostream &os, const Calendar &msg) 
 
 class BXEXPORT CalendarAll : public Calendar
 {
+protected:
+	virtual void DumpSpecialFields(std::ostream &os) const;
+
 public:
 	std::string MailAccount;
 
@@ -164,8 +169,6 @@ public:
 	void ParseHeader(const Data &data, size_t &offset);
 
 	void Clear();
-
-	void Dump(std::ostream &os) const;
 
 public:
 	// database name

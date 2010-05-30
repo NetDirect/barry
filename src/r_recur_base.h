@@ -101,7 +101,7 @@ protected:
 
 protected:
 	RecurBase();
-	~RecurBase();
+	virtual ~RecurBase();
 
 public:
 	// return true if parse, false if not (for example, if type not

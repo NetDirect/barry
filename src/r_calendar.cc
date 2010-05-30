@@ -395,10 +395,21 @@ void Calendar::Clear()
 	Unknowns.clear();
 }
 
-void Calendar::Dump(std::ostream &os) const
+void Calendar::DumpSpecialFields(std::ostream &os) const
 {
 	static const char *ClassTypes[] = { "Public", "Confidential", "Private" };
 	static const char *FreeBusy[] = { "Free", "Tentative", "Busy", "Out of Office" };
+
+	os << "   Calendar ID: 0x" << setbase(16) << CalendarID << "\n";
+	os << "   All Day Event: " << (AllDayEvent ? "yes" : "no") << "\n";
+	os << "   Class: " << ClassTypes[ClassFlag] << "\n";
+	os << "   Free/Busy: " << FreeBusy[FreeBusyFlag] << "\n";
+	if( TimeZoneValid )
+		os << "   Time Zone: " << GetTimeZone(TimeZoneCode)->Name << "\n";
+}
+
+void Calendar::Dump(std::ostream &os) const
+{
 
 // FIXME - need a "check all data" function that make sure that all
 // recurrence data is within range.  Then call that before using
@@ -406,12 +417,7 @@ void Calendar::Dump(std::ostream &os) const
 
 	os << "Calendar entry: 0x" << setbase(16) << RecordId
 		<< " (" << (unsigned int)RecType << ")\n";
-	os << "   Calendar ID: 0x" << setbase(16) << CalendarID << "\n";
-	os << "   All Day Event: " << (AllDayEvent ? "yes" : "no") << "\n";
-	os << "   Class: " << ClassTypes[ClassFlag] << "\n";
-	os << "   Free/Busy: " << FreeBusy[FreeBusyFlag] << "\n";
-	if( TimeZoneValid )
-		os << "   Time Zone: " << GetTimeZone(TimeZoneCode)->Name << "\n";
+	DumpSpecialFields(os);
 
 	// cycle through the type table
 	for(	const FieldLink<Calendar> *b = CalendarFieldLinks;
@@ -526,60 +532,10 @@ void CalendarAll::ParseHeader(const Data &data, size_t &offset)
 	offset += b - (data.GetData() + offset);
 }
 
-void CalendarAll::Dump(std::ostream &os) const
+void CalendarAll::DumpSpecialFields(std::ostream &os) const
 {
-	static const char *ClassTypes[] = { "Public", "Confidential", "Private" };
-	static const char *FreeBusy[] = { "Free", "Tentative", "Busy", "Out of Office" };
-
-// FIXME - need a "check all data" function that make sure that all
-// recurrence data is within range.  Then call that before using
-// the data, such as in Build and in Dump.
-
-	os << "Calendar entry: 0x" << setbase(16) << RecordId
-		<< " (" << (unsigned int)RecType << ")\n";
-	os << "   Calendar ID: 0x" << setbase(16) << CalendarID << "\n";
+	Calendar::DumpSpecialFields(os);
 	os << "   Mail Account: " << MailAccount << "\n";
-	os << "   All Day Event: " << (AllDayEvent ? "yes" : "no") << "\n";
-	os << "   Class: " << ClassTypes[ClassFlag] << "\n";
-	os << "   Free/Busy: " << FreeBusy[FreeBusyFlag] << "\n";
-	if( TimeZoneValid )
-		os << "   Time Zone: " << GetTimeZone(TimeZoneCode)->Name << "\n";
-
-	// cycle through the type table
-	for(	const FieldLink<Calendar> *b = CalendarFieldLinks;
-		b->type != CALFC_END;
-		b++ )
-	{
-		if( b->strMember ) {
-			const std::string &s = this->*(b->strMember);
-			if( s.size() )
-				os << "   " << b->name << ": " << s << "\n";
-		}
-		else if( b->timeMember ) {
-			time_t t = this->*(b->timeMember);
-			if( t > 0 )
-				os << "   " << b->name << ": " << ctime(&t);
-			else
-				os << "   " << b->name << ": disabled\n";
-		}
-		else if( b->addrMember ) {
-			const EmailAddressList &al = this->*(b->addrMember);
-			EmailAddressList::const_iterator lb = al.begin(), le = al.end();
-
-			for( ; lb != le; ++lb ) {
-				if( !lb->size() )
-					continue;
-
-				os << "   " << b->name << ": " << *lb << "\n";
-			}
-		}
-	}
-
-	// print recurrence data if available
-	RecurBase::Dump(os);
-
-	// print any unknowns
-	os << Unknowns;
 }
 
 } // namespace Barry
