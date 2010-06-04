@@ -179,6 +179,16 @@ public:
 			delete m_store;
 	}
 
+	virtual StorageT* GetStore()
+	{
+		return m_store;
+	}
+
+	virtual const StorageT* GetStore() const
+	{
+		return m_store;
+	}
+
 	virtual void Clear()
 	{
 		m_rec = RecordT();
