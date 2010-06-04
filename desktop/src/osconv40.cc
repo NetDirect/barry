@@ -122,14 +122,14 @@ void Converter40::Load(Config::Barry &config, const Member &member)
 	config.SetPassword("");
 	config.SetPin(Barry::Pin());
 
-	throw std::logic_error("Not yet implemented");
+	throw std::logic_error("Converter40::Load(Barry): Not yet implemented");
 }
 
 void Converter40::Load(Config::Evolution &config, const Member &member)
 {
 	string cfg = m_api.GetConfiguration(member.group_name, member.id);
 
-	throw std::logic_error("Not yet implemented");
+	throw std::logic_error("Converter40::Load(Evo): Not yet implemented");
 }
 
 void Converter40::Load(Config::Unsupported &config, const Member &member)
@@ -143,7 +143,7 @@ void Converter40::Save(const Config::Barry &config, const std::string &group_nam
 	if( config.GetMemberId() == -1 )
 		throw Config::SaveError("Cannot save a plugin with a member_id of -1");
 
-	throw std::logic_error("Not yet implemented");
+	throw std::logic_error("Converter40::Save(Barry): Not yet implemented");
 }
 
 void Converter40::Save(const Config::Evolution &config, const std::string &group_name)
@@ -151,7 +151,7 @@ void Converter40::Save(const Config::Evolution &config, const std::string &group
 	if( config.GetMemberId() == -1 )
 		throw Config::SaveError("Cannot save a plugin with a member_id of -1");
 
-	throw std::logic_error("Not yet implemented");
+	throw std::logic_error("converter40::Save(Evo): Not yet implemented");
 }
 
 void Converter40::Save(const Config::Unsupported &config, const std::string &group_name)
