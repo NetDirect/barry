@@ -456,6 +456,20 @@ void Calendar::Dump(std::ostream &os) const
 	os << Unknowns;
 }
 
+bool Calendar::operator<(const Calendar &other) const
+{
+	if( StartTime < other.StartTime )
+		return true;
+	else if( StartTime > other.StartTime )
+		return false;
+
+	int cmp = Subject.compare(other.Subject);
+	if( cmp == 0 )
+		cmp = Location.compare(other.Location);
+	return cmp < 0;
+}
+
+
 ///////////////////////////////////////////////////////////////////////////////
 // Calendar-All class
 

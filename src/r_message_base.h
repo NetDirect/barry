@@ -121,10 +121,7 @@ public:
 	void Dump(std::ostream &os) const;
 
 	// sorting
-	bool operator<(const MessageBase &other) const
-	{
-		return Subject < other.Subject;
-	}
+	bool operator<(const MessageBase &other) const;
 };
 
 BXEXPORT inline std::ostream& operator<<(std::ostream &os, const MessageBase &msg) {

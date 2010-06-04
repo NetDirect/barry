@@ -450,5 +450,17 @@ void ServiceBook::Dump(std::ostream &os) const
 	os.fill(fill);
 }
 
+bool ServiceBook::operator<(const ServiceBook &other) const
+{
+	int cmp = BesDomain.compare(other.BesDomain);
+	if( cmp == 0 )
+		cmp = DSID.compare(other.DSID);
+	if( cmp == 0 )
+		cmp = Name.compare(other.Name);
+	if( cmp == 0 )
+		cmp = UniqueId.compare(other.UniqueId);
+	return cmp < 0;
+}
+
 } // namespace Barry
 

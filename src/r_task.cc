@@ -450,6 +450,18 @@ void Task::Dump(std::ostream &os) const
 	os << "\n\n";
 }
 
+bool Task::operator<(const Task &other) const
+{
+	if( StartTime != other.StartTime )
+		return StartTime < other.StartTime;
+	if( AlarmTime != other.AlarmTime )
+		return AlarmTime < other.AlarmTime;
+
+	int cmp = Summary.compare(other.Summary);
+	if( cmp == 0 )
+		cmp = Notes.compare(other.Notes);
+	return cmp < 0;
+}
 
 } // namespace Barry
 

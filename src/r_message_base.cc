@@ -392,5 +392,19 @@ os << "From " << SimpleFromAddress() << "  " << ctime( &MessageDateSent );
 	os << "\n\n";
 }
 
+bool MessageBase::operator<(const MessageBase &other) const
+{
+	// just in case either of these are set to '0', use the
+	// one with the max value... this uses the latest date, which
+	// is likely the most accurate
+	time_t date = std::max(MessageDateSent, MessageDateReceived);
+	time_t odate = std::max(other.MessageDateSent, other.MessageDateReceived);
+
+	if( date != odate )
+		return date < odate;
+
+	return Subject < other.Subject;
+}
+
 } // namespace Barry
 

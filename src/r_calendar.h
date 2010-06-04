@@ -143,7 +143,7 @@ public:
 	void Dump(std::ostream &os) const;
 
 	// sorting
-	bool operator<(const Calendar &other) const { return StartTime < other.StartTime; }
+	bool operator<(const Calendar &other) const;
 
 	// database name
 	static const char * GetDBName() { return "Calendar"; }

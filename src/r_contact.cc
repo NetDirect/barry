@@ -547,6 +547,23 @@ void Contact::Dump(std::ostream &os) const
 	os.fill(fill);
 }
 
+bool Contact::operator<(const Contact &other) const
+{
+	// old sorting mechanism, to put group links at the bottom
+	//return GroupLinks.size() == 0 && other.GroupLinks.size() > 0;
+	// testing - put group links at the top
+	//return GroupLinks.size() > 0 && other.GroupLinks.size() == 0;
+
+	// usually one of these fields is filled in, so compare
+	// them all in a ( LastName + FirstName + Company ) key style
+	int cmp = LastName.compare(other.LastName);
+	if( cmp == 0 )
+		cmp = FirstName.compare(other.FirstName);
+	if( cmp == 0 )
+		cmp = Company.compare(other.Company);
+	return cmp < 0;
+}
+
 void Contact::SplitName(const std::string &full, std::string &first, std::string &last)
 {
 	first.clear();

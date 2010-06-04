@@ -106,7 +106,7 @@ public:
 
 	static std::string ConvertGsmToUtf8(const std::string &);
 
-	// sorting - put group links at the end
+	// sorting
 	bool operator<(const Sms &other) const {
 		return Timestamp < other.Timestamp;
 	}

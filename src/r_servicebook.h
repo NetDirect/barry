@@ -125,7 +125,7 @@ public:
 	void Dump(std::ostream &os) const;
 
 	// sorting
-	bool operator<(const ServiceBook &other) const { return RecordId < RecordId; }
+	bool operator<(const ServiceBook &other) const;
 
 	// database name
 	static const char * GetDBName() { return "Service Book"; }

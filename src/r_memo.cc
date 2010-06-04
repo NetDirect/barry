@@ -223,6 +223,14 @@ void Memo::Dump(std::ostream &os) const
 	os << "\n\n";
 }
 
+bool Memo::operator<(const Memo &other) const
+{
+	int cmp = Title.compare(other.Title);
+	if( cmp == 0 )
+		cmp = Body.compare(other.Body);
+	return cmp < 0;
+}
+
 void Memo::Clear()
 {
 	Title.clear();

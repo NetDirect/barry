@@ -74,6 +74,7 @@ void Usage()
    << "   -h        This help\n"
    << "   -i cs     International charset for string conversions\n"
    << "             Valid values here are available with 'iconv --list'\n"
+   << "   -I        Sort records before output\n"
    << "   -l        List devices\n"
    << "   -L        List Contact field names\n"
    << "   -m        Map LDIF name to Contact field / Unmap LDIF name\n"
@@ -125,12 +126,14 @@ struct Store
 	mutable typename std::vector<Record>::const_iterator rec_it;
 	std::string filename;
 	bool load;
+	bool immediate_display;
 	int count;
 
-	Store(const string &filename, bool load)
+	Store(const string &filename, bool load, bool immediate_display)
 		: rec_it(records.end()),
 		filename(filename),
 		load(load),
+		immediate_display(immediate_display),
 		count(0)
 	{
 #ifdef __BARRY_BOOST_MODE__
@@ -163,8 +166,15 @@ struct Store
 		}
 #endif
 	}
+
 	~Store()
 	{
+		if( !immediate_display ) {
+			// not dumped yet, sort then dump
+			sort(records.begin(), records.end());
+			DumpAll();
+		}
+
 		cout << "Store counted " << dec << count << " records." << endl;
 #ifdef __BARRY_BOOST_MODE__
 		try {
@@ -188,11 +198,20 @@ struct Store
 #endif
 	}
 
+	void DumpAll()
+	{
+		typename vector<Record>::const_iterator i = records.begin();
+		for( ; i != records.end(); ++i ) {
+			cout << *i << endl;
+		}
+	}
+
 	// storage operator
 	void operator()(const Record &rec)
 	{
 		count++;
-		std::cout << rec << std::endl;
+		if( immediate_display )
+			std::cout << rec << std::endl;
 		records.push_back(rec);
 	}
 
@@ -232,8 +251,13 @@ public:
 	virtual void Store() {}
 };
 
-auto_ptr<Parser> GetParser(const string &name, const string &filename, bool null_parser)
+auto_ptr<Parser> GetParser(const string &name,
+			const string &filename,
+			bool null_parser,
+			bool immediate_display)
 {
+	bool dnow = immediate_display;
+
 	if( null_parser ) {
 		// use null parser
 		return auto_ptr<Parser>( new DataDumpParser );
@@ -242,68 +266,68 @@ auto_ptr<Parser> GetParser(const string &name, const string &filename, bool null
 	else if( name == Contact::GetDBName() ) {
 		return auto_ptr<Parser>(
 			new RecordParser<Contact, Store<Contact> > (
-				new Store<Contact>(filename, false)));
+				new Store<Contact>(filename, false, dnow)));
 	}
 	else if( name == Message::GetDBName() ) {
 		return auto_ptr<Parser>(
 			new RecordParser<Message, Store<Message> > (
-				new Store<Message>(filename, false)));
+				new Store<Message>(filename, false, dnow)));
 	}
 	else if( name == Calendar::GetDBName() ) {
 		return auto_ptr<Parser>(
 			new RecordParser<Calendar, Store<Calendar> > (
-				new Store<Calendar>(filename, false)));
+				new Store<Calendar>(filename, false, dnow)));
 	}
 	else if( name == CalendarAll::GetDBName() ) {
 		return auto_ptr<Parser>(
 			new RecordParser<CalendarAll, Store<CalendarAll> > (
-				new Store<CalendarAll>(filename, false)));
+				new Store<CalendarAll>(filename, false, dnow)));
 	}
 	else if( name == CallLog::GetDBName() ) {
 		return auto_ptr<Parser>(
 			new RecordParser<CallLog, Store<CallLog> > (
-				new Store<CallLog>(filename, false)));
+				new Store<CallLog>(filename, false, dnow)));
 	}
 	else if( name == ServiceBook::GetDBName() ) {
 		return auto_ptr<Parser>(
 			new RecordParser<ServiceBook, Store<ServiceBook> > (
-				new Store<ServiceBook>(filename, false)));
+				new Store<ServiceBook>(filename, false, dnow)));
 	}
 
 	else if( name == Memo::GetDBName() ) {
 		return auto_ptr<Parser>(
 			new RecordParser<Memo, Store<Memo> > (
-				new Store<Memo>(filename, false)));
+				new Store<Memo>(filename, false, dnow)));
 	}
 	else if( name == Task::GetDBName() ) {
 		return auto_ptr<Parser>(
 			new RecordParser<Task, Store<Task> > (
-				new Store<Task>(filename, false)));
+				new Store<Task>(filename, false, dnow)));
 	}
 	else if( name == PINMessage::GetDBName() ) {
 		return auto_ptr<Parser>(
 			new RecordParser<PINMessage, Store<PINMessage> > (
-				new Store<PINMessage>(filename, false)));
+				new Store<PINMessage>(filename, false, dnow)));
 	}
 	else if( name == SavedMessage::GetDBName() ) {
 		return auto_ptr<Parser>(
 			new RecordParser<SavedMessage, Store<SavedMessage> > (
-				new Store<SavedMessage>(filename, false)));
+				new Store<SavedMessage>(filename, false, dnow)));
 	}
 	else if( name == Sms::GetDBName() ) {
 		return auto_ptr<Parser>(
 			new RecordParser<Sms, Store<Sms> > (
-				new Store<Sms>(filename, false)));
+				new Store<Sms>(filename, false, dnow)));
 	}
 	else if( name == Folder::GetDBName() ) {
 		return auto_ptr<Parser>(
 			new RecordParser<Folder, Store<Folder> > (
-				new Store<Folder>(filename, false)));
+				new Store<Folder>(filename, false, dnow)));
 	}
 	else if( name == Timezone::GetDBName() ) {
 		return auto_ptr<Parser>(
 			new RecordParser<Timezone, Store<Timezone> > (
-				new Store<Timezone>(filename, false)));
+				new Store<Timezone>(filename, false, dnow)));
 	}
 	else {
 		// unknown database, use null parser
@@ -317,38 +341,38 @@ auto_ptr<Builder> GetBuilder(const string &name, const string &filename)
 	if( name == Contact::GetDBName() ) {
 		return auto_ptr<Builder>(
 			new RecordBuilder<Contact, Store<Contact> > (
-				new Store<Contact>(filename, true)));
+				new Store<Contact>(filename, true, true)));
 	}
 	else if( name == Calendar::GetDBName() ) {
 		return auto_ptr<Builder>(
 			new RecordBuilder<Calendar, Store<Calendar> > (
-				new Store<Calendar>(filename, true)));
+				new Store<Calendar>(filename, true, true)));
 	}
 	else if( name == CalendarAll::GetDBName() ) {
 		return auto_ptr<Builder>(
 			new RecordBuilder<CalendarAll, Store<CalendarAll> > (
-				new Store<CalendarAll>(filename, true)));
+				new Store<CalendarAll>(filename, true, true)));
 	}
 	else if( name == Memo::GetDBName() ) {
 		return auto_ptr<Builder>(
 			new RecordBuilder<Memo, Store<Memo> > (
-				new Store<Memo>(filename, true)));
+				new Store<Memo>(filename, true, true)));
 	}
 	else if( name == Task::GetDBName() ) {
 		return auto_ptr<Builder>(
 			new RecordBuilder<Task, Store<Task> > (
-				new Store<Task>(filename, true)));
+				new Store<Task>(filename, true, true)));
 	}
 /*
 	else if( name == "Messages" ) {
 		return auto_ptr<Parser>(
 			new RecordParser<Message, Store<Message> > (
-				new Store<Message>(filename, true)));
+				new Store<Message>(filename, true, true)));
 	}
 	else if( name == "Service Book" ) {
 		return auto_ptr<Parser>(
 			new RecordParser<ServiceBook, Store<ServiceBook> > (
-				new Store<ServiceBook>(filename, true)));
+				new Store<ServiceBook>(filename, true, true)));
 	}
 */
 	else {
@@ -472,7 +496,8 @@ int main(int argc, char *argv[])
 			threaded_sockets = true,
 			record_state = false,
 			clear_database = false,
-			null_parser = false;
+			null_parser = false,
+			sort_records = false;
 		string ldifBaseDN, ldifDnAttr;
 		string filename;
 		string password;
@@ -485,7 +510,7 @@ int main(int argc, char *argv[])
 
 		// process command line options
 		for(;;) {
-			int cmd = getopt(argc, argv, "a:B:c:C:d:D:e:f:hi:lLm:MnN:p:P:r:R:Ss:tT:vXzZ");
+			int cmd = getopt(argc, argv, "a:B:c:C:d:D:e:f:hi:IlLm:MnN:p:P:r:R:Ss:tT:vXzZ");
 			if( cmd == -1 )
 				break;
 
@@ -538,6 +563,10 @@ int main(int argc, char *argv[])
 
 			case 'i':	// international charset (iconv)
 				iconvCharset = optarg;
+				break;
+
+			case 'I':	// sort before dump
+				sort_records = true;
 				break;
 
 			case 'l':	// list only
@@ -817,7 +846,8 @@ int main(int argc, char *argv[])
 
 			desktop.Open(password.c_str());
 			unsigned int id = desktop.GetDBID(dbNames[0]);
-			auto_ptr<Parser> parse = GetParser(dbNames[0],filename,null_parser);
+			auto_ptr<Parser> parse = GetParser(dbNames[0],filename,
+				null_parser, true);
 
 			for( unsigned int i = 0; i < stCommands.size(); i++ ) {
 				desktop.GetRecord(id, stCommands[i].index, *parse.get());
@@ -863,7 +893,8 @@ int main(int argc, char *argv[])
 
 			desktop.Open(password.c_str());
 			for( ; b != dbNames.end(); b++ ) {
-				auto_ptr<Parser> parse = GetParser(*b,filename,null_parser);
+				auto_ptr<Parser> parse = GetParser(*b,filename,
+					null_parser, !sort_records);
 				unsigned int id = desktop.GetDBID(*b);
 				desktop.LoadDatabase(id, *parse.get());
 			}

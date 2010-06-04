@@ -69,7 +69,8 @@ public:
 
 	void Dump(std::ostream &os) const;
 
-	bool operator<(const Memo &other) const { return Title < other.Title; }
+	bool operator<(const Memo &other) const;
+
 	// database name
 	static const char * GetDBName() { return "Memos"; }
 	static uint8_t GetDefaultRecType() { return 0; }    // or 0?

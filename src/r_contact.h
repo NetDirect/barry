@@ -156,12 +156,9 @@ public:
 
 	void Dump(std::ostream &os) const;
 
-	// sorting - put group links at the end
-	bool operator<(const Contact &other) const {
-		return GroupLinks.size() == 0 && other.GroupLinks.size() > 0;
-//		// testing - put group links at the top
-//		return GroupLinks.size() > 0 && other.GroupLinks.size() == 0;
-	}
+	// Sorting - use enough data to make the sorting as
+	//           consistent as possible
+	bool operator<(const Contact &other) const;
 
 	// database name
 	static const char * GetDBName() { return "Address Book"; }
