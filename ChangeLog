@@ -1,5 +1,14 @@
 Release: version 0.17 - 2010/01/??
 ------------------------------------------------------------------------------
+2010/06/03
+	- doc: added wireshark USB capture method to USB-capture.txt
+	- lib: added GetStore() access function to RecordParser template class
+	- lib: Improved the record class operator<() member functions, basing
+		the sort order on multiple fields in many cases.  This should
+		produce a fairly stable sort for a given data set, regardless
+		of RecordId.  This should be useful for scripted tests.
+	- tools: Added -I command line option to make use of new sort order
+	- man: Updated btool manpage
 2010/05/29
 	- applied 3 patches from Nicolas Vivien that add:
 		- Calendar - All parser
