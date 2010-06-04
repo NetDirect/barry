@@ -477,7 +477,7 @@ bool VEventConverter::ParseData(const char *data)
 	return true;
 }
 
-bool VEventConverter::MergeData(const Barry::Calendar &origin) 
+bool VEventConverter::MergeData(const Barry::Calendar &origin)
 {
 	// Save CalendarID value
 	// CalendarID field is used to link an entry event to an account mail
