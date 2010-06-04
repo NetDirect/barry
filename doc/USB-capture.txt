@@ -73,8 +73,8 @@ Once you have the logs, you can use the convo.awk script in the Barry
 src directory, and the translate.cc program to help analyze the data.
 
 
-Capturing: The Linux Way
-------------------------
+Capturing: The Linux Way, Method 1
+----------------------------------
 
 Recent versions of the Linux kernel in the 2.6 series provide their own
 way of getting to the low level USB behaviour.  In the usbcore driver/module,
@@ -121,6 +121,28 @@ As of December 2006, you can still download a free version of VMWare server
 from:
 
 	http://www.vmware.com/download/server/
+
+
+Capturing: The Linux Way, Method 2
+----------------------------------
+
+Recent versions of the Linux kernel provide a binary interface to the
+usbmon logging method.  You can simply cat the /sys/kernel/debug/usb/usbmon/1u
+file, depending on your bus number, for a text version of the capture,
+but the data is limited to 32 bytes.  This is not sufficient for
+many of the bulk data transfers used by the BlackBerry.
+
+Wireshark 1.2.x plus libpcap 1.0 or higher will use the /dev/usbmon*
+devices to capture the full binary USB traffic.  Wireshark can also
+export this data in plain text format, if the GUI display does not
+work for you.
+
+It is not guaranteed that the binary interface will capture all data
+if the system is really busy.  If this is a concern, renice your VM
+and wireshark appropriately.
+
+For more low level information on the usbmon binary interface, see
+the file Documentation/usb/usbmon.txt in the Linux kernel sources.
 
 
 Capturing: The VMWare way
