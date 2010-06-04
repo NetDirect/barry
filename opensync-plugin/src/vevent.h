@@ -85,8 +85,13 @@ public:
 	// Transfers ownership of m_Data to the caller
 	char* ExtractData();
 
+	const Barry::Calendar& GetCalendar() const { return m_Cal; };
+
 	// Parses vevent data
 	bool ParseData(const char *data);
+
+	// Merge vevent data
+	bool MergeData(const Barry::Calendar &origin);
 
 	// Barry storage operator
 	void operator()(const Barry::Calendar &rec);
