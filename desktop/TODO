@@ -9,10 +9,6 @@ Feature TODO List:
 
 Sync:
 -----
-- add support for xml path mapping, (see horrendous conflict dialog for
-	calendar items)
-	- contact key info: name, company, phone number, email
-	- calendar key info: summary, dates, location, description
 - test 0.4x, and see if it is possible to do a clean one-way
 	sync without deleting all 4 databases... on 0.22 this
 	seems to cause opensync to go into a stupendously long
