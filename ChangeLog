@@ -1,5 +1,8 @@
 Release: version 0.17 - 2010/01/??
 ------------------------------------------------------------------------------
+2010/06/12
+	- applied chat scripts for Orange Spain from Adrian Gibanel
+	- updated debian and rpm packages with new chatscripts
 2010/06/04
 	- os22: ported Nicolas Vivien's multi-calendar patch to 0.22 plugin
 		From commit: eb4d68df8d06f734e79e13ea05f7755aa5b0a5f3

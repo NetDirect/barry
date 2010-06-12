@@ -44,6 +44,7 @@ install/barry-util::
 		$(CURDIR)/ppp/barry-att_cingular \
 		$(CURDIR)/ppp/barry-chinamobile \
 		$(CURDIR)/ppp/barry-kpn \
+		$(CURDIR)/ppp/barry-orange-spain \
 		$(CURDIR)/debian/barry-util/etc/ppp/peers
 	install -d $(CURDIR)/debian/barry-util/etc/chatscripts
 	install -m 0640 \
@@ -55,6 +56,7 @@ install/barry-util::
 		$(CURDIR)/ppp/barry-att_cingular.chat \
 		$(CURDIR)/ppp/barry-chinamobile.chat \
 		$(CURDIR)/ppp/barry-kpn.chat \
+		$(CURDIR)/ppp/barry-orange-spain.chat \
 		$(CURDIR)/debian/barry-util/etc/chatscripts
 	# Install hal fdi configs
 	install -d $(CURDIR)/debian/barry-util/usr/share/hal/fdi/information/10freedesktop
