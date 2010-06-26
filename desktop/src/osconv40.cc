@@ -49,12 +49,12 @@ bool Converter40::IsPluginSupported(const std::string &plugin_name,
 	if( plugin_name == PLUGIN_BARRY ) {
 		if( appname )
 			*appname = Config::Barry::AppName();
-		return false;	// FIXME - not yet implemented
+		return true;
 	}
 	else if( plugin_name == PLUGIN_EVOLUTION ) {
 		if( appname )
 			*appname = Config::Evolution::AppName();
-		return false;	// FIXME - not yet implemented
+		return true;
 	}
 
 	return false;
@@ -122,14 +122,41 @@ void Converter40::Load(Config::Barry &config, const Member &member)
 	config.SetPassword("");
 	config.SetPin(Barry::Pin());
 
-	throw std::logic_error("Converter40::Load(Barry): Not yet implemented");
+	// read in config for barry-sync
+	OS40PluginConfig cfg = m_api.GetConfigurationObj(member.group_name,
+							member.id);
+	string value = cfg.GetAdvanced("Debug");
+	if( value == "1" )
+		config.DebugMode(true);
+
+	value = cfg.GetAdvanced("PinCode");
+	{
+		istringstream iss(value);
+		uint32_t pin = 0;
+		iss >> hex >> pin;
+		config.SetPin(Barry::Pin(pin));
+	}
+
+	value = cfg.GetPassword();
+	config.SetPassword(value);
+}
+
+std::string GrabPath(const std::string &url)
+{
+	if( url.substr(0, 7) == "file://" )
+		return url.substr(7);
+	return url;
 }
 
 void Converter40::Load(Config::Evolution &config, const Member &member)
 {
-	string cfg = m_api.GetConfiguration(member.group_name, member.id);
+	OS40PluginConfig cfg = m_api.GetConfigurationObj(member.group_name,
+							member.id);
 
-	throw std::logic_error("Converter40::Load(Evo): Not yet implemented");
+	config.SetAddressPath(GrabPath(cfg.GetResource("contact")->GetUrl()));
+	config.SetCalendarPath(GrabPath(cfg.GetResource("event")->GetUrl()));
+	config.SetTasksPath(GrabPath(cfg.GetResource("todo")->GetUrl()));
+	config.SetMemosPath(GrabPath(cfg.GetResource("note")->GetUrl()));
 }
 
 void Converter40::Load(Config::Unsupported &config, const Member &member)
@@ -143,7 +170,37 @@ void Converter40::Save(const Config::Barry &config, const std::string &group_nam
 	if( config.GetMemberId() == -1 )
 		throw Config::SaveError("Cannot save a plugin with a member_id of -1");
 
-	throw std::logic_error("Converter40::Save(Barry): Not yet implemented");
+	OS40PluginConfig cfg = m_api.GetConfigurationObj(group_name,
+							config.GetMemberId());
+	cfg.SetAdvanced("Debug", "Debug mode", OS40PluginConfig::BOOL_TYPE,
+		config.IsDebugMode() ? "1" : "0");
+	cfg.SetAdvanced("PinCode", "PIN number", OS40PluginConfig::STRING_TYPE,
+		config.GetPin().str());
+
+	cfg.SetPassword(config.GetPassword());
+
+	cfg.GetResource("contact")->
+		SetName("Contacts").
+		Enable(true).
+		SetObjFormat("vcard30").
+		AddResource();
+	cfg.GetResource("event")->
+		SetName("Event").
+		Enable(true).
+		SetObjFormat("vevent20").
+		AddResource();
+	cfg.GetResource("todo")->
+		SetName("Todo").
+		Enable(true).
+		SetObjFormat("vtodo20").
+		AddResource();
+	cfg.GetResource("note")->
+		SetName("Memo").
+		Enable(true).
+		SetObjFormat("vjournal").
+		AddResource();
+
+	cfg.Save();
 }
 
 void Converter40::Save(const Config::Evolution &config, const std::string &group_name)
@@ -151,7 +208,31 @@ void Converter40::Save(const Config::Evolution &config, const std::string &group
 	if( config.GetMemberId() == -1 )
 		throw Config::SaveError("Cannot save a plugin with a member_id of -1");
 
-	throw std::logic_error("converter40::Save(Evo): Not yet implemented");
+	OS40PluginConfig cfg = m_api.GetConfigurationObj(group_name,
+							config.GetMemberId());
+	cfg.GetResource("contact")->
+		Enable(true).
+		SetObjFormat("vcard21", "VCARD_EXTENSION=Evolution").
+		SetObjFormat("vcard30", "VCARD_EXTENSION=Evolution").
+		SetUrl("file://" + config.GetAddressPath()).
+		AddResource();
+	cfg.GetResource("event")->
+		Enable(true).
+		SetObjFormat("vevent20").
+		SetUrl("file://" + config.GetCalendarPath()).
+		AddResource();
+	cfg.GetResource("todo")->
+		Enable(true).
+		SetObjFormat("vtodo20").
+		SetUrl("file://" + config.GetTasksPath()).
+		AddResource();
+	cfg.GetResource("note")->
+		Enable(true).
+		SetObjFormat("vjournal").
+		SetUrl("file://" + config.GetMemosPath()).
+		AddResource();
+
+	cfg.Save();
 }
 
 void Converter40::Save(const Config::Unsupported &config, const std::string &group_name)
