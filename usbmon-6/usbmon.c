@@ -1,4 +1,10 @@
 /*
+ * usbmon-6, from http://people.redhat.com/zaitcev/linux/
+ * Modified by Chris Frey to comment out the root requirement
+ * and change the human hex dump format.
+ */
+
+/*
  * usbmon: Front-end for usbmon
  *
  * Copyright (C) 2005 Pete Zaitcev (zaitcev@redhat.com)
@@ -223,10 +229,10 @@ int main(int argc __unused, char **argv)
 	 * 1. Reduce weird error messages.
 	 * 2. If we create device nodes, we want them owned by root.
 	 */
-	if (geteuid() != 0) {
-		fprintf(stderr, TAG ": Must run as root\n");
-		exit(1);
-	}
+//	if (geteuid() != 0) {
+//		fprintf(stderr, TAG ": Must run as root\n");
+//		exit(1);
+//	}
 
 	if ((fd = open(par.devname, O_RDWR)) == -1) {
 		if (errno == ENOENT) {
@@ -725,34 +731,34 @@ void print_human(const struct params *prm, const struct usbmon_packet_1 *ep,
 static void print_human_data(struct print_cursor *curs,
     const struct usbmon_packet_1 *ep, const unsigned char *data, int data_len)
 {
-	int any_printable;
-	int i;
+	int i, j;
 
-	print_safe(curs, "   ");
 	for (i = 0; i < data_len; i++) {
-		if (i % 4 == 0)
-			print_safe(curs, " ");
-		print_safe(curs, "%02x", data[i]);
-	}
-	print_safe(curs, "\n");
-
-	any_printable = 0;
-	for (i = 0; i < data_len; i++) {
-		if (isprint(data[i])) {
-			any_printable = 1;
-			break;
-		}
-	}
-	if (any_printable) {
 		print_safe(curs, "   ");
-		for (i = 0; i < data_len; i++) {
-			if (i % 4 == 0)
+
+		for (j = 0; j < 16; j++) {
+			if (i+j < data_len)
+				print_safe(curs, "%02x ", data[i+j]);
+			else
+				print_safe(curs, "   ");
+			if (j == 7)
 				print_safe(curs, " ");
-			print_safe(curs, " %c",
-			    isprint(data[i]) ? data[i] : '.');
+		}
+
+		print_safe(curs, "  ");
+
+		for (j = 0; j < 16; j++, i++) {
+			if (i < data_len)
+				print_safe(curs, "%c",
+				    isprint(data[i]) ? data[i] : '.');
+			else
+				print_safe(curs, " ");
+			if (j == 7)
+				print_safe(curs, " ");
 		}
 		print_safe(curs, "\n");
 	}
+	print_safe(curs, "\n");
 }
 
 /*
