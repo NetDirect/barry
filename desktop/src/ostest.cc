@@ -174,6 +174,61 @@ void Test(API &os)
 	cout << "=======================================================\n";
 }
 
+void ShowAdvanced(OS40PluginConfig &cfg, const char *name)
+{
+	cout << name << ": " << cfg.GetAdvanced(name) << endl;
+}
+
+void TestConfig(OpenSync40 &os, const char *name, long member_id)
+{
+	OS40PluginConfig cfg = os.GetConfigurationObj(name, member_id);
+	ShowAdvanced(cfg, "PinCode");
+	ShowAdvanced(cfg, "Debug");
+	cfg.SetAdvanced("TestName", "Test Display Name", "Whippoorwill");
+
+	OS40PluginConfig::OS40ConfigResourcePtr res =
+		cfg.GetResource("contact");
+	if( res->IsExistingResource() ) {
+		cout << "Resource: " << res->GetName() << ": "
+			<< (res->IsEnabled() ? "enabled" : "disabled")
+			<< endl;
+		cout << "   pref format: " << res->GetPreferredFormat() << endl;
+		cout << "   mime: " << res->GetMime() << endl;
+		cout << "   objtype: " << res->GetObjType() << endl;
+		cout << "   path: " << res->GetPath() << endl;
+		cout << "   url: " << res->GetUrl() << endl;
+
+		string config;
+		if( res->FindObjFormat("vcard30", config) ) {
+			cout << "   objformat: vcard30: " << config << endl;
+		}
+		else {
+			cout << "   no vcard30 found" << endl;
+		}
+	}
+	else {
+		cout << "No contact resource found" << endl;
+	}
+
+	// add one / set one
+	res = cfg.GetResource("testresource");
+	if( res->IsExistingResource() )
+		cout << "testresource exists" << endl;
+	res->SetObjFormat("vcard30");
+	res->SetUrl("http://netdirect.ca/");
+	res->SetName("ResourceName");
+	res->Enable();
+	res->AddResource();
+	cfg.Save();
+}
+
+void TestConfig(API &os)
+{
+	OpenSync40 &os40 = dynamic_cast<OpenSync40&> (os);
+	TestConfig(os40, "test", 1);
+	TestConfig(os40, "test", 2);
+}
+
 int main()
 {
 	Barry::Init(true);
@@ -187,6 +242,7 @@ int main()
 		DeviceSetTest(config, set);
 
 		if( set.os40() ) {
+			TestConfig(*set.os40());
 			Test(*set.os40());
 		}
 

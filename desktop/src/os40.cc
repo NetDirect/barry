@@ -301,6 +301,95 @@ public:
 					OSyncEngine *engine,OSyncError **error);
 	OSyncEngineMappingEvent	(*osync_engine_mapping_update_get_event)(
 					OSyncEngineMappingUpdate *update);
+	void			(*osync_plugin_resource_unref)(
+					OSyncPluginResource *resource);
+	void			(*osync_plugin_config_add_resource)(
+					OSyncPluginConfig *config,
+					OSyncPluginResource *resource);
+	osync_bool		(*osync_plugin_resource_is_enabled)(
+					OSyncPluginResource *resource);
+	void			(*osync_plugin_resource_enable)(
+					OSyncPluginResource *resource,
+					osync_bool enable);
+	OSyncList*		(*osync_plugin_resource_get_objformat_sinks)(
+					OSyncPluginResource *resource);
+	const char*		(*osync_objformat_sink_get_objformat)(
+					OSyncObjFormatSink *sink);
+	const char*		(*osync_objformat_sink_get_config)(
+					OSyncObjFormatSink *sink);
+	void			(*osync_objformat_sink_set_config)(
+					OSyncObjFormatSink *sink,
+					const char *config);
+	OSyncObjFormatSink*	(*osync_objformat_sink_new)(
+					const char *objformat,
+					OSyncError **error);
+	void			(*osync_plugin_resource_add_objformat_sink)(
+					OSyncPluginResource *resource,
+					OSyncObjFormatSink *formatsink);
+	void			(*osync_objformat_sink_unref)(
+					OSyncObjFormatSink *sink);
+	const char*		(*osync_plugin_resource_get_preferred_format)(
+					OSyncPluginResource *resource);
+	void			(*osync_plugin_resource_set_preferred_format)(
+					OSyncPluginResource *resource,
+					const char *preferred_format);
+	const char*		(*osync_plugin_resource_get_mime)(
+					OSyncPluginResource *resource);
+	void			(*osync_plugin_resource_set_mime)(
+					OSyncPluginResource *resource,
+					const char *mime);
+	const char*		(*osync_plugin_resource_get_objtype)(
+					OSyncPluginResource *resource);
+	void			(*osync_plugin_resource_set_objtype)(
+					OSyncPluginResource *resource,
+					const char *objtype);
+	const char*		(*osync_plugin_resource_get_path)(
+					OSyncPluginResource *resource);
+	void			(*osync_plugin_resource_set_path)(
+					OSyncPluginResource *resource,
+					const char *path);
+	const char*		(*osync_plugin_resource_get_url)(
+					OSyncPluginResource *resource);
+	void			(*osync_plugin_resource_set_url)(
+					OSyncPluginResource *resource,
+					const char *url);
+	const char*		(*osync_plugin_config_get_advancedoption_value_by_name)(
+					OSyncPluginConfig *config,
+					const char *name);
+	OSyncList*		(*osync_plugin_config_get_advancedoptions)(
+					OSyncPluginConfig *config);
+	void			(*osync_plugin_config_add_advancedoption)(
+					OSyncPluginConfig *config,
+					OSyncPluginAdvancedOption *option);
+	OSyncPluginAdvancedOption* (*osync_plugin_advancedoption_new)(
+					OSyncError **error);
+	void			(*osync_plugin_advancedoption_unref)(
+					OSyncPluginAdvancedOption *option);
+	const char*		(*osync_plugin_advancedoption_get_name)(
+					OSyncPluginAdvancedOption *option);
+	void			(*osync_plugin_advancedoption_set_name)(
+					OSyncPluginAdvancedOption *option,
+					const char *name);
+	void			(*osync_plugin_advancedoption_set_displayname)(
+					OSyncPluginAdvancedOption *option,
+					const char *displayname);
+	void			(*osync_plugin_advancedoption_set_type)(
+					OSyncPluginAdvancedOption *option,
+					OSyncPluginAdvancedOptionType type);
+	void			(*osync_plugin_advancedoption_set_value)(
+					OSyncPluginAdvancedOption *option,
+					const char *value);
+	OSyncList*		(*osync_plugin_config_get_resources)(
+					OSyncPluginConfig *config);
+	OSyncPluginResource*	(*osync_plugin_resource_ref)(
+					OSyncPluginResource *resource);
+	OSyncPluginResource*	(*osync_plugin_resource_new)(
+					OSyncError **error);
+	const char*		(*osync_plugin_resource_get_name)(
+					OSyncPluginResource *resource);
+	void			(*osync_plugin_resource_set_name)(
+					OSyncPluginResource *resource,
+					const char *name);
 
 	// data pointers
 	vLateSmartPtr<OSyncGroupEnv, void(*)(OSyncGroupEnv*)> group_env;
@@ -356,6 +445,34 @@ public:
 
 	// returns true if any member is dirty
 	bool AppendMembers(std::vector<SyncMemberSummary> &list);
+};
+
+class OS40PluginConfigPrivate
+{
+public:
+	OSyncMember *m_member;
+	OSyncPluginConfig *m_config;
+
+	OS40PluginConfigPrivate()
+		: m_member(0)
+		, m_config(0)
+	{
+	}
+};
+
+class OS40ConfigResourcePrivate
+{
+public:
+	OpenSync40Private *m_privapi;
+	OS40PluginConfigPrivate *m_parentpriv;
+	OSyncPluginResource *m_resource;
+
+	OS40ConfigResourcePrivate()
+		: m_privapi(0)
+		, m_parentpriv(0)
+		, m_resource(0)
+	{
+	}
 };
 
 struct CallbackBundle
@@ -914,6 +1031,297 @@ void multiply_summary(OSyncEngine *engine, void *cbdata)
 
 
 /////////////////////////////////////////////////////////////////////////////
+// OS40ConfigResource - public members
+
+OS40ConfigResource::OS40ConfigResource(const OS40PluginConfig &parent,
+					void *resource,
+					bool existing_resource)
+	: m_priv( new OS40ConfigResourcePrivate )
+	, m_exists(existing_resource)
+{
+	m_priv->m_privapi = parent.m_privapi;
+	m_priv->m_parentpriv = parent.m_priv.get();
+	m_priv->m_resource = (OSyncPluginResource*) resource;
+}
+
+OS40ConfigResource::~OS40ConfigResource()
+{
+	// unref the resource, since we hold a copy
+	m_priv->m_privapi->
+		osync_plugin_resource_unref(m_priv->m_resource);
+	delete m_priv;
+}
+
+bool OS40ConfigResource::IsExistingResource() const
+{
+	return m_exists;
+}
+
+// safe to call multiple times
+void OS40ConfigResource::AddResource()
+{
+	if( !IsExistingResource() ) {
+		m_priv->m_privapi->
+			osync_plugin_config_add_resource(
+				m_priv->m_parentpriv->m_config,
+				m_priv->m_resource);
+	}
+}
+
+bool OS40ConfigResource::IsEnabled() const
+{
+	return m_priv->m_privapi->
+		osync_plugin_resource_is_enabled(m_priv->m_resource);
+}
+
+void OS40ConfigResource::Enable(bool enabled)
+{
+	m_priv->m_privapi->osync_plugin_resource_enable(m_priv->m_resource,
+		enabled);
+}
+
+bool OS40ConfigResource::FindObjFormat(const std::string &objformat,
+					std::string &config)
+{
+	SyncListHandle sinks(m_priv->m_privapi->osync_list_free);
+	sinks = m_priv->m_privapi->
+		osync_plugin_resource_get_objformat_sinks(m_priv->m_resource);
+	for( OSyncList *o = sinks.get(); o; o = o->next ) {
+		OSyncObjFormatSink *sink = (OSyncObjFormatSink*) o->data;
+		if( objformat == m_priv->m_privapi->osync_objformat_sink_get_objformat(sink) ) {
+			const char *cfg = m_priv->m_privapi->osync_objformat_sink_get_config(sink);
+			if( cfg )
+				config = cfg;
+			else
+				config.clear();
+			return true;
+		}
+	}
+	return false;
+}
+
+void OS40ConfigResource::SetObjFormat(const std::string &objformat,
+					const std::string &config)
+{
+	// if it already exists, just set the config value
+	SyncListHandle sinks(m_priv->m_privapi->osync_list_free);
+	sinks = m_priv->m_privapi->
+		osync_plugin_resource_get_objformat_sinks(m_priv->m_resource);
+	for( OSyncList *o = sinks.get(); o; o = o->next ) {
+		OSyncObjFormatSink *sink = (OSyncObjFormatSink*) o->data;
+		if( objformat == m_priv->m_privapi->osync_objformat_sink_get_objformat(sink) ) {
+			m_priv->m_privapi->osync_objformat_sink_set_config(sink, config.c_str());
+			return;
+		}
+	}
+
+	// if we get here, it doesn't exist, and we need to add it
+	OSyncObjFormatSink *sink = m_priv->m_privapi->
+		osync_objformat_sink_new(objformat.c_str(),
+			m_priv->m_privapi->error);
+	if( !sink )
+		throw std::runtime_error(m_priv->m_privapi->error.GetErrorMsg());
+
+	if( config.size() )
+		m_priv->m_privapi->osync_objformat_sink_set_config(sink,
+			config.c_str());
+	m_priv->m_privapi->osync_plugin_resource_add_objformat_sink(
+		m_priv->m_resource, sink);
+	m_priv->m_privapi->osync_objformat_sink_unref(sink);
+}
+
+std::string OS40ConfigResource::GetName() const
+{
+	string value;
+	const char *pv = m_priv->m_privapi->
+		osync_plugin_resource_get_name(m_priv->m_resource);
+	if( pv )
+		value = pv;
+	return value;
+}
+
+void OS40ConfigResource::SetName(const std::string &name)
+{
+	m_priv->m_privapi->
+		osync_plugin_resource_set_name(m_priv->m_resource, name.c_str());
+}
+
+std::string OS40ConfigResource::GetPreferredFormat() const
+{
+	string value;
+	const char *pv = m_priv->m_privapi->
+		osync_plugin_resource_get_preferred_format(m_priv->m_resource);
+	if( pv )
+		value = pv;
+	return value;
+}
+
+void OS40ConfigResource::SetPreferredFormat(const std::string &format)
+{
+	m_priv->m_privapi->
+		osync_plugin_resource_set_preferred_format(m_priv->m_resource,
+			format.c_str());
+}
+
+std::string OS40ConfigResource::GetMime() const
+{
+	string value;
+	const char *pv = m_priv->m_privapi->osync_plugin_resource_get_mime(
+					m_priv->m_resource);
+	if( pv )
+		value = pv;
+	return value;
+}
+
+void OS40ConfigResource::SetMime(const std::string &mime)
+{
+	m_priv->m_privapi->osync_plugin_resource_set_mime(m_priv->m_resource,
+		mime.c_str());
+}
+
+std::string OS40ConfigResource::GetObjType() const
+{
+	string value;
+	const char *pv = m_priv->m_privapi->osync_plugin_resource_get_objtype(
+					m_priv->m_resource);
+	if( pv )
+		value = pv;
+	return value;
+}
+
+void OS40ConfigResource::SetObjType(const std::string &objtype)
+{
+	m_priv->m_privapi->osync_plugin_resource_set_objtype(m_priv->m_resource,
+		objtype.c_str());
+}
+
+std::string OS40ConfigResource::GetPath() const
+{
+	string value;
+	const char *pv = m_priv->m_privapi->osync_plugin_resource_get_path(
+					m_priv->m_resource);
+	if( pv )
+		value = pv;
+	return value;
+}
+
+void OS40ConfigResource::SetPath(const std::string &path)
+{
+	m_priv->m_privapi->osync_plugin_resource_set_path(m_priv->m_resource,
+		path.c_str());
+}
+
+std::string OS40ConfigResource::GetUrl() const
+{
+	string value;
+	const char *pv = m_priv->m_privapi->osync_plugin_resource_get_url(
+					m_priv->m_resource);
+	if( pv )
+		value = pv;
+	return value;
+}
+
+void OS40ConfigResource::SetUrl(const std::string &url)
+{
+	m_priv->m_privapi->osync_plugin_resource_set_url(m_priv->m_resource,
+		url.c_str());
+}
+
+
+/////////////////////////////////////////////////////////////////////////////
+// OS40PluginConfig - public members
+
+OS40PluginConfig::OS40PluginConfig(OpenSync40Private *privapi,
+					void *member,
+					void *config)
+	: m_privapi(privapi)
+{
+	m_priv.reset( new OS40PluginConfigPrivate );
+	m_priv->m_member = (OSyncMember*) member;
+	m_priv->m_config = (OSyncPluginConfig*) config;
+}
+
+std::string OS40PluginConfig::GetAdvanced(const std::string &name)
+{
+	const char *value = m_privapi->osync_plugin_config_get_advancedoption_value_by_name(m_priv->m_config, name.c_str());
+	string val;
+	if( value )
+		val = value;
+	return val;
+}
+
+void OS40PluginConfig::SetAdvanced(const std::string &name,
+				const std::string &display_name,
+				const std::string &val)
+{
+	// find the first advanced option with this name
+	SyncListHandle aos(m_privapi->osync_list_free);
+	aos = m_privapi->osync_plugin_config_get_advancedoptions(m_priv->m_config);
+	OSyncPluginAdvancedOption *option = 0;
+	for( OSyncList *o = aos.get(); o; o = o->next ) {
+		option = (OSyncPluginAdvancedOption*) o->data;
+
+		if( name == m_privapi->osync_plugin_advancedoption_get_name(option) )
+			break;
+	}
+
+	if( option ) {
+		// found existing option, set it with val
+		m_privapi->osync_plugin_advancedoption_set_value(option, val.c_str());
+	}
+	else {
+		// option with that name does not exist, so create it
+		option = m_privapi->osync_plugin_advancedoption_new(m_privapi->error);
+		if( !option )
+			throw std::runtime_error(m_privapi->error.GetErrorMsg());
+
+		m_privapi->osync_plugin_advancedoption_set_name(option, name.c_str());
+		m_privapi->osync_plugin_advancedoption_set_displayname(option, display_name.c_str());
+		m_privapi->osync_plugin_advancedoption_set_type(option, OSYNC_PLUGIN_ADVANCEDOPTION_TYPE_STRING);
+		m_privapi->osync_plugin_advancedoption_set_value(option, val.c_str());
+		m_privapi->osync_plugin_config_add_advancedoption(m_priv->m_config, option);
+		m_privapi->osync_plugin_advancedoption_unref(option);
+	}
+}
+
+OS40PluginConfig::OS40ConfigResourcePtr
+OS40PluginConfig::GetResource(const std::string &objtype)
+{
+	OS40ConfigResourcePtr ptr;
+
+	// FIXME - get_resources() does not give us a copy, so don't use
+	//         the SyncListHandle here
+	OSyncList *rs = m_privapi->osync_plugin_config_get_resources(m_priv->m_config);
+	for( OSyncList *o = rs; o; o = o->next ) {
+		OSyncPluginResource *res = (OSyncPluginResource*) o->data;
+		if( objtype == m_privapi->osync_plugin_resource_get_objtype(res) ) {
+			// bump the resource count, since OS40ConfigResource
+			// will unref it in the destructor
+			m_privapi->osync_plugin_resource_ref(res);
+			ptr.reset( new OS40ConfigResource(*this, res, true) );
+			return ptr;
+		}
+	}
+
+	// this res has a ref bump already, no ref() needed like it is above
+	OSyncPluginResource *res = m_privapi->osync_plugin_resource_new(m_privapi->error);
+	if( !res )
+		throw std::runtime_error(m_privapi->error.GetErrorMsg());
+	ptr.reset( new OS40ConfigResource(*this, res, false) );
+	// we search by objtype name, so make sure this is set in
+	// the new object
+	ptr->SetObjType(objtype);
+	return ptr;
+}
+
+void OS40PluginConfig::Save()
+{
+	if( !m_privapi->osync_member_save(m_priv->m_member, m_privapi->error) )
+		throw std::runtime_error(m_privapi->error.GetErrorMsg());
+}
+
+
+/////////////////////////////////////////////////////////////////////////////
 // OpenSync40 (API override class) - public members
 
 OpenSync40::OpenSync40()
@@ -1071,6 +1479,78 @@ OpenSync40::OpenSync40()
 				"osync_engine_synchronize_and_block");
 	LoadSym(p->osync_engine_mapping_update_get_event,
 				"osync_engine_mapping_update_get_event");
+	LoadSym(p->osync_plugin_resource_unref,
+				"osync_plugin_resource_unref");
+	LoadSym(p->osync_plugin_config_add_resource,
+				"osync_plugin_config_add_resource");
+	LoadSym(p->osync_plugin_resource_is_enabled,
+				"osync_plugin_resource_is_enabled");
+	LoadSym(p->osync_plugin_resource_enable,
+				"osync_plugin_resource_enable");
+	LoadSym(p->osync_plugin_resource_get_objformat_sinks,
+				"osync_plugin_resource_get_objformat_sinks");
+	LoadSym(p->osync_objformat_sink_get_objformat,
+				"osync_objformat_sink_get_objformat");
+	LoadSym(p->osync_objformat_sink_get_config,
+				"osync_objformat_sink_get_config");
+	LoadSym(p->osync_objformat_sink_set_config,
+				"osync_objformat_sink_set_config");
+	LoadSym(p->osync_objformat_sink_new,
+				"osync_objformat_sink_new");
+	LoadSym(p->osync_plugin_resource_add_objformat_sink,
+				"osync_plugin_resource_add_objformat_sink");
+	LoadSym(p->osync_objformat_sink_unref,
+				"osync_objformat_sink_unref");
+	LoadSym(p->osync_plugin_resource_get_preferred_format,
+				"osync_plugin_resource_get_preferred_format");
+	LoadSym(p->osync_plugin_resource_set_preferred_format,
+				"osync_plugin_resource_set_preferred_format");
+	LoadSym(p->osync_plugin_resource_get_mime,
+				"osync_plugin_resource_get_mime");
+	LoadSym(p->osync_plugin_resource_set_mime,
+				"osync_plugin_resource_set_mime");
+	LoadSym(p->osync_plugin_resource_get_objtype,
+				"osync_plugin_resource_get_objtype");
+	LoadSym(p->osync_plugin_resource_set_objtype,
+				"osync_plugin_resource_set_objtype");
+	LoadSym(p->osync_plugin_resource_get_path,
+				"osync_plugin_resource_get_path");
+	LoadSym(p->osync_plugin_resource_set_path,
+				"osync_plugin_resource_set_path");
+	LoadSym(p->osync_plugin_resource_get_url,
+				"osync_plugin_resource_get_url");
+	LoadSym(p->osync_plugin_resource_set_url,
+				"osync_plugin_resource_set_url");
+	LoadSym(p->osync_plugin_config_get_advancedoption_value_by_name,
+			"osync_plugin_config_get_advancedoption_value_by_name");
+	LoadSym(p->osync_plugin_config_get_advancedoptions,
+				"osync_plugin_config_get_advancedoptions");
+	LoadSym(p->osync_plugin_config_add_advancedoption,
+				"osync_plugin_config_add_advancedoption");
+	LoadSym(p->osync_plugin_advancedoption_new,
+				"osync_plugin_advancedoption_new");
+	LoadSym(p->osync_plugin_advancedoption_unref,
+				"osync_plugin_advancedoption_unref");
+	LoadSym(p->osync_plugin_advancedoption_get_name,
+				"osync_plugin_advancedoption_get_name");
+	LoadSym(p->osync_plugin_advancedoption_set_name,
+				"osync_plugin_advancedoption_set_name");
+	LoadSym(p->osync_plugin_advancedoption_set_displayname,
+				"osync_plugin_advancedoption_set_displayname");
+	LoadSym(p->osync_plugin_advancedoption_set_type,
+				"osync_plugin_advancedoption_set_type");
+	LoadSym(p->osync_plugin_advancedoption_set_value,
+				"osync_plugin_advancedoption_set_value");
+	LoadSym(p->osync_plugin_config_get_resources,
+				"osync_plugin_config_get_resources");
+	LoadSym(p->osync_plugin_resource_ref,
+				"osync_plugin_resource_ref");
+	LoadSym(p->osync_plugin_resource_new,
+				"osync_plugin_resource_new");
+	LoadSym(p->osync_plugin_resource_get_name,
+				"osync_plugin_resource_get_name");
+	LoadSym(p->osync_plugin_resource_set_name,
+				"osync_plugin_resource_set_name");
 
 	// fixup free pointers
 	p->group_env.SetFreeFunc(p->osync_group_env_unref);
@@ -1378,6 +1858,38 @@ std::string OpenSync40::GetConfiguration(const std::string &group_name,
 	}
 
 	return config_data;
+}
+
+OS40PluginConfig OpenSync40::GetConfigurationObj(const std::string &group_name,
+						long member_id)
+{
+	if( !IsConfigurable(group_name, member_id) ) {
+		ostringstream oss;
+		oss << "Member " << member_id << " of group '" << group_name << "' does not accept configuration.";
+		throw std::runtime_error(oss.str());
+	}
+
+	OSyncGroup *group = m_priv->osync_group_env_find_group(m_priv->group_env.get(), group_name.c_str());
+	if( !group )
+		throw std::runtime_error("Group not found: " + group_name);
+
+	OSyncMember *member = m_priv->osync_group_find_member(group, member_id);
+	if( !member ) {
+		ostringstream oss;
+		oss << "Member " << member_id << " not found.";
+		throw std::runtime_error(oss.str());
+	}
+
+	OSyncPlugin *plugin = m_priv->osync_plugin_env_find_plugin(m_priv->plugin_env.get(), m_priv->osync_member_get_pluginname(member));
+	if( !plugin )
+		throw std::runtime_error(string("Unable to find plugin with name: ") + m_priv->osync_member_get_pluginname(member));
+
+
+	OSyncPluginConfig *config = m_priv->osync_member_get_config_or_default(member, m_priv->error);
+	if( !config )
+		throw std::runtime_error(m_priv->error.GetErrorMsg());
+
+	return OS40PluginConfig(m_priv, member, config);
 }
 
 void OpenSync40::SetConfiguration(const std::string &group_name,

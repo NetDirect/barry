@@ -29,6 +29,92 @@
 namespace OpenSync {
 
 class OpenSync40Private;
+class OS40PluginConfigPrivate;
+class OS40ConfigResourcePrivate;
+
+class OS40PluginConfig;
+class OpenSync40;
+
+class OS40ConfigResource
+{
+	friend class OS40PluginConfig;
+
+private:
+	OS40ConfigResourcePrivate *m_priv;
+	bool m_exists;			// true if this resources exists
+					// in the plugin config.
+					// AddResource() sets this to true
+
+private:
+	OS40ConfigResource(const OS40PluginConfig &parent, void *resource,
+		bool existing_resource);
+	OS40ConfigResource(const OS40ConfigResource &other);//disabled copy
+	OS40ConfigResource& operator=(const OS40ConfigResource &other);
+
+public:
+	~OS40ConfigResource();
+
+	/// Returns true if this instance represents an existing
+	/// resource in the config.  If this is false, then
+	/// AddResource() must be called, otherwise any changes
+	/// will not be saved to the config object.
+	bool IsExistingResource() const;
+	void AddResource();	// safe to call multiple times
+
+	bool IsEnabled() const;
+	void Enable(bool enabled = true);
+
+	// searches for the objformat, and fills in config with its config
+	// value if it exists and returns true... otherwise returns false
+	bool FindObjFormat(const std::string &objformat, std::string &config);
+	void SetObjFormat(const std::string &objformat,
+		const std::string &config = "");
+
+	std::string GetName() const;
+	void SetName(const std::string &name);
+
+	std::string GetPreferredFormat() const;
+	void SetPreferredFormat(const std::string &format);
+
+	std::string GetMime() const;
+	void SetMime(const std::string &mime);
+
+	std::string GetObjType() const;
+private:void SetObjType(const std::string &objtype); // objtype is set
+		// automatically when this object is created with GetResource()
+
+public:
+	std::string GetPath() const;
+	void SetPath(const std::string &path);
+
+	std::string GetUrl() const;
+	void SetUrl(const std::string &url);
+};
+
+class OS40PluginConfig
+{
+	friend class OS40ConfigResource;
+	friend class OpenSync40;
+
+public:
+	typedef std::auto_ptr<OS40ConfigResource>	OS40ConfigResourcePtr;
+
+private:
+	OpenSync40Private *m_privapi;	// external pointer to OpenSync40
+	std::tr1::shared_ptr<OS40PluginConfigPrivate> m_priv;
+
+private:
+	OS40PluginConfig(OpenSync40Private *privapi, void *member, void *config);
+
+public:
+	std::string GetAdvanced(const std::string &name);
+	void SetAdvanced(const std::string &name,
+		const std::string &display_name, const std::string &val);
+
+	OS40ConfigResourcePtr GetResource(const std::string &objtype);
+
+	void Save();
+};
 
 class OpenSync40 : public DlOpen, public OpenSync::API
 {
@@ -86,6 +172,8 @@ public:
 	bool IsConfigurable(const std::string &group_name,
 		long member_id);
 	std::string GetConfiguration(const std::string &group_name,
+		long member_id);
+	OS40PluginConfig GetConfigurationObj(const std::string &group_name,
 		long member_id);
 	void SetConfiguration(const std::string &group_name,
 		long member_id, const std::string &config_data);
