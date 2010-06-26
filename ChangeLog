@@ -1,5 +1,8 @@
 Release: version 0.17 - 2010/01/??
 ------------------------------------------------------------------------------
+2010/06/26
+	- added Pete Zaitcev's usbmon-6, with some minor changes to
+		remove root requirements and pretty up the hex dump format
 2010/06/12
 	- applied chat scripts for Orange Spain from Adrian Gibanel
 	- updated debian and rpm packages with new chatscripts
