@@ -13,6 +13,12 @@ Sync:
 	sync without deleting all 4 databases... on 0.22 this
 	seems to cause opensync to go into a stupendously long
 	busy loop... maybe 0.4x is better
+- 0.4x has a CheckSummary state, that shows what changes are going
+	to happen just before the sync happens... in the command line
+	version, this is shown in a text table... should create a dialog
+	for the user to approve first... perhaps make this a config
+	option, so that the user doesn't have to confirm on each
+	sync if he doesn't want to
 
 Wishlist TODO List:
 ===================
