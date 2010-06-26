@@ -1262,6 +1262,14 @@ void OS40PluginConfig::SetAdvanced(const std::string &name,
 				const std::string &display_name,
 				const std::string &val)
 {
+	SetAdvanced(name, display_name, STRING_TYPE, val);
+}
+
+void OS40PluginConfig::SetAdvanced(const std::string &name,
+				const std::string &display_name,
+				int val_type,
+				const std::string &val)
+{
 	// find the first advanced option with this name
 	SyncListHandle aos(m_privapi->osync_list_free);
 	aos = m_privapi->osync_plugin_config_get_advancedoptions(m_priv->m_config);
@@ -1285,7 +1293,46 @@ void OS40PluginConfig::SetAdvanced(const std::string &name,
 
 		m_privapi->osync_plugin_advancedoption_set_name(option, name.c_str());
 		m_privapi->osync_plugin_advancedoption_set_displayname(option, display_name.c_str());
-		m_privapi->osync_plugin_advancedoption_set_type(option, OSYNC_PLUGIN_ADVANCEDOPTION_TYPE_STRING);
+		OSyncPluginAdvancedOptionType type;
+		switch( val_type )
+		{
+		case NONE_TYPE:
+			type = OSYNC_PLUGIN_ADVANCEDOPTION_TYPE_NONE;
+			break;
+		case BOOL_TYPE:
+			type = OSYNC_PLUGIN_ADVANCEDOPTION_TYPE_BOOL;
+			break;
+		case CHAR_TYPE:
+			type = OSYNC_PLUGIN_ADVANCEDOPTION_TYPE_CHAR;
+			break;
+		case DOUBLE_TYPE:
+			type = OSYNC_PLUGIN_ADVANCEDOPTION_TYPE_DOUBLE;
+			break;
+		case INT_TYPE:
+			type = OSYNC_PLUGIN_ADVANCEDOPTION_TYPE_INT;
+			break;
+		case LONG_TYPE:
+			type = OSYNC_PLUGIN_ADVANCEDOPTION_TYPE_LONG;
+			break;
+		case LONGLONG_TYPE:
+			type = OSYNC_PLUGIN_ADVANCEDOPTION_TYPE_LONGLONG;
+			break;
+		case UINT_TYPE:
+			type = OSYNC_PLUGIN_ADVANCEDOPTION_TYPE_UINT;
+			break;
+		case ULONG_TYPE:
+			type = OSYNC_PLUGIN_ADVANCEDOPTION_TYPE_ULONG;
+			break;
+		case ULONGLONG_TYPE:
+			type = OSYNC_PLUGIN_ADVANCEDOPTION_TYPE_ULONGLONG;
+			break;
+		case STRING_TYPE:
+			type = OSYNC_PLUGIN_ADVANCEDOPTION_TYPE_STRING;
+			break;
+		default:
+			throw std::logic_error("Bad type in SetAdvanced()");
+		}
+		m_privapi->osync_plugin_advancedoption_set_type(option, type);
 		m_privapi->osync_plugin_advancedoption_set_value(option, val.c_str());
 		m_privapi->osync_plugin_config_add_advancedoption(m_priv->m_config, option);
 		m_privapi->osync_plugin_advancedoption_unref(option);

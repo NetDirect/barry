@@ -99,6 +99,20 @@ class OS40PluginConfig
 public:
 	typedef std::auto_ptr<OS40ConfigResource>	OS40ConfigResourcePtr;
 
+	enum {
+		NONE_TYPE,
+		BOOL_TYPE,
+		CHAR_TYPE,
+		DOUBLE_TYPE,
+		INT_TYPE,
+		LONG_TYPE,
+		LONGLONG_TYPE,
+		UINT_TYPE,
+		ULONG_TYPE,
+		ULONGLONG_TYPE,
+		STRING_TYPE
+	};
+
 private:
 	OpenSync40Private *m_privapi;	// external pointer to OpenSync40
 	std::tr1::shared_ptr<OS40PluginConfigPrivate> m_priv;
@@ -110,6 +124,9 @@ public:
 	std::string GetAdvanced(const std::string &name);
 	void SetAdvanced(const std::string &name,
 		const std::string &display_name, const std::string &val);
+	void SetAdvanced(const std::string &name,
+		const std::string &display_name,
+		int val_type, const std::string &val);
 
 	OS40ConfigResourcePtr GetResource(const std::string &objtype);
 
