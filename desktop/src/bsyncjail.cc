@@ -317,8 +317,9 @@ void BarrySyncJail::MemberStatus(long member_id,
 void BarrySyncJail::CheckSummary(OpenSync::SyncSummary &summary)
 {
 	// FIXME: not currently supported... abort every time
-	cerr << "FIXME: CheckSummary() not implemented, aborting" << endl;
-	summary.Abort();
+//	cerr << "FIXME: CheckSummary() not implemented, aborting" << endl;
+//	summary.Abort();
+	summary.Continue();
 }
 
 void BarrySyncJail::ReportError(const std::string &msg)
