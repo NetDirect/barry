@@ -62,33 +62,33 @@ public:
 	void AddResource();	// safe to call multiple times
 
 	bool IsEnabled() const;
-	void Enable(bool enabled = true);
+	OS40ConfigResource& Enable(bool enabled = true);
 
 	// searches for the objformat, and fills in config with its config
 	// value if it exists and returns true... otherwise returns false
 	bool FindObjFormat(const std::string &objformat, std::string &config);
-	void SetObjFormat(const std::string &objformat,
+	OS40ConfigResource& SetObjFormat(const std::string &objformat,
 		const std::string &config = "");
 
 	std::string GetName() const;
-	void SetName(const std::string &name);
+	OS40ConfigResource& SetName(const std::string &name);
 
 	std::string GetPreferredFormat() const;
-	void SetPreferredFormat(const std::string &format);
+	OS40ConfigResource& SetPreferredFormat(const std::string &format);
 
 	std::string GetMime() const;
-	void SetMime(const std::string &mime);
+	OS40ConfigResource& SetMime(const std::string &mime);
 
 	std::string GetObjType() const;
-private:void SetObjType(const std::string &objtype); // objtype is set
+private:OS40ConfigResource& SetObjType(const std::string &objtype); // objtype is set
 		// automatically when this object is created with GetResource()
 
 public:
 	std::string GetPath() const;
-	void SetPath(const std::string &path);
+	OS40ConfigResource& SetPath(const std::string &path);
 
 	std::string GetUrl() const;
-	void SetUrl(const std::string &url);
+	OS40ConfigResource& SetUrl(const std::string &url);
 };
 
 class OS40PluginConfig

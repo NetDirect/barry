@@ -1074,10 +1074,11 @@ bool OS40ConfigResource::IsEnabled() const
 		osync_plugin_resource_is_enabled(m_priv->m_resource);
 }
 
-void OS40ConfigResource::Enable(bool enabled)
+OS40ConfigResource& OS40ConfigResource::Enable(bool enabled)
 {
 	m_priv->m_privapi->osync_plugin_resource_enable(m_priv->m_resource,
 		enabled);
+	return *this;
 }
 
 bool OS40ConfigResource::FindObjFormat(const std::string &objformat,
@@ -1100,7 +1101,7 @@ bool OS40ConfigResource::FindObjFormat(const std::string &objformat,
 	return false;
 }
 
-void OS40ConfigResource::SetObjFormat(const std::string &objformat,
+OS40ConfigResource& OS40ConfigResource::SetObjFormat(const std::string &objformat,
 					const std::string &config)
 {
 	// if it already exists, just set the config value
@@ -1111,7 +1112,7 @@ void OS40ConfigResource::SetObjFormat(const std::string &objformat,
 		OSyncObjFormatSink *sink = (OSyncObjFormatSink*) o->data;
 		if( objformat == m_priv->m_privapi->osync_objformat_sink_get_objformat(sink) ) {
 			m_priv->m_privapi->osync_objformat_sink_set_config(sink, config.c_str());
-			return;
+			return *this;
 		}
 	}
 
@@ -1128,6 +1129,7 @@ void OS40ConfigResource::SetObjFormat(const std::string &objformat,
 	m_priv->m_privapi->osync_plugin_resource_add_objformat_sink(
 		m_priv->m_resource, sink);
 	m_priv->m_privapi->osync_objformat_sink_unref(sink);
+	return *this;
 }
 
 std::string OS40ConfigResource::GetName() const
@@ -1140,10 +1142,11 @@ std::string OS40ConfigResource::GetName() const
 	return value;
 }
 
-void OS40ConfigResource::SetName(const std::string &name)
+OS40ConfigResource& OS40ConfigResource::SetName(const std::string &name)
 {
 	m_priv->m_privapi->
 		osync_plugin_resource_set_name(m_priv->m_resource, name.c_str());
+	return *this;
 }
 
 std::string OS40ConfigResource::GetPreferredFormat() const
@@ -1156,11 +1159,12 @@ std::string OS40ConfigResource::GetPreferredFormat() const
 	return value;
 }
 
-void OS40ConfigResource::SetPreferredFormat(const std::string &format)
+OS40ConfigResource& OS40ConfigResource::SetPreferredFormat(const std::string &format)
 {
 	m_priv->m_privapi->
 		osync_plugin_resource_set_preferred_format(m_priv->m_resource,
 			format.c_str());
+	return *this;
 }
 
 std::string OS40ConfigResource::GetMime() const
@@ -1173,10 +1177,11 @@ std::string OS40ConfigResource::GetMime() const
 	return value;
 }
 
-void OS40ConfigResource::SetMime(const std::string &mime)
+OS40ConfigResource& OS40ConfigResource::SetMime(const std::string &mime)
 {
 	m_priv->m_privapi->osync_plugin_resource_set_mime(m_priv->m_resource,
 		mime.c_str());
+	return *this;
 }
 
 std::string OS40ConfigResource::GetObjType() const
@@ -1189,10 +1194,11 @@ std::string OS40ConfigResource::GetObjType() const
 	return value;
 }
 
-void OS40ConfigResource::SetObjType(const std::string &objtype)
+OS40ConfigResource& OS40ConfigResource::SetObjType(const std::string &objtype)
 {
 	m_priv->m_privapi->osync_plugin_resource_set_objtype(m_priv->m_resource,
 		objtype.c_str());
+	return *this;
 }
 
 std::string OS40ConfigResource::GetPath() const
@@ -1205,10 +1211,11 @@ std::string OS40ConfigResource::GetPath() const
 	return value;
 }
 
-void OS40ConfigResource::SetPath(const std::string &path)
+OS40ConfigResource& OS40ConfigResource::SetPath(const std::string &path)
 {
 	m_priv->m_privapi->osync_plugin_resource_set_path(m_priv->m_resource,
 		path.c_str());
+	return *this;
 }
 
 std::string OS40ConfigResource::GetUrl() const
@@ -1221,10 +1228,11 @@ std::string OS40ConfigResource::GetUrl() const
 	return value;
 }
 
-void OS40ConfigResource::SetUrl(const std::string &url)
+OS40ConfigResource& OS40ConfigResource::SetUrl(const std::string &url)
 {
 	m_priv->m_privapi->osync_plugin_resource_set_url(m_priv->m_resource,
 		url.c_str());
+	return *this;
 }
 
 

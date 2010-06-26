@@ -214,11 +214,11 @@ void TestConfig(OpenSync40 &os, const char *name, long member_id)
 	res = cfg.GetResource("testresource");
 	if( res->IsExistingResource() )
 		cout << "testresource exists" << endl;
-	res->SetObjFormat("vcard30");
-	res->SetUrl("http://netdirect.ca/");
-	res->SetName("ResourceName");
-	res->Enable();
-	res->AddResource();
+	res->SetObjFormat("vcard30").
+		SetUrl("http://netdirect.ca/").
+		SetName("ResourceName").
+		Enable().
+		AddResource();
 	cfg.Save();
 }
 
