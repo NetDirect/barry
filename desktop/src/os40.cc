@@ -390,6 +390,23 @@ public:
 	void			(*osync_plugin_resource_set_name)(
 					OSyncPluginResource *resource,
 					const char *name);
+	OSyncPluginAuthentication* (*osync_plugin_config_get_authentication)(
+					OSyncPluginConfig *config);
+	const char*		(*osync_plugin_authentication_get_password)(
+					OSyncPluginAuthentication *auth);
+	OSyncPluginAuthentication* (*osync_plugin_authentication_new)(
+					OSyncError **error);
+	osync_bool		(*osync_plugin_authentication_option_is_supported)(
+					OSyncPluginAuthentication *auth,
+					OSyncPluginAuthenticationOptionSupportedFlag flag);
+	void			(*osync_plugin_authentication_unref)(
+					OSyncPluginAuthentication *auth);
+	void			(*osync_plugin_config_set_authentication)(
+					OSyncPluginConfig *config,
+					OSyncPluginAuthentication *auth);
+	void			(*osync_plugin_authentication_set_password)(
+					OSyncPluginAuthentication *auth,
+					const char *password);
 
 	// data pointers
 	vLateSmartPtr<OSyncGroupEnv, void(*)(OSyncGroupEnv*)> group_env;
@@ -1369,6 +1386,44 @@ OS40PluginConfig::GetResource(const std::string &objtype)
 	return ptr;
 }
 
+std::string OS40PluginConfig::GetPassword() const
+{
+	string password;
+
+	OSyncPluginAuthentication *auth = m_privapi->osync_plugin_config_get_authentication(m_priv->m_config);
+	if( !auth )
+		return password;
+
+	const char *pass = m_privapi->osync_plugin_authentication_get_password(auth);
+	if( !pass )
+		return password;
+
+	password = pass;
+	return password;
+}
+
+void OS40PluginConfig::SetPassword(const std::string &password)
+{
+	OSyncPluginAuthentication *auth = m_privapi->osync_plugin_config_get_authentication(m_priv->m_config);
+	if( !auth ) {
+		auth = m_privapi->osync_plugin_authentication_new(m_privapi->error);
+		if( !auth )
+			throw std::runtime_error(m_privapi->error.GetErrorMsg());
+		if( !m_privapi->osync_plugin_authentication_option_is_supported(auth, OSYNC_PLUGIN_AUTHENTICATION_PASSWORD) ) {
+			m_privapi->osync_plugin_authentication_unref(auth);
+			throw std::runtime_error("Password authentication is not supported in plugin!");
+		}
+
+		// all looks ok, add it to the config
+		m_privapi->osync_plugin_config_set_authentication(m_priv->m_config, auth);
+		// unref our copy, since the config now has it...
+		// our auth pointer will still be valid since config holds it
+		m_privapi->osync_plugin_authentication_unref(auth);
+	}
+
+	m_privapi->osync_plugin_authentication_set_password(auth, password.c_str());
+}
+
 void OS40PluginConfig::Save()
 {
 	if( !m_privapi->osync_member_save(m_priv->m_member, m_privapi->error) )
@@ -1606,6 +1661,20 @@ OpenSync40::OpenSync40()
 				"osync_plugin_resource_get_name");
 	LoadSym(p->osync_plugin_resource_set_name,
 				"osync_plugin_resource_set_name");
+	LoadSym(p->osync_plugin_config_get_authentication,
+				"osync_plugin_config_get_authentication");
+	LoadSym(p->osync_plugin_authentication_get_password,
+				"osync_plugin_authentication_get_password");
+	LoadSym(p->osync_plugin_authentication_new,
+				"osync_plugin_authentication_new");
+	LoadSym(p->osync_plugin_authentication_option_is_supported,
+			"osync_plugin_authentication_option_is_supported");
+	LoadSym(p->osync_plugin_authentication_unref,
+				"osync_plugin_authentication_unref");
+	LoadSym(p->osync_plugin_config_set_authentication,
+				"osync_plugin_config_set_authentication");
+	LoadSym(p->osync_plugin_authentication_set_password,
+				"osync_plugin_authentication_set_password");
 
 	// fixup free pointers
 	p->group_env.SetFreeFunc(p->osync_group_env_unref);

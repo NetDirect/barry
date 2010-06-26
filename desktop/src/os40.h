@@ -130,6 +130,9 @@ public:
 
 	OS40ConfigResourcePtr GetResource(const std::string &objtype);
 
+	std::string GetPassword() const;
+	void SetPassword(const std::string &password);
+
 	void Save();
 };
 
