@@ -44,7 +44,7 @@ using namespace Barry;
 class TCPWriter : public Barry::Mode::VNCServerDataCallback
 {
 public:
-    void SetSocket(int socket, bool& keepGoing)
+    TCPWriter(int socket, bool& keepGoing)
     {
         cfd = socket;
         continuePtr = &keepGoing;
@@ -62,6 +62,7 @@ public:
         while (written < toWrite)
         {
             ssize_t writtenThisTime = write(cfd, &(data.GetData()[written]), toWrite - written);
+            cerr << "Written " << writtenThisTime << " bytes over TCP\n";
             if (writtenThisTime < 0)
             {
                 *continuePtr = false;
@@ -187,9 +188,48 @@ int main(int argc, char *argv[])
 			return 1;
 		}
 
-        // Create the thing which will write onto TCP
-        TCPWriter tcpwriter;
+        // Now start to read from TCP and get ready to write
+        // to the BlackBerry.
+        int sfd = socket(AF_INET, SOCK_STREAM, 0);
+        if (sfd == -1)
+            handle_error("socket");
 
+        cerr << "Trying to listen...\n";
+
+        sockaddr_in my_addr;
+        memset(&my_addr, 0, sizeof(struct sockaddr_in));
+                               /* Clear structure */
+        my_addr.sin_family = AF_INET;
+        my_addr.sin_port = htons(2003);
+        my_addr.sin_addr.s_addr = INADDR_ANY;
+    
+        if (bind(sfd, (struct sockaddr *) &my_addr,
+                sizeof(struct sockaddr_in)) == -1)
+            handle_error("bind");
+
+        std::cerr << "Bound\n";
+        if (listen(sfd, 1) == -1)
+            handle_error("listen");
+        std::cerr << "Listening\n";
+
+        /* Now we can accept incoming connections one
+           at a time using accept(2) */
+
+        sockaddr_in peer_addr;
+        socklen_t peer_addr_size = sizeof(struct sockaddr_in);
+        int cfd = accept(sfd, (struct sockaddr *) &peer_addr,
+                     &peer_addr_size);
+        if (cfd == -1)
+            handle_error("accept");
+
+        std::cerr << "Accepted\n";
+
+        bool running = true;
+
+        // Create the thing which will write onto TCP
+        TCPWriter tcpwriter(cfd, running);
+
+        // Set up the BlackBerry gubbins
         // Start a thread to handle any data arriving from
         // the BlackBerry.
         auto_ptr<SocketRoutingQueue> router;
@@ -205,52 +245,22 @@ int main(int argc, char *argv[])
 		//
 		vncrelay.Open(password.c_str());
 
-        // Now start to read from TCP and get ready to write
-        // to the BlackBerry.
-        int sfd = socket(AF_INET, SOCK_STREAM, 0);
-        if (sfd == -1)
-            handle_error("socket");
-
-        cerr << "Listening on port 2000\n";
-
-        sockaddr_in my_addr;
-        memset(&my_addr, 0, sizeof(struct sockaddr_in));
-                               /* Clear structure */
-        my_addr.sin_family = AF_INET;
-        my_addr.sin_port = 2000;
-        my_addr.sin_addr.s_addr = INADDR_ANY;
-    
-        if (bind(sfd, (struct sockaddr *) &my_addr,
-                sizeof(struct sockaddr_in)) == -1)
-            handle_error("bind");
-
-        if (listen(sfd, 1) == -1)
-            handle_error("listen");
-
-        /* Now we can accept incoming connections one
-           at a time using accept(2) */
-
-        sockaddr_in peer_addr;
-        socklen_t peer_addr_size = sizeof(struct sockaddr_in);
-        int cfd = accept(sfd, (struct sockaddr *) &peer_addr,
-                     &peer_addr_size);
-        if (cfd == -1)
-            handle_error("accept");
-
-
-        std::cerr << "Accepted\n";
-
-        bool running = true;
-        tcpwriter.SetSocket(cfd, running);
-
+        // We now have a thread running to read from the
+        // BB and write over TCP; in this thread we'll
+        // read from TCP and write to the BB.
         unsigned char buf[2000];
         while (running)
         {
             size_t haveRead = read(cfd, buf, 2000);
             if (haveRead > 0)
             {
+                std::cerr << "Sending " << haveRead << " bytes TCP->USB\n";
                 Data toWrite(buf, haveRead);
+                std::cerr << "To BB: ";
+                toWrite.DumpHex(std::cerr);
+                std::cerr << "\n";
                 vncrelay.Send(toWrite);
+                std::cerr << "Sent " << haveRead << " bytes TCP->USB\n";
             }
             else if (haveRead < 0)
             {

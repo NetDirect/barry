@@ -201,9 +201,12 @@ uint16_t Controller::SelectMode(ModeType mode)
 		break;
 	}
 
+    std::cerr << "a\n";
 	// send mode command before we open, as a default socket is socket 0
 	Data command(&packet, btohs(packet.size));
 	Data response;
+
+    std::cerr << "b\n";
 
 	try {
 		m_zero.Send(command, response);
@@ -211,12 +214,15 @@ uint16_t Controller::SelectMode(ModeType mode)
 		// get the data socket number
 		// indicates the socket number that
 		// should be used below in the Open() call
-		Protocol::CheckSize(response, SB_MODE_PACKET_RESPONSE_SIZE);
+    std::cerr << "c\n";
+		//Protocol::CheckSize(response, SB_MODE_PACKET_RESPONSE_SIZE);
+    std::cerr << "d\n";
 		MAKE_PACKET(modepack, response);
 		if( modepack->command != SB_COMMAND_MODE_SELECTED ) {
 			eeout(command, response);
 			throw Error("Controller: mode not selected");
 		}
+    std::cerr << "e\n";
 
 		if (mode == Desktop) {
 			// On the BlackBerry Storm, I have to read a packet

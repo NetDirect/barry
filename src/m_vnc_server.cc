@@ -65,12 +65,23 @@ void VNCServer::OnOpen()
 
 void VNCServer::Send(Data& data)
 {
-    m_socket->Send(data);
+    Data toReceive;
+    try
+    {
+        m_socket->PacketData(data, toReceive, 0); // timeout immediately
+        if (toReceive.GetSize() != 0)
+            HandleReceivedData(toReceive);
+    }
+    catch (Usb::Error& err)
+    {
+    }
 }
 
 void VNCServer::HandleReceivedData(Data& data)
 {
-    Callback.DataReceived(data);
+    // Remove packet headers
+    Data partial(data.GetData() + 4, data.GetSize() - 4);
+    Callback.DataReceived(partial);
 }
 
 }} // namespace Barry::Mode
