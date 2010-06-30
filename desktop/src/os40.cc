@@ -1035,6 +1035,10 @@ void multiply_summary(OSyncEngine *engine, void *cbdata)
 			// call the status handler only if dirty
 			cb->m_status->CheckSummary(summary);
 		}
+		else {
+			// nothing dirty, just continue
+			summary.Continue();
+		}
 	}
 	catch( std::exception &e ) {
 		cb->m_status->ReportError(
