@@ -9,7 +9,7 @@ AM_CXXFLAGS = -ansi -Wall -g
 AM_CPPFLAGS = -DBARRYDESKTOP_BASEDATADIR='"$(basedatadir)"' -DBARRYDESKTOP_IMAGEDIR='"$(imagedir)"'
 AM_LDFLAGS =
 
-bin_PROGRAMS = barrydesktop bsyncjail
+bin_PROGRAMS = barrydesktop bsyncjail bsynccl
 noinst_PROGRAMS = ostest xmlcompactor xmlmap
 
 barrydesktop_SOURCES = \
@@ -79,6 +79,30 @@ bsyncjail_SOURCES += null-os40.cc
 endif
 bsyncjail_LDADD = -ldl @WX_LIBS@
 bsyncjail_CXXFLAGS = $(AM_CXXFLAGS) @WX_CXXFLAGS@
+
+bsynccl_SOURCES = \
+	bsynccl.cc \
+	error.cc error.h \
+	dlopen.cc dlopen.h \
+	tempdir.cc tempdir.h \
+	osbase.cc osbase.h osprivatebase.h \
+	osconfig.cc osconfig.h \
+	osconv22.h \
+	osconv40.h \
+	os22.h \
+	os40.h 
+if WITH_OPENSYNC22
+bsynccl_SOURCES += os22.cc osconv22.cc
+else
+bsynccl_SOURCES += null-os22.cc
+endif
+if WITH_OPENSYNC40
+bsynccl_SOURCES += os40.cc osconv40.cc
+else
+bsynccl_SOURCES += null-os40.cc
+endif
+bsynccl_LDADD = -ldl
+bsynccl_CXXFLAGS = $(AM_CXXFLAGS)
 
 ostest_SOURCES = \
 	error.cc error.h \
