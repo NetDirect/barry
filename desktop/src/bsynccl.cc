@@ -95,7 +95,7 @@ bool BarrySyncJail::OnInit()
 
 	// start the sync
 	try {
-//		m_engine->Discover(g_argv_group_name);
+		m_engine->Discover(g_argv_group_name);
 		m_engine->Sync(g_argv_group_name, *this);
 	}
 	catch( std::exception &e ) {
