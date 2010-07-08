@@ -1,5 +1,9 @@
 Release: version 0.17 - 2010/01/??
 ------------------------------------------------------------------------------
+2010/07/08
+	- fixed bug in both opensync plugins where they would attempt to
+		access a database, even if it was disabled in the config.
+		Thanks to R. Brent Clements for reporting this bug.
 2010/06/26
 	- added Pete Zaitcev's usbmon-6, with some minor changes to
 		remove root requirements and pretty up the hex dump format
