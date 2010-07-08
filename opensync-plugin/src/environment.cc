@@ -197,11 +197,15 @@ void BarryEnvironment::DoConnect()
 	m_pDesktop->Open(m_password.c_str());
 
 	// Save the DBIDs and DBNames of the databases we will work with
-	m_CalendarSync.m_dbName = Barry::Calendar::GetDBName();
-	m_CalendarSync.m_dbId = m_pDesktop->GetDBID(Barry::Calendar::GetDBName());
+	if( m_CalendarSync.m_Sync ) {
+		m_CalendarSync.m_dbName = Barry::Calendar::GetDBName();
+		m_CalendarSync.m_dbId = m_pDesktop->GetDBID(Barry::Calendar::GetDBName());
+	}
 
-	m_ContactsSync.m_dbId = m_pDesktop->GetDBID(Barry::Contact::GetDBName());
-	m_ContactsSync.m_dbName = Barry::Contact::GetDBName();
+	if( m_ContactsSync.m_Sync ) {
+		m_ContactsSync.m_dbId = m_pDesktop->GetDBID(Barry::Contact::GetDBName());
+		m_ContactsSync.m_dbName = Barry::Contact::GetDBName();
+	}
 }
 
 void BarryEnvironment::Connect(const Barry::ProbeResult &result)
