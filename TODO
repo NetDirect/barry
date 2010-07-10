@@ -309,6 +309,14 @@ Estimated time: 40 hours (documentation expands to fill available time...)
 
 
 
+Improve useability of web documentation
+---------------------------------------
+Add a Q&A style of support web site, where Blackberry users can plug in
+their device model, data provider, etc. and get exact command lines that
+they can use for modem tethering, etc.
+
+
+
 Code cleanup
 ------------
 Code can always be improved.  There are two big ways to help:
