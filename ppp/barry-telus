@@ -1,7 +1,7 @@
 # See the README file in the source tree for notes and documentation
 # This is a copy of barry-sprint, confirmed to work by Matt McGirr
 
-connect "/usr/sbin/chat -f /etc/chatscripts/barry-sprint.chat"
+connect "/usr/sbin/chat -f /etc/chatscripts/barry-telus.chat"
 pty "/usr/sbin/pppob"
 
 debug
