@@ -168,6 +168,7 @@ cd ../
 %{__cp} ppp/barry-rogers %{buildroot}%{_sysconfdir}/ppp/peers/
 %{__cp} ppp/barry-verizon %{buildroot}%{_sysconfdir}/ppp/peers/
 %{__cp} ppp/barry-sprint %{buildroot}%{_sysconfdir}/ppp/peers/
+%{__cp} ppp/barry-telus %{buildroot}%{_sysconfdir}/ppp/peers/
 %{__cp} ppp/barry-o2ireland %{buildroot}%{_sysconfdir}/ppp/peers/
 %{__cp} ppp/barry-tmobileus %{buildroot}%{_sysconfdir}/ppp/peers/
 %{__cp} ppp/barry-att_cingular %{buildroot}%{_sysconfdir}/ppp/peers/
@@ -178,6 +179,7 @@ cd ../
 %{__cp} ppp/barry-rogers.chat %{buildroot}%{_sysconfdir}/chatscripts/
 %{__cp} ppp/barry-verizon.chat %{buildroot}%{_sysconfdir}/chatscripts/
 %{__cp} ppp/barry-sprint.chat %{buildroot}%{_sysconfdir}/chatscripts/
+%{__cp} ppp/barry-telus.chat %{buildroot}%{_sysconfdir}/chatscripts/
 %{__cp} ppp/barry-o2ireland.chat %{buildroot}%{_sysconfdir}/chatscripts/
 %{__cp} ppp/barry-tmobileus.chat %{buildroot}%{_sysconfdir}/chatscripts/
 %{__cp} ppp/barry-att_cingular.chat %{buildroot}%{_sysconfdir}/chatscripts/
@@ -267,6 +269,7 @@ cd ../
 %attr(0644,root,root) %config %{_sysconfdir}/ppp/peers/barry-rogers
 %attr(0644,root,root) %config %{_sysconfdir}/ppp/peers/barry-verizon
 %attr(0644,root,root) %config %{_sysconfdir}/ppp/peers/barry-sprint
+%attr(0644,root,root) %config %{_sysconfdir}/ppp/peers/barry-telus
 %attr(0644,root,root) %config %{_sysconfdir}/ppp/peers/barry-o2ireland
 %attr(0644,root,root) %config %{_sysconfdir}/ppp/peers/barry-tmobileus
 %attr(0644,root,root) %config %{_sysconfdir}/ppp/peers/barry-att_cingular
@@ -276,6 +279,7 @@ cd ../
 %attr(0640,root,root) %config %{_sysconfdir}/chatscripts/barry-rogers.chat
 %attr(0640,root,root) %config %{_sysconfdir}/chatscripts/barry-verizon.chat
 %attr(0640,root,root) %config %{_sysconfdir}/chatscripts/barry-sprint.chat
+%attr(0640,root,root) %config %{_sysconfdir}/chatscripts/barry-telus.chat
 %attr(0640,root,root) %config %{_sysconfdir}/chatscripts/barry-o2ireland.chat
 %attr(0640,root,root) %config %{_sysconfdir}/chatscripts/barry-tmobileus.chat
 %attr(0640,root,root) %config %{_sysconfdir}/chatscripts/barry-att_cingular.chat
@@ -323,6 +327,7 @@ cd ../
 - cleaned up conditionals
 - added Fedora 13 support
 - added new ppp chat script for Orange Spain
+- added copy of barry-sprint as barry-telus
 
 * Sat Sep 29 2009 Chris Frey <cdfrey@foursquare.net> 0.16-0
 - version bump

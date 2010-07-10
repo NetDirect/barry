@@ -39,6 +39,7 @@ install/barry-util::
 		$(CURDIR)/ppp/barry-rogers \
 		$(CURDIR)/ppp/barry-verizon \
 		$(CURDIR)/ppp/barry-sprint \
+		$(CURDIR)/ppp/barry-telus \
 		$(CURDIR)/ppp/barry-o2ireland \
 		$(CURDIR)/ppp/barry-tmobileus \
 		$(CURDIR)/ppp/barry-att_cingular \
@@ -51,6 +52,7 @@ install/barry-util::
 		$(CURDIR)/ppp/barry-rogers.chat \
 		$(CURDIR)/ppp/barry-verizon.chat \
 		$(CURDIR)/ppp/barry-sprint.chat \
+		$(CURDIR)/ppp/barry-telus.chat \
 		$(CURDIR)/ppp/barry-o2ireland.chat \
 		$(CURDIR)/ppp/barry-tmobileus.chat \
 		$(CURDIR)/ppp/barry-att_cingular.chat \

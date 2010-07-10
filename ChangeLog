@@ -1,5 +1,11 @@
 Release: version 0.17 - 2010/01/??
 ------------------------------------------------------------------------------
+2010/07/10
+	- ppp: copied barry-sprint to barry-telus, which also works
+		Thanks to Matt McGirr who confirmed it works with Telus
+	- os4x: run plugin as process... other opensync plugins seem to run
+		better with this, and it seems like a good idea to isolate
+		plugins as much as possible
 2010/07/08
 	- fixed bug in both opensync plugins where they would attempt to
 		access a database, even if it was disabled in the config.

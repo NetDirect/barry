@@ -1,0 +1,35 @@
+# See the README file in the source tree for notes and documentation
+# This is a copy of barry-sprint, confirmed to work by Matt McGirr
+
+connect "/usr/sbin/chat -f /etc/chatscripts/barry-sprint.chat"
+pty "/usr/sbin/pppob"
+
+debug
+
+noauth
+user wapuser
+password wap
+name wapuser
+
+defaultroute
+usepeerdns
+
+noipdefault
+nodetach
+nodeflate
+nobsdcomp
+noaccomp
+nocrtscts
+nopcomp
+nomagic
+novj
+
+ipcp-restart 7
+ipcp-accept-local
+ipcp-accept-remote
+lcp-echo-interval 0
+lcp-echo-failure 999
+
+passive
+mtu 1492
+
