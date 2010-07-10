@@ -210,12 +210,12 @@ void GroupCfgDlg::AddAppSizer(wxSizer *sizer)
 		wxVERTICAL
 		);
 
-	UpdateAppSizer();
+	UpdateAppSizer(false);
 
 	sizer->Add(m_appsizer, 0, wxLEFT | wxEXPAND, 5);
 }
 
-void GroupCfgDlg::UpdateAppSizer()
+void GroupCfgDlg::UpdateAppSizer(bool relayout)
 {
 	// start fresh
 	m_appsizer->Clear(true);
@@ -236,6 +236,11 @@ void GroupCfgDlg::UpdateAppSizer()
 		new wxButton(this, Dialog_GroupCfg_AppConfigButton,
 			_T("&Configure...")),
 		0, wxALL | wxALIGN_CENTRE, 5);
+
+	// in case this is called after the dialog is already displayed,
+	// we need to readjust everything
+	if( relayout )
+		m_topsizer->Layout();
 }
 
 void GroupCfgDlg::LoadAppNames(wxArrayString &appnames)

@@ -74,9 +74,9 @@ protected:
 	void AddConfigSizer(wxSizer *sizer);
 	void AddBarrySizer(wxSizer *sizer);
 	void AddAppSizer(wxSizer *sizer);
-	void UpdateAppSizer();		// called if engine changes, to update
-					// the app combo, etc, with available
-					// apps
+	void UpdateAppSizer(bool relayout = true); // called if engine changes,
+				// to update the app combo, etc, with available
+				// apps
 	void LoadAppNames(wxArrayString &appnames);
 	void AddFavourSizer(wxSizer *sizer);
 	void AddButtonSizer(wxSizer *sizer);
