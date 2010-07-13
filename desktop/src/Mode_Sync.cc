@@ -377,26 +377,41 @@ void SyncMode::ConfigureDevice(DeviceEntry &entry)
 			DeviceEntry::group_ptr grp = dlg.GetGroup();
 
 			// make sure that the save will be successful
-			if( grp->GroupExists(*eng) &&
-			    !grp->GroupMatchesExistingConfig(*eng) )
-			{
-				if( WarnAbout1WayReset() ) {
-					eng->DeleteGroup(grp->GetGroupName());
-					grp->DisconnectMembers();
+			if( grp->GroupExists(*eng) ) {
+				if( !grp->GroupMatchesExistingConfig(*eng) ) {
+					if( WarnAbout1WayReset() ) {
+						eng->DeleteGroup(grp->GetGroupName());
+						grp->DisconnectMembers();
+					}
+					else {
+						// skip save
+						return;
+					}
 				}
 				else {
-					// skip save
-					return;
+					// group we want to save has the
+					// same set of plugins and member IDs
+					// as the one already there...
+					// so do not disconnect members
 				}
 			}
+			else {
+				// we are saving a brand new group, so make
+				// sure that all members are new
+				grp->DisconnectMembers();
+			}
 
+			// save the new one
+			grp->Save(*dlg.GetEngine());
+
+			// clean up the old engine's group, so we don't leave
+			// garbage behind... do this after a successful
+			// save, so that we don't delete existing knowledge
+			// before we've crossed over
 			if( delete_old ) {
 				barryverbose("Engine change detected in config: deleting old config '" << entry.GetConfigGroup()->GetGroupName() << "' from engine " << entry.GetEngine()->GetVersion() << " in order to save it to engine " << dlg.GetEngine()->GetVersion());
 				entry.GetEngine()->DeleteGroup(entry.GetConfigGroup()->GetGroupName());
 			}
-
-			// save the new one
-			dlg.GetGroup()->Save(*dlg.GetEngine());
 
 		}
 		catch( OpenSync::Config::SaveError &se ) {
