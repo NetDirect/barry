@@ -456,6 +456,7 @@ bool GroupCfgDlg::TransferDataFromWindow()
 		wxCommandEvent event;
 		OnConfigureApp(event);
 
+		app = GetCurrentPlugin();
 		if( !app.get() || !app->IsConfigured(*m_engine) ) {
 			wxMessageBox(_T("The application plugin is not fully configured."),
 				_T("Application Config"), wxOK | wxICON_ERROR, this);
