@@ -811,7 +811,7 @@ void OpenSync22::GetFormats(format_list_type &formats)
 
 	OSyncFormatEnv *fenv = m_priv->osync_conv_env_new(m_priv->env);
 	if( !fenv ) {
-		throw std::runtime_error("Unable to load format environment in GetFormats (22)");
+		throw std::runtime_error("GetFormats(): Unable to load format environment in GetFormats (22)");
 	}
 
 	for( int i = 0; i < m_priv->osync_conv_num_objtypes(fenv); i++ ) {
@@ -853,7 +853,7 @@ void OpenSync22::GetMembers(const std::string &group_name,
 
 	OSyncGroup *group = m_priv->osync_env_find_group(m_priv->env, group_name.c_str());
 	if( !group ) {
-		throw std::runtime_error("Unable to find group with name: " + group_name);
+		throw std::runtime_error("GetMembers(): Unable to find group with name: " + group_name);
 	}
 
 	for( int i = 0; i < m_priv->osync_group_num_members(group); i++ ) {
@@ -869,7 +869,7 @@ void OpenSync22::GetMembers(const std::string &group_name,
 		// our long... to double check they are equal after
 		// the conversion
 		if( new_member.id != m_priv->osync_member_get_id(member) ) {
-			throw std::logic_error("OpenSync's member ID is too large to fit in OpenSyncAPI (22)");
+			throw std::logic_error("GetMembers(): OpenSync's member ID is too large to fit in OpenSyncAPI (22)");
 		}
 
 		// add to member list
@@ -880,7 +880,7 @@ void OpenSync22::GetMembers(const std::string &group_name,
 void OpenSync22::AddGroup(const std::string &group_name)
 {
 	if( m_priv->osync_env_find_group(m_priv->env, group_name.c_str()) )
-		throw std::runtime_error("Group already exists: " + group_name);
+		throw std::runtime_error("AddGroup(): Group already exists: " + group_name);
 
 	OSyncGroup *group = m_priv->osync_group_new(m_priv->env);
 	m_priv->osync_group_set_name(group, group_name.c_str());
@@ -888,7 +888,7 @@ void OpenSync22::AddGroup(const std::string &group_name)
 	OSyncError *error = NULL;
 	if( !m_priv->osync_group_save(group, &error) ) {
 		// grab error message
-		std::runtime_error err(string("Unable to save group: ") + m_priv->osync_error_print(&error));
+		std::runtime_error err(string("AddGroup(): Unable to save group: ") + m_priv->osync_error_print(&error));
 
 		// cleanup
 		m_priv->osync_error_free(&error);
@@ -901,11 +901,11 @@ void OpenSync22::DeleteGroup(const std::string &group_name)
 {
 	OSyncGroup *group = m_priv->osync_env_find_group(m_priv->env, group_name.c_str());
 	if( !group )
-		throw std::runtime_error("Group not found: " + group_name);
+		throw std::runtime_error("DeleteGroup(): Group not found: " + group_name);
 
 	OSyncError *error = NULL;
 	if( !m_priv->osync_group_delete(group, &error) ) {
-		std::runtime_error err(string("Unable to delete group: ") + m_priv->osync_error_print(&error));
+		std::runtime_error err(string("DeleteGroup(): Unable to delete group: ") + m_priv->osync_error_print(&error));
 		m_priv->osync_error_free(&error);
 		throw err;
 	}
@@ -922,19 +922,19 @@ long OpenSync22::AddMember(const std::string &group_name,
 {
 	OSyncGroup *group = m_priv->osync_env_find_group(m_priv->env, group_name.c_str());
 	if( !group )
-		throw std::runtime_error("Group not found: " + group_name);
+		throw std::runtime_error("AddMember(): Group not found: " + group_name);
 
 	OSyncMember *member = m_priv->osync_member_new(group);
 
 	OSyncError *error = NULL;
 	if( !m_priv->osync_member_instance_plugin(member, plugin_name.c_str(), &error) ) {
-		std::runtime_error err(string("Unable to connect plugin with member: ") + m_priv->osync_error_print(&error));
+		std::runtime_error err(string("AddMember(): Unable to connect plugin with member: ") + m_priv->osync_error_print(&error));
 		m_priv->osync_error_free(&error);
 		throw err;
 	}
 
 	if( !m_priv->osync_member_save(member, &error) ) {
-		std::runtime_error err(string("Unable to save member: ") + m_priv->osync_error_print(&error));
+		std::runtime_error err(string("AddMember(): Unable to save member: ") + m_priv->osync_error_print(&error));
 		m_priv->osync_error_free(&error);
 		throw err;
 	}
@@ -952,7 +952,7 @@ bool OpenSync22::IsConfigurable(const std::string &group_name,
 	OSyncMember *member = m_priv->osync_member_from_id(group, member_id);
 	if( !member ) {
 		ostringstream oss;
-		oss << "Member " << member_id << " not found.";
+		oss << "IsConfigurable(): Member " << member_id << " not found.";
 		throw std::runtime_error(oss.str());
 	}
 
@@ -972,18 +972,18 @@ std::string OpenSync22::GetConfiguration(const std::string &group_name,
 {
 	if( !IsConfigurable(group_name, member_id) ) {
 		ostringstream oss;
-		oss << "Member " << member_id << " of group '" << group_name << "' does not accept configuration.";
+		oss << "GetConfiguration(): Member " << member_id << " of group '" << group_name << "' does not accept configuration.";
 		throw std::runtime_error(oss.str());
 	}
 
 	OSyncGroup *group = m_priv->osync_env_find_group(m_priv->env, group_name.c_str());
 	if( !group )
-		throw std::runtime_error("Group not found: " + group_name);
+		throw std::runtime_error("GetConfiguration(): Group not found: " + group_name);
 
 	OSyncMember *member = m_priv->osync_member_from_id(group, member_id);
 	if( !member ) {
 		ostringstream oss;
-		oss << "Member " << member_id << " not found.";
+		oss << "GetConfiguration(): Member " << member_id << " not found.";
 		throw std::runtime_error(oss.str());
 	}
 
@@ -991,7 +991,7 @@ std::string OpenSync22::GetConfiguration(const std::string &group_name,
 	char *data = NULL;
 	int size = 0;
 	if( !m_priv->osync_member_get_config_or_default(member, &data, &size, &error)) {
-		std::runtime_error err(string("Unable to retrieve config: ") + m_priv->osync_error_print(&error));
+		std::runtime_error err(string("GetConfiguration(): Unable to retrieve config: ") + m_priv->osync_error_print(&error));
 		m_priv->osync_error_free(&error);
 		throw err;
 	}
@@ -1008,18 +1008,18 @@ void OpenSync22::SetConfiguration(const std::string &group_name,
 {
 	if( !IsConfigurable(group_name, member_id) ) {
 		ostringstream oss;
-		oss << "Member " << member_id << " of group '" << group_name << "' does not accept configuration.";
+		oss << "SetConfiguration(): Member " << member_id << " of group '" << group_name << "' does not accept configuration.";
 		throw std::runtime_error(oss.str());
 	}
 
 	OSyncGroup *group = m_priv->osync_env_find_group(m_priv->env, group_name.c_str());
 	if( !group )
-		throw std::runtime_error("Group not found: " + group_name);
+		throw std::runtime_error("SetConfiguration(): Group not found: " + group_name);
 
 	OSyncMember *member = m_priv->osync_member_from_id(group, member_id);
 	if( !member ) {
 		ostringstream oss;
-		oss << "Member " << member_id << " not found.";
+		oss << "SetConfiguration(): Member " << member_id << " not found.";
 		throw std::runtime_error(oss.str());
 	}
 
@@ -1027,7 +1027,7 @@ void OpenSync22::SetConfiguration(const std::string &group_name,
 
 	OSyncError *error = NULL;
 	if( !m_priv->osync_member_save(member, &error) ) {
-		std::runtime_error err(string("Unable to save member's config: ") + m_priv->osync_error_print(&error));
+		std::runtime_error err(string("SetConfiguration(): Unable to save member's config: ") + m_priv->osync_error_print(&error));
 		m_priv->osync_error_free(&error);
 		throw err;
 	}
@@ -1043,7 +1043,7 @@ void OpenSync22::Sync(const std::string &group_name,
 {
 	OSyncGroup *group = m_priv->osync_env_find_group(m_priv->env, group_name.c_str());
 	if( !group )
-		throw std::runtime_error("Group not found: " + group_name);
+		throw std::runtime_error("Sync(): Group not found: " + group_name);
 
 	OSyncError *error = NULL;
 	EngineHandle engine(m_priv->osengine_free);
