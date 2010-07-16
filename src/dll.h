@@ -60,5 +60,29 @@
 
 #endif
 
+
+//
+// Add this to the end of variable argument function declarations.
+// For example:
+//
+//   void log(const char *msg, ...) BARRY_GCC_FORMAT_CHECK(1, 2);
+//
+// This tells GCC that the first argument is the format string, and
+// the second is the first variable argument to check.
+//
+// If you use this inside a class, you need to allow for the invisible
+// 'this' pointer:
+//
+//   class Trace {
+//     public:
+//       void logf(const char *msg, ...) BARRY_GCC_FORMAT_CHECK(2, 3);
+//   };
+//
+#if __GNUC__
+#define BARRY_GCC_FORMAT_CHECK(a,b) __attribute__ ((format(printf, a, b)))
+#else
+#define BARRY_GCC_FORMAT_CHECK(a,b)
+#endif
+
 #endif
 
