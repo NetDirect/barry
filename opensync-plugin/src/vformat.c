@@ -33,8 +33,8 @@
 #include <iconv.h>
 #include <opensync/opensync.h>
 
-static size_t base64_encode_step(unsigned char *in, size_t len, gboolean break_lines, unsigned char *out, int *state, int *save);
-static size_t base64_decode_step(unsigned char *in, size_t len, unsigned char *out, int *state, unsigned int *save);
+static size_t base64_encode_step(const unsigned char *in, size_t len, gboolean break_lines, unsigned char *out, int *state, int *save);
+static size_t base64_decode_step(const unsigned char *in, size_t len, unsigned char *out, int *state, unsigned int *save);
 static size_t base64_decode_simple (char *data, size_t len);
 static char  *base64_encode_simple (const char *data, size_t len);
 
@@ -400,7 +400,7 @@ static void _read_attribute_value (b_VFormatAttribute *attr, char **p, int forma
 				  /* \t is (incorrectly) used by kOrganizer, so handle it here */
 				case 't': str = g_string_append_c (str, '\t'); break;
 				default:
-					osync_trace(TRACE_INTERNAL, "invalid escape, passing it through. escaped char was %i", *lp);
+					osync_trace(TRACE_INTERNAL, "invalid escape, passing it through. escaped char was %u", (unsigned int)*lp);
 					str = g_string_append_c (str, '\\');
 					str = g_string_append_unichar (str, g_utf8_get_char(lp));
 					break;
@@ -856,7 +856,7 @@ b_vformat_unescape_string (const char *s)
 			  /* \t is (incorrectly) used by kOrganizer, so handle it here */
 			case 't': str = g_string_append_c (str, '\t'); break;
 			default:
-				osync_trace(TRACE_INTERNAL, "invalid escape, passing it through. escaped char was %s", *p);
+				osync_trace(TRACE_INTERNAL, "invalid escape, passing it through. escaped char was %u", (unsigned int)*p);
 				str = g_string_append_c (str, '\\');
 				str = g_string_append_unichar (str, g_utf8_get_char(p));
 				break;
@@ -986,6 +986,7 @@ char *b_vformat_to_string (b_VFormat *evc, b_VFormatType type)
 			break;
 		case VFORMAT_TODO_20:
 		case VFORMAT_EVENT_20:
+		case VFORMAT_JOURNAL:
 			str = g_string_append (str, "BEGIN:VCALENDAR\r\nVERSION:2.0\r\n");
 			break;
 		case VFORMAT_NOTE:
@@ -1019,7 +1020,7 @@ char *b_vformat_to_string (b_VFormat *evc, b_VFormatType type)
 			 * param        = param-name "=" param-value *("," param-value)
 			 */
 			if( type == VFORMAT_CARD_30 || type == VFORMAT_TODO_20
-			    || type == VFORMAT_EVENT_20) {
+			    || type == VFORMAT_EVENT_20 || type == VFORMAT_JOURNAL) {
 
 				/**
 				 * Character set can only be specified on the CHARSET
@@ -1201,6 +1202,7 @@ char *b_vformat_to_string (b_VFormat *evc, b_VFormatType type)
 			break;
 		case VFORMAT_TODO_20:
 		case VFORMAT_EVENT_20:
+		case VFORMAT_JOURNAL:
 			str = g_string_append (str, "END:VCALENDAR\r\n");
 			break;
 		case VFORMAT_NOTE:
@@ -1884,7 +1886,7 @@ static void base64_init(char *rank)
 
 /* call this when finished encoding everything, to
    flush off the last little bit */
-static size_t base64_encode_close(unsigned char *in, size_t inlen, gboolean break_lines, unsigned char *out, int *state, int *save)
+static size_t base64_encode_close(const unsigned char *in, size_t inlen, gboolean break_lines, unsigned char *out, int *state, int *save)
 {
 	int c1, c2;
 	unsigned char *outptr = out;
@@ -1923,9 +1925,10 @@ static size_t base64_encode_close(unsigned char *in, size_t inlen, gboolean brea
   output at a time, saves left-over state in state and save (initialise to
   0 on first invocation).
 */
-static size_t base64_encode_step(unsigned char *in, size_t len, gboolean break_lines, unsigned char *out, int *state, int *save)
+static size_t base64_encode_step(const unsigned char *in, size_t len, gboolean break_lines, unsigned char *out, int *state, int *save)
 {
-	register unsigned char *inptr, *outptr;
+	register const unsigned char *inptr;
+	register unsigned char *outptr;
 
 	if (len<=0)
 		return 0;
@@ -1934,7 +1937,7 @@ static size_t base64_encode_step(unsigned char *in, size_t len, gboolean break_l
 	outptr = out;
 
 	if (len + ((char *)save)[0] > 2) {
-		unsigned char *inend = in+len-2;
+		const unsigned char *inend = in+len-2;
 		register int c1, c2, c3;
 		register int already;
 
@@ -1997,13 +2000,15 @@ static size_t base64_encode_step(unsigned char *in, size_t len, gboolean break_l
  *
  * Decodes a chunk of base64 encoded data
  **/
-static size_t base64_decode_step(unsigned char *in, size_t len, unsigned char *out, int *state, unsigned int *save)
+static size_t base64_decode_step(const unsigned char *in, size_t len, unsigned char *out, int *state, unsigned int *save)
 {
 	unsigned char base64_rank[256];
 	base64_init((char*)base64_rank);
 
-	register unsigned char *inptr, *outptr;
-	unsigned char *inend, c;
+	register const unsigned char *inptr;
+	register unsigned char *outptr;
+	const unsigned char *inend;
+	unsigned char c;
 	register unsigned int v;
 	int i;
 

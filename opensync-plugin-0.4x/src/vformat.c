@@ -400,7 +400,7 @@ static void _read_attribute_value (b_VFormatAttribute *attr, char **p, int forma
 				  /* \t is (incorrectly) used by kOrganizer, so handle it here */
 				case 't': str = g_string_append_c (str, '\t'); break;
 				default:
-					osync_trace(TRACE_INTERNAL, "invalid escape, passing it through. escaped char was %i", *lp);
+					osync_trace(TRACE_INTERNAL, "invalid escape, passing it through. escaped char was %u", (unsigned int)*lp);
 					str = g_string_append_c (str, '\\');
 					str = g_string_append_unichar (str, g_utf8_get_char(lp));
 					break;
@@ -856,7 +856,7 @@ b_vformat_unescape_string (const char *s)
 			  /* \t is (incorrectly) used by kOrganizer, so handle it here */
 			case 't': str = g_string_append_c (str, '\t'); break;
 			default:
-				osync_trace(TRACE_INTERNAL, "invalid escape, passing it through. escaped char was %c", *p);
+				osync_trace(TRACE_INTERNAL, "invalid escape, passing it through. escaped char was %u", (unsigned int)*p);
 				str = g_string_append_c (str, '\\');
 				str = g_string_append_unichar (str, g_utf8_get_char(p));
 				break;
@@ -2061,7 +2061,7 @@ static char *base64_encode_simple (const char *data, size_t len)
 	g_return_val_if_fail (data != NULL, NULL);
 
 	out = g_malloc (len * 4 / 3 + 5);
-	outlen = base64_encode_close ((const unsigned char *)data, len, FALSE,
+	outlen = base64_encode_close ((unsigned char *)data, len, FALSE,
 				      out, &state, (int*)&save);
 	out[outlen] = '\0';
 	return (char *)out;
@@ -2074,7 +2074,7 @@ static size_t base64_decode_simple (char *data, size_t len)
 
 	g_return_val_if_fail (data != NULL, 0);
 
-	return base64_decode_step ((const unsigned char *)data, len,
+	return base64_decode_step ((unsigned char *)data, len,
 					(unsigned char *)data, &state, &save);
 }
 
