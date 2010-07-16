@@ -20,7 +20,11 @@
 */
 
 #include "log.h"
+#include "clog.h"
 #include <pthread.h>
+#include <stdarg.h>
+#include <string.h>
+#include <iostream>
 
 namespace Barry {
 
@@ -51,4 +55,24 @@ std::ostream* GetLogStream()
 }
 
 } // namespace Barry
+
+// Callable from C:
+
+void BarryLogf(int verbose, const char *msg, ...)
+{
+	va_list vl;
+	va_start(vl, msg);
+	char buffer[2048];
+	int n = vsnprintf(buffer, sizeof(buffer), msg, vl);
+	va_end(vl);
+	if( n > -1 && n < (int)sizeof(buffer) )
+		strcpy(buffer, "BarryLog: (trace error, output too long for buffer)");
+
+	if( verbose ) {
+		barryverbose(buffer);
+	}
+	else {
+		barrylog(buffer);
+	}
+}
 

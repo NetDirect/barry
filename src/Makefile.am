@@ -138,7 +138,8 @@ noinst_HEADERS = cbarry.h \
 	strnlen.h \
 	dp_parser.h \
 	j_message.h \
-	j_jdwp.h
+	j_jdwp.h \
+	clog.h
 
 EXTRA_DIST = convo.awk \
 	legal.txt
