@@ -131,7 +131,10 @@ include_barry_HEADERS = barry.h barrysync.h \
 	vformat.h \
 	vbase.h \
 	vcard.h \
-	vevent.h
+	vevent.h \
+	vjournal.h \
+	vtodo.h \
+	tzwrapper.h
 
 noinst_HEADERS = cbarry.h \
 	base64.h \
