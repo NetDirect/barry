@@ -19,60 +19,16 @@
     root directory of this project for more details.
 */
 
-#ifndef __BARRY_SYNC_VEVENT_H__
-#define __BARRY_SYNC_VEVENT_H__
+#ifndef __BARRYSYNC_VEVENT_H__
+#define __BARRYSYNC_VEVENT_H__
 
 #include <barry/barry.h>
+#include <barry/barrysync.h>
 #include <stdint.h>
 #include <string>
-#include "vbase.h"
-#include "vformat.h"
 
 // forward declarations
 class BarryEnvironment;
-
-//
-// vCalendar
-//
-/// Class for converting between RFC 2445 iCalendar data format,
-/// and the Barry::Calendar class.
-///
-class vCalendar : public vBase
-{
-	// data to pass to external requests
-	char *m_gCalData;	// dynamic memory returned by vformat()... can
-				// be used directly by the plugin, without
-				// overmuch allocation and freeing (see Extract())
-	std::string m_vCalData;	// copy of m_gCalData, for C++ use
-	Barry::Calendar m_BarryCal;
-
-	static const char *WeekDays[7];
-
-	unsigned short GetMonthWeekNumFromBYDAY(const std::string& ByDay);
-	unsigned short GetWeekDayIndexFromBYDAY(const std::string& ByDay);
-
-protected:
-	void RecurToVCal();
-	void RecurToBarryCal(vAttr& rrule, time_t starttime);
-
-	static unsigned short GetWeekDayIndex(const char *dayname);
-	bool HasMultipleVEvents() const;
-
-public:
-	vCalendar();
-	~vCalendar();
-
-	const std::string&	ToVCal(const Barry::Calendar &cal);
-	const Barry::Calendar&	ToBarry(const char *vcal, uint32_t RecordId);
-
-	const std::string&	GetVCal() const { return m_vCalData; }
-	const Barry::Calendar&	GetBarryCal() const { return m_BarryCal; }
-
-	char* ExtractVCal();
-
-	void Clear();
-};
-
 
 class VEventConverter
 {
@@ -117,7 +73,6 @@ public:
 		Barry::RecordStateTable::IndexType StateIndex, uint32_t recordId,
 		const char *data, bool add, std::string &errmsg);
 };
-
 
 #endif
 

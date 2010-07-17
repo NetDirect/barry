@@ -28,12 +28,10 @@ barry_sync_LTLIBRARIES = barry_sync.la
 barry_sync_la_SOURCES = \
 	barry_sync.cc barry_sync.h \
 	environment.cc environment.h \
-	vbase.cc vbase.h \
 	vevent.cc vevent.h \
 	vcard.cc vcard.h \
 	vjournal.cc vjournal.h \
 	vtodo.cc vtodo.h \
-	vformat.c vformat.h \
 	format_check.h \
 	trace.h \
 	tosserror.h

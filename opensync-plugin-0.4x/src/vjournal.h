@@ -20,50 +20,17 @@
     root directory of this project for more details.
 */
 
-#ifndef __BARRY_SYNC_VJOURNAL_H__
-#define __BARRY_SYNC_VJOURNAL_H__
+#ifndef __BARRYSYNC_VJOURNAL_H__
+#define __BARRYSYNC_VJOURNAL_H__
 
 #include <barry/barry.h>
+#include <barry/barrysync.h>
 #include <stdint.h>
 #include <string>
-#include "vbase.h"
-#include "vformat.h"
 
 
 // forward declarations
 class BarryEnvironment;
-
-
-//
-// vJournal
-//
-/// Class for converting between RFC 2445 iCalendar data format,
-/// and the Barry::Memo class.
-///
-class vJournal : public vBase
-{
-	// data to pass to external requests
-	char *m_gJournalData;	// dynamic memory returned by vformat()... can
-				// be used directly by the plugin, without
-				// overmuch allocation and freeing (see Extract())
-	std::string m_vJournalData;	// copy of m_gJournalData, for C++ use
-	Barry::Memo m_BarryMemo;
-
-protected:
-	bool HasMultipleVJournals() const;
-
-public:
-	vJournal();
-	~vJournal();
-
-	const std::string&	ToMemo(const Barry::Memo &memo);
-	const Barry::Memo&	ToBarry(const char *vjournal, uint32_t RecordId);
-
-	char* ExtractVJournal();
-
-	void Clear();
-};
-
 
 class VJournalConverter
 {
@@ -103,7 +70,6 @@ public:
 		Barry::RecordStateTable::IndexType StateIndex, uint32_t recordId,
 		const char *data, bool add, std::string &errmsg);
 };
-
 
 #endif
 

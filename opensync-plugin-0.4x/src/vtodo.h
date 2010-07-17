@@ -20,49 +20,16 @@
     root directory of this project for more details.
 */
 
-#ifndef __BARRY_SYNC_VTODO_H__
-#define __BARRY_SYNC_VTODO_H__
+#ifndef __BARRYSYNC_VTODO_H__
+#define __BARRYSYNC_VTODO_H__
 
 #include <barry/barry.h>
+#include <barry/barrysync.h>
 #include <stdint.h>
 #include <string>
-#include "vbase.h"
-#include "vformat.h"
-
 
 // forward declarations
 class BarryEnvironment;
-
-//
-// vTodo
-//
-/// Class for converting between RFC 2445 iCalendar data format,
-/// and the Barry::Task class.
-///
-class vTodo : public vBase
-{
-	// data to pass to external requests
-	char *m_gTodoData;	// dynamic memory returned by vformat()... can
-				// be used directly by the plugin, without
-				// overmuch allocation and freeing (see Extract())
-	std::string m_vTodoData;	// copy of m_gJournalData, for C++ use
-	Barry::Task m_BarryTask;
-
-protected:
-	bool HasMultipleVTodos() const;
-
-public:
-	vTodo();
-	~vTodo();
-
-	const std::string&	ToTask(const Barry::Task &task);
-	const Barry::Task&	ToBarry(const char *vtodo, uint32_t RecordId);
-
-	char* ExtractVTodo();
-
-	void Clear();
-};
-
 
 class VTodoConverter
 {
@@ -102,7 +69,6 @@ public:
 		Barry::RecordStateTable::IndexType StateIndex, uint32_t recordId,
 		const char *data, bool add, std::string &errmsg);
 };
-
 
 #endif
 
