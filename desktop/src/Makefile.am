@@ -115,13 +115,16 @@ ostest_SOURCES = \
 	os22.h \
 	os40.h \
 	ostest.cc
+ostest_CXXFLAGS =
 if WITH_OPENSYNC22
 ostest_SOURCES += os22.cc osconv22.cc
+ostest_CXXFLAGS += -DWITH_OPENSYNC22
 else
 ostest_SOURCES += null-os22.cc
 endif
 if WITH_OPENSYNC40
 ostest_SOURCES += os40.cc osconv40.cc
+ostest_CXXFLAGS += -DWITH_OPENSYNC40
 else
 ostest_SOURCES += null-os40.cc
 endif

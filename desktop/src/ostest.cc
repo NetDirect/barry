@@ -174,13 +174,18 @@ void Test(API &os)
 	cout << "=======================================================\n";
 }
 
+#ifdef WITH_OPENSYNC40
 void ShowAdvanced(OS40PluginConfig &cfg, const char *name)
 {
 	cout << name << ": " << cfg.GetAdvanced(name) << endl;
 }
+#endif
 
 void TestConfig(OpenSync40 &os, const char *name, long member_id)
 {
+#ifndef WITH_OPENSYNC40
+	cout << "OpenSync40 support not compiled in." << endl;
+#else
 	OS40PluginConfig cfg = os.GetConfigurationObj(name, member_id);
 	ShowAdvanced(cfg, "PinCode");
 	ShowAdvanced(cfg, "Debug");
@@ -220,13 +225,14 @@ void TestConfig(OpenSync40 &os, const char *name, long member_id)
 		Enable().
 		AddResource();
 	cfg.Save();
+#endif
 }
 
 void TestConfig(API &os)
 {
-	OpenSync40 &os40 = dynamic_cast<OpenSync40&> (os);
-	TestConfig(os40, "test", 1);
-	TestConfig(os40, "test", 2);
+	OpenSync40 *os40 = dynamic_cast<OpenSync40*> (&os);
+	TestConfig(*os40, "test", 1);
+	TestConfig(*os40, "test", 2);
 }
 
 int main()
