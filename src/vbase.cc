@@ -23,6 +23,8 @@
 //#include "trace.h"
 #include "vformat.h"		// comes from opensync, but not a public header yet
 #include "tzwrapper.h"
+#include <stdio.h>
+#include <stdarg.h>
 #include <stdint.h>
 #include <string.h>
 #include <glib.h>
