@@ -74,7 +74,7 @@ if WITH_SYNC
 lib_LTLIBRARIES += libbarrysync.la
 endif
 
-include_barry_HEADERS = barry.h \
+include_barry_HEADERS = barry.h barrysync.h \
 	dll.h \
 	builder.h \
 	common.h \
@@ -223,7 +223,8 @@ libbarrysync_la_SOURCES = \
 	vformat.h vformat.c \
 	vbase.h vbase.cc \
 	vcard.h vcard.cc \
-	vevent.h vevent.cc
+	vevent.h vevent.cc \
+	tzwrapper.h tzwrapper.cc
 libbarrysync_la_CFLAGS = $(GLIB2_CFLAGS)
 libbarrysync_la_CXXFLAGS = $(GLIB2_CFLAGS)
 libbarrysync_la_LIBADD = libbarry.la $(GLIB2_LIBS)
