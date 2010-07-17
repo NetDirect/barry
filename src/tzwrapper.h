@@ -7,15 +7,17 @@
 /*
     Copyright (C) 2010, Chris Frey <cdfrey@foursquare.net>, To God be the glory
     Released to the public domain.
+    Included in Barry and Barrified the namespace July 2010
 */
 
 #ifndef __TZWRAPPER_H__
 
+#include "dll.h"
 #include <string>
 #include <time.h>
 #include <stdlib.h>
 
-namespace reuse {
+namespace Barry { namespace Sync {
 
 /// Parses ISO timestamp in the format of YYYYMMDDTHHMMSS[Z]
 /// and places broken down time in result.
@@ -23,9 +25,9 @@ namespace reuse {
 /// If the Z exists, utc will be set to true, otherwise false.
 /// Returns NULL on error.
 /// Thread-safe.
-struct tm* iso_to_tm(const char *timestamp,
-			struct tm *result,
-			bool &utc);
+BXEXPORT struct tm* iso_to_tm(const char *timestamp,
+				struct tm *result,
+				bool &utc);
 
 /// utc_mktime() converts a struct tm that contains
 /// broken down time in utc to a time_t.  This function uses
@@ -46,7 +48,7 @@ struct tm* iso_to_tm(const char *timestamp,
 /// to do it.  If the ISO timestamp has no 'Z', then iso_mktime()
 /// behaves like mktime().
 ///
-time_t utc_mktime(struct tm *utctime);
+BXEXPORT time_t utc_mktime(struct tm *utctime);
 
 //
 // class TzWrapper
@@ -71,7 +73,7 @@ time_t utc_mktime(struct tm *utctime);
 ///       environment variable without locking.  If other threads
 ///       use time functions, this may interfere with their behaviour.
 ///
-class TzWrapper
+class BXEXPORT TzWrapper
 {
 	std::string m_orig_tz;
 	bool m_tz_exists;
@@ -210,7 +212,7 @@ public:
 	static time_t iso_mktime(const char *timestamp);
 };
 
-} // namespace reuse
+}} // namespace Barry::Sync
 
 #endif
 

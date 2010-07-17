@@ -7,13 +7,14 @@
 /*
     Copyright (C) 2010, Chris Frey <cdfrey@foursquare.net>, To God be the glory
     Released to the public domain.
+    Included in Barry and Barrified the namespace July 2010
 */
 
 #include "tzwrapper.h"
 #include <string.h>
 #include <stdio.h>
 
-namespace reuse {
+namespace Barry { namespace Sync {
 
 time_t utc_mktime(struct tm *utctime)
 {
@@ -90,13 +91,13 @@ time_t TzWrapper::iso_mktime(const char *timestamp)
 	return tzw.mktime(&t);
 }
 
-} // namespace reuse
+}} // namespace Barry::Sync
 
 
 #ifdef TZ_TEST_MODE
 #include <iostream>
 using namespace std;
-using namespace reuse;
+using namespace Barry::Sync;
 int main()
 {
 	time_t now = time(NULL);
