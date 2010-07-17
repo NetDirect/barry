@@ -14,6 +14,7 @@ noinst_PROGRAMS = ostest xmlcompactor xmlmap
 
 barrydesktop_SOURCES = \
 	barrydesktop.cc barrydesktop.h \
+	ipc.h optout.h \
 	windowids.h \
 	util.cc util.h \
 	xmlcompactor.cc xmlcompactor.h \
@@ -57,6 +58,7 @@ barrydesktop_CXXFLAGS = $(AM_CXXFLAGS) @WX_CXXFLAGS@ $(LIBXMLPP_CFLAGS)
 
 bsyncjail_SOURCES = \
 	bsyncjail.cc \
+	ipc.h \
 	error.cc error.h \
 	dlopen.cc dlopen.h \
 	tempdir.cc tempdir.h \
