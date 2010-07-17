@@ -2,6 +2,8 @@ Release: version 0.17 - 2010/01/??
 ------------------------------------------------------------------------------
 2010/07/17
 	- lib: added tm_to_iso() to tzwrapper functions
+	- lib: vbase now has default implementation of vTimeConverter (was
+		vTimeZone) with a simpler API, based on TzWrapper underneath
 2010/07/16
 	- lib: added BARRY_GCC_FORMAT_CHECK() for printf() style arg checking
 	- lib: added C-style BarryLogf() function for internal use

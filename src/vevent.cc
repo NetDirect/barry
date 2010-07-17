@@ -24,6 +24,7 @@
 #include <stdint.h>
 #include <glib.h>
 #include <strings.h>
+#include <stdlib.h>
 #include <sstream>
 #include <string>
 
@@ -34,8 +35,8 @@ namespace Barry { namespace Sync {
 //////////////////////////////////////////////////////////////////////////////
 // vCalendar
 
-vCalendar::vCalendar(vTimeZone &vtz)
-	: m_vtz(vtz)
+vCalendar::vCalendar(vTimeConverter &vtc)
+	: m_vtc(vtc)
 	, m_gCalData(0)
 {
 }
@@ -170,7 +171,7 @@ void vCalendar::RecurToVCal()
 	}
 	if( !cal.Perpetual ) {
 		AddParam(attr, "UNTIL",
-			m_vtz.unix2vtime(&cal.RecurringEndTime).c_str());
+			m_vtc.unix2vtime(&cal.RecurringEndTime).c_str());
 	}
 
 	AddAttr(attr);
@@ -254,9 +255,9 @@ const std::string& vCalendar::ToVCal(const Barry::Calendar &cal)
 	AddAttr(NewAttr("DESCRIPTION", cal.Notes.c_str()));
 	AddAttr(NewAttr("LOCATION", cal.Location.c_str()));
 
-	string start(m_vtz.unix2vtime(&cal.StartTime));
-	string end(m_vtz.unix2vtime(&cal.EndTime));
-	string notify(m_vtz.unix2vtime(&cal.NotificationTime));
+	string start(m_vtc.unix2vtime(&cal.StartTime));
+	string end(m_vtc.unix2vtime(&cal.EndTime));
+	string notify(m_vtc.unix2vtime(&cal.NotificationTime));
 
 	AddAttr(NewAttr("DTSTART", start.c_str()));
 	AddAttr(NewAttr("DTEND", end.c_str()));
@@ -340,19 +341,16 @@ const Barry::Calendar& vCalendar::ToBarry(const char *vcal, uint32_t RecordId)
 	// in the vcalendar record will be in the current timezone...
 	// This is wrong!  fix this later.
 	//
-	// Also, we current ignore any time zone
+	// Also, we currently ignore any time zone
 	// parameters that might be in the vcalendar format... this
 	// must be fixed.
 	//
-	time_t now = time(NULL);
-	int zoneoffset = m_vtz.timezone_diff(localtime(&now));
-
 	Barry::Calendar &rec = m_BarryCal;
 	rec.SetIds(Barry::Calendar::GetDefaultRecType(), RecordId);
 
 	if( !start.size() )
 		throw ConvertError("Blank DTSTART");
-	rec.StartTime = m_vtz.vtime2unix(start.c_str(), zoneoffset);
+	rec.StartTime = m_vtc.vtime2unix(start.c_str());
 
 	if( !end.size() ) {
 		// DTEND is actually optional!  According to the
@@ -366,7 +364,7 @@ const Barry::Calendar& vCalendar::ToBarry(const char *vcal, uint32_t RecordId)
 		rec.EndTime = rec.StartTime + 24 * 60 * 60;
 	}
 	else {
-		rec.EndTime = m_vtz.vtime2unix(end.c_str(), zoneoffset);
+		rec.EndTime = m_vtc.vtime2unix(end.c_str());
 	}
 
 	rec.Subject = subject;
@@ -384,7 +382,7 @@ const Barry::Calendar& vCalendar::ToBarry(const char *vcal, uint32_t RecordId)
 //			trace.logf("ERROR: no TRIGGER found in calendar entry, assuming notification time as 15 minutes before start.");
 		}
 		else if( trigger_type == "DATE-TIME" ) {
-			rec.NotificationTime = m_vtz.vtime2unix(trigger.c_str(), zoneoffset);
+			rec.NotificationTime = m_vtc.vtime2unix(trigger.c_str());
 		}
 		else if( trigger_type == "DURATION" || trigger_type.size() == 0 ) {
 			// default is DURATION (RFC 4.8.6.3)
@@ -395,7 +393,7 @@ const Barry::Calendar& vCalendar::ToBarry(const char *vcal, uint32_t RecordId)
 			if( related == "END" )
 				relative = &rec.EndTime;
 
-			rec.NotificationTime = *relative + m_vtz.alarmdu2sec(trigger.c_str());
+			rec.NotificationTime = *relative + m_vtc.alarmduration2sec(trigger.c_str());
 		}
 		else {
 			throw ConvertError("Unknown TRIGGER VALUE");

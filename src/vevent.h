@@ -40,7 +40,7 @@ namespace Barry { namespace Sync {
 class vCalendar : public vBase
 {
 	// external reference
-	vTimeZone &m_vtz;
+	vTimeConverter &m_vtc;
 
 	// data to pass to external requests
 	char *m_gCalData;	// dynamic memory returned by vformat()... can
@@ -59,7 +59,7 @@ protected:
 	bool HasMultipleVEvents() const;
 
 public:
-	explicit vCalendar(vTimeZone &vtz);
+	explicit vCalendar(vTimeConverter &vtc);
 	~vCalendar();
 
 	const std::string&	ToVCal(const Barry::Calendar &cal);

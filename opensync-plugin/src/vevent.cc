@@ -30,31 +30,6 @@
 
 using namespace Barry::Sync;
 
-class vTimeZone : public Barry::Sync::vTimeZone
-{
-public:
-	std::string unix2vtime(const time_t *timestamp)
-	{
-		gStringPtr vtime(osync_time_unix2vtime(timestamp));
-		return std::string(vtime.Get());
-	}
-
-	time_t vtime2unix(const char *vtime, int offset)
-	{
-		return osync_time_vtime2unix(vtime, offset);
-	}
-
-	int timezone_diff(const struct tm *local)
-	{
-		return osync_time_timezone_diff(local);
-	}
-
-	int alarmdu2sec(const char *alarm)
-	{
-		return osync_time_alarmdu2sec(alarm);
-	}
-};
-
 //////////////////////////////////////////////////////////////////////////////
 //
 
@@ -90,8 +65,8 @@ bool VEventConverter::ParseData(const char *data)
 
 	try {
 
-		::vTimeZone vtz;
-		vCalendar vcal(vtz);
+		vTimeConverter vtc;
+		vCalendar vcal(vtc);
 		m_Cal = vcal.ToBarry(data, m_RecordId);
 
 	}
@@ -129,8 +104,8 @@ void VEventConverter::operator()(const Barry::Calendar &rec)
 
 	try {
 
-		::vTimeZone vtz;
-		vCalendar vcal(vtz);
+		vTimeConverter vtc;
+		vCalendar vcal(vtc);
 		vcal.ToVCal(rec);
 		m_Data = vcal.ExtractVCal();
 

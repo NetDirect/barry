@@ -22,11 +22,117 @@
 #include "vbase.h"
 //#include "trace.h"
 #include "vformat.h"		// comes from opensync, but not a public header yet
+#include "tzwrapper.h"
 #include <stdint.h>
+#include <string.h>
 #include <glib.h>
 #include <sstream>
 
+using namespace std;
+
 namespace Barry { namespace Sync {
+
+//////////////////////////////////////////////////////////////////////////////
+// vTimeConverter
+
+std::string vTimeConverter::unix2vtime(const time_t *timestamp)
+{
+	struct tm split;
+	if( !gmtime_r(timestamp, &split) ) {
+		ostringstream oss;
+		oss << "gmtime_r() failed on time_t of ";
+		if( timestamp )
+			oss << *timestamp;
+		else
+			oss << "(null pointer)";
+		throw Barry::ConvertError(oss.str());
+	}
+
+	return tm_to_iso(&split, true);
+}
+
+time_t vTimeConverter::vtime2unix(const char *vtime)
+{
+	return TzWrapper::iso_mktime(vtime);
+}
+
+//
+// The following implementation is taken from opensync's
+// opensync_time.c implementation with the following copyright
+// notices at the top as of July 2010:
+//
+//  * Copyright (C) 2004-2005  Armin Bauer <armin.bauer@opensync.org>
+//  * Copyright (C) 2006-2008 Daniel Gollub <gollub@b1-systems.de>
+//  * Copyright (C) 2007 Chris Frey <cdfrey@netdirect.ca>
+//
+// License: LGPL 2.1 or later
+//
+int vTimeConverter::alarmduration2sec(const char *alarm)
+{
+        int i, secs, digits = 0;
+        int is_digit = 0;
+        int sign = 1;   // when ical stamp doesn't start with '-' => seconds after event
+        int days = 0, weeks = 0, hours = 0, minutes = 0, seconds = 0;
+        int len = strlen(alarm);
+
+        for (i=0; i < len; i++) {
+
+                switch (alarm[i]) {
+                case '-':
+                        sign = -1; // seconds before event - change the sign
+                case 'P':
+                case 'T':
+                        is_digit = 0;
+                        break;
+                case 'W':
+                        is_digit = 0;
+                        weeks = digits;
+                        break;
+                case 'D':
+                        is_digit = 0;
+                        days = digits;
+                        break;
+                case 'H':
+                        is_digit = 0;
+                        hours = digits;
+                        break;
+                case 'M':
+                        is_digit = 0;
+                        minutes = digits;
+                        break;
+                case 'S':
+                        is_digit = 0;
+                        seconds = digits;
+                        break;
+                case '0':
+                case '1':
+                case '2':
+                case '3':
+                case '4':
+                case '5':
+                case '6':
+                case '7':
+                case '8':
+                case '9':
+                        if (is_digit)
+                                break;
+
+                        if (sscanf((char*)(alarm+i),"%d",&digits) == EOF)
+                                return -1;
+
+                        is_digit = 1;
+                        break;
+                }
+        }
+
+        secs = (weeks * 7 * 24 * 3600) + (days * 24 * 3600) + (hours * 3600) + (minutes * 60) + seconds;
+
+        secs = secs * sign;     // change sign if the alarm is in seconds before event (leading '-')
+
+        return secs;
+
+}
+
 
 //////////////////////////////////////////////////////////////////////////////
 // vAttr

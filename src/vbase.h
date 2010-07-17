@@ -32,23 +32,34 @@ namespace Barry { namespace Sync {
 //
 // vTimeZone
 //
-/// A pure virtual base class that the plugins must implement, to do
-/// time zone related conversions.  Most of these functions are
-/// provided by the opensync library itself, so the implementation will
-/// be easy.
+/// A virtual base class that the plugins may override, to do
+/// time related conversions.  Default implementations for these
+/// functions are provided, but may be overrided depending on need.
 ///
 /// We do this in a "callback" style, so that it doesn't matter what
-/// version of the opensync library we link against.
+/// version of the opensync library we link against, in case the
+/// user wishes to use the opensync time functions.
 ///
-class BXEXPORT vTimeZone
+class BXEXPORT vTimeConverter
 {
 public:
-	virtual ~vTimeZone() {}
+	virtual ~vTimeConverter() {}
 
-	virtual std::string unix2vtime(const time_t *timestamp) = 0;
-	virtual time_t vtime2unix(const char *vtime, int offset) = 0;
-	virtual int timezone_diff(const struct tm *local) = 0;
-	virtual int alarmdu2sec(const char *alarm) = 0;
+	/// Convert a time_t into an ISO timestamp string
+	/// Throws Barry::ConvertError on error, but these errors
+	/// must be rare.
+	virtual std::string unix2vtime(const time_t *timestamp);
+
+	/// Convert an ISO timestamp string into a time_t, using
+	/// the current system timezone if vtime is not in UTC.
+	/// Returns (time_t)-1 on error.
+	virtual time_t vtime2unix(const char *vtime);
+
+	/// Convert a VEVENT alarm duration string in the format
+	/// of "[+-]P.W.DT.H.M.S" where the periods represent numbers
+	/// and each letter besides P and T represent Week, Day,
+	/// Hour, Minute, and Second respectively.
+	virtual int alarmduration2sec(const char *alarm);
 };
 
 
