@@ -8,6 +8,8 @@ Release: version 0.17 - 2010/01/??
 		set of vformat code
 	- lib: added vtodo and vjournal vformat support from os4x plugin
 	- deb: added new libbarrysync library to debian binary package
+	- tools: added -V option to btool, to output in the new MIME vformat
+		mode for records that are supported
 2010/07/16
 	- lib: added BARRY_GCC_FORMAT_CHECK() for printf() style arg checking
 	- lib: added C-style BarryLogf() function for internal use

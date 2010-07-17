@@ -20,6 +20,7 @@
 */
 
 #include <barry/barry.h>
+#include <barry/barrysync.h>
 #include <iomanip>
 #include <iostream>
 #include <fstream>
@@ -90,6 +91,7 @@ void Usage()
    << "   -t        Show database database table\n"
    << "   -T db     Show record state table for given database\n"
    << "   -v        Dump protocol data during operation\n"
+   << "   -V        Dump records using MIME vformats where possible\n"
    << "   -X        Reset device\n"
    << "   -z        Use non-threaded sockets\n"
    << "   -Z        Use threaded socket router (default)\n"
@@ -120,6 +122,72 @@ public:
 };
 
 template <class Record>
+class MimeDump
+{
+public:
+	void Dump(std::ostream &os, const Record &rec)
+	{
+		os << rec << endl;
+	}
+
+	static bool Supported() { return false; }
+};
+
+template <>
+class MimeDump<Contact>
+{
+public:
+	void Dump(std::ostream &os, const Contact &rec)
+	{
+		Sync::vCard vcard;
+		os << vcard.ToVCard(rec) << endl;
+	}
+
+	static bool Supported() { return true; }
+};
+
+template <>
+class MimeDump<Calendar>
+{
+public:
+	void Dump(std::ostream &os, const Calendar &rec)
+	{
+		Sync::vTimeConverter vtc;
+		Sync::vCalendar vcal(vtc);
+		os << vcal.ToVCal(rec) << endl;
+	}
+
+	static bool Supported() { return true; }
+};
+
+template <>
+class MimeDump<Memo>
+{
+public:
+	void Dump(std::ostream &os, const Memo &rec)
+	{
+		Sync::vJournal vjournal;
+		os << vjournal.ToMemo(rec) << endl;
+	}
+
+	static bool Supported() { return true; }
+};
+
+template <>
+class MimeDump<Task>
+{
+public:
+	void Dump(std::ostream &os, const Task &rec)
+	{
+		Sync::vTimeConverter vtc;
+		Sync::vTodo vtodo(vtc);
+		os << vtodo.ToTask(rec) << endl;
+	}
+
+	static bool Supported() { return true; }
+};
+
+template <class Record>
 struct Store
 {
 	std::vector<Record> records;
@@ -127,13 +195,16 @@ struct Store
 	std::string filename;
 	bool load;
 	bool immediate_display;
+	bool vformat_mode;
 	int count;
 
-	Store(const string &filename, bool load, bool immediate_display)
+	Store(const string &filename, bool load, bool immediate_display,
+			bool vformat_mode)
 		: rec_it(records.end()),
 		filename(filename),
 		load(load),
 		immediate_display(immediate_display),
+		vformat_mode(vformat_mode),
 		count(0)
 	{
 #ifdef __BARRY_BOOST_MODE__
@@ -202,7 +273,18 @@ struct Store
 	{
 		typename vector<Record>::const_iterator i = records.begin();
 		for( ; i != records.end(); ++i ) {
-			cout << *i << endl;
+			Dump(*i);
+		}
+	}
+
+	void Dump(const Record &rec)
+	{
+		if( vformat_mode ) {
+			MimeDump<Record> md;
+			md.Dump(cout, rec);
+		}
+		else {
+			cout << rec << endl;
 		}
 	}
 
@@ -211,7 +293,7 @@ struct Store
 	{
 		count++;
 		if( immediate_display )
-			std::cout << rec << std::endl;
+			Dump(rec);
 		records.push_back(rec);
 	}
 
@@ -254,9 +336,11 @@ public:
 auto_ptr<Parser> GetParser(const string &name,
 			const string &filename,
 			bool null_parser,
-			bool immediate_display)
+			bool immediate_display,
+			bool vformat_mode)
 {
 	bool dnow = immediate_display;
+	bool vmode = vformat_mode;
 
 	if( null_parser ) {
 		// use null parser
@@ -266,68 +350,68 @@ auto_ptr<Parser> GetParser(const string &name,
 	else if( name == Contact::GetDBName() ) {
 		return auto_ptr<Parser>(
 			new RecordParser<Contact, Store<Contact> > (
-				new Store<Contact>(filename, false, dnow)));
+				new Store<Contact>(filename, false, dnow, vmode)));
 	}
 	else if( name == Message::GetDBName() ) {
 		return auto_ptr<Parser>(
 			new RecordParser<Message, Store<Message> > (
-				new Store<Message>(filename, false, dnow)));
+				new Store<Message>(filename, false, dnow, vmode)));
 	}
 	else if( name == Calendar::GetDBName() ) {
 		return auto_ptr<Parser>(
 			new RecordParser<Calendar, Store<Calendar> > (
-				new Store<Calendar>(filename, false, dnow)));
+				new Store<Calendar>(filename, false, dnow, vmode)));
 	}
 	else if( name == CalendarAll::GetDBName() ) {
 		return auto_ptr<Parser>(
 			new RecordParser<CalendarAll, Store<CalendarAll> > (
-				new Store<CalendarAll>(filename, false, dnow)));
+				new Store<CalendarAll>(filename, false, dnow, vmode)));
 	}
 	else if( name == CallLog::GetDBName() ) {
 		return auto_ptr<Parser>(
 			new RecordParser<CallLog, Store<CallLog> > (
-				new Store<CallLog>(filename, false, dnow)));
+				new Store<CallLog>(filename, false, dnow, vmode)));
 	}
 	else if( name == ServiceBook::GetDBName() ) {
 		return auto_ptr<Parser>(
 			new RecordParser<ServiceBook, Store<ServiceBook> > (
-				new Store<ServiceBook>(filename, false, dnow)));
+				new Store<ServiceBook>(filename, false, dnow, vmode)));
 	}
 
 	else if( name == Memo::GetDBName() ) {
 		return auto_ptr<Parser>(
 			new RecordParser<Memo, Store<Memo> > (
-				new Store<Memo>(filename, false, dnow)));
+				new Store<Memo>(filename, false, dnow, vmode)));
 	}
 	else if( name == Task::GetDBName() ) {
 		return auto_ptr<Parser>(
 			new RecordParser<Task, Store<Task> > (
-				new Store<Task>(filename, false, dnow)));
+				new Store<Task>(filename, false, dnow, vmode)));
 	}
 	else if( name == PINMessage::GetDBName() ) {
 		return auto_ptr<Parser>(
 			new RecordParser<PINMessage, Store<PINMessage> > (
-				new Store<PINMessage>(filename, false, dnow)));
+				new Store<PINMessage>(filename, false, dnow, vmode)));
 	}
 	else if( name == SavedMessage::GetDBName() ) {
 		return auto_ptr<Parser>(
 			new RecordParser<SavedMessage, Store<SavedMessage> > (
-				new Store<SavedMessage>(filename, false, dnow)));
+				new Store<SavedMessage>(filename, false, dnow, vmode)));
 	}
 	else if( name == Sms::GetDBName() ) {
 		return auto_ptr<Parser>(
 			new RecordParser<Sms, Store<Sms> > (
-				new Store<Sms>(filename, false, dnow)));
+				new Store<Sms>(filename, false, dnow, vmode)));
 	}
 	else if( name == Folder::GetDBName() ) {
 		return auto_ptr<Parser>(
 			new RecordParser<Folder, Store<Folder> > (
-				new Store<Folder>(filename, false, dnow)));
+				new Store<Folder>(filename, false, dnow, vmode)));
 	}
 	else if( name == Timezone::GetDBName() ) {
 		return auto_ptr<Parser>(
 			new RecordParser<Timezone, Store<Timezone> > (
-				new Store<Timezone>(filename, false, dnow)));
+				new Store<Timezone>(filename, false, dnow, vmode)));
 	}
 	else {
 		// unknown database, use null parser
@@ -341,38 +425,38 @@ auto_ptr<Builder> GetBuilder(const string &name, const string &filename)
 	if( name == Contact::GetDBName() ) {
 		return auto_ptr<Builder>(
 			new RecordBuilder<Contact, Store<Contact> > (
-				new Store<Contact>(filename, true, true)));
+				new Store<Contact>(filename, true, true, false)));
 	}
 	else if( name == Calendar::GetDBName() ) {
 		return auto_ptr<Builder>(
 			new RecordBuilder<Calendar, Store<Calendar> > (
-				new Store<Calendar>(filename, true, true)));
+				new Store<Calendar>(filename, true, true, false)));
 	}
 	else if( name == CalendarAll::GetDBName() ) {
 		return auto_ptr<Builder>(
 			new RecordBuilder<CalendarAll, Store<CalendarAll> > (
-				new Store<CalendarAll>(filename, true, true)));
+				new Store<CalendarAll>(filename, true, true, false)));
 	}
 	else if( name == Memo::GetDBName() ) {
 		return auto_ptr<Builder>(
 			new RecordBuilder<Memo, Store<Memo> > (
-				new Store<Memo>(filename, true, true)));
+				new Store<Memo>(filename, true, true, false)));
 	}
 	else if( name == Task::GetDBName() ) {
 		return auto_ptr<Builder>(
 			new RecordBuilder<Task, Store<Task> > (
-				new Store<Task>(filename, true, true)));
+				new Store<Task>(filename, true, true, false)));
 	}
 /*
 	else if( name == "Messages" ) {
 		return auto_ptr<Parser>(
 			new RecordParser<Message, Store<Message> > (
-				new Store<Message>(filename, true, true)));
+				new Store<Message>(filename, true, true, false)));
 	}
 	else if( name == "Service Book" ) {
 		return auto_ptr<Parser>(
 			new RecordParser<ServiceBook, Store<ServiceBook> > (
-				new Store<ServiceBook>(filename, true, true)));
+				new Store<ServiceBook>(filename, true, true, false)));
 	}
 */
 	else {
@@ -383,14 +467,15 @@ auto_ptr<Builder> GetBuilder(const string &name, const string &filename)
 void ShowParsers()
 {
 	cout << "Supported Database parsers:\n"
-	<< "   Address Book\n"
+	<< " (* = can display in vformat MIME mode)\n"
+	<< "   Address Book *\n"
 	<< "   Messages\n"
-	<< "   Calendar\n"
-	<< "   Calendar - All\n"
+	<< "   Calendar *\n"
+	<< "   Calendar - All *\n"
 	<< "   Phone Call Logs\n"
 	<< "   Service Book\n"
-	<< "   Memos\n"
-	<< "   Tasks\n"
+	<< "   Memos *\n"
+	<< "   Tasks *\n"
 	<< "   PIN Messages\n"
 	<< "   Saved Email Messages\n"
 	<< "   SMS Messages\n"
@@ -489,6 +574,7 @@ int main(int argc, char *argv[])
 			show_dbdb = false,
 			ldif_contacts = false,
 			data_dump = false,
+			vformat_mode = false,
 			reset_device = false,
 			list_contact_fields = false,
 			list_ldif_map = false,
@@ -510,7 +596,7 @@ int main(int argc, char *argv[])
 
 		// process command line options
 		for(;;) {
-			int cmd = getopt(argc, argv, "a:B:c:C:d:D:e:f:hi:IlLm:MnN:p:P:r:R:Ss:tT:vXzZ");
+			int cmd = getopt(argc, argv, "a:B:c:C:d:D:e:f:hi:IlLm:MnN:p:P:r:R:Ss:tT:vVXzZ");
 			if( cmd == -1 )
 				break;
 
@@ -630,6 +716,10 @@ int main(int argc, char *argv[])
 
 			case 'v':	// data dump on
 				data_dump = true;
+				break;
+
+			case 'V':	// vformat MIME mode
+				vformat_mode = true;
 				break;
 
 			case 'X':	// reset device
@@ -847,7 +937,7 @@ int main(int argc, char *argv[])
 			desktop.Open(password.c_str());
 			unsigned int id = desktop.GetDBID(dbNames[0]);
 			auto_ptr<Parser> parse = GetParser(dbNames[0],filename,
-				null_parser, true);
+				null_parser, true, vformat_mode);
 
 			for( unsigned int i = 0; i < stCommands.size(); i++ ) {
 				desktop.GetRecord(id, stCommands[i].index, *parse.get());
@@ -894,7 +984,8 @@ int main(int argc, char *argv[])
 			desktop.Open(password.c_str());
 			for( ; b != dbNames.end(); b++ ) {
 				auto_ptr<Parser> parse = GetParser(*b,filename,
-					null_parser, !sort_records);
+					null_parser, !sort_records,
+					vformat_mode);
 				unsigned int id = desktop.GetDBID(*b);
 				desktop.LoadDatabase(id, *parse.get());
 			}
