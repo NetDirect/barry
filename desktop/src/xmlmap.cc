@@ -22,7 +22,7 @@
 */
 
 #include "xmlmap.h"
-#include "tzwrapper.h"
+#include <barry/tzwrapper.h>
 #include <libxml++/libxml++.h>
 #include <iostream>
 #include <fstream>
@@ -217,13 +217,13 @@ bool Timestamp2Unix(const Glib::ustring &stamp, time_t &result)
 {
 	struct tm split;
 	bool utc;
-	if( !reuse::iso_to_tm(stamp.c_str(), &split, utc) )
+	if( !Barry::Sync::iso_to_tm(stamp.c_str(), &split, utc) )
 		return false;
 
 	split.tm_isdst = -1;
 
 	if( utc )
-		result = reuse::utc_mktime(&split);
+		result = Barry::Sync::utc_mktime(&split);
 	else
 		result = mktime(&split);
 

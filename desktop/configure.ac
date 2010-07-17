@@ -22,7 +22,7 @@ AC_PROG_LIBTOOL
 
 AC_LANG([C++])
 
-PKG_CHECK_MODULES([BARRY], [libbarry-0])
+PKG_CHECK_MODULES([BARRY], [libbarry-0 libbarrysync-0])
 PKG_CHECK_MODULES([GLIB2], [glib-2.0])
 PKG_CHECK_MODULES([LIBXMLPP], [libxml++-2.6])
 PKG_CHECK_MODULES([OPENSYNC22], [opensync-1.0], [], [OS22NOTFOUND=yes])
