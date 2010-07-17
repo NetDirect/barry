@@ -51,9 +51,12 @@ class vCalendar : public vBase
 
 	static const char *WeekDays[7];
 
+	unsigned short GetMonthWeekNumFromBYDAY(const std::string& ByDay);
+	unsigned short GetWeekDayIndexFromBYDAY(const std::string& ByDay);
+
 protected:
 	void RecurToVCal();
-	void RecurToBarryCal();
+	void RecurToBarryCal(vAttr& rrule, time_t starttime);
 
 	static unsigned short GetWeekDayIndex(const char *dayname);
 	bool HasMultipleVEvents() const;
