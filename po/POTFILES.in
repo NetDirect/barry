@@ -50,23 +50,26 @@ src/base64.cc
 src/j_jdwp.cc
 src/r_recur_base.cc
 src/r_message_base.cc
+src/tzwrapper.cc
+src/vformat.c
+src/vbase.cc
+src/vcard.cc
+src/vevent.cc
+src/vjournal.cc
+src/vtodo.cc
 
 opensync-plugin/src/vcard.cc
-opensync-plugin/src/vformat.c
 opensync-plugin/src/vevent.cc
 opensync-plugin/src/idmap.cc
 opensync-plugin/src/barry_sync.cc
 opensync-plugin/src/environment.cc
-opensync-plugin/src/vbase.cc
 
 opensync-plugin-0.4x/src/vcard.cc
-opensync-plugin-0.4x/src/vformat.c
 opensync-plugin-0.4x/src/vjournal.cc
 opensync-plugin-0.4x/src/vevent.cc
 opensync-plugin-0.4x/src/barry_sync.cc
 opensync-plugin-0.4x/src/vtodo.cc
 opensync-plugin-0.4x/src/environment.cc
-opensync-plugin-0.4x/src/vbase.cc
 
 tools/brimtrans.cc
 tools/bjvmdebug.cc
