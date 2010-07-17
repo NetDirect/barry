@@ -102,64 +102,65 @@ void vCalendar::RecurToVCal()
 	switch( cal.RecurringType )
 	{
 	case Calendar::Day:		// eg. every day
-		AddParam(attr, "FREQ", "DAILY");
+		AddValue(attr,"FREQ=DAILY");
 		break;
 
 	case Calendar::MonthByDate:	// eg. every month on the 12th
 					// see: DayOfMonth
-		AddParam(attr, "FREQ", "MONTHLY");
+		AddValue(attr,"FREQ=MONTHLY");
 		{
 			ostringstream oss;
-			oss << cal.DayOfMonth;
-			AddParam(attr, "BYMONTHDAY", oss.str().c_str());
+			oss << "BYMONTHDAY=" << cal.DayOfMonth;
+			AddValue(attr, oss.str().c_str());
 		}
 		break;
 
 	case Calendar::MonthByDay:	// eg. every month on 3rd Wed
 					// see: DayOfWeek and WeekOfMonth
-		AddParam(attr, "FREQ", "MONTHLY");
+		AddValue(attr, "FREQ=MONTHLY");
 		if( cal.DayOfWeek <= 6 ) {	// DayOfWeek is unsigned
 			ostringstream oss;
-			oss << cal.WeekOfMonth << WeekDays[cal.DayOfWeek];
-			AddParam(attr, "BYDAY", oss.str().c_str());
+			oss << "BYDAY=" << cal.WeekOfMonth << WeekDays[cal.DayOfWeek];
+			AddValue(attr, oss.str().c_str());
 		}
 		break;
 
 	case Calendar::YearByDate:	// eg. every year on March 5
 					// see: DayOfMonth and MonthOfYear
-		AddParam(attr, "FREQ", "YEARLY");
+		AddValue(attr, "FREQ=YEARLY");
 		{
 			ostringstream oss;
-			oss << cal.MonthOfYear;
-			AddParam(attr, "BYMONTH", oss.str().c_str());
+			oss << "BYMONTH=" << cal.MonthOfYear;
+			AddValue(attr, oss.str().c_str());
 		}
 		{
 			ostringstream oss;
-			oss << cal.DayOfMonth;
-			AddParam(attr, "BYMONTHDAY", oss.str().c_str());
+			oss << "BYMONTHDAY=" << cal.DayOfMonth;
+			AddValue(attr, oss.str().c_str());
 		}
 		break;
 
 	case Calendar::YearByDay:	// eg. every year on 3rd Wed of Jan
 					// see: DayOfWeek, WeekOfMonth, and
 					//      MonthOfYear
-		AddParam(attr, "FREQ", "YEARLY");
+		AddValue(attr, "FREQ=YEARLY");
 		if( cal.DayOfWeek <= 6 ) {	// DayOfWeek is unsigned
 			ostringstream oss;
-			oss << cal.WeekOfMonth << WeekDays[cal.DayOfWeek];
-			AddParam(attr, "BYDAY", oss.str().c_str());
+			oss << "BYDAY=" << cal.WeekOfMonth << WeekDays[cal.DayOfWeek];
+			AddValue(attr, oss.str().c_str());
 
 			oss.str("");
-			oss << cal.MonthOfYear;
-			AddParam(attr, "BYMONTH", oss.str().c_str());
+			oss << "BYMONTH=" << cal.MonthOfYear;
+			AddValue(attr, oss.str().c_str());
 		}
 		break;
 
 	case Calendar::Week:		// eg. every week on Mon and Fri
 					// see: WeekDays
-		AddParam(attr, "FREQ", "WEEKLY");
+		AddValue(attr, "FREQ=WEEKLY");
 		{
 			ostringstream oss;
+			oss << "BYDAY=";
 			for( int i = 0, bm = 1, cnt = 0; i < 7; i++, bm <<= 1 ) {
 				if( cal.WeekDays & bm ) {
 					if( cnt )
@@ -168,7 +169,7 @@ void vCalendar::RecurToVCal()
 					cnt++;
 				}
 			}
-			AddParam(attr, "BYDAY", oss.str().c_str());
+			AddValue(attr, oss.str().c_str());
 		}
 		break;
 
@@ -179,12 +180,13 @@ void vCalendar::RecurToVCal()
 	// add some common parameters
 	if( cal.Interval > 1 ) {
 		ostringstream oss;
-		oss << cal.Interval;
-		AddParam(attr, "INTERVAL", oss.str().c_str());
+		oss << "INTERVAL=" << cal.Interval;
+		AddValue(attr, oss.str().c_str());
 	}
 	if( !cal.Perpetual ) {
-		AddParam(attr, "UNTIL",
-			m_vtc.unix2vtime(&cal.RecurringEndTime).c_str());
+		ostringstream oss;
+		oss << "UNTIL=" << m_vtc.unix2vtime(&cal.RecurringEndTime);
+		AddValue(attr, oss.str().c_str());
 	}
 
 	AddAttr(attr);
