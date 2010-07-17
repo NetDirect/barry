@@ -67,8 +67,12 @@ DEFS = -DLOCALEDIR=\"$(localedir)\" @DEFS@
 # libbarry - main USB protocol interface library
 # libbarrydp - '.debug' parser library
 # libbarryjdwp - java debug server library
+# libbarrysync - utility functions and classes for syncing and vformats
 #
 lib_LTLIBRARIES = libbarry.la libbarrydp.la libbarryjdwp.la
+if WITH_SYNC
+lib_LTLIBRARIES += libbarrysync.la
+endif
 
 include_barry_HEADERS = barry.h \
 	dll.h \
@@ -123,7 +127,11 @@ include_barry_HEADERS = barry.h \
 	s11n-boost.h \
 	dp_codinfo.h \
 	j_manager.h \
-	j_server.h
+	j_server.h \
+	vformat.h \
+	vbase.h \
+	vcard.h \
+	vevent.h
 
 noinst_HEADERS = cbarry.h \
 	base64.h \
@@ -209,6 +217,18 @@ libbarryjdwp_la_SOURCES = \
 	j_manager.h j_manager.cc
 libbarryjdwp_la_LIBADD = libbarry.la libbarrydp.la $(LIBUSB_LIBS)
 libbarryjdwp_la_LDFLAGS = -version-info ${LIB_BARRY_VERSION}
+
+if WITH_SYNC
+libbarrysync_la_SOURCES = \
+	vformat.h vformat.c \
+	vbase.h vbase.cc \
+	vcard.h vcard.cc \
+	vevent.h vevent.cc
+libbarrysync_la_CFLAGS = $(GLIB2_CFLAGS)
+libbarrysync_la_CXXFLAGS = $(GLIB2_CFLAGS)
+libbarrysync_la_LIBADD = libbarry.la $(GLIB2_LIBS)
+libbarrysync_la_LDFLAGS = -version-info ${LIB_BARRY_VERSION}
+endif
 
 ##if DO_TEST
 ##	bin_PROGRAMS += test-base64 test-data test-time

@@ -203,6 +203,17 @@ public:
 	uint8_t response() const { return m_response; }
 };
 
+//
+// ConvertError
+//
+/// Thrown by the vformat related barrysync library classes.
+///
+class ConvertError : public Barry::Error
+{
+public:
+	ConvertError(const std::string &msg) : Barry::Error(msg) {}
+};
+
 /// @}
 
 } // namespace Barry

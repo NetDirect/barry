@@ -3,6 +3,7 @@ Release: version 0.17 - 2010/01/??
 2010/07/16
 	- lib: added BARRY_GCC_FORMAT_CHECK() for printf() style arg checking
 	- lib: added C-style BarryLogf() function for internal use
+	- libsync: moved vformat-related code from os22 to library
 2010/07/13
 	- os4x: undo run-as-process setting, since some tests indicate that
 		sync will timeout

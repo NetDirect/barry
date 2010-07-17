@@ -19,58 +19,15 @@
     root directory of this project for more details.
 */
 
-#ifndef __BARRY_SYNC_VCARD_H__
-#define __BARRY_SYNC_VCARD_H__
+#ifndef __BARRYSYNC_VCARD_H__
+#define __BARRYSYNC_VCARD_H__
 
 #include <barry/barry.h>
 #include <stdint.h>
 #include <string>
-#include "vbase.h"
-#include "vformat.h"
 
 // forward declarations
 class BarryEnvironment;
-
-
-//
-// vCard
-//
-/// Class for converting between RFC 2425/2426 vCard data format,
-/// and the Barry::Contact class.
-///
-class vCard : public vBase
-{
-	// data to pass to external requests
-	char *m_gCardData;	// dynamic memory returned by vformat()... can
-				// be used directly by the plugin, without
-				// overmuch allocation and freeing (see Extract())
-	std::string m_vCardData;// copy of m_gCardData, for C++ use
-	Barry::Contact m_BarryContact;
-
-protected:
-	void AddAddress(const char *rfc_type, const Barry::PostalAddress &addr);
-	void AddCategories(const Barry::CategoryList &categories);
-	void AddPhoneCond(const std::string &phone);
-	void AddPhoneCond(const char *rfc_type, const std::string &phone);
-
-	void ParseAddress(vAttr &adr, Barry::PostalAddress &address);
-	void ParseCategories(vAttr &cat, Barry::CategoryList &cats);
-
-public:
-	vCard();
-	~vCard();
-
-	const std::string&	ToVCard(const Barry::Contact &con);
-	const Barry::Contact&	ToBarry(const char *vcal, uint32_t RecordId);
-
-	const std::string&	GetVCard() const { return m_vCardData; }
-	const Barry::Contact&	GetBarryContact() const { return m_BarryContact; }
-
-	char* ExtractVCard();
-
-	void Clear();
-};
-
 
 class VCardConverter
 {

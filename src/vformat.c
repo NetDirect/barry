@@ -21,17 +21,23 @@
  */
 
 #include "vformat.h"
+#include "clog.h"
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
+//#ifdef HAVE_CONFIG_H
+//#include "config.h"
+//#endif
 
 #include <string.h>
 #include <stdio.h>
 #include <ctype.h>
 #include <stdlib.h>
 #include <iconv.h>
-#include <opensync/opensync.h>
+//#include <opensync/opensync.h>
+
+#define TRACE_INTERNAL 1
+#define TRACE_ENTRY 1
+#define TRACE_EXIT 1
+#define TRACE_ERROR 0
 
 static size_t base64_encode_step(const unsigned char *in, size_t len, gboolean break_lines, unsigned char *out, int *state, int *save);
 static size_t base64_decode_step(const unsigned char *in, size_t len, unsigned char *out, int *state, unsigned int *save);
@@ -400,7 +406,7 @@ static void _read_attribute_value (b_VFormatAttribute *attr, char **p, int forma
 				  /* \t is (incorrectly) used by kOrganizer, so handle it here */
 				case 't': str = g_string_append_c (str, '\t'); break;
 				default:
-					osync_trace(TRACE_INTERNAL, "invalid escape, passing it through. escaped char was %u", (unsigned int)*lp);
+					BarryLogf(TRACE_INTERNAL, "invalid escape, passing it through. escaped char was %u", (unsigned int)*lp);
 					str = g_string_append_c (str, '\\');
 					str = g_string_append_unichar (str, g_utf8_get_char(lp));
 					break;
@@ -569,7 +575,7 @@ static void _read_attribute_params(b_VFormatAttribute *attr, char **p, int *form
 				break;
 		}
 		else {
-			osync_trace(TRACE_INTERNAL, "invalid character found in parameter spec: \"%i\" String so far: %s", lp[0], str->str);
+			BarryLogf(TRACE_INTERNAL, "invalid character found in parameter spec: \"%i\" String so far: %s", lp[0], str->str);
 			g_string_assign (str, "");
 			_skip_until (&lp, ":;");
 		}
@@ -618,8 +624,7 @@ static b_VFormatAttribute *_read_attribute (char **p)
 		}
 		else if (*lp == '.') {
 			if (attr_group) {
-				osync_trace(TRACE_INTERNAL, "extra `.' in attribute specification.  ignoring extra group `%s'",
-					   str->str);
+				BarryLogf(TRACE_INTERNAL, "extra `.' in attribute specification.  ignoring extra group `%s'", str->str);
 				g_string_free (str, TRUE);
 				str = g_string_new ("");
 			}
@@ -632,7 +637,7 @@ static b_VFormatAttribute *_read_attribute (char **p)
 			str = g_string_append_unichar (str, g_utf8_get_char (lp));
 		}
 		else {
-			osync_trace(TRACE_INTERNAL, "invalid character found in attribute group/name: \"%i\" String so far: %s", lp[0], str->str);
+			BarryLogf(TRACE_INTERNAL, "invalid character found in attribute group/name: \"%i\" String so far: %s", lp[0], str->str);
 			g_string_free (str, TRUE);
 			*p = lp;
 			_skip_to_next_line(p);
@@ -720,7 +725,7 @@ static void _parse(b_VFormat *evc, const char *str)
 	/* first validate the string is valid utf8 */
 	if (!g_utf8_validate (buf, -1, (const char **)&end)) {
 		/* if the string isn't valid, we parse as much as we can from it */
-		osync_trace(TRACE_INTERNAL, "invalid utf8 passed to b_VFormat.  Limping along.");
+		BarryLogf(TRACE_INTERNAL, "invalid utf8 passed to b_VFormat.  Limping along.");
 		*end = '\0';
 	}
 
@@ -733,7 +738,7 @@ static void _parse(b_VFormat *evc, const char *str)
 		attr = _read_attribute (&p);
 
 	if (!attr || attr->group || g_ascii_strcasecmp (attr->name, "begin")) {
-		osync_trace(TRACE_INTERNAL, "vformat began without a BEGIN\n");
+		BarryLogf(TRACE_INTERNAL, "vformat began without a BEGIN\n");
 	}
 	if (attr && !g_ascii_strcasecmp (attr->name, "begin"))
 		b_vformat_attribute_free (attr);
@@ -749,14 +754,14 @@ static void _parse(b_VFormat *evc, const char *str)
 				// add to block hierarchy string
 				char *value = b_vformat_attribute_get_value(next_attr);
 				open_block(&block, value);
-				//osync_trace(TRACE_INTERNAL, "open block: %s", block);
+				//BarryLogf(TRACE_INTERNAL, "open block: %s", block);
 				g_free(value);
 			}
 			else if( g_ascii_strcasecmp(next_attr->name, "end") == 0 ) {
 				// close off the block
 				char *value = b_vformat_attribute_get_value(next_attr);
 				close_block(&block, value);
-				//osync_trace(TRACE_INTERNAL, "close block: %s", block);
+				//BarryLogf(TRACE_INTERNAL, "close block: %s", block);
 				g_free(value);
 			}
 
@@ -770,7 +775,7 @@ static void _parse(b_VFormat *evc, const char *str)
 	}
 
 	if (!attr || attr->group || g_ascii_strcasecmp (attr->name, "end")) {
-		osync_trace(TRACE_INTERNAL, "vformat ended without END");
+		BarryLogf(TRACE_INTERNAL, "vformat ended without END");
 	}
 
 	g_free (buf);
@@ -811,11 +816,11 @@ char *b_vformat_escape_string (const char *s, b_VFormatType type)
 			 * See comments above for a better explanation
 			**/
 			if (*p != '\0' && type == VFORMAT_CARD_21) {
-				osync_trace(TRACE_INTERNAL, "[%s]We won't escape backslashes", __func__);
+				BarryLogf(TRACE_INTERNAL, "[%s]We won't escape backslashes", __func__);
 				str = g_string_append_c(str, *p);
 			}
 			else {
-				osync_trace(TRACE_INTERNAL, "[%s] escape backslashes!!", __func__);
+				BarryLogf(TRACE_INTERNAL, "[%s] escape backslashes!!", __func__);
 				str = g_string_append (str, "\\\\");
 			}
 			break;
@@ -856,7 +861,7 @@ b_vformat_unescape_string (const char *s)
 			  /* \t is (incorrectly) used by kOrganizer, so handle it here */
 			case 't': str = g_string_append_c (str, '\t'); break;
 			default:
-				osync_trace(TRACE_INTERNAL, "invalid escape, passing it through. escaped char was %u", (unsigned int)*p);
+				BarryLogf(TRACE_INTERNAL, "invalid escape, passing it through. escaped char was %u", (unsigned int)*p);
 				str = g_string_append_c (str, '\\');
 				str = g_string_append_unichar (str, g_utf8_get_char(p));
 				break;
@@ -967,7 +972,7 @@ b_VFormatAttribute *b_vformat_find_attribute_next(b_VFormatAttribute *last,
 
 char *b_vformat_to_string (b_VFormat *evc, b_VFormatType type)
 {
-	osync_trace(TRACE_ENTRY, "%s(%p, %i)", __func__, evc, type);
+	BarryLogf(TRACE_ENTRY, "%s(%p, %i)", __func__, evc, type);
 	GList *l;
 	GList *v;
 
@@ -1044,7 +1049,7 @@ char *b_vformat_to_string (b_VFormat *evc, b_VFormatType type)
 					 * eliminated.
 					**/
 					if (!g_ascii_strcasecmp (param->name, "ENCODING") && !g_ascii_strcasecmp ((char *) v->data, "QUOTED-PRINTABLE")) {
-						osync_trace(TRACE_ERROR, "%s false encoding QUOTED-PRINTABLE is not allowed", __func__);
+						BarryLogf(TRACE_ERROR, "%s false encoding QUOTED-PRINTABLE is not allowed", __func__);
 						format_encoding = VF_ENCODING_QP;
 					}
 					attr_str = g_string_append (attr_str, v->data);
@@ -1210,7 +1215,7 @@ char *b_vformat_to_string (b_VFormat *evc, b_VFormatType type)
 			break;
 	}
 
-	osync_trace(TRACE_EXIT, "%s", __func__);
+	BarryLogf(TRACE_EXIT, "%s", __func__);
 	return g_string_free (str, FALSE);
 }
 
@@ -1388,7 +1393,7 @@ b_vformat_attribute_add_value_decoded (b_VFormatAttribute *attr, const char *val
 
 	switch (attr->encoding) {
 		case VF_ENCODING_RAW:
-			osync_trace(TRACE_INTERNAL, "can't add_value_decoded with an attribute using RAW encoding.  you must set the ENCODING parameter first");
+			BarryLogf(TRACE_INTERNAL, "can't add_value_decoded with an attribute using RAW encoding.  you must set the ENCODING parameter first");
 			break;
 		case VF_ENCODING_BASE64: {
 			char *b64_data = base64_encode_simple (value, len);
@@ -1528,7 +1533,7 @@ b_vformat_attribute_add_param (b_VFormatAttribute *attr,
 
 	if (!g_ascii_strcasecmp (param->name, "ENCODING")) {
 		if (attr->encoding_set) {
-			osync_trace(TRACE_INTERNAL, "ENCODING specified twice");
+			BarryLogf(TRACE_INTERNAL, "ENCODING specified twice");
 			return;
 		}
 
@@ -1540,14 +1545,13 @@ b_vformat_attribute_add_param (b_VFormatAttribute *attr,
 			else if (!g_ascii_strcasecmp ((char *)param->values->data, "8BIT"))
 				attr->encoding = VF_ENCODING_8BIT;
 			else {
-				osync_trace(TRACE_INTERNAL, "Unknown value `%s' for ENCODING parameter.  values will be treated as raw",
-					   (char*)param->values->data);
+				BarryLogf(TRACE_INTERNAL, "Unknown value `%s' for ENCODING parameter.  values will be treated as raw", (char*)param->values->data);
 			}
 
 			attr->encoding_set = TRUE;
 		}
 		else {
-			osync_trace(TRACE_INTERNAL, "ENCODING parameter added with no value");
+			BarryLogf(TRACE_INTERNAL, "ENCODING parameter added with no value");
 		}
 	}
 }
@@ -1748,7 +1752,7 @@ b_vformat_attribute_get_value (b_VFormatAttribute *attr)
 	values = b_vformat_attribute_get_values (attr);
 
 	if (!b_vformat_attribute_is_single_valued (attr))
-		osync_trace(TRACE_INTERNAL, "b_vformat_attribute_get_value called on multivalued attribute");
+		BarryLogf(TRACE_INTERNAL, "b_vformat_attribute_get_value called on multivalued attribute");
 
 	return values ? g_strdup ((char*)values->data) : NULL;
 }
@@ -1764,7 +1768,7 @@ b_vformat_attribute_get_value_decoded (b_VFormatAttribute *attr)
 	values = b_vformat_attribute_get_values_decoded (attr);
 
 	if (!b_vformat_attribute_is_single_valued (attr))
-		osync_trace(TRACE_INTERNAL, "b_vformat_attribute_get_value_decoded called on multivalued attribute");
+		BarryLogf(TRACE_INTERNAL, "b_vformat_attribute_get_value_decoded called on multivalued attribute");
 
 	if (values)
 		str = values->data;

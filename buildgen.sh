@@ -29,7 +29,7 @@ elif [ "$1" = "clean" ] ; then
 	rm -f Makefile.in aclocal.m4 config.guess config.h.in config.sub \
 		configure depcomp install-sh ltmain.sh missing \
 		src/Makefile.in tools/Makefile.in examples/Makefile.in \
-		man/Makefile.in INSTALL config.h.in~
+		man/Makefile.in INSTALL config.h.in~ compile
 	# clean up Debian build trails
 	rm -rf debian/barry
 	rm -f build-arch-stamp build-indep-stamp configure-stamp \

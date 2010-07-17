@@ -20,6 +20,9 @@ SUBDIRS = po . src tools examples man
 SUBDIRS += $(subdirs)
 
 pkgconfig_DATA = libbarry-0.pc libbarrydp-0.pc libbarryjdwp-0.pc
+if WITH_SYNC
+pkgconfig_DATA += libbarrysync-0.pc
+endif
 
 all-local:
 	rm -f $(top_builddir)/barry

@@ -22,45 +22,33 @@
 #ifndef __BARRY_SYNC_VBASE_H__
 #define __BARRY_SYNC_VBASE_H__
 
-#include <string>
-#include <stdexcept>
-#include <barry/vsmartptr.h>
+#include "dll.h"
+#include "vsmartptr.h"
 #include "vformat.h"
+#include "error.h"
 
-// forward declarations
-class BarryEnvironment;
+namespace Barry { namespace Sync {
 
-
-// FIXME - possibly scrap this in favour of opensync's xml time routines,
-// but this will require an overhaul of the plugin itself.
-class vTimeZone
+//
+// vTimeZone
+//
+/// A pure virtual base class that the plugins must implement, to do
+/// time zone related conversions.  Most of these functions are
+/// provided by the opensync library itself, so the implementation will
+/// be easy.
+///
+/// We do this in a "callback" style, so that it doesn't matter what
+/// version of the opensync library we link against.
+///
+class BXEXPORT vTimeZone
 {
 public:
-	struct ZoneBlock
-	{
-		bool m_daylightSaving;
-		std::string m_name;
-		std::string m_dtstart;
-		std::string m_tzoffsetfrom;
-		std::string m_tzoffsetto;
-	};
+	virtual ~vTimeZone() {}
 
-private:
-	bool m_valid;
-
-public:
-	std::string m_id;
-
-public:
-	vTimeZone();
-	~vTimeZone();
-
-	void Clear();
-
-	bool IsValid();
-
-	/// used for comparing by TZID
-	bool operator==(const std::string &tzid) const;
+	virtual std::string unix2vtime(const time_t *timestamp) = 0;
+	virtual time_t vtime2unix(const char *vtime, int offset) = 0;
+	virtual int timezone_diff(const struct tm *local) = 0;
+	virtual int alarmdu2sec(const char *alarm) = 0;
 };
 
 
@@ -75,7 +63,7 @@ typedef Barry::vSmartPtr<char, void, &g_free> gStringPtr;
 /// Class for reading a b_VFormatAttribute.  Reading does not require
 /// memory management, so none is done.
 ///
-class vAttr
+class BXEXPORT vAttr
 {
 	b_VFormatAttribute *m_attr;
 
@@ -114,20 +102,12 @@ public:
 //
 /// Base class containing vformat helper API.
 ///
-class vBase
+class BXEXPORT vBase
 {
 	// internal data for managing the vformat
 	b_VFormat *m_format;
 
 public:
-	// FIXME - if you put this class in the Barry library,
-	// you'll need to change the class hierarchy
-	class ConvertError : public std::runtime_error
-	{
-	public:
-		ConvertError(const std::string &msg) : std::runtime_error(msg) {}
-	};
-
 protected:
 	vBase();
 	virtual ~vBase();
@@ -148,6 +128,8 @@ protected:
 	std::string GetAttr(const char *attrname, const char *block = 0);
 	vAttr GetAttrObj(const char *attrname, int nth = 0, const char *block = 0);
 };
+
+}} // namespace Barry::Sync
 
 #endif
 

@@ -142,6 +142,11 @@ PKG_CHECK_MODULES([FUSE], [fuse >= 2.5],
 	[echo "FUSE library not found, skipping fuse module."; FUSE_FOUND=0]
 	)
 
+PKG_CHECK_MODULES([GLIB2], [glib-2.0],
+	[GLIB2_FOUND=1],
+	[echo "GLIB 2.0 not found, skipping sync library."; GLIB2_FOUND=0]
+	)
+
 pkgconfigdir=${libdir}/pkgconfig
 AC_SUBST(pkgconfigdir)
 
@@ -149,6 +154,7 @@ AC_SUBST(LIBUSB_CFLAGS)
 AC_SUBST(LIBUSB_LIBS)
 
 AM_CONDITIONAL([WITH_FUSE], [test "$FUSE_FOUND" = "1"])
+AM_CONDITIONAL([WITH_SYNC], [test "$GLIB2_FOUND" = "1"])
 
 #AC_CHECK_LIB([IOKit], [main])
 #AC_CHECK_LIB([libusb], [libusb_init])
@@ -230,7 +236,8 @@ AC_CONFIG_FILES([Makefile po/Makefile.in
                  man/Makefile
                  libbarry-0.pc
 		 libbarrydp-0.pc
-		 libbarryjdwp-0.pc])
+		 libbarryjdwp-0.pc
+		 libbarrysync-0.pc])
 
 #
 # nested packages

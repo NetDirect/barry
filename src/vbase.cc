@@ -20,12 +20,13 @@
 */
 
 #include "vbase.h"
-#include "trace.h"
+//#include "trace.h"
 #include "vformat.h"		// comes from opensync, but not a public header yet
 #include <stdint.h>
 #include <glib.h>
 #include <sstream>
 
+namespace Barry { namespace Sync {
 
 //////////////////////////////////////////////////////////////////////////////
 // vAttr
@@ -163,19 +164,19 @@ void vBase::Clear()
 
 vAttrPtr vBase::NewAttr(const char *name)
 {
-	Trace trace("vBase::NewAttr");
+//	Trace trace("vBase::NewAttr");
 
-	trace.logf("creating valueless attr: %s", name);
+//	trace.logf("creating valueless attr: %s", name);
 
 	vAttrPtr attr(b_vformat_attribute_new(NULL, name));
 	if( !attr.Get() )
-		throw ConvertError("resource error allocating vformat attribute");
+		throw Barry::ConvertError("resource error allocating vformat attribute");
 	return attr;
 }
 
 vAttrPtr vBase::NewAttr(const char *name, const char *value)
 {
-	Trace trace("vBase::NewAttr");
+//	Trace trace("vBase::NewAttr");
 
 /*
 some vCard values are positional (like name), so blank should be allowed...
@@ -186,7 +187,7 @@ some vCard values are positional (like name), so blank should be allowed...
 	}
 */
 
-	trace.logf("creating attr: %s, %s", name, value);
+//	trace.logf("creating attr: %s, %s", name, value);
 
 	vAttrPtr attr(b_vformat_attribute_new(NULL, name));
 	if( !attr.Get() )
@@ -198,10 +199,10 @@ some vCard values are positional (like name), so blank should be allowed...
 
 void vBase::AddAttr(vAttrPtr attr)
 {
-	Trace trace("vBase::AddAttr");
+//	Trace trace("vBase::AddAttr");
 
 	if( !attr.Get() ) {
-		trace.log("attribute contains no data, skipping");
+//		trace.log("attribute contains no data, skipping");
 		return;
 	}
 
@@ -210,9 +211,9 @@ void vBase::AddAttr(vAttrPtr attr)
 
 void vBase::AddValue(vAttrPtr &attr, const char *value)
 {
-	Trace trace("vBase::AddValue");
+//	Trace trace("vBase::AddValue");
 	if( !attr.Get() ) {
-		trace.log("attribute pointer contains no data, skipping");
+//		trace.log("attribute pointer contains no data, skipping");
 		return;
 	}
 /*
@@ -226,9 +227,9 @@ void vBase::AddValue(vAttrPtr &attr, const char *value)
 
 void vBase::AddEncodedValue(vAttrPtr &attr, b_VFormatEncoding encoding, const char *value, int len)
 {
-	Trace trace("vBase::AddValue");
+//	Trace trace("vBase::AddValue");
 	if( !attr.Get() ) {
-		trace.log("attribute pointer contains no data, skipping");
+//		trace.log("attribute pointer contains no data, skipping");
 		return;
 	}
 
@@ -240,10 +241,10 @@ void vBase::AddEncodedValue(vAttrPtr &attr, b_VFormatEncoding encoding, const ch
 
 void vBase::AddParam(vAttrPtr &attr, const char *name, const char *value)
 {
-	Trace trace("vBase::AddParam");
+//	Trace trace("vBase::AddParam");
 
 	if( !attr.Get() ) {
-		trace.log("attribute pointer contains no data, skipping");
+//		trace.log("attribute pointer contains no data, skipping");
 		return;
 	}
 /*
@@ -260,8 +261,8 @@ void vBase::AddParam(vAttrPtr &attr, const char *name, const char *value)
 
 std::string vBase::GetAttr(const char *attrname, const char *block)
 {
-	Trace trace("vBase::GetAttr");
-	trace.logf("getting attr: %s", attrname);
+//	Trace trace("vBase::GetAttr");
+//	trace.logf("getting attr: %s", attrname);
 
 	std::string ret;
 	const char *value = 0;
@@ -286,15 +287,17 @@ std::string vBase::GetAttr(const char *attrname, const char *block)
 	if( needs_freeing )
 		g_free((char *)value);
 
-	trace.logf("attr value: %s", ret.c_str());
+//	trace.logf("attr value: %s", ret.c_str());
 	return ret;
 }
 
 vAttr vBase::GetAttrObj(const char *attrname, int nth, const char *block)
 {
-	Trace trace("vBase::GetAttrObj");
-	trace.logf("getting attr: %s", attrname);
+//	Trace trace("vBase::GetAttrObj");
+//	trace.logf("getting attr: %s", attrname);
 
 	return vAttr(b_vformat_find_attribute(m_format, attrname, nth, block));
 }
+
+}} // namespace Barry::Sync
 
