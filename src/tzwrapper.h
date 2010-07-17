@@ -29,6 +29,15 @@ BXEXPORT struct tm* iso_to_tm(const char *timestamp,
 				struct tm *result,
 				bool &utc);
 
+/// Turns the struct tm into an ISO timestamp in the format
+/// of YYYYMMDDTHHMMSS[Z].  The Z is appended if utc is true.
+/// This function assumes that t contains sane values, and will
+/// create the target string directly from its content.
+/// Returns the ISO timestamp, or empty string on error.
+/// If t contains sane values, this function should never fail.
+/// Thread-safe.
+BXEXPORT std::string tm_to_iso(const struct tm *t, bool utc);
+
 /// utc_mktime() converts a struct tm that contains
 /// broken down time in utc to a time_t.  This function uses
 /// a brute-force method of conversion that does not require

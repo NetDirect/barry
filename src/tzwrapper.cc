@@ -79,6 +79,31 @@ struct tm* iso_to_tm(const char *timestamp,
 	return (found >= 6) ? result : 0;
 }
 
+std::string tm_to_iso(const struct tm *t, bool utc)
+{
+	char tmp[128];
+
+	int cc = snprintf(tmp, sizeof(tmp), "%04d%02d%02dT%02d%02d%02d",
+		t->tm_year + 1900,
+		t->tm_mon + 1,
+		t->tm_mday,
+		t->tm_hour,
+		t->tm_min,
+		t->tm_sec
+		);
+	if( cc < 0 || (size_t)cc >= sizeof(tmp) )
+		return "";
+
+	if( utc ) {
+		if( (size_t)cc >= (sizeof(tmp) - 1) )
+			return "";		// not enough room for Z
+		tmp[cc++] = 'Z';
+		tmp[cc] = 0;
+	}
+
+	return tmp;
+}
+
 time_t TzWrapper::iso_mktime(const char *timestamp)
 {
 	bool utc;
@@ -131,6 +156,8 @@ int main()
 		cout << "Fail check: passed" << endl;
 	else
 		cout << "Fail check: ERROR" << endl;
+
+	cout << "t1: " << tm_to_iso(gmtime(&t1), true) << endl;
 }
 #endif
 
