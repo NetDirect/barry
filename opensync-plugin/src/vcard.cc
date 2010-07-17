@@ -71,7 +71,7 @@ bool VCardConverter::ParseData(const char *data)
 
 	}
 	catch( Barry::ConvertError &ce ) {
-		trace.logf("ERROR: Barry::ConvertError exception: %s", ce.what());
+		trace.logf("ERROR: vcard:Barry::ConvertError exception: %s", ce.what());
 		return false;
 	}
 
@@ -97,7 +97,7 @@ void VCardConverter::operator()(const Barry::Contact &rec)
 
 	}
 	catch( Barry::ConvertError &ce ) {
-		trace.logf("ERROR: vCard::ConvertError exception: %s", ce.what());
+		trace.logf("ERROR: vcard:Barry::ConvertError exception: %s", ce.what());
 	}
 }
 

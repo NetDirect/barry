@@ -71,7 +71,7 @@ bool VEventConverter::ParseData(const char *data)
 
 	}
 	catch( Barry::ConvertError &ce ) {
-		trace.logf("ERROR: Barry::ConvertError exception: %s", ce.what());
+		trace.logf("ERROR: vevent:Barry::ConvertError exception: %s", ce.what());
 		return false;
 	}
 
@@ -111,7 +111,7 @@ void VEventConverter::operator()(const Barry::Calendar &rec)
 
 	}
 	catch( Barry::ConvertError &ce ) {
-		trace.logf("ERROR: Barry::ConvertError exception: %s", ce.what());
+		trace.logf("ERROR: vevent:Barry::ConvertError exception: %s", ce.what());
 	}
 }
 
