@@ -27,6 +27,8 @@
 #include "vbase.h"
 #include "vcard.h"
 #include "vevent.h"
+#include "vjournal.h"
+#include "vtodo.h"
 
 #endif
 

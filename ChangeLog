@@ -6,6 +6,7 @@ Release: version 0.17 - 2010/01/??
 		vTimeZone) with a simpler API, based on TzWrapper underneath
 	- lib: pulled in os4x vbase code, so both plugins are using one
 		set of vformat code
+	- lib: added vtodo and vjournal vformat support from os4x plugin
 2010/07/16
 	- lib: added BARRY_GCC_FORMAT_CHECK() for printf() style arg checking
 	- lib: added C-style BarryLogf() function for internal use

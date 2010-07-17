@@ -224,6 +224,8 @@ libbarrysync_la_SOURCES = \
 	vbase.h vbase.cc \
 	vcard.h vcard.cc \
 	vevent.h vevent.cc \
+	vjournal.h vjournal.cc \
+	vtodo.h vtodo.cc \
 	tzwrapper.h tzwrapper.cc
 libbarrysync_la_CFLAGS = $(GLIB2_CFLAGS)
 libbarrysync_la_CXXFLAGS = $(GLIB2_CFLAGS)
