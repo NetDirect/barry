@@ -227,9 +227,6 @@ const std::string& vCard::ToVCard(const Barry::Contact &con)
 		AddAttr(NewAttr("ROLE", con.JobTitle.c_str()));
 	}
 
-	// Image not supported, since vformat routines probably don't
-	// support binary VCARD fields....
-
 	if( con.Company.size() ) {
 		// RFC 2426, 3.5.5
 		vAttrPtr org = NewAttr("ORG", con.Company.c_str()); // Organization name

@@ -248,6 +248,7 @@ vBase::~vBase()
 {
 	if( m_format ) {
 		b_vformat_free(m_format);
+		m_format = 0;
 	}
 }
 
@@ -397,12 +398,92 @@ std::string vBase::GetAttr(const char *attrname, const char *block)
 	return ret;
 }
 
+std::vector<std::string> vBase::GetValueVector(const char *attrname, const char *block)
+{
+//	Trace trace("vBase::GetValueVector");
+//	trace.logf("getting value vector for: %s", attrname);
+
+	std::vector<std::string> ret;
+	const char *value = 0;
+	bool needs_freeing = false;
+
+	b_VFormatAttribute *attr = b_vformat_find_attribute(m_format, attrname, 0, block);
+	if( attr ) {
+		if( b_vformat_attribute_is_single_valued(attr) ) {
+			value = b_vformat_attribute_get_value(attr);
+			needs_freeing = true;
+		} else {
+			// nasty, but avoids tweaking vformat.
+			int idx = 0;
+			do {
+				value = b_vformat_attribute_get_nth_value(attr, idx++);
+				if( value ) {
+					ret.push_back(value);
+				}
+			} while( value );
+		}
+	}
+
+	if( needs_freeing )
+		g_free((char *)value);
+
+	return ret;
+}
+
 vAttr vBase::GetAttrObj(const char *attrname, int nth, const char *block)
 {
 //	Trace trace("vBase::GetAttrObj");
 //	trace.logf("getting attr: %s", attrname);
 
 	return vAttr(b_vformat_find_attribute(m_format, attrname, nth, block));
+}
+
+std::vector<std::string> vBase::Tokenize(const std::string& str, const char delim)
+{
+	std::vector<std::string> tokens;
+	std::string::size_type delimPos = 0, tokenPos = 0, pos = 0;
+
+	if( str.length() < 1 ) {
+		return tokens;
+	}
+
+	while( 1 ) {
+		delimPos = str.find_first_of(delim, pos);
+		tokenPos = str.find_first_not_of(delim, pos);
+
+		if( std::string::npos != delimPos ) {
+			if( std::string::npos != tokenPos ) {
+				if( tokenPos < delimPos ) {
+					tokens.push_back(str.substr(pos, delimPos-pos));
+				} else {
+					tokens.push_back("");
+				}
+			} else {
+				tokens.push_back("");
+			}
+			pos = delimPos + 1;
+		} else {
+			if( std::string::npos != tokenPos ){
+				tokens.push_back(str.substr(pos));
+			} else {
+				tokens.push_back("");
+			}
+			break;
+		}
+	}
+	return tokens;
+}
+
+std::string vBase::ToStringList(const std::vector<std::string> &list, const char delim)
+{
+	std::string str;
+	for( unsigned int idx = 0; idx < list.size(); idx++ ) {
+		if( idx ) {
+			str += delim;
+		}
+		str += list[idx];
+	}
+	return str;
 }
 
 }} // namespace Barry::Sync
