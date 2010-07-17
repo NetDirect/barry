@@ -22,6 +22,7 @@
 #include "log.h"
 #include "clog.h"
 #include <pthread.h>
+#include <stdio.h>
 #include <stdarg.h>
 #include <string.h>
 #include <iostream>
