@@ -25,6 +25,7 @@
 #ifndef _VFORMAT_H
 #define _VFORMAT_H
 
+#include "dll.h"
 #include <glib.h>
 #include <time.h>
 
