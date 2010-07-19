@@ -159,6 +159,8 @@ public:
 		const wxString &command);
 	/// Returns true if App is currently running
 	virtual bool IsAppRunning();
+	/// Blocks until child exits
+	virtual void WaitForChild();
 	virtual int GetAppStatus() const { return m_app_status; }
 	/// Sends a termination signal to the App, if running
 	virtual void KillApp(bool hardkill = false);

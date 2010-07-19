@@ -178,6 +178,12 @@ bool ExecHelper::IsAppRunning()
 	return m_app_callback && m_app_pid > 0;
 }
 
+void ExecHelper::WaitForChild()
+{
+	while( IsAppRunning() )
+		usleep(50000);
+}
+
 void ExecHelper::KillApp(bool hardkill)
 {
 	if( IsAppRunning() ) {
