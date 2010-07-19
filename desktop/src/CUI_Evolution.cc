@@ -94,14 +94,10 @@ namespace {
 
 long Evolution::ForceShutdown()
 {
-	const wxChar *shutdown_argv[] = {
-		_T("evolution"),
-		_T("--force-shutdown"),
-		NULL
-	};
-	long ret = wxExecute((wxChar**)shutdown_argv, wxEXEC_SYNC);
-	wxSleep(2);
-	return ret;
+	ExecHelper shutdown(NULL);
+	shutdown.Run(NULL, "Evolution shutdown", _T("evolution --force-shutdown"));
+	shutdown.WaitForChild();
+	return shutdown.GetAppStatus();
 }
 
 //////////////////////////////////////////////////////////////////////////////
