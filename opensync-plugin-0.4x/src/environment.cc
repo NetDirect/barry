@@ -92,7 +92,16 @@ BarryEnvironment::~BarryEnvironment()
 void BarryEnvironment::DoConnect()
 {
 	// Create controller
-	m_pCon = new Barry::Controller(m_ProbeResult);
+	//
+	// Override the timeout due to a firmware issue... sometimes
+	// the firmware will hang during a Reconnect, and fail to
+	// respond to a Desktop::Open().  To work around this, we
+	// set the default timeout to 15 seconds so that we find this
+	// failure early enough to fix it within opensync's 30 second timeout.
+	// Then if we get such a timeout, we do the Reconnect again and
+	// hope for the best... this often fixes it.
+	//
+	m_pCon = new Barry::Controller(m_ProbeResult, 15000);
 	m_pDesktop = new Barry::Mode::Desktop(*m_pCon, m_IConverter);
 	m_pDesktop->Open(m_password.c_str());
 
@@ -130,21 +139,38 @@ void BarryEnvironment::Connect(const Barry::ProbeResult &result)
 
 void BarryEnvironment::Reconnect()
 {
-	Disconnect();
+	int tries = 0;
 
-	// FIXME - temporary fix for odd reconnect message... without this
-	// probe, the reconnect will often fail on newer Blackberries
-	// due to an unexpected close socket message.  It is unclear
-	// if this is really a message from the device, but until then,
-	// we add this probe.
-	{
-		Barry::Probe probe;
-		int i = probe.FindActive(m_ProbeResult.m_pin);
-		if( i != -1 )
-			m_ProbeResult = probe.Get(i);
+	while(1) try {
+
+		tries++;
+
+		Disconnect();
+
+		// FIXME - temporary fix for odd reconnect message... without this
+		// probe, the reconnect will often fail on newer Blackberries
+		// due to an unexpected close socket message.  It is unclear
+		// if this is really a message from the device, but until then,
+		// we add this probe.
+		{
+			Barry::Probe probe;
+			int i = probe.FindActive(m_ProbeResult.m_pin);
+			if( i != -1 )
+				m_ProbeResult = probe.Get(i);
+		}
+
+		DoConnect();
+
+		return;
 	}
-
-	DoConnect();
+	catch( Usb::Timeout & ) {
+		if( tries > 1 ) {
+			throw;
+		}
+		else {
+			std::cout << "Timeout in Reconnect()... trying again" << std::endl;
+		}
+	}
 }
 
 void BarryEnvironment::Disconnect()

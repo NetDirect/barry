@@ -3,6 +3,17 @@ Release: version 0.17 - 2010/01/??
 2010/07/19
 	- lib: added ability to do a USB ClearHalt() from socket level
 	- lib: added ability to override USB default timeout from controller
+	- sync: added workarounds for firmware hang issue
+		This workaround overrides the timeout due to a firmware
+		issue: sometimes the firmware will hang during a plugin
+		Reconnect(), during the shutdown stage when the plugin
+		attempts to update the device's dirty flags.  When the
+		device hangs like this, it fails to respond to a
+		Desktop::Open().  To work around this, we set the default
+		timeout to 15 seconds so that we find this failure early
+		enough to fix it within opensync's 30 second timeout.
+		Then if we get such a timeout, we do the Reconnect again and
+		hope for the best... this often fixes it.
 2010/07/17
 	- lib: added tm_to_iso() to tzwrapper functions
 	- lib: vbase now has default implementation of vTimeConverter (was
