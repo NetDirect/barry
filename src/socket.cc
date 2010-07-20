@@ -595,6 +595,25 @@ void SocketZero::Close(Socket &socket)
 	socket.ForceClosed();
 }
 
+//
+// ClearHalt
+//
+/// Clears the USB Halt bit on both the read and write endpoints
+///
+void SocketZero::ClearHalt()
+{
+	// clear the read endpoint
+	if( m_queue ) {
+		m_dev->ClearHalt(m_queue->GetReadEp());
+	}
+	else {
+		m_dev->ClearHalt(m_readEp);
+	}
+
+	// clear the write endpoint
+	m_dev->ClearHalt(m_writeEp);
+}
+
 
 
 
@@ -714,6 +733,11 @@ void Socket::ReceiveData(Data &receive, int timeout)
 	HideSequencePacket(false);
 	Receive(receive);
 	HideSequencePacket(true);
+}
+
+void Socket::ClearHalt()
+{
+	m_zero->ClearHalt();
 }
 
 
