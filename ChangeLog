@@ -1,5 +1,9 @@
 Release: version 0.17 - 2010/01/??
 ------------------------------------------------------------------------------
+2010/07/20
+	- sync: added 1 second wait during Reconnect() to let firmware settle
+		This seems to help prevent the firmware hang fixed yesterday,
+		which ultimately speeds up the whole sync
 2010/07/19
 	- lib: added ability to do a USB ClearHalt() from socket level
 	- lib: added ability to override USB default timeout from controller

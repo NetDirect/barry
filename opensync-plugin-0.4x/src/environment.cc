@@ -34,6 +34,7 @@
 #include <sstream>
 #include <iomanip>
 #include <string.h>
+#include <unistd.h>
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -146,6 +147,10 @@ void BarryEnvironment::Reconnect()
 		tries++;
 
 		Disconnect();
+
+		// let the device settle... this seems to help prevent the
+		// firmware hang, and therefore ultimately speeds up the sync
+		sleep(1);
 
 		// FIXME - temporary fix for odd reconnect message... without this
 		// probe, the reconnect will often fail on newer Blackberries
