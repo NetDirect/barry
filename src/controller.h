@@ -104,8 +104,10 @@ protected:
 	uint16_t SelectMode(ModeType mode);	// returns mode socket
 
 public:
-	explicit Controller(const ProbeResult &device);
-	Controller(const ProbeResult &device, SocketRoutingQueue &queue);
+	explicit Controller(const ProbeResult &device,
+		int default_timeout = USBWRAP_DEFAULT_TIMEOUT);
+	Controller(const ProbeResult &device, SocketRoutingQueue &queue,
+		int default_timeout = USBWRAP_DEFAULT_TIMEOUT);
 	~Controller();
 
 	bool HasQueue() const { return m_queue; }

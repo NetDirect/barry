@@ -41,10 +41,12 @@ namespace Barry {
 ///
 /// \param[in]	device		One of the ProbeResult objects from the
 ///				Probe class.
+/// \param[in]	default_timeout	Override Usb::Device's default timeout
 ///
-Controller::Controller(const ProbeResult &device)
+Controller::Controller(const ProbeResult &device,
+			int default_timeout)
 	: m_result(device)
-	, m_dev(device.m_dev)
+	, m_dev(device.m_dev, default_timeout)
 	, m_iface(0)
 	, m_pin(device.m_pin)
 	, m_zero(m_dev, device.m_ep.write, device.m_ep.read, device.m_zeroSocketSequence)
@@ -64,10 +66,13 @@ Controller::Controller(const ProbeResult &device)
 ///				Probe class.
 /// \param[in]	queue		Plugin router object for reading data
 ///				from sockets.
+/// \param[in]	default_timeout	Override Usb::Device's default timeout
 ///
-Controller::Controller(const ProbeResult &device, SocketRoutingQueue &queue)
+Controller::Controller(const ProbeResult &device,
+			SocketRoutingQueue &queue,
+			int default_timeout)
 	: m_result(device)
-	, m_dev(device.m_dev)
+	, m_dev(device.m_dev, default_timeout)
 	, m_iface(0)
 	, m_pin(device.m_pin)
 	, m_zero(queue, device.m_ep.write, device.m_zeroSocketSequence)

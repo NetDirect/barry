@@ -2,6 +2,7 @@ Release: version 0.17 - 2010/01/??
 ------------------------------------------------------------------------------
 2010/07/19
 	- lib: added ability to do a USB ClearHalt() from socket level
+	- lib: added ability to override USB default timeout from controller
 2010/07/17
 	- lib: added tm_to_iso() to tzwrapper functions
 	- lib: vbase now has default implementation of vTimeConverter (was
