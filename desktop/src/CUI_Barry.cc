@@ -111,7 +111,7 @@ bool Barry::ZapData(wxWindow *parent,
 
 	// present the list to the user
 	int count = wxGetMultipleChoices(selections, msg,
-		_T("Select Databases to Erase"), dbs);
+		_T("Select Databases to Erase"), dbs, m_parent);
 	if( count <= 0 )
 		return false;	// nothing to do
 
