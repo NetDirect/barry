@@ -164,36 +164,16 @@ contributions are welcome from all users!
 
 
 
-Porting opensync plugin to opensync 0.40
-----------------------------------------
-The main porting effort is mostly complete (pending changes in the
-opensync API once the official 0.40 is released).
-
-The XML way involves:
-
-	- switching from the vcard/vevent formats to the opensync XML
-		formats
-	- making use of the new opensync time APIs to properly support
-		timezones for all time operations
-
-Switching away from text based vcard and vevent formats will remove
-the burden of raw data parsing and formatting from the plugin itself,
-and make use of the more tested opensync library.  Any bugs fixed
-in opensync's parsers will automatically fix bugs in the Barry plugin.
-
+Timezone support to opensync plugins
+------------------------------------
 Support for timezones will likely stress the opensync API as well as
 the Barry API, but definitely needs to be done for completeness on both
 sides of the equation.
 
+This may involve switching from the text based vcard formats to
+the opensync XML formats.
+
 Estimated time:   open ended
-
-
-
-Adding support for recurring calendar items to opensync plugin
---------------------------------------------------------------
-See vCalendar::RecurToBarryCal() in the opensync sources, and compare
-with RecurToVCal().  See also iCal format RFC's.
-http://tools.ietf.org/html/rfc2445
 
 
 
