@@ -24,6 +24,7 @@
 #include "PromptDlg.h"
 #include "ConfigDlg.h"
 #include "util.h"
+#include "i18n.h"
 #include <gtkmm/aboutdialog.h>
 #include <iostream>
 #include <iomanip>
@@ -75,11 +76,11 @@ BackupWindow::BackupWindow(BaseObjectType *cobject,
 	m_pListStore = Gtk::ListStore::create(m_columns);
 	m_pDeviceList->set_model(m_pListStore);
 
-	m_pDeviceList->append_column("PIN", m_columns.m_pin);
-	m_pDeviceList->append_column("Name", m_columns.m_name);
-	m_pDeviceList->append_column("Status", m_columns.m_status);
+	m_pDeviceList->append_column(_("PIN"), m_columns.m_pin);
+	m_pDeviceList->append_column(_("Name"), m_columns.m_name);
+	m_pDeviceList->append_column(_("Status"), m_columns.m_status);
 	Gtk::CellRendererProgress* cell = new Gtk::CellRendererProgress;
-	m_pDeviceList->append_column("Progress", *cell);
+	m_pDeviceList->append_column(_("Progress"), *cell);
 	Gtk::TreeViewColumn* pColumn = m_pDeviceList->get_column(3);
 	pColumn->add_attribute(cell->property_value(), m_columns.m_percentage);
 
@@ -117,7 +118,7 @@ BackupWindow::BackupWindow(BaseObjectType *cobject,
 	// the initial Scan() happens right away, and the statusbar
 	// doesn't seem to update the screen until the handler is
 	// finished, we update the status bar here instead
-	StatusbarSet("Scanning for devices...");
+	StatusbarSet(_("Scanning for devices..."));
 
 	// do this last so that any exceptions in the constructor
 	// won't cause a connected signal handler to a non-object
@@ -134,7 +135,7 @@ BackupWindow::~BackupWindow()
 
 void BackupWindow::Scan()
 {
-	StatusbarSet("Scanning for devices...");
+	StatusbarSet(_("Scanning for devices..."));
 
 	m_pListStore->clear();
 	m_threads.clear();
@@ -143,13 +144,13 @@ void BackupWindow::Scan()
 	m_device_count = m_bus.ProbeCount();
 
 	if( m_device_count == 0 )
-		m_pDeviceLabel->set_label("No devices.");
+		m_pDeviceLabel->set_label(_("No devices."));
 	else if( m_device_count == 1 )
-		m_pDeviceLabel->set_label("1 device:");
+		m_pDeviceLabel->set_label(_("1 device:"));
 	else
 	{
 		std::ostringstream oss;
-		oss << m_device_count << " devices:";
+		oss << m_device_count << _(" devices:");
 		m_pDeviceLabel->set_label(oss.str());
 	}
 
@@ -165,7 +166,7 @@ void BackupWindow::Scan()
 	// all devices loaded
 	m_scanned = true;
 
-	StatusbarSet("All devices loaded.");
+	StatusbarSet(_("All devices loaded."));
 
 	// if one or more device plugged in,
 	// activate the first one
@@ -179,7 +180,7 @@ bool BackupWindow::Connect(Thread *thread)
 	if( thread->Connected() )
 		return true;
 
-	StatusbarSet("Connecting to Device...");
+	StatusbarSet(_("Connecting to Device..."));
 	static int tries(0);
 
 	CheckDeviceName(thread);
@@ -193,7 +194,7 @@ bool BackupWindow::Connect(Thread *thread)
 					connected = thread->Connect(dlg.GetPassword());
 				else { // user cancelled
 					thread->Reset();
-					StatusbarSet("Connection cancelled.");
+					StatusbarSet(_("Connection cancelled."));
 					return false;
 				}
 			}
@@ -201,7 +202,7 @@ bool BackupWindow::Connect(Thread *thread)
 			{
 				Gtk::MessageDialog msg(thread->BadPasswordError());
 				msg.run();
-				StatusbarSet("Cannot connect to " + thread->GetFullname() + ".");
+				StatusbarSet(_("Cannot connect to ") + thread->GetFullname() + ".");
 				return false;
 			}
 		}
@@ -216,27 +217,27 @@ bool BackupWindow::Connect(Thread *thread)
 			else {
 				Gtk::MessageDialog msg(thread->BadSizeError());
 				msg.run();
-				StatusbarSet("Cannot connect to " + thread->GetFullname() + ".");
+				StatusbarSet(_("Cannot connect to ") + thread->GetFullname() + ".");
 				return false;
 			}
 		}
 		else {
 			Gtk::MessageDialog msg(thread->LastInterfaceError());
 			msg.run();
-			StatusbarSet("Cannot connect to " + thread->GetFullname() + ".");
+			StatusbarSet(_("Cannot connect to ") + thread->GetFullname() + ".");
 			return false;
 		}
 	}
 	tries = 0;
-	StatusbarSet("Connected to " + thread->GetFullname() + ".");
+	StatusbarSet(_("Connected to ") + thread->GetFullname() + ".");
 	return true;
 }
 
 void BackupWindow::Disconnect(Thread *thread)
 {
 	if( thread->Working() ) {
-		Gtk::MessageDialog dialog(*this, thread->GetFullname() + " is working, "
-			"disconnecting from it may cause data corruption, are you sure to proceed?",
+		Gtk::MessageDialog dialog(*this, thread->GetFullname() + _(" is working, "
+			"disconnecting from it may cause data corruption, are you sure to proceed?"),
 			false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL);
 		if( dialog.run() == Gtk::RESPONSE_CANCEL )
 			return;
@@ -244,10 +245,10 @@ void BackupWindow::Disconnect(Thread *thread)
 
 	if( thread->Connected() ) {
 		thread->Disconnect();
-		StatusbarSet("Disconnected from " + thread->GetFullname() + ".");
+		StatusbarSet(_("Disconnected from ") + thread->GetFullname() + ".");
 	}
 	else {
-		StatusbarSet("Not connected.");
+		StatusbarSet(_("Not connected."));
 	}
 }
 
@@ -255,7 +256,7 @@ void BackupWindow::CheckDeviceName(Thread *thread)
 {
 	if( !thread->HasDeviceName() ) {
 		PromptDlg dlg;
-		dlg.SetPrompt("Unnamed device found (PIN: " + thread->GetPIN().str() + ").\r\nPlease enter a name for it:");
+		dlg.SetPrompt(_("Unnamed device found (PIN: ") + thread->GetPIN().str() + ").\r\n " + _("Please enter a name for it:"));
 		if( dlg.run() == Gtk::RESPONSE_OK ) {
 			thread->SetDeviceName(dlg.GetAnswer());
 		}
@@ -263,7 +264,7 @@ void BackupWindow::CheckDeviceName(Thread *thread)
 			thread->SetDeviceName(" ");
 		}
 		if( !thread->Save() ) {
-			Gtk::MessageDialog msg("Error saving config: " +
+			Gtk::MessageDialog msg(_("Error saving config: ") +
 				thread->LastConfigError());
 			msg.run();
 		}
@@ -305,9 +306,9 @@ bool BackupWindow::CheckWorking()
 	}
 
 	if( working ) {
-		Gtk::MessageDialog dialog(*this, "One or more devices are working, "
+		Gtk::MessageDialog dialog(*this, _("One or more devices are working, "
 			"disconnecting now may cause data corruption. "
-			"Proceed anyway?",
+			"Proceed anyway?"),
 			false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL);
 		if( dialog.run() != Gtk::RESPONSE_OK )
 			return false;
@@ -364,13 +365,13 @@ void BackupWindow::treeview_update()
 			std::string op;
 
 			if( thread->GetThreadState() & THREAD_STATE_BACKUP )
-				op = "Backup";
+				op = _("Backup on");
 			else if( thread->GetThreadState() & THREAD_STATE_RESTORE )
-				op = "Restore";
+				op = _("Restore on");
 			else
-				op = "Operation";
+				op = _("Operation on");
 
-			StatusbarSet(op + " on " + thread->GetFullname() + " finished!");
+			StatusbarSet(op + thread->GetFullname() + _(" finished!"));
 			if( (thread->GetThreadState() & THREAD_STATE_BACKUP) &&
 			     finished != total )
 			{
@@ -382,7 +383,9 @@ void BackupWindow::treeview_update()
 				// warn the user that not all data was
 				// included in the backup
 				std::ostringstream oss;
-				oss << "Warning\n\nNot all records were processed on device:" << thread->GetFullname() << "\n\nOnly " << finished << " of " << total << " records were backed up.\n\nIt is suspected that due to international characters in these records, the BlackBerry uses a different low-level protocol, which Barry Backup does not yet support.  Please contact the developers at http://netdirect.ca/barry if you want to assist in debugging this issue.";
+				oss << _("Warning\n\nNot all records were processed on device: ") << thread->GetFullname() 
+					<< _("\n\nOnly ") << finished << _(" of ") << total 
+					<< _(" records were backed up.\n\nIt is suspected that due to international characters in these records, the BlackBerry uses a different low-level protocol, which Barry Backup does not yet support. Please contact the developers at http://netdirect.ca/barry if you want to assist in debugging this issue.");
 				Gtk::MessageDialog msg(oss.str());
 				msg.run();
 			}
@@ -399,21 +402,21 @@ void BackupWindow::on_backup()
 
 	// already working?
 	if( thread->Working() ) {
-		Gtk::MessageDialog msg("Thread already in progress.");
+		Gtk::MessageDialog msg(_("Thread already in progress."));
 		msg.run();
 		return;
 	}
 
 	// make sure our target directory exists
 	if( !Barry::ConfigFile::CheckPath(thread->GetPath()) ) {
-		Gtk::MessageDialog msg("Could not create directory: " + thread->GetPath());
+		Gtk::MessageDialog msg(_("Could not create directory: ") + thread->GetPath());
 		msg.run();
 		return;
 	}
 
 	// anything to do?
 	if( thread->GetBackupList().size() == 0 ) {
-		Gtk::MessageDialog msg("No databases selected in configuration.");
+		Gtk::MessageDialog msg(_("No databases selected in configuration."));
 		msg.run();
 		return;
 	}
@@ -422,7 +425,7 @@ void BackupWindow::on_backup()
 	std::string backupLabel;
 	if( thread->PromptBackupLabel() ) {
 		PromptDlg dlg;
-		dlg.SetPrompt("Please enter a label for this backup (blank is ok):");
+		dlg.SetPrompt(_("Please enter a label for this backup (blank is ok):"));
 		if( dlg.run() == Gtk::RESPONSE_OK ) {
 			backupLabel = dlg.GetAnswer();
 		}
@@ -434,12 +437,12 @@ void BackupWindow::on_backup()
 
 	// start the thread
 	if( !thread->Backup(backupLabel) ) {
-		Gtk::MessageDialog msg("Error starting backup thread: " +
+		Gtk::MessageDialog msg(_("Error starting backup thread: ") +
 			thread->LastInterfaceError());
 		msg.run();
 	}
 	else {
-		StatusbarSet("Backup of " + thread->GetFullname() + " in progress...");
+		StatusbarSet(_("Backup of ") + thread->GetFullname() + _(" in progress..."));
 	}
 }
 
@@ -453,7 +456,7 @@ bool BackupWindow::PromptForRestoreTarball(std::string &restoreFilename,
 	// the dialog where we are
 	chdir(start_path.c_str());
 
-	Gtk::FileChooserDialog dlg(*this, "Select backup to restore from");
+	Gtk::FileChooserDialog dlg(*this, _("Select backup to restore from"));
 	dlg.add_button(Gtk::Stock::OK, Gtk::RESPONSE_OK);
 	dlg.add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
 	int result = dlg.run();
@@ -477,7 +480,7 @@ void BackupWindow::on_restore()
 
 	// already working?
 	if( thread->Working() ) {
-		Gtk::MessageDialog msg("Thread already in progress.");
+		Gtk::MessageDialog msg(_("Thread already in progress."));
 		msg.run();
 		return;
 	}
@@ -489,12 +492,12 @@ void BackupWindow::on_restore()
 	// start the thread
 	// if( !thread->RestoreAndBackup(restoreFilename) ) {
 	if( !thread->Restore(restoreFilename) ) {
-		Gtk::MessageDialog msg("Error starting restore thread: " +
+		Gtk::MessageDialog msg(_("Error starting restore thread: ") +
 			thread->LastInterfaceError());
 		msg.run();
 	}
 	else {
-		StatusbarSet("Restore of " + thread->GetFullname() + " in progress...");
+		StatusbarSet(_("Restore of ") + thread->GetFullname() + _(" in progress..."));
 	}
 }
 
@@ -538,10 +541,10 @@ void BackupWindow::on_config()
 		thread->SetBackupPath(dlg.GetBackupPath());
 		thread->SetPromptBackupLabel(dlg.GetPromptBackupLabel());
 		if( !thread->Save() )
-			StatusbarSet("Error saving config: " +
+			StatusbarSet(_("Error saving config: ") +
 				thread->LastConfigError());
 		else
-			StatusbarSet("Config saved successfully.");
+			StatusbarSet(_("Config saved successfully."));
 	}
 	thread->LoadConfig();
 }
@@ -579,8 +582,8 @@ void BackupWindow::on_help_about()
 
 	std::vector<std::string> authors;
 	authors.push_back("Chris Frey <cdfrey@foursquare.net>");
-	authors.push_back("and Barry contributors.  See AUTHORS file");
-	authors.push_back("for detailed contribution information.");
+	authors.push_back(_("and Barry contributors.  See AUTHORS file"));
+	authors.push_back(_("for detailed contribution information."));
 
 	dlg.set_authors(authors);
 
@@ -588,7 +591,7 @@ void BackupWindow::on_help_about()
 	const char *BarryVersion = Barry::Version(major, minor);
 	dlg.set_name("Barry Backup");
 	dlg.set_version("0.17");
-	dlg.set_comments(std::string("Using library: ") + BarryVersion);
+	dlg.set_comments(std::string(_("Using library: ")) + BarryVersion);
 	dlg.set_website("http://netdirect.ca/barry");
 	dlg.run();
 }

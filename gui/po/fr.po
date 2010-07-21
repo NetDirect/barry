@@ -7,10 +7,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: barry-backup 0.1\n"
 "Report-Msgid-Bugs-To: http://netdirect.ca/barry\n"
-"POT-Creation-Date: 2009-12-02 14:05+0100\n"
+"POT-Creation-Date: 2010-07-21 12:34+0200\n"
 "PO-Revision-Date: 2009-12-02 14:08+0100\n"
 "Last-Translator: Nicolas <nicolas@vivien.fr>\n"
 "Language-Team: French\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -38,13 +39,16 @@ msgstr "Nom du périphérique"
 
 #: src/ConfigDlg.glade:83
 msgid "Prompt for label on every backup."
-msgstr ""
+msgstr "Demander un nom lors de chaque sauvegarde."
 
 #: src/ConfigDlg.glade:102
 msgid ""
 "Database restore filter.  Only databases selected in this list will be "
 "restored, even if more exist in the backup."
 msgstr ""
+"Filtre des bases à données à restaurer. Seulement les bases de données "
+"sélectionnées dans cette liste seront restaurées, même si elles n'existent "
+"plus dans les données sauvegardées."
 
 #: src/ConfigDlg.glade:118
 msgid "Device database backup list:"
@@ -101,7 +105,7 @@ msgstr "Périphérique:"
 msgid "Backup"
 msgstr "Sauvegarder"
 
-#: src/BackupWindow.glade:124
+#: src/BackupWindow.glade:124 src/Thread.cc:177
 msgid "Restore..."
 msgstr "Restauration..."
 
@@ -165,9 +169,9 @@ msgstr "_Configuration..."
 msgid "Device PIN"
 msgstr "Code PIN"
 
-#: src/barry-gui.glade:627
+#: src/barry-gui.glade:627 src/BackupWindow.cc:83
 msgid "Progress"
-msgstr "Statut"
+msgstr "Avancement"
 
 #: src/barry-gui.glade:649
 msgid "Database"
@@ -186,3 +190,273 @@ msgid ""
 "Multiple BlackBerry devices have been found. Please select the one to work "
 "with:"
 msgstr "Plusieurs BlackBerry ont été trouvés. Veuillez en sélectionner un:"
+
+#: src/PasswordDlg.cc:41
+msgid "Please enter device password: ("
+msgstr "Veuillez saisir le mot de passe: ("
+
+#: src/PasswordDlg.cc:41
+msgid " tries remaining)"
+msgstr " essais restants)"
+
+#: src/BackupWindow.cc:79
+msgid "PIN"
+msgstr "PIN"
+
+#: src/BackupWindow.cc:80 src/DatabaseSelectDlg.cc:77
+msgid "Name"
+msgstr "Nom"
+
+#: src/BackupWindow.cc:81
+msgid "Status"
+msgstr "Statut"
+
+#: src/BackupWindow.cc:121 src/BackupWindow.cc:138
+msgid "Scanning for devices..."
+msgstr "Recherche des périphériques en cours..."
+
+#: src/BackupWindow.cc:147
+msgid "No devices."
+msgstr "Aucun périphérique."
+
+#: src/BackupWindow.cc:149
+msgid "1 device:"
+msgstr "1 périphérique:"
+
+#: src/BackupWindow.cc:153
+msgid " devices:"
+msgstr " périphériques:"
+
+#: src/BackupWindow.cc:169
+msgid "All devices loaded."
+msgstr "Détection des périphériques terminées."
+
+#: src/BackupWindow.cc:183
+msgid "Connecting to Device..."
+msgstr "Connexion au périphérique..."
+
+#: src/BackupWindow.cc:197
+msgid "Connection cancelled."
+msgstr "Connexion annuelée."
+
+#: src/BackupWindow.cc:205 src/BackupWindow.cc:220 src/BackupWindow.cc:227
+msgid "Cannot connect to "
+msgstr "Impossible de se connecter à "
+
+#: src/BackupWindow.cc:232
+msgid "Connected to "
+msgstr "Connecté à "
+
+#: src/BackupWindow.cc:239
+msgid ""
+" is working, disconnecting from it may cause data corruption, are you sure "
+"to proceed?"
+msgstr ""
+" est en cours d'utilisation, une déconnexion pourrait corrompre vos données, "
+"êtes-vous sûr de vouloir continuer?"
+
+#: src/BackupWindow.cc:248
+msgid "Disconnected from "
+msgstr "Déconnexion de "
+
+#: src/BackupWindow.cc:251
+msgid "Not connected."
+msgstr "Non connecté."
+
+#: src/BackupWindow.cc:259
+msgid "Unnamed device found (PIN: "
+msgstr "Périphérique inconnu trouvé (PIN: "
+
+#: src/BackupWindow.cc:259
+msgid "Please enter a name for it:"
+msgstr "Veuillez saisir un nom:"
+
+#: src/BackupWindow.cc:267 src/BackupWindow.cc:544
+msgid "Error saving config: "
+msgstr "Erreur lors de la sauvegarde de la configuration"
+
+#: src/BackupWindow.cc:309
+msgid ""
+"One or more devices are working, disconnecting now may cause data "
+"corruption. Proceed anyway?"
+msgstr ""
+"Un ou plusieurs périphériques sont en cours d'utilisation, une déconnexion "
+"pourrait corrompre vos données.Continuer?"
+
+#: src/BackupWindow.cc:368
+#, fuzzy
+msgid "Backup on"
+msgstr "Sauvegarde du "
+
+#: src/BackupWindow.cc:370
+#, fuzzy
+msgid "Restore on"
+msgstr "Restauration du "
+
+#: src/BackupWindow.cc:372
+#, fuzzy
+msgid "Operation on"
+msgstr "Opération sur "
+
+#: src/BackupWindow.cc:374
+msgid " finished!"
+msgstr " terminée!"
+
+#: src/BackupWindow.cc:386
+msgid ""
+"Warning\n"
+"\n"
+"Not all records were processed on device: "
+msgstr ""
+"Attention\n"
+"\n"
+"Toutes les données n'ont pu être traitées sur: "
+
+#: src/BackupWindow.cc:387
+msgid ""
+"\n"
+"\n"
+"Only "
+msgstr ""
+"\n"
+"\n"
+"Seulement "
+
+#: src/BackupWindow.cc:387
+msgid " of "
+msgstr " parmi "
+
+#: src/BackupWindow.cc:388
+msgid ""
+" records were backed up.\n"
+"\n"
+"It is suspected that due to international characters in these records, the "
+"BlackBerry uses a different low-level protocol, which Barry Backup does not "
+"yet support. Please contact the developers at http://netdirect.ca/barry if "
+"you want to assist in debugging this issue."
+msgstr ""
+" données ont été traitées.\n"
+"\n"
+"Cela peut être du au fait que ces données contiennent des caractères "
+"spéciaux, votre BlackBerry utilise différents protocols, qui ne sont pas "
+"encore tous supportés par Barry. Merci de contacter les développeurs à "
+"l'adresse http://netdirect.ca/barry si vous souhaitez aider à fixer ce "
+"problème."
+
+#: src/BackupWindow.cc:405 src/BackupWindow.cc:483
+msgid "Thread already in progress."
+msgstr "Traitement déjà en cours."
+
+#: src/BackupWindow.cc:412
+msgid "Could not create directory: "
+msgstr "Impossible de créer le dossier: "
+
+#: src/BackupWindow.cc:419
+msgid "No databases selected in configuration."
+msgstr "Aucune base de données n'a été sélectionnée."
+
+#: src/BackupWindow.cc:428
+msgid "Please enter a label for this backup (blank is ok):"
+msgstr "Veuillez saisir un nom pour cette sauvegarde (vide est accepté):"
+
+#: src/BackupWindow.cc:440
+msgid "Error starting backup thread: "
+msgstr "Erreur lors du lancement de la sauvegarde: "
+
+#: src/BackupWindow.cc:445
+msgid "Backup of "
+msgstr "Sauvegarde du "
+
+#: src/BackupWindow.cc:445 src/BackupWindow.cc:500
+msgid " in progress..."
+msgstr " en cours..."
+
+#: src/BackupWindow.cc:459
+msgid "Select backup to restore from"
+msgstr "Sélectionner la sauvegarde en restaurer"
+
+#: src/BackupWindow.cc:495
+msgid "Error starting restore thread: "
+msgstr "Erreur lors du lancement de la restauration: "
+
+#: src/BackupWindow.cc:500
+msgid "Restore of "
+msgstr "Restauration du "
+
+#: src/BackupWindow.cc:547
+msgid "Config saved successfully."
+msgstr "Configuration enregistrée avec succès."
+
+#: src/BackupWindow.cc:585
+msgid "and Barry contributors.  See AUTHORS file"
+msgstr "et les contributeurs du projet Barry. Voir le fichier AUTHORS"
+
+#: src/BackupWindow.cc:586
+msgid "for detailed contribution information."
+msgstr "pour davantage d'informations."
+
+#: src/BackupWindow.cc:594
+msgid "Using library: "
+msgstr "Librairie utilisée: "
+
+#: src/DeviceIface.cc:85 src/DeviceIface.cc:144 src/DeviceIface.cc:206
+msgid "Terminated by user."
+msgstr "Interrompu par l'utilisateur."
+
+#: src/DeviceIface.cc:119 src/DeviceIface.cc:177
+msgid "Error while restoring "
+msgstr "Erreur pendant la restauration "
+
+#: src/DeviceIface.cc:122 src/DeviceIface.cc:180
+msgid "  Will continue processing."
+msgstr " Poursuite du traitement."
+
+#: src/DeviceIface.cc:128 src/DeviceIface.cc:186
+#, fuzzy
+msgid "Error on database: "
+msgstr " Erreur concernant la base de données: "
+
+#: src/DeviceIface.cc:411 src/DeviceIface.cc:435 src/DeviceIface.cc:469
+#, fuzzy
+msgid "Thread already running."
+msgstr "Traitement déjà en cours."
+
+#: src/DeviceIface.cc:518
+msgid "No unique ID available!"
+msgstr "Pas d'ID unique disponible!"
+
+#: src/DeviceIface.cc:574
+msgid "Skipping invalid tar record: "
+msgstr "Ignore les entrées invalides de l'archive: "
+
+#: src/DeviceIface.cc:640
+msgid "Skipping: "
+msgstr "Ignore: "
+
+#: src/DatabaseSelectDlg.cc:76
+msgid "Active"
+msgstr "Actif"
+
+#: src/Thread.cc:56 src/Thread.cc:124
+msgid "Ready"
+msgstr "Prêt"
+
+#: src/Thread.cc:100 src/Thread.cc:115 src/Thread.cc:223
+msgid "Connected"
+msgstr "Connecté"
+
+#: src/Thread.cc:154
+msgid "Backup..."
+msgstr "Sauvegarde..."
+
+#: src/Thread.cc:216
+msgid " error: "
+msgstr " erreur: "
+
+#: src/Thread.cc:233
+msgid "Erasing database: "
+msgstr "Suppression de la base de données: "
+
+#: src/Thread.cc:239
+msgid "Restored database: "
+msgstr "Base de données restaurée: "

@@ -21,6 +21,7 @@
 
 #include "DeviceIface.h"
 #include "util.h"
+#include "i18n.h"
 #include <glibmm.h>
 #include <iostream>
 #include <iomanip>
@@ -81,7 +82,7 @@ void DeviceInterface::BackupThread()
 		error = true;
 	}
 	catch( Quit &q ) {
-		m_last_thread_error = "Terminated by user.";
+		m_last_thread_error = _("Terminated by user.");
 	}
 
 	m_tarback->Close();
@@ -115,16 +116,16 @@ void DeviceInterface::RestoreThread()
 			}
 			catch( Barry::Error &be ) {
 				// save thread error
-				m_last_thread_error = "Error while restoring ";
+				m_last_thread_error = _("Error while restoring ");
 				m_last_thread_error += m_current_dbname + ".  ";
 				m_last_thread_error += be.what();
-				m_last_thread_error += "  Will continue processing.";
+				m_last_thread_error += _("  Will continue processing.");
 
 				// notify host thread
 				m_AppComm.m_error->emit();
 
 				// skip over records from this db
-				std::cerr << "Error on database: "
+				std::cerr << _("Error on database: ")
 					<< m_current_dbname << std::endl;
 				SkipCurrentDB();
 			}
@@ -140,7 +141,7 @@ void DeviceInterface::RestoreThread()
 		m_AppComm.m_error->emit();
 	}
 	catch( Quit &q ) {
-		m_last_thread_error = "Terminated by user.";
+		m_last_thread_error = _("Terminated by user.");
 	}
 
 	m_tar->Close();
@@ -173,16 +174,16 @@ void DeviceInterface::RestoreAndBackupThread()
 			}
 			catch( Barry::Error &be ) {
 				// save thread error
-				m_last_thread_error = "Error while restoring ";
+				m_last_thread_error = _("Error while restoring ");
 				m_last_thread_error += m_current_dbname + ".  ";
 				m_last_thread_error += be.what();
-				m_last_thread_error += "  Will continue processing.";
+				m_last_thread_error += _("  Will continue processing.");
 
 				// notify host thread
 				m_AppComm.m_error->emit();
 
 				// skip over records from this db
-				std::cerr << "Error on database: "
+				std::cerr << _("Error on database: ")
 					<< m_current_dbname << std::endl;
 				SkipCurrentDB();
 			}
@@ -202,7 +203,7 @@ void DeviceInterface::RestoreAndBackupThread()
 		m_AppComm.m_error->emit();
 	}
 	catch( Quit &q ) {
-		m_last_thread_error = "Terminated by user.";
+		m_last_thread_error = _("Terminated by user.");
 	}
 
 	m_tar->Close();
@@ -407,7 +408,7 @@ bool DeviceInterface::StartBackup(AppComm comm,
 				  const std::string &backupLabel)
 {
 	if( m_AppComm.IsValid() )
-		return False("Thread already running.");
+		return False(_("Thread already running."));
 
 	try {
 		std::string filename = directory + "/" + MakeFilename(backupLabel);
@@ -431,7 +432,7 @@ bool DeviceInterface::StartRestore(AppComm comm,
 				   const std::string &filename)
 {
 	if( m_AppComm.IsValid() )
-		return False("Thread already running.");
+		return False(_("Thread already running."));
 
 	try {
 		// open for the main restore
@@ -465,7 +466,7 @@ bool DeviceInterface::StartRestoreAndBackup(AppComm comm,
 				const std::string &directory)
 {
 	if( m_AppComm.IsValid() )
-		return False("Thread already running.");
+		return False(_("Thread already running."));
 
 	try {
 		// open for the main restore
@@ -514,7 +515,7 @@ void DeviceInterface::SetIds(uint8_t RecType, uint32_t UniqueId)
 	oss << std::hex << m_unique_id << " " << (unsigned int)m_rec_type;
 	m_tar_id_text = oss.str();
 	if( m_tar_id_text.size() == 0 )
-		throw std::runtime_error("No unique ID available!");
+		throw std::runtime_error(_("No unique ID available!"));
 }
 
 void DeviceInterface::ParseHeader(const Barry::Data &data, size_t &offset)
@@ -570,7 +571,7 @@ bool DeviceInterface::Retrieve(unsigned int dbId)
 		std::string dbname;
 		if( !SplitTarPath(filename, dbname, m_tar_id_text, m_rec_type, m_unique_id) ) {
 			// invalid filename, skip it
-			std::cerr << "Skipping invalid tar record: " << filename << std::endl;
+			std::cerr << _("Skipping invalid tar record: ") << filename << std::endl;
 			continue;
 		}
 
@@ -636,7 +637,7 @@ void DeviceInterface::SkipCurrentDB() throw()
 	// skip all records until next DB
 	try {
 		while( Retrieve(0) ) {
-			std::cerr << "Skipping: "
+			std::cerr << _("Skipping: ")
 				<< m_current_dbname << "/"
 				<< m_tar_id_text << std::endl;
 			m_tar_record_loaded = false;

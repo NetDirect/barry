@@ -21,6 +21,7 @@
 
 #include "DatabaseSelectDlg.h"
 #include "util.h"
+#include "i18n.h"
 #include <barry/barry.h>
 #include <sstream>
 
@@ -72,8 +73,8 @@ void DatabaseSelectDlg::LoadTree(const Barry::DatabaseDatabase &dbdb)
 		(*row)[m_Columns.m_name] = i->Name;
 	}
 	m_pTree->set_model(m_pListStore);
-	m_pTree->append_column_editable("Active", m_Columns.m_selected);
-	m_pTree->append_column("Name", m_Columns.m_name);
+	m_pTree->append_column_editable(_("Active"), m_Columns.m_selected);
+	m_pTree->append_column(_("Name"), m_Columns.m_name);
 }
 
 bool DatabaseSelectDlg::IsSelected(const std::string &dbname)

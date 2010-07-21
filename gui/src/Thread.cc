@@ -22,6 +22,7 @@
 
 #include "Thread.h"
 #include "util.h"
+#include "i18n.h"
 
 void Thread::SetStatus(std::string mode)
 {
@@ -52,7 +53,7 @@ Thread::Thread(Device dev, Glib::Dispatcher *update_signal)
 	m_signal_restored_db.connect(
 		sigc::mem_fun(*this, &Thread::on_thread_restored_db));
 
-	SetStatus("Ready");
+	SetStatus(_("Ready"));
 }
 
 void Thread::LoadConfig()
@@ -96,7 +97,7 @@ bool Thread::Connect()
 		bad_size = true;
 		return (m_connected = false);
 	}
-	SetStatus("Connected");
+	SetStatus(_("Connected"));
 	return (m_connected = true);
 }
 
@@ -111,7 +112,7 @@ bool Thread::Connect(const std::string &password)
 		bad_password_error = bp.what();
 		return (m_connected = false);
 	}
-	SetStatus("Connected");
+	SetStatus(_("Connected"));
 	return (m_connected = true);
 }
 
@@ -120,7 +121,7 @@ void Thread::Disconnect()
 	if( m_connected )
 	{
 		m_interface.Disconnect();
-		SetStatus("Ready");
+		SetStatus(_("Ready"));
 		m_connected = false;
 	}
 }
@@ -150,7 +151,7 @@ bool Thread::Backup(std::string label)
 		GetBackupList(), GetPath(), label);
 	if( started ) {
 		m_thread_state = THREAD_STATE_BACKUP;
-		SetStatus("Backup");
+		SetStatus(_("Backup..."));
 	}
 	return started;
 }
@@ -173,7 +174,7 @@ bool Thread::Restore(std::string filename)
 		GetRestoreList(), filename);
 	if( started ) {
 		m_thread_state = THREAD_STATE_RESTORE;
-		SetStatus("Restore");
+		SetStatus(_("Restore..."));
 	}
 	return started;
 }
@@ -212,14 +213,14 @@ void Thread::on_thread_error()
 	m_error = true;
 	m_thread_state |= THREAD_STATE_IDLE;
 
-	Gtk::MessageDialog msg(m_status + " error: " + m_interface.get_last_thread_error());
+	Gtk::MessageDialog msg(m_status + _(" error: ") + m_interface.get_last_thread_error());
 	msg.run();
 }
 
 void Thread::on_thread_done()
 {
 	if( m_active )
-		SetStatus("Connected");
+		SetStatus(_("Connected"));
 	else
 		Disconnect();
 	m_thread_state |= THREAD_STATE_IDLE;
@@ -229,13 +230,13 @@ void Thread::on_thread_done()
 void Thread::on_thread_erase_db()
 {
 	m_erasing_db_name = m_interface.GetThreadDBName();
-	std::cerr << "Erasing database: " << m_erasing_db_name << std::endl;
+	std::cerr << _("Erasing database: ") << m_erasing_db_name << std::endl;
 }
 
 void Thread::on_thread_restored_db()
 {
 	if( m_erasing_db_name.size() ) {
-		std::cerr << "Restored database: " << m_erasing_db_name << std::endl;
+		std::cerr << _("Restored database: ") << m_erasing_db_name << std::endl;
 		m_erasing_db_name.clear();
 	}
 }

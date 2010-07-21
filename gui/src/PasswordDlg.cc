@@ -21,6 +21,7 @@
 
 #include "PasswordDlg.h"
 #include "util.h"
+#include "i18n.h"
 #include <sstream>
 
 PasswordDlg::PasswordDlg(int remaining_tries)
@@ -37,7 +38,7 @@ PasswordDlg::PasswordDlg(int remaining_tries)
 	xml->get_widget("password_entry", m_pPasswordEntry);
 
 	std::ostringstream oss;
-	oss << "Please enter device password: (" << remaining_tries << " tries remaining)";
+	oss << _("Please enter device password: (") << remaining_tries << _(" tries remaining)");
 	m_pPromptLabel->set_text(oss.str());
 }
 
