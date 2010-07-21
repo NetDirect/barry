@@ -38,6 +38,8 @@ btool_SOURCES = btool.cc
 btool_LDADD = ../src/libbarry.la ../src/libbarrysync.la $(LIBUSB_LIBS) $(GLIB2_LIBS) -lpthread @BOOST_LDADD@
 if WITH_BOOST
 btool_CXXFLAGS = -D__BARRY_BOOST_MODE__ -D_REENTRANT @BOOST_INC_PATH@ $(GLIB2_CFLAGS) $(AM_CXXFLAGS)
+else
+btool_CXXFLAGS = $(GLIB2_CFLAGS) 
 endif
 btool_LDFLAGS = @BOOST_LIB_PATH@
 
