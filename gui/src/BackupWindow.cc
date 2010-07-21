@@ -383,8 +383,8 @@ void BackupWindow::treeview_update()
 				// warn the user that not all data was
 				// included in the backup
 				std::ostringstream oss;
-				oss << _("Warning\n\nNot all records were processed on device: ") << thread->GetFullname() 
-					<< _("\n\nOnly ") << finished << _(" of ") << total 
+				oss << _("Warning\n\nNot all records were processed on device: ") << thread->GetFullname()
+					<< _("\n\nOnly ") << finished << _(" of ") << total
 					<< _(" records were backed up.\n\nIt is suspected that due to international characters in these records, the BlackBerry uses a different low-level protocol, which Barry Backup does not yet support. Please contact the developers at http://netdirect.ca/barry if you want to assist in debugging this issue.");
 				Gtk::MessageDialog msg(oss.str());
 				msg.run();
