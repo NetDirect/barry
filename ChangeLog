@@ -1,5 +1,7 @@
 Release: version 0.17 - 2010/01/??
 ------------------------------------------------------------------------------
+2010/07/21
+	- applied Nicolas Vivien's compile fix and French translation patches
 2010/07/20
 	- sync: added 1 second wait during Reconnect() to let firmware settle
 		This seems to help prevent the firmware hang fixed yesterday,
