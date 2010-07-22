@@ -119,7 +119,7 @@ echo "Individual package build test..."
 rm -rf "$BASEPATH/build/rootdir"
 
 export CXXFLAGS="-Wall -Werror -O0 -g"
-./configure --prefix="$BASEPATH/build/rootdir"
+./configure --prefix="$BASEPATH/build/rootdir" --disable-boost
 make $MAKEOPTS
 make distclean
 ./configure --prefix="$BASEPATH/build/rootdir" --enable-boost --with-zlib
