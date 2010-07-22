@@ -77,6 +77,12 @@ else
 	#autoreconf -if --include=config
 	#autoreconf -ifv --include=config
 
+	# Autogenerate the gettext PO support files
+	# Do this for ./ and gui/ and then zap the gui/m4 directory
+	autopoint
+	(cd gui && autopoint)
+	rm -rf gui/m4
+
 	# If we let autoreconf do this, it will run libtoolize after
 	# creating some or all of the configure files.  For example,
 	# it might copy files into ../m4 again while processing the
