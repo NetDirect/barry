@@ -46,9 +46,8 @@ msgid ""
 "Database restore filter.  Only databases selected in this list will be "
 "restored, even if more exist in the backup."
 msgstr ""
-"Filtre des bases à données à restaurer. Seulement les bases de données "
-"sélectionnées dans cette liste seront restaurées, même si elles n'existent "
-"plus dans les données sauvegardées."
+"Filtre des bases de données à restaurer. Si la sauvegarde contient plusieurs "
+"bases, seules celles sélectionnées seront restaurées."
 
 #: src/ConfigDlg.glade:118
 msgid "Device database backup list:"
@@ -229,7 +228,7 @@ msgstr " périphériques:"
 
 #: src/BackupWindow.cc:169
 msgid "All devices loaded."
-msgstr "Détection des périphériques terminées."
+msgstr "Détection des périphériques terminée."
 
 #: src/BackupWindow.cc:183
 msgid "Connecting to Device..."
@@ -237,7 +236,7 @@ msgstr "Connexion au périphérique..."
 
 #: src/BackupWindow.cc:197
 msgid "Connection cancelled."
-msgstr "Connexion annuelée."
+msgstr "Connexion annulée."
 
 #: src/BackupWindow.cc:205 src/BackupWindow.cc:220 src/BackupWindow.cc:227
 msgid "Cannot connect to "
@@ -338,7 +337,7 @@ msgstr ""
 " données ont été traitées.\n"
 "\n"
 "Cela peut être du au fait que ces données contiennent des caractères "
-"spéciaux, votre BlackBerry utilise différents protocols, qui ne sont pas "
+"spéciaux, votre BlackBerry utilise différents protocoles, qui ne sont pas "
 "encore tous supportés par Barry. Merci de contacter les développeurs à "
 "l'adresse http://netdirect.ca/barry si vous souhaitez aider à fixer ce "
 "problème."
