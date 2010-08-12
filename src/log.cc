@@ -64,16 +64,29 @@ void BarryLogf(int verbose, const char *msg, ...)
 	va_list vl;
 	va_start(vl, msg);
 	char buffer[2048];
-	int n = vsnprintf(buffer, sizeof(buffer), msg, vl);
+	char *output = buffer;
+	int buflen = sizeof(buffer);
+	int n = vsnprintf(buffer, buflen, msg, vl);
+	if( n < 0 || n >= buflen ) {
+		buflen = n + 100;
+		output = new char [buflen];
+		n = vsnprintf(output, buflen, msg, vl);
+		if( n < 0 || n >= buflen ) {
+			delete [] output;
+			output = buffer;
+			strcpy(buffer, "BarryLog: (trace error, output too long for buffer)");
+		}
+	}
 	va_end(vl);
-	if( n > -1 && n < (int)sizeof(buffer) )
-		strcpy(buffer, "BarryLog: (trace error, output too long for buffer)");
 
 	if( verbose ) {
-		barryverbose(buffer);
+		barryverbose(output);
 	}
 	else {
-		barrylog(buffer);
+		barrylog(output);
 	}
+
+	if( output != buffer )
+		delete [] output;
 }
 

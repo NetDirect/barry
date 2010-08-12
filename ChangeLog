@@ -12,6 +12,9 @@ Release: version 0.17 - 2010/01/??
 	- lib: added better ISO timestamp support... Now handles timestamps
 		with dashes and colons, including timestamps with their
 		own timezone offsets
+	- lib: fixed vsnprintf() error check bug in log.cc... and added
+		code to allocate memory if message is too long for
+		static buffer
 2010/07/29
 	- applied patch from Martin Owens fixing version dependencies in
 		debian binary packages
