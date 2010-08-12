@@ -13,6 +13,9 @@
 #include "tzwrapper.h"
 #include <string.h>
 #include <stdio.h>
+#include <string>
+
+using namespace std;
 
 namespace Barry { namespace Sync {
 
@@ -60,23 +63,64 @@ time_t utc_mktime(struct tm *utctime)
 
 struct tm* iso_to_tm(const char *timestamp,
 			struct tm *result,
-			bool &utc)
+			bool &utc,
+			bool *zone,
+			int *zoneminutes)
 {
 	memset(result, 0, sizeof(struct tm));
-	char zflag = 0;
 
-	int found = sscanf(timestamp, "%04d%02d%02dT%02d%02d%02d%c",
+	// handle YYYY-MM-DDTHH:MM:SS.uuu-HH:MM format
+	// by stripping out the dashes and colons
+	string ts = timestamp;
+	string::iterator i = ts.begin();
+	bool date = true;
+	while( i != ts.end() ) {
+		if( *i == 'T' )
+			date = false;
+		if( (date && *i == '-') || *i == ':' )
+			ts.erase(i);
+		else
+			++i;
+	}
+
+	int found = sscanf(ts.c_str(), "%04d%02d%02dT%02d%02d%02d",
 		&(result->tm_year), &(result->tm_mon), &(result->tm_mday),
-		&(result->tm_hour), &(result->tm_min), &(result->tm_sec),
-		&zflag);
+		&(result->tm_hour), &(result->tm_min), &(result->tm_sec));
 
 	result->tm_year -= 1900;
 	result->tm_mon -= 1;
 	result->tm_isdst = -1;
+	if( found != 6 ) {
+		return 0;
+	}
 
-	utc = (found == 7 && zflag == 'Z');
+	utc = ts.find('Z', 15) != string::npos;
 
-	return (found >= 6) ? result : 0;
+	if( zone && zoneminutes ) {
+		*zone = false;
+
+		size_t neg = ts.find('-', 15);
+		size_t pos = ts.find('+', 15);
+
+		if( neg != string::npos || pos != string::npos ) {
+			// capture timezone offset
+			size_t it = neg != string::npos ? neg : pos;
+			it++;
+			string offset = ts.substr(it);
+
+			int hour, min;
+			found = sscanf(offset.c_str(), "%02d%02d",
+				&hour, &min);
+			if( found == 2 ) {
+				*zone = true;
+				*zoneminutes = hour * 60 + min;
+				if( neg != string::npos )
+					*zoneminutes *= -1;
+			}
+		}
+	}
+
+	return result;
 }
 
 std::string tm_to_iso(const struct tm *t, bool utc)
@@ -104,15 +148,47 @@ std::string tm_to_iso(const struct tm *t, bool utc)
 	return tmp;
 }
 
+TzWrapper& TzWrapper::SetOffset(int zoneminutes)
+{
+	//
+	// Set a custom TZ with the offset in hours/minutes.
+	//
+	// Note that TZ sees negative offsets as *ahead* of
+	// UTC and positive offsets as behind UTC.  Therefore,
+	// Berlin, one hour ahead of UTC is -01:00 and
+	// Canada/Eastern standard time is +05:00.
+	//
+	// This is exactly opposite to the ISO timestamp format
+	// which would have +01:00 and -05:00 respectively,
+	// and therefore exactly opposite to the sign of zoneminutes.
+	//
+	// We use a fake timezone name of XXX here, since it
+	// doesn't matter, we are only interested in the offset.
+
+	char buf[128];
+	sprintf(buf, "XXX%c%02d:%02d",
+		(zoneminutes < 0 ? '+' : '-'),
+		abs(zoneminutes) / 60,
+		abs(zoneminutes) % 60
+		);
+	return Set(buf);
+}
+
 time_t TzWrapper::iso_mktime(const char *timestamp)
 {
-	bool utc;
+	bool utc, zone;
 	struct tm t;
-	if( !iso_to_tm(timestamp, &t, utc) )
+	int zoneminutes;
+	if( !iso_to_tm(timestamp, &t, utc, &zone, &zoneminutes) )
 		return (time_t)-1;
+
 	TzWrapper tzw;
-	if( utc )
+	if( utc ) {
 		tzw.SetUTC();
+	}
+	else if( zone ) {
+		tzw.SetOffset(zoneminutes);
+	}
 	return tzw.mktime(&t);
 }
 
@@ -151,6 +227,31 @@ int main()
 	time_t t2 = TzWrapper::iso_mktime(iso2);
 	cout << " " << iso1 << ": (" << t1 << ") " << ctime(&t1);
 	cout        << iso2 << ": (" << t2 << ") " << ctime(&t2);
+	if( t1 == t2 )
+		cout << "t1 == t2: passed" << endl;
+	else
+		cout << "t1 != t2: ERROR" << endl;
+
+	time_t t3 = TzWrapper::iso_mktime("2010-05-01T03:15:00.000Z");
+	cout << ctime(&t3);
+	if( t2 == t3 )
+		cout << "t2 == t3: passed" << endl;
+	else
+		cout << "t2 != t3: ERROR" << endl;
+
+	time_t t4 = TzWrapper::iso_mktime("2010-05-01T04:15:00.000+01:00");
+	cout << ctime(&t4);
+	if( t3 == t4 )
+		cout << "t3 == t4: passed" << endl;
+	else
+		cout << "t3 != t4: ERROR" << endl;
+
+	time_t t5 = TzWrapper::iso_mktime("2010-05-01T00:15:00.000-03:00");
+	cout << ctime(&t5);
+	if( t4 == t5 )
+		cout << "t4 == t5: passed" << endl;
+	else
+		cout << "t4 != t5: ERROR: t4: " << t4 << " t5: " << t5  << endl;
 
 	if( TzWrapper::iso_mktime("20100430") == (time_t)-1 )
 		cout << "Fail check: passed" << endl;
@@ -158,6 +259,23 @@ int main()
 		cout << "Fail check: ERROR" << endl;
 
 	cout << "t1: " << tm_to_iso(gmtime(&t1), true) << endl;
+
+	bool utc, zone;
+	int zoneminutes;
+	struct tm zonetest;
+	if( !iso_to_tm("2010-05-01T04:15:00.000-", &zonetest, utc, &zone, &zoneminutes) )
+		cout << "iso_to_tm failed wrongly: ERROR" << endl;
+	if( zone )
+		cout << "zone true?: ERROR" << endl;
+	else
+		cout << "zone fail check: passed" << endl;
+
+	if( !iso_to_tm("2010-05-01T04:15:00.000-010", &zonetest, utc, &zone, &zoneminutes) )
+		cout << "iso_to_tm failed wrongly: ERROR" << endl;
+	if( zone )
+		cout << "zone true?: ERROR" << endl;
+	else
+		cout << "zone fail check2: passed" << endl;
 }
-#endif
+#endif 
 

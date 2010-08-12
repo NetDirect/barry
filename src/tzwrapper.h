@@ -20,14 +20,20 @@
 namespace Barry { namespace Sync {
 
 /// Parses ISO timestamp in the format of YYYYMMDDTHHMMSS[Z]
+/// or YYYY-MM-DDTHH:MM:SS.uuu-HH:MM
 /// and places broken down time in result.
 /// The trailing Z is optional in the format.
 /// If the Z exists, utc will be set to true, otherwise false.
+/// If zoneminutes is not null, and if a timezone offset is
+/// specified, it will be filled in and *zone set to true.
+/// Otherwise, *zone will be set to false.
 /// Returns NULL on error.
 /// Thread-safe.
 BXEXPORT struct tm* iso_to_tm(const char *timestamp,
 				struct tm *result,
-				bool &utc);
+				bool &utc,
+				bool *zone = 0,
+				int *zoneminutes = 0);
 
 /// Turns the struct tm into an ISO timestamp in the format
 /// of YYYYMMDDTHHMMSS[Z].  The Z is appended if utc is true.
@@ -164,6 +170,11 @@ public:
 	{
 		return Set("");
 	}
+
+	/// Set timezone via offset in minutes
+	/// Negative minutes goes west, positive goes east
+	/// i.e. -05:00 is EST
+	TzWrapper& SetOffset(int zoneminutes);
 
 	/// Use system localtime.  This overrides any TZ value that the
 	/// user may have set before running your program.

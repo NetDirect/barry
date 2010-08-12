@@ -8,6 +8,10 @@ Release: version 0.17 - 2010/01/??
 		that have separate libraries for these features, such as
 		the Mac
 	- buildgen.sh calls libtoolize and glibtoolize now (Mac support)
+2010/08/12
+	- lib: added better ISO timestamp support... Now handles timestamps
+		with dashes and colons, including timestamps with their
+		own timezone offsets
 2010/07/29
 	- applied patch from Martin Owens fixing version dependencies in
 		debian binary packages
