@@ -133,7 +133,7 @@ int main(int argc, char *argv[])
 
 	// process command line options
 	for(;;) {
-		int cmd = getopt(argc, argv, "hsp:P:v");
+		int cmd = getopt(argc, argv, "hp:P:v");
 		if( cmd == -1 )
 			break;
 
