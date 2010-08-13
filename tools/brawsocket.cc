@@ -97,7 +97,6 @@ void Usage()
    << "        Using: " << Version << "\n"
    << "\n"
    << "   -h        This help\n"
-   << "   -s        List sibling in module list\n"
    << "   -p pin    PIN of device to talk with\n"
    << "             If only one device is plugged in, this flag is optional\n"
    << "   -P pass   Simplistic method to specify device password\n"
@@ -146,10 +145,6 @@ int main(int argc, char *argv[])
 
 		case 'P':	// Device password
 			password = optarg;
-			break;
-
-		case 's':	// turn on listing of sibling modules
-			list_siblings = true;
 			break;
 
 		case 'v':	// data dump on
