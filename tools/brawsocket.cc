@@ -1,5 +1,5 @@
 ///
-/// \file	bvncrelay.cc
+/// \file	brawsocket.cc
 ///
 ///
 
@@ -41,31 +41,37 @@
 using namespace std;
 using namespace Barry;
 
-class TCPWriter : public Barry::Mode::VNCServerDataCallback
+class TCPWriter : public Barry::Mode::RawSocketDataCallback
 {
 public:
-    TCPWriter(int socket, bool& keepGoing)
+  TCPWriter(int socket, bool& keepGoing, bool verbose)
+    : m_cfd(socket)
+    , m_continuePtr(&keepGoing)
+    , m_verbose(verbose)
     {
-        cfd = socket;
-        continuePtr = &keepGoing;
     }
+
     
     void DataReceived(Data& data)
     {
-        std::cerr << "From BB: ";
-        data.DumpHex(std::cerr);
-        std::cerr << "\n";
+      if (m_verbose)
+	{
+	  std::cerr << "From BB: ";
+	  data.DumpHex(std::cerr);
+	  std::cerr << "\n";
+	}
 
         size_t toWrite = data.GetSize();
         size_t written = 0;
 
         while (written < toWrite)
         {
-            ssize_t writtenThisTime = write(cfd, &(data.GetData()[written]), toWrite - written);
-            cerr << "Written " << writtenThisTime << " bytes over TCP\n";
+            ssize_t writtenThisTime = write(m_cfd, &(data.GetData()[written]), toWrite - written);
+	    if (m_verbose)
+	        cerr << "Written " << writtenThisTime << " bytes over TCP\n";
             if (writtenThisTime < 0)
             {
-                *continuePtr = false;
+                *m_continuePtr = false;
             }
             else
             {
@@ -75,8 +81,9 @@ public:
     }
 
 private:
-    bool* continuePtr;
-    int cfd;
+    int m_cfd;
+    bool* m_continuePtr;
+    bool m_verbose;
 };
 
 void Usage()
@@ -85,7 +92,7 @@ void Usage()
    const char *Version = Barry::Version(major, minor);
 
    cerr
-   << "bvncrelay - Command line USB Blackberry VNC Relay\n"
+   << "brawsocket - Command line USB Blackberry raw socket interface\n"
    << "        Copyright 2010, RealVNC Ltd.\n"
    << "        Using: " << Version << "\n"
    << "\n"
@@ -96,6 +103,8 @@ void Usage()
    << "   -P pass   Simplistic method to specify device password\n"
    << "   -v        Dump protocol data during operation\n"
    << "\n"
+   << "Usage:\n"
+   << "brawsocket [options] <socket name>\n"
    << endl;
 }
 
@@ -113,80 +122,79 @@ int main(int argc, char *argv[])
 					// stdio for debug messages
 
 	try {
+	uint32_t pin = 0;
+	bool list_siblings = false,
+	     data_dump = false;
+	string password;
+	vector<string> params;
+	string busname;
+	string devname;
+	string iconvCharset;
+	Usb::EndpointPair epOverride;
 
-		uint32_t pin = 0;
-		bool list_siblings = false,
-			data_dump = false;
-		string password;
-		vector<string> params;
-		string busname;
-		string devname;
-		string iconvCharset;
-		Usb::EndpointPair epOverride;
+	// process command line options
+	for(;;) {
+		int cmd = getopt(argc, argv, "hsp:P:v");
+		if( cmd == -1 )
+			break;
 
-		// process command line options
-		for(;;) {
-			int cmd = getopt(argc, argv, "hsp:P:v");
-			if( cmd == -1 )
-				break;
+		switch( cmd )
+		{
+	        case 'p':	// Blackberry PIN
+			pin = strtoul(optarg, NULL, 16);
+			break;
 
-			switch( cmd )
-			{
-			case 'p':	// Blackberry PIN
-				pin = strtoul(optarg, NULL, 16);
-				break;
+		case 'P':	// Device password
+			password = optarg;
+			break;
 
-			case 'P':	// Device password
-				password = optarg;
-				break;
+		case 's':	// turn on listing of sibling modules
+			list_siblings = true;
+			break;
 
-			case 's':	// turn on listing of sibling modules
-				list_siblings = true;
-				break;
+		case 'v':	// data dump on
+			data_dump = true;
+			break;
 
-			case 'v':	// data dump on
-				data_dump = true;
-				break;
-
-			case 'h':	// help
-			default:
-				Usage();
-				return 0;
-			}
-		}
-
-		argc -= optind;
-		argv += optind;
-
-		if( argc < 1 ) {
-			cerr << "missing command" << endl;
+		case 'h':	// help
+		default:
 			Usage();
-			return 1;
+			return 0;
 		}
+	}
 
-		// Fetch command from remaining arguments
-		string cmd = argv[0];
-		argc --;
-		argv ++;
+	argc -= optind;
+	argv += optind;
 
-		// Put the remaining arguments into an array
-		for (; argc > 0; argc --, argv ++) {
-			params.push_back(string(argv[0]));
-		}
+	if( argc < 1 ) {
+		cerr << "Error: Missing raw socket name." << endl;
+		Usage();
+		return 1;
+	}
 
-		// Initialize the barry library.  Must be called before
-		// anything else.
-		Barry::Init(data_dump);
+	// Fetch command from remaining arguments
+	string socketName = argv[0];
+	argc --;
+	argv ++;
 
-		// Probe the USB bus for Blackberry devices and display.
-		// If user has specified a PIN, search for it in the
-		// available device list here as well
-		Barry::Probe probe;
-		int activeDevice = probe.FindActive(pin);
-		if( activeDevice == -1 ) {
-			cerr << "No device selected, or PIN not found" << endl;
-			return 1;
-		}
+	// Put the remaining arguments into an array
+	for (; argc > 0; argc --, argv ++) {
+		params.push_back(string(argv[0]));
+	}
+
+	// Initialize the barry library.  Must be called before
+	// anything else.
+	Barry::Init(data_dump);
+
+	// Probe the USB bus for Blackberry devices and display.
+	// If user has specified a PIN, search for it in the
+	// available device list here as well
+	Barry::Probe probe;
+	int activeDevice = probe.FindActive(pin);
+	if( activeDevice == -1 ) {
+	  cerr << "No device selected, or PIN not found" << endl;
+	  return 1;
+	}
 
         // Now start to read from TCP and get ready to write
         // to the BlackBerry.
@@ -198,7 +206,8 @@ int main(int argc, char *argv[])
 	int one = 1;
 	setsockopt(sfd, SOL_SOCKET, SO_REUSEADDR, &one, sizeof(one));
 
-        cerr << "Trying to listen...\n";
+	if (data_dump)
+            cerr << "Trying to listen...\n";
 
         sockaddr_in my_addr;
         memset(&my_addr, 0, sizeof(struct sockaddr_in));
@@ -210,11 +219,13 @@ int main(int argc, char *argv[])
         if (bind(sfd, (struct sockaddr *) &my_addr,
                 sizeof(struct sockaddr_in)) == -1)
             handle_error("bind");
-
-        std::cerr << "Bound\n";
+	
+	if (data_dump)
+            std::cerr << "Bound\n";
         if (listen(sfd, 1) == -1)
             handle_error("listen");
-        std::cerr << "Listening\n";
+	if (data_dump)
+            std::cerr << "Listening\n";
 
         /* Now we can accept incoming connections one
            at a time using accept(2) */
@@ -226,12 +237,13 @@ int main(int argc, char *argv[])
         if (cfd == -1)
             handle_error("accept");
 
-        std::cerr << "Accepted\n";
+        if (data_dump)
+	    std::cerr << "Accepted\n";
 
         bool running = true;
 
         // Create the thing which will write onto TCP
-        TCPWriter tcpwriter(cfd, running);
+        TCPWriter tcpwriter(cfd, running, data_dump);
 
         // Set up the BlackBerry gubbins
         // Start a thread to handle any data arriving from
@@ -240,14 +252,14 @@ int main(int argc, char *argv[])
         router.reset(new SocketRoutingQueue);
         router->SpinoffSimpleReadThread();
 
-		// Create our controller object
-		Barry::Controller con(probe.Get(activeDevice), *router);
-		Barry::Mode::VNCServer vncrelay(con, tcpwriter);
+	// Create our controller object
+	Barry::Controller con(probe.Get(activeDevice), *router);
+	Barry::Mode::RawSocket rawSocket(con, tcpwriter);
 
-		//
-		// execute each mode that was turned on
-		//
-		vncrelay.Open(password.c_str());
+	//
+	// execute each mode that was turned on
+	//
+	rawSocket.Open(password.c_str(), socketName.c_str());
 
         // We now have a thread running to read from the
         // BB and write over TCP; in this thread we'll
@@ -258,13 +270,17 @@ int main(int argc, char *argv[])
             size_t haveRead = read(cfd, buf, 2000);
             if (haveRead > 0)
             {
-                std::cerr << "Sending " << haveRead << " bytes TCP->USB\n";
                 Data toWrite(buf, haveRead);
-                std::cerr << "To BB: ";
-                toWrite.DumpHex(std::cerr);
-                std::cerr << "\n";
-                vncrelay.Send(toWrite);
-                std::cerr << "Sent " << haveRead << " bytes TCP->USB\n";
+	        if(data_dump)
+		    {
+		    std::cerr << "Sending " << haveRead << " bytes TCP->USB\n";
+                    std::cerr << "To BB: ";
+		    toWrite.DumpHex(std::cerr);
+		    std::cerr << "\n";
+		    }
+                rawSocket.Send(toWrite);
+		if(data_dump)
+		    std::cerr << "Sent " << haveRead << " bytes TCP->USB\n";
             }
             else if (haveRead < 0)
             {
@@ -273,17 +289,17 @@ int main(int argc, char *argv[])
         }
 	}
 	catch( Usb::Error &ue) {
-		std::cout << endl;	// flush any normal output first
+	        std::cout.flush();	// flush any normal output first
 		std::cerr << "Usb::Error caught: " << ue.what() << endl;
 		return 1;
 	}
 	catch( Barry::Error &se ) {
-		std::cout << endl;
+		std::cout.flush();
 		std::cerr << "Barry::Error caught: " << se.what() << endl;
 		return 1;
 	}
 	catch( std::exception &e ) {
-		std::cout << endl;
+		std::cout.flush();
 		std::cerr << "std::exception caught: " << e.what() << endl;
 		return 1;
 	}

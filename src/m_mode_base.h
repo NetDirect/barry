@@ -52,6 +52,7 @@ public:
 	// primary operations - required before anything else
 
 	void Open(const char *password = 0);
+	void Open(const char *password, const char *name);
 	void RetryPassword(const char *password);
 //	void Close();
 

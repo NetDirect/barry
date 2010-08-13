@@ -86,7 +86,7 @@ public:
 		JVMDebug,		//< experimental
 		UsbSerData,		//< GPRS modem support over USB
 		UsbSerCtrl,		//< internally used behind the scenes
-		VNCServer		//< for VNC server redirection
+		RawSocket		//< raw socket
 	};
 
 private:
@@ -102,7 +102,8 @@ private:
 	void SetupUsb(const ProbeResult &device);
 
 protected:
-	uint16_t SelectMode(ModeType mode);	// returns mode socket
+	uint16_t SelectMode(ModeType mode); 	// returns mode socket
+	uint16_t SelectMode(ModeType mode, const char* explicitModeName); 	// returns mode socket
 
 public:
 	explicit Controller(const ProbeResult &device,

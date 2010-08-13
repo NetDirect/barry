@@ -1,10 +1,11 @@
 ///
-/// \file	m_vnc_server.cc
-///		Mode class for the VNCServer mode
+/// \file	m_raw_socket.cc
+///		Mode class for the raw socket
 ///
 
 /*
     Copyright (C) 2005-2010, Net Direct Inc. (http://www.netdirect.ca/)
+    Portions Copyright (C) 2010 RealVNC Ltd.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -19,7 +20,7 @@
     root directory of this project for more details.
 */
 
-#include "m_vnc_server.h"
+#include "m_raw_socket.h"
 #include "data.h"
 #include "protocol.h"
 #include "protostructs.h"
@@ -38,33 +39,31 @@ namespace Barry { namespace Mode {
 
 static void HandleReceivedDataCallback(void* ctx, Data* data)
 {
-    ((VNCServer*)ctx)->HandleReceivedData(*data);
+    ((RawSocket*)ctx)->HandleReceivedData(*data);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// VNCServer Mode class
+// RawSocket Mode class
 
-VNCServer::VNCServer(Controller &con, VNCServerDataCallback& callback)
-	: Mode(con, Controller::VNCServer),
+RawSocket::RawSocket(Controller &con, RawSocketDataCallback& callback)
+	: Mode(con, Controller::RawSocket),
       Callback(callback)
 {
 }
 
-VNCServer::~VNCServer()
+RawSocket::~RawSocket()
 {
 }
 
-void VNCServer::OnOpen()
+void RawSocket::OnOpen()
 {
-    std::cerr << "about to register interest\n";
     m_socket->RegisterInterest(HandleReceivedDataCallback, this);
-    std::cerr << "registered interest\n";
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // public API
 
-void VNCServer::Send(Data& data)
+void RawSocket::Send(Data& data)
 {
     Data toReceive;
     try
@@ -85,7 +84,7 @@ void VNCServer::Send(Data& data)
     }
 }
 
-void VNCServer::HandleReceivedData(Data& data)
+void RawSocket::HandleReceivedData(Data& data)
 {
     // Remove packet headers
     Data partial(data.GetData() + 4, data.GetSize() - 4);
