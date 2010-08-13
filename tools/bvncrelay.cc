@@ -194,6 +194,10 @@ int main(int argc, char *argv[])
         if (sfd == -1)
             handle_error("socket");
 
+	/* Mark it for reuse */
+	int one = 1;
+	setsockopt(sfd, SOL_SOCKET, SO_REUSEADDR, &one, sizeof(one));
+
         cerr << "Trying to listen...\n";
 
         sockaddr_in my_addr;
