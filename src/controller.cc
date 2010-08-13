@@ -233,7 +233,7 @@ uint16_t Controller::SelectMode(ModeType mode)
 			m_zero.Receive(response);
 			m_zero.HideSequencePacket(true);
 		}
-
+		std::cerr << "f\n";
 		// return the socket that the device is expecting us to use
 		return btohs(modepack->u.socket.socket);
 	}

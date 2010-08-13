@@ -30,6 +30,7 @@
 #include "controller.h"
 #include <stdexcept>
 #include <sstream>
+#include <cstring>
 
 #include "debug.h"
 
@@ -68,7 +69,14 @@ void VNCServer::Send(Data& data)
     Data toReceive;
     try
     {
-        m_socket->PacketData(data, toReceive, 0); // timeout immediately
+        size_t packetSize = 4 + data.GetSize();
+	Barry::Protocol::Packet* packet = (Barry::Protocol::Packet*)m_sendBuffer;
+	packet->socket = htobs(m_socket->GetSocket());
+	packet->size = htobs(packetSize);
+	std::memcpy(&(m_sendBuffer[4]), data.GetData(), data.GetSize());
+
+	Data toSend(m_sendBuffer, packetSize);
+        m_socket->PacketData(toSend, toReceive, 0); // timeout immediately
         if (toReceive.GetSize() != 0)
             HandleReceivedData(toReceive);
     }

@@ -501,6 +501,12 @@ SocketHandle SocketZero::Open(uint16_t socket, const char *password)
 		// fall through to success check...
 	}
 
+	if( packet.Command() == SB_COMMAND_CLOSE_SOCKET )
+	{
+	        eout("Packet:\n" << receive);
+		throw Error("Socket: Socket closed when trying to open");
+	}
+
 	if( packet.Command() != SB_COMMAND_OPENED_SOCKET ||
 	    packet.SocketResponse() != socket ||
 	    packet.SocketSequence() != closeFlag )

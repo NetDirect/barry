@@ -72,6 +72,7 @@ public:
 
 private:
     VNCServerDataCallback& Callback;
+    unsigned char m_sendBuffer[(1 << 16) + 4]; // Max packet size
 
 };
 
