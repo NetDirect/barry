@@ -111,7 +111,7 @@ struct tm* iso_to_tm(const char *timestamp,
 			int hour, min;
 			found = sscanf(offset.c_str(), "%02d%02d",
 				&hour, &min);
-			if( found == 2 ) {
+			if( offset.size() == 4 && found == 2 ) {
 				*zone = true;
 				*zoneminutes = hour * 60 + min;
 				if( neg != string::npos )

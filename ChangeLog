@@ -8,6 +8,9 @@ Release: version 0.17 - 2010/01/??
 		that have separate libraries for these features, such as
 		the Mac
 	- buildgen.sh calls libtoolize and glibtoolize now (Mac support)
+2010/08/15
+	- lib: fixed bug in ISO timezone detection... must be in [-+]HH[:]MM
+		format, with 2 digits for the hours and minutes
 2010/08/12
 	- lib: added better ISO timestamp support... Now handles timestamps
 		with dashes and colons, including timestamps with their
