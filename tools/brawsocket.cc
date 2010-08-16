@@ -27,26 +27,26 @@
 #include <vector>
 #include <string>
 #include <cstring>
+#include <cstdio>
 #include <algorithm>
 #include <getopt.h>
 #include <fstream>
 #include <string.h>
+#include <unistd.h>
 #include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
 
 #include "i18n.h"
 
 using namespace std;
 using namespace Barry;
 
-class TCPWriter : public Barry::Mode::RawSocketDataCallback
+#define READ_BUF_SIZE 16384
+
+class StdoutWriter : public Barry::Mode::RawSocketDataCallback
 {
 public:
-  TCPWriter(int socket, bool& keepGoing, bool verbose)
-    : m_cfd(socket)
-    , m_continuePtr(&keepGoing)
+  StdoutWriter(bool& keepGoing, bool verbose)
+    : m_continuePtr(&keepGoing)
     , m_verbose(verbose)
     {
     }
@@ -64,11 +64,12 @@ public:
         size_t toWrite = data.GetSize();
         size_t written = 0;
 
-        while (written < toWrite)
+        while (written < toWrite && *m_continuePtr)
         {
-            ssize_t writtenThisTime = write(m_cfd, &(data.GetData()[written]), toWrite - written);
+	  ssize_t writtenThisTime = write(STDOUT_FILENO, &(data.GetData()[written]), toWrite - written);
 	    if (m_verbose)
-	        cerr << "Written " << writtenThisTime << " bytes over TCP\n";
+	        cerr << "Written " << writtenThisTime << " bytes over stdout\n";
+	    std::fflush(stdout);
             if (writtenThisTime < 0)
             {
                 *m_continuePtr = false;
@@ -81,7 +82,6 @@ public:
     }
 
 private:
-    int m_cfd;
     bool* m_continuePtr;
     bool m_verbose;
 };
@@ -107,12 +107,6 @@ void Usage()
    << endl;
 }
 
-static void handle_error(const char* text)
-{
-    throw new std::runtime_error(text);
-}
-
-
 int main(int argc, char *argv[])
 {
 	INIT_I18N(PACKAGE);
@@ -122,8 +116,7 @@ int main(int argc, char *argv[])
 
 	try {
 	uint32_t pin = 0;
-	bool list_siblings = false,
-	     data_dump = false;
+	bool data_dump = false;
 	string password;
 	vector<string> params;
 	string busname;
@@ -191,54 +184,15 @@ int main(int argc, char *argv[])
 	  return 1;
 	}
 
-        // Now start to read from TCP and get ready to write
+        // Now start to read from cin and get ready to write
         // to the BlackBerry.
-        int sfd = socket(AF_INET, SOCK_STREAM, 0);
-        if (sfd == -1)
-            handle_error("socket");
-
-	/* Mark it for reuse */
-	int one = 1;
-	setsockopt(sfd, SOL_SOCKET, SO_REUSEADDR, &one, sizeof(one));
-
 	if (data_dump)
-            cerr << "Trying to listen...\n";
-
-        sockaddr_in my_addr;
-        memset(&my_addr, 0, sizeof(struct sockaddr_in));
-                               /* Clear structure */
-        my_addr.sin_family = AF_INET;
-        my_addr.sin_port = htons(2003);
-        my_addr.sin_addr.s_addr = INADDR_ANY;
-    
-        if (bind(sfd, (struct sockaddr *) &my_addr,
-                sizeof(struct sockaddr_in)) == -1)
-            handle_error("bind");
-	
-	if (data_dump)
-            std::cerr << "Bound\n";
-        if (listen(sfd, 1) == -1)
-            handle_error("listen");
-	if (data_dump)
-            std::cerr << "Listening\n";
-
-        /* Now we can accept incoming connections one
-           at a time using accept(2) */
-
-        sockaddr_in peer_addr;
-        socklen_t peer_addr_size = sizeof(struct sockaddr_in);
-        int cfd = accept(sfd, (struct sockaddr *) &peer_addr,
-                     &peer_addr_size);
-        if (cfd == -1)
-            handle_error("accept");
-
-        if (data_dump)
-	    std::cerr << "Accepted\n";
+	    std::cerr << "Connected to device, starting read/write\n";
 
         bool running = true;
 
-        // Create the thing which will write onto TCP
-        TCPWriter tcpwriter(cfd, running, data_dump);
+        // Create the thing which will write onto stdout
+        StdoutWriter stdoutWriter(running, data_dump);
 
         // Set up the BlackBerry gubbins
         // Start a thread to handle any data arriving from
@@ -249,7 +203,7 @@ int main(int argc, char *argv[])
 
 	// Create our controller object
 	Barry::Controller con(probe.Get(activeDevice), *router);
-	Barry::Mode::RawSocket rawSocket(con, tcpwriter);
+	Barry::Mode::RawSocket rawSocket(con, stdoutWriter);
 
 	//
 	// execute each mode that was turned on
@@ -257,44 +211,41 @@ int main(int argc, char *argv[])
 	rawSocket.Open(password.c_str(), socketName.c_str());
 
         // We now have a thread running to read from the
-        // BB and write over TCP; in this thread we'll
-        // read from TCP and write to the BB.
-        unsigned char buf[2000];
+        // BB and write over stdout; in this thread we'll
+        // read from stdin and write to the BB.
+        unsigned char buf[READ_BUF_SIZE];
         while (running)
         {
-            size_t haveRead = read(cfd, buf, 2000);
+	  size_t haveRead = read(STDIN_FILENO, buf, READ_BUF_SIZE);
             if (haveRead > 0)
             {
                 Data toWrite(buf, haveRead);
 	        if(data_dump)
 		    {
-		    std::cerr << "Sending " << haveRead << " bytes TCP->USB\n";
+		    std::cerr << "Sending " << haveRead << " bytes stdin->USB\n";
                     std::cerr << "To BB: ";
 		    toWrite.DumpHex(std::cerr);
 		    std::cerr << "\n";
 		    }
                 rawSocket.Send(toWrite);
 		if(data_dump)
-		    std::cerr << "Sent " << haveRead << " bytes TCP->USB\n";
+		    std::cerr << "Sent " << haveRead << " bytes stdin->USB\n";
             }
-            else if (haveRead < 0)
+            else if (haveRead < 0 || !std::cin.good())
             {
                 running = false;
             }
         }
 	}
 	catch( Usb::Error &ue) {
-	        std::cout.flush();	// flush any normal output first
 		std::cerr << "Usb::Error caught: " << ue.what() << endl;
 		return 1;
 	}
 	catch( Barry::Error &se ) {
-		std::cout.flush();
 		std::cerr << "Barry::Error caught: " << se.what() << endl;
 		return 1;
 	}
 	catch( std::exception &e ) {
-		std::cout.flush();
 		std::cerr << "std::exception caught: " << e.what() << endl;
 		return 1;
 	}
