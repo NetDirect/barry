@@ -65,22 +65,18 @@ void RawChannel::OnOpen()
 void RawChannel::Send(Data& data)
 {
 	Data toReceive;
-	try
-	{
-		size_t packetSize = HeaderSize + data.GetSize();
-		Barry::Protocol::Packet* packet = (Barry::Protocol::Packet*)m_sendBuffer;
-		packet->socket = htobs(m_socket->GetSocket());
-		packet->size = htobs(packetSize);
-		std::memcpy(&(m_sendBuffer[HeaderSize]), data.GetData(), data.GetSize());
+	size_t packetSize = HeaderSize + data.GetSize();
+	if(packetSize > MaximumPacketSize)
+		throw Barry::Error("RawChannel: send data size larger than MaximumPacketSize");
+	Barry::Protocol::Packet* packet = (Barry::Protocol::Packet*)m_sendBuffer;
+	packet->socket = htobs(m_socket->GetSocket());
+	packet->size = htobs(packetSize);
+	std::memcpy(&(m_sendBuffer[HeaderSize]), data.GetData(), data.GetSize());
 
-		Data toSend(m_sendBuffer, packetSize);
-		m_socket->PacketData(toSend, toReceive, 0); // timeout immediately
-		if (toReceive.GetSize() != 0)
-			HandleReceivedData(toReceive);
-	}
-	catch (Usb::Error& err)
-	{
-	}
+	Data toSend(m_sendBuffer, packetSize);
+	m_socket->PacketData(toSend, toReceive, 0); // timeout immediately
+	if (toReceive.GetSize() != 0)
+		HandleReceivedData(toReceive);
 }
 
 void RawChannel::HandleReceivedData(Data& data)

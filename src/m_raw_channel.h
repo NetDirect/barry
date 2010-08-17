@@ -65,12 +65,19 @@ public:
 	// Raw channel mode specific methods
 
 	// Send some data on the raw channel
-	// Will throw an error if data is longer than
-	// RAW_CHANNEL_MAXIMUM_PACKET_CONTENTS_SIZE
+	// Will throw a Barry::Error if data is longer than
+	// MaximumPacketContentsSize or a Barry::Usb::Error if there
+	// is an underlying USB error.
 	void Send(Data& data);
 
+	// Not intended for use by users of this class.
+	// Instead data received will come in via the 
+	// appropriate RawChannelDataCallback callback.
 	void HandleReceivedData(Data& data);
 
+	// Not intended for use by users of this class.
+	// This method is called by the internals of
+	// Barry when setting up a connection.
 	void OnOpen();
 
 private:
