@@ -102,6 +102,8 @@ void Usage()
 		<< "             If only one device is plugged in, this flag is optional\n"
 		<< "   -P pass   Simplistic method to specify device password\n"
 		<< "   -v        Dump protocol data during operation\n"
+		<< "             This will cause libusb output to appear on STDOUT unless\n"
+		<< "             the environment variable LIBUSB_DEBUG is set to 0.
 		<< endl;
 }
 
@@ -212,14 +214,11 @@ int main(int argc, char *argv[])
 		// BB and write over stdout; in this thread we'll
 		// read from stdin and write to the BB.
 		unsigned char buf[Barry::Mode::RawChannel::MaximumPacketContentsSize];
-		while (running)
-		{
+		while (running)	{
 			size_t haveRead = read(STDIN_FILENO, buf, sizeof(buf));
-			if (haveRead > 0)
-			{
+			if (haveRead > 0) {
 				Data toWrite(buf, haveRead);
-				if(data_dump)
-				{
+				if(data_dump) {
 					std::cerr << "Sending " << haveRead << " bytes stdin->USB\n";
 					std::cerr << "To BB: ";
 					toWrite.DumpHex(std::cerr);
@@ -229,8 +228,7 @@ int main(int argc, char *argv[])
 				if(data_dump)
 					std::cerr << "Sent " << haveRead << " bytes stdin->USB\n";
 			}
-			else if (haveRead < 0 || !std::cin.good())
-			{
+			else if (haveRead < 0 || !std::cin.good()) {
 				running = false;
 			}
 		}

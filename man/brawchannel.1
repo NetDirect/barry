@@ -50,9 +50,9 @@ A simplistic method to specify the device password.
 .B \-v
 Verbose debug output.  This enables dumping of USB bus scanning, as
 well as the protocol packets used during communication.
-Unlike other Barry Project tools, this -v mode won't enable logging from
-libusb, due to libusb's use of STDOUT.
-
+This will cause libusb to output information on STDOUT, which will
+usually be undesirable. Setting environment LIBUSB_DEBUG to 0, 1 or 2
+should prevent any addition output on STDOUT.
 .SH AUTHOR
 .nh
 .B brawchannel
