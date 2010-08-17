@@ -32,8 +32,11 @@
 #include <stdexcept>
 #include <sstream>
 #include <cstring>
+#include "protostructs.h"
 
 #include "debug.h"
+
+#define RAW_HEADER_SIZE 4
 
 namespace Barry { namespace Mode {
 
@@ -46,12 +49,15 @@ static void HandleReceivedDataCallback(void* ctx, Data* data) {
 
 RawChannel::RawChannel(Controller &con, RawChannelDataCallback& callback)
 	: Mode(con, Controller::RawChannel),
-      Callback(callback)
+	  Callback(callback),
+	  m_sendBuffer(0)
 {
+	m_sendBuffer = new unsigned char[MAX_PACKET_SIZE];
 }
 
 RawChannel::~RawChannel()
 {
+	delete[] m_sendBuffer;
 }
 
 void RawChannel::OnOpen()
@@ -64,25 +70,27 @@ void RawChannel::OnOpen()
 
 void RawChannel::Send(Data& data)
 {
-	Data toReceive;
-	size_t packetSize = HeaderSize + data.GetSize();
-	if(packetSize > MaximumPacketSize)
+	size_t packetSize = RAW_HEADER_SIZE + data.GetSize();
+	if(packetSize > MAX_PACKET_SIZE)
 		throw Barry::Error("RawChannel: send data size larger than MaximumPacketSize");
 	Barry::Protocol::Packet* packet = (Barry::Protocol::Packet*)m_sendBuffer;
 	packet->socket = htobs(m_socket->GetSocket());
 	packet->size = htobs(packetSize);
-	std::memcpy(&(m_sendBuffer[HeaderSize]), data.GetData(), data.GetSize());
+	std::memcpy(&(m_sendBuffer[RAW_HEADER_SIZE]), data.GetData(), data.GetSize());
 
 	Data toSend(m_sendBuffer, packetSize);
-	m_socket->PacketData(toSend, toReceive, 0); // timeout immediately
-	if (toReceive.GetSize() != 0)
-		HandleReceivedData(toReceive);
+	m_socket->Send(toSend);
 }
 
+size_t RawChannel::MaximumSendSize()
+{
+	return MAX_PACKET_SIZE - RAW_HEADER_SIZE;
+}
+		
 void RawChannel::HandleReceivedData(Data& data)
 {
 	// Remove packet headers
-	Data partial(data.GetData() + HeaderSize, data.GetSize() - HeaderSize);
+	Data partial(data.GetData() + RAW_HEADER_SIZE, data.GetSize() - RAW_HEADER_SIZE);
 	Callback.DataReceived(partial);
 }
 

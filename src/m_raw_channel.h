@@ -80,22 +80,13 @@ public:
 	// Barry when setting up a connection.
 	void OnOpen();
 
-private:
-	// Private constants
-	enum {
-		HeaderSize = 4,
-		MaximumPacketSize = 16384
-	};
-
-public:
-	// Public constants
-	enum {
-		MaximumPacketContentsSize = MaximumPacketSize - HeaderSize
-	};
+	// Returns the maximum quantity of data which
+	// can be sent
+	size_t MaximumSendSize();
 
 private:
 	RawChannelDataCallback& Callback;
-	unsigned char m_sendBuffer[MaximumPacketSize];
+	unsigned char *m_sendBuffer;
 
 };
 

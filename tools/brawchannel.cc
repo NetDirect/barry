@@ -28,6 +28,7 @@
 #include <string>
 #include <cstring>
 #include <cstdio>
+#include <cstdlib>
 #include <algorithm>
 #include <getopt.h>
 #include <fstream>
@@ -43,7 +44,7 @@ using namespace Barry;
 class StdoutWriter : public Barry::Mode::RawChannelDataCallback
 {
 public:
-	StdoutWriter(bool& keepGoing, bool verbose)
+	StdoutWriter(volatile bool& keepGoing, bool verbose)
 		: m_continuePtr(&keepGoing)
 		, m_verbose(verbose)
 		{
@@ -80,7 +81,7 @@ public:
 		}
 
 private:
-	bool* m_continuePtr;
+	volatile bool* m_continuePtr;
 	bool m_verbose;
 };
 
@@ -113,7 +114,7 @@ int main(int argc, char *argv[])
 
 	cout.sync_with_stdio(true);	// leave this on, since libusb uses
 					// stdio for debug messages
-
+	unsigned char* buf = NULL;
 	try {
 		uint32_t pin = 0;
 		bool data_dump = false;
@@ -169,6 +170,23 @@ int main(int argc, char *argv[])
 		for (; argc > 0; argc --, argv ++) {
 			params.push_back(string(argv[0]));
 		}
+		
+		if (data_dump)
+		{
+			// Warn if LIBUSB_DEBUG isn't set to 0, 1 or 2
+			// as that usually means libusb will write to STDOUT
+			char* val = std::getenv("LIBUSB_DEBUG");
+			int parsedValue = -1;
+			if(val)
+			{
+				parsedValue = atoi(val);
+			}
+			if(parsedValue != 0 && parsedValue != 1 && parsedValue != 2)
+			{
+				cerr << "Warning: Protocol dump enabled without setting LIBUSB_DEBUG to 0, 1 or 2.\n"
+				     << "         libusb might log to STDOUT and ruin data stream." << endl;
+			}	
+		}
 
 		// Initialize the barry library.  Must be called before
 		// anything else.
@@ -184,12 +202,12 @@ int main(int argc, char *argv[])
 			return 1;
 		}
 
-		// Now start to read from cin and get ready to write
+		// Now start to read from stdin and get ready to write
 		// to the BlackBerry.
 		if (data_dump)
 			std::cerr << "Connected to device, starting read/write\n";
 
-		bool running = true;
+		volatile bool running = true;
 
 		// Create the thing which will write onto stdout
 		StdoutWriter stdoutWriter(running, data_dump);
@@ -213,9 +231,10 @@ int main(int argc, char *argv[])
 		// We now have a thread running to read from the
 		// BB and write over stdout; in this thread we'll
 		// read from stdin and write to the BB.
-		unsigned char buf[Barry::Mode::RawChannel::MaximumPacketContentsSize];
+		const size_t bufSize = rawChannel.MaximumSendSize();
+		buf = new unsigned char[bufSize];
 		while (running)	{
-			size_t haveRead = read(STDIN_FILENO, buf, sizeof(buf));
+			ssize_t haveRead = read(STDIN_FILENO, buf, bufSize);
 			if (haveRead > 0) {
 				Data toWrite(buf, haveRead);
 				if(data_dump) {
@@ -228,7 +247,7 @@ int main(int argc, char *argv[])
 				if(data_dump)
 					std::cerr << "Sent " << haveRead << " bytes stdin->USB\n";
 			}
-			else if (haveRead < 0 || !std::cin.good()) {
+			else if (haveRead < 0) {
 				running = false;
 			}
 		}
@@ -245,6 +264,8 @@ int main(int argc, char *argv[])
 		std::cerr << "std::exception caught: " << e.what() << endl;
 		return 1;
 	}
+
+	delete[] buf;
 
 	return 0;
 }
