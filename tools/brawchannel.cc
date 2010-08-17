@@ -103,7 +103,7 @@ void Usage()
 		<< "   -P pass   Simplistic method to specify device password\n"
 		<< "   -v        Dump protocol data during operation\n"
 		<< "             This will cause libusb output to appear on STDOUT unless\n"
-		<< "             the environment variable LIBUSB_DEBUG is set to 0.
+		<< "             the environment variable LIBUSB_DEBUG is set to 0.\n"
 		<< endl;
 }
 
