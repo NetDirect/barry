@@ -1,6 +1,6 @@
 ///
-/// \file	m_raw_socket.cc
-///		Mode class for the raw socket
+/// \file	m_raw_channel.cc
+///		Mode class for a raw channel
 ///
 
 /*
@@ -20,7 +20,7 @@
     root directory of this project for more details.
 */
 
-#include "m_raw_socket.h"
+#include "m_raw_channel.h"
 #include "data.h"
 #include "protocol.h"
 #include "protostructs.h"
@@ -37,58 +37,57 @@
 
 namespace Barry { namespace Mode {
 
-static void HandleReceivedDataCallback(void* ctx, Data* data)
-{
-    ((RawSocket*)ctx)->HandleReceivedData(*data);
+static void HandleReceivedDataCallback(void* ctx, Data* data) {
+	((RawChannel*)ctx)->HandleReceivedData(*data);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// RawSocket Mode class
+// RawChannel Mode class
 
-RawSocket::RawSocket(Controller &con, RawSocketDataCallback& callback)
-	: Mode(con, Controller::RawSocket),
+RawChannel::RawChannel(Controller &con, RawChannelDataCallback& callback)
+	: Mode(con, Controller::RawChannel),
       Callback(callback)
 {
 }
 
-RawSocket::~RawSocket()
+RawChannel::~RawChannel()
 {
 }
 
-void RawSocket::OnOpen()
+void RawChannel::OnOpen()
 {
-    m_socket->RegisterInterest(HandleReceivedDataCallback, this);
+	m_socket->RegisterInterest(HandleReceivedDataCallback, this);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // public API
 
-void RawSocket::Send(Data& data)
+void RawChannel::Send(Data& data)
 {
-    Data toReceive;
-    try
-    {
-        size_t packetSize = 4 + data.GetSize();
-	Barry::Protocol::Packet* packet = (Barry::Protocol::Packet*)m_sendBuffer;
-	packet->socket = htobs(m_socket->GetSocket());
-	packet->size = htobs(packetSize);
-	std::memcpy(&(m_sendBuffer[4]), data.GetData(), data.GetSize());
+	Data toReceive;
+	try
+	{
+		size_t packetSize = HeaderSize + data.GetSize();
+		Barry::Protocol::Packet* packet = (Barry::Protocol::Packet*)m_sendBuffer;
+		packet->socket = htobs(m_socket->GetSocket());
+		packet->size = htobs(packetSize);
+		std::memcpy(&(m_sendBuffer[HeaderSize]), data.GetData(), data.GetSize());
 
-	Data toSend(m_sendBuffer, packetSize);
-        m_socket->PacketData(toSend, toReceive, 0); // timeout immediately
-        if (toReceive.GetSize() != 0)
-            HandleReceivedData(toReceive);
-    }
-    catch (Usb::Error& err)
-    {
-    }
+		Data toSend(m_sendBuffer, packetSize);
+		m_socket->PacketData(toSend, toReceive, 0); // timeout immediately
+		if (toReceive.GetSize() != 0)
+			HandleReceivedData(toReceive);
+	}
+	catch (Usb::Error& err)
+	{
+	}
 }
 
-void RawSocket::HandleReceivedData(Data& data)
+void RawChannel::HandleReceivedData(Data& data)
 {
-    // Remove packet headers
-    Data partial(data.GetData() + 4, data.GetSize() - 4);
-    Callback.DataReceived(partial);
+	// Remove packet headers
+	Data partial(data.GetData() + HeaderSize, data.GetSize() - HeaderSize);
+	Callback.DataReceived(partial);
 }
 
 }} // namespace Barry::Mode

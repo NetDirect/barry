@@ -86,7 +86,7 @@ public:
 		JVMDebug,		//< experimental
 		UsbSerData,		//< GPRS modem support over USB
 		UsbSerCtrl,		//< internally used behind the scenes
-		RawSocket		//< raw socket
+		RawChannel		//< raw channel
 	};
 
 private:

@@ -82,7 +82,7 @@ include_barry_HEADERS = barry.h barrysync.h \
 	controller.h \
 	m_mode_base.h \
 	m_desktop.h \
-	m_raw_socket.h \
+	m_raw_channel.h \
 	m_desktoptmpl.h \
 	m_ipmodem.h \
 	m_serial.h \
@@ -195,7 +195,7 @@ libbarry_la_SOURCES = dll.h \
 	controller.h controller.cc \
 	m_mode_base.h m_mode_base.cc \
 	m_desktop.h m_desktop.cc \
-	m_raw_socket.h m_raw_socket.cc \
+	m_raw_channel.h m_raw_channel.cc \
 	m_ipmodem.h m_ipmodem.cc \
 	m_serial.h m_serial.cc \
 	m_javaloader.h m_javaloader.cc \

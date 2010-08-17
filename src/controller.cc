@@ -166,7 +166,7 @@ Controller::~Controller()
 // Otherwise the default mode name for the given mode will be used.
 // It should be a nul terminated string if it is provided.
 //
-// The RawSocket mode requires an explicitModeName to be specified.
+// The RawChannel mode requires an explicitModeName to be specified.
 //
   uint16_t Controller::SelectMode(ModeType mode, const char *explicitModeName)
 {
@@ -211,6 +211,10 @@ Controller::~Controller()
 
 	  case UsbSerCtrl:
 	      strcpy(modeName, "RIM_UsbSerCtrl");
+	      break;
+
+	  case RawChannel:
+	      throw std::logic_error("Controller: No channel name given with RawChannel mode");
 	      break;
 
 	  default:

@@ -1,0 +1,64 @@
+.\"                                      Hey, EMACS: -*- nroff -*-
+.\" First parameter, NAME, should be all caps
+.\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
+.\" other parameters are allowed: see man(7), man(1)
+.TH BRAWCHANNEL 1 "August 17, 2010"
+.\" Please adjust this date whenever revising the manpage.
+.\"
+.\" Some roff macros, for reference:
+.\" .nh        disable hyphenation
+.\" .hy        enable hyphenation
+.\" .ad l      left justify
+.\" .ad b      justify to both left and right margins
+.\" .nf        disable filling
+.\" .fi        enable filling
+.\" .br        insert line break
+.\" .sp <n>    insert n+1 empty lines
+.\" for manpage-specific macros, see man(7)
+.SH NAME
+.B brawchannel
+\- Barry Project's program to create channel to BlackBerry applications
+.SH SYNOPSIS
+.B brawchannel [-h][-p pin][-P pass][-v] <channel name>
+.SH DESCRIPTION
+.PP
+.B brawchannel
+is a tool for connecting to an application channel on a BlackBerry device,
+as provided to on device programs by the 
+.B net.rim.device.api.system.USBPort
+API. Data received on the channel will be output to STDOUT and any data
+received on STDIN in will be sent over the channel. Any errors or verbose
+output will be written to STDERR.
+.BR
+The
+.B channel name
+provided to this program should be the same as the channel name passed
+to the call to 
+.B net.rim.device.api.system.USBPort.registerChannel
+.SH OPTIONS
+.TP
+.B \-h
+Display a command help summary.
+.TP
+.B \-p pin
+Specifies the PIN number of the device with which you wish to communicate,
+when multiple devices are connected.
+.TP
+.B \-P password
+A simplistic method to specify the device password.
+.TP
+.B \-v
+Verbose debug output.  This enables dumping of USB bus scanning, as
+well as the protocol packets used during communication.
+Unlike other Barry Project tools, this -v mode won't enable logging from
+libusb, due to libusb's use of STDOUT.
+
+.SH AUTHOR
+.nh
+.B brawchannel
+was initially written for the Barry project by RealVNC Ltd.,
+based on bjavaloader by Nicolas Vivien.
+.SH SEE ALSO
+.PP
+http://www.netdirect.ca/software/packages/barry
+

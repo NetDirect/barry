@@ -7,6 +7,7 @@ dist_man_MANS = \
 	bs11nread.1 \
 	bidentify.1 \
 	breset.1 \
+	brawchannel.1 \
 	pppob.1 \
 	brecsum.1 \
 	upldif.1

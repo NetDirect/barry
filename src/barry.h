@@ -65,7 +65,7 @@
 #include "m_ipmodem.h"
 #include "m_serial.h"
 #include "m_javaloader.h"
-#include "m_raw_socket.h"
+#include "m_raw_channel.h"
 #include "m_jvmdebug.h"
 #include "version.h"
 #include "log.h"
