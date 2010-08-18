@@ -35,11 +35,16 @@ endif
 sbin_PROGRAMS = bcharge breset pppob
 
 btool_SOURCES = btool.cc
-btool_LDADD = ../src/libbarry.la ../src/libbarrysync.la $(LIBUSB_LIBS) $(GLIB2_LIBS) -lpthread @BOOST_LDADD@
+btool_LDADD = ../src/libbarry.la $(LIBUSB_LIBS) -lpthread @BOOST_LDADD@
+if WITH_SYNC
+btool_LDADD += ../src/libbarrysync.la $(GLIB2_LIBS)
+endif
+btool_CXXFLAGS = $(AM_CXXFLAGS)
 if WITH_BOOST
-btool_CXXFLAGS = -D__BARRY_BOOST_MODE__ -D_REENTRANT @BOOST_INC_PATH@ $(GLIB2_CFLAGS) $(AM_CXXFLAGS)
-else
-btool_CXXFLAGS = $(GLIB2_CFLAGS) 
+btool_CXXFLAGS += -D__BARRY_BOOST_MODE__ -D_REENTRANT @BOOST_INC_PATH@
+endif
+if WITH_SYNC
+btool_CXXFLAGS += -D__BARRY_SYNC_MODE__ $(GLIB2_CFLAGS) 
 endif
 btool_LDFLAGS = @BOOST_LIB_PATH@
 

@@ -20,7 +20,10 @@
 */
 
 #include <barry/barry.h>
+#ifdef __BARRY_SYNC_MODE__
 #include <barry/barrysync.h>
+#endif
+
 #include <iomanip>
 #include <iostream>
 #include <fstream>
@@ -91,7 +94,9 @@ void Usage()
    << "   -t        Show database database table\n"
    << "   -T db     Show record state table for given database\n"
    << "   -v        Dump protocol data during operation\n"
+#ifdef __BARRY_SYNC_MODE__
    << "   -V        Dump records using MIME vformats where possible\n"
+#endif
    << "   -X        Reset device\n"
    << "   -z        Use non-threaded sockets\n"
    << "   -Z        Use threaded socket router (default)\n"
@@ -121,6 +126,7 @@ public:
 	}
 };
 
+#ifdef __BARRY_SYNC_MODE__
 template <class Record>
 class MimeDump
 {
@@ -186,6 +192,7 @@ public:
 
 	static bool Supported() { return true; }
 };
+#endif
 
 template <class Record>
 struct Store
@@ -280,8 +287,10 @@ struct Store
 	void Dump(const Record &rec)
 	{
 		if( vformat_mode ) {
+#ifdef __BARRY_SYNC_MODE__
 			MimeDump<Record> md;
 			md.Dump(cout, rec);
+#endif
 		}
 		else {
 			cout << rec << endl;
@@ -719,7 +728,13 @@ int main(int argc, char *argv[])
 				break;
 
 			case 'V':	// vformat MIME mode
+#ifdef __BARRY_SYNC_MODE__
 				vformat_mode = true;
+#else
+				cerr << "-V option not supported - no Sync "
+					"library support available\n";
+				return 1;
+#endif
 				break;
 
 			case 'X':	// reset device

@@ -1,5 +1,9 @@
 Release: version 0.17 - 2010/01/??
 ------------------------------------------------------------------------------
+2010/08/18
+	- fixed build bug, where libbarrysync was still used even if glib2
+		was not found on the system.  Thanks to Eric Arseneau
+		for finding this during his Mac build testing.
 2010/07/29
 	- applied patch from Martin Owens fixing version dependencies in
 		debian binary packages
