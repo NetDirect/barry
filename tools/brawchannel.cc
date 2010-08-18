@@ -62,8 +62,7 @@ public:
     
 	void DataReceived(Data& data)
 		{
-			if (m_verbose)
-			{
+			if (m_verbose) {
 				std::cerr << "From BB: ";
 				data.DumpHex(std::cerr);
 				std::cerr << "\n";
@@ -72,11 +71,12 @@ public:
 			size_t toWrite = data.GetSize();
 			size_t written = 0;
 
-			while (written < toWrite && *m_continuePtr)
-			{
+			while (written < toWrite && *m_continuePtr) {
 				ssize_t writtenThisTime = write(STDOUT_FILENO, &(data.GetData()[written]), toWrite - written);
-				if (m_verbose)
+				if (m_verbose) {
+					std::cerr.setf(ios::dec, ios::basefield);
 					cerr << "Written " << writtenThisTime << " bytes over stdout\n";
+				}
 				std::fflush(stdout);
 				if (writtenThisTime < 0)
 				{
@@ -86,7 +86,7 @@ public:
 				{
 					written += writtenThisTime;
 				}
-			}
+			}	
 		}
 
 private:
@@ -113,7 +113,7 @@ void Usage()
 		<< "   -P pass   Simplistic method to specify device password\n"
 		<< "   -v        Dump protocol data during operation\n"
 		<< "             This will cause libusb output to appear on STDOUT unless\n"
-		<< "             the environment variable LIBUSB_DEBUG is set to 0,1 or 2.\n"
+		<< "             the environment variable USB_DEBUG is set to 0,1 or 2.\n"
 		<< endl;
 }
 
@@ -127,7 +127,7 @@ int main(int argc, char *argv[])
 	signal(SIGINT, &signalHandler);
 	signal(SIGQUIT, &signalHandler);
 
-	cout.sync_with_stdio(true);	// leave this on, since libusb uses
+	cerr.sync_with_stdio(true);	// since libusb uses
 					// stdio for debug messages
 	unsigned char* buf = NULL;
 	try {
@@ -188,9 +188,9 @@ int main(int argc, char *argv[])
 		
 		if (data_dump)
 		{
-			// Warn if LIBUSB_DEBUG isn't set to 0, 1 or 2
+			// Warn if USB_DEBUG isn't set to 0, 1 or 2
 			// as that usually means libusb will write to STDOUT
-			char* val = std::getenv("LIBUSB_DEBUG");
+			char* val = std::getenv("USB_DEBUG");
 			int parsedValue = -1;
 			if(val)
 			{
@@ -198,7 +198,7 @@ int main(int argc, char *argv[])
 			}
 			if(parsedValue != 0 && parsedValue != 1 && parsedValue != 2)
 			{
-				cerr << "Warning: Protocol dump enabled without setting LIBUSB_DEBUG to 0, 1 or 2.\n"
+				cerr << "Warning: Protocol dump enabled without setting USB_DEBUG to 0, 1 or 2.\n"
 				     << "         libusb might log to STDOUT and ruin data stream." << endl;
 			}	
 		}
@@ -268,14 +268,17 @@ int main(int argc, char *argv[])
 				if (haveRead > 0) {
 					Data toWrite(buf, haveRead);
 					if (data_dump) {
+						std::cerr.setf(ios::dec, ios::basefield);
 						std::cerr << "Sending " << haveRead << " bytes stdin->USB\n";
 						std::cerr << "To BB: ";
 						toWrite.DumpHex(std::cerr);
 						std::cerr << "\n";
 					}
 					rawChannel.Send(toWrite);
-					if (data_dump)
+					if (data_dump) {
+						std::cerr.setf(ios::dec, ios::basefield);
 						std::cerr << "Sent " << haveRead << " bytes stdin->USB\n";
+					}
 				}
 				else if (haveRead < 0) {
 					running = false;
