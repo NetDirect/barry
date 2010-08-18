@@ -35,11 +35,20 @@
 #include <string.h>
 #include <unistd.h>
 #include <sys/types.h>
+#include <signal.h>
+#include <errno.h>
 
 #include "i18n.h"
 
 using namespace std;
 using namespace Barry;
+
+static volatile bool signalReceived = false;
+
+static void signalHandler(int signum)
+{
+	signalReceived = true;
+}
 
 class StdoutWriter : public Barry::Mode::RawChannelDataCallback
 {
@@ -111,6 +120,12 @@ void Usage()
 int main(int argc, char *argv[])
 {
 	INIT_I18N(PACKAGE);
+
+	// Setup signal handling
+	signal(SIGHUP, &signalHandler);
+	signal(SIGTERM, &signalHandler);
+	signal(SIGINT, &signalHandler);
+	signal(SIGQUIT, &signalHandler);
 
 	cout.sync_with_stdio(true);	// leave this on, since libusb uses
 					// stdio for debug messages
@@ -190,7 +205,7 @@ int main(int argc, char *argv[])
 
 		// Initialize the barry library.  Must be called before
 		// anything else.
-		Barry::Init(data_dump);
+		Barry::Init(data_dump, &std::cerr);
 
 		// Probe the USB bus for Blackberry devices and display.
 		// If user has specified a PIN, search for it in the
@@ -221,6 +236,7 @@ int main(int argc, char *argv[])
 
 		// Create our controller object
 		Barry::Controller con(probe.Get(activeDevice), *router);
+
 		Barry::Mode::RawChannel rawChannel(con, stdoutWriter);
 
 		//
@@ -233,22 +249,37 @@ int main(int argc, char *argv[])
 		// read from stdin and write to the BB.
 		const size_t bufSize = rawChannel.MaximumSendSize();
 		buf = new unsigned char[bufSize];
-		while (running)	{
-			ssize_t haveRead = read(STDIN_FILENO, buf, bufSize);
-			if (haveRead > 0) {
-				Data toWrite(buf, haveRead);
-				if(data_dump) {
-					std::cerr << "Sending " << haveRead << " bytes stdin->USB\n";
-					std::cerr << "To BB: ";
-					toWrite.DumpHex(std::cerr);
-					std::cerr << "\n";
-				}
-				rawChannel.Send(toWrite);
-				if(data_dump)
-					std::cerr << "Sent " << haveRead << " bytes stdin->USB\n";
-			}
-			else if (haveRead < 0) {
+		fd_set rfds;
+		struct timeval tv;
+		FD_ZERO(&rfds);
+
+		while (running && !signalReceived) {
+			FD_SET(STDIN_FILENO, &rfds);
+			tv.tv_sec = 0;
+			tv.tv_usec = 500000; // 0.5 seconds
+
+			int ret = select(1, &rfds, NULL, NULL, &tv);
+			if (ret < 0) {
+				std::cerr << "Select failed with errno: " << errno << std::endl;
 				running = false;
+			}
+			else if (ret && FD_ISSET(STDIN_FILENO, &rfds)) {
+				ssize_t haveRead = read(STDIN_FILENO, buf, bufSize);
+				if (haveRead > 0) {
+					Data toWrite(buf, haveRead);
+					if (data_dump) {
+						std::cerr << "Sending " << haveRead << " bytes stdin->USB\n";
+						std::cerr << "To BB: ";
+						toWrite.DumpHex(std::cerr);
+						std::cerr << "\n";
+					}
+					rawChannel.Send(toWrite);
+					if (data_dump)
+						std::cerr << "Sent " << haveRead << " bytes stdin->USB\n";
+				}
+				else if (haveRead < 0) {
+					running = false;
+				}
 			}
 		}
 	}
