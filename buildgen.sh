@@ -1,7 +1,8 @@
 #!/bin/sh
 
 libtoolit() {
-	libtoolize --force --copy
+	# Different name on the Mac
+	libtoolize --force --copy || glibtoolize --force --copy
 }
 
 doconf() {

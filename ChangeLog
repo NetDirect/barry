@@ -4,6 +4,10 @@ Release: version 0.17 - 2010/01/??
 	- fixed build bug, where libbarrysync was still used even if glib2
 		was not found on the system.  Thanks to Eric Arseneau
 		for finding this during his Mac build testing.
+	- added LTLIBINTL and LTLIBICONV to tools/Makefile.am for systems
+		that have separate libraries for these features, such as
+		the Mac
+	- buildgen.sh calls libtoolize and glibtoolize now (Mac support)
 2010/07/29
 	- applied patch from Martin Owens fixing version dependencies in
 		debian binary packages
