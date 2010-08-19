@@ -37,11 +37,15 @@
 #include <sys/types.h>
 #include <signal.h>
 #include <errno.h>
+#include <usb.h>
 
 #include "i18n.h"
 
 using namespace std;
 using namespace Barry;
+
+// How long to wait between reads before checking if should shutdown
+#define READ_TIMEOUT_SECONDS 1
 
 static volatile bool signalReceived = false;
 
@@ -92,6 +96,75 @@ public:
 private:
 	volatile bool* m_continuePtr;
 	bool m_verbose;
+};
+
+// Class which adds error detection and setting of a continue boolean
+// to false when an error is detected to SocketRoutingQueue.
+// This code is heavily based on the thread creation code of 
+// SocketRoutingQueue, which sadly has too many private variables
+// to just sub-class.
+class ErrorHandlingSocketRoutingQueue
+{
+public:
+	ErrorHandlingSocketRoutingQueue(volatile bool& continuePtr)
+		: m_socketRoutingQueue(),
+		  m_continuePtr(&continuePtr),
+		  m_runningThread(false)
+		{
+			// Nothing to do
+		}
+
+	~ErrorHandlingSocketRoutingQueue() {
+		// Is the read thread still running
+		if( m_runningThread ) {
+			m_runningThread = false;
+			pthread_join(m_usb_read_thread, NULL);
+		}
+	}
+
+	// Utility function to make it easier to create the
+	// USB pure-read thread.  
+	// Throws Barry::ErrnoError on thread creation error.
+	void SpinoffReadThread() {
+		// signal that it's ok to run inside the thread
+		if( m_runningThread )
+			return;	// already running
+		m_runningThread = true;
+
+		// Start USB read thread, to handle all routing
+		int ret = pthread_create(&m_usb_read_thread, NULL, &ReadThreadFunction, this);
+		if (ret) {
+			m_runningThread = false;
+			throw Barry::ErrnoError("SocketRoutingQueue: Error creating USB read thread.", ret);
+		}
+	}
+
+	SocketRoutingQueue* GetSocketRoutingQueue() {
+		return &m_socketRoutingQueue;
+	}
+
+protected:
+	static void* ReadThreadFunction(void* userPtr) {
+		ErrorHandlingSocketRoutingQueue *q = (ErrorHandlingSocketRoutingQueue *)userPtr;
+
+		// read from USB and write to stdout until finished
+		std::string msg;
+		while (q->m_runningThread) {
+			if( !q->m_socketRoutingQueue.DoRead(msg,  READ_TIMEOUT_SECONDS * 1000) &&
+			    // Only report the first failure, so check m_continuePtr
+				*q->m_continuePtr) {
+				std::cerr << "Error in ReadThread: " << msg << std::endl;
+				*q->m_continuePtr = false;
+			}
+		}
+		return 0;	
+	}
+	
+protected:	
+	SocketRoutingQueue m_socketRoutingQueue;
+	volatile bool* m_continuePtr;
+	volatile bool m_runningThread;
+	pthread_t m_usb_read_thread;
 };
 
 void Usage()
@@ -230,12 +303,12 @@ int main(int argc, char *argv[])
 		// Set up the BlackBerry gubbins
 		// Start a thread to handle any data arriving from
 		// the BlackBerry.
-		auto_ptr<SocketRoutingQueue> router;
-		router.reset(new SocketRoutingQueue);
-		router->SpinoffSimpleReadThread();
+		auto_ptr<ErrorHandlingSocketRoutingQueue> router;
+		router.reset(new ErrorHandlingSocketRoutingQueue(running));
+		router->SpinoffReadThread();
 
 		// Create our controller object
-		Barry::Controller con(probe.Get(activeDevice), *router);
+		Barry::Controller con(probe.Get(activeDevice), *router->GetSocketRoutingQueue());
 
 		Barry::Mode::RawChannel rawChannel(con, stdoutWriter);
 
@@ -255,8 +328,8 @@ int main(int argc, char *argv[])
 
 		while (running && !signalReceived) {
 			FD_SET(STDIN_FILENO, &rfds);
-			tv.tv_sec = 0;
-			tv.tv_usec = 500000; // 0.5 seconds
+			tv.tv_sec = READ_TIMEOUT_SECONDS;
+			tv.tv_usec = 0;
 
 			int ret = select(1, &rfds, NULL, NULL, &tv);
 			if (ret < 0) {
