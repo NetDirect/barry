@@ -37,7 +37,6 @@
 #include <sys/types.h>
 #include <signal.h>
 #include <errno.h>
-#include <usb.h>
 
 #include "i18n.h"
 
