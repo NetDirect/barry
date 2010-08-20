@@ -62,24 +62,31 @@ RawChannel::~RawChannel()
 
 void RawChannel::OnOpen()
 {
+	// Enable sequence packets so that DataSendAck callback can be
+	// implemented
+	m_socket->HideSequencePacket(false);
+	m_con.m_queue->RegisterInterest(0, HandleReceivedDataCallback, this);
 	m_socket->RegisterInterest(HandleReceivedDataCallback, this);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // public API
 
-void RawChannel::Send(Data& data)
+void RawChannel::Send(Data& data, int timeout)
 {
 	size_t packetSize = RAW_HEADER_SIZE + data.GetSize();
 	if(packetSize > MAX_PACKET_SIZE)
 		throw Barry::Error("RawChannel: send data size larger than MaximumPacketSize");
-	Barry::Protocol::Packet* packet = (Barry::Protocol::Packet*)m_sendBuffer;
+
+	
+	// setup header and copy data in
+	MAKE_PACKETPTR_BUF(packet, m_sendBuffer);
 	packet->socket = htobs(m_socket->GetSocket());
 	packet->size = htobs(packetSize);
 	std::memcpy(&(m_sendBuffer[RAW_HEADER_SIZE]), data.GetData(), data.GetSize());
 
 	Data toSend(m_sendBuffer, packetSize);
-	m_socket->Send(toSend);
+	m_socket->Send(toSend, timeout);
 }
 
 size_t RawChannel::MaximumSendSize()
@@ -89,10 +96,24 @@ size_t RawChannel::MaximumSendSize()
 		
 void RawChannel::HandleReceivedData(Data& data)
 {
-	// Remove packet headers
-	Data partial(data.GetData() + RAW_HEADER_SIZE, data.GetSize() - RAW_HEADER_SIZE);
-	Callback.DataReceived(partial);
+	Protocol::CheckSize(data, MIN_PACKET_DATA_SIZE);
+	MAKE_PACKETPTR_BUF(packet, data.GetData());
+
+	if (packet->socket == 0) {
+		// check it is a sequence handshake
+		if (packet->command == htobs(SB_COMMAND_SEQUENCE_HANDSHAKE))
+		{
+			Callback.DataSendAck();
+		}
+		else
+		{
+			throw Barry::Error("RawChannel: Got unexpected socket zero packet");
+		}
+	} else {
+		// Should be a socket packet for us, so remove packet headers
+		Data partial(data.GetData() + RAW_HEADER_SIZE, data.GetSize() - RAW_HEADER_SIZE);
+		Callback.DataReceived(partial);
+	}
 }
 
 }} // namespace Barry::Mode
-

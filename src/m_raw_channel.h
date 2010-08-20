@@ -36,6 +36,7 @@ namespace Mode {
 class BXEXPORT RawChannelDataCallback
 {
 public:
+	virtual void DataSendAck() = 0;
 	virtual void DataReceived(Data& data) = 0;
 	virtual ~RawChannelDataCallback() {};
 };
@@ -68,7 +69,11 @@ public:
 	// Will throw a Barry::Error if data is longer than
 	// MaximumPacketContentsSize or a Barry::Usb::Error if there
 	// is an underlying USB error.
-	void Send(Data& data);
+	//
+	// Before calling send again it's advisable to wait
+	// for the DataSendAck callback to occur. If Send is called
+	// again before the callback then data loss is very likely to occur.
+	void Send(Data& data, int timeout = -1);
 
 	// Not intended for use by users of this class.
 	// Instead data received will come in via the 

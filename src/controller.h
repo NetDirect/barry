@@ -42,6 +42,7 @@ namespace Mode {
 	class Serial;
 	class JavaLoader;
 	class JVMDebug;
+	class RawChannel;
 }
 
 //
@@ -74,6 +75,7 @@ class BXEXPORT Controller
 	friend class Barry::Mode::Serial;
 	friend class Barry::Mode::JavaLoader;
 	friend class Barry::Mode::JVMDebug;
+	friend class Barry::Mode::RawChannel;
 
 public:
 	/// Handheld mode type

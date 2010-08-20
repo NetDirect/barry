@@ -37,6 +37,7 @@
 #include <sys/types.h>
 #include <signal.h>
 #include <errno.h>
+#include <pthread.h>
 
 #include "i18n.h"
 
@@ -53,12 +54,174 @@ static void signalHandler(int signum)
 	signalReceived = true;
 }
 
+class Condvar;
+
+// Wrapper for pthread_mutex_t
+class Mutex
+{
+public:
+	friend class Condvar;
+	Mutex();
+	~Mutex();
+	void Lock();
+	void Unlock();
+private:
+	bool m_initialized;
+	pthread_mutex_t m_mutex;
+};
+
+Mutex::Mutex()
+	: m_initialized(false)
+{
+	int ret = pthread_mutex_init(&m_mutex, NULL);
+	if (ret != 0)
+		throw Barry::Error("Mutex: failed to create mutex");
+	m_initialized = true;
+}
+
+Mutex::~Mutex()
+{
+	if (m_initialized)
+	{
+		int ret = pthread_mutex_destroy(&m_mutex);
+		if (ret != 0)
+			std::cerr << "Failed to destroy mutex with error: " << ret << std::endl;
+	}
+}
+
+void Mutex::Lock()
+{
+	int ret = pthread_mutex_lock(&m_mutex);
+	if (ret != 0)
+		throw Barry::Error("Mutex: failed to lock mutex");
+}
+
+void Mutex::Unlock()
+{
+	int ret = pthread_mutex_unlock(&m_mutex);
+	if (ret != 0)
+		throw Barry::Error("Mutex: failed to unlock mutex");
+}
+
+// RIAA wrapper for locking Mutex class
+class MutexLock
+{
+public:
+	MutexLock(Mutex& mutex)
+		: m_locked(false),
+		  m_mutex(mutex)
+		{ mutex.Lock(); m_locked = true; };
+	void Unlock()
+		{
+			if (m_locked)
+			{
+				m_mutex.Unlock();
+				m_locked = false;
+			}
+		}
+	~MutexLock() { Unlock(); }
+private:
+	bool m_locked;
+	Mutex& m_mutex;
+	};
+
+// Wrapper for pthread_cont_t
+class Condvar
+{
+public:
+	Condvar();
+	~Condvar();
+	void Wait(Mutex& mutex);
+	void Signal();
+private:
+	bool m_initialized;
+	pthread_cond_t m_cv;
+};
+
+Condvar::Condvar()
+	: m_initialized(false)
+{
+	int ret = pthread_cond_init(&m_cv, NULL);
+	if (ret != 0)
+		throw Barry::Error("Condvar: failed to create condvar");
+	m_initialized = true;
+}
+
+Condvar::~Condvar()
+{
+	if (m_initialized)
+	{
+		int ret = pthread_cond_destroy(&m_cv);
+		if (ret != 0)
+			std::cerr << "Failed to destroy condvar with error: " << ret << std::endl;
+	}
+}
+
+void Condvar::Wait(Mutex& mutex)
+{
+	int ret = pthread_cond_wait(&m_cv, &mutex.m_mutex);
+	if (ret != 0)
+		throw Barry::Error("Condvar: failed to wait on condvar");
+}
+
+void Condvar::Signal()
+{
+	int ret = pthread_cond_signal(&m_cv);
+	if (ret != 0)
+		throw Barry::Error("Condvar: failed to signal condvar");
+}
+
+// Semaphore class for signalling between threads
+class Semaphore
+{
+public:
+	Semaphore(int initialVal = 0);
+	~Semaphore();
+	void WaitForSignal();
+	void Signal();
+private:
+	int m_value;
+	Mutex m_mutex;
+	Condvar m_cv;
+};
+
+Semaphore::Semaphore(int initialVal)
+  : m_value(initialVal),
+    m_mutex(),
+    m_cv()
+{
+}
+
+Semaphore::~Semaphore()
+{
+}
+
+void Semaphore::WaitForSignal()
+{
+	MutexLock lock(m_mutex);
+	while (m_value <= 0) {
+		m_cv.Wait(m_mutex);
+	}
+	--m_value;
+	lock.Unlock();
+}
+
+void Semaphore::Signal()
+{
+	MutexLock lock(m_mutex);
+	++m_value;
+	m_cv.Signal();
+	lock.Unlock();
+	m_mutex.Lock();
+}
+
 class StdoutWriter : public Barry::Mode::RawChannelDataCallback
 {
 public:
-	StdoutWriter(volatile bool& keepGoing, bool verbose)
-		: m_continuePtr(&keepGoing)
-		, m_verbose(verbose)
+	StdoutWriter(volatile bool& keepGoing, bool verbose, Semaphore& semaphore)
+		: m_continuePtr(&keepGoing),
+		  m_verbose(verbose),
+		  m_semaphore(semaphore)
 		{
 		}
 
@@ -84,6 +247,7 @@ public:
 				if (writtenThisTime < 0)
 				{
 					*m_continuePtr = false;
+					m_semaphore.Signal();
 				}
 				else
 				{
@@ -92,9 +256,15 @@ public:
 			}	
 		}
 
+	void DataSendAck()
+		{
+			m_semaphore.Signal();	
+		}
+
 private:
 	volatile bool* m_continuePtr;
 	bool m_verbose;
+	Semaphore& m_semaphore;
 };
 
 // Class which adds error detection and setting of a continue boolean
@@ -105,10 +275,11 @@ private:
 class ErrorHandlingSocketRoutingQueue
 {
 public:
-	ErrorHandlingSocketRoutingQueue(volatile bool& continuePtr)
+	ErrorHandlingSocketRoutingQueue(volatile bool& continuePtr, Semaphore& semaphore)
 		: m_socketRoutingQueue(),
 		  m_continuePtr(&continuePtr),
-		  m_runningThread(false)
+		  m_runningThread(false),
+		  m_semaphore(semaphore)
 		{
 			// Nothing to do
 		}
@@ -154,6 +325,7 @@ protected:
 				*q->m_continuePtr) {
 				std::cerr << "Error in ReadThread: " << msg << std::endl;
 				*q->m_continuePtr = false;
+				q->m_semaphore.Signal();
 			}
 		}
 		return 0;	
@@ -164,6 +336,7 @@ protected:
 	volatile bool* m_continuePtr;
 	volatile bool m_runningThread;
 	pthread_t m_usb_read_thread;
+	Semaphore& m_semaphore;
 };
 
 void Usage()
@@ -296,14 +469,16 @@ int main(int argc, char *argv[])
 
 		volatile bool running = true;
 
+		Semaphore sem;
+
 		// Create the thing which will write onto stdout
-		StdoutWriter stdoutWriter(running, data_dump);
+		StdoutWriter stdoutWriter(running, data_dump, sem);
 
 		// Set up the BlackBerry gubbins
 		// Start a thread to handle any data arriving from
 		// the BlackBerry.
 		auto_ptr<ErrorHandlingSocketRoutingQueue> router;
-		router.reset(new ErrorHandlingSocketRoutingQueue(running));
+		router.reset(new ErrorHandlingSocketRoutingQueue(running, sem));
 		router->SpinoffReadThread();
 
 		// Create our controller object
@@ -351,6 +526,7 @@ int main(int argc, char *argv[])
 						std::cerr.setf(ios::dec, ios::basefield);
 						std::cerr << "Sent " << haveRead << " bytes stdin->USB\n";
 					}
+					sem.WaitForSignal();
 				}
 				else if (haveRead < 0) {
 					running = false;
