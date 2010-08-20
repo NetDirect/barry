@@ -85,7 +85,7 @@ Mutex::~Mutex()
 	{
 		int ret = pthread_mutex_destroy(&m_mutex);
 		if (ret != 0)
-			std::cerr << "Failed to destroy mutex with error: " << ret << std::endl;
+			cerr << "Failed to destroy mutex with error: " << ret << endl;
 	}
 }
 
@@ -153,7 +153,7 @@ Condvar::~Condvar()
 	{
 		int ret = pthread_cond_destroy(&m_cv);
 		if (ret != 0)
-			std::cerr << "Failed to destroy condvar with error: " << ret << std::endl;
+			cerr << "Failed to destroy condvar with error: " << ret << endl;
 	}
 }
 
@@ -212,7 +212,6 @@ void Semaphore::Signal()
 	++m_value;
 	m_cv.Signal();
 	lock.Unlock();
-	m_mutex.Lock();
 }
 
 class StdoutWriter : public Barry::Mode::RawChannelDataCallback
@@ -226,46 +225,64 @@ public:
 		}
 
     
-	void DataReceived(Data& data)
-		{
-			if (m_verbose) {
-				std::cerr << "From BB: ";
-				data.DumpHex(std::cerr);
-				std::cerr << "\n";
-			}
-
-			size_t toWrite = data.GetSize();
-			size_t written = 0;
-
-			while (written < toWrite && *m_continuePtr) {
-				ssize_t writtenThisTime = write(STDOUT_FILENO, &(data.GetData()[written]), toWrite - written);
-				if (m_verbose) {
-					std::cerr.setf(ios::dec, ios::basefield);
-					cerr << "Written " << writtenThisTime << " bytes over stdout\n";
-				}
-				std::fflush(stdout);
-				if (writtenThisTime < 0)
-				{
-					*m_continuePtr = false;
-					m_semaphore.Signal();
-				}
-				else
-				{
-					written += writtenThisTime;
-				}
-			}	
-		}
-
-	void DataSendAck()
-		{
-			m_semaphore.Signal();	
-		}
+public: // From RawChannelDataCallback
+	virtual void DataReceived(Data& data);
+	virtual void DataSendAck();
+	virtual void ChannelError(string msg);
+	virtual void ChannelClose();
 
 private:
 	volatile bool* m_continuePtr;
 	bool m_verbose;
 	Semaphore& m_semaphore;
 };
+
+
+void StdoutWriter::DataReceived(Data& data)
+{
+	if (m_verbose) {
+		cerr << "From BB: ";
+		data.DumpHex(cerr);
+		cerr << "\n";
+	}
+
+	size_t toWrite = data.GetSize();
+	size_t written = 0;
+
+	while (written < toWrite && *m_continuePtr) {
+		ssize_t writtenThisTime = write(STDOUT_FILENO, &(data.GetData()[written]), toWrite - written);
+		if (m_verbose) {
+			cerr.setf(ios::dec, ios::basefield);
+			cerr << "Written " << writtenThisTime << " bytes over stdout" << endl;
+		}
+		fflush(stdout);
+		if (writtenThisTime < 0)
+		{
+			ChannelClose();
+		}
+		else
+		{
+			written += writtenThisTime;
+		}
+	}	
+}
+
+void StdoutWriter::DataSendAck()
+{
+	m_semaphore.Signal();
+}
+
+void StdoutWriter::ChannelError(string msg)
+{
+	cerr << "StdoutWriter: Received error: " << msg << endl;
+	ChannelClose();
+}
+
+void StdoutWriter::ChannelClose()
+{
+	*m_continuePtr = false;
+	m_semaphore.Signal();
+}
 
 // Class which adds error detection and setting of a continue boolean
 // to false when an error is detected to SocketRoutingQueue.
@@ -318,12 +335,12 @@ protected:
 		ErrorHandlingSocketRoutingQueue *q = (ErrorHandlingSocketRoutingQueue *)userPtr;
 
 		// read from USB and write to stdout until finished
-		std::string msg;
+		string msg;
 		while (q->m_runningThread) {
 			if( !q->m_socketRoutingQueue.DoRead(msg,  READ_TIMEOUT_SECONDS * 1000) &&
 			    // Only report the first failure, so check m_continuePtr
 				*q->m_continuePtr) {
-				std::cerr << "Error in ReadThread: " << msg << std::endl;
+				cerr << "Error in ReadThread: " << msg << endl;
 				*q->m_continuePtr = false;
 				q->m_semaphore.Signal();
 			}
@@ -362,15 +379,29 @@ void Usage()
 		<< endl;
 }
 
+// Helper class to restore signal handlers when shutdown is occuring
+// This class isn't responsible for setting up the signal handlers
+// as they need to be restored before the Barry::Socket starts closing.
+class SignalRestorer
+{
+public:
+	SignalRestorer(int signum, sighandler_t handler)
+		: m_signum(signum), m_handler(handler) {}
+	~SignalRestorer() { signal(m_signum, m_handler); }
+private:
+	int m_signum;
+	sighandler_t m_handler;
+};
+
 int main(int argc, char *argv[])
 {
 	INIT_I18N(PACKAGE);
 
 	// Setup signal handling
-	signal(SIGHUP, &signalHandler);
-	signal(SIGTERM, &signalHandler);
-	signal(SIGINT, &signalHandler);
-	signal(SIGQUIT, &signalHandler);
+	sighandler_t oldSigHup = signal(SIGHUP, &signalHandler);
+	sighandler_t oldSigTerm = signal(SIGTERM, &signalHandler);
+	sighandler_t oldSigInt = signal(SIGINT, &signalHandler);
+	sighandler_t oldSigQuit = signal(SIGQUIT, &signalHandler);
 
 	cerr.sync_with_stdio(true);	// since libusb uses
 					// stdio for debug messages
@@ -435,7 +466,7 @@ int main(int argc, char *argv[])
 		{
 			// Warn if USB_DEBUG isn't set to 0, 1 or 2
 			// as that usually means libusb will write to STDOUT
-			char* val = std::getenv("USB_DEBUG");
+			char* val = getenv("USB_DEBUG");
 			int parsedValue = -1;
 			if(val)
 			{
@@ -450,7 +481,7 @@ int main(int argc, char *argv[])
 
 		// Initialize the barry library.  Must be called before
 		// anything else.
-		Barry::Init(data_dump, &std::cerr);
+		Barry::Init(data_dump, &cerr);
 
 		// Probe the USB bus for Blackberry devices and display.
 		// If user has specified a PIN, search for it in the
@@ -465,7 +496,7 @@ int main(int argc, char *argv[])
 		// Now start to read from stdin and get ready to write
 		// to the BlackBerry.
 		if (data_dump)
-			std::cerr << "Connected to device, starting read/write\n";
+			cerr << "Connected to device, starting read/write\n";
 
 		volatile bool running = true;
 
@@ -500,6 +531,11 @@ int main(int argc, char *argv[])
 		struct timeval tv;
 		FD_ZERO(&rfds);
 
+		SignalRestorer srh(SIGHUP, oldSigHup);
+		SignalRestorer srt(SIGTERM, oldSigTerm);
+		SignalRestorer sri(SIGINT, oldSigInt);
+		SignalRestorer srq(SIGQUIT, oldSigQuit);
+
 		while (running && !signalReceived) {
 			FD_SET(STDIN_FILENO, &rfds);
 			tv.tv_sec = READ_TIMEOUT_SECONDS;
@@ -507,7 +543,7 @@ int main(int argc, char *argv[])
 
 			int ret = select(1, &rfds, NULL, NULL, &tv);
 			if (ret < 0) {
-				std::cerr << "Select failed with errno: " << errno << std::endl;
+				cerr << "Select failed with errno: " << errno << endl;
 				running = false;
 			}
 			else if (ret && FD_ISSET(STDIN_FILENO, &rfds)) {
@@ -515,16 +551,16 @@ int main(int argc, char *argv[])
 				if (haveRead > 0) {
 					Data toWrite(buf, haveRead);
 					if (data_dump) {
-						std::cerr.setf(ios::dec, ios::basefield);
-						std::cerr << "Sending " << haveRead << " bytes stdin->USB\n";
-						std::cerr << "To BB: ";
-						toWrite.DumpHex(std::cerr);
-						std::cerr << "\n";
+						cerr.setf(ios::dec, ios::basefield);
+						cerr << "Sending " << haveRead << " bytes stdin->USB\n";
+						cerr << "To BB: ";
+						toWrite.DumpHex(cerr);
+						cerr << "\n";
 					}
 					rawChannel.Send(toWrite);
 					if (data_dump) {
-						std::cerr.setf(ios::dec, ios::basefield);
-						std::cerr << "Sent " << haveRead << " bytes stdin->USB\n";
+						cerr.setf(ios::dec, ios::basefield);
+						cerr << "Sent " << ios::dec << haveRead << " bytes stdin->USB\n";
 					}
 					sem.WaitForSignal();
 				}
@@ -535,15 +571,15 @@ int main(int argc, char *argv[])
 		}
 	}
 	catch( Usb::Error &ue) {
-		std::cerr << "Usb::Error caught: " << ue.what() << endl;
+		cerr << "Usb::Error caught: " << ue.what() << endl;
 		return 1;
 	}
 	catch( Barry::Error &se ) {
-		std::cerr << "Barry::Error caught: " << se.what() << endl;
+		cerr << "Barry::Error caught: " << se.what() << endl;
 		return 1;
 	}
-	catch( std::exception &e ) {
-		std::cerr << "std::exception caught: " << e.what() << endl;
+	catch( exception &e ) {
+		cerr << "exception caught: " << e.what() << endl;
 		return 1;
 	}
 

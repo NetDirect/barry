@@ -27,6 +27,8 @@
 #include "m_mode_base.h"
 #include "socket.h"
 
+#include <string>
+
 namespace Barry {
 
 namespace Mode {
@@ -36,9 +38,14 @@ namespace Mode {
 class BXEXPORT RawChannelDataCallback
 {
 public:
+	// Called when data has been sent on the channel
 	virtual void DataSendAck() = 0;
+	// Called when data has been received on the channel
 	virtual void DataReceived(Data& data) = 0;
-	virtual ~RawChannelDataCallback() {};
+	// Called when the channel has an error
+	virtual void ChannelError(std::string msg) = 0;
+	// Called when the channel has been asked to close by the other side
+	virtual void ChannelClose() = 0;
 };
 
 //
@@ -60,7 +67,7 @@ class BXEXPORT RawChannel : public Mode
 {
 public:
 	RawChannel(Controller &con, RawChannelDataCallback& callback);
-	~RawChannel();
+	virtual ~RawChannel();
 
 	//////////////////////////////////
 	// Raw channel mode specific methods
@@ -77,8 +84,14 @@ public:
 
 	// Not intended for use by users of this class.
 	// Instead data received will come in via the 
-	// appropriate RawChannelDataCallback callback.
+	// RawChannelDataCallback::DataReceived callback.
 	void HandleReceivedData(Data& data);
+
+	// Not intended for use by users of this class.
+	// Instead acknowledgement of data send will come
+	// in via the RawChannelDataCallback::DataSendAck();
+	// callback.
+	void HandleSequencePacket(Data& data);
 
 	// Not intended for use by users of this class.
 	// This method is called by the internals of
@@ -89,9 +102,13 @@ public:
 	// can be sent
 	size_t MaximumSendSize();
 
+protected:
+	void UnregisterZeroSocketInterest();
+
 private:
-	RawChannelDataCallback& Callback;
+	RawChannelDataCallback& m_callback;
 	unsigned char *m_sendBuffer;
+	bool m_zeroRegistered;
 
 };
 

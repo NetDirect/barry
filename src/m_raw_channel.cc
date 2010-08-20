@@ -49,21 +49,24 @@ static void HandleReceivedDataCallback(void* ctx, Data* data) {
 
 RawChannel::RawChannel(Controller &con, RawChannelDataCallback& callback)
 	: Mode(con, Controller::RawChannel),
-	  Callback(callback),
-	  m_sendBuffer(0)
+	  m_callback(callback),
+	  m_sendBuffer(0),
+	  m_zeroRegistered(false)
 {
 	m_sendBuffer = new unsigned char[MAX_PACKET_SIZE];
 }
 
 RawChannel::~RawChannel()
 {
+	UnregisterZeroSocketInterest();
 	delete[] m_sendBuffer;
 }
 
 void RawChannel::OnOpen()
 {
-	// Enable sequence packets so that DataSendAck callback can be
+	// Enable sequence packets so that DataSendAck callback and close can be
 	// implemented
+	m_zeroRegistered = true;
 	m_socket->HideSequencePacket(false);
 	m_con.m_queue->RegisterInterest(0, HandleReceivedDataCallback, this);
 	m_socket->RegisterInterest(HandleReceivedDataCallback, this);
@@ -100,19 +103,35 @@ void RawChannel::HandleReceivedData(Data& data)
 	MAKE_PACKETPTR_BUF(packet, data.GetData());
 
 	if (packet->socket == 0) {
-		// check it is a sequence handshake
-		if (packet->command == htobs(SB_COMMAND_SEQUENCE_HANDSHAKE))
+		switch(btohs(packet->command))
 		{
-			Callback.DataSendAck();
-		}
-		else
-		{
-			throw Barry::Error("RawChannel: Got unexpected socket zero packet");
+		case SB_COMMAND_SEQUENCE_HANDSHAKE:
+			m_callback.DataSendAck();
+			break;
+		case SB_COMMAND_CLOSE_SOCKET:
+		case SB_COMMAND_REMOTE_CLOSE_SOCKET:
+			// Stop listening to socket 0 messages
+			// so that socket close work.
+			UnregisterZeroSocketInterest();
+			m_callback.ChannelClose();
+			break;
+		default:
+			UnregisterZeroSocketInterest();
+			m_callback.ChannelError("RawChannel: Got unexpected socket zero packet");
+			break;
 		}
 	} else {
 		// Should be a socket packet for us, so remove packet headers
 		Data partial(data.GetData() + RAW_HEADER_SIZE, data.GetSize() - RAW_HEADER_SIZE);
-		Callback.DataReceived(partial);
+		m_callback.DataReceived(partial);
+	}
+}
+
+void RawChannel::UnregisterZeroSocketInterest() {
+	if (m_zeroRegistered) {
+		m_con.m_queue->UnregisterInterest(0);
+		m_socket->HideSequencePacket(true);
+		m_zeroRegistered = false;
 	}
 }
 
