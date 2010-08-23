@@ -410,11 +410,6 @@ int main(int argc, char *argv[])
 		uint32_t pin = 0;
 		bool data_dump = false;
 		string password;
-		vector<string> params;
-		string busname;
-		string devname;
-		string iconvCharset;
-		Usb::EndpointPair epOverride;
 
 		// process command line options
 		for(;;) {
@@ -446,8 +441,14 @@ int main(int argc, char *argv[])
 		argc -= optind;
 		argv += optind;
 
-		if( argc < 1 ) {
+		if (argc < 1) {
 			cerr << "Error: Missing raw channel name." << endl;
+			Usage();
+			return 1;
+		}
+
+		if (argc > 1) {
+			cerr << "Error: Too many arguments." << endl;
 			Usage();
 			return 1;
 		}
@@ -457,10 +458,6 @@ int main(int argc, char *argv[])
 		argc --;
 		argv ++;
 
-		// Put the remaining arguments into an array
-		for (; argc > 0; argc --, argv ++) {
-			params.push_back(string(argv[0]));
-		}
 		
 		if (data_dump)
 		{
