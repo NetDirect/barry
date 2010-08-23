@@ -19,7 +19,7 @@ src/threadwrap.cc
 src/r_servicebook.cc
 src/iconv.cc
 src/m_desktop.cc
-src/m_vnc_server.cc
+src/m_raw_channel.cc
 src/record.cc
 src/dp_codinfo.cc
 src/time.cc
@@ -88,5 +88,5 @@ tools/btool.cc
 tools/bfuse.cc
 tools/upldif.cc
 tools/bjavaloader.cc
-tools/bvncrelay.cc
+tools/brawchannel.cc
 

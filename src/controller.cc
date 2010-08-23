@@ -154,7 +154,7 @@ Controller::~Controller()
 // Tells device which mode is desired, and returns the suggested
 // socket ID to use for that mode.
 //
-  uint16_t Controller::SelectMode(ModeType mode)
+uint16_t Controller::SelectMode(ModeType mode)
 {
   return SelectMode(mode, NULL);
 }
@@ -168,7 +168,7 @@ Controller::~Controller()
 //
 // The RawChannel mode requires an explicitModeName to be specified.
 //
-  uint16_t Controller::SelectMode(ModeType mode, const char *explicitModeName)
+uint16_t Controller::SelectMode(ModeType mode, const char *explicitModeName)
 {
 	// select mode
 	Protocol::Packet packet;

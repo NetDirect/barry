@@ -214,10 +214,10 @@ void Semaphore::Signal()
 	lock.Unlock();
 }
 
-class StdoutWriter : public Barry::Mode::RawChannelDataCallback
+class CallbackHandler : public Barry::Mode::RawChannelDataCallback
 {
 public:
-	StdoutWriter(volatile bool& keepGoing, bool verbose, Semaphore& semaphore)
+	CallbackHandler(volatile bool& keepGoing, bool verbose, Semaphore& semaphore)
 		: m_continuePtr(&keepGoing),
 		  m_verbose(verbose),
 		  m_semaphore(semaphore)
@@ -238,7 +238,7 @@ private:
 };
 
 
-void StdoutWriter::DataReceived(Data& data)
+void CallbackHandler::DataReceived(Data& data)
 {
 	if (m_verbose) {
 		cerr << "From BB: ";
@@ -267,28 +267,29 @@ void StdoutWriter::DataReceived(Data& data)
 	}	
 }
 
-void StdoutWriter::DataSendAck()
+void CallbackHandler::DataSendAck()
 {
 	m_semaphore.Signal();
 }
 
-void StdoutWriter::ChannelError(string msg)
+void CallbackHandler::ChannelError(string msg)
 {
-	cerr << "StdoutWriter: Received error: " << msg << endl;
+	cerr << "CallbackHandler: Received error: " << msg << endl;
 	ChannelClose();
 }
 
-void StdoutWriter::ChannelClose()
+void CallbackHandler::ChannelClose()
 {
 	*m_continuePtr = false;
 	m_semaphore.Signal();
 }
 
-// Class which adds error detection and setting of a continue boolean
-// to false when an error is detected to SocketRoutingQueue.
-// This code is heavily based on the thread creation code of 
-// SocketRoutingQueue, which sadly has too many private variables
-// to just sub-class.
+// Class which extends the functionality of SocketRoutingQueue to add
+// error detection and setting of a continue boolean to false when an
+// error is detected.
+// This code is heavily based on the thread
+// creation code of SocketRoutingQueue, which sadly has too many
+// private variables to just sub-class.
 class ErrorHandlingSocketRoutingQueue
 {
 public:
@@ -405,6 +406,9 @@ int main(int argc, char *argv[])
 
 	cerr.sync_with_stdio(true);	// since libusb uses
 					// stdio for debug messages
+
+	// Buffer to hold data read in from STDIN before sending it
+	// to the BlackBerry.
 	unsigned char* buf = NULL;
 	try {
 		uint32_t pin = 0;
@@ -480,7 +484,7 @@ int main(int argc, char *argv[])
 		// anything else.
 		Barry::Init(data_dump, &cerr);
 
-		// Probe the USB bus for Blackberry devices and display.
+		// Probe the USB bus for Blackberry devices.
 		// If user has specified a PIN, search for it in the
 		// available device list here as well
 		Barry::Probe probe;
@@ -490,8 +494,7 @@ int main(int argc, char *argv[])
 			return 1;
 		}
 
-		// Now start to read from stdin and get ready to write
-		// to the BlackBerry.
+		// Now get setup to open the channel.
 		if (data_dump)
 			cerr << "Connected to device, starting read/write\n";
 
@@ -500,9 +503,9 @@ int main(int argc, char *argv[])
 		Semaphore sem;
 
 		// Create the thing which will write onto stdout
-		StdoutWriter stdoutWriter(running, data_dump, sem);
+		// and perform other callback duties.
+		CallbackHandler callbackHandler(running, data_dump, sem);
 
-		// Set up the BlackBerry gubbins
 		// Start a thread to handle any data arriving from
 		// the BlackBerry.
 		auto_ptr<ErrorHandlingSocketRoutingQueue> router;
@@ -512,11 +515,9 @@ int main(int argc, char *argv[])
 		// Create our controller object
 		Barry::Controller con(probe.Get(activeDevice), *router->GetSocketRoutingQueue());
 
-		Barry::Mode::RawChannel rawChannel(con, stdoutWriter);
+		Barry::Mode::RawChannel rawChannel(con, callbackHandler);
 
-		//
-		// execute each mode that was turned on
-		//
+		// Try to open the requested channel now everything is setup
 		rawChannel.Open(password.c_str(), channelName.c_str());
 
 		// We now have a thread running to read from the
@@ -528,6 +529,11 @@ int main(int argc, char *argv[])
 		struct timeval tv;
 		FD_ZERO(&rfds);
 
+		// Set up the signal restorers to restore signal
+		// handling (in their destructors) before the socket
+		// starts to be closed. This allows, for example,
+		// double control-c presses to stop graceful close
+		// down.
 		SignalRestorer srh(SIGHUP, oldSigHup);
 		SignalRestorer srt(SIGTERM, oldSigTerm);
 		SignalRestorer sri(SIGINT, oldSigInt);
@@ -559,6 +565,8 @@ int main(int argc, char *argv[])
 						cerr.setf(ios::dec, ios::basefield);
 						cerr << "Sent " << ios::dec << haveRead << " bytes stdin->USB\n";
 					}
+					// Wait for the write to be completed before reading
+					// the next data to send.
 					sem.WaitForSignal();
 				}
 				else if (haveRead < 0) {

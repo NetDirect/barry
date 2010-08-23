@@ -88,12 +88,6 @@ public:
 	void HandleReceivedData(Data& data);
 
 	// Not intended for use by users of this class.
-	// Instead acknowledgement of data send will come
-	// in via the RawChannelDataCallback::DataSendAck();
-	// callback.
-	void HandleSequencePacket(Data& data);
-
-	// Not intended for use by users of this class.
 	// This method is called by the internals of
 	// Barry when setting up a connection.
 	void OnOpen();

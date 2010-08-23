@@ -90,7 +90,7 @@ void Mode::Open(const char *password)
 /// is responsible for safely handling the raw password data.
 ///
 /// It uses the provided name as the name for the socket used in this mode.
-/// Usually this shouldn't be needed unless using the raw socket mode.
+/// Usually this shouldn't be needed unless using the raw channel mode.
 ///
 /// You can retry the password by catching Barry::BadPassword and
 /// calling RetryPassword() with the new password.
