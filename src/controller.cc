@@ -182,7 +182,7 @@ uint16_t Controller::SelectMode(ModeType mode, const char *explicitModeName)
 	char *modeName = (char *) packet.u.socket.u.mode.name;
 	
 	if( explicitModeName ) {
-		if( strlen(modeName) >= sizeof(packet.u.socket.u.mode.name) ) {
+		if( strlen(explicitModeName) >= sizeof(packet.u.socket.u.mode.name) ) {
 			throw std::logic_error("Controller: explicit mode name too long");
 		}
 		strcpy(modeName, explicitModeName);
