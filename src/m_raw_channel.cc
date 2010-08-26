@@ -21,6 +21,7 @@
 */
 
 #include "m_raw_channel.h"
+#include "semaphore.h"
 #include "data.h"
 #include "protocol.h"
 #include "protostructs.h"
@@ -52,14 +53,36 @@ RawChannel::RawChannel(Controller &con, RawChannelDataCallback& callback)
 	, m_callback(callback)
 	, m_sendBuffer(0)
 	, m_zeroRegistered(false)
+	, m_mutex_valid(false)
+	, m_cv_valid(false)
+	, m_semaphore(NULL)
 {
 	m_sendBuffer = new unsigned char[MAX_PACKET_SIZE];
+
+	// Create the thread synchronization objects
+	if( pthread_mutex_init(&m_mutex, NULL) ) {
+		throw Barry::Error("Failed to create mutex");
+	}
+	m_mutex_valid = true;
+	if( pthread_cond_init(&m_cv, NULL) ) {
+		throw Barry::Error("Failed to create condvar");
+	}
+	m_cv_valid = true;
+	m_semaphore = new semaphore(m_mutex, m_cv);
 }
 
 RawChannel::~RawChannel()
 {
 	UnregisterZeroSocketInterest();
 	delete[] m_sendBuffer;
+
+	if( m_mutex_valid ) {
+		pthread_mutex_destroy(&m_mutex);
+	}
+	if( m_cv_valid ) {
+		pthread_cond_destroy(&m_cv);
+	}
+	delete m_semaphore;
 }
 
 void RawChannel::OnOpen()
@@ -91,6 +114,7 @@ void RawChannel::Send(Data& data, int timeout)
 
 	Data toSend(m_sendBuffer, packetSize);
 	m_socket->Send(toSend, timeout);
+	m_semaphore->WaitForSignal();
 }
 
 size_t RawChannel::MaximumSendSize()
@@ -107,7 +131,7 @@ void RawChannel::HandleReceivedData(Data& data)
 		switch( btohs(packet->command) )
 		{
 		case SB_COMMAND_SEQUENCE_HANDSHAKE:
-			m_callback.DataSendAck();
+			m_semaphore->Signal();
 			break;
 		case SB_COMMAND_CLOSE_SOCKET:
 		case SB_COMMAND_REMOTE_CLOSE_SOCKET:

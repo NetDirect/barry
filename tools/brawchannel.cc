@@ -23,7 +23,6 @@
 
 
 #include <barry/barry.h>
-#include <barry/semaphore.h>
 #include <iostream>
 #include <vector>
 #include <string>
@@ -60,20 +59,17 @@ class CallbackHandler : public Barry::Mode::RawChannelDataCallback
 private:
 	volatile bool* m_continuePtr;
 	bool m_verbose;
-	semaphore& m_semaphore;
 
 public:
-	CallbackHandler(volatile bool& keepGoing, bool verbose, semaphore& semaphore)
+	CallbackHandler(volatile bool& keepGoing, bool verbose)
 		: m_continuePtr(&keepGoing)
 		, m_verbose(verbose)
-		, m_semaphore(semaphore)
 		{
 		}
 
     
 public: // From RawChannelDataCallback
 	virtual void DataReceived(Data& data);
-	virtual void DataSendAck();
 	virtual void ChannelError(string msg);
 	virtual void ChannelClose();
 };
@@ -106,11 +102,6 @@ void CallbackHandler::DataReceived(Data& data)
 	}	
 }
 
-void CallbackHandler::DataSendAck()
-{
-	m_semaphore.Signal();
-}
-
 void CallbackHandler::ChannelError(string msg)
 {
 	cerr << "CallbackHandler: Received error: " << msg << endl;
@@ -120,7 +111,6 @@ void CallbackHandler::ChannelError(string msg)
 void CallbackHandler::ChannelClose()
 {
 	*m_continuePtr = false;
-	m_semaphore.Signal();
 }
 
 // Class which extends the functionality of SocketRoutingQueue to add
@@ -144,7 +134,6 @@ protected:
 				*q->m_continuePtr ) {
 				cerr << "Error in ReadThread: " << msg << endl;
 				*q->m_continuePtr = false;
-				q->m_semaphore.Signal();
 			}
 		}
 		return 0;	
@@ -154,13 +143,11 @@ protected:
 	volatile bool* m_continuePtr;
 	volatile bool m_runningThread;
 	pthread_t m_usb_read_thread;
-	semaphore& m_semaphore;
 public:
-	ErrorHandlingSocketRoutingQueue(volatile bool& continuePtr, semaphore& semaphore)
+	ErrorHandlingSocketRoutingQueue(volatile bool& continuePtr)
 		: m_socketRoutingQueue()
 		, m_continuePtr(&continuePtr)
 		, m_runningThread(false)
-		, m_semaphore(semaphore)
 	{
 		// Nothing to do
 	}
@@ -251,12 +238,6 @@ int main(int argc, char *argv[])
 	// Buffer to hold data read in from STDIN before sending it
 	// to the BlackBerry.
 	unsigned char* buf = NULL;
-	// Mutex for signalling between read and write threads
-	pthread_mutex_t mutex;
-	bool mutex_valid = false;
-	// Condvar for signalling between read and write threads
-	pthread_cond_t cv;
-	bool cv_valid = false;
 	try {
 		uint32_t pin = 0;
 		bool data_dump = false;
@@ -346,26 +327,14 @@ int main(int argc, char *argv[])
 
 		volatile bool running = true;
 
-		// Create the thread synchronization objects
-		if( pthread_mutex_init(&mutex, NULL) ) {
-			throw Barry::Error("Failed to create mutex");
-		}
-		mutex_valid = true;
-		if( pthread_cond_init(&cv, NULL) ) {
-			throw Barry::Error("Failed to create condvar");
-		}
-		cv_valid = true;
-
-		semaphore sem(mutex, cv);
-
 		// Create the thing which will write onto stdout
 		// and perform other callback duties.
-		CallbackHandler callbackHandler(running, data_dump, sem);
+		CallbackHandler callbackHandler(running, data_dump);
 
 		// Start a thread to handle any data arriving from
 		// the BlackBerry.
 		auto_ptr<ErrorHandlingSocketRoutingQueue> router;
-		router.reset(new ErrorHandlingSocketRoutingQueue(running, sem));
+		router.reset(new ErrorHandlingSocketRoutingQueue(running));
 		router->SpinoffReadThread();
 
 		// Create our controller object
@@ -421,9 +390,6 @@ int main(int argc, char *argv[])
 						cerr.setf(ios::dec, ios::basefield);
 						cerr << "Sent " << ios::dec << haveRead << " bytes stdin->USB\n";
 					}
-					// Wait for the write to be completed before reading
-					// the next data to send.
-					sem.WaitForSignal();
 				}
 				else if( haveRead < 0 ) {
 					running = false;
@@ -445,13 +411,6 @@ int main(int argc, char *argv[])
 	}
 
 	delete[] buf;
-
-	if( mutex_valid ) {
-		pthread_mutex_destroy(&mutex);
-	}
-	if( cv_valid ) {
-		pthread_cond_destroy(&cv);
-	}
 
 	return 0;
 }

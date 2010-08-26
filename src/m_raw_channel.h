@@ -28,8 +28,11 @@
 #include "socket.h"
 
 #include <string>
+#include <pthread.h>
 
 namespace Barry {
+
+class semaphore;
 
 namespace Mode {
 
@@ -38,8 +41,6 @@ namespace Mode {
 class BXEXPORT RawChannelDataCallback
 {
 public:
-	// Called when data has been sent on the channel
-	virtual void DataSendAck() = 0;
 	// Called when data has been received on the channel
 	virtual void DataReceived(Data& data) = 0;
 	// Called when the channel has an error
@@ -65,7 +66,14 @@ public:
 ///
 class BXEXPORT RawChannel : public Mode
 {
-private:
+	// Mutex for signalling between read and write threads
+	pthread_mutex_t m_mutex;
+	bool m_mutex_valid;
+	// Condvar for signalling between read and write threads
+	pthread_cond_t m_cv;
+	bool m_cv_valid;
+	
+	semaphore* m_semaphore;
 	RawChannelDataCallback& m_callback;
 	unsigned char *m_sendBuffer;
 	bool m_zeroRegistered;
@@ -80,15 +88,15 @@ public:
 	//////////////////////////////////
 	// Raw channel mode specific methods
 
-	// Send some data on the raw channel
+	// Send some data on the raw channel.
 	// Will throw a Barry::Error if data is longer than
 	// MaximumPacketContentsSize or a Barry::Usb::Error if there
 	// is an underlying USB error.
-	//
-	// Before calling send again it's advisable to wait
-	// for the DataSendAck callback to occur. If Send is called
-	// again before the callback then data loss is very likely to occur.
 	void Send(Data& data, int timeout = -1);
+
+	// Returns the maximum quantity of data which
+	// can be sent
+	size_t MaximumSendSize();
 
 	// Not intended for use by users of this class.
 	// Instead data received will come in via the 
@@ -99,10 +107,6 @@ public:
 	// This method is called by the internals of
 	// Barry when setting up a connection.
 	void OnOpen();
-
-	// Returns the maximum quantity of data which
-	// can be sent
-	size_t MaximumSendSize();
 };
 
 }} // namespace Barry::Mode
