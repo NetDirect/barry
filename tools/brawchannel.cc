@@ -23,6 +23,7 @@
 
 
 #include <barry/barry.h>
+#include <barry/semaphore.h>
 #include <iostream>
 #include <vector>
 #include <string>
@@ -54,179 +55,15 @@ static void signalHandler(int signum)
 	signalReceived = true;
 }
 
-class Condvar;
-
-// Wrapper for pthread_mutex_t
-class Mutex
-{
-private:
-	bool m_initialized;
-	pthread_mutex_t m_mutex;
-public:
-	friend class Condvar;
-	Mutex();
-	~Mutex();
-	void Lock();
-	void Unlock();
-};
-
-Mutex::Mutex()
-	: m_initialized(false)
-{
-	int ret = pthread_mutex_init(&m_mutex, NULL);
-	if( ret != 0 ) {
-		throw Barry::Error("Mutex: failed to create mutex");
-	}
-	m_initialized = true;
-}
-
-Mutex::~Mutex()
-{
-	if( m_initialized ) {
-		int ret = pthread_mutex_destroy(&m_mutex);
-		if( ret != 0 ) {
-			cerr << "Failed to destroy mutex with error: " << ret << endl;
-		}
-	}
-}
-
-void Mutex::Lock()
-{
-	int ret = pthread_mutex_lock(&m_mutex);
-	if( ret != 0 ) {
-		throw Barry::Error("Mutex: failed to lock mutex");
-	}
-}
-
-void Mutex::Unlock()
-{
-	int ret = pthread_mutex_unlock(&m_mutex);
-	if( ret != 0 ) {
-		throw Barry::Error("Mutex: failed to unlock mutex");
-	}
-}
-
-// RAII wrapper for locking Mutex class
-class MutexLock
-{
-private:
-	bool m_locked;
-	Mutex& m_mutex;
-public:
-	MutexLock(Mutex& mutex)
-		: m_locked(false)
-		, m_mutex(mutex)
-		{ mutex.Lock(); m_locked = true; };
-	void Unlock()
-		{
-			if( m_locked ) {
-				m_mutex.Unlock();
-				m_locked = false;
-			}
-		}
-	~MutexLock() { Unlock(); }
-};
-
-// Wrapper for pthread_cont_t
-class Condvar
-{
-private:
-	bool m_initialized;
-	pthread_cond_t m_cv;
-public:
-	Condvar();
-	~Condvar();
-	void Wait(Mutex& mutex);
-	void Signal();
-};
-
-Condvar::Condvar()
-	: m_initialized(false)
-{
-	int ret = pthread_cond_init(&m_cv, NULL);
-	if( ret != 0 ) {
-		throw Barry::Error("Condvar: failed to create condvar");
-	}
-	m_initialized = true;
-}
-
-Condvar::~Condvar()
-{
-	if( m_initialized ) {
-		int ret = pthread_cond_destroy(&m_cv);
-		if (ret != 0)
-			cerr << "Failed to destroy condvar with error: " << ret << endl;
-	}
-}
-
-void Condvar::Wait(Mutex& mutex)
-{
-	int ret = pthread_cond_wait(&m_cv, &mutex.m_mutex);
-	if( ret != 0 ) {
-		throw Barry::Error("Condvar: failed to wait on condvar");
-	}
-}
-
-void Condvar::Signal()
-{
-	int ret = pthread_cond_signal(&m_cv);
-	if( ret != 0 ) {
-		throw Barry::Error("Condvar: failed to signal condvar");
-	}
-}
-
-// Semaphore class for signalling between threads
-class Semaphore
-{
-private:
-	int m_value;
-	Mutex m_mutex;
-	Condvar m_cv;
-public:
-	Semaphore(int initialVal = 0);
-	~Semaphore();
-	void WaitForSignal();
-	void Signal();
-};
-
-Semaphore::Semaphore(int initialVal)
-  : m_value(initialVal)
-  , m_mutex()
-  , m_cv()
-{
-}
-
-Semaphore::~Semaphore()
-{
-}
-
-void Semaphore::WaitForSignal()
-{
-	MutexLock lock(m_mutex);
-	while( m_value <= 0 ) {
-		m_cv.Wait(m_mutex);
-	}
-	--m_value;
-	lock.Unlock();
-}
-
-void Semaphore::Signal()
-{
-	MutexLock lock(m_mutex);
-	++m_value;
-	m_cv.Signal();
-	lock.Unlock();
-}
-
 class CallbackHandler : public Barry::Mode::RawChannelDataCallback
 {
 private:
 	volatile bool* m_continuePtr;
 	bool m_verbose;
-	Semaphore& m_semaphore;
+	semaphore& m_semaphore;
 
 public:
-	CallbackHandler(volatile bool& keepGoing, bool verbose, Semaphore& semaphore)
+	CallbackHandler(volatile bool& keepGoing, bool verbose, semaphore& semaphore)
 		: m_continuePtr(&keepGoing)
 		, m_verbose(verbose)
 		, m_semaphore(semaphore)
@@ -317,9 +154,9 @@ protected:
 	volatile bool* m_continuePtr;
 	volatile bool m_runningThread;
 	pthread_t m_usb_read_thread;
-	Semaphore& m_semaphore;
+	semaphore& m_semaphore;
 public:
-	ErrorHandlingSocketRoutingQueue(volatile bool& continuePtr, Semaphore& semaphore)
+	ErrorHandlingSocketRoutingQueue(volatile bool& continuePtr, semaphore& semaphore)
 		: m_socketRoutingQueue()
 		, m_continuePtr(&continuePtr)
 		, m_runningThread(false)
@@ -414,6 +251,12 @@ int main(int argc, char *argv[])
 	// Buffer to hold data read in from STDIN before sending it
 	// to the BlackBerry.
 	unsigned char* buf = NULL;
+	// Mutex for signalling between read and write threads
+	pthread_mutex_t mutex;
+	bool mutex_valid = false;
+	// Condvar for signalling between read and write threads
+	pthread_cond_t cv;
+	bool cv_valid = false;
 	try {
 		uint32_t pin = 0;
 		bool data_dump = false;
@@ -503,7 +346,17 @@ int main(int argc, char *argv[])
 
 		volatile bool running = true;
 
-		Semaphore sem;
+		// Create the thread synchronization objects
+		if( pthread_mutex_init(&mutex, NULL) ) {
+			throw Barry::Error("Failed to create mutex");
+		}
+		mutex_valid = true;
+		if( pthread_cond_init(&cv, NULL) ) {
+			throw Barry::Error("Failed to create condvar");
+		}
+		cv_valid = true;
+
+		semaphore sem(mutex, cv);
 
 		// Create the thing which will write onto stdout
 		// and perform other callback duties.
@@ -592,6 +445,13 @@ int main(int argc, char *argv[])
 	}
 
 	delete[] buf;
+
+	if( mutex_valid ) {
+		pthread_mutex_destroy(&mutex);
+	}
+	if( cv_valid ) {
+		pthread_cond_destroy(&cv);
+	}
 
 	return 0;
 }
