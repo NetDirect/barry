@@ -48,10 +48,10 @@ static void HandleReceivedDataCallback(void* ctx, Data* data) {
 // RawChannel Mode class
 
 RawChannel::RawChannel(Controller &con, RawChannelDataCallback& callback)
-	: Mode(con, Controller::RawChannel),
-	  m_callback(callback),
-	  m_sendBuffer(0),
-	  m_zeroRegistered(false)
+	: Mode(con, Controller::RawChannel)
+	, m_callback(callback)
+	, m_sendBuffer(0)
+	, m_zeroRegistered(false)
 {
 	m_sendBuffer = new unsigned char[MAX_PACKET_SIZE];
 }
@@ -78,9 +78,10 @@ void RawChannel::OnOpen()
 void RawChannel::Send(Data& data, int timeout)
 {
 	size_t packetSize = RAW_HEADER_SIZE + data.GetSize();
-	if(packetSize > MAX_PACKET_SIZE)
-		throw Barry::Error("RawChannel: send data size larger than MaximumPacketSize");
 
+	if( packetSize > MAX_PACKET_SIZE ) {
+		throw Barry::Error("RawChannel: send data size larger than MaximumPacketSize");
+	}
 	
 	// setup header and copy data in
 	MAKE_PACKETPTR_BUF(packet, m_sendBuffer);
@@ -102,8 +103,8 @@ void RawChannel::HandleReceivedData(Data& data)
 	Protocol::CheckSize(data, MIN_PACKET_DATA_SIZE);
 	MAKE_PACKETPTR_BUF(packet, data.GetData());
 
-	if (packet->socket == 0) {
-		switch(btohs(packet->command))
+	if( packet->socket == 0 ) {
+		switch( btohs(packet->command) )
 		{
 		case SB_COMMAND_SEQUENCE_HANDSHAKE:
 			m_callback.DataSendAck();
@@ -120,15 +121,17 @@ void RawChannel::HandleReceivedData(Data& data)
 			m_callback.ChannelError("RawChannel: Got unexpected socket zero packet");
 			break;
 		}
-	} else {
+	}
+	else {
 		// Should be a socket packet for us, so remove packet headers
 		Data partial(data.GetData() + RAW_HEADER_SIZE, data.GetSize() - RAW_HEADER_SIZE);
 		m_callback.DataReceived(partial);
 	}
 }
 
-void RawChannel::UnregisterZeroSocketInterest() {
-	if (m_zeroRegistered) {
+void RawChannel::UnregisterZeroSocketInterest()
+{
+	if( m_zeroRegistered ) {
 		m_con.m_queue->UnregisterInterest(0);
 		m_socket->HideSequencePacket(true);
 		m_zeroRegistered = false;

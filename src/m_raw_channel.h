@@ -65,6 +65,14 @@ public:
 ///
 class BXEXPORT RawChannel : public Mode
 {
+private:
+	RawChannelDataCallback& m_callback;
+	unsigned char *m_sendBuffer;
+	bool m_zeroRegistered;
+
+protected:
+	void UnregisterZeroSocketInterest();
+
 public:
 	RawChannel(Controller &con, RawChannelDataCallback& callback);
 	virtual ~RawChannel();
@@ -95,15 +103,6 @@ public:
 	// Returns the maximum quantity of data which
 	// can be sent
 	size_t MaximumSendSize();
-
-protected:
-	void UnregisterZeroSocketInterest();
-
-private:
-	RawChannelDataCallback& m_callback;
-	unsigned char *m_sendBuffer;
-	bool m_zeroRegistered;
-
 };
 
 }} // namespace Barry::Mode

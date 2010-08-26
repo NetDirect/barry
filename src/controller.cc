@@ -156,7 +156,7 @@ Controller::~Controller()
 //
 uint16_t Controller::SelectMode(ModeType mode)
 {
-  return SelectMode(mode, NULL);
+	return SelectMode(mode, NULL);
 }
 //
 // Tells device which mode is desired, and returns the suggested
@@ -181,46 +181,49 @@ uint16_t Controller::SelectMode(ModeType mode, const char *explicitModeName)
 
 	char *modeName = (char *) packet.u.socket.u.mode.name;
 	
-	if(explicitModeName)
-	{
-	  strcpy(modeName, explicitModeName);
+	if( explicitModeName ) {
+		if( strlen(modeName) >= sizeof(packet.u.socket.u.mode.name) ) {
+			throw std::logic_error("Controller: explicit mode name too long");
+		}
+		strcpy(modeName, explicitModeName);
 	}
-	else
-	  // No modeName given, use the default
-	  switch( mode )
-	  {
-	  case Bypass:
-	      strcpy(modeName, "RIM Bypass");
-	      break;
+	else {
+		// No modeName given, use the default
+		switch( mode )
+		{
+		case Bypass:
+			strcpy(modeName, "RIM Bypass");
+			break;
 
-	  case Desktop:
-	      strcpy(modeName, "RIM Desktop");
-	      break;
+		case Desktop:
+			strcpy(modeName, "RIM Desktop");
+			break;
 
-	  case JavaLoader:
-	      strcpy(modeName, "RIM_JavaLoader");
-	      break;
+		case JavaLoader:
+			strcpy(modeName, "RIM_JavaLoader");
+			break;
 
-	  case JVMDebug:
-	      strcpy(modeName, "RIM_JVMDebug");
-	      break;
+		case JVMDebug:
+			strcpy(modeName, "RIM_JVMDebug");
+			break;
 
-	  case UsbSerData:
-	      strcpy(modeName, "RIM_UsbSerData");
-	      break;
+		case UsbSerData:
+			strcpy(modeName, "RIM_UsbSerData");
+			break;
 
-	  case UsbSerCtrl:
-	      strcpy(modeName, "RIM_UsbSerCtrl");
-	      break;
+		case UsbSerCtrl:
+			strcpy(modeName, "RIM_UsbSerCtrl");
+			break;
 
-	  case RawChannel:
-	      throw std::logic_error("Controller: No channel name given with RawChannel mode");
-	      break;
+		case RawChannel:
+			throw std::logic_error("Controller: No channel name given with RawChannel mode");
+			break;
 
-	  default:
-	      throw std::logic_error("Controller: Invalid mode in SelectMode");
-	      break;
-	  }
+		default:
+			throw std::logic_error("Controller: Invalid mode in SelectMode");
+			break;
+		}
+	}
 
 	// send mode command before we open, as a default socket is socket 0
 	Data command(&packet, btohs(packet.size));
@@ -233,15 +236,15 @@ uint16_t Controller::SelectMode(ModeType mode, const char *explicitModeName)
 		// indicates the socket number that
 		// should be used below in the Open() call
 		MAKE_PACKET(modepack, response);
-		if (modepack->command == SB_COMMAND_MODE_NOT_SELECTED) {
+		if( modepack->command == SB_COMMAND_MODE_NOT_SELECTED ) {
 		        throw Error("Controller: requested mode not supported");
 		}
-		if (modepack->command != SB_COMMAND_MODE_SELECTED) {
+		if( modepack->command != SB_COMMAND_MODE_SELECTED ) {
 			eeout(command, response);
 			throw Error("Controller: mode not selected");
 		}
 
-		if (mode == Desktop) {
+		if( mode == Desktop ) {
 			// On the BlackBerry Storm, I have to read a packet
 			// after opening a socket. (only for Desktop mode)
 			// Otherwise, barrybackup and opensync-plugin can crash (timeout)

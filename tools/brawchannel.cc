@@ -1,6 +1,6 @@
 ///
 /// \file	brawchannel.cc
-///
+///		Directs a named raw channel over STDIN/STDOUT
 ///
 
 /*
@@ -59,98 +59,100 @@ class Condvar;
 // Wrapper for pthread_mutex_t
 class Mutex
 {
+private:
+	bool m_initialized;
+	pthread_mutex_t m_mutex;
 public:
 	friend class Condvar;
 	Mutex();
 	~Mutex();
 	void Lock();
 	void Unlock();
-private:
-	bool m_initialized;
-	pthread_mutex_t m_mutex;
 };
 
 Mutex::Mutex()
 	: m_initialized(false)
 {
 	int ret = pthread_mutex_init(&m_mutex, NULL);
-	if (ret != 0)
+	if( ret != 0 ) {
 		throw Barry::Error("Mutex: failed to create mutex");
+	}
 	m_initialized = true;
 }
 
 Mutex::~Mutex()
 {
-	if (m_initialized)
-	{
+	if( m_initialized ) {
 		int ret = pthread_mutex_destroy(&m_mutex);
-		if (ret != 0)
+		if( ret != 0 ) {
 			cerr << "Failed to destroy mutex with error: " << ret << endl;
+		}
 	}
 }
 
 void Mutex::Lock()
 {
 	int ret = pthread_mutex_lock(&m_mutex);
-	if (ret != 0)
+	if( ret != 0 ) {
 		throw Barry::Error("Mutex: failed to lock mutex");
+	}
 }
 
 void Mutex::Unlock()
 {
 	int ret = pthread_mutex_unlock(&m_mutex);
-	if (ret != 0)
+	if( ret != 0 ) {
 		throw Barry::Error("Mutex: failed to unlock mutex");
+	}
 }
 
-// RIAA wrapper for locking Mutex class
+// RAII wrapper for locking Mutex class
 class MutexLock
 {
+private:
+	bool m_locked;
+	Mutex& m_mutex;
 public:
 	MutexLock(Mutex& mutex)
-		: m_locked(false),
-		  m_mutex(mutex)
+		: m_locked(false)
+		, m_mutex(mutex)
 		{ mutex.Lock(); m_locked = true; };
 	void Unlock()
 		{
-			if (m_locked)
-			{
+			if( m_locked ) {
 				m_mutex.Unlock();
 				m_locked = false;
 			}
 		}
 	~MutexLock() { Unlock(); }
-private:
-	bool m_locked;
-	Mutex& m_mutex;
-	};
+};
 
 // Wrapper for pthread_cont_t
 class Condvar
 {
+private:
+	bool m_initialized;
+	pthread_cond_t m_cv;
 public:
 	Condvar();
 	~Condvar();
 	void Wait(Mutex& mutex);
 	void Signal();
-private:
-	bool m_initialized;
-	pthread_cond_t m_cv;
 };
 
 Condvar::Condvar()
 	: m_initialized(false)
 {
 	int ret = pthread_cond_init(&m_cv, NULL);
-	if (ret != 0)
+	if( ret != 0 ) {
 		throw Barry::Error("Condvar: failed to create condvar");
+	}
 	m_initialized = true;
 }
 
 Condvar::~Condvar()
 {
-	if (m_initialized)
-	{
+	if( m_initialized ) {
 		int ret = pthread_cond_destroy(&m_cv);
 		if (ret != 0)
 			cerr << "Failed to destroy condvar with error: " << ret << endl;
@@ -160,35 +162,37 @@ Condvar::~Condvar()
 void Condvar::Wait(Mutex& mutex)
 {
 	int ret = pthread_cond_wait(&m_cv, &mutex.m_mutex);
-	if (ret != 0)
+	if( ret != 0 ) {
 		throw Barry::Error("Condvar: failed to wait on condvar");
+	}
 }
 
 void Condvar::Signal()
 {
 	int ret = pthread_cond_signal(&m_cv);
-	if (ret != 0)
+	if( ret != 0 ) {
 		throw Barry::Error("Condvar: failed to signal condvar");
+	}
 }
 
 // Semaphore class for signalling between threads
 class Semaphore
 {
+private:
+	int m_value;
+	Mutex m_mutex;
+	Condvar m_cv;
 public:
 	Semaphore(int initialVal = 0);
 	~Semaphore();
 	void WaitForSignal();
 	void Signal();
-private:
-	int m_value;
-	Mutex m_mutex;
-	Condvar m_cv;
 };
 
 Semaphore::Semaphore(int initialVal)
-  : m_value(initialVal),
-    m_mutex(),
-    m_cv()
+  : m_value(initialVal)
+  , m_mutex()
+  , m_cv()
 {
 }
 
@@ -199,7 +203,7 @@ Semaphore::~Semaphore()
 void Semaphore::WaitForSignal()
 {
 	MutexLock lock(m_mutex);
-	while (m_value <= 0) {
+	while( m_value <= 0 ) {
 		m_cv.Wait(m_mutex);
 	}
 	--m_value;
@@ -216,11 +220,16 @@ void Semaphore::Signal()
 
 class CallbackHandler : public Barry::Mode::RawChannelDataCallback
 {
+private:
+	volatile bool* m_continuePtr;
+	bool m_verbose;
+	Semaphore& m_semaphore;
+
 public:
 	CallbackHandler(volatile bool& keepGoing, bool verbose, Semaphore& semaphore)
-		: m_continuePtr(&keepGoing),
-		  m_verbose(verbose),
-		  m_semaphore(semaphore)
+		: m_continuePtr(&keepGoing)
+		, m_verbose(verbose)
+		, m_semaphore(semaphore)
 		{
 		}
 
@@ -230,17 +239,12 @@ public: // From RawChannelDataCallback
 	virtual void DataSendAck();
 	virtual void ChannelError(string msg);
 	virtual void ChannelClose();
-
-private:
-	volatile bool* m_continuePtr;
-	bool m_verbose;
-	Semaphore& m_semaphore;
 };
 
 
 void CallbackHandler::DataReceived(Data& data)
 {
-	if (m_verbose) {
+	if( m_verbose ) {
 		cerr << "From BB: ";
 		data.DumpHex(cerr);
 		cerr << "\n";
@@ -249,19 +253,17 @@ void CallbackHandler::DataReceived(Data& data)
 	size_t toWrite = data.GetSize();
 	size_t written = 0;
 
-	while (written < toWrite && *m_continuePtr) {
+	while( written < toWrite && *m_continuePtr ) {
 		ssize_t writtenThisTime = write(STDOUT_FILENO, &(data.GetData()[written]), toWrite - written);
-		if (m_verbose) {
+		if( m_verbose ) {
 			cerr.setf(ios::dec, ios::basefield);
 			cerr << "Written " << writtenThisTime << " bytes over stdout" << endl;
 		}
 		fflush(stdout);
-		if (writtenThisTime < 0)
-		{
+		if( writtenThisTime < 0 ) {
 			ChannelClose();
 		}
-		else
-		{
+		else {
 			written += writtenThisTime;
 		}
 	}	
@@ -292,17 +294,42 @@ void CallbackHandler::ChannelClose()
 // private variables to just sub-class.
 class ErrorHandlingSocketRoutingQueue
 {
+protected:
+	static void* ReadThreadFunction(void* userPtr)
+	{
+		ErrorHandlingSocketRoutingQueue *q = (ErrorHandlingSocketRoutingQueue *)userPtr;
+
+		// read from USB and write to stdout until finished
+		string msg;
+		while( q->m_runningThread ) {
+			if( !q->m_socketRoutingQueue.DoRead(msg,  READ_TIMEOUT_SECONDS * 1000) &&
+			    // Only report the first failure, so check m_continuePtr
+				*q->m_continuePtr ) {
+				cerr << "Error in ReadThread: " << msg << endl;
+				*q->m_continuePtr = false;
+				q->m_semaphore.Signal();
+			}
+		}
+		return 0;	
+	}
+		
+	SocketRoutingQueue m_socketRoutingQueue;
+	volatile bool* m_continuePtr;
+	volatile bool m_runningThread;
+	pthread_t m_usb_read_thread;
+	Semaphore& m_semaphore;
 public:
 	ErrorHandlingSocketRoutingQueue(volatile bool& continuePtr, Semaphore& semaphore)
-		: m_socketRoutingQueue(),
-		  m_continuePtr(&continuePtr),
-		  m_runningThread(false),
-		  m_semaphore(semaphore)
-		{
-			// Nothing to do
-		}
+		: m_socketRoutingQueue()
+		, m_continuePtr(&continuePtr)
+		, m_runningThread(false)
+		, m_semaphore(semaphore)
+	{
+		// Nothing to do
+	}
 
-	~ErrorHandlingSocketRoutingQueue() {
+	~ErrorHandlingSocketRoutingQueue()
+	{
 		// Is the read thread still running
 		if( m_runningThread ) {
 			m_runningThread = false;
@@ -313,7 +340,8 @@ public:
 	// Utility function to make it easier to create the
 	// USB pure-read thread.  
 	// Throws Barry::ErrnoError on thread creation error.
-	void SpinoffReadThread() {
+	void SpinoffReadThread()
+	{
 		// signal that it's ok to run inside the thread
 		if( m_runningThread )
 			return;	// already running
@@ -321,40 +349,16 @@ public:
 
 		// Start USB read thread, to handle all routing
 		int ret = pthread_create(&m_usb_read_thread, NULL, &ReadThreadFunction, this);
-		if (ret) {
+		if( ret ) {
 			m_runningThread = false;
 			throw Barry::ErrnoError("SocketRoutingQueue: Error creating USB read thread.", ret);
 		}
 	}
 
-	SocketRoutingQueue* GetSocketRoutingQueue() {
+	SocketRoutingQueue* GetSocketRoutingQueue()
+	{
 		return &m_socketRoutingQueue;
 	}
-
-protected:
-	static void* ReadThreadFunction(void* userPtr) {
-		ErrorHandlingSocketRoutingQueue *q = (ErrorHandlingSocketRoutingQueue *)userPtr;
-
-		// read from USB and write to stdout until finished
-		string msg;
-		while (q->m_runningThread) {
-			if( !q->m_socketRoutingQueue.DoRead(msg,  READ_TIMEOUT_SECONDS * 1000) &&
-			    // Only report the first failure, so check m_continuePtr
-				*q->m_continuePtr) {
-				cerr << "Error in ReadThread: " << msg << endl;
-				*q->m_continuePtr = false;
-				q->m_semaphore.Signal();
-			}
-		}
-		return 0;	
-	}
-	
-protected:	
-	SocketRoutingQueue m_socketRoutingQueue;
-	volatile bool* m_continuePtr;
-	volatile bool m_runningThread;
-	pthread_t m_usb_read_thread;
-	Semaphore& m_semaphore;
 };
 
 void Usage()
@@ -385,13 +389,13 @@ void Usage()
 // as they need to be restored before the Barry::Socket starts closing.
 class SignalRestorer
 {
+private:
+	int m_signum;
+	sighandler_t m_handler;
 public:
 	SignalRestorer(int signum, sighandler_t handler)
 		: m_signum(signum), m_handler(handler) {}
 	~SignalRestorer() { signal(m_signum, m_handler); }
-private:
-	int m_signum;
-	sighandler_t m_handler;
 };
 
 int main(int argc, char *argv[])
@@ -416,10 +420,11 @@ int main(int argc, char *argv[])
 		string password;
 
 		// process command line options
-		for(;;) {
+		for( ;; ) {
 			int cmd = getopt(argc, argv, "hp:P:v");
-			if( cmd == -1 )
+			if( cmd == -1 ) {
 				break;
+			}
 
 			switch( cmd )
 			{
@@ -445,13 +450,13 @@ int main(int argc, char *argv[])
 		argc -= optind;
 		argv += optind;
 
-		if (argc < 1) {
+		if( argc < 1 ) {
 			cerr << "Error: Missing raw channel name." << endl;
 			Usage();
 			return 1;
 		}
 
-		if (argc > 1) {
+		if( argc > 1 ) {
 			cerr << "Error: Too many arguments." << endl;
 			Usage();
 			return 1;
@@ -463,18 +468,15 @@ int main(int argc, char *argv[])
 		argv ++;
 
 		
-		if (data_dump)
-		{
+		if( data_dump ) {
 			// Warn if USB_DEBUG isn't set to 0, 1 or 2
 			// as that usually means libusb will write to STDOUT
 			char* val = getenv("USB_DEBUG");
 			int parsedValue = -1;
-			if(val)
-			{
+			if( val ) {
 				parsedValue = atoi(val);
 			}
-			if(parsedValue != 0 && parsedValue != 1 && parsedValue != 2)
-			{
+			if( parsedValue != 0 && parsedValue != 1 && parsedValue != 2 ) {
 				cerr << "Warning: Protocol dump enabled without setting USB_DEBUG to 0, 1 or 2.\n"
 				     << "         libusb might log to STDOUT and ruin data stream." << endl;
 			}	
@@ -495,8 +497,9 @@ int main(int argc, char *argv[])
 		}
 
 		// Now get setup to open the channel.
-		if (data_dump)
+		if( data_dump ) {
 			cerr << "Connected to device, starting read/write\n";
+		}
 
 		volatile bool running = true;
 
@@ -539,21 +542,21 @@ int main(int argc, char *argv[])
 		SignalRestorer sri(SIGINT, oldSigInt);
 		SignalRestorer srq(SIGQUIT, oldSigQuit);
 
-		while (running && !signalReceived) {
+		while( running && !signalReceived ) {
 			FD_SET(STDIN_FILENO, &rfds);
 			tv.tv_sec = READ_TIMEOUT_SECONDS;
 			tv.tv_usec = 0;
 
 			int ret = select(1, &rfds, NULL, NULL, &tv);
-			if (ret < 0) {
+			if( ret < 0 ) {
 				cerr << "Select failed with errno: " << errno << endl;
 				running = false;
 			}
-			else if (ret && FD_ISSET(STDIN_FILENO, &rfds)) {
+			else if ( ret && FD_ISSET(STDIN_FILENO, &rfds) ) {
 				ssize_t haveRead = read(STDIN_FILENO, buf, bufSize);
-				if (haveRead > 0) {
+				if( haveRead > 0 ) {
 					Data toWrite(buf, haveRead);
-					if (data_dump) {
+					if( data_dump ) {
 						cerr.setf(ios::dec, ios::basefield);
 						cerr << "Sending " << haveRead << " bytes stdin->USB\n";
 						cerr << "To BB: ";
@@ -561,7 +564,7 @@ int main(int argc, char *argv[])
 						cerr << "\n";
 					}
 					rawChannel.Send(toWrite);
-					if (data_dump) {
+					if( data_dump ) {
 						cerr.setf(ios::dec, ios::basefield);
 						cerr << "Sent " << ios::dec << haveRead << " bytes stdin->USB\n";
 					}
@@ -569,13 +572,13 @@ int main(int argc, char *argv[])
 					// the next data to send.
 					sem.WaitForSignal();
 				}
-				else if (haveRead < 0) {
+				else if( haveRead < 0 ) {
 					running = false;
 				}
 			}
 		}
 	}
-	catch( Usb::Error &ue) {
+	catch( Usb::Error &ue ) {
 		cerr << "Usb::Error caught: " << ue.what() << endl;
 		return 1;
 	}
