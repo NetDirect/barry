@@ -42,9 +42,27 @@
 
 namespace Barry { namespace Mode {
 
-static void HandleReceivedDataCallback(void* ctx, Data* data) {
-	((RawChannel*)ctx)->HandleReceivedData(*data);
-}
+///////////////////////////////////////////////////////////////////////////////
+// RawChannel SocketDataHandler callback class
+class RawChannelSocketHandler: public SocketRoutingQueue::SocketDataHandler
+{
+	RawChannel& m_raw_channel;
+public: 
+	RawChannelSocketHandler(RawChannel& raw_channel)
+		: m_raw_channel(raw_channel)
+	{}
+	virtual void DataReceived(Data& data)
+	{
+		m_raw_channel.HandleReceivedData(data);
+	}
+	virtual void Error(Barry::Error& error)
+	{
+		SocketDataHandler::Error(error);
+		m_raw_channel.HandleError(error);
+	}
+	virtual ~RawChannelSocketHandler()
+	{}
+};
 
 ///////////////////////////////////////////////////////////////////////////////
 // RawChannel Mode class
@@ -127,56 +145,18 @@ void RawChannel::OnOpen()
 	// implemented
 	m_zero_registered = true;
 	m_socket->HideSequencePacket(false);
-	m_con.m_queue->RegisterInterest(0, HandleReceivedDataCallback, this);
+	std::tr1::shared_ptr<SocketRoutingQueue::SocketDataHandler> callback;
+	callback.reset(new RawChannelSocketHandler(*this));
+	m_con.m_queue->RegisterInterest(0, callback);
 	// Get socket data packets routed to this class as well if using callback
 	// otherside just request interest
-	m_socket->RegisterInterest( m_callback ? HandleReceivedDataCallback : NULL, this);
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// public API
-
-void RawChannel::Send(Data& data, int timeout)
-{
-	size_t packetSize = RAW_HEADER_SIZE + data.GetSize();
-
-	if( packetSize > MAX_PACKET_SIZE ) {
-		throw Barry::Error("RawChannel: send data size larger than MaximumPacketSize");
+	if( !m_callback ) {
+		// Don't want to be called back immediately on data
+		callback.reset();
 	}
-	
-	// setup header and copy data in
-	MAKE_PACKETPTR_BUF(packet, m_send_buffer);
-	packet->socket = htobs(m_socket->GetSocket());
-	packet->size = htobs(packetSize);
-	std::memcpy(&(m_send_buffer[RAW_HEADER_SIZE]), data.GetData(), data.GetSize());
-
-	Data toSend(m_send_buffer, packetSize);
-	m_socket->Send(toSend, timeout);
-	m_semaphore->WaitForSignal();
-	if( m_pending_error ) {
-		throw Barry::Error(*m_pending_error);
-	}
+	m_socket->RegisterInterest(callback);
 }
 
-void RawChannel::Receive(Data& data,int timeout)
-{
-	if( m_callback ) {
-		throw std::logic_error("RawChannel: Receive called when channel was created with a callback");
-	}
-	// Receive into a buffer
-	m_socket->Receive(m_receive_data, timeout);
-	// Then transfer across, skipping the header
-	Protocol::CheckSize(m_receive_data, RAW_HEADER_SIZE);
-	size_t len = m_receive_data.GetSize() - RAW_HEADER_SIZE;
-	memcpy(data.GetBuffer(), m_receive_data.GetData() + RAW_HEADER_SIZE, len);
-	data.ReleaseBuffer(len);
-	
-}
-
-size_t RawChannel::MaximumSendSize()
-{
-	return MAX_PACKET_SIZE - RAW_HEADER_SIZE;
-}
 		
 void RawChannel::HandleReceivedData(Data& data)
 {
@@ -225,6 +205,17 @@ void RawChannel::HandleReceivedData(Data& data)
 	}
 }
 
+void RawChannel::HandleError(Barry::Error& error)
+{
+	if( m_callback ) {
+		m_callback->ChannelError("RawChannel: Socket error received");
+	}
+	else {
+		SetPendingError("RawChannel: Socket error received");
+	}
+	m_semaphore->Signal();
+}
+
 void RawChannel::UnregisterZeroSocketInterest()
 {
 	if( m_zero_registered ) {
@@ -239,6 +230,51 @@ void RawChannel::SetPendingError(const char* msg)
 	if( !m_pending_error ) {
 		m_pending_error = new std::string(msg);
 	}
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// public API
+
+void RawChannel::Send(Data& data, int timeout)
+{
+	size_t packetSize = RAW_HEADER_SIZE + data.GetSize();
+
+	if( packetSize > MAX_PACKET_SIZE ) {
+		throw Barry::Error("RawChannel: send data size larger than MaximumPacketSize");
+	}
+	
+	// setup header and copy data in
+	MAKE_PACKETPTR_BUF(packet, m_send_buffer);
+	packet->socket = htobs(m_socket->GetSocket());
+	packet->size = htobs(packetSize);
+	std::memcpy(&(m_send_buffer[RAW_HEADER_SIZE]), data.GetData(), data.GetSize());
+
+	Data toSend(m_send_buffer, packetSize);
+	m_socket->Send(toSend, timeout);
+	m_semaphore->WaitForSignal();
+	if( m_pending_error ) {
+		throw Barry::Error(*m_pending_error);
+	}
+}
+
+void RawChannel::Receive(Data& data,int timeout)
+{
+	if( m_callback ) {
+		throw std::logic_error("RawChannel: Receive called when channel was created with a callback");
+	}
+	// Receive into a buffer
+	m_socket->Receive(m_receive_data, timeout);
+	// Then transfer across, skipping the header
+	Protocol::CheckSize(m_receive_data, RAW_HEADER_SIZE);
+	size_t len = m_receive_data.GetSize() - RAW_HEADER_SIZE;
+	memcpy(data.GetBuffer(), m_receive_data.GetData() + RAW_HEADER_SIZE, len);
+	data.ReleaseBuffer(len);
+	
+}
+
+size_t RawChannel::MaximumSendSize()
+{
+	return MAX_PACKET_SIZE - RAW_HEADER_SIZE;
 }
 
 }} // namespace Barry::Mode

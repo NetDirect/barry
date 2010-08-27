@@ -31,6 +31,21 @@
 namespace Barry {
 
 ///////////////////////////////////////////////////////////////////////////////
+// SocketDataHandler default methods
+
+void SocketRoutingQueue::SocketDataHandler::Error(Barry::Error& error)
+{
+	// Just log the error
+	dout("SocketDataHandler: Error: " << error.what());
+	(void) error;
+}
+
+SocketRoutingQueue::SocketDataHandler::~SocketDataHandler()
+{
+	// Nothing to destroy
+}
+
+///////////////////////////////////////////////////////////////////////////////
 // SocketRoutingQueue constructors
 
 SocketRoutingQueue::SocketRoutingQueue(int prealloc_buffer_count)
@@ -38,6 +53,7 @@ SocketRoutingQueue::SocketRoutingQueue(int prealloc_buffer_count)
 	, m_writeEp(0)
 	, m_readEp(0)
 	, m_interest(false)
+	, m_readwaitInUse(false)
 	, m_continue_reading(false)
 {
 	pthread_mutex_init(&m_mutex, NULL);
@@ -81,12 +97,15 @@ void *SocketRoutingQueue::SimpleReadThread(void *userptr)
 {
 	SocketRoutingQueue *q = (SocketRoutingQueue *)userptr;
 
-	// read from USB and write to stdout until finished
-	std::string msg;
-	while( q->m_continue_reading ) {
-		if( !q->DoRead(msg, 1000) ) {	// timeout in milliseconds
-			eout("Error in SimpleReadThread: " << msg);
+	// read from USB and write to stdout until finished or USB error
+	try {
+		while( q->m_continue_reading ) {
+			q->DoRead(1000);	// timeout in milliseconds
 		}
+	}
+	catch( Usb::Error &ue ) {
+		// Fatal error
+		eout("SocketRoutingQueue: USB error in simple read thread: " << ue.what());
 	}
 	return 0;
 }
@@ -115,7 +134,9 @@ void SocketRoutingQueue::ClearUsbDevice()
 	// wait for the DoRead cycle to finish, so the external
 	// Usb::Device object doesn't close before we're done with it
 	scoped_lock wait(m_readwaitMutex);
-	pthread_cond_wait(&m_readwaitCond, &m_readwaitMutex);
+	while( m_readwaitInUse ) {
+		pthread_cond_wait(&m_readwaitCond, &m_readwaitMutex);
+	}
 }
 
 bool SocketRoutingQueue::UsbDeviceReady()
@@ -194,8 +215,7 @@ DataHandle SocketRoutingQueue::DefaultRead(int timeout)
 /// Throws std::logic_error if already registered.
 ///
 void SocketRoutingQueue::RegisterInterest(SocketId socket,
-					  SocketDataHandler handler,
-					  void *context)
+					  std::tr1::shared_ptr<SocketDataHandler>& handler)
 {
 	// modifying our own std::map, need a lock
 	scoped_lock lock(m_mutex);
@@ -204,7 +224,7 @@ void SocketRoutingQueue::RegisterInterest(SocketId socket,
 	if( qi != m_socketQueues.end() )
 		throw std::logic_error("RegisterInterest requesting a previously registered socket.");
 
-	m_socketQueues[socket] = QueueEntryPtr( new QueueEntry(handler, context) );
+	m_socketQueues[socket] = QueueEntryPtr( new QueueEntry(handler) );
 	m_interest = true;
 }
 
@@ -329,26 +349,27 @@ bool SocketRoutingQueue::IsAvailable(SocketId socket) const
 /// device to work with.
 ///
 /// Timeout is in milliseconds.
-///
-/// Returns false in the case of USB errors and puts the error message
-/// in msg.
-///
-bool SocketRoutingQueue::DoRead(std::string &msg, int timeout)
+void SocketRoutingQueue::DoRead(int timeout)
 {
 	class ReadWaitSignal
 	{
 		pthread_mutex_t &m_Mutex;
 		pthread_cond_t &m_Cond;
+		bool& m_inUse;
 	public:
-		ReadWaitSignal(pthread_mutex_t &mut, pthread_cond_t &cond)
-			: m_Mutex(mut), m_Cond(cond)
-			{}
+		ReadWaitSignal(pthread_mutex_t &mut, pthread_cond_t &cond, bool& inUse)
+			: m_Mutex(mut), m_Cond(cond), m_inUse(inUse)
+		{
+			scoped_lock wait(m_Mutex);
+			m_inUse = true;
+		}
 		~ReadWaitSignal()
 		{
 			scoped_lock wait(m_Mutex);
+			m_inUse = false;
 			pthread_cond_signal(&m_Cond);
 		}
-	} readwait(m_readwaitMutex, m_readwaitCond);
+	} readwait(m_readwaitMutex, m_readwaitCond, m_readwaitInUse);
 
 	Usb::Device * volatile dev = 0;
 	int readEp;
@@ -363,7 +384,7 @@ bool SocketRoutingQueue::DoRead(std::string &msg, int timeout)
 			// sleep only a short time, since things could be
 			// in the process of setup or teardown
 			usleep(125000);
-			return true;
+			return;
 		}
 
 		dev = m_dev;
@@ -384,13 +405,13 @@ bool SocketRoutingQueue::DoRead(std::string &msg, int timeout)
 		Data &data = *buf.get();
 
 		if( !dev->BulkRead(readEp, data, timeout) )
-			return true;	// no data, done!
+			return;	// no data, done!
 
 		MAKE_PACKET(pack, data);
 
 		// make sure the size is right
 		if( data.GetSize() < sizeof(pack->socket) )
-			return true;	// bad size, just skip
+			return;	// bad size, just skip
 
 		// extract the socket from the packet
 		uint16_t socket = btohs(pack->socket);
@@ -403,19 +424,18 @@ bool SocketRoutingQueue::DoRead(std::string &msg, int timeout)
 		if( m_interest ) {
 			SocketQueueMap::iterator qi = m_socketQueues.find(socket);
 			if( qi != m_socketQueues.end() ) {
-				SocketDataHandler sdh = qi->second->m_handler;
-				void *ctx = qi->second->m_context;
+				std::tr1::shared_ptr<SocketDataHandler>& sdh = qi->second->m_handler;
 
 				// is there a handler?
 				if( sdh ) {
 					// unlock & let the handler process it
 					lock.unlock();
-					(*sdh)(ctx, buf.get());
-					return true;
+					sdh->DataReceived(*buf.get());
+					return;
 				}
 				else {
 					qi->second->m_queue.push(buf.release());
-					return true;
+					return;
 				}
 			}
 
@@ -427,20 +447,35 @@ bool SocketRoutingQueue::DoRead(std::string &msg, int timeout)
 
 		// if we get here, send to default queue
 		m_default.push(buf.release());
-		return true;
-
 	}
 	catch( Usb::Timeout & ) {
 		// this is expected... just ignore
 	}
 	catch( Usb::Error &ue ) {
 		// this is unexpected, but we're in a thread here...
-		// return false and the caller decide how to handle it
-		msg = ue.what();
-		return false;
+		// Need to iterate through all the registered handlers
+		// calling their error callback.
+		// Can't be locked when calling the callback, so need
+		// to make a list of them first.
+		scoped_lock lock(m_mutex);
+		std::vector<std::tr1::shared_ptr<SocketDataHandler> > handlers;
+		SocketQueueMap::iterator qi = m_socketQueues.begin();
+		while( qi != m_socketQueues.end() ) {
+			std::tr1::shared_ptr<SocketDataHandler>& sdh = qi->second->m_handler;
+			// is there a handler?
+			if( sdh ) {
+				handlers.push_back(sdh);
+			}
+			++qi;
+		}
+		lock.unlock();
+		std::vector<std::tr1::shared_ptr<SocketDataHandler> >::iterator hi = handlers.begin();
+		while( hi != handlers.end() ) {
+			(*hi)->Error(ue);
+			++hi;
+		}
+		throw;
 	}
-
-	return true;
 }
 
 void SocketRoutingQueue::SpinoffSimpleReadThread()

@@ -61,8 +61,8 @@ private:
 	void *m_callback_context;
 
 protected:
-	static void DataCallback(void *context, Data *data);
-	static void CtrlCallback(void *context, Data *data);
+	static void DataCallback(Serial& context, Data *data);
+	static void CtrlCallback(Serial& context, Data *data);
 
 public:
 	Serial(Controller &con, DeviceDataCallback callback, void *callback_context);

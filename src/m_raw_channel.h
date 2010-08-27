@@ -37,6 +37,9 @@ class semaphore;
 
 namespace Mode {
 
+// Forward declaration of internal class
+class RawChannelSocketHandler;
+
 // Callback from the raw channel.
 
 class BXEXPORT RawChannelDataCallback
@@ -67,6 +70,8 @@ public:
 ///
 class BXEXPORT RawChannel : public Mode
 {
+	friend class RawChannelSocketHandler;
+
 	// Mutex for signalling between read and write threads
 	pthread_mutex_t m_mutex;
 	bool m_mutex_valid;
@@ -89,6 +94,19 @@ protected:
 	void SetPendingError(const char* msg);
 	void UnregisterZeroSocketInterest();
 
+	// Not intended for use by users of this class.
+	// Instead data received will come in via the 
+	// RawChannelDataCallback::DataReceived callback
+	// or using Receive().
+	void HandleReceivedData(Data& data);
+
+	// Not intended for use by users of this class.
+	void HandleError(Barry::Error& data);
+
+	// Not intended for use by users of this class.
+	// This method is called by the internals of
+	// Barry when setting up a connection.
+	void OnOpen();
 public:
 	// Creates a raw channel in non-callback mode. 
 	// This requires all data to be sent and received
@@ -139,16 +157,6 @@ public:
 	// Returns the maximum quantity of data which
 	// can be sent
 	size_t MaximumSendSize();
-
-	// Not intended for use by users of this class.
-	// Instead data received will come in via the 
-	// RawChannelDataCallback::DataReceived callback.
-	void HandleReceivedData(Data& data);
-
-	// Not intended for use by users of this class.
-	// This method is called by the internals of
-	// Barry when setting up a connection.
-	void OnOpen();
 };
 
 }} // namespace Barry::Mode

@@ -29,6 +29,7 @@
 #include <stdexcept>
 #include <pthread.h>
 #include "dataqueue.h"
+#include "error.h"
 
 namespace Usb { class Device; }
 
@@ -41,16 +42,51 @@ class BXEXPORT SocketRoutingQueue
 	friend class DataHandle;
 
 public:
-	typedef void (*SocketDataHandler)(void *ctx, Data*);	//< See RegisterInterest() for information on this callback.
+	// Interface class for socket data callbacks
+	// See RegisterInterest() for more information.
+	class BXEXPORT SocketDataHandler
+	{
+	public:
+		// Called when data is received on the socket
+		// for which interested has been registered.
+		// 
+		// The lifetime of the data parameter is only valid
+		// for the duration of this method call. 
+		virtual void DataReceived(Data& data) = 0;
+
+		// Called when an error has occured on the socket
+		// for which interest has been registered.
+		//
+		// The lifetime of the error parameter is only valid
+		// for the lifetime of this method call.
+		virtual void Error(Barry::Error& error);
+
+		virtual ~SocketDataHandler();
+	};
+
+	// Simple wrapper template class for SocketDataHandler which provides a basic data recieved callback
+	template<typename T> class SimpleSocketDataHandler : public SocketDataHandler
+	{
+		void (*m_callback)(T&, Data*);
+		T& m_context;
+	public:
+		SimpleSocketDataHandler<T>(T& context, void (*callback)(T& context, Data* data))
+			: m_callback(callback)
+			, m_context(context)
+		{}
+		virtual void DataReceived(Data& data)
+		{
+			m_callback(m_context, &data);
+		}
+	};
+
 	struct QueueEntry
 	{
-		SocketDataHandler m_handler;
-		void *m_context;
+		std::tr1::shared_ptr<SocketDataHandler> m_handler;
 		DataQueue m_queue;
 
-		QueueEntry(SocketDataHandler h, void *c)
+		QueueEntry(std::tr1::shared_ptr<SocketDataHandler>& h)
 			: m_handler(h)
-			, m_context(c)
 			{}
 	};
 	typedef std::tr1::shared_ptr<QueueEntry>	QueueEntryPtr;
@@ -70,6 +106,7 @@ private:
 
 	pthread_mutex_t m_readwaitMutex;
 	pthread_cond_t m_readwaitCond;
+	bool m_readwaitInUse;
 
 	DataQueue m_free;
 	DataQueue m_default;
@@ -130,11 +167,11 @@ public:
 	// and must be read by DefaultRead()
 	// If not null, handler is called when new data is read.  It will
 	// be called in the same thread instance that DoRead() is called from.
-	// Handler is passed the DataQueue Data pointer, and so no
+	// Handler is passed the DataQueue Data object, and so no
 	// copying is done.  Once the handler returns, the data is
 	// considered processed and not added to the interested queue,
 	// but instead returned to m_free.
-	void RegisterInterest(SocketId socket, SocketDataHandler handler = 0, void *context = 0);
+	void RegisterInterest(SocketId socket, std::tr1::shared_ptr<SocketDataHandler>& handler);
 
 	// Unregisters interest in data from the given socket, and discards
 	// any existing data in its interest queue.  Any new incoming data
@@ -161,10 +198,7 @@ public:
 	// device to work with.
 	//
 	// Timeout is in milliseconds.
-	//
-	// Returns false in the case of USB errors, and puts the error
-	// message in msg.
-	bool DoRead(std::string &msg, int timeout = -1);
+	void DoRead(int timeout = -1);
 
 	// Utility function to make it easier for the user to create the
 	// USB pure-read thread.  If the user wants anything more complicated

@@ -52,18 +52,16 @@ Serial::~Serial()
 //////////////////////////////////////////////////////////////////////////////
 // protected API / static functions
 
-void Serial::DataCallback(void *context, Data *data)
+void Serial::DataCallback(Serial& ser, Data *data)
 {
 	ddout("Serial::DataCallback called");
-
-	Serial *ser = (Serial*) context;
 
 	if( data->GetSize() <= 4 )
 		return;	// nothing to do
 
 	// call callback if available
-	if( ser->m_callback ) {
-		(*ser->m_callback)(ser->m_callback_context,
+	if( ser.m_callback ) {
+		(*ser.m_callback)(ser.m_callback_context,
 			data->GetData() + 4,
 			data->GetSize() - 4);
 	}
@@ -73,10 +71,8 @@ void Serial::DataCallback(void *context, Data *data)
 //	}
 }
 
-void Serial::CtrlCallback(void *context, Data *data)
+void Serial::CtrlCallback(Serial& ser, Data *data)
 {
-//	Serial *ser = (Serial*) context;
-
 	// just dump to stdout, and do nothing
 	ddout("CtrlCallback received:\n" << *data);
 }
@@ -105,8 +101,12 @@ void Serial::Open(const char *password)
 	m_ctrl = m_con.m_zero.Open(m_CtrlSocket, password);
 
 	// register callback for incoming data, for speed
-	m_data->RegisterInterest(DataCallback, this);
-	m_ctrl->RegisterInterest(CtrlCallback, this);
+	std::tr1::shared_ptr<SocketRoutingQueue::SocketDataHandler> data_callback
+		(new SocketRoutingQueue::SimpleSocketDataHandler<Serial>(*this, DataCallback));
+	m_data->RegisterInterest(data_callback);
+	std::tr1::shared_ptr<SocketRoutingQueue::SocketDataHandler> ctrl_callback
+		(new SocketRoutingQueue::SimpleSocketDataHandler<Serial>(*this, CtrlCallback));
+	m_ctrl->RegisterInterest(ctrl_callback);
 
 	const unsigned char start[] =
 		{ 0, 0, 0x0a, 0, 0x01, 0x01, 0xc2, 0x00, 0x40, 0x00 };
