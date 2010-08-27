@@ -53,6 +53,7 @@ SocketRoutingQueue::SocketRoutingQueue(int prealloc_buffer_count)
 	, m_writeEp(0)
 	, m_readEp(0)
 	, m_interest(false)
+	, m_seen_usb_error(false)
 	, m_continue_reading(false)
 {
 	pthread_mutex_init(&m_mutex, NULL);
@@ -96,15 +97,10 @@ void *SocketRoutingQueue::SimpleReadThread(void *userptr)
 {
 	SocketRoutingQueue *q = (SocketRoutingQueue *)userptr;
 
-	// read from USB and write to stdout until finished or USB error
-	try {
-		while( q->m_continue_reading ) {
-			q->DoRead(1000);	// timeout in milliseconds
-		}
-	}
-	catch( Usb::Error &ue ) {
-		// Fatal error
-		eout("SocketRoutingQueue: USB error in simple read thread: " << ue.what());
+	// read from USB and write to stdout until finished
+	q->m_seen_usb_error = false;
+	while( q->m_continue_reading ) {
+		q->DoRead(1000);	// timeout in milliseconds
 	}
 	return 0;
 }
@@ -371,7 +367,7 @@ void SocketRoutingQueue::DoRead(int timeout)
 	{
 		scoped_lock lock(m_mutex);
 
-		if( !m_dev ) {
+		if( !m_dev || m_seen_usb_error ) {
 			lock.unlock();	// unlock early, since we're sleeping
 			// sleep only a short time, since things could be
 			// in the process of setup or teardown
@@ -466,7 +462,7 @@ void SocketRoutingQueue::DoRead(int timeout)
 			(*hi)->Error(ue);
 			++hi;
 		}
-		throw;
+		m_seen_usb_error = true;
 	}
 }
 
