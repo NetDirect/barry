@@ -316,7 +316,7 @@ int main(int argc, char *argv[])
 					rawChannel.Send(toWrite);
 					if( data_dump ) {
 						cerr.setf(ios::dec, ios::basefield);
-						cerr << "Sent " << ios::dec << haveRead << " bytes stdin->USB\n";
+						cerr << "Sent " << haveRead << " bytes stdin->USB\n";
 					}
 				}
 				else if( haveRead < 0 ) {

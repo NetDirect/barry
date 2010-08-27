@@ -396,7 +396,7 @@ void SocketRoutingQueue::DoRead(int timeout)
 			return;	// no data, done!
 
 		MAKE_PACKET(pack, data);
-
+		
 		// make sure the size is right
 		if( data.GetSize() < sizeof(pack->socket) )
 			return;	// bad size, just skip
