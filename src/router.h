@@ -106,7 +106,6 @@ private:
 
 	pthread_mutex_t m_readwaitMutex;
 	pthread_cond_t m_readwaitCond;
-	bool m_readwaitInUse;
 
 	DataQueue m_free;
 	DataQueue m_default;

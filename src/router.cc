@@ -53,7 +53,6 @@ SocketRoutingQueue::SocketRoutingQueue(int prealloc_buffer_count)
 	, m_writeEp(0)
 	, m_readEp(0)
 	, m_interest(false)
-	, m_readwaitInUse(false)
 	, m_continue_reading(false)
 {
 	pthread_mutex_init(&m_mutex, NULL);
@@ -134,9 +133,7 @@ void SocketRoutingQueue::ClearUsbDevice()
 	// wait for the DoRead cycle to finish, so the external
 	// Usb::Device object doesn't close before we're done with it
 	scoped_lock wait(m_readwaitMutex);
-	while( m_readwaitInUse ) {
-		pthread_cond_wait(&m_readwaitCond, &m_readwaitMutex);
-	}
+	pthread_cond_wait(&m_readwaitCond, &m_readwaitMutex);
 }
 
 bool SocketRoutingQueue::UsbDeviceReady()
@@ -355,21 +352,16 @@ void SocketRoutingQueue::DoRead(int timeout)
 	{
 		pthread_mutex_t &m_Mutex;
 		pthread_cond_t &m_Cond;
-		bool& m_inUse;
 	public:
-		ReadWaitSignal(pthread_mutex_t &mut, pthread_cond_t &cond, bool& inUse)
-			: m_Mutex(mut), m_Cond(cond), m_inUse(inUse)
-		{
-			scoped_lock wait(m_Mutex);
-			m_inUse = true;
-		}
+		ReadWaitSignal(pthread_mutex_t &mut, pthread_cond_t &cond)
+			: m_Mutex(mut), m_Cond(cond)
+			{}
 		~ReadWaitSignal()
 		{
 			scoped_lock wait(m_Mutex);
-			m_inUse = false;
 			pthread_cond_signal(&m_Cond);
 		}
-	} readwait(m_readwaitMutex, m_readwaitCond, m_readwaitInUse);
+	} readwait(m_readwaitMutex, m_readwaitCond);
 
 	Usb::Device * volatile dev = 0;
 	int readEp;
