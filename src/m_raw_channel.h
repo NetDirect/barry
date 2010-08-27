@@ -27,6 +27,7 @@
 #include "m_mode_base.h"
 #include "socket.h"
 
+#include <barry/data.h>
 #include <string>
 #include <pthread.h>
 
@@ -79,7 +80,10 @@ class BXEXPORT RawChannel : public Mode
 	bool m_zero_registered;
 	std::string* m_pending_error;
 
+	Data m_receive_data;
+
 protected:
+	void CheckQueueAvailable();
 	void InitBuffer();
 	void InitSemaphore();
 	void SetPendingError(const char* msg);
@@ -92,6 +96,9 @@ public:
 	// As there are no notifications of data being
 	// available to send or receive, this is only recommended
 	// for use with synchronous protocols over the channel.
+	//
+	// Will throw a Barry::Error if the provided controller
+	// doesn't have a routing queue set.
 	RawChannel(Controller& con);
 
 	// Creates a raw channel in callback mode.
@@ -99,13 +106,8 @@ public:
 	// the Receive method must never be called.
 	// Instead the DataReceive
 	//
-	// If using a raw channel in callback mode it's important
-	// to regularily call DoRead on the SocketRoutingQueue
-	// registered with the controller in a separate thread from
-	// the thread(s) which call Send. Calls to Send will generally
-	// block until a few calls to DoRead on the router are performed.
-	// This will happen correctly if a read thread is created
-	// with SocketRoutingQueue::SpinoffSimpleReadThread.
+	// Will throw a Barry::Error if the provided controller
+	// doesn't have a routing queue set.
 	RawChannel(Controller& con, RawChannelDataCallback& callback);
 
 	virtual ~RawChannel();
@@ -115,7 +117,7 @@ public:
 
 	// Send some data on the raw channel.
 	// Will throw a Barry::Error if data is longer than
-	// MaximumPacketContentsSize or a Barry::Usb::Error if there
+	// MaximumPacketContentsSize or a Usb::Error if there
 	// is an underlying USB error.
 	//
 	// If using a raw channel in callback mode then care must be
@@ -126,26 +128,13 @@ public:
 
 	// Receive some data on the raw channel.
 	// Will throw a Barry::Error if a disconnect occurs
-	// or a Barry::Usb::Error if there is an underlying USB error
-	// or a Barry::Usb::Timeout if the receive times out.
-	//
-	// The timeout value doesn't directly correspond to the maximum
-	// time spent in this method. The timeout value specifies how
-	// long to wait between any data arriving on the socket, not just 
-	// for the RawChannel. This means that if there is USB data being
-	// received over the port every second, but not for this channel,
-	// that a timeout of two seconds would cause this method to never
-	// return.
-	//
-	// If finer control of timeout between packets is required then it's
-	// recommended to use the callback enabled version of the raw channel
-	// and implement a timeout timer in the application using the
-	// raw channel.
+	// or a Usb::Error if there is an underlying USB error
+	// or a Usb::Timeout if the receive times out.
 	//
 	// Only valid to call this if the raw channel was created in non-callback
 	// mode. If this is called when the raw channel was created with a
 	// callback then a std::logic_error will be thrown.
-	DataHandle Receive(int timeout = -1);
+	void Receive(Data& data, int timeout = -1);
 
 	// Returns the maximum quantity of data which
 	// can be sent

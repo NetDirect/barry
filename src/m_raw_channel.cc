@@ -59,6 +59,7 @@ RawChannel::RawChannel(Controller &con, RawChannelDataCallback& callback)
 	, m_zero_registered(false)
 	, m_pending_error(NULL)
 {
+	CheckQueueAvailable();
 	InitBuffer();
 	InitSemaphore();
 }
@@ -73,8 +74,16 @@ RawChannel::RawChannel(Controller &con)
 	, m_zero_registered(false)
 	, m_pending_error(NULL)
 {
+	CheckQueueAvailable();
 	InitBuffer();
 	InitSemaphore();
+}
+
+void RawChannel::CheckQueueAvailable()
+{
+	if( !m_con.m_queue ) {
+		throw Barry::Error("RawChannel: No routing queue set in controller");
+	}
 }
 
 void RawChannel::InitBuffer()
@@ -143,49 +152,25 @@ void RawChannel::Send(Data& data, int timeout)
 
 	Data toSend(m_send_buffer, packetSize);
 	m_socket->Send(toSend, timeout);
-	if( m_callback ) {
-		// Being used in callback mode
-		m_semaphore->WaitForSignal();
-	}
-	else {
-		// Being used in non-callback mode so need to call DoRead
-		// until SB_COMMAND_SEQUENCE_HANDSHAKE is received
-		std::string msg;
-		while( !m_semaphore->ReceiveSignal() ) {
-			if( !m_con.m_queue->DoRead(msg, timeout) ) {
-				// Error recevied, throw it to the caller
-				throw Usb::Error(msg);
-			}
-			// Check to see if the handler got an error
-			if( m_pending_error ) {
-				throw Barry::Error(*m_pending_error);
-			}
-		}
+	m_semaphore->WaitForSignal();
+	if( m_pending_error ) {
+		throw Barry::Error(*m_pending_error);
 	}
 }
 
-DataHandle RawChannel::Receive(int timeout)
+void RawChannel::Receive(Data& data,int timeout)
 {
 	if( m_callback ) {
 		throw std::logic_error("RawChannel: Receive called when channel was created with a callback");
 	}
-	// See if a packet to receive is already queued
-	DataHandle ret = m_con.m_queue->SocketRead(m_socket->GetSocket(), 0);
-	std::string msg;
-	while( !ret.get() ) {
-		// Nothing to read at the moment, wait for timeout or error
-		if( !m_con.m_queue->DoRead(msg, timeout) ) {
-			// Error recevied, throw it to the caller
-			throw Usb::Error(msg);
-		}
-		// Check to see if the handler got an error
-		if( m_pending_error ) {
-			throw Barry::Error(*m_pending_error);
-		}
-		// Try to see if a new packet was queued
-		ret = m_con.m_queue->SocketRead(m_socket->GetSocket(), 0);
-	}
-	return ret;
+	// Receive into a buffer
+	m_socket->Receive(m_receive_data, timeout);
+	// Then transfer across, skipping the header
+	Protocol::CheckSize(m_receive_data, RAW_HEADER_SIZE);
+	size_t len = m_receive_data.GetSize() - RAW_HEADER_SIZE;
+	memcpy(data.GetBuffer(), m_receive_data.GetData() + RAW_HEADER_SIZE, len);
+	data.ReleaseBuffer(len);
+	
 }
 
 size_t RawChannel::MaximumSendSize()
