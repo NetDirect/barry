@@ -81,6 +81,7 @@ reverse engineer the battery charging handshake via USB.</p>
 	<li><? createLink("backups", "Make backups of my Blackberry data"); ?></li>
 	<li><? createLink("sync", "Sync my Blackberry with Evolution"); ?></li>
 	<li><? createLink("modem", "Use my Blackberry as a modem to surf the net"); ?></li>
+	<li><? createLink("rawchannel", "Use Blackberry USB channels with Barry"); ?></li>
 	<li><? createLink("troubleshooting", "Find troubleshooting help"); ?></li>
 	<li><? createLink("bugs", "Report a bug"); ?></li>
 	<li><? createLink("patches", "Submit a patch"); ?></li>
