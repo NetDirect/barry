@@ -572,9 +572,15 @@ void SocketZero::Close(Socket &socket)
 	{
 		// reset so this won't be called again
 		socket.ForceClosed();
-
-		eout("Packet:\n" << response);
-		throw BadPacket(rpack->command, "Socket: Bad CLOSED packet in Close");
+		
+		if( rpack->command == SB_COMMAND_REMOTE_CLOSE_SOCKET ) {
+			eout("Remote end closed connection");
+			throw BadPacket(rpack->command, "Socket: Remote close packet in Close");
+		}
+		else {
+			eout("Packet:\n" << response);
+			throw BadPacket(rpack->command, "Socket: Bad CLOSED packet in Close");
+		}
 	}
 
 	if( m_resetOnClose ) {
