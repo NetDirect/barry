@@ -33,6 +33,7 @@
 #include <stdexcept>
 #include <sstream>
 #include <cstring>
+#include <string>
 #include "protostructs.h"
 
 #include "debug.h"
@@ -50,15 +51,39 @@ static void HandleReceivedDataCallback(void* ctx, Data* data) {
 
 RawChannel::RawChannel(Controller &con, RawChannelDataCallback& callback)
 	: Mode(con, Controller::RawChannel)
-	, m_callback(callback)
-	, m_sendBuffer(0)
-	, m_zeroRegistered(false)
 	, m_mutex_valid(false)
 	, m_cv_valid(false)
 	, m_semaphore(NULL)
+	, m_callback(&callback)
+	, m_send_buffer(NULL)
+	, m_zero_registered(false)
+	, m_pending_error(NULL)
 {
-	m_sendBuffer = new unsigned char[MAX_PACKET_SIZE];
+	InitBuffer();
+	InitSemaphore();
+}
 
+RawChannel::RawChannel(Controller &con)
+	: Mode(con, Controller::RawChannel)
+	, m_mutex_valid(false)
+	, m_cv_valid(false)
+	, m_semaphore(NULL)
+	, m_callback(NULL)
+	, m_send_buffer(NULL)
+	, m_zero_registered(false)
+	, m_pending_error(NULL)
+{
+	InitBuffer();
+	InitSemaphore();
+}
+
+void RawChannel::InitBuffer()
+{
+	m_send_buffer = new unsigned char[MAX_PACKET_SIZE];	
+}
+
+void RawChannel::InitSemaphore()
+{
 	// Create the thread synchronization objects
 	if( pthread_mutex_init(&m_mutex, NULL) ) {
 		throw Barry::Error("Failed to create mutex");
@@ -74,7 +99,8 @@ RawChannel::RawChannel(Controller &con, RawChannelDataCallback& callback)
 RawChannel::~RawChannel()
 {
 	UnregisterZeroSocketInterest();
-	delete[] m_sendBuffer;
+
+	delete[] m_send_buffer;
 
 	if( m_mutex_valid ) {
 		pthread_mutex_destroy(&m_mutex);
@@ -83,16 +109,19 @@ RawChannel::~RawChannel()
 		pthread_cond_destroy(&m_cv);
 	}
 	delete m_semaphore;
+	delete m_pending_error;
 }
 
 void RawChannel::OnOpen()
 {
 	// Enable sequence packets so that DataSendAck callback and close can be
 	// implemented
-	m_zeroRegistered = true;
+	m_zero_registered = true;
 	m_socket->HideSequencePacket(false);
 	m_con.m_queue->RegisterInterest(0, HandleReceivedDataCallback, this);
-	m_socket->RegisterInterest(HandleReceivedDataCallback, this);
+	// Get socket data packets routed to this class as well if using callback
+	// otherside just request interest
+	m_socket->RegisterInterest( m_callback ? HandleReceivedDataCallback : NULL, this);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -107,14 +136,56 @@ void RawChannel::Send(Data& data, int timeout)
 	}
 	
 	// setup header and copy data in
-	MAKE_PACKETPTR_BUF(packet, m_sendBuffer);
+	MAKE_PACKETPTR_BUF(packet, m_send_buffer);
 	packet->socket = htobs(m_socket->GetSocket());
 	packet->size = htobs(packetSize);
-	std::memcpy(&(m_sendBuffer[RAW_HEADER_SIZE]), data.GetData(), data.GetSize());
+	std::memcpy(&(m_send_buffer[RAW_HEADER_SIZE]), data.GetData(), data.GetSize());
 
-	Data toSend(m_sendBuffer, packetSize);
+	Data toSend(m_send_buffer, packetSize);
 	m_socket->Send(toSend, timeout);
-	m_semaphore->WaitForSignal();
+	if( m_callback ) {
+		// Being used in callback mode
+		m_semaphore->WaitForSignal();
+	}
+	else {
+		// Being used in non-callback mode so need to call DoRead
+		// until SB_COMMAND_SEQUENCE_HANDSHAKE is received
+		std::string msg;
+		while( !m_semaphore->ReceiveSignal() ) {
+			if( !m_con.m_queue->DoRead(msg, timeout) ) {
+				// Error recevied, throw it to the caller
+				throw Usb::Error(msg);
+			}
+			// Check to see if the handler got an error
+			if( m_pending_error ) {
+				throw Barry::Error(*m_pending_error);
+			}
+		}
+	}
+}
+
+DataHandle RawChannel::Receive(int timeout)
+{
+	if( m_callback ) {
+		throw std::logic_error("RawChannel: Receive called when channel was created with a callback");
+	}
+	// See if a packet to receive is already queued
+	DataHandle ret = m_con.m_queue->SocketRead(m_socket->GetSocket(), 0);
+	std::string msg;
+	while( !ret.get() ) {
+		// Nothing to read at the moment, wait for timeout or error
+		if( !m_con.m_queue->DoRead(msg, timeout) ) {
+			// Error recevied, throw it to the caller
+			throw Usb::Error(msg);
+		}
+		// Check to see if the handler got an error
+		if( m_pending_error ) {
+			throw Barry::Error(*m_pending_error);
+		}
+		// Try to see if a new packet was queued
+		ret = m_con.m_queue->SocketRead(m_socket->GetSocket(), 0);
+	}
+	return ret;
 }
 
 size_t RawChannel::MaximumSendSize()
@@ -124,6 +195,7 @@ size_t RawChannel::MaximumSendSize()
 		
 void RawChannel::HandleReceivedData(Data& data)
 {
+	// Only ever called in callback mode
 	Protocol::CheckSize(data, MIN_PACKET_DATA_SIZE);
 	MAKE_PACKETPTR_BUF(packet, data.GetData());
 
@@ -138,27 +210,49 @@ void RawChannel::HandleReceivedData(Data& data)
 			// Stop listening to socket 0 messages
 			// so that socket close work.
 			UnregisterZeroSocketInterest();
-			m_callback.ChannelClose();
+			if( m_callback ) {
+				m_callback->ChannelClose();
+			}
+			
+			m_semaphore->Signal();
 			break;
 		default:
 			UnregisterZeroSocketInterest();
-			m_callback.ChannelError("RawChannel: Got unexpected socket zero packet");
+			if( m_callback ) {
+				m_callback->ChannelError("RawChannel: Got unexpected socket zero packet");
+			}
+			else {
+				SetPendingError("RawChannel: Got unexpected socket zero packet");
+			}
+			m_semaphore->Signal();
 			break;
 		}
 	}
 	else {
 		// Should be a socket packet for us, so remove packet headers
 		Data partial(data.GetData() + RAW_HEADER_SIZE, data.GetSize() - RAW_HEADER_SIZE);
-		m_callback.DataReceived(partial);
+		if( m_callback ) {
+			m_callback->DataReceived(partial);
+		}
+		else {
+			SetPendingError("RawChannel: Received data to handle when in non-callback mode");
+		}
 	}
 }
 
 void RawChannel::UnregisterZeroSocketInterest()
 {
-	if( m_zeroRegistered ) {
+	if( m_zero_registered ) {
 		m_con.m_queue->UnregisterInterest(0);
 		m_socket->HideSequencePacket(true);
-		m_zeroRegistered = false;
+		m_zero_registered = false;
+	}
+}
+
+void RawChannel::SetPendingError(const char* msg)
+{
+	if( !m_pending_error ) {
+		m_pending_error = new std::string(msg);
 	}
 }
 

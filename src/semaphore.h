@@ -41,6 +41,8 @@ public:
 	{
 	}
 
+	// Waits for the value of this semaphore to be greater than 0 and then
+	// decrements it by one before returning.
 	void WaitForSignal()
 	{
 		scoped_lock lock(*m_mutex);
@@ -54,6 +56,22 @@ public:
 		lock.unlock();
 	}
 
+	// Checks for a semaphore signal without blocking. Returns true and decrements
+	// the semaphore if the value is greater than 0, otherwise returns false.
+	bool ReceiveSignal()
+	{
+		bool ret = false;
+		scoped_lock lock(*m_mutex);
+		if( m_value > 0 ) {
+			--m_value;
+			ret = true;
+		}
+		lock.unlock();
+		return ret;
+	}
+
+	// Increments the value of this semaphore by 1, waking any sleeping threads waiting
+	// on this semaphore.
 	void Signal()
 	{
 		scoped_lock lock(*m_mutex);
