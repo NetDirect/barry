@@ -90,14 +90,23 @@ ConfigFile::~ConfigFile()
 
 void ConfigFile::BuildFilename()
 {
-	struct passwd *pw = getpwuid(getuid());
-	if( !pw )
+	size_t strsize = 255 * 5;
+	char *strbuf = new char[strsize];
+	struct passwd pwbuf;
+	struct passwd *pw;
+
+	getpwuid_r(getuid(), &pwbuf, strbuf, strsize, &pw);
+	if( !pw ) {
+		delete [] strbuf;
 		throw ConfigFileError("BuildFilename: getpwuid failed", errno);
+	}
 
 	m_filename = pw->pw_dir;
 	m_filename += "/.barry/backup/";
 	m_filename += m_pin.str();
 	m_filename += "/config";
+
+	delete [] strbuf;
 }
 
 void ConfigFile::BuildDefaultPath()

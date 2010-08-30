@@ -1,5 +1,7 @@
 Release: version 0.17 - 2010/01/??
 ------------------------------------------------------------------------------
+2010/08/30
+	- lib: use thread-safe getpwuid_r() in config file code
 2010/08/18
 	- fixed build bug, where libbarrysync was still used even if glib2
 		was not found on the system.  Thanks to Eric Arseneau
