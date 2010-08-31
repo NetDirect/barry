@@ -113,18 +113,18 @@ void BarryEnvironment::DoConnect()
 	}
 
 	if( m_ContactsSync.m_Sync ) {
-		m_ContactsSync.m_dbId = m_pDesktop->GetDBID(Barry::Contact::GetDBName());
 		m_ContactsSync.m_dbName = Barry::Contact::GetDBName();
+		m_ContactsSync.m_dbId = m_pDesktop->GetDBID(Barry::Contact::GetDBName());
 	}
 
 	if( m_JournalSync.m_Sync ) {
-		m_JournalSync.m_dbId = m_pDesktop->GetDBID(Barry::Memo::GetDBName());
 		m_JournalSync.m_dbName = Barry::Memo::GetDBName();
+		m_JournalSync.m_dbId = m_pDesktop->GetDBID(Barry::Memo::GetDBName());
 	}
 
 	if( m_TodoSync.m_Sync ) {
-		m_TodoSync.m_dbId = m_pDesktop->GetDBID(Barry::Task::GetDBName());
 		m_TodoSync.m_dbName = Barry::Task::GetDBName();
+		m_TodoSync.m_dbId = m_pDesktop->GetDBID(Barry::Task::GetDBName());
 	}
 }
 
