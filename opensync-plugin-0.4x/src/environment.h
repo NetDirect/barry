@@ -73,6 +73,9 @@ public:
 	// sync data
 	DatabaseSyncState m_CalendarSync, m_ContactsSync, m_JournalSync, m_TodoSync;
 
+	// optimization state
+	bool m_NeedsReconnect;
+
 protected:
 	void DoConnect();
 
@@ -84,6 +87,8 @@ public:
 	void Reconnect();
 	void Disconnect();
 	bool isConnected();
+	void ReconnectForDirtyFlags();
+	void RequireDirtyReconnect();
 
 	DatabaseSyncState* GetSyncObject(OSyncChange *change);
 

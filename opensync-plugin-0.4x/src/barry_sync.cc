@@ -316,10 +316,14 @@ bool FinishSync(OSyncContext *ctx, BarryEnvironment *env, DatabaseSyncState *pSy
 		return true;
 	}
 
-	Barry::Mode::Desktop &desktop = *env->m_pDesktop;
+	// we reconnect to the device here, since dirty flags
+	// for records we've just touched do not show up until
+	// a disconnect... as far as I can tell.
+	env->ReconnectForDirtyFlags();
 
 	// get the state table again, so we can update
 	// the cache properly
+	Barry::Mode::Desktop &desktop = *env->m_pDesktop;
 	desktop.GetRecordStateTable(pSync->m_dbId, pSync->m_Table);
 
 	// clear all dirty flags in device
@@ -896,6 +900,11 @@ static void commit_change(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncCo
 			}
 		}
 
+		// if we get here, we are about to update the device,
+		// and dirty flags will change in such a way that a
+		// reconnect will be required later... so flag this state
+		env->RequireDirtyReconnect();
+
 
 		std::string errmsg;
 		bool status;
@@ -968,11 +977,6 @@ static void contact_sync_done(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSy
 
 		BarryEnvironment *env = (BarryEnvironment *) userdata;
 
-		// we reconnect to the device here, since dirty flags
-		// for records we've just touched do not show up until
-		// a disconnect... as far as I can tell.
-		env->Reconnect();
-
 		// do cleanup for each database
 		if( FinishSync(ctx, env, &env->m_ContactsSync) )
 		{
@@ -998,11 +1002,6 @@ static void event_sync_done(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSync
 	try {
 
 		BarryEnvironment *env = (BarryEnvironment *) userdata;
-
-		// we reconnect to the device here, since dirty flags
-		// for records we've just touched do not show up until
-		// a disconnect... as far as I can tell.
-		env->Reconnect();
 
 		// do cleanup for each database
 		if( FinishSync(ctx, env, &env->m_CalendarSync) )
@@ -1030,11 +1029,6 @@ static void journal_sync_done(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSy
 
 		BarryEnvironment *env = (BarryEnvironment *) userdata;
 
-		// we reconnect to the device here, since dirty flags
-		// for records we've just touched do not show up until
-		// a disconnect... as far as I can tell.
-		env->Reconnect();
-
 		// do cleanup for each database
 		if( FinishSync(ctx, env, &env->m_JournalSync) )
 		{
@@ -1060,11 +1054,6 @@ static void todo_sync_done(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncC
 	try {
 
 		BarryEnvironment *env = (BarryEnvironment *) userdata;
-
-		// we reconnect to the device here, since dirty flags
-		// for records we've just touched do not show up until
-		// a disconnect... as far as I can tell.
-		env->Reconnect();
 
 		// do cleanup for each database
 		if( FinishSync(ctx, env, &env->m_TodoSync) )

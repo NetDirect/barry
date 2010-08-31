@@ -80,7 +80,8 @@ BarryEnvironment::BarryEnvironment(OSyncPluginInfo *info):
 	m_CalendarSync(info, "calendar"),
 	m_ContactsSync(info, "contacts"),
 	m_JournalSync(info, "note"),
-	m_TodoSync(info, "todo")
+	m_TodoSync(info, "todo"),
+	m_NeedsReconnect(false)
 {
 }
 
@@ -185,6 +186,8 @@ void BarryEnvironment::Disconnect()
 
 	delete m_pCon;
 	m_pCon = 0;
+
+	m_NeedsReconnect = false;
 }
 
 bool BarryEnvironment::isConnected()
@@ -193,6 +196,19 @@ bool BarryEnvironment::isConnected()
 		return true;
 
 	return false;
+}
+
+void BarryEnvironment::ReconnectForDirtyFlags()
+{
+	if( m_NeedsReconnect ) {
+		// Reconnect resets the m_NeedsReconnect via Disconnect
+		Reconnect();
+	}
+}
+
+void BarryEnvironment::RequireDirtyReconnect()
+{
+	m_NeedsReconnect = true;
 }
 
 void BarryEnvironment::ClearDirtyFlags(Barry::RecordStateTable &table,

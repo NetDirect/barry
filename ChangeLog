@@ -1,5 +1,12 @@
 Release: version 0.17 - 2010/01/??
 ------------------------------------------------------------------------------
+2010/08/31
+	- os4x: optimized dirty flag clearing
+		Clearing the dirty flags on newly updated records requires
+		a reconnect, but it only requires one reconnect, and no
+		reconnect it needed if nothing is written to the device,
+		so skip the reconnect whenever possible, which makes syncing
+		much faster
 2010/08/30
 	- lib: use thread-safe getpwuid_r() in config file code
 2010/08/18
