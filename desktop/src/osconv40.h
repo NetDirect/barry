@@ -40,18 +40,22 @@ public:
 
 	virtual std::string GetPluginName(const Config::Barry &) const;
 	virtual std::string GetPluginName(const Config::Evolution &) const;
+	virtual std::string GetPluginName(const Config::Google &) const;
 	virtual std::string GetPluginName(const Config::Unsupported &) const;
 
 	virtual bool IsConfigured(const Config::Barry &) const;
 	virtual bool IsConfigured(const Config::Evolution &) const;
+	virtual bool IsConfigured(const Config::Google &) const;
 	virtual bool IsConfigured(const Config::Unsupported &) const;
 
 	virtual void Load(Config::Barry &config, const Member &member);
 	virtual void Load(Config::Evolution &config, const Member &member);
+	virtual void Load(Config::Google &config, const Member &member);
 	virtual void Load(Config::Unsupported &config, const Member &member);
 
 	virtual void Save(const Config::Barry &config, const std::string &group_name);
 	virtual void Save(const Config::Evolution &config, const std::string &group_name);
+	virtual void Save(const Config::Google &config, const std::string &group_name);
 	virtual void Save(const Config::Unsupported &config, const std::string &group_name);
 };
 

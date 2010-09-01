@@ -28,6 +28,7 @@ using namespace std;
 // Supported plugin names
 #define PLUGIN_BARRY		"barry-sync"
 #define PLUGIN_EVOLUTION	"evo2-sync"
+#define PLUGIN_GOOGLE		"google-calendar" // "google-data" ???
 #define PLUGIN_KDEPIM		"kdepim-sync"
 #define PLUGIN_FILE		"file-sync"
 #define PLUGIN_SUNBIRD		"sunbird-sync"
@@ -90,6 +91,11 @@ std::string Converter22::GetPluginName(const Config::Evolution &) const
 	return PLUGIN_EVOLUTION;
 }
 
+std::string Converter22::GetPluginName(const Config::Google &) const
+{
+	return PLUGIN_GOOGLE;
+}
+
 std::string Converter22::GetPluginName(const Config::Unsupported &) const
 {
 	return "unsupported-sync";
@@ -107,6 +113,11 @@ bool Converter22::IsConfigured(const Config::Evolution &config) const
 	return	config.GetAddressPath().size() &&
 		config.GetCalendarPath().size() &&
 		config.GetTasksPath().size();
+}
+
+bool Converter22::IsConfigured(const Config::Google &config) const
+{
+	return false;
 }
 
 bool Converter22::IsConfigured(const Config::Unsupported &) const
@@ -200,6 +211,11 @@ void Converter22::Load(Config::Evolution &config, const Member &member)
 	config.SetTasksPath(GrabField(cfg, "tasks_path"));
 }
 
+void Converter22::Load(Config::Google &config, const Member &member)
+{
+	throw std::logic_error("Loading config for Google calendar plugin is not supported for 0.22.  Use the Unsupported class.");
+}
+
 void Converter22::Load(Config::Unsupported &config, const Member &member)
 {
 	string cfg = m_api.GetConfiguration(member.group_name, member.id);
@@ -238,6 +254,12 @@ void Converter22::Save(const Config::Evolution &config,
 	    << endl;
 
 	m_api.SetConfiguration(group_name, config.GetMemberId(), oss.str());
+}
+
+void Converter22::Save(const Config::Google &config,
+			const std::string &group_name)
+{
+	throw std::logic_error("Saving config for Google calendar plugin is not supported for 0.22.  Use the Unsupported class.");
 }
 
 void Converter22::Save(const Config::Unsupported &config,

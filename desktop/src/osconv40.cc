@@ -28,6 +28,7 @@ using namespace std;
 // Supported plugin names
 #define PLUGIN_BARRY		"barry-sync"
 #define PLUGIN_EVOLUTION	"evo2-sync"
+#define PLUGIN_GOOGLE		"google-data"
 #define PLUGIN_KDEPIM		"kdepim-sync"
 #define PLUGIN_FILE		"file-sync"
 #define PLUGIN_SUNBIRD		"sunbird-sync"
@@ -56,6 +57,11 @@ bool Converter40::IsPluginSupported(const std::string &plugin_name,
 			*appname = Config::Evolution::AppName();
 		return true;
 	}
+	else if( plugin_name == PLUGIN_GOOGLE ) {
+		if( appname )
+			*appname = Config::Google::AppName();
+		return true;
+	}
 
 	return false;
 }
@@ -71,6 +77,9 @@ Converter::plugin_ptr Converter40::CreateAndLoadPlugin(const Member &member)
 	}
 	else if( member.plugin_name == PLUGIN_EVOLUTION ) {
 		ptr.reset( new Config::Evolution(this, member) );
+	}
+	else if( member.plugin_name == PLUGIN_GOOGLE ) {
+		ptr.reset( new Config::Google(this, member) );
 	}
 	// default: Unsupported
 	else {
@@ -90,6 +99,11 @@ std::string Converter40::GetPluginName(const Config::Evolution &) const
 	return PLUGIN_EVOLUTION;
 }
 
+std::string Converter40::GetPluginName(const Config::Google &) const
+{
+	return PLUGIN_GOOGLE;
+}
+
 std::string Converter40::GetPluginName(const Config::Unsupported &) const
 {
 	return "unsupported-sync";
@@ -107,6 +121,12 @@ bool Converter40::IsConfigured(const Config::Evolution &config) const
 		config.GetCalendarPath().size() &&
 		config.GetTasksPath().size() &&
 		config.GetMemosPath().size();
+}
+
+bool Converter40::IsConfigured(const Config::Google &config) const
+{
+	// password might (maaayybe) be empty, so skip it
+	return config.GetUsername().size();
 }
 
 bool Converter40::IsConfigured(const Config::Unsupported &) const
@@ -157,6 +177,17 @@ void Converter40::Load(Config::Evolution &config, const Member &member)
 	config.SetCalendarPath(GrabPath(cfg.GetResource("event")->GetUrl()));
 	config.SetTasksPath(GrabPath(cfg.GetResource("todo")->GetUrl()));
 	config.SetMemosPath(GrabPath(cfg.GetResource("note")->GetUrl()));
+}
+
+void Converter40::Load(Config::Google &config, const Member &member)
+{
+	OS40PluginConfig cfg = m_api.GetConfigurationObj(member.group_name,
+							member.id);
+
+	config.SetUsername(cfg.GetUsername());
+	config.SetPassword(cfg.GetPassword());
+	config.EnableContacts(cfg.GetResource("contact")->IsEnabled());
+	config.EnableCalendar(cfg.GetResource("event")->IsEnabled());
 }
 
 void Converter40::Load(Config::Unsupported &config, const Member &member)
@@ -230,6 +261,27 @@ void Converter40::Save(const Config::Evolution &config, const std::string &group
 		Enable(true).
 		SetObjFormat("vjournal").
 		SetUrl("file://" + config.GetMemosPath()).
+		AddResource();
+
+	cfg.Save();
+}
+
+void Converter40::Save(const Config::Google &config, const std::string &group_name)
+{
+	if( config.GetMemberId() == -1 )
+		throw Config::SaveError("Cannot save a plugin with a member_id of -1");
+
+	OS40PluginConfig cfg = m_api.GetConfigurationObj(group_name,
+							config.GetMemberId());
+	cfg.SetUsername(config.GetUsername());
+	cfg.SetPassword(config.GetPassword());
+	cfg.GetResource("contact")->
+		Enable(config.IsContactsEnabled()).
+		SetObjFormat("xmlformat-contact-doc").
+		AddResource();
+	cfg.GetResource("event")->
+		Enable(config.IsCalendarEnabled()).
+		SetObjFormat("xmlformat-event-doc").
 		AddResource();
 
 	cfg.Save();

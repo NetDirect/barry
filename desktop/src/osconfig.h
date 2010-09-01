@@ -330,6 +330,88 @@ public:
 	}
 };
 
+class Google : public Plugin
+{
+private:
+	// configuration settings
+	std::string m_username;
+	std::string m_password;
+	bool m_contacts_enabled;
+	bool m_calendar_enabled;
+
+public:
+	Google()
+		: m_contacts_enabled(true)
+		, m_calendar_enabled(true)
+	{
+	}
+
+	explicit Google(Converter *load_converter, const Member &member)
+	{
+		load_converter->Load(*this, member);
+	}
+
+	const std::string& GetUsername() const { return m_username; }
+	const std::string& GetPassword() const { return m_password; }
+	bool IsContactsEnabled() const { return m_contacts_enabled; }
+	bool IsCalendarEnabled() const { return m_calendar_enabled; }
+
+	void SetUsername(const std::string &u) { m_username = u; }
+	void SetPassword(const std::string &p) { m_password = p; }
+	bool EnableContacts(bool setting = true)
+	{
+		bool old = m_contacts_enabled;
+		m_contacts_enabled = setting;
+		return old;
+	}
+	bool EnableCalendar(bool setting = true)
+	{
+		bool old = m_calendar_enabled;
+		m_calendar_enabled = setting;
+		return old;
+	}
+
+	// virtual overrides
+	virtual Google* Clone() const { return new Google(*this); }
+	virtual bool IsUnsupported() const { return false; }
+	virtual std::string GetAppName() const { return AppName(); }
+	virtual void Save(OpenSync::API &api, const std::string &group_name) const
+	{
+		api.GetConverter().Save(*this, group_name);
+	}
+	virtual std::string GetPluginName(OpenSync::API &api) const
+	{
+		return api.GetConverter().GetPluginName(*this);
+	}
+	virtual bool IsConfigured(OpenSync::API &api) const
+	{
+		return api.GetConverter().IsConfigured(*this);
+	}
+	virtual bool Compare(const Plugin &plugin,
+				bool &sametype, bool &equal) const
+	{
+		sametype = equal = false;
+		const Google *other = dynamic_cast<const Google*> (&plugin);
+		if( other ) {
+			sametype = true;
+
+			if( m_username == other->m_username &&
+			    m_password == other->m_password &&
+			    m_contacts_enabled == other->m_contacts_enabled &&
+			    m_calendar_enabled == other->m_calendar_enabled )
+				equal = true;
+		}
+		return sametype && equal;
+	}
+
+	// statics
+	static std::string AppName() { return "Google Calendar"; }
+	static std::string PluginName(OpenSync::API &api)
+	{
+		return api.GetConverter().GetPluginName(Google());
+	}
+};
+
 //
 // Group
 //

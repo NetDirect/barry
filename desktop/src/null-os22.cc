@@ -143,6 +143,11 @@ std::string Converter22::GetPluginName(const Config::Evolution &) const
 	throw std::logic_error("Not supported on this system.");
 }
 
+std::string Converter22::GetPluginName(const Config::Google &) const
+{
+	throw std::logic_error("Not supported on this system.");
+}
+
 std::string Converter22::GetPluginName(const Config::Unsupported &) const
 {
 	throw std::logic_error("Not supported on this system.");
@@ -154,6 +159,11 @@ bool Converter22::IsConfigured(const Config::Barry &) const
 }
 
 bool Converter22::IsConfigured(const Config::Evolution &) const
+{
+	return false;
+}
+
+bool Converter22::IsConfigured(const Config::Google &) const
 {
 	return false;
 }
@@ -179,6 +189,11 @@ void Converter22::Load(Config::Evolution &config, const Member &member)
 	throw std::logic_error("Not supported on this system.");
 }
 
+void Converter22::Load(Config::Google &config, const Member &member)
+{
+	throw std::logic_error("Not supported on this system.");
+}
+
 void Converter22::Load(Config::Unsupported &config, const Member &member)
 {
 	throw std::logic_error("Not supported on this system.");
@@ -190,6 +205,11 @@ void Converter22::Save(const Config::Barry &config, const std::string &group_nam
 }
 
 void Converter22::Save(const Config::Evolution &config, const std::string &group_name)
+{
+	throw std::logic_error("Not supported on this system.");
+}
+
+void Converter22::Save(const Config::Google &config, const std::string &group_name)
 {
 	throw std::logic_error("Not supported on this system.");
 }
