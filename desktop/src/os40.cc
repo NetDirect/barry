@@ -407,6 +407,11 @@ public:
 	void			(*osync_plugin_authentication_set_password)(
 					OSyncPluginAuthentication *auth,
 					const char *password);
+	const char*		(*osync_plugin_authentication_get_username)(
+					OSyncPluginAuthentication *auth);
+	void			(*osync_plugin_authentication_set_username)(
+					OSyncPluginAuthentication *auth,
+					const char *password);
 
 	// data pointers
 	vLateSmartPtr<OSyncGroupEnv, void(*)(OSyncGroupEnv*)> group_env;
@@ -1390,6 +1395,44 @@ OS40PluginConfig::GetResource(const std::string &objtype)
 	return ptr;
 }
 
+std::string OS40PluginConfig::GetUsername() const
+{
+	string username;
+
+	OSyncPluginAuthentication *auth = m_privapi->osync_plugin_config_get_authentication(m_priv->m_config);
+	if( !auth )
+		return username;
+
+	const char *un = m_privapi->osync_plugin_authentication_get_username(auth);
+	if( !un )
+		return username;
+
+	username = un;
+	return username;
+}
+
+void OS40PluginConfig::SetUsername(const std::string &username)
+{
+	OSyncPluginAuthentication *auth = m_privapi->osync_plugin_config_get_authentication(m_priv->m_config);
+	if( !auth ) {
+		auth = m_privapi->osync_plugin_authentication_new(m_privapi->error);
+		if( !auth )
+			throw std::runtime_error(m_privapi->error.GetErrorMsg());
+		if( !m_privapi->osync_plugin_authentication_option_is_supported(auth, OSYNC_PLUGIN_AUTHENTICATION_USERNAME) ) {
+			m_privapi->osync_plugin_authentication_unref(auth);
+			throw std::runtime_error("Username (authentication parameter) is not supported in plugin!");
+		}
+
+		// all looks ok, add it to the config
+		m_privapi->osync_plugin_config_set_authentication(m_priv->m_config, auth);
+		// unref our copy, since the config now has it...
+		// our auth pointer will still be valid since config holds it
+		m_privapi->osync_plugin_authentication_unref(auth);
+	}
+
+	m_privapi->osync_plugin_authentication_set_username(auth, username.c_str());
+}
+
 std::string OS40PluginConfig::GetPassword() const
 {
 	string password;
@@ -1679,6 +1722,10 @@ OpenSync40::OpenSync40()
 				"osync_plugin_config_set_authentication");
 	LoadSym(p->osync_plugin_authentication_set_password,
 				"osync_plugin_authentication_set_password");
+	LoadSym(p->osync_plugin_authentication_get_username,
+				"osync_plugin_authentication_get_username");
+	LoadSym(p->osync_plugin_authentication_set_username,
+				"osync_plugin_authentication_set_username");
 
 	// fixup free pointers
 	p->group_env.SetFreeFunc(p->osync_group_env_unref);
