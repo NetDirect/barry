@@ -33,6 +33,7 @@ barrydesktop_SOURCES = \
 	exechelper.cc exechelper.h \
 	CUI_Barry.cc CUI_Barry.h \
 	CUI_Evolution.cc CUI_Evolution.h \
+	CUI_Google.cc CUI_Google.h \
 	error.cc error.h \
 	dlopen.cc dlopen.h \
 	tempdir.cc tempdir.h \
@@ -53,8 +54,9 @@ barrydesktop_SOURCES += os40.cc osconv40.cc
 else
 barrydesktop_SOURCES += null-os40.cc
 endif
-barrydesktop_LDADD = -ldl @WX_LIBS@ $(LIBXMLPP_LIBS)
-barrydesktop_CXXFLAGS = $(AM_CXXFLAGS) @WX_CXXFLAGS@ $(LIBXMLPP_CFLAGS)
+barrydesktop_LDADD = -ldl @WX_LIBS@ $(LIBXMLPP_LIBS) $(LIBGCAL_LIBS)
+barrydesktop_CXXFLAGS = $(AM_CXXFLAGS) @WX_CXXFLAGS@ $(LIBXMLPP_CFLAGS) \
+	$(LIBGCAL_CFLAGS)
 
 bsyncjail_SOURCES = \
 	bsyncjail.cc \

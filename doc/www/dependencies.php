@@ -75,6 +75,8 @@ some are only needed for building CVS.
 	<li><b>rpmdevtools and rpm-build</b>, if building RPMs yourself</li>
 	<li><b>fakeroot</b>, if building DEB packages yourself</li>
 	<li><b>wxWidgets</b>, if building the Barry Desktop</li>
+	<li><b>libgcal</b>, version 0.9.6 or higher, if building the
+		Barry Desktop</li>
 </ul>
 </p>
 
