@@ -112,10 +112,12 @@ void *SocketRoutingQueue::SimpleReadThread(void *userptr)
 // These functions connect the router to an external Usb::Device
 // object.  Normally this is handled automatically by the
 // Controller class, but are public here in case they are needed.
-void SocketRoutingQueue::SetUsbDevice(Usb::Device *dev, int writeEp, int readEp)
+void SocketRoutingQueue::SetUsbDevice(Usb::Device *dev, int writeEp, int readEp,
+					SocketDataHandlerPtr callback)
 {
 	scoped_lock lock(m_mutex);
 	m_dev = dev;
+	m_usb_error_dev_callback = callback;
 	m_writeEp = writeEp;
 	m_readEp = readEp;
 }
@@ -124,6 +126,7 @@ void SocketRoutingQueue::ClearUsbDevice()
 {
 	scoped_lock lock(m_mutex);
 	m_dev = 0;
+	m_usb_error_dev_callback.reset();
 	lock.unlock();
 
 	// wait for the DoRead cycle to finish, so the external
@@ -135,7 +138,7 @@ void SocketRoutingQueue::ClearUsbDevice()
 bool SocketRoutingQueue::UsbDeviceReady()
 {
 	scoped_lock lock(m_mutex);
-	return m_dev != 0;
+	return m_dev != 0 && !m_seen_usb_error;
 }
 
 //
@@ -440,6 +443,10 @@ void SocketRoutingQueue::DoRead(int timeout)
 		// this is expected... just ignore
 	}
 	catch( Usb::Error &ue ) {
+		// set the flag first, in case any of the handlers
+		// are able to recover from this error
+		m_seen_usb_error = true;
+
 		// this is unexpected, but we're in a thread here...
 		// Need to iterate through all the registered handlers
 		// calling their error callback.
@@ -456,13 +463,20 @@ void SocketRoutingQueue::DoRead(int timeout)
 			}
 			++qi;
 		}
+
+		SocketDataHandlerPtr usb_error_handler = m_usb_error_dev_callback;
+
 		lock.unlock();
 		std::vector<SocketDataHandlerPtr>::iterator hi = handlers.begin();
 		while( hi != handlers.end() ) {
 			(*hi)->Error(ue);
 			++hi;
 		}
-		m_seen_usb_error = true;
+
+		// and finally, call the specific error callback if available
+		if( usb_error_handler.get() ) {
+			usb_error_handler->Error(ue);
+		}
 	}
 }
 

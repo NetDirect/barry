@@ -109,6 +109,7 @@ private:
 	pthread_mutex_t m_readwaitMutex;
 	pthread_cond_t m_readwaitCond;
 	bool m_seen_usb_error;
+	SocketDataHandlerPtr m_usb_error_dev_callback;
 
 	DataQueue m_free;
 	DataQueue m_default;
@@ -145,10 +146,19 @@ public:
 	// These functions connect the router to an external Usb::Device
 	// object.  Normally this is handled automatically by the
 	// Controller class, but are public here in case they are needed.
-	void SetUsbDevice(Usb::Device *dev, int writeEp, int readEp);
+	//
+	// If DoRead encounters an error, it sets a flag and stops
+	// reading.  To recover, you should handle the Error() call in
+	// the callback, fix the USB device, and then call
+	// ClearUsbError() to clear the flag.
+	//
+	void SetUsbDevice(Usb::Device *dev, int writeEp, int readEp,
+		SocketDataHandlerPtr callback = SocketDataHandlerPtr());
 	void ClearUsbDevice();
 	bool UsbDeviceReady();
 	Usb::Device* GetUsbDevice() { return m_dev; }
+	void ClearUsbError();
+
 
 	// This class starts out with no buffers, and will grow one buffer
 	// at a time if needed.  Call this to allocate count buffers
