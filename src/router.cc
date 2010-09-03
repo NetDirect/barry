@@ -208,7 +208,7 @@ DataHandle SocketRoutingQueue::DefaultRead(int timeout)
 /// Throws std::logic_error if already registered.
 ///
 void SocketRoutingQueue::RegisterInterest(SocketId socket,
-					  std::tr1::shared_ptr<SocketDataHandler>& handler)
+					  std::tr1::shared_ptr<SocketDataHandler> handler)
 {
 	// modifying our own std::map, need a lock
 	scoped_lock lock(m_mutex);

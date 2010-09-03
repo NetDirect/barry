@@ -85,7 +85,7 @@ public:
 		std::tr1::shared_ptr<SocketDataHandler> m_handler;
 		DataQueue m_queue;
 
-		QueueEntry(std::tr1::shared_ptr<SocketDataHandler>& h)
+		QueueEntry(std::tr1::shared_ptr<SocketDataHandler> h)
 			: m_handler(h)
 			{}
 	};
@@ -171,7 +171,7 @@ public:
 	// copying is done.  Once the handler returns, the data is
 	// considered processed and not added to the interested queue,
 	// but instead returned to m_free.
-	void RegisterInterest(SocketId socket, std::tr1::shared_ptr<SocketDataHandler>& handler);
+	void RegisterInterest(SocketId socket, std::tr1::shared_ptr<SocketDataHandler> handler);
 
 	// Unregisters interest in data from the given socket, and discards
 	// any existing data in its interest queue.  Any new incoming data

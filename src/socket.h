@@ -189,7 +189,7 @@ public:
 	// Register a callback for incoming data from the device.
 	// This function assumes that this socket is based on a socketZero
 	// that has a SocketRoutingQueue, otherwise throws logic_error.
-	void RegisterInterest(std::tr1::shared_ptr<SocketRoutingQueue::SocketDataHandler>& handler);
+	void RegisterInterest(std::tr1::shared_ptr<SocketRoutingQueue::SocketDataHandler> handler);
 	void UnregisterInterest();
 
 

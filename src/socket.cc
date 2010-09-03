@@ -1098,7 +1098,7 @@ void Socket::NextRecord(Data &receive)
 	Packet(command, receive);
 }
 
-void Socket::RegisterInterest(std::tr1::shared_ptr<SocketRoutingQueue::SocketDataHandler>& handler)
+void Socket::RegisterInterest(std::tr1::shared_ptr<SocketRoutingQueue::SocketDataHandler> handler)
 {
 	if( !m_zero->m_queue )
 		throw std::logic_error("SocketRoutingQueue required in SocketZero in order to call Socket::RegisterInterest()");
