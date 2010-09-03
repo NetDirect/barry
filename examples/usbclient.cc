@@ -1,5 +1,5 @@
 ///
-/// \file	addcontact.cc
+/// \file	usbclient.cc
 ///		Example code using the Barry library to interface
 ///		with a custom USB channel on a Blackberry device.
 ///

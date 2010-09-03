@@ -48,7 +48,7 @@ public:
 	{
 	public:
 		// Called when data is received on the socket
-		// for which interested has been registered.
+		// for which interest has been registered.
 		// 
 		// The lifetime of the data parameter is only valid
 		// for the duration of this method call. 

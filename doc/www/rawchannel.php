@@ -48,7 +48,7 @@ reflects the USB channel protocol, it can be unhelpful for
 applications which are designed with <a
 href="http://en.wikipedia.org/wiki/Stream_(computing)">streams</a> as
 their communication mechanisms. To accommodate this Barry provides
-a tool called <tt>brawchannel</tt>. This tools redirects the named
+a tool called <tt>brawchannel</tt>. This tool redirects the named
 channel over STDIN and STDOUT, allowing easy communication with
 pre-existing tools.</p>
 
