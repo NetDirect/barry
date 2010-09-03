@@ -22,8 +22,7 @@
 #ifndef __BARRY_SEMAPHORE_H__
 #define __BARRY_SEMAPHORE_H__
 
-#include <barry/scoped_lock.h>
-
+#include "scoped_lock.h"
 #include <pthread.h>
 
 namespace Barry {
