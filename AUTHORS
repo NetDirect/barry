@@ -35,6 +35,8 @@ Contributors (code and otherwise) in alphabetical order by last name:
 		- reverse engineering Service Book record
 	Dr. J A Gow <J.A.Gow@wellfrazzled.com>
 		- recurring calendar item sync support
+	Toby Gray <toby.gray@realvnc.com>
+		- RAW channel support
 	Andy Herkey <a.herkey@comcast.net>
 		- sample ppp chat script for Sprint
 		- ipmodem password patches
@@ -88,6 +90,8 @@ Contributors (code and otherwise) in alphabetical order by last name:
 		- debian packaging patches
 	Michael L. Stokes <stokes@aris.net>
 		- sample ppp files for Verizon devices
+	Adrian Taylor <aat@realvnc.com>
+		- preliminary work on RAW channel support
 	Jason Thomas <jason@debian.org>
 		- autoconf / build system patch
 		- debian package patch
