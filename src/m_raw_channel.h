@@ -46,7 +46,7 @@ class BXEXPORT RawChannelDataCallback
 {
 public:
 	// Called when data has been received on the channel
-	virtual void DataReceived(Data& data) = 0;
+	virtual void DataReceived(Data &data) = 0;
 	// Called when the channel has an error
 	virtual void ChannelError(std::string msg) = 0;
 	// Called when the channel has been asked to close by the other side
@@ -79,11 +79,11 @@ class BXEXPORT RawChannel : public Mode
 	pthread_cond_t m_cv;
 	bool m_cv_valid;
 	
-	semaphore* m_semaphore;
-	RawChannelDataCallback* m_callback;
+	semaphore *m_semaphore;
+	RawChannelDataCallback *m_callback;
 	unsigned char *m_send_buffer;
 	bool m_zero_registered;
-	std::string* m_pending_error;
+	std::string *m_pending_error;
 
 	Data m_receive_data;
 
@@ -91,17 +91,17 @@ protected:
 	void CheckQueueAvailable();
 	void InitBuffer();
 	void InitSemaphore();
-	void SetPendingError(const char* msg);
+	void SetPendingError(const char *msg);
 	void UnregisterZeroSocketInterest();
 
 	// Not intended for use by users of this class.
 	// Instead data received will come in via the 
 	// RawChannelDataCallback::DataReceived callback
 	// or using Receive().
-	void HandleReceivedData(Data& data);
+	void HandleReceivedData(Data &data);
 
 	// Not intended for use by users of this class.
-	void HandleError(Barry::Error& data);
+	void HandleError(Barry::Error &data);
 
 	// Not intended for use by users of this class.
 	// This method is called by the internals of
@@ -117,7 +117,7 @@ public:
 	//
 	// Will throw a Barry::Error if the provided controller
 	// doesn't have a routing queue set.
-	RawChannel(Controller& con);
+	RawChannel(Controller &con);
 
 	// Creates a raw channel in callback mode.
 	// This requires all data to be sent via calls to Send, but
@@ -126,7 +126,7 @@ public:
 	//
 	// Will throw a Barry::Error if the provided controller
 	// doesn't have a routing queue set.
-	RawChannel(Controller& con, RawChannelDataCallback& callback);
+	RawChannel(Controller &con, RawChannelDataCallback &callback);
 
 	virtual ~RawChannel();
 
@@ -142,7 +142,7 @@ public:
 	// taken to ensure another thread is running during any calls
 	// to Send. See the comment in the constructor of RawChannel
 	// for further information.
-	void Send(Data& data, int timeout = -1);
+	void Send(Data &data, int timeout = -1);
 
 	// Receive some data on the raw channel.
 	// Will throw a Barry::Error if a disconnect occurs
@@ -152,7 +152,7 @@ public:
 	// Only valid to call this if the raw channel was created in non-callback
 	// mode. If this is called when the raw channel was created with a
 	// callback then a std::logic_error will be thrown.
-	void Receive(Data& data, int timeout = -1);
+	void Receive(Data &data, int timeout = -1);
 
 	// Returns the maximum quantity of data which
 	// can be sent

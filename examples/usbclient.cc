@@ -47,7 +47,7 @@ using namespace Barry;
 #define BYE_FROM_BB   "Goodbye from Device"
 
 // Function to print the data read
-static void printReply(Data& data)
+static void printReply(Data &data)
 {
 	// Need to work out if it's a GCF wrapped reply or a USBPort based
 	// reply.

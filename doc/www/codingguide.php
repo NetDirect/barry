@@ -96,6 +96,24 @@ them when bug reports come in.
 	dout("Error 1234: too many rules");
 </pre></p>
 
+<p>For pointer and reference variables, the pointer and reference symbol
+goes next to the variable, not the the type:
+
+<pre>
+	Data* data;           // wrong
+
+	Data *data;           // right
+</pre>
+
+The reason for this becomes obvious when you consider what a multi-variable
+declaration looks like.  The first style confuses things.  The second
+flows naturally:
+
+<pre>
+	Data* block1, block2;  // wrong, declares a pointer and an object
+
+	Data *block1, *block2; // right, declares two pointers
+</pre>
 
 <p>I think that covers it.  You may see some funky for() statements sometimes,
 due to size:

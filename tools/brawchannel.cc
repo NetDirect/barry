@@ -57,11 +57,11 @@ static void signalHandler(int signum)
 class CallbackHandler : public Barry::Mode::RawChannelDataCallback
 {
 private:
-	volatile bool* m_continuePtr;
+	volatile bool *m_continuePtr;
 	bool m_verbose;
 
 public:
-	CallbackHandler(volatile bool& keepGoing, bool verbose)
+	CallbackHandler(volatile bool &keepGoing, bool verbose)
 		: m_continuePtr(&keepGoing)
 		, m_verbose(verbose)
 		{
@@ -69,13 +69,13 @@ public:
 
     
 public: // From RawChannelDataCallback
-	virtual void DataReceived(Data& data);
+	virtual void DataReceived(Data &data);
 	virtual void ChannelError(string msg);
 	virtual void ChannelClose();
 };
 
 
-void CallbackHandler::DataReceived(Data& data)
+void CallbackHandler::DataReceived(Data &data)
 {
 	if( m_verbose ) {
 		cerr << "From BB: ";
@@ -165,7 +165,7 @@ int main(int argc, char *argv[])
 
 	// Buffer to hold data read in from STDIN before sending it
 	// to the BlackBerry.
-	unsigned char* buf = NULL;
+	unsigned char *buf = NULL;
 	try {
 		uint32_t pin = 0;
 		bool data_dump = false;
@@ -223,7 +223,7 @@ int main(int argc, char *argv[])
 		if( data_dump ) {
 			// Warn if USB_DEBUG isn't set to 0, 1 or 2
 			// as that usually means libusb will write to STDOUT
-			char* val = getenv("USB_DEBUG");
+			char *val = getenv("USB_DEBUG");
 			int parsedValue = -1;
 			if( val ) {
 				parsedValue = atoi(val);

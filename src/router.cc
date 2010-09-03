@@ -33,7 +33,7 @@ namespace Barry {
 ///////////////////////////////////////////////////////////////////////////////
 // SocketDataHandler default methods
 
-void SocketRoutingQueue::SocketDataHandler::Error(Barry::Error& error)
+void SocketRoutingQueue::SocketDataHandler::Error(Barry::Error &error)
 {
 	// Just log the error
 	dout("SocketDataHandler: Error: " << error.what());
@@ -412,7 +412,7 @@ void SocketRoutingQueue::DoRead(int timeout)
 		if( m_interest ) {
 			SocketQueueMap::iterator qi = m_socketQueues.find(socket);
 			if( qi != m_socketQueues.end() ) {
-				std::tr1::shared_ptr<SocketDataHandler>& sdh = qi->second->m_handler;
+				std::tr1::shared_ptr<SocketDataHandler> &sdh = qi->second->m_handler;
 
 				// is there a handler?
 				if( sdh ) {
@@ -449,7 +449,7 @@ void SocketRoutingQueue::DoRead(int timeout)
 		std::vector<std::tr1::shared_ptr<SocketDataHandler> > handlers;
 		SocketQueueMap::iterator qi = m_socketQueues.begin();
 		while( qi != m_socketQueues.end() ) {
-			std::tr1::shared_ptr<SocketDataHandler>& sdh = qi->second->m_handler;
+			std::tr1::shared_ptr<SocketDataHandler> &sdh = qi->second->m_handler;
 			// is there a handler?
 			if( sdh ) {
 				handlers.push_back(sdh);

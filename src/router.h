@@ -59,7 +59,7 @@ public:
 		//
 		// The lifetime of the error parameter is only valid
 		// for the lifetime of this method call.
-		virtual void Error(Barry::Error& error);
+		virtual void Error(Barry::Error &error);
 
 		virtual ~SocketDataHandler();
 	};

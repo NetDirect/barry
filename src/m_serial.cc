@@ -52,7 +52,7 @@ Serial::~Serial()
 //////////////////////////////////////////////////////////////////////////////
 // protected API / static functions
 
-void Serial::DataCallback(Serial& ser, Data *data)
+void Serial::DataCallback(Serial &ser, Data *data)
 {
 	ddout("Serial::DataCallback called");
 
@@ -71,7 +71,7 @@ void Serial::DataCallback(Serial& ser, Data *data)
 //	}
 }
 
-void Serial::CtrlCallback(Serial& ser, Data *data)
+void Serial::CtrlCallback(Serial &ser, Data *data)
 {
 	// just dump to stdout, and do nothing
 	ddout("CtrlCallback received:\n" << *data);

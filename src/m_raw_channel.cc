@@ -46,16 +46,16 @@ namespace Barry { namespace Mode {
 // RawChannel SocketDataHandler callback class
 class RawChannelSocketHandler: public SocketRoutingQueue::SocketDataHandler
 {
-	RawChannel& m_raw_channel;
+	RawChannel &m_raw_channel;
 public: 
-	RawChannelSocketHandler(RawChannel& raw_channel)
+	RawChannelSocketHandler(RawChannel &raw_channel)
 		: m_raw_channel(raw_channel)
 	{}
-	virtual void DataReceived(Data& data)
+	virtual void DataReceived(Data &data)
 	{
 		m_raw_channel.HandleReceivedData(data);
 	}
-	virtual void Error(Barry::Error& error)
+	virtual void Error(Barry::Error &error)
 	{
 		SocketDataHandler::Error(error);
 		m_raw_channel.HandleError(error);
@@ -67,7 +67,7 @@ public:
 ///////////////////////////////////////////////////////////////////////////////
 // RawChannel Mode class
 
-RawChannel::RawChannel(Controller &con, RawChannelDataCallback& callback)
+RawChannel::RawChannel(Controller &con, RawChannelDataCallback &callback)
 	: Mode(con, Controller::RawChannel)
 	, m_mutex_valid(false)
 	, m_cv_valid(false)
@@ -158,7 +158,7 @@ void RawChannel::OnOpen()
 }
 
 		
-void RawChannel::HandleReceivedData(Data& data)
+void RawChannel::HandleReceivedData(Data &data)
 {
 	// Only ever called in callback mode
 	Protocol::CheckSize(data, MIN_PACKET_DATA_SIZE);
@@ -205,7 +205,7 @@ void RawChannel::HandleReceivedData(Data& data)
 	}
 }
 
-void RawChannel::HandleError(Barry::Error& error)
+void RawChannel::HandleError(Barry::Error &error)
 {
 	if( m_callback ) {
 		m_callback->ChannelError("RawChannel: Socket error received");
@@ -225,7 +225,7 @@ void RawChannel::UnregisterZeroSocketInterest()
 	}
 }
 
-void RawChannel::SetPendingError(const char* msg)
+void RawChannel::SetPendingError(const char *msg)
 {
 	if( !m_pending_error ) {
 		m_pending_error = new std::string(msg);
@@ -235,7 +235,7 @@ void RawChannel::SetPendingError(const char* msg)
 ///////////////////////////////////////////////////////////////////////////////
 // public API
 
-void RawChannel::Send(Data& data, int timeout)
+void RawChannel::Send(Data &data, int timeout)
 {
 	size_t packetSize = RAW_HEADER_SIZE + data.GetSize();
 
@@ -257,7 +257,7 @@ void RawChannel::Send(Data& data, int timeout)
 	}
 }
 
-void RawChannel::Receive(Data& data,int timeout)
+void RawChannel::Receive(Data &data,int timeout)
 {
 	if( m_callback ) {
 		throw std::logic_error("RawChannel: Receive called when channel was created with a callback");
