@@ -64,6 +64,8 @@ public:
 		virtual ~SocketDataHandler();
 	};
 
+	typedef std::tr1::shared_ptr<SocketDataHandler> SocketDataHandlerPtr;
+
 	// Simple wrapper template class for SocketDataHandler which provides a basic data recieved callback
 	template<typename T> class SimpleSocketDataHandler : public SocketDataHandler
 	{
@@ -82,10 +84,10 @@ public:
 
 	struct QueueEntry
 	{
-		std::tr1::shared_ptr<SocketDataHandler> m_handler;
+		SocketDataHandlerPtr m_handler;
 		DataQueue m_queue;
 
-		QueueEntry(std::tr1::shared_ptr<SocketDataHandler> h)
+		QueueEntry(SocketDataHandlerPtr h)
 			: m_handler(h)
 			{}
 	};
@@ -171,7 +173,7 @@ public:
 	// copying is done.  Once the handler returns, the data is
 	// considered processed and not added to the interested queue,
 	// but instead returned to m_free.
-	void RegisterInterest(SocketId socket, std::tr1::shared_ptr<SocketDataHandler> handler);
+	void RegisterInterest(SocketId socket, SocketDataHandlerPtr handler);
 
 	// Unregisters interest in data from the given socket, and discards
 	// any existing data in its interest queue.  Any new incoming data

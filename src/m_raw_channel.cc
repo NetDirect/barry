@@ -145,7 +145,7 @@ void RawChannel::OnOpen()
 	// implemented
 	m_zero_registered = true;
 	m_socket->HideSequencePacket(false);
-	std::tr1::shared_ptr<SocketRoutingQueue::SocketDataHandler> callback;
+	SocketRoutingQueue::SocketDataHandlerPtr callback;
 	callback.reset(new RawChannelSocketHandler(*this));
 	m_con.m_queue->RegisterInterest(0, callback);
 	// Get socket data packets routed to this class as well if using callback

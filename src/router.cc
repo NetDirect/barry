@@ -208,7 +208,7 @@ DataHandle SocketRoutingQueue::DefaultRead(int timeout)
 /// Throws std::logic_error if already registered.
 ///
 void SocketRoutingQueue::RegisterInterest(SocketId socket,
-					  std::tr1::shared_ptr<SocketDataHandler> handler)
+					  SocketDataHandlerPtr handler)
 {
 	// modifying our own std::map, need a lock
 	scoped_lock lock(m_mutex);
@@ -412,7 +412,7 @@ void SocketRoutingQueue::DoRead(int timeout)
 		if( m_interest ) {
 			SocketQueueMap::iterator qi = m_socketQueues.find(socket);
 			if( qi != m_socketQueues.end() ) {
-				std::tr1::shared_ptr<SocketDataHandler> &sdh = qi->second->m_handler;
+				SocketDataHandlerPtr &sdh = qi->second->m_handler;
 
 				// is there a handler?
 				if( sdh ) {
@@ -446,10 +446,10 @@ void SocketRoutingQueue::DoRead(int timeout)
 		// Can't be locked when calling the callback, so need
 		// to make a list of them first.
 		scoped_lock lock(m_mutex);
-		std::vector<std::tr1::shared_ptr<SocketDataHandler> > handlers;
+		std::vector<SocketDataHandlerPtr> handlers;
 		SocketQueueMap::iterator qi = m_socketQueues.begin();
 		while( qi != m_socketQueues.end() ) {
-			std::tr1::shared_ptr<SocketDataHandler> &sdh = qi->second->m_handler;
+			SocketDataHandlerPtr &sdh = qi->second->m_handler;
 			// is there a handler?
 			if( sdh ) {
 				handlers.push_back(sdh);
@@ -457,7 +457,7 @@ void SocketRoutingQueue::DoRead(int timeout)
 			++qi;
 		}
 		lock.unlock();
-		std::vector<std::tr1::shared_ptr<SocketDataHandler> >::iterator hi = handlers.begin();
+		std::vector<SocketDataHandlerPtr>::iterator hi = handlers.begin();
 		while( hi != handlers.end() ) {
 			(*hi)->Error(ue);
 			++hi;

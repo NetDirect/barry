@@ -101,10 +101,10 @@ void Serial::Open(const char *password)
 	m_ctrl = m_con.m_zero.Open(m_CtrlSocket, password);
 
 	// register callback for incoming data, for speed
-	std::tr1::shared_ptr<SocketRoutingQueue::SocketDataHandler> data_callback
+	SocketRoutingQueue::SocketDataHandlerPtr data_callback
 		(new SocketRoutingQueue::SimpleSocketDataHandler<Serial>(*this, DataCallback));
 	m_data->RegisterInterest(data_callback);
-	std::tr1::shared_ptr<SocketRoutingQueue::SocketDataHandler> ctrl_callback
+	SocketRoutingQueue::SocketDataHandlerPtr ctrl_callback
 		(new SocketRoutingQueue::SimpleSocketDataHandler<Serial>(*this, CtrlCallback));
 	m_ctrl->RegisterInterest(ctrl_callback);
 
