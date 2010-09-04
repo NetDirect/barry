@@ -4,6 +4,7 @@ Release: version 0.17 - 2010/01/??
 	- merged Toby Gray's and Adrian Taylor's RAW channel support code
 	- updated debian binary package with brawchannel and examples and
 		ppp chat scripts as docs
+	- updated rpm barry.spec with brawchannel and ppp README
 2010/08/31
 	- os4x: optimized dirty flag clearing
 		Clearing the dirty flags on newly updated records requires

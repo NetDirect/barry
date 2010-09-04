@@ -242,6 +242,7 @@ cd ../
 %attr(0755,root,root) %{_bindir}/bfuse
 %attr(0755,root,root) %{_bindir}/bjavaloader
 %attr(0755,root,root) %{_bindir}/bjdwp
+%attr(0755,root,root) %{_bindir}/brawchannel
 %attr(0755,root,root) %{_bindir}/bs11nread
 %attr(0755,root,root) %{_bindir}/bidentify
 %attr(0755,root,root) %{_bindir}/brecsum
@@ -254,6 +255,7 @@ cd ../
 %attr(0644,root,root) %{_mandir}/man1/bfuse*
 %attr(0644,root,root) %{_mandir}/man1/bjavaloader*
 %attr(0644,root,root) %{_mandir}/man1/bjdwp*
+%attr(0644,root,root) %{_mandir}/man1/brawchannel*
 %attr(0644,root,root) %{_mandir}/man1/bs11nread*
 %attr(0644,root,root) %{_mandir}/man1/bidentify*
 %attr(0644,root,root) %{_mandir}/man1/bcharge*
@@ -290,6 +292,7 @@ cd ../
 %attr(0640,root,root) %config %{_sysconfdir}/bash_completion.d/btool
 %doc COPYING
 %doc zsh
+%doc ppp/README
 
 %if %{with_gui}
 %files gui
@@ -328,6 +331,7 @@ cd ../
 - added Fedora 13 support
 - added new ppp chat script for Orange Spain
 - added copy of barry-sprint as barry-telus
+- added brawchannel
 
 * Sat Sep 29 2009 Chris Frey <cdfrey@foursquare.net> 0.16-0
 - version bump
