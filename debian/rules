@@ -74,6 +74,10 @@ install/barry-util::
 		$(CURDIR)/bash/bjavaloader \
 		$(CURDIR)/bash/btool \
 		$(CURDIR)/debian/barry-util/etc/bash_completion.d
+	# Install examples/ into libbarry-dev
+	install -d $(CURDIR)/debian/libbarry-dev/usr/share/doc/libbarry-dev/examples
+	install -m 0644 $(CURDIR)/examples/*.cc \
+		$(CURDIR)/debian/libbarry-dev/usr/share/doc/libbarry-dev/examples
 
 install/barrybackup-gui::
 	# Install barry icon

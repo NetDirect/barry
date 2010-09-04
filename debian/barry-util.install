@@ -2,6 +2,7 @@ debian/tmp/usr/bin/btool
 debian/tmp/usr/bin/bfuse
 debian/tmp/usr/bin/bjavaloader
 debian/tmp/usr/bin/bjdwp
+debian/tmp/usr/bin/brawchannel
 debian/tmp/usr/bin/bs11nread
 debian/tmp/usr/bin/bidentify
 debian/tmp/usr/bin/brecsum
@@ -23,5 +24,6 @@ debian/tmp/usr/share/man/man1/bjavaloader.1
 debian/tmp/usr/share/man/man1/bjdwp.1
 debian/tmp/usr/share/man/man1/pppob.1
 debian/tmp/usr/share/man/man1/upldif.1
+debian/tmp/usr/share/man/man1/brawchannel.1
 debian/tmp/usr/share/locale/*
 
