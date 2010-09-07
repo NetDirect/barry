@@ -226,12 +226,11 @@ cd ../
 
 %files -n libbarry-devel
 %defattr(-,root,root)
-%doc examples/*.cc examples/*.am
 %attr(0644,root,root) %{_includedir}/barry/*
 %attr(0644,root,root) %{_libdir}/*.a
 %attr(0755,root,root) %{_libdir}/*.la
 %attr(0644,root,root) %{_libdir}/pkgconfig/*.pc
-%doc COPYING TODO doc/*
+%doc COPYING TODO doc/* examples/*.cc
 
 %files util
 %defattr(-,root,root)
