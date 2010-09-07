@@ -45,6 +45,8 @@ class RawChannelSocketHandler;
 class BXEXPORT RawChannelDataCallback
 {
 public:
+	virtual ~RawChannelDataCallback() {}
+
 	// Called when data has been received on the channel
 	virtual void DataReceived(Data &data) = 0;
 	// Called when the channel has an error
