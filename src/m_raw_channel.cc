@@ -38,12 +38,10 @@
 
 #include "debug.h"
 
-#define RAW_HEADER_SIZE 4
-
 namespace Barry { namespace Mode {
 
 ///////////////////////////////////////////////////////////////////////////////
-// RawChannel SocketDataHandler callback class
+// RawChannel SocketDataHandler callback class for data socket
 class RawChannelSocketHandler: public SocketRoutingQueue::SocketDataHandler
 {
 	RawChannel &m_raw_channel;
@@ -61,6 +59,28 @@ public:
 		m_raw_channel.HandleError(error);
 	}
 	virtual ~RawChannelSocketHandler()
+	{}
+};
+
+///////////////////////////////////////////////////////////////////////////////
+// RawChannel SocketDataHandler callback class for zero socket
+class RawChannelZeroSocketHandler: public SocketRoutingQueue::SocketDataHandler
+{
+	RawChannel &m_raw_channel;
+public: 
+	RawChannelZeroSocketHandler(RawChannel &raw_channel)
+		: m_raw_channel(raw_channel)
+	{}
+	virtual void DataReceived(Data &data)
+	{
+		m_raw_channel.HandleReceivedZeroPacket(data);
+	}
+	virtual void Error(Barry::Error &error)
+	{
+		SocketDataHandler::Error(error);
+		m_raw_channel.HandleError(error);
+	}
+	virtual ~RawChannelZeroSocketHandler()
 	{}
 };
 
@@ -145,65 +165,78 @@ void RawChannel::OnOpen()
 	// implemented
 	m_zero_registered = true;
 	m_socket->HideSequencePacket(false);
-	SocketRoutingQueue::SocketDataHandlerPtr callback;
-	callback.reset(new RawChannelSocketHandler(*this));
-	m_con.m_queue->RegisterInterest(0, callback);
+	SocketRoutingQueue::SocketDataHandlerPtr zeroCallback;
+	zeroCallback.reset(new RawChannelZeroSocketHandler(*this));
+	m_con.m_queue->RegisterInterest(0, zeroCallback);
 	// Get socket data packets routed to this class as well if a
 	// callback was provided, otherside just get the data packets
 	// placed into a queue for the socket.
 	if( m_callback ) {
+		SocketRoutingQueue::SocketDataHandlerPtr callback;
+		callback.reset(new RawChannelSocketHandler(*this));
 		m_socket->RegisterInterest(callback);
 	}
 	else {
-		m_socket->RegisterInterest(NULL);
+		SocketRoutingQueue::SocketDataHandlerPtr nullCallback;
+		m_socket->RegisterInterest(nullCallback);
 	}
 }
 
-		
+
+void RawChannel::HandleReceivedZeroPacket(Data &data)
+{
+	Protocol::CheckSize(data, SB_PACKET_HEADER_SIZE);
+	MAKE_PACKETPTR_BUF(packet, data.GetData());
+	
+	if( packet->socket != 0 ) {
+		UnregisterZeroSocketInterest();
+		SetPendingError("RawChannel: Got packet not for socket-zero");	
+		m_semaphore->Signal();
+	}
+
+	switch( btohs(packet->command) )
+	{
+	case SB_COMMAND_SEQUENCE_HANDSHAKE:
+		m_semaphore->Signal();
+		break;
+	case SB_COMMAND_CLOSE_SOCKET:
+	case SB_COMMAND_REMOTE_CLOSE_SOCKET:
+		// Stop listening to socket 0 messages
+		// so that socket close work.
+		UnregisterZeroSocketInterest();
+		if( m_callback ) {
+			m_callback->ChannelClose();
+		}
+			
+		m_semaphore->Signal();
+		break;
+	default:
+		UnregisterZeroSocketInterest();
+		if( m_callback ) {
+			m_callback->ChannelError("RawChannel: Got unexpected socket zero packet");
+		}
+		else {
+			SetPendingError("RawChannel: Got unexpected socket zero packet");
+		}
+		m_semaphore->Signal();
+		break;
+	}
+	
+}
+
 void RawChannel::HandleReceivedData(Data &data)
 {
 	// Only ever called in callback mode
-	Protocol::CheckSize(data, MIN_PACKET_DATA_SIZE);
-	MAKE_PACKETPTR_BUF(packet, data.GetData());
+	ValidateDataPacket(data);
+	MAKE_CHANNELPACKETPTR_BUF(packet, data.GetData());
 
-	if( packet->socket == 0 ) {
-		switch( btohs(packet->command) )
-		{
-		case SB_COMMAND_SEQUENCE_HANDSHAKE:
-			m_semaphore->Signal();
-			break;
-		case SB_COMMAND_CLOSE_SOCKET:
-		case SB_COMMAND_REMOTE_CLOSE_SOCKET:
-			// Stop listening to socket 0 messages
-			// so that socket close work.
-			UnregisterZeroSocketInterest();
-			if( m_callback ) {
-				m_callback->ChannelClose();
-			}
-			
-			m_semaphore->Signal();
-			break;
-		default:
-			UnregisterZeroSocketInterest();
-			if( m_callback ) {
-				m_callback->ChannelError("RawChannel: Got unexpected socket zero packet");
-			}
-			else {
-				SetPendingError("RawChannel: Got unexpected socket zero packet");
-			}
-			m_semaphore->Signal();
-			break;
-		}
+	// Should be a socket packet for us, so remove packet headers
+	Data partial(packet->u.data, data.GetSize() - SB_CHANNELPACKET_HEADER_SIZE);
+	if( m_callback ) {
+		m_callback->DataReceived(partial);
 	}
 	else {
-		// Should be a socket packet for us, so remove packet headers
-		Data partial(data.GetData() + RAW_HEADER_SIZE, data.GetSize() - RAW_HEADER_SIZE);
-		if( m_callback ) {
-			m_callback->DataReceived(partial);
-		}
-		else {
-			SetPendingError("RawChannel: Received data to handle when in non-callback mode");
-		}
+		SetPendingError("RawChannel: Received data to handle when in non-callback mode");
 	}
 }
 
@@ -239,17 +272,17 @@ void RawChannel::SetPendingError(const char *msg)
 
 void RawChannel::Send(Data &data, int timeout)
 {
-	size_t packetSize = RAW_HEADER_SIZE + data.GetSize();
+	size_t packetSize = SB_CHANNELPACKET_HEADER_SIZE + data.GetSize();
 
-	if( packetSize > MAX_PACKET_SIZE ) {
+	if( packetSize > SB_CHANNELPACKET_HEADER_SIZE + SB_CHANNELPACKET_MAX_DATA_SIZE ) {
 		throw Barry::Error("RawChannel: send data size larger than MaximumPacketSize");
 	}
 	
 	// setup header and copy data in
-	MAKE_PACKETPTR_BUF(packet, m_send_buffer);
+	MAKE_CHANNELPACKETPTR_BUF(packet, m_send_buffer);
 	packet->socket = htobs(m_socket->GetSocket());
 	packet->size = htobs(packetSize);
-	std::memcpy(&(m_send_buffer[RAW_HEADER_SIZE]), data.GetData(), data.GetSize());
+	std::memcpy(packet->u.data, data.GetData(), data.GetSize());
 
 	Data toSend(m_send_buffer, packetSize);
 	m_socket->Send(toSend, timeout);
@@ -267,16 +300,28 @@ void RawChannel::Receive(Data &data,int timeout)
 	// Receive into a buffer
 	m_socket->Receive(m_receive_data, timeout);
 	// Then transfer across, skipping the header
-	Protocol::CheckSize(m_receive_data, RAW_HEADER_SIZE);
-	size_t len = m_receive_data.GetSize() - RAW_HEADER_SIZE;
-	memcpy(data.GetBuffer(), m_receive_data.GetData() + RAW_HEADER_SIZE, len);
+	ValidateDataPacket(m_receive_data);
+	MAKE_CHANNELPACKETPTR_BUF(packet, m_receive_data.GetData());
+	
+	size_t len = packet->size - SB_CHANNELPACKET_HEADER_SIZE;
+	memcpy(data.GetBuffer(), packet->u.data, len);
 	data.ReleaseBuffer(len);
 	
 }
 
+void RawChannel::ValidateDataPacket(Data &data)
+{
+	Protocol::CheckSize(data, SB_CHANNELPACKET_HEADER_SIZE);
+	MAKE_CHANNELPACKETPTR_BUF(packet, data.GetData());
+	if( packet->size != data.GetSize() ) {
+		
+		throw std::logic_error("RawChannel: Data size doesn't match packet size");
+	}
+}
+
 size_t RawChannel::MaximumSendSize()
 {
-	return MAX_PACKET_SIZE - RAW_HEADER_SIZE;
+	return SB_CHANNELPACKET_MAX_DATA_SIZE;
 }
 
 }} // namespace Barry::Mode

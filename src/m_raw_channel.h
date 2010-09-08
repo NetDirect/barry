@@ -37,8 +37,9 @@ class semaphore;
 
 namespace Mode {
 
-// Forward declaration of internal class
+// Forward declaration of internal classes
 class RawChannelSocketHandler;
+class RawChannelZeroSocketHandler;
 
 // Callback from the raw channel.
 
@@ -73,6 +74,7 @@ public:
 class BXEXPORT RawChannel : public Mode
 {
 	friend class RawChannelSocketHandler;
+	friend class RawChannelZeroSocketHandler;
 
 	// Mutex for signalling between read and write threads
 	pthread_mutex_t m_mutex;
@@ -95,6 +97,13 @@ protected:
 	void InitSemaphore();
 	void SetPendingError(const char *msg);
 	void UnregisterZeroSocketInterest();
+
+	// Used to validate a packet is a valid channel data packet
+	void ValidateDataPacket(Data &data);
+
+	// Not intended for use by users of this class.
+	// Used for handling zero-socket packets.
+	void HandleReceivedZeroPacket(Data &data);
 
 	// Not intended for use by users of this class.
 	// Instead data received will come in via the 

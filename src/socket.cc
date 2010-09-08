@@ -583,8 +583,8 @@ void SocketZero::Close(Socket &socket)
 	// SB_COMMAND_REMOTE_CLOSE_SOCKET if the device wanted to
 	// close the socket at the same time, such as if the channel
 	// API is being used by the device.
-	if( rpack->command != SB_COMMAND_CLOSED_SOCKET ||
-	    rpack->command != SB_COMMAND_REMOTE_CLOSE_SOCKET ||
+	if( ( rpack->command != SB_COMMAND_CLOSED_SOCKET &&
+	      rpack->command != SB_COMMAND_REMOTE_CLOSE_SOCKET ) ||
 	    btohs(rpack->u.socket.socket) != socket.GetSocket() ||
 	    rpack->u.socket.sequence != socket.GetCloseFlag() )
 	{

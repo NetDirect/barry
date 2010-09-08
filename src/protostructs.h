@@ -918,6 +918,22 @@ struct JVMPacket
 #define SB_JVMPACKET_HEADER_SIZE		(sizeof(::Barry::Protocol::JVMPacket) - sizeof(::Barry::Protocol::JVMPacket::PacketData))
 
 
+/////////////////////////////////////////////////////////////////////////////
+// Raw channel packet structure
+struct ChannelPacket
+{
+	uint16_t	socket;		// socket ID... 0 exists by default
+	uint16_t	size;		// total size of data packet
+	
+	union PacketData
+	{
+		uint8_t			data[1];
+	} __attribute__ ((packed)) u;
+} __attribute__ ((packed));
+#define SB_CHANNELPACKET_HEADER_SIZE		(sizeof(::Barry::Protocol::ChannelPacket) - sizeof(::Barry::Protocol::ChannelPacket::PacketData))
+
+#define SB_CHANNELPACKET_MAX_DATA_SIZE		0x7FC
+
 ///////////////////////////////////////////////////////////////////////////////
 // Main packet struct
 
@@ -976,9 +992,11 @@ struct Packet
 #define MAKE_PACKET(var, data)			const ::Barry::Protocol::Packet *var = (const ::Barry::Protocol::Packet *) (data).GetData()
 #define MAKE_JLPACKET(var, data)		const ::Barry::Protocol::JLPacket *var = (const ::Barry::Protocol::JLPacket *) (data).GetData()
 #define MAKE_JVMPACKET(var, data)		const ::Barry::Protocol::JVMPacket *var = (const ::Barry::Protocol::JVMPacket *) (data).GetData()
+#define MAKE_CHANNELPACKET(var, data)		const ::Barry::Protocol::ChannelPacket *var = (const ::Barry::Protocol::ChannelPacket *) (data).GetData()
 #define MAKE_PACKETPTR_BUF(var, ptr)		::Barry::Protocol::Packet *var = (::Barry::Protocol::Packet *)ptr
 #define MAKE_JLPACKETPTR_BUF(var, ptr)		::Barry::Protocol::JLPacket *var = (::Barry::Protocol::JLPacket *)ptr
 #define MAKE_JVMPACKETPTR_BUF(var, ptr)		::Barry::Protocol::JVMPacket *var = (::Barry::Protocol::JVMPacket *)ptr
+#define MAKE_CHANNELPACKETPTR_BUF(var, ptr)	::Barry::Protocol::ChannelPacket *var = (::Barry::Protocol::ChannelPacket *)ptr
 #define MAKE_RECORD(type,var,data,off)		type *var = (type *) ((data).GetData() + (off))
 #define MAKE_RECORD_PTR(type,var,data,off)	type *var = (type *) ((data) + (off))
 
