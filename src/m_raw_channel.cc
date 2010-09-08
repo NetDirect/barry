@@ -148,13 +148,15 @@ void RawChannel::OnOpen()
 	SocketRoutingQueue::SocketDataHandlerPtr callback;
 	callback.reset(new RawChannelSocketHandler(*this));
 	m_con.m_queue->RegisterInterest(0, callback);
-	// Get socket data packets routed to this class as well if using callback
-	// otherside just request interest
-	if( !m_callback ) {
-		// Don't want to be called back immediately on data
-		callback.reset();
+	// Get socket data packets routed to this class as well if a
+	// callback was provided, otherside just get the data packets
+	// placed into a queue for the socket.
+	if( m_callback ) {
+		m_socket->RegisterInterest(callback);
 	}
-	m_socket->RegisterInterest(callback);
+	else {
+		m_socket->RegisterInterest(NULL);
+	}
 }
 
 		
