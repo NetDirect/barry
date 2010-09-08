@@ -501,10 +501,20 @@ SocketHandle SocketZero::Open(uint16_t socket, const char *password)
 		// fall through to success check...
 	}
 
+	// If the device thinks that the socket was already open then
+	// it will tell us by sending an SB_COMMAND_CLOSE_SOCKET.
+	//
+	// This happens most commonly when using raw channels which
+	// haven't been cleanly closed (such as by killing the process
+	// running Barry) and so the device still thinks the socket
+	// is open.
+	//
+	// Retrying the open will usually succeed, but relies on the
+	// device software re-creating the channel after it's closed
+	// so return an error here instead of automatically retrying.
 	if( packet.Command() == SB_COMMAND_CLOSE_SOCKET )
 	{
-	        eout("Packet:\n" << receive);
-		throw Error("Socket: Socket closed when trying to open");
+		throw Error("Socket: Device closed socket when trying to open");
 	}
 
 	if( packet.Command() != SB_COMMAND_OPENED_SOCKET ||
@@ -566,21 +576,23 @@ void SocketZero::Close(Socket &socket)
 
 	Protocol::CheckSize(response, SB_SOCKET_PACKET_HEADER_SIZE);
 	MAKE_PACKET(rpack, response);
+	// The reply will be SB_COMMAND_CLOSED_SOCKET if the device
+	// has closed the socket in response to our request.
+	// 
+	// It's also possible for the reply to be
+	// SB_COMMAND_REMOTE_CLOSE_SOCKET if the device wanted to
+	// close the socket at the same time, such as if the channel
+	// API is being used by the device.
 	if( rpack->command != SB_COMMAND_CLOSED_SOCKET ||
+	    rpack->command != SB_COMMAND_REMOTE_CLOSE_SOCKET ||
 	    btohs(rpack->u.socket.socket) != socket.GetSocket() ||
 	    rpack->u.socket.sequence != socket.GetCloseFlag() )
 	{
 		// reset so this won't be called again
 		socket.ForceClosed();
 		
-		if( rpack->command == SB_COMMAND_REMOTE_CLOSE_SOCKET ) {
-			eout("Remote end closed connection");
-			throw BadPacket(rpack->command, "Socket: Remote close packet in Close");
-		}
-		else {
-			eout("Packet:\n" << response);
-			throw BadPacket(rpack->command, "Socket: Bad CLOSED packet in Close");
-		}
+		eout("Packet:\n" << response);
+		throw BadPacket(rpack->command, "Socket: Bad CLOSED packet in Close");
 	}
 
 	if( m_resetOnClose ) {
