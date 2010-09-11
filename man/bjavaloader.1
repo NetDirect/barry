@@ -2,7 +2,7 @@
 .\" First parameter, NAME, should be all caps
 .\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
 .\" other parameters are allowed: see man(7), man(1)
-.TH BJAVALOADER 1 "April 6, 2009"
+.TH BJAVALOADER 1 "September 11, 2010"
 .\" Please adjust this date whenever revising the manpage.
 .\"
 .\" Some roff macros, for reference:
@@ -27,7 +27,7 @@
 .TP
 .B bjavaloader load <.codfile>
 .TP
-.B bjavaloader save <module_name>
+.B bjavaloader save [-A] <module_name>
 .TP
 .B bjavaloader wipe [-a | -i]
 .TP
@@ -51,6 +51,9 @@ management.  The command syntax is intentionally similar to the Windows
 program 'javaloader.exe' provided by Research In Motion, in order
 to make it easy to use the same build scripts on Linux and Windows.
 .SH OPTIONS
+.TP
+.B \-A
+Used with the 'save' command to save all available modules.
 .TP
 .B \-a
 Used with the 'wipe' command to only wipe the applications.
@@ -91,10 +94,11 @@ Provides information on the handheld.
 .B load <.cod filename> ...
 Loads one or more COD application files into the device.
 .TP
-.B save <module name> ...
+.B save [-A] <module name> ...
 Retrieves modules from the handheld and writes them to .cod files with the
 same name as the module.  Note that this will overwrite any existing .cod
-file in the current directory.
+file in the current directory.  If the -A option is specified, a dir will
+be done internally, and all available modules will be saved.
 .TP
 .B wipe [-a | -i]
 Wipes the handheld, removing all data such as messages, contacts, etc.

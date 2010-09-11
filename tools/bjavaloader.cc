@@ -66,6 +66,7 @@ void Usage()
    << "        Copyright 2005-2010, Net Direct Inc. (http://www.netdirect.ca/)\n"
    << "        Using: " << Version << "\n"
    << "\n"
+   << "   -A        Save all modules found\n"
    << "   -a        Wipe applications only\n"
    << "   -i        Wipe filesystem only\n"
    << "   -f        Force erase, if module is in use\n"
@@ -87,7 +88,7 @@ void Usage()
    << "   " << CMD_LOAD << " <.cod file> ...\n"
    << "      Loads modules onto the handheld\n"
    << "\n"
-   << "   " << CMD_SAVE << " <module name> ...\n"
+   << "   " << CMD_SAVE << " [-A] <module name> ...\n"
    << "      Retrieves modules from the handheld and writes to .cod file\n"
    << "      Note: will overwrite existing files!\n"
    << "\n"
@@ -230,6 +231,7 @@ int main(int argc, char *argv[])
 		bool list_siblings = false,
 			force_erase = false,
 			data_dump = false,
+			all_modules = false,
 			wipe_apps = true,
 			wipe_fs = true;
 		string password;
@@ -241,7 +243,7 @@ int main(int argc, char *argv[])
 
 		// process command line options
 		for(;;) {
-			int cmd = getopt(argc, argv, "aifhsp:P:v");
+			int cmd = getopt(argc, argv, "Aaifhsp:P:v");
 			if( cmd == -1 )
 				break;
 
@@ -265,6 +267,10 @@ int main(int argc, char *argv[])
 
 			case 'v':	// data dump on
 				data_dump = true;
+				break;
+
+			case 'A':	// save all modules
+				all_modules = true;
 				break;
 
 			case 'a':	// wipe apps only
@@ -389,17 +395,28 @@ int main(int argc, char *argv[])
 			javaloader.LogStackTraces();
 		}
 		else if( cmd == CMD_SAVE ) {
-			if( params.size() == 0 ) {
+			if( all_modules ) {
+				JLDirectory dir;
+				javaloader.GetDirectory(dir, false);
+				JLDirectory::BaseIterator i = dir.begin();
+				for( ; i != dir.end(); ++i ) {
+					cout << "saving: " << i->Name << "... ";
+					SaveModule(&javaloader,i->Name.c_str());
+					cout << "done." << endl;
+				}
+			}
+			else if( params.size() == 0 ) {
 				cerr << "specify at least one module to save" << endl;
 				Usage();
 				return 1;
 			}
-
-			vector<string>::iterator i = params.begin(), end = params.end();
-			for( ; i != end; ++i ) {
-				cout << "saving: " << (*i) << "... ";
-				SaveModule(&javaloader, (*i).c_str());
-				cout << "done." << endl;
+			else {
+				vector<string>::iterator i = params.begin(), end = params.end();
+				for( ; i != end; ++i ) {
+					cout << "saving: " << (*i) << "... ";
+					SaveModule(&javaloader, (*i).c_str());
+					cout << "done." << endl;
+				}
 			}
 		}
 		else if( cmd == CMD_DEVICEINFO ) {

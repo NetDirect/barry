@@ -1,5 +1,7 @@
 Release: version 0.17 - 2010/01/??
 ------------------------------------------------------------------------------
+2010/09/11
+	- added -A option to bjavaloader save
 2010/09/07
 	- added hardware contribution section to AUTHORS
 2010/09/03
