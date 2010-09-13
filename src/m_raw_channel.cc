@@ -126,7 +126,7 @@ void RawChannel::CheckQueueAvailable()
 
 void RawChannel::InitBuffer()
 {
-	m_send_buffer = new unsigned char[MAX_PACKET_SIZE];	
+	m_send_buffer = new unsigned char[SB_CHANNELPACKET_HEADER_SIZE + SB_CHANNELPACKET_MAX_DATA_SIZE];
 }
 
 void RawChannel::InitSemaphore()

@@ -932,7 +932,7 @@ struct ChannelPacket
 } __attribute__ ((packed));
 #define SB_CHANNELPACKET_HEADER_SIZE		(sizeof(::Barry::Protocol::ChannelPacket) - sizeof(::Barry::Protocol::ChannelPacket::PacketData))
 
-#define SB_CHANNELPACKET_MAX_DATA_SIZE		0x7FC
+#define SB_CHANNELPACKET_MAX_DATA_SIZE		0x3FFC
 
 ///////////////////////////////////////////////////////////////////////////////
 // Main packet struct
