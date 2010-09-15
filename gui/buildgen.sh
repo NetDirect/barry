@@ -10,7 +10,7 @@ if [ "$1" = "clean" ] ; then
 		configure depcomp install-sh ltmain.sh missing \
 		man/Makefile.in \
 		src/Makefile.in src/*.bak src/*.gladep INSTALL \
-		config.h.in~
+		config.h.in~ config.rpath
 else
 	autoreconf -if
 	#autoreconf -ifv
