@@ -135,6 +135,8 @@ include_barry_HEADERS = barry.h barrysync.h \
 	vevent.h \
 	vjournal.h \
 	vtodo.h \
+	scoped_lock.h \
+	semaphore.h \
 	tzwrapper.h
 
 noinst_HEADERS = cbarry.h \
@@ -143,7 +145,6 @@ noinst_HEADERS = cbarry.h \
 	bmp-internal.h \
 	cod-internal.h \
 	packet.h \
-	scoped_lock.h \
 	protostructs.h \
 	debug.h \
 	endian.h \
