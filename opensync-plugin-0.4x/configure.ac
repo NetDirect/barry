@@ -4,7 +4,7 @@ AC_PREREQ(2.61)
 AC_INIT([Barry OpenSync Plugin 0.4x], [0.17], [barry-devel@lists.sourceforge.net])
 AC_CONFIG_SRCDIR(src/barry_sync.cc)
 AC_CONFIG_HEADER(config.h)
-AC_CONFIG_AUX_DIR([..])
+AC_CONFIG_AUX_DIR([.])
 AC_CONFIG_MACRO_DIR([../m4])
 AM_INIT_AUTOMAKE(foreign)
 

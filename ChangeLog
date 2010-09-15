@@ -1,5 +1,8 @@
 Release: version 0.17 - 2010/01/??
 ------------------------------------------------------------------------------
+2010/09/15
+	- set AC_CONFIG_AUX_DIR to [.] instead of parent directory, to make
+		the submodules more independent
 2010/09/11
 	- added -A option to bjavaloader save
 2010/09/07
