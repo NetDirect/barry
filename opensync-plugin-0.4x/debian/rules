@@ -30,7 +30,7 @@ clean::
 	-@rm -f $(DEB_SRCDIR)/config.guess $(DEB_SRCDIR)/config.sub $(DEB_SRCDIR)/ltmain.sh $(DEB_SRCDIR)/aclocal.m4
 	-@rm -f $(DEB_SRCDIR)/config.h.in $(DEB_SRCDIR)/mkinstalldirs $(DEB_SRCDIR)/install-sh
 	-@rm -f $(DEB_SRCDIR)/missing $(DEB_SRCDIR)/depcomp $(DEB_SRCDIR)/configure $(DEB_SRCDIR)/subdirs
-	-@rm -rf build/ $(DEB_SRCDIR)/configure.files $(DEB_SRCDIR)/stamp-h.in
-	-@rm `find . -type f -name "Makefile.in" -print`
+	-@rm -f $(DEB_SRCDIR)/configure.files $(DEB_SRCDIR)/stamp-h.in
+	-@rm -f `find . -type f -name "Makefile.in" -print`
 
 
