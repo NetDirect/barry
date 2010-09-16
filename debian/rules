@@ -27,70 +27,73 @@ install/barry-util::
 	# Install udev rules for the barry-util package
 	install -d $(CURDIR)/debian/barry-util/etc/udev/rules.d
 	install -m 0644 \
-		$(CURDIR)/udev/10-blackberry.rules \
-		$(CURDIR)/udev/99-blackberry-perms.rules \
+		$(DEB_SRCDIR)/udev/10-blackberry.rules \
+		$(DEB_SRCDIR)/udev/99-blackberry-perms.rules \
 		$(CURDIR)/debian/barry-util/etc/udev/rules.d
 	# Install modprobe blacklist file for bcharge, into barry-util package
 	install -d $(CURDIR)/debian/barry-util/etc/modprobe.d
-	install -m 0644 $(CURDIR)/modprobe/blacklist-berry_charge.conf $(CURDIR)/debian/barry-util/etc/modprobe.d/blacklist-berry_charge.conf
+	install -m 0644 $(DEB_SRCDIR)/modprobe/blacklist-berry_charge.conf $(CURDIR)/debian/barry-util/etc/modprobe.d/blacklist-berry_charge.conf
 	# Install default ppp options and chat scripts
 	install -d $(CURDIR)/debian/barry-util/etc/ppp/peers
 	install -m 0644 \
-		$(CURDIR)/ppp/barry-rogers \
-		$(CURDIR)/ppp/barry-verizon \
-		$(CURDIR)/ppp/barry-sprint \
-		$(CURDIR)/ppp/barry-telus \
-		$(CURDIR)/ppp/barry-o2ireland \
-		$(CURDIR)/ppp/barry-tmobileus \
-		$(CURDIR)/ppp/barry-att_cingular \
-		$(CURDIR)/ppp/barry-chinamobile \
-		$(CURDIR)/ppp/barry-kpn \
-		$(CURDIR)/ppp/barry-orange-spain \
+		$(DEB_SRCDIR)/ppp/barry-rogers \
+		$(DEB_SRCDIR)/ppp/barry-verizon \
+		$(DEB_SRCDIR)/ppp/barry-sprint \
+		$(DEB_SRCDIR)/ppp/barry-telus \
+		$(DEB_SRCDIR)/ppp/barry-o2ireland \
+		$(DEB_SRCDIR)/ppp/barry-tmobileus \
+		$(DEB_SRCDIR)/ppp/barry-att_cingular \
+		$(DEB_SRCDIR)/ppp/barry-chinamobile \
+		$(DEB_SRCDIR)/ppp/barry-kpn \
+		$(DEB_SRCDIR)/ppp/barry-orange-spain \
 		$(CURDIR)/debian/barry-util/etc/ppp/peers
 	install -d $(CURDIR)/debian/barry-util/etc/chatscripts
 	install -m 0640 \
-		$(CURDIR)/ppp/barry-rogers.chat \
-		$(CURDIR)/ppp/barry-verizon.chat \
-		$(CURDIR)/ppp/barry-sprint.chat \
-		$(CURDIR)/ppp/barry-telus.chat \
-		$(CURDIR)/ppp/barry-o2ireland.chat \
-		$(CURDIR)/ppp/barry-tmobileus.chat \
-		$(CURDIR)/ppp/barry-att_cingular.chat \
-		$(CURDIR)/ppp/barry-chinamobile.chat \
-		$(CURDIR)/ppp/barry-kpn.chat \
-		$(CURDIR)/ppp/barry-orange-spain.chat \
+		$(DEB_SRCDIR)/ppp/barry-rogers.chat \
+		$(DEB_SRCDIR)/ppp/barry-verizon.chat \
+		$(DEB_SRCDIR)/ppp/barry-sprint.chat \
+		$(DEB_SRCDIR)/ppp/barry-telus.chat \
+		$(DEB_SRCDIR)/ppp/barry-o2ireland.chat \
+		$(DEB_SRCDIR)/ppp/barry-tmobileus.chat \
+		$(DEB_SRCDIR)/ppp/barry-att_cingular.chat \
+		$(DEB_SRCDIR)/ppp/barry-chinamobile.chat \
+		$(DEB_SRCDIR)/ppp/barry-kpn.chat \
+		$(DEB_SRCDIR)/ppp/barry-orange-spain.chat \
 		$(CURDIR)/debian/barry-util/etc/chatscripts
 	# Install hal fdi configs
 	install -d $(CURDIR)/debian/barry-util/usr/share/hal/fdi/information/10freedesktop
 	install -d $(CURDIR)/debian/barry-util/usr/share/hal/fdi/policy/10osvendor
-	install -m 0644 $(CURDIR)/hal/fdi/information/10freedesktop/10-blackberry.fdi $(CURDIR)/debian/barry-util/usr/share/hal/fdi/information/10freedesktop
-	install -m 0644 $(CURDIR)/hal/fdi/policy/10osvendor/19-blackberry-acl.fdi $(CURDIR)/debian/barry-util/usr/share/hal/fdi/policy/10osvendor
+	install -m 0644 $(DEB_SRCDIR)/hal/fdi/information/10freedesktop/10-blackberry.fdi $(CURDIR)/debian/barry-util/usr/share/hal/fdi/information/10freedesktop
+	install -m 0644 $(DEB_SRCDIR)/hal/fdi/policy/10osvendor/19-blackberry-acl.fdi $(CURDIR)/debian/barry-util/usr/share/hal/fdi/policy/10osvendor
 	# Install hal support script
 	install -d $(CURDIR)/debian/barry-util/usr/bin
-	install -m 0755 $(CURDIR)/hal/hal-blackberry $(CURDIR)/debian/barry-util/usr/bin
+	install -m 0755 $(DEB_SRCDIR)/hal/hal-blackberry $(CURDIR)/debian/barry-util/usr/bin
 	# Install bash and zsh completion scripts
 	install -d $(CURDIR)/debian/barry-util/etc/bash_completion.d
 	install -m 0644 \
-		$(CURDIR)/bash/bjavaloader \
-		$(CURDIR)/bash/btool \
+		$(DEB_SRCDIR)/bash/bjavaloader \
+		$(DEB_SRCDIR)/bash/btool \
 		$(CURDIR)/debian/barry-util/etc/bash_completion.d
 	# Install examples/ into libbarry-dev
 	install -d $(CURDIR)/debian/libbarry-dev/usr/share/doc/libbarry-dev/examples
-	install -m 0644 $(CURDIR)/examples/*.cc \
+	install -m 0644 $(DEB_SRCDIR)/examples/*.cc \
 		$(CURDIR)/debian/libbarry-dev/usr/share/doc/libbarry-dev/examples
 
 install/barrybackup-gui::
 	# Install barry icon
 	install -d $(CURDIR)/debian/barrybackup-gui/usr/share/pixmaps
-	install -m 0644 $(CURDIR)/logo/barry_logo_icon.png $(CURDIR)/debian/barrybackup-gui/usr/share/pixmaps
+	install -m 0644 $(DEB_SRCDIR)/logo/barry_logo_icon.png $(CURDIR)/debian/barrybackup-gui/usr/share/pixmaps
 
 post-patches::
+	@rm -f $(CURDIR)/deb_srcdir
+	@ln -s $(DEB_SRCDIR) $(CURDIR)/deb_srcdir
 	@test -x $(DEB_SRCDIR)/configure && echo "allready autoreconf" || (cd $(DEB_SRCDIR) && autoreconf -i)
 
 clean::
+	-@rm -f $(CURDIR)/deb_srcdir
 	-@rm -f $(DEB_SRCDIR)/config.guess $(DEB_SRCDIR)/config.sub $(DEB_SRCDIR)/ltmain.sh $(DEB_SRCDIR)/aclocal.m4
 	-@rm -f $(DEB_SRCDIR)/config.h.in $(DEB_SRCDIR)/mkinstalldirs $(DEB_SRCDIR)/install-sh
 	-@rm -f $(DEB_SRCDIR)/missing $(DEB_SRCDIR)/depcomp $(DEB_SRCDIR)/configure $(DEB_SRCDIR)/subdirs
-	-@rm -rf build/ $(DEB_SRCDIR)/configure.files $(DEB_SRCDIR)/stamp-h.in
-	-@rm `find . -type f -name "Makefile.in" -print`
+	-@rm -f $(DEB_SRCDIR)/configure.files $(DEB_SRCDIR)/stamp-h.in
+	-@rm -f `find . -type f -name "Makefile.in" -print`
 
