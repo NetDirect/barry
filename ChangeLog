@@ -2,6 +2,8 @@ Release: version 0.17 - 2010/01/??
 ------------------------------------------------------------------------------
 2010/09/16
 	- debian: updated rules to allow for building with an external debian/
+	- applied Martin Owens' patch to add a debian directory to
+		the opensync-plugin-0.4x plugin
 2010/09/15
 	- set AC_CONFIG_AUX_DIR to [.] instead of parent directory, to make
 		the submodules more independent
