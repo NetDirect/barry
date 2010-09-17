@@ -1,0 +1,6 @@
+opensync-plugin-barry (0.17-0) unstable; urgency=low
+
+  * Individual package for the 0.22 plugin
+
+ -- Chris Frey <cdfrey@foursquare.net>  Thu, 16 Sep 2010 03:20:17 -0400
+
