@@ -22,6 +22,9 @@ cd ../
 tar xf barry_$DATEVER.orig.tar
 rm barry_$DATEVER.orig.tar
 
+# Generate autoconf / automake / libtool / autopoint particulars for everything
+(cd $PROJECT.tmp && ./buildgen.sh)
+
 # Sort out the opensync plugins
 [ -d opensync-plugin-barry.tmp ] && rm -fr opensync-plugin-barry.tmp
 [ -d opensync-plugin-barry-4x.tmp ] && rm -fr opensync-plugin-barry-4x.tmp
