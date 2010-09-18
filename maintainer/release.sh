@@ -15,12 +15,14 @@ fi
 
 set -e
 
+export CHOWNUSER="$(whoami)"
+
 # Create the tarball
 ./git-release-tar.sh $1 $2 $3
 
 # Build as root first, so all prompts are finished at the start,
 # for the chroot systems...
-su - -c "cd $(pwd) && ./release-root.sh $1 $2"
+su - -c "cd $(pwd) && ./release-root.sh $1 $2 '$CHOWNUSER'"
 
 # Build Debian packages in /usr/src/barry-version
 ./make-deb-local.sh build/barry-$1.$2.tar.bz2 $1 $2 debian

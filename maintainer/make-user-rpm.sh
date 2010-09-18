@@ -1,6 +1,6 @@
 #!/bin/sh
 
-if [ -z "$1" -o -z "$2" -o -z "$3" -o -z "$4" -o -z "$CHROOTUSER" ] ; then
+if [ -z "$1" -o -z "$2" -o -z "$3" -o -z "$4" -o -z "$CHROOTUSER" -o -z "$CHOWNUSER" ] ; then
 	echo
 	echo "Usage: ./make-rpm.sh tarball specfile chroot_target short_form"
 	echo
@@ -44,5 +44,5 @@ cp "$TARGET/home/$CHROOTUSER/rpmbuild/SRPMS/"* "build/$TAG"
 	done
 )
 
-chown -R $(whoami) "build/$TAG"
+chown -R "$CHOWNUSER" "build/$TAG"
 

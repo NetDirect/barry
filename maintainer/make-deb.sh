@@ -1,6 +1,6 @@
 #!/bin/sh
 
-if [ -z "$1" -o -z "$2" -o -z "$3" -o -z "$CHROOTUSER" ] ; then
+if [ -z "$1" -o -z "$2" -o -z "$3" -o -z "$CHROOTUSER" -o -z "$CHOWNUSER" ] ; then
 	echo
 	echo "Usage: ./make-rpm.sh tarball chroot_target short_form"
 	echo
@@ -39,5 +39,5 @@ rm "$TARGET/home/$CHROOTUSER/$TARNAME"
 	done
 )
 
-chown -R $(whoami) "build/$TAG"
+chown -R "$CHOWNUSER" "build/$TAG"
 
