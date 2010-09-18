@@ -9,9 +9,11 @@ fi
 
 CHROOTTARGET="$1"
 TAG="$2"
+# optional... may not always exist
+DEBTARGETS="$3"
 
 if [ "$THEMODE" = "release" ] ; then
-	./make-deb.sh "$BARRYTARBALL" "$CHROOTTARGET" "$TAG"
+	./make-deb.sh "$BARRYTARBALL" "$CHROOTTARGET" "$TAG" "$DEBTARGETS"
 elif [ "$THEMODE" = "test" ] ; then
 	./test-build.sh "$BARRYTARBALL" "$CHROOTTARGET"
 else

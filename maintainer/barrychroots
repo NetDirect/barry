@@ -6,11 +6,11 @@ export CHROOTUSER=cdfrey
 #
 # Build the DEB's
 #
-./deb.sh /var/chroot/ubuntu1004 ubuntu1004
-./deb.sh /var/chroot/ubuntu910 ubuntu910
-./deb.sh /var/chroot/ubuntu904 ubuntu904
-./deb.sh /var/chroot/ubuntu804 ubuntu804
-./deb.sh /var/chroot/ubuntu710 ubuntu710
+./deb.sh /var/chroot/ubuntu1004 ubuntu1004 os22-binary
+./deb.sh /var/chroot/ubuntu910 ubuntu910 os22-binary
+./deb.sh /var/chroot/ubuntu904 ubuntu904 os22-binary
+./deb.sh /var/chroot/ubuntu804 ubuntu804 os22-binary
+./deb.sh /var/chroot/ubuntu710 ubuntu710 os22-binary
 
 
 #
