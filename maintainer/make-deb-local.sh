@@ -27,12 +27,28 @@ set -e
 
 # start clean
 rm -rf "/usr/src/barry-$MAJOR.$MINOR"
+rm -f /usr/src/*barry*deb
 
+# extract from tarball
 tar -C /usr/src -xjvf "$TARPATH"
-(cd "/usr/src/barry-$MAJOR.$MINOR" && fakeroot -- debian/rules binary)
+
+# build plugin based on available opensync
+# first check for 0.22 -dev, which has 0 in the name
+if dpkg -l libopensync0-dev ; then
+	PLUGIN_TARGET=os22-binary
+elif dpkg -l libopensync1-dev ; then
+	PLUGIN_TARGET=os4x-binary
+fi
+
+# build base debs
+(cd "/usr/src/barry-$MAJOR.$MINOR" && fakeroot -- debian/rules binary $PLUGIN_TARGET)
 mkdir -p "build/$TARGET"
 mv /usr/src/*barry*deb "build/$TARGET"
+if [ -n "$PLUGIN_TARGET" ] ; then
+	mv /usr/src/barry-$MAJOR.$MINOR/*.deb "build/$TARGET"
+fi
 
 # end clean
 rm -rf "/usr/src/barry-$MAJOR.$MINOR"
+rm -f /usr/src/*barry*deb
 
