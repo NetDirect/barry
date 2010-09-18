@@ -87,13 +87,7 @@ install/barrybackup-gui::
 post-patches::
 	@rm -f $(CURDIR)/deb_srcdir
 	@ln -s $(DEB_SRCDIR) $(CURDIR)/deb_srcdir
-	@test -x $(DEB_SRCDIR)/configure && echo "allready autoreconf" || (cd $(DEB_SRCDIR) && autoreconf -i)
 
 clean::
 	-@rm -f $(CURDIR)/deb_srcdir
-	-@rm -f $(DEB_SRCDIR)/config.guess $(DEB_SRCDIR)/config.sub $(DEB_SRCDIR)/ltmain.sh $(DEB_SRCDIR)/aclocal.m4
-	-@rm -f $(DEB_SRCDIR)/config.h.in $(DEB_SRCDIR)/mkinstalldirs $(DEB_SRCDIR)/install-sh
-	-@rm -f $(DEB_SRCDIR)/missing $(DEB_SRCDIR)/depcomp $(DEB_SRCDIR)/configure $(DEB_SRCDIR)/subdirs
-	-@rm -f $(DEB_SRCDIR)/configure.files $(DEB_SRCDIR)/stamp-h.in
-	-@rm -f `find . -type f -name "Makefile.in" -print`
 
