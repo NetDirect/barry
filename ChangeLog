@@ -1,5 +1,15 @@
 Release: version 0.17 - 2010/01/??
 ------------------------------------------------------------------------------
+2010/09/18
+	-  debian: remove all autoreconf and cleanup targets
+		Having the debian/rules files try to manage their own
+		autoreconf is too much of a headache.  Binary packages
+		should start with a valid autoconf and gettext / autopoint
+		system already in place.
+		This patch removes any temptation to believe otherwise.
+		If you have been building source packages from git
+		already, just add a call to "./buildgen.sh" before your
+		debian binary build.
 2010/09/16
 	- debian: updated rules to allow for building with an external debian/
 	- applied Martin Owens' patch to add a debian directory to
