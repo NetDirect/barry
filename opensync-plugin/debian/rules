@@ -29,7 +29,7 @@ post-patches::
 
 makebuilddir::
 	# This rule is meant for the parent debian/rules to be able to call
-	# us, and give us the location of a pre-build libbarry to
+	# us, and give us the location of a pre-built libbarry to
 	# insert into our DESTDIR, to avoid needing to install
 	# libbarry-dev to build this package.
 	# If TREE_BUILD_DIR is empty, nothing happens.
