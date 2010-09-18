@@ -13,7 +13,7 @@ include /usr/share/cdbs/1/class/autotools.mk
 DEB_SRCDIR = .
 # in which directory to build
 DEB_BUILDDIR = .
-# in which directory to install the sofware
+# in which directory to install the sofware(must be full path! CURDIR does this)
 DEB_DESTDIR = $(CURDIR)/debian/tmp
 #To register a debug library package libfoo-dbg for libfoo (which needs unstripped '.so') in compat mode 4:
 DEB_DH_STRIP_ARGS := --dbg-package=opensync-plugin-barry
@@ -26,6 +26,20 @@ DEB_INSTALL_DOCS_ALL =
 post-patches::
 	@rm -f $(CURDIR)/deb_srcdir
 	@ln -s $(DEB_SRCDIR) $(CURDIR)/deb_srcdir
+
+makebuilddir::
+	# This rule is meant for the parent debian/rules to be able to call
+	# us, and give us the location of a pre-build libbarry to
+	# insert into our DESTDIR, to avoid needing to install
+	# libbarry-dev to build this package.
+	# If TREE_BUILD_DIR is empty, nothing happens.
+	(if [ -n "$(TREE_BUILD_DIR)" ] ; then \
+		cd $(TREE_BUILD_DIR) && \
+		make DESTDIR=$(DEB_DESTDIR) install && \
+		rm -f `find $(DEB_DESTDIR) -name "*.la"` && \
+		cp $(TREE_BUILD_DIR)/debian/libbarry*/DEBIAN/shlibs \
+			$(CURDIR)/debian/shlibs.local ; \
+	fi)
 
 clean::
 	-@rm -f $(CURDIR)/deb_srcdir
