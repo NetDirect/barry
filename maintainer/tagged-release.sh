@@ -18,6 +18,10 @@ fi
 
 set -e
 
+echo "WARNING: make sure you have the appropriate libopensync0-dev"
+echo "         installed on the local system, for the local deb build."
+read
+
 # Create the tarball
 maintainer/git-tagged-release.sh $1 $2
 
