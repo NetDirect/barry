@@ -2,40 +2,55 @@
 #
 # Written by Martin Owens doctormo@gmail.com,
 # License: Public Domain
-# Revision: 2
+# Revision: 3
 #
 
-VERSION=0.16
-RELEASE=jaunty
+PROJECT=barry
+VERSION=0.17
 PPA=ppa:doctormo/barry-snapshot
-DIR=barry-$VERSION
 GIT_DIR=barry-git
 #GIT_URL=git://repo.or.cz/barry.git
 GIT_URL=git://barry.git.sourceforge.net/gitroot/barry/barry
+DATEVER=$VERSION-`date +%Y%m%d%S`
 
-[ -d $DIR ] && rm -fr $DIR
 [ -d $GIT_DIR ] && (cd $GIT_DIR && git pull origin) || (git clone $GIT_URL $GIT_DIR)
 
 # Get a copy of the code
-rm barry_$VERSION.orig.tar.gz
 cd $GIT_DIR
-git archive --prefix=$DIR/ master > ../barry_$VERSION.orig.tar
+git archive --prefix=$PROJECT.tmp/ master > ../barry_$DATEVER.orig.tar
 cd ../
-tar xvf barry_$VERSION.orig.tar
-gzip barry_$VERSION.orig.tar
+tar xf barry_$DATEVER.orig.tar
+rm barry_$DATEVER.orig.tar
 
-# Go into the code
-cd $DIR
+# Sort out the opensync plugins
+[ -d opensync-plugin-barry.tmp ] && rm -fr opensync-plugin-barry.tmp
+[ -d opensync-plugin-barry-4x.tmp ] && rm -fr opensync-plugin-barry-4x.tmp
+mv $PROJECT.tmp/opensync-plugin opensync-plugin-barry.tmp
+mv $PROJECT.tmp/opensync-plugin-0.4x opensync-plugin-barry-4x.tmp
 
-# Generate a new changelog file
-rm debian/changelog
-DATEVER=$VERSION-0git`date +%Y%m%d%S`
-dch --create --package=barry -v $DATEVER --distribution $RELEASE "Weekly GIT Build for $PPA"
+for PACKAGE in barry opensync-plugin-barry opensync-plugin-barry-4x; do
+    echo "Packaging $PACKAGE $DATEVER"
+    DIR=$PACKAGE-$VERSION
+    [ -d $DIR ] && rm -fr $DIR
+    mv $PACKAGE.tmp $DIR
 
-# Build our debian source package
-debuild -S
+    tar czf ${PACKAGE}_$DATEVER.orig.tar.gz $DIR
 
-# Put our debian source package into launchpad
-cd ../
-dput $PPA barry_${DATEVER}_source.changes
+    for RELEASE in karmic lucid maverick; do
+        echo "  > For $RELEASE"
+        cd $DIR
+        # Make a vew version for us.
+        DEBVER="$DATEVER-0${RELEASE}1"
+        rm debian/changelog
+        # Generate a new changelog file
+        dch --create --package=$PACKAGE -v $DEBVER --distribution $RELEASE "GIT Build for $PPA"
+        # Build our debian source package
+        debuild -S 1> $PACKAGE-$RELEASE.log
+        # Put our debian source package into launchpad
+        cd ../
+        dput $PPA ${PACKAGE}_${DEBVER}_source.changes
+    done;
+done;
+
+
 
