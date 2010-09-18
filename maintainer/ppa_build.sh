@@ -25,6 +25,14 @@ rm barry_$DATEVER.orig.tar
 # Generate autoconf / automake / libtool / autopoint particulars for everything
 (cd $PROJECT.tmp && ./buildgen.sh)
 
+# Clean up the extraneous autoconf clutter
+(cd $PROJECT.tmp && \
+	rm -rf \
+		autom4te.cache \
+		gui/autom4te.cache \
+		opensync-plugin/autom4te.cache \
+		opensync-plugin-0.4x/autom4te.cache)
+
 # Sort out the opensync plugins
 [ -d opensync-plugin-barry.tmp ] && rm -fr opensync-plugin-barry.tmp
 [ -d opensync-plugin-barry-4x.tmp ] && rm -fr opensync-plugin-barry-4x.tmp
