@@ -19,7 +19,10 @@ export CHROOTUSER=cdfrey
 ./rpm.sh /var/chroot/fedora13 f13
 ./rpm.sh /var/chroot/fedora12 f12
 ./rpm.sh /var/chroot/fedora11 f11
-./rpmroot.sh /var/chroot/fedora9 fc9
+if [ "$THEMODE" = "release" ] ; then
+	# Fedora 9 has no opensync, so don't test-build on it, only release
+	./rpmroot.sh /var/chroot/fedora9 fc9
+fi
 ./rpmroot.sh /var/chroot/fedora8 fc8
 ./rpmroot.sh /var/chroot/fedora7 fc7
 
