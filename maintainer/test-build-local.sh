@@ -1,6 +1,5 @@
 #!/bin/sh
 
-CHROOT="/var/chroot"
 BUILDUSER="cdfrey"
 
 if [ -z "$1" ] ; then

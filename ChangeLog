@@ -10,6 +10,9 @@ Release: version 0.17 - 2010/01/??
 		If you have been building source packages from git
 		already, just add a call to "./buildgen.sh" before your
 		debian binary build.
+	- maint: overhaul of release / test build scripts
+		Made scripts configurable by user, in case others have
+		chroot build systems of their own.
 2010/09/16
 	- debian: updated rules to allow for building with an external debian/
 	- applied Martin Owens' patch to add a debian directory to

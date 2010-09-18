@@ -2,18 +2,21 @@
 
 if [ -z "$1" -o -z "$2" ] ; then
 	echo
-	echo "Do not call this script directly.  Call test.sh instead."
+	echo "Do not call test-root.sh directly.  Call test.sh instead."
 	echo
 	exit 1
 fi
 
 set -e
 
+export BARRYTARBALL=build/barry-$1.$2.tar.bz2
+export THESPEC=build/barry-$1.$2/rpm/barry.spec
+export THEMODE=test
+
 # Make sure it compiles cleanly on all handy systems
-#./test-build.sh build/barry-$1.$2.tar.bz2 fedora4
-#./test-build.sh build/barry-$1.$2.tar.bz2 fedora5
-./test-build.sh build/barry-$1.$2.tar.bz2 ubuntu710
-./test-build.sh build/barry-$1.$2.tar.bz2 fedora7
-./test-build.sh build/barry-$1.$2.tar.bz2 opensuse10.2
-./test-build.sh build/barry-$1.$2.tar.bz2 fedora6
+if [ -f ~/.barrychroots ] ; then
+	. ~/.barrychroots
+else
+	. barrychroots
+fi
 

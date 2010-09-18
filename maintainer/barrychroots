@@ -1,0 +1,25 @@
+#
+# The user account on the chroot system to build in
+#
+export CHROOTUSER=cdfrey
+
+#
+# Build the DEB's
+#
+./deb.sh /var/chroot/ubuntu1004 ubuntu1004
+./deb.sh /var/chroot/ubuntu910 ubuntu910
+./deb.sh /var/chroot/ubuntu904 ubuntu904
+./deb.sh /var/chroot/ubuntu804 ubuntu804
+./deb.sh /var/chroot/ubuntu710 ubuntu710
+
+
+#
+# Build the Fedora RPM's
+#
+./rpm.sh /var/chroot/fedora13 f13
+./rpm.sh /var/chroot/fedora12 f12
+./rpm.sh /var/chroot/fedora11 f11
+./rpmroot.sh /var/chroot/fedora9 fc9
+./rpmroot.sh /var/chroot/fedora8 fc8
+./rpmroot.sh /var/chroot/fedora7 fc7
+

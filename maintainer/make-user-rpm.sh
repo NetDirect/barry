@@ -1,10 +1,6 @@
 #!/bin/sh
 
-CHROOT="/var/chroot"
-DEFAULTUSER="cdfrey"
-CHOWNUSER="cdfrey:cdfrey"
-
-if [ -z "$1" -o -z "$2" -o -z "$3" -o -z "$4" ] ; then
+if [ -z "$1" -o -z "$2" -o -z "$3" -o -z "$4" -o -z "$CHROOTUSER" ] ; then
 	echo
 	echo "Usage: ./make-rpm.sh tarball specfile chroot_target short_form"
 	echo
@@ -15,8 +11,7 @@ if [ -z "$1" -o -z "$2" -o -z "$3" -o -z "$4" ] ; then
 	echo "short_form is the tag to rename the resulting RPM's with,"
 	echo "such as fc5 or fc6."
 	echo
-	echo "Available chroot targets:"
-	find $CHROOT -maxdepth 1 -type d -print | sed "s/^.*\//	/"
+	echo "Expects CHROOTUSER to be set appropriately in the environment."
 	echo
 	exit 1
 fi
@@ -29,18 +24,18 @@ TAG="$4"
 
 set -e
 
-cp "$TARPATH" "$CHROOT/$TARGET/home/$DEFAULTUSER/rpmbuild/SOURCES"
-cp "$SPECPATH" "$CHROOT/$TARGET/home/$DEFAULTUSER/rpmbuild/SPECS/barry.spec"
-USERCMD="rm -f /home/$DEFAULTUSER/rpmbuild/RPMS/i386/* /home/$DEFAULTUSER/rpmbuild/SRPMS/* && cd /home/$DEFAULTUSER/rpmbuild/SPECS && rpmbuild --target i386 -ba barry.spec --with gui --with opensync && cd /home/$DEFAULTUSER/rpmbuild/RPMS/i386"
-chroot "$CHROOT/$TARGET" su -c "$USERCMD" - $DEFAULTUSER
-mkdir -p "build/$TARGET"
-cp "$CHROOT/$TARGET/home/$DEFAULTUSER/rpmbuild/RPMS/i386/"* "build/$TARGET"
-cp "$CHROOT/$TARGET/home/$DEFAULTUSER/rpmbuild/SRPMS/"* "build/$TARGET"
+cp "$TARPATH" "$TARGET/home/$CHROOTUSER/rpmbuild/SOURCES"
+cp "$SPECPATH" "$TARGET/home/$CHROOTUSER/rpmbuild/SPECS/barry.spec"
+USERCMD="rm -f /home/$CHROOTUSER/rpmbuild/RPMS/i386/* /home/$CHROOTUSER/rpmbuild/SRPMS/* && cd /home/$CHROOTUSER/rpmbuild/SPECS && rpmbuild --target i386 -ba barry.spec --with gui --with opensync && cd /home/$CHROOTUSER/rpmbuild/RPMS/i386"
+chroot "$TARGET" su -c "$USERCMD" - $CHROOTUSER
+mkdir -p "build/$TAG"
+cp "$TARGET/home/$CHROOTUSER/rpmbuild/RPMS/i386/"* "build/$TAG"
+cp "$TARGET/home/$CHROOTUSER/rpmbuild/SRPMS/"* "build/$TAG"
 
 # We do this manually in a for loop, since the rename command is
 # not the same across various linux distros...
 (
-	cd "build/$TARGET"
+	cd "build/$TAG"
 	for f in *.src.rpm ; do
 		mv "$f" "$(echo $f | sed "s/.src.rpm$/.$TAG.src.rpm/")"
 	done
@@ -49,5 +44,5 @@ cp "$CHROOT/$TARGET/home/$DEFAULTUSER/rpmbuild/SRPMS/"* "build/$TARGET"
 	done
 )
 
-chown -R $CHOWNUSER "build/$TARGET"
+chown -R $(whoami) "build/$TAG"
 

@@ -5,7 +5,7 @@ if [ -z "$1" -o -z "$2" -o -z "$3" ] ; then
 	echo "Usage: ./test.sh MAJOR MINOR commit"
 	echo
 	echo "Creates the release tarball from git sources, tests the compile"
-	echo "on local machine, fedora 5, 6, and 7, and opensuse 10.2."
+	echo "on local machine's chroot systems."
 	echo
 	exit 1
 fi
