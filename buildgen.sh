@@ -14,11 +14,6 @@ doconf() {
 
 cleangettext() {
 	rm -f ABOUT-NLS \
-		gui/ABOUT-NLS \
-		gui/po/Makefile.in.in \
-		gui/po/Makevars.template \
-		gui/po/fr.gmo \
-		gui/po/stamp-po \
 		m4/codeset.m4 \
 		m4/gettext.m4 \
 		m4/glibc2.m4 \
@@ -73,6 +68,7 @@ if [ "$1" = "cleanall" ] ; then
 	(cd opensync-plugin && ./buildgen.sh clean)
 	(cd opensync-plugin-0.4x && ./buildgen.sh clean)
 	cleangettext
+	(cd gui && cleangettext)
 elif [ "$1" = "clean" ] ; then
 	rm -rf autom4te.cache
 	rm -f Makefile.in aclocal.m4 config.guess config.h.in config.sub \
@@ -127,10 +123,9 @@ else
 	#autoreconf -ifv --include=config
 
 	# Autogenerate the gettext PO support files
-	# Do this for ./ and gui/ and then zap the gui/m4 directory
+	# Do this for ./ and gui/
 	autopoint
 	(cd gui && autopoint)
-	rm -rf gui/m4
 
 	# If we let autoreconf do this, it will run libtoolize after
 	# creating some or all of the configure files.  For example,
@@ -143,14 +138,14 @@ else
 	# So... we do the libtool stuff all at once at the beginning,
 	# then the rest.
 	libtoolit m4
-	(cd gui && libtoolit ../m4)
-	(cd opensync-plugin && libtoolit ../m4)
-	(cd opensync-plugin-0.4x && libtoolit ../m4)
+	(cd gui && libtoolit m4)
+	(cd opensync-plugin && libtoolit m4)
+	(cd opensync-plugin-0.4x && libtoolit m4)
 
 	# Now for aclocal, autoheader, automake, and autoconf
 	doconf m4
-	(cd gui && doconf ../m4)
-	(cd opensync-plugin && doconf ../m4)
-	(cd opensync-plugin-0.4x && doconf ../m4)
+	(cd gui && doconf m4)
+	(cd opensync-plugin && doconf m4)
+	(cd opensync-plugin-0.4x && doconf m4)
 fi
 

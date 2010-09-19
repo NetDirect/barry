@@ -7,7 +7,7 @@ AC_INIT([barry-backup], [0.17], [barry-devel@lists.sourceforge.net])
 AC_CONFIG_SRCDIR([src/main.cc])
 AC_CONFIG_HEADERS([config.h:config.h.in])
 AC_CONFIG_AUX_DIR([.])
-AC_CONFIG_MACRO_DIR([../m4])
+AC_CONFIG_MACRO_DIR([m4])
 AM_INIT_AUTOMAKE
 
 AM_GNU_GETTEXT([external])
