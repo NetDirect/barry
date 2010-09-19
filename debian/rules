@@ -87,6 +87,7 @@ install/barrybackup-gui::
 post-patches::
 	@rm -f $(CURDIR)/deb_srcdir
 	@ln -s $(DEB_SRCDIR) $(CURDIR)/deb_srcdir
+	@test -x $(DEB_SRCDIR)/configure && echo "allready autoreconf" || (cd $(DEB_SRCDIR) && autoreconf -i)
 
 os22-binary:: binary
 	# DEB_SRCDIR can be relative, so change into directory to use pwd.

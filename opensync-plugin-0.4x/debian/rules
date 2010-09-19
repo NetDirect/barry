@@ -26,6 +26,7 @@ DEB_INSTALL_DOCS_ALL =
 post-patches::
 	@rm -f $(CURDIR)/deb_srcdir
 	@ln -s $(DEB_SRCDIR) $(CURDIR)/deb_srcdir
+	@test -x $(DEB_SRCDIR)/configure && echo "allready autoreconf" || (cd $(DEB_SRCDIR) && autoreconf -i)
 
 makebuilddir::
 	# This rule is meant for the parent debian/rules to be able to call

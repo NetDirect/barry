@@ -3,8 +3,9 @@ Release: version 0.17 - 2010/01/??
 2010/09/19
 	- further split up the m4 directories to make the submodules
 		yet more independent
+	- debian: added back the autoreconf targets, but not cleanup targets
 2010/09/18
-	-  debian: remove all autoreconf and cleanup targets
+	- debian: remove all autoreconf and cleanup targets
 		Having the debian/rules files try to manage their own
 		autoreconf is too much of a headache.  Binary packages
 		should start with a valid autoconf and gettext / autopoint
