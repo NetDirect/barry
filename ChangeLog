@@ -2,6 +2,11 @@ Release: version 0.17 - 2010/01/??
 ------------------------------------------------------------------------------
 2010/09/20
 	- removed ppa_build.sh per request by Martin Owens
+	- debian: added autopoint to build deps
+		The new Debian Squeeze and Ubuntu Maverick have split out
+		the autopoint script from the gettext package.  On systems
+		with gettext 0.18 or newer, we require autopoint, and hope
+		that autopoint depends on gettext.
 2010/09/19
 	- further split up the m4 directories to make the submodules
 		yet more independent
