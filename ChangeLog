@@ -1,5 +1,7 @@
 Release: version 0.17 - 2010/01/??
 ------------------------------------------------------------------------------
+2010/09/20
+	- removed ppa_build.sh per request by Martin Owens
 2010/09/19
 	- further split up the m4 directories to make the submodules
 		yet more independent
