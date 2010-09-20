@@ -44,6 +44,8 @@ some are only needed for building CVS.
 	<li><b>automake</b> version 1.9 (CVS builds only) </li>
 	<li><b>autoconf</b> version 2.61 (CVS builds only) </li>
 	<li><b>libtool</b> version 1.5.22 (CVS builds only) </li>
+	<li><b>autopoint</b> on some systems, this is a separate package, yet
+		on others, it is part of gettext (CVS builds only) </li>
 	<li><b>doxygen</b> suggested version 1.5.6, only for building API documentation</li>
 	<li><b>gtkmm, glademm, glibmm</b> C++ versions of the GTK libraries (needed for the barrybackup GUI)</li>
 	<li><b>libtar</b> (barrybackup GUI) </li>
@@ -119,7 +121,7 @@ distributions should have similar package names.
 	<li> php-cli (optional, for generating docs) </li>
 </ul>
 
-<p><b>Debian stable:</b></p>
+<p><b>Debian:</b></p>
 <p>Use the apt-get package manager to install the following:
 <ul>
 	<li> pkg-config </li>
@@ -127,6 +129,7 @@ distributions should have similar package names.
 	<li> cdbs </li>
 	<li> autoconf </li>
 	<li> automake </li>
+	<li> autopoint (only on some newer Debian/Ubuntu systems) </li>
 	<li> libtool </li>
 	<li> libusb-dev </li>
 	<li> libboost-serialization-dev </li>
