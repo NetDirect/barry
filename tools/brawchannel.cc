@@ -297,7 +297,7 @@ int main(int argc, char *argv[])
 			tv.tv_sec = READ_TIMEOUT_SECONDS;
 			tv.tv_usec = 0;
 
-			int ret = select(1, &rfds, NULL, NULL, &tv);
+			int ret = select(STDIN_FILENO + 1, &rfds, NULL, NULL, &tv);
 			if( ret < 0 ) {
 				cerr << "Select failed with errno: " << errno << endl;
 				running = false;
