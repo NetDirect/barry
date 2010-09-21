@@ -213,7 +213,8 @@ bool Device::BulkRead(int ep, Barry::Data &data, int timeout)
 			else
 				throw Error(ret, "Error in usb_bulk_read");
 		}
-		data.ReleaseBuffer(ret);
+		else if( ret > 0 )
+			data.ReleaseBuffer(ret);
 	} while( ret == -EINTR || ret == -EAGAIN );
 
 	return ret >= 0;
@@ -278,7 +279,8 @@ bool Device::InterruptRead(int ep, Barry::Data &data, int timeout)
 			else
 				throw Error(ret, "Error in usb_interrupt_read");
 		}
-		data.ReleaseBuffer(ret);
+		else if( ret > 0 )
+			data.ReleaseBuffer(ret);
 	} while( ret == -EINTR || ret == -EAGAIN );
 
 	return ret >= 0;
