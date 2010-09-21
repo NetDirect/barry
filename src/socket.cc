@@ -306,10 +306,10 @@ void SocketZero::RawSend(Data &send, int timeout)
 		packet.buffer[2] = 0;		// zero the top byte
 		Data sizeCommand(&packet, 3);
 
-		dev->BulkWrite(m_writeEp, sizeCommand);
+		dev->BulkWrite(m_writeEp, sizeCommand, timeout);
 	}
 
-	dev->BulkWrite(m_writeEp, send);
+	dev->BulkWrite(m_writeEp, send, timeout);
 }
 
 void SocketZero::RawReceive(Data &receive, int timeout)
