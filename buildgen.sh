@@ -143,7 +143,10 @@ else
 	# then the rest.
 	libtoolit m4
 	(cd gui && libtoolit m4)
+	# note that gui gets its own m4 via autopoint, while
+	# desktop does not use it
 	(cd desktop && libtoolit ../m4)
+	# the plugins always have their own m4's
 	(cd opensync-plugin && libtoolit m4)
 	(cd opensync-plugin-0.4x && libtoolit m4)
 
