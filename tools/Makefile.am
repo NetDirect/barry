@@ -63,7 +63,7 @@ bjavaloader_SOURCES = bjavaloader.cc
 bjavaloader_LDADD = ../src/libbarry.la $(LIBUSB_LIBS) -lpthread $(LTLIBINTL)
 
 brawchannel_SOURCES = brawchannel.cc
-brawchannel_LDADD = ../src/libbarry.la $(LIBUSB_LIBS) -lpthread
+brawchannel_LDADD = ../src/libbarry.la $(LIBUSB_LIBS) -lpthread $(LTLIBINTL)
 
 bjvmdebug_SOURCES = bjvmdebug.cc
 bjvmdebug_LDADD = ../src/libbarry.la $(LIBUSB_LIBS) -lpthread $(LTLIBINTL)
@@ -78,6 +78,7 @@ upldif_SOURCES = upldif.cc
 upldif_LDADD = ../src/libbarry.la $(LIBUSB_LIBS) -lpthread $(LTLIBINTL)
 
 btranslate_SOURCES = btranslate.cc
+btranslate_LDADD = $(LTLIBINTL)
 
 bktrans_SOURCES = bktrans.cc
 bktrans_LDADD = ../src/libbarry.la -lpthread $(LTLIBINTL)
@@ -101,4 +102,5 @@ bfuse_LDADD = ../src/libbarry.la $(FUSE_LIBS) -lpthread $(LTLIBINTL)
 endif
 
 brimtrans_SOURCES = brimtrans.cc
+brimtrans_LDADD = $(LTLIBINTL)
 
