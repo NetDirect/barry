@@ -41,6 +41,13 @@
 
 #include "i18n.h"
 
+#if defined( WIN32 )
+typedef void(*)(int) sighandler_t;
+#elif defined( __FreeBSD__ )
+typedef sig_t sighandler_t;
+#endif
+
+
 using namespace std;
 using namespace Barry;
 
