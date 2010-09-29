@@ -51,5 +51,15 @@ std::string ErrnoError::GetMsg(const std::string &msg, int err)
 	return oss.str();
 }
 
+std::string UnroutableReadError::GetMsg(unsigned int read_size,
+					unsigned int min_size)
+{
+	std::ostringstream oss;
+	oss << "Unroutable read due to size. Data read size: " << read_size
+	    << ". Minimum size: " << min_size;
+	return oss.str();
+}
+
+
 } // namespace Barry
 

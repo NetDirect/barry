@@ -214,6 +214,23 @@ public:
 	ConvertError(const std::string &msg) : Barry::Error(msg) {}
 };
 
+//
+// UnroutableReadError
+//
+/// Thrown by SocketRoutingQueue when a read is too small to determine
+/// the socket, so is unroutable.
+///
+class UnroutableReadError : public Barry::Error
+{
+	BXLOCAL static std::string GetMsg(unsigned int read_size,
+					  unsigned int min_size);
+public:
+	UnroutableReadError(unsigned int read_size,
+		unsigned int min_size)
+		: Barry::Error(GetMsg(read_size, min_size))
+		{}
+};
+
 /// @}
 
 } // namespace Barry

@@ -36,7 +36,7 @@ namespace Barry {
 void SocketRoutingQueue::SocketDataHandler::Error(Barry::Error &error)
 {
 	// Just log the error
-	dout("SocketDataHandler: Error: " << error.what());
+	eout("SocketDataHandler: Error: " << error.what());
 	(void) error;
 }
 
@@ -187,6 +187,13 @@ bool SocketRoutingQueue::DefaultRead(Data &receive, int timeout)
 ///
 DataHandle SocketRoutingQueue::DefaultRead(int timeout)
 {
+	if( m_seen_usb_error && timeout == -1 )
+		// If an error has been seen and not cleared then no
+		// more data will be read into the queue by
+		// DoRead(). Forcing the timeout to zero allows any
+		// data already in the queue to be read, but prevents
+		// waiting for data which will never arrive.
+		timeout = 0;
 	// m_default handles its own locking
 	Data *buf = m_default.wait_pop(timeout);
 	return DataHandle(*this, buf);
@@ -402,7 +409,7 @@ void SocketRoutingQueue::DoRead(int timeout)
 		
 		// make sure the size is right
 		if( data.GetSize() < sizeof(pack->socket) )
-			return;	// bad size, just skip
+			throw UnroutableReadError(data.GetSize(), sizeof(pack->socket));
 
 		// extract the socket from the packet
 		uint16_t socket = btohs(pack->socket);
@@ -447,37 +454,51 @@ void SocketRoutingQueue::DoRead(int timeout)
 		// are able to recover from this error
 		m_seen_usb_error = true;
 
-		// this is unexpected, but we're in a thread here...
-		// Need to iterate through all the registered handlers
-		// calling their error callback.
-		// Can't be locked when calling the callback, so need
-		// to make a list of them first.
-		scoped_lock lock(m_mutex);
-		std::vector<SocketDataHandlerPtr> handlers;
-		SocketQueueMap::iterator qi = m_socketQueues.begin();
-		while( qi != m_socketQueues.end() ) {
-			SocketDataHandlerPtr &sdh = qi->second->m_handler;
-			// is there a handler?
-			if( sdh ) {
-				handlers.push_back(sdh);
-			}
-			++qi;
-		}
-
-		SocketDataHandlerPtr usb_error_handler = m_usb_error_dev_callback;
-
-		lock.unlock();
-		std::vector<SocketDataHandlerPtr>::iterator hi = handlers.begin();
-		while( hi != handlers.end() ) {
-			(*hi)->Error(ue);
-			++hi;
-		}
-
-		// and finally, call the specific error callback if available
-		if( usb_error_handler.get() ) {
-			usb_error_handler->Error(ue);
-		}
+		NotifyHandlersOfError(ue);
 	}
+	catch( UnroutableReadError &e ) {
+		// Although this isn't a USB error the usb error flag
+		// is set. This is because devices seem to never send
+		// data which is this small and therefore the only
+		// time this error is seen (so far) is when the USB
+		// port has been reset
+		m_seen_usb_error = true;
+
+		NotifyHandlersOfError(e);
+	}
+}
+
+void SocketRoutingQueue::NotifyHandlersOfError(Barry::Error &error)
+{
+	// Need to iterate through all the registered handlers
+	// calling their error callback.
+	// Can't be locked when calling the callback, so need
+	// to make a list of them first.
+	scoped_lock lock(m_mutex);
+	std::vector<SocketDataHandlerPtr> handlers;
+	SocketQueueMap::iterator qi = m_socketQueues.begin();
+	while( qi != m_socketQueues.end() ) {
+		SocketDataHandlerPtr &sdh = qi->second->m_handler;
+		// is there a handler?
+		if( sdh ) {
+			handlers.push_back(sdh);
+		}
+		++qi;
+	}
+
+	SocketDataHandlerPtr usb_error_handler = m_usb_error_dev_callback;
+
+	lock.unlock();
+	std::vector<SocketDataHandlerPtr>::iterator hi = handlers.begin();
+	while( hi != handlers.end() ) {
+		(*hi)->Error(error);
+		++hi;
+	}
+
+	// and finally, call the specific error callback if available
+	if( usb_error_handler.get() ) {
+		usb_error_handler->Error(error);
+	}	
 }
 
 void SocketRoutingQueue::SpinoffSimpleReadThread()
