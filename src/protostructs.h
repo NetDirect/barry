@@ -953,6 +953,7 @@ struct Packet
 
 	} __attribute__ ((packed)) u;
 } __attribute__ ((packed));
+#define SB_PACKET_SOCKET_SIZE			(sizeof(uint16_t)) // size needed to read the socket in a packet
 #define SB_PACKET_HEADER_SIZE			(sizeof(::Barry::Protocol::Packet) - sizeof(::Barry::Protocol::Packet::PacketData))
 
 // WARNING : For JavaLoader we have some packet with 5 size !

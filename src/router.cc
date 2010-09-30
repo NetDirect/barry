@@ -408,7 +408,7 @@ void SocketRoutingQueue::DoRead(int timeout)
 		MAKE_PACKET(pack, data);
 		
 		// make sure the size is right
-		if( data.GetSize() < sizeof(pack->socket) )
+		if( data.GetSize() < SB_PACKET_SOCKET_SIZE )
 			throw UnroutableReadError(data.GetSize(), sizeof(pack->socket));
 
 		// extract the socket from the packet
