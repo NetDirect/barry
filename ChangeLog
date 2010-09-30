@@ -1,5 +1,8 @@
 Release: version 0.17 - 2010/01/??
 ------------------------------------------------------------------------------
+2010/09/30
+	- merged build fixes from Toby Gray
+	- merged UnroutableReadError exception patch from Toby Gray
 2010/09/21
 	- merged constant and timeout fixes from Toby Gray
 	- lib: added belt-and-suspenders fix to usb Read functions
