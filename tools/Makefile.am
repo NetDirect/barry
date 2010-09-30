@@ -11,7 +11,8 @@ localedir = $(datadir)/locale
 DEFS = -DLOCALEDIR=\"$(localedir)\" @DEFS@
 
 noinst_HEADERS = \
-	i18n.h
+	i18n.h \
+	platform.h
 
 bin_PROGRAMS = \
 	btool \
