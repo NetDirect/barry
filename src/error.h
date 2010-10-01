@@ -103,20 +103,10 @@ class BXEXPORT BadSize : public Barry::Error
 	BXLOCAL static std::string GetMsg(unsigned int p, unsigned int d, unsigned int r);
 
 public:
-	BadSize(const char *msg, unsigned int data_size, unsigned int required_size)
-		: Barry::Error(GetMsg(msg, data_size, required_size))
-		, m_packet_size(0)
-		, m_data_buf_size(data_size)
-		, m_required_size(required_size)
-		{}
+	BadSize(const char *msg, unsigned int data_size, unsigned int required_size);
 	BadSize(unsigned int packet_size,
 		unsigned int data_buf_size,
-		unsigned int required_size)
-		: Barry::Error(GetMsg(packet_size, data_buf_size, required_size))
-		, m_packet_size(packet_size)
-		, m_data_buf_size(data_buf_size)
-		, m_required_size(required_size)
-		{}
+		unsigned int required_size);
 	unsigned int packet_size() const { return m_packet_size; }
 	unsigned int data_buf_size() const { return m_data_buf_size; }
 	unsigned int required_size() const { return m_required_size; }
@@ -131,19 +121,13 @@ class BXEXPORT ErrnoError : public Barry::Error
 {
 	int m_errno;
 
-	static std::string GetMsg(const std::string &msg, int err);
+	BXLOCAL static std::string GetMsg(const std::string &msg, int err);
 
 protected:
-	ErrnoError(const std::string &msg) // for derived classes
-		: Barry::Error(msg)
-		, m_errno(0)
-		{}
+	ErrnoError(const std::string &msg); // for derived classes
 
 public:
-	ErrnoError(const std::string &msg, int err)
-		: Barry::Error(GetMsg(msg, err))
-		, m_errno(err)
-		{}
+	ErrnoError(const std::string &msg, int err);
 
 	int error_code() const { return m_errno; }
 };
@@ -154,7 +138,7 @@ public:
 /// Thrown by the ConfigFile class when encountering a serious system
 /// error while loading the global config file for a given PIN.
 ///
-class ConfigFileError : public Barry::ErrnoError
+class BXEXPORT ConfigFileError : public Barry::ErrnoError
 {
 public:
 	ConfigFileError(const char *msg) : Barry::ErrnoError(msg) {}
@@ -208,7 +192,7 @@ public:
 //
 /// Thrown by the vformat related barrysync library classes.
 ///
-class ConvertError : public Barry::Error
+class BXEXPORT ConvertError : public Barry::Error
 {
 public:
 	ConvertError(const std::string &msg) : Barry::Error(msg) {}
@@ -220,15 +204,12 @@ public:
 /// Thrown by SocketRoutingQueue when a read is too small to determine
 /// the socket, so is unroutable.
 ///
-class UnroutableReadError : public Barry::Error
+class BXEXPORT UnroutableReadError : public Barry::Error
 {
 	BXLOCAL static std::string GetMsg(unsigned int read_size,
 					  unsigned int min_size);
 public:
-	UnroutableReadError(unsigned int read_size,
-		unsigned int min_size)
-		: Barry::Error(GetMsg(read_size, min_size))
-		{}
+	UnroutableReadError(unsigned int read_size, unsigned int min_size);
 };
 
 /// @}

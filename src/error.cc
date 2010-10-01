@@ -27,6 +27,28 @@ using namespace std;
 
 namespace Barry {
 
+//////////////////////////////////////////////////////////////////////////////
+// BadSize exception
+
+BadSize::BadSize(const char *msg, unsigned int data_size,
+			unsigned int required_size)
+	: Barry::Error(GetMsg(msg, data_size, required_size))
+	, m_packet_size(0)
+	, m_data_buf_size(data_size)
+	, m_required_size(required_size)
+{
+}
+
+BadSize::BadSize(unsigned int packet_size,
+			unsigned int data_buf_size,
+			unsigned int required_size)
+	: Barry::Error(GetMsg(packet_size, data_buf_size, required_size))
+	, m_packet_size(packet_size)
+	, m_data_buf_size(data_buf_size)
+	, m_required_size(required_size)
+{
+}
+
 std::string BadSize::GetMsg(const char *msg, unsigned int d, unsigned int r)
 {
 	std::ostringstream oss;
@@ -44,11 +66,37 @@ std::string BadSize::GetMsg(unsigned int p, unsigned int d, unsigned int r)
 	return oss.str();
 }
 
+
+//////////////////////////////////////////////////////////////////////////////
+// ErrnoError exception
+
+ErrnoError::ErrnoError(const std::string &msg)
+	: Barry::Error(msg)
+	, m_errno(0)
+{
+}
+
+ErrnoError::ErrnoError(const std::string &msg, int err)
+	: Barry::Error(GetMsg(msg, err))
+	, m_errno(err)
+{
+}
+
 std::string ErrnoError::GetMsg(const std::string &msg, int err)
 {
 	std::ostringstream oss;
 	oss << msg << ": (errno " << err << ") " << strerror(err);
 	return oss.str();
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
+// UnroutableReadError exception
+
+UnroutableReadError::UnroutableReadError(unsigned int read_size,
+					 unsigned int min_size)
+	: Barry::Error(GetMsg(read_size, min_size))
+{
 }
 
 std::string UnroutableReadError::GetMsg(unsigned int read_size,

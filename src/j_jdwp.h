@@ -35,7 +35,7 @@ namespace JDWP {
 /// @{
 
 /// Thrown on low level JDWP errors.
-class Error : public Barry::Error
+class BXEXPORT Error : public Barry::Error
 {
 	int m_errcode;
 
@@ -47,7 +47,7 @@ public:
 	int errcode() const { return m_errcode; }
 };
 
-class Timeout : public Error
+class BXEXPORT Timeout : public Error
 {
 public:
 	Timeout(const std::string &str) : Error(str) {}
