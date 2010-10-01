@@ -334,11 +334,11 @@ bool Probe::ProbePair(Usb::Device &dev,
 	// side-affect that usb-storage issues a port reset after the
 	// 30 second timeout, which kills any current Barry
 	// connection.
-	// 
+	//
 	// To further complicate matters some devices, such as the
-	// 8830, always need clear halt before they will respond to 
+	// 8830, always need clear halt before they will respond to
 	// probes.
-	// 
+	//
 	// So to work with all these device quirks the probe is first
 	// attempted without calling clear halt. If that probe fails
 	// then a clear halt is issued followed by a retry on the

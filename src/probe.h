@@ -38,7 +38,7 @@ struct BXEXPORT ProbeResult
 	Barry::Pin m_pin;
 	Usb::EndpointPair m_ep;
 	Usb::EndpointPair m_epModem;
-	// Specifies if it's necessary to clear halt on the 
+	// Specifies if it's necessary to clear halt on the
 	// endpoints before using them. On some devices such
 	// as the 8830 it's essential to clear halt. On other
 	// devices such as the Curve 8520 calling clear halt
