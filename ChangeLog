@@ -3,6 +3,8 @@ Release: version 0.17 - 2010/01/??
 2010/10/01
 	- lib: cleaned up missing BXEXPORT / BXLOCAL flags for exceptions
 		http://gcc.gnu.org/wiki/Visibility
+	- lib: fixed build bug where GCC visibility flags were missing from
+		the libbarrysync library
 2010/09/30
 	- merged build fixes from Toby Gray
 	- merged UnroutableReadError exception patch from Toby Gray

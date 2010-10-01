@@ -37,7 +37,7 @@ namespace Barry { namespace Sync {
 /// Class for converting between RFC 2445 iCalendar data format,
 /// and the Barry::Calendar class.
 ///
-class vCalendar : public vBase
+class BXEXPORT vCalendar : public vBase
 {
 	// external reference
 	vTimeConverter &m_vtc;

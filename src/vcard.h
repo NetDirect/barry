@@ -22,6 +22,7 @@
 #ifndef __BARRY_SYNC_VCARD_H__
 #define __BARRY_SYNC_VCARD_H__
 
+#include "dll.h"
 #include "vbase.h"
 #include "r_contact.h"
 #include <stdint.h>
@@ -35,7 +36,7 @@ namespace Barry { namespace Sync {
 /// Class for converting between RFC 2425/2426 vCard data format,
 /// and the Barry::Contact class.
 ///
-class vCard : public vBase
+class BXEXPORT vCard : public vBase
 {
 	// data to pass to external requests
 	char *m_gCardData;	// dynamic memory returned by vformat()... can

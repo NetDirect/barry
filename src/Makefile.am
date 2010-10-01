@@ -233,8 +233,11 @@ libbarrysync_la_SOURCES = \
 	vjournal.h vjournal.cc \
 	vtodo.h vtodo.cc \
 	tzwrapper.h tzwrapper.cc
-libbarrysync_la_CFLAGS = $(GLIB2_CFLAGS)
-libbarrysync_la_CXXFLAGS = $(GLIB2_CFLAGS)
+# if we set CFLAGS and CXXFLAGS ourselves, we need to include
+# AM_*FLAGS as well... this only seems to matter for compile flags,
+# not link flags
+libbarrysync_la_CFLAGS = $(AM_CFLAGS) $(GLIB2_CFLAGS)
+libbarrysync_la_CXXFLAGS = $(AM_CXXFLAGS) $(GLIB2_CFLAGS)
 libbarrysync_la_LIBADD = libbarry.la $(GLIB2_LIBS)
 libbarrysync_la_LDFLAGS = -version-info ${LIB_BARRY_VERSION}
 endif
