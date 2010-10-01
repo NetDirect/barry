@@ -33,6 +33,12 @@ typedef void(*)(int) sighandler_t;
 #include <signal.h>
 typedef sig_t sighandler_t;
 
+// All Mac OS X specific detail
+#elif defined( __APPLE__ ) && defined( __MACH__ )
+
+#include <signal.h>
+typedef sig_t sighandler_t;
+
 #endif
 
 #endif
