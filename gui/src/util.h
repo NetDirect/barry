@@ -26,7 +26,6 @@
 #include <string>
 
 Glib::RefPtr<Gnome::Glade::Xml> LoadXml(const char *filename);
-std::string GetPath(const std::string &filename);
 
 #endif
 

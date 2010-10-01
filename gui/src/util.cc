@@ -43,13 +43,3 @@ Glib::RefPtr<Gnome::Glade::Xml> LoadXml(const char *filename)
 	return Gnome::Glade::Xml::create(filename);
 }
 
-std::string GetPath(const std::string &filename)
-{
-	std::string path;
-	std::string::size_type pos = filename.rfind('/');
-	if( pos != std::string::npos ) {
-		path = filename.substr(0, pos);
-	}
-	return path;
-}
-
