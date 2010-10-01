@@ -239,12 +239,14 @@ void Probe::ProbeDevice(Usb::DeviceIDType devid)
 		uint32_t pin;
 		uint8_t zeroSocketSequence;
 		std::string desc;
-		if( ProbePair(dev, m_epp, pin, desc, zeroSocketSequence) ) {
+		bool needClearHalt;
+		if( ProbePair(dev, m_epp, pin, desc, zeroSocketSequence, needClearHalt) ) {
 			// looks good, finish filling out the result
 			result.m_ep = m_epp;
 			result.m_pin = pin;
 			result.m_description = desc;
 			result.m_zeroSocketSequence = zeroSocketSequence;
+			result.m_needClearHalt = needClearHalt;
 		}
 	}
 	else {
@@ -263,11 +265,13 @@ void Probe::ProbeDevice(Usb::DeviceIDType devid)
 				uint32_t pin;
 				uint8_t zeroSocketSequence;
 				std::string desc;
-				if( ProbePair(dev, ep, pin, desc, zeroSocketSequence) ) {
+				bool needClearHalt;
+				if( ProbePair(dev, ep, pin, desc, zeroSocketSequence, needClearHalt) ) {
 					result.m_ep = ep;
 					result.m_pin = pin;
 					result.m_description = desc;
 					result.m_zeroSocketSequence = zeroSocketSequence;
+					result.m_needClearHalt = needClearHalt;
 					break;
 				}
 			}
@@ -313,16 +317,49 @@ bool Probe::ProbePair(Usb::Device &dev,
 			const Usb::EndpointPair &ep,
 			uint32_t &pin,
 			std::string &desc,
-			uint8_t &zeroSocketSequence)
+			uint8_t &zeroSocketSequence,
+			bool &needClearHalt)
 {
-	dev.ClearHalt(ep.read);
-	dev.ClearHalt(ep.write);
+	// Initially assume that clear halt isn't needed as it causes some
+	// devices to drop packets. The suspicion is that the toggle bits
+	// get out of sync, but this hasn't been confirmed with hardware
+	// tracing.
+	//
+	// It is possible to always use clear halt, as long as SET
+	// INTERFACE has been sent before, via usb_set_altinterface().
+	// However this has the side affect that any outstanding URBs
+	// on other interfaces (i.e. usb-storage) timeout and lose
+	// their data. This is not a good thing as it can corrupt the
+	// file system exposed over usb-storage. This also has the
+	// side-affect that usb-storage issues a port reset after the
+	// 30 second timeout, which kills any current Barry
+	// connection.
+	// 
+	// To further complicate matters some devices, such as the
+	// 8830, always need clear halt before they will respond to 
+	// probes.
+	// 
+	// So to work with all these device quirks the probe is first
+	// attempted without calling clear halt. If that probe fails
+	// then a clear halt is issued followed by a retry on the
+	// probing.
+	needClearHalt = false;
 
 	Data data;
 	dev.BulkDrain(ep.read);
 	if( !Intro(0, ep, dev, data) ) {
-		dout("Probe: Intro(0) failed");
-		return false;
+		// Try clearing halt and then reprobing
+		dout("Probe: Intro(0) failed, retrying after clearing halt");
+		dev.ClearHalt(ep.read);
+		dev.ClearHalt(ep.write);
+		needClearHalt = true;
+		// Retry
+		dev.BulkDrain(ep.read);
+		if( !Intro(0, ep, dev, data) ) {
+			// Still no response so fail the probe
+			dout("Probe: Intro(0) still failed after clearing halt");
+			return false;
+		}
 	}
 
 	SocketZero socket(dev, ep.write, ep.read);

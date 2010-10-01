@@ -38,6 +38,13 @@ struct BXEXPORT ProbeResult
 	Barry::Pin m_pin;
 	Usb::EndpointPair m_ep;
 	Usb::EndpointPair m_epModem;
+	// Specifies if it's necessary to clear halt on the 
+	// endpoints before using them. On some devices such
+	// as the 8830 it's essential to clear halt. On other
+	// devices such as the Curve 8520 calling clear halt
+	// can cause them to get into a state where they drop
+	// packets.
+	bool m_needClearHalt;
 	uint8_t m_zeroSocketSequence;
 	std::string m_description;
 
@@ -46,7 +53,8 @@ struct BXEXPORT ProbeResult
 	std::string m_cfgDeviceName;
 
 	ProbeResult()
-		: m_dev(0), m_interface(0), m_pin(0), m_zeroSocketSequence(0)
+		: m_dev(0), m_interface(0), m_pin(0)
+		, m_needClearHalt(false), m_zeroSocketSequence(0)
 		{}
 	void DumpAll(std::ostream &os) const;
 	bool HasIpModem() const { return m_epModem.IsComplete(); }
@@ -83,7 +91,8 @@ protected:
 		const char *busname, const char *devname);
 	void ProbeDevice(Usb::DeviceIDType devid);
 	bool ProbePair(Usb::Device &dev, const Usb::EndpointPair &ep,
-		uint32_t &pin, std::string &desc, uint8_t &zeroSocketSequence);
+		uint32_t &pin, std::string &desc, uint8_t &zeroSocketSequence,
+		bool &needClearHalt);
 	bool ProbeModem(Usb::Device &dev, const Usb::EndpointPair &ep);
 
 public:

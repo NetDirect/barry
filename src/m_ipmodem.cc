@@ -223,9 +223,11 @@ void IpModem::Open(const char *password)
 		throw Barry::Error(oss.str());
 	}
 
-	// clear halt when starting out
-	m_dev.ClearHalt(pair.read);
-	m_dev.ClearHalt(pair.write);
+	// clear halt when starting out only if needed
+	if( m_con.m_result.m_needClearHalt ) {
+		m_dev.ClearHalt(pair.read);
+		m_dev.ClearHalt(pair.write);
+	}
 
 	// Send stop command
 	ddout("IPModem: Sending Stop Response:\n");
