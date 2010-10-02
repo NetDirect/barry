@@ -68,10 +68,14 @@ DEFS = -DLOCALEDIR=\"$(localedir)\" @DEFS@
 # libbarrydp - '.debug' parser library
 # libbarryjdwp - java debug server library
 # libbarrysync - utility functions and classes for syncing and vformats
+# libbarrybackup - utility classes for reading/writing Barry backup files
 #
 lib_LTLIBRARIES = libbarry.la libbarrydp.la libbarryjdwp.la
 if WITH_SYNC
 lib_LTLIBRARIES += libbarrysync.la
+endif
+if WITH_BACKUP
+lib_LTLIBRARIES += libbarrybackup.la
 endif
 
 include_barry_HEADERS = barry.h barrysync.h \
@@ -152,6 +156,7 @@ noinst_HEADERS = cbarry.h \
 	dp_parser.h \
 	j_message.h \
 	j_jdwp.h \
+	tarfile.h \
 	clog.h
 
 EXTRA_DIST = convo.awk \
@@ -240,6 +245,15 @@ libbarrysync_la_CFLAGS = $(AM_CFLAGS) $(GLIB2_CFLAGS)
 libbarrysync_la_CXXFLAGS = $(AM_CXXFLAGS) $(GLIB2_CFLAGS)
 libbarrysync_la_LIBADD = libbarry.la $(GLIB2_LIBS)
 libbarrysync_la_LDFLAGS = -version-info ${LIB_BARRY_VERSION}
+endif
+
+if WITH_BACKUP
+libbarrybackup_la_SOURCES = \
+	tarfile.cc tarfile-ops-nt.cc
+libbarrybackup_la_CFLAGS = $(AM_CFLAGS) $(LIBTAR_CFLAGS) $(LIBZ_CFLAGS)
+libbarrybackup_la_CXXFLAGS = $(AM_CXXFLAGS) $(LIBTAR_CFLAGS) $(LIBZ_CFLAGS)
+libbarrybackup_la_LIBADD = libbarry.la $(LIBTAR_LIBS) $(LIBZ_LIBS)
+libbarrybackup_la_LDFLAGS = -version-info ${LIB_BARRY_VERSION}
 endif
 
 ##if DO_TEST

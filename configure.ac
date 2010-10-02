@@ -36,6 +36,37 @@ AC_LANG([C++])
 # Checks for libraries.
 #
 
+# libtar and libz don't have pkg-config files on many systems.
+# libz we can assume, but libtar we need to test for
+AC_ARG_WITH(libtar,
+	[  --with-libtar=<path>    root path of libtar install],
+	[LIBTAR_CFLAGS="-I$with_libtar/include"
+	 LIBTAR_LIBS="-L$with_libtar/lib -ltar"],
+	[echo "Guessing libtar location... may not compile...";
+	 LIBTAR_CFLAGS=""
+	 LIBTAR_LIBS="-ltar"])
+AC_SUBST(LIBTAR_CFLAGS)
+AC_SUBST(LIBTAR_LIBS)
+
+AC_CHECK_LIB([tar], [tar_open],
+	[LIBTAR_FOUND=1
+	AC_MSG_NOTICE([Found libtar, enabling libbarrybackup]) ],
+	[LIBTAR_FOUND=0
+	AC_MSG_NOTICE([Libtar NOT found, disabling libbarrybackup])],
+	[$LIBTAR_CFLAGS $LIBTAR_LIBS])
+
+AC_ARG_WITH(libz,
+	[  --with-zlib=<path>      root path of zlib install],
+	[LIBZ_CFLAGS="-I$with_libtar/include"
+	 LIBZ_LIBS="-L$with_libtar/lib -ltar"],
+	[echo "Guessing zlib location... may not compile...";
+	 LIBZ_CFLAGS=""
+	 LIBZ_LIBS="-lz"])
+AC_SUBST(LIBZ_CFLAGS)
+AC_SUBST(LIBZ_LIBS)
+
+AM_CONDITIONAL([WITH_BACKUP], [test "$LIBTAR_FOUND" = "1"])
+
 # generates LIBUSB_CFLAGS and LIBUSB_LIBS for us
 PKG_CHECK_MODULES([LIBUSB], [libusb],
 	[],
@@ -238,7 +269,8 @@ AC_CONFIG_FILES([Makefile po/Makefile.in
                  libbarry-0.pc
 		 libbarrydp-0.pc
 		 libbarryjdwp-0.pc
-		 libbarrysync-0.pc])
+		 libbarrysync-0.pc
+		 libbarrybackup-0.pc])
 
 #
 # nested packages

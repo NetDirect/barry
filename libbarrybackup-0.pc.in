@@ -1,0 +1,12 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: Barry
+Description: C++ library for reading and writing Barry backup files
+URL: http://sourceforge.net/projects/barry
+Version: @VERSION@
+Libs: -L${libdir} -lbarrybackup
+Cflags: -I${includedir}
+
