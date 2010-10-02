@@ -5,6 +5,8 @@ Release: version 0.17 - 2010/01/??
 		http://gcc.gnu.org/wiki/Visibility
 	- lib: fixed build bug where GCC visibility flags were missing from
 		the libbarrysync library
+	- merged clear halt fixes from Toby Gray, which should make it
+		possible to use Barry and usb-storage at the same time
 2010/09/30
 	- merged build fixes from Toby Gray
 	- merged UnroutableReadError exception patch from Toby Gray
