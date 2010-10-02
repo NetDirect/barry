@@ -23,6 +23,9 @@ pkgconfig_DATA = libbarry-0.pc libbarrydp-0.pc libbarryjdwp-0.pc
 if WITH_SYNC
 pkgconfig_DATA += libbarrysync-0.pc
 endif
+if WITH_BACKUP
+pkgconfig_DATA += libbarrybackup-0.pc
+endif
 
 all-local:
 	rm -f $(top_builddir)/barry
