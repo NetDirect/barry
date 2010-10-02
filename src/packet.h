@@ -162,7 +162,8 @@ public:
 	unsigned int ReturnCode() const;	// throws FIXME if packet doesn't support it
 	unsigned int DBOperation() const; // throws Error on size trouble
 
-	bool Parse(Parser &parser, const IConverter *ic); // switches based on last m_send command
+	bool Parse(Parser &parser, const std::string &dbname,
+		const IConverter *ic); // switches based on last m_send command
 
 	// response parsers
 };

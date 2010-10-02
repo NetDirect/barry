@@ -23,6 +23,8 @@
 #define __BARRY_BUILDER_H__
 
 #include "dll.h"
+#include "data.h"
+#include <string>
 
 namespace Barry {
 
@@ -49,6 +51,7 @@ public:
 	virtual bool Retrieve(unsigned int databaseId) = 0;
 
 	/// Called to retrive the unique ID for this record.
+	virtual std::string GetDBName() const = 0;
 	virtual uint8_t GetRecType() const = 0;
 	virtual uint32_t GetUniqueId() const = 0;
 
@@ -115,6 +118,11 @@ public:
 	virtual bool Retrieve(unsigned int databaseId)
 	{
 		return (*m_storage)(m_rec, databaseId);
+	}
+
+	virtual std::string GetDBName() const
+	{
+		return RecordT::GetDBName();
 	}
 
 	virtual uint8_t GetRecType() const

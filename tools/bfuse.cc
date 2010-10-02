@@ -121,7 +121,8 @@ public:
 
 	virtual void Clear() {}
 
-	virtual void SetIds(uint8_t RecType, uint32_t UniqueId)
+	virtual void SetIds(const std::string &DbName,
+				uint8_t RecType, uint32_t UniqueId)
 	{
 		m_id = UniqueId;
 	}

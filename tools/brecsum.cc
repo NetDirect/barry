@@ -44,7 +44,7 @@ void Usage()
    << "   -d db     Read database 'db' and sum all its records.\n"
    << "             Can be used multiple times to fetch more than one DB\n"
    << "   -h        This help\n"
-   << "   -i        Include Type and Unique record IDs in the checksums\n"
+   << "   -i        Include DB Name, Type, and Unique record IDs in the checksums\n"
    << "   -p pin    PIN of device to talk with\n"
    << "             If only one device is plugged in, this flag is optional\n"
    << "   -P pass   Simplistic method to specify device password\n"
@@ -67,9 +67,11 @@ public:
 		SHA1_Init(&m_ctx);
 	}
 
-	virtual void SetIds(uint8_t RecType, uint32_t UniqueId)
+	virtual void SetIds(const std::string &DbName,
+				uint8_t RecType, uint32_t UniqueId)
 	{
 		if( m_IncludeIds ) {
+			SHA1_Update(&m_ctx, DbName.c_str(), DbName.size());
 			SHA1_Update(&m_ctx, &RecType, sizeof(RecType));
 			SHA1_Update(&m_ctx, &UniqueId, sizeof(UniqueId));
 		}

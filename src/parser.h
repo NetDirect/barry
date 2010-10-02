@@ -59,7 +59,8 @@ public:
 	virtual void Clear() = 0;
 
 	/// Stores the IDs
-	virtual void SetIds(uint8_t RecType, uint32_t UniqueId) = 0;
+	virtual void SetIds(const std::string &DbName,
+		uint8_t RecType, uint32_t UniqueId) = 0;
 
 	/// Called to parse the header portion of the raw data packet.
 	/// data contains the entire packet, and offset contains the
@@ -101,7 +102,8 @@ public:
 	virtual void Clear() {}
 
 	/// Stores the IDs
-	virtual void SetIds(uint8_t RecType, uint32_t UniqueId) {}
+	virtual void SetIds(const std::string &DbName,
+		uint8_t RecType, uint32_t UniqueId) {}
 
 	/// Called to parse the header portion of the raw data packet.
 	/// data contains the entire packet, and offset contains the
@@ -194,7 +196,8 @@ public:
 		m_rec = RecordT();
 	}
 
-	virtual void SetIds(uint8_t RecType, uint32_t UniqueId)
+	virtual void SetIds(const std::string &DbName,
+				uint8_t RecType, uint32_t UniqueId)
 	{
 		m_rec.SetIds(RecType, UniqueId);
 	}

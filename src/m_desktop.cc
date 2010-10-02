@@ -253,6 +253,9 @@ void Desktop::GetRecord(unsigned int dbId,
 {
 	dout("Database ID: " << dbId);
 
+	std::string dbName;
+	m_dbdb.GetDBName(dbId, dbName);
+
 	Data command, response;
 	DBPacket packet(*this, command, response);
 	packet.GetRecordByIndex(dbId, stateTableIndex);
@@ -282,7 +285,7 @@ void Desktop::GetRecord(unsigned int dbId,
 	}
 
 	// grab that data
-	packet.Parse(parser, m_ic);
+	packet.Parse(parser, dbName, m_ic);
 
 	// flush the command sequence
 	while( packet.Command() != SB_COMMAND_DB_DONE )
@@ -394,6 +397,9 @@ void Desktop::LoadDatabase(unsigned int dbId, Parser &parser)
 {
 	dout("Database ID: " << dbId);
 
+	std::string dbName;
+	m_dbdb.GetDBName(dbId, dbName);
+
 	Data command, response;
 	DBPacket packet(*this, command, response);
 	packet.GetRecords(dbId);
@@ -404,7 +410,7 @@ void Desktop::LoadDatabase(unsigned int dbId, Parser &parser)
 		if( packet.Command() == SB_COMMAND_DB_DATA ) {
 			// this size is the old header size, since using
 			// old command above
-			packet.Parse(parser, m_ic);
+			packet.Parse(parser, dbName, m_ic);
 		}
 
 		// advance!

@@ -507,7 +507,9 @@ void DeviceInterface::Clear()
 {
 }
 
-void DeviceInterface::SetIds(uint8_t RecType, uint32_t UniqueId)
+void DeviceInterface::SetIds(const std::string &DbName,
+			     uint8_t RecType,
+			     uint32_t UniqueId)
 {
 	m_rec_type = RecType;
 	m_unique_id = UniqueId;
@@ -599,6 +601,11 @@ bool DeviceInterface::Retrieve(unsigned int dbId)
 		SetThreadDBName(dbname);
 		return r_val;
 	}
+}
+
+std::string DeviceInterface::GetDBName() const
+{
+	return m_current_dbname;
 }
 
 uint8_t DeviceInterface::GetRecType() const

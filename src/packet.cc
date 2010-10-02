@@ -490,7 +490,8 @@ unsigned int DBPacket::DBOperation() const
 /// \returns	bool	true - packet was recognized and parse was attempted
 ///			false - packet was not recognized
 ///
-bool DBPacket::Parse(Parser &parser, const IConverter *ic)
+bool DBPacket::Parse(Parser &parser, const std::string &dbname,
+			const IConverter *ic)
 {
 	size_t offset = 0;
 	MAKE_PACKET(rpack, m_receive);
@@ -505,7 +506,8 @@ bool DBPacket::Parse(Parser &parser, const IConverter *ic)
 		Protocol::CheckSize(m_receive, offset);
 		// FIXME - this may need adjustment for email records... they
 		// don't seem to have uniqueID's
-		parser.SetIds(rpack->u.db.u.response.u.tagged.rectype,
+		parser.SetIds(dbname,
+			rpack->u.db.u.response.u.tagged.rectype,
 			btohl(rpack->u.db.u.response.u.tagged.uniqueId));
 
 		parser.ParseHeader(m_receive, offset);

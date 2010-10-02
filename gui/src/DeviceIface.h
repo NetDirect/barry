@@ -173,7 +173,8 @@ public:
 
 	// Barry::Parser overrides
 	virtual void Clear();
-	virtual void SetIds(uint8_t RecType, uint32_t UniqueId);
+	virtual void SetIds(const std::string &DbName,
+		uint8_t RecType, uint32_t UniqueId);
 	virtual void ParseHeader(const Barry::Data &data, size_t &offset);
 	virtual void ParseFields(const Barry::Data &data, size_t &offset,
 		const Barry::IConverter *ic);
@@ -181,6 +182,7 @@ public:
 
 	// Barry::Builder overrides
 	virtual bool Retrieve(unsigned int dbId);
+	virtual std::string GetDBName() const;
 	virtual uint8_t GetRecType() const;
 	virtual uint32_t GetUniqueId() const;
 	virtual void BuildHeader(Barry::Data &data, size_t &offset);
