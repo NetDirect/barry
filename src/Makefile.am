@@ -78,7 +78,7 @@ if WITH_BACKUP
 lib_LTLIBRARIES += libbarrybackup.la
 endif
 
-include_barry_HEADERS = barry.h barrysync.h \
+include_barry_HEADERS = barry.h barrysync.h barrybackup.h \
 	dll.h \
 	builder.h \
 	common.h \
@@ -141,6 +141,8 @@ include_barry_HEADERS = barry.h barrysync.h \
 	vtodo.h \
 	scoped_lock.h \
 	semaphore.h \
+	backup.h \
+	restore.h \
 	tzwrapper.h
 
 noinst_HEADERS = cbarry.h \
@@ -249,7 +251,9 @@ endif
 
 if WITH_BACKUP
 libbarrybackup_la_SOURCES = \
-	tarfile.cc tarfile-ops-nt.cc
+	tarfile.cc tarfile-ops-nt.cc \
+	backup.h backup.cc \
+	restore.h restore.cc
 libbarrybackup_la_CFLAGS = $(AM_CFLAGS) $(LIBTAR_CFLAGS) $(LIBZ_CFLAGS)
 libbarrybackup_la_CXXFLAGS = $(AM_CXXFLAGS) $(LIBTAR_CFLAGS) $(LIBZ_CFLAGS)
 libbarrybackup_la_LIBADD = libbarry.la $(LIBTAR_LIBS) $(LIBZ_LIBS)
