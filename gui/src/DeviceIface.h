@@ -185,6 +185,7 @@ public:
 	virtual std::string GetDBName() const;
 	virtual uint8_t GetRecType() const;
 	virtual uint32_t GetUniqueId() const;
+	virtual bool EndOfFile() const { return false; } // not used
 	virtual void BuildHeader(Barry::Data &data, size_t &offset);
 	virtual void BuildFields(Barry::Data &data, size_t &offset, const Barry::IConverter *ic);
 	void SkipCurrentDB() throw();	// helper function for halding restore errors

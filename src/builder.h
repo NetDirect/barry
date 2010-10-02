@@ -55,6 +55,13 @@ public:
 	virtual uint8_t GetRecType() const = 0;
 	virtual uint32_t GetUniqueId() const = 0;
 
+	/// Sometimes a builder can have multiple databases stored
+	/// in it, so when Retrieve() returns false, check if there
+	/// is more data with this function.  This function is
+	/// not used by database-oriented functions, but by pipe-
+	/// oriented functions.
+	virtual bool EndOfFile() const = 0;
+
 	/// Called before BuildFields() in order to build the header
 	/// for this record.  Store the raw data in data, at the
 	/// offset given in offset.  When finished, update offset to
@@ -95,19 +102,28 @@ class RecordBuilder : public Builder
 {
 	StorageT *m_storage;
 	bool m_owned;
+	bool m_end_of_file;
 	RecordT m_rec;
 
 public:
 	/// Constructor that references an externally managed storage object.
 	RecordBuilder(StorageT &storage)
-		: m_storage(&storage), m_owned(false) {}
+		: m_storage(&storage)
+		, m_owned(false)
+		, m_end_of_file(false)
+	{
+	}
 
 	/// Constructor that references a locally managed storage object.
 	/// The pointer passed in will be stored, and freed when this class
 	/// is destroyed.  It is safe to call this constructor with
 	/// a 'new'ly created storage object.
 	RecordBuilder(StorageT *storage)
-		: m_storage(storage), m_owned(true) {}
+		: m_storage(storage)
+		, m_owned(true)
+		, m_end_of_file(false)
+	{
+	}
 
 	~RecordBuilder()
 	{
@@ -117,7 +133,10 @@ public:
 
 	virtual bool Retrieve()
 	{
-		return (*m_storage)(m_rec, *this);
+		bool ret = (*m_storage)(m_rec, *this);
+		if( !ret )
+			m_end_of_file = true;
+		return ret;
 	}
 
 	virtual std::string GetDBName() const
@@ -133,6 +152,11 @@ public:
 	virtual uint32_t GetUniqueId() const
 	{
 		return m_rec.GetUniqueId();
+	}
+
+	virtual bool EndOfFile() const
+	{
+		return m_end_of_file;
 	}
 
 	/// Functor member called by Controller::SaveDatabase() during
