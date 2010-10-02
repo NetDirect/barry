@@ -23,6 +23,9 @@
 #ifdef __BARRY_SYNC_MODE__
 #include <barry/barrysync.h>
 #endif
+#ifdef __BARRY_BACKUP_MODE__
+#include <barry/barrybackup.h>
+#endif
 
 #include <iomanip>
 #include <iostream>
@@ -57,6 +60,7 @@ void Usage()
 #endif
    << " Boost support\n"
    << "\n"
+   << "   -b file   Filename to save or load a Barry Backup to (tar.gz)\n"
    << "   -B bus    Specify which USB bus to search on\n"
    << "   -N dev    Specify which system device, using system specific string\n"
    << "\n"
@@ -349,7 +353,8 @@ shared_ptr<Parser> GetParser(const string &name,
 			const string &filename,
 			bool null_parser,
 			bool immediate_display,
-			bool vformat_mode)
+			bool vformat_mode,
+			bool bbackup_mode)
 {
 	bool dnow = immediate_display;
 	bool vmode = vformat_mode;
@@ -357,6 +362,18 @@ shared_ptr<Parser> GetParser(const string &name,
 	if( null_parser ) {
 		// use null parser
 		return shared_ptr<Parser>( new DataDumpParser );
+	}
+	else if( bbackup_mode ) {
+#ifdef __BARRY_BACKUP_MODE__
+		// Only one backup file per run
+		static shared_ptr<Parser> backup;
+		if( !backup.get() ) {
+			backup.reset( new Backup(filename) );
+		}
+		return backup;
+#else
+		return shared_ptr<Parser>( new DataDumpParser );
+#endif
 	}
 	// check for recognized database names
 	else if( name == Contact::GetDBName() ) {
@@ -595,6 +612,7 @@ int main(int argc, char *argv[])
 			record_state = false,
 			clear_database = false,
 			null_parser = false,
+			bbackup_mode = false,
 			sort_records = false;
 		string ldifBaseDN, ldifDnAttr;
 		string filename;
@@ -608,7 +626,7 @@ int main(int argc, char *argv[])
 
 		// process command line options
 		for(;;) {
-			int cmd = getopt(argc, argv, "a:B:c:C:d:D:e:f:hi:IlLm:MnN:p:P:r:R:Ss:tT:vVXzZ");
+			int cmd = getopt(argc, argv, "a:b:B:c:C:d:D:e:f:hi:IlLm:MnN:p:P:r:R:Ss:tT:vVXzZ");
 			if( cmd == -1 )
 				break;
 
@@ -617,6 +635,23 @@ int main(int argc, char *argv[])
 			case 'a':	// Clear Database
 				clear_database = true;
 				clearDbNames.push_back(string(optarg));
+				break;
+
+			case 'b':	// Barry backup filename (tar.gz)
+#ifdef __BARRY_BACKUP_MODE__
+				if( filename.size() == 0 ) {
+					filename = optarg;
+					bbackup_mode = true;
+				}
+				else {
+					cerr << "Do not use -f with -b\n";
+					return 1;
+				}
+#else
+				cerr << "-b option not supported - no Barry "
+					"Backup library support available\n";
+				return 1;
+#endif
 				break;
 
 			case 'B':	// busname
@@ -651,7 +686,13 @@ int main(int argc, char *argv[])
 
 			case 'f':	// filename
 #ifdef __BARRY_BOOST_MODE__
-				filename = optarg;
+				if( !bbackup_mode && filename.size() == 0 ) {
+					filename = optarg;
+				}
+				else {
+					cerr << "Do not use -f with -b\n";
+					return 1;
+				}
 #else
 				cerr << "-f option not supported - no Boost "
 					"serialization support available\n";
@@ -955,7 +996,7 @@ int main(int argc, char *argv[])
 			desktop.Open(password.c_str());
 			unsigned int id = desktop.GetDBID(dbNames[0]);
 			shared_ptr<Parser> parse = GetParser(dbNames[0],filename,
-				null_parser, true, vformat_mode);
+				null_parser, true, vformat_mode, bbackup_mode);
 
 			for( unsigned int i = 0; i < stCommands.size(); i++ ) {
 				desktop.GetRecord(id, stCommands[i].index, *parse.get());
@@ -1003,7 +1044,7 @@ int main(int argc, char *argv[])
 			for( ; b != dbNames.end(); b++ ) {
 				shared_ptr<Parser> parse = GetParser(*b,filename,
 					null_parser, !sort_records,
-					vformat_mode);
+					vformat_mode, bbackup_mode);
 				unsigned int id = desktop.GetDBID(*b);
 				desktop.LoadDatabase(id, *parse.get());
 			}

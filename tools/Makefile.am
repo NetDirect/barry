@@ -41,12 +41,18 @@ btool_LDADD = ../src/libbarry.la $(LIBUSB_LIBS) -lpthread @BOOST_LDADD@ $(LTLIBI
 if WITH_SYNC
 btool_LDADD += ../src/libbarrysync.la $(GLIB2_LIBS)
 endif
+if WITH_BACKUP
+btool_LDADD += ../src/libbarrybackup.la
+endif
 btool_CXXFLAGS = $(AM_CXXFLAGS)
 if WITH_BOOST
 btool_CXXFLAGS += -D__BARRY_BOOST_MODE__ -D_REENTRANT @BOOST_INC_PATH@
 endif
 if WITH_SYNC
 btool_CXXFLAGS += -D__BARRY_SYNC_MODE__ $(GLIB2_CFLAGS) 
+endif
+if WITH_BACKUP
+btool_CXXFLAGS += -D__BARRY_BACKUP_MODE__
 endif
 btool_LDFLAGS = @BOOST_LIB_PATH@
 
