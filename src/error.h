@@ -212,6 +212,30 @@ public:
 	UnroutableReadError(unsigned int read_size, unsigned int min_size);
 };
 
+//
+// BackupError
+//
+/// Thrown by the Backup parser class when there is a problem with the
+/// low level file operation.
+///
+class BXEXPORT BackupError : public Barry::Error
+{
+public:
+	BackupError(const std::string &str) : Error(str) {}
+};
+
+//
+// RestoreError
+//
+/// Thrown by the Restore builder class when there is a problem with the
+/// low level file operation.
+///
+class BXEXPORT RestoreError : public Barry::Error
+{
+public:
+	RestoreError(const std::string &str) : Error(str) {}
+};
+
 /// @}
 
 } // namespace Barry

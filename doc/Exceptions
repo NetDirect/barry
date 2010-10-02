@@ -16,6 +16,8 @@ The Barry library has the following exception hierarchy:
 			- Barry::BadPacket
 			- Barry::ConvertError
 			- Barry::UnroutableReadError
+			- Barry::BackupError
+			- Barry::RestoreError
 			- Barry::JDWP::Error
 			- Barry::JDWP::Timeout
 
