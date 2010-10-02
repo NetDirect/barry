@@ -107,7 +107,7 @@ void VTodoConverter::operator()(const Barry::Task &rec)
 }
 
 // Barry builder operator
-bool VTodoConverter::operator()(Barry::Task &rec, unsigned int dbId)
+bool VTodoConverter::operator()(Barry::Task &rec, Barry::Builder &)
 {
 	Trace trace("VTodoConverter::builder operator()");
 

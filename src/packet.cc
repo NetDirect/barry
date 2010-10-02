@@ -360,7 +360,7 @@ bool DBPacket::SetRecordByIndex(unsigned int dbId, unsigned int stateTableIndex,
 			      Builder &build, const IConverter *ic)
 {
 	// get new data if available
-	if( !build.Retrieve(dbId) )
+	if( !build.Retrieve() )
 		return false;
 
 	// build packet data
@@ -423,7 +423,7 @@ void DBPacket::GetRecords(unsigned int dbId)
 bool DBPacket::SetRecord(unsigned int dbId, Builder &build, const IConverter *ic)
 {
 	// get new data if available
-	if( !build.Retrieve(dbId) )
+	if( !build.Retrieve() )
 		return false;
 
 	// build packet data

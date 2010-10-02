@@ -55,7 +55,7 @@ public:
 	void operator()(const Barry::Calendar &rec);
 
 	// Barry builder operator
-	bool operator()(Barry::Calendar &rec, unsigned int dbId);
+	bool operator()(Barry::Calendar &rec, Barry::Builder &);
 
 	// Handles calling of the Barry::Controller to fetch a specific
 	// record, indicated by index (into the RecordStateTable).

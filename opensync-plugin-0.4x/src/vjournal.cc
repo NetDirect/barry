@@ -104,7 +104,7 @@ void VJournalConverter::operator()(const Barry::Memo &rec)
 }
 
 // Barry builder operator
-bool VJournalConverter::operator()(Barry::Memo &rec, unsigned int dbId)
+bool VJournalConverter::operator()(Barry::Memo &rec, Barry::Builder &)
 {
 	Trace trace("VMemoConverter::builder operator()");
 

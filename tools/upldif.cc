@@ -79,7 +79,7 @@ struct Store
 
 	// Retrieval operator -- called by Barry during the upload
 	// process to get the next object
-	bool operator()(Record &rec, unsigned int databaseId) const
+	bool operator()(Record &rec, Builder &builder) const
 	{
 		if( rec_it == records.end() )
 			return false;

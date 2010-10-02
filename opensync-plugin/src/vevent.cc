@@ -116,7 +116,7 @@ void VEventConverter::operator()(const Barry::Calendar &rec)
 }
 
 // Barry builder operator
-bool VEventConverter::operator()(Barry::Calendar &rec, unsigned int dbId)
+bool VEventConverter::operator()(Barry::Calendar &rec, Barry::Builder &)
 {
 	Trace trace("VEventConverter::builder operator()");
 

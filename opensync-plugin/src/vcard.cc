@@ -102,7 +102,7 @@ void VCardConverter::operator()(const Barry::Contact &rec)
 }
 
 // Barry builder operator
-bool VCardConverter::operator()(Barry::Contact &rec, unsigned int dbId)
+bool VCardConverter::operator()(Barry::Contact &rec, Barry::Builder &)
 {
 	Trace trace("VCardConverter::builder operator()");
 

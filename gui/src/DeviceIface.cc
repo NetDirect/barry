@@ -453,7 +453,7 @@ bool DeviceInterface::StartRestore(AppComm comm,
 	m_tar_record_loaded = false;
 
 	// get first tar record
-	Retrieve(0);
+	Retrieve();
 
 	// start the thread
 	Glib::Thread::create(sigc::mem_fun(*this, &DeviceInterface::RestoreThread), false);
@@ -491,7 +491,7 @@ bool DeviceInterface::StartRestoreAndBackup(AppComm comm,
 	m_tar_record_loaded = false;
 
 	// get first tar record
-	Retrieve(0);
+	Retrieve();
 
 	// start the thread
 	Glib::Thread::create(sigc::mem_fun(*this, &DeviceInterface::RestoreAndBackupThread), false);
@@ -548,7 +548,7 @@ void DeviceInterface::Store()
 //////////////////////////////////////////////////////////////////////////////
 // Barry::Builder overrides
 
-bool DeviceInterface::Retrieve(unsigned int dbId)
+bool DeviceInterface::Retrieve()
 {
 	if( m_end_of_tar )
 		return false;
@@ -643,7 +643,7 @@ void DeviceInterface::SkipCurrentDB() throw()
 {
 	// skip all records until next DB
 	try {
-		while( Retrieve(0) ) {
+		while( Retrieve() ) {
 			std::cerr << _("Skipping: ")
 				<< m_current_dbname << "/"
 				<< m_tar_id_text << std::endl;

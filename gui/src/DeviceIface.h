@@ -181,7 +181,7 @@ public:
 	virtual void Store();
 
 	// Barry::Builder overrides
-	virtual bool Retrieve(unsigned int dbId);
+	virtual bool Retrieve();
 	virtual std::string GetDBName() const;
 	virtual uint8_t GetRecType() const;
 	virtual uint32_t GetUniqueId() const;

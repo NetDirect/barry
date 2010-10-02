@@ -53,7 +53,7 @@ public:
 	void operator()(const Barry::Memo &rec);
 
 	// Barry builder operator
-	bool operator()(Barry::Memo &rec, unsigned int dbId);
+	bool operator()(Barry::Memo &rec, Barry::Builder &);
 
 	// Handles calling of the Barry::Controller to fetch a specific
 	// record, indicated by index (into the RecordStateTable).

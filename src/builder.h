@@ -48,7 +48,7 @@ public:
 	/// Called first in the sequence, to allow the application to
 	/// load the needed data from memory, disk, etc.  If successful,
 	/// return true.  If at the end of the series, return false.
-	virtual bool Retrieve(unsigned int databaseId) = 0;
+	virtual bool Retrieve() = 0;
 
 	/// Called to retrive the unique ID for this record.
 	virtual std::string GetDBName() const = 0;
@@ -115,9 +115,9 @@ public:
 			delete m_storage;
 	}
 
-	virtual bool Retrieve(unsigned int databaseId)
+	virtual bool Retrieve()
 	{
-		return (*m_storage)(m_rec, databaseId);
+		return (*m_storage)(m_rec, *this);
 	}
 
 	virtual std::string GetDBName() const
@@ -163,7 +163,7 @@ class RecordFetch
 
 public:
 	RecordFetch(const RecordT &rec) : m_rec(rec), m_done(false) {}
-	bool operator()(RecordT &rec, unsigned int dbId) const
+	bool operator()(RecordT &rec, Builder &) const
 	{
 		if( m_done )
 			return false;
