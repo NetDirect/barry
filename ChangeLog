@@ -1,5 +1,18 @@
 Release: version 0.17 - 2010/01/??
 ------------------------------------------------------------------------------
+2010/10/02
+	- lib: added start of libbarrybackup, and copied tarfile support
+		from gui
+	- lib: added DBName support to parsers and builders
+	- lib: added BackupError and RestoreError exceptions
+	- lib: removed the dbId from Builder::Retrieve()
+	- tools: changed parser/builder auto_ptr to shared_ptr
+	- added libbarrybackup*.pc file to install target
+	- lib: added EndOfFile() to Builder
+	- lib: added Backup parser and Restore builder classes
+		These classes are based on the backup and restore logic of
+		the GUI's DeviceIface.cc code, but made general.
+	- tools: added tar backup option to btool (!)
 2010/10/01
 	- lib: cleaned up missing BXEXPORT / BXLOCAL flags for exceptions
 		http://gcc.gnu.org/wiki/Visibility
