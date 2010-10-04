@@ -1,5 +1,13 @@
 Release: version 0.17 - 2010/01/??
 ------------------------------------------------------------------------------
+2010/10/04
+	- added gettext.h convenience header to support --disable-nls
+		Toby Gray discovered that when --disable-nls is used or
+		on systems that do not support <libintl.h> well, it
+		is recommended to use the gettext.h header as specified
+		in the gettext documentation:
+		http://www.gnu.org/software/gettext/manual/gettext.html#lib_002fgettext_002eh
+		This commit adds gettext.h to both tools/ and the gui/
 2010/10/02
 	- lib: added start of libbarrybackup, and copied tarfile support
 		from gui

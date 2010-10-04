@@ -45,7 +45,8 @@ noinst_HEADERS= \
 	Thread.h \
 	tarfile.h \
 	util.h \
-	i18n.h
+	i18n.h \
+	gettext.h
 
 EXTRA_DIST = barry-gui.glade
 

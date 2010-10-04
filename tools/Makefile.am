@@ -12,6 +12,7 @@ DEFS = -DLOCALEDIR=\"$(localedir)\" @DEFS@
 
 noinst_HEADERS = \
 	i18n.h \
+	gettext.h \
 	platform.h
 
 bin_PROGRAMS = \

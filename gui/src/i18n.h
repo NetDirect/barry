@@ -25,7 +25,7 @@
 
 #include <config.h>
 #include <locale.h>
-#include <libintl.h>
+#include "gettext.h"
 
 #define _(String) gettext (String)
 #define N_(String) String
