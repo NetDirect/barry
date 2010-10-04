@@ -143,6 +143,7 @@ include_barry_HEADERS = barry.h barrysync.h barrybackup.h \
 	semaphore.h \
 	backup.h \
 	restore.h \
+	pipe.h \
 	tzwrapper.h
 
 noinst_HEADERS = cbarry.h \
@@ -202,6 +203,7 @@ libbarry_la_SOURCES = dll.h \
 	r_timezone.h r_timezone.cc \
 	packet.h packet.cc \
 	controller.h controller.cc \
+	pipe.h pipe.cc \
 	m_mode_base.h m_mode_base.cc \
 	m_desktop.h m_desktop.cc \
 	m_raw_channel.h m_raw_channel.cc \
