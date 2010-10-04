@@ -10,6 +10,9 @@ debian/tmp/usr/lib/libbarryjdwp.so
 debian/tmp/usr/lib/libbarrysync.a
 debian/tmp/usr/lib/libbarrysync.la
 debian/tmp/usr/lib/libbarrysync.so
+debian/tmp/usr/lib/libbarrybackup.a
+debian/tmp/usr/lib/libbarrybackup.la
+debian/tmp/usr/lib/libbarrybackup.so
 debian/tmp/usr/include/barry/*
 debian/tmp/usr/lib/pkgconfig/*
 
