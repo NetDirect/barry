@@ -24,6 +24,7 @@
 
 #include "dll.h"
 #include "data.h"
+#include <stdint.h>
 #include <string>
 
 namespace Barry {
