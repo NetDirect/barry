@@ -45,6 +45,14 @@ struct BXEXPORT ProbeResult
 	// can cause them to get into a state where they drop
 	// packets.
 	bool m_needClearHalt;
+	// Specifieds if it's necessary to call usb_set_altinterface()
+	// before attempting to use the end points for this device.
+	// 
+	// This can help to re-synchronize the state between the USB
+	// host and the device. However it can also cause usb-storage
+	// URBs to be lost on some device, so it's only used as a
+	// last resort.
+	bool m_needSetAltInterface;
 	uint8_t m_zeroSocketSequence;
 	std::string m_description;
 
@@ -54,7 +62,8 @@ struct BXEXPORT ProbeResult
 
 	ProbeResult()
 		: m_dev(0), m_interface(0), m_pin(0)
-		, m_needClearHalt(false), m_zeroSocketSequence(0)
+		, m_needClearHalt(false), m_needSetAltInterface(false)
+		, m_zeroSocketSequence(0)
 		{}
 	void DumpAll(std::ostream &os) const;
 	bool HasIpModem() const { return m_epModem.IsComplete(); }
@@ -90,6 +99,7 @@ protected:
 	void ProbeMatching(int vendor, int product,
 		const char *busname, const char *devname);
 	void ProbeDevice(Usb::DeviceIDType devid);
+	void ProbeDeviceEndpoints(Usb::Device &dev, Usb::EndpointDiscovery &ed, ProbeResult &result);
 	bool ProbePair(Usb::Device &dev, const Usb::EndpointPair &ep,
 		uint32_t &pin, std::string &desc, uint8_t &zeroSocketSequence,
 		bool &needClearHalt);

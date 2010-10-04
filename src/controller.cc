@@ -101,6 +101,10 @@ void Controller::SetupUsb(const ProbeResult &device)
 
 	m_iface = new Usb::Interface(m_dev, device.m_interface);
 
+	if( device.m_needSetAltInterface ) {
+		m_dev.SetAltInterface(device.m_interface);
+	}
+
 	if( device.m_needClearHalt ) {
 		m_dev.ClearHalt(device.m_ep.read);
 		m_dev.ClearHalt(device.m_ep.write);

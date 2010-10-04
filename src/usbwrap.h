@@ -139,6 +139,7 @@ public:
 	// Combo functions
 
 	bool GetConfiguration(unsigned char &cfg);
+	bool SetAltInterface(int iface);
 };
 
 class BXEXPORT Interface

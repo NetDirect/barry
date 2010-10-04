@@ -234,6 +234,48 @@ void Probe::ProbeDevice(Usb::DeviceIDType devid)
 	// open interface
 	Interface iface(dev, InterfaceNumber);
 
+	// Try the initial probing of endpoints
+	ProbeDeviceEndpoints(dev, ed, result);
+
+	if( !result.m_ep.IsComplete() ) {
+		// Probing of end-points failed, so try reprobing
+		// after calling usb_set_altinterface().
+		// 
+		// Calling usb_set_altinterface() should be harmless
+		// and can help the host and device to synchronize the
+		// USB state, especially on FreeBSD and Mac OS X.
+		// However it can cause usb-storage URBs to be lost
+		// on some devices, so is only used if necessary.
+		dout("Probe: probing endpoints failed, retrying after setting alternate interface");
+		dev.SetAltInterface(InterfaceNumber);
+		result.m_needSetAltInterface = true;
+		ProbeDeviceEndpoints(dev, ed, result);
+	}
+
+	// add to list
+	if( result.m_ep.IsComplete() ) {
+		// before adding to list, try to load the device's
+		// friendly name from the configfile... but don't
+		// fail if we can't do it
+		try {
+			ConfigFile cfg(result.m_pin);
+			result.m_cfgDeviceName = cfg.GetDeviceName();
+		}
+		catch( Barry::ConfigFileError & ) {
+			// ignore...
+		}
+
+		m_results.push_back(result);
+		ddout("Using ReadEndpoint: " << (unsigned int)result.m_ep.read);
+		ddout("      WriteEndpoint: " << (unsigned int)result.m_ep.write);
+	}
+	else {
+		ddout("Unable to discover endpoint pair for one device.");
+	}
+}
+
+void Probe::ProbeDeviceEndpoints(Device &dev, EndpointDiscovery &ed, ProbeResult &result)
+{
 	if( m_epp_override ) {
 		// user has given us endpoints to try... so try them
 		uint32_t pin;
@@ -277,7 +319,7 @@ void Probe::ProbeDevice(Usb::DeviceIDType devid)
 			}
 			else {
 				dout("Probe: Skipping non-bulk endpoint pair (offset: "
-					<< i-1 << ") ");
+				     << i-1 << ") ");
 			}
 		}
 
@@ -289,28 +331,7 @@ void Probe::ProbeDevice(Usb::DeviceIDType devid)
 				result.m_epModem = ep;
 			}
 		}
-	}
-
-	// add to list
-	if( result.m_ep.IsComplete() ) {
-		// before adding to list, try to load the device's
-		// friendly name from the configfile... but don't
-		// fail if we can't do it
-		try {
-			ConfigFile cfg(result.m_pin);
-			result.m_cfgDeviceName = cfg.GetDeviceName();
-		}
-		catch( Barry::ConfigFileError & ) {
-			// ignore...
-		}
-
-		m_results.push_back(result);
-		ddout("Using ReadEndpoint: " << (unsigned int)result.m_ep.read);
-		ddout("      WriteEndpoint: " << (unsigned int)result.m_ep.write);
-	}
-	else {
-		ddout("Unable to discover endpoint pair for one device.");
-	}
+	}	
 }
 
 bool Probe::ProbePair(Usb::Device &dev,

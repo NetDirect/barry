@@ -338,6 +338,22 @@ bool Device::GetConfiguration(unsigned char &cfg)
 	return result >= 0;
 }
 
+//
+// SetAltInterface
+//
+/// Uses the usb_set_altinterface() function to set the currently
+/// selected USB alternate setting of the current interface.
+/// The iface parameter passed in should be a value specified
+/// in the bAlternateSetting descriptor field.
+/// If unsuccessful, returns false.
+///
+bool Device::SetAltInterface(int iface)
+{
+	int result = usb_set_altinterface(m_handle, iface);
+	m_lasterror = result;
+	return result >= 0;
+}
+
 
 
 ///////////////////////////////////////////////////////////////////////////////
