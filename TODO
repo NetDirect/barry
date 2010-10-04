@@ -120,14 +120,6 @@ Mail from Brian Edginton on the topic:
 http://sourceforge.net/mailarchive/message.php?msg_id=200706291619.05854.edge%40edginton.net
 
 
-Fix GUI configure script to run a check for libtar
---------------------------------------------------
-Currently, the autoconf scripts only take an argument on the command line
-for the location of libtar, and assumes its location otherwise.
-There should be an actual test for this, that tries linking against
-libtar, and stops the configure script if not available.
-
-
 An automated test suite
 -----------------------
 Testing Barry will be a challenge, since an actual device is required
