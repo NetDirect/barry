@@ -100,7 +100,15 @@ void *SocketRoutingQueue::SimpleReadThread(void *userptr)
 	// read from USB and write to stdout until finished
 	q->m_seen_usb_error = false;
 	while( q->m_continue_reading ) {
-		q->DoRead(1000);	// timeout in milliseconds
+		try {
+			q->DoRead(1000);	// timeout in milliseconds
+		}
+		catch (std::runtime_error const &e) {
+			eout("SimpleReadThread received uncaught exception: " <<  typeid(e).name() << " what: " << e.what());
+		}
+		catch (...) {
+			eout("SimpleReadThread recevied uncaught exception of unknown type");
+		}
 	}
 	return 0;
 }
