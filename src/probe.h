@@ -47,7 +47,7 @@ struct BXEXPORT ProbeResult
 	bool m_needClearHalt;
 	// Specifieds if it's necessary to call usb_set_altinterface()
 	// before attempting to use the end points for this device.
-	// 
+	//
 	// This can help to re-synchronize the state between the USB
 	// host and the device. However it can also cause usb-storage
 	// URBs to be lost on some device, so it's only used as a

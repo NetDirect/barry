@@ -240,7 +240,7 @@ void Probe::ProbeDevice(Usb::DeviceIDType devid)
 	if( !result.m_ep.IsComplete() ) {
 		// Probing of end-points failed, so try reprobing
 		// after calling usb_set_altinterface().
-		// 
+		//
 		// Calling usb_set_altinterface() should be harmless
 		// and can help the host and device to synchronize the
 		// USB state, especially on FreeBSD and Mac OS X.
@@ -331,7 +331,7 @@ void Probe::ProbeDeviceEndpoints(Device &dev, EndpointDiscovery &ed, ProbeResult
 				result.m_epModem = ep;
 			}
 		}
-	}	
+	}
 }
 
 bool Probe::ProbePair(Usb::Device &dev,
