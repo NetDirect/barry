@@ -49,6 +49,13 @@ public:
 	/// Called first in the sequence, to allow the application to
 	/// load the needed data from memory, disk, etc.  If successful,
 	/// return true.  If at the end of the series, return false.
+	/// Note that this function, if it returns true, may be called
+	/// more than once, and it is the builder's responsibility
+	/// to not retrieve the next item until BuildDone() is called.
+	/// If Retrieve() returns false to mark the end-of-series,
+	/// it does not have to return false next time, since a new
+	/// series may begin.  It is the caller's responsibility to
+	/// handle this.
 	virtual bool Retrieve() = 0;
 
 	/// Called to retrive the unique ID for this record.
@@ -75,6 +82,11 @@ public:
 	/// packet (possibly with Data::ReleaseBuffer()).
 	virtual void BuildFields(Data &data, size_t &offset,
 		const IConverter *ic) = 0;
+
+	/// Called last to signify to the application that the library
+	/// is finished with this record.  The next Retrieve() call
+	/// can load the next item after this call.
+	virtual void BuildDone() = 0;
 };
 
 
@@ -103,6 +115,7 @@ class RecordBuilder : public Builder
 {
 	StorageT *m_storage;
 	bool m_owned;
+	bool m_record_loaded;
 	bool m_end_of_file;
 	RecordT m_rec;
 
@@ -111,6 +124,7 @@ public:
 	RecordBuilder(StorageT &storage)
 		: m_storage(&storage)
 		, m_owned(false)
+		, m_record_loaded(false)
 		, m_end_of_file(false)
 	{
 	}
@@ -122,6 +136,7 @@ public:
 	RecordBuilder(StorageT *storage)
 		: m_storage(storage)
 		, m_owned(true)
+		, m_record_loaded(false)
 		, m_end_of_file(false)
 	{
 	}
@@ -134,10 +149,15 @@ public:
 
 	virtual bool Retrieve()
 	{
-		bool ret = (*m_storage)(m_rec, *this);
-		if( !ret )
+		if( m_end_of_file )
+			return false;
+		if( m_record_loaded )
+			return true;
+
+		m_record_loaded = (*m_storage)(m_rec, *this);
+		if( !m_record_loaded )
 			m_end_of_file = true;
-		return ret;
+		return m_record_loaded;
 	}
 
 	virtual std::string GetDBName() const
@@ -170,6 +190,11 @@ public:
 	virtual void BuildFields(Data &data, size_t &offset, const IConverter *ic)
 	{
 		m_rec.BuildFields(data, offset, ic);
+	}
+
+	virtual void BuildDone()
+	{
+		m_record_loaded = false;
 	}
 };
 

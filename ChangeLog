@@ -45,6 +45,8 @@ Release: version 0.17 - 2010/01/??
 		in the gettext documentation:
 		http://www.gnu.org/software/gettext/manual/gettext.html#lib_002fgettext_002eh
 		This commit adds gettext.h to both tools/ and the gui/
+	- lib: added Builder::BuildDone() to make the multiple-call
+		possibility of Retrieve() more explicit
 2010/10/02
 	- lib: added start of libbarrybackup, and copied tarfile support
 		from gui

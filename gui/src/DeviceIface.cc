@@ -631,10 +631,12 @@ void DeviceInterface::BuildFields(Barry::Data &data, size_t &offset,
 	memcpy(buf + offset, m_record_data.data(), m_record_data.size());
 	offset += m_record_data.size();
 	data.ReleaseBuffer(packet_size);
+}
 
+void DeviceInterface::BuildDone()
+{
 	// clear loaded flag, as it has now been used
 	m_tar_record_loaded = false;
-
 	m_AppComm.m_progress->emit();
 }
 

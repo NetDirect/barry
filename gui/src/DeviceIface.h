@@ -188,6 +188,7 @@ public:
 	virtual bool EndOfFile() const { return false; } // not used
 	virtual void BuildHeader(Barry::Data &data, size_t &offset);
 	virtual void BuildFields(Barry::Data &data, size_t &offset, const Barry::IConverter *ic);
+	virtual void BuildDone();
 	void SkipCurrentDB() throw();	// helper function for halding restore errors
 };
 

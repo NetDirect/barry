@@ -255,7 +255,10 @@ void Restore::BuildFields(Barry::Data &data, size_t &offset,
 	memcpy(buf + offset, m_record_data.data(), m_record_data.size());
 	offset += m_record_data.size();
 	data.ReleaseBuffer(packet_size);
+}
 
+void Restore::BuildDone()
+{
 	// clear loaded flag, as it has now been used
 	m_tar_record_loaded = false;
 }

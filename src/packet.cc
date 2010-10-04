@@ -382,6 +382,7 @@ bool DBPacket::SetRecordByIndex(unsigned int dbId, unsigned int stateTableIndex,
 	packet.u.db.u.command.u.index_upload.index = htobs(stateTableIndex);
 
 	m_send.ReleaseBuffer(total_size);
+	build.BuildDone();
 
 	m_last_dbop = SB_DBOP_SET_RECORD_BY_INDEX;
 	return true;
@@ -447,6 +448,7 @@ bool DBPacket::SetRecord(unsigned int dbId, Builder &build, const IConverter *ic
 	packet.u.db.u.command.u.tag_upload.unknown2 = 1;	// unknown observed value
 
 	m_send.ReleaseBuffer(total_size);
+	build.BuildDone();
 
 	m_last_dbop = SB_DBOP_SET_RECORD;
 	return true;
