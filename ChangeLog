@@ -1,5 +1,8 @@
 Release: version 0.17 - 2010/01/??
 ------------------------------------------------------------------------------
+2010/10/05
+	- doc: added note about --with-libintl-prefix=/opt/local/ on Mac OSX
+		Thanks to Toby Gray for reporting this.
 2010/10/04
 	- merged from Toby Gray:
 		- missing header in builder.h

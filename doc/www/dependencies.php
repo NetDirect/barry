@@ -28,6 +28,17 @@
 </ul>
 </p>
 
+<p>Mac OSX systems:
+<ul>
+	<li><b>gettext</b> - the default gettext autoconf scripts do not
+		always do a very good job of detecting gettext and libintl
+		libraries on the Mac.  If it cannot find libintl, it will
+		automatically disable NLS support.  If this is important
+		to you, add --with-libintl-prefix=/opt/local/ to the
+		configure command line when building from source.</li>
+</ul>
+</p>
+
 <? createSubHeader("Master List of Dependencies"); ?>
 
 <p>The following list contains all software that Barry depends on, and
