@@ -45,7 +45,7 @@ struct BXEXPORT ProbeResult
 	// can cause them to get into a state where they drop
 	// packets.
 	bool m_needClearHalt;
-	// Specifieds if it's necessary to call usb_set_altinterface()
+	// Specifies if it's necessary to call usb_set_altinterface()
 	// before attempting to use the end points for this device.
 	//
 	// This can help to re-synchronize the state between the USB
