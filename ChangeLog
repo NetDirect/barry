@@ -1,5 +1,12 @@
 Release: version 0.17 - 2010/01/??
 ------------------------------------------------------------------------------
+2010/10/07
+	- made bcharge more flexible... Dual mode is not the default anymore,
+		since newer devices seem to present themselves in a sane
+		manner via USB.  Instead -o and -d only happen if specified.
+		This patch also adds a new option, -g, which will set dual
+		mode only if Interface Class 255 (database) is not found.
+		Also updated the udev rules to use -d and -g as appropriate.
 2010/10/05
 	- doc: added note about --with-libintl-prefix=/opt/local/ on Mac OSX
 		Thanks to Toby Gray for reporting this.

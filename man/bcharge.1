@@ -2,7 +2,7 @@
 .\" First parameter, NAME, should be all caps
 .\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
 .\" other parameters are allowed: see man(7), man(1)
-.TH BCHARGE 1 "August 17, 2007"
+.TH BCHARGE 1 "October 7, 2010"
 .\" Please adjust this date whenever revising the manpage.
 .\"
 .\" Some roff macros, for reference:
@@ -30,13 +30,14 @@ itself, and then request 500mA instead of the usual 100mA.  This allows
 proper charging on Linux.
 .PP
 It is safe to run this command multiple times, as it only changes devices
-that are not already set to 500mA.
+that are not already set to 500mA, or are not in the desired mode.
 
 .SH OPTIONS
 .TP
 .B \-o
 For Blackberry Pearl devices, using this switch causes bcharge to set the
-Product ID to 0001.  Otherwise, the default is to use Product ID 0004.
+Product ID to 0001.
+
 When the Pearl is in 0004 mode, two USB interfaces are presented:
 one for database access and one for mass storage.  In 0001 mode, only
 the database access is available.
@@ -46,11 +47,17 @@ which only gives mass storage functionality.  You must run bcharge
 for the Pearl before using btool.
 .TP
 .B \-d
-Again, this switch is for the Blackberry Pearl to switch it back to
-0004 dual mode after having run bcharge with the -o option.  Since
-a Pearl in mode 0001 is practically indistinguishable from a classic
-Blackberry, the -d switch is needed to tell bcharge that you really
-are working with a Pearl.
+This switch is for the Blackberry Pearl to switch it back to
+0004 dual mode after having run bcharge with the -o option.  Alternately,
+newer devices (such as Storm with product ID of 8007) will be switched
+to 0004.  Since a Pearl in mode 0001 is practically indistinguishable
+from a classic Blackberry, the -d switch is needed to tell bcharge
+that you really are working with a Pearl.
+.TP
+.B \-g
+Guess whether Dual mode is needed.  If USB Interface Class 255 is not
+found on the device (the class used for database access), then dual
+mode is set.  Otherwise, the device is left as-is.
 .TP
 .B \-h
 Help summary.

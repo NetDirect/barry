@@ -21,6 +21,8 @@
 #
 # Older devices that only use 0x0001 (no USB Mass Storage)
 #
+
+# Classic device, no Dual mode, only autosuspend adjustment
 SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ACTION=="add", \
 	ATTR{idVendor}=="0fca", ATTR{idProduct}=="0001", \
 	RUN="/usr/sbin/bcharge -p %p"
@@ -32,23 +34,29 @@ SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ACTION=="add", \
 #     0x0006 usually get transformed into 0x0004
 #
 
-# 0x0006 turns into 0x0004, so no need to fiddle with autosuspend here
+# Pearl 0x0006 classic, force a change into 0x0004
+# No need to fiddle with autosuspend here, since a reset is
+# nearly guaranteed
 SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ACTION=="add", \
 	ATTR{idVendor}=="0fca", ATTR{idProduct}=="0006", \
-	RUN="/usr/sbin/bcharge"
+	RUN="/usr/sbin/bcharge -d"
 
+# Storm 9530, ask bcharge to guess best setting
 SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ACTION=="add", \
 	ATTR{idVendor}=="0fca", ATTR{idProduct}=="8007", \
-	RUN="/usr/sbin/bcharge -p %p"
+	RUN="/usr/sbin/bcharge -g -p %p"
 
+# Pearl 8120 and Storm 9550, ask bcharge to guess best setting
 SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ACTION=="add", \
 	ATTR{idVendor}=="0fca", ATTR{idProduct}=="8004", \
-	RUN="/usr/sbin/bcharge -p %p"
+	RUN="/usr/sbin/bcharge -g -p %p"
 
+# Pearl Flip... bcharge guesses
 SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ACTION=="add", \
 	ATTR{idVendor}=="0fca", ATTR{idProduct}=="8001", \
-	RUN="/usr/sbin/bcharge -p %p"
+	RUN="/usr/sbin/bcharge -g -p %p"
 
+# Pearl Dual mode already, so just adjust autosuspend
 SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ACTION=="add", \
 	ATTR{idVendor}=="0fca", ATTR{idProduct}=="0004", \
 	RUN="/usr/sbin/bcharge -p %p"

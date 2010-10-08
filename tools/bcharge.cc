@@ -42,8 +42,14 @@
 #include <barry/common.h>
 #include "i18n.h"
 
-bool old_style_pearl = false;
-bool force_dual = false;
+enum ModeType {
+	NO_CHANGE,
+	PEARL_CLASSIC_MODE_0001,	// force classic mode
+	PEARL_DUAL_MODE_0004,		// force dual mode
+	CONDITIONAL_DUAL_MODE,		// set dual mode if no class 255
+					// interface is found (database iface)
+};
+
 std::string udev_devpath;
 std::string sysfs_path = "/sys";
 
@@ -53,8 +59,10 @@ void Usage()
 	"bcharge - Adjust Blackberry charging modes\n"
 	"          Copyright 2006-2010, Net Direct Inc. (http://www.netdirect.ca/)\n"
 	"\n"
-	"   -d          Dual mode (mode 0004) (default)\n"
+	"   -d          Set to dual mode (0004)\n"
 	"   -o          Set a Pearl to old Blackberry mode (0001)\n"
+	"   -g          Set dual mode only if database interface class 255\n"
+	"               is not found\n"
 	"\n"
 	"   -h          This help message\n"
 	"   -p devpath  The devpath argument from udev.  If specified, will attempt\n"
@@ -84,23 +92,23 @@ void charge(struct usb_dev_handle *handle)
 	control(handle, 0x40, 0xa2, 0, 1, buffer, 0, 100);
 }
 
-void pearl_mode(struct usb_dev_handle *handle)
+void pearl_classic_mode(struct usb_dev_handle *handle)
 {
 	char buffer[2];
-	if( old_style_pearl ) {
-		// use this for "old style" interface: product ID 0001
-		control(handle, 0xc0, 0xa9, 0, 1, buffer, 2, 100);
-	}
-	else {
-		// Product ID 0004
-		control(handle, 0xc0, 0xa9, 1, 1, buffer, 2, 100);
-	}
+	// use this for "old style" interface: product ID 0001
+	control(handle, 0xc0, 0xa9, 0, 1, buffer, 2, 100);
 }
 
-int find_mass_storage_interface(struct usb_dev_handle *handle)
+void pearl_dual_mode(struct usb_dev_handle *handle)
 {
-	// search the configuration descriptor for a Mass Storage
-	// interface (class 8)
+	char buffer[2];
+	// Product ID 0004
+	control(handle, 0xc0, 0xa9, 1, 1, buffer, 2, 100);
+}
+
+int find_interface(struct usb_dev_handle *handle, int iface_class)
+{
+	// search the configuration descriptor for the given class ID
 	struct usb_device *dev = usb_device(handle);
 	struct usb_config_descriptor *cfg = dev ? dev->config : 0;
 
@@ -110,18 +118,30 @@ int find_mass_storage_interface(struct usb_dev_handle *handle)
 			struct usb_interface *iface = &cfg->interface[i];
 			for( int a = 0; iface->altsetting && a < iface->num_altsetting; a++ ) {
 				struct usb_interface_descriptor *id = &iface->altsetting[a];
-				if( id->bInterfaceClass == USB_CLASS_MASS_STORAGE )
+				if( id->bInterfaceClass == iface_class )
 					return id->bInterfaceNumber;
 			}
 		}
 	}
 
-	// if we get here, then we didn't find the Mass Storage interface
-	// ... this should never happen, but if it does, assume
-	// the device is s showing product ID 0006, and the Mass Storage
-	// interface is interface #0
-	printf("Can't find Mass Storage interface, assuming 0.\n");
-	return 0;
+	return -1;
+}
+
+int find_mass_storage_interface(struct usb_dev_handle *handle)
+{
+	int iface = find_interface(handle, USB_CLASS_MASS_STORAGE);
+
+	if( iface == -1 ) {
+		// if we get here, then we didn't find the Mass Storage
+		// interface ... this should never happen, but if it does,
+		// assume the device is showing product ID 0006, and the
+		// Mass Storage interface is interface #0
+		printf("Can't find Mass Storage interface, assuming 0.\n");
+		return 0;
+	}
+	else {
+		return iface;
+	}
 }
 
 void driver_conflict(struct usb_dev_handle *handle)
@@ -129,7 +149,7 @@ void driver_conflict(struct usb_dev_handle *handle)
 	// this is called if the first usb_set_configuration()
 	// failed... this most probably means that usb_storage
 	// has already claimed the Mass Storage interface,
-	// in which case we politely tell it to away.
+	// in which case we politely tell it to go away.
 
 #if LIBUSB_HAS_DETACH_KERNEL_DRIVER_NP
 	printf("Detecting possible kernel driver conflict, trying to resolve...\n");
@@ -144,7 +164,7 @@ void driver_conflict(struct usb_dev_handle *handle)
 }
 
 // returns true if device mode was modified, false otherwise
-bool process(struct usb_device *dev, bool is_pearl)
+bool process(struct usb_device *dev, ModeType mode)
 {
 	bool apply = false;
 	printf("Found device #%s...", dev->filename);
@@ -167,25 +187,53 @@ bool process(struct usb_device *dev, bool is_pearl)
 	else {
 		printf("already at 500mA");
 	}
+	printf("\n");
 
 	// adjust Pearl mode
-	if( is_pearl || force_dual ) {
-		int desired_mode = old_style_pearl
-			? PRODUCT_RIM_BLACKBERRY : PRODUCT_RIM_PEARL_DUAL;
+	switch( mode )
+	{
+	case NO_CHANGE:
+		printf("...no Pearl mode adjustment");
+		break;
 
-		if( desired_mode != dev->descriptor.idProduct ) {
-			printf("...adjusting Pearl mode to %s",
-				old_style_pearl ? "single" : "dual");
-			pearl_mode(handle);
+	case PEARL_CLASSIC_MODE_0001:
+		if( dev->descriptor.idProduct != PRODUCT_RIM_BLACKBERRY ) {
+			printf("...adjusting Pearl mode to single");
+			pearl_classic_mode(handle);
 			apply = true;
 		}
 		else {
-			printf("...already in desired Pearl mode");
+			printf("...already in classic/single mode");
 		}
+		break;
+
+	case PEARL_DUAL_MODE_0004:
+		if( dev->descriptor.idProduct != PRODUCT_RIM_PEARL_DUAL ) {
+			printf("...adjusting Pearl mode to dual");
+			pearl_dual_mode(handle);
+			apply = true;
+		}
+		else {
+			printf("...already in dual mode");
+		}
+		break;
+
+	case CONDITIONAL_DUAL_MODE:
+		if( find_interface(handle, 255) == -1 ) {
+			printf("...no database iface found, setting dual mode");
+			pearl_dual_mode(handle);
+			apply = true;
+		}
+		else {
+			printf("...found database iface, no change");
+		}
+		break;
+
+	default:
+		printf("Bug: default case");
+		break;
 	}
-	else {
-		printf("...no Pearl adjustment");
-	}
+	printf("\n");
 
 	// apply changes
 	if( apply ) {
@@ -194,7 +242,7 @@ bool process(struct usb_device *dev, bool is_pearl)
 
 		// the Blackberry Pearl doesn't reset itself after the above,
 		// so do it ourselves
-		if( is_pearl || force_dual ) {
+		if( mode == PEARL_DUAL_MODE_0004 ) {
 			//
 			// It has been observed that the 8830 behaves both like
 			// a Pearl device (in that it has mass storage +
@@ -213,11 +261,12 @@ bool process(struct usb_device *dev, bool is_pearl)
 			}
 		}
 
-		printf("...done\n");
+		printf("...done");
 	}
 	else {
-		printf("...no change\n");
+		printf("...no change");
 	}
+	printf("\n");
 
 	// cleanup
 	usb_close(handle);
@@ -325,32 +374,35 @@ void resume()
 int main(int argc, char *argv[])
 {
 	struct usb_bus *busses;
+	ModeType mode = NO_CHANGE;
 
 	INIT_I18N(PACKAGE);
 
 	//
 	// allow -o command line switch to choose which mode to use for
 	// Blackberry Pearls:
-	//	Dual(default):  0004	-d
+	//	Dual:           0004	-d
 	//	With switch:    0001	-o
 	//
 
 	// process command line options
 	for(;;) {
-		int cmd = getopt(argc, argv, "dop:s:h");
+		int cmd = getopt(argc, argv, "dogp:s:h");
 		if( cmd == -1 )
 			break;
 
 		switch( cmd )
 		{
-		case 'd':	// Dual (default)
-			force_dual = true;
-			old_style_pearl = false;
+		case 'd':	// Dual
+			mode = PEARL_DUAL_MODE_0004;
 			break;
 
-		case 'o':	// Old style pearl
-			force_dual = false;
-			old_style_pearl = true;
+		case 'o':	// Classic style pearl
+			mode = PEARL_CLASSIC_MODE_0001;
+			break;
+
+		case 'g':	// Guess whether dual is needed
+			mode = CONDITIONAL_DUAL_MODE;
 			break;
 
 		case 'p':	// udev devpath
@@ -384,22 +436,8 @@ int main(int argc, char *argv[])
 		for (dev = bus->devices; dev; dev = dev->next) {
 			// Is this a blackberry?
 			if( dev->descriptor.idVendor == VENDOR_RIM ) {
-				switch(dev->descriptor.idProduct)
-				{
-				case PRODUCT_RIM_BLACKBERRY:
-					if( !process(dev, false) )
-						resume();
-					break;
-
-				case PRODUCT_RIM_PEARL_DUAL:
-				case PRODUCT_RIM_PEARL:
-				case PRODUCT_RIM_PEARL_8120:
-				case PRODUCT_RIM_PEARL_FLIP:
-				case PRODUCT_RIM_STORM:
-					if( !process(dev, true) )
-						resume();
-					break;
-				}
+				if( !process(dev, mode) )
+					resume();
 			}
 		}
 	}
