@@ -7,6 +7,9 @@ Release: version 0.17 - 2010/01/??
 		This patch also adds a new option, -g, which will set dual
 		mode only if Interface Class 255 (database) is not found.
 		Also updated the udev rules to use -d and -g as appropriate.
+	- reverted commit c7685942140b123bf110e755ce11a97c3c6372f7 (the
+		UnrouteableReadError patch) since it was discovered that
+		usb bulk reads of 0 bytes are possible and valid
 2010/10/05
 	- doc: added note about --with-libintl-prefix=/opt/local/ on Mac OSX
 		Thanks to Toby Gray for reporting this.
