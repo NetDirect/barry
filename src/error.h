@@ -199,20 +199,6 @@ public:
 };
 
 //
-// UnroutableReadError
-//
-/// Thrown by SocketRoutingQueue when a read is too small to determine
-/// the socket, so is unroutable.
-///
-class BXEXPORT UnroutableReadError : public Barry::Error
-{
-	BXLOCAL static std::string GetMsg(unsigned int read_size,
-					  unsigned int min_size);
-public:
-	UnroutableReadError(unsigned int read_size, unsigned int min_size);
-};
-
-//
 // BackupError
 //
 /// Thrown by the Backup parser class when there is a problem with the

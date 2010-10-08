@@ -242,14 +242,11 @@ void RawChannel::HandleReceivedData(Data &data)
 
 void RawChannel::HandleError(Barry::Error &error)
 {
-	std::ostringstream errorOss;
-	errorOss << "RawChannel: Socket error received, what: " << error.what();
-
 	if( m_callback ) {
-		m_callback->ChannelError(errorOss.str().c_str());
+		m_callback->ChannelError("RawChannel: Socket error received");
 	}
 	else {
-		SetPendingError(errorOss.str().c_str());
+		SetPendingError("RawChannel: Socket error received");
 	}
 	m_semaphore->Signal();
 }

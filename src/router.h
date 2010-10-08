@@ -132,11 +132,6 @@ protected:
 	// created in the SpinoffSimpleReadThread() member below.
 	static void *SimpleReadThread(void *userptr);
 
-	// Notifies all registered handlers of an error.
-	// Intended to be called by error handling code within threads which
-	// aren't the main thread.
-	void NotifyHandlersOfError(Barry::Error &error);
-
 public:
 	SocketRoutingQueue(int prealloc_buffer_count = 4);
 	~SocketRoutingQueue();

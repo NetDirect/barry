@@ -89,25 +89,5 @@ std::string ErrnoError::GetMsg(const std::string &msg, int err)
 	return oss.str();
 }
 
-
-//////////////////////////////////////////////////////////////////////////////
-// UnroutableReadError exception
-
-UnroutableReadError::UnroutableReadError(unsigned int read_size,
-					 unsigned int min_size)
-	: Barry::Error(GetMsg(read_size, min_size))
-{
-}
-
-std::string UnroutableReadError::GetMsg(unsigned int read_size,
-					unsigned int min_size)
-{
-	std::ostringstream oss;
-	oss << "Unroutable read due to size. Data read size: " << read_size
-	    << ". Minimum size: " << min_size;
-	return oss.str();
-}
-
-
 } // namespace Barry
 
