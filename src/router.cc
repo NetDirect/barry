@@ -36,7 +36,7 @@ namespace Barry {
 void SocketRoutingQueue::SocketDataHandler::Error(Barry::Error &error)
 {
 	// Just log the error
-	dout("SocketDataHandler: Error: " << error.what());
+	eout("SocketDataHandler: Error: " << error.what());
 	(void) error;
 }
 
