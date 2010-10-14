@@ -24,7 +24,13 @@
 #define __SB_USBWRAP_H__
 
 #include "dll.h"
+
+// On Windows systems, usb.h includes <windows.h> which defines min/max,
+// which causes trouble for other headers
 #include <usb.h>
+#undef min
+#undef max
+
 #include <vector>
 #include <map>
 #include "error.h"
