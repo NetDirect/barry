@@ -119,6 +119,7 @@ public:
 	int GetLastError() const { return m_lasterror; } //< not thread safe...
 		//< use the error code stored in the exceptions to track
 		//< errors in threaded usage
+	int GetDefaultTimeout() const { return m_timeout; }
 
 
 	/////////////////////////////
