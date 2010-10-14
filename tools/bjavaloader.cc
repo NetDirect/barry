@@ -32,6 +32,7 @@
 #include <getopt.h>
 #include <fstream>
 #include <string.h>
+#include <time.h>
 #include "i18n.h"
 
 // supported javaloader commands
