@@ -25,7 +25,7 @@
 
 // All Windows specific detail
 #if defined( WIN32 )
-typedef void(*)(int) sighandler_t;
+typedef void (*sighandler_t)(int);
 
 // All FreeBSD / BSD specific detail
 #elif defined( __FreeBSD__ )
