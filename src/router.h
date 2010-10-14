@@ -30,8 +30,7 @@
 #include <pthread.h>
 #include "dataqueue.h"
 #include "error.h"
-
-namespace Usb { class Device; }
+#include "usbwrap.h"
 
 namespace Barry {
 
@@ -115,6 +114,8 @@ private:
 	DataQueue m_default;
 	SocketQueueMap m_socketQueues;
 
+	int m_timeout;
+
 	// thread state
 	pthread_t m_usb_read_thread;
 	volatile bool m_continue_reading;// set to true when the thread is created,
@@ -133,7 +134,8 @@ protected:
 	static void *SimpleReadThread(void *userptr);
 
 public:
-	SocketRoutingQueue(int prealloc_buffer_count = 4);
+	SocketRoutingQueue(int prealloc_buffer_count = 4,
+		int default_read_timeout = USBWRAP_DEFAULT_TIMEOUT);
 	~SocketRoutingQueue();
 
 	//
@@ -170,6 +172,9 @@ public:
 	// Returns false (or null pointer) on timeout and no data.
 	// With the return version of the function, there is no
 	// copying performed.
+	//
+	// Timeout is in milliseconds.  Default timeout set by constructor
+	// is used if set to -1.
 	bool DefaultRead(Data &receive, int timeout = -1);
 	DataHandle DefaultRead(int timeout = -1);
 
@@ -196,6 +201,9 @@ public:
 	// Returns false (or null pointer) on timeout and no data.
 	// With the return version of the function, there is no
 	// copying performed.
+	//
+	// Timeout is in milliseconds.  Default timeout set by constructor
+	// is used if set to -1.
 	bool SocketRead(SocketId socket, Data &receive, int timeout = -1);
 	DataHandle SocketRead(SocketId socket, int timeout = -1);
 
@@ -209,7 +217,7 @@ public:
 	// called... it just doesn't do anything if there is no usb
 	// device to work with.
 	//
-	// Timeout is in milliseconds.
+	// Timeout is in milliseconds.  Default is default USB timeout.
 	void DoRead(int timeout = -1);
 
 	// Utility function to make it easier for the user to create the

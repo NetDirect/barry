@@ -48,12 +48,14 @@ SocketRoutingQueue::SocketDataHandler::~SocketDataHandler()
 ///////////////////////////////////////////////////////////////////////////////
 // SocketRoutingQueue constructors
 
-SocketRoutingQueue::SocketRoutingQueue(int prealloc_buffer_count)
+SocketRoutingQueue::SocketRoutingQueue(int prealloc_buffer_count,
+					int default_read_timeout)
 	: m_dev(0)
 	, m_writeEp(0)
 	, m_readEp(0)
 	, m_interest(false)
 	, m_seen_usb_error(false)
+	, m_timeout(default_read_timeout)
 	, m_continue_reading(false)
 {
 	pthread_mutex_init(&m_mutex, NULL);
@@ -205,7 +207,8 @@ DataHandle SocketRoutingQueue::DefaultRead(int timeout)
 	}
 
 	// m_default handles its own locking
-	Data *buf = m_default.wait_pop(timeout);
+	// Be careful with the queue timeout, since its -1 means "forever"
+	Data *buf = m_default.wait_pop(timeout == -1 ? m_timeout : timeout);
 	return DataHandle(*this, buf);
 }
 
@@ -329,7 +332,8 @@ DataHandle SocketRoutingQueue::SocketRead(SocketId socket, int timeout)
 	}
 
 	// get data from DataQueue
-	Data *buf = dq->wait_pop(timeout);
+	// Be careful with the queue timeout, since its -1 means "forever"
+	Data *buf = dq->wait_pop(timeout == -1 ? m_timeout : timeout);
 
 	// specifically delete our copy of shared pointer, in a locked
 	// environment
@@ -362,6 +366,8 @@ bool SocketRoutingQueue::IsAvailable(SocketId socket) const
 /// device to work with.
 ///
 /// Timeout is in milliseconds.
+//  This timeout is for the USB subsystem, so no special handling
+//  for it is needed... just use usbwrap's default timeout.
 void SocketRoutingQueue::DoRead(int timeout)
 {
 	class ReadWaitSignal

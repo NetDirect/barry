@@ -1,5 +1,15 @@
 Release: version 0.17 - 2010/01/??
 ------------------------------------------------------------------------------
+2010/10/14
+	- lib: fixed timeout mismatch behaviour between USB and Router
+		The default timeout (-1) for usbwrap is about 30 seconds,
+		while the default timeout (-1) for the DataQueues used
+		by the Router is forever.  The router now accepts a default
+		read timeout of its own, and defaults to the same 30
+		seconds as usbwrap.
+2010/10/13
+	- a number of build tweaks for compiling command line tools
+		on Windows
 2010/10/07
 	- made bcharge more flexible... Dual mode is not the default anymore,
 		since newer devices seem to present themselves in a sane
