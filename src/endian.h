@@ -35,17 +35,16 @@
 // http://www.netstumbler.org/showpost.php?s=79764fd1526e4653d5cb4432225da6ee&p=190494&postcount=29
 
 //#warning "byteswap.h is an unportable GNU extension!  Don't use!"
-
-static inline unsigned short bswap_16(unsigned short x) {
+static inline unsigned short bbswap_16(unsigned short x) {
   return (x>>8) | (x<<8);
 }
 
-static inline unsigned int bswap_32(unsigned int x) {
-  return (bswap_16(x&0xffff)<<16) | (bswap_16(x>>16));
+static inline unsigned int bbswap_32(unsigned int x) {
+  return (bbswap_16(x&0xffff)<<16) | (bbswap_16(x>>16));
 }
 
-static inline uint64_t bswap_64(uint64_t x) {
-  return (((uint64_t)bswap_32(x&0xffffffffull))<<32) | (bswap_32(x>>32));
+static inline uint64_t bbswap_64(uint64_t x) {
+  return (((uint64_t)bbswap_32(x&0xffffffffull))<<32) | (bbswap_32(x>>32));
 }
 
 #ifndef WORDS_BIGENDIAN
@@ -59,22 +58,22 @@ static inline uint64_t bswap_64(uint64_t x) {
 #define htobll(x) x			// for uint64_t
 
 // For when Blackberry needs big endian (often in JavaLoader protocol)
-#define be_btohs(x) bswap_16(x)		// for uint16_t
-#define be_btohl(x) bswap_32(x)		// for uint32_t
-#define be_btohll(x) bswap_64(x)	// for uint64_t
-#define be_htobs(x) bswap_16(x)		// for uint16_t
-#define be_htobl(x) bswap_32(x)		// for uint32_t
-#define be_htobll(x) bswap_64(x)	// for uint64_t
+#define be_btohs(x) bbswap_16(x)	// for uint16_t
+#define be_btohl(x) bbswap_32(x)	// for uint32_t
+#define be_btohll(x) bbswap_64(x)	// for uint64_t
+#define be_htobs(x) bbswap_16(x)	// for uint16_t
+#define be_htobl(x) bbswap_32(x)	// for uint32_t
+#define be_htobll(x) bbswap_64(x)	// for uint64_t
 
 #else
 
 // For when Blackberry needs little endian (most of the time)
-#define btohs(x) bswap_16(x)		// for uint16_t
-#define btohl(x) bswap_32(x)		// for uint32_t
-#define btohll(x) bswap_64(x)		// for uint64_t
-#define htobs(x) bswap_16(x)		// for uint16_t
-#define htobl(x) bswap_32(x)		// for uint32_t
-#define htobll(x) bswap_64(x)		// for uint64_t
+#define btohs(x) bbswap_16(x)		// for uint16_t
+#define btohl(x) bbswap_32(x)		// for uint32_t
+#define btohll(x) bbswap_64(x)		// for uint64_t
+#define htobs(x) bbswap_16(x)		// for uint16_t
+#define htobl(x) bbswap_32(x)		// for uint32_t
+#define htobll(x) bbswap_64(x)		// for uint64_t
 
 // For when Blackberry needs big endian (often in JavaLoader protocol)
 #define be_btohs(x) x			// for uint16_t
