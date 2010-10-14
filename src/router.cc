@@ -195,6 +195,15 @@ bool SocketRoutingQueue::DefaultRead(Data &receive, int timeout)
 ///
 DataHandle SocketRoutingQueue::DefaultRead(int timeout)
 {
+	if( m_seen_usb_error && timeout == -1 ) {
+		// If an error has been seen and not cleared then no
+		// more data will be read into the queue by
+		// DoRead(). Forcing the timeout to zero allows any
+		// data already in the queue to be read, but prevents
+		// waiting for data which will never arrive.
+		timeout = 0;
+	}
+
 	// m_default handles its own locking
 	Data *buf = m_default.wait_pop(timeout);
 	return DataHandle(*this, buf);
