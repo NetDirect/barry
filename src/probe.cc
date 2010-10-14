@@ -32,6 +32,7 @@
 #include "record-internal.h"
 #include "strnlen.h"
 #include "configfile.h"
+#include "platform.h"
 #include <iomanip>
 #include <errno.h>
 #include <string.h>
@@ -225,7 +226,7 @@ void Probe::ProbeDevice(Usb::DeviceIDType devid)
 	if( !dev.GetConfiguration(cfg) )
 		throw Usb::Error(dev.GetLastError(),
 			"Probe: GetConfiguration failed");
-	if( cfg != BLACKBERRY_CONFIGURATION ) {
+	if( cfg != BLACKBERRY_CONFIGURATION || MUST_SET_CONFIGURATION ) {
 		if( !dev.SetConfiguration(BLACKBERRY_CONFIGURATION) )
 			throw Usb::Error(dev.GetLastError(),
 				"Probe: SetConfiguration failed");

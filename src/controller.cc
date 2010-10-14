@@ -26,6 +26,7 @@
 #include "protostructs.h"
 #include "data.h"
 #include "endian.h"
+#include "platform.h"
 #include <string.h>
 
 #define __DEBUG_MODE__
@@ -93,7 +94,7 @@ void Controller::SetupUsb(const ProbeResult &device)
 		throw Usb::Error(m_dev.GetLastError(),
 			"Controller: GetConfiguration failed");
 
-	if( cfg != BLACKBERRY_CONFIGURATION ) {
+	if( cfg != BLACKBERRY_CONFIGURATION || MUST_SET_CONFIGURATION ) {
 		if( !m_dev.SetConfiguration(BLACKBERRY_CONFIGURATION) )
 			throw Usb::Error(m_dev.GetLastError(),
 				"Controller: SetConfiguration failed");

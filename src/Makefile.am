@@ -155,6 +155,7 @@ noinst_HEADERS = cbarry.h \
 	debug.h \
 	endian.h \
 	strnlen.h \
+	platform.h \
 	dp_parser.h \
 	j_message.h \
 	j_jdwp.h \
