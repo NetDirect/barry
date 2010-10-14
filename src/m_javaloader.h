@@ -127,18 +127,18 @@ class BXEXPORT JLEventlogEntry
 {
 public:
 	typedef enum {
-		ALWAYS_LOG,
-		SEVERE_ERROR,
-		ERROR,
-		WARNING,
-		INFORMATION,
-		DEBUG_INFO
+		JES_ALWAYS_LOG,
+		JES_SEVERE_ERROR,
+		JES_ERROR,
+		JES_WARNING,
+		JES_INFORMATION,
+		JES_DEBUG_INFO
 	} Severity_t;
 
 	typedef enum {
-		NUMBER = 1,
-		STRING,
-		EXCEPTION
+		JEVT_NUMBER = 1,
+		JEVT_STRING,
+		JEVT_EXCEPTION
 	} ViewerType_t;
 
 	std::string	Guid;
