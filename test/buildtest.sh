@@ -128,7 +128,7 @@ make install
 make distclean
 
 cd gui
-export CXXFLAGS="-Wall -Werror -pedantic -O0 -g"
+export CXXFLAGS="-Wall -Werror -ansi -pedantic -O0 -g"
 ./configure --prefix="$BASEPATH/build/rootdir"
 make $MAKEOPTS
 make install
