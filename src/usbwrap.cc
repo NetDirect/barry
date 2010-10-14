@@ -29,6 +29,7 @@
 #include <sstream>
 #include <errno.h>
 #include <string.h>
+#include <limits.h>
 
 #ifndef __DEBUG_MODE__
 #define __DEBUG_MODE__
