@@ -3,7 +3,7 @@ EXTRA_DIST = Makefile.plain
 #DEFAULT_INCLUDES =
 INCLUDES = $(LIBUSB_CFLAGS)
 #AM_CXXFLAGS = -ansi -Wall -fno-strict-aliasing -g
-AM_CXXFLAGS = -ansi -Wall -g
+AM_CXXFLAGS = -Wall -g
 
 # To use gettext
 datadir = @datadir@

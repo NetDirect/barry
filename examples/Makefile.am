@@ -1,7 +1,7 @@
 
 #DEFAULT_INCLUDES =
 INCLUDES = $(LIBUSB_CFLAGS)
-AM_CXXFLAGS = -ansi -Wall -g
+AM_CXXFLAGS = -Wall -g
 
 noinst_PROGRAMS = addcontact addcalendar addmemo dbdump usbclient
 
