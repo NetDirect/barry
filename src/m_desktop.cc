@@ -64,21 +64,20 @@ void Desktop::LoadCommandTable()
 	*((uint16_t*) rawCommand) = htobs(m_socket->GetSocket());
 
 	Data command(rawCommand, sizeof(rawCommand));
-	Data response;
 
 	try {
-		m_socket->Packet(command, response);
+		m_socket->Packet(command, m_response);
 
-		MAKE_PACKET(rpack, response);
+		MAKE_PACKET(rpack, m_response);
 		while( rpack->command != SB_COMMAND_DB_DONE ) {
-			m_socket->NextRecord(response);
+			m_socket->NextRecord(m_response);
 
-			rpack = (const Protocol::Packet *) response.GetData();
+			rpack = (const Protocol::Packet *) m_response.GetData();
 			if( rpack->command == SB_COMMAND_DB_DATA && btohs(rpack->size) > 10 ) {
 				// second packet is generally large, and contains
 				// the command table
 				m_commandTable.Clear();
-				m_commandTable.Parse(response, 6);
+				m_commandTable.Parse(m_response, 6);
 			}
 		}
 
@@ -87,15 +86,14 @@ void Desktop::LoadCommandTable()
 	}
 	catch( Usb::Error & ) {
 		eout("Desktop: error getting command table");
-		eeout(command, response);
+		eeout(command, m_response);
 		throw;
 	}
 }
 
 void Desktop::LoadDBDB()
 {
-	Data command, response;
-	DBPacket packet(*this, command, response);
+	DBPacket packet(*this, m_command, m_response);
 	packet.GetDBDB();
 
 	m_socket->Packet(packet);
@@ -103,11 +101,11 @@ void Desktop::LoadDBDB()
 	while( packet.Command() != SB_COMMAND_DB_DONE ) {
 		if( packet.Command() == SB_COMMAND_DB_DATA ) {
 			m_dbdb.Clear();
-			m_dbdb.Parse(response);
+			m_dbdb.Parse(m_response);
 		}
 
 		// advance!
-		m_socket->NextRecord(response);
+		m_socket->NextRecord(m_response);
 	}
 }
 
@@ -191,16 +189,15 @@ void Desktop::GetRecordStateTable(unsigned int dbId, RecordStateTable &result)
 	// start fresh
 	result.Clear();
 
-	Data command, response;
-	DBPacket packet(*this, command, response);
+	DBPacket packet(*this, m_command, m_response);
 	packet.GetRecordStateTable(dbId);
 
 	m_socket->Packet(packet);
-	result.Parse(response);
+	result.Parse(m_response);
 
 	// flush the command sequence
 	while( packet.Command() != SB_COMMAND_DB_DONE )
-		m_socket->NextRecord(response);
+		m_socket->NextRecord(m_response);
 }
 
 //
@@ -215,8 +212,7 @@ void Desktop::AddRecord(unsigned int dbId, Builder &build)
 {
 	dout("Database ID: " << dbId);
 
-	Data command, response;
-	DBPacket packet(*this, command, response);
+	DBPacket packet(*this, m_command, m_response);
 
 	if( packet.SetRecord(dbId, build, m_ic) ) {
 
@@ -256,24 +252,23 @@ void Desktop::GetRecord(unsigned int dbId,
 	std::string dbName;
 	m_dbdb.GetDBName(dbId, dbName);
 
-	Data command, response;
-	DBPacket packet(*this, command, response);
+	DBPacket packet(*this, m_command, m_response);
 	packet.GetRecordByIndex(dbId, stateTableIndex);
 
 	m_socket->Packet(packet);
 
 	// perform copious packet checks
-	if( response.GetSize() < SB_PACKET_RESPONSE_HEADER_SIZE ) {
-		eeout(command, response);
+	if( m_response.GetSize() < SB_PACKET_RESPONSE_HEADER_SIZE ) {
+		eeout(m_command, m_response);
 
 		std::ostringstream oss;
 		oss << "Desktop: invalid response packet size of "
-		    << std::dec << response.GetSize();
+		    << std::dec << m_response.GetSize();
 		eout(oss.str());
 		throw Error(oss.str());
 	}
 	if( packet.Command() != SB_COMMAND_DB_DATA ) {
-		eeout(command, response);
+		eeout(m_command, m_response);
 
 		std::ostringstream oss;
 		oss << "Desktop: unexpected command of 0x"
@@ -289,7 +284,7 @@ void Desktop::GetRecord(unsigned int dbId,
 
 	// flush the command sequence
 	while( packet.Command() != SB_COMMAND_DB_DONE )
-		m_socket->NextRecord(response);
+		m_socket->NextRecord(m_response);
 }
 
 //
@@ -303,8 +298,7 @@ void Desktop::SetRecord(unsigned int dbId, unsigned int stateTableIndex,
 {
 	dout("Database ID: " << dbId << " Index: " << stateTableIndex);
 
-	Data command, response;
-	DBPacket packet(*this, command, response);
+	DBPacket packet(*this, m_command, m_response);
 
 	// loop until builder object has no more data
 	if( !packet.SetRecordByIndex(dbId, stateTableIndex, build, m_ic) ) {
@@ -339,15 +333,14 @@ void Desktop::ClearDirty(unsigned int dbId, unsigned int stateTableIndex)
 {
 	dout("Database ID: " << dbId);
 
-	Data command, response;
-	DBPacket packet(*this, command, response);
+	DBPacket packet(*this, m_command, m_response);
 	packet.SetRecordFlags(dbId, stateTableIndex, 0);
 
 	m_socket->Packet(packet);
 
 	// flush the command sequence
 	while( packet.Command() != SB_COMMAND_DB_DONE )
-		m_socket->NextRecord(response);
+		m_socket->NextRecord(m_response);
 }
 
 //
@@ -359,15 +352,14 @@ void Desktop::DeleteRecord(unsigned int dbId, unsigned int stateTableIndex)
 {
 	dout("Database ID: " << dbId);
 
-	Data command, response;
-	DBPacket packet(*this, command, response);
+	DBPacket packet(*this, m_command, m_response);
 	packet.DeleteRecordByIndex(dbId, stateTableIndex);
 
 	m_socket->Packet(packet);
 
 	// flush the command sequence
 	while( packet.Command() != SB_COMMAND_DB_DONE )
-		m_socket->NextRecord(response);
+		m_socket->NextRecord(m_response);
 }
 
 //
@@ -400,8 +392,7 @@ void Desktop::LoadDatabase(unsigned int dbId, Parser &parser)
 	std::string dbName;
 	m_dbdb.GetDBName(dbId, dbName);
 
-	Data command, response;
-	DBPacket packet(*this, command, response);
+	DBPacket packet(*this, m_command, m_response);
 	packet.GetRecords(dbId);
 
 	m_socket->Packet(packet);
@@ -414,7 +405,7 @@ void Desktop::LoadDatabase(unsigned int dbId, Parser &parser)
 		}
 
 		// advance!
-		m_socket->NextRecord(response);
+		m_socket->NextRecord(m_response);
 	}
 }
 
@@ -422,8 +413,7 @@ void Desktop::ClearDatabase(unsigned int dbId)
 {
 	dout("Database ID: " << dbId);
 
-	Data command, response;
-	DBPacket packet(*this, command, response);
+	DBPacket packet(*this, m_command, m_response);
 	packet.ClearDatabase(dbId);
 
 	// wait up to a minute here for old, slower devices with lots of data
@@ -438,7 +428,7 @@ void Desktop::ClearDatabase(unsigned int dbId)
 
 	// check response to clear command was successful
 	if( packet.Command() != SB_COMMAND_DB_DONE ) {
-		eeout(command, response);
+		eeout(m_command, m_response);
 		throw Error("Desktop: error clearing database, bad response");
 	}
 }
@@ -456,8 +446,7 @@ void Desktop::SaveDatabase(unsigned int dbId, Builder &builder)
 	//                technique.
 	ClearDatabase(dbId);
 
-	Data command, response;
-	DBPacket packet(*this, command, response);
+	DBPacket packet(*this, m_command, m_response);
 
 	// loop until builder object has no more data
 	bool first = true;

@@ -2,6 +2,7 @@ Release: version 0.17 - 2010/01/??
 ------------------------------------------------------------------------------
 2010/10/18
 	- lib: removed needless data copy in Socket::Packet()
+	- lib: moved command/response buffers into Desktop class itself
 2010/10/14
 	- lib: fixed timeout mismatch behaviour between USB and Router
 		The default timeout (-1) for usbwrap is about 30 seconds,
