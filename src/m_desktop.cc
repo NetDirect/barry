@@ -33,6 +33,8 @@
 
 #include "debug.h"
 
+#include "parser.h"	// FIXME - remove
+
 namespace Barry { namespace Mode {
 
 
@@ -387,25 +389,22 @@ void Desktop::DeleteRecord(unsigned int dbId, unsigned int stateTableIndex)
 ///
 void Desktop::LoadDatabase(unsigned int dbId, Parser &parser)
 {
-	dout("Database ID: " << dbId);
-
-	std::string dbName;
-	m_dbdb.GetDBName(dbId, dbName);
-
-	DBPacket packet(*this, m_command, m_response);
-	packet.GetRecords(dbId);
-
-	m_socket->Packet(packet);
-
-	while( packet.Command() != SB_COMMAND_DB_DONE ) {
-		if( packet.Command() == SB_COMMAND_DB_DATA ) {
-			// this size is the old header size, since using
-			// old command above
-			packet.Parse(parser, dbName, m_ic);
-		}
+	DBData data;
+	DBLoader loader(*this, data);
+	bool loading = loader.StartDBLoad(dbId);
+	while( loading ) {
+		// manual parser call
+		// FIXME - parser should use DBData
+		parser.Clear();
+		parser.SetIds(data.GetDBName(),
+			data.GetRecType(), data.GetUniqueId());
+		size_t offset = data.GetOffset();
+		parser.ParseHeader(data.GetData(), offset);
+		parser.ParseFields(data.GetData(), offset, m_ic);
+		parser.Store();
 
 		// advance!
-		m_socket->NextRecord(m_response);
+		loading = loader.GetNextRecord();
 	}
 }
 
@@ -471,6 +470,82 @@ void Desktop::SaveDatabase(unsigned int dbId, Builder &builder)
 			throw Error(oss.str());
 		}
 	}
+}
+
+
+
+//////////////////////////////////////////////////////////////////////////////
+// DBLoader class
+
+
+struct DBLoaderData
+{
+	DBPacket m_packet;
+	DBLoaderData(Desktop &desktop, Data &command, Data &response)
+		: m_packet(desktop, command, response)
+	{
+	}
+};
+
+DBLoader::DBLoader(Desktop &desktop, DBData &data)
+	: m_loader(new DBLoaderData(desktop, desktop.m_command, data.UseData()))
+	, m_desktop(desktop)
+	, m_data(data)
+	, m_loading(false)
+{
+}
+
+DBLoader::~DBLoader()
+{
+	delete m_loader;
+}
+
+bool DBLoader::StartDBLoad(unsigned int dbId)
+{
+	dout("Database ID: " << dbId);
+
+	m_loading = true;
+	m_desktop.m_dbdb.GetDBName(dbId, m_dbName);
+
+	m_loader->m_packet.GetRecords(dbId);
+	m_desktop.m_socket->Packet(m_loader->m_packet);
+
+	while( m_loader->m_packet.Command() != SB_COMMAND_DB_DONE ) {
+		if( m_loader->m_packet.Command() == SB_COMMAND_DB_DATA ) {
+			// this size is the old header size, since using
+			// old command above
+			m_loader->m_packet.ParseMeta(m_data);
+			m_data.SetDBName(m_dbName);
+			return true;
+		}
+
+		// advance!
+		m_desktop.m_socket->NextRecord(m_data.UseData());
+	}
+
+	m_loading = false;
+	return false;
+}
+
+bool DBLoader::GetNextRecord()
+{
+	if( !m_loading )
+		return false;
+
+	do {
+		// advance!
+		m_desktop.m_socket->NextRecord(m_data.UseData());
+
+		if( m_loader->m_packet.Command() == SB_COMMAND_DB_DATA ) {
+			// this size is the old header size, since using
+			// old command above
+			m_loader->m_packet.ParseMeta(m_data);
+			return true;
+		}
+	} while( m_loader->m_packet.Command() != SB_COMMAND_DB_DONE );
+
+	m_loading = false;
+	return false;
 }
 
 }} // namespace Barry::Mode

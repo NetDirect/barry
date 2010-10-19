@@ -37,6 +37,8 @@ class IConverter;
 
 namespace Mode {
 
+class DBLoader;
+
 //
 // Desktop class
 //
@@ -54,6 +56,8 @@ namespace Mode {
 ///
 class BXEXPORT Desktop : public Mode
 {
+	friend class DBLoader;
+
 public:
 	enum CommandType { Unknown, DatabaseAccess };
 
@@ -118,6 +122,43 @@ public:
 
 	template <class RecordT> void AddRecordByType(uint32_t recordId, const RecordT &rec);
 
+};
+
+// used to hold internal-only state
+struct DBLoaderData;
+
+//
+// DBLoader
+//
+/// Database Loader operation class.  Encapsulates the load / save
+/// logic of Desktop::LoadDatabase() and someday Desktop::SaveDatabase()
+/// in such a way that the loading of individual records is
+/// controllable by the user, instead of using the parser callback mechanism.
+///
+/// This class can be reused to load / save multiple databases, but
+/// do not call Desktop members while a load operation is in progress.
+///
+class BXEXPORT DBLoader
+{
+	DBLoaderData *m_loader;
+	Desktop &m_desktop;
+	DBData &m_data;
+	bool m_loading;
+	std::string m_dbName;
+
+public:
+	DBLoader(Desktop &desktop, DBData &data);
+	~DBLoader();
+
+	/// Do not call Desktop members if this is true.
+	bool IsBusy() const { return m_loading; }
+
+	// caller-controllable load/save operations... if
+	// these functions return true, then new data has
+	// just been loaded into the data object passed to
+	// the constructor
+	bool StartDBLoad(unsigned int dbId);
+	bool GetNextRecord();
 };
 
 }} // namespace Barry::Mode

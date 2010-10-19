@@ -3,6 +3,13 @@ Release: version 0.17 - 2010/01/??
 2010/10/18
 	- lib: removed needless data copy in Socket::Packet()
 	- lib: moved command/response buffers into Desktop class itself
+	- lib: added DBData and DBLoader... these classes make it possible
+		for the programmer to control the database record loading
+		process, instead of using the parser callback mechanism...
+		this is the beginning stage of adding generic data flow
+		channels to Barry, to hopefully make it easy to pass
+		data from backup files to devices, from device to device,
+		from backup to backup, and more
 2010/10/14
 	- lib: fixed timeout mismatch behaviour between USB and Router
 		The default timeout (-1) for usbwrap is about 30 seconds,

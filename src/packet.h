@@ -27,6 +27,7 @@
 #include <string>
 #include <stdint.h>
 #include "protocol.h"
+#include "data.h"
 
 namespace Barry { class Data; }
 
@@ -164,6 +165,7 @@ public:
 
 	bool Parse(Parser &parser, const std::string &dbname,
 		const IConverter *ic); // switches based on last m_send command
+	bool ParseMeta(DBData &data);
 
 	// response parsers
 };

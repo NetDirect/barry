@@ -25,6 +25,8 @@
 #include "dll.h"
 #include <iosfwd>
 #include <vector>
+#include <string>
+#include <stdint.h>
 
 namespace Barry {
 
@@ -119,6 +121,89 @@ BXEXPORT std::ostream& operator<< (std::ostream &os, const Diff &diff);
 // utility functions
 BXEXPORT bool LoadDataArray(const std::string &filename, std::vector<Data> &array);
 BXEXPORT bool ReadDataArray(std::istream &is, std::vector<Data> &array);
+
+
+//
+// DBData
+//
+/// Database record data class.  The purpose of this class is to contain
+/// the raw data that flows between low level activity such as device
+/// read/writes, backup read/writes, and record parsing.
+///
+/// This class contains the low level record data block, unparsed, as well
+/// as the surrounding meta data, such as the database name it belongs
+/// to, the Unique ID, the Rec Type, and format version/type based on what
+/// commands were used to extract the data from the device. (When using
+/// newer commands, the format of the records, potentially including the
+/// individual field type codes, are different.)
+///
+/// Possible bi-directional data flow in all of Barry:
+/// Note that this class, DBData, represents the data+meta stage.
+///
+///	data+meta <-> device
+///	data+meta <-> backup file
+///	data+meta <-> record object
+///	record object <-> boost serialization
+///	contact record object <-> ldif
+///
+/// Possible uni-directional data flow in all of Barry:
+///
+///	record object -> text dump
+///
+class BXEXPORT DBData
+{
+public:
+	enum RecordFormatVersion
+	{
+		REC_VERSION_1,
+		REC_VERSION_2
+	};
+
+private:
+	// record meta data
+	RecordFormatVersion m_version;
+	std::string m_dbName;
+	uint8_t m_recType;
+	uint32_t m_uniqueId;
+	size_t m_offset;
+
+	// the raw data block
+	Data m_data;
+
+public:
+
+	// access meta data
+	RecordFormatVersion GetVersion() const { return m_version; }
+	const std::string& GetDBName() const { return m_dbName; }
+	uint8_t GetRecType() const { return m_recType; }
+	uint32_t GetUniqueId() const { return m_uniqueId; }
+	size_t GetOffset() const { return m_offset; }
+
+	const Data& GetData() const { return m_data; }
+	Data& UseData() { return m_data; }
+
+	// operations
+	void SetVersion(RecordFormatVersion ver)
+	{
+		m_version = ver;
+	}
+
+	void SetDBName(const std::string &dbName)
+	{
+		m_dbName = dbName;
+	}
+
+	void SetIds(uint8_t recType, uint32_t uniqueId)
+	{
+		m_recType = recType;
+		m_uniqueId = uniqueId;
+	}
+
+	void SetOffset(size_t offset)
+	{
+		m_offset = offset;
+	}
+};
 
 } // namespace Barry
 

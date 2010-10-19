@@ -520,6 +520,37 @@ bool DBPacket::Parse(Parser &parser, const std::string &dbname,
 	}
 }
 
+//
+// ParseMeta
+//
+/// Fills DBData's meta data based on its data block, and the last dbop.
+///
+bool DBPacket::ParseMeta(DBData &data)
+{
+	size_t offset = 0;
+	MAKE_PACKET(rpack, data.GetData());
+
+	switch( m_last_dbop )
+	{
+	case SB_DBOP_OLD_GET_RECORDS:
+	case SB_DBOP_GET_RECORD_BY_INDEX:
+		data.SetVersion(DBData::REC_VERSION_1);
+
+		offset = SB_PACKET_RESPONSE_HEADER_SIZE + DBR_OLD_TAGGED_RECORD_HEADER_SIZE;
+		Protocol::CheckSize(data.GetData(), offset);
+		data.SetOffset(offset);
+
+		// FIXME - this may need adjustment for email records... they
+		// don't seem to have uniqueID's
+		data.SetIds(rpack->u.db.u.response.u.tagged.rectype,
+			btohl(rpack->u.db.u.response.u.tagged.uniqueId));
+		return true;
+
+	default:	// unknown command
+		return false;
+	}
+}
+
 
 
 //////////////////////////////////////////////////////////////////////////////
