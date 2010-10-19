@@ -945,12 +945,15 @@ void Socket::Packet(Data &send, Data &receive, int timeout)
 		throw std::logic_error("Socket: unknown send data in Packet()");
 	}
 
-	Data inFrag;
+	// assume the common case of no fragmentation,
+	// and use the receive buffer for input... allocate a frag buffer
+	// later if necessary
+	Data *inputBuf = &receive;
 	receive.Zap();
 
 	if( send.GetSize() <= MAX_PACKET_SIZE ) {
 		// send non-fragmented
-		Send(send, inFrag, timeout);
+		Send(send, *inputBuf, timeout);
 	}
 	else {
 		// send fragmented
@@ -975,21 +978,21 @@ void Socket::Packet(Data &send, Data &receive, int timeout)
 			if (spack->command != SB_COMMAND_DB_FRAGMENTED)
 				HideSequencePacket(true);
 
-			Send(outFrag, inFrag, timeout);
+			Send(outFrag, *inputBuf, timeout);
 
 			// only process sequence handshakes... once we
 			// get to the last fragment, we fall through to normal
 			// processing below
 			if (spack->command != SB_COMMAND_DB_FRAGMENTED) {
-				MAKE_PACKET(rpack, inFrag);
+				MAKE_PACKET(rpack, *inputBuf);
 
-				if( offset && inFrag.GetSize() > 0 ) {
-					Protocol::CheckSize(inFrag, SB_PACKET_HEADER_SIZE);
+				if( offset && inputBuf->GetSize() > 0 ) {
+					Protocol::CheckSize(*inputBuf, SB_PACKET_HEADER_SIZE);
 
 					switch( rpack->command )
 					{
 					case SB_COMMAND_SEQUENCE_HANDSHAKE:
-						CheckSequence(inFrag);
+						CheckSequence(*inputBuf);
 						break;
 
 					default: {
@@ -1009,40 +1012,46 @@ void Socket::Packet(Data &send, Data &receive, int timeout)
 		HideSequencePacket(true);
 	}
 
+	std::auto_ptr<Data> inFrag;
 	bool done = false, frag = false;
 	int blankCount = 0;
 	while( !done ) {
-		MAKE_PACKET(rpack, inFrag);
+		MAKE_PACKET(rpack, *inputBuf);
 
 		// check the packet's validity
-		if( inFrag.GetSize() > 0 ) {
+		if( inputBuf->GetSize() > 0 ) {
 			blankCount = 0;
 
-			Protocol::CheckSize(inFrag, SB_PACKET_HEADER_SIZE);
+			Protocol::CheckSize(*inputBuf, SB_PACKET_HEADER_SIZE);
 
 			switch( rpack->command )
 			{
 			case SB_COMMAND_SEQUENCE_HANDSHAKE:
-				CheckSequence(inFrag);
+				CheckSequence(*inputBuf);
 				break;
 
 			case SB_COMMAND_DB_DATA:
 				if( frag ) {
-					SocketZero::AppendFragment(receive, inFrag);
+					SocketZero::AppendFragment(receive, *inputBuf);
 				}
 				else {
-					receive = inFrag;
+					// no copy needed, already in receive,
+					// since inputBuf starts out that way
 				}
 				done = true;
 				break;
 
 			case SB_COMMAND_DB_FRAGMENTED:
-				SocketZero::AppendFragment(receive, inFrag);
+				// only copy if frag is true, since the
+				// first time through, receive == inputBuf
+				if( frag ) {
+					SocketZero::AppendFragment(receive, *inputBuf);
+				}
 				frag = true;
 				break;
 
 			case SB_COMMAND_DB_DONE:
-				receive = inFrag;
+				// no copy needed, already in receive
 				done = true;
 				break;
 
@@ -1066,8 +1075,13 @@ void Socket::Packet(Data &send, Data &receive, int timeout)
 		}
 
 		if( !done ) {
-			// not done yet, ask for another read
-			Receive(inFrag);
+			// not done yet, ask for another read, and
+			// create new buffer for fragmented reads
+			if( !inFrag.get() ) {
+				inFrag.reset( new Data );
+				inputBuf = inFrag.get();
+			}
+			Receive(*inputBuf);
 		}
 	}
 }
