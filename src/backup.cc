@@ -65,38 +65,31 @@ void Backup::Close()
 //////////////////////////////////////////////////////////////////////////////
 // Barry::Parser overrides
 
-void Backup::Clear()
+void Backup::StartParser()
 {
 }
 
-void Backup::SetIds(const std::string &DbName,
-		    uint8_t RecType,
-		    uint32_t UniqueId)
+void Backup::ParseRecord(const Barry::DBData &data,
+			  const Barry::IConverter *ic)
 {
-	m_current_dbname = DbName;
+	m_current_dbname = data.GetDBName();
 
 	std::ostringstream oss;
-	oss << std::hex << UniqueId << " " << (unsigned int)RecType;
+	oss << std::hex << data.GetUniqueId()
+		<< " " << (unsigned int)data.GetRecType();
 	m_tar_id_text = oss.str();
 
 	if( m_current_dbname.size() == 0 )
 		throw Barry::BackupError("Backup: No database name available");
 	if( m_tar_id_text.size() == 0 )
 		throw Barry::BackupError("Backup: No unique ID available!");
+
+	m_record_data.assign(
+		(const char*)data.GetData().GetData() + data.GetOffset(),
+		data.GetData().GetSize() - data.GetOffset());
 }
 
-void Backup::ParseHeader(const Barry::Data &data, size_t &offset)
-{
-}
-
-void Backup::ParseFields(const Barry::Data &data,
-				  size_t &offset,
-				  const Barry::IConverter *ic)
-{
-	m_record_data.assign((const char*)data.GetData() + offset, data.GetSize() - offset);
-}
-
-void Backup::Store()
+void Backup::EndParser()
 {
 	std::string tarname = m_current_dbname + "/" + m_tar_id_text;
 std::cout << "Saving: " << tarname << std::endl;

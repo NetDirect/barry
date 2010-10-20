@@ -119,25 +119,18 @@ public:
 	{
 	}
 
-	virtual void Clear() {}
+	virtual void StartParser() {}
 
-	virtual void SetIds(const std::string &DbName,
-				uint8_t RecType, uint32_t UniqueId)
+	virtual void ParseRecord(const Barry::DBData &data,
+				 const Barry::IConverter *ic)
 	{
-		m_id = UniqueId;
-	}
-
-	virtual void ParseHeader(const Barry::Data &, size_t &) {}
-
-	virtual void ParseFields(const Barry::Data &data, size_t &offset,
-				const Barry::IConverter *ic)
-	{
+		m_id = data.GetUniqueId();
 		m_os << "Raw record dump for record: "
 			<< std::hex << m_id << std::endl;
-		m_os << data << std::endl;
+		m_os << data.GetData() << std::endl;
 	}
 
-	virtual void Store() {}
+	virtual void EndParser() {}
 };
 
 template <class Record>

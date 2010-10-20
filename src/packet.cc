@@ -364,8 +364,11 @@ bool DBPacket::SetRecordByIndex(unsigned int dbId, unsigned int stateTableIndex,
 		return false;
 
 	// build packet data
+	DBData send(m_send, false);	// send is just a reference to m_send,
+					// so it is safe to use m_send later
+
 	size_t header_size = SB_PACKET_COMMAND_HEADER_SIZE + DBC_INDEXED_UPLOAD_HEADER_SIZE;
-	build.BuildFields(m_send, header_size, ic);
+	build.BuildRecord(send, header_size, ic);
 	size_t total_size = m_send.GetSize();
 
 	// fill in the header values
@@ -428,9 +431,11 @@ bool DBPacket::SetRecord(unsigned int dbId, Builder &build, const IConverter *ic
 		return false;
 
 	// build packet data
+	DBData send(m_send, false);	// send is just a reference to m_send,
+					// so it is safe to use m_send later
+
 	size_t header_size = SB_PACKET_COMMAND_HEADER_SIZE + DBC_TAGGED_UPLOAD_HEADER_SIZE;
-	build.BuildHeader(m_send, header_size);
-	build.BuildFields(m_send, header_size, ic);
+	build.BuildRecord(send, header_size, ic);
 	size_t total_size = m_send.GetSize();
 
 	// fill in the header values
@@ -443,8 +448,8 @@ bool DBPacket::SetRecord(unsigned int dbId, Builder &build, const IConverter *ic
 	packet.u.db.tableCmd = m_con.GetDBCommand(Mode::Desktop::DatabaseAccess);
 	packet.u.db.u.command.operation = SB_DBOP_SET_RECORD;
 	packet.u.db.u.command.databaseId = htobs(dbId);
-	packet.u.db.u.command.u.tag_upload.rectype = build.GetRecType();
-	packet.u.db.u.command.u.tag_upload.uniqueId = htobl(build.GetUniqueId());
+	packet.u.db.u.command.u.tag_upload.rectype = send.GetRecType();
+	packet.u.db.u.command.u.tag_upload.uniqueId = htobl(send.GetUniqueId());
 	packet.u.db.u.command.u.tag_upload.unknown2 = 1;	// unknown observed value
 
 	m_send.ReleaseBuffer(total_size);
@@ -502,19 +507,20 @@ bool DBPacket::Parse(Parser &parser, const std::string &dbname,
 	{
 	case SB_DBOP_OLD_GET_RECORDS:
 	case SB_DBOP_GET_RECORD_BY_INDEX:
-		parser.Clear();
-
 		offset = SB_PACKET_RESPONSE_HEADER_SIZE + DBR_OLD_TAGGED_RECORD_HEADER_SIZE;
 		Protocol::CheckSize(m_receive, offset);
+
 		// FIXME - this may need adjustment for email records... they
 		// don't seem to have uniqueID's
-		parser.SetIds(dbname,
-			rpack->u.db.u.response.u.tagged.rectype,
-			btohl(rpack->u.db.u.response.u.tagged.uniqueId));
-
-		parser.ParseHeader(m_receive, offset);
-		parser.ParseFields(m_receive, offset, ic);
-		parser.Store();
+		{
+			DBData block(DBData::REC_VERSION_1, dbname,
+				rpack->u.db.u.response.u.tagged.rectype,
+				btohl(rpack->u.db.u.response.u.tagged.uniqueId),
+				offset, m_receive, false);
+			parser.StartParser();
+			parser.ParseRecord(block, ic);
+			parser.EndParser();
+		}
 		return true;
 
 	default:	// unknown command

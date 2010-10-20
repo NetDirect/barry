@@ -38,7 +38,7 @@ class BXEXPORT Pipe
 	Builder &m_builder;
 	bool m_valid_builder;
 
-	Data m_buffer;
+	DBData m_buffer;
 
 public:
 	explicit Pipe(Builder &builder);

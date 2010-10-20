@@ -1,5 +1,11 @@
 Release: version 0.17 - 2010/01/??
 ------------------------------------------------------------------------------
+2010/10/20
+	- lib: simplified parser and builder API, using the new DBData class
+		This also updates the DBData class to support copy-on-write
+		in construction, to avoid copies wherever possible.
+		Also, this patch affects a lot of code, and it is all
+		updated at once.
 2010/10/18
 	- lib: removed needless data copy in Socket::Packet()
 	- lib: moved command/response buffers into Desktop class itself

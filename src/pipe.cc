@@ -48,19 +48,10 @@ bool Pipe::PumpEntry(Parser &parser, const IConverter *ic)
 		return false;
 
 	size_t offset = 0;
-	m_builder.BuildHeader(m_buffer, offset);
-	m_builder.BuildFields(m_buffer, offset, ic);
-
-//	size_t total_size = m_buffer.GetSize();
-	offset = 0;
-
-	parser.Clear();
-	parser.SetIds(m_builder.GetDBName(),
-		m_builder.GetRecType(), m_builder.GetUniqueId());
-	parser.ParseHeader(m_buffer, offset);
-	parser.ParseFields(m_buffer, offset, ic);
-
-	parser.Store();
+	m_builder.BuildRecord(m_buffer, offset, ic);
+	parser.StartParser();
+	parser.ParseRecord(m_buffer, ic);
+	parser.EndParser();
 	m_builder.BuildDone();
 	return true;
 }

@@ -172,22 +172,15 @@ public:
 		const std::string &directory);
 
 	// Barry::Parser overrides
-	virtual void Clear();
-	virtual void SetIds(const std::string &DbName,
-		uint8_t RecType, uint32_t UniqueId);
-	virtual void ParseHeader(const Barry::Data &data, size_t &offset);
-	virtual void ParseFields(const Barry::Data &data, size_t &offset,
+	virtual void StartParser();
+	virtual void ParseRecord(const Barry::DBData &data,
 		const Barry::IConverter *ic);
-	virtual void Store();
+	virtual void EndParser();
 
 	// Barry::Builder overrides
 	virtual bool Retrieve();
-	virtual std::string GetDBName() const;
-	virtual uint8_t GetRecType() const;
-	virtual uint32_t GetUniqueId() const;
 	virtual bool EndOfFile() const { return false; } // not used
-	virtual void BuildHeader(Barry::Data &data, size_t &offset);
-	virtual void BuildFields(Barry::Data &data, size_t &offset, const Barry::IConverter *ic);
+	virtual void BuildRecord(Barry::DBData &data, size_t &offset, const Barry::IConverter *ic);
 	virtual void BuildDone();
 	void SkipCurrentDB() throw();	// helper function for halding restore errors
 };

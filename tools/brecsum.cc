@@ -62,35 +62,31 @@ public:
 		: m_IncludeIds(IncludeIds)
 	{}
 
-	virtual void Clear()
+	virtual void StartParser()
 	{
 		SHA1_Init(&m_ctx);
 	}
 
-	virtual void SetIds(const std::string &DbName,
-				uint8_t RecType, uint32_t UniqueId)
+	virtual void ParseRecord(const Barry::DBData &data,
+				 const Barry::IConverter *ic)
 	{
 		if( m_IncludeIds ) {
-			SHA1_Update(&m_ctx, DbName.c_str(), DbName.size());
-			SHA1_Update(&m_ctx, &RecType, sizeof(RecType));
-			SHA1_Update(&m_ctx, &UniqueId, sizeof(UniqueId));
+			SHA1_Update(&m_ctx, data.GetDBName().c_str(),
+				data.GetDBName().size());
+
+			uint8_t recType = data.GetRecType();
+			SHA1_Update(&m_ctx, &recType, sizeof(recType));
+
+			uint32_t uniqueId = data.GetUniqueId();
+			SHA1_Update(&m_ctx, &uniqueId, sizeof(uniqueId));
 		}
+
+		int len = data.GetData().GetSize() - data.GetOffset();
+		SHA1_Update(&m_ctx,
+			data.GetData().GetData() + data.GetOffset(), len);
 	}
 
-	virtual void ParseHeader(const Barry::Data &, size_t &)
-	{
-		// do nothing here, parse it all at once in ParseFields
-	}
-
-	virtual void ParseFields(const Barry::Data &data, size_t &offset,
-				const Barry::IConverter *ic)
-	{
-		int len = data.GetSize() - offset;
-		SHA1_Update(&m_ctx, data.GetData() + offset, len);
-		offset += len;
-	}
-
-	virtual void Store()
+	virtual void EndParser()
 	{
 		unsigned char sha1[SHA_DIGEST_LENGTH];
 		SHA1_Final(sha1, &m_ctx);

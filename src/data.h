@@ -167,10 +167,35 @@ private:
 	uint32_t m_uniqueId;
 	size_t m_offset;
 
-	// the raw data block
-	Data m_data;
+	// the raw data block, internal
+	Data *m_localData;
+
+	// the data block to use... could be external or internal,
+	// and does not change for the life of the object
+	Data &m_data;
 
 public:
+	/// Default constructor, constructs an empty local Data object
+	DBData();
+
+	/// Constructs a local Data object that points to external memory
+	DBData(const void *ValidData, size_t size);
+	DBData(RecordFormatVersion ver, const std::string &dbName,
+		uint8_t recType, uint32_t uniqueId, size_t offset,
+		const void *ValidData, size_t size);
+
+	/// If copy == false, constructs an external Data object, no local.
+	/// If copy == true, constructs an internal Data object copy
+	/// For speed, set copy to false.
+	/// If you want Copy On Write behaviour, similar to Data(buf,size),
+	/// then use the above (buf, size) constructor, not this one,
+	/// since this constructor uses Data's copy constructor.
+	DBData(Data &externalData, bool copy);
+	DBData(RecordFormatVersion ver, const std::string &dbName,
+		uint8_t recType, uint32_t uniqueId, size_t offset,
+		Data &externalData, bool copy);
+
+	~DBData();
 
 	// access meta data
 	RecordFormatVersion GetVersion() const { return m_version; }
@@ -180,7 +205,7 @@ public:
 	size_t GetOffset() const { return m_offset; }
 
 	const Data& GetData() const { return m_data; }
-	Data& UseData() { return m_data; }
+	Data& UseData();
 
 	// operations
 	void SetVersion(RecordFormatVersion ver)

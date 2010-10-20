@@ -328,25 +328,17 @@ class DataDumpParser : public Barry::Parser
 	uint32_t m_id;
 
 public:
-	virtual void Clear() {}
+	virtual void StartParser() {}
 
-	virtual void SetIds(const std::string &DbName,
-				uint8_t RecType, uint32_t UniqueId)
-	{
-		m_id = UniqueId;
-	}
-
-	virtual void ParseHeader(const Data &, size_t &) {}
-
-	virtual void ParseFields(const Barry::Data &data, size_t &offset,
-				const IConverter *ic)
+	virtual void ParseRecord(const Barry::DBData &data,
+				 const IConverter *ic)
 	{
 		std::cout << "Raw record dump for record: "
 			<< std::hex << m_id << std::endl;
-		std::cout << data << std::endl;
+		std::cout << data.GetData() << std::endl;
 	}
 
-	virtual void Store() {}
+	virtual void EndParser() {}
 };
 
 shared_ptr<Parser> GetParser(const string &name,

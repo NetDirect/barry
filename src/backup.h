@@ -50,13 +50,10 @@ public:
 	void Close();
 
 	// Barry::Parser overrides
-	virtual void Clear();
-	virtual void SetIds(const std::string &DbName,
-			uint8_t RecType, uint32_t UniqueId);
-	virtual void ParseHeader(const Barry::Data &data, size_t &offset);
-	virtual void ParseFields(const Barry::Data &data, size_t &offset,
+	virtual void StartParser();
+	virtual void ParseRecord(const Barry::DBData &data,
 			const Barry::IConverter *ic);
-	virtual void Store();
+	virtual void EndParser();
 };
 
 } // namespace Barry

@@ -58,11 +58,6 @@ public:
 	/// handle this.
 	virtual bool Retrieve() = 0;
 
-	/// Called to retrive the unique ID for this record.
-	virtual std::string GetDBName() const = 0;
-	virtual uint8_t GetRecType() const = 0;
-	virtual uint32_t GetUniqueId() const = 0;
-
 	/// Sometimes a builder can have multiple databases stored
 	/// in it, so when Retrieve() returns false, check if there
 	/// is more data with this function.  This function is
@@ -70,17 +65,11 @@ public:
 	/// oriented functions.
 	virtual bool EndOfFile() const = 0;
 
-	/// Called before BuildFields() in order to build the header
-	/// for this record.  Store the raw data in data, at the
-	/// offset given in offset.  When finished, update offset to
-	/// point to the next spot to put new data.
-	virtual void BuildHeader(Data &data, size_t &offset) = 0;
-
 	/// Called to build the record field data.  Store the raw data
 	/// in data, using offset to know where to write.  Be sure to
 	/// update offset, and be sure to adjust the size of the data
 	/// packet (possibly with Data::ReleaseBuffer()).
-	virtual void BuildFields(Data &data, size_t &offset,
+	virtual void BuildRecord(DBData &data, size_t &offset,
 		const IConverter *ic) = 0;
 
 	/// Called last to signify to the application that the library
@@ -160,36 +149,20 @@ public:
 		return m_record_loaded;
 	}
 
-	virtual std::string GetDBName() const
-	{
-		return RecordT::GetDBName();
-	}
-
-	virtual uint8_t GetRecType() const
-	{
-		return m_rec.GetRecType();
-	}
-
-	virtual uint32_t GetUniqueId() const
-	{
-		return m_rec.GetUniqueId();
-	}
-
 	virtual bool EndOfFile() const
 	{
 		return m_end_of_file;
 	}
 
-	/// Functor member called by Controller::SaveDatabase() during
-	/// processing.
-	virtual void BuildHeader(Data &data, size_t &offset)
+	virtual void BuildRecord(DBData &data, size_t &offset,
+				const IConverter *ic)
 	{
-		m_rec.BuildHeader(data, offset);
-	}
-
-	virtual void BuildFields(Data &data, size_t &offset, const IConverter *ic)
-	{
-		m_rec.BuildFields(data, offset, ic);
+		data.SetVersion(DBData::REC_VERSION_1);
+		data.SetDBName(RecordT::GetDBName());
+		data.SetIds(m_rec.GetRecType(), m_rec.GetUniqueId());
+		data.SetOffset(offset);
+		m_rec.BuildHeader(data.UseData(), offset);
+		m_rec.BuildFields(data.UseData(), offset, ic);
 	}
 
 	virtual void BuildDone()

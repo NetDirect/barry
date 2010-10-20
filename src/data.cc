@@ -391,6 +391,81 @@ ostream& operator<< (ostream &os, const Diff &diff)
 
 
 ///////////////////////////////////////////////////////////////////////////////
+// DBData class
+
+/// Default constructor, constructs an empty local Data object
+DBData::DBData()
+	: m_version(REC_VERSION_1)  // a reasonable default for now
+	, m_localData(new Data)
+	, m_data(*m_localData)
+{
+}
+
+
+/// Constructs a local Data object that points to external memory
+DBData::DBData(const void *ValidData, size_t size)
+	: m_version(REC_VERSION_1)  // a reasonable default for now
+	, m_localData(new Data)
+	, m_data(*m_localData)
+{
+}
+
+DBData::DBData(RecordFormatVersion ver,
+		const std::string &dbName,
+		uint8_t recType,
+		uint32_t uniqueId,
+		size_t offset,
+		const void *ValidData,
+		size_t size)
+	: m_version(ver)
+	, m_dbName(dbName)
+	, m_recType(recType)
+	, m_uniqueId(uniqueId)
+	, m_offset(offset)
+	, m_localData(new Data(ValidData, size))
+	, m_data(*m_localData)
+{
+}
+
+/// If copy == false, constructs an external Data object, no local.
+/// If copy == true, constructs an internal Data object copy
+DBData::DBData(Data &externalData, bool copy)
+	: m_version(REC_VERSION_1)  // a reasonable default for now
+	, m_localData(copy ? new Data(externalData) : 0)
+	, m_data(copy ? *m_localData : externalData)
+{
+}
+
+DBData::DBData(RecordFormatVersion ver,
+		const std::string &dbName,
+		uint8_t recType,
+		uint32_t uniqueId,
+		size_t offset,
+		Data &externalData,
+		bool copy)
+	: m_version(ver)
+	, m_dbName(dbName)
+	, m_recType(recType)
+	, m_uniqueId(uniqueId)
+	, m_offset(offset)
+	, m_localData(copy ? new Data(externalData) : 0)
+	, m_data(copy ? *m_localData : externalData)
+{
+}
+
+DBData::~DBData()
+{
+	delete m_localData;
+}
+
+Data& DBData::UseData()
+{
+	// make sure m_data is not external anymore
+	m_data.GetBuffer();
+	return m_data;	// return it
+}
+
+///////////////////////////////////////////////////////////////////////////////
 // Utility functions
 
 static bool IsEndpointStart(const std::string &line, int &endpoint)

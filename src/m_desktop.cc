@@ -28,12 +28,11 @@
 #include "error.h"
 #include "usbwrap.h"
 #include "controller.h"
+#include "parser.h"
 #include <stdexcept>
 #include <sstream>
 
 #include "debug.h"
-
-#include "parser.h"	// FIXME - remove
 
 namespace Barry { namespace Mode {
 
@@ -394,14 +393,9 @@ void Desktop::LoadDatabase(unsigned int dbId, Parser &parser)
 	bool loading = loader.StartDBLoad(dbId);
 	while( loading ) {
 		// manual parser call
-		// FIXME - parser should use DBData
-		parser.Clear();
-		parser.SetIds(data.GetDBName(),
-			data.GetRecType(), data.GetUniqueId());
-		size_t offset = data.GetOffset();
-		parser.ParseHeader(data.GetData(), offset);
-		parser.ParseFields(data.GetData(), offset, m_ic);
-		parser.Store();
+		parser.StartParser();
+		parser.ParseRecord(data, m_ic);
+		parser.EndParser();
 
 		// advance!
 		loading = loader.GetNextRecord();

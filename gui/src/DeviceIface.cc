@@ -503,35 +503,27 @@ bool DeviceInterface::StartRestoreAndBackup(AppComm comm,
 //////////////////////////////////////////////////////////////////////////////
 // Barry::Parser overrides
 
-void DeviceInterface::Clear()
+void DeviceInterface::StartParser()
 {
 }
 
-void DeviceInterface::SetIds(const std::string &DbName,
-			     uint8_t RecType,
-			     uint32_t UniqueId)
+void DeviceInterface::ParseRecord(const Barry::DBData &data,
+				  const Barry::IConverter *ic)
 {
-	m_rec_type = RecType;
-	m_unique_id = UniqueId;
+	m_rec_type = data.GetRecType();
+	m_unique_id = data.GetUniqueId();
 	std::ostringstream oss;
 	oss << std::hex << m_unique_id << " " << (unsigned int)m_rec_type;
 	m_tar_id_text = oss.str();
 	if( m_tar_id_text.size() == 0 )
 		throw std::runtime_error(_("No unique ID available!"));
+
+	m_record_data.assign(
+		(const char*)data.GetData().GetData() + data.GetOffset(),
+		data.GetData().GetSize() - data.GetOffset());
 }
 
-void DeviceInterface::ParseHeader(const Barry::Data &data, size_t &offset)
-{
-}
-
-void DeviceInterface::ParseFields(const Barry::Data &data,
-				  size_t &offset,
-				  const Barry::IConverter *ic)
-{
-	m_record_data.assign((const char*)data.GetData() + offset, data.GetSize() - offset);
-}
-
-void DeviceInterface::Store()
+void DeviceInterface::EndParser()
 {
 	std::string tarname = m_current_dbname + "/" + m_tar_id_text;
 	m_tarback->AppendFile(tarname.c_str(), m_record_data);
@@ -603,34 +595,22 @@ bool DeviceInterface::Retrieve()
 	}
 }
 
-std::string DeviceInterface::GetDBName() const
-{
-	return m_current_dbname;
-}
-
-uint8_t DeviceInterface::GetRecType() const
-{
-	return m_rec_type;
-}
-
-uint32_t DeviceInterface::GetUniqueId() const
-{
-	return m_unique_id;
-}
-
-void DeviceInterface::BuildHeader(Barry::Data &data, size_t &offset)
-{
-	// nothing to do
-}
-
-void DeviceInterface::BuildFields(Barry::Data &data, size_t &offset,
+void DeviceInterface::BuildRecord(Barry::DBData &data, size_t &offset,
 				  const Barry::IConverter *ic)
 {
+	// fill in the meta data
+	data.SetVersion(Barry::DBData::REC_VERSION_1);
+	data.SetDBName(m_current_dbname);
+	data.SetIds(m_rec_type, m_unique_id);
+	data.SetOffset(offset);
+
+	// fill in the record data
 	int packet_size = offset + m_record_data.size();
-	unsigned char *buf = data.GetBuffer(packet_size);
+	Barry::Data &block = data.UseData();
+	unsigned char *buf = block.GetBuffer(packet_size);
 	memcpy(buf + offset, m_record_data.data(), m_record_data.size());
 	offset += m_record_data.size();
-	data.ReleaseBuffer(packet_size);
+	block.ReleaseBuffer(packet_size);
 }
 
 void DeviceInterface::BuildDone()

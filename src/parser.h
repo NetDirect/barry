@@ -29,7 +29,6 @@
 
 // forward declarations
 namespace Barry {
-	class Data;
 	class IConverter;
 }
 
@@ -56,27 +55,14 @@ public:
 	virtual ~Parser() {}
 
 	/// Reset and prepare for a new raw data packet
-	virtual void Clear() = 0;
-
-	/// Stores the IDs
-	virtual void SetIds(const std::string &DbName,
-		uint8_t RecType, uint32_t UniqueId) = 0;
-
-	/// Called to parse the header portion of the raw data packet.
-	/// data contains the entire packet, and offset contains the
-	/// location at which to start parsing.
-	virtual void ParseHeader(const Data &data, size_t &offset) = 0;
+	virtual void StartParser() = 0;
 
 	/// Called to parse sub fields in the raw data packet.
-	/// The same data is passed as was passed in ParseHeader,
-	/// only the offset will be updated if it was advanced during
-	/// the header parsing.
-	virtual void ParseFields(const Data &data, size_t &offset,
-		const IConverter *ic) = 0;
+	virtual void ParseRecord(const DBData &data, const IConverter *ic) = 0;
 
 	/// Called at the very end of record parsing, and used to
 	/// store the final packet somewhere, either in memory, disk, etc.
-	virtual void Store() = 0;
+	virtual void EndParser() = 0;
 };
 
 
@@ -98,28 +84,9 @@ public:
 	NullParser() {}
 	virtual ~NullParser() {}
 
-	/// Reset and prepare for a new raw data packet
-	virtual void Clear() {}
-
-	/// Stores the IDs
-	virtual void SetIds(const std::string &DbName,
-		uint8_t RecType, uint32_t UniqueId) {}
-
-	/// Called to parse the header portion of the raw data packet.
-	/// data contains the entire packet, and offset contains the
-	/// location at which to start parsing.
-	virtual void ParseHeader(const Data &data, size_t &offset) {}
-
-	/// Called to parse sub fields in the raw data packet.
-	/// The same data is passed as was passed in ParseHeader,
-	/// only the offset will be updated if it was advanced during
-	/// the header parsing.
-	virtual void ParseFields(const Data &data, size_t &offset,
-		const IConverter *ic) {}
-
-	/// Called at the very end of record parsing, and used to
-	/// store the final packet somewhere, either in memory, disk, etc.
-	virtual void Store() {}
+	virtual void StartParser() {}
+	virtual void ParseRecord(const DBData &data, const IConverter *ic) {}
+	virtual void EndParser() {}
 };
 
 
@@ -191,29 +158,20 @@ public:
 		return m_store;
 	}
 
-	virtual void Clear()
+	virtual void StartParser()
 	{
 		m_rec = RecordT();
 	}
 
-	virtual void SetIds(const std::string &DbName,
-				uint8_t RecType, uint32_t UniqueId)
+	virtual void ParseRecord(const DBData &data, const IConverter *ic)
 	{
-		m_rec.SetIds(RecType, UniqueId);
+		m_rec.SetIds(data.GetRecType(), data.GetUniqueId());
+		size_t offset = data.GetOffset();
+		m_rec.ParseHeader(data.GetData(), offset);
+		m_rec.ParseFields(data.GetData(), offset, ic);
 	}
 
-	virtual void ParseHeader(const Data &data, size_t &offset)
-	{
-		m_rec.ParseHeader(data, offset);
-	}
-
-	virtual void ParseFields(const Data &data, size_t &offset,
-				 const IConverter *ic)
-	{
-		m_rec.ParseFields(data, offset, ic);
-	}
-
-	virtual void Store()
+	virtual void EndParser()
 	{
 		(*m_store)(m_rec);
 	}
