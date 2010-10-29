@@ -1,11 +1,12 @@
 #!/bin/sh
 
-if [ -z "$1" -o -z "$2" -o -z "$3" ] ; then
+if [ -z "$1" -o -z "$2" -o -z "$3" -o -z "$4" ] ; then
 	echo
-	echo "Usage: ./git-extract.sh MAJOR MINOR commit"
+	echo "Usage: ./git-extract.sh LOGICAL MAJOR MINOR commit"
 	echo
-	echo "MAJOR is the desired major version number"
-	echo "MINOR is the desired minor version number"
+	echo "LOGICAL is the desired logical version number"
+	echo "MAJOR is the desired libmajor version number"
+	echo "MINOR is the desired libminor version number"
 	echo "commit is a git commit tag to use for the extraction"
 	echo
 	echo "A build directory, containing the packaged results,"
@@ -25,10 +26,11 @@ if [ -z "$1" -o -z "$2" -o -z "$3" ] ; then
 	exit 1
 fi
 
-DIRNAME="barry-$1.$2"
-MAJOR="$1"
-MINOR="$2"
-COMMIT="$3"
+DIRNAME="barry-$1.$2.$3"
+LOGICAL="$1"
+MAJOR="$2"
+MINOR="$3"
+COMMIT="$4"
 RUNDIR="$(dirname "$0")/.."
 
 set -e

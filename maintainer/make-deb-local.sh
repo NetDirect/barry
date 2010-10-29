@@ -1,8 +1,8 @@
 #!/bin/sh
 
-if [ -z "$1" -o -z "$2" ] ; then
+if [ -z "$1" -o -z "$2" -o -z "$3" -o -z "$4" -o -z "$5" ] ; then
 	echo
-	echo "Usage: ./make-deb-local-root.sh tarball MAJOR MINOR target_name"
+	echo "Usage: ./make-deb-local-root.sh tarball LOGICAL MAJOR MINOR target_name"
 	echo
 	echo "Extracts tarball in temporary directory and builds Debian"
 	echo "packages based on the internal debian scripts.  Assumes"
@@ -16,9 +16,10 @@ fi
 
 TARPATH="$1"
 TARNAME=`basename "$TARPATH"`
-MAJOR="$2"
-MINOR="$3"
-TARGET="$4"
+LOGICAL="$2"
+MAJOR="$3"
+MINOR="$4"
+TARGET="$5"
 
 set -e
 
@@ -26,7 +27,7 @@ set -e
 # code in a user-friendly place.
 
 # start clean
-rm -rf "/usr/src/barry-$MAJOR.$MINOR"
+rm -rf "/usr/src/barry-$LOGICAL.$MAJOR.$MINOR"
 rm -f /usr/src/*barry*deb
 
 # extract from tarball
@@ -41,14 +42,14 @@ elif dpkg -l libopensync1-dev ; then
 fi
 
 # build base debs
-(cd "/usr/src/barry-$MAJOR.$MINOR" && fakeroot -- debian/rules binary $PLUGIN_TARGET)
+(cd "/usr/src/barry-$LOGICAL.$MAJOR.$MINOR" && fakeroot -- debian/rules binary $PLUGIN_TARGET)
 mkdir -p "build/$TARGET"
 mv /usr/src/*barry*deb "build/$TARGET"
 if [ -n "$PLUGIN_TARGET" ] ; then
-	mv /usr/src/barry-$MAJOR.$MINOR/*.deb "build/$TARGET"
+	mv /usr/src/barry-$LOGICAL.$MAJOR.$MINOR/*.deb "build/$TARGET"
 fi
 
 # end clean
-rm -rf "/usr/src/barry-$MAJOR.$MINOR"
+rm -rf "/usr/src/barry-$LOGICAL.$MAJOR.$MINOR"
 rm -f /usr/src/*barry*deb
 

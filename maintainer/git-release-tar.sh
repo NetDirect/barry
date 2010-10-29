@@ -1,11 +1,12 @@
 #!/bin/sh
 
-if [ -z "$1" -o -z "$2" -o -z "$3" ] ; then
+if [ -z "$1" -o -z "$2" -o -z "$3" -o -z "$4" ] ; then
 	echo
-	echo "Usage: ./git-release-tar.sh MAJOR MINOR commit"
+	echo "Usage: ./git-release-tar.sh LOGICAL MAJOR MINOR commit"
 	echo
-	echo "MAJOR is the desired major version number"
-	echo "MINOR is the desired minor version number"
+	echo "LOGICAL is the desired logical version number"
+	echo "MAJOR is the desired libmajor version number"
+	echo "MINOR is the desired libminor version number"
 	echo "commit is a git commit tag to use for the extraction"
 	echo
 	echo "A build directory, containing the packaged results,"
@@ -25,17 +26,18 @@ if [ -z "$1" -o -z "$2" -o -z "$3" ] ; then
 	exit 1
 fi
 
-DIRNAME="barry-$1.$2"
-TAGNAME="barry-$1_$2"
-MAJOR="$1"
-MINOR="$2"
-COMMIT="$3"
+DIRNAME="barry-$1.$2.$3"
+TAGNAME="barry-$1_$2_$3"
+LOGICAL="$1"
+MAJOR="$2"
+MINOR="$3"
+COMMIT="$4"
 RUNDIR="$(cd "$(dirname "$0")" && pwd)"
 
 set -e
 
-"$RUNDIR/git-extract.sh" $MAJOR $MINOR $COMMIT
+"$RUNDIR/git-extract.sh" $LOGICAL $MAJOR $MINOR $COMMIT
 (cd build/$DIRNAME && "$RUNDIR/tar-prepare.sh")
-(cd build && "$RUNDIR/tar-create.sh" $MAJOR $MINOR)
-(cd build && "$RUNDIR/deb-src-create.sh" $MAJOR $MINOR)
+(cd build && "$RUNDIR/tar-create.sh" $LOGICAL $MAJOR $MINOR)
+(cd build && "$RUNDIR/deb-src-create.sh" $LOGICAL $MAJOR $MINOR)
 

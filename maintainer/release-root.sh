@@ -1,6 +1,6 @@
 #!/bin/sh
 
-if [ -z "$1" -o -z "$2" -o -z "$3" ] ; then
+if [ -z "$1" -o -z "$2" -o -z "$3" -o -z "$4" ] ; then
 	echo
 	echo "Do not call release-root.sh directly.  Call release.sh instead."
 	echo
@@ -9,10 +9,10 @@ fi
 
 set -e
 
-export BARRYTARBALL=build/barry-$1.$2.tar.bz2
-export THESPEC=build/barry-$1.$2/rpm/barry.spec
+export BARRYTARBALL=build/barry-$1.$2.$3.tar.bz2
+export THESPEC=build/barry-$1.$2.$3/rpm/barry.spec
 export THEMODE=release
-export CHOWNUSER="$3"
+export CHOWNUSER="$4"
 
 if [ -f ~/.barrychroots ] ; then
 	. ~/.barrychroots

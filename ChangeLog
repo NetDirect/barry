@@ -3,6 +3,7 @@ Release: version 0.17.0 - 2010/01/??
 2010/10/28
 	- changed the versioning sheme for Barry, updating doc/VersionNotes,
 		src/Makefile.am, and ChangeLog
+	- updated maintainer scripts to support 3-number versions
 2010/10/20
 	- lib: simplified parser and builder API, using the new DBData class
 		This also updates the DBData class to support copy-on-write
