@@ -106,6 +106,7 @@ Any changes in the following areas only require a bump in libminor:
 	- changing:
 		- the internal implementation of a non-inline function
 		- any class or function, in any way, that is not BXEXPORTed
+		- any non-library code
 
 As you can see, most of the time we'll be bumping the libmajor
 version anyway, just like we've been bumping the minor.  But at
