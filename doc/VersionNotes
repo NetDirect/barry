@@ -1,42 +1,125 @@
+Preamble
+--------
+
 Barry is primarily intended to be a library, for any application to
 access Blackberry devices.  There will be an OpenSync module built
-on top of this, plus some command line utilities, and possibly a GUI,
+on top of this, plus some command line utilities, and a GUI,
 but initially Barry is a library, and must be versioned accordingly.
 
 Additional applications built on top of Barry may be versioned separately.
 
-Most operating systems can handle two library version numbers: major.minor.
-They use these numbers to determine which library is compatible
-and most recent.
-
-Therefore Barry will be versioned the same way, the major version
-number indicating a backward incompatible change to the library.
+Since Barry is a library, applications need to know which versions
+they are compatible with.  Unix has a version number scheme for this
+already.
 
 
-Version Numbering Plan:
------------------------
+History
+-------
 
-	Alpha development will occur on major version 0, incrementing the
-	minor version only until stability is reached.
+Initially, I had tried to use the old Linux kernel style of version
+numbering.  One series of version numbers for development, and one
+for "stable" releases.  Linux has since abandoned this versioning
+scheme, and after reality has bumped me about, I'm about to abandon
+it too.
 
-	When the 0.x series is stable, as a special case, the highest
-	stable 0.x version will be released as version 1.00.  User-
-	readable version strings in the library and applications will
-	be changed to 1.00, 1.01, 1.02, 1.05, etc, but the library
-	version in src/Makefile.am will stay on the 0.x series.
+The reason is that all of Barry's releases are generally stable.
+They are expected to work on all systems, even in the git tree.
+People run Barry from the git repositories regularly, and often
+the code in git is more stable or feature complete than the
+released tarball.
 
-	Bugfix releases for this stable series will continue from there,
-	using 1.01 in user strings, and 0.x in the src/Makefile.am.
+The goal of Barry's development style is to always be stable.
+Every commit should compile.  Every commit should work with all
+devices.  Every commit should be examined closely for security
+issues or buffer overflows.  It should be possible to take a
+snapshot of Barry's source tree at any time and use it.
 
-	A new development branch will be started with the version 1.50,
-	and both src/Makefile.am and the user strings will match again.
+Indeed, Barry's versioning over the past few years since 2005
+has indicated this philosophy.  Only 16 versions have been released,
+from 0.0.1 to 0.16.  The development has been linear, and while
+there have been some large changes to the library and tools (such
+as the introduction of optional threads) this has not impacted
+the stability of the library.  Most issues in Barry arrise from
+udev permissions problems or interactions with unknown parts of
+the Blackberry firmware.  There was only one release that was
+specifically to fix a bug in Barry itself.  (Version 0.11 which
+fixed a null pointer bug in 0.10, and which was released the
+day after.)
 
-	From then on, development will continue on odd numbered major
-	versions with incompatible changes allowed.  When stable, version
-	1.x will become 2.0, and the 3.x branch will be opened.
+So in the end, Barry is retaining a versioning feature it does
+not need (unstable and stable lines of development) and ignoring
+a feature it does need (library versions that indicate backward
+compatibility).
 
-Due to limitations in remaining portable across as many operating systems
-as possible, Barry will discontinue its 3-number version scheme as of
-version 0.4.
 
+New Direction
+-------------
+
+To fix this, we're going back to 3 number versioning, but with a
+twist:
+
+	logical.libmajor.libminor
+
+Logical now becomes something of an advertisement.  When we have
+sufficient features, we can call it version 1.  Until then, we
+remain version 0.
+
+Libmajor will start with the old minor, at 17.  It represents
+a compatible library.  All version 17 libraries are linkable to
+applications that depend on them.
+
+Libminor will represent releases that do not affect binary compatibility.
+
+So the first version using this new scheme will be version 0.17.0
+and the libbarry.so will be named libbarry.so.17.0.0, libbarry.17.0.1,
+etc.
+
+
+Managing Version Numbers
+------------------------
+
+Any changes in the following areas require a bump in libmajor:
+
+	- removing:
+		- a standalone function call
+		- a member function
+		- a member variable from a class
+		- a global variable
+	- changing:
+		- the arguments in an API call
+		- the size or name of a member variable
+		- the size or name or a global variable
+		- the virtual-ness of a member function
+	- adding:
+		- a member variable to the middle of the class
+	- moving:
+		- a public element from one namespace to another
+
+
+Any changes in the following areas only require a bump in libminor:
+
+	- adding:
+		- a non-virtual member function to a class
+		- a standalone function call
+		- a global variable
+		- an entirely brand new class
+	- changing:
+		- the internal implementation of a non-inline function
+		- any class or function, in any way, that is not BXEXPORTed
+
+As you can see, most of the time we'll be bumping the libmajor
+version anyway, just like we've been bumping the minor.  But at
+least now, distros and library users can separate Barry library
+versions, and safely install multiple versions of the Barry
+library on their system at the same time.
+
+This version scheme will in no way impact the freedom to change the API.
+If the API needs to be updated, we'll bump the libmajor version with
+impunity.
+
+If you have comments or suggestions or bug reports with regard to
+Barry versioning, please post to the barry-devel mailing list.
+
+Chris Frey <cdfrey@foursquare.net>
+October 2010
 
