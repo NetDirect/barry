@@ -112,12 +112,9 @@ public:
 
 	// Barry::Builder overrides
 	virtual bool Retrieve();
-	virtual std::string GetDBName() const;  // only valid after a Retrieve()
-	virtual uint8_t GetRecType() const;
-	virtual uint32_t GetUniqueId() const;
 	virtual bool EndOfFile() const { return m_end_of_tar; }
-	virtual void BuildHeader(Barry::Data &data, size_t &offset);
-	virtual void BuildFields(Barry::Data &data, size_t &offset, const Barry::IConverter *ic);
+	virtual void BuildRecord(Barry::DBData &data, size_t &offset,
+		const Barry::IConverter *ic);
 	virtual void BuildDone();
 };
 

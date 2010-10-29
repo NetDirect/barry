@@ -227,34 +227,20 @@ bool Restore::Retrieve()
 	}
 }
 
-std::string Restore::GetDBName() const
+void Restore::BuildRecord(Barry::DBData &data,
+			  size_t &offset,
+			  const Barry::IConverter *ic)
 {
-	return m_current_dbname;
-}
+	data.SetVersion(Barry::DBData::REC_VERSION_1);
+	data.SetDBName(m_current_dbname);
+	data.SetIds(m_rec_type, m_unique_id);
+	data.SetOffset(offset);
 
-uint8_t Restore::GetRecType() const
-{
-	return m_rec_type;
-}
-
-uint32_t Restore::GetUniqueId() const
-{
-	return m_unique_id;
-}
-
-void Restore::BuildHeader(Barry::Data &data, size_t &offset)
-{
-	// nothing to do
-}
-
-void Restore::BuildFields(Barry::Data &data, size_t &offset,
-				  const Barry::IConverter *ic)
-{
 	int packet_size = offset + m_record_data.size();
-	unsigned char *buf = data.GetBuffer(packet_size);
+	unsigned char *buf = data.UseData().GetBuffer(packet_size);
 	memcpy(buf + offset, m_record_data.data(), m_record_data.size());
 	offset += m_record_data.size();
-	data.ReleaseBuffer(packet_size);
+	data.UseData().ReleaseBuffer(packet_size);
 }
 
 void Restore::BuildDone()
