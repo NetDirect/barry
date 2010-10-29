@@ -19,7 +19,7 @@
 
 Summary: BlackBerry(tm) Desktop for Linux
 Name: barry
-Version: 0.17
+Version: 0.17.0
 Release: 0
 Group: Applications/Productivity
 License: GPLv2+
@@ -323,7 +323,7 @@ cd ../
 /sbin/ldconfig
 
 %changelog
-* Fri May 28 2010 Chris Frey <cdfrey@foursquare.net> 0.17-0
+* Fri May 28 2010 Chris Frey <cdfrey@foursquare.net> 0.17.0-0
 - version bump
 - added NLS support
 - cleaned up conditionals
