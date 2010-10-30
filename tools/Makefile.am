@@ -37,6 +37,9 @@ endif
 if WITH_BACKUP
 bin_PROGRAMS += btardump
 endif
+if WITH_ALX
+bin_PROGRAMS += balxparse
+endif
 
 sbin_PROGRAMS = bcharge breset pppob
 
@@ -126,6 +129,12 @@ btardump_LDADD = ../src/libbarry.la $(LIBUSB_LIBS) \
 if WITH_SYNC
 btardump_LDADD += ../src/libbarrysync.la $(GLIB2_LIBS)
 endif
+endif
+
+if WITH_ALX
+balxparse_SOURCES = balxparse.cc
+balxparse_CXXFLAGS = $(AM_CXXFLAGS) $(LIBXMLXX_CFLAGS)
+balxparse_LDADD = ../src/libbarry.la ../src/libbarryalx.la $(LTLIBINTL)
 endif
 
 brimtrans_SOURCES = brimtrans.cc

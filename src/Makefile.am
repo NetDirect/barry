@@ -67,12 +67,13 @@ DEFS = -DLOCALEDIR=\"$(localedir)\" @DEFS@
 
 #
 # libbarry - main USB protocol interface library
+# libbarryalx - ALX library
 # libbarrydp - '.debug' parser library
 # libbarryjdwp - java debug server library
 # libbarrysync - utility functions and classes for syncing and vformats
 # libbarrybackup - utility classes for reading/writing Barry backup files
 #
-lib_LTLIBRARIES = libbarry.la libbarrydp.la libbarryjdwp.la
+lib_LTLIBRARIES = libbarry.la libbarrydp.la libbarryjdwp.la libbarryalx.la
 if WITH_SYNC
 lib_LTLIBRARIES += libbarrysync.la
 endif
@@ -86,6 +87,13 @@ include_barry_HEADERS = barry.h barrysync.h barrybackup.h \
 	common.h \
 	configfile.h \
 	controller.h \
+	xmlparser.h \
+	a_common.h \
+	a_codsection.h \
+	a_library.h \
+	a_application.h \
+	a_osloader.h \
+	a_alxparser.h \
 	m_mode_base.h \
 	m_desktop.h \
 	m_raw_channel.h \
@@ -223,6 +231,20 @@ libbarry_la_SOURCES = dll.h \
 #libbarry_la_LIBADD = $(LTLIBOBJS) $(LIBUSB_LIBS) $(OPENSSL_LIBS)
 libbarry_la_LIBADD = $(LTLIBOBJS) $(LIBUSB_LIBS) $(ZLIB_LIBS) @LTLIBICONV@
 libbarry_la_LDFLAGS = -version-info ${LIB_BARRY_VERSION}
+
+if WITH_ALX
+libbarryalx_la_SOURCES = \
+	xmlparser.h xmlparser.cc \
+	a_common.h \
+	a_codsection.h a_codsection.cc \
+	a_library.h a_library.cc \
+	a_application.h a_application.cc \
+	a_osloader.h a_osloader.cc \
+	a_alxparser.h a_alxparser.cc
+libbarryalx_la_CXXFLAGS = $(AM_CXXFLAGS) $(LIBXMLXX_CFLAGS)
+libbarryalx_la_LIBADD = $(LIBXMLXX_LIBS)
+libbarryalx_la_LDFLAGS = -version-info ${LIB_BARRY_VERSION}
+endif
 
 libbarrydp_la_SOURCES = \
 	dp_parser.h dp_parser.cc \

@@ -3,6 +3,7 @@ Release: version 0.17.0 - 2010/01/??
 2010/12/07
 	- tools: added -i charset support to btardump
 2010/12/04
+	- lib: add ALX parser by Nicolas VIVIEN
 	- lib: add browser bookmarks parser by Nicolas VIVIEN
 	- tools: added -V option to btardump by Nicolas VIVIEN, to output in the new 
 		MIME vformat mode for records that are supported

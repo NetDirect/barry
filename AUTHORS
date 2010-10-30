@@ -109,6 +109,7 @@ Contributors (code and otherwise) in alphabetical order by last name:
 		- JVM Debug support, and bjdwp
 		- btardump & MIME vformat using
 		- bookmark parser
+		- Single & multiple ALX parser
 	Niels de Vos <nixpanic@users.sourceforge.net>
 		- debian package patches
 		- usb_storage unbind script
