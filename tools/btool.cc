@@ -601,7 +601,7 @@ int main(int argc, char *argv[])
 			list_ldif_map = false,
 			epp_override = false,
 			threaded_sockets = true,
-			record_state = false,
+			record_state_table = false,
 			clear_database = false,
 			null_parser = false,
 			bbackup_mode = false,
@@ -755,7 +755,7 @@ int main(int argc, char *argv[])
 				break;
 
 			case 'T':	// show RecordStateTable
-				record_state = true;
+				record_state_table = true;
 				dbNames.push_back(string(optarg));
 				break;
 
@@ -959,7 +959,7 @@ int main(int argc, char *argv[])
 		}
 
 		// Dump record state table to stdout
-		if( record_state ) {
+		if( record_state_table ) {
 			if( dbNames.size() == 0 ) {
 				cout << "No db names to process" << endl;
 				return 1;
@@ -1007,7 +1007,7 @@ int main(int argc, char *argv[])
 		}
 
 		// Clear databases
-		if (clear_database) {
+		if( clear_database ) {
 			if( clearDbNames.size() == 0 ) {
 				cout << "No db names to erase" << endl;
 				return 1;
@@ -1034,8 +1034,8 @@ int main(int argc, char *argv[])
 
 			desktop.Open(password.c_str());
 			for( ; b != dbNames.end(); b++ ) {
-				shared_ptr<Parser> parse = GetParser(*b,filename,
-					null_parser, !sort_records,
+				shared_ptr<Parser> parse = GetParser(*b,
+					filename, null_parser, !sort_records,
 					vformat_mode, bbackup_mode);
 				unsigned int id = desktop.GetDBID(*b);
 				desktop.LoadDatabase(id, *parse.get());
@@ -1049,15 +1049,15 @@ int main(int argc, char *argv[])
 
 			desktop.Open(password.c_str());
 			for( ; b != saveDbNames.end(); b++ ) {
-				shared_ptr<Builder> build =
-					GetBuilder(*b, filename);
+				shared_ptr<Builder> build = GetBuilder(*b,
+					filename);
 				unsigned int id = desktop.GetDBID(*b);
 				desktop.SaveDatabase(id, *build);
 			}
 		}
 
 	}
-	catch( Usb::Error &ue) {
+	catch( Usb::Error &ue ) {
 		std::cerr << "Usb::Error caught: " << ue.what() << endl;
 		return 1;
 	}
