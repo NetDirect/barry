@@ -11,6 +11,7 @@
 */
 
 #ifndef __TZWRAPPER_H__
+#define __TZWRAPPER_H__
 
 #include "dll.h"
 #include <string>
