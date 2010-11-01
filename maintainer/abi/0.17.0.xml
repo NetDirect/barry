@@ -1,0 +1,21 @@
+<version>
+	0.17.0
+</version>
+
+<headers>
+	/tmp/0.17.0/rootdir/include
+</headers>
+
+<libs>
+	/tmp/0.17.0/rootdir/lib/libbarry.so
+	/tmp/0.17.0/rootdir/lib/libbarrydp.so
+	/tmp/0.17.0/rootdir/lib/libbarryjdwp.so
+	/tmp/0.17.0/rootdir/lib/libbarrysync.so
+	/tmp/0.17.0/rootdir/lib/libbarrybackup.so
+</libs>
+
+<include_paths>
+	/usr/include/glib-2.0
+	/usr/lib/glib-2.0/include
+</include_paths>
+

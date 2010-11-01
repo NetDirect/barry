@@ -1,0 +1,12 @@
+<version>
+	0.16
+</version>
+
+<headers>
+	/tmp/0.16/rootdir/include
+</headers>
+
+<libs>
+	/tmp/0.16/rootdir/lib/libbarry.so
+</libs>
+

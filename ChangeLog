@@ -1,5 +1,8 @@
 Release: version 0.17.0 - 2010/01/??
 ------------------------------------------------------------------------------
+2010/11/01
+	- lib: fixed header bugs
+	- maint: added abi checker scripts and config
 2010/10/28
 	- changed the versioning sheme for Barry, updating doc/VersionNotes,
 		src/Makefile.am, and ChangeLog
