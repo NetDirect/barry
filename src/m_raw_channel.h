@@ -26,8 +26,8 @@
 #include "dll.h"
 #include "m_mode_base.h"
 #include "socket.h"
+#include "data.h"
 
-#include <barry/data.h>
 #include <string>
 #include <pthread.h>
 
