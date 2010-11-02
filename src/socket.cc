@@ -292,6 +292,8 @@ void SocketZero::SendPasswordHash(uint16_t socket, const char *password, Data &r
 void SocketZero::RawSend(Data &send, int timeout)
 {
 	Usb::Device *dev = m_queue ? m_queue->GetUsbDevice() : m_dev;
+	if( !dev )
+		throw Error("SocketZero: No device available for RawSend");
 
 	// Special case: it seems that sending packets with a size that's an
 	// exact multiple of 0x40 causes the device to get confused.
@@ -626,16 +628,20 @@ void SocketZero::Close(Socket &socket)
 ///
 void SocketZero::ClearHalt()
 {
+	Usb::Device *dev = m_queue ? m_queue->GetUsbDevice() : m_dev;
+	if( !dev )
+		throw Error("SocketZero: No device available for ClearHalt");
+
 	// clear the read endpoint
 	if( m_queue ) {
-		m_dev->ClearHalt(m_queue->GetReadEp());
+		dev->ClearHalt(m_queue->GetReadEp());
 	}
 	else {
-		m_dev->ClearHalt(m_readEp);
+		dev->ClearHalt(m_readEp);
 	}
 
 	// clear the write endpoint
-	m_dev->ClearHalt(m_writeEp);
+	dev->ClearHalt(m_writeEp);
 }
 
 

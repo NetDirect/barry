@@ -2,6 +2,9 @@ Release: version 0.17.0 - 2010/01/??
 ------------------------------------------------------------------------------
 2010/11/02
 	- added library dependency info to pkg-config .pc files
+	- cleaned up constructor and initialization order and pointer
+		issues found by the automatic API tester at:
+		http://linuxtesting.org/upstream-tracker/versions/barry.html
 2010/11/01
 	- lib: fixed header bugs
 	- maint: added abi checker scripts and config

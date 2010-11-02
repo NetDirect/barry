@@ -82,8 +82,6 @@ protected:
 	bool IsSequencePacketHidden() { return m_hideSequencePacket; }
 
 public:
-	void SetResetOnClose(bool flag) { m_resetOnClose = flag; }
-	void HideSequencePacket(bool flag) { m_hideSequencePacket = flag; }
 	explicit SocketZero(SocketRoutingQueue &queue, int writeEndpoint,
 		uint8_t zeroSocketSequenceStart = 0);
 	SocketZero(Usb::Device &dev, int writeEndpoint, int readEndpoint,
@@ -94,6 +92,9 @@ public:
 
 	void SetRoutingQueue(SocketRoutingQueue &queue);
 	void UnlinkRoutingQueue();
+
+	void SetResetOnClose(bool flag) { m_resetOnClose = flag; }
+	void HideSequencePacket(bool flag) { m_hideSequencePacket = flag; }
 
 	// Send functions for socket 0 only.
 	// These functions will overwrite:
