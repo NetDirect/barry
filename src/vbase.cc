@@ -242,8 +242,15 @@ std::string vAttr::GetAllParams(const char *name)
 // vCalendar
 
 vBase::vBase()
-	: m_format(0)
+	: m_format(b_vformat_new())
 {
+}
+
+vBase::vBase(b_VFormat *format)
+	: m_format(format)
+{
+	if( !format )
+		throw Barry::Error("Cannot construct vBase with null format");
 }
 
 vBase::~vBase()
@@ -256,6 +263,9 @@ vBase::~vBase()
 
 void vBase::SetFormat(b_VFormat *format)
 {
+	if( !format )
+		throw Barry::Error("Cannot set vBase with null format");
+
 	if( m_format ) {
 		b_vformat_free(m_format);
 		m_format = 0;
@@ -267,7 +277,7 @@ void vBase::Clear()
 {
 	if( m_format ) {
 		b_vformat_free(m_format);
-		m_format = 0;
+		m_format = b_vformat_new();
 	}
 }
 

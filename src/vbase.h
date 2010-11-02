@@ -122,6 +122,7 @@ class BXEXPORT vBase
 public:
 protected:
 	vBase();
+	explicit vBase(b_VFormat *format);
 	virtual ~vBase();
 
 	b_VFormat* Format() { return m_format; }
