@@ -123,8 +123,8 @@ public:
 	int GetCount() const { return m_results.size(); }
 	int GetFailCount() const { return m_fail_count; }
 
-	const std::string& GetFailMsg(int index) const { return m_fail_msgs[index]; }
-	const ProbeResult& Get(int index) const { return m_results[index]; }
+	const std::string& GetFailMsg(int index) const { return m_fail_msgs.at(index); }
+	const ProbeResult& Get(int index) const { return m_results.at(index); }
 
 	int FindActive(Barry::Pin pin = 0) const; // returns -1 if pin not found
 						// or if no devices
