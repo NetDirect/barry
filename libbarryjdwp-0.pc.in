@@ -7,6 +7,7 @@ Name: Barry
 Description: C++ library for using the BlackBerry Java debugger
 URL: http://sourceforge.net/projects/barry
 Version: @VERSION@
+Requires: libbarrydp-0
 Libs: -L${libdir} -lbarryjdwp
 Cflags: -I${includedir}
 

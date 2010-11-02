@@ -7,6 +7,7 @@ Name: Barry
 Description: C++ library for reading and writing Barry backup files
 URL: http://sourceforge.net/projects/barry
 Version: @VERSION@
+Requires: libbarry-0
 Libs: -L${libdir} -lbarrybackup
 Cflags: -I${includedir}
 
