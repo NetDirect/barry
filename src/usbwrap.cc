@@ -164,6 +164,8 @@ Device::Device(Usb::DeviceIDType id, int timeout)
 	m_timeout(timeout)
 {
 	dout("usb_open(" << std::dec << id << ")");
+	if( !id )
+		throw Error("invalid USB device ID");
 	m_handle = usb_open(id);
 	if( !m_handle )
 		throw Error("open failed");
