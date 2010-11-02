@@ -31,8 +31,12 @@
 
 namespace Barry {
 
+class Probe;
+
 struct BXEXPORT ProbeResult
 {
+	friend class Probe;
+
 	Usb::DeviceIDType m_dev;
 	unsigned char m_interface;
 	Barry::Pin m_pin;
@@ -60,11 +64,16 @@ struct BXEXPORT ProbeResult
 	// the probe code if available)
 	std::string m_cfgDeviceName;
 
+private:
+	// All ProbeResult objects should come from Probe, therefore
+	// this constructor is private to force the issue.
 	ProbeResult()
 		: m_dev(0), m_interface(0), m_pin(0)
 		, m_needClearHalt(false), m_needSetAltInterface(false)
 		, m_zeroSocketSequence(0)
 		{}
+
+public:
 	void DumpAll(std::ostream &os) const;
 	bool HasIpModem() const { return m_epModem.IsComplete(); }
 

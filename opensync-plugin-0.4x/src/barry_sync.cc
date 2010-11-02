@@ -706,7 +706,7 @@ static void connect(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncContext 
 				osync_context_report_error(ctx, OSYNC_ERROR_NO_CONNECTION, "Unable to find PIN %x", env->m_pin);
 				return;
 			}
-			env->m_ProbeResult = probe.Get(nIndex);
+			env->m_ProbeResult.reset( new Barry::ProbeResult(probe.Get(nIndex)) );
 
 			trace.log("connecting...");
 

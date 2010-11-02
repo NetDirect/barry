@@ -41,8 +41,7 @@ class Device
 	Barry::ProbeResult result;
 
 public:
-	Device();
-	Device(Barry::ProbeResult);
+	Device(const Barry::ProbeResult &result);
 
 	Barry::Pin GetPIN() const { return Barry::Pin(result.m_pin); };
 

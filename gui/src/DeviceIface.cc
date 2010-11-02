@@ -642,11 +642,8 @@ void DeviceInterface::SkipCurrentDB() throw()
 	}
 }
 
-Device::Device()
-{
-}
-
-Device::Device(Barry::ProbeResult pr) : result(pr)
+Device::Device(const Barry::ProbeResult &result)
+	: result(result)
 {
 }
 

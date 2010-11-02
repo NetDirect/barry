@@ -25,6 +25,7 @@
 #include <opensync/opensync.h>
 #include <barry/barry.h>
 #include <string>
+#include <memory>
 #include "idmap.h"
 
 
@@ -86,7 +87,7 @@ public:
 
 	// device communication
 	Barry::IConverter m_IConverter;
-	Barry::ProbeResult m_ProbeResult;
+	std::auto_ptr<Barry::ProbeResult> m_ProbeResult;
 	Barry::Controller *m_pCon;
 	Barry::Mode::Desktop *m_pDesktop;
 

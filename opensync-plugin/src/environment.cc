@@ -202,7 +202,9 @@ void BarryEnvironment::DoConnect()
 	// Then if we get such a timeout, we do the Reconnect again and
 	// hope for the best... this often fixes it.
 	//
-	m_pCon = new Barry::Controller(m_ProbeResult, 15000);
+	if( !m_ProbeResult.get() )
+		throw std::logic_error("Tried to use empty ProbeResult");
+	m_pCon = new Barry::Controller(*m_ProbeResult, 15000);
 	m_pDesktop = new Barry::Mode::Desktop(*m_pCon, m_IConverter);
 	m_pDesktop->Open(m_password.c_str());
 
@@ -223,7 +225,7 @@ void BarryEnvironment::Connect(const Barry::ProbeResult &result)
 	Disconnect();
 
 	// save result in case we need to reconnect later
-	m_ProbeResult = result;
+	m_ProbeResult.reset( new Barry::ProbeResult(result) );
 
 	DoConnect();
 }
@@ -249,9 +251,9 @@ void BarryEnvironment::Reconnect()
 		// we add this probe.
 		{
 			Barry::Probe probe;
-			int i = probe.FindActive(m_ProbeResult.m_pin);
+			int i = probe.FindActive(m_ProbeResult->m_pin);
 			if( i != -1 )
-				m_ProbeResult = probe.Get(i);
+				m_ProbeResult.reset( new Barry::ProbeResult(probe.Get(i)) );
 		}
 
 		DoConnect();
