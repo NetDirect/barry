@@ -1,5 +1,7 @@
 Release: version 0.17.0 - 2010/01/??
 ------------------------------------------------------------------------------
+2010/11/09
+	- doc: updated Fedora's RPM git repo URL
 2010/11/02
 	- added library dependency info to pkg-config .pc files
 	- cleaned up constructor and initialization order and pointer
