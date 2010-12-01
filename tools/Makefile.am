@@ -34,6 +34,9 @@ endif
 if WITH_FUSE
 bin_PROGRAMS += bfuse
 endif
+if WITH_BACKUP
+bin_PROGRAMS += btardump
+endif
 
 sbin_PROGRAMS = bcharge breset pppob
 
@@ -107,6 +110,12 @@ if WITH_FUSE
 bfuse_SOURCES = bfuse.cc
 bfuse_CXXFLAGS = $(FUSE_CFLAGS)
 bfuse_LDADD = ../src/libbarry.la $(FUSE_LIBS) -lpthread $(LTLIBINTL)
+endif
+
+if WITH_BACKUP
+btardump_SOURCES = btardump.cc
+btardump_LDADD = ../src/libbarry.la $(LIBUSB_LIBS) \
+	../src/libbarrybackup.la -lpthread $(LTLIBINTL)
 endif
 
 brimtrans_SOURCES = brimtrans.cc

@@ -22,6 +22,7 @@ Release: version 0.17.0 - 2010/01/??
 		and TeeParser
 	- examples: added pipedump.cc to demo how to use some of the new
 		builders, parsers, and pipe class
+	- tools: added btardump for parsing backup files from command line
 2010/11/16
 	- doc: clarified btool -X in its man page
 2010/11/09
