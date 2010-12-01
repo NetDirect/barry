@@ -25,11 +25,7 @@ namespace Barry {
 
 Pipe::Pipe(Builder &builder)
 	: m_builder(builder)
-	, m_valid_builder(false)
 {
-	// call it once to load the builder with data,
-	// in case the user calls GetBuilder().GetDBName()
-	m_valid_builder = m_builder.Retrieve();
 }
 
 Pipe::~Pipe()
@@ -38,21 +34,14 @@ Pipe::~Pipe()
 
 bool Pipe::PumpEntry(Parser &parser, const IConverter *ic)
 {
-	// if the very first call (constructor) returns false, don't
-	// rely on this builder
-	if( !m_valid_builder )
-		return false;
-
 	// if false, end of series, so pass that on to the caller
-	if( !m_builder.Retrieve() )
+	if( !m_builder.FetchRecord(m_buffer, ic) )
 		return false;
 
-	size_t offset = 0;
-	m_builder.BuildRecord(m_buffer, offset, ic);
 	parser.StartParser();
+	// pass the data into the parser
 	parser.ParseRecord(m_buffer, ic);
 	parser.EndParser();
-	m_builder.BuildDone();
 	return true;
 }
 

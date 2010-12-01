@@ -46,17 +46,38 @@ public:
 	Builder() {}
 	virtual ~Builder() {}
 
-	/// Called first in the sequence, to allow the application to
-	/// load the needed data from memory, disk, etc.  If successful,
-	/// return true.  If at the end of the series, return false.
-	/// Note that this function, if it returns true, may be called
-	/// more than once, and it is the builder's responsibility
-	/// to not retrieve the next item until BuildDone() is called.
-	/// If Retrieve() returns false to mark the end-of-series,
-	/// it does not have to return false next time, since a new
-	/// series may begin.  It is the caller's responsibility to
-	/// handle this.
-	virtual bool Retrieve() = 0;
+	/// Called to build the record field data.  Store the raw data
+	/// in data, using offset to know where to write.  Be sure to
+	/// update offset, and be sure to adjust the size of the data
+	/// packet (possibly with Data::ReleaseBuffer()).
+	///
+	/// Returns true if successful, and false if at the end of
+	/// the series.  Note that if EndOfFile() is false after
+	/// this function returns false, then there may be another
+	/// series available, which the next call to BuildRecord()
+	/// will determine.
+	///
+	virtual bool BuildRecord(DBData &data, size_t &offset,
+		const IConverter *ic) = 0;
+
+	/// Same as BuildRecord, but does not care about any offsets.
+	/// The caller should call DBData::GetOffset() afterward
+	/// to discover if there is an offset to the result.
+	///
+	/// This is usually the fastest of the two functions, since
+	/// extra copying may be required if a specific offset is
+	/// given.  When building records from Record classes, both
+	/// functions are the same speed.  But when building records
+	/// from the device, the device decides the offset, so FetchRecord()
+	/// is faster, since BuildRecord requires a copy to adjust
+	/// to the right offset.
+	///
+	/// The caller should use the function that results in the least
+	/// amount of copying for the caller.  If the caller doesn't
+	/// care about where the resulting record is in data, use
+	/// FetchRecord().
+	///
+	virtual bool FetchRecord(DBData &data, const IConverter *ic) = 0;
 
 	/// Sometimes a builder can have multiple databases stored
 	/// in it, so when Retrieve() returns false, check if there
@@ -64,18 +85,6 @@ public:
 	/// not used by database-oriented functions, but by pipe-
 	/// oriented functions.
 	virtual bool EndOfFile() const = 0;
-
-	/// Called to build the record field data.  Store the raw data
-	/// in data, using offset to know where to write.  Be sure to
-	/// update offset, and be sure to adjust the size of the data
-	/// packet (possibly with Data::ReleaseBuffer()).
-	virtual void BuildRecord(DBData &data, size_t &offset,
-		const IConverter *ic) = 0;
-
-	/// Called last to signify to the application that the library
-	/// is finished with this record.  The next Retrieve() call
-	/// can load the next item after this call.
-	virtual void BuildDone() = 0;
 };
 
 
@@ -136,38 +145,35 @@ public:
 			delete m_storage;
 	}
 
-	virtual bool Retrieve()
+	virtual bool BuildRecord(DBData &data, size_t &offset,
+				const IConverter *ic)
 	{
 		if( m_end_of_file )
 			return false;
-		if( m_record_loaded )
-			return true;
 
-		m_record_loaded = (*m_storage)(m_rec, *this);
-		if( !m_record_loaded )
+		if( !(*m_storage)(m_rec, *this) ) {
 			m_end_of_file = true;
-		return m_record_loaded;
-	}
+			return false;
+		}
 
-	virtual bool EndOfFile() const
-	{
-		return m_end_of_file;
-	}
-
-	virtual void BuildRecord(DBData &data, size_t &offset,
-				const IConverter *ic)
-	{
 		data.SetVersion(DBData::REC_VERSION_1);
 		data.SetDBName(RecordT::GetDBName());
 		data.SetIds(m_rec.GetRecType(), m_rec.GetUniqueId());
 		data.SetOffset(offset);
 		m_rec.BuildHeader(data.UseData(), offset);
 		m_rec.BuildFields(data.UseData(), offset, ic);
+		return true;
 	}
 
-	virtual void BuildDone()
+	virtual bool FetchRecord(DBData &data, const IConverter *ic)
 	{
-		m_record_loaded = false;
+		size_t offset = 0;
+		return BuildRecord(data, offset, ic);
+	}
+
+	virtual bool EndOfFile() const
+	{
+		return m_end_of_file;
 	}
 };
 

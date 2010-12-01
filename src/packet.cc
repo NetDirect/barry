@@ -359,16 +359,13 @@ void DBPacket::GetRecordByIndex(unsigned int dbId, unsigned int stateTableIndex)
 bool DBPacket::SetRecordByIndex(unsigned int dbId, unsigned int stateTableIndex,
 			      Builder &build, const IConverter *ic)
 {
-	// get new data if available
-	if( !build.Retrieve() )
-		return false;
-
 	// build packet data
 	DBData send(m_send, false);	// send is just a reference to m_send,
 					// so it is safe to use m_send later
 
 	size_t header_size = SB_PACKET_COMMAND_HEADER_SIZE + DBC_INDEXED_UPLOAD_HEADER_SIZE;
-	build.BuildRecord(send, header_size, ic);
+	if( !build.BuildRecord(send, header_size, ic) )
+		return false;		// no data available
 	size_t total_size = m_send.GetSize();
 
 	// fill in the header values
@@ -385,7 +382,6 @@ bool DBPacket::SetRecordByIndex(unsigned int dbId, unsigned int stateTableIndex,
 	packet.u.db.u.command.u.index_upload.index = htobs(stateTableIndex);
 
 	m_send.ReleaseBuffer(total_size);
-	build.BuildDone();
 
 	m_last_dbop = SB_DBOP_SET_RECORD_BY_INDEX;
 	return true;
@@ -426,16 +422,13 @@ void DBPacket::GetRecords(unsigned int dbId)
 ///
 bool DBPacket::SetRecord(unsigned int dbId, Builder &build, const IConverter *ic)
 {
-	// get new data if available
-	if( !build.Retrieve() )
-		return false;
-
 	// build packet data
 	DBData send(m_send, false);	// send is just a reference to m_send,
 					// so it is safe to use m_send later
 
 	size_t header_size = SB_PACKET_COMMAND_HEADER_SIZE + DBC_TAGGED_UPLOAD_HEADER_SIZE;
-	build.BuildRecord(send, header_size, ic);
+	if( !build.BuildRecord(send, header_size, ic) )
+		return false;		// no data available
 	size_t total_size = m_send.GetSize();
 
 	// fill in the header values
@@ -453,7 +446,6 @@ bool DBPacket::SetRecord(unsigned int dbId, Builder &build, const IConverter *ic
 	packet.u.db.u.command.u.tag_upload.unknown2 = 1;	// unknown observed value
 
 	m_send.ReleaseBuffer(total_size);
-	build.BuildDone();
 
 	m_last_dbop = SB_DBOP_SET_RECORD;
 	return true;

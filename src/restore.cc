@@ -136,7 +136,7 @@ void Restore::SkipCurrentDB()
 {
 	// skip all records until next DB
 	try {
-		while( Retrieve() ) {
+		while( Retrieve(m_record_data) ) {
 			std::cerr << "Skipping: "
 				<< m_current_dbname << "/"
 				<< m_tar_id_text << std::endl;
@@ -170,7 +170,7 @@ unsigned int Restore::GetRecordTotal(const std::string &tarpath) const
 //////////////////////////////////////////////////////////////////////////////
 // Barry::Builder overrides
 
-bool Restore::Retrieve()
+bool Restore::Retrieve(Data &record_data)
 {
 	if( m_end_of_tar )
 		return false;
@@ -184,7 +184,7 @@ bool Restore::Retrieve()
 	for(;;) {
 		// load record data from tar file
 		std::string filename;
-		if( !m_tar->ReadNextFile(filename, m_record_data) ) {
+		if( !m_tar->ReadNextFile(filename, record_data) ) {
 			// assume end of file
 			m_end_of_tar = true;
 			return false;
@@ -227,26 +227,47 @@ bool Restore::Retrieve()
 	}
 }
 
-void Restore::BuildRecord(Barry::DBData &data,
+bool Restore::BuildRecord(Barry::DBData &data,
 			  size_t &offset,
 			  const Barry::IConverter *ic)
 {
+	if( !Retrieve(m_record_data) )
+		return false;
+
 	data.SetVersion(Barry::DBData::REC_VERSION_1);
 	data.SetDBName(m_current_dbname);
 	data.SetIds(m_rec_type, m_unique_id);
 	data.SetOffset(offset);
 
-	int packet_size = offset + m_record_data.size();
+	int packet_size = offset + m_record_data.GetSize();
 	unsigned char *buf = data.UseData().GetBuffer(packet_size);
-	memcpy(buf + offset, m_record_data.data(), m_record_data.size());
-	offset += m_record_data.size();
+	memcpy(buf + offset, m_record_data.GetData(), m_record_data.GetSize());
+	offset += m_record_data.GetSize();
 	data.UseData().ReleaseBuffer(packet_size);
-}
 
-void Restore::BuildDone()
-{
 	// clear loaded flag, as it has now been used
 	m_tar_record_loaded = false;
+	return true;
+}
+
+bool Restore::FetchRecord(Barry::DBData &data, const Barry::IConverter *ic)
+{
+	if( !Retrieve(data.UseData()) )
+		return false;
+
+	data.SetVersion(Barry::DBData::REC_VERSION_1);
+	data.SetDBName(m_current_dbname);
+	data.SetIds(m_rec_type, m_unique_id);
+	data.SetOffset(0);
+
+	// clear loaded flag, as it has now been used
+	m_tar_record_loaded = false;
+	return true;
+}
+
+bool Restore::EndOfFile() const
+{
+	return m_end_of_tar;
 }
 
 } // namespace Barry

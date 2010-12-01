@@ -55,9 +55,11 @@ namespace Barry {
 /// the backup file.
 ///
 /// It is safe to call Retrieve() multiple times, so when first
-/// starting a restore, call the constructor, call AddDB() with
-/// any filters, and then call Retrieve(), which will grab the
-/// first record, and make GetDBName() valid.
+/// starting a restore:
+///	- call the constructor
+///	- call AddDB() with any filters
+///	- then call Retrieve(), which will grab the first record,
+///	  and make GetDBName() valid.
 ///
 class BXEXPORT Restore : public Barry::Builder
 {
@@ -75,7 +77,7 @@ private:
 	uint8_t m_rec_type;
 	uint32_t m_unique_id;
 	std::string m_current_dbname;
-	std::string m_record_data;
+	Barry::Data m_record_data;
 	std::string m_tar_id_text;
 
 protected:
@@ -84,6 +86,7 @@ protected:
 		uint8_t &dbrectype, uint32_t &dbid);
 
 	bool IsSelected(const std::string &dbName) const;
+	bool Retrieve(Data &record_data);
 
 
 public:
@@ -111,11 +114,10 @@ public:
 	unsigned int GetRecordTotal(const std::string &tarpath) const;
 
 	// Barry::Builder overrides
-	virtual bool Retrieve();
-	virtual bool EndOfFile() const { return m_end_of_tar; }
-	virtual void BuildRecord(Barry::DBData &data, size_t &offset,
+	bool BuildRecord(Barry::DBData &data, size_t &offset,
 		const Barry::IConverter *ic);
-	virtual void BuildDone();
+	bool FetchRecord(Barry::DBData &data, const Barry::IConverter *ic);
+	bool EndOfFile() const;
 };
 
 } // namespace Barry

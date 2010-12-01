@@ -135,6 +135,7 @@ protected:
 
 	// Sets the name of the database the thread is currently working on
 	void SetThreadDBName(const std::string &dbname);
+	bool Retrieve();
 
 public:
 	DeviceInterface(Device *dev = 0);
@@ -177,10 +178,9 @@ public:
 	virtual void EndParser();
 
 	// Barry::Builder overrides
-	virtual bool Retrieve();
+	virtual bool BuildRecord(Barry::DBData &data, size_t &offset, const Barry::IConverter *ic);
+	virtual bool FetchRecord(Barry::DBData &data, const Barry::IConverter *ic);
 	virtual bool EndOfFile() const { return false; } // not used
-	virtual void BuildRecord(Barry::DBData &data, size_t &offset, const Barry::IConverter *ic);
-	virtual void BuildDone();
 	void SkipCurrentDB() throw();	// helper function for halding restore errors
 };
 

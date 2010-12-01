@@ -36,7 +36,6 @@ namespace Barry {
 class BXEXPORT Pipe
 {
 	Builder &m_builder;
-	bool m_valid_builder;
 
 	DBData m_buffer;
 

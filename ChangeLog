@@ -6,6 +6,11 @@ Release: version 0.17.0 - 2010/01/??
 	- lib: added Data version of TarFile::ReadNextFile() (optimization)
 	- lib: allow Packet class to override receive buffer on the fly
 	- lib: added Data::Append()
+	- lib: substantial cleanup of the Builder API, removing the
+		Retrieve() and BuildDone() steps, and using just
+		BuildRecord() and FetchRecord(), depending on whether
+		the caller needs offset support or not.
+		In this change, the TarFile Data optimization is used.
 2010/11/16
 	- doc: clarified btool -X in its man page
 2010/11/09

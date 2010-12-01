@@ -595,9 +595,12 @@ bool DeviceInterface::Retrieve()
 	}
 }
 
-void DeviceInterface::BuildRecord(Barry::DBData &data, size_t &offset,
+bool DeviceInterface::BuildRecord(Barry::DBData &data, size_t &offset,
 				  const Barry::IConverter *ic)
 {
+	if( !Retrieve() )
+		return false;
+
 	// fill in the meta data
 	data.SetVersion(Barry::DBData::REC_VERSION_1);
 	data.SetDBName(m_current_dbname);
@@ -611,13 +614,18 @@ void DeviceInterface::BuildRecord(Barry::DBData &data, size_t &offset,
 	memcpy(buf + offset, m_record_data.data(), m_record_data.size());
 	offset += m_record_data.size();
 	block.ReleaseBuffer(packet_size);
-}
 
-void DeviceInterface::BuildDone()
-{
 	// clear loaded flag, as it has now been used
 	m_tar_record_loaded = false;
 	m_AppComm.m_progress->emit();
+	return true;
+}
+
+bool DeviceInterface::FetchRecord(Barry::DBData &data,
+				  const Barry::IConverter *ic)
+{
+	size_t offset = 0;
+	return BuildRecord(data, offset, ic);
 }
 
 // helper function for halding restore errors
