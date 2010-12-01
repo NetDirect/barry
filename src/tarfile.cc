@@ -20,6 +20,7 @@
 */
 
 #include "tarfile.h"
+#include "data.h"
 
 #include <fcntl.h>
 #include <errno.h>
@@ -181,6 +182,63 @@ bool TarFile::ReadNextFile(std::string &tarpath, std::string &data)
 		}
 
 		data.append(block, readsize);
+	}
+
+	return true;
+}
+
+// FIXME - yes, this is blatant copying of code, but this is
+// specific to Barry, to use a Barry::Data object instead of std::string
+// in order to reduce copies.
+bool TarFile::ReadNextFile(std::string &tarpath, Barry::Data &data)
+{
+	// start fresh
+	tarpath.clear();
+	data.QuickZap();
+
+	// read next tar file header
+	if( th_read(m_tar) != 0 ) {
+		// this is not necessarily an error, as it could just
+		// be the end of file, so a simple false is good here,
+		// don't throw an exception
+		m_last_error = "";
+		return false;
+	}
+
+	// write standard file header
+	if( !TH_ISREG(m_tar) ) {
+		return False("Only regular files are supported inside a tarball.");
+	}
+
+	char *pathname = th_get_pathname(m_tar);
+	tarpath = pathname;
+	//
+	// FIXME (leak) - someday, when all distros use a patched version of
+	// libtar, we may be able to avoid this memory leak, but
+	// th_get_pathname() does not consistently return a user-freeable
+	// string on all distros.
+	//
+	// See the following links for more information:
+	//   https://bugs.launchpad.net/ubuntu/+source/libtar/+bug/41804
+	//   https://lists.feep.net:8080/pipermail/libtar/2006-April/000222.html
+	//
+//	free(pathname);
+	size_t size = th_get_size(m_tar);
+
+	// read the data in blocks until finished
+	char block[T_BLOCKSIZE];
+	for( size_t pos = 0; pos < size; pos += T_BLOCKSIZE ) {
+		memset(block, 0, T_BLOCKSIZE);
+
+		size_t readsize = T_BLOCKSIZE;
+		if( size - pos < T_BLOCKSIZE )
+			readsize = size - pos;
+
+		if( tar_block_read(m_tar, block) != T_BLOCKSIZE ) {
+			return False("Unable to read block", errno);
+		}
+
+		data.Append(block, readsize);
 	}
 
 	return true;

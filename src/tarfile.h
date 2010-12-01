@@ -27,6 +27,10 @@
 #include <stdexcept>
 #include <libtar.h>
 
+namespace Barry {
+	class Data;
+}
+
 namespace reuse {
 
 //
@@ -74,6 +78,7 @@ public:
 	/// internal filename from tarball.
 	/// Returns false on end of archive.
 	bool ReadNextFile(std::string &tarpath, std::string &data);
+	bool ReadNextFile(std::string &tarpath, Barry::Data &data);
 
 	/// Read next available filename, skipping the data if it is
 	/// a regular file
