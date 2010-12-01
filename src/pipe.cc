@@ -38,10 +38,8 @@ bool Pipe::PumpEntry(Parser &parser, const IConverter *ic)
 	if( !m_builder.FetchRecord(m_buffer, ic) )
 		return false;
 
-	parser.StartParser();
 	// pass the data into the parser
 	parser.ParseRecord(m_buffer, ic);
-	parser.EndParser();
 	return true;
 }
 

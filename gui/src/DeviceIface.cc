@@ -503,10 +503,6 @@ bool DeviceInterface::StartRestoreAndBackup(AppComm comm,
 //////////////////////////////////////////////////////////////////////////////
 // Barry::Parser overrides
 
-void DeviceInterface::StartParser()
-{
-}
-
 void DeviceInterface::ParseRecord(const Barry::DBData &data,
 				  const Barry::IConverter *ic)
 {
@@ -521,10 +517,8 @@ void DeviceInterface::ParseRecord(const Barry::DBData &data,
 	m_record_data.assign(
 		(const char*)data.GetData().GetData() + data.GetOffset(),
 		data.GetData().GetSize() - data.GetOffset());
-}
 
-void DeviceInterface::EndParser()
-{
+	// store in tarball
 	std::string tarname = m_current_dbname + "/" + m_tar_id_text;
 	m_tarback->AppendFile(tarname.c_str(), m_record_data);
 

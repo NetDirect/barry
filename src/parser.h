@@ -54,15 +54,8 @@ public:
 	Parser() {}
 	virtual ~Parser() {}
 
-	/// Reset and prepare for a new raw data packet
-	virtual void StartParser() = 0;
-
 	/// Called to parse sub fields in the raw data packet.
 	virtual void ParseRecord(const DBData &data, const IConverter *ic) = 0;
-
-	/// Called at the very end of record parsing, and used to
-	/// store the final packet somewhere, either in memory, disk, etc.
-	virtual void EndParser() = 0;
 };
 
 
@@ -84,9 +77,7 @@ public:
 	NullParser() {}
 	virtual ~NullParser() {}
 
-	virtual void StartParser() {}
 	virtual void ParseRecord(const DBData &data, const IConverter *ic) {}
-	virtual void EndParser() {}
 };
 
 
@@ -129,18 +120,27 @@ class RecordParser : public Parser
 	StorageT *m_store;
 	bool m_owned;
 	RecordT m_rec;
+	bool m_record_valid;
 
 public:
 	/// Constructor that references an externally managed storage object.
 	RecordParser(StorageT &storage)
-		: m_store(&storage), m_owned(false) {}
+		: m_store(&storage)
+		, m_owned(false)
+		, m_record_valid(false)
+	{
+	}
 
 	/// Constructor that references a locally managed storage object.
 	/// The pointer passed in will be stored, and freed when this class
 	/// is destroyed.  It is safe to call this constructor with
 	/// a 'new'ly created storage object.
-	RecordParser(StorageT *storage)
-		: m_store(storage), m_owned(true) {}
+	RecordParser(StorageT *storage = 0)
+		: m_store(storage)
+		, m_owned(true)
+		, m_record_valid(false)
+	{
+	}
 
 	~RecordParser()
 	{
@@ -158,22 +158,19 @@ public:
 		return m_store;
 	}
 
-	virtual void StartParser()
-	{
-		m_rec = RecordT();
-	}
-
 	virtual void ParseRecord(const DBData &data, const IConverter *ic)
 	{
+		m_rec = RecordT();
+		m_record_valid = false;
+
 		m_rec.SetIds(data.GetRecType(), data.GetUniqueId());
 		size_t offset = data.GetOffset();
 		m_rec.ParseHeader(data.GetData(), offset);
 		m_rec.ParseFields(data.GetData(), offset, ic);
-	}
+		m_record_valid = true;
 
-	virtual void EndParser()
-	{
-		(*m_store)(m_rec);
+		if( m_store )
+			(*m_store)(m_rec);
 	}
 };
 

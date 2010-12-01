@@ -509,9 +509,7 @@ bool DBPacket::Parse(Parser &parser, const std::string &dbname,
 				rpack->u.db.u.response.u.tagged.rectype,
 				btohl(rpack->u.db.u.response.u.tagged.uniqueId),
 				offset, *m_receive, false);
-			parser.StartParser();
 			parser.ParseRecord(block, ic);
-			parser.EndParser();
 		}
 		return true;
 

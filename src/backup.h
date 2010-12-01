@@ -50,10 +50,8 @@ public:
 	void Close();
 
 	// Barry::Parser overrides
-	virtual void StartParser();
 	virtual void ParseRecord(const Barry::DBData &data,
 			const Barry::IConverter *ic);
-	virtual void EndParser();
 };
 
 } // namespace Barry

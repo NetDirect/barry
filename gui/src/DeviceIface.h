@@ -172,10 +172,8 @@ public:
 		const std::string &directory);
 
 	// Barry::Parser overrides
-	virtual void StartParser();
 	virtual void ParseRecord(const Barry::DBData &data,
 		const Barry::IConverter *ic);
-	virtual void EndParser();
 
 	// Barry::Builder overrides
 	virtual bool BuildRecord(Barry::DBData &data, size_t &offset, const Barry::IConverter *ic);

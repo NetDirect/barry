@@ -393,9 +393,7 @@ void Desktop::LoadDatabase(unsigned int dbId, Parser &parser)
 	bool loading = loader.StartDBLoad(dbId);
 	while( loading ) {
 		// manual parser call
-		parser.StartParser();
 		parser.ParseRecord(data, m_ic);
-		parser.EndParser();
 
 		// advance!
 		loading = loader.GetNextRecord();

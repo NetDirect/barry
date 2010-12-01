@@ -65,10 +65,6 @@ void Backup::Close()
 //////////////////////////////////////////////////////////////////////////////
 // Barry::Parser overrides
 
-void Backup::StartParser()
-{
-}
-
 void Backup::ParseRecord(const Barry::DBData &data,
 			  const Barry::IConverter *ic)
 {
@@ -87,10 +83,8 @@ void Backup::ParseRecord(const Barry::DBData &data,
 	m_record_data.assign(
 		(const char*)data.GetData().GetData() + data.GetOffset(),
 		data.GetData().GetSize() - data.GetOffset());
-}
 
-void Backup::EndParser()
-{
+	// save to tarball
 	std::string tarname = m_current_dbname + "/" + m_tar_id_text;
 std::cout << "Saving: " << tarname << std::endl;
 	m_tar->AppendFile(tarname.c_str(), m_record_data);
