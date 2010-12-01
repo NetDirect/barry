@@ -140,14 +140,14 @@ struct DBLoaderData;
 ///
 class BXEXPORT DBLoader
 {
-	DBLoaderData *m_loader;
 	Desktop &m_desktop;
-	DBData &m_data;
+	Data m_send;
 	bool m_loading;
 	std::string m_dbName;
+	DBLoaderData *m_loader;
 
 public:
-	DBLoader(Desktop &desktop, DBData &data);
+	explicit DBLoader(Desktop &desktop);
 	~DBLoader();
 
 	/// Do not call Desktop members if this is true.
@@ -157,8 +157,12 @@ public:
 	// these functions return true, then new data has
 	// just been loaded into the data object passed to
 	// the constructor
-	bool StartDBLoad(unsigned int dbId);
-	bool GetNextRecord();
+	//
+	// Both of these functions use a DBData object in order
+	// to pass buffers from application code all the way down
+	// to the socket level, to avoid copies wherever possible.
+	bool StartDBLoad(unsigned int dbId, DBData &data);
+	bool GetNextRecord(DBData &data);
 };
 
 }} // namespace Barry::Mode

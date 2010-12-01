@@ -389,14 +389,14 @@ void Desktop::DeleteRecord(unsigned int dbId, unsigned int stateTableIndex)
 void Desktop::LoadDatabase(unsigned int dbId, Parser &parser)
 {
 	DBData data;
-	DBLoader loader(*this, data);
-	bool loading = loader.StartDBLoad(dbId);
+	DBLoader loader(*this);
+	bool loading = loader.StartDBLoad(dbId, data);
 	while( loading ) {
 		// manual parser call
 		parser.ParseRecord(data, m_ic);
 
 		// advance!
-		loading = loader.GetNextRecord();
+		loading = loader.GetNextRecord(data);
 	}
 }
 
@@ -469,7 +469,6 @@ void Desktop::SaveDatabase(unsigned int dbId, Builder &builder)
 //////////////////////////////////////////////////////////////////////////////
 // DBLoader class
 
-
 struct DBLoaderData
 {
 	DBPacket m_packet;
@@ -479,11 +478,10 @@ struct DBLoaderData
 	}
 };
 
-DBLoader::DBLoader(Desktop &desktop, DBData &data)
-	: m_loader(new DBLoaderData(desktop, desktop.m_command, data.UseData()))
-	, m_desktop(desktop)
-	, m_data(data)
+DBLoader::DBLoader(Desktop &desktop)
+	: m_desktop(desktop)
 	, m_loading(false)
+	, m_loader(new DBLoaderData(desktop, m_send, m_send))
 {
 }
 
@@ -492,46 +490,47 @@ DBLoader::~DBLoader()
 	delete m_loader;
 }
 
-bool DBLoader::StartDBLoad(unsigned int dbId)
+bool DBLoader::StartDBLoad(unsigned int dbId, DBData &data)
 {
 	dout("Database ID: " << dbId);
 
 	m_loading = true;
 	m_desktop.m_dbdb.GetDBName(dbId, m_dbName);
 
-	m_loader->m_packet.GetRecords(dbId);
-	m_desktop.m_socket->Packet(m_loader->m_packet);
+	DBPacket &packet = m_loader->m_packet;
+	packet.SetNewReceive(data.UseData());
+	packet.GetRecords(dbId);
+	m_desktop.m_socket->Packet(packet);
 
-	while( m_loader->m_packet.Command() != SB_COMMAND_DB_DONE ) {
-		if( m_loader->m_packet.Command() == SB_COMMAND_DB_DATA ) {
-			// this size is the old header size, since using
-			// old command above
-			m_loader->m_packet.ParseMeta(m_data);
-			m_data.SetDBName(m_dbName);
+	while( packet.Command() != SB_COMMAND_DB_DONE ) {
+		if( packet.Command() == SB_COMMAND_DB_DATA ) {
+			packet.ParseMeta(data);
+			data.SetDBName(m_dbName);
 			return true;
 		}
 
-		// advance!
-		m_desktop.m_socket->NextRecord(m_data.UseData());
+		// advance! (use the same data block as in packet)
+		m_desktop.m_socket->NextRecord(data.UseData());
 	}
 
 	m_loading = false;
 	return false;
 }
 
-bool DBLoader::GetNextRecord()
+bool DBLoader::GetNextRecord(DBData &data)
 {
 	if( !m_loading )
 		return false;
 
-	do {
-		// advance!
-		m_desktop.m_socket->NextRecord(m_data.UseData());
+	DBPacket &packet = m_loader->m_packet;
+	packet.SetNewReceive(data.UseData());
 
-		if( m_loader->m_packet.Command() == SB_COMMAND_DB_DATA ) {
-			// this size is the old header size, since using
-			// old command above
-			m_loader->m_packet.ParseMeta(m_data);
+	do {
+		// advance! (use same data as in packet)
+		m_desktop.m_socket->NextRecord(data.UseData());
+
+		if( packet.Command() == SB_COMMAND_DB_DATA ) {
+			packet.ParseMeta(data);
 			return true;
 		}
 	} while( m_loader->m_packet.Command() != SB_COMMAND_DB_DONE );
