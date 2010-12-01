@@ -291,6 +291,12 @@ void Data::MemCpy(size_t &offset, const void *src, size_t size)
 	offset += size;
 }
 
+void Data::Append(const void *buf, size_t size)
+{
+	// MemCpy updates m_datasize via the offset reference
+	MemCpy(m_datasize, buf, size);
+}
+
 istream& operator>> (istream &is, Data &data)
 {
 	data.InputHexLine(is);

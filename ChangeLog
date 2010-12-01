@@ -5,6 +5,7 @@ Release: version 0.17.0 - 2010/01/??
 		inappropriately
 	- lib: added Data version of TarFile::ReadNextFile() (optimization)
 	- lib: allow Packet class to override receive buffer on the fly
+	- lib: added Data::Append()
 2010/11/16
 	- doc: clarified btool -X in its man page
 2010/11/09

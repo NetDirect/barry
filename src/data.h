@@ -87,6 +87,7 @@ public:
 	// The offset is advanced by the size of the data.
 	//
 	void MemCpy(size_t &offset, const void *src, size_t size);
+	void Append(const void *buf, size_t size);
 	template <class ValueT>
 	void SetValue(size_t &offset, ValueT value)
 	{
