@@ -27,12 +27,12 @@
 #include "data.h"
 #include "socket.h"
 #include "record.h"
+#include "builder.h"
 
 namespace Barry {
 
 // forward declarations
 class Parser;
-class Builder;
 class IConverter;
 
 namespace Mode {
@@ -165,7 +165,72 @@ public:
 	bool GetNextRecord(DBData &data);
 };
 
-}} // namespace Barry::Mode
+} // namespace Barry::Mode
+
+
+
+
+
+//
+// DeviceBuilder
+//
+/// Takes a list of database dbId's and behaves like a Builder,
+/// trying to avoid copies where possible on the device loading end.
+///
+class BXEXPORT DeviceBuilder : public Builder
+{
+	typedef unsigned int				dbid_type;
+
+	struct DBLabel
+	{
+		dbid_type id;
+		std::string name;
+
+		DBLabel(dbid_type id, const std::string &name)
+			: id(id)
+			, name(name)
+		{
+		}
+	};
+
+	typedef std::vector<DBLabel>			list_type;
+
+	// list of databases to fetch during build
+	list_type m_dbIds;
+	list_type::iterator m_current;
+
+	Mode::Desktop &m_desktop;
+
+	// loader object to use optimized batch loading while
+	// giving per-record control
+	Mode::DBLoader m_loader;
+
+public:
+	DeviceBuilder(Mode::Desktop &desktop);
+
+	// searches the dbdb from the desktop to find the dbId,
+	// returns false if not found, and adds it to the list of
+	// databases to retrieve if found
+	bool Add(const std::string &dbname);
+
+	/// sets the internal iterator to the start of the list
+	/// in order to perform a fresh run
+	void Restart() { m_current = m_dbIds.begin(); }
+
+	//
+	// Builder overrides
+	//
+
+	// has both BuildRecord() and Retrieve() functionality,
+	// and uses data all the way down to the socket level copy
+	virtual bool BuildRecord(DBData &data, size_t &offset,
+		const IConverter *ic);
+	virtual bool FetchRecord(DBData &data, const IConverter *ic);
+	virtual bool EndOfFile() const;
+};
+
+
+} // namespace Barry
 
 #endif
 

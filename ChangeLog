@@ -14,6 +14,8 @@ Release: version 0.17.0 - 2010/01/??
 	- lib: another API change, for Parser, removing StartParser()
 		and EndParser()
 	- lib: optimized Mode::DBLoader to allow application level data buffers
+	- lib: added DeviceBuilder class, which gives a Builder interface
+		to reading records directly from a device
 2010/11/16
 	- doc: clarified btool -X in its man page
 2010/11/09

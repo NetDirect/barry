@@ -539,5 +539,92 @@ bool DBLoader::GetNextRecord(DBData &data)
 	return false;
 }
 
-}} // namespace Barry::Mode
+} // namespace Barry::Mode
+
+
+
+
+
+//////////////////////////////////////////////////////////////////////////////
+// DeviceBuilder class
+
+DeviceBuilder::DeviceBuilder(Mode::Desktop &desktop)
+	: m_desktop(desktop)
+	, m_loader(desktop)
+{
+}
+
+// searches the dbdb from the desktop to find the dbId,
+// returns false if not found, and adds it to the list of
+// databases to retrieve if found
+bool DeviceBuilder::Add(const std::string &dbname)
+{
+	try {
+		DBLabel id(m_desktop.GetDBID(dbname), dbname);
+		m_dbIds.push_back(id);
+		m_current = m_dbIds.begin();
+		return true;
+	}
+	catch( Barry::Error & ) {
+		// GetDBID() throws on error...
+		return false;
+	}
+}
+
+bool DeviceBuilder::BuildRecord(DBData &data,
+				size_t &offset,
+				const IConverter *ic)
+{
+	DBData temp;
+	if( !FetchRecord(temp, ic) )
+		return false;
+
+	// copy the metadata
+	data.SetVersion(temp.GetVersion());
+	data.SetDBName(temp.GetDBName());
+	data.SetIds(temp.GetRecType(), temp.GetUniqueId());
+	data.SetOffset(offset);
+
+	// copy data from temp into the given offset
+	size_t tempsize = temp.GetData().GetSize() - temp.GetOffset();
+	data.UseData().MemCpy(offset,
+		temp.GetData().GetData() + temp.GetOffset(), tempsize);
+	data.UseData().ReleaseBuffer(offset + tempsize);
+	return true;
+}
+
+bool DeviceBuilder::FetchRecord(DBData &data, const IConverter *ic)
+{
+	bool ret;
+
+	if( m_loader.IsBusy() ) {
+		ret = m_loader.GetNextRecord(data);
+	}
+	else {
+		// don't do anything if we're at the end of our rope
+		if( EndOfFile() )
+			return false;
+
+		// advance and check again... m_current always points
+		// to our current DB
+		++m_current;
+		if( EndOfFile() )
+			return false;
+
+		ret = m_loader.StartDBLoad(m_current->id, data);
+	}
+
+	// fill in the DBname if successful
+	if( ret ) {
+		data.SetDBName(m_current->name);
+	}
+	return ret;
+}
+
+bool DeviceBuilder::EndOfFile() const
+{
+	return m_current == m_dbIds.end();
+}
+
+} // namespace Barry
 
