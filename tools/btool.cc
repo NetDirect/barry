@@ -323,24 +323,6 @@ struct Store
 	}
 };
 
-class DataDumpParser : public Barry::Parser
-{
-	uint32_t m_id;
-
-public:
-	virtual void StartParser() {}
-
-	virtual void ParseRecord(const Barry::DBData &data,
-				 const IConverter *ic)
-	{
-		std::cout << "Raw record dump for record: "
-			<< std::hex << m_id << std::endl;
-		std::cout << data.GetData() << std::endl;
-	}
-
-	virtual void EndParser() {}
-};
-
 shared_ptr<Parser> GetParser(const string &name,
 			const string &filename,
 			bool null_parser,
@@ -353,7 +335,7 @@ shared_ptr<Parser> GetParser(const string &name,
 
 	if( null_parser ) {
 		// use null parser
-		return shared_ptr<Parser>( new DataDumpParser );
+		return shared_ptr<Parser>( new Barry::HexDumpParser(cout) );
 	}
 	else if( bbackup_mode ) {
 #ifdef __BARRY_BACKUP_MODE__
@@ -364,7 +346,7 @@ shared_ptr<Parser> GetParser(const string &name,
 		}
 		return backup;
 #else
-		return shared_ptr<Parser>( new DataDumpParser );
+		return shared_ptr<Parser>( new Barry::HexDumpParser(cout) );
 #endif
 	}
 	// check for recognized database names
@@ -436,7 +418,7 @@ shared_ptr<Parser> GetParser(const string &name,
 	}
 	else {
 		// unknown database, use null parser
-		return shared_ptr<Parser>( new DataDumpParser );
+		return shared_ptr<Parser>( new Barry::HexDumpParser(cout) );
 	}
 }
 
@@ -895,6 +877,35 @@ int main(int argc, char *argv[])
 		}
 
 		//
+		// execute each mode that was turned on
+		//
+
+
+		// Dump current LDIF mapping
+		if( list_ldif_map ) {
+			cout << ldif << endl;
+		}
+
+		// Dump list of Contact field names
+		if( list_contact_fields ) {
+			for( const ContactLdif::NameToFunc *n = ldif.GetFieldNames(); n->name; n++ ) {
+				cout.fill(' ');
+				cout << "  " << left << setw(20) << n->name << ": "
+					<< n->description << endl;
+			}
+		}
+
+		// Check if Desktop access is needed
+		if( !(	show_dbdb ||
+			ldif_contacts ||
+			record_state_table ||
+			clear_database ||
+			stCommands.size() ||
+			dbNames.size() ||
+			saveDbNames.size() ) )
+			return 0;	// done
+
+		//
 		// Create our controller object
 		//
 		// Order is important in the following auto_ptr<> objects,
@@ -917,39 +928,17 @@ int main(int argc, char *argv[])
 
 		Barry::Controller &con = *pcon;
 		Barry::Mode::Desktop desktop(con, *ic);
-
-		//
-		// execute each mode that was turned on
-		//
-
+		desktop.Open(password.c_str());
 
 		// Dump list of all databases to stdout
 		if( show_dbdb ) {
 			// open desktop mode socket
-			desktop.Open(password.c_str());
 			cout << desktop.GetDBDB() << endl;
-		}
-
-		// Dump list of Contact field names
-		if( list_contact_fields ) {
-			for( const ContactLdif::NameToFunc *n = ldif.GetFieldNames(); n->name; n++ ) {
-				cout.fill(' ');
-				cout << "  " << left << setw(20) << n->name << ": "
-					<< n->description << endl;
-			}
-		}
-
-		// Dump current LDIF mapping
-		if( list_ldif_map ) {
-			cout << ldif << endl;
 		}
 
 		// Dump list of contacts to an LDAP LDIF file
 		// This uses the Controller convenience templates
 		if( ldif_contacts ) {
-			// make sure we're in desktop mode
-			desktop.Open(password.c_str());
-
 			// create a storage functor object that accepts
 			// Barry::Contact objects as input
 			Contact2Ldif storage(ldif);
@@ -964,8 +953,6 @@ int main(int argc, char *argv[])
 				cout << "No db names to process" << endl;
 				return 1;
 			}
-
-			desktop.Open(password.c_str());
 
 			vector<string>::iterator b = dbNames.begin();
 			for( ; b != dbNames.end(); b++ ) {
@@ -985,7 +972,6 @@ int main(int argc, char *argv[])
 				return 1;
 			}
 
-			desktop.Open(password.c_str());
 			unsigned int id = desktop.GetDBID(dbNames[0]);
 			shared_ptr<Parser> parse = GetParser(dbNames[0],filename,
 				null_parser, true, vformat_mode, bbackup_mode);
@@ -1006,6 +992,21 @@ int main(int argc, char *argv[])
 			return 0;
 		}
 
+		// Dump contents of selected databases to stdout, or
+		// to file if specified.
+		// This is retrieving data from the Blackberry.
+		if( dbNames.size() ) {
+			vector<string>::iterator b = dbNames.begin();
+
+			for( ; b != dbNames.end(); b++ ) {
+				shared_ptr<Parser> parse = GetParser(*b,
+					filename, null_parser, !sort_records,
+					vformat_mode, bbackup_mode);
+				unsigned int id = desktop.GetDBID(*b);
+				desktop.LoadDatabase(id, *parse.get());
+			}
+		}
+
 		// Clear databases
 		if( clear_database ) {
 			if( clearDbNames.size() == 0 ) {
@@ -1014,8 +1015,6 @@ int main(int argc, char *argv[])
 			}
 
 			vector<string>::iterator b = clearDbNames.begin();
-
-			desktop.Open(password.c_str());
 
 			for( ; b != clearDbNames.end(); b++ ) {
 				unsigned int id = desktop.GetDBID(*b);
@@ -1026,28 +1025,11 @@ int main(int argc, char *argv[])
 			return 0;
 		}
 
-		// Dump contents of selected databases to stdout, or
-		// to file if specified.
-		// This is retrieving data from the Blackberry.
-		if( dbNames.size() ) {
-			vector<string>::iterator b = dbNames.begin();
-
-			desktop.Open(password.c_str());
-			for( ; b != dbNames.end(); b++ ) {
-				shared_ptr<Parser> parse = GetParser(*b,
-					filename, null_parser, !sort_records,
-					vformat_mode, bbackup_mode);
-				unsigned int id = desktop.GetDBID(*b);
-				desktop.LoadDatabase(id, *parse.get());
-			}
-		}
-
 		// Save contents of file to specified databases
 		// This is writing data to the Blackberry.
 		if( saveDbNames.size() ) {
 			vector<string>::iterator b = saveDbNames.begin();
 
-			desktop.Open(password.c_str());
 			for( ; b != saveDbNames.end(); b++ ) {
 				shared_ptr<Builder> build = GetBuilder(*b,
 					filename);
