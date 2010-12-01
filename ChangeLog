@@ -1,5 +1,8 @@
 Release: version 0.17.0 - 2010/01/??
 ------------------------------------------------------------------------------
+2010/11/30
+	- lib: fixed but in Messages parser, which used CheckSize()
+		inappropriately
 2010/11/16
 	- doc: clarified btool -X in its man page
 2010/11/09

@@ -191,7 +191,12 @@ uint32_t MessageBase::GetUniqueId() const
 
 void MessageBase::ParseHeader(const Data &data, size_t &offset)
 {
-	Protocol::CheckSize(data, offset + MESSAGE_RECORD_HEADER_SIZE);
+	const unsigned char *begin = data.GetData();
+	const unsigned char *end = data.GetData() + data.GetSize();
+
+	begin += offset + MESSAGE_RECORD_HEADER_SIZE;
+	if( begin > end )
+		return;
 
 	MAKE_RECORD(const Barry::Protocol::MessageRecord, mr, data, offset);
 
