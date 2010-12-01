@@ -49,8 +49,8 @@ namespace Barry {
 ///
 unsigned int Packet::Command() const
 {
-	Protocol::CheckSize(m_receive, SB_PACKET_HEADER_SIZE);
-	MAKE_PACKET(rpack, m_receive);
+	Protocol::CheckSize(*m_receive, SB_PACKET_HEADER_SIZE);
+	MAKE_PACKET(rpack, *m_receive);
 	return rpack->command;
 }
 
@@ -130,53 +130,53 @@ void ZeroPacket::Reset()
 
 unsigned int ZeroPacket::ObjectID() const
 {
-	Protocol::CheckSize(m_receive, SB_SOCKET_PACKET_HEADER_SIZE);
-	MAKE_PACKET(rpack, m_receive);
+	Protocol::CheckSize(*m_receive, SB_SOCKET_PACKET_HEADER_SIZE);
+	MAKE_PACKET(rpack, *m_receive);
 	return btohs(rpack->u.socket.u.fetch.object);
 }
 
 unsigned int ZeroPacket::AttributeID() const
 {
-	Protocol::CheckSize(m_receive, SB_SOCKET_PACKET_HEADER_SIZE);
-	MAKE_PACKET(rpack, m_receive);
+	Protocol::CheckSize(*m_receive, SB_SOCKET_PACKET_HEADER_SIZE);
+	MAKE_PACKET(rpack, *m_receive);
 	return btohs(rpack->u.socket.u.fetch.attribute);
 }
 
 uint32_t ZeroPacket::ChallengeSeed() const
 {
-	Protocol::CheckSize(m_receive, SB_SOCKET_PACKET_HEADER_SIZE +
+	Protocol::CheckSize(*m_receive, SB_SOCKET_PACKET_HEADER_SIZE +
 		PASSWORD_CHALLENGE_SEED_SIZE);
-	MAKE_PACKET(rpack, m_receive);
+	MAKE_PACKET(rpack, *m_receive);
 	return btohl(rpack->u.socket.u.password.u.seed);
 }
 
 unsigned int ZeroPacket::RemainingTries() const
 {
-	Protocol::CheckSize(m_receive, SB_SOCKET_PACKET_HEADER_SIZE +
+	Protocol::CheckSize(*m_receive, SB_SOCKET_PACKET_HEADER_SIZE +
 		PASSWORD_CHALLENGE_HEADER_SIZE);
-	MAKE_PACKET(rpack, m_receive);
+	MAKE_PACKET(rpack, *m_receive);
 	// this is a byte, so no byte swapping needed
 	return rpack->u.socket.u.password.remaining_tries;
 }
 
 unsigned int ZeroPacket::SocketResponse() const
 {
-	Protocol::CheckSize(m_receive, SB_SOCKET_PACKET_HEADER_SIZE);
-	MAKE_PACKET(rpack, m_receive);
+	Protocol::CheckSize(*m_receive, SB_SOCKET_PACKET_HEADER_SIZE);
+	MAKE_PACKET(rpack, *m_receive);
 	return btohs(rpack->u.socket.socket);
 }
 
 unsigned char ZeroPacket::SocketSequence() const
 {
-	Protocol::CheckSize(m_receive, SB_SOCKET_PACKET_HEADER_SIZE);
-	MAKE_PACKET(rpack, m_receive);
+	Protocol::CheckSize(*m_receive, SB_SOCKET_PACKET_HEADER_SIZE);
+	MAKE_PACKET(rpack, *m_receive);
 	return rpack->u.socket.sequence;	// sequence is a byte
 }
 
 uint8_t ZeroPacket::CommandResponse() const
 {
-	Protocol::CheckSize(m_receive, SB_SOCKET_PACKET_HEADER_SIZE);
-	MAKE_PACKET(rpack, m_receive);
+	Protocol::CheckSize(*m_receive, SB_SOCKET_PACKET_HEADER_SIZE);
+	MAKE_PACKET(rpack, *m_receive);
 	return rpack->command;
 }
 
@@ -464,8 +464,8 @@ bool DBPacket::SetRecord(unsigned int dbId, Builder &build, const IConverter *ic
 unsigned int DBPacket::ReturnCode() const
 {
 	if( Command() == SB_COMMAND_DB_DONE ) {
-		Protocol::CheckSize(m_receive, SB_PACKET_DBACCESS_HEADER_SIZE + SB_DBACCESS_RETURN_CODE_SIZE);
-		MAKE_PACKET(rpack, m_receive);
+		Protocol::CheckSize(*m_receive, SB_PACKET_DBACCESS_HEADER_SIZE + SB_DBACCESS_RETURN_CODE_SIZE);
+		MAKE_PACKET(rpack, *m_receive);
 		return rpack->u.db.u.return_code;
 	}
 	else {
@@ -482,8 +482,8 @@ unsigned int DBPacket::ReturnCode() const
 ///
 unsigned int DBPacket::DBOperation() const
 {
-	Protocol::CheckSize(m_receive, SB_PACKET_RESPONSE_HEADER_SIZE);
-	MAKE_PACKET(rpack, m_receive);
+	Protocol::CheckSize(*m_receive, SB_PACKET_RESPONSE_HEADER_SIZE);
+	MAKE_PACKET(rpack, *m_receive);
 	return rpack->u.db.u.response.operation;
 }
 
@@ -501,14 +501,14 @@ bool DBPacket::Parse(Parser &parser, const std::string &dbname,
 			const IConverter *ic)
 {
 	size_t offset = 0;
-	MAKE_PACKET(rpack, m_receive);
+	MAKE_PACKET(rpack, *m_receive);
 
 	switch( m_last_dbop )
 	{
 	case SB_DBOP_OLD_GET_RECORDS:
 	case SB_DBOP_GET_RECORD_BY_INDEX:
 		offset = SB_PACKET_RESPONSE_HEADER_SIZE + DBR_OLD_TAGGED_RECORD_HEADER_SIZE;
-		Protocol::CheckSize(m_receive, offset);
+		Protocol::CheckSize(*m_receive, offset);
 
 		// FIXME - this may need adjustment for email records... they
 		// don't seem to have uniqueID's
@@ -516,7 +516,7 @@ bool DBPacket::Parse(Parser &parser, const std::string &dbname,
 			DBData block(DBData::REC_VERSION_1, dbname,
 				rpack->u.db.u.response.u.tagged.rectype,
 				btohl(rpack->u.db.u.response.u.tagged.uniqueId),
-				offset, m_receive, false);
+				offset, *m_receive, false);
 			parser.StartParser();
 			parser.ParseRecord(block, ic);
 			parser.EndParser();
@@ -578,8 +578,8 @@ JLPacket::~JLPacket()
 
 unsigned int JLPacket::Size()
 {
-	Protocol::CheckSize(m_receive, SB_JLPACKET_HEADER_SIZE + SB_JLRESPONSE_HEADER_SIZE);
-	MAKE_JLPACKET(rpack, m_receive);
+	Protocol::CheckSize(*m_receive, SB_JLPACKET_HEADER_SIZE + SB_JLRESPONSE_HEADER_SIZE);
+	MAKE_JLPACKET(rpack, *m_receive);
 	return btohs(rpack->u.response.expect);
 }
 
@@ -712,8 +712,8 @@ JVMPacket::~JVMPacket()
 
 unsigned int JVMPacket::Size()
 {
-	MAKE_JVMPACKET(rpack, m_receive);
-	Protocol::CheckSize(m_receive, SB_JVMPACKET_HEADER_SIZE + sizeof(rpack->u.expect));
+	MAKE_JVMPACKET(rpack, *m_receive);
+	Protocol::CheckSize(*m_receive, SB_JVMPACKET_HEADER_SIZE + sizeof(rpack->u.expect));
 	return be_btohs(rpack->u.expect);
 }
 

@@ -406,7 +406,7 @@ void SocketZero::Send(Data &send, Data &receive, int timeout)
 
 void SocketZero::Send(Barry::Packet &packet, int timeout)
 {
-	Send(packet.m_send, packet.m_receive, timeout);
+	Send(packet.m_send, *packet.m_receive, timeout);
 }
 
 void SocketZero::Receive(Data &receive, int timeout)
@@ -737,7 +737,7 @@ void Socket::Send(Data &send, Data &receive, int timeout)
 
 void Socket::Send(Barry::Packet &packet, int timeout)
 {
-	Send(packet.m_send, packet.m_receive, timeout);
+	Send(packet.m_send, *packet.m_receive, timeout);
 }
 
 void Socket::Receive(Data &receive, int timeout)
@@ -1094,26 +1094,26 @@ void Socket::Packet(Data &send, Data &receive, int timeout)
 
 void Socket::Packet(Barry::Packet &packet, int timeout)
 {
-	Packet(packet.m_send, packet.m_receive, timeout);
+	Packet(packet.m_send, *packet.m_receive, timeout);
 }
 
 void Socket::Packet(Barry::JLPacket &packet, int timeout)
 {
 	if( packet.HasData() ) {
 		HideSequencePacket(false);
-		PacketData(packet.m_cmd, packet.m_receive, timeout);
+		PacketData(packet.m_cmd, *packet.m_receive, timeout);
 		HideSequencePacket(true);
-		PacketData(packet.m_data, packet.m_receive, timeout);
+		PacketData(packet.m_data, *packet.m_receive, timeout);
 	}
 	else {
-		PacketData(packet.m_cmd, packet.m_receive, timeout);
+		PacketData(packet.m_cmd, *packet.m_receive, timeout);
 	}
 }
 
 void Socket::Packet(Barry::JVMPacket &packet, int timeout)
 {
 	HideSequencePacket(false);
-	PacketJVM(packet.m_cmd, packet.m_receive, timeout);
+	PacketJVM(packet.m_cmd, *packet.m_receive, timeout);
 	HideSequencePacket(true);
 }
 

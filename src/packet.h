@@ -50,16 +50,23 @@ class Packet
 	friend class Socket;
 
 protected:
-	Data &m_send, &m_receive;
+	Data &m_send;
+	Data *m_receive;
 
 	Data& GetSend() { return m_send; }
-	Data& GetReceive() { return m_receive; }
+	Data& GetReceive() { return *m_receive; }
 
 public:
 	Packet(Data &send, Data &receive)
-		: m_send(send), m_receive(receive)
+		: m_send(send), m_receive(&receive)
 		{}
 	virtual ~Packet() {}
+
+	// allow user to override the receive buffer for
+	// optimization purposes, to reduce copies... be
+	// careful with this, since this new Data object
+	// must outlive any usage of it via this Packet class
+	void SetNewReceive(Data &receive) { m_receive = &receive; }
 
 	//////////////////////////////////
 	// common response analysis
@@ -201,7 +208,7 @@ public:
 	// meta access
 
 	bool HasData() const	{ return m_last_set_size == 2; }
-	Data& GetReceive()	{ return m_receive; }
+	Data& GetReceive()	{ return *m_receive; }
 
 	//////////////////////////////////
 	// packet building
@@ -274,7 +281,7 @@ public:
 	//////////////////////////////////
 	// meta access
 
-	Data& GetReceive()	{ return m_receive; }
+	Data& GetReceive()	{ return *m_receive; }
 
 	//////////////////////////////////
 	// packet building
