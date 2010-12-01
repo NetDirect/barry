@@ -169,7 +169,8 @@ EXTRA_DIST = convo.awk \
 	legal.txt
 
 libbarry_la_SOURCES = dll.h \
-	builder.h parser.h \
+	builder.h \
+	parser.h parser.cc \
 	time.h time.cc \
 	base64.h base64.cc \
 	bmp.h bmp-internal.h bmp.cc \

@@ -26,10 +26,25 @@
 #include "data.h"
 #include "protocol.h"
 #include <stdint.h>		// for uint32_t
+#include <iosfwd>
+#include <map>
 
 // forward declarations
 namespace Barry {
 	class IConverter;
+	class Contact;
+	class Message;
+	class Calendar;
+	class CalendarAll;
+	class CallLog;
+	class ServiceBook;
+	class Memo;
+	class Task;
+	class PINMessage;
+	class SavedMessage;
+	class Sms;
+	class Folder;
+	class Timezone;
 }
 
 namespace Barry {
@@ -80,6 +95,94 @@ public:
 	virtual void ParseRecord(const DBData &data, const IConverter *ic) {}
 };
 
+//
+// HexDumpParser
+//
+/// Dumps raw hex of the given DBData to the given stream.
+///
+/// Do NOT derive your own personal parser classes from this,
+/// unless you are perfectly confident that you will catch
+/// future API changes on the devel tree without the compiler's
+/// help.
+///
+class BXEXPORT HexDumpParser : public Parser
+{
+	std::ostream &m_os;
+
+public:
+	explicit HexDumpParser(std::ostream &os);
+
+	virtual void ParseRecord(const Barry::DBData &data,
+				 const IConverter *ic);
+};
+
+//
+// RecordParserBase
+//
+/// Abstract base class for the following RecordParser template, that exposes
+/// some information on the specifics that the record parser can handle.
+/// Specifically, it exposes the database name it is able to parse
+///
+class BXEXPORT RecordParserBase : public Parser
+{
+public:
+	// These functions are always valid, regardless of the
+	// state of the parser.
+	virtual const char * GetDBName() const = 0;
+	virtual uint8_t GetDefaultRecType() const = 0;
+
+	// These functions depend on the parser having just parsed
+	// a record successfully.
+	virtual bool IsRecordValid() const = 0;
+	virtual uint8_t GetRecType() const = 0;
+	virtual uint32_t GetUniqueId() const = 0;
+	virtual void Dump(std::ostream &os) const = 0;
+};
+
+
+//
+// Note: Store classes take parsed Record objects as a functor.
+//       Parser classes deal with raw data, while Store classes deal with
+//       parsed Record objects.
+//
+
+//
+// NullStore
+//
+/// A Storage class for RecordParser<> that does nothing, for the cases
+/// where you only want to dump parsed record data to a stream.
+///
+template <class RecordT>
+class NullStore
+{
+public:
+	void operator() (const RecordT &r)
+	{
+	}
+};
+
+//
+// DumpStore
+//
+/// A Storage class for RecordParser<> that dumps the parsed record data
+/// to the given stream.
+///
+template <class RecordT>
+class DumpStore
+{
+	std::ostream &m_os;
+
+public:
+	explicit DumpStore(std::ostream &os)
+		: m_os(os)
+	{
+	}
+
+	void operator() (const RecordT &r)
+	{
+		r.Dump(m_os);
+	}
+};
 
 //
 // RecordParser template class
@@ -115,7 +218,7 @@ public:
 /// </pre>
 ///
 template <class RecordT, class StorageT>
-class RecordParser : public Parser
+class RecordParser : public RecordParserBase
 {
 	StorageT *m_store;
 	bool m_owned;
@@ -172,6 +275,201 @@ public:
 		if( m_store )
 			(*m_store)(m_rec);
 	}
+
+	//
+	// RecordParserBase overrides
+	//
+
+	// These functions are always valid, regardless of the
+	// state of the parser.
+	virtual const char * GetDBName() const
+	{
+		return RecordT::GetDBName();
+	}
+
+	virtual uint8_t GetDefaultRecType() const
+	{
+		return RecordT::GetDefaultRecType();
+	}
+
+	// These functions depend on the parser having just parsed
+	// a record successfully.
+	virtual bool IsRecordValid() const
+	{
+		return m_record_valid;
+	}
+
+	virtual uint8_t GetRecType() const
+	{
+		return m_rec.GetRecType();
+	}
+
+	virtual uint32_t GetUniqueId() const
+	{
+		return m_rec.GetUniqueId();
+	}
+
+	virtual void Dump(std::ostream &os) const
+	{
+		m_rec.Dump(os);
+	}
+};
+
+//
+// MultiRecordParser
+//
+/// Container parser class that accepts multiple Parser objects
+/// (often RecordParser<> objects but they don't have to be) and
+/// automatically routes incoming records to the appropriate parser.
+/// Note that this container owns *all* Parser objects, and will
+/// free them upon destruction.
+///
+/// Incoming records that have no matching parser are passed to the
+/// default parser object, if one exists, otherwise they are dropped
+/// silently.  The default parser object is also owned by the container,
+/// and will be freed on destruction.
+///
+/// Do NOT derive your own personal parser classes from this,
+/// unless you are perfectly confident that you will catch
+/// future API changes on the devel tree without the compiler's
+/// help.
+///
+class BXEXPORT MultiRecordParser : public Parser
+{
+	typedef std::map<std::string, Parser*>			map_type;
+
+	Parser *m_default;
+	map_type m_parsers;
+
+public:
+	// takes ownership of default_parser!
+	explicit MultiRecordParser(Parser *default_parser = 0);
+	~MultiRecordParser();
+
+	/// Adds given parser to list and takes ownership of it
+	void Add(const std::string &dbname, Parser *parser);
+
+	/// Adds given parser to list and takes ownership of it
+	void Add(RecordParserBase *parser);
+
+	/// Creates a RecordParser<> object for the given database name,
+	/// using DumpStore<> with the given stream for the output,
+	/// and adds it to list.
+	/// Returns false if there is no known Record class for dbname.
+	bool Add(const std::string &dbname, std::ostream &os);
+
+	// Parser overrides
+	virtual void ParseRecord(const DBData &data, const IConverter *ic);
+};
+
+//
+// AllRecordStore
+//
+/// Base class with overloaded functor behaviour for all available
+/// record classes.  To be used with AllRecordParser.
+///
+class BXEXPORT AllRecordStore
+{
+public:
+	AllRecordStore() {}
+	virtual ~AllRecordStore() {}
+
+	virtual void operator() (const Barry::Contact &) = 0;
+	virtual void operator() (const Barry::Message &) = 0;
+	virtual void operator() (const Barry::Calendar &) = 0;
+	virtual void operator() (const Barry::CalendarAll &) = 0;
+	virtual void operator() (const Barry::CallLog &) = 0;
+	virtual void operator() (const Barry::ServiceBook &) = 0;
+	virtual void operator() (const Barry::Memo &) = 0;
+	virtual void operator() (const Barry::Task &) = 0;
+	virtual void operator() (const Barry::PINMessage &) = 0;
+	virtual void operator() (const Barry::SavedMessage &) = 0;
+	virtual void operator() (const Barry::Sms &) = 0;
+	virtual void operator() (const Barry::Folder &) = 0;
+	virtual void operator() (const Barry::Timezone &) = 0;
+};
+
+//
+// AllRecordDumpStore
+//
+/// Derived from AllRecordStore, which just calls each record's
+/// Dump() member with the given stream.
+///
+class BXEXPORT AllRecordDumpStore : public AllRecordStore
+{
+	std::ostream &m_os;
+
+public:
+	explicit AllRecordDumpStore(std::ostream &os)
+		: m_os(os)
+	{
+	}
+
+	virtual void operator() (const Barry::Contact &);
+	virtual void operator() (const Barry::Message &);
+	virtual void operator() (const Barry::Calendar &);
+	virtual void operator() (const Barry::CalendarAll &);
+	virtual void operator() (const Barry::CallLog &);
+	virtual void operator() (const Barry::ServiceBook &);
+	virtual void operator() (const Barry::Memo &);
+	virtual void operator() (const Barry::Task &);
+	virtual void operator() (const Barry::PINMessage &);
+	virtual void operator() (const Barry::SavedMessage &);
+	virtual void operator() (const Barry::Sms &);
+	virtual void operator() (const Barry::Folder &);
+	virtual void operator() (const Barry::Timezone &);
+};
+
+//
+// AllRecordParser
+//
+/// Convenience parser that creates a MultiRecordParser with all known
+/// record parsers added.  If an AllRecordStore pointer is passed in,
+/// this class takes ownership of it, and uses it as the store object
+/// for all the RecordParser<> objects it creates.  If not, then
+/// a custom DumpStore<> object is created with the given stream
+/// for each RecordParser<> added.
+///
+/// The default parser object behaves just like MultiRecordParser
+///
+/// This class takes ownership of all pointers passed in.
+///
+class BXEXPORT AllRecordParser : public MultiRecordParser
+{
+	AllRecordStore *m_store;
+
+public:
+	// takes ownership of default_parser and store!
+	explicit AllRecordParser(std::ostream &os,
+		Parser *default_parser = 0,
+		AllRecordStore *store = 0);
+	~AllRecordParser();
+};
+
+//
+// TeeParser
+//
+/// Sends incoming DBData objects to all the parsers in its list.
+/// This parser container does NOT own the parsers added.
+///
+class BXEXPORT TeeParser : public Parser
+{
+	typedef std::vector<Parser*>			parser_list_type;
+
+	parser_list_type m_external_parsers, m_owned_parsers;
+
+public:
+	TeeParser();
+	~TeeParser();
+
+	/// Adds parser to internal list, and takes ownership of the
+	/// pointer.
+	void Add(Parser *p);
+
+	/// Adds parser to internal list.  Does NOT own the parser reference.
+	void Add(Parser &p);
+
+	void ParseRecord(const DBData &data, const IConverter *ic);
 };
 
 } // namespace Barry
