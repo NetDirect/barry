@@ -10,6 +10,8 @@ if [ -z "$1" -o -z "$2" -o -z "$3" -o -z "$4" ] ; then
 	echo "Note: You may wish to direct the output to a file, for"
 	echo "      later examination."
 	echo
+	echo "Example:   ./release.sh 0 17 0 master"
+	echo
 	exit 1
 fi
 
