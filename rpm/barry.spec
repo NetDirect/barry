@@ -238,6 +238,7 @@ cd ../
 %attr(0755,root,root) %{_sbindir}/breset
 %attr(0755,root,root) %{_sbindir}/pppob
 %attr(0755,root,root) %{_bindir}/btool
+%attr(0755,root,root) %{_bindir}/btardump
 %attr(0755,root,root) %{_bindir}/bfuse
 %attr(0755,root,root) %{_bindir}/bjavaloader
 %attr(0755,root,root) %{_bindir}/bjdwp
@@ -251,6 +252,7 @@ cd ../
 %attr(0755,root,root) %{_bindir}/brimtrans
 %attr(0755,root,root) %{_bindir}/hal-blackberry
 %attr(0644,root,root) %{_mandir}/man1/btool*
+%attr(0644,root,root) %{_mandir}/man1/btardump*
 %attr(0644,root,root) %{_mandir}/man1/bfuse*
 %attr(0644,root,root) %{_mandir}/man1/bjavaloader*
 %attr(0644,root,root) %{_mandir}/man1/bjdwp*
