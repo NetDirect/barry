@@ -43,6 +43,8 @@ void Usage()
    << "             at all, all available databases from the backup are\n"
    << "             dumped.\n"
    << "   -h        This help\n"
+   << "\n"
+   << "   [files...] Backup file(s), created by btool or the backup GUI.\n"
    << endl;
 }
 

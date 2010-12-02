@@ -1,6 +1,7 @@
 dist_man_MANS = \
 	bcharge.1 \
 	btool.1 \
+	btardump.1 \
 	bfuse.1 \
 	bjavaloader.1 \
 	bjdwp.1 \
