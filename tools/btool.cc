@@ -375,6 +375,11 @@ shared_ptr<Parser> GetParser(const string &name,
 			new RecordParser<CallLog, Store<CallLog> > (
 				new Store<CallLog>(filename, false, dnow, vmode)));
 	}
+	else if( name == Bookmark::GetDBName() ) {
+		return shared_ptr<Parser>(
+			new RecordParser<Bookmark, Store<Bookmark> > (
+				new Store<Bookmark>(filename, false, dnow, vmode)));
+	}
 	else if( name == ServiceBook::GetDBName() ) {
 		return shared_ptr<Parser>(
 			new RecordParser<ServiceBook, Store<ServiceBook> > (
@@ -476,6 +481,7 @@ void ShowParsers()
 	<< "   Calendar *\n"
 	<< "   Calendar - All *\n"
 	<< "   Phone Call Logs\n"
+	<< "   Browser Bookmarks\n"
 	<< "   Service Book\n"
 	<< "   Memos *\n"
 	<< "   Tasks *\n"

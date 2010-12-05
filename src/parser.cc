@@ -22,6 +22,7 @@
 #include "parser.h"
 #include "r_calendar.h"
 #include "r_calllog.h"
+#include "r_bookmark.h"
 #include "r_contact.h"
 #include "r_memo.h"
 #include "r_message.h"
@@ -42,6 +43,7 @@
 	HANDLE_TYPE(Calendar) \
 	HANDLE_TYPE(CalendarAll) \
 	HANDLE_TYPE(CallLog) \
+	HANDLE_TYPE(Bookmark) \
 	HANDLE_TYPE(ServiceBook) \
 	HANDLE_TYPE(Memo) \
 	HANDLE_TYPE(Task) \
@@ -176,6 +178,11 @@ void AllRecordDumpStore::operator() (const Barry::CalendarAll &r)
 }
 
 void AllRecordDumpStore::operator() (const Barry::CallLog &r)
+{
+	m_os << r << std::endl;
+}
+
+void AllRecordDumpStore::operator() (const Barry::Bookmark &r)
 {
 	m_os << r << std::endl;
 }

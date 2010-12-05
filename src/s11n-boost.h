@@ -230,6 +230,20 @@ void serialize(ArchiveT &ar, Barry::CallLog &c, const unsigned int ver)
 }
 
 template <class ArchiveT>
+void serialize(ArchiveT &ar, Barry::Bookmark &c, const unsigned int ver)
+{
+	ar & make_nvp("RecType", c.RecType);
+	ar & make_nvp("RecordId", c.RecordId);
+
+	ar & make_nvp("Name", c.Name);
+	ar & make_nvp("URL", c.URL);
+
+	if( ver < BARRY_POD_MAP_VERSION ) {
+		ar & make_nvp("Unknowns", c.Unknowns);
+	}
+}
+
+template <class ArchiveT>
 void serialize(ArchiveT &ar, Barry::ServiceBookConfig &c, const unsigned int ver)
 {
 	ar & make_nvp("Format", c.Format);

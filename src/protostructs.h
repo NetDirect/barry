@@ -315,6 +315,23 @@ struct CalendarRecurrenceDataField  // as documented in the Cassis project spec
 #define CLL_PHONETYPE_RANGE_HIGH	3
 
 //
+// Browser Bookmarks record: field constants
+//
+//
+#define BMK_BROWSER_AUTO				0
+#define BMK_BROWSER_BLACKBERRY			1
+#define BMK_BROWSER_FIREFOX				2
+#define BMK_BROWSER_INTERNET_EXPLORER	3
+
+#define BMK_DISPLAY_AUTO				0
+#define BMK_DISPLAY_COLOMN				1
+#define BMK_DISPLAY_PAGE				2
+
+#define BMK_JAVASCRIPT_AUTO				0
+#define BMK_JAVASCRIPT_ENABLED			1
+#define BMK_JAVASCRIPT_DISABLED			2
+
+//
 // Folder record: field constants
 //
 

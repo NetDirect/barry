@@ -107,6 +107,7 @@ include_barry_HEADERS = barry.h barrysync.h barrybackup.h \
 	r_recur_base.h \
 	r_calendar.h \
 	r_calllog.h \
+	r_bookmark.h \
 	r_contact.h \
 	r_folder.h \
 	r_memo.h \
@@ -193,6 +194,7 @@ libbarry_la_SOURCES = dll.h \
 	r_recur_base.h r_recur_base.cc \
 	r_calendar.h r_calendar.cc \
 	r_calllog.h r_calllog.cc \
+	r_bookmark.h r_bookmark.cc \
 	r_command.cc \
 	r_contact.h r_contact.cc \
 	r_dbdb.cc \

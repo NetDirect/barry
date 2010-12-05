@@ -37,6 +37,7 @@ namespace Barry {
 	class Calendar;
 	class CalendarAll;
 	class CallLog;
+	class Bookmark;
 	class ServiceBook;
 	class Memo;
 	class Task;
@@ -379,6 +380,7 @@ public:
 	virtual void operator() (const Barry::Calendar &) = 0;
 	virtual void operator() (const Barry::CalendarAll &) = 0;
 	virtual void operator() (const Barry::CallLog &) = 0;
+	virtual void operator() (const Barry::Bookmark &) = 0;
 	virtual void operator() (const Barry::ServiceBook &) = 0;
 	virtual void operator() (const Barry::Memo &) = 0;
 	virtual void operator() (const Barry::Task &) = 0;
@@ -410,6 +412,7 @@ public:
 	virtual void operator() (const Barry::Calendar &);
 	virtual void operator() (const Barry::CalendarAll &);
 	virtual void operator() (const Barry::CallLog &);
+	virtual void operator() (const Barry::Bookmark &);
 	virtual void operator() (const Barry::ServiceBook &);
 	virtual void operator() (const Barry::Memo &);
 	virtual void operator() (const Barry::Task &);
