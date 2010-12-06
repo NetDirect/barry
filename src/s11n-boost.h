@@ -236,7 +236,12 @@ void serialize(ArchiveT &ar, Barry::Bookmark &c, const unsigned int ver)
 	ar & make_nvp("RecordId", c.RecordId);
 
 	ar & make_nvp("Name", c.Name);
+	ar & make_nvp("Icon", c.Icon);
 	ar & make_nvp("URL", c.URL);
+
+	ar & make_nvp("BrowserIdentity", c.BrowserIdentity);
+	ar & make_nvp("DisplayMode", c.DisplayMode);
+	ar & make_nvp("JavaScriptMode", c.JavaScriptMode);
 
 	if( ver < BARRY_POD_MAP_VERSION ) {
 		ar & make_nvp("Unknowns", c.Unknowns);
