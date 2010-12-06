@@ -101,7 +101,7 @@ public:
 
 	// database name
 	static const char * GetDBName() { return "Browser Bookmarks"; }
-	static uint8_t GetDefaultRecType() { return 0; }
+	static uint8_t GetDefaultRecType() { return 1; }
 };
 
 BXEXPORT inline std::ostream& operator<<(std::ostream &os, const Bookmark &msg) {
