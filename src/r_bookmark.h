@@ -43,7 +43,7 @@ public:
 	uint32_t RecordId;
 
 	std::string Name;
-	std::string Icone;
+	std::string Icon;
 	std::string URL;
 
 	enum BrowserIdentityType

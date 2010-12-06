@@ -41,20 +41,20 @@ namespace Barry {
 // Bookmark Field Codes
 #define BMKFC_BOOKMARK_TYPE		0x01
 
-#define BMKFC_NAME				0x04
-#define BMKFC_URL				0xff
-#define BMKFC_ICONE				0x05
+#define BMKFC_NAME			0x04
+#define BMKFC_URL			0xff
+#define BMKFC_ICON			0x05
 
 #define BMKFC_STRUCT1			0x11
 #define BMKFC_STRUCT2			0x12
 
-#define BMKFC_END				0xffff
+#define BMKFC_END			0xffff
 
 static FieldLink<Bookmark> BookmarkFieldLinks[] = {
-    { BMKFC_NAME,		"Name",  0, 0, &Bookmark::Name, 0, 0, 0, 0, true },
-    { BMKFC_URL,		"URL",  0, 0, &Bookmark::URL, 0, 0, 0, 0, true },
-    { BMKFC_ICONE,		"Icone",  0, 0, &Bookmark::Icone, 0, 0, 0, 0, true },
-    { BMKFC_END,		"End of List",   0, 0, 0, 0, 0, 0, 0, false }
+    { BMKFC_NAME,	"Name",  0, 0, &Bookmark::Name, 0, 0, 0, 0, true },
+    { BMKFC_URL,	"URL",  0, 0, &Bookmark::URL, 0, 0, 0, 0, true },
+    { BMKFC_ICON,	"Icon",  0, 0, &Bookmark::Icon, 0, 0, 0, 0, true },
+    { BMKFC_END,	"End of List",   0, 0, 0, 0, 0, 0, 0, false }
 };
 
 Bookmark::Bookmark()
@@ -82,7 +82,7 @@ const unsigned char* Bookmark::ParseField(const unsigned char *begin,
 
 	if( field->type == BMKFC_BOOKMARK_TYPE ) {
 		if( field->u.raw[0] != 'D' ) {
-			throw Error( "Bookmark::ParseField: BookmarkType is not 'p'" );
+			throw Error( "Bookmark::ParseField: BookmarkType is not 'D'" );
 		}
 		return begin;
 	}
@@ -102,41 +102,42 @@ const unsigned char* Bookmark::ParseField(const unsigned char *begin,
 
 			// advance and check size
 			b += 1;
-			if( b > e )							// if begin==end, we are ok
+			if( b > e )		// if begin==end, we are ok
 				continue;
 
-			switch (type) {
+			switch (type)
+			{
 			case 0x81:
-				b += 8;							// 8 fields unknonw
+				b += 8;		// 8 fields unknown
 				break;
 			case 0x84:
 			case 0x85:
-				b += 5;							// 4 fields unknonw
+				b += 5;		// 4 fields unknown
 				break;
 			case BMKFC_NAME:
 				isdefined = *b;
 				b += sizeof(uint8_t);
-				if (isdefined == 1) {			// if field is defined
+				if (isdefined == 1) {	// if field is defined
 					const uint16_t size = be_btohs(*((const uint16_t *) b));
 					b += sizeof(uint16_t);
 					Name = ParseFieldString(b, size);
 					b += size;
 				}
 				break;
-			case BMKFC_ICONE:
+			case BMKFC_ICON:
 				isdefined = *b;
 				b += sizeof(uint8_t);
-				if (isdefined == 1) {			// if field is defined
+				if (isdefined == 1) {	// if field is defined
 					const uint16_t size = be_btohs(*((const uint16_t *) b));
 					b += sizeof(uint16_t);
-					Icone = ParseFieldString(b, size);
+					Icon = ParseFieldString(b, size);
 					b += size;
 				}
 				break;
 			case 0x08:
 				isdefined = *b;
 				b += sizeof(uint8_t);
-				if (isdefined == 1) {			// if field is defined
+				if (isdefined == 1) {	// if field is defined
 					const uint16_t size = be_btohs(*((const uint16_t *) b));
 					b += sizeof(uint16_t);
 					b += size;
@@ -243,8 +244,16 @@ bool Bookmark::operator<(const Bookmark &other) const
 
 void Bookmark::Clear()
 {
+	RecType = GetDefaultRecType();
+	RecordId = 0;
+
 	Name.clear();
+	Icon.clear();
 	URL.clear();
+
+	BrowserIdentity = IdentityUnknown;
+	DisplayMode = DisplayUnknown;
+	JavaScriptMode = JavaScriptUnknown;
 
 	Unknowns.clear();
 }
