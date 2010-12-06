@@ -146,7 +146,7 @@ const unsigned char* Bookmark::ParseField(const unsigned char *begin,
 			}
 		}
 
-		if (field->size >= 3) {
+		if( btohs(field->size) >= 3 ) {
 			if ((Barry::Bookmark::DisplayModeType) *(begin - 3) > Barry::Bookmark::DisplayUnknown)
 				DisplayMode = Barry::Bookmark::DisplayUnknown;
 			else
