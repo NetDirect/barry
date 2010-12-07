@@ -31,6 +31,31 @@
 using namespace std;
 using namespace Barry;
 
+void Usage()
+{
+   int major, minor;
+   const char *Version = Barry::Version(major, minor);
+
+   cerr
+   << "btardump - Command line parser for Barry backup files\n"
+   << "           Copyright 2010, Net Direct Inc. (http://www.netdirect.ca/)\n"
+   << "           Using: " << Version << "\n"
+   << "\n"
+   << "   -d db     Name of database to dump.  Can be used multiple times\n"
+   << "             to parse multiple databases at once.  If not specified\n"
+   << "             at all, all available databases from the backup are\n"
+   << "             dumped.\n"
+   << "   -h        This help\n"
+   << "   -i cs     International charset for string conversions\n"
+   << "             Valid values here are available with 'iconv --list'\n"
+#ifdef __BARRY_SYNC_MODE__
+   << "   -V        Dump records using MIME vformats where possible\n"
+#endif
+   << "\n"
+   << "   [files...] Backup file(s), created by btool or the backup GUI.\n"
+   << endl;
+}
+
 #ifdef __BARRY_SYNC_MODE__
 template <class Record>
 class MimeDump
@@ -143,29 +168,6 @@ void MyAllRecordDumpStore::operator() (const Barry::Task &rec)
 	}
 }
 
-void Usage()
-{
-   int major, minor;
-   const char *Version = Barry::Version(major, minor);
-
-   cerr
-   << "btardump - Command line parser for Barry backup files\n"
-   << "           Copyright 2010, Net Direct Inc. (http://www.netdirect.ca/)\n"
-   << "           Using: " << Version << "\n"
-   << "\n"
-   << "   -d db     Name of database to dump.  Can be used multiple times\n"
-   << "             to parse multiple databases at once.  If not specified\n"
-   << "             at all, all available databases from the backup are\n"
-   << "             dumped.\n"
-   << "   -h        This help\n"
-#ifdef __BARRY_SYNC_MODE__
-   << "   -V        Dump records using MIME vformats where possible\n"
-#endif
-   << "\n"
-   << "   [files...] Backup file(s), created by btool or the backup GUI.\n"
-   << endl;
-}
-
 int main(int argc, char *argv[])
 {
 	try {
@@ -173,10 +175,11 @@ int main(int argc, char *argv[])
 
 		vector<string> db_names;
 		vector<string> backup_files;
+		string iconvCharset;
 
 		// process command line options
 		for(;;) {
-			int cmd = getopt(argc, argv, "d:hV");
+			int cmd = getopt(argc, argv, "d:hi:V");
 			if( cmd == -1 )
 				break;
 
@@ -194,6 +197,10 @@ int main(int argc, char *argv[])
 					"library support available\n";
 				return 1;
 #endif
+				break;
+
+			case 'i':	// international charset (iconv)
+				iconvCharset = optarg;
 				break;
 
 			case 'h':	// help
@@ -217,6 +224,12 @@ int main(int argc, char *argv[])
 
 		Barry::Init();
 
+		// Create an IConverter object if needed
+		auto_ptr<IConverter> ic;
+		if( iconvCharset.size() ) {
+			ic.reset( new IConverter(iconvCharset.c_str(), true) );
+		}
+
 		// create the parser, and use stdout dump objects for output
 		AllRecordParser parser(cout,
 			new HexDumpParser(cout),
@@ -236,7 +249,7 @@ int main(int argc, char *argv[])
 			// create the pipe to connect builder to parser and
 			// move the data
 			Pipe pipe(builder);
-			pipe.PumpFile(parser);
+			pipe.PumpFile(parser, ic.get());
 		}
 
 	}
