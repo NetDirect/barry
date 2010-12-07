@@ -399,6 +399,7 @@ public:
 ///
 class BXEXPORT AllRecordDumpStore : public AllRecordStore
 {
+protected:
 	std::ostream &m_os;
 
 public:

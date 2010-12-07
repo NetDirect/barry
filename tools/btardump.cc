@@ -20,6 +20,9 @@
 */
 
 #include <barry/barry.h>
+#ifdef __BARRY_SYNC_MODE__
+#include <barry/barrysync.h>
+#endif
 #include <barry/barrybackup.h>
 #include <iostream>
 #include <iomanip>
@@ -27,6 +30,118 @@
 
 using namespace std;
 using namespace Barry;
+
+#ifdef __BARRY_SYNC_MODE__
+template <class Record>
+class MimeDump
+{
+public:
+	void Dump(std::ostream &os, const Record &rec)
+	{
+		os << rec << endl;
+	}
+
+	static bool Supported() { return false; }
+};
+
+template <>
+class MimeDump<Contact>
+{
+public:
+	void Dump(std::ostream &os, const Contact &rec)
+	{
+		Sync::vCard vcard;
+		os << vcard.ToVCard(rec) << endl;
+	}
+
+	static bool Supported() { return true; }
+};
+#endif
+
+class MyAllRecordDumpStore : public AllRecordDumpStore
+{
+	bool vformat_mode;
+
+public:
+	explicit MyAllRecordDumpStore(std::ostream &os, bool vformat_mode=false)
+		: AllRecordDumpStore(os)
+		, vformat_mode(vformat_mode)
+	{
+	}
+	virtual void operator() (const Barry::Contact &);
+	virtual void operator() (const Barry::Calendar &);
+	virtual void operator() (const Barry::CalendarAll &);
+	virtual void operator() (const Barry::Memo &);
+	virtual void operator() (const Barry::Task &);
+};
+
+void MyAllRecordDumpStore::operator() (const Barry::Contact &rec)
+{
+	if( vformat_mode ) {
+#ifdef __BARRY_SYNC_MODE__
+		Sync::vCard vcard;
+		m_os << vcard.ToVCard(rec) << endl;
+#endif
+	}
+	else {
+		m_os << rec << std::endl;
+	}
+}
+
+void MyAllRecordDumpStore::operator() (const Barry::Calendar &rec)
+{
+	if( vformat_mode ) {
+#ifdef __BARRY_SYNC_MODE__
+		Sync::vTimeConverter vtc;
+		Sync::vCalendar vcal(vtc);
+		m_os << vcal.ToVCal(rec) << endl;
+#endif
+	}
+	else {
+		m_os << rec << std::endl;
+	}
+}
+
+void MyAllRecordDumpStore::operator() (const Barry::CalendarAll &rec)
+{
+	if( vformat_mode ) {
+#ifdef __BARRY_SYNC_MODE__
+		Sync::vTimeConverter vtc;
+		Sync::vCalendar vcal(vtc);
+		m_os << vcal.ToVCal(rec) << endl;
+#endif
+	}
+	else {
+		m_os << rec << std::endl;
+	}
+}
+
+void MyAllRecordDumpStore::operator() (const Barry::Memo &rec)
+{
+	if( vformat_mode ) {
+#ifdef __BARRY_SYNC_MODE__
+		Sync::vJournal vjournal;
+		m_os << vjournal.ToMemo(rec) << endl;
+#endif
+	}
+	else {
+		m_os << rec << std::endl;
+	}
+}
+
+void MyAllRecordDumpStore::operator() (const Barry::Task &rec)
+{
+	if( vformat_mode ) {
+#ifdef __BARRY_SYNC_MODE__
+		Sync::vTimeConverter vtc;
+		Sync::vTodo vtodo(vtc);
+		m_os << vtodo.ToTask(rec) << endl;
+#endif
+	}
+	else {
+		m_os << rec << std::endl;
+	}
+}
 
 void Usage()
 {
@@ -43,6 +158,9 @@ void Usage()
    << "             at all, all available databases from the backup are\n"
    << "             dumped.\n"
    << "   -h        This help\n"
+#ifdef __BARRY_SYNC_MODE__
+   << "   -V        Dump records using MIME vformats where possible\n"
+#endif
    << "\n"
    << "   [files...] Backup file(s), created by btool or the backup GUI.\n"
    << endl;
@@ -51,13 +169,14 @@ void Usage()
 int main(int argc, char *argv[])
 {
 	try {
+		bool vformat_mode = false;
 
 		vector<string> db_names;
 		vector<string> backup_files;
 
 		// process command line options
 		for(;;) {
-			int cmd = getopt(argc, argv, "d:h");
+			int cmd = getopt(argc, argv, "d:hV");
 			if( cmd == -1 )
 				break;
 
@@ -65,6 +184,16 @@ int main(int argc, char *argv[])
 			{
 			case 'd':	// show dbname
 				db_names.push_back(string(optarg));
+				break;
+
+			case 'V':	// vformat MIME mode
+#ifdef __BARRY_SYNC_MODE__
+				vformat_mode = true;
+#else
+				cerr << "-V option not supported - no Sync "
+					"library support available\n";
+				return 1;
+#endif
 				break;
 
 			case 'h':	// help
@@ -91,7 +220,7 @@ int main(int argc, char *argv[])
 		// create the parser, and use stdout dump objects for output
 		AllRecordParser parser(cout,
 			new HexDumpParser(cout),
-			new AllRecordDumpStore(cout));
+			new MyAllRecordDumpStore(cout, vformat_mode));
 
 		for( size_t i = 0; i < backup_files.size(); i++ ) {
 

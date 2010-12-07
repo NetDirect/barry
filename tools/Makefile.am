@@ -114,8 +114,18 @@ endif
 
 if WITH_BACKUP
 btardump_SOURCES = btardump.cc
+btardump_CXXFLAGS = $(AM_CXXFLAGS) -D__BARRY_BACKUP_MODE__
+#if WITH_BOOST
+#btardump_CXXFLAGS += -D__BARRY_BOOST_MODE__ -D_REENTRANT @BOOST_INC_PATH@
+#endif
+if WITH_SYNC
+btardump_CXXFLAGS += -D__BARRY_SYNC_MODE__ $(GLIB2_CFLAGS) 
+endif
 btardump_LDADD = ../src/libbarry.la $(LIBUSB_LIBS) \
 	../src/libbarrybackup.la -lpthread $(LTLIBINTL)
+if WITH_SYNC
+btardump_LDADD += ../src/libbarrysync.la $(GLIB2_LIBS)
+endif
 endif
 
 brimtrans_SOURCES = brimtrans.cc

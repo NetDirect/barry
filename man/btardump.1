@@ -20,7 +20,7 @@
 \- Command line parser for Barry backup files
 .SH SYNOPSIS
 .B btardump
-[-d db][-h] filename [filenames...]
+[-d db][-h][-V] filename [filenames...]
 .SH DESCRIPTION
 .PP
 .B btardump
@@ -36,6 +36,11 @@ databases from the backup file are dumped.
 .TP
 .B \-h, \-\-help
 Show summary of options.
+.TP
+.B \-V
+Enable vformat MIME output where available.  Address Book gets printed
+in vCard format, Calendar in vEvent format, Memos in vJournal, and
+Tasks in vTodo, etc.
 
 .SH AUTHOR
 .nh
