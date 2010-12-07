@@ -42,9 +42,11 @@ public:
 	uint8_t RecType;
 	uint32_t RecordId;
 
+	uint8_t Index;
+
 	std::string Name;
 	std::string Icon;
-	std::string URL;
+	std::string Url;
 
 	enum BrowserIdentityType
 	{
@@ -77,6 +79,10 @@ public:
 	UnknownsType Unknowns;
 
 protected:
+	const unsigned char* ParseStruct1Field(const unsigned char *begin,
+		const unsigned char *end, const IConverter *ic = 0);
+	const unsigned char* ParseStruct2(const unsigned char *begin,
+		const unsigned char *end, const IConverter *ic = 0);
 
 public:
 	Bookmark();

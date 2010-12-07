@@ -309,7 +309,7 @@ struct CalendarRecurrenceDataField  // as documented in the Cassis project spec
 
 #define CLL_PHONETYPE_UNDEFINED		0
 #define CLL_PHONETYPE_OFFICE		1
-#define CLL_PHONETYPE_HOME			2
+#define CLL_PHONETYPE_HOME		2
 #define CLL_PHONETYPE_MOBILE		3
 #define CLL_PHONETYPE_RANGE_LOW		0
 #define CLL_PHONETYPE_RANGE_HIGH	3
@@ -318,18 +318,57 @@ struct CalendarRecurrenceDataField  // as documented in the Cassis project spec
 // Browser Bookmarks record: field constants
 //
 //
-#define BMK_BROWSER_AUTO				0
-#define BMK_BROWSER_BLACKBERRY			1
-#define BMK_BROWSER_FIREFOX				2
+#define BMK_BROWSER_AUTO		0
+#define BMK_BROWSER_BLACKBERRY		1
+#define BMK_BROWSER_FIREFOX		2
 #define BMK_BROWSER_INTERNET_EXPLORER	3
 
-#define BMK_DISPLAY_AUTO				0
-#define BMK_DISPLAY_COLOMN				1
-#define BMK_DISPLAY_PAGE				2
+#define BMK_DISPLAY_AUTO		0
+#define BMK_DISPLAY_COLOMN		1
+#define BMK_DISPLAY_PAGE		2
 
-#define BMK_JAVASCRIPT_AUTO				0
-#define BMK_JAVASCRIPT_ENABLED			1
-#define BMK_JAVASCRIPT_DISABLED			2
+#define BMK_JAVASCRIPT_AUTO		0
+#define BMK_JAVASCRIPT_ENABLED		1
+#define BMK_JAVASCRIPT_DISABLED		2
+
+struct StringField
+{
+	uint16_t	be_size;	// may or may not have a null term.
+					// big-endian
+	uint8_t		data[1];
+} __attribute__ ((packed));
+#define STRING_FIELD_HEADER_SIZE	(sizeof(::Barry::Protocol::StringField) - 1)
+
+struct BookmarkId
+{
+	uint32_t	bookmark_id;
+	uint8_t		index;
+} __attribute__ ((packed));
+#define BOOKMARK_ID_SIZE		(sizeof(::Barry::Protocol::BookmarkId))
+
+struct VarStringField
+{
+	uint8_t		present;
+	uint16_t	be_size;	// big-endian
+	uint8_t		data[1];
+} __attribute__ ((packed));
+#define VARSTRING_FIELD_HEADER_SIZE	(sizeof(::Barry::Protocol::VarStringField) - 1)
+
+struct BookmarkFolders
+{
+	uint32_t	id1;		// these two fields contain
+	uint32_t	id2;		// b9 fc f8 f6 c2 e3 a4 d5
+					// whenever there is a record in
+					// the Blackberry Bookmarks folder,
+					// even across multiple devices!
+					// this was true for the 9550 and
+					// the oooold 7750, and the 8700
+	uint8_t		unknown;	// may be a section code?  seems to
+					// always be 0x08
+	uint8_t		flag;		// unknown flag
+} __attribute__ ((packed));
+#define BOOKMARK_FOLDERS_HEADER_SIZE	(sizeof(::Barry::Protocol::BookmarkFolders))
+
 
 //
 // Folder record: field constants

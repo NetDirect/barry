@@ -234,10 +234,11 @@ void serialize(ArchiveT &ar, Barry::Bookmark &c, const unsigned int ver)
 {
 	ar & make_nvp("RecType", c.RecType);
 	ar & make_nvp("RecordId", c.RecordId);
+	ar & make_nvp("Index", c.Index);
 
 	ar & make_nvp("Name", c.Name);
 	ar & make_nvp("Icon", c.Icon);
-	ar & make_nvp("URL", c.URL);
+	ar & make_nvp("Url", c.Url);
 
 	ar & make_nvp("BrowserIdentity", c.BrowserIdentity);
 	ar & make_nvp("DisplayMode", c.DisplayMode);
