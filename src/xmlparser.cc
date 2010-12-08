@@ -52,15 +52,14 @@ const unsigned long XMLParser::getDepth(void) const
 bool XMLParser::run(void) 
 {
 	try {
-		char buff[1024];
-
-	    set_substitute_entities(true);
+		set_substitute_entities(true);
 		parse_chunk("<?xml version=\"1.0\" encoding=\"" + charset + "\"?>");
 
-		do {
-			input.read(buff, 1024);
-			parse_chunk_raw((unsigned char *) buff, 1024);
-		} while (input.gcount() > 0);
+		std::string line;
+		while( getline(input, line) ) {
+			parse_chunk(line);
+		}
+		finish_chunk_parsing();
 	}
 	catch (const xmlpp::exception& ex) {
 		std::cout << "libxml++ exception: " << ex.what() << std::endl;
