@@ -26,9 +26,12 @@
 
 #include <sys/types.h>
 #include <dirent.h>
+#include <errno.h>
 
 #include "a_osloader.h"
 #include "a_alxparser.h"
+#include "vsmartptr.h"
+#include "error.h"
 
 
 namespace Barry {
@@ -52,7 +55,6 @@ void OSLoader::load(const std::string& pathname)
 
 	int offset;
 
-	DIR *path;
 	struct dirent *entry;
 
 	std::string alxfile;
@@ -63,9 +65,13 @@ void OSLoader::load(const std::string& pathname)
 	loadALXFile(alxfile, false);
 
 	// Then, we can read all ALX files
-	path = opendir(pathname.c_str());
+	// Wrap it in a smart pointer so exceptions are safe
+	vLateSmartPtr<DIR, int (*)(DIR*)> path(&closedir);
+	path.reset( opendir(pathname.c_str()) );
+	if( path.get() == NULL )
+		throw Barry::ErrnoError("Could not opendir: " + pathname, errno);
 
-	while ((entry = readdir(path)) != NULL) {
+	while ((entry = readdir(path.get())) != NULL) {
 		alxfile = entry->d_name;
 
 		if (alxfile.length() < ext.length())
@@ -83,14 +89,14 @@ void OSLoader::load(const std::string& pathname)
 
 		loadALXFile(pathname + "/" + alxfile, true);
 	}
-
-	closedir(path);
 }
 
 
 void OSLoader::loadALXFile(const std::string& alxfile, const bool enable)
 {
 	std::ifstream file(alxfile.c_str());
+	if( !file )
+		throw Barry::Error("Cannot open ALX file: " + alxfile);
 
 	ALX::ALXParser parser(*this, file);
 
