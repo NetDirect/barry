@@ -73,12 +73,15 @@ DEFS = -DLOCALEDIR=\"$(localedir)\" @DEFS@
 # libbarrysync - utility functions and classes for syncing and vformats
 # libbarrybackup - utility classes for reading/writing Barry backup files
 #
-lib_LTLIBRARIES = libbarry.la libbarrydp.la libbarryjdwp.la libbarryalx.la
+lib_LTLIBRARIES = libbarry.la libbarrydp.la libbarryjdwp.la
 if WITH_SYNC
 lib_LTLIBRARIES += libbarrysync.la
 endif
 if WITH_BACKUP
 lib_LTLIBRARIES += libbarrybackup.la
+endif
+if WITH_ALX
+lib_LTLIBRARIES += libbarryalx.la
 endif
 
 include_barry_HEADERS = barry.h barrysync.h barrybackup.h \
@@ -232,20 +235,6 @@ libbarry_la_SOURCES = dll.h \
 libbarry_la_LIBADD = $(LTLIBOBJS) $(LIBUSB_LIBS) $(ZLIB_LIBS) @LTLIBICONV@
 libbarry_la_LDFLAGS = -version-info ${LIB_BARRY_VERSION}
 
-if WITH_ALX
-libbarryalx_la_SOURCES = \
-	xmlparser.h xmlparser.cc \
-	a_common.h \
-	a_codsection.h a_codsection.cc \
-	a_library.h a_library.cc \
-	a_application.h a_application.cc \
-	a_osloader.h a_osloader.cc \
-	a_alxparser.h a_alxparser.cc
-libbarryalx_la_CXXFLAGS = $(AM_CXXFLAGS) $(LIBXMLXX_CFLAGS)
-libbarryalx_la_LIBADD = $(LIBXMLXX_LIBS)
-libbarryalx_la_LDFLAGS = -version-info ${LIB_BARRY_VERSION}
-endif
-
 libbarrydp_la_SOURCES = \
 	dp_parser.h dp_parser.cc \
 	dp_codinfo.h dp_codinfo.cc
@@ -288,6 +277,20 @@ libbarrybackup_la_CFLAGS = $(AM_CFLAGS) $(LIBTAR_CFLAGS) $(LIBZ_CFLAGS)
 libbarrybackup_la_CXXFLAGS = $(AM_CXXFLAGS) $(LIBTAR_CFLAGS) $(LIBZ_CFLAGS)
 libbarrybackup_la_LIBADD = libbarry.la $(LIBTAR_LIBS) $(LIBZ_LIBS)
 libbarrybackup_la_LDFLAGS = -version-info ${LIB_BARRY_VERSION}
+endif
+
+if WITH_ALX
+libbarryalx_la_SOURCES = \
+	xmlparser.h xmlparser.cc \
+	a_common.h \
+	a_codsection.h a_codsection.cc \
+	a_library.h a_library.cc \
+	a_application.h a_application.cc \
+	a_osloader.h a_osloader.cc \
+	a_alxparser.h a_alxparser.cc
+libbarryalx_la_CXXFLAGS = $(AM_CXXFLAGS) $(LIBXMLXX_CFLAGS)
+libbarryalx_la_LIBADD = $(LIBXMLXX_LIBS)
+libbarryalx_la_LDFLAGS = -version-info ${LIB_BARRY_VERSION}
 endif
 
 ##if DO_TEST

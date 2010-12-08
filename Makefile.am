@@ -26,6 +26,9 @@ endif
 if WITH_BACKUP
 pkgconfig_DATA += libbarrybackup-0.pc
 endif
+if WITH_ALX
+pkgconfig_DATA += libbarryalx-0.pc
+endif
 
 all-local:
 	rm -f $(top_builddir)/barry

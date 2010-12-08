@@ -218,40 +218,13 @@ PKG_CHECK_MODULES([LIBXMLXX], [libxml++-2.6],
 	[LIBXMLXX_FOUND=1],
 	[
 		echo "*****************************************************************"
-		echo "WARNING: expat not found... ALX parser will not supported"
+		echo "WARNING: libxml++ not found... ALX parser not included"
 		echo "*****************************************************************"
 		LIBXMLXX_FOUND=0
 	]
 	)
 
 AM_CONDITIONAL([WITH_ALX],  [test "$LIBXMLXX_FOUND" = "1"])
-
-
-#AC_ARG_WITH(expat,
-#	AC_HELP_STRING(--with-expat, [force usage of expat, and halt if not available]),
-#	force_expat=$withval, force_expat=no )
-#
-#AC_CHECK_LIB(expat, [open], 
-#	[
-#	 	EXPAT_FOUND=1
-#		AC_DEFINE([HAVE_EXPAT], [1], [Use expat library])
-#		AC_ARG_VAR([EXPAT_LIBS], [Linker options for expat])
-#	 	EXPAT_LIBS="-lexpat"
-#	],
-#	[
-#		echo "*****************************************************************"
-#		echo "WARNING: expat not found... ALX parser will not supported"
-#		echo "*****************************************************************"
-#		AC_ARG_VAR([EXPAT_LIBS], [Linker options for expat])
-#		EXPAT_LIBS=""
-#		if test "x$force_expat" != xno ; then
-#			AC_MSG_FAILURE([--with-expat specified, but expat not found])
-#		fi
-#	]
-#	)
-#AC_CHECK_HEADERS([expat.h])
-#
-#AM_CONDITIONAL([WITH_ALX],  [test "$EXPAT_FOUND" = "1"])
 
 
 AM_ICONV
@@ -310,11 +283,8 @@ AC_CONFIG_FILES([Makefile po/Makefile.in
 		 libbarrydp-0.pc
 		 libbarryjdwp-0.pc
 		 libbarrysync-0.pc
-		 libbarrybackup-0.pc])
-
-if test "$LIBXMLXX_FOUND" = "1"; then
-AC_CONFIG_FILES([libbarryalx-0.pc])
-fi
+		 libbarrybackup-0.pc
+		 libbarryalx-0.pc])
 
 #
 # nested packages
