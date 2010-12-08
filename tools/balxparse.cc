@@ -22,14 +22,12 @@
 
 
 #include <barry/barry.h>
+#include <barry/barryalx.h>
 #include <iostream>
 #include <iomanip>
 #include <fstream>
 #include <getopt.h>
 #include "i18n.h"
-
-#include <barry/a_osloader.h>
-
 
 using namespace std;
 using namespace Barry;
@@ -95,6 +93,8 @@ void Usage()
 int main(int argc, char *argv[], char *envp[])
 {
 	INIT_I18N(PACKAGE);
+
+	try {
 
 	string lang;
 	string pathname;
@@ -167,6 +167,12 @@ int main(int argc, char *argv[], char *envp[])
 	}
 	
 	cout << os << endl;
+
+
+	} catch( std::exception &e ) {
+		cout << e.what() << endl;
+		return 1;
+	}
 
 	return 0;
 }
