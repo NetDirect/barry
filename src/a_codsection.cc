@@ -139,9 +139,7 @@ void CODSection::addFiles(const std::string& files)
 	std::string file;
 	std::istringstream iss(files);
 
-	while (!iss.eof()) {
-		std::getline(iss, file);
-
+	while( std::getline(iss, file) ) {
 		file = trim(file);
 
 		if (file.length() > 0)
