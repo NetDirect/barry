@@ -84,7 +84,7 @@ if WITH_ALX
 lib_LTLIBRARIES += libbarryalx.la
 endif
 
-include_barry_HEADERS = barry.h barrysync.h barrybackup.h \
+include_barry_HEADERS = barry.h barrysync.h barrybackup.h barryalx.h \
 	dll.h \
 	builder.h \
 	common.h \
