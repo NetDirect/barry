@@ -1,0 +1,56 @@
+.\"                                      Hey, EMACS: -*- nroff -*-
+.\" First parameter, NAME, should be all caps
+.\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
+.\" other parameters are allowed: see man(7), man(1)
+.TH BALXPARSE 1 "December 9, 2010"
+.\" Please adjust this date whenever revising the manpage.
+.\"
+.\" Some roff macros, for reference:
+.\" .nh        disable hyphenation
+.\" .hy        enable hyphenation
+.\" .ad l      left justify
+.\" .ad b      justify to both left and right margins
+.\" .nf        disable filling
+.\" .fi        enable filling
+.\" .br        insert line break
+.\" .sp <n>    insert n+1 empty lines
+.\" for manpage-specific macros, see man(7)
+.SH NAME
+.B balxparse
+\- Barry Project's program to parse firmware ALX files.
+.SH SYNOPSIS
+.B balxparse [-h][-i lang][-d path][-o file] [ALX files...]
+
+.SH DESCRIPTION
+.PP
+.B balxparse
+is a tool for loading XML data from the ALX files included with
+BlackBerry firmware updates.  It is able to parse this data in multiple
+charsets / languages, as well as parsing the entire directory of ALX
+files.
+
+.SH OPTIONS
+.TP
+.B \-h
+Display a command help summary.
+.TP
+.B \-i lang
+Specify the internationalization charset/language to use.  By running
+.B balxparse
+with the -h option, a list of available languages is displayed.
+.TP
+.B \-d path
+Specify the path to find all ALX files.
+.TP
+.B \-o file
+Specify an OS filename (Platform.alx) to parse, without loading application
+and library dependencies.
+.SH AUTHOR
+.nh
+.B balxparse
+was initially written for the Barry project by Nicolas Vivien, with
+additional contributions from others over time.
+.SH SEE ALSO
+.PP
+http://www.netdirect.ca/barry
+

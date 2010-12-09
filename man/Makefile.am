@@ -4,6 +4,7 @@ dist_man_MANS = \
 	btardump.1 \
 	bfuse.1 \
 	bjavaloader.1 \
+	balxparse.1 \
 	bjdwp.1 \
 	bs11nread.1 \
 	bidentify.1 \
