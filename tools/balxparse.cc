@@ -80,7 +80,7 @@ void Usage()
 	for (int i=0; langs[i].code!=NULL; i++) {
 		string s = (string) langs[i].code + " : " + (string) langs[i].description;
 
-		cerr << left << setfill(' ') << setw(20) << s;
+		cerr << left << setfill(' ') << setw(18) << s;
 
 		if (((i+1) % 4) == 0)
 			cerr << endl << "\t";
