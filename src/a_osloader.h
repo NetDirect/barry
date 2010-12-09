@@ -62,6 +62,8 @@ public:
 	~OSLoader(void);
 
 	void load(const std::string& path);
+	/// Load ALX file, and if enable is true, register the applications
+	/// and libraries found inside it with this OSLoader class.
 	void loadALXFile(const std::string& alxfile, const bool enable=true);
 
 	void dump(std::ostream &os) const;
