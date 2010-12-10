@@ -2,6 +2,7 @@ debian/tmp/usr/bin/btool
 debian/tmp/usr/bin/btardump
 debian/tmp/usr/bin/bfuse
 debian/tmp/usr/bin/bjavaloader
+debian/tmp/usr/bin/balxparse
 debian/tmp/usr/bin/bjdwp
 debian/tmp/usr/bin/brawchannel
 debian/tmp/usr/bin/bs11nread
@@ -23,6 +24,7 @@ debian/tmp/usr/share/man/man1/btool.1
 debian/tmp/usr/share/man/man1/btardump.1
 debian/tmp/usr/share/man/man1/bfuse.1
 debian/tmp/usr/share/man/man1/bjavaloader.1
+debian/tmp/usr/share/man/man1/balxparse.1
 debian/tmp/usr/share/man/man1/bjdwp.1
 debian/tmp/usr/share/man/man1/pppob.1
 debian/tmp/usr/share/man/man1/upldif.1
