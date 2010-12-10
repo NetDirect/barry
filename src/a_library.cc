@@ -50,7 +50,7 @@ Library::~Library(void)
 }
 
 
-void Library::dump(std::ostream &os) const
+void Library::Dump(std::ostream &os) const
 {
 	os << "  Library " << name << " - " << version << std::endl;
 	os << "    ID          : " << id << std::endl;

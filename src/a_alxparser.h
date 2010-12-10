@@ -38,7 +38,8 @@ namespace Barry {
 namespace ALX {
 
 
-class BXEXPORT ALXParser : public virtual XML::XMLParser {
+class BXEXPORT ALXParser : public virtual XML::XMLParser
+{
 public:
 	enum MainNodeType { 
 		MAIN_NONE,
@@ -78,9 +79,10 @@ public:
 	ALXParser(OSLoader& osloader, std::istream& input);
 	virtual ~ALXParser(void);
 
-	virtual bool run(const bool enable);
+	virtual bool Run(const bool enable);
 
 protected:
+	// SaxParser overrides, also overridden in XMLParser
 	virtual void on_start_document();
 	virtual void on_end_document();
 	virtual void on_start_element(const Glib::ustring& name,

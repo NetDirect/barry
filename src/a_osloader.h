@@ -50,7 +50,8 @@ namespace Barry {
 
 namespace ALX {
 
-class BXEXPORT OSLoader {
+class BXEXPORT OSLoader
+{
 private:
 	std::string sfifile;
 	std::vector<CODSection *> applications;
@@ -61,25 +62,25 @@ public:
 	OSLoader(void);
 	~OSLoader(void);
 
-	void load(const std::string& path);
+	void Load(const std::string& path);
 	/// Load ALX file, and if enable is true, register the applications
 	/// and libraries found inside it with this OSLoader class.
-	void loadALXFile(const std::string& alxfile, const bool enable=true);
+	void LoadALXFile(const std::string& alxfile, const bool enable=true);
 
-	void dump(std::ostream &os) const;
+	void Dump(std::ostream &os) const;
 
-	void addProperties(const std::string& property, const std::string& value);
-	void addProperties(const xmlpp::SaxParser::AttributeList& attrs);
-	void setSFIFile(const std::string& name);
-	bool isSupported(const xmlpp::SaxParser::AttributeList& attrs);
-	void addApplication(CODSection *app);
-	void addLibrary(CODSection *lib);
+	void AddProperties(const std::string& property, const std::string& value);
+	void AddProperties(const xmlpp::SaxParser::AttributeList& attrs);
+	void SetSFIFile(const std::string& name);
+	bool IsSupported(const xmlpp::SaxParser::AttributeList& attrs);
+	void AddApplication(CODSection *app);
+	void AddLibrary(CODSection *lib);
 };
 
 
 inline std::ostream& operator<<(std::ostream& os, const OSLoader& osloader)
 {
-	osloader.dump(os);
+	osloader.Dump(os);
 	return os;
 }
 

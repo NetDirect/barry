@@ -50,7 +50,7 @@ Application::~Application(void)
 }
 
 
-void Application::dump(std::ostream &os) const
+void Application::Dump(std::ostream &os) const
 {
 	os << "  Application " << name << " - " << version << std::endl;
 	os << "    ID          : " << id << std::endl;

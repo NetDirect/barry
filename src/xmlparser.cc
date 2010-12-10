@@ -43,13 +43,13 @@ XMLParser::~XMLParser(void)
 }
 
 
-const unsigned long XMLParser::getDepth(void) const 
+const unsigned long XMLParser::GetDepth(void) const 
 {
 	return depth;
 }
 
 
-bool XMLParser::run(void) 
+bool XMLParser::Run(void) 
 {
 	try {
 		set_substitute_entities(true);

@@ -48,11 +48,11 @@ ALXParser::~ALXParser(void)
 }
 
 
-bool ALXParser::run(const bool enable)
+bool ALXParser::Run(const bool enable)
 {
 	m_register = enable;
 
-	return XMLParser::run();
+	return XMLParser::Run();
 }
 
 
@@ -118,7 +118,7 @@ void ALXParser::on_start_element(const Glib::ustring& name,
 			subnode = SUB_NONE;
 		}
 		else if ((subnode == IN_OSFILES) && (name == "os")) 
-			osloader.addProperties(attrs);
+			osloader.AddProperties(attrs);
 		break;
 
 	case IN_LIBRARY:
@@ -136,11 +136,11 @@ void ALXParser::on_start_element(const Glib::ustring& name,
 			else if (name == "copyright")
 				subnode = IN_COPYRIGHT;
 			else if (name == "directory") {
-				if (osloader.isSupported(attrs))
+				if (osloader.IsSupported(attrs))
 					subnode = IN_DIRECTORY;
 			}
 			else if (name == "language") {
-				if (osloader.isSupported(attrs))
+				if (osloader.IsSupported(attrs))
 					subnode = IN_LANGUAGE_SUPPORTED;
 				else
 					subnode = IN_LANGUAGE;
@@ -148,7 +148,7 @@ void ALXParser::on_start_element(const Glib::ustring& name,
 			else if (name == "required")
 				subnode = IN_REQUIRED;
 			else if (name == "fileset") {
-				if (osloader.isSupported(attrs))
+				if (osloader.IsSupported(attrs))
 					subnode = IN_FILESET;
 			}
 		}
@@ -190,7 +190,7 @@ void ALXParser::on_end_element(const Glib::ustring& name)
 			if (name == "osfiles")
 				subnode = SUB_NONE;
 			else if (name == "os")
-				osloader.setSFIFile(buffdata);
+				osloader.SetSFIFile(buffdata);
 			break;
 		default:
 			break;
@@ -202,7 +202,7 @@ void ALXParser::on_end_element(const Glib::ustring& name)
 	case IN_SYSTEM_APPLICATION:
 		if (name == "application") {
 			if (m_register)
-				osloader.addApplication(m_codsection);
+				osloader.AddApplication(m_codsection);
 			subnode = SUB_NONE;
 			if (node == IN_APPLICATION)
 				node = IN_LOADER;
@@ -211,7 +211,7 @@ void ALXParser::on_end_element(const Glib::ustring& name)
 		}
 		else if (name == "library") {
 			if (m_register)
-				osloader.addLibrary(m_codsection);
+				osloader.AddLibrary(m_codsection);
 			subnode = SUB_NONE;
 			if (node == IN_LIBRARY)
 				node = IN_LOADER;
@@ -220,37 +220,37 @@ void ALXParser::on_end_element(const Glib::ustring& name)
 		switch (subnode) {
 		case IN_NAME:
 			if (name == "name") {
-				m_codsection->setName(buffdata);
+				m_codsection->SetName(buffdata);
 				subnode = SUB_NONE;
 			}
 			break;
 		case IN_DESCRIPTION:
 			if (name == "description") {
-				m_codsection->setDescription(buffdata);
+				m_codsection->SetDescription(buffdata);
 				subnode = SUB_NONE;
 			}
 			break;
 		case IN_VERSION:
 			if (name == "version") {
-				m_codsection->setVersion(buffdata);
+				m_codsection->SetVersion(buffdata);
 				subnode = SUB_NONE;
 			}
 			break;
 		case IN_VENDOR:
 			if (name == "vendor") {
-				m_codsection->setVendor(buffdata);
+				m_codsection->SetVendor(buffdata);
 				subnode = SUB_NONE;
 			}
 			break;
 		case IN_COPYRIGHT:
 			if (name == "copyright") {
-				m_codsection->setCopyright(buffdata);
+				m_codsection->SetCopyright(buffdata);
 				subnode = SUB_NONE;
 			}
 			break;
 		case IN_DIRECTORY:
 			if (name == "directory") {
-				m_codsection->setDirectory(buffdata);
+				m_codsection->SetDirectory(buffdata);
 				subnode = SUB_NONE;
 			}
 			break;
@@ -264,13 +264,13 @@ void ALXParser::on_end_element(const Glib::ustring& name)
 				subnode = SUB_NONE;
 			}
 			else if (name == "name") {
-				m_codsection->setName(buffdata);
+				m_codsection->SetName(buffdata);
 			}
 			break;
 		case IN_REQUIRED:
 			if (name == "required") {
 				subnode = SUB_NONE;
-				m_codsection->setRequired(buffdata);
+				m_codsection->SetRequired(buffdata);
 			}
 			break;
 		case IN_FILESET:
@@ -278,7 +278,7 @@ void ALXParser::on_end_element(const Glib::ustring& name)
 				subnode = SUB_NONE;
 			}
 			else if (name == "files") {
-				m_codsection->addFiles(buffdata);
+				m_codsection->AddFiles(buffdata);
 			}
 			break;
 

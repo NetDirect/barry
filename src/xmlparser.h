@@ -34,20 +34,21 @@ namespace Barry {
 namespace XML {
 
 
-class BXEXPORT XMLParser : public xmlpp::SaxParser {
+class BXEXPORT XMLParser : public xmlpp::SaxParser
+{
 public:
 	XMLParser(std::istream& input, const char *charset="UTF-8");
 	virtual ~XMLParser(void);
 
-	virtual bool run(void);
-	virtual const unsigned long getDepth(void) const;
+	virtual bool Run(void);
+	virtual const unsigned long GetDepth(void) const;
 
 protected:
 	std::string charset;
 	std::istream& input;
 	unsigned long depth;
 
-	// overrides:
+	// SaxParser overrides:
 	virtual void on_start_document();
 	virtual void on_end_document();
 	virtual void on_start_element(const Glib::ustring& name,

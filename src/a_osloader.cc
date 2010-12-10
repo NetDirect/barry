@@ -49,7 +49,7 @@ OSLoader::~OSLoader(void)
 }
 
 
-void OSLoader::load(const std::string& pathname)
+void OSLoader::Load(const std::string& pathname)
 {
 #define ALX_FILE_EXT	".alx"
 
@@ -62,7 +62,7 @@ void OSLoader::load(const std::string& pathname)
 
 	// At first, we have to read platform properties...
 	alxfile = pathname + "/Platform.alx";
-	loadALXFile(alxfile, false);
+	LoadALXFile(alxfile, false);
 
 	// Then, we can read all ALX files
 	// Wrap it in a smart pointer so exceptions are safe
@@ -87,12 +87,12 @@ void OSLoader::load(const std::string& pathname)
 		if (alxfile.substr(offset, ext.length()) != ALX_FILE_EXT)
 			continue;
 
-		loadALXFile(pathname + "/" + alxfile, true);
+		LoadALXFile(pathname + "/" + alxfile, true);
 	}
 }
 
 
-void OSLoader::loadALXFile(const std::string& alxfile, const bool enable)
+void OSLoader::LoadALXFile(const std::string& alxfile, const bool enable)
 {
 	std::ifstream file(alxfile.c_str());
 	if( !file )
@@ -100,13 +100,13 @@ void OSLoader::loadALXFile(const std::string& alxfile, const bool enable)
 
 	ALX::ALXParser parser(*this, file);
 
-	parser.run(enable);
+	parser.Run(enable);
 
 	file.close();
 }
 
 
-void OSLoader::dump(std::ostream &os) const
+void OSLoader::Dump(std::ostream &os) const
 {
 	os << "OS Properties :" << std::endl;
 
@@ -146,7 +146,7 @@ void OSLoader::dump(std::ostream &os) const
 }
 
 
-void OSLoader::addProperties(const std::string& property, const std::string& value) 
+void OSLoader::AddProperties(const std::string& property, const std::string& value) 
 {
 	properties[property] = value;
 
@@ -155,24 +155,24 @@ void OSLoader::addProperties(const std::string& property, const std::string& val
 }
 
 	
-void OSLoader::addProperties(const xmlpp::SaxParser::AttributeList& attrs)
+void OSLoader::AddProperties(const xmlpp::SaxParser::AttributeList& attrs)
 {
 	for (xmlpp::SaxParser::AttributeList::const_iterator iter = attrs.begin(); iter != attrs.end(); ++iter) {
 		std::string attribut(iter->name);
 		std::string value(iter->value);
 
-		addProperties(attribut, value);
+		AddProperties(attribut, value);
 	}
 }
 
 
-void OSLoader::setSFIFile(const std::string& name)
+void OSLoader::SetSFIFile(const std::string& name)
 {
 	sfifile = name;
 }
 
 
-bool OSLoader::isSupported(const xmlpp::SaxParser::AttributeList& attrs)
+bool OSLoader::IsSupported(const xmlpp::SaxParser::AttributeList& attrs)
 {
 	if (properties.empty())
 		return false;
@@ -202,13 +202,13 @@ bool OSLoader::isSupported(const xmlpp::SaxParser::AttributeList& attrs)
 }
 
 
-void OSLoader::addApplication(CODSection *app)
+void OSLoader::AddApplication(CODSection *app)
 {
 	applications.push_back(app);
 }
 
 
-void OSLoader::addLibrary(CODSection *lib)
+void OSLoader::AddLibrary(CODSection *lib)
 {
 	libraries.push_back(lib);
 }

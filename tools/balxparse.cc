@@ -141,7 +141,7 @@ int main(int argc, char *argv[], char *envp[])
 	// Init ALX parser
 	ALX::OSLoader os;
 
-	os.addProperties("_vendorID", "");
+	os.AddProperties("_vendorID", "");
 
 
 	if (lang.length() > 0) {
@@ -149,20 +149,20 @@ int main(int argc, char *argv[], char *envp[])
 			string code = langs[i].code;
 
 			if (code == lang)
-				os.addProperties("langid", langs[i].alxid);
+				os.AddProperties("langid", langs[i].alxid);
 		}
 	}
 
 	if (osfilename.length() > 0)
-		os.loadALXFile(osfilename, false);
+		os.LoadALXFile(osfilename, false);
 
 	if (pathname.length() > 0)
-		os.load(pathname);
+		os.Load(pathname);
 	
 	if (!filenames.empty()) {
 		vector<string>::iterator i = filenames.begin(), end = filenames.end();
 		for( ; i != end; ++i ) {
-			os.loadALXFile((*i), true);
+			os.LoadALXFile((*i), true);
 		}
 	}
 	

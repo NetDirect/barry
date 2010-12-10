@@ -34,19 +34,20 @@ namespace Barry {
 namespace ALX {
 
 
-class BXEXPORT Application : public virtual CODSection {
+class BXEXPORT Application : public virtual CODSection
+{
 public:
 	Application(void);
 	Application(const xmlpp::SaxParser::AttributeList& attrs);
 	virtual ~Application(void);
 
-	virtual void dump(std::ostream &os) const;
+	virtual void Dump(std::ostream &os) const;
 };
 
 
 inline std::ostream& operator<<(std::ostream& os, const Application& app)
 {
-	app.dump(os);
+	app.Dump(os);
 	return os;
 }
 

@@ -29,6 +29,7 @@
 
 namespace Barry {
 
+namespace {
 
 std::string trim(const std::string &str) {
 	int i;
@@ -51,6 +52,8 @@ std::string trim(const std::string &str) {
     return s;
 }
 
+}
+
 
 namespace ALX {
 
@@ -70,7 +73,7 @@ CODSection::CODSection(const xmlpp::SaxParser::AttributeList& attrs)
 		std::string value(iter->value);
 
 		if (attribut == "id")
-			setID(value);
+			SetID(value);
 	}
 }
 
@@ -81,49 +84,49 @@ CODSection::~CODSection(void)
 }
 
 
-void CODSection::setID(const std::string& id)
+void CODSection::SetID(const std::string& id)
 {
 	this->id = id;
 }
 
 
-void CODSection::setName(const std::string& name)
+void CODSection::SetName(const std::string& name)
 {
 	this->name = trim(name);
 }
 
 
-void CODSection::setDescription(const std::string& description)
+void CODSection::SetDescription(const std::string& description)
 {
 	this->description = trim(description);
 }
 
 
-void CODSection::setVersion(const std::string& version)
+void CODSection::SetVersion(const std::string& version)
 {
 	this->version = trim(version);
 }
 
 
-void CODSection::setVendor(const std::string& vendor)
+void CODSection::SetVendor(const std::string& vendor)
 {
 	this->vendor = trim(vendor);
 }
 
 
-void CODSection::setCopyright(const std::string& copyright)
+void CODSection::SetCopyright(const std::string& copyright)
 {
 	this->copyright = trim(copyright);
 }
 
 
-void CODSection::setDirectory(const std::string& directory)
+void CODSection::SetDirectory(const std::string& directory)
 {
 	this->directory = trim(directory);
 }
 
 
-void CODSection::setRequired(const std::string& required)
+void CODSection::SetRequired(const std::string& required)
 {
 	std::string s = trim(required);
 
@@ -134,7 +137,7 @@ void CODSection::setRequired(const std::string& required)
 }
 
 
-void CODSection::addFiles(const std::string& files) 
+void CODSection::AddFiles(const std::string& files) 
 {
 	std::string file;
 	std::istringstream iss(files);
@@ -143,12 +146,12 @@ void CODSection::addFiles(const std::string& files)
 		file = trim(file);
 
 		if (file.length() > 0)
-			addFile(file);
+			AddFile(file);
 	}
 }
 
 
-void CODSection::addFile(const std::string& file)
+void CODSection::AddFile(const std::string& file)
 {
 	codfiles.push_back(file);
 }

@@ -34,7 +34,8 @@ namespace Barry {
 namespace ALX {
 
 
-class BXEXPORT CODSection {
+class BXEXPORT CODSection
+{
 protected:
 	std::string id;
 	std::string name;
@@ -52,24 +53,24 @@ public:
 	CODSection(const xmlpp::SaxParser::AttributeList& attrs);
 	virtual ~CODSection(void);
 
-	virtual void dump(std::ostream &os) const = 0;
+	virtual void Dump(std::ostream &os) const = 0;
 
-	virtual void setID(const std::string& id);
-	virtual void setName(const std::string& name);
-	virtual void setDescription(const std::string& description);
-	virtual void setVersion(const std::string& version);
-	virtual void setVendor(const std::string& vendor);
-	virtual void setCopyright(const std::string& copyright);
-	virtual void setDirectory(const std::string& directory);
-	virtual void setRequired(const std::string& required);
-	virtual void addFiles(const std::string& files);
-	virtual void addFile(const std::string& files);
+	virtual void SetID(const std::string& id);
+	virtual void SetName(const std::string& name);
+	virtual void SetDescription(const std::string& description);
+	virtual void SetVersion(const std::string& version);
+	virtual void SetVendor(const std::string& vendor);
+	virtual void SetCopyright(const std::string& copyright);
+	virtual void SetDirectory(const std::string& directory);
+	virtual void SetRequired(const std::string& required);
+	virtual void AddFiles(const std::string& files);
+	virtual void AddFile(const std::string& files);
 };
 
 
 inline std::ostream& operator<<(std::ostream& os, const CODSection& cod)
 {
-	cod.dump(os);
+	cod.Dump(os);
 	return os;
 }
 
