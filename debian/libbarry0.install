@@ -3,4 +3,5 @@ debian/tmp/usr/lib/libbarrydp.so.*
 debian/tmp/usr/lib/libbarryjdwp.so.*
 debian/tmp/usr/lib/libbarrysync.so.*
 debian/tmp/usr/lib/libbarrybackup.so.*
+debian/tmp/usr/lib/libbarryalx.so.*
 
