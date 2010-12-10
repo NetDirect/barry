@@ -208,8 +208,6 @@ const unsigned char* Bookmark::ParseStruct1Field(const unsigned char *begin,
 		else {
 			ddout("Bookmark parser: unknown section type: "
 				<< std::hex << (unsigned int) type);
-cout << "Bookmark parser: unknown section type: "
-	<< std::hex << (unsigned int) type << endl;// DEBUG
 		}
 		break;
 	}
@@ -266,8 +264,7 @@ const unsigned char* Bookmark::ParseField(const unsigned char *begin,
 		while (b <= e) {
 			b = ParseStruct1Field(b, e, ic);
 		}
-//		return b;
-break;// DEBUG
+		return b;
 
 	case BMKFC_BOOKMARK_TYPE:
 		// above size check guarantees at least one byte,
@@ -279,8 +276,7 @@ break;// DEBUG
 
 	case BMKFC_STRUCT2:
 		begin = ParseStruct2(b, e, ic);
-//		return begin;
-break;// DEBUG
+		return begin;
 	}
 
 	// if still not handled, add to the Unknowns list
