@@ -33,7 +33,7 @@ namespace Barry {
 namespace ALX {
 
 
-ALXParser::ALXParser(OSLoader& osloader, std::istream& input) 
+ALXParser::ALXParser(OSLoader& osloader, std::istream& input)
 	: XML::XMLParser(input, "ISO-8859-1")
 	, osloader(osloader)
 {
@@ -91,7 +91,7 @@ void ALXParser::on_start_element(const Glib::ustring& name,
 		}
 		else if (name == "application") {
 			node = IN_APPLICATION;
-	
+
 			m_codsection = new Application(attrs);
 		}
 		else if (name == "library") {
@@ -117,7 +117,7 @@ void ALXParser::on_start_element(const Glib::ustring& name,
 			node = IN_SYSTEM_LIBRARY;
 			subnode = SUB_NONE;
 		}
-		else if ((subnode == IN_OSFILES) && (name == "os")) 
+		else if ((subnode == IN_OSFILES) && (name == "os"))
 			osloader.AddProperties(attrs);
 		break;
 

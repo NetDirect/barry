@@ -1,4 +1,4 @@
-/** 
+/**
  * @file dp_parser.cc
  * @author Nicolas VIVIEN
  * @date 2009-08-01
@@ -27,7 +27,7 @@
  *   This program is distributed in the hope that it will be useful,
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of
  *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * 
+ *
  *   See the GNU General Public License in the COPYING file at the
  *   root directory of this project for more details.
  */
@@ -47,7 +47,7 @@ namespace Barry {
 namespace JDG {
 
 
-string ParseString(istream &input, const int length) 
+string ParseString(istream &input, const int length)
 {
 	int i;
 	string str;
@@ -64,7 +64,7 @@ string ParseString(istream &input, const int length)
 }
 
 
-uint32_t ParseInteger(istream &input) 
+uint32_t ParseInteger(istream &input)
 {
 	uint32_t value;
 

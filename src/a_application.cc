@@ -62,7 +62,7 @@ void Application::Dump(std::ostream &os) const
 	std::vector<std::string>::const_iterator b = codfiles.begin(), e = codfiles.end();
 
 	os << "    Files       : " << std::endl;
-	for (; b != e; b++) 
+	for (; b != e; b++)
 		os << "        - " << directory << "/" << (*b) << std::endl;
 }
 

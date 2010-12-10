@@ -137,7 +137,7 @@ void CODSection::SetRequired(const std::string& required)
 }
 
 
-void CODSection::AddFiles(const std::string& files) 
+void CODSection::AddFiles(const std::string& files)
 {
 	std::string file;
 	std::istringstream iss(files);

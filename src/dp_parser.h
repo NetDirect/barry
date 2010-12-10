@@ -1,4 +1,4 @@
-/** 
+/**
  * @file dp_parser.h
  * @author Nicolas VIVIEN
  * @date 2009-08-01
@@ -22,7 +22,7 @@
  *   This program is distributed in the hope that it will be useful,
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of
  *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * 
+ *
  *   See the GNU General Public License in the COPYING file at the
  *   root directory of this project for more details.
  */

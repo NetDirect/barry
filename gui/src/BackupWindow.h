@@ -45,8 +45,8 @@ class BackupWindow : public Gtk::Window
 
 	// Widget objects
 	Gtk::Statusbar *m_pStatusbar;
-	Gtk::Button *m_pBackupButton, *m_pRestoreButton, 
-		*m_pConfigButton, *m_pDisconnectButton, 
+	Gtk::Button *m_pBackupButton, *m_pRestoreButton,
+		*m_pConfigButton, *m_pDisconnectButton,
 		*m_pDisconnectAllButton, *m_pReloadButton;
 	Gtk::Label *m_pDeviceLabel;
 	Gtk::TreeView *m_pDeviceList;

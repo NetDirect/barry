@@ -56,7 +56,7 @@ void JVMModulesList::Parse(const Data &entry_packet)
 
 	while (count < size) {
 		uint16_t len = 0;
-	
+
 		const unsigned char *ptr = (entry_packet.GetData() + count);
 		Protocol::JVMModulesEntry *e = (Protocol::JVMModulesEntry *) ptr;
 
@@ -118,7 +118,7 @@ void JVMThreadsList::Parse(const Data &entry_packet)
 
 	while (count < size) {
 		uint16_t len = 0;
-	
+
 		const unsigned char *ptr = (entry_packet.GetData() + count);
 		uint32_t *e = (uint32_t *) ptr;
 
@@ -566,7 +566,7 @@ bool JVMDebug::GetStatus(int &status)
 
 	// Send the command packet
 	packet.GetStatus();
-	
+
 	m_socket->Packet(packet);
 
 	expect = packet.Size();
@@ -608,13 +608,13 @@ bool JVMDebug::WaitStatus(int &status)
 
 	// Prepare the command packet
 	packet.GetStatus();
-	
+
 	try {
 		m_socket->Receive(packet.GetReceive(), 100);
 	} catch (Usb::Timeout &to ) {
 		return false;
 	}
-	
+
 	expect = packet.Size();
 
 	if (expect == 0)
@@ -657,7 +657,7 @@ int JVMDebug::GetConsoleMessage(std::string &message)
 
 	// Send the command packet
 	packet.GetConsoleMessage();
-	
+
 	m_socket->Packet(packet);
 
 	expect = packet.Size();
@@ -700,7 +700,7 @@ int JVMDebug::GetConsoleMessage(std::string &message)
 //
 // Get list of Java modules
 //
-void JVMDebug::GetModulesList(JVMModulesList &mylist) 
+void JVMDebug::GetModulesList(JVMModulesList &mylist)
 {
 	uint32_t size = 0;
 	uint32_t count = 0;
@@ -713,7 +713,7 @@ void JVMDebug::GetModulesList(JVMModulesList &mylist)
 	do {
 		// Send the command packet
 		packet.GetModulesList(offset);
-	
+
 		m_socket->Packet(packet);
 
 		expect = packet.Size();
@@ -762,7 +762,7 @@ void JVMDebug::GetModulesList(JVMModulesList &mylist)
 //
 // Get list of Java threads
 //
-void JVMDebug::GetThreadsList(JVMThreadsList &mylist) 
+void JVMDebug::GetThreadsList(JVMThreadsList &mylist)
 {
 	uint32_t size = 0;
 	uint32_t count = 0;
@@ -773,7 +773,7 @@ void JVMDebug::GetThreadsList(JVMThreadsList &mylist)
 
 	// Send the command packet
 	packet.GetThreadsList();
-	
+
 	m_socket->Packet(packet);
 
 	expect = packet.Size();
@@ -813,7 +813,7 @@ void JVMDebug::GetThreadsList(JVMThreadsList &mylist)
 		// 1°/
 		// Send the command packet
 		packet.Unknown11(entry.Id);
-	
+
 		m_socket->Packet(packet);
 
 		expect = packet.Size();
@@ -843,7 +843,7 @@ void JVMDebug::GetThreadsList(JVMThreadsList &mylist)
 		if (entry.Address != 0) {
 			// Send the command packet
 			packet.Unknown12(entry.Address);
-	
+
 			m_socket->Packet(packet);
 
 			expect = packet.Size();
@@ -874,7 +874,7 @@ void JVMDebug::GetThreadsList(JVMThreadsList &mylist)
 		// 3°/
 		// Send the command packet
 		packet.Unknown13(entry.Id);
-	
+
 		m_socket->Packet(packet);
 
 		expect = packet.Size();
@@ -901,7 +901,7 @@ void JVMDebug::GetThreadsList(JVMThreadsList &mylist)
 		// 4°/
 		// Send the command packet
 		packet.Unknown14(entry.Id);
-	
+
 		m_socket->Packet(packet);
 
 		expect = packet.Size();
@@ -929,7 +929,7 @@ void JVMDebug::GetThreadsList(JVMThreadsList &mylist)
 		// 5°/
 		// Send the command packet
 		packet.Unknown15(entry.Id);
-	
+
 		m_socket->Packet(packet);
 
 		expect = packet.Size();
@@ -977,7 +977,7 @@ void JVMDebug::Go()
 
 	while (expect == 0) {
 		m_socket->Receive(packet.GetReceive());
-	
+
 		expect = packet.Size();
 	}
 
@@ -1010,7 +1010,7 @@ void JVMDebug::Stop()
 
 	while (expect == 0) {
 		m_socket->Receive(packet.GetReceive());
-	
+
 		expect = packet.Size();
 	}
 

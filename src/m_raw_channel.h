@@ -82,7 +82,7 @@ class BXEXPORT RawChannel : public Mode
 	// Condvar for signalling between read and write threads
 	pthread_cond_t m_cv;
 	bool m_cv_valid;
-	
+
 	semaphore *m_semaphore;
 	RawChannelDataCallback *m_callback;
 	unsigned char *m_send_buffer;
@@ -106,7 +106,7 @@ protected:
 	void HandleReceivedZeroPacket(Data &data);
 
 	// Not intended for use by users of this class.
-	// Instead data received will come in via the 
+	// Instead data received will come in via the
 	// RawChannelDataCallback::DataReceived callback
 	// or using Receive().
 	void HandleReceivedData(Data &data);
@@ -119,7 +119,7 @@ protected:
 	// Barry when setting up a connection.
 	void OnOpen();
 public:
-	// Creates a raw channel in non-callback mode. 
+	// Creates a raw channel in non-callback mode.
 	// This requires all data to be sent and received
 	// via calls to Send and Receive.
 	// As there are no notifications of data being

@@ -202,7 +202,7 @@ void Memo::Dump(std::ostream &os) const
 	   << " (" << (unsigned int)RecType << ")\n";
 	os << "    Title: " << Title << "\n";
 	os << "    Body: ";
-	
+
 	// The Body may have '\r' characters... translate them
 	// in the output to make it look more pretty
 	for( string::const_iterator i = Body.begin(); i != Body.end(); ++i ) {

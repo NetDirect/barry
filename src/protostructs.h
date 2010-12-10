@@ -913,7 +913,7 @@ struct JVMModulesList
 {
 	uint32_t	nbr;
 	// remainder of packet is variable
-	// it contains the modules list 
+	// it contains the modules list
 } __attribute__ ((packed));
 #define SB_JVMMODULES_LIST_HEADER_SIZE		(sizeof(::Barry::Protocol::JVMModulesList))
 
@@ -931,7 +931,7 @@ struct JVMThreadsList
 {
 	uint32_t	nbr;
 	// remainder of packet is variable
-	// it contains the threads list 
+	// it contains the threads list
 } __attribute__ ((packed));
 #define SB_JVMTHREADS_LIST_HEADER_SIZE		(sizeof(::Barry::Protocol::JVMThreadsList))
 
@@ -980,7 +980,7 @@ struct ChannelPacket
 {
 	uint16_t	socket;		// socket ID... 0 exists by default
 	uint16_t	size;		// total size of data packet
-	
+
 	union PacketData
 	{
 		uint8_t			data[1];

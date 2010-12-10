@@ -30,7 +30,7 @@ namespace Barry {
 namespace XML {
 
 
-XMLParser::XMLParser(std::istream& input, const char *charset) 
+XMLParser::XMLParser(std::istream& input, const char *charset)
 	: xmlpp::SaxParser()
 	, input(input)
 {
@@ -38,18 +38,18 @@ XMLParser::XMLParser(std::istream& input, const char *charset)
 }
 
 
-XMLParser::~XMLParser(void) 
+XMLParser::~XMLParser(void)
 {
 }
 
 
-const unsigned long XMLParser::GetDepth(void) const 
+const unsigned long XMLParser::GetDepth(void) const
 {
 	return depth;
 }
 
 
-bool XMLParser::Run(void) 
+bool XMLParser::Run(void)
 {
 	try {
 		set_substitute_entities(true);

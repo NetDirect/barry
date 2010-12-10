@@ -58,7 +58,7 @@ time_t utc_mktime(struct tm *utctime)
 			return (time_t)-1;
 	}
 
-	return result; 
+	return result;
 }
 
 struct tm* iso_to_tm(const char *timestamp,
@@ -277,5 +277,5 @@ int main()
 	else
 		cout << "zone fail check2: passed" << endl;
 }
-#endif 
+#endif
 

@@ -1,4 +1,4 @@
-/** 
+/**
  * @file dp_codinfo.cc
  * @author Nicolas VIVIEN
  * @date 2009-08-01
@@ -26,7 +26,7 @@
  *   This program is distributed in the hope that it will be useful,
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of
  *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * 
+ *
  *   See the GNU General Public License in the COPYING file at the
  *   root directory of this project for more details.
  */
@@ -277,18 +277,18 @@ bool CodInfo::LoadDebugFile(const char *filename)
 		// Parse ressource area zone
 		ParseResourceSection(file);
 	}
-	
+
 	return true;
 }
 
 
-uint32_t CodInfo::GetUniqueId() 
+uint32_t CodInfo::GetUniqueId()
 {
 	return uniqueId;
 }
 
 
-string CodInfo::GetAppName() 
+string CodInfo::GetAppName()
 {
 	return appName;
 }
@@ -297,7 +297,7 @@ string CodInfo::GetAppName()
 // Private API - Section parsing
 //-------------------------------
 
-void CodInfo::ParseHeaderSection(istream &input) 
+void CodInfo::ParseHeaderSection(istream &input)
 {
 	uint32_t type;
 
@@ -313,7 +313,7 @@ void CodInfo::ParseHeaderSection(istream &input)
 }
 
 
-void CodInfo::ParseTypeSection(istream &input) 
+void CodInfo::ParseTypeSection(istream &input)
 {
 	uint32_t type;
 	uint32_t count;
@@ -363,7 +363,7 @@ void CodInfo::ParseResourceSection(istream &input)
 
 		len = ParseInteger(input);
 		name = ParseString(input, len);
-		
+
 		unknown01 = ParseInteger(input);
 		unknown02 = ParseInteger(input);
 		unknown03 = ParseInteger(input);
@@ -409,7 +409,7 @@ void CodInfo::ParseResourceSection(istream &input)
 	unknown02 = ParseInteger(input);
 	unknown03 = ParseInteger(input);
 	unknown04 = ParseInteger(input);
-	
+
 	dout("JDGCodInfo::parseRessource"
 		<< "\n  Name : " << name
 		<< "\n  unknown01 : " << hex << unknown01
@@ -444,7 +444,7 @@ void CodInfo::ParseResourceSection(istream &input)
 //-------------------------------
 
 
-uint32_t CodInfo::ParseNextHeaderField(istream &input) 
+uint32_t CodInfo::ParseNextHeaderField(istream &input)
 {
 	uint32_t type = ParseInteger(input);
 
@@ -465,7 +465,7 @@ uint32_t CodInfo::ParseNextHeaderField(istream &input)
 }
 
 
-uint32_t CodInfo::ParseNextTypeField(istream &input) 
+uint32_t CodInfo::ParseNextTypeField(istream &input)
 {
 	uint32_t type = ParseInteger(input);
 
@@ -522,13 +522,13 @@ uint32_t CodInfo::ParseNextTypeField(istream &input)
 }
 
 
-void CodInfo::ParseUniqueId(istream &input) 
+void CodInfo::ParseUniqueId(istream &input)
 {
 	uniqueId = ParseInteger(input);
 }
 
 
-void CodInfo::ParseAppName(istream &input) 
+void CodInfo::ParseAppName(istream &input)
 {
 	uint32_t len = ParseInteger(input);
 
@@ -536,7 +536,7 @@ void CodInfo::ParseAppName(istream &input)
 }
 
 
-void CodInfo::ParseBoolean(istream &input) 
+void CodInfo::ParseBoolean(istream &input)
 {
 	uint32_t len  = ParseInteger(input);
 
@@ -546,7 +546,7 @@ void CodInfo::ParseBoolean(istream &input)
 }
 
 
-void CodInfo::ParseByte(istream &input) 
+void CodInfo::ParseByte(istream &input)
 {
 	uint32_t len  = ParseInteger(input);
 
@@ -556,7 +556,7 @@ void CodInfo::ParseByte(istream &input)
 }
 
 
-void CodInfo::ParseChar(istream &input) 
+void CodInfo::ParseChar(istream &input)
 {
 	uint32_t len  = ParseInteger(input);
 
@@ -566,7 +566,7 @@ void CodInfo::ParseChar(istream &input)
 }
 
 
-void CodInfo::ParseShort(istream &input) 
+void CodInfo::ParseShort(istream &input)
 {
 	uint32_t len  = ParseInteger(input);
 
@@ -576,7 +576,7 @@ void CodInfo::ParseShort(istream &input)
 }
 
 
-void CodInfo::ParseInt(istream &input) 
+void CodInfo::ParseInt(istream &input)
 {
 	uint32_t len  = ParseInteger(input);
 
@@ -586,7 +586,7 @@ void CodInfo::ParseInt(istream &input)
 }
 
 
-void CodInfo::ParseLong(istream &input) 
+void CodInfo::ParseLong(istream &input)
 {
 	uint32_t len  = ParseInteger(input);
 
@@ -596,7 +596,7 @@ void CodInfo::ParseLong(istream &input)
 }
 
 
-void CodInfo::ParseClass(istream &input) 
+void CodInfo::ParseClass(istream &input)
 {
 	uint32_t len;
 
@@ -612,7 +612,7 @@ void CodInfo::ParseClass(istream &input)
 	object.unknown02 = ParseInteger(input);
 	object.unknown03 = ParseInteger(input);
 	object.id = ParseInteger(input);
-	
+
 	len  = ParseInteger(input);
 
 	if (len == 0)
@@ -645,7 +645,7 @@ void CodInfo::ParseClass(istream &input)
 }
 
 
-void CodInfo::ParseArray(istream &input) 
+void CodInfo::ParseArray(istream &input)
 {
 	uint32_t len  = ParseInteger(input);
 
@@ -655,7 +655,7 @@ void CodInfo::ParseArray(istream &input)
 }
 
 
-void CodInfo::ParseVoid(istream &input) 
+void CodInfo::ParseVoid(istream &input)
 {
 	uint32_t len  = ParseInteger(input);
 
@@ -665,7 +665,7 @@ void CodInfo::ParseVoid(istream &input)
 }
 
 
-void CodInfo::ParseDouble(istream &input) 
+void CodInfo::ParseDouble(istream &input)
 {
 	uint32_t len  = ParseInteger(input);
 

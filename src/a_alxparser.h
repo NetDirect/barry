@@ -41,9 +41,9 @@ namespace ALX {
 class BXEXPORT ALXParser : public virtual XML::XMLParser
 {
 public:
-	enum MainNodeType { 
+	enum MainNodeType {
 		MAIN_NONE,
-		IN_LOADER, 
+		IN_LOADER,
 		IN_SYSTEM,
 		IN_SYSTEM_APPLICATION,
 		IN_SYSTEM_LIBRARY,
@@ -55,11 +55,11 @@ public:
 		SUB_NONE,
 		IN_DIRECTORY,
 		IN_OSFILES,
-   		IN_NAME, 
-		IN_DESCRIPTION, 
-		IN_VERSION, 
-		IN_VENDOR, 
-		IN_COPYRIGHT, 
+   		IN_NAME,
+		IN_DESCRIPTION,
+		IN_VERSION,
+		IN_VENDOR,
+		IN_COPYRIGHT,
 		IN_LANGUAGE,
 		IN_LANGUAGE_SUPPORTED,
 		IN_REQUIRED,

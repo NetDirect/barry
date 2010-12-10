@@ -461,7 +461,7 @@ const Barry::Contact& vCard::ToBarry(const char *vcard, uint32_t RecordId)
 			con.Pager = tel.GetValue();
 			used = true;
 		}
-		// Check for any TEL-ignore types, and use other phone field if possible 
+		// Check for any TEL-ignore types, and use other phone field if possible
 		// bbs/video/modem   entire TEL ignored by Barry
 		// isdn              entire TEL ignored by Barry
 		else if( strstr(type, "bbs") || strstr(type, "video") || strstr(type, "modem") ) {
@@ -469,7 +469,7 @@ const Barry::Contact& vCard::ToBarry(const char *vcard, uint32_t RecordId)
 		else if( strstr(type, "isdn") ) {
 		}
 		// Voice telephone :
-		else { 
+		else {
 			if( strstr(type, "work") ) {
 				used = WorkPair.assign(tel.GetValue(), type, evolutionSlot);
 			}

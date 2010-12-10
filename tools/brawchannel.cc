@@ -69,7 +69,7 @@ public:
 		{
 		}
 
-    
+
 public: // From RawChannelDataCallback
 	virtual void DataReceived(Data &data);
 	virtual void ChannelError(string msg);
@@ -101,7 +101,7 @@ void CallbackHandler::DataReceived(Data &data)
 		else {
 			written += writtenThisTime;
 		}
-	}	
+	}
 }
 
 void CallbackHandler::ChannelError(string msg)
@@ -221,7 +221,7 @@ int main(int argc, char *argv[])
 		argc --;
 		argv ++;
 
-		
+
 		if( data_dump ) {
 			// Warn if USB_DEBUG isn't set to 0, 1 or 2
 			// as that usually means libusb will write to STDOUT
@@ -233,7 +233,7 @@ int main(int argc, char *argv[])
 			if( parsedValue != 0 && parsedValue != 1 && parsedValue != 2 ) {
 				cerr << "Warning: Protocol dump enabled without setting USB_DEBUG to 0, 1 or 2.\n"
 				     << "         libusb might log to STDOUT and ruin data stream." << endl;
-			}	
+			}
 		}
 
 		// Initialize the barry library.  Must be called before

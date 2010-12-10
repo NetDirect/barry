@@ -45,7 +45,7 @@ namespace Barry { namespace Mode {
 class RawChannelSocketHandler: public SocketRoutingQueue::SocketDataHandler
 {
 	RawChannel &m_raw_channel;
-public: 
+public:
 	RawChannelSocketHandler(RawChannel &raw_channel)
 		: m_raw_channel(raw_channel)
 	{}
@@ -67,7 +67,7 @@ public:
 class RawChannelZeroSocketHandler: public SocketRoutingQueue::SocketDataHandler
 {
 	RawChannel &m_raw_channel;
-public: 
+public:
 	RawChannelZeroSocketHandler(RawChannel &raw_channel)
 		: m_raw_channel(raw_channel)
 	{}
@@ -187,10 +187,10 @@ void RawChannel::HandleReceivedZeroPacket(Data &data)
 {
 	Protocol::CheckSize(data, SB_PACKET_HEADER_SIZE);
 	MAKE_PACKETPTR_BUF(packet, data.GetData());
-	
+
 	if( packet->socket != 0 ) {
 		UnregisterZeroSocketInterest();
-		SetPendingError("RawChannel: Got packet not for socket-zero");	
+		SetPendingError("RawChannel: Got packet not for socket-zero");
 		m_semaphore->Signal();
 	}
 
@@ -207,7 +207,7 @@ void RawChannel::HandleReceivedZeroPacket(Data &data)
 		if( m_callback ) {
 			m_callback->ChannelClose();
 		}
-			
+
 		m_semaphore->Signal();
 		break;
 	default:
@@ -221,7 +221,7 @@ void RawChannel::HandleReceivedZeroPacket(Data &data)
 		m_semaphore->Signal();
 		break;
 	}
-	
+
 }
 
 void RawChannel::HandleReceivedData(Data &data)
@@ -280,7 +280,7 @@ void RawChannel::Send(Data &data, int timeout)
 	if( packetSize > SB_CHANNELPACKET_HEADER_SIZE + SB_CHANNELPACKET_MAX_DATA_SIZE ) {
 		throw Barry::Error("RawChannel: send data size larger than MaximumPacketSize");
 	}
-	
+
 	// setup header and copy data in
 	MAKE_CHANNELPACKETPTR_BUF(packet, m_send_buffer);
 	packet->socket = htobs(m_socket->GetSocket());
@@ -305,11 +305,11 @@ void RawChannel::Receive(Data &data,int timeout)
 	// Then transfer across, skipping the header
 	ValidateDataPacket(m_receive_data);
 	MAKE_CHANNELPACKETPTR_BUF(packet, m_receive_data.GetData());
-	
+
 	size_t len = packet->size - SB_CHANNELPACKET_HEADER_SIZE;
 	memcpy(data.GetBuffer(), packet->u.data, len);
 	data.ReleaseBuffer(len);
-	
+
 }
 
 void RawChannel::ValidateDataPacket(Data &data)
@@ -317,7 +317,7 @@ void RawChannel::ValidateDataPacket(Data &data)
 	Protocol::CheckSize(data, SB_CHANNELPACKET_HEADER_SIZE);
 	MAKE_CHANNELPACKETPTR_BUF(packet, data.GetData());
 	if( packet->size != data.GetSize() ) {
-		
+
 		throw std::logic_error("RawChannel: Data size doesn't match packet size");
 	}
 }

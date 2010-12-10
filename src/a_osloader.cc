@@ -39,7 +39,7 @@ namespace Barry {
 namespace ALX {
 
 
-OSLoader::OSLoader(void) 
+OSLoader::OSLoader(void)
 {
 }
 
@@ -128,7 +128,7 @@ void OSLoader::Dump(std::ostream &os) const
 
 	{
 		std::vector<CODSection *>::const_iterator b = applications.begin(), e = applications.end();
-	
+
 		for (; b != e; b++) {
 			os << (**b) << std::endl;
 		}
@@ -138,7 +138,7 @@ void OSLoader::Dump(std::ostream &os) const
 
 	{
 		std::vector<CODSection *>::const_iterator b = libraries.begin(), e = libraries.end();
-	
+
 		for (; b != e; b++) {
 			os << (**b) << std::endl;
 		}
@@ -146,7 +146,7 @@ void OSLoader::Dump(std::ostream &os) const
 }
 
 
-void OSLoader::AddProperties(const std::string& property, const std::string& value) 
+void OSLoader::AddProperties(const std::string& property, const std::string& value)
 {
 	properties[property] = value;
 
@@ -154,7 +154,7 @@ void OSLoader::AddProperties(const std::string& property, const std::string& val
 		properties["Java"] = value;
 }
 
-	
+
 void OSLoader::AddProperties(const xmlpp::SaxParser::AttributeList& attrs)
 {
 	for (xmlpp::SaxParser::AttributeList::const_iterator iter = attrs.begin(); iter != attrs.end(); ++iter) {

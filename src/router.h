@@ -48,9 +48,9 @@ public:
 	public:
 		// Called when data is received on the socket
 		// for which interest has been registered.
-		// 
+		//
 		// The lifetime of the data parameter is only valid
-		// for the duration of this method call. 
+		// for the duration of this method call.
 		virtual void DataReceived(Data& data) = 0;
 
 		// Called when an error has occured on the socket

@@ -64,7 +64,7 @@ JDWServer::JDWServer(Barry::Mode::JVMDebug &device,
 }
 
 
-JDWServer::~JDWServer() 
+JDWServer::~JDWServer()
 {
 	Stop();
 }
@@ -103,7 +103,7 @@ static const char* h_strerror(int code)
 	}
 }
 
-bool JDWServer::Start() 
+bool JDWServer::Start()
 {
 	int rc;
 
@@ -262,7 +262,7 @@ bool JDWServer::Hello()
 	bool ret;
 
 	Barry::Data response;
-	
+
 	const size_t len = strlen(JDWP_HELLO_STRING);
 
 	JDWMessage msg(acceptfd);
@@ -277,7 +277,7 @@ bool JDWServer::Hello()
 
 	if (size != len)
 		return false;
-	
+
 	if (!strncmp(str, JDWP_HELLO_STRING, len)) {
 		Data command(JDWP_HELLO_STRING, len);
 
@@ -315,7 +315,7 @@ void JDWServer::Run()
 				while (!ret) {
 					// Read JDB message from host
 					msg.Receive(command);
-			
+
 					if (command.GetSize() > 0) {
 						// Convert to packet
 						rpack = (const Barry::Protocol::JDWP::Packet *) command.GetData();
@@ -329,7 +329,7 @@ void JDWServer::Run()
 						}
 
 						CommandsetProcess(command);
-	
+
 						break;
 					}
 					else
@@ -404,7 +404,7 @@ bool JDWServer::InitVisibleClassList()
 	for (it = appList.begin(); it != appList.end(); it++) {
 		JDWAppInfo &appInfo = it->second;
 		JDG::ClassList &list = appInfo.classList;
-	
+
 		JDG::ClassList::iterator b;
 
 		for (b = list.begin(); b != list.end(); b++) {

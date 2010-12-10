@@ -65,7 +65,7 @@ static void printReply(Data &data)
 			      data.GetSize() - GCF_HEADER_SIZE);
 	}
 	cout << "Received data: " << strdata << endl;
-	
+
 }
 
 int main(int argc, char *argv[])
@@ -82,7 +82,7 @@ int main(int argc, char *argv[])
 			cout << "Using PIN: "
 			     << probe.Get(0).m_pin.str() << endl;
 		}
-		
+
 		// Create the router
 		auto_ptr<SocketRoutingQueue> router;
 		router.reset(new SocketRoutingQueue());

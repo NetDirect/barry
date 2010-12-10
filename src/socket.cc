@@ -580,7 +580,7 @@ void SocketZero::Close(Socket &socket)
 	MAKE_PACKET(rpack, response);
 	// The reply will be SB_COMMAND_CLOSED_SOCKET if the device
 	// has closed the socket in response to our request.
-	// 
+	//
 	// It's also possible for the reply to be
 	// SB_COMMAND_REMOTE_CLOSE_SOCKET if the device wanted to
 	// close the socket at the same time, such as if the channel
@@ -592,7 +592,7 @@ void SocketZero::Close(Socket &socket)
 	{
 		// reset so this won't be called again
 		socket.ForceClosed();
-		
+
 		eout("Packet:\n" << response);
 		throw BadPacket(rpack->command, "Socket: Bad CLOSED packet in Close");
 	}

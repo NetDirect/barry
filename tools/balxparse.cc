@@ -85,7 +85,7 @@ void Usage()
 		if (((i+1) % 4) == 0)
 			cerr << endl << "\t";
 	}
-	
+
 	cerr << endl;
 }
 
@@ -158,14 +158,14 @@ int main(int argc, char *argv[], char *envp[])
 
 	if (pathname.length() > 0)
 		os.Load(pathname);
-	
+
 	if (!filenames.empty()) {
 		vector<string>::iterator i = filenames.begin(), end = filenames.end();
 		for( ; i != end; ++i ) {
 			os.LoadALXFile((*i), true);
 		}
 	}
-	
+
 	cout << os << endl;
 
 

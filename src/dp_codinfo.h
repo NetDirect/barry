@@ -58,7 +58,7 @@ public:
 
 public:
 	void AddElement(uint32_t uniqueid, const std::string &appname, const std::string &filename);
-	void Dump(std::ostream &os) const;	
+	void Dump(std::ostream &os) const;
 };
 inline std::ostream& operator<<(std::ostream &os, const DebugFileList &list) {
 	list.Dump(os);
