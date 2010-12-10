@@ -313,7 +313,7 @@ static void _read_attribute_value (b_VFormatAttribute *attr, char **p, int forma
 				if (isalnum(b)) {
 					/* e.g. ...N=C3=BCrnberg\r\n
 					 *          ^^^
-			       		 */
+					 */
 					x1=a;
 					x2=b;
 				}
@@ -332,7 +332,7 @@ static void _read_attribute_value (b_VFormatAttribute *attr, char **p, int forma
 				}
 				else {
 					/* append malformed input, and
-				   	   continue parsing */
+					   continue parsing */
 					str = g_string_append_c(str, a);
 					str = g_string_append_c(str, b);
 				}
@@ -350,7 +350,7 @@ static void _read_attribute_value (b_VFormatAttribute *attr, char **p, int forma
 				}
 				else {
 					/* append malformed input, and
-				   	   continue parsing */
+					   continue parsing */
 					str = g_string_append_c(str, a);
 					str = g_string_append_c(str, b);
 				}

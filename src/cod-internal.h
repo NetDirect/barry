@@ -112,16 +112,16 @@ typedef struct BXLOCAL {
 
 
 typedef struct BXLOCAL {
-	uint16_t 	type;			// Type			// 50 4B
-	uint8_t		unknown1[8];		// 			// 03 04 0A 00 00 00 00 00
-	uint8_t 	unknown2[4];		// 			// AB 5C 6A 39
-	uint8_t 	unknown3[4];		// 			// BE 5C 58 D1
-	uint32_t 	size1;			// COD size 0x0DCC	// CC 0D 01 00
-	uint32_t 	size2;			// COD size 0x0DCC	// CC OD 01 00
-	uint8_t 	strsize;		// Size of string	// 19
-	uint8_t 	reserved2;		// Reserved 0x00	// 00
-	uint8_t 	strfree;		// Empty uint8_t 	// 04
-	uint8_t 	reserved3;		// Reserved 0x00	// 00
+	uint16_t	type;			// Type			// 50 4B
+	uint8_t		unknown1[8];		//			// 03 04 0A 00 00 00 00 00
+	uint8_t		unknown2[4];		//			// AB 5C 6A 39
+	uint8_t		unknown3[4];		//			// BE 5C 58 D1
+	uint32_t	size1;			// COD size 0x0DCC	// CC 0D 01 00
+	uint32_t	size2;			// COD size 0x0DCC	// CC OD 01 00
+	uint8_t		strsize;		// Size of string	// 19
+	uint8_t		reserved2;		// Reserved 0x00	// 00
+	uint8_t		strfree;		// Empty uint8_t	// 04
+	uint8_t		reserved3;		// Reserved 0x00	// 00
 }  __attribute__ ((packed)) codfile_header_t;
 
 
@@ -144,18 +144,18 @@ typedef struct BXLOCAL {
 
 
 typedef struct BXLOCAL {
-	uint8_t 	flags;
-	uint8_t 	version;
-	uint16_t 	num_icalls;
-	uint8_t 	num_modules;
-	uint8_t 	num_classes ;
-	uint16_t 	exported_string_offset;
-	uint16_t 	data_uint8_ts_offset;
-	uint16_t 	empty_field;
-	uint16_t 	class_definitions;
-	uint16_t 	array_of_unknow1_fields[14];
-	uint16_t 	aliases;
-	uint16_t 	array_of_unknow2_fields[22];
+	uint8_t		flags;
+	uint8_t		version;
+	uint16_t	num_icalls;
+	uint8_t		num_modules;
+	uint8_t		num_classes ;
+	uint16_t	exported_string_offset;
+	uint16_t	data_uint8_ts_offset;
+	uint16_t	empty_field;
+	uint16_t	class_definitions;
+	uint16_t	array_of_unknow1_fields[14];
+	uint16_t	aliases;
+	uint16_t	array_of_unknow2_fields[22];
 }  __attribute__ ((packed)) data_header_t;
 
 #endif
