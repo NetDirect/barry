@@ -34,7 +34,7 @@ namespace Barry {
 namespace ALX {
 
 
-class BXEXPORT Library : public virtual CODSection
+class BXEXPORT Library : public CODSection
 {
 public:
 	Library(void);

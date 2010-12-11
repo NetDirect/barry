@@ -38,7 +38,7 @@ namespace Barry {
 namespace ALX {
 
 
-class BXEXPORT ALXParser : public virtual XML::XMLParser
+class BXEXPORT ALXParser : public XML::XMLParser
 {
 public:
 	enum MainNodeType {
