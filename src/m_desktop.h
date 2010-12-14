@@ -206,7 +206,7 @@ class BXEXPORT DeviceBuilder : public Builder
 	Mode::DBLoader m_loader;
 
 public:
-	DeviceBuilder(Mode::Desktop &desktop);
+	explicit DeviceBuilder(Mode::Desktop &desktop);
 
 	// searches the dbdb from the desktop to find the dbId,
 	// returns false if not found, and adds it to the list of
@@ -227,6 +227,78 @@ public:
 		const IConverter *ic);
 	virtual bool FetchRecord(DBData &data, const IConverter *ic);
 	virtual bool EndOfFile() const;
+};
+
+
+//
+// DeviceParser
+//
+/// A parser class that "parses" raw data into a device.  Basically this
+/// is a pipe-oriented way to call SaveDatabase().
+///
+/// Note that this is a multi-record parser.  For each incoming DBData
+/// that has a new DBName, a new save will be started.  There is no
+/// way to filter out records, except via the callback, so the easiest
+/// way to filter out records by database name is on the Builder side.
+///
+class BXEXPORT DeviceParser
+{
+public:
+	enum WriteMode {
+		/// Similar to SaveDatabase().  Erases all records from
+		/// the existing database and then uploads all new records.
+		ERASE_ALL_WRITE_ALL,
+
+		/// Adds any new records, and for records with Unique IDs
+		/// that already exist, overwrite them.
+		INDIVIDUAL_OVERWRITE,
+
+		/// Adds any new records, but if a record exists with the
+		/// current Unique ID, skip that record and don't write it
+		/// to the device.
+		ADD_BUT_NO_OVERWRITE,
+
+		/// Adds all incoming records as brand new records, generating
+		/// a new Unique ID for each one, and leaving any existing
+		/// records intact.
+		ADD_WITH_NEW_ID,
+
+		/// Calls the virtual function DecideWrite(...) for each
+		/// record, passing in the data.  DecideWrite() returns one
+		/// of these WriteMode values.
+		DECIDE_BY_CALLBACK,
+
+		/// Primarily used by DecideWrite(), and causes the current
+		/// record to not be written.
+		DROP_RECORD
+	};
+
+private:
+	Mode::Desktop &m_desktop;
+	WriteMode m_mode;
+
+	std::string m_current_db;
+	unsigned int m_current_dbid;
+	RecordStateTable m_rstate;
+
+protected:
+	void StartDB(const DBData &data, const IConverter *ic);
+	void WriteNext(const DBData &data, const IConverter *ic);
+
+public:
+	DeviceParser(Mode::Desktop &desktop, WriteMode mode);
+	virtual ~DeviceParser();
+
+	/// Callback... you must derive and override this if you use
+	/// the DECIDE_BY_CALLBACK mode.
+	/// May be called multiple times per record.
+	virtual WriteMode DecideWrite(const DBData &record) const
+	{
+		return DROP_RECORD;
+	}
+
+	/// Parser overrides
+	virtual void ParseRecord(const DBData &data, const IConverter *ic);
 };
 
 

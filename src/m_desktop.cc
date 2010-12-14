@@ -301,7 +301,7 @@ void Desktop::SetRecord(unsigned int dbId, unsigned int stateTableIndex,
 
 	DBPacket packet(*this, m_command, m_response);
 
-	// loop until builder object has no more data
+	// write only if builder object has data
 	if( !packet.SetRecordByIndex(dbId, stateTableIndex, build, m_ic) ) {
 		throw std::logic_error("Desktop: no data available in SetRecord");
 	}
@@ -624,6 +624,129 @@ bool DeviceBuilder::FetchRecord(DBData &data, const IConverter *ic)
 bool DeviceBuilder::EndOfFile() const
 {
 	return m_current == m_dbIds.end();
+}
+
+
+
+//////////////////////////////////////////////////////////////////////////////
+// DeviceParser class
+
+DeviceParser::DeviceParser(Mode::Desktop &desktop, WriteMode mode)
+	: m_desktop(desktop)
+	, m_mode(mode)
+{
+}
+
+DeviceParser::~DeviceParser()
+{
+}
+
+void DeviceParser::StartDB(const DBData &data, const IConverter *ic)
+{
+	// start fresh
+	m_rstate.Clear();
+	m_current_db = data.GetDBName();
+	if( !m_desktop.GetDBDB().GetDBNumber(m_current_db, m_current_dbid) ) {
+		// doh!  This database does not exist in this device
+		dout("Database '" << m_current_db << "' does not exist in this device.  Dropping record.");
+		m_current_db.clear();
+		m_current_dbid = 0;
+		return;
+	}
+
+	// determine mode
+	WriteMode mode = m_mode;
+	if( mode == DECIDE_BY_CALLBACK )
+		mode = DecideWrite(data);
+
+	switch( mode )
+	{
+	case ERASE_ALL_WRITE_ALL:
+		m_desktop.ClearDatabase(m_current_dbid);
+		WriteNext(data, ic);
+		break;
+
+	case INDIVIDUAL_OVERWRITE:
+	case ADD_BUT_NO_OVERWRITE:
+	case ADD_WITH_NEW_ID:
+		m_desktop.GetRecordStateTable(m_current_dbid, m_rstate);
+		WriteNext(data, ic);
+		break;
+
+	case DROP_RECORD:
+		break;
+
+	case DECIDE_BY_CALLBACK:
+	default:
+		throw std::logic_error("DeviceParser: unknown mode");
+	}
+}
+
+void DeviceParser::WriteNext(const DBData &data, const IConverter *ic)
+{
+	// determine mode
+	WriteMode mode = m_mode;
+	if( mode == DECIDE_BY_CALLBACK )
+		mode = DecideWrite(data);
+
+	// create fast copy with our own metadata
+	DBData local(data.GetVersion(), data.GetDBName(),
+		data.GetRecType(), data.GetUniqueId(), data.GetOffset(),
+		data.GetData().GetData(), data.GetData().GetSize());
+	DBDataBuilder dbuild(local);
+
+	RecordStateTable::IndexType index;
+
+	switch( mode )
+	{
+	case ERASE_ALL_WRITE_ALL:
+		// just do an AddRecord()
+		m_desktop.AddRecord(m_current_dbid, dbuild);
+		break;
+
+	case INDIVIDUAL_OVERWRITE:
+		// search the state table, overwrite existing, and add new
+		if( m_rstate.GetIndex(local.GetUniqueId(), &index) ) {
+			// found this record ID, use the index
+			m_desktop.SetRecord(m_current_dbid, index, dbuild);
+		}
+		else {
+			// new record
+			m_desktop.AddRecord(m_current_dbid, dbuild);
+		}
+		break;
+
+	case ADD_BUT_NO_OVERWRITE:
+		if( !m_rstate.GetIndex(local.GetUniqueId()) ) {
+			// no such record ID, so safe to add as new
+			m_desktop.AddRecord(m_current_dbid, dbuild);
+		}
+		// else, drop record
+		break;
+
+	case ADD_WITH_NEW_ID:
+		// use state table to create new id, and add as new
+		local.SetIds(local.GetRecType(), m_rstate.MakeNewRecordId());
+		m_desktop.AddRecord(m_current_dbid, dbuild);
+		break;
+
+	case DROP_RECORD:
+		break;
+
+	case DECIDE_BY_CALLBACK:
+	default:
+		throw std::logic_error("DeviceParser: unknown mode");
+	}
+}
+
+void DeviceParser::ParseRecord(const DBData &data, const IConverter *ic)
+{
+	if( data.GetDBName() == m_current_db ) {
+		WriteNext(data, ic);
+	}
+	else {
+		StartDB(data, ic);
+	}
 }
 
 } // namespace Barry
