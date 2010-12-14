@@ -62,14 +62,11 @@ public:
 		: m_IncludeIds(IncludeIds)
 	{}
 
-	virtual void StartParser()
-	{
-		SHA1_Init(&m_ctx);
-	}
-
 	virtual void ParseRecord(const Barry::DBData &data,
 				 const Barry::IConverter *ic)
 	{
+		SHA1_Init(&m_ctx);
+
 		if( m_IncludeIds ) {
 			SHA1_Update(&m_ctx, data.GetDBName().c_str(),
 				data.GetDBName().size());
@@ -84,10 +81,7 @@ public:
 		int len = data.GetData().GetSize() - data.GetOffset();
 		SHA1_Update(&m_ctx,
 			data.GetData().GetData() + data.GetOffset(), len);
-	}
 
-	virtual void EndParser()
-	{
 		unsigned char sha1[SHA_DIGEST_LENGTH];
 		SHA1_Final(sha1, &m_ctx);
 

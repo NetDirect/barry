@@ -119,8 +119,6 @@ public:
 	{
 	}
 
-	virtual void StartParser() {}
-
 	virtual void ParseRecord(const Barry::DBData &data,
 				 const Barry::IConverter *ic)
 	{
@@ -129,8 +127,6 @@ public:
 			<< std::hex << m_id << std::endl;
 		m_os << data.GetData() << std::endl;
 	}
-
-	virtual void EndParser() {}
 };
 
 template <class Record>
