@@ -80,11 +80,34 @@ public:
 	virtual bool FetchRecord(DBData &data, const IConverter *ic) = 0;
 
 	/// Sometimes a builder can have multiple databases stored
-	/// in it, so when Retrieve() returns false, check if there
+	/// in it, so when Build/Fetch returns false, check if there
 	/// is more data with this function.  This function is
 	/// not used by database-oriented functions, but by pipe-
 	/// oriented functions.
 	virtual bool EndOfFile() const = 0;
+};
+
+
+//
+// DBDataBuilder
+//
+/// Wrapper class around a DBData object, to make it easy to pass a DBData
+/// object into a function or API that requires a builder.  The main
+/// advantage to this is that the Builder API allows for movement of
+/// data, depending on the required offsets.
+///
+class BXEXPORT DBDataBuilder : public Builder
+{
+	const DBData &m_orig;
+
+public:
+	explicit DBDataBuilder(const DBData &orig);
+	virtual ~DBDataBuilder();
+
+	virtual bool BuildRecord(DBData &data, size_t &offset,
+		const IConverter *ic);
+	virtual bool FetchRecord(DBData &data, const IConverter *ic);
+	virtual bool EndOfFile() const;
 };
 
 
