@@ -229,6 +229,17 @@ public:
 	{
 		m_offset = offset;
 	}
+
+	void CopyMeta(const DBData &src)
+	{
+		m_version = src.m_version;
+		m_dbName = src.m_dbName;
+		m_recType = src.m_recType;
+		m_uniqueId = src.m_uniqueId;
+		m_offset = src.m_offset;
+	}
+
+	DBData& operator=(const DBData &other);
 };
 
 } // namespace Barry

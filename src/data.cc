@@ -471,6 +471,25 @@ Data& DBData::UseData()
 	return m_data;	// return it
 }
 
+// Note: this copy operator does not change what m_data references...
+// whatever m_data references in the constructor is what will be changed
+// in this copy.
+// Note also that the copy *will* involve a memcpy, and maybe a memory
+// allocation as well.
+DBData& DBData::operator=(const DBData &other)
+{
+	if( this == &other )
+		return *this;
+
+	// copy the data block
+	m_data = other.m_data;
+
+	// copy the metadata
+	CopyMeta(other);
+
+	return *this;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 // Utility functions
 
