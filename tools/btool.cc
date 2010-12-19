@@ -475,28 +475,23 @@ shared_ptr<Builder> GetBuilder(const string &name, const string &filename)
 void ShowParsers()
 {
 	cout << "Supported Database parsers:\n"
+#undef HANDLE_PARSER
+#ifdef __BARRY_SYNC_MODE__
 	<< " (* = can display in vformat MIME mode)\n"
-	<< "   Address Book *\n"
-	<< "   Messages\n"
-	<< "   Calendar *\n"
-	<< "   Calendar - All *\n"
-	<< "   Phone Call Logs\n"
-	<< "   Browser Bookmarks\n"
-	<< "   Service Book\n"
-	<< "   Memos *\n"
-	<< "   Tasks *\n"
-	<< "   PIN Messages\n"
-	<< "   Saved Email Messages\n"
-	<< "   SMS Messages\n"
-	<< "   Folders\n"
-	<< "   Time Zones (read only)\n"
+#define HANDLE_PARSER(tname) << "   " << tname::GetDBName() << (MimeDump<tname>::Supported() ? " *" : "") << "\n"
+
+#else
+#define HANDLE_PARSER(tname) << "   " << tname::GetDBName() << "\n"
+
+#endif
+	ALL_KNOWN_PARSER_TYPES
+
 	<< "\n"
+
 	<< "Supported Database builders:\n"
-	<< "   Address Book\n"
-	<< "   Calendar\n"
-	<< "   Calendar - All\n"
-	<< "   Memo\n"
-	<< "   Task\n"
+#undef HANDLE_BUILDER
+#define HANDLE_BUILDER(tname) << "   " << tname::GetDBName() << "\n"
+	ALL_KNOWN_BUILDER_TYPES
 	<< endl;
 }
 

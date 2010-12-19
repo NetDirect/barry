@@ -82,34 +82,18 @@ void DumpDB(const string &filename)
 	getline(ifs, dbName);
 
 	// check for recognized database names
-	Dump<Contact>		(dbName, ifs) ||
-	Dump<Message>		(dbName, ifs) ||
-	Dump<Calendar>		(dbName, ifs) ||
-	Dump<CalendarAll>	(dbName, ifs) ||
-	Dump<ServiceBook>	(dbName, ifs) ||
-	Dump<Memo>		(dbName, ifs) ||
-	Dump<Task>		(dbName, ifs) ||
-	Dump<PINMessage>	(dbName, ifs) ||
-	Dump<SavedMessage>	(dbName, ifs) ||
-	Dump<Folder>		(dbName, ifs) ||
-	Dump<Timezone>		(dbName, ifs) ||
+#undef HANDLE_PARSER
+#define HANDLE_PARSER(tname) Dump<tname>(dbName, ifs) ||
+	ALL_KNOWN_PARSER_TYPES
 		cerr << "Unknown database name: " << dbName << endl;
 }
 
 void ShowParsers()
 {
 	cout << "Supported Database parsers:\n"
-	<< "   Address Book\n"
-	<< "   Messages\n"
-	<< "   Calendar\n"
-	<< "   Calendar - All\n"
-	<< "   Service Book\n"
-	<< "   Memos\n"
-	<< "   Tasks\n"
-	<< "   PIN Messages\n"
-	<< "   Saved Email Messages\n"
-	<< "   Folders\n"
-	<< "   Time Zones\n"
+#undef HANDLE_PARSER
+#define HANDLE_PARSER(tname) << "   " << tname::GetDBName() << "\n"
+	ALL_KNOWN_PARSER_TYPES
 	<< endl;
 }
 
