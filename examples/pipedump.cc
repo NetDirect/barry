@@ -96,19 +96,14 @@ int main(int argc, char *argv[])
 
 		MultiRecordParser mrp( new UnknownParser );
 
-		// add a few known record types
+		// add a few known record types... first, the manual way
 		mrp.Add( Contact::GetDBName(),
 			new RecordParser<Contact, Store<Contact> >(
 				new Store<Contact>));
-		mrp.Add( Calendar::GetDBName(),
-			new RecordParser<Calendar, Store<Calendar> >(
-				new Store<Calendar>));
-		mrp.Add( Sms::GetDBName(),
-			new RecordParser<Sms, Store<Sms> >(
-				new Store<Sms>));
-		mrp.Add( Timezone::GetDBName(),
-			new RecordParser<Timezone, Store<Timezone> >(
-				new Store<Timezone>));
+		// and with the template member (does the same thing)
+		mrp.Add<Calendar>( new Store<Calendar> );
+		mrp.Add<Sms>( new Store<Sms> );
+		mrp.Add<Timezone>( new Store<Timezone> );
 
 		builder.Restart();
 		pipe.PumpFile(mrp);
