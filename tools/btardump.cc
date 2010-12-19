@@ -61,7 +61,7 @@ template <class Record>
 class MimeDump
 {
 public:
-	void Dump(std::ostream &os, const Record &rec)
+	static void Dump(std::ostream &os, const Record &rec)
 	{
 		os << rec << endl;
 	}
@@ -73,7 +73,7 @@ template <>
 class MimeDump<Contact>
 {
 public:
-	void Dump(std::ostream &os, const Contact &rec)
+	static void Dump(std::ostream &os, const Contact &rec)
 	{
 		Sync::vCard vcard;
 		os << vcard.ToVCard(rec) << endl;
@@ -81,92 +81,73 @@ public:
 
 	static bool Supported() { return true; }
 };
+
+template <>
+class MimeDump<Calendar>
+{
+public:
+	static void Dump(std::ostream &os, const Calendar &rec)
+	{
+		Sync::vTimeConverter vtc;
+		Sync::vCalendar vcal(vtc);
+		os << vcal.ToVCal(rec) << endl;
+	}
+
+	static bool Supported() { return true; }
+};
+
+template <>
+class MimeDump<Memo>
+{
+public:
+	static void Dump(std::ostream &os, const Memo &rec)
+	{
+		Sync::vJournal vjournal;
+		os << vjournal.ToMemo(rec) << endl;
+	}
+
+	static bool Supported() { return true; }
+};
+
+template <>
+class MimeDump<Task>
+{
+public:
+	static void Dump(std::ostream &os, const Task &rec)
+	{
+		Sync::vTimeConverter vtc;
+		Sync::vTodo vtodo(vtc);
+		os << vtodo.ToTask(rec) << endl;
+	}
+
+	static bool Supported() { return true; }
+};
 #endif
 
-class MyAllRecordDumpStore : public AllRecordDumpStore
+class MyAllRecordDumpStore : public AllRecordStore
 {
-	bool vformat_mode;
+	bool m_vformat_mode;
+	std::ostream &m_os;
 
 public:
 	explicit MyAllRecordDumpStore(std::ostream &os, bool vformat_mode=false)
-		: AllRecordDumpStore(os)
-		, vformat_mode(vformat_mode)
+		: m_vformat_mode(vformat_mode)
+		, m_os(os)
 	{
 	}
-	virtual void operator() (const Barry::Contact &);
-	virtual void operator() (const Barry::Calendar &);
-	virtual void operator() (const Barry::CalendarAll &);
-	virtual void operator() (const Barry::Memo &);
-	virtual void operator() (const Barry::Task &);
+
+#undef HANDLE_PARSER
+#define HANDLE_PARSER(tname) \
+	void operator() (const Barry::tname &r) \
+	{ \
+		if( m_vformat_mode ) \
+			MimeDump<tname>::Dump(m_os, r); \
+		else \
+			m_os << r << std::endl; \
+	}
+
+	ALL_KNOWN_PARSER_TYPES
 };
-
-void MyAllRecordDumpStore::operator() (const Barry::Contact &rec)
-{
-	if( vformat_mode ) {
-#ifdef __BARRY_SYNC_MODE__
-		Sync::vCard vcard;
-		m_os << vcard.ToVCard(rec) << endl;
-#endif
-	}
-	else {
-		m_os << rec << std::endl;
-	}
-}
-
-void MyAllRecordDumpStore::operator() (const Barry::Calendar &rec)
-{
-	if( vformat_mode ) {
-#ifdef __BARRY_SYNC_MODE__
-		Sync::vTimeConverter vtc;
-		Sync::vCalendar vcal(vtc);
-		m_os << vcal.ToVCal(rec) << endl;
-#endif
-	}
-	else {
-		m_os << rec << std::endl;
-	}
-}
-
-void MyAllRecordDumpStore::operator() (const Barry::CalendarAll &rec)
-{
-	if( vformat_mode ) {
-#ifdef __BARRY_SYNC_MODE__
-		Sync::vTimeConverter vtc;
-		Sync::vCalendar vcal(vtc);
-		m_os << vcal.ToVCal(rec) << endl;
-#endif
-	}
-	else {
-		m_os << rec << std::endl;
-	}
-}
-
-void MyAllRecordDumpStore::operator() (const Barry::Memo &rec)
-{
-	if( vformat_mode ) {
-#ifdef __BARRY_SYNC_MODE__
-		Sync::vJournal vjournal;
-		m_os << vjournal.ToMemo(rec) << endl;
-#endif
-	}
-	else {
-		m_os << rec << std::endl;
-	}
-}
-
-void MyAllRecordDumpStore::operator() (const Barry::Task &rec)
-{
-	if( vformat_mode ) {
-#ifdef __BARRY_SYNC_MODE__
-		Sync::vTimeConverter vtc;
-		Sync::vTodo vtodo(vtc);
-		m_os << vtodo.ToTask(rec) << endl;
-#endif
-	}
-	else {
-		m_os << rec << std::endl;
-	}
-}
 
 int main(int argc, char *argv[])
 {
