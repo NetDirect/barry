@@ -27,6 +27,21 @@
 #include <stdint.h>
 #include <string>
 
+//
+// This macro can be used to automatically generate code for all known
+// record types.  Just #undef HANDLE_BUILDER, then #define it to whatever
+// you need, then use ALL_KNOWN_BUILDER_TYPES.  See parser.cc for
+// various examples.
+//
+// These are sorted so their GetDBName()'s will display in alphabetical order.
+//
+#define ALL_KNOWN_BUILDER_TYPES \
+	HANDLE_BUILDER(Contact) \
+	HANDLE_BUILDER(Calendar) \
+	HANDLE_BUILDER(CalendarAll) \
+	HANDLE_BUILDER(Memo) \
+	HANDLE_BUILDER(Task) \
+
 namespace Barry {
 
 // forward declarations
