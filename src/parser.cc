@@ -37,22 +37,6 @@
 #include <iostream>
 #include <memory>
 
-#define ALL_KNOWN_RECORD_TYPES \
-	HANDLE_TYPE(Contact) \
-	HANDLE_TYPE(Message) \
-	HANDLE_TYPE(Calendar) \
-	HANDLE_TYPE(CalendarAll) \
-	HANDLE_TYPE(CallLog) \
-	HANDLE_TYPE(Bookmark) \
-	HANDLE_TYPE(ServiceBook) \
-	HANDLE_TYPE(Memo) \
-	HANDLE_TYPE(Task) \
-	HANDLE_TYPE(PINMessage) \
-	HANDLE_TYPE(SavedMessage) \
-	HANDLE_TYPE(Sms) \
-	HANDLE_TYPE(Folder) \
-	HANDLE_TYPE(Timezone)
-
 namespace Barry {
 
 //////////////////////////////////////////////////////////////////////////////
@@ -123,11 +107,11 @@ bool MultiRecordParser::Add(const std::string &dbname,
 {
 	std::auto_ptr<Parser> p;
 
-#undef HANDLE_TYPE
-#define HANDLE_TYPE(tname) if( dbname == tname::GetDBName() ) { p.reset( new RecordParser<tname, DumpStore<tname> > (new DumpStore<tname>(os)) ); }
+#undef HANDLE_PARSER
+#define HANDLE_PARSER(tname) if( dbname == tname::GetDBName() ) { p.reset( new RecordParser<tname, DumpStore<tname> > (new DumpStore<tname>(os)) ); }
 
 	// check for recognized database names
-	ALL_KNOWN_RECORD_TYPES
+	ALL_KNOWN_PARSER_TYPES
 
 	if( !p.get() ) {
 		// name not known
@@ -237,10 +221,10 @@ AllRecordParser::AllRecordParser(std::ostream &os,
 	: MultiRecordParser(default_parser)
 	, m_store(store)
 {
-#undef HANDLE_TYPE
-#define HANDLE_TYPE(tname) if( m_store ) { Add( new RecordParser<tname, AllRecordStore>(*m_store)); } else { Add(tname::GetDBName(), os); }
+#undef HANDLE_PARSER
+#define HANDLE_PARSER(tname) if( m_store ) { Add( new RecordParser<tname, AllRecordStore>(*m_store)); } else { Add(tname::GetDBName(), os); }
 
-	ALL_KNOWN_RECORD_TYPES;
+	ALL_KNOWN_PARSER_TYPES;
 }
 
 AllRecordParser::~AllRecordParser()

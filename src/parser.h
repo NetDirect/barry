@@ -48,6 +48,30 @@ namespace Barry {
 	class Timezone;
 }
 
+//
+// This macro can be used to automatically generate code for all known
+// record types.  Just #undef HANDLE_PARSER, then #define it to whatever
+// you need, then use ALL_KNOWN_PARSER_TYPES.  See parser.cc for
+// various examples.
+//
+// These are sorted so their GetDBName()'s will display in alphabetical order.
+//
+#define ALL_KNOWN_PARSER_TYPES \
+	HANDLE_PARSER(Contact) \
+	HANDLE_PARSER(Bookmark) \
+	HANDLE_PARSER(Calendar) \
+	HANDLE_PARSER(CalendarAll) \
+	HANDLE_PARSER(Folder) \
+	HANDLE_PARSER(Memo) \
+	HANDLE_PARSER(Message) \
+	HANDLE_PARSER(CallLog) \
+	HANDLE_PARSER(PINMessage) \
+	HANDLE_PARSER(SavedMessage) \
+	HANDLE_PARSER(ServiceBook) \
+	HANDLE_PARSER(Sms) \
+	HANDLE_PARSER(Task) \
+	HANDLE_PARSER(Timezone)
+
 namespace Barry {
 
 //
