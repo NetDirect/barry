@@ -80,7 +80,7 @@ int main(int argc, char *argv[])
 		}
 		else {
 			cout << "Using PIN: "
-			     << probe.Get(0).m_pin.str() << endl;
+			     << probe.Get(0).m_pin.Str() << endl;
 		}
 
 		// Create the router

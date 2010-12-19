@@ -100,7 +100,7 @@ int main(int argc, char *argv[])
 		// show all successfully found devices
 		for( int i = 0; i < probe.GetCount(); i++ ) {
 			const ProbeResult &pr = probe.Get(i);
-			cout 	<< pr.m_pin.str() << ", "
+			cout 	<< pr.m_pin.Str() << ", "
 				<< pr.m_description << endl;
 		}
 

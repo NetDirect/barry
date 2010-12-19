@@ -35,11 +35,10 @@ class BXEXPORT Pin
 public:
 	Pin(uint32_t pin__ = 0) : pin(pin__) {}
 
-	bool valid() const { return pin != 0; }
-
-	void clear() { pin = 0; }
-	std::string str() const;
-	uint32_t value() const { return pin; }
+	bool Valid() const { return pin != 0; }
+	void Clear() { pin = 0; }
+	std::string Str() const;
+	uint32_t Value() const { return pin; }
 
 	Pin& operator=(uint32_t p) { pin = p; return *this; }
 

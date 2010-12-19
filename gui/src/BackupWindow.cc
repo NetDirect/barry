@@ -256,7 +256,7 @@ void BackupWindow::CheckDeviceName(Thread *thread)
 {
 	if( !thread->HasDeviceName() ) {
 		PromptDlg dlg;
-		dlg.SetPrompt(_("Unnamed device found (PIN: ") + thread->GetPIN().str() + ").\r\n " + _("Please enter a name for it:"));
+		dlg.SetPrompt(_("Unnamed device found (PIN: ") + thread->GetPIN().Str() + ").\r\n " + _("Please enter a name for it:"));
 		if( dlg.run() == Gtk::RESPONSE_OK ) {
 			thread->SetDeviceName(dlg.GetAnswer());
 		}
@@ -348,7 +348,7 @@ void BackupWindow::treeview_update()
 		i != m_pListStore->children().end(); ++i ) {
 		unsigned int id = (*i)[m_columns.m_id];
 		Thread *thread = m_threads[id].get();
-		(*i)[m_columns.m_pin] = thread->GetPIN().str();
+		(*i)[m_columns.m_pin] = thread->GetPIN().Str();
 		(*i)[m_columns.m_name] = thread->GetDeviceName();
 		(*i)[m_columns.m_status] = thread->Status();
 		unsigned int finished(thread->GetRecordFinished()), total(thread->GetRecordTotal());

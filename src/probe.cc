@@ -508,7 +508,7 @@ void ProbeResult::DumpAll(std::ostream &os) const
 std::ostream& operator<< (std::ostream &os, const ProbeResult &pr)
 {
 	os << "Device ID: " << pr.m_dev
-	   << ". PIN: " << pr.m_pin.str()
+	   << ". PIN: " << pr.m_pin.Str()
 	   << ", Description: " << pr.m_description;
 	if( pr.m_cfgDeviceName.size() )
 		os << ", Name: " << pr.m_cfgDeviceName;

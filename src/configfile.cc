@@ -103,7 +103,7 @@ void ConfigFile::BuildFilename()
 
 	m_filename = pw->pw_dir;
 	m_filename += "/.barry/backup/";
-	m_filename += m_pin.str();
+	m_filename += m_pin.Str();
 	m_filename += "/config";
 
 	delete [] strbuf;
@@ -114,7 +114,7 @@ void ConfigFile::BuildDefaultPath()
 	struct passwd *pw = getpwuid(getuid());
 	m_path = pw->pw_dir;
 	m_path += "/.barry/backup/";
-	m_path += m_pin.str();
+	m_path += m_pin.Str();
 }
 
 void ConfigFile::Clear()
@@ -396,7 +396,7 @@ void GlobalConfigFile::Load()
 
 		if( keyword == "last_device" ) {
 			iss >> std::ws;
-			m_lastDevice.clear();
+			m_lastDevice.Clear();
 			iss >> m_lastDevice;
 		}
 		else if( keyword == "verbose_logging" ) {
@@ -431,7 +431,7 @@ bool GlobalConfigFile::Save()
 	}
 
 	if( !(m_lastDevice == 0) ) {
-		out << "last_device " << m_lastDevice.str() << std::endl;
+		out << "last_device " << m_lastDevice.Str() << std::endl;
 	}
 
 	out << "verbose_logging " << (m_verboseLogging ? 1 : 0) << std::endl;

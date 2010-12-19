@@ -625,7 +625,7 @@ public:
 
 		// connect to all PINs found, and add them to our map
 		for( int i = 0; i < m_probe->GetCount(); i++ ) {
-			string curpin = m_probe->Get(i).m_pin.str();
+			string curpin = m_probe->Get(i).m_pin.Str();
 
 			// don't add a blank or pre-existing pin
 			if( !curpin.size() || m_pinmap.find(curpin) != m_pinmap.end() ) {

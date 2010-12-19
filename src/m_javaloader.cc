@@ -304,7 +304,7 @@ void JLDeviceInfo::Dump(std::ostream &os) const
 	os << "0x" << hex << HardwareId << endl;
 
 	os << left << setfill(' ') << setw(17) << "PIN:";
-	os << "0x" << Pin.str() << endl;
+	os << "0x" << Pin.Str() << endl;
 
 	os << left << setfill(' ') << setw(17) << "OS Version:";
 	os << dec << OsVersion.Major << '.' << OsVersion.Minor << '.' << OsVersion.SubMinor << '.' << OsVersion.Build << endl;

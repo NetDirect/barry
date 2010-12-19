@@ -236,7 +236,7 @@ std::string DeviceInterface::MakeFilename(const std::string &label) const
 	}
 
 	std::ostringstream tarfilename;
-	tarfilename << m_dev->GetPIN().str() << "-"
+	tarfilename << m_dev->GetPIN().Str() << "-"
 		<< std::setw(4) << std::setfill('0') << (lt->tm_year + 1900)
 		<< std::setw(2) << std::setfill('0') << (lt->tm_mon + 1)
 		<< std::setw(2) << std::setfill('0') << lt->tm_mday
@@ -473,7 +473,7 @@ bool DeviceInterface::StartRestoreAndBackup(AppComm comm,
 		m_tar.reset( new reuse::TarFile(filename.c_str(), false, &reuse::gztar_ops_nonthread, true) );
 
 		// open for secondary backup
-		std::string back = directory + "/" + MakeFilename(m_dev->GetPIN().str());
+		std::string back = directory + "/" + MakeFilename(m_dev->GetPIN().Str());
 		m_tarback.reset( new reuse::TarFile(back.c_str(), true, &reuse::gztar_ops_nonthread, true) );
 
 	}

@@ -74,7 +74,7 @@ bool Thread::CheckFinishedMarker()
 
 std::string Thread::GetFullname()
 {
-	std::string ret = GetPIN().str() + " (" + GetDeviceName() + ")";
+	std::string ret = GetPIN().Str() + " (" + GetDeviceName() + ")";
 	return ret;
 }
 
