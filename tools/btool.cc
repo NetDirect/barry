@@ -137,7 +137,7 @@ template <class Record>
 class MimeDump
 {
 public:
-	void Dump(std::ostream &os, const Record &rec)
+	static void Dump(std::ostream &os, const Record &rec)
 	{
 		os << rec << endl;
 	}
@@ -149,7 +149,7 @@ template <>
 class MimeDump<Contact>
 {
 public:
-	void Dump(std::ostream &os, const Contact &rec)
+	static void Dump(std::ostream &os, const Contact &rec)
 	{
 		Sync::vCard vcard;
 		os << vcard.ToVCard(rec) << endl;
@@ -162,7 +162,7 @@ template <>
 class MimeDump<Calendar>
 {
 public:
-	void Dump(std::ostream &os, const Calendar &rec)
+	static void Dump(std::ostream &os, const Calendar &rec)
 	{
 		Sync::vTimeConverter vtc;
 		Sync::vCalendar vcal(vtc);
@@ -176,7 +176,7 @@ template <>
 class MimeDump<Memo>
 {
 public:
-	void Dump(std::ostream &os, const Memo &rec)
+	static void Dump(std::ostream &os, const Memo &rec)
 	{
 		Sync::vJournal vjournal;
 		os << vjournal.ToMemo(rec) << endl;
@@ -189,7 +189,7 @@ template <>
 class MimeDump<Task>
 {
 public:
-	void Dump(std::ostream &os, const Task &rec)
+	static void Dump(std::ostream &os, const Task &rec)
 	{
 		Sync::vTimeConverter vtc;
 		Sync::vTodo vtodo(vtc);
