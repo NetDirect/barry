@@ -122,6 +122,22 @@ bool MultiRecordParser::Add(const std::string &dbname,
 	return true;
 }
 
+bool MultiRecordParser::Add(const std::string &dbname, AllRecordStore &store)
+{
+#undef HANDLE_PARSER
+#define HANDLE_PARSER(tname) \
+	if( dbname == tname::GetDBName() ) { \
+		Add(dbname, new RecordParser<tname, AllRecordStore>(store)); \
+		return true; \
+	}
+
+	// check for recognized database names
+	ALL_KNOWN_PARSER_TYPES
+
+	// if we get here, record was not found
+	return false;
+}
+
 // Parser overrides
 void MultiRecordParser::ParseRecord(const DBData &data, const IConverter *ic)
 {

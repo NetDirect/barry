@@ -396,11 +396,44 @@ public:
 	/// Adds given parser to list and takes ownership of it
 	void Add(RecordParserBase *parser);
 
+	/// Creates a RecordParser<> object using the given record
+	/// type and AllRecordStore.  Does NOT take ownership of the
+	/// store object, since it can be used multiple times for
+	/// multiple records.
+	template <class RecordT>
+	void Add(AllRecordStore &store)
+	{
+		Add( RecordT::GetDBName(),
+			new RecordParser<RecordT, AllRecordStore>(store) );
+	}
+
+	/// Two helper template functions that create the RecordParser<>
+	/// automatically based on the function call.  Both pointer and
+	/// reference versions.
+	template <class RecordT, class StorageT>
+	void Add(StorageT *store)
+	{
+		Add( RecordT::GetDBName(),
+			new RecordParser<RecordT, StorageT>(store) );
+	}
+
+	template <class RecordT, class StorageT>
+	void Add(StorageT &store)
+	{
+		Add( RecordT::GetDBName(),
+			new RecordParser<RecordT, StorageT>(store) );
+	}
+
 	/// Creates a RecordParser<> object for the given database name,
 	/// using DumpStore<> with the given stream for the output,
 	/// and adds it to list.
 	/// Returns false if there is no known Record class for dbname.
 	bool Add(const std::string &dbname, std::ostream &os);
+
+	/// Creates a RecordParser<> object for the given database name,
+	/// using the given store object.
+	/// Returns false if there is no known Record class for dbname.
+	bool Add(const std::string &dbname, AllRecordStore &store);
 
 	// Parser overrides
 	virtual void ParseRecord(const DBData &data, const IConverter *ic);
