@@ -141,75 +141,16 @@ void MultiRecordParser::ParseRecord(const DBData &data, const IConverter *ic)
 //////////////////////////////////////////////////////////////////////////////
 // AllRecordDumpStore class
 
-void AllRecordDumpStore::operator() (const Barry::Contact &r)
-{
-	m_os << r << std::endl;
-}
+// Use the macro here to implement the overrides, so that
+// the compiler will catch if we are missing any.
+#undef HANDLE_PARSER
+#define HANDLE_PARSER(tname) \
+	void AllRecordDumpStore::operator() (const Barry::tname &r) \
+	{ \
+		m_os << r << std::endl; \
+	}
 
-void AllRecordDumpStore::operator() (const Barry::Message &r)
-{
-	m_os << r << std::endl;
-}
-
-void AllRecordDumpStore::operator() (const Barry::Calendar &r)
-{
-	m_os << r << std::endl;
-}
-
-void AllRecordDumpStore::operator() (const Barry::CalendarAll &r)
-{
-	m_os << r << std::endl;
-}
-
-void AllRecordDumpStore::operator() (const Barry::CallLog &r)
-{
-	m_os << r << std::endl;
-}
-
-void AllRecordDumpStore::operator() (const Barry::Bookmark &r)
-{
-	m_os << r << std::endl;
-}
-
-void AllRecordDumpStore::operator() (const Barry::ServiceBook &r)
-{
-	m_os << r << std::endl;
-}
-
-void AllRecordDumpStore::operator() (const Barry::Memo &r)
-{
-	m_os << r << std::endl;
-}
-
-void AllRecordDumpStore::operator() (const Barry::Task &r)
-{
-	m_os << r << std::endl;
-}
-
-void AllRecordDumpStore::operator() (const Barry::PINMessage &r)
-{
-	m_os << r << std::endl;
-}
-
-void AllRecordDumpStore::operator() (const Barry::SavedMessage &r)
-{
-	m_os << r << std::endl;
-}
-
-void AllRecordDumpStore::operator() (const Barry::Sms &r)
-{
-	m_os << r << std::endl;
-}
-
-void AllRecordDumpStore::operator() (const Barry::Folder &r)
-{
-	m_os << r << std::endl;
-}
-
-void AllRecordDumpStore::operator() (const Barry::Timezone &r)
-{
-	m_os << r << std::endl;
-}
+ALL_KNOWN_PARSER_TYPES
 
 
 //////////////////////////////////////////////////////////////////////////////

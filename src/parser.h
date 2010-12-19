@@ -341,6 +341,25 @@ public:
 };
 
 //
+// AllRecordStore
+//
+/// Base class with overloaded functor behaviour for all available
+/// record classes.  To be used with AllRecordParser.
+///
+class BXEXPORT AllRecordStore
+{
+public:
+	AllRecordStore() {}
+	virtual ~AllRecordStore() {}
+
+#undef HANDLE_PARSER
+#define HANDLE_PARSER(tname) \
+	virtual void operator() (const Barry::tname &) = 0;
+
+	ALL_KNOWN_PARSER_TYPES
+};
+
+//
 // MultiRecordParser
 //
 /// Container parser class that accepts multiple Parser objects
@@ -388,34 +407,6 @@ public:
 };
 
 //
-// AllRecordStore
-//
-/// Base class with overloaded functor behaviour for all available
-/// record classes.  To be used with AllRecordParser.
-///
-class BXEXPORT AllRecordStore
-{
-public:
-	AllRecordStore() {}
-	virtual ~AllRecordStore() {}
-
-	virtual void operator() (const Barry::Contact &) = 0;
-	virtual void operator() (const Barry::Message &) = 0;
-	virtual void operator() (const Barry::Calendar &) = 0;
-	virtual void operator() (const Barry::CalendarAll &) = 0;
-	virtual void operator() (const Barry::CallLog &) = 0;
-	virtual void operator() (const Barry::Bookmark &) = 0;
-	virtual void operator() (const Barry::ServiceBook &) = 0;
-	virtual void operator() (const Barry::Memo &) = 0;
-	virtual void operator() (const Barry::Task &) = 0;
-	virtual void operator() (const Barry::PINMessage &) = 0;
-	virtual void operator() (const Barry::SavedMessage &) = 0;
-	virtual void operator() (const Barry::Sms &) = 0;
-	virtual void operator() (const Barry::Folder &) = 0;
-	virtual void operator() (const Barry::Timezone &) = 0;
-};
-
-//
 // AllRecordDumpStore
 //
 /// Derived from AllRecordStore, which just calls each record's
@@ -432,20 +423,11 @@ public:
 	{
 	}
 
-	virtual void operator() (const Barry::Contact &);
-	virtual void operator() (const Barry::Message &);
-	virtual void operator() (const Barry::Calendar &);
-	virtual void operator() (const Barry::CalendarAll &);
-	virtual void operator() (const Barry::CallLog &);
-	virtual void operator() (const Barry::Bookmark &);
-	virtual void operator() (const Barry::ServiceBook &);
-	virtual void operator() (const Barry::Memo &);
-	virtual void operator() (const Barry::Task &);
-	virtual void operator() (const Barry::PINMessage &);
-	virtual void operator() (const Barry::SavedMessage &);
-	virtual void operator() (const Barry::Sms &);
-	virtual void operator() (const Barry::Folder &);
-	virtual void operator() (const Barry::Timezone &);
+#undef HANDLE_PARSER
+#define HANDLE_PARSER(tname) \
+	virtual void operator() (const Barry::tname &);
+
+	ALL_KNOWN_PARSER_TYPES
 };
 
 //
