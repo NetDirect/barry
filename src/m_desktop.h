@@ -198,6 +198,7 @@ class BXEXPORT DeviceBuilder : public Builder
 	// list of databases to fetch during build
 	list_type m_dbIds;
 	list_type::iterator m_current;
+	bool m_started;
 
 	Mode::Desktop &m_desktop;
 
@@ -215,7 +216,7 @@ public:
 
 	/// sets the internal iterator to the start of the list
 	/// in order to perform a fresh run
-	void Restart() { m_current = m_dbIds.begin(); }
+	void Restart() { m_current = m_dbIds.begin(); m_started = false; }
 
 	//
 	// Builder overrides

@@ -549,9 +549,11 @@ bool DBLoader::GetNextRecord(DBData &data)
 // DeviceBuilder class
 
 DeviceBuilder::DeviceBuilder(Mode::Desktop &desktop)
-	: m_desktop(desktop)
+	: m_started(false)
+	, m_desktop(desktop)
 	, m_loader(desktop)
 {
+	Restart();
 }
 
 // searches the dbdb from the desktop to find the dbId,
@@ -562,7 +564,6 @@ bool DeviceBuilder::Add(const std::string &dbname)
 	try {
 		DBLabel id(m_desktop.GetDBID(dbname), dbname);
 		m_dbIds.push_back(id);
-		m_current = m_dbIds.begin();
 		return true;
 	}
 	catch( Barry::Error & ) {
@@ -597,7 +598,15 @@ bool DeviceBuilder::FetchRecord(DBData &data, const IConverter *ic)
 {
 	bool ret;
 
-	if( m_loader.IsBusy() ) {
+	if( !m_dbIds.size() )
+		return false;	// nothing to do
+
+	if( !m_started ) {
+		m_current = m_dbIds.begin();
+		ret = m_loader.StartDBLoad(m_current->id, data);
+		m_started = true;
+	}
+	else if( m_loader.IsBusy() ) {
 		ret = m_loader.GetNextRecord(data);
 	}
 	else {
