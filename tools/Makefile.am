@@ -111,6 +111,9 @@ pppob_LDADD = ../src/libbarry.la $(LIBUSB_LIBS) -lpthread $(LTLIBINTL)
 brecsum_SOURCES = brecsum.cc
 brecsum_LDADD = ../src/libbarry.la $(LIBUSB_LIBS) -lpthread $(LTLIBINTL)
 
+brimtrans_SOURCES = brimtrans.cc
+brimtrans_LDADD = $(LTLIBINTL)
+
 if WITH_FUSE
 bfuse_SOURCES = bfuse.cc
 bfuse_CXXFLAGS = $(FUSE_CFLAGS)
@@ -139,6 +142,4 @@ balxparse_CXXFLAGS = $(AM_CXXFLAGS) $(LIBXMLXX_CFLAGS)
 balxparse_LDADD = ../src/libbarry.la ../src/libbarryalx.la $(LTLIBINTL)
 endif
 
-brimtrans_SOURCES = brimtrans.cc
-brimtrans_LDADD = $(LTLIBINTL)
 
