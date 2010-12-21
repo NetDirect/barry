@@ -215,6 +215,9 @@ public:
 	// databases to retrieve if found
 	bool Add(const std::string &dbname);
 
+	// adds all databases found in the given dbdb
+	void Add(const Barry::DatabaseDatabase &dbdb);
+
 	/// sets the internal iterator to the start of the list
 	/// in order to perform a fresh run
 	void Restart() { m_current = m_dbIds.begin(); m_started = false; }

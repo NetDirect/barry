@@ -572,6 +572,21 @@ bool DeviceBuilder::Add(const std::string &dbname)
 	}
 }
 
+void DeviceBuilder::Add(const Barry::DatabaseDatabase &dbdb)
+{
+	DatabaseDatabase::DatabaseArrayType::const_iterator
+		b = dbdb.Databases.begin(),
+		e = dbdb.Databases.end();
+
+	for( ; b != e; ++b ) {
+		// hmmm, could optimize this and only add ids
+		// with RecordCount > 0, but let's stick with this
+		// for now... it might flush bugs out of the system
+		DBLabel id(b->Number, b->Name);
+		m_dbIds.push_back(id);
+	}
+}
+
 bool DeviceBuilder::BuildRecord(DBData &data,
 				size_t &offset,
 				const IConverter *ic)
