@@ -42,6 +42,11 @@ endif
 if WITH_ALX
 bin_PROGRAMS += balxparse
 endif
+if WITH_BACKUP
+if WITH_SYNC
+bin_PROGRAMS += bio
+endif
+endif
 
 sbin_PROGRAMS = bcharge breset pppob
 
@@ -142,4 +147,19 @@ balxparse_CXXFLAGS = $(AM_CXXFLAGS) $(LIBXMLXX_CFLAGS)
 balxparse_LDADD = ../src/libbarry.la ../src/libbarryalx.la $(LTLIBINTL)
 endif
 
+if WITH_BACKUP
+if WITH_SYNC
+bio_SOURCES = bio.cc
+bio_CXXFLAGS = $(AM_CXXFLAGS) $(GLIB2_CFLAGS)
+if WITH_BOOST
+bio_CXXFLAGS += -D__BARRY_BOOST_MODE__ -D_REENTRANT @BOOST_INC_PATH@
+endif
+bio_LDADD = ../src/libbarry.la \
+	../src/libbarrysync.la $(GLIB2_LIBS) \
+	../src/libbarrybackup.la \
+	$(LIBUSB_LIBS) -lpthread @BOOST_LDADD@ \
+	$(LTLIBINTL) $(LTLIBICONV)
+bio_LDFLAGS = @BOOST_LIB_PATH@
+endif
+endif
 

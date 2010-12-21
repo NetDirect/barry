@@ -1,5 +1,9 @@
 Release: version 0.17.0 - 2010/01/??
 ------------------------------------------------------------------------------
+2010/12/21
+	- tools: added bio command line tool, Barry Input / Output
+		Supports IO for devices, tar backups, boost, ldif streams,
+		mime streams, hex and human dumps, and sha1 output
 2010/12/19
 	- lib: fixed capitalization API consistency in pin.h
 2010/12/13
