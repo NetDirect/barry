@@ -67,6 +67,9 @@ public:
 	char* ExtractVCard();
 
 	void Clear();
+
+	// This is the v-name of the innermost BEGIN/END block
+	static const char* GetVName() { return "VCARD"; }
 };
 
 }} // namespace Barry::Sync
