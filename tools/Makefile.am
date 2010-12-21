@@ -14,6 +14,7 @@ noinst_HEADERS = \
 	i18n.h \
 	gettext.h \
 	mimedump.h \
+	brecsum.h \
 	platform.h
 
 bin_PROGRAMS = \

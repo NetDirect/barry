@@ -27,6 +27,7 @@
 #include <string>
 #include <getopt.h>
 #include "i18n.h"
+#include "brecsum.h"
 
 using namespace std;
 using namespace Barry;
@@ -51,47 +52,6 @@ void Usage()
    << "   -v        Dump protocol data during operation\n"
    << endl;
 }
-
-class ChecksumParser : public Barry::Parser
-{
-	bool m_IncludeIds;
-	SHA_CTX m_ctx;
-
-public:
-	explicit ChecksumParser(bool IncludeIds)
-		: m_IncludeIds(IncludeIds)
-	{}
-
-	virtual void ParseRecord(const Barry::DBData &data,
-				 const Barry::IConverter *ic)
-	{
-		SHA1_Init(&m_ctx);
-
-		if( m_IncludeIds ) {
-			SHA1_Update(&m_ctx, data.GetDBName().c_str(),
-				data.GetDBName().size());
-
-			uint8_t recType = data.GetRecType();
-			SHA1_Update(&m_ctx, &recType, sizeof(recType));
-
-			uint32_t uniqueId = data.GetUniqueId();
-			SHA1_Update(&m_ctx, &uniqueId, sizeof(uniqueId));
-		}
-
-		int len = data.GetData().GetSize() - data.GetOffset();
-		SHA1_Update(&m_ctx,
-			data.GetData().GetData() + data.GetOffset(), len);
-
-		unsigned char sha1[SHA_DIGEST_LENGTH];
-		SHA1_Final(sha1, &m_ctx);
-
-		for( int i = 0; i < SHA_DIGEST_LENGTH; i++ ) {
-			cout << hex << setfill('0') << setw(2)
-				<< (unsigned int) sha1[i];
-		}
-		cout << endl;
-	}
-};
 
 int main(int argc, char *argv[])
 {
