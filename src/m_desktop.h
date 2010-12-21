@@ -27,6 +27,7 @@
 #include "data.h"
 #include "socket.h"
 #include "record.h"
+#include "parser.h"
 #include "builder.h"
 
 namespace Barry {
@@ -242,7 +243,7 @@ public:
 /// way to filter out records, except via the callback, so the easiest
 /// way to filter out records by database name is on the Builder side.
 ///
-class BXEXPORT DeviceParser
+class BXEXPORT DeviceParser : public Barry::Parser
 {
 public:
 	enum WriteMode {
