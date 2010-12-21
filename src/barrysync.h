@@ -29,6 +29,7 @@
 #include "vevent.h"
 #include "vjournal.h"
 #include "vtodo.h"
+#include "mimeio.h"
 
 #endif
 

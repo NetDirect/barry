@@ -125,6 +125,22 @@ public:
 	virtual bool EndOfFile() const;
 };
 
+//
+// SetDBData
+//
+/// Contains the proper way to convert a record object into a DBData object.
+///
+template <class RecordT>
+void SetDBData(const RecordT &rec, DBData &data, size_t &offset,
+		const IConverter *ic)
+{
+	data.SetVersion(DBData::REC_VERSION_1);
+	data.SetOffset(offset);
+	data.SetDBName(RecordT::GetDBName());
+	data.SetIds(rec.GetRecType(), rec.GetUniqueId());
+	rec.BuildHeader(data.UseData(), offset);
+	rec.BuildFields(data.UseData(), offset, ic);
+}
 
 //
 // RecordBuilder template class
@@ -194,12 +210,7 @@ public:
 			return false;
 		}
 
-		data.SetVersion(DBData::REC_VERSION_1);
-		data.SetDBName(RecordT::GetDBName());
-		data.SetIds(m_rec.GetRecType(), m_rec.GetUniqueId());
-		data.SetOffset(offset);
-		m_rec.BuildHeader(data.UseData(), offset);
-		m_rec.BuildFields(data.UseData(), offset, ic);
+		SetDBData(m_rec, data, offset, ic);
 		return true;
 	}
 

@@ -154,6 +154,7 @@ include_barry_HEADERS = barry.h barrysync.h barrybackup.h barryalx.h \
 	vevent.h \
 	vjournal.h \
 	vtodo.h \
+	mimeio.h \
 	scoped_lock.h \
 	semaphore.h \
 	backup.h \
@@ -260,6 +261,7 @@ libbarrysync_la_SOURCES = \
 	vevent.h vevent.cc \
 	vjournal.h vjournal.cc \
 	vtodo.h vtodo.cc \
+	mimeio.h mimeio.cc \
 	tzwrapper.h tzwrapper.cc
 # if we set CFLAGS and CXXFLAGS ourselves, we need to include
 # AM_*FLAGS as well... this only seems to matter for compile flags,
