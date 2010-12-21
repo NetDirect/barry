@@ -265,8 +265,12 @@ void Task::BuildFields(Data &data, size_t &offset, const IConverter *ic) const
 	else
 		BuildField(data, offset, TSKFC_DUE_FLAG, (char) 0);
 
-	if( TimeZoneValid )
-		BuildField(data, offset, TSKFC_TIMEZONE_CODE, TimeZoneCode);
+	if( TimeZoneValid ) {
+		// the time zone code field is 4 bytes, but we only use
+		// the first two... pad it with zeros
+		uint32_t code = TimeZoneCode;
+		BuildField(data, offset, TSKFC_TIMEZONE_CODE, code);
+	}
 
 	// cycle through the type table
 	for(	FieldLink<Task> *b = TaskFieldLinks;
