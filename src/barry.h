@@ -60,6 +60,7 @@
 #include "parser.h"
 #include "builder.h"
 #include "ldif.h"
+#include "ldifio.h"
 #include "controller.h"
 #include "m_desktop.h"
 #include "m_ipmodem.h"

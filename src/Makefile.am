@@ -108,6 +108,7 @@ include_barry_HEADERS = barry.h barrysync.h barrybackup.h barryalx.h \
 	data.h \
 	error.h \
 	ldif.h \
+	ldifio.h \
 	log.h \
 	parser.h \
 	pin.h \
@@ -195,6 +196,7 @@ libbarry_la_SOURCES = dll.h \
 	configfile.h configfile.cc \
 	error.h error.cc \
 	ldif.h ldif.cc \
+	ldifio.h ldifio.cc \
 	log.h log.cc \
 	socket.cc \
 	router.cc \
