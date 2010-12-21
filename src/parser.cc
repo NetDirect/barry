@@ -37,6 +37,8 @@
 #include <iostream>
 #include <memory>
 
+using namespace std;
+
 namespace Barry {
 
 //////////////////////////////////////////////////////////////////////////////
@@ -50,8 +52,11 @@ HexDumpParser::HexDumpParser(std::ostream &os)
 void HexDumpParser::ParseRecord(const Barry::DBData &data,
 				const IConverter *ic)
 {
-	m_os << "Raw record dump for record: "
-		<< std::hex << data.GetUniqueId() << std::endl;
+	m_os << "Raw record dump for record: 0x"
+		<< hex << data.GetUniqueId()
+		<< ", type: 0x" << hex << data.GetRecType()
+		<< ", offset: 0x" << hex << data.GetOffset()
+		<< endl;
 	m_os << data.GetData() << std::endl;
 }
 
