@@ -22,6 +22,7 @@
 #include <barry/barry.h>
 #ifdef __BARRY_SYNC_MODE__
 #include <barry/barrysync.h>
+#include "mimedump.h"
 #endif
 #ifdef __BARRY_BACKUP_MODE__
 #include <barry/barrybackup.h>
@@ -131,74 +132,6 @@ public:
 		ldif.DumpLdif(cout, rec);
 	}
 };
-
-#ifdef __BARRY_SYNC_MODE__
-template <class Record>
-class MimeDump
-{
-public:
-	static void Dump(std::ostream &os, const Record &rec)
-	{
-		os << rec << endl;
-	}
-
-	static bool Supported() { return false; }
-};
-
-template <>
-class MimeDump<Contact>
-{
-public:
-	static void Dump(std::ostream &os, const Contact &rec)
-	{
-		Sync::vCard vcard;
-		os << vcard.ToVCard(rec) << endl;
-	}
-
-	static bool Supported() { return true; }
-};
-
-template <>
-class MimeDump<Calendar>
-{
-public:
-	static void Dump(std::ostream &os, const Calendar &rec)
-	{
-		Sync::vTimeConverter vtc;
-		Sync::vCalendar vcal(vtc);
-		os << vcal.ToVCal(rec) << endl;
-	}
-
-	static bool Supported() { return true; }
-};
-
-template <>
-class MimeDump<Memo>
-{
-public:
-	static void Dump(std::ostream &os, const Memo &rec)
-	{
-		Sync::vJournal vjournal;
-		os << vjournal.ToMemo(rec) << endl;
-	}
-
-	static bool Supported() { return true; }
-};
-
-template <>
-class MimeDump<Task>
-{
-public:
-	static void Dump(std::ostream &os, const Task &rec)
-	{
-		Sync::vTimeConverter vtc;
-		Sync::vTodo vtodo(vtc);
-		os << vtodo.ToTask(rec) << endl;
-	}
-
-	static bool Supported() { return true; }
-};
-#endif
 
 template <class Record>
 struct Store
