@@ -25,6 +25,7 @@
 #ifndef __BARRY_S11N_BOOST_H__
 #define __BARRY_S11N_BOOST_H__
 
+#include "dll.h"
 #include "record.h"
 #include <boost/serialization/vector.hpp>
 
@@ -467,6 +468,262 @@ void serialize(ArchiveT &ar, Barry::Timezone &t, const unsigned int ver)
 }
 
 }} // namespace boost::serialization
+
+
+//////////////////////////////////////////////////////////////////////////////
+// Helper wrapper templates for loading and saving records to an iostream
+
+namespace Barry {
+
+// Can be used as a Storage class for RecordBuilder<>
+template <class RecordT>
+class BoostLoader
+{
+public:
+	typedef RecordT				rec_type;
+	typedef std::vector<rec_type>		list_type;
+
+private:
+	list_type m_records;
+	typename list_type::iterator rec_it;
+
+public:
+	explicit BoostLoader(std::istream &is)
+	{
+		boost::archive::text_iarchive ia(is);
+		ia >> m_records;
+		rec_it = m_records.begin();
+	}
+
+	list_type& GetRecords() { return m_records; }
+	const list_type& GetRecords() const { return m_records; }
+
+	// retrieval operator
+	bool operator()(RecordT &rec, Builder &builder)
+	{
+		if( rec_it == m_records.end() )
+			return false;
+		rec = *rec_it;
+		++rec_it;
+		return true;
+	}
+};
+
+// Can be used as a Storage class for RecordParser<>
+template <class RecordT>
+class BoostSaver
+{
+public:
+	typedef RecordT				rec_type;
+	typedef std::vector<rec_type>		list_type;
+
+private:
+	std::ostream &m_os;
+	list_type m_records;
+	typename list_type::iterator rec_it;
+
+public:
+	explicit BoostSaver(std::ostream &os)
+		: m_os(os)
+	{
+	}
+
+	~BoostSaver()
+	{
+		WriteArchive();
+	}
+
+	void WriteArchive() const
+	{
+		// write dbname first, so parsing is possible
+		m_os << RecordT::GetDBName() << std::endl;
+
+		// write boost archive of all records
+		boost::archive::text_oarchive oa(m_os);
+
+		// boost is fussy that the vector must be const
+		// we do this explicitly, for documentation's sake
+		const list_type &recs = m_records;
+		oa << recs;
+		m_os << std::endl;
+	}
+
+	list_type& GetRecords() { return m_records; }
+	const list_type& GetRecords() const { return m_records; }
+
+	// storage operator
+	void operator()(const RecordT &rec)
+	{
+		m_records.push_back(rec);
+	}
+};
+
+//
+// BoostParser
+//
+/// This Parser turns incoming records (which can be of any record type
+/// included in ALL_KNOWN_PARSER_TYPES) into a Boost Serialization stream
+/// on the given iostream.
+///
+/// This class is defined completely in the header, so that it is
+/// optional for applications to link against the boost libraries.
+///
+class BXEXPORT BoostParser : public Barry::Parser
+{
+	std::auto_ptr<Barry::Parser> m_parser;
+	std::ofstream *m_ofs;
+	std::ostream &m_os;	// references either an external object,
+				// or *m_ifs... this is the reference to
+				// use in the entire class... the constructor
+				// sets it up
+
+	std::string m_current_db;
+
+public:
+	explicit BoostParser(const std::string &filename)
+		: m_ofs( new std::ofstream(filename.c_str()) )
+		, m_os(*m_ofs)
+	{
+	}
+
+	explicit BoostParser(std::ostream &os)
+		: m_ofs(0)
+		, m_os(os)
+	{
+	}
+
+	~BoostParser()
+	{
+		// flush any remaining parser output
+		// (note this still potentially uses m_ofs, so do this first)
+		m_parser.reset();
+
+		// cleanup the stream
+		delete m_ofs;
+	}
+
+	void StartDB(const std::string &dbname)
+	{
+		// done with current parser, flush it's output
+		m_parser.reset();
+
+#undef HANDLE_PARSER
+#define HANDLE_PARSER(tname) \
+		if( dbname == tname::GetDBName() ) { \
+			m_parser.reset( \
+				new RecordParser<tname, BoostSaver<tname> >( \
+					new BoostSaver<tname>(m_os) ) ); \
+			return; \
+		}
+
+		ALL_KNOWN_PARSER_TYPES
+
+		// if we make it here, we don't have a record parser
+		// for this dbname, so just dump it to stderr (not stdout,
+		// since the user might be sending normal output there)
+		m_parser.reset( new HexDumpParser(std::cerr) );
+	}
+
+	void ParseRecord(const DBData &data, const IConverter *ic)
+	{
+		if( m_current_db != data.GetDBName() ) {
+			StartDB(data.GetDBName());
+			m_current_db = data.GetDBName();
+		}
+
+		m_parser->ParseRecord(data, ic);
+	}
+};
+
+//
+// BoostBuilder
+//
+/// This Builder class reads a boost serialization stream, and converts
+/// them into DBData records.  Can only produce records for record types
+/// in ALL_KNOWN_BUILDER_TYPES.
+///
+class BXEXPORT BoostBuilder : public Barry::Builder
+{
+	std::auto_ptr<Builder> m_builder;
+	std::ifstream *m_ifs;
+
+	std::istream &m_is;	// references either an external object,
+				// or *m_ifs... this is the reference to
+				// use in the entire class... the constructor
+				// sets it up
+
+public:
+	explicit BoostBuilder(const std::string &filename)
+		: m_ifs( new std::ifstream(filename.c_str()) )
+		, m_is(*m_ifs)
+	{
+		FinishDB();
+	}
+
+	explicit BoostBuilder(std::istream &is)
+		: m_ifs(0)
+		, m_is(is)
+	{
+		FinishDB();
+	}
+
+	~BoostBuilder()
+	{
+		delete m_ifs;
+	}
+
+	void FinishDB()
+	{
+		// done with current builder
+		m_builder.reset();
+
+		// read the next DBName
+		std::string dbName;
+		while( getline(m_is, dbName) ) {
+
+#undef HANDLE_BUILDER
+#define HANDLE_BUILDER(tname) \
+			if( dbName == tname::GetDBName() ) { \
+				m_builder.reset( \
+					new RecordBuilder<tname, BoostLoader<tname> >( \
+						new BoostLoader<tname>(m_is) ) ); \
+				return; \
+			}
+
+			ALL_KNOWN_BUILDER_TYPES
+		}
+	}
+
+	bool BuildRecord(DBData &data, size_t &offset, const IConverter *ic)
+	{
+		if( !m_builder.get() )
+			return false;
+
+		bool ret = m_builder->BuildRecord(data, offset, ic);
+		if( !ret )
+			FinishDB();
+		return ret;
+	}
+
+	bool FetchRecord(DBData &data, const IConverter *ic)
+	{
+		if( !m_builder.get() )
+			return false;
+
+		bool ret = m_builder->FetchRecord(data, ic);
+		if( !ret )
+			FinishDB();
+		return ret;
+	}
+
+	bool EndOfFile() const
+	{
+		return m_builder.get() ? false : true;
+	}
+};
+
+
+} // namespace Barry
 
 #endif
 
