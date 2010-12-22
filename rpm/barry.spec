@@ -76,7 +76,7 @@ This package contains the development library files for Barry, libbarry.
 
 
 %package util
-Summary: BlackBerry(tm) Desktop for Linux - bcharge, btool, breset and others
+Summary: BlackBerry(tm) Desktop for Linux - bcharge, btool, breset, bio and others
 Group: Applications/Productivity
 Requires: libbarry0 fuse
 Conflicts: barry-bcharge
@@ -85,9 +85,9 @@ Conflicts: barry-bcharge
 Barry is a desktop toolset for managing your BlackBerry(tm) device. (BlackBerry
 is a registered trademark of Research in Motion Limited.)
 
-This package contains the commandline tools bcharge, btool, breset and others
-which will enable you to charge your device with a proper 500mA and be able
-to access the data on the device in many ways.
+This package contains the commandline tools bcharge, btool, breset, bio and
+others which will enable you to charge your device with a proper 500mA
+and be able to access the data on the device in many ways.
 
 
 %if %{with_gui}
@@ -238,6 +238,7 @@ cd ../
 %attr(0755,root,root) %{_sbindir}/breset
 %attr(0755,root,root) %{_sbindir}/pppob
 %attr(0755,root,root) %{_bindir}/btool
+%attr(0755,root,root) %{_bindir}/bio
 %attr(0755,root,root) %{_bindir}/btardump
 %attr(0755,root,root) %{_bindir}/bfuse
 %attr(0755,root,root) %{_bindir}/bjavaloader
@@ -253,6 +254,7 @@ cd ../
 %attr(0755,root,root) %{_bindir}/brimtrans
 %attr(0755,root,root) %{_bindir}/hal-blackberry
 %attr(0644,root,root) %{_mandir}/man1/btool*
+%attr(0644,root,root) %{_mandir}/man1/bio*
 %attr(0644,root,root) %{_mandir}/man1/btardump*
 %attr(0644,root,root) %{_mandir}/man1/bfuse*
 %attr(0644,root,root) %{_mandir}/man1/bjavaloader*
@@ -334,7 +336,7 @@ cd ../
 - added Fedora 13 support
 - added new ppp chat script for Orange Spain
 - added copy of barry-sprint as barry-telus
-- added brawchannel, btardump, and balxparse
+- added brawchannel, btardump, bio, and balxparse
 
 * Sat Sep 29 2009 Chris Frey <cdfrey@foursquare.net> 0.16-0
 - version bump

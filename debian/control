@@ -43,7 +43,7 @@ Description: Command line utilities for working with the RIM BlackBerry Handheld
  Barry is a GPL C++ library for interfacing with the RIM BlackBerry Handheld.
  .
  This package contains command line utilities, such as bcharge, btool,
- breset, etc.
+ breset, bio, etc.
 
 Package: barry-util-dbg
 Section: utils

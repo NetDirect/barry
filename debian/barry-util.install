@@ -1,4 +1,5 @@
 debian/tmp/usr/bin/btool
+debian/tmp/usr/bin/bio
 debian/tmp/usr/bin/btardump
 debian/tmp/usr/bin/bfuse
 debian/tmp/usr/bin/bjavaloader
@@ -21,6 +22,7 @@ debian/tmp/usr/share/man/man1/brecsum.1
 debian/tmp/usr/share/man/man1/breset.1
 debian/tmp/usr/share/man/man1/bs11nread.1
 debian/tmp/usr/share/man/man1/btool.1
+debian/tmp/usr/share/man/man1/bio.1
 debian/tmp/usr/share/man/man1/btardump.1
 debian/tmp/usr/share/man/man1/bfuse.1
 debian/tmp/usr/share/man/man1/bjavaloader.1
