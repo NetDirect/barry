@@ -3,7 +3,7 @@
 #
 # Edit these settings to reflect your system
 #
-MAKEOPTS=-j3
+MAKEOPTS=-j2
 export CC="ccache gcc"
 export CXX="ccache g++"
 
