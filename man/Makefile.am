@@ -12,5 +12,6 @@ dist_man_MANS = \
 	brawchannel.1 \
 	pppob.1 \
 	brecsum.1 \
+	bio.1 \
 	upldif.1
 

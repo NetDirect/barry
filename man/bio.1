@@ -1,0 +1,258 @@
+.\"                                      Hey, EMACS: -*- nroff -*-
+.\" First parameter, NAME, should be all caps
+.\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
+.\" other parameters are allowed: see man(7), man(1)
+.TH BIO 1 "December 21, 2010"
+.\" Please adjust this date whenever revising the manpage.
+.\"
+.\" Some roff macros, for reference:
+.\" .nh        disable hyphenation
+.\" .hy        enable hyphenation
+.\" .ad l      left justify
+.\" .ad b      justify to both left and right margins
+.\" .nf        disable filling
+.\" .fi        enable filling
+.\" .br        insert line break
+.\" .sp <n>    insert n+1 empty lines
+.\" for manpage-specific macros, see man(7)
+.SH NAME
+.B bio
+\- Barry Input / Output
+.SH SYNOPSIS
+.B bio -i <input type> -o <output type> [-o <output type> ...]
+.SH DESCRIPTION
+.PP
+.B bio
+is a command line tool that treats devices, backups, and data streams
+as input and output.
+.B bio
+supports the following types of IO (actual type name shown in bold):
+
+.IP
+.B device
+
+.B tar
+(backup files)
+
+.B boost
+(serialization files and streams)
+
+.B mime
+streams
+
+.B ldif
+streams
+
+human readable and hex text
+.B dump
+
+.B sha1
+sum output
+
+.PP
+Each command line consists of at least one input and output option,
+along with their switches.  More than one output can be used, as long
+as they do not conflict with each other.  For example, it is not possible
+to read and write from the same device PIN.
+
+.PP
+This tool combines a lot of the functionality of
+.B btool, btardump, brecsum,
+and
+.B bs11nread,
+but does it more flexibly, and improves functionality in some cases,
+such as Boost archives being able to contain more than one database.
+
+.SH DEVICE TYPE OPTIONS
+.PP
+The
+.B device
+type is used to read or write from a device connected via USB.
+Some of the options below are valid only in one input or output
+mode, some in both.
+.TP
+.B \-d db
+Name of database to load, when using the
+.B device
+type as input.  Can be used multiple times.  See
+.B btool \-t
+for a list of databases on the device.
+.TP
+.B \-A
+Selects all databases found on the device, instead of adding them
+manually via the \-d option.
+.TP
+.B \-p pin
+PIN of device to talk to.  Valid for both input and output.
+Only needed if you have more than one Blackberry connected at once.
+.TP
+.B \-P password
+Simplistic method to specify device password.  In a real application, this
+would be done using a more secure prompt.
+.TP
+.B \-w mode
+Set write mode when using the
+.B device
+type in output mode.  This must be specified, or nothing will be written.
+Can be one of:
+.B erase, overwrite, addonly, addnew.
+
+.\".SH DATABASE COMMAND MODIFIERS (DEVICE)
+.\"The following options modify the -d command option above, and can be used
+.\"multiple times for more than one record.
+.\".TP
+.\".B \-r #
+.\"Fetch specific record, given a record index number as seen in the -T state table.
+.\"Can be used multiple times to fetch specific records from a single database.
+.\".TP
+.\".B \-R #
+.\"Same as -r, but also clears the record's dirty flags.
+.\".TP
+.\".B \-D #
+.\"Delete the specified record using the index number as seen in the -T state table.
+
+.SH TAR TYPE OPTIONS
+.PP
+The
+.B tar
+type is used to read or write from a backup file created by btool or
+the backup GUI.
+.TP
+.B \-d db
+Name of database to load, when using the
+.B tar
+type as input.  Can be used multiple times.
+.B Note
+that if no \-d options are specified,
+.B bio
+defaults to reading all available databases.
+.TP
+.B \-f file
+The tar backup file to read or write from.
+.B Bio
+uses gzip compressed tar files, so suitable extensions would be .tgz
+and .tar.gz.  Unfortunately, due to internal limitations,
+an actual file must be specified here, and not \- for stdin / stdout.
+
+.SH BOOST TYPE OPTIONS
+.PP
+The
+.B boost
+type is used to read and write parsable records in Boost Serialization
+format.  These files were historically written and read by
+.B btool
+and
+.B bs11nread.
+.B Bio
+is more flexible, in that it can contain multiple databases in one
+serialization archive.
+.TP
+.B \-f file
+Filename to read from or write to.  Use \- to specify stdin or stdout.
+If not specified for input, defaults to stdin, but since output can
+contain non-ASCII chars, you must use \-f \- if you want to write
+to stdout.
+
+.SH LDIF TYPE OPTIONS
+.PP
+The
+.B ldif
+type is used to read or write ldif output, like the output of the
+LDAP command line tool
+.B ldapsearch.
+.TP
+.B \-c dn
+When using ldif as output, specify the base DN.
+.TP
+.B \-C dnattr
+Again, for output, specify the attribute name to use when building the FQDN.
+
+.SH MIME TYPE OPTIONS
+.PP
+The
+.B mime
+type is used to read or write VCARD, VEVENT, VTODO, or VJOURNAL records
+based on the Address Book, Calendar, Tasks, or Memos databases respectively.
+.TP
+.B \-f file
+Filename to read from or write to.  Defaults to \- for stdin or stdout.
+
+.SH DUMP TYPE OPTIONS
+.PP
+The
+.B dump
+type is used only for output, and sends human readable record data to
+stdout.  Parsable records are parsed; unknown records are dumped in hex
+format.
+.TP
+.B \-n
+Use hex format for all records.
+
+.SH SHA1 TYPE OPTIONS
+.PP
+The
+.B sha1
+type is used to mimic the behaviour of the
+.B brecsum
+command.  It calculates a SHA1 sum on the raw record data and sends
+the sum to stdout.
+.TP
+.B \-t
+Include the DB Name, Type, and Unique record ID in the checksum for each
+record.
+
+.SH STANDALONE OPTIONS
+.TP
+.B \-h
+Displays a detailed summary of command line options.
+.TP
+.B \-I cs
+Set the international charset for string conversions.  Valid values here
+are available with
+.B iconv \-\-list
+.TP
+.B \-S
+Show list of supported database parsers and builders.
+.TP
+.B \-v
+Dump verbose low level protocol data during USB operations, to stdout.
+
+
+
+
+.SH EXAMPLES
+.TP
+1) Backup a full device to tar backup:
+.IP
+bio -i device -A -o tar -f mybackup.tar.gz
+.TP
+2) Read a backup file and convert the Address Book to MIME
+.IP
+bio -i tar -f mybackup.tar.gz -d "Address Book" -o mime
+.TP
+3) Copy the Calendar from one device to another, and dump
+the records to stdout in human readable format at the same time
+.IP
+bio -i device -p 3009efe3 -d Calendar -o device -p 204062f3 -w erase -o dump
+.TP
+4) Read LDIF input and convert the contacts to MIME format
+.IP
+ldapsearch -x | bio -i ldif -o mime
+.TP
+5) Test the record code by running the Tasks database through
+the Boost storage and back to human readable
+.IP
+bio -i device -d Tasks -o dump
+
+vs.
+
+bio -i device -d Tasks -o boost -f - | bio -i boost -f - -o dump
+
+.SH AUTHOR
+.nh
+.B bio
+is part of the Barry project.
+.SH SEE ALSO
+.PP
+http://www.netdirect.ca/barry
+

@@ -80,7 +80,7 @@ void Usage()
    << "   -d db     Name of input database. Can be used multiple times.\n"
    << "   -A        Add all available device databases, instead of specifying\n"
    << "             them manually via -d\n"
-   << "   -p pin    PIN of device to talk with\n"
+   << "   -p pin    PIN of device to talk to\n"
    << "             If only one device is plugged in, this flag is optional\n"
    << "   -P pass   Simplistic method to specify device password\n"
    << "   -w mode   Set write mode when using 'device' for output.  Must be\n"
