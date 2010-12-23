@@ -67,14 +67,24 @@ public:
 	typedef Barry::ConfigFile::DBListType		DBListType;
 
 private:
+	enum RetrievalState
+	{
+		RS_EMPTY,	// no record loaded
+		RS_UNKNOWN,	// record data loaded, but not yet checked
+				// whether this is part of current database
+		RS_NEXT,	// record loaded, part of current database
+		RS_DBEND,	// next record loaded, but end-of-database
+				// not yet processed by Builder API
+		RS_EOF		// no recrd loaded, end of tar file
+	};
+
 	DBListType m_dbList;
 
 	std::string m_tarpath;
 	std::auto_ptr<reuse::TarFile> m_tar;
 
 	bool m_default_all_db;
-	bool m_end_of_tar;
-	bool m_tar_record_loaded;
+	RetrievalState m_tar_record_state;
 	uint8_t m_rec_type;
 	uint32_t m_unique_id;
 	std::string m_current_dbname;
@@ -87,7 +97,7 @@ protected:
 		uint8_t &dbrectype, uint32_t &dbid);
 
 	bool IsSelected(const std::string &dbName) const;
-	bool Retrieve(Data &record_data);
+	RetrievalState Retrieve(Data &record_data);
 
 
 public:

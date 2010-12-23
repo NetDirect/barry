@@ -96,8 +96,7 @@ bool Restore::SplitTarPath(const std::string &tarpath,
 Restore::Restore(const std::string &tarpath, bool default_all_db)
 	: m_tarpath(tarpath)
 	, m_default_all_db(default_all_db)
-	, m_end_of_tar(false)
-	, m_tar_record_loaded(false)
+	, m_tar_record_state(RS_EMPTY)
 	, m_rec_type(0)
 	, m_unique_id(0)
 {
@@ -153,15 +152,15 @@ void Restore::SkipCurrentDB()
 {
 	// skip all records until next DB
 	try {
-		while( Retrieve(m_record_data) ) {
+		while( Retrieve(m_record_data) == RS_NEXT ) {
 			std::cerr << "Skipping: "
 				<< m_current_dbname << "/"
 				<< m_tar_id_text << std::endl;
-			m_tar_record_loaded = false;
+			m_tar_record_state = RS_EMPTY;
 		}
 	}
 	catch( reuse::TarFile::TarError & ) {
-		m_end_of_tar = true;
+		m_tar_record_state = RS_EOF;
 	}
 }
 
@@ -194,15 +193,11 @@ unsigned int Restore::GetRecordTotal(const std::string &tarpath,
 //////////////////////////////////////////////////////////////////////////////
 // Barry::Builder overrides
 
-bool Restore::Retrieve(Data &record_data)
+Restore::RetrievalState Restore::Retrieve(Data &record_data)
 {
-	if( m_end_of_tar )
-		return false;
-
-	// if loaded, we are likely on a database
-	// boundary, and the last read crossed it, so don't load again
-	if( m_tar_record_loaded )
-		return true;
+	// don't do anything unless we're empty
+	if( m_tar_record_state != RS_EMPTY )
+		return m_tar_record_state;
 
 	// search for a valid record
 	for(;;) {
@@ -210,10 +205,9 @@ bool Restore::Retrieve(Data &record_data)
 		std::string filename;
 		if( !m_tar->ReadNextFile(filename, record_data) ) {
 			// assume end of file
-			m_end_of_tar = true;
-			return false;
+			return m_tar_record_state = RS_EOF;
 		}
-		m_tar_record_loaded = true;
+		m_tar_record_state = RS_UNKNOWN;
 
 		// split record filename into dbname and ID
 		std::string dbname;
@@ -226,28 +220,27 @@ bool Restore::Retrieve(Data &record_data)
 		// are we working on the same dbname as last time?
 		// if so, go ahead!
 		if( m_current_dbname == dbname ) {
-			return true;
+			return m_tar_record_state = RS_NEXT;
 		}
 
 		// DIFFERENT DBNAME from here on down!
+		m_tar_record_state = RS_DBEND;
 
 		// does the filter allow this record?
 		// if not, skip it and continue looking
 		if( !IsSelected(dbname) ) {
-			m_tar_record_loaded = false;
 			continue;
 		}
 
-		// all checks pass, load the new dbname, and return false
+		// all checks pass, load the new dbname, and return DBEND
 		// if we are on a dbname boundary
-		bool r_val = false;
 		if( m_current_dbname.size() == 0 ) {
 			// this is the first time through Retrieve, so ok
-			r_val = true;
+			m_tar_record_state = RS_NEXT;
 		}
 
 		m_current_dbname = dbname;
-		return r_val;
+		return m_tar_record_state;
 	}
 }
 
@@ -255,43 +248,100 @@ bool Restore::BuildRecord(Barry::DBData &data,
 			  size_t &offset,
 			  const Barry::IConverter *ic)
 {
-	if( !Retrieve(m_record_data) )
+	// in this case, we are loading into m_record_data anyway,
+	// so no special handling is needed, like FetchRecord() needs.
+	switch( Retrieve(m_record_data) )
+	{
+	case RS_NEXT:
+		{
+			data.SetVersion(Barry::DBData::REC_VERSION_1);
+			data.SetDBName(m_current_dbname);
+			data.SetIds(m_rec_type, m_unique_id);
+			data.SetOffset(offset);
+
+			int packet_size = offset + m_record_data.GetSize();
+			unsigned char *buf = data.UseData().GetBuffer(packet_size);
+			memcpy(buf + offset, m_record_data.GetData(), m_record_data.GetSize());
+			offset += m_record_data.GetSize();
+			data.UseData().ReleaseBuffer(packet_size);
+
+			// clear loaded flag, as it has now been used
+			m_tar_record_state = RS_EMPTY;
+			return true;
+		}
+
+	case RS_EMPTY:
+	case RS_UNKNOWN:
+	default:
+		throw std::logic_error("Invalid state in Restore::BuildRecord()");
+
+	case RS_DBEND:
+		// process the end of database by returning false
+		// the next round will be valid, so set to RS_NEXT
+		m_tar_record_state = RS_NEXT;
 		return false;
 
-	data.SetVersion(Barry::DBData::REC_VERSION_1);
-	data.SetDBName(m_current_dbname);
-	data.SetIds(m_rec_type, m_unique_id);
-	data.SetOffset(offset);
-
-	int packet_size = offset + m_record_data.GetSize();
-	unsigned char *buf = data.UseData().GetBuffer(packet_size);
-	memcpy(buf + offset, m_record_data.GetData(), m_record_data.GetSize());
-	offset += m_record_data.GetSize();
-	data.UseData().ReleaseBuffer(packet_size);
-
-	// clear loaded flag, as it has now been used
-	m_tar_record_loaded = false;
-	return true;
+	case RS_EOF:
+		// always return false at end of file
+		return false;
+	}
 }
 
 bool Restore::FetchRecord(Barry::DBData &data, const Barry::IConverter *ic)
 {
-	if( !Retrieve(data.UseData()) )
+	// if the record has not yet been loaded, we can optimize
+	// the buffer, and pass in our own... otherwise, just copy
+	// the current buffer from m_record_data
+	//
+	// it is assumed here that Builder users will not alternate
+	// between calls to BuildRecord() and FetchRecord()
+	//
+	if( m_tar_record_state == RS_EMPTY ) {
+		// BUT, if RS_DBEND is the next value, then we need
+		// to save the data for the next round... this
+		// optimization is almost more bother than it's worth :-)
+		if( Retrieve(data.UseData()) == RS_DBEND ) {
+			m_record_data = data.GetData();
+			m_tar_record_state = RS_NEXT;
+			return false;
+		}
+	}
+	else {
+		data.UseData() = m_record_data;
+	}
+
+	switch( m_tar_record_state )
+	{
+	case RS_NEXT:
+		data.SetVersion(Barry::DBData::REC_VERSION_1);
+		data.SetDBName(m_current_dbname);
+		data.SetIds(m_rec_type, m_unique_id);
+		data.SetOffset(0);
+
+		// clear loaded flag, as it has now been used
+		m_tar_record_state = RS_EMPTY;
+		return true;
+
+	case RS_EMPTY:
+	case RS_UNKNOWN:
+	default:
+		throw std::logic_error("Invalid state in Restore::FetchRecord()");
+
+	case RS_DBEND:
+		// process the end of database by returning false
+		// the next round will be valid, so set to RS_NEXT
+		m_tar_record_state = RS_NEXT;
 		return false;
 
-	data.SetVersion(Barry::DBData::REC_VERSION_1);
-	data.SetDBName(m_current_dbname);
-	data.SetIds(m_rec_type, m_unique_id);
-	data.SetOffset(0);
-
-	// clear loaded flag, as it has now been used
-	m_tar_record_loaded = false;
-	return true;
+	case RS_EOF:
+		// always return false at end of file
+		return false;
+	}
 }
 
 bool Restore::EndOfFile() const
 {
-	return m_end_of_tar;
+	return m_tar_record_state == RS_EOF;
 }
 
 } // namespace Barry
