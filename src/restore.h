@@ -91,18 +91,19 @@ protected:
 
 
 public:
+	/// If default_all_db is true, and none of the Add*() functions
+	/// are called (meaning that Restore has an empty database list),
+	/// then all records are restored.  If false in this situation,
+	/// nothing is restored.
+	///
+	/// If any of the Add*() functions are called, then the database
+	/// list takes precedence, and default_all_db has no effect.
+	///
 	explicit Restore(const std::string &tarpath,
 			bool default_all_db = true);
 	~Restore();
 
-	/// Add database names to the read filter.
-	///
-	/// If default_all_db is true and you don't call this function,
-	/// all databases are read.
-	/// If default_all_db is false and you don't call this function,
-	/// no databases are read.
-	/// Regardless of default_all_db, if you call this function one
-	/// or more times, only the specified databases are read.
+	/// Add database name to the read filter.
 	void AddDB(const std::string &dbName);
 
 	// Skip the current DB, in case of error, or preference

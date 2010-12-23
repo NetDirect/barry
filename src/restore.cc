@@ -117,9 +117,9 @@ Restore::~Restore()
 
 bool Restore::IsSelected(const std::string &dbName) const
 {
-	// if nothing is in the list, default to all
+	// if nothing is in the list, use default
 	if( m_dbList.size() == 0 )
-		return true;
+		return m_default_all_db;
 	else
 		return m_dbList.IsSelected(dbName);
 }
