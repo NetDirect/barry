@@ -50,7 +50,7 @@ DeviceExtras::DeviceExtras(const Barry::Pin & pin,
 std::string DeviceExtras::MakeBaseKey(const std::string &group_name)
 {
 	ostringstream oss;
-	oss << m_pin.str() << "-" << group_name << "-";
+	oss << m_pin.Str() << "-" << group_name << "-";
 	return oss.str();
 }
 
@@ -95,7 +95,7 @@ DeviceEntry::DeviceEntry(const Barry::GlobalConfigFile &config,
 
 	// load the extras if available
 	Barry::Pin pin = GetPin();
-	if( pin.valid() && IsConfigured() ) {
+	if( pin.Valid() && IsConfigured() ) {
 		m_extras.reset( new DeviceExtras(pin, config,
 					m_group->GetGroupName()) );
 	}
@@ -122,9 +122,9 @@ Barry::Pin DeviceEntry::GetPin() const
 	if( m_group.get() && m_group->HasBarryPlugins() ) {
 		const OpenSync::Config::Barry &bp = m_group->GetBarryPlugin();
 
-		if( bp.GetPin().valid() ) {
+		if( bp.GetPin().Valid() ) {
 			// double check for possible conflicting pin numbers
-			if( pin.valid() ) {
+			if( pin.Valid() ) {
 				if( pin != bp.GetPin() ) {
 					throw std::logic_error("Probe pin != group pin in DeviceEntry");
 				}
@@ -152,7 +152,7 @@ std::string DeviceEntry::GetIdentifyingString() const
 {
 	ostringstream oss;
 
-	oss << GetPin().str();
+	oss << GetPin().Str();
 	string name = GetDeviceName();
 	if( name.size() )
 		oss << " (" << name << ")";
@@ -179,7 +179,7 @@ void DeviceEntry::SetConfigGroup(group_ptr group,
 
 std::ostream& operator<< (std::ostream &os, const DeviceEntry &de)
 {
-	os << setfill(' ') << setw(8) << de.GetPin().str();
+	os << setfill(' ') << setw(8) << de.GetPin().Str();
 	os << "|" << setfill(' ') << setw(35) << de.GetDeviceName();
 	os << "|" << setfill(' ') << setw(4) << (de.IsConnected() ? "yes" : "no");
 	os << "|" << setfill(' ') << setw(4) << (de.IsConfigured() ? "yes" : "no");
@@ -317,8 +317,8 @@ namespace {
 	bool DeviceEntryCompare(const DeviceEntry &a, const DeviceEntry &b)
 	{
 		if( a.IsConfigured() == b.IsConfigured() )
-			return strcmp(a.GetPin().str().c_str(),
-				b.GetPin().str().c_str()) < 0;
+			return strcmp(a.GetPin().Str().c_str(),
+				b.GetPin().Str().c_str()) < 0;
 		else
 			return a.IsConfigured();
 	}
@@ -367,7 +367,7 @@ std::string DeviceSet::Subset2String(const DeviceSet::subset_type &set)
 	for( ; i != set.end(); ++i ) {
 		if( list.size() )
 			list += " ";
-		list += (*i)->GetPin().str();
+		list += (*i)->GetPin().Str();
 	}
 	return list;
 }
@@ -380,7 +380,7 @@ DeviceSet::subset_type DeviceSet::String2Subset(const std::string &list)
 	Barry::Pin pin;
 
 	while( iss >> pin ) {
-		if( !pin.valid() )
+		if( !pin.Valid() )
 			continue;
 
 		// search for pin in device set

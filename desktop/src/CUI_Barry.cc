@@ -73,7 +73,7 @@ bool Barry::ZapData(wxWindow *parent,
 		dynamic_cast<OpenSync::Config::Barry&>(*plugin);
 
 	// build device name
-	string device_name = barry.GetPin().str();
+	string device_name = barry.GetPin().Str();
 	const ::Barry::Probe::Results &results = wxGetApp().GetResults();
 	int index = ::Barry::Probe::Find(results, barry.GetPin());
 	if( index != -1 && results[index].m_cfgDeviceName.size() )

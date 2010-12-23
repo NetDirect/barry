@@ -71,7 +71,7 @@ GroupCfgDlg::GroupCfgDlg(wxWindow *parent,
 
 	// set window title to device PIN and name
 	string label = "Configure Device - ";
-	label += m_device.GetPin().str();
+	label += m_device.GetPin().Str();
 	if( m_device.GetDeviceName().size() )
 		label += " (" + m_device.GetDeviceName() + ")";
 	SetTitle(wxString(label.c_str(), wxConvUTF8));
@@ -99,7 +99,7 @@ GroupCfgDlg::GroupCfgDlg(wxWindow *parent,
 		}
 	}
 	else {
-		m_group_name = "barrydesktop_" + m_device.GetPin().str();
+		m_group_name = "barrydesktop_" + m_device.GetPin().Str();
 	}
 
 	// copy over the extras

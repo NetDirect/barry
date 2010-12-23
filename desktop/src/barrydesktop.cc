@@ -101,7 +101,7 @@ wxBitmap BarryDesktopApp::GetScreenshot(const Barry::ProbeResult &device) const
 
 void BarryDesktopApp::SetDeviceName(Barry::Pin pin, const std::string &name)
 {
-	if( !pin.valid() )
+	if( !pin.Valid() )
 		return;
 
 	// load device config

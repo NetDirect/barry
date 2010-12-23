@@ -181,7 +181,7 @@ public:
 		: m_debug_mode(false)
 		, m_pin(pin)
 	{
-		if( !m_pin.valid() )
+		if( !m_pin.Valid() )
 			throw std::logic_error("Barry config must have valid pin number.");
 	}
 
@@ -199,7 +199,7 @@ public:
 		// converter->Load(barry_obj) manually, and pick out
 		// the left overs.
 		//
-		if( !m_pin.valid() ) {
+		if( !m_pin.Valid() ) {
 			std::ostringstream oss;
 			oss << "Unable to load pin number from Barry plugin config.  Consider this group corrupt, or not fully configured: " << member;
 			throw LoadError(oss.str());

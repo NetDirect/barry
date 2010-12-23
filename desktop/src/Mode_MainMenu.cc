@@ -43,7 +43,7 @@ void MainMenuMode::UpdateScreenshot(const Barry::Pin &pin)
 
 	// fetch the new device's screenshot
 	try {
-		if( pin.valid() ) {
+		if( pin.Valid() ) {
 			int index = Barry::Probe::FindActive(wxGetApp().GetResults(), pin);
 			if( index != -1 ) {
 				wxBusyCursor wait;

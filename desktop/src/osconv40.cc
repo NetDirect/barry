@@ -111,7 +111,7 @@ std::string Converter40::GetPluginName(const Config::Unsupported &) const
 
 bool Converter40::IsConfigured(const Config::Barry &config) const
 {
-	return config.GetPin().valid();
+	return config.GetPin().Valid();
 }
 
 bool Converter40::IsConfigured(const Config::Evolution &config) const
@@ -206,7 +206,7 @@ void Converter40::Save(const Config::Barry &config, const std::string &group_nam
 	cfg.SetAdvanced("Debug", "Debug mode", OS40PluginConfig::BOOL_TYPE,
 		config.IsDebugMode() ? "1" : "0");
 	cfg.SetAdvanced("PinCode", "PIN number", OS40PluginConfig::STRING_TYPE,
-		config.GetPin().str());
+		config.GetPin().Str());
 
 	cfg.SetPassword(config.GetPassword());
 

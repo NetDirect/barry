@@ -103,7 +103,7 @@ std::string Converter22::GetPluginName(const Config::Unsupported &) const
 
 bool Converter22::IsConfigured(const Config::Barry &config) const
 {
-	return config.GetPin().valid();
+	return config.GetPin().Valid();
 }
 
 bool Converter22::IsConfigured(const Config::Evolution &config) const
@@ -230,7 +230,7 @@ void Converter22::Save(const Config::Barry &config,
 
 	ostringstream oss;
 
-	oss << "Device " << config.GetPin().str() << " 1 1" << endl;
+	oss << "Device " << config.GetPin().Str() << " 1 1" << endl;
 	if( config.IsDebugMode() )
 		oss << "DebugMode" << endl;
 	if( config.GetPassword().size() )

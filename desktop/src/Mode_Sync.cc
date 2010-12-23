@@ -223,7 +223,7 @@ void SyncMode::FillDeviceList()
 	DeviceSet::const_iterator i = m_device_set->begin();
 	for( int index = 0; i != m_device_set->end(); ++i, index++ ) {
 		// PIN number
-		wxString text(i->GetPin().str().c_str(), wxConvUTF8);
+		wxString text(i->GetPin().Str().c_str(), wxConvUTF8);
 		long item = m_device_list->InsertItem(index, text);
 
 		// Device name
@@ -451,7 +451,7 @@ void SyncMode::CheckConfigured(DeviceSet::subset_type &subset)
 			continue;
 
 		ostringstream msg;
-		msg << "Selected device " << device.GetPin().str()
+		msg << "Selected device " << device.GetPin().Str()
 			<< " (" << device.GetDeviceName() << ")"
 			<< " is not yet configured.  Configure now?";
 
@@ -519,7 +519,7 @@ int SyncMode::GetAuthoritativeSide(int device_index)
 		if( dynamic_cast<OpenSync::Config::Barry*>( (*gi).get() ) ) {
 			// this is a Barry plugin, so display the
 			// device name, not the plugin name
-			string device_name = entry.GetPin().str();
+			string device_name = entry.GetPin().Str();
 			if( entry.GetDeviceName().size() )
 				device_name += " (" + entry.GetDeviceName() + ")";
 

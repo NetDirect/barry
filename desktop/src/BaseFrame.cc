@@ -156,13 +156,13 @@ void BaseFrame::CreateDeviceCombo(Barry::Pin pin)
 	for( Barry::Probe::Results::const_iterator i = results.begin();
 				i != results.end(); ++i ) {
 		std::ostringstream oss;
-		oss << i->m_pin.str();
+		oss << i->m_pin.Str();
 		if( i->m_cfgDeviceName.size() ) {
 			oss << " (" << i->m_cfgDeviceName << ")";
 		}
 
 		// if this is the desired item, remember this selection
-		if( pin.valid() && i->m_pin == pin ) {
+		if( pin.Valid() && i->m_pin == pin ) {
 			selected = devices.GetCount();
 		}
 
@@ -237,7 +237,7 @@ void BaseFrame::DisableBackButton()
 
 	// enable the USB menu options
 	Barry::Pin pin = GetCurrentComboPin();
-	m_sysmenu->Enable(SysMenu_RenameDevice, pin.valid() );
+	m_sysmenu->Enable(SysMenu_RenameDevice, pin.Valid());
 	m_sysmenu->Enable(SysMenu_ResetDevice, true);
 	m_sysmenu->Enable(SysMenu_RescanUsb, true);
 
@@ -713,7 +713,7 @@ void BaseFrame::OnVerboseLogging(wxCommandEvent &event)
 void BaseFrame::OnRenameDevice(wxCommandEvent &event)
 {
 	Barry::Pin pin = GetCurrentComboPin();
-	if( !pin.valid() )
+	if( !pin.Valid() )
 		return;
 
 	// grab the current known name of the device

@@ -436,7 +436,7 @@ void SyncStatusDlg::UpdateTitle()
 	}
 	else {
 		ostringstream oss;
-		oss << "Syncing: " << (*m_next_device)->GetPin().str()
+		oss << "Syncing: " << (*m_next_device)->GetPin().Str()
 		    << " with " << (*m_next_device)->GetAppNames();
 		wxString label(oss.str().c_str(), wxConvUTF8);
 		SetTitle(label);
@@ -483,7 +483,7 @@ void SyncStatusDlg::StartNextSync()
 	// grab all required information we need to sync
 	m_current_device = m_next_device;
 	DeviceEntry &device = *(*m_next_device);
-	m_device_id = device.GetPin().str() + " (" + device.GetDeviceName() + ")";
+	m_device_id = device.GetPin().Str() + " (" + device.GetDeviceName() + ")";
 
 	if( !device.IsConfigured() ) {
 		Print(m_device_id + " is not configured, skipping.", *wxRED);
