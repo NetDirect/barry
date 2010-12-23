@@ -69,6 +69,7 @@ public:
 private:
 	DBListType m_dbList;
 
+	std::string m_tarpath;
 	std::auto_ptr<reuse::TarFile> m_tar;
 
 	bool m_default_all_db;
@@ -111,7 +112,11 @@ public:
 	/// to the current read filter.  Does not use the main
 	/// Restore file, but opens the file separately.
 	/// It is safe to call this function as often as needed.
-	unsigned int GetRecordTotal(const std::string &tarpath) const;
+	unsigned int GetRecordTotal() const;
+
+	/// Static version of above call
+	static unsigned int GetRecordTotal(const std::string &tarpath,
+		const DBListType &dbList, bool default_all_db);
 
 	// Barry::Builder overrides
 	bool BuildRecord(Barry::DBData &data, size_t &offset,

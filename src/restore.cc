@@ -91,7 +91,8 @@ bool Restore::SplitTarPath(const std::string &tarpath,
 // Restore - constructors
 
 Restore::Restore(const std::string &tarpath, bool default_all_db)
-	: m_default_all_db(default_all_db)
+	: m_tarpath(tarpath)
+	, m_default_all_db(default_all_db)
 	, m_end_of_tar(false)
 	, m_tar_record_loaded(false)
 	, m_rec_type(0)
@@ -148,7 +149,14 @@ void Restore::SkipCurrentDB()
 	}
 }
 
-unsigned int Restore::GetRecordTotal(const std::string &tarpath) const
+unsigned int Restore::GetRecordTotal() const
+{
+	return GetRecordTotal(m_tarpath, m_dbList, m_default_all_db);
+}
+
+unsigned int Restore::GetRecordTotal(const std::string &tarpath,
+					const DBListType &dbList,
+					bool default_all_db)
 {
 	unsigned int count = 0;
 
@@ -158,7 +166,7 @@ unsigned int Restore::GetRecordTotal(const std::string &tarpath) const
 		// do a scan through the tar file
 		tar.reset( new reuse::TarFile(tarpath.c_str(), false,
 				&reuse::gztar_ops_nonthread, true) );
-		count = CountFiles(*tar, m_dbList, m_default_all_db);
+		count = CountFiles(*tar, dbList, default_all_db);
 	}
 	catch( reuse::TarFile::TarError &te ) {
 		throw Barry::RestoreError(te.what());
