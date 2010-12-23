@@ -125,7 +125,6 @@ protected:
 	// threads
 	void BackupThread();
 	void RestoreThread();
-	void RestoreAndBackupThread();
 
 	// helpers
 	std::string MakeFilename(const std::string &label = "") const;
@@ -164,12 +163,6 @@ public:
 	bool StartRestore(AppComm comm,
 		const Barry::ConfigFile::DBListType &restoreList,
 		const std::string &tarfilename);
-	// this is for debugging... starts a restore, and then does an
-	// immediate backup of the same DB before moving on to the next
-	bool StartRestoreAndBackup(AppComm comm,
-		const Barry::ConfigFile::DBListType &restoreAndBackupList,
-		const std::string &tarfilename,
-		const std::string &directory);
 
 	// Barry::Parser overrides
 	virtual void ParseRecord(const Barry::DBData &data,

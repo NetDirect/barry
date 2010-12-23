@@ -122,7 +122,6 @@ public:
 
 	bool Backup(std::string label);
 	bool Restore(std::string filename);
-	bool RestoreAndBackup(std::string filename);
 
 	void on_thread_progress();
 	void on_thread_error();

@@ -490,7 +490,6 @@ void BackupWindow::on_restore()
 		return;	// nothing to do
 
 	// start the thread
-	// if( !thread->RestoreAndBackup(restoreFilename) ) {
 	if( !thread->Restore(restoreFilename) ) {
 		Gtk::MessageDialog msg(_("Error starting restore thread: ") +
 			thread->LastInterfaceError());

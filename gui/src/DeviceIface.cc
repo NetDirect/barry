@@ -154,70 +154,6 @@ void DeviceInterface::RestoreThread()
 	m_AppComm.Invalidate();
 }
 
-void DeviceInterface::RestoreAndBackupThread()
-{
-	m_thread_quit = false;
-	m_last_thread_error = "";
-
-	try {
-
-		// cycle until m_end_of_tar
-		while( !m_end_of_tar ) {
-			unsigned int dbId = m_desktop->GetDBID(m_current_dbname);
-
-			try {
-
-				// do restore first
-				m_AppComm.m_erase_db->emit();
-				m_desktop->SaveDatabase(dbId, *this);
-
-			}
-			catch( Barry::Error &be ) {
-				// save thread error
-				m_last_thread_error = _("Error while restoring ");
-				m_last_thread_error += m_current_dbname + ".  ";
-				m_last_thread_error += be.what();
-				m_last_thread_error += _("  Will continue processing.");
-
-				// notify host thread
-				m_AppComm.m_error->emit();
-
-				// skip over records from this db
-				std::cerr << _("Error on database: ")
-					<< m_current_dbname << std::endl;
-				SkipCurrentDB();
-			}
-
-			// then the backup, even if restore fails
-			m_desktop->LoadDatabase(dbId, *this);
-
-		}
-
-	}
-	catch( Glib::Exception &e ) {
-		m_last_thread_error = e.what();
-		m_AppComm.m_error->emit();
-	}
-	catch( std::exception &e ) {
-		m_last_thread_error = e.what();
-		m_AppComm.m_error->emit();
-	}
-	catch( Quit &q ) {
-		m_last_thread_error = _("Terminated by user.");
-	}
-
-	m_tar->Close();
-	m_tar.reset();
-	m_tarback->Close();
-	m_tarback.reset();
-
-	// signal host thread that we're done
-	m_AppComm.m_done->emit();
-
-	// done!
-	m_AppComm.Invalidate();
-}
-
 std::string DeviceInterface::MakeFilename(const std::string &label) const
 {
 	time_t t = time(NULL);
@@ -457,44 +393,6 @@ bool DeviceInterface::StartRestore(AppComm comm,
 
 	// start the thread
 	Glib::Thread::create(sigc::mem_fun(*this, &DeviceInterface::RestoreThread), false);
-	return true;
-}
-
-bool DeviceInterface::StartRestoreAndBackup(AppComm comm,
-				const Barry::ConfigFile::DBListType &restoreAndBackupList,
-				const std::string &filename,
-				const std::string &directory)
-{
-	if( m_AppComm.IsValid() )
-		return False(_("Thread already running."));
-
-	try {
-		// open for the main restore
-		m_tar.reset( new reuse::TarFile(filename.c_str(), false, &reuse::gztar_ops_nonthread, true) );
-
-		// open for secondary backup
-		std::string back = directory + "/" + MakeFilename(m_dev->GetPIN().Str());
-		m_tarback.reset( new reuse::TarFile(back.c_str(), true, &reuse::gztar_ops_nonthread, true) );
-
-	}
-	catch( reuse::TarFile::TarError &te ) {
-		return False(te.what());
-	}
-
-	// setup
-	m_AppComm = comm;
-	m_dbList = restoreAndBackupList;
-	m_current_dbname_not_thread_safe = "";
-	m_current_dbname = "";
-	m_unique_id = 0;
-	m_end_of_tar = false;
-	m_tar_record_loaded = false;
-
-	// get first tar record
-	Retrieve();
-
-	// start the thread
-	Glib::Thread::create(sigc::mem_fun(*this, &DeviceInterface::RestoreAndBackupThread), false);
 	return true;
 }
 

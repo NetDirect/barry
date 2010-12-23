@@ -179,29 +179,6 @@ bool Thread::Restore(std::string filename)
 	return started;
 }
 
-bool Thread::RestoreAndBackup(std::string filename)
-{
-	// only start a restore if currently idle
-	if( Working() )
-		return false;
-
-	// not supported
-	return false;
-
-/*
-	m_working = m_interface.StartRestoreAndBackup(
-		DeviceInterface::AppComm(&m_signal_progress,
-			&m_signal_error,
-			&m_signal_done,
-			&m_signal_erase_db),
-		GetRestoreList(), filename,
-		GetPath());
-	if( m_working )
-		SetStatus("Restore & Backup");
-	return m_working;
-*/
-}
-
 void Thread::on_thread_progress()
 {
 	++m_recordFinished;
