@@ -330,6 +330,9 @@ std::string Date::ToBBString() const
 
 bool Date::FromTm(const struct tm *timep)
 {
+	if( !timep )
+		throw std::logic_error("NULL time pointer passed to Date::FromTm");
+
 	Year = timep->tm_year + 1900;
 	Month = timep->tm_mon;
 	Day = timep->tm_mday;
