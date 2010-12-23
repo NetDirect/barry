@@ -26,6 +26,9 @@
 #include <iomanip>
 #include <iostream>
 #include <string.h>
+#include <algorithm>
+
+using namespace std;
 
 namespace Barry {
 
@@ -130,7 +133,20 @@ bool Restore::IsSelected(const std::string &dbName) const
 
 void Restore::AddDB(const std::string &dbName)
 {
-	m_dbList.push_back(dbName);
+	if( find(m_dbList.begin(), m_dbList.end(), dbName) == m_dbList.end() ) {
+		// only add it if it is not already in the list
+		m_dbList.push_back(dbName);
+	}
+}
+
+void Restore::Add(const DBListType &dbList)
+{
+	for( DBListType::const_iterator i = dbList.begin();
+		i != dbList.end();
+		++i )
+	{
+		AddDB(*i);
+	}
 }
 
 void Restore::SkipCurrentDB()
