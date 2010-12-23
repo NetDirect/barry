@@ -189,6 +189,32 @@ unsigned int Restore::GetRecordTotal(const std::string &tarpath,
 	return count;
 }
 
+bool Restore::GetNextMeta(DBData &data)
+{
+	// always use m_record_data here, so that we don't lose access
+	// to the actual record data for future calls to BuildRecord()
+	// and FetchRecord()
+	if( m_tar_record_state == RS_EMPTY ) {
+		Retrieve(m_record_data);
+	}
+
+	// fill in the meta data that will be returned in the next call
+	// to BuildRecord() or FetchRecord()... this is only valid if
+	// the state is RS_NEXT
+	switch( m_tar_record_state )
+	{
+	case RS_NEXT:
+		data.SetVersion(Barry::DBData::REC_VERSION_1);
+		data.SetDBName(m_current_dbname);
+		data.SetIds(m_rec_type, m_unique_id);
+		data.SetOffset(0);
+		return true;
+
+	default:
+		return false;
+	}
+}
+
 
 //////////////////////////////////////////////////////////////////////////////
 // Barry::Builder overrides

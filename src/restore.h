@@ -133,6 +133,12 @@ public:
 	static unsigned int GetRecordTotal(const std::string &tarpath,
 		const DBListType &dbList, bool default_all_db);
 
+	/// If this function returns true, it fills data with the
+	/// meta data that the next call to BuildRecord() will retrieve.
+	/// This is useful for applications that need to setup a manual
+	/// call to Desktop::SaveDatabase().
+	bool GetNextMeta(DBData &data);
+
 	// Barry::Builder overrides
 	bool BuildRecord(Barry::DBData &data, size_t &offset,
 		const Barry::IConverter *ic);
