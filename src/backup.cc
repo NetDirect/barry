@@ -41,7 +41,6 @@ Backup::Backup(const std::string &tarpath)
 
 Backup::~Backup()
 {
-	std::cout << "Closing Backup parser" << std::endl;
 	try {
 		Close();
 	}
@@ -86,7 +85,6 @@ void Backup::ParseRecord(const Barry::DBData &data,
 
 	// save to tarball
 	std::string tarname = m_current_dbname + "/" + m_tar_id_text;
-std::cout << "Saving: " << tarname << std::endl;
 	m_tar->AppendFile(tarname.c_str(), m_record_data);
 }
 
