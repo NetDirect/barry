@@ -52,12 +52,17 @@ HexDumpParser::HexDumpParser(std::ostream &os)
 void HexDumpParser::ParseRecord(const Barry::DBData &data,
 				const IConverter *ic)
 {
+	if( m_last_dbname != data.GetDBName() ) {
+		m_os << "Records for database: " << data.GetDBName() << endl;
+		m_last_dbname = data.GetDBName();
+	}
+
 	m_os << "Raw record dump for record: 0x"
 		<< hex << data.GetUniqueId()
 		<< ", type: 0x" << hex << (unsigned int) data.GetRecType()
 		<< ", offset: 0x" << hex << data.GetOffset()
 		<< endl;
-	m_os << data.GetData() << std::endl;
+	m_os << data.GetData() << endl;
 }
 
 

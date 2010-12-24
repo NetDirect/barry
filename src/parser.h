@@ -133,6 +133,7 @@ public:
 class BXEXPORT HexDumpParser : public Parser
 {
 	std::ostream &m_os;
+	std::string m_last_dbname;
 
 public:
 	explicit HexDumpParser(std::ostream &os);
