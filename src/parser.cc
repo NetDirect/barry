@@ -54,7 +54,7 @@ void HexDumpParser::ParseRecord(const Barry::DBData &data,
 {
 	m_os << "Raw record dump for record: 0x"
 		<< hex << data.GetUniqueId()
-		<< ", type: 0x" << hex << data.GetRecType()
+		<< ", type: 0x" << hex << (unsigned int) data.GetRecType()
 		<< ", offset: 0x" << hex << data.GetOffset()
 		<< endl;
 	m_os << data.GetData() << std::endl;
