@@ -8,6 +8,10 @@ Release: version 0.17.0 - 2010/01/??
 		This supports extracting files and photos from Content Store.
 	- lib: fixed display bug in Date's operator<<
 	- lib: added HomeFax, MobilePhone2, and Nickname fields to Contact
+	- lib: tweaked tarfile.cc so it skips all directory names instead
+		of throwing exceptions... this allows reading of tarball
+		backups that may have been created by tar or perlbarry's
+		ipd2tgz tool
 2010/12/21
 	- tools: added bio command line tool, Barry Input / Output
 		Supports IO for devices, tar backups, boost, ldif streams,

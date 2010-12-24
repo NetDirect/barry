@@ -139,14 +139,16 @@ bool TarFile::ReadNextFile(std::string &tarpath, std::string &data)
 	tarpath.clear();
 	data.clear();
 
-	// read next tar file header
-	if( th_read(m_tar) != 0 ) {
-		// this is not necessarily an error, as it could just
-		// be the end of file, so a simple false is good here,
-		// don't throw an exception
-		m_last_error = "";
-		return false;
-	}
+	// read next tar file header... skip all directories
+	do {
+		if( th_read(m_tar) != 0 ) {
+			// this is not necessarily an error, as it could just
+			// be the end of file, so a simple false is good here,
+			// don't throw an exception
+			m_last_error = "";
+			return false;
+		}
+	} while( TH_ISDIR(m_tar) );
 
 	// write standard file header
 	if( !TH_ISREG(m_tar) ) {
@@ -196,14 +198,16 @@ bool TarFile::ReadNextFile(std::string &tarpath, Barry::Data &data)
 	tarpath.clear();
 	data.QuickZap();
 
-	// read next tar file header
-	if( th_read(m_tar) != 0 ) {
-		// this is not necessarily an error, as it could just
-		// be the end of file, so a simple false is good here,
-		// don't throw an exception
-		m_last_error = "";
-		return false;
-	}
+	// read next tar file header... skip all directories
+	do {
+		if( th_read(m_tar) != 0 ) {
+			// this is not necessarily an error, as it could just
+			// be the end of file, so a simple false is good here,
+			// don't throw an exception
+			m_last_error = "";
+			return false;
+		}
+	} while( TH_ISDIR(m_tar) );
 
 	// write standard file header
 	if( !TH_ISREG(m_tar) ) {
@@ -251,14 +255,16 @@ bool TarFile::ReadNextFilenameOnly(std::string &tarpath)
 	// start fresh
 	tarpath.clear();
 
-	// read next tar file header
-	if( th_read(m_tar) != 0 ) {
-		// this is not necessarily an error, as it could just
-		// be the end of file, so a simple false is good here,
-		// don't throw an exception
-		m_last_error = "";
-		return false;
-	}
+	// read next tar file header... skip all directories
+	do {
+		if( th_read(m_tar) != 0 ) {
+			// this is not necessarily an error, as it could just
+			// be the end of file, so a simple false is good here,
+			// don't throw an exception
+			m_last_error = "";
+			return false;
+		}
+	} while( TH_ISDIR(m_tar) );
 
 	// write standard file header
 	if( !TH_ISREG(m_tar) ) {
