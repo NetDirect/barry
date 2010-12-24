@@ -89,9 +89,11 @@ public:
 
 	std::string
 		Fax,
+		HomeFax,
 		WorkPhone,
 		HomePhone,
 		MobilePhone,
+		MobilePhone2,
 		Pager,
 		PIN,
 		Radio,
@@ -111,7 +113,8 @@ public:
 		UserDefined2,
 		UserDefined3,
 		UserDefined4,
-		Image;
+		Image,
+		Nickname;
 
 	Date Birthday;
 	Date Anniversary;

@@ -59,6 +59,8 @@ namespace Barry {
 #define CFC_WORK_PHONE_2	16	// 0x10
 #define CFC_HOME_PHONE_2	17	// 0x11
 #define CFC_OTHER_PHONE		18	// 0x12
+#define CFC_MOBILE_PHONE_2	19	// 0x13
+#define CFC_HOME_FAX		20	// 0x14
 #define CFC_NAME		32	// 0x20 used twice, in first/last name order
 #define CFC_COMPANY		33
 #define CFC_DEFAULT_COMM_METHOD	34
@@ -94,15 +96,19 @@ namespace Barry {
 #define CFC_BIRTHDAY		82	// 0x52
 #define CFC_ANNIVERSARY		83	// 0x53
 #define CFC_UNIQUEID		85	// 0x55
+#define CFC_NICKNAME		86	// 0x56
 #define CFC_INVALID_FIELD	255
 
 // Contact code to field table
 static FieldLink<Contact> ContactFieldLinks[] = {
+   { CFC_NICKNAME,     "Nickname",   0,0,                 &Contact::Nickname, 0, 0, 0, 0, true },
    { CFC_PHONE,        "Phone",      0,0,                 &Contact::Phone, 0, 0, 0, 0, true },
    { CFC_FAX,          "Fax",        "facsimileTelephoneNumber",0, &Contact::Fax, 0, 0, 0, 0, true },
+   { CFC_HOME_FAX,     "HomeFax",    0,0,                 &Contact::HomeFax, 0, 0, 0, 0, true },
    { CFC_WORK_PHONE,   "WorkPhone",  "telephoneNumber",0, &Contact::WorkPhone, 0, 0, 0, 0, true },
    { CFC_HOME_PHONE,   "HomePhone",  "homePhone",0,       &Contact::HomePhone, 0, 0, 0, 0, true },
    { CFC_MOBILE_PHONE, "MobilePhone","mobile",0,          &Contact::MobilePhone, 0, 0, 0, 0, true },
+   { CFC_MOBILE_PHONE_2,"MobilePhone2",0,0,               &Contact::MobilePhone2, 0, 0, 0, 0, true },
    { CFC_PAGER,        "Pager",      "pager",0,           &Contact::Pager, 0, 0, 0, 0, true },
    { CFC_PIN,          "PIN",        0,0,                 &Contact::PIN, 0, 0, 0, 0, true },
    { CFC_RADIO,        "Radio",      0,0,                 &Contact::Radio, 0, 0, 0, 0, true },
@@ -397,9 +403,11 @@ void Contact::Clear()
 	Phone.clear();
 
 	Fax.clear();
+	HomeFax.clear();
 	WorkPhone.clear();
 	HomePhone.clear();
 	MobilePhone.clear();
+	MobilePhone2.clear();
 	Pager.clear();
 	PIN.clear();
 	Radio.clear();
@@ -420,6 +428,7 @@ void Contact::Clear()
 	UserDefined3.clear();
 	UserDefined4.clear();
 	Image.clear();
+	Nickname.clear();
 
 	Birthday.Clear();
 	Anniversary.Clear();

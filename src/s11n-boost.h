@@ -76,9 +76,11 @@ void serialize(ArchiveT &ar, Barry::Contact &c, const unsigned int ver)
 	ar & make_nvp("EmailAddresses", c.EmailAddresses);
 	ar & make_nvp("Phone", c.Phone);
 	ar & make_nvp("Fax", c.Fax);
+	ar & make_nvp("HomeFax", c.HomeFax);
 	ar & make_nvp("WorkPhone", c.WorkPhone);
 	ar & make_nvp("HomePhone", c.HomePhone);
 	ar & make_nvp("MobilePhone", c.MobilePhone);
+	ar & make_nvp("MobilePhone2", c.MobilePhone2);
 	ar & make_nvp("Pager", c.Pager);
 	ar & make_nvp("PIN", c.PIN);
 	ar & make_nvp("Radio", c.Radio);
@@ -114,6 +116,7 @@ void serialize(ArchiveT &ar, Barry::Contact &c, const unsigned int ver)
 	ar & make_nvp("HomePostalCode", c.HomeAddress.PostalCode);
 	ar & make_nvp("HomeCountry", c.HomeAddress.Country);
 	ar & make_nvp("Image", c.Image);
+	ar & make_nvp("Nickname", c.Nickname);
 
 	if( ver < BARRY_POD_MAP_VERSION ) {
 		ar & make_nvp("GroupLinks", c.GroupLinks);
