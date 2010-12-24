@@ -1,10 +1,13 @@
 
-*****************************************************************************
-*  CAUTION: This is alpha software.  Please make complete backups of your   *
-*           Blackberry device before experimenting.  While the author has   *
-*           had good success with this software, that is no guarantee that  *
-*           you will.  Please make backups.                                 *
-*****************************************************************************
+******************************************************************************
+*  CAUTION: This is unofficial software, based on reverse engineering the    *
+*           USB protocol.  It does not have the advantage of any internal    *
+*           knowledge of RIM software design or specs.  Please make complete *
+*           backups of your BlackBerry device, using the official RIM        *
+*           software, before experimenting.  While the author has had good   *
+*           success with this software, that is no guarantee that you will.  *
+*           Please make backups.                                             *
+******************************************************************************
 
 Introduction:
 -------------
@@ -16,11 +19,9 @@ The SourceForge project page can be found at:
 	http://sourceforge.net/projects/barry/
 
 The documentation page can be found at:
-	http://www.netdirect.ca/software/packages/barry
+	http://netdirect.ca/barry
 	or
 	http://barry.sourceforge.net/  (redirect)
-	or
-	http://netdirect.ca/barry (redirect)
 
 The same documentation (and perhaps more up to date) can be found in the
 doc/www/ directory.  If you have php CLI installed, run the static.sh
@@ -28,5 +29,5 @@ script to generate the HTML, then start reading at index.html.
 
 Enjoy!
 
-October 2009
+December 2010
 
