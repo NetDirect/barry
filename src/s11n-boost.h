@@ -467,6 +467,24 @@ void serialize(ArchiveT &ar, Barry::Timezone &t, const unsigned int ver)
 	}
 }
 
+template <class ArchiveT>
+void serialize(ArchiveT &ar, Barry::ContentStore &c, const unsigned int ver)
+{
+	ar & make_nvp("RecType", c.RecType);
+	ar & make_nvp("RecordId", c.RecordId);
+
+	ar & make_nvp("Filename", c.Filename);
+	ar & make_nvp("FolderFlag", c.FolderFlag);
+	ar & make_nvp("FileContent", c.FileContent);
+	ar & make_nvp("FileDescriptor", c.FileDescriptor);
+
+	// FileSize is not used for building, so no need to save it here
+
+	if( ver < BARRY_POD_MAP_VERSION ) {
+		ar & make_nvp("Unknowns", c.Unknowns);
+	}
+}
+
 }} // namespace boost::serialization
 
 

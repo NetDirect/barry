@@ -121,6 +121,7 @@ include_barry_HEADERS = barry.h barrysync.h barrybackup.h barryalx.h \
 	r_calllog.h \
 	r_bookmark.h \
 	r_contact.h \
+	r_cstore.h \
 	r_folder.h \
 	r_memo.h \
 	r_message_base.h \
@@ -211,6 +212,7 @@ libbarry_la_SOURCES = dll.h \
 	r_bookmark.h r_bookmark.cc \
 	r_command.cc \
 	r_contact.h r_contact.cc \
+	r_cstore.h r_cstore.cc \
 	r_dbdb.cc \
 	r_folder.h r_folder.cc \
 	r_memo.h r_memo.cc \

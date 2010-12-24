@@ -39,6 +39,7 @@
 	HANDLE_BUILDER(Contact) \
 	HANDLE_BUILDER(Calendar) \
 	HANDLE_BUILDER(CalendarAll) \
+	HANDLE_BUILDER(ContentStore) \
 	HANDLE_BUILDER(Memo) \
 	HANDLE_BUILDER(Task) \
 

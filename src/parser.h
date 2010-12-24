@@ -46,6 +46,7 @@ namespace Barry {
 	class Sms;
 	class Folder;
 	class Timezone;
+	class ContentStore;
 }
 
 //
@@ -61,6 +62,7 @@ namespace Barry {
 	HANDLE_PARSER(Bookmark) \
 	HANDLE_PARSER(Calendar) \
 	HANDLE_PARSER(CalendarAll) \
+	HANDLE_PARSER(ContentStore) \
 	HANDLE_PARSER(Folder) \
 	HANDLE_PARSER(Memo) \
 	HANDLE_PARSER(Message) \

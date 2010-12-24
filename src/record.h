@@ -287,6 +287,7 @@ public:
 #include "r_calllog.h"
 #include "r_bookmark.h"
 #include "r_contact.h"
+#include "r_cstore.h"
 #include "r_memo.h"
 #include "r_message.h"
 #include "r_servicebook.h"

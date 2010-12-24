@@ -33,6 +33,7 @@
 #include "r_sms.h"
 #include "r_folder.h"
 #include "r_timezone.h"
+#include "r_cstore.h"
 
 #include <iostream>
 #include <memory>
