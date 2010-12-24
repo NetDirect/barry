@@ -32,6 +32,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <algorithm>
 #include <stdexcept>
 #include <tr1/memory>
 #include <getopt.h>
@@ -74,7 +75,7 @@ void Usage()
 #ifdef __BARRY_BOOST_MODE__
    << ", boost"
 #endif
-   << ", ldif, mime, dump, sha1\n"
+   << ", ldif, mime, dump, sha1, cstore\n"
    << "\n"
    << " Options to use for 'device' type:\n"
    << "   -d db     Name of input database. Can be used multiple times.\n"
@@ -137,6 +138,12 @@ LDIF options?
    << "\n"
    << " Options to use for 'sha1' sum stdout output type:\n"
    << "   -t        Include DB Name, Type, and Unique record IDs in the checksums\n"
+   << "\n"
+   << " Options to use for 'cstore' output type:\n"
+   << "   -l        List filenames only\n"
+   << "   -f file   Filename from the above list, including path.\n"
+   << "             If found, the file will be written to the current\n"
+   << "             directory, using the base filename from the device.\n"
    << "\n"
    << " Standalone options:\n"
    << "   -h        This help\n"
@@ -203,6 +210,11 @@ public:
 	virtual void IncludeIDs()
 	{
 		throw runtime_error("Including record IDs in the SHA1 sum is not applicable in this mode");
+	}
+
+	virtual void SetList()
+	{
+		throw runtime_error("List option not applicable for this mode");
 	}
 };
 
@@ -711,6 +723,89 @@ public:
 	}
 };
 
+//////////////////////////////////////////////////////////////////////////////
+// Mode: Output, Type: cstore
+
+class ContentStoreOutput : public OutputBase
+{
+	auto_ptr<Parser> m_parser;
+	bool m_list_only;
+	vector<string> m_filenames;
+
+public:
+	ContentStoreOutput()
+		: m_list_only(false)
+	{
+	}
+
+	void SetFilename(const std::string &name)
+	{
+		m_filenames.push_back(name);
+	}
+
+	void SetList()
+	{
+		m_list_only = true;
+	}
+
+	Parser& GetParser(Barry::Probe *probe, IConverter &ic)
+	{
+		m_parser.reset( new RecordParser<ContentStore, ContentStoreOutput>(*this) );
+		return *m_parser;
+	}
+
+	// storage operator
+	void operator() (const ContentStore &rec)
+	{
+		if( m_list_only ) {
+			cout << rec.Filename;
+			if( rec.FolderFlag ) {
+				cout << " (folder)";
+			}
+			cout << endl;
+		}
+		else {
+			// check if this record matches one of the filenames
+			// in the list
+			vector<string>::iterator i = find(m_filenames.begin(),
+				m_filenames.end(), rec.Filename);
+			if( i != m_filenames.end() ) {
+				SaveFile(rec);
+			}
+		}
+	}
+
+	void SaveFile(const ContentStore &rec)
+	{
+		size_t slash = rec.Filename.rfind('/');
+		string filename;
+		if( slash == string::npos )
+			filename = rec.Filename;
+		else
+			filename = rec.Filename.substr(slash + 1);
+
+		// modify filename until we find one that doesn't
+		// already exist
+		string freshname = filename;
+		int count = 0;
+		while( access(freshname.c_str(), F_OK) == 0 ) {
+			ostringstream oss;
+			oss << filename << count++;
+			freshname = oss.str();
+		}
+
+		// open and write!
+		cout << "Saving: " << rec.Filename
+			<< " as " << freshname << endl;
+		ofstream ofs(freshname.c_str());
+		ofs << rec.FileContent;
+		ofs.flush();
+		if( !ofs ) {
+			cout << "Error during write!" << endl;
+		}
+	}
+};
+
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -797,6 +892,10 @@ bool App::ParseOutMode(const string &mode)
 		Outputs.push_back( OutputPtr(new Sha1Output) );
 		return true;
 	}
+	else if( mode == "cstore" ) {
+		Outputs.push_back( OutputPtr(new ContentStoreOutput) );
+		return true;
+	}
 	else
 		return false;
 }
@@ -859,7 +958,7 @@ int App::main(int argc, char *argv[])
 	// process command line options
 	ModeBase *current = 0;
 	for(;;) {
-		int cmd = getopt(argc, argv, "i:o:nvIf:p:P:d:c:C:ASw:t");
+		int cmd = getopt(argc, argv, "i:o:nvIf:p:P:d:c:C:ASw:tl");
 		if( cmd == -1 )
 			break;
 
@@ -926,6 +1025,10 @@ int App::main(int argc, char *argv[])
 
 		case 't':	// include type and IDs in sha1 mode
 			current->IncludeIDs();
+			break;
+
+		case 'l':	// list only
+			current->SetList();
 			break;
 
 		case 'S':	// show parsers and builders
