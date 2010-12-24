@@ -44,6 +44,20 @@ using namespace Barry::Protocol;
 
 namespace Barry {
 
+BXEXPORT std::ostream& operator<< (std::ostream &os, const Cr2LfWrapper &str)
+{
+	for(	std::string::const_iterator i = str.m_str.begin();
+		i != str.m_str.end() && *i;
+		i++)
+	{
+		if( *i == '\r' )
+			os << '\n';
+		else
+			os << *i;
+	}
+	return os;
+}
+
 //////////////////////////////////////////////////////////////////////////////
 // Field builder helper functions
 

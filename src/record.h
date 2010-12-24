@@ -45,6 +45,19 @@ namespace Barry {
 //
 
 
+// stream-based wrapper to avoid printing strings that contain
+// the \r carriage return characters
+class BXEXPORT Cr2LfWrapper
+{
+	friend std::ostream& operator<< (std::ostream &os, const Cr2LfWrapper &str);
+	const std::string &m_str;
+public:
+	explicit Cr2LfWrapper(const std::string &str)
+		: m_str(str)
+	{
+	}
+};
+BXEXPORT std::ostream& operator<< (std::ostream &os, const Cr2LfWrapper &str);
 
 struct BXEXPORT CommandTableCommand
 {

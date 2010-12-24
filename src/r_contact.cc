@@ -506,7 +506,7 @@ void Contact::Dump(std::ostream &os) const
 		// print only fields with data
 		if( pField && pField->size() ) {
 			os << "    " << setw(20) << b->name;
-			os << ": " << *pField << "\n";
+			os << ": " << Cr2LfWrapper(*pField) << "\n";
 		}
 	}
 

@@ -385,15 +385,7 @@ os << "From " << SimpleFromAddress() << "  " << ctime( &MessageDateSent );
 	if( Subject.size() )
 		os << "Subject: " << Subject << "\n";
 	os << "\n";
-	for(	std::string::const_iterator i = Body.begin();
-		i != Body.end() && *i;
-		i++)
-	{
-		if( *i == '\r' )
-			os << '\n';
-		else
-			os << *i;
-	}
+	os << Cr2LfWrapper(Body);
 	os << "\n";
 
 	if( Attachment.size() )
