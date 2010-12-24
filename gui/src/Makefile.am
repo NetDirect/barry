@@ -1,7 +1,7 @@
 
 ##DEFAULT_INCLUDES =
-INCLUDES = $(TREE_BUILD_CXXFLAGS) $(BARRY_CFLAGS) $(GTKMM_CFLAGS) $(LIBTAR_CFLAGS) $(LIBZ_CFLAGS)
-LIBS = $(TREE_BUILD_LDFLAGS) $(BARRY_LIBS) $(GTKMM_LIBS) $(LIBTAR_LIBS) $(LIBZ_LIBS)
+INCLUDES = $(TREE_BUILD_CXXFLAGS) $(BARRY_CFLAGS) $(BARRYBACKUP_CFLAGS) $(GTKMM_CFLAGS)
+LIBS = $(TREE_BUILD_LDFLAGS) $(BARRY_LIBS) $(BARRYBACKUP_LIBS) $(GTKMM_LIBS)
 
 AM_CXXFLAGS = -Wall -g
 AM_CPPFLAGS = -DBARRYBACKUP_GLADEDIR='"$(gladedir)"'
@@ -30,8 +30,6 @@ barrybackup_SOURCES = \
 	DeviceBus.cc \
 	DeviceIface.cc \
 	Thread.cc \
-	tarfile.cc \
-	tarfile-ops-nt.cc \
 	util.cc
 
 noinst_HEADERS= \
@@ -43,7 +41,6 @@ noinst_HEADERS= \
 	PasswordDlg.h \
 	PromptDlg.h \
 	Thread.h \
-	tarfile.h \
 	util.h \
 	i18n.h \
 	gettext.h

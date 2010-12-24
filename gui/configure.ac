@@ -21,27 +21,8 @@ AC_PROG_LIBTOOL
 
 AC_LANG([C++])
 
-AC_ARG_WITH(libtar,
-	[  --with-libtar=<path>    root path of libtar install],
-	[LIBTAR_CFLAGS="-I$with_libtar/include"
-	 LIBTAR_LIBS="-L$with_libtar/lib -ltar"],
-	[echo "Guessing libtar location... may not compile...";
-	 LIBTAR_CFLAGS=""
-	 LIBTAR_LIBS="-ltar"])
-AC_SUBST(LIBTAR_CFLAGS)
-AC_SUBST(LIBTAR_LIBS)
-
-AC_ARG_WITH(libz,
-	[  --with-zlib=<path>      root path of zlib install],
-	[LIBZ_CFLAGS="-I$with_libtar/include"
-	 LIBZ_LIBS="-L$with_libtar/lib -ltar"],
-	[echo "Guessing zlib location... may not compile...";
-	 LIBZ_CFLAGS=""
-	 LIBZ_LIBS="-lz"])
-AC_SUBST(LIBZ_CFLAGS)
-AC_SUBST(LIBZ_LIBS)
-
 PKG_CHECK_MODULES([BARRY], [libbarry-0])
+PKG_CHECK_MODULES([BARRYBACKUP], [libbarrybackup-0])
 PKG_CHECK_MODULES([GTKMM], [gtkmm-2.4 libglademm-2.4 gthread-2.0])
 
 # Carry the special tree build environment variables from parent configure,
