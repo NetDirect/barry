@@ -49,6 +49,9 @@ human readable and hex text
 .B sha1
 sum output
 
+.B cstore
+for extracting Content Store records
+
 .PP
 Each command line consists of at least one input and output option,
 along with their switches.  More than one output can be used, as long
@@ -200,6 +203,23 @@ the sum to stdout.
 .B \-t
 Include the DB Name, Type, and Unique record ID in the checksum for each
 record.
+
+.SH CSTORE TYPE OPTIONS
+.PP
+The
+.B cstore
+type is used to parse Content Store records.
+.TP
+.B \-l
+List the filenames and folders found in the Content Store database.
+.TP
+.B \-f file
+Select a filename from the above list to extract and save locally.
+Specify the entire path as shown in the \-l list.
+If the file is found in the device, it will be written to the current
+directory, using the base filename as the name.  If a file by that name
+exists already, the filename will be modified to avoid overwriting local
+files.
 
 .SH STANDALONE OPTIONS
 .TP
