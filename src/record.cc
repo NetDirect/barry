@@ -307,7 +307,7 @@ std::string Date::ToYYYYMMDD() const
 	std::ostringstream oss;
 	// setfill and setw not sticky.
 	oss	<< setw(4) << setfill('0') << Year
-		<< setw(2) << setfill('0') << Month + 1
+		<< setw(2) << setfill('0') << (Month + 1)
 		<< setw(2) << setfill('0') << Day;
 	return oss.str();
 }
@@ -323,7 +323,7 @@ std::string Date::ToBBString() const
 	std::ostringstream oss;
 	// setw() ain't 'sticky'!
 	oss	<< setw(2) << setfill('0') << Day << '/'
-		<< setw(2) << setfill('0') << Month + 1 << '/'
+		<< setw(2) << setfill('0') << (Month + 1) << '/'
 		<< setw(2) << setfill('0') << Year;
 	return oss.str();
 }
@@ -365,9 +365,9 @@ bool Date::FromYYYYMMDD(const std::string &str)
 
 std::ostream& operator<<(std::ostream &os, const Date &date)
 {
-	os	<< setw(4) << date.Year << '/'
-		<< setw(2) << date.Month << '/'
-		<< setw(2) << date.Day;
+	os	<< setw(4) << dec << date.Year << '/'
+		<< setw(2) << dec << (date.Month + 1) << '/'
+		<< setw(2) << dec << date.Day;
 	return os;
 }
 

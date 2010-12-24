@@ -6,6 +6,7 @@ Release: version 0.17.0 - 2010/01/??
 	- lib: added record parser for the Content Store database
 	- tools: added simple output mode to bio for Content Store
 		This supports extracting files and photos from Content Store.
+	- lib: fixed display bug in Date's operator<<
 2010/12/21
 	- tools: added bio command line tool, Barry Input / Output
 		Supports IO for devices, tar backups, boost, ldif streams,
