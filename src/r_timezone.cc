@@ -162,16 +162,20 @@ void Timezone::ParseFields(const Data &data, size_t &offset, const IConverter *i
 
 void Timezone::Clear()
 {
-	TimeZoneName.clear();
+	RecType = GetDefaultRecType();
+	RecordId = 0;
 
+	TZType = 0;
+	DSTOffset = 0;
 	Index = 0;
-	Left = false;
-	UseDST = false;
 	Offset = 0;
 	OffsetFraction = 0;
-	DSTOffset = 0;
 	StartMonth = -1;
 	EndMonth = -1;
+	Left = false;
+	UseDST = false;
+
+	TimeZoneName.clear();
 
 	Unknowns.clear();
 }

@@ -50,7 +50,7 @@ class IConverter;
 class BXEXPORT ServiceBookConfig
 {
 public:
-	typedef std::vector<UnknownField>		UnknownsType;
+	typedef Barry::UnknownsType			UnknownsType;
 
 	uint8_t Format;
 

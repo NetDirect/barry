@@ -375,19 +375,26 @@ void Calendar::BuildFields(Data &data, size_t &offset, const IConverter *ic) con
 
 void Calendar::Clear()
 {
+	// clear the base class too
 	RecurBase::Clear();
 
-	RecType = Calendar::GetDefaultRecType();
+	// clear our fields
+	RecType = GetDefaultRecType();
+	RecordId = 0;
 
 	AllDayEvent = false;
-	CalendarID = btohll((uint64_t) -1);
 	Subject.clear();
 	Notes.clear();
 	Location.clear();
 	NotificationTime = StartTime = EndTime = 0;
+	Organizer.clear();
+	AcceptedBy.clear();
+	Invited.clear();
 
 	FreeBusyFlag = Free;
 	ClassFlag = Public;
+
+	CalendarID = btohll((uint64_t) -1);
 
 	TimeZoneCode = GetTimeZoneCode(0, 0);	// default to GMT
 	TimeZoneValid = false;

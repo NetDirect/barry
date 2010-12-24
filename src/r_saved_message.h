@@ -40,6 +40,14 @@ namespace Barry {
 class BXEXPORT SavedMessage : public MessageBase
 {
 public:
+	void Clear()
+	{
+		MessageBase::Clear();
+
+		RecType = GetDefaultRecType();
+		RecordId = 0;
+	}
+
 	// database name
 	static const char * GetDBName() { return "Saved Email Messages"; }
 	static uint8_t GetDefaultRecType() { return 3; }

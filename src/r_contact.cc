@@ -267,7 +267,6 @@ void Contact::ParseHeader(const Data &data, size_t &offset)
 	// no header to parse in Contact records
 }
 
-// this is called by the RecordParser<> class, which checks size for us
 void Contact::ParseFields(const Data &data, size_t &offset, const IConverter *ic)
 {
 	const unsigned char *finish = ParseCommonFields(*this,
@@ -391,10 +390,12 @@ void Contact::BuildFields(Data &data, size_t &offset, const IConverter *ic) cons
 
 void Contact::Clear()
 {
-	RecType = Contact::GetDefaultRecType();
+	RecType = GetDefaultRecType();
+	RecordId = 0;
 
 	EmailAddresses.clear();
 	Phone.clear();
+
 	Fax.clear();
 	WorkPhone.clear();
 	HomePhone.clear();

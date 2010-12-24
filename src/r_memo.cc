@@ -233,6 +233,9 @@ bool Memo::operator<(const Memo &other) const
 
 void Memo::Clear()
 {
+	RecType = GetDefaultRecType();
+	RecordId = 0;
+
 	Title.clear();
 	Body.clear();
 	Categories.clear();

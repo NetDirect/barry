@@ -320,21 +320,27 @@ void Task::BuildFields(Data &data, size_t &offset, const IConverter *ic) const
 
 void Task::Clear()
 {
+	// clear the base class first
 	RecurBase::Clear();
+
+	// our variables...
+	RecType = GetDefaultRecType();
+	RecordId = 0;
 
 	Summary.clear();
 	Notes.clear();
 	Categories.clear();
+	UID.clear();
+
 	StartTime = DueTime = AlarmTime = 0;
-
-	PriorityFlag = (PriorityFlagType)0;
-	StatusFlag = (StatusFlagType)0;
-	AlarmType = (AlarmFlagType)0;
-
-	DueDateFlag = false;
-
 	TimeZoneCode = GetTimeZoneCode( 0, 0 );	// default to GMT
 	TimeZoneValid = false;
+
+	AlarmType = (AlarmFlagType)0;
+	PriorityFlag = (PriorityFlagType)0;
+	StatusFlag = (StatusFlagType)0;
+
+	DueDateFlag = false;
 
 	Unknowns.clear();
 }

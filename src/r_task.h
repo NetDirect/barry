@@ -38,7 +38,7 @@ class IConverter;
 class BXEXPORT Task : public RecurBase
 {
 public:
-	typedef std::vector<UnknownField>		UnknownsType;
+	typedef Barry::UnknownsType			UnknownsType;
 
 	uint8_t RecType;
 	uint32_t RecordId;

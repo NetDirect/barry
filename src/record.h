@@ -186,7 +186,8 @@ struct BXEXPORT UnknownField
 	uint8_t type;
 	UnknownData data;
 };
-BXEXPORT std::ostream& operator<< (std::ostream &os, const std::vector<UnknownField> &unknowns);
+typedef std::vector<UnknownField> UnknownsType;
+BXEXPORT std::ostream& operator<< (std::ostream &os, const UnknownsType &unknowns);
 
 struct BXEXPORT EmailAddress
 {

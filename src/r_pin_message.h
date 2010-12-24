@@ -39,6 +39,14 @@ namespace Barry {
 class BXEXPORT PINMessage : public MessageBase
 {
 public:
+	void Clear()
+	{
+		MessageBase::Clear();
+
+		RecType = GetDefaultRecType();
+		RecordId = 0;
+	}
+
 	// database name
 	static const char * GetDBName() { return "PIN Messages"; }
 	static uint8_t GetDefaultRecType() { return 0; }

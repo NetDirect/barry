@@ -303,7 +303,8 @@ void CallLog::Dump(std::ostream &os) const
 
 void CallLog::Clear()
 {
-	RecType = CallLog::GetDefaultRecType();
+	RecType = GetDefaultRecType();
+	RecordId = 0;
 
 	Duration = 0;
 	Timestamp = 0;

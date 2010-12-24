@@ -164,9 +164,16 @@ void Folder::ParseFields(const Data &data, size_t &offset, const IConverter *ic)
 
 void Folder::Clear()
 {
+	RecType = GetDefaultRecType();
+	RecordId = 0;
+
 	Name.clear();
-	Unknowns.clear();
+	Number = 0;
+	Level = 0;
+
 	Type = FolderSubtree;
+
+	Unknowns.clear();
 }
 
 void Folder::Dump(std::ostream &os) const

@@ -290,6 +290,11 @@ void MessageBase::BuildFields(Data &data, size_t &offset, const IConverter *ic) 
 
 void MessageBase::Clear()
 {
+	// these must be overwritten by any derived classes
+	RecType = 0;
+	RecordId = 0;
+
+	// clear base class variables
 	From.clear();
 	To.clear();
 	Cc.clear();
@@ -305,6 +310,7 @@ void MessageBase::Clear()
 	MessageReplyTo = 0;
 	MessageDateSent = 0;
 	MessageDateReceived = 0;
+
 	MessageTruncated = false;
 	MessageRead = false;
 	MessageReply = false;

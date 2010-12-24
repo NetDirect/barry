@@ -178,6 +178,7 @@ void ServiceBookConfig::BuildFields(Data &data, size_t &offset, const IConverter
 
 void ServiceBookConfig::Clear()
 {
+	Format = 0;
 	Unknowns.clear();
 }
 

@@ -45,6 +45,8 @@ class IConverter;
 class BXEXPORT MessageBase
 {
 public:
+	typedef Barry::UnknownsType			UnknownsType;
+
 	uint8_t RecType;
 	uint32_t RecordId;
 
@@ -93,7 +95,7 @@ public:
 	};
 	SensitivityType Sensitivity;
 
-	std::vector<UnknownField> Unknowns;
+	UnknownsType Unknowns;
 
 protected:
 	std::string SimpleFromAddress() const;

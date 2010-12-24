@@ -225,13 +225,18 @@ void Sms::ParseFields(const Data &data, size_t &offset, const IConverter *ic)
 
 void Sms::Clear()
 {
+	RecType = GetDefaultRecType();
+	RecordId = 0;
+
 	MessageStatus = Unknown;
 	DeliveryStatus = NoReport;
-	DataCodingScheme = SevenBit;
 
 	IsNew = NewConversation = Saved = Deleted = Opened = false;
 
 	Timestamp = ServiceCenterTimestamp = 0;
+
+	DataCodingScheme = SevenBit;
+
 	ErrorId = 0;
 
 	Addresses.clear();

@@ -38,6 +38,14 @@ namespace Barry {
 class BXEXPORT Message : public MessageBase
 {
 public:
+	void Clear()
+	{
+		MessageBase::Clear();
+
+		RecType = GetDefaultRecType();
+		RecordId = 0;
+	}
+
 	// database name
 	static const char * GetDBName() { return "Messages"; }
 	static uint8_t GetDefaultRecType() { return 0; }

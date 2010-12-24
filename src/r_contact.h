@@ -65,7 +65,7 @@ public:
 	typedef Barry::CategoryList			CategoryList;
 	typedef ContactGroupLink			GroupLink;
 	typedef std::vector<GroupLink>			GroupLinksType;
-	typedef std::vector<UnknownField>		UnknownsType;
+	typedef Barry::UnknownsType			UnknownsType;
 	typedef std::string				EmailType;
 	typedef std::vector<EmailType>			EmailList;
 

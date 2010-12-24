@@ -1,5 +1,8 @@
 Release: version 0.17.0 - 2010/01/??
 ------------------------------------------------------------------------------
+2010/12/24
+	- lib: cleaned up Clear() functions in all record classes
+		Primarily fixed some missing variables.
 2010/12/21
 	- tools: added bio command line tool, Barry Input / Output
 		Supports IO for devices, tar backups, boost, ldif streams,
