@@ -454,7 +454,7 @@ bool BackupWindow::PromptForRestoreTarball(std::string &restoreFilename,
 
 	// start at the base path given... if it fails, just open
 	// the dialog where we are
-	chdir(start_path.c_str());
+	(void)chdir(start_path.c_str());
 
 	Gtk::FileChooserDialog dlg(*this, _("Select backup to restore from"));
 	dlg.add_button(Gtk::Stock::OK, Gtk::RESPONSE_OK);
@@ -462,7 +462,7 @@ bool BackupWindow::PromptForRestoreTarball(std::string &restoreFilename,
 	int result = dlg.run();
 
 	if( buf )
-		chdir(buf);
+		(void)chdir(buf);
 
 	if( result != Gtk::RESPONSE_OK )
 		return false;
