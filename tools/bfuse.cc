@@ -453,7 +453,7 @@ public:
 		string data = GetRecordData(ps.Record());
 
 		size_t len = data.size();
-		if( offset < len ) {
+		if( offset >= 0 && offset < (off_t)len ) {
 			if( (offset + size) > len )
 				size = len - offset;
 			memcpy(buf, data.data() + offset, size);
@@ -599,7 +599,7 @@ public:
 	virtual int ReadFile(const char *path, char *buf, size_t size, off_t offset)
 	{
 		size_t len = m_error_log.size();
-		if( offset < len ) {
+		if( offset >= 0 && offset < (off_t)len ) {
 			if( (offset + size) > len )
 				size = len - offset;
 			memcpy(buf, m_error_log.data() + offset, size);
