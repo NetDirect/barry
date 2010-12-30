@@ -22,6 +22,7 @@
 #include "ConfigDlg.h"
 #include "DatabaseSelectDlg.h"
 #include "util.h"
+#include "i18n.h"
 #include <barry/barry.h>
 
 ConfigDlg::ConfigDlg(const Barry::DatabaseDatabase &dbdb,
@@ -73,7 +74,7 @@ int ConfigDlg::run()
 void ConfigDlg::on_configure_backup()
 {
 	DatabaseSelectDlg dlg(m_dbdb, m_backupList,
-		"Select the device databases you wish to backup:");
+		_("Select the device databases you wish to backup:"));
 	if( dlg.run() == Gtk::RESPONSE_OK ) {
 		m_backupList = dlg.GetSelections();
 	}
@@ -82,10 +83,10 @@ void ConfigDlg::on_configure_backup()
 void ConfigDlg::on_configure_restore()
 {
 	DatabaseSelectDlg dlg(m_dbdb, m_restoreList,
-		"Select the device databases you wish to recover.  "
+		_("Select the device databases you wish to recover.  "
 		"This selection acts like a filter, in that only the databases "
 		"you select here will be restored, even if more exist in the "
-		"backup data.");
+		"backup data."));
 	if( dlg.run() == Gtk::RESPONSE_OK ) {
 		m_restoreList = dlg.GetSelections();
 	}
