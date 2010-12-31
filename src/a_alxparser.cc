@@ -111,11 +111,13 @@ void ALXParser::on_start_element(const Glib::ustring& name,
 			node = IN_SYSTEM_APPLICATION;
 			subnode = SUB_NONE;
 
-			m_codsection = new Application();
+			m_codsection = new Application(attrs);
 		}
 		else if (name == "library") {
 			node = IN_SYSTEM_LIBRARY;
 			subnode = SUB_NONE;
+
+			m_codsection = new Application(attrs);
 		}
 		else if ((subnode == IN_OSFILES) && (name == "os"))
 			osloader.AddProperties(attrs);
@@ -123,9 +125,17 @@ void ALXParser::on_start_element(const Glib::ustring& name,
 
 	case IN_LIBRARY:
 	case IN_APPLICATION:
+	case IN_APPLICATION_APPLICATION:
 	case IN_SYSTEM_APPLICATION:
+	case IN_SYSTEM_LIBRARY:
 		if (subnode == SUB_NONE) {
-			if (name == "name")
+			if ((node == IN_APPLICATION) && (name == "application")) {
+				node = IN_APPLICATION_APPLICATION;
+
+				m_savecodsection = m_codsection;
+				m_codsection = new Application(attrs);
+			}
+			else if (name == "name")
 				subnode = IN_NAME;
 			else if (name == "description")
 				subnode = IN_DESCRIPTION;
@@ -199,7 +209,9 @@ void ALXParser::on_end_element(const Glib::ustring& name)
 
 	case IN_LIBRARY:
 	case IN_APPLICATION:
+	case IN_APPLICATION_APPLICATION:
 	case IN_SYSTEM_APPLICATION:
+	case IN_SYSTEM_LIBRARY:
 		if (name == "application") {
 			if (m_register)
 				osloader.AddApplication(m_codsection);
@@ -208,6 +220,10 @@ void ALXParser::on_end_element(const Glib::ustring& name)
 				node = IN_LOADER;
 			else if (node == IN_SYSTEM_APPLICATION)
 				node = IN_SYSTEM;
+			else if (node == IN_APPLICATION_APPLICATION) {
+				node = IN_APPLICATION;
+				m_codsection = m_savecodsection;
+			}
 		}
 		else if (name == "library") {
 			if (m_register)
@@ -215,6 +231,8 @@ void ALXParser::on_end_element(const Glib::ustring& name)
 			subnode = SUB_NONE;
 			if (node == IN_LIBRARY)
 				node = IN_LOADER;
+			else if (node == IN_SYSTEM_LIBRARY)
+				node = IN_SYSTEM;
 		}
 
 		switch (subnode) {

@@ -79,10 +79,6 @@ void OSLoader::Load(const std::string& pathname)
 
 		offset = alxfile.length() - ext.length();
 
-		// Not supported...
-		if (alxfile == "BlackBerry.alx")
-			continue;
-
 		// Ignore all files except ".alx" files
 		if (alxfile.substr(offset, ext.length()) != ALX_FILE_EXT)
 			continue;

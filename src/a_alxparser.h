@@ -48,6 +48,7 @@ public:
 		IN_SYSTEM_APPLICATION,
 		IN_SYSTEM_LIBRARY,
 		IN_APPLICATION,
+		IN_APPLICATION_APPLICATION,
 		IN_LIBRARY
 	};
 
@@ -74,6 +75,7 @@ private:
 	std::string buffdata;
 
 	CODSection *m_codsection;
+	CODSection *m_savecodsection;
 
 public:
 	ALXParser(OSLoader& osloader, std::istream& input);

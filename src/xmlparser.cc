@@ -34,6 +34,7 @@ XMLParser::XMLParser(std::istream& input, const char *charset)
 	: xmlpp::SaxParser()
 	, input(input)
 {
+	this->depth = 0;
 	this->charset = charset;
 }
 
