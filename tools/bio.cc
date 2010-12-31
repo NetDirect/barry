@@ -962,9 +962,14 @@ int App::main(int argc, char *argv[])
 		if( cmd == -1 )
 			break;
 
-		// first option must be in or out
+		// first option must be in or out, or a global option
 		if( !current ) {
-			if( cmd != 'i' && cmd != 'o' && cmd != 'S' ) {
+			if( cmd != 'i' && \
+			    cmd != 'o' && \
+			    cmd != 'S' && \
+			    cmd != 'I' && \
+			    cmd != 'v' )
+			{
 				Usage();
 				return 1;
 			}
