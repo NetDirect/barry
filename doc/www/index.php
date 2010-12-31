@@ -158,7 +158,7 @@ may be out of date, but they may still be helpful to new users.</P>
 	<li><a href="http://www.linux.com/feature/123251">Syncing your Blackberry on Linux</a>, by Joe Barr (2007/12/21)</li>
 </ul>
 <ul>
-	<li><a href="http://www.progweb.com/modules/blackberry/index-en.html">How to use a Blackberry device with Linux</a>, by Nicolas Vivien (2009/03/06)</li>
+	<li><a href="http://www.progweb.com/modules/blackberry/index-en.html">How to use a Blackberry device with Linux</a>, by Nicolas Vivien (2009/03/06), and <a href="http://www.progweb.com/en/">his development blog</a></li>
 	<li><a href="http://www.slashdev.ca/2008/04/03/blackberry-development-using-linux/">Blackberry development using Linux</a>, by Josh Kropf (2008/04/03)</li>
 </ul>
 
