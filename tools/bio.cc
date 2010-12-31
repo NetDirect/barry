@@ -958,7 +958,7 @@ int App::main(int argc, char *argv[])
 	// process command line options
 	ModeBase *current = 0;
 	for(;;) {
-		int cmd = getopt(argc, argv, "i:o:nvIf:p:P:d:c:C:ASw:tl");
+		int cmd = getopt(argc, argv, "hi:o:nvIf:p:P:d:c:C:ASw:tl");
 		if( cmd == -1 )
 			break;
 
