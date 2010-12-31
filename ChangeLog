@@ -4,6 +4,8 @@ Release: version 0.17.0 - 2010/01/??
 	- merged translation and general bug fixes from Nicolas Vivien
 	- lib: merged Nicolas Vivien's BlackBerry.alx parser
 	- lib: changed pointer handling in src/a_*.h to use shared_ptr<>
+	- ppp: added barry-minimal, which may help in the case of
+		"Could not determine local IP address" errors
 2010/12/24
 	- lib: cleaned up Clear() functions in all record classes
 		Primarily fixed some missing variables.

@@ -1,0 +1,26 @@
+#
+# Some of these options found documented at:
+#    http://wiki.colar.net/tethering_with_blackberry_pearl_on_linux
+#
+# Others are based on the peer file in XmBlackBerry
+#
+# Please send all working peer files to cdfrey@foursquare.net, so we can
+# build a library of peer files for different carriers.
+#
+ABORT ERROR
+'' AT&F
+OK ATZ
+OK ATI
+OK AT+CNUM
+OK AT+CSQ
+# Some Blackberries reboot on this command
+#OK AT+CREG?
+#OK AT+CGDCONT?
+#OK AT+CGQREQ?
+#OK AT+CGQMIN?
+#OK AT+CGATT?
+#OK AT+CGREG?
+OK AT+CGDCONT=1,"IP","internet.com"
+OK ATDT*99#
+CONNECT
+

@@ -1,0 +1,23 @@
+# See the README file in the source tree for notes and documentation
+
+# This is based on connection data for a Rogers provider.
+# Sometimes it is better to let pppd do the handshaking for us.
+# In cases where barry-rogers gives the error
+# "Could not determine local IP address", this setup may work.
+
+connect "/usr/sbin/chat -f /etc/chatscripts/barry-minimal.chat"
+pty "/usr/sbin/pppob"
+
+user wapuser1
+
+nodetach
+defaultroute
+noipdefault
+noauth
+usepeerdns
+
+lcp-echo-failure 0
+lcp-echo-interval 0
+
+debug
+

@@ -37,6 +37,7 @@ install/barry-util::
 	install -d $(CURDIR)/debian/barry-util/etc/ppp/peers
 	install -m 0644 \
 		$(DEB_SRCDIR)/ppp/barry-rogers \
+		$(DEB_SRCDIR)/ppp/barry-minimal \
 		$(DEB_SRCDIR)/ppp/barry-verizon \
 		$(DEB_SRCDIR)/ppp/barry-sprint \
 		$(DEB_SRCDIR)/ppp/barry-telus \
@@ -50,6 +51,7 @@ install/barry-util::
 	install -d $(CURDIR)/debian/barry-util/etc/chatscripts
 	install -m 0640 \
 		$(DEB_SRCDIR)/ppp/barry-rogers.chat \
+		$(DEB_SRCDIR)/ppp/barry-minimal.chat \
 		$(DEB_SRCDIR)/ppp/barry-verizon.chat \
 		$(DEB_SRCDIR)/ppp/barry-sprint.chat \
 		$(DEB_SRCDIR)/ppp/barry-telus.chat \
