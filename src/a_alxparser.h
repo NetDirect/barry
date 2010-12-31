@@ -31,6 +31,7 @@
 #include "a_library.h"
 #include "a_application.h"
 #include "a_osloader.h"
+#include <tr1/memory>
 
 
 namespace Barry {
@@ -74,8 +75,8 @@ private:
 	SubNodeType subnode;
 	std::string buffdata;
 
-	CODSection *m_codsection;
-	CODSection *m_savecodsection;
+	std::tr1::shared_ptr<CODSection> m_codsection;
+	std::tr1::shared_ptr<CODSection> m_savecodsection;
 
 public:
 	ALXParser(OSLoader& osloader, std::istream& input);

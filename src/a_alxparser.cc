@@ -92,12 +92,12 @@ void ALXParser::on_start_element(const Glib::ustring& name,
 		else if (name == "application") {
 			node = IN_APPLICATION;
 
-			m_codsection = new Application(attrs);
+			m_codsection.reset( new Application(attrs) );
 		}
 		else if (name == "library") {
 			node = IN_LIBRARY;
 
-			m_codsection = new Library(attrs);
+			m_codsection.reset( new Library(attrs) );
 		}
 		break;
 
@@ -111,13 +111,13 @@ void ALXParser::on_start_element(const Glib::ustring& name,
 			node = IN_SYSTEM_APPLICATION;
 			subnode = SUB_NONE;
 
-			m_codsection = new Application(attrs);
+			m_codsection.reset( new Application(attrs) );
 		}
 		else if (name == "library") {
 			node = IN_SYSTEM_LIBRARY;
 			subnode = SUB_NONE;
 
-			m_codsection = new Application(attrs);
+			m_codsection.reset( new Application(attrs) );
 		}
 		else if ((subnode == IN_OSFILES) && (name == "os"))
 			osloader.AddProperties(attrs);
@@ -133,7 +133,7 @@ void ALXParser::on_start_element(const Glib::ustring& name,
 				node = IN_APPLICATION_APPLICATION;
 
 				m_savecodsection = m_codsection;
-				m_codsection = new Application(attrs);
+				m_codsection.reset( new Application(attrs) );
 			}
 			else if (name == "name")
 				subnode = IN_NAME;

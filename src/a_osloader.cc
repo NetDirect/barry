@@ -123,7 +123,7 @@ void OSLoader::Dump(std::ostream &os) const
 	os << "Applications :" << std::endl;
 
 	{
-		std::vector<CODSection *>::const_iterator b = applications.begin(), e = applications.end();
+		CODSectionList::const_iterator b = applications.begin(), e = applications.end();
 
 		for (; b != e; b++) {
 			os << (**b) << std::endl;
@@ -133,7 +133,7 @@ void OSLoader::Dump(std::ostream &os) const
 	os << "Libraries :" << std::endl;
 
 	{
-		std::vector<CODSection *>::const_iterator b = libraries.begin(), e = libraries.end();
+		CODSectionList::const_iterator b = libraries.begin(), e = libraries.end();
 
 		for (; b != e; b++) {
 			os << (**b) << std::endl;
@@ -198,13 +198,13 @@ bool OSLoader::IsSupported(const xmlpp::SaxParser::AttributeList& attrs)
 }
 
 
-void OSLoader::AddApplication(CODSection *app)
+void OSLoader::AddApplication(OSLoader::CODSectionPtr app)
 {
 	applications.push_back(app);
 }
 
 
-void OSLoader::AddLibrary(CODSection *lib)
+void OSLoader::AddLibrary(OSLoader::CODSectionPtr lib)
 {
 	libraries.push_back(lib);
 }

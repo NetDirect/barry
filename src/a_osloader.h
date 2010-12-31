@@ -30,6 +30,7 @@
 #include "dll.h"
 #include "a_application.h"
 #include "a_library.h"
+#include <tr1/memory>
 
 
 #define OS_LANG_ENGLISH			""
@@ -52,11 +53,16 @@ namespace ALX {
 
 class BXEXPORT OSLoader
 {
+public:
+	typedef std::tr1::shared_ptr<CODSection>	CODSectionPtr;
+	typedef std::vector<CODSectionPtr>		CODSectionList;
+	typedef std::map<std::string, std::string>	PropertyMap;
+
 private:
 	std::string sfifile;
-	std::vector<CODSection *> applications;
-	std::vector<CODSection *> libraries;
-	std::map<std::string, std::string> properties;
+	CODSectionList applications;
+	CODSectionList libraries;
+	PropertyMap properties;
 
 public:
 	OSLoader(void);
@@ -73,8 +79,8 @@ public:
 	void AddProperties(const xmlpp::SaxParser::AttributeList& attrs);
 	void SetSFIFile(const std::string& name);
 	bool IsSupported(const xmlpp::SaxParser::AttributeList& attrs);
-	void AddApplication(CODSection *app);
-	void AddLibrary(CODSection *lib);
+	void AddApplication(CODSectionPtr app);
+	void AddLibrary(CODSectionPtr lib);
 };
 
 
