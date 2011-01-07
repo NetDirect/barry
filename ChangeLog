@@ -1,5 +1,7 @@
 Release: version 0.17.0 - 2010/01/??
 ------------------------------------------------------------------------------
+2011/01/07
+	- merged zsh completion scripts (btool,btardump) from Nicolas Vivien
 2010/12/31
 	- merged translation and general bug fixes from Nicolas Vivien
 	- lib: merged Nicolas Vivien's BlackBerry.alx parser
