@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: barry-backup 0.1\n"
 "Report-Msgid-Bugs-To: http://netdirect.ca/barry\n"
 "POT-Creation-Date: 2010-12-30 20:20+0100\n"
-"PO-Revision-Date: 2010-12-30 20:19+0100\n"
+"PO-Revision-Date: 2011-01-07 20:45+0100\n"
 "Last-Translator: Nicolas VIVIEN <webmaster@progweb.com>\n"
 "Language-Team: French\n"
 "Language: \n"
@@ -44,7 +44,6 @@ msgid "Prompt for label on every backup."
 msgstr "Demander un nom lors de chaque sauvegarde."
 
 #: src/ConfigDlg.glade:102
-#, fuzzy
 msgid ""
 "Database restore filter.  Only databases selected in this list will be "
 "restored, even if more exist in the backup."
