@@ -12,9 +12,12 @@ _btool_options=(
 	'-c=[Convert address book database to LDIF format, using the specified base DN]:LDIF format:' \
 	'-C=[LDIF attribute name to use when building the FQDN]:LDIF attribute:' \
 	'-a=[Clear database FROM device]:Database:' \
+	'-b=[Filename to save or load a Barry Backup to]:archive:->archive' \
 	'-d=[Load database FROM device and dump to screen]:Database:' \
 	'-e=[Override endpoint pair detection]:Endpoint:' \
+	'-f=[Filename to save or load handheld data to/from]:Filename:_files' \
 	'-i=[International charset for string conversions]:International charset:->iconv' \
+	'-I[Sort records before output]' \
 	'-l[List devices]' \
 	'-L[List Contact field names]' \
 	'-m[Map LDIF name to Contact field / Unmap LDIF name]' \
@@ -27,6 +30,7 @@ _btool_options=(
 	'-t[Show database database table]' \
 	'-T=[Show record state table for given database]:Database:' \
 	'-v[Dump protocol data during operation]' \
+	'-V[Dump records using MIME vformats where possible]' \
 	'-X[Reset device]' \
 	'-z[Use non-threaded sockets]' \
 	'-Z[Use threaded socket router (default)]'
@@ -48,6 +52,10 @@ _arguments -C -s "$_btool_options[@]" && return 0
 case $state in
 	iconv)
 		_btool_iconv && return 0
+	;;
+
+	archive)
+		_files -g '*.((tar|TAR).(gz|GZ|Z)|tgz)(-.)' && return 0
 	;;
 esac
 
