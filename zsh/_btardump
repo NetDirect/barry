@@ -1,0 +1,38 @@
+#compdef btardump
+
+local _btardump_options
+
+local state
+
+
+_btardump_options=(
+	'-h[Show the most relevant command line options]' \
+	'-d=[Load database FROM device and dump to screen]:Database:' \
+	'-i=[International charset for string conversions]:International charset:->iconv' \
+	'-V[Dump records using MIME vformats where possible]' \
+	'*:archive file:->archive'
+)
+
+
+_btardump_iconv() {
+	local result
+
+	result=( ${${${(f)"$(_call_program codesets iconv --list)"}## #}%//} )
+
+	compadd -a "$@" - result
+}
+
+
+_arguments -C -s "$_btardump_options[@]" && return 0
+
+
+case $state in
+	iconv)
+		_btardump_iconv && return 0
+	;;
+
+	archive)
+		_files -g '*.((tar|TAR).(gz|GZ|Z)|tgz)(-.)' && return 0
+	;;
+esac
+
