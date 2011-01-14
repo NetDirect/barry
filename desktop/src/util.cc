@@ -72,6 +72,14 @@ wxString GetImageFilename(const wxString &filename)
 	file = wxPathOnly(wxGetApp().argv[0]);
 	file += _T("/../images/");
 	file += filename;
+	if( wxFileExists(file) )
+		return file;
+
+	// hmmm.... maybe we're running from inside the libtool
+	// build subdirectories
+	file = wxPathOnly(wxGetApp().argv[0]);
+	file += _T("/../../images/");
+	file += filename;
 	return file;
 }
 
