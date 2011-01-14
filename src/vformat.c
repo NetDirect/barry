@@ -145,6 +145,9 @@ static char *_fold_lines (char *buf)
 				if (*next2 == '\n' || *next2 == '\r' || *next2 == ' ' || *next2 == '\t') {
 					p = g_utf8_next_char (next2);
 				}
+				else if(quotedprintable) {
+					p = g_utf8_next_char (next);
+				}
 				else {
 					str = g_string_append (str, CRLF);
 					p = g_utf8_next_char (next);

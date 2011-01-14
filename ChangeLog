@@ -1,5 +1,8 @@
 Release: version 0.17.0 - 2010/01/??
 ------------------------------------------------------------------------------
+2011/01/14
+	- lib: fixed bug in vformat.c _fold_lines() when QUOTED-PRINTABLE
+		is in use
 2011/01/07
 	- merged zsh completion scripts (btool,btardump) from Nicolas Vivien
 2010/12/31
