@@ -290,22 +290,29 @@ AC_CONFIG_FILES([Makefile po/Makefile.in
 # nested packages
 #
 AC_ARG_ENABLE([gui], [AC_HELP_STRING([--enable-gui], [build the gui])])
-if test "$enable_gui" = yes; then
-	AC_CONFIG_SUBDIRS([gui])
-fi
 AC_ARG_ENABLE([opensync-plugin], [AC_HELP_STRING([--enable-opensync-plugin], [build the opensync plugin])])
-if test "$enable_opensync_plugin" = yes; then
-	AC_CONFIG_SUBDIRS([opensync-plugin])
-fi
 AC_ARG_ENABLE([opensync-plugin-4x], [AC_HELP_STRING([--enable-opensync-plugin-4x], [build the opensync 0.4x plugin])])
-if test "$enable_opensync_plugin_4x" = yes; then
-	AC_CONFIG_SUBDIRS([opensync-plugin-0.4x])
-fi
+
+# make sure that the environment is setup before anything else
 if test "$enable_gui" = yes || test "$enable_opensync_plugin" = yes || test "$enable_opensync_plugin_4x" = yes; then
 	export TREE_BUILD_CXXFLAGS="-I`pwd`"
 	export TREE_BUILD_LDFLAGS="-L`pwd`/src"
 	export PKG_CONFIG_PATH="`pwd`:$PKG_CONFIG_PATH"
 fi
 
+# conditionally enable the subdirectory packages
+if test "$enable_gui" = yes; then
+	AC_CONFIG_SUBDIRS([gui])
+fi
+if test "$enable_opensync_plugin" = yes; then
+	AC_CONFIG_SUBDIRS([opensync-plugin])
+fi
+if test "$enable_opensync_plugin_4x" = yes; then
+	AC_CONFIG_SUBDIRS([opensync-plugin-0.4x])
+fi
+
+#
+# Generate the scripts!
+#
 AC_OUTPUT
 
