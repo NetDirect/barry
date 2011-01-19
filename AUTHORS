@@ -95,6 +95,7 @@ Contributors (code and otherwise) in alphabetical order by last name:
 	Jason Thomas <jason@debian.org>
 		- autoconf / build system patch
 		- debian package patch
+		- ppp chatscripts for Optus and Vodafone AU
 	Nicolas VIVIEN <nicolas@vivien.fr>
 		- bjavaloader support
 		- screenshot support
