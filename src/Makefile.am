@@ -295,7 +295,7 @@ libbarryalx_la_SOURCES = \
 	a_osloader.h a_osloader.cc \
 	a_alxparser.h a_alxparser.cc
 libbarryalx_la_CXXFLAGS = $(AM_CXXFLAGS) $(LIBXMLXX_CFLAGS)
-libbarryalx_la_LIBADD = $(LIBXMLXX_LIBS)
+libbarryalx_la_LIBADD = libbarry.la $(LIBXMLXX_LIBS)
 libbarryalx_la_LDFLAGS = -version-info ${LIB_BARRY_VERSION}
 endif
 
