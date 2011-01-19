@@ -176,6 +176,8 @@ cd ../
 %{__cp} ppp/barry-chinamobile %{buildroot}%{_sysconfdir}/ppp/peers/
 %{__cp} ppp/barry-kpn %{buildroot}%{_sysconfdir}/ppp/peers/
 %{__cp} ppp/barry-orange-spain %{buildroot}%{_sysconfdir}/ppp/peers/
+%{__cp} ppp/barry-optus-au %{buildroot}%{_sysconfdir}/ppp/peers/
+%{__cp} ppp/barry-vodafone-au %{buildroot}%{_sysconfdir}/ppp/peers/
 %{__mkdir_p} %{buildroot}%{_sysconfdir}/chatscripts
 %{__cp} ppp/barry-rogers.chat %{buildroot}%{_sysconfdir}/chatscripts/
 %{__cp} ppp/barry-minimal.chat %{buildroot}%{_sysconfdir}/chatscripts/
@@ -188,6 +190,8 @@ cd ../
 %{__cp} ppp/barry-chinamobile.chat %{buildroot}%{_sysconfdir}/chatscripts/
 %{__cp} ppp/barry-kpn.chat %{buildroot}%{_sysconfdir}/chatscripts/
 %{__cp} ppp/barry-orange-spain.chat %{buildroot}%{_sysconfdir}/chatscripts/
+%{__cp} ppp/barry-optus-au.chat %{buildroot}%{_sysconfdir}/chatscripts/
+%{__cp} ppp/barry-vodafone-au.chat %{buildroot}%{_sysconfdir}/chatscripts/
 # Install hal fdi config
 %{__mkdir_p} %{buildroot}%{_datadir}/hal/fdi/information/10freedesktop
 %{__mkdir_p} %{buildroot}%{_datadir}/hal/fdi/policy/10osvendor
@@ -286,6 +290,8 @@ cd ../
 %attr(0644,root,root) %config %{_sysconfdir}/ppp/peers/barry-chinamobile
 %attr(0644,root,root) %config %{_sysconfdir}/ppp/peers/barry-kpn
 %attr(0644,root,root) %config %{_sysconfdir}/ppp/peers/barry-orange-spain
+%attr(0644,root,root) %config %{_sysconfdir}/ppp/peers/barry-optus-au
+%attr(0644,root,root) %config %{_sysconfdir}/ppp/peers/barry-vodafone-au
 %attr(0640,root,root) %config %{_sysconfdir}/chatscripts/barry-rogers.chat
 %attr(0640,root,root) %config %{_sysconfdir}/chatscripts/barry-minimal.chat
 %attr(0640,root,root) %config %{_sysconfdir}/chatscripts/barry-verizon.chat
@@ -297,6 +303,8 @@ cd ../
 %attr(0640,root,root) %config %{_sysconfdir}/chatscripts/barry-chinamobile.chat
 %attr(0640,root,root) %config %{_sysconfdir}/chatscripts/barry-kpn.chat
 %attr(0640,root,root) %config %{_sysconfdir}/chatscripts/barry-orange-spain.chat
+%attr(0640,root,root) %config %{_sysconfdir}/chatscripts/barry-optus-au.chat
+%attr(0640,root,root) %config %{_sysconfdir}/chatscripts/barry-vodafone-au.chat
 %attr(0640,root,root) %config %{_sysconfdir}/bash_completion.d/bjavaloader
 %attr(0640,root,root) %config %{_sysconfdir}/bash_completion.d/btool
 %doc COPYING
@@ -338,7 +346,7 @@ cd ../
 - added NLS support
 - cleaned up conditionals
 - added Fedora 13 support
-- added new ppp chat script for Orange Spain
+- added new ppp chat scripts for Orange Spain, Optus and Vodafone AU
 - added copy of barry-sprint as barry-telus
 - added brawchannel, btardump, bio, and balxparse
 

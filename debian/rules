@@ -47,6 +47,8 @@ install/barry-util::
 		$(DEB_SRCDIR)/ppp/barry-chinamobile \
 		$(DEB_SRCDIR)/ppp/barry-kpn \
 		$(DEB_SRCDIR)/ppp/barry-orange-spain \
+		$(DEB_SRCDIR)/ppp/barry-optus-au \
+		$(DEB_SRCDIR)/ppp/barry-vodafone-au \
 		$(CURDIR)/debian/barry-util/etc/ppp/peers
 	install -d $(CURDIR)/debian/barry-util/etc/chatscripts
 	install -m 0640 \
@@ -61,6 +63,8 @@ install/barry-util::
 		$(DEB_SRCDIR)/ppp/barry-chinamobile.chat \
 		$(DEB_SRCDIR)/ppp/barry-kpn.chat \
 		$(DEB_SRCDIR)/ppp/barry-orange-spain.chat \
+		$(DEB_SRCDIR)/ppp/barry-optus-au.chat \
+		$(DEB_SRCDIR)/ppp/barry-vodafone-au.chat \
 		$(CURDIR)/debian/barry-util/etc/chatscripts
 	# Install hal fdi configs
 	install -d $(CURDIR)/debian/barry-util/usr/share/hal/fdi/information/10freedesktop
