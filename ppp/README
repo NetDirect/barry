@@ -70,6 +70,8 @@ usepeerdns
 #
 noipdefault
 nodetach
+# note that there's a new option on the scene: updetach
+#updetach
 nodeflate
 nobsdcomp
 noaccomp
