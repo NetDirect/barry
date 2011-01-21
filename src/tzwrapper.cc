@@ -90,7 +90,13 @@ struct tm* iso_to_tm(const char *timestamp,
 	result->tm_year -= 1900;
 	result->tm_mon -= 1;
 	result->tm_isdst = -1;
-	if( found != 6 ) {
+	if( found == 3 ) {
+		// only a date available, so force time to 00:00:00
+		result->tm_hour = 0;
+		result->tm_min = 0;
+		result->tm_sec = 0;
+	}
+	else if( found != 6 ) {
 		return 0;
 	}
 
@@ -253,10 +259,10 @@ int main()
 	else
 		cout << "t4 != t5: ERROR: t4: " << t4 << " t5: " << t5  << endl;
 
-	if( TzWrapper::iso_mktime("20100430") == (time_t)-1 )
-		cout << "Fail check: passed" << endl;
+	if( TzWrapper::iso_mktime("20100430") != (time_t)-1 )
+		cout << "Date check: passed" << endl;
 	else
-		cout << "Fail check: ERROR" << endl;
+		cout << "Date check: ERROR" << endl;
 
 	cout << "t1: " << tm_to_iso(gmtime(&t1), true) << endl;
 
