@@ -47,33 +47,34 @@ MimeBuilder::MimeBuilder(std::istream &is)
 bool MimeBuilder::BuildRecord(DBData &data, size_t &offset,
 				const IConverter *ic)
 {
-	string vrec, type;
-	while( ReadMimeRecord(m_is, vrec, type) ) {
+	string vrec;
+	vector<string> types;
+	while( ReadMimeRecord(m_is, vrec, types) ) {
 		if( !vrec.size() ) {
 			// end of file
 			return false;
 		}
-		else if( strcasecmp(type.c_str(), Sync::vCard::GetVName()) == 0 ) {
+		else if( IsMember(Sync::vCard::GetVName(), types) ) {
 			Sync::vCard vcard;
 			SetDBData(vcard.ToBarry(vrec.c_str(), 0),
 				data, offset, ic);
 			return true;
 		}
-		else if( strcasecmp(type.c_str(), Sync::vCalendar::GetVName()) == 0 ) {
+		else if( IsMember(Sync::vCalendar::GetVName(), types) ) {
 			Sync::vTimeConverter vtc;
 			Sync::vCalendar vcal(vtc);
 			SetDBData(vcal.ToBarry(vrec.c_str(), 0),
 				data, offset, ic);
 			return true;
 		}
-		else if( strcasecmp(type.c_str(), Sync::vTodo::GetVName()) == 0 ) {
+		else if( IsMember(Sync::vTodo::GetVName(), types) ) {
 			Sync::vTimeConverter vtc;
 			Sync::vTodo vtodo(vtc);
 			SetDBData(vtodo.ToBarry(vrec.c_str(), 0),
 				data, offset, ic);
 			return true;
 		}
-		else if( strcasecmp(type.c_str(), Sync::vJournal::GetVName()) == 0 ) {
+		else if( IsMember(Sync::vJournal::GetVName(), types) ) {
 			Sync::vJournal vjournal;
 			SetDBData(vjournal.ToBarry(vrec.c_str(), 0),
 				data, offset, ic);
@@ -101,10 +102,10 @@ bool MimeBuilder::EndOfFile() const
 
 // return false at end of file, true if a record was read
 bool MimeBuilder::ReadMimeRecord(std::istream &is, std::string &vrec,
-				std::string &type)
+				std::vector<std::string> &types)
 {
 	vrec.clear();
-	type.clear();
+	types.clear();
 
 	string line;
 
@@ -113,7 +114,7 @@ bool MimeBuilder::ReadMimeRecord(std::istream &is, std::string &vrec,
 		if( strcasecmp(line.substr(0, 6).c_str(), "BEGIN:") == 0 ) {
 			vrec += line;
 			vrec += "\n";
-			type = line.substr(6);
+			types.push_back(line.substr(6));
 			break;
 		}
 	}
@@ -133,10 +134,11 @@ bool MimeBuilder::ReadMimeRecord(std::istream &is, std::string &vrec,
 
 		// pick up innermost BEGIN line
 		if( strcasecmp(line.substr(0, 6).c_str(), "BEGIN:") == 0 ) {
-			type = line.substr(6);
+			string type = line.substr(6);
 			while( type.size() && type[type.size()-1] == '\r' ) {
 				type = type.substr(0, type.size()-1);
 			}
+			types.push_back(type);
 		}
 
 		// place an upper limit on the number of lines...
@@ -148,6 +150,17 @@ bool MimeBuilder::ReadMimeRecord(std::istream &is, std::string &vrec,
 	}
 	// assume that end of file is the same as "blank line"
 	return true;
+}
+
+bool MimeBuilder::IsMember(const std::string &item,
+			const std::vector<std::string> &types)
+{
+	std::vector<std::string>::const_iterator i = types.begin();
+	for( ; i != types.end(); ++i ) {
+		if( strcasecmp(i->c_str(), item.c_str()) == 0 )
+			return true;
+	}
+	return false;
 }
 
 } // namespace Barry

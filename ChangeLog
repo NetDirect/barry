@@ -3,6 +3,9 @@ Release: version 0.17.0 - 2011/01/??
 2011/01/20
 	- doc: updated doc/www website docs in preparation for release
 	- updated copyright dates for 2011
+	- lib: fixed bug in MIME parsing with more than 2 BEGIN levels
+		Some events have an ALARM as well, which makes 3 BEGIN
+		levels, which broke the parsing that assumed only 2.
 2011/01/18
 	- ppp: applied Jason Thomas's ppp chatscripts for Optus and Vodafone AU
 2011/01/18

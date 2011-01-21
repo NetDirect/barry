@@ -25,6 +25,8 @@
 
 #include "dll.h"
 #include "builder.h"
+#include <string>
+#include <vector>
 #include <memory>
 #include <iosfwd>
 
@@ -45,7 +47,11 @@ public:
 
 	// return false at end of file, true if a record was read
 	static bool ReadMimeRecord(std::istream &is, std::string &vrec,
-					std::string &type);
+				std::vector<std::string> &types);
+	// returns true if item is a member of types, doing a
+	// case-insensitive compare
+	static bool IsMember(const std::string &item,
+				const std::vector<std::string> &types);
 };
 
 }
