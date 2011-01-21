@@ -5,7 +5,7 @@
 ///
 
 /*
-    Copyright (C) 2005-2010, Net Direct Inc. (http://www.netdirect.ca/)
+    Copyright (C) 2005-2011, Net Direct Inc. (http://www.netdirect.ca/)
     Copyright (C) 2009, Josh Kropf
 
     This program is free software; you can redistribute it and/or modify

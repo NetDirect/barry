@@ -4,7 +4,7 @@
 //
 
 /*
-    Copyright (C) 2006-2010, Net Direct Inc. (http://www.netdirect.ca/)
+    Copyright (C) 2006-2011, Net Direct Inc. (http://www.netdirect.ca/)
     Copyright (C) 2010, Nicolas VIVIEN
     Copyright (C) 2009, Dr J A Gow <J.A.Gow@wellfrazzled.com>
 

@@ -4,7 +4,7 @@
 ///
 
 /*
-    Copyright (C) 2007-2010, Net Direct Inc. (http://www.netdirect.ca/)
+    Copyright (C) 2007-2011, Net Direct Inc. (http://www.netdirect.ca/)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -565,7 +565,7 @@ void BackupWindow::on_file_quit()
 void BackupWindow::on_help_about()
 {
 	Gtk::AboutDialog dlg;
-	dlg.set_copyright("Copyright (C) 2007-2010, Net Direct Inc.");
+	dlg.set_copyright("Copyright (C) 2007-2011, Net Direct Inc.");
 	dlg.set_license(
 "    This program is free software; you can redistribute it and/or modify\n"
 "    it under the terms of the GNU General Public License as published by\n"

@@ -4,7 +4,7 @@
 ///
 
 /*
-    Copyright (C) 2010, Net Direct Inc. (http://www.netdirect.ca/)
+    Copyright (C) 2010-2011, Net Direct Inc. (http://www.netdirect.ca/)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -49,7 +49,7 @@ void Usage()
 
    cerr
    << "bio - Barry Input / Output\n"
-   << "      Copyright 2010, Net Direct Inc. (http://www.netdirect.ca/)\n"
+   << "      Copyright 2010-2011, Net Direct Inc. (http://www.netdirect.ca/)\n"
    << "      Using: " << Version << "\n"
    << "      Compiled "
 #ifdef __BARRY_BOOST_MODE__
