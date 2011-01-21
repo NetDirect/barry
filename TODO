@@ -11,7 +11,7 @@ please ask on the mailing list as well.
 
 Next Release Checklist (- todo, + done, x skipped)
 ==============================================================================
-Target: release version 0.17 (Nov 1)
+Target: release version 0.18
 	- figure out a solution to the HideSequencePacket issue
 	- website documentation:
 		- www documentation / howto for bjdwp and friends
@@ -29,7 +29,7 @@ Target: release version 0.17 (Nov 1)
 		- add to sourceforge
 		- add to repo.or.cz
 
-Target: release version 0.18 (Dec 1)
+Target: release version 0.19
 	- test and fix all build and functionality issues on:
 		- Fedora 11
 		- Fedora 12 (scheduled release on Nov 10)
@@ -41,7 +41,7 @@ Target: release version 0.18 (Dec 1)
 	- support our own repositories for apt and yum and zypper
 		to make installation easier
 
-Target: release version 0.19 (Jan 1, 2010)
+Target: release version 0.20
 	- polish up bfuse, and add feature to split out fields
 	- add record classes for Content Store based on
 		Martin Owens' doc/barry-research.ods
@@ -87,26 +87,6 @@ and so the Reload button must be available.
 
 Leave the Reload button even if HAL support is present, since the user
 may wish to control the list manually, or force a reload.
-
-
-Command line tool to parse backups
-----------------------------------
-Add the ability to feed raw database data into the parser from various
-formats, so that you can test parser code, and get human readable output
-without a Blackberry device attached.
-
-Ideally, this tool should be able to read tarball backups from barrybackup,
-and read only the database(s) of interest.  There should be a sort of
-plugin method for reading data from multiple sources: Windows backup
-files, barrybackup files, btool save files, ldap, text, etc.
-
-
-Add support for the new " - All" databases
-------------------------------------------
-New Blackberry devices appear to support a set of mixed databases, such as
-Calendar, Calendar - All, etc.  The format of these new "All" databases
-is not yet fully known, but needs to be supported as these databases become
-more popular.
 
 
 Reverse engineer date/time functions
@@ -212,19 +192,6 @@ would be seamless whether plugged in via USB or Bluetooth.
 Estimated tasks:
 	- research and design serial protocol stack to reuse as much
 		library code as possible
-Estimated time: unknown
-
-
-
-Add internationalization (i18n) support to the backup GUI and tools
--------------------------------------------------------------------
-Translations are needed for the GUI and command line tool prompts, as
-well as support in the code for this translation.
-
-Estimated tasks:
-	- update the code to support i18n
-	- translate to languages of interest
-
 Estimated time: unknown
 
 
@@ -345,37 +312,6 @@ Estimated tasks:
 	- finish C++ / Python integration (possible template issues)
 	- finish SWIG wrapper
 Estimated time: unknown
-
-
-
-Command line backup and restore
--------------------------------
-The only command line backup currently available is the one in btool,
-using the -f and -s switches.  This does not backup exact data from
-the device, but parses it, stores it in the Boost serialization format,
-and then reverses the process for restore.  This is a great test
-for the Barry library, but not so great for backup, since not all
-databases can be parsed.
-
-There is already an exact backup and restore interface with the GUI, but
-there is a lot of useful functionality trapped in a layer of GUI
-that could be just as useful from the command line.  Tasks such as a nightly
-cron backup of any Blackberry devices attached to the system would be more
-easily done via command line.
-
-You could add command line arguments to the barrybackup program to skip
-the GUI (tricky and possibly error prone), or you could pull the backup
-functionality into a standalone command line utility (more work, but smarter
-in the long run).  This is mostly a code refactoring job, consisting of
-all working code that's already there, and I know there are people
-who would thank you. :-)
-
-Note: see also the perl scripts in contrib/
-
-Estimated tasks:
-	- split out tar and backup functionality code into shared library
-	- write and test command line tool
-Estimated time: 6 hours
 
 
 
