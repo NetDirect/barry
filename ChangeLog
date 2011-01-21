@@ -1,5 +1,13 @@
 Release: version 0.17.0 - 2011/01/??
 ------------------------------------------------------------------------------
+2011/01/21
+	- build: added Debian Lenny's copy of pkg.m4
+		New versions of pkg-config's autoconf m4 files set the
+		variables PKG_CONFIG_PATH and PKG_CONFIG_LIBDIR as
+		precious... which means that configure caches the original
+		values and our subdir overrides are lost.  This copy of
+		pkg.m4 overrides whatever is on the system, and avoids
+		such preciousness.
 2011/01/20
 	- doc: updated doc/www website docs in preparation for release
 	- updated copyright dates for 2011
