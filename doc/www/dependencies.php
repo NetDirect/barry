@@ -51,7 +51,7 @@ some are only needed for building CVS.
 	<li><b>pkg-config</b> (source build: so configure can autodetect library locations) </li>
 	<li><b>libusb, stable (0.1.x)</b> - found at <a href="http://www.libusb.org/">http://www.libusb.org/</a> </li>
 	<li><b>pthread</b>
-	<li><b>boost</b> version 1.33 or higher (optional, needed for the serialization library, which you need if you want to save downloads for later uploads to the device, using btool) <a href="http://www.boost.org/">http://www.boost.org</a></li>
+	<li><b>boost</b> version 1.33 or higher (optional, Boost serialization support.) <a href="http://www.boost.org/">http://www.boost.org</a></li>
 	<li><b>automake</b> version 1.9 (CVS builds only) </li>
 	<li><b>autoconf</b> version 2.61 (CVS builds only) </li>
 	<li><b>libtool</b> version 1.5.22 (CVS builds only) </li>
@@ -87,8 +87,8 @@ Depending on your system, and how up to date it is, it may already have been
 fixed.</p>
 
 <p>The curious can read more about this bug
-<a href="http://sourceforge.net/mailarchive/message.php?msg_id=20070803200729.GA7068%40foursquare.net">here</a> and
-<a href="http://sourceforge.net/mailarchive/message.php?msg_name=20080417204336.GA15423%40foursquare.net">here</a>.</p>
+<a href="http://www.mail-archive.com/barry-devel@lists.sourceforge.net/msg00746.html">here</a> and
+<a href="http://www.mail-archive.com/barry-devel@lists.sourceforge.net/msg00754.html">here</a>.</p>
 
 <p>Of course, you probably don't want to read the intricate details of
 distro bugs.  You just want it to work!  For such systems, I usually
@@ -109,6 +109,9 @@ rpm -i ../RPMS/*/libtar*rpm
 <p>The following is a list of packages you'll need to install to build Barry
 from source, if you are using one of the below common distributions.  Other
 distributions should have similar package names.
+
+<p>You can also find scripts to automate this in the source tree under
+maintainer/depscripts.</p>
 
 <ul>
 

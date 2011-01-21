@@ -29,12 +29,18 @@ providers:
 <ul>
 	<li> AT&amp;T Cingular </li>
 	<li> China Mobile </li>
+	<li> Fido </li>
 	<li> KPN Nederland </li>
 	<li> O2 Ireland </li>
+	<li> Optus AU </li>
+	<li> Orange Spain </li>
 	<li> Rogers </li>
 	<li> Sprint </li>
+	<li> Telus </li>
 	<li> T-Mobile US </li>
 	<li> Verizon </li>
+	<li> Vodafone AU </li>
+	<li> and a minimalist script for debugging </li>
 </ul>
 </p>
 

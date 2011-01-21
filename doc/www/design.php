@@ -19,7 +19,7 @@ devices and make backups of their data.
 <p>Fourth, an <a href="http://www.opensync.org/">OpenSync Plugin</a>
 will provide general synchronization support for Contacts, Calendar,
 Tasks, and Memos; and the OpenSync framework will provide the synchronization
-support for the other side othe equation. (Evolution, Sunbird, etc.)
+support for the other side of the equation. (Evolution, Sunbird, etc.)
 
 
 <? createSubHeader("Design Goals"); ?>

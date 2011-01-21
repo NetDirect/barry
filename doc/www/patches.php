@@ -170,5 +170,5 @@ own git repo.  People can use it to collaborate on a feature as well.
 Let your imagination run wild.</p>
 
 <p>You can read more about the ideas behind the mob branch at
-<a href="http://repo.or.cz/mob.html">the repo.or.cz mob page</a></p>
+<a href="http://repo.or.cz/h/mob.html">the repo.or.cz mob page</a></p>
 

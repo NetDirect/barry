@@ -22,21 +22,44 @@ reverse engineer the battery charging handshake via USB.</p>
 
 <ul>
 	<li> charge your Blackberry's battery from your USB port </li>
-	<li> parse the following database records: Address Book, Email,
-		Calendar, Service Book, Memos, Tasks, PIN Messages,
-		Saved Email, Folders, Phone Call Logs, and SMS messages </li>
-	<li> build the following database records: Address Book, Calendar,
-		Memos, Tasks </li>
-	<li> export Address Book contacts in text or LDAP LDIF format </li>
+	<li> parse the following database records:
+		Address Book,
+		Browser Bookmarks,
+		Calendar,
+		Content Store,
+		Folders,
+		Memos,
+		Messages (Email),
+		Phone Call Logs,
+		PIN Messages,
+		Saved Email,
+		Service Book,
+		SMS messages,
+		Tasks,
+		Time Zones
+		</li>
+	<li> create the following database records:
+		Address Book,
+		Calendar,
+		Content Store,
+		Memos,
+		Tasks
+		</li>
+	<li> export Address Book contacts in text, LDAP LDIF format, or
+		as MIME vCards </li>
+	<li> import data in MIME vCard, vEvent, vJournal, and vTodo formats</li>
 	<li> make full data backups and restores of your device using
 		a GUI</li>
-	<li> synchronize contacts and calendar items using the
+	<li> synchronize contact, calendar, memo, and task items using the
 		<a href="http://www.opensync.org/">OpenSync</a>
-		framework</li>
+		framework (memos and tasks require the development OpenSync
+		libraries)</li>
 	<li> use the Blackberry as a modem</li>
 	<li> install and manage Java applications from the command line </li>
 	<li> take screenshots of your device </li>
 	<li> set the device time from the command line </li>
+	<li> use raw channel support to communicate with BlackBerry
+		applications </li>
 	<li> ... and more </li>
 </ul>
 </p>
@@ -45,7 +68,7 @@ reverse engineer the battery charging handshake via USB.</p>
 
 <p>
 <ul>
-	<li>Latest release: <b>0.16</b>, released on 2009/10/01</li>
+	<li>Latest release: <b>0.17</b>, released on 2011/01/27</li>
 	<li>License: GPL v2 or later</li>
 	<li>Download official source and binary packages from
 		<a href="http://sourceforge.net/project/showfiles.php?group_id=153722">Sourceforge</a></li>
@@ -65,7 +88,6 @@ reverse engineer the battery charging handshake via USB.</p>
 			protocol, which Barry does not yet support.</li>
 		<li>Restoring backups for some databases on newer Blackberries doesn't work (for example, on the 8120, 8700g)</li>
 		<li>Syncing is not supported on Fedora Core 9 or 10, since they packaged the OpenSync 0.3x devel tree (experimental support for the latest opensync SVN tree is included with a new plugin).  This has been fixed in Fedora 11, as they returned to version 0.22.</li>
-		<li>Accessing the database (such as during a backup) while copying files using the usb_storage kernel module may cause some Blackberries to spontaneously reboot</li>
 	</ul>
 	</li>
 </ul>
@@ -153,12 +175,14 @@ may be out of date, but they may still be helpful to new users.</P>
 
 <p>
 <ul>
-	<li><a href="http://www.chipbennett.net/wordpress/index.php/2008/05/synchronizing-a-blackberry-in-linux/">Synchronizing a Blackberry In Linux</a>, by Chip Bennett (2008/05/31)</li>
-	<li><a href="http://www.linux.com/feature/123251">Syncing your Blackberry on Linux</a>, by Joe Barr (2007/12/21)</li>
-</ul>
-<ul>
 	<li><a href="http://www.progweb.com/modules/blackberry/index-en.html">How to use a Blackberry device with Linux</a>, by Nicolas Vivien (2009/03/06), and <a href="http://www.progweb.com/en/">his development blog</a></li>
 	<li><a href="http://www.slashdev.ca/2008/04/03/blackberry-development-using-linux/">Blackberry development using Linux</a>, by Josh Kropf (2008/04/03)</li>
+</ul>
+
+<ul>
+	<li><a href="http://www.linuxjournal.com/article/10176">The BlackBerry In a World Without Windows</a>, by Carl Fink (2008/12/01)</li>
+	<li><a href="http://www.chipbennett.net/wordpress/index.php/2008/05/synchronizing-a-blackberry-in-linux/">Synchronizing a Blackberry In Linux</a>, by Chip Bennett (2008/05/31)</li>
+	<li><a href="http://www.linux.com/feature/123251">Syncing your Blackberry on Linux</a>, by Joe Barr (2007/12/21)</li>
 </ul>
 
 <ul>

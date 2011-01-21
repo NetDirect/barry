@@ -13,8 +13,8 @@ Pearl-like devices.</p>
 <p>In order to achieve proper charging, udev is setup to run the bcharge
 program every time you plug in your Blackberry.</p>
 
-<p>Recent kernels have a module called berry_charge, which does similar
-things from the kernel level.  These two methods can conflict if both
+<p>Kernels older than 2.6.34 have a module called berry_charge, which does
+similar things from the kernel level.  These two methods can conflict if both
 run at the same time.</p>
 
 <p>Due to this conflict, the binary packages are setup to install
@@ -30,8 +30,7 @@ blacklist file that comes with the source tarball.</p>
 <? createSubHeader("Power and the Kernel"); ?>
 
 <p>Recent kernels also have the ability to put the USB bus and its devices
-into suspend mode.  Kernels included in Ubuntu 7.04 and
-Fedora 7 have this turned on by default.</p>
+into suspend mode.  Distros often have this turned on by default.</p>
 
 <p>When bcharge runs, it successfully changes the Blackberry to use 500mA
 (its normal power level for charging), but then the kernel puts the device
@@ -74,9 +73,7 @@ have permissions to write to the USB device files setup by the kernel.</p>
 		ConsoleKit package.  This changes ownership of pluggable
 		devices to the user currently logged into the console,
 		on the theory that anyone at the console should have
-		control of the devices he plugs in.  No special
-		support is needed by Barry if you have this package
-		installed.</li>
+		control of the devices he plugs in. </li>
 </ul>
 
 
