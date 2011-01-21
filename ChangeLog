@@ -7,6 +7,8 @@ Release: version 0.17.0 - 2011/01/??
 		Some events have an ALARM as well, which makes 3 BEGIN
 		levels, which broke the parsing that assumed only 2.
 	- lib: added date-only parsing to TzWrapper
+	- lib: added all-day event support to MIME vEvents
+		This allows all-day event syncing as well, in both plugins.
 2011/01/18
 	- ppp: applied Jason Thomas's ppp chatscripts for Optus and Vodafone AU
 2011/01/18

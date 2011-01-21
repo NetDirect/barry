@@ -450,6 +450,17 @@ const std::string& vCalendar::ToVCal(const Barry::Calendar &cal)
 	string end(m_vtc.unix2vtime(&cal.EndTime));
 	string notify(m_vtc.unix2vtime(&cal.NotificationTime));
 
+	// if an all day event, only print the date parts of the string
+	if( cal.AllDayEvent && start.find('T') != string::npos ) {
+		// truncate start date
+		start = start.substr(0, start.find('T'));
+
+		// create end date 1 day in future
+		time_t end_t = cal.StartTime + 24 * 60 * 60;
+		end = m_vtc.unix2vtime(&end_t);
+		end = end.substr(0, end.find('T'));
+	}
+
 	AddAttr(NewAttr("DTSTART", start.c_str()));
 	AddAttr(NewAttr("DTEND", end.c_str()));
 	// FIXME - add a truly globally unique "UID" string?
@@ -558,6 +569,15 @@ const Barry::Calendar& vCalendar::ToBarry(const char *vcal, uint32_t RecordId)
 	}
 	else {
 		rec.EndTime = m_vtc.vtime2unix(end.c_str());
+	}
+
+	// check for "all day event" which is specified by a DTSTART
+	// and a DTEND with no times, and one day apart
+	if( start.find('T') == string::npos && end.size() &&
+	    end.find('T') == string::npos &&
+	    (rec.EndTime - rec.StartTime) == 24 * 60 * 60 )
+	{
+		rec.AllDayEvent = true;
 	}
 
 	rec.Subject = subject;
