@@ -24,6 +24,7 @@
 #include "data.h"
 #include "protocol.h"
 #include "debug.h"
+#include <algorithm>
 
 using namespace std;
 using namespace Barry::Protocol;
@@ -128,6 +129,19 @@ void DatabaseDatabase::Parse(const Data &data)
 void DatabaseDatabase::Clear()
 {
 	Databases.clear();
+}
+
+namespace {
+	bool NameSort(const DatabaseDatabase::Database &one,
+		const DatabaseDatabase::Database &two)
+	{
+		return one.Name < two.Name;
+	}
+}
+
+void DatabaseDatabase::SortByName()
+{
+	std::sort(Databases.begin(), Databases.end(), NameSort);
 }
 
 bool DatabaseDatabase::GetDBNumber(const std::string &name,

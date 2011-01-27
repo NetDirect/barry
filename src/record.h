@@ -172,6 +172,8 @@ public:
 	void Parse(const Data &data);
 	void Clear();
 
+	void SortByName();
+
 	// returns true on success, and fills target
 	bool GetDBNumber(const std::string &name, unsigned int &number) const;
 	bool GetDBName(unsigned int number, std::string &name) const;
