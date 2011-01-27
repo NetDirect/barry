@@ -13,6 +13,7 @@ apt-get install \
 	libglibmm-2.4-dev \
 	libglademm-2.4-dev \
 	libfuse-dev \
+	libxml++2.6-dev \
 	zlib1g-dev \
 	gettext \
 	ccache \
