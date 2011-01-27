@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.61)
-AC_INIT([barry], [0.17], [barry-devel@lists.sourceforge.net])
+AC_INIT([barry], [0.17.0], [barry-devel@lists.sourceforge.net])
 #AM_CONFIG_HEADER(config.h)
 AC_CONFIG_SRCDIR([src/barry.h])
 AC_CONFIG_HEADERS([config.h:config.h.in])
@@ -12,6 +12,7 @@ AM_INIT_AUTOMAKE([dist-bzip2])
 AC_USE_SYSTEM_EXTENSIONS
 
 AM_GNU_GETTEXT([external])
+# this is the verion of gettext, not barry
 AM_GNU_GETTEXT_VERSION([0.17])
 
 #
