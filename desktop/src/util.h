@@ -23,14 +23,48 @@
 #define __BARRYDESKTOP_UTIL_H__
 
 #include <wx/wx.h>
+#include <barry/barry.h>
 
 #define BUTTON_STATE_NORMAL	0
 #define BUTTON_STATE_FOCUS	1
 #define BUTTON_STATE_PUSHED	2
 
+template <class IteratorT, class StrFn>
+int GetMaxWidth(wxWindow *win, IteratorT begin, IteratorT end, StrFn sfn)
+{
+	int max_width = 0;
+	for( ; begin != end(); ++begin ) {
+		int this_width = 0;
+		int this_height = 0;
+		win->GetTextExtent(wxString(sfn(*begin).c_str(), wxConvUTF8),
+			&this_width, &this_height);
+
+		max_width = std::max(max_width, this_width);
+	}
+
+	return max_width;
+}
+
 std::string GetBaseFilename(const std::string &filename);
 wxString GetImageFilename(const wxString &filename);
 wxString GetButtonFilename(int id, int state);
+
+bool IsParsable(const std::string &dbname);
+
+// Determine buildable classes via template specialization
+template <class RecordT>
+inline bool IsBuildable()
+{
+	return false;
+}
+#undef HANDLE_BUILDER
+#define HANDLE_BUILDER(dbname) \
+	template <> \
+	inline bool IsBuildable<Barry::dbname>() \
+	{ \
+		return true; \
+	}
+ALL_KNOWN_BUILDER_TYPES
 
 #endif
 

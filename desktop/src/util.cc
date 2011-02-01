@@ -91,3 +91,14 @@ wxString GetButtonFilename(int id, int state)
 		);
 }
 
+bool IsParsable(const std::string &dbname)
+{
+#undef HANDLE_PARSER
+#define HANDLE_PARSER(dbn) \
+	if( dbname == Barry::dbn::GetDBName() ) return true;
+
+	ALL_KNOWN_PARSER_TYPES
+
+	return false;
+}
+
