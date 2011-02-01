@@ -48,6 +48,7 @@ int GetMaxWidth(wxWindow *win, IteratorT begin, IteratorT end, StrFn sfn)
 std::string GetBaseFilename(const std::string &filename);
 wxString GetImageFilename(const wxString &filename);
 wxString GetButtonFilename(int id, int state);
+bool IsButtonEnabled(int id);
 
 bool IsParsable(const std::string &dbname);
 

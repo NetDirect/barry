@@ -49,7 +49,8 @@ BaseButtons::BaseButtons(wxWindow *parent)
 
 		PNGButton *button = new PNGButton(parent, i,
 			col * m_buttonWidth,
-			row * m_buttonHeight + y_offset);
+			row * m_buttonHeight + y_offset,
+			IsButtonEnabled(i));
 
 		m_buttons.push_back(button);
 	}

@@ -25,12 +25,13 @@
 //////////////////////////////////////////////////////////////////////////////
 // PNGButton
 
-PNGButton::PNGButton(wxWindow *parent, int ID, int x, int y)
+PNGButton::PNGButton(wxWindow *parent, int ID, int x, int y, bool enabled)
 	: m_parent(parent)
 	, m_id(ID)
 	, m_x(x)
 	, m_y(y)
 	, m_state(0)
+	, m_enabled(enabled)
 {
 	// normal[0]
 	m_bitmaps[BUTTON_STATE_NORMAL] = LoadButtonBitmap(BUTTON_STATE_NORMAL);
@@ -74,24 +75,36 @@ void PNGButton::Draw(wxDC &dc)
 
 void PNGButton::Normal(wxDC &dc)
 {
+	if( !m_enabled )
+		return;
+
 	m_state = BUTTON_STATE_NORMAL;
 	Draw(dc);
 }
 
 void PNGButton::Focus(wxDC &dc)
 {
+	if( !m_enabled )
+		return;
+
 	m_state = BUTTON_STATE_FOCUS;
 	Draw(dc);
 }
 
 void PNGButton::Push(wxDC &dc)
 {
+	if( !m_enabled )
+		return;
+
 	m_state = BUTTON_STATE_PUSHED;
 	Draw(dc);
 }
 
 void PNGButton::Click(wxDC &dc)
 {
+	if( !m_enabled )
+		return;
+
 	if( IsPushed() ) {
 		// return to normal
 		m_state = BUTTON_STATE_NORMAL;

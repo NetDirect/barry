@@ -33,12 +33,13 @@ class PNGButton
 	int m_id;
 	int m_x, m_y;
 	int m_state;	// index into m_bitmaps
+	bool m_enabled;
 
 protected:
 	wxBitmap LoadButtonBitmap(int state);
 
 public:
-	PNGButton(wxWindow *parent, int ID, int x, int y);
+	PNGButton(wxWindow *parent, int ID, int x, int y, bool enabled = true);
 
 	bool IsPushed() const { return m_state == BUTTON_STATE_PUSHED; }
 

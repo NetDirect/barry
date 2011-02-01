@@ -35,6 +35,18 @@ const wxChar *ButtonNames[] = {
 	0
 	};
 
+bool ButtonEnabled[] = {
+	true,	// backuprestore
+	true,	// sync
+	false,	// modem
+	false,	// apploader
+	false,	// deviceswitch
+	true,	// browsedatabases
+	false,	// media
+	false,	// misc
+	false
+	};
+
 const wxChar *StateNames[] = {
 	_T("-normal.png"),
 	_T("-focus.png"),
@@ -89,6 +101,11 @@ wxString GetButtonFilename(int id, int state)
 		wxString(ButtonNames[id - MainMenu_FirstButton]) + 
 		StateNames[state]
 		);
+}
+
+bool IsButtonEnabled(int id)
+{
+	return ButtonEnabled[id - MainMenu_FirstButton];
 }
 
 bool IsParsable(const std::string &dbname)
