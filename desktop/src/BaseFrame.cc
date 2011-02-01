@@ -360,9 +360,10 @@ void BaseFrame::OnSync(wxCommandEvent &event)
 	EnableBackButton(m_sync_mode.get());
 }
 
-#include "ConflictDlg.h"
+//#include "ConflictDlg.h"
 void BaseFrame::OnModem(wxCommandEvent &event)
 {
+/*
 	OpenSync::SyncChange change;
 	change.id = 1;
 	change.member_id = 1;
@@ -495,10 +496,12 @@ void BaseFrame::OnModem(wxCommandEvent &event)
 		msg += always.m_always ? _T("always") : _T("not always");
 		wxMessageBox(msg);
 	}
+*/
 }
 
 void BaseFrame::OnAppLoader(wxCommandEvent &event)
 {
+/*
 	OpenSync::SyncChange change;
 	change.id = 1;
 	change.member_id = 1;
@@ -634,6 +637,7 @@ void BaseFrame::OnAppLoader(wxCommandEvent &event)
 		msg += always.m_always ? _T("always") : _T("not always");
 		wxMessageBox(msg);
 	}
+*/
 }
 
 void BaseFrame::OnDeviceSwitch(wxCommandEvent &event)
