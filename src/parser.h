@@ -398,12 +398,18 @@ class BXEXPORT MultiRecordParser : public Parser
 {
 	typedef std::map<std::string, Parser*>			map_type;
 
-	Parser *m_default;
+	Parser *m_delete_default;	// if set, will be freed
+	Parser *m_default;		// used by all code for actual work
+					// and may or may not be "owned" by us
 	map_type m_parsers;
 
 public:
 	// takes ownership of default_parser!
 	explicit MultiRecordParser(Parser *default_parser = 0);
+
+	// does not take ownership of the default_parser
+	explicit MultiRecordParser(Parser &default_parser);
+
 	~MultiRecordParser();
 
 	/// Adds given parser to list and takes ownership of it
@@ -497,11 +503,20 @@ class BXEXPORT AllRecordParser : public MultiRecordParser
 {
 	AllRecordStore *m_store;
 
+protected:
+	// does not take ownership of store, by itself,
+	// but the constructor that calls it might
+	void AddRecords(std::ostream *os, AllRecordStore *store);
+
 public:
 	// takes ownership of default_parser and store!
 	explicit AllRecordParser(std::ostream &os,
 		Parser *default_parser = 0,
 		AllRecordStore *store = 0);
+
+	// does not take ownership of default_parser or store
+	AllRecordParser(Parser &default_parser, AllRecordStore &store);
+
 	~AllRecordParser();
 };
 

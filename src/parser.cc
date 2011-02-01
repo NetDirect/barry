@@ -72,7 +72,15 @@ void HexDumpParser::ParseRecord(const Barry::DBData &data,
 
 // takes ownership of default_parser!
 MultiRecordParser::MultiRecordParser(Parser *default_parser)
-	: m_default(default_parser)
+	: m_delete_default(default_parser) // takes ownership
+	, m_default(default_parser)
+{
+}
+
+// does not take ownership of the default_parser
+MultiRecordParser::MultiRecordParser(Parser &default_parser)
+	: m_delete_default(0)	// no ownership of reference
+	, m_default(&default_parser)
 {
 }
 
@@ -84,7 +92,7 @@ MultiRecordParser::~MultiRecordParser()
 	}
 
 	// and the default parser
-	delete m_default;
+	delete m_delete_default;
 }
 
 void MultiRecordParser::Add(const std::string &dbname, Parser *parser)
@@ -187,17 +195,37 @@ AllRecordParser::AllRecordParser(std::ostream &os,
 				Parser *default_parser,
 				AllRecordStore *store)
 	: MultiRecordParser(default_parser)
-	, m_store(store)
+	, m_store(store)	// takes ownership here
 {
-#undef HANDLE_PARSER
-#define HANDLE_PARSER(tname) if( m_store ) { Add( new RecordParser<tname, AllRecordStore>(*m_store)); } else { Add(tname::GetDBName(), os); }
+	AddRecords(&os, store);
+}
 
-	ALL_KNOWN_PARSER_TYPES;
+// does not take ownership of default_parser or store
+AllRecordParser::AllRecordParser(Parser &default_parser, AllRecordStore &store)
+	: MultiRecordParser(default_parser)
+	, m_store(0)
+{
+	AddRecords(0, &store);
 }
 
 AllRecordParser::~AllRecordParser()
 {
 	delete m_store;
+}
+
+void AllRecordParser::AddRecords(std::ostream *os, AllRecordStore *store)
+{
+	// Does not allow RecordParser<> to own store, since we're using
+	// it multiple times as the same store for each record type.
+#undef HANDLE_PARSER
+#define HANDLE_PARSER(tname) \
+	if( store ) { \
+		Add( new RecordParser<tname, AllRecordStore>(*store)); \
+	} else if( os ) { \
+		Add(tname::GetDBName(), *os); \
+	}
+
+	ALL_KNOWN_PARSER_TYPES;
 }
 
 
