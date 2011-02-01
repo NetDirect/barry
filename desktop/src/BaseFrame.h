@@ -32,6 +32,7 @@
 
 class MainMenuMode;
 class SyncMode;
+class BrowseMode;
 class ClickableImage;
 class Mode;
 
@@ -45,6 +46,7 @@ private:
 	std::auto_ptr<MainMenuMode> m_main_menu_mode;// only this mode is
 							// never reset()
 	std::auto_ptr<SyncMode> m_sync_mode;
+	std::auto_ptr<BrowseMode> m_browse_mode;
 	std::auto_ptr<ClickableImage> m_barry_logo, m_netdirect_logo;
 	std::auto_ptr<wxMenu> m_sysmenu;
 	std::auto_ptr<wxComboBox> m_device_combo;

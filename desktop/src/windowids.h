@@ -61,6 +61,14 @@ enum {
 	SyncMode_1WayResetButton,
 	SyncMode_DeviceList,
 
+	// BrowseMode IDs
+	BrowseMode_DBDBList,
+	BrowseMode_RecordList,
+	BrowseMode_ShowAllCheckbox,
+	BrowseMode_AddRecordButton,
+	BrowseMode_EditRecordButton,
+	BrowseMode_DeleteRecordButton,
+
 	// Dialog IDs
 	Dialog_GroupCfg,
 	Dialog_GroupCfg_EngineCombo,

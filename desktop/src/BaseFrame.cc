@@ -22,6 +22,7 @@
 #include "BaseFrame.h"
 #include "Mode_MainMenu.h"
 #include "Mode_Sync.h"
+#include "Mode_Browse.h"
 #include "ClickImage.h"
 #include "barrydesktop.h"
 #include "windowids.h"
@@ -231,6 +232,7 @@ void BaseFrame::DisableBackButton()
 
 	// delete all modes
 	m_sync_mode.reset();
+	m_browse_mode.reset();
 
 	// create the device switcher combo again
 	CreateDeviceCombo(wxGetApp().GetGlobalConfig().GetLastDevice());
@@ -640,6 +642,32 @@ void BaseFrame::OnDeviceSwitch(wxCommandEvent &event)
 
 void BaseFrame::OnBrowseDatabases(wxCommandEvent &event)
 {
+	int i = Barry::Probe::Find(wxGetApp().GetResults(), GetCurrentComboPin());
+	if( i == -1 ) {
+		wxMessageBox(_T("There is no device selected in the device list.  Please select a device to browse."),
+			_T("Database Browser Mode"), wxOK | wxICON_ERROR);
+		return;
+	}
+
+	try {
+		m_browse_mode.reset( new BrowseMode(this,
+				wxGetApp().GetResults()[i]) );
+	}
+	catch( std::exception &e ) {
+		wxString msg(_T(
+			"An error occurred that prevented the loading of Database\n"
+			"Browse mode.  This could be due to a low level USB\n"
+			"issue.  Please make sure your device is plugged in\n"
+			"and not in Desktop Mode.  If it is, try replugging\n"
+			"the device, and rescanning the USB bus from the menu.\n"
+			"\n"
+			"Error: "));
+		msg += wxString(e.what(), wxConvUTF8);
+		wxMessageBox(msg, _T("Database Browser Mode"), wxOK | wxICON_ERROR);
+		return;
+	}
+
+	EnableBackButton(m_browse_mode.get());
 }
 
 void BaseFrame::OnMediaManagement(wxCommandEvent &event)
