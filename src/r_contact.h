@@ -155,9 +155,10 @@ public:
 	void BuildHeader(Data &data, size_t &offset) const;
 	void BuildFields(Data &data, size_t &offset, const IConverter *ic = 0) const;
 
+	// operations (common among record classes)
 	void Clear();			// erase everything
-
 	void Dump(std::ostream &os) const;
+	std::string GetDescription() const;
 
 	// Sorting - use enough data to make the sorting as
 	//           consistent as possible

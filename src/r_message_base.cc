@@ -323,6 +323,12 @@ void MessageBase::Clear()
 	Unknowns.clear();
 }
 
+std::string MessageBase::GetDescription() const
+{
+	// FIXME - ponder a better description...
+	return Subject;
+}
+
 std::string MessageBase::SimpleFromAddress() const
 {
 	if( From.size() ) {

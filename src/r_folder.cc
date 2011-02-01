@@ -27,7 +27,8 @@
 #include "time.h"
 #include "debug.h"
 #include "iconv.h"
-#include <ostream>
+#include <iostream>
+#include <sstream>
 #include <iomanip>
 
 using namespace std;
@@ -174,6 +175,13 @@ void Folder::Clear()
 	Type = FolderSubtree;
 
 	Unknowns.clear();
+}
+
+std::string Folder::GetDescription() const
+{
+	ostringstream oss;
+	oss << Name << " (" << Level << ")";
+	return oss.str();
 }
 
 void Folder::Dump(std::ostream &os) const

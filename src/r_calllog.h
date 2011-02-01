@@ -115,9 +115,10 @@ public:
 	void ParseHeader(const Data &data, size_t &offset);
 	void ParseFields(const Data &data, size_t &offset, const IConverter *ic = 0);
 
+	// operations (common among record classes)
 	void Clear();
-
 	void Dump(std::ostream &os) const;
+	std::string GetDescription() const;
 
 	// Sorting
 	bool operator<(const CallLog &other) const { return Timestamp < other.Timestamp; }

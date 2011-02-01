@@ -206,6 +206,11 @@ void ContentStore::Clear()
 	FileSize = 0;
 }
 
+std::string ContentStore::GetDescription() const
+{
+	return Filename;
+}
+
 void ContentStore::Dump(std::ostream &os) const
 {
 	ios::fmtflags oldflags = os.setf(ios::left);

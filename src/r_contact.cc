@@ -444,6 +444,11 @@ void Contact::Clear()
 	m_FirstNameSeen = false;
 }
 
+std::string Contact::GetDescription() const
+{
+	return GetFullName();
+}
+
 //
 // GetFullName
 //

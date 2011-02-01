@@ -367,5 +367,10 @@ void Bookmark::Clear()
 	Unknowns.clear();
 }
 
+std::string Bookmark::GetDescription() const
+{
+	return Name;
+}
+
 } // namespace Barry
 

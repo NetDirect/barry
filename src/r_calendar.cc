@@ -402,6 +402,11 @@ void Calendar::Clear()
 	Unknowns.clear();
 }
 
+std::string Calendar::GetDescription() const
+{
+	return Subject;
+}
+
 void Calendar::DumpSpecialFields(std::ostream &os) const
 {
 	static const char *ClassTypes[] = { "Public", "Confidential", "Private" };

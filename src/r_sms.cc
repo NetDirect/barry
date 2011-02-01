@@ -245,6 +245,14 @@ void Sms::Clear()
 	Unknowns.clear();
 }
 
+std::string Sms::GetDescription() const
+{
+	if( Addresses.size() )
+		return Addresses[0];
+	else
+		return "Unknown destination";
+}
+
 void Sms::Dump(std::ostream &os) const
 {
 

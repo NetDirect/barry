@@ -320,5 +320,10 @@ void CallLog::Clear()
 	Unknowns.clear();
 }
 
+std::string CallLog::GetDescription() const
+{
+	return ContactName;
+}
+
 } // namespace Barry
 

@@ -243,6 +243,10 @@ void Memo::Clear()
 	Unknowns.clear();
 }
 
+std::string Memo::GetDescription() const
+{
+	return Title;
+}
 
 } // namespace Barry
 

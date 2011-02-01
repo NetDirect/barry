@@ -27,7 +27,8 @@
 #include "time.h"
 #include "iconv.h"
 #include "debug.h"
-#include <ostream>
+#include <iostream>
+#include <sstream>
 #include <iomanip>
 
 using namespace std;
@@ -178,6 +179,15 @@ void Timezone::Clear()
 	TimeZoneName.clear();
 
 	Unknowns.clear();
+}
+
+std::string Timezone::GetDescription() const
+{
+	ostringstream oss;
+	oss << TimeZoneName << " ("
+	    << (Left ? "-" : "+") << dec << Offset << "." << OffsetFraction
+	    << ")";
+	return oss.str();
 }
 
 void Timezone::Dump(std::ostream &os) const

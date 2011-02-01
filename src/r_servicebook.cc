@@ -417,6 +417,11 @@ void ServiceBook::Clear()
 	Config.Clear();
 }
 
+std::string ServiceBook::GetDescription() const
+{
+	return Name;
+}
+
 inline void FormatStr(std::ostream &os, const char *name, const std::string &str)
 {
 	if( str.size() ) {

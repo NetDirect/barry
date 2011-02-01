@@ -345,6 +345,11 @@ void Task::Clear()
 	Unknowns.clear();
 }
 
+std::string Task::GetDescription() const
+{
+	return Summary;
+}
+
 void Task::Dump(std::ostream &os) const
 {
 	static const char *PriorityName[] = { "High", "Normal", "Low" };
