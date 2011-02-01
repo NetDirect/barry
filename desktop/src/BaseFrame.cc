@@ -264,7 +264,7 @@ void BaseFrame::OnPaint(wxPaintEvent &event)
 	m_barry_logo->Draw(dc);
 
 	// paint the header: NetDirect logo
-	m_netdirect_logo->Draw(dc);
+//	m_netdirect_logo->Draw(dc);
 
 	// paint the header: text
 	auto_ptr<wxFont> font( wxFont::New(14,
@@ -292,7 +292,7 @@ void BaseFrame::OnMouseMotion(wxMouseEvent &event)
 {
 	wxClientDC dc(this);
 	m_barry_logo->HandleMotion(dc, event.m_x, event.m_y);
-	m_netdirect_logo->HandleMotion(dc, event.m_x, event.m_y);
+//	m_netdirect_logo->HandleMotion(dc, event.m_x, event.m_y);
 
 	// the mode
 	if( m_current_mode )
@@ -303,7 +303,7 @@ void BaseFrame::OnLeftDown(wxMouseEvent &event)
 {
 	wxClientDC dc(this);
 	m_barry_logo->HandleDown(dc, event.m_x, event.m_y);
-	m_netdirect_logo->HandleDown(dc, event.m_x, event.m_y);
+//	m_netdirect_logo->HandleDown(dc, event.m_x, event.m_y);
 	event.Skip();
 
 	// the mode
@@ -315,7 +315,7 @@ void BaseFrame::OnLeftUp(wxMouseEvent &event)
 {
 	wxClientDC dc(this);
 	m_barry_logo->HandleUp(dc, event.m_x, event.m_y);
-	m_netdirect_logo->HandleUp(dc, event.m_x, event.m_y);
+//	m_netdirect_logo->HandleUp(dc, event.m_x, event.m_y);
 
 	// the mode
 	if( m_current_mode )
