@@ -213,6 +213,24 @@ public:
 };
 
 //
+// ParseDBData
+//
+/// Contains the proper way to convert a DBData object into a record.
+///
+template <class RecordT>
+void ParseDBData(const DBData &data, RecordT &rec, const IConverter *ic)
+{
+	// start fresh
+	rec = RecordT();
+
+	// parse
+	rec.SetIds(data.GetRecType(), data.GetUniqueId());
+	size_t offset = data.GetOffset();
+	rec.ParseHeader(data.GetData(), offset);
+	rec.ParseFields(data.GetData(), offset, ic);
+}
+
+//
 // RecordParser template class
 //
 /// Template class for easy creation of specific parser objects.  This template
@@ -291,13 +309,8 @@ public:
 
 	virtual void ParseRecord(const DBData &data, const IConverter *ic)
 	{
-		m_rec = RecordT();
 		m_record_valid = false;
-
-		m_rec.SetIds(data.GetRecType(), data.GetUniqueId());
-		size_t offset = data.GetOffset();
-		m_rec.ParseHeader(data.GetData(), offset);
-		m_rec.ParseFields(data.GetData(), offset, ic);
+		ParseDBData(data, m_rec, ic);
 		m_record_valid = true;
 
 		if( m_store )
