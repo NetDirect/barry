@@ -66,7 +66,7 @@ void BarryDesktopApp::Probe()
 		m_results = probe.GetResults();
 	}
 	catch( Usb::Error &e ) {
-		wxString msg = _T("A serious error occurred while probing the USB subsystem for BlackBerry devices: ");
+		wxString msg = _T("A serious error occurred while probing the USB subsystem for BlackBerry(R) devices: ");
 		msg += wxString(e.what(), wxConvUTF8);
 		wxMessageBox(msg, _T("USB Error"), wxOK | wxICON_ERROR);
 	}

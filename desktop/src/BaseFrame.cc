@@ -350,7 +350,7 @@ void BaseFrame::OnSync(wxCommandEvent &event)
 			"mode.  This is most likely because a critical piece\n"
 			"of OpenSync is missing.  Check that all required\n"
 			"plugins are installed, and that tools like 'bidentify'\n"
-			"can find your BlackBerry successfully.\n\n"
+			"can find your BlackBerry(R) successfully.\n\n"
 			"Error: "));
 		msg += wxString(e.what(), wxConvUTF8);
 		wxMessageBox(msg, _T("Sync Mode"), wxOK | wxICON_ERROR);
@@ -802,8 +802,8 @@ void BaseFrame::OnAbout(wxCommandEvent &event)
 	wxAboutDialogInfo info;
 	info.SetName(_T("Barry Desktop Control Panel"));
 	info.SetVersion(_T("0.17"));
-	info.SetDescription(_T("A Free Software graphical user interface for working with the BlackBerry(TM) handheld."));
-	info.SetCopyright(_T("Copyright (C) 2009-2011, Net Direct Inc."));
+	info.SetDescription(_T("A Free Software graphical user interface for working with the BlackBerry® smartphone."));
+	info.SetCopyright(_T("Copyright © 2009-2011, Net Direct Inc."));
 	info.SetWebSite(_T("http://netdirect.ca/barry"));
 	info.SetLicense(_T(
 "    This program is free software; you can redistribute it and/or modify\n"
