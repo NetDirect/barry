@@ -90,33 +90,38 @@ public:
 
 private:
 	IndexType m_state_index;
+	uint32_t m_record_id;
 
 public:
-	explicit DataCache(IndexType state_index)
+	DataCache(IndexType state_index, uint32_t record_id)
 		: m_state_index(state_index)
+		, m_record_id(record_id)
 	{
 	}
 
 	virtual ~DataCache() {}
 
-	IndexType GetStateIndex() const { return m_state_index; }
+	virtual IndexType GetStateIndex() const { return m_state_index; }
+	virtual uint32_t GetRecordId() const { return m_record_id; }
+	virtual void SetIds(IndexType state_index, uint32_t record_id)
+	{
+		std::cout << "DataCache::SetIds(" << state_index << ", " << record_id << ");" << std::endl;
+		m_state_index = state_index;
+		m_record_id = record_id;
+	}
 
 	// set editable to false if you just want to view record
 	// non-buildable records will always be non-editable regardless
-	virtual void Edit(wxWindow *parent, bool editable) = 0;
+	virtual bool Edit(wxWindow *parent, bool editable) = 0;
 	virtual std::string GetDescription() const = 0;
 
 	virtual bool IsBuildable() const { return false; }
-	virtual void Build(Barry::DBData &data, size_t offset,
-		const Barry::IConverter *ic) const
-	{
-		// not buildable
-	}
 
 	bool operator< (const DataCache &other)
 	{
 		return GetDescription() < other.GetDescription();
 	}
+
 };
 
 typedef std::tr1::shared_ptr<DataCache> DataCachePtr;
@@ -128,7 +133,7 @@ class DBDataCache : public DataCache
 public:
 	DBDataCache(DataCache::IndexType index, const Barry::DBData &raw);
 
-	virtual void Edit(wxWindow *parent, bool editable);
+	virtual bool Edit(wxWindow *parent, bool editable);
 	virtual std::string GetDescription() const;
 };
 
@@ -139,25 +144,42 @@ public:
 ALL_KNOWN_PARSER_TYPES
 
 template <class RecordT>
-class RecordCache : public DataCache
+class RecordCache
+	: public DataCache
+	, public Barry::Builder
 {
 private:
 	RecordT m_rec;
 
 public:
 	RecordCache(DataCache::IndexType index, const RecordT &rec)
-		: DataCache(index)
+		: DataCache(index, rec.GetUniqueId())
 		, m_rec(rec)
 	{
+		// if copying from another record, don't copy what
+		// we don't understand
+		m_rec.Unknowns.clear();
 	}
 
-	virtual void Edit(wxWindow *parent, bool editable)
+	const RecordT& GetRecord() const { return m_rec; }
+
+	// hook SetIds() to grab any new record_ids / UniqueIDs
+	virtual void SetIds(IndexType state_index, uint32_t record_id)
+	{
+		std::cout << "RecordCache::SetIds(" << state_index << ", " << record_id << ");" << std::endl;
+		DataCache::SetIds(state_index, record_id);
+		m_rec.SetIds(RecordT::GetDefaultRecType(), record_id);
+	}
+
+	virtual bool Edit(wxWindow *parent, bool editable)
 	{
 		RecordT copy = m_rec;
 		bool changed = EditRecord(parent, editable, copy);
 		if( changed && editable ) {
 			m_rec = copy;
+			return true;
 		}
+		return false;
 	}
 
 	virtual std::string GetDescription() const
@@ -170,11 +192,27 @@ public:
 		return ::IsBuildable<RecordT>();
 	}
 
-	virtual void Build(Barry::DBData &data, size_t offset,
+	//
+	// Barry::Builder overrides
+	//
+	virtual bool BuildRecord(Barry::DBData &data, size_t &offset,
 		const Barry::IConverter *ic)
 	{
-// FIXME
-//		Barry::SetDBData(m_rec, data, 0, ic);
+		Barry::SetDBData<RecordT>(m_rec, data, offset, ic);
+		return true;
+	}
+
+	virtual bool FetchRecord(Barry::DBData &data,
+		const Barry::IConverter *ic)
+	{
+		size_t offset = 0;
+		Barry::SetDBData<RecordT>(m_rec, data, offset, ic);
+		return true;
+	}
+
+	virtual bool EndOfFile() const
+	{
+		return true;
 	}
 };
 
@@ -203,12 +241,20 @@ public:
 
 	const std::string& GetDBName() { return m_dbname; }
 
-//	virtual void Add(wxWindow *parent);
-//	virtual void Edit(wxWindow *parent, int list_offset);
-//	virtual void Delete(wxWindow *parent, int list_offset);
+	iterator Get(int list_offset);
+	const_iterator Get(int list_offset) const;
+	// returns the numeric index of the record, to keep with GUI
+	int GetIndex(iterator record) const;
+	int GetIndex(const_iterator record) const;
 
-	DataList::const_iterator begin() const { return m_records.begin(); }
-	DataList::const_iterator end() const { return m_records.end(); }
+	iterator Add(wxWindow *parent, iterator copy_record);
+	bool Edit(wxWindow *parent, iterator record);
+	bool Delete(wxWindow *parent, iterator record);
+
+	iterator begin() { return m_records.begin(); }
+	iterator end() { return m_records.end(); }
+	const_iterator begin() const { return m_records.begin(); }
+	const_iterator end() const { return m_records.end(); }
 
 	// For Barry::AllRecordStore
 #undef HANDLE_PARSER
@@ -235,6 +281,7 @@ private:
 public:
 	DBMap(ThreadableDesktop &tdesktop);
 
+	DBCachePtr LoadDBCache(const std::string &dbname);
 	DBCachePtr GetDBCache(const std::string &dbname);
 };
 
@@ -260,6 +307,7 @@ private:
 	std::auto_ptr<wxListCtrl> m_record_list;
 	std::auto_ptr<wxCheckBox> m_show_all_checkbox;
 	std::auto_ptr<wxButton> m_add_record_button;
+	std::auto_ptr<wxButton> m_copy_record_button;
 	std::auto_ptr<wxButton> m_edit_record_button;
 	std::auto_ptr<wxButton> m_delete_record_button;
 
@@ -271,6 +319,8 @@ private:
 					// a Builder available for it
 	bool m_show_all;		// if true, show all databases in list
 					// instead of just the parsable ones
+	std::string m_current_dbname;
+	long m_current_record_item;
 
 	// thread state
 	pthread_t m_cache_thread;
@@ -296,8 +346,11 @@ public:
 
 	// window events
 	void OnDBDBListSelChange(wxListEvent &event);
+	void OnRecordListSelChange(wxListEvent &event);
+	void OnRecordListActivated(wxListEvent &event);
 	void OnShowAll(wxCommandEvent &event);
 	void OnAddRecord(wxCommandEvent &event);
+	void OnCopyRecord(wxCommandEvent &event);
 	void OnEditRecord(wxCommandEvent &event);
 	void OnDeleteRecord(wxCommandEvent &event);
 };

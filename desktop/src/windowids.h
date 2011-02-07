@@ -66,6 +66,7 @@ enum {
 	BrowseMode_RecordList,
 	BrowseMode_ShowAllCheckbox,
 	BrowseMode_AddRecordButton,
+	BrowseMode_CopyRecordButton,
 	BrowseMode_EditRecordButton,
 	BrowseMode_DeleteRecordButton,
 

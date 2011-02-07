@@ -21,7 +21,9 @@
 
 #include "Mode_Browse.h"
 #include "BaseFrame.h"
+#include "ContactEditDlg.h"
 #include "windowids.h"
+#include <iostream>
 #include <sstream>
 #include <iomanip>
 
@@ -31,10 +33,16 @@ using namespace Barry;
 BEGIN_EVENT_TABLE(BrowseMode, wxEvtHandler)
 	EVT_LIST_ITEM_SELECTED(BrowseMode_DBDBList,
 				BrowseMode::OnDBDBListSelChange)
+	EVT_LIST_ITEM_SELECTED(BrowseMode_RecordList,
+				BrowseMode::OnRecordListSelChange)
+	EVT_LIST_ITEM_ACTIVATED(BrowseMode_RecordList,
+				BrowseMode::OnRecordListActivated)
 	EVT_CHECKBOX	(BrowseMode_ShowAllCheckbox,
 				BrowseMode::OnShowAll)
 	EVT_BUTTON	(BrowseMode_AddRecordButton,
 				BrowseMode::OnAddRecord)
+	EVT_BUTTON	(BrowseMode_CopyRecordButton,
+				BrowseMode::OnCopyRecord)
 	EVT_BUTTON	(BrowseMode_EditRecordButton,
 				BrowseMode::OnEditRecord)
 	EVT_BUTTON	(BrowseMode_DeleteRecordButton,
@@ -47,7 +55,8 @@ END_EVENT_TABLE()
 
 bool EditRecord(wxWindow *parent, bool editable, Barry::Contact &rec)
 {
-	return false;
+	ContactEditDlg edit(parent, rec, editable);
+	return edit.ShowModal() == wxID_OK;
 }
 
 bool EditRecord(wxWindow *parent, bool editable, Barry::Bookmark &rec)
@@ -125,13 +134,14 @@ bool EditRecord(wxWindow *parent, bool editable, Barry::Timezone &rec)
 // DBDataCache
 
 DBDataCache::DBDataCache(DataCache::IndexType index, const Barry::DBData &raw)
-	: DataCache(index)
+	: DataCache(index, raw.GetUniqueId())
 	, m_raw(raw)
 {
 }
 
-void DBDataCache::Edit(wxWindow *parent, bool editable)
+bool DBDataCache::Edit(wxWindow *parent, bool editable)
 {
+	return false;
 }
 
 std::string DBDataCache::GetDescription() const
@@ -171,6 +181,159 @@ DBCache::~DBCache()
 {
 }
 
+DBCache::iterator DBCache::Get(int list_offset)
+{
+	iterator i = begin();
+	for( ; i != end() && list_offset; ++i, list_offset-- )
+		;
+	return i;
+}
+
+DBCache::const_iterator DBCache::Get(int list_offset) const
+{
+	const_iterator i = begin();
+	for( ; i != end() && list_offset; ++i, list_offset-- )
+		;
+	return i;
+}
+
+int DBCache::GetIndex(iterator record) const
+{
+	iterator i = const_cast<DBCache*> (this)->begin();
+	iterator e = const_cast<DBCache*> (this)->end();
+	for( int index = 0; i != e; ++i, index++ ) {
+		if( i == record )
+			return index;
+	}
+	return -1;
+}
+
+int DBCache::GetIndex(const_iterator record) const
+{
+	const_iterator i = begin();
+	for( int index = 0; i != end(); ++i, index++ ) {
+		if( i == record )
+			return index;
+	}
+	return -1;
+}
+
+DBCache::iterator DBCache::Add(wxWindow *parent, iterator copy_record)
+{
+	DataCachePtr p;
+
+#undef HANDLE_BUILDER
+#define HANDLE_BUILDER(tname) \
+	if( m_dbname == Barry::tname::GetDBName() ) { \
+		Barry::tname rec; \
+		if( copy_record != end() ) { \
+			RecordCache<Barry::tname> *rc = dynamic_cast<RecordCache<Barry::tname>* > (copy_record->get()); \
+			if( rc ) { \
+				rec = rc->GetRecord(); \
+			} \
+		} \
+		p.reset( new RecordCache<Barry::tname>(0, rec) ); \
+	}
+	ALL_KNOWN_BUILDER_TYPES
+
+	// anything else is not addable or buildable
+	if( !p.get() ) {
+		return end();
+	}
+
+	if( p->Edit(parent, true) ) {
+		// see if this record has a builder
+		Barry::Builder *bp = dynamic_cast<Barry::Builder*> (p.get());
+		if( !bp ) {
+			return end();
+		}
+
+		// give record a new UniqueID
+		uint32_t record_id = m_state.MakeNewRecordId();
+cout << "New recordID generated: 0x" << hex << record_id << endl;
+		p->SetIds(p->GetStateIndex(), record_id);
+
+		// add record to device
+		DesktopInstancePtr dip = m_tdesktop.Get();
+		Barry::Mode::Desktop &desktop = dip->Desktop();
+		desktop.AddRecord(m_dbid, *bp);
+
+		// update our copy of the record state table from device
+		desktop.GetRecordStateTable(m_dbid, m_state);
+cout << m_state << endl;
+
+		// find our new record_id in list, to find the state index
+		IndexType new_index;
+		if( !m_state.GetIndex(record_id, &new_index) ) {
+			throw std::logic_error("Need to reconnect for adding a record?");
+		}
+
+		// update new state_index in the data cache record
+		p->SetIds(new_index, record_id);
+
+		// add DataCachePtr to our own cache list
+		m_records.push_front(p);
+
+		// return iterator pointing to new record
+		return begin();
+	}
+	else {
+		return end();
+	}
+}
+
+bool DBCache::Edit(wxWindow *parent, iterator record)
+{
+	if( record == end() )
+		return false;
+
+	if( (*record)->Edit(parent, true) && (*record)->IsBuildable() ) {
+		// see if this record has a builder
+		Barry::Builder *bp = dynamic_cast<Barry::Builder*> ((*record).get());
+		if( !bp )
+			return false;
+
+cout << "Changing device record with index: 0x" << hex << (*record)->GetStateIndex() << endl;
+cout << m_state << endl;
+		// update the device with new record data
+		DesktopInstancePtr dip = m_tdesktop.Get();
+		Barry::Mode::Desktop &desktop = dip->Desktop();
+		desktop.SetRecord(m_dbid, (*record)->GetStateIndex(), *bp);
+		desktop.ClearDirty(m_dbid, (*record)->GetStateIndex());
+
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+bool DBCache::Delete(wxWindow *parent, iterator record)
+{
+	if( record == end() )
+		return false;
+
+	// prompt user with Yes / No message
+	wxString desc((*record)->GetDescription().c_str(), wxConvUTF8);
+	int choice = wxMessageBox(_T("Delete record: ") + desc + _T("?"),
+		_T("Record Delete"), wxYES_NO | wxICON_QUESTION, parent);
+
+	// if no, return false
+	if( choice != wxYES )
+		return false;
+
+cout << "Deleting device record with index: 0x" << hex << (*record)->GetStateIndex() << endl;
+cout << m_state << endl;
+	// delete record from device
+	DesktopInstancePtr dip = m_tdesktop.Get();
+	Barry::Mode::Desktop &desktop = dip->Desktop();
+	desktop.DeleteRecord(m_dbid, (*record)->GetStateIndex());
+
+	// remove record from cache list
+	m_records.erase(record);
+	return true;
+}
+
 // For Barry::AllRecordStore
 #undef HANDLE_PARSER
 #define HANDLE_PARSER(tname) \
@@ -201,7 +364,7 @@ DBMap::DBMap(ThreadableDesktop &tdesktop)
 	}
 }
 
-DBMap::DBCachePtr DBMap::GetDBCache(const std::string &dbname)
+DBMap::DBCachePtr DBMap::LoadDBCache(const std::string &dbname)
 {
 	scoped_lock lock(m_map_mutex);
 
@@ -216,6 +379,17 @@ DBMap::DBCachePtr DBMap::GetDBCache(const std::string &dbname)
 	DBCachePtr p( new DBCache(m_tdesktop, dbname) );
 	m_map[dbname] = p;
 	return p;
+}
+
+DBMap::DBCachePtr DBMap::GetDBCache(const std::string &dbname)
+{
+	scoped_lock lock(m_map_mutex);
+
+	MapType::iterator i = m_map.find(dbname);
+	if( i != m_map.end() )
+		return i->second;
+
+	return DBCachePtr();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -386,16 +560,20 @@ void BrowseMode::CreateControls()
 	m_add_record_button.reset( new wxButton(m_parent,
 				BrowseMode_AddRecordButton, _T("Add..."),
 				wxDefaultPosition, footer) );
+	m_copy_record_button.reset( new wxButton(m_parent,
+				BrowseMode_CopyRecordButton, _T("Copy..."),
+				wxDefaultPosition, footer) );
 	m_edit_record_button.reset( new wxButton(m_parent,
 				BrowseMode_EditRecordButton, _T("Edit..."),
 				wxDefaultPosition, footer));
 	m_delete_record_button.reset( new wxButton(m_parent,
 				BrowseMode_DeleteRecordButton, _T("Delete..."),
 				wxDefaultPosition, footer) );
-	buttons->Add(m_add_record_button.get(), 0, wxRIGHT, 5 );
-	buttons->Add(m_edit_record_button.get(), 0, wxRIGHT, 5 );
-	buttons->Add(m_delete_record_button.get(), 0, wxRIGHT, 5 );
-	m_top_sizer->Add(buttons, 0, wxALL | wxALIGN_RIGHT, 5 );
+	buttons->Add(m_add_record_button.get(), 0, wxRIGHT, 5);
+	buttons->Add(m_copy_record_button.get(), 0, wxRIGHT, 5);
+	buttons->Add(m_edit_record_button.get(), 0, wxRIGHT, 5);
+	buttons->Add(m_delete_record_button.get(), 0, wxRIGHT, 5);
+	m_top_sizer->Add(buttons, 0, wxALL | wxALIGN_RIGHT, 5);
 
 	//
 	// recalc size of children and add columns
@@ -491,7 +669,7 @@ void BrowseMode::FillRecordList(const std::string &dbname)
 		m_record_list->DeleteAllItems();
 
 		// grab our DB
-		DBMap::DBCachePtr db = m_dbmap->GetDBCache(dbname);
+		DBMap::DBCachePtr db = m_dbmap->LoadDBCache(dbname);
 
 		// cycle through the cache, and insert the descriptions
 		// given for each record
@@ -513,7 +691,8 @@ void BrowseMode::UpdateButtons()
 
 	// can only add if we have a builder for this record type
 	m_add_record_button->Enable(m_buildable);
-	// can only edit if we have a builder, and if only 1 is selected
+	// can only copy or edit if we have a builder, and only 1 is selected
+	m_copy_record_button->Enable(m_buildable && selected_count == 1);
 	m_edit_record_button->Enable(m_buildable && selected_count == 1);
 	// can only delete if something is selected
 	m_delete_record_button->Enable(selected_count > 0);
@@ -526,7 +705,7 @@ void BrowseMode::FillCache()
 		i = m_dbdb.Databases.begin(), e = m_dbdb.Databases.end();
 	for( ; i != e; ++i ) {
 		if( IsParsable(i->Name) ) try {
-			m_dbmap->GetDBCache(i->Name);
+			m_dbmap->LoadDBCache(i->Name);
 		} catch( Barry::Error &be ) {
 			cerr << be.what() << endl;
 		}
@@ -550,8 +729,34 @@ void BrowseMode::OnDBDBListSelChange(wxListEvent &event)
 {
 	wxBusyCursor wait;
 	int index = GUItoDBDBIndex(event.GetIndex());
-	FillRecordList(m_dbdb.Databases.at(index).Name);
+	m_current_dbname = m_dbdb.Databases.at(index).Name;
+	m_buildable = ::IsBuildable(m_current_dbname);
+	m_current_record_item = -1;
+
+	FillRecordList(m_current_dbname);
 	UpdateButtons();
+}
+
+void BrowseMode::OnRecordListSelChange(wxListEvent &event)
+{
+	// grab the cache for the current database... Get is ok here,
+	// since the cache is already loaded by the main db list
+	DBMap::DBCachePtr p = m_dbmap->GetDBCache(m_current_dbname);
+	if( !p.get() )
+		return;
+
+	// grab the record list index
+	m_current_record_item = event.GetIndex();
+//	m_current_record_item = m_record_list->GetNextItem(
+//		m_current_record_item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+
+	UpdateButtons();
+}
+
+void BrowseMode::OnRecordListActivated(wxListEvent &event)
+{
+	wxCommandEvent ce;
+	OnEditRecord(ce);
 }
 
 void BrowseMode::OnShowAll(wxCommandEvent &event)
@@ -562,13 +767,67 @@ void BrowseMode::OnShowAll(wxCommandEvent &event)
 
 void BrowseMode::OnAddRecord(wxCommandEvent &event)
 {
+	// grab the cache for the current database... Get is ok here,
+	// since the cache is already loaded by the main db list
+	DBMap::DBCachePtr p = m_dbmap->GetDBCache(m_current_dbname);
+	if( !p.get() )
+		return;
+
+	DBCache::iterator i = p->Add(m_parent, p->end());
+	if( i != p->end() ) {
+		wxString text((*i)->GetDescription().c_str(), wxConvUTF8);
+
+		// insert new record in same spot as DBCache has it
+		m_current_record_item = p->GetIndex(i);
+		m_record_list->InsertItem(m_current_record_item, text);
+	}
+}
+
+void BrowseMode::OnCopyRecord(wxCommandEvent &event)
+{
+	// grab the cache for the current database... Get is ok here,
+	// since the cache is already loaded by the main db list
+	DBMap::DBCachePtr p = m_dbmap->GetDBCache(m_current_dbname);
+	if( !p.get() )
+		return;
+
+	DBCache::iterator source = p->Get(m_current_record_item);
+	DBCache::iterator i = p->Add(m_parent, source);
+	if( i != p->end() ) {
+		wxString text((*i)->GetDescription().c_str(), wxConvUTF8);
+
+		// insert new record in same spot as DBCache has it
+		m_current_record_item = p->GetIndex(i);
+		m_record_list->InsertItem(m_current_record_item, text);
+	}
 }
 
 void BrowseMode::OnEditRecord(wxCommandEvent &event)
 {
+	// grab the cache for the current database... Get is ok here,
+	// since the cache is already loaded by the main db list
+	DBMap::DBCachePtr p = m_dbmap->GetDBCache(m_current_dbname);
+	if( !p.get() )
+		return;
+
+	DBCache::iterator i = p->Get(m_current_record_item);
+	if( p->Edit(m_parent, i) ) {
+		wxString text((*i)->GetDescription().c_str(), wxConvUTF8);
+		m_record_list->SetItem(m_current_record_item, 0, text);
+	}
 }
 
 void BrowseMode::OnDeleteRecord(wxCommandEvent &event)
 {
+	// grab the cache for the current database... Get is ok here,
+	// since the cache is already loaded by the main db list
+	DBMap::DBCachePtr p = m_dbmap->GetDBCache(m_current_dbname);
+	if( !p.get() )
+		return;
+
+	DBCache::iterator i = p->Get(m_current_record_item);
+	if( p->Delete(m_parent, i) ) {
+		m_record_list->DeleteItem(m_current_record_item);
+	}
 }
 
