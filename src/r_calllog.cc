@@ -231,6 +231,16 @@ void CallLog::ParseFields(const Data &data, size_t &offset, const IConverter *ic
 	offset += finish - (data.GetData() + offset);
 }
 
+void CallLog::BuildHeader(Data &data, size_t &offset) const
+{
+	// not yet implemented
+}
+
+void CallLog::BuildFields(Data &data, size_t &offset, const IConverter *ic) const
+{
+	// not yet implemented
+}
+
 void CallLog::Dump(std::ostream &os) const
 {
 	uint32_t timestamp = Duration;

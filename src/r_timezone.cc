@@ -161,6 +161,16 @@ void Timezone::ParseFields(const Data &data, size_t &offset, const IConverter *i
 	offset += finish - (data.GetData() + offset);
 }
 
+void Timezone::BuildHeader(Data &data, size_t &offset) const
+{
+	// not yet implemented
+}
+
+void Timezone::BuildFields(Data &data, size_t &offset, const IConverter *ic) const
+{
+	// not yet implemented
+}
+
 void Timezone::Clear()
 {
 	RecType = GetDefaultRecType();

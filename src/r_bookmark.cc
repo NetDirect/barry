@@ -301,6 +301,16 @@ void Bookmark::ParseFields(const Data &data, size_t &offset, const IConverter *i
 	offset += finish - (data.GetData() + offset);
 }
 
+void Bookmark::BuildHeader(Data &data, size_t &offset) const
+{
+	// not yet implemented
+}
+
+void Bookmark::BuildFields(Data &data, size_t &offset, const IConverter *ic) const
+{
+	// not yet implemented
+}
+
 void Bookmark::Dump(std::ostream &os) const
 {
 	static const char *DisplayModeName[] = { "Automatic", "Enabled", "Disabled", "Unknown" };

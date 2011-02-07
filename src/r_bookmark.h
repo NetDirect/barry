@@ -96,6 +96,8 @@ public:
 	void SetIds(uint8_t Type, uint32_t Id) { RecType = Type; RecordId = Id; }
 	void ParseHeader(const Data &data, size_t &offset);
 	void ParseFields(const Data &data, size_t &offset, const IConverter *ic = 0);
+	void BuildHeader(Data &data, size_t &offset) const;
+	void BuildFields(Data &data, size_t &offset, const IConverter *ic = 0) const;
 
 	// operations (common among record classes
 	void Clear();
