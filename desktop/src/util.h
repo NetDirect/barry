@@ -51,6 +51,22 @@ wxString GetButtonFilename(int id, int state);
 bool IsButtonEnabled(int id);
 
 bool IsParsable(const std::string &dbname);
+bool IsBuildable(const std::string &dbname);
+
+// Determine parsable classes via template specialization
+template <class RecordT>
+inline bool IsParsable()
+{
+	return false;
+}
+#undef HANDLE_PARSER
+#define HANDLE_PARSER(dbname) \
+	template <> \
+	inline bool IsParsable<Barry::dbname>() \
+	{ \
+		return true; \
+	}
+ALL_KNOWN_PARSER_TYPES
 
 // Determine buildable classes via template specialization
 template <class RecordT>

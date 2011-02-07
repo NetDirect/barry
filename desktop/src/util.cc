@@ -119,3 +119,14 @@ bool IsParsable(const std::string &dbname)
 	return false;
 }
 
+bool IsBuildable(const std::string &dbname)
+{
+#undef HANDLE_BUILDER
+#define HANDLE_BUILDER(dbn) \
+	if( dbname == Barry::dbn::GetDBName() ) return true;
+
+	ALL_KNOWN_BUILDER_TYPES
+
+	return false;
+}
+
