@@ -1,5 +1,23 @@
 Release: version 0.17.0 - 2011/01/??
 ------------------------------------------------------------------------------
+2011/02/07
+	- lib: fixed bug in Contact parser that caused old RecordIDs / UniqueID
+		to be stored in the Unknowns list, which when copied
+		and added to the device again, would build up and potentially
+		cause conflicts.
+		In some cases, when adding a record with multiple
+		RecordIDs, and if one of the IDs already existed in the
+		BlackBerry device, then the device would get into an
+		inconsistent state and end up with an un-deletable record,
+		and every attempt to edit it would give the message:
+		"Address updated externally. Changes will be lost and the
+		viewer closed"
+		This would also cause an inconsistency in the Record State
+		Table record count and the actual count retrieved during a
+		database backup.
+		The only way to recover would be to restore from a known
+		good backup, which will erase the existing database and
+		start fresh.
 2011/01/21
 	- build: added Debian Lenny's copy of pkg.m4
 		New versions of pkg-config's autoconf m4 files set the

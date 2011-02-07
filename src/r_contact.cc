@@ -95,6 +95,7 @@ namespace Barry {
 #define CFC_IMAGE		77	// 0x4D
 #define CFC_BIRTHDAY		82	// 0x52
 #define CFC_ANNIVERSARY		83	// 0x53
+#define CFC_MAYBE_CATEGORYID	84	// 0x54
 #define CFC_UNIQUEID		85	// 0x55
 #define CFC_NICKNAME		86	// 0x56
 #define CFC_INVALID_FIELD	255
@@ -255,6 +256,13 @@ const unsigned char* Contact::ParseField(const unsigned char *begin,
 		std::string astring = ParseFieldString(field);
 		Anniversary.FromBBString(astring);
 		}
+		return begin;
+
+	case CFC_UNIQUEID:
+		// this is a duplicate of the UniqueID that comes from
+		// the envelope part of the protocol... just throw this
+		// away, since when we upload it, we need to use a
+		// consisten UniqueID / RecordID from the API
 		return begin;
 	}
 
