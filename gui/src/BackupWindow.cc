@@ -385,7 +385,7 @@ void BackupWindow::treeview_update()
 				std::ostringstream oss;
 				oss << _("Warning\n\nNot all records were processed on device: ") << thread->GetFullname()
 					<< _("\n\nOnly ") << finished << _(" of ") << total
-					<< _(" records were backed up.\n\nIt is suspected that due to international characters in these records, the BlackBerry uses a different low-level protocol, which Barry Backup does not yet support. Please contact the developers at http://netdirect.ca/barry if you want to assist in debugging this issue.");
+					<< _(" records were backed up.\n\nIt is suspected that due to international characters in these records, the BlackBerry uses a different low-level protocol, which Barry Backup does not yet support.  Alternatively, there may be hidden records that cannot be edited in your device.  If this occurs in a database such as Address Book, sometimes a restore of just that database may fix the issue.");
 				Gtk::MessageDialog msg(oss.str());
 				msg.run();
 			}
