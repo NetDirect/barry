@@ -17,6 +17,7 @@ barrydesktop_SOURCES = \
 	ipc.h optout.h \
 	windowids.h \
 	util.cc util.h \
+	StringSync.cc StringSync.h \
 	xmlcompactor.cc xmlcompactor.h \
 	xmlmap.cc xmlmap.h \
 	ClickImage.cc ClickImage.h \
