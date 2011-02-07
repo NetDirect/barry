@@ -107,6 +107,7 @@ enum {
 	Dialog_Conflict_KeepNewerButton,
 	Dialog_Conflict_KillSyncButton,
 	Dialog_Conflict_AlwaysCheckbox,
+	Dialog_ContactEdit,
 
 	SysMenu_FirstItem,
 
