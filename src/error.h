@@ -23,6 +23,7 @@
 #define __BARRY_ERROR_H__
 
 #include "dll.h"
+#include "pin.h"
 #include <stdexcept>
 #include <stdint.h>
 
@@ -72,6 +73,30 @@ public:
 		{}
 	int remaining_tries() const { return m_remaining_tries; }
 	bool out_of_tries() const { return m_out_of_tries; }
+};
+
+//
+// PinNotFound
+//
+/// Thrown by the Connector class when unable to find the requested Pin
+/// If the attached pin is not Valid(), then unable to autodetect device.
+/// If pin is Valid(), then the specified pin number was not available.
+/// probe_count is the number of devices found during the probe.
+///
+class BXEXPORT PinNotFound : public Barry::Error
+{
+	Barry::Pin m_pin;
+	int m_probe_count;
+
+public:
+	PinNotFound(Barry::Pin pin, int probe_count)
+		: Barry::Error("PIN not found: " + pin.Str())
+		, m_pin(pin)
+		, m_probe_count(probe_count)
+		{}
+
+	const Barry::Pin& pin() const { return m_pin; }
+	int probe_count() const { return m_probe_count; }
 };
 
 //

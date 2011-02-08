@@ -19,6 +19,7 @@ The Barry library has the following exception hierarchy:
 			- Barry::RestoreError
 			- Barry::JDWP::Error
 			- Barry::JDWP::Timeout
+			- Barry::PinNotFound
 
 Usb::Error
 	All specific USB error exceptions will be derived from
