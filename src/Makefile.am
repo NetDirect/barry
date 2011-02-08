@@ -161,6 +161,7 @@ include_barry_HEADERS = barry.h barrysync.h barrybackup.h barryalx.h \
 	backup.h \
 	restore.h \
 	pipe.h \
+	connector.h \
 	tzwrapper.h
 
 noinst_HEADERS = cbarry.h \
@@ -232,6 +233,7 @@ libbarry_la_SOURCES = dll.h \
 	m_serial.h m_serial.cc \
 	m_javaloader.h m_javaloader.cc \
 	m_jvmdebug.h m_jvmdebug.cc \
+	connector.h connector.cc \
 	version.h version.cc \
 	pppfilter.h pppfilter.cc \
 	sha1.h sha1.cc \

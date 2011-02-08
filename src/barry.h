@@ -78,6 +78,7 @@
 #include "threadwrap.h"
 #include "vsmartptr.h"
 #include "pipe.h"
+#include "connector.h"
 
 // Include the JDW Debug Parser classes
 #include "dp_codinfo.h"

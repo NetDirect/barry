@@ -1,5 +1,13 @@
 Release: version 0.17.0 - 2011/01/??
 ------------------------------------------------------------------------------
+2011/02/08
+	- lib: added Connector base class and DesktopConnector class
+		These classes manage connecting and reconnecting to a device.
+		Too much technical knowledge was required in the application
+		in order to successfully connect and reconnect on all devices,
+		such as in the plugins when refreshing the dirty flags.
+		Pauses and rescans were needed in some cases.  This knowledge
+		belongs in the library, not the application.
 2011/02/07
 	- lib: fixed bug in Contact parser that caused old RecordIDs / UniqueID
 		to be stored in the Unknowns list, which when copied
