@@ -29,6 +29,22 @@
 #include <tr1/memory>
 #include <list>
 
+class GUIDesktopConnector : public Barry::DesktopConnector
+{
+	wxWindow *m_parent;
+
+public:
+	GUIDesktopConnector(wxWindow *parent, const char *password,
+		const std::string &locale, const Barry::ProbeResult &result)
+		: Barry::DesktopConnector(password, locale, result)
+		, m_parent(parent)
+	{
+	}
+
+	virtual bool PasswordPrompt(const Barry::BadPassword &bp,
+					std::string &password_result);
+};
+
 // Holds the "right" to use the desktop, and this right expires with the
 // scope of this class, and no other code can use it while this object exists.
 //
@@ -39,20 +55,19 @@ private:
 	Barry::scoped_lock m_lock;
 
 	// external interfaces... owned by caller
-	Barry::Mode::Desktop &m_desktop;
-	Barry::IConverter &m_ic;
+	GUIDesktopConnector &m_gdc;
 
 public:
-	DesktopInstance(pthread_mutex_t &mutex, Barry::Mode::Desktop &desktop,
-		Barry::IConverter &ic)
+	explicit DesktopInstance(pthread_mutex_t &mutex,
+				GUIDesktopConnector &gdc)
 		: m_lock(mutex)
-		, m_desktop(desktop)
-		, m_ic(ic)
+		, m_gdc(gdc)
 	{
 	}
 
-	Barry::Mode::Desktop& Desktop() { return m_desktop; }
-	Barry::IConverter& IC() { return m_ic; }
+	GUIDesktopConnector& Connector() { return m_gdc; }
+	Barry::Mode::Desktop& Desktop() { return m_gdc.GetDesktop(); }
+	Barry::IConverter& IC() { return m_gdc.GetIConverter(); }
 };
 
 typedef std::auto_ptr<DesktopInstance> DesktopInstancePtr;
@@ -63,13 +78,11 @@ private:
 	pthread_mutex_t m_mutex;
 
 	// external interfaces... owned by caller
-	Barry::Mode::Desktop &m_desktop;
-	Barry::IConverter &m_ic;
+	GUIDesktopConnector &m_gdc;
 
 public:
-	ThreadableDesktop(Barry::Mode::Desktop &desktop, Barry::IConverter &ic)
-		: m_desktop(desktop)
-		, m_ic(ic)
+	explicit ThreadableDesktop(GUIDesktopConnector &gdc)
+		: m_gdc(gdc)
 	{
 		if( pthread_mutex_init(&m_mutex, NULL) ) {
 			throw Barry::Error("Failed to create mutex for ThreadableDesktop");
@@ -79,7 +92,7 @@ public:
 	DesktopInstancePtr Get()
 	{
 		return DesktopInstancePtr(
-			new DesktopInstance(m_mutex, m_desktop, m_ic));
+			new DesktopInstance(m_mutex, m_gdc));
 	}
 };
 
@@ -294,9 +307,7 @@ private:
 	wxWindow *m_parent;
 
 	// device interface
-	std::auto_ptr<Barry::IConverter> m_ic;
-	std::auto_ptr<Barry::Controller> m_con;
-	std::auto_ptr<Barry::Mode::Desktop> m_desktop;
+	std::auto_ptr<GUIDesktopConnector> m_con;
 	std::auto_ptr<ThreadableDesktop> m_tdesktop;
 	std::auto_ptr<DBMap> m_dbmap;
 	Barry::DatabaseDatabase m_dbdb;

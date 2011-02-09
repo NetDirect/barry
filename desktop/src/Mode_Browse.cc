@@ -131,6 +131,30 @@ bool EditRecord(wxWindow *parent, bool editable, Barry::Timezone &rec)
 
 
 //////////////////////////////////////////////////////////////////////////////
+// GUIDesktopConnector
+
+bool GUIDesktopConnector::PasswordPrompt(const Barry::BadPassword &bp,
+					std::string &password_result)
+{
+	// create prompt based on exception data
+	ostringstream oss;
+	oss << "Please enter device password: ("
+	    << bp.remaining_tries()
+	    << " tries remaining)";
+	wxString prompt(oss.str().c_str(), wxConvUTF8);
+
+	// ask user for device password
+	wxString pass = wxGetPasswordFromUser(prompt,
+		_T("Device Password"), _T(""), m_parent);
+
+	password_result = pass.utf8_str();
+
+	// assume that a blank password means the user wishes to quit...
+	// wxWidgets doesn't seem to handle this very well?
+	return password_result.size() > 0;
+}
+
+//////////////////////////////////////////////////////////////////////////////
 // DBDataCache
 
 DBDataCache::DBDataCache(DataCache::IndexType index, const Barry::DBData &raw)
@@ -408,55 +432,15 @@ BrowseMode::BrowseMode(wxWindow *parent, const ProbeResult &device)
 	}
 	m_device_id_str = wxString(oss.str().c_str(), wxConvUTF8);
 
-	// exceptions are used here... is that a good idea?
-	m_ic.reset( new IConverter("utf-8", true) );
-
 	//
 	// connect to the device
 	//
-	m_con.reset( new Controller(device) );
-	m_desktop.reset( new Barry::Mode::Desktop(*m_con, *m_ic) );
-	m_tdesktop.reset( new ThreadableDesktop(*m_desktop, *m_ic) );
-
-	string password;
-	bool first = true;
-	while(1) {
-		wxString prompt;
-
-		try {
-			if( first ) {
-				first = false;
-				m_desktop->Open(password.c_str());
-			}
-			else {
-				m_desktop->RetryPassword(password.c_str());
-			}
-			break;
-		}
-		catch( BadPassword &bp ) {
-			if( bp.out_of_tries() ) {
-				throw;
-			}
-
-			// create prompt based on exception data
-			ostringstream oss;
-			oss << "Please enter device password: ("
-			    << bp.remaining_tries()
-			    << " tries remaining)";
-			prompt = wxString(oss.str().c_str(), wxConvUTF8);
-
-			// fall through to password prompt
-		}
-
-		// ask use for device password
-		wxString pass = wxGetPasswordFromUser(prompt,
-			_T("Device Password"), _T(""), m_parent);
-
-		password = pass.utf8_str();
-	}
+	m_con.reset( new GUIDesktopConnector(m_parent, "", "utf-8", device) );
+	m_con->Reconnect(2);
+	m_tdesktop.reset( new ThreadableDesktop(*m_con) );
 
 	// keep our own copy, and sort by name for later
-	m_dbdb = m_desktop->GetDBDB();
+	m_dbdb = m_con->GetDesktop().GetDBDB();
 	m_dbdb.SortByName();
 
 	CreateControls();
