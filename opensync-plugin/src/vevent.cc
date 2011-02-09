@@ -138,7 +138,7 @@ char* VEventConverter::GetRecordData(BarryEnvironment *env, unsigned int dbId,
 
 	VEventConverter cal2event;
 	RecordParser<Calendar, VEventConverter> parser(cal2event);
-	env->m_pDesktop->GetRecord(dbId, index, parser);
+	env->GetDesktop()->GetRecord(dbId, index, parser);
 	return cal2event.ExtractData();
 }
 
@@ -184,7 +184,7 @@ bool VEventConverter::CommitRecordData(BarryEnvironment *env, unsigned int dbId,
 
 		VEventConverter cal2event;
 		RecordParser<Calendar, VEventConverter> parser(cal2event);
-		env->m_pDesktop->GetRecord(dbId, StateIndex, parser);
+		env->GetDesktop()->GetRecord(dbId, StateIndex, parser);
 		Calendar cal = cal2event.GetCalendar();
 
 		convert.MergeData(cal);
@@ -194,13 +194,13 @@ bool VEventConverter::CommitRecordData(BarryEnvironment *env, unsigned int dbId,
 
 	if( add ) {
 		trace.log("adding record");
-		env->m_pDesktop->AddRecord(dbId, builder);
+		env->GetDesktop()->AddRecord(dbId, builder);
 	}
 	else {
 		trace.log("setting record");
-		env->m_pDesktop->SetRecord(dbId, StateIndex, builder);
+		env->GetDesktop()->SetRecord(dbId, StateIndex, builder);
 		trace.log("clearing dirty flag");
-		env->m_pDesktop->ClearDirty(dbId, StateIndex);
+		env->GetDesktop()->ClearDirty(dbId, StateIndex);
 	}
 
 	return true;

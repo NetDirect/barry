@@ -29,6 +29,7 @@
 #include <string.h>
 #include <unistd.h>
 
+using namespace Barry;
 
 //////////////////////////////////////////////////////////////////////////////
 // DatabaseSyncState
@@ -175,10 +176,6 @@ BarryEnvironment::BarryEnvironment(OSyncMember *pm)
 	: member(pm),
 	m_pin(-1),
 	m_DebugMode(false),
-	m_password(""),
-	m_IConverter("UTF-8"),
-	m_pCon(0),
-	m_pDesktop(0),
 	m_CalendarSync(pm, "calendar"),
 	m_ContactsSync(pm, "contacts")
 {
@@ -186,97 +183,48 @@ BarryEnvironment::BarryEnvironment(OSyncMember *pm)
 
 BarryEnvironment::~BarryEnvironment()
 {
-	delete m_pDesktop;
-	delete m_pCon;
 }
 
 void BarryEnvironment::DoConnect()
 {
-	// Create controller
-	//
-	// Override the timeout due to a firmware issue... sometimes
-	// the firmware will hang during a Reconnect, and fail to
-	// respond to a Desktop::Open().  To work around this, we
-	// set the default timeout to 15 seconds so that we find this
-	// failure early enough to fix it within opensync's 30 second timeout.
-	// Then if we get such a timeout, we do the Reconnect again and
-	// hope for the best... this often fixes it.
-	//
-	if( !m_ProbeResult.get() )
-		throw std::logic_error("Tried to use empty ProbeResult");
-	m_pCon = new Barry::Controller(*m_ProbeResult, 15000);
-	m_pDesktop = new Barry::Mode::Desktop(*m_pCon, m_IConverter);
-	m_pDesktop->Open(m_password.c_str());
+	if( !m_con.get() )
+		throw std::logic_error("Tried to use empty Connector");
+
+	m_con->Connect();
 
 	// Save the DBIDs and DBNames of the databases we will work with
 	if( m_CalendarSync.m_Sync ) {
 		m_CalendarSync.m_dbName = Barry::Calendar::GetDBName();
-		m_CalendarSync.m_dbId = m_pDesktop->GetDBID(Barry::Calendar::GetDBName());
+		m_CalendarSync.m_dbId = m_con->GetDesktop().GetDBID(Barry::Calendar::GetDBName());
 	}
 
 	if( m_ContactsSync.m_Sync ) {
-		m_ContactsSync.m_dbId = m_pDesktop->GetDBID(Barry::Contact::GetDBName());
+		m_ContactsSync.m_dbId = m_con->GetDesktop().GetDBID(Barry::Contact::GetDBName());
 		m_ContactsSync.m_dbName = Barry::Contact::GetDBName();
 	}
 }
 
+void BarryEnvironment::SetPassword(const std::string &password)
+{
+	m_password = password;
+	if( m_con.get() )
+		m_con->SetPassword(password.c_str());
+}
+
 void BarryEnvironment::Connect(const Barry::ProbeResult &result)
 {
-	Disconnect();
-
-	// save result in case we need to reconnect later
-	m_ProbeResult.reset( new Barry::ProbeResult(result) );
-
+	m_con.reset(new DesktopConnector(m_password.c_str(), "UTF-8", result));
 	DoConnect();
 }
 
 void BarryEnvironment::Reconnect()
 {
-	int tries = 0;
-
-	while(1) try {
-
-		tries++;
-
-		Disconnect();
-
-		// let the device settle... this seems to help prevent the
-		// firmware hang, and therefore ultimately speeds up the sync
-		sleep(1);
-
-		// FIXME - temporary fix for odd reconnect message... without this
-		// probe, the reconnect will often fail on newer Blackberries
-		// due to an unexpected close socket message.  It is unclear
-		// if this is really a message from the device, but until then,
-		// we add this probe.
-		{
-			Barry::Probe probe;
-			int i = probe.FindActive(m_ProbeResult->m_pin);
-			if( i != -1 )
-				m_ProbeResult.reset( new Barry::ProbeResult(probe.Get(i)) );
-		}
-
-		DoConnect();
-
-		return;
-	}
-	catch( Usb::Timeout & ) {
-		if( tries > 1 ) {
-			throw;
-		}
-		else {
-			std::cout << "Timeout in Reconnect()... trying again" << std::endl;
-		}
-	}
+	m_con->Reconnect(2);
 }
 
 void BarryEnvironment::Disconnect()
 {
-	delete m_pDesktop;
-	m_pDesktop = 0;
-
-	delete m_pCon;
-	m_pCon = 0;
+	m_con->Disconnect();
 }
 
 void BarryEnvironment::ClearDirtyFlags(Barry::RecordStateTable &table,
@@ -284,14 +232,14 @@ void BarryEnvironment::ClearDirtyFlags(Barry::RecordStateTable &table,
 {
 	Trace trace("ClearDirtyFlags");
 
-	unsigned int dbId = m_pDesktop->GetDBID(dbname);
+	unsigned int dbId = m_con->GetDesktop().GetDBID(dbname);
 
 	Barry::RecordStateTable::StateMapType::const_iterator i = table.StateMap.begin();
 	for( ; i != table.StateMap.end(); ++i ) {
 		if( i->second.Dirty ) {
 			trace.logf("Clearing dirty flag for db %u, index %u",
 				dbId, i->first);
-			m_pDesktop->ClearDirty(dbId, i->first);
+			m_con->GetDesktop().ClearDirty(dbId, i->first);
 		}
 	}
 }

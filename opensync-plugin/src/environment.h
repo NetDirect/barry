@@ -76,6 +76,9 @@ public:
 
 struct BarryEnvironment
 {
+private:
+	std::string m_password;
+
 public:
 	OSyncMember *member;
 
@@ -83,13 +86,9 @@ public:
 	std::string m_ConfigData;
 	uint32_t m_pin;
 	bool m_DebugMode;
-	std::string m_password;
 
 	// device communication
-	Barry::IConverter m_IConverter;
-	std::auto_ptr<Barry::ProbeResult> m_ProbeResult;
-	Barry::Controller *m_pCon;
-	Barry::Mode::Desktop *m_pDesktop;
+	std::auto_ptr<Barry::DesktopConnector> m_con;
 
 	// sync data
 	DatabaseSyncState m_CalendarSync, m_ContactsSync;
@@ -100,6 +99,9 @@ protected:
 public:
 	BarryEnvironment(OSyncMember *pm);
 	~BarryEnvironment();
+
+	Barry::Mode::Desktop* GetDesktop() { return &m_con->GetDesktop(); }
+	void SetPassword(const std::string &password);
 
 	void Connect(const Barry::ProbeResult &result);
 	void Reconnect();

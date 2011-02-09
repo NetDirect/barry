@@ -124,7 +124,7 @@ char* VCardConverter::GetRecordData(BarryEnvironment *env, unsigned int dbId,
 
 	VCardConverter contact2vcard;
 	RecordParser<Contact, VCardConverter> parser(contact2vcard);
-	env->m_pDesktop->GetRecord(dbId, index, parser);
+	env->GetDesktop()->GetRecord(dbId, index, parser);
 	return contact2vcard.ExtractData();
 }
 
@@ -165,13 +165,13 @@ bool VCardConverter::CommitRecordData(BarryEnvironment *env, unsigned int dbId,
 
 	if( add ) {
 		trace.log("adding record");
-		env->m_pDesktop->AddRecord(dbId, builder);
+		env->GetDesktop()->AddRecord(dbId, builder);
 	}
 	else {
 		trace.log("setting record");
-		env->m_pDesktop->SetRecord(dbId, StateIndex, builder);
+		env->GetDesktop()->SetRecord(dbId, StateIndex, builder);
 		trace.log("clearing dirty flag");
-		env->m_pDesktop->ClearDirty(dbId, StateIndex);
+		env->GetDesktop()->ClearDirty(dbId, StateIndex);
 	}
 
 	return true;

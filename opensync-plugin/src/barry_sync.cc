@@ -61,7 +61,7 @@ void GetChanges(OSyncContext *ctx, BarryEnvironment *env,
 	// shortcut references
 	using namespace Barry;
 	using Barry::RecordStateTable;
-	Mode::Desktop &desktop = *env->m_pDesktop;
+	Mode::Desktop &desktop = *env->GetDesktop();
 
 	// find the matching cache, state table, and id map for this change
 	DatabaseSyncState::cache_type &cache = pSync->m_Cache;
@@ -209,7 +209,7 @@ bool FinishSync(OSyncContext *ctx, BarryEnvironment *env, DatabaseSyncState *pSy
 		return true;
 	}
 
-	Barry::Mode::Desktop &desktop = *env->m_pDesktop;
+	Barry::Mode::Desktop &desktop = *env->GetDesktop();
 
 	// get the state table again, so we can update
 	// the cache properly
@@ -316,7 +316,6 @@ static void connect(OSyncContext *ctx)
 			osync_context_report_error(ctx, OSYNC_ERROR_NO_CONNECTION, "Unable to find PIN %lx", env->m_pin);
 			return;
 		}
-		env->m_ProbeResult.reset( new Barry::ProbeResult(probe.Get(nIndex)) );
 
 		env->Connect(probe.Get(nIndex));
 
@@ -402,7 +401,7 @@ static osync_bool commit_change(OSyncContext *ctx, OSyncChange *change)
 		DatabaseSyncState::cache_type &cache = pSync->m_Cache;
 		Barry::RecordStateTable &table = pSync->m_Table;
 		idmap &map = pSync->m_IdMap;
-		Barry::Mode::Desktop &desktop = *env->m_pDesktop;
+		Barry::Mode::Desktop &desktop = *env->GetDesktop();
 		unsigned int dbId = pSync->m_dbId;
 
 
