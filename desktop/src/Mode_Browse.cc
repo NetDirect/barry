@@ -323,7 +323,6 @@ cout << m_state << endl;
 		DesktopInstancePtr dip = m_tdesktop.Get();
 		Barry::Mode::Desktop &desktop = dip->Desktop();
 		desktop.SetRecord(m_dbid, (*record)->GetStateIndex(), *bp);
-		desktop.ClearDirty(m_dbid, (*record)->GetStateIndex());
 
 		return true;
 	}
