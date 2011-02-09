@@ -129,7 +129,7 @@ char* VTodoConverter::GetRecordData(BarryEnvironment *env, unsigned int dbId,
 
 	VTodoConverter task2todo;
 	RecordParser<Task, VTodoConverter> parser(task2todo);
-	env->m_pDesktop->GetRecord(dbId, index, parser);
+	env->GetDesktop()->GetRecord(dbId, index, parser);
 	return task2todo.ExtractData();
 }
 
@@ -170,13 +170,13 @@ bool VTodoConverter::CommitRecordData(BarryEnvironment *env, unsigned int dbId,
 
 	if( add ) {
 		trace.log("adding record");
-		env->m_pDesktop->AddRecord(dbId, builder);
+		env->GetDesktop()->AddRecord(dbId, builder);
 	}
 	else {
 		trace.log("setting record");
-		env->m_pDesktop->SetRecord(dbId, StateIndex, builder);
+		env->GetDesktop()->SetRecord(dbId, StateIndex, builder);
 		trace.log("clearing dirty flag");
-		env->m_pDesktop->ClearDirty(dbId, StateIndex);
+		env->GetDesktop()->ClearDirty(dbId, StateIndex);
 	}
 
 	return true;

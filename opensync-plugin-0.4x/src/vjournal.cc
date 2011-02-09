@@ -126,7 +126,7 @@ char* VJournalConverter::GetRecordData(BarryEnvironment *env, unsigned int dbId,
 
 	VJournalConverter memo2journal;
 	RecordParser<Memo, VJournalConverter> parser(memo2journal);
-	env->m_pDesktop->GetRecord(dbId, index, parser);
+	env->GetDesktop()->GetRecord(dbId, index, parser);
 	return memo2journal.ExtractData();
 }
 
@@ -167,13 +167,13 @@ bool VJournalConverter::CommitRecordData(BarryEnvironment *env, unsigned int dbI
 
 	if( add ) {
 		trace.log("adding record");
-		env->m_pDesktop->AddRecord(dbId, builder);
+		env->GetDesktop()->AddRecord(dbId, builder);
 	}
 	else {
 		trace.log("setting record");
-		env->m_pDesktop->SetRecord(dbId, StateIndex, builder);
+		env->GetDesktop()->SetRecord(dbId, StateIndex, builder);
 		trace.log("clearing dirty flag");
-		env->m_pDesktop->ClearDirty(dbId, StateIndex);
+		env->GetDesktop()->ClearDirty(dbId, StateIndex);
 	}
 
 	return true;

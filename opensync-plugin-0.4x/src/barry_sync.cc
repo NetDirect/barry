@@ -114,7 +114,7 @@ void GetChanges(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncContext *ctx
 	// shortcut references
 	using namespace Barry;
 	using Barry::RecordStateTable;
-	Mode::Desktop &desktop = *env->m_pDesktop;
+	Mode::Desktop &desktop = *env->GetDesktop();
 
 	// find hash table
 	//
@@ -323,7 +323,7 @@ bool FinishSync(OSyncContext *ctx, BarryEnvironment *env, DatabaseSyncState *pSy
 
 	// get the state table again, so we can update
 	// the cache properly
-	Barry::Mode::Desktop &desktop = *env->m_pDesktop;
+	Barry::Mode::Desktop &desktop = *env->GetDesktop();
 	desktop.GetRecordStateTable(pSync->m_dbId, pSync->m_Table);
 
 	// clear all dirty flags in device
@@ -599,7 +599,7 @@ static void *initialize(OSyncPlugin *plugin, OSyncPluginInfo *info, OSyncError *
 		if (osync_plugin_authentication_option_is_supported(optauth, OSYNC_PLUGIN_AUTHENTICATION_PASSWORD)) {
 			const char *val = osync_plugin_authentication_get_password(optauth);
 
-			env->m_password = val;
+			env->SetPassword(val);
 		}
 
 
@@ -706,7 +706,6 @@ static void connect(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncContext 
 				osync_context_report_error(ctx, OSYNC_ERROR_NO_CONNECTION, "Unable to find PIN %x", env->m_pin);
 				return;
 			}
-			env->m_ProbeResult.reset( new Barry::ProbeResult(probe.Get(nIndex)) );
 
 			trace.log("connecting...");
 
@@ -858,7 +857,7 @@ static void commit_change(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncCo
 
 		// make references instead of pointers
 		Barry::RecordStateTable &table = pSync->m_Table;
-		Barry::Mode::Desktop &desktop = *env->m_pDesktop;
+		Barry::Mode::Desktop &desktop = *env->GetDesktop();
 		unsigned int dbId = pSync->m_dbId;
 
 
