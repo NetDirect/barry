@@ -850,19 +850,19 @@ int main(int argc, char *argv[])
 		// here we want the user to pick.
 		//
 		auto_ptr<SocketRoutingQueue> router;
-		auto_ptr<Barry::Controller> pcon;
 		if( threaded_sockets ) {
 			router.reset( new SocketRoutingQueue );
 			router->SpinoffSimpleReadThread();
-			pcon.reset( new Barry::Controller(device, *router) );
-		}
-		else {
-			pcon.reset( new Barry::Controller(device) );
 		}
 
-		Barry::Controller &con = *pcon;
-		Barry::Mode::Desktop desktop(con, *ic);
-		desktop.Open(password.c_str());
+		DesktopConnector connector(password.c_str(),
+			iconvCharset, device, router.get());
+		if( !connector.Reconnect() ) {
+			// user canceled password prompt
+			return 0;
+		}
+
+		Barry::Mode::Desktop &desktop = connector.GetDesktop();
 
 		// Dump list of all databases to stdout
 		if( show_dbdb ) {
