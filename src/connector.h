@@ -67,6 +67,7 @@ public:
 		Barry::Pin pin = 0);
 	Connector(const char *password, const std::string &locale,
 		const Barry::ProbeResult &result);
+	virtual ~Connector();
 
 	IConverter& GetIConverter() { return m_ic; }
 	const IConverter& GetIConverter() const { return m_ic; }

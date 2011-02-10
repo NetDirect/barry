@@ -59,6 +59,10 @@ Connector::Connector(const char *password,
 {
 }
 
+Connector::~Connector()
+{
+}
+
 Barry::ProbeResult Connector::FindDevice(Barry::Pin pin)
 {
 	Barry::Probe probe;
