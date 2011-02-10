@@ -1,0 +1,4 @@
+<area shape="rect" href="$backup_8cc.html" title="Special parser class to support creation of Barry Backup files." alt="" coords="5,80,85,107">
+<area shape="rect" href="$restore_8cc.html" title="Builder class for restoring from Barry Backup files." alt="" coords="109,80,189,107">
+<area shape="rect" href="$tarfile-ops-nt_8cc.html" title="Non&#45;thread safe operation functions for a libtar&#45;compatible zlib compression interface..." alt="" coords="213,80,325,107">
+<area shape="rect" href="$tarfile_8cc.html" title="API for reading and writing sequentially from compressed tar files." alt="" coords="349,80,421,107">

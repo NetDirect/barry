@@ -1,0 +1,4 @@
+<area shape="rect" href="$classBarry_1_1DBPacket.html#580e45267843fc6d43ca13c009e98978" title="Barry::DBPacket::ReturnCode" alt="" coords="293,5,488,32">
+<area shape="rect" href="$classBarry_1_1DBPacket.html#7a41833dcc12c2823cd54991161e8d26" title="Builds a command packet in the m_send buffer for the SET_RECORD_BY_INDEX command..." alt="" coords="273,56,508,83">
+<area shape="rect" href="$classBarry_1_1Builder.html#4a3d38061d957eb6dd0539b18d40e6ad" title="Called to build the record field data." alt="" coords="596,31,775,57">
+<area shape="rect" href="$classBarry_1_1Mode_1_1Desktop.html#b1d7a169122aae509924729aedfeb24f" title="Get database command from command table." alt="" coords="559,81,812,108">

@@ -1,0 +1,8 @@
+<area shape="rect" href="$backup_8h.html" title="Special parser class to support creation of Barry Backup files." alt="" coords="367,80,441,107">
+<area shape="rect" href="$tarfile_8h.html" title="API for reading and writing sequentially from compressed tar files." alt="" coords="60,155,124,181">
+<area shape="rect" href="$error_8h.html" title="Common exception classes for the Barry library." alt="" coords="293,155,349,181">
+<area shape="rect" href="$dll_8h.html" title="Macros for handling DLL/library API visibility." alt="" coords="424,304,469,331">
+<area shape="rect" href="$parser_8h.html" title="Virtual parser wrapper." alt="" coords="691,155,757,181">
+<area shape="rect" href="$data_8h.html" title="Class to deal with pre&#45;saved data files." alt="" coords="787,229,843,256">
+<area shape="rect" href="$protocol_8h.html" title="USB Blackberry bulk protocol API constants." alt="" coords="685,229,763,256">
+<area shape="rect" href="$pin_8h.html" title="class for device PIN notation" alt="" coords="392,229,440,256">

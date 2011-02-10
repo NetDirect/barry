@@ -1,0 +1,13 @@
+<area shape="rect" href="$xmlparser_8h.html" title="A simple XML parser (use callback on start, end and data block." alt="" coords="95,80,183,107">
+<area shape="rect" href="$barryalx_8h.html" title="Main header file for libbarryalx." alt="" coords="589,379,667,405">
+<area shape="rect" href="$a__codsection_8h.html" title="COD structure for the ALX file parser." alt="" coords="411,80,520,107">
+<area shape="rect" href="$a__alxparser_8h.html" title="ALX file parser (for one file)." alt="" coords="340,304,439,331">
+<area shape="rect" href="$xmlparser_8cc.html" title="A simple XML parser (use callback on start, end and data block." alt="" coords="5,155,101,181">
+<area shape="rect" href="$a__alxparser_8cc.html" title="ALX file parser (for one file)." alt="" coords="317,379,421,405">
+<area shape="rect" href="$a__osloader_8cc.html" title="OS files parser (multi ALX files parser)." alt="" coords="445,379,547,405">
+<area shape="rect" href="$a__library_8h.html" title="ALX Library class based on CODSection class." alt="" coords="543,155,623,181">
+<area shape="rect" href="$a__application_8h.html" title="ALX Application class based on CODSection class." alt="" coords="412,155,519,181">
+<area shape="rect" href="$a__codsection_8cc.html" title="COD structure for the ALX file parser." alt="" coords="273,155,388,181">
+<area shape="rect" href="$a__osloader_8h.html" title="OS files parser (multi ALX files parser)." alt="" coords="467,229,560,256">
+<area shape="rect" href="$a__library_8cc.html" title="ALX Library class based on CODSection class." alt="" coords="685,229,773,256">
+<area shape="rect" href="$a__application_8cc.html" title="ALX Application class based on CODSection class." alt="" coords="277,229,392,256">

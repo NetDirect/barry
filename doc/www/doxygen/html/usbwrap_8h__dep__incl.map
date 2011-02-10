@@ -1,0 +1,33 @@
+<area shape="rect" href="$barry_8h.html" title="Main header file for applications." alt="" coords="1221,528,1280,555">
+<area shape="rect" href="$probe_8h.html" title="USB Blackberry detection routines." alt="" coords="520,155,584,181">
+<area shape="rect" href="$controller_8h.html" title="High level BlackBerry API class." alt="" coords="712,229,795,256">
+<area shape="rect" href="$m__desktop_8cc.html" title="Mode class for the Desktop mode." alt="" coords="281,453,385,480">
+<area shape="rect" href="$m__javaloader_8cc.html" title="Mode class for the JavaLoader mode." alt="" coords="409,453,524,480">
+<area shape="rect" href="$m__raw__channel_8cc.html" title="Mode class for a raw channel." alt="" coords="129,453,257,480">
+<area shape="rect" href="$m__jvmdebug_8cc.html" title="Mode class for the JVMDebug mode." alt="" coords="953,453,1065,480">
+<area shape="rect" href="$probe_8cc.html" title="USB Blackberry detection routines." alt="" coords="312,229,384,256">
+<area shape="rect" href="$router_8h.html" title="Support classes for the pluggable socket routing system." alt="" coords="1179,80,1243,107">
+<area shape="rect" href="$socket_8cc.html" title="Class wrapper to encapsulate the Blackberry USB logical socket." alt="" coords="1453,229,1531,256">
+<area shape="rect" href="$router_8cc.html" title="Support classes for the pluggable socket routing system." alt="" coords="1352,155,1424,181">
+<area shape="rect" href="$m__ipmodem_8h.html" title="Mode class for GPRS modem mode (using endpoints on modern devices)." alt="" coords="1605,229,1709,256">
+<area shape="rect" href="$src_2platform_8h-source.html" title="platform.h" alt="" coords="308,155,388,181">
+<area shape="rect" href="$usbwrap_8cc.html" title="USB API wrapper." alt="" coords="1549,80,1637,107">
+<area shape="rect" href="$controller_8cc.html" title="High level Barry API class." alt="" coords="243,304,333,331">
+<area shape="rect" href="$connector_8h-source.html" title="connector.h" alt="" coords="741,379,829,405">
+<area shape="rect" href="$m__mode__base_8h.html" title="Base for mode classes." alt="" coords="813,304,931,331">
+<area shape="rect" href="$connector_8cc-source.html" title="connector.cc" alt="" coords="832,453,928,480">
+<area shape="rect" href="$m__ipmodem_8cc.html" title="Mode class for GPRS modem mode (using endpoints on modern devices)." alt="" coords="1219,304,1328,331">
+<area shape="rect" href="$m__serial_8cc.html" title="Mode class for serial / GPRS modem mode." alt="" coords="1107,304,1195,331">
+<area shape="rect" href="$m__desktop_8h.html" title="Mode class for the Desktop mode." alt="" coords="1203,379,1299,405">
+<area shape="rect" href="$m__javaloader_8h.html" title="Mode class for the JavaLoader mode." alt="" coords="413,379,520,405">
+<area shape="rect" href="$m__raw__channel_8h.html" title="Mode class for a raw channel." alt="" coords="595,379,717,405">
+<area shape="rect" href="$m__jvmdebug_8h.html" title="Mode class for the JVMDebug mode." alt="" coords="1323,379,1429,405">
+<area shape="rect" href="$m__mode__base_8cc.html" title="Base for mode classes." alt="" coords="904,379,1027,405">
+<area shape="rect" href="$m__desktoptmpl_8h.html" title="Ease of use templates for the Desktop mode class." alt="" coords="1191,453,1311,480">
+<area shape="rect" href="$packet_8cc.html" title="Low level protocol packet builder class." alt="" coords="1089,453,1167,480">
+<area shape="rect" href="$bmp_8h.html" title="BMP conversion routines." alt="" coords="548,453,604,480">
+<area shape="rect" href="$bmp_8cc.html" title="BMP conversion routines." alt="" coords="544,528,608,555">
+<area shape="rect" href="$j__server_8h.html" title="Java Debug server classes." alt="" coords="1605,453,1683,480">
+<area shape="rect" href="$j__server_8cc.html" title="Server protocol implementation." alt="" coords="1603,528,1685,555">
+<area shape="rect" href="$socket_8h.html" title="Class wrapper to encapsulate the Blackberry USB logical socket." alt="" coords="1175,155,1247,181">
+<area shape="rect" href="$m__serial_8h.html" title="Mode class for serial / GPRS modem mode." alt="" coords="1299,229,1379,256">

@@ -1,0 +1,11 @@
+<area shape="rect" href="$a__osloader_8h.html" title="OS files parser (multi ALX files parser)." alt="" coords="351,155,444,181">
+<area shape="rect" href="$a__alxparser_8h.html" title="ALX file parser (for one file)." alt="" coords="584,80,683,107">
+<area shape="rect" href="$vsmartptr_8h-source.html" title="vsmartptr.h" alt="" coords="707,80,792,107">
+<area shape="rect" href="$error_8h.html" title="Common exception classes for the Barry library." alt="" coords="895,229,951,256">
+<area shape="rect" href="$dll_8h.html" title="Macros for handling DLL/library API visibility." alt="" coords="641,379,687,405">
+<area shape="rect" href="$a__application_8h.html" title="ALX Application class based on CODSection class." alt="" coords="233,229,340,256">
+<area shape="rect" href="$a__library_8h.html" title="ALX Library class based on CODSection class." alt="" coords="364,229,444,256">
+<area shape="rect" href="$a__codsection_8h.html" title="COD structure for the ALX file parser." alt="" coords="385,304,495,331">
+<area shape="rect" href="$a__common_8h.html" title="ALX file parser common header." alt="" coords="456,379,552,405">
+<area shape="rect" href="$xmlparser_8h.html" title="A simple XML parser (use callback on start, end and data block." alt="" coords="671,155,759,181">
+<area shape="rect" href="$pin_8h.html" title="class for device PIN notation" alt="" coords="985,304,1033,331">

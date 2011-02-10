@@ -1,0 +1,3 @@
+<area shape="rect" href="$log_8h.html" title="General header for the Barry library." alt="" coords="85,80,133,107">
+<area shape="rect" href="$clog_8h.html" title="C oriented logging routines for Barry." alt="" coords="5,80,61,107">
+<area shape="rect" href="$dll_8h.html" title="Macros for handling DLL/library API visibility." alt="" coords="11,155,56,181">

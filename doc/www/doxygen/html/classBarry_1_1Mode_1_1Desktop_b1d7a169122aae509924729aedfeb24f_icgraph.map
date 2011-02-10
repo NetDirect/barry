@@ -1,0 +1,15 @@
+<area shape="rect" href="$classBarry_1_1DBPacket.html#ace85c6dd63c5f85e21e9f61e10e5af5" title="Builds a command packet for the CLEAR_DATABASE command code, placing the data in..." alt="" coords="331,5,541,32">
+<area shape="rect" href="$classBarry_1_1DBPacket.html#fb9625f072f936a03ebee1ac64b78bf4" title="Builds a command packet in the send buffer for the DELETE_RECORD_BY_INDEX command..." alt="" coords="309,56,563,83">
+<area shape="rect" href="$classBarry_1_1DBPacket.html#206e98e5159e7fe7790d4976d0f039a0" title="Builds a command packet for the GET_DBDB command code, placing the data in m_send..." alt="" coords="344,107,528,133">
+<area shape="rect" href="$classBarry_1_1DBPacket.html#95355f6de0ab12e9eacd0727e8a66965" title="Builds a command packet in the send buffer for the GET_RECORD_BY_INDEX command code..." alt="" coords="317,157,555,184">
+<area shape="rect" href="$classBarry_1_1DBPacket.html#173b8eb90186edc54e8a679d7498bcb5" title="Builds a command packet in the send buffer for the GET_RECORDS command code." alt="" coords="339,208,533,235">
+<area shape="rect" href="$classBarry_1_1DBPacket.html#07e2e8ca566a1f4d7cc493983b56c32b" title="Builds a command packet in the send buffer for the GET_RECORD_STATE_TABLE command..." alt="" coords="311,259,561,285">
+<area shape="rect" href="$classBarry_1_1DBPacket.html#26c4025403d129f658c1919190c0a0f0" title="Builds a command packet in the m_send buffer for the SET_RECORD command code." alt="" coords="343,309,529,336">
+<area shape="rect" href="$classBarry_1_1DBPacket.html#7a41833dcc12c2823cd54991161e8d26" title="Builds a command packet in the m_send buffer for the SET_RECORD_BY_INDEX command..." alt="" coords="319,360,553,387">
+<area shape="rect" href="$classBarry_1_1DBPacket.html#9f0237393389b714f30bf56e616183dd" title="Builds a command packet in the send buffer for the SET_RECORD_FLAGS command code..." alt="" coords="327,411,545,437">
+<area shape="rect" href="$classBarry_1_1Mode_1_1Desktop.html#04cd4063958483b31cc98a353f335fe0" title="Deletes the specified record in the specified database." alt="" coords="633,56,868,83">
+<area shape="rect" href="$classBarry_1_1Mode_1_1Desktop.html#2420208d094c0195dd41b5836f54dc10" title="Retrieves a specific record from the specified database." alt="" coords="641,157,860,184">
+<area shape="rect" href="$classBarry_1_1Mode_1_1Desktop.html#047fe0a4a6dff740822451ffd38ddd84" title="Retrieve the record state table from the handheld device, using the given database..." alt="" coords="611,259,891,285">
+<area shape="rect" href="$classBarry_1_1Mode_1_1Desktop.html#0fec0d31ff496974acfc15fdc75f074a" title="Adds a record to the specified database." alt="" coords="641,309,860,336">
+<area shape="rect" href="$classBarry_1_1Mode_1_1Desktop.html#bf813b7fb04062515369209c8073dab0" title="Overwrites a specific record in the device as identified by the stateTableIndex." alt="" coords="643,360,859,387">
+<area shape="rect" href="$classBarry_1_1Mode_1_1Desktop.html#a766fb027d28f7cf4bb069eb0991baaa" title="Clears the dirty flag on the specified record in the specified database." alt="" coords="644,411,857,437">

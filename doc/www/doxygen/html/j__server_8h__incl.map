@@ -1,0 +1,32 @@
+<area shape="rect" href="$dll_8h.html" title="Macros for handling DLL/library API visibility." alt="" coords="967,677,1012,704">
+<area shape="rect" href="$j__manager_8h.html" title="Application management classes." alt="" coords="2429,528,2520,555">
+<area shape="rect" href="$dp__codinfo_8h.html" title="Debug file parsing." alt="" coords="2560,603,2656,629">
+<area shape="rect" href="$m__jvmdebug_8h.html" title="Mode class for the JVMDebug mode." alt="" coords="1160,80,1267,107">
+<area shape="rect" href="$threadwrap_8h.html" title="RAII Wrapper for a single thread." alt="" coords="245,453,341,480">
+<area shape="rect" href="$m__mode__base_8h.html" title="Base for mode classes." alt="" coords="575,155,692,181">
+<area shape="rect" href="$socket_8h.html" title="Class wrapper to encapsulate the Blackberry USB logical socket." alt="" coords="896,304,968,331">
+<area shape="rect" href="$record_8h.html" title="Blackberry database record classes." alt="" coords="2092,453,2159,480">
+<area shape="rect" href="$data_8h.html" title="Class to deal with pre&#45;saved data files." alt="" coords="2275,603,2331,629">
+<area shape="rect" href="$controller_8h.html" title="High level BlackBerry API class." alt="" coords="592,229,675,256">
+<area shape="rect" href="$usbwrap_8h.html" title="USB API wrapper." alt="" coords="517,453,597,480">
+<area shape="rect" href="$pin_8h.html" title="class for device PIN notation" alt="" coords="701,603,749,629">
+<area shape="rect" href="$probe_8h.html" title="USB Blackberry detection routines." alt="" coords="601,379,665,405">
+<area shape="rect" href="$error_8h.html" title="Common exception classes for the Barry library." alt="" coords="636,528,692,555">
+<area shape="rect" href="$router_8h.html" title="Support classes for the pluggable socket routing system." alt="" coords="900,379,964,405">
+<area shape="rect" href="$dataqueue_8h.html" title="FIFO queue of Data objects." alt="" coords="1020,453,1111,480">
+<area shape="rect" href="$r__calendar_8h.html" title="Blackberry database record parser class for calendar records." alt="" coords="2739,528,2829,555">
+<area shape="rect" href="$r__calllog_8h.html" title="Record parsing class for call logs." alt="" coords="1917,603,1997,629">
+<area shape="rect" href="$r__bookmark_8h.html" title="Record parsing class for call logs." alt="" coords="1696,603,1795,629">
+<area shape="rect" href="$r__contact_8h.html" title="Blackberry database record parser class for contact records." alt="" coords="2963,603,3048,629">
+<area shape="rect" href="$r__cstore_8h.html" title="Blackberry database record parser class for Content Store records." alt="" coords="3072,603,3152,629">
+<area shape="rect" href="$r__memo_8h.html" title="Record parsing class for the memo database." alt="" coords="1501,603,1581,629">
+<area shape="rect" href="$r__message_8h.html" title="Blackberry database record parser class for email records." alt="" coords="1249,528,1345,555">
+<area shape="rect" href="$r__servicebook_8h.html" title="Blackberry database record parser class for the Service Book record." alt="" coords="3176,603,3288,629">
+<area shape="rect" href="$r__task_8h.html" title="Record parsing class for the task database." alt="" coords="2175,528,2241,555">
+<area shape="rect" href="$r__pin__message_8h.html" title="Blackberry database record parser class for pin message records." alt="" coords="1369,528,1489,555">
+<area shape="rect" href="$r__saved__message_8h-source.html" title="r_saved_message.h" alt="" coords="1513,528,1652,555">
+<area shape="rect" href="$r__sms_8h-source.html" title="r_sms.h" alt="" coords="1605,603,1672,629">
+<area shape="rect" href="$r__folder_8h.html" title="Record parsing class for the Folder database." alt="" coords="1819,603,1893,629">
+<area shape="rect" href="$r__timezone_8h.html" title="Record parsing class for the timezone database." alt="" coords="1381,603,1477,629">
+<area shape="rect" href="$r__recur__base_8h.html" title="Base class for recurring calendar event data." alt="" coords="2731,603,2837,629">
+<area shape="rect" href="$r__message__base_8h.html" title="Base class for email&#45;oriented Blackberry database records." alt="" coords="2355,603,2485,629">

@@ -1,0 +1,17 @@
+<area shape="rect" href="$m__desktop_8h.html" title="Mode class for the Desktop mode." alt="" coords="676,80,772,107">
+<area shape="rect" href="$m__javaloader_8h.html" title="Mode class for the JavaLoader mode." alt="" coords="152,80,259,107">
+<area shape="rect" href="$m__raw__channel_8h.html" title="Mode class for a raw channel." alt="" coords="379,80,501,107">
+<area shape="rect" href="$m__jvmdebug_8h.html" title="Mode class for the JVMDebug mode." alt="" coords="1024,80,1131,107">
+<area shape="rect" href="$m__mode__base_8cc.html" title="Base for mode classes." alt="" coords="1155,80,1277,107">
+<area shape="rect" href="$barry_8h.html" title="Main header file for applications." alt="" coords="461,229,520,256">
+<area shape="rect" href="$m__desktoptmpl_8h.html" title="Ease of use templates for the Desktop mode class." alt="" coords="528,155,648,181">
+<area shape="rect" href="$connector_8cc-source.html" title="connector.cc" alt="" coords="901,155,997,181">
+<area shape="rect" href="$m__desktop_8cc.html" title="Mode class for the Desktop mode." alt="" coords="672,155,776,181">
+<area shape="rect" href="$packet_8cc.html" title="Low level protocol packet builder class." alt="" coords="800,155,877,181">
+<area shape="rect" href="$bmp_8h.html" title="BMP conversion routines." alt="" coords="144,155,200,181">
+<area shape="rect" href="$m__javaloader_8cc.html" title="Mode class for the JavaLoader mode." alt="" coords="5,155,120,181">
+<area shape="rect" href="$bmp_8cc.html" title="BMP conversion routines." alt="" coords="140,229,204,256">
+<area shape="rect" href="$m__raw__channel_8cc.html" title="Mode class for a raw channel." alt="" coords="275,155,403,181">
+<area shape="rect" href="$j__server_8h.html" title="Java Debug server classes." alt="" coords="1208,155,1285,181">
+<area shape="rect" href="$m__jvmdebug_8cc.html" title="Mode class for the JVMDebug mode." alt="" coords="1021,155,1133,181">
+<area shape="rect" href="$j__server_8cc.html" title="Server protocol implementation." alt="" coords="1205,229,1288,256">

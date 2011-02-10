@@ -1,0 +1,16 @@
+<area shape="rect" href="$classBarry_1_1DeviceBuilder.html#3eb2238b584aadac8af2f511cd2ba245" title="Same as BuildRecord, but does not care about any offsets." alt="" coords="273,119,495,145">
+<area shape="rect" href="$classBarry_1_1DBData.html#55d6bde680fe0b48d07882ade96ef9c3" title="Barry::DBData::SetDBName" alt="" coords="580,208,764,235">
+<area shape="rect" href="$classBarry_1_1DBData.html#a7cacc9655376447ffbf3aa4d664a03b" title="Barry::DBData::GetData" alt="" coords="304,245,464,272">
+<area shape="rect" href="$classBarry_1_1DBData.html#37303ba0c4008a8afe0e5f09b823812e" title="Barry::DBData::GetDBName" alt="" coords="291,296,477,323">
+<area shape="rect" href="$classBarry_1_1DBData.html#5b301bfdcda5a74ccfd3f7e54fd69d99" title="Barry::DBData::GetOffset" alt="" coords="300,347,468,373">
+<area shape="rect" href="$classBarry_1_1DBData.html#07523eb3b1dcfd99a917a184b61cb10a" title="Barry::DBData::GetRecType" alt="" coords="292,397,476,424">
+<area shape="rect" href="$classBarry_1_1DBData.html#2a0106c7330842c455fc5393a3abfbc7" title="Barry::DBData::GetUniqueId" alt="" coords="292,448,476,475">
+<area shape="rect" href="$classBarry_1_1DBData.html#b49877d999de648fd9fefca049686437" title="Barry::DBData::GetVersion" alt="" coords="296,499,472,525">
+<area shape="rect" href="$classBarry_1_1DBData.html#a46147fced1b122cb6a0e6d1cee3cb07" title="Barry::DBData::SetIds" alt="" coords="308,549,460,576">
+<area shape="rect" href="$classBarry_1_1DBData.html#cb569139ee2d44442d4709ccf2a4ab3c" title="Barry::DBData::SetOffset" alt="" coords="300,600,468,627">
+<area shape="rect" href="$classBarry_1_1DBData.html#d1a3e69cabea68e0a309459cd7c58e78" title="Barry::DBData::SetVersion" alt="" coords="296,651,472,677">
+<area shape="rect" href="$classBarry_1_1DBData.html#3c1c4ad5ce85cef0ea85002a0fe07881" title="Barry::DBData::UseData" alt="" coords="303,701,465,728">
+<area shape="rect" href="$classBarry_1_1DeviceBuilder.html#7310e46f1fa8ee6e65f0717a656a4d5d" title="Sometimes a builder can have multiple databases stored in it, so when Build/Fetch..." alt="" coords="569,5,775,32">
+<area shape="rect" href="$classBarry_1_1Mode_1_1DBLoader.html#2f1152364ff8ea48e8735fe57fcaa15c" title="Barry::Mode::DBLoader::GetNextRecord" alt="" coords="545,56,799,83">
+<area shape="rect" href="$classBarry_1_1Mode_1_1DBLoader.html#951ebb66ec127c4ee47ead54ac21dbca" title="Do not call Desktop members if this is true." alt="" coords="569,107,775,133">
+<area shape="rect" href="$classBarry_1_1Mode_1_1DBLoader.html#91865cdae00722a8c6fc53bcdf806a15" title="Barry::Mode::DBLoader::StartDBLoad" alt="" coords="552,157,792,184">

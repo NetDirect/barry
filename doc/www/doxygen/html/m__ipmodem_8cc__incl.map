@@ -1,0 +1,17 @@
+<area shape="rect" href="$m__ipmodem_8h.html" title="Mode class for GPRS modem mode (using endpoints on modern devices)." alt="" coords="216,229,320,256">
+<area shape="rect" href="$data_8h.html" title="Class to deal with pre&#45;saved data files." alt="" coords="279,379,335,405">
+<area shape="rect" href="$controller_8h.html" title="High level BlackBerry API class." alt="" coords="532,80,615,107">
+<area shape="rect" href="$debug_8h-source.html" title="debug.h" alt="" coords="1721,379,1788,405">
+<area shape="rect" href="$sha1_8h-source.html" title="sha1.h" alt="" coords="84,155,143,181">
+<area shape="rect" href="$dll_8h.html" title="Macros for handling DLL/library API visibility." alt="" coords="595,528,640,555">
+<area shape="rect" href="$modem_8h.html" title="Modem API base class for the various serial/modem modes available on the Blackberry..." alt="" coords="43,304,117,331">
+<area shape="rect" href="$usbwrap_8h.html" title="USB API wrapper." alt="" coords="533,304,613,331">
+<area shape="rect" href="$pppfilter_8h.html" title="Data filter class, to morph PPP data into something that the Blackberry / Rogers..." alt="" coords="192,304,269,331">
+<area shape="rect" href="$error_8h.html" title="Common exception classes for the Barry library." alt="" coords="963,379,1019,405">
+<area shape="rect" href="$pin_8h.html" title="class for device PIN notation" alt="" coords="781,453,829,480">
+<area shape="rect" href="$socket_8h.html" title="Class wrapper to encapsulate the Blackberry USB logical socket." alt="" coords="1076,155,1148,181">
+<area shape="rect" href="$probe_8h.html" title="USB Blackberry detection routines." alt="" coords="619,229,683,256">
+<area shape="rect" href="$router_8h.html" title="Support classes for the pluggable socket routing system." alt="" coords="1125,229,1189,256">
+<area shape="rect" href="$dataqueue_8h.html" title="FIFO queue of Data objects." alt="" coords="1245,304,1336,331">
+<area shape="rect" href="$common_8h.html" title="General header for the Barry library." alt="" coords="1657,453,1740,480">
+<area shape="rect" href="$log_8h.html" title="General header for the Barry library." alt="" coords="1585,453,1633,480">

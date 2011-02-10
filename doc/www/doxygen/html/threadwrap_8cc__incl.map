@@ -1,0 +1,4 @@
+<area shape="rect" href="$threadwrap_8h.html" title="RAII Wrapper for a single thread." alt="" coords="7,80,103,107">
+<area shape="rect" href="$error_8h.html" title="Common exception classes for the Barry library." alt="" coords="163,80,219,107">
+<area shape="rect" href="$dll_8h.html" title="Macros for handling DLL/library API visibility." alt="" coords="84,229,129,256">
+<area shape="rect" href="$pin_8h.html" title="class for device PIN notation" alt="" coords="167,155,215,181">

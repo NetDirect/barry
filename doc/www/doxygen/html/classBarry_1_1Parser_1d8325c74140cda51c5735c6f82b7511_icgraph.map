@@ -1,0 +1,7 @@
+<area shape="rect" href="$classBarry_1_1Mode_1_1Desktop.html#6bb1c96d6082575b5fa684dee2af51a6" title="Retrieve a database from the handheld device, using the given parser to parse the..." alt="" coords="240,5,480,32">
+<area shape="rect" href="$classBarry_1_1DBPacket.html#fd64b6c98e7ad1d482a8339e0283ff90" title="Parses the data in the receive buffer, and attempts to be smart about it, using the..." alt="" coords="280,56,440,83">
+<area shape="rect" href="$classBarry_1_1MultiRecordParser.html#e749f5c58c6a9b9b86511f84f3a91ee8" title="Called to parse sub fields in the raw data packet." alt="" coords="235,107,485,133">
+<area shape="rect" href="$classBarry_1_1Pipe.html#c37ea1a469fdc249eba6fb65e421cf34" title="Reads one item from the builder and feeds it into the parser and returns the builder..." alt="" coords="280,157,440,184">
+<area shape="rect" href="$classBarry_1_1Mode_1_1Desktop.html#2420208d094c0195dd41b5836f54dc10" title="Retrieves a specific record from the specified database." alt="" coords="533,56,752,83">
+<area shape="rect" href="$classBarry_1_1Pipe.html#6ac2aa700bf3aa575dec422b45d1b40f" title="Reads all items from builder, feeding them into the parser, until the builder&#39;s..." alt="" coords="560,157,725,184">
+<area shape="rect" href="$classBarry_1_1Pipe.html#0978edd4b1a8a0dcab3b6dd49b5a71ba" title="Reads all series from the builder, feeding them into the parser, until the builder&#39;s..." alt="" coords="800,157,949,184">

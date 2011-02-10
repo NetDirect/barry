@@ -1,0 +1,13 @@
+<area shape="rect" href="$router_8h.html" title="Support classes for the pluggable socket routing system." alt="" coords="756,80,820,107">
+<area shape="rect" href="$usbwrap_8h.html" title="USB API wrapper." alt="" coords="535,155,615,181">
+<area shape="rect" href="$scoped__lock_8h.html" title="Simple scope class for dealing with pthread mutex locking." alt="" coords="624,80,728,107">
+<area shape="rect" href="$data_8h.html" title="Class to deal with pre&#45;saved data files." alt="" coords="528,304,584,331">
+<area shape="rect" href="$protostructs_8h.html" title="USB Blackberry bulk protocol API." alt="" coords="1163,80,1264,107">
+<area shape="rect" href="$endian_8h.html" title="Endian conversion macros." alt="" coords="1309,80,1379,107">
+<area shape="rect" href="$debug_8h-source.html" title="debug.h" alt="" coords="157,229,224,256">
+<area shape="rect" href="$dll_8h.html" title="Macros for handling DLL/library API visibility." alt="" coords="417,379,463,405">
+<area shape="rect" href="$dataqueue_8h.html" title="FIFO queue of Data objects." alt="" coords="841,155,932,181">
+<area shape="rect" href="$error_8h.html" title="Common exception classes for the Barry library." alt="" coords="725,229,781,256">
+<area shape="rect" href="$pin_8h.html" title="class for device PIN notation" alt="" coords="708,304,756,331">
+<area shape="rect" href="$common_8h.html" title="General header for the Barry library." alt="" coords="269,304,352,331">
+<area shape="rect" href="$log_8h.html" title="General header for the Barry library." alt="" coords="197,304,245,331">

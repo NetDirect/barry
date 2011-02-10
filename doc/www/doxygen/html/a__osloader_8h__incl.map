@@ -1,0 +1,5 @@
+<area shape="rect" href="$dll_8h.html" title="Macros for handling DLL/library API visibility." alt="" coords="404,229,449,256">
+<area shape="rect" href="$a__application_8h.html" title="ALX Application class based on CODSection class." alt="" coords="357,80,464,107">
+<area shape="rect" href="$a__library_8h.html" title="ALX Library class based on CODSection class." alt="" coords="253,80,333,107">
+<area shape="rect" href="$a__codsection_8h.html" title="COD structure for the ALX file parser." alt="" coords="253,155,363,181">
+<area shape="rect" href="$a__common_8h.html" title="ALX file parser common header." alt="" coords="260,229,356,256">

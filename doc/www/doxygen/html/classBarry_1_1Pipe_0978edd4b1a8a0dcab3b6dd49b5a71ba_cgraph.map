@@ -1,0 +1,5 @@
+<area shape="rect" href="$classBarry_1_1Builder.html#0ecfa5788ddee814a2071c82c5734691" title="Sometimes a builder can have multiple databases stored in it, so when Build/Fetch..." alt="" coords="204,5,369,32">
+<area shape="rect" href="$classBarry_1_1Pipe.html#6ac2aa700bf3aa575dec422b45d1b40f" title="Reads all items from builder, feeding them into the parser, until the builder&#39;s..." alt="" coords="204,56,369,83">
+<area shape="rect" href="$classBarry_1_1Pipe.html#c37ea1a469fdc249eba6fb65e421cf34" title="Reads one item from the builder and feeds it into the parser and returns the builder..." alt="" coords="419,56,579,83">
+<area shape="rect" href="$classBarry_1_1Builder.html#005a0269c1f96947d7a75c1cc09a4609" title="Same as BuildRecord, but does not care about any offsets." alt="" coords="628,31,809,57">
+<area shape="rect" href="$classBarry_1_1Parser.html#1d8325c74140cda51c5735c6f82b7511" title="Called to parse sub fields in the raw data packet." alt="" coords="628,81,809,108">

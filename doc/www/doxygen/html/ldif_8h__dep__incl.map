@@ -1,0 +1,4 @@
+<area shape="rect" href="$barry_8h.html" title="Main header file for applications." alt="" coords="5,155,64,181">
+<area shape="rect" href="$ldifio_8h.html" title="Storage, parser, and builder classes for ldif operations." alt="" coords="72,80,131,107">
+<area shape="rect" href="$ldif_8cc.html" title="Routines for reading and writing LDAP LDIF data." alt="" coords="155,80,211,107">
+<area shape="rect" href="$ldifio_8cc.html" title="Storage, parser, and builder classes for ldif operations." alt="" coords="88,155,155,181">

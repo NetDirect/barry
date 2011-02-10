@@ -1,0 +1,4 @@
+<area shape="rect" href="$time_8h.html" title="Time related conversion routines." alt="" coords="828,80,884,107">
+<area shape="rect" href="$i18n_8h.html" title="Common internationalization defines, via gettext." alt="" coords="1101,80,1157,107">
+<area shape="rect" href="$dll_8h.html" title="Macros for handling DLL/library API visibility." alt="" coords="787,155,832,181">
+<area shape="rect" href="$gettext_8h-source.html" title="gettext.h" alt="" coords="1232,155,1304,181">

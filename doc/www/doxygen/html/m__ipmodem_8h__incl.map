@@ -1,0 +1,7 @@
+<area shape="rect" href="$dll_8h.html" title="Macros for handling DLL/library API visibility." alt="" coords="111,304,156,331">
+<area shape="rect" href="$modem_8h.html" title="Modem API base class for the various serial/modem modes available on the Blackberry..." alt="" coords="44,80,119,107">
+<area shape="rect" href="$usbwrap_8h.html" title="USB API wrapper." alt="" coords="252,80,332,107">
+<area shape="rect" href="$data_8h.html" title="Class to deal with pre&#45;saved data files." alt="" coords="445,229,501,256">
+<area shape="rect" href="$pppfilter_8h.html" title="Data filter class, to morph PPP data into something that the Blackberry / Rogers..." alt="" coords="69,155,147,181">
+<area shape="rect" href="$error_8h.html" title="Common exception classes for the Barry library." alt="" coords="232,155,288,181">
+<area shape="rect" href="$pin_8h.html" title="class for device PIN notation" alt="" coords="323,229,371,256">

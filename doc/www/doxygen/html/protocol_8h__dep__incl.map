@@ -1,0 +1,27 @@
+<area shape="rect" href="$parser_8h.html" title="Virtual parser wrapper." alt="" coords="624,80,691,107">
+<area shape="rect" href="$barry_8h.html" title="Main header file for applications." alt="" coords="577,304,636,331">
+<area shape="rect" href="$m__desktop_8cc.html" title="Mode class for the Desktop mode." alt="" coords="799,229,903,256">
+<area shape="rect" href="$packet_8cc.html" title="Low level protocol packet builder class." alt="" coords="1087,229,1164,256">
+<area shape="rect" href="$controller_8cc.html" title="High level Barry API class." alt="" coords="1176,80,1267,107">
+<area shape="rect" href="$j__server_8cc.html" title="Server protocol implementation." alt="" coords="1291,80,1373,107">
+<area shape="rect" href="$packet_8h.html" title="Low level protocol packet builder class." alt="" coords="1397,80,1469,107">
+<area shape="rect" href="$m__javaloader_8cc.html" title="Mode class for the JavaLoader mode." alt="" coords="945,155,1060,181">
+<area shape="rect" href="$m__jvmdebug_8cc.html" title="Mode class for the JVMDebug mode." alt="" coords="1084,155,1196,181">
+<area shape="rect" href="$m__raw__channel_8cc.html" title="Mode class for a raw channel." alt="" coords="1321,155,1449,181">
+<area shape="rect" href="$probe_8cc.html" title="USB Blackberry detection routines." alt="" coords="1473,155,1545,181">
+<area shape="rect" href="$socket_8cc.html" title="Class wrapper to encapsulate the Blackberry USB logical socket." alt="" coords="1569,155,1647,181">
+<area shape="rect" href="$protocol_8cc.html" title="USB Blackberry bulk protocol API." alt="" coords="1759,80,1844,107">
+<area shape="rect" href="$r__calendar_8cc.html" title="Blackberry database record parser class for calendar records." alt="" coords="1868,80,1967,107">
+<area shape="rect" href="$r__contact_8cc.html" title="Blackberry database record parser class for contact records." alt="" coords="1991,80,2084,107">
+<area shape="rect" href="$r__dbdb_8cc.html" title="DatabaseDatabase record parser class." alt="" coords="2108,80,2185,107">
+<area shape="rect" href="$r__servicebook_8cc.html" title="Blackberry database record parser class for Service Book records." alt="" coords="2209,80,2329,107">
+<area shape="rect" href="$record_8cc.html" title="Misc." alt="" coords="2353,80,2428,107">
+<area shape="rect" href="$backup_8h.html" title="Special parser class to support creation of Barry Backup files." alt="" coords="124,155,199,181">
+<area shape="rect" href="$m__desktop_8h.html" title="Mode class for the Desktop mode." alt="" coords="473,155,569,181">
+<area shape="rect" href="$m__desktoptmpl_8h.html" title="Ease of use templates for the Desktop mode class." alt="" coords="547,229,667,256">
+<area shape="rect" href="$pipe_8h.html" title="Connector class to join parsers and builders together." alt="" coords="292,155,348,181">
+<area shape="rect" href="$parser_8cc.html" title="Virtual parser wrapper." alt="" coords="796,155,871,181">
+<area shape="rect" href="$backup_8cc.html" title="Special parser class to support creation of Barry Backup files." alt="" coords="5,229,85,256">
+<area shape="rect" href="$barrybackup_8h.html" title="Main header file for libbarrybackup." alt="" coords="109,229,213,256">
+<area shape="rect" href="$connector_8cc-source.html" title="connector.cc" alt="" coords="427,229,523,256">
+<area shape="rect" href="$pipe_8cc.html" title="Connector class to join parsers and builders together." alt="" coords="288,229,352,256">

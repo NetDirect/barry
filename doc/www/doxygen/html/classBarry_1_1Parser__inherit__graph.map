@@ -1,0 +1,9 @@
+<area shape="rect" href="$classBarry_1_1BoostParser.html" title="This Parser turns incoming records (which can be of any record type included in ALL_KNOWN_PARSER_TYP..." alt="" coords="172,56,303,83">
+<area shape="rect" href="$classBarry_1_1DeviceParser.html" title="A parser class that &quot;parses&quot; raw data into a device." alt="" coords="168,107,307,133">
+<area shape="rect" href="$classBarry_1_1HexDumpParser.html" title="Dumps raw hex of the given DBData to the given stream." alt="" coords="160,157,315,184">
+<area shape="rect" href="$classBarry_1_1MultiRecordParser.html" title="Container parser class that accepts multiple Parser objects (often RecordParser&lt;&gt;..." alt="" coords="153,208,321,235">
+<area shape="rect" href="$classBarry_1_1NullParser.html" title="If in debug mode, this class can be used as a null parser." alt="" coords="177,259,297,285">
+<area shape="rect" href="$classBarry_1_1RecordParserBase.html" title="Abstract base class for the following RecordParser template, that exposes some information..." alt="" coords="153,309,321,336">
+<area shape="rect" href="$classBarry_1_1TeeParser.html" title="Sends incoming DBData objects to all the parsers in its list." alt="" coords="177,360,297,387">
+<area shape="rect" href="$classBarry_1_1AllRecordParser.html" title="Convenience parser that creates a MultiRecordParser with all known record parsers..." alt="" coords="429,208,584,235">
+<area shape="rect" href="$classBarry_1_1RecordParser.html" title="Template class for easy creation of specific parser objects." alt="" coords="371,309,643,336">

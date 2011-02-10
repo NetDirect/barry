@@ -1,0 +1,6 @@
+<area shape="rect" href="$barry_8h.html" title="Main header file for applications." alt="" coords="5,80,64,107">
+<area shape="rect" href="$restore_8h.html" title="Builder class for restoring from Barry Backup files." alt="" coords="88,80,160,107">
+<area shape="rect" href="$configfile_8cc.html" title="Barry configuraion class, for one device PIN." alt="" coords="184,80,275,107">
+<area shape="rect" href="$probe_8cc.html" title="USB Blackberry detection routines." alt="" coords="299,80,371,107">
+<area shape="rect" href="$barrybackup_8h.html" title="Main header file for libbarrybackup." alt="" coords="13,155,117,181">
+<area shape="rect" href="$restore_8cc.html" title="Builder class for restoring from Barry Backup files." alt="" coords="141,155,221,181">

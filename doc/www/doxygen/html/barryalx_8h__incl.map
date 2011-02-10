@@ -1,0 +1,8 @@
+<area shape="rect" href="$a__common_8h.html" title="ALX file parser common header." alt="" coords="119,379,215,405">
+<area shape="rect" href="$a__codsection_8h.html" title="COD structure for the ALX file parser." alt="" coords="263,304,372,331">
+<area shape="rect" href="$a__library_8h.html" title="ALX Library class based on CODSection class." alt="" coords="487,229,567,256">
+<area shape="rect" href="$a__application_8h.html" title="ALX Application class based on CODSection class." alt="" coords="356,229,463,256">
+<area shape="rect" href="$a__osloader_8h.html" title="OS files parser (multi ALX files parser)." alt="" coords="672,155,765,181">
+<area shape="rect" href="$a__alxparser_8h.html" title="ALX file parser (for one file)." alt="" coords="473,80,572,107">
+<area shape="rect" href="$dll_8h.html" title="Macros for handling DLL/library API visibility." alt="" coords="615,379,660,405">
+<area shape="rect" href="$xmlparser_8h.html" title="A simple XML parser (use callback on start, end and data block." alt="" coords="560,155,648,181">

@@ -1,0 +1,31 @@
+<area shape="rect" href="$m__jvmdebug_8h.html" title="Mode class for the JVMDebug mode." alt="" coords="2081,80,2188,107">
+<area shape="rect" href="$controller_8h.html" title="High level BlackBerry API class." alt="" coords="2181,229,2264,256">
+<area shape="rect" href="$usbwrap_8h.html" title="USB API wrapper." alt="" coords="2253,453,2333,480">
+<area shape="rect" href="$error_8h.html" title="Common exception classes for the Barry library." alt="" coords="2149,528,2205,555">
+<area shape="rect" href="$data_8h.html" title="Class to deal with pre&#45;saved data files." alt="" coords="1064,603,1120,629">
+<area shape="rect" href="$protocol_8h.html" title="USB Blackberry bulk protocol API constants." alt="" coords="195,603,272,629">
+<area shape="rect" href="$protostructs_8h.html" title="USB Blackberry bulk protocol API." alt="" coords="2813,528,2915,555">
+<area shape="rect" href="$packet_8h.html" title="Low level protocol packet builder class." alt="" coords="476,528,548,555">
+<area shape="rect" href="$endian_8h.html" title="Endian conversion macros." alt="" coords="2707,80,2776,107">
+<area shape="rect" href="$cod_8h.html" title="COD file API." alt="" coords="2989,528,3043,555">
+<area shape="rect" href="$time_8h.html" title="Time related conversion routines." alt="" coords="3027,603,3083,629">
+<area shape="rect" href="$debug_8h-source.html" title="debug.h" alt="" coords="3312,453,3379,480">
+<area shape="rect" href="$dll_8h.html" title="Macros for handling DLL/library API visibility." alt="" coords="2084,677,2129,704">
+<area shape="rect" href="$m__mode__base_8h.html" title="Base for mode classes." alt="" coords="2163,155,2280,181">
+<area shape="rect" href="$socket_8h.html" title="Class wrapper to encapsulate the Blackberry USB logical socket." alt="" coords="1935,304,2007,331">
+<area shape="rect" href="$record_8h.html" title="Blackberry database record classes." alt="" coords="1211,528,1277,555">
+<area shape="rect" href="$pin_8h.html" title="class for device PIN notation" alt="" coords="2083,603,2131,629">
+<area shape="rect" href="$probe_8h.html" title="USB Blackberry detection routines." alt="" coords="2191,379,2255,405">
+<area shape="rect" href="$router_8h.html" title="Support classes for the pluggable socket routing system." alt="" coords="2077,379,2141,405">
+<area shape="rect" href="$r__calendar_8h.html" title="Blackberry database record parser class for calendar records." alt="" coords="659,603,749,629">
+<area shape="rect" href="$r__calllog_8h.html" title="Record parsing class for call logs." alt="" coords="1512,603,1592,629">
+<area shape="rect" href="$r__bookmark_8h.html" title="Record parsing class for call logs." alt="" coords="1195,603,1293,629">
+<area shape="rect" href="$r__contact_8h.html" title="Blackberry database record parser class for contact records." alt="" coords="549,603,635,629">
+<area shape="rect" href="$r__cstore_8h.html" title="Blackberry database record parser class for Content Store records." alt="" coords="909,603,989,629">
+<area shape="rect" href="$r__memo_8h.html" title="Record parsing class for the memo database." alt="" coords="1317,603,1397,629">
+<area shape="rect" href="$r__message_8h.html" title="Blackberry database record parser class for email records." alt="" coords="1667,603,1763,629">
+<area shape="rect" href="$r__servicebook_8h.html" title="Blackberry database record parser class for the Service Book record." alt="" coords="773,603,885,629">
+<area shape="rect" href="$r__task_8h.html" title="Record parsing class for the task database." alt="" coords="1421,603,1488,629">
+<area shape="rect" href="$r__pin__message_8h.html" title="Blackberry database record parser class for pin message records." alt="" coords="1787,603,1907,629">
+<area shape="rect" href="$common_8h.html" title="General header for the Barry library." alt="" coords="3255,528,3337,555">
+<area shape="rect" href="$log_8h.html" title="General header for the Barry library." alt="" coords="3452,528,3500,555">

@@ -1,0 +1,9 @@
+<area shape="rect" href="$classBarry_1_1Parser.html" title="Base class for the parser hierarchy." alt="" coords="1487,5,1585,32">
+<area shape="rect" title="STL class." alt="" coords="332,157,412,184">
+<area shape="rect" href="$classBarry_1_1IConverter.html" title="Main charset conversion class, primarily focused on converting between the Blackberry..." alt="" coords="1153,416,1273,443">
+<area shape="rect" title="STL class." alt="" coords="7,157,172,184">
+<area shape="rect" href="$classBarry_1_1Mode_1_1Desktop.html" title="The main interface class to the device databases." alt="" coords="1463,443,1609,469">
+<area shape="rect" href="$classBarry_1_1Mode_1_1Mode.html" title="Base class for simple mode classes." alt="" coords="1148,365,1279,392">
+<area shape="rect" href="$classBarry_1_1Controller.html" title="The main interface class." alt="" coords="875,395,989,421">
+<area shape="rect" href="$classBarry_1_1DataQueue.html" title="This class provides a thread aware fifo queue for Data objects, providing memory..." alt="" coords="27,416,152,443">
+<area shape="rect" href="$classBarry_1_1IConvHandle.html" title="Wrapper class for a two&#45;way iconv_t handle pair." alt="" coords="865,445,999,472">

@@ -1,0 +1,3 @@
+<area shape="rect" href="$classBarry_1_1Pipe.html#c37ea1a469fdc249eba6fb65e421cf34" title="Reads one item from the builder and feeds it into the parser and returns the builder..." alt="" coords="219,31,379,57">
+<area shape="rect" href="$classBarry_1_1Builder.html#005a0269c1f96947d7a75c1cc09a4609" title="Same as BuildRecord, but does not care about any offsets." alt="" coords="428,5,609,32">
+<area shape="rect" href="$classBarry_1_1Parser.html#1d8325c74140cda51c5735c6f82b7511" title="Called to parse sub fields in the raw data packet." alt="" coords="428,56,609,83">

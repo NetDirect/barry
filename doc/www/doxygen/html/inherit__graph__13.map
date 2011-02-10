@@ -1,0 +1,14 @@
+<area shape="rect" href="$classBarry_1_1Error.html" title="The base class for any future derived exceptions." alt="" coords="5,284,93,311">
+<area shape="rect" href="$classBarry_1_1BackupError.html" title="Thrown by the Backup parser class when there is a problem with the low level file..." alt="" coords="160,5,291,32">
+<area shape="rect" href="$classBarry_1_1BadData.html" title="Thrown by record classes if their data is invalid and cannot be uploaded to the Blackberry..." alt="" coords="171,56,280,83">
+<area shape="rect" href="$classBarry_1_1BadPackedFormat.html" title="Thrown by record classes that don&#39;t recognize a given packed format code." alt="" coords="141,107,309,133">
+<area shape="rect" href="$classBarry_1_1BadPacket.html" title="Thrown by the socket class if a packet command&#39;s response indicates an error..." alt="" coords="164,157,287,184">
+<area shape="rect" href="$classBarry_1_1BadPassword.html" title="A bad or unknown password when talking to the device." alt="" coords="156,208,295,235">
+<area shape="rect" href="$classBarry_1_1BadSize.html" title="Unexpected packet size, or not enough data." alt="" coords="171,259,280,285">
+<area shape="rect" href="$classBarry_1_1ConvertError.html" title="Thrown by the vformat related barrysync library classes." alt="" coords="159,309,292,336">
+<area shape="rect" href="$classBarry_1_1ErrnoError.html" title="System error that provides an errno error code." alt="" coords="165,360,285,387">
+<area shape="rect" href="$classBarry_1_1JDWP_1_1Error.html" title="Thrown on low level JDWP errors." alt="" coords="159,411,292,437">
+<area shape="rect" href="$classBarry_1_1PinNotFound.html" title="Thrown by the Connector class when unable to find the requested Pin If the attached..." alt="" coords="157,461,293,488">
+<area shape="rect" href="$classBarry_1_1RestoreError.html" title="Thrown by the Restore builder class when there is a problem with the low level file..." alt="" coords="159,512,292,539">
+<area shape="rect" href="$classUsb_1_1Error.html" title="Thrown on low level USB errors." alt="" coords="185,563,265,589">
+<area shape="rect" href="$classBarry_1_1ConfigFileError.html" title="Thrown by the ConfigFile class when encountering a serious system error while loading..." alt="" coords="357,360,504,387">

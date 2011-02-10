@@ -1,0 +1,6 @@
+<area shape="rect" href="$iconv_8h.html" title="iconv wrapper class, and pluggable interface for records" alt="" coords="135,80,196,107">
+<area shape="rect" href="$common_8h.html" title="General header for the Barry library." alt="" coords="281,80,364,107">
+<area shape="rect" href="$error_8h.html" title="Common exception classes for the Barry library." alt="" coords="413,80,469,107">
+<area shape="rect" href="$dll_8h.html" title="Macros for handling DLL/library API visibility." alt="" coords="245,229,291,256">
+<area shape="rect" href="$data_8h.html" title="Class to deal with pre&#45;saved data files." alt="" coords="105,155,161,181">
+<area shape="rect" href="$pin_8h.html" title="class for device PIN notation" alt="" coords="383,155,431,181">

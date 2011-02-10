@@ -1,0 +1,38 @@
+<area shape="rect" href="$connector_8h-source.html" title="connector.h" alt="" coords="111,80,199,107">
+<area shape="rect" href="$tzwrapper_8h.html" title="Timezone adjustment class, wrapping the TZ environment variable to make struct tm..." alt="" coords="208,155,296,181">
+<area shape="rect" href="$vformat_8h-source.html" title="vformat.h" alt="" coords="384,80,459,107">
+<area shape="rect" href="$cbarry_8h.html" title="Main header file for Barry C API &#45; incomplete." alt="" coords="483,80,549,107">
+<area shape="rect" href="$dataqueue_8cc.html" title="FIFO queue of Data objects." alt="" coords="573,80,672,107">
+<area shape="rect" href="$m__javaloader_8cc.html" title="Mode class for the JavaLoader mode." alt="" coords="696,80,811,107">
+<area shape="rect" href="$m__jvmdebug_8cc.html" title="Mode class for the JVMDebug mode." alt="" coords="835,80,947,107">
+<area shape="rect" href="$r__bookmark_8cc.html" title="Record parsing class for the phone browser bookmarks database." alt="" coords="971,80,1077,107">
+<area shape="rect" href="$r__calendar_8cc.html" title="Blackberry database record parser class for calendar records." alt="" coords="1101,80,1200,107">
+<area shape="rect" href="$r__calllog_8cc.html" title="Record parsing class for the phone call logs database." alt="" coords="1224,80,1312,107">
+<area shape="rect" href="$r__contact_8cc.html" title="Blackberry database record parser class for contact records." alt="" coords="1336,80,1429,107">
+<area shape="rect" href="$r__folder_8cc.html" title="Record parsing class for the folders database." alt="" coords="1453,80,1533,107">
+<area shape="rect" href="$r__memo_8cc.html" title="Record parsing class for the memo database." alt="" coords="1557,80,1643,107">
+<area shape="rect" href="$r__message__base_8cc.html" title="Base class for email&#45;oriented Blackberry database records." alt="" coords="1667,80,1805,107">
+<area shape="rect" href="$r__recur__base_8cc.html" title="Base class for recurring calendar event data." alt="" coords="1829,80,1944,107">
+<area shape="rect" href="$r__servicebook_8cc.html" title="Blackberry database record parser class for Service Book records." alt="" coords="1968,80,2088,107">
+<area shape="rect" href="$r__sms_8cc.html" title="Record parsing class for the SMS database." alt="" coords="2112,80,2187,107">
+<area shape="rect" href="$r__task_8cc.html" title="Record parsing class for the task database." alt="" coords="2211,80,2285,107">
+<area shape="rect" href="$r__timezone_8cc.html" title="Record parsing class for the timezone database." alt="" coords="2309,80,2413,107">
+<area shape="rect" href="$record_8cc.html" title="Misc." alt="" coords="2437,80,2512,107">
+<area shape="rect" href="$time_8cc.html" title="Conversion between time_t and cenmin_t and back." alt="" coords="2536,80,2600,107">
+<area shape="rect" href="$bjavaloader_8cc.html" title="bjavaloader.cc" alt="" coords="2624,80,2728,107">
+<area shape="rect" href="$barry_8h.html" title="Main header file for applications." alt="" coords="125,155,184,181">
+<area shape="rect" href="$connector_8cc-source.html" title="connector.cc" alt="" coords="5,155,101,181">
+<area shape="rect" href="$barrysync_8h.html" title="Main header file for libbarrysync." alt="" coords="401,304,489,331">
+<area shape="rect" href="$tzwrapper_8cc.html" title="Timezone adjustment class, wrapping the TZ environment variable to make struct tm..." alt="" coords="116,229,209,256">
+<area shape="rect" href="$vbase_8cc-source.html" title="vbase.cc" alt="" coords="284,229,359,256">
+<area shape="rect" href="$vbase_8h.html" title="Base class for vformat support." alt="" coords="520,155,587,181">
+<area shape="rect" href="$vevent_8h-source.html" title="vevent.h" alt="" coords="609,229,681,256">
+<area shape="rect" href="$vjournal_8h-source.html" title="vjournal.h" alt="" coords="705,229,783,256">
+<area shape="rect" href="$vtodo_8h-source.html" title="vtodo.h" alt="" coords="383,229,447,256">
+<area shape="rect" href="$vformat_8c-source.html" title="vformat.c" alt="" coords="421,155,496,181">
+<area shape="rect" href="$vcard_8h.html" title="Conversion routines for vcards." alt="" coords="521,229,585,256">
+<area shape="rect" href="$mimeio_8cc.html" title="Storage, parser, builder classes for MIME objects (vcard, vevent, vtodo, vjournal)..." alt="" coords="609,304,689,331">
+<area shape="rect" href="$vcard_8cc.html" title="Conversion routines for vcards." alt="" coords="513,304,585,331">
+<area shape="rect" href="$vevent_8cc-source.html" title="vevent.cc" alt="" coords="713,304,791,331">
+<area shape="rect" href="$vjournal_8cc-source.html" title="vjournal.cc" alt="" coords="815,304,897,331">
+<area shape="rect" href="$vtodo_8cc-source.html" title="vtodo.cc" alt="" coords="305,304,377,331">

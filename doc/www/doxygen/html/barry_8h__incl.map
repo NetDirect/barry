@@ -1,0 +1,38 @@
+<area shape="rect" href="$data_8h.html" title="Class to deal with pre&#45;saved data files." alt="" coords="2317,379,2373,405">
+<area shape="rect" href="$usbwrap_8h.html" title="USB API wrapper." alt="" coords="1456,379,1536,405">
+<area shape="rect" href="$error_8h.html" title="Common exception classes for the Barry library." alt="" coords="1331,453,1387,480">
+<area shape="rect" href="$common_8h.html" title="General header for the Barry library." alt="" coords="215,304,297,331">
+<area shape="rect" href="$configfile_8h.html" title="Barry configuraion class, for one device PIN." alt="" coords="3617,304,3700,331">
+<area shape="rect" href="$record_8h.html" title="Blackberry database record classes." alt="" coords="2600,379,2667,405">
+<area shape="rect" href="$probe_8h.html" title="USB Blackberry detection routines." alt="" coords="2824,304,2888,331">
+<area shape="rect" href="$dataqueue_8h.html" title="FIFO queue of Data objects." alt="" coords="560,379,651,405">
+<area shape="rect" href="$socket_8h.html" title="Class wrapper to encapsulate the Blackberry USB logical socket." alt="" coords="1432,229,1504,256">
+<area shape="rect" href="$router_8h.html" title="Support classes for the pluggable socket routing system." alt="" coords="808,304,872,331">
+<area shape="rect" href="$protocol_8h.html" title="USB Blackberry bulk protocol API constants." alt="" coords="1861,379,1939,405">
+<area shape="rect" href="$parser_8h.html" title="Virtual parser wrapper." alt="" coords="2019,304,2085,331">
+<area shape="rect" href="$builder_8h.html" title="Virtual protocol packet builder wrapper." alt="" coords="2912,304,2981,331">
+<area shape="rect" href="$ldif_8h.html" title="Routines for reading and writing LDAP LDIF data." alt="" coords="1232,379,1280,405">
+<area shape="rect" href="$ldifio_8h.html" title="Storage, parser, and builder classes for ldif operations." alt="" coords="367,229,425,256">
+<area shape="rect" href="$controller_8h.html" title="High level BlackBerry API class." alt="" coords="1527,155,1609,181">
+<area shape="rect" href="$m__desktop_8h.html" title="Mode class for the Desktop mode." alt="" coords="2096,155,2192,181">
+<area shape="rect" href="$m__ipmodem_8h.html" title="Mode class for GPRS modem mode (using endpoints on modern devices)." alt="" coords="896,304,1000,331">
+<area shape="rect" href="$m__serial_8h.html" title="Mode class for serial / GPRS modem mode." alt="" coords="1175,155,1255,181">
+<area shape="rect" href="$m__javaloader_8h.html" title="Mode class for the JavaLoader mode." alt="" coords="2441,155,2548,181">
+<area shape="rect" href="$m__raw__channel_8h.html" title="Mode class for a raw channel." alt="" coords="1329,155,1452,181">
+<area shape="rect" href="$m__jvmdebug_8h.html" title="Mode class for the JVMDebug mode." alt="" coords="1965,155,2072,181">
+<area shape="rect" href="$version_8h.html" title="Provide access to library version information." alt="" coords="928,528,1003,555">
+<area shape="rect" href="$log_8h.html" title="General header for the Barry library." alt="" coords="5,528,53,555">
+<area shape="rect" href="$sha1_8h-source.html" title="sha1.h" alt="" coords="77,528,136,555">
+<area shape="rect" href="$iconv_8h.html" title="iconv wrapper class, and pluggable interface for records" alt="" coords="3005,304,3067,331">
+<area shape="rect" href="$bmp_8h.html" title="BMP conversion routines." alt="" coords="2337,80,2393,107">
+<area shape="rect" href="$cod_8h.html" title="COD file API." alt="" coords="372,304,425,331">
+<area shape="rect" href="$threadwrap_8h.html" title="RAII Wrapper for a single thread." alt="" coords="1008,229,1104,256">
+<area shape="rect" href="$vsmartptr_8h-source.html" title="vsmartptr.h" alt="" coords="2776,80,2861,107">
+<area shape="rect" href="$pipe_8h.html" title="Connector class to join parsers and builders together." alt="" coords="1883,229,1939,256">
+<area shape="rect" href="$connector_8h-source.html" title="connector.h" alt="" coords="2888,229,2976,256">
+<area shape="rect" href="$dp__codinfo_8h.html" title="Debug file parsing." alt="" coords="3112,379,3208,405">
+<area shape="rect" href="$j__manager_8h.html" title="Application management classes." alt="" coords="3253,304,3344,331">
+<area shape="rect" href="$j__server_8h.html" title="Java Debug server classes." alt="" coords="2180,80,2257,107">
+<area shape="rect" href="$m__desktoptmpl_8h.html" title="Ease of use templates for the Desktop mode class." alt="" coords="1965,80,2085,107">
+<area shape="rect" href="$dll_8h.html" title="Macros for handling DLL/library API visibility." alt="" coords="1656,603,1701,629">
+<area shape="rect" href="$pin_8h.html" title="class for device PIN notation" alt="" coords="3320,528,3368,555">

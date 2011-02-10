@@ -1,0 +1,12 @@
+<area shape="rect" href="$backup_8h.html" title="Special parser class to support creation of Barry Backup files." alt="" coords="124,80,199,107">
+<area shape="rect" href="$barry_8h.html" title="Main header file for applications." alt="" coords="516,229,575,256">
+<area shape="rect" href="$m__desktop_8h.html" title="Mode class for the Desktop mode." alt="" coords="567,80,663,107">
+<area shape="rect" href="$m__desktoptmpl_8h.html" title="Ease of use templates for the Desktop mode class." alt="" coords="827,155,947,181">
+<area shape="rect" href="$m__desktop_8cc.html" title="Mode class for the Desktop mode." alt="" coords="427,155,531,181">
+<area shape="rect" href="$packet_8cc.html" title="Low level protocol packet builder class." alt="" coords="555,155,632,181">
+<area shape="rect" href="$pipe_8h.html" title="Connector class to join parsers and builders together." alt="" coords="343,80,399,107">
+<area shape="rect" href="$parser_8cc.html" title="Virtual parser wrapper." alt="" coords="737,80,812,107">
+<area shape="rect" href="$backup_8cc.html" title="Special parser class to support creation of Barry Backup files." alt="" coords="5,155,85,181">
+<area shape="rect" href="$barrybackup_8h.html" title="Main header file for libbarrybackup." alt="" coords="109,155,213,181">
+<area shape="rect" href="$connector_8cc-source.html" title="connector.cc" alt="" coords="656,155,752,181">
+<area shape="rect" href="$pipe_8cc.html" title="Connector class to join parsers and builders together." alt="" coords="339,155,403,181">

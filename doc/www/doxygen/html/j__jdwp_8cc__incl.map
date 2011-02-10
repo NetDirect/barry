@@ -1,0 +1,5 @@
+<area shape="rect" href="$j__jdwp_8h.html" title="JDWP classes." alt="" coords="171,80,237,107">
+<area shape="rect" href="$data_8h.html" title="Class to deal with pre&#45;saved data files." alt="" coords="280,229,336,256">
+<area shape="rect" href="$error_8h.html" title="Common exception classes for the Barry library." alt="" coords="143,155,199,181">
+<area shape="rect" href="$dll_8h.html" title="Macros for handling DLL/library API visibility." alt="" coords="192,304,237,331">
+<area shape="rect" href="$pin_8h.html" title="class for device PIN notation" alt="" coords="208,229,256,256">

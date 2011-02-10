@@ -1,0 +1,4 @@
+<area shape="rect" href="$classBarry_1_1Sync_1_1TzWrapper.html#1f1529e9d5001b0b08de41d884c27d63" title="Barry::Sync::TzWrapper::mktime" alt="" coords="297,5,508,32">
+<area shape="rect" href="$classBarry_1_1Sync_1_1TzWrapper.html#6770fc385305652d74b565b882dfab0c" title="Set timezone via offset in minutes Negative minutes goes west, positive goes east..." alt="" coords="291,56,515,83">
+<area shape="rect" href="$classBarry_1_1Sync_1_1TzWrapper.html#ab3349c356c87e37d41841d78fd8f227" title="Set timezone to UTC." alt="" coords="296,107,509,133">
+<area shape="rect" href="$classBarry_1_1Sync_1_1TzWrapper.html#46e3e3ec5c35694810271476707a6186" title="Set TZ to a new value." alt="" coords="563,56,752,83">

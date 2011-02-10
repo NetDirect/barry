@@ -1,0 +1,6 @@
+<area shape="rect" href="$dll_8h.html" title="Macros for handling DLL/library API visibility." alt="" coords="519,379,564,405">
+<area shape="rect" href="$router_8h.html" title="Support classes for the pluggable socket routing system." alt="" coords="380,80,444,107">
+<area shape="rect" href="$dataqueue_8h.html" title="FIFO queue of Data objects." alt="" coords="101,155,192,181">
+<area shape="rect" href="$error_8h.html" title="Common exception classes for the Barry library." alt="" coords="272,229,328,256">
+<area shape="rect" href="$usbwrap_8h.html" title="USB API wrapper." alt="" coords="407,155,487,181">
+<area shape="rect" href="$pin_8h.html" title="class for device PIN notation" alt="" coords="304,304,352,331">

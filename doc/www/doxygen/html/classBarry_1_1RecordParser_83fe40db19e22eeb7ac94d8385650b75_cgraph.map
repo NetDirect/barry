@@ -1,0 +1,5 @@
+<area shape="rect" href="$namespaceBarry.html#d9b9de17676484b0a956a2944602f84c" title="Contains the proper way to convert a DBData object into a record." alt="" coords="279,81,417,108">
+<area shape="rect" href="$classBarry_1_1DBData.html#a7cacc9655376447ffbf3aa4d664a03b" title="Barry::DBData::GetData" alt="" coords="480,5,640,32">
+<area shape="rect" href="$classBarry_1_1DBData.html#5b301bfdcda5a74ccfd3f7e54fd69d99" title="Barry::DBData::GetOffset" alt="" coords="476,56,644,83">
+<area shape="rect" href="$classBarry_1_1DBData.html#07523eb3b1dcfd99a917a184b61cb10a" title="Barry::DBData::GetRecType" alt="" coords="468,107,652,133">
+<area shape="rect" href="$classBarry_1_1DBData.html#2a0106c7330842c455fc5393a3abfbc7" title="Barry::DBData::GetUniqueId" alt="" coords="468,157,652,184">

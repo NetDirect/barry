@@ -1,0 +1,5 @@
+<area shape="rect" href="$classBarry_1_1Sync_1_1vBase.html" title="Base class containing vformat helper API." alt="" coords="5,81,141,108">
+<area shape="rect" href="$classBarry_1_1Sync_1_1vCalendar.html" title="Class for converting between RFC 2445 iCalendar data format, and the Barry::Calendar..." alt="" coords="191,5,345,32">
+<area shape="rect" href="$classBarry_1_1Sync_1_1vCard.html" title="Class for converting between RFC 2425/2426 vCard data format, and the Barry::Contact..." alt="" coords="203,56,333,83">
+<area shape="rect" href="$classBarry_1_1Sync_1_1vJournal.html" title="Class for converting between RFC 2445 iCalendar data format, and the Barry::Memo..." alt="" coords="195,107,341,133">
+<area shape="rect" href="$classBarry_1_1Sync_1_1vTodo.html" title="Class for converting between RFC 2445 iCalendar data format, and the Barry::Task..." alt="" coords="201,157,335,184">

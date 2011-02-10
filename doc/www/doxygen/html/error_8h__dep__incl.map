@@ -1,0 +1,49 @@
+<area shape="rect" href="$a__osloader_8cc.html" title="OS files parser (multi ALX files parser)." alt="" coords="5,80,107,107">
+<area shape="rect" href="$backup_8cc.html" title="Special parser class to support creation of Barry Backup files." alt="" coords="131,80,211,107">
+<area shape="rect" href="$usbwrap_8h.html" title="USB API wrapper." alt="" coords="912,80,992,107">
+<area shape="rect" href="$barry_8h.html" title="Main header file for applications." alt="" coords="448,379,507,405">
+<area shape="rect" href="$m__desktop_8cc.html" title="Mode class for the Desktop mode." alt="" coords="1164,379,1268,405">
+<area shape="rect" href="$m__javaloader_8cc.html" title="Mode class for the JavaLoader mode." alt="" coords="1292,379,1407,405">
+<area shape="rect" href="$m__jvmdebug_8cc.html" title="Mode class for the JVMDebug mode." alt="" coords="1431,379,1543,405">
+<area shape="rect" href="$m__raw__channel_8cc.html" title="Mode class for a raw channel." alt="" coords="1012,379,1140,405">
+<area shape="rect" href="$probe_8cc.html" title="USB Blackberry detection routines." alt="" coords="824,304,896,331">
+<area shape="rect" href="$router_8h.html" title="Support classes for the pluggable socket routing system." alt="" coords="565,155,629,181">
+<area shape="rect" href="$usbwrap_8cc.html" title="USB API wrapper." alt="" coords="1192,155,1280,181">
+<area shape="rect" href="$vbase_8h.html" title="Base class for vformat support." alt="" coords="2893,80,2960,107">
+<area shape="rect" href="$bmp_8cc.html" title="BMP conversion routines." alt="" coords="2984,80,3048,107">
+<area shape="rect" href="$cod_8cc.html" title="COD file API." alt="" coords="3072,80,3131,107">
+<area shape="rect" href="$configfile_8cc.html" title="Barry configuraion class, for one device PIN." alt="" coords="3155,80,3245,107">
+<area shape="rect" href="$error_8cc.html" title="Common exception classes for the Barry library." alt="" coords="3269,80,3333,107">
+<area shape="rect" href="$iconv_8cc.html" title="iconv wrapper class, and pluggable interface for records" alt="" coords="3357,80,3427,107">
+<area shape="rect" href="$j__jdwp_8h.html" title="JDWP classes." alt="" coords="1569,80,1636,107">
+<area shape="rect" href="$j__server_8cc.html" title="Server protocol implementation." alt="" coords="1820,229,1903,256">
+<area shape="rect" href="$record-internal_8h.html" title="Support functions, types, and templates for the general record parsing classes in..." alt="" coords="2137,80,2252,107">
+<area shape="rect" href="$r__calendar_8cc.html" title="Blackberry database record parser class for calendar records." alt="" coords="1675,155,1773,181">
+<area shape="rect" href="$r__contact_8cc.html" title="Blackberry database record parser class for contact records." alt="" coords="2381,155,2475,181">
+<area shape="rect" href="$r__servicebook_8cc.html" title="Blackberry database record parser class for Service Book records." alt="" coords="2499,155,2619,181">
+<area shape="rect" href="$record_8cc.html" title="Misc." alt="" coords="2643,155,2717,181">
+<area shape="rect" href="$packet_8cc.html" title="Low level protocol packet builder class." alt="" coords="3451,80,3528,107">
+<area shape="rect" href="$protocol_8cc.html" title="USB Blackberry bulk protocol API." alt="" coords="3552,80,3637,107">
+<area shape="rect" href="$r__recur__base_8cc.html" title="Base class for recurring calendar event data." alt="" coords="3661,80,3776,107">
+<area shape="rect" href="$restore_8cc.html" title="Builder class for restoring from Barry Backup files." alt="" coords="3800,80,3880,107">
+<area shape="rect" href="$threadwrap_8cc.html" title="RAII Wrapper for a single thread." alt="" coords="3904,80,4005,107">
+<area shape="rect" href="$probe_8h.html" title="USB Blackberry detection routines." alt="" coords="1013,229,1077,256">
+<area shape="rect" href="$controller_8h.html" title="High level BlackBerry API class." alt="" coords="1035,304,1117,331">
+<area shape="rect" href="$socket_8cc.html" title="Class wrapper to encapsulate the Blackberry USB logical socket." alt="" coords="565,304,643,331">
+<area shape="rect" href="$router_8cc.html" title="Support classes for the pluggable socket routing system." alt="" coords="712,229,784,256">
+<area shape="rect" href="$m__ipmodem_8h.html" title="Mode class for GPRS modem mode (using endpoints on modern devices)." alt="" coords="336,304,440,331">
+<area shape="rect" href="$src_2platform_8h-source.html" title="platform.h" alt="" coords="859,229,939,256">
+<area shape="rect" href="$connector_8cc-source.html" title="connector.cc" alt="" coords="712,379,808,405">
+<area shape="rect" href="$socket_8h.html" title="Class wrapper to encapsulate the Blackberry USB logical socket." alt="" coords="616,229,688,256">
+<area shape="rect" href="$barrysync_8h.html" title="Main header file for libbarrysync." alt="" coords="3177,229,3265,256">
+<area shape="rect" href="$vcard_8h.html" title="Conversion routines for vcards." alt="" coords="3328,155,3392,181">
+<area shape="rect" href="$vevent_8h-source.html" title="vevent.h" alt="" coords="2893,155,2965,181">
+<area shape="rect" href="$vjournal_8h-source.html" title="vjournal.h" alt="" coords="2989,155,3067,181">
+<area shape="rect" href="$vtodo_8h-source.html" title="vtodo.h" alt="" coords="3189,155,3253,181">
+<area shape="rect" href="$vbase_8cc-source.html" title="vbase.cc" alt="" coords="3091,155,3165,181">
+<area shape="rect" href="$j__jdwp_8cc.html" title="JDWP socket communication implementation." alt="" coords="1456,155,1531,181">
+<area shape="rect" href="$j__message_8h.html" title="JDWP message classes." alt="" coords="1555,155,1651,181">
+<area shape="rect" href="$j__record_8cc.html" title="Internal record manipulation functions for JDWP classes." alt="" coords="2272,155,2357,181">
+<area shape="rect" href="$r__bookmark_8cc.html" title="Record parsing class for the phone browser bookmarks database." alt="" coords="1899,155,2005,181">
+<area shape="rect" href="$r__calllog_8cc.html" title="Record parsing class for the phone call logs database." alt="" coords="2029,155,2117,181">
+<area shape="rect" href="$r__command_8cc.html" title="Internal implementation of CommandTable parser class." alt="" coords="2141,155,2248,181">
