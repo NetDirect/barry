@@ -1,3 +1,25 @@
+Release: version 0.18.0 - 2011/02/??
+------------------------------------------------------------------------------
+2011/02/10
+	- lib: changed version API due to logical/major/minor (doh)
+	- version bumps
+		Doxyfile
+		configure.ac
+		debian/changelog
+		gui/configure.ac
+		gui/po/barry-backup.pot
+		gui/src/BackupWindow.cc
+		opensync-plugin-0.4x/configure.ac
+		opensync-plugin-0.4x/debian/control
+		opensync-plugin-0.4x/src/barry_sync.cc
+		opensync-plugin/configure.ac
+		opensync-plugin/debian/control
+		opensync-plugin/src/barry_sync.cc
+		po/barry.pot
+		po/fr.po
+		rpm/barry.spec
+		src/Makefile.am
+
 Release: version 0.17.0 - 2011/02/10
 ------------------------------------------------------------------------------
 2011/02/08
