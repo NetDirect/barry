@@ -98,7 +98,7 @@ reverse engineer the battery charging handshake via USB.</p>
 <p>How do I...
 <ul>
 	<li><? createLink("install", "Install Barry from binary packages"); ?></li>
-	<li><? createLink("cvs", "Compile Barry from tarball, CVS, or git"); ?></li>
+	<li><? createLink("cvs", "Compile Barry from tarball or git"); ?></li>
 	<li><? createLink("backups", "Make backups of my Blackberry data"); ?></li>
 	<li><? createLink("sync", "Sync my Blackberry with Evolution"); ?></li>
 	<li><? createLink("modem", "Use my Blackberry as a modem to surf the net"); ?></li>
@@ -123,7 +123,7 @@ reverse engineer the battery charging handshake via USB.</p>
 <? createSubHeader("How to Help"); ?>
 
 <p>If you are a C++ programmer, grab the source from
-<? createLink("cvs", "CVS"); ?> and take a look at the TODO file.
+<? createLink("cvs", "git"); ?> and take a look at the TODO file.
 Post a message to the
 <a href="http://sourceforge.net/mail/?group_id=153722">mailing list</a>
 when you start working on any of the listed features, so you can connect
@@ -137,7 +137,7 @@ help in testing.  Install Barry on your system, and
 <? createLink("bugs", "report any bugs"); ?> you find.</p>
 
 <p>If you prefer writing documentation, grab the source from
-<? createLink("cvs", "CVS"); ?> and look under the doc/www directory.
+<? createLink("cvs", "git"); ?> and look under the doc/www directory.
 Documentation is currently in html form, as well as doxygen-generated
 API documentation found in the comments of the source code itself.
 Patches updating either set of documentation are welcome.</p>
