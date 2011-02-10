@@ -28,15 +28,16 @@
 #define BARRY_VERSION_STRING	"Barry library version 0.17 (little endian)"
 #endif
 
-#define BARRY_VERSION_MAJOR	0
-#define BARRY_VERSION_MINOR	17
+#define BARRY_VERSION_LOGICAL	0
+#define BARRY_VERSION_MAJOR	18
+#define BARRY_VERSION_MINOR	0
 
 namespace Barry {
 
 /// Fills major and minor with integer version numbers, and
 /// returns a string containing human readable version
 /// information in English.
-const char* Version(int &major, int &minor)
+const char* Version(int &logical, int &major, int &minor)
 {
 	major = BARRY_VERSION_MAJOR;
 	minor = BARRY_VERSION_MINOR;

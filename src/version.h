@@ -26,7 +26,7 @@
 
 namespace Barry {
 
-BXEXPORT const char* Version(int &major, int &minor);
+BXEXPORT const char* Version(int &logical, int &major, int &minor);
 
 } // namespace Barry
 
