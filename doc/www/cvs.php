@@ -10,12 +10,10 @@ detailed information on the software that Barry needs.</p>
 
 <? createSubHeader("Getting the Source"); ?>
 
-<p>There are 3 ways to get the source code:
+<p>There are 2 ways to get the source code:
 <ul>
 	<li>download the release tarball from the
 		<a href="http://sourceforge.net/project/showfiles.php?group_id=153722">download page</a></li>
-	<li>download the development tree
-		<a href="http://sourceforge.net/cvs/?group_id=153722">using CVS</a></li>
 	<li>download the development tree
 		<a href="http://repo.or.cz/w/barry.git">using git</a></li>
 </ul>
@@ -26,7 +24,7 @@ detailed information on the software that Barry needs.</p>
 
 <p>There are multiple source packages available on the Sourceforge download page.
 The main tarball is always the tar.bz2 package.  This contains everything in
-CVS, including pre-built configure scripts and website documentation.</p>
+git, including pre-built configure scripts and website documentation.</p>
 
 <p>As an alternative, the tar.gz packages are Debian-specific.  This comes as
 an "orig" tarball, with the debian/ subdirectory contained in the diff.gz file.
@@ -47,30 +45,6 @@ resulting tree.</p>
 <p>Alternatively, there are rpm source packages, in the form of src.rpm files.
 These packages can be installed and built as usual, using the rpm and rpmbuild
 commands.</p>
-
-
-<? createSubHeader("Using CVS"); ?>
-
-<p>Up to date instructions for connecting to Sourceforge CVS repositories
-are available on the
-<a href="http://sourceforge.net/cvs/?group_id=153722">CVS page</a>.  This
-usually involves commands like this:
-
-<pre>
-	cvs -d:pserver:anonymous@barry.cvs.sourceforge.net:/cvsroot/barry login
-	(press enter when it asks for password)
-	cvs -d:pserver:anonymous@barry.cvs.sourceforge.net:/cvsroot/barry co -P barry
-</pre>
-</p>
-
-<p>This will place the Barry sources in the barry directory.  To update
-your source tree periodically, do the following:
-<pre>
-	cd barry
-	./buildgen.sh cleanall      (optional)
-	cvs update -Pd
-</pre>
-</p>
 
 
 <? createSubHeader("Using git"); ?>
@@ -214,15 +188,14 @@ files.  The files assume that pppob is located in /usr/sbin/pppob.</p>
 information on using your Blackberry as a modem.</p>
 
 
-<? createSubHeader("Building Barry RPMs from CVS"); ?>
+<? createSubHeader("Building Barry RPMs from git"); ?>
 
 <p> Paul Dugas reports on the mailing list that he uses the following
-steps for building RPMs from CVS:</p>
+steps for building RPMs from git:</p>
 
 <pre>
 	$ cd ~/work
-	$ cvs ... login
-	$ cvs ... co barry
+	$ git clone...
 	$ cd barry
 	$ ./buildgen.sh
 	$ ./configure --enable-gui --enable-opensync-plugin
