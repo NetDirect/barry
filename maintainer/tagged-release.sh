@@ -18,6 +18,8 @@ fi
 
 set -e
 
+export CHOWNUSER="$(whoami)"
+
 echo "WARNING: make sure you have the appropriate libopensync0-dev"
 echo "         installed on the local system, for the local deb build."
 read
@@ -32,7 +34,7 @@ cd maintainer
 
 # Build as root first, so all prompts are finished at the start,
 # for the chroot systems...
-su - -c "cd $(pwd) && ./release-root.sh $1 $2 $3"
+su - -c "cd $(pwd) && ./release-root.sh $1 $2 $3 '$CHOWNUSER'"
 
 # Build Debian packages in /usr/src/barry-version
 ./make-deb-local.sh build/barry-$1.$2.$3.tar.bz2 $1 $2 $3 debian
