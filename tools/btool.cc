@@ -46,8 +46,8 @@ using namespace Barry;
 
 void Usage()
 {
-   int major, minor;
-   const char *Version = Barry::Version(major, minor);
+   int logical, major, minor;
+   const char *Version = Barry::Version(logical, major, minor);
 
    cerr
    << "btool - Command line USB Blackberry Test Tool\n"
@@ -712,8 +712,8 @@ int main(int argc, char *argv[])
 		// anything else.
 		Barry::Init(data_dump);
 		if( data_dump ) {
-			int major, minor;
-			const char *Version = Barry::Version(major, minor);
+			int logical, major, minor;
+			const char *Version = Barry::Version(logical, major, minor);
 			cout << Version << endl;
 		}
 

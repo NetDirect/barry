@@ -586,8 +586,8 @@ void BackupWindow::on_help_about()
 
 	dlg.set_authors(authors);
 
-	int major, minor;
-	const char *BarryVersion = Barry::Version(major, minor);
+	int logical, major, minor;
+	const char *BarryVersion = Barry::Version(logical, major, minor);
 	dlg.set_name("Barry Backup");
 	dlg.set_version("0.18.0");
 	dlg.set_comments(std::string(_("Using library: ")) + BarryVersion);

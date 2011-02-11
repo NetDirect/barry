@@ -35,8 +35,8 @@ void printMessage(const std::string &message);
 
 void Usage()
 {
-   int major, minor;
-   const char *Version = Barry::Version(major, minor);
+   int logical, major, minor;
+   const char *Version = Barry::Version(logical, major, minor);
 
    cerr
    << "bjdwp - Command line USB Blackberry JDWP\n"

@@ -23,9 +23,9 @@
 #include "config.h"
 
 #ifdef WORDS_BIGENDIAN
-#define BARRY_VERSION_STRING	"Barry library version 0.17 (big endian)"
+#define BARRY_VERSION_STRING	"Barry library version 0.18.0 (big endian)"
 #else
-#define BARRY_VERSION_STRING	"Barry library version 0.17 (little endian)"
+#define BARRY_VERSION_STRING	"Barry library version 0.18.0 (little endian)"
 #endif
 
 #define BARRY_VERSION_LOGICAL	0

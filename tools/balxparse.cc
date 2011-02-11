@@ -57,8 +57,8 @@ const static struct Languages langs[] = {
 
 void Usage()
 {
-	int major, minor;
-	const char *Version = Barry::Version(major, minor);
+	int logical, major, minor;
+	const char *Version = Barry::Version(logical, major, minor);
 
 	cerr
 	<< "balxparse - Command line ALX parser\n"

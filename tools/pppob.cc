@@ -44,8 +44,8 @@ volatile bool signal_end = false;
 
 void Usage()
 {
-   int major, minor;
-   const char *Version = Barry::Version(major, minor);
+   int logical, major, minor;
+   const char *Version = Barry::Version(logical, major, minor);
 
    cerr
    << "pppob - PPP over Barry\n"
@@ -189,8 +189,8 @@ int main(int argc, char *argv[])
 
 		// Display version if in data_dump mode
 		if( data_dump ) {
-			int major, minor;
-			const char *Version = Barry::Version(major, minor);
+			int logical, major, minor;
+			const char *Version = Barry::Version(logical, major, minor);
 			barryverbose(Version);
 		}
 

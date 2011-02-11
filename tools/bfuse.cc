@@ -62,8 +62,8 @@ string cmdline_password;
 
 void Blurb()
 {
-   int major, minor;
-   const char *Version = Barry::Version(major, minor);
+   int logical, major, minor;
+   const char *Version = Barry::Version(logical, major, minor);
 
    cerr
    << "bfuse - FUSE filesystem for Blackberry databases\n"

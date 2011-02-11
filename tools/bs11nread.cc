@@ -37,8 +37,8 @@ using namespace Barry;
 
 void Usage()
 {
-   int major, minor;
-   const char *Version = Barry::Version(major, minor);
+   int logical, major, minor;
+   const char *Version = Barry::Version(logical, major, minor);
 
    cerr
    << "bs11nread - Reads a boost serialization file (from btool)\n"

@@ -58,8 +58,8 @@ using namespace Barry;
 
 void Usage()
 {
-   int major, minor;
-   const char *Version = Barry::Version(major, minor);
+   int logical, major, minor;
+   const char *Version = Barry::Version(logical, major, minor);
 
    cerr
    << "bjavaloader - Command line USB Blackberry Java Loader\n"

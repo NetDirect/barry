@@ -34,8 +34,8 @@ using namespace Barry;
 
 void Usage()
 {
-   int major, minor;
-   const char *Version = Barry::Version(major, minor);
+   int logical, major, minor;
+   const char *Version = Barry::Version(logical, major, minor);
 
    cerr
    << "brecsum - Generate SHA1 sums of raw Blackberry database records.\n"
