@@ -1,6 +1,7 @@
 Release: version 0.18.0 - 2011/02/??
 ------------------------------------------------------------------------------
 2011/02/10
+	- merged desktop branch
 	- lib: changed version API due to logical/major/minor (doh)
 	- version bumps
 		Doxyfile
