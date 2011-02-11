@@ -31,13 +31,22 @@ namespace Barry {
 
 class ContactPhotoWidget : public wxBitmapButton
 {
-	// external data
 	Barry::Contact &m_rec;
 	std::auto_ptr<wxBitmap> m_bitmap;
+	wxString m_file_filter;
+
+protected:
+	int LoadRecImage(int max_height);
 
 public:
 	ContactPhotoWidget(wxWindow *parent, wxWindowID id,
 		Barry::Contact &rec);
+
+	/// Lets user save current Photo to a JPG file
+	void PromptAndSave(wxWindow *parent);
+	/// Lets user replace current Photo with an image file
+	bool PromptAndLoad(wxWindow *parent);
+	void DeletePhoto();
 
 	static void DrawNoPhoto(wxBitmap &bm, int width, int height);
 };

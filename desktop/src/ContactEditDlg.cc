@@ -52,7 +52,7 @@ ContactEditDlg::ContactEditDlg(wxWindow *parent,
 	sizer_7_staticbox = new wxStaticBox(this, -1, wxT("Mobile"));
 	sizer_8_staticbox = new wxStaticBox(this, -1, wxT("Notes"));
 	sizer_9_staticbox = new wxStaticBox(this, -1, wxT("Name"));
-	window_1 = new ContactPhotoWidget(this, Dialog_ContactEdit_PhotoButton, m_rec);
+	m_photo = new ContactPhotoWidget(this, Dialog_ContactEdit_PhotoButton, m_rec);
 	label_13 = new wxStaticText(this, wxID_ANY, wxT("Title"));
 	Prefix = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
 	FirstNameStatic = new wxStaticText(this, wxID_ANY, wxT("First"));
@@ -217,7 +217,7 @@ void ContactEditDlg::do_layout()
 	wxFlexGridSizer* grid_sizer_1 = new wxFlexGridSizer(11, 2, 1, 3);
 	wxStaticBoxSizer* sizer_9 = new wxStaticBoxSizer(sizer_9_staticbox, wxHORIZONTAL);
 	wxFlexGridSizer* grid_sizer_2 = new wxFlexGridSizer(2, 6, 2, 3);
-	sizer_9->Add(window_1, 0, wxRIGHT|wxEXPAND|wxALIGN_CENTER_VERTICAL, 3);
+	sizer_9->Add(m_photo, 0, wxRIGHT|wxEXPAND|wxALIGN_CENTER_VERTICAL, 3);
 	grid_sizer_2->Add(label_13, 0, wxRIGHT|wxALIGN_CENTER_VERTICAL, 1);
 	grid_sizer_2->Add(Prefix, 0, wxEXPAND, 0);
 	grid_sizer_2->Add(FirstNameStatic, 0, wxLEFT|wxALIGN_CENTER_VERTICAL, 10);
@@ -341,6 +341,47 @@ int ContactEditDlg::ShowModal()
 
 void ContactEditDlg::OnPhotoButton(wxCommandEvent &event)
 {
-	// FIXME - let user pick a JPG or image file to replace the photo
+	if( m_rec.Image.size() ) {
+		// an image exists, prompt user what to do
+		wxArrayString choices;
+		choices.Add( _T("Load new photo") );
+		choices.Add( _T("Save current photo to disk") );
+		choices.Add( _T("Delete current photo") );
+
+		int choice = wxGetSingleChoiceIndex(
+			_T("A photo currently exists.  Would you like to:"),
+			_T("Photo Management"),
+			choices, this);
+
+		switch( choice )
+		{
+		case 0:	// load new photo
+			if( m_photo->PromptAndLoad(this) ) {
+				Layout();
+			}
+			break;
+
+		case 1: // save photo
+			m_photo->PromptAndSave(this);
+			break;
+
+		case 2: // delete photo
+			m_photo->DeletePhoto();
+			Layout();
+			break;
+
+		default:
+			// do nothing!
+			break;
+		}
+	}
+	else {
+		// no image exists, assume he wants to load a new one
+		if( m_photo->PromptAndLoad(this) ) {
+			// FIXME - if the photo is wider than old button,
+			// this doesn't seem to work.  Why?
+			Layout();
+		}
+	}
 }
 

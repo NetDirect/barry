@@ -136,8 +136,11 @@ bool BarryDesktopApp::OnInit()
 {
 	// Add a PNG handler for loading buttons and backgrounds
 	wxImage::AddHandler( new wxPNGHandler );
-	// Add a JPEG handler for loading Contact Photos
+
+	// Add handlers for loading Contact Photos
 	wxImage::AddHandler( new wxJPEGHandler );
+	wxImage::AddHandler( new wxTIFFHandler );
+	wxImage::AddHandler( new wxXPMHandler );
 
 	std::auto_ptr<UsbScanSplash> splash( new UsbScanSplash );
 

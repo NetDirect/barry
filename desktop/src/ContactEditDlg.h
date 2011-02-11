@@ -58,7 +58,7 @@ protected:
 	wxStaticBox* sizer_6_staticbox;
 	wxStaticBox* sizer_5_staticbox;
 	wxStaticBox* sizer_9_staticbox;
-	ContactPhotoWidget* window_1;
+	ContactPhotoWidget* m_photo;
 	wxStaticText* label_13;
 	wxTextCtrl* Prefix;
 	wxStaticText* FirstNameStatic;
