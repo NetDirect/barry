@@ -170,6 +170,8 @@ public:
 
 	// helpers
 	static void SplitName(const std::string &full, std::string &first, std::string &last);
+	static std::string Email2CommaString(const EmailList &list);
+	static void CommaString2Email(const std::string &list, EmailList &result);
 };
 
 BXEXPORT inline std::ostream& operator<< (std::ostream &os, const Contact &contact) {

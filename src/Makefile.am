@@ -162,6 +162,7 @@ include_barry_HEADERS = barry.h barrysync.h barrybackup.h barryalx.h \
 	restore.h \
 	pipe.h \
 	connector.h \
+	trim.h \
 	tzwrapper.h
 
 noinst_HEADERS = cbarry.h \

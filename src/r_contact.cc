@@ -28,8 +28,10 @@
 #include "error.h"
 #include "endian.h"
 #include "iconv.h"
-#include <ostream>
+#include "trim.h"
+#include <iostream>
 #include <iomanip>
+#include <sstream>
 #include <time.h>
 #include <stdexcept>
 
@@ -601,6 +603,54 @@ void Contact::SplitName(const std::string &full, std::string &first, std::string
 	else {
 		// no space, assume only first name
 		first = full.substr(0);
+	}
+}
+
+std::string Contact::Email2CommaString(const EmailList &list)
+{
+	ostringstream oss;
+	for( EmailList::const_iterator i = list.begin(); i!=list.end(); ++i ) {
+		if( i != list.begin() )
+			oss << ", ";
+		oss << *i;
+	}
+	return oss.str();
+}
+
+/// Replaces the EmailAddresses list with the parsed results of
+/// list.  If list is empty, then EmailAddresses will also be empty.
+/// Note that incoming addresses need to be in simple format, not
+/// complex formats like "Name <user@example.com>" but just
+/// "user@example.com".  This is a device limitation.
+///
+/// Any complex email addresses found in the list will be dropped,
+/// with a message sent to the debug output stream.
+void Contact::CommaString2Email(const std::string &list, EmailList &result)
+{
+	// start fresh
+	result.clear();
+
+	// parse the comma separated list
+	istringstream iss(list);
+	string address;
+
+	while( iss >> ws && getline(iss, address, ',') ) {
+		// trim any trailing whitespace in the address
+		Inplace::rtrim(address);
+
+		// is this a complex address?  like:
+		// Chris Frey <cdfrey@foursquare.net>
+		// The device only accepts the plain
+		// "cdfrey@foursquare.net" part here
+		if( address.rfind('>') != string::npos ) {
+			dout("Error: Cannot convert complex name+address to a simple contact email address, skipping: " << address);
+			continue;
+		}
+
+		// add to list if anything left
+		if( address.size() ) {
+			result.push_back(address);
+		}
 	}
 }
 
