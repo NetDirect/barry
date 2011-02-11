@@ -25,14 +25,14 @@
 #include "StringSync.h"
 #include <wx/wx.h>
 #include <barry/barry.h>
-#include <tr1/memory>
-#include <list>
 // begin wxGlade: ::dependencies
 #include <wx/statline.h>
 // end wxGlade
 
 // begin wxGlade: ::extracode
 // end wxGlade
+
+class ContactPhotoWidget;
 
 class ContactEditDlg : public wxDialog
 {
@@ -42,6 +42,7 @@ public:
 
 private:
 	Barry::Contact &m_rec;
+	std::string m_email_list;
 	StringSync m_strings;
 
 	// begin wxGlade: ContactEditDlg::methods
@@ -53,9 +54,11 @@ protected:
 	// begin wxGlade: ContactEditDlg::attributes
 	wxStaticBox* sizer_8_staticbox;
 	wxStaticBox* sizer_7_staticbox;
+	wxStaticBox* sizer_2_staticbox;
 	wxStaticBox* sizer_6_staticbox;
 	wxStaticBox* sizer_5_staticbox;
 	wxStaticBox* sizer_9_staticbox;
+	ContactPhotoWidget* window_1;
 	wxStaticText* label_13;
 	wxTextCtrl* Prefix;
 	wxStaticText* FirstNameStatic;
@@ -108,6 +111,24 @@ protected:
 	wxTextCtrl* WorkPhone2;
 	wxStaticText* label_8_copy;
 	wxTextCtrl* WorkFax;
+	wxStaticText* label_17;
+	wxTextCtrl* text_ctrl_9;
+	wxStaticText* label_18;
+	wxTextCtrl* text_ctrl_1;
+	wxStaticText* label_19;
+	wxTextCtrl* text_ctrl_2;
+	wxStaticText* label_20;
+	wxTextCtrl* text_ctrl_3;
+	wxStaticText* label_21;
+	wxTextCtrl* text_ctrl_4;
+	wxStaticText* label_22;
+	wxTextCtrl* text_ctrl_5;
+	wxStaticText* label_23;
+	wxTextCtrl* text_ctrl_6;
+	wxStaticText* label_24;
+	wxTextCtrl* text_ctrl_7;
+	wxStaticText* label_25;
+	wxTextCtrl* text_ctrl_8;
 	wxStaticText* label_10;
 	wxTextCtrl* MobilePhone;
 	wxStaticText* label_11;
@@ -121,9 +142,14 @@ protected:
 
 	wxSizer *bottom_buttons;
 
+	DECLARE_EVENT_TABLE();
+
 public:
 	ContactEditDlg(wxWindow *parent, Barry::Contact &rec, bool editable);
 	int ShowModal();
+
+public:
+	void OnPhotoButton(wxCommandEvent &event);
 };
 
 #endif

@@ -20,10 +20,15 @@
 */
 
 #include "ContactEditDlg.h"
+#include "ContactPhotoWidget.h"
 #include "windowids.h"
 
 // begin wxGlade: ::extracode
 // end wxGlade
+
+
+//////////////////////////////////////////////////////////////////////////////
+// ContactEditDlg class
 
 ContactEditDlg::ContactEditDlg(wxWindow *parent,
 				Barry::Contact &rec,
@@ -31,6 +36,8 @@ ContactEditDlg::ContactEditDlg(wxWindow *parent,
 	: wxDialog(parent, Dialog_ContactEdit, _T("Contact Record"))
 	, m_rec(rec)
 {
+	m_email_list = Barry::Contact::Email2CommaString(m_rec.EmailAddresses);
+
 	if( editable ) {
 		bottom_buttons = CreateButtonSizer(wxOK | wxCANCEL);
 	}
@@ -41,9 +48,11 @@ ContactEditDlg::ContactEditDlg(wxWindow *parent,
 	// begin wxGlade: ContactEditDlg::ContactEditDlg
 	sizer_5_staticbox = new wxStaticBox(this, -1, wxT("Home"));
 	sizer_6_staticbox = new wxStaticBox(this, -1, wxT("Work"));
+	sizer_2_staticbox = new wxStaticBox(this, -1, wxT("Misc"));
 	sizer_7_staticbox = new wxStaticBox(this, -1, wxT("Mobile"));
 	sizer_8_staticbox = new wxStaticBox(this, -1, wxT("Notes"));
 	sizer_9_staticbox = new wxStaticBox(this, -1, wxT("Name"));
+	window_1 = new ContactPhotoWidget(this, Dialog_ContactEdit_PhotoButton, m_rec);
 	label_13 = new wxStaticText(this, wxID_ANY, wxT("Title"));
 	Prefix = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
 	FirstNameStatic = new wxStaticText(this, wxID_ANY, wxT("First"));
@@ -96,6 +105,24 @@ ContactEditDlg::ContactEditDlg(wxWindow *parent,
 	WorkPhone2 = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
 	label_8_copy = new wxStaticText(this, wxID_ANY, wxT("Fax"));
 	WorkFax = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
+	label_17 = new wxStaticText(this, wxID_ANY, wxT("Email"));
+	text_ctrl_9 = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
+	label_18 = new wxStaticText(this, wxID_ANY, wxT("Other Phone"));
+	text_ctrl_1 = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
+	label_19 = new wxStaticText(this, wxID_ANY, wxT("Old Phone"));
+	text_ctrl_2 = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
+	label_20 = new wxStaticText(this, wxID_ANY, wxT("Radio"));
+	text_ctrl_3 = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
+	label_21 = new wxStaticText(this, wxID_ANY, wxT("PIN"));
+	text_ctrl_4 = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
+	label_22 = new wxStaticText(this, wxID_ANY, wxT("User1"));
+	text_ctrl_5 = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
+	label_23 = new wxStaticText(this, wxID_ANY, wxT("User2"));
+	text_ctrl_6 = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
+	label_24 = new wxStaticText(this, wxID_ANY, wxT("User3"));
+	text_ctrl_7 = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
+	label_25 = new wxStaticText(this, wxID_ANY, wxT("User4"));
+	text_ctrl_8 = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
 	label_10 = new wxStaticText(this, wxID_ANY, wxT("Cell"));
 	MobilePhone = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
 	label_11 = new wxStaticText(this, wxID_ANY, wxT("Cell 2"));
@@ -110,6 +137,11 @@ ContactEditDlg::ContactEditDlg(wxWindow *parent,
 	do_layout();
 	// end wxGlade
 }
+
+BEGIN_EVENT_TABLE(ContactEditDlg, wxDialog)
+	EVT_BUTTON	(Dialog_ContactEdit_PhotoButton,
+				ContactEditDlg::OnPhotoButton)
+END_EVENT_TABLE();
 
 void ContactEditDlg::set_properties()
 {
@@ -146,6 +178,17 @@ void ContactEditDlg::set_properties()
 	WorkPhone->SetValidator(wxTextValidator(wxFILTER_NONE, m_strings.Add(m_rec.WorkPhone)));
 	WorkPhone2->SetValidator(wxTextValidator(wxFILTER_NONE, m_strings.Add(m_rec.WorkPhone2)));
 	WorkFax->SetValidator(wxTextValidator(wxFILTER_NONE, m_strings.Add(m_rec.Fax)));
+	text_ctrl_9->SetMinSize(wxSize(170, -1));
+	text_ctrl_9->SetToolTip(wxT("Comma separated list of simple email addresses.  Do not use <> characters."));
+	text_ctrl_9->SetValidator(wxTextValidator(wxFILTER_NONE, m_strings.Add(m_email_list)));
+	text_ctrl_1->SetValidator(wxTextValidator(wxFILTER_NONE, m_strings.Add(m_rec.OtherPhone)));
+	text_ctrl_2->SetValidator(wxTextValidator(wxFILTER_NONE, m_strings.Add(m_rec.Phone)));
+	text_ctrl_3->SetValidator(wxTextValidator(wxFILTER_NONE, m_strings.Add(m_rec.Radio)));
+	text_ctrl_4->SetValidator(wxTextValidator(wxFILTER_NONE, m_strings.Add(m_rec.PIN)));
+	text_ctrl_5->SetValidator(wxTextValidator(wxFILTER_NONE, m_strings.Add(m_rec.UserDefined1)));
+	text_ctrl_6->SetValidator(wxTextValidator(wxFILTER_NONE, m_strings.Add(m_rec.UserDefined2)));
+	text_ctrl_7->SetValidator(wxTextValidator(wxFILTER_NONE, m_strings.Add(m_rec.UserDefined3)));
+	text_ctrl_8->SetValidator(wxTextValidator(wxFILTER_NONE, m_strings.Add(m_rec.UserDefined4)));
 	MobilePhone->SetMinSize(wxSize(100, -1));
 	MobilePhone->SetValidator(wxTextValidator(wxFILTER_NONE, m_strings.Add(m_rec.MobilePhone)));
 	MobilePhone2->SetMinSize(wxSize(100, -1));
@@ -166,12 +209,15 @@ void ContactEditDlg::do_layout()
 	wxBoxSizer* sizer_10 = new wxBoxSizer(wxHORIZONTAL);
 	wxStaticBoxSizer* sizer_7 = new wxStaticBoxSizer(sizer_7_staticbox, wxHORIZONTAL);
 	wxBoxSizer* sizer_4 = new wxBoxSizer(wxHORIZONTAL);
+	wxStaticBoxSizer* sizer_2 = new wxStaticBoxSizer(sizer_2_staticbox, wxHORIZONTAL);
+	wxFlexGridSizer* grid_sizer_3 = new wxFlexGridSizer(10, 2, 1, 3);
 	wxStaticBoxSizer* sizer_6 = new wxStaticBoxSizer(sizer_6_staticbox, wxHORIZONTAL);
 	wxFlexGridSizer* grid_sizer_1_copy = new wxFlexGridSizer(11, 2, 1, 3);
 	wxStaticBoxSizer* sizer_5 = new wxStaticBoxSizer(sizer_5_staticbox, wxHORIZONTAL);
 	wxFlexGridSizer* grid_sizer_1 = new wxFlexGridSizer(11, 2, 1, 3);
-	wxStaticBoxSizer* sizer_9 = new wxStaticBoxSizer(sizer_9_staticbox, wxVERTICAL);
+	wxStaticBoxSizer* sizer_9 = new wxStaticBoxSizer(sizer_9_staticbox, wxHORIZONTAL);
 	wxFlexGridSizer* grid_sizer_2 = new wxFlexGridSizer(2, 6, 2, 3);
+	sizer_9->Add(window_1, 0, wxRIGHT|wxEXPAND|wxALIGN_CENTER_VERTICAL, 3);
 	grid_sizer_2->Add(label_13, 0, wxRIGHT|wxALIGN_CENTER_VERTICAL, 1);
 	grid_sizer_2->Add(Prefix, 0, wxEXPAND, 0);
 	grid_sizer_2->Add(FirstNameStatic, 0, wxLEFT|wxALIGN_CENTER_VERTICAL, 10);
@@ -237,6 +283,26 @@ void ContactEditDlg::do_layout()
 	grid_sizer_1_copy->Add(WorkFax, 0, wxEXPAND, 0);
 	sizer_6->Add(grid_sizer_1_copy, 1, wxEXPAND, 0);
 	sizer_4->Add(sizer_6, 1, wxLEFT|wxRIGHT|wxEXPAND, 2);
+	grid_sizer_3->Add(label_17, 0, wxALIGN_CENTER_VERTICAL, 0);
+	grid_sizer_3->Add(text_ctrl_9, 0, 0, 0);
+	grid_sizer_3->Add(label_18, 0, wxALIGN_CENTER_VERTICAL, 0);
+	grid_sizer_3->Add(text_ctrl_1, 0, wxEXPAND, 0);
+	grid_sizer_3->Add(label_19, 0, 0, 0);
+	grid_sizer_3->Add(text_ctrl_2, 0, wxEXPAND, 0);
+	grid_sizer_3->Add(label_20, 0, 0, 0);
+	grid_sizer_3->Add(text_ctrl_3, 0, wxEXPAND, 0);
+	grid_sizer_3->Add(label_21, 0, 0, 0);
+	grid_sizer_3->Add(text_ctrl_4, 0, wxEXPAND, 0);
+	grid_sizer_3->Add(label_22, 0, 0, 0);
+	grid_sizer_3->Add(text_ctrl_5, 0, wxEXPAND, 0);
+	grid_sizer_3->Add(label_23, 0, 0, 0);
+	grid_sizer_3->Add(text_ctrl_6, 0, wxEXPAND, 0);
+	grid_sizer_3->Add(label_24, 0, 0, 0);
+	grid_sizer_3->Add(text_ctrl_7, 0, wxEXPAND, 0);
+	grid_sizer_3->Add(label_25, 0, 0, 0);
+	grid_sizer_3->Add(text_ctrl_8, 0, wxEXPAND, 0);
+	sizer_2->Add(grid_sizer_3, 1, wxEXPAND, 0);
+	sizer_4->Add(sizer_2, 1, wxEXPAND, 0);
 	sizer_1->Add(sizer_4, 0, wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND, 5);
 	sizer_7->Add(label_10, 0, wxRIGHT|wxALIGN_CENTER_VERTICAL, 1);
 	sizer_7->Add(MobilePhone, 1, 0, 0);
@@ -269,6 +335,12 @@ int ContactEditDlg::ShowModal()
 {
 	int ret = wxDialog::ShowModal();
 	m_strings.Sync();
+	Barry::Contact::CommaString2Email(m_email_list, m_rec.EmailAddresses);
 	return ret;
+}
+
+void ContactEditDlg::OnPhotoButton(wxCommandEvent &event)
+{
+	// FIXME - let user pick a JPG or image file to replace the photo
 }
 
