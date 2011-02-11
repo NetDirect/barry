@@ -24,6 +24,7 @@ barrydesktop_SOURCES = \
 	PNGButton.cc PNGButton.h \
 	BaseButtons.cc BaseButtons.h \
 	BaseFrame.cc BaseFrame.h \
+	ContactPhotoWidget.cc ContactPhotoWidget.h \
 	Mode.h \
 	Mode_MainMenu.cc Mode_MainMenu.h \
 	Mode_Sync.cc Mode_Sync.h \
