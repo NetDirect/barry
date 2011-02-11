@@ -29,6 +29,7 @@
 #include "time.h"
 #include "error.h"
 #include "endian.h"
+#include "trim.h"
 #include <sstream>
 #include <iomanip>
 #include <time.h>
@@ -225,12 +226,69 @@ std::ostream& operator<< (std::ostream &os, const std::vector<UnknownField> &unk
 ///////////////////////////////////////////////////////////////////////////////
 // EmailAddress class
 
-std::ostream& operator<<(std::ostream &os, const EmailAddress &msga) {
-	os << msga.Name << " <" << msga.Email << ">";
+EmailAddress::EmailAddress(const std::string &complex_address)
+{
+	size_t end = complex_address.rfind('>');
+	size_t start = complex_address.rfind('<');
+	if( start == string::npos || end == string::npos || start > end ) {
+		// simple address, add it
+		Email = complex_address;
+		Inplace::trim(Email);
+	}
+	else {
+		Name = complex_address.substr(0, start);
+		Inplace::trim(Name);
+
+		Email = complex_address.substr(start+1, end - start - 1);
+		Inplace::trim(Email);
+	}
+}
+
+std::ostream& operator<<(std::ostream &os, const EmailAddress &msga)
+{
+	if( msga.Name.size() )
+		os << msga.Name << " <";
+	os << msga.Email;
+	if( msga.Name.size() )
+		os << ">";
 	return os;
 }
 
-std::ostream& operator<<(std::ostream &os, const EmailAddressList &elist) {
+
+///////////////////////////////////////////////////////////////////////////////
+// EmailAddressList class
+
+std::string EmailAddressList::ToCommaSeparated() const
+{
+	std::ostringstream oss;
+	oss << *this;
+	return oss.str();
+}
+
+/// Adds every email address found in the comma separated list.
+/// Does not clear() first.
+void EmailAddressList::AddCommaSeparated(const std::string &list)
+{
+	istringstream iss(list);
+	string address;
+	iss >> ws;
+
+	while( getline(iss, address, ',') ) {
+		// trim any trailing whitespace in the address
+		size_t len = address.size();
+		while( len && ::isspace(address[len-1]) )
+			address.resize(len-1);
+
+		// add to list if anything left
+		if( address.size() ) {
+			EmailAddress ea(address);
+			push_back(ea);
+		}
+	}
+}
+
+std::ostream& operator<<(std::ostream &os, const EmailAddressList &elist)
+{
 	for( EmailAddressList::const_iterator i = elist.begin(); i != elist.end(); ++i ) {
 		if( i != elist.begin() )
 			os << ", ";

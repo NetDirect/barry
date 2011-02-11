@@ -132,6 +132,13 @@ void serialize(ArchiveT &ar, Barry::EmailAddress &a, const unsigned int ver)
 }
 
 template <class ArchiveT>
+void serialize(ArchiveT &ar, Barry::EmailAddressList &eal, const unsigned int ver)
+{
+	std::vector<Barry::EmailAddress> &v = eal;
+	ar & make_nvp("EmailAddressList", v);
+}
+
+template <class ArchiveT>
 void serialize(ArchiveT &ar, Barry::Message &m, const unsigned int ver)
 {
 	ar & make_nvp("From", m.From);

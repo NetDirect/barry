@@ -209,6 +209,14 @@ struct BXEXPORT EmailAddress
 	std::string Name;
 	std::string Email;
 
+	EmailAddress()
+	{
+	}
+
+	/// Converts "Name <address@host.com>" into Name + Address
+	/// Will also handle just a plain address too.
+	explicit EmailAddress(const std::string &complex_address);
+
 	void clear()
 	{
 		Name.clear();
@@ -222,7 +230,13 @@ struct BXEXPORT EmailAddress
 };
 BXEXPORT std::ostream& operator<<(std::ostream &os, const EmailAddress &msga);
 
-typedef std::vector<EmailAddress>	EmailAddressList;
+class BXEXPORT EmailAddressList : public std::vector<EmailAddress>
+{
+public:
+	std::string ToCommaSeparated() const;
+	void AddCommaSeparated(const std::string &list);
+};
+
 BXEXPORT std::ostream& operator<<(std::ostream &os, const EmailAddressList &elist);
 
 struct BXEXPORT PostalAddress
