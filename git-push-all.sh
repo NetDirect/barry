@@ -4,17 +4,11 @@ PATCH_CVS="$(dirname "$0")/git-patch-cvs.sh"
 
 set -e
 
-$PATCH_CVS origin master ../barry3
-$PATCH_CVS origin master ../external/barry
-
-echo "Press enter when ready for git push..."
-read
-
 # Note: This push only updates non-CVS branches, and master.
 #       To push other CVS branches, do it manually, with git-patch-cvs.sh
 
-git push --tags origin master scripts pristine-tar
-git push --tags nfshome master scripts pristine-tar
+git push -f --tags origin master scripts pristine-tar
+git push -f --tags nfshome master scripts pristine-tar
 
 echo "Press enter when ready for git push sourceforge.net..."
 read
