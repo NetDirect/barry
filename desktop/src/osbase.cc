@@ -23,9 +23,10 @@
 #include "os22.h"
 #include "os40.h"
 #include "osprivatebase.h"
+#include <stdlib.h>
 #include <iostream>
+#include <sstream>
 #include <iomanip>
-#include <barry/barry.h>
 
 using namespace std;
 
@@ -402,7 +403,7 @@ int APISet::OpenAvailable()
 		loaded++;
 	}
 	catch( std::exception &e ) {
-		barryverbose("Unable to load opensync 0.40: " << e.what());
+		cerr << "Unable to load opensync 0.40: " << e.what();
 		push_back(0);
 	}
 
@@ -412,7 +413,7 @@ int APISet::OpenAvailable()
 		loaded++;
 	}
 	catch( std::exception &e ) {
-		barryverbose("Unable to load opensync 0.22: " << e.what());
+		cerr << "Unable to load opensync 0.22: " << e.what();
 		push_back(0);
 	}
 

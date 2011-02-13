@@ -6,6 +6,7 @@ Barry Release Checklist:
 		- src/version.cc
 		- gui/configure.ac
 		- gui/src/BackupWindow.cc (about dialog)
+		- desktop/src/Makefile.am (oswrapper lib version)
 		- Doxyfile
 		- rpm/barry.spec
 		- debian/changelog

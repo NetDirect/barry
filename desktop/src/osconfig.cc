@@ -20,7 +20,7 @@
     root directory of this project for more details.
 */
 
-#include "deviceset.h"
+#include "osconfig.h"
 #include "os40.h"
 #include <sys/types.h>
 #include <sys/stat.h>

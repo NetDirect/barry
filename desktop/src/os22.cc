@@ -27,8 +27,9 @@
 #include "os22.h"
 #include "osprivatebase.h"
 #include "osconv22.h"
-#include <barry/barry.h>
 #include <barry/vsmartptr.h>
+#include <iostream>
+#include <sstream>
 #include <memory>
 #include <glib.h>
 

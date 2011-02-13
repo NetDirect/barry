@@ -1,3 +1,4 @@
+LIB_OSWRAPPER_VERSION = 18:0:0
 
 SUBDIRS = . 0.22 0.40
 
@@ -9,8 +10,46 @@ AM_CXXFLAGS = -ansi -Wall -g
 AM_CPPFLAGS = -DBARRYDESKTOP_BASEDATADIR='"$(basedatadir)"' -DBARRYDESKTOP_IMAGEDIR='"$(imagedir)"'
 AM_LDFLAGS =
 
+include_oswrapperdir = ${includedir}/barry/oswrapper
+
 bin_PROGRAMS = barrydesktop bsyncjail bsynccl
 noinst_PROGRAMS = ostest xmlcompactor xmlmap
+lib_LTLIBRARIES = liboswrapper.la
+
+include_oswrapper_HEADERS =
+	error.h \
+	dlopen.h \
+	tempdir.h \
+	osbase.h osprivatebase.h \
+	osconfig.h \
+	osconv22.h \
+	osconv40.h \
+	os22.h \
+	os40.h 
+
+noinst_HEADERS =
+
+liboswrapper_la_SOURCES = \
+	error.cc error.h \
+	dlopen.cc dlopen.h \
+	tempdir.cc tempdir.h \
+	osbase.cc osbase.h osprivatebase.h \
+	osconfig.cc osconfig.h \
+	osconv22.h \
+	osconv40.h \
+	os22.h \
+	os40.h 
+if WITH_OPENSYNC22
+liboswrapper_la_SOURCES += os22.cc osconv22.cc
+else
+liboswrapper_la_SOURCES += null-os22.cc
+endif
+if WITH_OPENSYNC40
+liboswrapper_la_SOURCES += os40.cc osconv40.cc
+else
+liboswrapper_la_SOURCES += null-os40.cc
+endif
+liboswrapper_la_LDFLAGS = -ldl -version-info ${LIB_OSWRAPPER_VERSION}
 
 barrydesktop_SOURCES = \
 	barrydesktop.cc barrydesktop.h \
@@ -38,115 +77,37 @@ barrydesktop_SOURCES = \
 	CUI_Barry.cc CUI_Barry.h \
 	CUI_Evolution.cc CUI_Evolution.h \
 	CUI_Google.cc CUI_Google.h \
-	error.cc error.h \
-	dlopen.cc dlopen.h \
-	tempdir.cc tempdir.h \
-	deviceset.cc deviceset.h \
-	osbase.cc osbase.h osprivatebase.h \
-	osconfig.cc osconfig.h \
-	osconv22.h \
-	osconv40.h \
-	os22.h \
-	os40.h 
-if WITH_OPENSYNC22
-barrydesktop_SOURCES += os22.cc osconv22.cc
-else
-barrydesktop_SOURCES += null-os22.cc
-endif
-if WITH_OPENSYNC40
-barrydesktop_SOURCES += os40.cc osconv40.cc
-else
-barrydesktop_SOURCES += null-os40.cc
-endif
-barrydesktop_LDADD = -ldl @WX_LIBS@ $(LIBXMLPP_LIBS) $(LIBGCAL_LIBS)
+	deviceset.cc deviceset.h
+barrydesktop_LDADD = liboswrapper.la -ldl @WX_LIBS@ $(LIBXMLPP_LIBS) $(LIBGCAL_LIBS)
 barrydesktop_CXXFLAGS = $(AM_CXXFLAGS) @WX_CXXFLAGS@ $(LIBXMLPP_CFLAGS) \
 	$(LIBGCAL_CFLAGS)
 
-bsyncjail_SOURCES = \
-	bsyncjail.cc \
-	ipc.h \
-	error.cc error.h \
-	dlopen.cc dlopen.h \
-	tempdir.cc tempdir.h \
-	osbase.cc osbase.h osprivatebase.h \
-	osconfig.cc osconfig.h \
-	osconv22.h \
-	osconv40.h \
-	os22.h \
-	os40.h 
-if WITH_OPENSYNC22
-bsyncjail_SOURCES += os22.cc osconv22.cc
-else
-bsyncjail_SOURCES += null-os22.cc
-endif
-if WITH_OPENSYNC40
-bsyncjail_SOURCES += os40.cc osconv40.cc
-else
-bsyncjail_SOURCES += null-os40.cc
-endif
-bsyncjail_LDADD = -ldl @WX_LIBS@
+bsyncjail_SOURCES = bsyncjail.cc ipc.h
+bsyncjail_LDADD = liboswrapper.la -ldl @WX_LIBS@
 bsyncjail_CXXFLAGS = $(AM_CXXFLAGS) @WX_CXXFLAGS@
 
-bsynccl_SOURCES = \
-	bsynccl.cc \
-	error.cc error.h \
-	dlopen.cc dlopen.h \
-	tempdir.cc tempdir.h \
-	osbase.cc osbase.h osprivatebase.h \
-	osconfig.cc osconfig.h \
-	osconv22.h \
-	osconv40.h \
-	os22.h \
-	os40.h 
-if WITH_OPENSYNC22
-bsynccl_SOURCES += os22.cc osconv22.cc
-else
-bsynccl_SOURCES += null-os22.cc
-endif
-if WITH_OPENSYNC40
-bsynccl_SOURCES += os40.cc osconv40.cc
-else
-bsynccl_SOURCES += null-os40.cc
-endif
-bsynccl_LDADD = -ldl
+bsynccl_SOURCES = bsynccl.cc
+bsynccl_LDADD = liboswrapper.la -ldl
 bsynccl_CXXFLAGS = $(AM_CXXFLAGS)
 
 ostest_SOURCES = \
-	error.cc error.h \
-	dlopen.cc dlopen.h \
-	tempdir.cc tempdir.h \
 	deviceset.cc deviceset.h \
-	osbase.cc osbase.h osprivatebase.h \
-	osconfig.cc osconfig.h \
-	osconv22.h \
-	osconv40.h \
-	os22.h \
-	os40.h \
 	ostest.cc
 ostest_CXXFLAGS =
 if WITH_OPENSYNC22
-ostest_SOURCES += os22.cc osconv22.cc
 ostest_CXXFLAGS += -DWITH_OPENSYNC22
-else
-ostest_SOURCES += null-os22.cc
 endif
 if WITH_OPENSYNC40
-ostest_SOURCES += os40.cc osconv40.cc
 ostest_CXXFLAGS += -DWITH_OPENSYNC40
-else
-ostest_SOURCES += null-os40.cc
 endif
 #ostest_LDFLAGS = -avoid-version
-ostest_LDADD = -ldl
+ostest_LDADD = liboswrapper.la -ldl
 
 xmlcompactor_SOURCES = xmlcompactor.cc xmlcompactor.h
 xmlcompactor_CXXFLAGS = -DXMLCOMPACTOR $(AM_CXXFLAGS) $(LIBXMLPP_CFLAGS)
 xmlcompactor_LDADD = $(LIBXMLPP_LIBS)
 
-xmlmap_SOURCES = \
-	xmlmap.cc xmlmap.h
+xmlmap_SOURCES = xmlmap.cc xmlmap.h
 xmlmap_CXXFLAGS = -DXMLMAP $(AM_CXXFLAGS) $(LIBXMLPP_CFLAGS)
 xmlmap_LDADD = $(LIBXMLPP_LIBS)
-
-noinst_HEADERS =
 
