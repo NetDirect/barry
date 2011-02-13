@@ -33,6 +33,7 @@
 #include <memory>
 #include <glib.h>
 
+// use relative paths to backtrack enough to specify only 0.22 includes
 #include <../opensync-1.0/opensync/opensync.h>
 #include <../opensync-1.0/osengine/engine.h>
 

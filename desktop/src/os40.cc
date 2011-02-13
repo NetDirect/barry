@@ -39,6 +39,7 @@
 #include <errno.h>
 #include <glib.h>
 
+// use relative paths to backtrack enough to specify only 0.4x includes
 #include <../libopensync1/opensync/opensync.h>
 #include <../libopensync1/opensync/opensync-group.h>
 #include <../libopensync1/opensync/opensync-format.h>
