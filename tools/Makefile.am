@@ -93,7 +93,10 @@ bdptest_SOURCES = bdptest.cc
 bdptest_LDADD = ../src/libbarry.la ../src/libbarrydp.la $(LTLIBINTL)
 
 bjdwp_SOURCES = bjdwp.cc
-bjdwp_LDADD = ../src/libbarry.la ../src/libbarryjdwp.la $(LTLIBINTL)
+bjdwp_LDADD = ../src/libbarry.la \
+	../src/libbarrydp.la \
+	../src/libbarryjdwp.la \
+	$(LTLIBINTL)
 
 upldif_SOURCES = upldif.cc
 upldif_LDADD = ../src/libbarry.la $(LIBUSB_LIBS) -lpthread $(LTLIBINTL)
