@@ -24,6 +24,9 @@
 #include "error.h"
 #include "config.h"
 #include <errno.h>
+#include <string>
+
+using namespace std;
 
 namespace Barry {
 
@@ -106,8 +109,14 @@ std::string IConverter::Convert(iconv_t cd, const std::string &str) const
 			// whether the user wants to be notified by
 			// exception... if not, just fall through and
 			// store as much converted data as possible
+			ErrnoError e(string("iconv failed with string '") + str + "'", errno);
 			if( m_throw_on_conv_err ) {
-				throw ErrnoError("iconv failed", errno);
+				throw e;
+			}
+			else {
+				cerr << e.what();
+				// return the unconverted string
+				return str;
 			}
 		}
 		else {
