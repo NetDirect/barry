@@ -213,6 +213,23 @@ public:
 };
 
 //
+// RecordStore
+//
+/// A Storage class for RecordParser that stores a copy of the parsed record.
+///
+template <class RecordT>
+class RecordStore
+{
+public:
+	RecordT m_rec;
+
+	void operator() (const RecordT &r)
+	{
+		m_rec = r;
+	}
+};
+
+//
 // ParseDBData
 //
 /// Contains the proper way to convert a DBData object into a record.
@@ -338,6 +355,11 @@ public:
 	virtual bool IsRecordValid() const
 	{
 		return m_record_valid;
+	}
+
+	virtual const RecordT& GetRecord() const
+	{
+		return m_rec;
 	}
 
 	virtual uint8_t GetRecType() const
