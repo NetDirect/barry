@@ -47,6 +47,7 @@ namespace Barry {
 	class Folder;
 	class Timezone;
 	class ContentStore;
+	class HandheldAgent;
 }
 
 //
@@ -64,6 +65,7 @@ namespace Barry {
 	HANDLE_PARSER(CalendarAll) \
 	HANDLE_PARSER(ContentStore) \
 	HANDLE_PARSER(Folder) \
+	HANDLE_PARSER(HandheldAgent) \
 	HANDLE_PARSER(Memo) \
 	HANDLE_PARSER(Message) \
 	HANDLE_PARSER(CallLog) \

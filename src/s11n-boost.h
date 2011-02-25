@@ -495,6 +495,26 @@ void serialize(ArchiveT &ar, Barry::ContentStore &c, const unsigned int ver)
 	}
 }
 
+template <class ArchiveT>
+void serialize(ArchiveT &ar, Barry::HandheldAgent &h, const unsigned int ver)
+{
+	ar & make_nvp("RecType", h.RecType);
+	ar & make_nvp("RecordId", h.RecordId);
+
+	ar & make_nvp("MEID", h.MEID);
+	ar & make_nvp("Model", h.Model);
+	ar & make_nvp("Bands", h.Bands);
+	ar & make_nvp("Pin", h.Pin);
+	ar & make_nvp("Version", h.Version);
+	ar & make_nvp("PlatformVersion", h.PlatformVersion);
+	ar & make_nvp("Manufacturer", h.Manufacturer);
+	ar & make_nvp("Network", h.Network);
+
+	if( ver < BARRY_POD_MAP_VERSION ) {
+		ar & make_nvp("Unknowns", h.Unknowns);
+	}
+}
+
 }} // namespace boost::serialization
 
 

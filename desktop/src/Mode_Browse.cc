@@ -129,6 +129,11 @@ bool EditRecord(wxWindow *parent, bool editable, Barry::Timezone &rec)
 	return false;
 }
 
+bool EditRecord(wxWindow *parent, bool editable, Barry::HandheldAgent &rec)
+{
+	return false;
+}
+
 
 //////////////////////////////////////////////////////////////////////////////
 // GUIDesktopConnector

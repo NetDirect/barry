@@ -326,6 +326,7 @@ public:
 #include "r_sms.h"
 #include "r_folder.h"
 #include "r_timezone.h"
+#include "r_hhagent.h"
 #endif
 
 #endif

@@ -354,6 +354,11 @@ shared_ptr<Parser> GetParser(const string &name,
 			new RecordParser<Timezone, Store<Timezone> > (
 				new Store<Timezone>(filename, false, dnow, vmode)));
 	}
+	else if( name == HandheldAgent::GetDBName() ) {
+		return shared_ptr<Parser>(
+			new RecordParser<HandheldAgent, Store<HandheldAgent> > (
+				new Store<HandheldAgent>(filename, false, dnow, vmode)));
+	}
 	else {
 		// unknown database, use null parser
 		return shared_ptr<Parser>( new Barry::HexDumpParser(cout) );

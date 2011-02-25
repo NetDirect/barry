@@ -34,6 +34,7 @@
 #include "r_folder.h"
 #include "r_timezone.h"
 #include "r_cstore.h"
+#include "r_hhagent.h"
 
 #include <iostream>
 #include <memory>
