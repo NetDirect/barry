@@ -122,6 +122,9 @@ export CXXFLAGS="-Wall -Werror -O0 -g"
 ./configure --prefix="$BASEPATH/build/rootdir" --disable-boost
 make $MAKEOPTS
 make distclean
+./configure --prefix="$BASEPATH/build/rootdir" --disable-sync
+make $MAKEOPTS
+make distclean
 ./configure --prefix="$BASEPATH/build/rootdir" --enable-boost --with-zlib
 make $MAKEOPTS
 make install
