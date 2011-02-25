@@ -80,6 +80,21 @@ AC_ARG_WITH(libusb,
 	[])
 
 #
+# Allow user to disable libbarrysync, since it depends on glib-2.0 which
+# may not be possible to cross-compile.
+#
+AC_ARG_ENABLE([sync],
+	AC_HELP_STRING([--disable-sync], [disable Barry sync library]),
+	[
+	if test x"$enableval" = "xno" ; then
+		SYNC_ENABLED=no
+	else
+		SYNC_ENABLED=yes
+	fi
+	],
+	[SYNC_ENABLED=yes])
+
+#
 # Boost library configuration
 #
 # Ok, the requirements:
@@ -187,7 +202,7 @@ AC_SUBST(LIBUSB_CFLAGS)
 AC_SUBST(LIBUSB_LIBS)
 
 AM_CONDITIONAL([WITH_FUSE], [test "$FUSE_FOUND" = "1"])
-AM_CONDITIONAL([WITH_SYNC], [test "$GLIB2_FOUND" = "1"])
+AM_CONDITIONAL([WITH_SYNC], [test "$GLIB2_FOUND" = "1" -a "$SYNC_ENABLED" = "yes"])
 
 #AC_CHECK_LIB([IOKit], [main])
 #AC_CHECK_LIB([libusb], [libusb_init])
