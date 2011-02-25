@@ -320,9 +320,9 @@ std::string Date::ToYYYYMMDD() const
 {
 	std::ostringstream oss;
 	// setfill and setw not sticky.
-	oss	<< setw(4) << setfill('0') << Year
-		<< setw(2) << setfill('0') << (Month + 1)
-		<< setw(2) << setfill('0') << Day;
+	oss	<< setw(4) << setfill('0') << dec << Year
+		<< setw(2) << setfill('0') << dec << (Month + 1)
+		<< setw(2) << setfill('0') << dec << Day;
 	return oss.str();
 }
 
@@ -336,9 +336,9 @@ std::string Date::ToBBString() const
 {
 	std::ostringstream oss;
 	// setw() ain't 'sticky'!
-	oss	<< setw(2) << setfill('0') << Day << '/'
-		<< setw(2) << setfill('0') << (Month + 1) << '/'
-		<< setw(2) << setfill('0') << Year;
+	oss	<< setw(2) << setfill('0') << dec << Day << '/'
+		<< setw(2) << setfill('0') << dec << (Month + 1) << '/'
+		<< setw(2) << setfill('0') << dec << Year;
 	return oss.str();
 }
 
