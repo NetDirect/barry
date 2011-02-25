@@ -2,7 +2,7 @@
 .\" First parameter, NAME, should be all caps
 .\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
 .\" other parameters are allowed: see man(7), man(1)
-.TH BIDENTIFY 1 "November 30, 2007"
+.TH BIDENTIFY 1 "February 24, 2011"
 .\" Please adjust this date whenever revising the manpage.
 .\"
 .\" Some roff macros, for reference:
@@ -40,6 +40,16 @@ to precisely select the device to work with.
 Specify the USB device name.  This is the second number displayed in the
 output from the lsusb command, such as 005.  If the device name is numeric
 on your system, 5 and 005 are equal.  See also the \-B option.
+.TP
+.B \-c
+If used with the -m option, ESN numbers will be displayed in both hex and
+decimal formats where possible.  If -m is not used, this option has
+no effect.
+.TP
+.B \-m
+Also show the device's ESN / MEID / IMEI number.  This requires desktop
+database access, so is an option.  It will only work on devices that have
+no password.
 .TP
 .B \-v
 Dump verbose protocol data during operation.
