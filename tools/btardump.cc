@@ -70,6 +70,9 @@ public:
 	}
 
 #undef HANDLE_PARSER
+
+#ifdef __BARRY_SYNC_MODE__
+
 #define HANDLE_PARSER(tname) \
 	void operator() (const Barry::tname &r) \
 	{ \
@@ -78,6 +81,16 @@ public:
 		else \
 			m_os << r << std::endl; \
 	}
+
+#else
+
+#define HANDLE_PARSER(tname) \
+	void operator() (const Barry::tname &r) \
+	{ \
+		m_os << r << std::endl; \
+	}
+
+#endif
 
 	ALL_KNOWN_PARSER_TYPES
 };
