@@ -1,9 +1,9 @@
-barry (0.17.0-0) unstable; urgency=low
+barry (0.17.1-0) unstable; urgency=low
 
   * version bump
   * moved opensync-plugin into its own build
 
- -- Chris Frey <cdfrey@foursquare.net>  Tue, 26 Jan 2010 03:20:17 -0400
+ -- Chris Frey <cdfrey@foursquare.net>  Tue, 26 Jan 2010 03:21:17 -0400
 
 barry (0.13-1.2) unstable; urgency=low
 
