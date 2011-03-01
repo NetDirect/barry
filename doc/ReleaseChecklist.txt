@@ -1,6 +1,10 @@
 Barry Release Checklist:
 ------------------------
 - bump version numbers in
+	Note: make sure you check all control files below for both current
+	versions (i.e. libbarry0 (>= 0.18)) and the next version
+	(i.e. libbarry0 (<< 0.19)) since the binary packages should prevent
+	interaction with incompatible libraries this way.
 		- configure.ac
 		- src/Makefile.am
 		- src/version.cc
@@ -10,12 +14,15 @@ Barry Release Checklist:
 		- Doxyfile
 		- rpm/barry.spec
 		- debian/changelog
+		- debian/control (libbarry0 should not depend on minor number)
 		- opensync-plugin/configure.ac
 		- opensync-plugin/src/barry_sync.cc
 		- opensync-plugin-0.4x/configure.ac
 		- opensync-plugin-0.4x/src/barry_sync.cc
 		- opensync-plugin/debian/control (libbarry-dev)
+		- opensync-plugin/debian/changelog (libbarry-dev)
 		- opensync-plugin-0.4x/debian/control (libbarry-dev)
+		- opensync-plugin-0.4x/debian/changelog (libbarry-dev)
 		- files under po/
 		- desktop/src/barrydesktop.cc
 - test ABI / API and bump major or minor version as appropriate
