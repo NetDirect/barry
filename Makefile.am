@@ -15,7 +15,7 @@ EXTRA_DIST = COPYING ChangeLog README Doxyfile \
 	test \
 	udev
 
-SUBDIRS = po . src tools examples man
+SUBDIRS = po . src tools examples man test
 # conditionally configured nested subdirectories are listed in $(subdirs)
 SUBDIRS += $(subdirs)
 
