@@ -379,9 +379,9 @@ bool Date::FromYYYYMMDD(const std::string &str)
 
 std::ostream& operator<<(std::ostream &os, const Date &date)
 {
-	os	<< setw(4) << dec << date.Year << '/'
-		<< setw(2) << dec << (date.Month + 1) << '/'
-		<< setw(2) << dec << date.Day;
+	os	<< setw(4) << setfill('0') << dec << date.Year << '/'
+		<< setw(2) << setfill('0') << dec << (date.Month + 1) << '/'
+		<< setw(2) << setfill('0') << dec << date.Day;
 	return os;
 }
 
