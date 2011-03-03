@@ -2,17 +2,19 @@
 
 PATCH_CVS="$(dirname "$0")/git-patch-cvs.sh"
 
+BRANCHES="master scripts pristine-tar"
+
 set -e
 
 # Note: This push only updates non-CVS branches, and master.
 #       To push other CVS branches, do it manually, with git-patch-cvs.sh
 
-git push -f --tags origin master scripts pristine-tar
-git push -f --tags nfshome master scripts pristine-tar
+git push -f --tags origin $BRANCHES
+git push -f --tags nfshome $BRANCHES
 
 echo "Press enter when ready for git push sourceforge.net..."
 read
-git push sourceforge.net master scripts pristine-tar
+git push sourceforge.net $BRANCHES
 
 
 echo "Press enter when ready for git push repo.or.cz..."
@@ -28,7 +30,7 @@ read
 #
 #git push --all repo.or.cz
 #git push --tags repo.or.cz master i18n
-git push repo.or.cz master scripts pristine-tar
+git push repo.or.cz $BRANCHES
 
 echo "================= NOTE: if you want to push a tag, do it manually"
 echo "=================       for both repo.or.cz and sourceforge.net!"
