@@ -24,6 +24,7 @@
 #include "time.h"
 #include "endian.h"
 #include "debug.h"
+#include "platform.h"
 
 namespace Barry {
 
@@ -241,11 +242,19 @@ time_t Message2Time(uint16_t r_date, uint16_t r_time)
 ///
 BXEXPORT struct timespec* ThreadTimeout(int timeout_ms, struct timespec *spec)
 {
+#ifndef WIN32
 	struct timeval now;
 	gettimeofday(&now, NULL);
 
 	spec->tv_sec = now.tv_sec + timeout_ms / 1000;
 	spec->tv_nsec = (now.tv_usec + timeout_ms % 1000 * 1000) * 1000;
+#else
+	SYSTEMTIME now;
+	GetSystemTime(&now);
+
+	spec->tv_sec = now.wSecond + timeout_ms / 1000;
+	spec->tv_nsec = (now.wMilliseconds + timeout_ms) * 1000;
+#endif
 
 	return spec;
 }

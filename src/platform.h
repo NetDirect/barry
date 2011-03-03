@@ -23,7 +23,8 @@
 #ifndef __BARRY_PLATFORM_H__
 #define __BARRY_PLATFORM_H__
 
-#include "usbwrap.h"			// USB specific details
+#include "usbwrap.h"			// USB specific details and windows.h
+#include <pthread.h>			// threading and struct timespec
 
 // All Windows specific detail
 #if defined( WIN32 )
