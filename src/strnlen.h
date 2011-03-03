@@ -25,6 +25,10 @@
 #include "config.h"
 #include <string.h>
 
+#ifdef WIN32
+#define HAVE_WORKING_STRNLEN 1
+#endif
+
 // this is always defined by configure, if not, then the autoconf
 // sources changed (likely in /usr/share/autoconf/autoconf/functions.m4)
 // and configure.ac is no longer accurate
