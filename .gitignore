@@ -82,3 +82,5 @@ desktop/src/ostest
 desktop/src/xmlcompactor
 desktop/src/xmlmap
 
+test/libtest
+
