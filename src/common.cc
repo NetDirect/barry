@@ -22,7 +22,7 @@
 #include "common.h"
 #include <pthread.h>
 #include "debug.h"
-#include "config.h"
+#include "publiccfg.h"
 
 #if USE_LIBUSB
 #include <usb.h>

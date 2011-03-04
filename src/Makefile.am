@@ -86,6 +86,7 @@ endif
 
 include_barry_HEADERS = barry.h barrysync.h barrybackup.h barryalx.h \
 	dll.h \
+	publiccfg.h \
 	builder.h \
 	common.h \
 	configfile.h \
@@ -187,6 +188,7 @@ EXTRA_DIST = convo.awk \
 	legal.txt
 
 libbarry_la_SOURCES = dll.h \
+	publiccfg.h \
 	builder.h builder.cc \
 	parser.h parser.cc \
 	time.h time.cc \

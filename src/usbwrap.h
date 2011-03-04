@@ -24,7 +24,7 @@
 #define __SB_USBWRAP_H__
 
 #include "dll.h"
-#include "config.h"
+#include "publiccfg.h"
 
 //////////////////////////////////////////////////////////////////////////////
 #if USE_LIBUSB

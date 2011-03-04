@@ -39,7 +39,8 @@ AC_LANG([C++])
 
 # If we are using configure, then we always are using LIBUSB.
 # This only gets set to 0 if compiling for some other USB related driver.
-AC_DEFINE([USE_LIBUSB], [1], [Whether compling against libusb or not])
+USE_LIBUSB=1
+AC_SUBST([USE_LIBUSB])
 
 # libtar and libz don't have pkg-config files on many systems.
 # libz we can assume, but libtar we need to test for
@@ -296,6 +297,7 @@ AC_C_BIGENDIAN
 
 AC_CONFIG_FILES([Makefile po/Makefile.in
                  src/Makefile
+                 src/publiccfg.h
                  tools/Makefile
                  examples/Makefile
                  man/Makefile

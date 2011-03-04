@@ -22,7 +22,7 @@
 #ifndef __BARRY_STRNLEN_H__
 #define __BARRY_STRNLEN_H__
 
-#include "config.h"
+#include "config.h"		// strnlen.h is not installed, so this is safe
 #include <string.h>
 
 #ifdef WIN32

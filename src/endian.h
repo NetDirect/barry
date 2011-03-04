@@ -24,7 +24,7 @@
 
 // The Blackberry is little endian in its USB data.  Fortunately,
 // this makes conversion easy on the x86...
-#include "config.h"
+#include "config.h"		// endian.h is not installed, so this is safe
 #include <stdint.h>
 
 //#include <byteswap.h>
