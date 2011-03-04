@@ -27,6 +27,7 @@
 #include <stdexcept>
 #include <string.h>
 #include <stdlib.h>
+#include <locale>
 
 //#define __DEBUG_MODE__
 #include "debug.h"
@@ -196,7 +197,7 @@ void Data::DumpHexLine(ostream &os, size_t index, size_t size) const
 		os << ' ';
 		for( size_t i = 0; i < size && (index+i) < GetSize(); i++ ) {
 			ostream::traits_type::char_type c = GetData()[index + i];
-			os << setbase(10) << (char) (isprint(c, loc) ? c : '.');
+			os << setbase(10) << (char) (std::isprint(c, loc) ? c : '.');
 		}
 	}
 
