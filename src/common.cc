@@ -20,9 +20,13 @@
 */
 
 #include "common.h"
-#include <usb.h>
 #include <pthread.h>
 #include "debug.h"
+#include "config.h"
+
+#if USE_LIBUSB
+#include <usb.h>
+#endif
 
 namespace Barry {
 
@@ -53,10 +57,12 @@ void Init(bool data_dump_mode, std::ostream *logStream)
 {
 	static bool initialized = false;
 
+#if USE_LIBUSB
 	// set usb debug mode first, so that USB's initialization
 	// is captured too
 	if( data_dump_mode )
 		usb_set_debug(9);
+#endif
 
 	// perform one-time initalization
 	if( !initialized ) {
@@ -64,7 +70,9 @@ void Init(bool data_dump_mode, std::ostream *logStream)
 		// level value will be used instead of our 9 above...
 		// if you need to *force* this to 9, call Verbose(true)
 		// after Init()
+#if USE_LIBUSB
 		usb_init();
+#endif
 
 		// only need to initialize this once
 		pthread_mutex_init(&LogStreamMutex, NULL);
@@ -91,10 +99,12 @@ void Verbose(bool data_dump_mode)
 {
 	__data_dump_mode__ = data_dump_mode;
 
+#if USE_LIBUSB
 	if( data_dump_mode )
 		usb_set_debug(9);
 	else
 		usb_set_debug(0);
+#endif
 }
 
 //

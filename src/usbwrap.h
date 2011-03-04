@@ -24,12 +24,33 @@
 #define __SB_USBWRAP_H__
 
 #include "dll.h"
+#include "config.h"
 
+//////////////////////////////////////////////////////////////////////////////
+#if USE_LIBUSB
+
+#include <usb.h>
+
+#if defined( WIN32 )
 // On Windows systems, usb.h includes <windows.h> which defines min/max,
 // which causes trouble for other headers
-#include <usb.h>
 #undef min
 #undef max
+#endif
+
+#else // USE_LIBUSB
+
+#if defined( WIN32 )
+// If not using libusb, we need to include windows.h ourselves, since
+// other code is depending on it.
+#include <windows.h>
+#undef min
+#undef max
+#endif
+
+#endif // USE_LIBUSB
+
+//////////////////////////////////////////////////////////////////////////////
 
 #include <vector>
 #include <map>
@@ -71,14 +92,31 @@ public:
 
 /// Typedefs used by the wrapper class, in the hope to make it
 /// easier to switch from libusb stable to devel and back.
+#if USE_LIBUSB
 typedef struct usb_device*			DeviceIDType;
 typedef struct usb_dev_handle*			DeviceHandleType;
+typedef struct usb_device_descriptor		DeviceDescriptorType;
+typedef struct usb_bus*				BusListType;
+typedef struct usb_endpoint_descriptor		EndpointDescriptorType;
+typedef struct usb_interface_descriptor		InterfaceDescriptorType;
+typedef struct usb_interface			InterfaceType;
+typedef struct usb_config_descriptor		ConfigDescriptorType;
+#else
+typedef uint32_t				DeviceIDType;
+typedef void*					DeviceHandleType;
+typedef int					DeviceDescriptorType;
+typedef int					BusListType;
+typedef int					EndpointDescriptorType;
+typedef int					InterfaceDescriptorType;
+typedef int					InterfaceType;
+typedef int					ConfigDescriptorType;
+#endif
 
 class BXEXPORT Match
 {
 private:
-	struct usb_bus *m_busses;
-	struct usb_device *m_dev;
+	BusListType m_busses;
+	DeviceIDType m_dev;
 	int m_vendor, m_product;
 	int m_lasterror;
 	const char *m_busname;
@@ -97,10 +135,12 @@ public:
 	bool next_device(Usb::DeviceIDType *devid);
 };
 
+struct PrivateDeviceData;
 
 class BXEXPORT Device
 {
 private:
+	PrivateDeviceData *m_data;
 	Usb::DeviceIDType m_id;
 	Usb::DeviceHandleType m_handle;
 
@@ -173,19 +213,19 @@ struct BXEXPORT EndpointPair
 	bool IsComplete() const { return read && write && IsTypeSet(); }
 };
 
-class BXEXPORT EndpointDiscovery : public std::map<unsigned char, usb_endpoint_descriptor>
+class BXEXPORT EndpointDiscovery : public std::map<unsigned char, EndpointDescriptorType>
 {
 	friend class InterfaceDiscovery;
 
 public:
-	typedef std::map<unsigned char, usb_endpoint_descriptor>base_type;
+	typedef std::map<unsigned char, EndpointDescriptorType>	base_type;
 	typedef std::vector<EndpointPair>			endpoint_array_type;
 
 private:
 	bool m_valid;
 	endpoint_array_type m_endpoints;
 
-	BXLOCAL bool Discover(struct usb_interface_descriptor *interface, int epcount);
+	BXLOCAL bool Discover(InterfaceDescriptorType *interface, int epcount);
 
 public:
 	EndpointDiscovery() : m_valid(false) {}
@@ -200,7 +240,7 @@ public:
 // Map of Interface numbers (not indexes) to interface descriptors and endpoint map
 struct BXEXPORT InterfaceDesc
 {
-	usb_interface_descriptor desc;
+	InterfaceDescriptorType desc;
 	EndpointDiscovery endpoints;
 };
 
@@ -212,7 +252,7 @@ public:
 private:
 	bool m_valid;
 
-	BXLOCAL bool DiscoverInterface(struct usb_interface *interface);
+	BXLOCAL bool DiscoverInterface(InterfaceType *interface);
 
 public:
 	InterfaceDiscovery() : m_valid(false) {}
@@ -227,7 +267,7 @@ public:
 // Map of Config numbers (not indexes) to config descriptors and interface map
 struct BXEXPORT ConfigDesc
 {
-	usb_config_descriptor desc;
+	ConfigDescriptorType desc;
 	InterfaceDiscovery interfaces;
 };
 
@@ -254,7 +294,7 @@ class BXEXPORT DeviceDiscovery
 	bool m_valid;
 
 public:
-	usb_device_descriptor desc;
+	DeviceDescriptorType desc;
 	ConfigDiscovery configs;
 
 public:

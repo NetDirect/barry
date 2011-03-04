@@ -37,6 +37,10 @@ AC_LANG([C++])
 # Checks for libraries.
 #
 
+# If we are using configure, then we always are using LIBUSB.
+# This only gets set to 0 if compiling for some other USB related driver.
+AC_DEFINE([USE_LIBUSB], [1], [Whether compling against libusb or not])
+
 # libtar and libz don't have pkg-config files on many systems.
 # libz we can assume, but libtar we need to test for
 AC_ARG_WITH(libtar,
