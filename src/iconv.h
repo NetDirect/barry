@@ -24,12 +24,13 @@
 
 #include "dll.h"
 #include "data.h"
-#include <iconv.h>
 #include <string>
+#include <memory>
 
 namespace Barry {
 
 class IConverter;
+class IConvHandlePrivate;
 
 //
 // IConvHandle class
@@ -41,17 +42,28 @@ class BXEXPORT IConvHandle
 {
 	friend class IConverter;
 
-	iconv_t m_handle;
+	std::auto_ptr<IConvHandlePrivate> m_priv;
+
+	bool m_throw_on_conv_err;
 
 private:
+	// no copying
+	IConvHandle(const IConvHandle &other);
+	IConvHandle& operator=(const IConvHandle &other);
+
 	// private constructor, used only by IConverter
-	IConvHandle(const char *fromcode, const char *tocode);
+	IConvHandle(const char *fromcode, const char *tocode, bool throwable);
+
+	// the heart of the conversion
+	std::string Convert(Data &tmp, const std::string &str) const;
 
 public:
 	// custom conversions from any to IConverter's 'tocode'
-	IConvHandle(const char *fromcode, const IConverter &ic);
+	IConvHandle(const char *fromcode, const IConverter &ic,
+		bool throw_on_conv_err = false);
 	// custom conversions from IConverter's 'tocode' to any
-	IConvHandle(const IConverter &ic, const char *tocode);
+	IConvHandle(const IConverter &ic, const char *tocode,
+		bool throw_on_conv_err = false);
 	~IConvHandle();
 };
 
@@ -94,16 +106,12 @@ class BXEXPORT IConverter
 	// internal buffer for fast conversions
 	mutable Data m_buffer;
 
-	bool m_throw_on_conv_err;
-
-private:
-	std::string Convert(iconv_t cd, const std::string &str) const;
-
 public:
 	/// Always throws ErrnoError if unable to open iconv.
 	/// If throw_on_conv_err is true, then string conversion operations
 	/// that fail will also throw ErrnoError.
-	explicit IConverter(const char *tocode = "UTF-8", bool throw_on_conv_err = false);
+	explicit IConverter(const char *tocode = "UTF-8",
+		bool throw_on_conv_err = false);
 	~IConverter();
 
 	std::string FromBB(const std::string &str) const;

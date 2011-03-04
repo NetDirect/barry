@@ -23,6 +23,7 @@
 #include "common.h"
 #include "error.h"
 #include "config.h"
+#include <iconv.h>
 #include <errno.h>
 #include <string>
 
@@ -31,59 +32,68 @@ using namespace std;
 namespace Barry {
 
 //////////////////////////////////////////////////////////////////////////////
+// IConvHandlePrivate class
+class IConvHandlePrivate
+{
+public:
+	iconv_t m_handle;
+
+	IConvHandlePrivate()
+	{
+	}
+};
+
+//////////////////////////////////////////////////////////////////////////////
 // IConvHandle class
 
-IConvHandle::IConvHandle(const char *fromcode, const char *tocode)
+IConvHandle::IConvHandle(const char *fromcode,
+			 const char *tocode,
+			 bool throw_on_conv_err)
+	: m_priv( new IConvHandlePrivate )
+	, m_throw_on_conv_err(throw_on_conv_err)
 {
-	m_handle = iconv_open(tocode, fromcode);
-	if( m_handle == (iconv_t)(-1) ) {
+	m_priv->m_handle = iconv_open(tocode, fromcode);
+	if( m_priv->m_handle == (iconv_t)(-1) ) {
 		throw ErrnoError(std::string("iconv_open failed: from ") + fromcode + " to " + tocode, errno);
 	}
 }
 
-IConvHandle::IConvHandle(const char *fromcode, const IConverter &ic)
+IConvHandle::IConvHandle(const char *fromcode,
+			 const IConverter &ic,
+			 bool throw_on_conv_err)
+	: m_priv( new IConvHandlePrivate )
+	, m_throw_on_conv_err(throw_on_conv_err)
 {
-	m_handle = iconv_open(ic.m_tocode.c_str(), fromcode);
-	if( m_handle == (iconv_t)(-1) ) {
+	m_priv->m_handle = iconv_open(ic.m_tocode.c_str(), fromcode);
+	if( m_priv->m_handle == (iconv_t)(-1) ) {
 		throw ErrnoError(std::string("iconv_open failed: from ") + fromcode + " to " + ic.m_tocode, errno);
 	}
 }
 
-IConvHandle::IConvHandle(const IConverter &ic, const char *tocode)
+IConvHandle::IConvHandle(const IConverter &ic,
+			 const char *tocode,
+			 bool throw_on_conv_err)
+	: m_priv( new IConvHandlePrivate )
+	, m_throw_on_conv_err(throw_on_conv_err)
 {
-	m_handle = iconv_open(tocode, ic.m_tocode.c_str());
-	if( m_handle == (iconv_t)(-1) ) {
+	m_priv->m_handle = iconv_open(tocode, ic.m_tocode.c_str());
+	if( m_priv->m_handle == (iconv_t)(-1) ) {
 		throw ErrnoError(std::string("iconv_open failed: from ") + ic.m_tocode + " to " + tocode, errno);
 	}
 }
 
 IConvHandle::~IConvHandle()
 {
-	iconv_close(m_handle);
+	iconv_close(m_priv->m_handle);
 }
 
-
-//////////////////////////////////////////////////////////////////////////////
-// IConvHandle class
-
-IConverter::IConverter(const char *tocode, bool throw_on_conv_err)
-	: m_from(BLACKBERRY_CHARSET, tocode)
-	, m_to(tocode, BLACKBERRY_CHARSET)
-	, m_tocode(tocode)
-	, m_throw_on_conv_err(throw_on_conv_err)
-{
-}
-
-IConverter::~IConverter()
-{
-}
-
-std::string IConverter::Convert(iconv_t cd, const std::string &str) const
+std::string IConvHandle::Convert(Data &tmp, const std::string &str) const
 {
 	size_t target = str.size() * 2;
 	char *out = 0, *outstart = 0;
 	size_t outbytesleft = 0;
 	std::string ret;
+	iconv_t cd = m_priv->m_handle;
 
 	// this loop is for the very odd case that the output string
 	// needs more than twice the input size
@@ -91,8 +101,8 @@ std::string IConverter::Convert(iconv_t cd, const std::string &str) const
 
 		const char *in = str.data();
 		size_t inbytesleft = str.size();
-		out = outstart = (char*) m_buffer.GetBuffer(target);
-		outbytesleft = m_buffer.GetBufSize();
+		out = outstart = (char*) tmp.GetBuffer(target);
+		outbytesleft = tmp.GetBufSize();
 
 		iconv(cd, NULL, NULL, NULL, NULL);	// reset cd's state
 		size_t status = iconv(cd, (ICONV_CONST char**) &in, &inbytesleft, &out, &outbytesleft);
@@ -130,19 +140,34 @@ std::string IConverter::Convert(iconv_t cd, const std::string &str) const
 	return ret;
 }
 
+
+//////////////////////////////////////////////////////////////////////////////
+// IConvHandle class
+
+IConverter::IConverter(const char *tocode, bool throw_on_conv_err)
+	: m_from(BLACKBERRY_CHARSET, tocode, throw_on_conv_err)
+	, m_to(tocode, BLACKBERRY_CHARSET, throw_on_conv_err)
+	, m_tocode(tocode)
+{
+}
+
+IConverter::~IConverter()
+{
+}
+
 std::string IConverter::FromBB(const std::string &str) const
 {
-	return Convert(m_from.m_handle, str);
+	return m_from.Convert(m_buffer, str);
 }
 
 std::string IConverter::ToBB(const std::string &str) const
 {
-	return Convert(m_to.m_handle, str);
+	return m_to.Convert(m_buffer, str);
 }
 
 std::string IConverter::Convert(const IConvHandle &custom, const std::string &str) const
 {
-	return Convert(custom.m_handle, str);
+	return custom.Convert(m_buffer, str);
 }
 
 } // namespace Barry
