@@ -23,7 +23,6 @@
 
 #include "record.h"
 #include "record-internal.h"
-#include "protocol.h"
 #include "protostructs.h"
 #include "data.h"
 #include "time.h"
