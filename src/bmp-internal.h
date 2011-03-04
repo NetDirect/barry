@@ -28,6 +28,12 @@
 #include "dll.h"
 #include <stdint.h>
 #include <sys/types.h>
+#include "platform.h"		// safe to include platform.h here, since
+				// bmp-internal.h is not installed either
+
+#if USE_PACK_PRAGMA
+#pragma pack(push, 1)
+#endif
 
 typedef struct BXLOCAL {
 	char bfType[2];				// Contains always 'BM'
@@ -35,7 +41,7 @@ typedef struct BXLOCAL {
 	uint16_t bfReserved1;			// 0x00
 	uint16_t bfReserved2;			// 0x00
 	uint32_t bfOffBits;			// Offset to find the raw data
-} __attribute__ ((packed)) bmp_file_header_t;
+} ATTRIBUTE_PACKED bmp_file_header_t;
 
 typedef struct BXLOCAL {
 	uint32_t biSize;			// Size of struct itself
@@ -49,7 +55,11 @@ typedef struct BXLOCAL {
 	uint32_t biYPelsPerMeter;		//
 	uint32_t biClrUsed;			//
 	uint32_t biClrImportant;		//
-} __attribute__ ((packed)) bmp_info_header_t;
+} ATTRIBUTE_PACKED bmp_info_header_t;
+
+#if USE_PACK_PRAGMA
+#pragma pack(pop)
+#endif
 
 #endif
 

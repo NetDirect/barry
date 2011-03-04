@@ -31,6 +31,12 @@
 #include "dll.h"
 #include <stdint.h>
 #include <sys/types.h>
+#include "platform.h"		// safe to include platform.h here, since
+				// cod-internal.h is not installed either
+
+#if USE_PACK_PRAGMA
+#pragma pack(push, 1)
+#endif
 
 #define CODFILE_TYPE_SIMPLE	{0xDE, 0xC0}
 #define CODFILE_TYPE_PKZIP	{0x50, 0x4B}
@@ -43,14 +49,14 @@ typedef struct BXLOCAL {
 	uint16_t	hour:5;
 	uint16_t	minute:6;
 	uint16_t	second:5;
-} __attribute__ ((packed)) msdos_time_t;
+} ATTRIBUTE_PACKED msdos_time_t;
 
 
 typedef struct BXLOCAL {
 	uint16_t	year:7;		// number of years since 1980
 	uint16_t	month:4;
 	uint16_t	day:5;
-} __attribute__ ((packed)) msdos_date_t;
+} ATTRIBUTE_PACKED msdos_date_t;
 
 
 typedef struct BXLOCAL {
@@ -67,7 +73,7 @@ typedef struct BXLOCAL {
 	uint16_t	extra_field_length;
 	//char		file_name[variable];
 	//char		extra_field[variable];
-} __attribute__ ((packed)) pkzip_local_header_t;
+} ATTRIBUTE_PACKED pkzip_local_header_t;
 
 
 typedef struct BXLOCAL {
@@ -92,7 +98,7 @@ typedef struct BXLOCAL {
 	//char		file_name[variable];
 	//char		extra_field[variable];
 	//char		file_comment[variable];
-} __attribute__ ((packed)) pkzip_directory_t;
+} ATTRIBUTE_PACKED pkzip_directory_t;
 
 
 typedef struct BXLOCAL {
@@ -108,7 +114,7 @@ typedef struct BXLOCAL {
 						// to the first central directory entry
 	uint16_t	file_comment_length;
 	//char		file_comment[variable];
-} __attribute__ ((packed)) pkzip_end_directory_t;
+} ATTRIBUTE_PACKED pkzip_end_directory_t;
 
 
 typedef struct BXLOCAL {
@@ -122,7 +128,7 @@ typedef struct BXLOCAL {
 	uint8_t		reserved2;		// Reserved 0x00	// 00
 	uint8_t		strfree;		// Empty uint8_t	// 04
 	uint8_t		reserved3;		// Reserved 0x00	// 00
-}  __attribute__ ((packed)) codfile_header_t;
+}  ATTRIBUTE_PACKED codfile_header_t;
 
 
 typedef struct BXLOCAL {
@@ -140,7 +146,7 @@ typedef struct BXLOCAL {
 	uint16_t	code_size;
 	uint16_t	data_size;
 	uint16_t	flags;
-}  __attribute__ ((packed)) code_header_t;
+}  ATTRIBUTE_PACKED code_header_t;
 
 
 typedef struct BXLOCAL {
@@ -156,7 +162,11 @@ typedef struct BXLOCAL {
 	uint16_t	array_of_unknow1_fields[14];
 	uint16_t	aliases;
 	uint16_t	array_of_unknow2_fields[22];
-}  __attribute__ ((packed)) data_header_t;
+}  ATTRIBUTE_PACKED data_header_t;
+
+#if USE_PACK_PRAGMA
+#pragma pack(pop)
+#endif
 
 #endif
 

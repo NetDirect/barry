@@ -26,6 +26,21 @@
 #include "usbwrap.h"			// USB specific details and windows.h
 #include <pthread.h>			// threading and struct timespec
 
+//////////////////////////////////////////////////////////////////////////////
+// All GCC specific detail
+#if defined( __GNUC__ )
+
+#define ATTRIBUTE_PACKED __attribute__ ((packed))
+#define USE_PACK_PRAGMA 0
+
+#else
+
+#define ATTRIBUTE_PACKED
+#define USE_PACK_PRAGMA 1
+
+#endif
+
+//////////////////////////////////////////////////////////////////////////////
 // All Windows specific detail
 #if defined( WIN32 )
 
@@ -40,6 +55,7 @@
 
 
 
+//////////////////////////////////////////////////////////////////////////////
 // All FreeBSD / BSD specific detail
 #if defined( __FreeBSD__ )
 
@@ -48,6 +64,7 @@
 
 
 
+//////////////////////////////////////////////////////////////////////////////
 // All Mac OS X specific detail
 #if defined( __APPLE__ ) && defined( __MACH__ )
 
