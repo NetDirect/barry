@@ -25,7 +25,7 @@
 # Only ever increment the first 2 numbers in this version:
 # The first number represents libmajor, the second libminor.
 # So version 0.17.1 will look like 17:1:0
-LIB_BARRY_VERSION = 17:1:0
+LIB_BARRY_VERSION = 17:2:0
 
 # Disable the default -I. -I$(srcdir) -I$(topdir), etc, but $(top_builddir) is
 # needed for config.h

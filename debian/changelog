@@ -1,4 +1,4 @@
-barry (0.17.1-0) unstable; urgency=low
+barry (0.17.2-0) unstable; urgency=low
 
   * version bump
   * moved opensync-plugin into its own build
