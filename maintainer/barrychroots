@@ -7,8 +7,6 @@ export CHROOTUSER=cdfrey
 # Build the DEB's
 #
 ./deb.sh /var/chroot/ubuntu1004 ubuntu1004 os22-binary
-./deb.sh /var/chroot/ubuntu910 ubuntu910 os22-binary
-./deb.sh /var/chroot/ubuntu904 ubuntu904 os22-binary
 ./deb.sh /var/chroot/ubuntu804 ubuntu804 os22-binary
 
 
@@ -18,10 +16,8 @@ export CHROOTUSER=cdfrey
 ./rpm.sh /var/chroot/fedora13 f13
 ./rpm.sh /var/chroot/fedora12 f12
 ./rpm.sh /var/chroot/fedora11 f11
-if [ "$THEMODE" = "release" ] ; then
-	# Fedora 9 has no opensync, so don't test-build on it, only release
-	./rpmroot.sh /var/chroot/fedora9 fc9
-fi
-./rpmroot.sh /var/chroot/fedora8 fc8
-./rpmroot.sh /var/chroot/fedora7 fc7
+#if [ "$THEMODE" = "release" ] ; then
+#	# Fedora 9 has no opensync, so don't test-build on it, only release
+#	./rpmroot.sh /var/chroot/fedora9 fc9
+#fi
 
