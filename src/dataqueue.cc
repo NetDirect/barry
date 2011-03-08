@@ -23,6 +23,9 @@
 #include "scoped_lock.h"
 #include "data.h"
 #include "time.h"
+#include <iostream>
+
+using namespace std;
 
 namespace Barry {
 
@@ -205,6 +208,18 @@ size_t DataQueue::size() const
 {
 	scoped_lock access(m_accessMutex);
 	return m_queue.size();
+}
+
+void DataQueue::DumpAll(std::ostream &os) const
+{
+	// queue is pushed to the back, and popped from the front
+	// (see raw_() functions) so this iterator direction will
+	// print the packets in the order they arrived
+	scoped_lock access(m_accessMutex);
+	queue_type::const_iterator b = m_queue.begin(), e = m_queue.end();
+	for( ; b != e; ++b ) {
+		os << **b << endl;
+	}
 }
 
 } // namespace Barry

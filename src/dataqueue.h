@@ -24,6 +24,7 @@
 
 #include <list>
 #include <pthread.h>
+#include <iosfwd>
 
 namespace Barry {
 
@@ -83,7 +84,15 @@ public:
 
 	bool empty() const;	// return true if empty
 	size_t size() const;
+
+	void DumpAll(std::ostream &os) const;
 };
+
+inline std::ostream& operator<< (std::ostream &os, const DataQueue &dq)
+{
+	dq.DumpAll(os);
+	return os;
+}
 
 } // namespace Barry
 
