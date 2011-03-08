@@ -27,6 +27,10 @@
 #include "endian.h"
 #include "debug.h"
 #include <unistd.h>
+#include <iostream>
+#include <iomanip>
+
+using namespace std;
 
 namespace Barry {
 
@@ -73,6 +77,16 @@ SocketRoutingQueue::~SocketRoutingQueue()
 		m_continue_reading = false;
 		pthread_join(m_usb_read_thread, NULL);
 	}
+
+	// dump all unused packets to debug output
+	SocketQueueMap::const_iterator b = m_socketQueues.begin();
+	for( ; b != m_socketQueues.end(); ++b ) {
+		DumpSocketQueue(b->first, b->second->m_queue);
+	}
+	if( m_default.size() ) {
+		ddout("(Default queue is socket 0)");
+		DumpSocketQueue(0, m_default);
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -113,6 +127,19 @@ void *SocketRoutingQueue::SimpleReadThread(void *userptr)
 		}
 	}
 	return 0;
+}
+
+void SocketRoutingQueue::DumpSocketQueue(SocketId socket, const DataQueue &dq)
+{
+	// dump a record of any unused packets in the queue, for debugging
+	if( dq.size() ) {
+		ddout("SocketRoutingQueue Leftovers: "
+			<< dec << dq.size()
+			<< " packet(s) for socket 0x"
+			<< hex << (unsigned int) socket
+			<< "\n"
+			<< dq);
+	}
 }
 
 
@@ -259,6 +286,9 @@ void SocketRoutingQueue::UnregisterInterest(SocketId socket)
 	SocketQueueMap::iterator qi = m_socketQueues.find(socket);
 	if( qi == m_socketQueues.end() )
 		return;	// nothing registered, done
+
+	// dump a record of any unused packets in the queue, for debugging
+	DumpSocketQueue(qi->first, qi->second->m_queue);
 
 	// salvage all our data buffers
 	m_free.append_from( qi->second->m_queue );
