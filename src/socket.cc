@@ -750,6 +750,9 @@ void Socket::Receive(Data &receive, int timeout)
 		else {
 			throw std::logic_error("NULL queue pointer in a registered socket read.");
 		}
+		ddout("Socket::Receive: Endpoint "
+			<< (m_zero->m_queue ? m_zero->m_queue->GetReadEp() : m_zero->m_readEp)
+			<< "\nReceived:\n" << receive);
 	}
 	else {
 		m_zero->RawReceive(receive, timeout);
