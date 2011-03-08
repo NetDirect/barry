@@ -257,9 +257,11 @@ uint16_t Controller::SelectMode(ModeType mode, const char *explicitModeName)
 			// Otherwise, barrybackup and opensync-plugin can crash (timeout)
 			// I don't know why ! Maybe a bug on the handheld.
 			m_zero.HideSequencePacket(false);
-			m_zero.Receive(response);
+			Data junk;
+			m_zero.Receive(junk);
 			m_zero.HideSequencePacket(true);
 		}
+
 		// return the socket that the device is expecting us to use
 		return btohs(modepack->u.socket.socket);
 	}
