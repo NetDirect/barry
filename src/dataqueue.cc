@@ -42,9 +42,31 @@ DataQueue::~DataQueue()
 	scoped_lock lock(m_accessMutex);	// FIXME - is this sane?
 
 	while( m_queue.size() ) {
-		delete m_queue.front();
-		m_queue.pop();
+		delete raw_pop();
 	}
+}
+
+// a push without locking - adds to the back
+void DataQueue::raw_push(Data *data)
+{
+	try {
+		m_queue.push_back(data);
+	}
+	catch(...) {
+		delete data;
+		throw;
+	}
+}
+
+// a pop without locking - removes from the front, and returns it
+Data* DataQueue::raw_pop()
+{
+	if( m_queue.size() == 0 )
+		return 0;
+
+	Data *ret = m_queue.front();
+	m_queue.pop_front();
+	return ret;
 }
 
 //
@@ -58,21 +80,14 @@ DataQueue::~DataQueue()
 ///
 void DataQueue::push(Data *data)
 {
-	try {
-
-		{
-			scoped_lock lock(m_accessMutex);
-			m_queue.push(data);
-		}
-
-		scoped_lock wait(m_waitMutex);
-		pthread_cond_broadcast(&m_waitCond);
-
+	{
+		scoped_lock lock(m_accessMutex);
+		raw_push(data);
 	}
-	catch(...) {
-		delete data;
-		throw;
-	}
+
+	// on success, signal
+	scoped_lock wait(m_waitMutex);
+	pthread_cond_broadcast(&m_waitCond);
 }
 
 //
@@ -86,13 +101,7 @@ void DataQueue::push(Data *data)
 Data* DataQueue::pop()
 {
 	scoped_lock lock(m_accessMutex);
-
-	if( m_queue.size() == 0 )
-		return 0;
-
-	Data *ret = m_queue.front();
-	m_queue.pop();
-	return ret;
+	return raw_pop();
 }
 
 //
@@ -107,15 +116,11 @@ Data* DataQueue::pop()
 ///
 Data* DataQueue::wait_pop(int timeout)
 {
-	Data *ret = 0;
-
 	// check if something's there already
 	{
 		scoped_lock access(m_accessMutex);
 		if( m_queue.size() ) {
-			ret = m_queue.front();
-			m_queue.pop();
-			return ret;
+			return raw_pop();
 		}
 	}
 
@@ -135,9 +140,7 @@ Data* DataQueue::wait_pop(int timeout)
 			size = m_queue.size();
 			if( size != 0 ) {
 				// already have the lock, return now
-				ret = m_queue.front();
-				m_queue.pop();
-				return ret;
+				return raw_pop();
 			}
 
 		} while( size == 0 );
@@ -151,12 +154,7 @@ Data* DataQueue::wait_pop(int timeout)
 	}
 
 	scoped_lock access(m_accessMutex);
-	if( m_queue.size() == 0 )
-		return 0;
-
-	ret = m_queue.front();
-	m_queue.pop();
-	return ret;
+	return raw_pop();
 }
 
 //
@@ -179,11 +177,11 @@ void DataQueue::append_from(DataQueue &other)
 	scoped_lock them(other.m_accessMutex);
 
 	while( other.m_queue.size() ) {
-		m_queue.push( other.m_queue.front() );
+		raw_push( other.m_queue.front() );
 
 		// only pop after the copy, since in the
 		// case of an exception we want to leave other intact
-		other.m_queue.pop();
+		other.raw_pop();
 	}
 }
 

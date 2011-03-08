@@ -22,7 +22,7 @@
 #ifndef __BARRY_DATAQUEUE_H__
 #define __BARRY_DATAQUEUE_H__
 
-#include <queue>
+#include <list>
 #include <pthread.h>
 
 namespace Barry {
@@ -39,7 +39,8 @@ class Data;
 ///
 class DataQueue
 {
-	typedef std::queue<Data*>			queue_type;
+	// always use the raw_push() and raw_pop() functions
+	typedef std::list<Data*>			queue_type;
 
 	pthread_mutex_t m_waitMutex;
 	pthread_cond_t m_waitCond;
@@ -47,6 +48,10 @@ class DataQueue
 	mutable pthread_mutex_t m_accessMutex;	// locked for each access of m_queue
 
 	queue_type m_queue;
+
+protected:
+	void raw_push(Data *data);
+	Data* raw_pop();
 
 public:
 	DataQueue();
