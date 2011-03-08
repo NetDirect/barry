@@ -1078,7 +1078,7 @@ void Socket::Packet(Data &send, Data &receive, int timeout)
 		if( !done ) {
 			// not done yet, ask for another read, and
 			// create new buffer for fragmented reads
-			if( !inFrag.get() ) {
+			if( frag && !inFrag.get() ) {
 				inFrag.reset( new Data );
 				inputBuf = inFrag.get();
 			}
