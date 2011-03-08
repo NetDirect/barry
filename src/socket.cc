@@ -519,7 +519,19 @@ SocketHandle SocketZero::Open(uint16_t socket, const char *password)
 	}
 
 	// success!  save the socket
-	return SocketHandle(new Socket(*this, socket, closeFlag));
+	SocketHandle sh(new Socket(*this, socket, closeFlag));
+
+	// if we are running with a routing queue, register the
+	// socket's interest in all its own data.  By default, this
+	// data will be queued without a callback handler.
+	// If other application code needs to intercept this with
+	// its own handler, it must call UnregisterInterest() and
+	// re-register its own handler.
+	if( m_queue ) {
+		sh->RegisterInterest();
+	}
+
+	return sh;
 }
 
 //
