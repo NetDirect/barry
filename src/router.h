@@ -133,6 +133,8 @@ protected:
 	// created in the SpinoffSimpleReadThread() member below.
 	static void *SimpleReadThread(void *userptr);
 
+	void DumpSocketQueue(SocketId socket, const DataQueue &dq);
+
 public:
 	SocketRoutingQueue(int prealloc_buffer_count = 4,
 		int default_read_timeout = USBWRAP_DEFAULT_TIMEOUT);
