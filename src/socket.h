@@ -190,7 +190,10 @@ public:
 	// Register a callback for incoming data from the device.
 	// This function assumes that this socket is based on a socketZero
 	// that has a SocketRoutingQueue, otherwise throws logic_error.
-	void RegisterInterest(Barry::SocketRoutingQueue::SocketDataHandlerPtr handler);
+	// It also assumes that nothing has been registered before.
+	// If you wish to re-register, call UnregisterInterest() first,
+	// which is safe to call as many times as you like.
+	void RegisterInterest(Barry::SocketRoutingQueue::SocketDataHandlerPtr handler = Barry::SocketRoutingQueue::SocketDataHandlerPtr());
 	void UnregisterInterest();
 
 
