@@ -23,6 +23,7 @@
 #include "scoped_lock.h"
 #include "data.h"
 #include "protostructs.h"
+#include "protocol.h"
 #include "usbwrap.h"
 #include "endian.h"
 #include "debug.h"
@@ -459,6 +460,18 @@ void SocketRoutingQueue::DoRead(int timeout)
 
 		// extract the socket from the packet
 		uint16_t socket = btohs(pack->socket);
+
+		// if this is a zero socket packet, do one more check
+		// to see if this is a sequence packet that belongs
+		// with the socket's queue
+		if( !socket ) {
+			if( data.GetSize() == SB_SEQUENCE_PACKET_SIZE &&
+			    pack->command == SB_COMMAND_SEQUENCE_HANDSHAKE )
+			{
+				// sequence.socket is a single byte
+				socket = pack->u.sequence.socket;
+			}
+		}
 
 		// we have data, now lock up again to place it
 		// in the right queue
