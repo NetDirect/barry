@@ -544,7 +544,7 @@ struct SocketCommand
 
 struct SequenceCommand
 {
-	uint8_t		unknown1;
+	uint8_t		socket;			// socket number, single byte
 	uint8_t		unknown2;
 	uint8_t		unknown3;
 	uint32_t	sequenceId;
