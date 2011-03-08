@@ -857,7 +857,7 @@ int main(int argc, char *argv[])
 
 		DesktopConnector connector(password.c_str(),
 			iconvCharset, device, router.get());
-		if( !connector.Reconnect() ) {
+		if( !connector.Connect() ) {
 			// user canceled password prompt
 			return 0;
 		}
