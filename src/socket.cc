@@ -219,15 +219,6 @@ void SocketZero::SendOpen(uint16_t socket, Data &receive)
 		throw;
 	}
 
-	// check sequence ID
-	Protocol::CheckSize(receive, SB_PACKET_HEADER_SIZE);
-	if( IS_COMMAND(receive, SB_COMMAND_SEQUENCE_HANDSHAKE) ) {
-		CheckSequence(0, receive);
-
-		// still need our ACK
-		RawReceive(receive);
-	}
-
 	// receive now holds the Open response
 }
 
