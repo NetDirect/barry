@@ -972,23 +972,15 @@ void Socket::Packet(Data &send, Data &receive, int timeout)
 		unsigned int offset = 0;
 		Data outFrag;
 
-		// You haven't to sequence packet while the whole packet isn't sent
-		//  a) No sequence received packet
-		//  b) 1°) Sent framgment 1/N
-		//     2°) Sent framgment 2/N
-		//         ...
-		//     N°) Before sent fragment N/N, I enable the sequence packet process.
-		//         Sent framgment N/N
-		HideSequencePacket(false);
+		// There are no sequence packets during fragments, only
+		// after the whole packet is sent.
+		// (FIXME - test this more)
 
 		do {
 			offset = SocketZero::MakeNextFragment(send, outFrag, offset);
 
 			// Is last packet ?
 			MAKE_PACKET(spack, outFrag);
-
-			if (spack->command != SB_COMMAND_DB_FRAGMENTED)
-				HideSequencePacket(true);
 
 			Send(outFrag, *inputBuf, timeout);
 
@@ -1019,9 +1011,6 @@ void Socket::Packet(Data &send, Data &receive, int timeout)
 			}
 
 		} while( offset > 0 );
-
-		// To be sure that it's clean...
-		HideSequencePacket(true);
 	}
 
 	std::auto_ptr<Data> inFrag;
