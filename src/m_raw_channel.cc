@@ -174,11 +174,12 @@ void RawChannel::OnOpen()
 	if( m_callback ) {
 		SocketRoutingQueue::SocketDataHandlerPtr callback;
 		callback.reset(new RawChannelSocketHandler(*this));
+		m_socket->UnregisterInterest();
 		m_socket->RegisterInterest(callback);
 	}
 	else {
-		SocketRoutingQueue::SocketDataHandlerPtr nullCallback;
-		m_socket->RegisterInterest(nullCallback);
+		// sockets already register themselves by default,
+		// so no need to do anything in this case
 	}
 }
 
@@ -196,9 +197,6 @@ void RawChannel::HandleReceivedZeroPacket(Data &data)
 
 	switch( btohs(packet->command) )
 	{
-	case SB_COMMAND_SEQUENCE_HANDSHAKE:
-		m_semaphore->Signal();
-		break;
 	case SB_COMMAND_CLOSE_SOCKET:
 	case SB_COMMAND_REMOTE_CLOSE_SOCKET:
 		// Stop listening to socket 0 messages
@@ -229,6 +227,16 @@ void RawChannel::HandleReceivedData(Data &data)
 	// Only ever called in callback mode
 	ValidateDataPacket(data);
 	MAKE_CHANNELPACKETPTR_BUF(packet, data.GetData());
+	MAKE_PACKETPTR_BUF(dpacket, data.GetData());
+
+	// Check for sequence packets
+	if( packet->socket == 0 &&
+	    data.GetSize() == SB_SEQUENCE_PACKET_SIZE &&
+	    dpacket->command == SB_COMMAND_SEQUENCE_HANDSHAKE )
+	{
+		m_semaphore->Signal();
+		return;
+	}
 
 	// Should be a socket packet for us, so remove packet headers
 	Data partial(packet->u.data, data.GetSize() - SB_CHANNELPACKET_HEADER_SIZE);
@@ -289,9 +297,29 @@ void RawChannel::Send(Data &data, int timeout)
 
 	Data toSend(m_send_buffer, packetSize);
 	m_socket->Send(toSend, timeout);
-	m_semaphore->WaitForSignal();
-	if( m_pending_error ) {
-		throw Barry::Error(*m_pending_error);
+	if( m_callback ) {
+		m_semaphore->WaitForSignal();
+		if( m_pending_error ) {
+			throw Barry::Error(*m_pending_error);
+		}
+	}
+	else {
+		// no callback, so just grab our sequence packet now
+		Data sequence;
+		m_socket->Receive(sequence, timeout);
+
+		ValidateDataPacket(sequence);
+		MAKE_PACKETPTR_BUF(packet, sequence.GetData());
+
+		// Check for sequence packets
+		if( !(packet->socket == 0 &&
+		    sequence.GetSize() == SB_SEQUENCE_PACKET_SIZE &&
+		    packet->command == SB_COMMAND_SEQUENCE_HANDSHAKE) )
+		{
+			SetPendingError("RawChannel: Immediate packet after send was not a sequence packet");
+			ddout(sequence);
+			throw Barry::Error(*m_pending_error);
+		}
 	}
 }
 
