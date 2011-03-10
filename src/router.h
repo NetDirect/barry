@@ -279,11 +279,18 @@ public:
 		return m_data;
 	}
 
-	Data* release()	// no longer owns the pointer
+	Data* release()	// no longer owns the pointer, and does not free it
 	{
 		Data *ret = m_data;
 		m_data = 0;
 		return ret;
+	}
+
+	// frees current pointer, and takes ownership of new one
+	void reset(Data *next = 0)
+	{
+		clear();
+		m_data = next;
 	}
 
 	Data* operator->()
