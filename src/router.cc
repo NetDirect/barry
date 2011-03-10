@@ -539,7 +539,20 @@ void SocketRoutingQueue::DoRead(int timeout)
 			// sequence.socket is a single byte
 			socket = pack->u.sequence.socket;
 
+			//////////////////////////////////////////////
+			// ALWAYS queue sequence packets, so that
+			// the socket code can handle SyncSend()
+			if( !QueuePacket(socket, buf) ) {
+				// if no queue available for this
+				// socket, send it to the default
+				// queue
+				QueuePacket(m_default, buf);
+			}
+
+			// done with sequence packet
+			return;
 		}
+
 		// we have data, now route or queue it
 		if( RouteOrQueuePacket(socket, buf) )
 			return; // done
