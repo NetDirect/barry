@@ -66,5 +66,18 @@ unsigned int GetSize(const Data &packet)
 	}
 }
 
+bool IsSequencePacket(const Barry::Data &data)
+{
+	if( data.GetSize() == SB_SEQUENCE_PACKET_SIZE ) {
+		MAKE_PACKET(rpack, data);
+		if( rpack->socket == 0 &&
+		    rpack->command == SB_COMMAND_SEQUENCE_HANDSHAKE )
+		{
+			return true;
+		}
+	}
+	return false;	// not a sequence packet
+}
+
 }} // namespace Barry::Protocol
 

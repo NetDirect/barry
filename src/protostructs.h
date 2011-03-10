@@ -1078,6 +1078,8 @@ struct Packet
 void CheckSize(const Barry::Data &packet, size_t requiredsize);
 unsigned int GetSize(const Barry::Data &packet);
 
+bool IsSequencePacket(const Barry::Data &data);
+
 }} // namespace Barry::Protocol
 
 #if USE_PACK_PRAGMA

@@ -269,8 +269,7 @@ void SocketZero::SendPasswordHash(uint16_t socket, const char *password, Data &r
 	send.Zap();
 
 	// check sequence ID
-	Protocol::CheckSize(receive, SB_PACKET_HEADER_SIZE);
-	if( IS_COMMAND(receive, SB_COMMAND_SEQUENCE_HANDSHAKE) ) {
+	if( Protocol::IsSequencePacket(receive) ) {
 		CheckSequence(0, receive);
 
 		// still need our ACK
@@ -315,44 +314,11 @@ void SocketZero::RawReceive(Data &receive, int timeout)
 		else {
 			m_dev->BulkRead(m_readEp, receive, timeout);
 		}
+
 		ddout("SocketZero::RawReceive: Endpoint "
 			<< (m_queue ? m_queue->GetReadEp() : m_readEp)
 			<< "\nReceived:\n" << receive);
-	} while( SequencePacket(receive) );
-}
-
-//
-// SequencePacket
-//
-/// Returns true if this is a sequence packet that should be ignored.
-/// This function is used in SocketZero::RawReceive() in order
-/// to determine whether to keep reading or not.  By default,
-/// this function checks whether the packet is a sequence packet
-/// or not, and returns true if so.  Also, if it is a sequence
-/// packet, it checks the validity of the sequence number.
-///
-/// If sequence packets become important in the future, this
-/// function could be changed to call a user-defined callback,
-/// in order to handle these things out of band.
-///
-bool SocketZero::SequencePacket(const Data &data)
-{
-	// Begin -- Test quiet durty :(
-	if (m_hideSequencePacket == false) {
-		return false;
-	}
-	// End -- Test quiet durty :(
-
-	if( data.GetSize() == SB_SEQUENCE_PACKET_SIZE ) {
-		MAKE_PACKET(rpack, data);
-		if( rpack->socket == 0 &&
-		    rpack->command == SB_COMMAND_SEQUENCE_HANDSHAKE )
-		{
-			CheckSequence(0, data);
-			return true;
-		}
-	}
-	return false;	// not a sequence packet
+	} while( Protocol::IsSequencePacket(receive) );
 }
 
 
@@ -571,8 +537,7 @@ void SocketZero::Close(Socket &socket)
 	}
 
 	// starting fresh, reset sequence ID
-	Protocol::CheckSize(response, SB_PACKET_HEADER_SIZE);
-	if( IS_COMMAND(response, SB_COMMAND_SEQUENCE_HANDSHAKE) ) {
+	if( Protocol::IsSequencePacket(response) ) {
 		CheckSequence(0, response);
 
 		// still need our ACK

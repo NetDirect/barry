@@ -78,7 +78,6 @@ private:
 	void RawReceive(Data &receive, int timeout = -1);
 
 protected:
-	bool SequencePacket(const Data &data);
 	bool IsSequencePacketHidden() { return m_hideSequencePacket; }
 
 public:

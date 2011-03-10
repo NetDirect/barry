@@ -227,13 +227,9 @@ void RawChannel::HandleReceivedData(Data &data)
 	// Only ever called in callback mode
 	ValidateDataPacket(data);
 	MAKE_CHANNELPACKETPTR_BUF(packet, data.GetData());
-	MAKE_PACKETPTR_BUF(dpacket, data.GetData());
 
 	// Check for sequence packets
-	if( packet->socket == 0 &&
-	    data.GetSize() == SB_SEQUENCE_PACKET_SIZE &&
-	    dpacket->command == SB_COMMAND_SEQUENCE_HANDSHAKE )
-	{
+	if( Protocol::IsSequencePacket(data) ) {
 		m_semaphore->Signal();
 		return;
 	}
@@ -309,13 +305,9 @@ void RawChannel::Send(Data &data, int timeout)
 		m_socket->Receive(sequence, timeout);
 
 		ValidateDataPacket(sequence);
-		MAKE_PACKETPTR_BUF(packet, sequence.GetData());
 
 		// Check for sequence packets
-		if( !(packet->socket == 0 &&
-		    sequence.GetSize() == SB_SEQUENCE_PACKET_SIZE &&
-		    packet->command == SB_COMMAND_SEQUENCE_HANDSHAKE) )
-		{
+		if( !Protocol::IsSequencePacket(sequence) ) {
 			SetPendingError("RawChannel: Immediate packet after send was not a sequence packet");
 			ddout(sequence);
 			throw Barry::Error(*m_pending_error);
