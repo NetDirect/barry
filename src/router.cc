@@ -106,6 +106,79 @@ void SocketRoutingQueue::ReturnBuffer(Data *buf)
 }
 
 //
+// QueuePacket
+//
+/// Helper function to add a buffer to a socket queue.
+/// Returns false if no queue is available for that socket.
+//// Also empties the DataHandle on success.
+///
+bool SocketRoutingQueue::QueuePacket(SocketId socket, DataHandle &buf)
+{
+	if( m_interest ) {
+		// lock so we can access the m_socketQueues map safely
+		scoped_lock lock(m_mutex);
+
+		// search for registration of socket
+		SocketQueueMap::iterator qi = m_socketQueues.find(socket);
+		if( qi != m_socketQueues.end() ) {
+			qi->second->m_queue.push(buf.release());
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool SocketRoutingQueue::QueuePacket(DataQueue &queue, DataHandle &buf)
+{
+	// don't need to lock here, since queue handles its own locking
+	queue.push(buf.release());
+	return true;
+}
+
+//
+// RouteOrQueuePacket
+//
+/// Same as QueuePacket, except sends the data to the callback if
+/// a callback is available.
+///
+/// This function duplicates code from QueuePacket(), in order to
+/// optimize the mutex locking.
+///
+bool SocketRoutingQueue::RouteOrQueuePacket(SocketId socket, DataHandle &buf)
+{
+	// search for registration of socket
+	if( m_interest ) {
+		// lock so we can access the m_socketQueues map safely
+		scoped_lock lock(m_mutex);
+
+		SocketQueueMap::iterator qi = m_socketQueues.find(socket);
+		if( qi != m_socketQueues.end() ) {
+			SocketDataHandlerPtr &sdh = qi->second->m_handler;
+
+			// is there a handler?
+			if( sdh ) {
+				// unlock & let the handler process it
+				lock.unlock();
+				sdh->DataReceived(*buf.get());
+
+				// no exceptions thrown, clear the
+				// DataHandle, sending packet back to its
+				// free list
+				buf.reset();
+				return true;
+			}
+			else {
+				qi->second->m_queue.push(buf.release());
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
+//
 // SimpleReadThread()
 //
 /// Convenience thread to handle USB read activity.
@@ -463,44 +536,16 @@ void SocketRoutingQueue::DoRead(int timeout)
 
 		// if this is a sequence packet, handle it specially
 		if( Protocol::IsSequencePacket(data) ) {
-			{
 			// sequence.socket is a single byte
 			socket = pack->u.sequence.socket;
 
-			}
 		}
-
-		// we have data, now lock up again to place it
-		// in the right queue
-		scoped_lock lock(m_mutex);
-
-		// search for registration of socket
-		if( m_interest ) {
-			SocketQueueMap::iterator qi = m_socketQueues.find(socket);
-			if( qi != m_socketQueues.end() ) {
-				SocketDataHandlerPtr &sdh = qi->second->m_handler;
-
-				// is there a handler?
-				if( sdh ) {
-					// unlock & let the handler process it
-					lock.unlock();
-					sdh->DataReceived(*buf.get());
-					return;
-				}
-				else {
-					qi->second->m_queue.push(buf.release());
-					return;
-				}
-			}
-
-			// fall through
-		}
-
-		// safe to unlock now, we are done with the map
-		lock.unlock();
+		// we have data, now route or queue it
+		if( RouteOrQueuePacket(socket, buf) )
+			return; // done
 
 		// if we get here, send to default queue
-		m_default.push(buf.release());
+		QueuePacket(m_default, buf);
 	}
 	catch( Usb::Timeout & ) {
 		// this is expected... just ignore

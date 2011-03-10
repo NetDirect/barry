@@ -129,6 +129,13 @@ protected:
 	// from its destructor.
 	void ReturnBuffer(Data *buf);
 
+	// Helper function to add a buffer to a socket queue
+	// Returns false if no queue is available for that socket
+	// Also empties the DataHandle on success.
+	bool QueuePacket(SocketId socket, DataHandle &buf);
+	bool QueuePacket(DataQueue &queue, DataHandle &buf);
+	bool RouteOrQueuePacket(SocketId socket, DataHandle &buf);
+
 	// Thread function for the simple read behaviour... thread is
 	// created in the SpinoffSimpleReadThread() member below.
 	static void *SimpleReadThread(void *userptr);
