@@ -19,7 +19,7 @@
     root directory of this project for more details.
 */
 
-#include <barry/barry.h>
+#include <barry/record.h>
 #include "libtest.h"
 #include <iostream>
 #include <sstream>
