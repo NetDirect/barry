@@ -22,6 +22,7 @@
 
 #include "m_ipmodem.h"
 #include "controller.h"
+#include "controllerpriv.h"
 #include "data.h"
 #include "debug.h"
 #include <sstream>
@@ -42,7 +43,7 @@ IpModem::IpModem(Controller &con,
 		DeviceDataCallback callback,
 		void *callback_context)
 	: m_con(con)
-	, m_dev(con.m_dev)
+	, m_dev(con.GetPrivate()->m_dev)
 	, m_continue_reading(false)
 	, m_callback(callback)
 	, m_callback_context(callback_context)
@@ -224,7 +225,7 @@ void IpModem::Open(const char *password)
 	}
 
 	// clear halt when starting out only if needed
-	if( m_con.m_result.m_needClearHalt ) {
+	if( m_con.GetProbeResult().m_needClearHalt ) {
 		m_dev.ClearHalt(pair.read);
 		m_dev.ClearHalt(pair.write);
 	}

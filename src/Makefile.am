@@ -172,6 +172,7 @@ noinst_HEADERS = cbarry.h \
 	record-internal.h \
 	bmp-internal.h \
 	cod-internal.h \
+	controllerpriv.h \
 	packet.h \
 	protostructs.h \
 	debug.h \

@@ -119,7 +119,7 @@ RawChannel::RawChannel(Controller &con)
 
 void RawChannel::CheckQueueAvailable()
 {
-	if( !m_con.m_queue ) {
+	if( !m_con.HasQueue() ) {
 		throw Barry::Error("RawChannel: No routing queue set in controller");
 	}
 }
@@ -167,7 +167,7 @@ void RawChannel::OnOpen()
 	m_socket->HideSequencePacket(false);
 	SocketRoutingQueue::SocketDataHandlerPtr zeroCallback;
 	zeroCallback.reset(new RawChannelZeroSocketHandler(*this));
-	m_con.m_queue->RegisterInterest(0, zeroCallback);
+	m_con.GetQueue()->RegisterInterest(0, zeroCallback);
 	// Get socket data packets routed to this class as well if a
 	// callback was provided, otherside just get the data packets
 	// placed into a queue for the socket.
@@ -261,7 +261,7 @@ void RawChannel::HandleError(Barry::Error &error)
 void RawChannel::UnregisterZeroSocketInterest()
 {
 	if( m_zero_registered ) {
-		m_con.m_queue->UnregisterInterest(0);
+		m_con.GetQueue()->UnregisterInterest(0);
 		m_socket->HideSequencePacket(true);
 		m_zero_registered = false;
 	}

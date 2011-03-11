@@ -23,10 +23,7 @@
 #define __BARRY_CONTROLLER_H__
 
 #include "dll.h"
-#include "usbwrap.h"
 #include "socket.h"
-#include "pin.h"
-#include "probe.h"
 
 /// Project namespace, containing all related functions and classes.
 /// This is the only namespace applications should be concerned with,
@@ -35,6 +32,9 @@ namespace Barry {
 
 // forward declarations
 class SocketRoutingQueue;
+class ProbeResult;
+
+class PrivateControllerData;
 
 namespace Mode {
 	class Mode;
@@ -92,13 +92,7 @@ public:
 	};
 
 private:
-	ProbeResult m_result;
-	Usb::Device m_dev;
-	Usb::Interface *m_iface;
-	Pin m_pin;
-
-	SocketZero m_zero;
-	SocketRoutingQueue *m_queue;	//< ptr to external object; no delete
+	std::auto_ptr<PrivateControllerData> m_priv;
 
 private:
 	void SetupUsb(const ProbeResult &device);
@@ -107,6 +101,7 @@ protected:
 	uint16_t SelectMode(ModeType mode);	// returns mode socket
 	uint16_t SelectMode(ModeType mode, const char *explicitModeName); // returns mode socket
 	SocketHandle OpenSocket(uint16_t socket, const char *password = 0);
+	PrivateControllerData* GetPrivate() { return m_priv.get(); }
 
 public:
 	explicit Controller(const ProbeResult &device,
@@ -115,9 +110,11 @@ public:
 		int default_timeout = USBWRAP_DEFAULT_TIMEOUT);
 	~Controller();
 
-	bool HasQueue() const { return m_queue; }
+	bool HasQueue() const;
+	SocketRoutingQueue* GetQueue();	// FIXME - not really ideal to have
+					// this exposed, but oh well
 
-	const ProbeResult& GetProbeResult() const { return m_result; }
+	const ProbeResult& GetProbeResult() const;
 };
 
 } // namespace Barry

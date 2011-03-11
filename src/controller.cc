@@ -20,7 +20,7 @@
 */
 
 #include "controller.h"
-#include "probe.h"
+#include "controllerpriv.h"
 #include "common.h"
 #include "protocol.h"
 #include "protostructs.h"
@@ -46,12 +46,7 @@ namespace Barry {
 ///
 Controller::Controller(const ProbeResult &device,
 			int default_timeout)
-	: m_result(device)
-	, m_dev(device.m_dev, default_timeout)
-	, m_iface(0)
-	, m_pin(device.m_pin)
-	, m_zero(m_dev, device.m_ep.write, device.m_ep.read, device.m_zeroSocketSequence)
-	, m_queue(0)
+	: m_priv(new PrivateControllerData(device, default_timeout))
 {
 	dout("Controller: Using non-threaded sockets");
 	SetupUsb(device);
@@ -72,86 +67,43 @@ Controller::Controller(const ProbeResult &device,
 Controller::Controller(const ProbeResult &device,
 			SocketRoutingQueue &queue,
 			int default_timeout)
-	: m_result(device)
-	, m_dev(device.m_dev, default_timeout)
-	, m_iface(0)
-	, m_pin(device.m_pin)
-	, m_zero(queue, device.m_ep.write, device.m_zeroSocketSequence)
-	, m_queue(&queue)
+	: m_priv(new PrivateControllerData(device, queue, default_timeout))
 {
 	dout("Controller: Using threaded socket router");
 
 	SetupUsb(device);
 
 	// set the queue to use our device
-	queue.SetUsbDevice(&m_dev, device.m_ep.write, device.m_ep.read);
+	queue.SetUsbDevice(&m_priv->m_dev, device.m_ep.write, device.m_ep.read);
 }
 
 void Controller::SetupUsb(const ProbeResult &device)
 {
 	unsigned char cfg;
-	if( !m_dev.GetConfiguration(cfg) )
-		throw Usb::Error(m_dev.GetLastError(),
+	if( !m_priv->m_dev.GetConfiguration(cfg) )
+		throw Usb::Error(m_priv->m_dev.GetLastError(),
 			"Controller: GetConfiguration failed");
 
 	if( cfg != BLACKBERRY_CONFIGURATION || MUST_SET_CONFIGURATION ) {
-		if( !m_dev.SetConfiguration(BLACKBERRY_CONFIGURATION) )
-			throw Usb::Error(m_dev.GetLastError(),
+		if( !m_priv->m_dev.SetConfiguration(BLACKBERRY_CONFIGURATION) )
+			throw Usb::Error(m_priv->m_dev.GetLastError(),
 				"Controller: SetConfiguration failed");
 	}
 
-	m_iface = new Usb::Interface(m_dev, device.m_interface);
+	m_priv->m_iface = new Usb::Interface(m_priv->m_dev, device.m_interface);
 
 	if( device.m_needSetAltInterface ) {
-		m_dev.SetAltInterface(device.m_interface);
+		m_priv->m_dev.SetAltInterface(device.m_interface);
 	}
 
 	if( device.m_needClearHalt ) {
-		m_dev.ClearHalt(device.m_ep.read);
-		m_dev.ClearHalt(device.m_ep.write);
+		m_priv->m_dev.ClearHalt(device.m_ep.read);
+		m_priv->m_dev.ClearHalt(device.m_ep.write);
 	}
 }
 
 Controller::~Controller()
 {
-//	// trap exceptions in the destructor
-//	try {
-//		// a non-default socket has been opened, close it
-//		m_socket.Close();
-//	}
-//	catch( std::runtime_error &re ) {
-//		// do nothing... log it?
-//		dout("Exception caught in ~Socket: " << re.what());
-//	}
-
-	// detach the router from our device
-	if( m_queue ) {
-		m_queue->ClearUsbDevice();
-		m_queue = 0;
-	}
-
-	// cleanup the interface
-	delete m_iface;
-
-	// this happens when for some reason the Desktop mode
-	// is not fully opened, but the device has already recommended
-	// a socket to open... in this case, reset the device
-	// in the hopes that on next open, it will be in a
-	// recognizable state.
-	//
-	// FIXME - this should not be necessary, and someday we
-	// we should figure out how to handle the "already open"
-	// response we get for the Desktop
-	//
-	// FIXME - halfOpen now seems to be handled in the Socket class...
-	// perhaps move this there if needed
-	//
-/*
-	if( m_halfOpen ) {
-		dout("Controller object destroyed in halfopen state, resetting device");
-		m_dev.Reset();
-	}
-*/
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -237,7 +189,7 @@ uint16_t Controller::SelectMode(ModeType mode, const char *explicitModeName)
 	Data response;
 
 	try {
-		m_zero.Send(command, response);
+		m_priv->m_zero.Send(command, response);
 
 		// get the data socket number
 		// indicates the socket number that
@@ -255,7 +207,7 @@ uint16_t Controller::SelectMode(ModeType mode, const char *explicitModeName)
 		// sequence packet for the new socket... we don't have
 		// the socket open yet, so just read it and throw it away
 		Data sequence;
-		m_zero.Receive(sequence);
+		m_priv->m_zero.Receive(sequence);
 
 		// return the socket that the device is expecting us to use
 		return btohs(modepack->u.socket.socket);
@@ -275,13 +227,27 @@ uint16_t Controller::SelectMode(ModeType mode, const char *explicitModeName)
 ///
 SocketHandle Controller::OpenSocket(uint16_t socket, const char *password)
 {
-	return m_zero.Open(socket, password);
+	return m_priv->m_zero.Open(socket, password);
 }
 
 
 ///////////////////////////////////////////////////////////////////////////////
 // public API
 
+bool Controller::HasQueue() const
+{
+	return m_priv->m_queue;
+}
+
+SocketRoutingQueue* Controller::GetQueue()
+{
+	return m_priv->m_queue;
+}
+
+const ProbeResult& Controller::GetProbeResult() const
+{
+	return m_priv->m_result;
+}
 
 } // namespace Barry
 
