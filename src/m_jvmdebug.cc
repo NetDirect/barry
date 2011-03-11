@@ -209,7 +209,6 @@ JVMDebug::~JVMDebug()
 
 void JVMDebug::OnOpen()
 {
-	m_socket->InitSequence();
 }
 
 // FIXME - is this necessary?  and if it is, wouldn't it be better

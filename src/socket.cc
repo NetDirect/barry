@@ -740,21 +740,6 @@ void Socket::ClearHalt()
 }
 
 
-// FIXME - find a better way to do this?
-void Socket::InitSequence(int timeout)
-{
-	Data receive;
-	receive.Zap();
-
-	HideSequencePacket(false);
-	Receive(receive);
-	HideSequencePacket(true);
-
-	Protocol::CheckSize(receive, SB_PACKET_HEADER_SIZE);
-	CheckSequence(receive);
-}
-
-
 // sends the send packet down to the device
 // Blocks until response received or timed out in Usb::Device
 //

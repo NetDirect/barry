@@ -176,7 +176,6 @@ public:
 	void Packet(Barry::JVMPacket &packet, int timeout = -1);
 
 	// Use this function to send packet to JVM instead of Packet function
-	void InitSequence(int timeout = -1);
 	void PacketJVM(Data &send, Data &receive, int timeout = -1);
 
 	// Use this function to send data packet instead of Packet function
