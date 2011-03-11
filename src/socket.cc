@@ -680,17 +680,14 @@ void SocketBase::Packet(Data &send, Data &receive, int timeout)
 		unsigned int offset = 0;
 		Data outFrag;
 
-		// There are no sequence packets during fragments, only
-		// after the whole packet is sent.
-		// (FIXME - test this more)
-
 		do {
 			offset = SocketZero::MakeNextFragment(send, outFrag, offset);
 
 			// Is last packet ?
 			MAKE_PACKET(spack, outFrag);
 
-			Send(outFrag, *inputBuf, timeout);
+			RawSend(outFrag, timeout);
+			Receive(*inputBuf, timeout); // for sequence
 
 			// only process sequence handshakes... once we
 			// get to the last fragment, we fall through to normal
