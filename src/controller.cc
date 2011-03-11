@@ -267,6 +267,17 @@ uint16_t Controller::SelectMode(ModeType mode, const char *explicitModeName)
 	}
 }
 
+//
+// OpenSocket
+//
+/// Can be called multiple times, in case of password retries.
+/// See also Mode::RetryPassword()
+///
+SocketHandle Controller::OpenSocket(uint16_t socket, const char *password)
+{
+	return m_zero.Open(socket, password);
+}
+
 
 ///////////////////////////////////////////////////////////////////////////////
 // public API

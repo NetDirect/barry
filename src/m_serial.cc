@@ -95,10 +95,10 @@ void Serial::Open(const char *password)
 	}
 
 	m_ModeSocket = m_con.SelectMode(Controller::UsbSerData);
-	m_data = m_con.m_zero.Open(m_ModeSocket, password);
+	m_data = m_con.OpenSocket(m_ModeSocket, password);
 
 	m_CtrlSocket = m_con.SelectMode(Controller::UsbSerCtrl);
-	m_ctrl = m_con.m_zero.Open(m_CtrlSocket, password);
+	m_ctrl = m_con.OpenSocket(m_CtrlSocket, password);
 
 	// register callback for incoming data, for speed
 	SocketRoutingQueue::SocketDataHandlerPtr data_callback

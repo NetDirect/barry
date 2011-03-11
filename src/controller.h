@@ -106,6 +106,7 @@ private:
 protected:
 	uint16_t SelectMode(ModeType mode);	// returns mode socket
 	uint16_t SelectMode(ModeType mode, const char *explicitModeName); // returns mode socket
+	SocketHandle OpenSocket(uint16_t socket, const char *password = 0);
 
 public:
 	explicit Controller(const ProbeResult &device,

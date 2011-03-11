@@ -140,7 +140,7 @@ void Mode::RetryPassword(const char *password)
 	if( m_socket.get() != 0 )
 		throw std::logic_error("Socket alreay open in RetryPassword");
 
-	m_socket = m_con.m_zero.Open(m_ModeSocket, password);
+	m_socket = m_con.OpenSocket(m_ModeSocket, password);
 
 	// success... perform open-oriented setup
 	OnOpen();
