@@ -47,7 +47,7 @@ namespace Mode {
 class Packet
 {
 	friend class SocketZero;
-	friend class Socket;
+	friend class SocketBase;
 
 protected:
 	Data &m_send;
@@ -194,7 +194,7 @@ public:
 ///
 class JLPacket : public Packet
 {
-	friend class Socket;
+	friend class SocketBase;
 
 private:
 	Data &m_cmd, &m_data;
@@ -269,7 +269,7 @@ public:
 ///
 class JVMPacket : public Packet
 {
-	friend class Socket;
+	friend class SocketBase;
 
 private:
 	Data &m_cmd;

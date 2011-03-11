@@ -40,11 +40,13 @@ namespace Barry {
 
 namespace Barry {
 
+class SocketBase;
 class Socket;
-typedef std::auto_ptr<Socket>	SocketHandle;
+typedef std::auto_ptr<SocketBase>	SocketHandle;
 
 class BXEXPORT SocketZero
 {
+	friend class SocketBase;
 	friend class Socket;
 
 	Usb::Device *m_dev;
@@ -58,8 +60,6 @@ class BXEXPORT SocketZero
 	bool m_halfOpen;
 	uint32_t m_challengeSeed;
 	unsigned int m_remainingTries;
-
-	bool m_hideSequencePacket;
 
 	bool m_resetOnClose;
 
@@ -78,7 +78,7 @@ private:
 	void RawReceive(Data &receive, int timeout = -1);
 
 protected:
-	bool IsSequencePacketHidden() { return m_hideSequencePacket; }
+	bool IsSequencePacketHidden() { return false; }
 
 public:
 	explicit SocketZero(SocketRoutingQueue &queue, int writeEndpoint,
@@ -93,7 +93,7 @@ public:
 	void UnlinkRoutingQueue();
 
 	void SetResetOnClose(bool flag) { m_resetOnClose = flag; }
-	void HideSequencePacket(bool flag) { m_hideSequencePacket = flag; }
+	void HideSequencePacket(bool flag) {}
 
 	// Send functions for socket 0 only.
 	// These functions will overwrite:
@@ -110,6 +110,65 @@ public:
 	void Close(Socket &socket);
 };
 
+class BXEXPORT SocketBase
+{
+protected:
+	void CheckSequence(const Data &seq);
+
+public:
+	SocketBase()
+	{
+	}
+
+	virtual ~SocketBase();
+
+	//
+	// Virtual Socket API
+	//
+	virtual void Close() = 0;
+
+	// FIXME - do I need RawSend?  Or just a good fragmenter?
+	virtual void RawSend(Data &send, int timeout = -1) = 0;
+	virtual void SyncSend(Data &send, int timeout = -1) = 0;
+	virtual void Receive(Data &receive, int timeout = -1) = 0;
+
+	virtual void RegisterInterest(Barry::SocketRoutingQueue::SocketDataHandlerPtr handler = Barry::SocketRoutingQueue::SocketDataHandlerPtr()) = 0;
+	virtual void UnregisterInterest() = 0;
+
+	//
+	// Convenience functions that just call the virtuals above
+	//
+	void Send(Data &send, Data &receive, int timeout = -1);
+	void Send(Barry::Packet &packet, int timeout = -1);
+
+	//
+	// Protocol based functions... all use the above virtual functions
+	//
+
+	// sends the send packet down to the device, fragmenting if
+	// necessary, and returns the response in receive, defragmenting
+	// if needed
+	// Blocks until response received or timed out in Usb::Device
+	void Packet(Data &send, Data &receive, int timeout = -1);
+	void Packet(Barry::Packet &packet, int timeout = -1);
+	void Packet(Barry::JLPacket &packet, int timeout = -1);
+	void Packet(Barry::JVMPacket &packet, int timeout = -1);
+
+	// Use this function to send packet to JVM instead of Packet function
+	// FIXME
+	void PacketJVM(Data &send, Data &receive, int timeout = -1);
+
+	// Use this function to send data packet instead of Packet function
+	// Indeed, Packet function is used to send command (and not data)
+	// FIXME
+	void PacketData(Data &send, Data &receive, int timeout = -1);
+
+	// some handy wrappers for the Packet() interface
+	void NextRecord(Data &receive);
+
+	// FIXME - does nothing, just a placeholder for now
+	void HideSequencePacket(bool flag) {}
+};
 
 //
 // Socket class
@@ -125,7 +184,7 @@ public:
 ///
 /// Requires an active Usb::Device object to work on.
 ///
-class BXEXPORT Socket
+class BXEXPORT Socket : public SocketBase
 {
 	friend class SocketZero;
 
@@ -135,49 +194,28 @@ class BXEXPORT Socket
 
 	bool m_registered;
 
+	// buffer data
+	std::auto_ptr<Data> m_sequence;
+
 protected:
-	void CheckSequence(const Data &seq);
 	void ForceClosed();
+
+	uint16_t GetSocket() const { return m_socket; }
+	uint8_t GetCloseFlag() const { return m_closeFlag; }
 
 	Socket(SocketZero &zero, uint16_t socket, uint8_t closeFlag);
 
 public:
 	~Socket();
 
-	uint16_t GetSocket() const { return m_socket; }
-	uint8_t GetCloseFlag() const { return m_closeFlag; }
-
+	//
+	// virtual overrides
+	//
 	void Close();
-
-	// Send and Receive are available before Open...
-	// an unopened socket defaults to socket 0, which you need
-	// in order to set the blackberry mode
-	// The send function will overwrite the zeroSocketSequence byte
-	// *inside* the packet, if the current m_socket is 0.
-	void Send(Data &send, int timeout = -1);	// send only
-	void Send(Data &send, Data &receive, int timeout = -1); // send+recv
-	void Send(Barry::Packet &packet, int timeout = -1);
+	void RawSend(Data &send, int timeout = -1);
+	void SyncSend(Data &send, int timeout = -1);
 	void Receive(Data &receive, int timeout = -1);
-	void ReceiveData(Data &receive, int timeout = -1);
 
-	// sends the send packet down to the device, fragmenting if
-	// necessary, and returns the response in receive, defragmenting
-	// if needed
-	// Blocks until response received or timed out in Usb::Device
-	void Packet(Data &send, Data &receive, int timeout = -1);
-	void Packet(Barry::Packet &packet, int timeout = -1);
-	void Packet(Barry::JLPacket &packet, int timeout = -1);
-	void Packet(Barry::JVMPacket &packet, int timeout = -1);
-
-	// Use this function to send packet to JVM instead of Packet function
-	void PacketJVM(Data &send, Data &receive, int timeout = -1);
-
-	// Use this function to send data packet instead of Packet function
-	// Indeed, Packet function is used to send command (and not data)
-	void PacketData(Data &send, Data &receive, int timeout = -1);
-
-	// some handy wrappers for the Packet() interface
-	void NextRecord(Data &receive);
 
 	// Register a callback for incoming data from the device.
 	// This function assumes that this socket is based on a socketZero
@@ -187,11 +225,6 @@ public:
 	// which is safe to call as many times as you like.
 	void RegisterInterest(Barry::SocketRoutingQueue::SocketDataHandlerPtr handler = Barry::SocketRoutingQueue::SocketDataHandlerPtr());
 	void UnregisterInterest();
-
-
-	// This function is quickly written
-	// It's very durty :( (but it's usefull to test...)
-	void HideSequencePacket(bool flag) { m_zero->HideSequencePacket(flag); }
 };
 
 

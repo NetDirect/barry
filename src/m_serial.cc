@@ -111,7 +111,7 @@ void Serial::Open(const char *password)
 	const unsigned char start[] =
 		{ 0, 0, 0x0a, 0, 0x01, 0x01, 0xc2, 0x00, 0x40, 0x00 };
 	Data block(start, sizeof(start));
-	m_ctrl->Send(block);
+	m_ctrl->RawSend(block);
 }
 
 void Serial::Close()
@@ -160,7 +160,7 @@ void Serial::Write(const Data &data, int timeout)
 	spack->size = htobs(filtered.GetSize());
 
 	// send via appropriate socket
-	m_data->Send(filtered, timeout);
+	m_data->RawSend(filtered, timeout);
 }
 
 }} // namespace Barry::Mode

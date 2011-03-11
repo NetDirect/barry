@@ -62,7 +62,6 @@ Desktop::~Desktop()
 void Desktop::LoadCommandTable()
 {
 	char rawCommand[] = { 6, 0, 0x0a, 0, 0x40, 0, 0, 1, 0, 0 };
-	*((uint16_t*) rawCommand) = htobs(m_socket->GetSocket());
 
 	Data command(rawCommand, sizeof(rawCommand));
 

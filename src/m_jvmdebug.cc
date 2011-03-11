@@ -272,7 +272,7 @@ void JVMDebug::Unknown01()
 		return;
 
 	// Read the data stream
-	m_socket->ReceiveData(response);
+	m_socket->Receive(response);
 
 	size_t bytereceived = response.GetSize() - SB_JVMPACKET_HEADER_SIZE;
 
@@ -302,7 +302,7 @@ void JVMDebug::Unknown02()
 		return;
 
 	// Read the data stream
-	m_socket->ReceiveData(response);
+	m_socket->Receive(response);
 
 	size_t bytereceived = response.GetSize() - SB_JVMPACKET_HEADER_SIZE;
 
@@ -332,7 +332,7 @@ void JVMDebug::Unknown03()
 		return;
 
 	// Read the data stream
-	m_socket->ReceiveData(response);
+	m_socket->Receive(response);
 
 	size_t bytereceived = response.GetSize() - SB_JVMPACKET_HEADER_SIZE;
 
@@ -362,7 +362,7 @@ void JVMDebug::Unknown04()
 		return;
 
 	// Read the data stream
-	m_socket->ReceiveData(response);
+	m_socket->Receive(response);
 
 	size_t bytereceived = response.GetSize() - SB_JVMPACKET_HEADER_SIZE;
 
@@ -392,7 +392,7 @@ void JVMDebug::Unknown05()
 		return;
 
 	// Read the data stream
-	m_socket->ReceiveData(response);
+	m_socket->Receive(response);
 
 	size_t bytereceived = response.GetSize() - SB_JVMPACKET_HEADER_SIZE;
 
@@ -422,7 +422,7 @@ void JVMDebug::Unknown06()
 		return;
 
 	// Read the data stream
-	m_socket->ReceiveData(response);
+	m_socket->Receive(response);
 
 	size_t bytereceived = response.GetSize() - SB_JVMPACKET_HEADER_SIZE;
 
@@ -452,7 +452,7 @@ void JVMDebug::Unknown07()
 		return;
 
 	// Read the data stream
-	m_socket->ReceiveData(response);
+	m_socket->Receive(response);
 
 	size_t bytereceived = response.GetSize() - SB_JVMPACKET_HEADER_SIZE;
 
@@ -482,7 +482,7 @@ void JVMDebug::Unknown08()
 		return;
 
 	// Read the data stream
-	m_socket->ReceiveData(response);
+	m_socket->Receive(response);
 
 	size_t bytereceived = response.GetSize() - SB_JVMPACKET_HEADER_SIZE;
 
@@ -512,7 +512,7 @@ void JVMDebug::Unknown09()
 		return;
 
 	// Read the data stream
-	m_socket->ReceiveData(response);
+	m_socket->Receive(response);
 
 	size_t bytereceived = response.GetSize() - SB_JVMPACKET_HEADER_SIZE;
 
@@ -542,7 +542,7 @@ void JVMDebug::Unknown10()
 		return;
 
 	// Read the data stream
-	m_socket->ReceiveData(response);
+	m_socket->Receive(response);
 
 	size_t bytereceived = response.GetSize() - SB_JVMPACKET_HEADER_SIZE;
 
@@ -574,7 +574,7 @@ bool JVMDebug::GetStatus(int &status)
 		return false;
 
 	// Read the data stream
-	m_socket->ReceiveData(response);
+	m_socket->Receive(response);
 
 	MAKE_JVMPACKET(dpack, response);
 
@@ -620,7 +620,7 @@ bool JVMDebug::WaitStatus(int &status)
 		return false;
 
 	// Read the data stream
-	m_socket->ReceiveData(response);
+	m_socket->Receive(response);
 
 	MAKE_JVMPACKET(dpack, response);
 
@@ -665,7 +665,7 @@ int JVMDebug::GetConsoleMessage(std::string &message)
 		return -1;
 
 	// Read the data stream
-	m_socket->ReceiveData(response);
+	m_socket->Receive(response);
 
 	MAKE_JVMPACKET(dpack, response);
 
@@ -721,7 +721,7 @@ void JVMDebug::GetModulesList(JVMModulesList &mylist)
 			break;
 
 		// Read the data stream
-		m_socket->ReceiveData(response);
+		m_socket->Receive(response);
 
 		MAKE_JVMPACKET(dpack, response);
 
@@ -781,7 +781,7 @@ void JVMDebug::GetThreadsList(JVMThreadsList &mylist)
 		return;
 
 	// Read the data stream
-	m_socket->ReceiveData(response);
+	m_socket->Receive(response);
 
 	MAKE_JVMPACKET(dpack, response);
 
@@ -821,7 +821,7 @@ void JVMDebug::GetThreadsList(JVMThreadsList &mylist)
 			return;
 
 		// Read the data stream
-		m_socket->ReceiveData(response);
+		m_socket->Receive(response);
 
 		MAKE_JVMPACKET(dpack, response);
 
@@ -851,7 +851,7 @@ void JVMDebug::GetThreadsList(JVMThreadsList &mylist)
 				return;
 
 			// Read the data stream
-			m_socket->ReceiveData(response);
+			m_socket->Receive(response);
 
 			MAKE_JVMPACKET(dpack, response);
 
@@ -882,7 +882,7 @@ void JVMDebug::GetThreadsList(JVMThreadsList &mylist)
 			return;
 
 		// Read the data stream
-		m_socket->ReceiveData(response);
+		m_socket->Receive(response);
 
 		dpack = (const Protocol::JVMPacket *) response.GetData();
 
@@ -909,7 +909,7 @@ void JVMDebug::GetThreadsList(JVMThreadsList &mylist)
 			return;
 
 		// Read the data stream
-		m_socket->ReceiveData(response);
+		m_socket->Receive(response);
 
 		dpack = (const Protocol::JVMPacket *) response.GetData();
 
@@ -937,7 +937,7 @@ void JVMDebug::GetThreadsList(JVMThreadsList &mylist)
 			return;
 
 		// Read the data stream
-		m_socket->ReceiveData(response);
+		m_socket->Receive(response);
 
 		dpack = (const Protocol::JVMPacket *) response.GetData();
 
@@ -981,7 +981,7 @@ void JVMDebug::Go()
 	}
 
 	// Read the data stream
-	m_socket->ReceiveData(response);
+	m_socket->Receive(response);
 
 	size_t bytereceived = response.GetSize() - SB_JVMPACKET_HEADER_SIZE;
 
@@ -1014,7 +1014,7 @@ void JVMDebug::Stop()
 	}
 
 	// Read the data stream
-	m_socket->ReceiveData(response);
+	m_socket->Receive(response);
 
 	size_t bytereceived = response.GetSize() - SB_JVMPACKET_HEADER_SIZE;
 

@@ -287,29 +287,14 @@ void RawChannel::Send(Data &data, int timeout)
 
 	// setup header and copy data in
 	MAKE_CHANNELPACKETPTR_BUF(packet, m_send_buffer);
-	packet->socket = htobs(m_socket->GetSocket());
 	packet->size = htobs(packetSize);
 	std::memcpy(packet->u.data, data.GetData(), data.GetSize());
 
 	Data toSend(m_send_buffer, packetSize);
-	m_socket->Send(toSend, timeout);
+	m_socket->SyncSend(toSend, timeout);
 	if( m_callback ) {
 		m_semaphore->WaitForSignal();
 		if( m_pending_error ) {
-			throw Barry::Error(*m_pending_error);
-		}
-	}
-	else {
-		// no callback, so just grab our sequence packet now
-		Data sequence;
-		m_socket->Receive(sequence, timeout);
-
-		ValidateDataPacket(sequence);
-
-		// Check for sequence packets
-		if( !Protocol::IsSequencePacket(sequence) ) {
-			SetPendingError("RawChannel: Immediate packet after send was not a sequence packet");
-			ddout(sequence);
 			throw Barry::Error(*m_pending_error);
 		}
 	}

@@ -52,7 +52,6 @@ SocketZero::SocketZero(	SocketRoutingQueue &queue,
 	m_halfOpen(false),
 	m_challengeSeed(0),
 	m_remainingTries(0),
-	m_hideSequencePacket(true),
 	m_resetOnClose(false)
 {
 }
@@ -69,7 +68,6 @@ SocketZero::SocketZero(	Device &dev,
 	m_halfOpen(false),
 	m_challengeSeed(0),
 	m_remainingTries(0),
-	m_hideSequencePacket(true),
 	m_resetOnClose(false)
 {
 }
@@ -483,7 +481,8 @@ SocketHandle SocketZero::Open(uint16_t socket, const char *password)
 	}
 
 	// success!  save the socket
-	SocketHandle sh(new Socket(*this, socket, closeFlag));
+	Socket *sock = new Socket(*this, socket, closeFlag);
+	SocketHandle sh(sock);
 
 	// if we are running with a routing queue, register the
 	// socket's interest in all its own data.  By default, this
@@ -492,7 +491,7 @@ SocketHandle SocketZero::Open(uint16_t socket, const char *password)
 	// its own handler, it must call UnregisterInterest() and
 	// re-register its own handler.
 	if( m_queue ) {
-		sh->RegisterInterest();
+		sock->RegisterInterest();
 	}
 
 	return sh;
@@ -591,270 +590,36 @@ void SocketZero::Close(Socket &socket)
 
 
 
-
 //////////////////////////////////////////////////////////////////////////////
-// Socket class
+// SocketBase class
 
-Socket::Socket( SocketZero &zero,
-		uint16_t socket,
-		uint8_t closeFlag)
-	: m_zero(&zero)
-	, m_socket(socket)
-	, m_closeFlag(closeFlag)
-	, m_registered(false)
+SocketBase::~SocketBase()
 {
 }
 
-Socket::~Socket()
+void SocketBase::CheckSequence(const Data &seq)
 {
-	// trap exceptions in the destructor
-	try {
-		// a non-default socket has been opened, close it
-		Close();
-	}
-	catch( std::runtime_error &re ) {
-		// do nothing... log it?
-		dout("Exception caught in ~Socket: " << re.what());
-	}
-}
-
-
-////////////////////////////////////
-// Socket protected API
-
-void Socket::CheckSequence(const Data &seq)
-{
-	m_zero->CheckSequence(m_socket, seq);
-}
-
-void Socket::ForceClosed()
-{
-	m_socket = 0;
-	m_closeFlag = 0;
-}
-
-
-////////////////////////////////////
-// Socket public API
-
-void Socket::Close()
-{
-	UnregisterInterest();
-	m_zero->Close(*this);
-}
-
-
-//
-// Send
-//
-/// Sends 'send' data to device, no receive.
-///
-/// \returns	void
-///
-/// \exception	Usb::Error on underlying bus errors.
-///
-void Socket::Send(Data &send, int timeout)
-{
-	// force the socket number to this socket
-	if( send.GetSize() >= SB_PACKET_HEADER_SIZE ) {
-		MAKE_PACKETPTR_BUF(spack, send.GetBuffer());
-		spack->socket = htobs(m_socket);
-	}
-	m_zero->RawSend(send, timeout);
+	// FIXME - needs implementation
 }
 
 //
 // Send
 //
-/// Sends 'send' data to device, and waits for response.
+/// SyncSends 'send' data to device, and waits for response.
 ///
 /// \returns	void
 ///
 /// \exception	Usb::Error on underlying bus errors.
 ///
-void Socket::Send(Data &send, Data &receive, int timeout)
+void SocketBase::Send(Data &send, Data &receive, int timeout)
 {
-	Send(send, timeout);
+	SyncSend(send, timeout);
 	Receive(receive, timeout);
 }
 
-void Socket::Send(Barry::Packet &packet, int timeout)
+void SocketBase::Send(Barry::Packet &packet, int timeout)
 {
 	Send(packet.m_send, *packet.m_receive, timeout);
-}
-
-void Socket::Receive(Data &receive, int timeout)
-{
-	if( m_registered ) {
-		if( m_zero->m_queue ) {
-			if( !m_zero->m_queue->SocketRead(m_socket, receive, timeout) )
-				throw Timeout("Socket::Receive: queue SocketRead returned false (likely a timeout)");
-		}
-		else {
-			throw std::logic_error("NULL queue pointer in a registered socket read.");
-		}
-		ddout("Socket::Receive: Endpoint "
-			<< (m_zero->m_queue ? m_zero->m_queue->GetReadEp() : m_zero->m_readEp)
-			<< "\nReceived:\n" << receive);
-	}
-	else {
-		m_zero->RawReceive(receive, timeout);
-	}
-}
-
-
-// FIXME - find a better way to do this?
-void Socket::ReceiveData(Data &receive, int timeout)
-{
-	HideSequencePacket(false);
-	Receive(receive);
-	HideSequencePacket(true);
-}
-
-
-// sends the send packet down to the device
-// Blocks until response received or timed out in Usb::Device
-//
-// This function is used to send packet to JVM
-void Socket::PacketJVM(Data &send, Data &receive, int timeout)
-{
-	if( ( send.GetSize() < MIN_PACKET_DATA_SIZE ) ||
-		( send.GetSize() > MAX_PACKET_DATA_SIZE ) ) {
-		// we don't do that around here
-		throw std::logic_error("Socket: unknown send data in PacketJVM()");
-	}
-
-	Data &inFrag = receive;
-	receive.Zap();
-
-	// send non-fragmented
-	Send(send, inFrag, timeout);
-
-	bool done = false;
-	int blankCount = 0;
-
-	while( !done ) {
-		// check the packet's validity
-		if( inFrag.GetSize() > 6 ) {
-			MAKE_PACKET(rpack, inFrag);
-
-			blankCount = 0;
-
-			Protocol::CheckSize(inFrag, SB_PACKET_HEADER_SIZE);
-
-			switch( rpack->command )
-			{
-			case SB_COMMAND_SEQUENCE_HANDSHAKE:
-				CheckSequence(inFrag);
-				break;
-
-			default: {
-				std::ostringstream oss;
-				oss << "Socket: (read) unhandled packet in Packet(): 0x" << std::hex << (unsigned int)rpack->command;
-				eout(oss.str());
-				throw Error(oss.str());
-				}
-				break;
-			}
-		}
-		else if( inFrag.GetSize() == 6 ) {
-			done = true;
-		}
-		else {
-			blankCount++;
-
-			//std::cerr << "Blank! " << blankCount << std::endl;
-			if( blankCount == 10 ) {
-				// only ask for more data on stalled sockets
-				// for so long
-				throw Error("Socket: 10 blank packets received");
-			}
-		}
-
-		if( !done ) {
-			// not done yet, ask for another read
-			Receive(inFrag);
-		}
-	}
-}
-
-// sends the send packet down to the device
-// Blocks until response received or timed out in Usb::Device
-void Socket::PacketData(Data &send, Data &receive, int timeout)
-{
-	if( ( send.GetSize() < MIN_PACKET_DATA_SIZE ) ||
-		( send.GetSize() > MAX_PACKET_DATA_SIZE ) ) {
-		// we don't do that around here
-		throw std::logic_error("Socket: unknown send data in PacketData()");
-	}
-
-	Data &inFrag = receive;
-	receive.Zap();
-
-	// send non-fragmented
-	Send(send, inFrag, timeout);
-
-	bool done = false;
-	int blankCount = 0;
-
-	while( !done ) {
-		// check the packet's validity
-		if( inFrag.GetSize() > 0 ) {
-			MAKE_PACKET(rpack, inFrag);
-
-			blankCount = 0;
-
-			Protocol::CheckSize(inFrag, SB_PACKET_HEADER_SIZE);
-
-			switch( rpack->command )
-			{
-			case SB_COMMAND_SEQUENCE_HANDSHAKE:
-				CheckSequence(inFrag);
-				if (!m_zero->IsSequencePacketHidden())
-					done = true;
-				break;
-
-			case SB_COMMAND_JL_READY:
-			case SB_COMMAND_JL_ACK:
-			case SB_COMMAND_JL_HELLO_ACK:
-			case SB_COMMAND_JL_RESET_REQUIRED:
-				done = true;
-				break;
-
-			case SB_COMMAND_JL_GET_DATA_ENTRY:	// This response means that the next packet is the stream
-				done = true;
-				break;
-
-			case SB_DATA_JL_INVALID:
-				throw BadPacket(rpack->command, "file is not a valid Java code file");
-				break;
-
-			case SB_COMMAND_JL_NOT_SUPPORTED:
-				throw BadPacket(rpack->command, "device does not support requested command");
-				break;
-
-			default:
-				// unknown packet, pass it up to the
-				// next higher code layer
-				done = true;
-				break;
-			}
-		}
-		else {
-			blankCount++;
-			//std::cerr << "Blank! " << blankCount << std::endl;
-			if( blankCount == 10 ) {
-				// only ask for more data on stalled sockets
-				// for so long
-				throw Error("Socket: 10 blank packets received");
-			}
-		}
-
-		if( !done ) {
-			// not done yet, ask for another read
-			Receive(inFrag);
-		}
-	}
 }
 
 // sends the send packet down to the device, fragmenting if
@@ -865,7 +630,7 @@ void Socket::PacketData(Data &send, Data &receive, int timeout)
 // This is primarily for Desktop Database packets... Javaloader
 // packets use PacketData().
 //
-void Socket::Packet(Data &send, Data &receive, int timeout)
+void SocketBase::Packet(Data &send, Data &receive, int timeout)
 {
 	MAKE_PACKET(spack, send);
 	if( send.GetSize() < MIN_PACKET_SIZE ||
@@ -1007,12 +772,12 @@ void Socket::Packet(Data &send, Data &receive, int timeout)
 	}
 }
 
-void Socket::Packet(Barry::Packet &packet, int timeout)
+void SocketBase::Packet(Barry::Packet &packet, int timeout)
 {
 	Packet(packet.m_send, *packet.m_receive, timeout);
 }
 
-void Socket::Packet(Barry::JLPacket &packet, int timeout)
+void SocketBase::Packet(Barry::JLPacket &packet, int timeout)
 {
 	if( packet.HasData() ) {
 		HideSequencePacket(false);
@@ -1025,17 +790,161 @@ void Socket::Packet(Barry::JLPacket &packet, int timeout)
 	}
 }
 
-void Socket::Packet(Barry::JVMPacket &packet, int timeout)
+void SocketBase::Packet(Barry::JVMPacket &packet, int timeout)
 {
 	HideSequencePacket(false);
 	PacketJVM(packet.m_cmd, *packet.m_receive, timeout);
 	HideSequencePacket(true);
 }
 
-void Socket::NextRecord(Data &receive)
+// sends the send packet down to the device
+// Blocks until response received or timed out in Usb::Device
+//
+// This function is used to send packet to JVM
+void SocketBase::PacketJVM(Data &send, Data &receive, int timeout)
+{
+	if( ( send.GetSize() < MIN_PACKET_DATA_SIZE ) ||
+		( send.GetSize() > MAX_PACKET_DATA_SIZE ) ) {
+		// we don't do that around here
+		throw std::logic_error("Socket: unknown send data in PacketJVM()");
+	}
+
+	Data &inFrag = receive;
+	receive.Zap();
+
+	// send non-fragmented
+	Send(send, inFrag, timeout);
+
+	bool done = false;
+	int blankCount = 0;
+
+	while( !done ) {
+		// check the packet's validity
+		if( inFrag.GetSize() > 6 ) {
+			MAKE_PACKET(rpack, inFrag);
+
+			blankCount = 0;
+
+			Protocol::CheckSize(inFrag, SB_PACKET_HEADER_SIZE);
+
+			switch( rpack->command )
+			{
+			case SB_COMMAND_SEQUENCE_HANDSHAKE:
+				CheckSequence(inFrag);
+				break;
+
+			default: {
+				std::ostringstream oss;
+				oss << "Socket: (read) unhandled packet in Packet(): 0x" << std::hex << (unsigned int)rpack->command;
+				eout(oss.str());
+				throw Error(oss.str());
+				}
+				break;
+			}
+		}
+		else if( inFrag.GetSize() == 6 ) {
+			done = true;
+		}
+		else {
+			blankCount++;
+
+			//std::cerr << "Blank! " << blankCount << std::endl;
+			if( blankCount == 10 ) {
+				// only ask for more data on stalled sockets
+				// for so long
+				throw Error("Socket: 10 blank packets received");
+			}
+		}
+
+		if( !done ) {
+			// not done yet, ask for another read
+			Receive(inFrag);
+		}
+	}
+}
+
+// sends the send packet down to the device
+// Blocks until response received or timed out in Usb::Device
+void SocketBase::PacketData(Data &send, Data &receive, int timeout)
+{
+	if( ( send.GetSize() < MIN_PACKET_DATA_SIZE ) ||
+		( send.GetSize() > MAX_PACKET_DATA_SIZE ) ) {
+		// we don't do that around here
+		throw std::logic_error("Socket: unknown send data in PacketData()");
+	}
+
+	Data &inFrag = receive;
+	receive.Zap();
+
+	// send non-fragmented
+	Send(send, inFrag, timeout);
+
+	bool done = false;
+	int blankCount = 0;
+
+	while( !done ) {
+		// check the packet's validity
+		if( inFrag.GetSize() > 0 ) {
+			MAKE_PACKET(rpack, inFrag);
+
+			blankCount = 0;
+
+			Protocol::CheckSize(inFrag, SB_PACKET_HEADER_SIZE);
+
+			switch( rpack->command )
+			{
+			case SB_COMMAND_SEQUENCE_HANDSHAKE:
+				CheckSequence(inFrag);
+//FIXME				if (!m_zero->IsSequencePacketHidden())
+					done = true;
+				break;
+
+			case SB_COMMAND_JL_READY:
+			case SB_COMMAND_JL_ACK:
+			case SB_COMMAND_JL_HELLO_ACK:
+			case SB_COMMAND_JL_RESET_REQUIRED:
+				done = true;
+				break;
+
+			case SB_COMMAND_JL_GET_DATA_ENTRY:	// This response means that the next packet is the stream
+				done = true;
+				break;
+
+			case SB_DATA_JL_INVALID:
+				throw BadPacket(rpack->command, "file is not a valid Java code file");
+				break;
+
+			case SB_COMMAND_JL_NOT_SUPPORTED:
+				throw BadPacket(rpack->command, "device does not support requested command");
+				break;
+
+			default:
+				// unknown packet, pass it up to the
+				// next higher code layer
+				done = true;
+				break;
+			}
+		}
+		else {
+			blankCount++;
+			//std::cerr << "Blank! " << blankCount << std::endl;
+			if( blankCount == 10 ) {
+				// only ask for more data on stalled sockets
+				// for so long
+				throw Error("Socket: 10 blank packets received");
+			}
+		}
+
+		if( !done ) {
+			// not done yet, ask for another read
+			Receive(inFrag);
+		}
+	}
+}
+
+void SocketBase::NextRecord(Data &receive)
 {
 	Barry::Protocol::Packet packet;
-	packet.socket = htobs(GetSocket());
 	packet.size = htobs(7);
 	packet.command = SB_COMMAND_DB_DONE;
 	packet.u.db.tableCmd = 0;
@@ -1044,6 +953,104 @@ void Socket::NextRecord(Data &receive)
 	Data command(&packet, 7);
 	Packet(command, receive);
 }
+
+
+
+//////////////////////////////////////////////////////////////////////////////
+// Socket class
+
+Socket::Socket( SocketZero &zero,
+		uint16_t socket,
+		uint8_t closeFlag)
+	: m_zero(&zero)
+	, m_socket(socket)
+	, m_closeFlag(closeFlag)
+	, m_registered(false)
+	, m_sequence(new Data)
+{
+}
+
+Socket::~Socket()
+{
+	// trap exceptions in the destructor
+	try {
+		// a non-default socket has been opened, close it
+		Close();
+	}
+	catch( std::runtime_error &re ) {
+		// do nothing... log it?
+		dout("Exception caught in ~Socket: " << re.what());
+	}
+}
+
+
+////////////////////////////////////
+// Socket protected API
+
+void Socket::ForceClosed()
+{
+	m_socket = 0;
+	m_closeFlag = 0;
+}
+
+
+////////////////////////////////////
+// Socket public API
+
+void Socket::Close()
+{
+	UnregisterInterest();
+	m_zero->Close(*this);
+}
+
+
+//
+// Send
+//
+/// Sends 'send' data to device, no receive.
+///
+/// \returns	void
+///
+/// \exception	Usb::Error on underlying bus errors.
+///
+void Socket::RawSend(Data &send, int timeout)
+{
+	// force the socket number to this socket
+	if( send.GetSize() >= SB_PACKET_HEADER_SIZE ) {
+		MAKE_PACKETPTR_BUF(spack, send.GetBuffer());
+		spack->socket = htobs(m_socket);
+	}
+	m_zero->RawSend(send, timeout);
+}
+
+void Socket::SyncSend(Data &send, int timeout)
+{
+	RawSend(send, timeout);
+	Receive(*m_sequence, timeout);
+	if( !Protocol::IsSequencePacket(*m_sequence) )
+		throw Barry::Error("Non-sequence packet in Socket::SyncSend()");
+	CheckSequence(*m_sequence);
+}
+
+void Socket::Receive(Data &receive, int timeout)
+{
+	if( m_registered ) {
+		if( m_zero->m_queue ) {
+			if( !m_zero->m_queue->SocketRead(m_socket, receive, timeout) )
+				throw Timeout("Socket::Receive: queue SocketRead returned false (likely a timeout)");
+		}
+		else {
+			throw std::logic_error("NULL queue pointer in a registered socket read.");
+		}
+		ddout("Socket::Receive: Endpoint "
+			<< (m_zero->m_queue ? m_zero->m_queue->GetReadEp() : m_zero->m_readEp)
+			<< "\nReceived:\n" << receive);
+	}
+	else {
+		m_zero->RawReceive(receive, timeout);
+	}
+}
+
 
 void Socket::RegisterInterest(SocketRoutingQueue::SocketDataHandlerPtr handler)
 {
