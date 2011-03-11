@@ -51,8 +51,7 @@ SocketZero::SocketZero(	SocketRoutingQueue &queue,
 	m_sequenceId(0),
 	m_halfOpen(false),
 	m_challengeSeed(0),
-	m_remainingTries(0),
-	m_resetOnClose(false)
+	m_remainingTries(0)
 {
 }
 
@@ -67,8 +66,7 @@ SocketZero::SocketZero(	Device &dev,
 	m_sequenceId(0),
 	m_halfOpen(false),
 	m_challengeSeed(0),
-	m_remainingTries(0),
-	m_resetOnClose(false)
+	m_remainingTries(0)
 {
 }
 
@@ -562,7 +560,7 @@ void SocketZero::Close(Socket &socket)
 		throw BadPacket(rpack->command, "Socket: Bad CLOSED packet in Close");
 	}
 
-	if( m_resetOnClose ) {
+	if( socket.IsResetOnClose() ) {
 		Data send, receive;
 		ZeroPacket reset_packet(send, receive);
 		reset_packet.Reset();

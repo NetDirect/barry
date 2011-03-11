@@ -492,7 +492,7 @@ bool JavaLoader::StopStream()
 	m_StreamStarted = false;
 
 	if( packet.Command() == SB_COMMAND_JL_RESET_REQUIRED ) {
-		m_con.m_zero.SetResetOnClose(true);
+		m_socket->ResetOnClose(true);
 		return true;
 	}
 	else if( packet.Command() != SB_COMMAND_JL_ACK &&

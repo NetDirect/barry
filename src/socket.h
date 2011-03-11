@@ -61,8 +61,6 @@ class BXEXPORT SocketZero
 	uint32_t m_challengeSeed;
 	unsigned int m_remainingTries;
 
-	bool m_resetOnClose;
-
 private:
 	static void AppendFragment(Data &whole, const Data &fragment);
 	static unsigned int MakeNextFragment(const Data &whole, Data &fragment,
@@ -92,7 +90,6 @@ public:
 	void SetRoutingQueue(SocketRoutingQueue &queue);
 	void UnlinkRoutingQueue();
 
-	void SetResetOnClose(bool flag) { m_resetOnClose = flag; }
 	void HideSequencePacket(bool flag) {}
 
 	// Send functions for socket 0 only.
@@ -112,11 +109,14 @@ public:
 
 class BXEXPORT SocketBase
 {
+	bool m_resetOnClose;
+
 protected:
 	void CheckSequence(const Data &seq);
 
 public:
 	SocketBase()
+		: m_resetOnClose(false)
 	{
 	}
 
@@ -134,6 +134,9 @@ public:
 
 	virtual void RegisterInterest(Barry::SocketRoutingQueue::SocketDataHandlerPtr handler = Barry::SocketRoutingQueue::SocketDataHandlerPtr()) = 0;
 	virtual void UnregisterInterest() = 0;
+
+	void ResetOnClose(bool reset = true) { m_resetOnClose = reset; }
+	bool IsResetOnClose() const { return m_resetOnClose; }
 
 	//
 	// Convenience functions that just call the virtuals above
