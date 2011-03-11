@@ -32,25 +32,35 @@ namespace Barry {
 
 class BXEXPORT Data
 {
-	unsigned char *m_data;
-	size_t m_bufsize;		//< size of m_data buffer allocated
-	size_t m_datasize;		//< number of bytes of actual data
-	int m_endpoint;
+	unsigned char *m_memBlock;	//< pointer to full memory block
+					//< can be null if external
+	size_t m_blockSize;		//< size of m_memBlock buffer allocated
+
+	unsigned char *m_dataStart;	//< pointer to start of internal data
+					//< can be null if external, and can
+					//< start somewhere in the middle of
+					//< m_memBlock if internal with a
+					//< prepend buffer
+
+	size_t m_dataSize;		//< number of bytes of actual data
 
 	// copy on write feature
 	const unsigned char *m_externalData;
 	bool m_external;
 
+	// meta data
+	int m_endpoint;
+
 	// output format flags
 	static bool bPrintAscii;
 
 protected:
-	void MakeSpace(size_t desiredsize);
-	void CopyOnWrite(size_t desiredsize);
+	void MakeSpace(size_t desiredsize, size_t desiredprepend = 0);
+	size_t AvailablePrependSpace() const;
 
 public:
 	Data();
-	explicit Data(int endpoint, size_t startsize = 0x4000);
+	explicit Data(int endpoint, size_t startsize = 0x4000, size_t prependsize = 0x100);
 	Data(const void *ValidData, size_t size);
 	Data(const Data &other);
 	~Data();
@@ -61,17 +71,18 @@ public:
 
 	int GetEndpoint() const { return m_endpoint; }
 
-	const unsigned char * GetData() const { return m_external ? m_externalData : m_data; }
-	size_t GetSize() const { return m_datasize; }
+	const unsigned char * GetData() const { return m_external ? m_externalData : m_dataStart; }
+	size_t GetSize() const { return m_dataSize; }
 
 	unsigned char * GetBuffer(size_t requiredsize = 0);
-	size_t GetBufSize() const { return m_bufsize; }
+	/// Returns size of buffer returned by GetBuffer()
+	size_t GetBufSize() const;
 	void ReleaseBuffer(int datasize = -1);
 
 	void AppendHexString(const char *str);
 
 	/// set buffer to 0 size, but don't bother overwriting memory with 0
-	void QuickZap() { m_datasize = 0; }
+	void QuickZap() { m_dataSize = 0; }
 	void Zap();	// does a memset too
 
 	Data& operator=(const Data &other);
@@ -85,9 +96,13 @@ public:
 	// dst is calculated as buffer + offset.
 	// The buffer is expanded automatically if needed.
 	// The offset is advanced by the size of the data.
+	// GetSize() will increase automatically if the result of
+	// the MemCpy() goes beyond the existing data size.
 	//
 	void MemCpy(size_t &offset, const void *src, size_t size);
 	void Append(const void *buf, size_t size);
+	void Prepend(const void *buf, size_t size);
+	void Prechop(size_t size);
 	template <class ValueT>
 	void SetValue(size_t &offset, ValueT value)
 	{

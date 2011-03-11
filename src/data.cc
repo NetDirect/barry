@@ -65,81 +65,131 @@ inline bool IsHexData(const std::string &s)
 bool Data::bPrintAscii = true;
 
 Data::Data()
-	: m_data(new unsigned char[0x4000]),
-	m_bufsize(0x4000),
-	m_datasize(0),
-	m_endpoint(-1),
-	m_externalData(0),
-	m_external(false)
+	: m_memBlock(new unsigned char[0x4100])
+	, m_blockSize(0x4100)
+	, m_dataStart(m_memBlock + 0x100)
+	, m_dataSize(0)
+	, m_externalData(0)
+	, m_external(false)
+	, m_endpoint(-1)
 {
-	memset(m_data, 0, m_bufsize);
+	memset(m_memBlock, 0, m_blockSize);
 }
 
-Data::Data(int endpoint, size_t startsize)
-	: m_data(new unsigned char[startsize]),
-	m_bufsize(startsize),
-	m_datasize(0),
-	m_endpoint(endpoint),
-	m_externalData(0),
-	m_external(false)
+Data::Data(int endpoint, size_t startsize, size_t prependsize)
+	: m_memBlock(new unsigned char[startsize + prependsize])
+	, m_blockSize(startsize + prependsize)
+	, m_dataStart(m_memBlock + prependsize)
+	, m_dataSize(0)
+	, m_externalData(0)
+	, m_external(false)
+	, m_endpoint(endpoint)
 {
-	memset(m_data, 0, m_bufsize);
+	memset(m_memBlock, 0, m_blockSize);
 }
 
 Data::Data(const void *ValidData, size_t size)
-	: m_data(0),
-	m_bufsize(0),
-	m_datasize(size),
-	m_endpoint(-1),
-	m_externalData((const unsigned char*)ValidData),
-	m_external(true)
+	: m_memBlock(0)
+	, m_blockSize(0)
+	, m_dataStart(0)
+	, m_dataSize(size)
+	, m_externalData((const unsigned char*)ValidData)
+	, m_external(true)
+	, m_endpoint(-1)
 {
 }
 
 Data::Data(const Data &other)
-	: m_data(other.m_bufsize ? new unsigned char[other.m_bufsize] : 0),
-	m_bufsize(other.m_bufsize),
-	m_datasize(other.m_datasize),
-	m_endpoint(other.m_endpoint),
-	m_externalData(other.m_externalData),
-	m_external(other.m_external)
+	: m_memBlock(other.m_blockSize ? new unsigned char[other.m_blockSize] : 0)
+	, m_blockSize(other.m_blockSize)
+	, m_dataStart(m_memBlock + other.AvailablePrependSpace())
+	, m_dataSize(other.m_dataSize)
+	, m_externalData(other.m_externalData)
+	, m_external(other.m_external)
+	, m_endpoint(other.m_endpoint)
 {
 	// copy over the raw data
 	if( !m_external )
-		memcpy(m_data, other.m_data, other.m_bufsize);
+		memcpy(m_memBlock, other.m_memBlock, other.m_blockSize);
 }
 
 Data::~Data()
 {
-	delete [] m_data;
+	delete [] m_memBlock;
 }
 
-void Data::MakeSpace(size_t desiredsize)
+//
+// MakeSpace
+//
+/// Reallocates buffers so that it is safe to write desiredsize data
+/// to m_dataStart after it returns.  All existing data is preserved.
+///
+/// This function also performs any copy on write needed.
+///
+/// If desiredprepend is nonzero, then at least desiredprepend bytes
+/// of prepend space will exist in the buffer after return.
+/// If desiredprepend is zero, defaults will be used if needed.
+///
+void Data::MakeSpace(size_t desiredsize, size_t desiredprepend)
 {
-	if( m_bufsize < desiredsize ) {
-		desiredsize += 1024;	// get a proper chunk
-		unsigned char *newbuf = new unsigned char[desiredsize];
-		memcpy(newbuf, m_data, m_bufsize);
-		memset(newbuf + m_bufsize, 0, desiredsize - m_bufsize);
-		delete [] m_data;
-		m_data = newbuf;
-		m_bufsize = desiredsize;
+	// use a default prepend size if none currently available
+	size_t prepend = std::max(AvailablePrependSpace(), desiredprepend);
+	if( !prepend )
+		prepend = 0x100;
+
+	// GetBufSize() returns 0 if m_external is true
+	if( GetBufSize() < (desiredsize + prepend) ||
+	    (desiredprepend && AvailablePrependSpace() < desiredprepend) )
+	{
+		// get a proper chunk to avoid future resizes
+		desiredsize += 1024 + prepend;
+
+		// desired size must be at least the size of our current
+		// data (in case of external data), as well as the size
+		// of our desired prepend space
+		if( desiredsize < (m_dataSize + prepend) )
+			desiredsize = m_dataSize + prepend;
+
+		// setup new zeroed buffer... reuse m_memBlock if it
+		// exists (see operator=())
+		unsigned char *newbuf = 0;
+		if( m_memBlock && m_blockSize >= desiredsize ) {
+			newbuf = m_memBlock;
+		}
+		else {
+			newbuf = new unsigned char[desiredsize];
+			memset(newbuf, 0, desiredsize);
+		}
+
+		// copy valid data over
+		if( m_external ) {
+			memcpy(newbuf + prepend, m_externalData, m_dataSize);
+
+			// not external anymore
+			m_external = false;
+		}
+		else {
+			memcpy(newbuf + prepend, m_dataStart, m_dataSize);
+		}
+
+		// install new buffer if we've allocated a new one
+		if( m_memBlock != newbuf ) {
+			delete [] m_memBlock;
+			m_memBlock = newbuf;
+			m_blockSize = desiredsize;
+		}
+
+		// update m_dataStart
+		m_dataStart = m_memBlock + prepend;
 	}
 }
 
-// perform the copy on write operation if needed
-void Data::CopyOnWrite(size_t desiredsize)
+size_t Data::AvailablePrependSpace() const
 {
-	if( m_external ) {
-		// make room
-		MakeSpace(std::max(desiredsize, m_datasize));
-
-		// copy it over
-		memcpy(m_data, m_externalData, m_datasize);
-
-		// not external anymore
-		m_external = false;
-	}
+	if( m_external )
+		return 0;
+	else
+		return m_dataStart - m_memBlock;
 }
 
 void Data::InputHexLine(istream &is)
@@ -162,11 +212,10 @@ void Data::InputHexLine(istream &is)
 
 	dout("InputHexLine: read " << index << " bytes");
 
-	CopyOnWrite(address + index);
 	MakeSpace(address + index);	// make space for the new
-	m_datasize = std::max(address + index, m_datasize);
+	m_dataSize = std::max(address + index, m_dataSize);
 	while( index-- )
-		m_data[address + index] = (unsigned char) values[index];
+		m_dataStart[address + index] = (unsigned char) values[index];
 	return;
 }
 
@@ -214,49 +263,56 @@ void Data::DumpHex(ostream &os) const
 
 unsigned char * Data::GetBuffer(size_t requiredsize)
 {
-	CopyOnWrite(requiredsize);
-	if( requiredsize > 0 )
-		MakeSpace(requiredsize);
-	return m_data;
+	if( requiredsize == 0 ) {
+		// handle default, use data size
+		requiredsize = m_dataSize;
+	}
+
+	MakeSpace(requiredsize);
+	return m_dataStart;
+}
+
+/// Returns size of buffer returned by GetBuffer().  Note that this does not
+/// include available prepend space.
+size_t Data::GetBufSize() const
+{
+	if( m_external )
+		return 0;
+	else
+		return m_blockSize - (m_dataStart - m_memBlock);
 }
 
 void Data::ReleaseBuffer(int datasize)
 {
-	assert( datasize >= 0 || datasize == -1 );
-	assert( datasize == -1 || (unsigned int)datasize <= m_bufsize );
-	assert( !m_external );
-
+	if( datasize < 0 && datasize != -1)
+		throw std::logic_error("Data::ReleaseBuffer() argument must be -1 or >= 0");
 	if( m_external )
-		return;
-	if( datasize >= 0 && (unsigned int)datasize > m_bufsize ) {
-		dout("ReleaseBuffer called with datasize("
-			<< std::dec << datasize << ") > m_bufsize("
-			<< m_bufsize << ")");
-		return;
-	}
+		throw std::logic_error("Data::ReleaseBuffer() must be called after GetBuffer()");
+	if( !(datasize == -1 || (unsigned int)datasize <= GetBufSize()) )
+		throw std::logic_error("Data::ReleaseBuffer() must be called with a size smaller than the original buffer requested");
 
 	if( datasize >= 0 ) {
-		m_datasize = datasize;
+		m_dataSize = datasize;
 	}
 	else {
 		// search for last non-zero value in buffer
-		m_datasize = m_bufsize - 1;
-		while( m_datasize && m_data[m_datasize] == 0 )
-			--m_datasize;
+		m_dataSize = GetBufSize() - 1;
+		while( m_dataSize && m_dataStart[m_dataSize] == 0 )
+			--m_dataSize;
 	}
 }
 
 /// Append bytes of data based on str
 void Data::AppendHexString(const char *str)
 {
-	CopyOnWrite(m_datasize + 512);
+	MakeSpace(m_dataSize + 512);
 
 	std::istringstream iss(str);
 	unsigned int byte;
 	while( iss >> hex >> byte ) {
-		MakeSpace(m_datasize + 1);
-		m_data[m_datasize] = (unsigned char) byte;
-		m_datasize++;
+		MakeSpace(m_dataSize + 1);
+		m_dataStart[m_dataSize] = (unsigned char) byte;
+		m_dataSize++;
 	}
 }
 
@@ -264,8 +320,8 @@ void Data::AppendHexString(const char *str)
 void Data::Zap()
 {
 	if( !m_external )
-		memset(m_data, 0, m_bufsize);
-	m_datasize = 0;
+		memset(m_memBlock, 0, m_blockSize);
+	m_dataSize = 0;
 }
 
 Data & Data::operator=(const Data &other)
@@ -273,15 +329,23 @@ Data & Data::operator=(const Data &other)
 	if( this == &other )
 		return *this;
 
-	// don't remove our current buffer, only grow it if needed
-	MakeSpace(other.m_bufsize);
-	memcpy(m_data, other.m_data, other.m_bufsize);
+	if( other.m_external ) {
+		// just copy over the pointers
+		m_externalData = other.m_externalData;
+		m_external = other.m_external;
+		m_dataSize = other.m_dataSize;
+		m_endpoint = other.m_endpoint;
+	}
+	else {
+		// don't remove our current buffer, only grow it if needed
+		MakeSpace(other.m_dataSize);
+		memcpy(m_dataStart, other.m_dataStart, other.m_dataSize);
 
-	// then copy over the data state
-	m_datasize = other.m_datasize;
-	m_endpoint = other.m_endpoint;
-	m_externalData = other.m_externalData;
-	m_external = other.m_external;
+		// then copy over the data state
+		m_dataSize = other.m_dataSize;
+		m_endpoint = other.m_endpoint;
+	}
+
 	return *this;
 }
 
@@ -290,12 +354,45 @@ void Data::MemCpy(size_t &offset, const void *src, size_t size)
 	unsigned char *pd = GetBuffer(offset + size) + offset;
 	memcpy(pd, src, size);
 	offset += size;
+
+	// if the new end of data is larger than m_dataSize, bump it
+	if( offset > m_dataSize )
+		m_dataSize = offset;
 }
 
 void Data::Append(const void *buf, size_t size)
 {
 	// MemCpy updates m_datasize via the offset reference
-	MemCpy(m_datasize, buf, size);
+	MemCpy(m_dataSize, buf, size);
+}
+
+void Data::Prepend(const void *buf, size_t size)
+{
+	MakeSpace(0, size);
+	m_dataStart -= size;
+	m_dataSize += size;
+	memcpy(m_dataStart, (const unsigned char*) buf, size);
+}
+
+/// Removes size bytes from the beginning of the buffer.
+/// If GetSize() is less than size, then all bytes will be chopped
+/// and GetSize() will end up 0.
+void Data::Prechop(size_t size)
+{
+	// chopping all the bytes that we have?
+	if( size >= GetSize() ) {
+		QuickZap();
+		return;
+	}
+
+	if( m_external ) {
+		m_externalData += size;
+		m_dataSize -= size;
+	}
+	else {
+		m_dataStart += size;
+		m_dataSize -= size;
+	}
 }
 
 istream& operator>> (istream &is, Data &data)
