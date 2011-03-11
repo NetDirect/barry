@@ -37,49 +37,27 @@ bool TestDate()
 	t.tm_mday = 28;
 
 	Date d(&t);
-	if( d.ToYYYYMMDD() != "20110228" ) {
-		cout << "ToYYYYMMDD() failed" << endl;
-		return false;
-	}
-
-	if( d.ToBBString() != "28/02/2011" ) {
-		cout << "ToBBString() failed" << endl;
-		return false;
-	}
+	TEST( d.ToYYYYMMDD() == "20110228", "ToYYYYMMDD() failed");
+	TEST( d.ToBBString() == "28/02/2011", "ToBBString() failed");
 
 	ostringstream oss;
 	oss << hex << d;
-	if( oss.str() != "2011/02/28" ) {
-		cout << "Stream output failed: " << oss.str() << endl;
-		return false;
-	}
+	TEST( oss.str() == "2011/02/28", "Stream output failed: " << oss.str());
 
 	Date d2;
 	d2.FromTm(&t);
-	if( d2.ToYYYYMMDD() != "20110228" ) {
-		cout << "FromTm() failed" << endl;
-		return false;
-	}
+	TEST( d2.ToYYYYMMDD() == "20110228", "FromTm() failed");
 
 	struct tm myt;
 	d.ToTm(&myt);
 	d2.FromTm(&myt);
-	if( d2.ToYYYYMMDD() != "20110228" ) {
-		cout << "ToTm() failed" << endl;
-		return false;
-	}
+	TEST( d2.ToYYYYMMDD() == "20110228", "ToTm() failed");
 
 	d2.FromBBString(d.ToBBString());
-	if( d2.ToYYYYMMDD() != "20110228" ) {
-		cout << "FromBBString() failed" << endl;
-		return false;
-	}
+	TEST( d2.ToYYYYMMDD() == "20110228", "FromBBString() failed");
 
 	d2.FromYYYYMMDD(d.ToYYYYMMDD());
-	if( d2.ToYYYYMMDD() != "20110228" ) {
-		cout << "FromYYYMMDD() failed" << endl;
-		return false;
-	}
+	TEST( d2.ToYYYYMMDD() == "20110228", "FromYYYMMDD() failed");
 
 	return true;
 }

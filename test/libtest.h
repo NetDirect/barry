@@ -22,6 +22,12 @@
 #ifndef __BARRY_LIBTEST_H__
 #define __BARRY_LIBTEST_H__
 
+#define TEST(t, err_msg) \
+	if( !(t) ) { \
+		std::cout << err_msg << std::endl; \
+		return false; \
+	}
+
 typedef bool (*testfunc)();
 
 void AddTest(const char *name, testfunc test);
