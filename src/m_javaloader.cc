@@ -840,9 +840,8 @@ void JavaLoader::SaveData(JLPacket &packet, uint16_t id, CodFileBuilder &builder
 			expect);
 
 		offset += expect;
+		buffer.ReleaseBuffer(offset);
 	}
-
-	buffer.ReleaseBuffer(offset);
 
 	builder.WriteNextHeader(output, buffer.GetData(), buffer.GetSize());
 	output.write((const char *)buffer.GetData(), buffer.GetSize());
