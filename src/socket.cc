@@ -778,13 +778,11 @@ void SocketBase::Packet(Barry::Packet &packet, int timeout)
 void SocketBase::Packet(Barry::JLPacket &packet, int timeout)
 {
 	if( packet.HasData() ) {
-		HideSequencePacket(false);
-		PacketData(packet.m_cmd, *packet.m_receive, timeout);
-		HideSequencePacket(true);
-		PacketData(packet.m_data, *packet.m_receive, timeout);
+		SyncSend(packet.m_cmd);
+		PacketData(packet.m_data, *packet.m_receive, false, timeout);
 	}
 	else {
-		PacketData(packet.m_cmd, *packet.m_receive, timeout);
+		PacketData(packet.m_cmd, *packet.m_receive, false, timeout);
 	}
 }
 
@@ -863,7 +861,10 @@ void SocketBase::PacketJVM(Data &send, Data &receive, int timeout)
 
 // sends the send packet down to the device
 // Blocks until response received or timed out in Usb::Device
-void SocketBase::PacketData(Data &send, Data &receive, int timeout)
+void SocketBase::PacketData(Data &send,
+				Data &receive,
+				bool done_on_sequence,
+				int timeout)
 {
 	if( ( send.GetSize() < MIN_PACKET_DATA_SIZE ) ||
 		( send.GetSize() > MAX_PACKET_DATA_SIZE ) ) {
@@ -875,7 +876,8 @@ void SocketBase::PacketData(Data &send, Data &receive, int timeout)
 	receive.Zap();
 
 	// send non-fragmented
-	Send(send, inFrag, timeout);
+	SyncSend(send, timeout);
+	Receive(inFrag, timeout);
 
 	bool done = false;
 	int blankCount = 0;
@@ -892,8 +894,8 @@ void SocketBase::PacketData(Data &send, Data &receive, int timeout)
 			switch( rpack->command )
 			{
 			case SB_COMMAND_SEQUENCE_HANDSHAKE:
-				CheckSequence(inFrag);
-//FIXME				if (!m_zero->IsSequencePacketHidden())
+//				CheckSequence(inFrag);
+				if( done_on_sequence )
 					done = true;
 				break;
 

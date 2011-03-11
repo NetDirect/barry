@@ -164,7 +164,8 @@ public:
 	// Use this function to send data packet instead of Packet function
 	// Indeed, Packet function is used to send command (and not data)
 	// FIXME
-	void PacketData(Data &send, Data &receive, int timeout = -1);
+	void PacketData(Data &send, Data &receive, bool done_on_sequence,
+		int timeout = -1);
 
 	// some handy wrappers for the Packet() interface
 	void NextRecord(Data &receive);
