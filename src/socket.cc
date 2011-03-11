@@ -306,19 +306,17 @@ void SocketZero::RawSend(Data &send, int timeout)
 
 void SocketZero::RawReceive(Data &receive, int timeout)
 {
-	do {
-		if( m_queue ) {
-			if( !m_queue->DefaultRead(receive, timeout) )
-				throw Timeout("SocketZero::RawReceive: queue DefaultRead returned false (likely a timeout)");
-		}
-		else {
-			m_dev->BulkRead(m_readEp, receive, timeout);
-		}
+	if( m_queue ) {
+		if( !m_queue->DefaultRead(receive, timeout) )
+			throw Timeout("SocketZero::RawReceive: queue DefaultRead returned false (likely a timeout)");
+	}
+	else {
+		m_dev->BulkRead(m_readEp, receive, timeout);
+	}
 
-		ddout("SocketZero::RawReceive: Endpoint "
-			<< (m_queue ? m_queue->GetReadEp() : m_readEp)
-			<< "\nReceived:\n" << receive);
-	} while( Protocol::IsSequencePacket(receive) );
+	ddout("SocketZero::RawReceive: Endpoint "
+		<< (m_queue ? m_queue->GetReadEp() : m_readEp)
+		<< "\nReceived:\n" << receive);
 }
 
 
