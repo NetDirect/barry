@@ -12,7 +12,6 @@ EXTRA_DIST = COPYING ChangeLog README Doxyfile \
 	modprobe \
 	ppp \
 	rpm \
-	test \
 	udev
 
 SUBDIRS = po . src tools examples man test
