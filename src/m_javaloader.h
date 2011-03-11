@@ -27,8 +27,6 @@
 
 #include "dll.h"
 #include "m_mode_base.h"
-#include "socket.h"
-#include "record.h"
 #include "data.h"
 #include "pin.h"
 
