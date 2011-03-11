@@ -203,12 +203,6 @@ uint16_t Controller::SelectMode(ModeType mode, const char *explicitModeName)
 			throw Error("Controller: mode not selected");
 		}
 
-		// immediately after a mode command comes the first
-		// sequence packet for the new socket... we don't have
-		// the socket open yet, so just read it and throw it away
-		Data sequence;
-		m_priv->m_zero.Receive(sequence);
-
 		// return the socket that the device is expecting us to use
 		return btohs(modepack->u.socket.socket);
 	}

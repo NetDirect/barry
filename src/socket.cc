@@ -43,30 +43,32 @@ namespace Barry {
 SocketZero::SocketZero(	SocketRoutingQueue &queue,
 			int writeEndpoint,
 			uint8_t zeroSocketSequenceStart)
-	: m_dev(0),
-	m_queue(&queue),
-	m_writeEp(writeEndpoint),
-	m_readEp(0),
-	m_zeroSocketSequence(zeroSocketSequenceStart),
-	m_sequenceId(0),
-	m_halfOpen(false),
-	m_challengeSeed(0),
-	m_remainingTries(0)
+	: m_dev(0)
+	, m_queue(&queue)
+	, m_writeEp(writeEndpoint)
+	, m_readEp(0)
+	, m_zeroSocketSequence(zeroSocketSequenceStart)
+	, m_sequenceId(0)
+	, m_halfOpen(false)
+	, m_challengeSeed(0)
+	, m_remainingTries(0)
+	, m_modeSequencePacketSeen(false)
 {
 }
 
 SocketZero::SocketZero(	Device &dev,
 			int writeEndpoint, int readEndpoint,
 			uint8_t zeroSocketSequenceStart)
-	: m_dev(&dev),
-	m_queue(0),
-	m_writeEp(writeEndpoint),
-	m_readEp(readEndpoint),
-	m_zeroSocketSequence(zeroSocketSequenceStart),
-	m_sequenceId(0),
-	m_halfOpen(false),
-	m_challengeSeed(0),
-	m_remainingTries(0)
+	: m_dev(&dev)
+	, m_queue(0)
+	, m_writeEp(writeEndpoint)
+	, m_readEp(readEndpoint)
+	, m_zeroSocketSequence(zeroSocketSequenceStart)
+	, m_sequenceId(0)
+	, m_halfOpen(false)
+	, m_challengeSeed(0)
+	, m_remainingTries(0)
+	, m_modeSequencePacketSeen(false)
 {
 }
 
@@ -210,6 +212,12 @@ void SocketZero::SendOpen(uint16_t socket, Data &receive)
 	try {
 		RawSend(send);
 		RawReceive(receive);
+		if( Protocol::IsSequencePacket(receive) ) {
+			m_modeSequencePacketSeen = true;
+			// during open, we could get a sequence packet in
+			// the middle, from the SelectMode operation
+			RawReceive(receive);
+		}
 	} catch( Usb::Error & ) {
 		eeout(send, receive);
 		throw;
@@ -266,6 +274,8 @@ void SocketZero::SendPasswordHash(uint16_t socket, const char *password, Data &r
 
 	// check sequence ID
 	if( Protocol::IsSequencePacket(receive) ) {
+		m_modeSequencePacketSeen = true;
+
 		CheckSequence(0, receive);
 
 		// still need our ACK
@@ -399,6 +409,13 @@ SocketHandle SocketZero::Open(uint16_t socket, const char *password)
 	Data send, receive;
 	ZeroPacket packet(send, receive);
 
+	// this gets set to true if we see a starting sequence packet
+	// during any of our open and password commands... After
+	// a mode command (like "RIM Desktop", etc.) a starting sequence
+	// packet is sent, and may arrive before or after the socket
+	// open handshake.
+	m_modeSequencePacketSeen = false;
+
 	// save sequence for later close
 	uint8_t closeFlag = GetZeroSocketSequence();
 
@@ -476,6 +493,14 @@ SocketHandle SocketZero::Open(uint16_t socket, const char *password)
 	{
 		eout("Packet:\n" << receive);
 		throw Error("Socket: Bad OPENED packet in Open");
+	}
+
+	// if no sequence packet has yet arrived, wait for it here
+	if( !m_modeSequencePacketSeen ) {
+		Data sequence;
+		RawReceive(sequence);
+		if( !Protocol::IsSequencePacket(sequence) )
+			throw Error("Could not find mode's starting sequence packet");
 	}
 
 	// success!  save the socket

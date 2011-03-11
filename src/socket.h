@@ -60,6 +60,7 @@ class BXEXPORT SocketZero
 	bool m_halfOpen;
 	uint32_t m_challengeSeed;
 	unsigned int m_remainingTries;
+	bool m_modeSequencePacketSeen;
 
 private:
 	static void AppendFragment(Data &whole, const Data &fragment);
