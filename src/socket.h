@@ -91,8 +91,6 @@ public:
 	void SetRoutingQueue(SocketRoutingQueue &queue);
 	void UnlinkRoutingQueue();
 
-	void HideSequencePacket(bool flag) {}
-
 	// Send functions for socket 0 only.
 	// These functions will overwrite:
 	//     - the zeroSocketSequence byte *inside* the packet
@@ -171,9 +169,6 @@ public:
 
 	// some handy wrappers for the Packet() interface
 	void NextRecord(Data &receive);
-
-	// FIXME - does nothing, just a placeholder for now
-	void HideSequencePacket(bool flag) {}
 };
 
 //

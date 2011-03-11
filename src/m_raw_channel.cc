@@ -164,7 +164,6 @@ void RawChannel::OnOpen()
 	// Enable sequence packets so that DataSendAck callback and close can be
 	// implemented
 	m_zero_registered = true;
-	m_socket->HideSequencePacket(false);
 	SocketRoutingQueue::SocketDataHandlerPtr zeroCallback;
 	zeroCallback.reset(new RawChannelZeroSocketHandler(*this));
 	m_con.GetQueue()->RegisterInterest(0, zeroCallback);
@@ -262,7 +261,6 @@ void RawChannel::UnregisterZeroSocketInterest()
 {
 	if( m_zero_registered ) {
 		m_con.GetQueue()->UnregisterInterest(0);
-		m_socket->HideSequencePacket(true);
 		m_zero_registered = false;
 	}
 }

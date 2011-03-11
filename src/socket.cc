@@ -793,9 +793,7 @@ void SocketBase::Packet(Barry::JLPacket &packet, int timeout)
 
 void SocketBase::Packet(Barry::JVMPacket &packet, int timeout)
 {
-	HideSequencePacket(false);
 	PacketJVM(packet.m_cmd, *packet.m_receive, timeout);
-	HideSequencePacket(true);
 }
 
 // sends the send packet down to the device
