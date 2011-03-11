@@ -24,6 +24,8 @@
 #include "bmp-internal.h"
 #include "error.h"
 #include "endian.h"
+#include "data.h"
+#include "m_javaloader.h"
 
 namespace Barry {
 

@@ -23,10 +23,12 @@
 #define __BARRY_BMP_H__
 
 #include "dll.h"
-#include "data.h"
-#include "m_javaloader.h"
+#include <sys/types.h>
 
 namespace Barry {
+
+class Data;
+class JLScreenInfo;
 
 BXEXPORT size_t GetTotalBitmapSize(const JLScreenInfo &info);
 BXEXPORT void ScreenshotToBitmap(const JLScreenInfo &info,
