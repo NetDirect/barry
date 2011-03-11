@@ -16,6 +16,7 @@ noinst_PROGRAMS = libtest
 
 libtest_SOURCES = \
 	date.cc \
+	data.cc \
 	libtest.cc
 libtest_LDADD = \
 	../src/libbarry.la \
