@@ -142,6 +142,7 @@ public:
 	//
 	// Convenience functions that just call the virtuals above
 	//
+	void DBFragSend(Data &send, int timeout = -1);
 	void Send(Data &send, Data &receive, int timeout = -1);
 	void Send(Barry::Packet &packet, int timeout = -1);
 

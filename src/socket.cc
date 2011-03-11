@@ -626,6 +626,43 @@ void SocketBase::CheckSequence(const Data &seq)
 }
 
 //
+// DBFragSend
+//
+/// Sends a fragmented Desktop / Database command packet.
+/// Assumes that 'send' contains a valid packet, which may or may not
+/// need fragmentation.  If it does, fragmentation will be done
+/// automatically.
+///
+void SocketBase::DBFragSend(Data &send, int timeout)
+{
+	MAKE_PACKET(spack, send);
+	if( send.GetSize() < MIN_PACKET_SIZE ||
+	    (spack->command != SB_COMMAND_DB_DATA &&
+	     spack->command != SB_COMMAND_DB_DONE) )
+	{
+		// we don't do that around here
+		eout("unknown send data in DBFragSend(): " << send);
+		throw std::logic_error("Socket: unknown send data in DBFragSend()");
+	}
+
+	if( send.GetSize() <= MAX_PACKET_SIZE ) {
+		// send non-fragmented
+		SyncSend(send, timeout);
+	}
+	else {
+		// send fragmented
+		unsigned int offset = 0;
+		Data outFrag;
+
+		do {
+			offset = SocketZero::MakeNextFragment(send, outFrag, offset);
+			SyncSend(outFrag, timeout);
+		} while( offset > 0 );
+	}
+
+}
+
+//
 // Send
 //
 /// SyncSends 'send' data to device, and waits for response.
@@ -655,68 +692,14 @@ void SocketBase::Send(Barry::Packet &packet, int timeout)
 //
 void SocketBase::Packet(Data &send, Data &receive, int timeout)
 {
-	MAKE_PACKET(spack, send);
-	if( send.GetSize() < MIN_PACKET_SIZE ||
-	    (spack->command != SB_COMMAND_DB_DATA &&
-	     spack->command != SB_COMMAND_DB_DONE) )
-	{
-		// we don't do that around here
-		eout("unknown send data in Packet(): " << send);
-		throw std::logic_error("Socket: unknown send data in Packet()");
-	}
-
 	// assume the common case of no fragmentation,
 	// and use the receive buffer for input... allocate a frag buffer
 	// later if necessary
 	Data *inputBuf = &receive;
 	receive.Zap();
 
-	if( send.GetSize() <= MAX_PACKET_SIZE ) {
-		// send non-fragmented
-		Send(send, *inputBuf, timeout);
-	}
-	else {
-		// send fragmented
-		unsigned int offset = 0;
-		Data outFrag;
-
-		do {
-			offset = SocketZero::MakeNextFragment(send, outFrag, offset);
-
-			// Is last packet ?
-			MAKE_PACKET(spack, outFrag);
-
-			RawSend(outFrag, timeout);
-			Receive(*inputBuf, timeout); // for sequence
-
-			// only process sequence handshakes... once we
-			// get to the last fragment, we fall through to normal
-			// processing below
-			if (spack->command != SB_COMMAND_DB_FRAGMENTED) {
-				MAKE_PACKET(rpack, *inputBuf);
-
-				if( offset && inputBuf->GetSize() > 0 ) {
-					Protocol::CheckSize(*inputBuf, SB_PACKET_HEADER_SIZE);
-
-					switch( rpack->command )
-					{
-					case SB_COMMAND_SEQUENCE_HANDSHAKE:
-						CheckSequence(*inputBuf);
-						break;
-
-					default: {
-						std::ostringstream oss;
-						oss << "Socket: (send) unhandled packet in Packet(): 0x" << std::hex << (unsigned int)rpack->command;
-						eout(oss.str());
-						throw Error(oss.str());
-						}
-						break;
-					}
-				}
-			}
-
-		} while( offset > 0 );
-	}
+	DBFragSend(send, timeout);
+	Receive(*inputBuf, timeout);
 
 	std::auto_ptr<Data> inFrag;
 	bool done = false, frag = false;
