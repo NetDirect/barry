@@ -587,29 +587,6 @@ void SocketZero::Close(Socket &socket)
 	socket.ForceClosed();
 }
 
-//
-// ClearHalt
-//
-/// Clears the USB Halt bit on both the read and write endpoints
-///
-void SocketZero::ClearHalt()
-{
-	Usb::Device *dev = m_queue ? m_queue->GetUsbDevice() : m_dev;
-	if( !dev )
-		throw Error("SocketZero: No device available for ClearHalt");
-
-	// clear the read endpoint
-	if( m_queue ) {
-		dev->ClearHalt(m_queue->GetReadEp());
-	}
-	else {
-		dev->ClearHalt(m_readEp);
-	}
-
-	// clear the write endpoint
-	dev->ClearHalt(m_writeEp);
-}
-
 
 
 
@@ -732,11 +709,6 @@ void Socket::ReceiveData(Data &receive, int timeout)
 	HideSequencePacket(false);
 	Receive(receive);
 	HideSequencePacket(true);
-}
-
-void Socket::ClearHalt()
-{
-	m_zero->ClearHalt();
 }
 
 

@@ -108,9 +108,6 @@ public:
 	// Opens a new socket and returns a Socket object to manage it
 	SocketHandle Open(uint16_t socket, const char *password = 0);
 	void Close(Socket &socket);
-
-	// Lower level USB operations
-	void ClearHalt();
 };
 
 
@@ -162,9 +159,6 @@ public:
 	void Send(Barry::Packet &packet, int timeout = -1);
 	void Receive(Data &receive, int timeout = -1);
 	void ReceiveData(Data &receive, int timeout = -1);
-
-	// Lower level USB operations
-	void ClearHalt();
 
 	// sends the send packet down to the device, fragmenting if
 	// necessary, and returns the response in receive, defragmenting
