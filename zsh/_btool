@@ -24,7 +24,7 @@ _btool_options=(
 	'-M[List current LDIF mapping]' \
 	'-n[Use null parser on all databases]' \
 	'-p=[PIN of device to talk with]:PIN:' \
-	'-P=[Simplistic method to specify device password]:Password:' \
+	'-P=[Simplistic method to specify device password]:Device password:' \
 	'-s=[Save database TO device from data loaded from -f file]:Database:' \
 	'-S[Show list of supported database parsers]' \
 	'-t[Show database database table]' \

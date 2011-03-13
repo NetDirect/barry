@@ -29,7 +29,7 @@ _bjavaloader_commands=(
 _bjavaloader_options=(
 	'-h[Show the most relevant command line options]'
 	'-p[PIN of device to talk with]:PIN device'
-	'-P[PIN of device to talk with (optional)]:PIN device'
+	'-P[Simplistic method to specify device password]:Device password'
 	'-v[Dump protocol data during operation]'
 	'*::arg:->cmd_or_options'
 )
