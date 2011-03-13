@@ -3,7 +3,7 @@ DISTCHECK_CONFIGURE_FLAGS = --enable-gui --enable-opensync-plugin --enable-opens
 ACLOCAL_FLAGS = -I m4
 ACLOCAL_AMFLAGS = -I m4
 
-EXTRA_DIST = COPYING ChangeLog README Doxyfile \
+EXTRA_DIST = COPYING ChangeLog README Doxyfile AUTHORS DEPUTY \
 	buildgen.sh \
 	data \
 	doc \
@@ -12,7 +12,15 @@ EXTRA_DIST = COPYING ChangeLog README Doxyfile \
 	modprobe \
 	ppp \
 	rpm \
-	udev
+	udev \
+	bash \
+	zsh \
+	hal \
+	logo \
+	contrib \
+	menu \
+	usbmon-6 \
+	.gitignore
 
 SUBDIRS = po . src tools examples man test
 # conditionally configured nested subdirectories are listed in $(subdirs)

@@ -1,3 +1,5 @@
+EXTRA_DIST = manpage.1.ex
+
 dist_man_MANS = \
 	bcharge.1 \
 	btool.1 \

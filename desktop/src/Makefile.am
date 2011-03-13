@@ -2,6 +2,10 @@ LIB_OSYNCWRAP_VERSION = 18:0:0
 
 SUBDIRS = . 0.22 0.40
 
+EXTRA_DIST = \
+	ContactEditDlg.wxg \
+	oextract.cc
+
 INCLUDES = $(TREE_BUILD_CXXFLAGS) $(BARRY_CFLAGS) $(OPENSYNC22_CFLAGS) $(OPENSYNC40_CFLAGS) $(GLIB2_CFLAGS)
 # opensync libraries are not included here... they are loaded with dlopen()
 LIBS = $(TREE_BUILD_LDFLAGS) $(BARRY_LIBS) $(GLIB2_LIBS)

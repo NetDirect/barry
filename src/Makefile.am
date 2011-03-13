@@ -185,11 +185,12 @@ noinst_HEADERS = cbarry.h \
 	tarfile.h \
 	clog.h
 
+# Include the windows-only code files here too
 EXTRA_DIST = convo.awk \
-	legal.txt
+	legal.txt \
+	iconvwin.cc
 
 libbarry_la_SOURCES = dll.h \
-	publiccfg.h \
 	builder.h builder.cc \
 	parser.h parser.cc \
 	time.h time.cc \
