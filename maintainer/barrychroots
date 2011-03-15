@@ -17,6 +17,7 @@ export CHROOTUSER=cdfrey
 #
 # ./rpm.sh <path_to_chroot> <tag>
 #
+./rpm.sh /var/chroot/fedora14 f14
 ./rpm.sh /var/chroot/fedora13 f13
 ./rpm.sh /var/chroot/fedora12 f12
 ./rpm.sh /var/chroot/fedora11 f11
