@@ -863,8 +863,9 @@ int main(int argc, char *argv[])
 		DesktopConnector connector(password.c_str(),
 			iconvCharset, device, router.get());
 		if( !connector.Connect() ) {
-			// user canceled password prompt
-			return 0;
+			// bad password (default action is not to prompt)
+			cerr << connector.GetBadPassword().what() << endl;
+			return 1;
 		}
 
 		Barry::Mode::Desktop &desktop = connector.GetDesktop();
