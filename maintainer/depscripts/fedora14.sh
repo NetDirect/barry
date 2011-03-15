@@ -3,6 +3,7 @@ yum install \
 	pkgconfig \
 	rpmdevtools \
 	rpm-build \
+	desktop-file-utils \
 	autoconf \
 	automake \
 	libtool \
