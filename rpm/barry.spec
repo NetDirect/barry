@@ -11,13 +11,13 @@
 %endif
 
 # Fedora 12 has the desktop packages installed for our build system
-%if 0%{?fc12} || 0%{?fc13}
+%if 0%{?fc12} || 0%{?fc13} || 0%{?fc14}
 	%define with_desktop 1
 %else
 	%define with_desktop 0
 %endif
 
-%if 0%{?fc12} || 0%{?fc13}
+%if 0%{?fc12} || 0%{?fc13} || 0%{?fc14}
 	%define use_69_rules 1
 %else
 	%define use_69_rules 0
