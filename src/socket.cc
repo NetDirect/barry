@@ -812,7 +812,8 @@ void SocketBase::PacketJVM(Data &send, Data &receive, int timeout)
 	receive.Zap();
 
 	// send non-fragmented
-	Send(send, inFrag, timeout);
+	RawSend(send, timeout);
+	Receive(inFrag, timeout);
 
 	bool done = false;
 	int blankCount = 0;
@@ -857,7 +858,7 @@ void SocketBase::PacketJVM(Data &send, Data &receive, int timeout)
 
 		if( !done ) {
 			// not done yet, ask for another read
-			Receive(inFrag);
+			Receive(inFrag, timeout);
 		}
 	}
 }
