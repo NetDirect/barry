@@ -48,6 +48,9 @@ protected:
 	int m_connect_count;
 	time_t m_last_disconnect;
 
+	// bad password status
+	BadPassword m_bpcopy;
+
 protected:
 	// helper functions
 	static Barry::ProbeResult FindDevice(Barry::Pin pin);
@@ -73,12 +76,17 @@ public:
 	const IConverter& GetIConverter() const { return m_ic; }
 	Barry::ProbeResult& GetProbeResult() { return m_probe_result; }
 	const Barry::ProbeResult& GetProbeResult() const { return m_probe_result; }
+	const Barry::BadPassword& GetBadPassword() const { return m_bpcopy; }
 
 	virtual void ClearPassword();
 	virtual void SetPassword(const char *password);
 
 	/// Returns true if connected, false if user cancelled, throws
-	/// Barry exception on error.
+	/// Barry exception on error.  Note that in the case of a bad
+	/// password, this will return false on the first password try,
+	/// unless you override PasswordPrompt() below.  In the default
+	/// case, a false here means the password was invalid, and you
+	/// should use GetBadPassword() to report the error.
 	virtual bool Connect();
 
 	/// Disconnects from the device

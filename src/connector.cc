@@ -44,6 +44,7 @@ Connector::Connector(const char *password,
 	, m_probe_result(FindDevice(pin))
 	, m_connect_count(0)
 	, m_last_disconnect(0)
+	, m_bpcopy("", 0, 0)
 {
 }
 
@@ -56,6 +57,7 @@ Connector::Connector(const char *password,
 	, m_probe_result(result)
 	, m_connect_count(0)
 	, m_last_disconnect(0)
+	, m_bpcopy("", 0, 0)
 {
 }
 
@@ -97,7 +99,6 @@ bool Connector::Connect()
 	Disconnect();
 
 	bool started = false;
-	BadPassword bpcopy("", 0, 0);
 	for(;;) {
 
 		try {
@@ -119,14 +120,14 @@ bool Connector::Connect()
 				throw;
 			}
 
-			bpcopy = bp;
+			m_bpcopy = bp;
 
 			// fall through to password prompt
 		}
 
 		// ask user for device password
 		ClearPassword();
-		if( !PasswordPrompt(bpcopy, m_password) ) {
+		if( !PasswordPrompt(m_bpcopy, m_password) ) {
 			// user wants out
 			return false;
 		}
