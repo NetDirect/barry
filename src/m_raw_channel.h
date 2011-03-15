@@ -76,14 +76,6 @@ class BXEXPORT RawChannel : public Mode
 	friend class RawChannelSocketHandler;
 	friend class RawChannelZeroSocketHandler;
 
-	// Mutex for signalling between read and write threads
-	pthread_mutex_t m_mutex;
-	bool m_mutex_valid;
-	// Condvar for signalling between read and write threads
-	pthread_cond_t m_cv;
-	bool m_cv_valid;
-
-	semaphore *m_semaphore;
 	RawChannelDataCallback *m_callback;
 	unsigned char *m_send_buffer;
 	bool m_zero_registered;
@@ -94,7 +86,6 @@ class BXEXPORT RawChannel : public Mode
 protected:
 	void CheckQueueAvailable();
 	void InitBuffer();
-	void InitSemaphore();
 	void SetPendingError(const char *msg);
 	void UnregisterZeroSocketInterest();
 

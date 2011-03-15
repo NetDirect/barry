@@ -89,9 +89,6 @@ public:
 
 RawChannel::RawChannel(Controller &con, RawChannelDataCallback &callback)
 	: Mode(con, Controller::RawChannel)
-	, m_mutex_valid(false)
-	, m_cv_valid(false)
-	, m_semaphore(NULL)
 	, m_callback(&callback)
 	, m_send_buffer(NULL)
 	, m_zero_registered(false)
@@ -99,14 +96,10 @@ RawChannel::RawChannel(Controller &con, RawChannelDataCallback &callback)
 {
 	CheckQueueAvailable();
 	InitBuffer();
-	InitSemaphore();
 }
 
 RawChannel::RawChannel(Controller &con)
 	: Mode(con, Controller::RawChannel)
-	, m_mutex_valid(false)
-	, m_cv_valid(false)
-	, m_semaphore(NULL)
 	, m_callback(NULL)
 	, m_send_buffer(NULL)
 	, m_zero_registered(false)
@@ -114,7 +107,6 @@ RawChannel::RawChannel(Controller &con)
 {
 	CheckQueueAvailable();
 	InitBuffer();
-	InitSemaphore();
 }
 
 void RawChannel::CheckQueueAvailable()
@@ -129,33 +121,12 @@ void RawChannel::InitBuffer()
 	m_send_buffer = new unsigned char[SB_CHANNELPACKET_HEADER_SIZE + SB_CHANNELPACKET_MAX_DATA_SIZE];
 }
 
-void RawChannel::InitSemaphore()
-{
-	// Create the thread synchronization objects
-	if( pthread_mutex_init(&m_mutex, NULL) ) {
-		throw Barry::Error("Failed to create mutex");
-	}
-	m_mutex_valid = true;
-	if( pthread_cond_init(&m_cv, NULL) ) {
-		throw Barry::Error("Failed to create condvar");
-	}
-	m_cv_valid = true;
-	m_semaphore = new semaphore(m_mutex, m_cv);
-}
-
 RawChannel::~RawChannel()
 {
 	UnregisterZeroSocketInterest();
 
 	delete[] m_send_buffer;
 
-	if( m_mutex_valid ) {
-		pthread_mutex_destroy(&m_mutex);
-	}
-	if( m_cv_valid ) {
-		pthread_cond_destroy(&m_cv);
-	}
-	delete m_semaphore;
 	delete m_pending_error;
 }
 
@@ -191,7 +162,6 @@ void RawChannel::HandleReceivedZeroPacket(Data &data)
 	if( packet->socket != 0 ) {
 		UnregisterZeroSocketInterest();
 		SetPendingError("RawChannel: Got packet not for socket-zero");
-		m_semaphore->Signal();
 	}
 
 	switch( btohs(packet->command) )
@@ -205,7 +175,6 @@ void RawChannel::HandleReceivedZeroPacket(Data &data)
 			m_callback->ChannelClose();
 		}
 
-		m_semaphore->Signal();
 		break;
 	default:
 		UnregisterZeroSocketInterest();
@@ -215,7 +184,6 @@ void RawChannel::HandleReceivedZeroPacket(Data &data)
 		else {
 			SetPendingError("RawChannel: Got unexpected socket zero packet");
 		}
-		m_semaphore->Signal();
 		break;
 	}
 
@@ -226,12 +194,6 @@ void RawChannel::HandleReceivedData(Data &data)
 	// Only ever called in callback mode
 	ValidateDataPacket(data);
 	MAKE_CHANNELPACKETPTR_BUF(packet, data.GetData());
-
-	// Check for sequence packets
-	if( Protocol::IsSequencePacket(data) ) {
-		m_semaphore->Signal();
-		return;
-	}
 
 	// Should be a socket packet for us, so remove packet headers
 	Data partial(packet->u.data, data.GetSize() - SB_CHANNELPACKET_HEADER_SIZE);
@@ -254,7 +216,6 @@ void RawChannel::HandleError(Barry::Error &error)
 	else {
 		SetPendingError(errorOss.str().c_str());
 	}
-	m_semaphore->Signal();
 }
 
 void RawChannel::UnregisterZeroSocketInterest()
@@ -290,12 +251,6 @@ void RawChannel::Send(Data &data, int timeout)
 
 	Data toSend(m_send_buffer, packetSize);
 	m_socket->SyncSend(toSend, timeout);
-	if( m_callback ) {
-		m_semaphore->WaitForSignal();
-		if( m_pending_error ) {
-			throw Barry::Error(*m_pending_error);
-		}
-	}
 }
 
 void RawChannel::Receive(Data &data,int timeout)
