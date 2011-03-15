@@ -244,6 +244,10 @@ void RawChannel::Send(Data &data, int timeout)
 		throw Barry::Error("RawChannel: send data size larger than MaximumPacketSize");
 	}
 
+	if( m_pending_error ) {
+		throw Barry::Error(*m_pending_error);
+	}
+
 	// setup header and copy data in
 	MAKE_CHANNELPACKETPTR_BUF(packet, m_send_buffer);
 	packet->size = htobs(packetSize);
@@ -251,6 +255,10 @@ void RawChannel::Send(Data &data, int timeout)
 
 	Data toSend(m_send_buffer, packetSize);
 	m_socket->SyncSend(toSend, timeout);
+
+	if( m_pending_error ) {
+		throw Barry::Error(*m_pending_error);
+	}
 }
 
 void RawChannel::Receive(Data &data,int timeout)
@@ -258,6 +266,11 @@ void RawChannel::Receive(Data &data,int timeout)
 	if( m_callback ) {
 		throw std::logic_error("RawChannel: Receive called when channel was created with a callback");
 	}
+
+	if( m_pending_error ) {
+		throw Barry::Error(*m_pending_error);
+	}
+
 	// Receive into a buffer
 	m_socket->Receive(m_receive_data, timeout);
 	// Then transfer across, skipping the header
