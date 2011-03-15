@@ -6,12 +6,16 @@ export CHROOTUSER=cdfrey
 #
 # Build the DEB's
 #
-./deb.sh /var/chroot/ubuntu1004 ubuntu1004 os22-binary
-./deb.sh /var/chroot/ubuntu804 ubuntu804 os22-binary
+# ./deb.sh <path_to_chroot> <tag> <debian/rules targets>
+#
+./deb.sh /var/chroot/ubuntu1004 ubuntu1004 "binary os22-binary"
+./deb.sh /var/chroot/ubuntu804 ubuntu804 "binary os22-binary"
 
 
 #
 # Build the Fedora RPM's
+#
+# ./rpm.sh <path_to_chroot> <tag>
 #
 ./rpm.sh /var/chroot/fedora13 f13
 ./rpm.sh /var/chroot/fedora12 f12

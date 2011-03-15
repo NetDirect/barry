@@ -26,6 +26,17 @@ export CHOWNUSER="$(whoami)"
 # for the chroot systems...
 su - -c "cd $(pwd) && ./release-root.sh $1 $2 $3 '$CHOWNUSER'"
 
-# Build Debian packages in /usr/src/barry-version
-./make-deb-local.sh build/barry-$1.$2.$3.tar.bz2 $1 $2 $3 debian
+# Build local packages
+export BARRYTARBALL=build/barry-$1.$2.$3.tar.bz2
+export THESPEC=build/barry-$1.$2.$3/rpm/barry.spec
+export THEMODE=release
+
+if [ -f ~/.barrylocal ] ; then
+	. ~/.barrylocal
+else
+	. barrylocal
+fi
+
+ls build
+echo "Binary packages successfully built"
 

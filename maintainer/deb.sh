@@ -1,6 +1,6 @@
 #!/bin/sh
 
-if [ -z "$1" -o -z "$2" -o -z "$BARRYTARBALL" ] ; then
+if [ -z "$1" -o -z "$2" -o -z "$3" -o -z "$BARRYTARBALL" ] ; then
 	echo
 	echo "Do not call deb.sh directly.  Call release.sh instead."
 	echo
@@ -9,7 +9,6 @@ fi
 
 CHROOTTARGET="$1"
 TAG="$2"
-# optional... may not always exist
 DEBTARGETS="$3"
 
 if [ "$THEMODE" = "release" ] ; then

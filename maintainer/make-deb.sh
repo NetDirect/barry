@@ -1,6 +1,6 @@
 #!/bin/sh
 
-if [ -z "$1" -o -z "$2" -o -z "$3" -o -z "$CHROOTUSER" -o -z "$CHOWNUSER" ] ; then
+if [ -z "$1" -o -z "$2" -o -z "$3" -o -z "$4" -o -z "$CHROOTUSER" -o -z "$CHOWNUSER" ] ; then
 	echo
 	echo "Usage: ./make-rpm.sh tarball chroot_target short_form [deb_targets]"
 	echo
@@ -23,14 +23,13 @@ TARPATH="$1"
 TARNAME=`basename "$TARPATH"`
 TARGET="$2"
 TAG="$3"
-# optional arg
 DEBTARGETS="$4"
 
 set -e
 
 cp "$TARPATH" "$TARGET/home/$CHROOTUSER"
 
-chroot "$TARGET" su - "$CHROOTUSER" -c /bin/sh -lc "rm -rf binarybuild && mkdir binarybuild && cd binarybuild && tar xjvf ../$TARNAME && cd * && fakeroot -- debian/rules binary $DEBTARGETS"
+chroot "$TARGET" su - "$CHROOTUSER" -c /bin/sh -lc "rm -rf binarybuild && mkdir binarybuild && cd binarybuild && tar xjvf ../$TARNAME && cd * && fakeroot -- debian/rules $DEBTARGETS"
 
 mkdir -p "build/$TAG"
 cp "$TARGET/home/$CHROOTUSER/binarybuild/"*.deb "build/$TAG"

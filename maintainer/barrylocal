@@ -1,0 +1,12 @@
+#
+# The user account on the chroot system to build in
+#
+export CHROOTUSER=cdfrey
+
+#
+# Build the local DEB's
+#
+# ./deblocal.sh <tag> <debian/rules targets>
+#
+./deblocal.sh debian "binary os22-binary"
+
