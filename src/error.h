@@ -76,6 +76,24 @@ public:
 };
 
 //
+// SocketCloseOnOpen
+//
+/// Thrown by the Socket class if it receives a CLOSE message in
+/// response to an OPEN command.  This can mean a number of things:
+///
+///	- device is password protected, and the wrong password was given
+///	- device thinks that the socket is already open
+///
+/// This special exception thrown so the application can try again
+/// with a fresh Socket::Open() call.
+///
+class BXEXPORT SocketCloseOnOpen : public Barry::Error
+{
+public:
+	SocketCloseOnOpen(const std::string &str) : Barry::Error(str) {}
+};
+
+//
 // PinNotFound
 //
 /// Thrown by the Connector class when unable to find the requested Pin
