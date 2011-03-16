@@ -409,13 +409,6 @@ SocketHandle SocketZero::Open(uint16_t socket, const char *password)
 	Data send, receive;
 	ZeroPacket packet(send, receive);
 
-	// this gets set to true if we see a starting sequence packet
-	// during any of our open and password commands... After
-	// a mode command (like "RIM Desktop", etc.) a starting sequence
-	// packet is sent, and may arrive before or after the socket
-	// open handshake.
-	m_modeSequencePacketSeen = false;
-
 	// save sequence for later close
 	uint8_t closeFlag = GetZeroSocketSequence();
 
@@ -423,6 +416,14 @@ SocketHandle SocketZero::Open(uint16_t socket, const char *password)
 		// starting fresh
 		m_remainingTries = 0;
 
+		// this gets set to true if we see a starting sequence packet
+		// during any of our open and password commands... After
+		// a mode command (like "RIM Desktop", etc.) a starting
+		// sequence packet is sent, and may arrive before or after
+		// the socket open handshake.
+		m_modeSequencePacketSeen = false;
+
+		// go for it!
 		SendOpen(socket, receive);
 
 		// check for password challenge, or success
