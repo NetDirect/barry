@@ -190,8 +190,16 @@ bool BackupWindow::Connect(Thread *thread)
 			bool connected = false;
 			while( !connected && !thread->PasswordOutOfTries() ) {
 				PasswordDlg dlg(thread->PasswordRemainingTries());
-				if( dlg.run() == Gtk::RESPONSE_OK )
+				if( dlg.run() == Gtk::RESPONSE_OK ) {
 					connected = thread->Connect(dlg.GetPassword());
+					if( !connected ) {
+						// low level error
+						Gtk::MessageDialog msg(thread->LastInterfaceError());
+						msg.run();
+						StatusbarSet(_("Cannot connect to ") + thread->GetFullname() + ".");
+						return false;
+					}
+				}
 				else { // user cancelled
 					thread->Reset();
 					StatusbarSet(_("Connection cancelled."));

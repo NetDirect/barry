@@ -104,7 +104,10 @@ bool Thread::Connect()
 bool Thread::Connect(const std::string &password)
 {
 	try {
-		m_interface.Password(password.c_str());
+		if( !m_interface.Password(password.c_str()) ) {
+			// low level error, not a password failure
+			return (m_connected = false);
+		}
 	}
 	catch( Barry::BadPassword &bp ) {
 		password_out_of_tries = bp.out_of_tries();
