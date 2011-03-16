@@ -485,7 +485,7 @@ SocketHandle SocketZero::Open(uint16_t socket, const char *password)
 	// so return an error here instead of automatically retrying.
 	if( packet.Command() == SB_COMMAND_CLOSE_SOCKET )
 	{
-		throw Error("Socket: Device closed socket when trying to open");
+		throw SocketCloseOnOpen("Socket: Device closed socket when trying to open (can be caused by the wrong password, or if the device thinks the socket is already open... please try again)");
 	}
 
 	if( packet.Command() != SB_COMMAND_OPENED_SOCKET ||
