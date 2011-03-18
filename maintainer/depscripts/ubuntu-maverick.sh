@@ -14,10 +14,14 @@ apt-get install \
 	libglademm-2.4-dev \
 	libfuse-dev \
 	libxml++2.6-dev \
+	libwxgtk2.8-dev \
+	libgcal-dev \
 	zlib1g-dev \
 	gettext \
 	ccache \
 	doxygen \
 	autopoint \
 	php5-cli
+
+# depending on the system: libopensync0-dev
 
