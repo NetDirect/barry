@@ -436,9 +436,17 @@ bool Date::FromYYYYMMDD(const std::string &str)
 
 std::ostream& operator<<(std::ostream &os, const Date &date)
 {
-	os	<< setw(4) << setfill('0') << dec << date.Year << '/'
-		<< setw(2) << setfill('0') << dec << (date.Month + 1) << '/'
-		<< setw(2) << setfill('0') << dec << date.Day;
+	ios::fmtflags oldflags = os.setf(ios::right);
+	char fill = os.fill('0');
+
+	os	<< setw(4) << dec << date.Year << '/'
+		<< setw(2) << dec << (date.Month + 1) << '/'
+		<< setw(2) << dec << date.Day;
+
+	// cleanup the stream
+	os.flags(oldflags);
+	os.fill(fill);
+
 	return os;
 }
 
