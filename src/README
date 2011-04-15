@@ -1,4 +1,4 @@
-This directory has source code to 3 libraries.
+This directory has source code to 6 libraries.
 
 Take a look at the Makefile.am file to see which files belong to which
 library.
