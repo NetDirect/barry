@@ -24,12 +24,6 @@
 
 namespace Barry {
 
-std::ostream& operator<<(std::ostream &os, const Pin &pin)
-{
-	os << pin.Str();
-	return os;
-}
-
 std::istream& operator>>(std::istream &is, Pin &pin)
 {
 	uint32_t newpin;
