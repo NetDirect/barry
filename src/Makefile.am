@@ -183,6 +183,7 @@ noinst_HEADERS = cbarry.h \
 	j_message.h \
 	j_jdwp.h \
 	tarfile.h \
+	ios_state.h \
 	clog.h
 
 # Include the windows-only code files here too

@@ -29,6 +29,7 @@
 #include "error.h"
 #include "endian.h"
 #include "trim.h"
+#include "ios_state.h"
 #include <sstream>
 #include <iomanip>
 #include <time.h>
@@ -436,16 +437,14 @@ bool Date::FromYYYYMMDD(const std::string &str)
 
 std::ostream& operator<<(std::ostream &os, const Date &date)
 {
-	ios::fmtflags oldflags = os.setf(ios::right);
-	char fill = os.fill('0');
+	ios_format_state state(os);
+
+	os.setf(ios::right);
+	os.fill('0');
 
 	os	<< setw(4) << dec << date.Year << '/'
 		<< setw(2) << dec << (date.Month + 1) << '/'
 		<< setw(2) << dec << date.Day;
-
-	// cleanup the stream
-	os.flags(oldflags);
-	os.fill(fill);
 
 	return os;
 }
