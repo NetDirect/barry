@@ -28,6 +28,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <locale>
+#include "ios_state.h"
 
 //#define __DEBUG_MODE__
 #include "debug.h"
@@ -194,6 +195,8 @@ size_t Data::AvailablePrependSpace() const
 
 void Data::InputHexLine(istream &is)
 {
+	ios_format_state state(is);
+
 	unsigned int values[16];
 	size_t index = 0;
 
@@ -221,7 +224,9 @@ void Data::InputHexLine(istream &is)
 
 void Data::DumpHexLine(ostream &os, size_t index, size_t size) const
 {
-	ios::fmtflags oldflags = os.setf(ios::right);
+	ios_format_state state(os);
+
+	os.setf(ios::right);
 
 	// index
 	os << "    ";
@@ -251,7 +256,6 @@ void Data::DumpHexLine(ostream &os, size_t index, size_t size) const
 	}
 
 	os << "\n";
-	os.flags(oldflags);
 }
 
 void Data::DumpHex(ostream &os) const
@@ -418,6 +422,8 @@ Diff::Diff(const Data &old, const Data &new_)
 
 void Diff::Compare(ostream &os, size_t index, size_t size) const
 {
+	ios_format_state state(os);
+
 	size_t min = std::min(m_old.GetSize(), m_new.GetSize());
 
 	// index
@@ -476,6 +482,8 @@ void Diff::Compare(ostream &os, size_t index, size_t size) const
 
 void Diff::Dump(std::ostream &os) const
 {
+	ios_format_state state(os);
+
 	if( m_old.GetSize() != m_new.GetSize() )
 		os << "sizes differ: "
 		   << m_old.GetSize() << " != " << m_new.GetSize() << endl;

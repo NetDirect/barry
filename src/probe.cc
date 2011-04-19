@@ -36,6 +36,7 @@
 #include <iomanip>
 #include <errno.h>
 #include <string.h>
+#include "ios_state.h"
 
 using namespace Usb;
 
@@ -497,6 +498,8 @@ int Probe::Find(const Results &results, Barry::Pin pin)
 
 void ProbeResult::DumpAll(std::ostream &os) const
 {
+	ios_format_state state(os);
+
 	os << *this
 	   << ", Interface: 0x" << std::hex << (unsigned int) m_interface
 	   << ", Endpoints: (read: 0x" << std::hex << (unsigned int) m_ep.read
@@ -507,6 +510,8 @@ void ProbeResult::DumpAll(std::ostream &os) const
 
 std::ostream& operator<< (std::ostream &os, const ProbeResult &pr)
 {
+	ios_format_state state(os);
+
 	os << "Device ID: " << pr.m_dev
 	   << ". PIN: " << pr.m_pin.Str()
 	   << ", Description: " << pr.m_description;

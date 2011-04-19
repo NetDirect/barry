@@ -39,6 +39,7 @@
 #include <string.h>
 #include <time.h>
 #include <stdio.h>
+#include "ios_state.h"
 
 #include "debug.h"
 
@@ -85,6 +86,8 @@ void JLDirectory::ParseTable(const Data &table_packet)
 
 void JLDirectory::Dump(std::ostream &os) const
 {
+	ios_format_state state(os);
+
 	int indent = m_level * 2;
 
 	os << setfill(' ') << setw(indent) << "";
@@ -150,6 +153,8 @@ void JLDirectoryEntry::Parse(uint16_t id, const Data &entry_packet)
 
 void JLDirectoryEntry::Dump(std::ostream &os) const
 {
+	ios_format_state state(os);
+
 	os << left << setfill(' ') << setw(50) << Name;
 
 	os << "\n";
@@ -282,6 +287,8 @@ std::string JLEventlogEntry::GetFormattedTimestamp() const
 
 void JLEventlogEntry::Dump(std::ostream &os) const
 {
+	ios_format_state state(os);
+
 	static const char *SeverityNames[] = { "Always Log", "Severe Error", "Error",
 		"Warning", "Information", "Debug Info"};
 	static const char *ViewerTypes[] = { "", "Number", "String", "Exception" };
@@ -300,6 +307,8 @@ void JLEventlogEntry::Dump(std::ostream &os) const
 
 void JLDeviceInfo::Dump(std::ostream &os) const
 {
+	ios_format_state state(os);
+
 	os << left << setfill(' ') << setw(17) << "Hardware Id:";
 	os << "0x" << hex << HardwareId << endl;
 

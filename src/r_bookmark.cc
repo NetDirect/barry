@@ -30,6 +30,7 @@
 #include <ostream>
 #include <iomanip>
 #include <iostream>
+#include "ios_state.h"
 
 using namespace std;
 using namespace Barry::Protocol;
@@ -313,6 +314,8 @@ void Bookmark::BuildFields(Data &data, size_t &offset, const IConverter *ic) con
 
 void Bookmark::Dump(std::ostream &os) const
 {
+	ios_format_state state(os);
+
 	static const char *DisplayModeName[] = { "Automatic", "Enabled", "Disabled", "Unknown" };
 	static const char *JavaScriptModeName[] = { "Automatic", "Enabled", "Disabled", "Unknown" };
 	static const char *BrowserIdentityName[] = { "Automatic", "BlackBerry", "FireFox", "Internet Explorer", "Unknown" };

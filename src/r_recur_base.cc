@@ -24,6 +24,7 @@
 #include "error.h"
 #include "endian.h"
 #include "time.h"
+#include "ios_state.h"
 #include <string.h>
 
 #define __DEBUG_MODE__
@@ -238,6 +239,8 @@ void RecurBase::Clear()
 
 void RecurBase::Dump(std::ostream &os) const
 {
+	ios_format_state state(os);
+
 	static const char *DayNames[] = { "Sun", "Mon", "Tue", "Wed",
 		"Thu", "Fri", "Sat" };
 	static const char *MonthNames[] = { "Jan", "Feb", "Mar", "Apr",

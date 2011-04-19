@@ -28,6 +28,7 @@
 #include "iconv.h"
 #include <ostream>
 #include <iomanip>
+#include "ios_state.h"
 
 using namespace std;
 using namespace Barry::Protocol;
@@ -243,6 +244,8 @@ void CallLog::BuildFields(Data &data, size_t &offset, const IConverter *ic) cons
 
 void CallLog::Dump(std::ostream &os) const
 {
+	ios_format_state state(os);
+
 	uint32_t timestamp = Duration;
 	int32_t days, hours, minutes, secondes;
 

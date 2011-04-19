@@ -27,6 +27,7 @@
 #include <iostream>
 #include <iomanip>
 #include <string.h>
+#include "ios_state.h"
 
 #define __DEBUG_MODE__
 #include "debug.h"
@@ -652,12 +653,14 @@ bool ContactLdif::RunHeuristics(Barry::Contact &con)
 void ContactLdif::DumpLdif(std::ostream &os,
 		       const Barry::Contact &con) const
 {
+	ios_format_state state(os);
+
 	// start fresh
 	ClearArrayState();
 
 	// setup stream state
-	std::ios::fmtflags oldflags = os.setf(std::ios::left);
-	char fill = os.fill(' ');
+	os.setf(std::ios::left);
+	os.fill(' ');
 
 	if( FirstName(con).size() == 0 && LastName(con).size() == 0 )
 		return;			// nothing to do
@@ -687,10 +690,6 @@ void ContactLdif::DumpLdif(std::ostream &os,
 
 	// last line must be empty
 	os << "\n";
-
-	// cleanup the stream
-	os.flags(oldflags);
-	os.fill(fill);
 }
 
 bool ContactLdif::ReadLdif(std::istream &is, Barry::Contact &con)
@@ -774,8 +773,10 @@ bool ContactLdif::ReadLdif(std::istream &is, Barry::Contact &con)
 
 void ContactLdif::DumpMap(std::ostream &os) const
 {
-	std::ios::fmtflags oldflags = os.setf(std::ios::left);
-	char fill = os.fill(' ');
+	ios_format_state state(os);
+
+	os.setf(std::ios::left);
+	os.fill(' ');
 
 	os << "ContactLdif Mapping:\n";
 
@@ -797,10 +798,6 @@ void ContactLdif::DumpMap(std::ostream &os) const
 	}
 
 	os << "   >>> DN attribute: " << m_dnAttr.name << "\n";
-
-	// cleanup the stream
-	os.flags(oldflags);
-	os.fill(fill);
 }
 
 std::string ContactLdif::MakeLdifData(const std::string &str)

@@ -30,6 +30,7 @@
 #include <iostream>
 #include <sstream>
 #include <iomanip>
+#include "ios_state.h"
 
 using namespace std;
 using namespace Barry::Protocol;
@@ -196,6 +197,8 @@ std::string Folder::GetDescription() const
 
 void Folder::Dump(std::ostream &os) const
 {
+	ios_format_state state(os);
+
 	static const char *FolderTypeString[] = { "Subtree", "Deleted", "Inbox", "Outbox", "Sent", "Other"};
 //	static const char *FolderStatusString[] = { "Orphan", "Unfiled", "Filed" };
 

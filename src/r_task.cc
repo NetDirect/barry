@@ -31,6 +31,7 @@
 #include <ostream>
 #include <iomanip>
 #include <string.h>
+#include "ios_state.h"
 
 using namespace std;
 using namespace Barry::Protocol;
@@ -352,6 +353,8 @@ std::string Task::GetDescription() const
 
 void Task::Dump(std::ostream &os) const
 {
+	ios_format_state state(os);
+
 	static const char *PriorityName[] = { "High", "Normal", "Low" };
 	static const char *StatusName[] = { "Not Started", "In Progress",
 		"Completed", "Waiting", "Deferred" };

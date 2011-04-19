@@ -25,6 +25,7 @@
 #include <sstream>
 
 #include "a_library.h"
+#include "ios_state.h"
 
 
 namespace Barry {
@@ -52,6 +53,8 @@ Library::~Library(void)
 
 void Library::Dump(std::ostream &os) const
 {
+	ios_format_state state(os);
+
 	os << "  Library " << name << " - " << version << std::endl;
 	os << "    ID          : " << id << std::endl;
 	os << "    Description : " << description << std::endl;

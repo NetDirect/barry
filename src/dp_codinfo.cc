@@ -41,6 +41,7 @@
 
 #include "dp_parser.h"
 #include "dp_codinfo.h"
+#include "ios_state.h"
 #include "debug.h"
 
 
@@ -162,6 +163,8 @@ void DebugFileList::AddElement(uint32_t uniqueid,
 
 void DebugFileList::Dump(std::ostream &os) const
 {
+	ios_format_state state(os);
+
 	const_iterator i = begin(), e = end();
 
 	os << "  UniqueID  " << "|";
@@ -181,6 +184,8 @@ void DebugFileList::Dump(std::ostream &os) const
 
 void DebugFileEntry::Dump(std::ostream &os) const
 {
+	ios_format_state state(os);
+
 	os << " 0x" << setfill('0') << setw(8) << hex << uniqueId << " |";
 	os << " " << appName << setfill(' ') << setw(24) << " |";
 	os << " " << fileName << endl;

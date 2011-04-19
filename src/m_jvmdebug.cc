@@ -37,6 +37,7 @@
 #include <string.h>
 #include <time.h>
 #include <stdio.h>
+#include "ios_state.h"
 
 #include "debug.h"
 
@@ -79,6 +80,8 @@ void JVMModulesList::Parse(const Data &entry_packet)
 
 void JVMModulesList::Dump(std::ostream &os) const
 {
+	ios_format_state state(os);
+
 	const_iterator i = begin(), e = end();
 
 	os << "     ID     " << "|";
@@ -101,6 +104,8 @@ void JVMModulesList::Dump(std::ostream &os) const
 
 void JVMModulesEntry::Dump(std::ostream &os) const
 {
+	ios_format_state state(os);
+
 	os << " 0x" << setfill('0') << setw(8) << hex << Id << " |";
 	os << " 0x" << setfill('0') << setw(8) << hex << UniqueID << " |";
 	os << " " << Name << endl;
@@ -139,6 +144,8 @@ void JVMThreadsList::Parse(const Data &entry_packet)
 
 void JVMThreadsList::Dump(std::ostream &os) const
 {
+	ios_format_state state(os);
+
 	const_iterator i = begin(), e = end();
 
 	os << "  Thread  " << "|";
@@ -170,6 +177,8 @@ void JVMThreadsList::Dump(std::ostream &os) const
 
 void JVMThreadsEntry::Dump(std::ostream &os, int num) const
 {
+	ios_format_state state(os);
+
 	os << " " << setfill(' ') << setw(8) << dec << num << " |";
 	os << " 0x" << setfill('0') << setw(8) << hex << (Id) << " |";
 	os << " 0x" << setfill('0') << setw(2) << hex << (Byte) << " |";

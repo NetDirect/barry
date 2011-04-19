@@ -33,6 +33,7 @@
 #include <time.h>
 #include <string.h>
 #include <stdexcept>
+#include "ios_state.h"
 
 #define __DEBUG_MODE__
 #include "debug.h"
@@ -409,6 +410,8 @@ std::string Calendar::GetDescription() const
 
 void Calendar::DumpSpecialFields(std::ostream &os) const
 {
+	ios_format_state state(os);
+
 	static const char *ClassTypes[] = { "Public", "Confidential", "Private" };
 	static const char *FreeBusy[] = { "Free", "Tentative", "Busy", "Out of Office" };
 
@@ -422,6 +425,7 @@ void Calendar::DumpSpecialFields(std::ostream &os) const
 
 void Calendar::Dump(std::ostream &os) const
 {
+	ios_format_state state(os);
 
 // FIXME - need a "check all data" function that make sure that all
 // recurrence data is within range.  Then call that before using
@@ -560,6 +564,8 @@ void CalendarAll::ParseHeader(const Data &data, size_t &offset)
 
 void CalendarAll::DumpSpecialFields(std::ostream &os) const
 {
+	ios_format_state state(os);
+
 	Calendar::DumpSpecialFields(os);
 	os << "   Mail Account: " << MailAccount << "\n";
 }

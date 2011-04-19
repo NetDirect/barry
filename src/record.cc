@@ -210,6 +210,8 @@ std::string ParseFieldString(const void *data, uint16_t maxlen)
 
 std::ostream& operator<< (std::ostream &os, const std::vector<UnknownField> &unknowns)
 {
+	ios_format_state state(os);
+
 	std::vector<UnknownField>::const_iterator
 		ub = unknowns.begin(), ue = unknowns.end();
 	if( ub != ue )

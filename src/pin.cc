@@ -21,11 +21,14 @@
 
 #include <sstream>
 #include "pin.h"
+#include "ios_state.h"
 
 namespace Barry {
 
 std::istream& operator>>(std::istream &is, Pin &pin)
 {
+	ios_format_state state(is);
+
 	uint32_t newpin;
 	is >> std::hex >> newpin;
 	if( is )

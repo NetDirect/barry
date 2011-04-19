@@ -30,6 +30,7 @@
 #include <iostream>
 #include <sstream>
 #include <iomanip>
+#include "ios_state.h"
 
 using namespace std;
 using namespace Barry::Protocol;
@@ -202,6 +203,8 @@ std::string Timezone::GetDescription() const
 
 void Timezone::Dump(std::ostream &os) const
 {
+	ios_format_state state(os);
+
 	static const char *month[] = {
 			"Jan", "Feb", "Mar", "Apr", "May",
 			"Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"

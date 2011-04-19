@@ -28,6 +28,7 @@
 #include "iconv.h"
 #include <ostream>
 #include <iomanip>
+#include "ios_state.h"
 
 using namespace std;
 using namespace Barry::Protocol;
@@ -198,6 +199,8 @@ void Memo::BuildFields(Data &data, size_t &offset, const IConverter *ic) const
 
 void Memo::Dump(std::ostream &os) const
 {
+	ios_format_state state(os);
+
 	os << "Memo entry: 0x" << setbase(16) << RecordId
 	   << " (" << (unsigned int)RecType << ")\n";
 	os << "    Title: " << Title << "\n";

@@ -33,6 +33,7 @@
 #include <iomanip>
 #include <time.h>
 #include <stdexcept>
+#include "ios_state.h"
 
 #define __DEBUG_MODE__
 #include "debug.h"
@@ -184,6 +185,8 @@ void ServiceBookConfig::Clear()
 
 void ServiceBookConfig::Dump(std::ostream &os) const
 {
+	ios_format_state state(os);
+
 	os << "   ServiceBookConfig Format: " << setbase(16) << (uint16_t)Format << "\n";
 
 	// cycle through the type table
@@ -424,6 +427,8 @@ std::string ServiceBook::GetDescription() const
 
 inline void FormatStr(std::ostream &os, const char *name, const std::string &str)
 {
+	ios_format_state state(os);
+
 	if( str.size() ) {
 		os << "   " << setw(20) << name;
 		os << ": " << str << "\n";
@@ -432,8 +437,10 @@ inline void FormatStr(std::ostream &os, const char *name, const std::string &str
 
 void ServiceBook::Dump(std::ostream &os) const
 {
-	ios::fmtflags oldflags = os.setf(ios::left);
-	char fill = os.fill(' ');
+	ios_format_state state(os);
+
+	os.setf(ios::left);
+	os.fill(' ');
 
 	os << "ServiceBook entry: 0x" << setbase(16) << RecordId
 		<< " (" << (unsigned int)RecType << ")\n";
@@ -450,10 +457,6 @@ void ServiceBook::Dump(std::ostream &os) const
 
 	// print any unknowns
 	os << Unknowns;
-
-	// cleanup the stream
-	os.flags(oldflags);
-	os.fill(fill);
 }
 
 bool ServiceBook::operator<(const ServiceBook &other) const

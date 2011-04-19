@@ -27,6 +27,7 @@
 #include <iostream>
 #include <sstream>
 #include <iomanip>
+#include "ios_state.h"
 
 #define __DEBUG_MODE__
 #include "debug.h"
@@ -213,8 +214,10 @@ std::string ContentStore::GetDescription() const
 
 void ContentStore::Dump(std::ostream &os) const
 {
-	ios::fmtflags oldflags = os.setf(ios::left);
-	char fill = os.fill(' ');
+	ios_format_state state(os);
+
+	os.setf(ios::left);
+	os.fill(' ');
 
 	os << "ContentStore: 0x" << hex << RecordId
 		<< " (" << (unsigned int)RecType << ")\n";
@@ -230,10 +233,6 @@ void ContentStore::Dump(std::ostream &os) const
 
 	// and finally print unknowns
 	os << Unknowns;
-
-	// cleanup the stream
-	os.flags(oldflags);
-	os.fill(fill);
 }
 
 bool ContentStore::operator<(const ContentStore &other) const

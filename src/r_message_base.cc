@@ -30,6 +30,7 @@
 #include <ostream>
 #include <iomanip>
 #include <stdexcept>
+#include "ios_state.h"
 
 #define __DEBUG_MODE__
 #include "debug.h"
@@ -348,6 +349,8 @@ std::string MessageBase::SimpleFromAddress() const
 // dump message in mbox format
 void MessageBase::Dump(std::ostream &os) const
 {
+	ios_format_state state(os);
+
 	static const char *Importance[] =
 		{ "Low", "Normal", "High", "Unknown Priority" };
 	static const char *SensitivityString[] =

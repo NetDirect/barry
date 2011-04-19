@@ -25,6 +25,7 @@
 #include <sstream>
 
 #include "a_application.h"
+#include "ios_state.h"
 
 
 namespace Barry {
@@ -52,6 +53,8 @@ Application::~Application(void)
 
 void Application::Dump(std::ostream &os) const
 {
+	ios_format_state state(os);
+
 	os << "  Application " << name << " - " << version << std::endl;
 	os << "    ID          : " << id << std::endl;
 	os << "    Description : " << description << std::endl;

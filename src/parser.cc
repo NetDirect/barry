@@ -35,6 +35,7 @@
 #include "r_timezone.h"
 #include "r_cstore.h"
 #include "r_hhagent.h"
+#include "ios_state.h"
 
 #include <iostream>
 #include <memory>
@@ -54,6 +55,8 @@ HexDumpParser::HexDumpParser(std::ostream &os)
 void HexDumpParser::ParseRecord(const Barry::DBData &data,
 				const IConverter *ic)
 {
+	ios_format_state state(m_os);
+
 	if( m_last_dbname != data.GetDBName() ) {
 		m_os << "Records for database: " << data.GetDBName() << endl;
 		m_last_dbname = data.GetDBName();

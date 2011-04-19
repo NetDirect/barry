@@ -34,6 +34,7 @@
 #include <sstream>
 #include <time.h>
 #include <stdexcept>
+#include "ios_state.h"
 
 #define __DEBUG_MODE__
 #include "debug.h"
@@ -489,8 +490,10 @@ const std::string& Contact::GetEmail(unsigned int index) const
 
 void Contact::Dump(std::ostream &os) const
 {
-	ios::fmtflags oldflags = os.setf(ios::left);
-	char fill = os.fill(' ');
+	ios_format_state state(os);
+
+	os.setf(ios::left);
+	os.fill(' ');
 
 	os << "Contact: 0x" << setbase(16) << GetID()
 		<< " (" << (unsigned int)RecType << ")\n";
@@ -566,10 +569,6 @@ void Contact::Dump(std::ostream &os) const
 
 	// and finally print unknowns
 	os << Unknowns;
-
-	// cleanup the stream
-	os.flags(oldflags);
-	os.fill(fill);
 }
 
 bool Contact::operator<(const Contact &other) const

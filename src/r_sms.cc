@@ -31,6 +31,7 @@
 #include <ostream>
 #include <iomanip>
 #include <string.h>
+#include "ios_state.h"
 
 using namespace std;
 using namespace Barry::Protocol;
@@ -265,6 +266,7 @@ std::string Sms::GetDescription() const
 
 void Sms::Dump(std::ostream &os) const
 {
+	ios_format_state state(os);
 
 	os << "SMS record: 0x" << setbase(16) << RecordId
 		<< " (" << (unsigned int)RecType << ")\n";

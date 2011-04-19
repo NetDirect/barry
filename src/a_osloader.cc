@@ -32,6 +32,7 @@
 #include "a_alxparser.h"
 #include "vsmartptr.h"
 #include "error.h"
+#include "ios_state.h"
 
 
 namespace Barry {
@@ -104,6 +105,8 @@ void OSLoader::LoadALXFile(const std::string& alxfile, const bool enable)
 
 void OSLoader::Dump(std::ostream &os) const
 {
+	ios_format_state state(os);
+
 	os << "OS Properties :" << std::endl;
 
 	{

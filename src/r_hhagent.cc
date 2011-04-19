@@ -28,6 +28,7 @@
 #include <sstream>
 #include <iomanip>
 #include <string>
+#include "ios_state.h"
 
 #define __DEBUG_MODE__
 #include "debug.h"
@@ -270,6 +271,8 @@ std::string HandheldAgent::GetDescription() const
 
 void HandheldAgent::Dump(std::ostream &os) const
 {
+	ios_format_state state(os);
+
 	os << "HandheldAgent entry: 0x" << hex << RecordId
 		<< " (" << (unsigned int)RecType << ")\n";
 
