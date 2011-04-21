@@ -31,12 +31,6 @@ If using git, use:
 		tarball data.
 
 
-Miscellaneous scripts:
-----------------------
-
-	ppa_build.sh - used by Martin Owens for the PPA snapshots
-
-
 Script hierarchy for the hackers:
 ---------------------------------
 
@@ -44,7 +38,7 @@ Script hierarchy for the hackers:
 		git-release-tar.sh
 		release-root.sh
 			barrychroots
-				./dep.sh
+				./deb.sh
 					./make-deb.sh
 				./rpm.sh
 					./make-user-rpm.sh
@@ -56,7 +50,7 @@ Script hierarchy for the hackers:
 		test-build-local.sh
 		test-root.sh
 			barrychroots
-				./dep.sh
+				./deb.sh
 					./test-build.sh
 				./rpm.sh
 					./test-build.sh
