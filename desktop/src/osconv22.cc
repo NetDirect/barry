@@ -190,8 +190,8 @@ std::string Converter22::GrabField(const std::string &cfg,
 	string start = "<" + name + ">file://";
 	string end = "</" + name + ">";
 
-	unsigned spos = cfg.find(start);
-	unsigned epos = cfg.find(end);
+	size_t spos = cfg.find(start);
+	size_t epos = cfg.find(end);
 
 	if( spos == string::npos || epos == string::npos )
 		return "";
