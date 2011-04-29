@@ -1,0 +1,73 @@
+#
+# This script is run from the top level scripts.  You can rely on
+# the following environment variables being set:
+#
+#    $BARRYTARBALL  - relative path to the release source tarball (bz2)
+#    $BARRYTARBASE  - basename of the source tarball (bz2)
+#
+
+rm -rf /tmp/barryremote
+mkdir -p /tmp/barryremote
+
+#
+# Build the DEB's
+#
+
+function do_ubuntu() {
+	./save.sh /tmp/barryremote/$1 $2 $3 \
+		./remote.sh root barrybuild.netdirect.ca 22 \
+			"$BARRYTARBALL make-deb.sh chroot.sh" \
+			/tmp/barrychroots/$1 \
+			/tmp/barryremote/$1 \
+		./chroot.sh cdfrey /home/chroot/$1 \
+			"$BARRYTARBASE make-deb.sh" \
+			/home/chroot/$1/home/cdfrey/barrychroot/results \
+			/tmp/barrychroots/$1 \
+			cdfrey \
+		./make-deb.sh "$BARRYTARBASE" "binary os22-binary"
+}
+
+do_ubuntu ubuntu1004 ubuntu1004-64 ubuntu1004
+do_ubuntu ubuntu804 ubuntu804-64 ubuntu804
+
+# Build on the Debian squeeze host system too
+./save.sh /tmp/barryremote/squeeze squeeze-64 squeeze \
+	./remote.sh cdfrey barrybuild.netdirect.ca 22 \
+		"$BARRYSQUEEZETARBALL make-deb.sh" \
+		/home/cdfrey/barryremote/results \
+		/tmp/barryremote/squeeze \
+	./make-deb.sh "$BARRYSQUEEZETARBASE" "binary os22-binary"
+
+#
+# Build the Fedora RPM's
+#
+# ./rpm.sh <path_to_chroot> <tag>
+#
+
+function do_fedora() {
+	./save.sh /tmp/barryremote/$1 $1 $2 \
+		./remote.sh root barrybuild.netdirect.ca 22 \
+			"$BARRYTARBALL make-rpm.sh chroot.sh" \
+			/tmp/barrychroots/$1 \
+			/tmp/barryremote/$1 \
+		./chroot.sh cdfrey /home/chroot/$1 \
+			"$BARRYTARBASE make-rpm.sh" \
+			/home/chroot/$1/home/cdfrey/rpmbuild/binarybuild/results \
+			/tmp/barrychroots/$1 \
+			cdfrey \
+		./make-rpm.sh \
+			"$BARRYTARBASE" rpm/barry.spec \
+			"-ba barry.spec --with gui --with opensync" \
+			/home/cdfrey \
+			/home/cdfrey/rpmbuild/binarybuild
+}
+
+do_fedora fedora14 f14
+
+
+#
+# Cleanup
+#
+rm -rf /tmp/barryremote
+ssh -x -a -2 root@barrybuild.netdirect.ca "rm -rf /tmp/barrychroots"
+

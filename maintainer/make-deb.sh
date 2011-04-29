@@ -1,54 +1,64 @@
 #!/bin/sh
 
-if [ -z "$1" -o -z "$2" -o -z "$3" -o -z "$4" -o -z "$CHROOTUSER" -o -z "$CHOWNUSER" ] ; then
+# args 3 and 4 are optional
+if [ -z "$1" -o -z "$2" ] ; then
 	echo
-	echo "Usage: ./make-rpm.sh tarball chroot_target short_form [deb_targets]"
+	echo "Usage: ./make-deb.sh tarball deb_targets [build_dir results_dir]"
 	echo
-	echo "Copies the tarball to the chroot target's /home/$CHROOTUSER/binarybuild dir,"
-	echo "then enters the chroot system and runs the build."
+	echo "Creates <build_dir>/binarybuild, expands the tarball into it,"
+	echo "and builds debian packages.  After the build, all deb"
+	echo "files are copied into <results_dir>/results/"
+	echo "Therefore <build_dir> and <results_dir> can be the same"
+	echo "if needed, without harm."
 	echo
-	echo "short_form is the tag to rename the resulting DEB's with,"
-	echo "such as ubuntu710, etc."
+	echo "If build_dir or results_dir are empty, the current directory,"
+	echo "plus the corresponding binarybuild and results directories,"
+	echo "are used."
 	echo
-	echo "deb_targets is a set of additional debian/rules makefile targets"
-	echo "that you wish to build on this round, such as os22-binary or"
-	echo "os4x-binary."
+	echo "tarball is the full pathname of the tarball to extract."
+	echo "It is allowed to be relative to the current directory."
 	echo
-	echo "Expects CHROOTUSER to be set appropriately in the environment."
+	echo "deb_targets is a set of debian/rules makefile targets"
+	echo "that you wish to build on this round, such as binary, or"
+	echo "os22-binary or os4x-binary."
 	echo
 	exit 1
 fi
 
-TARPATH="$1"
-TARNAME=`basename "$TARPATH"`
-TARGET="$2"
-TAG="$3"
-DEBTARGETS="$4"
+TARBALL="$1"
+DEBTARGETS="$2"
+BUILDPATH="$3/binarybuild"
+if [ -z "$3" ] ; then
+	BUILDPATH="binarybuild"
+fi
+DESTPATH="$4/results"
+if [ -z "$4" ] ; then
+	DESTPATH="results"
+fi
 
 set -e
 
-cp "$TARPATH" "$TARGET/home/$CHROOTUSER"
+#
+# Note that all commands below are done from the current directory.
+# Where the directory must change, it is done within brackets so that
+# we return to the current directory immediately afterward.
+#
+# This is so that all paths and directories given on the command line
+# may be relative, and everything still works.
+#
 
-chroot "$TARGET" su - "$CHROOTUSER" -c /bin/sh -lc "rm -rf binarybuild && mkdir binarybuild && cd binarybuild && tar xjvf ../$TARNAME && cd * && fakeroot -- debian/rules $DEBTARGETS"
+# setup directories
+rm -rf "$BUILDPATH"
+mkdir -p "$BUILDPATH"
+rm -rf "$DESTPATH"
+mkdir -p "$DESTPATH"
 
-mkdir -p "build/$TAG"
-cp "$TARGET/home/$CHROOTUSER/binarybuild/"*.deb "build/$TAG"
-# this may fail, if no sub debtargets are set, so avoid set -e issues
-if cp "$TARGET/home/$CHROOTUSER/binarybuild/"barry*/*.deb "build/$TAG" ; then
-	echo "make-deb.sh: Copied subtarget packages"
-else
-	echo "make-deb.sh: No subtarget packages available"
-fi
-rm "$TARGET/home/$CHROOTUSER/$TARNAME"
+# expand source
+tar -C "$BUILDPATH" -xjvf "$TARBALL"
 
-# We do this manually in a for loop, since the rename command is
-# not the same across various linux distros...
-(
-	cd "build/$TAG"
-	for f in *_i386.deb ; do
-		mv "$f" "$(echo $f | sed "s/_i386.deb$/_${TAG}_i386.deb/")"
-	done
-)
+# build binary packages
+(cd "$BUILDPATH"/* && fakeroot -- debian/rules $DEBTARGETS)
 
-chown -R "$CHOWNUSER" "build/$TAG"
+# move results to destination directory
+mv $(find "$BUILDPATH" -type f -name "*.deb" -print) "$DESTPATH"
 

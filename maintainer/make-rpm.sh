@@ -1,47 +1,74 @@
 #!/bin/sh
 
-if [ -z "$1" -o -z "$2" -o -z "$3" -o -z "$4" -o -z "$CHROOTUSER" -o -z "$CHOWNUSER" ] ; then
+if [ -z "$1" -o -z "$2" -o -z "$3" -o -z "$4" -o -z "$5" ] ; then
 	echo
-	echo "Usage: ./make-rpm.sh tarball specfile chroot_target short_form"
+	echo "Usage: ./make-rpm.sh tarball spec_target rpm_args build_dir results_dir"
 	echo
-	echo "Copies the tarball to the chroot target's redhat SOURCES dir, and"
-	echo "the spec file to SPEC dir, then enters the chroot system"
-	echo "and runs rpmbuild."
+	echo "<build_dir>/rpmbuild is the RPM tree where the build will"
+	echo "take place.  If rpmbuild does not exist, but SPECS does, then"
+	echo "it is assumed build_dir == the rpmbuild dir.  This is useful"
+	echo "in the (hopefully) rare occasions where you need to build in"
+	echo "/usr/src."
 	echo
-	echo "short_form is the tag to rename the resulting RPM's with,"
-	echo "such as fc5 or fc6."
+	echo "tarball is the full pathname of the tarball to extract."
+	echo "It is allowed to be relative to the current directory."
+	echo "It will be copied to rpmbuild/SOURCES, and the entire tar tree"
+	echo "will be extracted into <builddir>/binarybuild,"
+	echo "in order to fetch the spec file."
 	echo
-	echo "Expects CHROOTUSER to be set appropriately in the environment."
+	echo "spec_target is the filename of the tarball spec file to use"
+	echo "when building.  For example, in most cases it will be"
+	echo "rpm/barry.spec.  This file will be copied into rpmbuild/SPECS"
+	echo "as 'barry.spec' and will be used to build the binary packages."
+	echo
+	echo "rpm_args are the arguments passed to rpmbuild."
+	echo
+	echo "<results_dir>/results/ is where the resulting RPM and SRC RPM"
+	echo "packages will be copied."
 	echo
 	exit 1
 fi
 
-TARPATH="$1"
+TARBALL="$1"
 SPECPATH="$2"
-TARNAME=`basename "$TARPATH"`
-TARGET="$3"
-TAG="$4"
+SPACBASE=`basename "$SPECPATH"`
+RPMTARGETS="$3"
+RPMPATH="$4"
+if [ -d "$RPMPATH/rpmbuild/SPECS" ] ; then
+	RPMPATH="$4/rpmbuild"
+fi
+BUILDPATH="$RPMPATH/binarybuild"
+DESTPATH="$5/results"
 
 set -e
 
-cp "$TARPATH" "$TARGET/usr/src/redhat/SOURCES"
-cp "$SPECPATH" "$TARGET/usr/src/redhat/SPECS/barry.spec"
-chroot "$TARGET" /bin/sh -lc "rm -f /usr/src/redhat/RPMS/i386/* /usr/src/redhat/SRPMS/* && cd /usr/src/redhat/SPECS && rpmbuild --target i386 -ba barry.spec --with gui --with opensync && cd /usr/src/redhat/RPMS/i386"
-mkdir -p "build/$TAG"
-cp "$TARGET/usr/src/redhat/RPMS/i386/"* "build/$TAG"
-cp "$TARGET/usr/src/redhat/SRPMS/"* "build/$TAG"
+#
+# Note that all commands below are done from the current directory.
+# Where the directory must change, it is done within brackets so that
+# we return to the current directory immediately afterward.
+#
+# This is so that all paths and directories given on the command line
+# may be relative, and everything still works.
+#
 
-# We do this manually in a for loop, since the rename command is
-# not the same across various linux distros...
-(
-	cd "build/$TAG"
-	for f in *.src.rpm ; do
-		mv "$f" "$(echo $f | sed "s/.src.rpm$/.$TAG.src.rpm/")"
-	done
-	for f in *.i386.rpm ; do
-		mv "$f" "$(echo $f | sed "s/.i386.rpm$/.$TAG.i386.rpm/")"
-	done
-)
+# setup directories
+rm -rf "$BUILDPATH"
+mkdir -p "$BUILDPATH"
+rm -rf "$DESTPATH"
+mkdir -p "$DESTPATH"
+rm -f "$RPMPATH"/RPMS/i386/* "$RPMPATH"/SRPMS/*
 
-chown -R "$CHOWNUSER" "build/$TAG"
+# expand source
+tar -C "$BUILDPATH" -xjvf "$TARBALL"
+
+# setup RPM build tree
+cp "$TARBALL" "$RPMPATH/SOURCES"
+cp "$BUILDPATH"/barry-*/"$SPECPATH" "$RPMPATH/SPECS/barry.spec"
+
+# build binary packages
+#(cd "$RPMPATH"/SPECS && rpmbuild --target i386 -ba barry.spec --with gui --with opensync)
+(cd "$RPMPATH"/SPECS && rpmbuild $RPMTARGETS)
+
+# move results to destination directory
+mv $(find "$RPMPATH" -type f -name "*barry*.rpm" -print) "$DESTPATH"
 

@@ -1,12 +1,22 @@
 #
-# The user account on the chroot system to build in
+# This script is run from the top level scripts.  You can rely on
+# the following environment variables being set:
 #
-export CHROOTUSER=cdfrey
+#    $BARRYTARBALL  - relative path to the release source tarball (bz2)
+#    $BARRYTARBASE  - basename of the source tarball (bz2)
+#
 
 #
 # Build the local DEB's
 #
-# ./deblocal.sh <tag> <debian/rules targets>
+./save.sh /tmp/barrylb22/results debian lenny \
+	./make-deb.sh "$BARRYTARBALL" "binary os22-binary" \
+		/usr/src /tmp/barrylb22
+
+
 #
-./deblocal.sh debian "binary os22-binary"
+# Cleanup
+#
+rm -rf /usr/src/binarybuild
+rm -rf /tmp/barrylb22
 

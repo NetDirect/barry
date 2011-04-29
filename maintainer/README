@@ -1,73 +1,18 @@
 Most of the build or test build scripts in this directory assume a system
 with a number of chroot installs, in the directory /var/chroot.
 
-The file ~/.barrychroots is a shell script containing commands for each
-chroot system you wish to build for.  The format of the commands is:
+The files:
 
-	./type.sh directory tag
-	
-For example, it might contain a list like this:
+	barrychroots
+	barrylocal
+	barryremote
 
-	export CHROOTUSER=cdfrey
-	./rpm.sh /var/chroot/fedora13 f13
-	./deb.sh /var/chroot/ubuntu1004 ubuntu1004
-
-In release mode, this would build Fedora 13 packages in the fedora13
-chroot system, and tag all resulting binary packages with "f13".
-It would also use the /home/cdfrey directory for building.
-Then it would do the same on the ubuntu 10.04 chroot system.
+... are scripts that are called by release.sh.  These scripts call
+one or more of save.sh, remote.sh, chroot.sh, make-deb.sh, or make-rpm.sh,
+in order to do the building.  These scripts can be chained together to
+do the builds in the required places.
 
 The top level scripts are:
 
 	release.sh - builds all tar, deb, and rpm packages
-	test.sh    - does simple makes on all testable systems, and
-		     prompts after each so you can examine the output
-
-If using git, use:
-
-	tagged-release.sh - Run above release.sh first to flush out any
-		bugs, and if successful, tag the tree and start over with
-		this script, which also updates the git repo with official
-		tarball data.
-
-
-Script hierarchy for the hackers:
----------------------------------
-
-	release.sh
-		git-release-tar.sh
-		release-root.sh
-			barrychroots
-				./deb.sh
-					./make-deb.sh
-				./rpm.sh
-					./make-user-rpm.sh
-				./rpmroot.sh
-					./make-rpm.sh
-		./make-deb-local.sh
-	test.sh
-		git-release-tar.sh
-		test-build-local.sh
-		test-root.sh
-			barrychroots
-				./deb.sh
-					./test-build.sh
-				./rpm.sh
-					./test-build.sh
-				./rpmroot.sh
-					./test-build.sh
-
-	git-release-tar.sh
-		git-extract.sh
-		tar-prepare.sh
-		tar-create.sh
-		deb-src-create.sh
-
-	tagged-release.sh
-		git-tagged-release.sh
-			lots of git commands, including signed tags
-			tar-prepare.sh
-			pristine-tar
-		release-root.sh
-		make-deb-local.sh
 

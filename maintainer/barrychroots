@@ -1,28 +1,58 @@
 #
-# The user account on the chroot system to build in
+# This script is run from the top level scripts.  You can rely on
+# the following environment variables being set:
 #
-export CHROOTUSER=cdfrey
+#    $BARRYTARBALL  - relative path to the release source tarball (bz2)
+#    $BARRYTARBASE  - basename of the source tarball (bz2)
+#
+
+rm -rf /tmp/barrychroots
+mkdir -p /tmp/barrychroots
 
 #
 # Build the DEB's
 #
-# ./deb.sh <path_to_chroot> <tag> <debian/rules targets>
-#
-./deb.sh /var/chroot/ubuntu1004 ubuntu1004 "binary os22-binary"
-./deb.sh /var/chroot/ubuntu804 ubuntu804 "binary os22-binary"
+function do_ubuntu() {
+	./save.sh /tmp/barrychroots/$1 $1 $2 \
+		./chroot.sh cdfrey /var/chroot/$1 \
+			"$BARRYTARBALL make-deb.sh" \
+			/var/chroot/$1/home/cdfrey/barrychroot/results \
+			/tmp/barrychroots/$1 \
+			cdfrey \
+		./make-deb.sh "$BARRYTARBASE" "binary os22-binary"
+}
+
+do_ubuntu ubuntu1004 ubuntu1004
+do_ubuntu ubuntu804 ubuntu804
 
 
 #
 # Build the Fedora RPM's
 #
-# ./rpm.sh <path_to_chroot> <tag>
+function do_fedora() {
+	./save.sh /tmp/barrychroots/$1 $1 $2 \
+		./chroot.sh cdfrey /var/chroot/$1 \
+			"$BARRYTARBALL make-rpm.sh" \
+			/var/chroot/$1/home/cdfrey/rpmbuild/binarybuild/results \
+			/tmp/barrychroots/$1 \
+			cdfrey \
+		./make-rpm.sh \
+			"$BARRYTARBASE" rpm/barry.spec \
+			"--target i386 -ba barry.spec --with gui --with opensync" \
+			/home/cdfrey \
+			/home/cdfrey/rpmbuild/binarybuild
+}
+
+# fedora14 has a bug in ligcal's pkgconfig... need to edit
+# its /usr/lib/pkgconfig/libgcal.pc file manually to work around it
+# for now
+#do_fedora fedora14 f14
+do_fedora fedora13 f13
+do_fedora fedora12 f12
+do_fedora fedora11 f11
+
 #
-./rpm.sh /var/chroot/fedora14 f14
-./rpm.sh /var/chroot/fedora13 f13
-./rpm.sh /var/chroot/fedora12 f12
-./rpm.sh /var/chroot/fedora11 f11
-#if [ "$THEMODE" = "release" ] ; then
-#	# Fedora 9 has no opensync, so don't test-build on it, only release
-#	./rpmroot.sh /var/chroot/fedora9 fc9
-#fi
+# Cleanup
+#
+rm -rf /tmp/barrychroots
 
