@@ -155,6 +155,17 @@ This package contains the desktop panel GUI.
 %setup -q
 
 %build
+# some systems have an rpath checker, and need their own versions of
+# configure built on the same system in order to pass... in particular,
+# Fedora 14's 64bit version needs its own configure, for some reason,
+# in order to recognize that /usr/lib64 is a system path and therefore
+# there is no reason to use an rpath... unfortunately, configure's
+# --disable-rpath option seems to have no effect whatsoever. :-(
+%if 0%{?fc14}
+	./buildgen.sh cleanall
+	./buildgen.sh
+%endif
+
 # main tree
 %{configure} --enable-boost --enable-nls --with-zlib
 %{__make} %{?_smp_mflags}
