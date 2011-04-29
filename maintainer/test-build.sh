@@ -1,5 +1,7 @@
 #!/bin/sh
 
+FIXME - CHROOTUSER is no longer an environment variable
+
 if [ -z "$1" -o -z "$2" -o -z "$CHROOTUSER" ] ; then
 	echo
 	echo "Usage: ./test-build.sh tarball chroot_target"
