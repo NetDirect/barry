@@ -29,6 +29,7 @@
 #include "packet.h"
 #include "socket.h"
 #include "protocol.h"
+#include "protostructs.h"
 #include "record-internal.h"
 #include "strnlen.h"
 #include "configfile.h"
@@ -59,8 +60,8 @@ namespace {
 
 	unsigned int GetSize(const unsigned char *packet)
 	{
-		uint16_t size = *((uint16_t *)&packet[2]);
-		return btohs(size);
+		const Protocol::Packet *pack = (const Protocol::Packet*) packet;
+		return btohs(pack->size);
 	}
 
 	bool Intro(int IntroIndex, const EndpointPair &ep, Device &dev, Data &response)
@@ -107,7 +108,8 @@ bool Probe::ParsePIN(const Data &data, uint32_t &pin)
 		return false;
 
 	// capture the PIN
-	pin = btohl(*((uint32_t *) &pd[16]));
+	memcpy(&pin, &pd[16], sizeof(pin));
+	pin = btohl(pin);
 
 	return true;
 }
