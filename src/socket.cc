@@ -1062,8 +1062,11 @@ void Socket::RegisterInterest(SocketRoutingQueue::SocketDataHandlerPtr handler)
 	if( !m_zero->m_queue )
 		throw std::logic_error("SocketRoutingQueue required in SocketZero in order to call Socket::RegisterInterest()");
 
-	if( m_registered )
-		throw std::logic_error("Socket already registered in Socket::RegisterInterest()!");
+	if( m_registered ) {
+		std::ostringstream oss;
+		oss << "Socket (" << m_socket << ") already registered in Socket::RegisterInterest()!";
+		throw std::logic_error(oss.str());
+	}
 
 	m_zero->m_queue->RegisterInterest(m_socket, handler);
 	m_registered = true;
