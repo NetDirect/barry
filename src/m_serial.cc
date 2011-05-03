@@ -103,9 +103,11 @@ void Serial::Open(const char *password)
 	// register callback for incoming data, for speed
 	SocketRoutingQueue::SocketDataHandlerPtr data_callback
 		(new SocketRoutingQueue::SimpleSocketDataHandler<Serial>(*this, DataCallback));
+	m_data->UnregisterInterest();
 	m_data->RegisterInterest(data_callback);
 	SocketRoutingQueue::SocketDataHandlerPtr ctrl_callback
 		(new SocketRoutingQueue::SimpleSocketDataHandler<Serial>(*this, CtrlCallback));
+	m_ctrl->UnregisterInterest();
 	m_ctrl->RegisterInterest(ctrl_callback);
 
 	const unsigned char start[] =
@@ -131,6 +133,7 @@ void Serial::RetryPassword(const char *password)
 	m_ctrl = m_con.m_zero.OpenDBSocket(m_CtrlSocket, password);
 
 	// register callback for incoming data, for speed
+	m_data->UnregisterInterest();
 	m_data->RegisterInterest(DataCallback, this);
 }
 */
