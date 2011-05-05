@@ -31,6 +31,9 @@
 #include <sys/select.h>
 #include <sys/time.h>
 #include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <termios.h>
 #include <unistd.h>
 #include <signal.h>
 #include <errno.h>
@@ -43,6 +46,8 @@ using namespace Barry;
 
 bool data_dump = false;
 volatile bool signal_end = false;
+int read_fd = -1;
+int write_fd = -1;
 
 void Usage()
 {
@@ -59,6 +64,7 @@ void Usage()
    << "             If only one device plugged in, this flag is optional\n"
    << "   -P pass   Simplistic method to specify device password\n"
    << "   -s        Use Serial mode instead of IpModem\n"
+   << "   -t        Use a pseudo-tty instead of stdin/stdout\n"
    << "   -v        Dump protocol data during operation (debugging only!)\n"
    << endl;
 }
@@ -74,7 +80,7 @@ void SerialDataCallback(void *context, const unsigned char *data, int len)
 		barryverbose("ReadThread:\n" << Data(data, len));
 
 	while( len ) {
-		int written = write(1, data, len);
+		int written = write(write_fd, data, len);
 		if( written > 0 ) {
 			len -= written;
 			data += written;
@@ -107,16 +113,16 @@ void ProcessStdin(Modem &modem)
 		// hang when it tries to set the line discipline
 		// on our stdin.
 
-		FD_SET(0, &rfds);
+		FD_SET(read_fd, &rfds);
 		tv.tv_sec = 30;
 		tv.tv_usec = 0;
 
-		ret = select(1, &rfds, NULL, NULL, &tv);
+		ret = select(read_fd+1, &rfds, NULL, NULL, &tv);
 		if( ret == -1 ) {
 			perror("select()");
 		}
-		else if( ret && FD_ISSET(0, &rfds) ) {
-			bytes_read = read(0, data.GetBuffer(), data.GetBufSize());
+		else if( ret && FD_ISSET(read_fd, &rfds) ) {
+			bytes_read = read(read_fd, data.GetBuffer(), data.GetBufSize());
 			if( bytes_read == 0 )
 				break;	// end of file
 			else if( bytes_read > 0 ) {
@@ -142,7 +148,8 @@ int main(int argc, char *argv[])
 	try {
 
 		uint32_t pin = 0;
-		bool force_serial = false;
+		bool	force_serial = false,
+			pseudo_tty = false;
 		std::string logfile;
 		std::string password;
 
@@ -160,7 +167,7 @@ int main(int argc, char *argv[])
 
 		// process command line options
 		for(;;) {
-			int cmd = getopt(argc, argv, "l:p:P:sv");
+			int cmd = getopt(argc, argv, "l:p:P:stv");
 			if( cmd == -1 )
 				break;
 
@@ -182,6 +189,10 @@ int main(int argc, char *argv[])
 				force_serial = true;
 				break;
 
+			case 't':	// Use pseudo-tty
+				pseudo_tty = true;
+				break;
+
 			case 'v':	// data dump on
 				data_dump = true;
 				break;
@@ -191,6 +202,43 @@ int main(int argc, char *argv[])
 				Usage();
 				return 0;
 			}
+		}
+
+		if( pseudo_tty ) {
+			// open pty/tty master to get slave
+			int master = open("/dev/ptmx", O_RDWR);
+			if( master == -1 ) {
+				cerr << "Cannot open /dev/ptmx: " << strerror(errno) << endl;
+				return 1;
+			}
+
+			// grant and unlock, as per pts(4) man page
+			if( grantpt(master) == -1 ) {
+				cerr << "Warning: grantpt() failure: "
+					<< strerror(errno) << endl;
+			}
+			if( unlockpt(master) == -1 ) {
+				cerr << "Warning: unlockpt() failure: "
+					<< strerror(errno) << endl;
+			}
+
+			// set raw mode
+			struct termios tp;
+			tcgetattr(master, &tp);
+			cfmakeraw(&tp);
+			tcsetattr(master, TCSANOW, &tp);
+
+			// send name of slave to stdout
+			cout << ptsname(master) << endl;
+
+			// set the global fd's
+			read_fd = master;
+			write_fd = master;
+		}
+		else {
+			// just default to stdin/stdout
+			read_fd = 0;
+			write_fd = 1;
 		}
 
 		// Initialize the barry library.  Must be called before
