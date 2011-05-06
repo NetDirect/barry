@@ -104,6 +104,11 @@ std::string Converter40::GetPluginName(const Config::Google &) const
 	return PLUGIN_GOOGLE;
 }
 
+std::string Converter40::GetPluginName(const Config::KDEPim &) const
+{
+	return PLUGIN_KDEPIM;
+}
+
 std::string Converter40::GetPluginName(const Config::Unsupported &) const
 {
 	return "unsupported-sync";
@@ -127,6 +132,11 @@ bool Converter40::IsConfigured(const Config::Google &config) const
 {
 	// password might (maaayybe) be empty, so skip it
 	return config.GetUsername().size();
+}
+bool Converter40::IsConfigured(const Config::KDEPim &config) const
+{
+	// FIXME - not sure about this plugin yet
+	return false;
 }
 
 bool Converter40::IsConfigured(const Config::Unsupported &) const
@@ -188,6 +198,11 @@ void Converter40::Load(Config::Google &config, const Member &member)
 	config.SetPassword(cfg.GetPassword());
 	config.EnableContacts(cfg.GetResource("contact")->IsEnabled());
 	config.EnableCalendar(cfg.GetResource("event")->IsEnabled());
+}
+
+void Converter40::Load(Config::KDEPim &config, const Member &member)
+{
+	// FIXME
 }
 
 void Converter40::Load(Config::Unsupported &config, const Member &member)
@@ -285,6 +300,11 @@ void Converter40::Save(const Config::Google &config, const std::string &group_na
 		AddResource();
 
 	cfg.Save();
+}
+
+void Converter40::Save(const Config::KDEPim &config, const std::string &group_name)
+{
+	// FIXME
 }
 
 void Converter40::Save(const Config::Unsupported &config, const std::string &group_name)

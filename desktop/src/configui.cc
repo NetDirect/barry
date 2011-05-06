@@ -23,17 +23,25 @@
 #include "osconfig.h"
 #include "CUI_Evolution.h"
 #include "CUI_Barry.h"
+#include "CUI_Google.h"
+#include "CUI_KDEPim.h"
 
 // Static factory function
 ConfigUI::configui_ptr ConfigUI::CreateConfigUI(const std::string &appname)
 {
 	ConfigUI::configui_ptr ui;
 
-	if( appname == OpenSync::Config::Evolution::AppName() ) {
+	if( appname == OpenSync::Config::Barry::AppName() ) {
+		ui.reset( new AppConfig::Barry );
+	}
+	else if( appname == OpenSync::Config::Evolution::AppName() ) {
 		ui.reset( new AppConfig::Evolution );
 	}
-	else if( appname == OpenSync::Config::Barry::AppName() ) {
-		ui.reset( new AppConfig::Barry );
+	else if( appname == OpenSync::Config::Google::AppName() ) {
+		ui.reset( new AppConfig::Google );
+	}
+	else if( appname == OpenSync::Config::KDEPim::AppName() ) {
+		ui.reset( new AppConfig::KDEPim );
 	}
 
 	return ui;

@@ -57,6 +57,11 @@ bool Converter22::IsPluginSupported(const std::string &plugin_name,
 			*appname = Config::Evolution::AppName();
 		return true;
 	}
+	else if( plugin_name == PLUGIN_KDEPIM ) {
+		if( appname )
+			*appname = Config::KDEPim::AppName();
+		return true;
+	}
 
 	return false;
 }
@@ -72,6 +77,9 @@ Converter::plugin_ptr Converter22::CreateAndLoadPlugin(const Member &member)
 	}
 	else if( member.plugin_name == PLUGIN_EVOLUTION ) {
 		ptr.reset( new Config::Evolution(this, member) );
+	}
+	else if( member.plugin_name == PLUGIN_KDEPIM ) {
+		ptr.reset( new Config::KDEPim(this, member) );
 	}
 	// default: Unsupported
 	else {
@@ -96,6 +104,11 @@ std::string Converter22::GetPluginName(const Config::Google &) const
 	return PLUGIN_GOOGLE;
 }
 
+std::string Converter22::GetPluginName(const Config::KDEPim &) const
+{
+	return PLUGIN_KDEPIM;
+}
+
 std::string Converter22::GetPluginName(const Config::Unsupported &) const
 {
 	return "unsupported-sync";
@@ -118,6 +131,12 @@ bool Converter22::IsConfigured(const Config::Evolution &config) const
 bool Converter22::IsConfigured(const Config::Google &config) const
 {
 	return false;
+}
+
+bool Converter22::IsConfigured(const Config::KDEPim &config) const
+{
+	// KDEPim on 0.22 needs no configuration, so it is always configured
+	return true;
 }
 
 bool Converter22::IsConfigured(const Config::Unsupported &) const
@@ -216,6 +235,11 @@ void Converter22::Load(Config::Google &config, const Member &member)
 	throw std::logic_error("Loading config for Google calendar plugin is not supported for 0.22.  Use the Unsupported class.");
 }
 
+void Converter22::Load(Config::KDEPim &config, const Member &member)
+{
+	// KDEPim on 0.22 needs no config, so nothing to do here
+}
+
 void Converter22::Load(Config::Unsupported &config, const Member &member)
 {
 	string cfg = m_api.GetConfiguration(member.group_name, member.id);
@@ -260,6 +284,12 @@ void Converter22::Save(const Config::Google &config,
 			const std::string &group_name)
 {
 	throw std::logic_error("Saving config for Google calendar plugin is not supported for 0.22.  Use the Unsupported class.");
+}
+
+void Converter22::Save(const Config::KDEPim &config,
+			const std::string &group_name)
+{
+	// KDEPim 0.22 needs no config, so nothing to do here
 }
 
 void Converter22::Save(const Config::Unsupported &config,

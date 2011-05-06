@@ -412,6 +412,59 @@ public:
 	}
 };
 
+class KDEPim : public Plugin
+{
+private:
+	// version 0.22 has no config
+
+public:
+	KDEPim()
+	{
+	}
+
+	explicit KDEPim(Converter *load_converter, const Member &member)
+	{
+		load_converter->Load(*this, member);
+	}
+
+	// virtual overrides
+	virtual KDEPim* Clone() const { return new KDEPim(*this); }
+	virtual bool IsUnsupported() const { return false; }
+	virtual std::string GetAppName() const { return AppName(); }
+	virtual void Save(OpenSync::API &api, const std::string &group_name) const
+	{
+		api.GetConverter().Save(*this, group_name);
+	}
+	virtual std::string GetPluginName(OpenSync::API &api) const
+	{
+		return api.GetConverter().GetPluginName(*this);
+	}
+	virtual bool IsConfigured(OpenSync::API &api) const
+	{
+		return api.GetConverter().IsConfigured(*this);
+	}
+	virtual bool Compare(const Plugin &plugin,
+				bool &sametype, bool &equal) const
+	{
+		sametype = equal = false;
+		const KDEPim *other = dynamic_cast<const KDEPim*> (&plugin);
+		if( other ) {
+			sametype = true;
+
+			// no data for this config, so always equal
+			equal = true;
+		}
+		return sametype && equal;
+	}
+
+	// statics
+	static std::string AppName() { return "KDEPim / Kontact"; }
+	static std::string PluginName(OpenSync::API &api)
+	{
+		return api.GetConverter().GetPluginName(KDEPim());
+	}
+};
+
 //
 // Group
 //
