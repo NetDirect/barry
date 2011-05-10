@@ -20,12 +20,73 @@ AC_PROG_CXX
 AC_PROG_MAKE_SET
 AC_PROG_LIBTOOL
 
+AC_LANG([C])
+
+PKG_CHECK_MODULES([LIBGCAL], [libgcal >= 0.9.6], [],
+	[
+	LGTEMP_LDFLAGS="$LDFLAGS"
+	LDFLAGS="$LDFLAGS -lgcal"
+	AC_RUN_IFELSE(
+		[AC_LANG_PROGRAM(
+			[[
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+// the internal headers in some versions of libgcal are broken, so
+// we duplicate the prototype ourselves here, sadly.
+int get_the_url(char *data, int length, char **url);
+
+void xmlCleanupParser(void)
+{
+        // if this gets called, the libgcal we are using is broken
+        exit(1);
+}
+			]],
+			[[
+const char *xml = "<nothing></nothing>";
+char *dest;
+get_the_url(xml, strlen(xml), &dest);
+			]]
+			)
+		],
+		[LG_TRY_AGAIN=yes],
+		[AC_MSG_ERROR(
+[
+Your copy of libgcal is older than 0.9.6, and it contains
+this bug:
+
+http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=597153
+
+You will need to upgrade to avoid segfaults when syncing with
+Google calendar.
+]
+		)],
+		[AC_MSG_ERROR(
+[
+Your copy of libgcal is older than 0.9.6.  Since you are
+cross-compiling it is not possible to easily check whether
+the following bug exists in your copy or not:
+
+http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=597153
+
+Please upgrade and try again.
+]
+		)]
+		)
+	LDFLAGS="$LGTEMP_LDFLAGS"
+	if test "$LG_TRY_AGAIN" = "yes" ; then
+		AC_MSG_RESULT([found patched libgcal...])
+		PKG_CHECK_MODULES([LIBGCAL], [libgcal >= 0.9.4])
+	fi
+	]
+	)
+
 AC_LANG([C++])
 
 PKG_CHECK_MODULES([BARRY], [libbarry-0 libbarrysync-0])
 PKG_CHECK_MODULES([GLIB2], [glib-2.0])
 PKG_CHECK_MODULES([LIBXMLPP], [libxml++-2.6])
-PKG_CHECK_MODULES([LIBGCAL], [libgcal >= 0.9.6])
 PKG_CHECK_MODULES([OPENSYNC22], [opensync-1.0], [], [OS22NOTFOUND=yes])
 PKG_CHECK_MODULES([OPENSYNC40], [libopensync1], [], [OS40NOTFOUND=yes])
 
