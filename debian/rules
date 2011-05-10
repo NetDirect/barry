@@ -106,7 +106,7 @@ post-patches::
 	@ln -s $(DEB_SRCDIR) $(CURDIR)/deb_srcdir
 	@test -x $(DEB_SRCDIR)/configure && echo "allready autoreconf" || (cd $(DEB_SRCDIR) && autoreconf -i)
 
-os22-binary:: binary
+os22-binary::
 	# DEB_SRCDIR can be relative, so change into directory to use pwd.
 	#
 	# Note: that the compiler flags below depend on opensync-plugin's
@@ -122,7 +122,7 @@ os22-binary:: binary
 os22-clean::
 	(cd $(DEB_SRCDIR)/opensync-plugin && debian/rules clean)
 
-os4x-binary:: binary
+os4x-binary::
 	# DEB_SRCDIR can be relative, so change into directory to use pwd.
 	#
 	# Note: that the compiler flags below depend on opensync-plugin-0.4x's
