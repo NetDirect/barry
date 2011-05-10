@@ -39,8 +39,6 @@ if [ -n "$5" ] ; then
 		# needs root
 		su - -c "export BARRYTARBALL=build/barry-$1.$2.$3.tar.bz2 && \
 			export BARRYTARBASE=barry-$1.$2.$3.tar.bz2 && \
-			export BARRYSQUEEZETARBALL=build/barry-squeeze-$1.$2.$3.tar.bz2 && \
-			export BARRYSQUEEZETARBASE=barry-squeeze-$1.$2.$3.tar.bz2 && \
 			export THEMODE=release && \
 			export CHOWNUSER=$(whoami) && \
 			cd $(pwd) && \
@@ -48,8 +46,6 @@ if [ -n "$5" ] ; then
 	else
 		export BARRYTARBALL=build/barry-$1.$2.$3.tar.bz2
 		export BARRYTARBASE=barry-$1.$2.$3.tar.bz2
-		export BARRYSQUEEZETARBALL=build/barry-squeeze-$1.$2.$3.tar.bz2
-		export BARRYSQUEEZETARBASE=barry-squeeze-$1.$2.$3.tar.bz2
 		export THEMODE=release
 		export CHOWNUSER="$(whoami)"
 

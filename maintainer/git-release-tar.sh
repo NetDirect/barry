@@ -37,22 +37,6 @@ RUNDIR="$(cd "$(dirname "$0")" && pwd)"
 set -e
 
 "$RUNDIR/git-extract.sh" $LOGICAL $MAJOR $MINOR $COMMIT
-
-### Debian Squeeze hack, to get around libgcal 0.9.6 and 0.9.4 issues
-
-cp -a build/barry-$LOGICAL.$MAJOR.$MINOR build/good-barry
-mv build/barry-$LOGICAL.$MAJOR.$MINOR/desktop/configure.ac tempconfig
-sed "s/libgcal >= 0.9.6/libgcal/" < tempconfig > build/barry-$LOGICAL.$MAJOR.$MINOR/desktop/configure.ac
-rm tempconfig
-(cd build/$DIRNAME && "$RUNDIR/tar-prepare.sh")
-(cd build && "$RUNDIR/tar-create.sh" $LOGICAL $MAJOR $MINOR)
-mv build/barry*tar.bz2 build/mine
-rm -rf build/barry*
-mv build/mine build/barry-squeeze-$LOGICAL.$MAJOR.$MINOR.tar.bz2
-mv build/good-barry build/barry-$LOGICAL.$MAJOR.$MINOR
-
-### End Debian Squeeze hack
-
 (cd build/$DIRNAME && "$RUNDIR/tar-prepare.sh")
 (cd build && "$RUNDIR/tar-create.sh" $LOGICAL $MAJOR $MINOR)
 (cd build && "$RUNDIR/deb-src-create.sh" $LOGICAL $MAJOR $MINOR)
