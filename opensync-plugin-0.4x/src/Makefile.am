@@ -3,8 +3,8 @@ configdir=@OPENSYNC_CONFIGDIR@
 #formatsdir=@OPENSYNC_FORMATSDIR@
 opensyncheaderdir=@OPENSYNC_HEADERDIR@
 
-INCLUDES = @TREE_BUILD_CXXFLAGS@ @PACKAGE_CFLAGS@ @BARRY_CFLAGS@
-LIBS = @TREE_BUILD_LDFLAGS@
+INCLUDES = @TREE_BUILD_CXXFLAGS@ @GLIB2_CFLAGS@ @OPENSYNC4X_CFLAGS@ @BARRY_CFLAGS@ @BARRYSYNC_CFLAGS@
+LIBS = @TREE_BUILD_LDFLAGS@ @GLIB2_LIBS@ @OPENSYNC4X_LIBS@ @BARRY_LIBS@ @BARRYSYNC_LIBS@
 
 AM_CFLAGS = -Wall -Werror
 AM_CXXFLAGS = -Wall -Werror
@@ -37,12 +37,12 @@ barry_sync_la_SOURCES = \
 	tosserror.h
 
 barry_sync_la_LDFLAGS = -avoid-version -export-dynamic -module
-barry_sync_la_LIBADD = @PACKAGE_LIBS@ @LIBS@ @BARRY_LIBS@
+barry_sync_la_LIBADD = $(LIBS)
 
 ## if you plan to install format libraries: ##
 #formats_LTLIBRARIES = format.la
 #
 #format_la_SOURCES = format.c
 #format_la_LDFLAGS = -avoid-version -export-dynamic -module
-#format_la_LIBADD = @PACKAGE_LIBS@ @LIBS@
+#format_la_LIBADD = $(LIBS)
 

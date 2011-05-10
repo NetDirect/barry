@@ -8,11 +8,6 @@ AC_CONFIG_AUX_DIR([.])
 AC_CONFIG_MACRO_DIR([m4])
 AM_INIT_AUTOMAKE(foreign)
 
-pkg_modules="libopensync1 glib-2.0"
-PKG_CHECK_MODULES(PACKAGE, [$pkg_modules])
-AC_SUBST(PACKAGE_CFLAGS)
-AC_SUBST(PACKAGE_LIBS)
-
 AC_ISC_POSIX
 AC_PROG_CC
 AM_PROG_CC_STDC
@@ -31,7 +26,10 @@ AM_CONDITIONAL([WITH_GCCVISIBILITY], [test "$HAVE_C_GCCVISIBILITY" = "1" -a "$HA
 
 AC_LANG([C++])
 
-PKG_CHECK_MODULES([BARRY], [libbarry-0 libbarrysync-0])
+PKG_CHECK_MODULES([GLIB2], [glib-2.0])
+PKG_CHECK_MODULES([OPENSYNC4X], [libopensync1])
+PKG_CHECK_MODULES([BARRY], [libbarry-0])
+PKG_CHECK_MODULES([BARRYSYNC], [libbarrysync-0])
 
 # Carry the special tree build environment variables from parent configure,
 # just in case user is doing a complete tree build with --enable-opensync-plugin
