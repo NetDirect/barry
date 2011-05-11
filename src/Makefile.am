@@ -44,7 +44,7 @@ AM_CXXFLAGS += -D__BARRY_HAVE_GCCVISIBILITY__ -fvisibility=hidden
 #AM_LDFLAGS += -fvisibility=hidden -fvisibility-inlines-hidden
 AM_LDFLAGS += -fvisibility=hidden
 endif
-include_barrydir = ${includedir}/barry
+include_barrydir = ${includedir}/barry@BARRY_MAJOR@/barry
 
 ##
 ## Boost library usage - required for serialization support, but optional

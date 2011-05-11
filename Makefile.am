@@ -37,12 +37,15 @@ if WITH_ALX
 pkgconfig_DATA += libbarryalx-0.pc
 endif
 
+VERSIONED_INCLUDE = barry@BARRY_MAJOR@
+
 all-local:
-	rm -f $(top_builddir)/barry
+	rm -f $(top_builddir)/barry $(top_builddir)/$(VERSIONED_INCLUDE)
 	ln -s $(top_srcdir)/src $(top_builddir)/barry
+	ln -s $(top_builddir) $(top_builddir)/$(VERSIONED_INCLUDE)
 
 clean-local:
-	rm -f $(top_builddir)/barry
+	rm -f $(top_builddir)/barry $(top_builddir)/$(VERSIONED_INCLUDE)
 
 # these directories will be tested for during make dist to warn if they are
 # missing - a new nested package should be added both here and in configure.ac

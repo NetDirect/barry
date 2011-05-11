@@ -12,6 +12,7 @@ Barry Release Checklist:
 		- rpm/barry.spec
 		- debian/changelog
 		- debian/control (libbarry0 should not depend on minor number)
+		- debian/rules (the barry18 includedir)
 		- opensync-plugin/configure.ac
 		- opensync-plugin/src/barry_sync.cc
 		- opensync-plugin-0.4x/configure.ac
