@@ -16,6 +16,22 @@ AM_GNU_GETTEXT([external])
 AM_GNU_GETTEXT_VERSION([0.17])
 
 #
+# Barry Version Numbers
+#
+BARRY_LOGICAL=0
+BARRY_MAJOR=18
+BARRY_MINOR=0
+AC_DEFINE_UNQUOTED([BARRY_LOGICAL], [$BARRY_LOGICAL], [Logical version number])
+AC_DEFINE_UNQUOTED([BARRY_MAJOR], [$BARRY_MAJOR], [Major library version number])
+AC_DEFINE_UNQUOTED([BARRY_MINOR], [$BARRY_MINOR], [Minor library version number])
+AC_DEFINE_UNQUOTED([BARRY_VER_STRING],
+	["${BARRY_LOGICAL}.${BARRY_MAJOR}.${BARRY_MINOR}"],
+	[Full Barry version in string form])
+AC_SUBST([BARRY_LOGICAL])
+AC_SUBST([BARRY_MAJOR])
+AC_SUBST([BARRY_MINOR])
+
+#
 # Checks for programs.
 #
 AC_PROG_CC
@@ -295,7 +311,9 @@ AC_FUNC_SELECT_ARGTYPES
 AC_CHECK_FUNCS([bzero gettimeofday memset select strcasecmp strchr strerror strtol strtoul])
 AC_C_BIGENDIAN
 
-AC_CONFIG_FILES([Makefile po/Makefile.in
+AC_CONFIG_FILES([Makefile
+                 Doxyfile
+                 po/Makefile.in
                  src/Makefile
                  src/publiccfg.h
                  tools/Makefile

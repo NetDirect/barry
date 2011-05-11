@@ -23,14 +23,14 @@
 #include "config.h"
 
 #ifdef WORDS_BIGENDIAN
-#define BARRY_VERSION_STRING	"Barry library version 0.18.0 (big endian)"
+#define BARRY_VERSION_STRING	"Barry library version " BARRY_VER_STRING " (big endian)"
 #else
-#define BARRY_VERSION_STRING	"Barry library version 0.18.0 (little endian)"
+#define BARRY_VERSION_STRING	"Barry library version " BARRY_VER_STRING " (little endian)"
 #endif
 
-#define BARRY_VERSION_LOGICAL	0
-#define BARRY_VERSION_MAJOR	18
-#define BARRY_VERSION_MINOR	0
+#define BARRY_VERSION_LOGICAL	BARRY_LOGICAL
+#define BARRY_VERSION_MAJOR	BARRY_MAJOR
+#define BARRY_VERSION_MINOR	BARRY_MINOR
 
 namespace Barry {
 
