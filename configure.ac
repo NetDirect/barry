@@ -312,7 +312,6 @@ AC_CHECK_FUNCS([bzero gettimeofday memset select strcasecmp strchr strerror strt
 AC_C_BIGENDIAN
 
 AC_CONFIG_FILES([Makefile
-                 Doxyfile
                  po/Makefile.in
                  src/Makefile
                  src/publiccfg.h
