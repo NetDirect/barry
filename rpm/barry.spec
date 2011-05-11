@@ -289,7 +289,7 @@ desktop-file-install --vendor netdirect \
 
 %files -n libbarry-devel
 %defattr(-,root,root)
-%attr(0644,root,root) %{_includedir}/barry/*
+%attr(0644,root,root) %{_includedir}/barry*/barry/*
 %attr(0644,root,root) %{_libdir}/*.a
 %attr(0755,root,root) %{_libdir}/*.la
 %attr(0644,root,root) %{_libdir}/pkgconfig/*.pc
