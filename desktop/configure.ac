@@ -33,8 +33,6 @@ PKG_CHECK_MODULES([LIBGCAL], [libgcal >= 0.9.6], [],
 #include <string.h>
 #include <stdlib.h>
 
-// the internal headers in some versions of libgcal are broken, so
-// we duplicate the prototype ourselves here, sadly.
 int get_the_url(char *data, int length, char **url);
 
 void xmlCleanupParser(void)
