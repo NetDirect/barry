@@ -42,6 +42,21 @@ using namespace std;
 using namespace std::tr1;
 using namespace Barry;
 
+// keeping a record of all the -i device / -o device pin numbers, so
+// we can warn the poor user appropriately
+std::vector<Barry::Pin> m_device_pins;
+
+bool IsPinUsed(const Barry::Pin &pin)
+{
+	for( std::vector<Barry::Pin>::const_iterator b = m_device_pins.begin();
+			b != m_device_pins.end(); ++b )
+	{
+		if( *b == pin )
+			return true;
+	}
+	return false;
+}
+
 void Usage()
 {
    int logical, major, minor;
@@ -291,6 +306,11 @@ public:
 				throw runtime_error("PIN not specified, and more than one device exists.");
 		}
 
+		if( IsPinUsed(probe->Get(i).m_pin) ) {
+			throw runtime_error("It seems you are trying to use the same device for multiple input or outputs.");
+		}
+		m_device_pins.push_back(probe->Get(i).m_pin);
+
 		m_con.reset( new Controller(probe->Get(i)) );
 		m_desktop.reset( new Mode::Desktop(*m_con, ic) );
 		m_desktop->Open(m_password.c_str());
@@ -491,6 +511,11 @@ public:
 			else
 				throw runtime_error("PIN not specified, and more than one device exists.");
 		}
+
+		if( IsPinUsed(probe->Get(i).m_pin) ) {
+			throw runtime_error("It seems you are trying to use the same device for multiple input or outputs.");
+		}
+		m_device_pins.push_back(probe->Get(i).m_pin);
 
 		m_con.reset( new Controller(probe->Get(i)) );
 		m_desktop.reset( new Mode::Desktop(*m_con, ic) );
