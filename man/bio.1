@@ -2,7 +2,7 @@
 .\" First parameter, NAME, should be all caps
 .\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
 .\" other parameters are allowed: see man(7), man(1)
-.TH BIO 1 "December 21, 2010"
+.TH BIO 1 "May 17, 2011"
 .\" Please adjust this date whenever revising the manpage.
 .\"
 .\" Some roff macros, for reference:
@@ -19,7 +19,7 @@
 .B bio
 \- Barry Input / Output
 .SH SYNOPSIS
-.B bio -i <input type> -o <output type> [-o <output type> ...]
+.B bio -i <input type> [input args] -o <output type> [output args] [-o <output type> ...]
 .SH DESCRIPTION
 .PP
 .B bio
@@ -250,16 +250,20 @@ bio -i device -A -o tar -f mybackup.tar.gz
 .IP
 bio -i tar -f mybackup.tar.gz -d "Address Book" -o mime
 .TP
-3) Copy the Calendar from one device to another, and dump
+3) Restore a single database to a device
+.IP
+bio -i tar -f mybackup.tar.gz -d "Address Book" -o device -w erase
+.TP
+4) Copy the Calendar from one device to another, and dump
 the records to stdout in human readable format at the same time
 .IP
 bio -i device -p 3009efe3 -d Calendar -o device -p 204062f3 -w erase -o dump
 .TP
-4) Read LDIF input and convert the contacts to MIME format
+5) Read LDIF input and convert the contacts to MIME format
 .IP
 ldapsearch -x | bio -i ldif -o mime
 .TP
-5) Test the record code by running the Tasks database through
+6) Test the record code by running the Tasks database through
 the Boost storage and back to human readable
 .IP
 bio -i device -d Tasks -o dump
