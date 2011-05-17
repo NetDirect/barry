@@ -3,8 +3,9 @@
 *.la
 *.pc
 
-# The symlink
+# The symlinks
 barry
+barry18
 
 # M4 files, except the ones we manage
 *.m4
