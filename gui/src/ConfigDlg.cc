@@ -42,7 +42,7 @@ ConfigDlg::ConfigDlg(const Barry::DatabaseDatabase &dbdb,
 	m_pDeviceNameEntry->set_text(config.GetDeviceName());
 
 	xml->get_widget("BackupPath", m_pBackupPath);
-	m_pBackupPath->set_filename(config.GetPath());
+	m_pBackupPath->set_current_folder(config.GetPath());
 
 	xml->get_widget("PromptBackupLabel", m_pPromptBackupLabelCheck);
 	m_pPromptBackupLabelCheck->set_active(config.PromptBackupLabel());
