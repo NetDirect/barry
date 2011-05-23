@@ -431,6 +431,7 @@ int main(int argc, char *argv[])
 				<< "             such as messages, contacts, etc.\n"
 				<< "             Wiping applications will remove all .cod files\n"
 				<< "             on the device, including OS .cod files.\n\n"
+				<< "You have selected to wipe the filesystem of device '" << probe.Get(activeDevice).m_pin.Str() << "'\n"
 				<< "Continue with wipe? (yes/no) ";
 			string confirm;
 			getline(cin, confirm);
@@ -446,6 +447,7 @@ int main(int argc, char *argv[])
 				<< "Use Caution: Resetting IT policy to factory defaults will\n"
 				<< "             also perform a filesystem wipe which will remove\n"
 				<< "             all data such as messages, contacts, etc.\n\n"
+				<< "You have selected to reset device '" << probe.Get(activeDevice).m_pin.Str() << "' to factory defaults\n"
 				<< "Continue with wipe? (yes/no) ";
 			string confirm;
 			getline(cin, confirm);
