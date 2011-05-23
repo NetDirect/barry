@@ -128,7 +128,9 @@ void DeviceInterface::RestoreThread()
 
 				// skip over records from this db
 				std::cerr << _("Error on database: ")
-					<< meta.GetDBName() << std::endl;
+					<< meta.GetDBName()
+					<< " (" << be.what() << ")"
+					<< std::endl;
 				m_restore->SkipCurrentDB();
 			}
 		}
