@@ -201,6 +201,13 @@ class BXEXPORT Socket : public SocketBase
 protected:
 	void ForceClosed();
 
+	// These "Local" function are non-virtual worker functions,
+	// which are safe to be called from the destructor.
+	// If you override the virtual versions in your derived class,
+	// make sure your "Local" versions call us.
+	void LocalClose();
+	void LocalUnregisterInterest();
+
 	uint16_t GetSocket() const { return m_socket; }
 	uint8_t GetCloseFlag() const { return m_closeFlag; }
 
@@ -212,7 +219,7 @@ public:
 	//
 	// virtual overrides
 	//
-	void Close();
+	void Close() { LocalClose(); }
 	void RawSend(Data &send, int timeout = -1);
 	void SyncSend(Data &send, int timeout = -1);
 	void Receive(Data &receive, int timeout = -1);
@@ -225,7 +232,7 @@ public:
 	// If you wish to re-register, call UnregisterInterest() first,
 	// which is safe to call as many times as you like.
 	void RegisterInterest(Barry::SocketRoutingQueue::SocketDataHandlerPtr handler = Barry::SocketRoutingQueue::SocketDataHandlerPtr());
-	void UnregisterInterest();
+	void UnregisterInterest() { LocalUnregisterInterest(); }
 };
 
 

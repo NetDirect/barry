@@ -980,7 +980,7 @@ Socket::~Socket()
 	// trap exceptions in the destructor
 	try {
 		// a non-default socket has been opened, close it
-		Close();
+		LocalClose();
 	}
 	catch( std::runtime_error &re ) {
 		// do nothing... log it?
@@ -998,14 +998,19 @@ void Socket::ForceClosed()
 	m_closeFlag = 0;
 }
 
-
-////////////////////////////////////
-// Socket public API
-
-void Socket::Close()
+void Socket::LocalClose()
 {
-	UnregisterInterest();
+	LocalUnregisterInterest();
 	m_zero->Close(*this);
+}
+
+void Socket::LocalUnregisterInterest()
+{
+	if( m_registered ) {
+		if( m_zero->m_queue )
+			m_zero->m_queue->UnregisterInterest(m_socket);
+		m_registered = false;
+	}
 }
 
 
@@ -1070,15 +1075,6 @@ void Socket::RegisterInterest(SocketRoutingQueue::SocketDataHandlerPtr handler)
 
 	m_zero->m_queue->RegisterInterest(m_socket, handler);
 	m_registered = true;
-}
-
-void Socket::UnregisterInterest()
-{
-	if( m_registered ) {
-		if( m_zero->m_queue )
-			m_zero->m_queue->UnregisterInterest(m_socket);
-		m_registered = false;
-	}
 }
 
 
