@@ -321,7 +321,8 @@ public:
 		}
 		else {
 			for( size_t i = 0; i < m_dbnames.size(); i++ ) {
-				m_builder->Add(m_dbnames[i]);
+				if( !m_builder->Add(m_dbnames[i]) )
+					throw runtime_error("Database not found: " + m_dbnames[i]);
 			}
 		}
 
