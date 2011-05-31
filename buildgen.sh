@@ -71,6 +71,8 @@ if [ "$1" = "cleanall" ] ; then
 	(cd opensync-plugin-0.4x && ./buildgen.sh clean)
 	cleangettext
 	(cd gui && cleangettext && rmdir m4)
+	(cd opensync-plugin && cleangettext)
+	(cd opensync-plugin-0.4x && cleangettext)
 elif [ "$1" = "clean" ] ; then
 	rm -rf autom4te.cache
 	rm -f Makefile.in aclocal.m4 config.guess config.h.in config.sub \
