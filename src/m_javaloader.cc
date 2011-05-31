@@ -327,7 +327,8 @@ void JLDeviceInfo::Dump(std::ostream &os) const
 	os << left << setfill(' ') << setw(17) << "Vendor ID:";
 	os << dec << VendorId << endl;
 
-	os << left << setfill(' ') << setw(17) << "Active WAFs:";
+	// WAF = Wireless Access Families
+	os << left << setfill(' ') << setw(17) << "Active Wireless Access Families:";
 	os << "0x" << hex << ActiveWafs << endl;
 
 	os << left << setfill(' ') << setw(17) << "OS Metrics:" << endl;
