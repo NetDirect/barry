@@ -117,6 +117,16 @@ breset_SOURCES = breset.cc
 breset_LDADD = $(USB_LIBRARY_LIBS) $(LTLIBINTL)
 endif
 
+if USE_LIBUSB_1_0
+sbin_PROGRAMS += bcharge breset
+
+bcharge_SOURCES = bcharge_libusb_1_0.cc
+bcharge_LDADD = $(USB_LIBRARY_LIBS) $(LTLIBINTL)
+
+breset_SOURCES = breset_libusb_1_0.cc
+breset_LDADD = $(USB_LIBRARY_LIBS) $(LTLIBINTL)
+endif
+
 pppob_SOURCES = pppob.cc
 pppob_LDADD = ../src/libbarry.la $(USB_LIBRARY_LIBS) -lpthread $(LTLIBINTL)
 
