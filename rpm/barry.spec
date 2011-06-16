@@ -167,7 +167,7 @@ This package contains the desktop panel GUI.
 %endif
 
 # main tree
-%{configure} --enable-boost --enable-nls --with-zlib
+%{configure} --enable-boost --enable-nls --with-zlib --with-libusb
 %{__make} %{?_smp_mflags}
 
 # gui tree
