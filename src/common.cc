@@ -24,8 +24,8 @@
 #include "debug.h"
 #include "config.h"
 
-#ifdef USE_LIBUSB_0_1
-#include <usb.h>
+#ifdef USE_BARRY_SOCKETS
+#include "usbwrap.h"
 #endif
 
 namespace Barry {
@@ -57,21 +57,21 @@ void Init(bool data_dump_mode, std::ostream *logStream)
 {
 	static bool initialized = false;
 
-#ifdef USE_LIBUSB_0_1
-	// set usb debug mode first, so that USB's initialization
-	// is captured too
-	if( data_dump_mode )
-		usb_set_debug(9);
+#ifdef USE_BARRY_SOCKETS
+	Usb::LibraryInterface::SetDataDump(data_dump_mode);
 #endif
 
 	// perform one-time initalization
 	if( !initialized ) {
-		// if the environment variable USB_DEBUG is set, that
-		// level value will be used instead of our 9 above...
-		// if you need to *force* this to 9, call Verbose(true)
-		// after Init()
-#ifdef USE_LIBUSB_0_1
-		usb_init();
+#ifdef USE_BARRY_SOCKETS
+		// Should call Usb::Uninit at some point,
+		// but there isn't currently a deinit call.
+		int err = Usb::LibraryInterface::Init();
+		if( err ) {
+			eout("USB library failed to initialise with error: " << err);
+			throw Error("Failed to initialise USB");
+			return;
+		}
 #endif
 
 		// only need to initialize this once
@@ -99,11 +99,8 @@ void Verbose(bool data_dump_mode)
 {
 	__data_dump_mode__ = data_dump_mode;
 
-#ifdef USE_LIBUSB_0_1
-	if( data_dump_mode )
-		usb_set_debug(9);
-	else
-		usb_set_debug(0);
+#ifdef USE_BARRY_SOCKETS
+	Usb::LibraryInterface::SetDataDump(data_dump_mode);
 #endif
 }
 
