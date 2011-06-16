@@ -1,7 +1,7 @@
 EXTRA_DIST = buildtest.sh
 
 #DEFAULT_INCLUDES =
-INCLUDES = $(LIBUSB_CFLAGS)
+INCLUDES =
 #AM_CXXFLAGS = -ansi -Wall -fno-strict-aliasing -g
 AM_CXXFLAGS = -Wall -g
 
@@ -20,7 +20,7 @@ libtest_SOURCES = \
 	libtest.cc
 libtest_LDADD = \
 	../src/libbarry.la \
-	$(LIBUSB_LIBS) -lpthread @BOOST_LDADD@ $(LTLIBINTL) $(LTLIBICONV)
+	-lpthread @BOOST_LDADD@ $(LTLIBINTL) $(LTLIBICONV)
 libtest_LDFLAGS = @BOOST_LIB_PATH@
 libtest_CXXFLAGS = $(AM_CXXFLAGS)
 
