@@ -165,15 +165,15 @@ Probe::Probe(const char *busname, const char *devname,
 void Probe::ProbeMatching(int vendor, int product,
 			const char *busname, const char *devname)
 {
-	Usb::DeviceIDType devid;
+	Usb::DeviceID* devid;
 
 	Match match(vendor, product, busname, devname);
-	while( match.next_device(&devid) ) try {
+	while( match.next_device(devid) ) try {
 		ProbeDevice(devid);
 	}
 	catch( Usb::Error &e ) {
 		dout("Usb::Error exception caught: " << e.what());
-		if( e.libusb_errcode() == -EBUSY ) {
+		if( e.errcode() == -EBUSY ) {
 			m_fail_count++;
 			m_fail_msgs.push_back(e.what());
 		}
@@ -183,34 +183,34 @@ void Probe::ProbeMatching(int vendor, int product,
 	}
 }
 
-void Probe::ProbeDevice(Usb::DeviceIDType devid)
+void Probe::ProbeDevice(Usb::DeviceID* devid)
 {
 	// skip if we can't properly discover device config
-	DeviceDiscovery discover(devid);
-	ConfigDesc &config = discover.configs[BLACKBERRY_CONFIGURATION];
+	DeviceDescriptor desc(devid);
+	ConfigDescriptor* config = desc[BLACKBERRY_CONFIGURATION];
 
 	// search for interface class
-	InterfaceDiscovery::base_type::iterator idi = config.interfaces.begin();
-	for( ; idi != config.interfaces.end(); idi++ ) {
-		if( idi->second.desc.bInterfaceClass == BLACKBERRY_DB_CLASS )
+	ConfigDescriptor::base_type::iterator idi = config->begin();
+	for( ; idi != config->end(); idi++ ) {
+		if( idi->second->Class() == BLACKBERRY_DB_CLASS )
 			break;
 	}
-	if( idi == config.interfaces.end() ) {
+	if( idi == config->end() ) {
 		dout("Probe: Interface with BLACKBERRY_DB_CLASS ("
 			<< BLACKBERRY_DB_CLASS << ") not found.");
 		return;	// not found
 	}
 
-	unsigned char InterfaceNumber = idi->second.desc.bInterfaceNumber;
+	unsigned char InterfaceNumber = idi->second->Number();
 	dout("Probe: using InterfaceNumber: " << (unsigned int) InterfaceNumber);
 
 	// check endpoint validity
-	EndpointDiscovery &ed = config.interfaces[InterfaceNumber].endpoints;
-	if( !ed.IsValid() || ed.GetEndpointPairs().size() == 0 ) {
-		dout("Probe: endpoint invalid.   ed.IsValud() == "
-			<< (ed.IsValid() ? "true" : "false")
-			<< ", ed.GetEndpointPairs().size() == "
-			<< ed.GetEndpointPairs().size());
+	EndpointPairings ep(*(*config)[InterfaceNumber]);
+	if( !ep.IsValid() || ep.size() == 0 ) {
+		dout("Probe: endpoint invalid.   ep.IsValid() == "
+			<< (ep.IsValid() ? "true" : "false")
+			<< ", ep.size() == "
+			<< ep.size());
 		return;
 	}
 
@@ -239,7 +239,7 @@ void Probe::ProbeDevice(Usb::DeviceIDType devid)
 	Interface iface(dev, InterfaceNumber);
 
 	// Try the initial probing of endpoints
-	ProbeDeviceEndpoints(dev, ed, result);
+	ProbeDeviceEndpoints(dev, ep, result);
 
 	if( !result.m_ep.IsComplete() ) {
 		// Probing of end-points failed, so try reprobing
@@ -251,9 +251,10 @@ void Probe::ProbeDevice(Usb::DeviceIDType devid)
 		// However it can cause usb-storage URBs to be lost
 		// on some devices, so is only used if necessary.
 		dout("Probe: probing endpoints failed, retrying after setting alternate interface");
-		dev.SetAltInterface(InterfaceNumber);
+		
+		iface.SetAltInterface(InterfaceNumber);
 		result.m_needSetAltInterface = true;
-		ProbeDeviceEndpoints(dev, ed, result);
+		ProbeDeviceEndpoints(dev, ep, result);
 	}
 
 	// add to list
@@ -278,7 +279,7 @@ void Probe::ProbeDevice(Usb::DeviceIDType devid)
 	}
 }
 
-void Probe::ProbeDeviceEndpoints(Device &dev, EndpointDiscovery &ed, ProbeResult &result)
+void Probe::ProbeDeviceEndpoints(Device &dev, EndpointPairings &ed, ProbeResult &result)
 {
 	if( m_epp_override ) {
 		// user has given us endpoints to try... so try them
@@ -301,12 +302,12 @@ void Probe::ProbeDeviceEndpoints(Device &dev, EndpointDiscovery &ed, ProbeResult
 		// Start with second pair, since evidence indicates the later pairs
 		// are the ones we need.
 		size_t i;
-		for(i = ed.GetEndpointPairs().size() > 1 ? 1 : 0;
-		    i < ed.GetEndpointPairs().size();
+		for(i = ed.size() > 1 ? 1 : 0;
+		    i < ed.size();
 		    i++ )
 		{
-			const EndpointPair &ep = ed.GetEndpointPairs()[i];
-			if( ep.type == USB_ENDPOINT_TYPE_BULK ) {
+			const EndpointPair &ep = ed[i];
+			if( ep.type == Usb::EndpointDescriptor::BulkType ) {
 
 				uint32_t pin;
 				uint8_t zeroSocketSequence;
@@ -329,8 +330,8 @@ void Probe::ProbeDeviceEndpoints(Device &dev, EndpointDiscovery &ed, ProbeResult
 
 		// check for ip modem endpoints
 		i++;
-		if( i < ed.GetEndpointPairs().size() ) {
-			const EndpointPair &ep = ed.GetEndpointPairs()[i];
+		if( i < ed.size() ) {
+			const EndpointPair &ep = ed[i];
 			if( ProbeModem(dev, ep) ) {
 				result.m_epModem = ep;
 			}

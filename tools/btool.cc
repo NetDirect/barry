@@ -809,7 +809,8 @@ int main(int argc, char *argv[])
 		if( epp_override ) {
 			device.m_ep.read = epOverride.read;
 			device.m_ep.write = epOverride.write;
-			device.m_ep.type = 2;	// FIXME - override this too?
+			// FIXME - override this too?
+			device.m_ep.type = Usb::EndpointDescriptor::BulkType;
 			cout << "Endpoint pair (read,write) overridden with: "
 			     << hex
 			     << (unsigned int) device.m_ep.read << ","

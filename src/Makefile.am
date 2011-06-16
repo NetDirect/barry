@@ -180,6 +180,8 @@ noinst_HEADERS = cbarry.h \
 	j_message.h \
 	j_jdwp.h \
 	tarfile.h \
+	usbwrap_libusb.h \
+	usbwrap_libusb_1_0.h \
 	ios_state.h \
 	clog.h
 
@@ -249,9 +251,15 @@ include_barry_HEADERS += usbwrap.h
 
 libbarry_la_SOURCES += usbwrap.cc
 
+if USE_LIBUSB_0_1
+libbarry_la_SOURCES += usbwrap_libusb.cc
+endif
+
+if USE_LIBUSB_1_0
+libbarry_la_SOURCES += usbwrap_libusb_1_0.cc
+endif
+
 endif # USE_BARRY_SOCKETS
-
-
 
 #libbarry_la_LIBADD = $(LTLIBOBJS) $(USB_LIBRARY_LIBS) $(OPENSSL_LIBS)
 libbarry_la_LIBADD = $(LTLIBOBJS) $(USB_LIBRARY_LIBS) $(ZLIB_LIBS) @LTLIBICONV@

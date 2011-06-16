@@ -5,6 +5,7 @@
 
 /*
     Copyright (C) 2005-2011, Chris Frey
+    Portions Copyright (C) 2011, RealVNC Ltd.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -23,10 +24,12 @@
 #include "usbwrap.h"
 #include "data.h"
 #include "error.h"
+#include "config.h"
 #include "debug.h"
 
 #include <iomanip>
 #include <sstream>
+#include <stdlib.h>
 #include <errno.h>
 #include <string.h>
 #include <limits.h>
@@ -36,61 +39,51 @@
 #endif
 #include "debug.h"
 
+// Pull in the correct Usb::LibraryInterface
+#if defined USE_LIBUSB_0_1
+#include "usbwrap_libusb.h"
+#elif defined USE_LIBUSB_1_0
+#include "usbwrap_libusb_1_0.h"
+#else
+#error No usb library interface selected.
+#endif
+
+
 namespace Usb {
 
 ///////////////////////////////////////////////////////////////////////////////
 // Usb::Error exception class
 
-static std::string GetErrorString(int libusb_errcode, const std::string &str)
+static std::string GetErrorString(int errcode, const std::string &str)
 {
 	std::ostringstream oss;
 	oss << "(";
 
-	if( libusb_errcode ) {
-		oss << std::setbase(10) << libusb_errcode << ", ";
+	if( errcode ) {
+		oss << std::setbase(10) << errcode << ", ";
 	}
-
-//	oss << strerror(-libusb_errno) << "): "
-	oss << usb_strerror() << "): ";
+	oss << LibraryInterface::GetLastErrorString(errcode) << "): ";
 	oss << str;
 	return oss.str();
 }
 
 Error::Error(const std::string &str)
 	: Barry::Error(GetErrorString(0, str))
-	, m_libusb_errcode(0)
+	, m_errcode(0)
 {
 }
 
-Error::Error(int libusb_errcode, const std::string &str)
-	: Barry::Error(GetErrorString(libusb_errcode, str))
-	, m_libusb_errcode(libusb_errcode)
+Error::Error(int errcode, const std::string &str)
+	: Barry::Error(GetErrorString(errcode, str))
+	, m_errcode(errcode)
 {
 }
 
 
 ///////////////////////////////////////////////////////////////////////////////
-// Match
+// DeviceList
 
-Match::Match(int vendor, int product,
-		const char *busname, const char *devname)
-	: m_busses(0)
-	, m_dev(0)
-	, m_vendor(vendor)
-	, m_product(product)
-	, m_busname(busname)
-	, m_devname(devname)
-{
-	usb_find_busses();
-	usb_find_devices();
-	m_busses = usb_get_busses();
-}
-
-Match::~Match()
-{
-}
-
-bool Match::ToNum(const char *str, long &num)
+bool DeviceList::ToNum(const char *str, long &num)
 {
 	char *end = 0;
 	num = strtol(str, &end, 10);
@@ -108,7 +101,7 @@ bool Match::ToNum(const char *str, long &num)
 // compare them.  If unable to convert, then compare as strings.
 // This way, "3" == "003" and "bus-foobar" == "bus-foobar".
 //
-bool Match::NameCompare(const char *n1, const char *n2)
+bool DeviceList::NameCompare(const char *n1, const char *n2)
 {
 	long l1, l2;
 	if( ToNum(n1, l1) && ToNum(n2, l2) ) {
@@ -119,512 +112,140 @@ bool Match::NameCompare(const char *n1, const char *n2)
 	}
 }
 
-bool Match::next_device(Usb::DeviceIDType *devid)
+///////////////////////////////////////////////////////////////////////////////
+// EndpointPair
+
+EndpointPair::EndpointPair()
+	: read(0), write(0), type(EndpointDescriptor::InvalidType)
 {
-	for( ; m_busses; m_busses = m_busses->next ) {
+}
 
-		// only search on given bus
-		if( m_busname && !NameCompare(m_busname, m_busses->dirname) )
-			continue;
+bool EndpointPair::IsTypeSet() const
+{
+	return type != EndpointDescriptor::InvalidType;
+}
 
-		if( !m_dev )
-			m_dev = m_busses->devices;
+bool EndpointPair::IsComplete() const
+{
+	return read && write && IsTypeSet();
+}
 
-		for( ; m_dev; m_dev = m_dev->next ) {
-
-			// search for specific device
-			if( m_devname && !NameCompare(m_devname, m_dev->filename) )
-				continue;
-
-			// is there a match?
-			if( m_dev->descriptor.idVendor == m_vendor &&
-			    m_dev->descriptor.idProduct == m_product ) {
-				// found!
-				*devid = m_dev;
-
-				// advance for next time
-				m_dev = m_dev->next;
-				if( !m_dev )
-					m_busses = m_busses->next;
-
-				// done
-				return true;
-			}
-		}
-	}
-	return false;
+bool EndpointPair::IsBulk() const
+{
+	return type == EndpointDescriptor::BulkType;
 }
 
 
 ///////////////////////////////////////////////////////////////////////////////
-// Device
+// EndpointPairings
 
-Device::Device(Usb::DeviceIDType id, int timeout)
-	: m_id(id),
-	m_timeout(timeout)
+EndpointPairings::EndpointPairings(const std::vector<EndpointDescriptor*>& eps)
+	: m_valid(false)
 {
-	dout("usb_open(" << std::dec << id << ")");
-	if( !id )
-		throw Error("invalid USB device ID");
-	m_handle = usb_open(id);
-	if( !m_handle )
-		throw Error("open failed");
-}
-
-Device::~Device()
-{
-	dout("usb_close(" << std::dec << m_handle << ")");
-	usb_close(m_handle);
-}
-
-bool Device::SetConfiguration(unsigned char cfg)
-{
-	dout("usb_set_configuration(" << std::dec << m_handle << ", 0x" << std::hex << (unsigned int) cfg << ")");
-	int ret = usb_set_configuration(m_handle, cfg);
-	m_lasterror = ret;
-	return ret >= 0;
-}
-
-bool Device::ClearHalt(int ep)
-{
-	dout("usb_clear_halt(" << std::dec << m_handle << ", 0x" << std::hex << ep << ")");
-	int ret = usb_clear_halt(m_handle, ep);
-	m_lasterror = ret;
-	return ret >= 0;
-}
-
-bool Device::Reset()
-{
-	dout("usb_reset(" << std::dec << m_handle << ")");
-	int ret = usb_reset(m_handle);
-	m_lasterror = ret;
-	return ret == 0;
-}
-
-bool Device::BulkRead(int ep, Barry::Data &data, int timeout)
-{
-	int ret;
-	do {
-		data.QuickZap();
-		ret = usb_bulk_read(m_handle, ep,
-			(char*) data.GetBuffer(), data.GetBufSize(),
-			timeout == -1 ? m_timeout : timeout);
-		if( ret < 0 && ret != -EINTR && ret != -EAGAIN ) {
-			m_lasterror = ret;
-			if( ret == -ETIMEDOUT )
-				throw Timeout(ret, "Timeout in usb_bulk_read");
-			else
-				throw Error(ret, "Error in usb_bulk_read");
-		}
-		else if( ret > 0 )
-			data.ReleaseBuffer(ret);
-	} while( ret == -EINTR || ret == -EAGAIN );
-
-	return ret >= 0;
-}
-
-bool Device::BulkWrite(int ep, const Barry::Data &data, int timeout)
-{
-	ddout("BulkWrite to endpoint 0x" << std::hex << ep << ":\n" << data);
-	int ret;
-	do {
-		ret = usb_bulk_write(m_handle, ep,
-			(char*) data.GetData(), data.GetSize(),
-			timeout == -1 ? m_timeout : timeout);
-		if( ret < 0 && ret != -EINTR && ret != -EAGAIN ) {
-			m_lasterror = ret;
-			if( ret == -ETIMEDOUT )
-				throw Timeout(ret, "Timeout in usb_bulk_write (1)");
-			else
-				throw Error(ret, "Error in usb_bulk_write (1)");
-		}
-	} while( ret == -EINTR || ret == -EAGAIN );
-
-	return ret >= 0;
-}
-
-bool Device::BulkWrite(int ep, const void *data, size_t size, int timeout)
-{
-#ifdef __DEBUG_MODE__
-	Barry::Data dump(data, size);
-	ddout("BulkWrite to endpoint 0x" << std::hex << ep << ":\n" << dump);
-#endif
-
-	int ret;
-	do {
-		ret = usb_bulk_write(m_handle, ep,
-			(char*) data, size,
-			timeout == -1 ? m_timeout : timeout);
-		if( ret < 0 && ret != -EINTR && ret != -EAGAIN ) {
-			m_lasterror = ret;
-			if( ret == -ETIMEDOUT )
-				throw Timeout(ret, "Timeout in usb_bulk_write (2)");
-			else
-				throw Error(ret, "Error in usb_bulk_write (2)");
-		}
-	} while( ret == -EINTR || ret == -EAGAIN );
-
-	return ret >= 0;
-}
-
-bool Device::InterruptRead(int ep, Barry::Data &data, int timeout)
-{
-	int ret;
-	do {
-		data.QuickZap();
-		ret = usb_interrupt_read(m_handle, ep,
-			(char*) data.GetBuffer(), data.GetBufSize(),
-			timeout == -1 ? m_timeout : timeout);
-		if( ret < 0 && ret != -EINTR && ret != -EAGAIN ) {
-			m_lasterror = ret;
-			if( ret == -ETIMEDOUT )
-				throw Timeout(ret, "Timeout in usb_interrupt_read");
-			else
-				throw Error(ret, "Error in usb_interrupt_read");
-		}
-		else if( ret > 0 )
-			data.ReleaseBuffer(ret);
-	} while( ret == -EINTR || ret == -EAGAIN );
-
-	return ret >= 0;
-}
-
-bool Device::InterruptWrite(int ep, const Barry::Data &data, int timeout)
-{
-	ddout("InterruptWrite to endpoint 0x" << std::hex << ep << ":\n" << data);
-
-	int ret;
-	do {
-		ret = usb_interrupt_write(m_handle, ep,
-			(char*) data.GetData(), data.GetSize(),
-			timeout == -1 ? m_timeout : timeout);
-		if( ret < 0 && ret != -EINTR && ret != -EAGAIN ) {
-			m_lasterror = ret;
-			if( ret == -ETIMEDOUT )
-				throw Timeout(ret, "Timeout in usb_interrupt_write");
-			else
-				throw Error(ret, "Error in usb_interrupt_write");
-		}
-	} while( ret == -EINTR || ret == -EAGAIN );
-
-	return ret >= 0;
-}
-
-//
-// BulkDrain
-//
-/// Reads anything available on the given endpoint, with a low timeout,
-/// in order to clear any pending reads.
-///
-void Device::BulkDrain(int ep, int timeout)
-{
-	try {
-		Barry::Data data;
-		while( BulkRead(ep, data, timeout) )
-		;
-	}
-	catch( Usb::Error & ) {}
-}
-
-//
-// GetConfiguration
-//
-/// Uses the GET_CONFIGURATION control message to determine the currently
-/// selected USB configuration, returning it in the cfg argument.
-/// If unsuccessful, returns false.
-///
-bool Device::GetConfiguration(unsigned char &cfg)
-{
-	int result = usb_control_msg(m_handle, 0x80, USB_REQ_GET_CONFIGURATION, 0, 0,
-		(char*) &cfg, 1, m_timeout);
-	m_lasterror = result;
-	return result >= 0;
-}
-
-//
-// SetAltInterface
-//
-/// Uses the usb_set_altinterface() function to set the currently
-/// selected USB alternate setting of the current interface.
-/// The iface parameter passed in should be a value specified
-/// in the bAlternateSetting descriptor field.
-/// If unsuccessful, returns false.
-///
-bool Device::SetAltInterface(int iface)
-{
-	int result = usb_set_altinterface(m_handle, iface);
-	m_lasterror = result;
-	return result >= 0;
-}
-
-
-
-///////////////////////////////////////////////////////////////////////////////
-// Interface
-
-Interface::Interface(Device &dev, int iface)
-	: m_dev(dev), m_iface(iface)
-{
-	dout("usb_claim_interface(" << dev.GetHandle() << ", 0x" << std::hex << iface << ")");
-	int ret = usb_claim_interface(dev.GetHandle(), iface);
-	if( ret < 0 )
-		throw Error(ret, "claim interface failed");
-}
-
-Interface::~Interface()
-{
-	dout("usb_release_interface(" << m_dev.GetHandle() << ", 0x" << std::hex << m_iface << ")");
-	usb_release_interface(m_dev.GetHandle(), m_iface);
-}
-
-
-
-///////////////////////////////////////////////////////////////////////////////
-// EndpointDiscovery
-
-bool EndpointDiscovery::Discover(struct usb_interface_descriptor *interface, int epcount)
-{
-	// start fresh
-	clear();
-	m_valid = false;
-
+	// parse the endpoint into read/write sets, if possible,
+	// going in discovery order...
+	// Assumptions:
+	//	- endpoints of related utility will be grouped
+	//	- endpoints with same type will be grouped
+	//	- endpoints that do not meet the above assumptions
+	//		do not belong in a pair
 	EndpointPair pair;
 
-	if( !interface || !interface->endpoint ) {
-		dout("EndpointDiscovery::Discover: empty interface pointer");
-		return false;
+	if( eps.size() == 0 ) {
+		dout("EndpointPairing:: empty interface pointer");
+		return;
 	}
 
-	for( int i = 0; i < epcount; i++ ) {
-		// load descriptor
-		usb_endpoint_descriptor desc;
-		desc = interface->endpoint[i];
-		dout("      endpoint_desc #" << std::dec << i << " loaded"
-			<< "\nbLength: " << std::dec << (unsigned ) desc.bLength
-			<< "\nbDescriptorType: " << std::dec << (unsigned ) desc.bDescriptorType
-			<< "\nbEndpointAddress: 0x" << std::hex << (unsigned ) desc.bEndpointAddress
-			<< "\nbmAttributes: 0x" << std::hex << (unsigned ) desc.bmAttributes
-			<< "\nwMaxPacketSize: " << std::dec << (unsigned ) desc.wMaxPacketSize
-			<< "\nbInterval: " << std::dec << (unsigned ) desc.bInterval
-			<< "\nbRefresh: " << std::dec << (unsigned ) desc.bRefresh
-			<< "\nbSynchAddress: " << std::dec << (unsigned ) desc.bSynchAddress
-			<< "\n"
-			);
-
-		// add to the map
-		(*this)[desc.bEndpointAddress] = desc;
-		dout("      endpoint added to map with bEndpointAddress: 0x" << std::hex << (unsigned int)desc.bEndpointAddress);
-
-		// parse the endpoint into read/write sets, if possible,
-		// going in discovery order...
-		// Assumptions:
-		//	- endpoints of related utility will be grouped
-		//	- endpoints with same type will be grouped
-		//	- endpoints that do not meet the above assumptions
-		//		do not belong in a pair
-		unsigned char type = desc.bmAttributes & USB_ENDPOINT_TYPE_MASK;
-		if( desc.bEndpointAddress & USB_ENDPOINT_DIR_MASK ) {
-			// read endpoint
-			pair.read = desc.bEndpointAddress;
+	std::vector<EndpointDescriptor*>::const_iterator iter = eps.begin();
+	while( iter != eps.end() ) {
+		const EndpointDescriptor& desc = **iter;
+		if( desc.IsRead() ) {
+			// Read endpoint
+			pair.read = desc.Address();
 			dout("        pair.read = 0x" << std::hex << (unsigned int)pair.read);
-			if( pair.IsTypeSet() && pair.type != type ) {
+			if( pair.IsTypeSet() && pair.type != desc.Type() ) {
 				// if type is already set, we must start over
 				pair.write = 0;
 			}
-		}
-		else {
-			// write endpoint
-			pair.write = desc.bEndpointAddress;
+		} else {
+			// Write endpoint
+			pair.write = desc.Address();
 			dout("        pair.write = 0x" << std::hex << (unsigned int)pair.write);
-			if( pair.IsTypeSet() && pair.type != type ) {
+			if( pair.IsTypeSet() && pair.type != desc.Type() ) {
 				// if type is already set, we must start over
 				pair.read = 0;
 			}
 		}
-		// save the type last
-		pair.type = type;
+		pair.type = desc.Type();
+
 		dout("        pair.type = 0x" << std::hex << (unsigned int)pair.type);
 
 		// if pair is complete, add to array
 		if( pair.IsComplete() ) {
-			m_endpoints.push_back(pair);
+			push_back(pair);
+
 			dout("        pair added! ("
-				<< "read: 0x" << std::hex << (unsigned int)pair.read << ","
-				<< "write: 0x" << std::hex << (unsigned int)pair.write << ","
-				<< "type: 0x" << std::hex << (unsigned int)pair.type << ")");
+			     << "read: 0x" << std::hex << (unsigned int)pair.read << ","
+			     << "write: 0x" << std::hex << (unsigned int)pair.write << ","
+			     << "type: 0x" << std::hex << (unsigned int)pair.type << ")");
 			pair = EndpointPair();	// clear
 		}
+		++iter;
 	}
 
-	// just for debugging purposes, check for extra descriptors, and
-	// dump them to dout if they exist
-	if( interface->extra ) {
-		dout("while parsing endpoints, found a block of extra descriptors:");
-		Barry::Data data(interface->extra, interface->extralen);
-		dout(data);
-	}
-
-	return m_valid = true;
+	m_valid = true;
 }
 
+EndpointPairings::~EndpointPairings()
+{
+}
+
+bool EndpointPairings::IsValid() const
+{
+	return m_valid;
+}
 
 ///////////////////////////////////////////////////////////////////////////////
-// InterfaceDiscovery
+// EndpointDescriptor
 
-bool InterfaceDiscovery::DiscoverInterface(struct usb_interface *interface)
+bool EndpointDescriptor::IsRead() const
 {
-	if( !interface->altsetting ) {
-		dout("InterfaceDiscovery::DiscoverIterface: empty altsetting");
-		// some devices are buggy and return a higher bNumInterfaces
-		// than the number of interfaces available... in this case
-		// we just skip and continue
+	return m_read;
+}
+
+uint8_t EndpointDescriptor::Address() const
+{
+	return m_addr;
+}
+
+EndpointDescriptor::EpType EndpointDescriptor::Type() const
+{
+	return m_type;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// Match
+
+Match::Match(int vendor, int product,
+	     const char *busname, const char *devname)
+	: m_list(m_devices.MatchDevices(vendor, product, busname, devname))
+	, m_iter(m_list.begin())
+{
+
+}
+
+Match::~Match()
+{
+}
+
+bool Match::next_device(Usb::DeviceID*& devid)
+{
+	if( m_iter != m_list.end() ) {
+		devid = *m_iter;
+		++m_iter;
 		return true;
 	}
-
-	for( int i = 0; i < interface->num_altsetting; i++ ) {
-		// load descriptor
-		InterfaceDesc desc;
-		desc.desc = interface->altsetting[i];
-		dout("    interface_desc #" << std::dec << i << " loaded"
-			<< "\nbLength: " << std::dec << (unsigned) desc.desc.bLength
-			<< "\nbDescriptorType: " << std::dec << (unsigned) desc.desc.bDescriptorType
-			<< "\nbInterfaceNumber: " << std::dec << (unsigned) desc.desc.bInterfaceNumber
-			<< "\nbAlternateSetting: " << std::dec << (unsigned) desc.desc.bAlternateSetting
-			<< "\nbNumEndpoints: " << std::dec << (unsigned) desc.desc.bNumEndpoints
-			<< "\nbInterfaceClass: " << std::dec << (unsigned) desc.desc.bInterfaceClass
-			<< "\nbInterfaceSubClass: " << std::dec << (unsigned) desc.desc.bInterfaceSubClass
-			<< "\nbInterfaceProtocol: " << std::dec << (unsigned) desc.desc.bInterfaceProtocol
-			<< "\niInterface: " << std::dec << (unsigned) desc.desc.iInterface
-			<< "\n"
-			);
-
-		// load all endpoints on this interface
-		if( !desc.endpoints.Discover(&desc.desc, desc.desc.bNumEndpoints) ) {
-			dout("    endpoint discovery failed for bInterfaceNumber: " << std::dec << (unsigned int)desc.desc.bInterfaceNumber << ", not added to map.");
-			return false;
-		}
-
-		// add to the map
-		(*this)[desc.desc.bInterfaceNumber] = desc;
-		dout("    interface added to map with bInterfaceNumber: " << std::dec << (unsigned int)desc.desc.bInterfaceNumber);
-	}
-	return true;
-}
-
-bool InterfaceDiscovery::Discover(Usb::DeviceIDType devid, int cfgidx, int ifcount)
-{
-	// start fresh
-	clear();
-	m_valid = false;
-
-	if( !devid || !devid->config || !devid->config[cfgidx].interface ) {
-		dout("InterfaceDiscovery::Discover: empty devid/config/interface");
-		return false;
-	}
-
-	for( int i = 0; i < ifcount; i++ ) {
-		if( !DiscoverInterface(&devid->config[cfgidx].interface[i]) )
-			return false;
-	}
-
-	return m_valid = true;
-}
-
-
-///////////////////////////////////////////////////////////////////////////////
-// ConfigDiscovery
-
-bool ConfigDiscovery::Discover(Usb::DeviceIDType devid, int cfgcount)
-{
-	// start fresh
-	clear();
-	m_valid = false;
-
-	for( int i = 0; i < cfgcount; i++ ) {
-		// load descriptor
-		ConfigDesc desc;
-		if( !devid || !devid->config ) {
-			dout("ConfigDiscovery::Discover: empty devid or config");
-			return false;
-		}
-		desc.desc = devid->config[i];
-		dout("  config_desc #" << std::dec << i << " loaded"
-			<< "\nbLength: " << std::dec << (unsigned int) desc.desc.bLength
-			<< "\nbDescriptorType: " << std::dec << (unsigned int) desc.desc.bDescriptorType
-			<< "\nwTotalLength: " << std::dec << (unsigned int) desc.desc.wTotalLength
-			<< "\nbNumInterfaces: " << std::dec << (unsigned int) desc.desc.bNumInterfaces
-			<< "\nbConfigurationValue: " << std::dec << (unsigned int) desc.desc.bConfigurationValue
-			<< "\niConfiguration: " << std::dec << (unsigned int) desc.desc.iConfiguration
-			<< "\nbmAttributes: 0x" << std::hex << (unsigned int) desc.desc.bmAttributes
-			<< "\nMaxPower: " << std::dec << (unsigned int) desc.desc.MaxPower
-			<< "\n"
-			);
-
-		// just for debugging purposes, check for extra descriptors, and
-		// dump them to dout if they exist
-		if( desc.desc.extra ) {
-			dout("while parsing config descriptor, found a block of extra descriptors:");
-			Barry::Data data(desc.desc.extra, desc.desc.extralen);
-			dout(data);
-		}
-
-		// load all interfaces on this configuration
-		if( !desc.interfaces.Discover(devid, i, desc.desc.bNumInterfaces) ) {
-			dout("  config discovery failed for bConfigurationValue: " << std::dec << (unsigned int)desc.desc.bConfigurationValue << ", not added to map.");
-			return false;
-		}
-
-		// add to the map
-		(*this)[desc.desc.bConfigurationValue] = desc;
-		dout("  config added to map with bConfigurationValue: " << std::dec << (unsigned int)desc.desc.bConfigurationValue);
-	}
-
-	return m_valid = true;
-}
-
-
-///////////////////////////////////////////////////////////////////////////////
-// DeviceDiscovery
-
-DeviceDiscovery::DeviceDiscovery(Usb::DeviceIDType devid)
-	: m_valid(false)
-{
-	Discover(devid);
-}
-
-bool DeviceDiscovery::Discover(Usb::DeviceIDType devid)
-{
-	// start fresh
-	configs.clear();
-	m_valid = false;
-
-	// copy the descriptor over to our memory
-	if( !devid ) {
-		dout("DeviceDiscovery::Discover: empty devid");
-		return false;
-	}
-
-	desc = devid->descriptor;
-	dout("device_desc loaded"
-		<< "\nbLength: " << std::dec << (unsigned int) desc.bLength
-		<< "\nbDescriptorType: " << std::dec << (unsigned int) desc.bDescriptorType
-		<< "\nbcdUSB: 0x" << std::hex << (unsigned int) desc.bcdUSB
-		<< "\nbDeviceClass: " << std::dec << (unsigned int) desc.bDeviceClass
-		<< "\nbDeviceSubClass: " << std::dec << (unsigned int) desc.bDeviceSubClass
-		<< "\nbDeviceProtocol: " << std::dec << (unsigned int) desc.bDeviceProtocol
-		<< "\nbMaxPacketSize0: " << std::dec << (unsigned int) desc.bMaxPacketSize0
-		<< "\nidVendor: 0x" << std::hex << (unsigned int) desc.idVendor
-		<< "\nidProduct: 0x" << std::hex << (unsigned int) desc.idProduct
-		<< "\nbcdDevice: 0x" << std::hex << (unsigned int) desc.bcdDevice
-		<< "\niManufacturer: " << std::dec << (unsigned int) desc.iManufacturer
-		<< "\niProduct: " << std::dec << (unsigned int) desc.iProduct
-		<< "\niSerialNumber: " << std::dec << (unsigned int) desc.iSerialNumber
-		<< "\nbNumConfigurations: " << std::dec << (unsigned int) desc.bNumConfigurations
-		<< "\n"
-	);
-
-	m_valid = configs.Discover(devid, desc.bNumConfigurations);
-	return m_valid;
+	return false;
 }
 
 } // namespace Usb

@@ -50,7 +50,7 @@ void main_exception_handler()
 		// special check for EBUSY to make the error message
 		// more user friendly
 		Gtk::MessageDialog msg("");
-		if( e.libusb_errcode() == -EBUSY ) {
+		if( e.errcode() == -EBUSY ) {
 			msg.set_message("Device busy.  This is likely due to the usb_storage kernel module being loaded.  Try 'rmmod usb_storage'.");
 		}
 		else {
