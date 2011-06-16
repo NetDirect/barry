@@ -25,6 +25,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <stdlib.h>
 #include <getopt.h>
 #include "i18n.h"
 #include "brecsum.h"

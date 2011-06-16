@@ -36,6 +36,7 @@
 #include <string>
 #include <algorithm>
 #include <getopt.h>
+#include <stdlib.h>
 #include <tr1/memory>
 #include "i18n.h"
 

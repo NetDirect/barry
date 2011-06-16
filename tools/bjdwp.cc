@@ -24,6 +24,7 @@
 #include <barry/barry.h>
 #include <iostream>
 #include <string>
+#include <stdlib.h>
 #include "i18n.h"
 
 using namespace std;

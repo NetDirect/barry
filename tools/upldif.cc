@@ -24,6 +24,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <stdlib.h>
 #include <string>
 #include <getopt.h>
 #include "i18n.h"

@@ -36,6 +36,7 @@
 #include <sys/types.h>
 #include <fcntl.h>
 #include <string.h>
+#include <stdlib.h>
 #include "i18n.h"
 
 using namespace std;
