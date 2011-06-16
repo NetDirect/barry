@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: barry-backup 0.18.0\n"
 "Report-Msgid-Bugs-To: http://netdirect.ca/barry\n"
-"POT-Creation-Date: 2011-01-27 14:01-0500\n"
+"POT-Creation-Date: 2011-06-16 11:49+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -101,7 +101,7 @@ msgstr ""
 msgid "Backup"
 msgstr ""
 
-#: src/BackupWindow.glade:124 src/Thread.cc:177
+#: src/BackupWindow.glade:124 src/Thread.cc:180
 msgid "Restore..."
 msgstr ""
 
@@ -238,151 +238,153 @@ msgstr ""
 msgid "Connecting to Device..."
 msgstr ""
 
-#: src/BackupWindow.cc:197
-msgid "Connection cancelled."
-msgstr ""
-
-#: src/BackupWindow.cc:205 src/BackupWindow.cc:220 src/BackupWindow.cc:227
+#: src/BackupWindow.cc:199 src/BackupWindow.cc:213 src/BackupWindow.cc:228
+#: src/BackupWindow.cc:235
 msgid "Cannot connect to "
 msgstr ""
 
-#: src/BackupWindow.cc:232
+#: src/BackupWindow.cc:205
+msgid "Connection cancelled."
+msgstr ""
+
+#: src/BackupWindow.cc:240
 msgid "Connected to "
 msgstr ""
 
-#: src/BackupWindow.cc:239
+#: src/BackupWindow.cc:247
 msgid ""
 " is working, disconnecting from it may cause data corruption, are you sure "
 "to proceed?"
 msgstr ""
 
-#: src/BackupWindow.cc:248
+#: src/BackupWindow.cc:256
 msgid "Disconnected from "
 msgstr ""
 
-#: src/BackupWindow.cc:251
+#: src/BackupWindow.cc:259
 msgid "Not connected."
 msgstr ""
 
-#: src/BackupWindow.cc:259
+#: src/BackupWindow.cc:267
 msgid "Unnamed device found (PIN: "
 msgstr ""
 
-#: src/BackupWindow.cc:259
+#: src/BackupWindow.cc:267
 msgid "Please enter a name for it:"
 msgstr ""
 
-#: src/BackupWindow.cc:267 src/BackupWindow.cc:543
+#: src/BackupWindow.cc:275 src/BackupWindow.cc:551
 msgid "Error saving config: "
 msgstr ""
 
-#: src/BackupWindow.cc:309
+#: src/BackupWindow.cc:317
 msgid ""
 "One or more devices are working, disconnecting now may cause data "
 "corruption. Proceed anyway?"
 msgstr ""
 
-#: src/BackupWindow.cc:368
+#: src/BackupWindow.cc:376
 msgid "Backup on"
 msgstr ""
 
-#: src/BackupWindow.cc:370
+#: src/BackupWindow.cc:378
 msgid "Restore on"
 msgstr ""
 
-#: src/BackupWindow.cc:372
+#: src/BackupWindow.cc:380
 msgid "Operation on"
 msgstr ""
 
-#: src/BackupWindow.cc:374
+#: src/BackupWindow.cc:382
 msgid " finished!"
 msgstr ""
 
-#: src/BackupWindow.cc:386
+#: src/BackupWindow.cc:394
 msgid ""
 "Warning\n"
 "\n"
 "Not all records were processed on device: "
 msgstr ""
 
-#: src/BackupWindow.cc:387
+#: src/BackupWindow.cc:395
 msgid ""
 "\n"
 "\n"
 "Only "
 msgstr ""
 
-#: src/BackupWindow.cc:387
+#: src/BackupWindow.cc:395
 msgid " of "
 msgstr ""
 
-#: src/BackupWindow.cc:388
+#: src/BackupWindow.cc:396
 msgid ""
 " records were backed up.\n"
 "\n"
 "It is suspected that due to international characters in these records, the "
 "BlackBerry uses a different low-level protocol, which Barry Backup does not "
-"yet support. Please contact the developers at http://netdirect.ca/barry if "
-"you want to assist in debugging this issue."
+"yet support.  Alternatively, there may be hidden records that cannot be "
+"edited in your device.  If this occurs in a database such as Address Book, "
+"sometimes a restore of just that database may fix the issue."
 msgstr ""
 
-#: src/BackupWindow.cc:405 src/BackupWindow.cc:483
+#: src/BackupWindow.cc:413 src/BackupWindow.cc:491
 msgid "Thread already in progress."
 msgstr ""
 
-#: src/BackupWindow.cc:412
+#: src/BackupWindow.cc:420
 msgid "Could not create directory: "
 msgstr ""
 
-#: src/BackupWindow.cc:419
+#: src/BackupWindow.cc:427
 msgid "No databases selected in configuration."
 msgstr ""
 
-#: src/BackupWindow.cc:428
+#: src/BackupWindow.cc:436
 msgid "Please enter a label for this backup (blank is ok):"
 msgstr ""
 
-#: src/BackupWindow.cc:440
+#: src/BackupWindow.cc:448
 msgid "Error starting backup thread: "
 msgstr ""
 
-#: src/BackupWindow.cc:445
+#: src/BackupWindow.cc:453
 msgid "Backup of "
 msgstr ""
 
-#: src/BackupWindow.cc:445 src/BackupWindow.cc:499
+#: src/BackupWindow.cc:453 src/BackupWindow.cc:507
 msgid " in progress..."
 msgstr ""
 
-#: src/BackupWindow.cc:459
+#: src/BackupWindow.cc:467
 msgid "Select backup to restore from"
 msgstr ""
 
-#: src/BackupWindow.cc:494
+#: src/BackupWindow.cc:502
 msgid "Error starting restore thread: "
 msgstr ""
 
-#: src/BackupWindow.cc:499
+#: src/BackupWindow.cc:507
 msgid "Restore of "
 msgstr ""
 
-#: src/BackupWindow.cc:546
+#: src/BackupWindow.cc:554
 msgid "Config saved successfully."
 msgstr ""
 
-#: src/BackupWindow.cc:584
+#: src/BackupWindow.cc:592
 msgid "and Barry contributors.  See AUTHORS file"
 msgstr ""
 
-#: src/BackupWindow.cc:585
+#: src/BackupWindow.cc:593
 msgid "for detailed contribution information."
 msgstr ""
 
-#: src/BackupWindow.cc:593
+#: src/BackupWindow.cc:601
 msgid "Using library: "
 msgstr ""
 
-#: src/DeviceIface.cc:83 src/DeviceIface.cc:146
+#: src/DeviceIface.cc:83 src/DeviceIface.cc:148
 msgid "Terminated by user."
 msgstr ""
 
@@ -398,7 +400,7 @@ msgstr ""
 msgid "Error on database: "
 msgstr ""
 
-#: src/DeviceIface.cc:312 src/DeviceIface.cc:337
+#: src/DeviceIface.cc:314 src/DeviceIface.cc:339
 msgid "Thread already running."
 msgstr ""
 
@@ -406,26 +408,26 @@ msgstr ""
 msgid "Active"
 msgstr ""
 
-#: src/Thread.cc:56 src/Thread.cc:124
+#: src/Thread.cc:56 src/Thread.cc:127
 msgid "Ready"
 msgstr ""
 
-#: src/Thread.cc:100 src/Thread.cc:115 src/Thread.cc:200
+#: src/Thread.cc:100 src/Thread.cc:118 src/Thread.cc:203
 msgid "Connected"
 msgstr ""
 
-#: src/Thread.cc:154
+#: src/Thread.cc:157
 msgid "Backup..."
 msgstr ""
 
-#: src/Thread.cc:193
+#: src/Thread.cc:196
 msgid " error: "
 msgstr ""
 
-#: src/Thread.cc:210
+#: src/Thread.cc:213
 msgid "Erasing database: "
 msgstr ""
 
-#: src/Thread.cc:216
+#: src/Thread.cc:219
 msgid "Restored database: "
 msgstr ""
