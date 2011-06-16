@@ -43,6 +43,7 @@ class BarryDesktopApp : public wxApp
 {
 private:
 	Barry::GlobalConfigFile m_global_config;
+	std::auto_ptr<Barry::Probe> m_probe;
 	Barry::Probe::Results m_results;
 	std::auto_ptr<OpenSync::APISet> m_set;
 
