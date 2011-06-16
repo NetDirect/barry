@@ -25,6 +25,7 @@
 #include "debug.h"
 #include "data.h"
 #include <errno.h>
+#include <string.h>
 #include <iostream>
 #include <algorithm>
 

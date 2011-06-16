@@ -31,7 +31,6 @@
 #include <sstream>
 #include <stdlib.h>
 #include <errno.h>
-#include <string.h>
 #include <limits.h>
 
 #ifndef __DEBUG_MODE__
