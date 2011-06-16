@@ -24,10 +24,10 @@
 #define __SB_USBWRAP_H__
 
 #include "dll.h"
-#include "publiccfg.h"
+#include "config.h"
 
 //////////////////////////////////////////////////////////////////////////////
-#if USE_LIBUSB
+#ifdef USE_LIBUSB_0_1
 
 #include <usb.h>
 
@@ -38,7 +38,7 @@
 #undef max
 #endif
 
-#else // USE_LIBUSB
+#else // USE_LIBUSB_0_1
 
 #if defined( WIN32 )
 // If not using libusb, we need to include windows.h ourselves, since
@@ -48,7 +48,7 @@
 #undef max
 #endif
 
-#endif // USE_LIBUSB
+#endif // USE_LIBUSB_0_1
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -92,7 +92,7 @@ public:
 
 /// Typedefs used by the wrapper class, in the hope to make it
 /// easier to switch from libusb stable to devel and back.
-#if USE_LIBUSB
+#ifdef USE_LIBUSB_0_1
 typedef struct usb_device*			DeviceIDType;
 typedef struct usb_dev_handle*			DeviceHandleType;
 typedef struct usb_device_descriptor		DeviceDescriptorType;

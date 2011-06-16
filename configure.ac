@@ -53,11 +53,6 @@ AC_LANG([C++])
 # Checks for libraries.
 #
 
-# If we are using configure, then we always are using LIBUSB.
-# This only gets set to 0 if compiling for some other USB related driver.
-USE_LIBUSB=1
-AC_SUBST([USE_LIBUSB])
-
 # libtar and libz don't have pkg-config files on many systems.
 # libz we can assume, but libtar we need to test for
 AC_ARG_WITH(libtar,
@@ -89,16 +84,134 @@ AC_SUBST(LIBZ_LIBS)
 
 AM_CONDITIONAL([WITH_BACKUP], [test "$LIBTAR_FOUND" = "1"])
 
-# generates LIBUSB_CFLAGS and LIBUSB_LIBS for us
-PKG_CHECK_MODULES([LIBUSB], [libusb],
-	[],
-	[echo "ERROR: Libusb not found automatically... build may fail if you don't specify --with-libusb";LIBUSB_CFLAGS="-I/usr/include" LIBUSB_LIBS="-lusb"])
+# Always use Barry sockets and low level USB access, rather than
+# attempting to use third party socket APIs.
+# 
+# Currently compiling without this flag won't work, but
+# it exists to allow areas of code which are only needed
+# when using Barry sockets to be easily marked
+#
+# The idea is that this is always set on Linux, but could be
+# disabled when building on Windows to allow a different
+# socket API to be used.
+AC_DEFINE([USE_BARRY_SOCKETS], [], [Define to use the low-level socket and USB code built into Barry.])
+USE_BARRY_SOCKETS=1
+AC_SUBST([USE_BARRY_SOCKETS])
+AM_CONDITIONAL([USE_BARRY_SOCKETS], [test "$USE_BARRY_SOCKETS" = "1"])
 
+# Work out which USB library to use.
+# Ultimately this is all to set a few variables:
+#    USB_LIBRARY_CFLAGS - Compiler flags for chosen USB library
+#    USB_LIBRARY_LIBS   - Linker flags for chosen USB library
+# And one of the following defines:
+#    USE_LIBUSB_0_1
+#    USE_LIBUSB_1_0
+
+# Check what USB libraries are available
+PKG_CHECK_MODULES([LIBUSB_0_1], [libusb],
+	[HAVE_LIBUSB_0_1=1],
+	[HAVE_LIBUSB_0_1=0])
+
+PKG_CHECK_MODULES([LIBUSB_1_0], [libusb-1.0],
+	[HAVE_LIBUSB_1_0=1],
+	[HAVE_LIBUSB_1_0=0])
+
+# Process any user provided 'with' arguments
 AC_ARG_WITH(libusb,
-	[  --with-libusb=<path>    root path of libusb installation],
-	[LIBUSB_CFLAGS="-I$with_libusb/include"
-	 LIBUSB_LIBS="-L$with_libusb/lib -lusb"],
+	AS_HELP_STRING([--with-libusb@<:@=<path>@:>@],
+		[use libusb 0.1 as the USB library, optionally providing the root path of libusb 0.1 installation]),
+	[
+	 case x"$with_libusb" in
+	 xyes)
+		USE_LIBUSB_0_1=1
+		;;
+	 xno)
+		USE_LIBUSB_0_1=0
+		;;
+	 x*)	 
+	 	LIBUSB_0_1_CFLAGS="-I$with_libusb/include"
+	 	LIBUSB_0_1_LIBS="-L$with_libusb/lib -lusb"
+        	USE_LIBUSB_0_1=1
+		;;
+	 esac
+	 ],
 	[])
+
+AC_ARG_WITH(libusb1_0,
+	AS_HELP_STRING([--with-libusb1_0@<:@=<path>@:>@],
+		[use libusb 1.0 as the USB library, optionally providing the root path of libusb 1.0 installation]),
+	[
+	 case x"$with_libusb1_0" in
+	 xyes)
+		USE_LIBUSB_1_0=1
+		;;
+	 xno)
+		USE_LIBUSB_1_0=0
+		;;
+	 x*)	 
+	  	LIBUSB_1_0_CFLAGS="-I$with_libusb1_0/include/libusb-1.0"
+	 	LIBUSB_1_0_LIBS="-L$with_libusb1_0/lib -lusb-1.0"
+        	USE_LIBUSB_1_0=1
+		;;
+	 esac
+	 ],
+	[])
+
+# Work out which USB library should be used.
+
+# Count how many libraries have been chosen
+USB_CHOSEN_COUNT=0
+if test x"$USE_LIBUSB_1_0" == x1 ; then
+   USB_CHOSEN_COUNT=$(($USB_CHOSEN_COUNT + 1))
+fi
+if test x"$USE_LIBUSB_0_1" == x1 ; then
+   USB_CHOSEN_COUNT=$(($USB_CHOSEN_COUNT + 1))
+fi
+
+case $USB_CHOSEN_COUNT in
+0)
+   # User didn't ask for a specific library, so pick one
+   if test -n "${LIBUSB_1_0_CFLAGS+x}" -a -n "${LIBUSB_1_0_LIBS+x}" -a x"$USE_LIBUSB_1_0" != x0 ; then
+      USE_LIBUSB_1_0=1
+   elif test -n "${LIBUSB_0_1_CFLAGS+x}" -a -n "${LIBUSB_0_1_LIBS+x}" -a x"$USE_LIBUSB_0_1" != x0 ; then
+      USE_LIBUSB_0_1=1
+   fi
+   ;;
+1)
+   # User explicitly asked for a library, the code below will pick this.
+   ;;
+*)
+   AC_MSG_ERROR([Multiple USB libraries specified, please only specify one --with-<USBLIBRARY> option to the configure script.])
+   ;;
+esac
+
+AC_MSG_CHECKING([for which USB library to use])
+if test x"$USE_LIBUSB_1_0" = x1 ; then
+   # User explicitly asked for libusb 1.0
+   USB_LIBRARY_CFLAGS="$LIBUSB_1_0_CFLAGS"
+   USB_LIBRARY_LIBS="$LIBUSB_1_0_LIBS"
+   USE_LIBUSB_1_0=1
+   AC_SUBST([USE_LIBUSB_1_0])
+   AC_DEFINE([USE_LIBUSB_1_0], [], [Define if libusb 1.0 interface should be used])
+   AC_MSG_RESULT([libusb-1.0])
+
+elif test x"$USE_LIBUSB_0_1" = x1 ; then
+   # User explicitly asked for libusb 0.1
+   USB_LIBRARY_CFLAGS="$LIBUSB_0_1_CFLAGS"
+   USB_LIBRARY_LIBS="$LIBUSB_0_1_LIBS"
+   USE_LIBUSB_0_1=1
+   AC_SUBST([USE_LIBUSB_0_1])
+   AC_DEFINE([USE_LIBUSB_0_1], [], [Define if libusb 0.1 interface should be used])
+   AC_MSG_RESULT([libusb-0.1])
+
+else
+   AC_MSG_RESULT([unknown])
+   AC_MSG_WARN("ERROR: No USB library found automatically... build may fail if you don't specify --with-libusb or --with-libusb-1.0")
+fi
+AC_SUBST([USB_LIBRARY_CFLAGS])
+AC_SUBST([USB_LIBRARY_LIBS])
+AM_CONDITIONAL([USE_LIBUSB_0_1], [test "$USE_LIBUSB_0_1" = "1"])
+AM_CONDITIONAL([USE_LIBUSB_1_0], [test "$USE_LIBUSB_1_0" = "1"])
 
 #
 # Allow user to disable libbarrysync, since it depends on glib-2.0 which
@@ -314,7 +427,6 @@ AC_C_BIGENDIAN
 AC_CONFIG_FILES([Makefile
                  po/Makefile.in
                  src/Makefile
-                 src/publiccfg.h
                  tools/Makefile
                  examples/Makefile
                  man/Makefile

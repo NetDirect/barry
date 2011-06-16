@@ -30,9 +30,8 @@ LIB_BARRY_VERSION = @BARRY_MAJOR@:@BARRY_MINOR@:0
 # Disable the default -I. -I$(srcdir) -I$(topdir), etc, but $(top_builddir) is
 # needed for config.h
 DEFAULT_INCLUDES = -I$(top_builddir)
-#INCLUDES = @PACKAGE_CXXFLAGS@ -I@LIBUSB_INC_PATH@
-#INCLUDES = $(LIBUSB_CFLAGS) $(OPENSSL_CFLAGS)
-INCLUDES = $(LIBUSB_CFLAGS)
+#INCLUDES = $(USB_LIBRARY_CFLAGS) $(OPENSSL_CFLAGS)
+INCLUDES = $(USB_LIBRARY_CFLAGS)
 #AM_CXXFLAGS = -ansi -Wall -fno-strict-aliasing -g -D__DEBUG_MODE__
 AM_CFLAGS = -Wall -fno-strict-aliasing -g -D__BARRY_LIBRARY_BUILD__
 AM_CXXFLAGS = -Wall -fno-strict-aliasing -g -D__BARRY_LIBRARY_BUILD__
@@ -86,7 +85,6 @@ endif
 
 include_barry_HEADERS = barry.h barrysync.h barrybackup.h barryalx.h \
 	dll.h \
-	publiccfg.h \
 	builder.h \
 	common.h \
 	configfile.h \
@@ -140,7 +138,6 @@ include_barry_HEADERS = barry.h barrysync.h barrybackup.h barryalx.h \
 	time.h \
 	threadwrap.h \
 	vsmartptr.h \
-	usbwrap.h \
 	version.h \
 	pppfilter.h \
 	sha1.h \
@@ -199,7 +196,6 @@ libbarry_la_SOURCES = dll.h \
 	bmp.h bmp-internal.h bmp.cc \
 	cod.h cod-internal.h cod.cc \
 	data.h data.cc \
-	usbwrap.h usbwrap.cc \
 	pin.h pin.cc \
 	probe.h probe.cc \
 	common.h common.cc \
@@ -246,8 +242,19 @@ libbarry_la_SOURCES = dll.h \
 	pppfilter.h pppfilter.cc \
 	sha1.h sha1.cc \
 	iconv.h iconv.cc
-#libbarry_la_LIBADD = $(LTLIBOBJS) $(LIBUSB_LIBS) $(OPENSSL_LIBS)
-libbarry_la_LIBADD = $(LTLIBOBJS) $(LIBUSB_LIBS) $(ZLIB_LIBS) @LTLIBICONV@
+
+# Now sort out USB files
+if USE_BARRY_SOCKETS
+include_barry_HEADERS += usbwrap.h
+
+libbarry_la_SOURCES += usbwrap.cc
+
+endif # USE_BARRY_SOCKETS
+
+
+
+#libbarry_la_LIBADD = $(LTLIBOBJS) $(USB_LIBRARY_LIBS) $(OPENSSL_LIBS)
+libbarry_la_LIBADD = $(LTLIBOBJS) $(USB_LIBRARY_LIBS) $(ZLIB_LIBS) @LTLIBICONV@
 libbarry_la_LDFLAGS = -version-info ${LIB_BARRY_VERSION}
 
 libbarrydp_la_SOURCES = \
@@ -262,7 +269,7 @@ libbarryjdwp_la_SOURCES = \
 	j_message.h j_message.cc \
 	j_server.h j_server.cc \
 	j_manager.h j_manager.cc
-libbarryjdwp_la_LIBADD = libbarry.la libbarrydp.la $(LIBUSB_LIBS)
+libbarryjdwp_la_LIBADD = libbarry.la libbarrydp.la $(USB_LIBRARY_LIBS)
 libbarryjdwp_la_LDFLAGS = -version-info ${LIB_BARRY_VERSION}
 
 if WITH_SYNC

@@ -22,9 +22,9 @@
 #include "common.h"
 #include <pthread.h>
 #include "debug.h"
-#include "publiccfg.h"
+#include "config.h"
 
-#if USE_LIBUSB
+#ifdef USE_LIBUSB_0_1
 #include <usb.h>
 #endif
 
@@ -57,7 +57,7 @@ void Init(bool data_dump_mode, std::ostream *logStream)
 {
 	static bool initialized = false;
 
-#if USE_LIBUSB
+#ifdef USE_LIBUSB_0_1
 	// set usb debug mode first, so that USB's initialization
 	// is captured too
 	if( data_dump_mode )
@@ -70,7 +70,7 @@ void Init(bool data_dump_mode, std::ostream *logStream)
 		// level value will be used instead of our 9 above...
 		// if you need to *force* this to 9, call Verbose(true)
 		// after Init()
-#if USE_LIBUSB
+#ifdef USE_LIBUSB_0_1
 		usb_init();
 #endif
 
@@ -99,7 +99,7 @@ void Verbose(bool data_dump_mode)
 {
 	__data_dump_mode__ = data_dump_mode;
 
-#if USE_LIBUSB
+#ifdef USE_LIBUSB_0_1
 	if( data_dump_mode )
 		usb_set_debug(9);
 	else
