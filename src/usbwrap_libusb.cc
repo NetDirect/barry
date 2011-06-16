@@ -122,6 +122,36 @@ DeviceList::~DeviceList()
 {
 }
 
+
+static bool ToNum(const char *str, long &num)
+{
+	char *end = 0;
+	num = strtol(str, &end, 10);
+	return	num >= 0 &&			// no negative numbers
+		num != LONG_MIN && num != LONG_MAX &&	// no overflow
+		str != end && *end == '\0';	// whole string valid
+}
+
+//
+// Linux treats bus and device path names as numbers, sometimes left
+// padded with zeros.  Other platforms, such as Windows, use strings,
+// such as "bus-1" or similar.
+//
+// Here we try to convert each string to a number, and if successful,
+// compare them.  If unable to convert, then compare as strings.
+// This way, "3" == "003" and "bus-foobar" == "bus-foobar".
+//
+static bool NameCompare(const char *n1, const char *n2)
+{
+	long l1, l2;
+	if( ToNum(n1, l1) && ToNum(n2, l2) ) {
+		return l1 == l2;
+	}
+	else {
+		return strcmp(n1, n2) == 0;
+	}
+}
+
 std::vector<DeviceID*> DeviceList::MatchDevices(int vendor, int product,
 					    const char *busname, const char *devname)
 {

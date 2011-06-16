@@ -216,9 +216,6 @@ class BXEXPORT DeviceList
 private:
 	// Private implementation structure
 	const std::auto_ptr<DeviceListImpl> m_impl;
-protected:
-	static bool ToNum(const char *str, long &num);
-	static bool NameCompare(const char *n1, const char *n2);
 public:
 	DeviceList();
 	~DeviceList();
