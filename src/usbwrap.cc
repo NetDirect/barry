@@ -226,9 +226,10 @@ EndpointDescriptor::EpType EndpointDescriptor::Type() const
 ///////////////////////////////////////////////////////////////////////////////
 // Match
 
-Match::Match(int vendor, int product,
+Match::Match(DeviceList& devices,
+	     int vendor, int product,
 	     const char *busname, const char *devname)
-	: m_list(m_devices.MatchDevices(vendor, product, busname, devname))
+	: m_list(devices.MatchDevices(vendor, product, busname, devname))
 	, m_iter(m_list.begin())
 {
 

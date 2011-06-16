@@ -92,6 +92,7 @@ public:
 	typedef std::vector<ProbeResult>		Results;
 
 private:
+	Usb::DeviceList m_devices;
 	Results m_results;
 
 	std::vector<std::string> m_fail_msgs;

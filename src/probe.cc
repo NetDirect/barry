@@ -167,7 +167,7 @@ void Probe::ProbeMatching(int vendor, int product,
 {
 	Usb::DeviceID* devid;
 
-	Match match(vendor, product, busname, devname);
+	Match match(m_devices, vendor, product, busname, devname);
 	while( match.next_device(devid) ) try {
 		ProbeDevice(devid);
 	}

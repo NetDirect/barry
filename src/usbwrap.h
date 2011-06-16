@@ -326,12 +326,15 @@ public:
 class BXEXPORT Match
 {
 private:
-	DeviceList m_devices;
 	std::vector<DeviceID*> m_list;
 	std::vector<DeviceID*>::iterator m_iter;
 public:
-	Match(int vendor, int product,
-		const char *busname = 0, const char *devname = 0);
+	// Due to USB libraries having different ownership ideas
+	// about device IDs, Match objects must be constructed
+	// with a device list.
+	Match(DeviceList& devices,
+	      int vendor, int product,
+	      const char *busname = 0, const char *devname = 0);	
 	~Match();
 
 	// searches for next match, and if found, fills devid with
