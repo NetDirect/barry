@@ -74,11 +74,7 @@ likely want to also install barry-util and barry-gui.
 %package -n libbarry-devel
 Summary: BlackBerry(tm) Desktop for Linux - libbarry libraries
 Group: Development/Libraries
-%if 0%{?suse_version}
-Requires: libbarry0 libusb boost-devel
-%else
-Requires: libbarry0 libusb-devel boost-devel
-%endif
+Requires: libbarry0 boost-devel
 
 %description -n libbarry-devel
 Barry is a desktop toolset for managing your BlackBerry(tm) device. (BlackBerry
@@ -416,6 +412,7 @@ desktop-file-install --vendor netdirect \
 %changelog
 * Thu Feb 10 2011 Chris Frey <cdfrey@foursquare.net> 0.18.0-0
 - version bump
+- removed dependency of libbarry-devel on libusb(-devel)
 
 * Fri May 28 2010 Chris Frey <cdfrey@foursquare.net> 0.17.0-0
 - version bump
