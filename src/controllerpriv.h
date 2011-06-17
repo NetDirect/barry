@@ -23,7 +23,6 @@
 #define __BARRY_CONTROLLERPRIVATE_H__
 
 #include "probe.h"
-#include "usbwrap.h"
 #include "pin.h"
 #include "socket.h"
 #include "router.h"
