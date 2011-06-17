@@ -33,27 +33,10 @@
 
 #define USBWRAP_DEFAULT_TIMEOUT	30000
 
-#define VENDOR_RIM		0x0fca
-#define PRODUCT_RIM_BLACKBERRY	0x0001
-#define PRODUCT_RIM_PEARL_DUAL	0x0004
-#define PRODUCT_RIM_PEARL_FLIP	0x8001		// 8200 series
-#define PRODUCT_RIM_PEARL_8120	0x8004
-#define PRODUCT_RIM_PEARL	0x0006
-#define PRODUCT_RIM_STORM	0x8007
 // Matches any product ID when calling DeviceList::MatchDevices
 #define PRODUCT_ANY             0x10000
 // Indicates an unknown product ID
 #define PRODUCT_UNKNOWN         0x20000
-
-#define BLACKBERRY_INTERFACE		0
-#define BLACKBERRY_CONFIGURATION	1
-// USB interface classes
-#define BLACKBERRY_MS_CLASS             8
-#define BLACKBERRY_DB_CLASS		0xff
-
-#define IPRODUCT_RIM_HANDHELD		2
-#define IPRODUCT_RIM_MASS_STORAGE	4
-#define IPRODUCT_RIM_COMPOSITE		5
 
 namespace Barry { class Data; }
 
