@@ -105,10 +105,10 @@ public:
 	static int Init();
 	static void Uninit();
 	static void SetDataDump(bool data_dump_mode);
-	static const char* BusName(DeviceID* dev);
-	static uint16_t DeviceNumber(DeviceID* dev);
-	static const char* FileName(DeviceID* dev);
-	static uint16_t DeviceIdProduct(DeviceID* dev);
+	static const char* GetBusName(DeviceID* dev);
+	static uint16_t GetDeviceNumber(DeviceID* dev);
+	static const char* GetFileName(DeviceID* dev);
+	static uint16_t GetDeviceIdProduct(DeviceID* dev);
 };
 
 // Forward declaration of descriptor types.
@@ -141,8 +141,8 @@ public:
 	EndpointDescriptor(InterfaceDescriptor& dev, int endpoint);
 	~EndpointDescriptor();
 	bool IsRead() const;
-	uint8_t Address() const;
-	EpType Type() const;
+	uint8_t GetAddress() const;
+	EpType GetType() const;
 };
 
 // Private struct for holding library specific
@@ -163,8 +163,8 @@ public:
 	InterfaceDescriptor(ConfigDescriptor& cfgdesc,
 			    int interface, int altsetting);
 	~InterfaceDescriptor();
-	uint8_t Class() const;
-	uint8_t Number() const;
+	uint8_t GetClass() const;
+	uint8_t GetNumber() const;
 };
 
 // Private struct for holding library specific
@@ -185,7 +185,7 @@ private:
 public:
 	ConfigDescriptor(DeviceDescriptor& dev, int cfgnumber);
 	~ConfigDescriptor();
-	uint8_t Number() const;
+	uint8_t GetNumber() const;
 };
 
 // Private struct for holding library specific
@@ -254,7 +254,7 @@ public:
 	/////////////////////////////
 	// Device information
 
-	int PowerLevel();
+	int GetPowerLevel();
 	int FindInterface(int ifaceClass);
 
 	/////////////////////////////

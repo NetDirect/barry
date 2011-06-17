@@ -78,22 +78,22 @@ void LibraryInterface::SetDataDump(bool data_dump_mode)
 		usb_set_debug(0);
 }
 
-const char* LibraryInterface::BusName(DeviceID* dev)
+const char* LibraryInterface::GetBusName(DeviceID* dev)
 {
         return dev->m_dev->bus->dirname;
 }
 
-uint16_t LibraryInterface::DeviceNumber(DeviceID* dev)
+uint16_t LibraryInterface::GetDeviceNumber(DeviceID* dev)
 {
 	return dev->m_dev->devnum;
 }
 
-const char* LibraryInterface::FileName(DeviceID* dev)
+const char* LibraryInterface::GetFileName(DeviceID* dev)
 {
 	return dev->m_dev->filename;
 }
 
-uint16_t LibraryInterface::DeviceIdProduct(DeviceID* dev)
+uint16_t LibraryInterface::GetDeviceIdProduct(DeviceID* dev)
 {
 	return dev->m_dev->descriptor.idProduct;
 }
@@ -369,7 +369,7 @@ bool Device::GetConfiguration(unsigned char &cfg)
 }
 
 // Returns the current power level of the device, or 0 if unknown
-int Device::PowerLevel()
+int Device::GetPowerLevel()
 {
 	if( !m_id->m_dev->config ||
 	    !m_id->m_dev->descriptor.bNumConfigurations < 1 )
@@ -491,7 +491,7 @@ DeviceDescriptor::DeviceDescriptor(DeviceID* devid)
 	// Create all the configs
 	for( int i = 0; i < m_impl->m_desc.bNumConfigurations; ++i ) {
 		std::auto_ptr<ConfigDescriptor> ptr(new ConfigDescriptor(*this, i));
-		(*this)[ptr->Number()] = ptr.get();
+		(*this)[ptr->GetNumber()] = ptr.get();
 		ptr.release();
 	}
 }
@@ -545,7 +545,7 @@ ConfigDescriptor::ConfigDescriptor(DeviceDescriptor& dev, int cfgnumber)
 		for( int j = 0; j < interface->num_altsetting; ++j ) {
 			std::auto_ptr<InterfaceDescriptor> ptr(
 				new InterfaceDescriptor(*this, i, j));
-			(*this)[ptr->Number()] = ptr.get();
+			(*this)[ptr->GetNumber()] = ptr.get();
 			ptr.release();
 		}
 	}
@@ -559,7 +559,7 @@ ConfigDescriptor::~ConfigDescriptor()
 		      deleteMapPtr<int, InterfaceDescriptor>);
 }
 
-uint8_t ConfigDescriptor::Number() const {
+uint8_t ConfigDescriptor::GetNumber() const {
 	return m_impl->m_desc.bConfigurationValue;
 }
 
@@ -617,12 +617,12 @@ InterfaceDescriptor::~InterfaceDescriptor()
 		      deletePtr<EndpointDescriptor>);
 }
 
-uint8_t InterfaceDescriptor::Class() const
+uint8_t InterfaceDescriptor::GetClass() const
 {
 	return m_impl->m_desc.bInterfaceClass;
 }
 
-uint8_t InterfaceDescriptor::Number() const
+uint8_t InterfaceDescriptor::GetNumber() const
 {
 	return m_impl->m_desc.bInterfaceNumber;
 }

@@ -127,22 +127,22 @@ EndpointPairings::EndpointPairings(const std::vector<EndpointDescriptor*>& eps)
 		const EndpointDescriptor& desc = **iter;
 		if( desc.IsRead() ) {
 			// Read endpoint
-			pair.read = desc.Address();
+			pair.read = desc.GetAddress();
 			dout("        pair.read = 0x" << std::hex << (unsigned int)pair.read);
-			if( pair.IsTypeSet() && pair.type != desc.Type() ) {
+			if( pair.IsTypeSet() && pair.type != desc.GetType() ) {
 				// if type is already set, we must start over
 				pair.write = 0;
 			}
 		} else {
 			// Write endpoint
-			pair.write = desc.Address();
+			pair.write = desc.GetAddress();
 			dout("        pair.write = 0x" << std::hex << (unsigned int)pair.write);
-			if( pair.IsTypeSet() && pair.type != desc.Type() ) {
+			if( pair.IsTypeSet() && pair.type != desc.GetType() ) {
 				// if type is already set, we must start over
 				pair.read = 0;
 			}
 		}
-		pair.type = desc.Type();
+		pair.type = desc.GetType();
 
 		dout("        pair.type = 0x" << std::hex << (unsigned int)pair.type);
 
@@ -179,12 +179,12 @@ bool EndpointDescriptor::IsRead() const
 	return m_read;
 }
 
-uint8_t EndpointDescriptor::Address() const
+uint8_t EndpointDescriptor::GetAddress() const
 {
 	return m_addr;
 }
 
-EndpointDescriptor::EpType EndpointDescriptor::Type() const
+EndpointDescriptor::EpType EndpointDescriptor::GetType() const
 {
 	return m_type;
 }

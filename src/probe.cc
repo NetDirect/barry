@@ -192,7 +192,7 @@ void Probe::ProbeDevice(Usb::DeviceID* devid)
 	// search for interface class
 	ConfigDescriptor::base_type::iterator idi = config->begin();
 	for( ; idi != config->end(); idi++ ) {
-		if( idi->second->Class() == BLACKBERRY_DB_CLASS )
+		if( idi->second->GetClass() == BLACKBERRY_DB_CLASS )
 			break;
 	}
 	if( idi == config->end() ) {
@@ -201,7 +201,7 @@ void Probe::ProbeDevice(Usb::DeviceID* devid)
 		return;	// not found
 	}
 
-	unsigned char InterfaceNumber = idi->second->Number();
+	unsigned char InterfaceNumber = idi->second->GetNumber();
 	dout("Probe: using InterfaceNumber: " << (unsigned int) InterfaceNumber);
 
 	// check endpoint validity
