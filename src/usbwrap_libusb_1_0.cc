@@ -67,7 +67,10 @@ static const struct {
 	{ LIBUSB_ERROR_INTERRUPTED, -EINTR },
 	{ LIBUSB_ERROR_NO_MEM, -ENOMEM },
 	{ LIBUSB_ERROR_NOT_SUPPORTED, -ENOSYS },
-	{ LIBUSB_ERROR_OTHER, -EPERM }	
+	// FIXME - Permissions errors should be explicit... otherwise we might
+	// be chasing the wrong error.  Change the system error to 0
+	// to indicate unknown, but keep support for the "Other" message.
+	{ LIBUSB_ERROR_OTHER, 0 }
 };
 
 static const int errorCodeCnt = sizeof(errorCodes) / sizeof(errorCodes[0]);
