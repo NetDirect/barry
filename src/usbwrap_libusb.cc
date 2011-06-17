@@ -48,10 +48,16 @@ template<typename K, typename T> static void deleteMapPtr(std::pair<K,T*> ptr) {
 ///////////////////////////////////////////////////////////////////////////////
 // Static functions
 
-std::string LibraryInterface::GetLastErrorString(int /*errcode*/)
+std::string LibraryInterface::GetLastErrorString(int /*libusb_errcode*/)
 {
 	// Errcode is unused by libusb, so just call the last error
 	return std::string(usb_strerror());
+}
+
+int LibraryInterface::TranslateErrcode(int libusb_errcode)
+{
+	// libusb errcode == system errcode
+	return libusb_errcode;
 }
 
 int LibraryInterface::Init()

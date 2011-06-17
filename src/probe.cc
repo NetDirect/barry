@@ -173,7 +173,7 @@ void Probe::ProbeMatching(int vendor, int product,
 	}
 	catch( Usb::Error &e ) {
 		dout("Usb::Error exception caught: " << e.what());
-		if( e.errcode() == -EBUSY ) {
+		if( e.system_errcode() == -EBUSY ) {
 			m_fail_count++;
 			m_fail_msgs.push_back(e.what());
 		}

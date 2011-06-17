@@ -53,29 +53,36 @@ namespace Usb {
 ///////////////////////////////////////////////////////////////////////////////
 // Usb::Error exception class
 
-static std::string GetErrorString(int errcode, const std::string &str)
+static std::string GetErrorString(int libusb_errcode, const std::string &str)
 {
 	std::ostringstream oss;
 	oss << "(";
 
-	if( errcode ) {
-		oss << std::setbase(10) << errcode << ", ";
+	if( libusb_errcode ) {
+		oss << std::dec << libusb_errcode << " ("
+		    << LibraryInterface::TranslateErrcode(libusb_errcode)
+		    << "), ";
 	}
-	oss << LibraryInterface::GetLastErrorString(errcode) << "): ";
+	oss << LibraryInterface::GetLastErrorString(libusb_errcode) << "): ";
 	oss << str;
 	return oss.str();
 }
 
 Error::Error(const std::string &str)
 	: Barry::Error(GetErrorString(0, str))
-	, m_errcode(0)
+	, m_libusb_errcode(0)
 {
 }
 
-Error::Error(int errcode, const std::string &str)
-	: Barry::Error(GetErrorString(errcode, str))
-	, m_errcode(errcode)
+Error::Error(int libusb_errcode, const std::string &str)
+	: Barry::Error(GetErrorString(libusb_errcode, str))
+	, m_libusb_errcode(libusb_errcode)
 {
+}
+
+int Error::system_errcode() const
+{
+	return LibraryInterface::TranslateErrcode(m_libusb_errcode);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

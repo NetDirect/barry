@@ -50,14 +50,18 @@ namespace Usb {
 /// Thrown on low level USB errors.
 class BXEXPORT Error : public Barry::Error
 {
-	int m_errcode;
+	int m_libusb_errcode;
 
 public:
 	Error(const std::string &str);
 	Error(int errcode, const std::string &str);
 
 	// can return 0 in some case, if unknown error code
-	int errcode() const { return m_errcode; }
+	int libusb_errcode() const { return m_libusb_errcode; }
+
+	// returns a translated system error code when using libusb 1.0
+	// returns 0 if unknown or unable to translate
+	int system_errcode() const;
 };
 
 class BXEXPORT Timeout : public Error
@@ -84,7 +88,8 @@ struct DeviceHandle;
 class BXEXPORT LibraryInterface
 {
 public:
-	static std::string GetLastErrorString(int errcode);
+	static std::string GetLastErrorString(int libusb_errcode);
+	static int TranslateErrcode(int libusb_errcode);
 	static int Init();
 	static void Uninit();
 	static void SetDataDump(bool data_dump_mode);

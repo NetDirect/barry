@@ -72,18 +72,6 @@ static const struct {
 
 static const int errorCodeCnt = sizeof(errorCodes) / sizeof(errorCodes[0]);
 
-// helper function to translate libusb error codes into more useful values
-static int translateError(int err)
-{
-	for( int i = 0; i < errorCodeCnt; ++i )	{
-		if( errorCodes[i].libusb == err )
-			return errorCodes[i].system;
-	}
-	// default to passing unknown errors out
-	return err;
-}
-
-
 
 ///////////////////////////////////////////////////////////////////////////////
 // Global libusb library context
@@ -92,19 +80,9 @@ static libusb_context* libusbctx;
 ///////////////////////////////////////////////////////////////////////////////
 // Static functions
 
-std::string LibraryInterface::GetLastErrorString(int errcode)
+std::string LibraryInterface::GetLastErrorString(int libusb_errcode)
 {
-	// This takes the error codes as translated using the
-	// translateError function above, so need to convert it
-	// back first
-	int libusberr = errcode;
-	for( int i = 0; i < errorCodeCnt; ++i ) {
-		if( errorCodes[i].system == errcode ) {
-			libusberr = errorCodes[i].libusb;
-			break;
-		}
-	}
-	switch(libusberr)
+	switch( libusb_errcode )
 	{
 	case LIBUSB_SUCCESS:
 		return "Success";
@@ -137,6 +115,18 @@ std::string LibraryInterface::GetLastErrorString(int errcode)
 	default:
 		return "Unknown LIBUSB error code";
 	}
+}
+
+// helper function to translate libusb error codes into more useful values
+int LibraryInterface::TranslateErrcode(int libusb_errcode)
+{
+	for( int i = 0; i < errorCodeCnt; ++i ) {
+		if( errorCodes[i].libusb == libusb_errcode )
+			return errorCodes[i].system;
+	}
+
+	// default to 0 if unknown
+	return 0;
 }
 
 int LibraryInterface::Init()
@@ -337,13 +327,12 @@ bool Device::BulkRead(int ep, Barry::Data &data, int timeout)
 			// otherwise treat it as success.
 			if( ret == LIBUSB_ERROR_TIMEOUT ) {
 				if( transferred == 0 )
-					throw Timeout(translateError(ret),
-						      "Timeout in BulkRead");
+					throw Timeout(ret, "Timeout in BulkRead");
 				else
 					dout("Read timed out with some data transferred... possible partial read");
 			}
 			else if( ret != LIBUSB_ERROR_TIMEOUT )
-				throw Error(translateError(ret), "Error in BulkRead");
+				throw Error(ret, "Error in BulkRead");
 		}
 		if( transferred != 0 )
 			data.ReleaseBuffer(transferred);
@@ -372,7 +361,7 @@ bool Device::BulkWrite(int ep, const Barry::Data &data, int timeout)
 			if( ret == LIBUSB_ERROR_TIMEOUT && transferred == 0 )
 				throw Timeout(ret, "Timeout in BulkWrite");
 			else if( ret != LIBUSB_ERROR_TIMEOUT )
-				throw Error(translateError(ret), "Error in BulkWrite");
+				throw Error(ret, "Error in BulkWrite");
 		}
 		if( ret >= 0 &&
 		    (unsigned int)transferred != data.GetSize() ) {
@@ -409,7 +398,7 @@ bool Device::BulkWrite(int ep, const void *data, size_t size, int timeout)
 			if( ret == LIBUSB_ERROR_TIMEOUT && transferred == 0 )
 				throw Timeout(ret, "Timeout in BulkWrite (2)");
 			else if( ret != LIBUSB_ERROR_TIMEOUT )
-				throw Error(translateError(ret), "Error in BulkWrite (2)");
+				throw Error(ret, "Error in BulkWrite (2)");
 		}
 		if( ret >= 0 && (unsigned int)transferred != size ) {
 			dout("Failed to write all data on ep: " << ep <<
@@ -446,7 +435,7 @@ bool Device::InterruptRead(int ep, Barry::Data &data, int timeout)
 					dout("Read timed out with some data transferred... possible partial read");
 			}
 			else if( ret != LIBUSB_ERROR_TIMEOUT )
-				throw Error(translateError(ret), "Error in InterruptRead");
+				throw Error(ret, "Error in InterruptRead");
 		}
 		if( transferred != 0 )
 			data.ReleaseBuffer(transferred);
@@ -474,9 +463,9 @@ bool Device::InterruptWrite(int ep, const Barry::Data &data, int timeout)
 			// only notify of a timeout if no data was transferred,
 			// otherwise treat it as success.
 			if( ret == LIBUSB_ERROR_TIMEOUT && transferred == 0 )
-				throw Timeout(translateError(ret), "Timeout in InterruptWrite");
+				throw Timeout(ret, "Timeout in InterruptWrite");
 			else if( ret != LIBUSB_ERROR_TIMEOUT )
-				throw Error(translateError(ret), "Error in InterruptWrite");
+				throw Error(ret, "Error in InterruptWrite");
 		}
 		if( ret >= 0 && 
 		    (unsigned int)transferred != data.GetSize() ) {
@@ -593,7 +582,7 @@ Interface::Interface(Device &dev, int iface)
 	dout("libusb_claim_interface(" << dev.GetHandle()->m_handle << ", 0x" << std::hex << iface << ")");
 	int ret = libusb_claim_interface(dev.GetHandle()->m_handle, iface);
 	if( ret < 0 )
-		throw Error(translateError(ret), "claim interface failed");
+		throw Error(ret, "claim interface failed");
 }
 
 Interface::~Interface()
