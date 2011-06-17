@@ -34,7 +34,7 @@
 #endif
 #include "debug.h"
 
-using namespace Usb;
+namespace Usb {
 
 // helper function to make deleting pointers in maps and vectors easier
 template<typename T> static void deletePtr(T* ptr) {
@@ -673,3 +673,6 @@ EndpointDescriptor::EndpointDescriptor(InterfaceDescriptor& interface, int endpo
 EndpointDescriptor::~EndpointDescriptor()
 {
 }
+
+} // namespace Usb
+
