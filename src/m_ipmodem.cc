@@ -414,19 +414,24 @@ void IpModem::Close()
 	memcpy(&end[24], special_flag, sizeof(special_flag));
 	m_dev.BulkWrite(write_ep, end, sizeof(end));
 	m_dev.BulkWrite(write_ep, stop, sizeof(stop));
-	try {
-		m_dev.BulkRead(read_ep, data, 5000);
-		ddout("IPModem: Close read packet:\n" << data);
-	}
-	catch( Usb::Timeout &to ) {
-		// do nothing on timeouts
-		ddout("IPModem: Close Read Timeout");
-	}
+
 	// stop the read thread
 	if( m_continue_reading ) {
 		m_continue_reading = false;
 		pthread_join(m_modem_read_thread, NULL);
 	}
+	else {
+		// otherwise, drain the last read
+		try {
+			m_dev.BulkRead(read_ep, data, 5000);
+			ddout("IPModem: Close read packet:\n" << data);
+		}
+		catch( Usb::Timeout &to ) {
+			// do nothing on timeouts
+			ddout("IPModem: Close Read Timeout");
+		}
+	}
+
 	ddout("IPmodem: Closed!");
 
 }
