@@ -24,6 +24,7 @@
 #include "error.h"
 #include "config.h"
 #include <iconv.h>
+#include <iostream>
 #include <errno.h>
 #include <string>
 
