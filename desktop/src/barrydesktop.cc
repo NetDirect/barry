@@ -62,8 +62,8 @@ void BarryDesktopApp::Probe()
 
 	try {
 		// This can throw Usb::Error exceptions
-		m_probe.reset(new Barry::Probe());
-		m_results = m_probe->GetResults();
+		Barry::Probe probe;
+		m_results = probe.GetResults();
 	}
 	catch( Usb::Error &e ) {
 		wxString msg = _T("A serious error occurred while probing the USB subsystem for BlackBerry(R) devices: ");
