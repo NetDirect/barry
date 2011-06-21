@@ -39,6 +39,7 @@ struct BXEXPORT ProbeResult
 
 	Usb::DeviceID* m_dev;
 	unsigned char m_interface;
+	unsigned char m_altsetting;
 	Barry::Pin m_pin;
 	Usb::EndpointPair m_ep;
 	Usb::EndpointPair m_epModem;

@@ -93,10 +93,7 @@ void Controller::SetupUsb(const ProbeResult &device)
 	m_priv->m_iface = new Usb::Interface(m_priv->m_dev, device.m_interface);
 
 	if( device.m_needSetAltInterface ) {
-		// TODO: This doesn't seem correct behaviour as
-		// an alt setting number for the interface should be
-		// used as the parameter
-		m_priv->m_iface->SetAltInterface(device.m_interface);
+		m_priv->m_iface->SetAltInterface(device.m_altsetting);
 	}
 
 	if( device.m_needClearHalt ) {

@@ -202,7 +202,9 @@ void Probe::ProbeDevice(Usb::DeviceID* devid)
 	}
 
 	unsigned char InterfaceNumber = idi->second->GetNumber();
-	dout("Probe: using InterfaceNumber: " << (unsigned int) InterfaceNumber);
+	unsigned char InterfaceAltSetting = idi->second->GetAltSetting();
+	dout("Probe: using InterfaceNumber: " << (unsigned int) InterfaceNumber <<
+	     " AltSetting: " << (unsigned int) InterfaceAltSetting);
 
 	// check endpoint validity
 	EndpointPairings ep(*(*config)[InterfaceNumber]);
@@ -217,6 +219,7 @@ void Probe::ProbeDevice(Usb::DeviceID* devid)
 	ProbeResult result;
 	result.m_dev = devid;
 	result.m_interface = InterfaceNumber;
+	result.m_altsetting = InterfaceAltSetting;
 	result.m_zeroSocketSequence = 0;
 
 	// open device
@@ -252,7 +255,7 @@ void Probe::ProbeDevice(Usb::DeviceID* devid)
 		// on some devices, so is only used if necessary.
 		dout("Probe: probing endpoints failed, retrying after setting alternate interface");
 		
-		iface.SetAltInterface(InterfaceNumber);
+		iface.SetAltInterface(InterfaceAltSetting);
 		result.m_needSetAltInterface = true;
 		ProbeDeviceEndpoints(dev, ep, result);
 	}

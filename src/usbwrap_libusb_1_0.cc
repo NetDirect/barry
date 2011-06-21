@@ -801,6 +801,11 @@ uint8_t InterfaceDescriptor::GetNumber() const
 	return m_impl->m_desc->bInterfaceNumber;
 }
 
+uint8_t InterfaceDescriptor::GetAltSetting() const
+{
+	return m_impl->m_desc->bAlternateSetting;
+}
+
 /////////////////////////////////////////////////////////////////////////////////
 // EndpointDescriptor
 

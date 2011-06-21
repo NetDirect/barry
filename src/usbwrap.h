@@ -153,6 +153,7 @@ public:
 	~InterfaceDescriptor();
 	uint8_t GetClass() const;
 	uint8_t GetNumber() const;
+	uint8_t GetAltSetting() const;
 };
 
 // Private struct for holding library specific
