@@ -84,24 +84,36 @@ void LibraryInterface::SetDataDump(bool data_dump_mode)
 		usb_set_debug(0);
 }
 
-const char* LibraryInterface::GetBusName(DeviceID* dev)
+///////////////////////////////////////////////////////////////////////////////
+// DeviceID
+
+DeviceID::DeviceID(DeviceIDImpl* impl)
+	: m_impl(impl)
 {
-        return dev->m_dev->bus->dirname;
 }
 
-uint16_t LibraryInterface::GetDeviceNumber(DeviceID* dev)
+DeviceID::~DeviceID()
 {
-	return dev->m_dev->devnum;
 }
 
-const char* LibraryInterface::GetFileName(DeviceID* dev)
+const char* DeviceID::GetBusName() const
 {
-	return dev->m_dev->filename;
+        return m_impl->m_dev->bus->dirname;
 }
 
-uint16_t LibraryInterface::GetDeviceIdProduct(DeviceID* dev)
+uint16_t DeviceID::GetNumber() const
 {
-	return dev->m_dev->descriptor.idProduct;
+	return m_impl->m_dev->devnum;
+}
+
+const char* DeviceID::GetFileName() const
+{
+	return m_impl->m_dev->filename;
+}
+
+uint16_t DeviceID::GetIdProduct() const
+{
+	return m_impl->m_dev->descriptor.idProduct;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -118,8 +130,9 @@ DeviceList::DeviceList()
 		struct usb_device* dev = busses->devices;
 		for( ; dev; dev = dev->next ) {
 			// Add the device to the list of devices
-			DeviceID devID;
-			devID.m_dev = dev;
+			std::auto_ptr<DeviceIDImpl> impl( new DeviceIDImpl() );
+			impl->m_dev = dev;
+			DeviceID devID(impl.release());
 			m_impl->m_devices.push_back(devID);
 		}
 	}
@@ -159,15 +172,15 @@ static bool NameCompare(const char *n1, const char *n2)
 	}
 }
 
-std::vector<DeviceID*> DeviceList::MatchDevices(int vendor, int product,
+std::vector<DeviceID> DeviceList::MatchDevices(int vendor, int product,
 					    const char *busname, const char *devname)
 {
-	std::vector<DeviceID*> ret;
+	std::vector<DeviceID> ret;
 	
 	std::vector<DeviceID>::iterator iter = m_impl->m_devices.begin();
 
 	for( ; iter != m_impl->m_devices.end() ; ++iter ) {
-		struct usb_device* dev = iter->m_dev;
+		struct usb_device* dev = iter->m_impl->m_dev;
 		
 		// only search on given bus
 		if( busname && !NameCompare(busname, dev->bus->dirname) )
@@ -181,7 +194,7 @@ std::vector<DeviceID*> DeviceList::MatchDevices(int vendor, int product,
 		if( dev->descriptor.idVendor == vendor &&
 		    ( dev->descriptor.idProduct == product ||
 		      product == PRODUCT_ANY )) {
-			ret.push_back(&*iter);
+			ret.push_back(*iter);
 		}
 	}
 
@@ -191,15 +204,15 @@ std::vector<DeviceID*> DeviceList::MatchDevices(int vendor, int product,
 ///////////////////////////////////////////////////////////////////////////////
 // Device
 
-Device::Device(Usb::DeviceID* id, int timeout)
+Device::Device(const Usb::DeviceID& id, int timeout)
 	: m_id(id),
 	m_timeout(timeout)
 {
-	dout("usb_open(" << std::dec << id << ")");
-	if( !id )
+	dout("usb_open(" << std::dec << &*id.m_impl << ")");
+	if( !&*id.m_impl )
 		throw Error("invalid USB device ID");
 	m_handle.reset(new DeviceHandle());
-	m_handle->m_handle = usb_open(id->m_dev);
+	m_handle->m_handle = usb_open(id.m_impl->m_dev);
 	if( !m_handle->m_handle )
 		throw Error("open failed");
 }
@@ -377,11 +390,11 @@ bool Device::GetConfiguration(unsigned char &cfg)
 // Returns the current power level of the device, or 0 if unknown
 int Device::GetPowerLevel()
 {
-	if( !m_id->m_dev->config ||
-	    !m_id->m_dev->descriptor.bNumConfigurations < 1 )
+	if( !m_id.m_impl->m_dev->config ||
+	    !m_id.m_impl->m_dev->descriptor.bNumConfigurations < 1 )
 		return 0;
 
-	return m_id->m_dev->config[0].MaxPower;
+	return m_id.m_impl->m_dev->config[0].MaxPower;
 }
 
 // Requests that the kernel driver is detached, returning false on failure
@@ -411,7 +424,7 @@ bool Device::ControlMsg(int requesttype, int request, int value,
 
 int Device::FindInterface(int ifaceClass)
 {
-	struct usb_config_descriptor *cfg = m_id->m_dev->config;
+	struct usb_config_descriptor *cfg = m_id.m_impl->m_dev->config;
 
 	if( cfg ) {
 
@@ -466,16 +479,16 @@ bool Interface::SetAltInterface(int altSetting)
 //////////////////////////////////////////////////////////////////
 // DeviceDescriptor
 
-DeviceDescriptor::DeviceDescriptor(DeviceID* devid)
+DeviceDescriptor::DeviceDescriptor(DeviceID& devid)
 	: m_impl(new DeviceDescriptorImpl())
 {
-	if( !devid ) {
+	if( !&*devid.m_impl ) {
 		dout("DeviceDescriptor: empty devid");
 		return;
 	}
 	// Copy the descriptor over to our memory
-	m_impl->m_dev = devid->m_dev;
-	m_impl->m_desc = devid->m_dev->descriptor;
+	m_impl->m_dev = devid.m_impl->m_dev;
+	m_impl->m_desc = devid.m_impl->m_dev->descriptor;
 	dout("device_desc loaded"
 	     << "\nbLength: " << std::dec << (unsigned int) m_impl->m_desc.bLength
 	     << "\nbDescriptorType: " << std::dec << (unsigned int) m_impl->m_desc.bDescriptorType

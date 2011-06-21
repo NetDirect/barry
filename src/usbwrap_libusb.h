@@ -39,8 +39,9 @@
 namespace Usb
 {
 
-struct DeviceID
+class DeviceIDImpl
 {
+public:
 	struct usb_device* m_dev;
 };
 

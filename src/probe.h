@@ -37,7 +37,7 @@ struct BXEXPORT ProbeResult
 {
 	friend class Probe;
 
-	Usb::DeviceID* m_dev;
+	Usb::DeviceID m_dev;
 	unsigned char m_interface;
 	unsigned char m_altsetting;
 	Barry::Pin m_pin;
@@ -109,7 +109,7 @@ private:
 protected:
 	void ProbeMatching(int vendor, int product,
 		const char *busname, const char *devname);
-	void ProbeDevice(Usb::DeviceID* devid);
+	void ProbeDevice(Usb::DeviceID& devid);
 	void ProbeDeviceEndpoints(Usb::Device &dev, Usb::EndpointPairings &ed, ProbeResult &result);
 	bool ProbePair(Usb::Device &dev, const Usb::EndpointPair &ep,
 		uint32_t &pin, std::string &desc, uint8_t &zeroSocketSequence,

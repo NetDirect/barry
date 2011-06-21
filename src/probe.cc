@@ -165,7 +165,7 @@ Probe::Probe(const char *busname, const char *devname,
 void Probe::ProbeMatching(int vendor, int product,
 			const char *busname, const char *devname)
 {
-	Usb::DeviceID* devid;
+	Usb::DeviceID devid;
 
 	Match match(m_devices, vendor, product, busname, devname);
 	while( match.next_device(devid) ) try {
@@ -183,7 +183,7 @@ void Probe::ProbeMatching(int vendor, int product,
 	}
 }
 
-void Probe::ProbeDevice(Usb::DeviceID* devid)
+void Probe::ProbeDevice(Usb::DeviceID& devid)
 {
 	// skip if we can't properly discover device config
 	DeviceDescriptor desc(devid);
@@ -518,7 +518,7 @@ std::ostream& operator<< (std::ostream &os, const ProbeResult &pr)
 {
 	ios_format_state state(os);
 
-	os << "Device ID: " << pr.m_dev
+	os << "Device ID: " << pr.m_dev.GetFileName()
 	   << ". PIN: " << pr.m_pin.Str()
 	   << ", Description: " << pr.m_description;
 	if( pr.m_cfgDeviceName.size() )

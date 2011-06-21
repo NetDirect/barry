@@ -27,6 +27,7 @@
 #include "dll.h"
 
 #include <memory>
+#include <tr1/memory>
 #include <vector>
 #include <map>
 #include "error.h"
@@ -76,7 +77,21 @@ public:
 
 // Private struct for holding library specific
 // a unique identifier to a connected device.
-struct DeviceID;
+class DeviceIDImpl;
+
+class BXEXPORT DeviceID
+{
+public:
+	std::tr1::shared_ptr<DeviceIDImpl> m_impl;
+public:
+	// Takes ownership of impl
+	DeviceID(DeviceIDImpl* impl = NULL);
+	~DeviceID();
+	const char* GetBusName() const;
+	uint16_t GetNumber() const;
+	const char* GetFileName() const;
+	uint16_t GetIdProduct() const;
+};
 
 // Private struct for holding a library specific
 // device handle
@@ -93,10 +108,6 @@ public:
 	static int Init();
 	static void Uninit();
 	static void SetDataDump(bool data_dump_mode);
-	static const char* GetBusName(DeviceID* dev);
-	static uint16_t GetDeviceNumber(DeviceID* dev);
-	static const char* GetFileName(DeviceID* dev);
-	static uint16_t GetDeviceIdProduct(DeviceID* dev);
 };
 
 // Forward declaration of descriptor types.
@@ -192,7 +203,7 @@ public:
 private:
 	const std::auto_ptr<DeviceDescriptorImpl> m_impl;
 public:
-	DeviceDescriptor(DeviceID* devid);
+	DeviceDescriptor(DeviceID& devid);
 	~DeviceDescriptor();
 };
 
@@ -209,8 +220,8 @@ public:
 	DeviceList();
 	~DeviceList();
 
-	std::vector<DeviceID*> MatchDevices(int vendor, int product,
-					    const char *busname, const char *devname);
+	std::vector<DeviceID> MatchDevices(int vendor, int product,
+					   const char *busname, const char *devname);
 
 };
 
@@ -219,20 +230,20 @@ struct PrivateDeviceData;
 class BXEXPORT Device
 {
 private:
-	Usb::DeviceID* m_id;
+	Usb::DeviceID m_id;
 	std::auto_ptr<Usb::DeviceHandle> m_handle;
 
 	int m_timeout;
 	int m_lasterror;
 
 public:
-	Device(Usb::DeviceID *id, int timeout = USBWRAP_DEFAULT_TIMEOUT);
+	Device(const Usb::DeviceID& id, int timeout = USBWRAP_DEFAULT_TIMEOUT);
 	~Device();
 
 	/////////////////////////////
 	// Data access
 
-	const Usb::DeviceID* GetID() const { return &*m_id; }
+	const Usb::DeviceID& GetID() const { return m_id; }
 	const Usb::DeviceHandle* GetHandle() const { return &*m_handle; }
 	int GetLastError() const { return m_lasterror; } //< not thread safe...
 		//< use the error code stored in the exceptions to track
@@ -312,8 +323,8 @@ public:
 class BXEXPORT Match
 {
 private:
-	std::vector<DeviceID*> m_list;
-	std::vector<DeviceID*>::iterator m_iter;
+	std::vector<DeviceID> m_list;
+	std::vector<DeviceID>::iterator m_iter;
 public:
 	// Due to USB libraries having different ownership ideas
 	// about device IDs, Match objects must be constructed
@@ -326,7 +337,7 @@ public:
 	// searches for next match, and if found, fills devid with
 	// something you can pass on to DeviceDiscover, etc
 	// returns true if next is found, false if no more
-	bool next_device(Usb::DeviceID*& devid);
+	bool next_device(Usb::DeviceID& devid);
 };
 
 }

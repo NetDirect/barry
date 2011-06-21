@@ -212,7 +212,7 @@ Match::~Match()
 {
 }
 
-bool Match::next_device(Usb::DeviceID*& devid)
+bool Match::next_device(Usb::DeviceID& devid)
 {
 	if( m_iter != m_list.end() ) {
 		devid = *m_iter;

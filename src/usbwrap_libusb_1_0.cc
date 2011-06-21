@@ -162,26 +162,64 @@ void LibraryInterface::SetDataDump(bool data_dump_mode)
 		libusb_set_debug(libusbctx, 0);
 }
 
-const char* LibraryInterface::GetBusName(DeviceID* dev)
+///////////////////////////////////////////////////////////////////////////////
+// DeviceIDImpl
+
+DeviceIDImpl::DeviceIDImpl(libusb_device *dev)
+	: m_dev(dev)
 {
-	return dev->m_busname.c_str();
+	libusb_ref_device(m_dev);
+
+	// Libusb 1.0 doesn't provide busnames or filenames
+	// so it's necessary to make some up.
+	std::ostringstream formatter;
+	formatter << "libusb1-"
+		  << static_cast<int>(libusb_get_bus_number(m_dev));
+	m_busname = formatter.str();
+
+	formatter << "-"
+		  << static_cast<int>(libusb_get_device_address(m_dev));
+	m_filename = formatter.str();
 }
 
-uint16_t LibraryInterface::GetDeviceNumber(DeviceID* dev)
+DeviceIDImpl::~DeviceIDImpl()
 {
-	return libusb_get_device_address(dev->m_dev);
+	libusb_unref_device(m_dev);
 }
 
-const char* LibraryInterface::GetFileName(DeviceID* dev)
+///////////////////////////////////////////////////////////////////////////////
+// DeviceID
+
+DeviceID::DeviceID(DeviceIDImpl* impl)
+	: m_impl(impl)
 {
-	return dev->m_filename.c_str();
 }
 
-uint16_t LibraryInterface::GetDeviceIdProduct(DeviceID* dev)
+DeviceID::~DeviceID()
+{
+}
+
+
+const char* DeviceID::GetBusName() const
+{
+	return m_impl->m_busname.c_str();
+}
+
+uint16_t DeviceID::GetNumber() const
+{
+	return libusb_get_device_address(m_impl->m_dev);
+}
+
+const char* DeviceID::GetFileName() const
+{
+	return m_impl->m_filename.c_str();
+}
+
+uint16_t DeviceID::GetIdProduct() const
 {
 	int ret = PRODUCT_UNKNOWN;
 	struct libusb_device_descriptor desc;
-	int err = libusb_get_device_descriptor(dev->m_dev, &desc);
+	int err = libusb_get_device_descriptor(m_impl->m_dev, &desc);
 	if( err == 0 )
 		ret = desc.idProduct;
 	return ret;
@@ -203,20 +241,7 @@ DeviceList::DeviceList()
 
 	for( int i = 0; i < m_impl->m_listcnt; ++i ) {
 		// Add the device to the list of devices
-		DeviceID devID;
-		devID.m_dev = m_impl->m_list[i];
-
-		// Libusb 1.0 doesn't provide busnames or filenames
-		// so it's necessary to make some up.
-		std::ostringstream formatter;
-		formatter << "libusb1-"
-			  << static_cast<int>(libusb_get_bus_number(devID.m_dev));
-		devID.m_busname = formatter.str();
-
-		formatter << "-"
-			  << static_cast<int>(libusb_get_device_address(devID.m_dev));
-		devID.m_filename = formatter.str();
-
+		DeviceID devID(new DeviceIDImpl(m_impl->m_list[i]));
 		m_impl->m_devices.push_back(devID);
 	}
 }
@@ -228,16 +253,16 @@ DeviceList::~DeviceList()
 	}
 }
 
-std::vector<DeviceID*> DeviceList::MatchDevices(int vendor, int product,
+std::vector<DeviceID> DeviceList::MatchDevices(int vendor, int product,
 					    const char *busname, const char *devname)
 {
-	std::vector<DeviceID*> ret;
+	std::vector<DeviceID> ret;
 	int err;
 
 	std::vector<DeviceID>::iterator iter = m_impl->m_devices.begin();
 
 	for( ; iter != m_impl->m_devices.end() ; ++iter ) {
-		struct libusb_device* dev = iter->m_dev;
+		struct libusb_device* dev = iter->m_impl->m_dev;
 
 		// only search on given bus
 		if( busname && atoi(busname) != libusb_get_bus_number(dev) )
@@ -258,7 +283,7 @@ std::vector<DeviceID*> DeviceList::MatchDevices(int vendor, int product,
 		if( desc.idVendor == vendor &&
 		    ( desc.idProduct == product || 
 		      product == PRODUCT_ANY )) {
-			ret.push_back(&*iter);
+			ret.push_back(*iter);
 		}
 	}
 
@@ -268,15 +293,15 @@ std::vector<DeviceID*> DeviceList::MatchDevices(int vendor, int product,
 ///////////////////////////////////////////////////////////////////////////////
 // Device
 
-Device::Device(Usb::DeviceID* id, int timeout)
+Device::Device(const Usb::DeviceID& id, int timeout)
 	: m_id(id),
 	m_timeout(timeout)
 {
-	dout("libusb_open(" << std::dec << id << ")");
-	if( !id )
+	dout("libusb_open(" << std::dec << &*id.m_impl << ")");
+	if( !&(*id.m_impl) )
 		throw Error("invalid USB device ID");
 	m_handle.reset(new DeviceHandle());
-	int err = libusb_open(id->m_dev, &(m_handle->m_handle));
+	int err = libusb_open(id.m_impl->m_dev, &(m_handle->m_handle));
 	m_lasterror = err;
 	if( err )
 		throw Error("open failed");
@@ -521,7 +546,7 @@ int Device::GetPowerLevel()
 {
 	struct libusb_config_descriptor* cfg = NULL;
 	int ret = 0;
-	int result = libusb_get_active_config_descriptor(m_id->m_dev, &cfg);
+	int result = libusb_get_active_config_descriptor(m_id.m_impl->m_dev, &cfg);
 	m_lasterror = result;
 	if( result == 0 ) {
 		ret = cfg->MaxPower;
@@ -555,7 +580,7 @@ bool Device::ControlMsg(int requesttype, int request, int value,
 int Device::FindInterface(int ifaceClass)
 {
 	struct libusb_config_descriptor* cfg = NULL;
-	int ret = libusb_get_active_config_descriptor(m_id->m_dev, &cfg);
+	int ret = libusb_get_active_config_descriptor(m_id.m_impl->m_dev, &cfg);
 	if( ret == 0 ) {
 		for( int i = 0; cfg->interface && i < cfg->bNumInterfaces; ++i ) {
 			const struct libusb_interface& iface = cfg->interface[i];
@@ -618,15 +643,15 @@ bool Interface::SetAltInterface(int altSetting)
 //////////////////////////////////////////////////////////////////
 // DeviceDescriptor
 
-DeviceDescriptor::DeviceDescriptor(DeviceID* devid)
+DeviceDescriptor::DeviceDescriptor(DeviceID& devid)
 	: m_impl(new DeviceDescriptorImpl())
 {
-	if( !devid ) {
+	if( !&*(devid.m_impl) ) {
 		dout("DeviceDescriptor: empty devid");
 		return;
 	}
 	m_impl->m_devid = devid;
-	int ret = libusb_get_device_descriptor(devid->m_dev, &m_impl->m_desc);
+	int ret = libusb_get_device_descriptor(devid.m_impl->m_dev, &m_impl->m_desc);
 	if( ret != 0 ) {
 		dout("Failed to read device descriptor with err: " << ret);
 		return;
@@ -672,7 +697,7 @@ ConfigDescriptor::ConfigDescriptor(DeviceDescriptor& dev, int cfgnumber)
 	: m_impl(new ConfigDescriptorImpl())
 {
 	m_impl->m_desc = NULL;
-	int ret = libusb_get_config_descriptor(dev.m_impl->m_devid->m_dev,
+	int ret = libusb_get_config_descriptor(dev.m_impl->m_devid.m_impl->m_dev,
 					       cfgnumber, &(m_impl->m_desc));
 	if( ret != 0 ) {
 		dout("Failed to read config descriptor with err: " << ret);

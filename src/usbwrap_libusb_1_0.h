@@ -36,11 +36,15 @@
 namespace Usb
 {
 
-struct DeviceID
+class DeviceIDImpl
 {
+public:	
 	libusb_device *m_dev;
 	std::string m_busname;
 	std::string m_filename;
+public:
+	DeviceIDImpl(libusb_device *dev);
+	~DeviceIDImpl();
 };
 
 struct DeviceHandle
@@ -73,7 +77,7 @@ struct ConfigDescriptorImpl
 struct DeviceDescriptorImpl
 {
 	struct libusb_device_descriptor m_desc;
-	struct DeviceID* m_devid;
+	DeviceID m_devid;
 };
 
 }; // namespace Usb
