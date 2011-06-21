@@ -518,7 +518,7 @@ std::ostream& operator<< (std::ostream &os, const ProbeResult &pr)
 {
 	ios_format_state state(os);
 
-	os << "Device ID: " << pr.m_dev.GetFileName()
+	os << "Device ID: " << pr.m_dev.m_impl.get()
 	   << ". PIN: " << pr.m_pin.Str()
 	   << ", Description: " << pr.m_description;
 	if( pr.m_cfgDeviceName.size() )

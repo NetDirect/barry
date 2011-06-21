@@ -208,8 +208,8 @@ Device::Device(const Usb::DeviceID& id, int timeout)
 	: m_id(id),
 	m_timeout(timeout)
 {
-	dout("usb_open(" << std::dec << &*id.m_impl << ")");
-	if( !&*id.m_impl )
+	dout("usb_open(" << std::dec << id.m_impl.get() << ")");
+	if( !id.m_impl.get() )
 		throw Error("invalid USB device ID");
 	m_handle.reset(new DeviceHandle());
 	m_handle->m_handle = usb_open(id.m_impl->m_dev);
@@ -482,7 +482,7 @@ bool Interface::SetAltInterface(int altSetting)
 DeviceDescriptor::DeviceDescriptor(DeviceID& devid)
 	: m_impl(new DeviceDescriptorImpl())
 {
-	if( !&*devid.m_impl ) {
+	if( !devid.m_impl.get() ) {
 		dout("DeviceDescriptor: empty devid");
 		return;
 	}
