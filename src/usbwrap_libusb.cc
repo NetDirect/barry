@@ -106,7 +106,7 @@ uint16_t DeviceID::GetNumber() const
 	return m_impl->m_dev->devnum;
 }
 
-const char* DeviceID::GetFileName() const
+const char* DeviceID::GetFilename() const
 {
 	return m_impl->m_dev->filename;
 }

@@ -89,7 +89,7 @@ public:
 	~DeviceID();
 	const char* GetBusName() const;
 	uint16_t GetNumber() const;
-	const char* GetFileName() const;
+	const char* GetFilename() const;
 	uint16_t GetIdProduct() const;
 };
 

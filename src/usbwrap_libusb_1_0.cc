@@ -210,7 +210,7 @@ uint16_t DeviceID::GetNumber() const
 	return libusb_get_device_address(m_impl->m_dev);
 }
 
-const char* DeviceID::GetFileName() const
+const char* DeviceID::GetFilename() const
 {
 	return m_impl->m_filename.c_str();
 }
