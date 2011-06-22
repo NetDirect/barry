@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 if [ -z "$1" -o -z "$2" -o -z "$BARRYTARBALL" -o -z "$THESPEC" ] ; then
 	echo

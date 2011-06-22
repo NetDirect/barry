@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 if [ -z "$1" -o -z "$2" -o -z "$3" -o -z "$4" ] ; then
 	echo

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # args 3 and 4 are optional
 if [ -z "$1" -o -z "$2" ] ; then

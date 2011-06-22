@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 if [ -z "$1" -o -z "$2" -o -z "$3" -o \( "$(whoami)" = "root" -a -z "$CHOWNUSER" \) ] ; then
 	echo

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 FIXME - CHROOTUSER is no longer an environment variable
 
