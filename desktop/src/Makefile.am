@@ -14,7 +14,7 @@ AM_CXXFLAGS = -ansi -Wall -g
 AM_CPPFLAGS = -DBARRYDESKTOP_BASEDATADIR='"$(basedatadir)"' -DBARRYDESKTOP_IMAGEDIR='"$(imagedir)"'
 AM_LDFLAGS =
 
-include_osyncwrapdir = ${includedir}/barry/osyncwrap
+include_osyncwrapdir = ${includedir}/barry18/osyncwrap
 
 bin_PROGRAMS = barrydesktop bsyncjail bsynccl
 noinst_PROGRAMS = ostest xmlcompactor xmlmap
