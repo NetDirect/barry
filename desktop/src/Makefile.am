@@ -20,7 +20,7 @@ bin_PROGRAMS = barrydesktop bsyncjail bsynccl
 noinst_PROGRAMS = ostest xmlcompactor xmlmap
 lib_LTLIBRARIES = libosyncwrap.la
 
-include_osyncwrap_HEADERS =
+include_osyncwrap_HEADERS = \
 	error.h \
 	dlopen.h \
 	tempdir.h \
