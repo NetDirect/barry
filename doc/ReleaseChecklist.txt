@@ -8,7 +8,7 @@ Barry Release Checklist:
 		- configure.ac
 		- gui/configure.ac
 		- gui/src/BackupWindow.cc (about dialog)
-		- desktop/src/Makefile.am (oswrapper lib version)
+		- desktop/src/Makefile.am (oswrapper lib version & include dir)
 		- Doxyfile
 		- rpm/barry.spec
 		- debian/changelog
@@ -24,6 +24,8 @@ Barry Release Checklist:
 		- opensync-plugin-0.4x/debian/changelog (libbarry-dev)
 		- files under po/
 		- desktop/src/barrydesktop.cc
+		- debian/libbarry-dev.install (barry18 include dir)
+		- debian/barrydesktop.install (barry18 include dir)
 - test ABI / API and bump major or minor version as appropriate
 - run all tests on a clean git tree, including build test script
 - write release notes, including contributors, known issues, new
