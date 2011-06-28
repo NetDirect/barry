@@ -23,7 +23,9 @@ fi
 (cd doc/www && ./static.sh)
 
 # Generate doxygen docs
-(doxygen && rm -f doxygen.log)
+# These are large... let the user run if needed,
+# and post on the website instead of in the tarball.
+#(doxygen && rm -f doxygen.log)
 
 # Generate configure scripts
 ./buildgen.sh
