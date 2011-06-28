@@ -15,7 +15,7 @@ Description: Library for using the BlackBerry handheld on Linux
  This package contains shared libraries.
 
 Package: libbarry0-dbg
-Section: libs
+Section: debug
 Priority: extra
 Architecture: any
 Depends: libbarry0 (= ${binary:Version})
@@ -46,7 +46,7 @@ Description: Command line utilities for working with the RIM BlackBerry Handheld
  breset, bio, etc.
 
 Package: barry-util-dbg
-Section: utils
+Section: debug
 Priority: extra
 Architecture: any
 Depends: barry-util (= ${binary:Version})
@@ -65,7 +65,7 @@ Description: GTK+ based GUI for backing up the RIM BlackBerry Handheld
  This package contains a GUI application for making backups and restores.
 
 Package: barrybackup-gui-dbg
-Section: utils
+Section: debug
 Priority: extra
 Architecture: any
 Depends: barrybackup-gui (= ${binary:Version})
@@ -84,7 +84,7 @@ Description: Desktop Panel GUI for the RIM BlackBerry Handheld
  This package contains a GUI management application for backups, syncing, etc.
 
 Package: barrydesktop-dbg
-Section: utils
+Section: debug
 Priority: extra
 Architecture: any
 Depends: barrydesktop (= ${binary:Version})
