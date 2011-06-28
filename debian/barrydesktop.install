@@ -7,5 +7,5 @@ debian/tmp/usr/lib/libosyncwrap.so.*
 debian/tmp/usr/lib/libosyncwrap.a
 debian/tmp/usr/lib/libosyncwrap.la
 debian/tmp/usr/lib/libosyncwrap.so
-debian/tmp/usr/include/barry/osyncwrap/*
+debian/tmp/usr/include/barry18/osyncwrap/*
 

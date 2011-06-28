@@ -16,6 +16,6 @@ debian/tmp/usr/lib/libbarrybackup.so
 debian/tmp/usr/lib/libbarryalx.a
 debian/tmp/usr/lib/libbarryalx.la
 debian/tmp/usr/lib/libbarryalx.so
-debian/tmp/usr/include/barry/*
+debian/tmp/usr/include/barry18/barry/*
 debian/tmp/usr/lib/pkgconfig/*
 
