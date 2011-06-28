@@ -11,12 +11,13 @@ include /usr/share/cdbs/1/class/autotools.mk
 
 # where sources are
 DEB_SRCDIR = .
+
 # in which directory to build
 DEB_BUILDDIR = .
+
 # in which directory to install the sofware(must be full path! CURDIR does this)
 DEB_DESTDIR = $(CURDIR)/debian/tmp
-#To register a debug library package libfoo-dbg for libfoo (which needs unstripped '.so') in compat mode 4:
-DEB_DH_STRIP_ARGS := --dbg-package=opensync-plugin-barry-4x
+
 #CDBS automatically handles common flags to pass to the configure script,
 #but it is possible to give some extra parameters :
 #DEB_CONFIGURE_EXTRA_FLAGS := 
