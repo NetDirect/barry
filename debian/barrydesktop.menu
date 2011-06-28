@@ -1,4 +1,4 @@
-?package(barrydesktop-gui):\
+?package(barrydesktop):\
   needs="X11"\
   section="Applications/Mobile Devices"\
   title="Barry Desktop Panel"\
