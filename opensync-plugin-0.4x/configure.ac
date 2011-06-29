@@ -50,3 +50,20 @@ AC_OUTPUT([
 Makefile
 src/Makefile
 ])
+
+#
+# Add a special hack at the end, to let the user disable RPATH if he wants.
+#
+# http://wiki.debian.org/RpathIssue
+# http://lists.debian.org/debian-devel/2003/debian-devel-200306/msg00569.html
+# http://fedoraproject.org/wiki/Packaging:Guidelines#Removing_Rpath
+#
+AC_ARG_ENABLE([rpathhack],
+	[AC_HELP_STRING([--enable-rpathhack], [patch libtool to remove RPATH])],
+	[
+AC_MSG_RESULT([patching libtool to fix HIDEOUS BREAKAGE])
+sed -i 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g' libtool
+sed -i 's|^runpath_var=LD_RUN_PATH|runpath_var=DIE_RPATH_DIE|g' libtool
+	],
+	[])
+
