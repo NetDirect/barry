@@ -163,13 +163,13 @@ This package contains the desktop panel GUI.
 %endif
 
 # main tree
-%{configure} --enable-boost --enable-nls --with-zlib --with-libusb
+%{configure} --enable-boost --enable-nls --with-zlib --with-libusb --enable-rpathhack
 %{__make} %{?_smp_mflags}
 
 # gui tree
 %if %{with_gui}
 cd gui/
-%{configure} PKG_CONFIG_PATH="..:$PKG_CONFIG_PATH" CXXFLAGS="-I../.." LDFLAGS="-L../../src" --enable-nls
+%{configure} PKG_CONFIG_PATH="..:$PKG_CONFIG_PATH" CXXFLAGS="-I../.." LDFLAGS="-L../../src" --enable-nls --enable-rpathhack
 %{__make} %{?_smp_mflags}
 cd ../
 %endif
@@ -177,7 +177,7 @@ cd ../
 # opensync tree
 %if %{with_opensync}
 cd opensync-plugin/
-%{configure} PKG_CONFIG_PATH="..:$PKG_CONFIG_PATH" CXXFLAGS="-I../.." LDFLAGS="-L../../src" --enable-nls
+%{configure} PKG_CONFIG_PATH="..:$PKG_CONFIG_PATH" CXXFLAGS="-I../.." LDFLAGS="-L../../src" --enable-nls --enable-rpathhack
 %{__make} %{?_smp_mflags}
 cd ../
 %endif
@@ -185,7 +185,7 @@ cd ../
 # desktop tree
 %if %{with_desktop}
 cd desktop/
-%{configure} PKG_CONFIG_PATH="..:$PKG_CONFIG_PATH" CXXFLAGS="-I../.." LDFLAGS="-L../../src" --enable-nls
+%{configure} PKG_CONFIG_PATH="..:$PKG_CONFIG_PATH" CXXFLAGS="-I../.." LDFLAGS="-L../../src" --enable-nls --enable-rpathhack
 %{__make} %{?_smp_mflags}
 cd ../
 %endif
