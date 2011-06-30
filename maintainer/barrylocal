@@ -6,6 +6,8 @@
 #    $BARRYTARBASE  - basename of the source tarball (bz2)
 #
 
+set -e
+
 #
 # Build the local DEB's
 #

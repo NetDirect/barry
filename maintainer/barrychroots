@@ -6,6 +6,8 @@
 #    $BARRYTARBASE  - basename of the source tarball (bz2)
 #
 
+set -e
+
 rm -rf /tmp/barrychroots
 mkdir -p /tmp/barrychroots
 
