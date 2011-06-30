@@ -396,6 +396,7 @@ desktop-file-install --vendor netdirect \
 %attr(0644,root,root) %{_datadir}/pixmaps/barry_desktop_icon.png
 %attr(0644,root,root) %{_datadir}/applications/*barrydesktop.desktop
 %attr(0644,root,root) %{_mandir}/man1/barrydesktop*
+%attr(0644,root,root) %{_includedir}/barry*/osyncwrap/*
 %doc COPYING
 %endif
 
@@ -413,6 +414,7 @@ desktop-file-install --vendor netdirect \
 * Thu Feb 10 2011 Chris Frey <cdfrey@foursquare.net> 0.18.0-0
 - version bump
 - removed dependency of libbarry-devel on libusb(-devel)
+- added osyncwrap headers
 
 * Fri May 28 2010 Chris Frey <cdfrey@foursquare.net> 0.17.0-0
 - version bump
