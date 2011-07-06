@@ -196,6 +196,8 @@ cd ../
 # delete some test-only programs
 %{__rm} -f %{buildroot}%{_bindir}/bdptest
 %{__rm} -f %{buildroot}%{_bindir}/bjvmdebug
+# delete the .la files
+%{__rm} -f %{buildroot}%{_libdir}/*.la
 # proceed as usual...
 %{__mkdir_p} %{buildroot}%{_sysconfdir}/udev/rules.d
 %{__cp} udev/10-blackberry.rules %{buildroot}%{_sysconfdir}/udev/rules.d/
@@ -264,6 +266,8 @@ desktop-file-install --vendor netdirect \
 %if %{with_opensync}
 cd opensync-plugin/
 %{__make} DESTDIR=%{buildroot} install
+# remove .la files
+%{__rm} -f %{buildroot}%{_libdir}/opensync/plugins/*.la
 cd ../
 %endif
 
@@ -271,6 +275,8 @@ cd ../
 %if %{with_desktop}
 cd desktop/
 %{__make} DESTDIR=%{buildroot} install
+# remove .la files
+%{__rm} -f %{buildroot}%{_libdir}/*.la
 cd ../
 %{__cp} logo/barry_logo_icon.png %{buildroot}%{_datadir}/pixmaps/barry_desktop_icon.png
 desktop-file-install --vendor netdirect \
@@ -280,14 +286,29 @@ desktop-file-install --vendor netdirect \
 
 %files -n libbarry0
 %defattr(-,root,root)
-%attr(-,root,root) %{_libdir}/*.so*
+%attr(-,root,root) %{_libdir}/libbarry.so.*
+%attr(-,root,root) %{_libdir}/libbarrydp.so.*
+%attr(-,root,root) %{_libdir}/libbarryjdwp.so.*
+%attr(-,root,root) %{_libdir}/libbarrysync.so.*
+%attr(-,root,root) %{_libdir}/libbarrybackup.so.*
+%attr(-,root,root) %{_libdir}/libbarryalx.so.*
 %doc AUTHORS ChangeLog COPYING NEWS README
 
 %files -n libbarry-devel
 %defattr(-,root,root)
 %attr(0644,root,root) %{_includedir}/barry*/barry/*
-%attr(0644,root,root) %{_libdir}/*.a
-%attr(0755,root,root) %{_libdir}/*.la
+%attr(0644,root,root) %{_libdir}/libbarry.a
+%attr(0644,root,root) %{_libdir}/libbarry.so
+%attr(0644,root,root) %{_libdir}/libbarrydp.a
+%attr(0644,root,root) %{_libdir}/libbarrydp.so
+%attr(0644,root,root) %{_libdir}/libbarryjdwp.a
+%attr(0644,root,root) %{_libdir}/libbarryjdwp.so
+%attr(0644,root,root) %{_libdir}/libbarrysync.a
+%attr(0644,root,root) %{_libdir}/libbarrysync.so
+%attr(0644,root,root) %{_libdir}/libbarrybackup.a
+%attr(0644,root,root) %{_libdir}/libbarrybackup.so
+%attr(0644,root,root) %{_libdir}/libbarryalx.a
+%attr(0644,root,root) %{_libdir}/libbarryalx.so
 %attr(0644,root,root) %{_libdir}/pkgconfig/*.pc
 %doc COPYING TODO doc/* examples/*.cc
 
@@ -378,8 +399,8 @@ desktop-file-install --vendor netdirect \
 %if %{with_opensync}
 %files opensync
 %defattr(-,root,root)
-%attr(0755,root,root) %{_libdir}/opensync/plugins/*
-%attr(0644,root,root) %{_datadir}/opensync/defaults/*
+%attr(0755,root,root) %{_libdir}/opensync/plugins/barry_sync.so
+%attr(0644,root,root) %{_datadir}/opensync/defaults/barry-sync
 %doc COPYING
 %endif
 
@@ -396,6 +417,9 @@ desktop-file-install --vendor netdirect \
 %attr(0644,root,root) %{_datadir}/pixmaps/barry_desktop_icon.png
 %attr(0644,root,root) %{_datadir}/applications/*barrydesktop.desktop
 %attr(0644,root,root) %{_mandir}/man1/barrydesktop*
+%attr(-,root,root) %{_libdir}/libosyncwrap.so.*
+%attr(-,root,root) %{_libdir}/libosyncwrap.a
+%attr(-,root,root) %{_libdir}/libosyncwrap.so
 %attr(0644,root,root) %{_includedir}/barry*/osyncwrap/*
 %doc COPYING
 %endif
@@ -415,6 +439,9 @@ desktop-file-install --vendor netdirect \
 - version bump
 - removed dependency of libbarry-devel on libusb(-devel)
 - added osyncwrap headers
+- removed .la files
+- split up dev libraries a little better (-devel should have the dev libs)
+- put desktop library in desktop package
 
 * Fri May 28 2010 Chris Frey <cdfrey@foursquare.net> 0.17.0-0
 - version bump
