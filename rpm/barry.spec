@@ -164,6 +164,11 @@ This package contains the desktop panel GUI.
 	./buildgen.sh
 %endif
 
+# Generate configure if it does not exist already (for binary-meta)
+if [ ! -f ./configure ] ; then
+	./buildgen.sh
+fi
+
 # main tree
 %{configure} --enable-boost --enable-nls --with-zlib --with-libusb --enable-rpathhack
 %{__make} %{?_smp_mflags}
