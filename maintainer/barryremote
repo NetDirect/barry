@@ -59,12 +59,12 @@ function do_fedora() {
 			cdfrey \
 		./make-rpm.sh \
 			"$BARRYTARBASE" rpm/barry.spec \
-			"-ba barry.spec --with gui --with opensync" \
+			"$3" \
 			/home/cdfrey \
 			/home/cdfrey/rpmbuild/binarybuild
 }
 
-do_fedora fedora14 f14
+do_fedora fedora14 f14 "-ba barry.spec --with gui --with opensync --with desktop"
 
 
 #

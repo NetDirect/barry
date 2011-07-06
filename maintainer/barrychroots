@@ -40,18 +40,25 @@ function do_fedora() {
 			cdfrey \
 		./make-rpm.sh \
 			"$BARRYTARBASE" rpm/barry.spec \
-			"--target i386 -ba barry.spec --with gui --with opensync" \
+			"$3" \
 			/home/cdfrey \
 			/home/cdfrey/rpmbuild/binarybuild
 }
 
+#
+# RPM options:
+#	--with gui
+#	--with desktop
+#	--with opensync
+#	--with opensync4x
+#
 # fedora14 has a bug in ligcal's pkgconfig... need to edit
 # its /usr/lib/pkgconfig/libgcal.pc file manually to work around it
 # for now
-#do_fedora fedora14 f14
-do_fedora fedora13 f13
-do_fedora fedora12 f12
-do_fedora fedora11 f11
+#do_fedora fedora14 f14 "--target i386 -ba barry.spec --with gui --with opensync --with desktop"
+do_fedora fedora13 f13 "--target i386 -ba barry.spec --with gui --with opensync --with desktop"
+do_fedora fedora12 f12 "--target i386 -ba barry.spec --with gui --with opensync --with desktop"
+do_fedora fedora11 f11 "--target i386 -ba barry.spec --with gui --with opensync"
 
 #
 # Cleanup
