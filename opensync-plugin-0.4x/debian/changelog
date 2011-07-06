@@ -2,6 +2,7 @@ opensync-plugin-barry-4x (0.18-0) unstable; urgency=low
 
   * Build rules for Barry releases
   * Bumped compat level to 6 (2011/06/28)
+  * Removed .la files (2011/07/05)
 
  -- Chris Frey <cdfrey@foursquare.net>  Tue, 28 Jun 2011 00:03:23 -0400
 

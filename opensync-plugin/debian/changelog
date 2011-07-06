@@ -2,6 +2,7 @@ opensync-plugin-barry (0.18-0) unstable; urgency=low
 
   * Individual package for the 0.22 plugin
   * Bumped compat to level 6 (2011/06/28)
+  * Removed .la files (2011/07/05)
 
  -- Chris Frey <cdfrey@foursquare.net>  Thu, 16 Sep 2010 03:20:17 -0400
 

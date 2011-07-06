@@ -4,6 +4,7 @@ barry (0.18.0-0) unstable; urgency=low
   * moved opensync-plugin into its own build
   * removed dependency of libbarry-dev on libusb-dev
   * bumped compat to level 6 (2011/06/28)
+  * removed .la files (2011/07/05)
 
  -- Chris Frey <cdfrey@foursquare.net>  Thu, 10 Feb 2011 03:20:18 -0400
 
