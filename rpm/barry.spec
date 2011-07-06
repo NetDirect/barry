@@ -1,23 +1,19 @@
 %dump
 
-# always build with GUI
-%define with_gui 1
+# enable GUI using: --with gui
+%define with_gui 0%{?_with_gui:1}
 
-# Fedora 9 doesn't support opensync 0.22
-%if 0%{?fc9}
-	%define with_opensync 0
-%else
-	%define with_opensync 1
-%endif
+# enable opensync 0.2x using: --with opensync
+%define with_opensync 0%{?_with_opensync:1}
 
-# Fedora 12 has the desktop packages installed for our build system
-%if 0%{?fc12} || 0%{?fc13} || 0%{?fc14}
-	%define with_desktop 1
-%else
-	%define with_desktop 0
-%endif
+# enable opensync 0.4x using: --with opensync4x
+%define with_opensync4x 0%{?_with_opensync4x:1}
 
-%if 0%{?fc12} || 0%{?fc13} || 0%{?fc14}
+# enable desktop using: --with desktop
+%define with_desktop 0%{?_with_desktop:1}
+
+# slight change in udev, fedora 12 and later
+%if 0%{?fc12} || 0%{?fc13} || 0%{?fc14} || 0%{?fc15}
 	%define use_69_rules 1
 %else
 	%define use_69_rules 0
@@ -108,7 +104,7 @@ is a registered trademark of Research in Motion Limited.)
 This package contains the GUI applications built on top of libbarry.
 %endif
 
-
+# opensync 0.2x
 %if %{with_opensync}
 %package opensync
 Summary: BlackBerry(tm) Desktop for Linux - opensync plugin
@@ -123,12 +119,27 @@ is a registered trademark of Research in Motion Limited.)
 This package contains the opensync plugin.
 %endif
 
+# opensync 0.4x
+%if %{with_opensync4x}
+%package opensync4x
+Summary: BlackBerry(tm) Desktop for Linux - opensync 0.4x plugin
+Group: Applications/Productivity
+Requires: libbarry0, libopensync >= 0.39
+BuildRequires: libopensync-devel
+
+%description opensync4x
+Barry is a desktop toolset for managing your BlackBerry(tm) device. (BlackBerry
+is a registered trademark of Research in Motion Limited.)
+
+This package contains the opensync 0.4x plugin.
+%endif
+
 # desktop tree
 %if %{with_desktop}
 %package desktop
 Summary: BlackBerry(tm) Desktop Panel GUI for Linux
 Group: Applications/Productivity
-Requires: libbarry0, libopensync >= 0.22
+Requires: libbarry0, libopensync
 BuildRequires: wxGTK-devel
 
 %description desktop
@@ -168,6 +179,14 @@ cd ../
 # opensync tree
 %if %{with_opensync}
 cd opensync-plugin/
+%{configure} PKG_CONFIG_PATH="..:$PKG_CONFIG_PATH" CXXFLAGS="-I../.." LDFLAGS="-L../../src" --enable-nls --enable-rpathhack
+%{__make} %{?_smp_mflags}
+cd ../
+%endif
+
+# opensync4x tree
+%if %{with_opensync4x}
+cd opensync-plugin-0.4x/
 %{configure} PKG_CONFIG_PATH="..:$PKG_CONFIG_PATH" CXXFLAGS="-I../.." LDFLAGS="-L../../src" --enable-nls --enable-rpathhack
 %{__make} %{?_smp_mflags}
 cd ../
@@ -259,6 +278,15 @@ cd opensync-plugin/
 %{__make} DESTDIR=%{buildroot} install
 # remove .la files
 %{__rm} -f %{buildroot}%{_libdir}/opensync/plugins/*.la
+cd ../
+%endif
+
+# opensync4x tree
+%if %{with_opensync4x}
+cd opensync-plugin-0.4x/
+%{__make} DESTDIR=%{buildroot} install
+# remove .la files
+%{__rm} -f %{buildroot}%{_libdir}/libopensync1/plugins/*.la
 cd ../
 %endif
 
@@ -395,6 +423,14 @@ desktop-file-install --vendor netdirect \
 %doc COPYING
 %endif
 
+%if %{with_opensync4x}
+%files opensync4x
+%defattr(-,root,root)
+%attr(0755,root,root) %{_libdir}/libopensync1/plugins/barry_sync.so
+%attr(0644,root,root) %{_datadir}/libopensync1/defaults/barry-sync
+%doc COPYING
+%endif
+
 # desktop tree
 %if %{with_desktop}
 %files desktop
@@ -431,6 +467,8 @@ desktop-file-install --vendor netdirect \
 - removed dependency of libbarry-devel on libusb(-devel)
 - added osyncwrap headers
 - removed opensuse special cases
+- back to optional --with behaviour
+- added opensync 0.4x package support
 - removed .la files
 - split up dev libraries a little better (-devel should have the dev libs)
 - put desktop library in desktop package
