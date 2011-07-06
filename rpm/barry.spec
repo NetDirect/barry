@@ -35,11 +35,7 @@ URL: http://www.netdirect.ca/software/packages/barry
 Vendor: Net Direct Inc.
 BuildRoot: %{_tmppath}/%{name}-%{release}-%{version}-root
 
-%if 0%{?suse_version}
-BuildRequires: libusb, gcc-c++, pkgconfig, boost-devel, fuse-devel, zlib-devel
-%else
 BuildRequires: libusb-devel, gcc-c++, pkgconfig, boost-devel, fuse-devel, zlib-devel
-%endif
 
 %if %{with_gui}
 BuildRequires: desktop-file-utils
@@ -102,13 +98,8 @@ and be able to access the data on the device in many ways.
 %package gui
 Summary: BlackBerry(tm) Desktop for Linux - bcharge, btool, breset and others
 Group: Applications/Productivity
-%if 0%{?suse_version}
-Requires: libbarry0 gtkmm2 libglademm libtar
-BuildRequires: gtkmm2-devel libglademm-devel libtar-devel
-%else
 Requires: libbarry0 gtkmm24 libglademm24 libtar
 BuildRequires: gtkmm24-devel libglademm24-devel libtar-devel
-%endif
 
 %description gui
 Barry is a desktop toolset for managing your BlackBerry(tm) device. (BlackBerry
@@ -439,6 +430,7 @@ desktop-file-install --vendor netdirect \
 - version bump
 - removed dependency of libbarry-devel on libusb(-devel)
 - added osyncwrap headers
+- removed opensuse special cases
 - removed .la files
 - split up dev libraries a little better (-devel should have the dev libs)
 - put desktop library in desktop package
