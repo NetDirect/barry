@@ -169,6 +169,12 @@ if [ ! -f ./configure ] ; then
 	./buildgen.sh
 fi
 
+# setup the environment if there are additions (for binary-meta)
+if [ -n "$ADD_TO_PKG_CONFIG_PATH" ] ; then
+	export PKG_CONFIG_PATH="$ADD_TO_PKG_CONFIG_PATH:$PKG_CONFIG_PATH"
+fi
+set
+
 # main tree
 %{configure} --enable-boost --enable-nls --with-zlib --with-libusb --enable-rpathhack
 %{__make} %{?_smp_mflags}
