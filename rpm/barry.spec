@@ -170,8 +170,9 @@ if [ ! -f ./configure ] ; then
 fi
 
 # setup the environment if there are additions (for binary-meta)
+export ORIG_PKG_CONFIG_PATH="$PKG_CONFIG_PATH"
 if [ -n "$ADD_TO_PKG_CONFIG_PATH" ] ; then
-	export PKG_CONFIG_PATH="$ADD_TO_PKG_CONFIG_PATH:$PKG_CONFIG_PATH"
+	export PKG_CONFIG_PATH="$ADD_TO_PKG_CONFIG_PATH:$ORIG_PKG_CONFIG_PATH"
 fi
 set
 
@@ -189,6 +190,10 @@ cd ../
 
 # opensync tree
 %if %{with_opensync}
+# if there is a special pkgconfig for opensync 0.2x, use it
+if [ -n "$OSYNC2X_PKG_CONFIG_PATH" ] ; then
+	export PKG_CONFIG_PATH="$OSYNC2X_PKG_CONFIG_PATH:$ORIG_PKG_CONFIG_PATH"
+fi
 cd opensync-plugin/
 %{configure} PKG_CONFIG_PATH="..:$PKG_CONFIG_PATH" CXXFLAGS="-I../.." LDFLAGS="-L../../src" --enable-nls --enable-rpathhack
 %{__make} %{?_smp_mflags}
@@ -197,6 +202,10 @@ cd ../
 
 # opensync4x tree
 %if %{with_opensync4x}
+# if there is a special pkgconfig for opensync 0.4x, use it
+if [ -n "$OSYNC4X_PKG_CONFIG_PATH" ] ; then
+	export PKG_CONFIG_PATH="$OSYNC4X_PKG_CONFIG_PATH:$ORIG_PKG_CONFIG_PATH"
+fi
 cd opensync-plugin-0.4x/
 %{configure} PKG_CONFIG_PATH="..:$PKG_CONFIG_PATH" CXXFLAGS="-I../.." LDFLAGS="-L../../src" --enable-nls --enable-rpathhack
 %{__make} %{?_smp_mflags}
@@ -205,6 +214,10 @@ cd ../
 
 # desktop tree
 %if %{with_desktop}
+# if there is a special pkgconfig for both opensync 0.4x and 0.2x, use it
+if [ -n "$OSYNCBOTH_PKG_CONFIG_PATH" ] ; then
+	export PKG_CONFIG_PATH="$OSYNCBOTH_PKG_CONFIG_PATH:$ORIG_PKG_CONFIG_PATH"
+fi
 cd desktop/
 %{configure} PKG_CONFIG_PATH="..:$PKG_CONFIG_PATH" CXXFLAGS="-I../.." LDFLAGS="-L../../src" --enable-nls --enable-rpathhack
 %{__make} %{?_smp_mflags}
