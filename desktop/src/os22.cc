@@ -930,13 +930,13 @@ long OpenSync22::AddMember(const std::string &group_name,
 
 	OSyncError *error = NULL;
 	if( !m_priv->osync_member_instance_plugin(member, plugin_name.c_str(), &error) ) {
-		std::runtime_error err(string("AddMember(): Unable to connect plugin with member: ") + m_priv->osync_error_print(&error));
+		std::runtime_error err(string("AddMember(): Unable to connect plugin with member ") + member_name + "/" + plugin_name + ": " + m_priv->osync_error_print(&error));
 		m_priv->osync_error_free(&error);
 		throw err;
 	}
 
 	if( !m_priv->osync_member_save(member, &error) ) {
-		std::runtime_error err(string("AddMember(): Unable to save member: ") + m_priv->osync_error_print(&error));
+		std::runtime_error err(string("AddMember(): Unable to save member ") + member_name + "/" + plugin_name + ": " + m_priv->osync_error_print(&error));
 		m_priv->osync_error_free(&error);
 		throw err;
 	}
