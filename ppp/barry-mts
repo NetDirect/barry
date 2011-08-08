@@ -1,0 +1,39 @@
+# See the README file in the source tree for notes and documentation
+
+connect "/usr/sbin/chat -f /etc/chatscripts/barry-mts.chat"
+pty "/usr/sbin/pppob"
+
+debug
+
+# For Manitoba's MTS, you need to use a username in the form of
+# "##########@mip.1x.mts.net" (########## is your 10 digit phone number)
+# and a password of ########## (the same 10 digit number).
+#
+# Confirmed by Chris Chatelain <chris.chatelain@thewebshop.ca>
+noauth
+user "##########@mip.1x.mts.net"
+password "##########"
+name wapuser
+
+defaultroute
+usepeerdns
+
+noipdefault
+nodetach
+nodeflate
+nobsdcomp
+noaccomp
+nocrtscts
+nopcomp
+nomagic
+novj
+
+ipcp-restart 7
+ipcp-accept-local
+ipcp-accept-remote
+lcp-echo-interval 0
+lcp-echo-failure 999
+
+passive
+mtu 1492
+
