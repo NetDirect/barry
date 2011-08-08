@@ -86,6 +86,8 @@ Contributors (code and otherwise) in alphabetical order by last name:
 		- GPRS modem behaviour
 	Peter Silva <Peter.A.Silva@gmail.com>
 		- debian packaging
+	Andrew Sims <ajsims@blueyonder.co.uk>
+		- ppp chatscripts for Orange UK
 	Jose Carlos Garcia Sogo <jsogo@debian.org>
 		- debian packaging patches
 	Michael L. Stokes <stokes@aris.net>
