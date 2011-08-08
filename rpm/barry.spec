@@ -254,6 +254,8 @@ cd ../
 %{__cp} ppp/barry-chinamobile %{buildroot}%{_sysconfdir}/ppp/peers/
 %{__cp} ppp/barry-kpn %{buildroot}%{_sysconfdir}/ppp/peers/
 %{__cp} ppp/barry-orange-spain %{buildroot}%{_sysconfdir}/ppp/peers/
+%{__cp} ppp/barry-orangeuk %{buildroot}%{_sysconfdir}/ppp/peers/
+%{__cp} ppp/barry-mts %{buildroot}%{_sysconfdir}/ppp/peers/
 %{__cp} ppp/barry-optus-au %{buildroot}%{_sysconfdir}/ppp/peers/
 %{__cp} ppp/barry-vodafone-au %{buildroot}%{_sysconfdir}/ppp/peers/
 %{__mkdir_p} %{buildroot}%{_sysconfdir}/chatscripts
@@ -268,6 +270,8 @@ cd ../
 %{__cp} ppp/barry-chinamobile.chat %{buildroot}%{_sysconfdir}/chatscripts/
 %{__cp} ppp/barry-kpn.chat %{buildroot}%{_sysconfdir}/chatscripts/
 %{__cp} ppp/barry-orange-spain.chat %{buildroot}%{_sysconfdir}/chatscripts/
+%{__cp} ppp/barry-orangeuk.chat %{buildroot}%{_sysconfdir}/chatscripts/
+%{__cp} ppp/barry-mts.chat %{buildroot}%{_sysconfdir}/chatscripts/
 %{__cp} ppp/barry-optus-au.chat %{buildroot}%{_sysconfdir}/chatscripts/
 %{__cp} ppp/barry-vodafone-au.chat %{buildroot}%{_sysconfdir}/chatscripts/
 # Install hal fdi config
@@ -407,6 +411,8 @@ desktop-file-install --vendor netdirect \
 %attr(0644,root,root) %config %{_sysconfdir}/ppp/peers/barry-chinamobile
 %attr(0644,root,root) %config %{_sysconfdir}/ppp/peers/barry-kpn
 %attr(0644,root,root) %config %{_sysconfdir}/ppp/peers/barry-orange-spain
+%attr(0644,root,root) %config %{_sysconfdir}/ppp/peers/barry-orangeuk
+%attr(0644,root,root) %config %{_sysconfdir}/ppp/peers/barry-mts
 %attr(0644,root,root) %config %{_sysconfdir}/ppp/peers/barry-optus-au
 %attr(0644,root,root) %config %{_sysconfdir}/ppp/peers/barry-vodafone-au
 %attr(0640,root,root) %config %{_sysconfdir}/chatscripts/barry-rogers.chat
@@ -420,6 +426,8 @@ desktop-file-install --vendor netdirect \
 %attr(0640,root,root) %config %{_sysconfdir}/chatscripts/barry-chinamobile.chat
 %attr(0640,root,root) %config %{_sysconfdir}/chatscripts/barry-kpn.chat
 %attr(0640,root,root) %config %{_sysconfdir}/chatscripts/barry-orange-spain.chat
+%attr(0640,root,root) %config %{_sysconfdir}/chatscripts/barry-orangeuk.chat
+%attr(0640,root,root) %config %{_sysconfdir}/chatscripts/barry-mts.chat
 %attr(0640,root,root) %config %{_sysconfdir}/chatscripts/barry-optus-au.chat
 %attr(0640,root,root) %config %{_sysconfdir}/chatscripts/barry-vodafone-au.chat
 %attr(0640,root,root) %config %{_sysconfdir}/bash_completion.d/bjavaloader
@@ -486,7 +494,7 @@ desktop-file-install --vendor netdirect \
 /sbin/ldconfig
 
 %changelog
-* Thu Feb 10 2011 Chris Frey <cdfrey@foursquare.net> 0.18.0-0
+* Mon Aug  8 2011 Chris Frey <cdfrey@foursquare.net> 0.18.0-0
 - version bump
 - removed dependency of libbarry-devel on libusb(-devel)
 - added osyncwrap headers
@@ -496,6 +504,7 @@ desktop-file-install --vendor netdirect \
 - removed .la files
 - split up dev libraries a little better (-devel should have the dev libs)
 - put desktop library in desktop package
+- added orangeuk and mts ppp chatscript files
 
 * Fri May 28 2010 Chris Frey <cdfrey@foursquare.net> 0.17.0-0
 - version bump

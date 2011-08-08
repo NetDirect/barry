@@ -5,6 +5,7 @@ barry (0.18.0-0) unstable; urgency=low
   * removed dependency of libbarry-dev on libusb-dev
   * bumped compat to level 6 (2011/06/28)
   * removed .la files (2011/07/05)
+  * added orangeuk and mts ppp chatscript files (2011/08/08)
 
  -- Chris Frey <cdfrey@foursquare.net>  Thu, 10 Feb 2011 03:20:18 -0400
 

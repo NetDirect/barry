@@ -48,6 +48,8 @@ install/barry-util::
 		$(DEB_SRCDIR)/ppp/barry-chinamobile \
 		$(DEB_SRCDIR)/ppp/barry-kpn \
 		$(DEB_SRCDIR)/ppp/barry-orange-spain \
+		$(DEB_SRCDIR)/ppp/barry-orangeuk \
+		$(DEB_SRCDIR)/ppp/barry-mts \
 		$(DEB_SRCDIR)/ppp/barry-optus-au \
 		$(DEB_SRCDIR)/ppp/barry-vodafone-au \
 		$(CURDIR)/debian/barry-util/etc/ppp/peers
@@ -64,6 +66,8 @@ install/barry-util::
 		$(DEB_SRCDIR)/ppp/barry-chinamobile.chat \
 		$(DEB_SRCDIR)/ppp/barry-kpn.chat \
 		$(DEB_SRCDIR)/ppp/barry-orange-spain.chat \
+		$(DEB_SRCDIR)/ppp/barry-orangeuk.chat \
+		$(DEB_SRCDIR)/ppp/barry-mts.chat \
 		$(DEB_SRCDIR)/ppp/barry-optus-au.chat \
 		$(DEB_SRCDIR)/ppp/barry-vodafone-au.chat \
 		$(CURDIR)/debian/barry-util/etc/chatscripts
