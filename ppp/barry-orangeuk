@@ -1,0 +1,80 @@
+#
+# Some of these options found documented at:
+#    http://wiki.colar.net/tethering_with_blackberry_pearl_on_linux
+#
+# Others are based on the peer file in XmBlackBerry
+#
+# Please send all working peer files to cdfrey@foursquare.net, so we can
+# build a library of peer files for different carriers.
+#
+
+connect "/usr/sbin/chat -f /etc/chatscripts/barry-orangeuk.chat"
+
+#
+# authentication options - no need for ISP to authenticate to us, but
+#                          we may need a login here: user/password/name
+#
+noauth
+user orange
+password orange
+name orange
+
+#
+# handle the default route and DNS
+#
+#nodefaultroute
+defaultroute
+usepeerdns
+
+#
+# disable unsupported options
+#
+noipdefault
+nodetach
+novj
+nodeflate
+nobsdcomp
+noaccomp
+#default-asyncmap
+nocrtscts
+nopcomp
+nomagic
+
+passive
+
+#nomultilink
+ipcp-restart 7
+ipcp-accept-local
+ipcp-accept-remote
+# need lcp-echo turned off, at least for tmobile, otherwise c0onnectin
+# disconnects after few mn of inactivity.
+# thanks to loon for this info
+lcp-echo-interval 0
+lcp-echo-failure 999
+
+
+#
+# limit size of packets
+#
+mtu 1492
+
+#
+# operate in debug mode
+#
+debug
+#debug debug debug
+
+#
+# call pppob for the USB link
+#
+pty "/usr/sbin/pppob"
+
+
+#
+# unused options
+#
+
+#modem
+## refused anyway, no point in trying every time
+#novj
+
