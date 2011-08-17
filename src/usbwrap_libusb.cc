@@ -27,6 +27,7 @@
 #include <errno.h>
 #include <string.h>
 #include <iostream>
+#include <sstream>
 #include <algorithm>
 
 #ifndef __DEBUG_MODE__
@@ -259,8 +260,14 @@ bool Device::BulkRead(int ep, Barry::Data &data, int timeout)
 			m_lasterror = ret;
 			if( ret == -ETIMEDOUT )
 				throw Timeout(ret, "Timeout in usb_bulk_read");
-			else
-				throw Error(ret, "Error in usb_bulk_read");
+			else {
+				std::ostringstream oss;
+				oss << "Error in usb_bulk_read("
+				    << m_handle->m_handle << ", "
+				    << ep << ", buf, "
+				    << data.GetBufSize() << ")";
+				throw Error(ret, oss.str());
+			}
 		}
 		else if( ret > 0 )
 			data.ReleaseBuffer(ret);

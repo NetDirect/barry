@@ -29,6 +29,7 @@
 #include <errno.h>
 #include <sstream>
 #include <iostream>
+#include <sstream>
 #include <algorithm>
 
 #ifndef __DEBUG_MODE__
@@ -359,8 +360,17 @@ bool Device::BulkRead(int ep, Barry::Data &data, int timeout)
 				else
 					dout("Read timed out with some data transferred... possible partial read");
 			}
-			else if( ret != LIBUSB_ERROR_TIMEOUT )
-				throw Error(ret, "Error in BulkRead");
+			else if( ret != LIBUSB_ERROR_TIMEOUT ) {
+				std::ostringstream oss;
+				oss << "Error in libusb_bulk_tranfer("
+				    << m_handle->m_handle << ", "
+				    << ep << ", buf, "
+				    << data.GetBufSize() << ", "
+				    << transferred << ", "
+				    << (timeout == -1 ? m_timeout : timeout)
+				    << ")";
+				throw Error(ret, oss.str());
+			}
 		}
 		if( transferred != 0 )
 			data.ReleaseBuffer(transferred);
