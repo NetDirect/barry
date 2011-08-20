@@ -351,6 +351,8 @@ int main(int argc, char *argv[])
 	}
 
 	BarrySyncJail app;
-	return app.OnExit();
+	int ret = app.OnExit();
+	cerr << "bsyncjail exiting with code: " << ret << endl;
+	return ret;
 }
 
