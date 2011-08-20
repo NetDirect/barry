@@ -123,7 +123,7 @@ bool BarrySyncJail::OnInit()
 
 	// load opensync engine
 	try {
-		if( g_argv_version == "0.22" )
+		if( g_argv_version.substr(0, 3) == "0.2" )
 			m_engine.reset( new OpenSync::OpenSync22 );
 		else {
 			m_engine.reset( new OpenSync::OpenSync40 );
