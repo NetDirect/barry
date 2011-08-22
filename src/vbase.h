@@ -31,7 +31,7 @@
 namespace Barry { namespace Sync {
 
 //
-// vTimeZone
+// vTimeConverter
 //
 /// A virtual base class that the plugins may override, to do
 /// time related conversions.  Default implementations for these
