@@ -67,7 +67,8 @@ class MimeDump<Barry::Memo>
 public:
 	static void Dump(std::ostream &os, const Barry::Memo &rec)
 	{
-		Barry::Sync::vJournal vjournal;
+		Barry::Sync::vTimeConverter vtc;
+		Barry::Sync::vJournal vjournal(vtc);
 		os << vjournal.ToMemo(rec) << std::endl;
 	}
 

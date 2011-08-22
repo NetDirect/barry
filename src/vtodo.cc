@@ -95,9 +95,17 @@ const std::string& vTodo::ToTask(const Barry::Task &task)
 	// store the Barry object we're working with
 	m_BarryTask = task;
 
+	// RFC section 4.8.7.2 requires DTSTAMP in all VEVENT, VTODO,
+	// VJOURNAL, and VFREEBUSY calendar components, and it must be
+	// in UTC.  DTSTAMP holds the timestamp of when the iCal object itself
+	// was created, not when the object was created in the device or app.
+	// So, find out what time it is "now".
+	time_t now = time(NULL);
+
 	// begin building vCalendar data
 	AddAttr(NewAttr("PRODID", "-//OpenSync//NONSGML Barry Task Record//EN"));
 	AddAttr(NewAttr("BEGIN", "VTODO"));
+	AddAttr(NewAttr("DTSTAMP", m_vtc.unix2vtime(&now).c_str())); // see note above
 	AddAttr(NewAttr("SEQUENCE", "0"));
 	AddAttr(NewAttr("SUMMARY", task.Summary.c_str()));
 	AddAttr(NewAttr("DESCRIPTION", task.Notes.c_str()));

@@ -75,7 +75,8 @@ bool MimeBuilder::BuildRecord(DBData &data, size_t &offset,
 			return true;
 		}
 		else if( IsMember(Sync::vJournal::GetVName(), types) ) {
-			Sync::vJournal vjournal;
+			Sync::vTimeConverter vtc;
+			Sync::vJournal vjournal(vtc);
 			SetDBData(vjournal.ToBarry(vrec.c_str(), 0),
 				data, offset, ic);
 			return true;

@@ -40,6 +40,9 @@ namespace Barry { namespace Sync {
 ///
 class BXEXPORT vJournal : public vBase
 {
+	// external reference
+	vTimeConverter &m_vtc;
+
 	// data to pass to external requests
 	char *m_gJournalData;	// dynamic memory returned by vformat()... can
 				// be used directly by the plugin, without
@@ -51,7 +54,7 @@ protected:
 	bool HasMultipleVJournals() const;
 
 public:
-	vJournal();
+	explicit vJournal(vTimeConverter &vtc);
 	~vJournal();
 
 	const std::string&	ToMemo(const Barry::Memo &memo);

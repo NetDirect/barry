@@ -68,7 +68,8 @@ bool VJournalConverter::ParseData(const char *data)
 
 	try {
 
-		vJournal vjournal;
+		vTimeConverter vtc;
+		vJournal vjournal(vtc);
 		m_Memo = vjournal.ToBarry(data, m_RecordId);
 
 	}
@@ -93,7 +94,8 @@ void VJournalConverter::operator()(const Barry::Memo &rec)
 
 	try {
 
-		vJournal vjournal;
+		vTimeConverter vtc;
+		vJournal vjournal(vtc);
 		vjournal.ToMemo(rec);
 		m_Data = vjournal.ExtractVJournal();
 
