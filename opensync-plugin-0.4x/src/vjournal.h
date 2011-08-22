@@ -37,11 +37,14 @@ class VJournalConverter
 	char *m_Data;
 	Barry::Memo m_Memo;
 	uint32_t m_RecordId;
+	std::string m_last_errmsg;
 
 public:
 	VJournalConverter();
 	explicit VJournalConverter(uint32_t newRecordId);
 	~VJournalConverter();
+
+	const std::string& GetLastError() const { return m_last_errmsg; }
 
 	// Transfers ownership of m_Data to the caller
 	char* ExtractData();

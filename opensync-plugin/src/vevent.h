@@ -34,6 +34,7 @@ class VEventConverter
 	char *m_Data;
 	Barry::Calendar m_Cal;
 	uint32_t m_RecordId;
+	std::string m_last_errmsg;
 
 public:
 	VEventConverter();
@@ -44,6 +45,7 @@ public:
 	char* ExtractData();
 
 	const Barry::Calendar& GetCalendar() const { return m_Cal; };
+	const std::string& GetLastError() const { return m_last_errmsg; }
 
 	// Parses vevent data
 	bool ParseData(const char *data);

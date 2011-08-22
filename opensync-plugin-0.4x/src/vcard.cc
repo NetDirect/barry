@@ -71,6 +71,7 @@ bool VCardConverter::ParseData(const char *data)
 	}
 	catch( Barry::ConvertError &ce ) {
 		trace.logf("ERROR: vcard:Barry::ConvertError exception: %s", ce.what());
+		m_last_errmsg = ce.what();
 		return false;
 	}
 
@@ -97,6 +98,7 @@ void VCardConverter::operator()(const Barry::Contact &rec)
 	}
 	catch( Barry::ConvertError &ce ) {
 		trace.logf("ERROR: vcard:Barry::ConvertError exception: %s", ce.what());
+		m_last_errmsg = ce.what();
 	}
 }
 
@@ -154,7 +156,8 @@ bool VCardConverter::CommitRecordData(BarryEnvironment *env, unsigned int dbId,
 	if( !convert.ParseData(data) ) {
 		std::ostringstream oss;
 		oss << "unable to parse change data for new RecordId: "
-		    << newRecordId << " data: " << data;
+		    << newRecordId
+		    << " (" << convert.GetLastError() << ") data: " << data;
 		errmsg = oss.str();
 		trace.log(errmsg.c_str());
 		return false;

@@ -36,11 +36,14 @@ class VTodoConverter
 	char *m_Data;
 	Barry::Task m_Task;
 	uint32_t m_RecordId;
+	std::string m_last_errmsg;
 
 public:
 	VTodoConverter();
 	explicit VTodoConverter(uint32_t newRecordId);
 	~VTodoConverter();
+
+	const std::string& GetLastError() const { return m_last_errmsg; }
 
 	// Transfers ownership of m_Data to the caller
 	char* ExtractData();

@@ -72,6 +72,7 @@ bool VEventConverter::ParseData(const char *data)
 	}
 	catch( Barry::ConvertError &ce ) {
 		trace.logf("ERROR: vevent:Barry::ConvertError exception: %s", ce.what());
+		m_last_errmsg = ce.what();
 		return false;
 	}
 
@@ -112,6 +113,7 @@ void VEventConverter::operator()(const Barry::Calendar &rec)
 	}
 	catch( Barry::ConvertError &ce ) {
 		trace.logf("ERROR: vevent:Barry::ConvertError exception: %s", ce.what());
+		m_last_errmsg = ce.what();
 	}
 }
 
@@ -169,7 +171,8 @@ bool VEventConverter::CommitRecordData(BarryEnvironment *env, unsigned int dbId,
 	if( !convert.ParseData(data) ) {
 		std::ostringstream oss;
 		oss << "unable to parse change data for new RecordId: "
-		    << newRecordId << " data: " << data;
+		    << newRecordId
+		    << " (" << convert.GetLastError() << ") data: " << data;
 		errmsg = oss.str();
 		trace.log(errmsg.c_str());
 		return false;
