@@ -24,6 +24,7 @@ include_osyncwrap_HEADERS = \
 	error.h \
 	dlopen.h \
 	tempdir.h \
+	ostypes.h \
 	osbase.h osprivatebase.h \
 	osconfig.h \
 	osconv22.h \
@@ -37,6 +38,7 @@ libosyncwrap_la_SOURCES = \
 	error.cc error.h \
 	dlopen.cc dlopen.h \
 	tempdir.cc tempdir.h \
+	ostypes.cc ostypes.h \
 	osbase.cc osbase.h osprivatebase.h \
 	osconfig.cc osconfig.h \
 	osconv22.h \
