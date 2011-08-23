@@ -188,7 +188,12 @@ public:
 
 	/// Throws std::logic_error if not constructed with an appname
 	void SetKey(const std::string &key, const std::string &value);
-	std::string GetKey(const std::string &key) const;
+
+	/// Returns value for key, and returns default_value if key does not
+	/// exist in the config file.
+	/// Throws std::logic_error if not constructed with an appname
+	std::string GetKey(const std::string &key,
+		const std::string &default_value = "") const;
 
 	//
 	// Global Configuration setting

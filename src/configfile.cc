@@ -461,7 +461,8 @@ void GlobalConfigFile::SetKey(const std::string &key, const std::string &value)
 	m_keymap[fullkey] = value;
 }
 
-std::string GlobalConfigFile::GetKey(const std::string &key) const
+std::string GlobalConfigFile::GetKey(const std::string &key,
+				     const std::string &default_value) const
 {
 	if( !m_appname.size() )
 		throw std::logic_error("Cannot use SetKey() without specifying an appname in the constructor.");
@@ -469,7 +470,7 @@ std::string GlobalConfigFile::GetKey(const std::string &key) const
 	std::string fullkey = "X-" + m_appname + "-" + key;
 	keymap_type::const_iterator ci = m_keymap.find(fullkey);
 	if( ci == m_keymap.end() )
-		return "";
+		return default_value;
 	return ci->second;
 }
 
