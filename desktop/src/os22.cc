@@ -178,6 +178,10 @@ public:
 					OSyncChange *change);
 	char*			(*osync_change_get_printable)(
 					OSyncChange *change);
+	void			(*osync_group_set_objtype_enabled)(
+					OSyncGroup *group,
+					const char *objtypestr,
+					osync_bool enabled);
 
 	// data pointers
 	OSyncEnv *env;
@@ -732,6 +736,8 @@ OpenSync22::OpenSync22()
 					"osengine_mapping_num_changes");
 	LoadSym(p->osync_change_get_changetype, "osync_change_get_changetype");
 	LoadSym(p->osync_change_get_printable, "osync_change_get_printable");
+	LoadSym(p->osync_group_set_objtype_enabled,
+					"osync_group_set_objtype_enabled");
 
 	// do common initialization of opensync environment
 	SetupEnvironment(p.get());
@@ -1041,11 +1047,25 @@ void OpenSync22::Discover(const std::string &group_name)
 }
 
 void OpenSync22::Sync(const std::string &group_name,
-			SyncStatus &status_callback)
+			SyncStatus &status_callback,
+			Config::pst_type sync_types)
 {
 	OSyncGroup *group = m_priv->osync_env_find_group(m_priv->env, group_name.c_str());
 	if( !group )
 		throw std::runtime_error("Sync(): Group not found: " + group_name);
+
+	// enable/disable each objtype, as per sync_types
+	if( !(sync_types & PST_DO_NOT_SET) ) {
+		cerr << "enabling objtypes: " << sync_types << endl;
+		m_priv->osync_group_set_objtype_enabled(group, "contact",
+			(sync_types & PST_CONTACTS) ? TRUE : FALSE);
+		m_priv->osync_group_set_objtype_enabled(group, "event",
+			(sync_types & PST_EVENTS) ? TRUE : FALSE);
+		m_priv->osync_group_set_objtype_enabled(group, "note",
+			(sync_types & PST_NOTES) ? TRUE : FALSE);
+		m_priv->osync_group_set_objtype_enabled(group, "todo",
+			(sync_types & PST_TODOS) ? TRUE : FALSE);
+	}
 
 	OSyncError *error = NULL;
 	EngineHandle engine(m_priv->osengine_free);

@@ -145,8 +145,8 @@ void Test(API &os)
 
 	// try a sync
 	SyncStatus status_callbacks;
-	os.Sync(group_name, status_callbacks);
-	os.Sync(group_name, status_callbacks);
+	os.Sync(group_name, status_callbacks, PST_DO_NOT_SET);
+	os.Sync(group_name, status_callbacks, PST_DO_NOT_SET);
 
 	// loop
 	string command;
@@ -154,7 +154,7 @@ void Test(API &os)
 		getline(cin, command),
 		command[0] != 'q' )
 	{
-		os.Sync(group_name, status_callbacks);
+		os.Sync(group_name, status_callbacks, PST_DO_NOT_SET);
 	}
 
 	// delete group twice, to confirm behaviour

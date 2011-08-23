@@ -27,6 +27,7 @@
 #include <string>
 #include <iosfwd>
 #include <tr1/memory>
+#include "ostypes.h"
 
 namespace OpenSync {
 
@@ -302,8 +303,22 @@ public:
 	virtual void Discover(const std::string &group_name) = 0;
 
 	// Syncing
+	//
+	// API Note: we put the sync_types here, and not in a special
+	// API of its own, since 0.22 does not save this state, and
+	// while 0.4x does, it is not easy to determine whether every
+	// member in the group is configured the same... so we do it on
+	// the fly during the sync process, and we don't save the state.
+	//
+	// Therefore it is possible that you can disable an objtype in
+	// a 0.4x config, and sync here with it enabled, and the config
+	// files will remain the same!  This could be confusing for debugging,
+	// make sure you compare the barry config with the opensync config
+	// when debugging sync issues.
+	//
 	virtual void Sync(const std::string &group_name,
-		SyncStatus &status_callback) = 0;
+		SyncStatus &status_callback,
+		Config::pst_type sync_types/* = PST_DO_NOT_SET*/) = 0;
 };
 
 class APISet : private std::vector<API*>

@@ -413,6 +413,9 @@ public:
 	void			(*osync_plugin_authentication_set_username)(
 					OSyncPluginAuthentication *auth,
 					const char *password);
+	void			(*osync_group_set_objtype_enabled)(
+					OSyncGroup *group, const char *objtype,
+					osync_bool enabled);
 
 	// data pointers
 	vLateSmartPtr<OSyncGroupEnv, void(*)(OSyncGroupEnv*)> group_env;
@@ -1727,6 +1730,8 @@ OpenSync40::OpenSync40()
 				"osync_plugin_authentication_get_username");
 	LoadSym(p->osync_plugin_authentication_set_username,
 				"osync_plugin_authentication_set_username");
+	LoadSym(p->osync_group_set_objtype_enabled,
+				"osync_group_set_objtype_enabled");
 
 	// fixup free pointers
 	p->group_env.SetFreeFunc(p->osync_group_env_unref);
@@ -2161,11 +2166,25 @@ void OpenSync40::Discover(const std::string &group_name)
 }
 
 void OpenSync40::Sync(const std::string &group_name,
-			SyncStatus &status_callback)
+			SyncStatus &status_callback,
+			Config::pst_type sync_types)
 {
 	OSyncGroup *group = m_priv->osync_group_env_find_group(m_priv->group_env.get(), group_name.c_str());
 	if( !group )
 		throw std::runtime_error("Sync(): Group not found: " + group_name);
+
+	// enable/disable each objtype, as per sync_types
+	if( !(sync_types & PST_DO_NOT_SET) ) {
+		cerr << "enabling objtypes: " << sync_types << endl;
+		m_priv->osync_group_set_objtype_enabled(group, "contact",
+			(sync_types & PST_CONTACTS) ? TRUE : FALSE);
+		m_priv->osync_group_set_objtype_enabled(group, "event",
+			(sync_types & PST_EVENTS) ? TRUE : FALSE);
+		m_priv->osync_group_set_objtype_enabled(group, "note",
+			(sync_types & PST_NOTES) ? TRUE : FALSE);
+		m_priv->osync_group_set_objtype_enabled(group, "todo",
+			(sync_types & PST_TODOS) ? TRUE : FALSE);
+	}
 
 	EngineHandle engine(m_priv->osync_engine_unref);
 	engine = m_priv->osync_engine_new(group, m_priv->error);

@@ -483,6 +483,7 @@ void SyncStatusDlg::StartNextSync()
 	// grab all required information we need to sync
 	m_current_device = m_next_device;
 	DeviceEntry &device = *(*m_next_device);
+	const DeviceExtras *extras = device.GetExtras();
 	m_device_id = device.GetPin().Str() + " (" + device.GetDeviceName() + ")";
 
 	if( !device.IsConfigured() ) {
@@ -536,6 +537,10 @@ void SyncStatusDlg::StartNextSync()
 	command += wxString(engine->GetVersion(), wxConvUTF8);
 	command += _T(" ");
 	command += wxString(group_name.c_str(), wxConvUTF8);
+	command += _T(" ");
+	ostringstream sync_code;
+	sync_code << dec << extras->m_sync_types;
+	command += wxString(sync_code.str().c_str(), wxConvUTF8);
 
 	if( !m_jailexec.Run(NULL, "bsyncjail", command) ) {
 		Print("ERROR: unable to start bsyncjail: " + string(command.utf8_str()), *wxRED);

@@ -117,7 +117,8 @@ void OpenSync40::Discover(const std::string &group_name)
 }
 
 void OpenSync40::Sync(const std::string &group_name,
-			SyncStatus &status_callback)
+			SyncStatus &status_callback,
+			Config::pst_type sync_types)
 {
 }
 

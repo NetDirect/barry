@@ -30,11 +30,13 @@
 #include "os22.h"
 #include "os40.h"
 #include "tempdir.h"
+#include "ostypes.h"
 
 using namespace std;
 
 // command line arguments
 string g_argv_version, g_argv_group_name;
+OpenSync::Config::pst_type g_sync_types = PST_DO_NOT_SET;
 SillyBuffer sb;
 
 class ClientConnection : public wxConnection
@@ -145,7 +147,7 @@ bool BarrySyncJail::OnInit()
 	// start the sync
 	try {
 		m_engine->Discover(g_argv_group_name);
-		m_engine->Sync(g_argv_group_name, *this);
+		m_engine->Sync(g_argv_group_name, *this, g_sync_types);
 	}
 	catch( std::exception &e ) {
 		m_status_con->Poke(STATUS_ITEM_ERROR, sb.buf(e.what()));
@@ -335,7 +337,7 @@ int main(int argc, char *argv[])
 
 	cerr << "bsyncjail startup" << endl;
 
-	if( argc != 3 ) {
+	if( argc != 4 ) {
 		cerr << "This is a helper program for barrydesktop, and\n"
 			"not intended to be called directly.\n" << endl;
 		return 1;
@@ -343,6 +345,7 @@ int main(int argc, char *argv[])
 
 	g_argv_version = argv[1];
 	g_argv_group_name = argv[2];
+	g_sync_types = atoi(argv[3]);
 
 	wxInitializer initializer;
 	if( !initializer ) {
