@@ -24,6 +24,7 @@
 #define __BARRY_DEVICE_SET_H__
 
 #include "osconfig.h"
+#include "ostypes.h"
 #include <iosfwd>
 
 namespace Barry {
@@ -48,6 +49,7 @@ public:
 	// config data... The Extras
 	std::string m_favour_plugin_name;	// if empty, ask user
 	time_t m_last_sync_time;
+	OpenSync::Config::pst_type m_sync_types;
 
 protected:
 	std::string MakeBaseKey(const std::string &group_name);

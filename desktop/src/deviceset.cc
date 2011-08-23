@@ -35,6 +35,7 @@ using namespace std;
 DeviceExtras::DeviceExtras(const Barry::Pin &pin)
 	: m_pin(pin)
 	, m_last_sync_time(0)
+	, m_sync_types(PST_NONE)
 {
 }
 
@@ -62,6 +63,12 @@ void DeviceExtras::Load(const Barry::GlobalConfigFile &config,
 
 	string num = config.GetKey(key + "LastSyncTime");
 	m_last_sync_time = atol(num.c_str());
+
+	using OpenSync::Config::PSTString2Type;
+	using OpenSync::Config::PSTType2String;
+	string stypes = config.GetKey(key + "SyncTypes",
+		PSTType2String(PST_ALL));
+	m_sync_types = PSTString2Type(stypes);
 }
 
 void DeviceExtras::Save(Barry::GlobalConfigFile &config,
@@ -73,6 +80,9 @@ void DeviceExtras::Save(Barry::GlobalConfigFile &config,
 	ostringstream oss;
 	oss << m_last_sync_time;
 	config.SetKey(key + "LastSyncTime", oss.str());
+
+	config.SetKey(key + "SyncTypes",
+		OpenSync::Config::PSTType2String(m_sync_types));
 }
 
 
