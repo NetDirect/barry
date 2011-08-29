@@ -73,20 +73,20 @@ int main()
 	}
 	origvalue=bitmapdata;
 
+	// Probe the USB bus for Blackberry devices and display.
+	// If user has specified a PIN, search for it in the
+	// available device list here as well
+	Barry::Probe probe;
+	int activeDevice = probe.FindActive(pin);
+	if( activeDevice == -1 ) {
+		cerr << "No device selected, or PIN not found" << endl;
+		return 1;
+	}
+
 	// Main loop
 	while(!keypress) {
 		// Put this inside it's own block to avoid blocking the handheld
 		{
-			// Probe the USB bus for Blackberry devices and display.
-			// If user has specified a PIN, search for it in the
-			// available device list here as well
-			Barry::Probe probe;
-			int activeDevice = probe.FindActive(pin);
-			if( activeDevice == -1 ) {
-				cerr << "No device selected, or PIN not found" << endl;
-				return 1;
-			}
-
 			// Create our controller object
 			Barry::Controller con(probe.Get(activeDevice));
 			Barry::Mode::JavaLoader javaloader(con);
