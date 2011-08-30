@@ -33,30 +33,71 @@
 #include <string.h>
 #include <SDL/SDL.h>
 
-
 using namespace std;
 using namespace Barry;
 
-int main()
+void Usage()
 {
-	// Init SDL
-	bool sdl_started=false;
-	SDL_Surface *screen=NULL;
-	SDL_Event event;
-	int keypress = 0;
-	if (SDL_Init(SDL_INIT_VIDEO) < 0 )
-		return 1;
+   int logical, major, minor;
+   const char *Version = Barry::Version(logical, major, minor);
 
-	// Barry variables
+   cerr
+   << "bwatch - View video of BlackBerry screenshots\n"
+   << "         Copyright 2011, Alberto Mattea\n"
+   << "         Copyright 2011, Net Direct Inc. (http://www.netdirect.ca/)\n"
+   << "         Using: " << Version << "\n"
+   << "\n"
+   << "   -p pin    PIN of device to talk with\n"
+   << "             If only one device is plugged in, this flag is optional\n"
+   << "   -P pass   Simplistic method to specify device password\n"
+   << "   -v        Dump protocol data during operation\n"
+   << endl;
+}
+
+int main(int argc, char *argv[])
+{
+	try {
+
 	cout.sync_with_stdio(true); // leave this on, since libusb uses stdio for debug messages
+
 	uint32_t pin = 0;
 	bool data_dump = false;
 	string password;
-	vector<string> params;
-	string busname;
-	string devname;
-	string iconvCharset;
-	Usb::EndpointPair epOverride;
+
+	// process command line options
+	for(;;) {
+		int cmd = getopt(argc, argv, "hp:P:v");
+		if( cmd == -1 )
+			break;
+
+		switch( cmd )
+		{
+		case 'p':	// Blackberry PIN
+			pin = strtoul(optarg, NULL, 16);
+			break;
+
+		case 'P':	// Device password
+			password = optarg;
+			break;
+
+		case 'v':	// data dump on
+			data_dump = true;
+			break;
+
+		case 'h':	// help
+		default:
+			Usage();
+			return 0;
+		}
+	}
+
+	// Init SDL
+	bool sdl_started = false;
+	SDL_Surface *screen = NULL;
+	SDL_Event event;
+	int keypress = 0;
+	if( SDL_Init(SDL_INIT_VIDEO) < 0 )
+		return 1;
 
 	// Initialize the barry library.  Must be called before
 	// anything else.
@@ -64,14 +105,14 @@ int main()
 
 	JLScreenInfo info;
 	Data image;
-	const uint16_t* rawdata;
-	unsigned char* bitmapdata;
-	unsigned char* origvalue;
-	if ((bitmapdata=(unsigned char*)malloc(1000000))==NULL) {
+	const uint16_t *rawdata;
+	unsigned char *bitmapdata;
+	unsigned char *origvalue;
+	if( (bitmapdata = (unsigned char*)malloc(1000000))==NULL ) {
 		cerr << "Cannot allocate buffer" << endl;
 		return 1;
 	}
-	origvalue=bitmapdata;
+	origvalue = bitmapdata;
 
 	// Probe the USB bus for Blackberry devices and display.
 	// If user has specified a PIN, search for it in the
@@ -84,7 +125,7 @@ int main()
 	}
 
 	// Main loop
-	while(!keypress) {
+	while( !keypress ) {
 		// Put this inside it's own block to avoid blocking the handheld
 		{
 			// Create our controller object
@@ -100,8 +141,8 @@ int main()
 		}
 
 		// The first time set the video mode according to the screenshot data
-		if (!sdl_started) {
-			if (!(screen = SDL_SetVideoMode(info.width, info.height, 0, SDL_HWSURFACE))) {
+		if( !sdl_started ) {
+			if( !(screen = SDL_SetVideoMode(info.width, info.height, 0, SDL_HWSURFACE)) ) {
 				SDL_Quit();
 				return 1;
 			}
@@ -113,11 +154,11 @@ int main()
 		SDL_Delay(500);
 
 		// Convert to 24-bit RGB
-		rawdata=(const uint16_t*)image.GetData();
-		for (size_t j=0; j<info.height; j++) {
-			for (size_t i=0; i<info.width; i++) {
+		rawdata = (const uint16_t*)image.GetData();
+		for( size_t j = 0; j < info.height; j++) {
+			for( size_t i = 0; i < info.width; i++) {
 				// Read one pixel in the picture
-				short value=rawdata[i+j*info.width];
+				short value = rawdata[i+j*info.width];
 				// Pixel format used by the handheld is : 16 bits
 				// MSB < .... .... .... .... > LSB
 				//                    ^^^^^^ : Blue (between 0x00 and 0x1F)
@@ -129,11 +170,11 @@ int main()
 				bitmapdata += 3;
 			}
 		}
-		bitmapdata=origvalue;
+		bitmapdata = origvalue;
 
 		// Do the blit
 		SDL_Surface *tmp;
-		tmp=SDL_CreateRGBSurfaceFrom(bitmapdata, info.width, info.height, 24, info.width*3, 0, 0, 0, 0);
+		tmp = SDL_CreateRGBSurfaceFrom(bitmapdata, info.width, info.height, 24, info.width*3, 0, 0, 0, 0);
 		SDL_BlitSurface(tmp, 0, screen, 0);
 		SDL_Flip(screen);
 		while(SDL_PollEvent(&event)) {
@@ -151,5 +192,23 @@ int main()
 	// Stop SDL
 	SDL_Quit();
 	return 0;
+
+
+	}
+	catch( Usb::Error &ue) {
+		std::cout << endl;	// flush any normal output first
+		std::cerr << "Usb::Error caught: " << ue.what() << endl;
+		return 1;
+	}
+	catch( Barry::Error &se ) {
+		std::cout << endl;
+		std::cerr << "Barry::Error caught: " << se.what() << endl;
+		return 1;
+	}
+	catch( std::exception &e ) {
+		std::cout << endl;
+		std::cerr << "std::exception caught: " << e.what() << endl;
+		return 1;
+	}
 }
 
