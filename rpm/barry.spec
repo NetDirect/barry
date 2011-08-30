@@ -365,6 +365,7 @@ desktop-file-install --vendor netdirect \
 %attr(0755,root,root) %{_sbindir}/breset
 %attr(0755,root,root) %{_sbindir}/pppob
 %attr(0755,root,root) %{_bindir}/btool
+%attr(0755,root,root) %{_bindir}/bwatch
 %attr(0755,root,root) %{_bindir}/bio
 %attr(0755,root,root) %{_bindir}/btardump
 %attr(0755,root,root) %{_bindir}/bfuse
@@ -381,6 +382,7 @@ desktop-file-install --vendor netdirect \
 %attr(0755,root,root) %{_bindir}/brimtrans
 %attr(0755,root,root) %{_bindir}/hal-blackberry
 %attr(0644,root,root) %{_mandir}/man1/btool*
+%attr(0644,root,root) %{_mandir}/man1/bwatch*
 %attr(0644,root,root) %{_mandir}/man1/bio*
 %attr(0644,root,root) %{_mandir}/man1/btardump*
 %attr(0644,root,root) %{_mandir}/man1/bfuse*
@@ -505,6 +507,7 @@ desktop-file-install --vendor netdirect \
 - split up dev libraries a little better (-devel should have the dev libs)
 - put desktop library in desktop package
 - added orangeuk and mts ppp chatscript files
+- added bwatch
 
 * Fri May 28 2010 Chris Frey <cdfrey@foursquare.net> 0.17.0-0
 - version bump
