@@ -47,6 +47,9 @@ void Usage()
    << "         Copyright 2011, Net Direct Inc. (http://www.netdirect.ca/)\n"
    << "         Using: " << Version << "\n"
    << "\n"
+   << "   -d delay  Delay interval between screenshots, in milliseconds.\n"
+   << "             The lower the value, the higher the load on the device.\n"
+   << "             Default is 500ms.\n"
    << "   -p pin    PIN of device to talk with\n"
    << "             If only one device is plugged in, this flag is optional\n"
    << "   -P pass   Simplistic method to specify device password\n"
@@ -63,15 +66,24 @@ int main(int argc, char *argv[])
 	uint32_t pin = 0;
 	bool data_dump = false;
 	string password;
+	int delay = 500;	// default delay of 500 ms
 
 	// process command line options
 	for(;;) {
-		int cmd = getopt(argc, argv, "hp:P:v");
+		int cmd = getopt(argc, argv, "d:hp:P:v");
 		if( cmd == -1 )
 			break;
 
 		switch( cmd )
 		{
+		case 'd':	// delay interval in milliseconds
+			delay = atoi(optarg);
+			if( !delay ) {
+				cerr << "Invalid interval value of '" << optarg << "'.  Defaulting to 500ms." << endl;
+				delay = 500;
+			}
+			break;
+
 		case 'p':	// Blackberry PIN
 			pin = strtoul(optarg, NULL, 16);
 			break;
@@ -125,6 +137,7 @@ int main(int argc, char *argv[])
 	}
 
 	// Main loop
+	cout << "Press a key to exit..." << endl;
 	while( !keypress ) {
 		// Put this inside it's own block to avoid blocking the handheld
 		{
