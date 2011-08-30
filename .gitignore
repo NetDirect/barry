@@ -74,6 +74,7 @@ tools/bs11nread
 tools/btardump
 tools/btool
 tools/btranslate
+tools/bwatch
 tools/pppob
 tools/upldif
 
