@@ -16,6 +16,7 @@ apt-get install \
 	libfuse-dev \
 	libxml++2.6-dev \
 	libwxgtk2.8-dev \
+	libsdl-dev \
 	wx-common \
 	libgcal-dev \
 	zlib1g-dev \

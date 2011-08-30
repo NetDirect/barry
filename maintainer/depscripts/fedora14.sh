@@ -24,6 +24,7 @@ yum install \
 	ccache \
 	doxygen \
 	wxGTK-devel \
+	SDL-devel \
 	libgcal-devel \
 	libopensync-devel
 
