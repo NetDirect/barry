@@ -36,6 +36,9 @@ endif
 if WITH_FUSE
 bin_PROGRAMS += bfuse
 endif
+if WITH_SDL
+bin_PROGRAMS += bwatch
+endif
 if WITH_BACKUP
 bin_PROGRAMS += btardump
 endif
@@ -140,6 +143,12 @@ if WITH_FUSE
 bfuse_SOURCES = bfuse.cc
 bfuse_CXXFLAGS = $(FUSE_CFLAGS)
 bfuse_LDADD = ../src/libbarry.la $(FUSE_LIBS) -lpthread $(LTLIBINTL)
+endif
+
+if WITH_SDL
+bwatch_SOURCES = bwatch.cc
+bwatch_CXXFLAGS = $(SDL_FLAGS)
+bwatch_LDADD = ../src/libbarry.la $(SDL_LIBS) -lpthread $(LTLIBINTL)
 endif
 
 if WITH_BACKUP
