@@ -4,6 +4,7 @@ apt-get install \
 	fakeroot \
 	cdbs \
 	autoconf \
+	autoconf-archive \
 	automake \
 	libtool \
 	libusb-dev \

@@ -5,6 +5,7 @@ yum install \
 	rpm-build \
 	desktop-file-utils \
 	autoconf \
+	autoconf-archive \
 	automake \
 	libtool \
 	gcc-c++ \
