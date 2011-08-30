@@ -1,4 +1,4 @@
-EXTRA_DIST = buildtest.sh
+EXTRA_DIST = buildtest.sh nightly.sh
 
 #DEFAULT_INCLUDES =
 INCLUDES =
