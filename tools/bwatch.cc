@@ -104,7 +104,7 @@ int main(int argc, char *argv[])
 	}
 
 	// Init SDL
-	bool sdl_started = false;
+	int sdl_width = -1, sdl_height = -1;
 	SDL_Surface *screen = NULL;
 	SDL_Event event;
 	int keypress = 0;
@@ -154,12 +154,13 @@ int main(int argc, char *argv[])
 		}
 
 		// The first time set the video mode according to the screenshot data
-		if( !sdl_started ) {
+		if( sdl_width != info.width || sdl_height != info.height ) {
+			sdl_width = info.width;
+			sdl_height = info.height;
 			if( !(screen = SDL_SetVideoMode(info.width, info.height, 0, SDL_HWSURFACE)) ) {
 				SDL_Quit();
 				return 1;
 			}
-			sdl_started=true;
 			SDL_WM_SetCaption("Blackberry", 0);
 		}
 
