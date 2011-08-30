@@ -1,0 +1,56 @@
+.\"                                      Hey, EMACS: -*- nroff -*-
+.\" First parameter, NAME, should be all caps
+.\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
+.\" other parameters are allowed: see man(7), man(1)
+.TH BWATCH 1 "August 30, 2011"
+.\" Please adjust this date whenever revising the manpage.
+.\"
+.\" Some roff macros, for reference:
+.\" .nh        disable hyphenation
+.\" .hy        enable hyphenation
+.\" .ad l      left justify
+.\" .ad b      justify to both left and right margins
+.\" .nf        disable filling
+.\" .fi        enable filling
+.\" .br        insert line break
+.\" .sp <n>    insert n+1 empty lines
+.\" for manpage-specific macros, see man(7)
+.SH NAME
+.B bwatch
+\- program to view live updates of screenshots from a BlackBerry(TM) handheld
+.SH SYNOPSIS
+.B bwatch
+[-d delay][-h][-p pin][-P password][-v]
+.SH DESCRIPTION
+.PP
+.B bwatch
+is a program that takes screenshots of a given device at regular
+intervals, and displays those screenshots on the screen, using
+the SDL library.
+.SH OPTIONS
+.TP
+.B \-d delay
+The delay interval between screen updates, in milliseconds.  Default is 500.
+.TP
+.B \-p pin
+PIN of device to talk with.  Only needed if you have more than one Blackberry
+connected at once.
+.TP
+.B \-P password
+Simplistic method to specify device password.  In a real application, this
+would be done using a more secure prompt.
+.TP
+.B \-v
+Dump verbose protocol data during operation.
+.TP
+.B \-h, \-\-help
+Show summary of options.
+
+.SH AUTHOR
+.nh
+.B bwatch
+is part of the Barry project, and was originally written by Alberto Mattea.
+.SH SEE ALSO
+.PP
+http://netdirect.ca/barry
+

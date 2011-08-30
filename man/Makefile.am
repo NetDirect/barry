@@ -3,6 +3,7 @@ EXTRA_DIST = manpage.1.ex
 dist_man_MANS = \
 	bcharge.1 \
 	btool.1 \
+	bwatch.1 \
 	btardump.1 \
 	bfuse.1 \
 	bjavaloader.1 \
