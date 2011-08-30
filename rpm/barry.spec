@@ -159,7 +159,7 @@ This package contains the desktop panel GUI.
 # in order to recognize that /usr/lib64 is a system path and therefore
 # there is no reason to use an rpath... unfortunately, configure's
 # --disable-rpath option seems to have no effect whatsoever. :-(
-%if 0%{?fc14}
+%if "%{?_lib}" == "lib64"
 	./buildgen.sh cleanall
 	./buildgen.sh
 %endif
