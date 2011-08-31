@@ -30,6 +30,19 @@
 namespace Barry {
 
 //
+// GetBitmapHeadersSize
+//
+/// Returns the size of the bitmap headers (both file and info headers).
+/// You can use this as an offset into the bitmap produced by
+/// ScreenshotToBitmap to get just the 4-byte RGB data.
+///
+BXEXPORT size_t GetBitmapHeadersSize()
+{
+	return sizeof(bmp_file_header_t) +
+		sizeof(bmp_info_header_t);
+}
+
+//
 // GetTotalBitmapSize
 //
 /// Returns the total number of bytes needed to convert a

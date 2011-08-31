@@ -30,6 +30,7 @@ namespace Barry {
 class Data;
 class JLScreenInfo;
 
+BXEXPORT size_t GetBitmapHeadersSize();
 BXEXPORT size_t GetTotalBitmapSize(const JLScreenInfo &info);
 BXEXPORT void ScreenshotToBitmap(const JLScreenInfo &info,
 	const Data &screenshot, Data &bitmap);
