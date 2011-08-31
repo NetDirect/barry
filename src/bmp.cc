@@ -58,6 +58,74 @@ BXEXPORT size_t GetTotalBitmapSize(const JLScreenInfo &info)
 }
 
 //
+// ScreenshotToRGB
+//
+/// Converts screenshot data obtained via JavaLoader::GetScreenshot()
+/// into uncompressed RGB bitmap format.  The results will not have
+/// a bitmap BMP header.  Data will be written to buffer, starting
+/// at offset.  The depth variable can be 24 or 32.  If invert is
+/// true, the result will be inverted, just like a BMP file; otherwise not.
+///
+BXEXPORT void ScreenshotToRGB(const JLScreenInfo &info,
+			     const Data &screenshot,
+			     Data &buffer,
+			     size_t offset,
+			     int depth,
+			     bool invert)
+{
+	if( depth != 24 && depth != 32 )
+		throw Barry::Error("ScreenshotToRGB: depth must be 24 or 32");
+
+	size_t width = info.width;
+	size_t height = info.height;
+	size_t bytes_per_pixel = (depth == 24) ? 3 : 4;
+	size_t pixel_count = width * height;
+	size_t total_bitmap_size = pixel_count * bytes_per_pixel;
+	size_t total_buffer_size = total_bitmap_size + offset;
+
+	// make sure there is enough screeshot pixel data for the
+	// given width and height
+	if( screenshot.GetSize() < (pixel_count * 2) ) // 2 byte screenshot pixel data
+		throw Error("ScreenshotToRGB: Screenshot data size is too small for given width+height");
+
+	// setup write pointer
+	unsigned char *write = buffer.GetBuffer(total_buffer_size) + offset;
+
+	// I work with 2 bytes (see the pixel format)
+	const uint16_t *data = (const uint16_t*) screenshot.GetData();
+
+	// For each pixel... (note BMP format is up and backwards, hence
+	// offset calculation for each pixel in for loop)
+	for( size_t j = 0; j < height; j++ ) {
+		for( size_t i = 0; i < width; i++ ) {
+			// Read one pixel in the picture
+			short value;
+			if( invert )
+				value = data[(pixel_count - 1) - ((width-1 - i) + (width * j))];
+			else
+				value = data[(j * width) + i];
+
+			// Pixel format used by the handheld is : 16 bits
+			// MSB < .... .... .... .... > LSB
+			//                    ^^^^^^ : Blue (between 0x00 and 0x1F)
+			//             ^^^^^^^ : Green (between 0x00 and 0x3F)
+			//       ^^^^^^ : Red (between 0x00 and 0x1F)
+
+			if( bytes_per_pixel == 4 )
+				write[3] = 0x00;	// alpha
+
+			write[2] = (((value >> 11) & 0x1F) * 0xFF) / 0x1F;	// red
+			write[1] = (((value >> 5) & 0x3F) * 0xFF) / 0x3F;	// green
+			write[0] = ((value & 0x1F) * 0xFF) / 0x1F;		// blue
+
+			write += bytes_per_pixel;
+		}
+	}
+
+	buffer.ReleaseBuffer(total_buffer_size);
+}
+
+//
 // ScreenshotToBitmap
 //
 /// Converts screenshot data obtained via JavaLoader::GetScreenshot()
@@ -85,7 +153,8 @@ BXEXPORT void ScreenshotToBitmap(const JLScreenInfo &info,
 
 
 	// setup write pointer
-	unsigned char *write = bitmap.GetBuffer(total_bitmap_size);
+	unsigned char *bitbuf = bitmap.GetBuffer(total_bitmap_size);
+	unsigned char *write = bitbuf;
 
 	//
 	// Build header BMP file
@@ -143,32 +212,8 @@ BXEXPORT void ScreenshotToBitmap(const JLScreenInfo &info,
 	// Color palette important : None
 	infoheader->biClrImportant = 0;
 
-
-	// I work with 2 bytes (see the pixel format)
-	const uint16_t *data = (const uint16_t*) screenshot.GetData();
-	size_t pixel_count = width * height;
-
-	// For each pixel... (note BMP format is up and backwards, hence
-	// offset calculation for each pixel in for loop)
-	for (size_t j=0; j<height; j++) {
-		for (size_t i=0; i<width; i++) {
-			// Read one pixel in the picture
-			short value = data[(pixel_count - 1) - ((width-1 - i) + (width * j))];
-
-			// Pixel format used by the handheld is : 16 bits
-			// MSB < .... .... .... .... > LSB
-			//                    ^^^^^^ : Blue (between 0x00 and 0x1F)
-			//             ^^^^^^^ : Green (between 0x00 and 0x3F)
-			//       ^^^^^^ : Red (between 0x00 and 0x1F)
-
-			write[3] = 0x00;					// alpha
-			write[2] = (((value >> 11) & 0x1F) * 0xFF) / 0x1F;	// red
-			write[1] = (((value >> 5) & 0x3F) * 0xFF) / 0x3F;	// green
-			write[0] = ((value & 0x1F) * 0xFF) / 0x1F;		// blue
-
-			write += 4;
-		}
-	}
+	// Fill in the RGB data
+	ScreenshotToRGB(info, screenshot, bitmap, write - bitbuf, 32, true);
 
 	bitmap.ReleaseBuffer(total_bitmap_size);
 }
