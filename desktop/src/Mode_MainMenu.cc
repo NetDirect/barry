@@ -51,9 +51,10 @@ void MainMenuMode::UpdateScreenshot(const Barry::Pin &pin)
 			}
 		}
 	}
-	catch( Barry::Error & ) {
+	catch( Barry::Error &be ) {
 		// don't worry if we can't get a screenshot... not all
 		// devices support it
+		barryverbose("Ignorable screenshot exception: " << be.what());
 	}
 }
 
