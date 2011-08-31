@@ -188,6 +188,11 @@ void Probe::ProbeDevice(Usb::DeviceID& devid)
 	// skip if we can't properly discover device config
 	DeviceDescriptor desc(devid);
 	ConfigDescriptor* config = desc[BLACKBERRY_CONFIGURATION];
+	if( !config ) {
+		dout("Probe: No device descriptor for BlackBerry config (config id: "
+			<< BLACKBERRY_CONFIGURATION << ")");
+		return;	// not found
+	}
 
 	// search for interface class
 	ConfigDescriptor::base_type::iterator idi = config->begin();
