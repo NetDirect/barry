@@ -27,11 +27,11 @@
 #include <queue>
 #include <memory>
 #include "router.h"
+#include "data.h"
 
 // forward declarations
 namespace Usb { class Device; }
 namespace Barry {
-	class Data;
 	class Packet;
 	class JLPacket;
 	class JVMPacket;
@@ -62,6 +62,10 @@ class BXEXPORT SocketZero
 	unsigned int m_remainingTries;
 	bool m_modeSequencePacketSeen;
 
+	// pushback for out of order sequence packets
+	Data m_pushback_buffer;
+	bool m_pushback;
+
 private:
 	static void AppendFragment(Data &whole, const Data &fragment);
 	static unsigned int MakeNextFragment(const Data &whole, Data &fragment,
@@ -75,6 +79,8 @@ private:
 	// communication to the USB level.
 	void RawSend(Data &send, int timeout = -1);
 	void RawReceive(Data &receive, int timeout = -1);
+
+	void Pushback(const Data &buf);
 
 protected:
 	bool IsSequencePacketHidden() { return false; }

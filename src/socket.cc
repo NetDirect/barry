@@ -53,6 +53,7 @@ SocketZero::SocketZero(	SocketRoutingQueue &queue,
 	, m_challengeSeed(0)
 	, m_remainingTries(0)
 	, m_modeSequencePacketSeen(false)
+	, m_pushback(false)
 {
 }
 
@@ -69,6 +70,7 @@ SocketZero::SocketZero(	Device &dev,
 	, m_challengeSeed(0)
 	, m_remainingTries(0)
 	, m_modeSequencePacketSeen(false)
+	, m_pushback(false)
 {
 }
 
@@ -312,6 +314,12 @@ void SocketZero::RawSend(Data &send, int timeout)
 
 void SocketZero::RawReceive(Data &receive, int timeout)
 {
+	if( m_pushback ) {
+		receive = m_pushback_buffer;
+		m_pushback = false;
+		return;
+	}
+
 	if( m_queue ) {
 		if( !m_queue->DefaultRead(receive, timeout) )
 			throw Timeout("SocketZero::RawReceive: queue DefaultRead returned false (likely a timeout)");
@@ -323,6 +331,15 @@ void SocketZero::RawReceive(Data &receive, int timeout)
 	ddout("SocketZero::RawReceive: Endpoint "
 		<< (m_queue ? m_queue->GetReadEp() : m_readEp)
 		<< "\nReceived:\n" << receive);
+}
+
+void SocketZero::Pushback(const Data &buf)
+{
+	if( m_pushback )
+		throw Error("Multiple pushbacks");
+
+	m_pushback = true;
+	m_pushback_buffer = buf;
 }
 
 
