@@ -517,8 +517,23 @@ SocketHandle SocketZero::Open(uint16_t socket, const char *password)
 	if( !m_modeSequencePacketSeen ) {
 		Data sequence;
 		RawReceive(sequence);
-		if( !Protocol::IsSequencePacket(sequence) )
-			throw Error("Could not find mode's starting sequence packet");
+		if( !Protocol::IsSequencePacket(sequence) ) {
+			// if this is not the sequence packet, then it might
+			// just be out of order (some devices do this when
+			// opening the JavaLoader mode), so as a last
+			// ditch effort, do one more read with a short
+			// timeout, and check that as well
+			Data late_sequence;
+			RawReceive(late_sequence, 500);
+			if( !Protocol::IsSequencePacket(late_sequence) ) {
+				throw Error("Could not find mode's starting sequence packet");
+			}
+
+			// ok, so our ditch effort worked, but now we have
+			// a leftover packet on our hands... do a temporary
+			// pushback
+			Pushback(sequence);
+		}
 	}
 
 	// success!  save the socket
