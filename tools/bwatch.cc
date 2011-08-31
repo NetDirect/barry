@@ -116,15 +116,7 @@ int main(int argc, char *argv[])
 	Barry::Init(data_dump);
 
 	JLScreenInfo info;
-	Data image;
-	const uint16_t *rawdata;
-	unsigned char *bitmapdata;
-	unsigned char *origvalue;
-	if( (bitmapdata = (unsigned char*)malloc(1000000))==NULL ) {
-		cerr << "Cannot allocate buffer" << endl;
-		return 1;
-	}
-	origvalue = bitmapdata;
+	Data image, bitmap;
 
 	// Probe the USB bus for Blackberry devices and display.
 	// If user has specified a PIN, search for it in the
@@ -147,13 +139,15 @@ int main(int argc, char *argv[])
 			javaloader.Open(password.c_str());
 			javaloader.StartStream();
 			// Take a screenshot
-			//   - info object contains the screenshot properties (width, height...)
-			//   - image will be filled with the raw pixel screenshot data
+			//   - info object contains the screenshot properties
+			//     (width, height...)
+			//   - image will be filled with the raw pixel
+			//     screenshot data
 			javaloader.GetScreenshot(info, image);
 			javaloader.StopStream();
 		}
 
-		// The first time set the video mode according to the screenshot data
+		// Set the video mode according to the screenshot data
 		if( sdl_width != info.width || sdl_height != info.height ) {
 			sdl_width = info.width;
 			sdl_height = info.height;
@@ -168,27 +162,11 @@ int main(int argc, char *argv[])
 		SDL_Delay(500);
 
 		// Convert to 24-bit RGB
-		rawdata = (const uint16_t*)image.GetData();
-		for( size_t j = 0; j < info.height; j++) {
-			for( size_t i = 0; i < info.width; i++) {
-				// Read one pixel in the picture
-				short value = rawdata[i+j*info.width];
-				// Pixel format used by the handheld is : 16 bits
-				// MSB < .... .... .... .... > LSB
-				//                    ^^^^^^ : Blue (between 0x00 and 0x1F)
-				//             ^^^^^^^ : Green (between 0x00 and 0x3F)
-				//       ^^^^^^ : Red (between 0x00 and 0x1F)
-				bitmapdata[2] = (((value >> 11) & 0x1F) * 0xFF) / 0x1F;      // red
-				bitmapdata[1] = (((value >> 5) & 0x3F) * 0xFF) / 0x3F;       // green
-				bitmapdata[0] = ((value & 0x1F) * 0xFF) / 0x1F;              // blue
-				bitmapdata += 3;
-			}
-		}
-		bitmapdata = origvalue;
+		ScreenshotToRGB(info, image, bitmap, 0, 24, false);
 
 		// Do the blit
 		SDL_Surface *tmp;
-		tmp = SDL_CreateRGBSurfaceFrom(bitmapdata, info.width, info.height, 24, info.width*3, 0, 0, 0, 0);
+		tmp = SDL_CreateRGBSurfaceFrom((char*)bitmap.GetData(), info.width, info.height, 24, info.width*3, 0, 0, 0, 0);
 		SDL_BlitSurface(tmp, 0, screen, 0);
 		SDL_Flip(screen);
 		while(SDL_PollEvent(&event)) {
