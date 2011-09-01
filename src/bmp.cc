@@ -112,7 +112,7 @@ BXEXPORT void ScreenshotToRGB(const JLScreenInfo &info,
 			//       ^^^^^^ : Red (between 0x00 and 0x1F)
 
 			if( bytes_per_pixel == 4 )
-				write[3] = 0x00;	// alpha
+				write[3] = 0xFF;	// alpha
 
 			write[2] = (((value >> 11) & 0x1F) * 0xFF) / 0x1F;	// red
 			write[1] = (((value >> 5) & 0x3F) * 0xFF) / 0x3F;	// green
