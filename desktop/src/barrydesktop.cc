@@ -92,7 +92,7 @@ wxBitmap BarryDesktopApp::GetScreenshot(const Barry::ProbeResult &device) const
 	Barry::Data bitmap(-1, GetTotalBitmapSize(info));
 	Barry::ScreenshotToBitmap(info, image, bitmap);
 
-	// Load as wxImage (sigh)
+	// Load as wxImage
 	wxMemoryInputStream stream(bitmap.GetData(), bitmap.GetSize());
 	wxImage bmp(stream, wxBITMAP_TYPE_BMP);
 	bmp.Rescale(180, 100, wxIMAGE_QUALITY_HIGH);

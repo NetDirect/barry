@@ -28,6 +28,7 @@ Wishlist TODO List:
 - hook into HAL or inotify or udev somehow, to automatically detect when
 	a new device has been unplugged or plugged in, and do a usb scan
 	immediately, and update the lists, in the main screen, and in sync
+- add timer to screenshot, so it updates every second
 
 Dieter Rams' ten principles to "good design"
 ============================================
