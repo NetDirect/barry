@@ -150,6 +150,7 @@ This package contains the desktop panel GUI.
 %endif
 
 %prep
+[ "%{buildroot}" != "/" ] && %{__rm} -rf %{buildroot}
 %setup -q
 
 %build
@@ -496,7 +497,7 @@ desktop-file-install --vendor netdirect \
 /sbin/ldconfig
 
 %changelog
-* Mon Aug  8 2011 Chris Frey <cdfrey@foursquare.net> 0.18.0-0
+* Mon Aug 31 2011 Chris Frey <cdfrey@foursquare.net> 0.18.0-0
 - version bump
 - removed dependency of libbarry-devel on libusb(-devel)
 - added osyncwrap headers
@@ -508,6 +509,7 @@ desktop-file-install --vendor netdirect \
 - put desktop library in desktop package
 - added orangeuk and mts ppp chatscript files
 - added bwatch
+- added code to clean the buildroot at start
 
 * Fri May 28 2010 Chris Frey <cdfrey@foursquare.net> 0.17.0-0
 - version bump
