@@ -146,7 +146,7 @@ BXEXPORT void ScreenshotToBitmap(const JLScreenInfo &info,
 			//             ^^^^^^^ : Green (between 0x00 and 0x3F)
 			//       ^^^^^^ : Red (between 0x00 and 0x1F)
 
-			write[3] = 0x00;					// alpha
+			write[3] = 0xFF;					// alpha
 			write[2] = (((value >> 11) & 0x1F) * 0xFF) / 0x1F;	// red
 			write[1] = (((value >> 5) & 0x3F) * 0xFF) / 0x3F;	// green
 			write[0] = ((value & 0x1F) * 0xFF) / 0x1F;		// blue
