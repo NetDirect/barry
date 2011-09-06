@@ -383,19 +383,35 @@ void BackupWindow::treeview_update()
 			if( (thread->GetThreadState() & THREAD_STATE_BACKUP) &&
 			     finished != total )
 			{
-				// in some cases, not all records are backed
-				// up, possibly due to international chars
-				// in the Blackberry data which somehow
-				// forces the device to use a different
-				// low level protocol... here we need to
-				// warn the user that not all data was
-				// included in the backup
-				std::ostringstream oss;
-				oss << _("Warning\n\nNot all records were processed on device: ") << thread->GetFullname()
-					<< _("\n\nOnly ") << finished << _(" of ") << total
-					<< _(" records were backed up.\n\nIt is suspected that due to international characters in these records, the BlackBerry uses a different low-level protocol, which Barry Backup does not yet support.  Alternatively, there may be hidden records that cannot be edited in your device.  If this occurs in a database such as Address Book, sometimes a restore of just that database may fix the issue.");
-				Gtk::MessageDialog msg(oss.str());
-				msg.run();
+				if( finished < total ) {
+					// in some cases, not all records are backed
+					// up, possibly due to international chars
+					// in the Blackberry data which somehow
+					// forces the device to use a different
+					// low level protocol... here we need to
+					// warn the user that not all data was
+					// included in the backup
+					std::ostringstream oss;
+					oss << _("Warning\n\nNot all records were processed on device: ") << thread->GetFullname()
+						<< _("\n\nOnly ") << finished << _(" of ") << total
+						<< _(" records were backed up.\n\nIt is suspected that due to international characters in these records, the BlackBerry uses a different low-level protocol, which Barry Backup does not yet support.  Alternatively, there may be hidden records that cannot be edited in your device.  If this occurs in a database such as Address Book, sometimes a restore of just that database may fix the issue.");
+
+					oss << _("\n\nSummary:\n");
+					std::vector<std::string> msgs = thread->CompareTotals();
+					for( std::vector<std::string>::const_iterator i = msgs.begin() ; i != msgs.end(); ++i )
+						oss << *i << "\n";
+					Gtk::MessageDialog msg(oss.str());
+					msg.run();
+				}
+				else if( finished > total ) {
+					std::ostringstream oss;
+					oss << _("Warning: Record counts are not the same on device: ") << thread->GetFullname() << _("\nIt claims to have ") << total << _(" records, but actually retrieved ") << finished << _("\n\nSummary:\n");
+					std::vector<std::string> msgs = thread->CompareTotals();
+					for( std::vector<std::string>::const_iterator i = msgs.begin() ; i != msgs.end(); ++i )
+						oss << *i << "\n";
+					Gtk::MessageDialog msg(oss.str());
+					msg.run();
+				}
 			}
 		}
 	}
