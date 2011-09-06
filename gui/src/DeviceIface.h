@@ -106,6 +106,8 @@ private:
 	std::auto_ptr<Barry::Backup> m_backup;
 	std::auto_ptr<Barry::Restore> m_restore;
 
+	mutable Barry::Backup::StatsType m_backupStats;
+
 	// parser and builder data
 	Barry::ConfigFile::DBListType m_dbBackupList;
 	mutable Glib::Mutex *m_dbnameMutex;
@@ -144,6 +146,8 @@ public:
 	const Barry::DatabaseDatabase& GetDBDB() const { return m_desktop->GetDBDB(); }
 	unsigned int GetRecordTotal(const Barry::ConfigFile::DBListType &backupList) const;
 	unsigned int GetRecordTotal(const Barry::ConfigFile::DBListType &restoreList, const std::string &filename) const;
+
+	std::vector<std::string> CompareTotals(const Barry::ConfigFile::DBListType &backupList) const;
 
 	void QuitThread()	{ m_thread_quit = true; }
 

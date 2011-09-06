@@ -99,6 +99,7 @@ public:
 	unsigned int GetRecordFinished() const { return m_recordFinished; }
 	unsigned int GetRecordTotal() const { return m_recordTotal; }
 	unsigned int GetThreadState() const { return m_thread_state; }
+	std::vector<std::string> CompareTotals() const { return m_interface.CompareTotals(GetBackupList()); }
 
 	void Reset() { m_interface.Reset(); }
 	bool Connect();

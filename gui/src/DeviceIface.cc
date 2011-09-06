@@ -30,6 +30,8 @@
 #include <string.h>
 #include <stdlib.h>
 
+using namespace std;
+
 DeviceInterface::DeviceInterface(Device *dev)
 	: m_dev(dev)
 	, m_con(0)
@@ -83,6 +85,7 @@ void DeviceInterface::BackupThread()
 		m_last_thread_error = _("Terminated by user.");
 	}
 
+	m_backupStats = m_backup->GetStats();
 	m_backup.reset();
 
 	if( error )
@@ -296,6 +299,28 @@ unsigned int DeviceInterface::GetRecordTotal(const Barry::ConfigFile::DBListType
 unsigned int DeviceInterface::GetRecordTotal(const Barry::ConfigFile::DBListType &restoreList, const std::string &filename) const
 {
 	return Barry::Restore::GetRecordTotal(filename, restoreList, false);
+}
+
+// cycle through controller's DBDB and compare the record count of each
+// database, and store an error message for each one that is not equal,
+// and return the list of messages as a vector
+std::vector<std::string> DeviceInterface::CompareTotals(const Barry::ConfigFile::DBListType &backupList) const
+{
+	vector<string> msgs;
+
+	Barry::DatabaseDatabase::DatabaseArrayType::const_iterator
+		i = m_desktop->GetDBDB().Databases.begin();
+	for( ; i != m_desktop->GetDBDB().Databases.end(); ++i ) {
+		if( backupList.IsSelected(i->Name) ) {
+			if( (int)i->RecordCount != m_backupStats[i->Name] ) {
+				ostringstream oss;
+				oss << "'" << i->Name << "' claimed to have " << i->RecordCount << " records, but actually retrieved " << m_backupStats[i->Name] << ".";
+				msgs.push_back(oss.str());
+			}
+		}
+	}
+
+	return msgs;
 }
 
 /// returns name of database the thread is currently working on
