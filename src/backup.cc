@@ -60,6 +60,11 @@ void Backup::Close()
 	}
 }
 
+void Backup::ClearStats()
+{
+	m_stats.clear();
+}
+
 
 //////////////////////////////////////////////////////////////////////////////
 // Barry::Parser overrides
@@ -86,6 +91,9 @@ void Backup::ParseRecord(const Barry::DBData &data,
 	// save to tarball
 	std::string tarname = m_current_dbname + "/" + m_tar_id_text;
 	m_tar->AppendFile(tarname.c_str(), m_record_data);
+
+	// add stats
+	m_stats[m_current_dbname]++;
 }
 
 } // namespace Barry

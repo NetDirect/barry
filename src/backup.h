@@ -36,18 +36,25 @@ namespace Barry {
 
 class BXEXPORT Backup : public Barry::Parser
 {
+public:
+	typedef std::map<std::string, int>		StatsType;
+
 private:
 	std::auto_ptr<reuse::TarFile> m_tar;
 
 	std::string m_current_dbname;
 	std::string m_tar_id_text;
 	std::string m_record_data;
+	StatsType m_stats;
 
 public:
 	explicit Backup(const std::string &tarpath);
 	~Backup();
 
 	void Close();
+
+	void ClearStats();
+	const StatsType& GetStats() const { return m_stats; }
 
 	// Barry::Parser overrides
 	virtual void ParseRecord(const Barry::DBData &data,
