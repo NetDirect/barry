@@ -33,6 +33,14 @@ using namespace OpenSync;
 BEGIN_EVENT_TABLE(GroupCfgDlg, wxDialog)
 	EVT_BUTTON	(Dialog_GroupCfg_AppConfigButton,
 				GroupCfgDlg::OnConfigureApp)
+	EVT_CHECKBOX	(Dialog_GroupCfg_ContactsCheck,
+				GroupCfgDlg::OnSyncTypeCheck)
+	EVT_CHECKBOX	(Dialog_GroupCfg_EventsCheck,
+				GroupCfgDlg::OnSyncTypeCheck)
+	EVT_CHECKBOX	(Dialog_GroupCfg_NotesCheck,
+				GroupCfgDlg::OnSyncTypeCheck)
+	EVT_CHECKBOX	(Dialog_GroupCfg_TodosCheck,
+				GroupCfgDlg::OnSyncTypeCheck)
 	EVT_TEXT	(Dialog_GroupCfg_EngineCombo,
 				GroupCfgDlg::OnEngineComboChange)
 	EVT_TEXT	(Dialog_GroupCfg_AppCombo,
@@ -58,6 +66,10 @@ GroupCfgDlg::GroupCfgDlg(wxWindow *parent,
 	, m_password_edit(0)
 	, m_name_edit(0)
 	, m_debug_check(0)
+	, m_sync_contacts_check(0)
+	, m_sync_events_check(0)
+	, m_sync_notes_check(0)
+	, m_sync_todos_check(0)
 	, m_favour_radios(0)
 {
 	std::string appname;
@@ -75,6 +87,22 @@ GroupCfgDlg::GroupCfgDlg(wxWindow *parent,
 	if( m_device.GetDeviceName().size() )
 		label += " (" + m_device.GetDeviceName() + ")";
 	SetTitle(wxString(label.c_str(), wxConvUTF8));
+
+	// copy over the extras
+	// and initialize the engine / sync type map with config data
+	// if available
+	if( m_device.GetExtras() ) {
+		const DeviceExtras *extras = m_device.GetExtras();
+		m_favour_plugin_name = extras->m_favour_plugin_name;
+
+		m_sync_types[apiset.os22()] = extras->m_sync_types;
+		m_sync_types[apiset.os40()] = extras->m_sync_types;
+	}
+	else {
+		// default to all on, in worst case scenario
+		m_sync_types[apiset.os22()] = PST_ALL;
+		m_sync_types[apiset.os40()] = PST_ALL;
+	}
 
 	// initialize current engine pointer
 	if( m_device.GetEngine() ) {
@@ -102,12 +130,6 @@ GroupCfgDlg::GroupCfgDlg(wxWindow *parent,
 		m_group_name = "barrydesktop_" + m_device.GetPin().Str();
 	}
 
-	// copy over the extras
-	if( m_device.GetExtras() ) {
-		const DeviceExtras *extras = m_device.GetExtras();
-		m_favour_plugin_name = extras->m_favour_plugin_name;
-	}
-
 	SelectCurrentEngine();
 	LoadBarryConfig();
 	SelectApplication(appname);
@@ -124,6 +146,7 @@ void GroupCfgDlg::CreateLayout()
 	m_topsizer = new wxBoxSizer(wxVERTICAL);
 	AddEngineSizer(m_topsizer);
 	AddConfigSizer(m_topsizer);
+	AddSyncTypeSizer(m_topsizer);
 	AddFavourSizer(m_topsizer);
 	AddButtonSizer(m_topsizer);
 
@@ -289,6 +312,28 @@ void GroupCfgDlg::LoadAppNames(wxArrayString &appnames)
 	}
 }
 
+void GroupCfgDlg::AddSyncTypeSizer(wxSizer *sizer)
+{
+	wxStaticBoxSizer *checks = new wxStaticBoxSizer(wxHORIZONTAL, this,
+			_T("Sync:"));
+
+	checks->Add( m_sync_contacts_check = new wxCheckBox(this,
+			Dialog_GroupCfg_ContactsCheck, _T("Contacts")),
+		0, wxRIGHT | wxEXPAND, 10);
+	checks->Add( m_sync_events_check = new wxCheckBox(this,
+			Dialog_GroupCfg_EventsCheck, _T("Events")),
+		0, wxRIGHT | wxEXPAND, 10);
+	checks->Add( m_sync_notes_check = new wxCheckBox(this,
+			Dialog_GroupCfg_NotesCheck, _T("Notes")),
+		0, wxRIGHT | wxEXPAND, 10);
+	checks->Add( m_sync_todos_check = new wxCheckBox(this,
+			Dialog_GroupCfg_TodosCheck, _T("To-dos")),
+		0, wxRIGHT | wxEXPAND, 10);
+
+	sizer->Add( checks, 
+		0, wxTOP | wxLEFT | wxRIGHT | wxEXPAND, 10);
+}
+
 void GroupCfgDlg::AddFavourSizer(wxSizer *sizer)
 {
 	wxArrayString labels;
@@ -339,6 +384,39 @@ void GroupCfgDlg::LoadBarryConfig()
 void GroupCfgDlg::SelectApplication(const std::string appname)
 {
 	m_app_combo->SetValue(wxString(appname.c_str(), wxConvUTF8));
+	SelectSyncTypes();
+}
+
+void GroupCfgDlg::SelectSyncTypes()
+{
+	if( !m_engine ) {
+		SetSyncTypeChecks(PST_NONE);
+		EnableSyncTypeChecks(PST_NONE);
+		return;
+	}
+
+	string app = GetCurrentAppName();
+	plugin_ptr ap = GetCurrentPlugin();
+
+	// calculate the supported sync types
+	// Note:   we could also take the Barry plugin config into
+	//         consideration here, but so far, we just use the
+	//         opensync group config
+	pst_type supported = PST_NONE;
+	if( ap.get() ) {
+		supported = m_barry_plugin.GetSupportedSyncTypes(*m_engine)
+			& ap->GetSupportedSyncTypes(*m_engine);
+	}
+
+	// make sure our current selection is limited by our new
+	// set of supported plugins
+	m_sync_types[m_engine] &= supported;
+
+	// enable the checkboxes according to our ability
+	EnableSyncTypeChecks(supported);
+
+	// set the checkboxes according to our choices
+	SetSyncTypeChecks(m_sync_types[m_engine]);
 }
 
 void GroupCfgDlg::SelectFavour()
@@ -357,6 +435,32 @@ void GroupCfgDlg::SelectFavour()
 	}
 }
 
+void GroupCfgDlg::EnableSyncTypeChecks(pst_type types)
+{
+	m_sync_contacts_check->Enable( types & PST_CONTACTS );
+	m_sync_events_check  ->Enable( types & PST_EVENTS );
+	m_sync_notes_check   ->Enable( types & PST_NOTES );
+	m_sync_todos_check   ->Enable( types & PST_TODOS );
+}
+
+void GroupCfgDlg::SetSyncTypeChecks(pst_type types)
+{
+	m_sync_contacts_check->SetValue( types & PST_CONTACTS );
+	m_sync_events_check  ->SetValue( types & PST_EVENTS );
+	m_sync_notes_check   ->SetValue( types & PST_NOTES );
+	m_sync_todos_check   ->SetValue( types & PST_TODOS );
+}
+
+GroupCfgDlg::pst_type GroupCfgDlg::GetSyncTypeChecks()
+{
+	pst_type types = PST_NONE;
+	if( m_sync_contacts_check->GetValue() ) types |= PST_CONTACTS;
+	if( m_sync_events_check  ->GetValue() ) types |= PST_EVENTS;
+	if( m_sync_notes_check   ->GetValue() ) types |= PST_NOTES;
+	if( m_sync_todos_check   ->GetValue() ) types |= PST_TODOS;
+	return types;
+}
+
 std::string GroupCfgDlg::GetCurrentAppName() const
 {
 	wxString app = m_app_combo->GetValue();
@@ -371,7 +475,7 @@ GroupCfgDlg::plugin_ptr GroupCfgDlg::GetCurrentPlugin()
 	if( pi != cfgs.end() )
 		return pi->second;
 	else
-		return plugin_ptr();
+		return plugin_ptr();	// not found, return empty ptr
 }
 
 void GroupCfgDlg::OnConfigureApp(wxCommandEvent &event)
@@ -396,6 +500,13 @@ void GroupCfgDlg::OnConfigureApp(wxCommandEvent &event)
 		ConfigUI::plugin_ptr plugin = ui->GetPlugin();
 		if( plugin.get() ) {
 			m_plugins[m_engine][app] = plugin;
+
+			// if this is the first time, default to all
+			if( m_sync_types[m_engine] == PST_NONE )
+				m_sync_types[m_engine] = PST_ALL;
+
+			// update the types checkboxes
+			SelectSyncTypes();
 		}
 	}
 }
@@ -431,6 +542,15 @@ void GroupCfgDlg::OnEngineComboChange(wxCommandEvent &event)
 
 void GroupCfgDlg::OnAppComboChange(wxCommandEvent &event)
 {
+	SelectSyncTypes();
+}
+
+void GroupCfgDlg::OnSyncTypeCheck(wxCommandEvent &event)
+{
+	if( !m_engine )
+		return;
+
+	m_sync_types[m_engine] = GetSyncTypeChecks();
 }
 
 bool GroupCfgDlg::TransferDataFromWindow()
@@ -494,6 +614,9 @@ bool GroupCfgDlg::TransferDataFromWindow()
 	// save the new device name
 	wxGetApp().SetDeviceName(m_barry_plugin.GetPin(), m_device_name);
 
+	// save the sync type checkboxes
+	m_sync_types[m_engine] = GetSyncTypeChecks();
+
 	return true;
 }
 
@@ -510,6 +633,7 @@ int GroupCfgDlg::ShowModal()
 		// don't forget the extras
 		m_extras.reset( new DeviceExtras(m_barry_plugin.GetPin()) );
 		m_extras->m_favour_plugin_name = m_favour_plugin_name;
+		m_extras->m_sync_types = m_sync_types[m_engine];
 	}
 	else {
 		m_group.reset();

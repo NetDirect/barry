@@ -30,8 +30,10 @@
 class GroupCfgDlg : public wxDialog
 {
 	typedef OpenSync::Config::Group::plugin_ptr	plugin_ptr;
+	typedef OpenSync::Config::pst_type		pst_type;
 	typedef std::map<std::string, plugin_ptr>	appcfg_map;
 	typedef std::map<OpenSync::API*, appcfg_map>	engapp_map;
+	typedef std::map<OpenSync::API*, pst_type>	engtypes_map;
 
 	DECLARE_EVENT_TABLE()
 
@@ -57,6 +59,9 @@ class GroupCfgDlg : public wxDialog
 	// the dialog are kept if possible, to help with re-saving
 	// of opensync configs
 	engapp_map m_plugins;			// map of engines/apps/plugins
+	engtypes_map m_sync_types;		// map of engines/sync types
+		// this is a map only to preserve user selections between
+		// engines, similar to the plugin behaviour above
 	OpenSync::API *m_engine;		// current engine
 	OpenSync::Config::Barry m_barry_plugin;
 	std::string m_favour_plugin_name;	// an extra
@@ -66,6 +71,10 @@ class GroupCfgDlg : public wxDialog
 	wxComboBox *m_engine_combo, *m_app_combo;
 	wxTextCtrl *m_password_edit, *m_name_edit;
 	wxCheckBox *m_debug_check;
+	wxCheckBox *m_sync_contacts_check;
+	wxCheckBox *m_sync_events_check;
+	wxCheckBox *m_sync_notes_check;
+	wxCheckBox *m_sync_todos_check;
 	wxRadioBox *m_favour_radios;
 
 protected:
@@ -78,13 +87,20 @@ protected:
 				// to update the app combo, etc, with available
 				// apps
 	void LoadAppNames(wxArrayString &appnames);
+	void AddSyncTypeSizer(wxSizer *sizer);
 	void AddFavourSizer(wxSizer *sizer);
 	void AddButtonSizer(wxSizer *sizer);
 
 	void SelectCurrentEngine();
 	void LoadBarryConfig();
 	void SelectApplication(const std::string appname);
+	void SelectSyncTypes();
 	void SelectFavour();
+
+	// utility functions for interacting with the sync type checkboxes
+	void EnableSyncTypeChecks(pst_type types);
+	void SetSyncTypeChecks(pst_type types);
+	pst_type GetSyncTypeChecks();
 
 	std::string GetCurrentAppName() const;	// returns name of currently
 					// selected app, for the currently
@@ -106,6 +122,7 @@ public:
 	void OnConfigureApp(wxCommandEvent &event);
 	void OnEngineComboChange(wxCommandEvent &event);
 	void OnAppComboChange(wxCommandEvent &event);
+	void OnSyncTypeCheck(wxCommandEvent &event);
 
 	// overrides
 	virtual bool TransferDataFromWindow();
