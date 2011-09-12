@@ -52,6 +52,12 @@ public:
 	virtual bool IsConfigured(const Config::KDEPim &) const;
 	virtual bool IsConfigured(const Config::Unsupported &) const;
 
+	virtual Config::pst_type GetSupportedSyncTypes(const Config::Barry &) const;
+	virtual Config::pst_type GetSupportedSyncTypes(const Config::Evolution &) const;
+	virtual Config::pst_type GetSupportedSyncTypes(const Config::Google &) const;
+	virtual Config::pst_type GetSupportedSyncTypes(const Config::KDEPim &) const;
+	virtual Config::pst_type GetSupportedSyncTypes(const Config::Unsupported &) const;
+
 	virtual void Load(Config::Barry &config, const Member &member);
 	virtual void Load(Config::Evolution &config, const Member &member);
 	virtual void Load(Config::Google &config, const Member &member);

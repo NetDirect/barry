@@ -144,6 +144,35 @@ bool Converter40::IsConfigured(const Config::Unsupported &) const
 	return false;
 }
 
+// FIXME - these should/could? access the capabilities feature of
+//         opensync 0.4x, but I think that requires a discovery, and
+//         this information is required at the configuration stage
+//         for the GUI
+Config::pst_type Converter40::GetSupportedSyncTypes(const Config::Barry &) const
+{
+	return PST_CONTACTS | PST_EVENTS | PST_NOTES | PST_TODOS;
+}
+
+Config::pst_type Converter40::GetSupportedSyncTypes(const Config::Evolution &) const
+{
+	return PST_CONTACTS | PST_EVENTS | PST_NOTES | PST_TODOS;
+}
+
+Config::pst_type Converter40::GetSupportedSyncTypes(const Config::Google &) const
+{
+	return PST_CONTACTS | PST_EVENTS;
+}
+
+Config::pst_type Converter40::GetSupportedSyncTypes(const Config::KDEPim &) const
+{
+	return PST_CONTACTS | PST_EVENTS | PST_NOTES | PST_TODOS;
+}
+
+Config::pst_type Converter40::GetSupportedSyncTypes(const Config::Unsupported &) const
+{
+	return PST_NONE;
+}
+
 
 void Converter40::Load(Config::Barry &config, const Member &member)
 {

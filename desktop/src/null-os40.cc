@@ -191,6 +191,31 @@ bool Converter40::IsConfigured(const Config::Unsupported &) const
 	return false;
 }
 
+Config::pst_type Converter40::GetSupportedSyncTypes(const Config::Barry &) const
+{
+	return PST_NONE;
+}
+
+Config::pst_type Converter40::GetSupportedSyncTypes(const Config::Evolution &) const
+{
+	return PST_NONE;
+}
+
+Config::pst_type Converter40::GetSupportedSyncTypes(const Config::Google &) const
+{
+	return PST_NONE;
+}
+
+Config::pst_type Converter40::GetSupportedSyncTypes(const Config::KDEPim &) const
+{
+	return PST_NONE;
+}
+
+Config::pst_type Converter40::GetSupportedSyncTypes(const Config::Unsupported &) const
+{
+	return PST_NONE;
+}
+
 void Converter40::Load(Config::Barry &config, const Member &member)
 {
 	throw std::logic_error("Not supported on this system.");

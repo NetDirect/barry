@@ -144,6 +144,31 @@ bool Converter22::IsConfigured(const Config::Unsupported &) const
 	return false;
 }
 
+Config::pst_type Converter22::GetSupportedSyncTypes(const Config::Barry &) const
+{
+	return PST_CONTACTS | PST_EVENTS;
+}
+
+Config::pst_type Converter22::GetSupportedSyncTypes(const Config::Evolution &) const
+{
+	return PST_CONTACTS | PST_EVENTS | PST_TODOS;
+}
+
+Config::pst_type Converter22::GetSupportedSyncTypes(const Config::Google &) const
+{
+	return PST_CONTACTS | PST_EVENTS;
+}
+
+Config::pst_type Converter22::GetSupportedSyncTypes(const Config::KDEPim &) const
+{
+	return PST_CONTACTS | PST_EVENTS | PST_NOTES | PST_TODOS;
+}
+
+Config::pst_type Converter22::GetSupportedSyncTypes(const Config::Unsupported &) const
+{
+	return PST_NONE;
+}
+
 void Converter22::Load(Config::Barry &config, const Member &member)
 {
 	// start with a default setting

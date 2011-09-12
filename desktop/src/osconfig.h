@@ -28,6 +28,7 @@
 #include <tr1/memory>
 #include <stdexcept>
 #include "osbase.h"
+#include "ostypes.h"
 #include <iostream>
 
 namespace OpenSync { namespace Config {
@@ -106,6 +107,11 @@ public:
 	//{
 	//	return api.GetConverter().IsConfigured(*this);
 	//}
+	virtual pst_type GetSupportedSyncTypes(OpenSync::API &api) const = 0;
+	// sample implementation:
+	//{
+	//	return api.GetConverter().GetSupportedSyncTypes(*this);
+	//}
 
 	/// Support function for Group::Compare().  If plugin is the
 	/// same type as this, sametype is set to true.  If sametype
@@ -154,6 +160,10 @@ public:
 	virtual bool IsConfigured(OpenSync::API &api) const
 	{
 		return api.GetConverter().IsConfigured(*this);
+	}
+	virtual pst_type GetSupportedSyncTypes(OpenSync::API &api) const
+	{
+		return api.GetConverter().GetSupportedSyncTypes(*this);
 	}
 
 	// statics
@@ -230,6 +240,10 @@ public:
 	{
 		return api.GetConverter().IsConfigured(*this);
 	}
+	virtual pst_type GetSupportedSyncTypes(OpenSync::API &api) const
+	{
+		return api.GetConverter().GetSupportedSyncTypes(*this);
+	}
 	virtual bool Compare(const Plugin &plugin,
 				bool &sametype, bool &equal) const
 	{
@@ -251,6 +265,10 @@ public:
 	static std::string PluginName(OpenSync::API &api)
 	{
 		return api.GetConverter().GetPluginName(Barry());
+	}
+	static pst_type SupportedSyncTypes(OpenSync::API &api)
+	{
+		return api.GetConverter().GetSupportedSyncTypes(Barry());
 	}
 };
 
@@ -305,6 +323,10 @@ public:
 	{
 		return api.GetConverter().IsConfigured(*this);
 	}
+	virtual pst_type GetSupportedSyncTypes(OpenSync::API &api) const
+	{
+		return api.GetConverter().GetSupportedSyncTypes(*this);
+	}
 	virtual bool Compare(const Plugin &plugin,
 				bool &sametype, bool &equal) const
 	{
@@ -327,6 +349,10 @@ public:
 	static std::string PluginName(OpenSync::API &api)
 	{
 		return api.GetConverter().GetPluginName(Evolution());
+	}
+	static pst_type SupportedSyncTypes(OpenSync::API &api)
+	{
+		return api.GetConverter().GetSupportedSyncTypes(Evolution());
 	}
 };
 
@@ -387,6 +413,10 @@ public:
 	{
 		return api.GetConverter().IsConfigured(*this);
 	}
+	virtual pst_type GetSupportedSyncTypes(OpenSync::API &api) const
+	{
+		return api.GetConverter().GetSupportedSyncTypes(*this);
+	}
 	virtual bool Compare(const Plugin &plugin,
 				bool &sametype, bool &equal) const
 	{
@@ -409,6 +439,10 @@ public:
 	static std::string PluginName(OpenSync::API &api)
 	{
 		return api.GetConverter().GetPluginName(Google());
+	}
+	static pst_type SupportedSyncTypes(OpenSync::API &api)
+	{
+		return api.GetConverter().GetSupportedSyncTypes(Google());
 	}
 };
 
@@ -443,6 +477,10 @@ public:
 	{
 		return api.GetConverter().IsConfigured(*this);
 	}
+	virtual pst_type GetSupportedSyncTypes(OpenSync::API &api) const
+	{
+		return api.GetConverter().GetSupportedSyncTypes(*this);
+	}
 	virtual bool Compare(const Plugin &plugin,
 				bool &sametype, bool &equal) const
 	{
@@ -462,6 +500,10 @@ public:
 	static std::string PluginName(OpenSync::API &api)
 	{
 		return api.GetConverter().GetPluginName(KDEPim());
+	}
+	static pst_type SupportedSyncTypes(OpenSync::API &api)
+	{
+		return api.GetConverter().GetSupportedSyncTypes(KDEPim());
 	}
 };
 
@@ -531,6 +573,12 @@ public:
 	bool AllConfigured(OpenSync::API &api) const;
 	int GetConnectedCount() const;
 	const std::string& GetGroupName() const { return m_group_name; }
+
+	/// Cycles through all plugins and ANDs the supported types
+	/// for each together, and returns it.  The returned value is
+	/// the minimum set of supportable sync types for this group for
+	/// the given API engine.
+	pst_type GetSupportedSyncTypes(OpenSync::API &api) const;
 
 	/// Returns comma separated string of application/plugin names,
 	/// excluding Barry

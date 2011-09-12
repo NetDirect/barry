@@ -92,19 +92,19 @@ bool Barry::ZapData(wxWindow *parent,
 	// the pointer is valid)
 	wxArrayString dbs;
 	wxArrayInt selections;
-	if( !engine || engine->IsContactSyncSupported() ) {
+	if( !engine || (barry.GetSupportedSyncTypes(*engine) & PST_CONTACTS) ) {
 		dbs.Add( wxString(::Barry::Contact::GetDBName(), wxConvUTF8) );
 		selections.Add(dbs.GetCount() - 1);
 	}
-	if( !engine || engine->IsCalendarSyncSupported() ) {
+	if( !engine || (barry.GetSupportedSyncTypes(*engine) & PST_EVENTS) ) {
 		dbs.Add( wxString(::Barry::Calendar::GetDBName(), wxConvUTF8) );
 		selections.Add(dbs.GetCount() - 1);
 	}
-	if( !engine || engine->IsMemoSyncSupported() ) {
+	if( !engine || (barry.GetSupportedSyncTypes(*engine) & PST_NOTES) ) {
 		dbs.Add( wxString(::Barry::Memo::GetDBName(), wxConvUTF8) );
 		selections.Add(dbs.GetCount() - 1);
 	}
-	if( !engine || engine->IsTodoSyncSupported() ) {
+	if( !engine || (barry.GetSupportedSyncTypes(*engine) & PST_TODOS) ) {
 		dbs.Add( wxString(::Barry::Task::GetDBName(), wxConvUTF8) );
 		selections.Add(dbs.GetCount() - 1);
 	}

@@ -205,6 +205,18 @@ int Group::GetConnectedCount() const
 	return count;
 }
 
+pst_type Group::GetSupportedSyncTypes(OpenSync::API &api) const
+{
+	pst_type types = PST_ALL;
+
+	const_iterator b = begin(), e = end();
+	for( ; b != e; ++b ) {
+		types &= (*b)->GetSupportedSyncTypes(api);
+	}
+
+	return types;
+}
+
 std::string Group::GetAppNames() const
 {
 	std::string names;

@@ -233,6 +233,12 @@ public:
 	virtual bool IsConfigured(const Config::KDEPim &) const = 0;
 	virtual bool IsConfigured(const Config::Unsupported &) const = 0;
 
+	virtual Config::pst_type GetSupportedSyncTypes(const Config::Barry &) const = 0;
+	virtual Config::pst_type GetSupportedSyncTypes(const Config::Evolution &) const = 0;
+	virtual Config::pst_type GetSupportedSyncTypes(const Config::Google &) const = 0;
+	virtual Config::pst_type GetSupportedSyncTypes(const Config::KDEPim &) const = 0;
+	virtual Config::pst_type GetSupportedSyncTypes(const Config::Unsupported &) const = 0;
+
 	virtual void Load(Config::Barry &config, const Member &member) = 0;
 	virtual void Load(Config::Evolution &config, const Member &member) = 0;
 	virtual void Load(Config::Google &config, const Member &member) = 0;
@@ -266,10 +272,6 @@ public:
 	// the engine itself, but is information the osbase library
 	// determines useful for applications to know
 	virtual bool IsSlowSyncSupported() const = 0;
-	virtual bool IsContactSyncSupported() const = 0;
-	virtual bool IsCalendarSyncSupported() const = 0;
-	virtual bool IsMemoSyncSupported() const = 0;
-	virtual bool IsTodoSyncSupported() const = 0;
 
 	// General engine information
 	virtual const char* GetVersion() const = 0;
