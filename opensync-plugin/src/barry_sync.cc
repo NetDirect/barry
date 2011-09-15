@@ -342,14 +342,15 @@ static void get_changeinfo(OSyncContext *ctx)
 	try {
 
 		BarryEnvironment *env = (BarryEnvironment *)osync_context_get_plugin_data(ctx);
+		OSyncMember *member = osync_context_get_member(ctx);
 
-		if( env->m_CalendarSync.m_Sync ) {
+		if( env->m_CalendarSync.m_Sync && osync_member_objtype_enabled(member, "event") ) {
 			GetChanges(ctx, env, &env->m_CalendarSync,
 				"Calendar", "event", "vevent20",
 				&VEventConverter::GetRecordData);
 		}
 
-		if( env->m_ContactsSync.m_Sync ) {
+		if( env->m_ContactsSync.m_Sync && osync_member_objtype_enabled(member, "contact") ) {
 			GetChanges(ctx, env, &env->m_ContactsSync,
 				"Address Book", "contact", "vcard30",
 				&VCardConverter::GetRecordData);
