@@ -98,14 +98,42 @@ SyncMode::SyncMode(wxWindow *parent)
 	m_topsizer->AddSpacer(MAIN_HEADER_OFFSET);
 
 	// add status area
+	//
+	// Select the device(s) you want to sync and press Sync Now
+	// Press Configure... to configure the currently selected device
+	// Press Run App to start the application that the device syncs with
+	// Press 1-Way Reset to recover from a broken sync, copying all
+	//        device data to application, or vice versa.
+	//
 	m_topsizer->AddSpacer(5);
+
 	m_sync_now_button.reset( new wxButton(parent,
 				SyncMode_SyncNowButton, _T("Sync Now")));
-	m_topsizer->Add( m_sync_now_button.get(),
-				0, wxRIGHT | wxALIGN_RIGHT, 10 );
-	m_topsizer->AddSpacer(90);
-//	m_label.reset( new wxStaticText(parent, -1, _T("Static Text"),
-//		wxPoint(15, 100)) );
+	wxSize sync_button_size = m_sync_now_button->GetClientSize();
+	int wrapwidth = client_size.GetWidth() - 20 - sync_button_size.GetWidth();
+
+	wxBoxSizer *infosizer = new wxBoxSizer(wxHORIZONTAL);
+	wxBoxSizer *linesizer = new wxBoxSizer(wxVERTICAL);
+
+	// info lines
+#define MAKE_INFO_LABEL(a, b) \
+	m_label[a].reset( new wxStaticText(parent, -1, b, \
+		wxPoint(15, 100)) ); \
+	m_label[a]->Wrap(wrapwidth); \
+	linesizer->Add(m_label[a].get(), 0, wxEXPAND, 0); \
+	linesizer->AddSpacer(4);
+	MAKE_INFO_LABEL(0, _T("Select the device(s) you want to sync and press Sync Now."));
+	MAKE_INFO_LABEL(1, _T("Use Configure to configure the currently selected device."));
+	MAKE_INFO_LABEL(2, _T("Use Run App to start the application that the device syncs with."));
+	MAKE_INFO_LABEL(3, _T("Use 1-Way Reset to recover from a broken sync, copying all device data to application, or vice versa."));
+
+	infosizer->Add( linesizer, 1, wxALIGN_LEFT, 0 );
+	infosizer->Add( m_sync_now_button.get(), 0, wxALIGN_RIGHT, 0 );
+	m_topsizer->Add( infosizer,
+				0, wxEXPAND | wxLEFT | wxBOTTOM | wxRIGHT, 10 );
+
+	// status, final spacing
+	m_topsizer->AddSpacer(10);
 
 	// add device list
 	wxStaticBoxSizer *box = new wxStaticBoxSizer(wxHORIZONTAL, parent,

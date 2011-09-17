@@ -44,6 +44,7 @@ private:
 	std::auto_ptr<wxButton> m_run_app_button;
 	std::auto_ptr<wxButton> m_1way_reset_button;
 	std::auto_ptr<wxListCtrl> m_device_list;
+	std::auto_ptr<wxStaticText> m_label[4];
 
 protected:
 	static std::string Timestamp(time_t last_sync);
