@@ -82,6 +82,30 @@ Please upgrade and try again.
 
 AC_LANG([C++])
 
+#
+# Check for Evolution data server libraries, and allow user to disable
+# if needed.
+#
+AC_ARG_WITH([evolution],
+	[AS_HELP_STRING([--with-evolution],
+	[support fancy command line editing @<:@default=check@:>@])],
+	[],
+	[with_evolution=check])
+
+if test "x$with_evolution" != xno ; then
+	PKG_CHECK_MODULES([EVOLUTION],
+		[libebook-1.2 libecal-1.2 libedataserver-1.2],
+		[
+			AC_DEFINE([HAVE_EVOLUTION], [1],
+				[Define to 1 if Evolution data server libraries are available.])
+		],
+		[
+			if test "x$with_evolution" != xcheck; then
+				AC_MSG_FAILURE([--with-evolution was given, but test for evolution failed])
+			fi
+		])
+fi
+
 PKG_CHECK_MODULES([BARRY], [libbarry-0 libbarrysync-0])
 PKG_CHECK_MODULES([GLIB2], [glib-2.0])
 PKG_CHECK_MODULES([LIBXMLPP], [libxml++-2.6])
