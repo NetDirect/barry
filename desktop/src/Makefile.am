@@ -8,7 +8,7 @@ EXTRA_DIST = \
 
 INCLUDES = $(TREE_BUILD_CXXFLAGS) $(BARRY_CFLAGS) $(OPENSYNC22_CFLAGS) $(OPENSYNC40_CFLAGS) $(GLIB2_CFLAGS) $(EVOLUTION_CFLAGS)
 # opensync libraries are not included here... they are loaded with dlopen()
-LIBS = $(TREE_BUILD_LDFLAGS) $(BARRY_LIBS) $(GLIB2_LIBS) $(EVOLUTION_LIBS)
+LIBS = $(TREE_BUILD_LDFLAGS) $(BARRY_LIBS) $(GLIB2_LIBS)
 
 AM_CXXFLAGS = -ansi -Wall -g
 AM_CPPFLAGS = -DBARRYDESKTOP_BASEDATADIR='"$(basedatadir)"' -DBARRYDESKTOP_IMAGEDIR='"$(imagedir)"'
@@ -86,7 +86,7 @@ barrydesktop_SOURCES = \
 	CUI_KDEPim.cc CUI_KDEPim.h \
 	EvoSources.cc EvoSources.h \
 	deviceset.cc deviceset.h
-barrydesktop_LDADD = libosyncwrap.la -ldl @WX_LIBS@ $(LIBXMLPP_LIBS) $(LIBGCAL_LIBS)
+barrydesktop_LDADD = libosyncwrap.la -ldl @WX_LIBS@ $(LIBXMLPP_LIBS) $(LIBGCAL_LIBS) $(EVOLUTION_LIBS)
 barrydesktop_CXXFLAGS = $(AM_CXXFLAGS) @WX_CXXFLAGS@ $(LIBXMLPP_CFLAGS) \
 	$(LIBGCAL_CFLAGS)
 
