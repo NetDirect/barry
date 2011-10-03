@@ -84,6 +84,7 @@ barrydesktop_SOURCES = \
 	CUI_Evolution.cc CUI_Evolution.h \
 	CUI_Google.cc CUI_Google.h \
 	CUI_KDEPim.cc CUI_KDEPim.h \
+	EvoSources.cc EvoSources.h \
 	deviceset.cc deviceset.h
 barrydesktop_LDADD = libosyncwrap.la -ldl @WX_LIBS@ $(LIBXMLPP_LIBS) $(LIBGCAL_LIBS)
 barrydesktop_CXXFLAGS = $(AM_CXXFLAGS) @WX_CXXFLAGS@ $(LIBXMLPP_CFLAGS) \
