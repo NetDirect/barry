@@ -26,5 +26,6 @@ yum install \
 	wxGTK-devel \
 	SDL-devel \
 	libgcal-devel \
+	evolution-data-server-devel \
 	libopensync-devel
 
