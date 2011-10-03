@@ -24,10 +24,10 @@ apt-get install \
 	ccache \
 	doxygen \
 	autopoint \
-	evolution-data-server-dev, \
-	libebook1.2-dev, \
-	libedata-book1.2-dev, \
-	libedata-cal1.2-dev, \
+	evolution-data-server-dev \
+	libebook1.2-dev \
+	libedata-book1.2-dev \
+	libedata-cal1.2-dev \
 	libedataserver1.2-dev \
 	php5-cli
 
