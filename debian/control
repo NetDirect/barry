@@ -1,8 +1,38 @@
+#
+# Ideally, the evolution source path autodetection routines would
+# load libebook and libecal dynamically, so that dependencies would
+# not force the inclusion of evolution-data-server and friends.
+#
+# But there are two problems with that, which need to be
+# cracked first:
+#
+#     - the glib major version numbers, according to the .so
+#       files, are not consistent between distros
+#     - when used dynamically, in a program that is not otherwise
+#       linked to glib, it can segfault... and it seems to get
+#       funky somewhere inside glib itself... so I'm guessing that
+#       the library is not being initialized properly :-(
+#
+# All this means that general compilations of barrydesktop will
+# need evolution-data-server and friends linked in.  It is possible
+# to compile without by supplying --without-evolution on the configure
+# command line, but then you risk getting a weak auto-detection
+# of data sources in newer versions of evolution.  If your data
+# sources are located in paths like this:
+#
+#      file:///home/cdfrey/.evolution/addressbook/local/system
+#
+# then it is safe to disable evolution for the barrydesktop compile.
+#
+# Otherwise, if your version of evolution is new, and uses funkier names,
+# or uses local:system, or puts its files under ~/.config, then
+# build --with-evolution and link against it.
+#
 Source: barry
 Section: misc
 Priority: optional
 Maintainer: Chris Frey <cdfrey@foursquare.net>
-Build-Depends: debhelper (>= 6.0.0), g++ (>= 4.1), cdbs, autoconf, automake, libtool, pkg-config, libusb-dev, libboost-serialization-dev, libxml++2.6-dev, libfuse-dev (>= 2.5), zlib1g-dev, libtar-dev, libglib2.0-dev, libgtkmm-2.4-dev, libglademm-2.4-dev, gettext (<< 0.18) | autopoint, libgcal-dev, wx-common, libwxgtk2.8-dev
+Build-Depends: debhelper (>= 6.0.0), g++ (>= 4.1), cdbs, autoconf, automake, libtool, pkg-config, libusb-dev, libboost-serialization-dev, libxml++2.6-dev, libfuse-dev (>= 2.5), zlib1g-dev, libtar-dev, libglib2.0-dev, libgtkmm-2.4-dev, libglademm-2.4-dev, gettext (<< 0.18) | autopoint, libgcal-dev, wx-common, libwxgtk2.8-dev, evolution-data-server-dev, libebook1.2-dev, libedata-book1.2-dev, libedata-cal1.2-dev, libedataserver1.2-dev
 Standards-Version: 3.8.0
 
 Package: libbarry0

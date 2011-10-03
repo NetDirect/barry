@@ -39,7 +39,7 @@ BuildRequires: desktop-file-utils
 
 # desktop tree
 %if %{with_desktop}
-BuildRequires: wxGTK-devel
+BuildRequires: wxGTK-devel, evolution-data-server-devel
 %endif
 
 %define barryroot %{_builddir}/%{name}-%{version}
@@ -220,7 +220,7 @@ if [ -n "$OSYNCBOTH_PKG_CONFIG_PATH" ] ; then
 	export PKG_CONFIG_PATH="$OSYNCBOTH_PKG_CONFIG_PATH:$ORIG_PKG_CONFIG_PATH"
 fi
 cd desktop/
-%{configure} PKG_CONFIG_PATH="..:$PKG_CONFIG_PATH" CXXFLAGS="-I../.." LDFLAGS="-L../../src" --enable-nls --enable-rpathhack
+%{configure} PKG_CONFIG_PATH="..:$PKG_CONFIG_PATH" CXXFLAGS="-I../.." LDFLAGS="-L../../src" --enable-nls --enable-rpathhack --with-evolution
 %{__make} %{?_smp_mflags}
 cd ../
 %endif
@@ -472,6 +472,7 @@ desktop-file-install --vendor netdirect \
 %defattr(-,root,root)
 %attr(0755,root,root) %{_bindir}/barrydesktop
 %attr(0755,root,root) %{_bindir}/bsyncjail
+%attr(0755,root,root) %{_bindir}/blistevo
 %attr(0755,root,root) %{_bindir}/bsynccl
 %attr(0644,root,root) %{_datadir}/barry/desktop/0.22/*
 %attr(0644,root,root) %{_datadir}/barry/desktop/0.40/*
@@ -510,6 +511,7 @@ desktop-file-install --vendor netdirect \
 - added orangeuk and mts ppp chatscript files
 - added bwatch
 - added code to clean the buildroot at start
+- added evolution dependencies for desktop build
 
 * Fri May 28 2010 Chris Frey <cdfrey@foursquare.net> 0.17.0-0
 - version bump
