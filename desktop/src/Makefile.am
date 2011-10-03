@@ -16,7 +16,7 @@ AM_LDFLAGS =
 
 include_osyncwrapdir = ${includedir}/barry18/osyncwrap
 
-bin_PROGRAMS = barrydesktop bsyncjail bsynccl
+bin_PROGRAMS = barrydesktop bsyncjail bsynccl blistevo
 noinst_PROGRAMS = ostest xmlcompactor xmlmap
 lib_LTLIBRARIES = libosyncwrap.la
 
@@ -118,4 +118,11 @@ xmlcompactor_LDADD = $(LIBXMLPP_LIBS)
 xmlmap_SOURCES = xmlmap.cc xmlmap.h
 xmlmap_CXXFLAGS = -DXMLMAP $(AM_CXXFLAGS) $(LIBXMLPP_CFLAGS)
 xmlmap_LDADD = $(LIBXMLPP_LIBS)
+
+blistevo_SOURCES = blistevo.cc \
+	EvoSources.cc EvoSources.h \
+	dlopen.cc dlopen.h \
+	error.cc error.h
+blistevo_CXXFLAGS = $(AM_CXXFLAGS)
+blistevo_LDADD = -ldl $(EVOLUTION_LIBS)
 
