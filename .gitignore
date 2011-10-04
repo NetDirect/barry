@@ -83,6 +83,7 @@ gui/src/barrybackup
 desktop/src/barrydesktop
 desktop/src/bsynccl
 desktop/src/bsyncjail
+desktop/src/blistevo
 desktop/src/ostest
 desktop/src/xmlcompactor
 desktop/src/xmlmap
