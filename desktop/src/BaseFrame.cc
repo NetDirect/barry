@@ -360,9 +360,49 @@ void BaseFrame::OnSync(wxCommandEvent &event)
 	EnableBackButton(m_sync_mode.get());
 }
 
+//#include "EvoSources.h"
+//#include "EvoCfgDlg.h"
+//#include "EvoDefaultDlg.h"
+//void DumpItems(const EvoSources::List &list)
+//{
+//	EvoSources::List::const_iterator i;
+//	for( i = list.begin(); i != list.end(); ++i ) {
+//		cout	<< i->m_GroupName << ", "
+//			<< i->m_SourceName << ", "
+//			<< i->m_SourcePath << endl;
+//	}
+//}
 //#include "ConflictDlg.h"
 void BaseFrame::OnModem(wxCommandEvent &event)
 {
+/*
+	EvoDefaultDlg dlg(this);
+	dlg.ShowModal();
+*/
+
+/*
+	EvoSources es;
+	cout << "Addressbook:\n";
+	DumpItems(es.GetAddressBook());
+	cout << "Events:\n";
+	DumpItems(es.GetEvents());
+	cout << "Tasks:\n";
+	DumpItems(es.GetTasks());
+	cout << "Memos:\n";
+	DumpItems(es.GetMemos());
+
+	OpenSync::Config::Evolution ecfg;
+
+	EvoCfgDlg dlg(this, ecfg, es);
+	dlg.ShowModal();
+	dlg.SetPaths(ecfg);
+	cout << "Resulting paths:\n"
+		<< ecfg.GetAddressPath() << endl
+		<< ecfg.GetCalendarPath() << endl
+		<< ecfg.GetTasksPath() << endl
+		<< ecfg.GetMemosPath() << endl;
+*/
+
 /*
 	OpenSync::SyncChange change;
 	change.id = 1;
