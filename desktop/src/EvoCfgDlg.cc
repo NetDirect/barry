@@ -121,12 +121,52 @@ void EvoCfgDlg::SetPaths(OpenSync::Config::Evolution &ec) const
 	ec.SetMemosPath(m_memos_path);
 }
 
+wxString EvoCfgDlg::CheckPath(const wxString &name,
+				const std::string &path) const
+{
+	if( path.size() > 7 && path.substr(0, 7) == "file://" ) {
+		std::string p = path.substr(7);
+		if( !EvoSources::PathExists(p) ) {
+			wxString msg = name + _T(" does not exist.");
+			return msg;
+		}
+	}
+
+	return _T("");
+}
+
+wxString EvoCfgDlg::ValidatePaths() const
+{
+	if( m_address_path.empty() || m_calendar_path.empty() || m_tasks_path.empty() )
+		return _T("Address book, Event, and Tasks must be set.");
+
+	wxString msg;
+	msg = CheckPath(_T("Address book path"), m_address_path);
+	if( msg.size() )
+		return msg;
+	msg = CheckPath(_T("Event path"), m_calendar_path);
+	if( msg.size() )
+		return msg;
+	msg = CheckPath(_T("Tasks path"), m_tasks_path);
+	if( msg.size() )
+		return msg;
+	msg = CheckPath(_T("Memos path"), m_memos_path);
+	return msg;
+}
+
 bool EvoCfgDlg::TransferDataFromWindow()
 {
 	m_address_path = string(m_address_combo->GetValue().utf8_str());
 	m_calendar_path = string(m_calendar_combo->GetValue().utf8_str());
 	m_tasks_path = string(m_tasks_combo->GetValue().utf8_str());
 	m_memos_path = string(m_memos_combo->GetValue().utf8_str());
+
+	wxString msg = ValidatePaths();
+	if( msg.size() ) {
+		wxMessageBox(msg, _T("Minimum Config Required"),
+			wxOK | wxICON_ERROR, this);
+		return false;
+	}
 
 	return true;
 }

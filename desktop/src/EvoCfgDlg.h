@@ -55,6 +55,9 @@ protected:
 	void AddCombo(wxComboBox **combo, int  id,
 		const std::string &current_path,
 		const EvoSources::List &list);
+	wxString CheckPath(const wxString &name, const std::string &path) const;
+	/// returns error message string on error, otherwise empty string
+	wxString ValidatePaths() const;
 
 public:
 	EvoCfgDlg(wxWindow *parent, const OpenSync::Config::Evolution &ec,
