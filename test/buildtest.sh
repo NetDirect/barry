@@ -227,8 +227,17 @@ if [ "$DESKTOP_OPTIONAL_BUILD_TEST" = "1" ] ; then
 	make install
 	make distclean
 
-	cd ..
+	# Restore path
 	export PKG_CONFIG_PATH="$BACKUP_PKG_CONFIG_PATH"
+
+	# Test without evolution (EvoSources.cc dummy code)
+	export CXXFLAGS="-Wall -Werror -O0 -g"
+	./configure --prefix="$BASEPATH/build/rootdir" --without-evolution
+	make $MAKEOPTS
+	make install
+	make distclean
+
+	cd ..
 fi
 
 
