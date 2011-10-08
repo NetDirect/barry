@@ -293,3 +293,26 @@ void EvoSources::Clear()
 	m_memos.clear();
 }
 
+bool EvoSources::IsEmpty() const
+{
+	return	m_addressbook.empty() &&
+		m_events.empty() &&
+		m_tasks.empty() &&
+		m_memos.empty();
+}
+
+bool EvoSources::IsDefaultable() const
+{
+	return
+		// first three are required
+		m_addressbook.size() && m_addressbook[0].m_SourcePath.size() &&
+		m_events.size() && m_events[0].m_SourcePath.size() &&
+		m_tasks.size() && m_tasks[0].m_SourcePath.size() &&
+
+		// and all lists must not have more than 1 item
+		m_addressbook.size() <= 1 &&
+		m_events.size() <= 1 &&
+		m_tasks.size() <= 1 &&
+		m_memos.size() <= 1;
+}
+

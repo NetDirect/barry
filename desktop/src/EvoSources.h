@@ -79,6 +79,13 @@ public:
 	/// built at compile time due to lack of proper libraries.
 	bool IsSupported() const;
 
+	/// Returns true if all list are empty
+	bool IsEmpty() const;
+
+	/// Returns true if minimum 3 paths are available, and if there is
+	/// only 1 path in each list.
+	bool IsDefaultable() const;
+
 	const List& GetAddressBook() const { return m_addressbook; }
 	const List& GetEvents() const { return m_events; }
 	const List& GetTasks() const { return m_tasks; }
