@@ -240,8 +240,11 @@ std::string Converter22::GrabField(const std::string &cfg,
 	if( spos == string::npos || epos == string::npos )
 		return "";
 
-	spos += 9 + name.size();
+	spos += start.size();
 	int count = epos - spos;
+
+	if( spos > epos )
+		return "";
 
 	return cfg.substr(spos, count);
 }
