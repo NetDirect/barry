@@ -1,5 +1,5 @@
 ///
-/// \file	EvoSources.h
+/// \file	EvoSources.cc
 ///		A class that creates a list of Evolution data sources.
 ///
 
@@ -192,8 +192,10 @@ bool EvoSources::LoadEcalLib()
 //	}
 }
 
-EvoSources::EvoSources()
+void EvoSources::Detect()
 {
+	Clear();
+
 	if( LoadEbookLib() && LoadEcalLib() ) {
 		// done!
 		m_supported = true;
@@ -204,6 +206,8 @@ EvoSources::EvoSources()
 		m_supported = false;
 	}
 
+	// shutdown to unload symbols
+//	Shutdown();
 }
 
 bool EvoSources::IsSupported() const
@@ -220,7 +224,7 @@ bool EvoSources::IsSupported() const
 
 // helper functions
 
-EvoSources::EvoSources()
+void EvoSources::Detect()
 {
 	GuessPaths();
 }
@@ -257,6 +261,11 @@ void SetIfExists(EvoSources::List &list,
 			list.push_back(sitem);
 		}
 	}
+}
+
+EvoSources::EvoSources()
+{
+	Detect();
 }
 
 void EvoSources::GuessPaths()

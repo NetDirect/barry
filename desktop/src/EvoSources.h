@@ -69,6 +69,11 @@ protected:
 public:
 	EvoSources();
 
+	/// This is automatically run from inside the constructor.
+	/// It can be called again to retry detection with the same instance,
+	/// but note that any previous results will be Clear()'d.
+	void Detect();
+
 	/// Returns true if this class has built-in support for talking
 	/// to the Evolution data server.  False if a dummy wrapper was
 	/// built at compile time due to lack of proper libraries.
