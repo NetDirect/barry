@@ -80,6 +80,8 @@ enum {
 	Dialog_GroupCfg_NotesCheck,
 	Dialog_GroupCfg_TodosCheck,
 	Dialog_EvoCfg,
+	Dialog_EvoDefault,
+	Dialog_EvoDefault_ManualConfigButton,
 	Dialog_SyncStatus,
 	Dialog_SyncStatus_RunAppButton,
 	Dialog_SyncStatus_SyncAgainButton,
