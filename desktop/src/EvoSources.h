@@ -90,6 +90,8 @@ public:
 	const List& GetEvents() const { return m_events; }
 	const List& GetTasks() const { return m_tasks; }
 	const List& GetMemos() const { return m_memos; }
+
+	static bool PathExists(const std::string &path);
 };
 
 #endif

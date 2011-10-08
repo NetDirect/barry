@@ -244,22 +244,30 @@ bool EvoSources::IsSupported() const
 
 using namespace std;
 
+bool EvoSources::PathExists(const std::string &path)
+{
+	struct stat s;
+	if( stat(path.c_str(), &s) == 0 ) {
+		if( S_ISDIR(s.st_mode) ) {
+			return true;
+		}
+	}
+	return false;
+}
+
 void SetIfExists(EvoSources::List &list,
 		const std::string &group,
 		const std::string &name,
 		const std::string &dir)
 {
-	struct stat s;
-	if( stat(dir.c_str(), &s) == 0 ) {
-		if( S_ISDIR(s.st_mode) ) {
-			EvoSource sitem;
+	if( EvoSources::PathExists(dir) ) {
+		EvoSource sitem;
 
-			sitem.m_GroupName = group;
-			sitem.m_SourceName = name;
-			sitem.m_SourcePath = "file://" + dir;
+		sitem.m_GroupName = group;
+		sitem.m_SourceName = name;
+		sitem.m_SourcePath = "file://" + dir;
 
-			list.push_back(sitem);
-		}
+		list.push_back(sitem);
 	}
 }
 
