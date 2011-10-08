@@ -231,7 +231,7 @@ void Converter22::Load(Config::Barry &config, const Member &member)
 std::string Converter22::GrabField(const std::string &cfg,
 				const std::string &name)
 {
-	string start = "<" + name + ">file://";
+	string start = "<" + name + ">";
 	string end = "</" + name + ">";
 
 	size_t spos = cfg.find(start);
@@ -299,9 +299,9 @@ void Converter22::Save(const Config::Evolution &config,
 
 	ostringstream oss;
 	oss << "<config>\n"
-	    << "  <address_path>file://" << config.GetAddressPath() << "</address_path>\n"
-	    << "  <calendar_path>file://" << config.GetCalendarPath() << "</calendar_path>\n"
-	    << "  <tasks_path>file://" << config.GetTasksPath() << "</tasks_path>\n"
+	    << "  <address_path>" << config.GetAddressPath() << "</address_path>\n"
+	    << "  <calendar_path>" << config.GetCalendarPath() << "</calendar_path>\n"
+	    << "  <tasks_path>" << config.GetTasksPath() << "</tasks_path>\n"
 	    << "</config>"
 	    << endl;
 

@@ -200,22 +200,15 @@ void Converter40::Load(Config::Barry &config, const Member &member)
 	config.SetPassword(value);
 }
 
-std::string GrabPath(const std::string &url)
-{
-	if( url.substr(0, 7) == "file://" )
-		return url.substr(7);
-	return url;
-}
-
 void Converter40::Load(Config::Evolution &config, const Member &member)
 {
 	OS40PluginConfig cfg = m_api.GetConfigurationObj(member.group_name,
 							member.id);
 
-	config.SetAddressPath(GrabPath(cfg.GetResource("contact")->GetUrl()));
-	config.SetCalendarPath(GrabPath(cfg.GetResource("event")->GetUrl()));
-	config.SetTasksPath(GrabPath(cfg.GetResource("todo")->GetUrl()));
-	config.SetMemosPath(GrabPath(cfg.GetResource("note")->GetUrl()));
+	config.SetAddressPath(cfg.GetResource("contact")->GetUrl());
+	config.SetCalendarPath(cfg.GetResource("event")->GetUrl());
+	config.SetTasksPath(cfg.GetResource("todo")->GetUrl());
+	config.SetMemosPath(cfg.GetResource("note")->GetUrl());
 }
 
 void Converter40::Load(Config::Google &config, const Member &member)
@@ -289,22 +282,22 @@ void Converter40::Save(const Config::Evolution &config, const std::string &group
 		Enable(true).
 		SetObjFormat("vcard21", "VCARD_EXTENSION=Evolution").
 		SetObjFormat("vcard30", "VCARD_EXTENSION=Evolution").
-		SetUrl("file://" + config.GetAddressPath()).
+		SetUrl(config.GetAddressPath()).
 		AddResource();
 	cfg.GetResource("event")->
 		Enable(true).
 		SetObjFormat("vevent20").
-		SetUrl("file://" + config.GetCalendarPath()).
+		SetUrl(config.GetCalendarPath()).
 		AddResource();
 	cfg.GetResource("todo")->
 		Enable(true).
 		SetObjFormat("vtodo20").
-		SetUrl("file://" + config.GetTasksPath()).
+		SetUrl(config.GetTasksPath()).
 		AddResource();
 	cfg.GetResource("note")->
 		Enable(true).
 		SetObjFormat("vjournal").
-		SetUrl("file://" + config.GetMemosPath()).
+		SetUrl(config.GetMemosPath()).
 		AddResource();
 
 	cfg.Save();
