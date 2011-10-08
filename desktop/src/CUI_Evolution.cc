@@ -20,7 +20,11 @@
 */
 
 #include "CUI_Evolution.h"
+#include "EvoSources.h"
+#include "EvoCfgDlg.h"
+#include "EvoDefaultDlg.h"
 #include "os22.h"			// only for the dynamic_cast
+#include "windowids.h"
 #include <wx/wx.h>
 #include <wx/process.h>
 
@@ -109,18 +113,6 @@ Evolution::Evolution()
 {
 }
 
-bool Evolution::AutoDetect()
-{
-	if( m_evolution->AutoDetect() ) {
-		// tell the user all went well
-		wxMessageBox(_T("Evolution's configuration successfully auto-detected."), _T("Evolution Config"), wxOK | wxICON_INFORMATION, m_parent);
-		return true;
-	}
-	else {
-		return false;
-	}
-}
-
 bool Evolution::InitialRun()
 {
 	wxString msg = _T(
@@ -181,28 +173,8 @@ bool Evolution::InitialRun()
 		}
 	}
 
-	// if we get here, assume that the user followed our instructions
-	// and attempt another autodetect
-	if( AutoDetect() )
-		return true;	// success!
-
-	// and finally, failure
-	wxMessageBox(_T("Failed to find Evolution's usual data locations.\n"
-		"Please make sure the following directories are create by Evolution:\n"
-		"\n"
-		"      ~/.evolution/addressbook/local/system\n"
-		"      ~/.evolution/calendar/local/system\n"
-		"      ~/.evolution/tasks/local/system\n"
-		"      ~/.evolution/memos/local/system\n"
-		"\n"
-		"You may need to use each feature a bit before Evolution\n"
-		"creates these directories and the databases inside them.\n"
-		"Make sure you select the Personal folder in Contacts."
-		),
-		_T("Evolution Config"),
-		wxOK | wxICON_ERROR,
-		m_parent);
-	return false;
+	// so far so good...
+	return true;
 }
 
 std::string Evolution::AppName() const
@@ -224,15 +196,62 @@ bool Evolution::Configure(wxWindow *parent, plugin_ptr old_plugin)
 	}
 	m_container.reset( m_evolution );
 
-	// if auto detect fails, fall back to starting Evolution
-	// for the first time
-	if( AutoDetect() || InitialRun() ) {
-		return true;
+
+	// auto detect first
+	EvoSources srcs;
+
+	// if no sources are found at all, and if Evolution is in the path
+	//	do InitialRun and then auto detect again
+	if( srcs.IsEmpty() ) {
+		if( !InitialRun() ) {
+			// impossible to do initial run, so fail here
+			m_container.reset();
+			m_evolution = 0;
+			return false;
+		}
+		srcs.Detect();
+	}
+
+	// we now have an auto detect (EvoSources) to work with
+	// if minimum three paths are available, and if no list has
+	//	more than 1 item, then just default to those settings
+	//	and notify the user... in the notification, allow
+	//	the user to "Manual Cfg..." button
+	bool manual = false;
+	if( srcs.IsDefaultable() ) {
+		EvoDefaultDlg dlg(m_parent);
+		if( dlg.ShowModal() == Dialog_EvoDefault_ManualConfigButton ) {
+			manual = true;
+		}
+	}
+
+	// otherwise, if default settings are not possible, then
+	//	load the path config dialog without notification
+	if( !srcs.IsDefaultable() || manual ) {
+		EvoCfgDlg cfgdlg(m_parent, *m_evolution, srcs);
+		if( cfgdlg.ShowModal() == wxID_OK ) {
+			cfgdlg.SetPaths(*m_evolution);
+		}
+		else {
+			m_container.reset();
+			m_evolution = 0;
+			return false;
+		}
 	}
 	else {
-		m_container.reset();
-		return false;
+		// it's defaultable!  use default paths
+		m_evolution->SetAddressPath(srcs.GetAddressBook().size() ?
+			srcs.GetAddressBook()[0].m_SourcePath : "");
+		m_evolution->SetCalendarPath(srcs.GetEvents().size() ?
+			srcs.GetEvents()[0].m_SourcePath : "");
+		m_evolution->SetTasksPath(srcs.GetTasks().size() ?
+			srcs.GetTasks()[0].m_SourcePath : "");
+		m_evolution->SetMemosPath(srcs.GetMemos().size() ?
+			srcs.GetMemos()[0].m_SourcePath : "");
 	}
+
+	// success!
+	return true;
 }
 
 ConfigUI::plugin_ptr Evolution::GetPlugin()

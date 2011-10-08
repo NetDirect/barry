@@ -39,7 +39,6 @@ class Evolution : public ConfigUI
 	wxWindow *m_parent;
 
 protected:
-	bool AutoDetect();
 	bool InitialRun();
 
 public:

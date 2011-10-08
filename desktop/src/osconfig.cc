@@ -33,41 +33,6 @@ using namespace std;
 namespace OpenSync { namespace Config {
 
 //////////////////////////////////////////////////////////////////////////////
-// Evolution
-
-void Evolution::SetIfExists(std::string &var, const std::string &dir)
-{
-	struct stat s;
-	if( stat(dir.c_str(), &s) == 0 ) {
-		if( S_ISDIR(s.st_mode) ) {
-			var = dir;
-		}
-	}
-}
-
-bool Evolution::AutoDetect()
-{
-	struct passwd *pw = getpwuid(getuid());
-	if( !pw )
-		return false;
-
-	string base = pw->pw_dir;
-	base += "/.evolution/";
-
-	string tail = "/local/system";
-
-	SetIfExists(m_address_path, base + "addressbook" + tail);
-	SetIfExists(m_calendar_path, base + "calendar" + tail);
-	SetIfExists(m_tasks_path, base + "tasks" + tail);
-	SetIfExists(m_memos_path, base + "memos" + tail);
-
-	// first three are required
-	return m_address_path.size() &&
-		m_calendar_path.size() &&
-		m_tasks_path.size();
-}
-
-//////////////////////////////////////////////////////////////////////////////
 // Group class
 
 Group::Group(const std::string &group_name,
