@@ -1,11 +1,11 @@
-Source: opensync-plugin-barry-4x
+Source: opensync1-plugin-barry
 Section: misc
 Priority: optional
 Maintainer: Chris Frey <cdfrey@foursquare.net>
 Build-Depends: debhelper (>= 6.0.0), g++ (>= 4.1), cdbs, autoconf, automake, libtool, pkg-config, libusb-dev, zlib1g-dev, libopensync1-dev (>=0.39), libbarry-dev (>= 0.18)
 Standards-Version: 3.8.0
 
-Package: opensync-plugin-barry-4x
+Package: opensync1-plugin-barry
 Section: libs
 Architecture: any
 Depends: libopensync1 (>= 0.39), libbarry0 (>= 0.18), libbarry0 (<< 0.19), ${shlibs:Depends}
@@ -14,11 +14,11 @@ Description: Opensync Blackberry plugin, based on the Barry project
  .
  This package contains an opensync plugin for use with libopensync 0.39 and above.
 
-Package: opensync-plugin-barry-4x-dbg
+Package: opensync1-plugin-barry-dbg
 Section: debug
 Priority: extra
 Architecture: any
-Depends: libopensync1 (>= 0.39), opensync-plugin-barry (= ${binary:Version})
+Depends: libopensync1 (>= 0.39), opensync1-plugin-barry (= ${binary:Version})
 Description: Opensync Blackberry plugin, based on the Barry project
  Barry is a GPL C++ library for interfacing with the RIM BlackBerry Handheld.
  .

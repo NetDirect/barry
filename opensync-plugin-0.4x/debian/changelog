@@ -1,12 +1,13 @@
-opensync-plugin-barry-4x (0.18-0) unstable; urgency=low
+opensync1-plugin-barry (0.18-0) unstable; urgency=low
 
   * Build rules for Barry releases
   * Bumped compat level to 6 (2011/06/28)
   * Removed .la files (2011/07/05)
+  * Renamed package to opensync1-plugin-barry (2011/10/11)
 
- -- Chris Frey <cdfrey@foursquare.net>  Tue, 28 Jun 2011 00:03:23 -0400
+ -- Chris Frey <cdfrey@foursquare.net>  Tue, 11 Oct 2011 00:03:23 -0400
 
-opensync-plugin-barry-4x (0.17-0) unstable; urgency=low
+opensync1-plugin-barry (0.17-0) unstable; urgency=low
 
   * GIT Build for
 
