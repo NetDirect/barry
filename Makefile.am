@@ -41,8 +41,8 @@ VERSIONED_INCLUDE = barry@BARRY_MAJOR@
 
 all-local:
 	rm -f $(top_builddir)/barry $(top_builddir)/$(VERSIONED_INCLUDE)
-	ln -s $(top_srcdir)/src $(top_builddir)/barry
-	ln -s $(top_builddir) $(top_builddir)/$(VERSIONED_INCLUDE)
+	ln -fs $(top_srcdir)/src $(top_builddir)/barry
+	ln -fs $(top_builddir) $(top_builddir)/$(VERSIONED_INCLUDE)
 
 clean-local:
 	rm -f $(top_builddir)/barry $(top_builddir)/$(VERSIONED_INCLUDE)
