@@ -3,6 +3,8 @@ apt-get install \
 	pkg-config \
 	fakeroot \
 	cdbs \
+	debhelper \
+	apt-utils \
 	autoconf \
 	autoconf-archive \
 	automake \

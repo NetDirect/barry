@@ -3,6 +3,8 @@ yum install \
 	pkgconfig \
 	rpmdevtools \
 	rpm-build \
+	rpm-sign \
+	createrepo \
 	desktop-file-utils \
 	autoconf \
 	autoconf-archive \
