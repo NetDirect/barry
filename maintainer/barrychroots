@@ -56,10 +56,10 @@ function do_fedora() {
 # fedora14 has a bug in ligcal's pkgconfig... need to edit
 # its /usr/lib/pkgconfig/libgcal.pc file manually to work around it
 # for now
-#do_fedora fedora14 f14 "--target i386 -ba barry.spec --with gui --with opensync --with desktop"
-do_fedora fedora13 f13 "--target i386 -ba barry.spec --with gui --with opensync --with desktop"
-do_fedora fedora12 f12 "--target i386 -ba barry.spec --with gui --with opensync --with desktop"
-do_fedora fedora11 f11 "--target i386 -ba barry.spec --with gui --with opensync"
+#do_fedora fedora14 f14 "rpmbuild --target i386 -ba barry.spec --with gui --with opensync --with desktop"
+do_fedora fedora13 f13 "rpmbuild --target i386 -ba barry.spec --with gui --with opensync --with desktop"
+do_fedora fedora12 f12 "rpmbuild --target i386 -ba barry.spec --with gui --with opensync --with desktop"
+do_fedora fedora11 f11 "rpmbuild --target i386 -ba barry.spec --with gui --with opensync"
 
 #
 # Cleanup

@@ -21,7 +21,7 @@ if [ -z "$1" -o -z "$2" -o -z "$3" -o -z "$4" -o -z "$5" ] ; then
 	echo "rpm/barry.spec.  This file will be copied into rpmbuild/SPECS"
 	echo "as 'barry.spec' and will be used to build the binary packages."
 	echo
-	echo "rpm_args are the arguments passed to rpmbuild."
+	echo "rpm_args is the full command line to build the package."
 	echo
 	echo "<results_dir>/results/ is where the resulting RPM and SRC RPM"
 	echo "packages will be copied."
@@ -66,8 +66,7 @@ cp "$TARBALL" "$RPMPATH/SOURCES"
 cp "$BUILDPATH"/barry-*/"$SPECPATH" "$RPMPATH/SPECS/barry.spec"
 
 # build binary packages
-#(cd "$RPMPATH"/SPECS && rpmbuild --target i386 -ba barry.spec --with gui --with opensync)
-(cd "$RPMPATH"/SPECS && rpmbuild $RPMTARGETS)
+(cd "$RPMPATH"/SPECS && $RPMTARGETS)
 
 # move results to destination directory
 mv $(find "$RPMPATH" -type f -name "*barry*.rpm" -print) "$DESTPATH"
