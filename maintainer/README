@@ -16,3 +16,15 @@ The top level scripts are:
 
 	release.sh - builds all tar, deb, and rpm packages
 
+
+Binary-meta
+-----------
+
+To build binary meta, first create a tarball with 'make tarball' in
+binary-meta itself.
+
+Then run release-bm.sh with that tarball for each target script you with
+to release.
+
+Then run make-apt.sh and make-yum.sh to turn the tree into repositories.
+
