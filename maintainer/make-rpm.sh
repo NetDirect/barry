@@ -20,6 +20,7 @@ if [ -z "$1" -o -z "$2" -o -z "$3" -o -z "$4" -o -z "$5" ] ; then
 	echo "when building.  For example, in most cases it will be"
 	echo "rpm/barry.spec.  This file will be copied into rpmbuild/SPECS"
 	echo "as 'barry.spec' and will be used to build the binary packages."
+	echo "If the string is empty, this step will be skipped."
 	echo
 	echo "rpm_args is the full command line to build the package."
 	echo
@@ -31,7 +32,6 @@ fi
 
 TARBALL="$1"
 SPECPATH="$2"
-SPACBASE=`basename "$SPECPATH"`
 RPMTARGETS="$3"
 RPMPATH="$4"
 if [ -d "$RPMPATH/rpmbuild/SPECS" ] ; then
@@ -63,7 +63,9 @@ tar -C "$BUILDPATH" -xjvf "$TARBALL"
 
 # setup RPM build tree
 cp "$TARBALL" "$RPMPATH/SOURCES"
-cp "$BUILDPATH"/barry-*/"$SPECPATH" "$RPMPATH/SPECS/barry.spec"
+if [ -n "$SPECPATH" ] ; then
+	cp "$BUILDPATH"/barry-*/"$SPECPATH" "$RPMPATH/SPECS/barry.spec"
+fi
 
 # build binary packages
 (cd "$RPMPATH"/SPECS && $RPMTARGETS)
