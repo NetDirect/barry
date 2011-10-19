@@ -18,9 +18,8 @@ if [ -z "$1" -o -z "$2" ] ; then
 	echo "tarball is the full pathname of the tarball to extract."
 	echo "It is allowed to be relative to the current directory."
 	echo
-	echo "deb_targets is a set of debian/rules makefile targets"
-	echo "that you wish to build on this round, such as binary, or"
-	echo "os22-binary or os4x-binary."
+	echo "deb_targets is a full command line of what you want to build."
+	echo "For example: fakeroot -- debian/rules binary"
 	echo
 	exit 1
 fi
@@ -57,7 +56,7 @@ mkdir -p "$DESTPATH"
 tar -C "$BUILDPATH" -xjvf "$TARBALL"
 
 # build binary packages
-(cd "$BUILDPATH"/* && fakeroot -- debian/rules $DEBTARGETS)
+(cd "$BUILDPATH"/* && $DEBTARGETS)
 
 # move results to destination directory
 mv $(find "$BUILDPATH" -type f -name "*.deb" -print) "$DESTPATH"

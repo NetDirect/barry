@@ -21,7 +21,8 @@ function do_ubuntu() {
 			/var/chroot/$1/home/cdfrey/barrychroot/results \
 			/tmp/barrychroots/$1 \
 			cdfrey \
-		./make-deb.sh "$BARRYTARBASE" "binary os22-binary"
+		./make-deb.sh "$BARRYTARBASE" \
+			"fakeroot -- debian/rules binary os22-binary"
 }
 
 do_ubuntu ubuntu1004 ubuntu1004

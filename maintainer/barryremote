@@ -26,7 +26,8 @@ function do_ubuntu() {
 			/home/chroot/$1/home/cdfrey/barrychroot/results \
 			/tmp/barrychroots/$1 \
 			cdfrey \
-		./make-deb.sh "$BARRYTARBASE" "binary os22-binary"
+		./make-deb.sh "$BARRYTARBASE" \
+			"fakeroot -- debian/rules binary os22-binary"
 }
 
 do_ubuntu ubuntu1004 ubuntu1004-64 ubuntu1004
@@ -38,7 +39,8 @@ do_ubuntu ubuntu804 ubuntu804-64 ubuntu804
 		"$BARRYTARBALL make-deb.sh" \
 		/home/cdfrey/barryremote/results \
 		/tmp/barryremote/squeeze \
-	./make-deb.sh "$BARRYTARBASE" "binary os22-binary"
+	./make-deb.sh "$BARRYTARBASE" \
+		"fakeroot -- debian/rules binary os22-binary"
 
 #
 # Build the Fedora RPM's
