@@ -1,0 +1,60 @@
+#
+# This script is run from the top level scripts.  You can rely on
+# the following environment variables being set:
+#
+#    $BMTARBALL  - relative path to the release source tarball (bz2)
+#    $BMTARBASE  - basename of the source tarball (bz2)
+#
+
+set -e
+
+rm -rf /tmp/bmchroots
+mkdir -p /tmp/bmchroots
+
+#
+# Build the DEB's
+#
+function do_ubuntu() {
+	./save.sh "/tmp/bmchroots/$1" "$2" "$3" \
+		./chroot.sh cdfrey /var/chroot/$1 \
+			"$BMTARBALL make-deb.sh" \
+			/var/chroot/$1/home/cdfrey/barrychroot/bmbuild/results \
+			/tmp/bmchroots/$1 \
+			cdfrey \
+		./make-deb.sh "$BMTARBASE" \
+			"make -j2 debian-all" \
+			bmbuild bmbuild
+	chown -R cdfrey:cdfrey build
+}
+
+do_ubuntu ubuntu1004 ubuntu1004/main/binary-i386 ""
+
+
+#
+# Build the Fedora RPM's
+#
+function do_fedora() {
+	./save.sh "/tmp/bmchroots/$1" "$2" "$4" \
+		./chroot.sh cdfrey "/var/chroot/$1" \
+			"$BMTARBALL make-bm-rpm.sh" \
+			/var/chroot/$1/home/cdfrey/rpmbuild/bmbuild/results \
+			/tmp/bmchroots/$1 \
+			cdfrey \
+		./make-bm-rpm.sh \
+			"$BMTARBASE" rpm/barry.spec \
+			"$5" \
+			/home/cdfrey \
+			/home/cdfrey/rpmbuild/bmbuild
+	mkdir -p "build/$3"
+	mv "build/$2"/*src.rpm "build/$3"
+	chown -R cdfrey:cdfrey build
+}
+
+do_fedora fedora14 fedora14/i386/RPMS fedora14/source-i386/SRPMS "" \
+	"make -j2 rpm-all"
+
+#
+# Cleanup
+#
+rm -rf /tmp/bmchroots
+
