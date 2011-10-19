@@ -56,7 +56,7 @@ rm -rf "$BUILDPATH"
 mkdir -p "$BUILDPATH"
 rm -rf "$DESTPATH"
 mkdir -p "$DESTPATH"
-rm -f "$RPMPATH"/RPMS/i386/* "$RPMPATH"/SRPMS/*
+rm -f "$RPMPATH"/RPMS/*/* "$RPMPATH"/SRPMS/*
 
 # expand source
 tar -C "$BUILDPATH" -xjvf "$TARBALL"
