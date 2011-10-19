@@ -41,7 +41,7 @@ function do_fedora() {
 			/tmp/bmchroots/$1 \
 			cdfrey \
 		./make-bm-rpm.sh \
-			"$BMTARBASE" rpm/barry.spec \
+			"$BMTARBASE" \
 			"$5" \
 			/home/cdfrey \
 			/home/cdfrey/rpmbuild/bmbuild

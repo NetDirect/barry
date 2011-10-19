@@ -1,8 +1,8 @@
 #!/bin/bash
 
-if [ -z "$1" -o -z "$2" -o -z "$3" -o -z "$4" -o -z "$5" ] ; then
+if [ -z "$1" -o -z "$2" -o -z "$3" -o -z "$4" ] ; then
 	echo
-	echo "Usage: ./make-rpm.sh tarball spec_target rpm_args build_dir results_dir"
+	echo "Usage: ./make-rpm.sh tarball rpm_args build_dir results_dir"
 	echo
 	echo "<build_dir>/rpmbuild is the RPM tree where the build will"
 	echo "take place.  If rpmbuild does not exist, but SPECS does, then"
@@ -16,12 +16,6 @@ if [ -z "$1" -o -z "$2" -o -z "$3" -o -z "$4" -o -z "$5" ] ; then
 	echo "will be extracted into <builddir>/binarybuild,"
 	echo "in order to fetch the spec file."
 	echo
-	echo "spec_target is the filename of the tarball spec file to use"
-	echo "when building.  For example, in most cases it will be"
-	echo "rpm/barry.spec.  This file will be copied into rpmbuild/SPECS"
-	echo "as 'barry.spec' and will be used to build the binary packages."
-	echo "If the string is empty, this step will be skipped."
-	echo
 	echo "rpm_args is the full command line to build the package."
 	echo
 	echo "<results_dir>/results/ is where the resulting RPM and SRC RPM"
@@ -31,17 +25,13 @@ if [ -z "$1" -o -z "$2" -o -z "$3" -o -z "$4" -o -z "$5" ] ; then
 fi
 
 TARBALL="$1"
-SPECPATH="$2"
-if [ -n "$SPECPATH" ] ; then
-SPACBASE=`basename "$SPECPATH"`
-fi
-RPMTARGETS="$3"
-RPMPATH="$4"
+RPMTARGETS="$2"
+RPMPATH="$3"
 if [ -d "$RPMPATH/rpmbuild/SPECS" ] ; then
-	RPMPATH="$4/rpmbuild"
+	RPMPATH="$3/rpmbuild"
 fi
 BUILDPATH="$RPMPATH/binarybuild"
-DESTPATH="$5/results"
+DESTPATH="$4/results"
 
 set -e
 
