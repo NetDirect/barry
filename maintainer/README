@@ -28,3 +28,7 @@ to release.
 
 Then run make-apt.sh and make-yum.sh to turn the tree into repositories.
 
+Run make-redirect.sh to create an .htaccess file if any HTTP redirects are
+required for your setup.  And run make-slimdist.sh to grab the metadata
+you need on the redirecting server.
+
