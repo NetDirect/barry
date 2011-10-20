@@ -1,0 +1,82 @@
+#
+# This script is run from the top level scripts.  You can rely on
+# the following environment variables being set:
+#
+#    $BMTARBALL  - relative path to the release source tarball (bz2)
+#    $BMTARBASE  - basename of the source tarball (bz2)
+#
+
+set -e
+
+rm -rf /tmp/bmremote
+mkdir -p /tmp/bmremote
+
+#
+# Build the DEB's
+#
+
+function do_ubuntu() {
+	./save.sh /tmp/bmremote/$1 "$2" "$3" \
+		./remote.sh root barrybuild.netdirect.ca 22 \
+			"$BMTARBALL make-deb.sh chroot.sh" \
+			/tmp/bmchroots/$1 \
+			/tmp/bmremote/$1 \
+		./chroot.sh cdfrey /home/chroot/$1 \
+			"$BMTARBASE make-deb.sh" \
+			/home/chroot/$1/home/cdfrey/barrychroot/bmbuild/results \
+			/tmp/bmchroots/$1 \
+			cdfrey \
+		./make-deb.sh "$BMTARBASE" \
+			"make -j16 debian-all" \
+			bmbuild bmbuild
+}
+
+do_ubuntu ubuntu1004 dists/ubuntu1004/main/binary-amd64 ""
+
+# Build on the Debian squeeze host system too
+./save.sh /tmp/bmremote/squeeze64 dists/squeeze/main/binary-amd64 "" \
+	./remote.sh cdfrey barrybuild.netdirect.ca 22 \
+		"$BMTARBALL make-deb.sh" \
+		/home/cdfrey/barryremote/bmbuild/results \
+		/tmp/bmremote/squeeze64 \
+	./make-deb.sh "$BMTARBASE" \
+		"make -j16 debian-all" \
+		bmbuild bmbuild
+
+#
+# Build the Fedora RPM's
+#
+# ./rpm.sh <path_to_chroot> <tag>
+#
+
+function do_fedora() {
+	./save.sh "/tmp/bmremote/$1" "$2" "$4" \
+		./remote.sh root barrybuild.netdirect.ca 22 \
+			"$BMTARBALL make-bm-rpm.sh chroot.sh" \
+			/tmp/bmchroots/$1 \
+			/tmp/bmremote/$1 \
+		./chroot.sh cdfrey /home/chroot/$1 \
+			"$BMTARBASE make-bm-rpm.sh" \
+			/home/chroot/$1/home/cdfrey/rpmbuild/bmbuild/results \
+			/tmp/bmchroots/$1 \
+			cdfrey \
+		./make-bm-rpm.sh \
+			"$BMTARBASE" \
+			"$5" \
+			/home/cdfrey \
+			/home/cdfrey/rpmbuild/bmbuild
+	mkdir -p "build/$3"
+	mv "build/$2"/*src.rpm "build/$3"
+}
+
+do_fedora fedora14 \
+	dists/fedora14/x86_64/RPMS dists/fedora14/source-x86_64/SRPMS "" \
+	"make -j16 LIB_SUFFIX=64 rpm-all"
+
+
+#
+# Cleanup
+#
+rm -rf /tmp/bmremote
+ssh -x -a -2 root@barrybuild.netdirect.ca "rm -rf /tmp/bmchroots"
+
