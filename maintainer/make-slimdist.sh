@@ -5,5 +5,5 @@
 # packages themselves.
 #
 
-tar --exclude=*.deb --exclude=*.rpm -cvz -C build -f metadata.tar.gz .
+tar --exclude=*.deb --exclude=*.rpm -cvz -C bmbuild -f metadata.tar.gz .
 

@@ -46,7 +46,7 @@ fi
 
 echo
 echo "Current build directory:"
-ls build
+ls bmbuild
 echo
 echo "release-bm.sh done"
 

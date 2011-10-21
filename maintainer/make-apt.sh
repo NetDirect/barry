@@ -13,7 +13,7 @@ if [ -z "$GPG_AGENT_INFO" ] ; then
 fi
 
 # Work inside the build directory, so it doesn't show up in Packages pathnames
-cd build
+cd bmbuild
 
 # Build Packages and Contents, for all distros, per arch
 for arch in i386 amd64 ; do

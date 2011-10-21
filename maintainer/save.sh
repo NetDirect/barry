@@ -5,8 +5,8 @@ if [ -z "$1" -o -z "$2" -o \( "$(whoami)" = "root" -a -z "$CHOWNUSER" \) ] ; the
 	echo "Usage: ./save.sh results_dir dir_tag file_tag [script args...]"
 	echo
 	echo "Runs the given script, and then copies all resulting binaries"
-	echo "from <results_dir>/results/ into build/<TAG> and renames all"
-	echo "the files to include <file_tag> in the name."
+	echo "from <results_dir>/results/ into directory dir_tag and"
+	echo "renames all the files to include <file_tag> in the name."
 	echo
 	echo "file_tag can be an empty string to skip the rename."
 	echo
@@ -30,17 +30,17 @@ echo "Running: $@"
 "$@"
 
 # copy the results back to the target directory
-mkdir -p "build/$TAG"
-cp "$RESULTSDIR"/* "build/$TAG"
+mkdir -p "$TAG"
+cp "$RESULTSDIR"/* "$TAG"
 if [ "$(whoami)" = "root" ] ; then
-	chown -R "$CHOWNUSER" "build/$TAG"
+	chown -R "$CHOWNUSER" "$TAG"
 fi
 
 # We do this manually in a for loop, since the rename command is
 # not the same across various linux distros...
 if [ -n "$SHORTTAG" ] ; then
 	(
-	cd "build/$TAG"
+	cd "$TAG"
 
 	for f in *.deb ; do
 		if [ -f "$f" ] ; then

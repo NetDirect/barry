@@ -27,7 +27,7 @@ function do_ubuntu() {
 	chown -R cdfrey:cdfrey build
 }
 
-do_ubuntu ubuntu1004 dists/ubuntu1004/main/binary-i386 ""
+do_ubuntu ubuntu1004 bmbuild/dists/ubuntu1004/main/binary-i386 ""
 
 
 #
@@ -45,12 +45,14 @@ function do_fedora() {
 			"$5" \
 			/home/cdfrey \
 			/home/cdfrey/rpmbuild/bmbuild
-	mkdir -p "build/$3"
-	mv "build/$2"/*src.rpm "build/$3"
+	mkdir -p "$3"
+	mv "$2"/*src.rpm "$3"
 	chown -R cdfrey:cdfrey build
 }
 
-do_fedora fedora14 dists/fedora14/i386/RPMS dists/fedora14/source-i386/SRPMS \
+do_fedora fedora14 \
+	bmbuild/dists/fedora14/i386/RPMS \
+	bmbuild/dists/fedora14/source-i386/SRPMS \
 	"" \
 	"make -j2 rpm-all"
 

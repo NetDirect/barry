@@ -27,7 +27,7 @@ PREFIX_DIR="$1"
 NEW_URL_BASE="$2"
 
 # Build Packages and Contents, for all distros, per arch
-for file in $(cd build && find * -type f \( -name "*.rpm" -o -name "*.deb" \) -print) ; do
+for file in $(cd bmbuild && find * -type f \( -name "*.rpm" -o -name "*.deb" \) -print) ; do
 	echo "Redirect 302 $PREFIX_DIR/$file $NEW_URL_BASE/$file"
 done
 

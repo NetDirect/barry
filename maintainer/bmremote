@@ -31,10 +31,10 @@ function do_ubuntu() {
 			bmbuild bmbuild
 }
 
-do_ubuntu ubuntu1004 dists/ubuntu1004/main/binary-amd64 ""
+do_ubuntu ubuntu1004 bmbuild/dists/ubuntu1004/main/binary-amd64 ""
 
 # Build on the Debian squeeze host system too
-./save.sh /tmp/bmremote/squeeze64 dists/squeeze/main/binary-amd64 "" \
+./save.sh /tmp/bmremote/squeeze64 bmbuild/dists/squeeze/main/binary-amd64 "" \
 	./remote.sh cdfrey barrybuild.netdirect.ca 22 \
 		"$BMTARBALL make-deb.sh" \
 		/home/cdfrey/barryremote/bmbuild/results \
@@ -65,12 +65,13 @@ function do_fedora() {
 			"$5" \
 			/home/cdfrey \
 			/home/cdfrey/rpmbuild/bmbuild
-	mkdir -p "build/$3"
-	mv "build/$2"/*src.rpm "build/$3"
+	mkdir -p "$3"
+	mv "$2"/*src.rpm "$3"
 }
 
 do_fedora fedora14 \
-	dists/fedora14/x86_64/RPMS dists/fedora14/source-x86_64/SRPMS "" \
+	bmbuild/dists/fedora14/x86_64/RPMS \
+	bmbuild/dists/fedora14/source-x86_64/SRPMS "" \
 	"make -j16 LIB_SUFFIX=64 rpm-all"
 
 

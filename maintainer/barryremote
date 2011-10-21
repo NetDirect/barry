@@ -16,7 +16,7 @@ mkdir -p /tmp/barryremote
 #
 
 function do_ubuntu() {
-	./save.sh /tmp/barryremote/$1 $2 $3 \
+	./save.sh "/tmp/barryremote/$1" "$2" "$3" \
 		./remote.sh root barrybuild.netdirect.ca 22 \
 			"$BARRYTARBALL make-deb.sh chroot.sh" \
 			/tmp/barrychroots/$1 \
@@ -30,11 +30,11 @@ function do_ubuntu() {
 			"fakeroot -- debian/rules binary os22-binary"
 }
 
-do_ubuntu ubuntu1004 ubuntu1004-64 ubuntu1004
-do_ubuntu ubuntu804 ubuntu804-64 ubuntu804
+do_ubuntu ubuntu1004 build/ubuntu1004-64 ubuntu1004
+do_ubuntu ubuntu804 build/ubuntu804-64 ubuntu804
 
 # Build on the Debian squeeze host system too
-./save.sh /tmp/barryremote/squeeze squeeze-64 squeeze \
+./save.sh /tmp/barryremote/squeeze build/squeeze-64 squeeze \
 	./remote.sh cdfrey barrybuild.netdirect.ca 22 \
 		"$BARRYTARBALL make-deb.sh" \
 		/home/cdfrey/barryremote/results \
@@ -49,7 +49,7 @@ do_ubuntu ubuntu804 ubuntu804-64 ubuntu804
 #
 
 function do_fedora() {
-	./save.sh /tmp/barryremote/$1 $1 $2 \
+	./save.sh /tmp/barryremote/$1 "$2" "$3" \
 		./remote.sh root barrybuild.netdirect.ca 22 \
 			"$BARRYTARBALL make-rpm.sh chroot.sh" \
 			/tmp/barrychroots/$1 \
@@ -61,12 +61,13 @@ function do_fedora() {
 			cdfrey \
 		./make-rpm.sh \
 			"$BARRYTARBASE" rpm/barry.spec \
-			"$3" \
+			"$4" \
 			/home/cdfrey \
 			/home/cdfrey/rpmbuild/binarybuild
 }
 
-do_fedora fedora14 f14 "rpmbuild -ba barry.spec --with gui --with opensync --with desktop"
+do_fedora fedora14 build/fedora14 f14 \
+	"rpmbuild -ba barry.spec --with gui --with opensync --with desktop"
 
 
 #

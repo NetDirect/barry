@@ -15,7 +15,7 @@ mkdir -p /tmp/barrychroots
 # Build the DEB's
 #
 function do_ubuntu() {
-	./save.sh /tmp/barrychroots/$1 $1 $2 \
+	./save.sh "/tmp/barrychroots/$1" "$2" "$3" \
 		./chroot.sh cdfrey /var/chroot/$1 \
 			"$BARRYTARBALL make-deb.sh" \
 			/var/chroot/$1/home/cdfrey/barrychroot/results \
@@ -25,15 +25,15 @@ function do_ubuntu() {
 			"fakeroot -- debian/rules binary os22-binary"
 }
 
-do_ubuntu ubuntu1004 ubuntu1004
-do_ubuntu ubuntu804 ubuntu804
+do_ubuntu ubuntu1004 build/ubuntu1004 ubuntu1004
+do_ubuntu ubuntu804 build/ubuntu804 ubuntu804
 
 
 #
 # Build the Fedora RPM's
 #
 function do_fedora() {
-	./save.sh /tmp/barrychroots/$1 $1 $2 \
+	./save.sh "/tmp/barrychroots/$1" "$2" "$3" \
 		./chroot.sh cdfrey /var/chroot/$1 \
 			"$BARRYTARBALL make-rpm.sh" \
 			/var/chroot/$1/home/cdfrey/rpmbuild/binarybuild/results \
@@ -41,7 +41,7 @@ function do_fedora() {
 			cdfrey \
 		./make-rpm.sh \
 			"$BARRYTARBASE" rpm/barry.spec \
-			"$3" \
+			"$4" \
 			/home/cdfrey \
 			/home/cdfrey/rpmbuild/binarybuild
 }
@@ -56,10 +56,13 @@ function do_fedora() {
 # fedora14 has a bug in ligcal's pkgconfig... need to edit
 # its /usr/lib/pkgconfig/libgcal.pc file manually to work around it
 # for now
-#do_fedora fedora14 f14 "rpmbuild --target i386 -ba barry.spec --with gui --with opensync --with desktop"
-do_fedora fedora13 f13 "rpmbuild --target i386 -ba barry.spec --with gui --with opensync --with desktop"
-do_fedora fedora12 f12 "rpmbuild --target i386 -ba barry.spec --with gui --with opensync --with desktop"
-do_fedora fedora11 f11 "rpmbuild --target i386 -ba barry.spec --with gui --with opensync"
+#do_fedora fedora14 build/fedora14 f14 "rpmbuild --target i386 -ba barry.spec --with gui --with opensync --with desktop"
+do_fedora fedora13 build/fedora13 f13 \
+	"rpmbuild --target i386 -ba barry.spec --with gui --with opensync --with desktop"
+do_fedora fedora12 build/fedora12 f12 \
+	"rpmbuild --target i386 -ba barry.spec --with gui --with opensync --with desktop"
+do_fedora fedora11 build/fedora11 f11 \
+	"rpmbuild --target i386 -ba barry.spec --with gui --with opensync"
 
 #
 # Cleanup

@@ -15,8 +15,8 @@ rm -rf /tmp/bmbuild
 mkdir /tmp/bmbuild
 tar -C /tmp/bmbuild -xjvf "$BMTARBALL"
 (cd /tmp/bmbuild/binary-meta* && make -j2 debian-all)
-mkdir -p build/dists/squeeze/main/binary-i386
-mv /tmp/bmbuild/binary-meta*/debian/*.deb build/dists/squeeze/main/binary-i386
+mkdir -p bmbuild/dists/squeeze/main/binary-i386
+mv /tmp/bmbuild/binary-meta*/debian/*.deb bmbuild/dists/squeeze/main/binary-i386
 
 
 #
