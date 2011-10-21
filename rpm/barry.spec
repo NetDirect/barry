@@ -124,8 +124,8 @@ This package contains the opensync plugin.
 %package opensync4x
 Summary: BlackBerry(tm) Desktop for Linux - opensync 0.4x plugin
 Group: Applications/Productivity
-Requires: libbarry0, libopensync >= 0.39
-BuildRequires: libopensync-devel
+Requires: libbarry0, libopensync1 >= 0.39
+BuildRequires: libopensync1-devel
 
 %description opensync4x
 Barry is a desktop toolset for managing your BlackBerry(tm) device. (BlackBerry
@@ -139,7 +139,7 @@ This package contains the opensync 0.4x plugin.
 %package desktop
 Summary: BlackBerry(tm) Desktop Panel GUI for Linux
 Group: Applications/Productivity
-Requires: libbarry0, libopensync
+Requires: libbarry0
 BuildRequires: wxGTK-devel
 
 %description desktop
@@ -512,6 +512,8 @@ desktop-file-install --vendor netdirect \
 - added bwatch
 - added code to clean the buildroot at start
 - added evolution dependencies for desktop build
+- removed libopensync dependency from barry-desktop (can be either, both, or none)
+- renamed 0.4x plugin dependency to libopensync1
 
 * Fri May 28 2010 Chris Frey <cdfrey@foursquare.net> 0.17.0-0
 - version bump
