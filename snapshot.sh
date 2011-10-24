@@ -17,7 +17,8 @@ set -e
 SCRIPTDIR="$(cd "$(dirname "$0")" && pwd)"
 
 cd maintainer
-./git-extract.sh $1 $2 $3
+mkdir -p build
+(cd build && ./git-extract.sh $1 $2 $3)
 (cd build/barry* && "$SCRIPTDIR/debian-snap.sh" $1 $2)
 (cd build/barry* && "$SCRIPTDIR/rpm-snap.sh" $1 $2)
 sleep 2s
