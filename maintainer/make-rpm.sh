@@ -71,5 +71,5 @@ fi
 (cd "$RPMPATH"/SPECS && $RPMTARGETS)
 
 # move results to destination directory
-mv $(find "$RPMPATH" -type f -name "*barry*.rpm" -print) "$DESTPATH"
+mv $(find "$RPMPATH/RPMS" "$RPMPATH/SRPMS" -type f -name "*barry*.rpm" -print) "$DESTPATH"
 
