@@ -48,7 +48,7 @@ if echo "$TARGETFILE" | grep root > /dev/null ; then
 		export THEMODE=release && \
 		export CHOWNUSER=$(whoami) && \
 		cd $(pwd) && \
-		source $5"
+		source $TARGETFILE"
 else
 	export BARRYTARBALL=$TARBALL
 	export BARRYTARBASE=$BASENAME
@@ -56,7 +56,7 @@ else
 	export THEMODE=release
 	export CHOWNUSER="$(whoami)"
 
-	source $5
+	source $TARGETFILE
 fi
 
 echo
