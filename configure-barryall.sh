@@ -16,5 +16,9 @@ export PKG_CONFIG_PATH=/home/cdfrey/software/opensync/0.22/rootdir/lib/pkgconfig
 	--enable-gui \
 	--enable-opensync-plugin \
 	--enable-opensync-plugin-4x \
-	--enable-desktop
+	--enable-desktop \
+	$1
+
+
+#	--enable-rpathhack \
 
