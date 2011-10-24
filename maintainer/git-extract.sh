@@ -20,7 +20,7 @@ if [ -z "$1" -o -z "$2" -o -z "$3" -o -z "$4" ] ; then
 	echo "          cd /tmp/play"
 	echo "          /path/to/git/repo/barry/maintainer/git-extract.sh 0 14 master"
 	echo
-	echo "This will create /tmp/play/build containing the results, and"
+	echo "This will create /tmp/play/barry-*.*.* containing the results, and"
 	echo "use /path/to/git/repo as the repository."
 	echo
 	exit 1
@@ -38,9 +38,8 @@ set -e
 echo "Using git dir: $RUNDIR"
 sleep 3s
 
-mkdir build
 umask 0022
 (cd "$RUNDIR" && git archive --format=tar --prefix=$DIRNAME/ $COMMIT) |\
-	tar -x -C build -f -
+	tar -x -f -
 echo "Extracted $COMMIT..."
 
