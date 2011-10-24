@@ -4,6 +4,7 @@
 #
 #    $BARRYTARBALL  - relative path to the release source tarball (bz2)
 #    $BARRYTARBASE  - basename of the source tarball (bz2)
+#    $BARRYBUILDDIR - directory where results are stored
 #
 
 set -e
@@ -25,8 +26,9 @@ function do_ubuntu() {
 			"fakeroot -- debian/rules binary os22-binary"
 }
 
-do_ubuntu ubuntu1004 build/ubuntu1004 ubuntu1004
-do_ubuntu ubuntu804 build/ubuntu804 ubuntu804
+do_ubuntu ubuntu1004 $BARRYBUILDDIR/ubuntu1004 ubuntu1004
+do_ubuntu ubuntu804 $BARRYBUILDDIR/ubuntu804 ubuntu804
+chown -R cdfrey:cdfrey $BARRYBUILDDIR
 
 
 #
@@ -57,12 +59,13 @@ function do_fedora() {
 # its /usr/lib/pkgconfig/libgcal.pc file manually to work around it
 # for now
 #do_fedora fedora14 build/fedora14 f14 "rpmbuild --target i386 -ba barry.spec --with gui --with opensync --with desktop"
-do_fedora fedora13 build/fedora13 f13 \
+do_fedora fedora13 $BARRYBUILDDIR/fedora13 f13 \
 	"rpmbuild --target i386 -ba barry.spec --with gui --with opensync --with desktop"
-do_fedora fedora12 build/fedora12 f12 \
+do_fedora fedora12 $BARRYBUILDDIR/fedora12 f12 \
 	"rpmbuild --target i386 -ba barry.spec --with gui --with opensync --with desktop"
-do_fedora fedora11 build/fedora11 f11 \
+do_fedora fedora11 $BARRYBUILDDIR/fedora11 f11 \
 	"rpmbuild --target i386 -ba barry.spec --with gui --with opensync"
+chown -R cdfrey:cdfrey $BARRYBUILDDIR
 
 #
 # Cleanup

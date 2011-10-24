@@ -4,6 +4,7 @@
 #
 #    $BARRYTARBALL  - relative path to the release source tarball (bz2)
 #    $BARRYTARBASE  - basename of the source tarball (bz2)
+#    $BARRYBUILDDIR - directory where results are stored
 #
 
 set -e
@@ -11,7 +12,7 @@ set -e
 #
 # Build the local DEB's
 #
-./save.sh /tmp/barrylb22/results build/debian squeeze \
+./save.sh /tmp/barrylb22/results $BARRYBUILDDIR/debian squeeze \
 	./make-deb.sh "$BARRYTARBALL" \
 		"fakeroot -- debian/rules binary os22-binary" \
 		/usr/src /tmp/barrylb22
