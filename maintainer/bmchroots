@@ -24,10 +24,10 @@ function do_ubuntu() {
 		./make-deb.sh "$BMTARBASE" \
 			"make -j2 debian-all" \
 			bmbuild bmbuild
-	chown -R cdfrey:cdfrey build
 }
 
 do_ubuntu ubuntu1004 bmbuild/dists/ubuntu1004/main/binary-i386 ""
+chown -R cdfrey:cdfrey bmbuild
 
 
 #
