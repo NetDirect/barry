@@ -32,3 +32,14 @@ Run make-redirect.sh to create an .htaccess file if any HTTP redirects are
 required for your setup.  And run make-slimdist.sh to grab the metadata
 you need on the redirecting server.
 
+
+Caution! Parallel builds:
+-------------------------
+It is safe to build multiple targets at the same time, but ONLY in the
+same set.  For example, you can build barrychroots and barrylocal at
+the same time, but not barrychroots and bmchroots together.
+
+This is because the chroot and make-*.sh scripts use some hardcoded
+directories, and moreover the RPM builds use the same ~/rpmbuild
+spaces in each target, and spec files may get overwritten.
+
