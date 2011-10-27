@@ -4,6 +4,7 @@
 #
 #    $BMTARBALL  - relative path to the release source tarball (bz2)
 #    $BMTARBASE  - basename of the source tarball (bz2)
+#    $BMBUILDDIR - directory to place resulting binary package tree
 #
 
 set -e
@@ -46,16 +47,16 @@ function do_fedora() {
 }
 
 # Ubuntu 8.04 has trouble building KDEPIM / akonadi-sync, so skip those
-do_ubuntu ubuntu804 bmbuild/dists/ubuntu804/main/binary-i386 "" \
+do_ubuntu ubuntu804 "$BMBUILDDIR/dists/ubuntu804/main/binary-i386" "" \
 	"touch deb-akonadi-latest deb-kdepim-0.2x && make -j2 debian-all"
-do_ubuntu ubuntu1004 bmbuild/dists/ubuntu1004/main/binary-i386 "" \
+do_ubuntu ubuntu1004 "$BMBUILDDIR/dists/ubuntu1004/main/binary-i386" "" \
 	"make -j2 debian-all"
 do_fedora fedora14 \
-	bmbuild/dists/fedora14/i386/RPMS \
-	bmbuild/dists/fedora14/source-i386/SRPMS \
+	"$BMBUILDDIR/dists/fedora14/i386/RPMS" \
+	"$BMBUILDDIR/dists/fedora14/source-i386/SRPMS" \
 	"" "make -j2 rpm-all"
 
-chown -R cdfrey:cdfrey bmbuild
+chown -R cdfrey:cdfrey "$BMBUILDDIR"
 
 #
 # Cleanup

@@ -4,6 +4,7 @@
 #
 #    $BMTARBALL  - relative path to the release source tarball (bz2)
 #    $BMTARBASE  - basename of the source tarball (bz2)
+#    $BMBUILDDIR - directory to place resulting binary package tree
 #
 
 set -e
@@ -33,7 +34,7 @@ function do_ubuntu() {
 
 # Build on the Debian squeeze host system too
 function do_debian() {
-	./save.sh /tmp/bmremote/squeeze64 bmbuild/dists/squeeze/main/binary-amd64 "" \
+	./save.sh /tmp/bmremote/squeeze64 "$BMBUILDDIR/dists/squeeze/main/binary-amd64" "" \
 		./remote.sh cdfrey barrybuild.netdirect.ca 22 \
 			"$BMTARBALL make-deb.sh" \
 			/home/cdfrey/barryremote/bmbuild/results \
@@ -71,14 +72,14 @@ function do_fedora() {
 }
 
 # Ubuntu 8.04 has trouble building KDEPIM / akonadi-sync, so skip those
-do_ubuntu ubuntu804 bmbuild/dists/ubuntu804/main/binary-amd64 "" \
+do_ubuntu ubuntu804 "$BMBUILDDIR/dists/ubuntu804/main/binary-amd64" "" \
 	"touch deb-akonadi-latest deb-kdepim-0.2x && make -j16 debian-all"
-do_ubuntu ubuntu1004 bmbuild/dists/ubuntu1004/main/binary-amd64 "" \
+do_ubuntu ubuntu1004 "$BMBUILDDIR/dists/ubuntu1004/main/binary-amd64" "" \
 	"make -j16 debian-all"
 do_debian
 do_fedora fedora14 \
-	bmbuild/dists/fedora14/x86_64/RPMS \
-	bmbuild/dists/fedora14/source-x86_64/SRPMS "" \
+	"$BMBUILDDIR/dists/fedora14/x86_64/RPMS" \
+	"$BMBUILDDIR/dists/fedora14/source-x86_64/SRPMS" "" \
 	"make -j16 LIB_SUFFIX=64 rpm-all"
 
 

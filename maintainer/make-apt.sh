@@ -2,6 +2,13 @@
 
 set -e
 
+if [ -z "$1" ] ; then
+	echo "Usage: make-apt.sh builddir"
+	exit 1
+fi
+
+BUILDDIR="$1"
+
 if [ -z "$GPG_AGENT_INFO" ] ; then
 	echo "Press enter to continue if gpg-agent is running,"
 	echo "Otherwise, run:"
@@ -13,7 +20,7 @@ if [ -z "$GPG_AGENT_INFO" ] ; then
 fi
 
 # Work inside the build directory, so it doesn't show up in Packages pathnames
-cd bmbuild
+cd $BUILDDIR
 
 # Build Packages and Contents, for all distros, per arch
 for arch in i386 amd64 ; do

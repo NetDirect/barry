@@ -1,8 +1,8 @@
 #!/bin/bash
 
-if [ -z "$1" -o -z "$2" ] ; then
+if [ -z "$1" -o -z "$2" -o -z "$3" ] ; then
 	echo
-	echo "Usage: ./release-bm.sh binary-meta-tarball [target]"
+	echo "Usage: ./release-bm.sh builddir binary-meta-tarball target1 [target2...]"
 	echo
 	echo "Uses the given binary-meta tarball, and builds it on the"
 	echo "the target systems using the [target] script."
@@ -25,28 +25,40 @@ fi
 
 set -e
 
-if [ -n "$2" ] ; then
-	if echo "$2" | grep root > /dev/null ; then
+BUILDDIR="$1"
+shift
+
+TARBALL="$1"
+TARBASE="$(basename "$1")"
+shift
+
+TARGETFILE="$1"
+shift
+
+while [ -n "$TARGETFILE" ] ; do
+	if echo "$TARGETFILE" | grep root > /dev/null ; then
 		# needs root
-		su - -c "export BMTARBALL=$1 && \
-			export BMTARBASE=$(basename $1) && \
+		su - -c "export BMTARBALL=$TARBALL && \
+			export BMTARBASE=$TARBASE && \
+			export BMBUILDDIR=$BUILDDIR && \
 			export THEMODE=release && \
 			export CHOWNUSER=$(whoami) && \
 			cd $(pwd) && \
-			source $2"
+			source $TARGETFILE"
 	else
-		export BMTARBALL=$1
-		export BMTARBASE=$(basename $1)
+		export BMTARBALL=$TARBALL
+		export BMTARBASE=$TARBASE
+		export BMBUILDDIR=$BUILDDIR
 		export THEMODE=release
 		export CHOWNUSER="$(whoami)"
 
-		source $2
+		source $TARGETFILE
 	fi
-fi
+done
 
 echo
 echo "Current build directory:"
-ls bmbuild
+ls "$BUILDDIR"
 echo
 echo "release-bm.sh done"
 

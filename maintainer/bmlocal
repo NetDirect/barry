@@ -4,6 +4,7 @@
 #
 #    $BMTARBALL  - relative path to the release source tarball (bz2)
 #    $BMTARBASE  - basename of the source tarball (bz2)
+#    $BMBUILDDIR - directory to place resulting binary package tree
 #
 
 set -e
@@ -11,16 +12,16 @@ set -e
 #
 # Build the local DEB's
 #
-rm -rf /tmp/bmbuild
-mkdir /tmp/bmbuild
-tar -C /tmp/bmbuild -xjvf "$BMTARBALL"
-(cd /tmp/bmbuild/binary-meta* && make -j2 debian-all)
-mkdir -p bmbuild/dists/squeeze/main/binary-i386
-mv /tmp/bmbuild/binary-meta*/debian/*.deb bmbuild/dists/squeeze/main/binary-i386
+rm -rf /tmp/bmbuildlocaldeb
+mkdir /tmp/bmbuildlocaldeb
+tar -C /tmp/bmbuildlocaldeb -xjvf "$BMTARBALL"
+(cd /tmp/bmbuildlocaldeb/binary-meta* && make -j2 debian-all)
+mkdir -p "$BMBUILDDIR/dists/squeeze/main/binary-i386"
+mv /tmp/bmbuildlocaldeb/binary-meta*/debian/*.deb "$BMBUILDDIR/dists/squeeze/main/binary-i386"
 
 
 #
 # Cleanup
 #
-rm -rf /tmp/bmbuild
+rm -rf /tmp/bmbuildlocaldeb
 

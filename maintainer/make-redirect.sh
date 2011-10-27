@@ -2,11 +2,13 @@
 
 set -e
 
-if [ -z "$1" -o -z "$2" ] ; then
-	echo "make-redirect.sh prefix_dir new_url_base"
+if [ -z "$1" -o -z "$2" -z -o "$3" ] ; then
+	echo "make-redirect.sh builddir prefix_dir new_url_base"
 	echo
 	echo "Creates .htaccess output for redirecting all .deb and .rpm files"
 	echo "to another website."
+	echo
+	echo "builddir is where the resulting tree of release-bm.sh is located"
 	echo
 	echo "prefix_dir is the path from the redirecting site, from the"
 	echo "root of the domain name.  Must start with a slash."
@@ -23,11 +25,12 @@ if [ -z "$1" -o -z "$2" ] ; then
 	exit 1
 fi
 
-PREFIX_DIR="$1"
-NEW_URL_BASE="$2"
+BUILDDIR="$1"
+PREFIX_DIR="$2"
+NEW_URL_BASE="$3"
 
 # Build Packages and Contents, for all distros, per arch
-for file in $(cd bmbuild && find * -type f \( -name "*.rpm" -o -name "*.deb" \) -print) ; do
+for file in $(cd $BUILDDIR && find * -type f \( -name "*.rpm" -o -name "*.deb" \) -print) ; do
 	echo "Redirect 302 $PREFIX_DIR/$file $NEW_URL_BASE/$file"
 done
 

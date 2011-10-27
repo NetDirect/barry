@@ -2,7 +2,7 @@
 
 if [ -z "$1" -o -z "$2" ] ; then
 	echo
-	echo "Usage: ./release.sh builddir target"
+	echo "Usage: ./release.sh builddir target1 [target2...]"
 	echo
 	echo "Builds release binaries using the tar release in builddir."
 	echo
@@ -25,7 +25,7 @@ fi
 set -e
 
 BUILDDIR="$1"
-TARGETFILE="$2"
+shift
 
 TARBALL=$(echo $BUILDDIR/barry-*.*.*.tar.bz2)
 BASENAME=$(basename $TARBALL)
@@ -39,25 +39,34 @@ else
 	exit 1
 fi
 
-# Build the binary packages by running the target script
-if echo "$TARGETFILE" | grep root > /dev/null ; then
-	# needs root
-	su - -c "export BARRYTARBALL=$TARBALL && \
-		export BARRYTARBASE=$BASENAME && \
-		export BARRYBUILDDIR=$BUILDDIR && \
-		export THEMODE=release && \
-		export CHOWNUSER=$(whoami) && \
-		cd $(pwd) && \
-		source $TARGETFILE"
-else
-	export BARRYTARBALL=$TARBALL
-	export BARRYTARBASE=$BASENAME
-	export BARRYBUILDDIR=$BUILDDIR
-	export THEMODE=release
-	export CHOWNUSER="$(whoami)"
+TARGETFILE="$1"
+shift
 
-	source $TARGETFILE
-fi
+while [ -n "$TARGETFILE" ] ; do
+	# Build the binary packages by running the target script
+	if echo "$TARGETFILE" | grep root > /dev/null ; then
+		# needs root
+		su - -c "export BARRYTARBALL=$TARBALL && \
+			export BARRYTARBASE=$BASENAME && \
+			export BARRYBUILDDIR=$BUILDDIR && \
+			export THEMODE=release && \
+			export CHOWNUSER=$(whoami) && \
+			cd $(pwd) && \
+			source $TARGETFILE"
+	else
+		export BARRYTARBALL=$TARBALL
+		export BARRYTARBASE=$BASENAME
+		export BARRYBUILDDIR=$BUILDDIR
+		export THEMODE=release
+		export CHOWNUSER="$(whoami)"
+
+		source $TARGETFILE
+	fi
+
+	# next!
+	TARGETFILE="$1"
+	shift
+done
 
 echo
 echo "Current build directory:"
