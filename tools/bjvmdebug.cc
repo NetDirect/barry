@@ -27,10 +27,11 @@
 #include <string>
 #include <cstring>
 #include <algorithm>
-#include <getopt.h>
 #include <fstream>
 #include <string.h>
 #include "i18n.h"
+
+#include "barrygetopt.h"
 
 using namespace std;
 using namespace Barry;

@@ -22,7 +22,7 @@
 #include <barry/barry.h>
 #include <iostream>
 #include <iomanip>
-#include <getopt.h>
+#include "barrygetopt.h"
 #include "i18n.h"
 
 using namespace std;

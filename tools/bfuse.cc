@@ -25,7 +25,6 @@
 
 #include <barry/barry.h>
 #include <sstream>
-#include <getopt.h>
 #include <vector>
 #include <list>
 #include <string>
@@ -38,6 +37,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include "i18n.h"
+
+#include "barrygetopt.h"
 
 using namespace std;
 using namespace std::tr1;

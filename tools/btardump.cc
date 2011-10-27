@@ -27,7 +27,8 @@
 #include <barry/barrybackup.h>
 #include <iostream>
 #include <iomanip>
-#include <getopt.h>
+
+#include "barrygetopt.h"
 
 using namespace std;
 using namespace Barry;

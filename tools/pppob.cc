@@ -27,7 +27,6 @@
 #include <vector>
 #include <string>
 #include <memory>
-#include <getopt.h>
 #include <stdlib.h>
 #include <sys/select.h>
 #include <sys/time.h>
@@ -36,6 +35,7 @@
 #include <signal.h>
 #include "i18n.h"
 
+#include "barrygetopt.h"
 
 using namespace std;
 using namespace Barry;

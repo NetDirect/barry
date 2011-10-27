@@ -29,11 +29,12 @@
 #include <string>
 #include <cstring>
 #include <algorithm>
-#include <getopt.h>
 #include <fstream>
 #include <string.h>
 #include <time.h>
 #include "i18n.h"
+
+#include "barrygetopt.h"
 
 // supported javaloader commands
 #define CMD_LIST		"dir"

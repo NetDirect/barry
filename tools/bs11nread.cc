@@ -28,9 +28,9 @@
 #include <vector>
 #include <string>
 #include <algorithm>
-#include <getopt.h>
 #include "i18n.h"
 
+#include "barrygetopt.h"
 
 using namespace std;
 using namespace Barry;

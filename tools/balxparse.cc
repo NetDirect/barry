@@ -26,8 +26,9 @@
 #include <iostream>
 #include <iomanip>
 #include <fstream>
-#include <getopt.h>
 #include "i18n.h"
+
+#include "barrygetopt.h"
 
 using namespace std;
 using namespace Barry;

@@ -30,7 +30,6 @@
 #include <cstdio>
 #include <cstdlib>
 #include <algorithm>
-#include <getopt.h>
 #include <fstream>
 #include <string.h>
 #include <sys/types.h>
@@ -42,6 +41,7 @@
 
 #include "i18n.h"
 #include "platform.h"
+#include "barrygetopt.h"
 
 using namespace std;
 using namespace Barry;

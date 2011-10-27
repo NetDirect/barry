@@ -35,8 +35,9 @@
 #include <algorithm>
 #include <stdexcept>
 #include <tr1/memory>
-#include <getopt.h>
 #include <strings.h>
+
+#include "barrygetopt.h"
 
 using namespace std;
 using namespace std::tr1;
