@@ -5,7 +5,7 @@
 
 /*
     Copyright (C) 2010-2011, Net Direct Inc. (http://www.netdirect.ca/)
-    Copyright (C) 2010, RealVNC Ltd.
+    Copyright (C) 2010-2011, RealVNC Ltd.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -38,6 +38,10 @@ typedef sig_t sighandler_t;
 
 #include <signal.h>
 typedef sig_t sighandler_t;
+
+// All QNX specific detail
+#elif defined( __QNX__ )
+typedef void (*sighandler_t)(int signum);
 
 #endif
 
