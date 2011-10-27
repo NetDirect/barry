@@ -55,7 +55,10 @@ rm -f "$RPMPATH"/RPMS/*/* "$RPMPATH"/SRPMS/*
 tar -C "$BUILDPATH" -xjvf "$TARBALL"
 
 # build binary packages
-(cd "$BUILDPATH"/* && $RPMTARGETS)
+if ! (cd "$BUILDPATH"/* && eval $RPMTARGETS) ; then
+	echo "bm-RPM build failed"
+	exit 1
+fi
 
 # move results to destination directory
 mv $(find "$RPMPATH" -type f -name "*.rpm" -print) "$DESTPATH"

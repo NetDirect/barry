@@ -56,7 +56,10 @@ mkdir -p "$DESTPATH"
 tar -C "$BUILDPATH" -xjvf "$TARBALL"
 
 # build binary packages
-(cd "$BUILDPATH"/* && $DEBTARGETS)
+if ! (cd "$BUILDPATH"/* && eval $DEBTARGETS) ; then
+	echo "DEB build failed"
+	exit 1
+fi
 
 # move results to destination directory
 mv $(find "$BUILDPATH" -type f -name "*.deb" -print) "$DESTPATH"

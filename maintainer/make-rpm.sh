@@ -68,7 +68,10 @@ if [ -n "$SPECPATH" ] ; then
 fi
 
 # build binary packages
-(cd "$RPMPATH"/SPECS && $RPMTARGETS)
+if ! (cd "$RPMPATH"/SPECS && eval $RPMTARGETS) ; then
+	echo "RPM build failed"
+	exit 1
+fi
 
 # move results to destination directory
 mv $(find "$RPMPATH/RPMS" "$RPMPATH/SRPMS" -type f -name "*barry*.rpm" -print) "$DESTPATH"
