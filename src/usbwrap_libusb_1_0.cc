@@ -139,12 +139,16 @@ int LibraryInterface::Init()
 	// level value will be used instead of our 3 above...
 	// if you need to *force* this to 3, call SetDataDump(true)
 	// after Init()
-	return libusb_init(&libusbctx);
+	if( !libusbctx ) {
+		return TranslateErrcode(libusb_init(&libusbctx));
+	}
+	return 0;
 }
 
 void LibraryInterface::Uninit()
 {
 	libusb_exit(libusbctx);
+	libusbctx = NULL;
 }
 
 void LibraryInterface::SetDataDump(bool data_dump_mode)
