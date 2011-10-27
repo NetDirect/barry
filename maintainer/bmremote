@@ -27,21 +27,22 @@ function do_ubuntu() {
 			/tmp/bmchroots/$1 \
 			cdfrey \
 		./make-deb.sh "$BMTARBASE" \
+			"$4" \
+			bmbuild bmbuild
+}
+
+# Build on the Debian squeeze host system too
+function do_debian() {
+	./save.sh /tmp/bmremote/squeeze64 bmbuild/dists/squeeze/main/binary-amd64 "" \
+		./remote.sh cdfrey barrybuild.netdirect.ca 22 \
+			"$BMTARBALL make-deb.sh" \
+			/home/cdfrey/barryremote/bmbuild/results \
+			/tmp/bmremote/squeeze64 \
+		./make-deb.sh "$BMTARBASE" \
 			"make -j16 debian-all" \
 			bmbuild bmbuild
 }
 
-do_ubuntu ubuntu1004 bmbuild/dists/ubuntu1004/main/binary-amd64 ""
-
-# Build on the Debian squeeze host system too
-./save.sh /tmp/bmremote/squeeze64 bmbuild/dists/squeeze/main/binary-amd64 "" \
-	./remote.sh cdfrey barrybuild.netdirect.ca 22 \
-		"$BMTARBALL make-deb.sh" \
-		/home/cdfrey/barryremote/bmbuild/results \
-		/tmp/bmremote/squeeze64 \
-	./make-deb.sh "$BMTARBASE" \
-		"make -j16 debian-all" \
-		bmbuild bmbuild
 
 #
 # Build the Fedora RPM's
@@ -69,6 +70,12 @@ function do_fedora() {
 	mv "$2"/*src.rpm "$3"
 }
 
+# Ubuntu 8.04 has trouble building KDEPIM / akonadi-sync, so skip those
+do_ubuntu ubuntu804 bmbuild/dists/ubuntu804/main/binary-amd64 "" \
+	"touch deb-akonadi-latest deb-kdepim-0.2x && make -j16 debian-all"
+do_ubuntu ubuntu1004 bmbuild/dists/ubuntu1004/main/binary-amd64 "" \
+	"make -j16 debian-all"
+do_debian
 do_fedora fedora14 \
 	bmbuild/dists/fedora14/x86_64/RPMS \
 	bmbuild/dists/fedora14/source-x86_64/SRPMS "" \

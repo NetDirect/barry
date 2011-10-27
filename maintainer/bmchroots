@@ -22,13 +22,9 @@ function do_ubuntu() {
 			/tmp/bmchroots/$1 \
 			cdfrey \
 		./make-deb.sh "$BMTARBASE" \
-			"make -j2 debian-all" \
+			"$4" \
 			bmbuild bmbuild
 }
-
-do_ubuntu ubuntu1004 bmbuild/dists/ubuntu1004/main/binary-i386 ""
-chown -R cdfrey:cdfrey bmbuild
-
 
 #
 # Build the Fedora RPM's
@@ -47,14 +43,19 @@ function do_fedora() {
 			/home/cdfrey/rpmbuild/bmbuild
 	mkdir -p "$3"
 	mv "$2"/*src.rpm "$3"
-	chown -R cdfrey:cdfrey build
 }
 
+# Ubuntu 8.04 has trouble building KDEPIM / akonadi-sync, so skip those
+do_ubuntu ubuntu804 bmbuild/dists/ubuntu804/main/binary-i386 "" \
+	"touch deb-akonadi-latest deb-kdepim-0.2x && make -j2 debian-all"
+do_ubuntu ubuntu1004 bmbuild/dists/ubuntu1004/main/binary-i386 "" \
+	"make -j2 debian-all"
 do_fedora fedora14 \
 	bmbuild/dists/fedora14/i386/RPMS \
 	bmbuild/dists/fedora14/source-i386/SRPMS \
-	"" \
-	"make -j2 rpm-all"
+	"" "make -j2 rpm-all"
+
+chown -R cdfrey:cdfrey bmbuild
 
 #
 # Cleanup
