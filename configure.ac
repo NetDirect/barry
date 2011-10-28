@@ -363,6 +363,18 @@ else
 fi
 AC_SUBST([THREAD_LIBRARY_LIBS])
 
+
+NETWORK_LIBRARY_LIBS=
+AC_CHECK_FUNC([bind], [], [
+  AC_CHECK_LIB([socket], [bind], [ NETWORK_LIBRARY_LIBS="-lsocket" ] , [
+  	echo "**************************************************"
+	echo "WARNING: No networking library found, build errors"
+	echo "         will probably occur.                     "
+   	echo "**************************************************"
+  ])
+])
+AC_SUBST([NETWORK_LIBRARY_LIBS])
+
 AC_ARG_WITH(zlib,
 	AC_HELP_STRING(--with-zlib, [force usage of zlib, and halt if not available]),
 	force_zlib=$withval, force_zlib=no )

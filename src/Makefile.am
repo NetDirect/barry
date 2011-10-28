@@ -277,7 +277,7 @@ libbarryjdwp_la_SOURCES = \
 	j_message.h j_message.cc \
 	j_server.h j_server.cc \
 	j_manager.h j_manager.cc
-libbarryjdwp_la_LIBADD = libbarry.la libbarrydp.la $(USB_LIBRARY_LIBS)
+libbarryjdwp_la_LIBADD = libbarry.la libbarrydp.la $(USB_LIBRARY_LIBS) $(NETWORK_LIBRARY_LIBS)
 libbarryjdwp_la_LDFLAGS = -version-info ${LIB_BARRY_VERSION}
 
 if WITH_SYNC
