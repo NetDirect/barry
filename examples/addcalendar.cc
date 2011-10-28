@@ -20,7 +20,7 @@
     root directory of this project for more details.
 */
 
-#define _XOPEN_SOURCE
+#define _XOPEN_SOURCE 500
 #include <time.h>
 #include <string.h>
 #include <barry/barry.h>
