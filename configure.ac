@@ -344,9 +344,24 @@ AM_CONDITIONAL([WITH_FUSE], [test "$FUSE_FOUND" = "1"])
 AM_CONDITIONAL([WITH_SDL],  [test "$SDL_FOUND" = "1"])
 AM_CONDITIONAL([WITH_SYNC], [test "$GLIB2_FOUND" = "1" -a "$SYNC_ENABLED" = "yes"])
 
-#AC_CHECK_LIB([IOKit], [main])
-#AC_CHECK_LIB([libusb], [libusb_init])
-AC_CHECK_LIB([pthread], [main])
+AC_CHECK_LIB([pthread], [main], [HAVE_LIBPTHREAD=1], [HAVE_LIBPTHREAD=0])
+THREAD_LIBRARY_LIBS=
+if test "$HAVE_LIBPTHREAD" = "1"; then
+   THREAD_LIBRARY_LIBS="-lpthread"
+else
+   # See if pthreads is part of the core library or user provided LDFLAGS anyway
+   AC_MSG_CHECKING([for pthread_create in standard linker options])
+   AC_CHECK_FUNC([pthread_create], [
+   	AC_MSG_RESULT([ok])
+   ], [
+	AC_MSG_RESULT([failed])			
+	echo "*************************************************"
+	echo "WARNING: No threading library found, build errors"
+	echo "         will probably occur.                    "
+   	echo "*************************************************"
+   ])
+fi
+AC_SUBST([THREAD_LIBRARY_LIBS])
 
 AC_ARG_WITH(zlib,
 	AC_HELP_STRING(--with-zlib, [force usage of zlib, and halt if not available]),

@@ -54,7 +54,7 @@ endif
 sbin_PROGRAMS = pppob
 
 btool_SOURCES = btool.cc
-btool_LDADD = ../src/libbarry.la $(USB_LIBRARY_LIBS) -lpthread @BOOST_LDADD@ $(LTLIBINTL) $(LTLIBICONV)
+btool_LDADD = ../src/libbarry.la $(USB_LIBRARY_LIBS) $(THREAD_LIBRARY_LIBS) @BOOST_LDADD@ $(LTLIBINTL) $(LTLIBICONV)
 if WITH_SYNC
 btool_LDADD += ../src/libbarrysync.la $(GLIB2_LIBS)
 endif
@@ -75,22 +75,22 @@ btool_LDFLAGS = @BOOST_LIB_PATH@
 
 if WITH_BOOST
 bs11nread_SOURCES = bs11nread.cc
-bs11nread_LDADD = ../src/libbarry.la $(USB_LIBRARY_LIBS) -lpthread @BOOST_LDADD@ $(LTLIBINTL)
+bs11nread_LDADD = ../src/libbarry.la $(USB_LIBRARY_LIBS) $(THREAD_LIBRARY_LIBS) @BOOST_LDADD@ $(LTLIBINTL)
 bs11nread_CXXFLAGS = -D_REENTRANT @BOOST_INC_PATH@ $(AM_CXXFLAGS)
 bs11nread_LDFLAGS = @BOOST_LIB_PATH@
 endif
 
 bidentify_SOURCES = bidentify.cc
-bidentify_LDADD = ../src/libbarry.la $(USB_LIBRARY_LIBS) -lpthread $(LTLIBINTL)
+bidentify_LDADD = ../src/libbarry.la $(USB_LIBRARY_LIBS) $(THREAD_LIBRARY_LIBS) $(LTLIBINTL)
 
 bjavaloader_SOURCES = bjavaloader.cc
-bjavaloader_LDADD = ../src/libbarry.la $(USB_LIBRARY_LIBS) -lpthread $(LTLIBINTL)
+bjavaloader_LDADD = ../src/libbarry.la $(USB_LIBRARY_LIBS) $(THREAD_LIBRARY_LIBS) $(LTLIBINTL)
 
 brawchannel_SOURCES = brawchannel.cc
-brawchannel_LDADD = ../src/libbarry.la $(USB_LIBRARY_LIBS) -lpthread $(LTLIBINTL)
+brawchannel_LDADD = ../src/libbarry.la $(USB_LIBRARY_LIBS) $(THREAD_LIBRARY_LIBS) $(LTLIBINTL)
 
 bjvmdebug_SOURCES = bjvmdebug.cc
-bjvmdebug_LDADD = ../src/libbarry.la $(USB_LIBRARY_LIBS) -lpthread $(LTLIBINTL)
+bjvmdebug_LDADD = ../src/libbarry.la $(USB_LIBRARY_LIBS) $(THREAD_LIBRARY_LIBS) $(LTLIBINTL)
 
 bdptest_SOURCES = bdptest.cc
 bdptest_LDADD = ../src/libbarry.la ../src/libbarrydp.la $(LTLIBINTL)
@@ -102,13 +102,13 @@ bjdwp_LDADD = ../src/libbarry.la \
 	$(LTLIBINTL)
 
 upldif_SOURCES = upldif.cc
-upldif_LDADD = ../src/libbarry.la $(USB_LIBRARY_LIBS) -lpthread $(LTLIBINTL)
+upldif_LDADD = ../src/libbarry.la $(USB_LIBRARY_LIBS) $(THREAD_LIBRARY_LIBS) $(LTLIBINTL)
 
 btranslate_SOURCES = btranslate.cc
 btranslate_LDADD = $(LTLIBINTL)
 
 bktrans_SOURCES = bktrans.cc
-bktrans_LDADD = ../src/libbarry.la -lpthread $(LTLIBINTL)
+bktrans_LDADD = ../src/libbarry.la $(THREAD_LIBRARY_LIBS) $(LTLIBINTL)
 
 if USE_LIBUSB_0_1
 sbin_PROGRAMS += bcharge breset
@@ -131,10 +131,10 @@ breset_LDADD = $(USB_LIBRARY_LIBS) $(LTLIBINTL)
 endif
 
 pppob_SOURCES = pppob.cc
-pppob_LDADD = ../src/libbarry.la $(USB_LIBRARY_LIBS) -lpthread $(LTLIBINTL)
+pppob_LDADD = ../src/libbarry.la $(USB_LIBRARY_LIBS) $(THREAD_LIBRARY_LIBS) $(LTLIBINTL)
 
 brecsum_SOURCES = brecsum.cc
-brecsum_LDADD = ../src/libbarry.la $(USB_LIBRARY_LIBS) -lpthread $(LTLIBINTL)
+brecsum_LDADD = ../src/libbarry.la $(USB_LIBRARY_LIBS) $(THREAD_LIBRARY_LIBS) $(LTLIBINTL)
 
 brimtrans_SOURCES = brimtrans.cc
 brimtrans_LDADD = $(LTLIBINTL)
@@ -142,13 +142,13 @@ brimtrans_LDADD = $(LTLIBINTL)
 if WITH_FUSE
 bfuse_SOURCES = bfuse.cc
 bfuse_CXXFLAGS = $(FUSE_CFLAGS)
-bfuse_LDADD = ../src/libbarry.la $(FUSE_LIBS) -lpthread $(LTLIBINTL)
+bfuse_LDADD = ../src/libbarry.la $(FUSE_LIBS) $(THREAD_LIBRARY_LIBS) $(LTLIBINTL)
 endif
 
 if WITH_SDL
 bwatch_SOURCES = bwatch.cc
 bwatch_CXXFLAGS = $(SDL_FLAGS)
-bwatch_LDADD = ../src/libbarry.la $(SDL_LIBS) -lpthread $(LTLIBINTL)
+bwatch_LDADD = ../src/libbarry.la $(SDL_LIBS) $(THREAD_LIBRARY_LIBS) $(LTLIBINTL)
 endif
 
 if WITH_BACKUP
@@ -161,7 +161,7 @@ if WITH_SYNC
 btardump_CXXFLAGS += -D__BARRY_SYNC_MODE__ $(GLIB2_CFLAGS) 
 endif
 btardump_LDADD = ../src/libbarry.la $(USB_LIBRARY_LIBS) \
-	../src/libbarrybackup.la -lpthread $(LTLIBINTL)
+	../src/libbarrybackup.la $(THREAD_LIBRARY_LIBS) $(LTLIBINTL)
 if WITH_SYNC
 btardump_LDADD += ../src/libbarrysync.la $(GLIB2_LIBS)
 endif
@@ -183,7 +183,7 @@ endif
 bio_LDADD = ../src/libbarry.la \
 	../src/libbarrysync.la $(GLIB2_LIBS) \
 	../src/libbarrybackup.la \
-	$(USB_LIBRARY_LIBS) -lpthread @BOOST_LDADD@ \
+	$(USB_LIBRARY_LIBS) $(THREAD_LIBRARY_LIBS) @BOOST_LDADD@ \
 	$(LTLIBINTL) $(LTLIBICONV)
 bio_LDFLAGS = @BOOST_LIB_PATH@
 endif
