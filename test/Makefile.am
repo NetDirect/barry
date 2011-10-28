@@ -20,7 +20,7 @@ libtest_SOURCES = \
 	libtest.cc
 libtest_LDADD = \
 	../src/libbarry.la \
-	-lpthread @BOOST_LDADD@ $(LTLIBINTL) $(LTLIBICONV)
+	$(THREAD_LIBRARY_LIBS) @BOOST_LDADD@ $(LTLIBINTL) $(LTLIBICONV)
 libtest_LDFLAGS = @BOOST_LIB_PATH@
 libtest_CXXFLAGS = $(AM_CXXFLAGS)
 
