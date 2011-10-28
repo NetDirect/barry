@@ -40,9 +40,7 @@ else
 fi
 
 TARGETFILE="$1"
-shift
-
-while [ -n "$TARGETFILE" ] ; do
+while shift ; do
 	# Build the binary packages by running the target script
 	if echo "$TARGETFILE" | grep root > /dev/null ; then
 		# needs root
@@ -65,7 +63,6 @@ while [ -n "$TARGETFILE" ] ; do
 
 	# next!
 	TARGETFILE="$1"
-	shift
 done
 
 echo

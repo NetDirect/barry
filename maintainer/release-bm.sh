@@ -18,7 +18,7 @@ if [ -z "$1" -o -z "$2" -o -z "$3" ] ; then
 	echo "Note: You may wish to direct the output to a file, for"
 	echo "      later examination."
 	echo
-	echo "Example:   ./release-bm.sh binary-meta.tar.bz2 bmlocal"
+	echo "Example:   ./release-bm.sh bmbuild binary-meta.tar.bz2 bmlocal"
 	echo
 	exit 1
 fi
@@ -33,9 +33,7 @@ TARBASE="$(basename "$1")"
 shift
 
 TARGETFILE="$1"
-shift
-
-while [ -n "$TARGETFILE" ] ; do
+while shift ; do
 	if echo "$TARGETFILE" | grep root > /dev/null ; then
 		# needs root
 		su - -c "export BMTARBALL=$TARBALL && \
@@ -54,6 +52,9 @@ while [ -n "$TARGETFILE" ] ; do
 
 		source $TARGETFILE
 	fi
+
+	# next!
+	TARGETFILE="$1"
 done
 
 echo
