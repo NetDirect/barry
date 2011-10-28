@@ -358,6 +358,8 @@ if test "$NEED_PTHREAD_CHECK2" = "1"; then
 	])
 fi
 
+AC_CHECK_FUNC([getpwuid], [AC_DEFINE([HAVE_GETPWUID], [], [Defined if getpwuid is available])], [])
+
 
 NETWORK_LIBRARY_LIBS=
 AC_CHECK_FUNC([bind], [], [

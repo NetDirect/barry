@@ -61,6 +61,7 @@ extern std::ostream *LogStream;
 	#define eeout(c, r)	{ ::Barry::LogLock lock; (*::Barry::LogStream) << "Sent packet:\n" << c << "\n" << "Response packet:\n" << r << "\n"; }
 
 	// handle assert() as well
+        #undef NDEBUG
 	#define NDEBUG
 #endif
 
