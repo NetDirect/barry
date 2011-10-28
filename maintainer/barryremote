@@ -67,7 +67,7 @@ function do_fedora() {
 			/home/cdfrey/rpmbuild/binarybuild
 }
 
-do_fedora fedora14 $BARRYBUILDDIR/fedora14 f14 \
+do_fedora fedora14 $BARRYBUILDDIR/fedora14-64 f14 \
 	"rpmbuild -ba barry.spec --with gui --with opensync --with desktop"
 
 

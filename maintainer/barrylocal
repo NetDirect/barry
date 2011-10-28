@@ -12,7 +12,7 @@ set -e
 #
 # Build the local DEB's
 #
-./save.sh /tmp/barrylb22/results $BARRYBUILDDIR/debian squeeze \
+./save.sh /tmp/barrylb22/results $BARRYBUILDDIR/squeeze squeeze \
 	./make-deb.sh "$BARRYTARBALL" \
 		"fakeroot -- debian/rules binary os22-binary" \
 		/usr/src /tmp/barrylb22
