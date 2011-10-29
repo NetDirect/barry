@@ -57,7 +57,7 @@ include_barrydir = ${includedir}/barry@BARRY_MAJOR@/barry
 #WARNFLAGS = -ansi -pedantic -Wall -W -Wold-style-cast -Wfloat-equal -Wwrite-strings -Wno-long-long
 #WARNFLAGS = -ansi -pedantic -Wall -W -Weffc++ -Woverloaded-virtual -Wold-style-cast -Wfloat-equal -Wwrite-strings -Wno-long-long -Werror
 
-#LDFLAGS = ../../external/rootdir/libusb/lib/libusb.a $(LDBOOST) $(THREAD_LIBRARY_LIBS) $(LDDEBUG)
+#LDFLAGS = ../../external/rootdir/libusb/lib/libusb.a $(LDBOOST) $(LDDEBUG)
 
 # To use gettext
 datadir = @datadir@

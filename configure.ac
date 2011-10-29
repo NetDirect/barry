@@ -86,7 +86,7 @@ AM_CONDITIONAL([WITH_BACKUP], [test "$LIBTAR_FOUND" = "1"])
 
 # Always use Barry sockets and low level USB access, rather than
 # attempting to use third party socket APIs.
-# 
+#
 # Currently compiling without this flag won't work, but
 # it exists to allow areas of code which are only needed
 # when using Barry sockets to be easily marked
@@ -128,7 +128,7 @@ AC_ARG_WITH(libusb,
 	 xno)
 		USE_LIBUSB_0_1=0
 		;;
-	 x*)	 
+	 x*)
 	 	LIBUSB_0_1_CFLAGS="-I$with_libusb/include"
 	 	LIBUSB_0_1_LIBS="-L$with_libusb/lib -lusb"
         	USE_LIBUSB_0_1=1
@@ -148,7 +148,7 @@ AC_ARG_WITH(libusb1_0,
 	 xno)
 		USE_LIBUSB_1_0=0
 		;;
-	 x*)	 
+	 x*)
 	  	LIBUSB_1_0_CFLAGS="-I$with_libusb1_0/include/libusb-1.0"
 	 	LIBUSB_1_0_LIBS="-L$with_libusb1_0/lib -lusb-1.0"
         	USE_LIBUSB_1_0=1
@@ -344,24 +344,19 @@ AM_CONDITIONAL([WITH_FUSE], [test "$FUSE_FOUND" = "1"])
 AM_CONDITIONAL([WITH_SDL],  [test "$SDL_FOUND" = "1"])
 AM_CONDITIONAL([WITH_SYNC], [test "$GLIB2_FOUND" = "1" -a "$SYNC_ENABLED" = "yes"])
 
-AC_CHECK_LIB([pthread], [pthread_create], [HAVE_LIBPTHREAD=1], [HAVE_LIBPTHREAD=0])
-THREAD_LIBRARY_LIBS=
-if test "$HAVE_LIBPTHREAD" = "1"; then
-   THREAD_LIBRARY_LIBS="-lpthread"
-else
-   # See if pthreads is part of the core library or user provided LDFLAGS anyway
-   AC_MSG_CHECKING([for pthread_create in standard linker options])
-   AC_CHECK_FUNC([pthread_create], [
-   	AC_MSG_RESULT([ok])
-   ], [
-	AC_MSG_RESULT([failed])			
-	echo "*************************************************"
-	echo "WARNING: No threading library found, build errors"
-	echo "         will probably occur.                    "
-   	echo "*************************************************"
-   ])
+# Do not define the success case here, since we rely on -lpthread to be
+# automatically added to LIBS (the default macro behaviour)
+AC_CHECK_LIB([pthread], [pthread_create], [], [NEED_PTHREAD_CHECK2=1])
+if test "$NEED_PTHREAD_CHECK2" = "1"; then
+	# See if pthreads is part of the core library or user provided
+	# LDFLAGS anyway... this is needed for systems like QNX
+	AC_MSG_CHECKING([for pthread_create in standard linker options])
+	AC_CHECK_FUNC([pthread_create], [
+		AC_MSG_RESULT([ok])
+	], [
+		AC_MSG_ERROR([failed])
+	])
 fi
-AC_SUBST([THREAD_LIBRARY_LIBS])
 
 
 NETWORK_LIBRARY_LIBS=

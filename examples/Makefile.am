@@ -9,19 +9,19 @@ noinst_PROGRAMS = \
 	usbclient
 
 addcontact_SOURCES = addcontact.cc
-addcontact_LDADD = ../src/libbarry.la $(THREAD_LIBRARY_LIBS)
+addcontact_LDADD = ../src/libbarry.la
 
 addcalendar_SOURCES = addcalendar.cc
-addcalendar_LDADD = ../src/libbarry.la $(THREAD_LIBRARY_LIBS)
+addcalendar_LDADD = ../src/libbarry.la
 
 addmemo_SOURCES = addmemo.cc
-addmemo_LDADD = ../src/libbarry.la $(THREAD_LIBRARY_LIBS)
+addmemo_LDADD = ../src/libbarry.la
 
 dbdump_SOURCES = dbdump.cc
-dbdump_LDADD = ../src/libbarry.la $(THREAD_LIBRARY_LIBS)
+dbdump_LDADD = ../src/libbarry.la
 
 pipedump_SOURCES = pipedump.cc
-pipedump_LDADD = ../src/libbarry.la $(THREAD_LIBRARY_LIBS)
+pipedump_LDADD = ../src/libbarry.la
 
 usbclient_SOURCES = usbclient.cc
-usbclient_LDADD = ../src/libbarry.la $(THREAD_LIBRARY_LIBS)
+usbclient_LDADD = ../src/libbarry.la
