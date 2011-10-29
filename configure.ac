@@ -361,12 +361,12 @@ fi
 
 NETWORK_LIBRARY_LIBS=
 AC_CHECK_FUNC([bind], [], [
-  AC_CHECK_LIB([socket], [bind], [ NETWORK_LIBRARY_LIBS="-lsocket" ] , [
-  	echo "**************************************************"
-	echo "WARNING: No networking library found, build errors"
-	echo "         will probably occur.                     "
-   	echo "**************************************************"
-  ])
+	AC_CHECK_LIB([socket], [bind], [ NETWORK_LIBRARY_LIBS="-lsocket" ] , [
+		echo "**************************************************"
+		echo "WARNING: No networking library found, build errors"
+		echo "         will probably occur.                     "
+		echo "**************************************************"
+	])
 ])
 AC_SUBST([NETWORK_LIBRARY_LIBS])
 
