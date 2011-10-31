@@ -10,6 +10,10 @@ LOCAL_SRC_FILES := barry_root/tools/$(TOOL).cc
 LOCAL_C_INCLUDES += \
   $(LOCAL_PATH)/barry
 
+LOCAL_CFLAGS += -DLOCALEDIR=\"\"
+
+LOCAL_LDFLAGS += -Wl,-rpath-link="$(LOCAL_PATH)/../obj/local/$(TARGET_ARCH_ABI)"
+
 LOCAL_CPP_EXTENSION := cc
 
 LOCAL_SHARED_LIBRARIES += libbarry
