@@ -68,10 +68,9 @@ static const struct {
 	{ LIBUSB_ERROR_INTERRUPTED, -EINTR },
 	{ LIBUSB_ERROR_NO_MEM, -ENOMEM },
 	{ LIBUSB_ERROR_NOT_SUPPORTED, -ENOSYS },
-	// FIXME - Permissions errors should be explicit... otherwise we might
-	// be chasing the wrong error.  Change the system error to 0
-	// to indicate unknown, but keep support for the "Other" message.
-	{ LIBUSB_ERROR_OTHER, 0 }
+	// There isn't an errno.h value for generic errors, so pick a distinct one
+	// which is semi-descriptive.
+	{ LIBUSB_ERROR_OTHER, -ENODATA }
 };
 
 static const int errorCodeCnt = sizeof(errorCodes) / sizeof(errorCodes[0]);
@@ -128,9 +127,9 @@ int LibraryInterface::TranslateErrcode(int libusb_errcode)
 		if( errorCodes[i].libusb == libusb_errcode )
 			return errorCodes[i].system;
 	}
-
-	// default to 0 if unknown
-	return 0;
+	// default to the libusb value if unknown
+	eout("Failed to translate libusb errorcode: "<< libusb_errcode);
+	return libusb_errcode;
 }
 
 int LibraryInterface::Init()
