@@ -119,3 +119,14 @@ LOCAL_LDLIBS := -lz
 LOCAL_MODULE := libbarry
 
 include $(BUILD_SHARED_LIBRARY)
+
+#########
+# tools #
+#########
+TOOLS=brawchannel btool
+
+$(foreach TOOL, $(TOOLS), $(eval include $(LOCAL_PATH)/BarryTool.mk))
+
+
+
+

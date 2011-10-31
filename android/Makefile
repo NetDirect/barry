@@ -47,7 +47,10 @@ $(ANDROID_TOOLCHAIN_DIR):
 jni/barry_root:
 	ln -s ../../ jni/barry_root
 
-$(NDK_BINARIES): jni/barry_root $(LIBUSB_NAME) $(LIBICONV_NAME) $(ANDROID_TOOLCHAIN_DIR)
+jni/barry/barry:
+	ln -s ../../../src jni/barry/barry
+
+$(NDK_BINARIES): jni/barry_root jni/barry/barry $(LIBUSB_NAME) $(LIBICONV_NAME) $(ANDROID_TOOLCHAIN_DIR)
 	ANDROID_TOOLCHAIN_DIR="$(realpath $(ANDROID_TOOLCHAIN_DIR))" ndk-build
 
 clean: 
@@ -56,6 +59,7 @@ clean:
 	-$(RM) $(LIBICONV_NAME).tar.gz
 	-$(RM) -rf $(LIBICONV_NAME)
 	-$(RM) barry_root
+	-$(RM) jni/barry/barry
 	-$(RM) -rf obj
 	-$(RM) -rf $(NDK_BINARIES)
 	-$(RM) -rf $(ANDROID_TOOLCHAIN_DIR)
