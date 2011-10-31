@@ -431,17 +431,19 @@ AC_LANG([C])
 # AC_FUNC_STRNLEN changes linker options for us, and depends on a src/strnlen.c
 HAVE_WORKING_STRNLEN=0
 AC_FUNC_STRNLEN
-if test $ac_cv_func_strnlen_working = yes ; then
-	# If cross compiling for anything other than AIX then AC_FUNC_STRNLEN will end up
-	# saying it's working. Before we trust it, check if the function exists at all:
+if test "$ac_cv_func_strnlen_working" = "yes" ; then
+	# If cross compiling for anything other than AIX then AC_FUNC_STRNLEN
+	# will end up saying it's working. Before we trust it, check if the
+	# function exists at all:
 	AC_CHECK_FUNC([strnlen], [HAVE_WORKING_STRNLEN=1], [
 			HAVE_WORKING_STRNLEN=0
-			# Need to also add strnlen to AC_LIBOBJ as the AC_FUNC_STRNLEN macro won't have
-			# done that as it has guessed at everything being ok.
+			# Need to also add strnlen to AC_LIBOBJ as the
+			# AC_FUNC_STRNLEN macro won't have done that as it
+			# has guessed at everything being ok.
 			AC_LIBOBJ([strnlen])
 		])
 fi
-if test $ac_cv_func_strnlen_working = no ; then
+if test "$ac_cv_func_strnlen_working" = "no" ; then
 	HAVE_WORKING_STRNLEN=0
 fi
 AC_DEFINE_UNQUOTED(HAVE_WORKING_STRNLEN, $HAVE_WORKING_STRNLEN,
