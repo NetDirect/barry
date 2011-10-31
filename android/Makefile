@@ -18,7 +18,7 @@
 
 LIBUSB_NAME=libusb-1.0.8
 LIBICONV_NAME=libiconv-1.13.1
-NDK_OUTPUT_FILES=libbarry.so libusb1.0.so lsusb libiconv.so
+NDK_OUTPUT_FILES=libusb1.0.so lsusb libiconv.so btool brawchannel
 include jni/Application.mk
 NDK_OUTPUT_ARCHES=$(APP_ABI)
 NDK_BINARIES=$(addprefix libs/, $(foreach ARCH,$(NDK_OUTPUT_ARCHES),$(addprefix $(ARCH)/, $(NDK_OUTPUT_FILES))))
@@ -53,10 +53,12 @@ jni/barry/barry:
 $(NDK_BINARIES): jni/barry_root jni/barry/barry $(LIBUSB_NAME) $(LIBICONV_NAME) $(ANDROID_TOOLCHAIN_DIR)
 	ANDROID_TOOLCHAIN_DIR="$(realpath $(ANDROID_TOOLCHAIN_DIR))" ndk-build
 
-clean: 
+distclean: clean
 	-$(RM) $(LIBUSB_NAME).tar.bz2
-	-$(RM) -rf $(LIBUSB_NAME)
 	-$(RM) $(LIBICONV_NAME).tar.gz
+
+clean: 
+	-$(RM) -rf $(LIBUSB_NAME)
 	-$(RM) -rf $(LIBICONV_NAME)
 	-$(RM) barry_root
 	-$(RM) jni/barry/barry

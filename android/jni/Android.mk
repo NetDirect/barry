@@ -118,7 +118,8 @@ LOCAL_LDLIBS := -lz
 
 LOCAL_MODULE := libbarry
 
-include $(BUILD_SHARED_LIBRARY)
+# Have to build libbarry statically as libstdc++ is statically linked in
+include $(BUILD_STATIC_LIBRARY)
 
 #########
 # tools #
