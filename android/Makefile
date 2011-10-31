@@ -19,7 +19,8 @@
 LIBUSB_NAME=libusb-1.0.8
 LIBICONV_NAME=libiconv-1.13.1
 NDK_OUTPUT_FILES=libbarry.so libusb1.0.so lsusb libiconv.so
-NDK_OUTPUT_ARCHES=armeabi armeabi-v7a
+include jni/Application.mk
+NDK_OUTPUT_ARCHES=$(APP_ABI)
 NDK_BINARIES=$(addprefix libs/, $(foreach ARCH,$(NDK_OUTPUT_ARCHES),$(addprefix $(ARCH)/, $(NDK_OUTPUT_FILES))))
 ANDROID_TOOLCHAIN_DIR=android-ndk-tools
 ANDROID_NDK_PATH=$(dir $(shell which ndk-build))
