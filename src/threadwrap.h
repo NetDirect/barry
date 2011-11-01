@@ -29,14 +29,34 @@ namespace Barry {
 
 class BXEXPORT Thread
 {
+public:
+	struct CallbackData
+	{
+		void *(*callback)(Barry::Thread::CallbackData *data);
+
+		// user-accessible data
+		volatile bool stopflag;
+		void *userdata;
+
+		explicit CallbackData(void *userdata);
+	};
+
 private:
 	pthread_t thread;
+	int m_socket;
+	CallbackData *m_data;
 
 public:
-	Thread(int socket, void *(*callback)(void *data), void *data);
+	// Note: the data pointer passed into callback is not the same
+	// as userdata.  The data pointer is a pointer to CallbackData
+	// which will contain the userdata pointer.
+	Thread(int socket,
+		void *(*callback)(Barry::Thread::CallbackData *data),
+		void *userdata);
 	~Thread();
 
-	void Dispose();
+	/// Sets stopflag in the callback data to true
+	void StopFlag();
 };
 
 } // namespace Barry

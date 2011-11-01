@@ -93,7 +93,7 @@ public:
 	bool AttachToDevice();
 	bool InitVisibleClassList();
 	bool Hello();
-	void Run();
+	void Run(volatile bool &stopflag);
 	void DetachFromDevice();
 	bool Stop();		// cancels thread if still running, and
 				// cleans up Start()

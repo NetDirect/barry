@@ -46,7 +46,7 @@ using namespace std;
 
 namespace Barry { namespace JDWP {
 
-static void * acceptThread(void *data);
+static void * acceptThread(Barry::Thread::CallbackData *data);
 
 
 JDWServer::JDWServer(Barry::Mode::JVMDebug &device,
@@ -169,21 +169,17 @@ bool JDWServer::Start()
 }
 
 
-static void * acceptThread(void *data)
+static void * acceptThread(Barry::Thread::CallbackData *data)
 {
-	JDWServer *s;
+	JDWServer *s = (JDWServer *) data->userdata;
 
-	pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
-
-	s = (JDWServer *) data;
-
-	while (1) {
+	while( !data->stopflag ) {
 		if( s->AcceptConnection() &&
 			s->AttachToDevice() &&
 			s->InitVisibleClassList() &&
 			s->Hello() )
 		{
-			s->Run();
+			s->Run(data->stopflag);
 			s->DetachFromDevice();
 		}
 	}
@@ -290,7 +286,7 @@ bool JDWServer::Hello()
 }
 
 
-void JDWServer::Run()
+void JDWServer::Run(volatile bool &stopflag)
 {
 	string str;
 	JDWMessage msg(acceptfd);
@@ -301,7 +297,7 @@ void JDWServer::Run()
 
 	loop = true;
 
-	while (loop) {
+	while( loop && !stopflag ) {
 		if (targetrunning) {
 			// Read JDWP message from device
 			int value = jvmdebug->GetConsoleMessage(str);
@@ -369,7 +365,7 @@ void JDWServer::Run()
 bool JDWServer::Stop()
 {
 	if( handler.get() ) {
-		handler->Dispose();
+		handler->StopFlag();
 		handler.reset();
 	}
 
