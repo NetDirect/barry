@@ -18,7 +18,9 @@
 
 LIBUSB_NAME=libusb-1.0.8
 LIBICONV_NAME=libiconv-1.13.1
-NDK_OUTPUT_FILES=libusb1.0.so lsusb libiconv.so btool brawchannel
+NDK_OUTPUT_FILES=libusb1.0.so lsusb libiconv.so \
+	btool brawchannel bidentify bjavaloader bjvmdebug \
+	upldif bktrans breset bcharge pppob brecsum
 include jni/Application.mk
 NDK_OUTPUT_ARCHES=$(APP_ABI)
 NDK_BINARIES=$(addprefix libs/, $(foreach ARCH,$(NDK_OUTPUT_ARCHES),$(addprefix $(ARCH)/, $(NDK_OUTPUT_FILES))))

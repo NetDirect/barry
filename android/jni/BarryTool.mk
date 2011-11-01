@@ -18,6 +18,8 @@ LOCAL_STATIC_LIBRARIES += libbarry
 
 LOCAL_SHARED_LIBRARIES += libiconv libusb1.0
 
+LOCAL_LDLIBS := -lz
+
 LOCAL_MODULE := $(TOOL)
 
 include $(BUILD_EXECUTABLE)

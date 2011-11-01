@@ -124,10 +124,42 @@ include $(BUILD_STATIC_LIBRARY)
 #########
 # tools #
 #########
-TOOLS=brawchannel btool
+TOOLS=brawchannel btool bidentify bjavaloader bjvmdebug upldif bktrans pppob brecsum
 
 $(foreach TOOL, $(TOOLS), $(eval include $(LOCAL_PATH)/BarryTool.mk))
 
+###########
+# bcharge #
+###########
+include $(CLEAR_VARS)
 
+LOCAL_SRC_FILES := barry_root/tools/bcharge_libusb_1_0.cc
 
+LOCAL_CFLAGS += -DLOCALEDIR=\"\"
+LOCAL_CPP_EXTENSION := cc
+LOCAL_C_INCLUDES += \
+  $(LOCAL_PATH)/barry \
+  $(LOCAL_PATH)/../$(LIBUSB_NAME)/libusb
+LOCAL_SHARED_LIBRARIES += libusb1.0
 
+LOCAL_MODULE := bcharge
+
+include $(BUILD_EXECUTABLE)
+
+###########
+# breset #
+###########
+include $(CLEAR_VARS)
+
+LOCAL_SRC_FILES := barry_root/tools/breset_libusb_1_0.cc
+
+LOCAL_CFLAGS += -DLOCALEDIR=\"\"
+LOCAL_CPP_EXTENSION := cc
+LOCAL_C_INCLUDES += \
+  $(LOCAL_PATH)/barry \
+  $(LOCAL_PATH)/../$(LIBUSB_NAME)/libusb
+LOCAL_SHARED_LIBRARIES += libusb1.0
+
+LOCAL_MODULE := breset
+
+include $(BUILD_EXECUTABLE)
