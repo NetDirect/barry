@@ -770,6 +770,9 @@ ConfigDescriptor::~ConfigDescriptor()
 }
 
 uint8_t ConfigDescriptor::GetNumber() const {
+	if( !m_impl->m_desc )
+		// Return an invalid config number
+		return 0;
 	return m_impl->m_desc->bConfigurationValue;
 }
 
@@ -837,11 +840,17 @@ uint8_t InterfaceDescriptor::GetClass() const
 
 uint8_t InterfaceDescriptor::GetNumber() const
 {
+	if( !m_impl->m_desc )
+		// Return an invalid interface number
+		return 0;
 	return m_impl->m_desc->bInterfaceNumber;
 }
 
 uint8_t InterfaceDescriptor::GetAltSetting() const
 {
+	if( !m_impl->m_desc )
+		// Return an invalid setting number
+		return 0;
 	return m_impl->m_desc->bAlternateSetting;
 }
 
