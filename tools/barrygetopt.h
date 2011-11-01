@@ -1,8 +1,9 @@
 ///
 /// \file	barrygetopt.h
 ///		Simple wrapper header to include the correct #include for
-///             getopt
+///		getopt
 ///
+
 /*
     Copyright (C) 2011, RealVNC Ltd.
 
