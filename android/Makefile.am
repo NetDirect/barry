@@ -1,5 +1,5 @@
 #
-# \file Makefile
+# \file Makefile.am
 #       Make rules for building Barry and dependent libraries for Android
 #
 #    Copyright (C) 2011 RealVNC Ltd.
@@ -26,14 +26,25 @@ NDK_OUTPUT_ARCHES=$(APP_ABI)
 NDK_BINARIES=$(addprefix libs/, $(foreach ARCH,$(NDK_OUTPUT_ARCHES),$(addprefix $(ARCH)/, $(NDK_OUTPUT_FILES))))
 ANDROID_TOOLCHAIN_DIR=android-ndk-tools
 ANDROID_NDK_PATH=$(dir $(shell which ndk-build))
+WGET=wget
 
-all: $(NDK_BINARIES)
+EXTRA_DIST = \
+  jni/Android.mk \
+  jni/Application.mk \
+  jni/BarryTool.mk \
+  jni/barry/config.h \
+  jni/libusb/config.h \
+  README
+
+android-binaries: $(NDK_BINARIES)
+
+.PHONY: android-warning android-binaries
 
 $(LIBUSB_NAME).tar.bz2:
-	wget http://sourceforge.net/projects/libusb/files/libusb-1.0/libusb-1.0.8/libusb-1.0.8.tar.bz2/download -O $(LIBUSB_NAME).tar.bz2
+	$(WGET) http://sourceforge.net/projects/libusb/files/libusb-1.0/$(LIBUSB_NAME)/$(LIBUSB_NAME).tar.bz2/download -O $(LIBUSB_NAME).tar.bz2
 
 $(LIBICONV_NAME).tar.gz:
-	wget http://ftp.gnu.org/pub/gnu/libiconv/$(LIBICONV_NAME).tar.gz
+	$(WGET) http://ftp.gnu.org/pub/gnu/libiconv/$(LIBICONV_NAME).tar.gz -O $(LIBICONV_NAME).tar.gz
 
 $(LIBUSB_NAME): $(LIBUSB_NAME).tar.bz2
 	tar jxf $(LIBUSB_NAME).tar.bz2
@@ -55,14 +66,15 @@ jni/barry/barry:
 $(NDK_BINARIES): jni/barry_root jni/barry/barry $(LIBUSB_NAME) $(LIBICONV_NAME) $(ANDROID_TOOLCHAIN_DIR)
 	ANDROID_TOOLCHAIN_DIR="$(realpath $(ANDROID_TOOLCHAIN_DIR))" ndk-build
 
-distclean: clean
+distclean-local: clean-local
 	-$(RM) $(LIBUSB_NAME).tar.bz2
 	-$(RM) $(LIBICONV_NAME).tar.gz
+	-$(RM) -rf libs
 
-clean: 
+clean-local:
 	-$(RM) -rf $(LIBUSB_NAME)
 	-$(RM) -rf $(LIBICONV_NAME)
-	-$(RM) barry_root
+	-$(RM) jni/barry_root
 	-$(RM) jni/barry/barry
 	-$(RM) -rf obj
 	-$(RM) -rf $(NDK_BINARIES)

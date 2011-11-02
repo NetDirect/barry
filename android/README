@@ -1,0 +1,4 @@
+To build for android, run make with the "android-binaries" target with
+the "ndk-build" tool in the path. For example:
+
+    make android-binaries

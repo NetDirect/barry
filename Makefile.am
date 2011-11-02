@@ -22,7 +22,7 @@ EXTRA_DIST = COPYING ChangeLog README Doxyfile AUTHORS DEPUTY \
 	usbmon-6 \
 	.gitignore
 
-SUBDIRS = po . src tools examples man test
+SUBDIRS = po . src tools examples man test android
 # conditionally configured nested subdirectories are listed in $(subdirs)
 SUBDIRS += $(subdirs)
 
