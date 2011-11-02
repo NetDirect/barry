@@ -1,4 +1,60 @@
+Building:
+=========
+
 To build for android, run make with the "android-binaries" target with
 the "ndk-build" tool in the path. For example:
 
     make android-binaries
+
+The "ndk-build" tool is part of the Android NDK, which can be found at:
+http://developer.android.com/sdk/ndk/index.html
+
+
+Installing:
+===========
+
+The easiest way to install Barry on an Android device is by using adb,
+which is part of the Android SDK.
+
+These instructions assume the Android device has been configured to
+support the root user by default. For Android Open Source Project
+(AOSP) devices this should be the case. Other device ROMs may have
+different mechanism for attaining root access, e.g. Cyanogenmod based
+ROMs make use of the "sudo" utility.
+
+To install Barry to the system partition on a device run:
+
+    adb remount
+    for F in libs/armeabi/*.so ; do adb push $F /system/lib; done
+    for F in libs/armeabi/b* libs/armeabi/lsusb libs/armeabi/pppob libs/armeabi/upldif ; \
+        do adb push $F /system/bin; done
+
+To install Barry to a single directory on a device run:
+
+    adb shell mkdir /data/Barry
+    for F in libs/armeabi/* ; do adb push $F /data/Barry; done
+
+
+Running:
+========
+
+Before running Barry tools it may be necessary to grant the 
+user running Barry access to the USB bus devices. This can be achieved by
+running the following:
+
+   adb shell "for B in /dev/bus/usb/* ; do for D in \$B/* ; do chmod 0666 \$D ; done; done"
+
+Note: this grants access to the USB devices for all users and therefore is
+not secure for a system running arbitary software. Alternate security
+mechanisms should be employeed by such systems.
+
+If Barry was installed to the system partition then the tools can be run
+directly:
+
+    adb shell btool
+
+However if Barry was installed to a single directory then the library
+path will need to be specified:
+
+    adb shell "LD_LIBRARY_PATH=/data/Barry /data/Barry/btool"
+
