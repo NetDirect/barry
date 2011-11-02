@@ -112,8 +112,7 @@ BARRY_SRC_TO_EXCLUDE := \
 LOCAL_SRC_FILES:= $(filter-out $(BARRY_SRC_TO_EXCLUDE), $(BARRY_SRC_TO_INCLUDE)) barry_root/src/version.cc
 LOCAL_C_INCLUDES += \
   $(LOCAL_PATH)/barry \
-  $(LOCAL_PATH)/../$(LIBUSB_NAME)/libusb \
-  $(LOCAL_PATH)/barry_root/src
+  $(LOCAL_PATH)/../$(LIBUSB_NAME)/libusb
 
 LOCAL_CFLAGS += -D__BARRY_LIBRARY_BUILD__
 
