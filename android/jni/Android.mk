@@ -27,6 +27,9 @@ LOCAL_C_INCLUDES += \
 
 LOCAL_CFLAGS += -DBUILDING_LIBICONV -DBUILDING_LIBICONV -DIN_LIBRARY -DLIBDIR=\"\"
 
+LOCAL_EXPORT_C_INCLUDES := \
+  $(LOCAL_PATH)/../$(LIBICONV_NAME)/include
+
 $(info Checking if libiconv needs configuring...)
 COMMAND := $(shell \
            export PATH=$$ANDROID_TOOLCHAIN_DIR/bin:$$PATH; \
@@ -55,6 +58,9 @@ LOCAL_C_INCLUDES += \
   $(LOCAL_PATH)/libusb \
   $(LIBUSB_NAME)/libusb/ \
   $(LIBUSB_NAME)/libusb/os/
+
+LOCAL_EXPORT_C_INCLUDES := \
+  $(LOCAL_PATH)/../$(LIBUSB_NAME)/libusb
 
 LOCAL_MODULE := libusb1.0
 
@@ -106,11 +112,13 @@ BARRY_SRC_TO_EXCLUDE := \
 LOCAL_SRC_FILES:= $(filter-out $(BARRY_SRC_TO_EXCLUDE), $(BARRY_SRC_TO_INCLUDE)) barry_root/src/version.cc
 LOCAL_C_INCLUDES += \
   $(LOCAL_PATH)/barry \
-  $(LOCAL_PATH)/../$(LIBICONV_NAME)/include \
   $(LOCAL_PATH)/../$(LIBUSB_NAME)/libusb \
   $(LOCAL_PATH)/barry_root/src
 
 LOCAL_CFLAGS += -D__BARRY_LIBRARY_BUILD__
+
+LOCAL_EXPORT_C_INCLUDES := \
+  $(LOCAL_PATH)/barry
 
 LOCAL_CPP_EXTENSION := cc
 LOCAL_SHARED_LIBRARIES += libusb1.0 libiconv
@@ -138,8 +146,8 @@ LOCAL_SRC_FILES := barry_root/tools/bcharge_libusb_1_0.cc
 LOCAL_CFLAGS += -DLOCALEDIR=\"\"
 LOCAL_CPP_EXTENSION := cc
 LOCAL_C_INCLUDES += \
-  $(LOCAL_PATH)/barry \
-  $(LOCAL_PATH)/../$(LIBUSB_NAME)/libusb
+  $(LOCAL_PATH)/barry
+
 LOCAL_SHARED_LIBRARIES += libusb1.0
 
 LOCAL_MODULE := bcharge
@@ -156,8 +164,8 @@ LOCAL_SRC_FILES := barry_root/tools/breset_libusb_1_0.cc
 LOCAL_CFLAGS += -DLOCALEDIR=\"\"
 LOCAL_CPP_EXTENSION := cc
 LOCAL_C_INCLUDES += \
-  $(LOCAL_PATH)/barry \
-  $(LOCAL_PATH)/../$(LIBUSB_NAME)/libusb
+  $(LOCAL_PATH)/barry 
+
 LOCAL_SHARED_LIBRARIES += libusb1.0
 
 LOCAL_MODULE := breset

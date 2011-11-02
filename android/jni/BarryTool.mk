@@ -7,9 +7,6 @@ include $(CLEAR_VARS)
 
 LOCAL_SRC_FILES := barry_root/tools/$(TOOL).cc
 
-LOCAL_C_INCLUDES += \
-  $(LOCAL_PATH)/barry
-
 LOCAL_CFLAGS += -DLOCALEDIR=\"\"
 
 LOCAL_CPP_EXTENSION := cc
