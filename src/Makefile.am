@@ -175,6 +175,7 @@ noinst_HEADERS = cbarry.h \
 	debug.h \
 	endian.h \
 	strnlen.h \
+	getpwuid.h \
 	platform.h \
 	dp_parser.h \
 	j_message.h \
@@ -185,10 +186,11 @@ noinst_HEADERS = cbarry.h \
 	ios_state.h \
 	clog.h
 
-# Include the windows-only code files here too
+# Include the windows-only and android-only code files here too
 EXTRA_DIST = convo.awk \
 	legal.txt \
-	iconvwin.cc
+	iconvwin.cc \
+	getpwuidandroid.cc
 
 libbarry_la_SOURCES = dll.h \
 	builder.h builder.cc \

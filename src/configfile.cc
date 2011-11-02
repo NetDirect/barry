@@ -22,7 +22,7 @@
 #include "configfile.h"
 #include "error.h"
 #include "r_message.h"
-#include <pwd.h>
+#include "getpwuid.h"
 #include <string.h>
 #include <errno.h>
 #include <unistd.h>
