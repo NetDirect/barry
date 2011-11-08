@@ -342,8 +342,16 @@ JavaLoader::JavaLoader(Controller &con)
 
 JavaLoader::~JavaLoader()
 {
-	if( m_StreamStarted )
-		StopStream();
+	try {
+		if( m_StreamStarted )
+			StopStream();
+	}
+	catch( std::exception &e ) {
+		dout("Exception ignored in ~JavaLoader(): " << e.what());
+	}
+	catch( ... ) {
+		dout("Unknown exception in ~JavaLoader()");
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////
