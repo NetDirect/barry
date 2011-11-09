@@ -265,7 +265,7 @@ endif # USE_BARRY_SOCKETS
 
 #libbarry_la_LIBADD = $(LTLIBOBJS) $(USB_LIBRARY_LIBS) $(OPENSSL_LIBS)
 libbarry_la_LIBADD = $(LTLIBOBJS) $(USB_LIBRARY_LIBS) $(ZLIB_LIBS) @LTLIBICONV@
-libbarry_la_LDFLAGS = -version-info ${LIB_BARRY_VERSION}
+libbarry_la_LDFLAGS = -version-info ${LIB_BARRY_VERSION} $(NETWORK_LIBRARY_LIBS)
 
 libbarrydp_la_SOURCES = \
 	dp_parser.h dp_parser.cc \
