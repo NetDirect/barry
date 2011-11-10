@@ -1,5 +1,5 @@
 #
-# \file Makefile.am
+# \file Makefile
 #       Make rules for building Barry and dependent libraries for Android
 #
 #    Copyright (C) 2011 RealVNC Ltd.
