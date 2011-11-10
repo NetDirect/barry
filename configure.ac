@@ -469,7 +469,7 @@ AC_CONFIG_FILES([Makefile
                  src/Makefile
                  tools/Makefile
                  examples/Makefile
-		 android/Makefile
+                 android/Makefile
                  man/Makefile
                  test/Makefile
                  libbarry-0.pc
