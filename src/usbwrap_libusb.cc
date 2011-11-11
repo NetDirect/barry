@@ -61,7 +61,7 @@ int LibraryInterface::TranslateErrcode(int libusb_errcode)
 	return libusb_errcode;
 }
 
-int LibraryInterface::Init()
+bool LibraryInterface::Init(int *libusb_errno)
 {
 	// if the environment variable USB_DEBUG is set, that
 	// level value will be used instead of our 9 below...
@@ -69,7 +69,7 @@ int LibraryInterface::Init()
 	// after Init()
 	usb_init();
 	// Can never fail, so return success
-	return 0;
+	return true;
 }
 
 void LibraryInterface::Uninit()

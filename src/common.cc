@@ -66,9 +66,9 @@ void Init(bool data_dump_mode, std::ostream *logStream)
 #ifdef USE_BARRY_SOCKETS
 		// Should call Usb::Uninit at some point,
 		// but there isn't currently a deinit call.
-		int err = Usb::LibraryInterface::Init();
-		if( err ) {
-			eout("USB library failed to initialise with error: " << err);
+		int err = 0;
+		if( !Usb::LibraryInterface::Init(&err) ) {
+			eout("USB library failed to initialise with libusb error: " << err);
 			throw Error("Failed to initialise USB");
 			return;
 		}

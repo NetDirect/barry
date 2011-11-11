@@ -68,9 +68,9 @@ static const struct {
 	{ LIBUSB_ERROR_INTERRUPTED, -EINTR },
 	{ LIBUSB_ERROR_NO_MEM, -ENOMEM },
 	{ LIBUSB_ERROR_NOT_SUPPORTED, -ENOSYS },
-	// There isn't an errno.h value for generic errors, so pick a distinct one
-	// which is semi-descriptive.
-	{ LIBUSB_ERROR_OTHER, -ENODATA }
+	// There isn't an errno.h value for generic errors, so
+	// return success, which, for TranslateErrcode(), means error.
+	{ LIBUSB_ERROR_OTHER, 0 }
 };
 
 static const int errorCodeCnt = sizeof(errorCodes) / sizeof(errorCodes[0]);
@@ -120,26 +120,44 @@ std::string LibraryInterface::GetLastErrorString(int libusb_errcode)
 	}
 }
 
-// helper function to translate libusb error codes into more useful values
+// Helper function to translate libusb error codes into more useful values
+//
+// Note that this function assumes that libusb_errcode contains an error.
+// It is helpful enough to return 0 if libusb_errcode contains 0, but
+// if it is a positive success value (such as for a read or write)
+// it will still return 0, since it won't find a corresponding errno code.
+//
+// Since this function assumes that libusb_errcode is already an error,
+// it also assumes the caller already *knows* that it is an error, and
+// therefore a return of success is an "error" for this function. :-)
+//
 int LibraryInterface::TranslateErrcode(int libusb_errcode)
 {
 	for( int i = 0; i < errorCodeCnt; ++i ) {
 		if( errorCodes[i].libusb == libusb_errcode )
 			return errorCodes[i].system;
 	}
-	// default to the libusb value if unknown
-	eout("Failed to translate libusb errorcode: "<< libusb_errcode);
-	return libusb_errcode;
+
+	// default to 0 if unknown
+	eout("Failed to translate libusb errorcode: " << libusb_errcode);
+	return 0;
 }
 
-int LibraryInterface::Init()
+bool LibraryInterface::Init(int *libusb_errno)
 {
 	// if the environment variable LIBUSB_DEBUG is set, that
 	// level value will be used instead of our 3 above...
 	// if you need to *force* this to 3, call SetDataDump(true)
 	// after Init()
 	if( !libusbctx ) {
-		return TranslateErrcode(libusb_init(&libusbctx));
+		int ret = libusb_init(&libusbctx);
+
+		// store errno for user if possible
+		if( libusb_errno )
+			*libusb_errno = ret;
+
+		// true on success
+		return ret >= 0;
 	}
 	return 0;
 }

@@ -55,7 +55,7 @@ class BXEXPORT Error : public Barry::Error
 
 public:
 	Error(const std::string &str);
-	Error(int errcode, const std::string &str);
+	Error(int libusb_errcode, const std::string &str);
 
 	// can return 0 in some case, if unknown error code
 	int libusb_errcode() const { return m_libusb_errcode; }
@@ -104,8 +104,18 @@ class BXEXPORT LibraryInterface
 {
 public:
 	static std::string GetLastErrorString(int libusb_errcode);
+
+	/// Returns 0 if unable to translate libusb error code.
+	/// Note that this function assumes you already know that libusb_errcode
+	/// contains an actual error code, and so returns 0 (success)
+	/// for an unknown error.  This means that "success" means error
+	/// if you use this function correctly, but if you pass in a success
+	/// code (>= 0) it will always return 0 as well.
 	static int TranslateErrcode(int libusb_errcode);
-	static int Init();
+
+	/// Returns true on success... pass in a pointer to int
+	/// if the low level error code is important to you.
+	static bool Init(int *libusb_errno = 0);
 	static void Uninit();
 	static void SetDataDump(bool data_dump_mode);
 };
