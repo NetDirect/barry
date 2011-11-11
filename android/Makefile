@@ -36,6 +36,8 @@ EXTRA_DIST = \
   jni/libusb/config.h \
   README
 
+all: android-binaries
+
 .PHONY: android-binaries
 
 $(LIBUSB_NAME).tar.bz2:
@@ -65,12 +67,12 @@ jni/barry/barry:
 android-binaries: jni/barry_root jni/barry/barry $(LIBUSB_NAME) $(LIBICONV_NAME) $(ANDROID_TOOLCHAIN_DIR)
 	+ANDROID_TOOLCHAIN_DIR="$(realpath $(ANDROID_TOOLCHAIN_DIR))" ndk-build
 
-distclean-local: clean-local
+distclean: clean-local
 	-$(RM) $(LIBUSB_NAME).tar.bz2
 	-$(RM) $(LIBICONV_NAME).tar.gz
 	-$(RM) -rf libs
 
-clean-local:
+clean:
 	-$(RM) -rf $(LIBUSB_NAME)
 	-$(RM) -rf $(LIBICONV_NAME)
 	-$(RM) jni/barry_root
