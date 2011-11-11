@@ -67,7 +67,7 @@ jni/barry/barry:
 android-binaries: jni/barry_root jni/barry/barry $(LIBUSB_NAME) $(LIBICONV_NAME) $(ANDROID_TOOLCHAIN_DIR)
 	+ANDROID_TOOLCHAIN_DIR="$(realpath $(ANDROID_TOOLCHAIN_DIR))" ndk-build
 
-distclean: clean-local
+distclean: clean
 	-$(RM) $(LIBUSB_NAME).tar.bz2
 	-$(RM) $(LIBICONV_NAME).tar.gz
 	-$(RM) -rf libs
