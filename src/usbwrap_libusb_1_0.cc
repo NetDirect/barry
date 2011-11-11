@@ -159,7 +159,7 @@ bool LibraryInterface::Init(int *libusb_errno)
 		// true on success
 		return ret >= 0;
 	}
-	return 0;
+	return true;
 }
 
 void LibraryInterface::Uninit()
