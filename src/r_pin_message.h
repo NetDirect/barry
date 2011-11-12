@@ -39,6 +39,12 @@ namespace Barry {
 class BXEXPORT PINMessage : public MessageBase
 {
 public:
+	PINMessage()
+	{
+		// must call this again, since base class can't call ours
+		Clear();
+	}
+
 	void Clear()
 	{
 		MessageBase::Clear();

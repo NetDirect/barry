@@ -40,6 +40,11 @@ namespace Barry {
 class BXEXPORT SavedMessage : public MessageBase
 {
 public:
+	SavedMessage()
+	{
+		Clear();
+	}
+
 	void Clear()
 	{
 		MessageBase::Clear();

@@ -38,6 +38,12 @@ namespace Barry {
 class BXEXPORT Message : public MessageBase
 {
 public:
+	Message()
+	{
+		// must call this again, since base class can't call ours
+		Clear();
+	}
+
 	void Clear()
 	{
 		MessageBase::Clear();
