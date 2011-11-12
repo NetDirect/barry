@@ -180,16 +180,6 @@ const unsigned char* MessageBase::ParseField(const unsigned char *begin,
 	return begin;
 }
 
-uint8_t MessageBase::GetRecType() const
-{
-	throw std::logic_error("MessageBase::GetRecType() called, and not supported by the USB protocol.  Should never get called.");
-}
-
-uint32_t MessageBase::GetUniqueId() const
-{
-	throw std::logic_error("MessageBase::GetUniqueId() called, and not supported by the USB protocol.  Should never get called.");
-}
-
 void MessageBase::ParseHeader(const Data &data, size_t &offset)
 {
 	const unsigned char *begin = data.GetData();

@@ -110,8 +110,8 @@ protected:
 
 public:
 	// Parser / Builder API (see parser.h / builder.h)
-	uint8_t GetRecType() const;
-	uint32_t GetUniqueId() const;	// empty API, not required by protocol
+	uint8_t GetRecType() const { return RecType; }
+	uint32_t GetUniqueId() const { return RecordId; }
 	void SetIds(uint8_t Type, uint32_t Id){ RecType = Type; RecordId = Id; }
 	void ParseHeader(const Data &data, size_t &offset);
 	void ParseFields(const Data &data, size_t &offset, const IConverter *ic = 0);
