@@ -10,6 +10,7 @@ zypper install \
 	gcc-c++ \
 	make \
 	libusb-1_0-devel \
+	libusb-compat-devel \
 	boost-devel \
 	libtar-devel \
 	gtkmm2-devel \
