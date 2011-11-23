@@ -55,6 +55,10 @@ do_fedora fedora14 \
 	"$BMBUILDDIR/dists/fedora14/i386/RPMS" \
 	"$BMBUILDDIR/dists/fedora14/source-i386/SRPMS" \
 	"" "make -j2 rpm-all"
+do_fedora opensuse12.1 \
+	"$BMBUILDDIR/dists/opensuse12.1/i586/RPMS" \
+	"$BMBUILDDIR/dists/opensuse12.1/source-i586/SRPMS" \
+	"" "make -j2 rpm-libtar rpm-all"
 
 chown -R cdfrey:cdfrey "$BMBUILDDIR"
 

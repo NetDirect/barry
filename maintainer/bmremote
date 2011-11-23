@@ -81,6 +81,10 @@ do_fedora fedora14 \
 	"$BMBUILDDIR/dists/fedora14/x86_64/RPMS" \
 	"$BMBUILDDIR/dists/fedora14/source-x86_64/SRPMS" "" \
 	"make -j16 LIB_SUFFIX=64 rpm-all"
+do_fedora opensuse12.1 \
+	"$BMBUILDDIR/dists/opensuse12.1/x86_64/RPMS" \
+	"$BMBUILDDIR/dists/opensuse12.1/source-x86_64/SRPMS" "" \
+	"make -j16 LIB_SUFFIX=64 rpm-libtar rpm-all"
 
 
 #
