@@ -24,6 +24,7 @@
 
 #include "dll.h"
 #include <sys/types.h>
+#include <stdint.h>
 
 namespace Barry {
 
@@ -34,7 +35,8 @@ BXEXPORT size_t GetBitmapHeadersSize();
 BXEXPORT size_t GetTotalBitmapSize(const JLScreenInfo &info);
 BXEXPORT void ScreenshotToRGB(const JLScreenInfo &info,
 	const Data &screenshot, Data &buffer, size_t offset,
-	int depth, bool invert);
+	int depth, bool invert,
+	bool overwrite_alpha = false, uint8_t alpha = 0xFF);
 BXEXPORT void ScreenshotToBitmap(const JLScreenInfo &info,
 	const Data &screenshot, Data &bitmap);
 

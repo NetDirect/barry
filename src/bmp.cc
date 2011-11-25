@@ -71,10 +71,17 @@ BXEXPORT void ScreenshotToRGB(const JLScreenInfo &info,
 			     Data &buffer,
 			     size_t offset,
 			     int depth,
-			     bool invert)
+			     bool invert,
+			     bool overwrite_alpha,
+			     uint8_t alpha)
 {
 	if( depth != 24 && depth != 32 )
 		throw Barry::Error("ScreenshotToRGB: depth must be 24 or 32");
+
+	// if user doesn't want to overwrite alpha channel, then use
+	// the value for our own default
+	if( !overwrite_alpha )
+		alpha = 0xFF;
 
 	size_t width = info.width;
 	size_t height = info.height;
@@ -127,7 +134,7 @@ BXEXPORT void ScreenshotToRGB(const JLScreenInfo &info,
 				//       ^^^^^^ : Red (between 0x00 and 0x1F)
 
 				if( bytes_per_pixel == 4 )
-					write[3] = 0xFF;
+					write[3] = alpha;
 
 				write[2] = (((value >> 11) & 0x1F) * 0xFF) / 0x1F;	// red
 				write[1] = (((value >> 5) & 0x3F) * 0xFF) / 0x3F;	// green
@@ -140,7 +147,10 @@ BXEXPORT void ScreenshotToRGB(const JLScreenInfo &info,
 				// assumed to be RGBA
 
 				if( bytes_per_pixel == 4 ) {
-					write[3] = (value >> 24) & 0xFF;// alpha
+					if( overwrite_alpha )
+						write[3] = alpha;
+					else
+						write[3] = (value >> 24) & 0xFF;// alpha
 				}
 
 				write[2] = (value >> 16) & 0xFF;   // red
