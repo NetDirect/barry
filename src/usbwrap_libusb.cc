@@ -411,9 +411,8 @@ bool Device::IsAttachKernelDriver(int iface, std::string& name)
 
 	ret = usb_get_driver_np(m_handle->m_handle, iface, buffer, sizeof(buffer));
 	if (ret == 0) {
-		dout("interface (" << m_handle->m_handle << ", 0x" << std::hex << iface 
-			<< ") already claimed by driver \"" << name << "\" "
-			<< "attempting to detach it ");
+		dout("interface (" << m_handle->m_handle << ", 0x" << std::hex << iface
+			<< ") already claimed by driver \"" << name << "\"");
 		name = buffer;
 		return true;
 	}
