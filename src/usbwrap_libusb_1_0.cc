@@ -589,7 +589,7 @@ int Device::GetPowerLevel()
 	return ret;
 }
 
-bool Device::IsAttachKernelDriver(int iface, std::string &name)
+bool Device::IsAttachKernelDriver(int iface)
 {
 	int ret;
 
@@ -597,7 +597,6 @@ bool Device::IsAttachKernelDriver(int iface, std::string &name)
 	if (ret == 0) {
 		dout("interface (" << m_handle->m_handle << ", 0x" << std::hex << iface
 			<< ") already claimed by a driver of unknown name.");
-		name.clear();
 		return true;
 	}
 

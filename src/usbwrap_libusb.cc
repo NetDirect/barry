@@ -404,7 +404,7 @@ int Device::GetPowerLevel()
 	return m_id.m_impl->m_dev->config[0].MaxPower;
 }
 
-bool Device::IsAttachKernelDriver(int iface, std::string& name) 
+bool Device::IsAttachKernelDriver(int iface)
 {
 	int ret;
 	char buffer[64];
@@ -412,8 +412,7 @@ bool Device::IsAttachKernelDriver(int iface, std::string& name)
 	ret = usb_get_driver_np(m_handle->m_handle, iface, buffer, sizeof(buffer));
 	if (ret == 0) {
 		dout("interface (" << m_handle->m_handle << ", 0x" << std::hex << iface
-			<< ") already claimed by driver \"" << name << "\"");
-		name = buffer;
+			<< ") already claimed by driver \"" << buffer << "\"");
 		return true;
 	}
 
