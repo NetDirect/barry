@@ -83,40 +83,73 @@ BXEXPORT void ScreenshotToRGB(const JLScreenInfo &info,
 	size_t total_bitmap_size = pixel_count * bytes_per_pixel;
 	size_t total_buffer_size = total_bitmap_size + offset;
 
-	// make sure there is enough screeshot pixel data for the
-	// given width and height
-	if( screenshot.GetSize() < (pixel_count * 2) ) // 2 byte screenshot pixel data
+	// using pixel_count (width*height), determine the size used
+	// per pixel
+	size_t data_size;
+	for( data_size = 2; screenshot.GetSize() > (data_size * pixel_count); data_size++ )
+		;
+	if( screenshot.GetSize() < (pixel_count * data_size) )
 		throw Error("ScreenshotToRGB: Screenshot data size is too small for given width+height");
+	if( data_size != 2 && data_size != 4 )
+		throw Error("ScreenshotToRGB: Screenshot depth is not supported (Barry supports 2 byte or 4 byte pixels in device screenshots)");
 
 	// setup write pointer
 	unsigned char *write = buffer.GetBuffer(total_buffer_size) + offset;
 
-	// I work with 2 bytes (see the pixel format)
-	const uint16_t *data = (const uint16_t*) screenshot.GetData();
+	// pointer into screenshot data (grabbing pixel bytes per data_size)
+	const uint8_t *data = (const uint8_t*) screenshot.GetData();
 
 	// For each pixel... (note BMP format is up and backwards, hence
 	// offset calculation for each pixel in for loop)
 	for( size_t j = 0; j < height; j++ ) {
 		for( size_t i = 0; i < width; i++ ) {
 			// Read one pixel in the picture
-			short value;
+
+			// offset is in pixels... so multiply it by data_size
+			// to read out of data
+			int get_offset = 0;
 			if( invert )
-				value = data[(pixel_count - 1) - ((width-1 - i) + (width * j))];
+				get_offset = (pixel_count - 1) - ((width-1 - i) + (width * j));
 			else
-				value = data[(j * width) + i];
+				get_offset = (j * width) + i;
 
-			// Pixel format used by the handheld is : 16 bits
-			// MSB < .... .... .... .... > LSB
-			//                    ^^^^^^ : Blue (between 0x00 and 0x1F)
-			//             ^^^^^^^ : Green (between 0x00 and 0x3F)
-			//       ^^^^^^ : Red (between 0x00 and 0x1F)
+			// extract the pixel data, using data_size bytes
+			uint32_t value;
+			switch( data_size )
+			{
+			case 2:
+				value = ((const uint16_t *)data)[get_offset];
 
-			if( bytes_per_pixel == 4 )
-				write[3] = 0xFF;	// alpha
+				// 16bit pixel format used by the handheld is:
+				// MSB < .... .... .... .... > LSB
+				//                    ^^^^^^ : Blue (between 0x00 and 0x1F)
+				//             ^^^^^^^ : Green (between 0x00 and 0x3F)
+				//       ^^^^^^ : Red (between 0x00 and 0x1F)
 
-			write[2] = (((value >> 11) & 0x1F) * 0xFF) / 0x1F;	// red
-			write[1] = (((value >> 5) & 0x3F) * 0xFF) / 0x3F;	// green
-			write[0] = ((value & 0x1F) * 0xFF) / 0x1F;		// blue
+				if( bytes_per_pixel == 4 )
+					write[3] = 0xFF;
+
+				write[2] = (((value >> 11) & 0x1F) * 0xFF) / 0x1F;	// red
+				write[1] = (((value >> 5) & 0x3F) * 0xFF) / 0x3F;	// green
+				write[0] = ((value & 0x1F) * 0xFF) / 0x1F;		// blue
+				break;
+			case 4:
+				value = ((const uint32_t *)data)[get_offset];
+
+				// 32bit pixel format used by the handheld is
+				// assumed to be RGBA
+
+				if( bytes_per_pixel == 4 ) {
+					write[3] = (value >> 24) & 0xFF;// alpha
+				}
+
+				write[2] = (value >> 16) & 0xFF;   // red
+				write[1] = (value >> 8) & 0xFF;    // green
+				write[0] = value & 0xFF;           // blue
+				break;
+			default:
+				throw Error("ScreenshotToRGB: bad switch value, should never happen. Double check the data_size check.");
+			}
 
 			write += bytes_per_pixel;
 		}
