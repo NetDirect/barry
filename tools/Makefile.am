@@ -52,7 +52,10 @@ bin_PROGRAMS += bio
 endif
 endif
 
-sbin_PROGRAMS = pppob
+sbin_PROGRAMS = \
+	bcharge \
+	breset \
+	pppob
 
 btool_SOURCES = btool.cc
 btool_LDADD = ../src/libbarry.la $(USB_LIBRARY_LIBS) @BOOST_LDADD@ $(LTLIBINTL) $(LTLIBICONV)
@@ -112,8 +115,6 @@ bktrans_SOURCES = bktrans.cc
 bktrans_LDADD = ../src/libbarry.la $(LTLIBINTL)
 
 if USE_LIBUSB_0_1
-sbin_PROGRAMS += bcharge breset
-
 bcharge_SOURCES = bcharge.cc
 bcharge_LDADD = $(USB_LIBRARY_LIBS) $(LTLIBINTL)
 
@@ -122,8 +123,6 @@ breset_LDADD = $(USB_LIBRARY_LIBS) $(LTLIBINTL)
 endif
 
 if USE_LIBUSB_1_0
-sbin_PROGRAMS += bcharge breset
-
 bcharge_SOURCES = bcharge_libusb_1_0.cc
 bcharge_LDADD = $(USB_LIBRARY_LIBS) $(LTLIBINTL)
 
