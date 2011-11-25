@@ -404,6 +404,23 @@ int Device::GetPowerLevel()
 	return m_id.m_impl->m_dev->config[0].MaxPower;
 }
 
+bool Device::IsAttachKernelDriver(int iface, std::string& name) 
+{
+	int ret;
+	char buffer[64];
+
+	ret = usb_get_driver_np(m_handle->m_handle, iface, buffer, sizeof(buffer));
+	if (ret == 0) {
+		dout("interface (" << m_handle->m_handle << ", 0x" << std::hex << iface 
+			<< ") already claimed by driver \"" << name << "\" "
+			<< "attempting to detach it ");
+		name = buffer;
+		return true;
+	}
+
+	return false;
+}
+
 // Requests that the kernel driver is detached, returning false on failure
 bool Device::DetachKernelDriver(int iface)
 {

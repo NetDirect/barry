@@ -273,6 +273,7 @@ public:
 	bool SetConfiguration(unsigned char cfg);
 	bool ClearHalt(int ep);
 	bool Reset();
+	bool IsAttachKernelDriver(int iface, std::string& name);
 	bool DetachKernelDriver(int iface);
 
 	/////////////////////////////
