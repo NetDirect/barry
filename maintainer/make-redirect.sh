@@ -2,7 +2,7 @@
 
 set -e
 
-if [ -z "$1" -o -z "$2" -z -o "$3" ] ; then
+if [ -z "$1" -o -z "$2" -o -z "$3" ] ; then
 	echo "make-redirect.sh builddir prefix_dir new_url_base"
 	echo
 	echo "Creates .htaccess output for redirecting all .deb and .rpm files"
@@ -20,7 +20,7 @@ if [ -z "$1" -o -z "$2" -z -o "$3" ] ; then
 	echo
 	echo "Example:"
 	echo
-	echo "   make-redirect.sh /binary-meta http://downloads.sourceforge.net/project/barry/binary-meta/20111020"
+	echo "   make-redirect.sh bmbuild /binary-meta http://downloads.sourceforge.net/project/barry/binary-meta/20111020"
 	echo
 	exit 1
 fi
