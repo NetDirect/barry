@@ -18,7 +18,7 @@ BUILDDIR="$1"
 rpmsign --addsign $(find $BUILDDIR -name "*.rpm" -print)
 
 # Create the YUM repo files for each architecture
-for arch in i386 source-i386 x86_64 source-x86_64 ; do
+for arch in i386 source-i386 i686 source-i686 x86_64 source-x86_64 ; do
 	for dir in $(find $BUILDDIR -name "$arch" -type d -print) ; do
 		createrepo $dir
 		cp yum/key $dir/RPM-GPG-KEY-binary-meta
