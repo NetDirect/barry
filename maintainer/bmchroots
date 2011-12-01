@@ -54,9 +54,16 @@ do_ubuntu ubuntu1004 "$BMBUILDDIR/dists/ubuntu1004/main/binary-i386" "" \
 # Ubuntu 11.04 (Natty) is also good for Mint 11
 do_ubuntu ubuntu1104 "$BMBUILDDIR/dists/ubuntu1104/main/binary-i386" "" \
 	"make -j2 debian-all"
+# Ubuntu 11.10 (Oneiric) should also be good for Mint 12
+do_ubuntu ubuntu1110 "$BMBUILDDIR/dists/ubuntu1110/main/binary-i386" "" \
+	"make -j2 debian-all"
 do_fedora fedora14 \
 	"$BMBUILDDIR/dists/fedora14/i386/RPMS" \
 	"$BMBUILDDIR/dists/fedora14/source-i386/SRPMS" \
+	"" "make -j2 rpm-all"
+do_fedora fedora16 \
+	"$BMBUILDDIR/dists/fedora16/i686/RPMS" \
+	"$BMBUILDDIR/dists/fedora16/source-i686/SRPMS" \
 	"" "make -j2 rpm-all"
 do_fedora opensuse12.1 \
 	"$BMBUILDDIR/dists/opensuse12.1/i586/RPMS" \
