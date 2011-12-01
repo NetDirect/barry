@@ -1,0 +1,18 @@
+[Barry-binary-meta]
+name=Barry (meta) for Fedora $releasever - i686
+failovermethod=priority
+baseurl=http://example.com/binary-meta/dists/fedora$releasever/i686/
+enabled=1
+metadata_expire=7d
+gpgcheck=1
+gpgkey=http://example.com/binary-meta/dists/fedora$releasever/i686/RPM-GPG-KEY-binary-meta
+
+[Barry-binary-meta-sources]
+name=Barry (meta) for Fedora $releasever - Source
+failovermethod=priority
+baseurl=http://example.com/binary-meta/dists/fedora$releasever/source-i686/
+enabled=1
+metadata_expire=7d
+gpgcheck=1
+gpgkey=http://example.com/binary-meta/dists/fedora$releasever/source-i686/RPM-GPG-KEY-binary-meta
+

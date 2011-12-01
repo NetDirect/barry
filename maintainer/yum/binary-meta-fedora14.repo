@@ -1,0 +1,18 @@
+[binary-meta]
+name=Binary-Meta Fedora 14 - $basearch
+failovermethod=priority
+baseurl=http://example.com/binary-meta/dists/fedora14/$basearch/
+enabled=1
+metadata_expire=7d
+gpgcheck=1
+gpgkey=http://example.com/binary-meta/dists/fedora14/$basearch/RPM-GPG-KEY-binary-meta
+
+[binary-meta-source]
+name=Binary-Meta Fedora 14 - Source
+failovermethod=priority
+baseurl=http://example.com/binary-meta/dists/fedora14/source-$basearch/
+enabled=1
+metadata_expire=7d
+gpgcheck=1
+gpgkey=http://example.com/binary-meta/dists/fedora14/source-$basearch/RPM-GPG-KEY-binary-meta
+
