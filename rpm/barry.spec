@@ -94,7 +94,7 @@ and be able to access the data on the device in many ways.
 %package gui
 Summary: BlackBerry(tm) Desktop for Linux - bcharge, btool, breset and others
 Group: Applications/Productivity
-Requires: libbarry0 gtkmm24 libglademm24 libtar
+Requires: libbarry0
 BuildRequires: gtkmm24-devel libglademm24-devel libtar-devel
 
 %description gui
