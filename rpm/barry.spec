@@ -52,7 +52,7 @@ is a registered trademark of Research in Motion Limited.)
 %package -n libbarry0
 Summary: BlackBerry(tm) Desktop for Linux - libbarry libraries
 Group: Development/Libraries
-Requires: libusb boost
+#Requires: libusb boost
 
 %description -n libbarry0
 Barry is a desktop toolset for managing your BlackBerry(tm) device. (BlackBerry
@@ -514,6 +514,7 @@ desktop-file-install --vendor netdirect \
 - added evolution dependencies for desktop build
 - removed libopensync dependency from barry-desktop (can be either, both, or none)
 - renamed 0.4x plugin dependency to libopensync1
+- removed extraneous library dependencies, which should be handled automatically
 
 * Fri May 28 2010 Chris Frey <cdfrey@foursquare.net> 0.17.0-0
 - version bump
