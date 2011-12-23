@@ -3,7 +3,8 @@ Capturing USB Traffic for Fun and Profit
 
 Capturing USB traffic is critical to reverse engineering your shiny
 new Linux-incompatible toy.  This article documents my experiences
-with this process in the Barry project.
+with this process in the Barry project, as well as feedback for additional
+methods of USB capture gleaned from the Barry community.
 
 
 What do these numbers mean?
@@ -72,6 +73,12 @@ but still does a smashing job capturing the heavy duty areas of the protocol.
 Once you have the logs, you can use the convo.awk script in the Barry
 src directory, and the translate.cc program to help analyze the data.
 
+Other Windows Tools:
+--------------------
+
+There's a list of additional Windows USB sniffer tools at:
+	http://wiki.wireshark.org/Tools#USB_capture
+
 
 Capturing: The Linux Way, Method 1
 ----------------------------------
@@ -126,6 +133,11 @@ from:
 Capturing: The Linux Way, Method 2
 ----------------------------------
 
+This method is independent of the usbdevfs driver, to my knowledge, and
+is the main method of debugging USB problems under Linux.  It can also be
+used to capture traffic that is sent by a virtual machine such as
+VirtualBox or VMWare.
+
 Recent versions of the Linux kernel provide a binary interface to the
 usbmon logging method.  You can simply cat the /sys/kernel/debug/usb/usbmon/1u
 file, depending on your bus number, for a text version of the capture,
@@ -136,6 +148,9 @@ Wireshark 1.2.x plus libpcap 1.0 or higher will use the /dev/usbmon*
 devices to capture the full binary USB traffic.  Wireshark can also
 export this data in plain text format, if the GUI display does not
 work for you.
+
+Barry includes a copy of the command line usbmon-6 tool in the source tree.
+If you are capturing vast amounts of data, this is the tool to use.
 
 It is not guaranteed that the binary interface will capture all data
 if the system is really busy.  If this is a concern, renice your VM
@@ -163,8 +178,8 @@ traffic, and how to make use of those logs with vusb-analyzer.
 Capturing: The RIM way
 ----------------------
 
-It was reported on the mailing list that it is possible to add the
-following entries to the Windows Registry to cause RIM's software
+It was reported on the mailing list back in 2009 that it is possible to add
+the following entries to the Windows Registry to cause RIM's software
 to create verbose logs in your temp directory.  Apparently this also
 enables sniffing the communication with the BlackBerry simulator.
 
@@ -174,6 +189,27 @@ Windows Registry Editor Version 5.00
 "FileDump"=dword:00000001
 "ServiceDebug"=dword:ffffffff
 
+This feature may have changed in more recent releases of RIM's Windows
+software, so your mileage may vary.
+
+
+Capturing: The expensive hardware way
+-------------------------------------
+
+Toby Gray reports:
+
+   If you've got (quite a lot of) money to spend then you could also go
+   for a hardware USB analyzer, such as the LeCroy Advisor T3
+   (http://www.lecroy.com/protocolanalyzer/protocoloverview.aspx?seriesid=280).
+
+
+Capturing: The BeagleBoard way
+------------------------------
+
+There is also a project that makes use of the BeagleBoard
+(http://beagleboard.org/) to make it behave as a proxy, to sniff USB
+traffic.  You can find more about it here:
+	http://elinux.org/BeagleBoard/GSoC/2010_Projects/USBSniffer
 
 
 Happy Hacking!
