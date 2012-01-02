@@ -457,7 +457,10 @@ void Contact::Clear()
 
 std::string Contact::GetDescription() const
 {
-	return GetFullName();
+	string desc = GetFullName();
+	if( desc.size() == 0 && Company.size() )
+		return Company;
+	return desc;
 }
 
 //
