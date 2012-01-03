@@ -78,6 +78,8 @@ public:
 	void DumpAll(std::ostream &os) const;
 	bool HasIpModem() const { return m_epModem.IsComplete(); }
 
+	std::string GetDisplayName() const;
+
 	bool operator==(const Barry::Pin &pin) const
 	{
 		return m_pin == pin;

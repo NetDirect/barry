@@ -35,6 +35,7 @@
 #include "configfile.h"
 #include "platform.h"
 #include <iomanip>
+#include <sstream>
 #include <errno.h>
 #include <string.h>
 #include "ios_state.h"
@@ -517,6 +518,15 @@ void ProbeResult::DumpAll(std::ostream &os) const
 		<< ", write: 0x" << std::hex << (unsigned int) m_ep.write
 		<< ", type: 0x" << std::hex << (unsigned int) m_ep.type
 	   << ", ZeroSocketSequence: 0x" << std::hex << (unsigned int) m_zeroSocketSequence;
+}
+
+std::string ProbeResult::GetDisplayName() const
+{
+	std::ostringstream oss;
+	oss << m_pin.Str();
+	if( m_cfgDeviceName.size() )
+		oss << " (" << m_cfgDeviceName << ")";
+	return oss.str();
 }
 
 std::ostream& operator<< (std::ostream &os, const ProbeResult &pr)
