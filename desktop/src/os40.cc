@@ -4,7 +4,7 @@
 ///
 
 /*
-    Copyright (C) 2009-2011, Net Direct Inc. (http://www.netdirect.ca/)
+    Copyright (C) 2009-2012, Net Direct Inc. (http://www.netdirect.ca/)
 
     Used code from osynctool (GPL v2+) as a guide to the API,
     and copied some of the status messages, as well as one funcion

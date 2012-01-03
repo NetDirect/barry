@@ -4,7 +4,7 @@
 ///
 
 /*
-    Copyright (C) 2005-2011, Chris Frey
+    Copyright (C) 2005-2012, Chris Frey
     Portions Copyright (C) 2011, RealVNC Ltd.
 
     This program is free software; you can redistribute it and/or modify

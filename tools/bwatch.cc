@@ -5,7 +5,7 @@
 
 /*
     Copyright (C) 2011, Alberto Mattea
-    Copyright (C) 2011, Net Direct Inc. (http://www.netdirect.ca/)
+    Copyright (C) 2011-2012, Net Direct Inc. (http://www.netdirect.ca/)
 
     Some parts are inspired from bjavaloader
 
@@ -44,7 +44,7 @@ void Usage()
    cerr
    << "bwatch - View video of BlackBerry screenshots\n"
    << "         Copyright 2011, Alberto Mattea\n"
-   << "         Copyright 2011, Net Direct Inc. (http://www.netdirect.ca/)\n"
+   << "         Copyright 2011-2012, Net Direct Inc. (http://www.netdirect.ca/)\n"
    << "         Using: " << Version << "\n"
    << "\n"
    << "   -d delay  Delay interval between screenshots, in milliseconds.\n"

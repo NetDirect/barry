@@ -8,14 +8,14 @@ Upstream Authors:
 
 
 Copyright:
-    Copyright (C) 2005-2011, Net Direct Inc. (http://www.netdirect.ca/)
-    Copyright (C) 2007-2011, Chris Frey <cdfrey@foursquare.net>
+    Copyright (C) 2005-2012, Net Direct Inc. (http://www.netdirect.ca/)
+    Copyright (C) 2007-2012, Chris Frey <cdfrey@foursquare.net>
     Copyright (C) 2008, Brian Edginton (edge@edginton.net)
     Copyright (C) 1995-9 by Cryptography Research, Inc.
     Copyright (C) 2003 Ximian, Inc. 2005 Armin Bauer
-    Copyright (C) 2008-2011, Nicolas VIVIEN <nicolas@vivien.fr>
+    Copyright (C) 2008-2012, Nicolas VIVIEN <nicolas@vivien.fr>
     Copyright (C) 2009, Josh Kropf <josh@slashdev.ca>
-    Copyright (C) 2010, RealVNC Ltd., Toby Gray
+    Copyright (C) 2010-2012, RealVNC Ltd., Toby Gray
  For scripts in contrib/ directory:
     Copyright (C) 2008  Niels de Vos <nixpanic@users.sourceforge.net>
     Copyright (C) 2008, ashley willis <barry@venamous.net>

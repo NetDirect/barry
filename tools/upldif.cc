@@ -4,7 +4,7 @@
 ///
 
 /*
-    Copyright (C) 2006-2011, Net Direct Inc. (http://www.netdirect.ca/)
+    Copyright (C) 2006-2012, Net Direct Inc. (http://www.netdirect.ca/)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ void Usage()
 {
    cerr
    << "upldif - Command line LDIF uploader\n"
-   << "         Copyright 2006-2011, Net Direct Inc. (http://www.netdirect.ca/)\n\n"
+   << "         Copyright 2006-2012, Net Direct Inc. (http://www.netdirect.ca/)\n\n"
    << "   -p pin    PIN of device to talk with\n"
    << "             If only one device plugged in, this flag is optional\n"
    << "   -P pass   Simplistic method to specify device password\n"

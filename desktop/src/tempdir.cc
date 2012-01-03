@@ -4,7 +4,7 @@
 ///
 
 /*
-    Copyright (C) 2009-2011, Chris Frey <cdfrey@foursquare.net>
+    Copyright (C) 2009-2012, Chris Frey <cdfrey@foursquare.net>
     The idea to use glib's g_get_tmp_dir() came from opensync's osynctool.
 
     This program is free software; you can redistribute it and/or modify

@@ -5,7 +5,7 @@
 ///
 
 /*
-    Copyright (C) 2008-2011, Net Direct Inc. (http://www.netdirect.ca/)
+    Copyright (C) 2008-2012, Net Direct Inc. (http://www.netdirect.ca/)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ void Usage()
 
    cerr
    << "brecsum - Generate SHA1 sums of raw Blackberry database records.\n"
-   << "        Copyright 2008-2011, Net Direct Inc. (http://www.netdirect.ca/)\n"
+   << "        Copyright 2008-2012, Net Direct Inc. (http://www.netdirect.ca/)\n"
    << "        Using: " << Version << "\n"
    << "\n"
    << "   -d db     Read database 'db' and sum all its records.\n"

@@ -1,5 +1,5 @@
 # French translations for barry package.
-# Copyright (C) 2009-2011 Net Direct, Inc.
+# Copyright (C) 2009-2012 Net Direct, Inc.
 # This file is distributed under the same license as the barry package.
 # Nicolas <nicolas@vivien.fr>, 2009, French translation copyright
 #
