@@ -10,9 +10,9 @@ dist_image_DATA = \
 	browsedatabases-focus.png \
 	browsedatabases-normal.png \
 	browsedatabases-pushed.png \
-	deviceswitch-focus.png \
-	deviceswitch-normal.png \
-	deviceswitch-pushed.png \
+	migratedevice-focus.png \
+	migratedevice-normal.png \
+	migratedevice-pushed.png \
 	media-focus.png \
 	media-normal.png \
 	media-pushed.png \

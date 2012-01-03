@@ -46,7 +46,7 @@ BEGIN_EVENT_TABLE(BaseFrame, wxFrame)
 	EVT_BUTTON	(MainMenu_Sync, BaseFrame::OnSync)
 	EVT_BUTTON	(MainMenu_Modem, BaseFrame::OnModem)
 	EVT_BUTTON	(MainMenu_AppLoader, BaseFrame::OnAppLoader)
-	EVT_BUTTON	(MainMenu_DeviceSwitch, BaseFrame::OnDeviceSwitch)
+	EVT_BUTTON	(MainMenu_MigrateDevice, BaseFrame::OnMigrateDevice)
 	EVT_BUTTON	(MainMenu_BrowseDatabases, BaseFrame::OnBrowseDatabases)
 	EVT_BUTTON	(MainMenu_MediaManagement, BaseFrame::OnMediaManagement)
 	EVT_BUTTON	(MainMenu_Misc, BaseFrame::OnMisc)
@@ -680,7 +680,7 @@ void BaseFrame::OnAppLoader(wxCommandEvent &event)
 */
 }
 
-void BaseFrame::OnDeviceSwitch(wxCommandEvent &event)
+void BaseFrame::OnMigrateDevice(wxCommandEvent &event)
 {
 }
 

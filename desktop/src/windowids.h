@@ -36,7 +36,7 @@ enum {
 	MainMenu_Sync,
 	MainMenu_Modem,
 	MainMenu_AppLoader,
-	MainMenu_DeviceSwitch,
+	MainMenu_MigrateDevice,
 	MainMenu_BrowseDatabases,
 	MainMenu_MediaManagement,
 	MainMenu_Misc,

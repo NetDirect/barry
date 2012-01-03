@@ -77,7 +77,7 @@ public:
 	void OnSync(wxCommandEvent &event);
 	void OnModem(wxCommandEvent &event);
 	void OnAppLoader(wxCommandEvent &event);
-	void OnDeviceSwitch(wxCommandEvent &event);
+	void OnMigrateDevice(wxCommandEvent &event);
 	void OnBrowseDatabases(wxCommandEvent &event);
 	void OnMediaManagement(wxCommandEvent &event);
 	void OnMisc(wxCommandEvent &event);
