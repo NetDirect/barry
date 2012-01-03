@@ -155,19 +155,14 @@ void BaseFrame::CreateDeviceCombo(Barry::Pin pin)
 
 	// add one entry for each device
 	for( Barry::Probe::Results::const_iterator i = results.begin();
-				i != results.end(); ++i ) {
-		std::ostringstream oss;
-		oss << i->m_pin.Str();
-		if( i->m_cfgDeviceName.size() ) {
-			oss << " (" << i->m_cfgDeviceName << ")";
-		}
-
+				i != results.end(); ++i )
+	{
 		// if this is the desired item, remember this selection
 		if( pin.Valid() && i->m_pin == pin ) {
 			selected = devices.GetCount();
 		}
 
-		devices.Add(wxString(oss.str().c_str(), wxConvUTF8));
+		devices.Add(wxString(i->GetDisplayName().c_str(), wxConvUTF8));
 	}
 
 	// if nothing is there, be descriptive

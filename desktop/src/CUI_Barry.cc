@@ -73,11 +73,13 @@ bool Barry::ZapData(wxWindow *parent,
 		dynamic_cast<OpenSync::Config::Barry&>(*plugin);
 
 	// build device name
-	string device_name = barry.GetPin().Str();
+	string device_name;
 	const ::Barry::Probe::Results &results = wxGetApp().GetResults();
 	int index = ::Barry::Probe::Find(results, barry.GetPin());
-	if( index != -1 && results[index].m_cfgDeviceName.size() )
-		device_name += " (" + results[index].m_cfgDeviceName + ")";
+	if( index != -1 )
+		device_name = results[index].GetDisplayName();
+	else
+		device_name = barry.GetPin().Str(); // default to PIN if not in list
 
 	// build intro message
 	ostringstream oss;

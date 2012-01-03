@@ -430,12 +430,7 @@ BrowseMode::BrowseMode(wxWindow *parent, const ProbeResult &device)
 	, m_show_all(false)
 {
 	// create device identifying string
-	ostringstream oss;
-	oss << device.m_pin.Str();
-	if( device.m_cfgDeviceName.size() ) {
-		oss << " (" << device.m_cfgDeviceName << ")";
-	}
-	m_device_id_str = wxString(oss.str().c_str(), wxConvUTF8);
+	m_device_id_str = wxString(device.GetDisplayName().c_str(), wxConvUTF8);
 
 	//
 	// connect to the device
