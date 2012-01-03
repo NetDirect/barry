@@ -203,7 +203,8 @@ DBCache::DBCache(ThreadableDesktop &tdesktop, const std::string &dbname)
 		dip->Desktop().GetRecord(m_dbid, m_index, ap);
 	}
 
-	// FIXME - sort here?
+	// sort the list of records by description
+	m_records.sort();
 }
 
 DBCache::~DBCache()

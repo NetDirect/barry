@@ -137,7 +137,23 @@ public:
 
 };
 
-typedef std::tr1::shared_ptr<DataCache> DataCachePtr;
+class DataCachePtr : public std::tr1::shared_ptr<DataCache>
+{
+public:
+	DataCachePtr()
+	{
+	}
+
+	explicit DataCachePtr(DataCache *obj)
+		: std::tr1::shared_ptr<DataCache>(obj)
+	{
+	}
+
+	bool operator< (const DataCachePtr &other)
+	{
+		return (*this)->operator<( *other );
+	}
+};
 
 class DBDataCache : public DataCache
 {
