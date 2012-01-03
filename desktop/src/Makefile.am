@@ -74,6 +74,7 @@ barrydesktop_SOURCES = \
 	Mode_MainMenu.cc Mode_MainMenu.h \
 	Mode_Sync.cc Mode_Sync.h \
 	Mode_Browse.cc Mode_Browse.h \
+	MigrateDlg.cc MigrateDlg.h \
 	ContactEditDlg.cc ContactEditDlg.h \
 	GroupCfgDlg.cc GroupCfgDlg.h \
 	SyncStatusDlg.cc SyncStatusDlg.h \

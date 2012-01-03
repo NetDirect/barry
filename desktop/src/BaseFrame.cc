@@ -23,6 +23,7 @@
 #include "Mode_MainMenu.h"
 #include "Mode_Sync.h"
 #include "Mode_Browse.h"
+#include "MigrateDlg.h"
 #include "ClickImage.h"
 #include "barrydesktop.h"
 #include "windowids.h"
@@ -677,6 +678,28 @@ void BaseFrame::OnAppLoader(wxCommandEvent &event)
 
 void BaseFrame::OnMigrateDevice(wxCommandEvent &event)
 {
+	try {
+
+		int i = Barry::Probe::Find(wxGetApp().GetResults(),
+					GetCurrentComboPin());
+
+		MigrateDlg dlg(this, wxGetApp().GetResults(), i);
+		dlg.ShowModal();
+
+	}
+	catch( std::exception &e ) {
+		wxString msg(_T(
+			"An error occurred during device migration.\n"
+			"This could be due to a low level USB issue\n"
+			"Please make sure your device is plugged in\n"
+			"and not in Desktop Mode.  If it is, try replugging\n"
+			"the device, and rescanning the USB bus from the menu.\n"
+			"\n"
+			"Error: "));
+		msg += wxString(e.what(), wxConvUTF8);
+		wxMessageBox(msg, _T("Migrate Device"), wxOK | wxICON_ERROR);
+		return;
+	}
 }
 
 void BaseFrame::OnBrowseDatabases(wxCommandEvent &event)

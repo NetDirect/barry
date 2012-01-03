@@ -117,6 +117,7 @@ enum {
 	Dialog_Conflict_AlwaysCheckbox,
 	Dialog_ContactEdit,
 	Dialog_ContactEdit_PhotoButton,
+	Dialog_Migrate_MigrateNowButton,
 
 	SysMenu_FirstItem,
 

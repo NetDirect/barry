@@ -40,7 +40,7 @@ bool ButtonEnabled[] = {
 	true,	// sync
 	false,	// modem
 	false,	// apploader
-	false,	// migratedevice
+	true,	// migratedevice
 	true,	// browsedatabases
 	false,	// media
 	false,	// misc
