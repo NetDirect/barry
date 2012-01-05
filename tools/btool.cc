@@ -143,7 +143,8 @@ struct Store
 	bool load;
 	bool immediate_display;
 	bool vformat_mode;
-	int count;
+	int from_device_count;
+	mutable int to_device_count;
 
 	Store(const string &filename, bool load, bool immediate_display,
 			bool vformat_mode)
@@ -152,7 +153,8 @@ struct Store
 		load(load),
 		immediate_display(immediate_display),
 		vformat_mode(vformat_mode),
-		count(0)
+		from_device_count(0),
+		to_device_count(0)
 	{
 #ifdef __BARRY_BOOST_MODE__
 		try {
@@ -193,7 +195,7 @@ struct Store
 			DumpAll();
 		}
 
-		cout << "Store counted " << dec << count << " records." << endl;
+		cout << "Store counted " << dec << from_device_count << " records read from device, and " << dec << to_device_count << " records written to device." << endl;
 #ifdef __BARRY_BOOST_MODE__
 		try {
 
@@ -240,7 +242,7 @@ struct Store
 	// storage operator
 	void operator()(const Record &rec)
 	{
-		count++;
+		from_device_count++;
 		if( immediate_display )
 			Dump(rec);
 		records.push_back(rec);
@@ -251,6 +253,7 @@ struct Store
 	{
 		if( rec_it == records.end() )
 			return false;
+		to_device_count++;
 		rec = *rec_it;
 		rec_it++;
 		return true;
