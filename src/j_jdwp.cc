@@ -24,7 +24,7 @@
 #include <sstream>
 #include <iomanip>
 #include <errno.h>
-
+#include <unistd.h>
 
 namespace Barry { namespace JDWP {
 

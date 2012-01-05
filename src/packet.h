@@ -26,6 +26,7 @@
 
 #include <string>
 #include <stdint.h>
+#include <unistd.h>
 #include "protocol.h"
 #include "data.h"
 
