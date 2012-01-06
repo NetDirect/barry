@@ -60,6 +60,7 @@ libosyncwrap_la_LDFLAGS = -ldl -version-info ${LIB_OSYNCWRAP_VERSION}
 barrydesktop_SOURCES = \
 	barrydesktop.cc barrydesktop.h \
 	ipc.h optout.h \
+	EasyCondition.h \
 	windowids.h \
 	util.cc util.h \
 	StringSync.cc StringSync.h \
