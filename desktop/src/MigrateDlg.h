@@ -31,6 +31,7 @@
 DECLARE_EVENT_TYPE(MET_THREAD_FINISHED, -1)
 DECLARE_EVENT_TYPE(MET_CHECK_DEST_PIN, -1)
 DECLARE_EVENT_TYPE(MET_SET_STATUS_MSG, -1)
+DECLARE_EVENT_TYPE(MET_ERROR_MSG, -1)
 
 class MigrateDlg : public wxDialog
 {
@@ -51,7 +52,7 @@ private:
 	volatile bool m_thread_running;
 	const Barry::ProbeResult *m_source_device, *m_dest_device;
 	Barry::DeviceParser::WriteMode m_write_mode;
-	std::auto_ptr<EasyCondition> m_waiter;
+	EasyCondition m_waiter;
 
 	// dialog controls
 	wxSizer *m_topsizer;
@@ -76,6 +77,7 @@ protected:
 
 	void SendEvent(int event_type);
 	void SendStatusEvent(const wxString &msg, int pos = -1, int max = -1);
+	void SendErrorMsgEvent(const wxString &msg);
 
 	// thread helper functions, called from the thread
 	void BackupSource();
@@ -93,6 +95,7 @@ public:
 	void OnThreadFinished(wxCommandEvent &event);
 	void OnCheckDestPin(wxCommandEvent &event);
 	void OnSetStatusMsg(wxCommandEvent &event);
+	void OnErrorMsg(wxCommandEvent &event);
 
 	// migration thread function
 	static void* MigrateThread(void *arg);

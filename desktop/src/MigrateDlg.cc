@@ -33,6 +33,7 @@ using namespace OpenSync;
 DEFINE_EVENT_TYPE(MET_THREAD_FINISHED)
 DEFINE_EVENT_TYPE(MET_CHECK_DEST_PIN)
 DEFINE_EVENT_TYPE(MET_SET_STATUS_MSG)
+DEFINE_EVENT_TYPE(MET_ERROR_MSG)
 
 BEGIN_EVENT_TABLE(MigrateDlg, wxDialog)
 	EVT_BUTTON	(Dialog_Migrate_MigrateNowButton,
@@ -46,6 +47,8 @@ BEGIN_EVENT_TABLE(MigrateDlg, wxDialog)
 				MigrateDlg::OnCheckDestPin)
 	EVT_COMMAND	(wxID_ANY, MET_SET_STATUS_MSG,
 				MigrateDlg::OnSetStatusMsg)
+	EVT_COMMAND	(wxID_ANY, MET_ERROR_MSG,
+				MigrateDlg::OnErrorMsg)
 END_EVENT_TABLE()
 
 //////////////////////////////////////////////////////////////////////////////
@@ -264,6 +267,14 @@ void MigrateDlg::SendStatusEvent(const wxString &msg, int pos, int max)
 	AddPendingEvent(event);
 }
 
+void MigrateDlg::SendErrorMsgEvent(const wxString &msg)
+{
+	wxCommandEvent event(MET_ERROR_MSG, wxID_ANY);
+	event.SetEventObject(this);
+	event.SetString(msg);
+	AddPendingEvent(event);
+}
+
 void MigrateDlg::OnMigrateNow(wxCommandEvent &event)
 {
 	// gather info from dialog
@@ -371,9 +382,7 @@ void MigrateDlg::OnThreadFinished(wxCommandEvent &event)
 
 void MigrateDlg::OnCheckDestPin(wxCommandEvent &event)
 {
-	if( !m_waiter.get() )
-		return; // no condition available, skip
-	ScopeSignaler done(*m_waiter);
+	ScopeSignaler done(m_waiter);
 
 	if( m_dest_device && m_dest_device->m_pin.Valid() )
 		return; // nothing to do
@@ -457,6 +466,13 @@ void MigrateDlg::OnSetStatusMsg(wxCommandEvent &event)
 	}
 }
 
+void MigrateDlg::OnErrorMsg(wxCommandEvent &event)
+{
+	ScopeSignaler done(m_waiter);
+	wxMessageBox(event.GetString(), _T("Migration Error"),
+		wxOK | wxICON_ERROR, this);
+}
+
 void* MigrateDlg::MigrateThread(void *arg)
 {
 	MigrateDlg *us = (MigrateDlg*) arg;
@@ -464,16 +480,22 @@ void* MigrateDlg::MigrateThread(void *arg)
 	// we are running!
 	us->m_thread_running = true;
 
-	// backup source PIN
-	us->BackupSource();
+	try {
+		// backup source PIN
+		us->BackupSource();
 
-	// make sure we have a destination PIN
-	if( !us->m_abort_flag )
-		us->CheckDestPin();
+		// make sure we have a destination PIN
+		if( !us->m_abort_flag )
+			us->CheckDestPin();
 
-	// restore to dest PIN
-	if( !us->m_abort_flag )
-		us->RestoreToDest();
+		// restore to dest PIN
+		if( !us->m_abort_flag )
+			us->RestoreToDest();
+	}
+	catch( std::exception &e ) {
+		us->SendErrorMsgEvent(wxString(e.what(), wxConvUTF8));
+		us->m_waiter.Wait();
+	}
 
 	// invalidate the device selection pointers, since
 	// m_new_results may not always exist
@@ -497,9 +519,8 @@ void MigrateDlg::BackupSource()
 // This is called from the thread
 void MigrateDlg::CheckDestPin()
 {
-	m_waiter.reset( new EasyCondition );
 	SendEvent(MET_CHECK_DEST_PIN);
-	m_waiter->Wait();
+	m_waiter.Wait();
 }
 
 // This is called from the thread
