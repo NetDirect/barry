@@ -115,13 +115,12 @@ void MigrateDlg::Main_AddSourceSizer(wxSizer *sizer)
 		wxVERTICAL
 		);
 	source->Add(
-		m_source_combo = new wxComboBox(this, wxID_ANY, _T(""),
-			wxDefaultPosition, wxSize(225, -1), devices,
-			wxCB_READONLY),
+		m_source_combo = new wxChoice(this, wxID_ANY,
+			wxDefaultPosition, wxSize(225, -1), devices),
 		0, wxALL, 5);
 
 	if( m_current_device_index >= 0 )
-		m_source_combo->SetValue(devices[m_current_device_index]);
+		m_source_combo->SetSelection(m_current_device_index);
 
 	sizer->Add(source, 0, wxEXPAND, 0);
 }
@@ -155,11 +154,10 @@ void MigrateDlg::Main_AddDestSizer(wxSizer *sizer)
 		wxVERTICAL
 		);
 	dest->Add(
-		m_dest_combo = new wxComboBox(this, wxID_ANY, _T(""),
-			wxDefaultPosition, wxSize(225, -1), devices,
-			wxCB_READONLY),
+		m_dest_combo = new wxChoice(this, wxID_ANY,
+			wxDefaultPosition, wxSize(225, -1), devices),
 		0, wxALL, 5);
-	m_dest_combo->SetValue(devices[0]);
+	m_dest_combo->SetSelection(0);
 
 
 	wxArrayString write_modes;
@@ -170,11 +168,10 @@ void MigrateDlg::Main_AddDestSizer(wxSizer *sizer)
 
 	dest->Add( new wxStaticText(this, wxID_ANY, _T("Write Mode:")),
 		0, wxTOP | wxLEFT | wxRIGHT, 5);
-	dest->Add( m_write_mode_combo = new wxComboBox(this, wxID_ANY, _T(""),
-			wxDefaultPosition, wxSize(225, -1), write_modes,
-			wxCB_READONLY),
+	dest->Add( m_write_mode_combo = new wxChoice(this, wxID_ANY,
+			wxDefaultPosition, wxSize(225, -1), write_modes),
 		0, wxALL, 5);
-	m_write_mode_combo->SetValue(write_modes[0]);
+	m_write_mode_combo->SetSelection(0);
 
 //	dest->Add( m_wipe_check = wxCheckBox(maybe a checkbox for "wipe device before restore"));
 

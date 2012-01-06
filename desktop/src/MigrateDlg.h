@@ -40,7 +40,7 @@ private:
 
 	// dialog controls
 	wxSizer *m_topsizer;
-	wxComboBox *m_source_combo, *m_dest_combo, *m_write_mode_combo;
+	wxChoice *m_source_combo, *m_dest_combo, *m_write_mode_combo;
 	wxButton *m_migrate_button;
 	wxCheckBox *m_wipe_check;
 	wxStaticText *m_status;
