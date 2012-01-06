@@ -179,18 +179,6 @@ void MigrateDlg::Main_AddDestSizer(wxSizer *sizer)
 }
 
 
-/*
-MigrateDlg::plugin_ptr MigrateDlg::GetCurrentPlugin()
-{
-	string appname = GetCurrentAppName();
-	appcfg_map &cfgs = m_plugins[m_engine];
-	appcfg_map::iterator pi = cfgs.find(appname);
-	if( pi != cfgs.end() )
-		return pi->second;
-	else
-		return plugin_ptr();	// not found, return empty ptr
-}
-*/
 
 void MigrateDlg::OnMigrateNow(wxCommandEvent &event)
 {
