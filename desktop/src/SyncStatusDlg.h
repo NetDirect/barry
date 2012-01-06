@@ -94,8 +94,9 @@ class SyncStatusDlg
 	, public wxServer
 	, public TermCatcher
 {
-	DECLARE_EVENT_TABLE()
+	DECLARE_EVENT_TABLE()	// sets to protected:
 
+private:
 	// external data sources
 	DeviceSet::subset_type m_subset;
 	DeviceSet::subset_type::iterator m_next_device, m_current_device;

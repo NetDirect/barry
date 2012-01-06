@@ -39,7 +39,7 @@ class Mode;
 class BaseFrame : public wxFrame, public TermCatcher
 {
 private:
-	DECLARE_EVENT_TABLE()
+	DECLARE_EVENT_TABLE()	// sets to protected:
 
 private:
 	std::auto_ptr<wxBitmap> m_background;

@@ -31,6 +31,8 @@
 
 class ConflictDlg : public wxDialog
 {
+	DECLARE_EVENT_TABLE()	// sets to protected:
+
 public:
 	typedef std::tr1::shared_ptr<XmlNodeMap>	map_ptr;
 	typedef std::tr1::shared_ptr<xmlpp::DomParser>	dom_ptr;
@@ -72,8 +74,6 @@ public:
 	};
 
 private:
-	DECLARE_EVENT_TABLE()
-
 	// external data sources
 	const OpenSync::API &m_engine;
 	const std::vector<OpenSync::SyncChange> &m_changes;

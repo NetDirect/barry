@@ -28,7 +28,7 @@
 
 class EvoDefaultDlg : public wxDialog
 {
-	DECLARE_EVENT_TABLE()
+	DECLARE_EVENT_TABLE()	// sets to protected:
 
 protected:
 	void CreateLayout();

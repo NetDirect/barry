@@ -29,7 +29,7 @@
 class SyncMode : public wxEvtHandler, public Mode
 {
 private:
-	DECLARE_EVENT_TABLE()
+	DECLARE_EVENT_TABLE()	// sets to protected:
 
 private:
 	wxWindow *m_parent;

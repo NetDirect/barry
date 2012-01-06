@@ -28,8 +28,9 @@
 
 class MigrateDlg : public wxDialog
 {
-	DECLARE_EVENT_TABLE()
+	DECLARE_EVENT_TABLE()	// sets to protected:
 
+private:
 	// external data sources
 	const Barry::Probe::Results &m_results;
 	int m_current_device_index;

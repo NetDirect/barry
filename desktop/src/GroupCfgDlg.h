@@ -29,13 +29,14 @@
 
 class GroupCfgDlg : public wxDialog
 {
+	DECLARE_EVENT_TABLE()	// sets to protected:
+
+private:
 	typedef OpenSync::Config::Group::plugin_ptr	plugin_ptr;
 	typedef OpenSync::Config::pst_type		pst_type;
 	typedef std::map<std::string, plugin_ptr>	appcfg_map;
 	typedef std::map<OpenSync::API*, appcfg_map>	engapp_map;
 	typedef std::map<OpenSync::API*, pst_type>	engtypes_map;
-
-	DECLARE_EVENT_TABLE()
 
 	// external data sources
 	const DeviceEntry &m_device;

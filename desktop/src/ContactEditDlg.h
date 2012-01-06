@@ -142,7 +142,7 @@ protected:
 
 	wxSizer *bottom_buttons;
 
-	DECLARE_EVENT_TABLE();
+	DECLARE_EVENT_TABLE();	// sets to protected:
 
 public:
 	ContactEditDlg(wxWindow *parent, Barry::Contact &rec, bool editable);
