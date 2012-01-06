@@ -30,9 +30,22 @@
 using namespace std;
 using namespace OpenSync;
 
+DEFINE_EVENT_TYPE(MET_THREAD_FINISHED)
+DEFINE_EVENT_TYPE(MET_CHECK_DEST_PIN)
+DEFINE_EVENT_TYPE(MET_SET_STATUS_MSG)
+
 BEGIN_EVENT_TABLE(MigrateDlg, wxDialog)
 	EVT_BUTTON	(Dialog_Migrate_MigrateNowButton,
 				MigrateDlg::OnMigrateNow)
+	EVT_BUTTON	(Dialog_Migrate_CancelButton,
+				MigrateDlg::OnCancel)
+	EVT_CLOSE	(MigrateDlg::OnCloseWindow)
+	EVT_COMMAND	(wxID_ANY, MET_THREAD_FINISHED,
+				MigrateDlg::OnThreadFinished)
+	EVT_COMMAND	(wxID_ANY, MET_CHECK_DEST_PIN,
+				MigrateDlg::OnCheckDestPin)
+	EVT_COMMAND	(wxID_ANY, MET_SET_STATUS_MSG,
+				MigrateDlg::OnSetStatusMsg)
 END_EVENT_TABLE()
 
 //////////////////////////////////////////////////////////////////////////////
@@ -44,6 +57,20 @@ MigrateDlg::MigrateDlg(wxWindow *parent,
 	: wxDialog(parent, Dialog_GroupCfg, _T("Migrate Device"))
 	, m_results(results)
 	, m_current_device_index(current_device_index)
+	, m_migrate_thread_created(false)
+	, m_migrate_thread(NULL)
+	, m_abort_flag(false)
+	, m_thread_running(false)
+	, m_source_device(0)
+	, m_dest_device(0)
+	, m_topsizer(0)
+	, m_source_combo(0)
+	, m_dest_combo(0)
+	, m_write_mode_combo(0)
+	, m_migrate_button(0)
+	, m_wipe_check(0)
+	, m_status(0)
+	, m_progress(0)
 {
 	// setup the raw GUI
 	CreateLayout();
@@ -133,7 +160,8 @@ void MigrateDlg::Main_AddButtonSizer(wxSizer *sizer)
 		0, wxALIGN_CENTRE, 0);
 	m_migrate_button->SetDefault();
 	buttons->AddSpacer(10);
-	buttons->Add( new wxButton(this, wxID_CANCEL, _T("Cancel")),
+	buttons->Add( new wxButton(this, Dialog_Migrate_CancelButton,
+			_T("Cancel")),
 		0, wxALIGN_CENTRE, 0);
 
 	sizer->Add(buttons, 1, wxALIGN_CENTRE | wxLEFT | wxRIGHT, 10);
@@ -178,9 +206,304 @@ void MigrateDlg::Main_AddDestSizer(wxSizer *sizer)
 	sizer->Add(dest, 0, wxEXPAND, 0);
 }
 
+void MigrateDlg::EnableControls(bool enable)
+{
+	m_source_combo->Enable(enable);
+	m_dest_combo->Enable(enable);
+	m_write_mode_combo->Enable(enable);
+	m_migrate_button->Enable(enable);
+	//m_wipe_check->Enable(enable);
+}
 
+void MigrateDlg::DoSafeClose()
+{
+	// if migrate thread is running, try to close it down first...
+	// do not exit the dialog until the thread is properly stopped!
+	if( m_thread_running ) {
+		m_abort_flag = true;
+
+		m_status->SetLabel(_T("Waiting for thread to close..."));
+
+		if( m_migrate_thread_created ) {
+			void *junk;
+			pthread_join(m_migrate_thread, &junk);
+			m_migrate_thread_created = false;
+		}
+	}
+
+	// all activity is stopped, so close dialog
+	EndModal(wxID_CANCEL);
+}
+
+void MigrateDlg::SendEvent(int event_type)
+{
+	wxCommandEvent event(event_type, wxID_ANY);
+	event.SetEventObject(this);
+	AddPendingEvent(event);
+}
+
+void MigrateDlg::SendStatusEvent(const wxString &msg, int pos, int max)
+{
+	wxCommandEvent event(MET_SET_STATUS_MSG, wxID_ANY);
+	event.SetEventObject(this);
+
+	event.SetString(msg);
+
+	int value = 0;
+	if( pos == -1 )
+		value |= 0xff00;
+	else
+		value |= (pos << 8);
+
+	if( max == -1 )
+		value |= 0xff;
+	else
+		value |= max & 0xff;
+	event.SetInt(value);
+
+	AddPendingEvent(event);
+}
 
 void MigrateDlg::OnMigrateNow(wxCommandEvent &event)
+{
+	// gather info from dialog
+	int source_index = m_source_combo->GetSelection();
+	int dest_index = m_dest_combo->GetSelection();
+	int write_mode_index = m_write_mode_combo->GetSelection();
+
+	// validate options
+	if( source_index == wxNOT_FOUND || dest_index == wxNOT_FOUND ||
+		write_mode_index == wxNOT_FOUND )
+	{
+		wxMessageBox(_T("Please select a source and destination device, as well as the write mode."),
+			_T("Migration Options Needed"), wxOK | wxICON_ERROR);
+		return;
+	}
+
+	// do not migrate from one PIN to the same PIN
+	if( source_index == (dest_index - 1) ) {
+		wxMessageBox(_T("Cannot migrate from and to the same PIN."),
+			_T("Migration Options Error"), wxOK | wxICON_ERROR);
+		return;
+	}
+
+	// set the migration arguments
+	m_source_device = &m_results[source_index];
+	if( dest_index > 0 ) {
+		m_dest_device = &m_results[dest_index-1];
+	}
+	else {
+		m_dest_device = 0; // an invalid dest causes a prompt
+	}
+	switch( write_mode_index )
+	{
+	case 0:
+		m_write_mode = Barry::DeviceParser::ERASE_ALL_WRITE_ALL;
+		break;
+	case 1:
+		m_write_mode = Barry::DeviceParser::INDIVIDUAL_OVERWRITE;
+		break;
+	case 2:
+		m_write_mode = Barry::DeviceParser::ADD_BUT_NO_OVERWRITE;
+		break;
+	case 3:
+		m_write_mode = Barry::DeviceParser::ADD_WITH_NEW_ID;
+		break;
+	default:
+		wxMessageBox(_T("Invalid write mode. This should never happen. Contact the developers."),
+			_T("Internal Logic Error"), wxOK | wxICON_ERROR);
+		return;
+	}
+
+	// disable all buttons and controls except cancel
+	EnableControls(false);
+
+	// turn off the stop flag
+	m_abort_flag = false;
+	m_thread_running = false;
+
+	// fire up migrate thread, and let the thread close the dialog when
+	// done  (can we EndModal() from a thread?)
+	int ret = pthread_create(&m_migrate_thread, NULL,
+			&MigrateDlg::MigrateThread, this);
+	if( ret != 0 ) {
+		// go back to normal
+		EnableControls(true);
+		return;
+	}
+	else {
+		m_migrate_thread_created = true;
+	}
+
+	// thread started... let it finish
+}
+
+void MigrateDlg::OnCancel(wxCommandEvent &event)
+{
+	DoSafeClose();
+}
+
+void MigrateDlg::OnCloseWindow(wxCloseEvent &event)
+{
+	DoSafeClose();
+}
+
+void MigrateDlg::OnThreadFinished(wxCommandEvent &event)
+{
+	if( m_migrate_thread_created ) {
+		m_status->SetLabel(_T("Waiting for thread..."));
+		void *junk;
+		pthread_join(m_migrate_thread, &junk);
+		m_migrate_thread_created = false;
+	}
+
+	if( m_abort_flag ) {
+		// user cancelled in some way, restore GUI
+		EnableControls(true);
+		m_status->SetLabel(_T("Cancelled by user..."));
+	}
+	else {
+		// if we were not aborted, then this is success, and we
+		// can close the original dialog
+		EndModal(wxID_CANCEL);
+	}
+}
+
+void MigrateDlg::OnCheckDestPin(wxCommandEvent &event)
+{
+	if( !m_waiter.get() )
+		return; // no condition available, skip
+	ScopeSignaler done(*m_waiter);
+
+	if( m_dest_device && m_dest_device->m_pin.Valid() )
+		return; // nothing to do
+
+	// no destination pin was available, so user may need to plugin
+	// the new device right now, before continuing
+	int response = wxMessageBox(_T("Please plug in the target device now."),
+		_T("Ready for Writing"), wxOK | wxCANCEL | wxICON_INFORMATION,
+		this);
+	if( response != wxOK ) {
+		// user cancelled
+		m_abort_flag = true;
+		return;
+	}
+
+	{
+		wxBusyCursor wait;
+		m_status->SetLabel(_T("Scanning USB for devices..."));
+
+		// pause for 2 seconds to let any new devices settle down
+		wxGetApp().Yield();
+		wxSleep(2);
+
+		// rescan the USB and try to find the new device
+		Barry::Probe probe;
+		m_new_results = probe.GetResults();
+	}
+
+	// now prompt the user... create a list of PIN display names
+	wxArrayString devices;
+	for( Barry::Probe::Results::const_iterator i = m_new_results.begin();
+				i != m_new_results.end(); ++i )
+	{
+		devices.Add(wxString(i->GetDisplayName().c_str(), wxConvUTF8));
+	}
+
+	m_status->SetLabel(_T("User input..."));
+
+	do {
+
+		// prompt the user with this list
+		int choice = wxGetSingleChoiceIndex(_T("Please select the target device to write to:"),
+			_T("Destination PIN"), devices, this);
+		if( choice == -1 ) {
+			// user cancelled
+			m_abort_flag = true;
+			return;
+		}
+
+		// found the new PIN to use!
+		m_dest_device = &m_new_results[choice];
+
+		// check if user needs to choose again
+		if( m_dest_device->m_pin == m_source_device->m_pin ) {
+			wxMessageBox(_T("Cannot use the same device PIN as migration destination."),
+				_T("Invalid Device Selection"),
+				wxOK | wxICON_ERROR, this);
+		}
+
+	} while( m_dest_device->m_pin == m_source_device->m_pin );
+}
+
+void MigrateDlg::OnSetStatusMsg(wxCommandEvent &event)
+{
+	if( event.GetString().size() ) {
+		m_status->SetLabel(event.GetString());
+	}
+
+	if( (unsigned int)event.GetInt() != 0xffff ) {
+		unsigned int value = (unsigned int) event.GetInt();
+		unsigned int pos = (value & 0xff00) >> 8;
+		unsigned int max = (value & 0xff);
+
+		if( pos != 0xff ) {
+			m_progress->SetValue(pos);
+		}
+
+		if( max != 0xff ) {
+			m_progress->SetRange(max);
+		}
+	}
+}
+
+void* MigrateDlg::MigrateThread(void *arg)
+{
+	MigrateDlg *us = (MigrateDlg*) arg;
+
+	// we are running!
+	us->m_thread_running = true;
+
+	// backup source PIN
+	us->BackupSource();
+
+	// make sure we have a destination PIN
+	if( !us->m_abort_flag )
+		us->CheckDestPin();
+
+	// restore to dest PIN
+	if( !us->m_abort_flag )
+		us->RestoreToDest();
+
+	// invalidate the device selection pointers, since
+	// m_new_results may not always exist
+	us->m_source_device = us->m_dest_device = 0;
+
+	// we are done!
+	us->m_thread_running = false;
+
+	// send event to let main GUI thread we're finished
+	us->SendEvent(MET_THREAD_FINISHED);
+
+	return 0;
+}
+
+// This is called from the thread
+void MigrateDlg::BackupSource()
+{
+	SendStatusEvent(_T("In Backup Source..."), 5, 50);
+}
+
+// This is called from the thread
+void MigrateDlg::CheckDestPin()
+{
+	m_waiter.reset( new EasyCondition );
+	SendEvent(MET_CHECK_DEST_PIN);
+	m_waiter->Wait();
+}
+
+// This is called from the thread
+void MigrateDlg::RestoreToDest()
 {
 }
 

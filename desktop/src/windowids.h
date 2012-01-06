@@ -118,6 +118,7 @@ enum {
 	Dialog_ContactEdit,
 	Dialog_ContactEdit_PhotoButton,
 	Dialog_Migrate_MigrateNowButton,
+	Dialog_Migrate_CancelButton,
 
 	SysMenu_FirstItem,
 
