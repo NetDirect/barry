@@ -31,6 +31,7 @@
 DECLARE_EVENT_TYPE(MET_THREAD_FINISHED, -1)
 DECLARE_EVENT_TYPE(MET_CHECK_DEST_PIN, -1)
 DECLARE_EVENT_TYPE(MET_SET_STATUS_MSG, -1)
+DECLARE_EVENT_TYPE(MET_PROMPT_PASSWORD, -1)
 DECLARE_EVENT_TYPE(MET_ERROR_MSG, -1)
 
 class MigrateDlg : public wxDialog
@@ -53,6 +54,7 @@ private:
 	const Barry::ProbeResult *m_source_device, *m_dest_device;
 	Barry::DeviceParser::WriteMode m_write_mode;
 	EasyCondition m_waiter;
+	wxString m_password;
 
 	// dialog controls
 	wxSizer *m_topsizer;
@@ -88,6 +90,9 @@ public:
 	MigrateDlg(wxWindow *parent, const Barry::Probe::Results &results,
 		int current_device_index = -1);
 
+	void WaitForEvent();
+	const wxString& GetPassword() const { return m_password; }
+
 	// event handlers
 	void OnMigrateNow(wxCommandEvent &event);
 	void OnCancel(wxCommandEvent &event);
@@ -95,6 +100,7 @@ public:
 	void OnThreadFinished(wxCommandEvent &event);
 	void OnCheckDestPin(wxCommandEvent &event);
 	void OnSetStatusMsg(wxCommandEvent &event);
+	void OnPromptPassword(wxCommandEvent &event);
 	void OnErrorMsg(wxCommandEvent &event);
 
 	// migration thread function

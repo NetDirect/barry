@@ -33,6 +33,7 @@ using namespace OpenSync;
 DEFINE_EVENT_TYPE(MET_THREAD_FINISHED)
 DEFINE_EVENT_TYPE(MET_CHECK_DEST_PIN)
 DEFINE_EVENT_TYPE(MET_SET_STATUS_MSG)
+DEFINE_EVENT_TYPE(MET_PROMPT_PASSWORD)
 DEFINE_EVENT_TYPE(MET_ERROR_MSG)
 
 BEGIN_EVENT_TABLE(MigrateDlg, wxDialog)
@@ -47,9 +48,46 @@ BEGIN_EVENT_TABLE(MigrateDlg, wxDialog)
 				MigrateDlg::OnCheckDestPin)
 	EVT_COMMAND	(wxID_ANY, MET_SET_STATUS_MSG,
 				MigrateDlg::OnSetStatusMsg)
+	EVT_COMMAND	(wxID_ANY, MET_PROMPT_PASSWORD,
+				MigrateDlg::OnPromptPassword)
 	EVT_COMMAND	(wxID_ANY, MET_ERROR_MSG,
 				MigrateDlg::OnErrorMsg)
 END_EVENT_TABLE()
+
+
+class EventDesktopConnector : public Barry::DesktopConnector
+{
+	MigrateDlg *m_dlg;
+
+public:
+	EventDesktopConnector(MigrateDlg *dlg, const char *password,
+		const std::string &locale, const Barry::ProbeResult &result)
+		: Barry::DesktopConnector(password, locale, result)
+		, m_dlg(dlg)
+	{
+	}
+
+	virtual bool PasswordPrompt(const Barry::BadPassword &bp,
+					std::string &password_result);
+};
+
+bool EventDesktopConnector::PasswordPrompt(const Barry::BadPassword &bp,
+					std::string &password_result)
+{
+	// ping the parent and wait for finish
+	wxCommandEvent event(MET_PROMPT_PASSWORD, wxID_ANY);
+	event.SetEventObject(m_dlg);
+	event.SetInt(bp.remaining_tries());
+	m_dlg->AddPendingEvent(event);
+	m_dlg->WaitForEvent();
+
+	password_result = m_dlg->GetPassword().utf8_str();
+
+	// assume that a blank password means the user wishes to quit...
+	// wxWidgets doesn't seem to handle this very well?
+	return password_result.size() > 0;
+}
+
 
 //////////////////////////////////////////////////////////////////////////////
 // MigrateDlg class
@@ -77,6 +115,11 @@ MigrateDlg::MigrateDlg(wxWindow *parent,
 {
 	// setup the raw GUI
 	CreateLayout();
+}
+
+void MigrateDlg::WaitForEvent()
+{
+	m_waiter.Wait();
 }
 
 void MigrateDlg::CreateLayout()
@@ -466,6 +509,22 @@ void MigrateDlg::OnSetStatusMsg(wxCommandEvent &event)
 	}
 }
 
+void MigrateDlg::OnPromptPassword(wxCommandEvent &event)
+{
+	ScopeSignaler done(m_waiter);
+
+	// create prompt based on exception data
+	ostringstream oss;
+	oss << "Please enter device password: ("
+	    << event.GetInt()
+	    << " tries remaining)";
+	wxString prompt(oss.str().c_str(), wxConvUTF8);
+
+	// ask user for device password
+	m_password = wxGetPasswordFromUser(prompt,
+		_T("Device Password"), _T(""), this);
+}
+
 void MigrateDlg::OnErrorMsg(wxCommandEvent &event)
 {
 	ScopeSignaler done(m_waiter);
@@ -513,7 +572,34 @@ void* MigrateDlg::MigrateThread(void *arg)
 // This is called from the thread
 void MigrateDlg::BackupSource()
 {
-	SendStatusEvent(_T("In Backup Source..."), 5, 50);
+	// connect to the source device
+	SendStatusEvent(_T("Connecting..."));
+	EventDesktopConnector connect(this, "", "utf-8", *m_source_device);
+	if( !connect.Reconnect(2) ) {
+		// user cancelled
+		m_abort_flag = true;
+		return;
+	}
+
+	// calculate the default backup path location, based on user name
+	// (see backup GUI for code?)
+
+	// fetch DBDB, for list of databases to backup... back them all up
+	// remember to save this DBDB into the class, so it is available
+	// for the restore stage
+
+	// cycle through all databases
+		// status message "Backing up database: XXXXX..."
+		// calculate 1 to 100 percentage, based on number of
+		// databases being backed up, and update status bar too
+
+		// backup this database
+			// on each record (pump cycle?), as often as possible,
+			// check the m_abort_flag, and abort if necessary,
+			// updating the status message
+
+	// close all files, etc.
+	// save backup filename, for restore stage
 }
 
 // This is called from the thread
@@ -526,5 +612,22 @@ void MigrateDlg::CheckDestPin()
 // This is called from the thread
 void MigrateDlg::RestoreToDest()
 {
+	// connect to the dest device
+
+	// fetch DBDB of dest device, for list of databases we can restore
+	// to... compare with the backup DBDB to create a list of similarly
+	// named databases which we can restore....
+
+	// cycle through all databases
+		// status message "Writing database: XXXXX..."
+		// calculate 1 to 100 percentage, based on number of
+		// databases being restored up, and update status bar too
+
+		// restore this database
+			// on each record (pump cycle?), as often as possible,
+			// check the m_abort_flag, and abort if necessary,
+			// updating the status message
+
+	// close all files, etc.
 }
 
