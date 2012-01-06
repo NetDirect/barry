@@ -506,6 +506,10 @@ public:
 
 	Parser& GetParser(Barry::Probe *probe, IConverter &ic)
 	{
+		if( m_mode == DeviceParser::DROP_RECORD ) {
+			cerr << "Warning: the -w switch was not specified: no data will be written to the device." << endl;
+		}
+
 		int i = probe->FindActive(m_pin);
 		if( i == -1 ) {
 			if( m_pin.Valid() )
