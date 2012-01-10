@@ -148,6 +148,16 @@ void Restore::Add(const DBListType &dbList)
 	}
 }
 
+void Restore::Add(const DatabaseDatabase &dbdb)
+{
+	for( DatabaseDatabase::DatabaseArrayType::const_iterator i = dbdb.Databases.begin();
+		i != dbdb.Databases.end();
+		++i )
+	{
+		AddDB(i->Name);
+	}
+}
+
 void Restore::SkipCurrentDB()
 {
 	// skip all records until next DB

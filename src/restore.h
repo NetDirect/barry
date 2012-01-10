@@ -117,8 +117,10 @@ public:
 	void AddDB(const std::string &dbName);
 
 	/// Add all database names in dblist to the read filter
-	/// This function is additive.
 	void Add(const DBListType &dbList);
+
+	/// Add all database names in the DBDB to the read filter
+	void Add(const DatabaseDatabase &dbdb);
 
 	// Skip the current DB, in case of error, or preference
 	void SkipCurrentDB();
