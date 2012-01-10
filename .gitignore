@@ -72,6 +72,7 @@ tools/breset
 tools/brimtrans
 tools/bs11nread
 tools/btardump
+tools/btarcmp
 tools/btool
 tools/btranslate
 tools/bwatch

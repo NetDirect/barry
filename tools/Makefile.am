@@ -41,7 +41,7 @@ if WITH_SDL
 bin_PROGRAMS += bwatch
 endif
 if WITH_BACKUP
-bin_PROGRAMS += btardump
+bin_PROGRAMS += btardump btarcmp
 endif
 if WITH_ALX
 bin_PROGRAMS += balxparse
@@ -165,6 +165,13 @@ btardump_LDADD = ../src/libbarry.la $(USB_LIBRARY_LIBS) \
 if WITH_SYNC
 btardump_LDADD += ../src/libbarrysync.la $(GLIB2_LIBS)
 endif
+endif
+
+if WITH_BACKUP
+btarcmp_SOURCES = btarcmp.cc
+btarcmp_CXXFLAGS = $(AM_CXXFLAGS)
+btarcmp_LDADD = ../src/libbarry.la ../src/libbarrybackup.la \
+			$(USB_LIBRARY_LIBS) $(LTLIBINTL)
 endif
 
 if WITH_ALX
