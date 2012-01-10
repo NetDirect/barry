@@ -162,11 +162,18 @@ void Restore::SkipCurrentDB()
 {
 	// skip all records until next DB
 	try {
-		while( Retrieve(m_record_data) == RS_NEXT ) {
+		Restore::RetrievalState state;
+		while( (state = Retrieve(m_record_data)) == RS_NEXT ) {
 			std::cerr << "Skipping: "
 				<< m_current_dbname << "/"
 				<< m_tar_id_text << std::endl;
 			m_tar_record_state = RS_EMPTY;
+		}
+
+		if( state == RS_DBEND ) {
+			// process the end of database, so that user is free
+			// to call GetNextMeta() or Retrieve() or BuildRecord()
+			m_tar_record_state = RS_NEXT;
 		}
 	}
 	catch( reuse::TarFile::TarError & ) {
