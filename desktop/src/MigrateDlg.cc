@@ -763,8 +763,8 @@ void MigrateDlg::RestoreToDest()
 			}
 		}
 	}
-	catch( Barry::ClearError &e ) {
-		cerr << "Unable to clear database '" << meta.GetDBName() << "'"
+	catch( Barry::ReturnCodeError &e ) {
+		cerr << "Unable to clear or write to database '" << meta.GetDBName() << "'"
 			<< ": " << e.what() << endl;
 		cerr << "Continuing to process remaining records..." << endl;
 

@@ -231,7 +231,7 @@ void Desktop::AddRecord(unsigned int dbId, Builder &build)
 			oss << "Desktop: device responded with error code (command: "
 			    << packet.Command() << ", code: "
 			    << packet.ReturnCode() << ")";
-			throw Error(oss.str());
+			throw ReturnCodeError(oss.str(), packet.Command(), packet.ReturnCode());
 		}
 	}
 }
@@ -320,7 +320,7 @@ void Desktop::SetRecord(unsigned int dbId, unsigned int stateTableIndex,
 		oss << "Desktop: device responded with error code (command: "
 		    << packet.Command() << ", code: "
 		    << packet.ReturnCode() << ")";
-		throw Error(oss.str());
+		throw ReturnCodeError(oss.str(), packet.Command(), packet.ReturnCode());
 	}
 }
 
@@ -413,7 +413,7 @@ void Desktop::ClearDatabase(unsigned int dbId)
 		oss << "Desktop: could not clear database: (command: "
 		    << "0x" << std::hex << packet.Command() << ", code: "
 		    << "0x" << std::hex << packet.ReturnCode() << ")";
-		throw ClearError(oss.str(), packet.Command(), packet.ReturnCode());
+		throw ReturnCodeError(oss.str(), packet.Command(), packet.ReturnCode());
 	}
 
 	// check response to clear command was successful
@@ -458,7 +458,7 @@ void Desktop::SaveDatabase(unsigned int dbId, Builder &builder)
 			oss << "Desktop: device responded with error code (command: "
 			    << packet.Command() << ", code: "
 			    << packet.ReturnCode() << ")";
-			throw Error(oss.str());
+			throw ReturnCodeError(oss.str(), packet.Command(), packet.ReturnCode());
 		}
 	}
 }
