@@ -24,6 +24,7 @@
 
 #include <wx/wx.h>
 #include <wx/process.h>
+#include <time.h>
 
 class ExecHelper;
 
@@ -139,6 +140,7 @@ protected:
 	AppCallback *m_app_callback;
 	int m_app_pid;
 	int m_app_status;
+	time_t m_started;
 
 protected:
 	// helper functions
@@ -150,6 +152,8 @@ public:
 	/// specified so that the compiler helps prevent forgetfulness.
 	ExecHelper(TermCatcher *catcher);
 	virtual ~ExecHelper();
+
+	time_t GetStartTime() const { return m_started; }
 
 	/// Runs the Application, if not already running.. parent may
 	/// be NULL if you don't want this class to pop up error messages

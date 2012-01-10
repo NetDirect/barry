@@ -43,6 +43,7 @@ ExecHelper::ExecHelper(TermCatcher *catcher)
 	, m_app_callback(0)
 	, m_app_pid(-1)
 	, m_app_status(-1)
+	, m_started(0)
 {
 	// link ourselves to the catcher... the catcher will unlink if necessary
 	if( m_catcher )
@@ -105,6 +106,8 @@ int ExecHelper::Execute(bool use_wx,
 		}
 	};
 
+	// about to fork, log the start time
+	m_started = time(NULL);
 
 	// create child
 	int pid = fork();
