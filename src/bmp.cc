@@ -36,7 +36,7 @@ namespace Barry {
 /// You can use this as an offset into the bitmap produced by
 /// ScreenshotToBitmap to get just the 4-byte RGB data.
 ///
-BXEXPORT size_t GetBitmapHeadersSize()
+size_t GetBitmapHeadersSize()
 {
 	return sizeof(bmp_file_header_t) +
 		sizeof(bmp_info_header_t);
@@ -49,7 +49,7 @@ BXEXPORT size_t GetBitmapHeadersSize()
 /// screenshot of the given dimensions into a bitmap,
 /// using the ScreenshotToBitmap() function.
 ///
-BXEXPORT size_t GetTotalBitmapSize(const JLScreenInfo &info)
+size_t GetTotalBitmapSize(const JLScreenInfo &info)
 {
 	return sizeof(bmp_file_header_t) +
 		sizeof(bmp_info_header_t) +
@@ -66,7 +66,7 @@ BXEXPORT size_t GetTotalBitmapSize(const JLScreenInfo &info)
 /// at offset.  The depth variable can be 24 or 32.  If invert is
 /// true, the result will be inverted, just like a BMP file; otherwise not.
 ///
-BXEXPORT void ScreenshotToRGB(const JLScreenInfo &info,
+void ScreenshotToRGB(const JLScreenInfo &info,
 			     const Data &screenshot,
 			     Data &buffer,
 			     size_t offset,
@@ -180,7 +180,7 @@ BXEXPORT void ScreenshotToRGB(const JLScreenInfo &info,
 // This function assumes that the btoh() converter functions match
 // the needs of the bitmap file format.  Namely: little endian.
 //
-BXEXPORT void ScreenshotToBitmap(const JLScreenInfo &info,
+void ScreenshotToBitmap(const JLScreenInfo &info,
 				 const Data &screenshot,
 				 Data &bitmap)
 {

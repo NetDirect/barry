@@ -240,7 +240,7 @@ time_t Message2Time(uint16_t r_date, uint16_t r_time)
 /// Returns the spec pointer, to make it easy to use with
 /// pthread_cond_timedwait()
 ///
-BXEXPORT struct timespec* ThreadTimeout(int timeout_ms, struct timespec *spec)
+struct timespec* ThreadTimeout(int timeout_ms, struct timespec *spec)
 {
 #ifndef WIN32
 	struct timeval now;
