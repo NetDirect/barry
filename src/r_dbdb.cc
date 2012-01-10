@@ -144,11 +144,22 @@ void DatabaseDatabase::SortByName()
 	std::sort(Databases.begin(), Databases.end(), NameSort);
 }
 
+unsigned int DatabaseDatabase::GetTotalRecordCount() const
+{
+	unsigned int sum = 0;
+
+	DatabaseArrayType::const_iterator b = Databases.begin();
+	for( ; b != Databases.end(); ++b ) {
+		sum += b->RecordCount;
+	}
+	return sum;
+}
+
 bool DatabaseDatabase::GetDBNumber(const std::string &name,
 				   unsigned int &number) const
 {
 	DatabaseArrayType::const_iterator b = Databases.begin();
-	for( ; b != Databases.end(); b++ )
+	for( ; b != Databases.end(); ++b )
 		if( b->Name == name ) {
 			number = b->Number;
 			return true;
@@ -160,7 +171,7 @@ bool DatabaseDatabase::GetDBName(unsigned int number,
 				 std::string &name) const
 {
 	DatabaseArrayType::const_iterator b = Databases.begin();
-	for( ; b != Databases.end(); b++ )
+	for( ; b != Databases.end(); ++b )
 		if( b->Number == number ) {
 			name = b->Name;
 			return true;

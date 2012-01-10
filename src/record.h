@@ -173,6 +173,7 @@ public:
 	void Clear();
 
 	void SortByName();
+	unsigned int GetTotalRecordCount() const;
 
 	// returns true on success, and fills target
 	bool GetDBNumber(const std::string &name, unsigned int &number) const;
