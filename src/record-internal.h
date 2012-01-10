@@ -54,11 +54,15 @@ const unsigned char*  ParseCommonFields(RecordT &rec,
 	return b;
 }
 
+// Does not exist, so error will be caught by linker instead of at runtime.
+void ConvertHtoB_Not_Implemented();
+
 // Use templates here to guarantee types are converted in the strictest manner.
 template <class SizeT>
 inline SizeT ConvertHtoB(SizeT s)
 {
-	throw Error("Not implemented.");
+	ConvertHtoB_Not_Implemented();
+//	throw Error("Not implemented.");
 }
 
 // specializations for specific sizes
