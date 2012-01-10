@@ -413,7 +413,7 @@ void Desktop::ClearDatabase(unsigned int dbId)
 		oss << "Desktop: could not clear database: (command: "
 		    << "0x" << std::hex << packet.Command() << ", code: "
 		    << "0x" << std::hex << packet.ReturnCode() << ")";
-		throw Error(oss.str());
+		throw ClearError(oss.str(), packet.Command(), packet.ReturnCode());
 	}
 
 	// check response to clear command was successful

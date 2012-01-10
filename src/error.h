@@ -265,6 +265,31 @@ public:
 	RestoreError(const std::string &str) : Error(str) {}
 };
 
+//
+// ClearError
+//
+/// Thrown by the Mode::Desktop class when ClearDatabase() fails.
+/// The packet command and return code are passed along, for examination
+/// by application code.  Note that return code 0x02 usually means
+/// you're trying to clear a read-only database, like Time Zones.
+///
+class BXEXPORT ClearError : public Barry::Error
+{
+	unsigned int m_command, m_return_code;
+
+public:
+	ClearError(const std::string &str, unsigned int command,
+			unsigned int return_code)
+		: Error(str)
+		, m_command(command)
+		, m_return_code(return_code)
+	{
+	}
+
+	unsigned int command() const { return m_command; }
+	unsigned int return_code() const { return m_return_code; }
+};
+
 /// @}
 
 } // namespace Barry
