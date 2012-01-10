@@ -380,6 +380,10 @@ void BackupWindow::treeview_update()
 				op = _("Operation on");
 
 			StatusbarSet(op + thread->GetFullname() + _(" finished!"));
+
+			// thread really finished, so force percentage to 100
+			(*i)[m_columns.m_percentage] = 100;
+
 			if( (thread->GetThreadState() & THREAD_STATE_BACKUP) &&
 			     finished != total )
 			{
