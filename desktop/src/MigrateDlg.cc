@@ -610,8 +610,11 @@ void MigrateDlg::BackupSource()
 
 	// calculate the default backup path location, based on user name
 	// (see backup GUI for code?)
-	m_backup_tarfile = "/tmp/mybackup.tar.gz";	// FIXME
-		/* FIXME!! */ unlink("/tmp/mybackup.tar.gz");
+	Barry::ConfigFile cfg(m_source_device->m_pin);
+	Barry::ConfigFile::CheckPath(cfg.GetPath());
+	m_backup_tarfile = cfg.GetPath() + "/" +
+		Barry::MakeBackupFilename(m_source_device->m_pin, "migrate");
+
 	// and create tarball output parser
 	Barry::Backup parser(m_backup_tarfile);
 
