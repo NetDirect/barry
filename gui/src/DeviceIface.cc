@@ -162,33 +162,7 @@ void DeviceInterface::RestoreThread()
 
 std::string DeviceInterface::MakeFilename(const std::string &label) const
 {
-	time_t t = time(NULL);
-	struct tm *lt = localtime(&t);
-
-	std::string fileLabel = label;
-	if( fileLabel.size() ) {
-		// prepend a hyphen
-		fileLabel.insert(fileLabel.begin(), '-');
-
-		// change all spaces in label to underscores
-		for( size_t i = 0; i < fileLabel.size(); i++ ) {
-			if( fileLabel[i] == ' ' )
-				fileLabel[i] = '_';
-		}
-	}
-
-	std::ostringstream tarfilename;
-	tarfilename << m_dev->GetPIN().Str() << "-"
-		<< std::setw(4) << std::setfill('0') << (lt->tm_year + 1900)
-		<< std::setw(2) << std::setfill('0') << (lt->tm_mon + 1)
-		<< std::setw(2) << std::setfill('0') << lt->tm_mday
-		<< "-"
-		<< std::setw(2) << std::setfill('0') << lt->tm_hour
-		<< std::setw(2) << std::setfill('0') << lt->tm_min
-		<< std::setw(2) << std::setfill('0') << lt->tm_sec
-		<< fileLabel
-		<< ".tar.gz";
-	return tarfilename.str();
+	return Barry::MakeBackupFilename(m_dev->GetPIN(), label);
 }
 
 /// Splits a tarpath of the form "DBName/DBID" into separate string values.
