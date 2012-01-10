@@ -191,7 +191,9 @@ void Thread::on_thread_progress()
 void Thread::on_thread_error()
 {
 	m_error = true;
-	m_thread_state |= THREAD_STATE_IDLE;
+	// Do not change state, since backup/restores continue processing
+	// on error... wait for on_thread_done() to change state.
+	//m_thread_state |= THREAD_STATE_IDLE;
 
 	Gtk::MessageDialog msg(m_status + _(" error: ") + m_interface.get_last_thread_error());
 	msg.run();
