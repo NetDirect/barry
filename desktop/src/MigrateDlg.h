@@ -56,6 +56,10 @@ private:
 	EasyCondition m_waiter;
 	wxString m_password;
 
+	// backup data, used by the thread in BackupSource()
+	std::string m_backup_tarfile;
+	Barry::DatabaseDatabase m_source_dbdb;
+
 	// dialog controls
 	wxSizer *m_topsizer;
 	wxChoice *m_source_combo, *m_dest_combo, *m_write_mode_combo;

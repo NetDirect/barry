@@ -26,6 +26,8 @@
 #include "barrydesktop.h"
 #include <string>
 #include <wx/statline.h>
+#include <barry/barrybackup.h>
+#include <iostream>
 
 using namespace std;
 using namespace OpenSync;
@@ -569,6 +571,21 @@ void* MigrateDlg::MigrateThread(void *arg)
 	return 0;
 }
 
+class PeekParser : public Barry::Parser
+{
+	std::string m_dbname;
+
+public:
+	virtual void ParseRecord(const Barry::DBData &data,
+				const Barry::IConverter *ic)
+	{
+		m_dbname = data.GetDBName();
+	}
+
+	const std::string& GetDBName() const { return m_dbname; }
+};
+
+
 // This is called from the thread
 void MigrateDlg::BackupSource()
 {
@@ -581,25 +598,80 @@ void MigrateDlg::BackupSource()
 		return;
 	}
 
-	// calculate the default backup path location, based on user name
-	// (see backup GUI for code?)
-
 	// fetch DBDB, for list of databases to backup... back them all up
 	// remember to save this DBDB into the class, so it is available
 	// for the restore stage
+	m_source_dbdb = connect.GetDesktop().GetDBDB();
+	unsigned int total = m_source_dbdb.GetTotalRecordCount();
+
+	// create DeviceBuilder for fetching all
+	Barry::DeviceBuilder builder(connect.GetDesktop());
+	builder.Add(m_source_dbdb);
+
+	// calculate the default backup path location, based on user name
+	// (see backup GUI for code?)
+	m_backup_tarfile = "/tmp/mybackup.tar.gz";	// FIXME
+		/* FIXME!! */ unlink("/tmp/mybackup.tar.gz");
+	// and create tarball output parser
+	Barry::Backup parser(m_backup_tarfile);
+
+	// create the pipe
+	Barry::Pipe pipe(builder);
+
+	PeekParser peeker;
+
+	// create tee parser, so we can see what's being written
+	Barry::TeeParser tee;
+	tee.Add(peeker);
+	tee.Add(parser);
+
+	// setup status bar
+	unsigned int count = 0;
+	SendStatusEvent(_T(""), 0, 100);
 
 	// cycle through all databases
-		// status message "Backing up database: XXXXX..."
+	while( !builder.EndOfFile() ) {
+		if( !pipe.PumpEntry(tee) )
+			continue;
+
+		count++;
+
+		// ok, first entry has been pumped, so we can use
+		// peeker to create the status message, and only once
+		ostringstream oss;
+		oss << "Backing up database: " << peeker.GetDBName() << "...";
+
 		// calculate 1 to 100 percentage, based on number of
 		// databases being backed up, and update status bar too
+		int percent = count / (float)total * 100.0;
 
-		// backup this database
+		// send status event once
+		SendStatusEvent(wxString(oss.str().c_str(),wxConvUTF8), percent);
+
+		// backup the rest of the database, but don't update status
+		// for each record
+		int block = 0;
+		while( pipe.PumpEntry(tee) ) {
+			count++;
+			block++;
+			if( block >= 25 ) {
+				int percent = count / (float)total * 100.0;
+				SendStatusEvent(_T(""), percent);
+				block = 0;
+			}
+
 			// on each record (pump cycle?), as often as possible,
 			// check the m_abort_flag, and abort if necessary,
 			// updating the status message
+			if( m_abort_flag ) {
+				SendStatusEvent(_T("Backup aborted by user..."));
+				return;
+			}
+		}
+	}
 
 	// close all files, etc.
-	// save backup filename, for restore stage
+	parser.Close();
 }
 
 // This is called from the thread
@@ -613,21 +685,88 @@ void MigrateDlg::CheckDestPin()
 void MigrateDlg::RestoreToDest()
 {
 	// connect to the dest device
+	SendStatusEvent(_T("Connecting to target..."));
+	EventDesktopConnector connect(this, "", "utf-8", *m_dest_device);
+	if( !connect.Reconnect(2) ) {
+		// user cancelled
+		m_abort_flag = true;
+		return;
+	}
 
 	// fetch DBDB of dest device, for list of databases we can restore
 	// to... compare with the backup DBDB to create a list of similarly
 	// named databases which we can restore....
+	Barry::DatabaseDatabase dest_dbdb = connect.GetDesktop().GetDBDB();
+
+	// create the restore builder object, to read from tarball
+	Barry::Restore builder(m_backup_tarfile);
+
+	// add all database names from the _dest_ DBDB to the Restore
+	// filter... this way, only databases that exist on the new
+	// device will get restored
+	builder.Add(dest_dbdb);
+	unsigned int total = builder.GetRecordTotal();// counts filtered records
+
+	// create device parser, to write to device
+	Barry::DeviceParser parser(connect.GetDesktop(), m_write_mode);
+
+	// create the pipe
+	Barry::Pipe pipe(builder);
+
+	// setup status bar
+	unsigned int count = 0;
+	SendStatusEvent(_T(""), 0, 100);
 
 	// cycle through all databases
-		// status message "Writing database: XXXXX..."
-		// calculate 1 to 100 percentage, based on number of
-		// databases being restored up, and update status bar too
+	Barry::DBData meta;		// record meta data of next tar record
+	while( !builder.EndOfFile() ) try {
+		if( !builder.GetNextMeta(meta) )
+			continue;
 
-		// restore this database
+		// ok, first entry has been pumped, so we can use
+		// peeker to create the status message, and only once
+		ostringstream oss;
+		oss << "Writing database: " << meta.GetDBName() << "...";
+
+		// for debugging purposes in the field, display the names
+		// of the databases we restore
+		cerr << oss.str() << endl;
+
+		// calculate 1 to 100 percentage, based on number of
+		// databases being backed up, and update status bar too
+		int percent = count / (float)total * 100.0;
+
+		// send status event once
+		SendStatusEvent(wxString(oss.str().c_str(),wxConvUTF8), percent);
+
+		// restore  the rest of the database, but don't update status
+		// for each record
+		int block = 0;
+		while( pipe.PumpEntry(parser) ) {
+			count++;
+			block++;
+			if( block >= 25 ) {
+				int percent = count / (float)total * 100.0;
+				SendStatusEvent(_T(""), percent);
+				block = 0;
+			}
+
 			// on each record (pump cycle?), as often as possible,
 			// check the m_abort_flag, and abort if necessary,
 			// updating the status message
+			if( m_abort_flag ) {
+				SendStatusEvent(_T("Restore aborted by user..."));
+				return;
+			}
+		}
+	}
+	catch( Barry::ClearError &e ) {
+		cerr << "Unable to clear database '" << meta.GetDBName() << "'"
+			<< ": " << e.what() << endl;
+		cerr << "Continuing to process remaining records..." << endl;
 
-	// close all files, etc.
+		// skip the problematic database, and keep on trying
+		builder.SkipCurrentDB();
+	}
 }
 
