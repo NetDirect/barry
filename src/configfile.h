@@ -29,6 +29,11 @@
 
 namespace Barry {
 
+/// Creates a tar.gz filename using PIN + date + time + label.
+/// Does not include any path, just returns a new filename.
+BXEXPORT std::string MakeBackupFilename(const Barry::Pin &pin,
+					const std::string &label);
+
 class BXEXPORT ConfigFile
 {
 public:

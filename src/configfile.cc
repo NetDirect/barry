@@ -28,10 +28,52 @@
 #include <unistd.h>
 #include <fstream>
 #include <sstream>
+#include <iostream>
+#include <iomanip>
 #include <sys/types.h>
 #include <sys/stat.h>
 
 namespace Barry {
+
+/// Creates a tar.gz filename using PIN + date + time + label.
+/// Does not include any path, just returns a new filename.
+std::string MakeBackupFilename(const Barry::Pin &pin,
+				const std::string &label)
+{
+	using namespace std;
+
+	time_t t = time(NULL);
+	struct tm *lt = localtime(&t);
+
+	std::string fileLabel = label;
+	if( fileLabel.size() ) {
+		// prepend a hyphen
+		fileLabel.insert(fileLabel.begin(), '-');
+
+		// translate all spaces and slashes
+		for( size_t i = 0; i < fileLabel.size(); i++ ) {
+			if( fileLabel[i] == ' ' )
+				fileLabel[i] = '_';
+			else if( fileLabel[i] == '/' )
+				fileLabel[i] = '-';
+			else if( fileLabel[i] == '\\' )
+				fileLabel[i] = '-';
+		}
+	}
+
+	ostringstream tarfilename;
+	tarfilename << pin.Str() << "-"
+		<< setw(4) << setfill('0') << (lt->tm_year + 1900)
+		<< setw(2) << setfill('0') << (lt->tm_mon + 1)
+		<< setw(2) << setfill('0') << lt->tm_mday
+		<< "-"
+		<< setw(2) << setfill('0') << lt->tm_hour
+		<< setw(2) << setfill('0') << lt->tm_min
+		<< setw(2) << setfill('0') << lt->tm_sec
+		<< fileLabel
+		<< ".tar.gz";
+	return tarfilename.str();
+}
 
 bool ConfigFile::DBListType::IsSelected(const std::string &dbname) const
 {
