@@ -153,7 +153,7 @@ endif
 
 if WITH_BACKUP
 btardump_SOURCES = btardump.cc
-btardump_CXXFLAGS = $(AM_CXXFLAGS) -D__BARRY_BACKUP_MODE__
+btardump_CXXFLAGS = $(AM_CXXFLAGS)
 #if WITH_BOOST
 #btardump_CXXFLAGS += -D__BARRY_BOOST_MODE__ -D_REENTRANT @BOOST_INC_PATH@
 #endif
