@@ -177,6 +177,7 @@ public:
 
 	const std::string& get_last_error() const { return m_last_error; }
 	bool IsConfigLoaded() const { return m_loaded; }
+	const std::string& GetPath() const { return m_path; }
 
 	//
 	// Global Configuration data access
