@@ -119,7 +119,7 @@ LOCAL_CFLAGS += -D__BARRY_LIBRARY_BUILD__
 LOCAL_EXPORT_C_INCLUDES := \
   $(LOCAL_PATH)/barry
 
-LOCAL_CPP_EXTENSION := cc
+LOCAL_CPP_EXTENSION := .cc
 LOCAL_SHARED_LIBRARIES += libusb1.0 libiconv
 LOCAL_LDLIBS := -lz
 
@@ -143,7 +143,7 @@ include $(CLEAR_VARS)
 LOCAL_SRC_FILES := barry_root/tools/bcharge_libusb_1_0.cc
 
 LOCAL_CFLAGS += -DLOCALEDIR=\"\"
-LOCAL_CPP_EXTENSION := cc
+LOCAL_CPP_EXTENSION := .cc
 LOCAL_C_INCLUDES += \
   $(LOCAL_PATH)/barry
 
@@ -161,7 +161,7 @@ include $(CLEAR_VARS)
 LOCAL_SRC_FILES := barry_root/tools/breset_libusb_1_0.cc
 
 LOCAL_CFLAGS += -DLOCALEDIR=\"\"
-LOCAL_CPP_EXTENSION := cc
+LOCAL_CPP_EXTENSION := .cc
 LOCAL_C_INCLUDES += \
   $(LOCAL_PATH)/barry 
 
