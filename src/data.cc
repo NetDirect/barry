@@ -513,6 +513,19 @@ DBData::DBData()
 {
 }
 
+/// Copy constructor - always creates an internal Data object, and
+/// uses Data object's copy constructor to make it.
+/// Copies all meta data as well.
+DBData::DBData(const DBData &other)
+	: m_version(other.m_version)
+	, m_dbName(other.m_dbName)
+	, m_recType(other.m_recType)
+	, m_uniqueId(other.m_uniqueId)
+	, m_offset(other.m_offset)
+	, m_localData(new Data(other.m_data))
+	, m_data(*m_localData)
+{
+}
 
 /// Constructs a local Data object that points to external memory
 DBData::DBData(const void *ValidData, size_t size)

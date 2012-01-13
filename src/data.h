@@ -194,6 +194,13 @@ public:
 	/// Default constructor, constructs an empty local Data object
 	DBData();
 
+	/// Copy constructor - always creates an internal Data object, and
+	/// uses Data object's copy constructor to make it.
+	/// Copies all meta data as well.
+	/// If you want to optimize the copy, use one of the constructors
+	/// below.
+	DBData(const DBData &other);
+
 	/// Constructs a local Data object that points to external memory
 	DBData(const void *ValidData, size_t size);
 	DBData(RecordFormatVersion ver, const std::string &dbName,
