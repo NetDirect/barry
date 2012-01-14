@@ -133,6 +133,8 @@ public:
 
 private:
 	bool m_FirstNameSeen;
+
+protected:
 	static std::vector<FieldHandle<Contact> > m_FieldHandles;
 
 protected:

@@ -262,6 +262,16 @@ void HandheldAgent::Clear()
 	Unknowns.clear();
 }
 
+std::vector<FieldHandle<HandheldAgent> > HandheldAgent::m_FieldHandles;
+
+void HandheldAgent::FillHandles()
+{
+	// start fresh
+	m_FieldHandles.clear();
+
+	// FIXME
+}
+
 std::string HandheldAgent::GetDescription() const
 {
 	ostringstream oss;

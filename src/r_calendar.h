@@ -113,11 +113,16 @@ public:
 	UnknownsType Unknowns;
 
 protected:
+	static std::vector<FieldHandle<Calendar> > m_FieldHandles;
+
+protected:
 	static FreeBusyFlagType FreeBusyFlagProto2Rec(uint8_t f);
 	static uint8_t FreeBusyFlagRec2Proto(FreeBusyFlagType f);
 
 	static ClassFlagType ClassFlagProto2Rec(uint8_t f);
 	static uint8_t ClassFlagRec2Proto(ClassFlagType f);
+
+	static void FillHandles();
 
 	virtual void DumpSpecialFields(std::ostream &os) const;
 
@@ -149,6 +154,15 @@ public:
 	// database name
 	static const char * GetDBName() { return "Calendar"; }
 	static uint8_t GetDefaultRecType() { return 5; }	// or 0?
+
+	// Generic Field Handle support
+	static const std::vector<FieldHandle<Calendar> >& GetFieldHandles()
+	{
+		if( !m_FieldHandles.size() )
+			FillHandles();
+		return m_FieldHandles;
+	}
+	static void ClearFieldHandles() { m_FieldHandles.clear(); }
 };
 
 BXEXPORT inline std::ostream& operator<<(std::ostream &os, const Calendar &msg) {
@@ -159,11 +173,15 @@ BXEXPORT inline std::ostream& operator<<(std::ostream &os, const Calendar &msg) 
 
 class BXEXPORT CalendarAll : public Calendar
 {
-protected:
-	virtual void DumpSpecialFields(std::ostream &os) const;
-
 public:
 	std::string MailAccount;
+
+private:
+	static std::vector<FieldHandle<CalendarAll> > m_FieldHandles;
+
+protected:
+	virtual void DumpSpecialFields(std::ostream &os) const;
+	static void FillHandles();
 
 public:
 	// Parser / Builder API (see parser.h / builder.h)
@@ -174,6 +192,15 @@ public:
 public:
 	// database name
 	static const char * GetDBName() { return "Calendar - All"; }
+
+	// Generic Field Handle support
+	static const std::vector<FieldHandle<CalendarAll> >& GetFieldHandles()
+	{
+		if( !m_FieldHandles.size() )
+			FillHandles();
+		return m_FieldHandles;
+	}
+	static void ClearFieldHandles() { m_FieldHandles.clear(); }
 };
 
 BXEXPORT inline std::ostream& operator<<(std::ostream &os, const CalendarAll &msg) {

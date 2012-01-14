@@ -256,6 +256,16 @@ void Sms::Clear()
 	Unknowns.clear();
 }
 
+std::vector<FieldHandle<Sms> > Sms::m_FieldHandles;
+
+void Sms::FillHandles()
+{
+	// start fresh
+	m_FieldHandles.clear();
+
+	// FIXME
+}
+
 std::string Sms::GetDescription() const
 {
 	if( Addresses.size() )

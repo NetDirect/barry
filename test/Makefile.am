@@ -12,7 +12,7 @@ DEFS = -DLOCALEDIR=\"$(localedir)\" @DEFS@
 
 noinst_HEADERS = libtest.h
 
-noinst_PROGRAMS = libtest
+noinst_PROGRAMS = libtest fhbuild
 
 libtest_SOURCES = \
 	date.cc \
@@ -35,4 +35,8 @@ if WITH_BACKUP
 libtest_LDADD += ../src/libbarrybackup.la
 libtest_CXXFLAGS += -D__BARRY_BACKUP_MODE__
 endif
+
+fhbuild_SOURCES = fhbuild.cc
+fhbuild_LDADD = ../src/libbarry.la $(LTLIBINTL) $(LTLIBICONV)
+fhbuild_CXXFLAGS = $(AM_CXXFLAGS)
 

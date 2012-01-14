@@ -314,6 +314,15 @@ void MessageBase::Clear()
 	Unknowns.clear();
 }
 
+template <class RecordT>
+void DoFillHandles(std::vector<FieldHandle<RecordT> > &handles)
+{
+	// start fresh
+	handles.clear();
+
+	// FIXME
+}
+
 std::string MessageBase::GetDescription() const
 {
 	// FIXME - ponder a better description...
@@ -406,6 +415,52 @@ bool MessageBase::operator<(const MessageBase &other) const
 		return date < odate;
 
 	return Subject < other.Subject;
+}
+
+} // namespace Barry
+
+
+
+
+
+//////////////////////////////////////////////////////////////////////////////
+// Generic Field Handle support
+
+#include "r_message.h"
+#include "r_pin_message.h"
+#include "r_saved_message.h"
+
+
+namespace Barry {
+
+//////////////////////////////////////////////////////////////////////////////
+// Message class - statics
+
+std::vector<FieldHandle<Message> > Message::m_FieldHandles;
+
+void Message::FillHandles()
+{
+	DoFillHandles(m_FieldHandles);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// PINMessage class - statics
+
+std::vector<FieldHandle<PINMessage> > PINMessage::m_FieldHandles;
+
+void PINMessage::FillHandles()
+{
+	DoFillHandles(m_FieldHandles);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// SavedMessage class - statics
+
+std::vector<FieldHandle<SavedMessage> > SavedMessage::m_FieldHandles;
+
+void SavedMessage::FillHandles()
+{
+	DoFillHandles(m_FieldHandles);
 }
 
 } // namespace Barry

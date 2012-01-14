@@ -66,8 +66,12 @@ public:
 	UnknownsType Unknowns;
 
 protected:
+	static std::vector<FieldHandle<Folder> > m_FieldHandles;
+
+protected:
 	static FolderType TypeProto2Rec(uint8_t t);
 	static uint8_t TypeRec2Proto(FolderType t);
+	static void FillHandles();
 
 public:
 	Folder();
@@ -94,6 +98,14 @@ public:
 	static const char * GetDBName() { return "Folders"; }
 	static uint8_t GetDefaultRecType() { return 0; }
 
+	// Generic Field Handle support
+	static const std::vector<FieldHandle<Folder> >& GetFieldHandles()
+	{
+		if( !m_FieldHandles.size() )
+			FillHandles();
+		return m_FieldHandles;
+	}
+	static void ClearFieldHandles() { m_FieldHandles.clear(); }
 };
 
 BXEXPORT inline std::ostream& operator<<(std::ostream &os, const Folder &msg) {

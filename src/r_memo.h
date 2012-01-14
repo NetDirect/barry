@@ -48,6 +48,12 @@ public:
 
 	UnknownsType Unknowns;
 
+protected:
+	static std::vector<FieldHandle<Memo> > m_FieldHandles;
+
+protected:
+	static void FillHandles();
+
 public:
 	const unsigned char* ParseField(const unsigned char *begin,
 		const unsigned char *end, const IConverter *ic = 0);
@@ -75,6 +81,15 @@ public:
 	// database name
 	static const char * GetDBName() { return "Memos"; }
 	static uint8_t GetDefaultRecType() { return 0; }    // or 0?
+
+	// Generic Field Handle support
+	static const std::vector<FieldHandle<Memo> >& GetFieldHandles()
+	{
+		if( !m_FieldHandles.size() )
+			FillHandles();
+		return m_FieldHandles;
+	}
+	static void ClearFieldHandles() { m_FieldHandles.clear(); }
 };
 
 BXEXPORT inline std::ostream& operator<<(std::ostream &os, const Memo &msg) {

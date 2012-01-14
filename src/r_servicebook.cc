@@ -420,6 +420,16 @@ void ServiceBook::Clear()
 	Config.Clear();
 }
 
+std::vector<FieldHandle<ServiceBook> > ServiceBook::m_FieldHandles;
+
+void ServiceBook::FillHandles()
+{
+	// start fresh
+	m_FieldHandles.clear();
+
+	// FIXME
+}
+
 std::string ServiceBook::GetDescription() const
 {
 	return Name;

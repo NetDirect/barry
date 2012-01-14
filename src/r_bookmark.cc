@@ -380,6 +380,16 @@ void Bookmark::Clear()
 	Unknowns.clear();
 }
 
+std::vector<FieldHandle<Bookmark> > Bookmark::m_FieldHandles;
+
+void Bookmark::FillHandles()
+{
+	// start fresh
+	m_FieldHandles.clear();
+
+	// FIXME
+}
+
 std::string Bookmark::GetDescription() const
 {
 	return Name;

@@ -192,6 +192,16 @@ void Timezone::Clear()
 	Unknowns.clear();
 }
 
+std::vector<FieldHandle<Timezone> > Timezone::m_FieldHandles;
+
+void Timezone::FillHandles()
+{
+	// start fresh
+	m_FieldHandles.clear();
+
+	// FIXME
+}
+
 std::string Timezone::GetDescription() const
 {
 	ostringstream oss;

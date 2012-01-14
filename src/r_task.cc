@@ -346,6 +346,16 @@ void Task::Clear()
 	Unknowns.clear();
 }
 
+std::vector<FieldHandle<Task> > Task::m_FieldHandles;
+
+void Task::FillHandles()
+{
+	// start fresh
+	m_FieldHandles.clear();
+
+	// FIXME
+}
+
 std::string Task::GetDescription() const
 {
 	return Summary;

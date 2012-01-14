@@ -90,4 +90,5 @@ desktop/src/xmlcompactor
 desktop/src/xmlmap
 
 test/libtest
+test/fhbuild
 

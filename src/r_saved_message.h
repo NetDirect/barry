@@ -39,6 +39,12 @@ namespace Barry {
 
 class BXEXPORT SavedMessage : public MessageBase
 {
+private:
+	static std::vector<FieldHandle<SavedMessage> > m_FieldHandles;
+
+protected:
+	static void FillHandles();
+
 public:
 	SavedMessage()
 	{
@@ -56,6 +62,15 @@ public:
 	// database name
 	static const char * GetDBName() { return "Saved Email Messages"; }
 	static uint8_t GetDefaultRecType() { return 3; }
+
+	// Generic Field Handle support
+	static const std::vector<FieldHandle<SavedMessage> >& GetFieldHandles()
+	{
+		if( !m_FieldHandles.size() )
+			FillHandles();
+		return m_FieldHandles;
+	}
+	static void ClearFieldHandles() { m_FieldHandles.clear(); }
 };
 
 BXEXPORT inline std::ostream& operator<<(std::ostream &os, const SavedMessage &msg) {

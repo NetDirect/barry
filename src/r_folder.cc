@@ -188,6 +188,16 @@ void Folder::Clear()
 	Unknowns.clear();
 }
 
+std::vector<FieldHandle<Folder> > Folder::m_FieldHandles;
+
+void Folder::FillHandles()
+{
+	// start fresh
+	m_FieldHandles.clear();
+
+	// FIXME
+}
+
 std::string Folder::GetDescription() const
 {
 	ostringstream oss;

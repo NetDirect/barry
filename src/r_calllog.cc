@@ -333,6 +333,16 @@ void CallLog::Clear()
 	Unknowns.clear();
 }
 
+std::vector<FieldHandle<CallLog> > CallLog::m_FieldHandles;
+
+void CallLog::FillHandles()
+{
+	// start fresh
+	m_FieldHandles.clear();
+
+	// FIXME
+}
+
 std::string CallLog::GetDescription() const
 {
 	return ContactName;
