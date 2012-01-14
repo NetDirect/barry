@@ -205,6 +205,11 @@ struct BXEXPORT UnknownField
 typedef std::vector<UnknownField> UnknownsType;
 BXEXPORT std::ostream& operator<< (std::ostream &os, const UnknownsType &unknowns);
 
+// simple email type and list
+typedef std::string				EmailType;
+typedef std::vector<EmailType>			EmailList;
+
+// struct, attempting to combine name + email address, for mail
 struct BXEXPORT EmailAddress
 {
 	std::string Name;
