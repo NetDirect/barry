@@ -455,6 +455,95 @@ void Contact::Clear()
 	m_FirstNameSeen = false;
 }
 
+std::vector<FieldHandle<Contact> > Contact::m_FieldHandles;
+void Contact::FillHandles()
+{
+	// always start fresh
+	m_FieldHandles.clear();
+
+#undef CONTAINER_OBJECT_NAME
+#define CONTAINER_OBJECT_NAME m_FieldHandles
+
+#undef RECORD_CLASS_NAME
+#define RECORD_CLASS_NAME Contact
+
+	// first number is priority of fields... 0 being most critical fields
+	FHP(RecType, "Record Type Code");
+	FHP(RecordId, "Unique ID");
+	FHP(EmailAddresses, "Email Addresses");
+
+	FHP(FirstName, "First Name");
+	FHP(LastName, "Last Name");
+	FHL(Company, "Company", CFC_COMPANY, true, "o", 0);
+	FHL(JobTitle, "Job Title", CFC_TITLE, true, "title", 0);
+	FHD(Prefix, "Prefix", CFC_PREFIX, true);
+
+	FHD(Nickname, "Nickname", CFC_NICKNAME, true);
+	FHD(Phone, "Phone (deprecated)", CFC_PHONE, true);
+	FHL(Fax, "Work Fax", CFC_FAX, true, "facsimileTelephoneNumber", 0);
+	FHD(HomeFax, "Home Fax", CFC_HOME_FAX, true);
+	FHL(WorkPhone, "Work Phone", CFC_WORK_PHONE, true,
+		"telephoneNumber", 0);
+	FHD(WorkPhone2, "Work Phone 2", CFC_WORK_PHONE_2, true);
+	FHL(HomePhone, "Home Phone", CFC_HOME_PHONE, true, "homePhone", 0);
+	FHD(HomePhone2, "Home Phone 2", CFC_HOME_PHONE_2, true);
+	FHL(MobilePhone, "Mobile Phone", CFC_MOBILE_PHONE, true, "mobile", 0);
+	FHD(MobilePhone2, "Mobile Phone 2", CFC_MOBILE_PHONE_2, true);
+	FHD(OtherPhone, "Other Phone", CFC_OTHER_PHONE, true);
+	FHL(Pager, "Pager", CFC_PAGER, true, "pager", 0);
+	FHD(PIN, "PIN", CFC_PIN, true);
+	FHD(Radio, "Radio", CFC_RADIO, true);
+	FHD(DefaultCommunicationsMethod, "Default Communications Method",
+		CFC_DEFAULT_COMM_METHOD, true);
+	FHD(PublicKey, "Public Key", CFC_PUBLIC_KEY, false);
+	FHD(URL, "URL", CFC_URL, true);
+	FHD(Notes, "Notes", CFC_NOTES, true);
+	FHD(UserDefined1, "User Defined Field 1", CFC_USER_DEFINED_1, true);
+	FHD(UserDefined2, "User Defined Field 2", CFC_USER_DEFINED_2, true);
+	FHD(UserDefined3, "User Defined Field 3", CFC_USER_DEFINED_3, true);
+	FHD(UserDefined4, "User Defined Field 4", CFC_USER_DEFINED_4, true);
+	FHD(Image, "Image", CFC_IMAGE, false);
+
+	FHD(Birthday, "Birthday", CFC_BIRTHDAY, true);
+	FHD(Anniversary, "Anniversary", CFC_ANNIVERSARY, true);
+
+	FHC(WorkAddress, "Work Address");
+	FHS(WorkAddress, Address1, "Work Address 1",
+					CFC_ADDRESS1, true, 0, 0);
+	FHS(WorkAddress, Address2, "Work Address 2",
+					CFC_ADDRESS2, true, 0, 0);
+	FHS(WorkAddress, Address3, "Work Address 3",
+					CFC_ADDRESS3, true, 0, 0);
+	FHS(WorkAddress, City, "Work City",
+					CFC_CITY, true, "l", 0);
+	FHS(WorkAddress, Province, "Work Province",
+					CFC_PROVINCE, true, "st", 0);
+	FHS(WorkAddress, PostalCode, "Work Postal Code",
+					CFC_POSTAL_CODE, true, "postalCode", 0);
+	FHS(WorkAddress, Country, "Work Country",
+					CFC_COUNTRY, true, "c", "country");
+
+	FHC(HomeAddress, "Home Address");
+	FHS(HomeAddress, Address1, "Home Address 1",
+					CFC_HOME_ADDRESS1, true, 0, 0);
+	FHS(HomeAddress, Address2, "Home Address 2",
+					CFC_HOME_ADDRESS2, true, 0, 0);
+	FHS(HomeAddress, Address3, "Home Address 3",
+					CFC_HOME_ADDRESS3, true, 0, 0);
+	FHS(HomeAddress, City, "Home City",
+					CFC_HOME_CITY, true, 0, 0);
+	FHS(HomeAddress, Province, "Home Province",
+					CFC_HOME_PROVINCE, true, 0, 0);
+	FHS(HomeAddress, PostalCode, "Home Postal Code",
+					CFC_HOME_POSTAL_CODE, true, 0, 0);
+	FHS(HomeAddress, Country, "Home Country",
+					CFC_HOME_COUNTRY, true, 0, 0);
+
+	FHP(Categories, "Categories");
+//	FHP(GroupLinks, "Group Links");
+	FHP(Unknowns, "Unknown Fields");
+}
+
 std::string Contact::GetDescription() const
 {
 	string desc = GetFullName();

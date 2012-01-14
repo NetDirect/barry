@@ -133,6 +133,10 @@ public:
 
 private:
 	bool m_FirstNameSeen;
+	static std::vector<FieldHandle<Contact> > m_FieldHandles;
+
+protected:
+	static void FillHandles();
 
 public:
 	const unsigned char* ParseField(const unsigned char *begin,
@@ -172,6 +176,15 @@ public:
 	static void SplitName(const std::string &full, std::string &first, std::string &last);
 	static std::string Email2CommaString(const EmailList &list);
 	static void CommaString2Email(const std::string &list, EmailList &result);
+
+	// Generic Field Handle support
+	static const std::vector<FieldHandle<Contact> >& GetFieldHandles()
+	{
+		if( !m_FieldHandles.size() )
+			FillHandles();
+		return m_FieldHandles;
+	}
+	static void ClearFieldHandles() { m_FieldHandles.clear(); }
 };
 
 BXEXPORT inline std::ostream& operator<< (std::ostream &os, const Contact &contact) {
