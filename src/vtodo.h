@@ -1,7 +1,7 @@
-//
-// \file	vtodo.h
-//		Conversion routines for vtodos (VCALENDAR, etc)
-//
+///
+/// \file	vtodo.h
+///		Conversion routines for vtodos (VCALENDAR, etc)
+///
 
 /*
     Copyright (C) 2008-2009, Nicolas VIVIEN

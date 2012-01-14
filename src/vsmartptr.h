@@ -1,6 +1,6 @@
 ///
-/// \file	vsmartptr
-///		Variable 'free' smart pointer
+/// \file	vsmartptr.h
+///		Smart pointer that accepts custom 'free' functions.
 ///
 
 /*

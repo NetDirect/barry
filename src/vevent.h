@@ -1,7 +1,7 @@
-//
-// \file	vevent.h
-//		Conversion routines for vevents (VCALENDAR, etc)
-//
+///
+/// \file	vevent.h
+///		Conversion routines for vevents (VCALENDAR, etc)
+///
 
 /*
     Copyright (C) 2006-2012, Net Direct Inc. (http://www.netdirect.ca/)

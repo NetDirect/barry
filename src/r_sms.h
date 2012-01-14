@@ -1,6 +1,6 @@
 ///
-/// \file	r_task.h
-///		Record parsing class for the task database.
+/// \file	r_sms.h
+///		Record parsing class for SMS messages.
 ///
 
 /*

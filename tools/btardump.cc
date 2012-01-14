@@ -1,5 +1,5 @@
 ///
-/// \file	tardump.cc
+/// \file	btardump.cc
 ///		Utility to dump tarball	backup records to stdout.
 ///
 

@@ -1,7 +1,7 @@
-//
-// \file	vbase.cc
-//		vformat support routines in base class
-//
+///
+/// \file	vbase.cc
+///		vformat support routines in base class
+///
 
 /*
     Copyright (C) 2006-2012, Net Direct Inc. (http://www.netdirect.ca/)

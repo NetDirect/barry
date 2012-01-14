@@ -1,6 +1,6 @@
 ///
-/// \file	platform.h
-///		Platform-specific details
+/// \file	src/platform.h
+///		Platform-specific details for the Barry library
 ///
 
 /*

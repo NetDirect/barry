@@ -1,7 +1,7 @@
-//
-// \file	vjournal.h
-//		Conversion routines for vjournals (VCALENDAR, etc)
-//
+///
+/// \file	vjournal.h
+///		Conversion routines for vjournals (VCALENDAR, etc)
+///
 
 /*
     Copyright (C) 2008-2009, Nicolas VIVIEN

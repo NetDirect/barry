@@ -1,7 +1,7 @@
-//
-// \file	connector.h
-//		Base class interface for handling Mode connections to device
-//
+///
+/// \file	connector.h
+///		Base class interface for handling Mode connections to device
+///
 
 /*
     Copyright (C) 2011-2012, Net Direct Inc. (http://www.netdirect.ca/)

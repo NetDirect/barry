@@ -1,6 +1,6 @@
 ///
-/// \file	platform.h
-///		Platform-specific details
+/// \file	tools/platform.h
+///		Platform-specific details for Barry tools
 ///
 
 /*

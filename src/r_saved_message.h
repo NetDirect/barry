@@ -1,5 +1,5 @@
 ///
-/// \file	r_save_message.h
+/// \file	r_saved_message.h
 ///		Blackberry database record parser class for saved email
 ///		message records.
 ///
