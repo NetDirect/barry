@@ -265,7 +265,7 @@ const unsigned char* Contact::ParseField(const unsigned char *begin,
 		// this is a duplicate of the UniqueID that comes from
 		// the envelope part of the protocol... just throw this
 		// away, since when we upload it, we need to use a
-		// consisten UniqueID / RecordID from the API
+		// consistent UniqueID / RecordID from the API
 		return begin;
 	}
 
