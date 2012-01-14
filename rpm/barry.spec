@@ -369,6 +369,7 @@ desktop-file-install --vendor netdirect \
 %attr(0755,root,root) %{_bindir}/bwatch
 %attr(0755,root,root) %{_bindir}/bio
 %attr(0755,root,root) %{_bindir}/btardump
+%attr(0755,root,root) %{_bindir}/btarcmp
 %attr(0755,root,root) %{_bindir}/bfuse
 %attr(0755,root,root) %{_bindir}/bjavaloader
 %attr(0755,root,root) %{_bindir}/balxparse
@@ -515,6 +516,7 @@ desktop-file-install --vendor netdirect \
 - removed libopensync dependency from barry-desktop (can be either, both, or none)
 - renamed 0.4x plugin dependency to libopensync1
 - removed extraneous library dependencies, which should be handled automatically
+- added btarcmp
 
 * Fri May 28 2010 Chris Frey <cdfrey@foursquare.net> 0.17.0-0
 - version bump

@@ -2,6 +2,7 @@ debian/tmp/usr/bin/btool
 debian/tmp/usr/bin/bwatch
 debian/tmp/usr/bin/bio
 debian/tmp/usr/bin/btardump
+debian/tmp/usr/bin/btarcmp
 debian/tmp/usr/bin/bfuse
 debian/tmp/usr/bin/bjavaloader
 debian/tmp/usr/bin/balxparse

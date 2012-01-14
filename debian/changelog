@@ -7,6 +7,7 @@ barry (0.18.0-0) unstable; urgency=low
   * removed .la files (2011/07/05)
   * added orangeuk and mts ppp chatscript files (2011/08/08)
   * added bwatch
+  * added btarcmp
 
  -- Chris Frey <cdfrey@foursquare.net>  Mon,  2 Jan 2012 03:20:18 -0400
 
