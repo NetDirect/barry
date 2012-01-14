@@ -51,7 +51,7 @@ public:
 	time_t StartTime;
 	time_t DueTime;
 	time_t AlarmTime;
-	unsigned short TimeZoneCode;
+	uint16_t TimeZoneCode;
 	bool TimeZoneValid;		// true if the record contained a
 					// time zone code
 

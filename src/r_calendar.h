@@ -101,7 +101,7 @@ public:
 
 	uint64_t CalendarID;	// Calendar ID (usefull if devices have several calendars)
 
-	unsigned short TimeZoneCode;	// the time zone originally used
+	uint16_t TimeZoneCode;		// the time zone originally used
 					// for the recurrence data...
 					// seems to have little use, but
 					// set to your current time zone

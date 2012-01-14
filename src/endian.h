@@ -35,11 +35,11 @@
 // http://www.netstumbler.org/showpost.php?s=79764fd1526e4653d5cb4432225da6ee&p=190494&postcount=29
 
 //#warning "byteswap.h is an unportable GNU extension!  Don't use!"
-static inline unsigned short bbswap_16(unsigned short x) {
+static inline uint16_t bbswap_16(uint16_t x) {
   return (x>>8) | (x<<8);
 }
 
-static inline unsigned int bbswap_32(unsigned int x) {
+static inline uint32_t bbswap_32(uint32_t x) {
   return (bbswap_16(x&0xffff)<<16) | (bbswap_16(x>>16));
 }
 

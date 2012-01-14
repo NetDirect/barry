@@ -57,7 +57,7 @@ BXEXPORT time_t min2time(min1900_t m);
 // so the data can be used in both C and C++ libraries
 struct BXEXPORT TimeZone
 {
-	unsigned short Code;
+	uint16_t Code;
 	signed short HourOffset;
 	signed short MinOffset;
 	const char *Name;
@@ -67,12 +67,12 @@ struct BXEXPORT TimeZone
 #define TIME_ZONE_CODE_ERR	0xffff
 
 BXEXPORT const TimeZone* GetTimeZoneTable();
-BXEXPORT const TimeZone* GetTimeZone(unsigned short Code);
+BXEXPORT const TimeZone* GetTimeZone(uint16_t Code);
 BXEXPORT unsigned short GetTimeZoneCode(signed short HourOffset,
 	signed short MinOffset = 0);
 
 // Message time conversion stuff
-BXEXPORT time_t DayToDate( unsigned short Day );
+BXEXPORT time_t DayToDate( uint16_t Day );
 BXEXPORT time_t Message2Time(uint16_t r_date, uint16_t r_time);
 
 // Thread timeout creation

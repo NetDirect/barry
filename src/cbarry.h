@@ -208,8 +208,8 @@ BXEXPORT int barry_calendar_get_fixme_need_read_access_to_this
 
 /* Time zone API */
 BXEXPORT const TimeZone* barry_get_time_zone_table();
-BXEXPORT const TimeZone* barry_get_time_zone(unsigned short code);
-BXEXPORT unsigned short barry_get_time_zone_code(signed short hour_offset,
+BXEXPORT const TimeZone* barry_get_time_zone(uint16_t code);
+BXEXPORT uint16_t barry_get_time_zone_code(signed short hour_offset,
 	signed short min_offset);	/* returns TIME_ZONE_CODE_ERR on error*/
 
 #ifdef __cplusplus

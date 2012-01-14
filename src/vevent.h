@@ -51,14 +51,14 @@ class BXEXPORT vCalendar : public vBase
 
 	static const char *WeekDays[7];
 
-	unsigned short GetMonthWeekNumFromBYDAY(const std::string& ByDay);
-	unsigned short GetWeekDayIndexFromBYDAY(const std::string& ByDay);
+	uint16_t GetMonthWeekNumFromBYDAY(const std::string& ByDay);
+	uint16_t GetWeekDayIndexFromBYDAY(const std::string& ByDay);
 
 protected:
 	void RecurToVCal();
 	void RecurToBarryCal(vAttr& rrule, time_t starttime);
 
-	static unsigned short GetWeekDayIndex(const char *dayname);
+	static uint16_t GetWeekDayIndex(const char *dayname);
 	bool HasMultipleVEvents() const;
 
 public:

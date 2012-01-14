@@ -68,7 +68,7 @@ public:
 
 	bool Recurring;
 	RecurringCodeType RecurringType;
-	unsigned short Interval;	// must be >= 1
+	uint16_t Interval;		// must be >= 1
 	time_t RecurringEndTime;	// only pertains if Recurring is true
 					// sets the date and time when
 					// recurrence of this appointment
@@ -78,12 +78,12 @@ public:
 					// Instead, set the following flag.
 	bool Perpetual;			// if true, this will always recur
 
-	unsigned short			// recurring details, depending on type
+	uint16_t			// recurring details, depending on type
 		DayOfWeek,		// 0-6
 		WeekOfMonth,		// 1-5
 		DayOfMonth,		// 1-31
 		MonthOfYear;		// 1-12
-	unsigned char WeekDays;		// bitmask, bit 0 = sunday
+	uint8_t WeekDays;		// bitmask, bit 0 = sunday
 
 // FIXME - put these somewhere usable by both C and C++
 		#define CAL_WD_SUN	0x01

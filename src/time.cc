@@ -147,7 +147,7 @@ const TimeZone* GetTimeZoneTable()
 /// and the name is "Unknown time zone."  The unknown timezone
 /// is the same offset as GMT.
 ///
-const TimeZone* GetTimeZone(unsigned short Code)
+const TimeZone* GetTimeZone(uint16_t Code)
 {
 	static TimeZone Unknown = { TIME_ZONE_CODE_ERR, 0, 0, "Unknown time zone" };
 
@@ -166,7 +166,7 @@ const TimeZone* GetTimeZone(unsigned short Code)
 ///
 /// This function does not adjust for daylight saving time.
 ///
-unsigned short GetTimeZoneCode(signed short HourOffset,
+uint16_t GetTimeZoneCode(signed short HourOffset,
 			       signed short MinOffset)
 {
 	for( TimeZone *z = Zones; z->Name; z++ ) {
@@ -184,7 +184,7 @@ unsigned short GetTimeZoneCode(signed short HourOffset,
 /// but I don't have enough information to determine
 /// where the year is in this header info
 ///
-time_t DayToDate( unsigned short Day )
+time_t DayToDate( uint16_t Day )
 {
 	struct tm *now, then;
 	time_t t = time( NULL );
