@@ -33,6 +33,7 @@
 #include <vector>
 #include <map>
 #include <stdint.h>
+#include <stdexcept>
 
 // forward declarations
 namespace Barry { class Data; }
@@ -303,6 +304,614 @@ public:
 
 	using std::vector<std::string>::operator=;
 };
+
+
+
+//////////////////////////////////////////////////////////////////////////////
+// Generic Field Handles
+
+/// \addtogroup GenericFieldHandles
+///		Generic field handle classes, used to reference and work
+///		with record members in a flexible, indirect way.
+///
+///		There are two ways to access device record data.  The obvious
+///		way is to instantiate a record class, such as Contact, and
+///		access the public data members of that class to read and
+///		write.  If you always work with the same record class, this
+///		works fine.
+///
+///		The other way is to have a list of pointers to members.
+///		For example, you may wish to compare two records, without
+///		actually caring what data is in each one.  You can compare
+///		at the record class level, with Contact one, two; and then
+///		if( one == two ), but this will not tell you what field in
+///		the record changed.
+///
+///		This last feature is what Generic Field Handles are meant to
+///		fix.  Each record class will contain a GetFieldHandles()
+///		member function, which will return a vector of FieldHandle<>
+///		objects, for that specific record.  For example, Contact
+///		would fill a vector with FieldHandle<Contact> objects.
+///		Each FieldHandle<> object contains a C++ pointer-to-member,
+///		which the FieldHandle refers to, as well as a FieldIdentity
+///		object.  The FieldIdentity object contains various identitying
+///		information, such as the C++ variable name, an English
+///		(or localized language) display name of the field, suitable
+///		for user prompts, and other data more useful to the library.
+///
+///		The FieldHandle<> object has two member functions: Value()
+///		and Member().
+///
+///		Value() will call a callback function with the _value_ of
+///		the variable that FieldHandle<> points to.  For example,
+///		if the FieldHandle<> points to a std::string record member
+///		variable, then Value() will pass that string value in as
+///		an argument, along with a reference to the FieldIdentity
+///		object.  Value() requires a callback object and a record
+///		object to perform this callback.
+///
+///		Member() will call a callback function/functor with the
+///		pointer-to-member pointer and the FieldIdentity object.
+///		This allows the programmer to create a functor with multiple
+///		record objects, perhaps two objects to compare individual
+///		fields, and use the pointer-to-member to access the field
+///		data as needed.
+///
+///		For now, all data and callbacks are const, meaning that it
+///		is not possible (without const_casting) to write to the
+///		record via the pointers-to-members.  This design decision
+///		may need to be revisited someday, depending on its usefulness.
+///
+/// @{
+
+//
+// FieldIdentity
+//
+/// This class holds data that identifies a given field in a record.
+/// This is fairly constant data, referenced by the FieldHandle class.
+/// The information in here should be enough to show the user what kind
+/// of field this is.
+///
+struct FieldIdentity
+{
+	// useful public data
+	const char *Name;		// C++ name of field member variable in
+					// record class
+	std::string DisplayName;	// localized display name of field
+					// in UTF8
+					// FIXME - should we leave localization
+					// to the application?
+
+	// subfield detection
+	bool HasSubfields;		// true if this field has subfields
+	const char *ParentName;		// name of field member variable that
+					// this field is a member of, or NULL
+					// if this field is a member of the
+					// record class.
+					// For example, Contact::PostalAddress
+					// would have HasSubfields == true,
+					// and ParentName == NULL, while all
+					// its subfield strings would have
+					// HasSubfields == false and
+					// ParentName == "WorkAddress" or
+					// "HomeAddress".
+					// The application could then decide
+					// whether to process only main fields,
+					// some of which have subfields,
+					// or only individual subfields.
+
+	// internal field data
+	int FieldTypeCode;		// device type code for this field.
+					// if -1, then this is a conglomerate
+					// C++ field, such as
+					// Contact::PostalAddress, not a device
+					// field.
+					// If -1, then none of the following
+					// fields are valid.
+	const char *Ldif;		// matching LDIF field name, or NULL
+	const char *ObjectClass;	// matching LDIF object class, or NULL
+	bool IconvNeeded;		// if true, the device's data needs to
+					// be passed through an IConverter
+
+	FieldIdentity(const char *name, const std::string &display_name,
+		int type_code = -1,
+		bool iconvneeded = false,
+		const char *ldif = 0, const char *oclass = 0,
+		bool has_sub = false, const char *parent = 0
+		)
+		: Name(name)
+		, DisplayName(display_name)
+		, HasSubfields(has_sub)
+		, ParentName(parent)
+		, FieldTypeCode(type_code)
+		, Ldif(ldif)
+		, ObjectClass(oclass)
+		, IconvNeeded(iconvneeded)
+	{
+	}
+};
+
+//
+// FieldValueHandlerBase
+//
+/// This is a pure virtual base class, defining the various types that
+/// record fields can be.  To be able to handle all the types of data
+/// in all records, override these virtual functions to do with the
+/// data as you wish.
+///
+/// All data from the records and fields will be passed in by value.
+/// i.e. if field is string data, the overloaded std::string handler
+/// will be called, and a refernce to the string will be passed in.
+///
+/// The advantage of using this virtual class is that less code will be
+/// generated by templates.  The disadvantage is that this is less flexible.
+/// You will only get called for one field and record at a time.
+/// So you can't do comparisons this way.
+///
+class FieldValueHandlerBase
+{
+public:
+	virtual ~FieldValueHandlerBase() {}
+
+	/// For type std::string
+	virtual void operator()(const std::string &v,
+				const FieldIdentity &id) const = 0;
+	/// For type EmailAddressList
+	virtual void operator()(const EmailAddressList &v,
+				const FieldIdentity &id) const = 0;
+	/// For type time_t
+	virtual void operator()(const time_t &v,
+				const FieldIdentity &id) const = 0;
+	/// For type uint8_t
+	virtual void operator()(const uint8_t &v,
+				const FieldIdentity &id) const = 0;
+	/// For type uint16_t
+	virtual void operator()(const uint16_t &v,
+				const FieldIdentity &id) const = 0;
+	/// For type uint32_t
+	virtual void operator()(const uint32_t &v,
+				const FieldIdentity &id) const = 0;
+	/// For type uint64_t
+	virtual void operator()(const uint64_t &v,
+				const FieldIdentity &id) const = 0;
+	/// For type bool
+	virtual void operator()(const bool &v,
+				const FieldIdentity &id) const = 0;
+	/// For type EmailList
+	virtual void operator()(const EmailList &v,
+				const FieldIdentity &id) const = 0;
+	/// For type Date
+	virtual void operator()(const Date &v,
+				const FieldIdentity &id) const = 0;
+	/// For type CategoryList
+	virtual void operator()(const CategoryList &v,
+				const FieldIdentity &id) const = 0;
+	/// For type PostalAddress
+	virtual void operator()(const PostalAddress &v,
+				const FieldIdentity &id) const = 0;
+	/// For type UnknownsType
+	virtual void operator()(const UnknownsType &v,
+				const FieldIdentity &id) const = 0;
+};
+
+//
+// FieldHandle<RecordT>
+//
+/// This is a template class that handles pointers to members of multiple
+/// types of data and multiple types of records.
+///
+/// This class contains a union of all known data pointers in all records.
+/// Therefore this class can hold a pointer to member of any record class.
+///
+/// To do something with the field that this FieldHandle<> class refers to,
+/// call either Value() or Member() with appropriate callback functors.
+/// Value will pass a reference to the field.  You can use an object
+/// derived from FieldValueHandlerBase here.  Member() will pass a pointer
+/// to member.  Your functor will need to contain the record data in order
+/// to access its data via the pointer to member.
+///
+/// The template functor callback that you pass into member must be
+/// capable of this:
+///
+/// <pre>
+///	template &lt;class RecordT&gt;
+///	struct Callback
+///	{
+///		RecordT m_rec;
+///
+///		void operator()(typename FieldHandle<RecordT>::PostalPointer pp,
+///			const FieldIdentity &id) const
+///		{
+///			PostalAddress pa = m_rec.*(pp.m_PostalAddress);
+///			std::string val = pa.*(pp.m_PostalField);
+///			...
+///		}
+///
+///		template &lt;class TypeT&gt;
+///		void operator()(TypeT RecordT::* mp,
+///				const FieldIdentity &id) const
+///		{
+///			TypeT val = m_rec.*mp;
+///			...
+///		}
+///	};
+/// </pre>
+///
+/// You don't have to use a TypeT template, but if you don't, then you must
+/// support all field types that the record class you're processing uses.
+///
+///
+template <class RecordT>
+class FieldHandle
+{
+public:
+	// Need to use this in the union, so no constructor allowed
+	struct PostalPointer
+	{
+		PostalAddress RecordT::* m_PostalAddress;
+		std::string PostalAddress::* m_PostalField;
+	};
+
+	// So use a factory function
+	static PostalPointer MakePostalPointer(PostalAddress RecordT::* p1,
+			std::string PostalAddress::* p2)
+	{
+		PostalPointer pp;
+		pp.m_PostalAddress = p1;
+		pp.m_PostalField = p2;
+		return pp;
+	}
+
+private:
+	union PointerUnion
+	{
+		std::string RecordT::* m_string;		// index 0
+		EmailAddressList RecordT::* m_EmailAddressList; // 1
+		time_t RecordT::* m_time;			// 2
+		PostalPointer m_postal;				// 3
+		uint8_t RecordT::* m_uint8;			// 4
+		uint32_t RecordT::* m_uint32;			// 5
+		EmailList RecordT::* m_EmailList;		// 6
+		Date RecordT::* m_Date;				// 7
+		CategoryList RecordT::* m_CategoryList;		// 8
+//		GroupLinksType RecordT::* m_GroupLinksType;	// 9
+		UnknownsType RecordT::* m_UnknownsType;		// 10
+		bool RecordT::* m_bool;				// 11
+		uint64_t RecordT::* m_uint64;			// 12
+		uint16_t RecordT::* m_uint16;			// 13
+		PostalAddress RecordT::* m_PostalAddress;	// 14
+	};
+
+	int m_type_index;
+	PointerUnion m_union;
+
+	FieldIdentity m_id;
+
+public:
+	// 0
+	FieldHandle(std::string RecordT::* mp, const FieldIdentity &id)
+		: m_type_index(0)
+		, m_id(id)
+	{
+		m_union.m_string = mp;
+	}
+
+	// 1
+	FieldHandle(EmailAddressList RecordT::* mp, const FieldIdentity &id)
+		: m_type_index(1)
+		, m_id(id)
+	{
+		m_union.emailaddresslist = mp;
+	}
+
+	// 2
+	FieldHandle(time_t RecordT::* mp, const FieldIdentity &id)
+		: m_type_index(2)
+		, m_id(id)
+	{
+		m_union.m_time = mp;
+	}
+
+	// 3
+	FieldHandle(const PostalPointer &pp, const FieldIdentity &id)
+		: m_type_index(3)
+		, m_id(id)
+	{
+		m_union.m_postal = pp;
+	}
+
+	// 4
+	FieldHandle(uint8_t RecordT::* mp, const FieldIdentity &id)
+		: m_type_index(4)
+		, m_id(id)
+	{
+		m_union.m_uint8 = mp;
+	}
+
+	// 5
+	FieldHandle(uint32_t RecordT::* mp, const FieldIdentity &id)
+		: m_type_index(5)
+		, m_id(id)
+	{
+		m_union.m_uint32 = mp;
+	}
+
+	// 6
+	FieldHandle(EmailList RecordT::* mp, const FieldIdentity &id)
+		: m_type_index(6)
+		, m_id(id)
+	{
+		m_union.m_EmailList = mp;
+	}
+
+	// 7
+	FieldHandle(Date RecordT::* mp, const FieldIdentity &id)
+		: m_type_index(7)
+		, m_id(id)
+	{
+		m_union.m_Date = mp;
+	}
+
+	// 8
+	FieldHandle(CategoryList RecordT::* mp, const FieldIdentity &id)
+		: m_type_index(8)
+		, m_id(id)
+	{
+		m_union.m_CategoryList = mp;
+	}
+
+	// 9
+//	FieldHandle(GroupLinksType RecordT::* mp, const FieldIdentity &id)
+//		: m_type_index(9)
+//		, m_id(id)
+//	{
+//		m_union.m_GroupLinksType = mp;
+//	}
+
+	// 10
+	FieldHandle(UnknownsType RecordT::* mp, const FieldIdentity &id)
+		: m_type_index(10)
+		, m_id(id)
+	{
+		m_union.m_UnknownsType = mp;
+	}
+
+	// 11
+	FieldHandle(bool RecordT::* mp, const FieldIdentity &id)
+		: m_type_index(11)
+		, m_id(id)
+	{
+		m_union.m_bool = mp;
+	}
+
+	// 12
+	FieldHandle(uint64_t RecordT::* mp, const FieldIdentity &id)
+		: m_type_index(12)
+		, m_id(id)
+	{
+		m_union.m_uint64 = mp;
+	}
+
+	// 13
+	FieldHandle(uint16_t RecordT::* mp, const FieldIdentity &id)
+		: m_type_index(13)
+		, m_id(id)
+	{
+		m_union.m_uint16 = mp;
+	}
+
+	// 14
+	FieldHandle(PostalAddress RecordT::* mp, const FieldIdentity &id)
+		: m_type_index(14)
+		, m_id(id)
+	{
+		m_union.m_PostalAddress = mp;
+	}
+
+	/// Extracts FieldIdentity object from FieldHandle<>
+	const FieldIdentity& GetIdentity() const { return m_id; }
+
+	/// Calls the matching virtual function in FieldValueHandlerBase,
+	/// passing in the value of the field that this FieldHandle<>
+	/// refers to, and a referenct to the FieldIdentity object.
+	/// Caller must pass in a RecordT object as well.
+	void Value(const FieldValueHandlerBase &vh, const RecordT &rec) const
+	{
+		switch( m_type_index )
+		{
+		case 0:
+			vh(rec.*(m_union.m_string), m_id);
+			break;
+		case 1:
+			vh(rec.*(m_union.m_EmailAddressList), m_id);
+			break;
+		case 2:
+			vh(rec.*(m_union.m_time), m_id);
+			break;
+		case 3:
+			vh(rec.*(m_union.m_postal.m_PostalAddress).*(m_union.m_postal.m_PostalField), m_id);
+			break;
+		case 4:
+			vh(rec.*(m_union.m_uint8), m_id);
+			break;
+		case 5:
+			vh(rec.*(m_union.m_uint32), m_id);
+			break;
+		case 6:
+			vh(rec.*(m_union.m_EmailList), m_id);
+			break;
+		case 7:
+			vh(rec.*(m_union.m_Date), m_id);
+			break;
+		case 8:
+			vh(rec.*(m_union.m_CategoryList), m_id);
+			break;
+//		case 9:
+//			vh(rec.*(m_union.m_GroupLinksType), m_id);
+//			break;
+		case 10:
+			vh(rec.*(m_union.m_UnknownsType), m_id);
+			break;
+		case 11:
+			vh(rec.*(m_union.m_bool), m_id);
+			break;
+		case 12:
+			vh(rec.*(m_union.m_uint64), m_id);
+			break;
+		case 13:
+			vh(rec.*(m_union.m_uint16), m_id);
+			break;
+		case 14:
+			vh(rec.*(m_union.m_PostalAddress), m_id);
+			break;
+		default:
+			throw std::logic_error("Unknown field handle type index");
+		}
+	}
+
+	/// Calls the callback functor with two arguments: the pointer to
+	/// member that this FieldHandle<> contains, and the FieldIdentity
+	/// object.  It is assumed that the functor will either contain
+	/// or know where to find one or more records of type RecordT.
+	template <class CallbackT>
+	void Member(const CallbackT &func) const
+	{
+		switch( m_type_index )
+		{
+		case 0:
+			func(m_union.m_string, m_id);
+			break;
+		case 1:
+			func(m_union.m_EmailAddressList, m_id);
+			break;
+		case 2:
+			func(m_union.m_time, m_id);
+			break;
+		case 3:
+			func(m_union.m_postal, m_id);
+			break;
+		case 4:
+			func(m_union.m_uint8, m_id);
+			break;
+		case 5:
+			func(m_union.m_uint32, m_id);
+			break;
+		case 6:
+			func(m_union.m_EmailList, m_id);
+			break;
+		case 7:
+			func(m_union.m_Date, m_id);
+			break;
+		case 8:
+			func(m_union.m_CategoryList, m_id);
+			break;
+//		case 9:
+//			func(m_union.m_GroupLinksType, m_id);
+//			break;
+		case 10:
+			func(m_union.m_UnknownsType, m_id);
+			break;
+		case 11:
+			func(m_union.m_bool, m_id);
+			break;
+		case 12:
+			func(m_union.m_uint64, m_id);
+			break;
+		case 13:
+			func(m_union.m_uint16, m_id);
+			break;
+		case 14:
+			func(m_union.m_PostalAddress, m_id);
+			break;
+		default:
+			throw std::logic_error("Unknown field handle type index");
+		}
+	}
+};
+
+/// Factory function to create a FieldHandle<> object.
+template <class RecordT, class TypeT>
+FieldHandle<RecordT> MakeFieldHandle(TypeT RecordT::* tp,
+					const FieldIdentity &id)
+{
+	return FieldHandle<RecordT>(tp, id);
+}
+
+/// Calls FileHandle<>::Member() for each defined field for a given record type.
+/// Takes a vector of FileHandle<> objects, and calls Member(func) for each one.
+template <class HandlesT, class CallbackT>
+void ForEachField(const HandlesT &handles, const CallbackT &func)
+{
+	typename HandlesT::const_iterator
+		b = handles.begin(),
+		e = handles.end();
+	for( ; b != e; ++b ) {
+		b->Member(func);
+	}
+}
+
+/// Calls FileHandle<>::Value() for each defined field for a given record.
+/// Takes a RecordT object and calls Value(vh, rec) for each FileHandle<>
+/// object in the record's FileHandles set.
+template <class RecordT>
+void ForEachFieldValue(const RecordT &rec, const FieldValueHandlerBase &vh)
+{
+	typename std::vector<FieldHandle<RecordT> >::const_iterator
+		b = RecordT::GetFieldHandles().begin(),
+		e = RecordT::GetFieldHandles().end();
+	for( ; b != e; ++b ) {
+		b->Value(vh, rec);
+	}
+}
+
+//
+// FieldHandle setup macros
+//
+// #undef and #define the following macros to override these macros for you:
+//
+//	CONTAINER_OBJECT_NAME - the new FieldHandles will be .push_back()'d into
+//				this container
+//	RECORD_CLASS_NAME     - the name of the record class you are defining,
+//				i.e. Barry::Contact, or Barry::Calendar
+//
+
+// plain field, no connection to device field
+#define FHP(name, display) \
+	CONTAINER_OBJECT_NAME.push_back( \
+		FieldHandle<RECORD_CLASS_NAME>(&RECORD_CLASS_NAME::name, \
+			FieldIdentity(#name, display)))
+// record field with direct connection to device field, no LDIF data
+#define FHD(name, display, type_code, iconv) \
+	CONTAINER_OBJECT_NAME.push_back( \
+		FieldHandle<RECORD_CLASS_NAME>(&RECORD_CLASS_NAME::name, \
+			FieldIdentity(#name, display, type_code, iconv, \
+				0, 0)))
+// record field with direct connection to device field, with LDIF data
+#define FHL(name, display, type_code, iconv, ldif, oclass) \
+	CONTAINER_OBJECT_NAME.push_back( \
+		FieldHandle<RECORD_CLASS_NAME>(&RECORD_CLASS_NAME::name, \
+			FieldIdentity(#name, display, type_code, iconv, \
+				ldif, oclass)))
+// a subfield of a conglomerate field, with direct connection to device field,
+// with LDIF data
+#define FHS(name, subname, display, type, iconv, ldif, oclass) \
+	CONTAINER_OBJECT_NAME.push_back( \
+		FieldHandle<RECORD_CLASS_NAME>( \
+			FieldHandle<RECORD_CLASS_NAME>::MakePostalPointer( \
+				&RECORD_CLASS_NAME::name, \
+				&PostalAddress::subname), \
+			FieldIdentity(#name "::" #subname, display, \
+				type, iconv, ldif, oclass, \
+				false, #name)))
+// record conglomerate field, which has subfields
+#define FHC(name, display) \
+	CONTAINER_OBJECT_NAME.push_back( \
+		FieldHandle<RECORD_CLASS_NAME>(&RECORD_CLASS_NAME::name, \
+			FieldIdentity(#name, display, \
+				-1, false, 0, 0, true, 0)))
+
+
+/// @}
 
 
 /// \addtogroup RecordParserClasses
