@@ -455,14 +455,15 @@ void Contact::Clear()
 	m_FirstNameSeen = false;
 }
 
-std::vector<FieldHandle<Contact> > Contact::m_FieldHandles;
-void Contact::FillHandles()
+const std::vector<FieldHandle<Contact> >& Contact::GetFieldHandles()
 {
-	// always start fresh
-	m_FieldHandles.clear();
+	static std::vector<FieldHandle<Contact> > fhv;
+
+	if( fhv.size() )
+		return fhv;
 
 #undef CONTAINER_OBJECT_NAME
-#define CONTAINER_OBJECT_NAME m_FieldHandles
+#define CONTAINER_OBJECT_NAME fhv
 
 #undef RECORD_CLASS_NAME
 #define RECORD_CLASS_NAME Contact
@@ -542,6 +543,8 @@ void Contact::FillHandles()
 	FHP(Categories, "Categories");
 //	FHP(GroupLinks, "Group Links");
 	FHP(Unknowns, "Unknown Fields");
+
+	return fhv;
 }
 
 std::string Contact::GetDescription() const
