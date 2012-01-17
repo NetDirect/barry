@@ -79,15 +79,10 @@ public:
 	UnknownsType Unknowns;
 
 protected:
-	static std::vector<FieldHandle<Bookmark> > m_FieldHandles;
-
-protected:
 	const unsigned char* ParseStruct1Field(const unsigned char *begin,
 		const unsigned char *end, const IConverter *ic = 0);
 	const unsigned char* ParseStruct2(const unsigned char *begin,
 		const unsigned char *end, const IConverter *ic = 0);
-
-	static void FillHandles();
 
 public:
 	Bookmark();
@@ -118,13 +113,7 @@ public:
 	static uint8_t GetDefaultRecType() { return 1; }
 
 	// Generic Field Handle support
-	static const std::vector<FieldHandle<Bookmark> >& GetFieldHandles()
-	{
-		if( !m_FieldHandles.size() )
-			FillHandles();
-		return m_FieldHandles;
-	}
-	static void ClearFieldHandles() { m_FieldHandles.clear(); }
+	static const std::vector<FieldHandle<Bookmark> >& GetFieldHandles();
 };
 
 BXEXPORT inline std::ostream& operator<<(std::ostream &os, const Bookmark &msg) {

@@ -246,14 +246,16 @@ void Memo::Clear()
 	Unknowns.clear();
 }
 
-std::vector<FieldHandle<Memo> > Memo::m_FieldHandles;
-
-void Memo::FillHandles()
+const std::vector<FieldHandle<Memo> >& Memo::GetFieldHandles()
 {
-	// start fresh
-	m_FieldHandles.clear();
+	static std::vector<FieldHandle<Memo> > fhv;
+
+	if( fhv.size() )
+		return fhv;
 
 	// FIXME
+
+	return fhv;
 }
 
 std::string Memo::GetDescription() const

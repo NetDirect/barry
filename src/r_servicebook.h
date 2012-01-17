@@ -103,12 +103,6 @@ public:
 
 	UnknownsType Unknowns;
 
-protected:
-	static std::vector<FieldHandle<ServiceBook> > m_FieldHandles;
-
-protected:
-	static void FillHandles();
-
 public:
 	const unsigned char* ParseField(const unsigned char *begin,
 		const unsigned char *end, const IConverter *ic = 0);
@@ -139,13 +133,7 @@ public:
 	static uint8_t GetDefaultRecType() { return 0; }
 
 	// Generic Field Handle support
-	static const std::vector<FieldHandle<ServiceBook> >& GetFieldHandles()
-	{
-		if( !m_FieldHandles.size() )
-			FillHandles();
-		return m_FieldHandles;
-	}
-	static void ClearFieldHandles() { m_FieldHandles.clear(); }
+	static const std::vector<FieldHandle<ServiceBook> >& GetFieldHandles();
 };
 
 BXEXPORT inline std::ostream& operator<<(std::ostream &os, const ServiceBook &msg) {

@@ -333,14 +333,16 @@ void CallLog::Clear()
 	Unknowns.clear();
 }
 
-std::vector<FieldHandle<CallLog> > CallLog::m_FieldHandles;
-
-void CallLog::FillHandles()
+const std::vector<FieldHandle<CallLog> >& CallLog::GetFieldHandles()
 {
-	// start fresh
-	m_FieldHandles.clear();
+	static std::vector<FieldHandle<CallLog> > fhv;
+
+	if( fhv.size() )
+		return fhv;
 
 	// FIXME
+
+	return fhv;
 }
 
 std::string CallLog::GetDescription() const

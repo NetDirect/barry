@@ -188,14 +188,16 @@ void Folder::Clear()
 	Unknowns.clear();
 }
 
-std::vector<FieldHandle<Folder> > Folder::m_FieldHandles;
-
-void Folder::FillHandles()
+const std::vector<FieldHandle<Folder> >& Folder::GetFieldHandles()
 {
-	// start fresh
-	m_FieldHandles.clear();
+	static std::vector<FieldHandle<Folder> > fhv;
+
+	if( fhv.size() )
+		return fhv;
 
 	// FIXME
+
+	return fhv;
 }
 
 std::string Folder::GetDescription() const

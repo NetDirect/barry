@@ -346,14 +346,16 @@ void Task::Clear()
 	Unknowns.clear();
 }
 
-std::vector<FieldHandle<Task> > Task::m_FieldHandles;
-
-void Task::FillHandles()
+const std::vector<FieldHandle<Task> >& Task::GetFieldHandles()
 {
-	// start fresh
-	m_FieldHandles.clear();
+	static std::vector<FieldHandle<Task> > fhv;
+
+	if( fhv.size() )
+		return fhv;
 
 	// FIXME
+
+	return fhv;
 }
 
 std::string Task::GetDescription() const

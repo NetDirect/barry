@@ -192,14 +192,16 @@ void Timezone::Clear()
 	Unknowns.clear();
 }
 
-std::vector<FieldHandle<Timezone> > Timezone::m_FieldHandles;
-
-void Timezone::FillHandles()
+const std::vector<FieldHandle<Timezone> >& Timezone::GetFieldHandles()
 {
-	// start fresh
-	m_FieldHandles.clear();
+	static std::vector<FieldHandle<Timezone> > fhv;
+
+	if( fhv.size() )
+		return fhv;
 
 	// FIXME
+
+	return fhv;
 }
 
 std::string Timezone::GetDescription() const

@@ -67,12 +67,6 @@ public:
 
 	UnknownsType Unknowns;
 
-protected:
-	static std::vector<FieldHandle<HandheldAgent> > m_FieldHandles;
-
-protected:
-	static void FillHandles();
-
 public:
 	const unsigned char* ParseField(const unsigned char *begin,
 		const unsigned char *end, const IConverter *ic = 0);
@@ -119,13 +113,7 @@ public:
 	static std::string ESNHex2Dec(const std::string &esn);
 
 	// Generic Field Handle support
-	static const std::vector<FieldHandle<HandheldAgent> >& GetFieldHandles()
-	{
-		if( !m_FieldHandles.size() )
-			FillHandles();
-		return m_FieldHandles;
-	}
-	static void ClearFieldHandles() { m_FieldHandles.clear(); }
+	static const std::vector<FieldHandle<HandheldAgent> >& GetFieldHandles();
 };
 
 BXEXPORT inline std::ostream& operator<< (std::ostream &os, const HandheldAgent &hha) {

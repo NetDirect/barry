@@ -207,14 +207,16 @@ void ContentStore::Clear()
 	FileSize = 0;
 }
 
-std::vector<FieldHandle<ContentStore> > ContentStore::m_FieldHandles;
-
-void ContentStore::FillHandles()
+const std::vector<FieldHandle<ContentStore> >& ContentStore::GetFieldHandles()
 {
-	// start fresh
-	m_FieldHandles.clear();
+	static std::vector<FieldHandle<ContentStore> > fhv;
+
+	if( fhv.size() )
+		return fhv;
 
 	// FIXME
+
+	return fhv;
 }
 
 std::string ContentStore::GetDescription() const

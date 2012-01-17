@@ -86,9 +86,6 @@ public:
 	UnknownsType Unknowns;
 
 protected:
-	static std::vector<FieldHandle<Task> > m_FieldHandles;
-
-protected:
 	static AlarmFlagType AlarmProto2Rec(uint8_t a);
 	static uint8_t AlarmRec2Proto(AlarmFlagType a);
 
@@ -97,8 +94,6 @@ protected:
 
 	static StatusFlagType StatusProto2Rec(uint8_t s);
 	static uint8_t StatusRec2Proto(StatusFlagType s);
-
-	static void FillHandles();
 
 public:
 	Task();
@@ -126,13 +121,7 @@ public:
 	static uint8_t GetDefaultRecType() { return 2; }
 
 	// Generic Field Handle support
-	static const std::vector<FieldHandle<Task> >& GetFieldHandles()
-	{
-		if( !m_FieldHandles.size() )
-			FillHandles();
-		return m_FieldHandles;
-	}
-	static void ClearFieldHandles() { m_FieldHandles.clear(); }
+	static const std::vector<FieldHandle<Task> >& GetFieldHandles();
 };
 
 BXEXPORT inline std::ostream& operator<<(std::ostream &os, const Task &msg) {

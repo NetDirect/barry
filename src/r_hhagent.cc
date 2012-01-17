@@ -262,14 +262,16 @@ void HandheldAgent::Clear()
 	Unknowns.clear();
 }
 
-std::vector<FieldHandle<HandheldAgent> > HandheldAgent::m_FieldHandles;
-
-void HandheldAgent::FillHandles()
+const std::vector<FieldHandle<HandheldAgent> >& HandheldAgent::GetFieldHandles()
 {
-	// start fresh
-	m_FieldHandles.clear();
+	static std::vector<FieldHandle<HandheldAgent> > fhv;
+
+	if( fhv.size() )
+		return fhv;
 
 	// FIXME
+
+	return fhv;
 }
 
 std::string HandheldAgent::GetDescription() const

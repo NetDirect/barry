@@ -436,31 +436,43 @@ namespace Barry {
 //////////////////////////////////////////////////////////////////////////////
 // Message class - statics
 
-std::vector<FieldHandle<Message> > Message::m_FieldHandles;
-
-void Message::FillHandles()
+const std::vector<FieldHandle<Message> >& Message::GetFieldHandles()
 {
-	DoFillHandles(m_FieldHandles);
+	static std::vector<FieldHandle<Message> > fhv;
+
+	if( fhv.size() )
+		return fhv;
+
+	DoFillHandles(fhv);
+	return fhv;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 // PINMessage class - statics
 
-std::vector<FieldHandle<PINMessage> > PINMessage::m_FieldHandles;
-
-void PINMessage::FillHandles()
+const std::vector<FieldHandle<PINMessage> >& PINMessage::GetFieldHandles()
 {
-	DoFillHandles(m_FieldHandles);
+	static std::vector<FieldHandle<PINMessage> > fhv;
+
+	if( fhv.size() )
+		return fhv;
+
+	DoFillHandles(fhv);
+	return fhv;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 // SavedMessage class - statics
 
-std::vector<FieldHandle<SavedMessage> > SavedMessage::m_FieldHandles;
-
-void SavedMessage::FillHandles()
+const std::vector<FieldHandle<SavedMessage> >& SavedMessage::GetFieldHandles()
 {
-	DoFillHandles(m_FieldHandles);
+	static std::vector<FieldHandle<SavedMessage> > fhv;
+
+	if( fhv.size() )
+		return fhv;
+
+	DoFillHandles(fhv);
+	return fhv;
 }
 
 } // namespace Barry

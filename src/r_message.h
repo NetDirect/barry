@@ -37,12 +37,6 @@ namespace Barry {
 
 class BXEXPORT Message : public MessageBase
 {
-private:
-	static std::vector<FieldHandle<Message> > m_FieldHandles;
-
-protected:
-	static void FillHandles();
-
 public:
 	Message()
 	{
@@ -63,13 +57,7 @@ public:
 	static uint8_t GetDefaultRecType() { return 0; }
 
 	// Generic Field Handle support
-	static const std::vector<FieldHandle<Message> >& GetFieldHandles()
-	{
-		if( !m_FieldHandles.size() )
-			FillHandles();
-		return m_FieldHandles;
-	}
-	static void ClearFieldHandles() { m_FieldHandles.clear(); }
+	static const std::vector<FieldHandle<Message> >& GetFieldHandles();
 };
 
 BXEXPORT inline std::ostream& operator<<(std::ostream &os, const Message &msg) {

@@ -256,14 +256,16 @@ void Sms::Clear()
 	Unknowns.clear();
 }
 
-std::vector<FieldHandle<Sms> > Sms::m_FieldHandles;
-
-void Sms::FillHandles()
+const std::vector<FieldHandle<Sms> >& Sms::GetFieldHandles()
 {
-	// start fresh
-	m_FieldHandles.clear();
+	static std::vector<FieldHandle<Sms> > fhv;
+
+	if( fhv.size() )
+		return fhv;
 
 	// FIXME
+
+	return fhv;
 }
 
 std::string Sms::GetDescription() const

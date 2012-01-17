@@ -403,14 +403,16 @@ void Calendar::Clear()
 	Unknowns.clear();
 }
 
-std::vector<FieldHandle<Calendar> > Calendar::m_FieldHandles;
-
-void Calendar::FillHandles()
+const std::vector<FieldHandle<Calendar> >& Calendar::GetFieldHandles()
 {
-	// start fresh
-	m_FieldHandles.clear();
+	static std::vector<FieldHandle<Calendar> > fhv;
+
+	if( fhv.size() )
+		return fhv;
 
 	// FIXME
+
+	return fhv;
 }
 
 std::string Calendar::GetDescription() const
@@ -513,14 +515,16 @@ void CalendarAll::Clear()
 	MailAccount.clear();
 }
 
-std::vector<FieldHandle<CalendarAll> > CalendarAll::m_FieldHandles;
-
-void CalendarAll::FillHandles()
+const std::vector<FieldHandle<CalendarAll> >& CalendarAll::GetFieldHandles()
 {
-	// start fresh
-	m_FieldHandles.clear();
+	static std::vector<FieldHandle<CalendarAll> > fhv;
+
+	if( fhv.size() )
+		return fhv;
 
 	// FIXME
+
+	return fhv;
 }
 
 void CalendarAll::ParseHeader(const Data &data, size_t &offset)
