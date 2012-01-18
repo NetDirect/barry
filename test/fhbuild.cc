@@ -40,6 +40,21 @@ void DumpId(const FieldIdentity &id)
 		<< endl << endl;
 }
 
+void DumpEnumConstants(const EnumConstants *ec)
+{
+	cout << "   Available constants:" << endl;
+
+	EnumConstants::EnumConstantList::const_iterator
+		b = ec->GetConstantList().begin(),
+		e = ec->GetConstantList().end();
+	for( ; b != e; ++b ) {
+		cout << "      " << b->DisplayName
+			<< " (" << b->Name << ")"
+			<< " = " << b->Value << endl;
+	}
+	cout << endl;
+}
+
 std::ostream& operator<<(std::ostream &os, const EmailList &el)
 {
 	bool first = true;
@@ -62,6 +77,17 @@ struct FieldHandler
 	FieldHandler(const RecordT &obj)
 		: m_rec(obj)
 	{
+	}
+
+	void operator()(EnumFieldBase<RecordT> *ep,
+		const FieldIdentity &id) const
+	{
+		cout << id.DisplayName << " (" << id.Name << "): "
+			<< ep->GetName(ep->GetValue(m_rec))
+			<< " (" << ep->GetValue(m_rec) << ")"
+			<< endl;
+		DumpId(id);
+		DumpEnumConstants(ep);
 	}
 
 	void operator()(typename FieldHandle<RecordT>::PostalPointer pp,
@@ -143,6 +169,14 @@ public:
 	}
 	/// For type bool
 	virtual void operator()(const bool &v,
+				const FieldIdentity &id) const
+	{
+		cout << id.DisplayName << " (" << id.Name << "): "
+			<< v << endl;
+		DumpId(id);
+	}
+	/// For type int
+	virtual void operator()(const int &v,
 				const FieldIdentity &id) const
 	{
 		cout << id.DisplayName << " (" << id.Name << "): "
@@ -259,22 +293,32 @@ void BlankTestAll()
 {
 	VirtualFieldHandler vhandler;
 
+	cout << "All parsers......" << endl;
+
 #undef HANDLE_PARSER
 #define HANDLE_PARSER(tname) \
+	cout << "Record: " << #tname << endl; \
+	cout << "===================================================" << endl;\
 	tname obj##tname; \
 	FieldHandler<tname> fh##tname(obj##tname); \
 	ForEachField(tname::GetFieldHandles(), fh##tname); \
-	ForEachFieldValue(obj##tname, vhandler);
+	ForEachFieldValue(obj##tname, vhandler); \
+	cout << endl;
 
 	ALL_KNOWN_PARSER_TYPES
 
 
+	cout << "All builders........" << endl;
+
 #undef HANDLE_BUILDER
 #define HANDLE_BUILDER(tname) \
+	cout << "Record: " << #tname << endl; \
+	cout << "===================================================" << endl;\
 	tname bobj##tname; \
 	FieldHandler<tname> bfh##tname(bobj##tname); \
 	ForEachField(tname::GetFieldHandles(), bfh##tname); \
-	ForEachFieldValue(bobj##tname, vhandler);
+	ForEachFieldValue(bobj##tname, vhandler); \
+	cout << endl;
 
 	ALL_KNOWN_BUILDER_TYPES
 }

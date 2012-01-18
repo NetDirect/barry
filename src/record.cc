@@ -509,6 +509,54 @@ void CategoryList::CategoryList2Str(std::string &str) const
 }
 
 
+///////////////////////////////////////////////////////////////////////////////
+// EnumConstants class
+
+void EnumConstants::AddConstant(const char *name,
+				const std::string &display,
+				int val)
+{
+	m_constants.push_back(EnumConstant(name, display, val));
+}
+
+const EnumConstants::EnumConstant& EnumConstants::GetConstant(int value) const
+{
+	for( EnumConstantList::const_iterator b = m_constants.begin(), e = m_constants.end();
+		b != e;
+		++b )
+	{
+		if( b->Value == value )
+			return *b;
+	}
+
+	// not found in list
+	throw std::logic_error("Enum value not found in constant list");
+}
+
+const char* EnumConstants::GetName(int value) const
+{
+	return GetConstant(value).Name;
+}
+
+const std::string& EnumConstants::GetDisplayName(int value) const
+{
+	return GetConstant(value).DisplayName;
+}
+
+bool EnumConstants::IsConstantValid(int value) const
+{
+	for( EnumConstantList::const_iterator b = m_constants.begin(), e = m_constants.end();
+		b != e;
+		++b )
+	{
+		if( b->Value == value )
+			return true;
+	}
+
+	// not found in list, so not a valid constant
+	return false;
+}
+
 } // namespace Barry
 
 

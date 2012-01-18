@@ -432,6 +432,103 @@ struct BXEXPORT FieldIdentity
 };
 
 //
+// EnumConstants
+//
+/// This is the base class for the hierarchy of classes to define
+/// enum record members.  This is the base class, which contains the
+/// common code for creating and defining a list of enum constants for
+/// a given enum field.  The next derived class is EnumFieldBase<RecordT>,
+/// which defines the virtual API for talking to a given enum field
+/// in a given record.  The next derived class is EnumField<RecordT, EnumT>,
+/// which implements the pointer-to-member and virtual API for a given
+/// enum type in a given record class.
+///
+/// For example, the Bookmark record class has the following enum field:
+///
+/// <pre>
+///	enum BrowserIdentityType
+///	{
+///		IdentityAuto = 0,
+///		IdentityBlackBerry,
+///		IdentityFireFox,
+///		IdentityInternetExplorer,
+///		IdentityUnknown
+///	};
+///	BrowserIdentityType BrowserIdentity;
+/// </pre>
+///
+/// The EnumConstants class will hold a vector of EnumConstant structs
+/// defining each of the identity constants: Auto, BlackBerry, FireFox,
+/// InternetExplorer, and Unknown.
+///
+/// The derived class EnumFieldBase<Bookmark> will define two additional
+/// pure virtual API calls: GetValue(const Bookmark&) and
+/// SetValue(Bookmark&, int).
+///
+/// Finally, the derived class EnumField<Bookmark,Bookmark::BrowserIdentityType>
+/// will implement the virtual API, and contain a pointer-to-member to
+/// the Bookmark::BrowserIdentity member field.
+///
+/// The FieldHandle<Bookmark> class will hold a pointer to
+/// EnumFieldBase<Bookmark>, which can hold a pointer to a specific
+/// EnumField<> object, one object for each of Bookmark's enum types,
+/// of which there are currently 3.
+///
+class BXEXPORT EnumConstants
+{
+public:
+	/// This defines one of the enum constants being defined.
+	/// For example, for an enum declaration like:
+	/// enum Mine { A, B, C }; then this struct could contain
+	/// a definition for A, B, or C, but only one at at time.
+	/// All three would be defined by the EnumConstantList.
+	struct EnumConstant
+	{
+		const char *Name;		//< C++ name of enum constant
+		std::string DisplayName;	//< user-friendly name / meaning
+		int Value;			//< constant enum value
+
+		EnumConstant(const char *name, const std::string &display,
+			int value)
+			: Name(name)
+			, DisplayName(display)
+			, Value(value)
+		{
+		}
+	};
+
+	typedef std::vector<EnumConstant>	EnumConstantList;
+
+private:
+	EnumConstantList m_constants;
+
+public:
+	virtual ~EnumConstants() {}
+
+	/// Adds a constant definition to the list
+	void AddConstant(const char *name, const std::string &display, int val);
+
+	/// Returns a vector of EnumConstant objects, describing all enum
+	/// constants valid for this enum field.
+	const EnumConstantList& GetConstantList() const { return m_constants; }
+
+	/// Returns the EnumConstant for the given value.
+	/// Throws std::logic_error if not found.
+	const EnumConstant& GetConstant(int value) const;
+
+	/// Returns the constant name (C++ name) based on the given value.
+	/// Throws std::logic_error if not found.
+	const char* GetName(int value) const;
+
+	/// Returns the display name based on the given value.
+	/// Throws std::logic_error if not found.
+	const std::string& GetDisplayName(int value) const;
+
+	/// Returns true if the value matches one of the constants in the list.
+	bool IsConstantValid(int value) const;
+};
+
+//
 // FieldValueHandlerBase
 //
 /// This is a pure virtual base class, defining the various types that
@@ -477,6 +574,9 @@ public:
 	/// For type bool
 	virtual void operator()(const bool &v,
 				const FieldIdentity &id) const = 0;
+	/// For type int
+	virtual void operator()(const int &v,
+				const FieldIdentity &id) const = 0;
 	/// For type EmailList
 	virtual void operator()(const EmailList &v,
 				const FieldIdentity &id) const = 0;
@@ -492,6 +592,47 @@ public:
 	/// For type UnknownsType
 	virtual void operator()(const UnknownsType &v,
 				const FieldIdentity &id) const = 0;
+};
+
+///
+/// EnumFieldBase<RecordT>
+///
+template <class RecordT>
+class EnumFieldBase : public EnumConstants
+{
+public:
+	/// Return value of enum in rec
+	virtual int GetValue(const RecordT &rec) const = 0;
+	/// Set value of enum in rec
+	/// Throws std::logic_error if value is out of range
+	virtual void SetValue(RecordT &rec, int value) = 0;
+};
+
+///
+/// EnumField<RecordT, EnumT>
+///
+template <class RecordT, class EnumT>
+class EnumField : public EnumFieldBase<RecordT>
+{
+	EnumT RecordT::* m_mp;
+
+public:
+	explicit EnumField(EnumT RecordT::* mp)
+		: m_mp(mp)
+	{
+	}
+
+	virtual int GetValue(const RecordT &rec) const
+	{
+		return rec.*m_mp;
+	}
+
+	virtual void SetValue(RecordT &rec, int value)
+	{
+		if( !this->IsConstantValid(value) )
+			throw std::logic_error("Bad enum value in EnumField");
+		rec.*m_mp = (EnumT) value;
+	}
 };
 
 //
@@ -580,10 +721,14 @@ private:
 		uint64_t RecordT::* m_uint64;			// 12
 		uint16_t RecordT::* m_uint16;			// 13
 		PostalAddress RecordT::* m_PostalAddress;	// 14
+		// used by non-union m_enum below:		// 15
 	};
 
 	int m_type_index;
 	PointerUnion m_union;
+	EnumFieldBase<RecordT> *m_enum;	// never freed, since this is a
+					// static list, existing to end of
+					// program lifetime
 
 	FieldIdentity m_id;
 
@@ -591,6 +736,7 @@ public:
 	// 0
 	FieldHandle(std::string RecordT::* mp, const FieldIdentity &id)
 		: m_type_index(0)
+		, m_enum(0)
 		, m_id(id)
 	{
 		m_union.m_string = mp;
@@ -599,6 +745,7 @@ public:
 	// 1
 	FieldHandle(EmailAddressList RecordT::* mp, const FieldIdentity &id)
 		: m_type_index(1)
+		, m_enum(0)
 		, m_id(id)
 	{
 		m_union.emailaddresslist = mp;
@@ -607,6 +754,7 @@ public:
 	// 2
 	FieldHandle(time_t RecordT::* mp, const FieldIdentity &id)
 		: m_type_index(2)
+		, m_enum(0)
 		, m_id(id)
 	{
 		m_union.m_time = mp;
@@ -615,6 +763,7 @@ public:
 	// 3
 	FieldHandle(const PostalPointer &pp, const FieldIdentity &id)
 		: m_type_index(3)
+		, m_enum(0)
 		, m_id(id)
 	{
 		m_union.m_postal = pp;
@@ -623,6 +772,7 @@ public:
 	// 4
 	FieldHandle(uint8_t RecordT::* mp, const FieldIdentity &id)
 		: m_type_index(4)
+		, m_enum(0)
 		, m_id(id)
 	{
 		m_union.m_uint8 = mp;
@@ -631,6 +781,7 @@ public:
 	// 5
 	FieldHandle(uint32_t RecordT::* mp, const FieldIdentity &id)
 		: m_type_index(5)
+		, m_enum(0)
 		, m_id(id)
 	{
 		m_union.m_uint32 = mp;
@@ -639,6 +790,7 @@ public:
 	// 6
 	FieldHandle(EmailList RecordT::* mp, const FieldIdentity &id)
 		: m_type_index(6)
+		, m_enum(0)
 		, m_id(id)
 	{
 		m_union.m_EmailList = mp;
@@ -647,6 +799,7 @@ public:
 	// 7
 	FieldHandle(Date RecordT::* mp, const FieldIdentity &id)
 		: m_type_index(7)
+		, m_enum(0)
 		, m_id(id)
 	{
 		m_union.m_Date = mp;
@@ -655,6 +808,7 @@ public:
 	// 8
 	FieldHandle(CategoryList RecordT::* mp, const FieldIdentity &id)
 		: m_type_index(8)
+		, m_enum(0)
 		, m_id(id)
 	{
 		m_union.m_CategoryList = mp;
@@ -663,6 +817,7 @@ public:
 	// 9
 //	FieldHandle(GroupLinksType RecordT::* mp, const FieldIdentity &id)
 //		: m_type_index(9)
+//		, m_enum(0)
 //		, m_id(id)
 //	{
 //		m_union.m_GroupLinksType = mp;
@@ -671,6 +826,7 @@ public:
 	// 10
 	FieldHandle(UnknownsType RecordT::* mp, const FieldIdentity &id)
 		: m_type_index(10)
+		, m_enum(0)
 		, m_id(id)
 	{
 		m_union.m_UnknownsType = mp;
@@ -679,6 +835,7 @@ public:
 	// 11
 	FieldHandle(bool RecordT::* mp, const FieldIdentity &id)
 		: m_type_index(11)
+		, m_enum(0)
 		, m_id(id)
 	{
 		m_union.m_bool = mp;
@@ -687,6 +844,7 @@ public:
 	// 12
 	FieldHandle(uint64_t RecordT::* mp, const FieldIdentity &id)
 		: m_type_index(12)
+		, m_enum(0)
 		, m_id(id)
 	{
 		m_union.m_uint64 = mp;
@@ -695,6 +853,7 @@ public:
 	// 13
 	FieldHandle(uint16_t RecordT::* mp, const FieldIdentity &id)
 		: m_type_index(13)
+		, m_enum(0)
 		, m_id(id)
 	{
 		m_union.m_uint16 = mp;
@@ -703,9 +862,18 @@ public:
 	// 14
 	FieldHandle(PostalAddress RecordT::* mp, const FieldIdentity &id)
 		: m_type_index(14)
+		, m_enum(0)
 		, m_id(id)
 	{
 		m_union.m_PostalAddress = mp;
+	}
+
+	// 15
+	FieldHandle(EnumFieldBase<RecordT> *enum_, const FieldIdentity &id)
+		: m_type_index(15)
+		, m_enum(enum_)
+		, m_id(id)
+	{
 	}
 
 	/// Extracts FieldIdentity object from FieldHandle<>
@@ -763,6 +931,9 @@ public:
 			break;
 		case 14:
 			vh(rec.*(m_union.m_PostalAddress), m_id);
+			break;
+		case 15:
+			vh(m_enum->GetValue(rec), m_id);
 			break;
 		default:
 			throw std::logic_error("Unknown field handle type index");
@@ -822,6 +993,9 @@ public:
 			break;
 		case 14:
 			func(m_union.m_PostalAddress, m_id);
+			break;
+		case 15:
+			func(m_enum, m_id);
 			break;
 		default:
 			throw std::logic_error("Unknown field handle type index");
@@ -909,9 +1083,24 @@ void ForEachFieldValue(const RecordT &rec, const FieldValueHandlerBase &vh)
 		FieldHandle<RECORD_CLASS_NAME>(&RECORD_CLASS_NAME::name, \
 			FieldIdentity(#name, display, \
 				-1, false, 0, 0, true, 0)))
-
+// create new EnumField<>
+#define FH_NEW_ENUM(new_var_name, record_field_type, record_field_name) \
+	EnumField<RECORD_CLASS_NAME, RECORD_CLASS_NAME::record_field_type> \
+		*new_var_name = new \
+		EnumField<RECORD_CLASS_NAME, RECORD_CLASS_NAME::record_field_type> \
+			(&RECORD_CLASS_NAME::record_field_name)
+// add constant to enum created above
+#define FH_ADD_ENUM(var, name, display) \
+	var->AddConstant(#name, display, RECORD_CLASS_NAME::name)
+// enum record
+#define FHE(var, name, display) \
+	CONTAINER_OBJECT_NAME.push_back( \
+		FieldHandle<RECORD_CLASS_NAME>(var, \
+			FieldIdentity(#name, display)))
 
 /// @}
+
+} // namespace Barry
 
 
 /// \addtogroup RecordParserClasses
@@ -922,8 +1111,6 @@ void ForEachFieldValue(const RecordT &rec, const FieldValueHandlerBase &vh)
 ///		RecordParser<> template when calling Controller::LoadDatabase().
 /// @{
 /// @}
-
-} // namespace Barry
 
 #ifndef __BARRY_LIBRARY_BUILD__
 // Include all parser classes, to make it easy for the application to use.
