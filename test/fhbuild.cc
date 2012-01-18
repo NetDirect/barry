@@ -301,7 +301,9 @@ void BlankTestAll()
 	cout << "===================================================" << endl;\
 	tname obj##tname; \
 	FieldHandler<tname> fh##tname(obj##tname); \
+	cout << "By member pointer..." << endl; \
 	ForEachField(tname::GetFieldHandles(), fh##tname); \
+	cout << "\nBy value..." << endl; \
 	ForEachFieldValue(obj##tname, vhandler); \
 	cout << endl;
 
@@ -316,7 +318,9 @@ void BlankTestAll()
 	cout << "===================================================" << endl;\
 	tname bobj##tname; \
 	FieldHandler<tname> bfh##tname(bobj##tname); \
+	cout << "By member pointer..." << endl; \
 	ForEachField(tname::GetFieldHandles(), bfh##tname); \
+	cout << "\nBy value..." << endl; \
 	ForEachFieldValue(bobj##tname, vhandler); \
 	cout << endl;
 
