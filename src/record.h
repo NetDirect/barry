@@ -748,7 +748,7 @@ public:
 		, m_enum(0)
 		, m_id(id)
 	{
-		m_union.emailaddresslist = mp;
+		m_union.m_EmailAddressList = mp;
 	}
 
 	// 2
