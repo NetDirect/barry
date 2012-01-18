@@ -402,27 +402,24 @@ const std::vector<FieldHandle<Bookmark> >& Bookmark::GetFieldHandles()
 	FHP(Icon, "Site Icon");
 	FHP(Url, "Site URL");
 
-	FH_NEW_ENUM(bit, BrowserIdentityType, BrowserIdentity);
-	FH_ADD_ENUM(bit, IdentityAuto, "Auto detect browser");
-	FH_ADD_ENUM(bit, IdentityBlackBerry, "BlackBerry browser");
-	FH_ADD_ENUM(bit, IdentityFireFox, "FireFox browser");
-	FH_ADD_ENUM(bit, IdentityInternetExplorer, "Internet Explorer browser");
-	FH_ADD_ENUM(bit, IdentityUnknown, "Unknown browser");
-	FHE(bit, BrowserIdentity, "Browser Identity");
+	FHE(bit, BrowserIdentityType, BrowserIdentity, "Browser Identity");
+	FHE_CONST(bit, IdentityAuto, "Auto detect browser");
+	FHE_CONST(bit, IdentityBlackBerry, "BlackBerry browser");
+	FHE_CONST(bit, IdentityFireFox, "FireFox browser");
+	FHE_CONST(bit, IdentityInternetExplorer, "Internet Explorer browser");
+	FHE_CONST(bit, IdentityUnknown, "Unknown browser");
 
-	FH_NEW_ENUM(dmc, DisplayModeType, DisplayMode);
-	FH_ADD_ENUM(dmc, DisplayAuto, "Automatic");
-	FH_ADD_ENUM(dmc, DisplayColomn, "Column");
-	FH_ADD_ENUM(dmc, DisplayPage, "Page");
-	FH_ADD_ENUM(dmc, DisplayUnknown, "Unknown");
-	FHE(dmc, DisplayMode, "Display Mode");
+	FHE(dmc, DisplayModeType, DisplayMode, "Display Mode");
+	FHE_CONST(dmc, DisplayAuto, "Automatic");
+	FHE_CONST(dmc, DisplayColomn, "Column");
+	FHE_CONST(dmc, DisplayPage, "Page");
+	FHE_CONST(dmc, DisplayUnknown, "Unknown");
 
-	FH_NEW_ENUM(jsm, JavaScriptModeType, JavaScriptMode);
-	FH_ADD_ENUM(jsm, JavaScriptAuto, "Automatic");
-	FH_ADD_ENUM(jsm, JavaScriptEnabled, "Enabled");
-	FH_ADD_ENUM(jsm, JavaScriptDisabled, "Disabled");
-	FH_ADD_ENUM(jsm, JavaScriptUnknown, "Unknown");
-	FHE(jsm, JavaScriptMode, "JavaScript Mode");
+	FHE(jsm, JavaScriptModeType, JavaScriptMode, "JavaScript Mode");
+	FHE_CONST(jsm, JavaScriptAuto, "Automatic");
+	FHE_CONST(jsm, JavaScriptEnabled, "Enabled");
+	FHE_CONST(jsm, JavaScriptDisabled, "Disabled");
+	FHE_CONST(jsm, JavaScriptUnknown, "Unknown");
 
 	FHP(Unknowns, "Unknown Fields");
 

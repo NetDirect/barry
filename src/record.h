@@ -1083,20 +1083,19 @@ void ForEachFieldValue(const RecordT &rec, const FieldValueHandlerBase &vh)
 		FieldHandle<RECORD_CLASS_NAME>(&RECORD_CLASS_NAME::name, \
 			FieldIdentity(#name, display, \
 				-1, false, 0, 0, true, 0)))
-// create new EnumField<>
-#define FH_NEW_ENUM(new_var_name, record_field_type, record_field_name) \
+// create a new EnumField<> and add it to the list... use the new_var_name
+// to add constants with FHE_CONST below
+#define FHE(new_var_name, record_field_type, record_field_name, display) \
 	EnumField<RECORD_CLASS_NAME, RECORD_CLASS_NAME::record_field_type> \
 		*new_var_name = new \
 		EnumField<RECORD_CLASS_NAME, RECORD_CLASS_NAME::record_field_type> \
-			(&RECORD_CLASS_NAME::record_field_name)
-// add constant to enum created above
-#define FH_ADD_ENUM(var, name, display) \
-	var->AddConstant(#name, display, RECORD_CLASS_NAME::name)
-// enum record
-#define FHE(var, name, display) \
+			(&RECORD_CLASS_NAME::record_field_name); \
 	CONTAINER_OBJECT_NAME.push_back( \
-		FieldHandle<RECORD_CLASS_NAME>(var, \
-			FieldIdentity(#name, display)))
+		FieldHandle<RECORD_CLASS_NAME>(new_var_name, \
+			FieldIdentity(#record_field_name, display)))
+// add constant to enum created above
+#define FHE_CONST(var, name, display) \
+	var->AddConstant(#name, display, RECORD_CLASS_NAME::name)
 
 /// @}
 
