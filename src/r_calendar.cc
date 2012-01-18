@@ -416,37 +416,42 @@ const std::vector<FieldHandle<Calendar> >& Calendar::GetFieldHandles()
 #undef RECORD_CLASS_NAME
 #define RECORD_CLASS_NAME Calendar
 
-	FHP(RecType, "Record Type Code");
-	FHP(RecordId, "Unique Record ID");
-
-	FHP(AllDayEvent, "All Day Event");
-	FHD(Subject, "Subject", CALFC_SUBJECT, true);
-	FHD(Notes, "Notes", CALFC_NOTES, true);
-	FHD(Location, "Location", CALFC_LOCATION, true);
-	FHD(NotificationTime, "Notification Time (0 is off)",
-				CALFC_NOTIFICATION_TIME, false);
-	FHD(StartTime, "Start Time", CALFC_START_TIME, false);
-	FHD(EndTime, "End Time", CALFC_END_TIME, false);
-	FHD(Organizer, "Organizer", CALFC_ORGANIZER, true);
-	FHD(AcceptedBy, "Accepted By", CALFC_ACCEPTED_BY, true);
-	FHD(Invited, "Invited", CALFC_INVITED, true);
-
-	FHE(fbf, FreeBusyFlagType, FreeBusyFlag, "Free or Busy Flag");
-	FHE_CONST(fbf, Free, "Free");
-	FHE_CONST(fbf, Tentative, "Tentative");
-	FHE_CONST(fbf, Busy, "Busy");
-	FHE_CONST(fbf, OutOfOffice, "Out of Office");
-
-	FHE(cf, ClassFlagType, ClassFlag, "Event Class");
-	FHE_CONST(cf, Public, "Public");
-	FHE_CONST(cf, Confidential, "Confidential");
-	FHE_CONST(cf, Private, "Private");
-
-	FHP(CalendarID, "Calendar ID");
-	FHP(TimeZoneCode, "Time Zone Code");
-	FHP(TimeZoneValid, "Time Zone Validity");
-
+#define ALL_COMMON_CALENDAR_FIELDS \
+	FHP(RecType, "Record Type Code"); \
+	FHP(RecordId, "Unique Record ID"); \
+ \
+	FHP(AllDayEvent, "All Day Event"); \
+	FHD(Subject, "Subject", CALFC_SUBJECT, true); \
+	FHD(Notes, "Notes", CALFC_NOTES, true); \
+	FHD(Location, "Location", CALFC_LOCATION, true); \
+	FHD(NotificationTime, "Notification Time (0 is off)", \
+				CALFC_NOTIFICATION_TIME, false); \
+	FHD(StartTime, "Start Time", CALFC_START_TIME, false); \
+	FHD(EndTime, "End Time", CALFC_END_TIME, false); \
+	FHD(Organizer, "Organizer", CALFC_ORGANIZER, true); \
+	FHD(AcceptedBy, "Accepted By", CALFC_ACCEPTED_BY, true); \
+	FHD(Invited, "Invited", CALFC_INVITED, true); \
+ \
+	FHE(fbf, FreeBusyFlagType, FreeBusyFlag, "Free or Busy Flag"); \
+	FHE_CONST(fbf, Free, "Free"); \
+	FHE_CONST(fbf, Tentative, "Tentative"); \
+	FHE_CONST(fbf, Busy, "Busy"); \
+	FHE_CONST(fbf, OutOfOffice, "Out of Office"); \
+ \
+	FHE(cf, ClassFlagType, ClassFlag, "Event Class"); \
+	FHE_CONST(cf, Public, "Public"); \
+	FHE_CONST(cf, Confidential, "Confidential"); \
+	FHE_CONST(cf, Private, "Private"); \
+ \
+	FHP(TimeZoneCode, "Time Zone Code"); \
+	FHP(TimeZoneValid, "Time Zone Validity"); \
+ \
 	FHP(Unknowns, "Unknown Fields");
+
+	ALL_COMMON_CALENDAR_FIELDS
+
+	// the fields unique to Calendar, or different in CalendarALL
+	FHD(CalendarID, "Calendar ID", CALFC_CALENDAR_ID, false);
 
 	return fhv;
 }
@@ -558,7 +563,19 @@ const std::vector<FieldHandle<CalendarAll> >& CalendarAll::GetFieldHandles()
 	if( fhv.size() )
 		return fhv;
 
-	// FIXME
+#undef CONTAINER_OBJECT_NAME
+#define CONTAINER_OBJECT_NAME fhv
+
+#undef RECORD_CLASS_NAME
+#define RECORD_CLASS_NAME CalendarAll
+
+	ALL_COMMON_CALENDAR_FIELDS
+
+	// Calendar:: field, but with a CalendarAll ID
+	FHD(CalendarID, "Calendar ID", CALALLFC_CALENDAR_ID, false);
+
+	// add the fields specific to CalendarAll
+	FHD(MailAccount, "Mail Account", CALALLFC_MAIL_ACCOUNT, true);
 
 	return fhv;
 }
