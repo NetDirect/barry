@@ -387,7 +387,44 @@ const std::vector<FieldHandle<Bookmark> >& Bookmark::GetFieldHandles()
 	if( fhv.size() )
 		return fhv;
 
-	// FIXME
+#undef CONTAINER_OBJECT_NAME
+#define CONTAINER_OBJECT_NAME fhv
+
+#undef RECORD_CLASS_NAME
+#define RECORD_CLASS_NAME Bookmark
+
+	FHP(RecType, "Record Type");
+	FHP(RecordId, "Unique Record ID");
+
+	FHP(Index, "Bookmark Field Index");
+
+	FHP(Name, "Site Name");
+	FHP(Icon, "Site Icon");
+	FHP(Url, "Site URL");
+
+	FH_NEW_ENUM(bit, BrowserIdentityType, BrowserIdentity);
+	FH_ADD_ENUM(bit, IdentityAuto, "Auto detect browser");
+	FH_ADD_ENUM(bit, IdentityBlackBerry, "BlackBerry browser");
+	FH_ADD_ENUM(bit, IdentityFireFox, "FireFox browser");
+	FH_ADD_ENUM(bit, IdentityInternetExplorer, "Internet Explorer browser");
+	FH_ADD_ENUM(bit, IdentityUnknown, "Unknown browser");
+	FHE(bit, BrowserIdentity, "Browser Identity");
+
+	FH_NEW_ENUM(dmc, DisplayModeType, DisplayMode);
+	FH_ADD_ENUM(dmc, DisplayAuto, "Automatic");
+	FH_ADD_ENUM(dmc, DisplayColomn, "Column");
+	FH_ADD_ENUM(dmc, DisplayPage, "Page");
+	FH_ADD_ENUM(dmc, DisplayUnknown, "Unknown");
+	FHE(dmc, DisplayMode, "Display Mode");
+
+	FH_NEW_ENUM(jsm, JavaScriptModeType, JavaScriptMode);
+	FH_ADD_ENUM(jsm, JavaScriptAuto, "Automatic");
+	FH_ADD_ENUM(jsm, JavaScriptEnabled, "Enabled");
+	FH_ADD_ENUM(jsm, JavaScriptDisabled, "Disabled");
+	FH_ADD_ENUM(jsm, JavaScriptUnknown, "Unknown");
+	FHE(jsm, JavaScriptMode, "JavaScript Mode");
+
+	FHP(Unknowns, "Unknown Fields");
 
 	return fhv;
 }
