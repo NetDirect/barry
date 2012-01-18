@@ -372,7 +372,7 @@ public:
 /// The information in here should be enough to show the user what kind
 /// of field this is.
 ///
-struct FieldIdentity
+struct BXEXPORT FieldIdentity
 {
 	// useful public data
 	const char *Name;		// C++ name of field member variable in
@@ -448,7 +448,7 @@ struct FieldIdentity
 /// You will only get called for one field and record at a time.
 /// So you can't do comparisons this way.
 ///
-class FieldValueHandlerBase
+class BXEXPORT FieldValueHandlerBase
 {
 public:
 	virtual ~FieldValueHandlerBase() {}
