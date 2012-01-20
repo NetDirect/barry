@@ -269,7 +269,28 @@ const std::vector<FieldHandle<HandheldAgent> >& HandheldAgent::GetFieldHandles()
 	if( fhv.size() )
 		return fhv;
 
-	// FIXME
+#undef CONTAINER_OBJECT_NAME
+#define CONTAINER_OBJECT_NAME fhv
+
+#undef RECORD_CLASS_NAME
+#define RECORD_CLASS_NAME HandheldAgent
+
+	FHP(RecType, "Record Type Code");
+	FHP(RecordId, "Unique Record ID");
+
+	// These fields are only valid for RecordId 0x3000000
+	FHD(MEID, "MEID/ESN", HHAFC3_MEID, true);
+	FHD(Model, "Model", HHAFC3_MODEL, true);
+	FHD(Bands, "Bands", HHAFC3_BANDS, true);
+	FHD(Pin, "PIN", HHAFC3_PIN, true);
+	FHD(Version, "Version", HHAFC3_VERSION, true);
+	FHD(Network, "Network", HHAFC3_NETWORK, true);
+
+	// These fields are only for RecordId 0x7000000
+	FHD(PlatformVersion, "Platform Version", HHAFC7_PLATFORM, true);
+	FHD(Manufacturer, "Manufacturer", HHAFC7_MANUFACTURER, true);
+
+	FHP(Unknowns, "Unknown Fields");
 
 	return fhv;
 }

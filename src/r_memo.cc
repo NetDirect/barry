@@ -253,7 +253,20 @@ const std::vector<FieldHandle<Memo> >& Memo::GetFieldHandles()
 	if( fhv.size() )
 		return fhv;
 
-	// FIXME
+#undef CONTAINER_OBJECT_NAME
+#define CONTAINER_OBJECT_NAME fhv
+
+#undef RECORD_CLASS_NAME
+#define RECORD_CLASS_NAME Memo
+
+	FHP(RecType, "Record Type Code");
+	FHP(RecordId, "Unique Record ID");
+
+	FHD(Title, "Title", MEMFC_TITLE, true);
+	FHD(Body, "Body", MEMFC_BODY, true);
+	FHD(Categories, "Categories", MEMFC_CATEGORY, true);
+
+	FHP(Unknowns, "Unknown Fields");
 
 	return fhv;
 }

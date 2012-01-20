@@ -340,7 +340,46 @@ const std::vector<FieldHandle<CallLog> >& CallLog::GetFieldHandles()
 	if( fhv.size() )
 		return fhv;
 
-	// FIXME
+#undef CONTAINER_OBJECT_NAME
+#define CONTAINER_OBJECT_NAME fhv
+
+#undef RECORD_CLASS_NAME
+#define RECORD_CLASS_NAME CallLog
+
+	FHP(RecType, "Record Type Code");
+	FHP(RecordId, "Unique Record ID");
+
+	FHD(Duration, "Duration of Call in Seconds", CLLFC_DURATION, false);
+	FHD(Timestamp, "Timestamp of Call in Milliseconds", CLLFC_TIMESTAMP, false);
+	FHD(ContactName, "Contact Name", CLLFC_CONTACT_NAME, true);
+	FHD(PhoneNumber, "Phone Number", CLLFC_PHONE_NUMBER, true);
+
+	FHE(dft, DirectionFlagType, DirectionFlag, "Direction of Call");
+	FHE_CONST(dft, Receiver, "Received Call");
+	FHE_CONST(dft, Emitter, "Placed the Call");
+	FHE_CONST(dft, Failed, "Failed Call");
+	FHE_CONST(dft, Missing, "Missed Call");
+
+	FHE(sft, StatusFlagType, StatusFlag, "Status of Call");
+	FHE_CONST(sft, OK, "OK");
+	FHE_CONST(sft, Busy, "Busy");
+	FHE_CONST(sft, NetError, "Network Error");
+	FHE_CONST(sft, Unknown, "Unsupported Status");
+
+	FHE(ptf, PhoneTypeFlagType, PhoneTypeFlag, "Phone Type");
+	FHE_CONST(ptf, TypeUndefined, "Undefined");
+	FHE_CONST(ptf, TypeOffice, "Office");
+	FHE_CONST(ptf, TypeHome, "Home");
+	FHE_CONST(ptf, TypeMobile, "Mobile");
+	FHE_CONST(ptf, TypeUnknown, "Unknown");
+
+	FHE(pif, PhoneInfoFlagType, PhoneInfoFlag, "Phone Info");
+	FHE_CONST(pif, InfoUndefined, "Undefined");
+	FHE_CONST(pif, InfoKnown, "Phone Number is Set");
+	FHE_CONST(pif, InfoUnknown, "Phone Number Not Set");
+	FHE_CONST(pif, InfoPrivate, "Phone Number is Private");
+
+	FHP(Unknowns, "Unknown Fields");
 
 	return fhv;
 }

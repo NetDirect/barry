@@ -214,7 +214,21 @@ const std::vector<FieldHandle<ContentStore> >& ContentStore::GetFieldHandles()
 	if( fhv.size() )
 		return fhv;
 
-	// FIXME
+#undef CONTAINER_OBJECT_NAME
+#define CONTAINER_OBJECT_NAME fhv
+
+#undef RECORD_CLASS_NAME
+#define RECORD_CLASS_NAME ContentStore
+
+	FHP(RecType, "Record Type Code");
+	FHP(RecordId, "Unique Record ID");
+
+	FHD(Filename, "File or Folder Name", CSFC_FILENAME, true);
+	FHD(FolderFlag, "Folder Flag", CSFC_FOLDER_FLAG, false);
+	FHD(FileContent, "File Content", CSFC_FILE_CONTENT, false);
+	FHD(FileDescriptor, "File Descriptor", CSFC_FILE_DESCRIPTOR, false);
+
+	FHP(Unknowns, "Unknown Fields");
 
 	return fhv;
 }

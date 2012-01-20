@@ -195,7 +195,35 @@ const std::vector<FieldHandle<Folder> >& Folder::GetFieldHandles()
 	if( fhv.size() )
 		return fhv;
 
-	// FIXME
+#undef CONTAINER_OBJECT_NAME
+#define CONTAINER_OBJECT_NAME fhv
+
+#undef RECORD_CLASS_NAME
+#define RECORD_CLASS_NAME Folder
+
+	FHP(RecType, "Record Type Code");
+	FHP(RecordId, "Unique Record ID");
+
+	FHD(Name, "Folder Name", FFC_NAME, true);
+	FHD(Number, "Order Number", FFC_NUMBER, false);
+	FHD(Level, "Folder Level", FFC_LEVEL, false);
+
+	FHE(ft, FolderType, Type, "Folder Type");
+	FHE_CONST(ft, FolderSubtree, "Subtree");
+	FHE_CONST(ft, FolderDeleted, "Deleted");
+	FHE_CONST(ft, FolderInbox, "Inbox");
+	FHE_CONST(ft, FolderOutbox, "Outbox");
+	FHE_CONST(ft, FolderSent, "Sent");
+	FHE_CONST(ft, FolderOther, "Other");
+	FHE_CONST(ft, FolderDraft, "Draft");
+
+// Not yet implemented
+//	FHE(fst, FolderStatusType, ..., "Folder Status");
+//	FHE_CONST(fst, FolderOrphan, "Orphan");
+//	FHE_CONST(fst, FolderUnfiled, "Unfiled");
+//	FHE_CONST(fst, FolderFiled, "Filed");
+
+	FHP(Unknowns, "Unknown Fields");
 
 	return fhv;
 }
