@@ -27,6 +27,7 @@ debian/tmp/usr/share/man/man1/btool.1
 debian/tmp/usr/share/man/man1/bwatch.1
 debian/tmp/usr/share/man/man1/bio.1
 debian/tmp/usr/share/man/man1/btardump.1
+debian/tmp/usr/share/man/man1/btarcmp.1
 debian/tmp/usr/share/man/man1/bfuse.1
 debian/tmp/usr/share/man/man1/bjavaloader.1
 debian/tmp/usr/share/man/man1/balxparse.1

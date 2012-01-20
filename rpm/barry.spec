@@ -387,6 +387,7 @@ desktop-file-install --vendor netdirect \
 %attr(0644,root,root) %{_mandir}/man1/bwatch*
 %attr(0644,root,root) %{_mandir}/man1/bio*
 %attr(0644,root,root) %{_mandir}/man1/btardump*
+%attr(0644,root,root) %{_mandir}/man1/btarcmp*
 %attr(0644,root,root) %{_mandir}/man1/bfuse*
 %attr(0644,root,root) %{_mandir}/man1/bjavaloader*
 %attr(0644,root,root) %{_mandir}/man1/balxparse*

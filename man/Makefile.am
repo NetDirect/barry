@@ -5,6 +5,7 @@ dist_man_MANS = \
 	btool.1 \
 	bwatch.1 \
 	btardump.1 \
+	btarcmp.1 \
 	bfuse.1 \
 	bjavaloader.1 \
 	balxparse.1 \
