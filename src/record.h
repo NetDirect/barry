@@ -1109,6 +1109,15 @@ void ForEachFieldValue(const RecordT &rec, const FieldValueHandlerBase &vh)
 	CONTAINER_OBJECT_NAME.push_back( \
 		FieldHandle<RECORD_CLASS_NAME>(new_var_name, \
 			FieldIdentity(#record_field_name, display)))
+// same as FHE, but for when RECORD_CLASS_NAME is a template argument
+#define FHET(new_var_name, record_field_type, record_field_name, display) \
+	EnumField<RECORD_CLASS_NAME, typename RECORD_CLASS_NAME::record_field_type> \
+		*new_var_name = new \
+		EnumField<RECORD_CLASS_NAME, typename RECORD_CLASS_NAME::record_field_type> \
+			(&RECORD_CLASS_NAME::record_field_name); \
+	CONTAINER_OBJECT_NAME.push_back( \
+		FieldHandle<RECORD_CLASS_NAME>(new_var_name, \
+			FieldIdentity(#record_field_name, display)))
 // add constant to enum created above
 #define FHE_CONST(var, name, display) \
 	var->AddConstant(#name, display, RECORD_CLASS_NAME::name)

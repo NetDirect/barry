@@ -320,7 +320,50 @@ void DoFillHandles(std::vector<FieldHandle<RecordT> > &handles)
 	// start fresh
 	handles.clear();
 
-	// FIXME
+#undef CONTAINER_OBJECT_NAME
+#define CONTAINER_OBJECT_NAME handles
+
+#undef RECORD_CLASS_NAME
+#define RECORD_CLASS_NAME RecordT
+
+	FHP(RecType, "Record Type Code");
+	FHP(RecordId, "Unique Record ID");
+
+	FHD(From, "From", MBFC_FROM, true);
+	FHD(To, "To", MBFC_TO, true);
+	FHD(Cc, "CC", MBFC_CC, true);
+	FHD(Bcc, "BCC", MBFC_BCC, true);
+	FHD(Sender, "Sender", MBFC_SENDER, true);
+	FHD(ReplyTo, "Reply To", MBFC_REPLY_TO, true);
+	FHD(Subject, "Subject", MBFC_SUBJECT, true);
+	FHD(Body, "Body", MBFC_BODY, true);
+	FHD(Attachment, "Attachment", MBFC_ATTACHMENT, false);
+
+	FHD(MessageRecordId, "Message Record ID", MBFC_RECORDID, false);
+	FHP(MessageReplyTo, "Message Reply To");
+	FHP(MessageDateSent, "Date Sent");
+	FHP(MessageDateReceived, "Date Received");
+
+	FHP(MessageTruncated, "Truncated");
+	FHP(MessageRead, "Read");
+	FHP(MessageReply, "Reply");
+	FHP(MessageSaved, "Saved");
+	FHP(MessageSavedDeleted, "Saved Deleted");
+
+	FHET(pt, PriorityType, Priority, "Priority");
+	FHE_CONST(pt, LowPriority, "Low");
+	FHE_CONST(pt, NormalPriority, "Normal");
+	FHE_CONST(pt, HighPriority, "High");
+	FHE_CONST(pt, UnknownPriority, "Unknown");
+
+	FHET(st, SensitivityType, Sensitivity, "Sensitivity");
+	FHE_CONST(st, NormalSensitivity, "Normal");
+	FHE_CONST(st, Personal, "Personal");
+	FHE_CONST(st, Private, "Private");
+	FHE_CONST(st, Confidential, "Confidential");
+	FHE_CONST(st, UnknownSensitivity, "Unknown");
+
+	FHP(Unknowns, "Unknown Fields");
 }
 
 std::string MessageBase::GetDescription() const
