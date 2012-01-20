@@ -55,7 +55,7 @@ public:
 	{
 		NoReport = 0,
 		Failed,
-		Succedded
+		Succeeded
 	};
 	DeliveryType DeliveryStatus; // not implemented yet
 
