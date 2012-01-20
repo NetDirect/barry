@@ -263,7 +263,46 @@ const std::vector<FieldHandle<Sms> >& Sms::GetFieldHandles()
 	if( fhv.size() )
 		return fhv;
 
-	// FIXME
+#undef CONTAINER_OBJECT_NAME
+#define CONTAINER_OBJECT_NAME fhv
+
+#undef RECORD_CLASS_NAME
+#define RECORD_CLASS_NAME Sms
+
+	FHP(RecType, "Record Type Code");
+	FHP(RecordId, "Unique Record ID");
+
+	FHE(mt, MessageType, MessageStatus, "Message Status");
+	FHE_CONST(mt, Unknown, "Unknown");
+	FHE_CONST(mt, Received, "Received");
+	FHE_CONST(mt, Sent, "Sent");
+	FHE_CONST(mt, Draft, "Draft");
+
+	FHE(dt, DeliveryType, DeliveryStatus, "Delivery Status");
+	FHE_CONST(dt, NoReport, "No Report");
+	FHE_CONST(dt, Failed, "Failed");
+	FHE_CONST(dt, Succeeded, "Succeeded");
+
+	FHP(IsNew, "Is New?");
+	FHP(NewConversation, "New Conversation");
+	FHP(Saved, "Saved");
+	FHP(Deleted, "Deleted");
+	FHP(Opened, "Opened");
+
+	FHP(Timestamp, "Timestamp in Milliseconds");
+	FHP(ServiceCenterTimestamp, "Service Center Timestamp");
+
+	FHE(dcst, DataCodingSchemeType, DataCodingScheme, "Data Coding Scheme");
+	FHE_CONST(dcst, SevenBit, "7bit");
+	FHE_CONST(dcst, EightBit, "8bit");
+	FHE_CONST(dcst, UCS2, "UCS2");
+
+	FHP(ErrorId, "Error ID");
+
+	FHD(Addresses, "Addresses", SMSFC_ADDRESS, true);
+	FHD(Body, "Body", SMSFC_BODY, true);
+
+	FHP(Unknowns, "Unknown Fields");
 
 	return fhv;
 }
