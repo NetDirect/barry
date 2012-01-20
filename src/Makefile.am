@@ -167,6 +167,7 @@ include_barry_HEADERS = barry.h barrysync.h barrybackup.h barryalx.h \
 noinst_HEADERS = cbarry.h \
 	base64.h \
 	record-internal.h \
+	r_recur_base-int.h \
 	bmp-internal.h \
 	cod-internal.h \
 	controllerpriv.h \
@@ -214,7 +215,7 @@ libbarry_la_SOURCES = dll.h \
 	threadwrap.cc \
 	protocol.h protostructs.h protocol.cc \
 	record.h record-internal.h record.cc \
-	r_recur_base.h r_recur_base.cc \
+	r_recur_base.h r_recur_base-int.h r_recur_base.cc \
 	r_calendar.h r_calendar.cc \
 	r_calllog.h r_calllog.cc \
 	r_bookmark.h r_bookmark.cc \

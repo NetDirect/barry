@@ -22,6 +22,7 @@
 
 #include "r_task.h"
 #include "r_calendar.h"                        // for CAL_* defines
+#include "r_recur_base-int.h"
 #include "record-internal.h"
 #include "protostructs.h"
 #include "data.h"
@@ -353,7 +354,47 @@ const std::vector<FieldHandle<Task> >& Task::GetFieldHandles()
 	if( fhv.size() )
 		return fhv;
 
-	// FIXME
+#undef CONTAINER_OBJECT_NAME
+#define CONTAINER_OBJECT_NAME fhv
+
+#undef RECORD_CLASS_NAME
+#define RECORD_CLASS_NAME Task
+
+	FHP(RecType, "Record Type Code");
+	FHP(RecordId, "Unique Record ID");
+
+	FHD(Summary, "Summary", TSKFC_TITLE, true);
+	FHD(Notes, "Notes", TSKFC_NOTES, true);
+	FHD(Categories, "Categories", TSKFC_CATEGORIES, true);
+	FHP(UID, "UID");	// FIXME - not linked to any device field??
+
+	FHD(StartTime, "Start Time", TSKFC_START_TIME, false);
+	FHD(DueTime, "Due Time", TSKFC_DUE_TIME, false);
+	FHD(AlarmTime, "Alarm Time", TSKFC_ALARM_TIME, false);
+	FHD(TimeZoneCode, "Time Zone Code", TSKFC_TIMEZONE_CODE, false);
+	FHP(TimeZoneValid, "Time Zone Code Valid");
+	FHD(DueDateFlag, "Due Date is Set", TSKFC_DUE_FLAG, false);
+
+	FHE(aft, AlarmFlagType, AlarmType, "Alarm Type");
+	FHE_CONST(aft, Date, "Date");
+	FHE_CONST(aft, Relative, "Relative");
+
+	FHE(pft, PriorityFlagType, PriorityFlag, "Priority");
+	FHE_CONST(pft, High, "High");
+	FHE_CONST(pft, Normal, "Normal");
+	FHE_CONST(pft, Low, "Low");
+
+	FHE(sft, StatusFlagType, StatusFlag, "Status");
+	FHE_CONST(sft, NotStarted, "Not Started");
+	FHE_CONST(sft, InProgress, "In Progress");
+	FHE_CONST(sft, Completed, "Completed");
+	FHE_CONST(sft, Waiting, "Waiting");
+	FHE_CONST(sft, Deferred, "Deferred");
+
+	FHP(Unknowns, "Unknown Fields");
+
+	// and finally, the RecurBase fields
+	RECUR_BASE_FIELD_HANDLES
 
 	return fhv;
 }

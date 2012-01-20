@@ -20,6 +20,7 @@
 */
 
 #include "r_calendar.h"
+#include "r_recur_base-int.h"
 #include "record-internal.h"
 #include "protocol.h"
 #include "protostructs.h"
@@ -453,6 +454,9 @@ const std::vector<FieldHandle<Calendar> >& Calendar::GetFieldHandles()
 	// the fields unique to Calendar, or different in CalendarALL
 	FHD(CalendarID, "Calendar ID", CALFC_CALENDAR_ID, false);
 
+	// and finally, the RecurBase fields
+	RECUR_BASE_FIELD_HANDLES
+
 	return fhv;
 }
 
@@ -576,6 +580,9 @@ const std::vector<FieldHandle<CalendarAll> >& CalendarAll::GetFieldHandles()
 
 	// add the fields specific to CalendarAll
 	FHD(MailAccount, "Mail Account", CALALLFC_MAIL_ACCOUNT, true);
+
+	// and finally, the RecurBase fields
+	RECUR_BASE_FIELD_HANDLES
 
 	return fhv;
 }
