@@ -175,8 +175,8 @@ public:
 			<< v << endl;
 		DumpId(id);
 	}
-	/// For type int
-	virtual void operator()(const int &v,
+	/// For type int32_t
+	virtual void operator()(const int32_t &v,
 				const FieldIdentity &id) const
 	{
 		cout << id.DisplayName << " (" << id.Name << "): "

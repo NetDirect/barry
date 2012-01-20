@@ -574,8 +574,8 @@ public:
 	/// For type bool
 	virtual void operator()(const bool &v,
 				const FieldIdentity &id) const = 0;
-	/// For type int
-	virtual void operator()(const int &v,
+	/// For type int32_t
+	virtual void operator()(const int32_t &v,
 				const FieldIdentity &id) const = 0;
 	/// For type EmailList
 	virtual void operator()(const EmailList &v,
@@ -722,6 +722,7 @@ private:
 		uint16_t RecordT::* m_uint16;			// 13
 		PostalAddress RecordT::* m_PostalAddress;	// 14
 		// used by non-union m_enum below:		// 15
+		int32_t RecordT::* m_int32;			// 16
 	};
 
 	int m_type_index;
@@ -876,6 +877,15 @@ public:
 	{
 	}
 
+	// 16
+	FieldHandle(int32_t RecordT::* mp, const FieldIdentity &id)
+		: m_type_index(16)
+		, m_enum(0)
+		, m_id(id)
+	{
+		m_union.m_int32 = mp;
+	}
+
 	/// Extracts FieldIdentity object from FieldHandle<>
 	const FieldIdentity& GetIdentity() const { return m_id; }
 
@@ -934,6 +944,9 @@ public:
 			break;
 		case 15:
 			vh(m_enum->GetValue(rec), m_id);
+			break;
+		case 16:
+			vh(rec.*(m_union.m_int32), m_id);
 			break;
 		default:
 			throw std::logic_error("Unknown field handle type index");
@@ -996,6 +1009,9 @@ public:
 			break;
 		case 15:
 			func(m_enum, m_id);
+			break;
+		case 16:
+			func(m_union.m_int32, m_id);
 			break;
 		default:
 			throw std::logic_error("Unknown field handle type index");
