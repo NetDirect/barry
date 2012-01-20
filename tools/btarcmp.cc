@@ -38,18 +38,10 @@ using namespace std::tr1;
 using namespace Barry;
 
 /*
-- write btarcmp tool to compare two barry backup tarball files and report
-        differences...
-                - report differences in a concise list (uniqueId and displayname
-                  or something), with an option for verbose
-                - modes of comparison:
-                        - binary compare (similar to brecsum, with its options)
-                        - or parsed record compare, with list of fields that
-                          are different
-                - also, should have the ability to copy all differing records
-                        into another tarball, to function as a "patch", so
-                        user can write it to his device to update only differing
-                        records, or to store as a record of changes, etc.
+Still TODO: should have the ability to copy all differing records
+	into another tarball, to function as a "patch", so
+	user can write it to his device to update only differing
+	records, or to store as a record of changes, etc.
 */
 void Usage()
 {
