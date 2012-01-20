@@ -196,12 +196,33 @@ struct UnknownData
 	std::string::size_type size() const { return raw_data.size(); }
 	void assign(const std::string::value_type *s, std::string::size_type n)
 		{ raw_data.assign(s, n); }
+
+	bool operator==(const UnknownData &other) const
+	{
+		return raw_data == other.raw_data;
+	}
+
+	bool operator!=(const UnknownData &other) const
+	{
+		return !operator==(other);
+	}
 };
 
 struct BXEXPORT UnknownField
 {
 	uint8_t type;
 	UnknownData data;
+
+	bool operator==(const UnknownField &other) const
+	{
+		return	type == other.type &&
+			data == other.data;
+	}
+
+	bool operator!=(const UnknownField &other) const
+	{
+		return !operator==(other);
+	}
 };
 typedef std::vector<UnknownField> UnknownsType;
 BXEXPORT std::ostream& operator<< (std::ostream &os, const UnknownsType &unknowns);
@@ -234,6 +255,17 @@ struct BXEXPORT EmailAddress
 	{
 		return Name.size() + Email.size();
 	}
+
+	bool operator==(const EmailAddress &other) const
+	{
+		return	Name == other.Name &&
+			Email == other.Email;
+	}
+
+	bool operator!=(const EmailAddress &other) const
+	{
+		return !operator==(other);
+	}
 };
 BXEXPORT std::ostream& operator<<(std::ostream &os, const EmailAddress &msga);
 
@@ -263,6 +295,21 @@ struct BXEXPORT PostalAddress
 	bool HasData() const { return Address1.size() || Address2.size() ||
 		Address3.size() || City.size() || Province.size() ||
 		PostalCode.size() || Country.size(); }
+
+	bool operator==(const PostalAddress &other) const
+	{
+		return	Address1 == other.Address1 &&
+			Address2 == other.Address2 &&
+			Address3 == other.Address3 &&
+			City == other.City &&
+			Province == other.Province &&
+			PostalCode == other.PostalCode &&
+			Country == other.Country;
+	}
+	bool operator!=(const PostalAddress &other) const
+	{
+		return !operator==(other);
+	}
 };
 BXEXPORT std::ostream& operator<<(std::ostream &os, const PostalAddress &msga);
 
@@ -286,6 +333,17 @@ struct BXEXPORT Date
 	bool FromTm(const struct tm *timep);
 	bool FromBBString(const std::string &str);
 	bool FromYYYYMMDD(const std::string &str);
+
+	bool operator==(const Date &other) const
+	{
+		return Month == other.Month &&
+			Day == other.Day &&
+			Year == other.Year;
+	}
+	bool operator!=(const Date &other) const
+	{
+		return !operator==(other);
+	}
 };
 BXEXPORT std::ostream& operator<<(std::ostream &os, const Date &date);
 
