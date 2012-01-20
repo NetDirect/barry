@@ -427,7 +427,29 @@ const std::vector<FieldHandle<ServiceBook> >& ServiceBook::GetFieldHandles()
 	if( fhv.size() )
 		return fhv;
 
-	// FIXME
+#undef CONTAINER_OBJECT_NAME
+#define CONTAINER_OBJECT_NAME fhv
+
+#undef RECORD_CLASS_NAME
+#define RECORD_CLASS_NAME ServiceBook
+
+	FHP(RecType, "Record Type Code");
+	FHP(RecordId, "Unique Record ID");
+
+	FHP(Name, "Name");
+	FHP(HiddenName, "Hidden Name");
+	FHP(Description, "Description");
+	FHP(DSID, "DSID");
+	FHP(BesDomain, "BES Domain");
+	FHP(UniqueId, "Unique ID");
+	FHP(ContentId, "Content ID");
+
+	// FIXME - this config is not yet implmented fully... when it is,
+	// will need to add this as a field to FieldHandle<>, and maybe
+	// implement a ServiceBookConfig::GetFieldHandles()
+	//ServiceBookConfig Config;
+
+	FHP(Unknowns, "Unknown Fields");
 
 	return fhv;
 }
