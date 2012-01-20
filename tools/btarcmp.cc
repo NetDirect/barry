@@ -22,8 +22,6 @@
 #include <barry/barry.h>
 #include <barry/barrybackup.h>
 
-//#include "brecsum.h"
-
 #include <iostream>
 #include <iomanip>
 #include <tr1/memory>
@@ -65,7 +63,7 @@ void Usage()
    << "\n"
    << " Usage:  btarcmp [options...] tarball_0 tarball_1\n"
    << "\n"
-   << "   -b        Use brief output\n"
+   << "   -b        Use brief filename output\n"
    << "   -d db     Specify a specific database to compare.  Can be used\n"
    << "             multiple times.  If not used at all, all databases are\n"
    << "             compared.\n"
@@ -74,11 +72,246 @@ void Usage()
    << "   -h        This help\n"
    << "   -I cs     International charset for string conversions\n"
    << "             Valid values here are available with 'iconv --list'\n"
+   << "   -P        Only compare records that can be parsed\n"
+   << "             This is the same as specifying -d for each database\n"
+   << "             listed with -S.\n"
    << "   -S        Show list of supported database parsers\n"
-   << "   -v        Show verbose diff output\n"
+   << "   -v        Show verbose diff output (twice to force hex output)\n"
    << "\n"
    << endl;
 }
+
+
+//////////////////////////////////////////////////////////////////////////////
+// Utility functions and functors
+
+bool DBDataCmp(const DBData &a, const DBData &b)
+{
+	return a.GetUniqueId() < b.GetUniqueId();
+}
+
+class DBDataIdCmp
+{
+	uint32_t m_id;
+
+public:
+	explicit DBDataIdCmp(uint32_t id)
+		: m_id(id)
+	{
+	}
+
+	bool operator()(const DBData &data) const
+	{
+		return data.GetUniqueId() == m_id;
+	}
+};
+
+void ChecksumDBData(const DBData &data, bool include_ids, std::string &sum)
+{
+	Barry::SHA_CTX m_ctx;
+
+	SHA1_Init(&m_ctx);
+
+	if( include_ids ) {
+		SHA1_Update(&m_ctx, data.GetDBName().c_str(),
+			data.GetDBName().size());
+
+		uint8_t recType = data.GetRecType();
+		SHA1_Update(&m_ctx, &recType, sizeof(recType));
+
+		uint32_t uniqueId = data.GetUniqueId();
+		SHA1_Update(&m_ctx, &uniqueId, sizeof(uniqueId));
+	}
+
+	int len = data.GetData().GetSize() - data.GetOffset();
+	SHA1_Update(&m_ctx,
+		data.GetData().GetData() + data.GetOffset(), len);
+
+	unsigned char sha1[SHA_DIGEST_LENGTH];
+	SHA1_Final(sha1, &m_ctx);
+
+	ostringstream oss;
+	for( int i = 0; i < SHA_DIGEST_LENGTH; i++ ) {
+		oss << hex << setfill('0') << setw(2)
+			<< (unsigned int) sha1[i];
+	}
+	sum = oss.str();
+}
+
+std::ostream& operator<<(std::ostream &os, const EmailList &el)
+{
+	bool first = true;
+	for( EmailList::const_iterator b = el.begin(); b != el.end(); ++b ) {
+		if( !first )
+			os << ", ";
+		else
+			first = false;
+
+		os << *b;
+	}
+	return os;
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
+// Parsed Compare class
+
+class ParsedCompare
+{
+private:
+	const DBData &m_one, &m_two;
+	const IConverter *m_ic;
+	bool m_known_record;
+	std::string m_first_description;
+
+public:
+	ParsedCompare(const DBData &one, const DBData &two,
+		const IConverter *ic = 0);
+
+	bool CanParse() const { return m_known_record; }
+	const std::string& GetDescription() const { return m_first_description;}
+
+	/// Returns true if differing fields found and displayed.
+	/// False if no differences found.
+	bool ShowDifferingFields();
+};
+
+ParsedCompare::ParsedCompare(const DBData &one,
+				const DBData &two,
+				const IConverter *ic)
+	: m_one(one)
+	, m_two(two)
+	, m_ic(ic)
+	, m_known_record(false)
+{
+	if( one.GetDBName() != two.GetDBName() )
+		throw logic_error("Different database types in ParsedCompare ctor!");
+
+#undef HANDLE_PARSER
+#define HANDLE_PARSER(tname) \
+	else if( tname::GetDBName() == one.GetDBName() ) { \
+		m_known_record = true; \
+		tname a; \
+		ParseDBData(m_one, a, m_ic); \
+		m_first_description = a.GetDescription(); \
+	}
+
+	if( m_known_record ) {
+	}
+	ALL_KNOWN_PARSER_TYPES
+}
+
+template <class RecordT>
+class FieldHandler
+{
+private:
+	const RecordT &m_one, &m_two;
+	mutable bool m_found_difference;
+
+public:
+	FieldHandler(const RecordT &one, const RecordT &two)
+		: m_one(one)
+		, m_two(two)
+		, m_found_difference(false)
+	{
+	}
+
+	bool Differing() const { return m_found_difference; }
+
+	void operator()(EnumFieldBase<RecordT> *ep,
+		const FieldIdentity &id) const
+	{
+		if( ep->GetValue(m_one) == ep->GetValue(m_two) )
+			return;
+
+		m_found_difference = true;
+		cout << "   " << id.Name << ":\n"
+			<< "         tar[0] = "
+			<< ep->GetName(ep->GetValue(m_one))
+			<< " (" << ep->GetValue(m_one) << ")\n"
+			<< "         tar[1] = "
+			<< ep->GetName(ep->GetValue(m_two))
+			<< " (" << ep->GetValue(m_two) << ")"
+			<< endl;
+	}
+
+	void operator()(typename FieldHandle<RecordT>::PostalPointer pp,
+		const FieldIdentity &id) const
+	{
+		const std::string
+			&a = m_one.*(pp.m_PostalAddress).*(pp.m_PostalField),
+			&b = m_two.*(pp.m_PostalAddress).*(pp.m_PostalField);
+
+		if( a == b )
+			return;
+
+		m_found_difference = true;
+		cout << "   " << id.Name << ":\n"
+			<< "         tar[0] = '" << a << "'\n"
+			<< "         tar[1] = '" << b << "'"
+			<< endl;
+	}
+
+	void operator()(std::string RecordT::* mp, const FieldIdentity &id) const
+	{
+		if( m_one.*mp == m_two.*mp )
+			return;
+
+		m_found_difference = true;
+		cout << "   " << id.Name << ":\n"
+			<< "         tar[0] = '"
+			<< Cr2LfWrapper(m_one.*mp) << "'\n"
+			<< "         tar[1] = '"
+			<< Cr2LfWrapper(m_two.*mp) << "'"
+			<< endl;
+	}
+
+	template <class TypeT>
+	void operator()(TypeT RecordT::* mp, const FieldIdentity &id) const
+	{
+		if( m_one.*mp == m_two.*mp )
+			return;
+
+		m_found_difference = true;
+		cout << "   " << id.Name << ":\n"
+			<< "         tar[0] = '" << m_one.*mp << "'\n"
+			<< "         tar[1] = '" << m_two.*mp << "'"
+			<< endl;
+	}
+};
+
+template <class RecordT>
+bool DoParsedCompare(const RecordT &a, const RecordT &b)
+{
+	FieldHandler<RecordT> handler(a, b);
+	ForEachField(RecordT::GetFieldHandles(), handler);
+	return handler.Differing();
+}
+
+/// Returns true if differing fields found and displayed.
+/// False if no differences found.
+bool ParsedCompare::ShowDifferingFields()
+{
+#undef HANDLE_PARSER
+#define HANDLE_PARSER(tname) \
+	else if( tname::GetDBName() == m_one.GetDBName() ) { \
+		tname a, b; \
+		ParseDBData(m_one, a, m_ic); \
+		ParseDBData(m_two, b, m_ic); \
+		return DoParsedCompare<tname>(a, b); \
+	}
+
+	if( !m_known_record ) {
+		return false;
+	}
+
+	ALL_KNOWN_PARSER_TYPES
+
+	else {
+		return false;
+	}
+}
+
 
 //////////////////////////////////////////////////////////////////////////////
 // Main application class
@@ -102,8 +335,12 @@ private:
 	std::string m_tarfiles[2];	// just filename, no path; or brief mark
 	auto_ptr<IConverter> m_ic;
 
-	int m_main_return;
+	int m_main_return;		// 0 - success
+					// 1 - low level error or logic error
+					// 2 - databases lists not the same
+					// 3 - a record was added or deleted
 	bool m_verbose;
+	bool m_always_hex;
 	std::string m_last_dbname;
 
 public:
@@ -123,8 +360,11 @@ public:
 		DBDataList::const_iterator &e, const DBDataList &opposite_list,
 		const std::string &action);
 
+	void ShowRecordDiff(const DBData &one, const DBData &two,
+		ParsedCompare &pc);
 	void DumpRecord(const DBData &data);
 	void ShowDatabaseHeader(const std::string &dbname);
+	void AddParsersToCompare();
 
 	// returns true if any of the items in Outputs needs a probe
 	int main(int argc, char *argv[]);
@@ -153,11 +393,20 @@ public:
 
 
 //////////////////////////////////////////////////////////////////////////////
+// Misc helpers dependent on App
+
+bool IdExists(const App::DBDataList &list, uint32_t id)
+{
+	return find_if(list.begin(), list.end(), DBDataIdCmp(id)) != list.end();
+}
+
+//////////////////////////////////////////////////////////////////////////////
 // Member function definitions
 
 App::App()
 	: m_main_return(0)
 	, m_verbose(false)
+	, m_always_hex(false)
 {
 }
 
@@ -174,30 +423,13 @@ void App::ShowParsers()
 	<< endl;
 }
 
-bool DBDataCmp(const DBData &a, const DBData &b)
+void App::AddParsersToCompare()
 {
-	return a.GetUniqueId() < b.GetUniqueId();
-}
+#undef HANDLE_PARSER
+#define HANDLE_PARSER(tname) \
+	m_compare_list.push_back(tname::GetDBName());
 
-class DBDataIdCmp
-{
-	uint32_t m_id;
-
-public:
-	explicit DBDataIdCmp(uint32_t id)
-		: m_id(id)
-	{
-	}
-
-	bool operator()(const DBData &data) const
-	{
-		return data.GetUniqueId() == m_id;
-	}
-};
-
-bool IdExists(const App::DBDataList &list, uint32_t id)
-{
-	return find_if(list.begin(), list.end(), DBDataIdCmp(id)) != list.end();
+	ALL_KNOWN_PARSER_TYPES
 }
 
 void App::LoadTarballs()
@@ -306,58 +538,8 @@ void App::Compare(const std::string &dbname,
 	}
 }
 
-void ChecksumDBData(const DBData &data, bool include_ids, std::string &sum)
-{
-	Barry::SHA_CTX m_ctx;
-
-	SHA1_Init(&m_ctx);
-
-	if( include_ids ) {
-		SHA1_Update(&m_ctx, data.GetDBName().c_str(),
-			data.GetDBName().size());
-
-		uint8_t recType = data.GetRecType();
-		SHA1_Update(&m_ctx, &recType, sizeof(recType));
-
-		uint32_t uniqueId = data.GetUniqueId();
-		SHA1_Update(&m_ctx, &uniqueId, sizeof(uniqueId));
-	}
-
-	int len = data.GetData().GetSize() - data.GetOffset();
-	SHA1_Update(&m_ctx,
-		data.GetData().GetData() + data.GetOffset(), len);
-
-	unsigned char sha1[SHA_DIGEST_LENGTH];
-	SHA1_Final(sha1, &m_ctx);
-
-	ostringstream oss;
-	for( int i = 0; i < SHA_DIGEST_LENGTH; i++ ) {
-		oss << hex << setfill('0') << setw(2)
-			<< (unsigned int) sha1[i];
-	}
-	sum = oss.str();
-}
-
-class CompareParser : public Barry::Parser
-{
-private:
-//	const DBData &m_one, &m_two;
-
-protected:
-#undef HANDLE_PARSER
-#define HANDLE_PARSER(tname) \
-	tname m_##tname; \
-
-	ALL_KNOWN_PARSER_TYPES
-//fixme;
-public:
-	static std::auto_ptr<CompareParser> Factory(const DBData &one,
-					const DBData &two);
-};
-
 void App::Compare(const DBData &one, const DBData &two)
 {
-/*
 	// make sure one and two are of the same database, or throw
 	if( one.GetDBName() != two.GetDBName() )
 		throw logic_error("Tried to compare records from different databases: " + one.GetDBName() + ", and " + two.GetDBName());
@@ -375,38 +557,49 @@ void App::Compare(const DBData &one, const DBData &two)
 	// if different, check if there's a parser available for this data
 	// if not, display that these records differ, dump verbose if
 	// needed, and done
-	auto_ptr<CompareParser> parser = CompareParser::Factory(one, two);
-	if( !parser.get() ) {
-		ShowRecordDiff(one, two);
-		return;
-	}
-
-	// if parser available, parser records and do a parsed record compare.
-	// if alike, tell user that sums differ, but records are the same
-	// if parsed records differ, tell user concisely, and if verbose
-	// is turned on, then tell which records have changed.  If user always
-	// wants a binary dump, then dump as well
-	if( m_always_hex )
-		ShowRecordDiff(one, two, parser.get());
-	parser->ShowDifferingFields();
-*/
+	ParsedCompare pc(one, two, m_ic.get());
+	ShowRecordDiff(one, two, pc);
 }
 
-/*
-void App::ShowRecordDiff(const DBData &one, const DBData &two,
-			CompareParser *parser)
+void App::ShowRecordDiff(const DBData &one,
+			const DBData &two,
+			ParsedCompare &pc)
 {
-	// if parser is null, print:
-	//    UniqueID: sizes (one vs. two), X bytes differ
-	//
-	// otherwise, print:
-	//    UniqueID: sizes (one vs. two), (custom display name)
-	//
+	if( !pc.CanParse() ) {
+		// if can't parse, print:
+		//    UniqueID: sizes (one vs. two), X bytes differ
+		// then the differing fields
+		cout << "  0x" << hex << one.GetUniqueId() << ": differs: "
+			<< dec
+			<< "sizes (" << one.GetData().GetSize()
+			<< " vs. " << two.GetData().GetSize()
+			<< "), SHA1 sums differ"
+			<< endl;
+	}
+	else {
+		// otherwise, print:
+		//    UniqueID: sizes (one vs. two), (custom display name)
+		cout << "  0x" << hex << one.GetUniqueId() << ": differs: "
+			<< dec
+			<< "sizes (" << one.GetData().GetSize()
+			<< " vs. " << two.GetData().GetSize()
+			<< "), "
+			<< pc.GetDescription()
+			<< endl;
+
+		if( !pc.ShowDifferingFields() ) {
+			// no difference found...
+			cout << "No differences found in parsed records, but SHA1 sums differ." << endl;
+		}
+	}
 
 	// if verbose and parser is null, or if always_hex,
 	// then display a (messy?) hex diff of the raw data
+	if( (m_verbose && !pc.CanParse()) || m_always_hex ) {
+		cout << "   Hex diff of record:" << endl;
+		cout << Diff(one.GetData(), two.GetData()) << endl;
+	}
 }
-*/
 
 bool App::Alike(DBDataList::const_iterator b1,
 		DBDataList::const_iterator b2,
@@ -416,6 +609,24 @@ bool App::Alike(DBDataList::const_iterator b1,
 	if( b1 == e1 || b2 == e2 )
 		return false;
 	return b1->GetUniqueId() == b2->GetUniqueId();
+}
+
+std::string GetDBDescription(const DBData &data, const IConverter *ic)
+{
+	string desc;
+
+	// try to parse it
+#undef HANDLE_PARSER
+#define HANDLE_PARSER(tname) \
+	if( data.GetDBName() == tname::GetDBName() ) { \
+		tname rec; \
+		ParseDBData(data, rec, ic); \
+		return rec.GetDescription(); \
+	}
+
+	ALL_KNOWN_PARSER_TYPES
+
+	return desc;
 }
 
 void App::SearchCheck(DBDataList::const_iterator &b,
@@ -440,7 +651,14 @@ void App::SearchCheck(DBDataList::const_iterator &b,
 	// and advance the iterator
 	ShowDatabaseHeader(b->GetDBName());
 	cout << "  0x" << hex << b->GetUniqueId() << ": record has been "
-		<< action << " in " << "tar[1]" /*m_tarfiles[1]*/ << endl;
+		<< action << " in " << "tar[1]";
+	string desc = GetDBDescription(*b, m_ic.get());
+	if( desc.size() ) {
+		cout << ": " << desc << endl;
+	}
+	else {
+		cout << endl;
+	}
 	if( m_verbose ) {
 		DumpRecord(*b);
 	}
@@ -451,7 +669,19 @@ void App::SearchCheck(DBDataList::const_iterator &b,
 
 void App::DumpRecord(const DBData &data)
 {
-	// FIXME - dump record, either in hex, or in (condensed?) parsed format
+#undef HANDLE_PARSER
+#define HANDLE_PARSER(tname) \
+	if( data.GetDBName() == tname::GetDBName() ) { \
+		tname rec; \
+		ParseDBData(data, rec, m_ic.get()); \
+		cout << rec << endl; \
+		return; \
+	}
+
+	ALL_KNOWN_PARSER_TYPES
+
+	// if we get here, it's not a known record, so just dump the hex
+	cout << data.GetData() << endl;
 }
 
 void App::ShowDatabaseHeader(const std::string &dbname)
@@ -470,7 +700,7 @@ int App::main(int argc, char *argv[])
 
 	// process command line options
 	for(;;) {
-		int cmd = getopt(argc, argv, "bd:D:hI:Sv");
+		int cmd = getopt(argc, argv, "bd:D:hI:PSv");
 		if( cmd == -1 )
 			break;
 
@@ -488,6 +718,10 @@ int App::main(int argc, char *argv[])
 			m_skip_list.push_back(optarg);
 			break;
 
+		case 'P':	// only compare parseable records
+			AddParsersToCompare();
+			break;
+
 		case 'S':	// show parsers and builders
 			ShowParsers();
 			return 0;
@@ -497,7 +731,10 @@ int App::main(int argc, char *argv[])
 			break;
 
 		case 'v':	// verbose
-			m_verbose = true;
+			if( !m_verbose )
+				m_verbose = true;
+			else
+				m_always_hex = true;
 			break;
 
 		case 'h':	// help
@@ -542,7 +779,7 @@ int App::main(int argc, char *argv[])
 	cout << "tar[1] = " << m_tarpaths[1] << endl;
 
 	// initialize the Barry library
-	Barry::Init(m_verbose);
+	Barry::Init(false);
 
 	// create an IConverter object if needed
 	if( iconvCharset.size() ) {
