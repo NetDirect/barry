@@ -199,7 +199,29 @@ const std::vector<FieldHandle<Timezone> >& Timezone::GetFieldHandles()
 	if( fhv.size() )
 		return fhv;
 
-	// FIXME
+#undef CONTAINER_OBJECT_NAME
+#define CONTAINER_OBJECT_NAME fhv
+
+#undef RECORD_CLASS_NAME
+#define RECORD_CLASS_NAME Timezone
+
+	FHP(RecType, "Record Type Code");
+	FHP(RecordId, "Unique Record ID");
+
+	FHD(TimeZoneName, "Timezone Name", TZFC_NAME, true);
+	FHD(TZType, "Timezone Type", TZFC_TZTYPE, false);
+	FHD(DSTOffset, "DST Offset", TZFC_DST, false);
+	FHD(Index, "Index", TZFC_INDEX, false);
+	FHD(Offset, "Timezone Offset", TZFC_OFFSET, false);
+	FHD(OffsetFraction, "Timezone Offset Fraction", TZFC_OFFSET, false);
+	FHD(StartMonth, "Start Month", TZFC_STARTMONTH, false);
+	FHD(EndMonth, "End Month", TZFC_ENDMONTH, false);
+	FHD(UseDST, "Use DST?", TZFC_DST, false);
+
+	// part of TZFC_OFFSET processing...
+	FHP(Left, "Left Flag");
+
+	FHP(Unknowns, "Unknown Fields");
 
 	return fhv;
 }
