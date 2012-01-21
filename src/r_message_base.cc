@@ -159,7 +159,6 @@ const unsigned char* MessageBase::ParseField(const unsigned char *begin,
 	}
 
 	// handle special cases
-	char swallow;
 	switch( field->type )
 	{
 	case MBFC_RECORDID:
@@ -167,7 +166,7 @@ const unsigned char* MessageBase::ParseField(const unsigned char *begin,
 		return begin;
 
 	case MBFC_REPLY_UNKNOWN:	// FIXME - not available in SavedMessage?
-		swallow = field->u.raw[0];
+		//char swallow = field->u.raw[0];
 		return begin;
 	}
 
