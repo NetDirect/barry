@@ -52,7 +52,7 @@ Depends: libbarry0 (= ${binary:Version})
 Description: Library for using the BlackBerry handheld and debugging symbols
  Barry is a GPL C++ library for interfacing with the RIM BlackBerry Handheld.
  .
- This package contains the debug version of the libbary shared library.
+ This package contains the debug version of the shared library.
 
 Package: libbarry-dev
 Section: libdevel
