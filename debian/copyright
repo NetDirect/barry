@@ -37,7 +37,7 @@ License:
 
 
 On Debian systems, the complete text of the GNU General
-Public License can be found in `/usr/share/common-licenses/GPL'.
+Public License can be found in `/usr/share/common-licenses/GPL-2'.
 
  For opensync-plugin/src/vformat.[c,h]:
    This library is free software; you can redistribute it and/or
@@ -56,4 +56,4 @@ Public License can be found in `/usr/share/common-licenses/GPL'.
 
 
 On Debian systems, the complete text of the GNU Lesser General
-Public License can be found in `/usr/share/common-licenses/LGPL'.
+Public License can be found in `/usr/share/common-licenses/LGPL-2.1'.
