@@ -120,16 +120,8 @@ int main(int argc, char *argv[])
 			}
 		}
 
-		Barry::Init(data_dump);
+		Barry::Init(data_dump, &std::cerr);
 		Barry::Probe probe(busname.c_str(), devname.c_str());
-
-		// show any errors during probe first
-		if( probe.GetFailCount() ) {
-			cerr << "Blackberry device errors with errors during probe:" << endl;
-			for( int i = 0; i < probe.GetFailCount(); i++ ) {
-				cerr << probe.GetFailMsg(i) << endl;
-			}
-		}
 
 		// show all successfully found devices
 		for( int i = 0; i < probe.GetCount(); i++ ) {
