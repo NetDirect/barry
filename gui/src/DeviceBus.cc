@@ -46,3 +46,14 @@ Device DeviceBus::Get(unsigned int i)
 {
 	return Device(m_probe->Get(i));
 }
+
+int DeviceBus::GetFailCount() const
+{
+	return m_probe->GetFailCount();
+}
+
+const std::string& DeviceBus::GetFailMsg(int index) const
+{
+	return m_probe->GetFailMsg(index);
+}
+

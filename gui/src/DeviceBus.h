@@ -37,6 +37,9 @@ public:
 	void Probe();
 	unsigned int ProbeCount();
 	Device Get(unsigned int index);
+
+	int GetFailCount() const;
+	const std::string& GetFailMsg(int index) const;
 };
 
 #endif

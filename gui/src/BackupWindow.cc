@@ -141,6 +141,19 @@ void BackupWindow::Scan()
 	m_threads.clear();
 
 	m_bus.Probe();
+
+	// display any errors from the probe
+	if( m_bus.GetFailCount() ) {
+		std::ostringstream oss;
+		oss << _("There were some potential BlackBerry devices that could not be probed.  Please check your system's USB permissions if this happens regularly.\n\n");
+		for( int i = 0; i < m_bus.GetFailCount(); i++ ) {
+			oss << m_bus.GetFailMsg(i) << "\n";
+		}
+
+		Gtk::MessageDialog msg(oss.str());
+		msg.run();
+	}
+
 	m_device_count = m_bus.ProbeCount();
 
 	if( m_device_count == 0 )
