@@ -57,9 +57,9 @@ namespace Barry {
 #define BMK1SC_ICON			0x05
 #define BMK1SC_FOLDERS			0x81
 
-static FieldLink<Bookmark> BookmarkFieldLinks[] = {
-    { BMKFC_END,	"End of List",   0, 0, 0, 0, 0, 0, 0, false }
-};
+//static FieldLink<Bookmark> BookmarkFieldLinks[] = {
+//    { BMKFC_END,	"End of List",   0, 0, 0, 0, 0, 0, 0, false }
+//};
 
 Bookmark::Bookmark()
 {
@@ -323,25 +323,6 @@ void Bookmark::Dump(std::ostream &os) const
 	os << "Bookmark entry: 0x" << setbase(16) << RecordId
 	   << " (" << (unsigned int)RecType << ")"
 	   << " (index " << (unsigned int)Index << ")\n";
-
-	// cycle through the type table
-	for(	const FieldLink<Bookmark> *b = BookmarkFieldLinks;
-		b->type != BMKFC_END;
-		b++ )
-	{
-		if( b->strMember ) {
-			const std::string &s = this->*(b->strMember);
-			if( s.size() )
-				os << "   " << b->name << ": " << s << "\n";
-		}
-		else if( b->timeMember ) {
-			time_t t = this->*(b->timeMember);
-			if( t > 0 )
-				os << "   " << b->name << ": " << ctime(&t);
-			else
-				os << "   " << b->name << ": unknown\n";
-		}
-	}
 
 	if( Name.size() )
 		os << "                    Name: " << Name << "\n";
