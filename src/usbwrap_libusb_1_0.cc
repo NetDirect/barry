@@ -258,7 +258,7 @@ DeviceList::DeviceList()
 
 	m_impl->m_listcnt = libusb_get_device_list(libusbctx, &m_impl->m_list);
 	if( m_impl->m_listcnt < 0 ) {
-		throw Error("Failed to get device list");
+		throw Error(m_impl->m_listcnt, "Failed to get device list");
 	}
 
 	for( int i = 0; i < m_impl->m_listcnt; ++i ) {
