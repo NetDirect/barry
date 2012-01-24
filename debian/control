@@ -67,7 +67,7 @@ Description: Development files for libbarry
 Package: barry-util
 Section: utils
 Architecture: any
-Depends: libbarry0 (>= 0.18), libbarry0 (<< 0.19), udev (>= 0.056), python, ${shlibs:Depends}
+Depends: libbarry0 (>= 0.18), libbarry0 (<< 0.19), udev (>= 0.056) [linux-any], python, ${shlibs:Depends}
 Suggests: ppp
 Description: Command line utilities for working with the RIM BlackBerry Handheld
  Barry is a GPL C++ library for interfacing with the RIM BlackBerry Handheld.
