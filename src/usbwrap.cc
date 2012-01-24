@@ -69,13 +69,13 @@ static std::string GetErrorString(int libusb_errcode, const std::string &str)
 }
 
 Error::Error(const std::string &str)
-	: Barry::Error(GetErrorString(0, str))
+	: Barry::Error(str)
 	, m_libusb_errcode(0)
 {
 }
 
 Error::Error(int libusb_errcode, const std::string &str)
-	: Barry::Error(GetErrorString(libusb_errcode, str))
+	: Barry::Error(libusb_errcode == 0 ? str : GetErrorString(libusb_errcode, str))
 	, m_libusb_errcode(libusb_errcode)
 {
 }
