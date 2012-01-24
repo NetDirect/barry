@@ -326,7 +326,7 @@ Device::Device(const Usb::DeviceID& id, int timeout)
 	int err = libusb_open(id.m_impl->m_dev, &(m_handle->m_handle));
 	m_lasterror = err;
 	if( err )
-		throw Error("open failed");
+		throw Error(err, "Failed to open USB device.  Please check your system's USB device permissions.");
 }
 
 Device::~Device()

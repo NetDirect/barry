@@ -215,7 +215,7 @@ Device::Device(const Usb::DeviceID& id, int timeout)
 	m_handle.reset(new DeviceHandle());
 	m_handle->m_handle = usb_open(id.m_impl->m_dev);
 	if( !m_handle->m_handle )
-		throw Error("open failed");
+		throw Error("Failed to open USB device.  Please check your system's USB device permissions.");
 }
 
 Device::~Device()
