@@ -82,6 +82,11 @@ bool DBDataCmp(const DBData &a, const DBData &b)
 	return a.GetUniqueId() < b.GetUniqueId();
 }
 
+bool UnknownCmp(const UnknownField &a, const UnknownField &b)
+{
+	return a.type < b.type;
+}
+
 class DBDataIdCmp
 {
 	uint32_t m_id;
@@ -255,6 +260,23 @@ public:
 			<< Cr2LfWrapper(m_one.*mp) << "'\n"
 			<< "         tar[1] = '"
 			<< Cr2LfWrapper(m_two.*mp) << "'"
+			<< endl;
+	}
+
+	void operator()(UnknownsType RecordT::* mp, const FieldIdentity &id) const
+	{
+		UnknownsType a = m_one.*mp, b = m_two.*mp;
+
+		sort(a.begin(), a.end(), UnknownCmp);
+		sort(b.begin(), b.end(), UnknownCmp);
+
+		if( a == b )
+			return;
+
+		m_found_difference = true;
+		cout << "   " << id.Name << ":\n"
+			<< "         tar[0] = '" << a << "'\n"
+			<< "         tar[1] = '" << b << "'"
 			<< endl;
 	}
 
