@@ -247,6 +247,17 @@ uint16_t DeviceID::GetIdProduct() const
 	return ret;
 }
 
+std::string DeviceID::GetUsbName() const
+{
+	// for libusb 1.0, we can use bus name and number...
+	// and we stay away from the product ID, since that requires
+	// communication with the device, which may not be possible
+	// in error conditions.
+	std::ostringstream oss;
+	oss << GetBusName() << ":" << GetNumber();
+	return oss.str();
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 // DeviceList
 

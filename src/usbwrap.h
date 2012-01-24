@@ -91,6 +91,10 @@ public:
 	uint16_t GetNumber() const;
 	const char* GetFilename() const;
 	uint16_t GetIdProduct() const;
+
+	// Utility function: returns a string that uniquely identifies
+	// the bus and device, regardless of which libusb you're using
+	std::string GetUsbName() const;
 };
 
 // Private struct for holding a library specific
