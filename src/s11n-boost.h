@@ -47,6 +47,12 @@ namespace boost {
 namespace serialization {
 
 template <class ArchiveT>
+void serialize(ArchiveT &ar, Barry::TimeT &t, const unsigned int ver)
+{
+	ar & make_nvp("Barry::TimeT::Time", t.Time);
+}
+
+template <class ArchiveT>
 void serialize(ArchiveT &ar, Barry::UnknownField &uf, const unsigned int ver)
 {
 	ar & make_nvp("type", uf.type);
@@ -158,8 +164,8 @@ void serialize(ArchiveT &ar, Barry::Message &m, const unsigned int ver)
 	ar & make_nvp("Attachment", m.Attachment);
 	ar & make_nvp("MessageRecordId", m.MessageRecordId);
 	ar & make_nvp("MessageReplyTo", m.MessageReplyTo);
-	ar & make_nvp("MessageDateSent", m.MessageDateSent);
-	ar & make_nvp("MessageDateReceived", m.MessageDateReceived);
+	ar & make_nvp("MessageDateSent", m.MessageDateSent.Time);
+	ar & make_nvp("MessageDateReceived", m.MessageDateReceived.Time);
 
 	ar & make_nvp("MessageTruncated", m.MessageTruncated);
 	ar & make_nvp("MessageRead", m.MessageRead);
@@ -187,9 +193,9 @@ void serialize(ArchiveT &ar, Barry::Calendar &c, const unsigned int ver)
 	ar & make_nvp("Notes", c.Notes);
 	ar & make_nvp("Location", c.Location);
 
-	ar & make_nvp("NotificationTime", c.NotificationTime);
-	ar & make_nvp("StartTime", c.StartTime);
-	ar & make_nvp("EndTime", c.EndTime);
+	ar & make_nvp("NotificationTime", c.NotificationTime.Time);
+	ar & make_nvp("StartTime", c.StartTime.Time);
+	ar & make_nvp("EndTime", c.EndTime.Time);
 
 	ar & make_nvp("Organizer", c.Organizer);
 	ar & make_nvp("AcceptedBy", c.AcceptedBy);
@@ -201,7 +207,7 @@ void serialize(ArchiveT &ar, Barry::Calendar &c, const unsigned int ver)
 	ar & make_nvp("Recurring", c.Recurring);
 	ar & make_nvp("RecurringType", c.RecurringType);
 	ar & make_nvp("Interval", c.Interval);
-	ar & make_nvp("RecurringEndTime", c.RecurringEndTime);
+	ar & make_nvp("RecurringEndTime", c.RecurringEndTime.Time);
 	ar & make_nvp("Perpetual", c.Perpetual);
 	ar & make_nvp("CalendarID", c.CalendarID);
 	ar & make_nvp("TimeZoneCode", c.TimeZoneCode);
@@ -323,9 +329,9 @@ void serialize(ArchiveT &ar, Barry::Task &t, const unsigned int ver)
 	ar & make_nvp("Categories", t.Categories);
 	ar & make_nvp("UID", t.UID);
 
-	ar & make_nvp("StartTime", t.StartTime);
-	ar & make_nvp("DueTime", t.DueTime);
-	ar & make_nvp("AlarmTime", t.AlarmTime);
+	ar & make_nvp("StartTime", t.StartTime.Time);
+	ar & make_nvp("DueTime", t.DueTime.Time);
+	ar & make_nvp("AlarmTime", t.AlarmTime.Time);
 
 	ar & make_nvp("TimeZoneCode", t.TimeZoneCode);
 	ar & make_nvp("TimeZoneValid", t.TimeZoneValid);
@@ -333,7 +339,7 @@ void serialize(ArchiveT &ar, Barry::Task &t, const unsigned int ver)
 	ar & make_nvp("AlarmType", t.AlarmType);
 	ar & make_nvp("Interval", t.Interval);
 	ar & make_nvp("RecurringType", t.RecurringType);
-	ar & make_nvp("RecurringEndTime", t.RecurringEndTime);
+	ar & make_nvp("RecurringEndTime", t.RecurringEndTime.Time);
 	ar & make_nvp("DayOfWeek", t.DayOfWeek);
 	ar & make_nvp("WeekOfMonth", t.WeekOfMonth);
 	ar & make_nvp("DayOfMonth", t.DayOfMonth);
@@ -365,8 +371,8 @@ void serialize(ArchiveT &ar, Barry::PINMessage &p, const unsigned int ver)
 	ar & make_nvp("Body", p.Body);
 	ar & make_nvp("MessageRecordId", p.MessageRecordId);
 	ar & make_nvp("MessageReplyTo", p.MessageReplyTo);
-	ar & make_nvp("MessageDateSent", p.MessageDateSent);
-	ar & make_nvp("MessageDateReceived", p.MessageDateReceived);
+	ar & make_nvp("MessageDateSent", p.MessageDateSent.Time);
+	ar & make_nvp("MessageDateReceived", p.MessageDateReceived.Time);
 
 	ar & make_nvp("MessageTruncated", p.MessageTruncated);
 	ar & make_nvp("MessageRead", p.MessageRead);
@@ -399,8 +405,8 @@ void serialize(ArchiveT &ar, Barry::SavedMessage &m, const unsigned int ver)
 	ar & make_nvp("Attachment", m.Attachment);
 	ar & make_nvp("MessageRecordId", m.MessageRecordId);
 	ar & make_nvp("MessageReplyTo", m.MessageReplyTo);
-	ar & make_nvp("MessageDateSent", m.MessageDateSent);
-	ar & make_nvp("MessageDateReceived", m.MessageDateReceived);
+	ar & make_nvp("MessageDateSent", m.MessageDateSent.Time);
+	ar & make_nvp("MessageDateReceived", m.MessageDateReceived.Time);
 
 	ar & make_nvp("MessageTruncated", m.MessageTruncated);
 	ar & make_nvp("MessageRead", m.MessageRead);

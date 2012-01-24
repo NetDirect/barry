@@ -151,9 +151,9 @@ const unsigned char* Calendar::ParseField(const unsigned char *begin,
 				return begin;	// done!
 			}
 			else if( b->timeMember && btohs(field->size) == 4 ) {
-				time_t &t = this->*(b->timeMember);
+				TimeT &t = this->*(b->timeMember);
 				dout("min1900: " << field->u.min1900);
-				t = min2time(field->u.min1900);
+				t.Time = min2time(field->u.min1900);
 				return begin;
 			}
 			else if( b->addrMember ) {
@@ -309,9 +309,9 @@ void Calendar::BuildFields(Data &data, size_t &offset, const IConverter *ic) con
 				BuildField(data, offset, b->type, (b->iconvNeeded && ic) ? ic->ToBB(s) : s);
 		}
 		else if( b->timeMember ) {
-			time_t t = this->*(b->timeMember);
-			if( t > 0 )
-				BuildField1900(data, offset, b->type, t);
+			TimeT t = this->*(b->timeMember);
+			if( t.Time > 0 )
+				BuildField1900(data, offset, b->type, t.Time);
 		}
 		else if( b->addrMember ) {
 			const EmailAddressList &al = this->*(b->addrMember);
@@ -349,7 +349,7 @@ void Calendar::BuildFields(Data &data, size_t &offset, const IConverter *ic) con
 	// handle special cases
 	if( Recurring ) {
 		CalendarRecurrenceDataField recur;
-		BuildRecurrenceData(StartTime, &recur);
+		BuildRecurrenceData(StartTime.Time, &recur);
 		BuildField(data, offset, RecurBase::RecurringFieldType(),
 			&recur, CALENDAR_RECURRENCE_DATA_FIELD_SIZE);
 	}
@@ -388,7 +388,9 @@ void Calendar::Clear()
 	Subject.clear();
 	Notes.clear();
 	Location.clear();
-	NotificationTime = StartTime = EndTime = 0;
+	NotificationTime.clear();
+	StartTime.clear();
+	EndTime.clear();
 	Organizer.clear();
 	AcceptedBy.clear();
 	Invited.clear();
@@ -503,9 +505,9 @@ void Calendar::Dump(std::ostream &os) const
 				os << "   " << b->name << ": " << s << "\n";
 		}
 		else if( b->timeMember ) {
-			time_t t = this->*(b->timeMember);
-			if( t > 0 )
-				os << "   " << b->name << ": " << ctime(&t);
+			TimeT t = this->*(b->timeMember);
+			if( t.Time > 0 )
+				os << "   " << b->name << ": " << t << "\n";
 			else
 				os << "   " << b->name << ": disabled\n";
 		}
@@ -533,9 +535,10 @@ bool Calendar::operator<(const Calendar &other) const
 {
 	if( StartTime < other.StartTime )
 		return true;
-	else if( StartTime > other.StartTime )
+	else if( other.StartTime < StartTime )
 		return false;
 
+	// times are equal, so secondary sort based on Subject + Location
 	int cmp = Subject.compare(other.Subject);
 	if( cmp == 0 )
 		cmp = Location.compare(other.Location);

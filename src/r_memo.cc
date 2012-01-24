@@ -96,8 +96,8 @@ const unsigned char* Memo::ParseField(const unsigned char *begin,
 				return begin;   // done!
 			}
 			else if( b->timeMember && btohs(field->size) == 4 ) {
-				time_t &t = this->*(b->timeMember);
-				t = min2time(field->u.min1900);
+				TimeT &t = this->*(b->timeMember);
+				t.Time = min2time(field->u.min1900);
 				return begin;
 			}
 		}

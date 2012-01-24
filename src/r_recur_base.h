@@ -69,7 +69,7 @@ public:
 	bool Recurring;
 	RecurringCodeType RecurringType;
 	uint16_t Interval;		// must be >= 1
-	time_t RecurringEndTime;	// only pertains if Recurring is true
+	Barry::TimeT RecurringEndTime;	// only pertains if Recurring is true
 					// sets the date and time when
 					// recurrence of this appointment
 					// should no longer occur

@@ -161,9 +161,9 @@ const unsigned char* HandheldAgent::ParseField(const unsigned char *begin,
 				return begin;	// done!
 			}
 			else if( b->timeMember && btohs(field->size) == 4 ) {
-				time_t &t = this->*(b->timeMember);
+				TimeT &t = this->*(b->timeMember);
 				dout("min1900: " << field->u.min1900);
-				t = min2time(field->u.min1900);
+				t.Time = min2time(field->u.min1900);
 				return begin;
 			}
 			else if( b->addrMember ) {
@@ -320,9 +320,9 @@ void HandheldAgent::Dump(std::ostream &os) const
 				os << "   " << b->name << ": " << s << "\n";
 		}
 		else if( b->timeMember ) {
-			time_t t = this->*(b->timeMember);
-			if( t > 0 )
-				os << "   " << b->name << ": " << ctime(&t);
+			TimeT t = this->*(b->timeMember);
+			if( t.Time > 0 )
+				os << "   " << b->name << ": " << t << "\n";
 			else
 				os << "   " << b->name << ": disabled\n";
 		}

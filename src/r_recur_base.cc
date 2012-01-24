@@ -109,7 +109,7 @@ void RecurBase::ParseRecurrenceData(const void *data)
 		Perpetual = true;
 	}
 	else {
-		RecurringEndTime = min2time(rec->endTime);
+		RecurringEndTime.Time = min2time(rec->endTime);
 		Perpetual = false;
 	}
 
@@ -175,7 +175,7 @@ void RecurBase::BuildRecurrenceData(time_t StartTime, void *data) const
 	if( Perpetual )
 		rec->endTime = 0xffffffff;
 	else
-		rec->endTime = time2min(RecurringEndTime);
+		rec->endTime = time2min(RecurringEndTime.Time);
 
 	switch( RecurringType )
 	{
@@ -231,7 +231,7 @@ void RecurBase::Clear()
 	Recurring = false;
 	RecurringType = RecurBase::Week;
 	Interval = 1;
-	RecurringEndTime = 0;
+	RecurringEndTime.clear();
 	Perpetual = false;
 	DayOfWeek = WeekOfMonth = DayOfMonth = MonthOfYear = 0;
 	WeekDays = 0;
@@ -312,7 +312,7 @@ void RecurBase::Dump(std::ostream &os) const
 		if( Perpetual )
 			os << "      Ends: never\n";
 		else
-			os << "      Ends: " << ctime(&RecurringEndTime);
+			os << "      Ends: " << RecurringEndTime << "\n";
 	}
 }
 

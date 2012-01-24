@@ -68,8 +68,8 @@ public:
 					// header... in effect, this record ID
 					// occurs twice in the protocol
 	uint32_t MessageReplyTo;
-	time_t MessageDateSent;
-	time_t MessageDateReceived;
+	Barry::TimeT MessageDateSent;
+	Barry::TimeT MessageDateReceived;
 
 	// Message Flags
 	bool	MessageTruncated;

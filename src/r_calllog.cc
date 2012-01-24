@@ -134,8 +134,8 @@ const unsigned char* CallLog::ParseField(const unsigned char *begin,
 				return begin;   // done!
 			}
 			else if( b->timeMember && btohs(field->size) == 4 ) {
-				time_t &t = this->*(b->timeMember);
-				t = min2time(field->u.min1900);
+				TimeT &t = this->*(b->timeMember);
+				t.Time = min2time(field->u.min1900);
 				return begin;
 			}
 		}
@@ -301,9 +301,9 @@ void CallLog::Dump(std::ostream &os) const
 				os << "   " << b->name << ": " << s << "\n";
 		}
 		else if( b->timeMember ) {
-			time_t t = this->*(b->timeMember);
-			if( t > 0 )
-				os << "   " << b->name << ": " << ctime(&t);
+			TimeT t = this->*(b->timeMember);
+			if( t.Time > 0 )
+				os << "   " << b->name << ": " << t << "\n";
 			else
 				os << "   " << b->name << ": unknown\n";
 		}

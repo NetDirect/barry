@@ -154,8 +154,8 @@ const unsigned char* Task::ParseField(const unsigned char *begin,
 				return begin;   // done!
 			}
 			else if( b->timeMember && btohs(field->size) == 4 ) {
-				time_t &t = this->*(b->timeMember);
-				t = min2time(field->u.min1900);
+				TimeT &t = this->*(b->timeMember);
+				t.Time = min2time(field->u.min1900);
 				return begin;
 			}
 		}
@@ -288,8 +288,8 @@ void Task::BuildFields(Data &data, size_t &offset, const IConverter *ic) const
 			}
 		}
 		else if( b->timeMember ) {
-			time_t t = this->*(b->timeMember);
-			if( t > 0 )
+			TimeT t = this->*(b->timeMember);
+			if( t.Time > 0 )
 				BuildField1900(data, offset, b->type, t);
 		}
 		else if( b->postMember && b->postField ) {
@@ -334,7 +334,10 @@ void Task::Clear()
 	Categories.clear();
 	UID.clear();
 
-	StartTime = DueTime = AlarmTime = 0;
+	StartTime.clear();
+	DueTime.clear();
+	AlarmTime.clear();
+
 	TimeZoneCode = GetTimeZoneCode( 0, 0 );	// default to GMT
 	TimeZoneValid = false;
 
@@ -431,9 +434,9 @@ void Task::Dump(std::ostream &os) const
 				os << "   " << b->name << ": " << s << "\n";
 		}
 		else if( b->timeMember ) {
-			time_t t = this->*(b->timeMember);
-			if( t > 0 )
-				os << "   " << b->name << ": " << ctime(&t);
+			TimeT t = this->*(b->timeMember);
+			if( t.Time > 0 )
+				os << "   " << b->name << ": " << t << "\n";
 		}
 	}
 
@@ -508,7 +511,7 @@ void Task::Dump(std::ostream &os) const
 		if( Perpetual )
 			os << "      Ends: never\n";
 		else
-			os << "      Ends: " << ctime(&RecurringEndTime);
+			os << "      Ends: " << RecurringEndTime << "\n";
 	}
 
 	if( Categories.size() ) {

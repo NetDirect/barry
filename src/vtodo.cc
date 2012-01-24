@@ -130,15 +130,15 @@ const std::string& vTodo::ToTask(const Barry::Task &task)
 		AddAttr(NewAttr("PRIORITY", "7"));
 
 	// StartTime
-	if( task.StartTime ) {
+	if( task.StartTime.Time ) {
 		AddAttr(NewAttr("DTSTART",
-			m_vtc.unix2vtime(&task.StartTime).c_str()));
+			m_vtc.unix2vtime(&task.StartTime.Time).c_str()));
 	}
 
 	// DueTime DueFlag
 	if( task.DueDateFlag ) {
 		AddAttr(NewAttr("DUE",
-			m_vtc.unix2vtime(&task.DueTime).c_str()));
+			m_vtc.unix2vtime(&task.DueTime.Time).c_str()));
 	}
 
 	// FIXME - add a truly globally unique "UID" string?
@@ -261,12 +261,12 @@ const Barry::Task& vTodo::ToBarry(const char *vtodo, uint32_t RecordId)
 
 	// STARTTIME & DUETIME
 	if (start.size()) {
-		rec.StartTime = m_vtc.vtime2unix(start.c_str());
+		rec.StartTime.Time = m_vtc.vtime2unix(start.c_str());
 	}
 
 	if (due.size()) {
 		rec.DueDateFlag = true;
-		rec.DueTime = m_vtc.vtime2unix(due.c_str());
+		rec.DueTime.Time = m_vtc.vtime2unix(due.c_str());
 	}
 
 	std::ostringstream oss;

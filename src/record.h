@@ -60,6 +60,44 @@ public:
 };
 BXEXPORT std::ostream& operator<< (std::ostream &os, const Cr2LfWrapper &str);
 
+/// Struct wrapper for time_t, to make sure that it has its own type,
+/// for overload purposes.  Some systems, like QNX, use a uint32_t typedef.
+struct BXEXPORT TimeT
+{
+	time_t Time;
+
+	TimeT()
+		: Time(0)
+	{
+	}
+
+	explicit TimeT(time_t t)
+		: Time(t)
+	{
+	}
+
+	void clear()
+	{
+		Time = 0;
+	}
+
+	bool operator< (const Barry::TimeT &other) const
+	{
+		return Time < other.Time;
+	}
+
+	bool operator== (const Barry::TimeT &other) const
+	{
+		return Time == other.Time;
+	}
+
+	bool operator!= (const Barry::TimeT &other) const
+	{
+		return !operator==(other);
+	}
+};
+BXEXPORT std::ostream& operator<< (std::ostream &os, const TimeT &t);
+
 struct BXEXPORT CommandTableCommand
 {
 	unsigned int Code;
@@ -644,8 +682,8 @@ public:
 	/// For type EmailAddressList
 	virtual void operator()(const EmailAddressList &v,
 				const FieldIdentity &id) const = 0;
-	/// For type time_t
-	virtual void operator()(const time_t &v,
+	/// For type Barry::TimeT
+	virtual void operator()(const Barry::TimeT &v,
 				const FieldIdentity &id) const = 0;
 	/// For type uint8_t
 	virtual void operator()(const uint8_t &v,
@@ -796,7 +834,7 @@ private:
 	{
 		std::string RecordT::* m_string;		// index 0
 		EmailAddressList RecordT::* m_EmailAddressList; // 1
-		time_t RecordT::* m_time;			// 2
+		Barry::TimeT RecordT::* m_time;			// 2
 		PostalPointer m_postal;				// 3
 		uint8_t RecordT::* m_uint8;			// 4
 		uint32_t RecordT::* m_uint32;			// 5
@@ -841,7 +879,7 @@ public:
 	}
 
 	// 2
-	FieldHandle(time_t RecordT::* mp, const FieldIdentity &id)
+	FieldHandle(Barry::TimeT RecordT::* mp, const FieldIdentity &id)
 		: m_type_index(2)
 		, m_enum(0)
 		, m_id(id)

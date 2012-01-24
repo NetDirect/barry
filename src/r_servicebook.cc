@@ -200,9 +200,9 @@ void ServiceBookConfig::Dump(std::ostream &os) const
 				os << "      " << b->name << ": " << s << "\n";
 		}
 		else if( b->timeMember ) {
-			time_t t = this->*(b->timeMember);
-			if( t > 0 )
-				os << "      " << b->name << ": " << ctime(&t);
+			TimeT t = this->*(b->timeMember);
+			if( t.Time> 0 )
+				os << "      " << b->name << ": " << t << "\n";
 		}
 	}
 
@@ -294,8 +294,8 @@ FieldLink<RecordT>* ParseFieldByTable(RecordT *rec,
 				return links;
 			}
 			else if( b->timeMember && btohs(field->size) == 4 ) {
-				time_t &t = rec->*(b->timeMember);
-				t = min2time(field->u.min1900);
+				TimeT &t = rec->*(b->timeMember);
+				t.Time = min2time(field->u.min1900);
 				return links;
 			}
 		}

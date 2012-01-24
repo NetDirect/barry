@@ -59,6 +59,21 @@ std::ostream& operator<< (std::ostream &os, const Cr2LfWrapper &str)
 	return os;
 }
 
+std::ostream& operator<< (std::ostream &os, const TimeT &t)
+{
+	// strip the trailing newline
+	string output = ctime(&t.Time);
+	while( output.size() &&
+		(output[output.size()-1] == '\n' ||
+			output[output.size()-1] == '\r') )
+	{
+		output.resize(output.size() - 1);
+	}
+
+	os << output;
+	return os;
+}
+
 //////////////////////////////////////////////////////////////////////////////
 // Field builder helper functions
 

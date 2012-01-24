@@ -44,7 +44,7 @@ bool ReadBool(const char *prompt)
 	return data[0] == 'y' || data[0] == 'Y';
 }
 
-time_t ReadTime(const char *prompt)
+Barry::TimeT ReadTime(const char *prompt)
 {
 	string data;
 	char *unprocessed = 0;
@@ -58,7 +58,7 @@ time_t ReadTime(const char *prompt)
 		unprocessed = strptime(data.c_str(), "%Y/%m/%d %H:%M", &tm);
 	} while( !unprocessed );
 
-	return mktime(&tm);
+	return Barry::TimeT(mktime(&tm));
 }
 
 void ReadInput(Barry::Calendar &cal)

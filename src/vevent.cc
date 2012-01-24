@@ -185,7 +185,7 @@ void vCalendar::RecurToVCal()
 	}
 	if( !cal.Perpetual ) {
 		ostringstream oss;
-		oss << "UNTIL=" << m_vtc.unix2vtime(&cal.RecurringEndTime);
+		oss << "UNTIL=" << m_vtc.unix2vtime(&cal.RecurringEndTime.Time);
 		AddValue(attr, oss.str().c_str());
 	}
 
@@ -276,8 +276,8 @@ void vCalendar::RecurToBarryCal(vAttr& rrule, time_t starttime)
 	}
 	if(args.find(string("UNTIL"))!=args.end()) {
 		cal.Perpetual = FALSE;
-		cal.RecurringEndTime=m_vtc.vtime2unix(args["UNTIL"].c_str());
-		if( cal.RecurringEndTime == (time_t)-1 ) {
+		cal.RecurringEndTime.Time = m_vtc.vtime2unix(args["UNTIL"].c_str());
+		if( cal.RecurringEndTime.Time == (time_t)-1 ) {
 //			trace.logf("osync_time_vtime2unix() failed: UNTIL = %s, zoneoffset = %d", args["UNTIL"].c_str(), zoneoffset);
 		}
 	} else {
@@ -329,7 +329,7 @@ void vCalendar::RecurToBarryCal(vAttr& rrule, time_t starttime)
 			// need to process end date. This is easy
 			// for weeks, as a number of weeks can be
 			// reduced to seconds simply.
-			cal.RecurringEndTime=starttime +((count-1)*60*60*24*7);
+			cal.RecurringEndTime.Time = starttime + ((count-1)*60*60*24*7);
 		}
 	} else if(args["FREQ"]=="MONTHLY") {
 		if(args.find(string("BYMONTHDAY"))!=args.end()) {
@@ -371,7 +371,7 @@ void vCalendar::RecurToBarryCal(vAttr& rrule, time_t starttime)
 				datestruct.tm_mon+=1;
 				datestruct.tm_mday=1;
 			}
-			cal.RecurringEndTime=mktime(&datestruct);
+			cal.RecurringEndTime.Time = mktime(&datestruct);
 		}
 	} else if(args["FREQ"]=="YEARLY") {
 		if(args.find(string("BYMONTH"))!=args.end()) {
@@ -405,7 +405,7 @@ void vCalendar::RecurToBarryCal(vAttr& rrule, time_t starttime)
 			struct tm datestruct;
 			localtime_r(&starttime,&datestruct);
 			datestruct.tm_year += count;
-			cal.RecurringEndTime=mktime(&datestruct);
+			cal.RecurringEndTime.Time = mktime(&datestruct);
 		}
 	}
 
@@ -454,9 +454,9 @@ const std::string& vCalendar::ToVCal(const Barry::Calendar &cal)
 	AddAttr(NewAttr("DESCRIPTION", cal.Notes.c_str()));
 	AddAttr(NewAttr("LOCATION", cal.Location.c_str()));
 
-	string start(m_vtc.unix2vtime(&cal.StartTime));
-	string end(m_vtc.unix2vtime(&cal.EndTime));
-	string notify(m_vtc.unix2vtime(&cal.NotificationTime));
+	string start(m_vtc.unix2vtime(&cal.StartTime.Time));
+	string end(m_vtc.unix2vtime(&cal.EndTime.Time));
+	string notify(m_vtc.unix2vtime(&cal.NotificationTime.Time));
 
 	// if an all day event, only print the date parts of the string
 	if( cal.AllDayEvent && start.find('T') != string::npos ) {
@@ -464,7 +464,7 @@ const std::string& vCalendar::ToVCal(const Barry::Calendar &cal)
 		start = start.substr(0, start.find('T'));
 
 		// create end date 1 day in future
-		time_t end_t = cal.StartTime + 24 * 60 * 60;
+		time_t end_t = cal.StartTime.Time + 24 * 60 * 60;
 		end = m_vtc.unix2vtime(&end_t);
 		end = end.substr(0, end.find('T'));
 	}
@@ -562,7 +562,7 @@ const Barry::Calendar& vCalendar::ToBarry(const char *vcal, uint32_t RecordId)
 
 	if( !start.size() )
 		throw ConvertError("Blank DTSTART");
-	rec.StartTime = m_vtc.vtime2unix(start.c_str());
+	rec.StartTime.Time = m_vtc.vtime2unix(start.c_str());
 
 	if( !end.size() ) {
 		// DTEND is actually optional!  According to the
@@ -573,17 +573,17 @@ const Barry::Calendar& vCalendar::ToBarry(const char *vcal, uint32_t RecordId)
 		// Since the Blackberry doesn't really map well to this
 		// case, we'll set the end time to 1 day past start.
 		//
-		rec.EndTime = rec.StartTime + 24 * 60 * 60;
+		rec.EndTime.Time = rec.StartTime.Time + 24 * 60 * 60;
 	}
 	else {
-		rec.EndTime = m_vtc.vtime2unix(end.c_str());
+		rec.EndTime.Time = m_vtc.vtime2unix(end.c_str());
 	}
 
 	// check for "all day event" which is specified by a DTSTART
 	// and a DTEND with no times, and one day apart
 	if( start.find('T') == string::npos && end.size() &&
 	    end.find('T') == string::npos &&
-	    (rec.EndTime - rec.StartTime) == 24 * 60 * 60 )
+	    (rec.EndTime.Time - rec.StartTime.Time) == 24 * 60 * 60 )
 	{
 		rec.AllDayEvent = true;
 	}
@@ -593,12 +593,12 @@ const Barry::Calendar& vCalendar::ToBarry(const char *vcal, uint32_t RecordId)
 	rec.Notes = notes;
 
 	if(rrule.Get()) {
-		RecurToBarryCal(rrule, rec.StartTime);
+		RecurToBarryCal(rrule, rec.StartTime.Time);
 	}
 
 	// convert trigger time into notification time
 	// assume no notification, by default
-	rec.NotificationTime = 0;
+	rec.NotificationTime.Time = 0;
 	if( trigger_obj.Get() ) {
 		string trigger_type = trigger_obj.GetParam("VALUE");
 		string trigger = trigger_obj.GetValue();
@@ -607,18 +607,18 @@ const Barry::Calendar& vCalendar::ToBarry(const char *vcal, uint32_t RecordId)
 //			trace.logf("ERROR: no TRIGGER found in calendar entry, assuming notification time as 15 minutes before start.");
 		}
 		else if( trigger_type == "DATE-TIME" ) {
-			rec.NotificationTime = m_vtc.vtime2unix(trigger.c_str());
+			rec.NotificationTime.Time = m_vtc.vtime2unix(trigger.c_str());
 		}
 		else if( trigger_type == "DURATION" || trigger_type.size() == 0 ) {
 			// default is DURATION (RFC 4.8.6.3)
 			string related = trigger_obj.GetParam("RELATED");
 
 			// default to relative to start time
-			time_t *relative = &rec.StartTime;
+			time_t *relative = &rec.StartTime.Time;
 			if( related == "END" )
-				relative = &rec.EndTime;
+				relative = &rec.EndTime.Time;
 
-			rec.NotificationTime = *relative + m_vtc.alarmduration2sec(trigger.c_str());
+			rec.NotificationTime.Time = *relative + m_vtc.alarmduration2sec(trigger.c_str());
 		}
 		else {
 			throw ConvertError("Unknown TRIGGER VALUE");

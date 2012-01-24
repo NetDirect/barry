@@ -81,13 +81,17 @@ struct FieldLink
 	const char *objectClass;
 	std::string RecordT::* strMember;	// FIXME - find a more general
 	EmailAddressList RecordT::* addrMember;	// way to do this...
-	time_t RecordT::* timeMember;
+	Barry::TimeT RecordT::* timeMember;
 	PostalAddress RecordT::* postMember;
 	std::string PostalAddress::* postField;
 	bool iconvNeeded;
 };
 
 void BuildField1900(Data &data, size_t &size, uint8_t type, time_t t);
+inline void BuildField1900(Data &data, size_t &size, uint8_t type, const Barry::TimeT &t)
+{
+	BuildField1900(data, size, type, t.Time);
+}
 void BuildField(Data &data, size_t &size, uint8_t type, char c);
 void BuildField(Data &data, size_t &size, uint8_t type, uint8_t c);
 void BuildField(Data &data, size_t &size, uint8_t type, uint16_t value);

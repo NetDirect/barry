@@ -255,8 +255,8 @@ void MessageBase::ParseHeader(const Data &data, size_t &offset)
 	if( !( flags & MESSAGE_SAVED_DELETED ))
 		MessageSavedDeleted = true;
 
-	MessageDateSent = Message2Time(mr->dateSent, mr->timeSent);
-	MessageDateReceived = Message2Time(mr->dateReceived, mr->timeReceived);
+	MessageDateSent.Time = Message2Time(mr->dateSent, mr->timeSent);
+	MessageDateReceived.Time = Message2Time(mr->dateReceived, mr->timeReceived);
 
 	offset += MESSAGE_RECORD_HEADER_SIZE;
 }
@@ -298,8 +298,8 @@ void MessageBase::Clear()
 
 	MessageRecordId = 0;
 	MessageReplyTo = 0;
-	MessageDateSent = 0;
-	MessageDateReceived = 0;
+	MessageDateSent.clear();
+	MessageDateReceived.clear();
 
 	MessageTruncated = false;
 	MessageRead = false;
@@ -397,7 +397,7 @@ void MessageBase::Dump(std::ostream &os) const
 	static const char *SensitivityString[] =
 		{ "Normal", "Personal", "Private", "Confidential", "Unknown Sensivity" };
 
-	os << "From " << SimpleFromAddress() << "  " << ctime( &MessageDateReceived );
+	os << "From " << SimpleFromAddress() << "  " << MessageDateReceived << "\n";
 
 /*
 FIXME
@@ -419,7 +419,7 @@ os << "From " << SimpleFromAddress() << "  " << ctime( &MessageDateSent );
 		os << "Importance: " << Importance[Priority] << "\n";
 	if( Sensitivity != NormalSensitivity )
 		os << "Sensitivity: " << SensitivityString[Sensitivity] << "\n";
-	os << "Date: " << ctime(&MessageDateSent);
+	os << "Date: " << MessageDateSent << "\n";
 	if( From.size() )
 		os << "From: " << From[0] << "\n";
 	if( To.size() )
@@ -450,8 +450,8 @@ bool MessageBase::operator<(const MessageBase &other) const
 	// just in case either of these are set to '0', use the
 	// one with the max value... this uses the latest date, which
 	// is likely the most accurate
-	time_t date = std::max(MessageDateSent, MessageDateReceived);
-	time_t odate = std::max(other.MessageDateSent, other.MessageDateReceived);
+	time_t date = std::max(MessageDateSent.Time, MessageDateReceived.Time);
+	time_t odate = std::max(other.MessageDateSent.Time, other.MessageDateReceived.Time);
 
 	if( date != odate )
 		return date < odate;

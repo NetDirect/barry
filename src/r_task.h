@@ -48,9 +48,9 @@ public:
 	CategoryList Categories;
 	std::string UID;
 
-	time_t StartTime;
-	time_t DueTime;
-	time_t AlarmTime;
+	Barry::TimeT StartTime;
+	Barry::TimeT DueTime;
+	Barry::TimeT AlarmTime;
 	uint16_t TimeZoneCode;
 	bool TimeZoneValid;		// true if the record contained a
 					// time zone code

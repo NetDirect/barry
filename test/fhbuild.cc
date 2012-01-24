@@ -113,8 +113,8 @@ public:
 			<< v << endl;
 		DumpId(id);
 	}
-	/// For type time_t
-	virtual void operator()(const time_t &v,
+	/// For type Barry::TimeT
+	virtual void operator()(const Barry::TimeT &v,
 				const FieldIdentity &id) const
 	{
 		cout << id.DisplayName << " (" << id.Name << "): "
