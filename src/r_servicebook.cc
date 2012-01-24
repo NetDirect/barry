@@ -95,7 +95,7 @@ const unsigned char* ServiceBookConfig::ParseField(const unsigned char *begin,
 		break;
 
 	default:
-		eout("------> Unknown packed field format: 0x" << std::hex <<
+		dout("------> Unknown packed field format: 0x" << std::hex <<
 			(unsigned int) Format);
 		throw BadPackedFormat(Format);
 		return begin + 1;
