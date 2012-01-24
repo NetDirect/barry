@@ -129,8 +129,11 @@ bool Probe::ParseDesc(const Data &data, std::string &desc)
 }
 
 Probe::Probe(const char *busname, const char *devname,
-		const Usb::EndpointPair *epp)
-	: m_fail_count(0)
+		const Usb::EndpointPair *epp,
+		unsigned int log_exceptions,
+		bool auto_dump_log)
+	: m_log_exceptions(log_exceptions)
+	, m_fail_count(0)
 	, m_epp_override(epp)
 {
 	if( m_epp_override ) {
@@ -161,6 +164,17 @@ Probe::Probe(const char *busname, const char *devname,
 
 	// And one more time, for the Blackberry Storm
 	ProbeMatching(VENDOR_RIM, PRODUCT_RIM_STORM, busname, devname);
+
+	// now dump all logged error messages
+	if( auto_dump_log && m_fail_msgs.size() ) {
+		eout("Probe logged " << m_fail_msgs.size() << " exception messages:");
+		for( std::vector<std::string>::const_iterator b = m_fail_msgs.begin();
+			b != m_fail_msgs.end();
+			++b )
+		{
+			eout(*b);
+		}
+	}
 }
 
 void Probe::ProbeMatching(int vendor, int product,
@@ -173,10 +187,24 @@ void Probe::ProbeMatching(int vendor, int product,
 		ProbeDevice(devid);
 	}
 	catch( Usb::Error &e ) {
+		using namespace std;
+
 		dout("Usb::Error exception caught: " << e.what());
-		if( e.system_errcode() == -EBUSY ) {
+		if( ((m_log_exceptions & LOG_BUSY) && e.system_errcode() == -EBUSY) ||
+		    ((m_log_exceptions & LOG_ACCESS) && e.system_errcode() == -EACCES) ||
+		    ((m_log_exceptions & LOG_PERM) && e.system_errcode() == -EPERM) )
+		{
 			m_fail_count++;
-			m_fail_msgs.push_back(e.what());
+			string msg = "Device " + devid.GetUsbName() + ": ";
+			if( e.system_errcode() == -EBUSY )
+				msg += "(EBUSY) ";
+			else if( e.system_errcode() == -EACCES )
+				msg += "(EACCES) ";
+			else if( e.system_errcode() == -EPERM )
+				msg += "(EPERM) ";
+			msg += e.what();
+
+			m_fail_msgs.push_back(msg);
 		}
 		else {
 			throw;

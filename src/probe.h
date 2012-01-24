@@ -94,10 +94,17 @@ class BXEXPORT Probe
 public:
 	typedef std::vector<ProbeResult>		Results;
 
+	enum LogExceptionBits {
+		LOG_BUSY = 0x0001,
+		LOG_ACCESS = 0x0002,
+		LOG_PERM = 0x0004
+	};
+
 private:
 	Usb::DeviceList m_devices;
 	Results m_results;
 
+	unsigned int m_log_exceptions;
 	std::vector<std::string> m_fail_msgs;
 	int m_fail_count;
 
@@ -119,8 +126,19 @@ protected:
 	bool ProbeModem(Usb::Device &dev, const Usb::EndpointPair &ep);
 
 public:
+	/// log_exceptions is a bitmask of low level USB errors to
+	/// log instead of throw on.  If 0, all USB errors will cause
+	/// an exception, and thereby stop the probe.  If the error
+	/// is set in the bitmask, the exception will be caught, and
+	/// logged in m_fail_msgs, which can be retrieved through
+	/// GetFailCount() and GetFailMsg().  If auto_dump_log is true,
+	/// all logged messages will be dumped as well, via the eout() macro,
+	/// to make sure they are seen, even if the application
+	/// programmer doesn't deal with them via the API.
 	Probe(const char *busname = 0, const char *devname = 0,
-		const Usb::EndpointPair *epp = 0);
+		const Usb::EndpointPair *epp = 0,
+		unsigned int log_exceptions = LOG_BUSY | LOG_ACCESS | LOG_PERM,
+		bool auto_dump_log = true);
 
 	const Results& GetResults() const { return m_results; }
 
