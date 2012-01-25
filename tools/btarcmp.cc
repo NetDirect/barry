@@ -135,20 +135,6 @@ void ChecksumDBData(const DBData &data, bool include_ids, std::string &sum)
 	sum = oss.str();
 }
 
-std::ostream& operator<<(std::ostream &os, const EmailList &el)
-{
-	bool first = true;
-	for( EmailList::const_iterator b = el.begin(); b != el.end(); ++b ) {
-		if( !first )
-			os << ", ";
-		else
-			first = false;
-
-		os << *b;
-	}
-	return os;
-}
-
 
 //////////////////////////////////////////////////////////////////////////////
 // Parsed Compare class

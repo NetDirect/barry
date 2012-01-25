@@ -349,12 +349,7 @@ void Sms::Dump(std::ostream &os) const
 	}
 
 	os << "\t";
-	for (std::vector<std::string>::const_iterator i = Addresses.begin(); i < Addresses.end(); ++i) {
-		if (i != Addresses.begin())
-			os << ", ";
-		os << *i;
-	}
-	os << "\n";
+	os << Addresses << "\n";
 
 	if (IsNew || Opened || Saved || Deleted || NewConversation) {
 		os << "\t";

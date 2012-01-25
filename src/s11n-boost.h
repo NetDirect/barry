@@ -68,6 +68,13 @@ void serialize(ArchiveT &ar, Barry::CategoryList &cl, const unsigned int ver)
 }
 
 template <class ArchiveT>
+void serialize(ArchiveT &ar, Barry::EmailList &el, const unsigned int ver)
+{
+	std::vector<std::string> &sl = el;
+	ar & make_nvp("EmailList", sl);
+}
+
+template <class ArchiveT>
 void serialize(ArchiveT &ar, Barry::Contact &c, const unsigned int ver)
 {
 	ar & make_nvp("RecType", c.RecType);

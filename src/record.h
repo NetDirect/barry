@@ -227,9 +227,38 @@ struct BXEXPORT UnknownField
 typedef std::vector<UnknownField> UnknownsType;
 BXEXPORT std::ostream& operator<< (std::ostream &os, const UnknownsType &unknowns);
 
-// simple email type and list
+// simple string email type and list... keep this a simple string list,
+// so it can be reused for other address-like data, like phone numbers.
+// If you need something more complex, use EmailAddress below or
+// create a new type.
 typedef std::string				EmailType;
-typedef std::vector<EmailType>			EmailList;
+class BXEXPORT EmailList : public std::vector<EmailType>
+{
+public:
+	typedef std::vector<EmailType>		base_type;
+
+public:
+	using base_type::size;
+	using base_type::begin;
+	using base_type::end;
+	using base_type::at;
+	using base_type::rbegin;
+	using base_type::rend;
+	using base_type::empty;
+	using base_type::resize;
+	using base_type::reserve;
+	using base_type::front;
+	using base_type::back;
+	using base_type::push_back;
+	using base_type::pop_back;
+	using base_type::insert;
+	using base_type::erase;
+	using base_type::swap;
+	using base_type::clear;
+	using base_type::operator=;
+	using base_type::operator[];
+};
+BXEXPORT std::ostream& operator<< (std::ostream &os, const EmailList &list);
 
 // struct, attempting to combine name + email address, for mail
 struct BXEXPORT EmailAddress
@@ -362,6 +391,7 @@ public:
 
 	using std::vector<std::string>::operator=;
 };
+BXEXPORT std::ostream& operator<<(std::ostream &os, const CategoryList &cl);
 
 
 

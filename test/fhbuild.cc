@@ -55,20 +55,6 @@ void DumpEnumConstants(const EnumConstants *ec)
 	cout << endl;
 }
 
-std::ostream& operator<<(std::ostream &os, const EmailList &el)
-{
-	bool first = true;
-	for( EmailList::const_iterator b = el.begin(); b != el.end(); ++b ) {
-		if( !first )
-			os << ", ";
-		else
-			first = false;
-
-		os << *b;
-	}
-	return os;
-}
-
 template <class RecordT>
 struct FieldHandler
 {

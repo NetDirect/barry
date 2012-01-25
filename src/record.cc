@@ -226,6 +226,22 @@ std::ostream& operator<< (std::ostream &os, const std::vector<UnknownField> &unk
 
 
 ///////////////////////////////////////////////////////////////////////////////
+// EmailList typedef
+
+std::ostream& operator<< (std::ostream &os, const EmailList &list)
+{
+	for( EmailList::const_iterator b = list.begin(), e = list.end();
+		b != e;
+		++b )
+	{
+		if( b != list.begin() )
+			os << ", ";
+		os << *b;
+	}
+	return os;
+}
+
+///////////////////////////////////////////////////////////////////////////////
 // EmailAddress class
 
 EmailAddress::EmailAddress(const std::string &complex_address)
@@ -508,6 +524,13 @@ void CategoryList::CategoryList2Str(std::string &str) const
 	}
 }
 
+std::ostream& operator<<(std::ostream &os, const CategoryList &cl)
+{
+	string buf;
+	cl.CategoryList2Str(buf);
+	os << buf;
+	return os;
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 // EnumConstants class

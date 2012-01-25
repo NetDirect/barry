@@ -78,7 +78,8 @@ public:
 
 	uint32_t ErrorId;
 
-	std::vector<std::string> Addresses;
+	EmailList Addresses;		//< not strictly email, but just a list
+					//< strings, used for phone numbers
 	std::string Body;
 
 	UnknownsType Unknowns;
