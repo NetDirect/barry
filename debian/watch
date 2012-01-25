@@ -1,0 +1,8 @@
+version=3
+
+# This file contains upstream's debian/ directory.
+#http://sf.net/barry/barry-(.*)\.tar\.bz2
+
+# This file has upstream's debian/ directory removed
+http://sf.net/barry/barry_(.*)\.orig\.tar\.gz
+

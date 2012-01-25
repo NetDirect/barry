@@ -46,6 +46,9 @@ Barry Release Checklist:
 - upload packages to SourceForge
 	ssh -x -a -2 -t USER,PROJECT@shell.sourceforge.net create
 	   then use sf-help for details
+	MAKE SURE that the tar source files are under
+		/files/barry/barry-{version}/barry_{version}.tar.gz,
+		so that debian/watch remains accurate
 	- Ubuntu: 7.10, 8.04, 9.04
 	- Fedora: 7, 8, 9, 11
 	- Debian: stable (lenny)
