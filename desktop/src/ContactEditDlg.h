@@ -150,6 +150,7 @@ public:
 
 public:
 	void OnPhotoButton(wxCommandEvent &event);
+	virtual bool TransferDataFromWindow();
 };
 
 #endif

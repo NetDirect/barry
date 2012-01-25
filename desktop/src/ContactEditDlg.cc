@@ -334,8 +334,6 @@ void ContactEditDlg::do_layout()
 int ContactEditDlg::ShowModal()
 {
 	int ret = wxDialog::ShowModal();
-	m_strings.Sync();
-	Barry::Contact::CommaString2Email(m_email_list, m_rec.EmailAddresses);
 	return ret;
 }
 
@@ -383,5 +381,25 @@ void ContactEditDlg::OnPhotoButton(wxCommandEvent &event)
 			Layout();
 		}
 	}
+}
+
+bool ContactEditDlg::TransferDataFromWindow()
+{
+	if( !wxDialog::TransferDataFromWindow() )
+		return false;
+
+	m_strings.Sync();
+	Barry::Contact::CommaString2Email(m_email_list, m_rec.EmailAddresses);
+
+	// one final validation: make sure either the name field or the
+	// company field has data
+	if( !m_rec.GetFullName().size() && !m_rec.Company.size() ) {
+		wxMessageBox(_T("A contact record must contain either a First/Last name, or a Company name."),
+			_T("Required Fields"),
+			wxOK | wxICON_INFORMATION, this);
+		return false;
+	}
+
+	return true;
 }
 
