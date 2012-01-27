@@ -379,9 +379,6 @@ desktop-file-install --vendor netdirect \
 %attr(0755,root,root) %{_bindir}/bidentify
 %attr(0755,root,root) %{_bindir}/brecsum
 %attr(0755,root,root) %{_bindir}/upldif
-%attr(0755,root,root) %{_bindir}/bktrans
-%attr(0755,root,root) %{_bindir}/btranslate
-%attr(0755,root,root) %{_bindir}/brimtrans
 %attr(0755,root,root) %{_bindir}/hal-blackberry
 %attr(0644,root,root) %{_mandir}/man1/btool*
 %attr(0644,root,root) %{_mandir}/man1/bwatch*
@@ -518,6 +515,7 @@ desktop-file-install --vendor netdirect \
 - renamed 0.4x plugin dependency to libopensync1
 - removed extraneous library dependencies, which should be handled automatically
 - added btarcmp
+- removed brimtrans, bktrans, and btranslate (devel tools)
 
 * Fri May 28 2010 Chris Frey <cdfrey@foursquare.net> 0.17.0-0
 - version bump

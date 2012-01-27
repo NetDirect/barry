@@ -18,6 +18,11 @@ noinst_HEADERS = \
 	barrygetopt.h \
 	platform.h
 
+noinst_PROGRAMS = \
+	btranslate \
+	bktrans \
+	brimtrans
+
 bin_PROGRAMS = \
 	btool \
 	bidentify \
@@ -27,10 +32,7 @@ bin_PROGRAMS = \
 	bdptest \
 	bjdwp \
 	upldif \
-	btranslate \
-	bktrans \
-	brecsum \
-	brimtrans
+	brecsum
 if WITH_BOOST
 bin_PROGRAMS += bs11nread
 endif
