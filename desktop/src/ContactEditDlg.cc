@@ -1,6 +1,6 @@
 ///
 /// \file	ContactEditDlg.cc
-///		Dialog class to handle the editing of all Barry record classes
+///		Dialog class to handle the editing of the Contact record
 ///
 
 /*

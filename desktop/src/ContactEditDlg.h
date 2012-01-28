@@ -1,6 +1,6 @@
 ///
 /// \file	ContactEditDlg.h
-///		Dialog class to handle the editing of all Barry record classes
+///		Dialog class to handle the editing of the Contact record
 ///
 
 /*
@@ -19,8 +19,8 @@
     root directory of this project for more details.
 */
 
-#ifndef __BARRYDESKTOP_RECORD_EDIT_DLG_H__
-#define __BARRYDESKTOP_RECORD_EDIT_DLG_H__
+#ifndef __BARRYDESKTOP_CONTACT_EDIT_DLG_H__
+#define __BARRYDESKTOP_CONTACT_EDIT_DLG_H__
 
 #include "StringSync.h"
 #include <wx/wx.h>
