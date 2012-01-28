@@ -204,6 +204,11 @@ public:
 	{
 		RecordT copy = m_rec;
 		bool changed = EditRecord(parent, editable, copy);
+		// FIXME - we could, at this point, add a (copy != m_rec)
+		// check here, to prevent writing a record that has not
+		// changed, but that would require using the FieldHandle<>
+		// system (a lot of code), and it's not a critical feature
+		// right now
 		if( changed && editable ) {
 			m_rec = copy;
 			return true;

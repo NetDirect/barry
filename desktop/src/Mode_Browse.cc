@@ -22,6 +22,7 @@
 #include "Mode_Browse.h"
 #include "BaseFrame.h"
 #include "ContactEditDlg.h"
+#include "MemoEditDlg.h"
 #include "windowids.h"
 #include <iostream>
 #include <sstream>
@@ -86,7 +87,8 @@ bool EditRecord(wxWindow *parent, bool editable, Barry::Folder &rec)
 
 bool EditRecord(wxWindow *parent, bool editable, Barry::Memo &rec)
 {
-	return false;
+	MemoEditDlg edit(parent, rec, editable);
+	return edit.ShowModal() == wxID_OK;
 }
 
 bool EditRecord(wxWindow *parent, bool editable, Barry::Message &rec)

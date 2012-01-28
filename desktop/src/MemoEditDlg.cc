@@ -62,6 +62,7 @@ void MemoEditDlg::set_properties()
 	// begin wxGlade: MemoEditDlg::set_properties
 	SetTitle(wxT("Memo"));
 	text_ctrl_2->SetMinSize(wxSize(300, -1));
+	text_ctrl_2->SetFocus();
 	text_ctrl_2->SetValidator(wxTextValidator(wxFILTER_NONE, m_strings.Add(m_rec.Title)));
 	label_2->SetToolTip(wxT("Comma separated"));
 	text_ctrl_3->SetMinSize(wxSize(300, -1));
@@ -87,7 +88,7 @@ void MemoEditDlg::do_layout()
 	sizer_1->Add(text_ctrl_1, 2, wxALL|wxEXPAND, 10);
 	// end wxGlade
 
-	sizer_1->Add(bottom_buttons, 0, wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND, 5);
+	sizer_1->Add(bottom_buttons, 0, wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND, 10);
 
 	// NOTE: watch that wxGlade doesn't add these again above, if
 	// you regenerate the code... we need this here, so that we
