@@ -4,6 +4,7 @@ SUBDIRS = . 0.22 0.40
 
 EXTRA_DIST = \
 	ContactEditDlg.wxg \
+	MemoEditDlg.wxg \
 	oextract.cc
 
 INCLUDES = $(TREE_BUILD_CXXFLAGS) $(BARRY_CFLAGS) $(OPENSYNC22_CFLAGS) $(OPENSYNC40_CFLAGS) $(GLIB2_CFLAGS) $(EVOLUTION_CFLAGS)
@@ -77,6 +78,7 @@ barrydesktop_SOURCES = \
 	Mode_Browse.cc Mode_Browse.h \
 	MigrateDlg.cc MigrateDlg.h \
 	ContactEditDlg.cc ContactEditDlg.h \
+	MemoEditDlg.cc MemoEditDlg.h \
 	GroupCfgDlg.cc GroupCfgDlg.h \
 	SyncStatusDlg.cc SyncStatusDlg.h \
 	ConflictDlg.cc ConflictDlg.h \
