@@ -53,13 +53,31 @@ namespace Barry
 #define TZFC_END		0xffff
 
 static FieldLink<Timezone> TimezoneFieldLinks[] = {
-   { TZFC_NAME,   "Name",        0, 0, &Timezone::TimeZoneName, 0, 0, 0, 0, true },
+   { TZFC_NAME,   "Name",        0, 0, &Timezone::Name, 0, 0, 0, 0, true },
    { TZFC_END,    "End of List", 0, 0, 0, 0, 0, 0, 0, false },
 };
 
 Timezone::Timezone()
 {
 	Clear();
+}
+
+Timezone::Timezone(int utc_offset)
+{
+	Clear();
+
+	UTCOffset = utc_offset;
+}
+
+Timezone::Timezone(int hours, int minutes)
+{
+	Clear();
+
+	UTCOffset = hours * 60;
+	if( hours < 0 )
+		UTCOffset -= minutes;
+	else
+		UTCOffset += minutes;
 }
 
 Timezone::~Timezone()
@@ -110,18 +128,7 @@ const unsigned char* Timezone::ParseField(const unsigned char *begin,
 		return begin;
 
 	case TZFC_OFFSET:
-		Offset = btohs(field->u.int16);
-		if (Offset < 0) {
-			Offset =~ Offset;
-			Offset++;
-			OffsetFraction = Offset % 60;
-			Offset = Offset / 60;
-			Left = true;
-		} else {
-			OffsetFraction = Offset % 60;
-			Offset = Offset / 60;
-			Left = false;
-		}
+		UTCOffset = btohs(field->u.int16);
 		return begin;
 
 	case TZFC_DST:
@@ -177,17 +184,16 @@ void Timezone::Clear()
 	RecType = GetDefaultRecType();
 	RecordId = 0;
 
-	TZType = 0;
-	DSTOffset = 0;
+	Name.clear();
 	Index = 0;
-	Offset = 0;
-	OffsetFraction = 0;
+	UTCOffset = 0;
+
+	UseDST = false;
+	DSTOffset = 0;
 	StartMonth = -1;
 	EndMonth = -1;
-	Left = false;
-	UseDST = false;
 
-	TimeZoneName.clear();
+	TZType = 0;
 
 	Unknowns.clear();
 }
@@ -208,18 +214,14 @@ const std::vector<FieldHandle<Timezone> >& Timezone::GetFieldHandles()
 	FHP(RecType, "Record Type Code");
 	FHP(RecordId, "Unique Record ID");
 
-	FHD(TimeZoneName, "Timezone Name", TZFC_NAME, true);
-	FHD(TZType, "Timezone Type", TZFC_TZTYPE, false);
-	FHD(DSTOffset, "DST Offset", TZFC_DST, false);
+	FHD(Name, "Timezone Name", TZFC_NAME, true);
 	FHD(Index, "Index", TZFC_INDEX, false);
-	FHD(Offset, "Timezone Offset", TZFC_OFFSET, false);
-	FHD(OffsetFraction, "Timezone Offset Fraction", TZFC_OFFSET, false);
+	FHD(UTCOffset, "Timezone Offset in Minutes", TZFC_OFFSET, false);
+	FHD(UseDST, "Use DST?", TZFC_DST, false);
+	FHD(DSTOffset, "DST Offset", TZFC_DST, false);
 	FHD(StartMonth, "Start Month", TZFC_STARTMONTH, false);
 	FHD(EndMonth, "End Month", TZFC_ENDMONTH, false);
-	FHD(UseDST, "Use DST?", TZFC_DST, false);
-
-	// part of TZFC_OFFSET processing...
-	FHP(Left, "Left Flag");
+	FHD(TZType, "Timezone Type", TZFC_TZTYPE, false);
 
 	FHP(Unknowns, "Unknown Fields");
 
@@ -229,9 +231,7 @@ const std::vector<FieldHandle<Timezone> >& Timezone::GetFieldHandles()
 std::string Timezone::GetDescription() const
 {
 	ostringstream oss;
-	oss << TimeZoneName << " ("
-	    << (Left ? "-" : "+") << dec << Offset << "." << OffsetFraction
-	    << ")";
+	oss << Name << " (" << dec << (UTCOffset / 60.0) << ")";
 	return oss.str();
 }
 
@@ -244,7 +244,7 @@ void Timezone::Dump(std::ostream &os) const
 			"Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
 	};
 
-	os << "Task entry: 0x" << setbase(16) << RecordId
+	os << "Timezone entry: 0x" << setbase(16) << RecordId
 	   << " (" << (unsigned int)RecType << ")\n";
 
 	// cycle through the type table
@@ -259,10 +259,19 @@ void Timezone::Dump(std::ostream &os) const
 		}
 	}
 
+	int hours, minutes;
+	Split(&hours, &minutes);
+
+	os << "       Desc: " << GetDescription() << "\n";
 	os << "      Index: 0x" <<setw(2) << Index << "\n";
-	os << "     Offset: " << (Left ? "-" : "+") << setbase(10) << Offset << "." << OffsetFraction << "\n";
+	os << "       Type: 0x" <<setw(2) << (unsigned int)TZType << "\n";
+	os << "     Offset: " << setbase(10) << UTCOffset << " minutes ("
+		<< dec << (UTCOffset / 60.0) << ")\n";
+	os << "            Split Offset: hours: "
+		<< dec << hours << ", minutes: " << minutes << "\n";
 	os << "    Use DST: " << (UseDST ? "true" : "false") << "\n";
 	if (UseDST) {
+		os << " DST Offset: " << setbase(10) << DSTOffset << "\n";
 		if ((StartMonth > 0) && (StartMonth < 11))
 				os << "Start Month: " << month[StartMonth] << "\n";
 		else
@@ -277,4 +286,33 @@ void Timezone::Dump(std::ostream &os) const
 	os << "\n\n";
 }
 
+
+void Timezone::Split(int *hours, int *minutes) const
+{
+	*hours = UTCOffset / 60;
+	*minutes = UTCOffset % 60;
+	if( *minutes < 0 )
+		*minutes = -*minutes;
 }
+
+void Timezone::SplitAbsolute(bool *west,
+				unsigned int *hours,
+				unsigned int *minutes) const
+{
+	int tmphours, tmpminutes;
+	Split(&tmphours, &tmpminutes);
+
+	if( tmphours < 0 ) {
+		*west = true;
+		tmphours = -tmphours;
+	}
+	else {
+		*west = false;
+	}
+
+	*hours = tmphours;
+	*minutes = tmpminutes;
+}
+
+} // namespace Barry
+

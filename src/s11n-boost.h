@@ -473,17 +473,16 @@ void serialize(ArchiveT &ar, Barry::Timezone &t, const unsigned int ver)
 	ar & make_nvp("RecType", t.RecType);
 	ar & make_nvp("RecordId", t.RecordId);
 
-	ar & make_nvp("TZType", t.TZType);
-	ar & make_nvp("DSTOffset", t.DSTOffset);
+	ar & make_nvp("Name", t.Name);
 	ar & make_nvp("Index", t.Index);
-	ar & make_nvp("Offset", t.Offset);
-	ar & make_nvp("OffsetFraction", t.OffsetFraction);
+	ar & make_nvp("UTCOffset", t.UTCOffset);
+
+	ar & make_nvp("UseDST", t.UseDST);
+	ar & make_nvp("DSTOffset", t.DSTOffset);
 	ar & make_nvp("StartMonth", t.StartMonth);
 	ar & make_nvp("EndMonth", t.EndMonth);
-	ar & make_nvp("Left", t.Left);
-	ar & make_nvp("UseDST", t.UseDST);
 
-	ar & make_nvp("TimeZoneName", t.TimeZoneName);
+	ar & make_nvp("TZType", t.TZType);
 
 	if( ver < BARRY_POD_MAP_VERSION ) {
 		ar & make_nvp("Unknowns", t.Unknowns);

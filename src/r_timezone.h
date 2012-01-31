@@ -42,25 +42,63 @@ public:
 	uint8_t RecType;
 	uint32_t RecordId;
 
-	uint8_t TZType;
-	uint32_t DSTOffset;
-	int32_t Index;
-	int32_t Offset;
-	int32_t OffsetFraction;
-	uint32_t StartMonth;
-	uint32_t EndMonth;
-	bool Left;
-	bool UseDST;
+	std::string Name;		//< name of time zone
 
-	std::string TimeZoneName;
+	int32_t Index;			//< index of entry in time zone table...
+					//< matches Code in hard coded TimeZone
+					//< table in Barry
+
+	int32_t UTCOffset;		//< Timezone offset from UTC in minutes.
+					//< Will be a negative value for west
+					//< of UTC (North America, etc), and
+					//< a positive value for east (Europe).
+					//< i.e. -210 for St. John's, which is
+					//< -3.5 hours from UTC.
+
+	bool UseDST;			//< true this timezone uses DST
+	uint32_t DSTOffset;		//< minutes of DST, if UseDST is true.
+					//< This value will almost always be 60.
+	uint32_t StartMonth;		//< index, 0-11, of month to start DST
+	uint32_t EndMonth;		//< index, 0-11, of month to end DST
+
+	uint8_t TZType;			//< unknown
 
 	UnknownsType Unknowns;
 
 public:
-
 	Timezone();
+
+	/// Creates a new timezone based on utc_offset minutes.
+	/// Use same semantics as UTCOffset.  For example, a -3.5 hour
+	/// timezone would be constructed as: Timezone(-210)
+	explicit Timezone(int utc_offset);
+
+	/// Creates a new timezone based on negative/positive hours,
+	/// and positive minutes.  For example, a -3.5 hour timezone
+	/// would be constructed as: Timezone(-3, 30)
+	Timezone(int hours, int minutes);
+
 	virtual ~Timezone();
 
+	//
+	// Timezone related utility functions
+	//
+
+	bool IsWest() const { return UTCOffset < 0; }
+
+	/// Splits UTCOffset minutes into hours and minutes.  hours can be
+	/// negative.  minutes is always positive.
+	void Split(int *hours, int *minutes) const;
+
+	/// Splits UTCOffset minutes into absolute values of hours and minutes,
+	/// and sets the west flag appropriately.  This is to mimic the
+	/// old behaviour of the Left, Offset and OffsetFraction member
+	/// variables.
+	void SplitAbsolute(bool *west,
+		unsigned int *hours, unsigned int *minutes) const;
+
+
+	// common Barry record functions
 	const unsigned char* ParseField(const unsigned char *begin,
 		const unsigned char *end, const IConverter *ic = 0);
 	void ParseRecurrenceData(const void *data);
@@ -78,7 +116,7 @@ public:
 	void Dump(std::ostream &os) const;
 	std::string GetDescription() const;
 
-	bool operator<(const Timezone &other) const { return TimeZoneName < other.TimeZoneName; }
+	bool operator<(const Timezone &other) const { return Name < other.Name; }
 
 	// database name
 	static const char * GetDBName() { return "Time Zones"; }
