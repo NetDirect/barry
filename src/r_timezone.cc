@@ -269,6 +269,7 @@ void Timezone::Dump(std::ostream &os) const
 		<< dec << (UTCOffset / 60.0) << ")\n";
 	os << "            Split Offset: hours: "
 		<< dec << hours << ", minutes: " << minutes << "\n";
+	os << "  Sample TZ: " << GetTz("E") << "\n";
 	os << "    Use DST: " << (UseDST ? "true" : "false") << "\n";
 	if (UseDST) {
 		os << " DST Offset: " << setbase(10) << DSTOffset << "\n";
@@ -312,6 +313,47 @@ void Timezone::SplitAbsolute(bool *west,
 
 	*hours = tmphours;
 	*minutes = tmpminutes;
+}
+
+std::string Timezone::GetTz(const std::string &prefix) const
+{
+	int hours, minutes;
+	Split(&hours, &minutes);
+
+	// TZ variable uses positive for west, and negative for east,
+	// so swap the hour value.  Minutes is always positive for
+	// our purposes, so leave it alone.
+	hours = -hours;
+
+	// standard time first
+	ostringstream oss;
+	oss << prefix << "ST"
+		<< hours << ":"
+		<< setfill('0') << setw(2) << minutes
+		<< ":00";
+
+	// daylight saving time next, if available
+	if( UseDST ) {
+		Timezone dst(UTCOffset + DSTOffset);
+
+		dst.Split(&hours, &minutes);
+
+		// swap again for TZ semantics...
+		hours = -hours;
+
+		oss << prefix << "DT"
+			<< hours << ":"
+			<< setfill('0') << setw(2) << minutes
+			<< ":00";
+
+		// assume second Sunday of start month to first Sunday of
+		// end month, since we don't have enough data to be more
+		// precise
+		oss << ",M" << (StartMonth + 1) << ".2.0";
+		oss << ",M" << (EndMonth + 1) << ".1.0";
+	}
+
+	return oss.str();
 }
 
 } // namespace Barry

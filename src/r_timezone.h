@@ -97,6 +97,16 @@ public:
 	void SplitAbsolute(bool *west,
 		unsigned int *hours, unsigned int *minutes) const;
 
+	/// Creates a timezone string suitable for a Unix / POSIX TZ
+	/// environment variable.  Expects a time zone prefix.
+	/// For example, New Zealand Standard/Daylight Time is NZST/NZDT, so
+	/// the prefix would be "NZ".  Eastern Standard/Daylight Time
+	/// is EST/EDT, so the prefix would be "E".
+	///
+	/// Should be able to use this string to achieve time zone conversions
+	/// using the TzWrapper class.
+	std::string GetTz(const std::string &prefix) const;
+
 
 	// common Barry record functions
 	const unsigned char* ParseField(const unsigned char *begin,
