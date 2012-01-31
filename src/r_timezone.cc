@@ -73,6 +73,11 @@ Timezone::Timezone(int hours, int minutes)
 {
 	Clear();
 
+	// make sure that minutes are always positive, for our logic
+	if( minutes < 0 )
+		minutes = -minutes;
+
+	// calculate offset in total minutes
 	UTCOffset = hours * 60;
 	if( hours < 0 )
 		UTCOffset -= minutes;

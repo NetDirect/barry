@@ -70,12 +70,13 @@ public:
 
 	/// Creates a new timezone based on utc_offset minutes.
 	/// Use same semantics as UTCOffset.  For example, a -3.5 hour
-	/// timezone would be constructed as: Timezone(-210)
+	/// timezone (which is west of UTC) would be constructed
+	/// as: Timezone(-210)
 	explicit Timezone(int utc_offset);
 
 	/// Creates a new timezone based on negative/positive hours,
 	/// and positive minutes.  For example, a -3.5 hour timezone
-	/// would be constructed as: Timezone(-3, 30)
+	/// (which is west of UTC) would be constructed as: Timezone(-3, 30)
 	Timezone(int hours, int minutes);
 
 	virtual ~Timezone();
