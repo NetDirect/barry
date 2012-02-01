@@ -244,6 +244,11 @@ struct UnknownData
 	{
 		return !operator==(other);
 	}
+
+	bool operator< (const UnknownData &other) const
+	{
+		return raw_data < other.raw_data;
+	}
 };
 
 struct BXEXPORT UnknownField
@@ -260,6 +265,11 @@ struct BXEXPORT UnknownField
 	bool operator!=(const UnknownField &other) const
 	{
 		return !operator==(other);
+	}
+
+	bool operator< (const UnknownField &other) const
+	{
+		return type < other.type && data < other.data;
 	}
 };
 typedef std::vector<UnknownField> UnknownsType;
@@ -333,6 +343,12 @@ struct BXEXPORT EmailAddress
 	{
 		return !operator==(other);
 	}
+
+	bool operator< (const EmailAddress &other) const
+	{
+		// sort by email only, since not every address has a name
+		return Email < other.Email;
+	}
 };
 BXEXPORT std::ostream& operator<<(std::ostream &os, const EmailAddress &msga);
 
@@ -377,6 +393,10 @@ struct BXEXPORT PostalAddress
 	{
 		return !operator==(other);
 	}
+	bool operator< (const PostalAddress &other) const
+	{
+		return GetLabel() < other.GetLabel();
+	}
 };
 BXEXPORT std::ostream& operator<<(std::ostream &os, const PostalAddress &msga);
 
@@ -410,6 +430,13 @@ struct BXEXPORT Date
 	bool operator!=(const Date &other) const
 	{
 		return !operator==(other);
+	}
+	bool operator< (const Date &other) const
+	{
+		// YYYYMMDD as integer
+		unsigned int v1 = Year * 10000 + Month * 100 + Day;
+		unsigned int v2 = other.Year * 10000 + other.Month * 100 + other.Day;
+		return v1 < v2;
 	}
 };
 BXEXPORT std::ostream& operator<<(std::ostream &os, const Date &date);
