@@ -341,6 +341,10 @@ private:
 					// 3 - a record was added or deleted
 	bool m_verbose;
 	bool m_always_hex;
+	bool m_sort_on_load;		// if true, sort each database by
+					// Unique ID after loading from tarball
+	bool m_include_ids;		// if true, include DBData IDs in SHA1
+
 	std::string m_last_dbname;
 
 public:
@@ -407,6 +411,8 @@ App::App()
 	: m_main_return(0)
 	, m_verbose(false)
 	, m_always_hex(false)
+	, m_sort_on_load(true)
+	, m_include_ids(true)
 {
 }
 
@@ -466,7 +472,8 @@ void App::LoadTarballs()
 			b != m_tars[i].end();
 			++b )
 		{
-			sort(b->second.begin(), b->second.end(), DBDataCmp);
+			if( m_sort_on_load )
+				sort(b->second.begin(), b->second.end(), DBDataCmp);
 		}
 	}
 }
@@ -565,8 +572,8 @@ void App::Compare(const DBData &one, const DBData &two)
 
 	// always compare the sums of the data first, and if match, done
 	string sum1, sum2;
-	ChecksumDBData(one, true, sum1);
-	ChecksumDBData(two, true, sum2);
+	ChecksumDBData(one, m_include_ids, sum1);
+	ChecksumDBData(two, m_include_ids, sum2);
 	if( sum1 == sum2 )
 		return; // done
 
