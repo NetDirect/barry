@@ -412,15 +412,34 @@ App::App()
 
 void App::ShowParsers()
 {
-	cout << "Supported Database parsers:\n"
+	cout << "Supported Database parsers:\n";
 
 #undef HANDLE_PARSER
 #define HANDLE_PARSER(tname) \
-	<< "   " << tname::GetDBName() << "\n"
+	{ \
+		cout << "   " << tname::GetDBName() << "\n      "; \
+		std::vector<Barry::FieldHandle<tname> >::const_iterator \
+				fhi = tname::GetFieldHandles().begin(), \
+				fhe = tname::GetFieldHandles().end(); \
+		for( int count = 0, len = 6; fhi != fhe; ++fhi, ++count ) { \
+			if( count ) { \
+				cout << ", "; \
+				len += 2; \
+			} \
+			std::string name = fhi->GetIdentity().Name; \
+			if( len + name.size() >= 75 ) { \
+				cout << "\n      "; \
+				len = 6; \
+			} \
+			cout << name; \
+			len += name.size(); \
+		} \
+		cout << "\n"; \
+	}
 
 	ALL_KNOWN_PARSER_TYPES
 
-	<< endl;
+	cout << endl;
 }
 
 void App::AddParsersToCompare()
