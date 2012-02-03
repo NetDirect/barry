@@ -143,6 +143,7 @@ public:
 	bool Password(const char *password);
 	void Disconnect();
 
+	const Barry::ProbeResult& GetProbeResult() const { return m_con->GetProbeResult(); }
 	const Barry::DatabaseDatabase& GetDBDB() const { return m_desktop->GetDBDB(); }
 	unsigned int GetRecordTotal(const Barry::ConfigFile::DBListType &backupList) const;
 	unsigned int GetRecordTotal(const Barry::ConfigFile::DBListType &restoreList, const std::string &filename) const;
