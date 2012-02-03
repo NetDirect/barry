@@ -31,6 +31,7 @@
 #include "i18n.h"
 
 #include "barrygetopt.h"
+#include "util.h"
 
 using namespace std;
 using namespace Barry;
@@ -88,15 +89,6 @@ void DumpDB(const string &filename)
 		cerr << "Unknown database name: " << dbName << endl;
 }
 
-void ShowParsers()
-{
-	cout << "Supported Database parsers:\n"
-#undef HANDLE_PARSER
-#define HANDLE_PARSER(tname) << "   " << tname::GetDBName() << "\n"
-	ALL_KNOWN_PARSER_TYPES
-	<< endl;
-}
-
 int main(int argc, char *argv[])
 {
 	INIT_I18N(PACKAGE);
@@ -117,7 +109,7 @@ int main(int argc, char *argv[])
 				break;
 
 			case 'S':	// show supported databases
-				ShowParsers();
+				ShowParsers(false, false);
 				return 0;
 
 			case 'h':	// help

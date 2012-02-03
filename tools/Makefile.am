@@ -15,6 +15,7 @@ noinst_HEADERS = \
 	gettext.h \
 	mimedump.h \
 	brecsum.h \
+	util.h \
 	barrygetopt.h \
 	platform.h
 
@@ -59,7 +60,7 @@ sbin_PROGRAMS = \
 	breset \
 	pppob
 
-btool_SOURCES = btool.cc
+btool_SOURCES = btool.cc util.cc
 btool_LDADD = ../src/libbarry.la $(USB_LIBRARY_LIBS) @BOOST_LDADD@ $(LTLIBINTL) $(LTLIBICONV)
 if WITH_SYNC
 btool_LDADD += ../src/libbarrysync.la $(GLIB2_LIBS)
@@ -80,7 +81,7 @@ endif
 btool_LDFLAGS = @BOOST_LIB_PATH@
 
 if WITH_BOOST
-bs11nread_SOURCES = bs11nread.cc
+bs11nread_SOURCES = bs11nread.cc util.cc
 bs11nread_LDADD = ../src/libbarry.la $(USB_LIBRARY_LIBS) @BOOST_LDADD@ $(LTLIBINTL)
 bs11nread_CXXFLAGS = -D_REENTRANT @BOOST_INC_PATH@ $(AM_CXXFLAGS)
 bs11nread_LDFLAGS = @BOOST_LIB_PATH@
@@ -170,10 +171,13 @@ endif
 endif
 
 if WITH_BACKUP
-btarcmp_SOURCES = btarcmp.cc
+btarcmp_SOURCES = btarcmp.cc util.cc
 btarcmp_CXXFLAGS = $(AM_CXXFLAGS)
 btarcmp_LDADD = ../src/libbarry.la ../src/libbarrybackup.la \
 			$(USB_LIBRARY_LIBS) $(LTLIBINTL)
+if WITH_SYNC
+btarcmp_CXXFLAGS += -D__BARRY_SYNC_MODE__ $(GLIB2_CFLAGS) 
+endif
 endif
 
 if WITH_ALX
@@ -184,8 +188,9 @@ endif
 
 if WITH_BACKUP
 if WITH_SYNC
-bio_SOURCES = bio.cc
-bio_CXXFLAGS = $(AM_CXXFLAGS) $(GLIB2_CFLAGS)
+# the sync mode define is for util.cc
+bio_SOURCES = bio.cc util.cc
+bio_CXXFLAGS = -D__BARRY_SYNC_MODE__ $(AM_CXXFLAGS) $(GLIB2_CFLAGS)
 if WITH_BOOST
 bio_CXXFLAGS += -D__BARRY_BOOST_MODE__ -D_REENTRANT @BOOST_INC_PATH@
 endif

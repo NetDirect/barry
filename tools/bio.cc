@@ -25,6 +25,7 @@
 
 #include "mimedump.h"
 #include "brecsum.h"
+#include "util.h"
 
 #include <iomanip>
 #include <iostream>
@@ -165,7 +166,8 @@ LDIF options?
    << "   -h        This help\n"
    << "   -I cs     International charset for string conversions\n"
    << "             Valid values here are available with 'iconv --list'\n"
-   << "   -S        Show list of supported database parsers and builders\n"
+   << "   -S        Show list of supported database parsers and builders.\n"
+   << "             Use twice to show field names as well.\n"
    << "   -v        Dump protocol data during operation\n"
    << "\n"
    << endl;
@@ -857,7 +859,6 @@ public:
 	bool ParseInMode(const string &mode);
 	bool ParseOutMode(const string &mode);
 	DeviceParser::WriteMode ParseWriteMode(const std::string &mode);
-	static void ShowParsers();
 	// returns true if any of the items in Outputs needs a probe
 	bool OutputsProbeNeeded();
 	int main(int argc, char *argv[]);
@@ -945,30 +946,6 @@ DeviceParser::WriteMode App::ParseWriteMode(const std::string &mode)
 		throw runtime_error("Unknown device output mode. Must be one of: erase, overwrite, addonly, addnew");
 }
 
-void App::ShowParsers()
-{
-	cout << "Supported Database parsers:\n"
-	<< " (* = can display in vformat MIME mode)\n"
-
-#undef HANDLE_PARSER
-#define HANDLE_PARSER(tname) \
-	<< "   " << tname::GetDBName() \
-		<< (MimeDump<tname>::Supported() ? " *" : "") << "\n"
-
-	ALL_KNOWN_PARSER_TYPES
-
-	<< "\n"
-	<< "Supported Database builders:\n"
-
-#undef HANDLE_BUILDER
-#define HANDLE_BUILDER(tname) \
-	<< "   " << tname::GetDBName() << "\n"
-
-	ALL_KNOWN_BUILDER_TYPES
-
-	<< endl;
-}
-
 bool App::OutputsProbeNeeded()
 {
 	for( OutputsType::iterator i = Outputs.begin();
@@ -984,6 +961,7 @@ bool App::OutputsProbeNeeded()
 int App::main(int argc, char *argv[])
 {
 	bool verbose = false;
+	bool show_parsers = false, show_fields = false;
 	string iconvCharset;
 
 	// process command line options
@@ -1068,8 +1046,11 @@ int App::main(int argc, char *argv[])
 			break;
 
 		case 'S':	// show parsers and builders
-			ShowParsers();
-			return 0;
+			if( show_parsers )
+				show_fields = true;
+			else
+				show_parsers = true;
+			break;
 
 		case 'I':	// international charset (iconv)
 			iconvCharset = optarg;
@@ -1088,6 +1069,12 @@ int App::main(int argc, char *argv[])
 			Usage();
 			return 0;
 		}
+	}
+
+	if( show_parsers ) {
+		ShowParsers(show_fields, true);
+		ShowBuilders();
+		return 0;
 	}
 
 	if( !Input.get() || !Outputs.size() ) {

@@ -38,6 +38,7 @@
 #include <stdlib.h>
 #include <tr1/memory>
 #include "i18n.h"
+#include "util.h"
 
 #include "barrygetopt.h"
 
@@ -98,7 +99,8 @@ void Usage()
    << "             If only one device is plugged in, this flag is optional\n"
    << "   -P pass   Simplistic method to specify device password\n"
    << "   -s db     Save database 'db' TO device from data loaded from -f file\n"
-   << "   -S        Show list of supported database parsers\n"
+   << "   -S        Show list of supported database parsers.  Use twice to\n"
+   << "             display fields names as well.\n"
    << "   -t        Show database database table\n"
    << "   -T db     Show record state table for given database\n"
    << "   -v        Dump protocol data during operation\n"
@@ -414,29 +416,6 @@ shared_ptr<Builder> GetBuilder(const string &name, const string &filename)
 	}
 }
 
-void ShowParsers()
-{
-	cout << "Supported Database parsers:\n"
-#undef HANDLE_PARSER
-#ifdef __BARRY_SYNC_MODE__
-	<< " (* = can display in vformat MIME mode)\n"
-#define HANDLE_PARSER(tname) << "   " << tname::GetDBName() << (MimeDump<tname>::Supported() ? " *" : "") << "\n"
-
-#else
-#define HANDLE_PARSER(tname) << "   " << tname::GetDBName() << "\n"
-
-#endif
-	ALL_KNOWN_PARSER_TYPES
-
-	<< "\n"
-
-	<< "Supported Database builders:\n"
-#undef HANDLE_BUILDER
-#define HANDLE_BUILDER(tname) << "   " << tname::GetDBName() << "\n"
-	ALL_KNOWN_BUILDER_TYPES
-	<< endl;
-}
-
 struct StateTableCommand
 {
 	char flag;
@@ -530,7 +509,9 @@ int main(int argc, char *argv[])
 			clear_database = false,
 			null_parser = false,
 			bbackup_mode = false,
-			sort_records = false;
+			sort_records = false,
+			show_parsers = false,
+			show_fields = false;
 		string ldifBaseDN, ldifDnAttr;
 		string filename;
 		string password;
@@ -672,8 +653,11 @@ int main(int argc, char *argv[])
 				break;
 
 			case 'S':	// show supported databases
-				ShowParsers();
-				return 0;
+				if( show_parsers )
+					show_fields = true;
+				else
+					show_parsers = true;
+				break;
 
 			case 't':	// display database database
 				show_dbdb = true;
@@ -715,6 +699,12 @@ int main(int argc, char *argv[])
 				Usage();
 				return 0;
 			}
+		}
+
+		if( show_parsers ) {
+			ShowParsers(show_fields, true);
+			ShowBuilders();
+			return 0;
 		}
 
 		// Initialize the barry library.  Must be called before

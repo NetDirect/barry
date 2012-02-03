@@ -32,6 +32,7 @@
 #include <stdexcept>
 
 #include "barrygetopt.h"
+#include "util.h"
 
 using namespace std;
 using namespace std::tr1;
@@ -67,7 +68,8 @@ void Usage()
    << "   -P        Only compare records that can be parsed\n"
    << "             This is the same as specifying -d for each database\n"
    << "             listed with -S.\n"
-   << "   -S        Show list of supported database parsers\n"
+   << "   -S        Show list of supported database parsers.  Use twice\n"
+   << "             to show field names as well.\n"
    << "   -v        Show verbose diff output (twice to force hex output)\n"
    << "\n"
    << endl;
@@ -371,8 +373,6 @@ public:
 
 	// returns true if any of the items in Outputs needs a probe
 	int main(int argc, char *argv[]);
-
-	static void ShowParsers();
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -413,38 +413,6 @@ App::App()
 	, m_sort_on_load(true)
 	, m_include_ids(true)
 {
-}
-
-void App::ShowParsers()
-{
-	cout << "Supported Database parsers:\n";
-
-#undef HANDLE_PARSER
-#define HANDLE_PARSER(tname) \
-	{ \
-		cout << "   " << tname::GetDBName() << "\n      "; \
-		FieldHandle<tname>::ListT::const_iterator \
-				fhi = tname::GetFieldHandles().begin(), \
-				fhe = tname::GetFieldHandles().end(); \
-		for( int count = 0, len = 6; fhi != fhe; ++fhi, ++count ) { \
-			if( count ) { \
-				cout << ", "; \
-				len += 2; \
-			} \
-			std::string name = fhi->GetIdentity().Name; \
-			if( len + name.size() >= 75 ) { \
-				cout << "\n      "; \
-				len = 6; \
-			} \
-			cout << name; \
-			len += name.size(); \
-		} \
-		cout << "\n"; \
-	}
-
-	ALL_KNOWN_PARSER_TYPES
-
-	cout << endl;
 }
 
 void App::AddParsersToCompare()
@@ -721,6 +689,7 @@ void App::ShowDatabaseHeader(const std::string &dbname)
 int App::main(int argc, char *argv[])
 {
 	bool brief = false;
+	bool show_parsers = false, show_fields = false;
 	string iconvCharset;
 
 	// process command line options
@@ -748,8 +717,11 @@ int App::main(int argc, char *argv[])
 			break;
 
 		case 'S':	// show parsers and builders
-			ShowParsers();
-			return 0;
+			if( show_parsers )
+				show_fields = true;
+			else
+				show_parsers = true;
+			break;
 
 		case 'I':	// international charset (iconv)
 			iconvCharset = optarg;
@@ -767,6 +739,11 @@ int App::main(int argc, char *argv[])
 			Usage();
 			return 0;
 		}
+	}
+
+	if( show_parsers ) {
+		ShowParsers(show_fields, false);
+		return 0;
 	}
 
 	if( (optind + 2) > argc ) {
