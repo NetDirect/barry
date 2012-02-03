@@ -256,9 +256,9 @@ void Sms::Clear()
 	Unknowns.clear();
 }
 
-const std::vector<FieldHandle<Sms> >& Sms::GetFieldHandles()
+const FieldHandle<Sms>::ListT& Sms::GetFieldHandles()
 {
-	static std::vector<FieldHandle<Sms> > fhv;
+	static FieldHandle<Sms>::ListT fhv;
 
 	if( fhv.size() )
 		return fhv;

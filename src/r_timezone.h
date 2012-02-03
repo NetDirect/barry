@@ -134,7 +134,7 @@ public:
 	static uint8_t GetDefaultRecType() { return 2; }
 
 	// Generic Field Handle support
-	static const std::vector<FieldHandle<Timezone> >& GetFieldHandles();
+	static const FieldHandle<Timezone>::ListT& GetFieldHandles();
 };
 
 BXEXPORT inline std::ostream& operator<<(std::ostream &os, const Timezone &msg) {

@@ -203,9 +203,9 @@ void Timezone::Clear()
 	Unknowns.clear();
 }
 
-const std::vector<FieldHandle<Timezone> >& Timezone::GetFieldHandles()
+const FieldHandle<Timezone>::ListT& Timezone::GetFieldHandles()
 {
-	static std::vector<FieldHandle<Timezone> > fhv;
+	static FieldHandle<Timezone>::ListT fhv;
 
 	if( fhv.size() )
 		return fhv;

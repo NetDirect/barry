@@ -333,9 +333,9 @@ void CallLog::Clear()
 	Unknowns.clear();
 }
 
-const std::vector<FieldHandle<CallLog> >& CallLog::GetFieldHandles()
+const FieldHandle<CallLog>::ListT& CallLog::GetFieldHandles()
 {
-	static std::vector<FieldHandle<CallLog> > fhv;
+	static FieldHandle<CallLog>::ListT fhv;
 
 	if( fhv.size() )
 		return fhv;

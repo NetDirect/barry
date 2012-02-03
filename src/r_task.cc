@@ -350,9 +350,9 @@ void Task::Clear()
 	Unknowns.clear();
 }
 
-const std::vector<FieldHandle<Task> >& Task::GetFieldHandles()
+const FieldHandle<Task>::ListT& Task::GetFieldHandles()
 {
-	static std::vector<FieldHandle<Task> > fhv;
+	static FieldHandle<Task>::ListT fhv;
 
 	if( fhv.size() )
 		return fhv;

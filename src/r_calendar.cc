@@ -406,9 +406,9 @@ void Calendar::Clear()
 	Unknowns.clear();
 }
 
-const std::vector<FieldHandle<Calendar> >& Calendar::GetFieldHandles()
+const FieldHandle<Calendar>::ListT& Calendar::GetFieldHandles()
 {
-	static std::vector<FieldHandle<Calendar> > fhv;
+	static FieldHandle<Calendar>::ListT fhv;
 
 	if( fhv.size() )
 		return fhv;
@@ -563,9 +563,9 @@ void CalendarAll::Clear()
 	MailAccount.clear();
 }
 
-const std::vector<FieldHandle<CalendarAll> >& CalendarAll::GetFieldHandles()
+const FieldHandle<CalendarAll>::ListT& CalendarAll::GetFieldHandles()
 {
-	static std::vector<FieldHandle<CalendarAll> > fhv;
+	static FieldHandle<CalendarAll>::ListT fhv;
 
 	if( fhv.size() )
 		return fhv;

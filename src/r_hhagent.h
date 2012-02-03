@@ -113,7 +113,7 @@ public:
 	static std::string ESNHex2Dec(const std::string &esn);
 
 	// Generic Field Handle support
-	static const std::vector<FieldHandle<HandheldAgent> >& GetFieldHandles();
+	static const FieldHandle<HandheldAgent>::ListT& GetFieldHandles();
 };
 
 BXEXPORT inline std::ostream& operator<< (std::ostream &os, const HandheldAgent &hha) {

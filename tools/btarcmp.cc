@@ -423,7 +423,7 @@ void App::ShowParsers()
 #define HANDLE_PARSER(tname) \
 	{ \
 		cout << "   " << tname::GetDBName() << "\n      "; \
-		std::vector<Barry::FieldHandle<tname> >::const_iterator \
+		FieldHandle<tname>::ListT::const_iterator \
 				fhi = tname::GetFieldHandles().begin(), \
 				fhe = tname::GetFieldHandles().end(); \
 		for( int count = 0, len = 6; fhi != fhe; ++fhi, ++count ) { \

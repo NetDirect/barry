@@ -113,7 +113,7 @@ public:
 	static uint8_t GetDefaultRecType() { return 1; }
 
 	// Generic Field Handle support
-	static const std::vector<FieldHandle<Bookmark> >& GetFieldHandles();
+	static const FieldHandle<Bookmark>::ListT& GetFieldHandles();
 };
 
 BXEXPORT inline std::ostream& operator<<(std::ostream &os, const Bookmark &msg) {

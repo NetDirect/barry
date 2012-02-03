@@ -314,7 +314,7 @@ void MessageBase::Clear()
 }
 
 template <class RecordT>
-void DoFillHandles(std::vector<FieldHandle<RecordT> > &handles)
+void DoFillHandles(typename FieldHandle<RecordT>::ListT &handles)
 {
 	// start fresh
 	handles.clear();
@@ -478,42 +478,42 @@ namespace Barry {
 //////////////////////////////////////////////////////////////////////////////
 // Message class - statics
 
-const std::vector<FieldHandle<Message> >& Message::GetFieldHandles()
+const FieldHandle<Message>::ListT& Message::GetFieldHandles()
 {
-	static std::vector<FieldHandle<Message> > fhv;
+	static FieldHandle<Message>::ListT fhv;
 
 	if( fhv.size() )
 		return fhv;
 
-	DoFillHandles(fhv);
+	DoFillHandles<Message>(fhv);
 	return fhv;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 // PINMessage class - statics
 
-const std::vector<FieldHandle<PINMessage> >& PINMessage::GetFieldHandles()
+const FieldHandle<PINMessage>::ListT& PINMessage::GetFieldHandles()
 {
-	static std::vector<FieldHandle<PINMessage> > fhv;
+	static FieldHandle<PINMessage>::ListT fhv;
 
 	if( fhv.size() )
 		return fhv;
 
-	DoFillHandles(fhv);
+	DoFillHandles<PINMessage>(fhv);
 	return fhv;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 // SavedMessage class - statics
 
-const std::vector<FieldHandle<SavedMessage> >& SavedMessage::GetFieldHandles()
+const FieldHandle<SavedMessage>::ListT& SavedMessage::GetFieldHandles()
 {
-	static std::vector<FieldHandle<SavedMessage> > fhv;
+	static FieldHandle<SavedMessage>::ListT fhv;
 
 	if( fhv.size() )
 		return fhv;
 
-	DoFillHandles(fhv);
+	DoFillHandles<SavedMessage>(fhv);
 	return fhv;
 }
 

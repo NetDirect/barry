@@ -207,9 +207,9 @@ void ContentStore::Clear()
 	FileSize = 0;
 }
 
-const std::vector<FieldHandle<ContentStore> >& ContentStore::GetFieldHandles()
+const FieldHandle<ContentStore>::ListT& ContentStore::GetFieldHandles()
 {
-	static std::vector<FieldHandle<ContentStore> > fhv;
+	static FieldHandle<ContentStore>::ListT fhv;
 
 	if( fhv.size() )
 		return fhv;

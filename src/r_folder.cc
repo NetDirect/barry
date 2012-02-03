@@ -188,9 +188,9 @@ void Folder::Clear()
 	Unknowns.clear();
 }
 
-const std::vector<FieldHandle<Folder> >& Folder::GetFieldHandles()
+const FieldHandle<Folder>::ListT& Folder::GetFieldHandles()
 {
-	static std::vector<FieldHandle<Folder> > fhv;
+	static FieldHandle<Folder>::ListT fhv;
 
 	if( fhv.size() )
 		return fhv;

@@ -151,7 +151,7 @@ public:
 	static uint8_t GetDefaultRecType() { return 5; }	// or 0?
 
 	// Generic Field Handle support
-	static const std::vector<FieldHandle<Calendar> >& GetFieldHandles();
+	static const FieldHandle<Calendar>::ListT& GetFieldHandles();
 };
 
 BXEXPORT inline std::ostream& operator<<(std::ostream &os, const Calendar &msg) {
@@ -179,7 +179,7 @@ public:
 	static const char * GetDBName() { return "Calendar - All"; }
 
 	// Generic Field Handle support
-	static const std::vector<FieldHandle<CalendarAll> >& GetFieldHandles();
+	static const FieldHandle<CalendarAll>::ListT& GetFieldHandles();
 };
 
 BXEXPORT inline std::ostream& operator<<(std::ostream &os, const CalendarAll &msg) {

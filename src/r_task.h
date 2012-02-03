@@ -121,7 +121,7 @@ public:
 	static uint8_t GetDefaultRecType() { return 2; }
 
 	// Generic Field Handle support
-	static const std::vector<FieldHandle<Task> >& GetFieldHandles();
+	static const FieldHandle<Task>::ListT& GetFieldHandles();
 };
 
 BXEXPORT inline std::ostream& operator<<(std::ostream &os, const Task &msg) {

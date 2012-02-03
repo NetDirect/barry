@@ -246,9 +246,9 @@ void Memo::Clear()
 	Unknowns.clear();
 }
 
-const std::vector<FieldHandle<Memo> >& Memo::GetFieldHandles()
+const FieldHandle<Memo>::ListT& Memo::GetFieldHandles()
 {
-	static std::vector<FieldHandle<Memo> > fhv;
+	static FieldHandle<Memo>::ListT fhv;
 
 	if( fhv.size() )
 		return fhv;

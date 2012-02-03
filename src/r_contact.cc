@@ -455,9 +455,9 @@ void Contact::Clear()
 	m_FirstNameSeen = false;
 }
 
-const std::vector<FieldHandle<Contact> >& Contact::GetFieldHandles()
+const FieldHandle<Contact>::ListT& Contact::GetFieldHandles()
 {
-	static std::vector<FieldHandle<Contact> > fhv;
+	static FieldHandle<Contact>::ListT fhv;
 
 	if( fhv.size() )
 		return fhv;

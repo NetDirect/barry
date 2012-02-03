@@ -58,7 +58,7 @@ public:
 	static uint8_t GetDefaultRecType() { return 0; }
 
 	// Generic Field Handle support
-	static const std::vector<FieldHandle<PINMessage> >& GetFieldHandles();
+	static const FieldHandle<PINMessage>::ListT& GetFieldHandles();
 };
 
 BXEXPORT inline std::ostream& operator<<(std::ostream &os, const PINMessage &msg) {

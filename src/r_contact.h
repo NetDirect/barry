@@ -174,7 +174,7 @@ public:
 	static void CommaString2Email(const std::string &list, EmailList &result);
 
 	// Generic Field Handle support
-	static const std::vector<FieldHandle<Contact> >& GetFieldHandles();
+	static const FieldHandle<Contact>::ListT& GetFieldHandles();
 };
 
 BXEXPORT inline std::ostream& operator<< (std::ostream &os, const Contact &contact) {

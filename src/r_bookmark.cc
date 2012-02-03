@@ -361,9 +361,9 @@ void Bookmark::Clear()
 	Unknowns.clear();
 }
 
-const std::vector<FieldHandle<Bookmark> >& Bookmark::GetFieldHandles()
+const FieldHandle<Bookmark>::ListT& Bookmark::GetFieldHandles()
 {
-	static std::vector<FieldHandle<Bookmark> > fhv;
+	static FieldHandle<Bookmark>::ListT fhv;
 
 	if( fhv.size() )
 		return fhv;

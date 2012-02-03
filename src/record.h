@@ -482,9 +482,10 @@ BXEXPORT std::ostream& operator<<(std::ostream &os, const CategoryList &cl);
 ///
 ///		This last feature is what Generic Field Handles are meant to
 ///		fix.  Each record class will contain a GetFieldHandles()
-///		member function, which will return a vector of FieldHandle<>
+///		member function, which will return a list of type
+///		FieldHandle<T>::ListT (currently a std::vector<>)
 ///		objects, for that specific record.  For example, Contact
-///		would fill a vector with FieldHandle<Contact> objects.
+///		would fill the ListT with FieldHandle<Contact> objects.
 ///		Each FieldHandle<> object contains a C++ pointer-to-member,
 ///		which the FieldHandle refers to, as well as a FieldIdentity
 ///		object.  The FieldIdentity object contains various identitying
@@ -839,6 +840,9 @@ template <class RecordT>
 class FieldHandle
 {
 public:
+	typedef FieldHandle<RecordT>			Self;
+	typedef std::vector<Self>			ListT;
+
 	// Need to use this in the union, so no constructor allowed
 	struct PostalPointer
 	{
@@ -1181,8 +1185,8 @@ FieldHandle<RecordT> MakeFieldHandle(TypeT RecordT::* tp,
 }
 
 /// Calls FieldHandle<>::Member() for each defined field for a given record
-/// type.  Takes a vector of FieldHandle<> objects, and calls Member(func)
-/// for each one.
+/// type.  Takes a FieldHandle<>::ListT containing FieldHandle<> objects,
+/// and calls Member(func) for each one.
 template <class HandlesT, class CallbackT>
 void ForEachField(const HandlesT &handles, const CallbackT &func)
 {
@@ -1200,7 +1204,7 @@ void ForEachField(const HandlesT &handles, const CallbackT &func)
 template <class RecordT>
 void ForEachFieldValue(const RecordT &rec, const FieldValueHandlerBase &vh)
 {
-	typename std::vector<FieldHandle<RecordT> >::const_iterator
+	typename FieldHandle<RecordT>::ListT::const_iterator
 		b = RecordT::GetFieldHandles().begin(),
 		e = RecordT::GetFieldHandles().end();
 	for( ; b != e; ++b ) {
