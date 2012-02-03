@@ -142,7 +142,18 @@ bool Thread::Backup(std::string label)
 	if( Working() )
 		return false;
 
-	m_recordTotal = m_interface.GetRecordTotal(GetBackupList());
+	// grab copy of backup list
+	Barry::ConfigFile::DBListType list;
+	if( AutoSelectAll() ) {
+		// set list to full DBDB
+		list = m_interface.GetDBDB();
+	}
+	else {
+		// copy our current saved list
+		list = GetBackupList();
+	}
+
+	m_recordTotal = m_interface.GetRecordTotal(list);
 	m_recordFinished = 0;
 
 	bool started = m_interface.StartBackup(
@@ -151,7 +162,7 @@ bool Thread::Backup(std::string label)
 			&m_signal_done,
 			&m_signal_erase_db,
 			&m_signal_restored_db),
-		GetBackupList(), GetPath(), label);
+		list, GetPath(), label);
 	if( started ) {
 		m_thread_state = THREAD_STATE_BACKUP;
 		SetStatus(_("Backup..."));

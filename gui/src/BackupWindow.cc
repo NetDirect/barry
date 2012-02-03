@@ -456,7 +456,7 @@ void BackupWindow::on_backup()
 	}
 
 	// anything to do?
-	if( thread->GetBackupList().size() == 0 ) {
+	if( thread->GetBackupList().size() == 0 && !thread->AutoSelectAll() ) {
 		Gtk::MessageDialog msg(_("No databases selected in configuration."));
 		msg.run();
 		return;
@@ -580,6 +580,7 @@ void BackupWindow::on_config()
 		thread->SetDeviceName(dlg.GetDeviceName());
 		thread->SetBackupPath(dlg.GetBackupPath());
 		thread->SetPromptBackupLabel(dlg.GetPromptBackupLabel());
+		thread->SetAutoSelectAll(dlg.GetAutoSelectAll());
 		if( !thread->Save() )
 			StatusbarSet(_("Error saving config: ") +
 				thread->LastConfigError());

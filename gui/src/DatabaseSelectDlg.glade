@@ -173,6 +173,30 @@
 			    </packing>
 			  </child>
 
+                          <child>
+                            <widget class="GtkHBox" id="hbox1">
+                              <property name="visible">True</property>
+                              <child>
+                                <widget class="GtkCheckButton" id="auto_select_all">
+                                  <property name="label" translatable="yes">Automatically select all databases on every backup</property>
+                                  <property name="visible">True</property>
+                                  <property name="can_focus">True</property>
+                                </widget>
+                                <packing>
+                                  <property name="expand">False</property>
+                                  <property name="fill">False</property>
+                                  <property name="pack_type">end</property>
+                                  <property name="position">0</property>
+                                </packing>
+                              </child>
+                            </widget>
+                            <packing>
+                              <property name="expand">False</property>
+			      <property name="fill">True</property>
+                              <property name="padding">5</property>
+                            </packing>
+                          </child>
+
 			  <child>
 			    <widget class="GtkScrolledWindow" id="scrolledwindow4">
 			      <property name="visible">True</property>

@@ -27,10 +27,14 @@
 
 DatabaseSelectDlg::DatabaseSelectDlg(const Barry::DatabaseDatabase &dbdb,
 				     const Barry::ConfigFile::DBListType &selections,
-				     const Glib::ustring &label)
-	: m_pTopLabel(0),
-	m_pTree(0),
-	m_selections(selections)
+				     bool auto_select_all,
+				     const Glib::ustring &label,
+				     bool backup_mode)
+	: m_backupMode(backup_mode)
+	, m_pTopLabel(0)
+	, m_pTree(0)
+	, m_selections(selections)
+	, m_auto_select_all(auto_select_all)
 {
 	Glib::RefPtr<Gnome::Glade::Xml> xml = LoadXml("DatabaseSelectDlg.glade");
 
@@ -50,6 +54,10 @@ DatabaseSelectDlg::DatabaseSelectDlg(const Barry::DatabaseDatabase &dbdb,
 	xml->get_widget("deselect_all", pButton);
 	pButton->signal_clicked().connect(
 		sigc::mem_fun(*this, &DatabaseSelectDlg::on_deselect_all));
+
+	xml->get_widget("auto_select_all", m_pAutoSelectAllCheck);
+	m_pAutoSelectAllCheck->set_active(m_auto_select_all);
+	m_pAutoSelectAllCheck->set_visible(m_backupMode);
 
 	m_pTopLabel->set_text(label);
 
@@ -97,6 +105,9 @@ void DatabaseSelectDlg::SaveSelections()
 			m_selections.push_back( name );
 		}
 	}
+
+	// save the auto flag
+	m_auto_select_all = m_pAutoSelectAllCheck->get_active();
 }
 
 int DatabaseSelectDlg::run()

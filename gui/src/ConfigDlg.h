@@ -47,6 +47,7 @@ class ConfigDlg
 	std::string m_deviceName;
 	std::string m_backupPath;
 	bool m_promptBackupLabel;
+	bool m_autoSelectAll;
 
 public:
 	ConfigDlg(const Barry::DatabaseDatabase &dbdb,
@@ -58,6 +59,7 @@ public:
 	const std::string& GetDeviceName() const { return m_deviceName; }
 	const std::string& GetBackupPath() const { return m_backupPath; }
 	bool GetPromptBackupLabel() const { return m_promptBackupLabel; }
+	bool GetAutoSelectAll() const { return m_autoSelectAll; }
 
 	int run();
 

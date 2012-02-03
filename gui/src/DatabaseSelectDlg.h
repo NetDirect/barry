@@ -45,15 +45,20 @@ class DatabaseSelectDlg
 		}
 	};
 
+	// meta class flags
+	bool m_backupMode;	// if true, the checkbox is visible
+
 	// Widgets
 	std::auto_ptr<Gtk::Dialog> m_pDialog;
 	Gtk::Label *m_pTopLabel;
+	Gtk::CheckButton *m_pAutoSelectAllCheck;
 	Gtk::TreeView *m_pTree;
 	Columns m_Columns;
 	Glib::RefPtr<Gtk::ListStore> m_pListStore;
 
 	// data
 	Barry::ConfigFile::DBListType m_selections;
+	bool m_auto_select_all;		// holds checkbox setting
 
 protected:
 	void LoadTree(const Barry::DatabaseDatabase &dbdb);
@@ -63,10 +68,12 @@ protected:
 public:
 	DatabaseSelectDlg(const Barry::DatabaseDatabase &dbdb,
 		const Barry::ConfigFile::DBListType &selections,
-		const Glib::ustring &label);
+		bool auto_select_all,
+		const Glib::ustring &label, bool backup_mode);
 	~DatabaseSelectDlg();
 
 	const Barry::ConfigFile::DBListType& GetSelections() const { return m_selections; }
+	bool AutoSelectAll() const { return m_auto_select_all; }
 
 	int run();
 

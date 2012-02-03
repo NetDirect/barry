@@ -41,6 +41,8 @@ public:
 	{
 	public:
 		bool IsSelected(const std::string &dbname) const;
+
+		DBListType& operator=(const DatabaseDatabase &dbdb);
 	};
 
 private:
@@ -58,6 +60,8 @@ private:
 	bool m_promptBackupLabel;	// if true, prompt the user on every
 					// backup for a string to label the
 					// backup file with
+	bool m_autoSelectAll;		// if true, automatically select all
+					// databases on every backup
 
 protected:
 	void BuildFilename();
@@ -98,6 +102,7 @@ public:
 	const std::string& GetDeviceName() const { return m_deviceName; }
 	bool HasDeviceName() const { return m_deviceName.size(); }
 	bool PromptBackupLabel() const { return m_promptBackupLabel; }
+	bool AutoSelectAll() const { return m_autoSelectAll; }
 
 	//
 	// operations
@@ -123,6 +128,7 @@ public:
 	void SetDeviceName(const std::string &name);
 	void SetBackupPath(const std::string &path);
 	void SetPromptBackupLabel(bool prompt = true);
+	void SetAutoSelectAll(bool asa = true);
 
 	//
 	// Utility functions

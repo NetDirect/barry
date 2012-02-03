@@ -99,6 +99,7 @@ ConfigFile::ConfigFile(Barry::Pin pin)
 	: m_pin(pin)
 	, m_loaded(false)
 	, m_promptBackupLabel(false)
+	, m_autoSelectAll(false)
 {
 	if( m_pin == 0 )
 		throw ConfigFileError("Configfile: empty pin");
@@ -116,6 +117,7 @@ ConfigFile::ConfigFile(Barry::Pin pin,
 	: m_pin(pin)
 	, m_loaded(false)
 	, m_promptBackupLabel(false)
+	, m_autoSelectAll(false)
 {
 	if( m_pin == 0 )
 		throw ConfigFileError("Configfile: empty pin");
@@ -166,6 +168,7 @@ void ConfigFile::Clear()
 	m_restoreList.clear();
 	m_deviceName.clear();
 	m_promptBackupLabel = false;
+	m_autoSelectAll = false;
 }
 
 /// Attempt to load the configuration file, but do not fail if not available
@@ -223,6 +226,11 @@ void ConfigFile::Load()
 				iss >> flag;
 				m_promptBackupLabel = flag;
 			}
+			else if( keyword == "auto_select_all" ) {
+				int flag;
+				iss >> flag;
+				m_autoSelectAll = flag;
+			}
 		}
 	}
 
@@ -232,34 +240,37 @@ void ConfigFile::Load()
 /// Saves current device's config, overwriting or creating a config file
 bool ConfigFile::Save()
 {
+	using namespace std;
+
 	if( !CheckPath(m_path, &m_last_error) )
 		return false;
 
-	std::ofstream out(m_filename.c_str(), std::ios::out | std::ios::binary);
+	ofstream out(m_filename.c_str(), std::ios::out | std::ios::binary);
 	if( !out ) {
 		m_last_error = "Unable to open " + m_filename + " for writing.";
 		return false;
 	}
 
-	out << "backup_list" << std::endl;
+	out << "backup_list" << endl;
 	for( DBListType::iterator i = m_backupList.begin(); i != m_backupList.end(); ++i ) {
-		out << " " << *i << std::endl;
+		out << " " << *i << endl;
 	}
 
-	out << "restore_list" << std::endl;
+	out << "restore_list" << endl;
 	for( DBListType::iterator i = m_restoreList.begin(); i != m_restoreList.end(); ++i ) {
-		out << " " << *i << std::endl;
+		out << " " << *i << endl;
 	}
 
 	if( m_deviceName.size() ) {
-		out << "device_name " << m_deviceName << std::endl;
+		out << "device_name " << m_deviceName << endl;
 	}
 
 	if( m_path.size() ) {
-		out << "backup_path " << m_path << std::endl;
+		out << "backup_path " << m_path << endl;
 	}
 
-	out << "prompt_backup_label " << (m_promptBackupLabel ? 1 : 0) << std::endl;
+	out << "prompt_backup_label " << (m_promptBackupLabel ? 1 : 0) << endl;
+	out << "auto_select_all " << (m_autoSelectAll ? 1 : 0) << endl;
 
 	if( !out ) {
 		m_last_error = "Error during write.  Config may be incomplete.";
@@ -298,6 +309,22 @@ void ConfigFile::Enlighten(const Barry::DatabaseDatabase &db)
 	}
 }
 
+// fill list with all databases from dbdb
+ConfigFile:: DBListType& ConfigFile::DBListType::operator=(const DatabaseDatabase &dbdb)
+{
+	// start empty
+	clear();
+
+	// copy over all DB names
+	DatabaseDatabase::DatabaseArrayType::const_iterator
+		i = dbdb.Databases.begin(), e = dbdb.Databases.end();
+	for( ; i != e; ++i ) {
+		push_back(i->Name);
+	}
+
+	return *this;
+}
+
 /// Sets list with new config
 void ConfigFile::SetBackupList(const DBListType &list)
 {
@@ -330,6 +357,11 @@ void ConfigFile::SetBackupPath(const std::string &path)
 void ConfigFile::SetPromptBackupLabel(bool prompt)
 {
 	m_promptBackupLabel = prompt;
+}
+
+void ConfigFile::SetAutoSelectAll(bool asa)
+{
+	m_autoSelectAll = asa;
 }
 
 /// Checks that the path in path exists, and if not, creates it.
