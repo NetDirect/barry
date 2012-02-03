@@ -30,12 +30,31 @@
 #include "endian.h"
 #include "trim.h"
 #include "ios_state.h"
+#include "parser.h"
 #include <sstream>
 #include <iomanip>
 #include <time.h>
 #include <string.h>
 #include <stdio.h>			// for sscanf()
 #include <stdexcept>
+
+// for DBNamedFieldCmp below
+#include "recordtmpl.h"
+#include "r_calendar.h"
+#include "r_calllog.h"
+#include "r_bookmark.h"
+#include "r_contact.h"
+#include "r_cstore.h"
+#include "r_memo.h"
+#include "r_message.h"
+#include "r_servicebook.h"
+#include "r_task.h"
+#include "r_pin_message.h"
+#include "r_saved_message.h"
+#include "r_sms.h"
+#include "r_folder.h"
+#include "r_timezone.h"
+#include "r_hhagent.h"
 
 #define __DEBUG_MODE__
 #include "debug.h"
@@ -593,6 +612,38 @@ bool EnumConstants::IsConstantValid(int value) const
 
 	// not found in list, so not a valid constant
 	return false;
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
+// DBNamedFieldCmp class
+
+DBNamedFieldCmp::DBNamedFieldCmp(const std::string &field_name,
+					const Barry::IConverter *ic)
+	: m_name(field_name)
+	, m_ic(ic)
+{
+}
+
+bool DBNamedFieldCmp::operator() (const Barry::DBData &a,
+				const Barry::DBData &b) const
+{
+#undef HANDLE_PARSER
+#define HANDLE_PARSER(tname) \
+	else if( tname::GetDBName() == a.GetDBName() ) { \
+		tname rec1, rec2; \
+		ParseDBData(a, rec1, m_ic); \
+		ParseDBData(b, rec2, m_ic); \
+		return NamedFieldCmp<tname>(m_name).operator()(rec1, rec2); \
+	}
+
+	if( a.GetDBName() != b.GetDBName() ) {
+		throw logic_error("Different database types in DBNamedFieldCmp");
+	}
+	// fall through and use else's
+	ALL_KNOWN_PARSER_TYPES
+
+	throw logic_error("Unknown database in DBNamedFieldCmp::operator()");
 }
 
 } // namespace Barry

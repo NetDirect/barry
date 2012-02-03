@@ -114,6 +114,7 @@ include_barry_HEADERS = barry.h barrysync.h barrybackup.h barryalx.h \
 	probe.h \
 	protocol.h \
 	record.h \
+	recordtmpl.h \
 	modem.h \
 	r_recur_base.h \
 	r_calendar.h \
@@ -214,7 +215,7 @@ libbarry_la_SOURCES = dll.h \
 	dataqueue.cc \
 	threadwrap.cc \
 	protocol.h protostructs.h protocol.cc \
-	record.h record-internal.h record.cc \
+	record.h recordtmpl.h record-internal.h record.cc \
 	r_recur_base.h r_recur_base-int.h r_recur_base.cc \
 	r_calendar.h r_calendar.cc \
 	r_calllog.h r_calllog.cc \

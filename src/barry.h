@@ -89,6 +89,7 @@
 
 // Include the template helpers after the record classes
 #include "m_desktoptmpl.h"
+#include "recordtmpl.h"
 
 #ifdef __BARRY_BOOST_MODE__
 // Boost serialization seems to be picky about header order, do them all here
