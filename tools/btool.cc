@@ -46,6 +46,8 @@ using namespace std;
 using namespace std::tr1;
 using namespace Barry;
 
+std::map<std::string, std::string> SortKeys;
+
 void Usage()
 {
    int logical, major, minor;
@@ -84,6 +86,11 @@ void Usage()
 #ifdef __BARRY_BOOST_MODE__
    << "   -f file   Filename to save or load handheld data to/from\n"
 #endif
+   << "   -F sort   Field name by which to sort the output.  Note that the\n"
+   << "             format of this field is special: 'DBName:field1,field2'\n"
+   << "             with no spaces unless the spaces are part of the name.\n"
+   << "             Can be used multiple times, to match your -d options.\n"
+   << "             Example: -F 'Address Book:Company,LastName,FirstName'\n"
    << "   -h        This help\n"
    << "   -i cs     International charset for string conversions\n"
    << "             Valid values here are available with 'iconv --list'\n"
@@ -153,7 +160,7 @@ struct Store
 		: rec_it(records.end()),
 		filename(filename),
 		load(load),
-		immediate_display(immediate_display),
+		immediate_display(immediate_display && !SortKeys.size()),
 		vformat_mode(vformat_mode),
 		from_device_count(0),
 		to_device_count(0)
@@ -193,7 +200,13 @@ struct Store
 	{
 		if( !immediate_display ) {
 			// not dumped yet, sort then dump
-			sort(records.begin(), records.end());
+			if( SortKeys.size() && SortKeys.find(Record::GetDBName()) != SortKeys.end() ) {
+				sort(records.begin(), records.end(),
+					NamedFieldCmp<Record>(SortKeys[Record::GetDBName()]));
+			}
+			else {
+				sort(records.begin(), records.end());
+			}
 			DumpAll();
 		}
 
@@ -485,6 +498,17 @@ bool ParseEpOverride(const char *arg, Usb::EndpointPair *epp)
 	return true;
 }
 
+void ParseSortKey(const std::string &key)
+{
+	istringstream iss(key);
+	string db, spec;
+	getline(iss, db, ':');
+	getline(iss, spec, ':');
+
+	if( db.size() && spec.size() )
+		SortKeys[db] = spec;
+}
+
 int main(int argc, char *argv[])
 {
 	INIT_I18N(PACKAGE);
@@ -524,7 +548,7 @@ int main(int argc, char *argv[])
 
 		// process command line options
 		for(;;) {
-			int cmd = getopt(argc, argv, "a:b:B:c:C:d:D:e:f:hi:IlLm:MnN:p:P:r:R:Ss:tT:vVXzZ");
+			int cmd = getopt(argc, argv, "a:b:B:c:C:d:D:e:f:F:hi:IlLm:MnN:p:P:r:R:Ss:tT:vVXzZ");
 			if( cmd == -1 )
 				break;
 
@@ -596,6 +620,10 @@ int main(int argc, char *argv[])
 					"serialization support available\n";
 				return 1;
 #endif
+				break;
+
+			case 'F':	// sort key
+				ParseSortKey(optarg);
 				break;
 
 			case 'i':	// international charset (iconv)

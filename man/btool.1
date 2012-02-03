@@ -2,7 +2,7 @@
 .\" First parameter, NAME, should be all caps
 .\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
 .\" other parameters are allowed: see man(7), man(1)
-.TH BTOOL 1 "December 7, 2010"
+.TH BTOOL 1 "February 3, 2012"
 .\" Please adjust this date whenever revising the manpage.
 .\"
 .\" Some roff macros, for reference:
@@ -20,7 +20,7 @@
 \- Barry Project's program to interface with BlackBerry handheld
 .SH SYNOPSIS
 .B btool
-[-B busname][-N devname][-a db][-c dn][-C dnattr][-d db [-f file][-r#][-R#]-D#]][-h][-i charset][-l][-L][-m cmd][-M][-p pin][-P password][-s db -f file][-S][-t][-v][-V][-X][-z][-Z]
+[-B busname][-N devname][-a db][-c dn][-C dnattr][-d db [-f file][-F sortkey][-r#][-R#]-D#]][-h][-i charset][-l][-L][-m cmd][-M][-p pin][-P password][-s db -f file][-S][-t][-v][-V][-X][-z][-Z]
 .SH DESCRIPTION
 .PP
 .B btool
@@ -74,6 +74,23 @@ You should never need to use this option, as endpoints are autodetected.
 Filename to write or read handheld data to/from.  Used in conjunction with
 the -d and -s options, respectively.  Note: the file format of this file
 is not backward compatible between devel releases.
+.TP
+.B \-F sortkey
+Sort the -d database output according to the given sortkey.
+Note that the format of this field is special: 'DBName:field1,field2'
+
+It contains no spaces, unless the spaces are part of the name.
+
+This option can be used multiple times, to match your -d options.
+
+Example: If you used the following command:
+
+btool -d 'Address Book'
+
+You could use the following sort key to sort by Company name first,
+with a subsort of last and first names.
+
+-F 'Address Book:Company,LastName,FirstName'
 .TP
 .B \-i charset
 Specifies the iconv charset to use for converting international strings.
