@@ -167,9 +167,6 @@ ParsedCompare::ParsedCompare(const DBData &one,
 	, m_ic(ic)
 	, m_known_record(false)
 {
-	if( one.GetDBName() != two.GetDBName() )
-		throw logic_error("Different database types in ParsedCompare ctor!");
-
 #undef HANDLE_PARSER
 #define HANDLE_PARSER(tname) \
 	else if( tname::GetDBName() == one.GetDBName() ) { \
@@ -179,8 +176,10 @@ ParsedCompare::ParsedCompare(const DBData &one,
 		m_first_description = a.GetDescription(); \
 	}
 
-	if( m_known_record ) {
+	if( one.GetDBName() != two.GetDBName() ) {
+		throw logic_error("Different database types in ParsedCompare ctor!");
 	}
+	// fall through and use the else's
 	ALL_KNOWN_PARSER_TYPES
 }
 
