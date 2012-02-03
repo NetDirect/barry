@@ -1180,8 +1180,9 @@ FieldHandle<RecordT> MakeFieldHandle(TypeT RecordT::* tp,
 	return FieldHandle<RecordT>(tp, id);
 }
 
-/// Calls FileHandle<>::Member() for each defined field for a given record type.
-/// Takes a vector of FileHandle<> objects, and calls Member(func) for each one.
+/// Calls FieldHandle<>::Member() for each defined field for a given record
+/// type.  Takes a vector of FieldHandle<> objects, and calls Member(func)
+/// for each one.
 template <class HandlesT, class CallbackT>
 void ForEachField(const HandlesT &handles, const CallbackT &func)
 {
@@ -1193,9 +1194,9 @@ void ForEachField(const HandlesT &handles, const CallbackT &func)
 	}
 }
 
-/// Calls FileHandle<>::Value() for each defined field for a given record.
-/// Takes a RecordT object and calls Value(vh, rec) for each FileHandle<>
-/// object in the record's FileHandles set.
+/// Calls FieldHandle<>::Value() for each defined field for a given record.
+/// Takes a RecordT object and calls Value(vh, rec) for each FieldHandle<>
+/// object in the record's FieldHandles set.
 template <class RecordT>
 void ForEachFieldValue(const RecordT &rec, const FieldValueHandlerBase &vh)
 {
