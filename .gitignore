@@ -78,6 +78,7 @@ tools/btranslate
 tools/bwatch
 tools/pppob
 tools/upldif
+tools/libutil.a
 
 gui/src/barrybackup
 

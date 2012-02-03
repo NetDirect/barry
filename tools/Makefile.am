@@ -24,6 +24,9 @@ noinst_PROGRAMS = \
 	bktrans \
 	brimtrans
 
+noinst_LIBRARIES = \
+	libutil.a
+
 bin_PROGRAMS = \
 	btool \
 	bidentify \
@@ -60,8 +63,14 @@ sbin_PROGRAMS = \
 	breset \
 	pppob
 
-btool_SOURCES = btool.cc util.cc
-btool_LDADD = ../src/libbarry.la $(USB_LIBRARY_LIBS) @BOOST_LDADD@ $(LTLIBINTL) $(LTLIBICONV)
+libutil_a_SOURCES = util.cc
+libutil_a_CXXFLAGS = $(AM_CXXFLAGS)
+if WITH_SYNC
+libutil_a_CXXFLAGS += -D__BARRY_SYNC_MODE__ $(GLIB2_CFLAGS)
+endif
+
+btool_SOURCES = btool.cc
+btool_LDADD = ../src/libbarry.la libutil.a $(USB_LIBRARY_LIBS) @BOOST_LDADD@ $(LTLIBINTL) $(LTLIBICONV)
 if WITH_SYNC
 btool_LDADD += ../src/libbarrysync.la $(GLIB2_LIBS)
 endif
@@ -73,7 +82,7 @@ if WITH_BOOST
 btool_CXXFLAGS += -D__BARRY_BOOST_MODE__ -D_REENTRANT @BOOST_INC_PATH@
 endif
 if WITH_SYNC
-btool_CXXFLAGS += -D__BARRY_SYNC_MODE__ $(GLIB2_CFLAGS) 
+btool_CXXFLAGS += -D__BARRY_SYNC_MODE__ $(GLIB2_CFLAGS)
 endif
 if WITH_BACKUP
 btool_CXXFLAGS += -D__BARRY_BACKUP_MODE__
@@ -81,8 +90,8 @@ endif
 btool_LDFLAGS = @BOOST_LIB_PATH@
 
 if WITH_BOOST
-bs11nread_SOURCES = bs11nread.cc util.cc
-bs11nread_LDADD = ../src/libbarry.la $(USB_LIBRARY_LIBS) @BOOST_LDADD@ $(LTLIBINTL)
+bs11nread_SOURCES = bs11nread.cc
+bs11nread_LDADD = ../src/libbarry.la libutil.a $(USB_LIBRARY_LIBS) @BOOST_LDADD@ $(LTLIBINTL)
 bs11nread_CXXFLAGS = -D_REENTRANT @BOOST_INC_PATH@ $(AM_CXXFLAGS)
 bs11nread_LDFLAGS = @BOOST_LIB_PATH@
 endif
@@ -161,7 +170,7 @@ btardump_CXXFLAGS = $(AM_CXXFLAGS)
 #btardump_CXXFLAGS += -D__BARRY_BOOST_MODE__ -D_REENTRANT @BOOST_INC_PATH@
 #endif
 if WITH_SYNC
-btardump_CXXFLAGS += -D__BARRY_SYNC_MODE__ $(GLIB2_CFLAGS) 
+btardump_CXXFLAGS += -D__BARRY_SYNC_MODE__ $(GLIB2_CFLAGS)
 endif
 btardump_LDADD = ../src/libbarry.la $(USB_LIBRARY_LIBS) \
 	../src/libbarrybackup.la $(LTLIBINTL)
@@ -171,12 +180,12 @@ endif
 endif
 
 if WITH_BACKUP
-btarcmp_SOURCES = btarcmp.cc util.cc
+btarcmp_SOURCES = btarcmp.cc
 btarcmp_CXXFLAGS = $(AM_CXXFLAGS)
-btarcmp_LDADD = ../src/libbarry.la ../src/libbarrybackup.la \
+btarcmp_LDADD = ../src/libbarry.la ../src/libbarrybackup.la libutil.a \
 			$(USB_LIBRARY_LIBS) $(LTLIBINTL)
 if WITH_SYNC
-btarcmp_CXXFLAGS += -D__BARRY_SYNC_MODE__ $(GLIB2_CFLAGS) 
+btarcmp_CXXFLAGS += -D__BARRY_SYNC_MODE__ $(GLIB2_CFLAGS)
 endif
 endif
 
@@ -188,8 +197,7 @@ endif
 
 if WITH_BACKUP
 if WITH_SYNC
-# the sync mode define is for util.cc
-bio_SOURCES = bio.cc util.cc
+bio_SOURCES = bio.cc
 bio_CXXFLAGS = -D__BARRY_SYNC_MODE__ $(AM_CXXFLAGS) $(GLIB2_CFLAGS)
 if WITH_BOOST
 bio_CXXFLAGS += -D__BARRY_BOOST_MODE__ -D_REENTRANT @BOOST_INC_PATH@
@@ -197,6 +205,7 @@ endif
 bio_LDADD = ../src/libbarry.la \
 	../src/libbarrysync.la $(GLIB2_LIBS) \
 	../src/libbarrybackup.la \
+	libutil.a \
 	$(USB_LIBRARY_LIBS) @BOOST_LDADD@ \
 	$(LTLIBINTL) $(LTLIBICONV)
 bio_LDFLAGS = @BOOST_LIB_PATH@
