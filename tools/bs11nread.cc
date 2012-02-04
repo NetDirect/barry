@@ -19,7 +19,10 @@
     root directory of this project for more details.
 */
 
-#define __BARRY_BOOST_MODE__	// this program always requires BOOST
+// Boost is required, but since the real Boost serialization code is in
+// util.cc, we don't need it here.
+#undef __BARRY_BOOST_MODE__
+
 #include <barry/barry.h>
 #include <iomanip>
 #include <iostream>
@@ -32,6 +35,7 @@
 
 #include "barrygetopt.h"
 #include "util.h"
+#include "boostwrap.h"
 
 using namespace std;
 using namespace Barry;
@@ -54,14 +58,19 @@ void Usage()
 }
 
 template <class Record>
-bool Dump(const std::string &dbName, ifstream &ifs)
+bool Dump(const std::string &dbName, const std::string &filename)
 {
 	if( dbName != Record::GetDBName() )
 		return false;
 
 	std::vector<Record> records;
-	boost::archive::text_iarchive ia(ifs);
-	ia >> records;
+	std::string junk, errmsg;
+
+	if( !LoadBoostFile(filename, records, junk, errmsg) ) {
+		cerr << errmsg << endl;
+		return false;
+	}
+
 	cout << records.size()
 	     << " records loaded" << endl;
 	sort(records.begin(), records.end());
@@ -81,10 +90,11 @@ void DumpDB(const string &filename)
 	ifstream ifs(filename.c_str());
 	std::string dbName;
 	getline(ifs, dbName);
+	ifs.close();
 
 	// check for recognized database names
 #undef HANDLE_PARSER
-#define HANDLE_PARSER(tname) Dump<tname>(dbName, ifs) ||
+#define HANDLE_PARSER(tname) Dump<tname>(dbName, filename) ||
 	ALL_KNOWN_PARSER_TYPES
 		cerr << "Unknown database name: " << dbName << endl;
 }
@@ -130,11 +140,6 @@ int main(int argc, char *argv[])
 
 		DumpDB(filename);
 
-	}
-	catch( boost::archive::archive_exception &ae ) {
-		cerr << "Archive exception: "
-		     << ae.what() << endl;
-		return 1;
 	}
 	catch( Usb::Error &ue) {
 		std::cerr << "Usb::Error caught: " << ue.what() << endl;

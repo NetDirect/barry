@@ -19,6 +19,22 @@
     root directory of this project for more details.
 */
 
+//
+// This define is used in barry/barry.h to signal inclusion of Boost
+// serialization headers.  It is intended to be used by applications,
+// so we shouldn't mess with it.
+//
+// But all actual Boost related code is now stuffed into util.cc, safely
+// locked away from other code.  So we don't need the Boost headers, we
+// just need a flag for our own functionality.  So translate this define
+// into our own, and undef to skip the Boost headers, and the compile speed
+// slowdown that it creates.
+//
+#ifdef __BARRY_BOOST_MODE__
+#define __BTOOL_BOOST_MODE__
+#endif
+#undef __BARRY_BOOST_MODE__
+
 #include <barry/barry.h>
 #ifdef __BARRY_SYNC_MODE__
 #include <barry/barrysync.h>
@@ -39,6 +55,7 @@
 #include <tr1/memory>
 #include "i18n.h"
 #include "util.h"
+#include "boostwrap.h"
 
 #include "barrygetopt.h"
 
@@ -58,7 +75,7 @@ void Usage()
    << "        Copyright 2005-2012, Net Direct Inc. (http://www.netdirect.ca/)\n"
    << "        Using: " << Version << "\n"
    << "        Compiled "
-#ifdef __BARRY_BOOST_MODE__
+#ifdef __BTOOL_BOOST_MODE__
    << "with"
 #else
    << "without"
@@ -83,7 +100,7 @@ void Usage()
    << "             endpoint pair.  Example: -e 83,5\n"
    << "             Note: Endpoints are specified in hex.\n"
    << "             You should never need to use this option.\n"
-#ifdef __BARRY_BOOST_MODE__
+#ifdef __BTOOL_BOOST_MODE__
    << "   -f file   Filename to save or load handheld data to/from\n"
 #endif
    << "   -F sort   Field name by which to sort the output.  Note that the\n"
@@ -165,33 +182,25 @@ struct Store
 		from_device_count(0),
 		to_device_count(0)
 	{
-#ifdef __BARRY_BOOST_MODE__
-		try {
-
-			if( load && filename.size() ) {
-				// filename is available, attempt to load
-				cout << "Loading: " << filename << endl;
-				ifstream ifs(filename.c_str());
-				std::string dbName;
-				getline(ifs, dbName);
-				boost::archive::text_iarchive ia(ifs);
-				ia >> records;
-				cout << records.size()
-				     << " records loaded from '"
-				     << filename << "'" << endl;
-				sort(records.begin(), records.end());
-				rec_it = records.begin();
-
-				// debugging aid
-				typename std::vector<Record>::const_iterator beg = records.begin(), end = records.end();
-				for( ; beg != end; beg++ ) {
-					cout << (*beg) << endl;
-				}
+#ifdef __BTOOL_BOOST_MODE__
+		if( load && filename.size() ) {
+			// filename is available, attempt to load
+			cout << "Loading: " << filename << endl;
+			string errmsg, dbName;
+			if( !LoadBoostFile(filename, records, dbName, errmsg) ) {
+				cerr << errmsg << endl;
 			}
+			cout << records.size()
+			     << " records loaded from '"
+			     << filename << "'" << endl;
+			sort(records.begin(), records.end());
+			rec_it = records.begin();
 
-		} catch( boost::archive::archive_exception &ae ) {
-			cerr << "Archive exception in ~Store(): "
-			     << ae.what() << endl;
+			// debugging aid
+			typename std::vector<Record>::const_iterator beg = records.begin(), end = records.end();
+			for( ; beg != end; beg++ ) {
+				cout << (*beg) << endl;
+			}
 		}
 #endif
 	}
@@ -211,24 +220,16 @@ struct Store
 		}
 
 		cout << "Store counted " << dec << from_device_count << " records read from device, and " << dec << to_device_count << " records written to device." << endl;
-#ifdef __BARRY_BOOST_MODE__
-		try {
-
-			if( !load && filename.size() ) {
-				// filename is available, attempt to save
-				cout << "Saving: " << filename << endl;
-				const std::vector<Record> &r = records;
-				ofstream ofs(filename.c_str());
-				ofs << Record::GetDBName() << endl;
-				boost::archive::text_oarchive oa(ofs);
-				oa << r;
-				cout << dec << r.size() << " records saved to '"
-					<< filename << "'" << endl;
+#ifdef __BTOOL_BOOST_MODE__
+		if( !load && filename.size() ) {
+			// filename is available, attempt to save
+			cout << "Saving: " << filename << endl;
+			string errmsg;
+			if( !SaveBoostFile(filename, records, errmsg) ) {
+				cerr << errmsg << endl;
 			}
-
-		} catch( boost::archive::archive_exception &ae ) {
-			cerr << "Archive exception in ~Store(): "
-			     << ae.what() << endl;
+			cout << dec << records.size() << " records saved to '"
+				<< filename << "'" << endl;
 		}
 #endif
 	}
@@ -607,7 +608,7 @@ int main(int argc, char *argv[])
 				break;
 
 			case 'f':	// filename
-#ifdef __BARRY_BOOST_MODE__
+#ifdef __BTOOL_BOOST_MODE__
 				if( !bbackup_mode && filename.size() == 0 ) {
 					filename = optarg;
 				}

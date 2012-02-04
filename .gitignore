@@ -79,6 +79,7 @@ tools/bwatch
 tools/pppob
 tools/upldif
 tools/libutil.a
+tools/libboostwrap.a
 
 gui/src/barrybackup
 

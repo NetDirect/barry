@@ -16,6 +16,7 @@ noinst_HEADERS = \
 	mimedump.h \
 	brecsum.h \
 	util.h \
+	boostwrap.h \
 	barrygetopt.h \
 	platform.h
 
@@ -25,7 +26,8 @@ noinst_PROGRAMS = \
 	brimtrans
 
 noinst_LIBRARIES = \
-	libutil.a
+	libutil.a \
+	libboostwrap.a
 
 bin_PROGRAMS = \
 	btool \
@@ -69,8 +71,14 @@ if WITH_SYNC
 libutil_a_CXXFLAGS += -D__BARRY_SYNC_MODE__ $(GLIB2_CFLAGS)
 endif
 
+libboostwrap_a_SOURCES = boostwrap.cc
+libboostwrap_a_CXXFLAGS = $(AM_CXXFLAGS)
+if WITH_BOOST
+libboostwrap_a_CXXFLAGS += -D__BARRY_BOOST_MODE__ -D_REENTRANT @BOOST_INC_PATH@
+endif
+
 btool_SOURCES = btool.cc
-btool_LDADD = ../src/libbarry.la libutil.a $(USB_LIBRARY_LIBS) @BOOST_LDADD@ $(LTLIBINTL) $(LTLIBICONV)
+btool_LDADD = ../src/libbarry.la libutil.a libboostwrap.a $(USB_LIBRARY_LIBS) @BOOST_LDADD@ $(LTLIBINTL) $(LTLIBICONV)
 if WITH_SYNC
 btool_LDADD += ../src/libbarrysync.la $(GLIB2_LIBS)
 endif
@@ -91,7 +99,7 @@ btool_LDFLAGS = @BOOST_LIB_PATH@
 
 if WITH_BOOST
 bs11nread_SOURCES = bs11nread.cc
-bs11nread_LDADD = ../src/libbarry.la libutil.a $(USB_LIBRARY_LIBS) @BOOST_LDADD@ $(LTLIBINTL)
+bs11nread_LDADD = ../src/libbarry.la libutil.a libboostwrap.a $(USB_LIBRARY_LIBS) @BOOST_LDADD@ $(LTLIBINTL)
 bs11nread_CXXFLAGS = -D_REENTRANT @BOOST_INC_PATH@ $(AM_CXXFLAGS)
 bs11nread_LDFLAGS = @BOOST_LIB_PATH@
 endif
@@ -206,6 +214,7 @@ bio_LDADD = ../src/libbarry.la \
 	../src/libbarrysync.la $(GLIB2_LIBS) \
 	../src/libbarrybackup.la \
 	libutil.a \
+	libboostwrap.a \
 	$(USB_LIBRARY_LIBS) @BOOST_LDADD@ \
 	$(LTLIBINTL) $(LTLIBICONV)
 bio_LDFLAGS = @BOOST_LIB_PATH@
