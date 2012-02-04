@@ -57,7 +57,9 @@ DatabaseSelectDlg::DatabaseSelectDlg(const Barry::DatabaseDatabase &dbdb,
 
 	xml->get_widget("auto_select_all", m_pAutoSelectAllCheck);
 	m_pAutoSelectAllCheck->set_active(m_auto_select_all);
-	m_pAutoSelectAllCheck->set_visible(m_backupMode);
+	if( !m_backupMode ) {
+		m_pAutoSelectAllCheck->hide();
+	}
 
 	m_pTopLabel->set_text(label);
 
