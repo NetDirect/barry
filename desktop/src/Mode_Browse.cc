@@ -31,6 +31,8 @@
 using namespace std;
 using namespace Barry;
 
+DEFINE_EVENT_TYPE(BMET_LOAD_STATUS)
+
 BEGIN_EVENT_TABLE(BrowseMode, wxEvtHandler)
 	EVT_LIST_ITEM_SELECTED(BrowseMode_DBDBList,
 				BrowseMode::OnDBDBListSelChange)
@@ -48,6 +50,8 @@ BEGIN_EVENT_TABLE(BrowseMode, wxEvtHandler)
 				BrowseMode::OnEditRecord)
 	EVT_BUTTON	(BrowseMode_DeleteRecordButton,
 				BrowseMode::OnDeleteRecord)
+	EVT_COMMAND	(wxID_ANY, BMET_LOAD_STATUS,
+				BrowseMode::OnStatusEvent)
 END_EVENT_TABLE()
 
 
@@ -512,6 +516,23 @@ std::string& GetDBName(Barry::DatabaseDatabase::Database &db)
 	return db.Name;
 }
 
+void BrowseMode::SendStatusEvent(const std::string &dbname)
+{
+	wxCommandEvent event(BMET_LOAD_STATUS, wxID_ANY);
+	event.SetEventObject(this);
+
+	if( dbname.size() ) {
+		wxString msg(_T("Loading: "));
+		msg += wxString(dbname.c_str(), wxConvUTF8);
+		event.SetString(msg);
+	}
+	else {
+		event.SetString(_T(""));
+	}
+
+	AddPendingEvent(event);
+}
+
 void BrowseMode::CreateControls()
 {
 	m_top_sizer.reset( new wxBoxSizer(wxVERTICAL) );
@@ -547,16 +568,32 @@ void BrowseMode::CreateControls()
 	m_top_sizer->Add( list_sizer, 1, wxEXPAND | wxALL, 4 );
 
 	//
-	// add "show all" checkbox
+	// add "show all" checkbox and load status static textbox, inside sizer
 	//
+
+	wxBoxSizer *status_sizer = new wxBoxSizer(wxHORIZONTAL);
 
 	m_show_all_checkbox.reset( new wxCheckBox(m_parent,
 				BrowseMode_ShowAllCheckbox,
 				_T("Show All Databases"),
 				wxDefaultPosition, wxDefaultSize,
 				wxCHK_2STATE) );
-	m_top_sizer->Add( m_show_all_checkbox.get(), 0, wxEXPAND | wxALL, 4 );
+	status_sizer->Add( m_show_all_checkbox.get(), 0, wxEXPAND, 0 );
 	m_show_all_checkbox->SetValue(m_show_all);
+
+	status_sizer->AddStretchSpacer();
+
+	m_load_status_text.reset( new wxStaticText(m_parent,
+				BrowseMode_LoadStatusText,
+				_T(""),
+				wxDefaultPosition, wxSize(200, -1),
+				wxST_NO_AUTORESIZE) );
+	status_sizer->Add( m_load_status_text.get(), 0,
+			wxEXPAND | wxALIGN_CENTRE_VERTICAL, 0 );
+
+	m_top_sizer->Add( status_sizer, 0, wxEXPAND | wxALL, 4 );
+
+
 
 	//
 	// bottom buttons
@@ -715,6 +752,7 @@ void BrowseMode::FillCache()
 		i = m_dbdb.Databases.begin(), e = m_dbdb.Databases.end();
 	for( ; i != e; ++i ) {
 		if( IsParsable(i->Name) ) try {
+			SendStatusEvent(i->Name);
 			m_dbmap->LoadDBCache(i->Name);
 		} catch( Barry::Error &be ) {
 			cerr << be.what() << endl;
@@ -723,6 +761,8 @@ void BrowseMode::FillCache()
 		if( m_abort_flag )
 			break;
 	}
+
+	SendStatusEvent("");
 
 	// finished
 	m_abort_flag = true;
@@ -839,5 +879,10 @@ void BrowseMode::OnDeleteRecord(wxCommandEvent &event)
 	if( p->Delete(m_parent, i) ) {
 		m_record_list->DeleteItem(m_current_record_item);
 	}
+}
+
+void BrowseMode::OnStatusEvent(wxCommandEvent &event)
+{
+	m_load_status_text->SetLabel(event.GetString());
 }
 

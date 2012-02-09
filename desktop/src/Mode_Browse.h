@@ -343,6 +343,7 @@ private:
 	std::auto_ptr<wxButton> m_copy_record_button;
 	std::auto_ptr<wxButton> m_edit_record_button;
 	std::auto_ptr<wxButton> m_delete_record_button;
+	std::auto_ptr<wxStaticText> m_load_status_text;
 
 	// misc supporting data
 	wxString m_device_id_str;
@@ -374,6 +375,8 @@ public:
 	BrowseMode(wxWindow *parent, const Barry::ProbeResult &device);
 	~BrowseMode();
 
+	void SendStatusEvent(const std::string &dbname);
+
 	// virtual override events (derived from Mode)
 	wxString GetTitleText() const { return _T("Barry Database Browser"); }
 
@@ -386,6 +389,7 @@ public:
 	void OnCopyRecord(wxCommandEvent &event);
 	void OnEditRecord(wxCommandEvent &event);
 	void OnDeleteRecord(wxCommandEvent &event);
+	void OnStatusEvent(wxCommandEvent &event);
 };
 
 #endif

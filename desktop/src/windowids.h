@@ -69,6 +69,7 @@ enum {
 	BrowseMode_CopyRecordButton,
 	BrowseMode_EditRecordButton,
 	BrowseMode_DeleteRecordButton,
+	BrowseMode_LoadStatusText,
 
 	// Dialog IDs
 	Dialog_GroupCfg,
