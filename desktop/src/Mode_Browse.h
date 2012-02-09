@@ -311,6 +311,7 @@ private:
 	ThreadableDesktop &m_tdesktop;
 	MapType m_map;
 	pthread_mutex_t m_map_mutex;
+	pthread_mutex_t m_load_mutex;
 
 public:
 	DBMap(ThreadableDesktop &tdesktop);

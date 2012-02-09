@@ -393,21 +393,45 @@ DBMap::DBMap(ThreadableDesktop &tdesktop)
 	if( pthread_mutex_init(&m_map_mutex, NULL) ) {
 		throw Barry::Error("Failed to create map mutex");
 	}
+
+	if( pthread_mutex_init(&m_load_mutex, NULL) ) {
+		throw Barry::Error("Failed to create load mutex");
+	}
 }
 
 DBMap::DBCachePtr DBMap::LoadDBCache(const std::string &dbname)
 {
-	scoped_lock lock(m_map_mutex);
+	// first, check for pre-loaded data, before the load lock,
+	// to make sure we return pre-loaded data with utmost haste
+	{
+		scoped_lock map_lock(m_map_mutex);
 
-	MapType::iterator i = m_map.find(dbname);
-	if( i != m_map.end() )
-		return i->second;
+		MapType::iterator i = m_map.find(dbname);
+		if( i != m_map.end() )
+			return i->second;
+	}
 
-	// do not unlock here, since we only want to load this
-	// data once, not provide a window for loading it twice
+	// if not found, lock and load, but be careful, since we
+	// don't want to open a window here for loading a db twice
+	scoped_lock load_lock(m_load_mutex);
 
-	// not found, time to load it up
+	// check again for pre-loaded data, since between
+	// map.unlock and load.lock there could have been
+	// another successful load
+	{
+		scoped_lock map_lock(m_map_mutex);
+
+		MapType::iterator i = m_map.find(dbname);
+		if( i != m_map.end() )
+			return i->second;
+	}
+
+	// do the load, without map.lock, since this can take a
+	// significant amount of time
 	DBCachePtr p( new DBCache(m_tdesktop, dbname) );
+
+	// lock once more to update the map, and then done
+	scoped_lock map_lock(m_map_mutex);
 	m_map[dbname] = p;
 	return p;
 }
