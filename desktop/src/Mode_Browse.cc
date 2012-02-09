@@ -58,6 +58,13 @@ END_EVENT_TABLE()
 //////////////////////////////////////////////////////////////////////////////
 // Standalone functions
 
+bool IsEditable(const std::string &dbname)
+{
+	// add entry here for each edit dialog available
+	return dbname == Contact::GetDBName() ||
+		dbname == Memo::GetDBName();
+}
+
 bool EditRecord(wxWindow *parent, bool editable, Barry::Contact &rec)
 {
 	ContactEditDlg edit(parent, rec, editable);
@@ -457,6 +464,7 @@ DBMap::DBCachePtr DBMap::GetDBCache(const std::string &dbname)
 BrowseMode::BrowseMode(wxWindow *parent, const ProbeResult &device)
 	: m_parent(parent)
 	, m_buildable(false)
+	, m_editable(false)
 	, m_show_all(false)
 {
 	// create device identifying string
@@ -736,11 +744,16 @@ void BrowseMode::UpdateButtons()
 {
 	int selected_count = m_record_list->GetSelectedItemCount();
 
-	// can only add if we have a builder for this record type
-	m_add_record_button->Enable(m_buildable);
-	// can only copy or edit if we have a builder, and only 1 is selected
-	m_copy_record_button->Enable(m_buildable && selected_count == 1);
-	m_edit_record_button->Enable(m_buildable && selected_count == 1);
+	// can only add if we have a builder and dialog for this record type
+	m_add_record_button->Enable(m_buildable && m_editable);
+
+	// can only copy or edit if we have a builder, a dialog, and
+	// only 1 is selected
+	m_copy_record_button->Enable(
+		m_buildable && m_editable && selected_count == 1);
+	m_edit_record_button->Enable(
+		m_buildable && m_editable && selected_count == 1);
+
 	// can only delete if something is selected
 	m_delete_record_button->Enable(selected_count > 0);
 }
@@ -781,6 +794,7 @@ void BrowseMode::OnDBDBListSelChange(wxListEvent &event)
 	int index = GUItoDBDBIndex(event.GetIndex());
 	m_current_dbname = m_dbdb.Databases.at(index).Name;
 	m_buildable = ::IsBuildable(m_current_dbname);
+	m_editable = ::IsEditable(m_current_dbname);
 	m_current_record_item = -1;
 
 	FillRecordList(m_current_dbname);

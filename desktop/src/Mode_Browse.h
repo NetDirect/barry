@@ -351,6 +351,8 @@ private:
 	// GUI state
 	bool m_buildable;		// true if currently displayed db has
 					// a Builder available for it
+	bool m_editable;		// true if currently displayed db has
+					// an edit dialog available for it
 	bool m_show_all;		// if true, show all databases in list
 					// instead of just the parsable ones
 	std::string m_current_dbname;
