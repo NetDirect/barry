@@ -89,6 +89,7 @@ public:
 	~Bookmark();
 
 	// Parser / Builder API (see parser.h / builder.h)
+	void Validate() const;
 	const unsigned char* ParseField(const unsigned char *begin,
 		const unsigned char *end, const IConverter *ic = 0);
 	uint8_t GetRecType() const { return RecType; }

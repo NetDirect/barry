@@ -240,6 +240,11 @@ void Task::ParseFields(const Data &data, size_t &offset, const IConverter *ic)
 }
 
 
+void Task::Validate() const
+{
+	RecurBase::Validate();
+}
+
 void Task::BuildHeader(Data &data, size_t &offset) const
 {
 	// no header in Task records

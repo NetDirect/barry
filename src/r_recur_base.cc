@@ -158,6 +158,10 @@ void RecurBase::ParseRecurrenceData(const void *data)
 	Recurring = true;
 }
 
+void RecurBase::Validate() const
+{
+}
+
 // this function assumes there is CALENDAR_RECURRENCE_DATA_FIELD_SIZE bytes
 // available in data
 void RecurBase::BuildRecurrenceData(time_t StartTime, void *data) const

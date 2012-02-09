@@ -277,6 +277,11 @@ void Calendar::ParseFields(const Data &data, size_t &offset, const IConverter *i
 	offset += finish - (data.GetData() + offset);
 }
 
+void Calendar::Validate() const
+{
+	RecurBase::Validate();
+}
+
 void Calendar::BuildHeader(Data &data, size_t &offset) const
 {
 	// no header in Calendar records

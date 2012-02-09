@@ -104,6 +104,8 @@ protected:
 	virtual ~RecurBase();
 
 public:
+	void Validate() const;
+
 	// return true if parse, false if not (for example, if type not
 	// recognized)
 	bool ParseField(uint8_t type, const unsigned char *data, size_t size,

@@ -291,6 +291,13 @@ void Contact::ParseFields(const Data &data, size_t &offset, const IConverter *ic
 	offset += finish - (data.GetData() + offset);
 }
 
+void Contact::Validate() const
+{
+	if( !GetFullName().size() && !Company.size() ) {
+		throw Barry::ValidationError("A contact record must contain either a First/Last name, or a Company name.");
+	}
+}
+
 void Contact::BuildHeader(Data &data, size_t &offset) const
 {
 	// no header in Contact records

@@ -65,6 +65,7 @@ public:
 	~ServiceBookConfig();
 
 	// Parser / Builder API (see parser.h / builder.h)
+	void Validate() const;
 	void ParseHeader(const Data &data, size_t &offset);
 	void ParseFields(const Data &data, size_t &offset, const IConverter *ic = 0);
 	void BuildHeader(Data &data, size_t &offset) const;
@@ -112,6 +113,7 @@ public:
 	~ServiceBook();
 
 	// Parser / Builder API (see parser.h / builder.h)
+	void Validate() const;
 	uint8_t GetRecType() const { return RecType; }
 	uint32_t GetUniqueId() const { return RecordId; }
 	void SetIds(uint8_t Type, uint32_t Id) { RecType = Type; RecordId = Id; }

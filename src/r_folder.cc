@@ -164,6 +164,10 @@ void Folder::ParseFields(const Data &data, size_t &offset, const IConverter *ic)
 	offset += finish - (data.GetData() + offset);
 }
 
+void Folder::Validate() const
+{
+}
+
 void Folder::BuildHeader(Data &data, size_t &offset) const
 {
 	// not yet implemented

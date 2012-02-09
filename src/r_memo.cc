@@ -138,6 +138,10 @@ void Memo::ParseFields(const Data &data, size_t &offset, const IConverter *ic)
 }
 
 
+void Memo::Validate() const
+{
+}
+
 void Memo::BuildHeader(Data &data, size_t &offset) const
 {
 	// no header in Memo records

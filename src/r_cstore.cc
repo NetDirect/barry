@@ -133,6 +133,10 @@ void ContentStore::ParseFields(const Data &data, size_t &offset, const IConverte
 	offset += finish - (data.GetData() + offset);
 }
 
+void ContentStore::Validate() const
+{
+}
+
 void ContentStore::BuildHeader(Data &data, size_t &offset) const
 {
 }

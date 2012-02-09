@@ -230,6 +230,10 @@ void HandheldAgent::ParseFields(const Data &data, size_t &offset, const IConvert
 	offset += finish - (data.GetData() + offset);
 }
 
+void HandheldAgent::Validate() const
+{
+}
+
 void HandheldAgent::BuildHeader(Data &data, size_t &offset) const
 {
 	// no header in HandheldAgent records

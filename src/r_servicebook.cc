@@ -156,6 +156,10 @@ void ServiceBookConfig::ParseFields(const Data &data, size_t &offset, const ICon
 	offset += finish - (data.GetData() + offset);
 }
 
+void ServiceBookConfig::Validate() const
+{
+}
+
 void ServiceBookConfig::BuildHeader(Data &data, size_t &offset) const
 {
 	// make sure there is enough space
@@ -396,6 +400,11 @@ void ServiceBook::ParseFields(const Data &data, size_t &offset, const IConverter
 	const unsigned char *finish = ParseCommonFields(*this,
 		data.GetData() + offset, data.GetData() + data.GetSize(), ic);
 	offset += finish - (data.GetData() + offset);
+}
+
+void ServiceBook::Validate() const
+{
+	Config.Validate();
 }
 
 void ServiceBook::BuildHeader(Data &data, size_t &offset) const

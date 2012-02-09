@@ -174,6 +174,10 @@ void Timezone::ParseFields(const Data &data, size_t &offset, const IConverter *i
 	offset += finish - (data.GetData() + offset);
 }
 
+void Timezone::Validate() const
+{
+}
+
 void Timezone::BuildHeader(Data &data, size_t &offset) const
 {
 	// not yet implemented

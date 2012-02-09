@@ -110,6 +110,7 @@ public:
 
 
 	// common Barry record functions
+	void Validate() const;
 	const unsigned char* ParseField(const unsigned char *begin,
 		const unsigned char *end, const IConverter *ic = 0);
 	void ParseRecurrenceData(const void *data);

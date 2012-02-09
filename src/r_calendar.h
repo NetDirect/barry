@@ -130,6 +130,7 @@ public:
 	~Calendar();
 
 	// Parser / Builder API (see parser.h / builder.h)
+	void Validate() const;
 	uint8_t GetRecType() const { return RecType; }
 	uint32_t GetUniqueId() const { return RecordId; }
 	void SetIds(uint8_t Type, uint32_t Id) { RecType = Type; RecordId = Id; }

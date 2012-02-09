@@ -302,6 +302,10 @@ void Bookmark::ParseFields(const Data &data, size_t &offset, const IConverter *i
 	offset += finish - (data.GetData() + offset);
 }
 
+void Bookmark::Validate() const
+{
+}
+
 void Bookmark::BuildHeader(Data &data, size_t &offset) const
 {
 	// not yet implemented

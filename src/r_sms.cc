@@ -224,6 +224,10 @@ void Sms::ParseFields(const Data &data, size_t &offset, const IConverter *ic)
 	offset += finish - (data.GetData() + offset);
 }
 
+void Sms::Validate() const
+{
+}
+
 void Sms::BuildHeader(Data &data, size_t &offset) const
 {
 	// not yet implemented

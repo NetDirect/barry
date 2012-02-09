@@ -291,6 +291,21 @@ public:
 	unsigned int return_code() const { return m_return_code; }
 };
 
+//
+// ValidationError
+//
+/// Thrown by one of the record classes' Validate() function.  Contains
+/// and error message describing the deficiency.
+///
+class BXEXPORT ValidationError : public Barry::Error
+{
+public:
+	explicit ValidationError(const std::string &str)
+		: Error(str)
+	{
+	}
+};
+
 /// @}
 
 } // namespace Barry

@@ -135,6 +135,11 @@ template <class RecordT>
 void SetDBData(const RecordT &rec, DBData &data, size_t &offset,
 		const IConverter *ic)
 {
+	// Make sure record is valid before building it.
+	// This can throw Barry::ValidationError
+	rec.Validate();
+
+	// Build the DBData object
 	data.SetVersion(DBData::REC_VERSION_1);
 	data.SetOffset(offset);
 	data.SetDBName(RecordT::GetDBName());

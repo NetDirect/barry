@@ -268,6 +268,10 @@ void MessageBase::ParseFields(const Data &data, size_t &offset, const IConverter
 	offset += finish - (data.GetData() + offset);
 }
 
+void MessageBase::Validate() const
+{
+}
+
 void MessageBase::BuildHeader(Data &data, size_t &offset) const
 {
 	throw std::logic_error("MessageBase::BuildHeader not yet implemented");

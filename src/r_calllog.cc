@@ -232,6 +232,10 @@ void CallLog::ParseFields(const Data &data, size_t &offset, const IConverter *ic
 	offset += finish - (data.GetData() + offset);
 }
 
+void CallLog::Validate() const
+{
+}
+
 void CallLog::BuildHeader(Data &data, size_t &offset) const
 {
 	// not yet implemented

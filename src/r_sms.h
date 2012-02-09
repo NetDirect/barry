@@ -93,6 +93,8 @@ public:
 	void SetTime(const time_t timestamp, unsigned int milliseconds = 0);
 	void SetServiceCenterTime(const time_t timestamp, unsigned int milliseconds = 0);
 
+	// Parser / Builder API (see parser.h / builder.h)
+	void Validate() const;
 	const unsigned char* ParseField(const unsigned char *begin, const unsigned char *end, const IConverter *ic = 0);
 	uint8_t GetRecType() const { return RecType; }
 	uint32_t GetUniqueId() const { return RecordId; }
