@@ -118,6 +118,7 @@ enum {
 	Dialog_Conflict_AlwaysCheckbox,
 	Dialog_ContactEdit,
 	Dialog_ContactEdit_PhotoButton,
+	Dialog_CalendarEdit,
 	Dialog_MemoEdit,
 	Dialog_Migrate_MigrateNowButton,
 	Dialog_Migrate_CancelButton,

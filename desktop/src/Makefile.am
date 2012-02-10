@@ -4,6 +4,7 @@ SUBDIRS = . 0.22 0.40
 
 EXTRA_DIST = \
 	ContactEditDlg.wxg \
+	CalendarEditDlg.wxg \
 	MemoEditDlg.wxg \
 	oextract.cc
 
@@ -78,6 +79,8 @@ barrydesktop_SOURCES = \
 	Mode_Browse.cc Mode_Browse.h \
 	MigrateDlg.cc MigrateDlg.h \
 	ContactEditDlg.cc ContactEditDlg.h \
+	CalendarEditDlg.cc CalendarEditDlg.h \
+		guitimet.h wxval.h \
 	MemoEditDlg.cc MemoEditDlg.h \
 	GroupCfgDlg.cc GroupCfgDlg.h \
 	SyncStatusDlg.cc SyncStatusDlg.h \
