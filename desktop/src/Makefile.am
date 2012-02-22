@@ -68,6 +68,7 @@ barrydesktop_SOURCES = \
 	StringSync.cc StringSync.h \
 	xmlcompactor.cc xmlcompactor.h \
 	xmlmap.cc xmlmap.h \
+	guitimet.cc guitimet.h \
 	ClickImage.cc ClickImage.h \
 	PNGButton.cc PNGButton.h \
 	BaseButtons.cc BaseButtons.h \
@@ -80,7 +81,7 @@ barrydesktop_SOURCES = \
 	MigrateDlg.cc MigrateDlg.h \
 	ContactEditDlg.cc ContactEditDlg.h \
 	CalendarEditDlg.cc CalendarEditDlg.h \
-		guitimet.h wxval.h \
+		wxval.h \
 	MemoEditDlg.cc MemoEditDlg.h \
 	GroupCfgDlg.cc GroupCfgDlg.h \
 	SyncStatusDlg.cc SyncStatusDlg.h \
