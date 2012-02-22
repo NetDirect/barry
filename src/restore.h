@@ -79,6 +79,7 @@ private:
 	};
 
 	DBListType m_dbList;
+	DBListType m_dbSkipList;
 
 	std::string m_tarpath;
 	std::auto_ptr<reuse::TarFile> m_tar;
@@ -121,6 +122,11 @@ public:
 
 	/// Add all database names in the DBDB to the read filter
 	void Add(const DatabaseDatabase &dbdb);
+
+	/// Add database name to the skip list.  The skip list prevents
+	/// any matching database from appearing in the restore process.
+	/// It is the converse of AddDB() in ultimate behaviour.
+	void AddSkipDB(const std::string &dbName);
 
 	// Skip the current DB, in case of error, or preference
 	void SkipCurrentDB();

@@ -119,8 +119,12 @@ Restore::~Restore()
 
 bool Restore::IsSelected(const std::string &dbName) const
 {
-	// if nothing is in the list, use default
-	if( m_dbList.size() == 0 )
+	// if in skip list, always return false,
+	// if nothing is in the main list, use default
+	// otherwise, only return true if specifically selected
+	if( m_dbSkipList.IsSelected(dbName) )
+		return false;
+	else if( m_dbList.size() == 0 )
 		return m_default_all_db;
 	else
 		return m_dbList.IsSelected(dbName);
@@ -155,6 +159,14 @@ void Restore::Add(const DatabaseDatabase &dbdb)
 		++i )
 	{
 		AddDB(i->Name);
+	}
+}
+
+void Restore::AddSkipDB(const std::string &dbName)
+{
+	if( find(m_dbSkipList.begin(), m_dbSkipList.end(), dbName) == m_dbSkipList.end() ) {
+		// only add it if it is not already in the list
+		m_dbSkipList.push_back(dbName);
 	}
 }
 
