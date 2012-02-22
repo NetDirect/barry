@@ -104,25 +104,16 @@ void Usage()
    << "   -w mode   Set write mode when using 'device' for output.  Must be\n"
    << "             specified, or will not write anything.\n"
    << "             Can be one of: erase, overwrite, addonly, addnew\n"
-/*
-// FIXME - modifiers not yet implemented
-   << "\n"
-   << " Input database modifiers:  (can be used multiple times for more than 1 record)\n"
-   << "\n"
-   << "   -r #      Record index number as seen in the -T state table.\n"
-   << "             This overrides the default -d behaviour, and only\n"
-   << "             downloads the one specified record, sending to stdout.\n"
-   << "   -R #      Same as -r, but also clears the record's dirty flags.\n"
-   << "   -D #      Record index number as seen in the -T state table,\n"
-   << "             which indicates the record to delete.  Used with the -d\n"
-   << "             command to specify the database.\n"
-*/
    << "\n"
    << " Options to use for 'tar' backup type:\n"
    << "   -d db     Name of input database. Can be used multiple times.\n"
    << "             Not available in output mode.  Note that by default,\n"
    << "             all databases in the backup are selected, when reading,\n"
    << "             unless at least one -d is specified.\n"
+   << "   -D db     Name of input database to skip.  If no -d options are used,\n"
+   << "             then all databases are automatically selected.  Using -D\n"
+   << "             allows a filtering selection.  If -d and -D are used for\n"
+   << "             the same database, -D takes precedence.\n"
    << "   -f file   Tar backup file to read from or write to\n"
 #ifdef __BARRY_BOOST_MODE__
    << "\n"
@@ -188,6 +179,11 @@ public:
 	virtual void AddDB(const std::string &dbname)
 	{
 		throw runtime_error("DB not applicable for this mode");
+	}
+
+	virtual void AddSkipDB(const std::string &dbname)
+	{
+		throw runtime_error("DB skipping not applicable for this mode");
 	}
 
 	virtual void AddAllDBs()
@@ -340,7 +336,7 @@ class TarInput : public InputBase
 {
 	auto_ptr<Restore> m_restore;
 	string m_tarpath;
-	vector<string> m_dbnames;
+	vector<string> m_dbnames, m_dbskips;
 
 public:
 	void SetFilename(const std::string &name)
@@ -355,11 +351,19 @@ public:
 		m_dbnames.push_back(dbname);
 	}
 
+	void AddSkipDB(const std::string &dbname)
+	{
+		m_dbskips.push_back(dbname);
+	}
+
 	Builder& GetBuilder(Barry::Probe *probe, IConverter &ic)
 	{
 		m_restore.reset( new Restore(m_tarpath, true) );
 		for( size_t i = 0; i < m_dbnames.size(); i++ ) {
 			m_restore->AddDB(m_dbnames[i]);
+		}
+		for( size_t i = 0; i < m_dbskips.size(); i++ ) {
+			m_restore->AddSkipDB(m_dbskips[i]);
 		}
 
 		return *m_restore;
@@ -967,7 +971,7 @@ int App::main(int argc, char *argv[])
 	// process command line options
 	ModeBase *current = 0;
 	for(;;) {
-		int cmd = getopt(argc, argv, "hi:o:nvI:f:p:P:d:c:C:ASw:tl");
+		int cmd = getopt(argc, argv, "hi:o:nvI:f:p:P:d:D:c:C:ASw:tl");
 		if( cmd == -1 )
 			break;
 
@@ -1015,6 +1019,10 @@ int App::main(int argc, char *argv[])
 
 		case 'd':	// database name
 			current->AddDB(optarg);
+			break;
+
+		case 'D':	// database name to skip
+			current->AddSkipDB(optarg);
 			break;
 
 		case 'f':	// filename
