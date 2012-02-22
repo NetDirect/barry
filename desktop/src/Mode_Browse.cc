@@ -22,6 +22,7 @@
 #include "Mode_Browse.h"
 #include "BaseFrame.h"
 #include "ContactEditDlg.h"
+#include "CalendarEditDlg.h"
 #include "MemoEditDlg.h"
 #include "windowids.h"
 #include <iostream>
@@ -61,7 +62,8 @@ END_EVENT_TABLE()
 bool IsEditable(const std::string &dbname)
 {
 	// add entry here for each edit dialog available
-	return dbname == Contact::GetDBName() ||
+	return	dbname == Contact::GetDBName() ||
+		dbname == Calendar::GetDBName() ||
 		dbname == Memo::GetDBName();
 }
 
@@ -78,7 +80,8 @@ bool EditRecord(wxWindow *parent, bool editable, Barry::Bookmark &rec)
 
 bool EditRecord(wxWindow *parent, bool editable, Barry::Calendar &rec)
 {
-	return false;
+	CalendarEditDlg edit(parent, rec, editable);
+	return edit.ShowModal() == wxID_OK;
 }
 
 bool EditRecord(wxWindow *parent, bool editable, Barry::CalendarAll &rec)
