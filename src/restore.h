@@ -141,6 +141,15 @@ public:
 	static unsigned int GetRecordTotal(const std::string &tarpath,
 		const DBListType &dbList, bool default_all_db);
 
+	/// Loads the given file, and creates a DBListType list of
+	/// all database names available in the tarball, using no filters.
+	/// Does not use the main Restore file, but opens the file separately.
+	/// It is safe to call this function as often as needed.
+	DBListType GetDBList() const;
+
+	/// Static version of GetDBList()
+	static DBListType GetDBList(const std::string &tarpath);
+
 	/// If this function returns true, it fills data with the
 	/// meta data that the next call to BuildRecord() will retrieve.
 	/// This is useful for applications that need to setup a manual

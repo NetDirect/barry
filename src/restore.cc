@@ -36,6 +36,7 @@ namespace {
 
 	int CountFiles(reuse::TarFile &tar,
 			const Barry::Restore::DBListType &restoreList,
+			Barry::Restore::DBListType *available,
 			bool default_all_db)
 	{
 		int count = 0;
@@ -52,6 +53,9 @@ namespace {
 				last_name = dbname;
 				good = (default_all_db && restoreList.size() == 0) ||
 					restoreList.IsSelected(dbname);
+
+				if( good && available )
+					available->push_back(dbname);
 			}
 			if( good )
 				count++;
@@ -210,12 +214,36 @@ unsigned int Restore::GetRecordTotal(const std::string &tarpath,
 		// do a scan through the tar file
 		tar.reset( new reuse::TarFile(tarpath.c_str(), false,
 				&reuse::gztar_ops_nonthread, true) );
-		count = CountFiles(*tar, dbList, default_all_db);
+		count = CountFiles(*tar, dbList, 0, default_all_db);
 	}
 	catch( reuse::TarFile::TarError &te ) {
 		throw Barry::RestoreError(te.what());
 	}
 	return count;
+}
+
+Barry::Restore::DBListType Restore::GetDBList() const
+{
+	return GetDBList(m_tarpath);
+}
+
+Barry::Restore::DBListType Restore::GetDBList(const std::string &tarpath)
+{
+	unsigned int count = 0;
+
+	std::auto_ptr<reuse::TarFile> tar;
+	DBListType available, empty;
+
+	try {
+		// do a scan through the tar file
+		tar.reset( new reuse::TarFile(tarpath.c_str(), false,
+				&reuse::gztar_ops_nonthread, true) );
+		count = CountFiles(*tar, empty, &available, true);
+		return available;
+	}
+	catch( reuse::TarFile::TarError &te ) {
+		throw Barry::RestoreError(te.what());
+	}
 }
 
 bool Restore::GetNextMeta(DBData &data)

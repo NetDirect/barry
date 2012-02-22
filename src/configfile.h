@@ -26,6 +26,7 @@
 #include "record.h"
 #include "pin.h"
 #include <string>
+#include <iosfwd>
 
 namespace Barry {
 
@@ -213,6 +214,8 @@ public:
 	void SetLastDevice(const Barry::Pin &pin);
 	void SetVerboseLogging(bool verbose = true);
 };
+
+BXEXPORT std::ostream& operator<< (std::ostream &os, const ConfigFile::DBListType &list);
 
 } // namespace Barry
 

@@ -86,6 +86,19 @@ bool ConfigFile::DBListType::IsSelected(const std::string &dbname) const
 	return false;
 }
 
+std::ostream& operator<< (std::ostream &os, const ConfigFile::DBListType &list)
+{
+	os << "DBListType dump:\n";
+
+	for( ConfigFile::DBListType::const_iterator i = list.begin();
+		i != list.end();
+		++i )
+	{
+		os << "   " << *i << "\n";
+	}
+	return os;
+}
+
 
 //////////////////////////////////////////////////////////////////////////////
 // ConfigFile class members
