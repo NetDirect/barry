@@ -63,6 +63,7 @@ protected:
 	int m_duration_hours, m_duration_minutes;
 	int m_reminder_hours, m_reminder_minutes;
 	int m_interval;
+	int m_recur_choice;
 	bool m_weekdays[7];
 	bool m_relative_date;
 	std::string m_organizer, m_invited, m_accepted_by;

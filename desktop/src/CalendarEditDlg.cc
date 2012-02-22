@@ -24,6 +24,8 @@
 #include <wx/valgen.h>
 #include "wxval.h"
 
+using namespace std;
+
 // begin wxGlade: ::extracode
 // end wxGlade
 
@@ -268,6 +270,7 @@ void CalendarEditDlg::set_properties()
 	m_ReminderMinutesSpinner->SetMinSize(wxSize(45, -1));
 	m_ReminderMinutesSpinner->SetToolTip(wxT("Set Reminder to 0 to disable"));
 	m_ReminderMinutesSpinner->SetValidator(wxGenericValidator(&m_reminder_minutes));
+	m_RecurrenceChoice->SetValidator(wxGenericValidator(&m_recur_choice));
 	m_RecurrenceChoice->SetSelection(0);
 	m_IntervalSpinner->SetMinSize(wxSize(45, -1));
 	m_IntervalSpinner->SetValidator(wxGenericValidator(&m_interval));
@@ -404,11 +407,113 @@ void CalendarEditDlg::do_layout()
 
 bool CalendarEditDlg::TransferDataToWindow()
 {
-	return true;
+	// prepare temporary variables, from record
+
+	m_organizer = m_rec.Organizer.ToCommaSeparated();
+	m_invited = m_rec.Invited.ToCommaSeparated();
+	m_accepted_by = m_rec.AcceptedBy.ToCommaSeparated();
+
+	m_StartDateObj.Set(m_rec.StartTime.Time);
+	m_EndDateObj.Set(m_rec.EndTime.Time);
+
+	int duration = m_rec.EndTime.Time - m_rec.StartTime.Time;
+	if( duration > 0 ) {
+		m_duration_hours = duration / 60;
+		m_duration_minutes = duration % 60;
+	}
+
+	if( m_rec.NotificationTime.Time ) {
+		int span = m_rec.StartTime.Time - m_rec.NotificationTime.Time;
+		if( span > 0 ) {
+			m_reminder_hours = span / 60;
+			m_reminder_minutes = span % 60;
+		}
+		else {
+			m_reminder_hours = 0;
+			m_reminder_minutes = 15;
+		}
+	}
+
+	// Note that recur_choice values are (zero-based) in the following
+	// order:
+	//	None, Daily, Weekly, Monthly, Yearly
+#define RC_NONE 0
+#define RC_DAILY 1
+#define RC_WEEKLY 2
+#define RC_MONTHLY 3
+#define RC_YEARLY 4
+
+	if( m_rec.Recurring ) {
+		switch( m_rec.RecurringType )
+		{
+		case Barry::Calendar::Day:
+			m_recur_choice = RC_DAILY;
+			m_relative_date = false;
+			break;
+
+		case Barry::Calendar::MonthByDate:
+			m_recur_choice = RC_MONTHLY;
+			m_relative_date = false;
+			break;
+
+		case Barry::Calendar::MonthByDay:
+			m_recur_choice = RC_MONTHLY;
+			m_relative_date = true;
+			break;
+
+		case Barry::Calendar::YearByDate:
+			m_recur_choice = RC_YEARLY;
+			m_relative_date = false;
+			break;
+
+		case Barry::Calendar::YearByDay:
+			m_recur_choice = RC_YEARLY;
+			m_relative_date = true;
+			break;
+
+		case Barry::Calendar::Week:
+			m_recur_choice = RC_WEEKLY;
+			m_relative_date = false;
+			m_weekdays[0] = m_rec.WeekDays & CAL_WD_SUN;
+			m_weekdays[1] = m_rec.WeekDays & CAL_WD_MON;
+			m_weekdays[2] = m_rec.WeekDays & CAL_WD_TUE;
+			m_weekdays[3] = m_rec.WeekDays & CAL_WD_WED;
+			m_weekdays[4] = m_rec.WeekDays & CAL_WD_THU;
+			m_weekdays[5] = m_rec.WeekDays & CAL_WD_FRI;
+			m_weekdays[6] = m_rec.WeekDays & CAL_WD_SAT;
+			break;
+
+		default:
+			cerr << "Bad RecurringType in CalendarEditDlg" << endl;
+			m_recur_choice = RC_NONE;
+			m_relative_date = false;
+		}
+	}
+	else {
+		m_recur_choice = RC_NONE;
+		m_relative_date = false;
+	}
+
+	m_interval = m_rec.Interval;
+
+	if( m_rec.Perpetual ) {
+		m_RecurEndDateCtrl->Enable(false);
+	}
+	else {
+		m_RecurEndDateCtrl->Enable();
+		m_RecurEndDateObj.Set(m_rec.RecurringEndTime.Time);
+	}
+
+	m_strings.SyncToWx();
+
+	return wxDialog::TransferDataToWindow();
 }
 
 bool CalendarEditDlg::TransferDataFromWindow()
 {
+	if( !wxDialog::TransferDataFromWindow() )
+		return false;
+
 	return true;
 }
 
