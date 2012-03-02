@@ -5,7 +5,8 @@
 
 include $(CLEAR_VARS)
 
-LOCAL_SRC_FILES := barry_root/tools/$(TOOL).cc
+LOCAL_SRC_FILES := barry_root/tools/$(TOOL).cc \
+	barry_root/tools/util.cc
 
 LOCAL_CFLAGS += -DLOCALEDIR=\"\"
 
