@@ -1,4 +1,4 @@
-barry (0.18.0-0) unstable; urgency=low
+barry (0.18.0-1) unstable; urgency=low
 
   * version bump
   * moved opensync-plugin into its own build
@@ -9,8 +9,14 @@ barry (0.18.0-0) unstable; urgency=low
   * added bwatch
   * added btarcmp
   * made udev linux-only, as per intrigeri's patch 539ed1b43b5559b8a90f7b651
+  * reviewed policy manual and updated Standards-Version to 3.9.1 (2012/03/03)
+  * reviewed debhelper(7) manpage changes and updated compat to 7 (2012/03/03)
+  * moved udev rules from /etc/udev/rules.d to /lib/udev/rules.d
+  * changed backup and desktop menu icons to 32x32 XPM format
+  * using >0 debian version number, since I'll probably be maintainer now
+  * removed libosyncwrap.a and libosyncwrap.so from desktop package
 
- -- Chris Frey <cdfrey@foursquare.net>  Mon,  2 Jan 2012 03:20:18 -0400
+ -- Chris Frey <cdfrey@foursquare.net>  Sat,  3 Mar 2012 00:38:40 -0500
 
 barry (0.13-1.2) unstable; urgency=low
 

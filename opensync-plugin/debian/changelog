@@ -1,9 +1,12 @@
-opensync0-plugin-barry (0.18-0) unstable; urgency=low
+opensync0-plugin-barry (0.18-1) unstable; urgency=low
 
   * Individual package for the 0.22 plugin
   * Bumped compat to level 6 (2011/06/28)
   * Removed .la files (2011/07/05)
   * Renamed package to opensync0-plugin-barry (2011/10/11)
+  * Bumped compat to level 7 (2012/03/03)
+  * Bumped Standards-Version to 3.9.1 (2012/03/03)
+  * Using >0 debian version, since I'll probably be Debian maintainer now
 
- -- Chris Frey <cdfrey@foursquare.net>  Tue, 11 Oct 2011 03:20:17 -0400
+ -- Chris Frey <cdfrey@foursquare.net>  Sat,  3 Mar 2012 00:44:39 -0500
 

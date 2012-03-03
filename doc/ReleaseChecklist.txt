@@ -12,7 +12,8 @@ Barry Release Checklist:
 		- Doxyfile
 		- rpm/barry.spec
 		- debian/changelog
-		- debian/control (libbarry0 should not depend on minor number)
+		- debian/control (libbarry's name includes version number)
+		- debian/libbarry*.* (files need to be renamed)
 		- debian/rules (the barry18 includedir)
 		- opensync-plugin/configure.ac
 		- opensync-plugin/src/barry_sync.cc

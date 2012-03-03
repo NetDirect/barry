@@ -4,5 +4,5 @@
   title="Barry Backup"\
   command="/usr/bin/barrybackup"\
   hints="Blackberry Backup Utility"\
-  icon="/usr/share/pixmaps/barry_logo_icon.png"
+  icon="/usr/share/pixmaps/barry_backup_menu_icon.xpm"
 

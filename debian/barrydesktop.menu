@@ -4,5 +4,5 @@
   title="Barry Desktop Panel"\
   command="/usr/bin/barrydesktop"\
   hints="Blackberry Management GUI"\
-  icon="/usr/share/pixmaps/barry_desktop_icon.png"
+  icon="/usr/share/pixmaps/barry_desktop_menu_icon.xpm"
 

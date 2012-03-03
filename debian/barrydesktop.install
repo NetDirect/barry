@@ -6,7 +6,5 @@ debian/tmp/usr/share/barry/desktop/0.40/*
 debian/tmp/usr/share/barry/desktop/images/*
 debian/tmp/usr/share/man/man1/barrydesktop.1
 debian/tmp/usr/lib/libosyncwrap.so.*
-debian/tmp/usr/lib/libosyncwrap.a
-debian/tmp/usr/lib/libosyncwrap.so
 debian/tmp/usr/include/barry*/osyncwrap/*
 

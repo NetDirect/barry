@@ -27,11 +27,11 @@ DEB_INSTALL_DOCS_ALL =
 install/barry-util::
 ifeq ($(DEB_HOST_ARCH_OS), linux)
 	# Install udev rules for the barry-util package
-	install -d $(CURDIR)/debian/barry-util/etc/udev/rules.d
+	install -d $(CURDIR)/debian/barry-util/lib/udev/rules.d
 	install -m 0644 \
 		$(DEB_SRCDIR)/udev/10-blackberry.rules \
 		$(DEB_SRCDIR)/udev/99-blackberry-perms.rules \
-		$(CURDIR)/debian/barry-util/etc/udev/rules.d
+		$(CURDIR)/debian/barry-util/lib/udev/rules.d
 endif
 	# Install modprobe blacklist file for bcharge, into barry-util package
 	install -d $(CURDIR)/debian/barry-util/etc/modprobe.d
@@ -95,7 +95,7 @@ endif
 install/barrybackup-gui::
 	# Install barry icon
 	install -d $(CURDIR)/debian/barrybackup-gui/usr/share/pixmaps
-	install -m 0644 $(DEB_SRCDIR)/logo/barry_logo_icon.png $(CURDIR)/debian/barrybackup-gui/usr/share/pixmaps
+	install -m 0644 $(DEB_SRCDIR)/logo/barry_logo_debian_menu_icon.xpm $(CURDIR)/debian/barrybackup-gui/usr/share/pixmaps/barry_backup_menu_icon.xpm
 	# Install Gnome .desktop file
 	install -d $(CURDIR)/debian/barrybackup-gui/usr/share/applications
 	install -m 0644 $(DEB_SRCDIR)/menu/barrybackup.desktop $(CURDIR)/debian/barrybackup-gui/usr/share/applications
@@ -103,7 +103,7 @@ install/barrybackup-gui::
 install/barrydesktop::
 	# Install barry icon
 	install -d $(CURDIR)/debian/barrydesktop/usr/share/pixmaps
-	install -m 0644 $(DEB_SRCDIR)/logo/barry_logo_icon.png $(CURDIR)/debian/barrydesktop/usr/share/pixmaps/barry_desktop_icon.png
+	install -m 0644 $(DEB_SRCDIR)/logo/barry_logo_debian_menu_icon.xpm $(CURDIR)/debian/barrydesktop/usr/share/pixmaps/barry_desktop_menu_icon.xpm
 	# Install Gnome .desktop file
 	install -d $(CURDIR)/debian/barrydesktop/usr/share/applications
 	install -m 0644 $(DEB_SRCDIR)/menu/barrydesktop.desktop $(CURDIR)/debian/barrydesktop/usr/share/applications
