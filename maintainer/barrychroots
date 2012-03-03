@@ -27,7 +27,6 @@ function do_ubuntu() {
 }
 
 do_ubuntu ubuntu1004 $BARRYBUILDDIR/ubuntu1004 ubuntu1004
-do_ubuntu ubuntu804 $BARRYBUILDDIR/ubuntu804 ubuntu804
 chown -R cdfrey:cdfrey $BARRYBUILDDIR
 
 

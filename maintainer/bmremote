@@ -71,9 +71,6 @@ function do_fedora() {
 	mv "$2"/*src.rpm "$3"
 }
 
-# Ubuntu 8.04 has trouble building KDEPIM / akonadi-sync, so skip those
-do_ubuntu ubuntu804 "$BMBUILDDIR/dists/ubuntu804/main/binary-amd64" "" \
-	"touch deb-akonadi-latest deb-kdepim-0.2x && make -j16 debian-all"
 do_ubuntu ubuntu1004 "$BMBUILDDIR/dists/ubuntu1004/main/binary-amd64" "" \
 	"make -j16 debian-all"
 # Ubuntu 11.04 (Natty) is also good for Mint 11

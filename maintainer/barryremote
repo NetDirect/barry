@@ -32,7 +32,6 @@ function do_ubuntu() {
 }
 
 do_ubuntu ubuntu1004 $BARRYBUILDDIR/ubuntu1004-64 ubuntu1004
-do_ubuntu ubuntu804 $BARRYBUILDDIR/ubuntu804-64 ubuntu804
 
 # Build on the Debian squeeze host system too
 ./save.sh /tmp/barryremote/squeeze $BARRYBUILDDIR/squeeze-64 squeeze \
