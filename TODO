@@ -324,3 +324,78 @@ Misc Low Level Todo Items:
 	if ok, remove the sorting code from Contact, Message, and
 	Calendar classes
 
+
+
+
+Other ways to help:
+==============================================================================
+
+Devel Distro Tester
+-------------------
+	Some distros release very early, and it is possible to follow
+	along their development cycle.  These distros include Fedora,
+	Ubuntu, and Debian.  There have already been some people reporting
+	bugs on pre-release versions of distros, and that has been very
+	helpful in ironing out kernel bugs, etc.
+
+	To help, build and test the latest stable and git Barry on
+	whatever distros you have available, and report bugs to the
+	mailing list.
+
+
+Compile Checker
+---------------
+	If you have access to cutting edge GCC versions, please submit any
+	compiler issues you find to the mailing list.
+
+
+Documentation Pages
+-------------------
+	You can help by periodically reviewing the web docs or
+	man pages, and submit patches or correction notes to the mailing
+	list.
+
+
+Downstream Monitor
+------------------
+	Ideally, downstream distro bugs are handled by the individual
+	package maintainers, but any bugs that are too hard to solve at
+	the distro level should be passed along upstream.  I follow the
+	Debian package bugs, but other distros could use some help.
+
+	Also, for distro package maintainers, if you have a patch you
+	apply regularly to Barry, and if it can be incorporated into
+	upstream Barry, please send your patch to me via the mailing list.
+	I'd like to keep Barry as up-to-date with such fixes as possible.
+
+
+Windows World Spy
+-----------------
+	To help here, test every feature on new Blackberry models and
+	official desktop software, and report what can be done with them
+	that you can't do on the previous model.
+
+	There should be a document listing all these features so
+	we know what to test against.  We can add these features to this
+	TODO file, or start a new file under doc/ if you like.
+
+
+Tech Support Liaison
+--------------------
+	There are many web support forums out there, where end users
+	discuss software and techniques.  Unfortunately, I am unable to
+	follow all these forums, looking for Barry and BlackBerry handheld
+	related posts.  But if you are a member of such a forum, you can
+	help Barry by responding to such topics, and if appropriate,
+	forwarding a link to the mailing list, so bugs can be fixed.
+
+
+Purity Advisor
+--------------
+	Upstream distros tend to change how they do things, or change their
+	official policies from time to time.  If you are a distro user
+	who keeps up to date with these changes, you can help by
+	reporting if Barry's binary packaging or software is doing
+	something that is out of date or deprecated.  Even better, please
+	document how it should be done instead.
+
