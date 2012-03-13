@@ -35,13 +35,18 @@ enum {
 	MainMenu_BackupAndRestore = MainMenu_FirstButton,
 	MainMenu_Sync,
 	MainMenu_Modem,
-	MainMenu_AppLoader,
 	MainMenu_MigrateDevice,
 	MainMenu_BrowseDatabases,
+	MainMenu_LastButton = MainMenu_BrowseDatabases,	// FIXME - just until
+				// apploader, media, and misc are implemented.
+				// see real last button below...
+				// Note, this has to be here, since enum
+				// number relies on this position.
+	MainMenu_AppLoader,
 	MainMenu_MediaManagement,
 	MainMenu_Misc,
 
-	MainMenu_LastButton = MainMenu_Misc,
+//	MainMenu_LastButton = MainMenu_Misc,
 
 	// Main menu buttons that don't always exist
 	MainMenu_BackButton,
