@@ -140,7 +140,7 @@ bool EditRecord(wxWindow *parent, bool editable, Barry::Task &rec)
 	return false;
 }
 
-bool EditRecord(wxWindow *parent, bool editable, Barry::Timezone &rec)
+bool EditRecord(wxWindow *parent, bool editable, Barry::TimeZone &rec)
 {
 	return false;
 }

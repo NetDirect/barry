@@ -468,7 +468,7 @@ void serialize(ArchiveT &ar, Barry::Folder &f, const unsigned int ver)
 }
 
 template <class ArchiveT>
-void serialize(ArchiveT &ar, Barry::Timezone &t, const unsigned int ver)
+void serialize(ArchiveT &ar, Barry::TimeZone &t, const unsigned int ver)
 {
 	ar & make_nvp("RecType", t.RecType);
 	ar & make_nvp("RecordId", t.RecordId);

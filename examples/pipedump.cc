@@ -103,7 +103,7 @@ int main(int argc, char *argv[])
 		// and with the template member (does the same thing)
 		mrp.Add<Calendar>( new Store<Calendar> );
 		mrp.Add<Sms>( new Store<Sms> );
-		mrp.Add<Timezone>( new Store<Timezone> );
+		mrp.Add<TimeZone>( new Store<TimeZone> );
 
 		builder.Restart();
 		pipe.PumpFile(mrp);

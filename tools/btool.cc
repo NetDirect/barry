@@ -369,10 +369,10 @@ shared_ptr<Parser> GetParser(const string &name,
 			new RecordParser<Folder, Store<Folder> > (
 				new Store<Folder>(filename, false, dnow, vmode)));
 	}
-	else if( name == Timezone::GetDBName() ) {
+	else if( name == TimeZone::GetDBName() ) {
 		return shared_ptr<Parser>(
-			new RecordParser<Timezone, Store<Timezone> > (
-				new Store<Timezone>(filename, false, dnow, vmode)));
+			new RecordParser<TimeZone, Store<TimeZone> > (
+				new Store<TimeZone>(filename, false, dnow, vmode)));
 	}
 	else if( name == HandheldAgent::GetDBName() ) {
 		return shared_ptr<Parser>(

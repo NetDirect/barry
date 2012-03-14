@@ -34,7 +34,7 @@ namespace Barry {
 // forward declarations
 class IConverter;
 
-class BXEXPORT Timezone
+class BXEXPORT TimeZone
 {
 public:
 	typedef Barry::UnknownsType			UnknownsType;
@@ -66,23 +66,23 @@ public:
 	UnknownsType Unknowns;
 
 public:
-	Timezone();
+	TimeZone();
 
 	/// Creates a new timezone based on utc_offset minutes.
 	/// Use same semantics as UTCOffset.  For example, a -3.5 hour
 	/// timezone (which is west of UTC) would be constructed
-	/// as: Timezone(-210)
-	explicit Timezone(int utc_offset);
+	/// as: TimeZone(-210)
+	explicit TimeZone(int utc_offset);
 
 	/// Creates a new timezone based on negative/positive hours,
 	/// and positive minutes.  For example, a -3.5 hour timezone
-	/// (which is west of UTC) would be constructed as: Timezone(-3, 30)
-	Timezone(int hours, int minutes);
+	/// (which is west of UTC) would be constructed as: TimeZone(-3, 30)
+	TimeZone(int hours, int minutes);
 
-	virtual ~Timezone();
+	virtual ~TimeZone();
 
 	//
-	// Timezone related utility functions
+	// TimeZone related utility functions
 	//
 
 	bool IsWest() const { return UTCOffset < 0; }
@@ -128,20 +128,21 @@ public:
 	void Dump(std::ostream &os) const;
 	std::string GetDescription() const;
 
-	bool operator<(const Timezone &other) const { return Name < other.Name; }
+	bool operator<(const TimeZone &other) const { return Name < other.Name; }
 
 	// database name
 	static const char * GetDBName() { return "Time Zones"; }
 	static uint8_t GetDefaultRecType() { return 2; }
 
 	// Generic Field Handle support
-	static const FieldHandle<Timezone>::ListT& GetFieldHandles();
+	static const FieldHandle<TimeZone>::ListT& GetFieldHandles();
 };
 
-BXEXPORT inline std::ostream& operator<<(std::ostream &os, const Timezone &msg) {
+BXEXPORT inline std::ostream& operator<<(std::ostream &os, const TimeZone &msg) {
 	msg.Dump(os);
 	return os;
 }
 } // namespace Barry
 
 #endif /* __BARRY_RECORD_TIMEZONE_H__*/
+

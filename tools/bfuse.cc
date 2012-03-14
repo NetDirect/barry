@@ -208,10 +208,10 @@ ParserPtr GetParser(const string &name, std::ostream &os, bool null_parser)
 			new RecordParser<Folder, Store<Folder> > (
 				new Store<Folder>(os)));
 	}
-	else if( name == Timezone::GetDBName() ) {
+	else if( name == TimeZone::GetDBName() ) {
 		return ParserPtr(
-			new RecordParser<Timezone, Store<Timezone> > (
-				new Store<Timezone>(os)));
+			new RecordParser<TimeZone, Store<TimeZone> > (
+				new Store<TimeZone>(os)));
 	}
 	else {
 		// unknown database, use null parser

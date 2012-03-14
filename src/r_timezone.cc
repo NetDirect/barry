@@ -39,9 +39,9 @@ namespace Barry
 {
 
 ///////////////////////////////////////////////////////////////////////////////
-// Timezone Class
+// TimeZone Class
 
-// Timezone Field Codes
+// TimeZone Field Codes
 #define TZFC_INDEX		0x01
 #define TZFC_NAME		0x02
 #define TZFC_OFFSET		0x03
@@ -52,24 +52,24 @@ namespace Barry
 
 #define TZFC_END		0xffff
 
-static FieldLink<Timezone> TimezoneFieldLinks[] = {
-   { TZFC_NAME,   "Name",        0, 0, &Timezone::Name, 0, 0, 0, 0, true },
+static FieldLink<TimeZone> TimeZoneFieldLinks[] = {
+   { TZFC_NAME,   "Name",        0, 0, &TimeZone::Name, 0, 0, 0, 0, true },
    { TZFC_END,    "End of List", 0, 0, 0, 0, 0, 0, 0, false },
 };
 
-Timezone::Timezone()
+TimeZone::TimeZone()
 {
 	Clear();
 }
 
-Timezone::Timezone(int utc_offset)
+TimeZone::TimeZone(int utc_offset)
 {
 	Clear();
 
 	UTCOffset = utc_offset;
 }
 
-Timezone::Timezone(int hours, int minutes)
+TimeZone::TimeZone(int hours, int minutes)
 {
 	Clear();
 
@@ -85,11 +85,11 @@ Timezone::Timezone(int hours, int minutes)
 		UTCOffset += minutes;
 }
 
-Timezone::~Timezone()
+TimeZone::~TimeZone()
 {
 }
 
-const unsigned char* Timezone::ParseField(const unsigned char *begin,
+const unsigned char* TimeZone::ParseField(const unsigned char *begin,
 					  const unsigned char *end,
 					  const IConverter *ic)
 {
@@ -105,13 +105,13 @@ const unsigned char* Timezone::ParseField(const unsigned char *begin,
 
 	if( field->type == TZFC_TZTYPE ) {
 		if( ( TZType = field->u.uint32 ) != 1 ) {
-			throw Error("Timezone::ParseField: Timezone Type is not valid");
+			throw Error("TimeZone::ParseField: TimeZone Type is not valid");
 		}
 		return begin;
 	}
 
 	// cycle through the type table
-	for(    FieldLink<Timezone> *b = TimezoneFieldLinks;
+	for(    FieldLink<TimeZone> *b = TimeZoneFieldLinks;
 		b->type != TZFC_END;
 		b++ )
 	{
@@ -162,33 +162,33 @@ const unsigned char* Timezone::ParseField(const unsigned char *begin,
 	return begin;
 }
 
-void Timezone::ParseHeader(const Data &data, size_t &offset)
+void TimeZone::ParseHeader(const Data &data, size_t &offset)
 {
 	// no header in Task records
 }
 
-void Timezone::ParseFields(const Data &data, size_t &offset, const IConverter *ic)
+void TimeZone::ParseFields(const Data &data, size_t &offset, const IConverter *ic)
 {
 	const unsigned char *finish = ParseCommonFields(*this,
 		data.GetData() + offset, data.GetData() + data.GetSize(), ic);
 	offset += finish - (data.GetData() + offset);
 }
 
-void Timezone::Validate() const
+void TimeZone::Validate() const
 {
 }
 
-void Timezone::BuildHeader(Data &data, size_t &offset) const
-{
-	// not yet implemented
-}
-
-void Timezone::BuildFields(Data &data, size_t &offset, const IConverter *ic) const
+void TimeZone::BuildHeader(Data &data, size_t &offset) const
 {
 	// not yet implemented
 }
 
-void Timezone::Clear()
+void TimeZone::BuildFields(Data &data, size_t &offset, const IConverter *ic) const
+{
+	// not yet implemented
+}
+
+void TimeZone::Clear()
 {
 	RecType = GetDefaultRecType();
 	RecordId = 0;
@@ -207,9 +207,9 @@ void Timezone::Clear()
 	Unknowns.clear();
 }
 
-const FieldHandle<Timezone>::ListT& Timezone::GetFieldHandles()
+const FieldHandle<TimeZone>::ListT& TimeZone::GetFieldHandles()
 {
-	static FieldHandle<Timezone>::ListT fhv;
+	static FieldHandle<TimeZone>::ListT fhv;
 
 	if( fhv.size() )
 		return fhv;
@@ -218,33 +218,33 @@ const FieldHandle<Timezone>::ListT& Timezone::GetFieldHandles()
 #define CONTAINER_OBJECT_NAME fhv
 
 #undef RECORD_CLASS_NAME
-#define RECORD_CLASS_NAME Timezone
+#define RECORD_CLASS_NAME TimeZone
 
 	FHP(RecType, "Record Type Code");
 	FHP(RecordId, "Unique Record ID");
 
-	FHD(Name, "Timezone Name", TZFC_NAME, true);
+	FHD(Name, "TimeZone Name", TZFC_NAME, true);
 	FHD(Index, "Index", TZFC_INDEX, false);
-	FHD(UTCOffset, "Timezone Offset in Minutes", TZFC_OFFSET, false);
+	FHD(UTCOffset, "TimeZone Offset in Minutes", TZFC_OFFSET, false);
 	FHD(UseDST, "Use DST?", TZFC_DST, false);
 	FHD(DSTOffset, "DST Offset", TZFC_DST, false);
 	FHD(StartMonth, "Start Month", TZFC_STARTMONTH, false);
 	FHD(EndMonth, "End Month", TZFC_ENDMONTH, false);
-	FHD(TZType, "Timezone Type", TZFC_TZTYPE, false);
+	FHD(TZType, "TimeZone Type", TZFC_TZTYPE, false);
 
 	FHP(Unknowns, "Unknown Fields");
 
 	return fhv;
 }
 
-std::string Timezone::GetDescription() const
+std::string TimeZone::GetDescription() const
 {
 	ostringstream oss;
 	oss << Name << " (" << dec << (UTCOffset / 60.0) << ")";
 	return oss.str();
 }
 
-void Timezone::Dump(std::ostream &os) const
+void TimeZone::Dump(std::ostream &os) const
 {
 	ios_format_state state(os);
 
@@ -253,11 +253,11 @@ void Timezone::Dump(std::ostream &os) const
 			"Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
 	};
 
-	os << "Timezone entry: 0x" << setbase(16) << RecordId
+	os << "TimeZone entry: 0x" << setbase(16) << RecordId
 	   << " (" << (unsigned int)RecType << ")\n";
 
 	// cycle through the type table
-	for(	const FieldLink<Timezone> *b = TimezoneFieldLinks;
+	for(	const FieldLink<TimeZone> *b = TimeZoneFieldLinks;
 		b->type != TZFC_END;
 		b++ )
 	{
@@ -297,7 +297,7 @@ void Timezone::Dump(std::ostream &os) const
 }
 
 
-void Timezone::Split(int *hours, int *minutes) const
+void TimeZone::Split(int *hours, int *minutes) const
 {
 	*hours = UTCOffset / 60;
 	*minutes = UTCOffset % 60;
@@ -305,7 +305,7 @@ void Timezone::Split(int *hours, int *minutes) const
 		*minutes = -*minutes;
 }
 
-void Timezone::SplitAbsolute(bool *west,
+void TimeZone::SplitAbsolute(bool *west,
 				unsigned int *hours,
 				unsigned int *minutes) const
 {
@@ -324,7 +324,7 @@ void Timezone::SplitAbsolute(bool *west,
 	*minutes = tmpminutes;
 }
 
-std::string Timezone::GetTz(const std::string &prefix) const
+std::string TimeZone::GetTz(const std::string &prefix) const
 {
 	int hours, minutes;
 	Split(&hours, &minutes);
@@ -343,7 +343,7 @@ std::string Timezone::GetTz(const std::string &prefix) const
 
 	// daylight saving time next, if available
 	if( UseDST ) {
-		Timezone dst(UTCOffset + DSTOffset);
+		TimeZone dst(UTCOffset + DSTOffset);
 
 		dst.Split(&hours, &minutes);
 

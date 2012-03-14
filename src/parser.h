@@ -45,7 +45,7 @@ namespace Barry {
 	class SavedMessage;
 	class Sms;
 	class Folder;
-	class Timezone;
+	class TimeZone;
 	class ContentStore;
 	class HandheldAgent;
 }
@@ -74,7 +74,7 @@ namespace Barry {
 	HANDLE_PARSER(ServiceBook) \
 	HANDLE_PARSER(Sms) \
 	HANDLE_PARSER(Task) \
-	HANDLE_PARSER(Timezone)
+	HANDLE_PARSER(TimeZone)
 
 namespace Barry {
 
