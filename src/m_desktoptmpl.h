@@ -51,14 +51,14 @@ void Desktop::SaveDatabaseByType(StorageT &store)
 template <class StorageT>
 void Desktop::LoadDatabaseByName(const std::string &name, StorageT &store)
 {
-	if( name == Contact::GetDBName() )
-		LoadDatabaseByType<Contact>(store);
-	else if( name == Message::GetDBName() )
-		LoadDatabaseByType<Message>(store);
-	else if( name == Calendar::GetDBName() )
-		LoadDatabaseByType<Calendar>(store);
-	else if( name == CalendarAll::GetDBName() )
-		LoadDatabaseByType<CalendarAll>(store);
+#undef HANDLE_PARSER
+#define HANDLE_PARSER(rtype) \
+	else if( name == Barry::rtype::GetDBName() ) \
+		LoadDatabaseByType<rtype>(store);
+
+	if( !name.size() )
+		throw Error("Empty database name in LoadDatabaseByName");
+	ALL_KNOWN_PARSER_TYPES
 	else
 		throw Error("Unknown database name in LoadDatabaseByName: " + name);
 }
@@ -66,14 +66,14 @@ void Desktop::LoadDatabaseByName(const std::string &name, StorageT &store)
 template <class StorageT>
 void Desktop::SaveDatabaseByName(const std::string &name, StorageT &store)
 {
-	if( name == Contact::GetDBName() )
-		SaveDatabaseByType<Contact>(store);
-	else if( name == Message::GetDBName() )
-		SaveDatabaseByType<Message>(store);
-	else if( name == Calendar::GetDBName() )
-		SaveDatabaseByType<Calendar>(store);
-	else if( name == CalendarAll::GetDBName() )
-		SaveDatabaseByType<CalendarAll>(store);
+#undef HANDLE_BUILDER
+#define HANDLE_BUILDER(rtype) \
+	else if( name == Barry::rtype::GetDBName() ) \
+		SaveDatabaseByType<rtype>(store);
+
+	if( !name.size() )
+		throw Error("Empty database name in SaveDatabaseByName");
+	ALL_KNOWN_BUILDER_TYPES
 	else
 		throw Error("Unknown database name in SaveDatabaseByName: " + name);
 }
