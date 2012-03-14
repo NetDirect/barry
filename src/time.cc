@@ -28,7 +28,7 @@
 
 namespace Barry {
 
-TimeZone Zones[] = {
+StaticTimeZone Zones[] = {
 	{ 0x0000,  -12,   0, "Eniwetok, Kwajalein (-12)" },
 	{ 0x0001,  -12,   0, "Midway Island, Samoa (-12)" },
 	{ 0x0002,  -10,   0, "Hawaii (-10)" },
@@ -126,32 +126,32 @@ time_t min2time(min1900_t m)
 
 
 //
-// GetTimeZoneTable
+// GetStaticTimeZoneTable
 //
-/// Returns a pointer to an array of TimeZone structs.
+/// Returns a pointer to an array of StaticTimeZone structs.
 /// The last struct contains 0 in all fields, and can be used as
 /// an "end of array" marker.
 ///
-const TimeZone* GetTimeZoneTable()
+const StaticTimeZone* GetStaticTimeZoneTable()
 {
 	return Zones;
 }
 
 //
-// GetTimeZone
+// GetStaticTimeZone
 //
 /// Searches the internal timezone code table for the given Code
-/// and returns a pointer to a TimeZone struct found.  If the
-/// code is not found, a pointer to a valid TimeZone struct is
-/// is still returned, but the struct's Code contains TIME_ZONE_CODE_ERR,
+/// and returns a pointer to a StaticTimeZone struct found.  If the
+/// code is not found, a pointer to a valid StaticTimeZone struct is
+/// is still returned, but the struct's Code contains STATIC_TIME_ZONE_CODE_ERR,
 /// and the name is "Unknown time zone."  The unknown timezone
 /// is the same offset as GMT.
 ///
-const TimeZone* GetTimeZone(uint16_t Code)
+const StaticTimeZone* GetStaticTimeZone(uint16_t Code)
 {
-	static TimeZone Unknown = { TIME_ZONE_CODE_ERR, 0, 0, "Unknown time zone" };
+	static StaticTimeZone Unknown = { STATIC_TIME_ZONE_CODE_ERR, 0, 0, "Unknown time zone" };
 
-	for( TimeZone *z = Zones; z->Name; z++ ) {
+	for( StaticTimeZone *z = Zones; z->Name; z++ ) {
 		if( Code == z->Code )
 			return z;
 	}
@@ -159,21 +159,21 @@ const TimeZone* GetTimeZone(uint16_t Code)
 }
 
 //
-// GetTimeZoneCode
+// GetStaticTimeZoneCode
 //
 /// Searches the internal timezone table for the first matching
-/// Code.  If no matching Code is found, TIME_ZONE_CODE_ERR is returned.
+/// Code.  If no matching Code is found, STATIC_TIME_ZONE_CODE_ERR is returned.
 ///
 /// This function does not adjust for daylight saving time.
 ///
-uint16_t GetTimeZoneCode(signed short HourOffset,
+uint16_t GetStaticTimeZoneCode(signed short HourOffset,
 			       signed short MinOffset)
 {
-	for( TimeZone *z = Zones; z->Name; z++ ) {
+	for( StaticTimeZone *z = Zones; z->Name; z++ ) {
 		if( HourOffset == z->HourOffset && MinOffset == z->MinOffset )
 			return z->Code;
 	}
-	return TIME_ZONE_CODE_ERR;
+	return STATIC_TIME_ZONE_CODE_ERR;
 }
 
 /// This routine takes the day of the year and
@@ -322,8 +322,8 @@ int main()
 		cout << "Failed!" << endl;
 
 	// time zone
-	cout << "Should say Eastern: " << GetTimeZone(0x23)->Name << endl;
-	cout << "should say Unknown: " << GetTimeZone(0xffff)->Name << endl;
+	cout << "Should say Eastern: " << GetStaticTimeZone(0x23)->Name << endl;
+	cout << "should say Unknown: " << GetStaticTimeZone(0xffff)->Name << endl;
 }
 
 #endif

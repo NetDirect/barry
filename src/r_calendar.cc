@@ -405,7 +405,7 @@ void Calendar::Clear()
 
 	CalendarID = btohll((uint64_t) -1);
 
-	TimeZoneCode = GetTimeZoneCode(0, 0);	// default to GMT
+	TimeZoneCode = GetStaticTimeZoneCode(0, 0);	// default to GMT
 	TimeZoneValid = false;
 
 	Unknowns.clear();
@@ -484,7 +484,7 @@ void Calendar::DumpSpecialFields(std::ostream &os) const
 	os << "   Class: " << ClassTypes[ClassFlag] << "\n";
 	os << "   Free/Busy: " << FreeBusy[FreeBusyFlag] << "\n";
 	if( TimeZoneValid )
-		os << "   Time Zone: " << GetTimeZone(TimeZoneCode)->Name << "\n";
+		os << "   Time Zone: " << GetStaticTimeZone(TimeZoneCode)->Name << "\n";
 }
 
 void Calendar::Dump(std::ostream &os) const

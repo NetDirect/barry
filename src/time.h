@@ -53,9 +53,17 @@ typedef long min1900_t;
 BXEXPORT min1900_t time2min(time_t t);
 BXEXPORT time_t min2time(min1900_t m);
 
-// FIXME - turn TimeZone into a C typedef and wrap this in extern "C"
+// FIXME - turn StaticTimeZone into a C typedef and wrap this in extern "C"
 // so the data can be used in both C and C++ libraries
-struct BXEXPORT TimeZone
+//
+// This is named StaticTimeZone since the time zone table is hard coded
+// in the library.  If you want to know what the device's idea of time zones
+// is, then extract the time zone database using the TimeZone record class.
+//
+// See also the TimeZones class, which unifies access to the static and
+// dynamic time zone tables in one class API.
+//
+struct BXEXPORT StaticTimeZone
 {
 	uint16_t Code;
 	signed short HourOffset;
@@ -64,11 +72,11 @@ struct BXEXPORT TimeZone
 };
 
 // FIXME - put this somewhere for both C and C++
-#define TIME_ZONE_CODE_ERR	0xffff
+#define STATIC_TIME_ZONE_CODE_ERR	0xffff
 
-BXEXPORT const TimeZone* GetTimeZoneTable();
-BXEXPORT const TimeZone* GetTimeZone(uint16_t Code);
-BXEXPORT unsigned short GetTimeZoneCode(signed short HourOffset,
+BXEXPORT const StaticTimeZone* GetStaticTimeZoneTable();
+BXEXPORT const StaticTimeZone* GetStaticTimeZone(uint16_t Code);
+BXEXPORT unsigned short GetStaticTimeZoneCode(signed short HourOffset,
 	signed short MinOffset = 0);
 
 // Message time conversion stuff

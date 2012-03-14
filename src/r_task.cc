@@ -343,7 +343,7 @@ void Task::Clear()
 	DueTime.clear();
 	AlarmTime.clear();
 
-	TimeZoneCode = GetTimeZoneCode( 0, 0 );	// default to GMT
+	TimeZoneCode = GetStaticTimeZoneCode( 0, 0 );	// default to GMT
 	TimeZoneValid = false;
 
 	AlarmType = (AlarmFlagType)0;
@@ -452,7 +452,7 @@ void Task::Dump(std::ostream &os) const
 		os << "   Alarm Type: " << AlarmTypeName[AlarmType] << "\n";
 	}
 	if( TimeZoneValid )
-		os << "   Time Zone: " << GetTimeZone(TimeZoneCode)->Name << "\n";
+		os << "   Time Zone: " << GetStaticTimeZone(TimeZoneCode)->Name << "\n";
 
 	// print recurrence data if available
 	os << "   Recurring: " << (Recurring ? "yes" : "no") << "\n";
