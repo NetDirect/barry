@@ -77,6 +77,8 @@ public:
 	/// Creates a new timezone based on negative/positive hours,
 	/// and positive minutes.  For example, a -3.5 hour timezone
 	/// (which is west of UTC) would be constructed as: TimeZone(-3, 30)
+	/// Note that minutes can be negative, and it will be handled
+	/// correctly.  i.e. TimeZone(-3, 30) == TimeZone(-3, -30)
 	TimeZone(int hours, int minutes);
 
 	virtual ~TimeZone();
@@ -128,7 +130,17 @@ public:
 	void Dump(std::ostream &os) const;
 	std::string GetDescription() const;
 
-	bool operator<(const TimeZone &other) const { return Name < other.Name; }
+	bool operator<(const TimeZone &other) const { return SortByName(*this, other); }
+
+	// sort options - suitable for use in std::sort()
+	static bool SortByName(const TimeZone &a, const TimeZone &b)
+	{
+		return a.Name < b.Name;
+	}
+	static bool SortByZone(const TimeZone &a, const TimeZone &b)
+	{
+		return a.UTCOffset < b.UTCOffset;
+	}
 
 	// database name
 	static const char * GetDBName() { return "Time Zones"; }
@@ -142,6 +154,59 @@ BXEXPORT inline std::ostream& operator<<(std::ostream &os, const TimeZone &msg) 
 	msg.Dump(os);
 	return os;
 }
+
+
+// forward declarations
+namespace Mode {
+	class Desktop;
+}
+
+//
+// TimeZones
+//
+/// Creates a vector of TimeZone objects either based on the library's
+/// hard coded StaticTimeZone list, or by extracting the time zone database
+/// from a given device.
+///
+/// After construction, the vector will be sorted according to time zone,
+/// with west-most first.
+///
+class BXEXPORT TimeZones
+{
+public:
+	typedef std::vector<TimeZone>			ListType;
+	typedef ListType::iterator			iterator;
+	typedef ListType::const_iterator		const_iterator;
+
+private:
+	ListType m_list;
+
+public:
+	/// Creates the list based on the library's hard coded StaticTimeZone
+	/// list.
+	TimeZones();
+
+	/// Extracts the time zone database from the given device.
+	explicit TimeZones(Barry::Mode::Desktop &desktop);
+
+	ListType& GetList() { return m_list; }
+	const ListType& GetList() const { return m_list; }
+
+	iterator begin() { return m_list.begin(); }
+	const_iterator begin() const { return m_list.begin(); }
+
+	iterator end() { return m_list.end(); }
+	const_iterator end() const { return m_list.end(); }
+
+	void Dump(std::ostream &os) const;
+};
+
+BXEXPORT inline std::ostream& operator<<(std::ostream &os, const TimeZones &l)
+{
+	l.Dump(os);
+	return os;
+}
+
 } // namespace Barry
 
 #endif /* __BARRY_RECORD_TIMEZONE_H__*/

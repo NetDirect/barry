@@ -31,6 +31,8 @@
 #include <sstream>
 #include <iomanip>
 #include "ios_state.h"
+#include <algorithm>
+#include "m_desktop.h"
 
 using namespace std;
 using namespace Barry::Protocol;
@@ -363,6 +365,56 @@ std::string TimeZone::GetTz(const std::string &prefix) const
 	}
 
 	return oss.str();
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+// TimeZones Class
+
+TimeZones::TimeZones()
+{
+	const StaticTimeZone *zones = GetStaticTimeZoneTable();
+	for( ; zones->Name; zones++ ) {
+		TimeZone tz(zones->HourOffset, zones->MinOffset);
+		tz.Index = zones->Code;
+		tz.Name = zones->Name;
+		m_list.push_back(tz);
+	}
+
+	sort(begin(), end(), &TimeZone::SortByZone);
+}
+
+struct TimeZoneStore
+{
+	TimeZones::ListType &m_list;
+
+	TimeZoneStore(TimeZones::ListType &list) : m_list(list)
+	{
+	}
+
+	void operator()(const TimeZone &rec)
+	{
+		m_list.push_back(rec);
+	}
+};
+
+TimeZones::TimeZones(Barry::Mode::Desktop &desktop)
+{
+	unsigned int dbId = desktop.GetDBID( TimeZone::GetDBName() );
+	TimeZoneStore store(m_list);
+	RecordParser<TimeZone, TimeZoneStore> parser(store);
+
+	desktop.LoadDatabase(dbId, parser);
+
+	sort(begin(), end(), &TimeZone::SortByZone);
+}
+
+void TimeZones::Dump(std::ostream &os) const
+{
+	const_iterator b = begin(), e = end();
+	for( ; b != e; ++b ) {
+		os << *b << endl;
+	}
 }
 
 } // namespace Barry
