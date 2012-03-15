@@ -411,6 +411,32 @@ TimeZones::TimeZones(Barry::Mode::Desktop &desktop)
 	sort(begin(), end(), &TimeZone::SortByZone);
 }
 
+TimeZones::iterator TimeZones::Find(int index)
+{
+	for( iterator i = begin(), e = end(); i != e; ++i )
+		if( i->Index == index )
+			return i;
+	return end();
+}
+
+TimeZones::const_iterator TimeZones::Find(int index) const
+{
+	return const_cast<TimeZones*>(this)->Find(index);
+}
+
+TimeZones::iterator TimeZones::FindByOffset(int utc_offset)
+{
+	for( iterator i = begin(), e = end(); i != e; ++i )
+		if( i->UTCOffset == utc_offset )
+			return i;
+	return end();
+}
+
+TimeZones::const_iterator TimeZones::FindByOffset(int utc_offset) const
+{
+	return const_cast<TimeZones*>(this)->FindByOffset(utc_offset);
+}
+
 void TimeZones::Dump(std::ostream &os) const
 {
 	const_iterator b = begin(), e = end();

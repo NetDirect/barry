@@ -198,6 +198,13 @@ public:
 	iterator end() { return m_list.end(); }
 	const_iterator end() const { return m_list.end(); }
 
+	// utility functions - return end() if not found
+	iterator Find(int index);
+	const_iterator Find(int index) const;
+
+	iterator FindByOffset(int utc_offset);
+	const_iterator FindByOffset(int utc_offset) const;
+
 	void Dump(std::ostream &os) const;
 };
 
