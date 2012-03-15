@@ -89,7 +89,7 @@ bool EditRecord(wxWindow *parent,
 		const Barry::TimeZones &zones,
 		Barry::Calendar &rec)
 {
-	CalendarEditDlg edit(parent, rec, editable);
+	CalendarEditDlg edit(parent, rec, editable, &zones);
 	return edit.ShowModal() == wxID_OK;
 }
 

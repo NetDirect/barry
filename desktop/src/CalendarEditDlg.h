@@ -55,6 +55,8 @@ private:
 	// end wxGlade
 
 protected:
+	Barry::TimeZones m_static_zones;
+	const Barry::TimeZones *m_zones;
 	Barry::Calendar &m_rec;
 	StringSync m_strings;
 	GUITimeT m_StartDateObj;
@@ -137,7 +139,8 @@ protected:
 	DECLARE_EVENT_TABLE(); // sets to protected:
 
 public:
-	CalendarEditDlg(wxWindow* parent, Barry::Calendar &rec, bool editable);
+	CalendarEditDlg(wxWindow* parent, Barry::Calendar &rec, bool editable,
+		const Barry::TimeZones *device_zones);
 
 	virtual bool TransferDataToWindow();
 	virtual bool TransferDataFromWindow();

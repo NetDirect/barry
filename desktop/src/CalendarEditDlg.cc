@@ -35,8 +35,10 @@ using namespace std;
 
 CalendarEditDlg::CalendarEditDlg(wxWindow* parent,
 				Barry::Calendar &rec,
-				bool editable)
+				bool editable,
+				const Barry::TimeZones *device_zones)
 	: wxDialog(parent, Dialog_CalendarEdit, _T("Calendar Record"))
+	, m_zones(device_zones ? device_zones : &m_static_zones)
 	, m_rec(rec)
 	, m_duration_hours(0)
 	, m_duration_minutes(0)
@@ -138,6 +140,20 @@ CalendarEditDlg::CalendarEditDlg(wxWindow* parent,
 	set_properties();
 	do_layout();
 	// end wxGlade
+
+	// fill the time zone control with real time zones
+	m_TimezoneChoice->Clear();
+	m_TimezoneChoice->Append(wxT("Assume Local Timezone"), (void*)0);
+	Barry::TimeZones::const_iterator b, e;
+	for( b = m_zones->begin(), e = m_zones->end(); b != e; ++b ) {
+		m_TimezoneChoice->Append(
+			wxString(b->GetDescription().c_str(), wxConvUTF8),
+			(void*) &b->Index);
+	}
+	m_TimezoneChoice->SetSelection(0);
+
+	// layout again, in case sizes are different
+	do_layout();
 }
 
 
