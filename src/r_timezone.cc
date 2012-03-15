@@ -411,6 +411,12 @@ TimeZones::TimeZones(Barry::Mode::Desktop &desktop)
 	sort(begin(), end(), &TimeZone::SortByZone);
 }
 
+bool TimeZones::IsLoadable(Barry::Mode::Desktop &desktop)
+{
+	unsigned int num;
+	return desktop.GetDBDB().GetDBNumber(TimeZone::GetDBName(), num);
+}
+
 TimeZones::iterator TimeZones::Find(int index)
 {
 	for( iterator i = begin(), e = end(); i != e; ++i )

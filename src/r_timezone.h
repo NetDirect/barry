@@ -189,6 +189,10 @@ public:
 	/// Extracts the time zone database from the given device.
 	explicit TimeZones(Barry::Mode::Desktop &desktop);
 
+	/// Static helper function that returns true if the device
+	/// referenced by desktop has a time zone database
+	static bool IsLoadable(Barry::Mode::Desktop &desktop);
+
 	ListType& GetList() { return m_list; }
 	const ListType& GetList() const { return m_list; }
 
