@@ -67,85 +67,133 @@ bool IsEditable(const std::string &dbname)
 		dbname == Memo::GetDBName();
 }
 
-bool EditRecord(wxWindow *parent, bool editable, Barry::Contact &rec)
+bool EditRecord(wxWindow *parent,
+		bool editable,
+		const Barry::TimeZones &zones,
+		Barry::Contact &rec)
 {
 	ContactEditDlg edit(parent, rec, editable);
 	return edit.ShowModal() == wxID_OK;
 }
 
-bool EditRecord(wxWindow *parent, bool editable, Barry::Bookmark &rec)
+bool EditRecord(wxWindow *parent,
+		bool editable,
+		const Barry::TimeZones &zones,
+		Barry::Bookmark &rec)
 {
 	return false;
 }
 
-bool EditRecord(wxWindow *parent, bool editable, Barry::Calendar &rec)
+bool EditRecord(wxWindow *parent,
+		bool editable,
+		const Barry::TimeZones &zones,
+		Barry::Calendar &rec)
 {
 	CalendarEditDlg edit(parent, rec, editable);
 	return edit.ShowModal() == wxID_OK;
 }
 
-bool EditRecord(wxWindow *parent, bool editable, Barry::CalendarAll &rec)
+bool EditRecord(wxWindow *parent,
+		bool editable,
+		const Barry::TimeZones &zones,
+		Barry::CalendarAll &rec)
 {
 	return false;
 }
 
-bool EditRecord(wxWindow *parent, bool editable, Barry::ContentStore &rec)
+bool EditRecord(wxWindow *parent,
+		bool editable,
+		const Barry::TimeZones &zones,
+		Barry::ContentStore &rec)
 {
 	return false;
 }
 
-bool EditRecord(wxWindow *parent, bool editable, Barry::Folder &rec)
+bool EditRecord(wxWindow *parent,
+		bool editable,
+		const Barry::TimeZones &zones,
+		Barry::Folder &rec)
 {
 	return false;
 }
 
-bool EditRecord(wxWindow *parent, bool editable, Barry::Memo &rec)
+bool EditRecord(wxWindow *parent,
+		bool editable,
+		const Barry::TimeZones &zones,
+		Barry::Memo &rec)
 {
 	MemoEditDlg edit(parent, rec, editable);
 	return edit.ShowModal() == wxID_OK;
 }
 
-bool EditRecord(wxWindow *parent, bool editable, Barry::Message &rec)
+bool EditRecord(wxWindow *parent,
+		bool editable,
+		const Barry::TimeZones &zones,
+		Barry::Message &rec)
 {
 	return false;
 }
 
-bool EditRecord(wxWindow *parent, bool editable, Barry::CallLog &rec)
+bool EditRecord(wxWindow *parent,
+		bool editable,
+		const Barry::TimeZones &zones,
+		Barry::CallLog &rec)
 {
 	return false;
 }
 
-bool EditRecord(wxWindow *parent, bool editable, Barry::PINMessage &rec)
+bool EditRecord(wxWindow *parent,
+		bool editable,
+		const Barry::TimeZones &zones,
+		Barry::PINMessage &rec)
 {
 	return false;
 }
 
-bool EditRecord(wxWindow *parent, bool editable, Barry::SavedMessage &rec)
+bool EditRecord(wxWindow *parent,
+		bool editable,
+		const Barry::TimeZones &zones,
+		Barry::SavedMessage &rec)
 {
 	return false;
 }
 
-bool EditRecord(wxWindow *parent, bool editable, Barry::ServiceBook &rec)
+bool EditRecord(wxWindow *parent,
+		bool editable,
+		const Barry::TimeZones &zones,
+		Barry::ServiceBook &rec)
 {
 	return false;
 }
 
-bool EditRecord(wxWindow *parent, bool editable, Barry::Sms &rec)
+bool EditRecord(wxWindow *parent,
+		bool editable,
+		const Barry::TimeZones &zones,
+		Barry::Sms &rec)
 {
 	return false;
 }
 
-bool EditRecord(wxWindow *parent, bool editable, Barry::Task &rec)
+bool EditRecord(wxWindow *parent,
+		bool editable,
+		const Barry::TimeZones &zones,
+		Barry::Task &rec)
 {
 	return false;
 }
 
-bool EditRecord(wxWindow *parent, bool editable, Barry::TimeZone &rec)
+bool EditRecord(wxWindow *parent,
+		bool editable,
+		const Barry::TimeZones &zones,
+		Barry::TimeZone &rec)
 {
 	return false;
 }
 
-bool EditRecord(wxWindow *parent, bool editable, Barry::HandheldAgent &rec)
+bool EditRecord(wxWindow *parent,
+		bool editable,
+		const Barry::TimeZones &zones,
+		Barry::HandheldAgent &rec)
 {
 	return false;
 }
@@ -184,7 +232,9 @@ DBDataCache::DBDataCache(DataCache::IndexType index, const Barry::DBData &raw)
 {
 }
 
-bool DBDataCache::Edit(wxWindow *parent, bool editable)
+bool DBDataCache::Edit(wxWindow *parent,
+			bool editable,
+			const Barry::TimeZones &zones)
 {
 	return false;
 }
@@ -264,7 +314,9 @@ int DBCache::GetIndex(const_iterator record) const
 	return -1;
 }
 
-DBCache::iterator DBCache::Add(wxWindow *parent, iterator copy_record)
+DBCache::iterator DBCache::Add(wxWindow *parent,
+				const Barry::TimeZones &zones,
+				iterator copy_record)
 {
 	DataCachePtr p;
 
@@ -287,7 +339,7 @@ DBCache::iterator DBCache::Add(wxWindow *parent, iterator copy_record)
 		return end();
 	}
 
-	if( p->Edit(parent, true) ) {
+	if( p->Edit(parent, true, zones) ) {
 		// see if this record has a builder
 		Barry::Builder *bp = dynamic_cast<Barry::Builder*> (p.get());
 		if( !bp ) {
@@ -328,12 +380,14 @@ cout << m_state << endl;
 	}
 }
 
-bool DBCache::Edit(wxWindow *parent, iterator record)
+bool DBCache::Edit(wxWindow *parent,
+		const Barry::TimeZones &zones,
+		iterator record)
 {
 	if( record == end() )
 		return false;
 
-	if( (*record)->Edit(parent, true) && (*record)->IsBuildable() ) {
+	if( (*record)->Edit(parent, true, zones) && (*record)->IsBuildable() ) {
 		// see if this record has a builder
 		Barry::Builder *bp = dynamic_cast<Barry::Builder*> ((*record).get());
 		if( !bp )
@@ -483,6 +537,16 @@ BrowseMode::BrowseMode(wxWindow *parent, const ProbeResult &device)
 	// keep our own copy, and sort by name for later
 	m_dbdb = m_con->GetDesktop().GetDBDB();
 	m_dbdb.SortByName();
+
+	// store a copy of the time zone set for record editing
+	if( TimeZones::IsLoadable(m_con->GetDesktop()) ) {
+		// load time zones from device itself
+		m_zones.reset( new TimeZones(m_con->GetDesktop()) );
+	}
+	else {
+		// use static time zone table from Barry library
+		m_zones.reset( new TimeZones );
+	}
 
 	CreateControls();
 
@@ -840,7 +904,7 @@ void BrowseMode::OnAddRecord(wxCommandEvent &event)
 	if( !p.get() )
 		return;
 
-	DBCache::iterator i = p->Add(m_parent, p->end());
+	DBCache::iterator i = p->Add(m_parent, *m_zones, p->end());
 	if( i != p->end() ) {
 		wxString text((*i)->GetDescription().c_str(), wxConvUTF8);
 
@@ -859,7 +923,7 @@ void BrowseMode::OnCopyRecord(wxCommandEvent &event)
 		return;
 
 	DBCache::iterator source = p->Get(m_current_record_item);
-	DBCache::iterator i = p->Add(m_parent, source);
+	DBCache::iterator i = p->Add(m_parent, *m_zones, source);
 	if( i != p->end() ) {
 		wxString text((*i)->GetDescription().c_str(), wxConvUTF8);
 
@@ -878,7 +942,7 @@ void BrowseMode::OnEditRecord(wxCommandEvent &event)
 		return;
 
 	DBCache::iterator i = p->Get(m_current_record_item);
-	if( p->Edit(m_parent, i) ) {
+	if( p->Edit(m_parent, *m_zones, i) ) {
 		wxString text((*i)->GetDescription().c_str(), wxConvUTF8);
 		m_record_list->SetItem(m_current_record_item, 0, text);
 	}

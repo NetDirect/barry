@@ -142,7 +142,8 @@ public:
 
 	// set editable to false if you just want to view record
 	// non-buildable records will always be non-editable regardless
-	virtual bool Edit(wxWindow *parent, bool editable) = 0;
+	virtual bool Edit(wxWindow *parent, bool editable,
+		const Barry::TimeZones &zones) = 0;
 	virtual std::string GetDescription() const = 0;
 
 	virtual bool IsBuildable() const { return false; }
@@ -193,14 +194,16 @@ class DBDataCache : public DataCache
 public:
 	DBDataCache(DataCache::IndexType index, const Barry::DBData &raw);
 
-	virtual bool Edit(wxWindow *parent, bool editable);
+	virtual bool Edit(wxWindow *parent, bool editable,
+		const Barry::TimeZones &zones);
 	virtual std::string GetDescription() const;
 };
 
 // returns true if GUI indicates change (i.e. if dialogreturns wxID_OK)
 #undef HANDLE_PARSER
 #define HANDLE_PARSER(dbname) \
-	bool EditRecord(wxWindow *parent, bool editable, Barry::dbname &rec);
+	bool EditRecord(wxWindow *parent, bool editable, \
+		const Barry::TimeZones &zones, Barry::dbname &rec);
 ALL_KNOWN_PARSER_TYPES
 
 //
@@ -237,10 +240,11 @@ public:
 		m_rec.SetIds(RecordT::GetDefaultRecType(), record_id);
 	}
 
-	virtual bool Edit(wxWindow *parent, bool editable)
+	virtual bool Edit(wxWindow *parent, bool editable,
+		const Barry::TimeZones &zones)
 	{
 		RecordT copy = m_rec;
-		bool changed = EditRecord(parent, editable, copy);
+		bool changed = EditRecord(parent, editable, zones, copy);
 		// FIXME - we could, at this point, add a (copy != m_rec)
 		// check here, to prevent writing a record that has not
 		// changed, but that would require using the FieldHandle<>
@@ -324,8 +328,10 @@ public:
 	int GetIndex(iterator record) const;
 	int GetIndex(const_iterator record) const;
 
-	iterator Add(wxWindow *parent, iterator copy_record);
-	bool Edit(wxWindow *parent, iterator record);
+	iterator Add(wxWindow *parent, const Barry::TimeZones &zones,
+		iterator copy_record);
+	bool Edit(wxWindow *parent, const Barry::TimeZones &zones,
+		iterator record);
 	bool Delete(wxWindow *parent, iterator record);
 
 	iterator begin() { return m_records.begin(); }
@@ -387,6 +393,7 @@ private:
 	std::auto_ptr<ThreadableDesktop> m_tdesktop;
 	std::auto_ptr<DBMap> m_dbmap;
 	Barry::DatabaseDatabase m_dbdb;
+	std::auto_ptr<Barry::TimeZones> m_zones;
 
 	// window controls
 	std::auto_ptr<wxBoxSizer> m_top_sizer;
