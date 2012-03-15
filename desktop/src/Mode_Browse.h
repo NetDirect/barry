@@ -48,7 +48,7 @@ public:
 // Holds the "right" to use the desktop, and this right expires with the
 // scope of this class, and no other code can use it while this object exists.
 //
-// Is copied around by the below auto_ptr<>
+// Is copied around by the below auto_ptr<> typedef.
 class DesktopInstance
 {
 private:
@@ -72,6 +72,15 @@ public:
 
 typedef std::auto_ptr<DesktopInstance> DesktopInstancePtr;
 
+//
+// ThreadableDesktop
+//
+/// Protection class that holds the GUIDesktopConnector (i.e. the main
+/// desktop instance) and a mutex.  To access the desktop object, call
+/// Get(), which locks access for the caller and returns the
+/// DesktopInstancePtr smart pointer.  The lock is released when
+/// the DesktopInstancePtr goes out of scope.
+///
 class ThreadableDesktop
 {
 private:
@@ -96,6 +105,14 @@ public:
 	}
 };
 
+//
+// DataCache
+//
+/// Abstract base class representing a single cached record in a database.
+/// Does not actually contain the record data (base classes hold that), but
+/// defines what can be done with such a record cache object. (eg. such as
+/// editing the record)
+///
 class DataCache
 {
 public:
@@ -137,6 +154,13 @@ public:
 
 };
 
+//
+// DataCachePtr
+//
+/// Basically a shared_ptr<DataCache>, but with the added operator<()
+/// overload so that it calls DataCache's operator<(), for sorting
+/// of objects via this pointer.
+///
 class DataCachePtr : public std::tr1::shared_ptr<DataCache>
 {
 public:
@@ -155,6 +179,13 @@ public:
 	}
 };
 
+//
+// DBDataCache
+//
+/// Derived class from DataCache that holds the raw data of a record that
+/// does not yet have a parser.  Unable to do much with such records in
+/// terms of editing, but still able to be cached in the DBMap.
+///
 class DBDataCache : public DataCache
 {
 	Barry::DBData m_raw;
@@ -172,6 +203,12 @@ public:
 	bool EditRecord(wxWindow *parent, bool editable, Barry::dbname &rec);
 ALL_KNOWN_PARSER_TYPES
 
+//
+// RecordCache<>
+//
+/// Template class derived from DataCache which holds the parsed record data
+/// for the templated record type.  Allows actions such as editing.
+///
 template <class RecordT>
 class RecordCache
 	: public DataCache
@@ -250,6 +287,12 @@ public:
 	}
 };
 
+//
+// DBCache
+//
+/// This is a container class that holds a std::list of DataCache-derived
+/// objects for all the records of a single database.
+///
 class DBCache : public Barry::AllRecordStore, public Barry::Parser
 {
 public:
@@ -301,6 +344,12 @@ public:
 		const Barry::IConverter *ic);
 };
 
+//
+// DBMap
+//
+/// A std::map based container that maps database names with their
+/// corresponding DBCaches.
+///
 class DBMap
 {
 public:
@@ -320,6 +369,11 @@ public:
 	DBCachePtr GetDBCache(const std::string &dbname);
 };
 
+//
+// BrowseMode
+//
+/// The Desktop GUI mode class for browsing databases and manipulating records.
+///
 class BrowseMode : public wxEvtHandler, public Mode
 {
 private:
