@@ -187,6 +187,8 @@ public:
 	TimeZones();
 
 	/// Extracts the time zone database from the given device.
+	/// Throws an exception if the device does not have a time zones
+	/// database.
 	explicit TimeZones(Barry::Mode::Desktop &desktop);
 
 	/// Static helper function that returns true if the device
