@@ -242,7 +242,9 @@ const FieldHandle<TimeZone>::ListT& TimeZone::GetFieldHandles()
 std::string TimeZone::GetDescription() const
 {
 	ostringstream oss;
-	oss << Name << " (" << dec << (UTCOffset / 60.0) << ")";
+	oss << Name <<
+		" (" << (UTCOffset > 0 ? "+" : "")
+		<< dec << (UTCOffset / 60.0) << ")";
 	return oss.str();
 }
 
