@@ -469,6 +469,17 @@ bool CalendarEditDlg::TransferDataToWindow()
 		}
 	}
 
+	// set the timezone choice only if the record's data is valid
+	m_TimezoneChoice->SetSelection(0);	// default to none
+	if( m_rec.TimeZoneValid ) {
+		TimeZones::const_iterator i = m_zones->Find(m_rec.TimeZoneCode);
+		if( i != m_zones->end() ) {
+			int array_index = i - m_zones->begin();
+			// select item, skipping 0's "none" option
+			m_TimezoneChoice->SetSelection(array_index + 1);
+		}
+	}
+
 	// Note that recur_choice values are (zero-based) in the following
 	// order:
 	//	None, Daily, Weekly, Monthly, Yearly
