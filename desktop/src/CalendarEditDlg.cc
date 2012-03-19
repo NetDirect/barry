@@ -472,6 +472,30 @@ bool CalendarEditDlg::TransferDataToWindow()
 		}
 	}
 
+#define SA_FREE 0
+#define SA_TENTATIVE 1
+#define SA_BUSY 2
+#define SA_OUT_OF_OFFICE 3
+	switch( m_rec.FreeBusyFlag )
+	{
+	case Barry::Calendar::Free:
+		m_ShowAsChoice->SetSelection(SA_FREE);
+		break;
+
+	case Barry::Calendar::Tentative:
+		m_ShowAsChoice->SetSelection(SA_TENTATIVE);
+		break;
+
+	case Barry::Calendar::Busy:
+	default:
+		m_ShowAsChoice->SetSelection(SA_BUSY);
+		break;
+
+	case Barry::Calendar::OutOfOffice:
+		m_ShowAsChoice->SetSelection(SA_OUT_OF_OFFICE);
+		break;
+	}
+
 	// Note that recur_choice values are (zero-based) in the following
 	// order:
 	//	None, Daily, Weekly, Monthly, Yearly
@@ -573,6 +597,26 @@ bool CalendarEditDlg::TransferDataFromWindow()
 
 	int span = ((m_reminder_hours * 60) + m_reminder_minutes) * 60;
 	m_rec.NotificationTime.Time = m_rec.StartTime.Time + span;
+
+	switch( m_ShowAsChoice->GetSelection() )
+	{
+	case SA_FREE:
+		m_rec.FreeBusyFlag = Barry::Calendar::Free;
+		break;
+
+	case SA_TENTATIVE:
+		m_rec.FreeBusyFlag = Barry::Calendar::Tentative;
+		break;
+
+	case SA_BUSY:
+	default:
+		m_rec.FreeBusyFlag = Barry::Calendar::Busy;
+		break;
+
+	case SA_OUT_OF_OFFICE:
+		m_rec.FreeBusyFlag = Barry::Calendar::OutOfOffice;
+		break;
+	}
 
 	// set the timezone choice only if the record's data is valid
 	int sel = m_TimezoneChoice->GetSelection();
