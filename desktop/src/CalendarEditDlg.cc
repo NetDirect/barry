@@ -212,13 +212,7 @@ void CalendarEditDlg::OnAllDayEvent(wxCommandEvent &event)
 		m_DurationMinutesSpinner->SetValue(0);
 	}
 
-	// disable start time, end time, duration
-	m_StartHoursSpinner->Enable(!checked);
-	m_StartMinutesSpinner->Enable(!checked);
-	m_EndHoursSpinner->Enable(!checked);
-	m_EndMinutesSpinner->Enable(!checked);
-	m_DurationHoursSpinner->Enable(!checked);
-	m_DurationMinutesSpinner->Enable(!checked);
+	EnableAllDayMode(checked);
 }
 
 void CalendarEditDlg::OnStartDateChanged(wxDateEvent &event)
@@ -477,6 +471,8 @@ bool CalendarEditDlg::TransferDataToWindow()
 			m_reminder_minutes = 15;
 		}
 	}
+
+	EnableAllDayMode(m_rec.AllDayEvent);
 
 	// set the timezone choice only if the record's data is valid
 	m_TimezoneChoice->SetSelection(0);	// default to none
@@ -737,5 +733,16 @@ void CalendarEditDlg::UpdateEndDate()
 	m_EndDateCtrl->SetValue(wxDateTime(m_EndDateObj.m_date));
 	m_EndHoursSpinner->SetValue(m_EndDateObj.m_hour);
 	m_EndMinutesSpinner->SetValue(m_EndDateObj.m_min);
+}
+
+void CalendarEditDlg::EnableAllDayMode(bool all_day)
+{
+	// if in all day mode, disable start time, end time, duration spinners
+	m_StartHoursSpinner->Enable(!all_day);
+	m_StartMinutesSpinner->Enable(!all_day);
+	m_EndHoursSpinner->Enable(!all_day);
+	m_EndMinutesSpinner->Enable(!all_day);
+	m_DurationHoursSpinner->Enable(!all_day);
+	m_DurationMinutesSpinner->Enable(!all_day);
 }
 

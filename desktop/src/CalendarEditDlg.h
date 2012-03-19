@@ -146,6 +146,7 @@ protected:
 	void UpdateDuration();
 	void UpdateEndDate();
 	void RedoLayout();
+	void EnableAllDayMode(bool all_day = true);
 
 public:
 	CalendarEditDlg(wxWindow* parent, Barry::Calendar &rec, bool editable,
