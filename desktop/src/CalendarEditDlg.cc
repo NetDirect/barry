@@ -66,21 +66,21 @@ CalendarEditDlg::CalendarEditDlg(wxWindow* parent,
 	m_Location = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
 	static_line_1 = new wxStaticLine(this, wxID_ANY);
 	label_4 = new wxStaticText(this, wxID_ANY, wxT("All Day Event:"));
-	m_AllDayCheck = new wxCheckBox(this, wxID_ANY, wxEmptyString);
+	m_AllDayCheck = new wxCheckBox(this, Dialog_CalendarEdit_AllDayCheck, wxEmptyString);
 	label_5 = new wxStaticText(this, wxID_ANY, wxT("Start:"));
-	m_StartDateCtrl = new wxDatePickerCtrl(this, wxID_ANY, wxDefaultDateTime, wxDefaultPosition, wxDefaultSize, wxDP_DROPDOWN|wxDP_SHOWCENTURY);
-	m_StartHoursSpinner = new wxSpinCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDefaultSize, wxSP_WRAP|wxTE_NOHIDESEL, 0, 23);
+	m_StartDateCtrl = new wxDatePickerCtrl(this, Dialog_CalendarEdit_StartDateCtrl, wxDefaultDateTime, wxDefaultPosition, wxDefaultSize, wxDP_DROPDOWN|wxDP_SHOWCENTURY);
+	m_StartHoursSpinner = new wxSpinCtrl(this, Dialog_CalendarEdit_StartHoursSpinner, wxT(""), wxDefaultPosition, wxDefaultSize, wxSP_WRAP|wxTE_NOHIDESEL, 0, 23);
 	label_11 = new wxStaticText(this, wxID_ANY, wxT(":"));
-	m_StartMinutesSpinner = new wxSpinCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDefaultSize, wxSP_WRAP|wxTE_NOHIDESEL, 0, 59);
+	m_StartMinutesSpinner = new wxSpinCtrl(this, Dialog_CalendarEdit_StartMinutesSpinner, wxT(""), wxDefaultPosition, wxDefaultSize, wxSP_WRAP|wxTE_NOHIDESEL, 0, 59);
 	label_6 = new wxStaticText(this, wxID_ANY, wxT("End:"));
-	m_EndDateCtrl = new wxDatePickerCtrl(this, wxID_ANY, wxDefaultDateTime, wxDefaultPosition, wxDefaultSize, wxDP_DROPDOWN|wxDP_SHOWCENTURY);
-	m_EndHoursSpinner = new wxSpinCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDefaultSize, wxSP_WRAP|wxTE_NOHIDESEL, 0, 23);
+	m_EndDateCtrl = new wxDatePickerCtrl(this, Dialog_CalendarEdit_EndDateCtrl, wxDefaultDateTime, wxDefaultPosition, wxDefaultSize, wxDP_DROPDOWN|wxDP_SHOWCENTURY);
+	m_EndHoursSpinner = new wxSpinCtrl(this, Dialog_CalendarEdit_EndHoursSpinner, wxT(""), wxDefaultPosition, wxDefaultSize, wxSP_WRAP|wxTE_NOHIDESEL, 0, 23);
 	label_12 = new wxStaticText(this, wxID_ANY, wxT(":"));
-	m_EndMinutesSpinner = new wxSpinCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDefaultSize, wxSP_WRAP|wxTE_NOHIDESEL, 0, 59);
+	m_EndMinutesSpinner = new wxSpinCtrl(this, Dialog_CalendarEdit_EndMinutesSpinner, wxT(""), wxDefaultPosition, wxDefaultSize, wxSP_WRAP|wxTE_NOHIDESEL, 0, 59);
 	label_7 = new wxStaticText(this, wxID_ANY, wxT("Duration:"));
-	m_DurationHoursSpinner = new wxSpinCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 0, 999);
+	m_DurationHoursSpinner = new wxSpinCtrl(this, Dialog_CalendarEdit_DurationHoursSpinner, wxT(""), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 0, 999);
 	label_13 = new wxStaticText(this, wxID_ANY, wxT("hours and"));
-	m_DurationMinutesSpinner = new wxSpinCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 0, 59);
+	m_DurationMinutesSpinner = new wxSpinCtrl(this, Dialog_CalendarEdit_DurationMinutesSpinner, wxT(""), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 0, 59);
 	label_17 = new wxStaticText(this, wxID_ANY, wxT("minutes."));
 	label_8 = new wxStaticText(this, wxID_ANY, wxT("Time Zone:"));
 	const wxString m_TimezoneChoice_choices[] = {
@@ -109,7 +109,7 @@ CalendarEditDlg::CalendarEditDlg(wxWindow* parent,
         wxT("Monthly"),
         wxT("Yearly")
     };
-	m_RecurrenceChoice = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 5, m_RecurrenceChoice_choices, 0);
+	m_RecurrenceChoice = new wxChoice(this, Dialog_CalendarEdit_RecurrenceChoice, wxDefaultPosition, wxDefaultSize, 5, m_RecurrenceChoice_choices, 0);
 	label_19 = new wxStaticText(this, wxID_ANY, wxT("Interval:"));
 	label_23 = new wxStaticText(this, wxID_ANY, wxT("Every"));
 	m_IntervalSpinner = new wxSpinCtrl(this, wxID_ANY, wxT("1"), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 1, 999);
@@ -125,7 +125,7 @@ CalendarEditDlg::CalendarEditDlg(wxWindow* parent,
 	label_21 = new wxStaticText(this, wxID_ANY, wxT("Relative Date:"));
 	m_RelativeDateCheck = new wxCheckBox(this, wxID_ANY, wxEmptyString);
 	label_22 = new wxStaticText(this, wxID_ANY, wxT("End Date:"));
-	m_NeverEndsCheck = new wxCheckBox(this, wxID_ANY, wxT("Never ends"));
+	m_NeverEndsCheck = new wxCheckBox(this, Dialog_CalendarEdit_NeverEndsCheck, wxT("Never ends"));
 	m_RecurEndDateCtrl = new wxDatePickerCtrl(this, wxID_ANY, wxDefaultDateTime, wxDefaultPosition, wxDefaultSize, wxDP_DROPDOWN|wxDP_SHOWCENTURY);
 	static_line_3 = new wxStaticLine(this, wxID_ANY);
 	label_14 = new wxStaticText(this, wxID_ANY, wxT("Organizer:"));
@@ -174,17 +174,17 @@ void CalendarEditDlg::RedoLayout()
 
 BEGIN_EVENT_TABLE(CalendarEditDlg, wxDialog)
 	// begin wxGlade: CalendarEditDlg::event_table
-	EVT_CHECKBOX(wxID_ANY, CalendarEditDlg::OnAllDayEvent)
-	EVT_DATE_CHANGED(wxID_ANY, CalendarEditDlg::OnStartDateChanged)
-	EVT_SPINCTRL(wxID_ANY, CalendarEditDlg::OnStartHoursSpin)
-	EVT_SPINCTRL(wxID_ANY, CalendarEditDlg::OnStartMinutesSpin)
-	EVT_DATE_CHANGED(wxID_ANY, CalendarEditDlg::OnEndDateChanged)
-	EVT_SPINCTRL(wxID_ANY, CalendarEditDlg::OnEndHoursSpin)
-	EVT_SPINCTRL(wxID_ANY, CalendarEditDlg::OnEndMinutesSpin)
-	EVT_SPINCTRL(wxID_ANY, CalendarEditDlg::OnDurationHoursSpin)
-	EVT_SPINCTRL(wxID_ANY, CalendarEditDlg::OnDurationMinutesSpin)
-	EVT_CHOICE(wxID_ANY, CalendarEditDlg::OnRecurrenceChoice)
-	EVT_CHECKBOX(wxID_ANY, CalendarEditDlg::OnEndDateCheckbox)
+	EVT_CHECKBOX(Dialog_CalendarEdit_AllDayCheck, CalendarEditDlg::OnAllDayEvent)
+	EVT_DATE_CHANGED(Dialog_CalendarEdit_StartDateCtrl, CalendarEditDlg::OnStartDateChanged)
+	EVT_SPINCTRL(Dialog_CalendarEdit_StartHoursSpinner, CalendarEditDlg::OnStartHoursSpin)
+	EVT_SPINCTRL(Dialog_CalendarEdit_StartMinutesSpinner, CalendarEditDlg::OnStartMinutesSpin)
+	EVT_DATE_CHANGED(Dialog_CalendarEdit_EndDateCtrl, CalendarEditDlg::OnEndDateChanged)
+	EVT_SPINCTRL(Dialog_CalendarEdit_EndHoursSpinner, CalendarEditDlg::OnEndHoursSpin)
+	EVT_SPINCTRL(Dialog_CalendarEdit_EndMinutesSpinner, CalendarEditDlg::OnEndMinutesSpin)
+	EVT_SPINCTRL(Dialog_CalendarEdit_DurationHoursSpinner, CalendarEditDlg::OnDurationHoursSpin)
+	EVT_SPINCTRL(Dialog_CalendarEdit_DurationMinutesSpinner, CalendarEditDlg::OnDurationMinutesSpin)
+	EVT_CHOICE(Dialog_CalendarEdit_RecurrenceChoice, CalendarEditDlg::OnRecurrenceChoice)
+	EVT_CHECKBOX(Dialog_CalendarEdit_NeverEndsCheck, CalendarEditDlg::OnEndDateCheckbox)
 	// end wxGlade
 END_EVENT_TABLE();
 
@@ -202,13 +202,11 @@ void CalendarEditDlg::OnStartDateChanged(wxDateEvent &event)
 	wxLogDebug(wxT("Event handler (CalendarEditDlg::OnStartDateChanged) not implemented yet")); //notify the user that he hasn't implemented the event handler yet
 }
 
-
 void CalendarEditDlg::OnStartHoursSpin(wxSpinEvent &event)
 {
 	event.Skip();
 	wxLogDebug(wxT("Event handler (CalendarEditDlg::OnStartHoursSpin) not implemented yet")); //notify the user that he hasn't implemented the event handler yet
 }
-
 
 void CalendarEditDlg::OnStartMinutesSpin(wxSpinEvent &event)
 {
@@ -216,13 +214,11 @@ void CalendarEditDlg::OnStartMinutesSpin(wxSpinEvent &event)
 	wxLogDebug(wxT("Event handler (CalendarEditDlg::OnStartMinutesSpin) not implemented yet")); //notify the user that he hasn't implemented the event handler yet
 }
 
-
 void CalendarEditDlg::OnEndDateChanged(wxDateEvent &event)
 {
 	event.Skip();
 	wxLogDebug(wxT("Event handler (CalendarEditDlg::OnEndDateChanged) not implemented yet")); //notify the user that he hasn't implemented the event handler yet
 }
-
 
 void CalendarEditDlg::OnEndHoursSpin(wxSpinEvent &event)
 {
@@ -230,13 +226,11 @@ void CalendarEditDlg::OnEndHoursSpin(wxSpinEvent &event)
 	wxLogDebug(wxT("Event handler (CalendarEditDlg::OnEndHoursSpin) not implemented yet")); //notify the user that he hasn't implemented the event handler yet
 }
 
-
 void CalendarEditDlg::OnEndMinutesSpin(wxSpinEvent &event)
 {
 	event.Skip();
 	wxLogDebug(wxT("Event handler (CalendarEditDlg::OnEndMinutesSpin) not implemented yet")); //notify the user that he hasn't implemented the event handler yet
 }
-
 
 void CalendarEditDlg::OnDurationHoursSpin(wxSpinEvent &event)
 {
@@ -244,13 +238,11 @@ void CalendarEditDlg::OnDurationHoursSpin(wxSpinEvent &event)
 	wxLogDebug(wxT("Event handler (CalendarEditDlg::OnDurationHoursSpin) not implemented yet")); //notify the user that he hasn't implemented the event handler yet
 }
 
-
 void CalendarEditDlg::OnDurationMinutesSpin(wxSpinEvent &event)
 {
 	event.Skip();
 	wxLogDebug(wxT("Event handler (CalendarEditDlg::OnDurationMinutesSpin) not implemented yet")); //notify the user that he hasn't implemented the event handler yet
 }
-
 
 void CalendarEditDlg::OnRecurrenceChoice(wxCommandEvent &event)
 {
