@@ -25,6 +25,7 @@
 #include "wxval.h"
 
 using namespace std;
+using namespace Barry;
 
 // begin wxGlade: ::extracode
 // end wxGlade
@@ -50,6 +51,13 @@ CalendarEditDlg::CalendarEditDlg(wxWindow* parent,
 	// set all weekday 'bits' to false
 	for( int i = 0; i < 7; i++ )
 		m_weekdays[i] = false;
+
+	if( editable ) {
+		bottom_buttons = CreateButtonSizer(wxOK | wxCANCEL);
+	}
+	else {
+		bottom_buttons = CreateButtonSizer(wxCANCEL);
+	}
 
 	// begin wxGlade: CalendarEditDlg::CalendarEditDlg
 	label_1 = new wxStaticText(this, wxID_ANY, wxT("Subject:"));
@@ -141,6 +149,8 @@ CalendarEditDlg::CalendarEditDlg(wxWindow* parent,
 	do_layout();
 	// end wxGlade
 
+	m_top_sizer->Add(bottom_buttons, 0, wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND, 5);
+
 	// fill the time zone control with real time zones
 	m_TimezoneChoice->Clear();
 	m_TimezoneChoice->Append(wxT("Assume Local Timezone"), (void*)0);
@@ -153,9 +163,14 @@ CalendarEditDlg::CalendarEditDlg(wxWindow* parent,
 	m_TimezoneChoice->SetSelection(0);
 
 	// layout again, in case sizes are different
-	do_layout();
+	RedoLayout();
 }
 
+void CalendarEditDlg::RedoLayout()
+{
+	m_top_sizer->Fit(this);
+	Layout();
+}
 
 BEGIN_EVENT_TABLE(CalendarEditDlg, wxDialog)
 	// begin wxGlade: CalendarEditDlg::event_table
@@ -419,6 +434,8 @@ void CalendarEditDlg::do_layout()
 	sizer_surround->Fit(this);
 	Layout();
 	// end wxGlade
+
+	m_top_sizer = sizer_surround;
 }
 
 bool CalendarEditDlg::TransferDataToWindow()

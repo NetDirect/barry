@@ -136,7 +136,14 @@ protected:
 	wxTextCtrl* m_NotesText;
 	// end wxGlade
 
+	wxSizer *bottom_buttons;
+	wxSizer *m_top_sizer;
+
 	DECLARE_EVENT_TABLE(); // sets to protected:
+
+protected:
+	// helper functions
+	void RedoLayout();
 
 public:
 	CalendarEditDlg(wxWindow* parent, Barry::Calendar &rec, bool editable,
