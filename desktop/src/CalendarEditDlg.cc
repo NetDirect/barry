@@ -110,11 +110,11 @@ CalendarEditDlg::CalendarEditDlg(wxWindow* parent,
         wxT("Yearly")
     };
 	m_RecurrenceChoice = new wxChoice(this, Dialog_CalendarEdit_RecurrenceChoice, wxDefaultPosition, wxDefaultSize, 5, m_RecurrenceChoice_choices, 0);
-	label_19 = new wxStaticText(this, wxID_ANY, wxT("Interval:"));
-	label_23 = new wxStaticText(this, wxID_ANY, wxT("Every"));
+	RecurIntervalLabel = new wxStaticText(this, wxID_ANY, wxT("Interval:"));
+	RecurIntervalLabelB = new wxStaticText(this, wxID_ANY, wxT("Every"));
 	m_IntervalSpinner = new wxSpinCtrl(this, wxID_ANY, wxT("1"), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 1, 999);
 	m_IntervalUnitLabel = new wxStaticText(this, wxID_ANY, wxT("days? weeks? months?"), wxDefaultPosition, wxDefaultSize, wxST_NO_AUTORESIZE);
-	label_20 = new wxStaticText(this, wxID_ANY, wxT("Days:"));
+	RecurDaysLabel = new wxStaticText(this, wxID_ANY, wxT("Days:"));
 	m_SunCheck = new wxCheckBox(this, wxID_ANY, wxT("S"));
 	m_MonCheck = new wxCheckBox(this, wxID_ANY, wxT("M"));
 	m_TueCheck = new wxCheckBox(this, wxID_ANY, wxT("T"));
@@ -122,9 +122,9 @@ CalendarEditDlg::CalendarEditDlg(wxWindow* parent,
 	m_ThuCheck = new wxCheckBox(this, wxID_ANY, wxT("T"));
 	m_FriCheck = new wxCheckBox(this, wxID_ANY, wxT("F"));
 	m_SatCheck = new wxCheckBox(this, wxID_ANY, wxT("S"));
-	label_21 = new wxStaticText(this, wxID_ANY, wxT("Relative Date:"));
+	RecurRelativeDateLabel = new wxStaticText(this, wxID_ANY, wxT("Relative Date:"));
 	m_RelativeDateCheck = new wxCheckBox(this, wxID_ANY, wxEmptyString);
-	label_22 = new wxStaticText(this, wxID_ANY, wxT("End Date:"));
+	RecurEndDateLabel = new wxStaticText(this, wxID_ANY, wxT("End Date:"));
 	m_NeverEndsCheck = new wxCheckBox(this, Dialog_CalendarEdit_NeverEndsCheck, wxT("Never ends"));
 	m_RecurEndDateCtrl = new wxDatePickerCtrl(this, wxID_ANY, wxDefaultDateTime, wxDefaultPosition, wxDefaultSize, wxDP_DROPDOWN|wxDP_SHOWCENTURY);
 	static_line_3 = new wxStaticLine(this, wxID_ANY);
@@ -257,8 +257,8 @@ void CalendarEditDlg::OnDurationMinutesSpin(wxSpinEvent &event)
 
 void CalendarEditDlg::OnRecurrenceChoice(wxCommandEvent &event)
 {
-	event.Skip();
-	wxLogDebug(wxT("Event handler (CalendarEditDlg::OnRecurrenceChoice) not implemented yet")); //notify the user that he hasn't implemented the event handler yet
+	TransferDataFromWindow();
+	EnableRecurMode(m_rec.Recurring);
 }
 
 
@@ -315,7 +315,7 @@ void CalendarEditDlg::set_properties()
 	m_ThuCheck->SetValidator(wxGenericValidator(&m_weekdays[4]));
 	m_FriCheck->SetValidator(wxGenericValidator(&m_weekdays[5]));
 	m_SatCheck->SetValidator(wxGenericValidator(&m_weekdays[6]));
-	label_21->SetToolTip(wxT("Relative monthly or yearly dates take the weekday of the start date into account. (eg. every first Sunday of month)"));
+	RecurRelativeDateLabel->SetToolTip(wxT("Relative monthly or yearly dates take the weekday of the start date into account. (eg. every first Sunday of month)"));
 	m_RelativeDateCheck->SetToolTip(wxT("Relative monthly or yearly dates take the weekday of the start date into account. (eg. every first Sunday of month)"));
 	m_RelativeDateCheck->SetValidator(wxGenericValidator(&m_relative_date));
 	m_NeverEndsCheck->SetValidator(wxGenericValidator(&m_rec.Perpetual));
@@ -395,12 +395,12 @@ void CalendarEditDlg::do_layout()
 	sizer_1->Add(static_line_2, 0, wxALL|wxEXPAND, 5);
 	grid_sizer_4->Add(label_18, 0, wxALIGN_CENTER_VERTICAL, 0);
 	grid_sizer_4->Add(m_RecurrenceChoice, 0, 0, 0);
-	grid_sizer_4->Add(label_19, 0, wxALIGN_CENTER_VERTICAL, 0);
-	m_IntervalCtrlsSizer->Add(label_23, 0, wxRIGHT|wxALIGN_CENTER_VERTICAL, 5);
+	grid_sizer_4->Add(RecurIntervalLabel, 0, wxALIGN_CENTER_VERTICAL, 0);
+	m_IntervalCtrlsSizer->Add(RecurIntervalLabelB, 0, wxRIGHT|wxALIGN_CENTER_VERTICAL, 5);
 	m_IntervalCtrlsSizer->Add(m_IntervalSpinner, 0, wxRIGHT, 5);
 	m_IntervalCtrlsSizer->Add(m_IntervalUnitLabel, 1, wxALIGN_CENTER_VERTICAL, 0);
 	grid_sizer_4->Add(m_IntervalCtrlsSizer, 1, wxEXPAND, 0);
-	grid_sizer_4->Add(label_20, 0, wxALIGN_CENTER_VERTICAL, 0);
+	grid_sizer_4->Add(RecurDaysLabel, 0, wxALIGN_CENTER_VERTICAL, 0);
 	m_DaysCtrlsSizer->Add(m_SunCheck, 0, wxRIGHT, 5);
 	m_DaysCtrlsSizer->Add(m_MonCheck, 0, wxRIGHT, 5);
 	m_DaysCtrlsSizer->Add(m_TueCheck, 0, wxRIGHT, 5);
@@ -409,9 +409,9 @@ void CalendarEditDlg::do_layout()
 	m_DaysCtrlsSizer->Add(m_FriCheck, 0, wxRIGHT, 5);
 	m_DaysCtrlsSizer->Add(m_SatCheck, 0, wxRIGHT, 5);
 	grid_sizer_4->Add(m_DaysCtrlsSizer, 1, wxEXPAND, 0);
-	grid_sizer_4->Add(label_21, 0, wxALIGN_CENTER_VERTICAL, 0);
+	grid_sizer_4->Add(RecurRelativeDateLabel, 0, wxALIGN_CENTER_VERTICAL, 0);
 	grid_sizer_4->Add(m_RelativeDateCheck, 0, 0, 0);
-	grid_sizer_4->Add(label_22, 0, wxALIGN_CENTER_VERTICAL, 0);
+	grid_sizer_4->Add(RecurEndDateLabel, 0, wxALIGN_CENTER_VERTICAL, 0);
 	sizer_8->Add(m_NeverEndsCheck, 0, wxRIGHT|wxALIGN_CENTER_VERTICAL, 10);
 	sizer_8->Add(m_RecurEndDateCtrl, 0, wxALIGN_CENTER_VERTICAL, 0);
 	grid_sizer_4->Add(sizer_8, 1, wxEXPAND, 0);
@@ -579,6 +579,8 @@ bool CalendarEditDlg::TransferDataToWindow()
 		m_RecurEndDateObj.Set(m_rec.RecurringEndTime.Time);
 	}
 
+	EnableRecurMode(m_rec.Recurring);
+
 	m_strings.SyncToWx();
 
 	return wxDialog::TransferDataToWindow();
@@ -744,5 +746,28 @@ void CalendarEditDlg::EnableAllDayMode(bool all_day)
 	m_EndMinutesSpinner->Enable(!all_day);
 	m_DurationHoursSpinner->Enable(!all_day);
 	m_DurationMinutesSpinner->Enable(!all_day);
+}
+
+void CalendarEditDlg::EnableRecurMode(bool recur)
+{
+	RecurIntervalLabel->Show(recur);
+	RecurIntervalLabelB->Show(recur);
+	m_IntervalSpinner->Show(recur);
+	m_IntervalUnitLabel->Show(recur);
+	RecurDaysLabel->Show(recur);
+	m_SunCheck->Show(recur);
+	m_MonCheck->Show(recur);
+	m_TueCheck->Show(recur);
+	m_WedCheck->Show(recur);
+	m_ThuCheck->Show(recur);
+	m_FriCheck->Show(recur);
+	m_SatCheck->Show(recur);
+	RecurRelativeDateLabel->Show(recur);
+	m_RelativeDateCheck->Show(recur);
+	RecurEndDateLabel->Show(recur);
+	m_NeverEndsCheck->Show(recur);
+	m_RecurEndDateCtrl->Show(recur);
+
+	RedoLayout();
 }
 

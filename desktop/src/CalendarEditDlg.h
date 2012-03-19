@@ -105,11 +105,11 @@ protected:
 	wxStaticLine* static_line_2;
 	wxStaticText* label_18;
 	wxChoice* m_RecurrenceChoice;
-	wxStaticText* label_19;
-	wxStaticText* label_23;
+	wxStaticText* RecurIntervalLabel;
+	wxStaticText* RecurIntervalLabelB;
 	wxSpinCtrl* m_IntervalSpinner;
 	wxStaticText* m_IntervalUnitLabel;
-	wxStaticText* label_20;
+	wxStaticText* RecurDaysLabel;
 	wxCheckBox* m_SunCheck;
 	wxCheckBox* m_MonCheck;
 	wxCheckBox* m_TueCheck;
@@ -117,9 +117,9 @@ protected:
 	wxCheckBox* m_ThuCheck;
 	wxCheckBox* m_FriCheck;
 	wxCheckBox* m_SatCheck;
-	wxStaticText* label_21;
+	wxStaticText* RecurRelativeDateLabel;
 	wxCheckBox* m_RelativeDateCheck;
-	wxStaticText* label_22;
+	wxStaticText* RecurEndDateLabel;
 	wxCheckBox* m_NeverEndsCheck;
 	wxDatePickerCtrl* m_RecurEndDateCtrl;
 	wxStaticLine* static_line_3;
@@ -147,6 +147,7 @@ protected:
 	void UpdateEndDate();
 	void RedoLayout();
 	void EnableAllDayMode(bool all_day = true);
+	void EnableRecurMode(bool recur = true);
 
 public:
 	CalendarEditDlg(wxWindow* parent, Barry::Calendar &rec, bool editable,
