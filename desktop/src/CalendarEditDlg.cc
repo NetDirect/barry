@@ -450,14 +450,16 @@ bool CalendarEditDlg::TransferDataToWindow()
 	m_EndDateObj.Set(m_rec.EndTime.Time);
 
 	int duration = m_rec.EndTime.Time - m_rec.StartTime.Time;
-	if( duration > 0 ) {
+	duration /= 60;			// convert to minutes
+	if( m_rec.EndTime.Time >= m_rec.StartTime.Time ) {
 		m_duration_hours = duration / 60;
 		m_duration_minutes = duration % 60;
 	}
 
 	if( m_rec.NotificationTime.Time ) {
 		int span = m_rec.StartTime.Time - m_rec.NotificationTime.Time;
-		if( span > 0 ) {
+		span /= 60;		// convert to minutes
+		if( m_rec.StartTime.Time > m_rec.NotificationTime.Time ) {
 			m_reminder_hours = span / 60;
 			m_reminder_minutes = span % 60;
 		}
