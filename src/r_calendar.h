@@ -107,7 +107,13 @@ public:
 					// set to your current time zone
 					// as a good default
 	bool TimeZoneValid;		// true if the record contained a
-					// time zone code
+					// time zone code, or in other words,
+					// true if TimeZoneCode contains
+					// valid data.  Be sure to set this to
+					// to true if you desire to write a
+					// calendar item with a time zone
+					// to the device, otherwise, the builder
+					// code will skip the time zone.
 
 	// unknown
 	UnknownsType Unknowns;

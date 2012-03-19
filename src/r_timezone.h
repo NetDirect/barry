@@ -204,6 +204,9 @@ public:
 	iterator end() { return m_list.end(); }
 	const_iterator end() const { return m_list.end(); }
 
+	TimeZone& operator[](int i) { return m_list[i]; }
+	const TimeZone& operator[](int i) const { return m_list[i]; }
+
 	// utility functions - return end() if not found
 	iterator Find(int index);
 	const_iterator Find(int index) const;
