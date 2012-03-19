@@ -596,7 +596,7 @@ bool CalendarEditDlg::TransferDataFromWindow()
 	}
 
 	int span = ((m_reminder_hours * 60) + m_reminder_minutes) * 60;
-	m_rec.NotificationTime.Time = m_rec.StartTime.Time + span;
+	m_rec.NotificationTime.Time = m_rec.StartTime.Time - span;
 
 	switch( m_ShowAsChoice->GetSelection() )
 	{
