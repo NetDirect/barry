@@ -275,7 +275,7 @@ void CalendarEditDlg::OnEndDateCheckbox(wxCommandEvent &event)
 void CalendarEditDlg::set_properties()
 {
 	// begin wxGlade: CalendarEditDlg::set_properties
-	SetTitle(wxT("dialog_1"));
+	SetTitle(wxT("Calendar Event"));
 	m_Subject->SetFocus();
 	m_Subject->SetValidator(wxTextValidator(wxFILTER_NONE, m_strings.Add(m_rec.Subject)));
 	m_Location->SetValidator(wxTextValidator(wxFILTER_NONE, m_strings.Add(m_rec.Location)));

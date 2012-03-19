@@ -4,7 +4,7 @@
 <application path="CalendarEditDlg.cc" name="" class="" option="0" language="C++" top_window="dialog_1" encoding="ISO-8859-1" use_gettext="0" overwrite="0" use_new_namespace="1" for_version="2.8" is_template="0" indent_amount="1" indent_symbol="tab" source_extension=".cc" header_extension=".h">
     <object class="CalendarEditDlg" name="dialog_1" base="EditDialog">
         <style>wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER|wxTHICK_FRAME</style>
-        <title>dialog_1</title>
+        <title>Calendar Event</title>
         <object class="wxBoxSizer" name="sizer_surround" base="EditBoxSizer">
             <orient>wxVERTICAL</orient>
             <object class="sizeritem">
