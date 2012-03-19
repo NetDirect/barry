@@ -560,6 +560,91 @@ bool CalendarEditDlg::TransferDataFromWindow()
 	if( !wxDialog::TransferDataFromWindow() )
 		return false;
 
+	m_strings.SyncToStd();
+
+	m_rec.Organizer.clear();
+	m_rec.Organizer.AddCommaSeparated(m_organizer);
+
+	m_rec.Invited.clear();
+	m_rec.Invited.AddCommaSeparated(m_invited);
+
+	m_rec.AcceptedBy.clear();
+	m_rec.AcceptedBy.AddCommaSeparated(m_accepted_by);
+
+	m_rec.StartTime.Time = m_StartDateObj.Get();
+	m_rec.EndTime.Time = m_EndDateObj.Get();
+	if( m_rec.EndTime.Time < m_rec.StartTime.Time ) {
+		wxMessageBox(_T("Start time must come before end time."),
+			_T("Validation Error"), wxOK | wxICON_INFORMATION);
+		return false;
+	}
+
+	int span = ((m_reminder_hours * 60) + m_reminder_minutes) * 60;
+	m_rec.NotificationTime.Time = m_rec.StartTime.Time + span;
+
+	// set the timezone choice only if the record's data is valid
+	int sel = m_TimezoneChoice->GetSelection();
+	if( sel > 0 ) {
+		m_rec.TimeZoneCode = (*m_zones)[sel-1].Index;
+		m_rec.TimeZoneValid = true;
+	}
+	else {
+		// default was selected
+		m_rec.TimeZoneValid = false;
+	}
+
+	// Note that recur_choice values are (zero-based) in the following
+	// order:
+	//	None, Daily, Weekly, Monthly, Yearly
+	switch( m_recur_choice )
+	{
+	case RC_NONE:
+	default:
+		m_rec.Recurring = false;
+		break;
+
+	case RC_DAILY:
+		m_rec.Recurring = true;
+		m_rec.RecurringType = Barry::Calendar::Day;
+		break;
+
+	case RC_WEEKLY:
+		m_rec.Recurring = true;
+		m_rec.RecurringType = Barry::Calendar::Week;
+		m_rec.WeekDays = 0;
+		if( m_weekdays[0] ) m_rec.WeekDays |= CAL_WD_SUN;
+		if( m_weekdays[1] ) m_rec.WeekDays |= CAL_WD_MON;
+		if( m_weekdays[2] ) m_rec.WeekDays |= CAL_WD_TUE;
+		if( m_weekdays[3] ) m_rec.WeekDays |= CAL_WD_WED;
+		if( m_weekdays[4] ) m_rec.WeekDays |= CAL_WD_THU;
+		if( m_weekdays[5] ) m_rec.WeekDays |= CAL_WD_FRI;
+		if( m_weekdays[6] ) m_rec.WeekDays |= CAL_WD_SAT;
+		break;
+
+	case RC_MONTHLY:
+		m_rec.Recurring = true;
+		if( m_relative_date )
+			m_rec.RecurringType = Barry::Calendar::MonthByDay;
+		else
+			m_rec.RecurringType = Barry::Calendar::MonthByDate;
+		break;
+
+	case RC_YEARLY:
+		m_rec.Recurring = true;
+		if( m_relative_date )
+			m_rec.RecurringType = Barry::Calendar::YearByDay;
+		else
+			m_rec.RecurringType = Barry::Calendar::YearByDate;
+		break;
+
+	}
+
+	m_rec.Interval = m_interval;
+
+	if( !m_rec.Perpetual ) {
+		m_rec.RecurringEndTime.Time = m_RecurEndDateObj.Get();
+	}
+
 	return true;
 }
 
