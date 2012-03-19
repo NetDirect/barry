@@ -191,57 +191,74 @@ END_EVENT_TABLE();
 
 void CalendarEditDlg::OnAllDayEvent(wxCommandEvent &event)
 {
-	event.Skip();
-	wxLogDebug(wxT("Event handler (CalendarEditDlg::OnAllDayEvent) not implemented yet")); //notify the user that he hasn't implemented the event handler yet
-}
+	bool checked = m_AllDayCheck->IsChecked();
 
+	if( checked ) {
+		// set start time to date at 00:00 and end time at
+		// day + 1 at 00:00
+
+		// time
+		m_StartHoursSpinner->SetValue(0);
+		m_StartMinutesSpinner->SetValue(0);
+		m_EndHoursSpinner->SetValue(0);
+		m_EndMinutesSpinner->SetValue(0);
+
+		// date
+		m_StartDateCtrl->SetValue(m_StartDateCtrl->GetValue().GetDateOnly());
+		m_EndDateCtrl->SetValue(m_StartDateCtrl->GetValue().GetDateOnly() + wxDateSpan::Day());
+
+		// duration
+		m_DurationHoursSpinner->SetValue(24);
+		m_DurationMinutesSpinner->SetValue(0);
+	}
+
+	// disable start time, end time, duration
+	m_StartHoursSpinner->Enable(!checked);
+	m_StartMinutesSpinner->Enable(!checked);
+	m_EndHoursSpinner->Enable(!checked);
+	m_EndMinutesSpinner->Enable(!checked);
+	m_DurationHoursSpinner->Enable(!checked);
+	m_DurationMinutesSpinner->Enable(!checked);
+}
 
 void CalendarEditDlg::OnStartDateChanged(wxDateEvent &event)
 {
-	event.Skip();
-	wxLogDebug(wxT("Event handler (CalendarEditDlg::OnStartDateChanged) not implemented yet")); //notify the user that he hasn't implemented the event handler yet
+	UpdateDuration();
 }
 
 void CalendarEditDlg::OnStartHoursSpin(wxSpinEvent &event)
 {
-	event.Skip();
-	wxLogDebug(wxT("Event handler (CalendarEditDlg::OnStartHoursSpin) not implemented yet")); //notify the user that he hasn't implemented the event handler yet
+	UpdateDuration();
 }
 
 void CalendarEditDlg::OnStartMinutesSpin(wxSpinEvent &event)
 {
-	event.Skip();
-	wxLogDebug(wxT("Event handler (CalendarEditDlg::OnStartMinutesSpin) not implemented yet")); //notify the user that he hasn't implemented the event handler yet
+	UpdateDuration();
 }
 
 void CalendarEditDlg::OnEndDateChanged(wxDateEvent &event)
 {
-	event.Skip();
-	wxLogDebug(wxT("Event handler (CalendarEditDlg::OnEndDateChanged) not implemented yet")); //notify the user that he hasn't implemented the event handler yet
+	UpdateDuration();
 }
 
 void CalendarEditDlg::OnEndHoursSpin(wxSpinEvent &event)
 {
-	event.Skip();
-	wxLogDebug(wxT("Event handler (CalendarEditDlg::OnEndHoursSpin) not implemented yet")); //notify the user that he hasn't implemented the event handler yet
+	UpdateDuration();
 }
 
 void CalendarEditDlg::OnEndMinutesSpin(wxSpinEvent &event)
 {
-	event.Skip();
-	wxLogDebug(wxT("Event handler (CalendarEditDlg::OnEndMinutesSpin) not implemented yet")); //notify the user that he hasn't implemented the event handler yet
+	UpdateDuration();
 }
 
 void CalendarEditDlg::OnDurationHoursSpin(wxSpinEvent &event)
 {
-	event.Skip();
-	wxLogDebug(wxT("Event handler (CalendarEditDlg::OnDurationHoursSpin) not implemented yet")); //notify the user that he hasn't implemented the event handler yet
+	UpdateEndDate();
 }
 
 void CalendarEditDlg::OnDurationMinutesSpin(wxSpinEvent &event)
 {
-	event.Skip();
-	wxLogDebug(wxT("Event handler (CalendarEditDlg::OnDurationMinutesSpin) not implemented yet")); //notify the user that he hasn't implemented the event handler yet
+	UpdateEndDate();
 }
 
 void CalendarEditDlg::OnRecurrenceChoice(wxCommandEvent &event)
@@ -682,5 +699,43 @@ bool CalendarEditDlg::TransferDataFromWindow()
 	}
 
 	return true;
+}
+
+void CalendarEditDlg::UpdateDuration()
+{
+	TransferDataFromWindow();
+
+	if( m_EndDateObj.Get() < m_StartDateObj.Get() ) {
+		// error... end date cannot be before start date
+		// set end date to start date
+		m_EndDateCtrl->SetValue(m_StartDateCtrl->GetValue());
+		m_EndHoursSpinner->SetValue(m_StartHoursSpinner->GetValue());
+		m_EndMinutesSpinner->SetValue(m_StartMinutesSpinner->GetValue());
+
+		// duration is 0
+		m_DurationHoursSpinner->SetValue(0);
+		m_DurationMinutesSpinner->SetValue(0);
+		return;
+	}
+	else {
+		// set duration to time span of End - Start
+		time_t diff = m_EndDateObj.Get() - m_StartDateObj.Get();
+		diff /= 60;		// convert to minutes
+		m_DurationHoursSpinner->SetValue(diff / 60);
+		m_DurationMinutesSpinner->SetValue(diff % 60);
+	}
+}
+
+void CalendarEditDlg::UpdateEndDate()
+{
+	TransferDataFromWindow();
+
+	m_EndDateObj.Set( m_StartDateObj.Get() +
+		m_duration_hours * 60 * 60 +
+		m_duration_minutes * 60 );
+
+	m_EndDateCtrl->SetValue(wxDateTime(m_EndDateObj.m_date));
+	m_EndHoursSpinner->SetValue(m_EndDateObj.m_hour);
+	m_EndMinutesSpinner->SetValue(m_EndDateObj.m_min);
 }
 

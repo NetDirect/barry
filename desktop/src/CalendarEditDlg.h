@@ -143,6 +143,8 @@ protected:
 
 protected:
 	// helper functions
+	void UpdateDuration();
+	void UpdateEndDate();
 	void RedoLayout();
 
 public:
