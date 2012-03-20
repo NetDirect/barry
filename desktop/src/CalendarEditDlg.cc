@@ -520,32 +520,32 @@ bool CalendarEditDlg::TransferDataToWindow()
 	if( m_rec.Recurring ) {
 		switch( m_rec.RecurringType )
 		{
-		case Barry::Calendar::Day:
+		case Barry::RecurBase::Day:
 			m_recur_choice = RC_DAILY;
 			m_relative_date = false;
 			break;
 
-		case Barry::Calendar::MonthByDate:
+		case Barry::RecurBase::MonthByDate:
 			m_recur_choice = RC_MONTHLY;
 			m_relative_date = false;
 			break;
 
-		case Barry::Calendar::MonthByDay:
+		case Barry::RecurBase::MonthByDay:
 			m_recur_choice = RC_MONTHLY;
 			m_relative_date = true;
 			break;
 
-		case Barry::Calendar::YearByDate:
+		case Barry::RecurBase::YearByDate:
 			m_recur_choice = RC_YEARLY;
 			m_relative_date = false;
 			break;
 
-		case Barry::Calendar::YearByDay:
+		case Barry::RecurBase::YearByDay:
 			m_recur_choice = RC_YEARLY;
 			m_relative_date = true;
 			break;
 
-		case Barry::Calendar::Week:
+		case Barry::RecurBase::Week:
 			m_recur_choice = RC_WEEKLY;
 			m_relative_date = false;
 			m_weekdays[0] = m_rec.WeekDays & CAL_WD_SUN;
@@ -655,12 +655,12 @@ bool CalendarEditDlg::TransferDataFromWindow()
 
 	case RC_DAILY:
 		m_rec.Recurring = true;
-		m_rec.RecurringType = Barry::Calendar::Day;
+		m_rec.RecurringType = Barry::RecurBase::Day;
 		break;
 
 	case RC_WEEKLY:
 		m_rec.Recurring = true;
-		m_rec.RecurringType = Barry::Calendar::Week;
+		m_rec.RecurringType = Barry::RecurBase::Week;
 		m_rec.WeekDays = 0;
 		if( m_weekdays[0] ) m_rec.WeekDays |= CAL_WD_SUN;
 		if( m_weekdays[1] ) m_rec.WeekDays |= CAL_WD_MON;
@@ -674,17 +674,17 @@ bool CalendarEditDlg::TransferDataFromWindow()
 	case RC_MONTHLY:
 		m_rec.Recurring = true;
 		if( m_relative_date )
-			m_rec.RecurringType = Barry::Calendar::MonthByDay;
+			m_rec.RecurringType = Barry::RecurBase::MonthByDay;
 		else
-			m_rec.RecurringType = Barry::Calendar::MonthByDate;
+			m_rec.RecurringType = Barry::RecurBase::MonthByDate;
 		break;
 
 	case RC_YEARLY:
 		m_rec.Recurring = true;
 		if( m_relative_date )
-			m_rec.RecurringType = Barry::Calendar::YearByDay;
+			m_rec.RecurringType = Barry::RecurBase::YearByDay;
 		else
-			m_rec.RecurringType = Barry::Calendar::YearByDate;
+			m_rec.RecurringType = Barry::RecurBase::YearByDate;
 		break;
 
 	}
