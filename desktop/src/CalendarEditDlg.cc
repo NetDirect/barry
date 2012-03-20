@@ -264,8 +264,7 @@ void CalendarEditDlg::OnRecurrenceChoice(wxCommandEvent &event)
 
 void CalendarEditDlg::OnEndDateCheckbox(wxCommandEvent &event)
 {
-	event.Skip();
-	wxLogDebug(wxT("Event handler (CalendarEditDlg::OnEndDateCheckbox) not implemented yet")); //notify the user that he hasn't implemented the event handler yet
+	m_RecurEndDateCtrl->Enable( !m_NeverEndsCheck->IsChecked() );
 }
 
 
@@ -767,6 +766,32 @@ void CalendarEditDlg::EnableRecurMode(bool recur)
 	RecurEndDateLabel->Show(recur);
 	m_NeverEndsCheck->Show(recur);
 	m_RecurEndDateCtrl->Show(recur);
+
+	if( recur ) {
+		switch( m_RecurrenceChoice->GetSelection() )
+		{
+		case RC_NONE:
+		default:
+			m_IntervalUnitLabel->SetLabel(_T(""));
+			break;
+
+		case RC_DAILY:
+			m_IntervalUnitLabel->SetLabel(_T("day(s)"));
+			break;
+
+		case RC_WEEKLY:
+			m_IntervalUnitLabel->SetLabel(_T("week(s)"));
+			break;
+
+		case RC_MONTHLY:
+			m_IntervalUnitLabel->SetLabel(_T("month(s)"));
+			break;
+
+		case RC_YEARLY:
+			m_IntervalUnitLabel->SetLabel(_T("year(s)"));
+			break;
+		}
+	}
 
 	RedoLayout();
 }
