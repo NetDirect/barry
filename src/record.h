@@ -62,6 +62,9 @@ BXEXPORT std::ostream& operator<< (std::ostream &os, const Cr2LfWrapper &str);
 
 /// Struct wrapper for time_t, to make sure that it has its own type,
 /// for overload purposes.  Some systems, like QNX, use a uint32_t typedef.
+///
+/// If Time contains 0, it is considered invalid/uninitialized when using
+/// IsValid().  Validity has no affect on comparison operators.
 struct BXEXPORT TimeT
 {
 	time_t Time;
@@ -80,6 +83,8 @@ struct BXEXPORT TimeT
 	{
 		Time = 0;
 	}
+
+	bool IsValid() const { return Time > 0; }
 
 	bool operator< (const Barry::TimeT &other) const
 	{
