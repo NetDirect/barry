@@ -99,6 +99,7 @@ uint8_t Task::StatusRec2Proto(StatusFlagType s)
 #define TSKFC_ALARM_TIME	0x0f
 #define TSKFC_TIMEZONE_CODE	0x10
 #define TSKFC_CATEGORIES	0x11
+#define TSKFC_ALARM_FLAG	0x12
 #define TSKFC_END		0xffff
 
 static FieldLink<Task> TaskFieldLinks[] = {
@@ -160,6 +161,14 @@ const unsigned char* Task::ParseField(const unsigned char *begin,
 			}
 		}
 	}
+
+	// on old old devices, such as the 7750, there is no DueDateFlag
+	// or AlarmFlag, // so we check here manually
+	if( DueTime.IsValid() )
+		DueDateFlag = true;
+	if( AlarmTime.IsValid() )
+		AlarmFlag = true;
+
 	// handle special cases
 	switch( field->type )
 	{
@@ -192,7 +201,19 @@ const unsigned char* Task::ParseField(const unsigned char *begin,
 		return begin;
 
 	case TSKFC_DUE_FLAG:
-		DueDateFlag = field->u.raw[0];
+		// the DueDateFlag is not available on really old devices
+		// such as the 7750, so we set it here only if true, and
+		// also set it when we actually find a DueDate in the data
+		if( field->u.raw[0] )
+			DueDateFlag = true;
+		return begin;
+
+	case TSKFC_ALARM_FLAG:
+		// the AlarmFlag is not available on really old devices
+		// such as the 7750, so we set it here only if true, and
+		// also set it when we actually find an AlarmDate in the data
+		if( field->u.raw[0] )
+			AlarmFlag = true;
 		return begin;
 
 	case TSKFC_ALARM_TYPE:
@@ -267,7 +288,12 @@ void Task::BuildFields(Data &data, size_t &offset, const IConverter *ic) const
 	BuildField(data, offset, TSKFC_PRIORITY, PriorityRec2Proto(PriorityFlag));
 	BuildField(data, offset, TSKFC_ALARM_TYPE, AlarmRec2Proto(AlarmType));
 
-	if ( DueDateFlag )
+	if( AlarmFlag || AlarmTime.IsValid() )
+		BuildField(data, offset, TSKFC_ALARM_FLAG, (char) 1);
+	else
+		BuildField(data, offset, TSKFC_ALARM_FLAG, (char) 0);
+
+	if ( DueDateFlag || DueTime.IsValid() )
 		BuildField(data, offset, TSKFC_DUE_FLAG, (char) 1);
 	else
 		BuildField(data, offset, TSKFC_DUE_FLAG, (char) 0);
@@ -294,7 +320,7 @@ void Task::BuildFields(Data &data, size_t &offset, const IConverter *ic) const
 		}
 		else if( b->timeMember ) {
 			TimeT t = this->*(b->timeMember);
-			if( t.Time > 0 )
+			if( t.IsValid() )
 				BuildField1900(data, offset, b->type, t);
 		}
 		else if( b->postMember && b->postField ) {
@@ -351,6 +377,7 @@ void Task::Clear()
 	StatusFlag = (StatusFlagType)0;
 
 	DueDateFlag = false;
+	AlarmFlag = false;
 
 	Unknowns.clear();
 }
@@ -446,6 +473,7 @@ void Task::Dump(std::ostream &os) const
 	}
 
 	os << "   Due Date Flag: " << (DueDateFlag ? "true" : "false") << "\n";
+	os << "   Alarm Flag: " << (AlarmFlag ? "true" : "false") << "\n";
 	os << "   Priority: " << PriorityName[PriorityFlag] << "\n";
 	os << "   Status: " << StatusName[StatusFlag] << "\n";
 	if( AlarmType ) {

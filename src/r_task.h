@@ -48,7 +48,8 @@ public:
 	CategoryList Categories;
 	std::string UID;
 
-	Barry::TimeT StartTime;
+	Barry::TimeT StartTime;		// most devices set this the same as
+					// DueTime
 	Barry::TimeT DueTime;
 	Barry::TimeT AlarmTime;
 	uint16_t TimeZoneCode;
@@ -81,6 +82,7 @@ public:
 	StatusFlagType StatusFlag;
 
 	bool DueDateFlag;	// true if due date is set
+	bool AlarmFlag;		// true if alarm/reminder is set
 
 	// unknown
 	UnknownsType Unknowns;
