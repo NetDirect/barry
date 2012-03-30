@@ -24,6 +24,7 @@
 #include "ContactEditDlg.h"
 #include "CalendarEditDlg.h"
 #include "MemoEditDlg.h"
+#include "TaskEditDlg.h"
 #include "windowids.h"
 #include <iostream>
 #include <sstream>
@@ -64,7 +65,8 @@ bool IsEditable(const std::string &dbname)
 	// add entry here for each edit dialog available
 	return	dbname == Contact::GetDBName() ||
 		dbname == Calendar::GetDBName() ||
-		dbname == Memo::GetDBName();
+		dbname == Memo::GetDBName() ||
+		dbname == Task::GetDBName();
 }
 
 bool EditRecord(wxWindow *parent,
@@ -179,7 +181,8 @@ bool EditRecord(wxWindow *parent,
 		const Barry::TimeZones &zones,
 		Barry::Task &rec)
 {
-	return false;
+	TaskEditDlg edit(parent, rec, editable, &zones);
+	return edit.ShowModal() == wxID_OK;
 }
 
 bool EditRecord(wxWindow *parent,

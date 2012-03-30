@@ -6,6 +6,7 @@ EXTRA_DIST = \
 	ContactEditDlg.wxg \
 	CalendarEditDlg.wxg \
 	MemoEditDlg.wxg \
+	TaskEditDlg.wxg \
 	oextract.cc
 
 INCLUDES = $(TREE_BUILD_CXXFLAGS) $(BARRY_CFLAGS) $(OPENSYNC22_CFLAGS) $(OPENSYNC40_CFLAGS) $(GLIB2_CFLAGS) $(EVOLUTION_CFLAGS)
@@ -83,6 +84,7 @@ barrydesktop_SOURCES = \
 	CalendarEditDlg.cc CalendarEditDlg.h \
 		wxval.h \
 	MemoEditDlg.cc MemoEditDlg.h \
+	TaskEditDlg.cc TaskEditDlg.h \
 	GroupCfgDlg.cc GroupCfgDlg.h \
 	SyncStatusDlg.cc SyncStatusDlg.h \
 	ConflictDlg.cc ConflictDlg.h \
