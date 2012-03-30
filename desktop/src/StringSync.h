@@ -33,6 +33,11 @@
 /// Sync() is called, the external linked string is updated with the
 /// current contents of the returned string.
 ///
+/// Note that you must call Sync explicitly, as it is not called
+/// in the destructor, since it is impossible to know when the
+/// external strings are freed, and they may have been freed already
+/// by the time ~StringSync() is called.
+///
 class StringSync
 {
 public:
@@ -64,7 +69,7 @@ public:
 	/// external wxStrings.
 	void SyncToWx();
 
-	/// Calls SyncToStd() and then SyncToWx()
+	/// Calls both SyncToStd() and SyncToWx()
 	void Sync();
 };
 

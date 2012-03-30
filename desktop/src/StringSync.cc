@@ -29,7 +29,9 @@ using namespace std;
 
 StringSync::~StringSync()
 {
-	Sync();
+	// do not Sync() here, since, if this object is part of another
+	// class, then external strings may have already been
+	// freed, depending on the order of objects defined in that class
 }
 
 wxString* StringSync::Add(std::string &source)
@@ -62,6 +64,7 @@ void StringSync::SyncToWx()
 
 void StringSync::Sync()
 {
+	// call order doesn't matter, since lists are independent
 	SyncToStd();
 	SyncToWx();
 }
