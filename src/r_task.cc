@@ -522,7 +522,7 @@ void Task::Dump(std::ostream &os) const
 	if( Categories.size() ) {
 		string display;
 		Categories.CategoryList2Str(display);
-		os << "    Categories: " << display << "\n";
+		os << "   Categories: " << display << "\n";
 	}
 
 	os << Unknowns;
