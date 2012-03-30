@@ -580,7 +580,7 @@ bool CalendarEditDlg::TransferDataToWindow()
 
 	EnableRecurMode(m_rec.Recurring);
 
-	m_strings.SyncToWx();
+	m_strings.RefreshWx();
 
 	return wxDialog::TransferDataToWindow();
 }
@@ -590,7 +590,7 @@ bool CalendarEditDlg::TransferDataFromWindow()
 	if( !wxDialog::TransferDataFromWindow() )
 		return false;
 
-	m_strings.SyncToStd();
+	m_strings.Sync();
 
 	m_rec.Organizer.clear();
 	m_rec.Organizer.AddCommaSeparated(m_organizer);
