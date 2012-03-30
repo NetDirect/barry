@@ -69,3 +69,26 @@ void StringSync::Sync()
 	SyncToWx();
 }
 
+void StringSync::RefreshWx()
+{
+	WxIsCopyList::iterator b = m_wx.begin();
+	for( ; b != m_wx.end(); ++b ) {
+		b->first = wxString(b->second->c_str(), wxConvUTF8);
+	}
+}
+
+void StringSync::RefreshStd()
+{
+	StdIsCopyList::iterator b = m_std.begin();
+	for( ; b != m_std.end(); ++b ) {
+		b->first.assign(b->second->utf8_str());
+	}
+}
+
+void StringSync::Refresh()
+{
+	// call order doesn't matter, since lists are independent
+	RefreshWx();
+	RefreshStd();
+}
+

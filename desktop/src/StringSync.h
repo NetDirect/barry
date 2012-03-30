@@ -33,6 +33,16 @@
 /// Sync() is called, the external linked string is updated with the
 /// current contents of the returned string.
 ///
+/// This class contains two lists of strings: one that maps external
+/// std::strings to internal wxStrings, and another that maps external
+/// wxStrings to internal std::strings.  These lists never mix.
+/// Add or Refresh transfers data from external to internal, and Sync
+/// transfers data from internal to external.
+///
+/// Normally, you would use Add and Refresh when setting up a dialog,
+/// and once setup, never use them again.  Use Sync when extracting
+/// data from the dialog, back into the original variables again.
+///
 /// Note that you must call Sync explicitly, as it is not called
 /// in the destructor, since it is impossible to know when the
 /// external strings are freed, and they may have been freed already
@@ -71,6 +81,19 @@ public:
 
 	/// Calls both SyncToStd() and SyncToWx()
 	void Sync();
+
+	/// Copies the contents of all the external std::strings into
+	/// their internal wxStrings, basically doing an Add() for each one
+	/// without re-creating the wxStrings.
+	void RefreshWx();
+
+	/// Copies the contents of all the external wxStrings into their
+	/// internal std::strings, basically doing an Add() for each one
+	/// without re-creating the std::strings.
+	void RefreshStd();
+
+	/// Calls both RefreshStd() and RefreshWx()
+	void Refresh();
 };
 
 #endif
