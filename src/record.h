@@ -217,6 +217,7 @@ public:
 	void Clear();
 
 	void SortByName();
+	void SortByRecordCount();
 	unsigned int GetTotalRecordCount() const;
 
 	// returns true on success, and fills target

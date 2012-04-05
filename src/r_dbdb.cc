@@ -137,11 +137,22 @@ namespace {
 	{
 		return one.Name < two.Name;
 	}
+
+	bool CountSort(const DatabaseDatabase::Database &one,
+		const DatabaseDatabase::Database &two)
+	{
+		return one.RecordCount < two.RecordCount;
+	}
 }
 
 void DatabaseDatabase::SortByName()
 {
 	std::sort(Databases.begin(), Databases.end(), NameSort);
+}
+
+void DatabaseDatabase::SortByRecordCount()
+{
+	std::sort(Databases.begin(), Databases.end(), CountSort);
 }
 
 unsigned int DatabaseDatabase::GetTotalRecordCount() const
