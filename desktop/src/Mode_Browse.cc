@@ -830,9 +830,15 @@ void BrowseMode::UpdateButtons()
 
 void BrowseMode::FillCache()
 {
+	// create a copy of the dbdb, and sort in ascending order of
+	// record count, so the last db loaded is the longest...
+	// hopefully this makes the UI more user-friendly and responsive
+	DatabaseDatabase dbdb = m_dbdb;
+	dbdb.SortByRecordCount();
+
 	// cycle through the dbdb and load all Parsable databases
 	DatabaseDatabase::DatabaseArrayType::const_iterator
-		i = m_dbdb.Databases.begin(), e = m_dbdb.Databases.end();
+		i = dbdb.Databases.begin(), e = dbdb.Databases.end();
 	for( ; i != e; ++i ) {
 		if( IsParsable(i->Name) ) try {
 			SendStatusEvent(i->Name);
