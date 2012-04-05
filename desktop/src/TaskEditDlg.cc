@@ -32,6 +32,22 @@ using namespace Barry;
 
 
 //////////////////////////////////////////////////////////////////////////////
+// Helper functions
+
+void MakeRecent(wxCheckBox *check, wxDatePickerCtrl *picker)
+{
+	wxDateTime when = picker->GetValue();
+	if( check->IsChecked() &&
+	    (!when.IsValid() ||
+		when < wxDateTime(1, wxDateTime::Jan, 1975, 0, 0, 0)) )
+	{
+		when = wxDateTime::Now();
+		picker->SetValue(when);
+	}
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
 // TaskEditDlg class
 
 TaskEditDlg::TaskEditDlg(wxWindow* parent,
@@ -170,6 +186,10 @@ END_EVENT_TABLE();
 void TaskEditDlg::OnDueCheck(wxCommandEvent &event)
 {
 	EnableDueDate(m_DueCheck->IsChecked());
+
+	// make sure the first date is in a recent range, if not previously
+	// valid...
+	MakeRecent(m_DueCheck, m_DueDateCtrl);
 }
 
 void TaskEditDlg::OnRecurrenceChoice(wxCommandEvent &event)
@@ -186,6 +206,10 @@ void TaskEditDlg::OnEndDateCheckbox(wxCommandEvent &event)
 void TaskEditDlg::OnReminderCheck(wxCommandEvent &event)
 {
 	EnableReminderDate(m_ReminderCheck->IsChecked());
+
+	// make sure the first date is in a recent range, if not previously
+	// valid...
+	MakeRecent(m_ReminderCheck, m_ReminderDateCtrl);
 }
 
 void TaskEditDlg::set_properties()
