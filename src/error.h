@@ -289,6 +289,8 @@ public:
 
 	unsigned int command() const { return m_command; }
 	unsigned int return_code() const { return m_return_code; }
+
+	bool IsReadOnly() const { return return_code() == 0x02; }
 };
 
 //
