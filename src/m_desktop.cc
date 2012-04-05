@@ -214,7 +214,7 @@ void Desktop::AddRecord(unsigned int dbId, Builder &build)
 
 	DBPacket packet(*this, m_command, m_response);
 
-	if( packet.SetRecord(dbId, build, m_ic) ) {
+	if( packet.AddRecord(dbId, build, m_ic) ) {
 
 		std::ostringstream oss;
 
@@ -427,20 +427,13 @@ void Desktop::SaveDatabase(unsigned int dbId, Builder &builder)
 {
 	dout("Database ID: " << dbId);
 
-	// Protocol note: so far in testing, this CLEAR_DATABASE operation is
-	//                required, since every record sent via SET_RECORD
-	//                is treated like a hypothetical "ADD_RECORD" (perhaps
-	//                SET_RECORD should be renamed)... I don't know if
-	//                there is a real SET_RECORD... all I know is from
-	//                the Windows USB captures, which uses this same
-	//                technique.
 	ClearDatabase(dbId);
 
 	DBPacket packet(*this, m_command, m_response);
 
 	// loop until builder object has no more data
 	bool first = true;
-	while( packet.SetRecord(dbId, builder, m_ic) ) {
+	while( packet.AddRecord(dbId, builder, m_ic) ) {
 		dout("Database ID: " << dbId);
 
 		m_socket->Packet(packet, first ? 60000 : -1);

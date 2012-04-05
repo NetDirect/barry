@@ -161,7 +161,7 @@ public:
 	void GetRecordByIndex(unsigned int dbId, unsigned int stateTableIndex);
 	bool SetRecordByIndex(unsigned int dbId, unsigned int stateTableIndex, Builder &build, const IConverter *ic);
 	void GetRecords(unsigned int dbId);
-	bool SetRecord(unsigned int dbId, Builder &build, const IConverter *ic);
+	bool AddRecord(unsigned int dbId, Builder &build, const IConverter *ic);
 
 
 	//////////////////////////////////

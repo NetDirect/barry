@@ -411,16 +411,16 @@ void DBPacket::GetRecords(unsigned int dbId)
 }
 
 //
-// SetRecord
+// AddRecord
 //
-/// Builds a command packet in the m_send buffer for the SET_RECORD command
+/// Builds a command packet in the m_send buffer for the ADD_RECORD command
 /// code.
 ///
 /// \return	bool
 ///		- true means success
 ///		- false means no data available from Builder object
 ///
-bool DBPacket::SetRecord(unsigned int dbId, Builder &build, const IConverter *ic)
+bool DBPacket::AddRecord(unsigned int dbId, Builder &build, const IConverter *ic)
 {
 	// build packet data
 	DBData send(m_send, false);	// send is just a reference to m_send,
@@ -439,7 +439,7 @@ bool DBPacket::SetRecord(unsigned int dbId, Builder &build, const IConverter *ic
 	packet.size = htobs(total_size);
 	packet.command = SB_COMMAND_DB_DATA;
 	packet.u.db.tableCmd = m_con.GetDBCommand(Mode::Desktop::DatabaseAccess);
-	packet.u.db.u.command.operation = SB_DBOP_SET_RECORD;
+	packet.u.db.u.command.operation = SB_DBOP_ADD_RECORD;
 	packet.u.db.u.command.databaseId = htobs(dbId);
 	packet.u.db.u.command.u.tag_upload.rectype = send.GetRecType();
 	packet.u.db.u.command.u.tag_upload.uniqueId = htobl(send.GetUniqueId());
@@ -447,7 +447,7 @@ bool DBPacket::SetRecord(unsigned int dbId, Builder &build, const IConverter *ic
 
 	m_send.ReleaseBuffer(total_size);
 
-	m_last_dbop = SB_DBOP_SET_RECORD;
+	m_last_dbop = SB_DBOP_ADD_RECORD;
 	return true;
 }
 
