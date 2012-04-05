@@ -60,6 +60,13 @@ END_EVENT_TABLE()
 //////////////////////////////////////////////////////////////////////////////
 // Standalone functions
 
+void ShowReadOnlyMsg(wxWindow *parent, const Barry::ReturnCodeError &rce)
+{
+	wxString what(rce.what(), wxConvUTF8);
+	wxMessageBox(_T("This database is apparently read-only.  If this device is connected to a BES, you cannot edit records via USB.  (Error: ") + what + _T(")"),
+		_T("Device Error"), wxOK | wxICON_ERROR, parent);
+}
+
 bool IsEditable(const std::string &dbname)
 {
 	// add entry here for each edit dialog available
@@ -357,7 +364,19 @@ cout << "New recordID generated: 0x" << hex << record_id << endl;
 		// add record to device
 		DesktopInstancePtr dip = m_tdesktop.Get();
 		Barry::Mode::Desktop &desktop = dip->Desktop();
-		desktop.AddRecord(m_dbid, *bp);
+bool iv = Barry::IsVerbose();
+Barry::Verbose(true);
+		try {
+			desktop.AddRecord(m_dbid, *bp);
+		} catch( Barry::ReturnCodeError &rce ) {
+			if( rce.IsReadOnly() ) {
+				ShowReadOnlyMsg(parent, rce);
+				return end();
+			}
+
+			throw;
+		}
+Barry::Verbose(iv);
 
 		// update our copy of the record state table from device
 		desktop.GetRecordStateTable(m_dbid, m_state);
@@ -401,7 +420,18 @@ cout << m_state << endl;
 		// update the device with new record data
 		DesktopInstancePtr dip = m_tdesktop.Get();
 		Barry::Mode::Desktop &desktop = dip->Desktop();
-		desktop.SetRecord(m_dbid, (*record)->GetStateIndex(), *bp);
+bool iv = Barry::IsVerbose();
+Barry::Verbose(true);
+		try {
+			desktop.SetRecord(m_dbid, (*record)->GetStateIndex(), *bp);
+		} catch( Barry::ReturnCodeError &rce ) {
+			if( rce.IsReadOnly() ) {
+				ShowReadOnlyMsg(parent, rce);
+			}
+
+			throw;
+		}
+Barry::Verbose(iv);
 
 		return true;
 	}
