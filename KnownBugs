@@ -1,0 +1,22 @@
+Tasks database self-corrupts on many devices
+--------------------------------------------
+	If you extract a Tasks record, and then write it back via
+	SetRecordByIndex(), on many devices that I tested, it ends up
+	corrupting the record on the device, and the GUI on the device
+	appears messed up.  (It shows the first few fields twice)
+	Such a corrupt record also loses the due date.
+
+	This appears to be a bug in the device firmware.
+
+	The workaround, when working with the Tasks database, is to
+	first DeleteByIndex() and then AddRecord() via the Desktop mode class,
+	using the same record ID.  This works, but is unfortunately
+	cumbersome.
+
+	See the Desktop GUI and the opensync plugins for examples of this
+	workaround.
+
+	Ideally, we should test a Tasks sync on Windows, and see how
+	the Windows software handles this.  There may be some protocol
+	changes that will be needed in future Barry versions.
+

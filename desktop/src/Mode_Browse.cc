@@ -402,6 +402,78 @@ cout << m_state << endl;
 	}
 }
 
+bool DBCache::OverwriteRecord(wxWindow *parent, iterator record)
+{
+	// see if this record has a builder
+	Barry::Builder *bp = dynamic_cast<Barry::Builder*> ((*record).get());
+	if( !bp )
+		return false;
+
+cout << "Changing device record with index: 0x" << hex << (*record)->GetStateIndex() << endl;
+cout << m_state << endl;
+	// update the device with new record data
+	DesktopInstancePtr dip = m_tdesktop.Get();
+	Barry::Mode::Desktop &desktop = dip->Desktop();
+bool iv = Barry::IsVerbose();
+Barry::Verbose(true);
+	try {
+		desktop.SetRecord(m_dbid, (*record)->GetStateIndex(), *bp);
+	} catch( Barry::ReturnCodeError &rce ) {
+		if( rce.IsReadOnly() ) {
+			ShowReadOnlyMsg(parent, rce);
+			return false;
+		}
+
+		throw;
+	}
+Barry::Verbose(iv);
+
+	return true;
+}
+
+bool DBCache::DeleteAndAddRecord(wxWindow *parent, iterator record)
+{
+	// see if this record has a builder
+	Barry::Builder *bp = dynamic_cast<Barry::Builder*> ((*record).get());
+	if( !bp )
+		return false;
+
+cout << "Changing device record with index: 0x" << hex << (*record)->GetStateIndex() << endl;
+cout << m_state << endl;
+	// update the device with new record data
+	DesktopInstancePtr dip = m_tdesktop.Get();
+	Barry::Mode::Desktop &desktop = dip->Desktop();
+bool iv = Barry::IsVerbose();
+Barry::Verbose(true);
+	try {
+		desktop.DeleteRecord(m_dbid, (*record)->GetStateIndex());
+		desktop.AddRecord(m_dbid, *bp);
+	} catch( Barry::ReturnCodeError &rce ) {
+		if( rce.IsReadOnly() ) {
+			ShowReadOnlyMsg(parent, rce);
+			return false;
+		}
+
+		throw;
+	}
+Barry::Verbose(iv);
+
+	// update our copy of the record state table from device
+	desktop.GetRecordStateTable(m_dbid, m_state);
+cout << m_state << endl;
+
+	// find our record_id in list, to find the state index
+	IndexType new_index;
+	if( !m_state.GetIndex((*record)->GetRecordId(), &new_index) ) {
+		throw std::logic_error("DAA: Need to reconnect for adding a record?");
+	}
+
+	// update new state_index in the data cache record
+	(*record)->SetIds(new_index, (*record)->GetRecordId());
+
+	return true;
+}
+
 bool DBCache::Edit(wxWindow *parent,
 		const Barry::TimeZones &zones,
 		iterator record)
@@ -410,30 +482,19 @@ bool DBCache::Edit(wxWindow *parent,
 		return false;
 
 	if( (*record)->Edit(parent, true, zones) && (*record)->IsBuildable() ) {
-		// see if this record has a builder
-		Barry::Builder *bp = dynamic_cast<Barry::Builder*> ((*record).get());
-		if( !bp )
-			return false;
+		// see if this record is part of the Tasks database
+		RecordCache<Barry::Task> *tp = dynamic_cast< RecordCache<Barry::Task>*> ((*record).get());
 
-cout << "Changing device record with index: 0x" << hex << (*record)->GetStateIndex() << endl;
-cout << m_state << endl;
-		// update the device with new record data
-		DesktopInstancePtr dip = m_tdesktop.Get();
-		Barry::Mode::Desktop &desktop = dip->Desktop();
-bool iv = Barry::IsVerbose();
-Barry::Verbose(true);
-		try {
-			desktop.SetRecord(m_dbid, (*record)->GetStateIndex(), *bp);
-		} catch( Barry::ReturnCodeError &rce ) {
-			if( rce.IsReadOnly() ) {
-				ShowReadOnlyMsg(parent, rce);
-			}
-
-			throw;
+		if( tp ) {
+			// yes, it is... the Tasks database has a bug
+			// so we need to "edit" by deleting and adding
+			// the record again
+			return DeleteAndAddRecord(parent, record);
 		}
-Barry::Verbose(iv);
-
-		return true;
+		else {
+			// use the normal code for all other records
+			return OverwriteRecord(parent, record);
+		}
 	}
 	else {
 		return false;

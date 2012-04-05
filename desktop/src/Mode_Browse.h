@@ -315,6 +315,11 @@ private:
 	// per-record load state
 	IndexType m_index;
 
+protected:
+	// helper functions, to work around Tasks bug in device
+	bool OverwriteRecord(wxWindow *parent, iterator record);
+	bool DeleteAndAddRecord(wxWindow *parent, iterator record);
+
 public:
 	// loads records in constructor
 	DBCache(ThreadableDesktop &tdesktop, const std::string &dbname);
