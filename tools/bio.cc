@@ -37,6 +37,7 @@
 #include <stdexcept>
 #include <tr1/memory>
 #include <strings.h>
+#include <unistd.h>
 
 #include "barrygetopt.h"
 

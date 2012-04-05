@@ -25,6 +25,7 @@
 #include <iostream>
 #include <string>
 #include <stdlib.h>
+#include <unistd.h>
 #include "i18n.h"
 
 using namespace std;

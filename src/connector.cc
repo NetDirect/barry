@@ -24,6 +24,7 @@
 #include "controller.h"
 #include "m_desktop.h"
 #include "debug.h"
+#include <unistd.h>
 
 using namespace std;
 using namespace Barry;
