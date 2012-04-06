@@ -760,6 +760,7 @@ void CalendarEditDlg::EnableAllDayMode(bool all_day)
 
 void CalendarEditDlg::EnableRecurMode(bool recur)
 {
+	// show all controls
 	RecurIntervalLabel->Show(recur);
 	RecurIntervalLabelB->Show(recur);
 	m_IntervalSpinner->Show(recur);
@@ -778,6 +779,17 @@ void CalendarEditDlg::EnableRecurMode(bool recur)
 	m_NeverEndsCheck->Show(recur);
 	m_RecurEndDateCtrl->Show(recur);
 
+	// enable based on choice
+	int choice = m_RecurrenceChoice->GetSelection();
+	m_SunCheck->Enable(choice == RC_WEEKLY);
+	m_MonCheck->Enable(choice == RC_WEEKLY);
+	m_TueCheck->Enable(choice == RC_WEEKLY);
+	m_WedCheck->Enable(choice == RC_WEEKLY);
+	m_ThuCheck->Enable(choice == RC_WEEKLY);
+	m_FriCheck->Enable(choice == RC_WEEKLY);
+	m_SatCheck->Enable(choice == RC_WEEKLY);
+
+	// update labels
 	if( recur ) {
 		switch( m_RecurrenceChoice->GetSelection() )
 		{
@@ -806,4 +818,11 @@ void CalendarEditDlg::EnableRecurMode(bool recur)
 
 	RedoLayout();
 }
+
+
+//
+// Note: this file is very similar to TaskEditDlg.cc, and should be kept
+// in lock step as much as possible.  They are in separate files, since
+// the GUI code is generated with wxglade
+//
 

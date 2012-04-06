@@ -697,3 +697,10 @@ void TaskEditDlg::EnableRecurMode(bool recur)
 	RedoLayout();
 }
 
+
+//
+// Note: this file is very similar to CalendarEditDlg.cc, and should be kept
+// in lock step as much as possible.  They are in separate files, since
+// the GUI code is generated with wxglade
+//
+
