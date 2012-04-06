@@ -583,7 +583,17 @@ bool CalendarEditDlg::TransferDataToWindow()
 
 	m_strings.RefreshWx();
 
-	return wxDialog::TransferDataToWindow();
+	// let the base class call the validaors to do the rest
+	if( wxDialog::TransferDataToWindow() ) {
+		// on success, do just a little bit of fine tuning
+		MakeDateRecent(true, m_StartDateCtrl);
+		MakeDateRecent(true, m_EndDateCtrl);
+		MakeDateRecent(true, m_RecurEndDateCtrl);
+		return true;
+	}
+	else {
+		return false;
+	}
 }
 
 bool CalendarEditDlg::TransferDataFromWindow()
