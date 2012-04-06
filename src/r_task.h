@@ -35,6 +35,29 @@ namespace Barry {
 // forward declarations
 class IConverter;
 
+//
+// Task record class
+//
+/// Task record class.  Note that there is a bug in many device firmwares.
+///
+/// If you extract a Tasks record, and then write it back via
+/// SetRecordByIndex(), on many devices that I tested, it ends up
+/// corrupting the record on the device, and the GUI on the device
+/// appears messed up.  (It shows the first few fields twice)
+/// Such a corrupt record also loses the due date.
+///
+/// The workaround, when working with the Tasks database, is to
+/// first DeleteByIndex() and then AddRecord() via the Desktop mode class,
+/// using the same record ID.  This works, but is unfortunately
+/// cumbersome.
+///
+/// See the Desktop GUI and the opensync plugins for examples of this
+/// workaround.
+///
+/// Ideally, we should test a Tasks sync on Windows, and see how
+/// the Windows software handles this.  There may be some protocol
+/// changes that will be needed in future Barry versions.
+///
 class BXEXPORT Task : public RecurBase
 {
 public:
@@ -49,7 +72,10 @@ public:
 	std::string UID;
 
 	Barry::TimeT StartTime;		// most devices set this the same as
-					// DueTime
+					// DueTime... this is a read-only
+					// variable.  By setting DueTime,
+					// the library will write StartTime
+					// for you automatically
 	Barry::TimeT DueTime;
 	Barry::TimeT AlarmTime;
 	uint16_t TimeZoneCode;
@@ -80,9 +106,6 @@ public:
 		Deferred
 	};
 	StatusFlagType StatusFlag;
-
-	bool DueDateFlag;	// true if due date is set
-	bool AlarmFlag;		// true if alarm/reminder is set
 
 	// unknown
 	UnknownsType Unknowns;

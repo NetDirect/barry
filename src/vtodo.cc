@@ -136,7 +136,7 @@ const std::string& vTodo::ToTask(const Barry::Task &task)
 	}
 
 	// DueTime DueFlag
-	if( task.DueDateFlag ) {
+	if( task.DueTime.IsValid() ) {
 		AddAttr(NewAttr("DUE",
 			m_vtc.unix2vtime(&task.DueTime.Time).c_str()));
 	}
@@ -265,7 +265,6 @@ const Barry::Task& vTodo::ToBarry(const char *vtodo, uint32_t RecordId)
 	}
 
 	if (due.size()) {
-		rec.DueDateFlag = true;
 		rec.DueTime.Time = m_vtc.vtime2unix(due.c_str());
 	}
 

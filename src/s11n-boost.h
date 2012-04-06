@@ -350,7 +350,6 @@ void serialize(ArchiveT &ar, Barry::Task &t, const unsigned int ver)
 	ar & make_nvp("StatusFlag", t.StatusFlag);
 	ar & make_nvp("Recurring", t.Recurring);
 	ar & make_nvp("Perpetual", t.Perpetual);
-	ar & make_nvp("DueDateFlag", t.DueDateFlag);
 
 	if( ver < BARRY_POD_MAP_VERSION ) {
 		ar & make_nvp( "Unknowns", t.Unknowns);

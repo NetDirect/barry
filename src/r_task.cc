@@ -162,13 +162,6 @@ const unsigned char* Task::ParseField(const unsigned char *begin,
 		}
 	}
 
-	// on old old devices, such as the 7750, there is no DueDateFlag
-	// or AlarmFlag, // so we check here manually
-	if( DueTime.IsValid() )
-		DueDateFlag = true;
-	if( AlarmTime.IsValid() )
-		AlarmFlag = true;
-
 	// handle special cases
 	switch( field->type )
 	{
@@ -202,18 +195,16 @@ const unsigned char* Task::ParseField(const unsigned char *begin,
 
 	case TSKFC_DUE_FLAG:
 		// the DueDateFlag is not available on really old devices
-		// such as the 7750, so we set it here only if true, and
-		// also set it when we actually find a DueDate in the data
-		if( field->u.raw[0] )
-			DueDateFlag = true;
+		// such as the 7750, and if the DueTime is available,
+		// we'll just save it.  There is no further need for this
+		// value that we know of yet, so just ignore it for now.
 		return begin;
 
 	case TSKFC_ALARM_FLAG:
 		// the AlarmFlag is not available on really old devices
-		// such as the 7750, so we set it here only if true, and
-		// also set it when we actually find an AlarmDate in the data
-		if( field->u.raw[0] )
-			AlarmFlag = true;
+		// such as the 7750, and if the AlarmTime is available,
+		// we'll just save it.  There is no further need for this
+		// value that we know of yet, so just ignore it for now.
 		return begin;
 
 	case TSKFC_ALARM_TYPE:
@@ -234,6 +225,7 @@ const unsigned char* Task::ParseField(const unsigned char *begin,
 		}
 		return begin;
 	}
+
 	// base class handles recurring data
 	if( RecurBase::ParseField(field->type, field->u.raw, btohs(field->size), ic) )
 		return begin;
@@ -281,22 +273,25 @@ void Task::BuildFields(Data &data, size_t &offset, const IConverter *ic) const
 {
 	data.Zap();
 
+	//
+	// Note: we do not use the FieldLink table, since the firmware
+	// on many devices apears flakey, so we try to write as close to
+	// the same order as we see coming from the device.  Unfortunately,
+	// this doesn't really help, for the Tasks corruption bug, but
+	// we'll keep the flexibility for now.
+	//
+
 	// tack on the 't' task type field first
 	BuildField(data, offset, TSKFC_TASK_TYPE, 't');
 
-	BuildField(data, offset, TSKFC_STATUS, StatusRec2Proto(StatusFlag));
-	BuildField(data, offset, TSKFC_PRIORITY, PriorityRec2Proto(PriorityFlag));
-	BuildField(data, offset, TSKFC_ALARM_TYPE, AlarmRec2Proto(AlarmType));
+	// Summary / Title
+	if( Summary.size() ) {
+		std::string s = (ic) ? ic->ToBB(Summary) : Summary;
+		BuildField(data, offset, TSKFC_TITLE, s);
+	}
 
-	if( AlarmFlag || AlarmTime.IsValid() )
-		BuildField(data, offset, TSKFC_ALARM_FLAG, (char) 1);
-	else
-		BuildField(data, offset, TSKFC_ALARM_FLAG, (char) 0);
-
-	if ( DueDateFlag || DueTime.IsValid() )
-		BuildField(data, offset, TSKFC_DUE_FLAG, (char) 1);
-	else
-		BuildField(data, offset, TSKFC_DUE_FLAG, (char) 0);
+	BuildField(data, offset, TSKFC_STATUS, (uint32_t) StatusRec2Proto(StatusFlag));
+	BuildField(data, offset, TSKFC_PRIORITY, (uint32_t) PriorityRec2Proto(PriorityFlag));
 
 	if( TimeZoneValid ) {
 		// the time zone code field is 4 bytes, but we only use
@@ -305,31 +300,22 @@ void Task::BuildFields(Data &data, size_t &offset, const IConverter *ic) const
 		BuildField(data, offset, TSKFC_TIMEZONE_CODE, code);
 	}
 
-	// cycle through the type table
-	for(	FieldLink<Task> *b = TaskFieldLinks;
-		b->type != TSKFC_END;
-		b++ )
-	{
-		// print only fields with data
-		if( b->strMember ) {
-			const std::string &field = this->*(b->strMember);
-			if( field.size() ) {
-				std::string s = (b->iconvNeeded && ic) ? ic->ToBB(field) : field;
-				BuildField(data, offset, b->type, s);
-			}
-		}
-		else if( b->timeMember ) {
-			TimeT t = this->*(b->timeMember);
-			if( t.IsValid() )
-				BuildField1900(data, offset, b->type, t);
-		}
-		else if( b->postMember && b->postField ) {
-			const std::string &field = (this->*(b->postMember)).*(b->postField);
-			if( field.size() ) {
-				std::string s = (b->iconvNeeded && ic) ? ic->ToBB(field) : field;
-				BuildField(data, offset, b->type, s);
-			}
-		}
+	// make sure StartTime matches DueTime, by writing it manually...
+	/// not sure why StartTime exists, but oh well. :-)
+	if( DueTime.IsValid() ) {
+		// we use DueTime here, with the START_TIME code,
+		// instead of StartTime, since the function is const
+		BuildField1900(data, offset, TSKFC_START_TIME, DueTime);
+
+		// then DueTime, with flag first, then time
+		BuildField(data, offset, TSKFC_DUE_FLAG, (uint32_t) 1);
+		BuildField1900(data, offset, TSKFC_DUE_TIME, DueTime);
+	}
+
+	if( AlarmTime.IsValid() ) {
+		BuildField(data, offset, TSKFC_ALARM_FLAG, (uint32_t) 1);
+		BuildField(data, offset, TSKFC_ALARM_TYPE, AlarmRec2Proto(AlarmType));
+		BuildField1900(data, offset, TSKFC_ALARM_TIME, AlarmTime);
 	}
 
 	// Categories
@@ -337,6 +323,12 @@ void Task::BuildFields(Data &data, size_t &offset, const IConverter *ic) const
 		string store;
 		Categories.CategoryList2Str(store);
 		BuildField(data, offset, TSKFC_CATEGORIES, ic ? ic->ToBB(store) : store);
+	}
+
+	// Notes
+	if( Notes.size() ) {
+		std::string s = (ic) ? ic->ToBB(Notes) : Notes;
+		BuildField(data, offset, TSKFC_NOTES, s);
 	}
 
 	if( Recurring ) {
@@ -379,12 +371,9 @@ void Task::Clear()
 	TimeZoneCode = GetStaticTimeZoneCode( 0, 0 );	// default to GMT
 	TimeZoneValid = false;
 
-	AlarmType = (AlarmFlagType)0;
-	PriorityFlag = (PriorityFlagType)0;
-	StatusFlag = (StatusFlagType)0;
-
-	DueDateFlag = false;
-	AlarmFlag = false;
+	AlarmType = Date;
+	PriorityFlag = Normal;
+	StatusFlag = NotStarted;
 
 	Unknowns.clear();
 }
@@ -415,7 +404,6 @@ const FieldHandle<Task>::ListT& Task::GetFieldHandles()
 	FHD(AlarmTime, "Alarm Time", TSKFC_ALARM_TIME, false);
 	FHD(TimeZoneCode, "Time Zone Code", TSKFC_TIMEZONE_CODE, false);
 	FHP(TimeZoneValid, "Time Zone Code Valid");
-	FHD(DueDateFlag, "Due Date is Set", TSKFC_DUE_FLAG, false);
 
 	FHE(aft, AlarmFlagType, AlarmType, "Alarm Type");
 	FHE_CONST(aft, Date, "Date");
@@ -470,17 +458,15 @@ void Task::Dump(std::ostream &os) const
 		if( b->strMember ) {
 			const std::string &s = this->*(b->strMember);
 			if( s.size() )
-				os << "   " << b->name << ": " << s << "\n";
+				os << "   " << b->name << ": " << Cr2LfWrapper(s) << "\n";
 		}
 		else if( b->timeMember ) {
 			TimeT t = this->*(b->timeMember);
-			if( t.Time > 0 )
+			if( t.IsValid() )
 				os << "   " << b->name << ": " << t << "\n";
 		}
 	}
 
-	os << "   Due Date Flag: " << (DueDateFlag ? "true" : "false") << "\n";
-	os << "   Alarm Flag: " << (AlarmFlag ? "true" : "false") << "\n";
 	os << "   Priority: " << PriorityName[PriorityFlag] << "\n";
 	os << "   Status: " << StatusName[StatusFlag] << "\n";
 	if( AlarmType ) {
