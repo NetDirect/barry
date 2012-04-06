@@ -570,12 +570,12 @@ bool CalendarEditDlg::TransferDataToWindow()
 
 	m_interval = m_rec.Interval;
 
+	m_RecurEndDateObj.Set(m_rec.RecurringEndTime.Time);
 	if( m_rec.Perpetual ) {
 		m_RecurEndDateCtrl->Enable(false);
 	}
 	else {
 		m_RecurEndDateCtrl->Enable();
-		m_RecurEndDateObj.Set(m_rec.RecurringEndTime.Time);
 	}
 
 	EnableRecurMode(m_rec.Recurring);
