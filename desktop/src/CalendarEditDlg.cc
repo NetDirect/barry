@@ -23,6 +23,7 @@
 #include "windowids.h"
 #include <wx/valgen.h>
 #include "wxval.h"
+#include "util.h"
 
 using namespace std;
 using namespace Barry;

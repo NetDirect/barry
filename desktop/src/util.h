@@ -49,6 +49,8 @@ std::string GetBaseFilename(const std::string &filename);
 wxString GetImageFilename(const wxString &filename);
 wxString GetButtonFilename(int id, int state);
 bool IsButtonEnabled(int id);
+class wxDatePickerCtrl;
+void MakeDateRecent(bool checked, wxDatePickerCtrl *picker);
 
 bool IsParsable(const std::string &dbname);
 bool IsBuildable(const std::string &dbname);

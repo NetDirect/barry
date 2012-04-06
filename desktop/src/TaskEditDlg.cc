@@ -23,27 +23,13 @@
 #include "windowids.h"
 #include <wx/valgen.h>
 #include "wxval.h"
+#include "util.h"
 
 using namespace std;
 using namespace Barry;
 
 // begin wxGlade: ::extracode
 // end wxGlade
-
-
-//////////////////////////////////////////////////////////////////////////////
-// Helper functions
-
-void MakeRecent(bool checked, wxDatePickerCtrl *picker)
-{
-	wxDateTime when = picker->GetValue();
-	if( checked && (!when.IsValid() ||
-		when < wxDateTime(1, wxDateTime::Jan, 1975, 0, 0, 0)) )
-	{
-		when = wxDateTime::Now();
-		picker->SetValue(when);
-	}
-}
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -188,7 +174,7 @@ void TaskEditDlg::OnDueCheck(wxCommandEvent &event)
 
 	// make sure the first date is in a recent range, if not previously
 	// valid...
-	MakeRecent(m_DueCheck->IsChecked(), m_DueDateCtrl);
+	MakeDateRecent(m_DueCheck->IsChecked(), m_DueDateCtrl);
 }
 
 void TaskEditDlg::OnRecurrenceChoice(wxCommandEvent &event)
@@ -202,7 +188,7 @@ void TaskEditDlg::OnEndDateCheckbox(wxCommandEvent &event)
 	m_RecurEndDateCtrl->Enable( !m_NeverEndsCheck->IsChecked() );
 
 	// make sure there is a recent date in the ctrl
-	MakeRecent(!m_NeverEndsCheck->IsChecked(), m_RecurEndDateCtrl);
+	MakeDateRecent(!m_NeverEndsCheck->IsChecked(), m_RecurEndDateCtrl);
 }
 
 void TaskEditDlg::OnReminderCheck(wxCommandEvent &event)
@@ -211,7 +197,7 @@ void TaskEditDlg::OnReminderCheck(wxCommandEvent &event)
 
 	// make sure the first date is in a recent range, if not previously
 	// valid...
-	MakeRecent(m_ReminderCheck->IsChecked(), m_ReminderDateCtrl);
+	MakeDateRecent(m_ReminderCheck->IsChecked(), m_ReminderDateCtrl);
 }
 
 void TaskEditDlg::set_properties()

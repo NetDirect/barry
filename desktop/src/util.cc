@@ -22,6 +22,7 @@
 #include "util.h"
 #include "barrydesktop.h"
 #include "windowids.h"
+#include <wx/datectrl.h>
 
 const wxChar *ButtonNames[] = {
 	_T("backuprestore"),
@@ -106,6 +107,17 @@ wxString GetButtonFilename(int id, int state)
 bool IsButtonEnabled(int id)
 {
 	return ButtonEnabled[id - MainMenu_FirstButton];
+}
+
+void MakeDateRecent(bool checked, wxDatePickerCtrl *picker)
+{
+	wxDateTime when = picker->GetValue();
+	if( checked && (!when.IsValid() ||
+		when < wxDateTime(1, wxDateTime::Jan, 1975, 0, 0, 0)) )
+	{
+		when = wxDateTime::Now();
+		picker->SetValue(when);
+	}
 }
 
 bool IsParsable(const std::string &dbname)
