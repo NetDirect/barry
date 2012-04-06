@@ -652,6 +652,7 @@ void TaskEditDlg::EnableReminderDate(bool enable)
 
 void TaskEditDlg::EnableRecurMode(bool recur)
 {
+	// show all controls
 	RecurIntervalLabel->Show(recur);
 	RecurIntervalLabelB->Show(recur);
 	m_IntervalSpinner->Show(recur);
@@ -670,6 +671,17 @@ void TaskEditDlg::EnableRecurMode(bool recur)
 	m_NeverEndsCheck->Show(recur);
 	m_RecurEndDateCtrl->Show(recur);
 
+	// enable based on choice
+	int choice = m_RecurrenceChoice->GetSelection();
+	m_SunCheck->Enable(choice == RC_WEEKLY);
+	m_MonCheck->Enable(choice == RC_WEEKLY);
+	m_TueCheck->Enable(choice == RC_WEEKLY);
+	m_WedCheck->Enable(choice == RC_WEEKLY);
+	m_ThuCheck->Enable(choice == RC_WEEKLY);
+	m_FriCheck->Enable(choice == RC_WEEKLY);
+	m_SatCheck->Enable(choice == RC_WEEKLY);
+
+	// update labels
 	if( recur ) {
 		switch( m_RecurrenceChoice->GetSelection() )
 		{
