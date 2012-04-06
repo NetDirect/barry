@@ -339,6 +339,13 @@ void Task::BuildFields(Data &data, size_t &offset, const IConverter *ic) const
 		BuildField(data, offset, TSKFC_CATEGORIES, ic ? ic->ToBB(store) : store);
 	}
 
+	if( Recurring ) {
+		CalendarRecurrenceDataField recur;
+		BuildRecurrenceData(StartTime.Time, &recur);
+		BuildField(data, offset, RecurBase::RecurringFieldType(),
+			&recur, CALENDAR_RECURRENCE_DATA_FIELD_SIZE);
+	}
+
 	// and finally save unknowns
 	UnknownsType::const_iterator
 		ub = Unknowns.begin(), ue = Unknowns.end();
