@@ -28,6 +28,10 @@
 #include "error.h"
 #include <vector>
 
+namespace Barry {
+	class CategoryList;
+}
+
 namespace Barry { namespace Sync {
 
 //
@@ -137,6 +141,8 @@ protected:
 	void AddValue(vAttrPtr &attr, const char *value);
 	void AddEncodedValue(vAttrPtr &attr, b_VFormatEncoding encoding, const char *value, int len);
 	void AddParam(vAttrPtr &attr, const char *name, const char *value);
+
+	void AddCategories(const Barry::CategoryList &categories);
 
 	std::string GetAttr(const char *attrname, const char *block = 0);
 	std::vector<std::string> GetValueVector(const char *attrname, const char *block = 0);

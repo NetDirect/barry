@@ -79,19 +79,6 @@ void vCard::AddAddress(const char *rfc_type, const Barry::PostalAddress &address
 	AddAttr(adr);
 }
 
-void vCard::AddCategories(const Barry::CategoryList &categories)
-{
-	if( !categories.size() )
-		return;
-
-	vAttrPtr cat = NewAttr("CATEGORIES");		// RFC 2426, 3.6.1
-	Barry::CategoryList::const_iterator i = categories.begin();
-	for( ; i < categories.end(); ++i ) {
-		AddValue(cat, i->c_str());
-	}
-	AddAttr(cat);
-}
-
 /// Add phone conditionally, only if phone has data in it.  This version
 /// does not add a TYPE parameter to the item.
 void vCard::AddPhoneCond(const std::string &phone)

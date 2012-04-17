@@ -47,7 +47,6 @@ class BXEXPORT vCard : public vBase
 
 protected:
 	void AddAddress(const char *rfc_type, const Barry::PostalAddress &addr);
-	void AddCategories(const Barry::CategoryList &categories);
 	void AddPhoneCond(const std::string &phone);
 	void AddPhoneCond(const char *rfc_type, const std::string &phone);
 

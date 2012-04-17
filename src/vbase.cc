@@ -23,6 +23,7 @@
 //#include "trace.h"
 #include "vformat.h"		// comes from opensync, but not a public header yet
 #include "tzwrapper.h"
+#include "r_contact.h"		// for CategoryList
 #include <stdio.h>
 #include <stdarg.h>
 #include <stdint.h>
@@ -376,6 +377,19 @@ void vBase::AddParam(vAttrPtr &attr, const char *name, const char *value)
 	b_VFormatParam *pParam = b_vformat_attribute_param_new(name);
 	b_vformat_attribute_param_add_value(pParam, value);
 	b_vformat_attribute_add_param(attr.Get(), pParam);
+}
+
+void vBase::AddCategories(const Barry::CategoryList &categories)
+{
+	if( !categories.size() )
+		return;
+
+	vAttrPtr cat = NewAttr("CATEGORIES");		// RFC 2426, 3.6.1
+	Barry::CategoryList::const_iterator i = categories.begin();
+	for( ; i < categories.end(); ++i ) {
+		AddValue(cat, i->c_str());
+	}
+	AddAttr(cat);
 }
 
 std::string vBase::GetAttr(const char *attrname, const char *block)
