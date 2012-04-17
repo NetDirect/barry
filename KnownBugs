@@ -20,3 +20,22 @@ Tasks database self-corrupts on many devices
 	the Windows software handles this.  There may be some protocol
 	changes that will be needed in future Barry versions.
 
+
+Dates before 2007/01/01 use modern DST rules
+--------------------------------------------
+	This is a device firmware issue.  Most devices that I've tested
+	use modern DST rules (i.e. DST begins second Sunday in March)
+	for all dates, even though these new rules only came into effect
+	in 2007.  So dates in 2006 and earlier have a window of innaccuracy,
+	since dates are given to Barry in UTC, converted to time_t, and most
+	computer systems will then convert that time_t to local time using
+	the old DST rules, and be an hour off.
+
+	Barry does nothing to workaround this bug, since most dates
+	are used in Calendar and Task apps, which usually only matter
+	for modern dates.  In other words, you use the Task and Calendar
+	apps to remind yourself of future appointments, not the past.
+	This appears to be the logic that RIM used as well, since the
+	device seems to only have one DST rule, and doesn't care about
+	historical rules.
+
