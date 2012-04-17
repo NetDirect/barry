@@ -176,10 +176,31 @@ bool VTodoConverter::CommitRecordData(BarryEnvironment *env, unsigned int dbId,
 		env->GetDesktop()->AddRecord(dbId, builder);
 	}
 	else {
+		// we need to use a workaround for the Tasks database,
+		// since there is a bug in many device firmwares which
+		// causes corruption when using SetRecord().
+		//
+		// so instead of the nice simple:
+		//
+		/*
 		trace.log("setting record");
 		env->GetDesktop()->SetRecord(dbId, StateIndex, builder);
 		trace.log("clearing dirty flag");
 		env->GetDesktop()->ClearDirty(dbId, StateIndex);
+		*/
+		//
+		// we have to delete, add, refresh the state index table,
+		// and then clear the dirty flag on the new record
+		//
+		// but since the upper level code will clear all the
+		// dirty flags for us, we can skip the state index and
+		// dirty flag step, and leave it for FinishSync() in
+		// barry_sync... :-)
+		//
+		trace.log("deleting task record");
+		env->GetDesktop()->DeleteRecord(dbId, StateIndex);
+		trace.log("re-adding task record");
+		env->GetDesktop()->AddRecord(dbId, builder);
 	}
 
 	return true;
