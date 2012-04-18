@@ -397,7 +397,7 @@ desktop-file-install --vendor netdirect \
 %attr(0644,root,root) %{_mandir}/man1/brecsum*
 %attr(0644,root,root) %{_mandir}/man1/breset*
 %attr(0644,root,root) %{_mandir}/man1/upldif*
-%attr(0644,root,root) %{_datadir}/locale/*
+%attr(0644,root,root) %{_datadir}/locale/fr/LC_MESSAGES/*
 %attr(0644,root,root) %{_datadir}/hal/fdi/information/10freedesktop/10-blackberry.fdi
 %attr(0644,root,root) %{_datadir}/hal/fdi/policy/10osvendor/19-blackberry-acl.fdi
 %attr(0644,root,root) %config %{_sysconfdir}/udev/rules.d/*
