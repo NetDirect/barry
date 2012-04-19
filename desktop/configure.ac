@@ -113,12 +113,17 @@ PKG_CHECK_MODULES([OPENSYNC22], [opensync-1.0], [], [OS22NOTFOUND=yes])
 PKG_CHECK_MODULES([OPENSYNC40], [libopensync1], [], [OS40NOTFOUND=yes])
 
 if test "$OS22NOTFOUND" = "yes" -a "$OS40NOTFOUND" = "yes" ; then
-	AC_MSG_ERROR(dnl
+	AC_MSG_WARN(dnl
 [
-Unable to find development libraries for either opensync 0.22 or 0.4x.
 
-Consider adjusting the PKG_CONFIG_PATH environment variable if you
-installed software in a non-standard prefix.
+*************************************************************************
+WARNING:
+Unable to find development libraries for either opensync 0.22 or 0.4x.
+Barry Desktop will be built without any sync support.
+*************************************************************************
+
+If this is not desired, consider adjusting the PKG_CONFIG_PATH environment
+variable if you installed software in a non-standard prefix.
 
 Alternatively, you may set the environment variables:
 
