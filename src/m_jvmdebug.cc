@@ -711,7 +711,6 @@ int JVMDebug::GetConsoleMessage(std::string &message)
 void JVMDebug::GetModulesList(JVMModulesList &mylist)
 {
 	uint32_t size = 0;
-	uint32_t count = 0;
 	uint32_t offset = 0;
 	uint16_t expect = 0;
 
@@ -746,7 +745,9 @@ void JVMDebug::GetModulesList(JVMModulesList &mylist)
 		CheckSize(response, SB_JVMPACKET_HEADER_SIZE + SB_JVMMODULES_LIST_HEADER_SIZE + 4);
 
 		// Number of modules entries in the list
-		count = be_btohl(dpack->u.moduleslist.nbr);
+		// (Valid, but unused variable... disabled to stop compiler
+		// warnings)
+//		uint32_t count = be_btohl(dpack->u.moduleslist.nbr);
 
 		// Size of modules list
 		// I remove the header of packet (contains the field 'number of modules')
@@ -773,7 +774,6 @@ void JVMDebug::GetModulesList(JVMModulesList &mylist)
 void JVMDebug::GetThreadsList(JVMThreadsList &mylist)
 {
 	uint32_t size = 0;
-	uint32_t count = 0;
 	uint16_t expect = 0;
 
 	Data command(-1, 8), response;
@@ -804,7 +804,8 @@ void JVMDebug::GetThreadsList(JVMThreadsList &mylist)
 	CheckSize(response, SB_JVMPACKET_HEADER_SIZE + SB_JVMTHREADS_LIST_HEADER_SIZE);
 
 	// Number of threads entries in the list
-	count = be_btohl(dpack->u.threadslist.nbr);
+	// (Valid, but unused variable... disabled to stop compiler warnings)
+//	uint32_t count = be_btohl(dpack->u.threadslist.nbr);
 
 	// Size of threads list
 	// I remove the header of packet (contains the field 'number of threads')

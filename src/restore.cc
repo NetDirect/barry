@@ -229,8 +229,6 @@ Barry::Restore::DBListType Restore::GetDBList() const
 
 Barry::Restore::DBListType Restore::GetDBList(const std::string &tarpath)
 {
-	unsigned int count = 0;
-
 	std::auto_ptr<reuse::TarFile> tar;
 	DBListType available, empty;
 
@@ -238,7 +236,7 @@ Barry::Restore::DBListType Restore::GetDBList(const std::string &tarpath)
 		// do a scan through the tar file
 		tar.reset( new reuse::TarFile(tarpath.c_str(), false,
 				&reuse::gztar_ops_nonthread, true) );
-		count = CountFiles(*tar, empty, &available, true);
+		CountFiles(*tar, empty, &available, true);
 		return available;
 	}
 	catch( reuse::TarFile::TarError &te ) {
