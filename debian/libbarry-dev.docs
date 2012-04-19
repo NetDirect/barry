@@ -3,6 +3,7 @@ deb_srcdir/NEWS
 deb_srcdir/TODO
 deb_srcdir/AUTHORS
 deb_srcdir/ChangeLog
+deb_srcdir/KnownBugs
 deb_srcdir/doc/Exceptions
 deb_srcdir/doc/Hacking
 deb_srcdir/doc/TimeZones.txt
