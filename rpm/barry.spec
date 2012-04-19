@@ -340,7 +340,7 @@ desktop-file-install --vendor netdirect \
 %attr(-,root,root) %{_libdir}/libbarrysync.so.*
 %attr(-,root,root) %{_libdir}/libbarrybackup.so.*
 %attr(-,root,root) %{_libdir}/libbarryalx.so.*
-%doc AUTHORS ChangeLog COPYING NEWS README
+%doc AUTHORS ChangeLog KnownBugs COPYING NEWS README
 
 %files -n libbarry-devel
 %defattr(-,root,root)
@@ -358,7 +358,7 @@ desktop-file-install --vendor netdirect \
 %attr(0644,root,root) %{_libdir}/libbarryalx.a
 %attr(0644,root,root) %{_libdir}/libbarryalx.so
 %attr(0644,root,root) %{_libdir}/pkgconfig/*.pc
-%doc COPYING TODO doc/* examples/*.cc
+%doc COPYING TODO KnownBugs doc/* examples/*.cc
 
 %files util
 %defattr(-,root,root)
