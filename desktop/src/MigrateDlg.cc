@@ -101,7 +101,6 @@ MigrateDlg::MigrateDlg(wxWindow *parent,
 	, m_results(results)
 	, m_current_device_index(current_device_index)
 	, m_migrate_thread_created(false)
-	, m_migrate_thread(NULL)
 	, m_abort_flag(false)
 	, m_thread_running(false)
 	, m_source_device(0)
