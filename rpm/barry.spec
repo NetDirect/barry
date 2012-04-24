@@ -281,8 +281,8 @@ cd ../
 %{__cp} hal/fdi/information/10freedesktop/10-blackberry.fdi %{buildroot}%{_datadir}/hal/fdi/information/10freedesktop
 %{__cp} hal/fdi/policy/10osvendor/19-blackberry-acl.fdi %{buildroot}%{_datadir}/hal/fdi/policy/10osvendor
 # Install hal support script
-%{__mkdir_p} %{buildroot}%{_bindir}
-%{__cp} hal/hal-blackberry %{buildroot}%{_bindir}
+%{__mkdir_p} %{buildroot}%{_libdir}/barry
+%{__cp} hal/hal-blackberry %{buildroot}%{_libdir}/barry
 # Install bash completion scripts
 %{__mkdir_p} %{buildroot}%{_sysconfdir}/bash_completion.d
 %{__cp} bash/bjavaloader %{buildroot}%{_sysconfdir}/bash_completion.d
@@ -326,6 +326,7 @@ cd desktop/
 # remove .la files
 %{__rm} -f %{buildroot}%{_libdir}/*.la
 cd ../
+%{__mkdir_p} %{buildroot}%{_datadir}/pixmaps
 %{__cp} logo/barry_logo_icon.png %{buildroot}%{_datadir}/pixmaps/barry_desktop_icon.png
 desktop-file-install --vendor netdirect \
    --dir %{buildroot}%{_datadir}/applications \
@@ -379,7 +380,7 @@ desktop-file-install --vendor netdirect \
 %attr(0755,root,root) %{_bindir}/bidentify
 %attr(0755,root,root) %{_bindir}/brecsum
 %attr(0755,root,root) %{_bindir}/upldif
-%attr(0755,root,root) %{_bindir}/hal-blackberry
+%attr(0755,root,root) %{_libdir}/barry/hal-blackberry
 %attr(0644,root,root) %{_mandir}/man1/btool*
 %attr(0644,root,root) %{_mandir}/man1/bwatch*
 %attr(0644,root,root) %{_mandir}/man1/bio*
@@ -470,9 +471,8 @@ desktop-file-install --vendor netdirect \
 %files desktop
 %defattr(-,root,root)
 %attr(0755,root,root) %{_bindir}/barrydesktop
-%attr(0755,root,root) %{_bindir}/bsyncjail
-%attr(0755,root,root) %{_bindir}/blistevo
-%attr(0755,root,root) %{_bindir}/bsynccl
+%attr(0755,root,root) %{_libexecdir}/barrydesktop/bsyncjail
+%attr(0755,root,root) %{_libexecdir}/barrydesktop/blistevo
 %attr(0644,root,root) %{_datadir}/barry/desktop/0.22/*
 %attr(0644,root,root) %{_datadir}/barry/desktop/0.40/*
 %attr(0644,root,root) %{_datadir}/barry/desktop/images/*.png
