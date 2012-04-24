@@ -1,6 +1,6 @@
 debian/tmp/usr/bin/barrydesktop
-debian/tmp/usr/bin/bsyncjail
-debian/tmp/usr/bin/blistevo
+debian/tmp/usr/lib/barry/barrydesktop/bsyncjail
+debian/tmp/usr/lib/barry/barrydesktop/blistevo
 debian/tmp/usr/share/barry/desktop/0.22/*
 debian/tmp/usr/share/barry/desktop/0.40/*
 debian/tmp/usr/share/barry/desktop/images/*

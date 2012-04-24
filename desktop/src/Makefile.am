@@ -14,13 +14,14 @@ INCLUDES = $(TREE_BUILD_CXXFLAGS) $(BARRY_CFLAGS) $(OPENSYNC22_CFLAGS) $(OPENSYN
 LIBS = $(TREE_BUILD_LDFLAGS) $(BARRY_LIBS) $(GLIB2_LIBS)
 
 AM_CXXFLAGS = -ansi -Wall -g
-AM_CPPFLAGS = -DBARRYDESKTOP_BASEDATADIR='"$(basedatadir)"' -DBARRYDESKTOP_IMAGEDIR='"$(imagedir)"'
+AM_CPPFLAGS = -DBARRYDESKTOP_BASEDATADIR='"$(basedatadir)"' -DBARRYDESKTOP_IMAGEDIR='"$(imagedir)"' -DBARRYDESKTOP_PKGLIBEXECDIR='"$(pkglibexecdir)"'
 AM_LDFLAGS =
 
 include_osyncwrapdir = ${includedir}/barry18/osyncwrap
 
-bin_PROGRAMS = barrydesktop bsyncjail bsynccl blistevo
-noinst_PROGRAMS = ostest xmlcompactor xmlmap
+noinst_PROGRAMS = ostest xmlcompactor xmlmap bsynccl
+bin_PROGRAMS = barrydesktop
+pkglibexec_PROGRAMS = bsyncjail blistevo
 lib_LTLIBRARIES = libosyncwrap.la
 
 include_osyncwrap_HEADERS = \
