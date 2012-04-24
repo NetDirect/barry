@@ -15,8 +15,12 @@ barry (0.18.0-1) unstable; urgency=low
   * changed backup and desktop menu icons to 32x32 XPM format
   * using >0 debian version number, since I'll probably be maintainer now
   * removed libosyncwrap.a and libosyncwrap.so from desktop package
+  * updated Standards-Version to 3.9.3
+  * this release closes: #657076
+  * moved bsyncjail to /usr/lib/barry/barrydesktop/
+  * moved hal-blackberry script to /usr/lib/barry/
 
- -- Chris Frey <cdfrey@foursquare.net>  Sat,  3 Mar 2012 00:38:40 -0500
+ -- Chris Frey <cdfrey@foursquare.net>  Sat, 23 Apr 2012 00:38:40 -0500
 
 barry (0.13-1.2) unstable; urgency=low
 
