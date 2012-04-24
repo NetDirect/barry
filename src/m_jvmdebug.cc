@@ -731,7 +731,7 @@ void JVMDebug::GetModulesList(JVMModulesList &mylist)
 		// Read the data stream
 		m_socket->Receive(response);
 
-		MAKE_JVMPACKET(dpack, response);
+//		MAKE_JVMPACKET(dpack, response);	// unused
 
 		size_t bytereceived = response.GetSize() - SB_JVMPACKET_HEADER_SIZE;
 
@@ -792,7 +792,7 @@ void JVMDebug::GetThreadsList(JVMThreadsList &mylist)
 	// Read the data stream
 	m_socket->Receive(response);
 
-	MAKE_JVMPACKET(dpack, response);
+//	MAKE_JVMPACKET(dpack, response);	// unused
 
 	size_t bytereceived = response.GetSize() - SB_JVMPACKET_HEADER_SIZE;
 
