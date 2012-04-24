@@ -79,8 +79,8 @@ endif
 	install -m 0644 $(DEB_SRCDIR)/hal/fdi/information/10freedesktop/10-blackberry.fdi $(CURDIR)/debian/barry-util/usr/share/hal/fdi/information/10freedesktop
 	install -m 0644 $(DEB_SRCDIR)/hal/fdi/policy/10osvendor/19-blackberry-acl.fdi $(CURDIR)/debian/barry-util/usr/share/hal/fdi/policy/10osvendor
 	# Install hal support script
-	install -d $(CURDIR)/debian/barry-util/usr/bin
-	install -m 0755 $(DEB_SRCDIR)/hal/hal-blackberry $(CURDIR)/debian/barry-util/usr/bin
+	install -d $(CURDIR)/debian/barry-util/usr/lib/barry
+	install -m 0755 $(DEB_SRCDIR)/hal/hal-blackberry $(CURDIR)/debian/barry-util/usr/lib/barry
 	# Install bash and zsh completion scripts
 	install -d $(CURDIR)/debian/barry-util/etc/bash_completion.d
 	install -m 0644 \
