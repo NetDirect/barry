@@ -1,0 +1,6 @@
+# This is a library only used by the Desktop GUI, and therefore packaged
+# right along with it.  Someday it may be useful as a standalone library,
+# and could be packaged that way, but it is not ready for that yet.
+
+barrydesktop: package-name-doesnt-match-sonames libosyncwrap18
+

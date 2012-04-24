@@ -19,6 +19,7 @@ barry (0.18.0-1) unstable; urgency=low
   * this release closes: #657076
   * moved bsyncjail to /usr/lib/barry/barrydesktop/
   * moved hal-blackberry script to /usr/lib/barry/
+  * added lintian override for libosyncwrap in the barrydesktop package
 
  -- Chris Frey <cdfrey@foursquare.net>  Sat, 23 Apr 2012 00:38:40 -0500
 
