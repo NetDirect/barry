@@ -1,0 +1,218 @@
+barry (0.15-1.2) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * Install udev rules into /lib/udev/rules.d (Closes: #561243, #622564)
+  * Fix uninstallability on kfreebsd-* by making barry-util depend on udev
+    on Linux only (Closes: #639594)
+  * Install udev rules on Linux only.
+
+ -- intrigeri <intrigeri+debian@boum.org>  Sun, 16 Oct 2011 20:04:55 +0200
+
+barry (0.15-1.1) unstable; urgency=low
+
+  * Non-maintainer upload
+  * Maintainer most apparently MIA
+  * Remove opensync plugins, closes: #569443, #591990
+    Thanks: Mathias Klose <doko@ubuntu.com>
+  * added missing bjavaloader and bfuse programs, closes: #548317
+    Thanks: Fabrice Coutadeur <fabricesp@ubuntu.com>
+  * Remove .la file (no reverse build dependencies), closes: #621271
+
+ -- Riku Voipio <riku.voipio@linaro.org>  Tue, 16 Aug 2011 10:54:04 +0300
+
+barry (0.15-1ubuntu1) lucid; urgency=low
+
+  * Merge from debian testing (LP: #426716), remaining changes:
+    - debian/barry-util.preinst:
+      + Remove old rules,path if unmodified
+    - debian/barry-util.postinst:
+      + Otherwise move to new path
+    - debian/control:
+      + Update udev dependency
+
+ -- Bhavani Shankar <right2bhavi@gmail.com>  Fri, 06 Nov 2009 17:54:31 +0530
+
+barry (0.15-1) unstable; urgency=low
+
+  * New Upstream Version
+    + Adds support for Curve 8900 (Closes: #524677)
+  * Ack NMU. Thanks to Cyril Brulebois for it.
+  * Updated patches:
+     - fix-ftbfs-with-new-boost.diff: deleted, fixed upstream.
+     - fix-ftbfs-with-gcc-4.4.diff: updated
+  * debian/rules:
+    + Install udev files from its new location.
+    + Use .conf for modprobe config files (Closes: #518571)
+  * debian/barry-util.install: do not try to install removed bs11nread util
+
+ -- Jose Carlos Garcia Sogo <jsogo@debian.org>  Sat, 29 Aug 2009 22:57:03 +0200
+
+barry (0.14-2.1ubuntu1) karmic; urgency=low
+
+  * Merge from debian unstable, remaining changes: LP: #401296
+    - debian/rules:
+      + Install udev rules into /lib/udev/rules.d now
+      + Install modprobe file as blacklist-berry_charge.conf
+    - debian/barry-util.preinst:
+      + Remove old rules,path if unmodified
+    - debian/barry-util.postinst:
+      + Otherwise move to new path
+    - debian/control:
+      + Update udev dependency  
+
+ -- Bhavani Shankar <right2bhavi@gmail.com>  Sun, 19 Jul 2009 12:21:14 +0530
+
+barry (0.14-2.1) unstable; urgency=medium
+
+  * Non-maintainer upload.
+  * Fix FTBFS with new boost (>= 1.37.0) by using the “-mt” suffix for
+    boost libraries since starting with this version, only this variant
+    is available (Closes: #529722). Add the following patch:
+     - fix-ftbfs-with-new-boost.diff (thanks to Steve M. Robbins)
+  * Fix FTBFS with gcc-4.4 (Closes: #505342):
+     - fix-ftbfs-with-gcc-4.4.diff (thanks to Martin Michlmayr)
+  * debian/rules: Add the simple-patchsys.mk include to get both patches
+    applied.
+  * Set urgency to “medium”, both bugs affect testing too.
+  * Add ${misc:Depends} to all Depends fields.
+
+ -- Cyril Brulebois <kibi@debian.org>  Sat, 18 Jul 2009 12:54:03 +0200
+
+barry (0.14-2ubuntu2) jaunty; urgency=low
+
+  * debian/rules: install modprobe file as blacklist-berry_charge.conf
+  * debian/barry-util.preinst: Remove old path if unmodified
+  * debian/barry-util.postinst: Otherwise move to new path
+
+ -- Scott James Remnant <scott@ubuntu.com>  Thu, 05 Mar 2009 20:14:50 +0000
+
+barry (0.14-2ubuntu1) jaunty; urgency=low
+
+  * debian/rules: Install udev rules into /lib/udev/rules.d now
+  * debian/barry-util.preinst: Remove old rules if unmodified
+  * debian/control: Update udev dependency.
+
+ -- Scott James Remnant <scott@ubuntu.com>  Mon, 12 Jan 2009 18:09:36 +0000
+
+barry (0.14-2.1) unstable; urgency=medium
+ 
+   * Non-maintainer upload.
+   * Fix FTBFS with new boost (>= 1.37.0) by using the “-mt” suffix for
+     boost libraries since starting with this version, only this variant
+     is available (Closes: #529722). Add the following patch:
+      - fix-ftbfs-with-new-boost.diff (thanks to Steve M. Robbins)
+   * Fix FTBFS with gcc-4.4 (Closes: #505342):
+      - fix-ftbfs-with-gcc-4.4.diff (thanks to Martin Michlmayr)
+   * debian/rules: Add the simple-patchsys.mk include to get both patches
+     applied.
+   * Set urgency to “medium”, both bugs affect testing too.
+   * Add ${misc:Depends} to all Depends fields.
+ 
+  -- Cyril Brulebois <kibi@debian.org>  Sat, 18 Jul 2009 12:54:03 +0200
+
+barry (0.14-2) unstable; urgency=low
+
+  * debian/rules: Fix libbarry-dbg name
+  * debian/: some debhelper control files were missing in latest release,
+    making binary packages almost empty. Thanks to Michael Banck for pointing it.
+  * debian/control: change opensync plugin package name to match naming scheme 
+    for other opensync plugins. Thanks to Michael Banck.
+  * debian/compat: force level 4 to make easier building of -dbg package  
+
+ -- Jose Carlos Garcia Sogo <jsogo@debian.org>  Tue, 21 Oct 2008 23:28:05 +0200
+
+barry (0.14-1) unstable; urgency=low
+
+  * New upstream release.
+
+ -- Jose Carlos Garcia Sogo <jsogo@debian.org>  Sun, 28 Sep 2008 16:43:58 +0200
+
+barry (0.13-1) unstable; urgency=low
+
+  [ Jose Carlos Garcia Sogo ]
+  * Upload to Debian (Closes: #450504)
+  * debian/copyright:
+    + Add copyright holders
+    + Add LGPL as license for vformat.[c,h] files
+  * debian/control:
+    + Change maintainer
+    + Bump Standards-Version to 3.8.0
+    + Rename libbary to libbary0 to follow policy.
+    + Add a dependency on exact binary:Version for each -dbg and -dev package
+    + libbarry-dev binary depends on libusb-dev
+  * debian/changelog:
+    + Merge different versions in 0.13-* packages in a new 0.13-1 one, so it
+    can be uploaded into Debian
+  * debian/rules: no need to call autotools
+  * barrybackup-gui.menu: use Applications/Mobile Devices menu, as per Policy
+  
+  [ Chris Frey ]
+  * From 0.13-1.1 upstream package
+  * added brecsum
+  * added ppp options and chat scripts
+  * fixed lintian description warnings
+
+  [ Jason Thomas ]
+  * Makefile.am and opensync-plugin/Makefile: add ACLOCAL_FLAGS for autoreconf
+  * debian/control: add build-depends: libglib2.0-dev
+  * debian/control: change build-depends: libopensync0 to libopensync0-dev 
+
+ -- Jose Carlos Garcia Sogo <jsogo@debian.org>  Sun, 21 Sep 2008 18:59:37 +0200
+
+barry (0.12-1) unstable; urgency=low
+
+   * version bump
+
+ -- Chris Frey <cdfrey@foursquare.net>  Fri, 07 Dec 2007 16:25:11 -0500
+
+barry (0.11-1) unstable; urgency=low
+
+   * version bump
+
+ -- Chris Frey <cdfrey@foursquare.net>  Fri, 30 Nov 2007 22:35:11 -0500
+
+barry (0.10-1) unstable; urgency=low
+
+   * renamed ktrans and translate to bktrans and btranslate
+   * added bidentify
+
+ -- Chris Frey <cdfrey@foursquare.net>  Fri, 30 Nov 2007 15:49:11 -0500
+
+barry (0.9-1) unstable; urgency=low
+
+   * updated for version 0.9 release
+   * converted build scripts to use cdbs
+   * added opensync plugin package
+
+ -- Chris Frey <cdfrey@foursquare.net>  Thu, 28 Sep 2007 15:55:11 -0500
+
+barry (0.8-1) unstable; urgency=low
+
+   * updated for version 0.8 release
+   * removed postinst, as the latest stable Debian has a current udev version
+   * split packaging into 4 separate packages: libbarry, libbarry-dev,
+     barry-util, barrybackup-gui
+   * added menu support for barrybackup-gui
+
+ -- Chris Frey <cdfrey@foursquare.net>  Fri, 11 May 2007 16:38:11 -0500
+
+barry (0.6-1) unstable; urgency=low
+
+   * adapted for Debian Etch.  has a newer version of udev, and plugdev 
+     available.  Also added btool in addition to only bcharge available
+
+ -- Peter Silva <Peter.A.Silva@gmail.com>  Fri, 06 Apr 2007 00:00:01 -0500
+
+barry (0.1-2) unstable; urgency=low
+
+  * Make this work on ubuntu as well.  Ubuntu has a newer version of udev
+    than Debian stable, and needs different rules.
+
+ -- Chris Frey <cdfrey@foursquare.net>  Fri, 04 Jan 2007 16:23:01 -0500
+
+barry (0.1-1) unstable; urgency=low
+
+  * Initial Release.
+
+ -- Chris Frey <cdfrey@foursquare.net>  Fri, 29 Dec 2006 20:34:01 -0500
+
