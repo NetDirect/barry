@@ -1,3 +1,46 @@
+barry (0.18.0-1) unstable; urgency=low
+
+  [Chris Frey]
+  * New upstream version 0.18 (Closes: #582189, #582187, #657076, LP: #500370)
+  * Moved opensync-plugin into its own build
+  * Removed dependency of libbarry-dev on libusb-dev
+  * Removed .la files
+  * Added new PPP chat scripts, including: kpn, telus, optus, vodafone AU,
+    orangeuk, mts
+  * Added new programs: bwatch, btarcmp, bjdwp, balxparse, bio, brawchannel
+  * New udev rules set, and now under /lib/udev/rules.d
+  * Added Bash and Zsh completion scripts
+  * Updated Standards-Version to 3.9.3
+  * Reviewed debhelper(7) manpage changes and updated compat to 7 (2012/03/03)
+  * New logo and icons
+  * Added NLS support
+  * Moved hal-blackberry script to /usr/lib/barry/
+  * Added lintian override for libosyncwrap in the barrydesktop package
+  * Updated debian/rules to allow for building with an external debian/
+    directory.
+  * Install examples and documentation.
+  * Configure --with-zlib and --enable-boost.
+  * Add gettext, autopoint, libsdl-dev, and libxml++2.6-dev to build-deps.
+  * Added support for hardened builds
+  * Use 3.0 (quilt) source format, as per intrigeri's patch
+
+  [ intrigeri ]
+  * Drop obsolete patch, stop using deprecated simple-patchsys.
+  * Use 3.0 (quilt) source format.
+  * Make barry-util.postinst script use 'set -e' rather than '/bin/sh -e'.
+  * Avoid duplicate short descriptions.
+  * Fix typo in description (Closes: #598878)
+  * Fix syntax of old debian/changelog entry.
+  * Fix section of -dbg packages.
+  * Add Homepage control field.
+  * Link to the correct version of GPL and LGPL.
+  * Revert useless changes to upstream files.
+
+  [ Martin Owens ]
+  * Add versionned dependency from barry-util and barrybackup-gui on libbarry0.
+
+ -- Chris Frey <cdfrey@foursquare.net>  Sat, 25 Apr 2012 00:38:40 -0500
+
 barry (0.15-1.2) unstable; urgency=low
 
   * Non-maintainer upload.
