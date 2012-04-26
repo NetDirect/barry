@@ -101,7 +101,7 @@ long Evolution::ForceShutdown()
 	ExecHelper shutdown(NULL);
 	shutdown.Run(NULL, "Evolution shutdown", _T("evolution --force-shutdown"));
 	shutdown.WaitForChild();
-	return shutdown.GetAppStatus();
+	return shutdown.GetChildExitCode();
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -749,13 +749,14 @@ void BaseFrame::OnTermBackupAndRestore(wxProcessEvent &event)
 {
 	barryverbose("OnTermBackupAndRestore(): done = "
 		<< (!m_backup_process.IsAppRunning() ? "true" : "false")
-		<< ", status = " << m_backup_process.GetAppStatus());
+		<< ", status = " << m_backup_process.GetRawAppStatus()
+		<< ", exit code = " << m_backup_process.GetChildExitCode());
 	// only give a warning if the application could not be run...
 	// if there's an error code, and it's been running for longer
 	// than a second or two, then it's a real error code, or a
 	// segfault or something similar.
 	if( !m_backup_process.IsAppRunning() &&
-	    m_backup_process.GetAppStatus() &&
+	    m_backup_process.GetChildExitCode() &&
 	    (time(NULL) - m_backup_process.GetStartTime()) < 2 )
 	{
 		wxMessageBox(_T("Unable to run barrybackup, or it returned an error. Please make sure it is installed and in your PATH."),

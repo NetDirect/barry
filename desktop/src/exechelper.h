@@ -165,7 +165,10 @@ public:
 	virtual bool IsAppRunning();
 	/// Blocks until child exits
 	virtual void WaitForChild();
-	virtual int GetAppStatus() const { return m_app_status; }
+	/// Returns raw status code: see waitpid() for info on how to use it
+	virtual int GetRawAppStatus() const { return m_app_status; }
+	/// Returns child's exit code
+	virtual int GetChildExitCode() const;
 	/// Sends a termination signal to the App, if running
 	virtual void KillApp(bool hardkill = false);
 };

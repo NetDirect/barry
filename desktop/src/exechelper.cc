@@ -187,6 +187,12 @@ void ExecHelper::WaitForChild()
 		usleep(50000);
 }
 
+int ExecHelper::GetChildExitCode() const
+{
+	int status = GetRawAppStatus();
+	return WEXITSTATUS(status);
+}
+
 void ExecHelper::KillApp(bool hardkill)
 {
 	if( IsAppRunning() ) {
