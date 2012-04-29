@@ -20,7 +20,7 @@
 \- Barry Project's backup program for the BlackBerry handheld
 .SH SYNOPSIS
 .B barrybackup
-[-?][-d]
+[\-?][\-d]
 .SH DESCRIPTION
 .PP
 .B barrybackup
@@ -40,7 +40,7 @@ files for each record of the databases.
 .SH OPTIONS
 .TP
 .B \-d
-.B \-\-debug-output
+.B \-\-debug\-output
 Enables low level protocol debug output written to stdout/stderr.
 .TP
 .B \-\-display=DISPLAY
@@ -57,7 +57,7 @@ Show summary of options.
 Backups are stored in tar format, compressed with gzip.  Backup files
 are named with the following pattern:
 
-	PIN-YYYYMMDD-HHMMSS[-tag_name].tar.gz
+	PIN\-YYYYMMDD\-HHMMSS[\-tag_name].tar.gz
 
 The tag name is optional and is used to name a particular backup.
 

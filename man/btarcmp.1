@@ -20,7 +20,7 @@
 \- a diff for Barry tar backup files
 .SH SYNOPSIS
 .B btarcmp
-[-b][-d db][-D db][-h][-I charset][-P][-S][-v] tar0 tar1
+[\-b][\-d db][\-D db][\-h][\-I charset][\-P][\-S][\-v] tar0 tar1
 .SH DESCRIPTION
 .PP
 .B btarcmp
@@ -38,7 +38,7 @@ Use brief filename markers.  Useful when tar filenames are extremely long.
 Name of database to compare.  Can be used multiple times to compare
 multiple databases.  If not specified, all databases are compared.
 .TP
-.B -D db
+.B \-D db
 Name of database to skip.  Can be used multiple times.  Overrides all
 other database selection options.
 .TP
@@ -47,13 +47,13 @@ Show summary of options.
 .TP
 .B \-I charset
 Specifies the iconv charset to use for converting international strings.
-The Blackberry uses the WINDOWS-1252 charset, which is incompatible with
+The Blackberry uses the WINDOWS\-1252 charset, which is incompatible with
 the more common code pages used in Linux.  The most useful charset to use
-with this option is UTF-8, and is highly recommended.  Any other charset
-available via 'iconv --list' can be used here too, but may not be
+with this option is UTF\-8, and is highly recommended.  Any other charset
+available via 'iconv \-\-list' can be used here too, but may not be
 successful for some character conversions.
 .TP
-.B -S
+.B \-S
 Displays list of known database records, which can be parsed.
 .TP
 .B \-v

@@ -20,7 +20,7 @@
 \- Command line USB Blackberry Java Debug Wire Protocol
 .SH SYNOPSIS
 .B bjdwp
-[-h][-p pin][-P password][-v] address port
+[\-h][\-p pin][\-P password][\-v] address port
 
 .SH DESCRIPTION
 .PP
@@ -65,7 +65,7 @@ Start the server and the USB connection to the device:
 
 Then start your java debugger:
 
-	jdb -connect com.sun.jdi.SocketAttach:hostname=localhost,port=8000
+	jdb \-connect com.sun.jdi.SocketAttach:hostname=localhost,port=8000
 
 
 .SH AUTHOR

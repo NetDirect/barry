@@ -20,13 +20,13 @@
 \- Command line parser for Barry backup files
 .SH SYNOPSIS
 .B btardump
-[-d db][-h][-i charset][-V] filename [filenames...]
+[\-d db][\-h][\-i charset][\-V] filename [filenames...]
 .SH DESCRIPTION
 .PP
 .B btardump
 takes one or more Barry backup tar files on the command line, and
 dumps parsed database records to stdout.  By default, all records
-are dumped, but this can be limited by the -d option.
+are dumped, but this can be limited by the \-d option.
 .SH OPTIONS
 .TP
 .B \-d db
@@ -39,10 +39,10 @@ Show summary of options.
 .TP
 .B \-i charset
 Specifies the iconv charset to use for converting international strings.
-The Blackberry uses the WINDOWS-1252 charset, which is incompatible with
+The Blackberry uses the WINDOWS\-1252 charset, which is incompatible with
 the more common code pages used in Linux.  The most useful charset to use
-with this option is UTF-8, and is highly recommended.  Any other charset
-available via 'iconv --list' can be used here too, but may not be
+with this option is UTF\-8, and is highly recommended.  Any other charset
+available via 'iconv \-\-list' can be used here too, but may not be
 successful for some character conversions.
 .TP
 .B \-V

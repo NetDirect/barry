@@ -48,16 +48,16 @@ for the Pearl before using btool.
 .TP
 .B \-d
 This switch is for the Blackberry Pearl to switch it back to
-0004 dual mode after having run bcharge with the -o option.  Alternately,
+0004 dual mode after having run bcharge with the \-o option.  Alternately,
 newer devices (such as Storm with product ID of 8007) will be switched
 to 0004.  Since a Pearl in mode 0001 is practically indistinguishable
-from a classic Blackberry, the -d switch is needed to tell bcharge
+from a classic Blackberry, the \-d switch is needed to tell bcharge
 that you really are working with a Pearl.
 .TP
 .B \-g
 Guess whether Dual mode is needed.  If USB Interface Class 255 is not
 found on the device (the class used for database access), then dual
-mode is set.  Otherwise, the device is left as-is.
+mode is set.  Otherwise, the device is left as is.
 .TP
 .B \-h
 Help summary.
@@ -68,7 +68,7 @@ kernels have this turned on, as well as some Fedora 7 kernels), then you
 also need to adjust the suspend state to avoid going into power saving mode.
 This option is used when run from udev, using a rule such as:
 
-BUS=="usb", SUBSYSTEM=="usb_device", ACTION=="add", SYSFS{idVendor}=="0fca", SYSFS{idProduct}=="0001", SYMLINK+="bb-%k", GROUP="plugdev", MODE="0660", RUN="/usr/sbin/bcharge \-p %p"
+BUS=="usb", SUBSYSTEM=="usb_device", ACTION=="add", SYSFS{idVendor}=="0fca", SYSFS{idProduct}=="0001", SYMLINK+="bb\-%k", GROUP="plugdev", MODE="0660", RUN="/usr/sbin/bcharge \-p %p"
 
 When using this option, you will almost always need to be root.
 .TP

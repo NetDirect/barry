@@ -20,13 +20,13 @@
 \- Barry Project's program to interface with BlackBerry handheld
 .SH SYNOPSIS
 .B btool
-[-B busname][-N devname][-a db][-c dn][-C dnattr][-d db [-f file][-F sortkey][-r#][-R#]-D#]][-h][-i charset][-l][-L][-m cmd][-M][-p pin][-P password][-s db -f file][-S][-t][-v][-V][-X][-z][-Z]
+[\-B busname][\-N devname][\-a db][\-c dn][\-C dnattr][\-d db [\-f file][\-F sortkey][\-r#][\-R#]\-D#]][\-h][\-i charset][\-l][\-L][\-m cmd][\-M][\-p pin][\-P password][\-s db \-f file][\-S][\-t][\-v][\-V][\-X][\-z][\-Z]
 .SH DESCRIPTION
 .PP
 .B btool
 is a program that communicates with a
 BlackBerry device over USB; there is no intention to support ancient
-serial-port BlackBerries.
+serial\-port BlackBerries.
 Since the protocols used by BlackBerry are not documented
 by the manufacturer Research In Motion, this program is
 experimental and you \fBuse at own risk\fP.
@@ -56,48 +56,48 @@ switch, make sure that the new dnattr exists.
 .TP
 .B \-d db
 Load database 'db' FROM device and dump to stdout.
-Can be used multiple times to fetch more than one database.  See the -t
+Can be used multiple times to fetch more than one database.  See the \-t
 option for a list of device databases.
 .TP
 .B \-e epp
 Override endpoint pair detection.  'epp' is a single string separated
 by a comma, holding the read,write endpoint pair.
 
-Example: -e 83,5
+Example: \-e 83,5
 
 Note: Endpoints are specified in hex.  Use the same numbers given by the
-lsusb -v output.
+lsusb \-v output.
 
 You should never need to use this option, as endpoints are autodetected.
 .TP
 .B \-f file
 Filename to write or read handheld data to/from.  Used in conjunction with
-the -d and -s options, respectively.  Note: the file format of this file
+the \-d and \-s options, respectively.  Note: the file format of this file
 is not backward compatible between devel releases.
 .TP
 .B \-F sortkey
-Sort the -d database output according to the given sortkey.
+Sort the \-d database output according to the given sortkey.
 Note that the format of this field is special: 'DBName:field1,field2'
 
 It contains no spaces, unless the spaces are part of the name.
 
-This option can be used multiple times, to match your -d options.
+This option can be used multiple times, to match your \-d options.
 
 Example: If you used the following command:
 
-btool -d 'Address Book'
+btool \-d 'Address Book'
 
 You could use the following sort key to sort by Company name first,
 with a subsort of last and first names.
 
--F 'Address Book:Company,LastName,FirstName'
+\-F 'Address Book:Company,LastName,FirstName'
 .TP
 .B \-i charset
 Specifies the iconv charset to use for converting international strings.
-The Blackberry uses the WINDOWS-1252 charset, which is incompatible with
+The Blackberry uses the WINDOWS\-1252 charset, which is incompatible with
 the more common code pages used in Linux.  The most useful charset to use
-with this option is UTF-8, and is highly recommended.  Any other charset
-available via 'iconv --list' can be used here too, but may not be
+with this option is UTF\-8, and is highly recommended.  Any other charset
+available via 'iconv \-\-list' can be used here too, but may not be
 successful for some character conversions.
 .TP
 .B \-I
@@ -109,7 +109,7 @@ Lists attached Blackberry devices, and their PIN numbers.
 .TP
 .B \-L
 List Contact field names.  Each name represents a contact field that the
-Barry library recognizes.  Use these names with the -m option to adjust
+Barry library recognizes.  Use these names with the \-m option to adjust
 the LDIF name to field mapping.
 .TP
 .B \-m command
@@ -126,7 +126,7 @@ FirstName and write to LastName, use:
 
 \-m strange,FirstName,LastName
 
-The -m option can be specified multiple times to create the desired mapping.
+The \-m option can be specified multiple times to create the desired mapping.
 .TP
 .B \-M
 List current LDIF mapping to stdout.
@@ -145,7 +145,7 @@ Simplistic method to specify device password.  In a real application, this
 would be done using a more secure prompt.
 .TP
 .B \-s db
-Save database 'db' TO device from data loaded from -f file.  See the -t
+Save database 'db' TO device from data loaded from \-f file.  See the \-t
 option for a list of device databases.
 .TP
 .B \-S
@@ -153,7 +153,7 @@ Show list of supported database parsers and builders.  Parsers are used
 when reading data out of the device, and builders are used when writing
 data to the device.  If a parser is supported, but its associated builder
 is not, that means you cannot change the database programmatically, such
-as with the -s option.
+as with the \-s option.
 .TP
 .B \-t
 Show device's database table.
@@ -174,32 +174,32 @@ Perform a USB reset on the device.  Similar to the breset command,
 and does a virtual "replug" of the device.
 .TP
 .B \-z
-Use non-threaded sockets when communicating with the device.  This is
+Use non\-threaded sockets when communicating with the device.  This is
 the behaviour seen in versions 0.12 and earlier, since threads were
-not yet supported.  This option, along with -Z, are for debugging
+not yet supported.  This option, along with \-Z, are for debugging
 and testing.
 .TP
 .B \-Z
 Use a threaded socket router when communicating with the device.
-This is the default for btool.  This option, along with -Z, are for
+This is the default for btool.  This option, along with \-Z, are for
 debugging and testing.
 .TP
 .B \-h, \-\-help
 Show summary of options.
 
 .SH DATABASE COMMAND MODIFIERS
-The following options modify the -d command option above, and can be used
+The following options modify the \-d command option above, and can be used
 multiple times for more than one record.
 .TP
 .B \-r #
-Fetch specific record, given a record index number as seen in the -T state table.
+Fetch specific record, given a record index number as seen in the \-T state table.
 Can be used multiple times to fetch specific records from a single database.
 .TP
 .B \-R #
-Same as -r, but also clears the record's dirty flags.
+Same as \-r, but also clears the record's dirty flags.
 .TP
 .B \-D #
-Delete the specified record using the index number as seen in the -T state table.
+Delete the specified record using the index number as seen in the \-T state table.
 
 
 .SH AUTHOR

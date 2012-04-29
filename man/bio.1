@@ -19,7 +19,7 @@
 .B bio
 \- Barry Input / Output
 .SH SYNOPSIS
-.B bio -i <input type> [input args] -o <output type> [output args] [-o <output type> ...]
+.B bio \-i <input type> [input args] \-o <output type> [output args] [\-o <output type> ...]
 .SH DESCRIPTION
 .PP
 .B bio
@@ -176,7 +176,7 @@ serialization archive.
 .B \-f file
 Filename to read from or write to.  Use \- to specify stdin or stdout.
 If not specified for input, defaults to stdin, but since output can
-contain non-ASCII chars, you must use \-f \- if you want to write
+contain non\(hyASCII chars, you must use \-f \- if you want to write
 to stdout.
 
 .SH LDIF TYPE OPTIONS
@@ -267,33 +267,33 @@ Dump verbose low level protocol data during USB operations, to stdout.
 .TP
 1) Backup a full device to tar backup:
 .IP
-bio -i device -A -o tar -f mybackup.tar.gz
+bio \-i device \-A \-o tar \-f mybackup.tar.gz
 .TP
 2) Read a backup file and convert the Address Book to MIME
 .IP
-bio -i tar -f mybackup.tar.gz -d "Address Book" -o mime
+bio \-i tar \-f mybackup.tar.gz \-d "Address Book" \-o mime
 .TP
 3) Restore a single database to a device
 .IP
-bio -i tar -f mybackup.tar.gz -d "Address Book" -o device -w erase
+bio \-i tar \-f mybackup.tar.gz \-d "Address Book" \-o device \-w erase
 .TP
 4) Copy the Calendar from one device to another, and dump
 the records to stdout in human readable format at the same time
 .IP
-bio -i device -p 3009efe3 -d Calendar -o device -p 204062f3 -w erase -o dump
+bio \-i device \-p 3009efe3 \-d Calendar \-o device \-p 204062f3 \-w erase \-o dump
 .TP
 5) Read LDIF input and convert the contacts to MIME format
 .IP
-ldapsearch -x | bio -i ldif -o mime
+ldapsearch \-x | bio \-i ldif \-o mime
 .TP
 6) Test the record code by running the Tasks database through
 the Boost storage and back to human readable
 .IP
-bio -i device -d Tasks -o dump
+bio \-i device \-d Tasks \-o dump
 
 vs.
 
-bio -i device -d Tasks -o boost -f - | bio -i boost -f - -o dump
+bio \-i device \-d Tasks \-o boost \-f \- | bio \-i boost \-f \- \-o dump
 
 .SH AUTHOR
 .nh

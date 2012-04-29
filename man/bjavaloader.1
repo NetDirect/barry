@@ -19,19 +19,19 @@
 .B bjavaloader
 \- Barry Project's program to manage BlackBerry applications
 .SH SYNOPSIS
-.B bjavaloader [-h][-p pin][-P pass][-v]
+.B bjavaloader [\-h][\-p pin][\-P pass][\-v]
 .TP
-.B bjavaloader dir [-s]
+.B bjavaloader dir [\-s]
 .TP
 .B bjavaloader deviceinfo
 .TP
 .B bjavaloader load <.codfile>
 .TP
-.B bjavaloader save [-A] <module_name>
+.B bjavaloader save [\-A] <module_name>
 .TP
-.B bjavaloader wipe [-a | -i]
+.B bjavaloader wipe [\-a | \-i]
 .TP
-.B bjavaloader erase [-f] <module_name>
+.B bjavaloader erase [\-f] <module_name>
 .TP
 .B bjavaloader eventlog
 .TP
@@ -41,7 +41,7 @@
 .TP
 .B bjavaloader screenshot <.bmp file>
 .TP
-.B bjavaloader settime [yyyy-mm-dd HH:MM:SS]
+.B bjavaloader settime [yyyy\-mm\-dd HH:MM:SS]
 .SH DESCRIPTION
 .PP
 .B bjavaloader
@@ -84,9 +84,9 @@ well as the protocol packets used during communication.
 
 .SH COMMANDS
 .TP
-.B dir [-s]
+.B dir [\-s]
 Fetch a list of all applications and display them on stdout.  When used with
-the -s option, submodules are included, and can take a long time to display.
+the \-s option, submodules are included, and can take a long time to display.
 .TP
 .B deviceinfo
 Provides information on the handheld.
@@ -94,21 +94,21 @@ Provides information on the handheld.
 .B load <.cod filename> ...
 Loads one or more COD application files into the device.
 .TP
-.B save [-A] <module name> ...
+.B save [\-A] <module name> ...
 Retrieves modules from the handheld and writes them to .cod files with the
 same name as the module.  Note that this will overwrite any existing .cod
-file in the current directory.  If the -A option is specified, a dir will
+file in the current directory.  If the \-A option is specified, a dir will
 be done internally, and all available modules will be saved.
 .TP
-.B wipe [-a | -i]
+.B wipe [\-a | \-i]
 Wipes the handheld, removing all data such as messages, contacts, etc.
 and/or all .cod files, including OS .cod files.
 By default, with no options specified, both applications and data are wiped.
 Use the switches to specify only applications or data.
 .TP
-.B erase [-f] <module name> ...
+.B erase [\-f] <module name> ...
 Delete the specified application module(s).  The module name can be determined
-using the 'dir' command.  When used with the -f option, the module is erased
+using the 'dir' command.  When used with the \-f option, the module is erased
 even if in use, and the device will be reset.
 .TP
 .B eventlog
@@ -124,7 +124,7 @@ be viewed with the 'eventlog' command.
 .B screenshot <.bmp filename>
 Capture current screen image and save in BMP format.
 .TP
-.B settime [yyyy-mm-dd HH:MM:SS]
+.B settime [yyyy\-mm\-dd HH:MM:SS]
 Sets the time on the handheld to the current time, or the specified time.
 If time is given as an argument, the current system timezone is assumed.
 
