@@ -149,6 +149,7 @@ enum {
 	Dialog_MemoEdit,
 	Dialog_Migrate_MigrateNowButton,
 	Dialog_Migrate_CancelButton,
+	Dialog_Modem,
 
 	SysMenu_FirstItem,
 

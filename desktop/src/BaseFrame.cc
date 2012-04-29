@@ -24,6 +24,7 @@
 #include "Mode_Sync.h"
 #include "Mode_Browse.h"
 #include "MigrateDlg.h"
+#include "ModemDlg.h"
 #include "ClickImage.h"
 #include "barrydesktop.h"
 #include "windowids.h"
@@ -371,6 +372,9 @@ void BaseFrame::OnSync(wxCommandEvent &event)
 //#include "ConflictDlg.h"
 void BaseFrame::OnModem(wxCommandEvent &event)
 {
+	Barry::Pin pin = GetCurrentComboPin();
+	ModemDlg::DoModem(this, pin);
+
 /*
 	EvoDefaultDlg dlg(this);
 	dlg.ShowModal();

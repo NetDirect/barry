@@ -7,6 +7,7 @@ EXTRA_DIST = \
 	CalendarEditDlg.wxg \
 	MemoEditDlg.wxg \
 	TaskEditDlg.wxg \
+	ModemDlg.wxg \
 	oextract.cc
 
 INCLUDES = $(TREE_BUILD_CXXFLAGS) $(BARRY_CFLAGS) $(OPENSYNC22_CFLAGS) $(OPENSYNC40_CFLAGS) $(GLIB2_CFLAGS) $(EVOLUTION_CFLAGS)
@@ -80,6 +81,7 @@ barrydesktop_SOURCES = \
 	Mode_MainMenu.cc Mode_MainMenu.h \
 	Mode_Sync.cc Mode_Sync.h \
 	Mode_Browse.cc Mode_Browse.h \
+	ModemDlg.cc ModemDlg.h \
 	MigrateDlg.cc MigrateDlg.h \
 	ContactEditDlg.cc ContactEditDlg.h \
 	CalendarEditDlg.cc CalendarEditDlg.h \

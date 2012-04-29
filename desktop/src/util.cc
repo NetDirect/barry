@@ -39,7 +39,7 @@ const wxChar *ButtonNames[] = {
 bool ButtonEnabled[] = {
 	true,	// backuprestore
 	true,	// sync
-	false,	// modem
+	true,	// modem
 	true,	// migratedevice
 	true,	// browsedatabases
 	false,	// apploader
