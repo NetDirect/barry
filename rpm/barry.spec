@@ -139,7 +139,7 @@ This package contains the opensync 0.4x plugin.
 %package desktop
 Summary: BlackBerry(tm) Desktop Panel GUI for Linux
 Group: Applications/Productivity
-Requires: libbarry0
+Requires: libbarry0 barry-util ppp xterm
 BuildRequires: wxGTK-devel
 
 %description desktop
