@@ -151,7 +151,7 @@ barry (0.14-2.1) unstable; urgency=medium
    * Set urgency to “medium”, both bugs affect testing too.
    * Add ${misc:Depends} to all Depends fields.
  
-  -- Cyril Brulebois <kibi@debian.org>  Sat, 18 Jul 2009 12:54:03 +0200
+ -- Cyril Brulebois <kibi@debian.org>  Sat, 18 Jul 2009 12:54:03 +0200
 
 barry (0.14-2) unstable; urgency=low
 
