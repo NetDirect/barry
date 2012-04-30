@@ -240,33 +240,6 @@ void ModemDlg::DoModem(wxWindow *parent, const Barry::Pin &pin)
 		return;
 	}
 
-	// in preparation for pppob search, find sbin, relative to our
-	// current application path
-	wxFileName app_path(wxTheApp->argv[0]);
-	string app_sbin(app_path.GetPath().utf8_str());
-	app_sbin += "/../sbin";
-	if( app_sbin[0] != '/' ) {
-		char cwdbuf[PATH_MAX];
-		getcwd(cwdbuf, PATH_MAX);
-
-		// insert current directory
-		app_sbin.insert(0, string(cwdbuf) + "/");
-	}
-	char *app_real = realpath(app_sbin.c_str(), NULL);
-	app_sbin = app_real;
-	free(app_real);
-cout << "app_sbin = " << app_sbin << endl;
-
-	// test whether pppob is available... use app directory as
-	// part of search as well, in case Barry is installed in an
-	// unusual place
-	ProgramDetect pppob("pppob", app_sbin + ":/usr/sbin:" + getenv("PATH"));
-	if( !pppob.Exists() || !pppob.IsExecutable() ) {
-		wxMessageBox(_T("Cannot find pppob.  Please make sure Barry's command line utilities are installed."), _T("pppob Not Found"), wxOK | wxICON_ERROR, parent);
-		return;
-	}
-cout << pppob.GetPath() << endl;
-
 	// test whether we can run pppd, probably need to use full
 	// /usr/sbin/pppd path to reach it... check for return code
 	// of 0 or 2
