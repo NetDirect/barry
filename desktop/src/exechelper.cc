@@ -139,7 +139,7 @@ int ExecHelper::Execute(bool use_wx,
 		}
 		cerr << endl;
 
-		exit(-1);
+		exit(255);
 	}
 	else {
 		// we are the parent... start the wait thread
