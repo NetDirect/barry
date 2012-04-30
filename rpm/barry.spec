@@ -139,7 +139,7 @@ This package contains the opensync 0.4x plugin.
 %package desktop
 Summary: BlackBerry(tm) Desktop Panel GUI for Linux
 Group: Applications/Productivity
-Requires: libbarry0 barry-util ppp xterm
+Requires: libbarry0 barry-util ppp xterm beesu
 BuildRequires: wxGTK-devel
 
 %description desktop
@@ -220,7 +220,7 @@ if [ -n "$OSYNCBOTH_PKG_CONFIG_PATH" ] ; then
 	export PKG_CONFIG_PATH="$OSYNCBOTH_PKG_CONFIG_PATH:$ORIG_PKG_CONFIG_PATH"
 fi
 cd desktop/
-%{configure} PKG_CONFIG_PATH="..:$PKG_CONFIG_PATH" CXXFLAGS="-I../.." LDFLAGS="-L../../src" --enable-nls --enable-rpathhack --with-evolution
+%{configure} PKG_CONFIG_PATH="..:$PKG_CONFIG_PATH" CXXFLAGS="-I../.." LDFLAGS="-L../../src" --enable-nls --enable-rpathhack --with-evolution --with-guisu=/usr/bin/beesu
 %{__make} %{?_smp_mflags}
 cd ../
 %endif
@@ -516,6 +516,7 @@ desktop-file-install --vendor netdirect \
 - removed extraneous library dependencies, which should be handled automatically
 - added btarcmp
 - removed brimtrans, bktrans, and btranslate (devel tools)
+- added beesu dependency for barrydesktop, for modem mode, to run pppd
 
 * Fri May 28 2010 Chris Frey <cdfrey@foursquare.net> 0.17.0-0
 - version bump
