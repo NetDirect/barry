@@ -141,6 +141,18 @@ int main(int argc, char *argv[])
 		std::string logfile;
 		std::string password;
 
+		// check for options via the fifo first, so the command
+		// line args can override them
+		FifoClient fifo;
+		if( fifo.Fetch(4) ) {
+			const FifoArgs &args = fifo.GetArgs();
+			pin = args.m_pin.Value();
+			force_serial = args.m_use_serial_mode;
+			logfile = args.m_log_filename;
+			password = args.m_password;
+			data_dump = args.m_verbose;
+		}
+
 		// process command line options
 		for(;;) {
 			int cmd = getopt(argc, argv, "l:p:P:sv");
