@@ -395,15 +395,24 @@ cout << pppob.GetPath() << endl;
 		otmp << "#!/bin/sh" << endl;
 		otmp << "echo Starting pppd for device PIN "
 			<< pin.Str() << "... " << endl;
+
+		ostringstream cmdoss;
+
 // FIXME - need gksu here, for the pty override :-(  Need method to
 // pass options to pppob without root
-		otmp << need_sudo << pppd.GetPath()
+		cmdoss << need_sudo << pppd.GetPath()
 			<< " call " << peer
 			<< " pty \"" << pppob.GetPath()
 				<< " -p " << pin.Str();
 		if( password.size() )
-			otmp << " -P " << password;
-		otmp << '"' << endl;
+			cmdoss << " -P " << password;
+		cmdoss << '"';
+
+		// show command with echo too
+		otmp << "echo" << endl;
+		otmp << "echo '" << cmdoss.str() << "'" << endl;
+		otmp << cmdoss.str() << endl;
+
 		otmp << "echo Press enter to close window..." << endl;
 		otmp << "read" << endl;
 		otmp.close();
