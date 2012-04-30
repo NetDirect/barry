@@ -229,6 +229,10 @@ std::string ModemDlg::GetPassword() const
 
 void ModemDlg::DoModem(wxWindow *parent, const Barry::Pin &pin)
 {
+	//
+	// Search for dependency programs: xterm, pppd, gksu, etc.
+	//
+
 	// test whether xterm is in the path
 	ProgramDetect xterm("xterm", getenv("PATH"));
 	if( !xterm.Exists() || !xterm.IsExecutable() ) {
@@ -272,40 +276,54 @@ cout << pppob.GetPath() << endl;
 		return;
 	}
 
+
+	//
+	// Check if we need root access to run pppd
+	//
 	string need_sudo;
 
-	if( !(pppd.IsSuid() && pppd.GetGroup() != "root") ) {
-		// No group / suid setup, so need sudo
-		// Use gtk's gui sudo, since we're using GTK's wxwidgets
-		// and probably safe here
-		// FIXME - need a portable method for all of this someday :-(
-		need_sudo = "gksu ";
+	if( pppd.IsExecutable() && pppd.IsSuid() ) {
+		// all good!
+	}
+	else if( !pppd.IsExecutable() && pppd.IsSuid() && pppd.GetGroup() != "root" ) {
+		wxString gname(pppd.GetGroup().c_str(), wxConvUTF8);
+		wxString msg = wxString::Format(_T("Your system's PPP has the suid bit set, with a group of '%s'.  You should add your account to the '%s' group, to avoid the need to enter the root password every time you use the modem.\n\nContinue anyway?"), gname.c_str(), gname.c_str());
+		int choice = wxMessageBox(msg, _T("System Group"), wxYES_NO,
+			parent);
+		if( choice != wxYES )
+			return;
+
+		need_sudo = BARRYDESKTOP_SYSTEM_GUI_SU + string(" ");
+	}
+	else if( pppd.IsExecutable() && !pppd.IsSuid() ) {
+		need_sudo = BARRYDESKTOP_SYSTEM_GUI_SU + string(" ");
 	}
 
-	ExecHelper eh(0);
-	wxString cmd((need_sudo + pppd.GetPath() + " help").c_str(), wxConvUTF8);
-	if( !eh.Run(0, "", cmd) ) {
-		if( need_sudo.size() ) {
-			wxMessageBox(_T("Unable to run pppd.  Please make sure you have it enabled in your sudo config, or put pppd in a group of its own."), _T("Cannot Run pppd"), wxOK | wxICON_ERROR, parent);
+	//
+	// Check if we can run pppd, in the non-root case
+	//
+	if( need_sudo.size() == 0 ) {
+		ExecHelper eh(0);
+		wxString cmd((pppd.GetPath() + " permission_test").c_str(), wxConvUTF8);
+		if( !eh.Run(0, "", cmd) ) {
+			wxMessageBox(_T("Internal fork error. Should never happen."), _T("Cannot Run pppd"), wxOK | wxICON_ERROR, parent);
+			return;
 		}
-		else {
-			wxString msg = wxString::Format(_T("Unable to run pppd.  Please make sure your user account is included in the '%s' group."), wxString(pppd.GetGroup().c_str(), wxConvUTF8).c_str());
 
-			wxMessageBox(msg, _T("Cannot Run pppd"), wxOK | wxICON_ERROR, parent);
+		eh.WaitForChild();
+		if( !(eh.GetChildExitCode() == 0 || eh.GetChildExitCode() == 2) ) {
+			wxString msg = wxString::Format(_T("Unable to run pppd correctly.  Unexpected error code: %d, %s"), eh.GetChildExitCode(), cmd.c_str());
+			wxMessageBox(msg, _T("Error Code"), wxOK | wxICON_ERROR, parent);
+			return;
 		}
-
-		return;
 	}
 
-	eh.WaitForChild();
-	if( !(eh.GetChildExitCode() == 0 || eh.GetChildExitCode() == 2) ) {
-		wxString msg = wxString::Format(_T("Unable to run pppd correctly.  Unexpected error code: %d, %s"), eh.GetChildExitCode(), cmd.c_str());
-		wxMessageBox(msg, _T("Error Code"), wxOK | wxICON_ERROR, parent);
-		return;
-	}
-
+	//
+	// Load all peer files.
+	//
 	// do a search in /etc/ppp/peers for all barry-* files and
 	// store in a vector
+	//
 	std::vector<std::string> peers;
 	wxDir dir(wxString("/etc/ppp/peers", wxConvUTF8));
 	if( !dir.IsOpened() ) {
@@ -328,6 +346,11 @@ cout << pppob.GetPath() << endl;
 	// sort the vector
 	sort(peers.begin(), peers.end());
 
+
+	//
+	// Double check that we can read the peer files
+	//
+
 	// do an access or file open test on the first barry-* file
 	// to make sure that we have access to peers/
 	string testfile = "/etc/ppp/peers/" + peers[0];
@@ -337,12 +360,18 @@ cout << pppob.GetPath() << endl;
 		return;
 	}
 
-	// fetch default peer choice
+
+	//
+	// Fetch default peer choice
+	//
 	Barry::GlobalConfigFile &config = wxGetApp().GetGlobalConfig();
 	string key = pin.Str() + "-DefaultPeer";
 	string default_peer = config.GetKey(key);
 
-	// show the dialog
+
+	//
+	// Show the dialog
+	//
 	ModemDlg dlg(parent, peers, default_peer);
 	if( dlg.ShowModal() == wxID_OK ) {
 		string password = dlg.GetPassword();
@@ -366,10 +395,9 @@ cout << pppob.GetPath() << endl;
 		otmp << "#!/bin/sh" << endl;
 		otmp << "echo Starting pppd for device PIN "
 			<< pin.Str() << "... " << endl;
-//		otmp << need_sudo << pppd.GetPath()
 // FIXME - need gksu here, for the pty override :-(  Need method to
 // pass options to pppob without root
-		otmp << "gksu " << pppd.GetPath()
+		otmp << need_sudo << pppd.GetPath()
 			<< " call " << peer
 			<< " pty \"" << pppob.GetPath()
 				<< " -p " << pin.Str();

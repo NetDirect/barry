@@ -83,6 +83,46 @@ Please upgrade and try again.
 AC_LANG([C++])
 
 #
+# Search for a GUI-style version of su.  If not specified, we search for
+# gksu (for Debian), beesu (for Fedora), and kdesu (for openSUSE),
+# searched in the above order.
+#
+# User can override with the option.
+#
+AC_ARG_WITH([guisu],
+	[AS_HELP_STRING([--with-guisu=CMD],
+	[specify GUI oriented su wrapper program @<:@default: searches for gksu, beesu, or kdesu in that order@:>@])],
+	[
+		GUISU="$with_guisu"
+		AC_MSG_NOTICE([Using user-specified GUI su wrapper: $GUISU])
+	],
+	[
+		if test -x /usr/bin/gksu ; then
+			GUISU="gksu"
+			AC_MSG_NOTICE([Found GUI su wrapper: gksu])
+		elif test -x /usr/bin/beesu ; then
+			GUISU="beesu"
+			AC_MSG_NOTICE([Found GUI su wrapper: beesu])
+		elif test -x /usr/bin/kdesu ; then
+			GUISU="kdesu"
+			AC_MSG_NOTICE([Found GUI su wrapper: kdesu])
+		else
+			AC_MSG_ERROR([Unable to find a GUI oriented su wrapper.
+
+	This is required for modem operation, in case permissions are not
+	set on pppd properly.
+
+	Please specify the GUI su wrapper you wish to use with the
+	--with-guisu configure option.  Note that it MUST be a GUI.
+	You cannot use the command line su.
+
+	])
+		fi
+	])
+
+AC_SUBST([GUISU])
+
+#
 # Check for Evolution data server libraries, and allow user to disable
 # if needed.
 #
