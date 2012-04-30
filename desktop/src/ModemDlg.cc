@@ -374,7 +374,6 @@ cout << pppob.GetPath() << endl;
 	//
 	ModemDlg dlg(parent, peers, default_peer);
 	if( dlg.ShowModal() == wxID_OK ) {
-		string password = dlg.GetPassword();
 		string peer = dlg.GetPeerName();
 		string peerfile = "/etc/ppp/peers/" + peer;
 		if( !peer.size() || access(peerfile.c_str(), R_OK) != 0 ) {
@@ -386,8 +385,7 @@ cout << pppob.GetPath() << endl;
 		// save peer selection as default for this device
 		config.SetKey(key, peer);
 
-		// create shell script which calls pppd with proper
-		// pty pppob override, and password if needed
+		// create shell script which calls pppd
 		TempDir tempdir("BarryDesktopModem");
 		string tmp_path = tempdir.GetNewFilename();
 
@@ -397,16 +395,7 @@ cout << pppob.GetPath() << endl;
 			<< pin.Str() << "... " << endl;
 
 		ostringstream cmdoss;
-
-// FIXME - need gksu here, for the pty override :-(  Need method to
-// pass options to pppob without root
-		cmdoss << need_sudo << pppd.GetPath()
-			<< " call " << peer
-			<< " pty \"" << pppob.GetPath()
-				<< " -p " << pin.Str();
-		if( password.size() )
-			cmdoss << " -P " << password;
-		cmdoss << '"';
+		cmdoss << need_sudo << pppd.GetPath() << " call " << peer;
 
 		// show command with echo too
 		otmp << "echo" << endl;
@@ -424,12 +413,17 @@ cout << pppob.GetPath() << endl;
 		wxString xterm_cmd((xterm.GetPath() + " " + tmp_path).c_str(),
 			wxConvUTF8);
 
+		// setup argument fifo
+		Barry::FifoArgs args;
+		args.m_password = dlg.GetPassword();
+		args.m_pin = pin;
+		Barry::FifoServer fifo(args);
+
 		// run! and go back to main screen
 		ExecHelper run(0);
 		run.Run(parent, "modem", xterm_cmd);
 
-		// let run, then let TempDir cleanup
-		sleep(2);
+		fifo.Serve(5);
 	}
 }
 
