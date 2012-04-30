@@ -163,6 +163,7 @@ include_barry_HEADERS = barry.h barrysync.h barrybackup.h barryalx.h \
 	pipe.h \
 	connector.h \
 	trim.h \
+	fifoargs.h \
 	tzwrapper.h
 
 noinst_HEADERS = cbarry.h \
@@ -198,6 +199,7 @@ libbarry_la_SOURCES = dll.h \
 	builder.h builder.cc \
 	parser.h parser.cc \
 	time.h time.cc \
+	fifoargs.h fifoargs.cc \
 	base64.h base64.cc \
 	bmp.h bmp-internal.h bmp.cc \
 	cod.h cod-internal.h cod.cc \

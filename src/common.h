@@ -51,6 +51,8 @@
 
 #define BLACKBERRY_CHARSET "WINDOWS-1252"
 
+#define BARRY_FIFO_NAME "/tmp/barry_fifo_args"
+
 namespace Barry {
 
 /// See also the LogLock class.

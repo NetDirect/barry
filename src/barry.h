@@ -79,6 +79,7 @@
 #include "vsmartptr.h"
 #include "pipe.h"
 #include "connector.h"
+#include "fifoargs.h"
 
 // Include the JDW Debug Parser classes
 #include "dp_codinfo.h"
