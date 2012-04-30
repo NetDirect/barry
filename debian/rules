@@ -28,7 +28,7 @@ DEB_DESTDIR = $(CURDIR)/debian/tmp
 
 #CDBS automatically handles common flags to pass to the configure script,
 #but it is possible to give some extra parameters :
-DEB_CONFIGURE_EXTRA_FLAGS := --enable-boost --enable-nls --with-zlib --enable-gui --enable-desktop $(BARRY_CONFIGURE_OPTS) --with-libusb --enable-rpathhack --with-evolution
+DEB_CONFIGURE_EXTRA_FLAGS := --enable-boost --enable-nls --with-zlib --enable-gui --enable-desktop --with-guisu=/usr/bin/gksu $(BARRY_CONFIGURE_OPTS) --with-libusb --enable-rpathhack --with-evolution
 COMMON_CONFIGURE_FLAGS := --prefix=/usr
 DEB_INSTALL_DOCS_ALL =
 

@@ -111,6 +111,7 @@ Package: barrydesktop
 Section: utils
 Architecture: any
 Depends: libbarry18, barry-util, ppp, xterm, ${shlibs:Depends}
+Suggests: gksu
 Description: Desktop Panel GUI for the RIM BlackBerry Handheld
  Barry is a GPL C++ library for interfacing with the RIM BlackBerry Handheld.
  .
