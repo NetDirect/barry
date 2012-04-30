@@ -88,7 +88,7 @@ AC_LANG([C++])
 #
 AC_ARG_WITH([evolution],
 	[AS_HELP_STRING([--with-evolution],
-	[support fancy command line editing @<:@default=check@:>@])],
+	[use evolution libs to help configure sync (yes,no,check) @<:@default=check@:>@])],
 	[],
 	[with_evolution=check])
 
