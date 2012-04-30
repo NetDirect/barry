@@ -373,7 +373,13 @@ void BaseFrame::OnSync(wxCommandEvent &event)
 void BaseFrame::OnModem(wxCommandEvent &event)
 {
 	Barry::Pin pin = GetCurrentComboPin();
-	ModemDlg::DoModem(this, pin);
+	if( pin.Valid() ) {
+		ModemDlg::DoModem(this, pin);
+	}
+	else {
+		wxMessageBox(_T("Please select a device first."),
+			_T("No Device"), wxOK | wxICON_ERROR, this);
+	}
 
 /*
 	EvoDefaultDlg dlg(this);
