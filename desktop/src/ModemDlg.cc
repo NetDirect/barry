@@ -44,7 +44,8 @@ using namespace std;
 
 ModemDlg::ModemDlg(wxWindow* parent,
 			const std::vector<std::string> &peers,
-			const std::string &default_peer)
+			const std::string &default_peer,
+			const Barry::Pin &pin)
 	: wxDialog(parent, Dialog_Modem, _T("Modem Kickstart"))
 {
 	bottom_buttons = CreateButtonSizer(wxOK | wxCANCEL);
@@ -52,6 +53,8 @@ ModemDlg::ModemDlg(wxWindow* parent,
 	// begin wxGlade: ModemDlg::ModemDlg
 	sizer_5_staticbox = new wxStaticBox(this, -1, wxT("Device"));
 	sizer_1_staticbox = new wxStaticBox(this, -1, wxT("Providers"));
+	label_2 = new wxStaticText(this, wxID_ANY, wxT("For device pin:"));
+	device_label = new wxStaticText(this, wxID_ANY, wxT("3009efe3"));
 	const wxString list_box_1_choices[] = {
         wxT("barry-minimal"),
         wxT("barry-rogers"),
@@ -82,15 +85,22 @@ ModemDlg::ModemDlg(wxWindow* parent,
 	else {
 		list_box_1->SetSelection(0);
 	}
+
+	// set the PIN value
+	device_label->SetLabel(wxString(pin.Str().c_str(), wxConvUTF8));
 }
 
 void ModemDlg::set_properties()
 {
 	// begin wxGlade: ModemDlg::set_properties
 	SetTitle(wxT("Modem Starter"));
+	device_label->SetMinSize(wxSize(100, -1));
 	list_box_1->SetMinSize(wxSize(-1, 150));
+	list_box_1->SetToolTip(wxT("Available provider scripts on your system.  Must pick one."));
 	list_box_1->SetSelection(0);
+	label_1->SetToolTip(wxT("Optional device password"));
 	text_ctrl_1->SetMinSize(wxSize(150, -1));
+	text_ctrl_1->SetToolTip(wxT("Optional device password"));
 	// end wxGlade
 }
 
@@ -102,6 +112,10 @@ void ModemDlg::do_layout()
 	wxBoxSizer* sizer_3 = new wxBoxSizer(wxVERTICAL);
 	wxStaticBoxSizer* sizer_5 = new wxStaticBoxSizer(sizer_5_staticbox, wxHORIZONTAL);
 	wxStaticBoxSizer* sizer_1 = new wxStaticBoxSizer(sizer_1_staticbox, wxVERTICAL);
+	wxBoxSizer* sizer_4 = new wxBoxSizer(wxHORIZONTAL);
+	sizer_4->Add(label_2, 0, wxRIGHT|wxALIGN_CENTER_VERTICAL, 2);
+	sizer_4->Add(device_label, 0, wxLEFT|wxALIGN_CENTER_VERTICAL, 10);
+	sizer_3->Add(sizer_4, 0, wxBOTTOM|wxEXPAND, 5);
 	sizer_1->Add(list_box_1, 0, wxEXPAND, 0);
 	sizer_3->Add(sizer_1, 0, wxEXPAND, 0);
 	sizer_5->Add(label_1, 0, wxRIGHT|wxALIGN_CENTER_VERTICAL, 2);
@@ -345,7 +359,7 @@ void ModemDlg::DoModem(wxWindow *parent, const Barry::Pin &pin)
 	//
 	// Show the dialog
 	//
-	ModemDlg dlg(parent, peers, default_peer);
+	ModemDlg dlg(parent, peers, default_peer, pin);
 	if( dlg.ShowModal() == wxID_OK ) {
 		string peer = dlg.GetPeerName();
 		string peerfile = "/etc/ppp/peers/" + peer;

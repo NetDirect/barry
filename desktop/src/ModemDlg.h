@@ -53,6 +53,8 @@ protected:
 	// begin wxGlade: ModemDlg::attributes
 	wxStaticBox* sizer_5_staticbox;
 	wxStaticBox* sizer_1_staticbox;
+	wxStaticText* label_2;
+	wxStaticText* device_label;
 	wxListBox* list_box_1;
 	wxStaticText* label_1;
 	wxTextCtrl* text_ctrl_1;
@@ -63,7 +65,8 @@ protected:
 
 public:
 	ModemDlg(wxWindow* parent, const std::vector<std::string> &peers,
-		const std::string &default_peer);
+		const std::string &default_peer,
+		const Barry::Pin &pin);
 
 	std::string GetPeerName() const;
 	std::string GetPassword() const;
