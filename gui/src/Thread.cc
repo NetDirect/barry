@@ -72,6 +72,18 @@ bool Thread::CheckFinishedMarker()
 	return true;
 }
 
+std::vector<std::string> Thread::CompareTotals() const
+{
+	if( AutoSelectAll() ) {
+		// compare against full DBDB
+		return m_interface.CompareTotals(m_interface.GetDBDB());
+	}
+	else {
+		// compare against current saved backup list
+		return m_interface.CompareTotals(GetBackupList());
+	}
+}
+
 std::string Thread::GetFullname()
 {
 	std::string ret = GetPIN().Str() + " (" + GetDeviceName() + ")";
