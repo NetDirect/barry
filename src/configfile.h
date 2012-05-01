@@ -44,6 +44,12 @@ public:
 		bool IsSelected(const std::string &dbname) const;
 
 		DBListType& operator=(const DatabaseDatabase &dbdb);
+
+		DBListType() {}
+		DBListType(const DatabaseDatabase &dbdb)
+		{
+			operator=(dbdb);
+		}
 	};
 
 private:
