@@ -5,7 +5,7 @@ Barry Release Checklist:
 	versions (i.e. libbarry0 (>= 0.18)) and the next version
 	(i.e. libbarry0 (<< 0.19)) since the binary packages should prevent
 	interaction with incompatible libraries this way.
-		- configure.ac
+		- configure.ac (both places)
 		- gui/configure.ac
 		- gui/src/BackupWindow.cc (about dialog)
 		- desktop/src/Makefile.am (oswrapper lib version & include dir)
@@ -40,9 +40,9 @@ Barry Release Checklist:
 		- run: ./static.sh netdirect
 	- upload latest doxygen docs to netdirect project page
 - update root README file
-- snip this version's changelog history into its own file
-- tag CVS repo and sign-tag git repo with latest version
-- run maintainer/tagged-release.sh
+- snip this version's git shortlog history into its own file
+- sign-tag git repo with latest version
+- no need to run maintainer/tagged-release.sh since you're maintainer now
 - manually push git tags to repo.or.cz and sourceforge.net
 - upload packages to SourceForge
 	ssh -x -a -2 -t USER,PROJECT@shell.sourceforge.net create
@@ -54,12 +54,20 @@ Barry Release Checklist:
 	- Fedora: 7, 8, 9, 11
 	- Debian: stable (lenny)
 	- openSUSE: ?
-- submit tracker news item at SourceForge
+- upload binary packaging metadata to download.barry.netdirect.ca
+	under a versioned directory (barry-0.18.0/) and update the
+	barry-latest symlink
+	- remember to run make-redirect.sh for both the new release
+		and barry-latest
+	- add the new release to .htaccess, and replace barry-latest
+		redirect links with the new ones
+	- make backup of new htaccess
 - send announcement to devel and announce mailing list, including:
 	- release notes
-	- changelog
+	- shortlog
 	- URLs to sourceforge and OpenSUSE Build Service binary packages
 	- URL to netdirect doc page
+- submit tracker news item at SourceForge
 - update Freshmeat entry
 - update Sourceforge screenshots / icons if applicable
 - send identi.ca/cdfrey and blog notices
