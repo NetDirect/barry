@@ -7,12 +7,13 @@
 <p>Linux users who also use a BlackBerry &trade; now have an option for
 managing their BlackBerry directly from Linux.</p>
 
-<p>Barry is an Open Source application that will provide synchronization,
-backup, restore and program management for BlackBerry &trade; devices.
-Barry is primarily developed on Linux, but is intended as a cross platform
+<p>Barry is an Open Source application that provides a Desktop GUI,
+synchronization, backup, restore and program management for
+BlackBerry &trade; devices.</p>
+
+<p>Barry is primarily developed on Linux, but is intended as a cross platform
 library and application set, targeting Linux, BSD, 32/64bit, and big/little
-endian systems.
-</p>
+endian systems.</p>
 
 <p>The Barry project began in October 2005 and has steadily added features
 and polish to Blackberry usage on Linux ever since.  We were the first to
@@ -68,7 +69,7 @@ reverse engineer the battery charging handshake via USB.</p>
 
 <p>
 <ul>
-	<li>Latest release: <b>0.17</b>, released on 2011/02/10</li>
+	<li>Latest release: <b>0.18.0</b>, released on 2012/05/02</li>
 	<li>License: GPL v2 or later</li>
 	<li>Download official source and binary packages from
 		<a href="http://sourceforge.net/project/showfiles.php?group_id=153722">Sourceforge</a></li>
