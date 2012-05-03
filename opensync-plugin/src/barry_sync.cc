@@ -27,6 +27,7 @@
 #include "vevent.h"
 #include "vcard.h"
 #include "trace.h"
+#include "config.h"
 #include <string>
 #include <glib.h>
 #include <stdint.h>
@@ -547,7 +548,7 @@ void get_info(OSyncEnv *env)
 	OSyncPluginInfo *info = osync_plugin_new_info(env);
 
 	info->name = "barry-sync";
-	info->longname = "Barry OpenSync plugin v0.18.0 for the Blackberry handheld";
+	info->longname = "Barry OpenSync plugin v" PACKAGE_VERSION " for the Blackberry handheld";
 	info->description = "Plugin to synchronize calendar and contact entries on USB Blackberry handhelds";
 	info->version = 1;		// API version (opensync api?)
 	info->is_threadsafe = TRUE;

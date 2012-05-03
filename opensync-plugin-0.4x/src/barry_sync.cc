@@ -36,6 +36,7 @@
 #include "vevent.h"
 #include "vcard.h"
 #include "trace.h"
+#include "config.h"
 #include <string>
 #include <glib.h>
 #include <stdint.h>
@@ -1104,7 +1105,7 @@ osync_bool get_sync_info(OSyncPluginEnv *env, OSyncError **error)
 
 	// Describe our plugin
 	osync_plugin_set_name(plugin, "barry-sync");
-	osync_plugin_set_longname(plugin, "Barry OpenSync plugin v0.18.0 for the Blackberry handheld");
+	osync_plugin_set_longname(plugin, "Barry OpenSync plugin v" PACKAGE_VERSION " for the Blackberry handheld");
 	osync_plugin_set_description(plugin, "Plugin to synchronize note, task, calendar and contact entries on USB Blackberry handhelds");
 
 	// Set the callback functions

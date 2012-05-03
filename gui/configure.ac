@@ -13,7 +13,9 @@ AM_INIT_AUTOMAKE
 AM_GNU_GETTEXT([external])
 AM_GNU_GETTEXT_VERSION([0.17])
 
+#
 # Checks for programs.
+#
 AC_PROG_CC
 AC_PROG_CXX
 AC_PROG_MAKE_SET

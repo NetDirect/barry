@@ -25,6 +25,7 @@
 #include "ConfigDlg.h"
 #include "util.h"
 #include "i18n.h"
+#include "config.h"
 #include <gtkmm/aboutdialog.h>
 #include <iostream>
 #include <iomanip>
@@ -631,7 +632,7 @@ void BackupWindow::on_help_about()
 	int logical, major, minor;
 	const char *BarryVersion = Barry::Version(logical, major, minor);
 	dlg.set_name("Barry Backup");
-	dlg.set_version("0.18.0");
+	dlg.set_version(PACKAGE_VERSION);
 	dlg.set_comments(std::string(_("Using library: ")) + BarryVersion);
 	dlg.set_website("http://netdirect.ca/barry");
 	dlg.run();

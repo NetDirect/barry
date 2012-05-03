@@ -28,6 +28,7 @@
 #include "ClickImage.h"
 #include "barrydesktop.h"
 #include "windowids.h"
+#include "config.h"
 #include <wx/aboutdlg.h>
 #include <iostream>
 #include <sstream>
@@ -875,7 +876,7 @@ void BaseFrame::OnAbout(wxCommandEvent &event)
 {
 	wxAboutDialogInfo info;
 	info.SetName(_T("Barry Desktop Control Panel"));
-	info.SetVersion(_T("0.18.0"));
+	info.SetVersion(_T(BARRY_DESKTOP_VER_STRING));
 	info.SetDescription(_T("A Free Software graphical user interface for working with the BlackBerry® smartphone."));
 	info.SetCopyright(_T("Copyright © 2009-2012, Net Direct Inc."));
 	info.SetWebSite(_T("http://netdirect.ca/barry"));

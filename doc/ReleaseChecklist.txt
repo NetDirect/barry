@@ -1,30 +1,33 @@
 Barry Release Checklist:
 ------------------------
 - bump version numbers in
-	Note: make sure you check all control files below for both current
-	versions (i.e. libbarry0 (>= 0.18)) and the next version
-	(i.e. libbarry0 (<< 0.19)) since the binary packages should prevent
-	interaction with incompatible libraries this way.
-		- configure.ac (both places)
+	Source locations:
+		- configure.ac (2 places)
 		- gui/configure.ac
-		- gui/src/BackupWindow.cc (about dialog)
-		- desktop/src/Makefile.am (oswrapper lib version & include dir)
+		- opensync-plugin/configure.ac
+		- opensync-plugin-0.4x/configure.ac
+		- desktop/configure.ac (2 places)
+
+	Documentation:
+		- doc/www/index.php
 		- Doxyfile
+
+	Binary packaging:
 		- rpm/barry.spec
+
 		- debian/changelog
-		- debian/control (libbarry's name includes version number)
+		- debian/control (major version only)
 		- debian/libbarry*.* (files need to be renamed)
 		- debian/rules (the barry18 includedir)
-		- opensync-plugin/configure.ac
-		- opensync-plugin/src/barry_sync.cc
-		- opensync-plugin-0.4x/configure.ac
-		- opensync-plugin-0.4x/src/barry_sync.cc
+
+		- opensync-plugin/debian/changelog
 		- opensync-plugin/debian/control (libbarry-dev)
-		- opensync-plugin/debian/changelog (libbarry-dev)
+
+		- opensync-plugin-0.4x/debian/changelog
 		- opensync-plugin-0.4x/debian/control (libbarry-dev)
-		- opensync-plugin-0.4x/debian/changelog (libbarry-dev)
+
+	Languages:
 		- files under po/
-		- desktop/src/barrydesktop.cc
 - test ABI / API and bump major or minor version as appropriate
 - run all tests on a clean git tree, including build test script
 - write release notes, including contributors, known issues, new

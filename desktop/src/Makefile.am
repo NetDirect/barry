@@ -1,4 +1,4 @@
-LIB_OSYNCWRAP_VERSION = 18:0:0
+LIB_OSYNCWRAP_VERSION = @BARRY_DESKTOP_MAJOR@:@BARRY_DESKTOP_MINOR@:0
 
 SUBDIRS = . 0.22 0.40
 
@@ -18,7 +18,10 @@ AM_CXXFLAGS = -ansi -Wall -g
 AM_CPPFLAGS = -DBARRYDESKTOP_BASEDATADIR='"$(basedatadir)"' -DBARRYDESKTOP_IMAGEDIR='"$(imagedir)"' -DBARRYDESKTOP_PKGLIBEXECDIR='"$(pkglibexecdir)"' -DBARRYDESKTOP_SYSTEM_GUI_SU='"$(GUISU)"'
 AM_LDFLAGS =
 
-include_osyncwrapdir = ${includedir}/barry18/osyncwrap
+# This should really use @BARRY_MAJOR@ but that's from the root configure.ac
+# not ours.  Desktop's major version should never really change from
+# Barry's though, so we should be safe.
+include_osyncwrapdir = ${includedir}/barry@BARRY_DESKTOP_MAJOR@/osyncwrap
 
 noinst_PROGRAMS = ostest xmlcompactor xmlmap bsynccl
 bin_PROGRAMS = barrydesktop
