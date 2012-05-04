@@ -126,6 +126,11 @@ void EvolutionPtrBase::AcquirePlugin(plugin_ptr old_plugin)
 	m_container.reset( m_evolution );
 }
 
+OpenSync::Config::Evolution* EvolutionPtrBase::GetEvolutionPtr()
+{
+	return m_evolution;
+}
+
 void EvolutionPtrBase::Clear()
 {
 	m_container.reset();
@@ -355,6 +360,11 @@ void Evolution3::AcquirePlugin(plugin_ptr old_plugin)
 		m_evolution3 = new OpenSync::Config::Evolution3;
 	}
 	m_container.reset( m_evolution3 );
+}
+
+OpenSync::Config::Evolution* Evolution3::GetEvolutionPtr()
+{
+	return m_evolution3;
 }
 
 void Evolution3::Clear()

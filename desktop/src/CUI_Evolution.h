@@ -43,7 +43,7 @@ protected:
 
 	// by default, creates Evolution object... override for others
 	virtual void AcquirePlugin(plugin_ptr old_plugin);
-	virtual OpenSync::Config::Evolution* GetEvolutionPtr() { return m_evolution; }
+	virtual OpenSync::Config::Evolution* GetEvolutionPtr();
 	virtual void Clear();
 
 public:
@@ -81,6 +81,7 @@ private:
 
 protected:
 	virtual void AcquirePlugin(plugin_ptr old_plugin);
+	virtual OpenSync::Config::Evolution* GetEvolutionPtr();
 	virtual void Clear();
 
 public:
