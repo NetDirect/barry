@@ -74,8 +74,8 @@ public:
 	{
 	}
 
-	long GetMemberId() const { return m_member_id; }
-	void SetMemberId(long id) { m_member_id = id; }
+	virtual long GetMemberId() const { return m_member_id; }
+	virtual void SetMemberId(long id) { m_member_id = id; }
 
 	//
 	// operations
