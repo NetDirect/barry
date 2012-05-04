@@ -28,6 +28,7 @@ using namespace std;
 // Supported plugin names
 #define PLUGIN_BARRY		"barry-sync"
 #define PLUGIN_EVOLUTION	"evo2-sync"
+#define PLUGIN_EVOLUTION3	"evo3-sync"
 #define PLUGIN_GOOGLE		"google-data"
 #define PLUGIN_KDEPIM		"kdepim-sync"
 #define PLUGIN_FILE		"file-sync"
@@ -57,6 +58,11 @@ bool Converter40::IsPluginSupported(const std::string &plugin_name,
 			*appname = Config::Evolution::AppName();
 		return true;
 	}
+	else if( plugin_name == PLUGIN_EVOLUTION3 ) {
+		if( appname )
+			*appname = Config::Evolution3::AppName();
+		return true;
+	}
 	else if( plugin_name == PLUGIN_GOOGLE ) {
 		if( appname )
 			*appname = Config::Google::AppName();
@@ -78,6 +84,9 @@ Converter::plugin_ptr Converter40::CreateAndLoadPlugin(const Member &member)
 	else if( member.plugin_name == PLUGIN_EVOLUTION ) {
 		ptr.reset( new Config::Evolution(this, member) );
 	}
+	else if( member.plugin_name == PLUGIN_EVOLUTION3 ) {
+		ptr.reset( new Config::Evolution3(this, member) );
+	}
 	else if( member.plugin_name == PLUGIN_GOOGLE ) {
 		ptr.reset( new Config::Google(this, member) );
 	}
@@ -97,6 +106,11 @@ std::string Converter40::GetPluginName(const Config::Barry &) const
 std::string Converter40::GetPluginName(const Config::Evolution &) const
 {
 	return PLUGIN_EVOLUTION;
+}
+
+std::string Converter40::GetPluginName(const Config::Evolution3 &) const
+{
+	return PLUGIN_EVOLUTION3;
 }
 
 std::string Converter40::GetPluginName(const Config::Google &) const
@@ -128,6 +142,11 @@ bool Converter40::IsConfigured(const Config::Evolution &config) const
 		config.GetMemosPath().size();
 }
 
+bool Converter40::IsConfigured(const Config::Evolution3 &config) const
+{
+	return	IsConfigured(static_cast<const Config::Evolution&> (config));
+}
+
 bool Converter40::IsConfigured(const Config::Google &config) const
 {
 	// password might (maaayybe) be empty, so skip it
@@ -154,6 +173,11 @@ Config::pst_type Converter40::GetSupportedSyncTypes(const Config::Barry &) const
 }
 
 Config::pst_type Converter40::GetSupportedSyncTypes(const Config::Evolution &) const
+{
+	return PST_CONTACTS | PST_EVENTS | PST_NOTES | PST_TODOS;
+}
+
+Config::pst_type Converter40::GetSupportedSyncTypes(const Config::Evolution3 &) const
 {
 	return PST_CONTACTS | PST_EVENTS | PST_NOTES | PST_TODOS;
 }
@@ -209,6 +233,11 @@ void Converter40::Load(Config::Evolution &config, const Member &member)
 	config.SetCalendarPath(cfg.GetResource("event")->GetUrl());
 	config.SetTasksPath(cfg.GetResource("todo")->GetUrl());
 	config.SetMemosPath(cfg.GetResource("note")->GetUrl());
+}
+
+void Converter40::Load(Config::Evolution3 &config, const Member &member)
+{
+	Load(static_cast<Config::Evolution&> (config), member);
 }
 
 void Converter40::Load(Config::Google &config, const Member &member)
@@ -301,6 +330,11 @@ void Converter40::Save(const Config::Evolution &config, const std::string &group
 		AddResource();
 
 	cfg.Save();
+}
+
+void Converter40::Save(const Config::Evolution3 &config, const std::string &group_name)
+{
+	Save(static_cast<const Config::Evolution&> (config), group_name);
 }
 
 void Converter40::Save(const Config::Google &config, const std::string &group_name)

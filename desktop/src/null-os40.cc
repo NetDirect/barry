@@ -151,6 +151,11 @@ std::string Converter40::GetPluginName(const Config::Evolution &) const
 	throw std::logic_error("Not supported on this system.");
 }
 
+std::string Converter40::GetPluginName(const Config::Evolution3 &) const
+{
+	throw std::logic_error("Not supported on this system.");
+}
+
 std::string Converter40::GetPluginName(const Config::Google &) const
 {
 	throw std::logic_error("Not supported on this system.");
@@ -172,6 +177,11 @@ bool Converter40::IsConfigured(const Config::Barry &) const
 }
 
 bool Converter40::IsConfigured(const Config::Evolution &) const
+{
+	return false;
+}
+
+bool Converter40::IsConfigured(const Config::Evolution3 &) const
 {
 	return false;
 }
@@ -201,6 +211,11 @@ Config::pst_type Converter40::GetSupportedSyncTypes(const Config::Evolution &) c
 	return PST_NONE;
 }
 
+Config::pst_type Converter40::GetSupportedSyncTypes(const Config::Evolution3 &) const
+{
+	return PST_NONE;
+}
+
 Config::pst_type Converter40::GetSupportedSyncTypes(const Config::Google &) const
 {
 	return PST_NONE;
@@ -226,6 +241,11 @@ void Converter40::Load(Config::Evolution &config, const Member &member)
 	throw std::logic_error("Not supported on this system.");
 }
 
+void Converter40::Load(Config::Evolution3 &config, const Member &member)
+{
+	throw std::logic_error("Not supported on this system.");
+}
+
 void Converter40::Load(Config::Google &config, const Member &member)
 {
 	throw std::logic_error("Not supported on this system.");
@@ -247,6 +267,11 @@ void Converter40::Save(const Config::Barry &config, const std::string &group_nam
 }
 
 void Converter40::Save(const Config::Evolution &config, const std::string &group_name)
+{
+	throw std::logic_error("Not supported on this system.");
+}
+
+void Converter40::Save(const Config::Evolution3 &config, const std::string &group_name)
 {
 	throw std::logic_error("Not supported on this system.");
 }

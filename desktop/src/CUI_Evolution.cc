@@ -104,12 +104,45 @@ long Evolution::ForceShutdown()
 	return shutdown.GetChildExitCode();
 }
 
+
+//////////////////////////////////////////////////////////////////////////////
+// EvolutionPtrBase class
+
+EvolutionPtrBase::EvolutionPtrBase()
+	: m_evolution(0)
+{
+}
+
+void EvolutionPtrBase::AcquirePlugin(plugin_ptr old_plugin)
+{
+	// create our plugin config
+	m_evolution = dynamic_cast<OpenSync::Config::Evolution*> (old_plugin.get());
+	if( m_evolution ) {
+		m_evolution = m_evolution->Clone();
+	}
+	else {
+		m_evolution = new OpenSync::Config::Evolution;
+	}
+	m_container.reset( m_evolution );
+}
+
+void EvolutionPtrBase::Clear()
+{
+	m_container.reset();
+	m_evolution = 0;
+}
+
+ConfigUI::plugin_ptr EvolutionPtrBase::GetPlugin()
+{
+	m_evolution = 0;
+	return m_container;
+}
+
 //////////////////////////////////////////////////////////////////////////////
 // Evolution config UI class
 
 Evolution::Evolution()
-	: m_evolution(0)
-	, m_parent(0)
+	: m_parent(0)
 {
 }
 
@@ -186,16 +219,7 @@ bool Evolution::Configure(wxWindow *parent, plugin_ptr old_plugin)
 {
 	m_parent = parent;
 
-	// create our plugin config
-	m_evolution = dynamic_cast<OpenSync::Config::Evolution*> (old_plugin.get());
-	if( m_evolution ) {
-		m_evolution = m_evolution->Clone();
-	}
-	else {
-		m_evolution = new OpenSync::Config::Evolution;
-	}
-	m_container.reset( m_evolution );
-
+	AcquirePlugin(old_plugin);
 
 	// auto detect first
 	EvoSources srcs;
@@ -205,8 +229,7 @@ bool Evolution::Configure(wxWindow *parent, plugin_ptr old_plugin)
 	if( srcs.IsEmpty() ) {
 		if( !InitialRun() ) {
 			// impossible to do initial run, so fail here
-			m_container.reset();
-			m_evolution = 0;
+			Clear();
 			return false;
 		}
 		srcs.Detect();
@@ -228,36 +251,29 @@ bool Evolution::Configure(wxWindow *parent, plugin_ptr old_plugin)
 	// otherwise, if default settings are not possible, then
 	//	load the path config dialog without notification
 	if( !srcs.IsDefaultable() || manual ) {
-		EvoCfgDlg cfgdlg(m_parent, *m_evolution, srcs);
+		EvoCfgDlg cfgdlg(m_parent, *GetEvolutionPtr(), srcs);
 		if( cfgdlg.ShowModal() == wxID_OK ) {
-			cfgdlg.SetPaths(*m_evolution);
+			cfgdlg.SetPaths(*GetEvolutionPtr());
 		}
 		else {
-			m_container.reset();
-			m_evolution = 0;
+			Clear();
 			return false;
 		}
 	}
 	else {
 		// it's defaultable!  use default paths
-		m_evolution->SetAddressPath(srcs.GetAddressBook().size() ?
+		GetEvolutionPtr()->SetAddressPath(srcs.GetAddressBook().size() ?
 			srcs.GetAddressBook()[0].m_SourcePath : "");
-		m_evolution->SetCalendarPath(srcs.GetEvents().size() ?
+		GetEvolutionPtr()->SetCalendarPath(srcs.GetEvents().size() ?
 			srcs.GetEvents()[0].m_SourcePath : "");
-		m_evolution->SetTasksPath(srcs.GetTasks().size() ?
+		GetEvolutionPtr()->SetTasksPath(srcs.GetTasks().size() ?
 			srcs.GetTasks()[0].m_SourcePath : "");
-		m_evolution->SetMemosPath(srcs.GetMemos().size() ?
+		GetEvolutionPtr()->SetMemosPath(srcs.GetMemos().size() ?
 			srcs.GetMemos()[0].m_SourcePath : "");
 	}
 
 	// success!
 	return true;
-}
-
-ConfigUI::plugin_ptr Evolution::GetPlugin()
-{
-	m_evolution = 0;
-	return m_container;
 }
 
 bool Evolution::RunApp(wxWindow *parent)
@@ -318,6 +334,41 @@ bool Evolution::ZapData(wxWindow *parent,
 
 	return true;
 }
+
+
+//////////////////////////////////////////////////////////////////////////////
+// Evolution3 class
+
+Evolution3::Evolution3()
+	: m_evolution3(0)
+{
+}
+
+void Evolution3::AcquirePlugin(plugin_ptr old_plugin)
+{
+	// create our plugin config
+	m_evolution3 = dynamic_cast<OpenSync::Config::Evolution3*> (old_plugin.get());
+	if( m_evolution3 ) {
+		m_evolution3 = m_evolution3->Clone();
+	}
+	else {
+		m_evolution3 = new OpenSync::Config::Evolution3;
+	}
+	m_container.reset( m_evolution3 );
+}
+
+void Evolution3::Clear()
+{
+	m_container.reset();
+	m_evolution3 = 0;
+}
+
+ConfigUI::plugin_ptr Evolution3::GetPlugin()
+{
+	m_evolution3 = 0;
+	return m_container;
+}
+
 
 } // namespace AppConfig
 

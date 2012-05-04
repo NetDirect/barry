@@ -356,6 +356,64 @@ public:
 	}
 };
 
+class Evolution3 : public Evolution
+{
+public:
+	Evolution3()
+	{
+	}
+
+	explicit Evolution3(Converter *load_converter, const Member &member)
+	{
+		load_converter->Load(*this, member);
+	}
+
+	// virtual overrides
+	virtual Evolution3* Clone() const { return new Evolution3(*this); }
+	virtual std::string GetAppName() const { return AppName(); }
+	virtual void Save(OpenSync::API &api, const std::string &group_name) const
+	{
+		api.GetConverter().Save(*this, group_name);
+	}
+	virtual std::string GetPluginName(OpenSync::API &api) const
+	{
+		return api.GetConverter().GetPluginName(*this);
+	}
+	virtual bool IsConfigured(OpenSync::API &api) const
+	{
+		return api.GetConverter().IsConfigured(*this);
+	}
+	virtual pst_type GetSupportedSyncTypes(OpenSync::API &api) const
+	{
+		return api.GetConverter().GetSupportedSyncTypes(*this);
+	}
+	virtual bool Compare(const Plugin &plugin,
+				bool &sametype, bool &equal) const
+	{
+		sametype = equal = false;
+		const Evolution3 *other = dynamic_cast<const Evolution3*> (&plugin);
+		if( other ) {
+			// we've established that Evolution3 == Evolution3,
+			// but the actual compare can be done by the base
+			// class...
+			return Evolution::Compare(plugin, sametype, equal);
+		}
+		else
+			return false;
+	}
+
+	// statics
+	static std::string AppName() { return "Evolution 3"; }
+	static std::string PluginName(OpenSync::API &api)
+	{
+		return api.GetConverter().GetPluginName(Evolution3());
+	}
+	static pst_type SupportedSyncTypes(OpenSync::API &api)
+	{
+		return api.GetConverter().GetSupportedSyncTypes(Evolution3());
+	}
+};
+
 class Google : public Plugin
 {
 private:

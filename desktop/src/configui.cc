@@ -37,6 +37,9 @@ ConfigUI::configui_ptr ConfigUI::CreateConfigUI(const std::string &appname)
 	else if( appname == OpenSync::Config::Evolution::AppName() ) {
 		ui.reset( new AppConfig::Evolution );
 	}
+	else if( appname == OpenSync::Config::Evolution3::AppName() ) {
+		ui.reset( new AppConfig::Evolution3 );
+	}
 	else if( appname == OpenSync::Config::Google::AppName() ) {
 		ui.reset( new AppConfig::Google );
 	}

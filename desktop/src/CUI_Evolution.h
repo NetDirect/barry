@@ -30,11 +30,29 @@ class wxWindow;
 
 namespace AppConfig {
 
-class Evolution : public ConfigUI
+class EvolutionPtrBase : public ConfigUI
 {
+private:
 	OpenSync::Config::Evolution *m_evolution;
+
+protected:
 	plugin_ptr m_container;			// merely holds m_evolution
 
+protected:
+	EvolutionPtrBase();
+
+	// by default, creates Evolution object... override for others
+	virtual void AcquirePlugin(plugin_ptr old_plugin);
+	virtual OpenSync::Config::Evolution* GetEvolutionPtr() { return m_evolution; }
+	virtual void Clear();
+
+public:
+	virtual plugin_ptr GetPlugin();
+};
+
+class Evolution : public EvolutionPtrBase
+{
+private:
 	// convenience pointers
 	wxWindow *m_parent;
 
@@ -47,7 +65,6 @@ public:
 	// virtual overrides (ConfigUI)
 	virtual std::string AppName() const;
 	virtual bool Configure(wxWindow *parent, plugin_ptr old_plugin);
-	virtual plugin_ptr GetPlugin();
 	virtual bool RunApp(wxWindow *parent);
 	virtual void PreSyncAppInit();
 	virtual bool ZapData(wxWindow *parent, plugin_ptr plugin,
@@ -55,6 +72,21 @@ public:
 
 	// static utility functions
 	static long ForceShutdown();
+};
+
+class Evolution3 : public Evolution
+{
+private:
+	OpenSync::Config::Evolution3 *m_evolution3;
+
+protected:
+	virtual void AcquirePlugin(plugin_ptr old_plugin);
+	virtual void Clear();
+
+public:
+	Evolution3();
+
+	virtual plugin_ptr GetPlugin();
 };
 
 }

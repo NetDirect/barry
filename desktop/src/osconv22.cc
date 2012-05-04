@@ -28,6 +28,7 @@ using namespace std;
 // Supported plugin names
 #define PLUGIN_BARRY		"barry-sync"
 #define PLUGIN_EVOLUTION	"evo2-sync"
+#define PLUGIN_EVOLUTION3	"evo3-sync"	// not supported on 0.2x
 #define PLUGIN_GOOGLE		"google-calendar" // "google-data" ???
 #define PLUGIN_KDEPIM		"kdepim-sync"
 #define PLUGIN_FILE		"file-sync"
@@ -53,6 +54,8 @@ bool Converter22::IsPluginSupported(const std::string &plugin_name,
 		return true;
 	}
 	else if( plugin_name == PLUGIN_EVOLUTION ) {
+		// only Evolution, not Evolution3, which is not available on
+		// version 0.2x
 		if( appname )
 			*appname = Config::Evolution::AppName();
 		return true;
@@ -99,6 +102,11 @@ std::string Converter22::GetPluginName(const Config::Evolution &) const
 	return PLUGIN_EVOLUTION;
 }
 
+std::string Converter22::GetPluginName(const Config::Evolution3 &) const
+{
+	return "unsupported-evo3-sync";
+}
+
 std::string Converter22::GetPluginName(const Config::Google &) const
 {
 	return PLUGIN_GOOGLE;
@@ -128,6 +136,11 @@ bool Converter22::IsConfigured(const Config::Evolution &config) const
 		config.GetTasksPath().size();
 }
 
+bool Converter22::IsConfigured(const Config::Evolution3 &config) const
+{
+	return false;
+}
+
 bool Converter22::IsConfigured(const Config::Google &config) const
 {
 	return false;
@@ -152,6 +165,11 @@ Config::pst_type Converter22::GetSupportedSyncTypes(const Config::Barry &) const
 Config::pst_type Converter22::GetSupportedSyncTypes(const Config::Evolution &) const
 {
 	return PST_CONTACTS | PST_EVENTS | PST_TODOS;
+}
+
+Config::pst_type Converter22::GetSupportedSyncTypes(const Config::Evolution3 &) const
+{
+	return PST_NONE;
 }
 
 Config::pst_type Converter22::GetSupportedSyncTypes(const Config::Google &) const
@@ -258,6 +276,11 @@ void Converter22::Load(Config::Evolution &config, const Member &member)
 	config.SetTasksPath(GrabField(cfg, "tasks_path"));
 }
 
+void Converter22::Load(Config::Evolution3 &config, const Member &member)
+{
+	throw std::logic_error("Loading config for Evolution3 plugin is not supported for 0.22.  Use the Unsupported class.");
+}
+
 void Converter22::Load(Config::Google &config, const Member &member)
 {
 	throw std::logic_error("Loading config for Google calendar plugin is not supported for 0.22.  Use the Unsupported class.");
@@ -306,6 +329,12 @@ void Converter22::Save(const Config::Evolution &config,
 	    << endl;
 
 	m_api.SetConfiguration(group_name, config.GetMemberId(), oss.str());
+}
+
+void Converter22::Save(const Config::Evolution3 &config,
+			const std::string &group_name)
+{
+	throw std::logic_error("Saving config for Evolution3 plugin is not supported for 0.22.  Use the Unsupported class.");
 }
 
 void Converter22::Save(const Config::Google &config,

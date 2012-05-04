@@ -187,6 +187,7 @@ namespace Config {
 	class Plugin;
 	class Barry;
 	class Evolution;
+	class Evolution3;
 	class Google;
 	class KDEPim;
 	class Unsupported;
@@ -223,24 +224,28 @@ public:
 
 	virtual std::string GetPluginName(const Config::Barry &) const = 0;
 	virtual std::string GetPluginName(const Config::Evolution &) const = 0;
+	virtual std::string GetPluginName(const Config::Evolution3 &) const = 0;
 	virtual std::string GetPluginName(const Config::Google &) const = 0;
 	virtual std::string GetPluginName(const Config::KDEPim &) const = 0;
 	virtual std::string GetPluginName(const Config::Unsupported &) const = 0;
 
 	virtual bool IsConfigured(const Config::Barry &) const = 0;
 	virtual bool IsConfigured(const Config::Evolution &) const = 0;
+	virtual bool IsConfigured(const Config::Evolution3 &) const = 0;
 	virtual bool IsConfigured(const Config::Google &) const = 0;
 	virtual bool IsConfigured(const Config::KDEPim &) const = 0;
 	virtual bool IsConfigured(const Config::Unsupported &) const = 0;
 
 	virtual Config::pst_type GetSupportedSyncTypes(const Config::Barry &) const = 0;
 	virtual Config::pst_type GetSupportedSyncTypes(const Config::Evolution &) const = 0;
+	virtual Config::pst_type GetSupportedSyncTypes(const Config::Evolution3 &) const = 0;
 	virtual Config::pst_type GetSupportedSyncTypes(const Config::Google &) const = 0;
 	virtual Config::pst_type GetSupportedSyncTypes(const Config::KDEPim &) const = 0;
 	virtual Config::pst_type GetSupportedSyncTypes(const Config::Unsupported &) const = 0;
 
 	virtual void Load(Config::Barry &config, const Member &member) = 0;
 	virtual void Load(Config::Evolution &config, const Member &member) = 0;
+	virtual void Load(Config::Evolution3 &config, const Member &member) = 0;
 	virtual void Load(Config::Google &config, const Member &member) = 0;
 	virtual void Load(Config::KDEPim &config, const Member &member) = 0;
 	virtual void Load(Config::Unsupported &config, const Member &member) = 0;
@@ -248,6 +253,8 @@ public:
 	virtual void Save(const Config::Barry &config,
 				const std::string &group_name) = 0;
 	virtual void Save(const Config::Evolution &config,
+				const std::string &group_name) = 0;
+	virtual void Save(const Config::Evolution3 &config,
 				const std::string &group_name) = 0;
 	virtual void Save(const Config::Google &config,
 				const std::string &group_name) = 0;
