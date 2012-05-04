@@ -98,6 +98,7 @@ public:
 	// function pointers
 	const char*		(*osync_get_version)();
 	const char*		(*osync_error_print)(OSyncError **error);
+	char*			(*osync_error_print_stack)(OSyncError **error);
 	osync_bool		(*osync_error_is_set)(OSyncError **error);
 	void			(*osync_error_unref)(OSyncError **error);
 	OSyncGroupEnv*		(*osync_group_env_new)(OSyncError **error);
@@ -429,6 +430,21 @@ public:
 		: error(this)
 		, converter(api)
 	{
+	}
+
+	// helper functions
+	std::string osync_error_print_stack_wrapper(OSyncError **error)
+	{
+		std::string rmsg;
+		char *msg = osync_error_print_stack(error);
+		if( msg ) {
+			rmsg = msg;
+			osync_free(msg);
+		}
+		else {
+			rmsg = "(NULL error msg)";
+		}
+		return rmsg;
 	}
 };
 
@@ -789,7 +805,7 @@ void entry_status(OSyncEngineChangeUpdate *status, void *cbdata)
 
 		const char *action = NULL;
 		const char *direction = NULL;
-		const char *msg = NULL;
+		string msg;
 		bool error_event = false;
 
 		switch( cb->m_priv->osync_engine_change_update_get_event(status) )
@@ -810,7 +826,7 @@ void entry_status(OSyncEngineChangeUpdate *status, void *cbdata)
 			error_event = true;
 			action = "Error for entry";
 			direction = "and";
-			msg = cb->m_priv->osync_error_print(&(error));
+			msg = cb->m_priv->osync_error_print_stack_wrapper(&(error));
 			break;
 		}
 
@@ -859,7 +875,7 @@ void mapping_status(OSyncEngineMappingUpdate *status, void *cbdata)
 		case OSYNC_ENGINE_MAPPING_EVENT_ERROR:
 			error_event = true;
 			oss << "Mapping error: "
-			    << cb->m_priv->osync_error_print(&(error));
+			    << cb->m_priv->osync_error_print_stack_wrapper(&(error));
 			break;
 		}
 
@@ -919,7 +935,7 @@ void engine_status(OSyncEngineUpdate *status, void *cbdata)
 			break;
 		case OSYNC_ENGINE_EVENT_ERROR:
 			error_event = true;
-			oss << "The sync failed: " << cb->m_priv->osync_error_print(&(error));
+			oss << "The sync failed: " << cb->m_priv->osync_error_print_stack_wrapper(&(error));
 			break;
 		case OSYNC_ENGINE_EVENT_SUCCESSFUL:
 			oss << "The sync was successful";
@@ -1004,7 +1020,7 @@ void member_status(OSyncEngineMemberUpdate *status, void *cbdata)
 			break;
 		case OSYNC_ENGINE_MEMBER_EVENT_ERROR:
 			oss << " had an error: "
-			    << cb->m_priv->osync_error_print(&error);
+			    << cb->m_priv->osync_error_print_stack_wrapper(&error);
 			error_event = true;
 			break;
 		default:
@@ -1507,6 +1523,7 @@ OpenSync40::OpenSync40()
 	// class destructor will clean up for us if LoadSym() throws
 	LoadSym(p->osync_get_version, "osync_get_version");
 	LoadSym(p->osync_error_print, "osync_error_print");
+	LoadSym(p->osync_error_print_stack, "osync_error_print_stack");
 	LoadSym(p->osync_error_is_set, "osync_error_is_set");
 	LoadSym(p->osync_error_unref, "osync_error_unref");
 	LoadSym(p->osync_group_env_new, "osync_group_env_new");
@@ -2234,7 +2251,7 @@ void OpenSync40::Sync(const std::string &group_name,
 /// Returns NULL if no error
 std::string TossError::GetErrorMsg()
 {
-	return std::string(m_priv->osync_error_print(&m_error));
+	return std::string(m_priv->osync_error_print_stack_wrapper(&m_error));
 }
 
 bool TossError::IsSet()
