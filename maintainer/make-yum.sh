@@ -31,7 +31,7 @@ rpmsign --addsign $(find $BUILDDIR -name "*.rpm" -print)
 for arch in i386 source-i386 i586 source-i586 i686 source-i686 x86_64 source-x86_64 ; do
 	for dir in $(find $BUILDDIR -name "$arch" -type d -print) ; do
 		createrepo $dir
-		cp yum/key $dir/RPM-GPG-KEY-binary-meta
+		cp yum/key $dir/RPM-GPG-KEY-barry
 	done
 done
 
