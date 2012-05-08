@@ -1,4 +1,4 @@
-opensync1-plugin-barry (0.18-1) unstable; urgency=low
+opensync1-plugin-barry (0.18.1-1) unstable; urgency=low
 
   * Build rules for Barry releases
   * Bumped compat level to 6 (2011/06/28)
@@ -9,7 +9,7 @@ opensync1-plugin-barry (0.18-1) unstable; urgency=low
   * Using >0 debian version, since I'll probably be Debian maintainer now
   * Fixed extended-description-line-too-long lintian warning
 
- -- Chris Frey <cdfrey@foursquare.net>  Sat,  3 Mar 2012 00:43:34 -0500
+ -- Chris Frey <cdfrey@foursquare.net>  Sat,  8 May 2012 01:33:34 -0400
 
 opensync1-plugin-barry (0.17-0) unstable; urgency=low
 
