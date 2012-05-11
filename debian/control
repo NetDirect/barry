@@ -45,7 +45,9 @@ Depends: ${shlibs:Depends}
 Description: Library for using the BlackBerry handheld on Linux
  Barry is a GPL C++ library for interfacing with the RIM BlackBerry Handheld.
  .
- This package contains shared libraries.
+ This package contains shared libraries for low level USB communication,
+ backup file writing and parsing, sync support routines such as vcard
+ support, JDWP debugging support, and ALX release file parsing.
 
 Package: libbarry18-dbg
 Section: debug
@@ -55,7 +57,8 @@ Depends: libbarry18 (= ${binary:Version})
 Description: Library for using the BlackBerry handheld (debug symbols)
  Barry is a GPL C++ library for interfacing with the RIM BlackBerry Handheld.
  .
- This package contains the debug version of the shared library.
+ This package contains the debug versions of the shared libraries found
+ in the libbarry package.
 
 Package: libbarry-dev
 Section: libdevel
@@ -76,7 +79,8 @@ Description: Command line utilities for working with the RIM BlackBerry Handheld
  Barry is a GPL C++ library for interfacing with the RIM BlackBerry Handheld.
  .
  This package contains command line utilities, such as bcharge, btool,
- breset, bio, etc.
+ breset, bio, etc.  It also contains udev rules to automate USB charging
+ as soon as devices are plugged in.
 
 Package: barry-util-dbg
 Section: debug
@@ -86,7 +90,8 @@ Depends: barry-util (= ${binary:Version})
 Description: Command line BlackBerry utilities (debug symbols)
  Barry is a GPL C++ library for interfacing with the RIM BlackBerry Handheld.
  .
- This package contains the debug versions of the command line utilities.
+ This package contains the debug versions of the command line utilities
+ from the barry-util package.
 
 Package: barrybackup-gui
 Section: utils
@@ -96,6 +101,9 @@ Description: GTK+ GUI for backing up the RIM BlackBerry Handheld
  Barry is a GPL C++ library for interfacing with the RIM BlackBerry Handheld.
  .
  This package contains a GUI application for making backups and restores.
+ It supports configurations to select individual device databases, or to
+ restore only certain databases from out of a backup file.  It supports
+ multiple devices plugged in at the same time.
 
 Package: barrybackup-gui-dbg
 Section: debug
@@ -105,7 +113,8 @@ Depends: barrybackup-gui (= ${binary:Version})
 Description: GTK+ GUI for backing up BlackBerry (debug symbols)
  Barry is a GPL C++ library for interfacing with the RIM BlackBerry Handheld.
  .
- This package contains the debug version of the backup GUI.
+ This package contains the debug version of the backup GUI from the
+ barrybackup-gui package.
 
 Package: barrydesktop
 Section: utils
@@ -115,7 +124,10 @@ Suggests: gksu
 Description: Desktop Panel GUI for the RIM BlackBerry Handheld
  Barry is a GPL C++ library for interfacing with the RIM BlackBerry Handheld.
  .
- This package contains a GUI management application for backups, syncing, etc.
+ This package contains the top level Barry Desktop GUI management
+ application for backups, syncing with OpenSync 0.2x and 0.4x, modem
+ operation, device data migration, and desktop editing of database
+ records via the GUI (Address Book, Calendar, Tasks, Memos).
 
 Package: barrydesktop-dbg
 Section: debug
@@ -125,7 +137,8 @@ Depends: barrydesktop (= ${binary:Version})
 Description: Desktop Panel GUI for the RIM BlackBerry Handheld (debug symbols)
  Barry is a GPL C++ library for interfacing with the RIM BlackBerry Handheld.
  .
- This package contains the debug files for the Barry desktop.
+ This package contains the debug files for the Barry desktop found in the
+ barrydesktop package.
 
 #Package: barry-doc
 #Architecture: all
