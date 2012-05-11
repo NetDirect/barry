@@ -1,7 +1,9 @@
 Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: Barry
 Upstream-Contact: Chris Frey <cdfrey@foursquare.net>
-Source: http://sourceforge.net/projects/barry
+Source:
+ Source code downloads at: http://sourceforge.net/projects/barry
+ Main homepage and documentation at: http://netdirect.ca/barry
 
 Files: *
 Copyright:
