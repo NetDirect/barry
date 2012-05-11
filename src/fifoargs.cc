@@ -121,6 +121,28 @@ bool FifoServer::Serve(int timeout_sec)
 	timeout_sec *= 4;
 	while( timeout_sec-- ) {
 		// attempt to open in non-blocking mode
+		//
+		// Security Note:
+		// --------------
+		// This should be safe from symlink attacks, since
+		// mkfifo(), in the constructor, will fail if any other
+		// file or symlink already exists, and therefore we will
+		// never get to this open() call if that fails.  And if
+		// mkfifo() succeeds, then we are guaranteed (assuming /tmp
+		// permissions are correct) that only root or our own
+		// user can replace the fifo with something else, such
+		// as a symlink.
+		//
+		// The server side is not intended to run as root, yet
+		// if it is, then we are still safe, due to the above logic.
+		// The client side can run as root (depending on what pppd
+		// does with pppob), and has no control over creation of
+		// the fifo, but only opens it for reading, never for
+		// creation or writing. (See FifoClient() below.)
+		//
+		// Therefore, we can only be attacked, via symlink,
+		// by root or ourselves.
+		//
 		int fd = open(BARRY_FIFO_NAME, O_WRONLY | O_NONBLOCK);
 		if( fd == -1 ) {
 			usleep(250000);
