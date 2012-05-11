@@ -4,24 +4,27 @@ Upstream-Contact: Chris Frey <cdfrey@foursquare.net>
 Source: http://sourceforge.net/projects/barry
 
 Files: *
-Copyright: © 2005-2012 Net Direct Inc. (http://www.netdirect.ca/)
-Copyright: © 2007-2012 Chris Frey <cdfrey@foursquare.net>
-Copyright: © 2008 Brian Edginton (edge@edginton.net)
-Copyright: © 1995-1999 Cryptography Research, Inc.
-Copyright: © 2003 Ximian, Inc. 2005 Armin Bauer
-Copyright: © 2008-2012 Nicolas VIVIEN <nicolas@vivien.fr>
-Copyright: © 2009 Josh Kropf <josh@slashdev.ca>
-Copyright: © 2010-2012 RealVNC Ltd., Toby Gray
+Copyright:
+ Copyright 2005-2012 Net Direct Inc. (http://www.netdirect.ca/)
+ Copyright 2007-2012 Chris Frey <cdfrey@foursquare.net>
+ Copyright 2008 Brian Edginton (edge@edginton.net)
+ Copyright 1995-1999 Cryptography Research, Inc.
+ Copyright 2003 Ximian, Inc. 2005 Armin Bauer
+ Copyright 2008-2012 Nicolas VIVIEN <nicolas@vivien.fr>
+ Copyright 2009 Josh Kropf <josh@slashdev.ca>
+ Copyright 2010-2012 RealVNC Ltd., Toby Gray
 License: GPL-2+
 
 Files: contrib/*
-Copyright: © 2008 Niels de Vos <nixpanic@users.sourceforge.net>
-Copyright: © 2008 ashley willis <barry@venamous.net>
+Copyright:
+ Copyright 2008 Niels de Vos <nixpanic@users.sourceforge.net>
+ Copyright 2008 ashley willis <barry@venamous.net>
 License: GPL-2+
 
 Files: src/vformat.{h,c}:
-Copyright: © 2003 Ximian, Inc.
-Copyright: © 2005 Armin Bauer
+Copyright:
+ Copyright 2003 Ximian, Inc.
+ Copyright 2005 Armin Bauer
 License: LGPL
 
 License: GPL-2+
