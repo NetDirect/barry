@@ -1,0 +1,16 @@
+# Barry is a C++ library, and as such it encounters similar struggles
+# as documented here: http://www.eyrie.org/~eagle/journal/2012-01/008.html
+# and here: http://www.eyrie.org/~eagle/journal/2012-02/001.html
+# As well, Barry already uses the ABI Compliance Checker from
+# linuxtesting.org to discover ABI/API breaks, and intends to bump the
+# major number each time, and has had this policy since 0.17.x.
+# See the following page for details:
+# http://linuxtesting.org/upstream-tracker/versions/barry.html
+
+libbarry18: no-symbols-control-file usr/lib/libbarrysync.so.18.0.1
+libbarry18: no-symbols-control-file usr/lib/libbarrybackup.so.18.0.1
+libbarry18: no-symbols-control-file usr/lib/libbarryalx.so.18.0.1
+libbarry18: no-symbols-control-file usr/lib/libbarrydp.so.18.0.1
+libbarry18: no-symbols-control-file usr/lib/libbarryjdwp.so.18.0.1
+libbarry18: no-symbols-control-file usr/lib/libbarry.so.18.0.1
+

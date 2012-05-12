@@ -1,0 +1,6 @@
+# The encoding key is set to UTF-8, and this is the default, and according
+# to lintian help text, this is harmless.  For the sake of simplicity
+# and backward compatibility, it has been left in.
+
+barrybackup-gui: desktop-entry-contains-encoding-key usr/share/applications/barrybackup.desktop*
+
