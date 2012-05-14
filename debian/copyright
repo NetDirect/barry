@@ -23,7 +23,7 @@ Copyright:
  Copyright 2008 ashley willis <barry@venamous.net>
 License: GPL-2+
 
-Files: src/vformat.h src/vformat.c:
+Files: src/vformat.h src/vformat.c
 Copyright:
  Copyright 2003 Ximian, Inc.
  Copyright 2005 Armin Bauer
