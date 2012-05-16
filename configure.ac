@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.61)
-AC_INIT([barry], [0.18.1], [barry-devel@lists.sourceforge.net])
+AC_INIT([barry], [0.18.2], [barry-devel@lists.sourceforge.net])
 #AM_CONFIG_HEADER(config.h)
 AC_CONFIG_SRCDIR([src/barry.h])
 AC_CONFIG_HEADERS([config.h:config.h.in])
@@ -20,7 +20,7 @@ AM_GNU_GETTEXT_VERSION([0.17])
 #
 BARRY_LOGICAL=0
 BARRY_MAJOR=18
-BARRY_MINOR=1
+BARRY_MINOR=2
 AC_DEFINE_UNQUOTED([BARRY_LOGICAL], [$BARRY_LOGICAL], [Logical version number])
 AC_DEFINE_UNQUOTED([BARRY_MAJOR], [$BARRY_MAJOR], [Major library version number])
 AC_DEFINE_UNQUOTED([BARRY_MINOR], [$BARRY_MINOR], [Minor library version number])
