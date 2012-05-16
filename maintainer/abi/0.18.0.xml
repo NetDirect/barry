@@ -1,0 +1,17 @@
+<version>
+	0.18.0
+</version>
+
+<headers>
+	/tmp/0.18.0/rootdir/include
+</headers>
+
+<libs>
+	/tmp/0.18.0/rootdir/lib/libbarry.so
+	/tmp/0.18.0/rootdir/lib/libbarrydp.so
+	/tmp/0.18.0/rootdir/lib/libbarryjdwp.so
+	/tmp/0.18.0/rootdir/lib/libbarrysync.so
+	/tmp/0.18.0/rootdir/lib/libbarrybackup.so
+	/tmp/0.18.0/rootdir/lib/libbarryalx.so
+</libs>
+
