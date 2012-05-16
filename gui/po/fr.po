@@ -5,7 +5,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: barry-backup 0.1\n"
+"Project-Id-Version: barry-backup 0.18.3\n"
 "Report-Msgid-Bugs-To: http://netdirect.ca/barry\n"
 "POT-Creation-Date: 2011-06-16 11:49+0100\n"
 "PO-Revision-Date: 2011-01-07 20:45+0100\n"

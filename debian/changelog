@@ -1,7 +1,7 @@
-barry (0.18.2-1) unstable; urgency=low
+barry (0.18.3-1) unstable; urgency=low
 
   [Chris Frey]
-  * New upstream version 0.18.2 (Closes: #582189, #582187, #657076, LP: #500370)
+  * New upstream version 0.18.3 (Closes: #582189, #582187, #657076, LP: #500370)
   * Moved opensync-plugin into its own build
   * Removed dependency of libbarry-dev on libusb-dev
   * Removed .la files

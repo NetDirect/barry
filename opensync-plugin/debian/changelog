@@ -1,4 +1,4 @@
-opensync0-plugin-barry (0.18.2-1) unstable; urgency=low
+opensync0-plugin-barry (0.18.3-1) unstable; urgency=low
 
   * Individual package for the 0.22 plugin
   * Bumped compat to level 6 (2011/06/28)
