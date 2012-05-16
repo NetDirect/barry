@@ -7,6 +7,12 @@ Barry Release Checklist:
 		- opensync-plugin/configure.ac
 		- opensync-plugin-0.4x/configure.ac
 		- desktop/configure.ac (2 places)
+		- libbarry*.pc.in (renamed for major version... also, requires
+			version changes inside those .pc files, in the
+			Requires: field)
+			- if renamed, update following:
+				- Makefile.am (root dir)
+				- all configure.ac files
 
 	Documentation:
 		- doc/www/index.php
