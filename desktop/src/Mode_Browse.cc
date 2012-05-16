@@ -25,6 +25,7 @@
 #include "CalendarEditDlg.h"
 #include "MemoEditDlg.h"
 #include "TaskEditDlg.h"
+#include "MimeExportDlg.h"
 #include "windowids.h"
 #include <iostream>
 #include <sstream>
@@ -44,6 +45,10 @@ BEGIN_EVENT_TABLE(BrowseMode, wxEvtHandler)
 				BrowseMode::OnRecordListActivated)
 	EVT_CHECKBOX	(BrowseMode_ShowAllCheckbox,
 				BrowseMode::OnShowAll)
+	EVT_BUTTON	(BrowseMode_ImportRecordButton,
+				BrowseMode::OnImportRecord)
+	EVT_BUTTON	(BrowseMode_ExportRecordButton,
+				BrowseMode::OnExportRecord)
 	EVT_BUTTON	(BrowseMode_AddRecordButton,
 				BrowseMode::OnAddRecord)
 	EVT_BUTTON	(BrowseMode_CopyRecordButton,
@@ -74,6 +79,31 @@ bool IsEditable(const std::string &dbname)
 		dbname == Calendar::GetDBName() ||
 		dbname == Memo::GetDBName() ||
 		dbname == Task::GetDBName();
+}
+
+bool IsCardable(const std::string &dbname, std::string *file_types = 0);
+bool IsCardable(const std::string &dbname, std::string *file_types)
+{
+	// add entry here for each record that can handle MIME style
+	// import / exports
+	if( dbname == Contact::GetDBName() ) {
+
+		if( file_types )
+			*file_types = "VCard files (*.vcf;*.vcard)|*.vcf;*.vcard";
+		return true;
+
+	}
+	else if( dbname == Calendar::GetDBName() ||
+			dbname == Memo::GetDBName() ||
+			dbname == Task::GetDBName() ) {
+
+		if( file_types )
+			*file_types = "ICalendar files (*.ical;*.ics;*.ifb;*.icalendar)|*.ical;*.ics;*.ifb;*.icalendar";
+		return true;
+
+	}
+
+	return false;
 }
 
 bool EditRecord(wxWindow *parent,
@@ -324,6 +354,58 @@ int DBCache::GetIndex(const_iterator record) const
 	return -1;
 }
 
+DBCache::iterator DBCache::Add(wxWindow *parent, DataCachePtr p)
+{
+	// see if this record has a builder
+	Barry::Builder *bp = dynamic_cast<Barry::Builder*> (p.get());
+	if( !bp ) {
+		cerr << "DataCachePtr has no builder" << endl;
+		return end();
+	}
+
+	// give record a new UniqueID
+	uint32_t record_id = m_state.MakeNewRecordId();
+cout << "New recordID generated: 0x" << hex << record_id << endl;
+	p->SetIds(p->GetStateIndex(), record_id);
+
+	// add record to device
+	DesktopInstancePtr dip = m_tdesktop.Get();
+	Barry::Mode::Desktop &desktop = dip->Desktop();
+bool iv = Barry::IsVerbose();
+Barry::Verbose(true);
+	try {
+		desktop.AddRecord(m_dbid, *bp);
+	} catch( Barry::ReturnCodeError &rce ) {
+		cerr << "Device exception: " << rce.what() << endl;
+		if( rce.IsReadOnly() ) {
+			ShowReadOnlyMsg(parent, rce);
+			return end();
+		}
+
+		throw;
+	}
+Barry::Verbose(iv);
+
+	// update our copy of the record state table from device
+	desktop.GetRecordStateTable(m_dbid, m_state);
+cout << m_state << endl;
+
+	// find our new record_id in list, to find the state index
+	IndexType new_index;
+	if( !m_state.GetIndex(record_id, &new_index) ) {
+		throw std::logic_error("Need to reconnect for adding a record?");
+	}
+
+	// update new state_index in the data cache record
+	p->SetIds(new_index, record_id);
+
+	// add DataCachePtr to our own cache list
+	m_records.push_front(p);
+
+	// return iterator pointing to new record
+	return begin();
+}
+
 DBCache::iterator DBCache::Add(wxWindow *parent,
 				const Barry::TimeZones &zones,
 				iterator copy_record)
@@ -350,52 +432,7 @@ DBCache::iterator DBCache::Add(wxWindow *parent,
 	}
 
 	if( p->Edit(parent, true, zones) ) {
-		// see if this record has a builder
-		Barry::Builder *bp = dynamic_cast<Barry::Builder*> (p.get());
-		if( !bp ) {
-			return end();
-		}
-
-		// give record a new UniqueID
-		uint32_t record_id = m_state.MakeNewRecordId();
-cout << "New recordID generated: 0x" << hex << record_id << endl;
-		p->SetIds(p->GetStateIndex(), record_id);
-
-		// add record to device
-		DesktopInstancePtr dip = m_tdesktop.Get();
-		Barry::Mode::Desktop &desktop = dip->Desktop();
-bool iv = Barry::IsVerbose();
-Barry::Verbose(true);
-		try {
-			desktop.AddRecord(m_dbid, *bp);
-		} catch( Barry::ReturnCodeError &rce ) {
-			if( rce.IsReadOnly() ) {
-				ShowReadOnlyMsg(parent, rce);
-				return end();
-			}
-
-			throw;
-		}
-Barry::Verbose(iv);
-
-		// update our copy of the record state table from device
-		desktop.GetRecordStateTable(m_dbid, m_state);
-cout << m_state << endl;
-
-		// find our new record_id in list, to find the state index
-		IndexType new_index;
-		if( !m_state.GetIndex(record_id, &new_index) ) {
-			throw std::logic_error("Need to reconnect for adding a record?");
-		}
-
-		// update new state_index in the data cache record
-		p->SetIds(new_index, record_id);
-
-		// add DataCachePtr to our own cache list
-		m_records.push_front(p);
-
-		// return iterator pointing to new record
-		return begin();
+		return Add(parent, p);
 	}
 	else {
 		return end();
@@ -616,6 +653,7 @@ BrowseMode::BrowseMode(wxWindow *parent, const ProbeResult &device)
 	: m_parent(parent)
 	, m_buildable(false)
 	, m_editable(false)
+	, m_cardable(false)
 	, m_show_all(false)
 {
 	// create device identifying string
@@ -771,8 +809,14 @@ void BrowseMode::CreateControls()
 	// add bottom buttons - these go in the bottom FOOTER area
 	// so their heights must be fixed to MAIN_HEADER_OFFSET
 	// minus a border of 5px top and bottom
-	wxSize footer(-1, MAIN_HEADER_OFFSET - 5 - 5);
+	wxSize footer(75, MAIN_HEADER_OFFSET - 5 - 5);
 	wxBoxSizer *buttons = new wxBoxSizer(wxHORIZONTAL);
+	m_import_record_button.reset( new wxButton(m_parent,
+				BrowseMode_ImportRecordButton, _T("Import..."),
+				wxDefaultPosition, footer) );
+	m_export_record_button.reset( new wxButton(m_parent,
+				BrowseMode_ExportRecordButton, _T("Export..."),
+				wxDefaultPosition, footer) );
 	m_add_record_button.reset( new wxButton(m_parent,
 				BrowseMode_AddRecordButton, _T("Add..."),
 				wxDefaultPosition, footer) );
@@ -785,6 +829,8 @@ void BrowseMode::CreateControls()
 	m_delete_record_button.reset( new wxButton(m_parent,
 				BrowseMode_DeleteRecordButton, _T("Delete..."),
 				wxDefaultPosition, footer) );
+	buttons->Add(m_import_record_button.get(), 0, wxRIGHT, 5);
+	buttons->Add(m_export_record_button.get(), 0, wxRIGHT, 5);
 	buttons->Add(m_add_record_button.get(), 0, wxRIGHT, 5);
 	buttons->Add(m_copy_record_button.get(), 0, wxRIGHT, 5);
 	buttons->Add(m_edit_record_button.get(), 0, wxRIGHT, 5);
@@ -905,6 +951,12 @@ void BrowseMode::UpdateButtons()
 {
 	int selected_count = m_record_list->GetSelectedItemCount();
 
+	// can only import if this is a cardable DB
+	m_import_record_button->Enable(m_cardable);
+
+	// can only export if this is a cardable DB and only 1 selected
+	m_export_record_button->Enable(m_cardable && selected_count == 1);
+
 	// can only add if we have a builder and dialog for this record type
 	m_add_record_button->Enable(m_buildable && m_editable);
 
@@ -962,6 +1014,7 @@ void BrowseMode::OnDBDBListSelChange(wxListEvent &event)
 	m_current_dbname = m_dbdb.Databases.at(index).Name;
 	m_buildable = ::IsBuildable(m_current_dbname);
 	m_editable = ::IsEditable(m_current_dbname);
+	m_cardable = ::IsCardable(m_current_dbname);
 	m_current_record_item = -1;
 
 	FillRecordList(m_current_dbname);
@@ -994,6 +1047,150 @@ void BrowseMode::OnShowAll(wxCommandEvent &event)
 {
 	m_show_all = !m_show_all;
 	FillDBDBList();
+}
+
+template <class SyncT>
+bool CheckTypes(wxWindow *parent,
+		const string &dbname,
+		const vector<string> &types)
+{
+	if( !MimeBuilder::IsMember(SyncT::GetVName(), types) ) {
+		CategoryList tlist;
+		tlist = types;
+		string tslist;
+		tlist.CategoryList2Str(tslist);
+
+		wxString msg = wxString::Format(_T("Card file type (%s) does not match record you are trying to add (%s)."),
+			wxString(tslist.c_str(), wxConvUTF8).c_str(),
+			wxString(dbname.c_str(), wxConvUTF8).c_str());
+		wxMessageBox(msg, _T("Invalid Card Type"),
+			wxOK | wxICON_INFORMATION, parent);
+		return false;
+	}
+
+	return true;
+}
+
+void BrowseMode::OnImportRecord(wxCommandEvent &event)
+{
+	string file_types;
+	if( !IsCardable(m_current_dbname, &file_types) )
+		return;
+
+	// we are loading files here, so also allow *.*
+	file_types += "|All files (*.*)|*.*";
+
+	wxString file_filter(file_types.c_str(), wxConvUTF8);
+
+	wxFileDialog dlg(m_parent, _T("Load Record..."), _T(""), _T(""),
+		file_filter,
+		wxFD_OPEN | wxFD_PREVIEW);
+	if( dlg.ShowModal() != wxID_OK )
+		return;
+
+	// open file
+	ifstream ifs(dlg.GetPath().utf8_str());
+	string vrec;
+	vector<string> types;
+	if( !MimeBuilder::ReadMimeRecord(ifs, vrec, types) ) {
+		wxMessageBox(_T("No card data found in: ") + dlg.GetPath(),
+			_T("Import Read Error"),
+			wxOK | wxICON_ERROR, m_parent);
+		return;
+	}
+
+	DataCachePtr rp;
+	string convert_error;
+	try {
+		const string &dn = m_current_dbname;
+
+		// and read per record type:
+		if( m_current_dbname == Contact::GetDBName() ) {
+			if( !CheckTypes<Sync::vCard>(m_parent, dn, types) )
+				return;
+			Sync::vCard vcard;
+			Contact rec = vcard.ToBarry(vrec.c_str(), 0);
+			rp.reset( new RecordCache<Contact>(0, rec) );
+		}
+		else if( m_current_dbname == Calendar::GetDBName() ) {
+			if( !CheckTypes<Sync::vCalendar>(m_parent, dn, types) )
+				return;
+			Sync::vTimeConverter vtc;
+			Sync::vCalendar vcal(vtc);
+			Calendar rec = vcal.ToBarry(vrec.c_str(), 0);
+			rp.reset( new RecordCache<Calendar>(0, rec) );
+		}
+		else if( m_current_dbname == Memo::GetDBName() ) {
+			if( !CheckTypes<Sync::vJournal>(m_parent, dn, types) )
+				return;
+			Sync::vTimeConverter vtc;
+			Sync::vJournal vjournal(vtc);
+			Memo rec = vjournal.ToBarry(vrec.c_str(), 0);
+			rp.reset( new RecordCache<Memo>(0, rec) );
+		}
+		else if( m_current_dbname == Task::GetDBName() ) {
+			if( !CheckTypes<Sync::vTodo>(m_parent, dn, types) )
+				return;
+			Sync::vTimeConverter vtc;
+			Sync::vTodo vtodo(vtc);
+			Task rec = vtodo.ToBarry(vrec.c_str(), 0);
+			rp.reset( new RecordCache<Task>(0, rec) );
+		}
+	} catch( Barry::ConvertError &ce ) {
+		convert_error = ce.what();
+	}
+
+	if( convert_error.size() ) {
+		wxString msg = wxString::Format(_T("Unable to import selected file: %s"), wxString(convert_error.c_str(), wxConvUTF8).c_str());
+		wxMessageBox(msg, _T("Import Error"), wxOK | wxICON_ERROR,
+			m_parent);
+		return;
+	}
+
+	// grab the cache for the current database... Get is ok here,
+	// since the cache is already loaded by the main db list
+	DBMap::DBCachePtr dbp = m_dbmap->GetDBCache(m_current_dbname);
+	if( !dbp.get() ) {
+		wxMessageBox(_T("Internal pointer error: cannot find DBCachePtr for: ") + wxString(m_current_dbname.c_str(), wxConvUTF8),
+			_T("Internal Error"),
+			wxOK | wxICON_ERROR, m_parent);
+		return;
+	}
+
+	DBCache::iterator i = dbp->Add(m_parent, rp);
+	if( i != dbp->end() ) {
+		wxString text((*i)->GetDescription().c_str(), wxConvUTF8);
+
+		// insert new record in same spot as DBCache has it
+		m_current_record_item = dbp->GetIndex(i);
+		m_record_list->InsertItem(m_current_record_item, text);
+	}
+	else {
+		wxMessageBox(_T("Internal error: cannot add record to DBCache"),
+			_T("Internal Error"),
+			wxOK | wxICON_ERROR, m_parent);
+		return;
+	}
+}
+
+void BrowseMode::OnExportRecord(wxCommandEvent &event)
+{
+	string file_types;
+	if( !IsCardable(m_current_dbname, &file_types) )
+		return;
+
+	// grab the cache for the current database... Get is ok here,
+	// since the cache is already loaded by the main db list
+	DBMap::DBCachePtr p = m_dbmap->GetDBCache(m_current_dbname);
+	if( !p.get() )
+		return;
+
+	DBCache::iterator i = p->Get(m_current_record_item);
+	string vdata;
+	if( (*i)->Card(m_parent, vdata) ) {
+		MimeExportDlg dlg(m_parent, vdata, file_types);
+		dlg.ShowModal();
+	}
 }
 
 void BrowseMode::OnAddRecord(wxCommandEvent &event)

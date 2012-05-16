@@ -92,6 +92,7 @@ barrydesktop_SOURCES = \
 	MemoEditDlg.cc MemoEditDlg.h \
 	TaskEditDlg.cc TaskEditDlg.h \
 	GroupCfgDlg.cc GroupCfgDlg.h \
+	MimeExportDlg.cc MimeExportDlg.h \
 	SyncStatusDlg.cc SyncStatusDlg.h \
 	ConflictDlg.cc ConflictDlg.h \
 	configui.cc configui.h \

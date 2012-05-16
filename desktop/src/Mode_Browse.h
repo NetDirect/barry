@@ -25,6 +25,7 @@
 #include "Mode.h"
 #include "util.h"
 #include <barry/barry.h>
+#include <barry/barrysync.h>
 #include <barry/scoped_lock.h>
 #include <tr1/memory>
 #include <list>
@@ -144,6 +145,7 @@ public:
 	// non-buildable records will always be non-editable regardless
 	virtual bool Edit(wxWindow *parent, bool editable,
 		const Barry::TimeZones &zones) = 0;
+	virtual bool Card(wxWindow *parent, std::string &vdata) {return false;}
 	virtual std::string GetDescription() const = 0;
 
 	virtual bool IsBuildable() const { return false; }
@@ -257,6 +259,17 @@ public:
 		return false;
 	}
 
+	virtual bool Card(wxWindow *parent, std::string &vdata)
+	{
+		if( !Barry::MimeDump<RecordT>::Supported() )
+			return false;
+
+		std::ostringstream oss;
+		Barry::MimeDump<RecordT>::Dump(oss, m_rec);
+		vdata = oss.str();
+		return true;
+	}
+
 	virtual std::string GetDescription() const
 	{
 		return m_rec.GetDescription();
@@ -333,6 +346,8 @@ public:
 	int GetIndex(iterator record) const;
 	int GetIndex(const_iterator record) const;
 
+	iterator Add(wxWindow *parent, DataCachePtr p);	// adds to device too,
+							// just like Add() below
 	iterator Add(wxWindow *parent, const Barry::TimeZones &zones,
 		iterator copy_record);
 	bool Edit(wxWindow *parent, const Barry::TimeZones &zones,
@@ -405,6 +420,8 @@ private:
 	std::auto_ptr<wxListCtrl> m_dbdb_list;
 	std::auto_ptr<wxListCtrl> m_record_list;
 	std::auto_ptr<wxCheckBox> m_show_all_checkbox;
+	std::auto_ptr<wxButton> m_import_record_button;
+	std::auto_ptr<wxButton> m_export_record_button;
 	std::auto_ptr<wxButton> m_add_record_button;
 	std::auto_ptr<wxButton> m_copy_record_button;
 	std::auto_ptr<wxButton> m_edit_record_button;
@@ -419,6 +436,8 @@ private:
 					// a Builder available for it
 	bool m_editable;		// true if currently displayed db has
 					// an edit dialog available for it
+	bool m_cardable;		// true if currently displayed db is
+					// capable of MIME style import/exports
 	bool m_show_all;		// if true, show all databases in list
 					// instead of just the parsable ones
 	std::string m_current_dbname;
@@ -453,6 +472,8 @@ public:
 	void OnRecordListSelChange(wxListEvent &event);
 	void OnRecordListActivated(wxListEvent &event);
 	void OnShowAll(wxCommandEvent &event);
+	void OnImportRecord(wxCommandEvent &event);
+	void OnExportRecord(wxCommandEvent &event);
 	void OnAddRecord(wxCommandEvent &event);
 	void OnCopyRecord(wxCommandEvent &event);
 	void OnEditRecord(wxCommandEvent &event);

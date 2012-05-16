@@ -70,6 +70,8 @@ enum {
 	BrowseMode_DBDBList,
 	BrowseMode_RecordList,
 	BrowseMode_ShowAllCheckbox,
+	BrowseMode_ImportRecordButton,
+	BrowseMode_ExportRecordButton,
 	BrowseMode_AddRecordButton,
 	BrowseMode_CopyRecordButton,
 	BrowseMode_EditRecordButton,
@@ -150,6 +152,8 @@ enum {
 	Dialog_Migrate_MigrateNowButton,
 	Dialog_Migrate_CancelButton,
 	Dialog_Modem,
+	Dialog_MimeExport,
+	Dialog_MimeExport_SaveButton,
 
 	SysMenu_FirstItem,
 
