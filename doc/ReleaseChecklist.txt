@@ -17,6 +17,7 @@ Barry Release Checklist:
 	Documentation:
 		- doc/www/index.php
 		- Doxyfile
+		- update root README file as necessary
 
 	Binary packaging:
 		- rpm/barry.spec
@@ -25,6 +26,7 @@ Barry Release Checklist:
 		- debian/control (major version only)
 		- debian/libbarry*.* (files need to be renamed)
 		- debian/rules (the barry18 includedir)
+		- debian/*.lintian-overrides (major version only)
 
 		- opensync-plugin/debian/changelog
 		- opensync-plugin/debian/control (libbarry-dev)
@@ -34,40 +36,48 @@ Barry Release Checklist:
 
 	Languages:
 		- files under po/
-- test ABI / API and bump major or minor version as appropriate
-- run all tests on a clean git tree, including build test script
+		- files under gui/po/
+
+	Misc:
+		- android/jni/barry/config.h (multiple version strings)
+		- test/nightly.sh
+
+- tests in following order:
+	- test ABI / API and bump major or minor version as appropriate
+	- run tests under test/
+	- build debian packages and run lintian on *.dsc, *.changes, and *.deb
+		lintian --info --display-info --pedantic --color auto \
+			*.changes *.deb *.dsc
+	- apt-get upgrade on sid first, then run lintian tests on latest sid
+	- run binary-meta release build test
 - write release notes, including contributors, known issues, new
 	features and bugs fixed
 	- include mention of distros that support Barry:
 		(see AUTHORS file for distro list)
 	- include description at the top of what Barry is
 - web docs:
-	- bump version number and release date on index.php
 	- update known issues list
 	- check that all external links work, and point to proper content
 	- upload latest web docs to netdirect project page
 		- run: ./static.sh netdirect
 	- upload latest doxygen docs to netdirect project page
-- update root README file
 - snip this version's git shortlog history into its own file
 - sign-tag git repo with latest version
 - no need to run maintainer/tagged-release.sh since you're maintainer now
 - manually push git tags to repo.or.cz and sourceforge.net
-- upload packages to SourceForge
+- create binary-meta tree under dists/, and debian source packages and tarballs
+	under sources/
+- upload above tree to SourceForge
 	ssh -x -a -2 -t USER,PROJECT@shell.sourceforge.net create
 	   then use sf-help for details
 	MAKE SURE that the tar source files are under
 		/files/barry/barry-{version}/barry_{version}.tar.gz,
 		so that debian/watch remains accurate
-	- Ubuntu: 7.10, 8.04, 9.04
-	- Fedora: 7, 8, 9, 11
-	- Debian: stable (lenny)
-	- openSUSE: ?
 - upload binary packaging metadata to download.barry.netdirect.ca
-	under a versioned directory (barry-0.18.0/) and update the
+	under a versioned directory (eg. barry-0.18.0/) and update the
 	barry-latest symlink
-	- remember to run make-redirect.sh for both the new release
-		and barry-latest
+	- remember to run make-redirect.sh for both the new release dir
+		and barry-latest symlink
 	- add the new release to .htaccess, and replace barry-latest
 		redirect links with the new ones
 	- make backup of new htaccess
@@ -81,26 +91,4 @@ Barry Release Checklist:
 - update Sourceforge screenshots / icons if applicable
 - send identi.ca/cdfrey and blog notices
 - update source project, bumping revision numbers in source code
-
-
-A note on the tags in Barry's git repository:
----------------------------------------------
-Each release will now have at least 3 tags.  For example, if releasing
-version 0.14, the tags will be:
-
-	barry-0.14		Tag on master branch, signifying the
-				development point that the release occured
-	barry-0.14.tar.bz2	Contains the exact contents of the
-				full tar.bz2 release tarball.  If you
-				look far enough in the history logs, you will
-				find the barry-0.14 tag.
-	barry_0.14.orig.tar.gz	Contains the exact contents of the debian
-				source package tarball.  Again, barry-0.14
-				will be in this tag's history.
-
-Basically, the first tag contains only the source code, and no generated
-files.  The second tag (tar.bz2) contains the source code and all
-generated files.  And the third tag (orig) contains all of tar.bz2
-*except* the debian/ directory.  They are arranged so all history
-merges back into the main non-generated source development tree.
 
