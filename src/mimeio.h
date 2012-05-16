@@ -25,12 +25,98 @@
 
 #include "dll.h"
 #include "builder.h"
+#include "vcard.h"
+#include "vevent.h"
+#include "vjournal.h"
+#include "vtodo.h"
 #include <string>
 #include <vector>
 #include <memory>
-#include <iosfwd>
+#include <iostream>
 
 namespace Barry {
+
+class Contact;
+class Calendar;
+class Memo;
+class Task;
+
+//
+// Template classes to write MIME data to stream, from record.
+//
+
+template <class Record>
+class MimeDump
+{
+public:
+	static void Dump(std::ostream &os, const Record &rec)
+	{
+		os << rec << std::endl;
+	}
+
+	static bool Supported() { return false; }
+};
+
+template <>
+class MimeDump<Barry::Contact>
+{
+public:
+	static void Dump(std::ostream &os, const Barry::Contact &rec)
+	{
+		Barry::Sync::vCard vcard;
+		os << vcard.ToVCard(rec) << std::endl;
+	}
+
+	static bool Supported() { return true; }
+};
+
+template <>
+class MimeDump<Barry::Calendar>
+{
+public:
+	static void Dump(std::ostream &os, const Barry::Calendar &rec)
+	{
+		Barry::Sync::vTimeConverter vtc;
+		Barry::Sync::vCalendar vcal(vtc);
+		os << vcal.ToVCal(rec) << std::endl;
+	}
+
+	static bool Supported() { return true; }
+};
+
+template <>
+class MimeDump<Barry::Memo>
+{
+public:
+	static void Dump(std::ostream &os, const Barry::Memo &rec)
+	{
+		Barry::Sync::vTimeConverter vtc;
+		Barry::Sync::vJournal vjournal(vtc);
+		os << vjournal.ToMemo(rec) << std::endl;
+	}
+
+	static bool Supported() { return true; }
+};
+
+template <>
+class MimeDump<Barry::Task>
+{
+public:
+	static void Dump(std::ostream &os, const Barry::Task &rec)
+	{
+		Barry::Sync::vTimeConverter vtc;
+		Barry::Sync::vTodo vtodo(vtc);
+		os << vtodo.ToTask(rec) << std::endl;
+	}
+
+	static bool Supported() { return true; }
+};
+
+
+//
+// Builder class, for reading MIME stream data and loading into
+// a DBData record.
+//
 
 class BXEXPORT MimeBuilder : public Barry::Builder
 {

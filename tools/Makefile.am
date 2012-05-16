@@ -13,7 +13,6 @@ DEFS = -DLOCALEDIR=\"$(localedir)\" @DEFS@
 noinst_HEADERS = \
 	i18n.h \
 	gettext.h \
-	mimedump.h \
 	brecsum.h \
 	util.h \
 	boostwrap.h \

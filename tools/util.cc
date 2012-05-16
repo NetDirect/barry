@@ -24,7 +24,6 @@
 #include <barry/barry.h>
 #ifdef __BARRY_SYNC_MODE__
 #include <barry/barrysync.h>
-#include "mimedump.h"
 #endif
 
 #include <iostream>

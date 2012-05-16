@@ -23,7 +23,6 @@
 #include <barry/barrysync.h>
 #include <barry/barrybackup.h>
 
-#include "mimedump.h"
 #include "brecsum.h"
 #include "util.h"
 

@@ -38,7 +38,6 @@
 #include <barry/barry.h>
 #ifdef __BARRY_SYNC_MODE__
 #include <barry/barrysync.h>
-#include "mimedump.h"
 #endif
 #ifdef __BARRY_BACKUP_MODE__
 #include <barry/barrybackup.h>
