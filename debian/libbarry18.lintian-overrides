@@ -7,10 +7,10 @@
 # See the following page for details:
 # http://linuxtesting.org/upstream-tracker/versions/barry.html
 
-libbarry18: no-symbols-control-file usr/lib/libbarrysync.so.18.0.1
-libbarry18: no-symbols-control-file usr/lib/libbarrybackup.so.18.0.1
-libbarry18: no-symbols-control-file usr/lib/libbarryalx.so.18.0.1
-libbarry18: no-symbols-control-file usr/lib/libbarrydp.so.18.0.1
-libbarry18: no-symbols-control-file usr/lib/libbarryjdwp.so.18.0.1
-libbarry18: no-symbols-control-file usr/lib/libbarry.so.18.0.1
+libbarry18: no-symbols-control-file usr/lib/libbarrysync.so*
+libbarry18: no-symbols-control-file usr/lib/libbarrybackup.so*
+libbarry18: no-symbols-control-file usr/lib/libbarryalx.so*
+libbarry18: no-symbols-control-file usr/lib/libbarrydp.so*
+libbarry18: no-symbols-control-file usr/lib/libbarryjdwp.so*
+libbarry18: no-symbols-control-file usr/lib/libbarry.so*
 

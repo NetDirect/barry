@@ -2,7 +2,7 @@
 # right along with it.  Someday it may be useful as a standalone library,
 # and could be packaged that way, but it is not ready for that yet.
 
-barrydesktop: package-name-doesnt-match-sonames libosyncwrap18
+barrydesktop: package-name-doesnt-match-sonames libosyncwrap*
 
 
 # The encoding key is set to UTF-8, and this is the default, and according
@@ -24,5 +24,5 @@ barrydesktop: desktop-entry-contains-encoding-key usr/share/applications/barryde
 # Also, libosyncwrap.so is an internal library for barrydesktop only,
 # and is not meant for public use yet. (See above)
 
-barrydesktop: no-symbols-control-file usr/lib/libosyncwrap.so.18.0.1
+barrydesktop: no-symbols-control-file usr/lib/libosyncwrap.so*
 
