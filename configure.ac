@@ -471,12 +471,12 @@ AC_CONFIG_FILES([Makefile
                  examples/Makefile
                  man/Makefile
                  test/Makefile
-                 libbarry-0.pc
-                 libbarrydp-0.pc
-                 libbarryjdwp-0.pc
-                 libbarrysync-0.pc
-                 libbarrybackup-0.pc
-                 libbarryalx-0.pc])
+                 libbarry-18.pc
+                 libbarrydp-18.pc
+                 libbarryjdwp-18.pc
+                 libbarrysync-18.pc
+                 libbarrybackup-18.pc
+                 libbarryalx-18.pc])
 
 #
 # nested packages

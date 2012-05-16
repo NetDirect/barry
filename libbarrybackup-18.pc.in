@@ -4,10 +4,10 @@ libdir=@libdir@
 includedir=@includedir@/barry@BARRY_MAJOR@
 
 Name: Barry
-Description: C++ library for sync and vformat parsing
+Description: C++ library for reading and writing Barry backup files
 URL: http://sourceforge.net/projects/barry
 Version: @VERSION@
-Requires: glib-2.0 libbarry-0
-Libs: -L${libdir} -lbarrysync
+Requires: libbarry-18
+Libs: -L${libdir} -lbarrybackup
 Cflags: -I${includedir}
 

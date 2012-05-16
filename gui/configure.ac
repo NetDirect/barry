@@ -23,8 +23,8 @@ AC_PROG_LIBTOOL
 
 AC_LANG([C++])
 
-PKG_CHECK_MODULES([BARRY], [libbarry-0])
-PKG_CHECK_MODULES([BARRYBACKUP], [libbarrybackup-0])
+PKG_CHECK_MODULES([BARRY], [libbarry-18])
+PKG_CHECK_MODULES([BARRYBACKUP], [libbarrybackup-18])
 PKG_CHECK_MODULES([GTKMM], [gtkmm-2.4 libglademm-2.4 gthread-2.0])
 
 # Carry the special tree build environment variables from parent configure,

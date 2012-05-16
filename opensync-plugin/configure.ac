@@ -28,8 +28,8 @@ AC_LANG([C++])
 
 PKG_CHECK_MODULES([GLIB2], [glib-2.0])
 PKG_CHECK_MODULES([OPENSYNC2X], [opensync-1.0])
-PKG_CHECK_MODULES([BARRY], [libbarry-0])
-PKG_CHECK_MODULES([BARRYSYNC], [libbarrysync-0])
+PKG_CHECK_MODULES([BARRY], [libbarry-18])
+PKG_CHECK_MODULES([BARRYSYNC], [libbarrysync-18])
 
 # Carry the special tree build environment variables from parent configure,
 # just in case user is doing a complete tree build with --enable-opensync-plugin

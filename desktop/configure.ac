@@ -167,7 +167,7 @@ if test "x$with_evolution" != xno ; then
 		])
 fi
 
-PKG_CHECK_MODULES([BARRY], [libbarry-0 libbarrysync-0 libbarrybackup-0])
+PKG_CHECK_MODULES([BARRY], [libbarry-18 libbarrysync-18 libbarrybackup-18])
 PKG_CHECK_MODULES([GLIB2], [glib-2.0])
 PKG_CHECK_MODULES([LIBXMLPP], [libxml++-2.6])
 PKG_CHECK_MODULES([OPENSYNC22], [opensync-1.0], [], [OS22NOTFOUND=yes])
