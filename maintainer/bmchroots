@@ -47,15 +47,15 @@ function do_fedora() {
 }
 
 do_ubuntu ubuntu1004 "$BMBUILDDIR/dists/ubuntu1004/main/binary-i386" "" \
-	"make -j2 debian-all"
+	"make -j2 debian-all deb-libtar"
 # Ubuntu 11.04 (Natty) is also good for Mint 11
 do_ubuntu ubuntu1104 "$BMBUILDDIR/dists/ubuntu1104/main/binary-i386" "" \
-	"make -j2 debian-all"
+	"make -j2 debian-all deb-libtar"
 # Ubuntu 11.10 (Oneiric) should also be good for Mint 12
 do_ubuntu ubuntu1110 "$BMBUILDDIR/dists/ubuntu1110/main/binary-i386" "" \
-	"make -j2 debian-all deb-evo3-latest"
+	"make -j2 debian-all deb-evo3-latest deb-libtar"
 do_ubuntu ubuntu1204 "$BMBUILDDIR/dists/ubuntu1204/main/binary-i386" "" \
-	"make -j2 debian-all deb-evo3-latest"
+	"make -j2 debian-all deb-evo3-latest deb-libtar"
 
 # Fedora and openSUSE use make 3.82, which is buggy and doesn't handle
 # parallel builds safely all cases.  So we can't use any -j options here.

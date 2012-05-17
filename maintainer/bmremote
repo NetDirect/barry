@@ -72,15 +72,15 @@ function do_fedora() {
 }
 
 do_ubuntu ubuntu1004 "$BMBUILDDIR/dists/ubuntu1004/main/binary-amd64" "" \
-	"make -j16 debian-all"
+	"make -j16 debian-all deb-libtar"
 # Ubuntu 11.04 (Natty) is also good for Mint 11
 do_ubuntu ubuntu1104 "$BMBUILDDIR/dists/ubuntu1104/main/binary-amd64" "" \
-	"make -j16 debian-all"
+	"make -j16 debian-all deb-libtar"
 # Ubuntu 11.10 (Oneric) should also be good for Mint 12
 do_ubuntu ubuntu1110 "$BMBUILDDIR/dists/ubuntu1110/main/binary-amd64" "" \
-	"make -j16 debian-all deb-evo3-latest"
+	"make -j16 debian-all deb-evo3-latest deb-libtar"
 do_ubuntu ubuntu1204 "$BMBUILDDIR/dists/ubuntu1204/main/binary-amd64" "" \
-	"make -j16 debian-all deb-evo3-latest"
+	"make -j16 debian-all deb-evo3-latest deb-libtar"
 do_debian
 
 # Fedora and openSUSE use make 3.82, which is buggy and doesn't handle
