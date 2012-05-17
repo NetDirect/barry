@@ -63,15 +63,15 @@ do_ubuntu ubuntu1204 "$BMBUILDDIR/dists/ubuntu1204/main/binary-i386" "" \
 do_fedora fedora14 \
 	"$BMBUILDDIR/dists/fedora14/i386/RPMS" \
 	"$BMBUILDDIR/dists/fedora14/source-i386/SRPMS" \
-	"" "make rpm-all"
+	"" "make rpmclean rpm-all"
 do_fedora fedora16 \
 	"$BMBUILDDIR/dists/fedora16/i686/RPMS" \
 	"$BMBUILDDIR/dists/fedora16/source-i686/SRPMS" \
-	"" "make rpm-all rpm-evo3-latest"
+	"" "make rpmclean rpm-all rpm-evo3-latest"
 do_fedora opensuse12.1 \
 	"$BMBUILDDIR/dists/opensuse12.1/i586/RPMS" \
 	"$BMBUILDDIR/dists/opensuse12.1/source-i586/SRPMS" \
-	"" "make rpm-libtar rpm-all"
+	"" "make rpmclean rpm-libtar rpm-all"
 
 chown -R cdfrey:cdfrey "$BMBUILDDIR"
 
