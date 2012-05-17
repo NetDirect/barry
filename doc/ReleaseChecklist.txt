@@ -48,7 +48,8 @@ Barry Release Checklist:
 	- build debian packages and run lintian on *.dsc, *.changes, and *.deb
 		lintian --info --display-info --pedantic --color auto \
 			*.changes *.deb *.dsc
-	- apt-get upgrade on sid first, then run lintian tests on latest sid
+	- run all lintian tests on latest sid, starting from fresh
+		install (pbuilder), checking build-deps in the process
 	- run binary-meta release build test
 - write release notes, including contributors, known issues, new
 	features and bugs fixed
