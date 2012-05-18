@@ -123,6 +123,9 @@ private:
 	wxButton *m_runapp_button, *m_syncagain_button, *m_killclose_button;
 	wxButton *m_details_button;
 
+	// state
+	bool m_repositioned;
+
 protected:
 	void CreateLayout();
 	void AddStatusSizer(wxSizer *sizer);

@@ -270,6 +270,8 @@ SyncStatusDlg::SyncStatusDlg(wxWindow *parent,
 	, m_runapp_button(0)
 	, m_syncagain_button(0)
 	, m_killclose_button(0)
+	, m_details_button(0)
+	, m_repositioned(false)
 {
 	wxBusyCursor wait;
 
@@ -628,22 +630,28 @@ void SyncStatusDlg::OnShowDetails(wxCommandEvent &event)
 		m_details_button->SetLabel(_T("Show Details"));
 	}
 	else {
+		if( !m_repositioned ) {
+			// try to position the window in a readable spot...
+			// do this first, so that the resize
+			wxSize size = GetSize();
+			wxPoint pos = GetScreenPosition();
+			int screen_height = wxSystemSettings::GetMetric(wxSYS_SCREEN_Y);
+			int new_height = size.GetHeight() + 470;
+			if( (pos.y + new_height) > screen_height &&
+			    new_height < screen_height )
+			{
+				int wiggle_room = screen_height - new_height;
+				int y = wiggle_room / 2;
+				Move(pos.x, y);
+			}
+
+			m_repositioned = true;
+		}
+
 		m_status_edit->Show();
 		m_details_button->SetLabel(_T("Hide Details"));
 	}
 	m_topsizer->Fit(this);
-
-	// try to position the window in a readable spot
-	wxSize size = GetSize();
-	wxPoint pos = GetScreenPosition();
-	int screen_height = wxSystemSettings::GetMetric(wxSYS_SCREEN_Y);
-	if( (pos.y + size.GetHeight()) > screen_height &&
-	    size.GetHeight() < screen_height )
-	{
-		int wiggle_room = screen_height - size.GetHeight();
-		int y = wiggle_room / 2;
-		Move(pos.x, y);
-	}
 }
 
 wxConnectionBase* SyncStatusDlg::OnAcceptConnection(const wxString &topic)
