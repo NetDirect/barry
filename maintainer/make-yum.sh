@@ -16,9 +16,10 @@ if [ -z "$GPG_AGENT_INFO" ] ; then
 	echo "Press enter to continue if gpg-agent is running,"
 	echo "Otherwise, run:"
 	echo
-	echo "      eval \$(gpg-agent --daemon)"
+	echo "      eval \$(gpg-agent --daemon --default-cache-ttl n)"
 	echo
-	echo "to preserve your sanity."
+	echo "to preserve your sanity.  n is in seconds, and default"
+	echo "from gpg-agent is 600 seconds."
 	read
 fi
 
