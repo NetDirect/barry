@@ -254,7 +254,9 @@ END_EVENT_TABLE()
 
 SyncStatusDlg::SyncStatusDlg(wxWindow *parent,
 				const DeviceSet::subset_type &subset)
-	: wxDialog(parent, Dialog_SyncStatus, _T("Device Sync Progress"))
+	: wxDialog(parent, Dialog_SyncStatus, _T("Device Sync Progress"),
+			wxDefaultPosition, wxDefaultSize,
+			wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
 	, TermCatcher(this, Dialog_SyncStatus_SyncTerminated)
 	, m_subset(subset)
 	, m_next_device(m_subset.begin())
