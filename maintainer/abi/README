@@ -5,14 +5,14 @@ using the tool found at:
 
 There are two scritps:
 
-	abi-prepare.sh - takes a Barry tarball, extracts it into /tmp
-			and builds and installs it
-	configure-lib.sh - support script used by abi-prepare.sh
+	abi-prepare.sh - extracts a git commit or tag into /tmp and builds
+			and installs it
+	configure-lib.sh - support script used by *abi-prepare.sh scripts
 
 For example, to prepare version 0.16 and 0.17.0 for comparison, run:
 
-	./abi-prepare.sh barry-0.16.tar.bz2 0.16.xml ./configure-lib.sh
-	./abi-prepare.sh barry-0.17.0.tar.bz2 0.17.0.xml ./configure-lib.sh
+	./abi-prepare.sh barry-0.16 0.16.xml ./configure-lib.sh
+	./abi-prepare.sh barry-0.17.0 0.17.0.xml ./configure-lib.sh
 
 To compare, run:
 
