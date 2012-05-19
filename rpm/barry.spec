@@ -292,10 +292,10 @@ cd ../
 %if %{with_gui}
 cd gui/
 %{__make} DESTDIR=%{buildroot} install
-# Install barry logo icon
+# Install barry logo icon (name of icon must match the *.desktop file!)
 cd ../
 %{__mkdir_p} %{buildroot}%{_datadir}/pixmaps
-%{__cp} logo/barry_logo_icon.png %{buildroot}%{_datadir}/pixmaps
+%{__cp} logo/barry_logo_icon.png %{buildroot}%{_datadir}/pixmaps/barry_backup_menu_icon.png
 desktop-file-install --vendor netdirect \
    --dir %{buildroot}%{_datadir}/applications \
    menu/barrybackup.desktop
@@ -327,7 +327,7 @@ cd desktop/
 %{__rm} -f %{buildroot}%{_libdir}/*.la
 cd ../
 %{__mkdir_p} %{buildroot}%{_datadir}/pixmaps
-%{__cp} logo/barry_logo_icon.png %{buildroot}%{_datadir}/pixmaps/barry_desktop_icon.png
+%{__cp} logo/barry_logo_icon.png %{buildroot}%{_datadir}/pixmaps/barry_desktop_menu_icon.png
 desktop-file-install --vendor netdirect \
    --dir %{buildroot}%{_datadir}/applications \
    menu/barrydesktop.desktop
@@ -444,7 +444,7 @@ desktop-file-install --vendor netdirect \
 %defattr(-,root,root)
 %attr(0755,root,root) %{_bindir}/barrybackup
 %attr(0644,root,root) %{_datadir}/barry/glade/*.glade
-%attr(0644,root,root) %{_datadir}/pixmaps/barry_logo_icon.png
+%attr(0644,root,root) %{_datadir}/pixmaps/barry_backup_menu_icon.png
 %attr(0644,root,root) %{_datadir}/applications/*barrybackup.desktop
 %attr(0644,root,root) %{_mandir}/man1/barrybackup*
 %doc COPYING
@@ -476,7 +476,7 @@ desktop-file-install --vendor netdirect \
 %attr(0644,root,root) %{_datadir}/barry/desktop/0.22/*
 %attr(0644,root,root) %{_datadir}/barry/desktop/0.40/*
 %attr(0644,root,root) %{_datadir}/barry/desktop/images/*.png
-%attr(0644,root,root) %{_datadir}/pixmaps/barry_desktop_icon.png
+%attr(0644,root,root) %{_datadir}/pixmaps/barry_desktop_menu_icon.png
 %attr(0644,root,root) %{_datadir}/applications/*barrydesktop.desktop
 %attr(0644,root,root) %{_mandir}/man1/barrydesktop*
 %attr(-,root,root) %{_libdir}/libosyncwrap.so.*
@@ -499,6 +499,7 @@ desktop-file-install --vendor netdirect \
 %changelog
 * Tue May 15 2012 Chris Frey <cdfrey@foursquare.net> 0.18.3-0
 - version bump
+- renamed icon filenames to match .desktop file
 
 * Tue May 15 2012 Chris Frey <cdfrey@foursquare.net> 0.18.2-0
 - version bump
