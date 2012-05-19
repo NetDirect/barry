@@ -63,7 +63,7 @@ Barry Release Checklist:
 		- run: ./static.sh netdirect
 	- upload latest doxygen docs to netdirect project page
 - snip this version's git shortlog history into its own file
-- sign-tag git repo with latest version
+- sign-tag Barry git repo and binary-meta git repo with latest version
 - no need to run maintainer/tagged-release.sh since you're maintainer now
 - manually push git tags to repo.or.cz and sourceforge.net
 - create binary-meta tree under dists/, and debian source packages and tarballs
