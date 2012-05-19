@@ -23,6 +23,7 @@
 
 #include "vevent.h"
 //#include "trace.h"
+#include "log.h"
 #include <stdint.h>
 #include <glib.h>
 #include <strings.h>
@@ -273,6 +274,16 @@ void vCalendar::RecurToBarryCal(vAttr& rrule, time_t starttime)
 
 	if(args.find(string("INTERVAL"))!=args.end()) {
 		cal.Interval = atoi(args["INTERVAL"].c_str());
+		if( cal.Interval < 1 ) {
+			// force to at least 1, for math below
+			cal.Interval = 1;
+		}
+	}
+	else {
+		// default to 1, for the math below.
+		// RecurBase::Clear() does this for us as well, but
+		// best to be safe
+		cal.Interval = 1;
 	}
 	if(args.find(string("UNTIL"))!=args.end()) {
 		cal.Perpetual = FALSE;
@@ -312,6 +323,18 @@ void vCalendar::RecurToBarryCal(vAttr& rrule, time_t starttime)
 	if(args["FREQ"]==string("DAILY")) {
 		cal.RecurringType=Calendar::Day;
 
+		if(count) {
+			// add count-1*interval days to find the end time:
+			// i.e. if starting on 2012/01/01 and going
+			// for 3 days, then the last day will be
+			// 2012/01/03.
+			//
+			// For intervals, the count is every interval days,
+			// so interval of 2 means 2012/01/01, 2012/01/03, etc.
+			// and the calculation still works.
+			cal.RecurringEndTime.Time =
+				starttime + (count-1) * cal.Interval * 24*60*60;
+		}
 	} else if(args["FREQ"]==string("WEEKLY")) {
 		cal.RecurringType=Calendar::Week;
 		// we must have a dayofweek entry
@@ -322,14 +345,21 @@ void vCalendar::RecurToBarryCal(vAttr& rrule, time_t starttime)
 				cal.WeekDays|=pmap[v[idx]];
 			}
 		} else {
-			// handle error here
-//			trace.logf("RecurToBarryCal: no BYDAY on weekly event");
+			// we must have at least one day selected, and if no
+			// BYDAY is selected, use the start time's day
+			struct tm datestruct;
+			localtime_r(&starttime,&datestruct);
+			cal.WeekDays = pmap[WeekDays[datestruct.tm_wday]];
+
+			barryverbose("Warning: WEEKLY VEVENT without a day selected. Assuming day of start time.\nRecord data so far:\n" << cal);
 		}
+
 		if(count) {
 			// need to process end date. This is easy
 			// for weeks, as a number of weeks can be
 			// reduced to seconds simply.
-			cal.RecurringEndTime.Time = starttime + ((count-1)*60*60*24*7);
+			cal.RecurringEndTime.Time =
+				starttime + (count-1) * cal.Interval * 60*60*24*7;
 		}
 	} else if(args["FREQ"]=="MONTHLY") {
 		if(args.find(string("BYMONTHDAY"))!=args.end()) {
@@ -341,7 +371,15 @@ void vCalendar::RecurToBarryCal(vAttr& rrule, time_t starttime)
 				cal.WeekOfMonth=GetMonthWeekNumFromBYDAY(args["BYDAY"]);
 				cal.DayOfWeek=GetWeekDayIndexFromBYDAY(args["BYDAY"]);
 			} else {
-//				trace.logf("RecurToBarryCal: No qualifier on MONTHLY freq");
+				// must have a recurring type, so assume
+				// that monthly means every day on the day
+				// of month specified by starttime
+				struct tm datestruct;
+				localtime_r(&starttime,&datestruct);
+
+				cal.RecurringType = Calendar::MonthByDate;
+				cal.DayOfMonth = datestruct.tm_mday;
+				barryverbose("Warning: MONTHLY VEVENT without a day type specified (no BYMONTHDAY nor BYDAY). Assuming BYMONTHDAY, using day of start time.\nRecord data so far:\n" << cal);
 			}
 		}
 		if(count) {
@@ -356,8 +394,9 @@ void vCalendar::RecurToBarryCal(vAttr& rrule, time_t starttime)
 			// month falls on a February. We don't need
 			// to worry about day of week as mktime()
 			// clobbers it.
-			datestruct.tm_year += (datestruct.tm_mon+count)/12;
-			datestruct.tm_mon = (datestruct.tm_mon+count)%12;
+			int add = (count-1) * cal.Interval;
+			datestruct.tm_year += (datestruct.tm_mon+add)/12;
+			datestruct.tm_mon = (datestruct.tm_mon+add)%12;
 			if(datestruct.tm_mday>28 && datestruct.tm_mon==1) {
 				// force it to 1st Mar
 				// TODO Potential bug on leap years
@@ -371,24 +410,33 @@ void vCalendar::RecurToBarryCal(vAttr& rrule, time_t starttime)
 				datestruct.tm_mon+=1;
 				datestruct.tm_mday=1;
 			}
+			// Just in case we're crossing DST boundaries,
+			// add an hour, to make sure we reach the ending
+			// month, in the case of intervals
+			datestruct.tm_hour++;
 			cal.RecurringEndTime.Time = mktime(&datestruct);
 		}
 	} else if(args["FREQ"]=="YEARLY") {
+		bool need_assumption = true;
 		if(args.find(string("BYMONTH"))!=args.end()) {
 			cal.MonthOfYear=atoi(args["BYMONTH"].c_str());
 			if(args.find(string("BYMONTHDAY"))!=args.end()) {
 				cal.RecurringType=Calendar::YearByDate;
 				cal.DayOfMonth=atoi(args["BYMONTHDAY"].c_str());
+				need_assumption = false;
 			} else {
 				if(args.find(string("BYDAY"))!=args.end()) {
 					cal.RecurringType=Calendar::YearByDay;
 					cal.WeekOfMonth=GetMonthWeekNumFromBYDAY(args["BYDAY"]);
 					cal.DayOfWeek=GetWeekDayIndexFromBYDAY(args["BYDAY"]);
+					need_assumption = false;
 				} else {
-//					trace.logf("RecurToBarryCal: No qualifier on YEARLY freq");
+					// needs assumption below...
 				}
 			}
-		} else {
+		}
+
+		if( need_assumption ) {
 			// otherwise use the start date and translate
 			// to a BYMONTHDAY.
 			// cal.StartTime has already been processed
@@ -399,12 +447,18 @@ void vCalendar::RecurToBarryCal(vAttr& rrule, time_t starttime)
 			cal.RecurringType=Calendar::YearByDate;
 			cal.MonthOfYear=datestruct.tm_mon;
 			cal.DayOfMonth=datestruct.tm_mday;
+			barryverbose("Warning: YEARLY VEVENT without a day type specified (no BYMONTHDAY nor BYDAY). Assuming BYMONTHDAY, using day and month of start time.\nRecord data so far:\n" << cal);
 		}
 		if(count) {
 			// convert to struct tm, then simply add to the year.
+			//
+			// Note: intervals do work in the device firmware,
+			// but not all of the devices allow you to edit it
+			// with their GUI... hmmm... oh well, allow it
+			// anyway, and do the multiplication below.
 			struct tm datestruct;
 			localtime_r(&starttime,&datestruct);
-			datestruct.tm_year += count;
+			datestruct.tm_year += (count-1) * cal.Interval;
 			cal.RecurringEndTime.Time = mktime(&datestruct);
 		}
 	}
