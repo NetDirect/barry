@@ -758,7 +758,7 @@ void BaseFrame::OnDeviceComboChange(wxCommandEvent &event)
 	wxGetApp().GetGlobalConfig().SetLastDevice(pin);
 
 	// update sys menu
-	m_sysmenu->Enable(SysMenu_RenameDevice, false);
+	m_sysmenu->Enable(SysMenu_RenameDevice, pin.Valid());
 
 	// update the main mode's screenshot
 	m_main_menu_mode->UpdateScreenshot(pin);
