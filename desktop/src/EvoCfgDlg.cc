@@ -137,21 +137,10 @@ wxString EvoCfgDlg::CheckPath(const wxString &name,
 
 wxString EvoCfgDlg::ValidatePaths() const
 {
-	if( m_address_path.empty() || m_calendar_path.empty() || m_tasks_path.empty() )
-		return _T("Address book, Event, and Tasks must be set.");
-
-	wxString msg;
-	msg = CheckPath(_T("Address book path"), m_address_path);
-	if( msg.size() )
-		return msg;
-	msg = CheckPath(_T("Event path"), m_calendar_path);
-	if( msg.size() )
-		return msg;
-	msg = CheckPath(_T("Tasks path"), m_tasks_path);
-	if( msg.size() )
-		return msg;
-	msg = CheckPath(_T("Memos path"), m_memos_path);
-	return msg;
+	if( m_address_path.empty() && m_calendar_path.empty() &&
+	    m_tasks_path.empty() && m_memos_path.empty() )
+		return _T("No paths set!  If there are no default options available in the drop down lists, please double check that you've initialized your Evolution account first.");
+	return _T("");
 }
 
 bool EvoCfgDlg::TransferDataFromWindow()

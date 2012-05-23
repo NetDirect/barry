@@ -24,6 +24,7 @@
 
 #include <wx/wx.h>
 #include "EvoSources.h"
+#include "ostypes.h"
 
 // forward declarations
 namespace OpenSync {

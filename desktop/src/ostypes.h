@@ -32,7 +32,11 @@
 #define PST_NOTES		0x04
 #define PST_TODOS		0x08
 #define PST_ALL			0x0f
-#define PST_DO_NOT_SET		0x10000000
+#define PST_DO_NOT_SET		0x10000000	// used by the engine to signal
+						// an attempt to run without
+						// specifying supported types...
+						// i.e. just run with default
+						// efforts
 
 namespace OpenSync { namespace Config {
 

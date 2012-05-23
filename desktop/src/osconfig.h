@@ -107,10 +107,12 @@ public:
 	//{
 	//	return api.GetConverter().IsConfigured(*this);
 	//}
+	virtual pst_type GetConfiguredSyncTypes() const { return PST_NONE; }
 	virtual pst_type GetSupportedSyncTypes(OpenSync::API &api) const = 0;
 	// sample implementation:
 	//{
-	//	return api.GetConverter().GetSupportedSyncTypes(*this);
+	//	return api.GetConverter().GetSupportedSyncTypes(*this)
+	//		&& GetConfiguredSyncTypes();
 	//}
 
 	/// Support function for Group::Compare().  If plugin is the
@@ -163,7 +165,8 @@ public:
 	}
 	virtual pst_type GetSupportedSyncTypes(OpenSync::API &api) const
 	{
-		return api.GetConverter().GetSupportedSyncTypes(*this);
+		return api.GetConverter().GetSupportedSyncTypes(*this) &
+			GetConfiguredSyncTypes();;
 	}
 
 	// statics
@@ -240,9 +243,14 @@ public:
 	{
 		return api.GetConverter().IsConfigured(*this);
 	}
+	virtual pst_type GetConfiguredSyncTypes() const
+	{
+		return m_pin.Valid() ? PST_ALL : PST_NONE;
+	}
 	virtual pst_type GetSupportedSyncTypes(OpenSync::API &api) const
 	{
-		return api.GetConverter().GetSupportedSyncTypes(*this);
+		return api.GetConverter().GetSupportedSyncTypes(*this) &
+			GetConfiguredSyncTypes();
 	}
 	virtual bool Compare(const Plugin &plugin,
 				bool &sametype, bool &equal) const
@@ -323,9 +331,21 @@ public:
 	{
 		return api.GetConverter().IsConfigured(*this);
 	}
+	virtual pst_type GetConfiguredSyncTypes() const
+	{
+		pst_type pst = PST_NONE;
+		if( m_address_path.size() )	pst |= PST_CONTACTS;
+		if( m_calendar_path.size() )	pst |= PST_EVENTS;
+		if( m_tasks_path.size() )	pst |= PST_TODOS;
+		if( m_memos_path.size() )	pst |= PST_NOTES;
+		return pst;
+	}
 	virtual pst_type GetSupportedSyncTypes(OpenSync::API &api) const
 	{
-		return api.GetConverter().GetSupportedSyncTypes(*this);
+		// supported types include what the plugin is capable of,
+		// ANDed against what has been configured
+		return api.GetConverter().GetSupportedSyncTypes(*this) &
+			GetConfiguredSyncTypes();
 	}
 	virtual bool Compare(const Plugin &plugin,
 				bool &sametype, bool &equal) const
@@ -385,7 +405,8 @@ public:
 	}
 	virtual pst_type GetSupportedSyncTypes(OpenSync::API &api) const
 	{
-		return api.GetConverter().GetSupportedSyncTypes(*this);
+		return api.GetConverter().GetSupportedSyncTypes(*this) &
+			GetConfiguredSyncTypes();
 	}
 	virtual bool Compare(const Plugin &plugin,
 				bool &sametype, bool &equal) const
@@ -471,9 +492,17 @@ public:
 	{
 		return api.GetConverter().IsConfigured(*this);
 	}
+	virtual pst_type GetConfiguredSyncTypes() const
+	{
+		pst_type pst = PST_NONE;
+		if( m_contacts_enabled )	pst |= PST_CONTACTS;
+		if( m_calendar_enabled )	pst |= PST_EVENTS;
+		return pst;
+	}
 	virtual pst_type GetSupportedSyncTypes(OpenSync::API &api) const
 	{
-		return api.GetConverter().GetSupportedSyncTypes(*this);
+		return api.GetConverter().GetSupportedSyncTypes(*this) &
+			GetConfiguredSyncTypes();
 	}
 	virtual bool Compare(const Plugin &plugin,
 				bool &sametype, bool &equal) const
@@ -535,9 +564,14 @@ public:
 	{
 		return api.GetConverter().IsConfigured(*this);
 	}
+	virtual pst_type GetConfiguredSyncTypes() const
+	{
+		return PST_ALL;
+	}
 	virtual pst_type GetSupportedSyncTypes(OpenSync::API &api) const
 	{
-		return api.GetConverter().GetSupportedSyncTypes(*this);
+		return api.GetConverter().GetSupportedSyncTypes(*this) &
+			GetConfiguredSyncTypes();
 	}
 	virtual bool Compare(const Plugin &plugin,
 				bool &sametype, bool &equal) const

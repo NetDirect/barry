@@ -130,10 +130,9 @@ bool Converter22::IsConfigured(const Config::Barry &config) const
 bool Converter22::IsConfigured(const Config::Evolution &config) const
 {
 	// the 22 barry plugin only supports address and calendar,
-	// but the evolution plugin seems to like these 3
-	return	config.GetAddressPath().size() &&
-		config.GetCalendarPath().size() &&
-		config.GetTasksPath().size();
+	// and as long as either one is configured, we're good
+	return	config.GetAddressPath().size() ||
+		config.GetCalendarPath().size();
 }
 
 bool Converter22::IsConfigured(const Config::Evolution3 &config) const

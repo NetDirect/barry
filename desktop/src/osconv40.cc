@@ -135,10 +135,10 @@ bool Converter40::IsConfigured(const Config::Barry &config) const
 
 bool Converter40::IsConfigured(const Config::Evolution &config) const
 {
-	// the 40 plugin supports all 4, so check all 4
-	return	config.GetAddressPath().size() &&
-		config.GetCalendarPath().size() &&
-		config.GetTasksPath().size() &&
+	// as long as one is configured, we're good
+	return	config.GetAddressPath().size() ||
+		config.GetCalendarPath().size() ||
+		config.GetTasksPath().size() ||
 		config.GetMemosPath().size();
 }
 

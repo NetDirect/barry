@@ -315,14 +315,13 @@ bool Evolution::ZapData(wxWindow *parent,
 	wxString msg;
 	if( dynamic_cast<OpenSync::OpenSync22*>(engine) ) {
 		msg = _T(
-		"Starting Evolution.  Delete all contacts and calendar "
-		"entries manually.");
+		"Starting Evolution.  Delete all contacts and/or calendar "
+		"entries manually, depending on your sync configuration.");
 	}
 	else {
 		msg = _T(
-		"Starting Evolution.  Delete all contacts and calendar "
-		"entries manually (as well as memos and tasks if you are "
-		"syncing them too)."
+		"Starting Evolution.  Delete all objects (contacts, calendar, "
+		"memos, and tasks, depending on your sync configuration)."
 		);
 	}
 	int choice = wxMessageBox(msg, _T("Starting Evolution"),
