@@ -374,7 +374,10 @@ void GroupCfgDlg::LoadBarryConfig()
 {
 	Config::Barry &bp = m_barry_plugin;
 
-	wxString dname(wxGetApp().GetDeviceName(bp.GetPin()).c_str(), wxConvUTF8);
+	// use m_device here, since BarryDesktopApp::GetDeviceName()
+	// may return an empty string if the device is not currently
+	// plugged in
+	wxString dname(m_device.GetDeviceName().c_str(), wxConvUTF8);
 
 	m_name_edit->SetValue(dname);
 	m_password_edit->SetValue(wxString(bp.GetPassword().c_str(), wxConvUTF8));

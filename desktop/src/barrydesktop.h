@@ -75,6 +75,11 @@ public:
 	/// m_results entry will be updated with the new device name,
 	/// so the next GetResults() will contain the new name.
 	void SetDeviceName(Barry::Pin pin, const std::string &name);
+
+	/// Returns device name for the given PIN, but ONLY if the
+	/// device is connected.  If you want to read the device
+	/// name of an unconnected device, use DeviceSet or just
+	/// load the config manually with Barry::ConfigFile.
 	std::string GetDeviceName(Barry::Pin pin) const;
 
 	//
