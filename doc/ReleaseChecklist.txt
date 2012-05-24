@@ -45,11 +45,11 @@ Barry Release Checklist:
 - tests in following order:
 	- test ABI / API and bump major or minor version as appropriate
 	- run tests under test/
-	- build debian packages and run lintian on *.dsc, *.changes, and *.deb
+	- starting from a fresh sid base, test build-deps, build debian
+		packages, and run sid lintian (only sid, since overrides
+		in Barry are specific to sid):
 		lintian --info --display-info --pedantic --color auto \
 			*.changes *.deb *.dsc
-	- run all lintian tests on latest sid, starting from fresh
-		install (pbuilder), checking build-deps in the process
 	- run binary-meta release build test
 - write release notes, including contributors, known issues, new
 	features and bugs fixed
@@ -66,8 +66,8 @@ Barry Release Checklist:
 - sign-tag Barry git repo and binary-meta git repo with latest version
 - no need to run maintainer/tagged-release.sh since you're maintainer now
 - manually push git tags to repo.or.cz and sourceforge.net
-- create binary-meta tree under dists/, and debian source packages and tarballs
-	under sources/
+- create binary-meta tree under dists/, and debian source packages and tarballs,
+	including binary-meta tarball, under sources/
 - upload above tree to SourceForge
 	ssh -x -a -2 -t USER,PROJECT@shell.sourceforge.net create
 	   then use sf-help for details
