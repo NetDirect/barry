@@ -247,6 +247,15 @@ void vCalendar::RecurToVCal()
 
 }
 
+namespace {
+	struct tm GetConstLocalTime(const time_t &t)
+	{
+		struct tm datestruct;
+		localtime_r(&t, &datestruct);
+		return datestruct;
+	}
+}
+
 void vCalendar::RecurToBarryCal(vAttr& rrule, time_t starttime)
 {
 	using namespace Barry;
@@ -262,6 +271,7 @@ void vCalendar::RecurToBarryCal(vAttr& rrule, time_t starttime)
 	pmap["FR"] = CAL_WD_FRI;
 	pmap["SA"] = CAL_WD_SAT;
 
+	const struct tm datestruct = GetConstLocalTime(starttime);
 
 	int i=0;
 	unsigned int count=0;
@@ -366,8 +376,6 @@ void vCalendar::RecurToBarryCal(vAttr& rrule, time_t starttime)
 		} else {
 			// we must have at least one day selected, and if no
 			// BYDAY is selected, use the start time's day
-			struct tm datestruct;
-			localtime_r(&starttime,&datestruct);
 			cal.WeekDays = pmap[WeekDays[datestruct.tm_wday]];
 
 			barrylog("Warning: WEEKLY VEVENT without a day selected. Assuming day of start time.");
@@ -394,9 +402,6 @@ void vCalendar::RecurToBarryCal(vAttr& rrule, time_t starttime)
 				// must have a recurring type, so assume
 				// that monthly means every day on the day
 				// of month specified by starttime
-				struct tm datestruct;
-				localtime_r(&starttime,&datestruct);
-
 				cal.RecurringType = Calendar::MonthByDate;
 				cal.DayOfMonth = datestruct.tm_mday;
 				barrylog("Warning: MONTHLY VEVENT without a day type specified (no BYMONTHDAY nor BYDAY). Assuming BYMONTHDAY, using day of start time.");
@@ -407,8 +412,8 @@ void vCalendar::RecurToBarryCal(vAttr& rrule, time_t starttime)
 			// Nasty. We need to convert to struct tm,
 			// do some modulo-12 addition then back
 			// to time_t
-			struct tm datestruct;
-			localtime_r(&starttime,&datestruct);
+			struct tm tempdate = datestruct;
+
 			// now do some modulo-12 on the month and year
 			// We could end up with an illegal date if
 			// the day of month is >28 and the resulting
@@ -416,26 +421,26 @@ void vCalendar::RecurToBarryCal(vAttr& rrule, time_t starttime)
 			// to worry about day of week as mktime()
 			// clobbers it.
 			int add = (count-1) * cal.Interval;
-			datestruct.tm_year += (datestruct.tm_mon+add)/12;
-			datestruct.tm_mon = (datestruct.tm_mon+add)%12;
-			if(datestruct.tm_mday>28 && datestruct.tm_mon==1) {
+			tempdate.tm_year += (tempdate.tm_mon+add)/12;
+			tempdate.tm_mon = (tempdate.tm_mon+add)%12;
+			if(tempdate.tm_mday>28 && tempdate.tm_mon==1) {
 				// force it to 1st Mar
 				// TODO Potential bug on leap years
-				datestruct.tm_mon=2;
-				datestruct.tm_mday=1;
+				tempdate.tm_mon=2;
+				tempdate.tm_mday=1;
 			}
-			if(datestruct.tm_mday==31 && (datestruct.tm_mon==8 ||
-						      datestruct.tm_mon==3 ||
-						      datestruct.tm_mon==5 ||
-										  datestruct.tm_mon==10)) {
-				datestruct.tm_mon+=1;
-				datestruct.tm_mday=1;
+			if(tempdate.tm_mday==31 && (tempdate.tm_mon==8 ||
+						      tempdate.tm_mon==3 ||
+						      tempdate.tm_mon==5 ||
+										  tempdate.tm_mon==10)) {
+				tempdate.tm_mon+=1;
+				tempdate.tm_mday=1;
 			}
 			// Just in case we're crossing DST boundaries,
 			// add an hour, to make sure we reach the ending
 			// month, in the case of intervals
-			datestruct.tm_hour++;
-			cal.RecurringEndTime.Time = mktime(&datestruct);
+			tempdate.tm_hour++;
+			cal.RecurringEndTime.Time = mktime(&tempdate);
 		}
 	} else if(args["FREQ"]=="YEARLY") {
 		bool need_assumption = true;
@@ -463,8 +468,6 @@ void vCalendar::RecurToBarryCal(vAttr& rrule, time_t starttime)
 			// cal.StartTime has already been processed
 			// when we get here we need month of year,
 			// and day of month.
-			struct tm datestruct;
-			localtime_r(&starttime,&datestruct);
 			cal.RecurringType=Calendar::YearByDate;
 			cal.MonthOfYear=datestruct.tm_mon;
 			cal.DayOfMonth=datestruct.tm_mday;
@@ -478,10 +481,9 @@ void vCalendar::RecurToBarryCal(vAttr& rrule, time_t starttime)
 			// but not all of the devices allow you to edit it
 			// with their GUI... hmmm... oh well, allow it
 			// anyway, and do the multiplication below.
-			struct tm datestruct;
-			localtime_r(&starttime,&datestruct);
-			datestruct.tm_year += (count-1) * cal.Interval;
-			cal.RecurringEndTime.Time = mktime(&datestruct);
+			struct tm tempdate = datestruct;
+			tempdate.tm_year += (count-1) * cal.Interval;
+			cal.RecurringEndTime.Time = mktime(&tempdate);
 		}
 	}
 
