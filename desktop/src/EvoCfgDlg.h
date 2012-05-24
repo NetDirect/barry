@@ -40,6 +40,10 @@ class EvoCfgDlg : public wxDialog
 	std::string m_calendar_path;
 	std::string m_tasks_path;
 	std::string m_memos_path;
+	bool m_empty_config;		// true if all paths are empty, and
+					// therefore the first time this
+					// is running, and defaults my be
+					// attempted
 
 	// external data
 	const EvoSources &m_sources;

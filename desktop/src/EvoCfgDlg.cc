@@ -33,6 +33,10 @@ EvoCfgDlg::EvoCfgDlg(wxWindow *parent,
 	, m_calendar_path(ec.GetCalendarPath())
 	, m_tasks_path(ec.GetTasksPath())
 	, m_memos_path(ec.GetMemosPath())
+	, m_empty_config(ec.GetAddressPath().empty() &&
+			ec.GetCalendarPath().empty() &&
+			ec.GetTasksPath().empty() &&
+			ec.GetMemosPath().empty())
 	, m_sources(es)
 {
 	CreateLayout();
@@ -78,10 +82,21 @@ void EvoCfgDlg::CreateLayout()
 	m_topsizer->Layout();
 }
 
-void EvoCfgDlg::AddCombo(wxComboBox **combo, int  id,
+void EvoCfgDlg::AddCombo(wxComboBox **combo, int id,
 			const std::string &current_path,
 			const EvoSources::List &list)
 {
+	//
+	// Note: the evolution opensync plugins allow "default" as a
+	// configuration string, to chose to connect to the default
+	// Evolution address book or calendar.  This is not detected
+	// by the EvoSources detection, since this is a special property
+	// of the opensync plugin.
+	//
+	// So we handle the "default" strings specially below.
+	//
+
+
 	// is the current path in the list?
 	bool in_list = false;
 	for( EvoSources::List::const_iterator i = list.begin(); current_path.size() && i != list.end(); ++i ) {
@@ -91,12 +106,19 @@ void EvoCfgDlg::AddCombo(wxComboBox **combo, int  id,
 		}
 	}
 
-	// create an array of choices, and add current_path as first in list
-	// if it is not already there
+	//
+	// create an array of choices
+	//
 	wxArrayString choices;
-	if( current_path.size() && !in_list ) {
+
+	// add current_path as first in list if it is not already there
+	if( current_path.size() && !in_list && current_path != "default" ) {
 		choices.Add(wxString(current_path.c_str(), wxConvUTF8));
 	}
+
+	// add the evolution special "default" option before the sources
+	// list, since it's probably what the user wants
+	choices.Add(_T("default"));
 
 	// add the sources list
 	for( EvoSources::List::const_iterator i = list.begin(); i!=list.end(); ++i ) {
@@ -105,9 +127,25 @@ void EvoCfgDlg::AddCombo(wxComboBox **combo, int  id,
 		}
 	}
 
+	// default choice... if we have an empty config, this is the first
+	// time the user is running this dialog, so use the first option
+	// in the combo box as the default.
+	//
+	// if not an empty config, then show what the user currently
+	// has in the config, even if it is empty
+	wxString default_value;
+	if( m_empty_config && choices.GetCount() ) {
+		// first run, use first item
+		default_value = choices[0];
+	}
+	else {
+		// show user's current config
+		default_value = wxString(current_path.c_str(), wxConvUTF8);
+	}
+
 	// create the combo box
 	*combo = new wxComboBox(this, id,
-		choices.GetCount() ? choices[0] : wxString(),
+		default_value,
 		wxDefaultPosition, wxDefaultSize, // wxSize(250, -1), //wxDefaultSize,
 		choices,
 		wxCB_DROPDOWN);
