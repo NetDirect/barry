@@ -26,6 +26,7 @@
 #include "time.h"
 #include "ios_state.h"
 #include <string.h>
+#include <iomanip>
 
 #define __DEBUG_MODE__
 #include "debug.h"
@@ -265,6 +266,7 @@ void RecurBase::Dump(std::ostream &os) const
 
 		case MonthByDate:
 			os << "      Every month on the "
+			   << dec
 			   << DayOfMonth
 			   << (DayOfMonth == 1 ? "st" : "")
 			   << (DayOfMonth == 2 ? "nd" : "")
@@ -275,6 +277,7 @@ void RecurBase::Dump(std::ostream &os) const
 
 		case MonthByDay:
 			os << "      Every month on the "
+			   << dec
 			   << DayNames[DayOfWeek]
 			   << " of week "
 			   << WeekOfMonth
@@ -283,12 +286,14 @@ void RecurBase::Dump(std::ostream &os) const
 
 		case YearByDate:
 			os << "      Every year on "
+			   << dec
 			   << MonthNames[MonthOfYear-1]
 			   << " " << DayOfMonth << "\n";
 			break;
 
 		case YearByDay:
 			os << "      Every year in " << MonthNames[MonthOfYear-1]
+			   << dec
 			   << " on "
 			   << DayNames[DayOfWeek]
 			   << " of week " << WeekOfMonth << "\n";
@@ -311,7 +316,7 @@ void RecurBase::Dump(std::ostream &os) const
 			break;
 		}
 
-		os << "      Interval: " << Interval << "\n";
+		os << dec << "      Interval: " << Interval << "\n";
 
 		if( Perpetual )
 			os << "      Ends: never\n";
