@@ -273,11 +273,12 @@ void vCalendar::RecurToBarryCal(vAttr& rrule, time_t starttime)
 	cal.Recurring=TRUE;
 
 	if(args.find(string("INTERVAL"))!=args.end()) {
-		cal.Interval = atoi(args["INTERVAL"].c_str());
-		if( cal.Interval < 1 ) {
+		int interval = atoi(args["INTERVAL"].c_str());
+		if( interval < 1 ) {
 			// force to at least 1, for math below
-			cal.Interval = 1;
+			interval = 1;
 		}
+		cal.Interval = interval;
 	}
 	else {
 		// default to 1, for the math below.
