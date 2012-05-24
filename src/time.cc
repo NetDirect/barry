@@ -259,6 +259,34 @@ struct timespec* ThreadTimeout(int timeout_ms, struct timespec *spec)
 	return spec;
 }
 
+//
+// DaysInMonth
+//
+/// Returns the number of days in the month, given the tm_mon and tm_year
+/// as specified in the struct tm argument.  It _does_ take leap year into
+/// account.
+///
+BXEXPORT int DaysInMonth(struct tm &t)
+{
+	int year = t.tm_year + 1900;
+
+	switch( t.tm_mon )
+	{
+	case 1:
+		if( year % 400 == 0 || (year % 100 != 0 && year % 4 == 0) )
+			return 29;
+		else
+			return 28;
+	case 4:
+	case 6:
+	case 9:
+	case 11:
+		return 30;
+	default:
+		return 31;
+	}
+}
+
 
 
 } // namespace Barry

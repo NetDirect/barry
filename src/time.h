@@ -86,6 +86,9 @@ BXEXPORT time_t Message2Time(uint16_t r_date, uint16_t r_time);
 // Thread timeout creation
 BXEXPORT struct timespec* ThreadTimeout(int timeout_ms, struct timespec *spec);
 
+// Utility functions
+BXEXPORT int DaysInMonth(struct tm &t);
+
 } // namespace Barry
 
 #endif
