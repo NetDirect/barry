@@ -320,12 +320,14 @@ void Converter22::Save(const Config::Evolution &config,
 		throw Config::SaveError("Cannot save a plugin with a member_id of -1");
 
 	ostringstream oss;
-	oss << "<config>\n"
-	    << "  <address_path>" << config.GetAddressPath() << "</address_path>\n"
-	    << "  <calendar_path>" << config.GetCalendarPath() << "</calendar_path>\n"
-	    << "  <tasks_path>" << config.GetTasksPath() << "</tasks_path>\n"
-	    << "</config>"
-	    << endl;
+	oss << "<config>\n";
+	if( config.GetAddressPath().size() )
+		oss << "  <address_path>" << config.GetAddressPath() << "</address_path>\n";
+	if( config.GetCalendarPath().size() )
+		oss << "  <calendar_path>" << config.GetCalendarPath() << "</calendar_path>\n";
+	if( config.GetTasksPath().size() )
+		oss << "  <tasks_path>" << config.GetTasksPath() << "</tasks_path>\n";
+	oss << "</config>" << endl;
 
 	m_api.SetConfiguration(group_name, config.GetMemberId(), oss.str());
 }

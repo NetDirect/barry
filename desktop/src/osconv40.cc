@@ -308,23 +308,23 @@ void Converter40::Save(const Config::Evolution &config, const std::string &group
 	OS40PluginConfig cfg = m_api.GetConfigurationObj(group_name,
 							config.GetMemberId());
 	cfg.GetResource("contact")->
-		Enable(true).
+		Enable(config.GetAddressPath().size()).
 		SetObjFormat("vcard21", "VCARD_EXTENSION=Evolution").
 		SetObjFormat("vcard30", "VCARD_EXTENSION=Evolution").
 		SetUrl(config.GetAddressPath()).
 		AddResource();
 	cfg.GetResource("event")->
-		Enable(true).
+		Enable(config.GetCalendarPath().size()).
 		SetObjFormat("vevent20").
 		SetUrl(config.GetCalendarPath()).
 		AddResource();
 	cfg.GetResource("todo")->
-		Enable(true).
+		Enable(config.GetTasksPath().size()).
 		SetObjFormat("vtodo20").
 		SetUrl(config.GetTasksPath()).
 		AddResource();
 	cfg.GetResource("note")->
-		Enable(true).
+		Enable(config.GetMemosPath().size()).
 		SetObjFormat("vjournal").
 		SetUrl(config.GetMemosPath()).
 		AddResource();
