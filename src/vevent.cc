@@ -420,22 +420,12 @@ void vCalendar::RecurToBarryCal(vAttr& rrule, time_t starttime)
 			// month falls on a February. We don't need
 			// to worry about day of week as mktime()
 			// clobbers it.
+			//
+			// We let mktime() normalize any out of range values.
 			int add = (count-1) * cal.Interval;
 			tempdate.tm_year += (tempdate.tm_mon+add)/12;
 			tempdate.tm_mon = (tempdate.tm_mon+add)%12;
-			if(tempdate.tm_mday>28 && tempdate.tm_mon==1) {
-				// force it to 1st Mar
-				// TODO Potential bug on leap years
-				tempdate.tm_mon=2;
-				tempdate.tm_mday=1;
-			}
-			if(tempdate.tm_mday==31 && (tempdate.tm_mon==8 ||
-						      tempdate.tm_mon==3 ||
-						      tempdate.tm_mon==5 ||
-										  tempdate.tm_mon==10)) {
-				tempdate.tm_mon+=1;
-				tempdate.tm_mday=1;
-			}
+
 			// Just in case we're crossing DST boundaries,
 			// add an hour, to make sure we reach the ending
 			// month, in the case of intervals
