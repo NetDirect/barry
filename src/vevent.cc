@@ -24,6 +24,7 @@
 #include "vevent.h"
 //#include "trace.h"
 #include "log.h"
+#include "time.h"
 #include <stdint.h>
 #include <glib.h>
 #include <strings.h>
@@ -71,14 +72,97 @@ void vCalendar::CheckUnsupportedArg(const ArgMapType &args,
 	}
 }
 
+std::vector<std::string> vCalendar::SplitBYDAY(const std::string &ByDay)
+{
+	std::vector<std::string> v = Tokenize(ByDay);
+
+	// BlackBerry recursion only supports one specification...
+	// i.e. only 3rd Wed of month, not 3rd Wed and 2nd Fri of month...
+	// if there's more than one item in v, warn the user, and just
+	// use the first item
+	if( v.size() > 1 ) {
+		barrylog("Warning: multiple items in BYDAY, not supported by device (" << ByDay << "). Using only the first item.");
+		barryverbose("Record data so far:\n" << m_BarryCal);
+	}
+
+	return v;
+}
+
 uint16_t vCalendar::GetMonthWeekNumFromBYDAY(const std::string& ByDay)
 {
-	return atoi(ByDay.substr(0,ByDay.length()-2).c_str());
+	std::vector<std::string> v = SplitBYDAY(ByDay);
+
+	if( !v.size() || v[0].size() < 2 ) {
+		return 0;
+	}
+	else {
+		int week = atoi(v[0].substr(0,v[0].length()-2).c_str());
+		if( week < 0 ) {
+			// assume 4 weeks per month
+			int pos_week = 4 + (week + 1);
+			if( pos_week < 1 || pos_week > 4 ) {
+				pos_week = 1;
+			}
+
+			barrylog("Warning: negative week in BYDAY (" << week << "), unsupported by device. Converting to positive week, based on 4 week months: " << pos_week << ".");
+			barryverbose("Record data so far:\n" << m_BarryCal);
+
+			week = pos_week;
+		}
+		return week;
+	}
 }
 
 uint16_t vCalendar::GetWeekDayIndexFromBYDAY(const std::string& ByDay)
 {
-	return GetWeekDayIndex(ByDay.substr(ByDay.length()-2).c_str());
+	std::vector<std::string> v = SplitBYDAY(ByDay);
+
+	if( !v.size() || v[0].size() < 2 )
+		return 0;
+	return GetWeekDayIndex(v[0].substr(v[0].length()-2).c_str());
+}
+
+// month_override is specified in 1-12, or -1 to use m_BarryCal.StartTime
+uint16_t vCalendar::GetDayOfMonthFromBYMONTHDAY(const ArgMapType &args,
+						int month_override)
+{
+	time_t starttime = m_BarryCal.StartTime.Time;
+	struct tm datestruct;
+	localtime_r(&starttime,&datestruct);
+	if( month_override != -1 )
+		datestruct.tm_mon = month_override - 1;
+	int monthdays = DaysInMonth(datestruct);
+
+	ArgMapType::const_iterator vi = args.find("BYMONTHDAY");
+	if( vi == args.end() )
+		throw std::logic_error("Called GetDayOfMonthFromBYMONTHDAY() without a BYMONTHDAY");
+
+	int val = atoi(vi->second.c_str());
+	if( val == 0 ) {
+		barryverbose("Warning: BYMONTHDAY of 0, assuming 1.\n"
+			<< "Record data so far:\n" << m_BarryCal);
+		val = 1;
+	}
+	else if( val > monthdays ) {
+		barryverbose("Warning: BYMONTHDAY larger than month (" << val << " days). Assuming 1.\nRecord data so far:\n" << m_BarryCal);
+		val = 1;
+	}
+	else if( val < 0 ) {
+		// See 4.3.10 RRULE in RFC 2445
+		// negative values mean "last n day of month", so
+		// convert to the fixed day, and then use that positive
+		// value instead, as an approximation
+		int pos_day = monthdays + (val + 1);
+		if( pos_day < 1 || pos_day > monthdays ) {
+			pos_day = 1;
+		}
+		barrylog("Warning: negative BYMONTHDAY (" << val << "), unsupported by device. Converting to positive day of month: " << pos_day << ".");
+		barryverbose("Record data so far:\n" << m_BarryCal);
+
+		val = pos_day;
+	}
+
+	return val;
 }
 
 
@@ -392,7 +476,7 @@ void vCalendar::RecurToBarryCal(vAttr& rrule, time_t starttime)
 	} else if(args["FREQ"]=="MONTHLY") {
 		if(args.find(string("BYMONTHDAY"))!=args.end()) {
 			cal.RecurringType=Calendar::MonthByDate;
-			cal.DayOfMonth=atoi(args["BYMONTHDAY"].c_str());
+			cal.DayOfMonth=GetDayOfMonthFromBYMONTHDAY(args);
 		} else {
 			if(args.find(string("BYDAY"))!=args.end()) {
 				cal.RecurringType=Calendar::MonthByDay;
@@ -436,9 +520,13 @@ void vCalendar::RecurToBarryCal(vAttr& rrule, time_t starttime)
 		bool need_assumption = true;
 		if(args.find(string("BYMONTH"))!=args.end()) {
 			cal.MonthOfYear=atoi(args["BYMONTH"].c_str());
+			if( cal.MonthOfYear < 1 || cal.MonthOfYear > 12 ) {
+				// doh... default to starttime's month
+				cal.MonthOfYear = datestruct.tm_mon + 1;
+			}
 			if(args.find(string("BYMONTHDAY"))!=args.end()) {
 				cal.RecurringType=Calendar::YearByDate;
-				cal.DayOfMonth=atoi(args["BYMONTHDAY"].c_str());
+				cal.DayOfMonth=GetDayOfMonthFromBYMONTHDAY(args, cal.MonthOfYear);
 				need_assumption = false;
 			} else {
 				if(args.find(string("BYDAY"))!=args.end()) {

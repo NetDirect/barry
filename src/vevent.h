@@ -56,8 +56,11 @@ class BXEXPORT vCalendar : public vBase
 
 	void CheckUnsupportedArg(const ArgMapType &args,
 		const std::string &name);
+	std::vector<std::string> SplitBYDAY(const std::string &ByDay);
 	uint16_t GetMonthWeekNumFromBYDAY(const std::string& ByDay);
 	uint16_t GetWeekDayIndexFromBYDAY(const std::string& ByDay);
+	uint16_t GetDayOfMonthFromBYMONTHDAY(const ArgMapType &args,
+					int month_override = -1);
 
 protected:
 	void RecurToVCal();
