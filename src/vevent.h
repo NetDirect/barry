@@ -28,6 +28,7 @@
 #include "r_calendar.h"
 #include <stdint.h>
 #include <string>
+#include <map>
 
 namespace Barry { namespace Sync {
 
@@ -39,6 +40,8 @@ namespace Barry { namespace Sync {
 ///
 class BXEXPORT vCalendar : public vBase
 {
+	typedef std::map<std::string, std::string>	ArgMapType;
+
 	// external reference
 	vTimeConverter &m_vtc;
 
@@ -51,6 +54,8 @@ class BXEXPORT vCalendar : public vBase
 
 	static const char *WeekDays[7];
 
+	void CheckUnsupportedArg(const ArgMapType &args,
+		const std::string &name);
 	uint16_t GetMonthWeekNumFromBYDAY(const std::string& ByDay);
 	uint16_t GetWeekDayIndexFromBYDAY(const std::string& ByDay);
 

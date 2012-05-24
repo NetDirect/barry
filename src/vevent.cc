@@ -62,6 +62,15 @@ uint16_t vCalendar::GetWeekDayIndex(const char *dayname)
 	return 0;
 }
 
+void vCalendar::CheckUnsupportedArg(const ArgMapType &args,
+					const std::string &name)
+{
+	if( args.find(name) != args.end() ) {
+		barrylog("ERROR: recurrence rule contains " << name << ", unsupported by Barry. MIME conversion will be incorrect.");
+		barryverbose("Record data so far:\n" << m_BarryCal);
+	}
+}
+
 uint16_t vCalendar::GetMonthWeekNumFromBYDAY(const std::string& ByDay)
 {
 	return atoi(ByDay.substr(0,ByDay.length()-2).c_str());
@@ -257,7 +266,7 @@ void vCalendar::RecurToBarryCal(vAttr& rrule, time_t starttime)
 	int i=0;
 	unsigned int count=0;
 	string val;
-	std::map<std::string,std::string> args;
+	ArgMapType args;
 	do {
 		val=rrule.GetValue(i++);
 		if(val.length()==0) {
@@ -313,6 +322,15 @@ void vCalendar::RecurToBarryCal(vAttr& rrule, time_t starttime)
 	// we need these if COUNT is true, or if we are a yearly job.
 
 	// TO-DO: we must process COUNT in terms of an end date if we have it.
+
+	// warn the user about unsupported arguments
+	CheckUnsupportedArg(args, "BYSETPOS");// FIXME - theorectically supportable
+	CheckUnsupportedArg(args, "BYYEARDAY");
+	CheckUnsupportedArg(args, "BYWEEKNO");
+	CheckUnsupportedArg(args, "WKST");
+	CheckUnsupportedArg(args, "BYSECOND");
+	CheckUnsupportedArg(args, "BYMINUTE");
+	CheckUnsupportedArg(args, "BYHOUR");
 
 	// Now deal with the freq
 
