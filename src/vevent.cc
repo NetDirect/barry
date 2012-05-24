@@ -370,7 +370,8 @@ void vCalendar::RecurToBarryCal(vAttr& rrule, time_t starttime)
 			localtime_r(&starttime,&datestruct);
 			cal.WeekDays = pmap[WeekDays[datestruct.tm_wday]];
 
-			barryverbose("Warning: WEEKLY VEVENT without a day selected. Assuming day of start time.\nRecord data so far:\n" << cal);
+			barrylog("Warning: WEEKLY VEVENT without a day selected. Assuming day of start time.");
+			barryverbose("Record data so far:\n" << cal);
 		}
 
 		if(count) {
@@ -398,7 +399,8 @@ void vCalendar::RecurToBarryCal(vAttr& rrule, time_t starttime)
 
 				cal.RecurringType = Calendar::MonthByDate;
 				cal.DayOfMonth = datestruct.tm_mday;
-				barryverbose("Warning: MONTHLY VEVENT without a day type specified (no BYMONTHDAY nor BYDAY). Assuming BYMONTHDAY, using day of start time.\nRecord data so far:\n" << cal);
+				barrylog("Warning: MONTHLY VEVENT without a day type specified (no BYMONTHDAY nor BYDAY). Assuming BYMONTHDAY, using day of start time.");
+				barryverbose("Record data so far:\n" << cal);
 			}
 		}
 		if(count) {
@@ -450,7 +452,7 @@ void vCalendar::RecurToBarryCal(vAttr& rrule, time_t starttime)
 					cal.DayOfWeek=GetWeekDayIndexFromBYDAY(args["BYDAY"]);
 					need_assumption = false;
 				} else {
-					// needs assumption below...
+					// fall through to assumption below...
 				}
 			}
 		}
@@ -466,7 +468,8 @@ void vCalendar::RecurToBarryCal(vAttr& rrule, time_t starttime)
 			cal.RecurringType=Calendar::YearByDate;
 			cal.MonthOfYear=datestruct.tm_mon;
 			cal.DayOfMonth=datestruct.tm_mday;
-			barryverbose("Warning: YEARLY VEVENT without a day type specified (no BYMONTHDAY nor BYDAY). Assuming BYMONTHDAY, using day and month of start time.\nRecord data so far:\n" << cal);
+			barrylog("Warning: YEARLY VEVENT without a day type specified (no BYMONTHDAY nor BYDAY). Assuming BYMONTHDAY, using day and month of start time.");
+			barryverbose("Record data so far:\n" << cal);
 		}
 		if(count) {
 			// convert to struct tm, then simply add to the year.
