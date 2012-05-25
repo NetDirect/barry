@@ -6,6 +6,10 @@
 	/tmp/0.18.2/rootdir/include
 </headers>
 
+<defines>
+	#define __BARRY_BOOST_MODE__ 1
+</defines>
+
 <libs>
 	/tmp/0.18.2/rootdir/lib/libbarry.so
 	/tmp/0.18.2/rootdir/lib/libbarrydp.so
