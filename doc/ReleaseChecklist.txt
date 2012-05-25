@@ -79,6 +79,9 @@ Barry Release Checklist:
 	barry-latest symlink
 	- remember to run make-redirect.sh for both the new release dir
 		and barry-latest symlink
+		For example:
+		./make-redirect.sh bmbuild /barry-0.18.3 http://sourceforge.net/projects/barry/files/barry/barry-0.18.3/bmbuild
+		./make-redirect.sh bmbuild /barry-latest http://sourceforge.net/projects/barry/files/barry/barry-0.18.3/bmbuild
 	- add the new release to .htaccess, and replace barry-latest
 		redirect links with the new ones
 	- make backup of new htaccess
