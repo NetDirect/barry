@@ -175,6 +175,9 @@ const std::string& vCard::ToVCard(const Barry::Contact &con)
 		AddAttr(name);
 	}
 
+	if( con.Nickname.size() )
+		AddAttr(NewAttr("NICKNAME", con.Nickname.c_str()));
+
 	if( con.WorkAddress.HasData() )
 		AddAddress("work", con.WorkAddress);
 	if( con.HomeAddress.HasData() )
@@ -347,6 +350,8 @@ const Barry::Contact& vCard::ToBarry(const char *vcard, uint32_t RecordId)
 		con.FirstName = name.GetValue(1);	// Given Name
 		con.Prefix = name.GetValue(3);		// Honorific Prefixes
 	}
+
+	con.Nickname = GetAttr("NICKNAME");
 
 	vAttr adr = GetAttrObj("ADR");
 	for( int i = 0; adr.Get(); adr = GetAttrObj("ADR", ++i) )
