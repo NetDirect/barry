@@ -1,4 +1,4 @@
-opensync1-plugin-barry (0.18.3-1) unstable; urgency=low
+opensync1-plugin-barry (0.18.4-1) unstable; urgency=low
 
   * Build rules for Barry releases
   * Bumped compat level to 6 (2011/06/28)
