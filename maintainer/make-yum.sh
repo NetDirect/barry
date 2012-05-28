@@ -26,6 +26,8 @@ fi
 BUILDDIR="$1"
 
 # Sign all RPMs found under $BUILDDIR/
+echo "Note: ~/.rpmmacros has been overridden to use gpg-agent..."
+echo "Enter an empty password here."
 rpmsign --addsign $(find $BUILDDIR -name "*.rpm" -print)
 
 # Create the YUM repo files for each architecture
