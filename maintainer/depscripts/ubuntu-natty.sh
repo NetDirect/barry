@@ -31,6 +31,7 @@ apt-get install \
 	libedata-book1.2-dev \
 	libedata-cal1.2-dev \
 	libedataserver1.2-dev \
+	gksu \
 	php5-cli
 
 # depending on the system: libopensync0-dev

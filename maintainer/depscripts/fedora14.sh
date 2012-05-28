@@ -28,6 +28,7 @@ yum install \
 	wxGTK-devel \
 	SDL-devel \
 	libgcal-devel \
+	beesu \
 	evolution-data-server-devel
 
 # depending on the system
