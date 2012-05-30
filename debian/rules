@@ -9,6 +9,14 @@ include /usr/share/cdbs/1/rules/debhelper.mk
 include /usr/share/cdbs/1/class/autotools.mk
 #include /usr/share/cdbs/1/rules/simple-patchsys.mk
 
+# The following is for systems that support hardened builds.
+# Not all systems have this support, so make it conditional on buildflags.mk
+ifneq ($(strip $(wildcard /usr/share/dpkg/buildflags.mk)),)
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+export DEB_CFLAGS_MAINT_APPEND = -Wall
+include /usr/share/dpkg/buildflags.mk
+endif
+
 # where sources are
 DEB_SRCDIR = .
 

@@ -21,6 +21,7 @@ barry (0.18.3-2) unstable; urgency=low
   * Install examples and documentation.
   * Configure --with-zlib and --enable-boost.
   * Add gettext, autopoint, libsdl-dev, and libxml++2.6-dev to build-deps.
+  * Added support for hardened builds
   * Use 3.0 (quilt) source format, as per intrigeri's patch
 
   [ intrigeri ]
