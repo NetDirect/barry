@@ -5,6 +5,8 @@ roadmap
 requirements
 dependencies
 install
+installdebian
+installfedora
 cvs
 patches
 codingguide

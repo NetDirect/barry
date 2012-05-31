@@ -29,6 +29,7 @@ reverse engineer the battery charging handshake via USB.</p>
 		Calendar,
 		Content Store,
 		Folders,
+		Handheld Agent (partial),
 		Memos,
 		Messages (Email),
 		Phone Call Logs,
@@ -51,10 +52,8 @@ reverse engineer the battery charging handshake via USB.</p>
 	<li> import data in MIME vCard, vEvent, vJournal, and vTodo formats</li>
 	<li> make full data backups and restores of your device using
 		a GUI</li>
-	<li> synchronize contact, calendar, memo, and task items using the
-		<a href="http://www.opensync.org/">OpenSync</a>
-		framework (memos and tasks require the development OpenSync
-		libraries)</li>
+	<li> synchronize contact, calendar, memo, and task items with
+		Evolution using the Desktop GUI</li>
 	<li> use the Blackberry as a modem</li>
 	<li> install and manage Java applications from the command line </li>
 	<li> take screenshots of your device </li>
@@ -71,24 +70,27 @@ reverse engineer the battery charging handshake via USB.</p>
 <ul>
 	<li>Latest release: <b>0.18.4</b>, released on 2012/05/25</li>
 	<li>License: GPL v2 or later</li>
+
 	<li>Download official source and binary packages from
 		<a href="http://sourceforge.net/project/showfiles.php?group_id=153722">Sourceforge</a></li>
+
 	<li>General <a href="http://sourceforge.net/projects/barry/">Sourceforge project page</a></li>
+
 	<li><a href="http://repo.or.cz/w/barry.git">Barry git repo</a></li>
-	<li>Additional binary packages for the following distributions are available from various volunteers.  Note that these packages may already be available in your distro of choice, using the normal package managers.
+
+	<li>Note that Barry is also available in various distros.  Some of these distros are listed below:
 		<ul>
-			<li><a href="http://packages.debian.org/unstable/main/barry-util">Debian, in the unstable tree, packaged by Jose Carlos Garcia Sogo</a></li>
-			<li><a href="http://download.fedora.redhat.com/pub/fedora/linux/releases/">Fedora</a> (packaged by Nathanael Noblet) and the related RPM <a href="http://pkgs.fedoraproject.org/gitweb/?p=barry.git">git repo</a></li>
+			<li>Debian and Ubuntu - maintianed in the Barry repo itself by Chris Frey</li>
+			<li>Fedora - packaged by Nathanael Noblet (RPM <a href="http://pkgs.fedoraproject.org/gitweb/?p=barry.git">git repo</a>)</li>
 			<li>Mandriva's RPM <a href="http://svn.mandriva.com/cgi-bin/viewvc.cgi/packages/cooker/barry/current/">SVN</a></li>
 		</ul>
 	</li>
+
 	<li>Known Issues:
 	<ul>
 		<li>International characters in calendar and contact records
 			cause some devices to switch to a different low-level
 			protocol, which Barry does not yet support.</li>
-		<li>Restoring backups for some databases on newer Blackberries doesn't work (for example, on the 8120, 8700g)</li>
-		<li>Syncing is not supported on Fedora Core 9 or 10, since they packaged the OpenSync 0.3x devel tree (experimental support for the latest opensync SVN tree is included with a new plugin).  This has been fixed in Fedora 11, as they returned to version 0.22.</li>
 	</ul>
 	</li>
 </ul>
@@ -98,6 +100,8 @@ reverse engineer the battery charging handshake via USB.</p>
 
 <p>How do I...
 <ul>
+	<li><? createLink("installdebian", "Install Barry on Debian or Ubuntu"); ?></li>
+	<li><? createLink("installfedora", "Install Barry on Fedora"); ?></li>
 	<li><? createLink("install", "Install Barry from binary packages"); ?></li>
 	<li><? createLink("cvs", "Compile Barry from tarball or git"); ?></li>
 	<li><? createLink("backups", "Make backups of my Blackberry data"); ?></li>
