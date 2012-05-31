@@ -39,7 +39,7 @@ set -e
 
 mkdir -p "$BUILDDIR"
 (cd "$BUILDDIR" && "$RUNDIR/git-extract.sh" $LOGICAL $MAJOR $MINOR $COMMIT)
+(cd $BUILDDIR && "$RUNDIR/deb-src-create.sh" $LOGICAL $MAJOR $MINOR)
 (cd $BUILDDIR/$DIRNAME && "$RUNDIR/tar-prepare.sh")
 (cd $BUILDDIR && "$RUNDIR/tar-create.sh" $LOGICAL $MAJOR $MINOR)
-(cd $BUILDDIR && "$RUNDIR/deb-src-create.sh" $LOGICAL $MAJOR $MINOR)
 
