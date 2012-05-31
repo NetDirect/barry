@@ -1,4 +1,4 @@
-barry (0.18.3-1) unstable; urgency=low
+barry (0.18.3-2) unstable; urgency=low
 
   [Chris Frey]
   * New upstream version 0.18.3 (Closes: #582189, #582187, #657076, LP: #500370)
