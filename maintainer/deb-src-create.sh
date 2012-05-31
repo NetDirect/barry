@@ -32,4 +32,5 @@ tar -cf - $DIRNAME | gzip -9c > barry_$LOGICAL.$MAJOR.$MINOR.orig.tar.gz
 rm -rf $DIRNAME
 mv $DIRNAME.patched $DIRNAME
 dpkg-source -b $DIRNAME
+debsign -kB6C2250E barry*.dsc
 
