@@ -33,6 +33,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <signal.h>
+#include <errno.h>
 #include "i18n.h"
 
 #include "barrygetopt.h"
@@ -117,11 +118,15 @@ void ProcessStdin(Modem &modem)
 		else if( ret && FD_ISSET(0, &rfds) ) {
 			bytes_read = read(0, data.GetBuffer(), data.GetBufSize());
 			if( bytes_read == 0 )
-				break;
-
-			if( bytes_read > 0 ) {
+				break;	// end of file
+			else if( bytes_read > 0 ) {
 				data.ReleaseBuffer(bytes_read);
 				modem.Write(data);
+			}
+			else {
+				// read error
+				barryverbose("Read error in ProcessStdin: " << strerror(errno));
+				break;
 			}
 		}
 	}
