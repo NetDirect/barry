@@ -72,19 +72,6 @@ reasons why Open Source works that way:</p>
 </pre>
 	</li>
 
-	<li>If you are using CVS, make your changes in your working
-		directory, and then do:
-<pre>
-	cd barry-cvs
-	./buildgen.sh cleanall
-	cvs diff -u > patchfile
-	grep ^? patchfile
-</pre>
-		Any new files that you've added to your tree will need
-		to be attached to your patch email, as CVS has no
-		way to add files without write access to the repository.
-		<br/><br/></li>
-
 	<li>If you are using the git tree, you can make your changes
 		in your own branch, and then create patches for each
 		commit you've made:

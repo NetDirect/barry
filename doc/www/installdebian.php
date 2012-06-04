@@ -33,6 +33,21 @@ file list page</a>.
 <p>For Mint, pick the version of Debian or Ubuntu that your version of
 Mint is based on.
 
+<p>Finally, you will need to update your apt keyring with the following
+key:
+
+<pre>
+	82DE DE11 74C1 0EA7 C55D  5679 3B52 35AE B6C2 250E
+</pre>
+
+<p>One way to fetch this key is by using gpg:
+
+<pre>
+	gpg --keyserver pgp.mit.edu --recv-key B6C2250E
+	gpg --armor --export B6C2250E &gt; barry.key
+	apt-key add barry.key
+</pre>
+
 
 <? createSubHeader("The Packages"); ?>
 

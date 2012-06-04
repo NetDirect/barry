@@ -132,6 +132,8 @@ distros if you really need them.  If you run into this problem and
 require help to solve it, please email the <? createLink("contact",
 "mailing list"); ?>.
 
+<p>The latest version of libtar can be found <a href="http://repo.or.cz/w/libtar.git">here</a>.
+
 
 <? createSubHeader("Dependency Packages for Common Distros"); ?>
 
