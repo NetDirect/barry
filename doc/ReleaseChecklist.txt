@@ -50,6 +50,10 @@ Barry Release Checklist:
 		in Barry are specific to sid):
 		lintian --info --display-info --pedantic --color auto \
 			*.changes *.deb *.dsc
+	- double check hardening on sid:
+		hardening-check tmp/usr/bin/barrydesktop
+		hardening-check tmp/usr/lib/libbarry.so.18
+		- between both, should show all options enabled
 	- run binary-meta release build test
 - write release notes, including contributors, known issues, new
 	features and bugs fixed
@@ -90,6 +94,11 @@ Barry Release Checklist:
 	- shortlog
 	- URLs to sourceforge and OpenSUSE Build Service binary packages
 	- URL to netdirect doc page
+	- send email notice to intrigeri including:
+		- name of upstream tag (i.e. barry-0.18.3-2)
+		- example of upstream diff
+			git log -p barry-0.18.3..barry-0.18.3-2
+		- release URL directly to the .dsc file
 - submit tracker news item at SourceForge
 - update Freshmeat entry
 - update Sourceforge screenshots / icons if applicable
