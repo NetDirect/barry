@@ -32,7 +32,7 @@ Source: barry
 Section: misc
 Priority: optional
 Maintainer: Chris Frey <cdfrey@foursquare.net>
-Build-Depends: debhelper (>= 7.0.0), g++ (>= 4.1), cdbs, autoconf, autoconf-archive, automake, libtool, pkg-config, libusb-dev, libboost-serialization-dev, libxml++2.6-dev, libfuse-dev (>= 2.5), zlib1g-dev, libtar-dev, libglibmm-2.4-dev, libgtkmm-2.4-dev, libglademm-2.4-dev, gettext (<< 0.18) | autopoint, libgcal-dev, wx-common, libwxgtk2.8-dev, libsdl-dev, evolution-data-server-dev, libebook1.2-dev, libedata-book1.2-dev, libedata-cal1.2-dev, libedataserver1.2-dev
+Build-Depends: debhelper (>= 7.0.0), g++ (>= 4.1), cdbs, autoconf, autoconf-archive, automake, libtool, pkg-config, libusb-dev, libboost-serialization-dev, libxml++2.6-dev, libfuse-dev (>= 2.5), zlib1g-dev, libtar-dev, libglibmm-2.4-dev, libgtkmm-2.4-dev, libglademm-2.4-dev, autopoint | gettext (<< 0.18), libgcal-dev, wx-common, libwxgtk2.8-dev, libsdl-dev, evolution-data-server-dev, libebook1.2-dev, libedata-book1.2-dev, libedata-cal1.2-dev, libedataserver1.2-dev
 Standards-Version: 3.9.3
 Homepage: http://netdirect.ca/barry
 Vcs-Git: git://repo.or.cz/barry.git
