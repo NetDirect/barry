@@ -1,3 +1,9 @@
+barry (0.18.3-3) unstable; urgency=low
+
+  * Fixed build-dep order for autopoint (Closes: #676321)
+
+ -- Chris Frey <cdfrey@foursquare.net>  Wed, 06 Jun 2012 17:08:40 -0400
+
 barry (0.18.3-2) unstable; urgency=low
 
   [Chris Frey]
