@@ -107,7 +107,8 @@ BARRY_SRC_TO_EXCLUDE := \
   barry_root/src/backup.cc \
   barry_root/src/iconvwin.cc \
   barry_root/src/restore.cc \
-  barry_root/src/usbwrap_libusb.cc
+  barry_root/src/usbwrap_libusb.cc \
+  barry_root/src/configfilewin32.cc
 
 LOCAL_SRC_FILES:= $(filter-out $(BARRY_SRC_TO_EXCLUDE), $(BARRY_SRC_TO_INCLUDE)) barry_root/src/version.cc
 LOCAL_C_INCLUDES += \

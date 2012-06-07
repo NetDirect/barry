@@ -193,7 +193,8 @@ noinst_HEADERS = cbarry.h \
 EXTRA_DIST = convo.awk \
 	legal.txt \
 	iconvwin.cc \
-	getpwuidandroid.cc
+	getpwuidandroid.cc \
+	configfilewin32.cc
 
 libbarry_la_SOURCES = dll.h \
 	builder.h builder.cc \
@@ -208,6 +209,7 @@ libbarry_la_SOURCES = dll.h \
 	probe.h probe.cc \
 	common.h common.cc \
 	configfile.h configfile.cc \
+	configfileunix.cc \
 	error.h error.cc \
 	ldif.h ldif.cc \
 	ldifio.h ldifio.cc \
