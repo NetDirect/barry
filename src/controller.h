@@ -32,7 +32,7 @@ namespace Barry {
 
 // forward declarations
 class SocketRoutingQueue;
-class ProbeResult;
+struct ProbeResult;
 
 class PrivateControllerData;
 
