@@ -6,6 +6,9 @@
 include $(CLEAR_VARS)
 
 LOCAL_SRC_FILES := barry_root/tools/$(TOOL).cc \
+	$(subst $(LOCAL_PATH)/,, \
+		$(wildcard $(LOCAL_PATH)/barry_root/tools/$(TOOL)*unix.cc) \
+	) \
 	barry_root/tools/util.cc
 
 LOCAL_CFLAGS += -DLOCALEDIR=\"\"

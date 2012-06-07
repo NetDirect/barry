@@ -1,10 +1,10 @@
 ///
 /// \file	brawchannel.cc
-///		Directs a named raw channel over STDIN/STDOUT
+///		Directs a named raw channel over STDIN/STDOUT or TCP
 ///
 
 /*
-    Copyright (C) 2010, RealVNC Ltd.
+    Copyright (C) 2010-2012, RealVNC Ltd.
 
         Some parts are inspired from bjavaloader.cc
 
@@ -42,12 +42,10 @@
 #include "i18n.h"
 #include "platform.h"
 #include "barrygetopt.h"
+#include "brawchannel.h"
 
 using namespace std;
 using namespace Barry;
-
-// How long to wait between reads before checking if should shutdown
-#define READ_TIMEOUT_SECONDS 1
 
 static volatile bool signalReceived = false;
 
@@ -59,12 +57,14 @@ static void signalHandler(int signum)
 class CallbackHandler : public Barry::Mode::RawChannelDataCallback
 {
 private:
+	OutputStream& m_output;
 	volatile bool *m_continuePtr;
 	bool m_verbose;
 
 public:
-	CallbackHandler(volatile bool &keepGoing, bool verbose)
-		: m_continuePtr(&keepGoing)
+	CallbackHandler(OutputStream& output, volatile bool &keepGoing, bool verbose)
+		: m_output(output)
+		, m_continuePtr(&keepGoing)
 		, m_verbose(verbose)
 		{
 		}
@@ -89,7 +89,7 @@ void CallbackHandler::DataReceived(Data &data)
 	size_t written = 0;
 
 	while( written < toWrite && *m_continuePtr ) {
-		ssize_t writtenThisTime = write(STDOUT_FILENO, &(data.GetData()[written]), toWrite - written);
+		ssize_t writtenThisTime = m_output.write(&(data.GetData()[written]), toWrite - written);
 		if( m_verbose ) {
 			cerr.setf(ios::dec, ios::basefield);
 			cerr << string_vprintf(_("Written %ld bytes over stdout"), (long int)writtenThisTime) << endl;
@@ -122,7 +122,7 @@ void Usage()
 
 	cerr << string_vprintf(
 	_("brawchannel - Command line USB Blackberry raw channel interface\n"
-	"        Copyright 2010, RealVNC Ltd.\n"
+	"        Copyright 2010-2012, RealVNC Ltd.\n"
 	"        Using: %s\n"
 	"\n"
 	"Usage:\n"
@@ -132,6 +132,10 @@ void Usage()
 	"   -p pin    PIN of device to talk with\n"
 	"             If only one device is plugged in, this flag is optional\n"
 	"   -P pass   Simplistic method to specify device password\n"
+	"   -l port   Listen for a TCP connection on the provided port instead\n"
+	"             of using STDIN and STDOUT for data\n"
+	"   -a addr   Address to bind the listening socket to, allowing listening\n"
+	"             only on a specified interface\n"
 	"   -v        Dump protocol data during operation\n"
 	"             This will cause libusb output to appear on STDOUT unless\n"
 	"             the environment variable USB_DEBUG is set to 0,1 or 2.\n"),
@@ -173,10 +177,12 @@ int main(int argc, char *argv[])
 		uint32_t pin = 0;
 		bool data_dump = false;
 		string password;
+		char * tcp_addr = NULL;
+		long tcp_port = 0;
 
 		// process command line options
 		for( ;; ) {
-			int cmd = getopt(argc, argv, "hp:P:v");
+			int cmd = getopt(argc, argv, "hp:P:l:a:v");
 			if( cmd == -1 ) {
 				break;
 			}
@@ -193,6 +199,14 @@ int main(int argc, char *argv[])
 
 			case 'v':	// data dump on
 				data_dump = true;
+				break;
+
+			case 'l':
+				tcp_port = strtol(optarg, NULL, 10);
+				break;
+
+			case 'a':
+				tcp_addr = optarg;
 				break;
 
 			case 'h':	// help
@@ -222,6 +236,10 @@ int main(int argc, char *argv[])
 		argc --;
 		argv ++;
 
+		if( tcp_addr != NULL && tcp_port == 0 ) {
+			cerr << "Error: specified TCP listen address but no port." << endl;
+			return 1;
+		}
 
 		if( data_dump ) {
 			// Warn if USB_DEBUG isn't set to 0, 1 or 2
@@ -259,9 +277,25 @@ int main(int argc, char *argv[])
 
 		volatile bool running = true;
 
+		auto_ptr<TcpStream> tcpStreamPtr;
+		auto_ptr<InputStream> inputPtr;
+		auto_ptr<OutputStream> outputPtr;
+		
+		if( tcp_port != 0 ) {
+			/* Use TCP socket for channel data */
+			tcpStreamPtr.reset(new TcpStream(tcp_addr, tcp_port));
+			if( !tcpStreamPtr->accept() )
+				return 1;
+			inputPtr.reset(new TcpInStream(*tcpStreamPtr));
+			outputPtr.reset(new TcpOutStream(*tcpStreamPtr));
+		} else {
+			/* Use STDIN and STDOUT for channel data */
+			inputPtr.reset(new StdInStream());
+			outputPtr.reset(new StdOutStream());
+		}
 		// Create the thing which will write onto stdout
 		// and perform other callback duties.
-		CallbackHandler callbackHandler(running, data_dump);
+		CallbackHandler callbackHandler(*outputPtr, running, data_dump);
 
 		// Start a thread to handle any data arriving from
 		// the BlackBerry.
@@ -282,9 +316,6 @@ int main(int argc, char *argv[])
 		// read from stdin and write to the BB.
 		const size_t bufSize = rawChannel.MaximumSendSize();
 		buf = new unsigned char[bufSize];
-		fd_set rfds;
-		struct timeval tv;
-		FD_ZERO(&rfds);
 
 		// Set up the signal restorers to restore signal
 		// handling (in their destructors) before the socket
@@ -297,48 +328,41 @@ int main(int argc, char *argv[])
 		SignalRestorer srq(SIGQUIT, oldSigQuit);
 
 		while( running && !signalReceived ) {
-			FD_SET(STDIN_FILENO, &rfds);
-			tv.tv_sec = READ_TIMEOUT_SECONDS;
-			tv.tv_usec = 0;
-
-			int ret = select(STDIN_FILENO + 1, &rfds, NULL, NULL, &tv);
-			if( ret < 0 ) {
-				cerr << _("Select failed with errno: ") << errno << endl;
-				running = false;
+			ssize_t haveRead = inputPtr->read(buf, bufSize, READ_TIMEOUT_SECONDS);
+			if( haveRead > 0 ) {
+				Data toWrite(buf, haveRead);
+				if( data_dump ) {
+					cerr.setf(ios::dec, ios::basefield);
+					cerr << string_vprintf(_("Sending %ld bytes stdin->USB\n"), (long int)haveRead);
+					cerr << _("To BB: ");
+					toWrite.DumpHex(cerr);
+					cerr << "\n";
+				}
+				rawChannel.Send(toWrite);
+				if( data_dump ) {
+					cerr.setf(ios::dec, ios::basefield);
+					cerr << string_vprintf(_("Sent %ld bytes stdin->USB\n"), (long int)haveRead);
+				}
 			}
-			else if ( ret && FD_ISSET(STDIN_FILENO, &rfds) ) {
-				ssize_t haveRead = read(STDIN_FILENO, buf, bufSize);
-				if( haveRead > 0 ) {
-					Data toWrite(buf, haveRead);
-					if( data_dump ) {
-						cerr.setf(ios::dec, ios::basefield);
-						cerr << string_vprintf(_("Sending %ld bytes stdin->USB\n"), (long int)haveRead);
-						cerr << _("To BB: ");
-						toWrite.DumpHex(cerr);
-						cerr << "\n";
-					}
-					rawChannel.Send(toWrite);
-					if( data_dump ) {
-						cerr.setf(ios::dec, ios::basefield);
-						cerr << string_vprintf(_("Sent %ld bytes stdin->USB\n"), (long int)haveRead);
-					}
-				}
-				else if( haveRead < 0 ) {
-					running = false;
-				}
+			else if( haveRead < 0 ) {
+				running = false;
 			}
 		}
 	}
-	catch( Usb::Error &ue ) {
+	catch( const Usb::Error &ue ) {
 		cerr << _("Usb::Error caught: ") << ue.what() << endl;
 		return 1;
 	}
-	catch( Barry::Error &se ) {
+	catch( const Barry::Error &se ) {
 		cerr << _("Barry::Error caught: ") << se.what() << endl;
 		return 1;
 	}
-	catch( exception &e ) {
+	catch( const exception &e ) {
 		cerr << _("exception caught: ") << e.what() << endl;
+		return 1;
+	}
+	catch( ... ) {
+		cerr << "unknown exception caught" << endl;
 		return 1;
 	}
 

@@ -501,6 +501,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\tools\brawchannel_win32.cc"
+				>
+			</File>
+			<File
 				RelativePath="..\tools\util.cc"
 				>
 			</File>
@@ -516,6 +520,10 @@
 			>
 			<File
 				RelativePath="..\src\barry.h"
+				>
+			</File>
+			<File
+				RelativePath="..\tools\brawchannel.h"
 				>
 			</File>
 			<File

@@ -1,4 +1,4 @@
-EXTRA_DIST =
+EXTRA_DIST = brawchannel_win32.cc
 
 #DEFAULT_INCLUDES =
 INCLUDES = $(USB_LIBRARY_CFLAGS)
@@ -17,7 +17,8 @@ noinst_HEADERS = \
 	util.h \
 	boostwrap.h \
 	barrygetopt.h \
-	platform.h
+	platform.h \
+	brawchannel.h
 
 noinst_PROGRAMS = \
 	btranslate \
@@ -109,7 +110,7 @@ bidentify_LDADD = ../src/libbarry.la $(USB_LIBRARY_LIBS) $(LTLIBINTL)
 bjavaloader_SOURCES = bjavaloader.cc
 bjavaloader_LDADD = ../src/libbarry.la $(USB_LIBRARY_LIBS) $(LTLIBINTL)
 
-brawchannel_SOURCES = brawchannel.cc
+brawchannel_SOURCES = brawchannel.cc brawchannel_unix.cc
 brawchannel_LDADD = ../src/libbarry.la $(USB_LIBRARY_LIBS) $(LTLIBINTL)
 
 bjvmdebug_SOURCES = bjvmdebug.cc
