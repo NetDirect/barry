@@ -7,21 +7,30 @@
 #ifndef __BARRY_TRIM_H__
 #define __BARRY_TRIM_H__
 
+#include <stdlib.h>
 #include <algorithm>
 #include <functional>
 #include <locale>
+
+// Windows CE defines std::isspace(int) as a macro to a function with two arguments
+// with one prefilled, so a wrapper function is needed.
+static int isSpaceChar(int c) {
+	return ::isspace(c);
+}
 
 namespace Barry { namespace Inplace {
 
 // trim from start
 static inline std::string &ltrim(std::string &s) {
-	s.erase(s.begin(), std::find_if(s.begin(), s.end(), std::not1(std::ptr_fun<int, int>(std::isspace))));
+	std::string::iterator end(std::find_if(s.begin(), s.end(), std::not1(std::ptr_fun<int, int>(isSpaceChar))));
+	s.erase(s.begin(), end);
 	return s;
 }
 
 // trim from end
 static inline std::string &rtrim(std::string &s) {
-	s.erase(std::find_if(s.rbegin(), s.rend(), std::not1(std::ptr_fun<int, int>(std::isspace))).base(), s.end());
+	std::string::reverse_iterator start(std::find_if(s.rbegin(), s.rend(), std::not1(std::ptr_fun<int, int>(isSpaceChar))));
+	s.erase(start.base(), s.end());
 	return s;
 }
 
