@@ -242,20 +242,29 @@ time_t Message2Time(uint16_t r_date, uint16_t r_time)
 ///
 struct timespec* ThreadTimeout(int timeout_ms, struct timespec *spec)
 {
-#ifndef WIN32
 	struct timeval now;
+#ifndef WIN32
 	gettimeofday(&now, NULL);
+#else
+	SYSTEMTIME st;
+	FILETIME ft;
+	LONGLONG ll;
+
+	GetSystemTime(&st);
+	SystemTimeToFileTime(&st, &ft);
+	/* Now convert the file time to a timespec */
+	ll = (static_cast<LONGLONG>(ft.dwHighDateTime) << 32) | ft.dwLowDateTime;
+	// Adjust the offset to 100ns periods from UNIX epoc
+	ll -= 116444736000000000;
+	// Adjust the offset to micro-seconds since the UNIX epoc
+	ll /= 10;
+
+	now.tv_sec = static_cast<long>(ll / 1000000);
+	now.tv_usec = static_cast<long>(ll % 1000000);
+#endif
 
 	spec->tv_sec = now.tv_sec + timeout_ms / 1000;
 	spec->tv_nsec = (now.tv_usec + timeout_ms % 1000 * 1000) * 1000;
-#else
-	SYSTEMTIME now;
-	GetSystemTime(&now);
-
-	spec->tv_sec = now.wSecond + timeout_ms / 1000;
-	spec->tv_nsec = (now.wMilliseconds + timeout_ms) * 1000;
-#endif
-
 	return spec;
 }
 
