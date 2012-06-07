@@ -22,6 +22,7 @@
 #ifndef __BARRY_DATAQUEUE_H__
 #define __BARRY_DATAQUEUE_H__
 
+#include "dll.h"
 #include <list>
 #include <pthread.h>
 #include <iosfwd>
@@ -38,7 +39,7 @@ class Data;
 ///
 /// It uses similar member names as std::queue<>, for consistency.
 ///
-class DataQueue
+class BXEXPORT DataQueue
 {
 	// always use the raw_push() and raw_pop() functions
 	typedef std::list<Data*>			queue_type;
