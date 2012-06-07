@@ -92,7 +92,7 @@ public:
 	};
 
 private:
-	std::auto_ptr<PrivateControllerData> m_priv;
+	const std::auto_ptr<PrivateControllerData> m_priv;
 
 private:
 	Controller(const Controller& rhs); // prevent copying

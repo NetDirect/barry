@@ -328,12 +328,12 @@ std::vector<DeviceID> DeviceList::MatchDevices(int vendor, int product,
 
 Device::Device(const Usb::DeviceID& id, int timeout)
 	: m_id(id),
+	m_handle(new DeviceHandle()),
 	m_timeout(timeout)
 {
 	dout("libusb_open(" << std::dec << id.m_impl.get() << ")");
 	if( !&(*id.m_impl) )
 		throw Error("invalid USB device ID");
-	m_handle.reset(new DeviceHandle());
 	int err = libusb_open(id.m_impl->m_dev, &(m_handle->m_handle));
 	m_lasterror = err;
 	if( err )

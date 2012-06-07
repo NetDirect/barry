@@ -255,7 +255,7 @@ class BXEXPORT Device
 {
 private:
 	Usb::DeviceID m_id;
-	std::auto_ptr<Usb::DeviceHandle> m_handle;
+	const std::auto_ptr<Usb::DeviceHandle> m_handle;
 
 	int m_timeout;
 	int m_lasterror;
