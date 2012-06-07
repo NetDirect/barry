@@ -80,6 +80,8 @@ Sms::~Sms()
 {
 }
 
+#define CHECK_FLAG(flags, bitfield) ((flags & (bitfield)) != 0)
+
 const unsigned char* Sms::ParseField(const unsigned char *begin,
 				     const unsigned char *end,
 				     const IConverter *ic)
@@ -102,12 +104,12 @@ const unsigned char* Sms::ParseField(const unsigned char *begin,
 				break; // size not match
 
 			const SMSMetaData &metadata = field->u.sms_metadata;
-			NewConversation = metadata.flags & SMS_FLG_NEW_CONVERSATION;
-			Saved = metadata.flags & SMS_FLG_SAVED;
-			Deleted = metadata.flags & SMS_FLG_DELETED;
-			Opened = metadata.flags & SMS_FLG_OPENED;
+			NewConversation = CHECK_FLAG(metadata.flags, SMS_FLG_NEW_CONVERSATION);
+			Saved = CHECK_FLAG(metadata.flags, SMS_FLG_SAVED);
+			Deleted = CHECK_FLAG(metadata.flags, SMS_FLG_DELETED);
+			Opened = CHECK_FLAG(metadata.flags, SMS_FLG_OPENED);
 
-			IsNew = metadata.new_flag;
+			IsNew = metadata.new_flag != 0;
 
 			uint32_t status = btohl(metadata.status);
 

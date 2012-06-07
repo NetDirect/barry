@@ -663,7 +663,7 @@ int JLPacket::GetScreenshot()
 
 int JLPacket::Erase(uint16_t cmd, uint16_t id)
 {
-	SimpleCmd(cmd, 0, 2);
+	SimpleCmd((uint8_t)cmd, 0, 2);
 	return BigEndianData(id);
 }
 

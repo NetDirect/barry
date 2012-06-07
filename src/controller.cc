@@ -230,7 +230,7 @@ SocketHandle Controller::OpenSocket(uint16_t socket, const char *password)
 
 bool Controller::HasQueue() const
 {
-	return m_priv->m_queue;
+	return m_priv->m_queue != NULL;
 }
 
 SocketRoutingQueue* Controller::GetQueue()

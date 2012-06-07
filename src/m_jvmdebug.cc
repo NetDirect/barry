@@ -62,7 +62,7 @@ void JVMModulesList::Parse(const Data &entry_packet)
 		Protocol::JVMModulesEntry *e = (Protocol::JVMModulesEntry *) ptr;
 
 		len = SB_JVMMODULES_ENTRY_HEADER_SIZE + be_btohs(e->sizename);
-		if( (count + len) > size )
+		if( (size_t)(count + len) > size )
 			break;
 
 		JVMModulesEntry entry;
@@ -128,7 +128,7 @@ void JVMThreadsList::Parse(const Data &entry_packet)
 		uint32_t *e = (uint32_t *) ptr;
 
 		len = sizeof(uint32_t);
-		if( (count + len) > size )
+		if( (size_t)(count + len) > size )
 			break;
 
 		JVMThreadsEntry entry;

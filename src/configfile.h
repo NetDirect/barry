@@ -107,7 +107,7 @@ public:
 	const DBListType& GetBackupList() const { return m_backupList; }
 	const DBListType& GetRestoreList() const { return m_restoreList; }
 	const std::string& GetDeviceName() const { return m_deviceName; }
-	bool HasDeviceName() const { return m_deviceName.size(); }
+	bool HasDeviceName() const { return m_deviceName.size() != 0; }
 	bool PromptBackupLabel() const { return m_promptBackupLabel; }
 	bool AutoSelectAll() const { return m_autoSelectAll; }
 

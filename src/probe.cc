@@ -134,7 +134,7 @@ Probe::Probe(const char *busname, const char *devname,
 		bool auto_dump_log)
 	: m_log_exceptions(log_exceptions)
 	, m_fail_count(0)
-	, m_epp_override(epp)
+	, m_epp_override(epp != NULL)
 {
 	if( m_epp_override ) {
 		m_epp = *epp;

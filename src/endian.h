@@ -44,7 +44,7 @@ static inline uint32_t bbswap_32(uint32_t x) {
 }
 
 static inline uint64_t bbswap_64(uint64_t x) {
-  return (((uint64_t)bbswap_32(x&0xffffffffull))<<32) | (bbswap_32(x>>32));
+  return (((uint64_t)bbswap_32((uint32_t)(x&0xffffffffull)))<<32) | (bbswap_32((uint32_t)(x>>32)));
 }
 
 #ifndef WORDS_BIGENDIAN

@@ -132,7 +132,7 @@ const unsigned char* ServiceBookConfig::ParseField(const unsigned char *begin,
 
 	// if still not handled, add to the Unknowns list
 	UnknownField uf;
-	uf.type = type;
+	uf.type = (uint8_t)type;
 	uf.data.assign((const char*)raw, size);
 	Unknowns.push_back(uf);
 

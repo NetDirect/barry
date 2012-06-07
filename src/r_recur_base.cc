@@ -191,26 +191,26 @@ void RecurBase::BuildRecurrenceData(time_t StartTime, void *data) const
 
 	case MonthByDate:
 		rec->type = CRDF_TYPE_MONTH_BY_DATE;
-		rec->u.month_by_date.monthDay = DayOfMonth;
+		rec->u.month_by_date.monthDay = (uint8_t)DayOfMonth;
 		break;
 
 	case MonthByDay:
 		rec->type = CRDF_TYPE_MONTH_BY_DAY;
-		rec->u.month_by_day.weekDay = DayOfWeek;
-		rec->u.month_by_day.week = WeekOfMonth;
+		rec->u.month_by_day.weekDay = (uint8_t)DayOfWeek;
+		rec->u.month_by_day.week = (uint8_t)WeekOfMonth;
 		break;
 
 	case YearByDate:
 		rec->type = CRDF_TYPE_YEAR_BY_DATE;
-		rec->u.year_by_date.monthDay = DayOfMonth;
-		rec->u.year_by_date.month = MonthOfYear;
+		rec->u.year_by_date.monthDay = (uint8_t)DayOfMonth;
+		rec->u.year_by_date.month = (uint8_t)MonthOfYear;
 		break;
 
 	case YearByDay:
 		rec->type = CRDF_TYPE_YEAR_BY_DAY;
-		rec->u.year_by_day.weekDay = DayOfWeek;
-		rec->u.year_by_day.week = WeekOfMonth;
-		rec->u.year_by_day.month = MonthOfYear;
+		rec->u.year_by_day.weekDay = (uint8_t)DayOfWeek;
+		rec->u.year_by_day.week = (uint8_t)WeekOfMonth;
+		rec->u.year_by_day.month = (uint8_t)MonthOfYear;
 		break;
 
 	case Week:
