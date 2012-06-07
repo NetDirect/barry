@@ -54,6 +54,11 @@ bool reset(struct libusb_device *dev)
 	if( err != 0 )
 		return false;
 
+#ifdef WIN32
+	// Attempt to set the configuration as a way to reset
+	libusb_set_configuration(handle, BLACKBERRY_CONFIGURATION);
+#endif
+
 	bool ret = libusb_reset_device(handle) == 0;
 	libusb_close(handle);
 	return ret;
