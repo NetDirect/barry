@@ -183,7 +183,7 @@ public:
 
 public:
 	uint32_t	HardwareId;
-	struct Pin	Pin;
+	class Pin	Pin;
 	VersionQuad	OsVersion;
 	VersionQuad	VmVersion;
 	uint32_t	RadioId;
