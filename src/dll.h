@@ -53,6 +53,21 @@
 #define BXEXPORT __attribute__ ((visibility("default")))
 #define BXLOCAL __attribute__ ((visibility("hidden")))
 
+#elif defined(WIN32)
+
+#ifdef __BARRY_LIBRARY_BUILD__
+#define BXEXPORT __declspec( dllexport ) 
+#define BXLOCAL
+#else
+#define BXEXPORT __declspec( dllimport ) 
+#define BXLOCAL
+#endif
+
+// Disable "needs to have dll interface warning" which
+// comes from exporting classes which make use of non-exported 
+// templated classes.
+#pragma warning(disable: 4251)
+
 #else
 
 #define BXEXPORT
