@@ -24,6 +24,7 @@
 #include "error.h"
 #include <errno.h>
 #include <string>
+#include <assert.h>
 
 using namespace std;
 
@@ -63,8 +64,24 @@ IConvHandle::IConvHandle(const IConverter &ic,
 {
 }
 
+IConvHandle::IConvHandle(const IConvHandle &other)
+{
+	/* This is private to prevent copying, so shouldn't ever be called.
+	 * However MSCL still generates refernces to it, so it needs to be provided. */
+	assert(false);
+}
+
 IConvHandle::~IConvHandle()
 {
+}
+
+
+IConvHandle& IConvHandle::operator=(const IConvHandle &other)
+{
+	/* This is private to prevent copying, so shouldn't ever be called.
+	 * However MSCL still generates refernces to it, so it needs to be provided. */
+	assert(false);
+	return *this;
 }
 
 std::string IConvHandle::Convert(Data &tmp, const std::string &str) const
