@@ -41,7 +41,7 @@
 
 //////////////////////////////////////////////////////////////////////////////
 // All Windows specific detail
-#if defined( WIN32 )
+#if defined( WIN32 ) && !defined( WINCE )
 
 // On Windows, we must call usb_set_configuration() before claim_interface()
 #define MUST_SET_CONFIGURATION 1
@@ -49,6 +49,12 @@
 #else
 
 #define MUST_SET_CONFIGURATION 0
+
+#endif
+
+#if defined( WINCE )
+
+#define vsnprintf _vsnprintf
 
 #endif
 

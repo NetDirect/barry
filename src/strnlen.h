@@ -25,7 +25,7 @@
 #include "config.h"		// strnlen.h is not installed, so this is safe
 #include <string.h>
 
-#ifdef WIN32
+#if defined(WIN32) && !defined(WINCE)
 #define HAVE_WORKING_STRNLEN 1
 #endif
 
