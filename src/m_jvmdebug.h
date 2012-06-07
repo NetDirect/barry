@@ -129,7 +129,7 @@ private:
 	bool m_Attached;
 
 protected:
-	void ThrowJVMError(const std::string &msg, uint8_t cmd);
+	void ThrowJVMError(const std::string &msg, uint16_t cmd);
 
 	//////////////////////////////////
 	// overrides

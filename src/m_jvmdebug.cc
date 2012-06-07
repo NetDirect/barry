@@ -254,7 +254,7 @@ void JVMDebug::Detach()
 }
 
 
-void JVMDebug::ThrowJVMError(const std::string &msg, uint8_t cmd)
+void JVMDebug::ThrowJVMError(const std::string &msg, uint16_t cmd)
 {
 	std::ostringstream oss;
 	oss << msg << ": " << _("unexpected packet command code: ")
