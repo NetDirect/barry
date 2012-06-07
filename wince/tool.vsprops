@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioPropertySheet
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="tool"
+	>
+	<!--
+		This property sheet is used to set the values needed to include libbarry and other common
+		code into a barry tool.
+	-->
+	<Tool
+		Name="VCCLCompilerTool"
+		AdditionalIncludeDirectories=".\dist\include;.\wrappers"
+	/>
+	<Tool
+		Name="VCPostBuildEventTool"
+		CommandLine="cd $(SolutionDir) &amp; copy_tool.bat &quot;$(PlatformName)&quot; &quot;$(ConfigurationName)&quot; &quot;$(TargetFileName)&quot;"
+	/>
+</VisualStudioPropertySheet>

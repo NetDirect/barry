@@ -21,6 +21,7 @@ EXTRA_DIST = COPYING ChangeLog README Doxyfile AUTHORS KnownBugs \
 	menu \
 	usbmon-6 \
 	android \
+	wince \
 	.gitignore
 
 SUBDIRS = po . src tools examples man test

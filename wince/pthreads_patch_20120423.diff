@@ -1,0 +1,126 @@
+Index: Makefile
+===================================================================
+RCS file: /cvs/pthreads-win32/pthreads/Makefile,v
+retrieving revision 1.52
+diff -u -r1.52 Makefile
+--- Makefile	3 Jul 2011 14:15:58 -0000	1.52
++++ Makefile	25 Jun 2012 13:47:51 -0000
+@@ -11,7 +11,7 @@
+ DLL_VER	= 2
+ DLL_VERD= $(DLL_VER)d
+ 
+-DEVROOT	= C:\pthreads
++DEVROOT	= C:\src\pthreads
+ 
+ DLLDEST	= $(DEVROOT)\dll
+ LIBDEST	= $(DEVROOT)\lib
+@@ -26,7 +26,7 @@
+ 
+ CC	= cl
+ CPPFLAGS = /I. /DHAVE_PTW32_CONFIG_H
+-XCFLAGS = /W3 /MD /nologo
++XCFLAGS = /W3 /MD /nologo /DWINCE /D_ARM_ /D_UWIN_ /D_UNICODE /DUNICODE  /D_WIN32_WCE=0x500 /DUNDER_CE
+ CFLAGS	= /O2 /Ob2 $(XCFLAGS)
+ CFLAGSD	= /Z7 $(XCFLAGS)
+ 
+@@ -476,7 +476,7 @@
+ 	copy semaphore.h $(HDRDEST)
+ 
+ $(DLLS): $(DLL_OBJS)
+-	$(CC) /LDd /Zi /nologo $(DLL_OBJS) /link /implib:$*.lib $(XLIBS) /out:$@
++	$(CC) /LDd /Zi /nologo $(DLL_OBJS) /link /implib:$*.lib $(XLIBS) /out:$@ /subsystem:windowsce,5.00 /NODEFAULTLIB:"oldnames.lib" coredll.lib corelibc.lib
+ 
+ $(INLINED_STAMPS): $(DLL_INLINED_OBJS)
+ 	$(CC) /LDd /Zi /nologo $(DLL_INLINED_OBJS) /link /implib:$*.lib $(XLIBS) /out:$*.dll
+@@ -489,7 +489,7 @@
+ 	$(CC) $(EHFLAGS) /D$(CLEANUP) -c $<
+ 
+ .rc.res:
+-	rc /dPTW32_RC_MSC /d$(CLEANUP) $<
++	rc /I "c:\Program Files\Windows CE Tools\wce500\STANDARDSDK_500\Include\Armv4i" /dPTW32_RC_MSC /d$(CLEANUP) $<
+ 
+ .c.i:
+ 	$(CC) /P /O2 /Ob1 $(VCFLAGS) $<
+Index: errno.c
+===================================================================
+RCS file: /cvs/pthreads-win32/pthreads/errno.c,v
+retrieving revision 1.15
+diff -u -r1.15 errno.c
+--- errno.c	22 Nov 2007 14:14:58 -0000	1.15
++++ errno.c	25 Jun 2012 13:47:51 -0000
+@@ -35,9 +35,9 @@
+  *      59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
+  */
+ 
++#include "pthread.h"
+ #if defined(NEED_ERRNO)
+ 
+-#include "pthread.h"
+ #include "implement.h"
+ 
+ static int reallyBad = ENOMEM;
+@@ -84,7 +84,7 @@
+     }
+   else
+     {
+-      result = (int *)(&self.p->exitStatus);
++      result = &(((ptw32_thread_t*)self.p)->exitStatus);
+     }
+ 
+   return (result);
+Index: mutex.c
+===================================================================
+RCS file: /cvs/pthreads-win32/pthreads/mutex.c,v
+retrieving revision 1.66
+diff -u -r1.66 mutex.c
+--- mutex.c	30 May 2011 00:31:00 -0000	1.66
++++ mutex.c	25 Jun 2012 13:47:51 -0000
+@@ -33,14 +33,13 @@
+  *      if not, write to the Free Software Foundation, Inc.,
+  *      59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
+  */
+-
++#include "pthread.h"
+ #if ! defined(_UWIN) && ! defined(WINCE)
+ #   include <process.h>
+ #endif
+ #if !defined(NEED_FTIME)
+ #include <sys/timeb.h>
+ #endif
+-#include "pthread.h"
+ #include "implement.h"
+ 
+ 
+Index: pthread_win32_attach_detach_np.c
+===================================================================
+RCS file: /cvs/pthreads-win32/pthreads/pthread_win32_attach_detach_np.c,v
+retrieving revision 1.28
+diff -u -r1.28 pthread_win32_attach_detach_np.c
+--- pthread_win32_attach_detach_np.c	5 Jul 2011 02:02:35 -0000	1.28
++++ pthread_win32_attach_detach_np.c	25 Jun 2012 13:47:52 -0000
+@@ -70,7 +70,9 @@
+    *
+    * This should take care of any security issues.
+    */
+-#if defined(__GNUC__) || _MSC_VER < 1400
++#if defined(WINCE)
++  /* Not supported on WinCE */
++#elif defined(__GNUC__) || _MSC_VER < 1400
+   if(GetSystemDirectory(QuserExDLLPathBuf, sizeof(QuserExDLLPathBuf)))
+   {
+     (void) strncat(QuserExDLLPathBuf,
+Index: semaphore.c
+===================================================================
+RCS file: /cvs/pthreads-win32/pthreads/semaphore.c,v
+retrieving revision 1.37
+diff -u -r1.37 semaphore.c
+--- semaphore.c	30 May 2011 00:31:01 -0000	1.37
++++ semaphore.c	25 Jun 2012 13:47:52 -0000
+@@ -45,6 +45,7 @@
+  *      59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
+  */
+ 
++#include "pthread.h"
+ #if !defined(NEED_FTIME)
+ #  include <sys/timeb.h>
+ #endif

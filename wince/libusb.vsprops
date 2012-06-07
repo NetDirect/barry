@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioPropertySheet
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="libusb"
+	>
+	<!--
+		This property sheet is used to check that LIBUSB_PREBUILT_DIR is set
+		as an environment variable before the project is built.  This
+		variable allows you to specify the location of the pre-built libusb headers
+		and libraries without having to edit the project first.
+
+		If you don't want to use an environment variable for this, then
+		you can use the IDE to remove this property sheet 
+		and then set the include and library directories manually.
+		To remove an inherited property sheet in Visual Studio 2005,
+		open the project Properties dialog and look under
+		Congfiguration Properties / General.
+	-->
+	<Tool
+		Name="VCPreBuildEventTool"
+		Description="Checking for LIBUSB_PREBUILT_DIR macro:"
+		CommandLine="if &quot;$(LIBUSB_PREBUILT_DIR)&quot; == &quot;&quot; (&#x0D;&#x0A;echo *******************************************************************************&#x0D;&#x0A;echo LIBUSB_PREBUILT_DIR is not set.  You must set LIBUSB_PREBUILT_DIR, either as a Visual Studio&#x0D;&#x0A;echo macro or in the environment, before building this sample.&#x0D;&#x0A;echo The value of LIBUSB_PREBUILT_DIR should be the path to directory that contains the&#x0D;&#x0A;echo include and DLL directories.&#x0D;&#x0A;echo *******************************************************************************&#x0D;&#x0A;exit 1&#x0D;&#x0A;) else (&#x0D;&#x0A;echo LIBUSB_PREBUILT_DIR is $(LIBUSB_PREBUILT_DIR)&#x0D;&#x0A;)"
+	/>
+	<Tool
+		Name="VCCLCompilerTool"
+		AdditionalIncludeDirectories="$(LIBUSB_PREBUILT_DIR)\include\libusb-1.0"
+	/>
+	<Tool
+		Name="VCLinkerTool"
+		AdditionalDependencies="libusb-1.0.lib"
+	/>
+</VisualStudioPropertySheet>

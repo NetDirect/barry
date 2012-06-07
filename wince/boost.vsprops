@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioPropertySheet
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="boost"
+	>
+	<!--
+		This property sheet is used to check that BOOST_SRC_PATH is set
+		as an environment variable before the project is built.  This
+		variable allows you to specify the location of the boost source and headers
+		without having to edit the project first.
+
+		If you don't want to use an environment variable for this, then
+		you can use the IDE to remove this property sheet 
+		and then set the include and library directories manually.
+		To remove an inherited property sheet in Visual Studio 2005,
+		open the project Properties dialog and look under
+		Congfiguration Properties / General.
+	-->
+	<Tool
+		Name="VCPreBuildEventTool"
+		Description="Checking for BOOST_SRC_PATH macro:"
+		CommandLine="if &quot;$(BOOST_SRC_PATH)&quot; == &quot;&quot; (&#x0D;&#x0A;echo *******************************************************************************&#x0D;&#x0A;echo BOOST_SRC_PATH is not set.  You must set BOOST_SRC_PATH, either as a Visual Studio&#x0D;&#x0A;echo macro or in the environment, before building this sample.&#x0D;&#x0A;echo The value of BOOST_SRC_PATH should be the path to directory that contains the&#x0D;&#x0A;echo include and DLL directories.&#x0D;&#x0A;echo *******************************************************************************&#x0D;&#x0A;exit 1&#x0D;&#x0A;) else (&#x0D;&#x0A;echo BOOST_SRC_PATH is $(BOOST_SRC_PATH)&#x0D;&#x0A;)"
+	/>
+	<Tool
+		Name="VCCLCompilerTool"
+		AdditionalIncludeDirectories="$(BOOST_SRC_PATH)"
+	/>
+</VisualStudioPropertySheet>

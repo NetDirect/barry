@@ -1,0 +1,86 @@
+Building:
+---------
+
+You'll need to have the following defined:
+
+ * LIBUSB_PREBUILT_DIR - To a pre-built Win32/WinCE build of libusb. This should contain an include directory and one or more of MS32, MS64 and WinCE_STD500_ARMV4I.
+ * PTHREADS-WIN32_PREBUILT_DIR - To a pre-built Win32/WinCE build of pthreads-win32. This should contain an include directory and one or more of MS32, MS64 and WinCE_STD500_ARMV4I
+ * BOOST_SRC_PATH - Pointing to extracted boost source; i.e. the directory containing the "boost" directory.
+ * STLPORT_PREBUILT_DIR - To a pre-built Win32/WinCE build of STLPort. This should contain an include directory and one or more of MS32, MS64 and WinCE_STD500_ARMV4I
+
+When running barry you'll also need the following libraries in your PATH:
+
+ * libusb-1.0.so - from LIBUSB_PREBUILT_DIR
+ * pthreadVC2.dll, pthreadVC2d.dll - from PTHREADS-WIN32_PREBUILT_DIR
+ * stlport.5.2.dll, stlportd.5.2.dll - from STLPORT_PREBUILT_DIR
+ * msvcr80.dll, msvcr80d.dll - from your Visual Studio install, usually found in
+			%PROGRAMFILES%\Microsoft Visual Studio 8\vc\ce\dll\%ARCH%
+ 
+Extracting boost 1.49.0:
+------------------------
+
+1. Download:
+   http://downloads.sourceforge.net/project/boost/boost/1.49.0/boost_1_49_0.tar.bz2?r=http%3A%2F%2Fsourceforge.net%2Fprojects%2Fboost%2Ffiles%2Fboost%2F1.49.0%2F&ts=1335266401&use_mirror=switch
+ 
+2. Extract to BOOST_SRC_PATH
+
+Building pthreads-win32:
+------------------------
+
+1. cvs -d :pserver:anonymous@sourceware.org:/cvs/pthreads-win32 checkout -D "20120423" pthreads
+
+2. Apply the patch contained in "pthreads_patch_20120423.diff"
+
+3. Add the following environment variables, pointing to the CE build tool paths:
+  set PATH=%PROGRAMFILES%\Microsoft Visual Studio 8\vc\ce\bin\x86_arm;%PROGRAMFILES%\Microsoft Visual Studio 8\VC\bin;%PROGRAMFILES%\Microsoft Visual Studio 8\Common7\IDE;%PATH%
+  set INCLUDE=%PROGRAMFILES%\Windows CE Tools\wce500\STANDARDSDK_500\Include\Armv4i\;C:\src\pthreads
+  set LIB=%PROGRAMFILES%\Windows CE Tools\wce500\STANDARDSDK_500\Lib\ARMV4I;%PROGRAMFILES%\Microsoft Visual Studio 8\vc\ce\lib\armv4;%PROGRAMFILES%\Microsoft Visual Studio 8\VC\ATLMFC\LIB;%PROGRAMFILES%\Microsoft Visual Studio 8\VC\LIB;%PROGRAMFILES%\Microsoft Visual Studio 8\VC\PlatformSDK\lib;%PROGRAMFILES%\Microsoft Visual Studio 8\SDK\v2.0\lib;
+
+4. Compile the code with:
+  nmake clean VC 
+
+5. Move the built files to the correct location:
+  set ARCH=WinCE_STD500_ARMV4I
+  md %PTHREADS-WIN32_PREBUILT_DIR%\include
+  copy pthread.h %PTHREADS-WIN32_PREBUILT_DIR%\include
+  copy sched.h %PTHREADS-WIN32_PREBUILT_DIR%\include
+  copy semaphore.h %PTHREADS-WIN32_PREBUILT_DIR%\include
+  copy need_errno.h %PTHREADS-WIN32_PREBUILT_DIR%\include
+  md %PTHREADS-WIN32_PREBUILT_DIR%\%ARCH%
+  md %PTHREADS-WIN32_PREBUILT_DIR%\%ARCH%\dll
+  copy pthread*.dll %PTHREADS-WIN32_PREBUILT_DIR%\%ARCH%\dll
+  copy pthread*.lib %PTHREADS-WIN32_PREBUILT_DIR%\%ARCH%\dll
+
+11. Edit %PTHREADS-WIN32_PREBUILT_DIR%\include\need_errno.h so that it has
+       "#include <winsock2.h>" instead of "#include <winsock.h>"
+
+Building STLPort 5.2.1:
+-----------------------
+
+1. Download:
+
+  http://downloads.sourceforge.net/project/stlport/STLport/STLport-5.2.1/STLport-5.2.1.tar.bz2?r=http%3A%2F%2Fsourceforge.net%2Fprojects%2Fstlport%2F&ts=1335280874&use_mirror=freefr
+
+2. Extract somewhere.
+
+3. Run the following from the STLport directory:
+  set PATH=%PROGRAMFILES%\Microsoft Visual Studio 8\vc\ce\bin\x86_arm;%PROGRAMFILES%\Microsoft Visual Studio 8\VC\bin;%PROGRAMFILES%\Microsoft Visual Studio 8\Common7\IDE;%PATH%
+  set INCLUDE=%PROGRAMFILES%\Windows CE Tools\wce500\STANDARDSDK_500\Include\Armv4i\;%PROGRAMFILES%\Windows CE Tools\wce500\STANDARDSDK_500\Include\MFC\include;%PROGRAMFILES%\Windows CE Tools\wce500\STANDARDSDK_500\Include\ATL\include
+  set LIB=%PROGRAMFILES%\Windows CE Tools\wce500\STANDARDSDK_500\Lib\ARMV4I;%PROGRAMFILES%\Windows CE Tools\wce500\STANDARDSDK_500\MFC\Lib\ARMV4I;%PROGRAMFILES%\Windows CE Tools\wce500\STANDARDSDK_500\ATL\Lib\ARMV4I;%PROGRAMFILES%\Microsoft Visual Studio 8\vc\ce\lib\armv4
+  set TARGETCPU=ARMV4I
+  configure evc8
+  cd build\lib
+  nmake clean install
+  
+  REM Move the built files to the correct location:
+  cd ..\..
+  set ARCH=WinCE_STD500_ARMV4I
+  md %STLPORT_PREBUILT_DIR%\include
+  xcopy /S /Y stlport\* %STLPORT_PREBUILT_DIR%\include
+  del %STLPORT_PREBUILT_DIR%\include\pthread.h
+  del %STLPORT_PREBUILT_DIR%\include\signal.h
+  del %STLPORT_PREBUILT_DIR%\include\cstddef
+  md %STLPORT_PREBUILT_DIR%\%ARCH%
+  md %STLPORT_PREBUILT_DIR%\%ARCH%\dll
+  copy bin\evc8-arm\*.dll %STLPORT_PREBUILT_DIR%\%ARCH%\dll
+  copy lib\evc8-arm\*.lib %STLPORT_PREBUILT_DIR%\%ARCH%\dll
