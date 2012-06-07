@@ -68,9 +68,8 @@ public:
 class BXEXPORT Timeout : public Error
 {
 public:
-	Timeout(const std::string &str) : Error(str) {}
-	Timeout(int errcode, const std::string &str)
-		: Error(errcode, str) {}
+	Timeout(const std::string &str);
+	Timeout(int errcode, const std::string &str);
 };
 
 /// @}

@@ -86,6 +86,19 @@ int Error::system_errcode() const
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+// Usb::Timeout exception class
+
+Timeout::Timeout(const std::string &str)
+	: Error(str)
+{
+}
+
+Timeout::Timeout(int errcode, const std::string &str)
+	: Error(errcode, str)
+{
+}
+
+///////////////////////////////////////////////////////////////////////////////
 // EndpointPair
 
 EndpointPair::EndpointPair()

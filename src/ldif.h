@@ -136,7 +136,7 @@ public:
 	explicit ContactLdif(const std::string &baseDN);
 	virtual ~ContactLdif();
 
-	const NameToFunc* GetFieldNames() const { return FieldMap; }
+	const NameToFunc* GetFieldNames() const;
 	const NameToFunc* GetField(const std::string &fieldname) const;
 	std::string GetFieldReadName(GetFunctionType read) const;
 	std::string GetFieldWriteName(SetFunctionType write) const;

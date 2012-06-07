@@ -194,6 +194,11 @@ void ContactLdif::Hook(const std::string &ldifname, std::string *var)
 	m_hookMap[ldifname] = var;
 }
 
+const ContactLdif::NameToFunc* ContactLdif::GetFieldNames() const
+{
+	return FieldMap;
+}
+
 const ContactLdif::NameToFunc*
 ContactLdif::GetField(const std::string &fieldname) const
 {
