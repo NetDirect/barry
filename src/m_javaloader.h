@@ -87,6 +87,7 @@ public:
 	JLDirectory SubDir;
 
 public:
+	JLDirectoryEntry();
 	explicit JLDirectoryEntry(int level);
 
 	void Parse(uint16_t id, const Data &entry_packet);

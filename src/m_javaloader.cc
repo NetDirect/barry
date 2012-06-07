@@ -106,6 +106,12 @@ void JLDirectory::Dump(std::ostream &os) const
 ///////////////////////////////////////////////////////////////////////////////
 // JLDirectoryEntry class
 
+JLDirectoryEntry::JLDirectoryEntry()
+	: m_level(0)
+	, SubDir(1)
+{
+}
+
 JLDirectoryEntry::JLDirectoryEntry(int level)
 	: m_level(level)
 	, SubDir(level + 1)
