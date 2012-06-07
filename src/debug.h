@@ -37,6 +37,7 @@ extern std::ostream *LogStream;
 	// debugging on
 	#undef dout
 	#undef eout
+	#undef DEBUG_ONLY
 
 	// low level debug output
 	#define dout(x)		if(::Barry::__data_dump_mode__) { ::Barry::LogLock lock; (*::Barry::LogStream) << x << std::endl; }
@@ -48,6 +49,9 @@ extern std::ostream *LogStream;
 	// easy exception output
 	#define eeout(c, r)	{ ::Barry::LogLock lock; (*::Barry::LogStream) << "Sent packet:\n" << c << "\n" << "Response packet:\n" << r << "\n"; }
 
+	// For debug only variables and parameters
+	#define DEBUG_ONLY(x) x
+
 	// handle assert()
 	#undef NDEBUG
 #else
@@ -55,10 +59,14 @@ extern std::ostream *LogStream;
 	// debugging off
 	#undef dout
 	#undef eout
+	#undef DEBUG_ONLY
 
 	#define dout(x)
 	#define eout(x)		{ ::Barry::LogLock lock; (*::Barry::LogStream) << x << std::endl; }
 	#define eeout(c, r)	{ ::Barry::LogLock lock; (*::Barry::LogStream) << "Sent packet:\n" << c << "\n" << "Response packet:\n" << r << "\n"; }
+
+	// For debug only variables and parameters
+	#define DEBUG_ONLY(x)
 
 	// handle assert() as well
 	#undef NDEBUG

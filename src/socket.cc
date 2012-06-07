@@ -1014,7 +1014,7 @@ Socket::~Socket()
 		// a non-default socket has been opened, close it
 		LocalClose();
 	}
-	catch( std::runtime_error &re ) {
+	catch( std::runtime_error &DEBUG_ONLY(re) ) {
 		// do nothing... log it?
 		dout("Exception caught in ~Socket: " << re.what());
 	}

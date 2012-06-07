@@ -619,7 +619,7 @@ bool JVMDebug::WaitStatus(int &status)
 
 	try {
 		m_socket->Receive(packet.GetReceive(), 100);
-	} catch (Usb::Timeout &to ) {
+	} catch (Usb::Timeout &DEBUG_ONLY(to) ) {
 		return false;
 	}
 

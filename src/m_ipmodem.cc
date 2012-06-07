@@ -55,7 +55,7 @@ IpModem::~IpModem()
 {
 	try {
 		Close();
-	} catch( std::exception &e ) {
+	} catch( std::exception &DEBUG_ONLY(e) ) {
 		dout("Exception caught in IpModem destructor, ignoring: "
 			<< e.what());
 	}
@@ -107,7 +107,7 @@ bool IpModem::SendPassword( const char *password, uint32_t seed )
 			m_dev.BulkRead(read_ep, data, 500);
 			ddout("IPModem: Null Response Packet:\n" << data);
 		}
-		catch( Usb::Timeout &to ) {
+		catch( Usb::Timeout &DEBUG_ONLY(to) ) {
 			// do nothing on timeouts
 			ddout("IPModem: Null Response Timeout");
 		}
@@ -189,7 +189,7 @@ void *IpModem::DataReadThread(void *userptr)
 //			}
 
 		}
-		catch( Usb::Timeout &to ) {
+		catch( Usb::Timeout &DEBUG_ONLY(to) ) {
 			// do nothing on timeouts
 			ddout("IPModem: Timeout in DataReadThread!");
 		}
@@ -237,7 +237,7 @@ void IpModem::Open(const char *password)
 		m_dev.BulkRead(read_ep, data, 500);
 		ddout("IPModem: Stop Response Packet:\n" << data);
 	}
-	catch( Usb::Timeout &to ) {
+	catch( Usb::Timeout &DEBUG_ONLY(to) ) {
 		// do nothing on timeouts
 		ddout("IPModem: Stop Response Timeout");
 	}
@@ -314,7 +314,7 @@ void IpModem::Open(const char *password)
 				m_dev.BulkRead(read_ep, data, 5000);
 				ddout("IPModem: AT Response Packet:\n" << data);
 			}
-			catch( Usb::Timeout &to ) {
+			catch( Usb::Timeout &DEBUG_ONLY(to) ) {
 				// do nothing on timeouts
 				ddout("IPModem: AT Response Timeout");
 			}
@@ -427,7 +427,7 @@ void IpModem::Close()
 			m_dev.BulkRead(read_ep, data, 5000);
 			ddout("IPModem: Close read packet:\n" << data);
 		}
-		catch( Usb::Timeout &to ) {
+		catch( Usb::Timeout &DEBUG_ONLY(to) ) {
 			// do nothing on timeouts
 			ddout("IPModem: Close Read Timeout");
 		}

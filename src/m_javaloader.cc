@@ -356,7 +356,7 @@ JavaLoader::~JavaLoader()
 		if( m_StreamStarted )
 			StopStream();
 	}
-	catch( std::exception &e ) {
+	catch( std::exception &DEBUG_ONLY(e) ) {
 		dout("Exception ignored in ~JavaLoader(): " << e.what());
 	}
 	catch( ... ) {
