@@ -34,6 +34,14 @@
 #include <map>
 #include <stdint.h>
 #include <stdexcept>
+	
+#ifdef WINCE
+/* The WinCE compiler v14.00.60131 doesn't like using operator= from base classes, so don't
+ * confuse it with a using directive. */
+#define USE_BASE_ASSIGNMENT_OPERATOR
+#else
+#define USE_BASE_ASSIGNMENT_OPERATOR using base_type::operator=;
+#endif
 
 // forward declarations
 namespace Barry { class Data; }
@@ -50,7 +58,7 @@ namespace Barry {
 // the \r carriage return characters
 class BXEXPORT Cr2LfWrapper
 {
-	friend std::ostream& operator<< (std::ostream &os, const Cr2LfWrapper &str);
+	friend BXEXPORT std::ostream& operator<< (std::ostream &os, const Cr2LfWrapper &str);
 	const std::string &m_str;
 public:
 	explicit Cr2LfWrapper(const std::string &str)
@@ -309,8 +317,8 @@ public:
 	using base_type::erase;
 	using base_type::swap;
 	using base_type::clear;
-	using base_type::operator=;
 	using base_type::operator[];
+	USE_BASE_ASSIGNMENT_OPERATOR
 };
 BXEXPORT std::ostream& operator<< (std::ostream &os, const EmailList &list);
 
@@ -450,6 +458,9 @@ BXEXPORT std::ostream& operator<<(std::ostream &os, const Date &date);
 class BXEXPORT CategoryList : public std::vector<std::string>
 {
 public:
+	typedef std::vector<std::string>		base_type;
+
+public:
 	/// Parses the given comma delimited category string into
 	/// this CategoryList object, appending each token to the vector.
 	/// Will clear vector beforehand.
@@ -460,7 +471,7 @@ public:
 	/// protocol values.
 	void CategoryList2Str(std::string &str) const;
 
-	using std::vector<std::string>::operator=;
+	USE_BASE_ASSIGNMENT_OPERATOR
 };
 BXEXPORT std::ostream& operator<<(std::ostream &os, const CategoryList &cl);
 
