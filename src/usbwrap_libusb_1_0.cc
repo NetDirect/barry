@@ -822,7 +822,7 @@ uint8_t ConfigDescriptor::GetNumber() const {
 // InterfaceDescriptor
 
 InterfaceDescriptor::InterfaceDescriptor(ConfigDescriptor& cfgdesc,
-					 int interface, int altsetting)
+					 int iface, int altsetting)
 	: m_impl(new InterfaceDescriptorImpl())
 {
 	m_impl->m_desc = NULL;
@@ -830,9 +830,9 @@ InterfaceDescriptor::InterfaceDescriptor(ConfigDescriptor& cfgdesc,
 	// Find the descriptor
 	m_impl->m_desc =
 		&(cfgdesc.m_impl->m_desc
-		     ->interface[interface]
+		     ->interface[iface]
 		  .altsetting[altsetting]);
-	dout("    interface_desc #" << std::dec << interface << " loaded"
+	dout("    interface_desc #" << std::dec << iface << " loaded"
 	     << "\nbLength: " << std::dec << (unsigned) m_impl->m_desc->bLength
 	     << "\nbDescriptorType: " << std::dec << (unsigned) m_impl->m_desc->bDescriptorType
 	     << "\nbInterfaceNumber: " << std::dec << (unsigned) m_impl->m_desc->bInterfaceNumber

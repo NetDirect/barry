@@ -174,7 +174,7 @@ private:
 	const std::auto_ptr<InterfaceDescriptorImpl> m_impl;
 public:
 	InterfaceDescriptor(ConfigDescriptor& cfgdesc,
-			    int interface, int altsetting);
+			    int iface, int altsetting);
 	~InterfaceDescriptor();
 	uint8_t GetClass() const;
 	uint8_t GetNumber() const;
