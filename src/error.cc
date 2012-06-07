@@ -20,6 +20,7 @@
 */
 
 #include "error.h"
+#include <errno.h>
 #include <sstream>
 #include <string.h>
 

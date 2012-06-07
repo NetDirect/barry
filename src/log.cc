@@ -21,6 +21,7 @@
 
 #include "log.h"
 #include "clog.h"
+#include "platform.h"
 #include <pthread.h>
 #include <stdio.h>
 #include <stdarg.h>

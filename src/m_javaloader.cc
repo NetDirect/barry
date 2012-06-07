@@ -37,6 +37,7 @@
 #include <iomanip>
 #include <vector>
 #include <string.h>
+#include <sys/time.h>
 #include <time.h>
 #include <stdio.h>
 #include "ios_state.h"
