@@ -95,6 +95,7 @@ private:
 	std::auto_ptr<PrivateControllerData> m_priv;
 
 private:
+	Controller(const Controller& rhs); // prevent copying
 	void SetupUsb(const ProbeResult &device);
 
 protected:

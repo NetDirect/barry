@@ -150,6 +150,8 @@ private:
 	bool m_read;
 	uint8_t m_addr;
 	EpType m_type;
+private:
+	EndpointDescriptor(const EndpointDescriptor& rhs); // Prevent copying
 public:
 	EndpointDescriptor(InterfaceDescriptor& dev, int endpoint);
 	~EndpointDescriptor();
@@ -172,6 +174,8 @@ public:
 	typedef std::vector<EndpointDescriptor*> base_type;
 private:
 	const std::auto_ptr<InterfaceDescriptorImpl> m_impl;
+private:
+	InterfaceDescriptor(const InterfaceDescriptor& rhs); // Prevent copying
 public:
 	InterfaceDescriptor(ConfigDescriptor& cfgdesc,
 			    int iface, int altsetting);
@@ -196,6 +200,8 @@ public:
 	typedef std::map<int, InterfaceDescriptor*> base_type;
 private:
 	const std::auto_ptr<ConfigDescriptorImpl> m_impl;
+private:
+	ConfigDescriptor(const ConfigDescriptor& rhs); // Prevent copying
 public:
 	ConfigDescriptor(DeviceDescriptor& dev, int cfgnumber);
 	~ConfigDescriptor();
@@ -216,6 +222,8 @@ public:
 	typedef std::map<int, ConfigDescriptor*> base_type;
 private:
 	const std::auto_ptr<DeviceDescriptorImpl> m_impl;
+private:
+	DeviceDescriptor(const DeviceDescriptor& rhs); // Prevent copying
 public:
 	DeviceDescriptor(DeviceID& devid);
 	~DeviceDescriptor();
@@ -230,6 +238,8 @@ class BXEXPORT DeviceList
 private:
 	// Private implementation structure
 	const std::auto_ptr<DeviceListImpl> m_impl;
+private:
+	DeviceList(const DeviceList& rhs); // Prevent copying
 public:
 	DeviceList();
 	~DeviceList();
@@ -249,7 +259,8 @@ private:
 
 	int m_timeout;
 	int m_lasterror;
-
+private:
+	Device(const Device& rhs); // Prevent copying
 public:
 	Device(const Usb::DeviceID& id, int timeout = USBWRAP_DEFAULT_TIMEOUT);
 	~Device();
