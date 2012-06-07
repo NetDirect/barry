@@ -23,7 +23,7 @@
 #ifndef __BARRY_GETOPT_H__
 #define __BARRY_GETOPT_H__
 
-#if defined(__QNX__)
+#if defined(__QNX__) || defined(WINCE)
 #include <unistd.h>
 #else
 #include <getopt.h>
