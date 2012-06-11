@@ -59,8 +59,11 @@ protected:
 	size_t AvailablePrependSpace() const;
 
 public:
+	static const int DEFAULT_SIZE = 0x4000;
+	static const int DEFAULT_PREPEND_SIZE = 0x100;
+
 	Data();
-	explicit Data(int endpoint, size_t startsize = 0x4000, size_t prependsize = 0x100);
+	explicit Data(int endpoint, size_t startsize = DEFAULT_SIZE, size_t prependsize = DEFAULT_PREPEND_SIZE);
 	Data(const void *ValidData, size_t size);
 	Data(const Data &other);
 	~Data();
