@@ -8,10 +8,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: barry-backup 0.18.3\n"
 "Report-Msgid-Bugs-To: http://netdirect.ca/barry\n"
-"POT-Creation-Date: 2011-06-16 11:49+0100\n"
+"POT-Creation-Date: 2012-06-12 21:11-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -58,7 +59,7 @@ msgstr ""
 msgid "Database Selection"
 msgstr ""
 
-#: src/DatabaseSelectDlg.glade:100 src/ConfigDlg.cc:77
+#: src/DatabaseSelectDlg.glade:100 src/ConfigDlg.cc:79
 msgid "Select the device databases you wish to backup:"
 msgstr ""
 
@@ -68,6 +69,10 @@ msgstr ""
 
 #: src/DatabaseSelectDlg.glade:162
 msgid "_Deselect All"
+msgstr ""
+
+#: src/DatabaseSelectDlg.glade:181
+msgid "Automatically select all databases on every backup"
 msgstr ""
 
 #: src/PromptDlg.glade:8
@@ -101,7 +106,7 @@ msgstr ""
 msgid "Backup"
 msgstr ""
 
-#: src/BackupWindow.glade:124 src/Thread.cc:180
+#: src/BackupWindow.glade:124 src/Thread.cc:203
 msgid "Restore..."
 msgstr ""
 
@@ -165,7 +170,7 @@ msgstr ""
 msgid "Device PIN"
 msgstr ""
 
-#: src/barry-gui.glade:627 src/BackupWindow.cc:83
+#: src/barry-gui.glade:627 src/BackupWindow.cc:84
 msgid "Progress"
 msgstr ""
 
@@ -195,129 +200,166 @@ msgstr ""
 msgid " tries remaining)"
 msgstr ""
 
-#: src/ConfigDlg.cc:86
+#: src/ConfigDlg.cc:89
 msgid ""
 "Select the device databases you wish to recover.  This selection acts like a "
 "filter, in that only the databases you select here will be restored, even if "
 "more exist in the backup data."
 msgstr ""
 
-#: src/BackupWindow.cc:79
+#: src/main.cc:41 src/BackupWindow.cc:347
+msgid "Glib::Exception caught in main: "
+msgstr ""
+
+#: src/main.cc:47
+msgid "Usb::Error caught in main:\n"
+msgstr ""
+
+#: src/main.cc:54
+msgid ""
+"Device busy.  This is likely due to the usb_storage kernel module being "
+"loaded.  Try 'rmmod usb_storage'."
+msgstr ""
+
+#: src/main.cc:62
+msgid "std::exception caught in main: "
+msgstr ""
+
+#: src/main.cc:110
+msgid "Enable protocol debug output to stdout/stderr"
+msgstr ""
+
+#: src/main.cc:113 src/main.cc:114
+msgid "Options specific to the Barry Backup application."
+msgstr ""
+
+#: src/main.cc:118
+msgid "Backup program for the Blackberry Handheld"
+msgstr ""
+
+#: src/BackupWindow.cc:80
 msgid "PIN"
 msgstr ""
 
-#: src/BackupWindow.cc:80 src/DatabaseSelectDlg.cc:77
+#: src/BackupWindow.cc:81 src/DatabaseSelectDlg.cc:87
 msgid "Name"
 msgstr ""
 
-#: src/BackupWindow.cc:81
+#: src/BackupWindow.cc:82
 msgid "Status"
 msgstr ""
 
-#: src/BackupWindow.cc:121 src/BackupWindow.cc:138
+#: src/BackupWindow.cc:122 src/BackupWindow.cc:139
 msgid "Scanning for devices..."
 msgstr ""
 
-#: src/BackupWindow.cc:147
+#: src/BackupWindow.cc:149
+msgid ""
+"There were some potential BlackBerry devices that could not be probed.  "
+"Please check your system's USB permissions if this happens regularly.\n"
+"\n"
+msgstr ""
+
+#: src/BackupWindow.cc:161
 msgid "No devices."
 msgstr ""
 
-#: src/BackupWindow.cc:149
+#: src/BackupWindow.cc:163
 msgid "1 device:"
 msgstr ""
 
-#: src/BackupWindow.cc:153
+#: src/BackupWindow.cc:167
 msgid " devices:"
 msgstr ""
 
-#: src/BackupWindow.cc:169
+#: src/BackupWindow.cc:183
 msgid "All devices loaded."
 msgstr ""
 
-#: src/BackupWindow.cc:183
+#: src/BackupWindow.cc:197
 msgid "Connecting to Device..."
 msgstr ""
 
-#: src/BackupWindow.cc:199 src/BackupWindow.cc:213 src/BackupWindow.cc:228
-#: src/BackupWindow.cc:235
+#: src/BackupWindow.cc:213 src/BackupWindow.cc:227 src/BackupWindow.cc:242
+#: src/BackupWindow.cc:249
 msgid "Cannot connect to "
 msgstr ""
 
-#: src/BackupWindow.cc:205
+#: src/BackupWindow.cc:219
 msgid "Connection cancelled."
 msgstr ""
 
-#: src/BackupWindow.cc:240
+#: src/BackupWindow.cc:254
 msgid "Connected to "
 msgstr ""
 
-#: src/BackupWindow.cc:247
+#: src/BackupWindow.cc:261
 msgid ""
 " is working, disconnecting from it may cause data corruption, are you sure "
 "to proceed?"
 msgstr ""
 
-#: src/BackupWindow.cc:256
+#: src/BackupWindow.cc:269
 msgid "Disconnected from "
 msgstr ""
 
-#: src/BackupWindow.cc:259
+#: src/BackupWindow.cc:272
 msgid "Not connected."
 msgstr ""
 
-#: src/BackupWindow.cc:267
+#: src/BackupWindow.cc:280
 msgid "Unnamed device found (PIN: "
 msgstr ""
 
-#: src/BackupWindow.cc:267
+#: src/BackupWindow.cc:280
 msgid "Please enter a name for it:"
 msgstr ""
 
-#: src/BackupWindow.cc:275 src/BackupWindow.cc:551
+#: src/BackupWindow.cc:288 src/BackupWindow.cc:583
 msgid "Error saving config: "
 msgstr ""
 
-#: src/BackupWindow.cc:317
+#: src/BackupWindow.cc:330
 msgid ""
 "One or more devices are working, disconnecting now may cause data "
 "corruption. Proceed anyway?"
 msgstr ""
 
-#: src/BackupWindow.cc:376
+#: src/BackupWindow.cc:387
 msgid "Backup on"
 msgstr ""
 
-#: src/BackupWindow.cc:378
+#: src/BackupWindow.cc:389
 msgid "Restore on"
 msgstr ""
 
-#: src/BackupWindow.cc:380
+#: src/BackupWindow.cc:391
 msgid "Operation on"
 msgstr ""
 
-#: src/BackupWindow.cc:382
+#: src/BackupWindow.cc:393
 msgid " finished!"
 msgstr ""
 
-#: src/BackupWindow.cc:394
+#: src/BackupWindow.cc:410
 msgid ""
 "Warning\n"
 "\n"
 "Not all records were processed on device: "
 msgstr ""
 
-#: src/BackupWindow.cc:395
+#: src/BackupWindow.cc:411
 msgid ""
 "\n"
 "\n"
 "Only "
 msgstr ""
 
-#: src/BackupWindow.cc:395
+#: src/BackupWindow.cc:411
 msgid " of "
 msgstr ""
 
-#: src/BackupWindow.cc:396
+#: src/BackupWindow.cc:412
 msgid ""
 " records were backed up.\n"
 "\n"
@@ -328,106 +370,131 @@ msgid ""
 "sometimes a restore of just that database may fix the issue."
 msgstr ""
 
-#: src/BackupWindow.cc:413 src/BackupWindow.cc:491
+#: src/BackupWindow.cc:414 src/BackupWindow.cc:423
+msgid ""
+"\n"
+"\n"
+"Summary:\n"
+msgstr ""
+
+#: src/BackupWindow.cc:423
+msgid "Warning: Record counts are not the same on device: "
+msgstr ""
+
+#: src/BackupWindow.cc:423
+msgid ""
+"\n"
+"It claims to have "
+msgstr ""
+
+#: src/BackupWindow.cc:423 src/DeviceIface.cc:291
+msgid " records, but actually retrieved "
+msgstr ""
+
+#: src/BackupWindow.cc:444 src/BackupWindow.cc:522
 msgid "Thread already in progress."
 msgstr ""
 
-#: src/BackupWindow.cc:420
+#: src/BackupWindow.cc:451
 msgid "Could not create directory: "
 msgstr ""
 
-#: src/BackupWindow.cc:427
+#: src/BackupWindow.cc:458
 msgid "No databases selected in configuration."
 msgstr ""
 
-#: src/BackupWindow.cc:436
+#: src/BackupWindow.cc:467
 msgid "Please enter a label for this backup (blank is ok):"
 msgstr ""
 
-#: src/BackupWindow.cc:448
+#: src/BackupWindow.cc:479
 msgid "Error starting backup thread: "
 msgstr ""
 
-#: src/BackupWindow.cc:453
+#: src/BackupWindow.cc:484
 msgid "Backup of "
 msgstr ""
 
-#: src/BackupWindow.cc:453 src/BackupWindow.cc:507
+#: src/BackupWindow.cc:484 src/BackupWindow.cc:538
 msgid " in progress..."
 msgstr ""
 
-#: src/BackupWindow.cc:467
+#: src/BackupWindow.cc:498
 msgid "Select backup to restore from"
 msgstr ""
 
-#: src/BackupWindow.cc:502
+#: src/BackupWindow.cc:533
 msgid "Error starting restore thread: "
 msgstr ""
 
-#: src/BackupWindow.cc:507
+#: src/BackupWindow.cc:538
 msgid "Restore of "
 msgstr ""
 
-#: src/BackupWindow.cc:554
+#: src/BackupWindow.cc:586
 msgid "Config saved successfully."
 msgstr ""
 
-#: src/BackupWindow.cc:592
+#: src/BackupWindow.cc:624
 msgid "and Barry contributors.  See AUTHORS file"
 msgstr ""
 
-#: src/BackupWindow.cc:593
+#: src/BackupWindow.cc:625
 msgid "for detailed contribution information."
 msgstr ""
 
-#: src/BackupWindow.cc:601
+#: src/BackupWindow.cc:633
 msgid "Using library: "
 msgstr ""
 
-#: src/DeviceIface.cc:83 src/DeviceIface.cc:148
+#: src/DeviceIface.cc:85 src/DeviceIface.cc:151
 msgid "Terminated by user."
 msgstr ""
 
-#: src/DeviceIface.cc:121
+#: src/DeviceIface.cc:124
 msgid "Error while restoring "
 msgstr ""
 
-#: src/DeviceIface.cc:124
+#: src/DeviceIface.cc:127
 msgid "  Will continue processing."
 msgstr ""
 
-#: src/DeviceIface.cc:130
+#: src/DeviceIface.cc:133
 msgid "Error on database: "
 msgstr ""
 
-#: src/DeviceIface.cc:314 src/DeviceIface.cc:339
+#: src/DeviceIface.cc:291
+msgid " claimed to have "
+msgstr ""
+
+#: src/DeviceIface.cc:313 src/DeviceIface.cc:338
 msgid "Thread already running."
 msgstr ""
 
-#: src/DatabaseSelectDlg.cc:76
+#: src/DatabaseSelectDlg.cc:86
 msgid "Active"
 msgstr ""
 
-#: src/Thread.cc:56 src/Thread.cc:127
+#: src/Thread.cc:56 src/Thread.cc:139
 msgid "Ready"
 msgstr ""
 
-#: src/Thread.cc:100 src/Thread.cc:118 src/Thread.cc:203
+#: src/Thread.cc:112 src/Thread.cc:130 src/Thread.cc:228
 msgid "Connected"
 msgstr ""
 
-#: src/Thread.cc:157
+#: src/Thread.cc:180
 msgid "Backup..."
 msgstr ""
 
-#: src/Thread.cc:196
+#: src/Thread.cc:221
 msgid " error: "
 msgstr ""
 
-#: src/Thread.cc:213
+#: src/Thread.cc:238
 msgid "Erasing database: "
 msgstr ""
 
-#: src/Thread.cc:219
+#: src/Thread.cc:244
 msgid "Restored database: "
 msgstr ""

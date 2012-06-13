@@ -288,7 +288,7 @@ std::vector<std::string> DeviceInterface::CompareTotals(const Barry::ConfigFile:
 		if( backupList.IsSelected(i->Name) ) {
 			if( (int)i->RecordCount != m_backupStats[i->Name] ) {
 				ostringstream oss;
-				oss << "'" << i->Name << "' claimed to have " << i->RecordCount << " records, but actually retrieved " << m_backupStats[i->Name] << ".";
+				oss << "'" << i->Name << "'" << _(" claimed to have ") << i->RecordCount << _(" records, but actually retrieved ") << m_backupStats[i->Name] << ".";
 				msgs.push_back(oss.str());
 			}
 		}

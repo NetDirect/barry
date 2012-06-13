@@ -86,10 +86,7 @@ void ConfigDlg::on_configure_backup()
 void ConfigDlg::on_configure_restore()
 {
 	DatabaseSelectDlg dlg(m_dbdb, m_restoreList, m_autoSelectAll,
-		_("Select the device databases you wish to recover.  "
-		"This selection acts like a filter, in that only the databases "
-		"you select here will be restored, even if more exist in the "
-		"backup data."), false);
+		_("Select the device databases you wish to recover.  This selection acts like a filter, in that only the databases you select here will be restored, even if more exist in the backup data."), false);
 	if( dlg.run() == Gtk::RESPONSE_OK ) {
 		m_restoreList = dlg.GetSelections();
 	}

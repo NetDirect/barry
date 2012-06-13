@@ -258,8 +258,7 @@ bool BackupWindow::Connect(Thread *thread)
 void BackupWindow::Disconnect(Thread *thread)
 {
 	if( thread->Working() ) {
-		Gtk::MessageDialog dialog(*this, thread->GetFullname() + _(" is working, "
-			"disconnecting from it may cause data corruption, are you sure to proceed?"),
+		Gtk::MessageDialog dialog(*this, thread->GetFullname() + _(" is working, disconnecting from it may cause data corruption, are you sure to proceed?"),
 			false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL);
 		if( dialog.run() == Gtk::RESPONSE_CANCEL )
 			return;
@@ -328,9 +327,7 @@ bool BackupWindow::CheckWorking()
 	}
 
 	if( working ) {
-		Gtk::MessageDialog dialog(*this, _("One or more devices are working, "
-			"disconnecting now may cause data corruption. "
-			"Proceed anyway?"),
+		Gtk::MessageDialog dialog(*this, _("One or more devices are working, disconnecting now may cause data corruption. Proceed anyway?"),
 			false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL);
 		if( dialog.run() != Gtk::RESPONSE_OK )
 			return false;
@@ -347,7 +344,7 @@ void BackupWindow::signal_exception_handler()
 	catch( Glib::Exception &e ) {
 		// This usually just means a missing .glade file,
 		// so we try to carry on.
-		std::cerr << "Glib::Exception caught in main: " << std::endl;
+		std::cerr << _("Glib::Exception caught in main: ") << std::endl;
 		std::cerr << e.what() << std::endl;
 		Gtk::MessageDialog msg(e.what());
 		msg.run();

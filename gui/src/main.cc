@@ -38,20 +38,20 @@ void main_exception_handler()
 		throw;
 	}
 	catch( Glib::Exception &e ) {
-		std::cerr << "Glib::Exception caught in main: " << std::endl;
+		std::cerr << _("Glib::Exception caught in main: ") << std::endl;
 		std::cerr << e.what() << std::endl;
 		Gtk::MessageDialog msg(e.what());
 		msg.run();
 	}
 	catch( Usb::Error &e ) {
-		std::cerr << "Usb::Error caught in main:\n"
+		std::cerr << _("Usb::Error caught in main:\n")
 			<< e.what() << std::endl;
 
 		// special check for EBUSY to make the error message
 		// more user friendly
 		Gtk::MessageDialog msg("");
 		if( e.system_errcode() == -EBUSY ) {
-			msg.set_message("Device busy.  This is likely due to the usb_storage kernel module being loaded.  Try 'rmmod usb_storage'.");
+			msg.set_message(_("Device busy.  This is likely due to the usb_storage kernel module being loaded.  Try 'rmmod usb_storage'."));
 		}
 		else {
 			msg.set_message(e.what());
@@ -59,7 +59,7 @@ void main_exception_handler()
 		msg.run();
 	}
 	catch( std::exception &e ) {
-		std::cerr << "std::exception caught in main: " << std::endl;
+		std::cerr << _("std::exception caught in main: ") << std::endl;
 		std::cerr << e.what() << std::endl;
 		Gtk::MessageDialog msg(e.what());
 		msg.run();
@@ -107,15 +107,15 @@ int main(int argc, char *argv[])
 		OptionEntry::FLAG_OPTIONAL_ARG);
 	debug_opt.set_short_name('d');
 	debug_opt.set_long_name("debug-output");
-	debug_opt.set_description("Enable protocol debug output to stdout/stderr");
+	debug_opt.set_description(_("Enable protocol debug output to stdout/stderr"));
 
 	OptionGroup option_group("barry",
-		"Options specific to the Barry Backup application.",
-		"Options specific to the Barry Backup application.");
+		_("Options specific to the Barry Backup application."),
+		_("Options specific to the Barry Backup application."));
 	bool debug_flag = false;
 	option_group.add_entry(debug_opt, debug_flag);
 
-	OptionContext option_context("Backup program for the Blackberry Handheld");
+	OptionContext option_context(_("Backup program for the Blackberry Handheld"));
 	option_context.add_group(option_group);
 
 	try {
