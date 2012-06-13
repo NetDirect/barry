@@ -1,0 +1,506 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Net Direct, Inc.
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: barry-backup 0.18.4\n"
+"Report-Msgid-Bugs-To: http://netdirect.ca/barry\n"
+"POT-Creation-Date: 2012-06-12 21:11-0400\n"
+"PO-Revision-Date: 2012-06-12 23:23-0300\n"
+"Last-Translator: Cesar Ballardini <cesar@ballardini.com.ar>\n"
+"Language-Team: es\n"
+"Language: es\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/PasswordDlg.glade:8
+msgid "Password Required"
+msgstr "Se necesita contraseña"
+
+#: src/PasswordDlg.glade:99
+msgid "Please enter device password: (5 tries remaining)"
+msgstr "Escriba la contraseña del dispositivo: (quedan 5 intentos)"
+
+#: src/ConfigDlg.glade:7
+msgid "Configuration of Current PIN"
+msgstr "Configuración del PIN actual"
+
+#: src/ConfigDlg.glade:33
+msgid "Backup path:"
+msgstr "Ruta del respaldo:"
+
+#: src/ConfigDlg.glade:70
+msgid "Device name:"
+msgstr "Nombre del dispositivo:"
+
+#: src/ConfigDlg.glade:83
+msgid "Prompt for label on every backup."
+msgstr "Solicita etiqueta en cada respaldo."
+
+#: src/ConfigDlg.glade:102
+msgid ""
+"Database restore filter.  Only databases selected in this list will be "
+"restored, even if more exist in the backup."
+msgstr "Filtro de restauración de base de datos.  Sólo las bases seleccionadas en esta lista se restaurarón, incluso si existen otras en el respaldo."
+
+#: src/ConfigDlg.glade:118
+msgid "Device database backup list:"
+msgstr "Lista de respaldos de bases del dispositivo:"
+
+#: src/ConfigDlg.glade:138 src/ConfigDlg.glade:166
+msgid "Configure..."
+msgstr "Configuración..."
+
+#: src/DatabaseSelectDlg.glade:8
+msgid "Database Selection"
+msgstr "Selección de base de datos"
+
+#: src/DatabaseSelectDlg.glade:100 src/ConfigDlg.cc:79
+msgid "Select the device databases you wish to backup:"
+msgstr "Elija la base de datos del dispositivo que desee respaldar:"
+
+#: src/DatabaseSelectDlg.glade:150
+msgid "Select _All"
+msgstr "Selecciona Tod_As"
+
+#: src/DatabaseSelectDlg.glade:162
+msgid "_Deselect All"
+msgstr "Borra la selección"
+
+#: src/DatabaseSelectDlg.glade:181
+msgid "Automatically select all databases on every backup"
+msgstr "Automáticamente selecciona todas las bases de datos en cada respaldo"
+
+#: src/PromptDlg.glade:8
+msgid "Question"
+msgstr "Pregunta"
+
+#: src/PromptDlg.glade:101
+msgid "Nice detailed question for the user to answer..."
+msgstr "Pregunta detallada para que responda el usuario..."
+
+#: src/BackupWindow.glade:7 src/barry-gui.glade:8 src/barry-gui.glade:296
+#: src/barry-gui.glade:446
+msgid "Barry Backup"
+msgstr "Barry Backup"
+
+#: src/BackupWindow.glade:18 src/barry-gui.glade:33 src/barry-gui.glade:321
+#: src/barry-gui.glade:471
+msgid "_File"
+msgstr "Archivo"
+
+#: src/BackupWindow.glade:36 src/barry-gui.glade:110 src/barry-gui.glade:365
+#: src/barry-gui.glade:515
+msgid "_Help"
+msgstr "Ayuda"
+
+#: src/BackupWindow.glade:72
+msgid "Device:"
+msgstr "Dispositivo"
+
+#: src/BackupWindow.glade:111 src/barry-gui.glade:684
+msgid "Backup"
+msgstr "Respaldo"
+
+#: src/BackupWindow.glade:124 src/Thread.cc:203
+msgid "Restore..."
+msgstr "Restauración..."
+
+#: src/BackupWindow.glade:137
+msgid "Config..."
+msgstr "Configuración..."
+
+#: src/BackupWindow.glade:150
+msgid "Disconnect"
+msgstr "Desconectar"
+
+#: src/BackupWindow.glade:163
+msgid "Rescan USB Bus"
+msgstr "Reexplorar el Bus USB"
+
+#: src/BackupWindow.glade:178
+msgid "Disconnect All"
+msgstr "Desconectar todo"
+
+#: src/barry-gui.glade:55
+msgid "_Device"
+msgstr "_Dispositivo"
+
+#: src/barry-gui.glade:64 src/barry-gui.glade:147
+msgid "_Connect"
+msgstr "_Conectar"
+
+#: src/barry-gui.glade:73 src/barry-gui.glade:162
+msgid "_Disconnect"
+msgstr "_Desconectar"
+
+#: src/barry-gui.glade:88
+msgid "_Backup..."
+msgstr "Respaldar..."
+
+#: src/barry-gui.glade:97
+msgid "_Restore..."
+msgstr "Restaurar..."
+
+#: src/barry-gui.glade:119 src/barry-gui.glade:374 src/barry-gui.glade:524
+msgid "_About"
+msgstr "_Acerca de"
+
+#: src/barry-gui.glade:190 src/barry-gui.glade:403
+msgid "_Backup"
+msgstr "_Respaldar"
+
+#: src/barry-gui.glade:205 src/barry-gui.glade:415
+msgid "_Restore"
+msgstr "_Restaurar"
+
+#: src/barry-gui.glade:343 src/barry-gui.glade:493
+msgid "_Edit"
+msgstr "_Editar"
+
+#: src/barry-gui.glade:352 src/barry-gui.glade:502
+msgid "_Config..."
+msgstr "_Configurar..."
+
+#: src/barry-gui.glade:605
+msgid "Device PIN"
+msgstr "PIN del dispositivo"
+
+#: src/barry-gui.glade:627 src/BackupWindow.cc:84
+msgid "Progress"
+msgstr "Avance"
+
+#: src/barry-gui.glade:649
+msgid "Database"
+msgstr "Base de datos"
+
+#: src/barry-gui.glade:701
+msgid "Restore"
+msgstr "Restauración"
+
+#: src/barry-gui.glade:736
+msgid "Device Selection"
+msgstr "Selección de dispositivo"
+
+#: src/barry-gui.glade:827
+msgid ""
+"Multiple BlackBerry devices have been found. Please select the one to work "
+"with:"
+msgstr "Se encontraron varios dispositivos Blackberry.  Por favor elija uno para trabajar:"
+
+#: src/PasswordDlg.cc:41
+msgid "Please enter device password: ("
+msgstr "Escriba la contraseña del dispositivo: (quedan "
+
+#: src/PasswordDlg.cc:41
+msgid " tries remaining)"
+msgstr " intentos)"
+
+#: src/ConfigDlg.cc:89
+msgid ""
+"Select the device databases you wish to recover.  This selection acts like a "
+"filter, in that only the databases you select here will be restored, even if "
+"more exist in the backup data."
+msgstr "Elija las bases de datos del dispositivo que desea recuperar.  Esta selección actúa como filtro, y sólo las bases que seleccionó se restaurarán, incluso si existen otras en los datos del respaldo."
+
+#: src/main.cc:41 src/BackupWindow.cc:347
+msgid "Glib::Exception caught in main: "
+msgstr "Glib: en main se encontró una excepción:"
+
+#: src/main.cc:47
+msgid "Usb::Error caught in main:\n"
+msgstr "se encontró un Usb::Error en main:\n"
+
+#: src/main.cc:54
+msgid ""
+"Device busy.  This is likely due to the usb_storage kernel module being "
+"loaded.  Try 'rmmod usb_storage'."
+msgstr "Dispositivo ocupado.  Probablemente el módulo usb_storage está cargado en el núcleo.  Pruebe 'rmmod usb_storage'."
+
+#: src/main.cc:62
+msgid "std::exception caught in main: "
+msgstr "se encontró std::exception en main: "
+
+#: src/main.cc:110
+msgid "Enable protocol debug output to stdout/stderr"
+msgstr "Habilitar la salida de depuración del protocolo por stdout/stderr"
+
+#: src/main.cc:113 src/main.cc:114
+msgid "Options specific to the Barry Backup application."
+msgstr "Opciones específicas a la aplicación Barry Backup."
+
+#: src/main.cc:118
+msgid "Backup program for the Blackberry Handheld"
+msgstr "Programa de respaldo para el móvil Blackberry"
+
+#: src/BackupWindow.cc:80
+msgid "PIN"
+msgstr "PIN"
+
+#: src/BackupWindow.cc:81 src/DatabaseSelectDlg.cc:87
+msgid "Name"
+msgstr "Nombre"
+
+#: src/BackupWindow.cc:82
+msgid "Status"
+msgstr "Estado"
+
+#: src/BackupWindow.cc:122 src/BackupWindow.cc:139
+msgid "Scanning for devices..."
+msgstr "En busca de dispositivos..."
+
+#: src/BackupWindow.cc:149
+msgid ""
+"There were some potential BlackBerry devices that could not be probed.  "
+"Please check your system's USB permissions if this happens regularly.\n"
+"\n"
+msgstr "Existen algunos dispositivos Blackberry en potencia que no pueden detectarse.  Por favor, verifique los permisos de su sistema USB si esto sucede regularmente.\n\n"
+
+#: src/BackupWindow.cc:161
+msgid "No devices."
+msgstr "No hay dispositivos."
+
+#: src/BackupWindow.cc:163
+msgid "1 device:"
+msgstr "1 dispositivo:"
+
+#: src/BackupWindow.cc:167
+msgid " devices:"
+msgstr " dispositivos:"
+
+#: src/BackupWindow.cc:183
+msgid "All devices loaded."
+msgstr "Se han cargado todos los dispositivos."
+
+#: src/BackupWindow.cc:197
+msgid "Connecting to Device..."
+msgstr "Conectando al dispositivo..."
+
+#: src/BackupWindow.cc:213 src/BackupWindow.cc:227 src/BackupWindow.cc:242
+#: src/BackupWindow.cc:249
+msgid "Cannot connect to "
+msgstr "No se puede conectar con "
+
+#: src/BackupWindow.cc:219
+msgid "Connection cancelled."
+msgstr "Se canceló la conexión."
+
+#: src/BackupWindow.cc:254
+msgid "Connected to "
+msgstr "Conectado a "
+
+#: src/BackupWindow.cc:261
+msgid ""
+" is working, disconnecting from it may cause data corruption, are you sure "
+"to proceed?"
+msgstr " está funcionando, si lo desconectamos puede causar corrupción de datos, ¿está seguro de querer continuar?"
+
+#: src/BackupWindow.cc:269
+msgid "Disconnected from "
+msgstr "Desconectado de "
+
+#: src/BackupWindow.cc:272
+msgid "Not connected."
+msgstr "No está conectado."
+
+#: src/BackupWindow.cc:280
+msgid "Unnamed device found (PIN: "
+msgstr "Se encontró un dispositivo sin nombre (PIN: "
+
+#: src/BackupWindow.cc:280
+msgid "Please enter a name for it:"
+msgstr "Escriba un nombre para él:"
+
+#: src/BackupWindow.cc:288 src/BackupWindow.cc:583
+msgid "Error saving config: "
+msgstr "Error al guardar la configuración:"
+
+#: src/BackupWindow.cc:330
+msgid ""
+"One or more devices are working, disconnecting now may cause data "
+"corruption. Proceed anyway?"
+msgstr "Uno o más dispositivos están funcionando, si descaonecta ahora puede causar corrupción de datos.  ¿Está seguro de querer continuar?"
+
+#: src/BackupWindow.cc:387
+msgid "Backup on"
+msgstr "Respaldo sobre"
+
+#: src/BackupWindow.cc:389
+msgid "Restore on"
+msgstr "Restauración sobre"
+
+#: src/BackupWindow.cc:391
+msgid "Operation on"
+msgstr "Operación sobre"
+
+#: src/BackupWindow.cc:393
+msgid " finished!"
+msgstr " terminada!"
+
+#: src/BackupWindow.cc:410
+msgid ""
+"Warning\n"
+"\n"
+"Not all records were processed on device: "
+msgstr ""
+"Cuidado\n"
+"\n"
+"No se procesaron todos los registro en el dispositivo: "
+
+#: src/BackupWindow.cc:411
+msgid ""
+"\n"
+"\n"
+"Only "
+msgstr "\n\nSólo "
+
+#: src/BackupWindow.cc:411
+msgid " of "
+msgstr " de "
+
+#: src/BackupWindow.cc:412
+msgid ""
+" records were backed up.\n"
+"\n"
+"It is suspected that due to international characters in these records, the "
+"BlackBerry uses a different low-level protocol, which Barry Backup does not "
+"yet support.  Alternatively, there may be hidden records that cannot be "
+"edited in your device.  If this occurs in a database such as Address Book, "
+"sometimes a restore of just that database may fix the issue."
+msgstr ""
+"regitros se respaldaron.\n"
+"\n"
+"Existe la sospecha de que como hay caracteres internacionales en esos registros, el Blackberry utiliza un protocolo de bajo nivel diferente, el cual no es admitido aún por Barry Backup.  Alternativamente, pueden existir registros ocultos que no se pueden editar en su dispositivo.  Si esto es lo que ocurre en una base de datos como la Libreta de Direcciones, a veces el problema se arregla con restaurar sólo esa base de datos."
+
+#: src/BackupWindow.cc:414 src/BackupWindow.cc:423
+msgid ""
+"\n"
+"\n"
+"Summary:\n"
+msgstr "\n\nResumen:\n"
+
+#: src/BackupWindow.cc:423
+msgid "Warning: Record counts are not the same on device: "
+msgstr "Cuidado: La cantidad de registros no es la misma en el dispositivo: "
+
+#: src/BackupWindow.cc:423
+msgid ""
+"\n"
+"It claims to have "
+msgstr "\nAnuncia que tiene "
+
+#: src/BackupWindow.cc:423 src/DeviceIface.cc:291
+msgid " records, but actually retrieved "
+msgstr " registros, pero en realidad se recuperaron "
+
+#: src/BackupWindow.cc:444 src/BackupWindow.cc:522
+msgid "Thread already in progress."
+msgstr "Traajo en proceso."
+
+#: src/BackupWindow.cc:451
+msgid "Could not create directory: "
+msgstr "No se puede crear el directorio: "
+
+#: src/BackupWindow.cc:458
+msgid "No databases selected in configuration."
+msgstr "No hay bases de datos seleccionadas en la configuración."
+
+#: src/BackupWindow.cc:467
+msgid "Please enter a label for this backup (blank is ok):"
+msgstr "Escriba una etiqueta para este respaldo (puede dejarse en blanco):"
+
+#: src/BackupWindow.cc:479
+msgid "Error starting backup thread: "
+msgstr "Error al iniciar el trabajo de respaldo: "
+
+#: src/BackupWindow.cc:484
+msgid "Backup of "
+msgstr "Respaldo de "
+
+#: src/BackupWindow.cc:484 src/BackupWindow.cc:538
+msgid " in progress..."
+msgstr " en proceso..."
+
+#: src/BackupWindow.cc:498
+msgid "Select backup to restore from"
+msgstr "Elija el respaldo a restaurar desde"
+
+#: src/BackupWindow.cc:533
+msgid "Error starting restore thread: "
+msgstr "Error al iniciar el trabajo de restauración: "
+
+#: src/BackupWindow.cc:538
+msgid "Restore of "
+msgstr "Restauración de "
+
+#: src/BackupWindow.cc:586
+msgid "Config saved successfully."
+msgstr "Se guardó la configuración."
+
+#: src/BackupWindow.cc:624
+msgid "and Barry contributors.  See AUTHORS file"
+msgstr "y los colaboradores de Barry.  Vea en el archivo AUTHORS"
+
+#: src/BackupWindow.cc:625
+msgid "for detailed contribution information."
+msgstr "para encontrar la información detallada de las colaboracioens."
+
+#: src/BackupWindow.cc:633
+msgid "Using library: "
+msgstr "Biblioteca en uso: "
+
+#: src/DeviceIface.cc:85 src/DeviceIface.cc:151
+msgid "Terminated by user."
+msgstr "El usuario lo terminó."
+
+#: src/DeviceIface.cc:124
+msgid "Error while restoring "
+msgstr "Error mientras restauraba "
+
+#: src/DeviceIface.cc:127
+msgid "  Will continue processing."
+msgstr "  Se continuará con el procesamiento."
+
+#: src/DeviceIface.cc:133
+msgid "Error on database: "
+msgstr "Error en la base de datos: "
+
+#: src/DeviceIface.cc:291
+msgid " claimed to have "
+msgstr " indica que tiene "
+
+#: src/DeviceIface.cc:313 src/DeviceIface.cc:338
+msgid "Thread already running."
+msgstr "El trabajo ya está funcionando."
+
+#: src/DatabaseSelectDlg.cc:86
+msgid "Active"
+msgstr "Activo"
+
+#: src/Thread.cc:56 src/Thread.cc:139
+msgid "Ready"
+msgstr "Listo"
+
+#: src/Thread.cc:112 src/Thread.cc:130 src/Thread.cc:228
+msgid "Connected"
+msgstr "Conectado"
+
+#: src/Thread.cc:180
+msgid "Backup..."
+msgstr "Respaldo..."
+
+#: src/Thread.cc:221
+msgid " error: "
+msgstr " error: "
+
+#: src/Thread.cc:238
+msgid "Erasing database: "
+msgstr "Se borra la base de datos: "
+
+#: src/Thread.cc:244
+msgid "Restored database: "
+msgstr "Base de datos restaurada: "
