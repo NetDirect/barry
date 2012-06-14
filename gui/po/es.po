@@ -45,7 +45,9 @@ msgstr "Solicita etiqueta en cada respaldo."
 msgid ""
 "Database restore filter.  Only databases selected in this list will be "
 "restored, even if more exist in the backup."
-msgstr "Filtro de restauración de base de datos.  Sólo las bases seleccionadas en esta lista se restaurarón, incluso si existen otras en el respaldo."
+msgstr ""
+"Filtro de restauración de base de datos.  Sólo las bases seleccionadas en "
+"esta lista se restaurarón, incluso si existen otras en el respaldo."
 
 #: src/ConfigDlg.glade:118
 msgid "Device database backup list:"
@@ -104,7 +106,7 @@ msgstr "Dispositivo"
 
 #: src/BackupWindow.glade:111 src/barry-gui.glade:684
 msgid "Backup"
-msgstr "Respaldo"
+msgstr "Respaldar"
 
 #: src/BackupWindow.glade:124 src/Thread.cc:203
 msgid "Restore..."
@@ -190,7 +192,9 @@ msgstr "Selección de dispositivo"
 msgid ""
 "Multiple BlackBerry devices have been found. Please select the one to work "
 "with:"
-msgstr "Se encontraron varios dispositivos Blackberry.  Por favor elija uno para trabajar:"
+msgstr ""
+"Se encontraron varios dispositivos Blackberry.  Por favor elija uno para "
+"trabajar:"
 
 #: src/PasswordDlg.cc:41
 msgid "Please enter device password: ("
@@ -205,7 +209,10 @@ msgid ""
 "Select the device databases you wish to recover.  This selection acts like a "
 "filter, in that only the databases you select here will be restored, even if "
 "more exist in the backup data."
-msgstr "Elija las bases de datos del dispositivo que desea recuperar.  Esta selección actúa como filtro, y sólo las bases que seleccionó se restaurarán, incluso si existen otras en los datos del respaldo."
+msgstr ""
+"Elija las bases de datos del dispositivo que desea recuperar.  Esta "
+"selección actúa como filtro, y sólo las bases que seleccionó se restaurarán, "
+"incluso si existen otras en los datos del respaldo."
 
 #: src/main.cc:41 src/BackupWindow.cc:347
 msgid "Glib::Exception caught in main: "
@@ -219,7 +226,9 @@ msgstr "se encontró un Usb::Error en main:\n"
 msgid ""
 "Device busy.  This is likely due to the usb_storage kernel module being "
 "loaded.  Try 'rmmod usb_storage'."
-msgstr "Dispositivo ocupado.  Probablemente el módulo usb_storage está cargado en el núcleo.  Pruebe 'rmmod usb_storage'."
+msgstr ""
+"Dispositivo ocupado.  Probablemente el módulo usb_storage está cargado en el "
+"núcleo.  Pruebe 'rmmod usb_storage'."
 
 #: src/main.cc:62
 msgid "std::exception caught in main: "
@@ -258,7 +267,11 @@ msgid ""
 "There were some potential BlackBerry devices that could not be probed.  "
 "Please check your system's USB permissions if this happens regularly.\n"
 "\n"
-msgstr "Existen algunos dispositivos Blackberry en potencia que no pueden detectarse.  Por favor, verifique los permisos de su sistema USB si esto sucede regularmente.\n\n"
+msgstr ""
+"Existen algunos dispositivos Blackberry en potencia que no pueden "
+"detectarse.  Por favor, verifique los permisos de su sistema USB si esto "
+"sucede regularmente.\n"
+"\n"
 
 #: src/BackupWindow.cc:161
 msgid "No devices."
@@ -297,7 +310,9 @@ msgstr "Conectado a "
 msgid ""
 " is working, disconnecting from it may cause data corruption, are you sure "
 "to proceed?"
-msgstr " está funcionando, si lo desconectamos puede causar corrupción de datos, ¿está seguro de querer continuar?"
+msgstr ""
+" está funcionando, si lo desconectamos puede causar corrupción de datos, "
+"¿está seguro de querer continuar?"
 
 #: src/BackupWindow.cc:269
 msgid "Disconnected from "
@@ -323,7 +338,9 @@ msgstr "Error al guardar la configuración:"
 msgid ""
 "One or more devices are working, disconnecting now may cause data "
 "corruption. Proceed anyway?"
-msgstr "Uno o más dispositivos están funcionando, si descaonecta ahora puede causar corrupción de datos.  ¿Está seguro de querer continuar?"
+msgstr ""
+"Uno o más dispositivos están funcionando, si descaonecta ahora puede causar "
+"corrupción de datos.  ¿Está seguro de querer continuar?"
 
 #: src/BackupWindow.cc:387
 msgid "Backup on"
@@ -356,7 +373,10 @@ msgid ""
 "\n"
 "\n"
 "Only "
-msgstr "\n\nSólo "
+msgstr ""
+"\n"
+"\n"
+"Sólo "
 
 #: src/BackupWindow.cc:411
 msgid " of "
@@ -374,14 +394,22 @@ msgid ""
 msgstr ""
 "regitros se respaldaron.\n"
 "\n"
-"Existe la sospecha de que como hay caracteres internacionales en esos registros, el Blackberry utiliza un protocolo de bajo nivel diferente, el cual no es admitido aún por Barry Backup.  Alternativamente, pueden existir registros ocultos que no se pueden editar en su dispositivo.  Si esto es lo que ocurre en una base de datos como la Libreta de Direcciones, a veces el problema se arregla con restaurar sólo esa base de datos."
+"Existe la sospecha de que como hay caracteres internacionales en esos "
+"registros, el Blackberry utiliza un protocolo de bajo nivel diferente, el "
+"cual no es admitido aún por Barry Backup.  Alternativamente, pueden existir "
+"registros ocultos que no se pueden editar en su dispositivo.  Si esto es lo "
+"que ocurre en una base de datos como la Libreta de Direcciones, a veces el "
+"problema se arregla con restaurar sólo esa base de datos."
 
 #: src/BackupWindow.cc:414 src/BackupWindow.cc:423
 msgid ""
 "\n"
 "\n"
 "Summary:\n"
-msgstr "\n\nResumen:\n"
+msgstr ""
+"\n"
+"\n"
+"Resumen:\n"
 
 #: src/BackupWindow.cc:423
 msgid "Warning: Record counts are not the same on device: "
@@ -391,7 +419,9 @@ msgstr "Cuidado: La cantidad de registros no es la misma en el dispositivo: "
 msgid ""
 "\n"
 "It claims to have "
-msgstr "\nAnuncia que tiene "
+msgstr ""
+"\n"
+"Anuncia que tiene "
 
 #: src/BackupWindow.cc:423 src/DeviceIface.cc:291
 msgid " records, but actually retrieved "
@@ -447,7 +477,7 @@ msgstr "y los colaboradores de Barry.  Vea en el archivo AUTHORS"
 
 #: src/BackupWindow.cc:625
 msgid "for detailed contribution information."
-msgstr "para encontrar la información detallada de las colaboracioens."
+msgstr "para encontrar la información detallada de las colaboraciones."
 
 #: src/BackupWindow.cc:633
 msgid "Using library: "
