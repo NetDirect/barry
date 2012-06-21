@@ -407,7 +407,7 @@ bool Device::BulkRead(int ep, Barry::Data &data, int timeout)
 		if( transferred != 0 )
 			data.ReleaseBuffer(transferred);
 
-	} while( ret == -LIBUSB_ERROR_INTERRUPTED );
+	} while( ret == LIBUSB_ERROR_INTERRUPTED );
 
 	return ret >= 0;
 }
