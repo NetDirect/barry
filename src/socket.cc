@@ -422,11 +422,32 @@ SocketHandle SocketZero::Open(uint16_t socket, const char *password)
 	// This function should support being called as many times
 	// as needed to handle the password
 
+
 	Data send, receive;
 	ZeroPacket packet(send, receive);
 
 	// save sequence for later close
 	uint8_t closeFlag = GetZeroSocketSequence();
+
+	// It's necessary to create the socket before performing any
+	// device IO as the device can start sending packets for a socket
+	// as soon as it's sent a SB_COMMAND_OPENED_SOCKET command.
+	//
+	// If something goes wrong and this method throws an error
+	// then the SocketHandle cleanup will destroy the socket,
+	// correctly unregistering it.
+	Socket *sock = new Socket(*this, socket, closeFlag);
+	SocketHandle sh(sock);
+
+	// if we are running with a routing queue, register the
+	// socket's interest in all its own data.  By default, this
+	// data will be queued without a callback handler.
+	// If other application code needs to intercept this with
+	// its own handler, it must call UnregisterInterest() and
+	// re-register its own handler.
+	if( m_queue ) {
+		sock->RegisterInterest();
+	}
 
 	if( !m_halfOpen ) {
 		// starting fresh
@@ -535,20 +556,7 @@ SocketHandle SocketZero::Open(uint16_t socket, const char *password)
 		}
 	}
 
-	// success!  save the socket
-	Socket *sock = new Socket(*this, socket, closeFlag);
-	SocketHandle sh(sock);
-
-	// if we are running with a routing queue, register the
-	// socket's interest in all its own data.  By default, this
-	// data will be queued without a callback handler.
-	// If other application code needs to intercept this with
-	// its own handler, it must call UnregisterInterest() and
-	// re-register its own handler.
-	if( m_queue ) {
-		sock->RegisterInterest();
-	}
-
+	// success! 
 	return sh;
 }
 
