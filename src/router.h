@@ -41,6 +41,16 @@ class BXEXPORT SocketRoutingQueue
 	friend class DataHandle;
 
 public:
+	// When registering interest in socket packets
+	// this type is used to indicate what type of
+	// packets are desired.
+	enum InterestType
+	{
+		DataPackets = 0x1,
+		SequencePackets = 0x2,
+		SequenceAndDataPackets = DataPackets | SequencePackets
+	};
+
 	// Interface class for socket data callbacks
 	// See RegisterInterest() for more information.
 	class BXEXPORT SocketDataHandler
@@ -85,9 +95,11 @@ public:
 	{
 		SocketDataHandlerPtr m_handler;
 		DataQueue m_queue;
+		InterestType m_type;
 
-		QueueEntry(SocketDataHandlerPtr h)
+		QueueEntry(SocketDataHandlerPtr h, InterestType t)
 			: m_handler(h)
+			, m_type(t)
 			{}
 	};
 	typedef std::tr1::shared_ptr<QueueEntry>	QueueEntryPtr;
@@ -197,12 +209,23 @@ public:
 	// copying is done.  Once the handler returns, the data is
 	// considered processed and not added to the interested queue,
 	// but instead returned to m_free.
+	// The provided InterestType is used to determine which packets
+	// the socket is interested in.
+	void RegisterInterest(SocketId socket, SocketDataHandlerPtr handler, InterestType type);
+
+	// This behaves like RegisterInterest(SocketId, SocketDataHandlerPtr, InterestType)
+	// but defaults to an InterestType of SequenceAndDataPackets
 	void RegisterInterest(SocketId socket, SocketDataHandlerPtr handler);
 
 	// Unregisters interest in data from the given socket, and discards
 	// any existing data in its interest queue.  Any new incoming data
 	// for this socket will be placed in the default queue.
 	void UnregisterInterest(SocketId socket);
+
+	// Changes the type of data that a client is interested in for a certain socket.
+	// Interest in the socket must have previously been registered by a call
+	// to RegisterInterest().
+	void ChangeInterest(SocketId socket, InterestType type);
 
 	// Reads data from the interested socket cache.  Can only read
 	// from sockets that have been previously registered.
