@@ -32,6 +32,13 @@ function createLink($name, $desc) {
 	echo '<a href="' . $barry_page_path . $name . $extension . '">' . $desc . "</a>\n";
 }
 
+function createHref($name) {
+	global $extension;
+	global $barry_page_path;
+
+	echo 'href="' . $barry_page_path . $name . $extension . '"';
+}
+
 function createFileLink($name, $desc) {
 	global $files_path;
 

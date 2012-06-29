@@ -19,6 +19,9 @@ page for more details.</p>
 </ul>
 </p>
 
+<p>See the <? createLink("desktop", "Barry Desktop"); ?> page for
+more information on using the GUI to manage the modem.</p>
+
 
 <? createSubHeader("If You Installed Barry's Binary Packages..."); ?>
 
@@ -31,9 +34,11 @@ providers:
 	<li> China Mobile </li>
 	<li> Fido </li>
 	<li> KPN Nederland </li>
+	<li> Manitoba's MTS </li>
 	<li> O2 Ireland </li>
 	<li> Optus AU </li>
 	<li> Orange Spain </li>
+	<li> Orange UK </li>
 	<li> Rogers </li>
 	<li> Sprint </li>
 	<li> Telus </li>

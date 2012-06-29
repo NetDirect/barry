@@ -104,6 +104,7 @@ reverse engineer the battery charging handshake via USB.</p>
 	<li><? createLink("installfedora", "Install Barry on Fedora"); ?></li>
 	<li><? createLink("install", "Install Barry from binary packages"); ?></li>
 	<li><? createLink("cvs", "Compile Barry from tarball or git"); ?></li>
+	<li><? createLink("desktop", "Use the Barry Desktop GUI"); ?> <i>(new!)</i></li>
 	<li><? createLink("backups", "Make backups of my Blackberry data"); ?></li>
 	<li><? createLink("sync", "Sync my Blackberry with Evolution"); ?></li>
 	<li><? createLink("modem", "Use my Blackberry as a modem to surf the net"); ?></li>
@@ -120,7 +121,6 @@ reverse engineer the battery charging handshake via USB.</p>
 	<li><? createLink("requirements", "System requirements"); ?></li>
 	<li><? createLink("dependencies", "Software dependencies"); ?></li>
 	<li><? createFileLink("doxygen/html/index.html", "Barry's Doxygen documentation"); ?></li>
-	<li><? createLink("devices", "Device compatibility list"); ?></li>
 </ul>
 </p>
 

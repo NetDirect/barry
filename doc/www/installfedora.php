@@ -34,12 +34,12 @@ gpgkey=http://download.barry.netdirect.ca/barry-latest/dists/fedora$releasever/s
 <hr/>
 
 <p>If you only want to use a specific version of Barry, you can change
-the URLs from "barry-latest" to, for example, "barry-0.18.3".
+the URLs from "barry-latest" to, for example, "barry-0.18.4".
 Check out the latest available versions at the
 <a href="http://sourceforge.net/projects/barry/files/barry/">Sourceforge
 file list page</a>.
 
-<p>Currently, only Fedora 14 and 16 are supported.
+<p>Currently, only Fedora 16 and 17 are supported.
 
 
 <? createSubHeader("The Packages"); ?>

@@ -1,5 +1,6 @@
 index
 design
+desktop
 hacking
 roadmap
 requirements
@@ -12,11 +13,14 @@ patches
 codingguide
 backups
 modem
+guimodem
 contact
 bugs
 sync
+guisync
 troubleshooting
 logs
-devices
 rawchannel
+migrate
+browse
 
