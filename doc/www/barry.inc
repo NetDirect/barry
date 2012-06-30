@@ -63,4 +63,10 @@ function createImage($filename) {
 	echo '<img src="' . $image_path . $filename . '"/>';
 }
 
+function createImageEx($filename, $img_html) {
+	global $image_path;
+
+	echo '<img src="' . $image_path . $filename . '" ' . $img_html . ' />';
+}
+
 ?>

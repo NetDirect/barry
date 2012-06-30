@@ -6,8 +6,7 @@
 
 <p>
 <center>
-<img src="desktop-browse.png" width="480" height="352"
-	alt="Barry Desktop browse screen" />
+<? createImageEx("desktop-browse.png", 'width="480" height="352" alt="Barry Desktop browse screen"'); ?>
 </center>
 
 <p>This screen provides an interface to Add, Copy, Edit, Delete, Import,

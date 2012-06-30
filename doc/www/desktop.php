@@ -9,8 +9,7 @@ in the image to get more detailed help.)
 
 <p>
 <center>
-<img src="desktop-main.png" width="480" height="352"
-	alt="Barry Desktop main screen" usemap="#desktopmainmap" />
+<? createImageEx("desktop-main.png", 'width="480" height="352" alt="Barry Desktop main screen" usemap="#desktopmainmap"'); ?>
 <map name="desktopmainmap">
 	<area shape="rect" coords="6,39 152,121"
 		<? createHref("backups"); ?> alt="Launch Backup GUI" />

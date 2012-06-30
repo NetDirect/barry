@@ -10,8 +10,7 @@ detail, using the following dialog:
 
 <p>
 <center>
-<img src="desktop-modem.png" width="241" height="294" border="1"
-	alt="Barry Desktop modem dialog" />
+<? createImageEx("desktop-modem.png", 'width="241" height="294" border="1" alt="Barry Desktop modem dialog"'); ?>
 </center>
 
 <p>This dialog assumes that you have pppd installed and that the system

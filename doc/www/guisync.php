@@ -8,8 +8,7 @@
 
 <p>
 <center>
-<img src="desktop-sync.png" width="480" height="352"
-	alt="Barry Desktop sync screen" />
+<? createImageEx("desktop-sync.png", 'width="480" height="352" alt="Barry Desktop sync screen"'); ?>
 </center>
 
 
@@ -48,8 +47,7 @@ if you are syncing your BlackBerry to Evolution, Evolution will be launched.
 
 <p>
 <center>
-<img src="desktop-sync-config.png" width="449" height="370" border="1"
-	alt="Barry Desktop sync configure dialog" />
+<? createImageEx("desktop-sync-config.png", 'width="449" height="370" border="1" alt="Barry Desktop sync configure dialog"'); ?>
 </center>
 
 <p>The Configure dialog displays settings for: the OpenSync engine's

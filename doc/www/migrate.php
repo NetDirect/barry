@@ -4,8 +4,7 @@
 
 <p>
 <center>
-<img src="desktop-migrate.png" width="480" height="152" border="1"
-	alt="Barry Desktop migrate dialog" />
+<? createImageEx("desktop-migrate.png", 'width="480" height="152" border="1" alt="Barry Desktop migrate dialog"'); ?>
 </center>
 
 <p>The Migrate dialog provides an easy method of backing up the device's
