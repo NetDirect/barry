@@ -1,0 +1,16 @@
+#!/bin/sh
+
+# unload the umass driver
+kldunload umass
+
+# load the ugen driver
+kldload ugen
+
+# run the pppob utility via ptyexec to bind it to a tty
+# this assumes that ptyexec and pppob are both in your path
+
+ptyexec pppob
+
+# run ppp(8)
+
+ppp -background barry

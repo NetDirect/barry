@@ -1,0 +1,64 @@
+#!/bin/sh -- # A comment mentioning perl
+eval 'exec perl -S $0 ${1+"$@"}'
+        if 0;
+#
+# ptyexec: connect the STDIN and STDOUT of some command to a 
+# pseudo terminal (e.g. /dev/ptyp2 (master) and /dev/ttyp2 (slave))
+#
+# based on "ssh-ppp" (ppp over secure shell VPN hack)
+#
+# Usage: ptyexec <command and args to run ...>
+#
+# Runs the command in background; writes to output what pseudoterminal
+# has been connected to it.
+#
+
+@cmd = @ARGV;
+
+die "no command" unless @cmd;
+
+# loop over possible pseudoterminals until we can open one:
+foreach $m1 ("p" .. "z") {
+        foreach $m2 ("0".."9", "a".."f") {
+                &try("$m1$m2"); # exit takes place in try() on success
+        }
+}
+exit 1;
+
+sub try {
+        my ($dev) = @_;
+
+        my $master = "/dev/pty$dev";
+        my $slave  = "/dev/tty$dev";
+
+        # try to open the pseudoterminal read/write:
+        if ( open(PTY, "+>$master") ) {
+                # now fork off a child in background to exec @cmd:
+                my $pid = fork();
+                die "cannot fork, $!" if ! defined($pid);
+
+                if ( ! $pid ) {
+                        # child remaps his stdio to the pseudoterm:
+                        open(STDIN,  "<&PTY") || die "reopen STDIN,  $!";
+                        open(STDOUT, ">&PTY") || die "reopen STDOUT, $!";
+                        close(PTY);
+
+                        # and then runs the command:
+                        exec @cmd;
+                        # exec failed:
+                        die "exec: " . join(' ', @cmd) . ": $!";
+                } else {
+                        # parent tells the user what we have set up: 
+                        close(PTY);
+                        sleep 1;
+                        print STDOUT "PID:$pid\n";
+                        if ( ! kill 0, $pid ) {
+                                # see if the child is still alive:
+                                print STDOUT "WARNING: NO CHILD PID\n";
+                        }
+                        print STDOUT "MASTER: $master\n";
+                        print STDOUT "SLAVE:  $slave\n";
+                        exit 0;
+                }
+        }
+}
