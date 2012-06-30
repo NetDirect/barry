@@ -88,3 +88,13 @@ need to boot your kernel with "boot -c" and disable the uberry module.<p>
 
 <p>Suggestions for better ways to work around this conflict are welcome.</p>
 
+
+
+<? createSubHeader("::::::: FreeBSD ::::::::::::::"); ?>
+
+<? createSubHeader("Running pppob"); ?>
+
+<p>Check out Bill Paul's notes on running pppob on FreeBSD using the
+userspace ppp.  You can find his notes and scripts
+<a href="http://repo.or.cz/w/barry.git/tree/HEAD:/contrib/barry_freebsd">here</a>.
+
