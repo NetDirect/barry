@@ -9,7 +9,7 @@ Evolution, using OpenSync version 0.22 and the command line tool
 msynctool.  The concepts are similar with other Opensync plugins,
 and should be relatively straightforward to sync with other data sources.</p>
 
-<p>If you are using a recent version of Barry, please try the
+<p><b>Note!</b> - If you are using a recent version of Barry, please try the
 <? createLink("desktop", "Barry Desktop"); ?> which makes syncing much
 easier, and supports OpenSync version 0.4x.</p>
 
