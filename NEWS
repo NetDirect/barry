@@ -1,9 +1,26 @@
+2012/05
+==============================================================================
+
+Binary Package Rename
+---------------------
+As of version 0.18, the binary package names for libbarry on Debian
+have been renamed to libbarry18 to reflect the major version number.
+The RPM may follow eventually, but testing on that side of things is
+slower.
+
+
+API Change
+----------
+The API of version 0.18 of the library differs substantially in numerous
+details from version 0.17.  Mostly due to new features being added, in
+the library and the tools and GUI.
+
+
 August 2008
 ==============================================================================
 
 Binary Package Rename
 ---------------------
-
 As of version 0.14, the binary package names for libbarry (both RPM and DEB)
 have been renamed to libbarry0, to match the commonly accepted procedure
 of most distributions.
@@ -19,7 +36,6 @@ May 2008
 
 API Change
 ----------
-
 As of version 0.13, the Barry API has changed to use a hierarchy of Mode
 classes instead of using the Controller class to switch modes or select
 them.  These new Mode classes are in a new namespace called Mode.
@@ -33,7 +49,6 @@ and usage.
 
 IP Modem support
 ----------------
-
 Version 0.13 has preliminary IP Modem support.  You will need a newer
 Blackberry device to make use of this.
 

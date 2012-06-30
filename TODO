@@ -5,44 +5,21 @@ intentions, in order to avoid duplication of effort.
 If you would like help or more information on any of these items,
 please ask on the mailing list as well.
 
-- Chris
-<cdfrey@foursquare.net>
+Chris Frey
 
 
 Next Release Checklist (- todo, + done, x skipped)
 ==============================================================================
-Target: release version 0.18
-	- figure out a solution to the HideSequencePacket issue
+Target: the 0.18.x series
+	- continue adding better support for French and Spanish translations,
+		especially to the Desktop GUI
+	- desktop: add java management GUI
 	- website documentation:
 		- www documentation / howto for bjdwp and friends
-		- add a more detailed set of instructions for how to
-			contribute to the project using git
-			(see email to Josh)
-		- incorporate Bill Paul's modem HOWTO for FreeBSD
-			into web docs (see list emails)
-		- add docs for opensync 0.4x plugin (note that it is
-			currently experimental, based on devel opensync)
 		- add docs for using libmtp with the Storm to access media
-	- incorporate Martin Owens' Barry logo/icon into Barry
-		- add to documentation page?
-		- add to identi.ca barry group
-		- add to sourceforge
-		- add to repo.or.cz
+	- polish up bfuse, and add feature to split out fields
 
 Target: release version 0.19
-	- test and fix all build and functionality issues on:
-		- Fedora 11
-		- Fedora 12 (scheduled release on Nov 10)
-		- Ubuntu 8.10, 9.04
-		- Ubuntu 9.10 (scheduled release on Oct 29)
-		- openSUSE 11.1
-			- see mailing list reports
-		- give openBSD a test compile
-	- support our own repositories for apt and yum and zypper
-		to make installation easier
-
-Target: release version 0.20
-	- polish up bfuse, and add feature to split out fields
 	- add record classes for Content Store based on
 		Martin Owens' doc/barry-research.ods
 	- look at incorporating contrib/ into main tree, or at least
@@ -196,35 +173,6 @@ Estimated time: unknown
 
 
 
-Write simple GUI for streamlining sync setup and action
--------------------------------------------------------
-Syncing setup and operation is currently a tedious, complicated task.
-A GUI that performed all the detailed setup and configuration work,
-for a Blackberry-specific sync, using opensync libraries and plugins
-for Evolution, Sunbird, etc, would be very helpful.
-
-This would be much easier for an experienced GUI programmer, but there is
-a learning curve for the opensync API.
-
-Estimated tasks:
-	- document the settings required for Blackberry, and
-		all intended plugins required
-	- write application that:
-		- does the opensync configuration through the opensync
-			API directly
-		- scans the USB bus for available Blackberry devices using
-			Barry
-		- lives in the system tray watching for Blackberry devices
-	- if aiming for super ease of use, script a source build of
-		all needed opensync components and install in private
-		area to avoid conflict with system
-Estimated time: unknown
-Note: Depending how fast HAL, OpenSync, and Conduit are implemented,
-	this may never be needed... but if it existed today, there's a
-	lot of users who would be very happy...
-
-
-
 Document the USB protocol
 -------------------------
 Currently the only english documentation for the Blackberry protocol
@@ -245,14 +193,6 @@ people to write documentation for me... :-)
 Estimated tasks:
 	- write, write, write
 Estimated time: 40 hours (documentation expands to fill available time...)
-
-
-
-Improve useability of web documentation
----------------------------------------
-Add a Q&A style of support web site, where Blackberry users can plug in
-their device model, data provider, etc. and get exact command lines that
-they can use for modem tethering, etc.
 
 
 
@@ -312,18 +252,6 @@ Estimated tasks:
 	- finish C++ / Python integration (possible template issues)
 	- finish SWIG wrapper
 Estimated time: unknown
-
-
-
-Misc Low Level Todo Items:
---------------------------
-- test whether sorting of contact records is required before
-	uploading data to the device... test whether it is ok
-	to upload a GroupLink item in the middle of a contact
-	upload, even before all the groups have been sent...
-	if ok, remove the sorting code from Contact, Message, and
-	Calendar classes
-
 
 
 
