@@ -2,7 +2,7 @@
 .\" First parameter, NAME, should be all caps
 .\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
 .\" other parameters are allowed: see man(7), man(1)
-.TH PPPOB 1 "May 29, 2008"
+.TH PPPOB 1 "July 7, 2012"
 .\" Please adjust this date whenever revising the manpage.
 .\"
 .\" Some roff macros, for reference:
@@ -20,7 +20,7 @@
 \- Barry Project's program to access the Blackberry modem for pppd
 .SH SYNOPSIS
 .B pppob
-[\-l filename][\-p pin][\-P password][\-s][\-v]
+[\-l filename][\-p pin][\-P password][\-s][\-t][\-v]
 .SH DESCRIPTION
 .PP
 .B pppob
@@ -51,6 +51,10 @@ with this size/socket format, and therefore transfer less data across the
 USB bus.  By default, pppob tries to use IpModem mode if proper endpoints
 are detected, and otherwise falls back to Serial mode.  This switch
 skips IpModem mode entirely and tries Serial mode immediately.
+.TP
+.B \-t
+Creates a pty for communication, instead of using stdin and stdout;
+and prints the filename of the pty on stdout.
 .TP
 .B \-v
 Dump verbose protocol data to stderr during operation.
