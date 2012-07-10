@@ -12,7 +12,7 @@ DEFS = -DLOCALEDIR=\"$(localedir)\" @DEFS@
 
 noinst_HEADERS = libtest.h
 
-noinst_PROGRAMS = libtest fhbuild
+noinst_PROGRAMS = libtest fhbuild ptyio
 
 libtest_SOURCES = \
 	date.cc \
@@ -39,4 +39,7 @@ endif
 fhbuild_SOURCES = fhbuild.cc
 fhbuild_LDADD = ../src/libbarry.la $(LTLIBINTL) $(LTLIBICONV)
 fhbuild_CXXFLAGS = $(AM_CXXFLAGS)
+
+ptyio_SOURCES = ptyio.cc
+ptyio_CXXFLAGS = $(AM_CXXFLAGS)
 

@@ -93,4 +93,5 @@ desktop/src/xmlmap
 
 test/libtest
 test/fhbuild
+test/ptyio
 
