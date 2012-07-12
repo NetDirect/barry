@@ -116,6 +116,14 @@ install/barrydesktop::
 	install -d $(CURDIR)/debian/barrydesktop/usr/share/applications
 	install -m 0644 $(DEB_SRCDIR)/menu/barrydesktop.desktop $(CURDIR)/debian/barrydesktop/usr/share/applications
 
+install/barry-doc::
+	# Build the static version of the docs
+	cp -a $(DEB_SRCDIR)/doc/www $(CURDIR)/debian
+	(cd $(CURDIR)/debian/www && ./static.sh)
+	# Install to share/doc
+	install -d $(CURDIR)/debian/barry-doc/usr/share/doc/barry-doc/www
+	install -m 0644 $(CURDIR)/debian/www/*.html $(CURDIR)/debian/www/*.png $(CURDIR)/debian/www/*.css $(CURDIR)/debian/barry-doc/usr/share/doc/barry-doc/www
+
 post-patches::
 	@rm -f $(CURDIR)/deb_srcdir
 	@ln -s $(DEB_SRCDIR) $(CURDIR)/deb_srcdir

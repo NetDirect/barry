@@ -32,7 +32,7 @@ Source: barry
 Section: misc
 Priority: optional
 Maintainer: Chris Frey <cdfrey@foursquare.net>
-Build-Depends: debhelper (>= 7.0.0), g++ (>= 4.1), cdbs, autoconf, autoconf-archive, automake, libtool, pkg-config, libusb-dev, libboost-serialization-dev, libxml++2.6-dev, libfuse-dev (>= 2.5), zlib1g-dev, libtar-dev, libglibmm-2.4-dev, libgtkmm-2.4-dev, libglademm-2.4-dev, autopoint | gettext (<< 0.18), libgcal-dev, wx-common, libwxgtk2.8-dev, libsdl-dev, evolution-data-server-dev, libebook1.2-dev, libedata-book1.2-dev, libedata-cal1.2-dev, libedataserver1.2-dev
+Build-Depends: debhelper (>= 7.0.0), g++ (>= 4.1), cdbs, autoconf, autoconf-archive, automake, libtool, pkg-config, libusb-dev, libboost-serialization-dev, libxml++2.6-dev, libfuse-dev (>= 2.5), zlib1g-dev, libtar-dev, libglibmm-2.4-dev, libgtkmm-2.4-dev, libglademm-2.4-dev, autopoint | gettext (<< 0.18), libgcal-dev, wx-common, libwxgtk2.8-dev, libsdl-dev, evolution-data-server-dev, libebook1.2-dev, libedata-book1.2-dev, libedata-cal1.2-dev, libedataserver1.2-dev, php5-cli
 Standards-Version: 3.9.3
 Homepage: http://netdirect.ca/barry
 Vcs-Git: git://repo.or.cz/barry.git
@@ -141,11 +141,15 @@ Description: Desktop Panel GUI for the RIM BlackBerry Handheld (debug symbols)
  This package contains the debug files for the Barry desktop found in the
  barrydesktop package.
 
-#Package: barry-doc
-#Architecture: all
-#Description: Documentation for barry
-# Barry is a GPL C++ library for interfacing with the RIM BlackBerry Handheld.
-# It comes with a command line tool for exploring the device and for making quick
-# backups. The goal of this project is to create a fully functional syncing
-# mechanism on Linux.
+Package: barry-doc
+Section: doc
+Priority: optional
+Architecture: all
+Description: End user documentation for Barry Desktop and utilities
+ Barry is a GPL C++ library for interfacing with the RIM BlackBerry Handheld.
+ .
+ This package contains the end-user HTML documentaion that comes with the
+ source code and which is also the basis for the documentation available
+ online at http://netdirect.ca/barry.  This package does not include the
+ doxygen documentation.
 
