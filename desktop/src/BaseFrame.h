@@ -57,6 +57,8 @@ private:
 
 	ExecHelper m_backup_process;
 
+	bool m_rescan_pending;
+
 public:
 	BaseFrame(const wxImage &background);
 

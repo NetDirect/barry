@@ -80,6 +80,7 @@ BaseFrame::BaseFrame(const wxImage &background)
 	, m_height(background.GetHeight())
 	, m_current_mode(0)
 	, m_backup_process(this)
+	, m_rescan_pending(false)
 {
 	// This is a workaround for different size behaviour
 	// in the GTK version of wxWidgets 2.9
@@ -244,6 +245,12 @@ void BaseFrame::DisableBackButton()
 	// reset the current mode to main menu and repaint
 	m_current_mode = m_main_menu_mode.get();
 	Refresh(false);
+
+	// if a USB rescan is pending, do it now
+	if( m_rescan_pending ) {
+		wxCommandEvent event;
+		OnRescanUsb(event);
+	}
 }
 
 void BaseFrame::OnSize(wxSizeEvent &event)
@@ -732,6 +739,14 @@ void BaseFrame::OnTermBackupAndRestore(wxProcessEvent &event)
 		wxMessageBox(_T("Unable to run barrybackup, or it returned an error. Please make sure it is installed and in your PATH."),
 			_T("Backup and Restore"), wxOK | wxICON_ERROR);
 	}
+	else
+	{
+		// looks like a successful run... the device name may
+		// have been changed by the BarryBackup GUI, so reprobe
+		// to refresh the names and device list
+		wxCommandEvent event;
+		OnRescanUsb(event);
+	}
 }
 
 void BaseFrame::OnBarryLogoClicked(wxCommandEvent &event)
@@ -824,10 +839,12 @@ void BaseFrame::OnRescanUsb(wxCommandEvent &event)
 		std::auto_ptr<UsbScanSplash> splash( new UsbScanSplash );
 		wxGetApp().Probe();
 		CreateDeviceCombo(wxGetApp().GetGlobalConfig().GetLastDevice());
+		m_rescan_pending = false;
 	}
 	else {
-		// FIXME - tell the user we didn't do anything?
-		// or perhaps just disable rescan while in a mode
+		// flag that we need to rescan the next time we return
+		// to the main screen
+		m_rescan_pending = true;
 	}
 }
 
