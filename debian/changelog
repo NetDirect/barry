@@ -2,6 +2,7 @@ barry (0.18.4-1) unstable; urgency=low
 
   * New upstream version 0.18.4
   * New barry-doc package which includes the html user docs (Closes: #582190)
+  * Moved barry-backup.mo from barry-util package to barrybackup-gui
 
  -- Chris Frey <cdfrey@foursquare.net>  Mon, 25 Jun 2012 17:07:40 -0400
 

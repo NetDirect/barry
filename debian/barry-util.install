@@ -32,5 +32,5 @@ debian/tmp/usr/share/man/man1/bjdwp.1
 debian/tmp/usr/share/man/man1/pppob.1
 debian/tmp/usr/share/man/man1/upldif.1
 debian/tmp/usr/share/man/man1/brawchannel.1
-debian/tmp/usr/share/locale/*
+debian/tmp/usr/share/locale/*/LC_MESSAGES/barry.mo
 
