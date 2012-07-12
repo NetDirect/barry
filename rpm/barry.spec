@@ -398,7 +398,7 @@ desktop-file-install --vendor netdirect \
 %attr(0644,root,root) %{_mandir}/man1/brecsum*
 %attr(0644,root,root) %{_mandir}/man1/breset*
 %attr(0644,root,root) %{_mandir}/man1/upldif*
-%attr(0644,root,root) %{_datadir}/locale/fr/LC_MESSAGES/*
+%attr(0644,root,root) %{_datadir}/locale/*/LC_MESSAGES/barry.mo
 %attr(0644,root,root) %{_datadir}/hal/fdi/information/10freedesktop/10-blackberry.fdi
 %attr(0644,root,root) %{_datadir}/hal/fdi/policy/10osvendor/19-blackberry-acl.fdi
 %attr(0644,root,root) %config %{_sysconfdir}/udev/rules.d/*
@@ -447,6 +447,7 @@ desktop-file-install --vendor netdirect \
 %attr(0644,root,root) %{_datadir}/pixmaps/barry_backup_menu_icon.png
 %attr(0644,root,root) %{_datadir}/applications/*barrybackup.desktop
 %attr(0644,root,root) %{_mandir}/man1/barrybackup*
+%attr(0644,root,root) %{_datadir}/locale/*/LC_MESSAGES/barry-backup.mo
 %doc COPYING
 %endif
 
@@ -499,6 +500,8 @@ desktop-file-install --vendor netdirect \
 %changelog
 * Sat May 26 2012 Chris Frey <cdfrey@foursquare.net> 0.18.4-0
 - version bump
+- added spanish translation, and fixed locations of .mo files, so
+  barry.mo goes to utils, and barry-backup.mo goes to backup
 
 * Tue May 15 2012 Chris Frey <cdfrey@foursquare.net> 0.18.3-0
 - version bump
