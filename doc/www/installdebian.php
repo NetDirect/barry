@@ -103,6 +103,7 @@ packages:
 
 <? createSubHeader("Removal"); ?>
 
-<p>Everything depends on the following 3 packages: libbarry18, libopensync0,
-and/or libopensync1.  Remove them, and the rest will follow.
+<p>Everything exists in or depends on the following 4 packages: libbarry18,
+libopensync0, libopensync1, and barry-doc.  Remove them, and the rest will
+follow.
 
