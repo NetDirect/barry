@@ -343,7 +343,10 @@ void CodInfo::ParseTypeSection(istream &input)
 	// We have to find the same value
 	check = ParseInteger(input);
 
-	// Checking...
+	// Checking... this code only exists in __DEBUG_MODE__ only, so
+	// make sure unused variables are always "used"
+	(void)nbr;
+	(void)check;
 	dout("Nbr = " << dec << nbr << " / Count = " << dec << count << " / check = " << check);
 }
 
@@ -441,6 +444,17 @@ void CodInfo::ParseResourceSection(istream &input)
 		<< "\n  unknown03 : " << hex << unknown03
 		<< "\n  unknown04 : " << hex << unknown04
 		<< "\n  unknown05 : " << hex << unknown05);
+
+	// make sure that unused variables are always "used" when
+	// not in __DEBUG_MODE__
+	(void)type;
+	(void)unknown01;
+	(void)unknown02;
+	(void)unknown03;
+	(void)unknown04;
+	(void)unknown05;
+	(void)unknown06;
+	(void)unknown07;
 }
 
 
