@@ -148,7 +148,7 @@ Depends: ${misc:Depends}
 Description: End user documentation for Barry Desktop and utilities
  Barry is a GPL C++ library for interfacing with the RIM BlackBerry Handheld.
  .
- This package contains the end-user HTML documentaion that comes with the
+ This package contains the end-user HTML documentation that comes with the
  source code and which is also the basis for the documentation available
  online at http://netdirect.ca/barry.  This package does not include the
  doxygen documentation.
