@@ -143,7 +143,6 @@ Description: Desktop Panel GUI for the RIM BlackBerry Handheld (debug symbols)
 
 Package: barry-doc
 Section: doc
-Priority: optional
 Architecture: all
 Description: End user documentation for Barry Desktop and utilities
  Barry is a GPL C++ library for interfacing with the RIM BlackBerry Handheld.
