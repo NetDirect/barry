@@ -1,0 +1,13 @@
+Document: barry-doc
+Title: Barry Desktop User Manual (BlackBerry interface software)
+Author: Chris Frey, et al
+Abstract: This manual describes how to use, install, and build the
+ Barry Desktop software and utilities, which interface with the
+ BlackBerry Handheld.  It includes documentation for the Desktop,
+ Backup, Sync, Modem, and Raw Channel features of the software, and more.
+Section: Mobile Devices
+
+Format: HTML
+Index: /usr/share/doc/barry-doc/www/index.html
+Files: /usr/share/doc/barry-doc/www/*.html /usr/share/doc/barry-doc/www/*.png /usr/share/doc/barry-doc/www/*.css
+
