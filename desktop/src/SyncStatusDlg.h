@@ -147,9 +147,9 @@ public:
 	void KillSync();
 	void StartNextSync();
 
-	void Print(const std::string &msg, const wxColour &colour);
+	void PrintStd(const std::string &msg, const wxColour &colour);
 	void Print(const wxString &msg, const wxColour &colour);
-	void ShortPrint(const std::string &msg);
+	void ShortPrintStd(const std::string &msg);
 	void ShortPrint(const wxString &msg);
 	void Throb();
 	void StartTimer();

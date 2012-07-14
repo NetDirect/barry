@@ -62,7 +62,7 @@ bool StatusConnection::OnPoke(const wxString &topic,
 	}
 	else if( item == STATUS_ITEM_ENTRY ) {
 		m_dlg.Print(msg, *wxBLUE);
-		m_dlg.ShortPrint(string("Syncing entries...")); // Vondra, 4/7/12
+		m_dlg.ShortPrint(_T("Syncing entries..."));
 	}
 	else if( item == STATUS_ITEM_MAPPING ) {
 		m_dlg.Print(msg, *wxBLUE);
@@ -114,7 +114,7 @@ bool ConflictConnection::OnPoke(const wxString &topic,
 				wxIPCFormat format)
 {
 	barryverbose("Conflict::OnPoke: " << string(topic.utf8_str()) << ", "
-		<< string(item.utf8_str())); // Vondra 4/7/12
+		<< string(item.utf8_str()));
 
 	if( topic != TOPIC_CONFLICT )
 		return false;
@@ -390,7 +390,7 @@ void SyncStatusDlg::SetClose()
 	StopTimer();
 }
 
-void SyncStatusDlg::Print(const std::string &msg, const wxColour &colour)
+void SyncStatusDlg::PrintStd(const std::string &msg, const wxColour &colour)
 {
 	Print(wxString(msg.c_str(), wxConvUTF8), colour);
 }
@@ -401,7 +401,7 @@ void SyncStatusDlg::Print(const wxString &msg, const wxColour &colour)
 	m_status_edit->AppendText(_T("\n") + msg);
 }
 
-void SyncStatusDlg::ShortPrint(const std::string &msg)
+void SyncStatusDlg::ShortPrintStd(const std::string &msg)
 {
 	ShortPrint(wxString(msg.c_str(), wxConvUTF8));
 }
@@ -476,7 +476,7 @@ void SyncStatusDlg::StartNextSync()
 
 	// anything to do?
 	if( m_next_device == m_subset.end() ) {
-		Print(string("No more devices to sync."), *wxBLACK); // Vondra, 4/7/12
+		Print(_T("No more devices to sync."), *wxBLACK);
 		SetClose();
 		return;
 	}
@@ -491,8 +491,8 @@ void SyncStatusDlg::StartNextSync()
 	m_device_id = device.GetPin().Str() + " (" + device.GetDeviceName() + ")";
 
 	if( !device.IsConfigured() ) {
-		Print(m_device_id + " is not configured, skipping.", *wxRED);
-		ShortPrint("Skipping unconfigured: " + m_device_id);
+		PrintStd(m_device_id + " is not configured, skipping.", *wxRED);
+		ShortPrintStd("Skipping unconfigured: " + m_device_id);
 		++m_next_device;
 		m_current_device = m_subset.end();
 		StartNextSync();
@@ -504,8 +504,8 @@ void SyncStatusDlg::StartNextSync()
 	string group_name = group->GetGroupName();
 
 	string statusmsg = "Starting sync for: " + m_device_id;
-	Print(statusmsg, *wxBLACK);
-	ShortPrint(statusmsg);
+	PrintStd(statusmsg, *wxBLACK);
+	ShortPrintStd(statusmsg);
 
 	// for each plugin / app, perform the pre-sync steps
 	for( OpenSync::Config::Group::iterator i = group->begin();
@@ -520,7 +520,7 @@ void SyncStatusDlg::StartNextSync()
 
 	// initialize sync jail process
 	if( m_jailexec.IsAppRunning() ) {
-		string msg = "ERROR: App running in StartNextSync()";
+		wxString msg(_T("ERROR: App running in StartNextSync()"));
 		Print(msg, *wxRED);
 		ShortPrint(msg);
 		SetClose();
@@ -541,8 +541,8 @@ void SyncStatusDlg::StartNextSync()
 	command += wxString(sync_code.str().c_str(), wxConvUTF8);
 
 	if( !m_jailexec.Run(NULL, "bsyncjail", command) ) {
-		Print("ERROR: unable to start bsyncjail: " + string(command.utf8_str()), *wxRED);
-		ShortPrint(string("ERROR: unable to start bsyncjail")); // Vondra, 4/7/12
+		Print(_T("ERROR: unable to start bsyncjail: ") + command, *wxRED);
+		ShortPrint(_T("ERROR: unable to start bsyncjail"));
 		SetClose();
 		return;
 	}
@@ -553,11 +553,11 @@ void SyncStatusDlg::StartNextSync()
 
 void SyncStatusDlg::OnSlowSync()
 {
-	Print(string("Slow sync detected!  Killing sync automatically."), *wxRED); // Vondra, 4/7/12
+	Print(_T("Slow sync detected!  Killing sync automatically."), *wxRED);
 	KillSync();
 
-	Print(string("Slow syncs are known to be unreliable."), *wxBLACK); // Vondra, 4/7/12
-	Print(string("Do a 1 Way Reset, and sync again."), *wxBLACK); // Vondra, 4/7/12
+	Print(_T("Slow syncs are known to be unreliable."), *wxBLACK);
+	Print(_T("Do a 1 Way Reset, and sync again."), *wxBLACK);
 }
 
 void SyncStatusDlg::OnInitDialog(wxInitDialogEvent &event)
@@ -610,8 +610,8 @@ void SyncStatusDlg::OnKillClose(wxCommandEvent &event)
 		if( choice == wxYES ) {
 			KillSync();
 
-			Print(string("Killing sync... this may take a little while..."), *wxRED); // Vondra, 4/7/12
-			Print(string("Remember to re-plug your device."), *wxRED); // Vondra, 4/7/12
+			Print(_T("Killing sync... this may take a little while..."), *wxRED);
+			Print(_T("Remember to re-plug your device."), *wxRED);
 			// let the terminate call clean up the buttons
 			return;
 		}
@@ -677,8 +677,8 @@ void SyncStatusDlg::OnExecTerminated(wxProcessEvent &event)
 	oss << m_device_id;
 	if( m_jailexec.GetChildExitCode() )
 		oss << " with error " << m_jailexec.GetChildExitCode();
-	Print(oss.str(), *wxBLACK);
-	ShortPrint(oss.str());
+	PrintStd(oss.str(), *wxBLACK);
+	ShortPrintStd(oss.str());
 	UpdateLastSyncTime();
 
 	m_current_device = m_subset.end();
