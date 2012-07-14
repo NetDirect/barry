@@ -89,15 +89,15 @@ do_debian
 do_fedora fedora16 \
 	"$BMBUILDDIR/dists/fedora16/x86_64/RPMS" \
 	"$BMBUILDDIR/dists/fedora16/source-x86_64/SRPMS" "" \
-	"make LIB_SUFFIX=64 rpmclean rpm-all rpm-evo3-latest"
+	"make rpmclean && make LIB_SUFFIX=64 rpm-all rpm-evo3-latest"
 do_fedora fedora17 \
 	"$BMBUILDDIR/dists/fedora17/x86_64/RPMS" \
 	"$BMBUILDDIR/dists/fedora17/source-x86_64/SRPMS" "" \
-	"make LIB_SUFFIX=64 rpmclean rpm-all rpm-evo3-latest"
+	"make rpmclean && make LIB_SUFFIX=64 rpm-all rpm-evo3-latest"
 do_fedora opensuse12.1 \
 	"$BMBUILDDIR/dists/opensuse12.1/x86_64/RPMS" \
 	"$BMBUILDDIR/dists/opensuse12.1/source-x86_64/SRPMS" "" \
-	"make LIB_SUFFIX=64 BARRY_GUISU=kdesu rpmclean rpm-libtar rpm-all"
+	"make rpmclean && make LIB_SUFFIX=64 BARRY_GUISU=kdesu rpm-libtar rpm-all"
 
 
 #
