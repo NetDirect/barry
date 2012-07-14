@@ -1,5 +1,14 @@
 %dump
 
+#
+# Note: This spec file is intended to be as cross-platform as possible.
+#       As such, it skips listing the BuildRequires lines, expecting to
+#       be built on a system with rpmbuild -ba only, and dependencies
+#       pre-installed.  See the ../maintainer/depscripts/ directory
+#       in the Barry source package for scripts to automate installation
+#       of dependencies.
+#
+
 # enable GUI using: --with gui
 %define with_gui 0%{?_with_gui:1}
 
@@ -11,6 +20,17 @@
 
 # enable desktop using: --with desktop
 %define with_desktop 0%{?_with_desktop:1}
+
+# enable kdesu for desktop instead of beesu: --with kdesu
+%define with_kdesu 0%{?_with_kdesu:1}
+
+%if %{with_kdesu}
+%define guisu_name kdesu
+%define guisu_package kdebase4-runtime
+%else
+%define guisu_name beesu
+%define guisu_package beesu
+%endif
 
 
 Summary: BlackBerry(tm) Desktop for Linux
@@ -132,7 +152,7 @@ This package contains the opensync 0.4x plugin.
 %package desktop
 Summary: BlackBerry(tm) Desktop Panel GUI for Linux
 Group: Applications/Productivity
-Requires: libbarry0 barry-util ppp xterm beesu
+Requires: libbarry0 barry-util ppp xterm %{guisu_package}
 #BuildRequires: wxGTK-devel
 
 %description desktop
@@ -213,7 +233,7 @@ if [ -n "$OSYNCBOTH_PKG_CONFIG_PATH" ] ; then
 	export PKG_CONFIG_PATH="$OSYNCBOTH_PKG_CONFIG_PATH:$ORIG_PKG_CONFIG_PATH"
 fi
 cd desktop/
-%{configure} PKG_CONFIG_PATH="..:$PKG_CONFIG_PATH" CXXFLAGS="-I../.." LDFLAGS="-L../../src" --enable-nls --enable-rpathhack --with-evolution --with-guisu=/usr/bin/beesu
+%{configure} PKG_CONFIG_PATH="..:$PKG_CONFIG_PATH" CXXFLAGS="-I../.." LDFLAGS="-L../../src" --enable-nls --enable-rpathhack --with-evolution --with-guisu=/usr/bin/%{guisu_name}
 %{__make} %{?_smp_mflags}
 cd ../
 %endif
@@ -494,6 +514,7 @@ desktop-file-install --vendor netdirect \
 - since we are building with binary-meta which contains depscripts,
   removed all BuildRequires lines, to make spec file more portable
   across Fedora and openSUSE
+- use kdesu for openSUSE builds, beesu for Fedora
 
 * Tue May 15 2012 Chris Frey <cdfrey@foursquare.net> 0.18.3-0
 - version bump
