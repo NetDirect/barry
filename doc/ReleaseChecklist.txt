@@ -43,6 +43,8 @@ Barry Release Checklist:
 		- test/nightly.sh
 
 - tests in following order:
+	- run 'make update-po' periodically in each po directory to
+		update translation work
 	- test ABI / API and bump major or minor version as appropriate
 	- run tests under test/
 	- starting from a fresh sid base, test build-deps, build debian

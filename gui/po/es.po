@@ -1,9 +1,8 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR Net Direct, Inc.
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# Spanish translations for barry-backup package.
+# Copyright (C) 2012 Net Direct, Inc.
+# This file is distributed under the same license as the Barry package.
+# Cesar Ballardini <cesar@ballardini.com.ar>, 2012, Spanish translation copyright
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: barry-backup 0.18.4\n"
