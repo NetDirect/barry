@@ -51,6 +51,7 @@ cleangettext() {
 		po/Makefile.in.in \
 		po/Makevars.template \
 		po/fr.gmo \
+		po/es.gmo \
 		po/stamp-po
 }
 
