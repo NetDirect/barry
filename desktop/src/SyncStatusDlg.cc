@@ -62,7 +62,7 @@ bool StatusConnection::OnPoke(const wxString &topic,
 	}
 	else if( item == STATUS_ITEM_ENTRY ) {
 		m_dlg.Print(msg, *wxBLUE);
-		m_dlg.ShortPrint("Syncing entries...");
+		m_dlg.ShortPrint(string("Syncing entries...")); // Vondra, 4/7/12
 	}
 	else if( item == STATUS_ITEM_MAPPING ) {
 		m_dlg.Print(msg, *wxBLUE);
@@ -113,8 +113,8 @@ bool ConflictConnection::OnPoke(const wxString &topic,
 				int size,
 				wxIPCFormat format)
 {
-	barryverbose("Conflict::OnPoke: " << topic.utf8_str() << ", "
-		<< item.utf8_str());
+	barryverbose("Conflict::OnPoke: " << string(topic.utf8_str()) << ", "
+		<< string(item.utf8_str())); // Vondra 4/7/12
 
 	if( topic != TOPIC_CONFLICT )
 		return false;
@@ -476,7 +476,7 @@ void SyncStatusDlg::StartNextSync()
 
 	// anything to do?
 	if( m_next_device == m_subset.end() ) {
-		Print("No more devices to sync.", *wxBLACK);
+		Print(string("No more devices to sync."), *wxBLACK); // Vondra, 4/7/12
 		SetClose();
 		return;
 	}
@@ -542,7 +542,7 @@ void SyncStatusDlg::StartNextSync()
 
 	if( !m_jailexec.Run(NULL, "bsyncjail", command) ) {
 		Print("ERROR: unable to start bsyncjail: " + string(command.utf8_str()), *wxRED);
-		ShortPrint("ERROR: unable to start bsyncjail");
+		ShortPrint(string("ERROR: unable to start bsyncjail")); // Vondra, 4/7/12
 		SetClose();
 		return;
 	}
@@ -553,11 +553,11 @@ void SyncStatusDlg::StartNextSync()
 
 void SyncStatusDlg::OnSlowSync()
 {
-	Print("Slow sync detected!  Killing sync automatically.", *wxRED);
+	Print(string("Slow sync detected!  Killing sync automatically."), *wxRED); // Vondra, 4/7/12
 	KillSync();
 
-	Print("Slow syncs are known to be unreliable.", *wxBLACK);
-	Print("Do a 1 Way Reset, and sync again.", *wxBLACK);
+	Print(string("Slow syncs are known to be unreliable."), *wxBLACK); // Vondra, 4/7/12
+	Print(string("Do a 1 Way Reset, and sync again."), *wxBLACK); // Vondra, 4/7/12
 }
 
 void SyncStatusDlg::OnInitDialog(wxInitDialogEvent &event)
@@ -610,10 +610,8 @@ void SyncStatusDlg::OnKillClose(wxCommandEvent &event)
 		if( choice == wxYES ) {
 			KillSync();
 
-			// print a warning so the user know's what's going on
-			Print("Killing sync... this may take a little while...", *wxRED);
-			Print("Remember to re-plug your device.", *wxRED);
-
+			Print(string("Killing sync... this may take a little while..."), *wxRED); // Vondra, 4/7/12
+			Print(string("Remember to re-plug your device."), *wxRED); // Vondra, 4/7/12
 			// let the terminate call clean up the buttons
 			return;
 		}
