@@ -24,16 +24,16 @@ URL: http://www.netdirect.ca/software/packages/barry
 Vendor: Net Direct Inc.
 BuildRoot: %{_tmppath}/%{name}-%{release}-%{version}-root
 
-BuildRequires: libusb-devel, gcc-c++, pkgconfig, boost-devel, fuse-devel, zlib-devel
+#BuildRequires: libusb-devel, gcc-c++, pkgconfig, boost-devel, fuse-devel, zlib-devel
 
-%if %{with_gui}
-BuildRequires: desktop-file-utils
-%endif
+#%if %{with_gui}
+#BuildRequires: desktop-file-utils
+#%endif
 
 # desktop tree
-%if %{with_desktop}
-BuildRequires: wxGTK-devel, evolution-data-server-devel
-%endif
+#%if %{with_desktop}
+#BuildRequires: wxGTK-devel, evolution-data-server-devel
+#%endif
 
 %define barryroot %{_builddir}/%{name}-%{version}
 
@@ -88,7 +88,7 @@ and be able to access the data on the device in many ways.
 Summary: BlackBerry(tm) Desktop for Linux - bcharge, btool, breset and others
 Group: Applications/Productivity
 Requires: libbarry0
-BuildRequires: gtkmm24-devel libglademm24-devel libtar-devel
+#BuildRequires: gtkmm24-devel libglademm24-devel libtar-devel
 
 %description gui
 Barry is a desktop toolset for managing your BlackBerry(tm) device. (BlackBerry
@@ -103,7 +103,7 @@ This package contains the GUI applications built on top of libbarry.
 Summary: BlackBerry(tm) Desktop for Linux - opensync plugin
 Group: Applications/Productivity
 Requires: libbarry0, libopensync >= 0.22
-BuildRequires: libopensync-devel
+#BuildRequires: libopensync-devel
 
 %description opensync
 Barry is a desktop toolset for managing your BlackBerry(tm) device. (BlackBerry
@@ -118,7 +118,7 @@ This package contains the opensync plugin.
 Summary: BlackBerry(tm) Desktop for Linux - opensync 0.4x plugin
 Group: Applications/Productivity
 Requires: libbarry0, libopensync1 >= 0.39
-BuildRequires: libopensync1-devel
+#BuildRequires: libopensync1-devel
 
 %description opensync4x
 Barry is a desktop toolset for managing your BlackBerry(tm) device. (BlackBerry
@@ -133,7 +133,7 @@ This package contains the opensync 0.4x plugin.
 Summary: BlackBerry(tm) Desktop Panel GUI for Linux
 Group: Applications/Productivity
 Requires: libbarry0 barry-util ppp xterm beesu
-BuildRequires: wxGTK-devel
+#BuildRequires: wxGTK-devel
 
 %description desktop
 Barry is a desktop toolset for managing your BlackBerry(tm) device. (BlackBerry
@@ -487,10 +487,13 @@ desktop-file-install --vendor netdirect \
 /sbin/ldconfig
 
 %changelog
-* Sat May 26 2012 Chris Frey <cdfrey@foursquare.net> 0.18.4-0
+* Fri Jul 13 2012 Chris Frey <cdfrey@foursquare.net> 0.18.4-0
 - version bump
 - added spanish translation, and fixed locations of .mo files, so
   barry.mo goes to utils, and barry-backup.mo goes to backup
+- since we are building with binary-meta which contains depscripts,
+  removed all BuildRequires lines, to make spec file more portable
+  across Fedora and openSUSE
 
 * Tue May 15 2012 Chris Frey <cdfrey@foursquare.net> 0.18.3-0
 - version bump
