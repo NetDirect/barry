@@ -12,13 +12,6 @@
 # enable desktop using: --with desktop
 %define with_desktop 0%{?_with_desktop:1}
 
-# slight change in udev, fedora 12 and later
-%if 0%{?fc12} || 0%{?fc13} || 0%{?fc14} || 0%{?fc15}
-	%define use_69_rules 1
-%else
-	%define use_69_rules 0
-%endif
-
 
 Summary: BlackBerry(tm) Desktop for Linux
 Name: barry
@@ -236,11 +229,7 @@ cd ../
 # proceed as usual...
 %{__mkdir_p} %{buildroot}%{_sysconfdir}/udev/rules.d
 %{__cp} udev/10-blackberry.rules %{buildroot}%{_sysconfdir}/udev/rules.d/
-%if %{use_69_rules}
-%{__cp} udev/69-blackberry.rules %{buildroot}%{_sysconfdir}/udev/rules.d/
-%else
 %{__cp} udev/99-blackberry-perms.rules %{buildroot}%{_sysconfdir}/udev/rules.d/
-%endif
 %{__mkdir_p} %{buildroot}%{_sysconfdir}/modprobe.d
 %{__cp} modprobe/blacklist-berry_charge.conf %{buildroot}%{_sysconfdir}/modprobe.d/
 %{__mkdir_p} %{buildroot}%{_sysconfdir}/ppp/peers
