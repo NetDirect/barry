@@ -6,12 +6,13 @@
 MAKEOPTS=-j2
 export CC="ccache gcc"
 export CXX="ccache g++"
+COMMIT=master
 
 # Make sure any errors stop the test
 set -e
 
 Usage() {
-	echo "Main Barry build test script."
+	echo "Main Barry build test script.  Tests the master branch."
 	echo
 	echo "Usage:"
 	echo "       ./buildtest.sh /path/to/libopensync-0.22.tar.bz2"
@@ -129,11 +130,11 @@ fi
 #
 # Move .. barry into its own buildable directory
 #
-echo "Moving barry into it's own directory..."
+echo "Moving barry [$COMMIT] into it's own directory..."
 mkdir -p build/barry
-(tar -C .. --exclude=CVS --exclude=.git --exclude=test/build -cf - . | \
-	tar -C build/barry -xf -)
-diff -ruN --exclude=CVS --exclude=.git --exclude=test --exclude=build .. build/barry
+(cd "./$(git rev-parse --show-cdup)" && git archive --prefix="" "$COMMIT") | \
+	tar -C build/barry -xf -
+cp -a build/barry build/barry-orig
 
 
 
@@ -303,7 +304,7 @@ fi
 echo "Testing buildgen cleanall..."
 ./buildgen.sh cleanall
 cd "$BASEPATH"
-diff -ruN --exclude=CVS --exclude=.git --exclude=test --exclude=build .. build/barry
+diff -ruN build/barry-orig build/barry
 cd build/barry
 
 
