@@ -135,6 +135,7 @@ fi
 # Move .. barry into its own buildable directory
 #
 echo "Moving barry [$COMMIT] into it's own directory..."
+sleep 2s
 mkdir -p build/barry
 (cd "./$(git rev-parse --show-cdup)" && git archive --prefix="" "$COMMIT") | \
 	tar -C build/barry -xf -
