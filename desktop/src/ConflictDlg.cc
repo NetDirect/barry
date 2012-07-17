@@ -27,6 +27,8 @@
 #include <sstream>
 #include <stdexcept>
 #include <wx/statline.h>
+#include "wxi18n.h"
+
 using namespace std;
 
 //////////////////////////////////////////////////////////////////////////////
@@ -88,7 +90,7 @@ ConflictDlg::ConflictDlg(wxWindow *parent,
 			const std::string &supported_commands,
 			const std::vector<OpenSync::SyncChange> &changes,
 			ConflictDlg::AlwaysMemoryBlock &always)
-	: wxDialog(parent, Dialog_Conflict, _T("Sync Conflict"))
+	: wxDialog(parent, Dialog_Conflict, _W("Sync Conflict"))
 	, m_engine(engine)
 	, m_changes(changes)
 	, m_supported_commands(supported_commands)
@@ -310,13 +312,13 @@ void ConflictDlg::CreateSummaryButtons(wxSizer *sizer, size_t change_index)
 	box->Add(0, 0, 1);
 	box->Add( new wxButton(this,
 			Dialog_Conflict_ShowButton1 + change_index,
-			_T("XML..."),
+			_W("XML..."),
 			wxDefaultPosition, wxDefaultSize,
 			wxBU_EXACTFIT),
 		0, wxTOP | wxLEFT | wxRIGHT, 3);
 	box->Add( new wxButton(this,
 			Dialog_Conflict_SelectButton1 + change_index,
-			_T("Select"),
+			_W("Select"),
 			wxDefaultPosition, wxDefaultSize,
 			wxBU_EXACTFIT),
 		0, wxTOP | wxLEFT | wxRIGHT, 3);
@@ -335,7 +337,7 @@ void ConflictDlg::AddEmptyNotice(wxSizer *sizer)
 	font.SetStyle( wxFONTSTYLE_ITALIC );
 
 	wxStaticText *text = new wxStaticText(this, wxID_ANY,
-		_T("No XML map found."),
+		_W("No XML map found."),
 		wxDefaultPosition, wxDefaultSize,
 		wxALIGN_CENTRE | wxST_NO_AUTORESIZE);
 	text->SetFont(font);
@@ -386,37 +388,37 @@ void ConflictDlg::CreateAlternateButtons(wxSizer *sizer)
 	wxBoxSizer *box = new wxBoxSizer(wxHORIZONTAL);
 
 	box->Add( new wxCheckBox(this, Dialog_Conflict_AlwaysCheckbox,
-			_T("Always use this choice")),
+			_W("Always use this choice")),
 		0, wxALIGN_CENTRE, 0);
 	box->Add( -1, -1, 1 );
 
 	if( m_supported_commands.find('D') != string::npos ) {
 		box->Add( new wxButton(this, Dialog_Conflict_DuplicateButton,
-					_T("Duplicate")),
+					_W("Duplicate")),
 			0, wxLEFT , 5);
 	}
 
 	if( m_supported_commands.find('I') != string::npos ) {
 		box->Add( new wxButton(this, Dialog_Conflict_IgnoreButton,
-					_T("Ignore")),
+					_W("Ignore")),
 			0, wxLEFT, 5);
 	}
 
 	if( m_supported_commands.find('N') != string::npos ) {
 		box->Add( new wxButton(this, Dialog_Conflict_KeepNewerButton,
-					_T("Keep Newer")),
+					_W("Keep Newer")),
 			0, wxLEFT, 5);
 	}
 
 	if( m_supported_commands.find('A') != string::npos ) {
 		box->Add( new wxButton(this, Dialog_Conflict_AbortButton,
-					_T("Abort")),
+					_W("Abort")),
 			0, wxLEFT, 5);
 	}
 	else {
 		// no abort available, so add a Kill Sync button
 		box->Add( new wxButton(this, Dialog_Conflict_KillSyncButton,
-					_T("Kill Sync")),
+					_W("Kill Sync")),
 			0, wxLEFT, 5);
 	}
 
@@ -487,7 +489,7 @@ void ConflictDlg::OnShowButton(wxCommandEvent &event)
 	wxString xmldata(m_changes[index].printable_data.c_str(), wxConvUTF8);
 
 	// let's try this the quick manual way...
-	wxDialog dlg(this, wxID_ANY, _T("Raw Change Data"));
+	wxDialog dlg(this, wxID_ANY, _W("Raw Change Data"));
 	wxBoxSizer *box = new wxBoxSizer(wxVERTICAL);
 	box->Add( new wxTextCtrl(&dlg, wxID_ANY, xmldata,
 			wxDefaultPosition, wxSize(400, 400),

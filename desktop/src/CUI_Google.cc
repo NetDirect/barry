@@ -20,11 +20,12 @@
 */
 
 #include "CUI_Google.h"
-//#include "os22.h"			// only for the dynamic_cast
 #include <wx/wx.h>
 #include <wx/process.h>
 #include <gcalendar.h>
 #include <sstream>
+#include "wxi18n.h"
+#include "i18n.h"
 
 using namespace std;
 
@@ -94,36 +95,36 @@ bool Google::ZapData(wxWindow *parent,
 
 	// build intro message
 	ostringstream oss;
-	oss << "Please select the databases you wish to erase\n"
+	oss << _C("Please select the databases you wish to erase\n"
 		"in your Google Calendar: \n"
 		"\n"
 		"Note: all synced databases must be erased\n"
-		"to avoid a slow-sync.";
+		"to avoid a slow-sync.");
 	wxString msg(oss.str().c_str(), wxConvUTF8);
 
 	// build list of databases (base on information from engine, if
 	// the pointer is valid)
 	wxArrayString dbs;
 	wxArrayInt selections;
-	dbs.Add( _T("Calendar") );	selections.Add(0);
-	dbs.Add( _T("Contacts") );	selections.Add(1);
+	dbs.Add( _W("Calendar") );	selections.Add(0);
+	dbs.Add( _W("Contacts") );	selections.Add(1);
 
 	// present the list to the user
 	int count = wxGetMultipleChoices(selections, msg,
-		_T("Select Databases to Erase"), dbs, m_parent);
+		_W("Select Databases to Erase"), dbs, m_parent);
 	if( count <= 0 )
 		return false;	// nothing to do
 
 	// display selections to the user for one final confirmation
 	oss.str("");
-	oss << "You have selected the following databases to be completely "
-		"erased from your Google Calendar:\n\n";
+	oss << _C("You have selected the following databases to be completely "
+		"erased from your Google Calendar:") << "\n\n";
 	for( size_t i = 0; i < selections.GetCount(); i++ ) {
 		oss << string(dbs[selections[i]].utf8_str()) << "\n";
 	}
-	oss << "\nProceed with erase?";
+	oss << "\n" << _C("Proceed with erase?");
 	wxString confirm(oss.str().c_str(), wxConvUTF8);
-	int choice = wxMessageBox(confirm, _T("Erase Confirmation"),
+	int choice = wxMessageBox(confirm, _W("Erase Confirmation"),
 		wxYES_NO | wxICON_QUESTION, m_parent);
 	if( choice != wxYES )
 		return false;		// nothing to do

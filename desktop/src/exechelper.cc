@@ -29,6 +29,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <errno.h>
+#include "wxi18n.h"
 
 using namespace std;
 
@@ -65,7 +66,7 @@ void ExecHelper::RunError(wxWindow *parent, const wxString &msg)
 	if( !parent )
 		return;
 
-	wxMessageBox(msg, _T("Application Run Error"),
+	wxMessageBox(msg, _W("Application Run Error"),
 		wxOK | wxICON_ERROR, parent);
 }
 
@@ -156,7 +157,7 @@ bool ExecHelper::Run(wxWindow *parent,
 {
 	if( IsAppRunning() ) {
 		RunError(parent, wxString(appname.c_str(), wxConvUTF8) +
-			_T(" is already running."));
+			_W(" is already running."));
 		return false;
 	}
 
@@ -167,9 +168,9 @@ bool ExecHelper::Run(wxWindow *parent,
 		m_app_callback = 0;
 		m_app_pid = -1;
 
-		RunError(parent, _T("Failed to run ") +
+		RunError(parent, _W("Failed to run ") +
 			wxString(appname.c_str(), wxConvUTF8) +
-			_T(". Please make sure it is installed and in your PATH."));
+			_W(". Please make sure it is installed and in your PATH."));
 		return false;
 	}
 

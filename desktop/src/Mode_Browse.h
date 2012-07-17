@@ -29,6 +29,8 @@
 #include <barry/scoped_lock.h>
 #include <tr1/memory>
 #include <list>
+#include "i18n.h"
+#include "wxi18n.h"
 
 class GUIDesktopConnector : public Barry::DesktopConnector
 {
@@ -95,7 +97,7 @@ public:
 		: m_gdc(gdc)
 	{
 		if( pthread_mutex_init(&m_mutex, NULL) ) {
-			throw Barry::Error("Failed to create mutex for ThreadableDesktop");
+			throw Barry::Error(_C("Failed to create mutex for ThreadableDesktop"));
 		}
 	}
 
@@ -465,7 +467,7 @@ public:
 	void SendStatusEvent(const std::string &dbname);
 
 	// virtual override events (derived from Mode)
-	wxString GetTitleText() const { return _T("Barry Database Browser"); }
+	wxString GetTitleText() const { return _W("Barry Database Browser"); }
 
 	// window events
 	void OnDBDBListSelChange(wxListEvent &event);

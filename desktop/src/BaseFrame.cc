@@ -70,7 +70,7 @@ END_EVENT_TABLE()
 // BaseFrame
 
 BaseFrame::BaseFrame(const wxImage &background)
-	: wxFrame(NULL, wxID_ANY, _T("Barry Desktop Control Panel"),
+	: wxFrame(NULL, wxID_ANY, _W("Barry Desktop Control Panel"),
 		wxPoint(50, 50),
 		wxSize(background.GetWidth(), background.GetHeight()),
 		wxMINIMIZE_BOX | wxCAPTION | wxCLOSE_BOX | wxSYSTEM_MENU |
@@ -106,15 +106,15 @@ BaseFrame::BaseFrame(const wxImage &background)
 	// Create the Barry Logo popup system menu
 	m_sysmenu.reset( new wxMenu );
 	m_sysmenu->Append( new wxMenuItem(m_sysmenu.get(),
-		SysMenu_VerboseLogging, _T("&Verbose Logging"),
-		_T("Enable low level USB debug output"), wxITEM_CHECK, NULL) );
-	m_sysmenu->Append(SysMenu_RenameDevice, _T("Re&name Device..."));
-	m_sysmenu->Append(SysMenu_ResetDevice, _T("Re&set Device"));
-	m_sysmenu->Append(SysMenu_RescanUsb, _T("&Rescan USB"));
+		SysMenu_VerboseLogging, _W("&Verbose Logging"),
+		_W("Enable low level USB debug output"), wxITEM_CHECK, NULL) );
+	m_sysmenu->Append(SysMenu_RenameDevice, _W("Re&name Device..."));
+	m_sysmenu->Append(SysMenu_ResetDevice, _W("Re&set Device"));
+	m_sysmenu->Append(SysMenu_RescanUsb, _W("&Rescan USB"));
 	m_sysmenu->AppendSeparator();
-	m_sysmenu->Append(SysMenu_About, _T("&About..."));
+	m_sysmenu->Append(SysMenu_About, _W("&About..."));
 	m_sysmenu->AppendSeparator();
-	m_sysmenu->Append(wxID_EXIT, _T("E&xit"));
+	m_sysmenu->Append(wxID_EXIT, _W("E&xit"));
 
 	UpdateMenuState();
 	CreateDeviceCombo(wxGetApp().GetGlobalConfig().GetLastDevice());
@@ -154,7 +154,7 @@ void BaseFrame::CreateDeviceCombo(Barry::Pin pin)
 
 	// if there's more than one device, let the user pick "none"
 	if( results.size() > 1 ) {
-		devices.Add(_T("No device selected"));
+		devices.Add(_W("No device selected"));
 	}
 
 	// add one entry for each device
@@ -171,7 +171,7 @@ void BaseFrame::CreateDeviceCombo(Barry::Pin pin)
 
 	// if nothing is there, be descriptive
 	if( devices.GetCount() == 0 ) {
-		devices.Add(_T("No devices available"));
+		devices.Add(_W("No devices available"));
 	}
 
 	// create the combobox
@@ -206,7 +206,7 @@ void BaseFrame::EnableBackButton(Mode *new_mode)
 	wxSize size(-1, MAIN_HEADER_OFFSET - 5 - 5);
 
 	m_back_button.reset( new wxButton(this, MainMenu_BackButton,
-		_T("Main Menu"), pos, size) );
+		_W("Main Menu"), pos, size) );
 
 	// set the new mode
 	m_current_mode = new_mode;
@@ -280,7 +280,7 @@ void BaseFrame::OnPaint(wxPaintEvent &event)
 	dc.SetTextBackground( wxColour(0, 0, 0, wxALPHA_TRANSPARENT) );
 
 	long width, height, descent;
-	wxString header = _T("Barry Desktop Control Panel");
+	wxString header = _W("Barry Desktop Control Panel");
 	if( m_current_mode )
 		header = m_current_mode->GetTitleText();
 	dc.GetTextExtent(header, &width, &height, &descent);
@@ -330,12 +330,12 @@ void BaseFrame::OnLeftUp(wxMouseEvent &event)
 void BaseFrame::OnBackupRestore(wxCommandEvent &event)
 {
 	if( m_backup_process.IsAppRunning() ) {
-		wxMessageBox(_T("The Backup program is already running!"),
-			_T("Backup and Restore"), wxOK | wxICON_INFORMATION);
+		wxMessageBox(_W("The Backup program is already running!"),
+			_W("Backup and Restore"), wxOK | wxICON_INFORMATION);
 		return;
 	}
 
-	if( !m_backup_process.Run(this, "Backup and Restore", _T("barrybackup")) )
+	if( !m_backup_process.Run(this, _C("Backup and Restore"), _T("barrybackup")) )
 		return;
 }
 
@@ -350,7 +350,7 @@ void BaseFrame::OnSync(wxCommandEvent &event)
 		m_sync_mode.reset( new SyncMode(this) );
 	}
 	catch( std::exception &e ) {
-		wxString msg(_T(
+		wxString msg(_W(
 			"An error occurred that prevented the loading of Sync\n"
 			"mode.  This is most likely because a critical piece\n"
 			"of OpenSync is missing.  Check that all required\n"
@@ -358,7 +358,7 @@ void BaseFrame::OnSync(wxCommandEvent &event)
 			"can find your BlackBerry(R) successfully.\n\n"
 			"Error: "));
 		msg += wxString(e.what(), wxConvUTF8);
-		wxMessageBox(msg, _T("Sync Mode"), wxOK | wxICON_ERROR);
+		wxMessageBox(msg, _W("Sync Mode"), wxOK | wxICON_ERROR);
 		return;
 	}
 
@@ -372,8 +372,8 @@ void BaseFrame::OnModem(wxCommandEvent &event)
 		ModemDlg::DoModem(this, pin);
 	}
 	else {
-		wxMessageBox(_T("Please select a device first."),
-			_T("No Device"), wxOK | wxICON_ERROR, this);
+		wxMessageBox(_W("Please select a device first."),
+			_W("No Device"), wxOK | wxICON_ERROR, this);
 	}
 
 /*
@@ -665,7 +665,7 @@ void BaseFrame::OnMigrateDevice(wxCommandEvent &event)
 
 	}
 	catch( std::exception &e ) {
-		wxString msg(_T(
+		wxString msg(_W(
 			"An error occurred during device migration.\n"
 			"This could be due to a low level USB issue\n"
 			"Please make sure your device is plugged in\n"
@@ -674,7 +674,7 @@ void BaseFrame::OnMigrateDevice(wxCommandEvent &event)
 			"\n"
 			"Error: "));
 		msg += wxString(e.what(), wxConvUTF8);
-		wxMessageBox(msg, _T("Migrate Device"), wxOK | wxICON_ERROR);
+		wxMessageBox(msg, _W("Migrate Device"), wxOK | wxICON_ERROR);
 		return;
 	}
 }
@@ -683,8 +683,8 @@ void BaseFrame::OnBrowseDatabases(wxCommandEvent &event)
 {
 	int i = Barry::Probe::Find(wxGetApp().GetResults(), GetCurrentComboPin());
 	if( i == -1 ) {
-		wxMessageBox(_T("There is no device selected in the device list.  Please select a device to browse."),
-			_T("Database Browser Mode"), wxOK | wxICON_ERROR);
+		wxMessageBox(_W("There is no device selected in the device list.  Please select a device to browse."),
+			_W("Database Browser Mode"), wxOK | wxICON_ERROR);
 		return;
 	}
 
@@ -693,7 +693,7 @@ void BaseFrame::OnBrowseDatabases(wxCommandEvent &event)
 				wxGetApp().GetResults()[i]) );
 	}
 	catch( std::exception &e ) {
-		wxString msg(_T(
+		wxString msg(_W(
 			"An error occurred that prevented the loading of Database\n"
 			"Browse mode.  This could be due to a low level USB\n"
 			"issue.  Please make sure your device is plugged in\n"
@@ -702,7 +702,7 @@ void BaseFrame::OnBrowseDatabases(wxCommandEvent &event)
 			"\n"
 			"Error: "));
 		msg += wxString(e.what(), wxConvUTF8);
-		wxMessageBox(msg, _T("Database Browser Mode"), wxOK | wxICON_ERROR);
+		wxMessageBox(msg, _W("Database Browser Mode"), wxOK | wxICON_ERROR);
 		return;
 	}
 
@@ -736,8 +736,8 @@ void BaseFrame::OnTermBackupAndRestore(wxProcessEvent &event)
 	    m_backup_process.GetChildExitCode() &&
 	    (time(NULL) - m_backup_process.GetStartTime()) < 2 )
 	{
-		wxMessageBox(_T("Unable to run barrybackup, or it returned an error. Please make sure it is installed and in your PATH."),
-			_T("Backup and Restore"), wxOK | wxICON_ERROR);
+		wxMessageBox(_W("Unable to run barrybackup, or it returned an error. Please make sure it is installed and in your PATH."),
+			_W("Backup and Restore"), wxOK | wxICON_ERROR);
 	}
 	else
 	{
@@ -805,8 +805,8 @@ void BaseFrame::OnRenameDevice(wxCommandEvent &event)
 
 	wxString current_name(results[index].m_cfgDeviceName.c_str(), wxConvUTF8);
 	wxTextEntryDialog dlg(this,
-		_T("Please enter a name for the current device:"),
-		_T("Rename Device"),
+		_W("Please enter a name for the current device:"),
+		_W("Rename Device"),
 		current_name, wxTextEntryDialogStyle);
 
 	if( dlg.ShowModal() != wxID_OK )
@@ -851,9 +851,9 @@ void BaseFrame::OnRescanUsb(wxCommandEvent &event)
 void BaseFrame::OnAbout(wxCommandEvent &event)
 {
 	wxAboutDialogInfo info;
-	info.SetName(_T("Barry Desktop Control Panel"));
+	info.SetName(_W("Barry Desktop Control Panel"));
 	info.SetVersion(_T(BARRY_DESKTOP_VER_STRING));
-	info.SetDescription(_T("A Free Software graphical user interface for working with the BlackBerry® smartphone."));
+	info.SetDescription(_W("A Free Software graphical user interface for working with the BlackBerry® smartphone."));
 	info.SetCopyright(_T("Copyright © 2009-2012, Net Direct Inc."));
 	info.SetWebSite(_T("http://netdirect.ca/barry"));
 	info.SetLicense(_T(
@@ -874,9 +874,9 @@ void BaseFrame::OnAbout(wxCommandEvent &event)
 //	info.AddDeveloper(_T("See AUTHORS file for detailed"));
 //	info.AddDeveloper(_T("contribution information."));
 
-	info.AddArtist(_T("Chris Frey - GUI interface"));
-	info.AddArtist(_T("Martin Owens - Barry logo"));
-	info.AddArtist(_T("Tango Desktop Project - Public domain icons"));
+	info.AddArtist(_W("Chris Frey - GUI interface"));
+	info.AddArtist(_W("Martin Owens - Barry logo"));
+	info.AddArtist(_W("Tango Desktop Project - Public domain icons"));
 
 	wxAboutBox(info);
 }

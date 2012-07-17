@@ -23,6 +23,8 @@
 #include "barrydesktop.h"
 #include <iostream>
 #include <sstream>
+#include "wxi18n.h"
+#include "i18n.h"
 
 using namespace std;
 
@@ -83,11 +85,11 @@ bool Barry::ZapData(wxWindow *parent,
 
 	// build intro message
 	ostringstream oss;
-	oss << "Please select the databases you wish to erase\n"
-		"on device: " << device_name << "\n"
-		"\n"
-		"Note: all synced databases must be erased\n"
-		"to avoid a slow-sync.";
+	oss << _C("Please select the databases you wish to erase\n"
+		"on device: ") << device_name << "\n"
+		<< "\n"
+		<< _C("Note: all synced databases must be erased\n"
+		"to avoid a slow-sync.");
 	wxString msg(oss.str().c_str(), wxConvUTF8);
 
 	// build list of databases (base on information from engine, if
@@ -113,20 +115,20 @@ bool Barry::ZapData(wxWindow *parent,
 
 	// present the list to the user
 	int count = wxGetMultipleChoices(selections, msg,
-		_T("Select Databases to Erase"), dbs, m_parent);
+		_W("Select Databases to Erase"), dbs, m_parent);
 	if( count <= 0 )
 		return false;	// nothing to do
 
 	// display selections to the user for one final confirmation
 	oss.str("");
-	oss << "You have selected the following databases to be completely "
-		"erased from device " << device_name << ":\n\n";
+	oss << _C("You have selected the following databases to be completely "
+		"erased from device: ") << device_name << "\n\n";
 	for( size_t i = 0; i < selections.GetCount(); i++ ) {
 		oss << string(dbs[selections[i]].utf8_str()) << "\n";
 	}
-	oss << "\nProceed with erase?";
+	oss << "\n" << _C("Proceed with erase?");
 	wxString confirm(oss.str().c_str(), wxConvUTF8);
-	int choice = wxMessageBox(confirm, _T("Erase Confirmation"),
+	int choice = wxMessageBox(confirm, _W("Erase Confirmation"),
 		wxYES_NO | wxICON_QUESTION, m_parent);
 	if( choice != wxYES )
 		return false;		// nothing to do
@@ -144,11 +146,11 @@ bool Barry::ZapData(wxWindow *parent,
 
 		unsigned int dbid;
 		if( !dbdb.GetDBNumber(dbname, dbid) ) {
-			barryverbose("No database named '" << dbname << "' in device!");
+			barryverbose(_C("No database named '") << dbname << _C("' in device!"));
 			continue;
 		}
 
-		barryverbose("Clearing db: " << dbname);
+		barryverbose(_C("Clearing db: ") << dbname);
 		desktop.ClearDatabase(dbid);
 	}
 
@@ -156,11 +158,11 @@ bool Barry::ZapData(wxWindow *parent,
 
 	} catch( ::Barry::Error &e ) {
 		ostringstream oss;
-		oss << "Barry exception: " << e.what() << "\n\n"
-			"You may need to do a USB reset and rescan from the "
-			"main menu.";
+		oss << _C("Barry exception: ") << e.what() << "\n\n"
+		    << _C("You may need to do a USB reset and rescan from the "
+			"main menu.");
 		wxString msg(oss.str().c_str(), wxConvUTF8);
-		wxMessageBox(msg, _T("Barry Exception"),
+		wxMessageBox(msg, _W("Barry Exception"),
 			wxOK | wxICON_ERROR, m_parent);
 		return false;
 	}

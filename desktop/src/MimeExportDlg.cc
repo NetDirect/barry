@@ -23,6 +23,7 @@
 #include "windowids.h"
 #include <iostream>
 #include <fstream>
+#include "wxi18n.h"
 
 using namespace std;
 
@@ -37,14 +38,14 @@ END_EVENT_TABLE()
 MimeExportDlg::MimeExportDlg(wxWindow* parent,
 				const std::string &vdata,
 				const std::string &file_types)
-	: wxDialog(parent, Dialog_MimeExport, _T("MIME Card Data"))
+	: wxDialog(parent, Dialog_MimeExport, _W("MIME Card Data"))
 	, m_vdata(vdata)
 	, m_file_types(file_types)
 {
 	bottom_buttons = CreateButtonSizer(wxOK);
 
 	text_ctrl_1 = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE);
-	save_button = new wxButton(this, Dialog_MimeExport_SaveButton, _T("Save..."));
+	save_button = new wxButton(this, Dialog_MimeExport_SaveButton, _W("Save..."));
 
 	set_properties();
 	do_layout();
@@ -74,7 +75,7 @@ void MimeExportDlg::OnSaveButton(wxCommandEvent &event)
 {
 	wxString ftypes(m_file_types.c_str(), wxConvUTF8);
 
-	wxFileDialog dlg(this, _T("Save Card as..."), _T(""), _T(""),
+	wxFileDialog dlg(this, _W("Save Card as..."), _T(""), _T(""),
 		ftypes,
 		wxFD_SAVE | wxFD_OVERWRITE_PROMPT | wxFD_PREVIEW);
 	if( dlg.ShowModal() == wxID_OK ) {

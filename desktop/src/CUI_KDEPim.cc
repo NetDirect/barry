@@ -23,6 +23,7 @@
 #include "os22.h"			// only for the dynamic_cast
 #include <wx/wx.h>
 #include <wx/process.h>
+#include "wxi18n.h"
 
 namespace AppConfig {
 
@@ -55,7 +56,7 @@ bool KDEPim::Configure(wxWindow *parent, plugin_ptr old_plugin)
 	m_container.reset( m_kdepim );
 
 	// tell the user all went well
-	wxMessageBox(_T("KDEPim needs no configuration."), _T("KDEPim Config"), wxOK | wxICON_INFORMATION, m_parent);
+	wxMessageBox(_W("KDEPim needs no configuration."), _W("KDEPim Config"), wxOK | wxICON_INFORMATION, m_parent);
 	return true;
 }
 
@@ -81,8 +82,8 @@ bool KDEPim::ZapData(wxWindow *parent,
 	m_parent = parent;
 
 	if( IsAppRunning() ) {
-		wxMessageBox(_T("Kontact already running."),
-			_T("No Biscuit"), wxOK | wxICON_INFORMATION,
+		wxMessageBox(_W("Kontact already running."),
+			_W("Oops..."), wxOK | wxICON_INFORMATION,
 			m_parent);
 		return false;
 	}
@@ -90,18 +91,18 @@ bool KDEPim::ZapData(wxWindow *parent,
 	// tell the user what to do
 	wxString msg;
 	if( dynamic_cast<OpenSync::OpenSync22*>(engine) ) {
-		msg = _T(
+		msg = _W(
 		"Starting Kontact.  Delete all contacts and calendar "
 		"entries manually.");
 	}
 	else {
-		msg = _T(
+		msg = _W(
 		"Starting Kontact.  Delete all contacts and calendar "
 		"entries manually (as well as memos and tasks if you are "
 		"syncing them too)."
 		);
 	}
-	int choice = wxMessageBox(msg, _T("Starting Kontact"),
+	int choice = wxMessageBox(msg, _W("Starting Kontact"),
 			wxOK | wxCANCEL | wxICON_QUESTION, m_parent);
 	if( choice != wxOK )
 		return false;

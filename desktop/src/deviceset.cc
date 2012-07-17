@@ -26,6 +26,7 @@
 #include <algorithm>
 #include <iostream>
 #include <iomanip>
+#include "i18n.h"
 
 using namespace std;
 
@@ -191,8 +192,8 @@ std::ostream& operator<< (std::ostream &os, const DeviceEntry &de)
 {
 	os << setfill(' ') << setw(8) << de.GetPin().Str();
 	os << "|" << setfill(' ') << setw(35) << de.GetDeviceName();
-	os << "|" << setfill(' ') << setw(4) << (de.IsConnected() ? "yes" : "no");
-	os << "|" << setfill(' ') << setw(4) << (de.IsConfigured() ? "yes" : "no");
+	os << "|" << setfill(' ') << setw(4) << (de.IsConnected() ? _C("yes") : _C("no"));
+	os << "|" << setfill(' ') << setw(4) << (de.IsConfigured() ? _C("yes") : _C("no"));
 	os << "|" << setfill(' ') << setw(7)
 		<< (de.GetEngine() ? de.GetEngine()->GetVersion() : "");
 	return os;

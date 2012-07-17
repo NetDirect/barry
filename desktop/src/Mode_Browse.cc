@@ -68,8 +68,8 @@ END_EVENT_TABLE()
 void ShowReadOnlyMsg(wxWindow *parent, const Barry::ReturnCodeError &rce)
 {
 	wxString what(rce.what(), wxConvUTF8);
-	wxMessageBox(_T("This database is apparently read-only.  If this device is connected to a BES, you cannot edit records via USB.  (Error: ") + what + _T(")"),
-		_T("Device Error"), wxOK | wxICON_ERROR, parent);
+	wxMessageBox(_W("This database is apparently read-only.  If this device is connected to a BES, you cannot edit records via USB.  (Error: ") + what + _T(")"),
+		_W("Device Error"), wxOK | wxICON_ERROR, parent);
 }
 
 bool IsEditable(const std::string &dbname)
@@ -88,8 +88,10 @@ bool IsCardable(const std::string &dbname, std::string *file_types)
 	// import / exports
 	if( dbname == Contact::GetDBName() ) {
 
-		if( file_types )
-			*file_types = "VCard files (*.vcf;*.vcard)|*.vcf;*.vcard";
+		if( file_types ) {
+			*file_types = _C("VCard files");
+			*file_types += " (*.vcf;*.vcard)|*.vcf;*.vcard";
+		}
 		return true;
 
 	}
@@ -97,8 +99,10 @@ bool IsCardable(const std::string &dbname, std::string *file_types)
 			dbname == Memo::GetDBName() ||
 			dbname == Task::GetDBName() ) {
 
-		if( file_types )
-			*file_types = "ICalendar files (*.ical;*.ics;*.ifb;*.icalendar)|*.ical;*.ics;*.ifb;*.icalendar";
+		if( file_types ) {
+			*file_types = _C("ICalendar files");
+			*file_types += " (*.ical;*.ics;*.ifb;*.icalendar)|*.ical;*.ics;*.ifb;*.icalendar";
+		}
 		return true;
 
 	}
@@ -247,14 +251,13 @@ bool GUIDesktopConnector::PasswordPrompt(const Barry::BadPassword &bp,
 {
 	// create prompt based on exception data
 	ostringstream oss;
-	oss << "Please enter device password: ("
-	    << bp.remaining_tries()
-	    << " tries remaining)";
+	oss << _C("Please enter device password: ")
+	    << "(" << bp.remaining_tries() << _C(" tries remaining") << ")";
 	wxString prompt(oss.str().c_str(), wxConvUTF8);
 
 	// ask user for device password
 	wxString pass = wxGetPasswordFromUser(prompt,
-		_T("Device Password"), _T(""), m_parent);
+		_W("Device Password"), _T(""), m_parent);
 
 	password_result = pass.utf8_str();
 
@@ -281,7 +284,7 @@ bool DBDataCache::Edit(wxWindow *parent,
 
 std::string DBDataCache::GetDescription() const
 {
-	return "raw data";
+	return _C("raw data");
 }
 
 
@@ -359,7 +362,7 @@ DBCache::iterator DBCache::Add(wxWindow *parent, DataCachePtr p)
 	// see if this record has a builder
 	Barry::Builder *bp = dynamic_cast<Barry::Builder*> (p.get());
 	if( !bp ) {
-		cerr << "DataCachePtr has no builder" << endl;
+		cerr << _C("DataCachePtr has no builder") << endl;
 		return end();
 	}
 
@@ -376,7 +379,7 @@ Barry::Verbose(true);
 	try {
 		desktop.AddRecord(m_dbid, *bp);
 	} catch( Barry::ReturnCodeError &rce ) {
-		cerr << "Device exception: " << rce.what() << endl;
+		cerr << _C("Device exception: ") << rce.what() << endl;
 		if( rce.IsReadOnly() ) {
 			ShowReadOnlyMsg(parent, rce);
 			return end();
@@ -545,8 +548,8 @@ bool DBCache::Delete(wxWindow *parent, iterator record)
 
 	// prompt user with Yes / No message
 	wxString desc((*record)->GetDescription().c_str(), wxConvUTF8);
-	int choice = wxMessageBox(_T("Delete record: ") + desc + _T("?"),
-		_T("Record Delete"), wxYES_NO | wxICON_QUESTION, parent);
+	int choice = wxMessageBox(_W("Delete this record?\n   ") + desc,
+		_W("Record Delete"), wxYES_NO | wxICON_QUESTION, parent);
 
 	// if no, return false
 	if( choice != wxYES )
@@ -590,11 +593,11 @@ DBMap::DBMap(ThreadableDesktop &tdesktop)
 	: m_tdesktop(tdesktop)
 {
 	if( pthread_mutex_init(&m_map_mutex, NULL) ) {
-		throw Barry::Error("Failed to create map mutex");
+		throw Barry::Error(_C("Failed to create map mutex"));
 	}
 
 	if( pthread_mutex_init(&m_load_mutex, NULL) ) {
-		throw Barry::Error("Failed to create load mutex");
+		throw Barry::Error(_C("Failed to create load mutex"));
 	}
 }
 
@@ -729,7 +732,7 @@ void BrowseMode::SendStatusEvent(const std::string &dbname)
 	event.SetEventObject(this);
 
 	if( dbname.size() ) {
-		wxString msg(_T("Loading: "));
+		wxString msg(_W("Loading: "));
 		msg += wxString(dbname.c_str(), wxConvUTF8);
 		event.SetString(msg);
 	}
@@ -782,7 +785,7 @@ void BrowseMode::CreateControls()
 
 	m_show_all_checkbox.reset( new wxCheckBox(m_parent,
 				BrowseMode_ShowAllCheckbox,
-				_T("Show All Databases"),
+				_W("Show All Databases"),
 				wxDefaultPosition, wxDefaultSize,
 				wxCHK_2STATE) );
 	status_sizer->Add( m_show_all_checkbox.get(), 0, wxEXPAND, 0 );
@@ -812,22 +815,22 @@ void BrowseMode::CreateControls()
 	wxSize footer(75, MAIN_HEADER_OFFSET - 5 - 5);
 	wxBoxSizer *buttons = new wxBoxSizer(wxHORIZONTAL);
 	m_import_record_button.reset( new wxButton(m_parent,
-				BrowseMode_ImportRecordButton, _T("Import..."),
+				BrowseMode_ImportRecordButton, _W("Import..."),
 				wxDefaultPosition, footer) );
 	m_export_record_button.reset( new wxButton(m_parent,
-				BrowseMode_ExportRecordButton, _T("Export..."),
+				BrowseMode_ExportRecordButton, _W("Export..."),
 				wxDefaultPosition, footer) );
 	m_add_record_button.reset( new wxButton(m_parent,
-				BrowseMode_AddRecordButton, _T("Add..."),
+				BrowseMode_AddRecordButton, _W("Add..."),
 				wxDefaultPosition, footer) );
 	m_copy_record_button.reset( new wxButton(m_parent,
-				BrowseMode_CopyRecordButton, _T("Copy..."),
+				BrowseMode_CopyRecordButton, _W("Copy..."),
 				wxDefaultPosition, footer) );
 	m_edit_record_button.reset( new wxButton(m_parent,
-				BrowseMode_EditRecordButton, _T("Edit..."),
+				BrowseMode_EditRecordButton, _W("Edit..."),
 				wxDefaultPosition, footer));
 	m_delete_record_button.reset( new wxButton(m_parent,
-				BrowseMode_DeleteRecordButton, _T("Delete..."),
+				BrowseMode_DeleteRecordButton, _W("Delete..."),
 				wxDefaultPosition, footer) );
 	buttons->Add(m_import_record_button.get(), 0, wxRIGHT, 5);
 	buttons->Add(m_export_record_button.get(), 0, wxRIGHT, 5);
@@ -848,9 +851,9 @@ void BrowseMode::CreateControls()
 	wxSize dbdb_size = m_dbdb_list->GetClientSize();
 	int scroll_width = wxSystemSettings::GetMetric(wxSYS_VSCROLL_X);
 	int size = dbdb_size.GetWidth() - scroll_width;
-	m_dbdb_list->InsertColumn(0, _T("Databases"), wxLIST_FORMAT_LEFT,
+	m_dbdb_list->InsertColumn(0, _W("Databases"), wxLIST_FORMAT_LEFT,
 		size * 0.80);
-	m_dbdb_list->InsertColumn(1, _T("Count"), wxLIST_FORMAT_LEFT,
+	m_dbdb_list->InsertColumn(1, _W("Count"), wxLIST_FORMAT_LEFT,
 		size * 0.20 + scroll_width); // add back the scroll width
 					// so it doesn't look half-baked when
 					// there is no scroll bar
@@ -858,7 +861,7 @@ void BrowseMode::CreateControls()
 
 	// m_record_list
 	wxSize record_size = m_record_list->GetClientSize();
-	m_record_list->InsertColumn(0, _T("Record Description"),
+	m_record_list->InsertColumn(0, _W("Record Description"),
 		wxLIST_FORMAT_LEFT, record_size.GetWidth());
 
 
@@ -1060,10 +1063,10 @@ bool CheckTypes(wxWindow *parent,
 		string tslist;
 		tlist.CategoryList2Str(tslist);
 
-		wxString msg = wxString::Format(_T("Card file type (%s) does not match record you are trying to add (%s)."),
+		wxString msg = wxString::Format(_W("Card file type (%s) does not match record you are trying to add (%s)."),
 			wxString(tslist.c_str(), wxConvUTF8).c_str(),
 			wxString(dbname.c_str(), wxConvUTF8).c_str());
-		wxMessageBox(msg, _T("Invalid Card Type"),
+		wxMessageBox(msg, _W("Invalid Card Type"),
 			wxOK | wxICON_INFORMATION, parent);
 		return false;
 	}
@@ -1078,11 +1081,13 @@ void BrowseMode::OnImportRecord(wxCommandEvent &event)
 		return;
 
 	// we are loading files here, so also allow *.*
-	file_types += "|All files (*.*)|*.*";
+	file_types += "|";
+	file_types += _C("All files");
+	file_types += " (*.*)|*.*";
 
 	wxString file_filter(file_types.c_str(), wxConvUTF8);
 
-	wxFileDialog dlg(m_parent, _T("Load Record..."), _T(""), _T(""),
+	wxFileDialog dlg(m_parent, _W("Load Record..."), _T(""), _T(""),
 		file_filter,
 		wxFD_OPEN | wxFD_PREVIEW);
 	if( dlg.ShowModal() != wxID_OK )
@@ -1093,8 +1098,8 @@ void BrowseMode::OnImportRecord(wxCommandEvent &event)
 	string vrec;
 	vector<string> types;
 	if( !MimeBuilder::ReadMimeRecord(ifs, vrec, types) ) {
-		wxMessageBox(_T("No card data found in: ") + dlg.GetPath(),
-			_T("Import Read Error"),
+		wxMessageBox(_W("No card data found in: ") + dlg.GetPath(),
+			_W("Import Read Error"),
 			wxOK | wxICON_ERROR, m_parent);
 		return;
 	}
@@ -1141,8 +1146,8 @@ void BrowseMode::OnImportRecord(wxCommandEvent &event)
 	}
 
 	if( convert_error.size() ) {
-		wxString msg = wxString::Format(_T("Unable to import selected file: %s"), wxString(convert_error.c_str(), wxConvUTF8).c_str());
-		wxMessageBox(msg, _T("Import Error"), wxOK | wxICON_ERROR,
+		wxString msg = wxString::Format(_W("Unable to import selected file: %s"), wxString(convert_error.c_str(), wxConvUTF8).c_str());
+		wxMessageBox(msg, _W("Import Error"), wxOK | wxICON_ERROR,
 			m_parent);
 		return;
 	}
@@ -1151,8 +1156,8 @@ void BrowseMode::OnImportRecord(wxCommandEvent &event)
 	// since the cache is already loaded by the main db list
 	DBMap::DBCachePtr dbp = m_dbmap->GetDBCache(m_current_dbname);
 	if( !dbp.get() ) {
-		wxMessageBox(_T("Internal pointer error: cannot find DBCachePtr for: ") + wxString(m_current_dbname.c_str(), wxConvUTF8),
-			_T("Internal Error"),
+		wxMessageBox(_W("Internal pointer error: cannot find DBCachePtr for: ") + wxString(m_current_dbname.c_str(), wxConvUTF8),
+			_W("Internal Error"),
 			wxOK | wxICON_ERROR, m_parent);
 		return;
 	}
@@ -1166,8 +1171,8 @@ void BrowseMode::OnImportRecord(wxCommandEvent &event)
 		m_record_list->InsertItem(m_current_record_item, text);
 	}
 	else {
-		wxMessageBox(_T("Internal error: cannot add record to DBCache"),
-			_T("Internal Error"),
+		wxMessageBox(_W("Internal error: cannot add record to DBCache"),
+			_W("Internal Error"),
 			wxOK | wxICON_ERROR, m_parent);
 		return;
 	}

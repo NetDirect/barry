@@ -22,6 +22,7 @@
 #include "osconv22.h"
 #include "osconfig.h"
 #include <sstream>
+#include "i18n.h"
 
 using namespace std;
 
@@ -300,7 +301,7 @@ void Converter22::Save(const Config::Barry &config,
 			const std::string &group_name)
 {
 	if( config.GetMemberId() == -1 )
-		throw Config::SaveError("Cannot save a plugin with a member_id of -1");
+		throw Config::SaveError(_C("Cannot save a plugin with a member_id of -1"));
 
 	ostringstream oss;
 
@@ -317,7 +318,7 @@ void Converter22::Save(const Config::Evolution &config,
 			const std::string &group_name)
 {
 	if( config.GetMemberId() == -1 )
-		throw Config::SaveError("Cannot save a plugin with a member_id of -1");
+		throw Config::SaveError(_C("Cannot save a plugin with a member_id of -1"));
 
 	ostringstream oss;
 	oss << "<config>\n";
@@ -354,7 +355,7 @@ void Converter22::Save(const Config::Unsupported &config,
 			const std::string &group_name)
 {
 	if( config.GetMemberId() == -1 )
-		throw Config::SaveError("Cannot save a plugin with a member_id of -1");
+		throw Config::SaveError(_C("Cannot save a plugin with a member_id of -1"));
 
 	m_api.SetConfiguration(group_name, config.GetMemberId(),
 		config.GetRawConfig());

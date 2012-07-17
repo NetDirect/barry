@@ -31,7 +31,7 @@ public:
 	virtual ~Mode() {}
 
 	// events (called from BaseFrame)
-	virtual wxString GetTitleText() const { return _T("FIXME"); }
+	virtual wxString GetTitleText() const { return _T("FIXME - Incorrect Mode Title"); }
 	virtual void OnPaint(wxDC &dc) {}
 	virtual void OnMouseMotion(wxDC &dc, int x, int y) {}
 	virtual void OnLeftDown(wxDC &dc, int x, int y) {}

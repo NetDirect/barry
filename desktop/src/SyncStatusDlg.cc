@@ -30,6 +30,8 @@
 #include <sstream>
 #include <iomanip>
 #include <iterator>
+#include "wxi18n.h"
+#include "i18n.h"
 
 using namespace std;
 
@@ -62,7 +64,7 @@ bool StatusConnection::OnPoke(const wxString &topic,
 	}
 	else if( item == STATUS_ITEM_ENTRY ) {
 		m_dlg.Print(msg, *wxBLUE);
-		m_dlg.ShortPrint(_T("Syncing entries..."));
+		m_dlg.ShortPrint(_W("Syncing entries..."));
 	}
 	else if( item == STATUS_ITEM_MAPPING ) {
 		m_dlg.Print(msg, *wxBLUE);
@@ -254,7 +256,7 @@ END_EVENT_TABLE()
 
 SyncStatusDlg::SyncStatusDlg(wxWindow *parent,
 				const DeviceSet::subset_type &subset)
-	: wxDialog(parent, Dialog_SyncStatus, _T("Device Sync Progress"),
+	: wxDialog(parent, Dialog_SyncStatus, _W("Device Sync Progress"),
 			wxDefaultPosition, wxDefaultSize,
 			wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
 	, TermCatcher(this, Dialog_SyncStatus_SyncTerminated)
@@ -302,7 +304,7 @@ void SyncStatusDlg::CreateLayout()
 void SyncStatusDlg::AddStatusSizer(wxSizer *sizer)
 {
 	wxSizer *ss = new wxStaticBoxSizer(
-		new wxStaticBox(this, wxID_ANY, _T("Sync Progress")),
+		new wxStaticBox(this, wxID_ANY, _W("Sync Progress")),
 		wxVERTICAL
 		);
 
@@ -336,7 +338,7 @@ void SyncStatusDlg::AddButtonSizer(wxSizer *sizer)
 	button->Add(
 		m_details_button = new wxButton(this,
 			Dialog_SyncStatus_ShowDetailsButton,
-			_T("Show Details")),
+			_W("Show Details")),
 		0, wxALL, 3);
 
 	button->Add( -1, -1, 1 );
@@ -345,18 +347,18 @@ void SyncStatusDlg::AddButtonSizer(wxSizer *sizer)
 		button->Add(
 			m_runapp_button = new wxButton(this,
 				Dialog_SyncStatus_RunAppButton,
-				_T("Run App")),
+				_W("Run App")),
 			0, wxALL, 3);
 	}
 	button->Add(
 		m_syncagain_button = new wxButton(this,
 			Dialog_SyncStatus_SyncAgainButton,
-			_T("Sync Again")),
+			_W("Sync Again")),
 		0, wxALL, 3);
 	button->Add(
 		m_killclose_button = new wxButton(this,
 			Dialog_SyncStatus_KillCloseButton,
-			_T("Kill Sync")),
+			_W("Kill Sync")),
 		0, wxALL, 3);
 
 	sizer->Add(button, 0, wxALL | wxEXPAND, 5);
@@ -367,7 +369,7 @@ void SyncStatusDlg::SetRunning()
 	if( m_runapp_button )
 		m_runapp_button->Enable(false);
 	m_syncagain_button->Enable(false);
-	m_killclose_button->SetLabel(_T("Kill Sync"));
+	m_killclose_button->SetLabel(_W("Kill Sync"));
 	m_killclose_button->Enable(true);
 	UpdateTitle();
 
@@ -381,7 +383,7 @@ void SyncStatusDlg::SetClose()
 	if( m_runapp_button )
 		m_runapp_button->Enable(true);
 	m_syncagain_button->Enable(true);
-	m_killclose_button->SetLabel(_T("Close"));
+	m_killclose_button->SetLabel(_W("Close"));
 	m_killclose_button->Enable(true);
 	UpdateTitle();
 
@@ -436,12 +438,12 @@ DeviceEntry* SyncStatusDlg::GetCurrentDevice()
 void SyncStatusDlg::UpdateTitle()
 {
 	if( m_next_device == m_subset.end() ) {
-		SetTitle(_T("Sync Progress Dialog"));
+		SetTitle(_W("Sync Progress Dialog"));
 	}
 	else {
 		ostringstream oss;
-		oss << "Syncing: " << (*m_next_device)->GetPin().Str()
-		    << " with " << (*m_next_device)->GetAppNames();
+		oss << _C("Syncing: ") << (*m_next_device)->GetPin().Str()
+		    << _C(" with ") << (*m_next_device)->GetAppNames();
 		wxString label(oss.str().c_str(), wxConvUTF8);
 		SetTitle(label);
 	}
@@ -476,7 +478,7 @@ void SyncStatusDlg::StartNextSync()
 
 	// anything to do?
 	if( m_next_device == m_subset.end() ) {
-		Print(_T("No more devices to sync."), *wxBLACK);
+		Print(_W("No more devices to sync."), *wxBLACK);
 		SetClose();
 		return;
 	}
@@ -491,8 +493,8 @@ void SyncStatusDlg::StartNextSync()
 	m_device_id = device.GetPin().Str() + " (" + device.GetDeviceName() + ")";
 
 	if( !device.IsConfigured() ) {
-		PrintStd(m_device_id + " is not configured, skipping.", *wxRED);
-		ShortPrintStd("Skipping unconfigured: " + m_device_id);
+		PrintStd(m_device_id + _C(" is not configured, skipping."), *wxRED);
+		ShortPrintStd(_C("Skipping unconfigured: ") + m_device_id);
 		++m_next_device;
 		m_current_device = m_subset.end();
 		StartNextSync();
@@ -503,7 +505,7 @@ void SyncStatusDlg::StartNextSync()
 	OpenSync::Config::Group *group = device.GetConfigGroup();
 	string group_name = group->GetGroupName();
 
-	string statusmsg = "Starting sync for: " + m_device_id;
+	string statusmsg = _C("Starting sync for: ") + m_device_id;
 	PrintStd(statusmsg, *wxBLACK);
 	ShortPrintStd(statusmsg);
 
@@ -520,7 +522,7 @@ void SyncStatusDlg::StartNextSync()
 
 	// initialize sync jail process
 	if( m_jailexec.IsAppRunning() ) {
-		wxString msg(_T("ERROR: App running in StartNextSync()"));
+		wxString msg(_W("ERROR: App running in StartNextSync()"));
 		Print(msg, *wxRED);
 		ShortPrint(msg);
 		SetClose();
@@ -541,8 +543,8 @@ void SyncStatusDlg::StartNextSync()
 	command += wxString(sync_code.str().c_str(), wxConvUTF8);
 
 	if( !m_jailexec.Run(NULL, "bsyncjail", command) ) {
-		Print(_T("ERROR: unable to start bsyncjail: ") + command, *wxRED);
-		ShortPrint(_T("ERROR: unable to start bsyncjail"));
+		Print(_W("ERROR: unable to start bsyncjail: ") + command, *wxRED);
+		ShortPrint(_W("ERROR: unable to start bsyncjail"));
 		SetClose();
 		return;
 	}
@@ -553,11 +555,11 @@ void SyncStatusDlg::StartNextSync()
 
 void SyncStatusDlg::OnSlowSync()
 {
-	Print(_T("Slow sync detected!  Killing sync automatically."), *wxRED);
+	Print(_W("Slow sync detected!  Killing sync automatically."), *wxRED);
 	KillSync();
 
-	Print(_T("Slow syncs are known to be unreliable."), *wxBLACK);
-	Print(_T("Do a 1 Way Reset, and sync again."), *wxBLACK);
+	Print(_W("Slow syncs are known to be unreliable."), *wxBLACK);
+	Print(_W("Do a 1 Way Reset, and sync again."), *wxBLACK);
 }
 
 void SyncStatusDlg::OnInitDialog(wxInitDialogEvent &event)
@@ -572,8 +574,8 @@ void SyncStatusDlg::OnRunApp(wxCommandEvent &event)
 		return;
 
 	if( m_ui.get() && m_ui->IsAppRunning() ) {
-		wxMessageBox(_T("The application is already running."),
-			_T("Run Application"), wxOK | wxICON_ERROR);
+		wxMessageBox(_W("The application is already running."),
+			_W("Run Application"), wxOK | wxICON_ERROR);
 		return;
 	}
 
@@ -599,19 +601,19 @@ void SyncStatusDlg::OnKillClose(wxCommandEvent &event)
 	if( m_jailexec.IsAppRunning() ) {
 		int choice;
 		if( m_killingjail ) {
-			choice = wxMessageBox(_T("Already killing sync.  Kill again?"),
-				_T("Kill Sync"), wxYES_NO | wxICON_QUESTION);
+			choice = wxMessageBox(_W("Already killing sync.  Kill again?"),
+				_W("Kill Sync"), wxYES_NO | wxICON_QUESTION);
 		}
 		else {
-			choice = wxMessageBox(_T("This will kill the syncing child process, and will likely require a configuration reset.\n\nKill sync process anyway?"),
-				_T("Kill Sync"), wxYES_NO | wxICON_QUESTION);
+			choice = wxMessageBox(_W("This will kill the syncing child process, and will likely require a configuration reset.\n\nKill sync process anyway?"),
+				_W("Kill Sync"), wxYES_NO | wxICON_QUESTION);
 		}
 
 		if( choice == wxYES ) {
 			KillSync();
 
-			Print(_T("Killing sync... this may take a little while..."), *wxRED);
-			Print(_T("Remember to re-plug your device."), *wxRED);
+			Print(_W("Killing sync... this may take a little while..."), *wxRED);
+			Print(_W("Remember to re-plug your device."), *wxRED);
 			// let the terminate call clean up the buttons
 			return;
 		}
@@ -625,7 +627,7 @@ void SyncStatusDlg::OnShowDetails(wxCommandEvent &event)
 {
 	if( m_status_edit->IsShown() ) {
 		m_status_edit->Hide();
-		m_details_button->SetLabel(_T("Show Details"));
+		m_details_button->SetLabel(_W("Show Details"));
 	}
 	else {
 		if( !m_repositioned ) {
@@ -647,7 +649,7 @@ void SyncStatusDlg::OnShowDetails(wxCommandEvent &event)
 		}
 
 		m_status_edit->Show();
-		m_details_button->SetLabel(_T("Hide Details"));
+		m_details_button->SetLabel(_W("Hide Details"));
 	}
 	m_topsizer->Fit(this);
 }
@@ -671,12 +673,12 @@ void SyncStatusDlg::OnExecTerminated(wxProcessEvent &event)
 {
 	ostringstream oss;
 	if( m_killingjail )
-		oss << "Sync terminated: ";
+		oss << _C("Sync terminated: ");
 	else
-		oss << "Sync finished: ";
+		oss << _C("Sync finished: ");
 	oss << m_device_id;
 	if( m_jailexec.GetChildExitCode() )
-		oss << " with error " << m_jailexec.GetChildExitCode();
+		oss << _C(" with error code ") << m_jailexec.GetChildExitCode();
 	PrintStd(oss.str(), *wxBLACK);
 	ShortPrintStd(oss.str());
 	UpdateLastSyncTime();

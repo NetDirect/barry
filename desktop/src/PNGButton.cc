@@ -21,6 +21,7 @@
 
 #include "PNGButton.h"
 #include "barrydesktop.h"
+#include "i18n.h"
 
 //////////////////////////////////////////////////////////////////////////////
 // PNGButton
@@ -50,7 +51,7 @@ wxBitmap PNGButton::LoadButtonBitmap(int state)
 	wxBitmap bmp(image);
 	if( !image.IsOk() || !bmp.IsOk() ) {
 		wxGetApp().Yield();
-		throw std::runtime_error("Cannot load button bitmap.");
+		throw std::runtime_error(_C("Cannot load button bitmap."));
 	}
 	return bmp;
 }

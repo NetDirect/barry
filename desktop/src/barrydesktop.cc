@@ -26,6 +26,7 @@
 #include <memory>
 #include <wx/splash.h>
 #include <wx/mstream.h>
+#include "wxi18n.h"
 
 using namespace std;
 
@@ -66,9 +67,9 @@ void BarryDesktopApp::Probe()
 		m_results = probe.GetResults();
 	}
 	catch( Usb::Error &e ) {
-		wxString msg = _T("A serious error occurred while probing the USB subsystem for BlackBerry(R) devices: ");
+		wxString msg = _W("A serious error occurred while probing the USB subsystem for BlackBerry(R) devices: ");
 		msg += wxString(e.what(), wxConvUTF8);
-		wxMessageBox(msg, _T("USB Error"), wxOK | wxICON_ERROR);
+		wxMessageBox(msg, _W("USB Error"), wxOK | wxICON_ERROR);
 	}
 }
 
@@ -129,7 +130,7 @@ std::string BarryDesktopApp::GetDeviceName(Barry::Pin pin) const
 
 void BarryDesktopApp::ShowMissingOpenSyncMessage()
 {
-	wxMessageBox(_T("No OpenSync libraries were found. Sync will be unavailable until you install OpenSync version 0.22 or version 0.4x on your system, along with the needed plugins."), _T("OpenSync Not Found"), wxOK | wxICON_INFORMATION);
+	wxMessageBox(_W("No OpenSync libraries were found. Sync will be unavailable until you install OpenSync version 0.22 or version 0.4x on your system, along with the needed plugins."), _W("OpenSync Not Found"), wxOK | wxICON_INFORMATION);
 }
 
 bool BarryDesktopApp::OnInit()

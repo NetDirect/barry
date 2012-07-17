@@ -32,6 +32,7 @@
 #include <sstream>
 #include <memory>
 #include <glib.h>
+#include "i18n.h"
 
 // use relative paths to backtrack enough to specify only 0.22 includes
 #include <../opensync-1.0/opensync/opensync.h>
@@ -244,10 +245,10 @@ void conflict_handler(OSyncEngine *, OSyncMapping *, void *);
 static const char *OSyncChangeType2String(OSyncChangeType c)
 {
 	switch (c) {
-		case CHANGE_ADDED: return "ADDED";
-		case CHANGE_UNMODIFIED: return "UNMODIFIED";
-		case CHANGE_DELETED: return "DELETED";
-		case CHANGE_MODIFIED: return "MODIFIED";
+		case CHANGE_ADDED: return _C("ADDED");
+		case CHANGE_UNMODIFIED: return _C("UNMODIFIED");
+		case CHANGE_DELETED: return _C("DELETED");
+		case CHANGE_MODIFIED: return _C("MODIFIED");
 		default:
 		case CHANGE_UNKNOWN: return "?";
 	}
@@ -287,7 +288,7 @@ void SyncConflict22Private::Select(int change_id)
 {
 	OSyncChange *change = m_priv->osengine_mapping_nth_change(m_mapping, change_id);
 	if( !change ) {
-		throw std::runtime_error("Bad change_id, or error getting nth change object.");
+		throw std::runtime_error(_C("Bad change_id, or error getting nth change object."));
 	}
 
 	m_priv->osengine_mapping_solve(m_engine, m_mapping, change);
@@ -311,7 +312,7 @@ void SyncConflict22Private::Ignore()
 	OSyncError *error = NULL;
 	if( !m_priv->osengine_mapping_ignore_conflict(m_engine, m_mapping, &error)) {
 		ostringstream oss;
-		oss << "Conflict not ignored: "
+		oss << _C("Conflict not ignored: ")
 		    << m_priv->osync_error_print(&error);
 		m_priv->osync_error_free(&error);
 		throw std::runtime_error(oss.str());
@@ -326,7 +327,7 @@ void SyncConflict22Private::KeepNewer()
 	OSyncError *error = NULL;
 	if( !m_priv->osengine_mapping_solve_latest(m_engine, m_mapping, &error)) {
 		ostringstream oss;
-		oss << "Conflict not resolved: "
+		oss << _C("Conflict not resolved: ")
 		    << m_priv->osync_error_print(&error);
 		m_priv->osync_error_free(&error);
 		throw std::runtime_error(oss.str());
@@ -373,7 +374,7 @@ void member_status(OSyncMemberUpdate *status, void *cbdata)
 		bool error_event = false;
 		bool valid = true;
 
-		oss << "Member "
+		oss << _C("Member ")
 		    << cb->m_priv->osync_member_get_id(status->member)
 		    << " ("
 		    << cb->m_priv->osync_member_get_pluginname(status->member)
@@ -382,38 +383,38 @@ void member_status(OSyncMemberUpdate *status, void *cbdata)
 		switch( status->type )
 		{
 		case MEMBER_CONNECTED:
-			oss << " just connected";
+			oss << _C(" just connected");
 			break;
 		case MEMBER_DISCONNECTED:
-			oss << " just disconnected";
+			oss << _C(" just disconnected");
 			break;
 		case MEMBER_SENT_CHANGES:
-			oss << " just sent all changes";
+			oss << _C(" just sent all changes");
 			break;
 		case MEMBER_COMMITTED_ALL:
-			oss << " committed all changes";
+			oss << _C(" committed all changes");
 			break;
 		case MEMBER_CONNECT_ERROR:
-			oss << " had an error while connecting: "
+			oss << _C(" had an error while connecting: ")
 			    << cb->m_priv->osync_error_print(&status->error);
 			break;
 		case MEMBER_GET_CHANGES_ERROR:
-			oss << " had an error while getting changes: "
+			oss << _C(" had an error while getting changes: ")
 			    << cb->m_priv->osync_error_print(&status->error);
 			error_event = true;
 			break;
 		case MEMBER_SYNC_DONE_ERROR:
-			oss << " had an error while calling sync done: "
+			oss << _C(" had an error while calling sync done: ")
 			    << cb->m_priv->osync_error_print(&status->error);
 			error_event = true;
 			break;
 		case MEMBER_DISCONNECT_ERROR:
-			oss << " had an error while disconnecting: "
+			oss << _C(" had an error while disconnecting: ")
 			    << cb->m_priv->osync_error_print(&status->error);
 			error_event = true;
 			break;
 		case MEMBER_COMMITTED_ALL_ERROR:
-			oss << " had an error while commiting changes: "
+			oss << _C(" had an error while commiting changes: ")
 			    << cb->m_priv->osync_error_print(&status->error);
 			error_event = true;
 			break;
@@ -432,11 +433,11 @@ void member_status(OSyncMemberUpdate *status, void *cbdata)
 	}
 	catch( std::exception &e ) {
 		cb->m_status->ReportError(
-			string("member_status error: ") + e.what());
+			string(_C("member_status error: ")) + e.what());
 	}
 	catch( ... ) {
 		cb->m_status->ReportError(
-			"Unknown exception caught in member_status()");
+			_C("Unknown exception caught in member_status()"));
 	}
 
 }
@@ -454,45 +455,47 @@ void entry_status(OSyncEngine *engine, OSyncChangeUpdate *status, void *cbdata)
 		switch( status->type )
 		{
 		case CHANGE_RECEIVED_INFO:
-			oss << "Received an entry "
+			oss << _C("Received an entry ")
 			    << cb->m_priv->osync_change_get_uid(status->change)
-			    << " without data from member "
+			    << _C(" without data from member ")
 			    << status->member_id
 			    << " ("
 			    << cb->m_priv->osync_member_get_pluginname(member)
 			    << "). "
-			    << "Changetype "
+			    << _C("Change type: ")
 			    << OSyncChangeType2String(cb->m_priv->osync_change_get_changetype(status->change));
 			break;
 		case CHANGE_RECEIVED:
-			oss << "Received an entry "
+			oss << _C("Received an entry ")
 			    << cb->m_priv->osync_change_get_uid(status->change)
-			    << " with data of size "
+			    << _C(" with data of size ")
 			    << cb->m_priv->osync_change_get_datasize(status->change)
-			    << " from member "
+			    << _C(" from member ")
 			    << status->member_id
 			    << " ("
 			    << cb->m_priv->osync_member_get_pluginname(member)
-			    << "). Changetype "
+			    << "). "
+			    << _C("Change type:")
 			    << OSyncChangeType2String(cb->m_priv->osync_change_get_changetype(status->change));
 			break;
 		case CHANGE_SENT:
-			oss << "Sent an entry "
+			oss << _C("Sent an entry ")
 			    << cb->m_priv->osync_change_get_uid(status->change)
-			    << " of size "
+			    << _C(" of size ")
 			    << cb->m_priv->osync_change_get_datasize(status->change)
-			    << " to member "
+			    << _C(" to member ")
 			    << status->member_id
 			    << " ("
 			    << cb->m_priv->osync_member_get_pluginname(member)
-			    << "). Changetype "
+			    << "). "
+			    << _C("Change type: ")
 			    << OSyncChangeType2String(cb->m_priv->osync_change_get_changetype(status->change));
 			break;
 		case CHANGE_WRITE_ERROR:
 			error_event = true;
-			oss << "Error writing entry "
+			oss << _C("Error writing entry ")
 			    << cb->m_priv->osync_change_get_uid(status->change)
-			    << " to member "
+			    << _C(" to member ")
 			    << status->member_id
 			    << " ("
 			    << cb->m_priv->osync_member_get_pluginname(member)
@@ -501,9 +504,9 @@ void entry_status(OSyncEngine *engine, OSyncChangeUpdate *status, void *cbdata)
 			break;
 		case CHANGE_RECV_ERROR:
 			error_event = true;
-			oss << "Error reading entry "
+			oss << _C("Error reading entry ")
 			    << cb->m_priv->osync_change_get_uid(status->change)
-			    << " from member "
+			    << _C(" from member ")
 			    << status->member_id
 			    << " ("
 			    << cb->m_priv->osync_member_get_pluginname(member)
@@ -519,11 +522,11 @@ void entry_status(OSyncEngine *engine, OSyncChangeUpdate *status, void *cbdata)
 	}
 	catch( std::exception &e ) {
 		cb->m_status->ReportError(
-			string("entry_status error:") + e.what());
+			string(_C("entry_status error:")) + e.what());
 	}
 	catch( ... ) {
 		cb->m_status->ReportError(
-			"Unknown exception caught in entry_status()");
+			_C("Unknown exception caught in entry_status()"));
 	}
 }
 
@@ -538,28 +541,28 @@ void engine_status(OSyncEngine *engine, OSyncEngineUpdate *status, void *cbdata)
 		switch( status->type )
 		{
 		case ENG_PREV_UNCLEAN:
-			oss << "The previous synchronization was unclean. Slow-syncing.";
+			oss << _C("The previous synchronization was unclean. Slow-syncing.");
 			break;
 		case ENG_ENDPHASE_CON:
-			oss << "All clients connected or error";
+			oss << _C("All clients connected or error");
 			break;
 		case ENG_END_CONFLICTS:
-			oss << "All conflicts have been reported";
+			oss << _C("All conflicts have been reported");
 			break;
 		case ENG_ENDPHASE_READ:
-			oss << "All clients sent changes or error";
+			oss << _C("All clients sent changes or error");
 			break;
 		case ENG_ENDPHASE_WRITE:
-			oss << "All clients have written";
+			oss << _C("All clients have written");
 			break;
 		case ENG_ENDPHASE_DISCON:
-			oss << "All clients have disconnected";
+			oss << _C("All clients have disconnected");
 			break;
 		case ENG_SYNC_SUCCESSFULL:
-			oss << "The sync was successful";
+			oss << _C("The sync was successful");
 			break;
 		case ENG_ERROR:
-			oss << "The sync failed: "
+			oss << _C("The sync failed: ")
 			    << cb->m_priv->osync_error_print(&status->error);
 			error_event = true;
 			break;
@@ -573,11 +576,11 @@ void engine_status(OSyncEngine *engine, OSyncEngineUpdate *status, void *cbdata)
 	}
 	catch( std::exception &e ) {
 		cb->m_status->ReportError(
-			string("engine_status error: ") + e.what());
+			string(_C("engine_status error: ")) + e.what());
 	}
 	catch( ... ) {
 		cb->m_status->ReportError(
-			"Unknown exception caught in engine_status()");
+			_C("Unknown exception caught in engine_status()"));
 	}
 }
 
@@ -592,14 +595,14 @@ void mapping_status(OSyncMappingUpdate *status, void *cbdata)
 		switch( status->type )
 		{
 		case MAPPING_SOLVED:
-			oss << "Mapping solved";
+			oss << _C("Mapping solved");
 			break;
 		case MAPPING_SYNCED:
-			oss << "Mapping Synced";
+			oss << _C("Mapping Synced");
 			break;
 		case MAPPING_WRITE_ERROR:
 			error_event = true;
-			oss << "Mapping Write Error: "
+			oss << _C("Mapping Write Error: ")
 			    << cb->m_priv->osync_error_print(&status->error);
 			break;
 		}
@@ -610,11 +613,11 @@ void mapping_status(OSyncMappingUpdate *status, void *cbdata)
 	}
 	catch( std::exception &e ) {
 		cb->m_status->ReportError(
-			string("mapping_status error: ") + e.what());
+			string(_C("mapping_status error: ")) + e.what());
 	}
 	catch( ... ) {
 		cb->m_status->ReportError(
-			"Unknown exception caught in mapping_status()");
+			_C("Unknown exception caught in mapping_status()"));
 	}
 }
 
@@ -636,11 +639,11 @@ void conflict_handler(OSyncEngine *engine, OSyncMapping *mapping, void *cbdata)
 	}
 	catch( std::exception &e ) {
 		cb->m_status->ReportError(
-			string("Conflict not resolved. ") + e.what());
+			string(_C("Conflict not resolved. ")) + e.what());
 	}
 	catch( ... ) {
 		cb->m_status->ReportError(
-			"Unknown exception caught in conflict_handler()");
+			_C("Unknown exception caught in conflict_handler()"));
 	}
 }
 
@@ -766,7 +769,7 @@ void OpenSync22::SetupEnvironment(OpenSync22Private *p)
 	// will responsibility be transferred to the destructor
 	p->env = p->osync_env_new();
 	if( !p->env )
-		throw std::runtime_error("Error allocating opensync 0.22 environment");
+		throw std::runtime_error(_C("Error allocating opensync 0.22 environment"));
 
 	p->osync_env_set_option(p->env, "GROUPS_DIRECTORY", NULL);
 	p->osync_env_set_option(p->env, "LOAD_GROUPS", "TRUE");
@@ -819,7 +822,7 @@ void OpenSync22::GetFormats(format_list_type &formats)
 
 	OSyncFormatEnv *fenv = m_priv->osync_conv_env_new(m_priv->env);
 	if( !fenv ) {
-		throw std::runtime_error("GetFormats(): Unable to load format environment in GetFormats (22)");
+		throw std::runtime_error(string("GetFormats(): ") + _C("Unable to load format environment in GetFormats (22)"));
 	}
 
 	for( int i = 0; i < m_priv->osync_conv_num_objtypes(fenv); i++ ) {
@@ -861,7 +864,7 @@ void OpenSync22::GetMembers(const std::string &group_name,
 
 	OSyncGroup *group = m_priv->osync_env_find_group(m_priv->env, group_name.c_str());
 	if( !group ) {
-		throw std::runtime_error("GetMembers(): Unable to find group with name: " + group_name);
+		throw std::runtime_error(string("GetMembers(): ") + _C("Unable to find group with name: ") + group_name);
 	}
 
 	for( int i = 0; i < m_priv->osync_group_num_members(group); i++ ) {
@@ -888,7 +891,7 @@ void OpenSync22::GetMembers(const std::string &group_name,
 void OpenSync22::AddGroup(const std::string &group_name)
 {
 	if( m_priv->osync_env_find_group(m_priv->env, group_name.c_str()) )
-		throw std::runtime_error("AddGroup(): Group already exists: " + group_name);
+		throw std::runtime_error(string("AddGroup(): ") + _C("Group already exists: ") + group_name);
 
 	OSyncGroup *group = m_priv->osync_group_new(m_priv->env);
 	m_priv->osync_group_set_name(group, group_name.c_str());
@@ -896,7 +899,7 @@ void OpenSync22::AddGroup(const std::string &group_name)
 	OSyncError *error = NULL;
 	if( !m_priv->osync_group_save(group, &error) ) {
 		// grab error message
-		std::runtime_error err(string("AddGroup(): Unable to save group: ") + m_priv->osync_error_print(&error));
+		std::runtime_error err(string("AddGroup(): ") + _C("Unable to save group: ") + m_priv->osync_error_print(&error));
 
 		// cleanup
 		m_priv->osync_error_free(&error);
@@ -909,11 +912,11 @@ void OpenSync22::DeleteGroup(const std::string &group_name)
 {
 	OSyncGroup *group = m_priv->osync_env_find_group(m_priv->env, group_name.c_str());
 	if( !group )
-		throw std::runtime_error("DeleteGroup(): Group not found: " + group_name);
+		throw std::runtime_error(string("DeleteGroup(): ") + _C("Group not found: ") + group_name);
 
 	OSyncError *error = NULL;
 	if( !m_priv->osync_group_delete(group, &error) ) {
-		std::runtime_error err(string("DeleteGroup(): Unable to delete group: ") + m_priv->osync_error_print(&error));
+		std::runtime_error err(string("DeleteGroup(): ") + _C("Unable to delete group: ") + m_priv->osync_error_print(&error));
 		m_priv->osync_error_free(&error);
 		throw err;
 	}
@@ -930,19 +933,19 @@ long OpenSync22::AddMember(const std::string &group_name,
 {
 	OSyncGroup *group = m_priv->osync_env_find_group(m_priv->env, group_name.c_str());
 	if( !group )
-		throw std::runtime_error("AddMember(): Group not found: " + group_name);
+		throw std::runtime_error(string("AddMember(): ") + _C("Group not found: ") + group_name);
 
 	OSyncMember *member = m_priv->osync_member_new(group);
 
 	OSyncError *error = NULL;
 	if( !m_priv->osync_member_instance_plugin(member, plugin_name.c_str(), &error) ) {
-		std::runtime_error err(string("AddMember(): Unable to connect plugin with member ") + member_name + "/" + plugin_name + ": " + m_priv->osync_error_print(&error));
+		std::runtime_error err(string("AddMember(): ") + _C("Unable to connect plugin with member ") + member_name + "/" + plugin_name + ": " + m_priv->osync_error_print(&error));
 		m_priv->osync_error_free(&error);
 		throw err;
 	}
 
 	if( !m_priv->osync_member_save(member, &error) ) {
-		std::runtime_error err(string("AddMember(): Unable to save member ") + member_name + "/" + plugin_name + ": " + m_priv->osync_error_print(&error));
+		std::runtime_error err(string("AddMember(): ") + _C("Unable to save member ") + member_name + "/" + plugin_name + ": " + m_priv->osync_error_print(&error));
 		m_priv->osync_error_free(&error);
 		throw err;
 	}
@@ -955,19 +958,19 @@ bool OpenSync22::IsConfigurable(const std::string &group_name,
 {
 	OSyncGroup *group = m_priv->osync_env_find_group(m_priv->env, group_name.c_str());
 	if( !group )
-		throw std::runtime_error("Group not found: " + group_name);
+		throw std::runtime_error(_C("Group not found: ") + group_name);
 
 	OSyncMember *member = m_priv->osync_member_from_id(group, member_id);
 	if( !member ) {
 		ostringstream oss;
-		oss << "IsConfigurable(): Member " << member_id << " not found.";
+		oss << "IsConfigurable(): " << _C("Member not found: ") << member_id;
 		throw std::runtime_error(oss.str());
 	}
 
 	OSyncConfigurationTypes type = NO_CONFIGURATION;
 	OSyncError *error = NULL;
 	if( !m_priv->osync_member_need_config(member, &type, &error) ) {
-		std::runtime_error err(string("Unable to determine needed config: ") + m_priv->osync_error_print(&error));
+		std::runtime_error err(string(_C("Unable to determine needed config: ")) + m_priv->osync_error_print(&error));
 		m_priv->osync_error_free(&error);
 		throw err;
 	}
@@ -980,18 +983,18 @@ std::string OpenSync22::GetConfiguration(const std::string &group_name,
 {
 	if( !IsConfigurable(group_name, member_id) ) {
 		ostringstream oss;
-		oss << "GetConfiguration(): Member " << member_id << " of group '" << group_name << "' does not accept configuration.";
+		oss << "GetConfiguration(): " << _C("Member ") << member_id << _C(" of group '") << group_name << _C("' does not accept configuration.");
 		throw std::runtime_error(oss.str());
 	}
 
 	OSyncGroup *group = m_priv->osync_env_find_group(m_priv->env, group_name.c_str());
 	if( !group )
-		throw std::runtime_error("GetConfiguration(): Group not found: " + group_name);
+		throw std::runtime_error(string("GetConfiguration(): ") + _C("Group not found: ") + group_name);
 
 	OSyncMember *member = m_priv->osync_member_from_id(group, member_id);
 	if( !member ) {
 		ostringstream oss;
-		oss << "GetConfiguration(): Member " << member_id << " not found.";
+		oss << "GetConfiguration(): " << _C("Member ") << member_id << _C(" not found.");
 		throw std::runtime_error(oss.str());
 	}
 
@@ -999,7 +1002,7 @@ std::string OpenSync22::GetConfiguration(const std::string &group_name,
 	char *data = NULL;
 	int size = 0;
 	if( !m_priv->osync_member_get_config_or_default(member, &data, &size, &error)) {
-		std::runtime_error err(string("GetConfiguration(): Unable to retrieve config: ") + m_priv->osync_error_print(&error));
+		std::runtime_error err(string("GetConfiguration(): ") + _C("Unable to retrieve config: ") + m_priv->osync_error_print(&error));
 		m_priv->osync_error_free(&error);
 		throw err;
 	}
@@ -1016,18 +1019,18 @@ void OpenSync22::SetConfiguration(const std::string &group_name,
 {
 	if( !IsConfigurable(group_name, member_id) ) {
 		ostringstream oss;
-		oss << "SetConfiguration(): Member " << member_id << " of group '" << group_name << "' does not accept configuration.";
+		oss << "SetConfiguration(): " << _C("Member ") << member_id << _C(" of group '") << group_name << _C("' does not accept configuration.");
 		throw std::runtime_error(oss.str());
 	}
 
 	OSyncGroup *group = m_priv->osync_env_find_group(m_priv->env, group_name.c_str());
 	if( !group )
-		throw std::runtime_error("SetConfiguration(): Group not found: " + group_name);
+		throw std::runtime_error(string("SetConfiguration(): ") + _C("Group not found: ") + group_name);
 
 	OSyncMember *member = m_priv->osync_member_from_id(group, member_id);
 	if( !member ) {
 		ostringstream oss;
-		oss << "SetConfiguration(): Member " << member_id << " not found.";
+		oss << "SetConfiguration(): " << _C("Member ") << member_id << _C(" not found.");
 		throw std::runtime_error(oss.str());
 	}
 
@@ -1035,7 +1038,7 @@ void OpenSync22::SetConfiguration(const std::string &group_name,
 
 	OSyncError *error = NULL;
 	if( !m_priv->osync_member_save(member, &error) ) {
-		std::runtime_error err(string("SetConfiguration(): Unable to save member's config: ") + m_priv->osync_error_print(&error));
+		std::runtime_error err(string("SetConfiguration(): ") + _C("Unable to save member's config: ") + m_priv->osync_error_print(&error));
 		m_priv->osync_error_free(&error);
 		throw err;
 	}
@@ -1052,7 +1055,7 @@ void OpenSync22::Sync(const std::string &group_name,
 {
 	OSyncGroup *group = m_priv->osync_env_find_group(m_priv->env, group_name.c_str());
 	if( !group )
-		throw std::runtime_error("Sync(): Group not found: " + group_name);
+		throw std::runtime_error(string("Sync(): ") + _C("Group not found: ") + group_name);
 
 	// enable/disable each objtype, as per sync_types
 	if( !(sync_types & PST_DO_NOT_SET) ) {
@@ -1072,7 +1075,7 @@ void OpenSync22::Sync(const std::string &group_name,
 	engine = m_priv->osengine_new(group, &error);
 	if( !engine.get() ) {
 		std::ostringstream oss;
-		oss << "Error while synchronizing: "
+		oss << _C("Error while synchronizing: ")
 		    << m_priv->osync_error_print(&error);
 		m_priv->osync_error_free(&error);
 		throw std::runtime_error(oss.str());
@@ -1093,7 +1096,7 @@ void OpenSync22::Sync(const std::string &group_name,
 
 	if( !m_priv->osengine_init(engine.get(), &error) ) {
 		ostringstream oss;
-		oss << "Error initializing osengine: "
+		oss << _C("Error initializing osengine: ")
 		    << m_priv->osync_error_print(&error);
 		m_priv->osync_error_free(&error);
 		throw std::runtime_error(oss.str());
@@ -1105,7 +1108,7 @@ void OpenSync22::Sync(const std::string &group_name,
 
 	if( !m_priv->osengine_sync_and_block(engine.get(), &error) ) {
 		ostringstream oss;
-		oss << "Error during sync: "
+		oss << _C("Error during sync: ")
 		    << m_priv->osync_error_print(&error);
 		m_priv->osync_error_free(&error);
 		throw std::runtime_error(oss.str());

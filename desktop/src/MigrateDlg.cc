@@ -28,6 +28,8 @@
 #include <wx/statline.h>
 #include <barry/barrybackup.h>
 #include <iostream>
+#include "i18n.h"
+#include "wxi18n.h"
 
 using namespace std;
 using namespace OpenSync;
@@ -97,7 +99,7 @@ bool EventDesktopConnector::PasswordPrompt(const Barry::BadPassword &bp,
 MigrateDlg::MigrateDlg(wxWindow *parent,
 			const Barry::Probe::Results &results,
 			int current_device_index)
-	: wxDialog(parent, Dialog_GroupCfg, _T("Migrate Device"))
+	: wxDialog(parent, Dialog_GroupCfg, _W("Migrate Device"))
 	, m_results(results)
 	, m_current_device_index(current_device_index)
 	, m_migrate_thread_created(false)
@@ -140,7 +142,7 @@ void MigrateDlg::AddDescriptionSizer(wxSizer *sizer)
 {
 	sizer->Add(
 		new wxStaticText(this, wxID_ANY,
-			_T("Migrate device data from source device to target device.")),
+			_W("Migrate device data from source device to target device.")),
 		0, wxALIGN_CENTRE | wxALIGN_CENTRE_VERTICAL |
 			wxTOP | wxLEFT | wxRIGHT, 10);
 }
@@ -163,7 +165,7 @@ void MigrateDlg::AddStatusSizer(wxSizer *sizer)
 		0, wxEXPAND | wxTOP | wxLEFT | wxRIGHT, 10);
 
 	sizer->Add(
-		m_status = new wxStaticText(this, wxID_ANY, _T("Ready...")),
+		m_status = new wxStaticText(this, wxID_ANY, _W("Ready...")),
 		0, wxEXPAND | wxLEFT | wxRIGHT, 10);
 	// Reduce font size for status text
 	wxFont font = m_status->GetFont();
@@ -185,7 +187,7 @@ void MigrateDlg::Main_AddSourceSizer(wxSizer *sizer)
 	}
 
 	wxSizer *source = new wxStaticBoxSizer(
-		new wxStaticBox(this, wxID_ANY, _T("Source device")),
+		new wxStaticBox(this, wxID_ANY, _W("Source device")),
 		wxVERTICAL
 		);
 	source->Add(
@@ -203,12 +205,12 @@ void MigrateDlg::Main_AddButtonSizer(wxSizer *sizer)
 {
 	wxSizer *buttons = new wxBoxSizer(wxVERTICAL);
 	buttons->Add( m_migrate_button = new wxButton(this,
-		Dialog_Migrate_MigrateNowButton, _T("Migrate Now")),
+		Dialog_Migrate_MigrateNowButton, _W("Migrate Now")),
 		0, wxALIGN_CENTRE, 0);
 	m_migrate_button->SetDefault();
 	buttons->AddSpacer(10);
 	buttons->Add( new wxButton(this, Dialog_Migrate_CancelButton,
-			_T("Cancel")),
+			_W("Cancel")),
 		0, wxALIGN_CENTRE, 0);
 
 	sizer->Add(buttons, 1, wxALIGN_CENTRE | wxLEFT | wxRIGHT, 10);
@@ -217,7 +219,7 @@ void MigrateDlg::Main_AddButtonSizer(wxSizer *sizer)
 void MigrateDlg::Main_AddDestSizer(wxSizer *sizer)
 {
 	wxArrayString devices;
-	devices.Add(_T("Prompt to plug in later..."));
+	devices.Add(_W("Prompt to plug in later..."));
 	for( Barry::Probe::Results::const_iterator i = m_results.begin();
 				i != m_results.end(); ++i )
 	{
@@ -225,7 +227,7 @@ void MigrateDlg::Main_AddDestSizer(wxSizer *sizer)
 	}
 
 	wxSizer *dest = new wxStaticBoxSizer(
-		new wxStaticBox(this, wxID_ANY, _T("Destination device")),
+		new wxStaticBox(this, wxID_ANY, _W("Destination device")),
 		wxVERTICAL
 		);
 	dest->Add(
@@ -236,12 +238,12 @@ void MigrateDlg::Main_AddDestSizer(wxSizer *sizer)
 
 
 	wxArrayString write_modes;
-	write_modes.Add(_T("Erase all, then restore"));
-	write_modes.Add(_T("Add new, and overwrite existing"));
-	write_modes.Add(_T("Add only, don't overwrite existing"));
-	write_modes.Add(_T("Add every record as a new entry (may cause duplicates)"));
+	write_modes.Add(_W("Erase all, then restore"));
+	write_modes.Add(_W("Add new, and overwrite existing"));
+	write_modes.Add(_W("Add only, don't overwrite existing"));
+	write_modes.Add(_W("Add every record as a new entry (may cause duplicates)"));
 
-	dest->Add( new wxStaticText(this, wxID_ANY, _T("Write Mode:")),
+	dest->Add( new wxStaticText(this, wxID_ANY, _W("Write Mode:")),
 		0, wxTOP | wxLEFT | wxRIGHT, 5);
 	dest->Add( m_write_mode_combo = new wxChoice(this, wxID_ANY,
 			wxDefaultPosition, wxSize(225, -1), write_modes),
@@ -269,7 +271,7 @@ void MigrateDlg::DoSafeClose()
 	if( m_thread_running ) {
 		m_abort_flag = true;
 
-		m_status->SetLabel(_T("Waiting for thread to close..."));
+		m_status->SetLabel(_W("Waiting for thread to close..."));
 
 		if( m_migrate_thread_created ) {
 			void *junk;
@@ -330,15 +332,15 @@ void MigrateDlg::OnMigrateNow(wxCommandEvent &event)
 	if( source_index == wxNOT_FOUND || dest_index == wxNOT_FOUND ||
 		write_mode_index == wxNOT_FOUND )
 	{
-		wxMessageBox(_T("Please select a source and destination device, as well as the write mode."),
-			_T("Migration Options Needed"), wxOK | wxICON_ERROR);
+		wxMessageBox(_W("Please select a source and destination device, as well as the write mode."),
+			_W("Migration Options Needed"), wxOK | wxICON_ERROR);
 		return;
 	}
 
 	// do not migrate from one PIN to the same PIN
 	if( source_index == (dest_index - 1) ) {
-		wxMessageBox(_T("Cannot migrate from and to the same PIN."),
-			_T("Migration Options Error"), wxOK | wxICON_ERROR);
+		wxMessageBox(_W("Cannot migrate from and to the same PIN."),
+			_W("Migration Options Error"), wxOK | wxICON_ERROR);
 		return;
 	}
 
@@ -365,8 +367,8 @@ void MigrateDlg::OnMigrateNow(wxCommandEvent &event)
 		m_write_mode = Barry::DeviceParser::ADD_WITH_NEW_ID;
 		break;
 	default:
-		wxMessageBox(_T("Invalid write mode. This should never happen. Contact the developers."),
-			_T("Internal Logic Error"), wxOK | wxICON_ERROR);
+		wxMessageBox(_W("Invalid write mode. This should never happen. Contact the developers."),
+			_W("Internal Logic Error"), wxOK | wxICON_ERROR);
 		return;
 	}
 
@@ -406,7 +408,7 @@ void MigrateDlg::OnCloseWindow(wxCloseEvent &event)
 void MigrateDlg::OnThreadFinished(wxCommandEvent &event)
 {
 	if( m_migrate_thread_created ) {
-		m_status->SetLabel(_T("Waiting for thread..."));
+		m_status->SetLabel(_W("Waiting for thread..."));
 		void *junk;
 		pthread_join(m_migrate_thread, &junk);
 		m_migrate_thread_created = false;
@@ -415,7 +417,7 @@ void MigrateDlg::OnThreadFinished(wxCommandEvent &event)
 	if( m_abort_flag ) {
 		// user cancelled in some way, restore GUI
 		EnableControls(true);
-		m_status->SetLabel(_T("Cancelled by user..."));
+		m_status->SetLabel(_W("Cancelled by user..."));
 	}
 	else {
 		// if we were not aborted, then this is success, and we
@@ -433,8 +435,8 @@ void MigrateDlg::OnCheckDestPin(wxCommandEvent &event)
 
 	// no destination pin was available, so user may need to plugin
 	// the new device right now, before continuing
-	int response = wxMessageBox(_T("Please plug in the target device now."),
-		_T("Ready for Writing"), wxOK | wxCANCEL | wxICON_INFORMATION,
+	int response = wxMessageBox(_W("Please plug in the target device now."),
+		_W("Ready for Writing"), wxOK | wxCANCEL | wxICON_INFORMATION,
 		this);
 	if( response != wxOK ) {
 		// user cancelled
@@ -444,7 +446,7 @@ void MigrateDlg::OnCheckDestPin(wxCommandEvent &event)
 
 	{
 		wxBusyCursor wait;
-		m_status->SetLabel(_T("Scanning USB for devices..."));
+		m_status->SetLabel(_W("Scanning USB for devices..."));
 
 		// pause for 2 seconds to let any new devices settle down
 		wxGetApp().Yield();
@@ -463,13 +465,13 @@ void MigrateDlg::OnCheckDestPin(wxCommandEvent &event)
 		devices.Add(wxString(i->GetDisplayName().c_str(), wxConvUTF8));
 	}
 
-	m_status->SetLabel(_T("User input..."));
+	m_status->SetLabel(_W("User input..."));
 
 	do {
 
 		// prompt the user with this list
-		int choice = wxGetSingleChoiceIndex(_T("Please select the target device to write to:"),
-			_T("Destination PIN"), devices, this);
+		int choice = wxGetSingleChoiceIndex(_W("Please select the target device to write to:"),
+			_W("Destination PIN"), devices, this);
 		if( choice == -1 ) {
 			// user cancelled
 			m_abort_flag = true;
@@ -481,8 +483,8 @@ void MigrateDlg::OnCheckDestPin(wxCommandEvent &event)
 
 		// check if user needs to choose again
 		if( m_dest_device->m_pin == m_source_device->m_pin ) {
-			wxMessageBox(_T("Cannot use the same device PIN as migration destination."),
-				_T("Invalid Device Selection"),
+			wxMessageBox(_W("Cannot use the same device PIN as migration destination."),
+				_W("Invalid Device Selection"),
 				wxOK | wxICON_ERROR, this);
 		}
 
@@ -516,20 +518,19 @@ void MigrateDlg::OnPromptPassword(wxCommandEvent &event)
 
 	// create prompt based on exception data
 	ostringstream oss;
-	oss << "Please enter device password: ("
-	    << event.GetInt()
-	    << " tries remaining)";
+	oss << _C("Please enter device password: ")
+	    << "(" << event.GetInt() << _C(" tries remaining") << ")";
 	wxString prompt(oss.str().c_str(), wxConvUTF8);
 
 	// ask user for device password
 	m_password = wxGetPasswordFromUser(prompt,
-		_T("Device Password"), _T(""), this);
+		_W("Device Password"), _T(""), this);
 }
 
 void MigrateDlg::OnErrorMsg(wxCommandEvent &event)
 {
 	ScopeSignaler done(m_waiter);
-	wxMessageBox(event.GetString(), _T("Migration Error"),
+	wxMessageBox(event.GetString(), _W("Migration Error"),
 		wxOK | wxICON_ERROR, this);
 }
 
@@ -589,7 +590,7 @@ public:
 void MigrateDlg::BackupSource()
 {
 	// connect to the source device
-	SendStatusEvent(_T("Connecting..."));
+	SendStatusEvent(_W("Connecting..."));
 	EventDesktopConnector connect(this, "", "utf-8", *m_source_device);
 	if( !connect.Reconnect(2) ) {
 		// user cancelled
@@ -641,7 +642,9 @@ void MigrateDlg::BackupSource()
 		// ok, first entry has been pumped, so we can use
 		// peeker to create the status message, and only once
 		ostringstream oss;
-		oss << "Backing up database: " << peeker.GetDBName() << "...";
+		oss << _C("Backing up database: ")
+		    << peeker.GetDBName()
+		    << "...";
 
 		// calculate 1 to 100 percentage, based on number of
 		// databases being backed up, and update status bar too
@@ -666,7 +669,7 @@ void MigrateDlg::BackupSource()
 			// check the m_abort_flag, and abort if necessary,
 			// updating the status message
 			if( m_abort_flag ) {
-				SendStatusEvent(_T("Backup aborted by user..."));
+				SendStatusEvent(_W("Backup aborted by user..."));
 				return;
 			}
 		}
@@ -687,7 +690,7 @@ void MigrateDlg::CheckDestPin()
 void MigrateDlg::RestoreToDest()
 {
 	// connect to the dest device
-	SendStatusEvent(_T("Connecting to target..."));
+	SendStatusEvent(_W("Connecting to target..."));
 	EventDesktopConnector connect(this, "", "utf-8", *m_dest_device);
 	if( !connect.Reconnect(2) ) {
 		// user cancelled
@@ -728,7 +731,9 @@ void MigrateDlg::RestoreToDest()
 		// ok, first entry has been pumped, so we can use
 		// peeker to create the status message, and only once
 		ostringstream oss;
-		oss << "Writing database: " << meta.GetDBName() << "...";
+		oss << _C("Writing database: ")
+		    << meta.GetDBName()
+		    << "...";
 
 		// for debugging purposes in the field, display the names
 		// of the databases we restore
@@ -757,15 +762,16 @@ void MigrateDlg::RestoreToDest()
 			// check the m_abort_flag, and abort if necessary,
 			// updating the status message
 			if( m_abort_flag ) {
-				SendStatusEvent(_T("Restore aborted by user..."));
+				SendStatusEvent(_W("Restore aborted by user..."));
 				return;
 			}
 		}
 	}
 	catch( Barry::ReturnCodeError &e ) {
-		cerr << "Unable to clear or write to database '" << meta.GetDBName() << "'"
-			<< ": " << e.what() << endl;
-		cerr << "Continuing to process remaining records..." << endl;
+		cerr << _C("Unable to clear or write to database: ")
+		     << meta.GetDBName()
+		     << ": " << e.what() << endl;
+		cerr << _C("Continuing to process remaining records...") << endl;
 
 		// skip the problematic database, and keep on trying
 		builder.SkipCurrentDB();

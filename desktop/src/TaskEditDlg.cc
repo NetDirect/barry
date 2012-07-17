@@ -39,7 +39,7 @@ TaskEditDlg::TaskEditDlg(wxWindow* parent,
 			Barry::Task &rec,
 			bool editable,
 			const Barry::TimeZones *device_zones)
-	: wxDialog(parent, Dialog_TaskEdit, _T("Task Record"))
+	: wxDialog(parent, Dialog_TaskEdit, _W("Task Record"))
 	, m_zones(device_zones ? device_zones : &m_static_zones)
 	, m_rec(rec)
 	, m_reminder_hours(0)
@@ -59,10 +59,11 @@ TaskEditDlg::TaskEditDlg(wxWindow* parent,
 	}
 
 	// begin wxGlade: TaskEditDlg::TaskEditDlg
-	label_1 = new wxStaticText(this, wxID_ANY, wxT("Task:"));
+	label_1 = new wxStaticText(this, wxID_ANY, _W("Task:"));
 	m_TaskSummary = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
 	static_line_1 = new wxStaticLine(this, wxID_ANY);
-	label_2 = new wxStaticText(this, wxID_ANY, wxT("Status:"));
+	label_2 = new wxStaticText(this, wxID_ANY, _W("Status:"));
+/*
 	const wxString m_StatusChoice_choices[] = {
         wxT("Not Started"),
         wxT("In Progress"),
@@ -70,33 +71,49 @@ TaskEditDlg::TaskEditDlg(wxWindow* parent,
         wxT("Waiting"),
         wxT("Deferred")
     };
-	m_StatusChoice = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 5, m_StatusChoice_choices, 0);
-	label_9 = new wxStaticText(this, wxID_ANY, wxT("Priority:"));
+*/
+wxArrayString m_StatusChoice_choices;
+m_StatusChoice_choices.Add( _W("Not Started") );
+m_StatusChoice_choices.Add( _W("In Progress") );
+m_StatusChoice_choices.Add( _W("Completed") );
+m_StatusChoice_choices.Add( _W("Waiting") );
+m_StatusChoice_choices.Add( _W("Deferred") );
+
+	m_StatusChoice = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_StatusChoice_choices, 0);
+	label_9 = new wxStaticText(this, wxID_ANY, _W("Priority:"));
+/*
 	const wxString m_PriorityChoice_choices[] = {
         wxT("High"),
         wxT("Normal"),
         wxT("Low")
     };
-	m_PriorityChoice = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 3, m_PriorityChoice_choices, 0);
-	label_5 = new wxStaticText(this, wxID_ANY, wxT("Due:"));
+*/
+wxArrayString m_PriorityChoice_choices;
+m_PriorityChoice_choices.Add( _W("High") );
+m_PriorityChoice_choices.Add( _W("Normal") );
+m_PriorityChoice_choices.Add( _W("Low") );
+
+	m_PriorityChoice = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_PriorityChoice_choices, 0);
+	label_5 = new wxStaticText(this, wxID_ANY, _W("Due:"));
 	m_DueCheck = new wxCheckBox(this, Dialog_TaskEdit_DueCheck, wxEmptyString);
 	m_DueDateCtrl = new wxDatePickerCtrl(this, Dialog_TaskEdit_DueDateCtrl, wxDefaultDateTime, wxDefaultPosition, wxDefaultSize, wxDP_DROPDOWN|wxDP_SHOWCENTURY);
 	m_DueHoursSpinner = new wxSpinCtrl(this, Dialog_TaskEdit_DueHoursSpinner, wxT(""), wxDefaultPosition, wxDefaultSize, wxSP_WRAP|wxTE_NOHIDESEL, 0, 23);
 	label_11 = new wxStaticText(this, wxID_ANY, wxT(":"));
 	m_DueMinutesSpinner = new wxSpinCtrl(this, Dialog_TaskEdit_DueMinutesSpinner, wxT(""), wxDefaultPosition, wxDefaultSize, wxSP_WRAP|wxTE_NOHIDESEL, 0, 59);
-	label_8 = new wxStaticText(this, wxID_ANY, wxT("Time Zone:"));
+	label_8 = new wxStaticText(this, wxID_ANY, _W("Time Zone:"));
 	const wxString m_TimezoneChoice_choices[] = {
         wxT("System Time Zone")
     };
 	m_TimezoneChoice = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 1, m_TimezoneChoice_choices, 0);
-	label_10 = new wxStaticText(this, wxID_ANY, wxT("Reminder:"));
+	label_10 = new wxStaticText(this, wxID_ANY, _W("Reminder:"));
 	m_ReminderCheck = new wxCheckBox(this, Dialog_TaskEdit_ReminderCheck, wxEmptyString);
 	m_ReminderDateCtrl = new wxDatePickerCtrl(this, Dialog_TaskEdit_ReminderDateCtrl);
 	m_ReminderHoursSpinner = new wxSpinCtrl(this, Dialog_TaskEdit_ReminderHoursSpinner, wxT(""), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 0, 999);
 	label_6 = new wxStaticText(this, wxID_ANY, wxT(":"));
 	m_ReminderMinutesSpinner = new wxSpinCtrl(this, Dialog_TaskEdit_ReminderMinutesSpinner, wxT(""), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 0, 59);
 	static_line_2 = new wxStaticLine(this, wxID_ANY);
-	label_18 = new wxStaticText(this, wxID_ANY, wxT("Recurrence:"));
+	label_18 = new wxStaticText(this, wxID_ANY, _W("Recurrence:"));
+/*
 	const wxString m_RecurrenceChoice_choices[] = {
         wxT("None"),
         wxT("Daily"),
@@ -104,12 +121,20 @@ TaskEditDlg::TaskEditDlg(wxWindow* parent,
         wxT("Monthly"),
         wxT("Yearly")
     };
-	m_RecurrenceChoice = new wxChoice(this, Dialog_TaskEdit_RecurrenceChoice, wxDefaultPosition, wxDefaultSize, 5, m_RecurrenceChoice_choices, 0);
-	RecurIntervalLabel = new wxStaticText(this, wxID_ANY, wxT("Interval:"));
-	RecurIntervalLabelB = new wxStaticText(this, wxID_ANY, wxT("Every"));
+*/
+wxArrayString m_RecurrenceChoice_choices;
+m_RecurrenceChoice_choices.Add( _W("None") );
+m_RecurrenceChoice_choices.Add( _W("Daily") );
+m_RecurrenceChoice_choices.Add( _W("Weekly") );
+m_RecurrenceChoice_choices.Add( _W("Monthly") );
+m_RecurrenceChoice_choices.Add( _W("Yearly") );
+
+	m_RecurrenceChoice = new wxChoice(this, Dialog_TaskEdit_RecurrenceChoice, wxDefaultPosition, wxDefaultSize, m_RecurrenceChoice_choices, 0);
+	RecurIntervalLabel = new wxStaticText(this, wxID_ANY, _W("Interval:"));
+	RecurIntervalLabelB = new wxStaticText(this, wxID_ANY, _W("Every"));
 	m_IntervalSpinner = new wxSpinCtrl(this, wxID_ANY, wxT("1"), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 1, 999);
-	m_IntervalUnitLabel = new wxStaticText(this, wxID_ANY, wxT("days? weeks? months?"), wxDefaultPosition, wxDefaultSize, wxST_NO_AUTORESIZE);
-	RecurDaysLabel = new wxStaticText(this, wxID_ANY, wxT("Days:"));
+	m_IntervalUnitLabel = new wxStaticText(this, wxID_ANY, _W("days? weeks? months?"), wxDefaultPosition, wxDefaultSize, wxST_NO_AUTORESIZE);
+	RecurDaysLabel = new wxStaticText(this, wxID_ANY, _W("Days:"));
 	m_SunCheck = new wxCheckBox(this, wxID_ANY, wxT("S"));
 	m_MonCheck = new wxCheckBox(this, wxID_ANY, wxT("M"));
 	m_TueCheck = new wxCheckBox(this, wxID_ANY, wxT("T"));
@@ -117,15 +142,15 @@ TaskEditDlg::TaskEditDlg(wxWindow* parent,
 	m_ThuCheck = new wxCheckBox(this, wxID_ANY, wxT("T"));
 	m_FriCheck = new wxCheckBox(this, wxID_ANY, wxT("F"));
 	m_SatCheck = new wxCheckBox(this, wxID_ANY, wxT("S"));
-	RecurRelativeDateLabel = new wxStaticText(this, wxID_ANY, wxT("Relative Date:"));
+	RecurRelativeDateLabel = new wxStaticText(this, wxID_ANY, _W("Relative Date:"));
 	m_RelativeDateCheck = new wxCheckBox(this, wxID_ANY, wxEmptyString);
-	RecurEndDateLabel = new wxStaticText(this, wxID_ANY, wxT("End Date:"));
-	m_NeverEndsCheck = new wxCheckBox(this, Dialog_TaskEdit_NeverEndsCheck, wxT("Never ends"));
+	RecurEndDateLabel = new wxStaticText(this, wxID_ANY, _W("End Date:"));
+	m_NeverEndsCheck = new wxCheckBox(this, Dialog_TaskEdit_NeverEndsCheck, _W("Never ends"));
 	m_RecurEndDateCtrl = new wxDatePickerCtrl(this, wxID_ANY, wxDefaultDateTime, wxDefaultPosition, wxDefaultSize, wxDP_DROPDOWN|wxDP_SHOWCENTURY);
 	static_line_3 = new wxStaticLine(this, wxID_ANY);
-	label_4 = new wxStaticText(this, wxID_ANY, wxT("Categories:"));
+	label_4 = new wxStaticText(this, wxID_ANY, _W("Categories:"));
 	m_CategoriesText = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
-	label_3 = new wxStaticText(this, wxID_ANY, wxT("Notes:"));
+	label_3 = new wxStaticText(this, wxID_ANY, _W("Notes:"));
 	m_NotesText = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE);
 
 	set_properties();
@@ -136,7 +161,7 @@ TaskEditDlg::TaskEditDlg(wxWindow* parent,
 
 	// fill the time zone control with real time zones
 	m_TimezoneChoice->Clear();
-	m_TimezoneChoice->Append(wxT("Assume Local Timezone"), (void*)0);
+	m_TimezoneChoice->Append(_W("Assume Local Timezone"), (void*)0);
 	Barry::TimeZones::const_iterator b, e;
 	for( b = m_zones->begin(), e = m_zones->end(); b != e; ++b ) {
 		m_TimezoneChoice->Append(
@@ -203,7 +228,7 @@ void TaskEditDlg::OnReminderCheck(wxCommandEvent &event)
 void TaskEditDlg::set_properties()
 {
 	// begin wxGlade: TaskEditDlg::set_properties
-	SetTitle(wxT("Task Event"));
+	SetTitle(_W("Task Event"));
 	m_TaskSummary->SetFocus();
 	m_TaskSummary->SetValidator(wxTextValidator(wxFILTER_NONE, m_strings.Add(m_rec.Summary)));
 	m_StatusChoice->SetSelection(0);
@@ -218,10 +243,10 @@ void TaskEditDlg::set_properties()
 	m_ReminderDateCtrl->SetMinSize(wxSize(110, -1));
 	m_ReminderDateCtrl->SetValidator(DateTimeValidator(&m_ReminderDateObj.m_date));
 	m_ReminderHoursSpinner->SetMinSize(wxSize(45, -1));
-	m_ReminderHoursSpinner->SetToolTip(wxT("Set Reminder to 0 to disable"));
+	m_ReminderHoursSpinner->SetToolTip(_W("Set Reminder to 0 to disable"));
 	m_ReminderHoursSpinner->SetValidator(wxGenericValidator(&m_ReminderDateObj.m_hour));
 	m_ReminderMinutesSpinner->SetMinSize(wxSize(45, -1));
-	m_ReminderMinutesSpinner->SetToolTip(wxT("Set Reminder to 0 to disable"));
+	m_ReminderMinutesSpinner->SetToolTip(_W("Set Reminder to 0 to disable"));
 	m_ReminderMinutesSpinner->SetValidator(wxGenericValidator(&m_ReminderDateObj.m_min));
 	m_RecurrenceChoice->SetValidator(wxGenericValidator(&m_recur_choice));
 	m_RecurrenceChoice->SetSelection(0);
@@ -234,8 +259,8 @@ void TaskEditDlg::set_properties()
 	m_ThuCheck->SetValidator(wxGenericValidator(&m_weekdays[4]));
 	m_FriCheck->SetValidator(wxGenericValidator(&m_weekdays[5]));
 	m_SatCheck->SetValidator(wxGenericValidator(&m_weekdays[6]));
-	RecurRelativeDateLabel->SetToolTip(wxT("Relative monthly or yearly dates take the weekday of the start date into account. (eg. every first Sunday of month)"));
-	m_RelativeDateCheck->SetToolTip(wxT("Relative monthly or yearly dates take the weekday of the start date into account. (eg. every first Sunday of month)"));
+	RecurRelativeDateLabel->SetToolTip(_W("Relative monthly or yearly dates take the weekday of the start date into account. (eg. every first Sunday of month)"));
+	m_RelativeDateCheck->SetToolTip(_W("Relative monthly or yearly dates take the weekday of the start date into account. (eg. every first Sunday of month)"));
 	m_RelativeDateCheck->SetValidator(wxGenericValidator(&m_relative_date));
 	m_NeverEndsCheck->SetValidator(wxGenericValidator(&m_rec.Perpetual));
 	m_NeverEndsCheck->SetValue(1);
@@ -677,19 +702,19 @@ void TaskEditDlg::EnableRecurMode(bool recur)
 			break;
 
 		case RC_DAILY:
-			m_IntervalUnitLabel->SetLabel(_T("day(s)"));
+			m_IntervalUnitLabel->SetLabel(_W("day(s)"));
 			break;
 
 		case RC_WEEKLY:
-			m_IntervalUnitLabel->SetLabel(_T("week(s)"));
+			m_IntervalUnitLabel->SetLabel(_W("week(s)"));
 			break;
 
 		case RC_MONTHLY:
-			m_IntervalUnitLabel->SetLabel(_T("month(s)"));
+			m_IntervalUnitLabel->SetLabel(_W("month(s)"));
 			break;
 
 		case RC_YEARLY:
-			m_IntervalUnitLabel->SetLabel(_T("year(s)"));
+			m_IntervalUnitLabel->SetLabel(_W("year(s)"));
 			break;
 		}
 	}

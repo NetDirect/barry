@@ -25,6 +25,7 @@
 #include <wx/wx.h>
 #include <memory>
 #include "Mode.h"
+#include "wxi18n.h"
 
 class BaseButtons;
 namespace Barry {
@@ -45,7 +46,7 @@ public:
 	// events (called from BaseFrame)
 	wxString GetTitleText() const
 	{
-		return _T("Barry Desktop Control Panel");
+		return _W("Barry Desktop Control Panel");
 	}
 
 	void OnPaint(wxDC &dc);

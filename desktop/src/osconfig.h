@@ -170,7 +170,7 @@ public:
 	}
 
 	// statics
-	static std::string AppName() { return "Unsupported"; }
+	static std::string AppName();
 };
 
 class Barry : public Plugin
@@ -190,34 +190,8 @@ protected:
 	}
 
 public:
-	explicit Barry(const ::Barry::Pin &pin)
-		: m_debug_mode(false)
-		, m_pin(pin)
-	{
-		if( !m_pin.Valid() )
-			throw std::logic_error("Barry config must have valid pin number.");
-	}
-
-	explicit Barry(Converter *load_converter, const Member &member)
-		: m_debug_mode(false)
-	{
-		load_converter->Load(*this, member);
-		//
-		// check that the loaded pin is valid... if not, it is
-		// likely safe to assume that something is horribly wrong.
-		// in the case where the Application wishes to add a new
-		// barry plugin, it should use the Pin constructor.
-		// if you *really* need to try to salvage an old
-		// corrupt config, you can always do the
-		// converter->Load(barry_obj) manually, and pick out
-		// the left overs.
-		//
-		if( !m_pin.Valid() ) {
-			std::ostringstream oss;
-			oss << "Unable to load pin number from Barry plugin config.  Consider this group corrupt, or not fully configured: " << member;
-			throw LoadError(oss.str());
-		}
-	}
+	explicit Barry(const ::Barry::Pin &pin);
+	explicit Barry(Converter *load_converter, const Member &member);
 
 	bool IsDebugMode() const { return m_debug_mode; }
 	::Barry::Pin GetPin() const { return m_pin; }

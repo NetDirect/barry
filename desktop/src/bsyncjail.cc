@@ -31,6 +31,7 @@
 #include "os40.h"
 #include "tempdir.h"
 #include "ostypes.h"
+#include "i18n.h"
 
 using namespace std;
 
@@ -119,7 +120,7 @@ bool BarrySyncJail::OnInit()
 	m_conflict_con = m_client->MakeConnection(_T("localhost"),
 		SERVER_SERVICE_NAME, TOPIC_CONFLICT);
 	if( !m_status_con || !m_conflict_con ) {
-		cerr << "Unable to connect to server." << endl;
+		cerr << _C("Unable to connect to server.") << endl;
 		return false;
 	}
 
@@ -130,7 +131,7 @@ bool BarrySyncJail::OnInit()
 		else {
 			m_engine.reset( new OpenSync::OpenSync40 );
 			if( g_argv_version != m_engine->GetVersion() )
-				throw std::runtime_error("Can't find matching engine for: " + g_argv_version);
+				throw std::runtime_error(_C("Can't find matching engine for: ") + g_argv_version);
 		}
 	}
 	catch( std::exception &e ) {
@@ -140,7 +141,7 @@ bool BarrySyncJail::OnInit()
 	}
 
 	if( !m_engine.get() ) {
-		m_status_con->Poke(STATUS_ITEM_ERROR, sb.buf(string("Unknown engine number: ") + g_argv_version));
+		m_status_con->Poke(STATUS_ITEM_ERROR, sb.buf(string(_C("Unknown engine number: ")) + g_argv_version));
 		return false;
 	}
 
@@ -228,7 +229,7 @@ void BarrySyncJail::HandleConflict(OpenSync::SyncConflict &conflict)
 		iss >> sequenceID >> command;
 		if( !iss || sequenceID != m_sequenceID ) {
 			// invalid command from server, something is wrong
-			throw std::runtime_error("Invalid server response: " + string(msg.utf8_str()));
+			throw std::runtime_error(_C("Invalid server response: ") + string(msg.utf8_str()));
 		}
 
 		switch( command[0] )
@@ -236,7 +237,7 @@ void BarrySyncJail::HandleConflict(OpenSync::SyncConflict &conflict)
 		case 'S':	// Select
 			iss >> id;
 			if( !iss )
-				throw std::runtime_error("Invalid Select command from server: " + string(msg.utf8_str()));
+				throw std::runtime_error(_C("Invalid Select command from server: ") + string(msg.utf8_str()));
 			conflict.Select(id);
 			break;
 
@@ -246,24 +247,24 @@ void BarrySyncJail::HandleConflict(OpenSync::SyncConflict &conflict)
 
 		case 'A':	// Abort
 			if( !conflict.IsAbortSupported() )
-				throw std::runtime_error("Abort not supported, and server sent Abort command.");
+				throw std::runtime_error(_C("Abort not supported, and server sent Abort command."));
 			conflict.Abort();
 			break;
 
 		case 'I':	// Ignore
 			if( !conflict.IsIgnoreSupported() )
-				throw std::runtime_error("Ignore not supported, and server sent Ignore command.");
+				throw std::runtime_error(_C("Ignore not supported, and server sent Ignore command."));
 			conflict.Ignore();
 			break;
 
 		case 'N':	// Keep Newer
 			if( !conflict.IsKeepNewerSupported() )
-				throw std::runtime_error("Keep Newer not supported, and server sent Keep Newer command.");
+				throw std::runtime_error(_C("Keep Newer not supported, and server sent Keep Newer command."));
 			conflict.KeepNewer();
 			break;
 
 		default:
-			throw std::runtime_error("Invalid command from server: " + string(msg.utf8_str()));
+			throw std::runtime_error(_C("Invalid command from server: ") + string(msg.utf8_str()));
 		}
 
 		// all done!
@@ -274,7 +275,7 @@ connection_lost:
 	if( conflict.IsAbortSupported() )
 		conflict.Abort();
 	else
-		throw std::runtime_error("Lost connection with server");
+		throw std::runtime_error(_C("Lost connection with server"));
 }
 
 void BarrySyncJail::EntryStatus(const std::string &msg, bool error)
@@ -338,8 +339,8 @@ int main(int argc, char *argv[])
 	cerr << "bsyncjail startup" << endl;
 
 	if( argc != 4 ) {
-		cerr << "This is a helper program for barrydesktop, and\n"
-			"not intended to be called directly.\n" << endl;
+		cerr << _C("This is a helper program for barrydesktop, and\n"
+			"is not intended to be called directly.\n") << endl;
 		return 1;
 	}
 
@@ -349,13 +350,13 @@ int main(int argc, char *argv[])
 
 	wxInitializer initializer;
 	if( !initializer ) {
-		cerr << "Unable to initialize wxWidgets library, aborting." << endl;
+		cerr << _C("Unable to initialize wxWidgets library, aborting.") << endl;
 		return 1;
 	}
 
 	BarrySyncJail app;
 	int ret = app.OnExit();
-	cerr << "bsyncjail exiting with code: " << ret << endl;
+	cerr << _C("bsyncjail exiting with code: ") << ret << endl;
 	return ret;
 }
 

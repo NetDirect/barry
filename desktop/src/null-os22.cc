@@ -21,8 +21,14 @@
 
 #include "os22.h"
 #include "osconv22.h"
+#include "i18n.h"
 
 namespace OpenSync {
+
+static void ThrowNotSupported()
+{
+	throw std::logic_error(_C("Not supported on this system."));
+}
 
 /////////////////////////////////////////////////////////////////////////////
 // OpenSync22 - public members
@@ -31,7 +37,7 @@ bool OpenSync22::symbols_loaded = false;
 
 OpenSync22::OpenSync22()
 {
-	throw std::runtime_error("OpenSync 0.22 support was not compiled in.");
+	throw std::runtime_error(_C("OpenSync 0.22 support was not compiled in."));
 }
 
 OpenSync22::~OpenSync22()
@@ -78,7 +84,7 @@ void OpenSync22::DeleteGroup(const std::string &group_name)
 
 Converter& OpenSync22::GetConverter()
 {
-	throw std::logic_error("Not supported on this system.");
+	throw std::logic_error(_C("Not supported on this system."));
 }
 
 long OpenSync22::AddMember(const std::string &group_name,
@@ -136,32 +142,32 @@ Converter::plugin_ptr Converter22::CreateAndLoadPlugin(const Member &member)
 
 std::string Converter22::GetPluginName(const Config::Barry &) const
 {
-	throw std::logic_error("Not supported on this system.");
+	throw std::logic_error(_C("Not supported on this system."));
 }
 
 std::string Converter22::GetPluginName(const Config::Evolution &) const
 {
-	throw std::logic_error("Not supported on this system.");
+	throw std::logic_error(_C("Not supported on this system."));
 }
 
 std::string Converter22::GetPluginName(const Config::Evolution3 &) const
 {
-	throw std::logic_error("Not supported on this system.");
+	throw std::logic_error(_C("Not supported on this system."));
 }
 
 std::string Converter22::GetPluginName(const Config::Google &) const
 {
-	throw std::logic_error("Not supported on this system.");
+	throw std::logic_error(_C("Not supported on this system."));
 }
 
 std::string Converter22::GetPluginName(const Config::KDEPim &) const
 {
-	throw std::logic_error("Not supported on this system.");
+	throw std::logic_error(_C("Not supported on this system."));
 }
 
 std::string Converter22::GetPluginName(const Config::Unsupported &) const
 {
-	throw std::logic_error("Not supported on this system.");
+	throw std::logic_error(_C("Not supported on this system."));
 }
 
 bool Converter22::IsConfigured(const Config::Barry &) const
@@ -226,68 +232,68 @@ Config::pst_type Converter22::GetSupportedSyncTypes(const Config::Unsupported &)
 
 void Converter22::Load(Config::Barry &config, const Member &member)
 {
-	throw std::logic_error("Not supported on this system.");
+	ThrowNotSupported();
 }
 
 std::string Converter22::GrabField(const std::string &cfg,
 				const std::string &name)
 {
-	throw std::logic_error("Not supported on this system.");
+	throw std::logic_error(_C("Not supported on this system."));
 }
 
 void Converter22::Load(Config::Evolution &config, const Member &member)
 {
-	throw std::logic_error("Not supported on this system.");
+	ThrowNotSupported();
 }
 
 void Converter22::Load(Config::Evolution3 &config, const Member &member)
 {
-	throw std::logic_error("Not supported on this system.");
+	ThrowNotSupported();
 }
 
 void Converter22::Load(Config::Google &config, const Member &member)
 {
-	throw std::logic_error("Not supported on this system.");
+	ThrowNotSupported();
 }
 
 void Converter22::Load(Config::KDEPim &config, const Member &member)
 {
-	throw std::logic_error("Not supported on this system.");
+	ThrowNotSupported();
 }
 
 void Converter22::Load(Config::Unsupported &config, const Member &member)
 {
-	throw std::logic_error("Not supported on this system.");
+	ThrowNotSupported();
 }
 
 void Converter22::Save(const Config::Barry &config, const std::string &group_name)
 {
-	throw std::logic_error("Not supported on this system.");
+	ThrowNotSupported();
 }
 
 void Converter22::Save(const Config::Evolution &config, const std::string &group_name)
 {
-	throw std::logic_error("Not supported on this system.");
+	ThrowNotSupported();
 }
 
 void Converter22::Save(const Config::Evolution3 &config, const std::string &group_name)
 {
-	throw std::logic_error("Not supported on this system.");
+	ThrowNotSupported();
 }
 
 void Converter22::Save(const Config::Google &config, const std::string &group_name)
 {
-	throw std::logic_error("Not supported on this system.");
+	ThrowNotSupported();
 }
 
 void Converter22::Save(const Config::KDEPim &config, const std::string &group_name)
 {
-	throw std::logic_error("Not supported on this system.");
+	ThrowNotSupported();
 }
 
 void Converter22::Save(const Config::Unsupported &config, const std::string &group_name)
 {
-	throw std::logic_error("Not supported on this system.");
+	ThrowNotSupported();
 }
 
 }

@@ -26,6 +26,7 @@
 #include "barrydesktop.h"
 #include "windowids.h"
 #include <string>
+#include "i18n.h"
 
 using namespace std;
 
@@ -72,7 +73,7 @@ SyncMode::SyncMode(wxWindow *parent)
 			// FIXME - the width of the choice dialog is
 			// determined by the length of the string...
 			// which is less than ideal
-			int choice = wxGetSingleChoiceIndex(_T("Multiple configurations have been found with the same PIN.  Please select\nthe configuration that Barry Desktop should work with."),
+			int choice = wxGetSingleChoiceIndex(_W("Multiple configurations have been found with the same PIN.  Please select\nthe configuration that Barry Desktop should work with."),
 				_T("Duplicate PIN"),
 				choices, parent);
 
@@ -122,10 +123,10 @@ SyncMode::SyncMode(wxWindow *parent)
 	m_label[a]->Wrap(wrapwidth); \
 	linesizer->Add(m_label[a].get(), 0, wxEXPAND, 0); \
 	linesizer->AddSpacer(4);
-	MAKE_INFO_LABEL(0, _T("Select the device(s) you want to sync and press Sync Now."));
-	MAKE_INFO_LABEL(1, _T("Use Configure to configure the currently selected device."));
-	MAKE_INFO_LABEL(2, _T("Use Run App to start the application that the device syncs with."));
-	MAKE_INFO_LABEL(3, _T("Use 1-Way Reset to recover from a broken sync, copying all device data to application, or vice versa."));
+	MAKE_INFO_LABEL(0, _W("Select the device(s) you want to sync and press Sync Now."));
+	MAKE_INFO_LABEL(1, _W("Use Configure to configure the currently selected device."));
+	MAKE_INFO_LABEL(2, _W("Use Run App to start the application that the device syncs with."));
+	MAKE_INFO_LABEL(3, _W("Use 1-Way Reset to recover from a broken sync, copying all device data to application, or vice versa."));
 
 	infosizer->Add( linesizer, 1, wxALIGN_LEFT, 0 );
 	infosizer->Add( m_sync_now_button.get(), 0, wxALIGN_RIGHT, 0 );
@@ -137,7 +138,7 @@ SyncMode::SyncMode(wxWindow *parent)
 
 	// add device list
 	wxStaticBoxSizer *box = new wxStaticBoxSizer(wxHORIZONTAL, parent,
-		_T("Device List"));
+		_W("Device List"));
 	m_device_list.reset (new wxListCtrl(parent, SyncMode_DeviceList,
 				wxDefaultPosition, wxDefaultSize,
 				wxLC_REPORT /*| wxLC_VRULES*/) );
@@ -150,13 +151,13 @@ SyncMode::SyncMode(wxWindow *parent)
 	wxSize footer(-1, MAIN_HEADER_OFFSET - 5 - 5);
 	wxBoxSizer *buttons = new wxBoxSizer(wxHORIZONTAL);
 	m_run_app_button.reset( new wxButton(parent,
-				SyncMode_RunAppButton, _T("Run App"),
+				SyncMode_RunAppButton, _W("Run App"),
 				wxDefaultPosition, footer));
 	m_configure_button.reset( new wxButton(parent,
-				SyncMode_ConfigureButton, _T("Configure..."),
+				SyncMode_ConfigureButton, _W("Configure..."),
 				wxDefaultPosition, footer) );
 	m_1way_reset_button.reset( new wxButton(parent,
-				SyncMode_1WayResetButton, _T("1 Way Reset..."),
+				SyncMode_1WayResetButton, _W("1 Way Reset..."),
 				wxDefaultPosition, footer) );
 	buttons->Add(m_run_app_button.get(), 0, wxRIGHT, 5 );
 	buttons->Add(m_configure_button.get(), 0, wxRIGHT, 5 );
@@ -177,17 +178,17 @@ SyncMode::SyncMode(wxWindow *parent)
 	// a constant here :-(
 	timestamp_width += 8;
 	int usable_width = list_size.GetWidth() - timestamp_width;
-	m_device_list->InsertColumn(0, _T("PIN"),
+	m_device_list->InsertColumn(0, _W("PIN"),
 		wxLIST_FORMAT_LEFT, usable_width * 0.16);
-	m_device_list->InsertColumn(1, _T("Name"),
+	m_device_list->InsertColumn(1, _W("Name"),
 		wxLIST_FORMAT_LEFT, usable_width * 0.33);
-	m_device_list->InsertColumn(2, _T("Connected"),
+	m_device_list->InsertColumn(2, _W("Connected"),
 		wxLIST_FORMAT_CENTRE, usable_width * 0.16);
-	m_device_list->InsertColumn(3, _T("Application"),
+	m_device_list->InsertColumn(3, _W("Application"),
 		wxLIST_FORMAT_CENTRE, usable_width * 0.18);
-	m_device_list->InsertColumn(4, _T("Engine"),
+	m_device_list->InsertColumn(4, _W("Engine"),
 		wxLIST_FORMAT_CENTRE, usable_width * 0.17);
-	m_device_list->InsertColumn(5, _T("Last Sync"),
+	m_device_list->InsertColumn(5, _W("Last Sync"),
 		wxLIST_FORMAT_CENTRE, timestamp_width);
 
 	FillDeviceList();
@@ -259,7 +260,7 @@ void SyncMode::FillDeviceList()
 		m_device_list->SetItem(item, 1, text);
 
 		// Connected?
-		text = i->IsConnected() ? _T("Yes") : _T("No");
+		text = i->IsConnected() ? _W("Yes") : _W("No");
 		m_device_list->SetItem(item, 2, text);
 
 		// Configured?
@@ -267,7 +268,7 @@ void SyncMode::FillDeviceList()
 			text = wxString(i->GetAppNames().c_str(), wxConvUTF8);
 		}
 		else {
-			text = _T("(No config)");
+			text = _W("(No config)");
 		}
 		m_device_list->SetItem(item, 3, text);
 
@@ -360,8 +361,8 @@ void SyncMode::ConfigureDevice(DeviceEntry &entry)
 {
 	// make sure it's not already running
 	if( m_cui.get() && m_cui->IsAppRunning() ) {
-		wxMessageBox(_T("An application is currently running."),
-			_T("Run App Error"), wxOK | wxICON_ERROR);
+		wxMessageBox(_W("An application is currently running."),
+			_W("Run App Error"), wxOK | wxICON_ERROR);
 		return;
 	}
 
@@ -387,7 +388,7 @@ void SyncMode::ConfigureDevice(DeviceEntry &entry)
 
 			if( skip_rewrite )  {
 				// config is the same, don't bother saving again
-				barryverbose("Config is the same, skipping save");
+				barryverbose(_C("Config is the same, skipping save"));
 			}
 			else {
 				// clean up after ourselves... if the new
@@ -443,10 +444,10 @@ void SyncMode::ConfigureDevice(DeviceEntry &entry)
 
 		}
 		catch( OpenSync::Config::SaveError &se ) {
-			barryverbose("Exception during save: " << se.what());
-			wxString msg = _T("Unable to save configuration for this device.\nError: ");
+			barryverbose(_C("Exception during save: ") << se.what());
+			wxString msg = _W("Unable to save configuration for this device.\nError: ");
 			msg += wxString(se.what(), wxConvUTF8);
-			wxMessageBox(msg, _T("OpenSync Save Error"),
+			wxMessageBox(msg, _W("OpenSync Save Error"),
 				wxOK | wxICON_ERROR);
 			return;
 		}
@@ -479,13 +480,13 @@ void SyncMode::CheckConfigured(DeviceSet::subset_type &subset)
 			continue;
 
 		ostringstream msg;
-		msg << "Selected device " << device.GetPin().Str()
+		msg << _C("Selected device ") << device.GetPin().Str()
 			<< " (" << device.GetDeviceName() << ")"
-			<< " is not yet configured.  Configure now?";
+			<< _C(" is not yet configured.  Configure now?");
 
 		int response = wxMessageBox(
 			wxString(msg.str().c_str(),wxConvUTF8),
-			_T("Configure Now?"), wxYES_NO, m_parent);
+			_W("Configure Now?"), wxYES_NO, m_parent);
 		if( response == wxYES ) {
 			ConfigureDevice(device);
 		}
@@ -502,8 +503,8 @@ void SyncMode::RefillList()
 int SyncMode::GetSelectedDevice()
 {
 	if( m_device_list->GetSelectedItemCount() != 1 ) {
-		wxMessageBox(_T("Please select one device from the list."),
-			_T("Device List"), wxOK | wxICON_ERROR);
+		wxMessageBox(_W("Please select one device from the list."),
+			_W("Device List"), wxOK | wxICON_ERROR);
 		return -1;
 	}
 
@@ -531,7 +532,7 @@ int SyncMode::GetAuthoritativeSide(int device_index)
 		return -1;
 
 	// build message
-	wxString intro(_T(
+	wxString intro(_W(
 		"Which device / application should be considered\n"
 		"authoritative?\n"
 		"\n"
@@ -562,7 +563,7 @@ int SyncMode::GetAuthoritativeSide(int device_index)
 
 	// ask the user
 	int choice = wxGetSingleChoiceIndex(intro,
-		_T("Select Authoritative Device / Application"),
+		_W("Select Authoritative Device / Application"),
 		list, m_parent);
 	return choice;
 }
@@ -635,11 +636,11 @@ void SyncMode::RewriteConfig(int device_index)
 	}
 	catch( std::runtime_error &re ) {
 		ostringstream oss;
-		oss << "Unable to rewrite config!  Start over manually. "
-			"Error: " << re.what();
+		oss << _C("Unable to rewrite config!  Start over manually. "
+			"Error: ") << re.what();
 		wxString msg(oss.str().c_str(), wxConvUTF8);
 
-		wxMessageBox(msg, _T("Error Rewriting Config"),
+		wxMessageBox(msg, _W("Error Rewriting Config"),
 			wxOK | wxICON_ERROR, m_parent);
 	}
 
@@ -655,13 +656,13 @@ void SyncMode::RewriteConfig(int device_index)
 
 bool SyncMode::WarnAbout1WayReset()
 {
-	int answer = wxMessageBox( _T("The sync config you are about to save "
+	int answer = wxMessageBox( _W("The sync config you are about to save "
 		"is sufficiently different from the existing one that "
 		"a 1-Way Reset will be required.  You will need to "
 		"perform the reset at your earliest convenience, before "
 		"your next sync.\n\n"
 		"Continue anyway?"),
-		_T("1-Way Reset Warning"),
+		_W("1-Way Reset Warning"),
 		wxYES_NO | wxICON_QUESTION, m_parent);
 	return answer == wxYES;
 }
@@ -674,8 +675,8 @@ void SyncMode::OnSyncNow(wxCommandEvent &event)
 
 	// make sure an app is not running
 	if( m_cui.get() && m_cui->IsAppRunning() ) {
-		wxMessageBox(_T("An application is currently running."),
-			_T("Sync Error"), wxOK | wxICON_ERROR);
+		wxMessageBox(_W("An application is currently running."),
+			_W("Sync Error"), wxOK | wxICON_ERROR);
 		return;
 	}
 
@@ -701,8 +702,8 @@ void SyncMode::OnRunApp(wxCommandEvent &event)
 {
 	// make sure it's not already running
 	if( m_cui.get() && m_cui->IsAppRunning() ) {
-		wxMessageBox(_T("An application is already running."),
-			_T("Run App Error"), wxOK | wxICON_ERROR);
+		wxMessageBox(_W("An application is already running."),
+			_W("Run App Error"), wxOK | wxICON_ERROR);
 		return;
 	}
 
@@ -747,8 +748,8 @@ void SyncMode::On1WayReset(wxCommandEvent &event)
 	RefillList();
 
 	// tell the user all's well
-	wxMessageBox(_T("1-Way Reset is complete, and ready to sync."),
-		_T("Reset Complete"), wxOK | wxICON_INFORMATION, m_parent);
+	wxMessageBox(_W("1-Way Reset is complete, and ready to sync."),
+		_W("Reset Complete"), wxOK | wxICON_INFORMATION, m_parent);
 }
 
 void SyncMode::OnListSelChange(wxListEvent &event)

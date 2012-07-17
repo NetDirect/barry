@@ -23,6 +23,7 @@
 #include "EvoDefaultDlg.h"
 #include "windowids.h"
 #include <wx/statline.h>
+#include "wxi18n.h"
 
 using namespace std;
 
@@ -32,7 +33,7 @@ BEGIN_EVENT_TABLE(EvoDefaultDlg, wxDialog)
 END_EVENT_TABLE()
 
 EvoDefaultDlg::EvoDefaultDlg(wxWindow *parent)
-	: wxDialog(parent, Dialog_EvoDefault, _T("Evolution Success"))
+	: wxDialog(parent, Dialog_EvoDefault, _W("Evolution Success"))
 {
 	CreateLayout();
 }
@@ -48,7 +49,7 @@ void EvoDefaultDlg::CreateLayout()
 	//msgsizer->Add( someicon );
 
 	msgsizer->Add(
-		new wxStaticText(this, wxID_ANY, _T("Successfully auto-detected Evolution configuration!")),
+		new wxStaticText(this, wxID_ANY, _W("Successfully auto-detected Evolution configuration!")),
 		0, wxALIGN_LEFT | wxTOP | wxLEFT | wxRIGHT, 10);
 
 	topsizer->Add(msgsizer, 0, 0, 0);
@@ -57,7 +58,7 @@ void EvoDefaultDlg::CreateLayout()
 
 	wxBoxSizer *buttons = new wxBoxSizer(wxHORIZONTAL);
 	buttons->Add( new wxButton(this, Dialog_EvoDefault_ManualConfigButton,
-			_T("Manual Cfg...")),
+			_W("Manual Cfg...")),
 		0, wxALIGN_LEFT | wxEXPAND, 0);
 	buttons->AddStretchSpacer(1);
 

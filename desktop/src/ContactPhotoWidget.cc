@@ -25,6 +25,7 @@
 #include <wx/mstream.h>
 #include <iostream>
 #include <fstream>
+#include "wxi18n.h"
 
 using namespace std;
 
@@ -35,8 +36,12 @@ ContactPhotoWidget::ContactPhotoWidget(wxWindow *parent,
 					wxWindowID id,
 					Barry::Contact &rec)
 	: m_rec(rec)
-	, m_file_filter(_T("Image files (*.bmp;*.jpg;*.png;*.xmp;*.tif)|*.bmp;*.jpg;*.png;*.xmp;*.tif;*.tiff|All files (*.*)|*.*"))
 {
+	m_file_filter = _W("Image files");
+	m_file_filter += _T(" (*.bmp;*.jpg;*.png;*.xmp;*.tif)|*.bmp;*.jpg;*.png;*.xmp;*.tif;*.tiff|");
+	m_file_filter += _W("All files");
+	m_file_filter += _T(" (*.*)|*.*");
+
 	// limit size of image to 60 px height
 	int max_height = MAX_IMAGE_HEIGHT, width = 0;
 
@@ -74,14 +79,17 @@ int ContactPhotoWidget::LoadRecImage(int max_height)
 void ContactPhotoWidget::PromptAndSave(wxWindow *parent)
 {
 	if( !m_rec.Image.size() ) {
-		wxMessageBox(_T("There is no photo available to save."),
-			_T("No Photo"),
+		wxMessageBox(_W("There is no photo available to save."),
+			_W("No Photo"),
 			wxICON_INFORMATION | wxOK);
 		return;
 	}
 
-	wxFileDialog dlg(parent, _T("Save Photo as JPEG..."), _T(""), _T(""),
-		_T("JPEG files (*.jpg)|*.jpg"),
+	wxString filter = _W("JPEG files");
+	filter += _T(" (*.jpg)|*.jpg");
+
+	wxFileDialog dlg(parent, _W("Save Photo as JPEG..."), _T(""), _T(""),
+		filter,
 		wxFD_SAVE | wxFD_OVERWRITE_PROMPT | wxFD_PREVIEW);
 	if( dlg.ShowModal() == wxID_OK ) {
 		ofstream ofs(dlg.GetPath().utf8_str(), ios::binary);
@@ -92,7 +100,7 @@ void ContactPhotoWidget::PromptAndSave(wxWindow *parent)
 /// Returns true if a new image has been loaded (may want to resize)
 bool ContactPhotoWidget::PromptAndLoad(wxWindow *parent)
 {
-	wxFileDialog dlg(parent, _T("Load Photo..."), _T(""), _T(""),
+	wxFileDialog dlg(parent, _W("Load Photo..."), _T(""), _T(""),
 		m_file_filter,
 		wxFD_OPEN | wxFD_PREVIEW);
 	if( dlg.ShowModal() != wxID_OK )
@@ -101,8 +109,8 @@ bool ContactPhotoWidget::PromptAndLoad(wxWindow *parent)
 	// Load image in whatever format it's in
 	wxImage image;
 	if( !image.LoadFile(dlg.GetPath()) ) {
-		wxMessageBox(_T("Unable to load selected photo."),
-			_T("Photo Load Error"),
+		wxMessageBox(_W("Unable to load selected photo."),
+			_W("Photo Load Error"),
 			wxICON_ERROR | wxOK);
 		return false;
 	}
@@ -110,8 +118,8 @@ bool ContactPhotoWidget::PromptAndLoad(wxWindow *parent)
 	// Save image to memory as a JPEG
 	wxMemoryOutputStream stream;
 	if( !image.SaveFile(stream, wxBITMAP_TYPE_JPEG) ) {
-		wxMessageBox(_T("Unable to convert image to JPEG."),
-			_T("Photo Convert"),
+		wxMessageBox(_W("Unable to convert image to JPEG."),
+			_W("Photo Convert"),
 			wxICON_ERROR | wxOK);
 		return false;
 	}
@@ -154,7 +162,7 @@ void ContactPhotoWidget::DrawNoPhoto(wxBitmap &bm, int width, int height)
 	wxColour background(0xed, 0xec, 0xeb);
 	wxPen pen(background);
 	wxBrush brush(background);
-	wxString line1(_T("No")), line2(_T("Photo"));
+	wxString line1(_W("No")), line2(_W("Photo"));
 	int pointsize =wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT)
 				.GetPointSize();
 	wxFont font(pointsize, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL,

@@ -21,15 +21,21 @@
 
 #include "os40.h"
 #include "osconv40.h"
+#include "i18n.h"
 
 namespace OpenSync {
+
+static void ThrowNotSupported()
+{
+	throw std::logic_error("Not supported on this system.");
+}
 
 /////////////////////////////////////////////////////////////////////////////
 // OpenSync40 - public members
 
 OpenSync40::OpenSync40()
 {
-	throw std::runtime_error("OpenSync 0.4x support was not compiled in.");
+	throw std::runtime_error(_C("OpenSync 0.4x support was not compiled in."));
 }
 
 OpenSync40::~OpenSync40()
@@ -76,7 +82,7 @@ void OpenSync40::DeleteGroup(const std::string &group_name)
 
 Converter& OpenSync40::GetConverter()
 {
-	throw std::logic_error("Not supported on this system.");
+	throw std::logic_error(_C("Not supported on this system."));
 }
 
 long OpenSync40::AddMember(const std::string &group_name,
@@ -143,32 +149,32 @@ Converter::plugin_ptr Converter40::CreateAndLoadPlugin(const Member &member)
 
 std::string Converter40::GetPluginName(const Config::Barry &) const
 {
-	throw std::logic_error("Not supported on this system.");
+	throw std::logic_error(_C("Not supported on this system."));
 }
 
 std::string Converter40::GetPluginName(const Config::Evolution &) const
 {
-	throw std::logic_error("Not supported on this system.");
+	throw std::logic_error(_C("Not supported on this system."));
 }
 
 std::string Converter40::GetPluginName(const Config::Evolution3 &) const
 {
-	throw std::logic_error("Not supported on this system.");
+	throw std::logic_error(_C("Not supported on this system."));
 }
 
 std::string Converter40::GetPluginName(const Config::Google &) const
 {
-	throw std::logic_error("Not supported on this system.");
+	throw std::logic_error(_C("Not supported on this system."));
 }
 
 std::string Converter40::GetPluginName(const Config::KDEPim &) const
 {
-	throw std::logic_error("Not supported on this system.");
+	throw std::logic_error(_C("Not supported on this system."));
 }
 
 std::string Converter40::GetPluginName(const Config::Unsupported &) const
 {
-	throw std::logic_error("Not supported on this system.");
+	throw std::logic_error(_C("Not supported on this system."));
 }
 
 bool Converter40::IsConfigured(const Config::Barry &) const
@@ -233,62 +239,62 @@ Config::pst_type Converter40::GetSupportedSyncTypes(const Config::Unsupported &)
 
 void Converter40::Load(Config::Barry &config, const Member &member)
 {
-	throw std::logic_error("Not supported on this system.");
+	ThrowNotSupported();
 }
 
 void Converter40::Load(Config::Evolution &config, const Member &member)
 {
-	throw std::logic_error("Not supported on this system.");
+	ThrowNotSupported();
 }
 
 void Converter40::Load(Config::Evolution3 &config, const Member &member)
 {
-	throw std::logic_error("Not supported on this system.");
+	ThrowNotSupported();
 }
 
 void Converter40::Load(Config::Google &config, const Member &member)
 {
-	throw std::logic_error("Not supported on this system.");
+	ThrowNotSupported();
 }
 
 void Converter40::Load(Config::KDEPim &config, const Member &member)
 {
-	throw std::logic_error("Not supported on this system.");
+	ThrowNotSupported();
 }
 
 void Converter40::Load(Config::Unsupported &config, const Member &member)
 {
-	throw std::logic_error("Not supported on this system.");
+	ThrowNotSupported();
 }
 
 void Converter40::Save(const Config::Barry &config, const std::string &group_name)
 {
-	throw std::logic_error("Not supported on this system.");
+	ThrowNotSupported();
 }
 
 void Converter40::Save(const Config::Evolution &config, const std::string &group_name)
 {
-	throw std::logic_error("Not supported on this system.");
+	ThrowNotSupported();
 }
 
 void Converter40::Save(const Config::Evolution3 &config, const std::string &group_name)
 {
-	throw std::logic_error("Not supported on this system.");
+	ThrowNotSupported();
 }
 
 void Converter40::Save(const Config::Google &config, const std::string &group_name)
 {
-	throw std::logic_error("Not supported on this system.");
+	ThrowNotSupported();
 }
 
 void Converter40::Save(const Config::KDEPim &config, const std::string &group_name)
 {
-	throw std::logic_error("Not supported on this system.");
+	ThrowNotSupported();
 }
 
 void Converter40::Save(const Config::Unsupported &config, const std::string &group_name)
 {
-	throw std::logic_error("Not supported on this system.");
+	ThrowNotSupported();
 }
 
 }

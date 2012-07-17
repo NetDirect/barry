@@ -35,6 +35,8 @@
 #include <wx/dir.h>
 #include <wx/filename.h>
 #include <barry/barry.h>
+#include "wxi18n.h"
+#include "i18n.h"
 
 using namespace std;
 
@@ -46,14 +48,14 @@ ModemDlg::ModemDlg(wxWindow* parent,
 			const std::vector<std::string> &peers,
 			const std::string &default_peer,
 			const Barry::Pin &pin)
-	: wxDialog(parent, Dialog_Modem, _T("Modem Kickstart"))
+	: wxDialog(parent, Dialog_Modem, _W("Modem Kickstart"))
 {
 	bottom_buttons = CreateButtonSizer(wxOK | wxCANCEL);
 
 	// begin wxGlade: ModemDlg::ModemDlg
-	sizer_5_staticbox = new wxStaticBox(this, -1, wxT("Device"));
-	sizer_1_staticbox = new wxStaticBox(this, -1, wxT("Providers"));
-	label_2 = new wxStaticText(this, wxID_ANY, wxT("For device pin:"));
+	sizer_5_staticbox = new wxStaticBox(this, -1, _W("Device"));
+	sizer_1_staticbox = new wxStaticBox(this, -1, _W("Providers"));
+	label_2 = new wxStaticText(this, wxID_ANY, _W("For device pin:"));
 	device_label = new wxStaticText(this, wxID_ANY, wxT("3009efe3"));
 	const wxString list_box_1_choices[] = {
         wxT("barry-minimal"),
@@ -61,7 +63,7 @@ ModemDlg::ModemDlg(wxWindow* parent,
         wxT("barry-testing")
     };
 	list_box_1 = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 3, list_box_1_choices, wxLB_SINGLE);
-	label_1 = new wxStaticText(this, wxID_ANY, wxT("Password:"));
+	label_1 = new wxStaticText(this, wxID_ANY, _W("Password:"));
 	text_ctrl_1 = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PASSWORD);
 
 	set_properties();
@@ -93,14 +95,14 @@ ModemDlg::ModemDlg(wxWindow* parent,
 void ModemDlg::set_properties()
 {
 	// begin wxGlade: ModemDlg::set_properties
-	SetTitle(wxT("Modem Starter"));
+	SetTitle(_W("Modem Starter"));
 	device_label->SetMinSize(wxSize(100, -1));
 	list_box_1->SetMinSize(wxSize(-1, 150));
-	list_box_1->SetToolTip(wxT("Available provider scripts on your system.  Must pick one."));
+	list_box_1->SetToolTip(_W("Available provider scripts on your system.  Must pick one."));
 	list_box_1->SetSelection(0);
-	label_1->SetToolTip(wxT("Optional device password"));
+	label_1->SetToolTip(_W("Optional device password"));
 	text_ctrl_1->SetMinSize(wxSize(150, -1));
-	text_ctrl_1->SetToolTip(wxT("Optional device password"));
+	text_ctrl_1->SetToolTip(_W("Optional device password"));
 	// end wxGlade
 }
 
@@ -250,7 +252,7 @@ void ModemDlg::DoModem(wxWindow *parent, const Barry::Pin &pin)
 	// test whether xterm is in the path
 	ProgramDetect xterm("xterm", getenv("PATH"));
 	if( !xterm.Exists() || !xterm.IsExecutable() ) {
-		wxMessageBox(_T("Cannot locate the xterm program.  This is used to display modem connection output.  Please install it and try again."), _T("Xterm Not Found"), wxOK | wxICON_ERROR, parent);
+		wxMessageBox(_W("Cannot locate the xterm program.  This is used to display modem connection output.  Please install it and try again."), _W("Xterm Not Found"), wxOK | wxICON_ERROR, parent);
 		return;
 	}
 
@@ -259,7 +261,7 @@ void ModemDlg::DoModem(wxWindow *parent, const Barry::Pin &pin)
 	// of 0 or 2
 	ProgramDetect pppd("pppd", "/usr/sbin:/usr/bin");
 	if( !pppd.Exists() ) {
-	    	wxMessageBox(_T("Cannot find pppd.  Please install it for modem use."), _T("pppd Not Found"), wxOK | wxICON_ERROR, parent);
+	    	wxMessageBox(_W("Cannot find pppd.  Please install it for modem use."), _W("pppd Not Found"), wxOK | wxICON_ERROR, parent);
 		return;
 	}
 
@@ -274,8 +276,8 @@ void ModemDlg::DoModem(wxWindow *parent, const Barry::Pin &pin)
 	}
 	else if( !pppd.IsExecutable() && pppd.IsSuid() && pppd.GetGroup() != "root" ) {
 		wxString gname(pppd.GetGroup().c_str(), wxConvUTF8);
-		wxString msg = wxString::Format(_T("Your system's PPP has the suid bit set, with a group of '%s'.  You should add your account to the '%s' group, to avoid the need to enter the root password every time you use the modem.\n\nContinue anyway?"), gname.c_str(), gname.c_str());
-		int choice = wxMessageBox(msg, _T("System Group"), wxYES_NO,
+		wxString msg = wxString::Format(_W("Your system's PPP has the suid bit set, with a group of '%s'.  You should add your account to the '%s' group, to avoid the need to enter the root password every time you use the modem.\n\nContinue anyway?"), gname.c_str(), gname.c_str());
+		int choice = wxMessageBox(msg, _W("System Group"), wxYES_NO,
 			parent);
 		if( choice != wxYES )
 			return;
@@ -293,14 +295,14 @@ void ModemDlg::DoModem(wxWindow *parent, const Barry::Pin &pin)
 		ExecHelper eh(0);
 		wxString cmd((pppd.GetPath() + " permission_test").c_str(), wxConvUTF8);
 		if( !eh.Run(0, "", cmd) ) {
-			wxMessageBox(_T("Internal fork error. Should never happen."), _T("Cannot Run pppd"), wxOK | wxICON_ERROR, parent);
+			wxMessageBox(_W("Internal fork error. Should never happen."), _W("Cannot Run pppd"), wxOK | wxICON_ERROR, parent);
 			return;
 		}
 
 		eh.WaitForChild();
 		if( !(eh.GetChildExitCode() == 0 || eh.GetChildExitCode() == 2) ) {
-			wxString msg = wxString::Format(_T("Unable to run pppd correctly.  Unexpected error code: %d, %s"), eh.GetChildExitCode(), cmd.c_str());
-			wxMessageBox(msg, _T("Error Code"), wxOK | wxICON_ERROR, parent);
+			wxString msg = wxString::Format(_W("Unable to run pppd correctly.  Unexpected error code: %d, %s"), eh.GetChildExitCode(), cmd.c_str());
+			wxMessageBox(msg, _W("Error Code"), wxOK | wxICON_ERROR, parent);
 			return;
 		}
 	}
@@ -314,7 +316,7 @@ void ModemDlg::DoModem(wxWindow *parent, const Barry::Pin &pin)
 	std::vector<std::string> peers;
 	wxDir dir(wxString("/etc/ppp/peers", wxConvUTF8));
 	if( !dir.IsOpened() ) {
-		wxMessageBox(_T("Unable to access files in /etc/ppp/peers.  Do you have the correct permissions?"), _T("Cannot Open Peers"), wxOK | wxICON_ERROR, parent);
+		wxMessageBox(_W("Unable to access files in /etc/ppp/peers.  Do you have the correct permissions?"), _W("Cannot Open Peers"), wxOK | wxICON_ERROR, parent);
 		return;
 	}
 	wxString filename;
@@ -326,7 +328,7 @@ void ModemDlg::DoModem(wxWindow *parent, const Barry::Pin &pin)
 
 	// anything available?
 	if( !peers.size() ) {
-		wxMessageBox(_T("No providers found.  Make sure Barry was properly installed, with peer files in /etc/ppp/peers."), _T("No Providers"), wxOK | wxICON_ERROR, parent);
+		wxMessageBox(_W("No providers found.  Make sure Barry was properly installed, with peer files in /etc/ppp/peers."), _W("No Providers"), wxOK | wxICON_ERROR, parent);
 		return;
 	}
 
@@ -342,8 +344,8 @@ void ModemDlg::DoModem(wxWindow *parent, const Barry::Pin &pin)
 	// to make sure that we have access to peers/
 	string testfile = "/etc/ppp/peers/" + peers[0];
 	if( access(testfile.c_str(), R_OK) != 0 ) {
-		wxString msg = wxString::Format(_T("Cannot read provider files under /etc/ppp/peers. Please check your file permissions. (Access failed for %s)"), wxString(testfile.c_str(), wxConvUTF8).c_str());
-		wxMessageBox(msg, _T("Permissions Error"), wxOK | wxICON_ERROR, parent);
+		wxString msg = wxString::Format(_W("Cannot read provider files under /etc/ppp/peers. Please check your file permissions. (Access failed for %s)"), wxString(testfile.c_str(), wxConvUTF8).c_str());
+		wxMessageBox(msg, _W("Permissions Error"), wxOK | wxICON_ERROR, parent);
 		return;
 	}
 
@@ -364,8 +366,8 @@ void ModemDlg::DoModem(wxWindow *parent, const Barry::Pin &pin)
 		string peer = dlg.GetPeerName();
 		string peerfile = "/etc/ppp/peers/" + peer;
 		if( !peer.size() || access(peerfile.c_str(), R_OK) != 0 ) {
-			wxString msg = wxString::Format(_T("Unable to open peer file: %s"), wxString(peerfile.c_str(), wxConvUTF8).c_str());
-			wxMessageBox(msg, _T("Invalid Peer"), wxOK | wxICON_ERROR, parent);
+			wxString msg = wxString::Format(_W("Unable to open peer file: %s"), wxString(peerfile.c_str(), wxConvUTF8).c_str());
+			wxMessageBox(msg, _W("Invalid Peer"), wxOK | wxICON_ERROR, parent);
 			return;
 		}
 
@@ -378,7 +380,7 @@ void ModemDlg::DoModem(wxWindow *parent, const Barry::Pin &pin)
 
 		ofstream otmp(tmp_path.c_str());
 		otmp << "#!/bin/sh" << endl;
-		otmp << "echo Starting pppd for device PIN "
+		otmp << "echo " << _C("Starting pppd for device PIN ")
 			<< pin.Str() << "... " << endl;
 
 		ostringstream cmdoss;
@@ -389,7 +391,7 @@ void ModemDlg::DoModem(wxWindow *parent, const Barry::Pin &pin)
 		otmp << "echo '" << cmdoss.str() << "'" << endl;
 		otmp << cmdoss.str() << endl;
 
-		otmp << "echo Press enter to close window..." << endl;
+		otmp << "echo " << _C("Press enter to close window...") << endl;
 		otmp << "read" << endl;
 		otmp.close();
 

@@ -27,6 +27,7 @@
 #include <iostream>
 #include <sstream>
 #include <iomanip>
+#include "i18n.h"
 
 using namespace std;
 
@@ -155,18 +156,19 @@ bool SyncConflict::IsKeepNewerSupported() const
 std::string SyncConflict::GetMenu() const
 {
 	ostringstream oss;
-	oss << "Which entry do you want to use?\n[1-9] To select a side";
+	oss << _C("Which entry do you want to use?\n[1-9] To select a side");
 
+	// Translator note: the menu letters must remain the same!
 	if( IsAbortSupported() )
-		oss << ", [A]bort";
+		oss << _C(", [A]bort");
 
-	oss << ", [D]uplicate";
+	oss << _C(", [D]uplicate");
 
 	if( IsIgnoreSupported() )
-		oss << ", [I]gnore";
+		oss << _C(", [I]gnore");
 
 	if( IsKeepNewerSupported() )
-		oss << ", Keep [N]ewer";
+		oss << _C(", Keep [N]ewer");
 
 	return oss.str();
 }
@@ -263,7 +265,7 @@ void SyncStatus::HandleConflict(SyncConflict &conflict)
 	bool again = true;
 	while( again ) {
 		again = false;
-		cout << "Conflicting items:\n" << conflict << endl;
+		cout << _C("Conflicting items:") << "\n" << conflict << endl;
 		cout << conflict.GetMenu() << ": ";
 		string line;
 		getline(cin, line);
@@ -285,7 +287,7 @@ void SyncStatus::HandleConflict(SyncConflict &conflict)
 			if( conflict.IsAbortSupported() )
 				conflict.Abort();
 			else
-				cout << "Abort not supported!" << endl;
+				cout << _C("Abort not supported!") << endl;
 			break;
 		case 'D':
 		case 'd':
@@ -296,14 +298,14 @@ void SyncStatus::HandleConflict(SyncConflict &conflict)
 			if( conflict.IsIgnoreSupported() )
 				conflict.Ignore();
 			else
-				cout << "Ignore not supported!" << endl;
+				cout << _C("Ignore not supported!") << endl;
 			break;
 		case 'N':
 		case 'n':
 			if( conflict.IsKeepNewerSupported() )
 				conflict.KeepNewer();
 			else
-				cout << "Keep Newer not supported!" << endl;
+				cout << _C("Keep Newer not supported!") << endl;
 			break;
 		default:
 			again = true;
@@ -315,21 +317,21 @@ void SyncStatus::HandleConflict(SyncConflict &conflict)
 void SyncStatus::EntryStatus(const std::string &msg, bool error)
 {
 	if( error )
-		cout << "ERROR: ";
+		cout << _C("ERROR: ");
 	cout << msg << endl;
 }
 
 void SyncStatus::MappingStatus(const std::string &msg, bool error)
 {
 	if( error )
-		cout << "ERROR: ";
+		cout << _C("ERROR: ");
 	cout << msg << endl;
 }
 
 void SyncStatus::EngineStatus(const std::string &msg, bool error, bool slowsync)
 {
 	if( error )
-		cout << "ERROR: ";
+		cout << _C("ERROR: ");
 	cout << msg << endl;
 }
 
@@ -339,32 +341,32 @@ void SyncStatus::MemberStatus(long member_id,
 				bool error)
 {
 	if( error )
-		cout << "ERROR: ";
+		cout << _C("ERROR: ");
 	cout << msg << endl;
 }
 
 void SyncStatus::CheckSummary(SyncSummary &summary)
 {
-	cout << "\nSynchronization Forecast Summary:\n";
+	cout << "\n" << _C("Synchronization Forecast Summary:") << "\n";
 	cout << summary << endl;
 
-	cout << "Do you want to continue the synchronization? (N/y): ";
+	cout << _C("Do you want to continue the synchronization? (N/y): ");
 	string line;
 	getline(cin, line);
 
 	// Abort if not got accepted with 'y'
 	if( line[0] != 'y') {
-		cout << "\nAborting! Synchronization got aborted by user!" << endl;
+		cout << "\n" << _C("Aborting! Synchronization got aborted by user!") << endl;
 		summary.Abort();
 	} else {
-		cout << "\nOK! Completing synchronization!" << endl;
+		cout << "\n" << _C("OK! Completing synchronization!") << endl;
 		summary.Continue();
 	}
 }
 
 void SyncStatus::ReportError(const std::string &msg)
 {
-	cout << "CALLBACK ERROR: " << msg << endl;
+	cout << _C("CALLBACK ERROR: ") << msg << endl;
 }
 
 
@@ -403,7 +405,7 @@ int APISet::OpenAvailable()
 		loaded++;
 	}
 	catch( std::exception &e ) {
-		cerr << "Unable to load opensync 0.40: " << e.what();
+		cerr << _C("Unable to load opensync 0.40: ") << e.what();
 		push_back(0);
 	}
 
@@ -413,7 +415,7 @@ int APISet::OpenAvailable()
 		loaded++;
 	}
 	catch( std::exception &e ) {
-		cerr << "Unable to load opensync 0.22: " << e.what();
+		cerr << _C("Unable to load opensync 0.22: ") << e.what();
 		push_back(0);
 	}
 

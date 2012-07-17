@@ -22,6 +22,7 @@
 #include "ContactEditDlg.h"
 #include "ContactPhotoWidget.h"
 #include "windowids.h"
+#include "wxi18n.h"
 
 // begin wxGlade: ::extracode
 // end wxGlade
@@ -33,7 +34,7 @@
 ContactEditDlg::ContactEditDlg(wxWindow *parent,
 				Barry::Contact &rec,
 				bool editable)
-	: wxDialog(parent, Dialog_ContactEdit, _T("Contact Record"))
+	: wxDialog(parent, Dialog_ContactEdit, _W("Contact Record"))
 	, m_rec(rec)
 {
 	m_email_list = Barry::Contact::Email2CommaString(m_rec.EmailAddresses);
@@ -46,91 +47,91 @@ ContactEditDlg::ContactEditDlg(wxWindow *parent,
 	}
 
 	// begin wxGlade: ContactEditDlg::ContactEditDlg
-	sizer_5_staticbox = new wxStaticBox(this, -1, wxT("Home"));
-	sizer_6_staticbox = new wxStaticBox(this, -1, wxT("Work"));
-	sizer_2_staticbox = new wxStaticBox(this, -1, wxT("Misc"));
-	sizer_7_staticbox = new wxStaticBox(this, -1, wxT("Mobile"));
-	sizer_8_staticbox = new wxStaticBox(this, -1, wxT("Notes"));
-	sizer_9_staticbox = new wxStaticBox(this, -1, wxT("Name"));
+	sizer_5_staticbox = new wxStaticBox(this, -1, _W("Home"));
+	sizer_6_staticbox = new wxStaticBox(this, -1, _W("Work"));
+	sizer_2_staticbox = new wxStaticBox(this, -1, _W("Misc"));
+	sizer_7_staticbox = new wxStaticBox(this, -1, _W("Mobile"));
+	sizer_8_staticbox = new wxStaticBox(this, -1, _W("Notes"));
+	sizer_9_staticbox = new wxStaticBox(this, -1, _W("Name"));
 	m_photo = new ContactPhotoWidget(this, Dialog_ContactEdit_PhotoButton, m_rec);
-	label_13 = new wxStaticText(this, wxID_ANY, wxT("Title"));
+	label_13 = new wxStaticText(this, wxID_ANY, _W("Title"));
 	Prefix = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
-	FirstNameStatic = new wxStaticText(this, wxID_ANY, wxT("First"));
+	FirstNameStatic = new wxStaticText(this, wxID_ANY, _W("First"));
 	FirstName = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
-	LastNameStatic = new wxStaticText(this, wxID_ANY, wxT("Last"));
+	LastNameStatic = new wxStaticText(this, wxID_ANY, _W("Last"));
 	LastName = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
-	label_14 = new wxStaticText(this, wxID_ANY, wxT("Company"));
+	label_14 = new wxStaticText(this, wxID_ANY, _W("Company"));
 	Company = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
-	label_15 = new wxStaticText(this, wxID_ANY, wxT("Job Title"));
+	label_15 = new wxStaticText(this, wxID_ANY, _W("Job Title"));
 	JobTitle = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
-	label_9 = new wxStaticText(this, wxID_ANY, wxT("Nickname"));
+	label_9 = new wxStaticText(this, wxID_ANY, _W("Nickname"));
 	Nickname = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
-	label_1 = new wxStaticText(this, wxID_ANY, wxT("Address"));
+	label_1 = new wxStaticText(this, wxID_ANY, _W("Address"));
 	HomeAddress1 = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
 	HomeAddress2 = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
 	HomeAddress3 = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
-	label_2 = new wxStaticText(this, wxID_ANY, wxT("City"));
+	label_2 = new wxStaticText(this, wxID_ANY, _W("City"));
 	HomeCity = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
-	label_3 = new wxStaticText(this, wxID_ANY, wxT("Province"));
+	label_3 = new wxStaticText(this, wxID_ANY, _W("Province"));
 	HomeProvince = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
-	label_4 = new wxStaticText(this, wxID_ANY, wxT("Postal Code"));
+	label_4 = new wxStaticText(this, wxID_ANY, _W("Postal Code"));
 	HomePostalCode = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
-	label_5 = new wxStaticText(this, wxID_ANY, wxT("Country"));
+	label_5 = new wxStaticText(this, wxID_ANY, _W("Country"));
 	HomeCountry = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
 	static_line_1 = new wxStaticLine(this, wxID_ANY);
 	static_line_2 = new wxStaticLine(this, wxID_ANY);
-	label_6 = new wxStaticText(this, wxID_ANY, wxT("Phone"));
+	label_6 = new wxStaticText(this, wxID_ANY, _W("Phone"));
 	HomePhone = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
-	label_7 = new wxStaticText(this, wxID_ANY, wxT("Phone 2"));
+	label_7 = new wxStaticText(this, wxID_ANY, _W("Phone 2"));
 	HomePhone2 = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
-	label_8 = new wxStaticText(this, wxID_ANY, wxT("Fax"));
+	label_8 = new wxStaticText(this, wxID_ANY, _W("Fax"));
 	HomeFax = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
-	label_1_copy = new wxStaticText(this, wxID_ANY, wxT("Address"));
+	label_1_copy = new wxStaticText(this, wxID_ANY, _W("Address"));
 	WorkAddress1 = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
 	WorkAddress2 = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
 	WorkAddress3 = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
-	label_2_copy = new wxStaticText(this, wxID_ANY, wxT("City"));
+	label_2_copy = new wxStaticText(this, wxID_ANY, _W("City"));
 	WorkCity = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
-	label_3_copy = new wxStaticText(this, wxID_ANY, wxT("Province"));
+	label_3_copy = new wxStaticText(this, wxID_ANY, _W("Province"));
 	WorkProvince = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
-	label_4_copy = new wxStaticText(this, wxID_ANY, wxT("Postal Code"));
+	label_4_copy = new wxStaticText(this, wxID_ANY, _W("Postal Code"));
 	WorkPostalCode = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
-	label_5_copy = new wxStaticText(this, wxID_ANY, wxT("Country"));
+	label_5_copy = new wxStaticText(this, wxID_ANY, _W("Country"));
 	WorkCountry = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
 	static_line_1_copy = new wxStaticLine(this, wxID_ANY);
 	static_line_2_copy = new wxStaticLine(this, wxID_ANY);
-	label_6_copy = new wxStaticText(this, wxID_ANY, wxT("Phone"));
+	label_6_copy = new wxStaticText(this, wxID_ANY, _W("Phone"));
 	WorkPhone = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
-	label_7_copy = new wxStaticText(this, wxID_ANY, wxT("Phone 2"));
+	label_7_copy = new wxStaticText(this, wxID_ANY, _W("Phone 2"));
 	WorkPhone2 = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
-	label_8_copy = new wxStaticText(this, wxID_ANY, wxT("Fax"));
+	label_8_copy = new wxStaticText(this, wxID_ANY, _W("Fax"));
 	WorkFax = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
-	label_17 = new wxStaticText(this, wxID_ANY, wxT("Email"));
+	label_17 = new wxStaticText(this, wxID_ANY, _W("Email"));
 	text_ctrl_9 = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
-	label_18 = new wxStaticText(this, wxID_ANY, wxT("Other Phone"));
+	label_18 = new wxStaticText(this, wxID_ANY, _W("Other Phone"));
 	text_ctrl_1 = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
-	label_19 = new wxStaticText(this, wxID_ANY, wxT("Old Phone"));
+	label_19 = new wxStaticText(this, wxID_ANY, _W("Old Phone"));
 	text_ctrl_2 = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
-	label_20 = new wxStaticText(this, wxID_ANY, wxT("Radio"));
+	label_20 = new wxStaticText(this, wxID_ANY, _W("Radio"));
 	text_ctrl_3 = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
-	label_21 = new wxStaticText(this, wxID_ANY, wxT("PIN"));
+	label_21 = new wxStaticText(this, wxID_ANY, _W("PIN"));
 	text_ctrl_4 = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
-	label_22 = new wxStaticText(this, wxID_ANY, wxT("User1"));
+	label_22 = new wxStaticText(this, wxID_ANY, _W("User1"));
 	text_ctrl_5 = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
-	label_23 = new wxStaticText(this, wxID_ANY, wxT("User2"));
+	label_23 = new wxStaticText(this, wxID_ANY, _W("User2"));
 	text_ctrl_6 = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
-	label_24 = new wxStaticText(this, wxID_ANY, wxT("User3"));
+	label_24 = new wxStaticText(this, wxID_ANY, _W("User3"));
 	text_ctrl_7 = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
-	label_25 = new wxStaticText(this, wxID_ANY, wxT("User4"));
+	label_25 = new wxStaticText(this, wxID_ANY, _W("User4"));
 	text_ctrl_8 = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
-	label_10 = new wxStaticText(this, wxID_ANY, wxT("Cell"));
+	label_10 = new wxStaticText(this, wxID_ANY, _W("Cell"));
 	MobilePhone = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
-	label_11 = new wxStaticText(this, wxID_ANY, wxT("Cell 2"));
+	label_11 = new wxStaticText(this, wxID_ANY, _W("Cell 2"));
 	MobilePhone2 = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
-	label_12 = new wxStaticText(this, wxID_ANY, wxT("Pager"));
+	label_12 = new wxStaticText(this, wxID_ANY, _W("Pager"));
 	Pager = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
 	Notes = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER|wxTE_MULTILINE);
-	label_16 = new wxStaticText(this, wxID_ANY, wxT("URL"));
+	label_16 = new wxStaticText(this, wxID_ANY, _W("URL"));
 	Url = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
 
 	set_properties();
@@ -146,7 +147,7 @@ END_EVENT_TABLE();
 void ContactEditDlg::set_properties()
 {
 	// begin wxGlade: ContactEditDlg::set_properties
-	SetTitle(wxT("Contact"));
+	SetTitle(_W("Contact"));
 	Prefix->SetValidator(wxTextValidator(wxFILTER_NONE, m_strings.Add(m_rec.Prefix)));
 	FirstName->SetMinSize(wxSize(100, -1));
 	FirstName->SetValidator(wxTextValidator(wxFILTER_NONE, m_strings.Add(m_rec.FirstName)));
@@ -179,7 +180,7 @@ void ContactEditDlg::set_properties()
 	WorkPhone2->SetValidator(wxTextValidator(wxFILTER_NONE, m_strings.Add(m_rec.WorkPhone2)));
 	WorkFax->SetValidator(wxTextValidator(wxFILTER_NONE, m_strings.Add(m_rec.Fax)));
 	text_ctrl_9->SetMinSize(wxSize(170, -1));
-	text_ctrl_9->SetToolTip(wxT("Comma separated list of simple email addresses.  Do not use <> characters."));
+	text_ctrl_9->SetToolTip(_W("Comma separated list of simple email addresses.  Do not use <> characters."));
 	text_ctrl_9->SetValidator(wxTextValidator(wxFILTER_NONE, m_strings.Add(m_email_list)));
 	text_ctrl_1->SetValidator(wxTextValidator(wxFILTER_NONE, m_strings.Add(m_rec.OtherPhone)));
 	text_ctrl_2->SetValidator(wxTextValidator(wxFILTER_NONE, m_strings.Add(m_rec.Phone)));
@@ -342,13 +343,13 @@ void ContactEditDlg::OnPhotoButton(wxCommandEvent &event)
 	if( m_rec.Image.size() ) {
 		// an image exists, prompt user what to do
 		wxArrayString choices;
-		choices.Add( _T("Load new photo") );
-		choices.Add( _T("Save current photo to disk") );
-		choices.Add( _T("Delete current photo") );
+		choices.Add( _W("Load new photo") );
+		choices.Add( _W("Save current photo to disk") );
+		choices.Add( _W("Delete current photo") );
 
 		int choice = wxGetSingleChoiceIndex(
-			_T("A photo currently exists.  Would you like to:"),
-			_T("Photo Management"),
+			_W("A photo currently exists.  Would you like to:"),
+			_W("Photo Management"),
 			choices, this);
 
 		switch( choice )
@@ -394,8 +395,8 @@ bool ContactEditDlg::TransferDataFromWindow()
 	// one final validation: make sure either the name field or the
 	// company field has data
 	if( !m_rec.GetFullName().size() && !m_rec.Company.size() ) {
-		wxMessageBox(_T("A contact record must contain either a First/Last name, or a Company name."),
-			_T("Required Fields"),
+		wxMessageBox(_W("A contact record must contain either a First/Last name, or a Company name."),
+			_W("Required Fields"),
 			wxOK | wxICON_INFORMATION, this);
 		return false;
 	}

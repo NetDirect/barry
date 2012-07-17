@@ -28,6 +28,7 @@
 #include <glib.h>
 #include <sstream>
 #include <stdexcept>
+#include "i18n.h"
 
 TempDir::TempDir(const char *basename)
 	: m_template(0)
@@ -36,7 +37,7 @@ TempDir::TempDir(const char *basename)
 	m_template = g_strdup_printf("%s/%s-XXXXXX", g_get_tmp_dir(), basename);
 	if( mkdtemp(m_template) == NULL ) {
 		g_free(m_template);
-		throw std::runtime_error(std::string("Cannot create temp directory: ") + strerror(errno));
+		throw std::runtime_error(std::string(_C("Cannot create temp directory: ")) + strerror(errno));
 	}
 }
 

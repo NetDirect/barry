@@ -27,6 +27,8 @@
 #include "windowids.h"
 #include <wx/wx.h>
 #include <wx/process.h>
+#include "wxi18n.h"
+#include "i18n.h"
 
 namespace AppConfig {
 
@@ -73,7 +75,7 @@ namespace {
 			top->Add( new wxStaticText(this, wxID_ANY, msg),
 				0, wxALL | wxALIGN_LEFT, 10);
 			top->Add( new wxButton(this, wxID_CANCEL,
-						_T("Stop waiting")),
+						_W("Stop waiting")),
 				0, wxALL | wxALIGN_RIGHT, 5);
 			SetSizer(top);
 			top->SetSizeHints(this);
@@ -99,7 +101,7 @@ namespace {
 long Evolution::ForceShutdown()
 {
 	ExecHelper shutdown(NULL);
-	shutdown.Run(NULL, "Evolution shutdown", _T("evolution --force-shutdown"));
+	shutdown.Run(NULL, _C("Evolution shutdown"), _T("evolution --force-shutdown"));
 	shutdown.WaitForChild();
 	return shutdown.GetChildExitCode();
 }
@@ -153,7 +155,7 @@ Evolution::Evolution()
 
 bool Evolution::InitialRun()
 {
-	wxString msg = _T(
+	wxString msg = _W(
 		"Unable to automatically detect Evolution's configuration.\n"
 		"You need to run Evolution, and manually click each of the\n"
 		"section buttons:\n"
@@ -164,7 +166,7 @@ bool Evolution::InitialRun()
 		"\n"
 		"Would you like to start Evolution now?\n");
 
-	int choice = wxMessageBox(msg, _T("Evolution Config"),
+	int choice = wxMessageBox(msg, _W("Evolution Config"),
 		wxYES_NO | wxICON_QUESTION, m_parent);
 
 	if( choice == wxNO )
@@ -174,8 +176,8 @@ bool Evolution::InitialRun()
 
 	// start Evolution, and wait for it to exit, showing a waiting
 	// message to the user
-	WaitDialog waitdlg(m_parent, _T("Waiting for Evolution to exit..."),
-		_T("Evolution Running"));
+	WaitDialog waitdlg(m_parent, _W("Waiting for Evolution to exit..."),
+		_W("Evolution Running"));
 
 	ExecCallback *callback = new ExecCallback(&waitdlg);
 
@@ -186,7 +188,7 @@ bool Evolution::InitialRun()
 	long ret = wxExecute((wxChar**)start_argv, wxEXEC_ASYNC, callback);
 	if( ret == 0 ) {
 		delete callback;
-		wxMessageBox(_T("Failed to run evolution. Please make sure it is installed and in your PATH."), _T("Evolution Config"), wxOK | wxICON_ERROR, m_parent);
+		wxMessageBox(_W("Failed to run evolution. Please make sure it is installed and in your PATH."), _W("Evolution Config"), wxOK | wxICON_ERROR, m_parent);
 		return false;
 	}
 
@@ -202,7 +204,7 @@ bool Evolution::InitialRun()
 		// closed us, and we can delete it
 		if( callback->m_status ) {
 			// error status code
-			wxMessageBox(_T("Failed to run evolution. Please make sure it is installed and in your PATH."), _T("Evolution Config"), wxOK | wxICON_ERROR, m_parent);
+			wxMessageBox(_W("Failed to run evolution. Please make sure it is installed and in your PATH."), _W("Evolution Config"), wxOK | wxICON_ERROR, m_parent);
 			delete callback;
 			return false;
 		}
@@ -305,8 +307,8 @@ bool Evolution::ZapData(wxWindow *parent,
 //		dynamic_cast<OpenSync::Config::Evolution&>(*plugin);
 
 	if( IsAppRunning() ) {
-		wxMessageBox(_T("Evolution already running."),
-			_T("No Biscuit"), wxOK | wxICON_INFORMATION,
+		wxMessageBox(_W("Evolution already running."),
+			_W("Oops..."), wxOK | wxICON_INFORMATION,
 			m_parent);
 		return false;
 	}
@@ -314,17 +316,17 @@ bool Evolution::ZapData(wxWindow *parent,
 	// tell the user what to do
 	wxString msg;
 	if( dynamic_cast<OpenSync::OpenSync22*>(engine) ) {
-		msg = _T(
+		msg = _W(
 		"Starting Evolution.  Delete all contacts and/or calendar "
 		"entries manually, depending on your sync configuration.");
 	}
 	else {
-		msg = _T(
+		msg = _W(
 		"Starting Evolution.  Delete all objects (contacts, calendar, "
 		"memos, and tasks, depending on your sync configuration)."
 		);
 	}
-	int choice = wxMessageBox(msg, _T("Starting Evolution"),
+	int choice = wxMessageBox(msg, _W("Starting Evolution"),
 			wxOK | wxCANCEL | wxICON_QUESTION, m_parent);
 	if( choice != wxOK )
 		return false;

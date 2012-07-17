@@ -27,10 +27,53 @@
 #include <unistd.h>
 #include <pwd.h>
 #include <algorithm>
+#include "i18n.h"
 
 using namespace std;
 
 namespace OpenSync { namespace Config {
+
+//////////////////////////////////////////////////////////////////////////////
+// Unsupported config class
+
+std::string Unsupported::AppName()
+{
+	return _C("Unsupported");
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
+// Barry config class
+
+Barry::Barry(const ::Barry::Pin &pin)
+	: m_debug_mode(false)
+	, m_pin(pin)
+{
+	if( !m_pin.Valid() )
+		throw std::logic_error(_C("Barry config must have valid pin number."));
+}
+
+Barry::Barry(Converter *load_converter, const Member &member)
+	: m_debug_mode(false)
+{
+	load_converter->Load(*this, member);
+	//
+	// check that the loaded pin is valid... if not, it is
+	// likely safe to assume that something is horribly wrong.
+	// in the case where the Application wishes to add a new
+	// barry plugin, it should use the Pin constructor.
+	// if you *really* need to try to salvage an old
+	// corrupt config, you can always do the
+	// converter->Load(barry_obj) manually, and pick out
+	// the left overs.
+	//
+	if( !m_pin.Valid() ) {
+		std::ostringstream oss;
+		oss << _C("Unable to load pin number from Barry plugin config.  Consider this group corrupt, or not fully configured: ") << member;
+		throw LoadError(oss.str());
+	}
+}
+
 
 //////////////////////////////////////////////////////////////////////////////
 // Group class
@@ -67,13 +110,13 @@ void Group::BarryCheck(OpenSync::API &api,
 
 	if( found == 0 && (throw_mask & OSCG_THROW_ON_NO_BARRY) ) {
 		ostringstream oss;
-		oss << "No Barry plugins found in group '" << group_name << "' and OSCG_THROW_ON_NO_BARRY is set.";
+		oss << _C("No Barry plugins found in group '") << group_name << _C("' and OSCG_THROW_ON_NO_BARRY is set.");
 		throw LoadError(oss.str());
 	}
 
 	if( found > 1 && (throw_mask & OSCG_THROW_ON_MULTIPLE_BARRIES) ) {
 		ostringstream oss;
-		oss << "Found " << found << " Barry plugins in group '" << group_name << "' and OSCG_THROW_ON_MULTIPLE_BARRIES is set.";
+		oss << _C("Found ") << found << _C(" Barry plugins in group '") << group_name << _C("' and OSCG_THROW_ON_MULTIPLE_BARRIES is set.");
 		throw LoadError(oss.str());
 	}
 }
@@ -93,7 +136,7 @@ bool Group::GroupMatchesExistingConfig(OpenSync::API &api)
 
 	// check totals match
 	if( (unsigned) GetConnectedCount() != members.size() ) {
-		barryverbose("Connected count of " << GetConnectedCount() << " does not match member count of " << members.size());
+		barryverbose(_C("Connected count of ") << GetConnectedCount() << _C(" does not match member count of ") << members.size());
 		return false;
 	}
 
@@ -106,12 +149,12 @@ bool Group::GroupMatchesExistingConfig(OpenSync::API &api)
 
 		Member *m = members.Find( (*ci)->GetMemberId() );
 		if( !m ) {
-			barryverbose("Can't match member ID: " << (*ci)->GetMemberId() );
+			barryverbose(_C("Can't match member ID: ") << (*ci)->GetMemberId() );
 			return false;
 		}
 
 		if( m->plugin_name != (*ci)->GetPluginName(api) ) {
-			barryverbose("Plugin names don't match: "
+			barryverbose(_C("Plugin names don't match: ")
 				<< m->plugin_name << ", "
 				<< (*ci)->GetPluginName(api));
 			return false;
@@ -262,7 +305,7 @@ void Group::Load(const std::string &src_group_name,
 
 		if( p->IsUnsupported() && (throw_mask & OSCG_THROW_ON_UNSUPPORTED) ) {
 			ostringstream oss;
-			oss << "Unsupported plugin '" << b->plugin_name << "' in group '" << src_group_name << "' and OSCG_THROW_ON_UNSUPPORTED is set.";
+			oss << _C("Unsupported plugin '") << b->plugin_name << _C("' in group '") << src_group_name << _C("' and OSCG_THROW_ON_UNSUPPORTED is set.");
 			throw LoadError(oss.str());
 		}
 
@@ -291,7 +334,7 @@ void Group::DeletePlugin(iterator i, OpenSync::API &api)
 		OpenSync::OpenSync40 *api40 = dynamic_cast<OpenSync::OpenSync40*> (&api);
 		if( !api40 ) {
 			// not version 0.40... can't do it capt'n!
-			throw DeleteError("Cannot delete individual members from an OpenSync group with versions < 0.40.");
+			throw DeleteError(_C("Cannot delete individual members from an OpenSync group with versions < 0.40."));
 		}
 
 		// so... we have the capability... check that the plugin
@@ -304,13 +347,13 @@ void Group::DeletePlugin(iterator i, OpenSync::API &api)
 		Member *m = members.Find( (*i)->GetMemberId() );
 		if( !m ) {
 			ostringstream oss;
-			oss << "Tried to delete non-existent member ID " << (*i)->GetMemberId() << " (" << (*i)->GetPluginName(api) << ") from group '" << m_group_name << "'";
+			oss << _C("Tried to delete non-existent member ID ") << (*i)->GetMemberId() << " (" << (*i)->GetPluginName(api) << ") " << _C("from group") << "'" << m_group_name << "'";
 			throw DeleteError(oss.str());
 		}
 
 		if( m->plugin_name != (*i)->GetPluginName(api) ) {
 			ostringstream oss;
-			oss << "Tried to delete member ID " << (*i)->GetMemberId() << " using plugin '" << (*i)->GetPluginName(api) << "' from group '" << m_group_name << "', but the existing member uses plugin '" << m->plugin_name << "'";
+			oss << _C("Tried to delete member ID ") << (*i)->GetMemberId() << _C(" using plugin '") << (*i)->GetPluginName(api) << _C("' from group '") << m_group_name << _C("', but the existing member uses plugin") << "'" << m->plugin_name << "'";
 			throw DeleteError(oss.str());
 		}
 
@@ -330,7 +373,7 @@ void Group::Save(OpenSync::API &api)
 		// plugin names in the group's member list
 		if( !GroupMatchesExistingConfig(api) ) {
 			ostringstream oss;
-			oss << "Tried to overwrite group '" << m_group_name << "' with a Group set that did not match in ID's and plugin names.";
+			oss << _C("Tried to overwrite group '") << m_group_name << _C("' with a Group set that did not match in ID's and plugin names.");
 			throw SaveError(oss.str());
 		}
 	}

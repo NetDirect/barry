@@ -21,6 +21,7 @@
 
 #include "EvoSources.h"
 #include <iostream>
+#include "i18n.h"
 
 using namespace std;
 
@@ -38,13 +39,13 @@ void DumpItems(const EvoSources::List &list)
 int main()
 {
 	EvoSources es;
-	cout << "\nAddressbook:\n------------\n";
+	cout << "\n" << _C("Addressbook:") << "\n------------\n";
 	DumpItems(es.GetAddressBook());
-	cout << "\nEvents:\n-------\n";
+	cout << "\n" << _C("Events:") << "\n-------\n";
 	DumpItems(es.GetEvents());
-	cout << "\nTasks:\n------\n";
+	cout << "\n" << _C("Tasks:") << "\n------\n";
 	DumpItems(es.GetTasks());
-	cout << "\nMemos:\n------\n";
+	cout << "\n" << _C("Memos:") << "\n------\n";
 	DumpItems(es.GetMemos());
 }
 

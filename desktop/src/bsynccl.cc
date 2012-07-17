@@ -30,6 +30,7 @@
 #include "os40.h"
 #include "tempdir.h"
 #include "ostypes.h"
+#include "i18n.h"
 
 using namespace std;
 
@@ -136,8 +137,8 @@ int main(int argc, char *argv[])
 	cerr << "bsyncjail startup" << endl;
 
 	if( argc != 4 ) {
-		cerr << "This is a helper program for barrydesktop, and\n"
-			"not intended to be called directly.\n" << endl;
+		cerr << _C("This is a helper program for barrydesktop, and\n"
+			"is not intended to be called directly.\n") << endl;
 		return 1;
 	}
 

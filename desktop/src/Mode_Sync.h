@@ -25,6 +25,7 @@
 #include "Mode.h"
 #include "deviceset.h"
 #include "configui.h"
+#include "wxi18n.h"
 
 class SyncMode : public wxEvtHandler, public Mode
 {
@@ -71,7 +72,7 @@ public:
 	~SyncMode();
 
 	// virtual override events (derived from Mode)
-	wxString GetTitleText() const { return _T("Barry Sync"); }
+	wxString GetTitleText() const { return _W("Barry Sync"); }
 
 	// window events
 	void OnSyncNow(wxCommandEvent &event);

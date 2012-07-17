@@ -23,6 +23,7 @@
 #include "BaseButtons.h"
 #include "barrydesktop.h"
 #include <barry/barry.h>
+#include "i18n.h"
 
 //////////////////////////////////////////////////////////////////////////////
 // MainMenuMode
@@ -54,7 +55,7 @@ void MainMenuMode::UpdateScreenshot(const Barry::Pin &pin)
 	catch( Barry::Error &be ) {
 		// don't worry if we can't get a screenshot... not all
 		// devices support it
-		barryverbose("Ignorable screenshot exception: " << be.what());
+		barryverbose(_C("Ignorable screenshot exception: ") << be.what());
 	}
 }
 

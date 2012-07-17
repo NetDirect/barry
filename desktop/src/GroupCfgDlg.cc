@@ -26,6 +26,8 @@
 #include "configui.h"
 #include "barrydesktop.h"
 #include <string>
+#include "wxi18n.h"
+#include "i18n.h"
 
 using namespace std;
 using namespace OpenSync;
@@ -53,7 +55,7 @@ END_EVENT_TABLE()
 GroupCfgDlg::GroupCfgDlg(wxWindow *parent,
 			const DeviceEntry &device,
 			OpenSync::APISet &apiset)
-	: wxDialog(parent, Dialog_GroupCfg, _T("Device Sync Configuration"))
+	: wxDialog(parent, Dialog_GroupCfg, _W("Device Sync Configuration"))
 	, m_device(device)
 	, m_apiset(apiset)
 	, m_app_count(0)
@@ -76,13 +78,13 @@ GroupCfgDlg::GroupCfgDlg(wxWindow *parent,
 
 	// make sure there is at least one engine
 	if( !apiset.os22() && !apiset.os40() )
-		throw std::logic_error("Must have at least one engine in GroupCfgDlg");
+		throw std::logic_error(_C("Must have at least one engine in GroupCfgDlg"));
 
 	// setup the raw GUI
 	CreateLayout();
 
 	// set window title to device PIN and name
-	string label = "Configure Device - ";
+	string label = _C("Configure Device - ");
 	label += m_device.GetPin().Str();
 	if( m_device.GetDeviceName().size() )
 		label += " (" + m_device.GetDeviceName() + ")";
@@ -136,8 +138,8 @@ GroupCfgDlg::GroupCfgDlg(wxWindow *parent,
 	SelectFavour();
 
 	if( m_app_count == 0 ) {
-		wxMessageBox(_T("No supported applications found.  You may need to install some opensync plugins."),
-			_T("No App Found"), wxOK | wxICON_ERROR, this);
+		wxMessageBox(_W("No supported applications found.  You may need to install some opensync plugins."),
+			_W("No App Found"), wxOK | wxICON_ERROR, this);
 	}
 }
 
@@ -158,7 +160,7 @@ void GroupCfgDlg::CreateLayout()
 void GroupCfgDlg::AddEngineSizer(wxSizer *sizer)
 {
 	wxSizer *engine = new wxStaticBoxSizer(
-		new wxStaticBox(this, wxID_ANY, _T("OpenSync Engine")),
+		new wxStaticBox(this, wxID_ANY, _W("OpenSync Engine")),
 		wxHORIZONTAL
 		);
 
@@ -195,13 +197,13 @@ void GroupCfgDlg::AddConfigSizer(wxSizer *sizer)
 void GroupCfgDlg::AddBarrySizer(wxSizer *sizer)
 {
 	wxSizer *barry = new wxStaticBoxSizer(
-		new wxStaticBox(this, wxID_ANY, _T("Barry Config")),
+		new wxStaticBox(this, wxID_ANY, _W("Barry Config")),
 		wxVERTICAL
 		);
 
 	wxSizer *dname = new wxBoxSizer(wxHORIZONTAL);
 	dname->Add(
-		new wxStaticText(this, wxID_ANY, _T("Name:")),
+		new wxStaticText(this, wxID_ANY, _W("Name:")),
 		0, wxALIGN_RIGHT | wxALIGN_CENTRE_VERTICAL, 2);
 	dname->Add(
 		m_name_edit = new wxTextCtrl(this, wxID_ANY, _T("")),
@@ -210,7 +212,7 @@ void GroupCfgDlg::AddBarrySizer(wxSizer *sizer)
 
 	wxSizer *password = new wxBoxSizer(wxHORIZONTAL);
 	password->Add(
-		new wxStaticText(this, wxID_ANY, _T("Password:")),
+		new wxStaticText(this, wxID_ANY, _W("Password:")),
 		0, wxALIGN_RIGHT | wxALIGN_CENTRE_VERTICAL, 2);
 	password->Add(
 		m_password_edit = new wxTextCtrl(this, wxID_ANY, _T(""),
@@ -220,7 +222,7 @@ void GroupCfgDlg::AddBarrySizer(wxSizer *sizer)
 
 	barry->Add(
 		m_debug_check = new wxCheckBox(this, wxID_ANY,
-			_T("Debug output during sync")),
+			_W("Debug output during sync")),
 		0, wxALIGN_LEFT, 5);
 
 	sizer->Add(barry, 0, wxRIGHT | wxEXPAND, 5);
@@ -229,7 +231,7 @@ void GroupCfgDlg::AddBarrySizer(wxSizer *sizer)
 void GroupCfgDlg::AddAppSizer(wxSizer *sizer)
 {
 	m_appsizer = new wxStaticBoxSizer(
-		new wxStaticBox(this, wxID_ANY, _T("Application")),
+		new wxStaticBox(this, wxID_ANY, _W("Application")),
 		wxVERTICAL
 		);
 
@@ -257,7 +259,7 @@ void GroupCfgDlg::UpdateAppSizer(bool relayout)
 		0, wxALL | wxALIGN_CENTRE, 5);
 	m_appsizer->Add(
 		new wxButton(this, Dialog_GroupCfg_AppConfigButton,
-			_T("&Configure...")),
+			_W("&Configure...")),
 		0, wxALL | wxALIGN_CENTRE, 5);
 
 	// in case this is called after the dialog is already displayed,
@@ -273,7 +275,7 @@ void GroupCfgDlg::LoadAppNames(wxArrayString &appnames)
 
 	if( !m_engine ) {
 		// no engine available
-		appnames.Add(_T("No engine selected"));
+		appnames.Add(_W("No engine selected"));
 		return;
 	}
 
@@ -282,7 +284,7 @@ void GroupCfgDlg::LoadAppNames(wxArrayString &appnames)
 		m_engine->GetPluginNames(plugins);
 	}
 	catch( std::exception &e ) {
-		barrylog("Exception caught in LoadAppNames: " << e.what());
+		barrylog(_C("Exception caught in LoadAppNames: ") << e.what());
 		return;
 	}
 
@@ -307,7 +309,7 @@ void GroupCfgDlg::LoadAppNames(wxArrayString &appnames)
 	m_app_count = added;
 
 	if( m_app_count == 0 ) {
-		appnames.Add(_T("No supported plugins available"));
+		appnames.Add(_W("No supported plugins available"));
 		return;
 	}
 }
@@ -315,19 +317,19 @@ void GroupCfgDlg::LoadAppNames(wxArrayString &appnames)
 void GroupCfgDlg::AddSyncTypeSizer(wxSizer *sizer)
 {
 	wxStaticBoxSizer *checks = new wxStaticBoxSizer(wxHORIZONTAL, this,
-			_T("Sync:"));
+			_W("Sync:"));
 
 	checks->Add( m_sync_contacts_check = new wxCheckBox(this,
-			Dialog_GroupCfg_ContactsCheck, _T("Contacts")),
+			Dialog_GroupCfg_ContactsCheck, _W("Contacts")),
 		0, wxRIGHT | wxEXPAND, 10);
 	checks->Add( m_sync_events_check = new wxCheckBox(this,
-			Dialog_GroupCfg_EventsCheck, _T("Events")),
+			Dialog_GroupCfg_EventsCheck, _W("Events")),
 		0, wxRIGHT | wxEXPAND, 10);
 	checks->Add( m_sync_notes_check = new wxCheckBox(this,
-			Dialog_GroupCfg_NotesCheck, _T("Notes")),
+			Dialog_GroupCfg_NotesCheck, _W("Notes")),
 		0, wxRIGHT | wxEXPAND, 10);
 	checks->Add( m_sync_todos_check = new wxCheckBox(this,
-			Dialog_GroupCfg_TodosCheck, _T("To-dos")),
+			Dialog_GroupCfg_TodosCheck, _W("To-dos")),
 		0, wxRIGHT | wxEXPAND, 10);
 
 	sizer->Add( checks, 
@@ -337,12 +339,12 @@ void GroupCfgDlg::AddSyncTypeSizer(wxSizer *sizer)
 void GroupCfgDlg::AddFavourSizer(wxSizer *sizer)
 {
 	wxArrayString labels;
-	labels.Add( _T("Favour device") );
-	labels.Add( _T("Favour application") );
-	labels.Add( _T("Ask me") );
+	labels.Add( _W("Favour device") );
+	labels.Add( _W("Favour application") );
+	labels.Add( _W("Ask me") );
 
 	sizer->Add( m_favour_radios = new wxRadioBox(this, wxID_ANY,
-			_T("To Resolve Conflicts:"),
+			_W("To Resolve Conflicts:"),
 			wxDefaultPosition, wxDefaultSize,
 			labels, 1, wxRA_SPECIFY_ROWS),
 		0, wxTOP | wxLEFT | wxRIGHT | wxEXPAND, 10);
@@ -485,16 +487,16 @@ void GroupCfgDlg::OnConfigureApp(wxCommandEvent &event)
 {
 	string app = GetCurrentAppName();
 	if( app.size() == 0 ) {
-		wxMessageBox(_T("Please select an application."),
-			_T("Application Config"), wxOK | wxICON_ERROR, this);
+		wxMessageBox(_W("Please select an application."),
+			_W("Application Config"), wxOK | wxICON_ERROR, this);
 		return;
 	}
 
 	ConfigUI::ptr ui = ConfigUI::CreateConfigUI(app);
 
 	if( !ui.get() ) {
-		wxMessageBox(_T("No configuration interface available for this Application."),
-			_T("Application Config"),
+		wxMessageBox(_W("No configuration interface available for this Application."),
+			_W("Application Config"),
 			wxOK | wxICON_ERROR, this);
 		return;
 	}
@@ -560,15 +562,15 @@ bool GroupCfgDlg::TransferDataFromWindow()
 {
 	// engine must be set!
 	if( !m_engine ) {
-		wxMessageBox(_T("Please select an engine."),
-			_T("Device Config"), wxOK | wxICON_ERROR, this);
+		wxMessageBox(_W("Please select an engine."),
+			_W("Device Config"), wxOK | wxICON_ERROR, this);
 		return false;
 	}
 
 	// make sure the Barry plugin is configured
 	if( !m_barry_plugin.IsConfigured(*m_engine) ) {
-		wxMessageBox(_T("Barry doesn't have a PIN number.  This should never happen."),
-			_T("Device Config"), wxOK | wxICON_ERROR, this);
+		wxMessageBox(_W("Barry doesn't have a PIN number.  This should never happen."),
+			_W("Device Config"), wxOK | wxICON_ERROR, this);
 		return false;
 	}
 
@@ -581,8 +583,8 @@ bool GroupCfgDlg::TransferDataFromWindow()
 
 		app = GetCurrentPlugin();
 		if( !app.get() || !app->IsConfigured(*m_engine) ) {
-			wxMessageBox(_T("The application plugin is not fully configured."),
-				_T("Application Config"), wxOK | wxICON_ERROR, this);
+			wxMessageBox(_W("The application plugin is not fully configured."),
+				_W("Application Config"), wxOK | wxICON_ERROR, this);
 			return false;
 		}
 	}
@@ -609,8 +611,8 @@ bool GroupCfgDlg::TransferDataFromWindow()
 		break;
 
 	default: // borked
-		wxMessageBox(_T("Please select conflict resolution method."),
-			_T("Conflict Resolution"), wxOK | wxICON_ERROR, this);
+		wxMessageBox(_W("Please select conflict resolution method."),
+			_W("Conflict Resolution"), wxOK | wxICON_ERROR, this);
 		return false;
 	}
 

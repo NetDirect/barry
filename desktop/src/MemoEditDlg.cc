@@ -21,6 +21,7 @@
 
 #include "MemoEditDlg.h"
 #include "windowids.h"
+#include "wxi18n.h"
 
 // begin wxGlade: ::extracode
 // end wxGlade
@@ -32,7 +33,7 @@
 MemoEditDlg::MemoEditDlg(wxWindow* parent,
 			Barry::Memo &rec,
 			bool editable)
-	: wxDialog(parent, Dialog_MemoEdit, _T("Memo Record"))
+	: wxDialog(parent, Dialog_MemoEdit, _W("Memo Record"))
 	, m_rec(rec)
 {
 	m_rec.Categories.CategoryList2Str(m_category_list);
@@ -45,9 +46,9 @@ MemoEditDlg::MemoEditDlg(wxWindow* parent,
 	}
 
 	// begin wxGlade: MemoEditDlg::MemoEditDlg
-	label_1 = new wxStaticText(this, wxID_ANY, wxT("Title:"));
+	label_1 = new wxStaticText(this, wxID_ANY, _W("Title:"));
 	text_ctrl_2 = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
-	label_2 = new wxStaticText(this, wxID_ANY, wxT("Categories:"));
+	label_2 = new wxStaticText(this, wxID_ANY, _W("Categories:"));
 	text_ctrl_3 = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
 	text_ctrl_1 = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE);
 
@@ -60,16 +61,16 @@ MemoEditDlg::MemoEditDlg(wxWindow* parent,
 void MemoEditDlg::set_properties()
 {
 	// begin wxGlade: MemoEditDlg::set_properties
-	SetTitle(wxT("Memo"));
+	SetTitle(_W("Memo"));
 	text_ctrl_2->SetMinSize(wxSize(300, -1));
 	text_ctrl_2->SetFocus();
 	text_ctrl_2->SetValidator(wxTextValidator(wxFILTER_NONE, m_strings.Add(m_rec.Title)));
-	label_2->SetToolTip(wxT("Comma separated"));
+	label_2->SetToolTip(_W("Comma separated"));
 	text_ctrl_3->SetMinSize(wxSize(300, -1));
-	text_ctrl_3->SetToolTip(wxT("Comma separated list of categories (can be empty)"));
+	text_ctrl_3->SetToolTip(_W("Comma separated list of categories (can be empty)"));
 	text_ctrl_3->SetValidator(wxTextValidator(wxFILTER_NONE, m_strings.Add(m_category_list)));
 	text_ctrl_1->SetMinSize(wxSize(-1, 240));
-	text_ctrl_1->SetToolTip(wxT("Body of memo"));
+	text_ctrl_1->SetToolTip(_W("Body of memo"));
 	text_ctrl_1->SetValidator(wxTextValidator(wxFILTER_NONE, m_strings.Add(m_rec.Body)));
 	// end wxGlade
 }
@@ -108,8 +109,8 @@ bool MemoEditDlg::TransferDataFromWindow()
 
 	// make sure that the title contains something
 	if( !m_rec.Title.size() ) {
-		wxMessageBox(_T("Please enter a title for your memo."),
-			_T("Required Fields"),
+		wxMessageBox(_W("Please enter a title for your memo."),
+			_W("Required Fields"),
 			wxOK | wxICON_INFORMATION, this);
 		return false;
 	}

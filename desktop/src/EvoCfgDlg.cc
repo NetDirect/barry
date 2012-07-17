@@ -22,13 +22,14 @@
 #include "EvoCfgDlg.h"
 #include "osconfig.h"
 #include "windowids.h"
+#include "wxi18n.h"
 
 using namespace std;
 
 EvoCfgDlg::EvoCfgDlg(wxWindow *parent,
 			const OpenSync::Config::Evolution &ec,
 			const EvoSources &es)
-	: wxDialog(parent, Dialog_EvoCfg, _T("Evolution Plugin Configuration"))
+	: wxDialog(parent, Dialog_EvoCfg, _W("Evolution Plugin Configuration"))
 	, m_address_path(ec.GetAddressPath())
 	, m_calendar_path(ec.GetCalendarPath())
 	, m_tasks_path(ec.GetTasksPath())
@@ -47,28 +48,28 @@ void EvoCfgDlg::CreateLayout()
 	m_topsizer = new wxBoxSizer(wxVERTICAL);
 
 	m_topsizer->Add(
-		new wxStaticText(this, wxID_ANY, _T("Address Book:")),
+		new wxStaticText(this, wxID_ANY, _W("Address Book:")),
 		0, wxALIGN_LEFT | wxTOP | wxLEFT | wxRIGHT, 10);
 	AddCombo(&m_address_combo, wxID_ANY,
 		m_address_path, m_sources.GetAddressBook());
 	m_topsizer->Add(m_address_combo, 0, wxEXPAND | wxLEFT | wxRIGHT, 10);
 
 	m_topsizer->Add(
-		new wxStaticText(this, wxID_ANY, _T("Calendar:")),
+		new wxStaticText(this, wxID_ANY, _W("Calendar:")),
 		0, wxALIGN_LEFT | wxTOP | wxLEFT | wxRIGHT, 10);
 	AddCombo(&m_calendar_combo, wxID_ANY,
 		m_calendar_path, m_sources.GetEvents());
 	m_topsizer->Add(m_calendar_combo, 0, wxEXPAND | wxLEFT | wxRIGHT, 10);
 
 	m_topsizer->Add(
-		new wxStaticText(this, wxID_ANY, _T("Tasks:")),
+		new wxStaticText(this, wxID_ANY, _W("Tasks:")),
 		0, wxALIGN_LEFT | wxTOP | wxLEFT | wxRIGHT, 10);
 	AddCombo(&m_tasks_combo, wxID_ANY,
 		m_tasks_path, m_sources.GetTasks());
 	m_topsizer->Add(m_tasks_combo, 0, wxEXPAND | wxLEFT | wxRIGHT, 10);
 
 	m_topsizer->Add(
-		new wxStaticText(this, wxID_ANY, _T("Memos:")),
+		new wxStaticText(this, wxID_ANY, _W("Memos:")),
 		0, wxALIGN_LEFT | wxTOP | wxLEFT | wxRIGHT, 10);
 	AddCombo(&m_memos_combo, wxID_ANY,
 		m_memos_path, m_sources.GetMemos());
@@ -165,7 +166,7 @@ wxString EvoCfgDlg::CheckPath(const wxString &name,
 	if( path.size() > 7 && path.substr(0, 7) == "file://" ) {
 		std::string p = path.substr(7);
 		if( !EvoSources::PathExists(p) ) {
-			wxString msg = name + _T(" does not exist.");
+			wxString msg = name + _W(" does not exist.");
 			return msg;
 		}
 	}
@@ -177,7 +178,7 @@ wxString EvoCfgDlg::ValidatePaths() const
 {
 	if( m_address_path.empty() && m_calendar_path.empty() &&
 	    m_tasks_path.empty() && m_memos_path.empty() )
-		return _T("No paths set!  If there are no default options available in the drop down lists, please double check that you've initialized your Evolution account first.");
+		return _W("No paths set!  If there are no default options available in the drop down lists, please double check that you've initialized your Evolution account first.");
 	return _T("");
 }
 
@@ -190,7 +191,7 @@ bool EvoCfgDlg::TransferDataFromWindow()
 
 	wxString msg = ValidatePaths();
 	if( msg.size() ) {
-		wxMessageBox(msg, _T("Minimum Config Required"),
+		wxMessageBox(msg, _W("Minimum Config Required"),
 			wxOK | wxICON_ERROR, this);
 		return false;
 	}

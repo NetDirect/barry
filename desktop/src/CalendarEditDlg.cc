@@ -24,6 +24,7 @@
 #include <wx/valgen.h>
 #include "wxval.h"
 #include "util.h"
+#include "i18n.h"
 
 using namespace std;
 using namespace Barry;
@@ -39,7 +40,7 @@ CalendarEditDlg::CalendarEditDlg(wxWindow* parent,
 				Barry::Calendar &rec,
 				bool editable,
 				const Barry::TimeZones *device_zones)
-	: wxDialog(parent, Dialog_CalendarEdit, _T("Calendar Record"))
+	: wxDialog(parent, Dialog_CalendarEdit, _W("Calendar Record"))
 	, m_zones(device_zones ? device_zones : &m_static_zones)
 	, m_rec(rec)
 	, m_duration_hours(0)
@@ -61,48 +62,57 @@ CalendarEditDlg::CalendarEditDlg(wxWindow* parent,
 	}
 
 	// begin wxGlade: CalendarEditDlg::CalendarEditDlg
-	label_1 = new wxStaticText(this, wxID_ANY, wxT("Subject:"));
+	label_1 = new wxStaticText(this, wxID_ANY, _W("Subject:"));
 	m_Subject = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
-	label_2 = new wxStaticText(this, wxID_ANY, wxT("Location:"));
+	label_2 = new wxStaticText(this, wxID_ANY, _W("Location:"));
 	m_Location = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
 	static_line_1 = new wxStaticLine(this, wxID_ANY);
-	label_4 = new wxStaticText(this, wxID_ANY, wxT("All Day Event:"));
+	label_4 = new wxStaticText(this, wxID_ANY, _W("All Day Event:"));
 	m_AllDayCheck = new wxCheckBox(this, Dialog_CalendarEdit_AllDayCheck, wxEmptyString);
-	label_5 = new wxStaticText(this, wxID_ANY, wxT("Start:"));
+	label_5 = new wxStaticText(this, wxID_ANY, _W("Start:"));
 	m_StartDateCtrl = new wxDatePickerCtrl(this, Dialog_CalendarEdit_StartDateCtrl, wxDefaultDateTime, wxDefaultPosition, wxDefaultSize, wxDP_DROPDOWN|wxDP_SHOWCENTURY);
 	m_StartHoursSpinner = new wxSpinCtrl(this, Dialog_CalendarEdit_StartHoursSpinner, wxT(""), wxDefaultPosition, wxDefaultSize, wxSP_WRAP|wxTE_NOHIDESEL, 0, 23);
 	label_11 = new wxStaticText(this, wxID_ANY, wxT(":"));
 	m_StartMinutesSpinner = new wxSpinCtrl(this, Dialog_CalendarEdit_StartMinutesSpinner, wxT(""), wxDefaultPosition, wxDefaultSize, wxSP_WRAP|wxTE_NOHIDESEL, 0, 59);
-	label_6 = new wxStaticText(this, wxID_ANY, wxT("End:"));
+	label_6 = new wxStaticText(this, wxID_ANY, _W("End:"));
 	m_EndDateCtrl = new wxDatePickerCtrl(this, Dialog_CalendarEdit_EndDateCtrl, wxDefaultDateTime, wxDefaultPosition, wxDefaultSize, wxDP_DROPDOWN|wxDP_SHOWCENTURY);
 	m_EndHoursSpinner = new wxSpinCtrl(this, Dialog_CalendarEdit_EndHoursSpinner, wxT(""), wxDefaultPosition, wxDefaultSize, wxSP_WRAP|wxTE_NOHIDESEL, 0, 23);
 	label_12 = new wxStaticText(this, wxID_ANY, wxT(":"));
 	m_EndMinutesSpinner = new wxSpinCtrl(this, Dialog_CalendarEdit_EndMinutesSpinner, wxT(""), wxDefaultPosition, wxDefaultSize, wxSP_WRAP|wxTE_NOHIDESEL, 0, 59);
-	label_7 = new wxStaticText(this, wxID_ANY, wxT("Duration:"));
+	label_7 = new wxStaticText(this, wxID_ANY, _W("Duration:"));
 	m_DurationHoursSpinner = new wxSpinCtrl(this, Dialog_CalendarEdit_DurationHoursSpinner, wxT(""), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 0, 999);
-	label_13 = new wxStaticText(this, wxID_ANY, wxT("hours and"));
+	label_13 = new wxStaticText(this, wxID_ANY, _W("hours and"));
 	m_DurationMinutesSpinner = new wxSpinCtrl(this, Dialog_CalendarEdit_DurationMinutesSpinner, wxT(""), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 0, 59);
-	label_17 = new wxStaticText(this, wxID_ANY, wxT("minutes."));
-	label_8 = new wxStaticText(this, wxID_ANY, wxT("Time Zone:"));
+	label_17 = new wxStaticText(this, wxID_ANY, _W("minutes."));
+	label_8 = new wxStaticText(this, wxID_ANY, _W("Time Zone:"));
 	const wxString m_TimezoneChoice_choices[] = {
-        wxT("System Time Zone")
+        _W("System Time Zone")
     };
 	m_TimezoneChoice = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 1, m_TimezoneChoice_choices, 0);
-	label_9 = new wxStaticText(this, wxID_ANY, wxT("Show As:"));
+	label_9 = new wxStaticText(this, wxID_ANY, _W("Show As:"));
+/*
 	const wxString m_ShowAsChoice_choices[] = {
         wxT("Free"),
         wxT("Tentative"),
         wxT("Busy"),
         wxT("Out of Office")
     };
-	m_ShowAsChoice = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 4, m_ShowAsChoice_choices, 0);
-	label_10 = new wxStaticText(this, wxID_ANY, wxT("Reminder:"));
+*/
+wxArrayString m_ShowAsChoice_choices;
+m_ShowAsChoice_choices.Add( _W("Free") );
+m_ShowAsChoice_choices.Add( _W("Tentative") );
+m_ShowAsChoice_choices.Add( _W("Busy") );
+m_ShowAsChoice_choices.Add( _W("Out of Office") );
+
+	m_ShowAsChoice = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_ShowAsChoice_choices, 0);
+	label_10 = new wxStaticText(this, wxID_ANY, _W("Reminder:"));
 	m_ReminderHoursSpinner = new wxSpinCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 0, 999);
-	label_13_copy = new wxStaticText(this, wxID_ANY, wxT("hours and"));
+	label_13_copy = new wxStaticText(this, wxID_ANY, _W("hours and"));
 	m_ReminderMinutesSpinner = new wxSpinCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 0, 59);
-	label_17_copy = new wxStaticText(this, wxID_ANY, wxT("minutes."));
+	label_17_copy = new wxStaticText(this, wxID_ANY, _W("minutes."));
 	static_line_2 = new wxStaticLine(this, wxID_ANY);
-	label_18 = new wxStaticText(this, wxID_ANY, wxT("Recurrence:"));
+	label_18 = new wxStaticText(this, wxID_ANY, _W("Recurrence:"));
+/*
 	const wxString m_RecurrenceChoice_choices[] = {
         wxT("None"),
         wxT("Daily"),
@@ -110,12 +120,20 @@ CalendarEditDlg::CalendarEditDlg(wxWindow* parent,
         wxT("Monthly"),
         wxT("Yearly")
     };
-	m_RecurrenceChoice = new wxChoice(this, Dialog_CalendarEdit_RecurrenceChoice, wxDefaultPosition, wxDefaultSize, 5, m_RecurrenceChoice_choices, 0);
-	RecurIntervalLabel = new wxStaticText(this, wxID_ANY, wxT("Interval:"));
-	RecurIntervalLabelB = new wxStaticText(this, wxID_ANY, wxT("Every"));
+*/
+wxArrayString m_RecurrenceChoice_choices;
+m_RecurrenceChoice_choices.Add( _W("None") );
+m_RecurrenceChoice_choices.Add( _W("Daily") );
+m_RecurrenceChoice_choices.Add( _W("Weekly") );
+m_RecurrenceChoice_choices.Add( _W("Monthly") );
+m_RecurrenceChoice_choices.Add( _W("Yearly") );
+
+	m_RecurrenceChoice = new wxChoice(this, Dialog_CalendarEdit_RecurrenceChoice, wxDefaultPosition, wxDefaultSize, m_RecurrenceChoice_choices, 0);
+	RecurIntervalLabel = new wxStaticText(this, wxID_ANY, _W("Interval:"));
+	RecurIntervalLabelB = new wxStaticText(this, wxID_ANY, _W("Every"));
 	m_IntervalSpinner = new wxSpinCtrl(this, wxID_ANY, wxT("1"), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 1, 999);
-	m_IntervalUnitLabel = new wxStaticText(this, wxID_ANY, wxT("days? weeks? months?"), wxDefaultPosition, wxDefaultSize, wxST_NO_AUTORESIZE);
-	RecurDaysLabel = new wxStaticText(this, wxID_ANY, wxT("Days:"));
+	m_IntervalUnitLabel = new wxStaticText(this, wxID_ANY, _W("days? weeks? months?"), wxDefaultPosition, wxDefaultSize, wxST_NO_AUTORESIZE);
+	RecurDaysLabel = new wxStaticText(this, wxID_ANY, _W("Days:"));
 	m_SunCheck = new wxCheckBox(this, wxID_ANY, wxT("S"));
 	m_MonCheck = new wxCheckBox(this, wxID_ANY, wxT("M"));
 	m_TueCheck = new wxCheckBox(this, wxID_ANY, wxT("T"));
@@ -123,27 +141,34 @@ CalendarEditDlg::CalendarEditDlg(wxWindow* parent,
 	m_ThuCheck = new wxCheckBox(this, wxID_ANY, wxT("T"));
 	m_FriCheck = new wxCheckBox(this, wxID_ANY, wxT("F"));
 	m_SatCheck = new wxCheckBox(this, wxID_ANY, wxT("S"));
-	RecurRelativeDateLabel = new wxStaticText(this, wxID_ANY, wxT("Relative Date:"));
+	RecurRelativeDateLabel = new wxStaticText(this, wxID_ANY, _W("Relative Date:"));
 	m_RelativeDateCheck = new wxCheckBox(this, wxID_ANY, wxEmptyString);
-	RecurEndDateLabel = new wxStaticText(this, wxID_ANY, wxT("End Date:"));
-	m_NeverEndsCheck = new wxCheckBox(this, Dialog_CalendarEdit_NeverEndsCheck, wxT("Never ends"));
+	RecurEndDateLabel = new wxStaticText(this, wxID_ANY, _W("End Date:"));
+	m_NeverEndsCheck = new wxCheckBox(this, Dialog_CalendarEdit_NeverEndsCheck, _W("Never ends"));
 	m_RecurEndDateCtrl = new wxDatePickerCtrl(this, wxID_ANY, wxDefaultDateTime, wxDefaultPosition, wxDefaultSize, wxDP_DROPDOWN|wxDP_SHOWCENTURY);
 	static_line_3 = new wxStaticLine(this, wxID_ANY);
-	label_14 = new wxStaticText(this, wxID_ANY, wxT("Organizer:"));
+	label_14 = new wxStaticText(this, wxID_ANY, _W("Organizer:"));
 	m_OrganizerText = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
-	label_15 = new wxStaticText(this, wxID_ANY, wxT("Invited:"));
+	label_15 = new wxStaticText(this, wxID_ANY, _W("Invited:"));
 	m_InvitedText = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
-	label_16 = new wxStaticText(this, wxID_ANY, wxT("Accepted By:"));
+	label_16 = new wxStaticText(this, wxID_ANY, _W("Accepted By:"));
 	m_AcceptedByText = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
 	static_line_4 = new wxStaticLine(this, wxID_ANY);
+/*
 	const wxString m_ClassRadioBox_choices[] = {
         wxT("Public"),
         wxT("Private"),
         wxT("Confidential")
     };
-	m_ClassRadioBox = new wxRadioBox(this, wxID_ANY, wxT("Class"), wxDefaultPosition, wxDefaultSize, 3, m_ClassRadioBox_choices, 3, wxRA_SPECIFY_COLS);
+*/
+wxArrayString m_ClassRadioBox_choices;
+m_ClassRadioBox_choices.Add( _W("Public") );
+m_ClassRadioBox_choices.Add( _W("Private") );
+m_ClassRadioBox_choices.Add( _W("Confidential") );
+
+	m_ClassRadioBox = new wxRadioBox(this, wxID_ANY, _W("Class"), wxDefaultPosition, wxDefaultSize, m_ClassRadioBox_choices, 3, wxRA_SPECIFY_COLS);
 	static_line_5 = new wxStaticLine(this, wxID_ANY);
-	label_3 = new wxStaticText(this, wxID_ANY, wxT("Notes:"));
+	label_3 = new wxStaticText(this, wxID_ANY, _W("Notes:"));
 	m_NotesText = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE);
 
 	set_properties();
@@ -154,7 +179,7 @@ CalendarEditDlg::CalendarEditDlg(wxWindow* parent,
 
 	// fill the time zone control with real time zones
 	m_TimezoneChoice->Clear();
-	m_TimezoneChoice->Append(wxT("Assume Local Timezone"), (void*)0);
+	m_TimezoneChoice->Append(_W("Assume Local Timezone"), (void*)0);
 	Barry::TimeZones::const_iterator b, e;
 	for( b = m_zones->begin(), e = m_zones->end(); b != e; ++b ) {
 		m_TimezoneChoice->Append(
@@ -275,7 +300,7 @@ void CalendarEditDlg::OnEndDateCheckbox(wxCommandEvent &event)
 void CalendarEditDlg::set_properties()
 {
 	// begin wxGlade: CalendarEditDlg::set_properties
-	SetTitle(wxT("Calendar Event"));
+	SetTitle(_W("Calendar Event"));
 	m_Subject->SetFocus();
 	m_Subject->SetValidator(wxTextValidator(wxFILTER_NONE, m_strings.Add(m_rec.Subject)));
 	m_Location->SetValidator(wxTextValidator(wxFILTER_NONE, m_strings.Add(m_rec.Location)));
@@ -299,10 +324,10 @@ void CalendarEditDlg::set_properties()
 	m_TimezoneChoice->SetSelection(0);
 	m_ShowAsChoice->SetSelection(2);
 	m_ReminderHoursSpinner->SetMinSize(wxSize(45, -1));
-	m_ReminderHoursSpinner->SetToolTip(wxT("Set Reminder to 0 to disable"));
+	m_ReminderHoursSpinner->SetToolTip(_W("Set Reminder to 0 to disable"));
 	m_ReminderHoursSpinner->SetValidator(wxGenericValidator(&m_reminder_hours));
 	m_ReminderMinutesSpinner->SetMinSize(wxSize(45, -1));
-	m_ReminderMinutesSpinner->SetToolTip(wxT("Set Reminder to 0 to disable"));
+	m_ReminderMinutesSpinner->SetToolTip(_W("Set Reminder to 0 to disable"));
 	m_ReminderMinutesSpinner->SetValidator(wxGenericValidator(&m_reminder_minutes));
 	m_RecurrenceChoice->SetValidator(wxGenericValidator(&m_recur_choice));
 	m_RecurrenceChoice->SetSelection(0);
@@ -315,8 +340,8 @@ void CalendarEditDlg::set_properties()
 	m_ThuCheck->SetValidator(wxGenericValidator(&m_weekdays[4]));
 	m_FriCheck->SetValidator(wxGenericValidator(&m_weekdays[5]));
 	m_SatCheck->SetValidator(wxGenericValidator(&m_weekdays[6]));
-	RecurRelativeDateLabel->SetToolTip(wxT("Relative monthly or yearly dates take the weekday of the start date into account. (eg. every first Sunday of month)"));
-	m_RelativeDateCheck->SetToolTip(wxT("Relative monthly or yearly dates take the weekday of the start date into account. (eg. every first Sunday of month)"));
+	RecurRelativeDateLabel->SetToolTip(_W("Relative monthly or yearly dates take the weekday of the start date into account. (eg. every first Sunday of month)"));
+	m_RelativeDateCheck->SetToolTip(_W("Relative monthly or yearly dates take the weekday of the start date into account. (eg. every first Sunday of month)"));
 	m_RelativeDateCheck->SetValidator(wxGenericValidator(&m_relative_date));
 	m_NeverEndsCheck->SetValidator(wxGenericValidator(&m_rec.Perpetual));
 	m_NeverEndsCheck->SetValue(1);
@@ -559,7 +584,7 @@ bool CalendarEditDlg::TransferDataToWindow()
 			break;
 
 		default:
-			cerr << "Bad RecurringType in CalendarEditDlg" << endl;
+			cerr << _C("Bad RecurringType in CalendarEditDlg") << endl;
 			m_recur_choice = RC_NONE;
 			m_relative_date = false;
 		}
@@ -615,8 +640,8 @@ bool CalendarEditDlg::TransferDataFromWindow()
 	m_rec.StartTime.Time = m_StartDateObj.Get();
 	m_rec.EndTime.Time = m_EndDateObj.Get();
 	if( m_rec.EndTime.Time < m_rec.StartTime.Time ) {
-		wxMessageBox(_T("Start time must come before end time."),
-			_T("Validation Error"), wxOK | wxICON_INFORMATION);
+		wxMessageBox(_W("Start time must come before end time."),
+			_W("Validation Error"), wxOK | wxICON_INFORMATION);
 		return false;
 	}
 
@@ -799,19 +824,19 @@ void CalendarEditDlg::EnableRecurMode(bool recur)
 			break;
 
 		case RC_DAILY:
-			m_IntervalUnitLabel->SetLabel(_T("day(s)"));
+			m_IntervalUnitLabel->SetLabel(_W("day(s)"));
 			break;
 
 		case RC_WEEKLY:
-			m_IntervalUnitLabel->SetLabel(_T("week(s)"));
+			m_IntervalUnitLabel->SetLabel(_W("week(s)"));
 			break;
 
 		case RC_MONTHLY:
-			m_IntervalUnitLabel->SetLabel(_T("month(s)"));
+			m_IntervalUnitLabel->SetLabel(_W("month(s)"));
 			break;
 
 		case RC_YEARLY:
-			m_IntervalUnitLabel->SetLabel(_T("year(s)"));
+			m_IntervalUnitLabel->SetLabel(_W("year(s)"));
 			break;
 		}
 	}

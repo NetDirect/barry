@@ -23,6 +23,7 @@
 #define __BARRYDESKTOP_WXVAL_H__
 
 #include <algorithm>
+#include "wxi18n.h"
 
 class DateTimeValidator : public wxValidator
 {
@@ -65,7 +66,7 @@ public:
 		// in-memory value, according to the wxWidgets documentation,
 		// so do TransferFromWindow() first
 		if( !(TransferFromWindow() && m_pDateTime->IsValid()) ) {
-			wxMessageBox(_T("Invalid date!"), _T("Validation"),
+			wxMessageBox(_W("Invalid date!"), _W("Validation"),
 				wxOK | wxICON_INFORMATION, parent);
 			return false;
 		}
@@ -152,8 +153,8 @@ public:
 		// so do TransferFromWindow() first
 		if( !(TransferFromWindow() && IsSelectionValid()) ) {
 			wxMessageBox(
-				_T("Please select one of the radio buttons."),
-				_T("Validation"),
+				_W("Please select one of the radio buttons."),
+				_W("Validation"),
 				wxOK | wxICON_INFORMATION, parent);
 			return false;
 		}
