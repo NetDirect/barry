@@ -6,16 +6,15 @@
 MAKEOPTS=-j2
 export CC="ccache gcc"
 export CXX="ccache g++"
-COMMIT=master
 
 # Make sure any errors stop the test
 set -e
 
 Usage() {
-	echo "Main Barry build test script.  Tests the master branch."
+	echo "Main Barry build test script.  Tests the master branch by default."
 	echo
 	echo "Usage:"
-	echo "       ./buildtest.sh /path/to/libopensync-0.22.tar.bz2"
+	echo "       ./buildtest.sh [commit] [/path/to/libopensync-0.22.tar.bz2]"
 	echo
 	echo "Or, write a ~/.barrytest2 file that contains shell commands"
 	echo "setting OSYNCROOTDIR to the directory you used as a --prefix"
@@ -91,7 +90,12 @@ if [ -d "build" ] ; then
 fi
 
 BASEPATH=$(pwd)
-OSYNCSOURCE="$1"
+COMMIT="$1"
+OSYNCSOURCE="$2"
+
+if [ -z "$COMMIT" ] ; then
+	COMMIT="master"
+fi
 
 mkdir -p build
 
