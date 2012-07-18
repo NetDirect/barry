@@ -45,6 +45,7 @@ private:
 	Barry::GlobalConfigFile m_global_config;
 	Barry::Probe::Results m_results;
 	std::auto_ptr<OpenSync::APISet> m_set;
+	wxLocale m_locale;
 
 public:
 	BarryDesktopApp();

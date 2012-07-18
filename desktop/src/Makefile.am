@@ -10,6 +10,11 @@ EXTRA_DIST = \
 	ModemDlg.wxg \
 	oextract.cc
 
+# To use gettext
+datadir = @datadir@
+localedir = $(datadir)/locale
+DEFS = -DLOCALEDIR=\"$(localedir)\" @DEFS@
+
 INCLUDES = $(TREE_BUILD_CXXFLAGS) $(BARRY_CFLAGS) $(OPENSYNC22_CFLAGS) $(OPENSYNC40_CFLAGS) $(GLIB2_CFLAGS) $(EVOLUTION_CFLAGS)
 # opensync libraries are not included here... they are loaded with dlopen()
 LIBS = $(TREE_BUILD_LDFLAGS) $(BARRY_LIBS) $(GLIB2_LIBS)

@@ -135,6 +135,10 @@ void BarryDesktopApp::ShowMissingOpenSyncMessage()
 
 bool BarryDesktopApp::OnInit()
 {
+	m_locale.Init();
+	m_locale.AddCatalogLookupPathPrefix(_T(LOCALEDIR));
+	m_locale.AddCatalog(_T("barrydesktop"));
+
 	// Add a PNG handler for loading buttons and backgrounds
 	wxImage::AddHandler( new wxPNGHandler );
 
