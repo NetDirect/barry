@@ -36,7 +36,7 @@
 #undef _
 
 // For wxString(_W("blah blah"))
-#define _W(x)	wxString(_T(x))
+#define _W(x)	wxString(wxGetTranslation(_T(x)))
 
 #endif
 
