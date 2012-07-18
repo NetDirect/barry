@@ -14,6 +14,10 @@ AC_CONFIG_AUX_DIR([.])
 AC_CONFIG_MACRO_DIR([../m4])
 AM_INIT_AUTOMAKE
 
+AM_GNU_GETTEXT([external])
+# this is the verion of gettext, not barry
+AM_GNU_GETTEXT_VERSION([0.18.1])
+
 #
 # Barry Desktop Version Numbers
 #
@@ -255,6 +259,7 @@ AC_FUNC_STAT
 AC_CHECK_FUNCS([bzero gettimeofday memset select strcasecmp strchr strerror strtol strtoul])
 
 AC_CONFIG_FILES([Makefile
+                 po/Makefile.in
                  images/Makefile
                  src/Makefile
                  src/0.22/Makefile

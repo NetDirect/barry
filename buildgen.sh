@@ -72,6 +72,7 @@ if [ "$1" = "cleanall" ] ; then
 	(cd opensync-plugin-0.4x && ./buildgen.sh clean)
 	cleangettext
 	(cd gui && cleangettext && rmdir m4)
+	(cd desktop && cleangettext && rmdir m4)
 	(cd opensync-plugin && cleangettext)
 	(cd opensync-plugin-0.4x && cleangettext)
 elif [ "$1" = "clean" ] ; then
@@ -131,9 +132,10 @@ else
 	#autoreconf -ifv --include=config
 
 	# Autogenerate the gettext PO support files
-	# Do this for ./ and gui/
+	# Do this for ./ and gui/ and desktop/
 	autopoint
 	(cd gui && autopoint)
+	(cd desktop && autopoint)
 
 	# If we let autoreconf do this, it will run libtoolize after
 	# creating some or all of the configure files.  For example,
@@ -147,17 +149,14 @@ else
 	# then the rest.
 	libtoolit m4
 	(cd gui && libtoolit m4)
-	# note that gui gets its own m4 via autopoint, while
-	# desktop does not use it
-	(cd desktop && libtoolit ../m4)
-	# the plugins always have their own m4's
+	(cd desktop && libtoolit m4)
 	(cd opensync-plugin && libtoolit m4)
 	(cd opensync-plugin-0.4x && libtoolit m4)
 
 	# Now for aclocal, autoheader, automake, and autoconf
 	doconf m4
 	(cd gui && doconf m4)
-	(cd desktop && doconf ../m4)
+	(cd desktop && doconf m4)
 	(cd opensync-plugin && doconf m4)
 	(cd opensync-plugin-0.4x && doconf m4)
 fi
