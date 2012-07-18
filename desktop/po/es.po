@@ -1,0 +1,2503 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Net Direct, Inc.
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: barrydesktop 0.18.4\n"
+"Report-Msgid-Bugs-To: http://netdirect.ca/barry\n"
+"POT-Creation-Date: 2012-07-18 18:03-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: es\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/BaseFrame.cc:73 src/BaseFrame.cc:283 src/BaseFrame.cc:854
+#: src/Mode_MainMenu.h:49
+msgid "Barry Desktop Control Panel"
+msgstr ""
+
+#: src/BaseFrame.cc:109
+msgid "&Verbose Logging"
+msgstr ""
+
+#: src/BaseFrame.cc:110
+msgid "Enable low level USB debug output"
+msgstr ""
+
+#: src/BaseFrame.cc:111
+msgid "Re&name Device..."
+msgstr ""
+
+#: src/BaseFrame.cc:112
+msgid "Re&set Device"
+msgstr ""
+
+#: src/BaseFrame.cc:113
+msgid "&Rescan USB"
+msgstr ""
+
+#: src/BaseFrame.cc:115
+msgid "&About..."
+msgstr ""
+
+#: src/BaseFrame.cc:117
+msgid "E&xit"
+msgstr ""
+
+#: src/BaseFrame.cc:157
+msgid "No device selected"
+msgstr ""
+
+#: src/BaseFrame.cc:174
+msgid "No devices available"
+msgstr ""
+
+#: src/BaseFrame.cc:209
+msgid "Main Menu"
+msgstr ""
+
+#: src/BaseFrame.cc:333
+msgid "The Backup program is already running!"
+msgstr ""
+
+#: src/BaseFrame.cc:334 src/BaseFrame.cc:338 src/BaseFrame.cc:740
+msgid "Backup and Restore"
+msgstr ""
+
+#: src/BaseFrame.cc:354
+msgid ""
+"An error occurred that prevented the loading of Sync\n"
+"mode.  This is most likely because a critical piece\n"
+"of OpenSync is missing.  Check that all required\n"
+"plugins are installed, and that tools like 'bidentify'\n"
+"can find your BlackBerry(R) successfully.\n"
+"\n"
+"Error: "
+msgstr ""
+
+#: src/BaseFrame.cc:361
+msgid "Sync Mode"
+msgstr ""
+
+#: src/BaseFrame.cc:375
+msgid "Please select a device first."
+msgstr ""
+
+#: src/BaseFrame.cc:376
+msgid "No Device"
+msgstr ""
+
+#: src/BaseFrame.cc:669
+msgid ""
+"An error occurred during device migration.\n"
+"This could be due to a low level USB issue\n"
+"Please make sure your device is plugged in\n"
+"and not in Desktop Mode.  If it is, try replugging\n"
+"the device, and rescanning the USB bus from the menu.\n"
+"\n"
+"Error: "
+msgstr ""
+
+#: src/BaseFrame.cc:677 src/MigrateDlg.cc:102
+msgid "Migrate Device"
+msgstr ""
+
+#: src/BaseFrame.cc:686
+msgid ""
+"There is no device selected in the device list.  Please select a device to "
+"browse."
+msgstr ""
+
+#: src/BaseFrame.cc:687 src/BaseFrame.cc:705
+msgid "Database Browser Mode"
+msgstr ""
+
+#: src/BaseFrame.cc:697
+msgid ""
+"An error occurred that prevented the loading of Database\n"
+"Browse mode.  This could be due to a low level USB\n"
+"issue.  Please make sure your device is plugged in\n"
+"and not in Desktop Mode.  If it is, try replugging\n"
+"the device, and rescanning the USB bus from the menu.\n"
+"\n"
+"Error: "
+msgstr ""
+
+#: src/BaseFrame.cc:739
+msgid ""
+"Unable to run barrybackup, or it returned an error. Please make sure it is "
+"installed and in your PATH."
+msgstr ""
+
+#: src/BaseFrame.cc:808
+msgid "Please enter a name for the current device:"
+msgstr ""
+
+#: src/BaseFrame.cc:809
+msgid "Rename Device"
+msgstr ""
+
+#: src/BaseFrame.cc:856
+msgid ""
+"A Free Software graphical user interface for working with the BlackBerry® "
+"smartphone."
+msgstr ""
+
+#: src/BaseFrame.cc:877
+msgid "Chris Frey - GUI interface"
+msgstr ""
+
+#: src/BaseFrame.cc:878
+msgid "Martin Owens - Barry logo"
+msgstr ""
+
+#: src/BaseFrame.cc:879
+msgid "Tango Desktop Project - Public domain icons"
+msgstr ""
+
+#: src/CUI_Barry.cc:88
+msgid ""
+"Please select the databases you wish to erase\n"
+"on device: "
+msgstr ""
+
+#: src/CUI_Barry.cc:91
+msgid ""
+"Note: all synced databases must be erased\n"
+"to avoid a slow-sync."
+msgstr ""
+
+#: src/CUI_Barry.cc:118 src/CUI_Google.cc:114
+msgid "Select Databases to Erase"
+msgstr ""
+
+#: src/CUI_Barry.cc:124
+msgid ""
+"You have selected the following databases to be completely erased from "
+"device: "
+msgstr ""
+
+#: src/CUI_Barry.cc:129 src/CUI_Google.cc:125
+msgid "Proceed with erase?"
+msgstr ""
+
+#: src/CUI_Barry.cc:131 src/CUI_Google.cc:127
+msgid "Erase Confirmation"
+msgstr ""
+
+#: src/CUI_Barry.cc:149
+msgid "No database named '"
+msgstr ""
+
+#: src/CUI_Barry.cc:149
+msgid "' in device!"
+msgstr ""
+
+#: src/CUI_Barry.cc:153
+msgid "Clearing db: "
+msgstr ""
+
+#: src/CUI_Barry.cc:161
+msgid "Barry exception: "
+msgstr ""
+
+#: src/CUI_Barry.cc:162
+msgid "You may need to do a USB reset and rescan from the main menu."
+msgstr ""
+
+#: src/CUI_Barry.cc:165
+msgid "Barry Exception"
+msgstr ""
+
+#: src/CUI_Evolution.cc:78
+msgid "Stop waiting"
+msgstr ""
+
+#: src/CUI_Evolution.cc:104
+msgid "Evolution shutdown"
+msgstr ""
+
+#: src/CUI_Evolution.cc:159
+msgid ""
+"Unable to automatically detect Evolution's configuration.\n"
+"You need to run Evolution, and manually click each of the\n"
+"section buttons:\n"
+"\n"
+"      Mail, Contacts, Calendars, Memos, and Tasks\n"
+"\n"
+"Then quit Evolution to continue configuration.\n"
+"\n"
+"Would you like to start Evolution now?\n"
+msgstr ""
+
+#: src/CUI_Evolution.cc:169 src/CUI_Evolution.cc:191 src/CUI_Evolution.cc:207
+msgid "Evolution Config"
+msgstr ""
+
+#: src/CUI_Evolution.cc:179
+msgid "Waiting for Evolution to exit..."
+msgstr ""
+
+#: src/CUI_Evolution.cc:180
+msgid "Evolution Running"
+msgstr ""
+
+#: src/CUI_Evolution.cc:191 src/CUI_Evolution.cc:207
+msgid ""
+"Failed to run evolution. Please make sure it is installed and in your PATH."
+msgstr ""
+
+#: src/CUI_Evolution.cc:310
+msgid "Evolution already running."
+msgstr ""
+
+#: src/CUI_Evolution.cc:311 src/CUI_KDEPim.cc:86
+msgid "Oops..."
+msgstr ""
+
+#: src/CUI_Evolution.cc:320
+msgid ""
+"Starting Evolution.  Delete all contacts and/or calendar entries manually, "
+"depending on your sync configuration."
+msgstr ""
+
+#: src/CUI_Evolution.cc:325
+msgid ""
+"Starting Evolution.  Delete all objects (contacts, calendar, memos, and "
+"tasks, depending on your sync configuration)."
+msgstr ""
+
+#: src/CUI_Evolution.cc:329
+msgid "Starting Evolution"
+msgstr ""
+
+#: src/CUI_Google.cc:98
+msgid ""
+"Please select the databases you wish to erase\n"
+"in your Google Calendar: \n"
+"\n"
+"Note: all synced databases must be erased\n"
+"to avoid a slow-sync."
+msgstr ""
+
+#: src/CUI_Google.cc:109
+msgid "Calendar"
+msgstr ""
+
+#: src/CUI_Google.cc:110 src/GroupCfgDlg.cc:323
+msgid "Contacts"
+msgstr ""
+
+#: src/CUI_Google.cc:120
+msgid ""
+"You have selected the following databases to be completely erased from your "
+"Google Calendar:"
+msgstr ""
+
+#: src/CUI_KDEPim.cc:59
+msgid "KDEPim needs no configuration."
+msgstr ""
+
+#: src/CUI_KDEPim.cc:59
+msgid "KDEPim Config"
+msgstr ""
+
+#: src/CUI_KDEPim.cc:85
+msgid "Kontact already running."
+msgstr ""
+
+#: src/CUI_KDEPim.cc:95
+msgid "Starting Kontact.  Delete all contacts and calendar entries manually."
+msgstr ""
+
+#: src/CUI_KDEPim.cc:100
+msgid ""
+"Starting Kontact.  Delete all contacts and calendar entries manually (as "
+"well as memos and tasks if you are syncing them too)."
+msgstr ""
+
+#: src/CUI_KDEPim.cc:105
+msgid "Starting Kontact"
+msgstr ""
+
+#: src/CalendarEditDlg.cc:43
+msgid "Calendar Record"
+msgstr ""
+
+#: src/CalendarEditDlg.cc:65
+msgid "Subject:"
+msgstr ""
+
+#: src/CalendarEditDlg.cc:67
+msgid "Location:"
+msgstr ""
+
+#: src/CalendarEditDlg.cc:70
+msgid "All Day Event:"
+msgstr ""
+
+#: src/CalendarEditDlg.cc:72
+msgid "Start:"
+msgstr ""
+
+#: src/CalendarEditDlg.cc:77
+msgid "End:"
+msgstr ""
+
+#: src/CalendarEditDlg.cc:82
+msgid "Duration:"
+msgstr ""
+
+#: src/CalendarEditDlg.cc:84 src/CalendarEditDlg.cc:110
+msgid "hours and"
+msgstr ""
+
+#: src/CalendarEditDlg.cc:86 src/CalendarEditDlg.cc:112
+msgid "minutes."
+msgstr ""
+
+#: src/CalendarEditDlg.cc:87 src/TaskEditDlg.cc:103
+msgid "Time Zone:"
+msgstr ""
+
+#: src/CalendarEditDlg.cc:89
+msgid "System Time Zone"
+msgstr ""
+
+#: src/CalendarEditDlg.cc:92
+msgid "Show As:"
+msgstr ""
+
+#: src/CalendarEditDlg.cc:102
+msgid "Free"
+msgstr ""
+
+#: src/CalendarEditDlg.cc:103
+msgid "Tentative"
+msgstr ""
+
+#: src/CalendarEditDlg.cc:104
+msgid "Busy"
+msgstr ""
+
+#: src/CalendarEditDlg.cc:105
+msgid "Out of Office"
+msgstr ""
+
+#: src/CalendarEditDlg.cc:108 src/TaskEditDlg.cc:108
+msgid "Reminder:"
+msgstr ""
+
+#: src/CalendarEditDlg.cc:114 src/TaskEditDlg.cc:115
+msgid "Recurrence:"
+msgstr ""
+
+#: src/CalendarEditDlg.cc:125 src/TaskEditDlg.cc:126
+msgid "None"
+msgstr ""
+
+#: src/CalendarEditDlg.cc:126 src/TaskEditDlg.cc:127
+msgid "Daily"
+msgstr ""
+
+#: src/CalendarEditDlg.cc:127 src/TaskEditDlg.cc:128
+msgid "Weekly"
+msgstr ""
+
+#: src/CalendarEditDlg.cc:128 src/TaskEditDlg.cc:129
+msgid "Monthly"
+msgstr ""
+
+#: src/CalendarEditDlg.cc:129 src/TaskEditDlg.cc:130
+msgid "Yearly"
+msgstr ""
+
+#: src/CalendarEditDlg.cc:132 src/TaskEditDlg.cc:133
+msgid "Interval:"
+msgstr ""
+
+#: src/CalendarEditDlg.cc:133 src/TaskEditDlg.cc:134
+msgid "Every"
+msgstr ""
+
+#: src/CalendarEditDlg.cc:135 src/TaskEditDlg.cc:136
+msgid "days? weeks? months?"
+msgstr ""
+
+#: src/CalendarEditDlg.cc:136 src/TaskEditDlg.cc:137
+msgid "Days:"
+msgstr ""
+
+#: src/CalendarEditDlg.cc:144 src/TaskEditDlg.cc:145
+msgid "Relative Date:"
+msgstr ""
+
+#: src/CalendarEditDlg.cc:146 src/TaskEditDlg.cc:147
+msgid "End Date:"
+msgstr ""
+
+#: src/CalendarEditDlg.cc:147 src/TaskEditDlg.cc:148
+msgid "Never ends"
+msgstr ""
+
+#: src/CalendarEditDlg.cc:150
+msgid "Organizer:"
+msgstr ""
+
+#: src/CalendarEditDlg.cc:152
+msgid "Invited:"
+msgstr ""
+
+#: src/CalendarEditDlg.cc:154
+msgid "Accepted By:"
+msgstr ""
+
+#: src/CalendarEditDlg.cc:165
+msgid "Public"
+msgstr ""
+
+#: src/CalendarEditDlg.cc:166
+msgid "Private"
+msgstr ""
+
+#: src/CalendarEditDlg.cc:167
+msgid "Confidential"
+msgstr ""
+
+#: src/CalendarEditDlg.cc:169
+msgid "Class"
+msgstr ""
+
+#: src/CalendarEditDlg.cc:171 src/TaskEditDlg.cc:153
+msgid "Notes:"
+msgstr ""
+
+#: src/CalendarEditDlg.cc:182 src/TaskEditDlg.cc:164
+msgid "Assume Local Timezone"
+msgstr ""
+
+#: src/CalendarEditDlg.cc:303
+msgid "Calendar Event"
+msgstr ""
+
+#: src/CalendarEditDlg.cc:327 src/CalendarEditDlg.cc:330
+#: src/TaskEditDlg.cc:246 src/TaskEditDlg.cc:249
+msgid "Set Reminder to 0 to disable"
+msgstr ""
+
+#: src/CalendarEditDlg.cc:343 src/CalendarEditDlg.cc:344
+#: src/TaskEditDlg.cc:262 src/TaskEditDlg.cc:263
+msgid ""
+"Relative monthly or yearly dates take the weekday of the start date into "
+"account. (eg. every first Sunday of month)"
+msgstr ""
+
+#: src/CalendarEditDlg.cc:587
+msgid "Bad RecurringType in CalendarEditDlg"
+msgstr ""
+
+#: src/CalendarEditDlg.cc:643
+msgid "Start time must come before end time."
+msgstr ""
+
+#: src/CalendarEditDlg.cc:644
+msgid "Validation Error"
+msgstr ""
+
+#: src/CalendarEditDlg.cc:827 src/TaskEditDlg.cc:705
+msgid "day(s)"
+msgstr ""
+
+#: src/CalendarEditDlg.cc:831 src/TaskEditDlg.cc:709
+msgid "week(s)"
+msgstr ""
+
+#: src/CalendarEditDlg.cc:835 src/TaskEditDlg.cc:713
+msgid "month(s)"
+msgstr ""
+
+#: src/CalendarEditDlg.cc:839 src/TaskEditDlg.cc:717
+msgid "year(s)"
+msgstr ""
+
+#: src/ConflictDlg.cc:93
+msgid "Sync Conflict"
+msgstr ""
+
+#: src/ConflictDlg.cc:315
+msgid "XML..."
+msgstr ""
+
+#: src/ConflictDlg.cc:321
+msgid "Select"
+msgstr ""
+
+#: src/ConflictDlg.cc:340
+msgid "No XML map found."
+msgstr ""
+
+#: src/ConflictDlg.cc:391
+msgid "Always use this choice"
+msgstr ""
+
+#: src/ConflictDlg.cc:397
+msgid "Duplicate"
+msgstr ""
+
+#: src/ConflictDlg.cc:403
+msgid "Ignore"
+msgstr ""
+
+#: src/ConflictDlg.cc:409
+msgid "Keep Newer"
+msgstr ""
+
+#: src/ConflictDlg.cc:415
+msgid "Abort"
+msgstr ""
+
+#: src/ConflictDlg.cc:421 src/SyncStatusDlg.cc:361 src/SyncStatusDlg.cc:372
+#: src/SyncStatusDlg.cc:605 src/SyncStatusDlg.cc:609
+msgid "Kill Sync"
+msgstr ""
+
+#: src/ConflictDlg.cc:492
+msgid "Raw Change Data"
+msgstr ""
+
+#: src/ContactEditDlg.cc:37
+msgid "Contact Record"
+msgstr ""
+
+#: src/ContactEditDlg.cc:50
+msgid "Home"
+msgstr ""
+
+#: src/ContactEditDlg.cc:51
+msgid "Work"
+msgstr ""
+
+#: src/ContactEditDlg.cc:52
+msgid "Misc"
+msgstr ""
+
+#: src/ContactEditDlg.cc:53
+msgid "Mobile"
+msgstr ""
+
+#: src/ContactEditDlg.cc:54 src/GroupCfgDlg.cc:329
+msgid "Notes"
+msgstr ""
+
+#: src/ContactEditDlg.cc:55 src/Mode_Sync.cc:183
+msgid "Name"
+msgstr ""
+
+#: src/ContactEditDlg.cc:57
+msgid "Title"
+msgstr ""
+
+#: src/ContactEditDlg.cc:59
+msgid "First"
+msgstr ""
+
+#: src/ContactEditDlg.cc:61
+msgid "Last"
+msgstr ""
+
+#: src/ContactEditDlg.cc:63
+msgid "Company"
+msgstr ""
+
+#: src/ContactEditDlg.cc:65
+msgid "Job Title"
+msgstr ""
+
+#: src/ContactEditDlg.cc:67
+msgid "Nickname"
+msgstr ""
+
+#: src/ContactEditDlg.cc:69 src/ContactEditDlg.cc:89
+msgid "Address"
+msgstr ""
+
+#: src/ContactEditDlg.cc:73 src/ContactEditDlg.cc:93
+msgid "City"
+msgstr ""
+
+#: src/ContactEditDlg.cc:75 src/ContactEditDlg.cc:95
+msgid "Province"
+msgstr ""
+
+#: src/ContactEditDlg.cc:77 src/ContactEditDlg.cc:97
+msgid "Postal Code"
+msgstr ""
+
+#: src/ContactEditDlg.cc:79 src/ContactEditDlg.cc:99
+msgid "Country"
+msgstr ""
+
+#: src/ContactEditDlg.cc:83 src/ContactEditDlg.cc:103
+msgid "Phone"
+msgstr ""
+
+#: src/ContactEditDlg.cc:85 src/ContactEditDlg.cc:105
+msgid "Phone 2"
+msgstr ""
+
+#: src/ContactEditDlg.cc:87 src/ContactEditDlg.cc:107
+msgid "Fax"
+msgstr ""
+
+#: src/ContactEditDlg.cc:109
+msgid "Email"
+msgstr ""
+
+#: src/ContactEditDlg.cc:111
+msgid "Other Phone"
+msgstr ""
+
+#: src/ContactEditDlg.cc:113
+msgid "Old Phone"
+msgstr ""
+
+#: src/ContactEditDlg.cc:115
+msgid "Radio"
+msgstr ""
+
+#: src/ContactEditDlg.cc:117 src/Mode_Sync.cc:181
+msgid "PIN"
+msgstr ""
+
+#: src/ContactEditDlg.cc:119
+msgid "User1"
+msgstr ""
+
+#: src/ContactEditDlg.cc:121
+msgid "User2"
+msgstr ""
+
+#: src/ContactEditDlg.cc:123
+msgid "User3"
+msgstr ""
+
+#: src/ContactEditDlg.cc:125
+msgid "User4"
+msgstr ""
+
+#: src/ContactEditDlg.cc:127
+msgid "Cell"
+msgstr ""
+
+#: src/ContactEditDlg.cc:129
+msgid "Cell 2"
+msgstr ""
+
+#: src/ContactEditDlg.cc:131
+msgid "Pager"
+msgstr ""
+
+#: src/ContactEditDlg.cc:134
+msgid "URL"
+msgstr ""
+
+#: src/ContactEditDlg.cc:150
+msgid "Contact"
+msgstr ""
+
+#: src/ContactEditDlg.cc:183
+msgid ""
+"Comma separated list of simple email addresses.  Do not use <> characters."
+msgstr ""
+
+#: src/ContactEditDlg.cc:346
+msgid "Load new photo"
+msgstr ""
+
+#: src/ContactEditDlg.cc:347
+msgid "Save current photo to disk"
+msgstr ""
+
+#: src/ContactEditDlg.cc:348
+msgid "Delete current photo"
+msgstr ""
+
+#: src/ContactEditDlg.cc:351
+msgid "A photo currently exists.  Would you like to:"
+msgstr ""
+
+#: src/ContactEditDlg.cc:352
+msgid "Photo Management"
+msgstr ""
+
+#: src/ContactEditDlg.cc:398
+msgid ""
+"A contact record must contain either a First/Last name, or a Company name."
+msgstr ""
+
+#: src/ContactEditDlg.cc:399 src/MemoEditDlg.cc:113
+msgid "Required Fields"
+msgstr ""
+
+#: src/ContactPhotoWidget.cc:40
+msgid "Image files"
+msgstr ""
+
+#: src/ContactPhotoWidget.cc:42 src/Mode_Browse.cc:1085
+msgid "All files"
+msgstr ""
+
+#: src/ContactPhotoWidget.cc:82
+msgid "There is no photo available to save."
+msgstr ""
+
+#: src/ContactPhotoWidget.cc:83
+msgid "No Photo"
+msgstr ""
+
+#: src/ContactPhotoWidget.cc:88
+msgid "JPEG files"
+msgstr ""
+
+#: src/ContactPhotoWidget.cc:91
+msgid "Save Photo as JPEG..."
+msgstr ""
+
+#: src/ContactPhotoWidget.cc:103
+msgid "Load Photo..."
+msgstr ""
+
+#: src/ContactPhotoWidget.cc:112
+msgid "Unable to load selected photo."
+msgstr ""
+
+#: src/ContactPhotoWidget.cc:113
+msgid "Photo Load Error"
+msgstr ""
+
+#: src/ContactPhotoWidget.cc:121
+msgid "Unable to convert image to JPEG."
+msgstr ""
+
+#: src/ContactPhotoWidget.cc:122
+msgid "Photo Convert"
+msgstr ""
+
+#: src/ContactPhotoWidget.cc:165 src/Mode_Sync.cc:263
+msgid "No"
+msgstr ""
+
+#: src/ContactPhotoWidget.cc:165
+msgid "Photo"
+msgstr ""
+
+#: src/EvoCfgDlg.cc:32
+msgid "Evolution Plugin Configuration"
+msgstr ""
+
+#: src/EvoCfgDlg.cc:51
+msgid "Address Book:"
+msgstr ""
+
+#: src/EvoCfgDlg.cc:58
+msgid "Calendar:"
+msgstr ""
+
+#: src/EvoCfgDlg.cc:65 src/blistevo.cc:46
+msgid "Tasks:"
+msgstr ""
+
+#: src/EvoCfgDlg.cc:72 src/blistevo.cc:48
+msgid "Memos:"
+msgstr ""
+
+#: src/EvoCfgDlg.cc:169
+msgid " does not exist."
+msgstr ""
+
+#: src/EvoCfgDlg.cc:181
+msgid ""
+"No paths set!  If there are no default options available in the drop down "
+"lists, please double check that you've initialized your Evolution account "
+"first."
+msgstr ""
+
+#: src/EvoCfgDlg.cc:194
+msgid "Minimum Config Required"
+msgstr ""
+
+#: src/EvoDefaultDlg.cc:36
+msgid "Evolution Success"
+msgstr ""
+
+#: src/EvoDefaultDlg.cc:52
+msgid "Successfully auto-detected Evolution configuration!"
+msgstr ""
+
+#: src/EvoDefaultDlg.cc:61
+msgid "Manual Cfg..."
+msgstr ""
+
+#: src/GroupCfgDlg.cc:58
+msgid "Device Sync Configuration"
+msgstr ""
+
+#: src/GroupCfgDlg.cc:81
+msgid "Must have at least one engine in GroupCfgDlg"
+msgstr ""
+
+#: src/GroupCfgDlg.cc:87
+msgid "Configure Device - "
+msgstr ""
+
+#: src/GroupCfgDlg.cc:141
+msgid ""
+"No supported applications found.  You may need to install some opensync "
+"plugins."
+msgstr ""
+
+#: src/GroupCfgDlg.cc:142
+msgid "No App Found"
+msgstr ""
+
+#: src/GroupCfgDlg.cc:163
+msgid "OpenSync Engine"
+msgstr ""
+
+#: src/GroupCfgDlg.cc:200
+msgid "Barry Config"
+msgstr ""
+
+#: src/GroupCfgDlg.cc:206
+msgid "Name:"
+msgstr ""
+
+#: src/GroupCfgDlg.cc:215 src/ModemDlg.cc:66
+msgid "Password:"
+msgstr ""
+
+#: src/GroupCfgDlg.cc:225
+msgid "Debug output during sync"
+msgstr ""
+
+#: src/GroupCfgDlg.cc:234 src/Mode_Sync.cc:187
+msgid "Application"
+msgstr ""
+
+#: src/GroupCfgDlg.cc:262
+msgid "&Configure..."
+msgstr ""
+
+#: src/GroupCfgDlg.cc:278
+msgid "No engine selected"
+msgstr ""
+
+#: src/GroupCfgDlg.cc:287
+msgid "Exception caught in LoadAppNames: "
+msgstr ""
+
+#: src/GroupCfgDlg.cc:312
+msgid "No supported plugins available"
+msgstr ""
+
+#: src/GroupCfgDlg.cc:320
+msgid "Sync:"
+msgstr ""
+
+#: src/GroupCfgDlg.cc:326
+msgid "Events"
+msgstr ""
+
+#: src/GroupCfgDlg.cc:332
+msgid "To-dos"
+msgstr ""
+
+#: src/GroupCfgDlg.cc:342
+msgid "Favour device"
+msgstr ""
+
+#: src/GroupCfgDlg.cc:343
+msgid "Favour application"
+msgstr ""
+
+#: src/GroupCfgDlg.cc:344
+msgid "Ask me"
+msgstr ""
+
+#: src/GroupCfgDlg.cc:347
+msgid "To Resolve Conflicts:"
+msgstr ""
+
+#: src/GroupCfgDlg.cc:490
+msgid "Please select an application."
+msgstr ""
+
+#: src/GroupCfgDlg.cc:491 src/GroupCfgDlg.cc:499 src/GroupCfgDlg.cc:587
+msgid "Application Config"
+msgstr ""
+
+#: src/GroupCfgDlg.cc:498
+msgid "No configuration interface available for this Application."
+msgstr ""
+
+#: src/GroupCfgDlg.cc:565
+msgid "Please select an engine."
+msgstr ""
+
+#: src/GroupCfgDlg.cc:566 src/GroupCfgDlg.cc:573
+msgid "Device Config"
+msgstr ""
+
+#: src/GroupCfgDlg.cc:572
+msgid "Barry doesn't have a PIN number.  This should never happen."
+msgstr ""
+
+#: src/GroupCfgDlg.cc:586
+msgid "The application plugin is not fully configured."
+msgstr ""
+
+#: src/GroupCfgDlg.cc:614
+msgid "Please select conflict resolution method."
+msgstr ""
+
+#: src/GroupCfgDlg.cc:615
+msgid "Conflict Resolution"
+msgstr ""
+
+#: src/MemoEditDlg.cc:36
+msgid "Memo Record"
+msgstr ""
+
+#: src/MemoEditDlg.cc:49
+msgid "Title:"
+msgstr ""
+
+#: src/MemoEditDlg.cc:51 src/TaskEditDlg.cc:151
+msgid "Categories:"
+msgstr ""
+
+#: src/MemoEditDlg.cc:64
+msgid "Memo"
+msgstr ""
+
+#: src/MemoEditDlg.cc:68
+msgid "Comma separated"
+msgstr ""
+
+#: src/MemoEditDlg.cc:70
+msgid "Comma separated list of categories (can be empty)"
+msgstr ""
+
+#: src/MemoEditDlg.cc:73
+msgid "Body of memo"
+msgstr ""
+
+#: src/MemoEditDlg.cc:112
+msgid "Please enter a title for your memo."
+msgstr ""
+
+#: src/MigrateDlg.cc:145
+msgid "Migrate device data from source device to target device."
+msgstr ""
+
+#: src/MigrateDlg.cc:168
+msgid "Ready..."
+msgstr ""
+
+#: src/MigrateDlg.cc:190
+msgid "Source device"
+msgstr ""
+
+#: src/MigrateDlg.cc:208
+msgid "Migrate Now"
+msgstr ""
+
+#: src/MigrateDlg.cc:213
+msgid "Cancel"
+msgstr ""
+
+#: src/MigrateDlg.cc:222
+msgid "Prompt to plug in later..."
+msgstr ""
+
+#: src/MigrateDlg.cc:230
+msgid "Destination device"
+msgstr ""
+
+#: src/MigrateDlg.cc:241
+msgid "Erase all, then restore"
+msgstr ""
+
+#: src/MigrateDlg.cc:242
+msgid "Add new, and overwrite existing"
+msgstr ""
+
+#: src/MigrateDlg.cc:243
+msgid "Add only, don't overwrite existing"
+msgstr ""
+
+#: src/MigrateDlg.cc:244
+msgid "Add every record as a new entry (may cause duplicates)"
+msgstr ""
+
+#: src/MigrateDlg.cc:246
+msgid "Write Mode:"
+msgstr ""
+
+#: src/MigrateDlg.cc:274
+msgid "Waiting for thread to close..."
+msgstr ""
+
+#: src/MigrateDlg.cc:335
+msgid ""
+"Please select a source and destination device, as well as the write mode."
+msgstr ""
+
+#: src/MigrateDlg.cc:336
+msgid "Migration Options Needed"
+msgstr ""
+
+#: src/MigrateDlg.cc:342
+msgid "Cannot migrate from and to the same PIN."
+msgstr ""
+
+#: src/MigrateDlg.cc:343
+msgid "Migration Options Error"
+msgstr ""
+
+#: src/MigrateDlg.cc:370
+msgid "Invalid write mode. This should never happen. Contact the developers."
+msgstr ""
+
+#: src/MigrateDlg.cc:371
+msgid "Internal Logic Error"
+msgstr ""
+
+#: src/MigrateDlg.cc:411
+msgid "Waiting for thread..."
+msgstr ""
+
+#: src/MigrateDlg.cc:420
+msgid "Cancelled by user..."
+msgstr ""
+
+#: src/MigrateDlg.cc:438
+msgid "Please plug in the target device now."
+msgstr ""
+
+#: src/MigrateDlg.cc:439
+msgid "Ready for Writing"
+msgstr ""
+
+#: src/MigrateDlg.cc:449
+msgid "Scanning USB for devices..."
+msgstr ""
+
+#: src/MigrateDlg.cc:468
+msgid "User input..."
+msgstr ""
+
+#: src/MigrateDlg.cc:473
+msgid "Please select the target device to write to:"
+msgstr ""
+
+#: src/MigrateDlg.cc:474
+msgid "Destination PIN"
+msgstr ""
+
+#: src/MigrateDlg.cc:486
+msgid "Cannot use the same device PIN as migration destination."
+msgstr ""
+
+#: src/MigrateDlg.cc:487
+msgid "Invalid Device Selection"
+msgstr ""
+
+#: src/MigrateDlg.cc:521 src/Mode_Browse.cc:254
+msgid "Please enter device password: "
+msgstr ""
+
+#: src/MigrateDlg.cc:522 src/Mode_Browse.cc:255
+msgid " tries remaining"
+msgstr ""
+
+#: src/MigrateDlg.cc:527 src/Mode_Browse.cc:260
+msgid "Device Password"
+msgstr ""
+
+#: src/MigrateDlg.cc:533
+msgid "Migration Error"
+msgstr ""
+
+#: src/MigrateDlg.cc:593
+msgid "Connecting..."
+msgstr ""
+
+#: src/MigrateDlg.cc:645
+msgid "Backing up database: "
+msgstr ""
+
+#: src/MigrateDlg.cc:672
+msgid "Backup aborted by user..."
+msgstr ""
+
+#: src/MigrateDlg.cc:693
+msgid "Connecting to target..."
+msgstr ""
+
+#: src/MigrateDlg.cc:734
+msgid "Writing database: "
+msgstr ""
+
+#: src/MigrateDlg.cc:765
+msgid "Restore aborted by user..."
+msgstr ""
+
+#: src/MigrateDlg.cc:771
+msgid "Unable to clear or write to database: "
+msgstr ""
+
+#: src/MigrateDlg.cc:774
+msgid "Continuing to process remaining records..."
+msgstr ""
+
+#: src/MimeExportDlg.cc:41
+msgid "MIME Card Data"
+msgstr ""
+
+#: src/MimeExportDlg.cc:48
+msgid "Save..."
+msgstr ""
+
+#: src/MimeExportDlg.cc:78
+msgid "Save Card as..."
+msgstr ""
+
+#: src/Mode_Browse.cc:71
+msgid ""
+"This database is apparently read-only.  If this device is connected to a "
+"BES, you cannot edit records via USB.  (Error: "
+msgstr ""
+
+#: src/Mode_Browse.cc:72
+msgid "Device Error"
+msgstr ""
+
+#: src/Mode_Browse.cc:92
+msgid "VCard files"
+msgstr ""
+
+#: src/Mode_Browse.cc:103
+msgid "ICalendar files"
+msgstr ""
+
+#: src/Mode_Browse.cc:287
+msgid "raw data"
+msgstr ""
+
+#: src/Mode_Browse.cc:365
+msgid "DataCachePtr has no builder"
+msgstr ""
+
+#: src/Mode_Browse.cc:382
+msgid "Device exception: "
+msgstr ""
+
+#: src/Mode_Browse.cc:551
+msgid ""
+"Delete this record?\n"
+"   "
+msgstr ""
+
+#: src/Mode_Browse.cc:552
+msgid "Record Delete"
+msgstr ""
+
+#: src/Mode_Browse.cc:596
+msgid "Failed to create map mutex"
+msgstr ""
+
+#: src/Mode_Browse.cc:600
+msgid "Failed to create load mutex"
+msgstr ""
+
+#: src/Mode_Browse.cc:735
+msgid "Loading: "
+msgstr ""
+
+#: src/Mode_Browse.cc:788
+msgid "Show All Databases"
+msgstr ""
+
+#: src/Mode_Browse.cc:818
+msgid "Import..."
+msgstr ""
+
+#: src/Mode_Browse.cc:821
+msgid "Export..."
+msgstr ""
+
+#: src/Mode_Browse.cc:824
+msgid "Add..."
+msgstr ""
+
+#: src/Mode_Browse.cc:827
+msgid "Copy..."
+msgstr ""
+
+#: src/Mode_Browse.cc:830
+msgid "Edit..."
+msgstr ""
+
+#: src/Mode_Browse.cc:833
+msgid "Delete..."
+msgstr ""
+
+#: src/Mode_Browse.cc:854
+msgid "Databases"
+msgstr ""
+
+#: src/Mode_Browse.cc:856
+msgid "Count"
+msgstr ""
+
+#: src/Mode_Browse.cc:864
+msgid "Record Description"
+msgstr ""
+
+#: src/Mode_Browse.cc:1066
+#, c-format
+msgid "Card file type (%s) does not match record you are trying to add (%s)."
+msgstr ""
+
+#: src/Mode_Browse.cc:1069
+msgid "Invalid Card Type"
+msgstr ""
+
+#: src/Mode_Browse.cc:1090
+msgid "Load Record..."
+msgstr ""
+
+#: src/Mode_Browse.cc:1101
+msgid "No card data found in: "
+msgstr ""
+
+#: src/Mode_Browse.cc:1102
+msgid "Import Read Error"
+msgstr ""
+
+#: src/Mode_Browse.cc:1149
+#, c-format
+msgid "Unable to import selected file: %s"
+msgstr ""
+
+#: src/Mode_Browse.cc:1150
+msgid "Import Error"
+msgstr ""
+
+#: src/Mode_Browse.cc:1159
+msgid "Internal pointer error: cannot find DBCachePtr for: "
+msgstr ""
+
+#: src/Mode_Browse.cc:1160 src/Mode_Browse.cc:1175
+msgid "Internal Error"
+msgstr ""
+
+#: src/Mode_Browse.cc:1174
+msgid "Internal error: cannot add record to DBCache"
+msgstr ""
+
+#: src/Mode_Browse.h:100
+msgid "Failed to create mutex for ThreadableDesktop"
+msgstr ""
+
+#: src/Mode_Browse.h:470
+msgid "Barry Database Browser"
+msgstr ""
+
+#: src/Mode_MainMenu.cc:58
+msgid "Ignorable screenshot exception: "
+msgstr ""
+
+#: src/Mode_Sync.cc:76
+msgid ""
+"Multiple configurations have been found with the same PIN.  Please select\n"
+"the configuration that Barry Desktop should work with."
+msgstr ""
+
+#: src/Mode_Sync.cc:126
+msgid "Select the device(s) you want to sync and press Sync Now."
+msgstr ""
+
+#: src/Mode_Sync.cc:127
+msgid "Use Configure to configure the currently selected device."
+msgstr ""
+
+#: src/Mode_Sync.cc:128
+msgid "Use Run App to start the application that the device syncs with."
+msgstr ""
+
+#: src/Mode_Sync.cc:129
+msgid ""
+"Use 1-Way Reset to recover from a broken sync, copying all device data to "
+"application, or vice versa."
+msgstr ""
+
+#: src/Mode_Sync.cc:141 src/Mode_Sync.cc:507
+msgid "Device List"
+msgstr ""
+
+#: src/Mode_Sync.cc:154 src/SyncStatusDlg.cc:350
+msgid "Run App"
+msgstr ""
+
+#: src/Mode_Sync.cc:157
+msgid "Configure..."
+msgstr ""
+
+#: src/Mode_Sync.cc:160
+msgid "1 Way Reset..."
+msgstr ""
+
+#: src/Mode_Sync.cc:185
+msgid "Connected"
+msgstr ""
+
+#: src/Mode_Sync.cc:189
+msgid "Engine"
+msgstr ""
+
+#: src/Mode_Sync.cc:191
+msgid "Last Sync"
+msgstr ""
+
+#: src/Mode_Sync.cc:263
+msgid "Yes"
+msgstr ""
+
+#: src/Mode_Sync.cc:271
+msgid "(No config)"
+msgstr ""
+
+#: src/Mode_Sync.cc:364 src/Mode_Sync.cc:678
+msgid "An application is currently running."
+msgstr ""
+
+#: src/Mode_Sync.cc:365 src/Mode_Sync.cc:706
+msgid "Run App Error"
+msgstr ""
+
+#: src/Mode_Sync.cc:391
+msgid "Config is the same, skipping save"
+msgstr ""
+
+#: src/Mode_Sync.cc:447
+msgid "Exception during save: "
+msgstr ""
+
+#: src/Mode_Sync.cc:448
+msgid ""
+"Unable to save configuration for this device.\n"
+"Error: "
+msgstr ""
+
+#: src/Mode_Sync.cc:450
+msgid "OpenSync Save Error"
+msgstr ""
+
+#: src/Mode_Sync.cc:483
+msgid "Selected device "
+msgstr ""
+
+#: src/Mode_Sync.cc:485
+msgid " is not yet configured.  Configure now?"
+msgstr ""
+
+#: src/Mode_Sync.cc:489
+msgid "Configure Now?"
+msgstr ""
+
+#: src/Mode_Sync.cc:506
+msgid "Please select one device from the list."
+msgstr ""
+
+#: src/Mode_Sync.cc:536
+msgid ""
+"Which device / application should be considered\n"
+"authoritative?\n"
+"\n"
+"All data in non-authoritative devices / applications\n"
+"will be deleted in order to setup a straight copy on\n"
+"the next sync."
+msgstr ""
+
+#: src/Mode_Sync.cc:566
+msgid "Select Authoritative Device / Application"
+msgstr ""
+
+#: src/Mode_Sync.cc:639
+msgid "Unable to rewrite config!  Start over manually. Error: "
+msgstr ""
+
+#: src/Mode_Sync.cc:643
+msgid "Error Rewriting Config"
+msgstr ""
+
+#: src/Mode_Sync.cc:659
+msgid ""
+"The sync config you are about to save is sufficiently different from the "
+"existing one that a 1-Way Reset will be required.  You will need to perform "
+"the reset at your earliest convenience, before your next sync.\n"
+"\n"
+"Continue anyway?"
+msgstr ""
+
+#: src/Mode_Sync.cc:665
+msgid "1-Way Reset Warning"
+msgstr ""
+
+#: src/Mode_Sync.cc:679
+msgid "Sync Error"
+msgstr ""
+
+#: src/Mode_Sync.cc:705
+msgid "An application is already running."
+msgstr ""
+
+#: src/Mode_Sync.cc:751
+msgid "1-Way Reset is complete, and ready to sync."
+msgstr ""
+
+#: src/Mode_Sync.cc:752
+msgid "Reset Complete"
+msgstr ""
+
+#: src/Mode_Sync.h:75
+msgid "Barry Sync"
+msgstr ""
+
+#: src/ModemDlg.cc:51
+msgid "Modem Kickstart"
+msgstr ""
+
+#: src/ModemDlg.cc:56
+msgid "Device"
+msgstr ""
+
+#: src/ModemDlg.cc:57
+msgid "Providers"
+msgstr ""
+
+#: src/ModemDlg.cc:58
+msgid "For device pin:"
+msgstr ""
+
+#: src/ModemDlg.cc:98
+msgid "Modem Starter"
+msgstr ""
+
+#: src/ModemDlg.cc:101
+msgid "Available provider scripts on your system.  Must pick one."
+msgstr ""
+
+#: src/ModemDlg.cc:103 src/ModemDlg.cc:105
+msgid "Optional device password"
+msgstr ""
+
+#: src/ModemDlg.cc:255
+msgid ""
+"Cannot locate the xterm program.  This is used to display modem connection "
+"output.  Please install it and try again."
+msgstr ""
+
+#: src/ModemDlg.cc:255
+msgid "Xterm Not Found"
+msgstr ""
+
+#: src/ModemDlg.cc:264
+msgid "Cannot find pppd.  Please install it for modem use."
+msgstr ""
+
+#: src/ModemDlg.cc:264
+msgid "pppd Not Found"
+msgstr ""
+
+#: src/ModemDlg.cc:279
+#, c-format
+msgid ""
+"Your system's PPP has the suid bit set, with a group of '%s'.  You should "
+"add your account to the '%s' group, to avoid the need to enter the root "
+"password every time you use the modem.\n"
+"\n"
+"Continue anyway?"
+msgstr ""
+
+#: src/ModemDlg.cc:280
+msgid "System Group"
+msgstr ""
+
+#: src/ModemDlg.cc:298
+msgid "Internal fork error. Should never happen."
+msgstr ""
+
+#: src/ModemDlg.cc:298
+msgid "Cannot Run pppd"
+msgstr ""
+
+#: src/ModemDlg.cc:304
+#, c-format
+msgid "Unable to run pppd correctly.  Unexpected error code: %d, %s"
+msgstr ""
+
+#: src/ModemDlg.cc:305
+msgid "Error Code"
+msgstr ""
+
+#: src/ModemDlg.cc:319
+msgid ""
+"Unable to access files in /etc/ppp/peers.  Do you have the correct "
+"permissions?"
+msgstr ""
+
+#: src/ModemDlg.cc:319
+msgid "Cannot Open Peers"
+msgstr ""
+
+#: src/ModemDlg.cc:331
+msgid ""
+"No providers found.  Make sure Barry was properly installed, with peer files "
+"in /etc/ppp/peers."
+msgstr ""
+
+#: src/ModemDlg.cc:331
+msgid "No Providers"
+msgstr ""
+
+#: src/ModemDlg.cc:347
+#, c-format
+msgid ""
+"Cannot read provider files under /etc/ppp/peers. Please check your file "
+"permissions. (Access failed for %s)"
+msgstr ""
+
+#: src/ModemDlg.cc:348
+msgid "Permissions Error"
+msgstr ""
+
+#: src/ModemDlg.cc:369
+#, c-format
+msgid "Unable to open peer file: %s"
+msgstr ""
+
+#: src/ModemDlg.cc:370
+msgid "Invalid Peer"
+msgstr ""
+
+#: src/ModemDlg.cc:383
+msgid "Starting pppd for device PIN "
+msgstr ""
+
+#: src/ModemDlg.cc:394
+msgid "Press enter to close window..."
+msgstr ""
+
+#: src/PNGButton.cc:54
+msgid "Cannot load button bitmap."
+msgstr ""
+
+#: src/SyncStatusDlg.cc:67
+msgid "Syncing entries..."
+msgstr ""
+
+#: src/SyncStatusDlg.cc:259
+msgid "Device Sync Progress"
+msgstr ""
+
+#: src/SyncStatusDlg.cc:307
+msgid "Sync Progress"
+msgstr ""
+
+#: src/SyncStatusDlg.cc:341 src/SyncStatusDlg.cc:630
+msgid "Show Details"
+msgstr ""
+
+#: src/SyncStatusDlg.cc:356
+msgid "Sync Again"
+msgstr ""
+
+#: src/SyncStatusDlg.cc:386
+msgid "Close"
+msgstr ""
+
+#: src/SyncStatusDlg.cc:441
+msgid "Sync Progress Dialog"
+msgstr ""
+
+#: src/SyncStatusDlg.cc:445
+msgid "Syncing: "
+msgstr ""
+
+#: src/SyncStatusDlg.cc:446
+msgid " with "
+msgstr ""
+
+#: src/SyncStatusDlg.cc:481
+msgid "No more devices to sync."
+msgstr ""
+
+#: src/SyncStatusDlg.cc:496
+msgid " is not configured, skipping."
+msgstr ""
+
+#: src/SyncStatusDlg.cc:497
+msgid "Skipping unconfigured: "
+msgstr ""
+
+#: src/SyncStatusDlg.cc:508
+msgid "Starting sync for: "
+msgstr ""
+
+#: src/SyncStatusDlg.cc:525
+msgid "ERROR: App running in StartNextSync()"
+msgstr ""
+
+#: src/SyncStatusDlg.cc:546
+msgid "ERROR: unable to start bsyncjail: "
+msgstr ""
+
+#: src/SyncStatusDlg.cc:547
+msgid "ERROR: unable to start bsyncjail"
+msgstr ""
+
+#: src/SyncStatusDlg.cc:558
+msgid "Slow sync detected!  Killing sync automatically."
+msgstr ""
+
+#: src/SyncStatusDlg.cc:561
+msgid "Slow syncs are known to be unreliable."
+msgstr ""
+
+#: src/SyncStatusDlg.cc:562
+msgid "Do a 1 Way Reset, and sync again."
+msgstr ""
+
+#: src/SyncStatusDlg.cc:577
+msgid "The application is already running."
+msgstr ""
+
+#: src/SyncStatusDlg.cc:578
+msgid "Run Application"
+msgstr ""
+
+#: src/SyncStatusDlg.cc:604
+msgid "Already killing sync.  Kill again?"
+msgstr ""
+
+#: src/SyncStatusDlg.cc:608
+msgid ""
+"This will kill the syncing child process, and will likely require a "
+"configuration reset.\n"
+"\n"
+"Kill sync process anyway?"
+msgstr ""
+
+#: src/SyncStatusDlg.cc:615
+msgid "Killing sync... this may take a little while..."
+msgstr ""
+
+#: src/SyncStatusDlg.cc:616
+msgid "Remember to re-plug your device."
+msgstr ""
+
+#: src/SyncStatusDlg.cc:652
+msgid "Hide Details"
+msgstr ""
+
+#: src/SyncStatusDlg.cc:676
+msgid "Sync terminated: "
+msgstr ""
+
+#: src/SyncStatusDlg.cc:678
+msgid "Sync finished: "
+msgstr ""
+
+#: src/SyncStatusDlg.cc:681
+msgid " with error code "
+msgstr ""
+
+#: src/TaskEditDlg.cc:42
+msgid "Task Record"
+msgstr ""
+
+#: src/TaskEditDlg.cc:62
+msgid "Task:"
+msgstr ""
+
+#: src/TaskEditDlg.cc:65
+msgid "Status:"
+msgstr ""
+
+#: src/TaskEditDlg.cc:76
+msgid "Not Started"
+msgstr ""
+
+#: src/TaskEditDlg.cc:77
+msgid "In Progress"
+msgstr ""
+
+#: src/TaskEditDlg.cc:78
+msgid "Completed"
+msgstr ""
+
+#: src/TaskEditDlg.cc:79
+msgid "Waiting"
+msgstr ""
+
+#: src/TaskEditDlg.cc:80
+msgid "Deferred"
+msgstr ""
+
+#: src/TaskEditDlg.cc:83
+msgid "Priority:"
+msgstr ""
+
+#: src/TaskEditDlg.cc:92
+msgid "High"
+msgstr ""
+
+#: src/TaskEditDlg.cc:93
+msgid "Normal"
+msgstr ""
+
+#: src/TaskEditDlg.cc:94
+msgid "Low"
+msgstr ""
+
+#: src/TaskEditDlg.cc:97
+msgid "Due:"
+msgstr ""
+
+#: src/TaskEditDlg.cc:231
+msgid "Task Event"
+msgstr ""
+
+#: src/barrydesktop.cc:70
+msgid ""
+"A serious error occurred while probing the USB subsystem for BlackBerry(R) "
+"devices: "
+msgstr ""
+
+#: src/barrydesktop.cc:72
+msgid "USB Error"
+msgstr ""
+
+#: src/barrydesktop.cc:133
+msgid ""
+"No OpenSync libraries were found. Sync will be unavailable until you install "
+"OpenSync version 0.22 or version 0.4x on your system, along with the needed "
+"plugins."
+msgstr ""
+
+#: src/barrydesktop.cc:133
+msgid "OpenSync Not Found"
+msgstr ""
+
+#: src/blistevo.cc:42
+msgid "Addressbook:"
+msgstr ""
+
+#: src/blistevo.cc:44
+msgid "Events:"
+msgstr ""
+
+#: src/bsynccl.cc:140 src/bsyncjail.cc:342
+msgid ""
+"This is a helper program for barrydesktop, and\n"
+"is not intended to be called directly.\n"
+msgstr ""
+
+#: src/bsyncjail.cc:123
+msgid "Unable to connect to server."
+msgstr ""
+
+#: src/bsyncjail.cc:134
+msgid "Can't find matching engine for: "
+msgstr ""
+
+#: src/bsyncjail.cc:144
+msgid "Unknown engine number: "
+msgstr ""
+
+#: src/bsyncjail.cc:232
+msgid "Invalid server response: "
+msgstr ""
+
+#: src/bsyncjail.cc:240
+msgid "Invalid Select command from server: "
+msgstr ""
+
+#: src/bsyncjail.cc:250
+msgid "Abort not supported, and server sent Abort command."
+msgstr ""
+
+#: src/bsyncjail.cc:256
+msgid "Ignore not supported, and server sent Ignore command."
+msgstr ""
+
+#: src/bsyncjail.cc:262
+msgid "Keep Newer not supported, and server sent Keep Newer command."
+msgstr ""
+
+#: src/bsyncjail.cc:267
+msgid "Invalid command from server: "
+msgstr ""
+
+#: src/bsyncjail.cc:278
+msgid "Lost connection with server"
+msgstr ""
+
+#: src/bsyncjail.cc:353
+msgid "Unable to initialize wxWidgets library, aborting."
+msgstr ""
+
+#: src/bsyncjail.cc:359
+msgid "bsyncjail exiting with code: "
+msgstr ""
+
+#: src/deviceset.cc:195 src/deviceset.cc:196
+msgid "yes"
+msgstr ""
+
+#: src/deviceset.cc:195 src/deviceset.cc:196
+msgid "no"
+msgstr ""
+
+#: src/exechelper.cc:69
+msgid "Application Run Error"
+msgstr ""
+
+#: src/exechelper.cc:160
+msgid " is already running."
+msgstr ""
+
+#: src/exechelper.cc:171
+msgid "Failed to run "
+msgstr ""
+
+#: src/exechelper.cc:173
+msgid ". Please make sure it is installed and in your PATH."
+msgstr ""
+
+#: src/null-os22.cc:30 src/null-os22.cc:87 src/null-os22.cc:145
+#: src/null-os22.cc:150 src/null-os22.cc:155 src/null-os22.cc:160
+#: src/null-os22.cc:165 src/null-os22.cc:170 src/null-os22.cc:241
+#: src/null-os40.cc:85 src/null-os40.cc:152 src/null-os40.cc:157
+#: src/null-os40.cc:162 src/null-os40.cc:167 src/null-os40.cc:172
+#: src/null-os40.cc:177
+msgid "Not supported on this system."
+msgstr ""
+
+#: src/null-os22.cc:40
+msgid "OpenSync 0.22 support was not compiled in."
+msgstr ""
+
+#: src/null-os40.cc:38
+msgid "OpenSync 0.4x support was not compiled in."
+msgstr ""
+
+#: src/os22.cc:248 src/os40.cc:547
+msgid "ADDED"
+msgstr ""
+
+#: src/os22.cc:249 src/os40.cc:548
+msgid "UNMODIFIED"
+msgstr ""
+
+#: src/os22.cc:250 src/os40.cc:549
+msgid "DELETED"
+msgstr ""
+
+#: src/os22.cc:251 src/os40.cc:550
+msgid "MODIFIED"
+msgstr ""
+
+#: src/os22.cc:291
+msgid "Bad change_id, or error getting nth change object."
+msgstr ""
+
+#: src/os22.cc:315
+msgid "Conflict not ignored: "
+msgstr ""
+
+#: src/os22.cc:330
+msgid "Conflict not resolved: "
+msgstr ""
+
+#: src/os22.cc:377 src/os22.cc:986 src/os22.cc:997 src/os22.cc:1022
+#: src/os22.cc:1033 src/os40.cc:2016 src/os40.cc:2067 src/os40.cc:2100
+#: src/os40.cc:2232
+msgid "Member "
+msgstr ""
+
+#: src/os22.cc:386 src/os40.cc:1001
+msgid " just connected"
+msgstr ""
+
+#: src/os22.cc:389 src/os40.cc:1008
+msgid " just disconnected"
+msgstr ""
+
+#: src/os22.cc:392 src/os40.cc:1011
+msgid " just sent all changes"
+msgstr ""
+
+#: src/os22.cc:395 src/os40.cc:1014
+msgid " committed all changes"
+msgstr ""
+
+#: src/os22.cc:398
+msgid " had an error while connecting: "
+msgstr ""
+
+#: src/os22.cc:402
+msgid " had an error while getting changes: "
+msgstr ""
+
+#: src/os22.cc:407
+msgid " had an error while calling sync done: "
+msgstr ""
+
+#: src/os22.cc:412
+msgid " had an error while disconnecting: "
+msgstr ""
+
+#: src/os22.cc:417
+msgid " had an error while commiting changes: "
+msgstr ""
+
+#: src/os22.cc:436 src/os40.cc:1042
+msgid "member_status error: "
+msgstr ""
+
+#: src/os22.cc:440 src/os40.cc:1046
+msgid "Unknown exception caught in member_status()"
+msgstr ""
+
+#: src/os22.cc:458 src/os22.cc:469
+msgid "Received an entry "
+msgstr ""
+
+#: src/os22.cc:460
+msgid " without data from member "
+msgstr ""
+
+#: src/os22.cc:465 src/os22.cc:491
+msgid "Change type: "
+msgstr ""
+
+#: src/os22.cc:471
+msgid " with data of size "
+msgstr ""
+
+#: src/os22.cc:473 src/os22.cc:509
+msgid " from member "
+msgstr ""
+
+#: src/os22.cc:478
+msgid "Change type:"
+msgstr ""
+
+#: src/os22.cc:482
+msgid "Sent an entry "
+msgstr ""
+
+#: src/os22.cc:484
+msgid " of size "
+msgstr ""
+
+#: src/os22.cc:486 src/os22.cc:498
+msgid " to member "
+msgstr ""
+
+#: src/os22.cc:496
+msgid "Error writing entry "
+msgstr ""
+
+#: src/os22.cc:507
+msgid "Error reading entry "
+msgstr ""
+
+#: src/os22.cc:525
+msgid "entry_status error:"
+msgstr ""
+
+#: src/os22.cc:529 src/os40.cc:856
+msgid "Unknown exception caught in entry_status()"
+msgstr ""
+
+#: src/os22.cc:544
+msgid "The previous synchronization was unclean. Slow-syncing."
+msgstr ""
+
+#: src/os22.cc:547 src/os40.cc:911
+msgid "All clients connected or error"
+msgstr ""
+
+#: src/os22.cc:550 src/os40.cc:949
+msgid "All conflicts have been reported"
+msgstr ""
+
+#: src/os22.cc:553 src/os40.cc:917
+msgid "All clients sent changes or error"
+msgstr ""
+
+#: src/os22.cc:556 src/os40.cc:932
+msgid "All clients have written"
+msgstr ""
+
+#: src/os22.cc:559 src/os40.cc:935
+msgid "All clients have disconnected"
+msgstr ""
+
+#: src/os22.cc:562 src/os40.cc:942
+msgid "The sync was successful"
+msgstr ""
+
+#: src/os22.cc:565 src/os40.cc:939
+msgid "The sync failed: "
+msgstr ""
+
+#: src/os22.cc:579 src/os40.cc:964
+msgid "engine_status error: "
+msgstr ""
+
+#: src/os22.cc:583 src/os40.cc:968
+msgid "Unknown exception caught in engine_status()"
+msgstr ""
+
+#: src/os22.cc:598 src/os40.cc:873
+msgid "Mapping solved"
+msgstr ""
+
+#: src/os22.cc:601
+msgid "Mapping Synced"
+msgstr ""
+
+#: src/os22.cc:605
+msgid "Mapping Write Error: "
+msgstr ""
+
+#: src/os22.cc:616 src/os40.cc:889
+msgid "mapping_status error: "
+msgstr ""
+
+#: src/os22.cc:620 src/os40.cc:893
+msgid "Unknown exception caught in mapping_status()"
+msgstr ""
+
+#: src/os22.cc:642 src/os40.cc:788
+msgid "Conflict not resolved. "
+msgstr ""
+
+#: src/os22.cc:646 src/os40.cc:792
+msgid "Unknown exception caught in conflict_handler()"
+msgstr ""
+
+#: src/os22.cc:772
+msgid "Error allocating opensync 0.22 environment"
+msgstr ""
+
+#: src/os22.cc:825
+msgid "Unable to load format environment in GetFormats (22)"
+msgstr ""
+
+#: src/os22.cc:867 src/os40.cc:1866
+msgid "Unable to find group with name: "
+msgstr ""
+
+#: src/os22.cc:894
+msgid "Group already exists: "
+msgstr ""
+
+#: src/os22.cc:902
+msgid "Unable to save group: "
+msgstr ""
+
+#: src/os22.cc:915 src/os22.cc:936 src/os22.cc:961 src/os22.cc:992
+#: src/os22.cc:1028 src/os22.cc:1058 src/os40.cc:1915 src/os40.cc:1934
+#: src/os40.cc:1961 src/os40.cc:1993 src/os40.cc:2022 src/os40.cc:2073
+#: src/os40.cc:2106 src/os40.cc:2151 src/os40.cc:2192
+msgid "Group not found: "
+msgstr ""
+
+#: src/os22.cc:919
+msgid "Unable to delete group: "
+msgstr ""
+
+#: src/os22.cc:942
+msgid "Unable to connect plugin with member "
+msgstr ""
+
+#: src/os22.cc:948
+msgid "Unable to save member "
+msgstr ""
+
+#: src/os22.cc:966 src/os40.cc:1966 src/os40.cc:1983 src/os40.cc:1998
+#: src/os40.cc:2027 src/os40.cc:2078 src/os40.cc:2111
+msgid "Member not found: "
+msgstr ""
+
+#: src/os22.cc:973
+msgid "Unable to determine needed config: "
+msgstr ""
+
+#: src/os22.cc:986 src/os22.cc:1022 src/os40.cc:2016 src/os40.cc:2067
+#: src/os40.cc:2100
+msgid " of group '"
+msgstr ""
+
+#: src/os22.cc:986 src/os22.cc:1022 src/os40.cc:2016 src/os40.cc:2067
+#: src/os40.cc:2100
+msgid "' does not accept configuration."
+msgstr ""
+
+#: src/os22.cc:997 src/os22.cc:1033
+msgid " not found."
+msgstr ""
+
+#: src/os22.cc:1005
+msgid "Unable to retrieve config: "
+msgstr ""
+
+#: src/os22.cc:1041
+msgid "Unable to save member's config: "
+msgstr ""
+
+#: src/os22.cc:1078
+msgid "Error while synchronizing: "
+msgstr ""
+
+#: src/os22.cc:1099
+msgid "Error initializing osengine: "
+msgstr ""
+
+#: src/os22.cc:1111
+msgid "Error during sync: "
+msgstr ""
+
+#: src/os40.cc:446
+msgid "(NULL error msg)"
+msgstr ""
+
+#: src/os40.cc:609
+msgid "Problems while aborting: "
+msgstr ""
+
+#: src/os40.cc:815
+msgid "Received an entry"
+msgstr ""
+
+#: src/os40.cc:816
+msgid "from"
+msgstr ""
+
+#: src/os40.cc:821
+msgid "Sent an entry"
+msgstr ""
+
+#: src/os40.cc:822
+msgid "to"
+msgstr ""
+
+#: src/os40.cc:828
+msgid "Error for entry"
+msgstr ""
+
+#: src/os40.cc:829
+msgid "and"
+msgstr ""
+
+#: src/os40.cc:839
+msgid " member "
+msgstr ""
+
+#: src/os40.cc:852
+msgid "entry_status error: "
+msgstr ""
+
+#: src/os40.cc:878
+msgid "Mapping error: "
+msgstr ""
+
+#: src/os40.cc:920
+msgid "All changes got mapped"
+msgstr ""
+
+#: src/os40.cc:923
+msgid "All changes got multiplied"
+msgstr ""
+
+#: src/os40.cc:926
+msgid "All changes got prepared for write"
+msgstr ""
+
+#: src/os40.cc:945
+msgid "The previous synchronization was unclean. Slow-syncing"
+msgstr ""
+
+#: src/os40.cc:952
+msgid "All clients reported sync done"
+msgstr ""
+
+#: src/os40.cc:983
+msgid "Main sink"
+msgstr ""
+
+#: src/os40.cc:985
+msgid " sink"
+msgstr ""
+
+#: src/os40.cc:990
+msgid " of member "
+msgstr ""
+
+#: src/os40.cc:1017
+msgid " reported sync done"
+msgstr ""
+
+#: src/os40.cc:1020
+msgid " discovered its objtypes"
+msgstr ""
+
+#: src/os40.cc:1023
+msgid " had an error: "
+msgstr ""
+
+#: src/os40.cc:1071
+msgid "Error handling summary item. "
+msgstr ""
+
+#: src/os40.cc:1075
+msgid "Unknown exception caught in multiply_summary()"
+msgstr ""
+
+#: src/os40.cc:1444
+msgid "Username (authentication parameter) is not supported in plugin!"
+msgstr ""
+
+#: src/os40.cc:1482
+msgid "Password authentication is not supported in plugin!"
+msgstr ""
+
+#: src/os40.cc:1938
+msgid "Plugin not found: "
+msgstr ""
+
+#: src/os40.cc:2004 src/os40.cc:2033 src/os40.cc:2084 src/os40.cc:2117
+msgid "Unable to find plugin with name: "
+msgstr ""
+
+#: src/os40.cc:2171
+msgid "discover failed: no objtypes returned"
+msgstr ""
+
+#: src/os40.cc:2232
+msgid " has no objtypes. Has it already been discovered?"
+msgstr ""
+
+#: src/osbase.cc:159
+msgid ""
+"Which entry do you want to use?\n"
+"[1-9] To select a side"
+msgstr ""
+
+#: src/osbase.cc:163
+msgid ", [A]bort"
+msgstr ""
+
+#: src/osbase.cc:165
+msgid ", [D]uplicate"
+msgstr ""
+
+#: src/osbase.cc:168
+msgid ", [I]gnore"
+msgstr ""
+
+#: src/osbase.cc:171
+msgid ", Keep [N]ewer"
+msgstr ""
+
+#: src/osbase.cc:268
+msgid "Conflicting items:"
+msgstr ""
+
+#: src/osbase.cc:290
+msgid "Abort not supported!"
+msgstr ""
+
+#: src/osbase.cc:301
+msgid "Ignore not supported!"
+msgstr ""
+
+#: src/osbase.cc:308
+msgid "Keep Newer not supported!"
+msgstr ""
+
+#: src/osbase.cc:320 src/osbase.cc:327 src/osbase.cc:334 src/osbase.cc:344
+msgid "ERROR: "
+msgstr ""
+
+#: src/osbase.cc:350
+msgid "Synchronization Forecast Summary:"
+msgstr ""
+
+#: src/osbase.cc:353
+msgid "Do you want to continue the synchronization? (N/y): "
+msgstr ""
+
+#: src/osbase.cc:359
+msgid "Aborting! Synchronization got aborted by user!"
+msgstr ""
+
+#: src/osbase.cc:362
+msgid "OK! Completing synchronization!"
+msgstr ""
+
+#: src/osbase.cc:369
+msgid "CALLBACK ERROR: "
+msgstr ""
+
+#: src/osbase.cc:408
+msgid "Unable to load opensync 0.40: "
+msgstr ""
+
+#: src/osbase.cc:418
+msgid "Unable to load opensync 0.22: "
+msgstr ""
+
+#: src/osconfig.cc:41
+msgid "Unsupported"
+msgstr ""
+
+#: src/osconfig.cc:53
+msgid "Barry config must have valid pin number."
+msgstr ""
+
+#: src/osconfig.cc:72
+msgid ""
+"Unable to load pin number from Barry plugin config.  Consider this group "
+"corrupt, or not fully configured: "
+msgstr ""
+
+#: src/osconfig.cc:113
+msgid "No Barry plugins found in group '"
+msgstr ""
+
+#: src/osconfig.cc:113
+msgid "' and OSCG_THROW_ON_NO_BARRY is set."
+msgstr ""
+
+#: src/osconfig.cc:119
+msgid "Found "
+msgstr ""
+
+#: src/osconfig.cc:119
+msgid " Barry plugins in group '"
+msgstr ""
+
+#: src/osconfig.cc:119
+msgid "' and OSCG_THROW_ON_MULTIPLE_BARRIES is set."
+msgstr ""
+
+#: src/osconfig.cc:139
+msgid "Connected count of "
+msgstr ""
+
+#: src/osconfig.cc:139
+msgid " does not match member count of "
+msgstr ""
+
+#: src/osconfig.cc:152
+msgid "Can't match member ID: "
+msgstr ""
+
+#: src/osconfig.cc:157
+msgid "Plugin names don't match: "
+msgstr ""
+
+#: src/osconfig.cc:308
+msgid "Unsupported plugin '"
+msgstr ""
+
+#: src/osconfig.cc:308
+msgid "' in group '"
+msgstr ""
+
+#: src/osconfig.cc:308
+msgid "' and OSCG_THROW_ON_UNSUPPORTED is set."
+msgstr ""
+
+#: src/osconfig.cc:337
+msgid ""
+"Cannot delete individual members from an OpenSync group with versions < 0.40."
+msgstr ""
+
+#: src/osconfig.cc:350
+msgid "Tried to delete non-existent member ID "
+msgstr ""
+
+#: src/osconfig.cc:350
+msgid "from group"
+msgstr ""
+
+#: src/osconfig.cc:356
+msgid "Tried to delete member ID "
+msgstr ""
+
+#: src/osconfig.cc:356
+msgid " using plugin '"
+msgstr ""
+
+#: src/osconfig.cc:356
+msgid "' from group '"
+msgstr ""
+
+#: src/osconfig.cc:356
+msgid "', but the existing member uses plugin"
+msgstr ""
+
+#: src/osconfig.cc:376
+msgid "Tried to overwrite group '"
+msgstr ""
+
+#: src/osconfig.cc:376
+msgid "' with a Group set that did not match in ID's and plugin names."
+msgstr ""
+
+#: src/osconv22.cc:304 src/osconv22.cc:321 src/osconv22.cc:358
+#: src/osconv40.cc:269 src/osconv40.cc:307 src/osconv40.cc:344
+#: src/osconv40.cc:370
+msgid "Cannot save a plugin with a member_id of -1"
+msgstr ""
+
+#: src/tempdir.cc:40
+msgid "Cannot create temp directory: "
+msgstr ""
+
+#: src/wxval.h:69
+msgid "Invalid date!"
+msgstr ""
+
+#: src/wxval.h:69 src/wxval.h:157
+msgid "Validation"
+msgstr ""
+
+#: src/wxval.h:156
+msgid "Please select one of the radio buttons."
+msgstr ""
