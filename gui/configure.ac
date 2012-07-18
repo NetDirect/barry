@@ -11,7 +11,8 @@ AC_CONFIG_MACRO_DIR([m4])
 AM_INIT_AUTOMAKE
 
 AM_GNU_GETTEXT([external])
-AM_GNU_GETTEXT_VERSION([0.17])
+# this is the gettext version, not barry's version
+AM_GNU_GETTEXT_VERSION([0.18.1])
 
 #
 # Checks for programs.
