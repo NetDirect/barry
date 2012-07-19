@@ -66,9 +66,9 @@
 
 // Convenience macro to initialize i18n, using wxWidgets
 #define INIT_I18N(package) { \
-	/* Do gettext first, if possible */ \
+	/* Do gettext first, if possible, for libosyncwrap */ \
 	setlocale(LC_ALL, ""); \
-	bindtextdomain(package, LOCALEDIR); \
+	bindtextdomain("barryosyncwrap", LOCALEDIR); \
 	/* Init wxWidgets */ \
 	static wxLocale locale; \
 	locale.Init(); \

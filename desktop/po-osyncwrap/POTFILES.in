@@ -1,0 +1,34 @@
+# List of source files (for libosyncwrap only!) which contain
+# translatable strings.
+
+# Standalone programs
+src/blistevo.cc
+src/bsynccl.cc
+
+# This list should match Makefile.am's libosyncwrap fairly closely.
+src/dlopen.cc
+src/dlopen.h
+src/error.cc
+src/error.h
+src/null-os22.cc
+src/null-os40.cc
+src/deviceset.cc
+src/deviceset.h
+src/os22.cc
+src/os22.h
+src/os40.cc
+src/os40.h
+src/osbase.cc
+src/osbase.h
+src/osconfig.cc
+src/osconfig.h
+src/osconv22.cc
+src/osconv22.h
+src/osconv40.cc
+src/osconv40.h
+src/osprivatebase.h
+src/ostypes.cc
+src/ostypes.h
+src/tempdir.cc
+src/tempdir.h
+

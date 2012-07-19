@@ -4,5 +4,5 @@ ACLOCAL_AMFLAGS = -I m4
 EXTRA_DIST = COPYING ChangeLog README buildgen.sh \
 	doc
 
-SUBDIRS = po . images src man
+SUBDIRS = po po-osyncwrap . images src man
 

@@ -52,6 +52,7 @@ libosyncwrap_la_SOURCES = \
 	error.cc error.h \
 	dlopen.cc dlopen.h \
 	tempdir.cc tempdir.h \
+	deviceset.cc deviceset.h \
 	ostypes.cc ostypes.h \
 	osbase.cc osbase.h osprivatebase.h \
 	osconfig.cc osconfig.h \
@@ -110,8 +111,7 @@ barrydesktop_SOURCES = \
 	CUI_KDEPim.cc CUI_KDEPim.h \
 	EvoSources.cc EvoSources.h \
 	EvoCfgDlg.cc EvoCfgDlg.h \
-	EvoDefaultDlg.cc EvoDefaultDlg.h \
-	deviceset.cc deviceset.h
+	EvoDefaultDlg.cc EvoDefaultDlg.h
 barrydesktop_LDADD = libosyncwrap.la -ldl @WX_LIBS@ $(LIBXMLPP_LIBS) $(LIBGCAL_LIBS) $(EVOLUTION_LIBS)
 barrydesktop_CXXFLAGS = $(AM_CXXFLAGS) @WX_CXXFLAGS@ $(LIBXMLPP_CFLAGS) \
 	$(LIBGCAL_CFLAGS)
@@ -125,7 +125,6 @@ bsynccl_LDADD = libosyncwrap.la -ldl
 bsynccl_CXXFLAGS = $(AM_CXXFLAGS)
 
 ostest_SOURCES = \
-	deviceset.cc deviceset.h \
 	ostest.cc
 ostest_CXXFLAGS =
 if WITH_OPENSYNC22

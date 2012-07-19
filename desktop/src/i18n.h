@@ -42,7 +42,7 @@
 // Set the DEFAULT_TEXT_DOMAIN so that gettext.h uses dgettext()
 // instead of gettext().  This way we don't have to call textdomain()
 // and hope that nobody changes it on us later.
-#define DEFAULT_TEXT_DOMAIN PACKAGE
+#define DEFAULT_TEXT_DOMAIN "barryosyncwrap"
 #include "gettext.h"
 
 // Define our own macro for plain const char* strings, so that
@@ -50,9 +50,9 @@
 #define _C(x)	gettext(x)
 
 // Convenience macro for main().
-#define INIT_I18N(package) { \
+#define INIT_I18N() { \
 	setlocale(LC_ALL, ""); \
-	bindtextdomain(package, LOCALEDIR); \
+	bindtextdomain("barryosyncwrap", LOCALEDIR); \
 	}
 
 #endif

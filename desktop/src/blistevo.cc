@@ -38,7 +38,7 @@ void DumpItems(const EvoSources::List &list)
 
 int main()
 {
-	INIT_I18N(PACKAGE);
+	INIT_I18N();
 
 	EvoSources es;
 	cout << "\n" << _C("Addressbook:") << "\n------------\n";

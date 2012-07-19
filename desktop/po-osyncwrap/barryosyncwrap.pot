@@ -1,0 +1,636 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Net Direct, Inc.
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: barrydesktop 0.18.4\n"
+"Report-Msgid-Bugs-To: http://netdirect.ca/barry\n"
+"POT-Creation-Date: 2012-07-19 16:48-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/blistevo.cc:44
+msgid "Addressbook:"
+msgstr ""
+
+#: src/blistevo.cc:46
+msgid "Events:"
+msgstr ""
+
+#: src/blistevo.cc:48
+msgid "Tasks:"
+msgstr ""
+
+#: src/blistevo.cc:50
+msgid "Memos:"
+msgstr ""
+
+#: src/bsynccl.cc:140
+msgid ""
+"This is a helper program for barrydesktop, and\n"
+"is not intended to be called directly.\n"
+msgstr ""
+
+#: src/null-os22.cc:30 src/null-os22.cc:87 src/null-os22.cc:145
+#: src/null-os22.cc:150 src/null-os22.cc:155 src/null-os22.cc:160
+#: src/null-os22.cc:165 src/null-os22.cc:170 src/null-os22.cc:241
+#: src/null-os40.cc:85 src/null-os40.cc:152 src/null-os40.cc:157
+#: src/null-os40.cc:162 src/null-os40.cc:167 src/null-os40.cc:172
+#: src/null-os40.cc:177
+msgid "Not supported on this system."
+msgstr ""
+
+#: src/null-os22.cc:40
+msgid "OpenSync 0.22 support was not compiled in."
+msgstr ""
+
+#: src/null-os40.cc:38
+msgid "OpenSync 0.4x support was not compiled in."
+msgstr ""
+
+#: src/os22.cc:248 src/os40.cc:547
+msgid "ADDED"
+msgstr ""
+
+#: src/os22.cc:249 src/os40.cc:548
+msgid "UNMODIFIED"
+msgstr ""
+
+#: src/os22.cc:250 src/os40.cc:549
+msgid "DELETED"
+msgstr ""
+
+#: src/os22.cc:251 src/os40.cc:550
+msgid "MODIFIED"
+msgstr ""
+
+#: src/os22.cc:291
+msgid "Bad change_id, or error getting nth change object."
+msgstr ""
+
+#: src/os22.cc:315
+msgid "Conflict not ignored: "
+msgstr ""
+
+#: src/os22.cc:330
+msgid "Conflict not resolved: "
+msgstr ""
+
+#: src/os22.cc:377 src/os22.cc:986 src/os22.cc:997 src/os22.cc:1022
+#: src/os22.cc:1033 src/os40.cc:2016 src/os40.cc:2067 src/os40.cc:2100
+#: src/os40.cc:2232
+msgid "Member "
+msgstr ""
+
+#: src/os22.cc:386 src/os40.cc:1001
+msgid " just connected"
+msgstr ""
+
+#: src/os22.cc:389 src/os40.cc:1008
+msgid " just disconnected"
+msgstr ""
+
+#: src/os22.cc:392 src/os40.cc:1011
+msgid " just sent all changes"
+msgstr ""
+
+#: src/os22.cc:395 src/os40.cc:1014
+msgid " committed all changes"
+msgstr ""
+
+#: src/os22.cc:398
+msgid " had an error while connecting: "
+msgstr ""
+
+#: src/os22.cc:402
+msgid " had an error while getting changes: "
+msgstr ""
+
+#: src/os22.cc:407
+msgid " had an error while calling sync done: "
+msgstr ""
+
+#: src/os22.cc:412
+msgid " had an error while disconnecting: "
+msgstr ""
+
+#: src/os22.cc:417
+msgid " had an error while commiting changes: "
+msgstr ""
+
+#: src/os22.cc:436 src/os40.cc:1042
+msgid "member_status error: "
+msgstr ""
+
+#: src/os22.cc:440 src/os40.cc:1046
+msgid "Unknown exception caught in member_status()"
+msgstr ""
+
+#: src/os22.cc:458 src/os22.cc:469
+msgid "Received an entry "
+msgstr ""
+
+#: src/os22.cc:460
+msgid " without data from member "
+msgstr ""
+
+#: src/os22.cc:465 src/os22.cc:491
+msgid "Change type: "
+msgstr ""
+
+#: src/os22.cc:471
+msgid " with data of size "
+msgstr ""
+
+#: src/os22.cc:473 src/os22.cc:509
+msgid " from member "
+msgstr ""
+
+#: src/os22.cc:478
+msgid "Change type:"
+msgstr ""
+
+#: src/os22.cc:482
+msgid "Sent an entry "
+msgstr ""
+
+#: src/os22.cc:484
+msgid " of size "
+msgstr ""
+
+#: src/os22.cc:486 src/os22.cc:498
+msgid " to member "
+msgstr ""
+
+#: src/os22.cc:496
+msgid "Error writing entry "
+msgstr ""
+
+#: src/os22.cc:507
+msgid "Error reading entry "
+msgstr ""
+
+#: src/os22.cc:525
+msgid "entry_status error:"
+msgstr ""
+
+#: src/os22.cc:529 src/os40.cc:856
+msgid "Unknown exception caught in entry_status()"
+msgstr ""
+
+#: src/os22.cc:544
+msgid "The previous synchronization was unclean. Slow-syncing."
+msgstr ""
+
+#: src/os22.cc:547 src/os40.cc:911
+msgid "All clients connected or error"
+msgstr ""
+
+#: src/os22.cc:550 src/os40.cc:949
+msgid "All conflicts have been reported"
+msgstr ""
+
+#: src/os22.cc:553 src/os40.cc:917
+msgid "All clients sent changes or error"
+msgstr ""
+
+#: src/os22.cc:556 src/os40.cc:932
+msgid "All clients have written"
+msgstr ""
+
+#: src/os22.cc:559 src/os40.cc:935
+msgid "All clients have disconnected"
+msgstr ""
+
+#: src/os22.cc:562 src/os40.cc:942
+msgid "The sync was successful"
+msgstr ""
+
+#: src/os22.cc:565 src/os40.cc:939
+msgid "The sync failed: "
+msgstr ""
+
+#: src/os22.cc:579 src/os40.cc:964
+msgid "engine_status error: "
+msgstr ""
+
+#: src/os22.cc:583 src/os40.cc:968
+msgid "Unknown exception caught in engine_status()"
+msgstr ""
+
+#: src/os22.cc:598 src/os40.cc:873
+msgid "Mapping solved"
+msgstr ""
+
+#: src/os22.cc:601
+msgid "Mapping Synced"
+msgstr ""
+
+#: src/os22.cc:605
+msgid "Mapping Write Error: "
+msgstr ""
+
+#: src/os22.cc:616 src/os40.cc:889
+msgid "mapping_status error: "
+msgstr ""
+
+#: src/os22.cc:620 src/os40.cc:893
+msgid "Unknown exception caught in mapping_status()"
+msgstr ""
+
+#: src/os22.cc:642 src/os40.cc:788
+msgid "Conflict not resolved. "
+msgstr ""
+
+#: src/os22.cc:646 src/os40.cc:792
+msgid "Unknown exception caught in conflict_handler()"
+msgstr ""
+
+#: src/os22.cc:772
+msgid "Error allocating opensync 0.22 environment"
+msgstr ""
+
+#: src/os22.cc:825
+msgid "Unable to load format environment in GetFormats (22)"
+msgstr ""
+
+#: src/os22.cc:867 src/os40.cc:1866
+msgid "Unable to find group with name: "
+msgstr ""
+
+#: src/os22.cc:894
+msgid "Group already exists: "
+msgstr ""
+
+#: src/os22.cc:902
+msgid "Unable to save group: "
+msgstr ""
+
+#: src/os22.cc:915 src/os22.cc:936 src/os22.cc:961 src/os22.cc:992
+#: src/os22.cc:1028 src/os22.cc:1058 src/os40.cc:1915 src/os40.cc:1934
+#: src/os40.cc:1961 src/os40.cc:1993 src/os40.cc:2022 src/os40.cc:2073
+#: src/os40.cc:2106 src/os40.cc:2151 src/os40.cc:2192
+msgid "Group not found: "
+msgstr ""
+
+#: src/os22.cc:919
+msgid "Unable to delete group: "
+msgstr ""
+
+#: src/os22.cc:942
+msgid "Unable to connect plugin with member "
+msgstr ""
+
+#: src/os22.cc:948
+msgid "Unable to save member "
+msgstr ""
+
+#: src/os22.cc:966 src/os40.cc:1966 src/os40.cc:1983 src/os40.cc:1998
+#: src/os40.cc:2027 src/os40.cc:2078 src/os40.cc:2111
+msgid "Member not found: "
+msgstr ""
+
+#: src/os22.cc:973
+msgid "Unable to determine needed config: "
+msgstr ""
+
+#: src/os22.cc:986 src/os22.cc:1022 src/os40.cc:2016 src/os40.cc:2067
+#: src/os40.cc:2100
+msgid " of group '"
+msgstr ""
+
+#: src/os22.cc:986 src/os22.cc:1022 src/os40.cc:2016 src/os40.cc:2067
+#: src/os40.cc:2100
+msgid "' does not accept configuration."
+msgstr ""
+
+#: src/os22.cc:997 src/os22.cc:1033
+msgid " not found."
+msgstr ""
+
+#: src/os22.cc:1005
+msgid "Unable to retrieve config: "
+msgstr ""
+
+#: src/os22.cc:1041
+msgid "Unable to save member's config: "
+msgstr ""
+
+#: src/os22.cc:1078
+msgid "Error while synchronizing: "
+msgstr ""
+
+#: src/os22.cc:1099
+msgid "Error initializing osengine: "
+msgstr ""
+
+#: src/os22.cc:1111
+msgid "Error during sync: "
+msgstr ""
+
+#: src/os40.cc:446
+msgid "(NULL error msg)"
+msgstr ""
+
+#: src/os40.cc:609
+msgid "Problems while aborting: "
+msgstr ""
+
+#: src/os40.cc:815
+msgid "Received an entry"
+msgstr ""
+
+#: src/os40.cc:816
+msgid "from"
+msgstr ""
+
+#: src/os40.cc:821
+msgid "Sent an entry"
+msgstr ""
+
+#: src/os40.cc:822
+msgid "to"
+msgstr ""
+
+#: src/os40.cc:828
+msgid "Error for entry"
+msgstr ""
+
+#: src/os40.cc:829
+msgid "and"
+msgstr ""
+
+#: src/os40.cc:839
+msgid " member "
+msgstr ""
+
+#: src/os40.cc:852
+msgid "entry_status error: "
+msgstr ""
+
+#: src/os40.cc:878
+msgid "Mapping error: "
+msgstr ""
+
+#: src/os40.cc:920
+msgid "All changes got mapped"
+msgstr ""
+
+#: src/os40.cc:923
+msgid "All changes got multiplied"
+msgstr ""
+
+#: src/os40.cc:926
+msgid "All changes got prepared for write"
+msgstr ""
+
+#: src/os40.cc:945
+msgid "The previous synchronization was unclean. Slow-syncing"
+msgstr ""
+
+#: src/os40.cc:952
+msgid "All clients reported sync done"
+msgstr ""
+
+#: src/os40.cc:983
+msgid "Main sink"
+msgstr ""
+
+#: src/os40.cc:985
+msgid " sink"
+msgstr ""
+
+#: src/os40.cc:990
+msgid " of member "
+msgstr ""
+
+#: src/os40.cc:1017
+msgid " reported sync done"
+msgstr ""
+
+#: src/os40.cc:1020
+msgid " discovered its objtypes"
+msgstr ""
+
+#: src/os40.cc:1023
+msgid " had an error: "
+msgstr ""
+
+#: src/os40.cc:1071
+msgid "Error handling summary item. "
+msgstr ""
+
+#: src/os40.cc:1075
+msgid "Unknown exception caught in multiply_summary()"
+msgstr ""
+
+#: src/os40.cc:1444
+msgid "Username (authentication parameter) is not supported in plugin!"
+msgstr ""
+
+#: src/os40.cc:1482
+msgid "Password authentication is not supported in plugin!"
+msgstr ""
+
+#: src/os40.cc:1938
+msgid "Plugin not found: "
+msgstr ""
+
+#: src/os40.cc:2004 src/os40.cc:2033 src/os40.cc:2084 src/os40.cc:2117
+msgid "Unable to find plugin with name: "
+msgstr ""
+
+#: src/os40.cc:2171
+msgid "discover failed: no objtypes returned"
+msgstr ""
+
+#: src/os40.cc:2232
+msgid " has no objtypes. Has it already been discovered?"
+msgstr ""
+
+#: src/osbase.cc:159
+msgid ""
+"Which entry do you want to use?\n"
+"[1-9] To select a side"
+msgstr ""
+
+#: src/osbase.cc:163
+msgid ", [A]bort"
+msgstr ""
+
+#: src/osbase.cc:165
+msgid ", [D]uplicate"
+msgstr ""
+
+#: src/osbase.cc:168
+msgid ", [I]gnore"
+msgstr ""
+
+#: src/osbase.cc:171
+msgid ", Keep [N]ewer"
+msgstr ""
+
+#: src/osbase.cc:268
+msgid "Conflicting items:"
+msgstr ""
+
+#: src/osbase.cc:290
+msgid "Abort not supported!"
+msgstr ""
+
+#: src/osbase.cc:301
+msgid "Ignore not supported!"
+msgstr ""
+
+#: src/osbase.cc:308
+msgid "Keep Newer not supported!"
+msgstr ""
+
+#: src/osbase.cc:320 src/osbase.cc:327 src/osbase.cc:334 src/osbase.cc:344
+msgid "ERROR: "
+msgstr ""
+
+#: src/osbase.cc:350
+msgid "Synchronization Forecast Summary:"
+msgstr ""
+
+#: src/osbase.cc:353
+msgid "Do you want to continue the synchronization? (N/y): "
+msgstr ""
+
+#: src/osbase.cc:359
+msgid "Aborting! Synchronization got aborted by user!"
+msgstr ""
+
+#: src/osbase.cc:362
+msgid "OK! Completing synchronization!"
+msgstr ""
+
+#: src/osbase.cc:369
+msgid "CALLBACK ERROR: "
+msgstr ""
+
+#: src/osbase.cc:408
+msgid "Unable to load opensync 0.40: "
+msgstr ""
+
+#: src/osbase.cc:418
+msgid "Unable to load opensync 0.22: "
+msgstr ""
+
+#: src/osconfig.cc:41
+msgid "Unsupported"
+msgstr ""
+
+#: src/osconfig.cc:53
+msgid "Barry config must have valid pin number."
+msgstr ""
+
+#: src/osconfig.cc:72
+msgid ""
+"Unable to load pin number from Barry plugin config.  Consider this group "
+"corrupt, or not fully configured: "
+msgstr ""
+
+#: src/osconfig.cc:113
+msgid "No Barry plugins found in group '"
+msgstr ""
+
+#: src/osconfig.cc:113
+msgid "' and OSCG_THROW_ON_NO_BARRY is set."
+msgstr ""
+
+#: src/osconfig.cc:119
+msgid "Found "
+msgstr ""
+
+#: src/osconfig.cc:119
+msgid " Barry plugins in group '"
+msgstr ""
+
+#: src/osconfig.cc:119
+msgid "' and OSCG_THROW_ON_MULTIPLE_BARRIES is set."
+msgstr ""
+
+#: src/osconfig.cc:139
+msgid "Connected count of "
+msgstr ""
+
+#: src/osconfig.cc:139
+msgid " does not match member count of "
+msgstr ""
+
+#: src/osconfig.cc:152
+msgid "Can't match member ID: "
+msgstr ""
+
+#: src/osconfig.cc:157
+msgid "Plugin names don't match: "
+msgstr ""
+
+#: src/osconfig.cc:308
+msgid "Unsupported plugin '"
+msgstr ""
+
+#: src/osconfig.cc:308
+msgid "' in group '"
+msgstr ""
+
+#: src/osconfig.cc:308
+msgid "' and OSCG_THROW_ON_UNSUPPORTED is set."
+msgstr ""
+
+#: src/osconfig.cc:337
+msgid ""
+"Cannot delete individual members from an OpenSync group with versions < 0.40."
+msgstr ""
+
+#: src/osconfig.cc:350
+msgid "Tried to delete non-existent member ID "
+msgstr ""
+
+#: src/osconfig.cc:350
+msgid "from group"
+msgstr ""
+
+#: src/osconfig.cc:356
+msgid "Tried to delete member ID "
+msgstr ""
+
+#: src/osconfig.cc:356
+msgid " using plugin '"
+msgstr ""
+
+#: src/osconfig.cc:356
+msgid "' from group '"
+msgstr ""
+
+#: src/osconfig.cc:356
+msgid "', but the existing member uses plugin"
+msgstr ""
+
+#: src/osconfig.cc:376
+msgid "Tried to overwrite group '"
+msgstr ""
+
+#: src/osconfig.cc:376
+msgid "' with a Group set that did not match in ID's and plugin names."
+msgstr ""
+
+#: src/osconv22.cc:304 src/osconv22.cc:321 src/osconv22.cc:358
+#: src/osconv40.cc:269 src/osconv40.cc:307 src/osconv40.cc:344
+#: src/osconv40.cc:370
+msgid "Cannot save a plugin with a member_id of -1"
+msgstr ""
+
+#: src/tempdir.cc:40
+msgid "Cannot create temp directory: "
+msgstr ""

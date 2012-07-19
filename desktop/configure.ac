@@ -260,6 +260,7 @@ AC_CHECK_FUNCS([bzero gettimeofday memset select strcasecmp strchr strerror strt
 
 AC_CONFIG_FILES([Makefile
                  po/Makefile.in
+                 po-osyncwrap/Makefile.in
                  images/Makefile
                  src/Makefile
                  src/0.22/Makefile

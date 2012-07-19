@@ -1,0 +1,26 @@
+HOWTO to add a new language or update translation
+=================================================
+
+To add a new language
+---------------------
+
+Sample to add spanish language
+
+  $ cd <barrydesktop>/po-osyncwrap
+  $ msginit --locale=es --input=barrydesktop.pot
+  $ echo "es" >> LINGUAS
+  $ make update-po
+
+Then, send to barry team your work.
+
+To update translation
+---------------------
+
+You have to only edit a ".po" file.
+
+  $ cd <barrydesktop>/po-osyncwrap
+  $ vi es.po
+  $ make update-po
+
+Then, send to barry team your work.
+
