@@ -348,6 +348,7 @@ diff -ruN \
 	--exclude=debian \
 	--exclude='*.m4' \
 	--exclude=po \
+	--exclude=po-osyncwrap \
 	barry disttree/barry-*.*.*
 
 #
