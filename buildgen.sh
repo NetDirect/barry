@@ -54,7 +54,12 @@ cleangettext() {
 		po/Makevars.template \
 		po/fr.gmo \
 		po/es.gmo \
-		po/stamp-po
+		po/stamp-po \
+		po-osyncwrap/Makefile.in.in \
+		po-osyncwrap/Makevars.template \
+		po-osyncwrap/fr.gmo \
+		po-osyncwrap/es.gmo \
+		po-osyncwrap/stamp-po
 }
 
 #

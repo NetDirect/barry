@@ -13,6 +13,7 @@ if [ "$1" = "clean" ] ; then
 		src/Makefile.in src/*.bak \
 		src/0.22/Makefile.in \
 		src/0.40/Makefile.in \
+		config.rpath \
 		INSTALL \
 		config.h.in~
 else
