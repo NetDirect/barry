@@ -489,6 +489,8 @@ desktop-file-install --vendor netdirect \
 %attr(0644,root,root) %{_datadir}/pixmaps/barry_desktop_menu_icon.png
 %attr(0644,root,root) %{_datadir}/applications/*barrydesktop.desktop
 %attr(0644,root,root) %{_mandir}/man1/barrydesktop*
+%attr(0644,root,root) %{_datadir}/locale/*/LC_MESSAGES/barrydesktop.mo
+%attr(0644,root,root) %{_datadir}/locale/*/LC_MESSAGES/barryosyncwrap.mo
 %attr(-,root,root) %{_libdir}/libosyncwrap.so.*
 %attr(-,root,root) %{_libdir}/libosyncwrap.a
 %attr(-,root,root) %{_libdir}/libosyncwrap.so
@@ -515,6 +517,7 @@ desktop-file-install --vendor netdirect \
   removed all BuildRequires lines, to make spec file more portable
   across Fedora and openSUSE
 - use kdesu for openSUSE builds, beesu for Fedora
+- added desktop's barrydesktop.mo and barryosyncwrap.mo files
 
 * Tue May 15 2012 Chris Frey <cdfrey@foursquare.net> 0.18.3-0
 - version bump
