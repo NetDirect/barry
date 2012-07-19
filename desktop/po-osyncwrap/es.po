@@ -1,6 +1,6 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR Net Direct, Inc.
-# This file is distributed under the same license as the PACKAGE package.
+# Barry Spanish Translation File
+# Copyright (C) 2012 Net Direct, Inc.
+# This file is distributed under the same license as the Barry Desktop package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
 #, fuzzy
@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: barrydesktop 0.18.4\n"
 "Report-Msgid-Bugs-To: http://netdirect.ca/barry\n"
-"POT-Creation-Date: 2012-07-19 16:48-0400\n"
+"POT-Creation-Date: 2012-07-19 17:58-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,19 +17,19 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/blistevo.cc:44
+#: src/blistevo.cc:46
 msgid "Addressbook:"
 msgstr ""
 
-#: src/blistevo.cc:46
+#: src/blistevo.cc:48
 msgid "Events:"
 msgstr ""
 
-#: src/blistevo.cc:48
+#: src/blistevo.cc:50
 msgid "Tasks:"
 msgstr ""
 
-#: src/blistevo.cc:50
+#: src/blistevo.cc:52
 msgid "Memos:"
 msgstr ""
 
@@ -54,6 +54,14 @@ msgstr ""
 
 #: src/null-os40.cc:38
 msgid "OpenSync 0.4x support was not compiled in."
+msgstr ""
+
+#: src/deviceset.cc:195 src/deviceset.cc:196
+msgid "yes"
+msgstr ""
+
+#: src/deviceset.cc:195 src/deviceset.cc:196
+msgid "no"
 msgstr ""
 
 #: src/os22.cc:248 src/os40.cc:547

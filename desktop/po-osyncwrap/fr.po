@@ -1,5 +1,5 @@
 # Barry Desktop French Translation
-# Copyright (C) YEAR Net Direct, Inc.
+# Copyright (C) 2012 Net Direct, Inc.
 # This file is distributed under the same license as the Barry Desktop package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: barrydesktop 0.18.4\n"
 "Report-Msgid-Bugs-To: http://netdirect.ca/barry\n"
-"POT-Creation-Date: 2012-07-19 16:48-0400\n"
+"POT-Creation-Date: 2012-07-19 17:58-0400\n"
 "PO-Revision-Date: 2012-07-18 18:18-0400\n"
 "Last-Translator: Chris Frey <cdfrey@foursquare.net\n"
 "Language-Team: Barry\n"
@@ -16,19 +16,19 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/blistevo.cc:44
-msgid "Addressbook:"
-msgstr ""
-
 #: src/blistevo.cc:46
+msgid "Addressbook:"
+msgstr "French Addressbook:"
+
+#: src/blistevo.cc:48
 msgid "Events:"
 msgstr ""
 
-#: src/blistevo.cc:48
+#: src/blistevo.cc:50
 msgid "Tasks:"
 msgstr ""
 
-#: src/blistevo.cc:50
+#: src/blistevo.cc:52
 msgid "Memos:"
 msgstr ""
 
@@ -49,10 +49,18 @@ msgstr ""
 
 #: src/null-os22.cc:40
 msgid "OpenSync 0.22 support was not compiled in."
-msgstr ""
+msgstr "French OpenSync 0.22 support was not compiled in."
 
 #: src/null-os40.cc:38
 msgid "OpenSync 0.4x support was not compiled in."
+msgstr "French OpenSync 0.4x support was not compiled in."
+
+#: src/deviceset.cc:195 src/deviceset.cc:196
+msgid "yes"
+msgstr ""
+
+#: src/deviceset.cc:195 src/deviceset.cc:196
+msgid "no"
 msgstr ""
 
 #: src/os22.cc:248 src/os40.cc:547
@@ -633,6 +641,3 @@ msgstr ""
 #: src/tempdir.cc:40
 msgid "Cannot create temp directory: "
 msgstr ""
-
-#~ msgid "Barry Desktop Control Panel"
-#~ msgstr "French Barry Desktop Control Panel"

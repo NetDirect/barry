@@ -40,14 +40,16 @@ int main()
 {
 	INIT_I18N();
 
+	const char *separator = "\n-----------------------------------------\n";
+
 	EvoSources es;
-	cout << "\n" << _C("Addressbook:") << "\n------------\n";
+	cout << "\n" << _C("Addressbook:") << separator;
 	DumpItems(es.GetAddressBook());
-	cout << "\n" << _C("Events:") << "\n-------\n";
+	cout << "\n" << _C("Events:") << separator;
 	DumpItems(es.GetEvents());
-	cout << "\n" << _C("Tasks:") << "\n------\n";
+	cout << "\n" << _C("Tasks:") << separator;
 	DumpItems(es.GetTasks());
-	cout << "\n" << _C("Memos:") << "\n------\n";
+	cout << "\n" << _C("Memos:") << separator;
 	DumpItems(es.GetMemos());
 }
 
