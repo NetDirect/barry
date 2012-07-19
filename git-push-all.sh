@@ -2,7 +2,7 @@
 
 PATCH_CVS="$(dirname "$0")/git-patch-cvs.sh"
 
-BRANCHES="master scripts pristine-tar v0.17.2"
+BRANCHES="master scripts"
 
 set -e
 
