@@ -29,7 +29,6 @@
 #include <barry/scoped_lock.h>
 #include <tr1/memory>
 #include <list>
-#include "i18n.h"
 #include "wxi18n.h"
 
 class GUIDesktopConnector : public Barry::DesktopConnector

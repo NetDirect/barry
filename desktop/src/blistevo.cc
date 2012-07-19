@@ -38,6 +38,8 @@ void DumpItems(const EvoSources::List &list)
 
 int main()
 {
+	INIT_I18N(PACKAGE);
+
 	EvoSources es;
 	cout << "\n" << _C("Addressbook:") << "\n------------\n";
 	DumpItems(es.GetAddressBook());

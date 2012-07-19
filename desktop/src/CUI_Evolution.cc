@@ -28,7 +28,6 @@
 #include <wx/wx.h>
 #include <wx/process.h>
 #include "wxi18n.h"
-#include "i18n.h"
 
 namespace AppConfig {
 

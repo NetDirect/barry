@@ -28,7 +28,6 @@
 #include <wx/statline.h>
 #include <barry/barrybackup.h>
 #include <iostream>
-#include "i18n.h"
 #include "wxi18n.h"
 
 using namespace std;

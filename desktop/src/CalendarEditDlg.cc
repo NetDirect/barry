@@ -24,7 +24,6 @@
 #include <wx/valgen.h>
 #include "wxval.h"
 #include "util.h"
-#include "i18n.h"
 
 using namespace std;
 using namespace Barry;
@@ -584,7 +583,7 @@ bool CalendarEditDlg::TransferDataToWindow()
 			break;
 
 		default:
-			cerr << _C("Bad RecurringType in CalendarEditDlg") << endl;
+			cerr << "Bad RecurringType in CalendarEditDlg" << endl;
 			m_recur_choice = RC_NONE;
 			m_relative_date = false;
 		}

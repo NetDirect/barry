@@ -36,7 +36,6 @@
 #include <wx/filename.h>
 #include <barry/barry.h>
 #include "wxi18n.h"
-#include "i18n.h"
 
 using namespace std;
 

@@ -48,7 +48,7 @@ include_osyncwrap_HEADERS = \
 noinst_HEADERS =
 
 libosyncwrap_la_SOURCES = \
-	i18n.h wxi18n.h \
+	i18n.h wxi18n.h gettext.h \
 	error.cc error.h \
 	dlopen.cc dlopen.h \
 	tempdir.cc tempdir.h \
@@ -72,7 +72,7 @@ endif
 libosyncwrap_la_LDFLAGS = -ldl -version-info ${LIB_OSYNCWRAP_VERSION}
 
 barrydesktop_SOURCES = \
-	i18n.h wxi18n.h \
+	i18n.h wxi18n.h gettext.h \
 	barrydesktop.cc barrydesktop.h \
 	ipc.h optout.h \
 	EasyCondition.h \
@@ -146,6 +146,7 @@ xmlmap_CXXFLAGS = -DXMLMAP $(AM_CXXFLAGS) $(LIBXMLPP_CFLAGS)
 xmlmap_LDADD = $(LIBXMLPP_LIBS)
 
 blistevo_SOURCES = blistevo.cc \
+	i18n.h gettext.h \
 	EvoSources.cc EvoSources.h \
 	dlopen.cc dlopen.h \
 	error.cc error.h

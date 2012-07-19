@@ -23,7 +23,6 @@
 #include "BaseButtons.h"
 #include "barrydesktop.h"
 #include <barry/barry.h>
-#include "i18n.h"
 
 //////////////////////////////////////////////////////////////////////////////
 // MainMenuMode

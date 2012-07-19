@@ -27,7 +27,6 @@
 #include "barrydesktop.h"
 #include <string>
 #include "wxi18n.h"
-#include "i18n.h"
 
 using namespace std;
 using namespace OpenSync;

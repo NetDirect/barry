@@ -26,7 +26,6 @@
 #include "barrydesktop.h"
 #include "windowids.h"
 #include <string>
-#include "i18n.h"
 
 using namespace std;
 

@@ -21,7 +21,7 @@
 
 #include "PNGButton.h"
 #include "barrydesktop.h"
-#include "i18n.h"
+#include "wxi18n.h"
 
 //////////////////////////////////////////////////////////////////////////////
 // PNGButton

@@ -31,7 +31,7 @@
 #include "os40.h"
 #include "tempdir.h"
 #include "ostypes.h"
-#include "i18n.h"
+#include "wxi18n.h"
 
 using namespace std;
 
@@ -334,6 +334,8 @@ void BarrySyncJail::ReportError(const std::string &msg)
 
 int main(int argc, char *argv[])
 {
+	INIT_I18N(PACKAGE);
+
 	wxApp::CheckBuildOptions(WX_BUILD_OPTIONS_SIGNATURE, "bsyncjail");
 
 	cerr << "bsyncjail startup" << endl;

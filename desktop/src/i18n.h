@@ -31,8 +31,29 @@
 #ifndef __BARRY_DESKTOP_I18N_H__
 #define __BARRY_DESKTOP_I18N_H__
 
-// For std::string(_C("blah blah"))
-#define _C(x)	x
+// Make sure that wxi18n.h is not included in this module
+#ifdef __BARRY_DESKTOP_WXI18N_H__
+#error Cannot include both i18n.h and wxi18n.h in same module.
+#endif
+
+#include <config.h>
+#include <locale.h>
+
+// Set the DEFAULT_TEXT_DOMAIN so that gettext.h uses dgettext()
+// instead of gettext().  This way we don't have to call textdomain()
+// and hope that nobody changes it on us later.
+#define DEFAULT_TEXT_DOMAIN PACKAGE
+#include "gettext.h"
+
+// Define our own macro for plain const char* strings, so that
+// there is no conflict with wxWidgets.  For std::string(_C("blah blah")).
+#define _C(x)	gettext(x)
+
+// Convenience macro for main().
+#define INIT_I18N(package) { \
+	setlocale(LC_ALL, ""); \
+	bindtextdomain(package, LOCALEDIR); \
+	}
 
 #endif
 

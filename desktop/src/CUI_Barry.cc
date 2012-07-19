@@ -24,7 +24,6 @@
 #include <iostream>
 #include <sstream>
 #include "wxi18n.h"
-#include "i18n.h"
 
 using namespace std;
 
