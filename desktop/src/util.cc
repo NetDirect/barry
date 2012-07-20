@@ -191,8 +191,9 @@ namespace {
 // DrawButtonLabel
 //
 /// Draws the given label text in the specified area of the bitmap,
-/// modifying the bitmap in the process.  This is intended for use in
-/// creating the main Desktop buttons, but can be used on any image.
+/// modifying the DC in the process (the bitmap is only used for
+/// sizing).  This is intended for use in creating the main Desktop
+/// buttons, but can be used on any image.
 ///
 /// The left/top/right/bottom coordinates are relative to the 0,0 of
 /// the bitmap itself, and limit the area where the label text will be
@@ -213,7 +214,7 @@ namespace {
 ///
 /// If Font is invalid, DrawButtonLabelError will be thrown.
 ///
-void DrawButtonLabel(wxBitmap &bmp, const wxString &label,
+void DrawButtonLabelDC(wxDC &dc, const wxBitmap &bmp, const wxString &label,
 	const wxFont &orig_font, const wxColour &textfg,
 	int left, int top, int right, int bottom)
 {
@@ -240,8 +241,6 @@ void DrawButtonLabel(wxBitmap &bmp, const wxString &label,
 		throw DrawButtonLabelError(_C("Unable to create button: font is invalid"));
 
 	// create DC to work with, writing into the bitmap given to us
-	wxMemoryDC dc;
-	dc.SelectObject(bmp);
 	dc.SetFont(font);
 	dc.SetTextForeground(textfg);
 	dc.SetMapMode(wxMM_TEXT);

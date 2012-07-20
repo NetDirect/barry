@@ -67,7 +67,7 @@ void MakeDateRecent(bool checked, wxDatePickerCtrl *picker);
 bool IsParsable(const std::string &dbname);
 bool IsBuildable(const std::string &dbname);
 
-void DrawButtonLabel(wxBitmap &bmp, const wxString &label,
+void DrawButtonLabelDC(wxDC &dc, const wxBitmap &bmp, const wxString &label,
 	const wxFont &font, const wxColour &textfg,
 	int left, int top, int right, int bottom);
 

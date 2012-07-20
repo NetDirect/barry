@@ -28,6 +28,7 @@
 class PNGButton
 {
 	wxBitmap m_bitmaps[3]; // normal[0], focus[1], pushed[2]
+	wxString m_label;
 	wxBitmap m_background;
 	wxWindow *m_parent;
 	int m_id;
@@ -45,6 +46,7 @@ public:
 
 	void Init(wxDC &dc);
 	void Draw(wxDC &dc);
+	void Erase(wxDC &dc);
 	void Normal(wxDC &dc);
 	void Focus(wxDC &dc);
 	void Push(wxDC &dc);
