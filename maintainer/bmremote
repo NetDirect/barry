@@ -97,7 +97,7 @@ do_fedora fedora17 \
 do_fedora opensuse12.1 \
 	"$BMBUILDDIR/dists/opensuse12.1/x86_64/RPMS" \
 	"$BMBUILDDIR/dists/opensuse12.1/source-x86_64/SRPMS" "" \
-	"make rpmclean && make LIB_SUFFIX=64 BARRY_GUISU=kdesu rpm-libtar rpm-all"
+	"make rpmclean && && make opensuse && make LIB_SUFFIX=64 BARRY_GUISU=kdesu rpm-libtar rpm-all"
 
 
 #
