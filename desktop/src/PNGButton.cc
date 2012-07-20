@@ -80,6 +80,14 @@ void PNGButton::Init(wxDC &dc)
 		grab_dc.Blit(0, 0, width, height, &dc, m_x, m_y, wxCOPY, false);
 	}
 
+	// this font may be modified by DrawButtonLabelDC... keep it
+	// outside the loop so the same size font will be used for all
+	// buttons
+	int pointsize = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT)
+		.GetPointSize();
+	wxFont font(pointsize + 2, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL,
+		wxFONTWEIGHT_BOLD);
+
 	// for each button, draw it with background + transparency + label
 	for( int i = 0; i < 3; i++ ) {
 		wxBitmap final = wxBitmap(width, height);
@@ -95,11 +103,8 @@ void PNGButton::Init(wxDC &dc)
 			dc.DrawBitmap(m_bitmaps[i], 0, 0);
 
 			// draw the text
-			int pointsize = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT).GetPointSize();
-			wxFont font(pointsize + 2, wxFONTFAMILY_SWISS,
-				wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD);
 			DrawButtonLabelDC(dc, m_bitmaps[i],
-				m_label, font, *wxBLACK, 70, 12, -15, -15);
+				m_label, font, *wxBLACK, 80, 12, -15, -15);
 		}
 
 		// copy final button bitmap into m_bitmaps array for use

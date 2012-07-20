@@ -207,8 +207,10 @@ namespace {
 /// area.  A trailing \n character is not required, and not recommended.
 ///
 /// If the coordinate area is too small for the given text and font,
-/// the font will be reduced by 1 or two points and tried again.  If still
-/// too big, a DrawButtonLabelError exception will be thrown.
+/// the font will be reduced iteratively for a few points and tried again.
+/// If still too big, a DrawButtonLabelError exception will be thrown.
+/// Note that the font passed in will be modified in this case, in case
+/// the new point size needs to be used elsewhere.
 ///
 /// If the label contains an empty string, a DrawButtonLabelError exception will
 /// be thrown.  This is to prevent any unlabeled buttons in the system.
@@ -216,7 +218,7 @@ namespace {
 /// If Font is invalid, DrawButtonLabelError will be thrown.
 ///
 void DrawButtonLabelDC(wxDC &dc, const wxBitmap &bmp, const wxString &label,
-	const wxFont &orig_font, const wxColour &textfg,
+	wxFont &font, const wxColour &textfg,
 	int left, int top, int right, int bottom)
 {
 	// calculate the coordinates, and various sanity checks
@@ -240,7 +242,6 @@ void DrawButtonLabelDC(wxDC &dc, const wxBitmap &bmp, const wxString &label,
 		height = bottom - top;
 	}
 
-	wxFont font = orig_font;
 	if( !font.IsOk() )
 		throw DrawButtonLabelError(_C("Unable to create button: font is invalid"));
 
@@ -285,7 +286,7 @@ void DrawButtonLabelDC(wxDC &dc, const wxBitmap &bmp, const wxString &label,
 		}
 
 		// only reduce font so much...
-		if( tries >= 2 )
+		if( tries >= 4 )
 			throw DrawButtonLabelError(_C("Unable to create button: text is too big to fit"));
 
 		// too big, reduce font and try again

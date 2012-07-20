@@ -68,7 +68,7 @@ bool IsParsable(const std::string &dbname);
 bool IsBuildable(const std::string &dbname);
 
 void DrawButtonLabelDC(wxDC &dc, const wxBitmap &bmp, const wxString &label,
-	const wxFont &font, const wxColour &textfg,
+	wxFont &font, const wxColour &textfg,
 	int left, int top, int right, int bottom);
 
 // Determine parsable classes via template specialization
