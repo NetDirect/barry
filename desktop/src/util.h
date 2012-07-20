@@ -29,6 +29,16 @@
 #define BUTTON_STATE_FOCUS	1
 #define BUTTON_STATE_PUSHED	2
 
+// exception class for DrawButtonLabel() function below
+class DrawButtonLabelError : public std::runtime_error
+{
+public:
+	DrawButtonLabelError(const std::string &msg)
+		: std::runtime_error(msg)
+	{
+	}
+};
+
 template <class IteratorT, class StrFn>
 int GetMaxWidth(wxWindow *win, IteratorT begin, IteratorT end, StrFn sfn)
 {
@@ -45,15 +55,21 @@ int GetMaxWidth(wxWindow *win, IteratorT begin, IteratorT end, StrFn sfn)
 	return max_width;
 }
 
+const wxArrayString& GetButtonLabels();
 std::string GetBaseFilename(const std::string &filename);
 wxString GetImageFilename(const wxString &filename);
 wxString GetButtonFilename(int id, int state);
+wxString GetButtonLabel(int id);
 bool IsButtonEnabled(int id);
 class wxDatePickerCtrl;
 void MakeDateRecent(bool checked, wxDatePickerCtrl *picker);
 
 bool IsParsable(const std::string &dbname);
 bool IsBuildable(const std::string &dbname);
+
+void DrawButtonLabel(wxBitmap &bmp, const wxString &label,
+	const wxFont &font, const wxColour &textfg,
+	int left, int top, int right, int bottom);
 
 // Determine parsable classes via template specialization
 template <class RecordT>

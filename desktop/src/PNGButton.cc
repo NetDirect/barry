@@ -53,6 +53,15 @@ wxBitmap PNGButton::LoadButtonBitmap(int state)
 		wxGetApp().Yield();
 		throw std::runtime_error(_C("Cannot load button bitmap."));
 	}
+
+	int pointsize = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT)
+				.GetPointSize();
+	wxFont font(pointsize + 2, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL,
+		wxFONTWEIGHT_BOLD);
+
+	wxString label = GetButtonLabel(m_id);
+	DrawButtonLabel(bmp, label, font, *wxBLACK, 75, -1, -1, -1);
+
 	return bmp;
 }
 
