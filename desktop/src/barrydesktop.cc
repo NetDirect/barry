@@ -34,13 +34,30 @@ UsbScanSplash::UsbScanSplash()
 {
 	wxImage scanpng(GetImageFilename(_T("scanning.png")));
 	wxBitmap scanning(scanpng);
+
+	// draw i18n text on the splash screen
+	{
+		wxMemoryDC dc;
+		dc.SelectObject(scanning);
+
+		int pointsize = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT) .GetPointSize();
+		wxFont font(pointsize + 2, wxFONTFAMILY_SWISS,
+			wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
+
+		DrawButtonLabelDC(dc, scanning, _W("Scanning USB..."),
+			font, *wxBLACK, 70, -1, -1, -1);
+	}
+
 	std::auto_ptr<wxSplashScreen> splash( new wxSplashScreen(
 		scanning, wxSPLASH_CENTRE_ON_SCREEN, 0,
 		NULL, -1, wxDefaultPosition, wxDefaultSize,
 		wxSIMPLE_BORDER) );
 	splash->Show(true);
-	wxGetApp().Yield();
-	wxGetApp().Yield();
+	for( int i = 0; i < 4; i++ ) {
+		wxGetApp().Yield();
+		wxMilliSleep(250);
+		wxGetApp().Yield();
+	}
 }
 
 UsbScanSplash::~UsbScanSplash()
