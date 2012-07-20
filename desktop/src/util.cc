@@ -198,6 +198,7 @@ namespace {
 /// The left/top/right/bottom coordinates are relative to the 0,0 of
 /// the bitmap itself, and limit the area where the label text will be
 /// drawn.  If -1 is used for any of the values, the bitmap edge will
+/// be used.  If other negative numbers are used, (edge - value) will
 /// be used.
 ///
 /// The label text can contain \n characters to split into multiple
@@ -223,6 +224,9 @@ void DrawButtonLabelDC(wxDC &dc, const wxBitmap &bmp, const wxString &label,
 	if( top == -1 )		top = 0;
 	if( right == -1 )	right = bmp.GetWidth();
 	if( bottom == -1 )	bottom = bmp.GetHeight();
+
+	if( right < -1 )	right = bmp.GetWidth() + right;
+	if( bottom < -1 )	bottom = bmp.GetHeight() + bottom;
 
 	int width = right - left;
 	if( width < 0 ) {

@@ -99,7 +99,7 @@ void PNGButton::Init(wxDC &dc)
 			wxFont font(pointsize + 2, wxFONTFAMILY_SWISS,
 				wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD);
 			DrawButtonLabelDC(dc, m_bitmaps[i],
-				m_label, font, *wxBLACK, 70, -1, -1, -1);
+				m_label, font, *wxBLACK, 70, 12, -15, -15);
 		}
 
 		// copy final button bitmap into m_bitmaps array for use
