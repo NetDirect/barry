@@ -441,7 +441,7 @@ bool Device::BulkWrite(int ep, const Barry::Data &data, int timeout)
 			throw Error("Failed to perform a complete write");
 		}
 
-	} while( ret == -LIBUSB_ERROR_INTERRUPTED );
+	} while( ret == LIBUSB_ERROR_INTERRUPTED );
 
 	return ret >= 0;
 }
@@ -477,7 +477,7 @@ bool Device::BulkWrite(int ep, const void *data, size_t size, int timeout)
 			throw Error("Failed to perform a complete write");
 		}
 
-	} while( ret == -LIBUSB_ERROR_INTERRUPTED );
+	} while( ret == LIBUSB_ERROR_INTERRUPTED );
 
 	return ret >= 0;
 }
@@ -510,7 +510,7 @@ bool Device::InterruptRead(int ep, Barry::Data &data, int timeout)
 		if( transferred != 0 )
 			data.ReleaseBuffer(transferred);
 
-	} while( ret == -LIBUSB_ERROR_INTERRUPTED );
+	} while( ret == LIBUSB_ERROR_INTERRUPTED );
 
 	return ret >= 0;
 
@@ -545,7 +545,7 @@ bool Device::InterruptWrite(int ep, const Barry::Data &data, int timeout)
 			throw Error("Failed to perform a complete write");
 		}
 
-	} while( ret == -LIBUSB_ERROR_INTERRUPTED );
+	} while( ret == LIBUSB_ERROR_INTERRUPTED );
 
 	return ret >= 0;
 }
