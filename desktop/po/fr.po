@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: barrydesktop 0.18.4\n"
 "Report-Msgid-Bugs-To: http://netdirect.ca/barry\n"
-"POT-Creation-Date: 2012-07-20 00:48-0400\n"
+"POT-Creation-Date: 2012-07-20 21:27-0400\n"
 "PO-Revision-Date: 2012-07-18 18:18-0400\n"
 "Last-Translator: Chris Frey <cdfrey@foursquare.net\n"
 "Language-Team: Barry\n"
@@ -161,18 +161,16 @@ msgid "Tango Desktop Project - Public domain icons"
 msgstr ""
 
 #: src/CUI_Barry.cc:87
+#, c-format
 msgid ""
 "Please select the databases you wish to erase\n"
-"on device: "
-msgstr ""
-
-#: src/CUI_Barry.cc:90
-msgid ""
+"on device: %s\n"
+"\n"
 "Note: all synced databases must be erased\n"
 "to avoid a slow-sync."
 msgstr ""
 
-#: src/CUI_Barry.cc:117 src/CUI_Google.cc:113
+#: src/CUI_Barry.cc:117 src/CUI_Google.cc:111
 msgid "Select Databases to Erase"
 msgstr ""
 
@@ -182,11 +180,11 @@ msgid ""
 "device: "
 msgstr ""
 
-#: src/CUI_Barry.cc:128 src/CUI_Google.cc:124
+#: src/CUI_Barry.cc:128 src/CUI_Google.cc:122
 msgid "Proceed with erase?"
 msgstr ""
 
-#: src/CUI_Barry.cc:130 src/CUI_Google.cc:126
+#: src/CUI_Barry.cc:130 src/CUI_Google.cc:124
 msgid "Erase Confirmation"
 msgstr ""
 
@@ -276,7 +274,7 @@ msgstr ""
 msgid "Starting Evolution"
 msgstr ""
 
-#: src/CUI_Google.cc:97
+#: src/CUI_Google.cc:96
 msgid ""
 "Please select the databases you wish to erase\n"
 "in your Google Calendar: \n"
@@ -285,15 +283,15 @@ msgid ""
 "to avoid a slow-sync."
 msgstr ""
 
-#: src/CUI_Google.cc:108
+#: src/CUI_Google.cc:106
 msgid "Calendar"
 msgstr ""
 
-#: src/CUI_Google.cc:109 src/GroupCfgDlg.cc:322
+#: src/CUI_Google.cc:107 src/GroupCfgDlg.cc:322
 msgid "Contacts"
 msgstr ""
 
-#: src/CUI_Google.cc:119
+#: src/CUI_Google.cc:117
 msgid ""
 "You have selected the following databases to be completely erased from your "
 "Google Calendar:"
@@ -578,7 +576,8 @@ msgstr ""
 msgid "Work"
 msgstr ""
 
-#: src/ContactEditDlg.cc:52 src/util.cc:56
+#. TRANSLATORS: this is a main screen button label
+#: src/ContactEditDlg.cc:52 src/util.cc:65
 msgid "Misc"
 msgstr ""
 
@@ -740,55 +739,64 @@ msgstr ""
 msgid "Required Fields"
 msgstr ""
 
-#: src/ContactPhotoWidget.cc:40
+#. TRANSLATORS: this is the first part of a file selector string,
+#. as in: "Images files (*.bmp;*.jpg;*.png)"
+#. The file types are not part of the translation.
+#: src/ContactPhotoWidget.cc:43
 msgid "Image files"
 msgstr ""
 
-#: src/ContactPhotoWidget.cc:42 src/Mode_Browse.cc:1085
+#. TRANSLATORS: this is a file selector string.  See "Image files"
+#. for more info.
+#. TRANSLATORS: this is a file selector string,
+#. see "Image files" for more info.
+#: src/ContactPhotoWidget.cc:47 src/Mode_Browse.cc:1090
 msgid "All files"
 msgstr ""
 
-#: src/ContactPhotoWidget.cc:82
+#: src/ContactPhotoWidget.cc:87
 msgid "There is no photo available to save."
 msgstr ""
 
-#: src/ContactPhotoWidget.cc:83
+#: src/ContactPhotoWidget.cc:88
 msgid "No Photo"
 msgstr ""
 
-#: src/ContactPhotoWidget.cc:88
+#. TRANSLATORS: this is a file selector string.  See "Image files"
+#. for more info.
+#: src/ContactPhotoWidget.cc:95
 msgid "JPEG files"
 msgstr ""
 
-#: src/ContactPhotoWidget.cc:91
+#: src/ContactPhotoWidget.cc:98
 msgid "Save Photo as JPEG..."
 msgstr ""
 
-#: src/ContactPhotoWidget.cc:103
+#: src/ContactPhotoWidget.cc:110
 msgid "Load Photo..."
 msgstr ""
 
-#: src/ContactPhotoWidget.cc:112
+#: src/ContactPhotoWidget.cc:119
 msgid "Unable to load selected photo."
 msgstr ""
 
-#: src/ContactPhotoWidget.cc:113
+#: src/ContactPhotoWidget.cc:120
 msgid "Photo Load Error"
 msgstr ""
 
-#: src/ContactPhotoWidget.cc:121
+#: src/ContactPhotoWidget.cc:128
 msgid "Unable to convert image to JPEG."
 msgstr ""
 
-#: src/ContactPhotoWidget.cc:122
+#: src/ContactPhotoWidget.cc:129
 msgid "Photo Convert"
 msgstr ""
 
-#: src/ContactPhotoWidget.cc:165 src/Mode_Sync.cc:262
+#: src/ContactPhotoWidget.cc:172 src/Mode_Sync.cc:262
 msgid "No"
 msgstr ""
 
-#: src/ContactPhotoWidget.cc:165
+#: src/ContactPhotoWidget.cc:172
 msgid "Photo"
 msgstr ""
 
@@ -813,7 +821,8 @@ msgid "Memos:"
 msgstr ""
 
 #: src/EvoCfgDlg.cc:169
-msgid " does not exist."
+#, c-format
+msgid "File '%s' does not exist."
 msgstr ""
 
 #: src/EvoCfgDlg.cc:181
@@ -913,55 +922,57 @@ msgstr ""
 msgid "To-dos"
 msgstr ""
 
-#: src/GroupCfgDlg.cc:341
+#. TRANSLATORS: these 3 strings are options for default
+#. conflict resolution during syncing
+#: src/GroupCfgDlg.cc:343
 msgid "Favour device"
 msgstr ""
 
-#: src/GroupCfgDlg.cc:342
+#: src/GroupCfgDlg.cc:344
 msgid "Favour application"
 msgstr ""
 
-#: src/GroupCfgDlg.cc:343
+#: src/GroupCfgDlg.cc:345
 msgid "Ask me"
 msgstr ""
 
-#: src/GroupCfgDlg.cc:346
+#: src/GroupCfgDlg.cc:348
 msgid "To Resolve Conflicts:"
 msgstr ""
 
-#: src/GroupCfgDlg.cc:489
+#: src/GroupCfgDlg.cc:491
 msgid "Please select an application."
 msgstr ""
 
-#: src/GroupCfgDlg.cc:490 src/GroupCfgDlg.cc:498 src/GroupCfgDlg.cc:586
+#: src/GroupCfgDlg.cc:492 src/GroupCfgDlg.cc:500 src/GroupCfgDlg.cc:588
 msgid "Application Config"
 msgstr ""
 
-#: src/GroupCfgDlg.cc:497
+#: src/GroupCfgDlg.cc:499
 msgid "No configuration interface available for this Application."
 msgstr ""
 
-#: src/GroupCfgDlg.cc:564
+#: src/GroupCfgDlg.cc:566
 msgid "Please select an engine."
 msgstr ""
 
-#: src/GroupCfgDlg.cc:565 src/GroupCfgDlg.cc:572
+#: src/GroupCfgDlg.cc:567 src/GroupCfgDlg.cc:574
 msgid "Device Config"
 msgstr ""
 
-#: src/GroupCfgDlg.cc:571
+#: src/GroupCfgDlg.cc:573
 msgid "Barry doesn't have a PIN number.  This should never happen."
 msgstr ""
 
-#: src/GroupCfgDlg.cc:585
+#: src/GroupCfgDlg.cc:587
 msgid "The application plugin is not fully configured."
 msgstr ""
 
-#: src/GroupCfgDlg.cc:613
+#: src/GroupCfgDlg.cc:615
 msgid "Please select conflict resolution method."
 msgstr ""
 
-#: src/GroupCfgDlg.cc:614
+#: src/GroupCfgDlg.cc:616
 msgid "Conflict Resolution"
 msgstr ""
 
@@ -1025,140 +1036,139 @@ msgstr ""
 msgid "Destination device"
 msgstr ""
 
-#: src/MigrateDlg.cc:240
+#. TRANSLATORS: these 4 strings are write-mode options in the
+#. Migrate Device dialog
+#: src/MigrateDlg.cc:242
 msgid "Erase all, then restore"
 msgstr ""
 
-#: src/MigrateDlg.cc:241
+#: src/MigrateDlg.cc:243
 msgid "Add new, and overwrite existing"
 msgstr ""
 
-#: src/MigrateDlg.cc:242
+#: src/MigrateDlg.cc:244
 msgid "Add only, don't overwrite existing"
 msgstr ""
 
-#: src/MigrateDlg.cc:243
+#: src/MigrateDlg.cc:245
 msgid "Add every record as a new entry (may cause duplicates)"
 msgstr ""
 
-#: src/MigrateDlg.cc:245
+#: src/MigrateDlg.cc:247
 msgid "Write Mode:"
 msgstr ""
 
-#: src/MigrateDlg.cc:273
+#: src/MigrateDlg.cc:275
 msgid "Waiting for thread to close..."
 msgstr ""
 
-#: src/MigrateDlg.cc:334
+#: src/MigrateDlg.cc:336
 msgid ""
 "Please select a source and destination device, as well as the write mode."
 msgstr ""
 
-#: src/MigrateDlg.cc:335
+#: src/MigrateDlg.cc:337
 msgid "Migration Options Needed"
 msgstr ""
 
-#: src/MigrateDlg.cc:341
+#: src/MigrateDlg.cc:343
 msgid "Cannot migrate from and to the same PIN."
 msgstr ""
 
-#: src/MigrateDlg.cc:342
+#: src/MigrateDlg.cc:344
 msgid "Migration Options Error"
 msgstr ""
 
-#: src/MigrateDlg.cc:369
+#: src/MigrateDlg.cc:371
 msgid "Invalid write mode. This should never happen. Contact the developers."
 msgstr ""
 
-#: src/MigrateDlg.cc:370
+#: src/MigrateDlg.cc:372
 msgid "Internal Logic Error"
 msgstr ""
 
-#: src/MigrateDlg.cc:410
+#: src/MigrateDlg.cc:412
 msgid "Waiting for thread..."
 msgstr ""
 
-#: src/MigrateDlg.cc:419
+#: src/MigrateDlg.cc:421
 msgid "Cancelled by user..."
 msgstr ""
 
-#: src/MigrateDlg.cc:437
+#: src/MigrateDlg.cc:439
 msgid "Please plug in the target device now."
 msgstr ""
 
-#: src/MigrateDlg.cc:438
+#: src/MigrateDlg.cc:440
 msgid "Ready for Writing"
 msgstr ""
 
-#: src/MigrateDlg.cc:448
+#: src/MigrateDlg.cc:450
 msgid "Scanning USB for devices..."
 msgstr ""
 
-#: src/MigrateDlg.cc:467
+#: src/MigrateDlg.cc:469
 msgid "User input..."
 msgstr ""
 
-#: src/MigrateDlg.cc:472
+#: src/MigrateDlg.cc:474
 msgid "Please select the target device to write to:"
 msgstr ""
 
-#: src/MigrateDlg.cc:473
+#: src/MigrateDlg.cc:475
 msgid "Destination PIN"
 msgstr ""
 
-#: src/MigrateDlg.cc:485
+#: src/MigrateDlg.cc:487
 msgid "Cannot use the same device PIN as migration destination."
 msgstr ""
 
-#: src/MigrateDlg.cc:486
+#: src/MigrateDlg.cc:488
 msgid "Invalid Device Selection"
 msgstr ""
 
-#: src/MigrateDlg.cc:520 src/Mode_Browse.cc:254
-msgid "Please enter device password: "
+#: src/MigrateDlg.cc:522 src/Mode_Browse.cc:258
+#, c-format
+msgid "Please enter device password: (%d tries remaining)"
 msgstr ""
 
-#: src/MigrateDlg.cc:521 src/Mode_Browse.cc:255
-msgid " tries remaining"
-msgstr ""
-
-#: src/MigrateDlg.cc:526 src/Mode_Browse.cc:260
+#: src/MigrateDlg.cc:527 src/Mode_Browse.cc:263
 msgid "Device Password"
 msgstr ""
 
-#: src/MigrateDlg.cc:532
+#: src/MigrateDlg.cc:533
 msgid "Migration Error"
 msgstr ""
 
-#: src/MigrateDlg.cc:592
+#: src/MigrateDlg.cc:593
 msgid "Connecting..."
 msgstr ""
 
-#: src/MigrateDlg.cc:644
+#: src/MigrateDlg.cc:645
 msgid "Backing up database: "
 msgstr ""
 
-#: src/MigrateDlg.cc:671
+#: src/MigrateDlg.cc:672
 msgid "Backup aborted by user..."
 msgstr ""
 
-#: src/MigrateDlg.cc:692
+#: src/MigrateDlg.cc:693
 msgid "Connecting to target..."
 msgstr ""
 
-#: src/MigrateDlg.cc:733
+#: src/MigrateDlg.cc:734
 msgid "Writing database: "
 msgstr ""
 
-#: src/MigrateDlg.cc:764
+#: src/MigrateDlg.cc:765
 msgid "Restore aborted by user..."
 msgstr ""
 
-#: src/MigrateDlg.cc:770
+#: src/MigrateDlg.cc:771
 msgid "Unable to clear or write to database: "
 msgstr ""
 
-#: src/MigrateDlg.cc:773
+#: src/MigrateDlg.cc:774
 msgid "Continuing to process remaining records..."
 msgstr ""
 
@@ -1184,127 +1194,131 @@ msgstr ""
 msgid "Device Error"
 msgstr ""
 
-#: src/Mode_Browse.cc:92
+#. TRANSLATORS: this is a file selector string,
+#. see "Image files" for more info.
+#: src/Mode_Browse.cc:94
 msgid "VCard files"
 msgstr ""
 
-#: src/Mode_Browse.cc:103
+#. TRANSLATORS: this is a file selector string,
+#. see "Image files" for more info.
+#: src/Mode_Browse.cc:107
 msgid "ICalendar files"
 msgstr ""
 
-#: src/Mode_Browse.cc:287
+#: src/Mode_Browse.cc:290
 msgid "raw data"
 msgstr ""
 
-#: src/Mode_Browse.cc:365
+#: src/Mode_Browse.cc:368
 msgid "DataCachePtr has no builder"
 msgstr ""
 
-#: src/Mode_Browse.cc:382
+#: src/Mode_Browse.cc:385
 msgid "Device exception: "
 msgstr ""
 
-#: src/Mode_Browse.cc:551
+#: src/Mode_Browse.cc:554
 msgid ""
 "Delete this record?\n"
 "   "
 msgstr ""
 
-#: src/Mode_Browse.cc:552
+#: src/Mode_Browse.cc:555
 msgid "Record Delete"
 msgstr ""
 
-#: src/Mode_Browse.cc:596
+#: src/Mode_Browse.cc:599
 msgid "Failed to create map mutex"
 msgstr ""
 
-#: src/Mode_Browse.cc:600
+#: src/Mode_Browse.cc:603
 msgid "Failed to create load mutex"
 msgstr ""
 
-#: src/Mode_Browse.cc:735
+#: src/Mode_Browse.cc:738
 msgid "Loading: "
 msgstr ""
 
-#: src/Mode_Browse.cc:788
+#: src/Mode_Browse.cc:791
 msgid "Show All Databases"
 msgstr ""
 
-#: src/Mode_Browse.cc:818
+#: src/Mode_Browse.cc:821
 msgid "Import..."
 msgstr ""
 
-#: src/Mode_Browse.cc:821
+#: src/Mode_Browse.cc:824
 msgid "Export..."
 msgstr ""
 
-#: src/Mode_Browse.cc:824
+#: src/Mode_Browse.cc:827
 msgid "Add..."
 msgstr ""
 
-#: src/Mode_Browse.cc:827
+#: src/Mode_Browse.cc:830
 msgid "Copy..."
 msgstr ""
 
-#: src/Mode_Browse.cc:830
+#: src/Mode_Browse.cc:833
 msgid "Edit..."
 msgstr ""
 
-#: src/Mode_Browse.cc:833
+#: src/Mode_Browse.cc:836
 msgid "Delete..."
 msgstr ""
 
-#: src/Mode_Browse.cc:854
+#: src/Mode_Browse.cc:857
 msgid "Databases"
 msgstr ""
 
-#: src/Mode_Browse.cc:856
+#: src/Mode_Browse.cc:859
 msgid "Count"
 msgstr ""
 
-#: src/Mode_Browse.cc:864
+#: src/Mode_Browse.cc:867
 msgid "Record Description"
 msgstr ""
 
-#: src/Mode_Browse.cc:1066
+#: src/Mode_Browse.cc:1069
 #, c-format
 msgid "Card file type (%s) does not match record you are trying to add (%s)."
 msgstr ""
 
-#: src/Mode_Browse.cc:1069
+#: src/Mode_Browse.cc:1072
 msgid "Invalid Card Type"
 msgstr ""
 
-#: src/Mode_Browse.cc:1090
+#: src/Mode_Browse.cc:1095
 msgid "Load Record..."
 msgstr ""
 
-#: src/Mode_Browse.cc:1101
+#: src/Mode_Browse.cc:1106
 msgid "No card data found in: "
 msgstr ""
 
-#: src/Mode_Browse.cc:1102
+#: src/Mode_Browse.cc:1107
 msgid "Import Read Error"
 msgstr ""
 
-#: src/Mode_Browse.cc:1149
+#: src/Mode_Browse.cc:1154
 #, c-format
 msgid "Unable to import selected file: %s"
 msgstr ""
 
-#: src/Mode_Browse.cc:1150
+#: src/Mode_Browse.cc:1155
 msgid "Import Error"
 msgstr ""
 
-#: src/Mode_Browse.cc:1159
+#: src/Mode_Browse.cc:1164
 msgid "Internal pointer error: cannot find DBCachePtr for: "
 msgstr ""
 
-#: src/Mode_Browse.cc:1160 src/Mode_Browse.cc:1175
+#: src/Mode_Browse.cc:1165 src/Mode_Browse.cc:1180
 msgid "Internal Error"
 msgstr ""
 
-#: src/Mode_Browse.cc:1174
+#: src/Mode_Browse.cc:1179
 msgid "Internal error: cannot add record to DBCache"
 msgstr ""
 
@@ -1344,7 +1358,7 @@ msgid ""
 "application, or vice versa."
 msgstr ""
 
-#: src/Mode_Sync.cc:140 src/Mode_Sync.cc:506
+#: src/Mode_Sync.cc:140 src/Mode_Sync.cc:507
 msgid "Device List"
 msgstr ""
 
@@ -1380,20 +1394,16 @@ msgstr ""
 msgid "(No config)"
 msgstr ""
 
-#: src/Mode_Sync.cc:363 src/Mode_Sync.cc:677
+#: src/Mode_Sync.cc:363 src/Mode_Sync.cc:678
 msgid "An application is currently running."
 msgstr ""
 
-#: src/Mode_Sync.cc:364 src/Mode_Sync.cc:705
+#: src/Mode_Sync.cc:364 src/Mode_Sync.cc:706
 msgid "Run App Error"
 msgstr ""
 
 #: src/Mode_Sync.cc:390
 msgid "Config is the same, skipping save"
-msgstr ""
-
-#: src/Mode_Sync.cc:446
-msgid "Exception during save: "
 msgstr ""
 
 #: src/Mode_Sync.cc:447
@@ -1406,23 +1416,22 @@ msgstr ""
 msgid "OpenSync Save Error"
 msgstr ""
 
-#: src/Mode_Sync.cc:482
-msgid "Selected device "
-msgstr ""
-
+#. TRANSLATORS: first %s is the PIN number, and
+#. the second (in parentheses) is the device name.
 #: src/Mode_Sync.cc:484
-msgid " is not yet configured.  Configure now?"
+#, c-format
+msgid "Selected device %s (%s) is not yet configured.  Configure now?"
 msgstr ""
 
-#: src/Mode_Sync.cc:488
+#: src/Mode_Sync.cc:489
 msgid "Configure Now?"
 msgstr ""
 
-#: src/Mode_Sync.cc:505
+#: src/Mode_Sync.cc:506
 msgid "Please select one device from the list."
 msgstr ""
 
-#: src/Mode_Sync.cc:535
+#: src/Mode_Sync.cc:536
 msgid ""
 "Which device / application should be considered\n"
 "authoritative?\n"
@@ -1432,19 +1441,19 @@ msgid ""
 "the next sync."
 msgstr ""
 
-#: src/Mode_Sync.cc:565
+#: src/Mode_Sync.cc:566
 msgid "Select Authoritative Device / Application"
 msgstr ""
 
-#: src/Mode_Sync.cc:638
+#: src/Mode_Sync.cc:639
 msgid "Unable to rewrite config!  Start over manually. Error: "
 msgstr ""
 
-#: src/Mode_Sync.cc:642
+#: src/Mode_Sync.cc:643
 msgid "Error Rewriting Config"
 msgstr ""
 
-#: src/Mode_Sync.cc:658
+#: src/Mode_Sync.cc:659
 msgid ""
 "The sync config you are about to save is sufficiently different from the "
 "existing one that a 1-Way Reset will be required.  You will need to perform "
@@ -1453,23 +1462,23 @@ msgid ""
 "Continue anyway?"
 msgstr ""
 
-#: src/Mode_Sync.cc:664
+#: src/Mode_Sync.cc:665
 msgid "1-Way Reset Warning"
 msgstr ""
 
-#: src/Mode_Sync.cc:678
+#: src/Mode_Sync.cc:679
 msgid "Sync Error"
 msgstr ""
 
-#: src/Mode_Sync.cc:704
+#: src/Mode_Sync.cc:705
 msgid "An application is already running."
 msgstr ""
 
-#: src/Mode_Sync.cc:750
+#: src/Mode_Sync.cc:751
 msgid "1-Way Reset is complete, and ready to sync."
 msgstr ""
 
-#: src/Mode_Sync.cc:751
+#: src/Mode_Sync.cc:752
 msgid "Reset Complete"
 msgstr ""
 
@@ -1786,24 +1795,24 @@ msgstr ""
 msgid "Scanning USB..."
 msgstr "Balayage USB..."
 
-#: src/barrydesktop.cc:84
+#: src/barrydesktop.cc:87
 msgid ""
 "A serious error occurred while probing the USB subsystem for BlackBerry(R) "
 "devices: "
 msgstr ""
 
-#: src/barrydesktop.cc:86
+#: src/barrydesktop.cc:89
 msgid "USB Error"
 msgstr ""
 
-#: src/barrydesktop.cc:147
+#: src/barrydesktop.cc:150
 msgid ""
 "No OpenSync libraries were found. Sync will be unavailable until you install "
 "OpenSync version 0.22 or version 0.4x on your system, along with the needed "
 "plugins."
 msgstr ""
 
-#: src/barrydesktop.cc:147
+#: src/barrydesktop.cc:150
 msgid "OpenSync Not Found"
 msgstr ""
 
@@ -1865,19 +1874,20 @@ msgstr ""
 msgid "Application Run Error"
 msgstr ""
 
-#: src/exechelper.cc:160
-msgid " is already running."
+#. TRANSLATORS: %s is the name of an application
+#: src/exechelper.cc:161
+#, c-format
+msgid "%s is already running."
 msgstr ""
 
-#: src/exechelper.cc:171
-msgid "Failed to run "
+#: src/exechelper.cc:174
+#, c-format
+msgid "Failed to run %s. Please make sure it is installed and in your PATH."
 msgstr ""
 
-#: src/exechelper.cc:173
-msgid ". Please make sure it is installed and in your PATH."
-msgstr ""
-
-#: src/util.cc:49
+#. TRANSLATORS: this is a main screen button label. See
+#. util.cc line 200 for more information on its flexibility.
+#: src/util.cc:51
 msgid ""
 "Backup &\n"
 "Restore"
@@ -1885,47 +1895,53 @@ msgstr ""
 "Sauvegarder\n"
 "& Restaurer"
 
-#: src/util.cc:50
+#. TRANSLATORS: this is a main screen button label
+#: src/util.cc:53
 msgid "Sync"
 msgstr ""
 
-#: src/util.cc:51
+#. TRANSLATORS: this is a main screen button label
+#: src/util.cc:55
 msgid ""
 "Modem\n"
 "Tethering"
 msgstr ""
 
-#: src/util.cc:52
+#. TRANSLATORS: this is a main screen button label
+#: src/util.cc:57
 msgid ""
 "Migrate\n"
 "Device"
 msgstr ""
 
-#: src/util.cc:53
+#. TRANSLATORS: this is a main screen button label
+#: src/util.cc:59
 msgid ""
 "Browse\n"
 "Databases"
 msgstr ""
 
-#: src/util.cc:54
+#. TRANSLATORS: this is a main screen button label
+#: src/util.cc:61
 msgid ""
 "Application\n"
 "Loader"
 msgstr ""
 
-#: src/util.cc:55
+#. TRANSLATORS: this is a main screen button label
+#: src/util.cc:63
 msgid "Media"
 msgstr ""
 
-#: src/util.cc:246
+#: src/util.cc:255
 msgid "Unable to create button: font is invalid"
 msgstr ""
 
-#: src/util.cc:290
+#: src/util.cc:299
 msgid "Unable to create button: text is too big to fit"
 msgstr ""
 
-#: src/util.cc:299
+#: src/util.cc:308
 msgid "Unable to create button: label is empty"
 msgstr ""
 
