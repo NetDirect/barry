@@ -12,13 +12,13 @@
 #include <functional>
 #include <locale>
 
-// Windows CE defines std::isspace(int) as a macro to a function with two arguments
-// with one prefilled, so a wrapper function is needed.
-static int isSpaceChar(int c) {
-	return ::isspace(c);
-}
-
 namespace Barry { namespace Inplace {
+
+// Windows CE defines std::isspace(int) as a macro to a function with
+// two arguments with one prefilled, so a wrapper function is needed.
+static inline int isSpaceChar(int c) {
+	return std::isspace(c);
+}
 
 // trim from start
 static inline std::string &ltrim(std::string &s) {
