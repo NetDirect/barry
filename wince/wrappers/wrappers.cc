@@ -303,44 +303,49 @@ size_t strftime(char *s, size_t max, const char *format,
 					// Year as decimal, including century
 					curOut += _snprintf(curOut, remainingSpace,
 						"%04d", tm->tm_year + 1900);
-					++curIn;
+					curIn += 2;
 					break;
 				case 'm':
 					// Month as a decimal (01-12)
 					curOut += _snprintf(curOut, remainingSpace,
 						"%02d", tm->tm_mon + 1);
-					++curIn;
+					curIn += 2;
 					break;
 				case 'd':
 					// Day of month in decimal (01-31)
 					curOut += _snprintf(curOut, remainingSpace,
 						"%02d", tm->tm_mday);
-					++curIn;
+					curIn += 2;
 					break;
 				case 'H':
 					// Hour in decimal (00-23)
 					curOut += _snprintf(curOut, remainingSpace,
 						"%02d", tm->tm_hour);
-					++curIn;
+					curIn += 2;
 					break;
 				case 'M':
 					// Minutes in decimal (00-59)
 					curOut += _snprintf(curOut, remainingSpace,
 						"%02d", tm->tm_min);
-					++curIn;
+					curIn += 2;
 					break;
 				case 'S':
 					// Seconds as a decimal (00-60)
 					curOut += _snprintf(curOut, remainingSpace,
 						"%02d", tm->tm_sec);
-					++curIn;
+					curIn += 2;
 					break;
 				default:
 					// Unsupported format specifier, including NUL
 					// just write it out as is.
-					*curOut = *curIn;
-					++curOut;
-					++curIn;
+					if( remainingSpace >= 2 ) {
+						*curOut = *curIn;
+						++curOut;
+						++curIn;
+						*curOut = *curIn;
+						++curOut;
+						++curIn;
+					}
 					break;
 			}
 		} else {
