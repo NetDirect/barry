@@ -109,15 +109,13 @@ void Group::BarryCheck(OpenSync::API &api,
 	}
 
 	if( found == 0 && (throw_mask & OSCG_THROW_ON_NO_BARRY) ) {
-		ostringstream oss;
-		oss << _C("No Barry plugins found in group '") << group_name << _C("' and OSCG_THROW_ON_NO_BARRY is set.");
-		throw LoadError(oss.str());
+		throw LoadError(
+			string_vprintf(_C("No Barry plugins found in group '%s' and OSCG_THROW_ON_NO_BARRY is set."), group_name.c_str()));
 	}
 
 	if( found > 1 && (throw_mask & OSCG_THROW_ON_MULTIPLE_BARRIES) ) {
-		ostringstream oss;
-		oss << _C("Found ") << found << _C(" Barry plugins in group '") << group_name << _C("' and OSCG_THROW_ON_MULTIPLE_BARRIES is set.");
-		throw LoadError(oss.str());
+		throw LoadError(
+			string_vprintf(_C("Found %d Barry plugins in group '%s' and OSCG_THROW_ON_MULTIPLE_BARRIES is set."), found, group_name.c_str()));
 	}
 }
 
@@ -304,9 +302,10 @@ void Group::Load(const std::string &src_group_name,
 		p->SetMemberId(b->id);
 
 		if( p->IsUnsupported() && (throw_mask & OSCG_THROW_ON_UNSUPPORTED) ) {
-			ostringstream oss;
-			oss << _C("Unsupported plugin '") << b->plugin_name << _C("' in group '") << src_group_name << _C("' and OSCG_THROW_ON_UNSUPPORTED is set.");
-			throw LoadError(oss.str());
+			throw LoadError(
+				string_vprintf(_C("Unsupported plugin '%s' in group '%s' and OSCG_THROW_ON_UNSUPPORTED is set."),
+					b->plugin_name.c_str(),
+					src_group_name.c_str()));
 		}
 
 		// everything looks ok, add the plugin to our list
@@ -346,15 +345,18 @@ void Group::DeletePlugin(iterator i, OpenSync::API &api)
 
 		Member *m = members.Find( (*i)->GetMemberId() );
 		if( !m ) {
-			ostringstream oss;
-			oss << _C("Tried to delete non-existent member ID ") << (*i)->GetMemberId() << " (" << (*i)->GetPluginName(api) << ") " << _C("from group") << "'" << m_group_name << "'";
-			throw DeleteError(oss.str());
+			throw DeleteError(string_vprintf(_C("Tried to delete non-existent member ID %ld (%s) from group '%s'"),
+				(*i)->GetMemberId(),
+				(*i)->GetPluginName(api).c_str(),
+				m_group_name.c_str()));
 		}
 
 		if( m->plugin_name != (*i)->GetPluginName(api) ) {
-			ostringstream oss;
-			oss << _C("Tried to delete member ID ") << (*i)->GetMemberId() << _C(" using plugin '") << (*i)->GetPluginName(api) << _C("' from group '") << m_group_name << _C("', but the existing member uses plugin") << "'" << m->plugin_name << "'";
-			throw DeleteError(oss.str());
+			throw DeleteError(string_vprintf(_C("Tried to delete member ID %ld using plugin '%s' from group '%s', but the existing member uses plugin '%s'"),
+			(*i)->GetMemberId(),
+			(*i)->GetPluginName(api).c_str(),
+			m_group_name.c_str(),
+			m->plugin_name.c_str()));
 		}
 
 		// so far so good... try deleting it
@@ -372,9 +374,8 @@ void Group::Save(OpenSync::API &api)
 		// connected plugins match the existing member_ids and
 		// plugin names in the group's member list
 		if( !GroupMatchesExistingConfig(api) ) {
-			ostringstream oss;
-			oss << _C("Tried to overwrite group '") << m_group_name << _C("' with a Group set that did not match in ID's and plugin names.");
-			throw SaveError(oss.str());
+			throw SaveError(string_vprintf(_C("Tried to overwrite group '%s' with a Group set that did not match in ID's and plugin names."),
+				m_group_name.c_str()));
 		}
 	}
 	else {

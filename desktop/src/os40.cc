@@ -798,53 +798,42 @@ void entry_status(OSyncEngineChangeUpdate *status, void *cbdata)
 	CallbackBundle *cb = (CallbackBundle*) cbdata;
 
 	try {
-		ostringstream oss;
-
 		OSyncChange *change = cb->m_priv->osync_engine_change_update_get_change(status);
 		OSyncMember *member = cb->m_priv->osync_engine_change_update_get_member(status);
 		OSyncError *error = cb->m_priv->osync_engine_change_update_get_error(status);
 
-		const char *action = NULL;
-		const char *direction = NULL;
-		string msg;
+		string fmt, msg;
 		bool error_event = false;
 
 		switch( cb->m_priv->osync_engine_change_update_get_event(status) )
 		{
 		case OSYNC_ENGINE_CHANGE_EVENT_READ:
-			action = _C("Received an entry");
-			direction = _C("from");
+			fmt = _C("Received an entry %s (%s) from member %d (%s): %s");
 			msg = OSyncChangeType2String(cb->m_priv->osync_change_get_changetype(change));
 			break;
 
 		case OSYNC_ENGINE_CHANGE_EVENT_WRITTEN:
-			action = _C("Sent an entry");
-			direction = _C("to");
+			fmt = _C("Sent an entry %s (%s) to member %d (%s): %s");
 			msg = OSyncChangeType2String(cb->m_priv->osync_change_get_changetype(change));
 			break;
 
 		case OSYNC_ENGINE_CHANGE_EVENT_ERROR:
 			error_event = true;
-			action = _C("Error for entry");
-			direction = _C("and");
+			fmt = _C("Error for entry %s (%s) and member %d (%s): %s");
 			msg = cb->m_priv->osync_error_print_stack_wrapper(&(error));
 			break;
 		}
 
-		if( action ) {
-			oss << action << " "
-			    << cb->m_priv->osync_change_get_uid(change)
-			    << "("
-			    << cb->m_priv->osync_objformat_get_name( cb->m_priv->osync_change_get_objformat(change))
-			    << ") " << direction << _C(" member ")
-			    << cb->m_priv->osync_member_get_id(member)
-			    << " ("
-			    << cb->m_priv->osync_member_get_pluginname(member)
-			    << "): "
-			    << msg;
+		if( fmt.size() ) {
+			string status_msg = string_vprintf(fmt.c_str(),
+			    cb->m_priv->osync_change_get_uid(change),
+			    cb->m_priv->osync_objformat_get_name( cb->m_priv->osync_change_get_objformat(change)),
+			    cb->m_priv->osync_member_get_id(member),
+			    cb->m_priv->osync_member_get_pluginname(member),
+			    msg.c_str());
 
 			// call the status handler
-			cb->m_status->EntryStatus(oss.str(), error_event);
+			cb->m_status->EntryStatus(status_msg, error_event);
 		}
 	}
 	catch( std::exception &e ) {
@@ -974,54 +963,53 @@ void member_status(OSyncEngineMemberUpdate *status, void *cbdata)
 	CallbackBundle *cb = (CallbackBundle*) cbdata;
 
 	try {
-		ostringstream oss;
 		bool error_event = false;
 		bool valid = true;
 
+		string fmt, sinkmsg, errmsg;
+
 		const char *objtype = cb->m_priv->osync_engine_member_update_get_objtype(status);
 		if( objtype == NULL )
-			oss << _C("Main sink");
+			sinkmsg = _C("Main sink");
 		else
-			oss << objtype << _C(" sink");
+			sinkmsg = string_vprintf(_C("%s sink"), objtype);
 
 
 		OSyncMember *member = cb->m_priv->osync_engine_member_update_get_member(status);
-
-		oss << _C(" of member ")
-		    << cb->m_priv->osync_member_get_id(member)
-		    << " ("
-		    << cb->m_priv->osync_member_get_pluginname(member)
-		    << ")";
 
 		OSyncError *error = cb->m_priv->osync_engine_member_update_get_error(status);
 
 		switch( cb->m_priv->osync_engine_member_update_get_event(status) )
 		{
 		case OSYNC_ENGINE_MEMBER_EVENT_CONNECTED:
-			oss << _C(" just connected");
+			// TRANSLATORS: resulting message may look like this:
+			// "Main sink of member 5 (barry-sync) just connected"
+			// The "Main sink" part is based on the "Main sink"
+			// string or the "%s sink" string.
+			fmt = _C("%s of member %d (%s) just connected");
 			break;
 		case OSYNC_ENGINE_MEMBER_EVENT_CONNECT_DONE:
 			// Special event - but not interesting for
 			// the normal user.
 			break;
 		case OSYNC_ENGINE_MEMBER_EVENT_DISCONNECTED:
-			oss << _C(" just disconnected");
+			fmt = _C("%s of member %d (%s) just disconnected");
 			break;
 		case OSYNC_ENGINE_MEMBER_EVENT_READ:
-			oss << _C(" just sent all changes");
+			fmt = _C("%s of member %d (%s) just sent all changes");
 			break;
 		case OSYNC_ENGINE_MEMBER_EVENT_WRITTEN:
-			oss << _C(" committed all changes");
+			fmt = _C("%s of member %d (%s) committed all changes");
 			break;
 		case OSYNC_ENGINE_MEMBER_EVENT_SYNC_DONE:
-			oss << _C(" reported sync done");
+			fmt = _C("%s of member %d (%s) reported sync done");
 			break;
 		case OSYNC_ENGINE_MEMBER_EVENT_DISCOVERED:
-			oss << _C(" discovered its objtypes");
+			fmt = _C("%s of member %d (%s) discovered its objtypes");
 			break;
 		case OSYNC_ENGINE_MEMBER_EVENT_ERROR:
-			oss << _C(" had an error: ")
-			    << cb->m_priv->osync_error_print_stack_wrapper(&error);
+			fmt = _C("%s of member %d (%s) had an error: %s");
+			errmsg = cb->m_priv->osync_error_print_stack_wrapper(&error);
 			error_event = true;
 			break;
 		default:
@@ -1029,12 +1017,19 @@ void member_status(OSyncEngineMemberUpdate *status, void *cbdata)
 			break;
 		}
 
+		// construct the msg
+		string msg = string_vprintf(fmt.c_str(),
+			sinkmsg.c_str(),
+			cb->m_priv->osync_member_get_id(member),
+			cb->m_priv->osync_member_get_pluginname(member),
+			errmsg.c_str());
+
 		// call the status handler
-		if( oss.str().size() && valid ) {
+		if( msg.size() && valid ) {
 			cb->m_status->MemberStatus(
 				cb->m_priv->osync_member_get_id(member),
 				cb->m_priv->osync_member_get_pluginname(member),
-				oss.str(), error_event);
+				msg, error_event);
 		}
 	}
 	catch( std::exception &e ) {
@@ -2012,9 +2007,9 @@ std::string OpenSync40::GetConfiguration(const std::string &group_name,
 					long member_id)
 {
 	if( !IsConfigurable(group_name, member_id) ) {
-		ostringstream oss;
-		oss << "GetConfiguration(): " << _C("Member ") << member_id << _C(" of group '") << group_name << _C("' does not accept configuration.");
-		throw std::runtime_error(oss.str());
+		throw std::runtime_error(string("GetConfiguration(): ") + string_vprintf(_C("Member %ld of group '%s' does not accept configuration."),
+			member_id,
+			group_name.c_str()));
 	}
 
 	OSyncGroup *group = m_priv->osync_group_env_find_group(m_priv->group_env.get(), group_name.c_str());
@@ -2063,9 +2058,9 @@ OS40PluginConfig OpenSync40::GetConfigurationObj(const std::string &group_name,
 						long member_id)
 {
 	if( !IsConfigurable(group_name, member_id) ) {
-		ostringstream oss;
-		oss << "GetConfigurationObj(): " << _C("Member ") << member_id << _C(" of group '") << group_name << _C("' does not accept configuration.");
-		throw std::runtime_error(oss.str());
+		throw std::runtime_error(string("GetConfigurationObj(): ") + string_vprintf(_C("Member %ld of group '%s' does not accept configuration."),
+			member_id,
+			group_name.c_str()));
 	}
 
 	OSyncGroup *group = m_priv->osync_group_env_find_group(m_priv->group_env.get(), group_name.c_str());
@@ -2096,9 +2091,9 @@ void OpenSync40::SetConfiguration(const std::string &group_name,
 				const std::string &config_data)
 {
 	if( !IsConfigurable(group_name, member_id) ) {
-		ostringstream oss;
-		oss << "SetConfiguration(): " << _C("Member ") << member_id << _C(" of group '") << group_name << _C("' does not accept configuration.");
-		throw std::runtime_error(oss.str());
+		throw std::runtime_error(string("SetConfiguration(): ") + string_vprintf(_C("Member %ld of group '%s' does not accept configuration."),
+			member_id,
+			group_name.c_str()));
 	}
 
 	OSyncGroup *group = m_priv->osync_group_env_find_group(m_priv->group_env.get(), group_name.c_str());
