@@ -38,7 +38,7 @@ Homepage: http://netdirect.ca/barry
 Vcs-Git: git://repo.or.cz/barry.git
 Vcs-Browser: http://repo.or.cz/w/barry.git
 
-Package: libbarry18
+Package: libbarry19
 Section: libs
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
@@ -49,11 +49,11 @@ Description: Library for using the BlackBerry handheld on Linux
  backup file writing and parsing, sync support routines such as vcard
  support, JDWP debugging support, and ALX release file parsing.
 
-Package: libbarry18-dbg
+Package: libbarry19-dbg
 Section: debug
 Priority: extra
 Architecture: any
-Depends: libbarry18 (= ${binary:Version}), ${misc:Depends}
+Depends: libbarry19 (= ${binary:Version}), ${misc:Depends}
 Description: Library for using the BlackBerry handheld (debug symbols)
  Barry is a GPL C++ library for interfacing with the RIM BlackBerry Handheld.
  .
@@ -63,7 +63,7 @@ Description: Library for using the BlackBerry handheld (debug symbols)
 Package: libbarry-dev
 Section: libdevel
 Architecture: any
-Depends: libbarry18 (= ${binary:Version}), ${misc:Depends}
+Depends: libbarry19 (= ${binary:Version}), ${misc:Depends}
 Description: Development files for libbarry
  Barry is a GPL C++ library for interfacing with the RIM BlackBerry Handheld.
  .
@@ -73,7 +73,7 @@ Description: Development files for libbarry
 Package: barry-util
 Section: utils
 Architecture: any
-Depends: libbarry18, udev [linux-any], python, ${shlibs:Depends}, ${misc:Depends}
+Depends: libbarry19, udev [linux-any], python, ${shlibs:Depends}, ${misc:Depends}
 Suggests: ppp [linux-any]
 Description: Command line utilities for working with the RIM BlackBerry Handheld
  Barry is a GPL C++ library for interfacing with the RIM BlackBerry Handheld.
@@ -96,7 +96,7 @@ Description: Command line BlackBerry utilities (debug symbols)
 Package: barrybackup-gui
 Section: utils
 Architecture: any
-Depends: libbarry18, ${shlibs:Depends}, ${misc:Depends}
+Depends: libbarry19, ${shlibs:Depends}, ${misc:Depends}
 Description: GTK+ GUI for backing up the RIM BlackBerry Handheld
  Barry is a GPL C++ library for interfacing with the RIM BlackBerry Handheld.
  .
@@ -119,7 +119,7 @@ Description: GTK+ GUI for backing up BlackBerry (debug symbols)
 Package: barrydesktop
 Section: utils
 Architecture: any
-Depends: libbarry18, barry-util, xterm, ${shlibs:Depends}, ${misc:Depends}
+Depends: libbarry19, barry-util, xterm, ${shlibs:Depends}, ${misc:Depends}
 Recommends: barrybackup-gui, ppp [linux-any]
 Suggests: gksu
 Description: Desktop Panel GUI for the RIM BlackBerry Handheld

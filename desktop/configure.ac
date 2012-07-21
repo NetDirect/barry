@@ -6,7 +6,7 @@
 #
 
 AC_PREREQ(2.61)
-AC_INIT([barrydesktop], [0.18.4], [barry-devel@lists.sourceforge.net])
+AC_INIT([barrydesktop], [0.19.0], [barry-devel@lists.sourceforge.net])
 #AM_CONFIG_HEADER(config.h)
 AC_CONFIG_SRCDIR([src/barrydesktop.cc])
 AC_CONFIG_HEADERS([config.h:config.h.in])
@@ -25,8 +25,8 @@ AM_GNU_GETTEXT_VERSION([0.18.1])
 # (see desktop/src/Makefile.am for the reason)
 #
 BARRY_DESKTOP_LOGICAL=0
-BARRY_DESKTOP_MAJOR=18
-BARRY_DESKTOP_MINOR=4
+BARRY_DESKTOP_MAJOR=19
+BARRY_DESKTOP_MINOR=0
 AC_DEFINE_UNQUOTED([BARRY_DESKTOP_LOGICAL], [$BARRY_DESKTOP_LOGICAL], [Logical version number])
 AC_DEFINE_UNQUOTED([BARRY_DESKTOP_MAJOR], [$BARRY_DESKTOP_MAJOR], [Major library version number])
 AC_DEFINE_UNQUOTED([BARRY_DESKTOP_MINOR], [$BARRY_DESKTOP_MINOR], [Minor library version number])
@@ -171,7 +171,7 @@ if test "x$with_evolution" != xno ; then
 		])
 fi
 
-PKG_CHECK_MODULES([BARRY], [libbarry-18 libbarrysync-18 libbarrybackup-18])
+PKG_CHECK_MODULES([BARRY], [libbarry-19 libbarrysync-19 libbarrybackup-19])
 PKG_CHECK_MODULES([GLIB2], [glib-2.0])
 PKG_CHECK_MODULES([LIBXMLPP], [libxml++-2.6])
 PKG_CHECK_MODULES([OPENSYNC22], [opensync-1.0], [], [OS22NOTFOUND=yes])

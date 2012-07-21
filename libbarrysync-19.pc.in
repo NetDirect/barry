@@ -7,7 +7,7 @@ Name: Barry
 Description: C++ library for sync and vformat parsing
 URL: http://sourceforge.net/projects/barry
 Version: @VERSION@
-Requires: glib-2.0 libbarry-18
+Requires: glib-2.0 libbarry-19
 Libs: -L${libdir} -lbarrysync
 Cflags: -I${includedir}
 

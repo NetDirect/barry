@@ -2,7 +2,7 @@ Source: opensync0-plugin-barry
 Section: misc
 Priority: optional
 Maintainer: Chris Frey <cdfrey@foursquare.net>
-Build-Depends: debhelper (>= 7.0.0), g++ (>= 4.1), cdbs, autoconf, automake, libtool, pkg-config, libusb-dev, zlib1g-dev, libopensync0-dev (>= 0.22), libopensync0-dev (<< 0.30), libbarry-dev (>= 0.18)
+Build-Depends: debhelper (>= 7.0.0), g++ (>= 4.1), cdbs, autoconf, automake, libtool, pkg-config, libusb-dev, zlib1g-dev, libopensync0-dev (>= 0.22), libopensync0-dev (<< 0.30), libbarry-dev (>= 0.19)
 Standards-Version: 3.9.3
 
 Package: opensync0-plugin-barry

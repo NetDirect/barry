@@ -1,3 +1,9 @@
+opensync1-plugin-barry (0.19.0-1) unstable; urgency=low
+
+  * New upstream version
+
+ -- Chris Frey <cdfrey@foursquare.net>  Fri, 20 Jul 2012 23:04:30 -0400
+
 opensync1-plugin-barry (0.18.4-1) unstable; urgency=low
 
   * Build rules for Barry releases

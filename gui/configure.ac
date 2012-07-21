@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.61)
-AC_INIT([barry-backup], [0.18.4], [barry-devel@lists.sourceforge.net])
+AC_INIT([barry-backup], [0.19.0], [barry-devel@lists.sourceforge.net])
 #AM_CONFIG_HEADER(config.h)
 AC_CONFIG_SRCDIR([src/main.cc])
 AC_CONFIG_HEADERS([config.h:config.h.in])
@@ -24,8 +24,8 @@ AC_PROG_LIBTOOL
 
 AC_LANG([C++])
 
-PKG_CHECK_MODULES([BARRY], [libbarry-18])
-PKG_CHECK_MODULES([BARRYBACKUP], [libbarrybackup-18])
+PKG_CHECK_MODULES([BARRY], [libbarry-19])
+PKG_CHECK_MODULES([BARRYBACKUP], [libbarrybackup-19])
 PKG_CHECK_MODULES([GTKMM], [gtkmm-2.4 libglademm-2.4 gthread-2.0])
 
 # Carry the special tree build environment variables from parent configure,

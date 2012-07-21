@@ -5,7 +5,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: barry-opensync-plugin-0-4x 0.18.4\n"
+"Project-Id-Version: barry-opensync-plugin-0-4x 0.19.0\n"
 "Report-Msgid-Bugs-To: http://netdirect.ca/barry\n"
 "POT-Creation-Date: 2012-08-07 14:47-0400\n"
 "PO-Revision-Date: 2012-07-26 23:24-0400\n"

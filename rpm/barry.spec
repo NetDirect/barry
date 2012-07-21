@@ -35,7 +35,7 @@
 
 Summary: BlackBerry(tm) Desktop for Linux
 Name: barry
-Version: 0.18.4
+Version: 0.19.0
 Release: 0
 Group: Applications/Productivity
 License: GPLv2+
@@ -515,6 +515,9 @@ desktop-file-install --vendor netdirect \
 /sbin/ldconfig
 
 %changelog
+* Fri Jul 20 2012 Chris Frey <cdfrey@foursquare.net> 0.19.0-0
+- version bump
+
 * Mon Aug 20 2012 Chris Frey <cdfrey@foursquare.net> 0.18.4-0
 - version bump
 - added spanish translation, and fixed locations of .mo files, so

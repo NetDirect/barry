@@ -3,8 +3,8 @@
 set -e
 
 cd $(dirname "$0")/../maintainer
-./release.sh 0 18 4 master barrychroots
-./release.sh 0 18 4 master barryremote
+./release.sh 0 19 0 master barrychroots
+./release.sh 0 19 0 master barryremote
 
 cd ../test
 git clean -xdf

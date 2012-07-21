@@ -1,7 +1,7 @@
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.61)
-AC_INIT([Barry OpenSync Plugin], [0.18.4], [barry-devel@lists.sourceforge.net])
+AC_INIT([Barry OpenSync Plugin], [0.19.0], [barry-devel@lists.sourceforge.net])
 AC_CONFIG_SRCDIR(src/barry_sync.cc)
 AC_CONFIG_HEADER(config.h)
 AC_CONFIG_AUX_DIR([.])
@@ -32,8 +32,8 @@ AC_LANG([C++])
 
 PKG_CHECK_MODULES([GLIB2], [glib-2.0])
 PKG_CHECK_MODULES([OPENSYNC2X], [opensync-1.0])
-PKG_CHECK_MODULES([BARRY], [libbarry-18])
-PKG_CHECK_MODULES([BARRYSYNC], [libbarrysync-18])
+PKG_CHECK_MODULES([BARRY], [libbarry-19])
+PKG_CHECK_MODULES([BARRYSYNC], [libbarrysync-19])
 
 # Carry the special tree build environment variables from parent configure,
 # just in case user is doing a complete tree build with --enable-opensync-plugin

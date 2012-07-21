@@ -137,7 +137,7 @@ os22-binary::
 	# Note: that the compiler flags below depend on opensync-plugin's
 	# debian/rules having a DESTDIR target of opensync-plugin/debian/tmp
 	(cd $(DEB_SRCDIR) && \
-		export TREE_BUILD_CXXFLAGS="-I`pwd`/opensync-plugin/debian/tmp/usr/include/barry18" && \
+		export TREE_BUILD_CXXFLAGS="-I`pwd`/opensync-plugin/debian/tmp/usr/include/barry19" && \
 		export TREE_BUILD_LDFLAGS="-L`pwd`/opensync-plugin/debian/tmp/usr/lib" && \
 		export PKG_CONFIG_PATH="`pwd`:$(PKG_CONFIG_PATH)" && \
 		export LD_LIBRARY_PATH="`pwd`/opensync-plugin/debian/tmp/usr/lib:$(LD_LIBRARY_PATH)" && \
@@ -153,7 +153,7 @@ os4x-binary::
 	# Note: that the compiler flags below depend on opensync-plugin-0.4x's
 	# debian/rules having a DESTDIR target of opensync-plugin-0.4x/debian/tmp
 	(cd $(DEB_SRCDIR) && \
-		export TREE_BUILD_CXXFLAGS="-I`pwd`/opensync-plugin-0.4x/debian/tmp/usr/include/barry18" && \
+		export TREE_BUILD_CXXFLAGS="-I`pwd`/opensync-plugin-0.4x/debian/tmp/usr/include/barry19" && \
 		export TREE_BUILD_LDFLAGS="-L`pwd`/opensync-plugin-0.4x/debian/tmp/usr/lib" && \
 		export PKG_CONFIG_PATH="`pwd`:$(PKG_CONFIG_PATH)" && \
 		export LD_LIBRARY_PATH="`pwd`/opensync-plugin-0.4x/debian/tmp/usr/lib:$(LD_LIBRARY_PATH)" && \

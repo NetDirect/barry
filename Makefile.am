@@ -27,15 +27,15 @@ SUBDIRS = po . src tools examples man test
 # conditionally configured nested subdirectories are listed in $(subdirs)
 SUBDIRS += $(subdirs)
 
-pkgconfig_DATA = libbarry-18.pc libbarrydp-18.pc libbarryjdwp-18.pc
+pkgconfig_DATA = libbarry-19.pc libbarrydp-19.pc libbarryjdwp-19.pc
 if WITH_SYNC
-pkgconfig_DATA += libbarrysync-18.pc
+pkgconfig_DATA += libbarrysync-19.pc
 endif
 if WITH_BACKUP
-pkgconfig_DATA += libbarrybackup-18.pc
+pkgconfig_DATA += libbarrybackup-19.pc
 endif
 if WITH_ALX
-pkgconfig_DATA += libbarryalx-18.pc
+pkgconfig_DATA += libbarryalx-19.pc
 endif
 
 VERSIONED_INCLUDE = barry@BARRY_MAJOR@

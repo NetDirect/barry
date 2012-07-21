@@ -1,3 +1,9 @@
+barry (0.19.0-1) unstable; urgency=low
+
+  * New upstream version 0.19.0
+
+ -- Chris Frey <cdfrey@foursquare.net>  Fri, 20 Jul 2012 22:59:27 -0400
+
 barry (0.18.4-1) unstable; urgency=low
 
   * New upstream version 0.18.4

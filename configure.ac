@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.61)
-AC_INIT([barry], [0.18.4], [barry-devel@lists.sourceforge.net])
+AC_INIT([barry], [0.19.0], [barry-devel@lists.sourceforge.net])
 #AM_CONFIG_HEADER(config.h)
 AC_CONFIG_SRCDIR([src/barry.h])
 AC_CONFIG_HEADERS([config.h:config.h.in])
@@ -19,8 +19,8 @@ AM_GNU_GETTEXT_VERSION([0.18.1])
 # Barry Version Numbers
 #
 BARRY_LOGICAL=0
-BARRY_MAJOR=18
-BARRY_MINOR=4
+BARRY_MAJOR=19
+BARRY_MINOR=0
 AC_DEFINE_UNQUOTED([BARRY_LOGICAL], [$BARRY_LOGICAL], [Logical version number])
 AC_DEFINE_UNQUOTED([BARRY_MAJOR], [$BARRY_MAJOR], [Major library version number])
 AC_DEFINE_UNQUOTED([BARRY_MINOR], [$BARRY_MINOR], [Minor library version number])
@@ -471,12 +471,12 @@ AC_CONFIG_FILES([Makefile
                  examples/Makefile
                  man/Makefile
                  test/Makefile
-                 libbarry-18.pc
-                 libbarrydp-18.pc
-                 libbarryjdwp-18.pc
-                 libbarrysync-18.pc
-                 libbarrybackup-18.pc
-                 libbarryalx-18.pc])
+                 libbarry-19.pc
+                 libbarrydp-19.pc
+                 libbarryjdwp-19.pc
+                 libbarrysync-19.pc
+                 libbarrybackup-19.pc
+                 libbarryalx-19.pc])
 
 #
 # nested packages

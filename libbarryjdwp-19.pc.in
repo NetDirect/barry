@@ -4,10 +4,10 @@ libdir=@libdir@
 includedir=@includedir@/barry@BARRY_MAJOR@
 
 Name: Barry
-Description: C++ library for reading and writing Barry backup files
+Description: C++ library for using the BlackBerry Java debugger
 URL: http://sourceforge.net/projects/barry
 Version: @VERSION@
-Requires: libbarry-18
-Libs: -L${libdir} -lbarrybackup
+Requires: libbarrydp-19
+Libs: -L${libdir} -lbarryjdwp
 Cflags: -I${includedir}
 
