@@ -28,6 +28,7 @@ dist_image_DATA = \
 
 EXTRA_DIST = \
 	MainButtons.xcf \
+	scanning.xcf \
 	Makefile.am \
 	README \
 	background.xcf \
