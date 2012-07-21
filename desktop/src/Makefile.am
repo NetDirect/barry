@@ -48,7 +48,7 @@ include_osyncwrap_HEADERS = \
 noinst_HEADERS =
 
 libosyncwrap_la_SOURCES = \
-	i18n.h wxi18n.h gettext.h \
+	i18n.h gettext.h \
 	error.cc error.h \
 	dlopen.cc dlopen.h \
 	tempdir.cc tempdir.h \
@@ -73,7 +73,7 @@ endif
 libosyncwrap_la_LDFLAGS = -ldl -version-info ${LIB_OSYNCWRAP_VERSION}
 
 barrydesktop_SOURCES = \
-	i18n.h wxi18n.h gettext.h \
+	wxi18n.h \
 	barrydesktop.cc barrydesktop.h \
 	ipc.h optout.h \
 	EasyCondition.h \
