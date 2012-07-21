@@ -89,6 +89,8 @@ bool IsCardable(const std::string &dbname, std::string *file_types)
 	if( dbname == Contact::GetDBName() ) {
 
 		if( file_types ) {
+			// TRANSLATORS: this is a file selector string,
+			// see "Image files" for more info.
 			*file_types = _C("VCard files");
 			*file_types += " (*.vcf;*.vcard)|*.vcf;*.vcard";
 		}
@@ -100,6 +102,8 @@ bool IsCardable(const std::string &dbname, std::string *file_types)
 			dbname == Task::GetDBName() ) {
 
 		if( file_types ) {
+			// TRANSLATORS: this is a file selector string,
+			// see "Image files" for more info.
 			*file_types = _C("ICalendar files");
 			*file_types += " (*.ical;*.ics;*.ifb;*.icalendar)|*.ical;*.ics;*.ifb;*.icalendar";
 		}
@@ -250,10 +254,9 @@ bool GUIDesktopConnector::PasswordPrompt(const Barry::BadPassword &bp,
 					std::string &password_result)
 {
 	// create prompt based on exception data
-	ostringstream oss;
-	oss << _C("Please enter device password: ")
-	    << "(" << bp.remaining_tries() << _C(" tries remaining") << ")";
-	wxString prompt(oss.str().c_str(), wxConvUTF8);
+	wxString prompt = wxString::Format(
+		_W("Please enter device password: (%d tries remaining)"),
+		bp.remaining_tries());
 
 	// ask user for device password
 	wxString pass = wxGetPasswordFromUser(prompt,
@@ -1082,6 +1085,8 @@ void BrowseMode::OnImportRecord(wxCommandEvent &event)
 
 	// we are loading files here, so also allow *.*
 	file_types += "|";
+	// TRANSLATORS: this is a file selector string,
+	// see "Image files" for more info.
 	file_types += _C("All files");
 	file_types += " (*.*)|*.*";
 

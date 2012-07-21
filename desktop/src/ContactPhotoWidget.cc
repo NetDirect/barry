@@ -37,8 +37,13 @@ ContactPhotoWidget::ContactPhotoWidget(wxWindow *parent,
 					Barry::Contact &rec)
 	: m_rec(rec)
 {
+	// TRANSLATORS: this is the first part of a file selector string,
+	// as in: "Images files (*.bmp;*.jpg;*.png)"
+	// The file types are not part of the translation.
 	m_file_filter = _W("Image files");
 	m_file_filter += _T(" (*.bmp;*.jpg;*.png;*.xmp;*.tif)|*.bmp;*.jpg;*.png;*.xmp;*.tif;*.tiff|");
+	// TRANSLATORS: this is a file selector string.  See "Image files"
+	// for more info.
 	m_file_filter += _W("All files");
 	m_file_filter += _T(" (*.*)|*.*");
 
@@ -85,6 +90,8 @@ void ContactPhotoWidget::PromptAndSave(wxWindow *parent)
 		return;
 	}
 
+	// TRANSLATORS: this is a file selector string.  See "Image files"
+	// for more info.
 	wxString filter = _W("JPEG files");
 	filter += _T(" (*.jpg)|*.jpg");
 

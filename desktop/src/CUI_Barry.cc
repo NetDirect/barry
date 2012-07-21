@@ -83,13 +83,13 @@ bool Barry::ZapData(wxWindow *parent,
 		device_name = barry.GetPin().Str(); // default to PIN if not in list
 
 	// build intro message
-	ostringstream oss;
-	oss << _C("Please select the databases you wish to erase\n"
-		"on device: ") << device_name << "\n"
-		<< "\n"
-		<< _C("Note: all synced databases must be erased\n"
-		"to avoid a slow-sync.");
-	wxString msg(oss.str().c_str(), wxConvUTF8);
+	wxString msg = wxString::Format(
+		_W("Please select the databases you wish to erase\n"
+		"on device: %s\n"
+		"\n"
+		"Note: all synced databases must be erased\n"
+		"to avoid a slow-sync."),
+		wxString(device_name.c_str(), wxConvUTF8).c_str());
 
 	// build list of databases (base on information from engine, if
 	// the pointer is valid)
@@ -119,7 +119,7 @@ bool Barry::ZapData(wxWindow *parent,
 		return false;	// nothing to do
 
 	// display selections to the user for one final confirmation
-	oss.str("");
+	ostringstream oss;
 	oss << _C("You have selected the following databases to be completely "
 		"erased from device: ") << device_name << "\n\n";
 	for( size_t i = 0; i < selections.GetCount(); i++ ) {

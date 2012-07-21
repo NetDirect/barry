@@ -443,7 +443,7 @@ void SyncMode::ConfigureDevice(DeviceEntry &entry)
 
 		}
 		catch( OpenSync::Config::SaveError &se ) {
-			barryverbose(_C("Exception during save: ") << se.what());
+			barryverbose("Exception during save: " << se.what());
 			wxString msg = _W("Unable to save configuration for this device.\nError: ");
 			msg += wxString(se.what(), wxConvUTF8);
 			wxMessageBox(msg, _W("OpenSync Save Error"),
@@ -478,13 +478,14 @@ void SyncMode::CheckConfigured(DeviceSet::subset_type &subset)
 		if( device.IsConfigured() )
 			continue;
 
-		ostringstream msg;
-		msg << _C("Selected device ") << device.GetPin().Str()
-			<< " (" << device.GetDeviceName() << ")"
-			<< _C(" is not yet configured.  Configure now?");
+		wxString msg = wxString::Format(
+			// TRANSLATORS: first %s is the PIN number, and
+			// the second (in parentheses) is the device name.
+			_W("Selected device %s (%s) is not yet configured.  Configure now?"),
+			wxString(device.GetPin().Str().c_str(), wxConvUTF8).c_str(),
+			wxString(device.GetDeviceName().c_str(), wxConvUTF8).c_str());
 
-		int response = wxMessageBox(
-			wxString(msg.str().c_str(),wxConvUTF8),
+		int response = wxMessageBox(msg,
 			_W("Configure Now?"), wxYES_NO, m_parent);
 		if( response == wxYES ) {
 			ConfigureDevice(device);

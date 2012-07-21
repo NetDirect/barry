@@ -46,13 +46,22 @@ const wxArrayString& GetButtonLabels()
 	static wxArrayString m_labels;
 
 	if( m_labels.GetCount() == 0 ) {
+		// TRANSLATORS: this is a main screen button label. See
+		// util.cc line 200 for more information on its flexibility.
 		m_labels.Add( _W("Backup &\nRestore") );
+		// TRANSLATORS: this is a main screen button label
 		m_labels.Add( _W("Sync") );
+		// TRANSLATORS: this is a main screen button label
 		m_labels.Add( _W("Modem\nTethering") );
+		// TRANSLATORS: this is a main screen button label
 		m_labels.Add( _W("Migrate\nDevice") );
+		// TRANSLATORS: this is a main screen button label
 		m_labels.Add( _W("Browse\nDatabases") );
+		// TRANSLATORS: this is a main screen button label
 		m_labels.Add( _W("Application\nLoader") );
+		// TRANSLATORS: this is a main screen button label
 		m_labels.Add( _W("Media") );
+		// TRANSLATORS: this is a main screen button label
 		m_labels.Add( _W("Misc") );
 	}
 

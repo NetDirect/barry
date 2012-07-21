@@ -136,7 +136,7 @@ bool Group::GroupMatchesExistingConfig(OpenSync::API &api)
 
 	// check totals match
 	if( (unsigned) GetConnectedCount() != members.size() ) {
-		barryverbose(_C("Connected count of ") << GetConnectedCount() << _C(" does not match member count of ") << members.size());
+		barryverbose("Connected count of " << GetConnectedCount() << " does not match member count of " << members.size());
 		return false;
 	}
 
@@ -149,12 +149,12 @@ bool Group::GroupMatchesExistingConfig(OpenSync::API &api)
 
 		Member *m = members.Find( (*ci)->GetMemberId() );
 		if( !m ) {
-			barryverbose(_C("Can't match member ID: ") << (*ci)->GetMemberId() );
+			barryverbose("Can't match member ID: " << (*ci)->GetMemberId() );
 			return false;
 		}
 
 		if( m->plugin_name != (*ci)->GetPluginName(api) ) {
-			barryverbose(_C("Plugin names don't match: ")
+			barryverbose("Plugin names don't match: "
 				<< m->plugin_name << ", "
 				<< (*ci)->GetPluginName(api));
 			return false;

@@ -2229,7 +2229,7 @@ void OpenSync40::Sync(const std::string &group_name,
 		SyncListHandle objtypes(m_priv->osync_list_free);
 		objtypes = m_priv->osync_member_get_objtypes(member);
 		if( m_priv->osync_list_length(objtypes.get()) == 0 ) {
-			cout << "Sync(): " << _C("Member ") << m_priv->osync_member_get_id(member) << _C(" has no objtypes. Has it already been discovered?") << endl;
+			cout << "Sync(): " << "Member " << m_priv->osync_member_get_id(member) << " has no objtypes. Has it already been discovered?" << endl;
 		}
 	}
 

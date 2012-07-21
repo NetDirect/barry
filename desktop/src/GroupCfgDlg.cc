@@ -338,6 +338,8 @@ void GroupCfgDlg::AddSyncTypeSizer(wxSizer *sizer)
 void GroupCfgDlg::AddFavourSizer(wxSizer *sizer)
 {
 	wxArrayString labels;
+	// TRANSLATORS: these 3 strings are options for default
+	// conflict resolution during syncing
 	labels.Add( _W("Favour device") );
 	labels.Add( _W("Favour application") );
 	labels.Add( _W("Ask me") );

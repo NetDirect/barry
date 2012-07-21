@@ -237,6 +237,8 @@ void MigrateDlg::Main_AddDestSizer(wxSizer *sizer)
 
 
 	wxArrayString write_modes;
+	// TRANSLATORS: these 4 strings are write-mode options in the
+	// Migrate Device dialog
 	write_modes.Add(_W("Erase all, then restore"));
 	write_modes.Add(_W("Add new, and overwrite existing"));
 	write_modes.Add(_W("Add only, don't overwrite existing"));
@@ -516,10 +518,9 @@ void MigrateDlg::OnPromptPassword(wxCommandEvent &event)
 	ScopeSignaler done(m_waiter);
 
 	// create prompt based on exception data
-	ostringstream oss;
-	oss << _C("Please enter device password: ")
-	    << "(" << event.GetInt() << _C(" tries remaining") << ")";
-	wxString prompt(oss.str().c_str(), wxConvUTF8);
+	wxString prompt = wxString::Format(
+		_W("Please enter device password: (%d tries remaining)"),
+		event.GetInt());
 
 	// ask user for device password
 	m_password = wxGetPasswordFromUser(prompt,

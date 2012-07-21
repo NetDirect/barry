@@ -93,13 +93,11 @@ bool Google::ZapData(wxWindow *parent,
 		dynamic_cast<OpenSync::Config::Google&>(*plugin);
 
 	// build intro message
-	ostringstream oss;
-	oss << _C("Please select the databases you wish to erase\n"
+	wxString msg = _W("Please select the databases you wish to erase\n"
 		"in your Google Calendar: \n"
 		"\n"
 		"Note: all synced databases must be erased\n"
 		"to avoid a slow-sync.");
-	wxString msg(oss.str().c_str(), wxConvUTF8);
 
 	// build list of databases (base on information from engine, if
 	// the pointer is valid)
@@ -115,7 +113,7 @@ bool Google::ZapData(wxWindow *parent,
 		return false;	// nothing to do
 
 	// display selections to the user for one final confirmation
-	oss.str("");
+	ostringstream oss;
 	oss << _C("You have selected the following databases to be completely "
 		"erased from your Google Calendar:") << "\n\n";
 	for( size_t i = 0; i < selections.GetCount(); i++ ) {

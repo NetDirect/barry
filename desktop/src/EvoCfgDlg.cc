@@ -166,7 +166,7 @@ wxString EvoCfgDlg::CheckPath(const wxString &name,
 	if( path.size() > 7 && path.substr(0, 7) == "file://" ) {
 		std::string p = path.substr(7);
 		if( !EvoSources::PathExists(p) ) {
-			wxString msg = name + _W(" does not exist.");
+			wxString msg = wxString::Format(_W("File '%s' does not exist."), name.c_str());
 			return msg;
 		}
 	}

@@ -156,8 +156,10 @@ bool ExecHelper::Run(wxWindow *parent,
 			const wxString &command)
 {
 	if( IsAppRunning() ) {
-		RunError(parent, wxString(appname.c_str(), wxConvUTF8) +
-			_W(" is already running."));
+		RunError(parent,
+			// TRANSLATORS: %s is the name of an application
+			wxString::Format(_W("%s is already running."),
+				appname.c_str()));
 		return false;
 	}
 
@@ -168,9 +170,10 @@ bool ExecHelper::Run(wxWindow *parent,
 		m_app_callback = 0;
 		m_app_pid = -1;
 
-		RunError(parent, _W("Failed to run ") +
-			wxString(appname.c_str(), wxConvUTF8) +
-			_W(". Please make sure it is installed and in your PATH."));
+		RunError(parent, wxString::Format(
+			_W("Failed to run %s. Please make sure it is "
+			"installed and in your PATH."),
+			appname.c_str()));
 		return false;
 	}
 
