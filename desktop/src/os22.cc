@@ -281,7 +281,7 @@ bool SyncConflict22Private::IsIgnoreSupported() const
 
 bool SyncConflict22Private::IsKeepNewerSupported() const
 {
-	return m_priv->osengine_mapping_check_timestamps(m_engine, m_mapping, NULL); 
+	return m_priv->osengine_mapping_check_timestamps(m_engine, m_mapping, NULL);
 }
 
 void SyncConflict22Private::Select(int change_id)
@@ -370,52 +370,47 @@ void member_status(OSyncMemberUpdate *status, void *cbdata)
 	CallbackBundle22 *cb = (CallbackBundle22*) cbdata;
 
 	try {
-		ostringstream oss;
 		bool error_event = false;
 		bool valid = true;
 
-		oss << _C("Member ")
-		    << cb->m_priv->osync_member_get_id(status->member)
-		    << " ("
-		    << cb->m_priv->osync_member_get_pluginname(status->member)
-		    << ")";
+		string fmt, trailer;
 
 		switch( status->type )
 		{
 		case MEMBER_CONNECTED:
-			oss << _C(" just connected");
+			fmt = _C("Member %lld (%s) just connected");
 			break;
 		case MEMBER_DISCONNECTED:
-			oss << _C(" just disconnected");
+			fmt = _C("Member %lld (%s) just disconnected");
 			break;
 		case MEMBER_SENT_CHANGES:
-			oss << _C(" just sent all changes");
+			fmt = _C("Member %lld (%s) just sent all changes");
 			break;
 		case MEMBER_COMMITTED_ALL:
-			oss << _C(" committed all changes");
+			fmt = _C("Member %lld (%s) committed all changes");
 			break;
 		case MEMBER_CONNECT_ERROR:
-			oss << _C(" had an error while connecting: ")
-			    << cb->m_priv->osync_error_print(&status->error);
+			fmt = _C("Member %lld (%s) had an error while connecting: %s");
+			trailer = cb->m_priv->osync_error_print(&status->error);
 			break;
 		case MEMBER_GET_CHANGES_ERROR:
-			oss << _C(" had an error while getting changes: ")
-			    << cb->m_priv->osync_error_print(&status->error);
+			fmt = _C("Member %lld (%s) had an error while getting changes: %s");
+			trailer = cb->m_priv->osync_error_print(&status->error);
 			error_event = true;
 			break;
 		case MEMBER_SYNC_DONE_ERROR:
-			oss << _C(" had an error while calling sync done: ")
-			    << cb->m_priv->osync_error_print(&status->error);
+			fmt = _C("Member %lld (%s) had an error while calling sync done: %s");
+			trailer = cb->m_priv->osync_error_print(&status->error);
 			error_event = true;
 			break;
 		case MEMBER_DISCONNECT_ERROR:
-			oss << _C(" had an error while disconnecting: ")
-			    << cb->m_priv->osync_error_print(&status->error);
+			fmt = _C("Member %lld (%s) had an error while disconnecting: %s");
+			trailer = cb->m_priv->osync_error_print(&status->error);
 			error_event = true;
 			break;
 		case MEMBER_COMMITTED_ALL_ERROR:
-			oss << _C(" had an error while commiting changes: ")
-			    << cb->m_priv->osync_error_print(&status->error);
+			fmt = _C("Member %lld (%s) had an error while commiting changes: %s");
+			trailer = cb->m_priv->osync_error_print(&status->error);
 			error_event = true;
 			break;
 		default:
@@ -423,12 +418,18 @@ void member_status(OSyncMemberUpdate *status, void *cbdata)
 			break;
 		}
 
+		// combine the message
+		string msg = string_vprintf(fmt.c_str(),
+			cb->m_priv->osync_member_get_id(status->member),
+			cb->m_priv->osync_member_get_pluginname(status->member),
+			trailer.c_str());
+
 		// call the status handler
-		if( oss.str().size() && valid ) {
+		if( msg.size() && valid ) {
 			cb->m_status->MemberStatus(
 				cb->m_priv->osync_member_get_id(status->member),
 				cb->m_priv->osync_member_get_pluginname(status->member),
-				oss.str(), error_event);
+				msg, error_event);
 		}
 	}
 	catch( std::exception &e ) {
@@ -447,77 +448,57 @@ void entry_status(OSyncEngine *engine, OSyncChangeUpdate *status, void *cbdata)
 	CallbackBundle22 *cb = (CallbackBundle22*) cbdata;
 
 	try {
-		ostringstream oss;
-
 		OSyncMember *member = cb->m_priv->osync_change_get_member(status->change);
 		bool error_event = false;
+
+		string msg;
 
 		switch( status->type )
 		{
 		case CHANGE_RECEIVED_INFO:
-			oss << _C("Received an entry ")
-			    << cb->m_priv->osync_change_get_uid(status->change)
-			    << _C(" without data from member ")
-			    << status->member_id
-			    << " ("
-			    << cb->m_priv->osync_member_get_pluginname(member)
-			    << "). "
-			    << _C("Change type: ")
-			    << OSyncChangeType2String(cb->m_priv->osync_change_get_changetype(status->change));
+			msg = string_vprintf(_C("Received an entry %s without data from member %d (%s).  Change type: %s"),
+			    cb->m_priv->osync_change_get_uid(status->change),
+			    status->member_id,
+			    cb->m_priv->osync_member_get_pluginname(member),
+			    OSyncChangeType2String(cb->m_priv->osync_change_get_changetype(status->change)));
 			break;
 		case CHANGE_RECEIVED:
-			oss << _C("Received an entry ")
-			    << cb->m_priv->osync_change_get_uid(status->change)
-			    << _C(" with data of size ")
-			    << cb->m_priv->osync_change_get_datasize(status->change)
-			    << _C(" from member ")
-			    << status->member_id
-			    << " ("
-			    << cb->m_priv->osync_member_get_pluginname(member)
-			    << "). "
-			    << _C("Change type:")
-			    << OSyncChangeType2String(cb->m_priv->osync_change_get_changetype(status->change));
+			msg = string_vprintf(_C("Received an entry %s with data of size %d from member %d (%s).  Change type: %s"),
+			    cb->m_priv->osync_change_get_uid(status->change),
+			    cb->m_priv->osync_change_get_datasize(status->change),
+			    status->member_id,
+			    cb->m_priv->osync_member_get_pluginname(member),
+			    OSyncChangeType2String(cb->m_priv->osync_change_get_changetype(status->change)));
 			break;
 		case CHANGE_SENT:
-			oss << _C("Sent an entry ")
-			    << cb->m_priv->osync_change_get_uid(status->change)
-			    << _C(" of size ")
-			    << cb->m_priv->osync_change_get_datasize(status->change)
-			    << _C(" to member ")
-			    << status->member_id
-			    << " ("
-			    << cb->m_priv->osync_member_get_pluginname(member)
-			    << "). "
-			    << _C("Change type: ")
-			    << OSyncChangeType2String(cb->m_priv->osync_change_get_changetype(status->change));
+			msg = string_vprintf(_C("Sent an entry %s of size %d to member %d (%s).  Change type: %s"),
+			    cb->m_priv->osync_change_get_uid(status->change),
+			    cb->m_priv->osync_change_get_datasize(status->change),
+			    status->member_id,
+			    cb->m_priv->osync_member_get_pluginname(member),
+			    OSyncChangeType2String(cb->m_priv->osync_change_get_changetype(status->change)));
 			break;
 		case CHANGE_WRITE_ERROR:
 			error_event = true;
-			oss << _C("Error writing entry ")
-			    << cb->m_priv->osync_change_get_uid(status->change)
-			    << _C(" to member ")
-			    << status->member_id
-			    << " ("
-			    << cb->m_priv->osync_member_get_pluginname(member)
-			    << "): "
-			    << cb->m_priv->osync_error_print(&status->error);
+			msg = string_vprintf(_C("Error writing entry %s to member %d (%s): %s"),
+			    cb->m_priv->osync_change_get_uid(status->change),
+			    status->member_id,
+			    cb->m_priv->osync_member_get_pluginname(member),
+			    cb->m_priv->osync_error_print(&status->error));
 			break;
 		case CHANGE_RECV_ERROR:
 			error_event = true;
-			oss << _C("Error reading entry ")
-			    << cb->m_priv->osync_change_get_uid(status->change)
-			    << _C(" from member ")
-			    << status->member_id
-			    << " ("
-			    << cb->m_priv->osync_member_get_pluginname(member)
-			    << "): "
-			    << cb->m_priv->osync_error_print(&(status->error));
+			msg = string_vprintf(_C("Error reading entry %s from member %d (%s): %s"),
+			    cb->m_priv->osync_change_get_uid(status->change),
+			    status->member_id,
+			    cb->m_priv->osync_member_get_pluginname(member),
+			    cb->m_priv->osync_error_print(&(status->error)));
 			break;
 		}
 
 		// call the status handler
-		if( oss.str().size() ) {
-			cb->m_status->EntryStatus(oss.str(), error_event);
+		if( msg.size() ) {
+			cb->m_status->EntryStatus(msg, error_event);
 		}
 	}
 	catch( std::exception &e ) {
@@ -982,9 +963,9 @@ std::string OpenSync22::GetConfiguration(const std::string &group_name,
 					long member_id)
 {
 	if( !IsConfigurable(group_name, member_id) ) {
-		ostringstream oss;
-		oss << "GetConfiguration(): " << _C("Member ") << member_id << _C(" of group '") << group_name << _C("' does not accept configuration.");
-		throw std::runtime_error(oss.str());
+		throw std::runtime_error(string("GetConfiguration(): ") + string_vprintf(_C("Member %ld of group '%s' does not accept configuration."),
+				member_id,
+				group_name.c_str()));
 	}
 
 	OSyncGroup *group = m_priv->osync_env_find_group(m_priv->env, group_name.c_str());
@@ -993,9 +974,7 @@ std::string OpenSync22::GetConfiguration(const std::string &group_name,
 
 	OSyncMember *member = m_priv->osync_member_from_id(group, member_id);
 	if( !member ) {
-		ostringstream oss;
-		oss << "GetConfiguration(): " << _C("Member ") << member_id << _C(" not found.");
-		throw std::runtime_error(oss.str());
+		throw std::runtime_error(string("GetConfiguration(): ") + string_vprintf(_C("Member %ld not found."), member_id));
 	}
 
 	OSyncError *error = NULL;
@@ -1018,9 +997,9 @@ void OpenSync22::SetConfiguration(const std::string &group_name,
 				const std::string &config_data)
 {
 	if( !IsConfigurable(group_name, member_id) ) {
-		ostringstream oss;
-		oss << "SetConfiguration(): " << _C("Member ") << member_id << _C(" of group '") << group_name << _C("' does not accept configuration.");
-		throw std::runtime_error(oss.str());
+		throw std::runtime_error(string("SetConfiguration(): ") + string_vprintf(_C("Member %ld of group '%s' does not accept configuration."),
+			member_id,
+			group_name.c_str()));
 	}
 
 	OSyncGroup *group = m_priv->osync_env_find_group(m_priv->env, group_name.c_str());
@@ -1029,9 +1008,7 @@ void OpenSync22::SetConfiguration(const std::string &group_name,
 
 	OSyncMember *member = m_priv->osync_member_from_id(group, member_id);
 	if( !member ) {
-		ostringstream oss;
-		oss << "SetConfiguration(): " << _C("Member ") << member_id << _C(" not found.");
-		throw std::runtime_error(oss.str());
+		throw std::runtime_error(string("SetConfiguration(): ") + string_vprintf(_C("Member %ld not found."), member_id));
 	}
 
 	m_priv->osync_member_set_config(member, config_data.c_str(), config_data.size());

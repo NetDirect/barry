@@ -23,7 +23,9 @@
 #include "os22.h"
 #include "os40.h"
 #include "osprivatebase.h"
+#include <stdio.h>
 #include <stdlib.h>
+#include <stdarg.h>
 #include <iostream>
 #include <sstream>
 #include <iomanip>
@@ -32,6 +34,47 @@
 using namespace std;
 
 namespace OpenSync {
+
+// The following code is based on the example from the vsnprintf(3) manpage
+std::string string_vprintf(const char *fmt, ...)
+{
+	// Guess we need no more than 200 bytes.
+	int n, size = 200;
+	char *p, *np;
+	std::string result;
+	va_list ap;
+
+	if ((p = (char*)malloc(size)) == NULL)
+		return NULL;
+
+	for (;;) {
+		// Try to print in the allocated space.
+		va_start(ap, fmt);
+		n = vsnprintf(p, size, fmt, ap);
+		va_end(ap);
+
+		// If that worked, return the string.
+		if (n > -1 && n < size) {
+			result = p;
+			free(p);
+			return result;
+		}
+
+		// Else try again with more space.
+		if (n > -1)    // glibc 2.1
+			size = n+1; // precisely what is needed
+		else           // glibc 2.0
+			size *= 2;  // twice the old size
+
+		if ((np = (char*)realloc (p, size)) == NULL) {
+			free(p);
+			return result;
+		} else {
+			p = np;
+		}
+	}
+}
+
 
 std::ostream& operator<< (std::ostream &os, const string_list_type &list)
 {

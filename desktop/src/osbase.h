@@ -31,6 +31,9 @@
 
 namespace OpenSync {
 
+// utilitiy functions
+std::string string_vprintf(const char *fmt, ...);
+
 struct Member
 {
 	std::string group_name;
