@@ -1,0 +1,21 @@
+<version>
+	0.19.0
+</version>
+
+<headers>
+	/tmp/0.19.0/rootdir/include
+</headers>
+
+<defines>
+	#define __BARRY_BOOST_MODE__ 1
+</defines>
+
+<libs>
+	/tmp/0.19.0/rootdir/lib/libbarry.so
+	/tmp/0.19.0/rootdir/lib/libbarrydp.so
+	/tmp/0.19.0/rootdir/lib/libbarryjdwp.so
+	/tmp/0.19.0/rootdir/lib/libbarrysync.so
+	/tmp/0.19.0/rootdir/lib/libbarrybackup.so
+	/tmp/0.19.0/rootdir/lib/libbarryalx.so
+</libs>
+
