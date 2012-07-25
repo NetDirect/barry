@@ -218,12 +218,12 @@ std::vector<DeviceID> DeviceList::MatchDevices(int vendor, int product,
 
 Device::Device(const Usb::DeviceID& id, int timeout)
 	: m_id(id),
+	m_handle(new DeviceHandle()),
 	m_timeout(timeout)
 {
 	dout("usb_open(" << std::dec << id.m_impl.get() << ")");
 	if( !id.m_impl.get() )
 		throw Error("invalid USB device ID");
-	m_handle.reset(new DeviceHandle());
 	m_handle->m_handle = usb_open(id.m_impl->m_dev);
 	if( !m_handle->m_handle )
 		throw Error("Failed to open USB device.  Please check your system's USB device permissions.");
