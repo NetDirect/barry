@@ -220,8 +220,8 @@ time_t Message2Time(uint16_t r_date, uint16_t r_time)
 	dout("Message2Time(0x" << std::hex << btohs(r_date) << ", 0x"
 		<< btohs(r_time) << ")");
 
-	time_t result = ( btohs(r_date) & 0x01ff ) - 0x29;
-	result = DayToDate( (uint16_t)result );
+	uint16_t day = ( btohs(r_date) & 0x01ff ) - 0x29;
+	time_t result = DayToDate( day );
 	result += (time_t)( btohs(r_time)*1.77 );
 
 	dout("Message2Time result: " << ctime(&result));

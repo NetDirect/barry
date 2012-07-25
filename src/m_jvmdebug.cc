@@ -51,7 +51,7 @@ namespace Barry {
 
 void JVMModulesList::Parse(const Data &entry_packet)
 {
-	uint16_t count = 0;
+	uint32_t count = 0;
 
 	size_t size = entry_packet.GetSize();
 
@@ -62,7 +62,7 @@ void JVMModulesList::Parse(const Data &entry_packet)
 		Protocol::JVMModulesEntry *e = (Protocol::JVMModulesEntry *) ptr;
 
 		len = SB_JVMMODULES_ENTRY_HEADER_SIZE + be_btohs(e->sizename);
-		if( (size_t)(count + len) > size )
+		if( (count + len) > size )
 			break;
 
 		JVMModulesEntry entry;
@@ -117,7 +117,7 @@ void JVMModulesEntry::Dump(std::ostream &os) const
 
 void JVMThreadsList::Parse(const Data &entry_packet)
 {
-	uint16_t count = 0;
+	uint32_t count = 0;
 
 	size_t size = entry_packet.GetSize();
 
@@ -128,7 +128,7 @@ void JVMThreadsList::Parse(const Data &entry_packet)
 		uint32_t *e = (uint32_t *) ptr;
 
 		len = sizeof(uint32_t);
-		if( (size_t)(count + len) > size )
+		if( (count + len) > size )
 			break;
 
 		JVMThreadsEntry entry;
