@@ -28,6 +28,9 @@
 #include <string>
 #include <stdint.h>
 
+#define BARRY_DATA_DEFAULT_SIZE 0x4000
+#define BARRY_DATA_DEFAULT_PREPEND_SIZE 0x100
+
 namespace Barry {
 
 class BXEXPORT Data
@@ -59,11 +62,8 @@ protected:
 	size_t AvailablePrependSpace() const;
 
 public:
-	static const int DEFAULT_SIZE = 0x4000;
-	static const int DEFAULT_PREPEND_SIZE = 0x100;
-
 	Data();
-	explicit Data(int endpoint, size_t startsize = DEFAULT_SIZE, size_t prependsize = DEFAULT_PREPEND_SIZE);
+	explicit Data(int endpoint, size_t startsize = BARRY_DATA_DEFAULT_SIZE, size_t prependsize = BARRY_DATA_DEFAULT_PREPEND_SIZE);
 	Data(const void *ValidData, size_t size);
 	Data(const Data &other);
 	~Data();

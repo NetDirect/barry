@@ -66,9 +66,9 @@ inline bool IsHexData(const std::string &s)
 bool Data::bPrintAscii = true;
 
 Data::Data()
-	: m_memBlock(new unsigned char[DEFAULT_SIZE + DEFAULT_PREPEND_SIZE])
-	, m_blockSize(DEFAULT_SIZE + DEFAULT_PREPEND_SIZE)
-	, m_dataStart(m_memBlock + DEFAULT_PREPEND_SIZE)
+	: m_memBlock(new unsigned char[BARRY_DATA_DEFAULT_SIZE + BARRY_DATA_DEFAULT_PREPEND_SIZE])
+	, m_blockSize(BARRY_DATA_DEFAULT_SIZE + BARRY_DATA_DEFAULT_PREPEND_SIZE)
+	, m_dataStart(m_memBlock + BARRY_DATA_DEFAULT_PREPEND_SIZE)
 	, m_dataSize(0)
 	, m_externalData(0)
 	, m_external(false)
