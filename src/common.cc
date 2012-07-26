@@ -63,6 +63,10 @@ void Init(bool data_dump_mode, std::ostream *logStream)
 
 	// perform one-time initalization
 	if( !initialized ) {
+		// initialize i18n gettext directory
+		// the rest is done in i18n.h
+		bindtextdomain(PACKAGE, LOCALEDIR);
+
 #ifdef USE_BARRY_SOCKETS
 		// Should call Usb::Uninit at some point,
 		// but there isn't currently a deinit call.

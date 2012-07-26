@@ -167,6 +167,7 @@ include_barry_HEADERS = barry.h barrysync.h barrybackup.h barryalx.h \
 	tzwrapper.h
 
 noinst_HEADERS = cbarry.h \
+	i18n.h \
 	base64.h \
 	record-internal.h \
 	r_recur_base-int.h \
