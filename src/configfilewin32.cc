@@ -81,10 +81,10 @@ void ConfigFile::BuildFilename()
 	TCHAR dirName[MAX_PATH];
 	CHAR dirNameA[MAX_PATH];
 	if( !SHGetSpecialFolderPath(NULL, dirName, CSIDL_APPDATA, TRUE) ) {
-		throw ConfigFileError("BuildFilename: SHGetSpecialFolderPath failed", GetLastError());
+		throw ConfigFileError(_("BuildFilename: SHGetSpecialFolderPath failed"), GetLastError());
 	}
 	if( WideCharToMultiByte(CP_ACP, 0, dirName, -1, dirNameA, MAX_PATH, NULL, NULL) <= 0 ) {
-		throw ConfigFileError("BuildFilename: conversion failed", GetLastError());
+		throw ConfigFileError(_("BuildFilename: conversion failed"), GetLastError());
 	}
 	dirNameA[MAX_PATH-1] = 0; // Make sure it's NUL terminated
 	m_filename = dirNameA;
@@ -98,10 +98,10 @@ void ConfigFile::BuildDefaultPath()
 	TCHAR dirName[MAX_PATH];
 	CHAR dirNameA[MAX_PATH];
 	if( !SHGetSpecialFolderPath(NULL, dirName, CSIDL_APPDATA, TRUE) ) {
-		throw ConfigFileError("BuildDefaultPath: SHGetSpecialFolderPath failed", GetLastError());
+		throw ConfigFileError(_("BuildDefaultPath: SHGetSpecialFolderPath failed"), GetLastError());
 	}
 	if( WideCharToMultiByte(CP_ACP, 0, dirName, -1, dirNameA, MAX_PATH, NULL, NULL) <= 0 ) {
-		throw ConfigFileError("BuildFilename: conversion failed", GetLastError());
+		throw ConfigFileError(_("BuildFilename: conversion failed"), GetLastError());
 	}
 	dirNameA[MAX_PATH-1] = 0; // Make sure it's NUL terminated
 	m_path = dirNameA;
@@ -115,14 +115,14 @@ bool ConfigFile::CheckPath(const std::string &path, std::string *perr)
 {
 	if( path.size() == 0 ) {
 		if( perr )
-			*perr = "path is empty!";
+			*perr = _("ConfigFile::CheckPath(): path is empty!");
 		return false;
 	}
 
 	TCHAR dirName[MAX_PATH];
 	if( MultiByteToWideChar(CP_ACP, 0, path.c_str(), -1, dirName, MAX_PATH) <= 0 ) {
 		if( perr )
-			*perr = "Failed to convert to widechar";
+			*perr = _("Failed to convert to widechar");
 		return false;
 	}
 	dirName[MAX_PATH-1] = 0; // Make sure it's NUL terminated
@@ -145,7 +145,7 @@ bool ConfigFile::CheckPath(const std::string &path, std::string *perr)
 			continue;
 		if( !CreateDirectory(dirName, NULL) ) {
 				if( perr ) {
-					*perr = "failed to create directory";
+					*perr = _("failed to create directory");
 				}
 				return false;
 		}
@@ -160,10 +160,10 @@ void GlobalConfigFile::BuildFilename()
 	TCHAR dirName[MAX_PATH];
 	CHAR dirNameA[MAX_PATH];
 	if (!SHGetSpecialFolderPath(NULL, dirName, CSIDL_APPDATA, TRUE)) {
-		throw ConfigFileError("BuildFilename: SHGetSpecialFolderPath failed", GetLastError());
+		throw ConfigFileError(_("BuildFilename: SHGetSpecialFolderPath failed"), GetLastError());
 	}
 	if (WideCharToMultiByte(CP_ACP, 0, dirName, -1, dirNameA, MAX_PATH, NULL, NULL) <= 0) {
-		throw ConfigFileError("BuildFilename: conversion failed", GetLastError());
+		throw ConfigFileError(_("BuildFilename: conversion failed"), GetLastError());
 	}
 	dirNameA[MAX_PATH-1] = 0; // Make sure it's NUL terminated
 	m_filename = dirNameA;

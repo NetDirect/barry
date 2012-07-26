@@ -40,21 +40,21 @@ void Usage()
    int logical, major, minor;
    const char *Version = Barry::Version(logical, major, minor);
 
-   cerr
-   << "bjdwp - Command line USB Blackberry JDWP\n"
-   << "        Copyright 2008-2009, Nicolas VIVIEN.\n"
-   << "        Using: " << Version << "\n"
-   << "\n"
-   << "   -h        This help\n"
-   << "   -p pin    PIN of device to talk with\n"
-   << "             If only one device is plugged in, this flag is optional\n"
-   << "   -P pass   Simplistic method to specify device password\n"
-   << "   -v        Dump protocol data during operation\n"
-   << "\n"
-   << "arguments\n"
-   << "\n"
-   << "  <address>  Interface\n"
-   << "  <port>     Listen port\n"
+   cerr << string_vprintf(
+   _("bjdwp - Command line USB Blackberry JDWP\n"
+   "        Copyright 2008-2009, Nicolas VIVIEN.\n"
+   "        Using: %s\n"
+   "\n"
+   "   -h        This help\n"
+   "   -p pin    PIN of device to talk with\n"
+   "             If only one device is plugged in, this flag is optional\n"
+   "   -P pass   Simplistic method to specify device password\n"
+   "   -v        Dump protocol data during operation\n"
+   "\n"
+   "arguments\n"
+   "\n"
+   "  <address>  Interface\n"
+   "  <port>     Listen port\n"), Version)
    << endl;
 }
 
@@ -101,7 +101,7 @@ int main(int argc, char *argv[], char *envp[])
 		argv += optind;
 
 		if( argc != 2 ) {
-			cerr << "missing command" << endl;
+			cerr << _("missing command") << endl;
 			Usage();
 			return 1;
 		}
@@ -121,7 +121,8 @@ int main(int argc, char *argv[], char *envp[])
 		Barry::Probe probe;
 		int activeDevice = probe.FindActive(pin);
 		if( activeDevice == -1 ) {
-			cerr << "No device selected, or PIN not found" << endl;
+			cerr << _("No device selected, or PIN not found")
+				<< endl;
 			return 1;
 		}
 
@@ -150,17 +151,17 @@ int main(int argc, char *argv[], char *envp[])
 	}
 	catch( Usb::Error &ue) {
 		std::cout << endl;	// flush any normal output first
-		std::cerr << "Usb::Error caught: " << ue.what() << endl;
+		std::cerr << _("Usb::Error caught: ") << ue.what() << endl;
 		return 1;
 	}
 	catch( Barry::Error &se ) {
 		std::cout << endl;
-		std::cerr << "Barry::Error caught: " << se.what() << endl;
+		std::cerr << _("Barry::Error caught: ") << se.what() << endl;
 		return 1;
 	}
 	catch( std::exception &e ) {
 		std::cout << endl;
-		std::cerr << "std::exception caught: " << e.what() << endl;
+		std::cerr << _("std::exception caught: ") << e.what() << endl;
 		return 1;
 	}
 

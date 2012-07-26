@@ -20,6 +20,7 @@
     root directory of this project for more details.
 */
 
+#include "i18n.h"
 #include "m_raw_channel.h"
 #include "semaphore.h"
 #include "data.h"
@@ -112,7 +113,7 @@ RawChannel::RawChannel(Controller &con)
 void RawChannel::CheckQueueAvailable()
 {
 	if( !m_con.HasQueue() ) {
-		throw Barry::Error("RawChannel: No routing queue set in controller");
+		throw Barry::Error(_("RawChannel: No routing queue set in controller"));
 	}
 }
 
@@ -161,7 +162,7 @@ void RawChannel::HandleReceivedZeroPacket(Data &data)
 
 	if( packet->socket != 0 ) {
 		UnregisterZeroSocketInterest();
-		SetPendingError("RawChannel: Got packet not for socket-zero");
+		SetPendingError(_("RawChannel: Got packet not for socket-zero"));
 	}
 
 	switch( btohs(packet->command) )
@@ -179,10 +180,10 @@ void RawChannel::HandleReceivedZeroPacket(Data &data)
 	default:
 		UnregisterZeroSocketInterest();
 		if( m_callback ) {
-			m_callback->ChannelError("RawChannel: Got unexpected socket zero packet");
+			m_callback->ChannelError(_("RawChannel: Got unexpected socket zero packet"));
 		}
 		else {
-			SetPendingError("RawChannel: Got unexpected socket zero packet");
+			SetPendingError(_("RawChannel: Got unexpected socket zero packet"));
 		}
 		break;
 	}
@@ -201,14 +202,14 @@ void RawChannel::HandleReceivedData(Data &data)
 		m_callback->DataReceived(partial);
 	}
 	else {
-		SetPendingError("RawChannel: Received data to handle when in non-callback mode");
+		SetPendingError(_("RawChannel: Received data to handle when in non-callback mode"));
 	}
 }
 
 void RawChannel::HandleError(Barry::Error &error)
 {
 	std::ostringstream errorOss;
-	errorOss << "RawChannel: Socket error received, what: " << error.what();
+	errorOss << _("RawChannel: Socket error received, what: ") << error.what();
 
 	if( m_callback ) {
 		m_callback->ChannelError(errorOss.str().c_str());
@@ -241,7 +242,7 @@ void RawChannel::Send(Data &data, int timeout)
 	size_t packetSize = SB_CHANNELPACKET_HEADER_SIZE + data.GetSize();
 
 	if( packetSize > SB_CHANNELPACKET_HEADER_SIZE + SB_CHANNELPACKET_MAX_DATA_SIZE ) {
-		throw Barry::Error("RawChannel: send data size larger than MaximumPacketSize");
+		throw Barry::Error(_("RawChannel: send data size larger than MaximumPacketSize"));
 	}
 
 	if( m_pending_error ) {
@@ -264,7 +265,7 @@ void RawChannel::Send(Data &data, int timeout)
 void RawChannel::Receive(Data &data,int timeout)
 {
 	if( m_callback ) {
-		throw std::logic_error("RawChannel: Receive called when channel was created with a callback");
+		throw std::logic_error(_("RawChannel: Receive called when channel was created with a callback"));
 	}
 
 	if( m_pending_error ) {
@@ -289,7 +290,7 @@ void RawChannel::ValidateDataPacket(Data &data)
 	MAKE_CHANNELPACKETPTR_BUF(packet, data.GetData());
 	if( packet->size != data.GetSize() ) {
 
-		throw std::logic_error("RawChannel: Data size doesn't match packet size");
+		throw std::logic_error(_("RawChannel: Data size doesn't match packet size"));
 	}
 }
 

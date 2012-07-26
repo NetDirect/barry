@@ -19,6 +19,7 @@
     root directory of this project for more details.
 */
 
+#include "i18n.h"
 #include "error.h"
 #include <errno.h>
 #include <sstream>
@@ -53,17 +54,19 @@ BadSize::BadSize(unsigned int packet_size,
 std::string BadSize::GetMsg(const char *msg, unsigned int d, unsigned int r)
 {
 	std::ostringstream oss;
-	oss << msg << ": Bad packet size, not enough data: DataSize(): " << d
-	    << ". Required size: " << r;
+	oss << msg << ": "
+	    << _("Bad packet size, not enough data: ")
+	    << _("DataSize(): ") << d << ". "
+	    << _("Required size: ") << r;
 	return oss.str();
 }
 
 std::string BadSize::GetMsg(unsigned int p, unsigned int d, unsigned int r)
 {
 	std::ostringstream oss;
-	oss << "Bad packet size. Packet: " << p
-	    << ". DataSize(): " << d
-	    << ". Required size: " << r;
+	oss << _("Bad packet size. Packet: ") << p
+	    << ". " << _("DataSize(): ") << d
+	    << ". " << _("Required size: ") << r;
 	return oss.str();
 }
 

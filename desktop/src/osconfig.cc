@@ -30,6 +30,7 @@
 #include "i18n.h"
 
 using namespace std;
+using namespace Barry;
 
 namespace OpenSync { namespace Config {
 

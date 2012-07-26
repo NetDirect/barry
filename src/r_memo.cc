@@ -20,6 +20,7 @@
     root directory of this project for more details.
 */
 
+#include "i18n.h"
 #include "r_memo.h"
 #include "record-internal.h"
 #include "protostructs.h"
@@ -46,9 +47,9 @@ namespace Barry {
 #define MEMFC_END		0xffff
 
 static FieldLink<Memo> MemoFieldLinks[] = {
-    { MEMFC_TITLE,     "Title",       0, 0, &Memo::Title, 0, 0, 0, 0, true },
-    { MEMFC_BODY,      "Body",        0, 0, &Memo::Body, 0, 0, 0, 0, true },
-    { MEMFC_END,       "End of List", 0, 0, 0, 0, 0, 0, 0, false }
+    { MEMFC_TITLE,  N_("Title"),       0, 0, &Memo::Title, 0, 0, 0, 0, true },
+    { MEMFC_BODY,   N_("Body"),        0, 0, &Memo::Body, 0, 0, 0, 0, true },
+    { MEMFC_END,    N_("End of List"), 0, 0, 0, 0, 0, 0, 0, false }
 };
 
 Memo::Memo()
@@ -76,7 +77,7 @@ const unsigned char* Memo::ParseField(const unsigned char *begin,
 
 	if( field->type == MEMFC_MEMO_TYPE ) {
 		if( field->u.raw[0] != 'm' ) {
-			throw Error( "Memo::ParseField: MemoType is not 'm'" );
+			throw Error(_("Memo::ParseField: MemoType is not 'm'"));
 		}
 		return begin;
 	}
@@ -205,10 +206,10 @@ void Memo::Dump(std::ostream &os) const
 {
 	ios_format_state state(os);
 
-	os << "Memo entry: 0x" << setbase(16) << RecordId
+	os << _("Memo entry: ") << "0x" << setbase(16) << RecordId
 	   << " (" << (unsigned int)RecType << ")\n";
-	os << "    Title: " << Title << "\n";
-	os << "    Body: ";
+	os << _("    Title: ") << Title << "\n";
+	os << _("    Body: ");
 
 	// The Body may have '\r' characters... translate them
 	// in the output to make it look more pretty
@@ -223,7 +224,7 @@ void Memo::Dump(std::ostream &os) const
 	if( Categories.size() ) {
 		string display;
 		Categories.CategoryList2Str(display);
-		os << "    Categories: " << display << "\n";
+		os << _("    Categories: ") << display << "\n";
 	}
 
 	os << Unknowns;
@@ -263,14 +264,14 @@ const FieldHandle<Memo>::ListT& Memo::GetFieldHandles()
 #undef RECORD_CLASS_NAME
 #define RECORD_CLASS_NAME Memo
 
-	FHP(RecType, "Record Type Code");
-	FHP(RecordId, "Unique Record ID");
+	FHP(RecType, _("Record Type Code"));
+	FHP(RecordId, _("Unique Record ID"));
 
-	FHD(Title, "Title", MEMFC_TITLE, true);
-	FHD(Body, "Body", MEMFC_BODY, true);
-	FHD(Categories, "Categories", MEMFC_CATEGORY, true);
+	FHD(Title, _("Title"), MEMFC_TITLE, true);
+	FHD(Body, _("Body"), MEMFC_BODY, true);
+	FHD(Categories, _("Categories"), MEMFC_CATEGORY, true);
 
-	FHP(Unknowns, "Unknown Fields");
+	FHP(Unknowns, _("Unknown Fields"));
 
 	return fhv;
 }

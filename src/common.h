@@ -60,6 +60,10 @@ BXEXPORT void Init(bool data_dump_mode = false, std::ostream *logStream = &std::
 BXEXPORT void Verbose(bool data_dump_mode = true);
 BXEXPORT bool IsVerbose();
 
+// utilitiy functions
+BXEXPORT std::string string_vprintf(const char *fmt, ...) BARRY_GCC_FORMAT_CHECK(1, 2);
+
+
 } // namespace Barry
 
 #endif

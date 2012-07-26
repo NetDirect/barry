@@ -21,6 +21,7 @@
     root directory of this project for more details.
 */
 
+#include "i18n.h"
 #include "packet.h"
 #include "m_desktop.h"
 #include "protocol.h"
@@ -461,7 +462,7 @@ unsigned int DBPacket::ReturnCode() const
 		return rpack->u.db.u.return_code;
 	}
 	else {
-		throw Error("Attempting to extract a return code from the wrong response packet type");
+		throw Error(_("Attempting to extract a return code from the wrong response packet type"));
 	}
 }
 

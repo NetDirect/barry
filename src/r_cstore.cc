@@ -20,6 +20,7 @@
     root directory of this project for more details.
 */
 
+#include "i18n.h"
 #include "r_cstore.h"
 #include "record-internal.h"
 #include "data.h"
@@ -146,10 +147,10 @@ void ContentStore::BuildFields(Data &data, size_t &offset, const IConverter *ic)
 	data.Zap();
 
 	if( !Filename.size() )
-		throw BadData("Content Store must have a name.");
+		throw BadData(_("Content Store must have a name."));
 
 	if( !FolderFlag && !FileContent.size() )
-		throw BadData("Content Store item without any data.");
+		throw BadData(_("Content Store item without any data."));
 
 	// Filename
 	BuildField(data, offset, CSFC_FILENAME, Filename);
@@ -224,15 +225,15 @@ const FieldHandle<ContentStore>::ListT& ContentStore::GetFieldHandles()
 #undef RECORD_CLASS_NAME
 #define RECORD_CLASS_NAME ContentStore
 
-	FHP(RecType, "Record Type Code");
-	FHP(RecordId, "Unique Record ID");
+	FHP(RecType, _("Record Type Code"));
+	FHP(RecordId, _("Unique Record ID"));
 
-	FHD(Filename, "File or Folder Name", CSFC_FILENAME, true);
-	FHD(FolderFlag, "Folder Flag", CSFC_FOLDER_FLAG, false);
-	FHD(FileContent, "File Content", CSFC_FILE_CONTENT, false);
-	FHD(FileDescriptor, "File Descriptor", CSFC_FILE_DESCRIPTOR, false);
+	FHD(Filename, _("File or Folder Name"), CSFC_FILENAME, true);
+	FHD(FolderFlag, _("Folder Flag"), CSFC_FOLDER_FLAG, false);
+	FHD(FileContent, _("File Content"), CSFC_FILE_CONTENT, false);
+	FHD(FileDescriptor, _("File Descriptor"), CSFC_FILE_DESCRIPTOR, false);
 
-	FHP(Unknowns, "Unknown Fields");
+	FHP(Unknowns, _("Unknown Fields"));
 
 	return fhv;
 }
@@ -249,16 +250,16 @@ void ContentStore::Dump(std::ostream &os) const
 	os.setf(ios::left);
 	os.fill(' ');
 
-	os << "ContentStore: 0x" << hex << RecordId
+	os << _("ContentStore: ") << "0x" << hex << RecordId
 		<< " (" << (unsigned int)RecType << ")\n";
 
-	os << "       Filename: " << Filename << endl;
-	os << "         Folder: " << (FolderFlag ? "yes" : "no") << endl;
-	os << "        BB Size: " << dec << FileSize << endl;
-	os << "    Actual Size: " << FileContent.size() << endl;
-	os << "     Descriptor:\n"
+	os << _("       Filename: ") << Filename << endl;
+	os << _("         Folder: ") << (FolderFlag ? "yes" : "no") << endl;
+	os << _("        BB Size: ") << dec << FileSize << endl;
+	os << _("    Actual Size: ") << FileContent.size() << endl;
+	os << _("     Descriptor:\n")
 		<< Data(FileDescriptor.data(), FileDescriptor.size()) << endl;
-	os << "        Content:\n"
+	os << _("        Content:\n")
 		<< Data(FileContent.data(), FileContent.size()) << endl;
 
 	// and finally print unknowns

@@ -19,6 +19,7 @@
     root directory of this project for more details.
 */
 
+#include "i18n.h"
 #include "tarfile.h"
 #include "data.h"
 
@@ -51,7 +52,7 @@ TarFile::TarFile(const char *filename,
 	// open... throw on error, as we are in the constructor
 	if( tar_open(&m_tar, const_cast<char*>(filename),
 		compress_ops, flags, mode, TAR_VERBOSE | TAR_GNU) == -1 ) {
-		throw TarError(std::string("Unable to open tar file: ") + strerror(errno));
+		throw TarError(std::string(_("Unable to open tar file: ")) + strerror(errno));
 	}
 }
 
@@ -84,11 +85,11 @@ bool TarFile::Close()
 	if( m_tar ) {
 		if( m_writemode ) {
 			if( tar_append_eof(m_tar) != 0 )
-				return False("Unable to write eof", errno);
+				return False(_("Unable to write eof"), errno);
 		}
 
 		if( tar_close(m_tar) != 0 ) {
-			return False("Unable to close file", errno);
+			return False(_("Unable to close file"), errno);
 		}
 		m_tar = 0;
 	}
@@ -109,7 +110,7 @@ bool TarFile::AppendFile(const char *tarpath, const std::string &data)
 	th_set_size(m_tar, data.size());
 	th_set_mtime(m_tar, time(NULL));
 	if( th_write(m_tar) != 0 ) {
-		return False("Unable to write tar header", errno);
+		return False(_("Unable to write tar header"), errno);
 	}
 
 	// write the data in blocks until finished
@@ -124,7 +125,7 @@ bool TarFile::AppendFile(const char *tarpath, const std::string &data)
 		memcpy(block, data.data() + pos, size);
 
 		if( tar_block_write(m_tar, block) != T_BLOCKSIZE ) {
-			return False("Unable to write block", errno);
+			return False(_("Unable to write block"), errno);
 		}
 	}
 
@@ -152,7 +153,7 @@ bool TarFile::ReadNextFile(std::string &tarpath, std::string &data)
 
 	// write standard file header
 	if( !TH_ISREG(m_tar) ) {
-		return False("Only regular files are supported inside a tarball.");
+		return False(_("Only regular files are supported inside a tarball."));
 	}
 
 	char *pathname = th_get_pathname(m_tar);
@@ -180,7 +181,7 @@ bool TarFile::ReadNextFile(std::string &tarpath, std::string &data)
 			readsize = size - pos;
 
 		if( tar_block_read(m_tar, block) != T_BLOCKSIZE ) {
-			return False("Unable to read block", errno);
+			return False(_("Unable to read block"), errno);
 		}
 
 		data.append(block, readsize);
@@ -211,7 +212,7 @@ bool TarFile::ReadNextFile(std::string &tarpath, Barry::Data &data)
 
 	// write standard file header
 	if( !TH_ISREG(m_tar) ) {
-		return False("Only regular files are supported inside a tarball.");
+		return False(_("Only regular files are supported inside a tarball."));
 	}
 
 	char *pathname = th_get_pathname(m_tar);
@@ -239,7 +240,7 @@ bool TarFile::ReadNextFile(std::string &tarpath, Barry::Data &data)
 			readsize = size - pos;
 
 		if( tar_block_read(m_tar, block) != T_BLOCKSIZE ) {
-			return False("Unable to read block", errno);
+			return False(_("Unable to read block"), errno);
 		}
 
 		data.Append(block, readsize);
@@ -268,7 +269,7 @@ bool TarFile::ReadNextFilenameOnly(std::string &tarpath)
 
 	// write standard file header
 	if( !TH_ISREG(m_tar) ) {
-		return False("Only regular files are supported inside a tarball.");
+		return False(_("Only regular files are supported inside a tarball."));
 	}
 
 	char *pathname = th_get_pathname(m_tar);
@@ -277,7 +278,7 @@ bool TarFile::ReadNextFilenameOnly(std::string &tarpath)
 //	free(pathname);
 
 	if( tar_skip_regfile(m_tar) != 0 ) {
-		return False("Unable to skip tar file", errno);
+		return False(_("Unable to skip tar file"), errno);
 	}
 
 	return true;

@@ -19,6 +19,7 @@
     root directory of this project for more details.
 */
 
+#include "i18n.h"
 #include "socket.h"
 #include "usbwrap.h"
 #include "data.h"
@@ -119,7 +120,7 @@ unsigned int SocketZero::MakeNextFragment(const Data &whole, Data &fragment, uns
 	// sanity check
 	if( whole.GetSize() < SB_FRAG_HEADER_SIZE ) {
 		eout("Whole packet too short to fragment: " << whole.GetSize());
-		throw Error("Socket: Whole packet too short to fragment");
+		throw Error(_("Socket: Whole packet too short to fragment"));
 	}
 
 	// calculate size
@@ -166,7 +167,7 @@ void SocketZero::CheckSequence(uint16_t socket, const Data &seq)
 	MAKE_PACKET(spack, seq);
 	if( (unsigned int) seq.GetSize() < SB_SEQUENCE_PACKET_SIZE ) {
 		eout("Short sequence packet:\n" << seq);
-		throw Error("Socket: invalid sequence packet");
+		throw Error(_("Socket: invalid sequence packet"));
 	}
 
 	// we'll cheat here... if the packet's sequence is 0, we'll
@@ -179,14 +180,12 @@ void SocketZero::CheckSequence(uint16_t socket, const Data &seq)
 	else {
 		if( sequenceId != m_sequenceId ) {
 			if( socket != 0 ) {
-				std::ostringstream oss;
-				oss << "Socket 0x" << std::hex << (unsigned int)socket
-					<< ": out of sequence. "
-					<< "(Global sequence: " << m_sequenceId
-					<< ". Packet sequence: " << sequenceId
-					<< ")";
-				eout(oss.str());
-				throw Error(oss.str());
+				std::string msg = string_vprintf(_("Socket 0x%x: out of sequence. (Global sequence: 0x%x. Packet sequence: 0x%x)"),
+					(unsigned int)socket,
+					(unsigned int)m_sequenceId,
+					(unsigned int)sequenceId);
+				eout(msg);
+				throw Error(msg);
 			}
 			else {
 				dout("Bad sequence on socket 0: expected: "
@@ -291,7 +290,7 @@ void SocketZero::RawSend(Data &send, int timeout)
 {
 	Usb::Device *dev = m_queue ? m_queue->GetUsbDevice() : m_dev;
 	if( !dev )
-		throw Error("SocketZero: No device available for RawSend");
+		throw Error(_("SocketZero: No device available for RawSend"));
 
 	// Special case: it seems that sending packets with a size that's an
 	// exact multiple of 0x40 causes the device to get confused.
@@ -322,7 +321,7 @@ void SocketZero::RawReceive(Data &receive, int timeout)
 
 	if( m_queue ) {
 		if( !m_queue->DefaultRead(receive, timeout) )
-			throw Timeout("SocketZero::RawReceive: queue DefaultRead returned false (likely a timeout)");
+			throw Timeout(_("SocketZero::RawReceive: queue DefaultRead returned false (likely a timeout)"));
 	}
 	else {
 		m_dev->BulkRead(m_readEp, receive, timeout);
@@ -336,7 +335,7 @@ void SocketZero::RawReceive(Data &receive, int timeout)
 void SocketZero::Pushback(const Data &buf)
 {
 	if( m_pushback )
-		throw Error("Multiple pushbacks");
+		throw Error(_("Multiple pushbacks in SocketZero!"));
 
 	m_pushback = true;
 	m_pushback_buffer = buf;
@@ -457,7 +456,7 @@ SocketHandle SocketZero::Open(uint16_t socket, const char *password)
 		// half open, device is expecting a password hash... do we
 		// have a password?
 		if( !password ) {
-			throw BadPassword("No password specified.", m_remainingTries, false);
+			throw BadPassword(_("No password specified."), m_remainingTries, false);
 		}
 
 		// only allow password attempts if there are
@@ -465,7 +464,7 @@ SocketHandle SocketZero::Open(uint16_t socket, const char *password)
 		// we want to give the user at least some chance on a
 		// Windows machine before the device commits suicide.
 		if( m_remainingTries < BARRY_MIN_PASSWORD_TRIES ) {
-			throw BadPassword("Fewer than " BARRY_MIN_PASSWORD_TRIES_ASC " password tries remaining in device. Refusing to proceed, to avoid device zapping itself.  Use a Windows client, or re-cradle the device.",
+			throw BadPassword(string_vprintf(_("Fewer than %d password tries remaining in device. Refusing to proceed, to avoid device zapping itself.  Use a Windows client, or re-cradle the device."), BARRY_MIN_PASSWORD_TRIES),
 				m_remainingTries,
 				true);
 		}
@@ -479,7 +478,7 @@ SocketHandle SocketZero::Open(uint16_t socket, const char *password)
 			m_halfOpen = true;
 			m_challengeSeed = packet.ChallengeSeed();
 			m_remainingTries = packet.RemainingTries();
-			throw BadPassword("Password rejected by device.", m_remainingTries, false);
+			throw BadPassword(_("Password rejected by device."), m_remainingTries, false);
 		}
 
 		// if we get this far, we are no longer in half-open password
@@ -502,7 +501,7 @@ SocketHandle SocketZero::Open(uint16_t socket, const char *password)
 	// so return an error here instead of automatically retrying.
 	if( packet.Command() == SB_COMMAND_CLOSE_SOCKET )
 	{
-		throw SocketCloseOnOpen("Socket: Device closed socket when trying to open (can be caused by the wrong password, or if the device thinks the socket is already open... please try again)");
+		throw SocketCloseOnOpen(_("Socket: Device closed socket when trying to open (can be caused by the wrong password, or if the device thinks the socket is already open... please try again)"));
 	}
 
 	if( packet.Command() != SB_COMMAND_OPENED_SOCKET ||
@@ -510,7 +509,7 @@ SocketHandle SocketZero::Open(uint16_t socket, const char *password)
 	    packet.SocketSequence() != closeFlag )
 	{
 		eout("Packet:\n" << receive);
-		throw Error("Socket: Bad OPENED packet in Open");
+		throw Error(_("Socket: Bad OPENED packet in Open"));
 	}
 
 	// if no sequence packet has yet arrived, wait for it here
@@ -526,7 +525,7 @@ SocketHandle SocketZero::Open(uint16_t socket, const char *password)
 			Data late_sequence;
 			RawReceive(late_sequence, 500);
 			if( !Protocol::IsSequencePacket(late_sequence) ) {
-				throw Error("Could not find mode's starting sequence packet");
+				throw Error(_("Could not find mode's starting sequence packet"));
 			}
 
 			// ok, so our ditch effort worked, but now we have
@@ -615,7 +614,7 @@ void SocketZero::Close(Socket &socket)
 		socket.ForceClosed();
 
 		eout("Packet:\n" << response);
-		throw BadPacket(rpack->command, "Socket: Bad CLOSED packet in Close");
+		throw BadPacket(rpack->command, _("Socket: Bad CLOSED packet in Close"));
 	}
 
 	if( socket.IsResetOnClose() ) {
@@ -626,7 +625,7 @@ void SocketZero::Close(Socket &socket)
 		Send(reset_packet);
 		if( reset_packet.CommandResponse() != SB_COMMAND_RESET_REPLY ) {
 			throw BadPacket(reset_packet.CommandResponse(),
-				"Socket: Missing RESET_REPLY in Close");
+				_("Socket: Missing RESET_REPLY in Close"));
 		}
 	}
 
@@ -675,7 +674,7 @@ void SocketBase::DBFragSend(Data &send, int timeout)
 	{
 		// we don't do that around here
 		eout("unknown send data in DBFragSend(): " << send);
-		throw std::logic_error("Socket: unknown send data in DBFragSend()");
+		throw std::logic_error(_("Socket: unknown send data in DBFragSend()"));
 	}
 
 	if( send.GetSize() <= MAX_PACKET_SIZE ) {
@@ -779,7 +778,7 @@ void SocketBase::Packet(Data &send, Data &receive, int timeout)
 
 			default: {
 				std::ostringstream oss;
-				oss << "Socket: (read) unhandled packet in Packet(): 0x" << std::hex << (unsigned int)rpack->command;
+				oss << _("Socket: (read) unhandled packet in Packet(): ") << "0x" << std::hex << (unsigned int)rpack->command;
 				eout(oss.str());
 				throw Error(oss.str());
 				}
@@ -792,7 +791,7 @@ void SocketBase::Packet(Data &send, Data &receive, int timeout)
 			if( blankCount == 10 ) {
 				// only ask for more data on stalled sockets
 				// for so long
-				throw Error("Socket: 10 blank packets received");
+				throw Error(_("Socket: 10 blank packets received"));
 			}
 		}
 
@@ -838,7 +837,7 @@ void SocketBase::PacketJVM(Data &send, Data &receive, int timeout)
 	if( ( send.GetSize() < MIN_PACKET_DATA_SIZE ) ||
 		( send.GetSize() > MAX_PACKET_DATA_SIZE ) ) {
 		// we don't do that around here
-		throw std::logic_error("Socket: unknown send data in PacketJVM()");
+		throw std::logic_error(_("Socket: unknown send data in PacketJVM()"));
 	}
 
 	Data &inFrag = receive;
@@ -868,7 +867,7 @@ void SocketBase::PacketJVM(Data &send, Data &receive, int timeout)
 
 			default: {
 				std::ostringstream oss;
-				oss << "Socket: (read) unhandled packet in Packet(): 0x" << std::hex << (unsigned int)rpack->command;
+				oss << _("Socket: (read) unhandled packet in Packet(): ") << "0x" << std::hex << (unsigned int)rpack->command;
 				eout(oss.str());
 				throw Error(oss.str());
 				}
@@ -885,7 +884,7 @@ void SocketBase::PacketJVM(Data &send, Data &receive, int timeout)
 			if( blankCount == 10 ) {
 				// only ask for more data on stalled sockets
 				// for so long
-				throw Error("Socket: 10 blank packets received");
+				throw Error(_("Socket: 10 blank packets received"));
 			}
 		}
 
@@ -906,7 +905,7 @@ void SocketBase::PacketData(Data &send,
 	if( ( send.GetSize() < MIN_PACKET_DATA_SIZE ) ||
 		( send.GetSize() > MAX_PACKET_DATA_SIZE ) ) {
 		// we don't do that around here
-		throw std::logic_error("Socket: unknown send data in PacketData()");
+		throw std::logic_error(_("Socket: unknown send data in PacketData()"));
 	}
 
 	Data &inFrag = receive;
@@ -948,11 +947,11 @@ void SocketBase::PacketData(Data &send,
 				break;
 
 			case SB_DATA_JL_INVALID:
-				throw BadPacket(rpack->command, "file is not a valid Java code file");
+				throw BadPacket(rpack->command, _("file is not a valid Java code file"));
 				break;
 
 			case SB_COMMAND_JL_NOT_SUPPORTED:
-				throw BadPacket(rpack->command, "device does not support requested command");
+				throw BadPacket(rpack->command, _("device does not support requested command"));
 				break;
 
 			default:
@@ -968,7 +967,7 @@ void SocketBase::PacketData(Data &send,
 			if( blankCount == 10 ) {
 				// only ask for more data on stalled sockets
 				// for so long
-				throw Error("Socket: 10 blank packets received");
+				throw Error(_("Socket: 10 blank packets received"));
 			}
 		}
 
@@ -1070,7 +1069,7 @@ void Socket::SyncSend(Data &send, int timeout)
 	RawSend(send, timeout);
 	Receive(*m_sequence, timeout);
 	if( !Protocol::IsSequencePacket(*m_sequence) )
-		throw Barry::Error("Non-sequence packet in Socket::SyncSend()");
+		throw Barry::Error(_("Non-sequence packet in Socket::SyncSend()"));
 	CheckSequence(*m_sequence);
 }
 
@@ -1079,10 +1078,10 @@ void Socket::Receive(Data &receive, int timeout)
 	if( m_registered ) {
 		if( m_zero->m_queue ) {
 			if( !m_zero->m_queue->SocketRead(m_socket, receive, timeout) )
-				throw Timeout("Socket::Receive: queue SocketRead returned false (likely a timeout)");
+				throw Timeout(_("Socket::Receive: queue SocketRead returned false (likely a timeout)"));
 		}
 		else {
-			throw std::logic_error("NULL queue pointer in a registered socket read.");
+			throw std::logic_error(_("NULL queue pointer in a registered socket read."));
 		}
 		ddout("Socket::Receive: Endpoint "
 			<< (m_zero->m_queue ? m_zero->m_queue->GetReadEp() : m_zero->m_readEp)
@@ -1097,12 +1096,10 @@ void Socket::Receive(Data &receive, int timeout)
 void Socket::RegisterInterest(SocketRoutingQueue::SocketDataHandlerPtr handler)
 {
 	if( !m_zero->m_queue )
-		throw std::logic_error("SocketRoutingQueue required in SocketZero in order to call Socket::RegisterInterest()");
+		throw std::logic_error(_("SocketRoutingQueue required in SocketZero in order to call Socket::RegisterInterest()"));
 
 	if( m_registered ) {
-		std::ostringstream oss;
-		oss << "Socket (" << m_socket << ") already registered in Socket::RegisterInterest()!";
-		throw std::logic_error(oss.str());
+		throw std::logic_error(string_vprintf(_("Socket (%u) already registered in Socket::RegisterInterest()!"), (unsigned int)m_socket));
 	}
 
 	m_zero->m_queue->RegisterInterest(m_socket, handler);

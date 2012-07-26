@@ -20,6 +20,7 @@
     root directory of this project for more details.
 */
 
+#include "i18n.h"
 #include "configfile.h"
 #include "error.h"
 #include "r_message.h"
@@ -87,7 +88,7 @@ void ConfigFile::BuildFilename()
 	getpwuid_r(getuid(), &pwbuf, strbuf, strsize, &pw);
 	if( !pw ) {
 		delete [] strbuf;
-		throw ConfigFileError("BuildFilename: getpwuid failed", errno);
+		throw ConfigFileError(_("BuildFilename: getpwuid failed"), errno);
 	}
 
 	m_filename = pw->pw_dir;
@@ -112,7 +113,7 @@ bool ConfigFile::CheckPath(const std::string &path, std::string *perr)
 {
 	if( path.size() == 0 ) {
 		if( perr )
-			*perr = "path is empty!";
+			*perr = _("ConfigFile::CheckPath(): path is empty!");
 		return false;
 	}
 
@@ -126,7 +127,7 @@ bool ConfigFile::CheckPath(const std::string &path, std::string *perr)
 		if( access(base.c_str(), F_OK) != 0 ) {
 			if( mkdir(base.c_str(), 0755) == -1 ) {
 				if( perr ) {
-					*perr = "mkdir(" + base + ") failed: ";
+					*perr = _("mkdir() failed to create: ") + base + ": ";
 					*perr += strerror(errno);
 				}
 				return false;
@@ -135,7 +136,7 @@ bool ConfigFile::CheckPath(const std::string &path, std::string *perr)
 	}
 	if( mkdir(path.c_str(), 0755) == -1 ) {
 		if( perr ) {
-			*perr = "last mkdir(" + path + ") failed: ";
+			*perr = _("last mkdir() failed to create: ") + path + ": ";
 			*perr += strerror(errno);
 		}
 		return false;
@@ -147,7 +148,7 @@ void GlobalConfigFile::BuildFilename()
 {
 	struct passwd *pw = getpwuid(getuid());
 	if( !pw )
-		throw ConfigFileError("BuildFilename: getpwuid failed", errno);
+		throw ConfigFileError(_("BuildFilename: getpwuid failed"), errno);
 
 	m_filename = pw->pw_dir;
 	m_filename += "/.barry/config";

@@ -20,6 +20,7 @@
     root directory of this project for more details.
 */
 
+#include "i18n.h"
 #include "m_jvmdebug.h"
 #include "data.h"
 #include "protocol.h"
@@ -84,9 +85,9 @@ void JVMModulesList::Dump(std::ostream &os) const
 
 	const_iterator i = begin(), e = end();
 
-	os << "     ID     " << "|";
-	os << "  UniqueID  " << "|";
-	os << " Module Name" << endl;
+	os << _("     ID     ") << "|";
+	os << _("  UniqueID  ") << "|";
+	os << _(" Module Name") << endl;
 
 	os << "------------+";
 	os << "------------+";
@@ -148,15 +149,15 @@ void JVMThreadsList::Dump(std::ostream &os) const
 
 	const_iterator i = begin(), e = end();
 
-	os << "  Thread  " << "|";
-	os << "  Address   " << "|";
-	os << " Byte " << "|";
-	os << " Unknown01  " << "|";
-	os << " Unknown02  " << "|";
-	os << " Unknown03  " << "|";
-	os << " Unknown04  " << "|";
-	os << " Unknown05  " << "|";
-	os << " Unknown06  " << "|";
+	os << _("  Thread  ") << "|";
+	os << _("  Address   ") << "|";
+	os << _(" Byte ") << "|";
+	os << _(" Unknown01  ") << "|";
+	os << _(" Unknown02  ") << "|";
+	os << _(" Unknown03  ") << "|";
+	os << _(" Unknown04  ") << "|";
+	os << _(" Unknown05  ") << "|";
+	os << _(" Unknown06  ") << "|";
 
 	os << "------------+";
 	os << "------------+";
@@ -256,8 +257,8 @@ void JVMDebug::Detach()
 void JVMDebug::ThrowJVMError(const std::string &msg, uint8_t cmd)
 {
 	std::ostringstream oss;
-	oss << msg << ": unexpected packet command code: 0x"
-		<< std::hex << (unsigned int) cmd;
+	oss << msg << ": " << _("unexpected packet command code: ")
+		<< "0x" << std::hex << (unsigned int) cmd;
 	throw Error(oss.str());
 }
 
@@ -287,7 +288,7 @@ void JVMDebug::Unknown01()
 
 	// Check the size read into the previous packet
 	if( expect != bytereceived ) {
-		ThrowJVMError("JVMDebug::Attach expect", expect);
+		ThrowJVMError(string("JVMDebug::Unknown01(): ") + _("byte count mismatch"), expect);
 	}
 }
 
@@ -317,7 +318,7 @@ void JVMDebug::Unknown02()
 
 	// Check the size read into the previous packet
 	if( expect != bytereceived ) {
-		ThrowJVMError("JVMDebug::Attach expect", expect);
+		ThrowJVMError(string("JVMDebug::Unknown02(): ") + _("byte count mismatch"), expect);
 	}
 }
 
@@ -347,7 +348,7 @@ void JVMDebug::Unknown03()
 
 	// Check the size read into the previous packet
 	if( expect != bytereceived ) {
-		ThrowJVMError("JVMDebug::Attach expect", expect);
+		ThrowJVMError(string("JVMDebug::Unknown03(): ") + _("byte count mismatch"), expect);
 	}
 }
 
@@ -377,7 +378,7 @@ void JVMDebug::Unknown04()
 
 	// Check the size read into the previous packet
 	if( expect != bytereceived ) {
-		ThrowJVMError("JVMDebug::Attach expect", expect);
+		ThrowJVMError(string("JVMDebug::Unknown04(): ") + _("byte count mismatch"), expect);
 	}
 }
 
@@ -407,7 +408,7 @@ void JVMDebug::Unknown05()
 
 	// Check the size read into the previous packet
 	if( expect != bytereceived ) {
-		ThrowJVMError("JVMDebug::Attach expect", expect);
+		ThrowJVMError(string("JVMDebug::Unknown05(): ") + _("byte count mismatch"), expect);
 	}
 }
 
@@ -437,7 +438,7 @@ void JVMDebug::Unknown06()
 
 	// Check the size read into the previous packet
 	if( expect != bytereceived ) {
-		ThrowJVMError("JVMDebug::Attach expect", expect);
+		ThrowJVMError(string("JVMDebug::Unknown06(): ") + _("byte count mismatch"), expect);
 	}
 }
 
@@ -467,7 +468,7 @@ void JVMDebug::Unknown07()
 
 	// Check the size read into the previous packet
 	if( expect != bytereceived ) {
-		ThrowJVMError("JVMDebug::Attach expect", expect);
+		ThrowJVMError(string("JVMDebug::Unknown07(): ") + _("byte count mismatch"), expect);
 	}
 }
 
@@ -497,7 +498,7 @@ void JVMDebug::Unknown08()
 
 	// Check the size read into the previous packet
 	if( expect != bytereceived ) {
-		ThrowJVMError("JVMDebug::Attach expect", expect);
+		ThrowJVMError(string("JVMDebug::Unknown08(): ") + _("byte count mismatch"), expect);
 	}
 }
 
@@ -527,7 +528,7 @@ void JVMDebug::Unknown09()
 
 	// Check the size read into the previous packet
 	if( expect != bytereceived ) {
-		ThrowJVMError("JVMDebug::Attach expect", expect);
+		ThrowJVMError(string("JVMDebug::Unknown09(): ") + _("byte count mismatch"), expect);
 	}
 }
 
@@ -557,7 +558,7 @@ void JVMDebug::Unknown10()
 
 	// Check the size read into the previous packet
 	if( expect != bytereceived ) {
-		ThrowJVMError("JVMDebug::Attach expect", expect);
+		ThrowJVMError(string("JVMDebug::Unknown10(): ") + _("byte count mismatch"), expect);
 	}
 }
 
@@ -591,7 +592,7 @@ bool JVMDebug::GetStatus(int &status)
 
 	// Check the size read into the previous packet
 	if( expect != bytereceived ) {
-		ThrowJVMError("JVMDebug::GetModulesList expect", expect);
+		ThrowJVMError(string("JVMDebug::GetStatus():") + _("byte count mismatch"), expect);
 	}
 
 	// Make sure we have a header to read
@@ -637,7 +638,7 @@ bool JVMDebug::WaitStatus(int &status)
 
 	// Check the size read into the previous packet
 	if( expect != bytereceived ) {
-		ThrowJVMError("JVMDebug::GetModulesList expect", expect);
+		ThrowJVMError(string("JVMDebug::WaitStatus():") + _("byte count mismatch"), expect);
 	}
 
 	// Make sure we have a header to read
@@ -682,7 +683,7 @@ int JVMDebug::GetConsoleMessage(std::string &message)
 
 	// Check the size read into the previous packet
 	if( expect != bytereceived ) {
-		ThrowJVMError("JVMDebug::GetModulesList expect", expect);
+		ThrowJVMError(string("JVMDebug::GetConsoleMessage():") + _("byte count mismatch"), expect);
 	}
 
 	// Make sure we have a header to read
@@ -737,7 +738,7 @@ void JVMDebug::GetModulesList(JVMModulesList &mylist)
 
 		// Check the size read into the previous packet
 		if( expect != bytereceived ) {
-			ThrowJVMError("JVMDebug::GetModulesList expect", expect);
+			ThrowJVMError(string("JVMDebug::GetModulesList():") + _("byte count mismatch"), expect);
 		}
 
 		// Make sure there's enough for packet header + module list
@@ -798,7 +799,7 @@ void JVMDebug::GetThreadsList(JVMThreadsList &mylist)
 
 	// Check the size read into the previous packet
 	if( expect != bytereceived ) {
-		ThrowJVMError("JVMDebug::GetThreadsList expect", expect);
+		ThrowJVMError(string("JVMDebug::GetThreadsList():") + _("byte count mismatch"), expect);
 	}
 
 	CheckSize(response, SB_JVMPACKET_HEADER_SIZE + SB_JVMTHREADS_LIST_HEADER_SIZE);
@@ -839,7 +840,7 @@ void JVMDebug::GetThreadsList(JVMThreadsList &mylist)
 
 		// Check the size read into the previous packet
 		if( expect != bytereceived ) {
-			ThrowJVMError("JVMDebug::GetThreadsList (1) expect", expect);
+			ThrowJVMError(string("JVMDebug::GetThreadsList() (1):") + _("byte count mismatch"), expect);
 		}
 
 		CheckSize(response, SB_JVMPACKET_HEADER_SIZE + SB_JVMUNKNOWN01_HEADER_SIZE);
@@ -869,7 +870,7 @@ void JVMDebug::GetThreadsList(JVMThreadsList &mylist)
 
 			// Check the size read into the previous packet
 			if( expect != bytereceived ) {
-				ThrowJVMError("JVMDebug::GetThreadsList (2) expect", expect);
+				ThrowJVMError(string("JVMDebug::GetThreadsList() (2):") + _("byte count mismatch"), expect);
 			}
 
 
@@ -900,7 +901,7 @@ void JVMDebug::GetThreadsList(JVMThreadsList &mylist)
 
 		// Check the size read into the previous packet
 		if( expect != bytereceived ) {
-			ThrowJVMError("JVMDebug::GetThreadsList (2) expect", expect);
+			ThrowJVMError(string("JVMDebug::GetThreadsList() (3):") + _("byte count mismatch"), expect);
 		}
 
 		// Save values
@@ -927,7 +928,7 @@ void JVMDebug::GetThreadsList(JVMThreadsList &mylist)
 
 		// Check the size read into the previous packet
 		if( expect != bytereceived ) {
-			ThrowJVMError("JVMDebug::GetThreadsList (2) expect", expect);
+			ThrowJVMError(string("JVMDebug::GetThreadsList() (4):") + _("byte count mismatch"), expect);
 		}
 
 		// Save values
@@ -955,7 +956,7 @@ void JVMDebug::GetThreadsList(JVMThreadsList &mylist)
 
 		// Check the size read into the previous packet
 		if( expect != bytereceived ) {
-			ThrowJVMError("JVMDebug::GetThreadsList (2) expect", expect);
+			ThrowJVMError(string("JVMDebug::GetThreadsList() (5):") + _("byte count mismatch"), expect);
 		}
 
 		// Save values
@@ -997,7 +998,7 @@ void JVMDebug::Go()
 
 	// Check the size read into the previous packet
 	if( expect != bytereceived ) {
-		ThrowJVMError("JVMDebug::Attach expect", expect);
+		ThrowJVMError(string("JVMDebug::Go():") + _("byte count mismatch"), expect);
 	}
 }
 
@@ -1030,7 +1031,7 @@ void JVMDebug::Stop()
 
 	// Check the size read into the previous packet
 	if( expect != bytereceived ) {
-		ThrowJVMError("JVMDebug::Attach expect", expect);
+		ThrowJVMError(string("JVMDebug::Stop():") + _("byte count mismatch"), expect);
 	}
 }
 

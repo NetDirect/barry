@@ -20,6 +20,7 @@
 */
 
 #include "util.h"
+#include "i18n.h"
 
 #include <barry/barry.h>
 #ifdef __BARRY_SYNC_MODE__
@@ -33,11 +34,11 @@ using namespace Barry;
 
 void ShowParsers(bool show_fields, bool show_mime_support)
 {
-	cout << "Supported Database parsers:\n";
+	cout << _("Supported Database parsers:\n");
 
 #ifdef __BARRY_SYNC_MODE__
 	if( show_mime_support )
-		cout << " (* = can display in vformat MIME mode)\n";
+		cout << _(" (* = can display in vformat MIME mode)\n");
 
 #define MIME_DOT(tname) (MimeDump<tname>::Supported() && show_mime_support ? " *" : "")
 
@@ -78,7 +79,7 @@ void ShowParsers(bool show_fields, bool show_mime_support)
 
 void ShowBuilders()
 {
-	cout << "Supported Database builders:\n";
+	cout << _("Supported Database builders:\n");
 
 #undef HANDLE_BUILDER
 #define HANDLE_BUILDER(tname) cout << "   " << tname::GetDBName() << "\n";

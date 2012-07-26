@@ -19,6 +19,7 @@
     root directory of this project for more details.
 */
 
+#include "i18n.h"
 #include "vcard.h"
 #include <string.h>
 #include <stdlib.h>
@@ -137,7 +138,7 @@ const std::string& vCard::ToVCard(const Barry::Contact &con)
 	Clear();
 	SetFormat( b_vformat_new() );
 	if( !Format() )
-		throw ConvertError("resource error allocating vformat");
+		throw ConvertError(_("resource error allocating vformat"));
 
 	// store the Barry object we're working with
 	m_BarryContact = con;
@@ -333,7 +334,7 @@ const Barry::Contact& vCard::ToBarry(const char *vcard, uint32_t RecordId)
 	// create format parser structures
 	SetFormat( b_vformat_new_from_string(vcard) );
 	if( !Format() )
-		throw ConvertError("resource error allocating vformat");
+		throw ConvertError(_("resource error allocating vformat"));
 
 
 	//
@@ -508,7 +509,7 @@ const Barry::Contact& vCard::ToBarry(const char *vcard, uint32_t RecordId)
 	con.Notes = GetAttr("NOTE");
 	con.URL = GetAttr("URL");
 	if( GetAttr("BDAY").size() && !con.Birthday.FromYYYYMMDD( GetAttr("BDAY") ) )
-		throw ConvertError("Unable to parse BDAY field");
+		throw ConvertError(_("Unable to parse BDAY field"));
 
 	// Photo vCard ?
 	vAttr photo = GetAttrObj("PHOTO");
@@ -540,7 +541,7 @@ const Barry::Contact& vCard::ToBarry(const char *vcard, uint32_t RecordId)
 	// Last sanity check: Blackberry requires that at least
 	// name or Company has data.
 	if( !con.GetFullName().size() && !con.Company.size() )
-		throw ConvertError("FN and ORG fields both blank in VCARD data");
+		throw ConvertError(_("FN and ORG fields both blank in VCARD data"));
 
 	return m_BarryContact;
 }

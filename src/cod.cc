@@ -21,6 +21,7 @@
     root directory of this project for more details.
 */
 
+#include "i18n.h"
 #include "cod.h"
 #include "cod-internal.h"
 #include "error.h"
@@ -57,7 +58,7 @@ size_t SeekNextCod(std::istream &input)
 	}
 
 	if( input.read(signature, sizeof(signature)).eof() ) {
-		throw Error("SeekNextCod: EOF while reading file signature");
+		throw Error(_("SeekNextCod: EOF while reading file signature"));
 	}
 
 	if( memcmp(signature, codtype_pkzip, sizeof(codtype_pkzip)) == 0 ) {
@@ -66,13 +67,13 @@ size_t SeekNextCod(std::istream &input)
 			pkzip_local_header_t header;
 
 			if( input.read((char *)&header, sizeof(pkzip_local_header_t)).eof() ) {
-				throw Error("SeekNextCod: EOF while reading PKZIP header");
+				throw Error(_("SeekNextCod: EOF while reading PKZIP header"));
 			}
 
 			// skip cod file name and extra field, we don't need them
 			size_t skip_len = header.file_name_length + header.extra_field_length;
 			if( input.ignore(skip_len).eof() ) {
-				throw Error("SeekNextCod: EOF while skipping unused fields");
+				throw Error(_("SeekNextCod: EOF while skipping unused fields"));
 			}
 
 			return btohl(header.compressed_size);
@@ -85,19 +86,19 @@ size_t SeekNextCod(std::istream &input)
 	else if( memcmp(signature, codtype_simple, sizeof(codtype_simple)) == 0 ) {
 		// find and return size of cod file
 		if( input.seekg(0, ios::end).fail() ) {
-			throw Error("SeekNextCod: seek to end failed");
+			throw Error(_("SeekNextCod: seek to end failed"));
 		}
 
 		uint32_t size = input.tellg();
 
 		if( input.seekg(0, ios::beg).fail() ) {
-			throw Error("SeekNextCod: seek to start failed");
+			throw Error(_("SeekNextCod: seek to start failed"));
 		}
 
 		return size;
 	}
 	else {
-		throw Error("SeekNextCod: unknown COD file signature");
+		throw Error(_("SeekNextCod: unknown COD file signature"));
 	}
 
 	return 0;

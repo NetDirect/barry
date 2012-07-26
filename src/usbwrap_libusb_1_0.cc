@@ -20,7 +20,7 @@
     root directory of this project for more details.
 */
 
-
+#include "i18n.h"
 
 #include "usbwrap_libusb_1_0.h"
 
@@ -88,35 +88,35 @@ std::string LibraryInterface::GetLastErrorString(int libusb_errcode)
 	switch( libusb_errcode )
 	{
 	case LIBUSB_SUCCESS:
-		return "Success";
+		return _("Success");
 	case LIBUSB_ERROR_IO:
-		return "IO Error";
+		return _("IO Error");
 	case LIBUSB_ERROR_INVALID_PARAM:
-		return "Invalid parameter";
+		return _("Invalid parameter");
 	case LIBUSB_ERROR_ACCESS:
-		return "Access";
+		return _("Access");
 	case LIBUSB_ERROR_NO_DEVICE:
-		return "No device";
+		return _("No device");
 	case LIBUSB_ERROR_NOT_FOUND:
-		return "Not found";
+		return _("Not found");
 	case LIBUSB_ERROR_BUSY:
-		return "Busy";
+		return _("Busy");
 	case LIBUSB_ERROR_TIMEOUT:
-		return "Timeout";
+		return _("Timeout");
 	case LIBUSB_ERROR_OVERFLOW:
-		return "Overflow";
+		return _("Overflow");
 	case LIBUSB_ERROR_PIPE:
-		return "Pipe";
+		return _("Pipe");
 	case LIBUSB_ERROR_INTERRUPTED:
-		return "Interrupted";
+		return _("Interrupted");
 	case LIBUSB_ERROR_NO_MEM:
-		return "No memory";
+		return _("No memory");
 	case LIBUSB_ERROR_NOT_SUPPORTED:
-		return "Not supported";
+		return _("Not supported");
 	case LIBUSB_ERROR_OTHER:
-		return "Other";
+		return _("Other");
 	default:
-		return "Unknown LIBUSB error code";
+		return _("Unknown LIBUSB error code");
 	}
 }
 
@@ -269,7 +269,7 @@ DeviceList::DeviceList()
 
 	m_impl->m_listcnt = libusb_get_device_list(libusbctx, &m_impl->m_list);
 	if( m_impl->m_listcnt < 0 ) {
-		throw Error(m_impl->m_listcnt, "Failed to get device list");
+		throw Error(m_impl->m_listcnt, _("Failed to get device list"));
 	}
 
 	for( int i = 0; i < m_impl->m_listcnt; ++i ) {
@@ -333,11 +333,11 @@ Device::Device(const Usb::DeviceID& id, int timeout)
 {
 	dout("libusb_open(" << std::dec << id.m_impl.get() << ")");
 	if( !&(*id.m_impl) )
-		throw Error("invalid USB device ID");
+		throw Error(_("invalid USB device ID"));
 	int err = libusb_open(id.m_impl->m_dev, &(m_handle->m_handle));
 	m_lasterror = err;
 	if( err )
-		throw Error(err, "Failed to open USB device.  Please check your system's USB device permissions.");
+		throw Error(err, _("Failed to open USB device.  Please check your system's USB device permissions."));
 }
 
 Device::~Device()
@@ -388,13 +388,13 @@ bool Device::BulkRead(int ep, Barry::Data &data, int timeout)
 			// otherwise treat it as success.
 			if( ret == LIBUSB_ERROR_TIMEOUT ) {
 				if( transferred == 0 )
-					throw Timeout(ret, "Timeout in BulkRead");
+					throw Timeout(ret, _("Timeout in BulkRead"));
 				else
 					dout("Read timed out with some data transferred... possible partial read");
 			}
 			else if( ret != LIBUSB_ERROR_TIMEOUT ) {
 				std::ostringstream oss;
-				oss << "Error in libusb_bulk_tranfer("
+				oss << _("Error in libusb_bulk_tranfer(")
 				    << m_handle->m_handle << ", "
 				    << ep << ", buf, "
 				    << data.GetBufSize() << ", "
@@ -429,16 +429,16 @@ bool Device::BulkWrite(int ep, const Barry::Data &data, int timeout)
 			// only notify of a timeout if no data was transferred,
 			// otherwise treat it as success.
 			if( ret == LIBUSB_ERROR_TIMEOUT && transferred == 0 )
-				throw Timeout(ret, "Timeout in BulkWrite");
+				throw Timeout(ret, _("Timeout in BulkWrite"));
 			else if( ret != LIBUSB_ERROR_TIMEOUT )
-				throw Error(ret, "Error in BulkWrite");
+				throw Error(ret, _("Error in BulkWrite"));
 		}
 		if( ret >= 0 &&
 		    (unsigned int)transferred != data.GetSize() ) {
 			dout("Failed to write all data on ep: " << ep <<
 			     " attempted to write: " << data.GetSize() << 
 			     " but only wrote: " << transferred);
-			throw Error("Failed to perform a complete write");
+			throw Error(_("Failed to perform a complete write"));
 		}
 
 	} while( ret == LIBUSB_ERROR_INTERRUPTED );
@@ -466,15 +466,15 @@ bool Device::BulkWrite(int ep, const void *data, size_t size, int timeout)
 			// only notify of a timeout if no data was transferred,
 			// otherwise treat it as success.
 			if( ret == LIBUSB_ERROR_TIMEOUT && transferred == 0 )
-				throw Timeout(ret, "Timeout in BulkWrite (2)");
+				throw Timeout(ret, _("Timeout in BulkWrite (2)"));
 			else if( ret != LIBUSB_ERROR_TIMEOUT )
-				throw Error(ret, "Error in BulkWrite (2)");
+				throw Error(ret, _("Error in BulkWrite (2)"));
 		}
 		if( ret >= 0 && (unsigned int)transferred != size ) {
 			dout("Failed to write all data on ep: " << ep <<
 			     " attempted to write: " << size << 
 			     " but only wrote: " << transferred);
-			throw Error("Failed to perform a complete write");
+			throw Error(_("Failed to perform a complete write"));
 		}
 
 	} while( ret == LIBUSB_ERROR_INTERRUPTED );
@@ -500,12 +500,12 @@ bool Device::InterruptRead(int ep, Barry::Data &data, int timeout)
 			// otherwise treat it as success.
 			if( ret == LIBUSB_ERROR_TIMEOUT ) {
 				if( transferred == 0 )
-					throw Timeout(ret, "Timeout in InterruptRead");
+					throw Timeout(ret, _("Timeout in InterruptRead"));
 				else
 					dout("Read timed out with some data transferred... possible partial read");
 			}
 			else if( ret != LIBUSB_ERROR_TIMEOUT )
-				throw Error(ret, "Error in InterruptRead");
+				throw Error(ret, _("Error in InterruptRead"));
 		}
 		if( transferred != 0 )
 			data.ReleaseBuffer(transferred);
@@ -533,16 +533,16 @@ bool Device::InterruptWrite(int ep, const Barry::Data &data, int timeout)
 			// only notify of a timeout if no data was transferred,
 			// otherwise treat it as success.
 			if( ret == LIBUSB_ERROR_TIMEOUT && transferred == 0 )
-				throw Timeout(ret, "Timeout in InterruptWrite");
+				throw Timeout(ret, _("Timeout in InterruptWrite"));
 			else if( ret != LIBUSB_ERROR_TIMEOUT )
-				throw Error(ret, "Error in InterruptWrite");
+				throw Error(ret, _("Error in InterruptWrite"));
 		}
 		if( ret >= 0 && 
 		    (unsigned int)transferred != data.GetSize() ) {
 			dout("Failed to write all data on ep: " << ep <<
 			     " attempted to write: " << data.GetSize() << 
 			     " but only wrote: " << transferred);
-			throw Error("Failed to perform a complete write");
+			throw Error(_("Failed to perform a complete write"));
 		}
 
 	} while( ret == LIBUSB_ERROR_INTERRUPTED );
@@ -666,7 +666,7 @@ Interface::Interface(Device &dev, int iface)
 	dout("libusb_claim_interface(" << dev.GetHandle()->m_handle << ", 0x" << std::hex << iface << ")");
 	int ret = libusb_claim_interface(dev.GetHandle()->m_handle, iface);
 	if( ret < 0 )
-		throw Error(ret, "claim interface failed");
+		throw Error(ret, _("claim interface failed"));
 }
 
 Interface::~Interface()

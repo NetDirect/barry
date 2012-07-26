@@ -28,6 +28,7 @@
 #include <iomanip>
 
 #include "barrygetopt.h"
+#include "i18n.h"
 
 using namespace std;
 using namespace Barry;
@@ -37,23 +38,29 @@ void Usage()
    int logical, major, minor;
    const char *Version = Barry::Version(logical, major, minor);
 
-   cerr
-   << "btardump - Command line parser for Barry backup files\n"
-   << "           Copyright 2010-2012, Net Direct Inc. (http://www.netdirect.ca/)\n"
-   << "           Using: " << Version << "\n"
-   << "\n"
-   << "   -d db     Name of database to dump.  Can be used multiple times\n"
-   << "             to parse multiple databases at once.  If not specified\n"
-   << "             at all, all available databases from the backup are\n"
-   << "             dumped.\n"
-   << "   -h        This help\n"
-   << "   -i cs     International charset for string conversions\n"
-   << "             Valid values here are available with 'iconv --list'\n"
 #ifdef __BARRY_SYNC_MODE__
-   << "   -V        Dump records using MIME vformats where possible\n"
+   string sync_mode = _("   -V        Dump records using MIME vformats where possible");
+#else
+   string sync_mode;
 #endif
-   << "\n"
-   << "   [files...] Backup file(s), created by btool or the backup GUI.\n"
+
+   cerr << string_vprintf(
+   _("btardump - Command line parser for Barry backup files\n"
+   "           Copyright 2010-2012, Net Direct Inc. (http://www.netdirect.ca/)\n"
+   "           Using: %s\n"
+   "\n"
+   "   -d db     Name of database to dump.  Can be used multiple times\n"
+   "             to parse multiple databases at once.  If not specified\n"
+   "             at all, all available databases from the backup are\n"
+   "             dumped.\n"
+   "   -h        This help\n"
+   "   -i cs     International charset for string conversions\n"
+   "             Valid values here are available with 'iconv --list'\n"
+   "%s\n"
+   "\n"
+   "   [files...] Backup file(s), created by btool or the backup GUI.\n"),
+	Version,
+	sync_mode.c_str())
    << endl;
 }
 
@@ -120,8 +127,7 @@ int main(int argc, char *argv[])
 #ifdef __BARRY_SYNC_MODE__
 				vformat_mode = true;
 #else
-				cerr << "-V option not supported - no Sync "
-					"library support available\n";
+				cerr << _("-V option not supported - no Sync library support available\n");
 				return 1;
 #endif
 				break;
@@ -164,7 +170,7 @@ int main(int argc, char *argv[])
 
 		for( size_t i = 0; i < backup_files.size(); i++ ) {
 
-			cout << "Reading file: " << backup_files[i] << endl;
+			cout << _("Reading file: ") << backup_files[i] << endl;
 
 			Restore builder(backup_files[i]);
 

@@ -20,6 +20,7 @@
     root directory of this project for more details.
 */
 
+#include "i18n.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -55,16 +56,16 @@ void Library::Dump(std::ostream &os) const
 {
 	ios_format_state state(os);
 
-	os << "  Library " << name << " - " << version << std::endl;
-	os << "    ID          : " << id << std::endl;
-	os << "    Description : " << description << std::endl;
-	os << "    Vendor      : " << vendor << std::endl;
-	os << "    Copyright   : " << copyright << std::endl;
-	os << "    Required    : " << (isRequired ? "Yes" : "No") << std::endl;
+	os << _("  Library ") << name << " - " << version << std::endl;
+	os << _("    ID          : ") << id << std::endl;
+	os << _("    Description : ") << description << std::endl;
+	os << _("    Vendor      : ") << vendor << std::endl;
+	os << _("    Copyright   : ") << copyright << std::endl;
+	os << _("    Required    : ") << (isRequired ? _("Yes") : _("No")) << std::endl;
 
 	std::vector<std::string>::const_iterator b = codfiles.begin(), e = codfiles.end();
 
-	os << "    Files       : " << std::endl;
+	os << _("    Files       : ") << std::endl;
 	for (; b != e; b++)
 		os << "        - " << directory << "/" << (*b) << std::endl;
 }

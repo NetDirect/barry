@@ -20,6 +20,7 @@
     root directory of this project for more details.
 */
 
+#include "i18n.h"
 #include "r_bookmark.h"
 #include "record-internal.h"
 #include "protostructs.h"
@@ -121,7 +122,7 @@ const unsigned char* Bookmark::ParseStruct1Field(const unsigned char *begin,
 					Icon = ParseFieldString(f->data, size);
 					break;
 				default:
-					throw std::logic_error("Check cases");
+					throw std::logic_error("Bookmark: Check case statement. Should never happen.");
 					break;
 				}
 			}
@@ -271,7 +272,7 @@ const unsigned char* Bookmark::ParseField(const unsigned char *begin,
 		// above size check guarantees at least one byte,
 		// so this is safe
 		if( field->u.raw[0] != 'D' ) {
-			throw Error( "Bookmark::ParseField: BookmarkType is not 'D'" );
+			throw Error( _("Bookmark::ParseField: BookmarkType is not 'D'") );
 		}
 		return begin;
 
@@ -320,23 +321,42 @@ void Bookmark::Dump(std::ostream &os) const
 {
 	ios_format_state state(os);
 
-	static const char *DisplayModeName[] = { "Automatic", "Enabled", "Disabled", "Unknown" };
-	static const char *JavaScriptModeName[] = { "Automatic", "Enabled", "Disabled", "Unknown" };
-	static const char *BrowserIdentityName[] = { "Automatic", "BlackBerry", "FireFox", "Internet Explorer", "Unknown" };
+	static const char *DisplayModeName[] = {
+		N_("Automatic"),
+		N_("Enabled"),
+		N_("Disabled"),
+		N_("Unknown")
+	};
+	static const char *JavaScriptModeName[] = {
+		N_("Automatic"),
+		N_("Enabled"),
+		N_("Disabled"),
+		N_("Unknown")
+	};
+	static const char *BrowserIdentityName[] = {
+		N_("Automatic"),
+		N_("BlackBerry"),
+		N_("FireFox"),
+		N_("Internet Explorer"),
+		N_("Unknown")
+	};
 
-	os << "Bookmark entry: 0x" << setbase(16) << RecordId
+	os << _("Bookmark entry: ") << "0x" << setbase(16) << RecordId
 	   << " (" << (unsigned int)RecType << ")"
-	   << " (index " << (unsigned int)Index << ")\n";
+	   << " (" << _("index ") << (unsigned int)Index << ")\n";
 
 	if( Name.size() )
-		os << "                    Name: " << Name << "\n";
+		os << _("                    Name: ") << Name << "\n";
 	if( Icon.size() )
-		os << "                    Icon: " << Icon << "\n";
+		os << _("                    Icon: ") << Icon << "\n";
 	if( Url.size() )
-		os << "                     Url: " << Url << "\n";
-	os << "            Display mode: " << DisplayModeName[DisplayMode] << "\n";
-	os << "         JavaScript mode: " << JavaScriptModeName[JavaScriptMode] << "\n";
-	os << "   Browser Identity mode: " << BrowserIdentityName[BrowserIdentity] << "\n";
+		os << _("                     Url: ") << Url << "\n";
+	os << _("            Display mode: ")
+		<< gettext( DisplayModeName[DisplayMode] ) << "\n";
+	os << _("         JavaScript mode: ")
+		<< gettext( JavaScriptModeName[JavaScriptMode] ) << "\n";
+	os << _("   Browser Identity mode: ")
+		<< gettext( BrowserIdentityName[BrowserIdentity] ) << "\n";
 
 	os << Unknowns;
 	os << "\n\n";
@@ -378,35 +398,35 @@ const FieldHandle<Bookmark>::ListT& Bookmark::GetFieldHandles()
 #undef RECORD_CLASS_NAME
 #define RECORD_CLASS_NAME Bookmark
 
-	FHP(RecType, "Record Type");
-	FHP(RecordId, "Unique Record ID");
+	FHP(RecType, _("Record Type"));
+	FHP(RecordId, _("Unique Record ID"));
 
-	FHP(Index, "Bookmark Field Index");
+	FHP(Index, _("Bookmark Field Index"));
 
-	FHP(Name, "Site Name");
-	FHP(Icon, "Site Icon");
-	FHP(Url, "Site URL");
+	FHP(Name, _("Site Name"));
+	FHP(Icon, _("Site Icon"));
+	FHP(Url, _("Site URL"));
 
-	FHE(bit, BrowserIdentityType, BrowserIdentity, "Browser Identity");
-	FHE_CONST(bit, IdentityAuto, "Auto detect browser");
-	FHE_CONST(bit, IdentityBlackBerry, "BlackBerry browser");
-	FHE_CONST(bit, IdentityFireFox, "FireFox browser");
-	FHE_CONST(bit, IdentityInternetExplorer, "Internet Explorer browser");
-	FHE_CONST(bit, IdentityUnknown, "Unknown browser");
+	FHE(bit, BrowserIdentityType, BrowserIdentity, _("Browser Identity"));
+	FHE_CONST(bit, IdentityAuto, _("Auto detect browser"));
+	FHE_CONST(bit, IdentityBlackBerry, _("BlackBerry browser"));
+	FHE_CONST(bit, IdentityFireFox, _("FireFox browser"));
+	FHE_CONST(bit, IdentityInternetExplorer, _("Internet Explorer browser"));
+	FHE_CONST(bit, IdentityUnknown, _("Unknown browser"));
 
-	FHE(dmc, DisplayModeType, DisplayMode, "Display Mode");
-	FHE_CONST(dmc, DisplayAuto, "Automatic");
-	FHE_CONST(dmc, DisplayColomn, "Column");
-	FHE_CONST(dmc, DisplayPage, "Page");
-	FHE_CONST(dmc, DisplayUnknown, "Unknown");
+	FHE(dmc, DisplayModeType, DisplayMode, _("Display Mode"));
+	FHE_CONST(dmc, DisplayAuto, _("Automatic"));
+	FHE_CONST(dmc, DisplayColomn, _("Column"));
+	FHE_CONST(dmc, DisplayPage, _("Page"));
+	FHE_CONST(dmc, DisplayUnknown, _("Unknown"));
 
-	FHE(jsm, JavaScriptModeType, JavaScriptMode, "JavaScript Mode");
-	FHE_CONST(jsm, JavaScriptAuto, "Automatic");
-	FHE_CONST(jsm, JavaScriptEnabled, "Enabled");
-	FHE_CONST(jsm, JavaScriptDisabled, "Disabled");
-	FHE_CONST(jsm, JavaScriptUnknown, "Unknown");
+	FHE(jsm, JavaScriptModeType, JavaScriptMode, _("JavaScript Mode"));
+	FHE_CONST(jsm, JavaScriptAuto, _("Automatic"));
+	FHE_CONST(jsm, JavaScriptEnabled, _("Enabled"));
+	FHE_CONST(jsm, JavaScriptDisabled, _("Disabled"));
+	FHE_CONST(jsm, JavaScriptUnknown, _("Unknown"));
 
-	FHP(Unknowns, "Unknown Fields");
+	FHP(Unknowns, _("Unknown Fields"));
 
 	return fhv;
 }

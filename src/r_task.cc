@@ -20,6 +20,7 @@
     root directory of this project for more details.
 */
 
+#include "i18n.h"
 #include "r_task.h"
 #include "r_calendar.h"                        // for CAL_* defines
 #include "r_recur_base-int.h"
@@ -103,12 +104,12 @@ uint8_t Task::StatusRec2Proto(StatusFlagType s)
 #define TSKFC_END		0xffff
 
 static FieldLink<Task> TaskFieldLinks[] = {
-   { TSKFC_TITLE,      "Summary",     0, 0, &Task::Summary, 0, 0, 0, 0, true },
-   { TSKFC_NOTES,      "Notes",       0, 0, &Task::Notes, 0, 0, 0, 0, true },
-   { TSKFC_START_TIME, "Start Time",  0, 0, 0, 0, &Task::StartTime, 0, 0, false },
-   { TSKFC_DUE_TIME,   "Due Time",    0, 0, 0, 0, &Task::DueTime, 0, 0, false },
-   { TSKFC_ALARM_TIME, "Alarm Time",  0, 0, 0, 0, &Task::AlarmTime, 0, 0, false },
-   { TSKFC_END,        "End of List", 0, 0, 0, 0, 0, 0, 0, false },
+   { TSKFC_TITLE,      N_("Summary"),     0, 0, &Task::Summary, 0, 0, 0, 0, true },
+   { TSKFC_NOTES,      N_("Notes"),       0, 0, &Task::Notes, 0, 0, 0, 0, true },
+   { TSKFC_START_TIME, N_("Start Time"),  0, 0, 0, 0, &Task::StartTime, 0, 0, false },
+   { TSKFC_DUE_TIME,   N_("Due Time"),    0, 0, 0, 0, &Task::DueTime, 0, 0, false },
+   { TSKFC_ALARM_TIME, N_("Alarm Time"),  0, 0, 0, 0, &Task::AlarmTime, 0, 0, false },
+   { TSKFC_END,        N_("End of List"), 0, 0, 0, 0, 0, 0, 0, false },
 };
 
 Task::Task()
@@ -136,7 +137,7 @@ const unsigned char* Task::ParseField(const unsigned char *begin,
 
 	if( field->type == TSKFC_TASK_TYPE ) {
 		if( field->u.raw[0] != 't' ) {
-			throw Error("Task::ParseField: Task Type is not 't'");
+			throw Error(_("Task::ParseField: Task Type is not 't'"));
 		}
 		return begin;
 	}
@@ -167,7 +168,7 @@ const unsigned char* Task::ParseField(const unsigned char *begin,
 	{
 	case TSKFC_PRIORITY:
 		if( field->u.raw[0] > TR_PRIORITY_RANGE_HIGH ) {
-			throw Error( "Task::ParseField: priority field out of bounds" );
+			throw Error(_("Task::ParseField: priority field out of bounds"));
 		}
 		else {
 			PriorityFlag = PriorityProto2Rec(field->u.raw[0]);
@@ -176,7 +177,7 @@ const unsigned char* Task::ParseField(const unsigned char *begin,
 
 	case TSKFC_STATUS:
 		if( field->u.raw[0] > TR_STATUS_RANGE_HIGH ) {
-			throw Error( "Task::ParseField: priority field out of bounds" );
+			throw Error(_("Task::ParseField: priority field out of bounds"));
 		}
 		else {
 			StatusFlag = StatusProto2Rec(field->u.raw[0]);
@@ -189,7 +190,7 @@ const unsigned char* Task::ParseField(const unsigned char *begin,
 			TimeZoneValid = true;
 		}
 		else {
-			throw Error("Task::ParseField: not enough data in time zone code field");
+			throw Error(_("Task::ParseField: not enough data in time zone code field"));
 		}
 		return begin;
 
@@ -209,7 +210,7 @@ const unsigned char* Task::ParseField(const unsigned char *begin,
 
 	case TSKFC_ALARM_TYPE:
 		if( field->u.raw[0] > TR_ALARM_RANGE_HIGH ) {
-			throw Error("Task::ParseField: AlarmType out of bounds" );
+			throw Error(_("Task::ParseField: AlarmType out of bounds"));
 		}
 		else {
 			AlarmType = AlarmProto2Rec(field->u.raw[0]);
@@ -391,37 +392,37 @@ const FieldHandle<Task>::ListT& Task::GetFieldHandles()
 #undef RECORD_CLASS_NAME
 #define RECORD_CLASS_NAME Task
 
-	FHP(RecType, "Record Type Code");
-	FHP(RecordId, "Unique Record ID");
+	FHP(RecType, _("Record Type Code"));
+	FHP(RecordId, _("Unique Record ID"));
 
-	FHD(Summary, "Summary", TSKFC_TITLE, true);
-	FHD(Notes, "Notes", TSKFC_NOTES, true);
-	FHD(Categories, "Categories", TSKFC_CATEGORIES, true);
-	FHP(UID, "UID");	// FIXME - not linked to any device field??
+	FHD(Summary, _("Summary"), TSKFC_TITLE, true);
+	FHD(Notes, _("Notes"), TSKFC_NOTES, true);
+	FHD(Categories, _("Categories"), TSKFC_CATEGORIES, true);
+	FHP(UID, _("UID"));	// FIXME - not linked to any device field??
 
-	FHD(StartTime, "Start Time", TSKFC_START_TIME, false);
-	FHD(DueTime, "Due Time", TSKFC_DUE_TIME, false);
-	FHD(AlarmTime, "Alarm Time", TSKFC_ALARM_TIME, false);
-	FHD(TimeZoneCode, "Time Zone Code", TSKFC_TIMEZONE_CODE, false);
-	FHP(TimeZoneValid, "Time Zone Code Valid");
+	FHD(StartTime, _("Start Time"), TSKFC_START_TIME, false);
+	FHD(DueTime, _("Due Time"), TSKFC_DUE_TIME, false);
+	FHD(AlarmTime, _("Alarm Time"), TSKFC_ALARM_TIME, false);
+	FHD(TimeZoneCode, _("Time Zone Code"), TSKFC_TIMEZONE_CODE, false);
+	FHP(TimeZoneValid, _("Time Zone Code Valid"));
 
-	FHE(aft, AlarmFlagType, AlarmType, "Alarm Type");
-	FHE_CONST(aft, Date, "Date");
-	FHE_CONST(aft, Relative, "Relative");
+	FHE(aft, AlarmFlagType, AlarmType, _("Alarm Type"));
+	FHE_CONST(aft, Date, _("Date"));
+	FHE_CONST(aft, Relative, _("Relative"));
 
-	FHE(pft, PriorityFlagType, PriorityFlag, "Priority");
-	FHE_CONST(pft, High, "High");
-	FHE_CONST(pft, Normal, "Normal");
-	FHE_CONST(pft, Low, "Low");
+	FHE(pft, PriorityFlagType, PriorityFlag, _("Priority"));
+	FHE_CONST(pft, High, _("High"));
+	FHE_CONST(pft, Normal, _("Normal"));
+	FHE_CONST(pft, Low, _("Low"));
 
-	FHE(sft, StatusFlagType, StatusFlag, "Status");
-	FHE_CONST(sft, NotStarted, "Not Started");
-	FHE_CONST(sft, InProgress, "In Progress");
-	FHE_CONST(sft, Completed, "Completed");
-	FHE_CONST(sft, Waiting, "Waiting");
-	FHE_CONST(sft, Deferred, "Deferred");
+	FHE(sft, StatusFlagType, StatusFlag, _("Status"));
+	FHE_CONST(sft, NotStarted, _("Not Started"));
+	FHE_CONST(sft, InProgress, _("In Progress"));
+	FHE_CONST(sft, Completed, _("Completed"));
+	FHE_CONST(sft, Waiting, _("Waiting"));
+	FHE_CONST(sft, Deferred, _("Deferred"));
 
-	FHP(Unknowns, "Unknown Fields");
+	FHP(Unknowns, _("Unknown Fields"));
 
 	// and finally, the RecurBase fields
 	RECUR_BASE_FIELD_HANDLES
@@ -438,16 +439,25 @@ void Task::Dump(std::ostream &os) const
 {
 	ios_format_state state(os);
 
-	static const char *PriorityName[] = { "High", "Normal", "Low" };
-	static const char *StatusName[] = { "Not Started", "In Progress",
-		"Completed", "Waiting", "Deferred" };
-	static const char *DayNames[] = { "Sun", "Mon", "Tue", "Wed",
-		"Thu", "Fri", "Sat" };
-	static const char *MonthNames[] = { "Jan", "Feb", "Mar", "Apr",
-		"May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
-	static const char *AlarmTypeName[] = { "None", "By Date", "Relative" };
+	static const char *PriorityName[] = {
+		N_("High"),
+		N_("Normal"),
+		N_("Low")
+	};
+	static const char *StatusName[] = {
+		N_("Not Started"),
+		N_("In Progress"),
+		N_("Completed"),
+		N_("Waiting"),
+		N_("Deferred")
+	};
+	static const char *AlarmTypeName[] = {
+		N_("None"),
+		N_("By Date"),
+		N_("Relative")
+	};
 
-	os << "Task entry: 0x" << setbase(16) << RecordId
+	os << _("Task entry: ") << "0x" << setbase(16) << RecordId
 	   << " (" << (unsigned int)RecType << ")\n";
 
 	// cycle through the type table
@@ -458,92 +468,30 @@ void Task::Dump(std::ostream &os) const
 		if( b->strMember ) {
 			const std::string &s = this->*(b->strMember);
 			if( s.size() )
-				os << "   " << b->name << ": " << Cr2LfWrapper(s) << "\n";
+				os << "   " << gettext(b->name) << ": " << Cr2LfWrapper(s) << "\n";
 		}
 		else if( b->timeMember ) {
 			TimeT t = this->*(b->timeMember);
 			if( t.IsValid() )
-				os << "   " << b->name << ": " << t << "\n";
+				os << "   " << gettext(b->name) << ": " << t << "\n";
 		}
 	}
 
-	os << "   Priority: " << PriorityName[PriorityFlag] << "\n";
-	os << "   Status: " << StatusName[StatusFlag] << "\n";
+	os << _("   Priority: ") << gettext(PriorityName[PriorityFlag]) << "\n";
+	os << _("   Status: ") << gettext(StatusName[StatusFlag]) << "\n";
 	if( AlarmType ) {
-		os << "   Alarm Type: " << AlarmTypeName[AlarmType] << "\n";
+		os << _("   Alarm Type: ") << gettext(AlarmTypeName[AlarmType]) << "\n";
 	}
 	if( TimeZoneValid )
-		os << "   Time Zone: " << GetStaticTimeZone(TimeZoneCode)->Name << "\n";
+		os << _("   Time Zone: ") << gettext(GetStaticTimeZone(TimeZoneCode)->Name) << "\n";
 
 	// print recurrence data if available
-	os << "   Recurring: " << (Recurring ? "yes" : "no") << "\n";
-	if( Recurring ) {
-		switch( RecurringType )
-		{
-		case Day:
-			os << "      Every day.\n";
-			break;
-
-		case MonthByDate:
-			os << "      Every month on the "
-			   << DayOfMonth
-			   << (DayOfMonth == 1 ? "st" : "")
-			   << (DayOfMonth == 2 ? "nd" : "")
-			   << (DayOfMonth == 3 ? "rd" : "")
-			   << (DayOfMonth > 3  ? "th" : "")
-			   << "\n";
-			break;
-
-		case MonthByDay:
-			os << "      Every month on the "
-			   << DayNames[DayOfWeek]
-			   << " of week "
-			   << WeekOfMonth
-			   << "\n";
-			break;
-
-		case YearByDate:
-			os << "      Every year on "
-			   << MonthNames[MonthOfYear-1]
-			   << " " << DayOfMonth << "\n";
-			break;
-
-		case YearByDay:
-			os << "      Every year in " << MonthNames[MonthOfYear-1]
-			   << " on "
-			   << DayNames[DayOfWeek]
-			   << " of week " << WeekOfMonth << "\n";
-			break;
-
-		case Week:
-			os << "      Every week on: ";
-			if( WeekDays & CAL_WD_SUN ) os << "Sun ";
-			if( WeekDays & CAL_WD_MON ) os << "Mon ";
-			if( WeekDays & CAL_WD_TUE ) os << "Tue ";
-			if( WeekDays & CAL_WD_WED ) os << "Wed ";
-			if( WeekDays & CAL_WD_THU ) os << "Thu ";
-			if( WeekDays & CAL_WD_FRI ) os << "Fri ";
-			if( WeekDays & CAL_WD_SAT ) os << "Sat ";
-			os << "\n";
-			break;
-
-		default:
-			os << "      Unknown recurrence type\n";
-			break;
-		}
-
-		os << "      Interval: " << Interval << "\n";
-
-		if( Perpetual )
-			os << "      Ends: never\n";
-		else
-			os << "      Ends: " << RecurringEndTime << "\n";
-	}
+	RecurBase::Dump(os);
 
 	if( Categories.size() ) {
 		string display;
 		Categories.CategoryList2Str(display);
-		os << "   Categories: " << display << "\n";
+		os << _("   Categories: ") << display << "\n";
 	}
 
 	os << Unknowns;

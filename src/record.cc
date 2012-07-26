@@ -21,6 +21,7 @@
     root directory of this project for more details.
 */
 
+#include "i18n.h"
 #include "record.h"
 #include "record-internal.h"
 #include "protostructs.h"
@@ -249,11 +250,11 @@ std::ostream& operator<< (std::ostream &os, const std::vector<UnknownField> &unk
 	std::vector<UnknownField>::const_iterator
 		ub = unknowns.begin(), ue = unknowns.end();
 	if( ub != ue )
-		os << "    Unknowns:\n";
+		os << _("    Unknowns:\n");
 	for( ; ub != ue; ub++ ) {
-		os << "        Type: 0x" << setbase(16)
+		os << _("        Type: ") << "0x" << setbase(16)
 		   << (unsigned int) ub->type
-		   << " Data:\n" << Data(ub->data.data(), ub->data.size());
+		   << _(" Data:\n") << Data(ub->data.data(), ub->data.size());
 	}
 	return os;
 }
@@ -455,7 +456,7 @@ std::string Date::ToBBString() const
 bool Date::FromTm(const struct tm *timep)
 {
 	if( !timep )
-		throw std::logic_error("NULL time pointer passed to Date::FromTm");
+		throw std::logic_error(_("NULL time pointer passed to Date::FromTm"));
 
 	Year = timep->tm_year + 1900;
 	Month = timep->tm_mon;
@@ -587,7 +588,7 @@ const EnumConstants::EnumConstant& EnumConstants::GetConstant(int value) const
 	}
 
 	// not found in list
-	throw std::logic_error("Enum value not found in constant list");
+	throw std::logic_error(_("Enum value not found in constant list"));
 }
 
 const char* EnumConstants::GetName(int value) const
@@ -638,12 +639,12 @@ bool DBNamedFieldCmp::operator() (const Barry::DBData &a,
 	}
 
 	if( a.GetDBName() != b.GetDBName() ) {
-		throw logic_error("Different database types in DBNamedFieldCmp");
+		throw logic_error(_("Different database types in DBNamedFieldCmp"));
 	}
 	// fall through and use else's
 	ALL_KNOWN_PARSER_TYPES
 
-	throw logic_error("Unknown database in DBNamedFieldCmp::operator()");
+	throw logic_error(_("Unknown database in DBNamedFieldCmp::operator()"));
 }
 
 } // namespace Barry

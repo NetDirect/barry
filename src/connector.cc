@@ -19,6 +19,7 @@
     root directory of this project for more details.
 */
 
+#include "i18n.h"
 #include "connector.h"
 #include "router.h"
 #include "controller.h"
@@ -181,7 +182,7 @@ bool Connector::Reconnect(int total_tries)
 			throw;
 		}
 		else {
-			dout("Timeout in Connector::Reconnect()... trying again");
+			dout(_("Timeout in Connector::Reconnect()... trying again"));
 		}
 	}
 }

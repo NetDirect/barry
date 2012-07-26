@@ -80,7 +80,7 @@ public: // From RawChannelDataCallback
 void CallbackHandler::DataReceived(Data &data)
 {
 	if( m_verbose ) {
-		cerr << "From BB: ";
+		cerr << _("From BB: ");
 		data.DumpHex(cerr);
 		cerr << "\n";
 	}
@@ -92,7 +92,7 @@ void CallbackHandler::DataReceived(Data &data)
 		ssize_t writtenThisTime = write(STDOUT_FILENO, &(data.GetData()[written]), toWrite - written);
 		if( m_verbose ) {
 			cerr.setf(ios::dec, ios::basefield);
-			cerr << "Written " << writtenThisTime << " bytes over stdout" << endl;
+			cerr << string_vprintf(_("Written %ld bytes over stdout"), (long int)writtenThisTime) << endl;
 		}
 		fflush(stdout);
 		if( writtenThisTime < 0 ) {
@@ -106,7 +106,7 @@ void CallbackHandler::DataReceived(Data &data)
 
 void CallbackHandler::ChannelError(string msg)
 {
-	cerr << "CallbackHandler: Received error: " << msg << endl;
+	cerr << _("CallbackHandler: Received error: ") << msg << endl;
 	ChannelClose();
 }
 
@@ -120,22 +120,23 @@ void Usage()
 	int logical, major, minor;
 	const char *Version = Barry::Version(logical, major, minor);
 
-	cerr
-		<< "brawchannel - Command line USB Blackberry raw channel interface\n"
-		<< "        Copyright 2010, RealVNC Ltd.\n"
-		<< "        Using: " << Version << "\n"
-		<< "\n"
-		<< "Usage:\n"
-		<< "brawchannel [options] <channel name>\n"
-		<< "\n"
-		<< "   -h        This help\n"
-		<< "   -p pin    PIN of device to talk with\n"
-		<< "             If only one device is plugged in, this flag is optional\n"
-		<< "   -P pass   Simplistic method to specify device password\n"
-		<< "   -v        Dump protocol data during operation\n"
-		<< "             This will cause libusb output to appear on STDOUT unless\n"
-		<< "             the environment variable USB_DEBUG is set to 0,1 or 2.\n"
-		<< endl;
+	cerr << string_vprintf(
+	_("brawchannel - Command line USB Blackberry raw channel interface\n"
+	"        Copyright 2010, RealVNC Ltd.\n"
+	"        Using: %s\n"
+	"\n"
+	"Usage:\n"
+	"brawchannel [options] <channel name>\n"
+	"\n"
+	"   -h        This help\n"
+	"   -p pin    PIN of device to talk with\n"
+	"             If only one device is plugged in, this flag is optional\n"
+	"   -P pass   Simplistic method to specify device password\n"
+	"   -v        Dump protocol data during operation\n"
+	"             This will cause libusb output to appear on STDOUT unless\n"
+	"             the environment variable USB_DEBUG is set to 0,1 or 2.\n"),
+		Version)
+	<< endl;
 }
 
 // Helper class to restore signal handlers when shutdown is occuring
@@ -205,13 +206,13 @@ int main(int argc, char *argv[])
 		argv += optind;
 
 		if( argc < 1 ) {
-			cerr << "Error: Missing raw channel name." << endl;
+			cerr << _("Error: Missing raw channel name.") << endl;
 			Usage();
 			return 1;
 		}
 
 		if( argc > 1 ) {
-			cerr << "Error: Too many arguments." << endl;
+			cerr << _("Error: Too many arguments.") << endl;
 			Usage();
 			return 1;
 		}
@@ -231,8 +232,8 @@ int main(int argc, char *argv[])
 				parsedValue = atoi(val);
 			}
 			if( parsedValue != 0 && parsedValue != 1 && parsedValue != 2 ) {
-				cerr << "Warning: Protocol dump enabled without setting USB_DEBUG to 0, 1 or 2.\n"
-				     << "         libusb might log to STDOUT and ruin data stream." << endl;
+				cerr << _("Warning: Protocol dump enabled without setting USB_DEBUG to 0, 1 or 2.\n"
+				     "         libusb might log to STDOUT and ruin data stream.") << endl;
 			}
 		}
 
@@ -246,13 +247,14 @@ int main(int argc, char *argv[])
 		Barry::Probe probe;
 		int activeDevice = probe.FindActive(pin);
 		if( activeDevice == -1 ) {
-			cerr << "No device selected, or PIN not found" << endl;
+			cerr << _("No device selected, or PIN not found")
+				<< endl;
 			return 1;
 		}
 
 		// Now get setup to open the channel.
 		if( data_dump ) {
-			cerr << "Connected to device, starting read/write\n";
+			cerr << _("Connected to device, starting read/write\n");
 		}
 
 		volatile bool running = true;
@@ -301,7 +303,7 @@ int main(int argc, char *argv[])
 
 			int ret = select(STDIN_FILENO + 1, &rfds, NULL, NULL, &tv);
 			if( ret < 0 ) {
-				cerr << "Select failed with errno: " << errno << endl;
+				cerr << _("Select failed with errno: ") << errno << endl;
 				running = false;
 			}
 			else if ( ret && FD_ISSET(STDIN_FILENO, &rfds) ) {
@@ -310,15 +312,15 @@ int main(int argc, char *argv[])
 					Data toWrite(buf, haveRead);
 					if( data_dump ) {
 						cerr.setf(ios::dec, ios::basefield);
-						cerr << "Sending " << haveRead << " bytes stdin->USB\n";
-						cerr << "To BB: ";
+						cerr << string_vprintf(_("Sending %ld bytes stdin->USB\n"), (long int)haveRead);
+						cerr << _("To BB: ");
 						toWrite.DumpHex(cerr);
 						cerr << "\n";
 					}
 					rawChannel.Send(toWrite);
 					if( data_dump ) {
 						cerr.setf(ios::dec, ios::basefield);
-						cerr << "Sent " << haveRead << " bytes stdin->USB\n";
+						cerr << string_vprintf(_("Sent %ld bytes stdin->USB\n"), (long int)haveRead);
 					}
 				}
 				else if( haveRead < 0 ) {
@@ -328,15 +330,15 @@ int main(int argc, char *argv[])
 		}
 	}
 	catch( Usb::Error &ue ) {
-		cerr << "Usb::Error caught: " << ue.what() << endl;
+		cerr << _("Usb::Error caught: ") << ue.what() << endl;
 		return 1;
 	}
 	catch( Barry::Error &se ) {
-		cerr << "Barry::Error caught: " << se.what() << endl;
+		cerr << _("Barry::Error caught: ") << se.what() << endl;
 		return 1;
 	}
 	catch( exception &e ) {
-		cerr << "exception caught: " << e.what() << endl;
+		cerr << _("exception caught: ") << e.what() << endl;
 		return 1;
 	}
 

@@ -39,6 +39,7 @@
 #include <unistd.h>
 
 #include "barrygetopt.h"
+#include "i18n.h"
 
 using namespace std;
 using namespace std::tr1;
@@ -63,104 +64,104 @@ void Usage()
 {
    int logical, major, minor;
    const char *Version = Barry::Version(logical, major, minor);
-
-   cerr
-   << "bio - Barry Input / Output\n"
-   << "      Copyright 2010-2012, Net Direct Inc. (http://www.netdirect.ca/)\n"
-   << "      Using: " << Version << "\n"
-   << "      Compiled "
 #ifdef __BARRY_BOOST_MODE__
-   << "with"
+   string boost_mode = _("Compiled with Boost support");
+   string boost_feature = "boost, ";
+   string boost_options = _("\n"
+	" Options to use for 'boost' type:\n"
+	"   -f file   Boost serialization filename to read from or write to\n"
+	"             Can use - to specify stdin/stdout\n");
 #else
-   << "without"
+   string boost_mode = _("Compiled without Boost support");
+   string boost_feature;
+   string boost_options;
 #endif
-   << " Boost support\n"
-   << "\n"
-   << " Usage:  bio -i <type> [options...]   -o <type> [options...]\n"
-   << "\n"
-   << "   -i type   The input type (Builder) to use for producing records\n"
-   << "             Can be one of: device, tar"
-#ifdef __BARRY_BOOST_MODE__
-   << ", boost"
-#endif
-   << ", ldif, mime\n"
-   << "   -o type   The output type (Parser) to use for processing records.\n"
-   << "             Multiple outputs are allowed, as long as they don't\n"
-   << "             conflict (such as two outputs writing to the same file\n"
-   << "             or device).\n"
-   << "             Can be one of: device, tar"
-#ifdef __BARRY_BOOST_MODE__
-   << ", boost"
-#endif
-   << ", ldif, mime, dump, sha1, cstore\n"
-   << "\n"
-   << " Options to use for 'device' type:\n"
-   << "   -d db     Name of input database. Can be used multiple times.\n"
-   << "   -A        Add all available device databases, instead of specifying\n"
-   << "             them manually via -d\n"
-   << "   -p pin    PIN of device to talk to\n"
-   << "             If only one device is plugged in, this flag is optional\n"
-   << "   -P pass   Simplistic method to specify device password\n"
-   << "   -w mode   Set write mode when using 'device' for output.  Must be\n"
-   << "             specified, or will not write anything.\n"
-   << "             Can be one of: erase, overwrite, addonly, addnew\n"
-   << "\n"
-   << " Options to use for 'tar' backup type:\n"
-   << "   -d db     Name of input database. Can be used multiple times.\n"
-   << "             Not available in output mode.  Note that by default,\n"
-   << "             all databases in the backup are selected, when reading,\n"
-   << "             unless at least one -d is specified.\n"
-   << "   -D db     Name of input database to skip.  If no -d options are used,\n"
-   << "             then all databases are automatically selected.  Using -D\n"
-   << "             allows a filtering selection.  If -d and -D are used for\n"
-   << "             the same database, -D takes precedence.\n"
-   << "   -f file   Tar backup file to read from or write to\n"
-#ifdef __BARRY_BOOST_MODE__
-   << "\n"
-   << " Options to use for 'boost' type:\n"
-   << "   -f file   Boost serialization filename to read from or write to\n"
-   << "             Can use - to specify stdin/stdout\n"
-#endif
-   << "\n"
-   << " Options to use for 'ldif' type:\n"
-   << "   -c dn     Convert address book database to LDIF format, using the\n"
-   << "             specified baseDN\n"
-   << "   -C dnattr LDIF attribute name to use when building the FQDN\n"
-   << "             Defaults to 'cn'\n"
+
+   cerr << string_vprintf(
+   // TRANSLATORS: the i/o types, such as device, tar, mime, etc. must
+   // be exact.  They are commands that the code tests for.  Do not
+   // translate those particular words.  Same with the -w write mode
+   // options.
+   _("bio - Barry Input / Output\n"
+   "      Copyright 2010-2012, Net Direct Inc. (http://www.netdirect.ca/)\n"
+   "      Using: %s\n"
+   "      %s\n"
+   "\n"
+   " Usage:  bio -i <type> [options...]   -o <type> [options...]\n"
+   "\n"
+   "   -i type   The input type (Builder) to use for producing records\n"
+   "             Can be one of: device, tar, %sldif, mime\n"
+   "   -o type   The output type (Parser) to use for processing records.\n"
+   "             Multiple outputs are allowed, as long as they don't\n"
+   "             conflict (such as two outputs writing to the same file\n"
+   "             or device).\n"
+   "             Can be one of: device, tar, %sldif, mime, dump, sha1, cstore\n"
+   "\n"
+   " Options to use for 'device' type:\n"
+   "   -d db     Name of input database. Can be used multiple times.\n"
+   "   -A        Add all available device databases, instead of specifying\n"
+   "             them manually via -d\n"
+   "   -p pin    PIN of device to talk to\n"
+   "             If only one device is plugged in, this flag is optional\n"
+   "   -P pass   Simplistic method to specify device password\n"
+   "   -w mode   Set write mode when using 'device' for output.  Must be\n"
+   "             specified, or will not write anything.\n"
+   "             Can be one of: erase, overwrite, addonly, addnew\n"
+   "\n"
+   " Options to use for 'tar' backup type:\n"
+   "   -d db     Name of input database. Can be used multiple times.\n"
+   "             Not available in output mode.  Note that by default,\n"
+   "             all databases in the backup are selected, when reading,\n"
+   "             unless at least one -d is specified.\n"
+   "   -D db     Name of input database to skip.  If no -d options are used,\n"
+   "             then all databases are automatically selected.  Using -D\n"
+   "             allows a filtering selection.  If -d and -D are used for\n"
+   "             the same database, -D takes precedence.\n"
+   "   -f file   Tar backup file to read from or write to\n"
+   "%s"
+   "\n"
+   " Options to use for 'ldif' type:\n"
+   "   -c dn     Convert address book database to LDIF format, using the\n"
+   "             specified baseDN\n"
+   "   -C dnattr LDIF attribute name to use when building the FQDN\n"
+   "             Defaults to 'cn'\n"
 /*
 LDIF options?
 
-   << "   -L        List Contact field names\n"
-   << "   -m        Map LDIF name to Contact field / Unmap LDIF name\n"
-   << "                Map: ldif,read,write - maps ldif to read/write Contact fields\n"
-   << "                Unmap: ldif name alone\n"
-   << "   -M        List current LDIF mapping\n"
+   "   -L        List Contact field names\n"
+   "   -m        Map LDIF name to Contact field / Unmap LDIF name\n"
+   "                Map: ldif,read,write - maps ldif to read/write Contact fields\n"
+   "                Unmap: ldif name alone\n"
+   "   -M        List current LDIF mapping\n"
 */
-   << "\n"
-   << " Options to use for 'mime' type:\n"
-   << "   -f file   Filename to read from or write to.  Use - to explicitly\n"
-   << "             specify stdin/stdout, which is default.\n"
-   << "\n"
-   << " Options to use for 'dump' to stdout output type:\n"
-   << "   -n        Use hex dump parser on all databases.\n"
-   << "\n"
-   << " Options to use for 'sha1' sum stdout output type:\n"
-   << "   -t        Include DB Name, Type, and Unique record IDs in the checksums\n"
-   << "\n"
-   << " Options to use for 'cstore' output type:\n"
-   << "   -l        List filenames only\n"
-   << "   -f file   Filename from the above list, including path.\n"
-   << "             If found, the file will be written to the current\n"
-   << "             directory, using the base filename from the device.\n"
-   << "\n"
-   << " Standalone options:\n"
-   << "   -h        This help\n"
-   << "   -I cs     International charset for string conversions\n"
-   << "             Valid values here are available with 'iconv --list'\n"
-   << "   -S        Show list of supported database parsers and builders.\n"
-   << "             Use twice to show field names as well.\n"
-   << "   -v        Dump protocol data during operation\n"
-   << "\n"
+   "\n"
+   " Options to use for 'mime' type:\n"
+   "   -f file   Filename to read from or write to.  Use - to explicitly\n"
+   "             specify stdin/stdout, which is default.\n"
+   "\n"
+   " Options to use for 'dump' to stdout output type:\n"
+   "   -n        Use hex dump parser on all databases.\n"
+   "\n"
+   " Options to use for 'sha1' sum stdout output type:\n"
+   "   -t        Include DB Name, Type, and Unique record IDs in the checksums\n"
+   "\n"
+   " Options to use for 'cstore' output type:\n"
+   "   -l        List filenames only\n"
+   "   -f file   Filename from the above list, including path.\n"
+   "             If found, the file will be written to the current\n"
+   "             directory, using the base filename from the device.\n"
+   "\n"
+   " Standalone options:\n"
+   "   -h        This help\n"
+   "   -I cs     International charset for string conversions\n"
+   "             Valid values here are available with 'iconv --list'\n"
+   "   -S        Show list of supported database parsers and builders.\n"
+   "             Use twice to show field names as well.\n"
+   "   -v        Dump protocol data during operation\n"
+   "\n"),
+	Version, boost_mode.c_str(),
+	boost_feature.c_str(), boost_feature.c_str(),
+	boost_options.c_str())
    << endl;
 }
 
@@ -173,62 +174,62 @@ public:
 
 	virtual void SetFilename(const std::string &name)
 	{
-		throw runtime_error("Filename not applicable for this mode");
+		throw runtime_error(_("Filename not applicable for this mode"));
 	}
 
 	virtual void AddDB(const std::string &dbname)
 	{
-		throw runtime_error("DB not applicable for this mode");
+		throw runtime_error(_("DB not applicable for this mode"));
 	}
 
 	virtual void AddSkipDB(const std::string &dbname)
 	{
-		throw runtime_error("DB skipping not applicable for this mode");
+		throw runtime_error(_("DB skipping not applicable for this mode"));
 	}
 
 	virtual void AddAllDBs()
 	{
-		throw runtime_error("DBs not applicable for this mode");
+		throw runtime_error(_("DBs not applicable for this mode"));
 	}
 
 	virtual void SetPIN(const std::string &pin)
 	{
-		throw runtime_error("PIN not applicable for this mode");
+		throw runtime_error(_("PIN not applicable for this mode"));
 	}
 
 	virtual void SetPassword(const std::string &password)
 	{
-		throw runtime_error("Password not applicable for this mode");
+		throw runtime_error(_("Password not applicable for this mode"));
 	}
 
 	virtual void SetWriteMode(DeviceParser::WriteMode mode)
 	{
-		throw runtime_error("Device write behaviour not applicable for this mode");
+		throw runtime_error(_("Device write behaviour not applicable for this mode"));
 	}
 
 	virtual void SetDN(const std::string &dn)
 	{
-		throw runtime_error("DN not applicable for this mode");
+		throw runtime_error(_("DN not applicable for this mode"));
 	}
 
 	virtual void SetAttribute(const std::string &attr)
 	{
-		throw runtime_error("Attribute not applicable for this mode");
+		throw runtime_error(_("Attribute not applicable for this mode"));
 	}
 
 	virtual void SetHexDump()
 	{
-		throw runtime_error("No hex dump option in this mode");
+		throw runtime_error(_("No hex dump option in this mode"));
 	}
 
 	virtual void IncludeIDs()
 	{
-		throw runtime_error("Including record IDs in the SHA1 sum is not applicable in this mode");
+		throw runtime_error(_("Including record IDs in the SHA1 sum is not applicable in this mode"));
 	}
 
 	virtual void SetList()
 	{
-		throw runtime_error("List option not applicable for this mode");
+		throw runtime_error(_("List option not applicable for this mode"));
 	}
 };
 
@@ -246,7 +247,7 @@ public:
 		istringstream iss(pin);
 		iss >> m_pin;
 		if( !m_pin.Valid() )
-			throw runtime_error("Invalid PIN: " + pin);
+			throw runtime_error(_("Invalid PIN: ") + pin);
 	}
 
 	void SetPassword(const std::string &password)
@@ -300,13 +301,13 @@ public:
 		int i = probe->FindActive(m_pin);
 		if( i == -1 ) {
 			if( m_pin.Valid() )
-				throw runtime_error("PIN not found: " + m_pin.Str());
+				throw runtime_error(_("PIN not found: ") + m_pin.Str());
 			else
-				throw runtime_error("PIN not specified, and more than one device exists.");
+				throw runtime_error(_("PIN not specified, and more than one device exists."));
 		}
 
 		if( IsPinUsed(probe->Get(i).m_pin) ) {
-			throw runtime_error("It seems you are trying to use the same device for multiple input or outputs.");
+			throw runtime_error(_("It seems you are trying to use the same device for multiple input or outputs."));
 		}
 		m_device_pins.push_back(probe->Get(i).m_pin);
 
@@ -321,7 +322,7 @@ public:
 		else {
 			for( size_t i = 0; i < m_dbnames.size(); i++ ) {
 				if( !m_builder->Add(m_dbnames[i]) )
-					throw runtime_error("Database not found: " + m_dbnames[i]);
+					throw runtime_error(_("Database not found: ") + m_dbnames[i]);
 			}
 		}
 
@@ -343,7 +344,7 @@ public:
 	{
 		m_tarpath = name;
 		if( name == "-" )
-			throw runtime_error("Cannot use stdin as tar source file, sorry.");
+			throw runtime_error(_("Cannot use stdin as tar source file, sorry."));
 	}
 
 	void AddDB(const std::string &dbname)
@@ -513,19 +514,19 @@ public:
 	Parser& GetParser(Barry::Probe *probe, IConverter &ic)
 	{
 		if( m_mode == DeviceParser::DROP_RECORD ) {
-			cerr << "Warning: the -w switch was not specified: no data will be written to the device." << endl;
+			cerr << _("Warning: the -w switch was not specified: no data will be written to the device.") << endl;
 		}
 
 		int i = probe->FindActive(m_pin);
 		if( i == -1 ) {
 			if( m_pin.Valid() )
-				throw runtime_error("PIN not found: " + m_pin.Str());
+				throw runtime_error(_("PIN not found: ") + m_pin.Str());
 			else
-				throw runtime_error("PIN not specified, and more than one device exists.");
+				throw runtime_error(_("PIN not specified, and more than one device exists."));
 		}
 
 		if( IsPinUsed(probe->Get(i).m_pin) ) {
-			throw runtime_error("It seems you are trying to use the same device for multiple input or outputs.");
+			throw runtime_error(_("It seems you are trying to use the same device for multiple input or outputs."));
 		}
 		m_device_pins.push_back(probe->Get(i).m_pin);
 
@@ -551,7 +552,7 @@ public:
 	{
 		m_tarpath = name;
 		if( name == "-" )
-			throw runtime_error("Cannot use stdout as tar backup file, sorry.");
+			throw runtime_error(_("Cannot use stdout as tar backup file, sorry."));
 	}
 
 	Parser& GetParser(Barry::Probe *probe, IConverter &ic)
@@ -579,7 +580,7 @@ public:
 	Parser& GetParser(Barry::Probe *probe, IConverter &ic)
 	{
 		if( !m_filename.size() )
-			throw runtime_error("Boost output requires a specific output file (-f switch)");
+			throw runtime_error(_("Boost output requires a specific output file (-f switch)"));
 
 		if( m_filename == "-" ) {
 			// use stdout
@@ -797,7 +798,7 @@ public:
 		if( m_list_only ) {
 			cout << rec.Filename;
 			if( rec.FolderFlag ) {
-				cout << " (folder)";
+				cout << _(" (folder)");
 			}
 			cout << endl;
 		}
@@ -832,13 +833,14 @@ public:
 		}
 
 		// open and write!
-		cout << "Saving: " << rec.Filename
-			<< " as " << freshname << endl;
+		cout << string_vprintf(_("Saving: %s as %s"),
+				rec.Filename.c_str(), freshname.c_str())
+		     << endl;
 		ofstream ofs(freshname.c_str());
 		ofs << rec.FileContent;
 		ofs.flush();
 		if( !ofs ) {
-			cout << "Error during write!" << endl;
+			cout << _("Error during write!") << endl;
 		}
 	}
 };
@@ -947,7 +949,7 @@ DeviceParser::WriteMode App::ParseWriteMode(const std::string &mode)
 	else if( mode == "addnew" )
 		return DeviceParser::ADD_WITH_NEW_ID;
 	else
-		throw runtime_error("Unknown device output mode. Must be one of: erase, overwrite, addonly, addnew");
+		throw runtime_error(_("Unknown device output mode. Must be one of: erase, overwrite, addonly, addnew"));
 }
 
 bool App::OutputsProbeNeeded()
@@ -1130,7 +1132,7 @@ int main(int argc, char *argv[])
 		return app.main(argc, argv);
 	}
 	catch( std::exception &e ) {
-		cerr << "Exception: " << e.what() << endl;
+		cerr << _("Exception: ") << e.what() << endl;
 		return 1;
 	}
 }

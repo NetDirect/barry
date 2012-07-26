@@ -20,6 +20,7 @@
     root directory of this project for more details.
 */
 
+#include "i18n.h"
 #include "r_folder.h"
 #include "record-internal.h"
 #include "protostructs.h"
@@ -80,8 +81,8 @@ uint8_t Folder::TypeRec2Proto(FolderType t)
 #define ROOT_SEPARATOR	0x3a
 
 static FieldLink<Folder> FolderFieldLinks[] = {
-    { FFC_NAME, "FolderName",  0, 0, &Folder::Name, 0, 0, 0, 0, true },
-    { FFC_END,  "End of List", 0, 0, 0, 0, 0, 0, 0, false },
+    { FFC_NAME, N_("FolderName"),  0, 0, &Folder::Name, 0, 0, 0, 0, true },
+    { FFC_END,  N_("End of List"), 0, 0, 0, 0, 0, 0, 0, false },
 };
 
 Folder::Folder()
@@ -205,29 +206,29 @@ const FieldHandle<Folder>::ListT& Folder::GetFieldHandles()
 #undef RECORD_CLASS_NAME
 #define RECORD_CLASS_NAME Folder
 
-	FHP(RecType, "Record Type Code");
-	FHP(RecordId, "Unique Record ID");
+	FHP(RecType, _("Record Type Code"));
+	FHP(RecordId, _("Unique Record ID"));
 
-	FHD(Name, "Folder Name", FFC_NAME, true);
-	FHD(Number, "Order Number", FFC_NUMBER, false);
-	FHD(Level, "Folder Level", FFC_LEVEL, false);
+	FHD(Name, _("Folder Name"), FFC_NAME, true);
+	FHD(Number, _("Order Number"), FFC_NUMBER, false);
+	FHD(Level, _("Folder Level"), FFC_LEVEL, false);
 
-	FHE(ft, FolderType, Type, "Folder Type");
-	FHE_CONST(ft, FolderSubtree, "Subtree");
-	FHE_CONST(ft, FolderDeleted, "Deleted");
-	FHE_CONST(ft, FolderInbox, "Inbox");
-	FHE_CONST(ft, FolderOutbox, "Outbox");
-	FHE_CONST(ft, FolderSent, "Sent");
-	FHE_CONST(ft, FolderOther, "Other");
-	FHE_CONST(ft, FolderDraft, "Draft");
+	FHE(ft, FolderType, Type, _("Folder Type"));
+	FHE_CONST(ft, FolderSubtree, _("Subtree"));
+	FHE_CONST(ft, FolderDeleted, _("Deleted"));
+	FHE_CONST(ft, FolderInbox, _("Inbox"));
+	FHE_CONST(ft, FolderOutbox, _("Outbox"));
+	FHE_CONST(ft, FolderSent, _("Sent"));
+	FHE_CONST(ft, FolderOther, _("Other"));
+	FHE_CONST(ft, FolderDraft, _("Draft"));
 
 // Not yet implemented
-//	FHE(fst, FolderStatusType, ..., "Folder Status");
-//	FHE_CONST(fst, FolderOrphan, "Orphan");
-//	FHE_CONST(fst, FolderUnfiled, "Unfiled");
-//	FHE_CONST(fst, FolderFiled, "Filed");
+//	FHE(fst, FolderStatusType, ..., _("Folder Status"));
+//	FHE_CONST(fst, FolderOrphan, _("Orphan"));
+//	FHE_CONST(fst, FolderUnfiled, _("Unfiled"));
+//	FHE_CONST(fst, FolderFiled, _("Filed"));
 
-	FHP(Unknowns, "Unknown Fields");
+	FHP(Unknowns, _("Unknown Fields"));
 
 	return fhv;
 }
@@ -243,20 +244,27 @@ void Folder::Dump(std::ostream &os) const
 {
 	ios_format_state state(os);
 
-	static const char *FolderTypeString[] = { "Subtree", "Deleted", "Inbox", "Outbox", "Sent", "Other"};
+	static const char *FolderTypeString[] = {
+		N_("Subtree"),
+		N_("Deleted"),
+		N_("Inbox"),
+		N_("Outbox"),
+		N_("Sent"),
+		N_("Other")
+	};
 //	static const char *FolderStatusString[] = { "Orphan", "Unfiled", "Filed" };
 
-	os << "Folder Records\n\n";
-	os << "Folder Name: " << Name << "\n";
-	os << "Folder Type: ";
+	os << _("Folder Records\n\n");
+	os << _("Folder Name: ") << Name << "\n";
+	os << _("Folder Type: ");
 	if( Type < FolderDraft )
-		os << FolderTypeString[Type] << "\n";
+		os << gettext( FolderTypeString[Type] ) << "\n";
 	else if( Type == FolderDraft )
-		os << "Draft\n";
+		os << _("Draft\n");
 	else
-		os << "Unknown (" << std::hex << Type << ")\n";
-	os << "Folder Number: " << std::dec << Number << "\n";
-	os << "Folder Level: " << std::dec << Level << "\n";
+		os << _("Unknown") << " (" << std::hex << Type << ")\n";
+	os << _("Folder Number: ") << std::dec << Number << "\n";
+	os << _("Folder Level: ") << std::dec << Level << "\n";
 	os << "\n";
 	os << Unknowns;
 	os << "\n\n";

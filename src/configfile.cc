@@ -19,6 +19,7 @@
     root directory of this project for more details.
 */
 
+#include "i18n.h"
 #include "configfile.h"
 #include "error.h"
 #include "r_message.h"
@@ -46,7 +47,7 @@ bool ConfigFile::DBListType::IsSelected(const std::string &dbname) const
 
 std::ostream& operator<< (std::ostream &os, const ConfigFile::DBListType &list)
 {
-	os << "DBListType dump:\n";
+	os << _("DBListType dump:\n");
 
 	for( ConfigFile::DBListType::const_iterator i = list.begin();
 		i != list.end();
@@ -73,7 +74,7 @@ ConfigFile::ConfigFile(Barry::Pin pin)
 	, m_autoSelectAll(false)
 {
 	if( m_pin == 0 )
-		throw ConfigFileError("Configfile: empty pin");
+		throw ConfigFileError(_("Configfile: empty pin"));
 
 	BuildFilename();
 	BuildDefaultPath(); // this handles the situation that path is not set
@@ -91,7 +92,7 @@ ConfigFile::ConfigFile(Barry::Pin pin,
 	, m_autoSelectAll(false)
 {
 	if( m_pin == 0 )
-		throw ConfigFileError("Configfile: empty pin");
+		throw ConfigFileError(_("Configfile: empty pin"));
 
 	BuildFilename();
 	BuildDefaultPath();
@@ -189,7 +190,7 @@ bool ConfigFile::Save()
 
 	ofstream out(m_filename.c_str(), std::ios::out | std::ios::binary);
 	if( !out ) {
-		m_last_error = "Unable to open " + m_filename + " for writing.";
+		m_last_error = _("Unable to open file for writing: ") + m_filename;
 		return false;
 	}
 
@@ -215,7 +216,7 @@ bool ConfigFile::Save()
 	out << "auto_select_all " << (m_autoSelectAll ? 1 : 0) << endl;
 
 	if( !out ) {
-		m_last_error = "Error during write.  Config may be incomplete.";
+		m_last_error = _("Error during write.  Config may be incomplete.");
 		return false;
 	}
 	return true;
@@ -325,7 +326,7 @@ GlobalConfigFile::GlobalConfigFile(const std::string &appname)
 {
 	// there can be no spaces in the appname
 	if( m_appname.find(' ') != std::string::npos )
-		throw std::logic_error("App name must have no spaces.");
+		throw std::logic_error(_("App name must have no spaces."));
 
 	BuildFilename();
 	Load();
@@ -390,7 +391,7 @@ bool GlobalConfigFile::Save()
 
 	std::ofstream out(m_filename.c_str(), std::ios::out | std::ios::binary);
 	if( !out ) {
-		m_last_error = "Unable to open " + m_filename + " for writing.";
+		m_last_error = _("Unable to open file for writing: ") + m_filename;
 		return false;
 	}
 
@@ -407,7 +408,7 @@ bool GlobalConfigFile::Save()
 	}
 
 	if( !out ) {
-		m_last_error = "Error during write.  Config may be incomplete.";
+		m_last_error = _("Error during write.  Config may be incomplete.");
 		return false;
 	}
 	return true;
@@ -416,10 +417,10 @@ bool GlobalConfigFile::Save()
 void GlobalConfigFile::SetKey(const std::string &key, const std::string &value)
 {
 	if( !m_appname.size() )
-		throw std::logic_error("Cannot use SetKey() without specifying an appname in the constructor.");
+		throw std::logic_error(_("Cannot use SetKey() without specifying an appname in the constructor."));
 
 	if( value.find_first_of("\n\r") != std::string::npos )
-		throw std::logic_error("SetKey values may not contain newline characters.");
+		throw std::logic_error(_("SetKey values may not contain newline characters."));
 
 	std::string fullkey = "X-" + m_appname + "-" + key;
 	m_keymap[fullkey] = value;
@@ -429,7 +430,7 @@ std::string GlobalConfigFile::GetKey(const std::string &key,
 				     const std::string &default_value) const
 {
 	if( !m_appname.size() )
-		throw std::logic_error("Cannot use SetKey() without specifying an appname in the constructor.");
+		throw std::logic_error(_("Cannot use SetKey() without specifying an appname in the constructor."));
 
 	std::string fullkey = "X-" + m_appname + "-" + key;
 	keymap_type::const_iterator ci = m_keymap.find(fullkey);

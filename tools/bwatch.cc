@@ -33,6 +33,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <SDL/SDL.h>
+#include "i18n.h"
 
 using namespace std;
 using namespace Barry;
@@ -42,19 +43,20 @@ void Usage()
    int logical, major, minor;
    const char *Version = Barry::Version(logical, major, minor);
 
-   cerr
-   << "bwatch - View video of BlackBerry screenshots\n"
-   << "         Copyright 2011, Alberto Mattea\n"
-   << "         Copyright 2011-2012, Net Direct Inc. (http://www.netdirect.ca/)\n"
-   << "         Using: " << Version << "\n"
-   << "\n"
-   << "   -d delay  Delay interval between screenshots, in milliseconds.\n"
-   << "             The lower the value, the higher the load on the device.\n"
-   << "             Default is 500ms.\n"
-   << "   -p pin    PIN of device to talk with\n"
-   << "             If only one device is plugged in, this flag is optional\n"
-   << "   -P pass   Simplistic method to specify device password\n"
-   << "   -v        Dump protocol data during operation\n"
+   cerr << string_vprintf(
+   _("bwatch - View video of BlackBerry screenshots\n"
+   "         Copyright 2011, Alberto Mattea\n"
+   "         Copyright 2011-2012, Net Direct Inc. (http://www.netdirect.ca/)\n"
+   "         Using: %s\n"
+   "\n"
+   "   -d delay  Delay interval between screenshots, in milliseconds.\n"
+   "             The lower the value, the higher the load on the device.\n"
+   "             Default is 500ms.\n"
+   "   -p pin    PIN of device to talk with\n"
+   "             If only one device is plugged in, this flag is optional\n"
+   "   -P pass   Simplistic method to specify device password\n"
+   "   -v        Dump protocol data during operation\n"),
+	Version)
    << endl;
 }
 
@@ -80,7 +82,7 @@ int main(int argc, char *argv[])
 		case 'd':	// delay interval in milliseconds
 			delay = atoi(optarg);
 			if( !delay ) {
-				cerr << "Invalid interval value of '" << optarg << "'.  Defaulting to 500ms." << endl;
+				cerr << _("Invalid interval value of: ") << optarg << ".  " << _("Defaulting to 500ms.") << endl;
 				delay = 500;
 			}
 			break;
@@ -125,12 +127,12 @@ int main(int argc, char *argv[])
 	Barry::Probe probe;
 	int activeDevice = probe.FindActive(pin);
 	if( activeDevice == -1 ) {
-		cerr << "No device selected, or PIN not found" << endl;
+		cerr << _("No device selected, or PIN not found") << endl;
 		return 1;
 	}
 
 	// Main loop
-	cout << "Press a key to exit..." << endl;
+	cout << _("Press a key to exit...") << endl;
 	while( !keypress ) {
 		// Put this inside it's own block to avoid blocking the handheld
 		{
@@ -190,17 +192,17 @@ int main(int argc, char *argv[])
 	}
 	catch( Usb::Error &ue) {
 		std::cout << endl;	// flush any normal output first
-		std::cerr << "Usb::Error caught: " << ue.what() << endl;
+		std::cerr << _("Usb::Error caught: ") << ue.what() << endl;
 		return 1;
 	}
 	catch( Barry::Error &se ) {
 		std::cout << endl;
-		std::cerr << "Barry::Error caught: " << se.what() << endl;
+		std::cerr << _("Barry::Error caught: ") << se.what() << endl;
 		return 1;
 	}
 	catch( std::exception &e ) {
 		std::cout << endl;
-		std::cerr << "std::exception caught: " << e.what() << endl;
+		std::cerr << _("std::exception caught: ") << e.what() << endl;
 		return 1;
 	}
 }

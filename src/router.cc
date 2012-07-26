@@ -19,6 +19,7 @@
     root directory of this project for more details.
 */
 
+#include "i18n.h"
 #include "router.h"
 #include "scoped_lock.h"
 #include "data.h"
@@ -194,10 +195,10 @@ void *SocketRoutingQueue::SimpleReadThread(void *userptr)
 			q->DoRead(1000);	// timeout in milliseconds
 		}
 		catch (std::runtime_error const &e) {
-			eout("SimpleReadThread received uncaught exception: " <<  typeid(e).name() << " what: " << e.what());
+			eout(_("SimpleReadThread received uncaught exception: ") <<  typeid(e).name() << _(" what: ") << e.what());
 		}
 		catch (...) {
-			eout("SimpleReadThread recevied uncaught exception of unknown type");
+			eout(_("SimpleReadThread recevied uncaught exception of unknown type"));
 		}
 	}
 	return 0;
@@ -207,9 +208,9 @@ void SocketRoutingQueue::DumpSocketQueue(SocketId socket, const DataQueue &dq)
 {
 	// dump a record of any unused packets in the queue, for debugging
 	if( dq.size() ) {
-		ddout("SocketRoutingQueue Leftovers: "
+		ddout(_("SocketRoutingQueue Leftovers: ")
 			<< dec << dq.size()
-			<< " packet(s) for socket 0x"
+			<< _(" packet(s) for socket: ") << "0x"
 			<< hex << (unsigned int) socket
 			<< "\n"
 			<< dq);
@@ -339,7 +340,7 @@ void SocketRoutingQueue::RegisterInterest(SocketId socket,
 
 	SocketQueueMap::iterator qi = m_socketQueues.find(socket);
 	if( qi != m_socketQueues.end() )
-		throw std::logic_error("RegisterInterest requesting a previously registered socket.");
+		throw std::logic_error(_("RegisterInterest requesting a previously registered socket."));
 
 	m_socketQueues[socket] = QueueEntryPtr( new QueueEntry(handler) );
 	m_interest = true;
@@ -418,7 +419,7 @@ DataHandle SocketRoutingQueue::SocketRead(SocketId socket, int timeout)
 		scoped_lock lock(m_mutex);
 		SocketQueueMap::iterator qi = m_socketQueues.find(socket);
 		if( qi == m_socketQueues.end() )
-			throw std::logic_error("SocketRead requested data from unregistered socket.");
+			throw std::logic_error(_("SocketRead requested data from unregistered socket."));
 
 		// got our queue, save the whole QueueEntryPtr (shared_ptr),
 		// and unlock, since we will be waiting on the DataQueue,
@@ -612,7 +613,7 @@ void SocketRoutingQueue::SpinoffSimpleReadThread()
 	int ret = pthread_create(&m_usb_read_thread, NULL, &SimpleReadThread, this);
 	if( ret ) {
 		m_continue_reading = false;
-		throw Barry::ErrnoError("SocketRoutingQueue: Error creating USB read thread.", ret);
+		throw Barry::ErrnoError(_("SocketRoutingQueue: Error creating USB read thread."), ret);
 	}
 }
 

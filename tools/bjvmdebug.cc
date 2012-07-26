@@ -41,17 +41,17 @@ void Usage()
    int logical, major, minor;
    const char *Version = Barry::Version(logical, major, minor);
 
-   cerr
-   << "bjvmdebug - Command line USB Blackberry Java Debugger\n"
-   << "        Copyright 2008-2009, Nicolas VIVIEN.\n"
-   << "        Copyright 2005-2012, Net Direct Inc. (http://www.netdirect.ca/)\n"
-   << "        Using: " << Version << "\n"
-   << "\n"
-   << "   -h        This help\n"
-   << "   -p pin    PIN of device to talk with\n"
-   << "             If only one device is plugged in, this flag is optional\n"
-   << "   -P pass   Simplistic method to specify device password\n"
-   << "   -v        Dump protocol data during operation\n"
+   cerr << string_vprintf(
+   _("bjvmdebug - Command line USB Blackberry Java Debugger\n"
+   "        Copyright 2008-2009, Nicolas VIVIEN.\n"
+   "        Copyright 2005-2012, Net Direct Inc. (http://www.netdirect.ca/)\n"
+   "        Using: %s\n"
+   "\n"
+   "   -h        This help\n"
+   "   -p pin    PIN of device to talk with\n"
+   "             If only one device is plugged in, this flag is optional\n"
+   "   -P pass   Simplistic method to specify device password\n"
+   "   -v        Dump protocol data during operation\n"), Version)
    << endl;
 }
 
@@ -105,7 +105,8 @@ int main(int argc, char *argv[])
 		Barry::Probe probe;
 		int activeDevice = probe.FindActive(pin);
 		if( activeDevice == -1 ) {
-			cerr << "No device selected, or PIN not found" << endl;
+			cerr << _("No device selected, or PIN not found")
+				<< endl;
 			return 1;
 		}
 
@@ -127,14 +128,14 @@ int main(int argc, char *argv[])
 		jvmdebug.Unknown05();
 
 		{
-			cout << "Java Modules List :" << endl;
+			cout << _("Java Modules List :") << endl;
 			JVMModulesList list;
 			jvmdebug.GetModulesList(list);
 			cout << list;
 		}
 
 		{
-			cout << "Java Threads currently running :" << endl;
+			cout << _("Java Threads currently running :") << endl;
 			JVMThreadsList list;
 			jvmdebug.GetThreadsList(list);
 			cout << list;
@@ -158,7 +159,7 @@ int main(int argc, char *argv[])
 				jvmdebug.GetStatus(status);
 			}
 			else {
-				cout << "JVM message : " << msg << endl;
+				cout << _("JVM message : ") << msg << endl;
 			}
 		}
 
@@ -167,17 +168,17 @@ int main(int argc, char *argv[])
 	}
 	catch( Usb::Error &ue) {
 		std::cout << endl;	// flush any normal output first
-		std::cerr << "Usb::Error caught: " << ue.what() << endl;
+		std::cerr << _("Usb::Error caught: ") << ue.what() << endl;
 		return 1;
 	}
 	catch( Barry::Error &se ) {
 		std::cout << endl;
-		std::cerr << "Barry::Error caught: " << se.what() << endl;
+		std::cerr << _("Barry::Error caught: ") << se.what() << endl;
 		return 1;
 	}
 	catch( std::exception &e ) {
 		std::cout << endl;
-		std::cerr << "std::exception caught: " << e.what() << endl;
+		std::cerr << _("std::exception caught: ") << e.what() << endl;
 		return 1;
 	}
 

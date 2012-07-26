@@ -19,6 +19,7 @@
     root directory of this project for more details.
 */
 
+#include "i18n.h"
 #include "common.h"
 #include "probe.h"
 #include "usbwrap.h"
@@ -91,7 +92,8 @@ bool Probe::CheckSize(const Data &data, unsigned int required)
 	    data.GetSize() < required ||
 	    pd[4] != SB_COMMAND_FETCHED_ATTRIBUTE )
 	{
-		dout("Probe: Parse data failure: GetSize(pd): " << GetSize(pd)
+		dout(_("Probe: Parse data failure: ")
+			<< "GetSize(pd): " << GetSize(pd)
 			<< ", data.GetSize(): " << data.GetSize()
 			<< ", pd[4]: " << (unsigned int) pd[4]);
 		return false;
@@ -167,7 +169,8 @@ Probe::Probe(const char *busname, const char *devname,
 
 	// now dump all logged error messages
 	if( auto_dump_log && m_fail_msgs.size() ) {
-		eout("Probe logged " << m_fail_msgs.size() << " exception messages:");
+		eout(string_vprintf(_("Probe logged %u exception messages:"),
+			m_fail_msgs.size()));
 		for( std::vector<std::string>::const_iterator b = m_fail_msgs.begin();
 			b != m_fail_msgs.end();
 			++b )
@@ -189,7 +192,7 @@ void Probe::ProbeMatching(int vendor, int product,
 	catch( Usb::Error &e ) {
 		using namespace std;
 
-		dout("Usb::Error exception caught: " << e.what());
+		dout(_("Usb::Error exception caught: ") << e.what());
 		if( ((m_log_exceptions & LOG_BUSY) && e.system_errcode() == -EBUSY) ||
 		    ((m_log_exceptions & LOG_ACCESS) && e.system_errcode() == -EACCES) ||
 		    ((m_log_exceptions & LOG_PERM) && e.system_errcode() == -EPERM) )
@@ -218,7 +221,7 @@ void Probe::ProbeDevice(Usb::DeviceID& devid)
 	DeviceDescriptor desc(devid);
 	ConfigDescriptor* config = desc[BLACKBERRY_CONFIGURATION];
 	if( !config ) {
-		dout("Probe: No device descriptor for BlackBerry config (config id: "
+		dout(_("Probe: No device descriptor for BlackBerry config (config id: ")
 			<< BLACKBERRY_CONFIGURATION << ")");
 		return;	// not found
 	}
@@ -230,8 +233,7 @@ void Probe::ProbeDevice(Usb::DeviceID& devid)
 			break;
 	}
 	if( idi == config->end() ) {
-		dout("Probe: Interface with BLACKBERRY_DB_CLASS ("
-			<< BLACKBERRY_DB_CLASS << ") not found.");
+		dout(string_vprintf(_("Probe: Interface with BLACKBERRY_DB_CLASS (%u) not found."), BLACKBERRY_DB_CLASS));
 		return;	// not found
 	}
 
@@ -243,8 +245,9 @@ void Probe::ProbeDevice(Usb::DeviceID& devid)
 	// check endpoint validity
 	EndpointPairings ep(*(*config)[InterfaceNumber]);
 	if( !ep.IsValid() || ep.size() == 0 ) {
-		dout("Probe: endpoint invalid.   ep.IsValid() == "
-			<< (ep.IsValid() ? "true" : "false")
+		dout(_("Probe: endpoint invalid.")
+			<< "     ep.IsValid() == "
+			<< (ep.IsValid() ? _("true") : _("false"))
 			<< ", ep.size() == "
 			<< ep.size());
 		return;
@@ -265,11 +268,11 @@ void Probe::ProbeDevice(Usb::DeviceID& devid)
 	unsigned char cfg;
 	if( !dev.GetConfiguration(cfg) )
 		throw Usb::Error(dev.GetLastError(),
-			"Probe: GetConfiguration failed");
+			_("Probe: GetConfiguration failed"));
 	if( cfg != BLACKBERRY_CONFIGURATION || MUST_SET_CONFIGURATION ) {
 		if( !dev.SetConfiguration(BLACKBERRY_CONFIGURATION) )
 			throw Usb::Error(dev.GetLastError(),
-				"Probe: SetConfiguration failed");
+				_("Probe: SetConfiguration failed"));
 	}
 
 	// open interface
@@ -287,7 +290,7 @@ void Probe::ProbeDevice(Usb::DeviceID& devid)
 		// USB state, especially on FreeBSD and Mac OS X.
 		// However it can cause usb-storage URBs to be lost
 		// on some devices, so is only used if necessary.
-		dout("Probe: probing endpoints failed, retrying after setting alternate interface");
+		dout(_("Probe: probing endpoints failed, retrying after setting alternate interface"));
 		
 		iface.SetAltInterface(InterfaceAltSetting);
 		result.m_needSetAltInterface = true;
@@ -312,7 +315,7 @@ void Probe::ProbeDevice(Usb::DeviceID& devid)
 		ddout("      WriteEndpoint: " << (unsigned int)result.m_ep.write);
 	}
 	else {
-		ddout("Unable to discover endpoint pair for one device.");
+		ddout(_("Unable to discover endpoint pair for one device."));
 	}
 }
 
@@ -360,7 +363,7 @@ void Probe::ProbeDeviceEndpoints(Device &dev, EndpointPairings &ed, ProbeResult 
 				}
 			}
 			else {
-				dout("Probe: Skipping non-bulk endpoint pair (offset: "
+				dout(_("Probe: Skipping non-bulk endpoint pair (offset: ")
 				     << i-1 << ") ");
 			}
 		}
@@ -412,7 +415,7 @@ bool Probe::ProbePair(Usb::Device &dev,
 	dev.BulkDrain(ep.read);
 	if( !Intro(0, ep, dev, data) ) {
 		// Try clearing halt and then reprobing
-		dout("Probe: Intro(0) failed, retrying after clearing halt");
+		dout(_("Probe: Intro(0) failed, retrying after clearing halt"));
 		dev.ClearHalt(ep.read);
 		dev.ClearHalt(ep.write);
 		needClearHalt = true;
@@ -420,7 +423,7 @@ bool Probe::ProbePair(Usb::Device &dev,
 		dev.BulkDrain(ep.read);
 		if( !Intro(0, ep, dev, data) ) {
 			// Still no response so fail the probe
-			dout("Probe: Intro(0) still failed after clearing halt");
+			dout(_("Probe: Intro(0) still failed after clearing halt"));
 			return false;
 		}
 	}
@@ -442,7 +445,7 @@ bool Probe::ProbePair(Usb::Device &dev,
 	    packet.AttributeID() != SB_ATTR_PROFILE_PIN ||
 	    !ParsePIN(receive, pin) )
 	{
-		dout("Probe: unable to fetch PIN");
+		dout(_("Probe: unable to fetch PIN"));
 		return false;
 	}
 
@@ -454,7 +457,7 @@ bool Probe::ProbePair(Usb::Device &dev,
 	    packet.AttributeID() != SB_ATTR_PROFILE_DESC ||
 	    !ParseDesc(receive, desc) )
 	{
-		dout("Probe: unable to fetch description");
+		dout(_("Probe: unable to fetch description"));
 	}
 
 	// more unknowns:
@@ -561,11 +564,11 @@ std::ostream& operator<< (std::ostream &os, const ProbeResult &pr)
 {
 	ios_format_state state(os);
 
-	os << "Device ID: " << pr.m_dev.m_impl.get()
-	   << ". PIN: " << pr.m_pin.Str()
-	   << ", Description: " << pr.m_description;
+	os << _("Device ID: ") << pr.m_dev.m_impl.get()
+	   << ". " << _("PIN: ") << pr.m_pin.Str()
+	   << ", " << _("Description: ") << pr.m_description;
 	if( pr.m_cfgDeviceName.size() )
-		os << ", Name: " << pr.m_cfgDeviceName;
+		os << ", " << _("Name: ") << pr.m_cfgDeviceName;
 	return os;
 }
 

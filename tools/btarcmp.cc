@@ -33,6 +33,7 @@
 
 #include "barrygetopt.h"
 #include "util.h"
+#include "i18n.h"
 
 using namespace std;
 using namespace std::tr1;
@@ -49,29 +50,32 @@ void Usage()
    int logical, major, minor;
    const char *Version = Barry::Version(logical, major, minor);
 
-   cerr
-   << "btarcmp - Compare Barry backup tarballs\n"
-   << "      Copyright 2012, Net Direct Inc. (http://www.netdirect.ca/)\n"
-   << "      Using: " << Version << "\n"
-   << "\n"
-   << " Usage:  btarcmp [options...] tarball_0 tarball_1\n"
-   << "\n"
-   << "   -b        Use brief filename output\n"
-   << "   -d db     Specify a specific database to compare.  Can be used\n"
-   << "             multiple times.  If not used at all, all databases are\n"
-   << "             compared.\n"
-   << "   -D db     Specify a database name to skip.  If both -d and -D are\n"
-   << "             used for the same database name, it will be skipped.\n"
-   << "   -h        This help\n"
-   << "   -I cs     International charset for string conversions\n"
-   << "             Valid values here are available with 'iconv --list'\n"
-   << "   -P        Only compare records that can be parsed\n"
-   << "             This is the same as specifying -d for each database\n"
-   << "             listed with -S.\n"
-   << "   -S        Show list of supported database parsers.  Use twice\n"
-   << "             to show field names as well.\n"
-   << "   -v        Show verbose diff output (twice to force hex output)\n"
-   << "\n"
+   cerr << string_vprintf(
+   // TRANSLATORS: the Using: string is followed by the Barry library version
+   // string.
+   _("btarcmp - Compare Barry backup tarballs\n"
+   "      Copyright 2012, Net Direct Inc. (http://www.netdirect.ca/)\n"
+   "      Using: %s\n"
+   "\n"
+   " Usage:  btarcmp [options...] tarball_0 tarball_1\n"
+   "\n"
+   "   -b        Use brief filename output\n"
+   "   -d db     Specify a specific database to compare.  Can be used\n"
+   "             multiple times.  If not used at all, all databases are\n"
+   "             compared.\n"
+   "   -D db     Specify a database name to skip.  If both -d and -D are\n"
+   "             used for the same database name, it will be skipped.\n"
+   "   -h        This help\n"
+   "   -I cs     International charset for string conversions\n"
+   "             Valid values here are available with 'iconv --list'\n"
+   "   -P        Only compare records that can be parsed\n"
+   "             This is the same as specifying -d for each database\n"
+   "             listed with -S.\n"
+   "   -S        Show list of supported database parsers.  Use twice\n"
+   "             to show field names as well.\n"
+   "   -v        Show verbose diff output (twice to force hex output)\n"
+   "\n"),
+	Version)
    << endl;
 }
 
@@ -179,7 +183,7 @@ ParsedCompare::ParsedCompare(const DBData &one,
 	}
 
 	if( one.GetDBName() != two.GetDBName() ) {
-		throw logic_error("Different database types in ParsedCompare ctor!");
+		throw logic_error(_("Different database types in ParsedCompare ctor!"));
 	}
 	// fall through and use the else's
 	ALL_KNOWN_PARSER_TYPES
@@ -454,7 +458,7 @@ void App::CompareDatabaseNames()
 		for( ; b != m_tars[i].end(); ++b ) {
 			match = m_tars[other].find(b->first);
 			if( match == m_tars[other].end() ) {
-				cout << m_tarfiles[other] << ": has no database '" << b->first << "'" << endl;
+				cout << m_tarfiles[other] << _(": has no database '") << b->first << "'" << endl;
 				m_main_return = 2;
 			}
 			else {
@@ -495,7 +499,7 @@ void App::Compare(const std::string &dbname)
 	tar[1] = m_tars[1].find(dbname);
 
 	if( tar[0] == m_tars[0].end() || tar[1] == m_tars[1].end() )
-		throw logic_error("Comparing non-existant database!" + dbname);
+		throw logic_error(_("Comparing non-existant database!") + dbname);
 
 	Compare(dbname, tar[0]->second, tar[1]->second);
 }
@@ -525,8 +529,8 @@ void App::Compare(const std::string &dbname,
 		}
 		else {
 			// SearchCheck increments iterators if needed
-			SearchCheck(b1, e1, two, "deleted");
-			SearchCheck(b2, e2, one, "added");
+			SearchCheck(b1, e1, two, _("record has been deleted in "));
+			SearchCheck(b2, e2, one, _("record has been added in "));
 		}
 	}
 }
@@ -535,7 +539,7 @@ void App::Compare(const DBData &one, const DBData &two)
 {
 	// make sure one and two are of the same database, or throw
 	if( one.GetDBName() != two.GetDBName() )
-		throw logic_error("Tried to compare records from different databases: " + one.GetDBName() + ", and " + two.GetDBName());
+		throw logic_error(_("Tried to compare records from different databases: ") + one.GetDBName() + " & " + two.GetDBName());
 
 	// always compare the sums of the data first, and if match, done
 	string sum1, sum2;
@@ -562,19 +566,19 @@ void App::ShowRecordDiff(const DBData &one,
 		// if can't parse, print:
 		//    UniqueID: sizes (one vs. two), X bytes differ
 		// then the differing fields
-		cout << "  0x" << hex << one.GetUniqueId() << ": differs: "
+		cout << "  0x" << hex << one.GetUniqueId() << _(": differs: ")
 			<< dec
-			<< "sizes (" << one.GetData().GetSize()
+			<< _("sizes (") << one.GetData().GetSize()
 			<< " vs. " << two.GetData().GetSize()
-			<< "), SHA1 sums differ"
+			<< _("), SHA1 sums differ")
 			<< endl;
 	}
 	else {
 		// otherwise, print:
 		//    UniqueID: sizes (one vs. two), (custom display name)
-		cout << "  0x" << hex << one.GetUniqueId() << ": differs: "
+		cout << "  0x" << hex << one.GetUniqueId() << _(": differs: ")
 			<< dec
-			<< "sizes (" << one.GetData().GetSize()
+			<< _("sizes (") << one.GetData().GetSize()
 			<< " vs. " << two.GetData().GetSize()
 			<< "), "
 			<< pc.GetDescription()
@@ -582,14 +586,14 @@ void App::ShowRecordDiff(const DBData &one,
 
 		if( !pc.ShowDifferingFields() ) {
 			// no difference found...
-			cout << "No differences found in parsed records, but SHA1 sums differ." << endl;
+			cout << _("No differences found in parsed records, but SHA1 sums differ.") << endl;
 		}
 	}
 
 	// if verbose and parser is null, or if always_hex,
 	// then display a (messy?) hex diff of the raw data
 	if( (m_verbose && !pc.CanParse()) || m_always_hex ) {
-		cout << "   Hex diff of record:" << endl;
+		cout << _("   Hex diff of record:") << endl;
 		cout << Diff(one.GetData(), two.GetData()) << endl;
 	}
 }
@@ -643,8 +647,7 @@ void App::SearchCheck(DBDataList::const_iterator &b,
 	// (action says which one), and we need to display the diff
 	// and advance the iterator
 	ShowDatabaseHeader(b->GetDBName());
-	cout << "  0x" << hex << b->GetUniqueId() << ": record has been "
-		<< action << " in " << "tar[1]";
+	cout << "  0x" << hex << b->GetUniqueId() << ": " << action << "tar[1]";
 	string desc = GetDBDescription(*b, m_ic.get());
 	if( desc.size() ) {
 		cout << ": " << desc << endl;
@@ -681,7 +684,7 @@ void App::ShowDatabaseHeader(const std::string &dbname)
 {
 	if( dbname != m_last_dbname ) {
 		m_last_dbname = dbname;
-		cout << "In database: " << dbname << endl;
+		cout << _("In database: ") << dbname << endl;
 
 	}
 }
@@ -807,7 +810,7 @@ int main(int argc, char *argv[])
 		return app.main(argc, argv);
 	}
 	catch( std::exception &e ) {
-		cerr << "Exception: " << e.what() << endl;
+		cerr << _("Exception: ") << e.what() << endl;
 		return 1;
 	}
 }

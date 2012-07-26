@@ -20,6 +20,7 @@
     root directory of this project for more details.
 */
 
+#include "i18n.h"
 #include "r_timezone.h"
 #include "record-internal.h"
 #include "protostructs.h"
@@ -55,8 +56,8 @@ namespace Barry
 #define TZFC_END		0xffff
 
 static FieldLink<TimeZone> TimeZoneFieldLinks[] = {
-   { TZFC_NAME,   "Name",        0, 0, &TimeZone::Name, 0, 0, 0, 0, true },
-   { TZFC_END,    "End of List", 0, 0, 0, 0, 0, 0, 0, false },
+   { TZFC_NAME,  N_("Name"),        0, 0, &TimeZone::Name, 0, 0, 0, 0, true },
+   { TZFC_END,   N_("End of List"), 0, 0, 0, 0, 0, 0, 0, false },
 };
 
 TimeZone::TimeZone()
@@ -107,7 +108,7 @@ const unsigned char* TimeZone::ParseField(const unsigned char *begin,
 
 	if( field->type == TZFC_TZTYPE ) {
 		if( ( TZType = field->u.uint32 ) != 1 ) {
-			throw Error("TimeZone::ParseField: TimeZone Type is not valid");
+			throw Error(_("TimeZone::ParseField: TimeZone Type is not valid"));
 		}
 		return begin;
 	}
@@ -222,19 +223,19 @@ const FieldHandle<TimeZone>::ListT& TimeZone::GetFieldHandles()
 #undef RECORD_CLASS_NAME
 #define RECORD_CLASS_NAME TimeZone
 
-	FHP(RecType, "Record Type Code");
-	FHP(RecordId, "Unique Record ID");
+	FHP(RecType, _("Record Type Code"));
+	FHP(RecordId, _("Unique Record ID"));
 
-	FHD(Name, "TimeZone Name", TZFC_NAME, true);
-	FHD(Index, "Index", TZFC_INDEX, false);
-	FHD(UTCOffset, "TimeZone Offset in Minutes", TZFC_OFFSET, false);
-	FHD(UseDST, "Use DST?", TZFC_DST, false);
-	FHD(DSTOffset, "DST Offset", TZFC_DST, false);
-	FHD(StartMonth, "Start Month", TZFC_STARTMONTH, false);
-	FHD(EndMonth, "End Month", TZFC_ENDMONTH, false);
-	FHD(TZType, "TimeZone Type", TZFC_TZTYPE, false);
+	FHD(Name, _("TimeZone Name"), TZFC_NAME, true);
+	FHD(Index, _("Index"), TZFC_INDEX, false);
+	FHD(UTCOffset, _("TimeZone Offset in Minutes"), TZFC_OFFSET, false);
+	FHD(UseDST, _("Use DST?"), TZFC_DST, false);
+	FHD(DSTOffset, _("DST Offset"), TZFC_DST, false);
+	FHD(StartMonth, _("Start Month"), TZFC_STARTMONTH, false);
+	FHD(EndMonth, _("End Month"), TZFC_ENDMONTH, false);
+	FHD(TZType, _("TimeZone Type"), TZFC_TZTYPE, false);
 
-	FHP(Unknowns, "Unknown Fields");
+	FHP(Unknowns, _("Unknown Fields"));
 
 	return fhv;
 }
@@ -253,11 +254,21 @@ void TimeZone::Dump(std::ostream &os) const
 	ios_format_state state(os);
 
 	static const char *month[] = {
-			"Jan", "Feb", "Mar", "Apr", "May",
-			"Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+		N_("Jan"),
+		N_("Feb"),
+		N_("Mar"),
+		N_("Apr"),
+		N_("May"),
+		N_("Jun"),
+		N_("Jul"),
+		N_("Aug"),
+		N_("Sep"),
+		N_("Oct"),
+		N_("Nov"),
+		N_("Dec")
 	};
 
-	os << "TimeZone entry: 0x" << setbase(16) << RecordId
+	os << _("TimeZone entry: ") << "0x" << setbase(16) << RecordId
 	   << " (" << (unsigned int)RecType << ")\n";
 
 	// cycle through the type table
@@ -275,25 +286,25 @@ void TimeZone::Dump(std::ostream &os) const
 	int hours, minutes;
 	Split(&hours, &minutes);
 
-	os << "       Desc: " << GetDescription() << "\n";
-	os << "      Index: 0x" <<setw(2) << Index << "\n";
-	os << "       Type: 0x" <<setw(2) << (unsigned int)TZType << "\n";
-	os << "     Offset: " << setbase(10) << UTCOffset << " minutes ("
-		<< dec << (UTCOffset / 60.0) << ")\n";
-	os << "            Split Offset: hours: "
-		<< dec << hours << ", minutes: " << minutes << "\n";
-	os << "  Sample TZ: " << GetTz("E") << "\n";
-	os << "    Use DST: " << (UseDST ? "true" : "false") << "\n";
+	os << _("       Desc: ") << GetDescription() << "\n";
+	os << _("      Index: ") << "0x" <<setw(2) << Index << "\n";
+	os << _("       Type: ") << "0x" <<setw(2) << (unsigned int)TZType << "\n";
+	os << _("     Offset: ") << setbase(10) << UTCOffset << _(" minutes ")
+		<< "(" << dec << (UTCOffset / 60.0) << ")\n";
+	os << _("            Split Offset: hours: ")
+		<< dec << hours << _(", minutes: ") << minutes << "\n";
+	os << _("  Sample TZ: ") << GetTz("E") << "\n";
+	os << _("    Use DST: ") << (UseDST ? "true" : "false") << "\n";
 	if (UseDST) {
-		os << " DST Offset: " << setbase(10) << DSTOffset << "\n";
+		os << _(" DST Offset: ") << setbase(10) << DSTOffset << "\n";
 		if ((StartMonth > 0) && (StartMonth < 11))
-				os << "Start Month: " << month[StartMonth] << "\n";
+				os << _("Start Month: ") << gettext(month[StartMonth]) << "\n";
 		else
-				os << "Start Month: unknown (" << setbase(10) << StartMonth << ")\n";
+				os << _("Start Month: unknown (") << setbase(10) << StartMonth << ")\n";
 		if ((EndMonth > 0) && (EndMonth < 11))
-			os << "  End Month: " << month[EndMonth] << "\n";
+			os << _("  End Month: ") << gettext(month[EndMonth]) << "\n";
 		else
-			os << "  End Month: unknown (" << setbase(10) << EndMonth << ")\n";
+			os << _("  End Month: unknown (") << setbase(10) << EndMonth << ")\n";
 	}
 
 	os << Unknowns;
@@ -379,7 +390,7 @@ TimeZones::TimeZones()
 	for( ; zones->Name; zones++ ) {
 		TimeZone tz(zones->HourOffset, zones->MinOffset);
 		tz.Index = zones->Code;
-		tz.Name = zones->Name;
+		tz.Name = gettext( zones->Name );
 		m_list.push_back(tz);
 	}
 

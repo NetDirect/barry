@@ -45,15 +45,16 @@ void Usage()
    int logical, major, minor;
    const char *Version = Barry::Version(logical, major, minor);
 
-   cerr
-   << "bs11nread - Reads a boost serialization file (from btool)\n"
-   << "            and dumps data to stdout\n"
-   << "        Copyright 2008-2012, Net Direct Inc. (http://www.netdirect.ca/)\n"
-   << "        Using: " << Version << "\n"
-   << "\n"
-   << "   -f file   Filename to save or load handheld data to/from\n"
-   << "   -h        This help\n"
-   << "   -S        Show list of supported database parsers\n"
+   cerr << string_vprintf(
+   _("bs11nread - Reads a boost serialization file (from btool)\n"
+   "            and dumps data to stdout\n"
+   "        Copyright 2008-2012, Net Direct Inc. (http://www.netdirect.ca/)\n"
+   "        Using: %s\n"
+   "\n"
+   "   -f file   Filename to save or load handheld data to/from\n"
+   "   -h        This help\n"
+   "   -S        Show list of supported database parsers\n"),
+	Version)
    << endl;
 }
 
@@ -72,7 +73,7 @@ bool Dump(const std::string &dbName, const std::string &filename)
 	}
 
 	cout << records.size()
-	     << " records loaded" << endl;
+	     << _(" records loaded") << endl;
 	sort(records.begin(), records.end());
 
 	typename std::vector<Record>::const_iterator
@@ -96,7 +97,7 @@ void DumpDB(const string &filename)
 #undef HANDLE_PARSER
 #define HANDLE_PARSER(tname) Dump<tname>(dbName, filename) ||
 	ALL_KNOWN_PARSER_TYPES
-		cerr << "Unknown database name: " << dbName << endl;
+		cerr << _("Unknown database name: ") << dbName << endl;
 }
 
 int main(int argc, char *argv[])
@@ -134,7 +135,7 @@ int main(int argc, char *argv[])
 		Barry::Init();
 
 		if( !filename.size() ) {
-			cerr << "Filename must be specified" << endl;
+			cerr << _("Filename must be specified") << endl;
 			return 1;
 		}
 
@@ -142,15 +143,15 @@ int main(int argc, char *argv[])
 
 	}
 	catch( Usb::Error &ue) {
-		std::cerr << "Usb::Error caught: " << ue.what() << endl;
+		std::cerr << _("Usb::Error caught: ") << ue.what() << endl;
 		return 1;
 	}
 	catch( Barry::Error &se ) {
-		std::cerr << "Barry::Error caught: " << se.what() << endl;
+		std::cerr << _("Barry::Error caught: ") << se.what() << endl;
 		return 1;
 	}
 	catch( std::exception &e ) {
-		std::cerr << "std::exception caught: " << e.what() << endl;
+		std::cerr << _("std::exception caught: ") << e.what() << endl;
 		return 1;
 	}
 

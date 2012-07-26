@@ -20,6 +20,7 @@
     root directory of this project for more details.
 */
 
+#include "i18n.h"
 #include "vtodo.h"
 //#include "trace.h"
 #include <stdint.h>
@@ -90,7 +91,7 @@ const std::string& vTodo::ToTask(const Barry::Task &task)
 	Clear();
 	SetFormat( b_vformat_new() );
 	if( !Format() )
-		throw ConvertError("resource error allocating vformat");
+		throw ConvertError(_("resource error allocating vformat"));
 
 	// store the Barry object we're working with
 	m_BarryTask = task;
@@ -164,7 +165,7 @@ const Barry::Task& vTodo::ToBarry(const char *vtodo, uint32_t RecordId)
 
 	// we only handle vTodo data with one vtodo block
 	if( HasMultipleVTodos() )
-		throw ConvertError("vCalendar data contains more than one VTODO block, unsupported");
+		throw ConvertError(_("vCalendar data contains more than one VTODO block, unsupported"));
 
 	// start fresh
 	Clear();
@@ -175,7 +176,7 @@ const Barry::Task& vTodo::ToBarry(const char *vtodo, uint32_t RecordId)
 	// create format parser structures
 	SetFormat( b_vformat_new_from_string(vtodo) );
 	if( !Format() )
-		throw ConvertError("resource error allocating vtodo");
+		throw ConvertError(_("resource error allocating vtodo"));
 
 	string summary = GetAttr("SUMMARY", "/vtodo");
 //	trace.logf("SUMMARY attr retrieved: %s", summary.c_str());

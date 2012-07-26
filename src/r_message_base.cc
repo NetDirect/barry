@@ -20,6 +20,7 @@
     root directory of this project for more details.
 */
 
+#include "i18n.h"
 #include "r_message_base.h"
 #include "record-internal.h"
 #include "protostructs.h"
@@ -76,16 +77,16 @@ namespace Barry {
 #define MESSAGE_SAVED_DELETED	0x0080
 
 static FieldLink<MessageBase> MessageBaseFieldLinks[] = {
-   { MBFC_TO,         "To",           0, 0, 0, &MessageBase::To, 0, 0, 0, true },
-   { MBFC_CC,         "Cc",           0, 0, 0, &MessageBase::Cc, 0, 0, 0, true },
-   { MBFC_BCC,        "Bcc",          0, 0, 0, &MessageBase::Bcc, 0, 0, 0, true },
-   { MBFC_SENDER,     "Sender",       0, 0, 0, &MessageBase::Sender, 0, 0, 0, true },
-   { MBFC_FROM,       "From",         0, 0, 0, &MessageBase::From, 0, 0, 0, true },
-   { MBFC_REPLY_TO,   "ReplyTo",      0, 0, 0, &MessageBase::ReplyTo, 0, 0, 0, true },
-   { MBFC_SUBJECT,    "Subject",      0, 0, &MessageBase::Subject, 0, 0, 0, 0, true },
-   { MBFC_BODY,       "Body",         0, 0, &MessageBase::Body, 0, 0, 0, 0, true },
-   { MBFC_ATTACHMENT, "Attachment",   0, 0, &MessageBase::Attachment, 0, 0, 0, 0, false },
-   { MBFC_END,        "End of List",  0, 0, 0, 0, 0, 0, 0, false }
+   { MBFC_TO,        N_("To"),           0, 0, 0, &MessageBase::To, 0, 0, 0, true },
+   { MBFC_CC,        N_("Cc"),           0, 0, 0, &MessageBase::Cc, 0, 0, 0, true },
+   { MBFC_BCC,       N_("Bcc"),          0, 0, 0, &MessageBase::Bcc, 0, 0, 0, true },
+   { MBFC_SENDER,    N_("Sender"),       0, 0, 0, &MessageBase::Sender, 0, 0, 0, true },
+   { MBFC_FROM,      N_("From"),         0, 0, 0, &MessageBase::From, 0, 0, 0, true },
+   { MBFC_REPLY_TO,  N_("ReplyTo"),      0, 0, 0, &MessageBase::ReplyTo, 0, 0, 0, true },
+   { MBFC_SUBJECT,   N_("Subject"),      0, 0, &MessageBase::Subject, 0, 0, 0, 0, true },
+   { MBFC_BODY,      N_("Body"),         0, 0, &MessageBase::Body, 0, 0, 0, 0, true },
+   { MBFC_ATTACHMENT,N_("Attachment"),   0, 0, &MessageBase::Attachment, 0, 0, 0, 0, false },
+   { MBFC_END,       N_("End of List"),  0, 0, 0, 0, 0, 0, 0, false }
 };
 
 MessageBase::MessageBase()
@@ -274,12 +275,12 @@ void MessageBase::Validate() const
 
 void MessageBase::BuildHeader(Data &data, size_t &offset) const
 {
-	throw std::logic_error("MessageBase::BuildHeader not yet implemented");
+	throw std::logic_error(_("MessageBase::BuildHeader not yet implemented"));
 }
 
 void MessageBase::BuildFields(Data &data, size_t &offset, const IConverter *ic) const
 {
-	throw std::logic_error("MessageBase::BuildFields not yet implemented");
+	throw std::logic_error(_("MessageBase::BuildFields not yet implemented"));
 }
 
 void MessageBase::Clear()
@@ -329,44 +330,44 @@ void DoFillHandles(typename FieldHandle<RecordT>::ListT &handles)
 #undef RECORD_CLASS_NAME
 #define RECORD_CLASS_NAME RecordT
 
-	FHP(RecType, "Record Type Code");
-	FHP(RecordId, "Unique Record ID");
+	FHP(RecType, _("Record Type Code"));
+	FHP(RecordId, _("Unique Record ID"));
 
-	FHD(From, "From", MBFC_FROM, true);
-	FHD(To, "To", MBFC_TO, true);
-	FHD(Cc, "CC", MBFC_CC, true);
-	FHD(Bcc, "BCC", MBFC_BCC, true);
-	FHD(Sender, "Sender", MBFC_SENDER, true);
-	FHD(ReplyTo, "Reply To", MBFC_REPLY_TO, true);
-	FHD(Subject, "Subject", MBFC_SUBJECT, true);
-	FHD(Body, "Body", MBFC_BODY, true);
-	FHD(Attachment, "Attachment", MBFC_ATTACHMENT, false);
+	FHD(From, _("From"), MBFC_FROM, true);
+	FHD(To, _("To"), MBFC_TO, true);
+	FHD(Cc, _("CC"), MBFC_CC, true);
+	FHD(Bcc, _("BCC"), MBFC_BCC, true);
+	FHD(Sender, _("Sender"), MBFC_SENDER, true);
+	FHD(ReplyTo, _("Reply To"), MBFC_REPLY_TO, true);
+	FHD(Subject, _("Subject"), MBFC_SUBJECT, true);
+	FHD(Body, _("Body"), MBFC_BODY, true);
+	FHD(Attachment, _("Attachment"), MBFC_ATTACHMENT, false);
 
-	FHD(MessageRecordId, "Message Record ID", MBFC_RECORDID, false);
-	FHP(MessageReplyTo, "Message Reply To");
-	FHP(MessageDateSent, "Date Sent");
-	FHP(MessageDateReceived, "Date Received");
+	FHD(MessageRecordId, _("Message Record ID"), MBFC_RECORDID, false);
+	FHP(MessageReplyTo, _("Message Reply To"));
+	FHP(MessageDateSent, _("Date Sent"));
+	FHP(MessageDateReceived, _("Date Received"));
 
-	FHP(MessageTruncated, "Truncated");
-	FHP(MessageRead, "Read");
-	FHP(MessageReply, "Reply");
-	FHP(MessageSaved, "Saved");
-	FHP(MessageSavedDeleted, "Saved Deleted");
+	FHP(MessageTruncated, _("Truncated"));
+	FHP(MessageRead, _("Read"));
+	FHP(MessageReply, _("Reply"));
+	FHP(MessageSaved, _("Saved"));
+	FHP(MessageSavedDeleted, _("Saved Deleted"));
 
-	FHET(pt, PriorityType, Priority, "Priority");
-	FHE_CONST(pt, LowPriority, "Low");
-	FHE_CONST(pt, NormalPriority, "Normal");
-	FHE_CONST(pt, HighPriority, "High");
-	FHE_CONST(pt, UnknownPriority, "Unknown");
+	FHET(pt, PriorityType, Priority, _("Priority"));
+	FHE_CONST(pt, LowPriority, _("Low"));
+	FHE_CONST(pt, NormalPriority, _("Normal"));
+	FHE_CONST(pt, HighPriority, _("High"));
+	FHE_CONST(pt, UnknownPriority, _("Unknown"));
 
-	FHET(st, SensitivityType, Sensitivity, "Sensitivity");
-	FHE_CONST(st, NormalSensitivity, "Normal");
-	FHE_CONST(st, Personal, "Personal");
-	FHE_CONST(st, Private, "Private");
-	FHE_CONST(st, Confidential, "Confidential");
-	FHE_CONST(st, UnknownSensitivity, "Unknown");
+	FHET(st, SensitivityType, Sensitivity, _("Sensitivity"));
+	FHE_CONST(st, NormalSensitivity, _("Normal"));
+	FHE_CONST(st, Personal, _("Personal"));
+	FHE_CONST(st, Private, _("Private"));
+	FHE_CONST(st, Confidential, _("Confidential"));
+	FHE_CONST(st, UnknownSensitivity, _("Unknown"));
 
-	FHP(Unknowns, "Unknown Fields");
+	FHP(Unknowns, _("Unknown Fields"));
 }
 
 std::string MessageBase::GetDescription() const
@@ -387,7 +388,7 @@ std::string MessageBase::SimpleFromAddress() const
 		return ret;
 	}
 	else {
-		return "unknown";
+		return _("unknown");
 	}
 }
 

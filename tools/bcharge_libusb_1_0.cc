@@ -57,7 +57,7 @@ std::string sysfs_path = "/sys";
 void Usage()
 {
 	printf(
-	"bcharge - Adjust Blackberry charging modes\n"
+	_("bcharge - Adjust Blackberry charging modes\n"
 	"          Copyright 2006-2012, Net Direct Inc. (http://www.netdirect.ca/)\n"
 	"\n"
 	"   -d          Set to dual mode (0004)\n"
@@ -69,7 +69,7 @@ void Usage()
 	"   -p devpath  The devpath argument from udev.  If specified, will attempt\n"
 	"               to adjust USB suspend settings to keep the device charging.\n"
 	"   -s path     The path where sysfs is mounted.  Defaults to '/sys'\n"
-	"\n"
+	"\n")
 	);
 }
 
@@ -79,7 +79,7 @@ void control(libusb_device_handle *dev, int requesttype, int request, int value,
 	int result = libusb_control_transfer(dev, requesttype, request, value, index,
 		bytes, size, timeout);
 	if( result < 0 ) {
-		printf("\nusb_control_transfer failed: code: %d\n", result);
+		printf(_("\nusb_control_transfer failed: code: %d\n"), result);
 	}
 }
 
@@ -146,7 +146,7 @@ int find_mass_storage_interface(libusb_device_handle *handle)
 		// interface ... this should never happen, but if it does,
 		// assume the device is showing product ID 0006, and the
 		// Mass Storage interface is interface #0
-		printf("Can't find Mass Storage interface, assuming 0.\n");
+		printf(_("Can't find Mass Storage interface, assuming 0.\n"));
 		return 0;
 	}
 	else {
@@ -160,23 +160,23 @@ void driver_conflict(libusb_device_handle *handle)
 	// failed... this most probably means that usb_storage
 	// has already claimed the Mass Storage interface,
 	// in which case we politely tell it to go away.
-	printf("Detecting possible kernel driver conflict, trying to resolve...\n");
+	printf(_("Detecting possible kernel driver conflict, trying to resolve...\n"));
 
 	int iface = find_mass_storage_interface(handle);
 	int err = libusb_detach_kernel_driver(handle, iface);
 	if( err != 0 )
-		printf("libusb_detach_kernel_driver() failed: %d\n", err);
+		printf(_("libusb_detach_kernel_driver() failed: %d\n"), err);
 
 	err = libusb_set_configuration(handle, BLACKBERRY_CONFIGURATION);
 	if( err != 0 )
-		printf("libusb_set_configuration() failed: %d\n", err);
+		printf(_("libusb_set_configuration() failed: %d\n"), err);
 }
 
 // returns true if device mode was modified, false otherwise
 bool process(libusb_device *dev, ModeType mode)
 {
 	bool apply = false;
-	printf("Found device #%d-%d...",
+	printf(_("Found device #%d-%d..."),
 	       libusb_get_bus_number(dev),
 	       libusb_get_device_address(dev));
 
@@ -184,7 +184,7 @@ bool process(libusb_device *dev, ModeType mode)
 	libusb_device_handle *handle;
 	int err = libusb_open(dev, &handle);
 	if( err != 0 ) {
-		printf("unable to open device, %d\n", err);
+		printf(_("unable to open device, %d\n"), err);
 		return false;
 	}
 
@@ -193,25 +193,25 @@ bool process(libusb_device *dev, ModeType mode)
 	if( err == 0 )	{
 		// adjust power
 		if( config && config->MaxPower < 250 ) {
-			printf("adjusting charge setting");
+			printf(_("adjusting charge setting"));
 			charge(handle);
 			apply = true;
 		}
 		else {
-			printf("already at 500mA");
+			printf(_("already at 500mA"));
 		}
 		printf("\n");
 		libusb_free_config_descriptor(config);
 		config = NULL;
 	} else {
-		printf("failed to discover power level\n");
+		printf(_("failed to discover power level\n"));
 	}
 
 	// Retrieve the device descriptor
 	struct libusb_device_descriptor desc;
 	err = libusb_get_device_descriptor(dev, &desc);
 	if( err != 0 ) {
-		printf("failed to get device descriptor: %d\n", err);
+		printf(_("failed to get device descriptor: %d\n"), err);
 		return false;
 	}
 
@@ -219,39 +219,39 @@ bool process(libusb_device *dev, ModeType mode)
 	switch( mode )
 	{
 	case NO_CHANGE:
-		printf("...no Pearl mode adjustment");
+		printf(_("...no Pearl mode adjustment"));
 		break;
 
 	case PEARL_CLASSIC_MODE_0001:
 		if( desc.idProduct != PRODUCT_RIM_BLACKBERRY ) {
-			printf("...adjusting Pearl mode to single");
+			printf(_("...adjusting Pearl mode to single"));
 			pearl_classic_mode(handle);
 			apply = true;
 		}
 		else {
-			printf("...already in classic/single mode");
+			printf(_("...already in classic/single mode"));
 		}
 		break;
 
 	case PEARL_DUAL_MODE_0004:
 		if( desc.idProduct != PRODUCT_RIM_PEARL_DUAL ) {
-			printf("...adjusting Pearl mode to dual");
+			printf(_("...adjusting Pearl mode to dual"));
 			pearl_dual_mode(handle);
 			apply = true;
 		}
 		else {
-			printf("...already in dual mode");
+			printf(_("...already in dual mode"));
 		}
 		break;
 
 	case CONDITIONAL_DUAL_MODE:
 		if( find_interface(handle, 255) == -1 ) {
-			printf("...no database iface found, setting dual mode");
+			printf(_("...no database iface found, setting dual mode"));
 			pearl_dual_mode(handle);
 			apply = true;
 		}
 		else {
-			printf("...found database iface, no change");
+			printf(_("...found database iface, no change"));
 		}
 		break;
 
@@ -284,14 +284,14 @@ bool process(libusb_device *dev, ModeType mode)
 			sleep(1);
 			err =  libusb_reset_device(handle);
 			if( err != 0 ) {
-				printf("\nlibusb_reset_device() failed: %d\n", err);
+				printf(_("\nlibusb_reset_device() failed: %d\n"), err);
 			}
 		}
 
-		printf("...done");
+		printf(_("...done"));
 	}
 	else {
-		printf("...no change");
+		printf(_("...no change"));
 	}
 	printf("\n");
 
@@ -305,7 +305,7 @@ bool power_write(const std::string &file, const std::string &value)
 	// attempt to open the state file
 	int fd = open(file.c_str(), O_RDWR);
 	if( fd == -1 ) {
-		printf("autosuspend adjustment failure: (file: %s): %s\n",
+		printf(_("autosuspend adjustment failure: (file: %s): %s\n"),
 			file.c_str(),
 			strerror(errno));
 		return false;
@@ -316,13 +316,13 @@ bool power_write(const std::string &file, const std::string &value)
 	close(fd);
 
 	if( written < 0 || (size_t)written != value.size() ) {
-		printf("autosuspend adjustment failure (write): (file: %s): %s\n",
+		printf(_("autosuspend adjustment failure (write): (file: %s): %s\n"),
 			file.c_str(),
 			strerror(error));
 		return false;
 	}
 
-	printf("autosuspend adjustment: wrote %s to %s\n",
+	printf(_("autosuspend adjustment: wrote %s to %s\n"),
 		value.c_str(), file.c_str());
 	return true;
 }
@@ -450,14 +450,14 @@ int main(int argc, char *argv[])
 	libusb_context *usbctx = NULL;
 	int err = libusb_init(&usbctx);
 	if( err != 0 ) {
-		printf("Failed to start up USB: %d\n", err);
+		printf(_("Failed to start up USB: %d\n"), err);
 		return 1;
 	}
 	
 	libusb_device **devices = NULL;
 	int count = libusb_get_device_list(usbctx, &devices);
 
-	printf("Scanning for Blackberry devices...\n");
+	printf(_("Scanning for Blackberry devices...\n"));
 
 	for( int i = 0; i < count; ++i ) {
 		// Is this a blackberry?

@@ -20,6 +20,7 @@
     root directory of this project for more details.
 */
 
+#include "i18n.h"
 #include "vjournal.h"
 //#include "trace.h"
 #include <stdint.h>
@@ -75,7 +76,7 @@ const std::string& vJournal::ToMemo(const Barry::Memo &memo)
 	Clear();
 	SetFormat( b_vformat_new() );
 	if( !Format() )
-		throw ConvertError("resource error allocating vformat");
+		throw ConvertError(_("resource error allocating vformat"));
 
 	// store the Barry object we're working with
 	m_BarryMemo = memo;
@@ -120,7 +121,7 @@ const Barry::Memo& vJournal::ToBarry(const char *vjournal, uint32_t RecordId)
 
 	// we only handle vJournal data with one vmemo block
 	if( HasMultipleVJournals() )
-		throw ConvertError("vCalendar data contains more than one VJOURNAL block, unsupported");
+		throw ConvertError(_("vCalendar data contains more than one VJOURNAL block, unsupported"));
 
 	// start fresh
 	Clear();
@@ -131,7 +132,7 @@ const Barry::Memo& vJournal::ToBarry(const char *vjournal, uint32_t RecordId)
 	// create format parser structures
 	SetFormat( b_vformat_new_from_string(vjournal) );
 	if( !Format() )
-		throw ConvertError("resource error allocating vjournal");
+		throw ConvertError(_("resource error allocating vjournal"));
 
 	string title = GetAttr("SUMMARY", "/vjournal");
 //	trace.logf("SUMMARY attr retrieved: %s", title.c_str());

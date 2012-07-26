@@ -19,6 +19,7 @@
     root directory of this project for more details.
 */
 
+#include "i18n.h"
 #include "backup.h"
 #include "tarfile.h"
 #include "error.h"
@@ -80,9 +81,9 @@ void Backup::ParseRecord(const Barry::DBData &data,
 	m_tar_id_text = oss.str();
 
 	if( m_current_dbname.size() == 0 )
-		throw Barry::BackupError("Backup: No database name available");
+		throw Barry::BackupError(_("Backup: No database name available"));
 	if( m_tar_id_text.size() == 0 )
-		throw Barry::BackupError("Backup: No unique ID available!");
+		throw Barry::BackupError(_("Backup: No unique ID available!"));
 
 	m_record_data.assign(
 		(const char*)data.GetData().GetData() + data.GetOffset(),

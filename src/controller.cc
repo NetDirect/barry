@@ -19,6 +19,7 @@
     root directory of this project for more details.
 */
 
+#include "i18n.h"
 #include "controller.h"
 #include "controllerpriv.h"
 #include "common.h"
@@ -48,7 +49,7 @@ Controller::Controller(const ProbeResult &device,
 			int default_timeout)
 	: m_priv(new PrivateControllerData(device, default_timeout))
 {
-	dout("Controller: Using non-threaded sockets");
+	dout(_("Controller: Using non-threaded sockets"));
 	SetupUsb(device);
 }
 
@@ -69,7 +70,7 @@ Controller::Controller(const ProbeResult &device,
 			int default_timeout)
 	: m_priv(new PrivateControllerData(device, queue, default_timeout))
 {
-	dout("Controller: Using threaded socket router");
+	dout(_("Controller: Using threaded socket router"));
 
 	SetupUsb(device);
 
@@ -82,12 +83,12 @@ void Controller::SetupUsb(const ProbeResult &device)
 	unsigned char cfg;
 	if( !m_priv->m_dev.GetConfiguration(cfg) )
 		throw Usb::Error(m_priv->m_dev.GetLastError(),
-			"Controller: GetConfiguration failed");
+			_("Controller: GetConfiguration failed"));
 
 	if( cfg != BLACKBERRY_CONFIGURATION || MUST_SET_CONFIGURATION ) {
 		if( !m_priv->m_dev.SetConfiguration(BLACKBERRY_CONFIGURATION) )
 			throw Usb::Error(m_priv->m_dev.GetLastError(),
-				"Controller: SetConfiguration failed");
+				_("Controller: SetConfiguration failed"));
 	}
 
 	m_priv->m_iface = new Usb::Interface(m_priv->m_dev, device.m_interface);
@@ -142,7 +143,7 @@ uint16_t Controller::SelectMode(ModeType mode, const char *explicitModeName)
 
 	if( explicitModeName ) {
 		if( strlen(explicitModeName) >= sizeof(packet.u.socket.u.mode.name) ) {
-			throw std::logic_error("Controller: explicit mode name too long");
+			throw std::logic_error(_("Controller: explicit mode name too long"));
 		}
 		strcpy(modeName, explicitModeName);
 	}
@@ -175,11 +176,11 @@ uint16_t Controller::SelectMode(ModeType mode, const char *explicitModeName)
 			break;
 
 		case RawChannel:
-			throw std::logic_error("Controller: No channel name given with RawChannel mode");
+			throw std::logic_error(_("Controller: No channel name given with RawChannel mode"));
 			break;
 
 		default:
-			throw std::logic_error("Controller: Invalid mode in SelectMode");
+			throw std::logic_error(_("Controller: Invalid mode in SelectMode"));
 			break;
 		}
 	}
@@ -196,18 +197,18 @@ uint16_t Controller::SelectMode(ModeType mode, const char *explicitModeName)
 		// should be used below in the Open() call
 		MAKE_PACKET(modepack, response);
 		if( modepack->command == SB_COMMAND_MODE_NOT_SELECTED ) {
-		        throw Error("Controller: requested mode not supported");
+		        throw Error(_("Controller: requested mode not supported"));
 		}
 		if( modepack->command != SB_COMMAND_MODE_SELECTED ) {
 			eeout(command, response);
-			throw Error("Controller: mode not selected");
+			throw Error(_("Controller: mode not selected"));
 		}
 
 		// return the socket that the device is expecting us to use
 		return btohs(modepack->u.socket.socket);
 	}
 	catch( Usb::Error & ) {
-		eout("Controller: error setting desktop mode");
+		eout(_("Controller: error setting desktop mode"));
 		eeout(command, response);
 		throw;
 	}

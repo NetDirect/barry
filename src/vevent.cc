@@ -21,10 +21,12 @@
     root directory of this project for more details.
 */
 
+#include "i18n.h"
 #include "vevent.h"
 //#include "trace.h"
 #include "log.h"
 #include "time.h"
+#include "common.h"
 #include <stdint.h>
 #include <glib.h>
 #include <strings.h>
@@ -67,8 +69,8 @@ void vCalendar::CheckUnsupportedArg(const ArgMapType &args,
 					const std::string &name)
 {
 	if( args.find(name) != args.end() ) {
-		barrylog("ERROR: recurrence rule contains " << name << ", unsupported by Barry. MIME conversion will be incorrect.");
-		barryverbose("Record data so far:\n" << m_BarryCal);
+		barrylog(string_vprintf(_("ERROR: recurrence rule contains %s, unsupported by Barry. MIME conversion will be incorrect."), name.c_str()));
+		barryverbose(_("Record data so far:\n") << m_BarryCal);
 	}
 }
 
@@ -81,8 +83,8 @@ std::vector<std::string> vCalendar::SplitBYDAY(const std::string &ByDay)
 	// if there's more than one item in v, warn the user, and just
 	// use the first item
 	if( v.size() > 1 ) {
-		barrylog("Warning: multiple items in BYDAY, not supported by device (" << ByDay << "). Using only the first item.");
-		barryverbose("Record data so far:\n" << m_BarryCal);
+		barrylog(string_vprintf(_("Warning: multiple items in BYDAY, not supported by device (%s). Using only the first item."), ByDay.c_str()));
+		barryverbose(_("Record data so far:\n") << m_BarryCal);
 	}
 
 	return v;
@@ -104,8 +106,8 @@ uint16_t vCalendar::GetMonthWeekNumFromBYDAY(const std::string& ByDay)
 				pos_week = 1;
 			}
 
-			barrylog("Warning: negative week in BYDAY (" << week << "), unsupported by device. Converting to positive week, based on 4 week months: " << pos_week << ".");
-			barryverbose("Record data so far:\n" << m_BarryCal);
+			barrylog(string_vprintf(_("Warning: negative week in BYDAY (%d), unsupported by device. Converting to positive week, based on 4 week months: %d."), week, pos_week));
+			barryverbose(_("Record data so far:\n") << m_BarryCal);
 
 			week = pos_week;
 		}
@@ -135,16 +137,17 @@ uint16_t vCalendar::GetDayOfMonthFromBYMONTHDAY(const ArgMapType &args,
 
 	ArgMapType::const_iterator vi = args.find("BYMONTHDAY");
 	if( vi == args.end() )
-		throw std::logic_error("Called GetDayOfMonthFromBYMONTHDAY() without a BYMONTHDAY");
+		throw std::logic_error(_("Called GetDayOfMonthFromBYMONTHDAY() without a BYMONTHDAY"));
 
 	int val = atoi(vi->second.c_str());
 	if( val == 0 ) {
-		barryverbose("Warning: BYMONTHDAY of 0, assuming 1.\n"
-			<< "Record data so far:\n" << m_BarryCal);
+		barryverbose(_("Warning: BYMONTHDAY of 0, assuming 1.\n")
+			<< _("Record data so far:\n") << m_BarryCal);
 		val = 1;
 	}
 	else if( val > monthdays ) {
-		barryverbose("Warning: BYMONTHDAY larger than month (" << val << " days). Assuming 1.\nRecord data so far:\n" << m_BarryCal);
+		barryverbose(string_vprintf(_("Warning: BYMONTHDAY larger than month (%d days). Assuming 1.\n"), val));
+		barryverbose(_("Record data so far:\n") << m_BarryCal);
 		val = 1;
 	}
 	else if( val < 0 ) {
@@ -156,8 +159,8 @@ uint16_t vCalendar::GetDayOfMonthFromBYMONTHDAY(const ArgMapType &args,
 		if( pos_day < 1 || pos_day > monthdays ) {
 			pos_day = 1;
 		}
-		barrylog("Warning: negative BYMONTHDAY (" << val << "), unsupported by device. Converting to positive day of month: " << pos_day << ".");
-		barryverbose("Record data so far:\n" << m_BarryCal);
+		barrylog(string_vprintf(_("Warning: negative BYMONTHDAY (%d), unsupported by device. Converting to positive day of month: %d."), val, pos_day));
+		barryverbose(_("Record data so far:\n") << m_BarryCal);
 
 		val = pos_day;
 	}
@@ -268,7 +271,7 @@ void vCalendar::RecurToVCal()
 		break;
 
 	default:
-		throw ConvertError("Unknown RecurringType in Barry Calendar object");
+		throw ConvertError(_("Unknown RecurringType in Barry Calendar object"));
 	}
 
 	// add some common parameters
@@ -408,7 +411,7 @@ void vCalendar::RecurToBarryCal(vAttr& rrule, time_t starttime)
 			// depend upon the frequency.
 			count=atoi(args["COUNT"].c_str());
 			if( count == 0 ) {
-				throw std::runtime_error("Invalid COUNT in recurring rule: " + args["COUNT"]);
+				throw std::runtime_error(_("Invalid COUNT in recurring rule: ") + args["COUNT"]);
 			}
 		}
 	}
@@ -462,8 +465,8 @@ void vCalendar::RecurToBarryCal(vAttr& rrule, time_t starttime)
 			// BYDAY is selected, use the start time's day
 			cal.WeekDays = pmap[WeekDays[datestruct.tm_wday]];
 
-			barrylog("Warning: WEEKLY VEVENT without a day selected. Assuming day of start time.");
-			barryverbose("Record data so far:\n" << cal);
+			barrylog(_("Warning: WEEKLY VEVENT without a day selected. Assuming day of start time."));
+			barryverbose(_("Record data so far:\n") << cal);
 		}
 
 		if(count) {
@@ -488,8 +491,8 @@ void vCalendar::RecurToBarryCal(vAttr& rrule, time_t starttime)
 				// of month specified by starttime
 				cal.RecurringType = Calendar::MonthByDate;
 				cal.DayOfMonth = datestruct.tm_mday;
-				barrylog("Warning: MONTHLY VEVENT without a day type specified (no BYMONTHDAY nor BYDAY). Assuming BYMONTHDAY, using day of start time.");
-				barryverbose("Record data so far:\n" << cal);
+				barrylog(_("Warning: MONTHLY VEVENT without a day type specified (no BYMONTHDAY nor BYDAY). Assuming BYMONTHDAY, using day of start time."));
+				barryverbose(_("Record data so far:\n") << cal);
 			}
 		}
 		if(count) {
@@ -549,8 +552,8 @@ void vCalendar::RecurToBarryCal(vAttr& rrule, time_t starttime)
 			cal.RecurringType=Calendar::YearByDate;
 			cal.MonthOfYear=datestruct.tm_mon;
 			cal.DayOfMonth=datestruct.tm_mday;
-			barrylog("Warning: YEARLY VEVENT without a day type specified (no BYMONTHDAY nor BYDAY). Assuming BYMONTHDAY, using day and month of start time.");
-			barryverbose("Record data so far:\n" << cal);
+			barrylog(_("Warning: YEARLY VEVENT without a day type specified (no BYMONTHDAY nor BYDAY). Assuming BYMONTHDAY, using day and month of start time."));
+			barryverbose(_("Record data so far:\n") << cal);
 		}
 		if(count) {
 			// convert to struct tm, then simply add to the year.
@@ -589,7 +592,7 @@ const std::string& vCalendar::ToVCal(const Barry::Calendar &cal)
 	Clear();
 	SetFormat( b_vformat_new() );
 	if( !Format() )
-		throw ConvertError("resource error allocating vformat");
+		throw ConvertError(_("resource error allocating vformat"));
 
 	// store the Barry object we're working with
 	m_BarryCal = cal;
@@ -666,7 +669,7 @@ const Barry::Calendar& vCalendar::ToBarry(const char *vcal, uint32_t RecordId)
 
 	// we only handle vCalendar data with one vevent block
 	if( HasMultipleVEvents() )
-		throw ConvertError("vCalendar data contains more than one VEVENT block, unsupported");
+		throw ConvertError(_("vCalendar data contains more than one VEVENT block, unsupported"));
 
 	// start fresh
 	Clear();
@@ -677,7 +680,7 @@ const Barry::Calendar& vCalendar::ToBarry(const char *vcal, uint32_t RecordId)
 	// create format parser structures
 	SetFormat( b_vformat_new_from_string(vcal) );
 	if( !Format() )
-		throw ConvertError("resource error allocating vformat");
+		throw ConvertError(_("resource error allocating vformat"));
 
 	string start = GetAttr("DTSTART", "/vevent");
 //	trace.logf("DTSTART attr retrieved: %s", start.c_str());
@@ -717,7 +720,7 @@ const Barry::Calendar& vCalendar::ToBarry(const char *vcal, uint32_t RecordId)
 	rec.SetIds(Barry::Calendar::GetDefaultRecType(), RecordId);
 
 	if( !start.size() )
-		throw ConvertError("Blank DTSTART");
+		throw ConvertError(_("Blank DTSTART"));
 	rec.StartTime.Time = m_vtc.vtime2unix(start.c_str());
 
 	if( !end.size() ) {
@@ -777,7 +780,7 @@ const Barry::Calendar& vCalendar::ToBarry(const char *vcal, uint32_t RecordId)
 			rec.NotificationTime.Time = *relative + m_vtc.alarmduration2sec(trigger.c_str());
 		}
 		else {
-			throw ConvertError("Unknown TRIGGER VALUE");
+			throw ConvertError(_("Unknown TRIGGER VALUE"));
 		}
 	}
 	else {

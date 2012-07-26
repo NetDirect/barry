@@ -20,6 +20,7 @@
     root directory of this project for more details.
 */
 
+#include "i18n.h"
 #include "bmp.h"
 #include "bmp-internal.h"
 #include "error.h"
@@ -76,7 +77,7 @@ void ScreenshotToRGB(const JLScreenInfo &info,
 			     uint8_t alpha)
 {
 	if( depth != 24 && depth != 32 )
-		throw Barry::Error("ScreenshotToRGB: depth must be 24 or 32");
+		throw Barry::Error(_("ScreenshotToRGB: depth must be 24 or 32"));
 
 	// if user doesn't want to overwrite alpha channel, then use
 	// the value for our own default
@@ -96,9 +97,9 @@ void ScreenshotToRGB(const JLScreenInfo &info,
 	for( data_size = 2; screenshot.GetSize() > (data_size * pixel_count); data_size++ )
 		;
 	if( screenshot.GetSize() < (pixel_count * data_size) )
-		throw Error("ScreenshotToRGB: Screenshot data size is too small for given width+height");
+		throw Error(_("ScreenshotToRGB: Screenshot data size is too small for given width+height"));
 	if( data_size != 2 && data_size != 4 )
-		throw Error("ScreenshotToRGB: Screenshot depth is not supported (Barry supports 2 byte or 4 byte pixels in device screenshots)");
+		throw Error(_("ScreenshotToRGB: Screenshot depth is not supported (Barry supports 2 byte or 4 byte pixels in device screenshots)"));
 
 	// setup write pointer
 	unsigned char *write = buffer.GetBuffer(total_buffer_size) + offset;
@@ -158,7 +159,7 @@ void ScreenshotToRGB(const JLScreenInfo &info,
 				write[0] = value & 0xFF;           // blue
 				break;
 			default:
-				throw Error("ScreenshotToRGB: bad switch value, should never happen. Double check the data_size check.");
+				throw Error(_("ScreenshotToRGB: bad switch value, should never happen. Double check the data_size check."));
 			}
 
 			write += bytes_per_pixel;
@@ -192,7 +193,7 @@ void ScreenshotToBitmap(const JLScreenInfo &info,
 	// make sure there is enough screeshot pixel data for the
 	// given width and height
 	if( screenshot.GetSize() < (width * height * 2) ) // 2 byte screenshot pixel data
-		throw Error("Screenshot data size is too small for given width+height");
+		throw Error(_("Screenshot data size is too small for given width+height"));
 
 
 	// setup write pointer

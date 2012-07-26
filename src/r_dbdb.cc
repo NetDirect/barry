@@ -19,6 +19,7 @@
     root directory of this project for more details.
 */
 
+#include "i18n.h"
 #include "record.h"
 #include "record-internal.h"
 #include "data.h"
@@ -114,12 +115,12 @@ void DatabaseDatabase::Parse(const Data &data)
 				begin = ParseField<OldDBDBField>(begin, end);
 		}
 		else
-			dout("DatabaseDatabase: not enough data for parsing");
+			dout(_("DatabaseDatabase: not enough data for parsing"));
 		break;
 
 	default:
 		// unknown protocol
-		dout("Unknown protocol");
+		dout(_("Unknown protocol"));
 		break;
 	}
 
@@ -193,10 +194,10 @@ bool DatabaseDatabase::GetDBName(unsigned int number,
 void DatabaseDatabase::Dump(std::ostream &os) const
 {
 	DatabaseArrayType::const_iterator b = Databases.begin();
-	os << "Database database:\n";
+	os << _("Database database:\n");
 	for( ; b != Databases.end(); b++ ) {
-		os << "    Database: 0x" << setbase(16) << b->Number
-		   << " '" << b->Name << "' (records: "
+		os << _("    Database: ") << "0x" << setbase(16) << b->Number
+		   << " '" << b->Name << "' (" << _("records: ")
 		   << setbase(10) << b->RecordCount << ")\n";
 	}
 }

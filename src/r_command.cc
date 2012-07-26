@@ -19,6 +19,7 @@
     root directory of this project for more details.
 */
 
+#include "i18n.h"
 #include "record.h"
 #include "record-internal.h"
 #include "data.h"
@@ -95,9 +96,9 @@ unsigned int CommandTable::GetCommand(const std::string &name) const
 void CommandTable::Dump(std::ostream &os) const
 {
 	CommandArrayType::const_iterator b = Commands.begin();
-	os << "Command table:\n";
+	os << _("Command table:\n");
 	for( ; b != Commands.end(); b++ ) {
-		os << "    Command: 0x" << setbase(16) << b->Code
+		os << _("    Command: ") << "0x" << setbase(16) << b->Code
 		   << " '" << b->Name << "'\n";
 	}
 }

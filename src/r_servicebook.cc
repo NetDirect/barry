@@ -20,6 +20,7 @@
     root directory of this project for more details.
 */
 
+#include "i18n.h"
 #include "r_servicebook.h"
 #include "record-internal.h"
 #include "protocol.h"
@@ -50,8 +51,8 @@ namespace Barry {
 #define SBFCC_END			0xffff
 
 static FieldLink<ServiceBookConfig> ServiceBookConfigFieldLinks[] = {
-//   { SBFC_DSID,        "DSID",       0, 0,    &ServiceBook::DSID, 0, 0 },
-   { SBFCC_END,         "End of List",0, 0,    0, 0, 0 }
+//   { SBFC_DSID,  "DSID",       0, 0,    &ServiceBook::DSID, 0, 0 },
+   { SBFCC_END,    N_("End of List"),0, 0,    0, 0, 0 }
 };
 
 ServiceBookConfig::ServiceBookConfig()
@@ -178,7 +179,7 @@ void ServiceBookConfig::BuildHeader(Data &data, size_t &offset) const
 ///
 void ServiceBookConfig::BuildFields(Data &data, size_t &offset, const IConverter *ic) const
 {
-	throw std::logic_error("ServiceBookConfig::Build not yet implemented");
+	throw std::logic_error(_("ServiceBookConfig::Build not yet implemented"));
 }
 
 void ServiceBookConfig::Clear()
@@ -191,7 +192,7 @@ void ServiceBookConfig::Dump(std::ostream &os) const
 {
 	ios_format_state state(os);
 
-	os << "   ServiceBookConfig Format: " << setbase(16) << (uint16_t)Format << "\n";
+	os << _("   ServiceBookConfig Format: ") << setbase(16) << (uint16_t)Format << "\n";
 
 	// cycle through the type table
 	for(	const FieldLink<ServiceBookConfig> *b = ServiceBookConfigFieldLinks;
@@ -201,18 +202,18 @@ void ServiceBookConfig::Dump(std::ostream &os) const
 		if( b->strMember ) {
 			const std::string &s = this->*(b->strMember);
 			if( s.size() )
-				os << "      " << b->name << ": " << s << "\n";
+				os << "      " << gettext(b->name) << ": " << s << "\n";
 		}
 		else if( b->timeMember ) {
 			TimeT t = this->*(b->timeMember);
 			if( t.Time> 0 )
-				os << "      " << b->name << ": " << t << "\n";
+				os << "      " << gettext(b->name) << ": " << t << "\n";
 		}
 	}
 
 	// print any unknowns
 	os << Unknowns;
-	os << "   ------------------- End of Config Field\n";
+	os << _("   ------------------- End of Config Field\n");
 }
 
 
@@ -247,26 +248,26 @@ public:
 // to convert between old and new type codes, while hopefully keeping
 // things generic.
 static FieldLink<ServiceBook> ServiceBookOldFieldLinks[] = {
-   { SBFC_OLD_NAME,      "Old Name", 0, 0,     &ServiceBook::Name, 0, 0, 0, 0, true },
-   { SBFC_OLD_DESC,      "Old Desc", 0, 0,     &ServiceBook::Description, 0, 0, 0, 0, true },
-   { SBFC_OLD_UNIQUE_ID, "Old UniqueId", 0, 0, &ServiceBook::UniqueId, 0, 0, 0, 0, false },
-   { SBFC_END,           "End of List", 0, 0,  0, 0, 0, 0, 0, false }
+   { SBFC_OLD_NAME,      N_("Old Name"), 0, 0,     &ServiceBook::Name, 0, 0, 0, 0, true },
+   { SBFC_OLD_DESC,      N_("Old Desc"), 0, 0,     &ServiceBook::Description, 0, 0, 0, 0, true },
+   { SBFC_OLD_UNIQUE_ID, N_("Old UniqueId"), 0, 0, &ServiceBook::UniqueId, 0, 0, 0, 0, false },
+   { SBFC_END,           N_("End of List"), 0, 0,  0, 0, 0, 0, 0, false }
 };
 
 static FieldLink<ServiceBook> ServiceBookNewFieldLinks[] = {
-   { SBFC_NAME,        "Name", 0, 0,         &ServiceBook::Name, 0, 0, 0, 0, true },
-   { SBFC_DESCRIPTION, "Description", 0, 0,  &ServiceBook::Description, 0, 0, 0, 0, true },
-   { SBFC_UNIQUE_ID,   "UniqueId", 0, 0,     &ServiceBook::UniqueId, 0, 0, 0, 0, false },
-   { SBFC_END,         "End of List", 0, 0,  0, 0, 0, 0, 0, false }
+   { SBFC_NAME,        N_("Name"), 0, 0,         &ServiceBook::Name, 0, 0, 0, 0, true },
+   { SBFC_DESCRIPTION, N_("Description"), 0, 0,  &ServiceBook::Description, 0, 0, 0, 0, true },
+   { SBFC_UNIQUE_ID,   N_("UniqueId"), 0, 0,     &ServiceBook::UniqueId, 0, 0, 0, 0, false },
+   { SBFC_END,         N_("End of List"), 0, 0,  0, 0, 0, 0, 0, false }
 };
 
 // This table holds all
 static FieldLink<ServiceBook> ServiceBookFieldLinks[] = {
-   { SBFC_HIDDEN_NAME, "Hidden Name",0, 0, &ServiceBook::HiddenName, 0, 0, 0, 0, true },
-   { SBFC_DSID,        "DSID",       0, 0, &ServiceBook::DSID, 0, 0, 0, 0, false },
-   { SBFC_CONTENT_ID,  "ContentId",  0, 0, &ServiceBook::ContentId, 0, 0, 0, 0, false },
-   { SBFC_BES_DOMAIN,  "BES Domain", 0, 0, &ServiceBook::BesDomain, 0, 0, 0, 0, false },
-   { SBFC_END,         "End of List",0, 0, 0, 0, 0, 0, 0, false }
+   { SBFC_HIDDEN_NAME, N_("Hidden Name"),0, 0, &ServiceBook::HiddenName, 0, 0, 0, 0, true },
+   { SBFC_DSID,        N_("DSID"),       0, 0, &ServiceBook::DSID, 0, 0, 0, 0, false },
+   { SBFC_CONTENT_ID,  N_("ContentId"),  0, 0, &ServiceBook::ContentId, 0, 0, 0, 0, false },
+   { SBFC_BES_DOMAIN,  N_("BES Domain"), 0, 0, &ServiceBook::BesDomain, 0, 0, 0, 0, false },
+   { SBFC_END,         N_("End of List"),0, 0, 0, 0, 0, 0, 0, false }
 };
 
 // Array of conflicting tables only
@@ -419,7 +420,7 @@ void ServiceBook::BuildHeader(Data &data, size_t &offset) const
 ///
 void ServiceBook::BuildFields(Data &data, size_t &offset, const IConverter *ic) const
 {
-	throw std::logic_error("ServiceBook::BuildFields not yet implemented");
+	throw std::logic_error(_("ServiceBook::BuildFields not yet implemented"));
 }
 
 void ServiceBook::Clear()
@@ -442,23 +443,23 @@ const FieldHandle<ServiceBook>::ListT& ServiceBook::GetFieldHandles()
 #undef RECORD_CLASS_NAME
 #define RECORD_CLASS_NAME ServiceBook
 
-	FHP(RecType, "Record Type Code");
-	FHP(RecordId, "Unique Record ID");
+	FHP(RecType, _("Record Type Code"));
+	FHP(RecordId, _("Unique Record ID"));
 
-	FHP(Name, "Name");
-	FHP(HiddenName, "Hidden Name");
-	FHP(Description, "Description");
-	FHP(DSID, "DSID");
-	FHP(BesDomain, "BES Domain");
-	FHP(UniqueId, "Unique ID");
-	FHP(ContentId, "Content ID");
+	FHP(Name, _("Name"));
+	FHP(HiddenName, _("Hidden Name"));
+	FHP(Description, _("Description"));
+	FHP(DSID, _("DSID"));
+	FHP(BesDomain, _("BES Domain"));
+	FHP(UniqueId, _("Unique ID"));
+	FHP(ContentId, _("Content ID"));
 
 	// FIXME - this config is not yet implmented fully... when it is,
 	// will need to add this as a field to FieldHandle<>, and maybe
 	// implement a ServiceBookConfig::GetFieldHandles()
 	//ServiceBookConfig Config;
 
-	FHP(Unknowns, "Unknown Fields");
+	FHP(Unknowns, _("Unknown Fields"));
 
 	return fhv;
 }
@@ -485,16 +486,16 @@ void ServiceBook::Dump(std::ostream &os) const
 	os.setf(ios::left);
 	os.fill(' ');
 
-	os << "ServiceBook entry: 0x" << setbase(16) << RecordId
+	os << _("ServiceBook entry: ") << "0x" << setbase(16) << RecordId
 		<< " (" << (unsigned int)RecType << ")\n";
 
-	FormatStr(os, "Name", Name);
-	FormatStr(os, "Hidden Name", HiddenName);
-	FormatStr(os, "Description", Description);
-	FormatStr(os, "DSID", DSID);
-	FormatStr(os, "Unique ID", UniqueId);
-	FormatStr(os, "Content ID", ContentId);
-	FormatStr(os, "(BES) Domain", BesDomain);
+	FormatStr(os, _("Name"), Name);
+	FormatStr(os, _("Hidden Name"), HiddenName);
+	FormatStr(os, _("Description"), Description);
+	FormatStr(os, _("DSID"), DSID);
+	FormatStr(os, _("Unique ID"), UniqueId);
+	FormatStr(os, _("Content ID"), ContentId);
+	FormatStr(os, _("(BES) Domain"), BesDomain);
 
 	os << Config;
 

@@ -19,6 +19,7 @@
     root directory of this project for more details.
 */
 
+#include "i18n.h"
 #include "r_contact.h"
 #include "record-internal.h"
 #include "protocol.h"
@@ -105,47 +106,47 @@ namespace Barry {
 
 // Contact code to field table
 static FieldLink<Contact> ContactFieldLinks[] = {
-   { CFC_NICKNAME,     "Nickname",   0,0,                 &Contact::Nickname, 0, 0, 0, 0, true },
-   { CFC_PHONE,        "Phone",      0,0,                 &Contact::Phone, 0, 0, 0, 0, true },
-   { CFC_FAX,          "Fax",        "facsimileTelephoneNumber",0, &Contact::Fax, 0, 0, 0, 0, true },
-   { CFC_HOME_FAX,     "HomeFax",    0,0,                 &Contact::HomeFax, 0, 0, 0, 0, true },
-   { CFC_WORK_PHONE,   "WorkPhone",  "telephoneNumber",0, &Contact::WorkPhone, 0, 0, 0, 0, true },
-   { CFC_HOME_PHONE,   "HomePhone",  "homePhone",0,       &Contact::HomePhone, 0, 0, 0, 0, true },
-   { CFC_MOBILE_PHONE, "MobilePhone","mobile",0,          &Contact::MobilePhone, 0, 0, 0, 0, true },
-   { CFC_MOBILE_PHONE_2,"MobilePhone2",0,0,               &Contact::MobilePhone2, 0, 0, 0, 0, true },
-   { CFC_PAGER,        "Pager",      "pager",0,           &Contact::Pager, 0, 0, 0, 0, true },
-   { CFC_PIN,          "PIN",        0,0,                 &Contact::PIN, 0, 0, 0, 0, true },
-   { CFC_RADIO,        "Radio",      0,0,                 &Contact::Radio, 0, 0, 0, 0, true },
-   { CFC_WORK_PHONE_2, "WorkPhone2", 0,0,                 &Contact::WorkPhone2, 0, 0, 0, 0, true },
-   { CFC_HOME_PHONE_2, "HomePhone2", 0,0,                 &Contact::HomePhone2, 0, 0, 0, 0, true },
-   { CFC_OTHER_PHONE,  "OtherPhone", 0,0,                 &Contact::OtherPhone, 0, 0, 0, 0, true },
-   { CFC_COMPANY,      "Company",    "o",0,               &Contact::Company, 0, 0, 0, 0, true },
-   { CFC_DEFAULT_COMM_METHOD,"DefaultCommMethod",0,0,     &Contact::DefaultCommunicationsMethod, 0, 0, 0, 0, true },
-   { CFC_ADDRESS1,     "WorkAddress1",   0,0,             0, 0, 0, &Contact::WorkAddress, &PostalAddress::Address1, true },
-   { CFC_ADDRESS2,     "WorkAddress2",   0,0,             0, 0, 0, &Contact::WorkAddress, &PostalAddress::Address2, true },
-   { CFC_ADDRESS3,     "WorkAddress3",   0,0,             0, 0, 0, &Contact::WorkAddress, &PostalAddress::Address3, true },
-   { CFC_CITY,         "WorkCity",       "l",0,           0, 0, 0, &Contact::WorkAddress, &PostalAddress::City, true },
-   { CFC_PROVINCE,     "WorkProvince",   "st",0,          0, 0, 0, &Contact::WorkAddress, &PostalAddress::Province, true },
-   { CFC_POSTAL_CODE,  "WorkPostalCode", "postalCode",0,  0, 0, 0, &Contact::WorkAddress, &PostalAddress::PostalCode, true },
-   { CFC_COUNTRY,      "WorkCountry",    "c", "country",  0, 0, 0, &Contact::WorkAddress, &PostalAddress::Country, true },
-   { CFC_TITLE,        "JobTitle",   "title",0,           &Contact::JobTitle, 0, 0, 0, 0, true },
-   { CFC_PUBLIC_KEY,   "PublicKey",  0,0,                 &Contact::PublicKey, 0, 0, 0, 0, false },
-   { CFC_URL,          "URL",        0,0,                 &Contact::URL, 0, 0, 0, 0, true },
-   { CFC_PREFIX,       "Prefix",     0,0,                 &Contact::Prefix, 0, 0, 0, 0, true },
-   { CFC_HOME_ADDRESS1,"HomeAddress1", 0,0,               0, 0, 0, &Contact::HomeAddress, &PostalAddress::Address1, true },
-   { CFC_HOME_ADDRESS2,"HomeAddress2", 0,0,               0, 0, 0, &Contact::HomeAddress, &PostalAddress::Address2, true },
-   { CFC_HOME_ADDRESS3,"HomeAddress3", 0,0,               0, 0, 0, &Contact::HomeAddress, &PostalAddress::Address3, true },
-   { CFC_NOTES,        "Notes",      0,0,                 &Contact::Notes, 0, 0, 0, 0, true },
-   { CFC_USER_DEFINED_1, "UserDefined1", 0,0,             &Contact::UserDefined1, 0, 0, 0, 0, true },
-   { CFC_USER_DEFINED_2, "UserDefined2", 0,0,             &Contact::UserDefined2, 0, 0, 0, 0, true },
-   { CFC_USER_DEFINED_3, "UserDefined3", 0,0,             &Contact::UserDefined3, 0, 0, 0, 0, true },
-   { CFC_USER_DEFINED_4, "UserDefined4", 0,0,             &Contact::UserDefined4, 0, 0, 0, 0, true },
-   { CFC_HOME_CITY,    "HomeCity",   0,0,                 0, 0, 0, &Contact::HomeAddress, &PostalAddress::City, true },
-   { CFC_HOME_PROVINCE,"HomeProvince", 0,0,               0, 0, 0, &Contact::HomeAddress, &PostalAddress::Province, true },
-   { CFC_HOME_POSTAL_CODE, "HomePostalCode", 0,0,         0, 0, 0, &Contact::HomeAddress, &PostalAddress::PostalCode, true },
-   { CFC_HOME_COUNTRY, "HomeCountry",0,0,                 0, 0, 0, &Contact::HomeAddress, &PostalAddress::Country, true },
-   { CFC_IMAGE,        "Image",      0,0,                 &Contact::Image, 0, 0, 0, 0, false },
-   { CFC_INVALID_FIELD,"EndOfList",  0, 0, 0, 0, 0, 0, 0, false }
+   { CFC_NICKNAME,     N_("Nickname"),   0,0,                 &Contact::Nickname, 0, 0, 0, 0, true },
+   { CFC_PHONE,        N_("Phone"),      0,0,                 &Contact::Phone, 0, 0, 0, 0, true },
+   { CFC_FAX,          N_("Fax"),        "facsimileTelephoneNumber",0, &Contact::Fax, 0, 0, 0, 0, true },
+   { CFC_HOME_FAX,     N_("HomeFax"),    0,0,                 &Contact::HomeFax, 0, 0, 0, 0, true },
+   { CFC_WORK_PHONE,   N_("WorkPhone"),  "telephoneNumber",0, &Contact::WorkPhone, 0, 0, 0, 0, true },
+   { CFC_HOME_PHONE,   N_("HomePhone"),  "homePhone",0,       &Contact::HomePhone, 0, 0, 0, 0, true },
+   { CFC_MOBILE_PHONE, N_("MobilePhone"),"mobile",0,          &Contact::MobilePhone, 0, 0, 0, 0, true },
+   { CFC_MOBILE_PHONE_2,N_("MobilePhone2"),0,0,               &Contact::MobilePhone2, 0, 0, 0, 0, true },
+   { CFC_PAGER,        N_("Pager"),      "pager",0,           &Contact::Pager, 0, 0, 0, 0, true },
+   { CFC_PIN,          N_("PIN"),        0,0,                 &Contact::PIN, 0, 0, 0, 0, true },
+   { CFC_RADIO,        N_("Radio"),      0,0,                 &Contact::Radio, 0, 0, 0, 0, true },
+   { CFC_WORK_PHONE_2, N_("WorkPhone2"), 0,0,                 &Contact::WorkPhone2, 0, 0, 0, 0, true },
+   { CFC_HOME_PHONE_2, N_("HomePhone2"), 0,0,                 &Contact::HomePhone2, 0, 0, 0, 0, true },
+   { CFC_OTHER_PHONE,  N_("OtherPhone"), 0,0,                 &Contact::OtherPhone, 0, 0, 0, 0, true },
+   { CFC_COMPANY,      N_("Company"),    "o",0,               &Contact::Company, 0, 0, 0, 0, true },
+   { CFC_DEFAULT_COMM_METHOD,N_("DefaultCommMethod"),0,0,     &Contact::DefaultCommunicationsMethod, 0, 0, 0, 0, true },
+   { CFC_ADDRESS1,     N_("WorkAddress1"),   0,0,             0, 0, 0, &Contact::WorkAddress, &PostalAddress::Address1, true },
+   { CFC_ADDRESS2,     N_("WorkAddress2"),   0,0,             0, 0, 0, &Contact::WorkAddress, &PostalAddress::Address2, true },
+   { CFC_ADDRESS3,     N_("WorkAddress3"),   0,0,             0, 0, 0, &Contact::WorkAddress, &PostalAddress::Address3, true },
+   { CFC_CITY,         N_("WorkCity"),       "l",0,           0, 0, 0, &Contact::WorkAddress, &PostalAddress::City, true },
+   { CFC_PROVINCE,     N_("WorkProvince"),   "st",0,          0, 0, 0, &Contact::WorkAddress, &PostalAddress::Province, true },
+   { CFC_POSTAL_CODE,  N_("WorkPostalCode"), "postalCode",0,  0, 0, 0, &Contact::WorkAddress, &PostalAddress::PostalCode, true },
+   { CFC_COUNTRY,      N_("WorkCountry"),    "c", "country",  0, 0, 0, &Contact::WorkAddress, &PostalAddress::Country, true },
+   { CFC_TITLE,        N_("JobTitle"),   "title",0,           &Contact::JobTitle, 0, 0, 0, 0, true },
+   { CFC_PUBLIC_KEY,   N_("PublicKey"),  0,0,                 &Contact::PublicKey, 0, 0, 0, 0, false },
+   { CFC_URL,          N_("URL"),        0,0,                 &Contact::URL, 0, 0, 0, 0, true },
+   { CFC_PREFIX,       N_("Prefix"),     0,0,                 &Contact::Prefix, 0, 0, 0, 0, true },
+   { CFC_HOME_ADDRESS1,N_("HomeAddress1"), 0,0,               0, 0, 0, &Contact::HomeAddress, &PostalAddress::Address1, true },
+   { CFC_HOME_ADDRESS2,N_("HomeAddress2"), 0,0,               0, 0, 0, &Contact::HomeAddress, &PostalAddress::Address2, true },
+   { CFC_HOME_ADDRESS3,N_("HomeAddress3"), 0,0,               0, 0, 0, &Contact::HomeAddress, &PostalAddress::Address3, true },
+   { CFC_NOTES,        N_("Notes"),      0,0,                 &Contact::Notes, 0, 0, 0, 0, true },
+   { CFC_USER_DEFINED_1, N_("UserDefined1"), 0,0,             &Contact::UserDefined1, 0, 0, 0, 0, true },
+   { CFC_USER_DEFINED_2, N_("UserDefined2"), 0,0,             &Contact::UserDefined2, 0, 0, 0, 0, true },
+   { CFC_USER_DEFINED_3, N_("UserDefined3"), 0,0,             &Contact::UserDefined3, 0, 0, 0, 0, true },
+   { CFC_USER_DEFINED_4, N_("UserDefined4"), 0,0,             &Contact::UserDefined4, 0, 0, 0, 0, true },
+   { CFC_HOME_CITY,    N_("HomeCity"),   0,0,                 0, 0, 0, &Contact::HomeAddress, &PostalAddress::City, true },
+   { CFC_HOME_PROVINCE,N_("HomeProvince"), 0,0,               0, 0, 0, &Contact::HomeAddress, &PostalAddress::Province, true },
+   { CFC_HOME_POSTAL_CODE, N_("HomePostalCode"), 0,0,         0, 0, 0, &Contact::HomeAddress, &PostalAddress::PostalCode, true },
+   { CFC_HOME_COUNTRY, N_("HomeCountry"),0,0,                 0, 0, 0, &Contact::HomeAddress, &PostalAddress::Country, true },
+   { CFC_IMAGE,        N_("Image"),      0,0,                 &Contact::Image, 0, 0, 0, 0, false },
+   { CFC_INVALID_FIELD,N_("EndOfList"),  0, 0, 0, 0, 0, 0, 0, false }
 };
 
 Contact::Contact()
@@ -294,7 +295,7 @@ void Contact::ParseFields(const Data &data, size_t &offset, const IConverter *ic
 void Contact::Validate() const
 {
 	if( !GetFullName().size() && !Company.size() ) {
-		throw Barry::ValidationError("A contact record must contain either a First/Last name, or a Company name.");
+		throw Barry::ValidationError(_("A contact record must contain either a First/Last name, or a Company name."));
 	}
 }
 
@@ -315,7 +316,7 @@ void Contact::BuildFields(Data &data, size_t &offset, const IConverter *ic) cons
 	// Sanity check: the Blackberry requires at least a name or
 	// a company name for each address record.
 	if( !GetFullName().size() && !Company.size() )
-		throw BadData("Contact must have name or company name.");
+		throw BadData(_("Contact must have name or company name."));
 
 	// check if this is a group link record, and if so, output
 	// the group flag
@@ -476,80 +477,80 @@ const FieldHandle<Contact>::ListT& Contact::GetFieldHandles()
 #define RECORD_CLASS_NAME Contact
 
 	// first number is priority of fields... 0 being most critical fields
-	FHP(RecType, "Record Type Code");
-	FHP(RecordId, "Unique ID");
-	FHP(EmailAddresses, "Email Addresses");
+	FHP(RecType, _("Record Type Code"));
+	FHP(RecordId, _("Unique ID"));
+	FHP(EmailAddresses, _("Email Addresses"));
 
-	FHP(FirstName, "First Name");
-	FHP(LastName, "Last Name");
-	FHL(Company, "Company", CFC_COMPANY, true, "o", 0);
-	FHL(JobTitle, "Job Title", CFC_TITLE, true, "title", 0);
-	FHD(Prefix, "Prefix", CFC_PREFIX, true);
+	FHP(FirstName, _("First Name"));
+	FHP(LastName, _("Last Name"));
+	FHL(Company, _("Company"), CFC_COMPANY, true, "o", 0);
+	FHL(JobTitle, _("Job Title"), CFC_TITLE, true, "title", 0);
+	FHD(Prefix, _("Prefix"), CFC_PREFIX, true);
 
-	FHD(Nickname, "Nickname", CFC_NICKNAME, true);
-	FHD(Phone, "Phone (deprecated)", CFC_PHONE, true);
-	FHL(Fax, "Work Fax", CFC_FAX, true, "facsimileTelephoneNumber", 0);
-	FHD(HomeFax, "Home Fax", CFC_HOME_FAX, true);
-	FHL(WorkPhone, "Work Phone", CFC_WORK_PHONE, true,
+	FHD(Nickname, _("Nickname"), CFC_NICKNAME, true);
+	FHD(Phone, _("Phone (deprecated)"), CFC_PHONE, true);
+	FHL(Fax, _("Work Fax"), CFC_FAX, true, "facsimileTelephoneNumber", 0);
+	FHD(HomeFax, _("Home Fax"), CFC_HOME_FAX, true);
+	FHL(WorkPhone, _("Work Phone"), CFC_WORK_PHONE, true,
 		"telephoneNumber", 0);
-	FHD(WorkPhone2, "Work Phone 2", CFC_WORK_PHONE_2, true);
-	FHL(HomePhone, "Home Phone", CFC_HOME_PHONE, true, "homePhone", 0);
-	FHD(HomePhone2, "Home Phone 2", CFC_HOME_PHONE_2, true);
-	FHL(MobilePhone, "Mobile Phone", CFC_MOBILE_PHONE, true, "mobile", 0);
-	FHD(MobilePhone2, "Mobile Phone 2", CFC_MOBILE_PHONE_2, true);
-	FHD(OtherPhone, "Other Phone", CFC_OTHER_PHONE, true);
-	FHL(Pager, "Pager", CFC_PAGER, true, "pager", 0);
-	FHD(PIN, "PIN", CFC_PIN, true);
-	FHD(Radio, "Radio", CFC_RADIO, true);
-	FHD(DefaultCommunicationsMethod, "Default Communications Method",
+	FHD(WorkPhone2, _("Work Phone 2"), CFC_WORK_PHONE_2, true);
+	FHL(HomePhone, _("Home Phone"), CFC_HOME_PHONE, true, "homePhone", 0);
+	FHD(HomePhone2, _("Home Phone 2"), CFC_HOME_PHONE_2, true);
+	FHL(MobilePhone, _("Mobile Phone"), CFC_MOBILE_PHONE, true, "mobile", 0);
+	FHD(MobilePhone2, _("Mobile Phone 2"), CFC_MOBILE_PHONE_2, true);
+	FHD(OtherPhone, _("Other Phone"), CFC_OTHER_PHONE, true);
+	FHL(Pager, _("Pager"), CFC_PAGER, true, "pager", 0);
+	FHD(PIN, _("PIN"), CFC_PIN, true);
+	FHD(Radio, _("Radio"), CFC_RADIO, true);
+	FHD(DefaultCommunicationsMethod, _("Default Communications Method"),
 		CFC_DEFAULT_COMM_METHOD, true);
-	FHD(PublicKey, "Public Key", CFC_PUBLIC_KEY, false);
-	FHD(URL, "URL", CFC_URL, true);
-	FHD(Notes, "Notes", CFC_NOTES, true);
-	FHD(UserDefined1, "User Defined Field 1", CFC_USER_DEFINED_1, true);
-	FHD(UserDefined2, "User Defined Field 2", CFC_USER_DEFINED_2, true);
-	FHD(UserDefined3, "User Defined Field 3", CFC_USER_DEFINED_3, true);
-	FHD(UserDefined4, "User Defined Field 4", CFC_USER_DEFINED_4, true);
-	FHD(Image, "Image", CFC_IMAGE, false);
+	FHD(PublicKey, _("Public Key"), CFC_PUBLIC_KEY, false);
+	FHD(URL, _("URL"), CFC_URL, true);
+	FHD(Notes, _("Notes"), CFC_NOTES, true);
+	FHD(UserDefined1, _("User Defined Field 1"), CFC_USER_DEFINED_1, true);
+	FHD(UserDefined2, _("User Defined Field 2"), CFC_USER_DEFINED_2, true);
+	FHD(UserDefined3, _("User Defined Field 3"), CFC_USER_DEFINED_3, true);
+	FHD(UserDefined4, _("User Defined Field 4"), CFC_USER_DEFINED_4, true);
+	FHD(Image, _("Image"), CFC_IMAGE, false);
 
-	FHD(Birthday, "Birthday", CFC_BIRTHDAY, true);
-	FHD(Anniversary, "Anniversary", CFC_ANNIVERSARY, true);
+	FHD(Birthday, _("Birthday"), CFC_BIRTHDAY, true);
+	FHD(Anniversary, _("Anniversary"), CFC_ANNIVERSARY, true);
 
-	FHC(WorkAddress, "Work Address");
-	FHS(WorkAddress, Address1, "Work Address 1",
+	FHC(WorkAddress, _("Work Address"));
+	FHS(WorkAddress, Address1, _("Work Address 1"),
 					CFC_ADDRESS1, true, 0, 0);
-	FHS(WorkAddress, Address2, "Work Address 2",
+	FHS(WorkAddress, Address2, _("Work Address 2"),
 					CFC_ADDRESS2, true, 0, 0);
-	FHS(WorkAddress, Address3, "Work Address 3",
+	FHS(WorkAddress, Address3, _("Work Address 3"),
 					CFC_ADDRESS3, true, 0, 0);
-	FHS(WorkAddress, City, "Work City",
+	FHS(WorkAddress, City, _("Work City"),
 					CFC_CITY, true, "l", 0);
-	FHS(WorkAddress, Province, "Work Province",
+	FHS(WorkAddress, Province, _("Work Province"),
 					CFC_PROVINCE, true, "st", 0);
-	FHS(WorkAddress, PostalCode, "Work Postal Code",
+	FHS(WorkAddress, PostalCode, _("Work Postal Code"),
 					CFC_POSTAL_CODE, true, "postalCode", 0);
-	FHS(WorkAddress, Country, "Work Country",
+	FHS(WorkAddress, Country, _("Work Country"),
 					CFC_COUNTRY, true, "c", "country");
 
-	FHC(HomeAddress, "Home Address");
-	FHS(HomeAddress, Address1, "Home Address 1",
+	FHC(HomeAddress, _("Home Address"));
+	FHS(HomeAddress, Address1, _("Home Address 1"),
 					CFC_HOME_ADDRESS1, true, 0, 0);
-	FHS(HomeAddress, Address2, "Home Address 2",
+	FHS(HomeAddress, Address2, _("Home Address 2"),
 					CFC_HOME_ADDRESS2, true, 0, 0);
-	FHS(HomeAddress, Address3, "Home Address 3",
+	FHS(HomeAddress, Address3, _("Home Address 3"),
 					CFC_HOME_ADDRESS3, true, 0, 0);
-	FHS(HomeAddress, City, "Home City",
+	FHS(HomeAddress, City, _("Home City"),
 					CFC_HOME_CITY, true, 0, 0);
-	FHS(HomeAddress, Province, "Home Province",
+	FHS(HomeAddress, Province, _("Home Province"),
 					CFC_HOME_PROVINCE, true, 0, 0);
-	FHS(HomeAddress, PostalCode, "Home Postal Code",
+	FHS(HomeAddress, PostalCode, _("Home Postal Code"),
 					CFC_HOME_POSTAL_CODE, true, 0, 0);
-	FHS(HomeAddress, Country, "Home Country",
+	FHS(HomeAddress, Country, _("Home Country"),
 					CFC_HOME_COUNTRY, true, 0, 0);
 
-	FHP(Categories, "Categories");
-//	FHP(GroupLinks, "Group Links");
-	FHP(Unknowns, "Unknown Fields");
+	FHP(Categories, _("Categories"));
+//	FHP(GroupLinks, _("Group Links"));
+	FHP(Unknowns, _("Unknown Fields"));
 
 	return fhv;
 }
@@ -597,20 +598,20 @@ void Contact::Dump(std::ostream &os) const
 	os.setf(ios::left);
 	os.fill(' ');
 
-	os << "Contact: 0x" << setbase(16) << GetID()
+	os << _("Contact: ") << "0x" << setbase(16) << GetID()
 		<< " (" << (unsigned int)RecType << ")\n";
 
 	// special fields not in type table
-	os << "    " << setw(20) << "FirstName";
+	os << "    " << setw(20) << _("FirstName");
 	os << ": " << FirstName << "\n";
-	os << "    " << setw(20) << "LastName";
+	os << "    " << setw(20) << _("LastName");
 	os << ": " << LastName << "\n";
 
 	// cycle through email addresses
 	EmailList::const_iterator eai = EmailAddresses.begin();
 	for( ; eai != EmailAddresses.end(); ++eai ) {
 		if( eai->size() ) {
-			os << "    Email               : " << *eai << "\n";
+			os << _("    Email               : ") << *eai << "\n";
 		}
 	}
 
@@ -634,7 +635,7 @@ void Contact::Dump(std::ostream &os) const
 
 		// print only fields with data
 		if( pField && pField->size() ) {
-			os << "    " << setw(20) << b->name;
+			os << "    " << setw(20) << gettext(b->name);
 			os << ": " << Cr2LfWrapper(*pField) << "\n";
 		}
 	}
@@ -642,30 +643,30 @@ void Contact::Dump(std::ostream &os) const
 	if( Categories.size() ) {
 		string display;
 		Categories.CategoryList2Str(display);
-		os << "    Categories          : " << display << "\n";
+		os << _("    Categories          : ") << display << "\n";
 	}
 
 	// print Birthday and Anniversary
 	if( Birthday.HasData() ) {
-		os << "    Birthday            : " << Birthday << "\n";
+		os << _("    Birthday            : ") << Birthday << "\n";
 	}
 	if( Anniversary.HasData() ) {
-		os << "    Anniversary         : " << Anniversary << "\n";
+		os << _("    Anniversary         : ") << Anniversary << "\n";
 	}
 
 	// print any group links
 	GroupLinksType::const_iterator
 		gb = GroupLinks.begin(), ge = GroupLinks.end();
 	if( gb != ge )
-		os << "    GroupLinks:\n";
+		os << _("    GroupLinks:\n");
 	for( ; gb != ge; gb++ ) {
-		os << "        ID: 0x" << setbase(16) << gb->Link << "\n";
+		os << _("        ID: ") << "0x" << setbase(16) << gb->Link << "\n";
 	}
 
 	// print Image in hex dump format, if available
 	if( Image.size() ) {
 		Data image(Image.data(), Image.size());
-		os << "    Photo image:\n";
+		os << _("    Photo image:\n");
 		os << image << "\n";
 	}
 
@@ -744,7 +745,7 @@ void Contact::CommaString2Email(const std::string &list, EmailList &result)
 		// The device only accepts the plain
 		// "cdfrey@foursquare.net" part here
 		if( address.rfind('>') != string::npos ) {
-			dout("Error: Cannot convert complex name+address to a simple contact email address, skipping: " << address);
+			dout(_("Error: Cannot convert complex name+address to a simple contact email address, skipping: ") << address);
 			continue;
 		}
 

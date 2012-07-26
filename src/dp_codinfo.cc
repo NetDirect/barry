@@ -32,6 +32,7 @@
  */
 
 
+#include "i18n.h"
 #include <fstream>
 #include <iomanip>
 
@@ -167,9 +168,9 @@ void DebugFileList::Dump(std::ostream &os) const
 
 	const_iterator i = begin(), e = end();
 
-	os << "  UniqueID  " << "|";
-	os << "        Module Name       " << "|";
-	os << "         File Name        " << endl;
+	os << _("  UniqueID  ") << "|";
+	os << _("        Module Name       ") << "|";
+	os << _("         File Name        ") << endl;
 
 	os << "------------+";
 	os << "--------------------------+";

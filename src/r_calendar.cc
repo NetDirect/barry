@@ -19,6 +19,7 @@
     root directory of this project for more details.
 */
 
+#include "i18n.h"
 #include "r_calendar.h"
 #include "r_recur_base-int.h"
 #include "record-internal.h"
@@ -102,16 +103,16 @@ uint8_t Calendar::ClassFlagRec2Proto(ClassFlagType f)
 #define CALFC_END			0xffff
 
 static FieldLink<Calendar> CalendarFieldLinks[] = {
-   { CALFC_SUBJECT,    "Subject",    0, 0,    &Calendar::Subject, 0, 0, 0, 0, true },
-   { CALFC_NOTES,      "Notes",      0, 0,    &Calendar::Notes, 0, 0, 0, 0, true },
-   { CALFC_LOCATION,   "Location",   0, 0,    &Calendar::Location, 0, 0, 0, 0, true },
-   { CALFC_NOTIFICATION_TIME,"Notification Time",0,0, 0, 0, &Calendar::NotificationTime, 0, 0, false },
-   { CALFC_START_TIME, "Start Time", 0, 0,    0, 0, &Calendar::StartTime, 0, 0, false },
-   { CALFC_END_TIME,   "End Time",   0, 0,    0, 0, &Calendar::EndTime, 0, 0, false },
-   { CALFC_ORGANIZER,  "Organizer",  0, 0,    0, &Calendar::Organizer, 0, 0, 0, true },
-   { CALFC_ACCEPTED_BY,"Accepted By",0, 0,    0, &Calendar::AcceptedBy, 0, 0, 0, true },
-   { CALFC_INVITED,    "Invited",    0, 0,    0, &Calendar::Invited, 0, 0, 0, true },
-   { CALFC_END,        "End of List",0, 0,    0, 0, 0, 0, 0, false }
+   { CALFC_SUBJECT,    N_("Subject"),    0, 0,    &Calendar::Subject, 0, 0, 0, 0, true },
+   { CALFC_NOTES,      N_("Notes"),      0, 0,    &Calendar::Notes, 0, 0, 0, 0, true },
+   { CALFC_LOCATION,   N_("Location"),   0, 0,    &Calendar::Location, 0, 0, 0, 0, true },
+   { CALFC_NOTIFICATION_TIME,N_("Notification Time"),0,0, 0, 0, &Calendar::NotificationTime, 0, 0, false },
+   { CALFC_START_TIME, N_("Start Time"), 0, 0,    0, 0, &Calendar::StartTime, 0, 0, false },
+   { CALFC_END_TIME,   N_("End Time"),   0, 0,    0, 0, &Calendar::EndTime, 0, 0, false },
+   { CALFC_ORGANIZER,  N_("Organizer"),  0, 0,    0, &Calendar::Organizer, 0, 0, 0, true },
+   { CALFC_ACCEPTED_BY,N_("Accepted By"),0, 0,    0, &Calendar::AcceptedBy, 0, 0, 0, true },
+   { CALFC_INVITED,    N_("Invited"),    0, 0,    0, &Calendar::Invited, 0, 0, 0, true },
+   { CALFC_END,        N_("End of List"),0, 0,    0, 0, 0, 0, 0, false }
 };
 
 Calendar::Calendar()
@@ -208,7 +209,7 @@ const unsigned char* Calendar::ParseField(const unsigned char *begin,
 			return begin;
 
 		default:
-			throw Error("Calendar::ParseField: unknown appointment type");
+			throw Error(_("Calendar::ParseField: unknown appointment type"));
 		}
 		break;
 
@@ -223,13 +224,13 @@ const unsigned char* Calendar::ParseField(const unsigned char *begin,
 			TimeZoneValid = true;
 		}
 		else {
-			throw Error("Calendar::ParseField: not enough data in time zone code field");
+			throw Error(_("Calendar::ParseField: not enough data in time zone code field"));
 		}
 		return begin;
 
 	case CALFC_FREEBUSY_FLAG:
 		if( field->u.raw[0] > CR_FREEBUSY_RANGE_HIGH ) {
-			throw Error("Calendar::ParseField: FreeBusyFlag out of range" );
+			throw Error(_("Calendar::ParseField: FreeBusyFlag out of range"));
 		}
 		FreeBusyFlag = FreeBusyFlagProto2Rec(field->u.raw[0]);
 		return begin;
@@ -239,13 +240,13 @@ const unsigned char* Calendar::ParseField(const unsigned char *begin,
 			CalendarID = btohll(field->u.uint64);
 		}
 		else {
-			throw Error("Calendar::ParseField: size data unknown in calendar field");
+			throw Error(_("Calendar::ParseField: size data unknown in calendar field"));
 		}
 		return begin;
 
 	case CALFC_CLASS_FLAG:
 		if( field->u.raw[0] > CR_CLASS_RANGE_HIGH ) {
-			throw Error("Calendar::ParseField: ClassFlag out of range" );
+			throw Error(_("Calendar::ParseField: ClassFlag out of range" ));
 		}
 		ClassFlag = ClassFlagProto2Rec(field->u.raw[0]);
 		return begin;
@@ -425,41 +426,41 @@ const FieldHandle<Calendar>::ListT& Calendar::GetFieldHandles()
 #define RECORD_CLASS_NAME Calendar
 
 #define ALL_COMMON_CALENDAR_FIELDS \
-	FHP(RecType, "Record Type Code"); \
-	FHP(RecordId, "Unique Record ID"); \
+	FHP(RecType, _("Record Type Code")); \
+	FHP(RecordId, _("Unique Record ID")); \
  \
-	FHP(AllDayEvent, "All Day Event"); \
-	FHD(Subject, "Subject", CALFC_SUBJECT, true); \
-	FHD(Notes, "Notes", CALFC_NOTES, true); \
-	FHD(Location, "Location", CALFC_LOCATION, true); \
-	FHD(NotificationTime, "Notification Time (0 is off)", \
+	FHP(AllDayEvent, _("All Day Event")); \
+	FHD(Subject, _("Subject"), CALFC_SUBJECT, true); \
+	FHD(Notes, _("Notes"), CALFC_NOTES, true); \
+	FHD(Location, _("Location"), CALFC_LOCATION, true); \
+	FHD(NotificationTime, _("Notification Time (0 is off)"), \
 				CALFC_NOTIFICATION_TIME, false); \
-	FHD(StartTime, "Start Time", CALFC_START_TIME, false); \
-	FHD(EndTime, "End Time", CALFC_END_TIME, false); \
-	FHD(Organizer, "Organizer", CALFC_ORGANIZER, true); \
-	FHD(AcceptedBy, "Accepted By", CALFC_ACCEPTED_BY, true); \
-	FHD(Invited, "Invited", CALFC_INVITED, true); \
+	FHD(StartTime, _("Start Time"), CALFC_START_TIME, false); \
+	FHD(EndTime, _("End Time"), CALFC_END_TIME, false); \
+	FHD(Organizer, _("Organizer"), CALFC_ORGANIZER, true); \
+	FHD(AcceptedBy, _("Accepted By"), CALFC_ACCEPTED_BY, true); \
+	FHD(Invited, _("Invited"), CALFC_INVITED, true); \
  \
-	FHE(fbf, FreeBusyFlagType, FreeBusyFlag, "Free or Busy Flag"); \
-	FHE_CONST(fbf, Free, "Free"); \
-	FHE_CONST(fbf, Tentative, "Tentative"); \
-	FHE_CONST(fbf, Busy, "Busy"); \
-	FHE_CONST(fbf, OutOfOffice, "Out of Office"); \
+	FHE(fbf, FreeBusyFlagType, FreeBusyFlag, _("Free or Busy Flag")); \
+	FHE_CONST(fbf, Free, _("Free")); \
+	FHE_CONST(fbf, Tentative, _("Tentative")); \
+	FHE_CONST(fbf, Busy, _("Busy")); \
+	FHE_CONST(fbf, OutOfOffice, _("Out of Office")); \
  \
-	FHE(cf, ClassFlagType, ClassFlag, "Event Class"); \
-	FHE_CONST(cf, Public, "Public"); \
-	FHE_CONST(cf, Confidential, "Confidential"); \
-	FHE_CONST(cf, Private, "Private"); \
+	FHE(cf, ClassFlagType, ClassFlag, _("Event Class")); \
+	FHE_CONST(cf, Public, _("Public")); \
+	FHE_CONST(cf, Confidential, _("Confidential")); \
+	FHE_CONST(cf, Private, _("Private")); \
  \
-	FHP(TimeZoneCode, "Time Zone Code"); \
-	FHP(TimeZoneValid, "Time Zone Validity"); \
+	FHP(TimeZoneCode, _("Time Zone Code")); \
+	FHP(TimeZoneValid, _("Time Zone Validity")); \
  \
-	FHP(Unknowns, "Unknown Fields");
+	FHP(Unknowns, _("Unknown Fields"));
 
 	ALL_COMMON_CALENDAR_FIELDS
 
 	// the fields unique to Calendar, or different in CalendarALL
-	FHD(CalendarID, "Calendar ID", CALFC_CALENDAR_ID, false);
+	FHD(CalendarID, _("Calendar ID"), CALFC_CALENDAR_ID, false);
 
 	// and finally, the RecurBase fields
 	RECUR_BASE_FIELD_HANDLES
@@ -476,15 +477,25 @@ void Calendar::DumpSpecialFields(std::ostream &os) const
 {
 	ios_format_state state(os);
 
-	static const char *ClassTypes[] = { "Public", "Confidential", "Private" };
-	static const char *FreeBusy[] = { "Free", "Tentative", "Busy", "Out of Office" };
+	static const char *ClassTypes[] = {
+		N_("Public"),
+		N_("Confidential"),
+		N_("Private")
+	};
+	static const char *FreeBusy[] = {
+		N_("Free"),
+		N_("Tentative"),
+		N_("Busy"),
+		N_("Out of Office")
+	};
 
-	os << "   Calendar ID: 0x" << setbase(16) << CalendarID << "\n";
-	os << "   All Day Event: " << (AllDayEvent ? "yes" : "no") << "\n";
-	os << "   Class: " << ClassTypes[ClassFlag] << "\n";
-	os << "   Free/Busy: " << FreeBusy[FreeBusyFlag] << "\n";
+	os << _("   Calendar ID: ")
+		<< "0x" << setbase(16) << CalendarID << "\n";
+	os << _("   All Day Event: ") << (AllDayEvent ? "yes" : "no") << "\n";
+	os << _("   Class: ") << ClassTypes[ClassFlag] << "\n";
+	os << _("   Free/Busy: ") << FreeBusy[FreeBusyFlag] << "\n";
 	if( TimeZoneValid )
-		os << "   Time Zone: " << GetStaticTimeZone(TimeZoneCode)->Name << "\n";
+		os << _("   Time Zone: ") << gettext(GetStaticTimeZone(TimeZoneCode)->Name) << "\n";
 }
 
 void Calendar::Dump(std::ostream &os) const
@@ -495,7 +506,7 @@ void Calendar::Dump(std::ostream &os) const
 // recurrence data is within range.  Then call that before using
 // the data, such as in Build and in Dump.
 
-	os << "Calendar entry: 0x" << setbase(16) << RecordId
+	os << _("Calendar entry: ") << "0x" << setbase(16) << RecordId
 		<< " (" << (unsigned int)RecType << ")\n";
 	DumpSpecialFields(os);
 
@@ -507,14 +518,14 @@ void Calendar::Dump(std::ostream &os) const
 		if( b->strMember ) {
 			const std::string &s = this->*(b->strMember);
 			if( s.size() )
-				os << "   " << b->name << ": " << s << "\n";
+				os << "   " << gettext(b->name) << ": " << s << "\n";
 		}
 		else if( b->timeMember ) {
 			TimeT t = this->*(b->timeMember);
 			if( t.Time > 0 )
-				os << "   " << b->name << ": " << t << "\n";
+				os << "   " << gettext(b->name) << ": " << t << "\n";
 			else
-				os << "   " << b->name << ": disabled\n";
+				os << "   " << gettext(b->name) << ": " << _("disabled") << "\n";
 		}
 		else if( b->addrMember ) {
 			const EmailAddressList &al = this->*(b->addrMember);
@@ -524,7 +535,7 @@ void Calendar::Dump(std::ostream &os) const
 				if( !lb->size() )
 					continue;
 
-				os << "   " << b->name << ": " << *lb << "\n";
+				os << "   " << gettext(b->name) << ": " << *lb << "\n";
 			}
 		}
 	}
@@ -584,10 +595,10 @@ const FieldHandle<CalendarAll>::ListT& CalendarAll::GetFieldHandles()
 	ALL_COMMON_CALENDAR_FIELDS
 
 	// Calendar:: field, but with a CalendarAll ID
-	FHD(CalendarID, "Calendar ID", CALALLFC_CALENDAR_ID, false);
+	FHD(CalendarID, _("Calendar ID"), CALALLFC_CALENDAR_ID, false);
 
 	// add the fields specific to CalendarAll
-	FHD(MailAccount, "Mail Account", CALALLFC_MAIL_ACCOUNT, true);
+	FHD(MailAccount, _("Mail Account"), CALALLFC_MAIL_ACCOUNT, true);
 
 	// and finally, the RecurBase fields
 	RECUR_BASE_FIELD_HANDLES
@@ -626,7 +637,7 @@ void CalendarAll::ParseHeader(const Data &data, size_t &offset)
 				CalendarID = btohll(field->u.uint64);
 			}
 			else {
-				throw Error("CalendarAll::ParseField: size data unknown in calendar field");
+				throw Error(_("CalendarAll::ParseField: size data unknown in calendar field"));
 			}
 			continue;
 
@@ -639,7 +650,7 @@ void CalendarAll::ParseHeader(const Data &data, size_t &offset)
 				RecordId = btohl(field->u.uint32);
 			}
 			else {
-				throw Error("CalendarAll::ParseHeader: size data unknown in calendar field");
+				throw Error(_("CalendarAll::ParseHeader: size data unknown in calendar field"));
 			}
 			continue;
 		}
@@ -659,7 +670,7 @@ void CalendarAll::DumpSpecialFields(std::ostream &os) const
 	ios_format_state state(os);
 
 	Calendar::DumpSpecialFields(os);
-	os << "   Mail Account: " << MailAccount << "\n";
+	os << _("   Mail Account: ") << MailAccount << "\n";
 }
 
 } // namespace Barry

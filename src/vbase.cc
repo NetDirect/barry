@@ -19,6 +19,7 @@
     root directory of this project for more details.
 */
 
+#include "i18n.h"
 #include "vbase.h"
 //#include "trace.h"
 #include "vformat.h"		// comes from opensync, but not a public header yet
@@ -43,11 +44,11 @@ std::string vTimeConverter::unix2vtime(const time_t *timestamp)
 	struct tm split;
 	if( !gmtime_r(timestamp, &split) ) {
 		ostringstream oss;
-		oss << "gmtime_r() failed on time_t of ";
+		oss << _("gmtime_r() failed on time_t of: ");
 		if( timestamp )
 			oss << *timestamp;
 		else
-			oss << "(null pointer)";
+			oss << _("(null pointer)");
 		throw Barry::ConvertError(oss.str());
 	}
 
@@ -251,7 +252,7 @@ vBase::vBase(b_VFormat *format)
 	: m_format(format)
 {
 	if( !format )
-		throw Barry::Error("Cannot construct vBase with null format");
+		throw Barry::Error(_("Cannot construct vBase with null format"));
 }
 
 vBase::~vBase()
@@ -265,7 +266,7 @@ vBase::~vBase()
 void vBase::SetFormat(b_VFormat *format)
 {
 	if( !format )
-		throw Barry::Error("Cannot set vBase with null format");
+		throw Barry::Error(_("Cannot set vBase with null format"));
 
 	if( m_format ) {
 		b_vformat_free(m_format);
@@ -290,7 +291,7 @@ vAttrPtr vBase::NewAttr(const char *name)
 
 	vAttrPtr attr(b_vformat_attribute_new(NULL, name));
 	if( !attr.Get() )
-		throw Barry::ConvertError("resource error allocating vformat attribute");
+		throw Barry::ConvertError(_("resource error allocating vformat attribute"));
 	return attr;
 }
 
@@ -311,7 +312,7 @@ some vCard values are positional (like name), so blank should be allowed...
 
 	vAttrPtr attr(b_vformat_attribute_new(NULL, name));
 	if( !attr.Get() )
-		throw ConvertError("resource error allocating vformat attribute");
+		throw ConvertError(_("resource error allocating vformat attribute"));
 
 	b_vformat_attribute_add_value(attr.Get(), value);
 	return attr;

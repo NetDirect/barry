@@ -21,6 +21,7 @@
 */
 
 #include "boostwrap.h"
+#include "i18n.h"
 
 using namespace std;
 using namespace Barry;
@@ -41,7 +42,7 @@ bool DoLoadBoostFile(const std::string &filename,
 		return true;
 	}
 	catch( boost::archive::archive_exception &ae ) {
-		errmsg = "Archive exception in DoLoadBoostFile(): ";
+		errmsg = _("Archive exception in DoLoadBoostFile(): ");
 		errmsg += ae.what();
 		return false;
 	}
@@ -60,7 +61,7 @@ bool DoSaveBoostFile(const std::string &filename,
 		return true;
 	}
 	catch( boost::archive::archive_exception &ae ) {
-		errmsg = "Archive exception in DoSaveBoostFile(): ";
+		errmsg = _("Archive exception in DoSaveBoostFile(): ");
 		errmsg += ae.what();
 		return false;
 	}

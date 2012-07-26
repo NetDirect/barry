@@ -20,6 +20,7 @@
     root directory of this project for more details.
 */
 
+#include "i18n.h"
 #include "m_ipmodem.h"
 #include "controller.h"
 #include "controllerpriv.h"
@@ -56,7 +57,7 @@ IpModem::~IpModem()
 	try {
 		Close();
 	} catch( std::exception &DEBUG_ONLY(e) ) {
-		dout("Exception caught in IpModem destructor, ignoring: "
+		dout(_("Exception caught in IpModem destructor, ignoring: ")
 			<< e.what());
 	}
 }
@@ -64,7 +65,7 @@ IpModem::~IpModem()
 bool IpModem::SendPassword( const char *password, uint32_t seed )
 {
 	if( !password || strlen(password) == 0  ) {
-		throw BadPassword("Logic error: No password provided in SendPassword.", 0, false);
+		throw BadPassword(_("Logic error: No password provided in SendPassword."), 0, false);
 	}
 
 	int read_ep  = m_con.GetProbeResult().m_epModem.read;
@@ -76,7 +77,7 @@ bool IpModem::SendPassword( const char *password, uint32_t seed )
 	Data data;
 
 	if( !password || strlen(password) == 0  ) {
-		throw BadPassword("No password provided.", 0, false);
+		throw BadPassword(_("No password provided."), 0, false);
 	}
 
 	// Build the password hash
@@ -145,7 +146,7 @@ bool IpModem::SendPassword( const char *password, uint32_t seed )
 		}
 		else {
 			ddout("IPModem: Invalid password.\n" << data);
-			throw BadPassword("Password rejected by device.", data.GetData()[8], false);
+			throw BadPassword(_("Password rejected by device."), data.GetData()[8], false);
 		}
 	}
 	// Unknown packet
@@ -194,7 +195,7 @@ void *IpModem::DataReadThread(void *userptr)
 			ddout("IPModem: Timeout in DataReadThread!");
 		}
 		catch( std::exception &e ) {
-			eout("Exception in IpModem::DataReadThread: " << e.what());
+			eout(_("Exception in IpModem::DataReadThread: ") << e.what());
 		}
 	}
 
@@ -216,7 +217,7 @@ void IpModem::Open(const char *password)
 	const Usb::EndpointPair &pair = m_con.GetProbeResult().m_epModem;
 	if( !pair.IsComplete() ) {
 		std::ostringstream oss;
-		oss << "IP Modem not supported by this device: "
+		oss << _("IP Modem not supported by this device: ")
 			<< "read: " << std::hex << (unsigned int) pair.read
 			<< " write: " << std::hex << (unsigned int) pair.write
 			<< " type: " << std::hex << (unsigned int) pair.type;
@@ -256,14 +257,14 @@ void IpModem::Open(const char *password)
 
 		// Check how many retries are left
 		if( data.GetData()[8] < BARRY_MIN_PASSWORD_TRIES ) {
-			throw BadPassword("Fewer than " BARRY_MIN_PASSWORD_TRIES_ASC " password tries remaining in device. Refusing to proceed, to avoid device zapping itself.  Use a Windows client, or re-cradle the device.",
+			throw BadPassword(string_vprintf(_("Fewer than %d password tries remaining in device. Refusing to proceed, to avoid device zapping itself.  Use a Windows client, or re-cradle the device."), BARRY_MIN_PASSWORD_TRIES),
 				data.GetData()[8],
 				true);
 		}
 		memcpy(&seed, data.GetData() + 4, sizeof(seed));
 		// Send password
 		if( !SendPassword(password, seed) ) {
-			throw Barry::Error("IpModem: Error sending password.");
+			throw Barry::Error(_("IpModem: Error sending password."));
 		}
 
 		// Re-send "start" packet
@@ -289,7 +290,7 @@ void IpModem::Open(const char *password)
 		case 0x02:	// password seed received
 			memcpy(&seed, data.GetData() + 4, sizeof(uint32_t));
 			if( !SendPassword( password, seed ) ) {
-				throw Barry::Error("IpModem: Error sending password.");
+				throw Barry::Error(_("IpModem: Error sending password."));
 			}
 			break;
 		case 0x04:	// command accepted
@@ -322,13 +323,13 @@ void IpModem::Open(const char *password)
 
 		case 0x02:	// password seed received
 			if( !password || strlen(password) == 0 ) {
-				throw BadPassword("This device requested a password.",
+				throw BadPassword(_("This device requested a password."),
 					data.GetSize() >= 9 ? data.GetData()[8] : 0, false);
 			}
 			else {	// added for the Storm 9000
 				memcpy(&seed, data.GetData() + 4, sizeof(seed));
 				if( !SendPassword( password, seed ) ) {
-					throw Barry::Error("IpModem: Error sending password.");
+					throw Barry::Error(_("IpModem: Error sending password."));
 				}
 			}
 			break;
@@ -336,7 +337,7 @@ void IpModem::Open(const char *password)
 			break;
 
 		case 0x07:	// device is password protected?
-			throw BadPassword("This device requires a password.", 0, false);
+			throw BadPassword(_("This device requires a password."), 0, false);
 
 		default: 	// ???
 			ddout("IPModem: Unknown AT command response.\n");
@@ -356,7 +357,7 @@ void IpModem::Open(const char *password)
 	int ret = pthread_create(&m_modem_read_thread, NULL, &IpModem::DataReadThread, this);
 	if( ret ) {
 		m_continue_reading = false;
-		throw Barry::ErrnoError("IpModem: Error creating USB read thread.", ret);
+		throw Barry::ErrnoError(_("IpModem: Error creating USB read thread."), ret);
 	}
 }
 

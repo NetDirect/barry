@@ -19,6 +19,7 @@
     root directory of this project for more details.
 */
 
+#include "i18n.h"
 #include "m_serial.h"
 #include "controller.h"
 #include "protostructs.h"
@@ -41,7 +42,7 @@ Serial::Serial(	Controller &con,
 	, m_callback_context(callback_context)
 {
 	if( !m_con.HasQueue() )
-		throw std::logic_error("A SocketRoutingQueue is required in the Controller class when using Mode::Serial.");
+		throw std::logic_error(_("A SocketRoutingQueue is required in the Controller class when using Mode::Serial."));
 }
 
 Serial::~Serial()
@@ -152,7 +153,7 @@ void Serial::Write(const Data &data, int timeout)
 		return;	// nothing to do
 
 	if( !m_data.get() )
-		throw std::logic_error("Must call Open() before Write() in Mode::Serial");
+		throw std::logic_error(_("Must call Open() before Write() in Mode::Serial"));
 
 	// filter data for PPP, and prepend 4 bytes
 	Data &filtered = m_filter.Write(data, 4);

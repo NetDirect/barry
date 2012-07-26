@@ -33,6 +33,7 @@
 #include "tempdir.h"
 #include "osconv40.h"
 #include <barry/vsmartptr.h>
+#include <barry/common.h>
 #include <iostream>
 #include <sstream>
 #include <fstream>

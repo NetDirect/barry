@@ -20,6 +20,8 @@
     root directory of this project for more details.
 */
 
+#include "i18n.h"
+
 #include "usbwrap_libusb.h"
 
 #include "debug.h"
@@ -223,10 +225,10 @@ Device::Device(const Usb::DeviceID& id, int timeout)
 {
 	dout("usb_open(" << std::dec << id.m_impl.get() << ")");
 	if( !id.m_impl.get() )
-		throw Error("invalid USB device ID");
+		throw Error(_("invalid USB device ID"));
 	m_handle->m_handle = usb_open(id.m_impl->m_dev);
 	if( !m_handle->m_handle )
-		throw Error("Failed to open USB device.  Please check your system's USB device permissions.");
+		throw Error(_("Failed to open USB device.  Please check your system's USB device permissions."));
 }
 
 Device::~Device()
@@ -270,10 +272,10 @@ bool Device::BulkRead(int ep, Barry::Data &data, int timeout)
 		if( ret < 0 && ret != -EINTR && ret != -EAGAIN ) {
 			m_lasterror = ret;
 			if( ret == -ETIMEDOUT )
-				throw Timeout(ret, "Timeout in usb_bulk_read");
+				throw Timeout(ret, _("Timeout in usb_bulk_read"));
 			else {
 				std::ostringstream oss;
-				oss << "Error in usb_bulk_read("
+				oss << _("Error in usb_bulk_read(")
 				    << m_handle->m_handle << ", "
 				    << ep << ", buf, "
 				    << data.GetBufSize() << ")";
@@ -298,9 +300,9 @@ bool Device::BulkWrite(int ep, const Barry::Data &data, int timeout)
 		if( ret < 0 && ret != -EINTR && ret != -EAGAIN ) {
 			m_lasterror = ret;
 			if( ret == -ETIMEDOUT )
-				throw Timeout(ret, "Timeout in usb_bulk_write (1)");
+				throw Timeout(ret, _("Timeout in usb_bulk_write (1)"));
 			else
-				throw Error(ret, "Error in usb_bulk_write (1)");
+				throw Error(ret, _("Error in usb_bulk_write (1)"));
 		}
 	} while( ret == -EINTR || ret == -EAGAIN );
 
@@ -322,9 +324,9 @@ bool Device::BulkWrite(int ep, const void *data, size_t size, int timeout)
 		if( ret < 0 && ret != -EINTR && ret != -EAGAIN ) {
 			m_lasterror = ret;
 			if( ret == -ETIMEDOUT )
-				throw Timeout(ret, "Timeout in usb_bulk_write (2)");
+				throw Timeout(ret, _("Timeout in usb_bulk_write (2)"));
 			else
-				throw Error(ret, "Error in usb_bulk_write (2)");
+				throw Error(ret, _("Error in usb_bulk_write (2)"));
 		}
 	} while( ret == -EINTR || ret == -EAGAIN );
 
@@ -342,9 +344,9 @@ bool Device::InterruptRead(int ep, Barry::Data &data, int timeout)
 		if( ret < 0 && ret != -EINTR && ret != -EAGAIN ) {
 			m_lasterror = ret;
 			if( ret == -ETIMEDOUT )
-				throw Timeout(ret, "Timeout in usb_interrupt_read");
+				throw Timeout(ret, _("Timeout in usb_interrupt_read"));
 			else
-				throw Error(ret, "Error in usb_interrupt_read");
+				throw Error(ret, _("Error in usb_interrupt_read"));
 		}
 		else if( ret > 0 )
 			data.ReleaseBuffer(ret);
@@ -365,9 +367,9 @@ bool Device::InterruptWrite(int ep, const Barry::Data &data, int timeout)
 		if( ret < 0 && ret != -EINTR && ret != -EAGAIN ) {
 			m_lasterror = ret;
 			if( ret == -ETIMEDOUT )
-				throw Timeout(ret, "Timeout in usb_interrupt_write");
+				throw Timeout(ret, _("Timeout in usb_interrupt_write"));
 			else
-				throw Error(ret, "Error in usb_interrupt_write");
+				throw Error(ret, _("Error in usb_interrupt_write"));
 		}
 	} while( ret == -EINTR || ret == -EAGAIN );
 
@@ -489,7 +491,7 @@ Interface::Interface(Device &dev, int iface)
 	dout("usb_claim_interface(" << dev.GetHandle()->m_handle << ", 0x" << std::hex << iface << ")");
 	int ret = usb_claim_interface(dev.GetHandle()->m_handle, iface);
 	if( ret < 0 )
-		throw Error(ret, "claim interface failed");
+		throw Error(ret, _("claim interface failed"));
 }
 
 Interface::~Interface()

@@ -33,18 +33,18 @@ void Usage()
    int logical, major, minor;
    const char *Version = Barry::Version(logical, major, minor);
 
-   cerr
-   << "bidentify - USB Blackberry Identifier Tool\n"
-   << "            Copyright 2005-2012, Net Direct Inc. (http://www.netdirect.ca/)\n"
-   << "            Using: " << Version << "\n"
-   << "\n"
-   << "   -B bus    Specify which USB bus to search on\n"
-   << "   -N dev    Specify which system device, using system specific string\n"
-   << "\n"
-   << "   -c        If used with -m, show both hex and dec where possible\n"
-   << "   -m        Also show the device's ESN / MEID / IMEI\n"
-   << "   -h        This help\n"
-   << "   -v        Dump protocol data during operation\n"
+   cerr << string_vprintf(
+   _("bidentify - USB Blackberry Identifier Tool\n"
+   "            Copyright 2005-2012, Net Direct Inc. (http://www.netdirect.ca/)\n"
+   "            Using: %s\n"
+   "\n"
+   "   -B bus    Specify which USB bus to search on\n"
+   "   -N dev    Specify which system device, using system specific string\n"
+   "\n"
+   "   -c        If used with -m, show both hex and dec where possible\n"
+   "   -m        Also show the device's ESN / MEID / IMEI\n"
+   "   -h        This help\n"
+   "   -v        Dump protocol data during operation\n"), Version)
    << endl;
 }
 
@@ -153,7 +153,7 @@ int main(int argc, char *argv[])
 			catch( Barry::Error &e ) {
 				// output on cerr so as not to mess up
 				// the identify output
-				cerr << "Error on PIN: " << pr.m_pin.Str() << ": " << e.what() << endl;
+				cerr << _("Error on PIN: ") << pr.m_pin.Str() << ": " << e.what() << endl;
 			}
 
 			// finish the identity line
@@ -164,7 +164,7 @@ int main(int argc, char *argv[])
 
 	}
 	catch( std::exception &e ) {
-		cerr << "exception caught: " << e.what() << endl;
+		cerr << _("exception caught: ") << e.what() << endl;
 		return 1;
 	}
 }

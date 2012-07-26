@@ -19,6 +19,7 @@
     root directory of this project for more details.
 */
 
+#include "i18n.h"
 #include "data.h"
 #include <fstream>
 #include <sstream>
@@ -289,11 +290,11 @@ size_t Data::GetBufSize() const
 void Data::ReleaseBuffer(int datasize)
 {
 	if( datasize < 0 && datasize != -1)
-		throw std::logic_error("Data::ReleaseBuffer() argument must be -1 or >= 0");
+		throw std::logic_error(_("Data::ReleaseBuffer() argument must be -1 or >= 0"));
 	if( m_external )
-		throw std::logic_error("Data::ReleaseBuffer() must be called after GetBuffer()");
+		throw std::logic_error(_("Data::ReleaseBuffer() must be called after GetBuffer()"));
 	if( !(datasize == -1 || (unsigned int)datasize <= GetBufSize()) )
-		throw std::logic_error("Data::ReleaseBuffer() must be called with a size smaller than the original buffer requested");
+		throw std::logic_error(_("Data::ReleaseBuffer() must be called with a size smaller than the original buffer requested"));
 
 	if( datasize >= 0 ) {
 		m_dataSize = datasize;
@@ -485,7 +486,7 @@ void Diff::Dump(std::ostream &os) const
 	ios_format_state state(os);
 
 	if( m_old.GetSize() != m_new.GetSize() )
-		os << "sizes differ: "
+		os << _("sizes differ: ")
 		   << m_old.GetSize() << " != " << m_new.GetSize() << endl;
 
 	size_t max = std::max(m_old.GetSize(), m_new.GetSize());

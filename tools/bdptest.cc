@@ -57,7 +57,7 @@ int main(int argc, char *argv[], char *envp[])
 
 	JDG::SearchDebugFile(list);
 
-	cout << "List of debug files " << endl;
+	cout << _("List of debug files: ") << endl;
 	cout << list << endl;
 
 

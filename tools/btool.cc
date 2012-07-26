@@ -69,80 +69,89 @@ void Usage()
    int logical, major, minor;
    const char *Version = Barry::Version(logical, major, minor);
 
-   cerr
-   << "btool - Command line USB Blackberry Test Tool\n"
-   << "        Copyright 2005-2012, Net Direct Inc. (http://www.netdirect.ca/)\n"
-   << "        Using: " << Version << "\n"
-   << "        Compiled "
 #ifdef __BTOOL_BOOST_MODE__
-   << "with"
+   string boost_mode = _("Compiled with Boost support");
+   string boost_opt = _("   -f file   Filename to save or load handheld data to/from");
 #else
-   << "without"
+   string boost_mode = _("Compiled without Boost support");
+   string boost_opt;
 #endif
-   << " Boost support\n"
-   << "\n"
-   << "   -b file   Filename to save or load a Barry Backup to (tar.gz)\n"
-   << "   -B bus    Specify which USB bus to search on\n"
-   << "   -N dev    Specify which system device, using system specific string\n"
-   << "\n"
-   << "   -a db     Erase / clear database 'db' FROM device, deleting all\n"
-   << "             its records.  Can be used multiple times to clear more\n"
-   << "             than one DB.\n"
-   << "   -c dn     Convert address book database to LDIF format, using the\n"
-   << "             specified baseDN\n"
-   << "   -C dnattr LDIF attribute name to use when building the FQDN\n"
-   << "             Defaults to 'cn'\n"
-   << "   -d db     Load database 'db' FROM device and dump to screen\n"
-   << "             Can be used multiple times to fetch more than one DB\n"
-   << "   -e epp    Override endpoint pair detection.  'epp' is a single\n"
-   << "             string separated by a comma, holding the read,write\n"
-   << "             endpoint pair.  Example: -e 83,5\n"
-   << "             Note: Endpoints are specified in hex.\n"
-   << "             You should never need to use this option.\n"
-#ifdef __BTOOL_BOOST_MODE__
-   << "   -f file   Filename to save or load handheld data to/from\n"
-#endif
-   << "   -F sort   Field name by which to sort the output.  Note that the\n"
-   << "             format of this field is special: 'DBName:field1,field2'\n"
-   << "             with no spaces unless the spaces are part of the name.\n"
-   << "             Can be used multiple times, to match your -d options.\n"
-   << "             Example: -F 'Address Book:Company,LastName,FirstName'\n"
-   << "   -h        This help\n"
-   << "   -i cs     International charset for string conversions\n"
-   << "             Valid values here are available with 'iconv --list'\n"
-   << "   -I        Sort records before output\n"
-   << "   -l        List devices\n"
-   << "   -L        List Contact field names\n"
-   << "   -m        Map LDIF name to Contact field / Unmap LDIF name\n"
-   << "                Map: ldif,read,write - maps ldif to read/write Contact fields\n"
-   << "                Unmap: ldif name alone\n"
-   << "   -M        List current LDIF mapping\n"
-   << "   -n        Use null parser on all databases.\n"
-   << "   -p pin    PIN of device to talk with\n"
-   << "             If only one device is plugged in, this flag is optional\n"
-   << "   -P pass   Simplistic method to specify device password\n"
-   << "   -s db     Save database 'db' TO device from data loaded from -f file\n"
-   << "   -S        Show list of supported database parsers.  Use twice to\n"
-   << "             display fields names as well.\n"
-   << "   -t        Show database database table\n"
-   << "   -T db     Show record state table for given database\n"
-   << "   -v        Dump protocol data during operation\n"
+
 #ifdef __BARRY_SYNC_MODE__
-   << "   -V        Dump records using MIME vformats where possible\n"
+   string sync_mode = _("   -V        Dump records using MIME vformats where possible");
+#else
+   string sync_mode;
 #endif
-   << "   -X        Reset device\n"
-   << "   -z        Use non-threaded sockets\n"
-   << "   -Z        Use threaded socket router (default)\n"
-   << "\n"
-   << " -d Command modifiers:   (can be used multiple times for more than 1 record)\n"
-   << "\n"
-   << "   -r #      Record index number as seen in the -T state table.\n"
-   << "             This overrides the default -d behaviour, and only\n"
-   << "             downloads the one specified record, sending to stdout.\n"
-   << "   -R #      Same as -r, but also clears the record's dirty flags.\n"
-   << "   -D #      Record index number as seen in the -T state table,\n"
-   << "             which indicates the record to delete.  Used with the -d\n"
-   << "             command to specify the database.\n"
+
+   cerr << string_vprintf(
+   _("btool - Command line USB Blackberry Test Tool\n"
+   "        Copyright 2005-2012, Net Direct Inc. (http://www.netdirect.ca/)\n"
+   "        Using: %s\n"
+   "        %s\n"
+   "\n"
+   "   -b file   Filename to save or load a Barry Backup to (tar.gz)\n"
+   "   -B bus    Specify which USB bus to search on\n"
+   "   -N dev    Specify which system device, using system specific string\n"
+   "\n"
+   "   -a db     Erase / clear database 'db' FROM device, deleting all\n"
+   "             its records.  Can be used multiple times to clear more\n"
+   "             than one DB.\n"
+   "   -c dn     Convert address book database to LDIF format, using the\n"
+   "             specified baseDN\n"
+   "   -C dnattr LDIF attribute name to use when building the FQDN\n"
+   "             Defaults to 'cn'\n"
+   "   -d db     Load database 'db' FROM device and dump to screen\n"
+   "             Can be used multiple times to fetch more than one DB\n"
+   "   -e epp    Override endpoint pair detection.  'epp' is a single\n"
+   "             string separated by a comma, holding the read,write\n"
+   "             endpoint pair.  Example: -e 83,5\n"
+   "             Note: Endpoints are specified in hex.\n"
+   "             You should never need to use this option.\n"
+   "%s\n"
+   "   -F sort   Field name by which to sort the output.  Note that the\n"
+   "             format of this field is special: 'DBName:field1,field2'\n"
+   "             with no spaces unless the spaces are part of the name.\n"
+   "             Can be used multiple times, to match your -d options.\n"
+   "             Example: -F 'Address Book:Company,LastName,FirstName'\n"
+   "   -h        This help\n"
+   "   -i cs     International charset for string conversions\n"
+   "             Valid values here are available with 'iconv --list'\n"
+   "   -I        Sort records before output\n"
+   "   -l        List devices\n"
+   "   -L        List Contact field names\n"
+   "   -m        Map LDIF name to Contact field / Unmap LDIF name\n"
+   "                Map: ldif,read,write - maps ldif to read/write Contact fields\n"
+   "                Unmap: ldif name alone\n"
+   "   -M        List current LDIF mapping\n"
+   "   -n        Use null parser on all databases.\n"
+   "   -p pin    PIN of device to talk with\n"
+   "             If only one device is plugged in, this flag is optional\n"
+   "   -P pass   Simplistic method to specify device password\n"
+   "   -s db     Save database 'db' TO device from data loaded from -f file\n"
+   "   -S        Show list of supported database parsers.  Use twice to\n"
+   "             display fields names as well.\n"
+   "   -t        Show database database table\n"
+   "   -T db     Show record state table for given database\n"
+   "   -v        Dump protocol data during operation\n"
+   "%s\n"
+   "   -X        Reset device\n"
+   "   -z        Use non-threaded sockets\n"
+   "   -Z        Use threaded socket router (default)\n"
+   "\n"
+   " -d Command modifiers:   (can be used multiple times for more than 1 record)\n"
+   "\n"
+   "   -r #      Record index number as seen in the -T state table.\n"
+   "             This overrides the default -d behaviour, and only\n"
+   "             downloads the one specified record, sending to stdout.\n"
+   "   -R #      Same as -r, but also clears the record's dirty flags.\n"
+   "   -D #      Record index number as seen in the -T state table,\n"
+   "             which indicates the record to delete.  Used with the -d\n"
+   "             command to specify the database.\n"),
+	Version,
+	boost_mode.c_str(),
+	boost_opt.c_str(),
+	sync_mode.c_str()
+	)
    << endl;
 }
 
@@ -184,13 +193,13 @@ struct Store
 #ifdef __BTOOL_BOOST_MODE__
 		if( load && filename.size() ) {
 			// filename is available, attempt to load
-			cout << "Loading: " << filename << endl;
+			cout << _("Loading: ") << filename << endl;
 			string errmsg, dbName;
 			if( !LoadBoostFile(filename, records, dbName, errmsg) ) {
 				cerr << errmsg << endl;
 			}
 			cout << records.size()
-			     << " records loaded from '"
+			     << _(" records loaded from '")
 			     << filename << "'" << endl;
 			sort(records.begin(), records.end());
 			rec_it = records.begin();
@@ -218,16 +227,16 @@ struct Store
 			DumpAll();
 		}
 
-		cout << "Store counted " << dec << from_device_count << " records read from device, and " << dec << to_device_count << " records written to device." << endl;
+		cout << string_vprintf(_("Store counted %d records read from device, and %d records written to device."), from_device_count, to_device_count) << endl;
 #ifdef __BTOOL_BOOST_MODE__
 		if( !load && filename.size() ) {
 			// filename is available, attempt to save
-			cout << "Saving: " << filename << endl;
+			cout << _("Saving: ") << filename << endl;
 			string errmsg;
 			if( !SaveBoostFile(filename, records, errmsg) ) {
 				cerr << errmsg << endl;
 			}
-			cout << dec << records.size() << " records saved to '"
+			cout << dec << records.size() << _(" records saved to '")
 				<< filename << "'" << endl;
 		}
 #endif
@@ -425,7 +434,7 @@ shared_ptr<Builder> GetBuilder(const string &name, const string &filename)
 	}
 */
 	else {
-		throw std::runtime_error("No Builder available for database");
+		throw std::runtime_error(_("No Builder available for database"));
 	}
 }
 
@@ -465,21 +474,21 @@ void DoMapping(ContactLdif &ldif, const vector<string> &mapCommands)
 		// single names mean unmapping
 		if( i->find(',') == string::npos ) {
 			// unmap
-			cerr << "Unmapping: " << *i << endl;
+			cerr << _("Unmapping: ") << *i << endl;
 			ldif.Unmap(*i);
 		}
 		else {
-			cerr << "Mapping: " << *i << endl;
+			cerr << _("Mapping: ") << *i << endl;
 
 			// map... extract ldif/read/write names
 			string ldifname, read, write;
 			if( SplitMap(*i, ldifname, read, write) ) {
 				if( !ldif.Map(ldifname, read, write) ) {
-					cerr << "Read/Write name unknown: " << *i << endl;
+					cerr << _("Read/Write name unknown: ") << *i << endl;
 				}
 			}
 			else {
-				cerr << "Invalid map format: " << *i << endl;
+				cerr << _("Invalid map format: ") << *i << endl;
 			}
 		}
 	}
@@ -570,8 +579,7 @@ int main(int argc, char *argv[])
 					return 1;
 				}
 #else
-				cerr << "-b option not supported - no Barry "
-					"Backup library support available\n";
+				cerr << _("-b option not supported - no Barry Backup library support available\n");
 				return 1;
 #endif
 				break;
@@ -616,8 +624,7 @@ int main(int argc, char *argv[])
 					return 1;
 				}
 #else
-				cerr << "-f option not supported - no Boost "
-					"serialization support available\n";
+				cerr << _("-f option not supported - no Boost serialization support available\n");
 				return 1;
 #endif
 				break;
@@ -704,8 +711,7 @@ int main(int argc, char *argv[])
 #ifdef __BARRY_SYNC_MODE__
 				vformat_mode = true;
 #else
-				cerr << "-V option not supported - no Sync "
-					"library support available\n";
+				cerr << _("-V option not supported - no Sync library support available\n");
 				return 1;
 #endif
 				break;
@@ -755,7 +761,7 @@ int main(int argc, char *argv[])
 		DoMapping(ldif, mapCommands);
 		if( ldifDnAttr.size() ) {
 			if( !ldif.SetDNAttr(ldifDnAttr) ) {
-				cerr << "Unable to set DN Attr: " << ldifDnAttr << endl;
+				cerr << _("Unable to set DN Attr: ") << ldifDnAttr << endl;
 			}
 		}
 
@@ -770,7 +776,7 @@ int main(int argc, char *argv[])
 		if( probe.GetFailCount() ) {
 			if( ldif_contacts )
 				cout << "# ";
-			cout << "Blackberry device errors with errors during probe:" << endl;
+			cout << _("Blackberry device errors with errors during probe:") << endl;
 			for( int i = 0; i < probe.GetFailCount(); i++ ) {
 				if( ldif_contacts )
 					cout << "# ";
@@ -781,7 +787,7 @@ int main(int argc, char *argv[])
 		// show all successfully found devices
 		if( ldif_contacts )
 			cout << "# ";
-		cout << "Blackberry devices found:" << endl;
+		cout << _("Blackberry devices found:") << endl;
 		for( int i = 0; i < probe.GetCount(); i++ ) {
 			if( ldif_contacts )
 				cout << "# ";
@@ -803,20 +809,20 @@ int main(int argc, char *argv[])
 				if( probe.GetCount() == 1 )
 					activeDevice = 0;
 				else {
-					cerr << "No device selected" << endl;
+					cerr << _("No device selected") << endl;
 					return 1;
 				}
 			}
 			else {
-				cerr << "PIN " << setbase(16) << pin
-					<< " not found" << endl;
+				cerr << _("PIN not found: ")
+					<< setbase(16) << pin << endl;
 				return 1;
 			}
 		}
 
 		if( ldif_contacts )
 			cout << "# ";
-		cout << "Using device (PIN): "
+		cout << _("Using device (PIN): ")
 			<< probe.Get(activeDevice).m_pin.Str() << endl;
 
 		if( reset_device ) {
@@ -832,7 +838,7 @@ int main(int argc, char *argv[])
 			device.m_ep.write = epOverride.write;
 			// FIXME - override this too?
 			device.m_ep.type = Usb::EndpointDescriptor::BulkType;
-			cout << "Endpoint pair (read,write) overridden with: "
+			cout << _("Endpoint pair (read,write) overridden with: ")
 			     << hex
 			     << (unsigned int) device.m_ep.read << ","
 			     << (unsigned int) device.m_ep.write << endl;
@@ -913,7 +919,7 @@ int main(int argc, char *argv[])
 		// Dump record state table to stdout
 		if( record_state_table ) {
 			if( dbNames.size() == 0 ) {
-				cout << "No db names to process" << endl;
+				cout << _("No db names to process") << endl;
 				return 1;
 			}
 
@@ -922,7 +928,7 @@ int main(int argc, char *argv[])
 				unsigned int id = desktop.GetDBID(*b);
 				RecordStateTable state;
 				desktop.GetRecordStateTable(id, state);
-				cout << "Record state table for: " << *b << endl;
+				cout << _("Record state table for: ") << *b << endl;
 				cout << state;
 			}
 			return 0;
@@ -931,7 +937,7 @@ int main(int argc, char *argv[])
 		// Get Record mode overrides the default name mode
 		if( stCommands.size() ) {
 			if( dbNames.size() != 1 ) {
-				cout << "Must have 1 db name to process" << endl;
+				cout << _("Must have 1 db name to process") << endl;
 				return 1;
 			}
 
@@ -943,7 +949,7 @@ int main(int argc, char *argv[])
 				desktop.GetRecord(id, stCommands[i].index, *parse.get());
 
 				if( stCommands[i].flag == 'r' && stCommands[i].clear ) {
-					cout << "Clearing record's dirty flags..." << endl;
+					cout << _("Clearing record's dirty flags...") << endl;
 					desktop.ClearDirty(id, stCommands[i].index);
 				}
 
@@ -973,7 +979,7 @@ int main(int argc, char *argv[])
 		// Clear databases
 		if( clear_database ) {
 			if( clearDbNames.size() == 0 ) {
-				cout << "No db names to erase" << endl;
+				cout << _("No db names to erase") << endl;
 				return 1;
 			}
 
@@ -981,7 +987,7 @@ int main(int argc, char *argv[])
 
 			for( ; b != clearDbNames.end(); b++ ) {
 				unsigned int id = desktop.GetDBID(*b);
-				cout << "Deleting all records from " << (*b) << "..." << endl;
+				cout << _("Deleting all records from ") << (*b) << "..." << endl;
 				desktop.ClearDatabase(id);
 			}
 
@@ -1003,15 +1009,15 @@ int main(int argc, char *argv[])
 
 	}
 	catch( Usb::Error &ue ) {
-		std::cerr << "Usb::Error caught: " << ue.what() << endl;
+		std::cerr << _("Usb::Error caught: ") << ue.what() << endl;
 		return 1;
 	}
 	catch( Barry::Error &se ) {
-		std::cerr << "Barry::Error caught: " << se.what() << endl;
+		std::cerr << _("Barry::Error caught: ") << se.what() << endl;
 		return 1;
 	}
 	catch( std::exception &e ) {
-		std::cerr << "std::exception caught: " << e.what() << endl;
+		std::cerr << _("std::exception caught: ") << e.what() << endl;
 		return 1;
 	}
 

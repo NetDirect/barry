@@ -19,6 +19,7 @@
     root directory of this project for more details.
 */
 
+#include "i18n.h"
 #include "j_server.h"
 #include "protocol.h"
 #include "data.h"
@@ -87,19 +88,19 @@ static const char* h_strerror(int code)
 	switch( code )
 	{
 	case HOST_NOT_FOUND:
-		return "HOST_NOT_FOUND: The specified host is unknown";
+		return _("HOST_NOT_FOUND: The specified host is unknown");
 
 	case NO_ADDRESS:
-		return "NO_ADDRESS: The requested name is valid but does not have an IP address";
+		return _("NO_ADDRESS: The requested name is valid but does not have an IP address");
 
 	case NO_RECOVERY:
-		return "NO_RECOVERY: A non-recoverable name server error occurred";
+		return _("NO_RECOVERY: A non-recoverable name server error occurred");
 
 	case TRY_AGAIN:
-		return "TRY_AGAIN: A temporary error occurred on an authoritative name server. Try again later.";
+		return _("TRY_AGAIN: A temporary error occurred on an authoritative name server. Try again later.");
 
 	default:
-		return "Unknown network error code";
+		return _("Unknown network error code");
 	}
 }
 
@@ -138,7 +139,7 @@ bool JDWServer::Start()
 	sockfd = socket(sad.sin_family, SOCK_STREAM, 0);
 
 	if (sockfd < 0) {
-		throw Barry::ErrnoError("JDWServer::Start: Cannot open socket.", errno);
+		throw Barry::ErrnoError(_("JDWServer::Start: Cannot open socket."), errno);
 	}
 
 	// Bind
@@ -150,7 +151,7 @@ bool JDWServer::Start()
 		close(sockfd);
 		sockfd = -1;
 
-		throw Barry::ErrnoError("JDWServer::Start: Cannot bind socket", code);
+		throw Barry::ErrnoError(_("JDWServer::Start: Cannot bind socket"), code);
 	}
 
 	// Listen
@@ -160,7 +161,7 @@ bool JDWServer::Start()
 		close(sockfd);
 		sockfd = -1;
 
-		throw Barry::ErrnoError("JDWServer::Start: Cannot listen on socket", code);
+		throw Barry::ErrnoError(_("JDWServer::Start: Cannot listen on socket"), code);
 	}
 
 	handler.reset(new Thread(sockfd, acceptThread, (void*) this));
@@ -233,7 +234,7 @@ bool JDWServer::AttachToDevice()
 			appList[entry.UniqueID].Load(codInfo);
 		}
 		else {
-			dout("No debug information found for '" << entry.Name);
+			dout(_("No debug information found for: ") << entry.Name);
 			dout("' (" << hex << setfill('0') << setw(8) << entry.UniqueID << ")." << endl)
 		}
 	}
@@ -317,7 +318,7 @@ void JDWServer::Run(volatile bool &stopflag)
 						rpack = (const Barry::Protocol::JDWP::Packet *) command.GetData();
 
 						if (command.GetSize() != be_btohl(rpack->length)) {
-							dout("Packet size error !!!" << endl);
+							dout(_("Packet size error !!!") << endl);
 
 							// TODO : add throw exception
 
@@ -346,7 +347,7 @@ void JDWServer::Run(volatile bool &stopflag)
 				rpack = (const Barry::Protocol::JDWP::Packet *) command.GetData();
 
 				if (command.GetSize() != be_btohl(rpack->length)) {
-					dout("Packet size error !!!" << endl);
+					dout(_("Packet size error !!!") << endl);
 
 					// TODO : add throw exception
 
@@ -487,7 +488,7 @@ void JDWServer::CommandsetProcess(Data &cmd)
 
 		default:
 			// TODO : add exception (or alert)
-			dout("Commandset unknown !!!" << endl);
+			dout(_("Commandset unknown !!!") << endl);
 	}
 }
 

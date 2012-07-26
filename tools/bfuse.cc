@@ -67,21 +67,21 @@ void Blurb()
    int logical, major, minor;
    const char *Version = Barry::Version(logical, major, minor);
 
-   cerr
-   << "bfuse - FUSE filesystem for Blackberry databases\n"
-   << "        Copyright 2008-2012, Net Direct Inc. (http://www.netdirect.ca/)\n"
-   << "        Using: " << Version << "\n"
+   cerr << string_vprintf(
+   _("bfuse - FUSE filesystem for Blackberry databases\n"
+   "        Copyright 2008-2012, Net Direct Inc. (http://www.netdirect.ca/)\n"
+   "        Using: %s\n"), Version)
    << endl;
 }
 
 void Usage()
 {
-   cerr
-   << "\n"
-   << "Barry specific options:\n"
-   << "   -p pin    PIN of device to talk with\n"
-   << "             If only one device is plugged in, this flag is optional\n"
-   << "   -P pass   Simplistic method to specify device password\n"
+   cerr <<
+   _("\n"
+   "Barry specific options:\n"
+   "   -p pin    PIN of device to talk with\n"
+   "             If only one device is plugged in, this flag is optional\n"
+   "   -P pass   Simplistic method to specify device password\n")
    << endl;
 /*
    << "   -d db     Specify which database to mount.  If no -d options exist\n"
@@ -125,7 +125,7 @@ public:
 				 const Barry::IConverter *ic)
 	{
 		m_id = data.GetUniqueId();
-		m_os << "Raw record dump for record: "
+		m_os << _("Raw record dump for record: ")
 			<< std::hex << m_id << std::endl;
 		m_os << data.GetData() << std::endl;
 	}
@@ -431,7 +431,7 @@ public:
 		string constructed = string("/") + ps.Pin() + "/" + ps.DB();
 		if( constructed != m_name ) {
 			// FIXME - this is shoddy error handling
-			throw std::logic_error("Constructed != name");
+			throw std::logic_error(_("Constructed != name"));
 		}
 
 		string data = GetRecordData(ps.Record());
@@ -449,7 +449,7 @@ public:
 		string constructed = string("/") + ps.Pin() + "/" + ps.DB();
 		if( constructed != m_name ) {
 			// FIXME - this is shoddy error handling
-			throw std::logic_error("Constructed != name");
+			throw std::logic_error(_("Constructed != name"));
 		}
 
 		string data = GetRecordData(ps.Record());
@@ -568,7 +568,7 @@ public:
 		g_dirmap["/"] = this;
 		g_filemap[string("/") + error_log_filename] = this;
 
-		m_error_log = "Hello FUSE world.  This is Barry.  Pleased to meet you.\n";
+		m_error_log = _("Hello FUSE world.  This is Barry.  Pleased to meet you.\n");
 	}
 
 	~Context()

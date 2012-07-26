@@ -19,6 +19,7 @@
     root directory of this project for more details.
 */
 
+#include "i18n.h"
 #include "j_jdwp.h"
 #include "data.h"
 #include <sstream>
@@ -90,9 +91,9 @@ bool JDWP::Read(int socket, Barry::Data &data, int timeout)
 			if (ret != -EINTR && ret != -EAGAIN ) {
 				m_lasterror = ret;
 				if( ret == -ETIMEDOUT )
-					throw Timeout(ret, "Timeout in read");
+					throw Timeout(ret, _("Timeout in read"));
 				else
-					throw Error(ret, "Error in read");
+					throw Error(ret, _("Error in read"));
 			}
 		}
 		else
@@ -113,9 +114,9 @@ bool JDWP::Write(int socket, const Barry::Data &data, int timeout)
 		if( ret < 0 && ret != -EINTR && ret != -EAGAIN ) {
 			m_lasterror = ret;
 			if( ret == -ETIMEDOUT )
-				throw Timeout(ret, "Timeout in write (1)");
+				throw Timeout(ret, _("Timeout in write (1)"));
 			else
-				throw Error(ret, "Error in write (1)");
+				throw Error(ret, _("Error in write (1)"));
 		}
 	} while( ret == -EINTR || ret == -EAGAIN );
 
@@ -133,9 +134,9 @@ bool JDWP::Write(int socket, const void *data, size_t size, int timeout)
 		if( ret < 0 && ret != -EINTR && ret != -EAGAIN ) {
 			m_lasterror = ret;
 			if( ret == -ETIMEDOUT )
-				throw Timeout(ret, "Timeout in write (2)");
+				throw Timeout(ret, _("Timeout in write (2)"));
 			else
-				throw Error(ret, "Error in write (2)");
+				throw Error(ret, _("Error in write (2)"));
 		}
 	} while( ret == -EINTR || ret == -EAGAIN );
 

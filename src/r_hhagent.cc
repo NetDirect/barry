@@ -19,6 +19,7 @@
     root directory of this project for more details.
 */
 
+#include "i18n.h"
 #include "r_hhagent.h"
 #include "record-internal.h"
 #include "protostructs.h"
@@ -61,50 +62,50 @@ namespace Barry {
 
 // These fields are only valid for RecordId 0x3000000
 static FieldLink<HandheldAgent> HandheldAgentFieldLinks_3000000[] = {
-   { HHAFC3_MODEL,     "Model",      0, 0, &HandheldAgent::Model, 0, 0, 0, 0, true },
-   { HHAFC3_NETWORK,   "Network",    0, 0, &HandheldAgent::Network, 0, 0, 0, 0, true },
-   { HHAFC3_BANDS,     "Bands",      0, 0, &HandheldAgent::Bands, 0, 0, 0, 0, true },
-   { HHAFC3_MEID,      "MEID/ESN",   0, 0, &HandheldAgent::MEID, 0, 0, 0, 0, true },
-   { HHAFC3_PIN,       "PIN",        0, 0, &HandheldAgent::Pin, 0, 0, 0, 0, true },
-   { HHAFC3_VERSION,   "Version",0, 0, &HandheldAgent::Version, 0, 0, 0, 0, true },
-   { HHAFC_END,        "End of List",0, 0, 0, 0, 0, 0, 0, false }
+   { HHAFC3_MODEL,     N_("Model"),      0, 0, &HandheldAgent::Model, 0, 0, 0, 0, true },
+   { HHAFC3_NETWORK,   N_("Network"),    0, 0, &HandheldAgent::Network, 0, 0, 0, 0, true },
+   { HHAFC3_BANDS,     N_("Bands"),      0, 0, &HandheldAgent::Bands, 0, 0, 0, 0, true },
+   { HHAFC3_MEID,      N_("MEID/ESN"),   0, 0, &HandheldAgent::MEID, 0, 0, 0, 0, true },
+   { HHAFC3_PIN,       N_("PIN"),        0, 0, &HandheldAgent::Pin, 0, 0, 0, 0, true },
+   { HHAFC3_VERSION,   N_("Version"),0, 0, &HandheldAgent::Version, 0, 0, 0, 0, true },
+   { HHAFC_END,        N_("End of List"),0, 0, 0, 0, 0, 0, 0, false }
 };
 
 // These fields are only for RecordId 0x4000000
 static FieldLink<HandheldAgent> HandheldAgentFieldLinks_4000000[] = {
-   { HHAFC_END,        "End of List",0, 0, 0, 0, 0, 0, 0, false }
+   { HHAFC_END,        N_("End of List"),0, 0, 0, 0, 0, 0, 0, false }
 };
 
 // These fields are only for RecordId 0x5000000
 static FieldLink<HandheldAgent> HandheldAgentFieldLinks_5000000[] = {
-   { HHAFC_END,        "End of List",0, 0, 0, 0, 0, 0, 0, false }
+   { HHAFC_END,        N_("End of List"),0, 0, 0, 0, 0, 0, 0, false }
 };
 
 // These fields are only for RecordId 0x7000000
 static FieldLink<HandheldAgent> HandheldAgentFieldLinks_7000000[] = {
-   { HHAFC7_MODEL,     "Model",    0, 0, &HandheldAgent::Model, 0, 0, 0, 0, true },
-   { HHAFC7_MANUFACTURER,"Manufacturer",0,0,&HandheldAgent::Manufacturer,0, 0, 0, 0, true },
-   { HHAFC7_FIRMWARE,  "Firmware", 0, 0, &HandheldAgent::Version, 0, 0, 0, 0, true },
-   { HHAFC7_PLATFORM,  "Platform", 0, 0, &HandheldAgent::PlatformVersion, 0, 0, 0, 0, true },
-   { HHAFC_END,        "End of List",0, 0, 0, 0, 0, 0, 0, false }
+   { HHAFC7_MODEL,     N_("Model"),    0, 0, &HandheldAgent::Model, 0, 0, 0, 0, true },
+   { HHAFC7_MANUFACTURER,N_("Manufacturer"),0,0,&HandheldAgent::Manufacturer,0, 0, 0, 0, true },
+   { HHAFC7_FIRMWARE,  N_("Firmware"), 0, 0, &HandheldAgent::Version, 0, 0, 0, 0, true },
+   { HHAFC7_PLATFORM,  N_("Platform"), 0, 0, &HandheldAgent::PlatformVersion, 0, 0, 0, 0, true },
+   { HHAFC_END,        N_("End of List"),0, 0, 0, 0, 0, 0, 0, false }
 };
 
 // Use this table for default application style records
 static FieldLink<HandheldAgent> HandheldAgentFieldLinks_Default[] = {
-   { HHAFC_END,        "End of List",0, 0, 0, 0, 0, 0, 0, false }
+   { HHAFC_END,        N_("End of List"),0, 0, 0, 0, 0, 0, 0, false }
 };
 
 // Use this for display / Dump() etc... includes all fields
 static FieldLink<HandheldAgent> HandheldAgentFieldLinks_All[] = {
-   { 0, "Model",      0, 0, &HandheldAgent::Model, 0, 0, 0, 0, true },
-   { 0, "Network",    0, 0, &HandheldAgent::Network, 0, 0, 0, 0, true },
-   { 0, "Manufacturer",0,0, &HandheldAgent::Manufacturer,0, 0, 0, 0, true },
-   { 0, "Bands",      0, 0, &HandheldAgent::Bands, 0, 0, 0, 0, true },
-   { 0, "MEID/ESN",   0, 0, &HandheldAgent::MEID, 0, 0, 0, 0, true },
-   { 0, "PIN",        0, 0, &HandheldAgent::Pin, 0, 0, 0, 0, true },
-   { 0, "Version",    0, 0, &HandheldAgent::Version, 0, 0, 0, 0, true },
-   { 0, "Platform",   0, 0, &HandheldAgent::PlatformVersion, 0, 0, 0, 0, true },
-   { HHAFC_END,        "End of List",0, 0, 0, 0, 0, 0, 0, false }
+   { 0, N_("Model"),      0, 0, &HandheldAgent::Model, 0, 0, 0, 0, true },
+   { 0, N_("Network"),    0, 0, &HandheldAgent::Network, 0, 0, 0, 0, true },
+   { 0, N_("Manufacturer"),0,0, &HandheldAgent::Manufacturer,0, 0, 0, 0, true },
+   { 0, N_("Bands"),      0, 0, &HandheldAgent::Bands, 0, 0, 0, 0, true },
+   { 0, N_("MEID/ESN"),   0, 0, &HandheldAgent::MEID, 0, 0, 0, 0, true },
+   { 0, N_("PIN"),        0, 0, &HandheldAgent::Pin, 0, 0, 0, 0, true },
+   { 0, N_("Version"),    0, 0, &HandheldAgent::Version, 0, 0, 0, 0, true },
+   { 0, N_("Platform"),   0, 0, &HandheldAgent::PlatformVersion, 0, 0, 0, 0, true },
+   { HHAFC_END,        N_("End of List"),0, 0, 0, 0, 0, 0, 0, false }
 };
 
 HandheldAgent::HandheldAgent()
@@ -136,7 +137,7 @@ const unsigned char* HandheldAgent::ParseField(const unsigned char *begin,
 		// internal consistency check... all parsing code should
 		// call SetIds() first, and HandheldAgent relies on this,
 		// so double check, and throw if not
-		throw std::logic_error("HandheldAgent requires SetIds() to be called before ParseField()");
+		throw std::logic_error(_("HandheldAgent requires SetIds() to be called before ParseField()"));
 	}
 	else if( RecordId == GetMEIDRecordId() ) {
 		b = HandheldAgentFieldLinks_3000000;
@@ -279,22 +280,22 @@ const FieldHandle<HandheldAgent>::ListT& HandheldAgent::GetFieldHandles()
 #undef RECORD_CLASS_NAME
 #define RECORD_CLASS_NAME HandheldAgent
 
-	FHP(RecType, "Record Type Code");
-	FHP(RecordId, "Unique Record ID");
+	FHP(RecType, _("Record Type Code"));
+	FHP(RecordId, _("Unique Record ID"));
 
 	// These fields are only valid for RecordId 0x3000000
-	FHD(MEID, "MEID/ESN", HHAFC3_MEID, true);
-	FHD(Model, "Model", HHAFC3_MODEL, true);
-	FHD(Bands, "Bands", HHAFC3_BANDS, true);
-	FHD(Pin, "PIN", HHAFC3_PIN, true);
-	FHD(Version, "Version", HHAFC3_VERSION, true);
-	FHD(Network, "Network", HHAFC3_NETWORK, true);
+	FHD(MEID, _("MEID/ESN"), HHAFC3_MEID, true);
+	FHD(Model, _("Model"), HHAFC3_MODEL, true);
+	FHD(Bands, _("Bands"), HHAFC3_BANDS, true);
+	FHD(Pin, _("PIN"), HHAFC3_PIN, true);
+	FHD(Version, _("Version"), HHAFC3_VERSION, true);
+	FHD(Network, _("Network"), HHAFC3_NETWORK, true);
 
 	// These fields are only for RecordId 0x7000000
-	FHD(PlatformVersion, "Platform Version", HHAFC7_PLATFORM, true);
-	FHD(Manufacturer, "Manufacturer", HHAFC7_MANUFACTURER, true);
+	FHD(PlatformVersion, _("Platform Version"), HHAFC7_PLATFORM, true);
+	FHD(Manufacturer, _("Manufacturer"), HHAFC7_MANUFACTURER, true);
 
-	FHP(Unknowns, "Unknown Fields");
+	FHP(Unknowns, _("Unknown Fields"));
 
 	return fhv;
 }
@@ -302,7 +303,7 @@ const FieldHandle<HandheldAgent>::ListT& HandheldAgent::GetFieldHandles()
 std::string HandheldAgent::GetDescription() const
 {
 	ostringstream oss;
-	oss << "Handheld Agent: 0x" << hex << RecordId;
+	oss << _("Handheld Agent: ") << "0x" << hex << RecordId;
 	return oss.str();
 }
 
@@ -310,7 +311,7 @@ void HandheldAgent::Dump(std::ostream &os) const
 {
 	ios_format_state state(os);
 
-	os << "HandheldAgent entry: 0x" << hex << RecordId
+	os << _("HandheldAgent entry: ") << "0x" << hex << RecordId
 		<< " (" << (unsigned int)RecType << ")\n";
 
 	// cycle through the type table
@@ -321,14 +322,14 @@ void HandheldAgent::Dump(std::ostream &os) const
 		if( b->strMember ) {
 			const std::string &s = this->*(b->strMember);
 			if( s.size() )
-				os << "   " << b->name << ": " << s << "\n";
+				os << "   " << gettext(b->name) << ": " << s << "\n";
 		}
 		else if( b->timeMember ) {
 			TimeT t = this->*(b->timeMember);
 			if( t.Time > 0 )
-				os << "   " << b->name << ": " << t << "\n";
+				os << "   " << gettext(b->name) << ": " << t << "\n";
 			else
-				os << "   " << b->name << ": disabled\n";
+				os << "   " << gettext(b->name) << ": disabled\n";
 		}
 		else if( b->addrMember ) {
 			const EmailAddressList &al = this->*(b->addrMember);
@@ -338,7 +339,7 @@ void HandheldAgent::Dump(std::ostream &os) const
 				if( !lb->size() )
 					continue;
 
-				os << "   " << b->name << ": " << *lb << "\n";
+				os << "   " << gettext(b->name) << ": " << *lb << "\n";
 			}
 		}
 	}

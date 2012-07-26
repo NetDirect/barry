@@ -22,6 +22,7 @@
     root directory of this project for more details.
 */
 
+#include "i18n.h"
 #include "m_javaloader.h"
 #include "data.h"
 #include "protocol.h"
@@ -238,31 +239,31 @@ void JLEventlogEntry::Parse(uint16_t size, const char* buf)
 	ss.ignore(5); // skip "guid:"
 	ss >> Guid;
 	if( ss.fail() )
-		throw BadData("JLEventlogEntry:Parse bad guid field");
+		throw BadData(_("JLEventlogEntry:Parse bad guid field"));
 
 	ss.ignore(6); // skip " time:"
 	ss >> hex >> MSTimestamp;
 	if( ss.fail() )
-		throw BadData("JLEventlogEntry:Parse bad time field");
+		throw BadData(_("JLEventlogEntry:Parse bad time field"));
 
 	ss.ignore(10); // skip " severity:"
 	unsigned int severity;
 	ss >> severity;
 	Severity = SeverityProto2Rec(severity);
 	if( ss.fail() )
-		throw BadData("JLEventlogEntry:Parse bad severity field");
+		throw BadData(_("JLEventlogEntry:Parse bad severity field"));
 
 	ss.ignore(6); // skip " type:"
 	unsigned int type;
 	ss >> type;
 	Type = ViewerTypeProto2Rec(type);
 	if( ss.fail() )
-		throw BadData("JLEventlogEntry:Parse bad type field");
+		throw BadData(_("JLEventlogEntry:Parse bad type field"));
 
 	ss.ignore(5); // skip " app:"
 	ss >> App;
 	if( ss.fail() )
-		throw BadData("JLEventlogEntry:Parse bad app field");
+		throw BadData(_("JLEventlogEntry:Parse bad app field"));
 
 	ss.ignore(6); // skip " data:"
 
@@ -270,7 +271,7 @@ void JLEventlogEntry::Parse(uint16_t size, const char* buf)
 	stringbuf databuf;
 	ss >> &databuf;
 	if( ss.fail() )
-		throw BadData("JLEventlogEntry:Parse bad data field");
+		throw BadData(_("JLEventlogEntry:Parse bad data field"));
 
 	Data = databuf.str();
 }
@@ -296,16 +297,27 @@ void JLEventlogEntry::Dump(std::ostream &os) const
 {
 	ios_format_state state(os);
 
-	static const char *SeverityNames[] = { "Always Log", "Severe Error", "Error",
-		"Warning", "Information", "Debug Info"};
-	static const char *ViewerTypes[] = { "", "Number", "String", "Exception" };
+	static const char *SeverityNames[] = {
+		N_("Always Log"),
+		N_("Severe Error"),
+		N_("Error"),
+		N_("Warning"),
+		N_("Information"),
+		N_("Debug Info")
+	};
+	static const char *ViewerTypes[] = {
+		"",
+		N_("Number"),
+		N_("String"),
+		N_("Exception")
+	};
 
-	os << "guid:"      << Guid;
-	os << " time:"     << GetFormattedTimestamp();
-	os << " severity:" << SeverityNames[Severity];
-	os << " type:"     << ViewerTypes[Type];
-	os << " app:"      << App;
-	os << " data:"     << Data << endl;
+	os << _("guid:")      << Guid;
+	os << _(" time:")     << GetFormattedTimestamp();
+	os << _(" severity:") << gettext( SeverityNames[Severity] );
+	os << _(" type:")     << gettext( ViewerTypes[Type] );
+	os << _(" app:")      << App;
+	os << _(" data:")     << Data << endl;
 }
 
 
@@ -316,32 +328,32 @@ void JLDeviceInfo::Dump(std::ostream &os) const
 {
 	ios_format_state state(os);
 
-	os << left << setfill(' ') << setw(17) << "Hardware Id:";
+	os << left << setfill(' ') << setw(17) << _("Hardware Id:");
 	os << "0x" << hex << HardwareId << endl;
 
-	os << left << setfill(' ') << setw(17) << "PIN:";
+	os << left << setfill(' ') << setw(17) << _("PIN:");
 	os << "0x" << Pin.Str() << endl;
 
-	os << left << setfill(' ') << setw(17) << "OS Version:";
+	os << left << setfill(' ') << setw(17) << _("OS Version:");
 	os << dec << OsVersion.Major << '.' << OsVersion.Minor << '.' << OsVersion.SubMinor << '.' << OsVersion.Build << endl;
 
-	os << left << setfill(' ') << setw(17) << "VM Version:";
+	os << left << setfill(' ') << setw(17) << _("VM Version:");
 	os << dec << VmVersion.Major << '.' << VmVersion.Minor << '.' << VmVersion.SubMinor << '.' << VmVersion.Build << endl;
 
-	os << left << setfill(' ') << setw(17) << "Radio ID:";
+	os << left << setfill(' ') << setw(17) << _("Radio ID:");
 	os << "0x" << hex << RadioId << endl;
 
-	os << left << setfill(' ') << setw(17) << "Vendor ID:";
+	os << left << setfill(' ') << setw(17) << _("Vendor ID:");
 	os << dec << VendorId << endl;
 
 	// WAF = Wireless Access Families
-	os << left << setfill(' ') << setw(17) << "Active Wireless Access Families:";
+	os << left << setfill(' ') << setw(17) << _("Active Wireless Access Families:");
 	os << "0x" << hex << ActiveWafs << endl;
 
-	os << left << setfill(' ') << setw(17) << "OS Metrics:" << endl;
+	os << left << setfill(' ') << setw(17) << _("OS Metrics:") << endl;
 	os << OsMetrics;
 
-	os << left << setfill(' ') << setw(17) << "Bootrom Metrics:" << endl;
+	os << left << setfill(' ') << setw(17) << _("Bootrom Metrics:") << endl;
 	os << BootromMetrics;
 }
 
@@ -394,14 +406,14 @@ void JavaLoader::StartStream()
 	m_socket->Packet(packet);
 
 	if( packet.Command() != SB_COMMAND_JL_HELLO_ACK ) {
-		ThrowJLError("JavaLoader::StartStream Hello", packet.Command());
+		ThrowJLError(_("JavaLoader::StartStream Hello"), packet.Command());
 	}
 
 	packet.SetUnknown1();
 	m_socket->Packet(packet);
 
 	if( packet.Command() != SB_COMMAND_JL_ACK ) {
-		ThrowJLError("JavaLoader::StartStream Unknown1", packet.Command());
+		ThrowJLError(_("JavaLoader::StartStream Unknown1"), packet.Command());
 	}
 
 	m_StreamStarted = true;
@@ -452,7 +464,7 @@ void JavaLoader::SendStream(std::istream &input, size_t module_size)
 	m_socket->Packet(packet);
 
 	if( packet.Command() != SB_COMMAND_JL_ACK ) {
-		ThrowJLError("JavaLoader::SendStream set code size", packet.Command());
+		ThrowJLError(_("JavaLoader::SendStream: set code size first"), packet.Command());
 	}
 
 	while( remaining > 0 ) {
@@ -460,18 +472,18 @@ void JavaLoader::SendStream(std::istream &input, size_t module_size)
 
 		input.read(buffer, size);
 		if( input.fail() || (size_t)input.gcount() != size ) {
-			throw Error("JavaLoader::SendStream input stream read failed");
+			throw Error(_("JavaLoader::SendStream: input stream read failed"));
 		}
 
 		packet.PutData(buffer, size);
 		m_socket->Packet(packet);
 
 		if( packet.Command() == SB_COMMAND_JL_NOT_ENOUGH_MEMORY ) {
-			throw Error("JavaLoader::SendStream not enough memory to install the application");
+			throw Error(_("JavaLoader::SendStream: not enough memory to install the application"));
 		}
 
 		if( packet.Command() != SB_COMMAND_JL_ACK ) {
-			ThrowJLError("JavaLoader::SendStream send data", packet.Command());
+			ThrowJLError(_("JavaLoader::SendStream: send data"), packet.Command());
 		}
 
 		remaining -= size;
@@ -523,7 +535,7 @@ bool JavaLoader::StopStream()
 	else if( packet.Command() != SB_COMMAND_JL_ACK &&
 		 packet.Command() != SB_COMMAND_JL_NOT_SUPPORTED )
 	{
-		ThrowJLError("JavaLoader::StopStream", packet.Command());
+		ThrowJLError(_("JavaLoader::StopStream error"), packet.Command());
 	}
 
 	return false;
@@ -537,15 +549,15 @@ void JavaLoader::SetTime(time_t when)
 	packet.SetTime(when);
 	m_socket->Packet(packet);
 	if( packet.Command() != SB_COMMAND_JL_ACK ) {
-		ThrowJLError("JavaLoader::SetTime", packet.Command());
+		ThrowJLError(_("JavaLoader::SetTime error"), packet.Command());
 	}
 }
 
 void JavaLoader::ThrowJLError(const std::string &msg, uint8_t cmd)
 {
 	std::ostringstream oss;
-	oss << msg << ": unexpected packet command code: 0x"
-		<< std::hex << (unsigned int) cmd;
+	oss << msg << ": " << _("unexpected packet command code: ")
+		<< "0x" << std::hex << (unsigned int) cmd;
 	throw Error(oss.str());
 }
 
@@ -708,7 +720,7 @@ void JavaLoader::GetScreenshot(JLScreenInfo &info, Data &image)
 
 		// Check the size read into the previous packet
 		if( expect != bytereceived ) {
-			ThrowJLError("JavaLoader::GetScreenShot expect", expect);
+			ThrowJLError(_("JavaLoader::GetScreenShot expect"), expect);
 		}
 
 
@@ -731,7 +743,7 @@ void JavaLoader::DoErase(uint8_t cmd, const std::string &cod_name)
 	packet.SetCodFilename(cod_name);
 	m_socket->Packet(packet);
 	if( packet.Command() == SB_COMMAND_JL_COD_NOT_FOUND ) {
-		throw Error(string("JavaLoader::DoErase: module ") + cod_name + " not found");
+		throw Error(string(_("JavaLoader::DoErase: module not found: ")) + cod_name);
 	}
 	if( packet.Command() != SB_COMMAND_JL_ACK ) {
 		ThrowJLError("JavaLoader::DoErase", packet.Command());
@@ -739,7 +751,7 @@ void JavaLoader::DoErase(uint8_t cmd, const std::string &cod_name)
 
 	// make sure there is an ID coming
 	if( packet.Size() != 2 )
-		throw Error("JavaLoader::DoErase: expected code not available");
+		throw Error(_("JavaLoader::DoErase: expected code ID not available"));
 
 	// get ID
 	m_socket->Receive(response);
@@ -751,7 +763,7 @@ void JavaLoader::DoErase(uint8_t cmd, const std::string &cod_name)
 	packet.Erase(cmd, id);
 	m_socket->Packet(packet);
 	if( packet.Command() == SB_COMMAND_JL_COD_IN_USE ) {
-		throw Error("JavaLoader::DoErase: COD file in use.");
+		throw Error(_("JavaLoader::DoErase: COD file in use."));
 	}
 	if( packet.Command() != SB_COMMAND_JL_ACK ) {
 		ThrowJLError("JavaLoader::DoErase", packet.Command());
@@ -883,7 +895,7 @@ void JavaLoader::Save(const std::string &cod_name, std::ostream &output)
 	m_socket->Packet(packet);
 
 	if( packet.Command() == SB_COMMAND_JL_COD_NOT_FOUND ) {
-		throw Error(string("JavaLoader::Save: module ") + cod_name + " not found");
+		throw Error(string(_("JavaLoader::Save: module not found: ")) + cod_name);
 	}
 
 	if( packet.Command() != SB_COMMAND_JL_ACK ) {
@@ -892,7 +904,7 @@ void JavaLoader::Save(const std::string &cod_name, std::ostream &output)
 
 	// make sure there is an ID coming
 	if( packet.Size() != 2 )
-		throw Error("JavaLoader::Save: expected module ID");
+		throw Error(_("JavaLoader::Save: expected module ID, but not available"));
 
 	// get ID
 	m_socket->Receive(response);

@@ -19,6 +19,7 @@
     root directory of this project for more details.
 */
 
+#include "i18n.h"
 #include "threadwrap.h"
 #include "error.h"
 #include <sys/socket.h>
@@ -50,7 +51,7 @@ Thread::Thread(int socket,
 	int ret = pthread_create(&thread, NULL, callback_wrapper, m_data);
 	if( ret ) {
 		delete m_data;
-		throw Barry::ErrnoError("Thread: pthread_create failed.", ret);
+		throw Barry::ErrnoError(_("Thread: pthread_create failed."), ret);
 	}
 }
 

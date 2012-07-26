@@ -19,6 +19,7 @@
     root directory of this project for more details.
 */
 
+#include "i18n.h"
 #include "builder.h"
 #include <stdexcept>
 #include <string.h>
@@ -50,7 +51,7 @@ bool DBDataBuilder::BuildRecord(DBData &data, size_t &offset,
 
 		// copy the buffer, to the new offset
 		if( m_orig.GetOffset() > m_orig.GetData().GetSize() )
-			throw std::logic_error("DBDataBuilder: offset greater than size");
+			throw std::logic_error(_("DBDataBuilder: offset greater than size"));
 		size_t actual = m_orig.GetData().GetSize() - m_orig.GetOffset();
 		size_t total = offset + actual;
 		unsigned char *buf = data.UseData().GetBuffer(total);

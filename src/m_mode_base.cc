@@ -19,6 +19,7 @@
     root directory of this project for more details.
 */
 
+#include "i18n.h"
 #include "m_mode_base.h"
 
 namespace Barry { namespace Mode {
@@ -138,7 +139,7 @@ void Mode::Open(const char *password, const char *name)
 void Mode::RetryPassword(const char *password)
 {
 	if( m_socket.get() != 0 )
-		throw std::logic_error("Socket alreay open in RetryPassword");
+		throw std::logic_error(_("Socket alreay open in RetryPassword"));
 
 	m_socket = m_con.OpenSocket(m_ModeSocket, password);
 

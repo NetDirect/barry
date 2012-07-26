@@ -61,22 +61,22 @@ void Usage()
 	int logical, major, minor;
 	const char *Version = Barry::Version(logical, major, minor);
 
-	cerr
-	<< "balxparse - Command line ALX parser\n"
-	<< "        Copyright 2009-2010, Nicolas VIVIEN.\n"
-	<< "        Copyright 2005-2012, Net Direct Inc. (http://www.netdirect.ca/)\n"
-	<< "        Using: " << Version << "\n"
-	<< "\n"
-	<< "   -h        This help\n"
-	<< "   -i lang   Internationalization language\n"
-	<< "   -d path   OS path with all ALX files\n"
-	<< "   -o file   OS ALX filename (Platform.alx)\n"
-	<< "\n"
-	<< "   <ALX file> ...\n"
-	<< "     Parse one or several ALX files.\n"
-	<< "\n"
-	<< "   Language supported :\n"
-	<< "\t";
+	cerr << string_vprintf(
+	_("balxparse - Command line ALX parser\n"
+	"        Copyright 2009-2010, Nicolas VIVIEN.\n"
+	"        Copyright 2005-2012, Net Direct Inc. (http://www.netdirect.ca/)\n"
+	"        Using: %s\n"
+	"\n"
+	"   -h        This help\n"
+	"   -i lang   Internationalization language\n"
+	"   -d path   OS path with all ALX files\n"
+	"   -o file   OS ALX filename (Platform.alx)\n"
+	"\n"
+	"   <ALX file> ...\n"
+	"     Parse one or several ALX files.\n"
+	"\n"
+	"   Language supported :\n"
+	"\t"), Version);
 
 	for (int i=0; langs[i].code!=NULL; i++) {
 		string s = (string) langs[i].code + " : " + (string) langs[i].description;

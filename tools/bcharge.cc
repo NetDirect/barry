@@ -55,7 +55,7 @@ std::string sysfs_path = "/sys";
 
 void Usage()
 {
-	printf(
+	printf(_(
 	"bcharge - Adjust Blackberry charging modes\n"
 	"          Copyright 2006-2012, Net Direct Inc. (http://www.netdirect.ca/)\n"
 	"\n"
@@ -68,7 +68,7 @@ void Usage()
 	"   -p devpath  The devpath argument from udev.  If specified, will attempt\n"
 	"               to adjust USB suspend settings to keep the device charging.\n"
 	"   -s path     The path where sysfs is mounted.  Defaults to '/sys'\n"
-	"\n"
+	"\n")
 	);
 }
 
@@ -78,7 +78,7 @@ void control(usb_dev_handle *dev, int requesttype, int request, int value,
 	int result = usb_control_msg(dev, requesttype, request, value, index,
 		bytes, size, timeout);
 	if( result < 0 ) {
-		printf("\nusb_control_msg failed: code: %d, %s\n", result,
+		printf(_("\nusb_control_msg failed: code: %d, %s\n"), result,
 			usb_strerror());
 	}
 }
@@ -136,7 +136,7 @@ int find_mass_storage_interface(struct usb_dev_handle *handle)
 		// interface ... this should never happen, but if it does,
 		// assume the device is showing product ID 0006, and the
 		// Mass Storage interface is interface #0
-		printf("Can't find Mass Storage interface, assuming 0.\n");
+		printf(_("Can't find Mass Storage interface, assuming 0.\n"));
 		return 0;
 	}
 	else {
@@ -156,10 +156,10 @@ void driver_conflict(struct usb_dev_handle *handle)
 
 	int iface = find_mass_storage_interface(handle);
 	if( usb_detach_kernel_driver_np(handle, iface) < 0 )
-		printf("usb_detach_kernel_driver_np() failed: %s\n", usb_strerror());
+		printf(_("usb_detach_kernel_driver_np() failed: %s\n"), usb_strerror());
 
 	if( usb_set_configuration(handle, BLACKBERRY_CONFIGURATION) < 0 )
-		printf("usb_set_configuration() failed: %s\n", usb_strerror());
+		printf(_("usb_set_configuration() failed: %s\n"), usb_strerror());
 #endif
 }
 
@@ -167,12 +167,12 @@ void driver_conflict(struct usb_dev_handle *handle)
 bool process(struct usb_device *dev, ModeType mode)
 {
 	bool apply = false;
-	printf("Found device #%s...", dev->filename);
+	printf(_("Found device #%s..."), dev->filename);
 
 	// open
 	usb_dev_handle *handle = usb_open(dev);
 	if( !handle ) {
-		printf("unable to open device\n");
+		printf(_("unable to open device\n"));
 		return false;
 	}
 
@@ -180,12 +180,12 @@ bool process(struct usb_device *dev, ModeType mode)
 	if( dev->config &&
 	    dev->descriptor.bNumConfigurations >= 1 &&
 	    dev->config[0].MaxPower < 250 ) {
-		printf("adjusting charge setting");
+		printf(_("adjusting charge setting"));
 		charge(handle);
 		apply = true;
 	}
 	else {
-		printf("already at 500mA");
+		printf(_("already at 500mA"));
 	}
 	printf("\n");
 
@@ -193,39 +193,39 @@ bool process(struct usb_device *dev, ModeType mode)
 	switch( mode )
 	{
 	case NO_CHANGE:
-		printf("...no Pearl mode adjustment");
+		printf(_("...no Pearl mode adjustment"));
 		break;
 
 	case PEARL_CLASSIC_MODE_0001:
 		if( dev->descriptor.idProduct != PRODUCT_RIM_BLACKBERRY ) {
-			printf("...adjusting Pearl mode to single");
+			printf(_("...adjusting Pearl mode to single"));
 			pearl_classic_mode(handle);
 			apply = true;
 		}
 		else {
-			printf("...already in classic/single mode");
+			printf(_("...already in classic/single mode"));
 		}
 		break;
 
 	case PEARL_DUAL_MODE_0004:
 		if( dev->descriptor.idProduct != PRODUCT_RIM_PEARL_DUAL ) {
-			printf("...adjusting Pearl mode to dual");
+			printf(_("...adjusting Pearl mode to dual"));
 			pearl_dual_mode(handle);
 			apply = true;
 		}
 		else {
-			printf("...already in dual mode");
+			printf(_("...already in dual mode"));
 		}
 		break;
 
 	case CONDITIONAL_DUAL_MODE:
 		if( find_interface(handle, 255) == -1 ) {
-			printf("...no database iface found, setting dual mode");
+			printf(_("...no database iface found, setting dual mode"));
 			pearl_dual_mode(handle);
 			apply = true;
 		}
 		else {
-			printf("...found database iface, no change");
+			printf(_("...found database iface, no change"));
 		}
 		break;
 
@@ -257,14 +257,14 @@ bool process(struct usb_device *dev, ModeType mode)
 			//
 			sleep(1);
 			if( usb_reset(handle) < 0 ) {
-				printf("\nusb_reset failed: %s\n", usb_strerror());
+				printf(_("\nusb_reset failed: %s\n"), usb_strerror());
 			}
 		}
 
-		printf("...done");
+		printf(_("...done"));
 	}
 	else {
-		printf("...no change");
+		printf(_("...no change"));
 	}
 	printf("\n");
 
@@ -278,7 +278,7 @@ bool power_write(const std::string &file, const std::string &value)
 	// attempt to open the state file
 	int fd = open(file.c_str(), O_RDWR);
 	if( fd == -1 ) {
-		printf("autosuspend adjustment failure: (file: %s): %s\n",
+		printf(_("autosuspend adjustment failure: (file: %s): %s\n"),
 			file.c_str(),
 			strerror(errno));
 		return false;
@@ -289,13 +289,13 @@ bool power_write(const std::string &file, const std::string &value)
 	close(fd);
 
 	if( written < 0 || (size_t)written != value.size() ) {
-		printf("autosuspend adjustment failure (write): (file: %s): %s\n",
+		printf(_("autosuspend adjustment failure (write): (file: %s): %s\n"),
 			file.c_str(),
 			strerror(error));
 		return false;
 	}
 
-	printf("autosuspend adjustment: wrote %s to %s\n",
+	printf(_("autosuspend adjustment: wrote %s to %s\n"),
 		value.c_str(), file.c_str());
 	return true;
 }
@@ -422,12 +422,12 @@ int main(int argc, char *argv[])
 
 	usb_init();
 	if( usb_find_busses() < 0 || usb_find_devices() < 0 ) {
-		printf("\nUnable to scan devices: %s\n", usb_strerror());
+		printf(_("\nUnable to scan devices: %s\n"), usb_strerror());
 		return 1;
 	}
 	busses = usb_get_busses();
 
-	printf("Scanning for Blackberry devices...\n");
+	printf(_("Scanning for Blackberry devices...\n"));
 
 	struct usb_bus *bus;
 	for( bus = busses; bus; bus = bus->next ) {

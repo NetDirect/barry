@@ -61,6 +61,9 @@ namespace Barry {
 /// and can be overridden by a derived class.  This includes the heuristics
 /// functions, which are called by DumpLdif().
 ///
+/// Note that the description field in NameToFunc is translatable.
+/// You can pass it to gettext() for a translated string.
+///
 class BXEXPORT ContactLdif
 {
 public:

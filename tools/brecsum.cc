@@ -38,19 +38,20 @@ void Usage()
    int logical, major, minor;
    const char *Version = Barry::Version(logical, major, minor);
 
-   cerr
-   << "brecsum - Generate SHA1 sums of raw Blackberry database records.\n"
-   << "        Copyright 2008-2012, Net Direct Inc. (http://www.netdirect.ca/)\n"
-   << "        Using: " << Version << "\n"
-   << "\n"
-   << "   -d db     Read database 'db' and sum all its records.\n"
-   << "             Can be used multiple times to fetch more than one DB\n"
-   << "   -h        This help\n"
-   << "   -i        Include DB Name, Type, and Unique record IDs in the checksums\n"
-   << "   -p pin    PIN of device to talk with\n"
-   << "             If only one device is plugged in, this flag is optional\n"
-   << "   -P pass   Simplistic method to specify device password\n"
-   << "   -v        Dump protocol data during operation\n"
+   cerr << string_vprintf(
+   _("brecsum - Generate SHA1 sums of raw Blackberry database records.\n"
+   "        Copyright 2008-2012, Net Direct Inc. (http://www.netdirect.ca/)\n"
+   "        Using: %s\n"
+   "\n"
+   "   -d db     Read database 'db' and sum all its records.\n"
+   "             Can be used multiple times to fetch more than one DB\n"
+   "   -h        This help\n"
+   "   -i        Include DB Name, Type, and Unique record IDs in the checksums\n"
+   "   -p pin    PIN of device to talk with\n"
+   "             If only one device is plugged in, this flag is optional\n"
+   "   -P pass   Simplistic method to specify device password\n"
+   "   -v        Dump protocol data during operation\n"),
+	Version)
    << endl;
 }
 
@@ -119,7 +120,8 @@ int main(int argc, char *argv[])
 		Barry::Probe probe;
 		int activeDevice = probe.FindActive(pin);
 		if( activeDevice == -1 ) {
-			cerr << "No device selected, or PIN not found" << endl;
+			cerr << _("No device selected, or PIN not found")
+				<< endl;
 			return 1;
 		}
 

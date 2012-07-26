@@ -21,6 +21,7 @@
     root directory of this project for more details.
 */
 
+#include "i18n.h"
 #include "time.h"
 #include "endian.h"
 #include "debug.h"
@@ -144,12 +145,13 @@ const StaticTimeZone* GetStaticTimeZoneTable()
 /// and returns a pointer to a StaticTimeZone struct found.  If the
 /// code is not found, a pointer to a valid StaticTimeZone struct is
 /// is still returned, but the struct's Code contains STATIC_TIME_ZONE_CODE_ERR,
-/// and the name is "Unknown time zone."  The unknown timezone
-/// is the same offset as GMT.
+/// and the name is "Unknown time zone" (which is translatable with gettext).
+/// The unknown timezone is the same offset as GMT.
 ///
 const StaticTimeZone* GetStaticTimeZone(uint16_t Code)
 {
-	static StaticTimeZone Unknown = { STATIC_TIME_ZONE_CODE_ERR, 0, 0, "Unknown time zone" };
+	static StaticTimeZone Unknown = {
+		STATIC_TIME_ZONE_CODE_ERR, 0, 0, N_("Unknown time zone") };
 
 	for( StaticTimeZone *z = Zones; z->Name; z++ ) {
 		if( Code == z->Code )

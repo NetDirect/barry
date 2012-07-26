@@ -19,6 +19,7 @@
     root directory of this project for more details.
 */
 
+#include "i18n.h"
 #include "m_desktop.h"
 #include "data.h"
 #include "protocol.h"
@@ -85,7 +86,7 @@ void Desktop::LoadCommandTable()
 
 	}
 	catch( Usb::Error & ) {
-		eout("Desktop: error getting command table");
+		eout(_("Desktop: error getting command table"));
 		eeout(command, m_response);
 		throw;
 	}
@@ -135,7 +136,7 @@ unsigned int Desktop::GetDBID(const std::string &name) const
 	unsigned int ID = 0;
 	// FIXME - this needs a better error handler...
 	if( !m_dbdb.GetDBNumber(name, ID) ) {
-		throw Error("Desktop: database name not found: " + name);
+		throw Error(_("Desktop: database name not found: ") + name);
 	}
 	return ID;
 }
@@ -158,12 +159,12 @@ unsigned int Desktop::GetDBCommand(CommandType ct)
 		cmd = m_commandTable.GetCommand(cmdName);
 		break;
 	default:
-		throw std::logic_error("Desktop: unknown command type");
+		throw std::logic_error(_("Desktop: unknown command type"));
 	}
 
 	if( cmd == 0 ) {
 		std::ostringstream oss;
-		oss << "Desktop: unable to get command code: " << cmdName;
+		oss << _("Desktop: unable to get command code: ") << cmdName;
 		throw Error(oss.str());
 	}
 
@@ -184,7 +185,7 @@ void Desktop::SetIConverter(const IConverter &ic)
 ///
 void Desktop::GetRecordStateTable(unsigned int dbId, RecordStateTable &result)
 {
-	dout("Database ID: " << dbId);
+	dout(_("Database ID: ") << dbId);
 
 	// start fresh
 	result.Clear();
@@ -210,7 +211,7 @@ void Desktop::GetRecordStateTable(unsigned int dbId, RecordStateTable &result)
 //
 void Desktop::AddRecord(unsigned int dbId, Builder &build)
 {
-	dout("Database ID: " << dbId);
+	dout(_("Database ID: ") << dbId);
 
 	DBPacket packet(*this, m_command, m_response);
 
@@ -222,14 +223,14 @@ void Desktop::AddRecord(unsigned int dbId, Builder &build)
 
 		// successful packet transfer, so check the network return code
 		if( packet.Command() != SB_COMMAND_DB_DONE ) {
-			oss << "Desktop: device responded with unexpected packet command code: "
+			oss << _("Desktop: device responded with unexpected packet command code: ")
 			    << "0x" << std::hex << packet.Command();
 			throw Error(oss.str());
 		}
 
 		if( packet.ReturnCode() != 0 ) {
-			oss << "Desktop: device responded with error code (command: "
-			    << packet.Command() << ", code: "
+			oss << _("Desktop: device responded with error code (command: ")
+			    << packet.Command() << ", " << _("code: ")
 			    << packet.ReturnCode() << ")";
 			throw ReturnCodeError(oss.str(), packet.Command(), packet.ReturnCode());
 		}
@@ -247,7 +248,7 @@ void Desktop::GetRecord(unsigned int dbId,
 			   unsigned int stateTableIndex,
 			   Parser &parser)
 {
-	dout("Database ID: " << dbId);
+	dout(_("Database ID: ") << dbId);
 
 	std::string dbName;
 	m_dbdb.GetDBName(dbId, dbName);
@@ -262,7 +263,7 @@ void Desktop::GetRecord(unsigned int dbId,
 		eeout(m_command, m_response);
 
 		std::ostringstream oss;
-		oss << "Desktop: invalid response packet size of "
+		oss << _("Desktop: invalid response packet size of: ")
 		    << std::dec << m_response.GetSize();
 		eout(oss.str());
 		throw Error(oss.str());
@@ -271,9 +272,10 @@ void Desktop::GetRecord(unsigned int dbId,
 		eeout(m_command, m_response);
 
 		std::ostringstream oss;
-		oss << "Desktop: unexpected command of 0x"
-		    << std::setbase(16) << packet.Command()
-		    << " instead of expected 0x"
+		oss << _("Desktop: unexpected command of ")
+		    << "0x" << std::setbase(16) << packet.Command()
+		    << _(" instead of expected ")
+		    << "0x"
 		    << std::setbase(16) << (unsigned int)SB_COMMAND_DB_DATA;
 		eout(oss.str());
 		throw Error(oss.str());
@@ -296,13 +298,13 @@ void Desktop::GetRecord(unsigned int dbId,
 void Desktop::SetRecord(unsigned int dbId, unsigned int stateTableIndex,
 			   Builder &build)
 {
-	dout("Database ID: " << dbId << " Index: " << stateTableIndex);
+	dout(_("Database ID: ") << dbId << " " << _("Index: ") << stateTableIndex);
 
 	DBPacket packet(*this, m_command, m_response);
 
 	// write only if builder object has data
 	if( !packet.SetRecordByIndex(dbId, stateTableIndex, build, m_ic) ) {
-		throw std::logic_error("Desktop: no data available in SetRecord");
+		throw std::logic_error(_("Desktop: no data available in SetRecord"));
 	}
 
 	m_socket->Packet(packet);
@@ -311,14 +313,14 @@ void Desktop::SetRecord(unsigned int dbId, unsigned int stateTableIndex,
 
 	// successful packet transfer, so check the network return code
 	if( packet.Command() != SB_COMMAND_DB_DONE ) {
-		oss << "Desktop: device responded with unexpected packet command code: "
+		oss << _("Desktop: device responded with unexpected packet command code: ")
 		    << "0x" << std::hex << packet.Command();
 		throw Error(oss.str());
 	}
 
 	if( packet.ReturnCode() != 0 ) {
-		oss << "Desktop: device responded with error code (command: "
-		    << packet.Command() << ", code: "
+		oss << _("Desktop: device responded with error code (command: ")
+		    << packet.Command() << ", " << _("code: ")
 		    << packet.ReturnCode() << ")";
 		throw ReturnCodeError(oss.str(), packet.Command(), packet.ReturnCode());
 	}
@@ -331,7 +333,7 @@ void Desktop::SetRecord(unsigned int dbId, unsigned int stateTableIndex,
 ///
 void Desktop::ClearDirty(unsigned int dbId, unsigned int stateTableIndex)
 {
-	dout("Database ID: " << dbId);
+	dout(_("Database ID: ") << dbId);
 
 	DBPacket packet(*this, m_command, m_response);
 	packet.SetRecordFlags(dbId, stateTableIndex, 0);
@@ -350,7 +352,7 @@ void Desktop::ClearDirty(unsigned int dbId, unsigned int stateTableIndex)
 ///
 void Desktop::DeleteRecord(unsigned int dbId, unsigned int stateTableIndex)
 {
-	dout("Database ID: " << dbId);
+	dout(_("Database ID: ") << dbId);
 
 	DBPacket packet(*this, m_command, m_response);
 	packet.DeleteRecordByIndex(dbId, stateTableIndex);
@@ -401,7 +403,7 @@ void Desktop::LoadDatabase(unsigned int dbId, Parser &parser)
 
 void Desktop::ClearDatabase(unsigned int dbId)
 {
-	dout("Database ID: " << dbId);
+	dout(_("Database ID: ") << dbId);
 
 	DBPacket packet(*this, m_command, m_response);
 	packet.ClearDatabase(dbId);
@@ -410,8 +412,9 @@ void Desktop::ClearDatabase(unsigned int dbId)
 	m_socket->Packet(packet, 60000);
 	if( packet.ReturnCode() != 0 ) {
 		std::ostringstream oss;
-		oss << "Desktop: could not clear database: (command: "
-		    << "0x" << std::hex << packet.Command() << ", code: "
+		oss << _("Desktop: could not clear database: (command: ")
+		    << "0x" << std::hex << packet.Command() << ", "
+		    << _("code: ")
 		    << "0x" << std::hex << packet.ReturnCode() << ")";
 		throw ReturnCodeError(oss.str(), packet.Command(), packet.ReturnCode());
 	}
@@ -419,13 +422,13 @@ void Desktop::ClearDatabase(unsigned int dbId)
 	// check response to clear command was successful
 	if( packet.Command() != SB_COMMAND_DB_DONE ) {
 		eeout(m_command, m_response);
-		throw Error("Desktop: error clearing database, bad response");
+		throw Error(_("Desktop: error clearing database, bad response"));
 	}
 }
 
 void Desktop::SaveDatabase(unsigned int dbId, Builder &builder)
 {
-	dout("Database ID: " << dbId);
+	dout(_("Database ID: ") << dbId);
 
 	ClearDatabase(dbId);
 
@@ -434,7 +437,7 @@ void Desktop::SaveDatabase(unsigned int dbId, Builder &builder)
 	// loop until builder object has no more data
 	bool first = true;
 	while( packet.AddRecord(dbId, builder, m_ic) ) {
-		dout("Database ID: " << dbId);
+		dout(_("Database ID: ") << dbId);
 
 		m_socket->Packet(packet, first ? 60000 : -1);
 		first = false;
@@ -442,14 +445,14 @@ void Desktop::SaveDatabase(unsigned int dbId, Builder &builder)
 		std::ostringstream oss;
 		// successful packet transfer, so check the network return code
 		if( packet.Command() != SB_COMMAND_DB_DONE ) {
-			oss << "Desktop: device responded with unexpected packet command code: "
+			oss << _("Desktop: device responded with unexpected packet command code: ")
 			    << "0x" << std::hex << packet.Command();
 			throw Error(oss.str());
 		}
 
 		if( packet.ReturnCode() != 0 ) {
-			oss << "Desktop: device responded with error code (command: "
-			    << packet.Command() << ", code: "
+			oss << _("Desktop: device responded with error code (command: ")
+			    << packet.Command() << ", " << _("code: ")
 			    << packet.ReturnCode() << ")";
 			throw ReturnCodeError(oss.str(), packet.Command(), packet.ReturnCode());
 		}
@@ -484,7 +487,7 @@ DBLoader::~DBLoader()
 
 bool DBLoader::StartDBLoad(unsigned int dbId, DBData &data)
 {
-	dout("Database ID: " << dbId);
+	dout(_("Database ID: ") << dbId);
 
 	m_loading = true;
 	m_desktop.m_dbdb.GetDBName(dbId, m_dbName);
@@ -664,7 +667,7 @@ void DeviceParser::StartDB(const DBData &data, const IConverter *ic)
 	m_current_db = data.GetDBName();
 	if( !m_desktop.GetDBDB().GetDBNumber(m_current_db, m_current_dbid) ) {
 		// doh!  This database does not exist in this device
-		dout("Database '" << m_current_db << "' does not exist in this device.  Dropping record.");
+		dout(_("This database does not exist in device: ") << m_current_db << ". " << _("Dropping record."));
 		m_current_db.clear();
 		m_current_dbid = 0;
 		return;
@@ -694,7 +697,7 @@ void DeviceParser::StartDB(const DBData &data, const IConverter *ic)
 
 	case DECIDE_BY_CALLBACK:
 	default:
-		throw std::logic_error("DeviceParser: unknown mode");
+		throw std::logic_error(_("DeviceParser: unknown mode"));
 	}
 }
 
@@ -751,7 +754,7 @@ void DeviceParser::WriteNext(const DBData &data, const IConverter *ic)
 
 	case DECIDE_BY_CALLBACK:
 	default:
-		throw std::logic_error("DeviceParser: unknown mode");
+		throw std::logic_error(_("DeviceParser: unknown mode"));
 	}
 }
 

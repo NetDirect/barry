@@ -20,6 +20,7 @@
     root directory of this project for more details.
 */
 
+#include "i18n.h"
 #include "fifoargs.h"
 #include "error.h"
 #include "common.h"
@@ -101,7 +102,7 @@ FifoServer::FifoServer(const FifoArgs &args)
 {
 	int m_fifo = mkfifo(BARRY_FIFO_NAME, 0660);
 	if( m_fifo != 0 )
-		throw ErrnoError("Cannot open Barry argument fifo", errno);
+		throw ErrnoError(_("Cannot open Barry argument fifo"), errno);
 	m_created = true;
 }
 

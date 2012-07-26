@@ -54,18 +54,19 @@ void Usage()
    int logical, major, minor;
    const char *Version = Barry::Version(logical, major, minor);
 
-   cerr
-   << "pppob - PPP over Barry\n"
-   << "        Copyright 2007-2012, Net Direct Inc. (http://www.netdirect.ca/)\n"
-   << "        Using: " << Version << "\n"
-   << "\n"
-   << "   -l file   Direct pppob log output to file (useful with -v)\n"
-   << "   -p pin    PIN of device to talk with\n"
-   << "             If only one device plugged in, this flag is optional\n"
-   << "   -P pass   Simplistic method to specify device password\n"
-   << "   -s        Use Serial mode instead of IpModem\n"
-   << "   -t        Use a pseudo-tty instead of stdin/stdout\n"
-   << "   -v        Dump protocol data during operation (debugging only!)\n"
+   cerr << string_vprintf(
+   _("pppob - PPP over Barry\n"
+   "        Copyright 2007-2012, Net Direct Inc. (http://www.netdirect.ca/)\n"
+   "        Using: %s\n"
+   "\n"
+   "   -l file   Direct pppob log output to file (useful with -v)\n"
+   "   -p pin    PIN of device to talk with\n"
+   "             If only one device plugged in, this flag is optional\n"
+   "   -P pass   Simplistic method to specify device password\n"
+   "   -s        Use Serial mode instead of IpModem\n"
+   "   -t        Use a pseudo-tty instead of stdin/stdout\n"
+   "   -v        Dump protocol data during operation (debugging only!)\n"),
+	Version)
    << endl;
 }
 
@@ -86,7 +87,7 @@ void SerialDataCallback(void *context, const unsigned char *data, int len)
 			data += written;
 		}
 		else {
-			barryverbose("Error in write()");
+			barryverbose(_("Error in write()"));
 		}
 	}
 }
@@ -131,7 +132,7 @@ void ProcessStdin(Modem &modem)
 			}
 			else {
 				// read error
-				barryverbose("Read error in ProcessStdin: " << strerror(errno));
+				barryverbose(_("Read error in ProcessStdin: ") << strerror(errno));
 				break;
 			}
 		}
@@ -208,17 +209,17 @@ int main(int argc, char *argv[])
 			// open pty/tty master to get slave
 			int master = open("/dev/ptmx", O_RDWR);
 			if( master == -1 ) {
-				cerr << "Cannot open /dev/ptmx: " << strerror(errno) << endl;
+				cerr << _("Cannot open /dev/ptmx: ") << strerror(errno) << endl;
 				return 1;
 			}
 
 			// grant and unlock, as per pts(4) man page
 			if( grantpt(master) == -1 ) {
-				cerr << "Warning: grantpt() failure: "
+				cerr << _("Warning: grantpt() failure: ")
 					<< strerror(errno) << endl;
 			}
 			if( unlockpt(master) == -1 ) {
-				cerr << "Warning: unlockpt() failure: "
+				cerr << _("Warning: unlockpt() failure: ")
 					<< strerror(errno) << endl;
 			}
 
@@ -267,16 +268,16 @@ int main(int argc, char *argv[])
 		int activeDevice = probe.FindActive(pin);
 		if( activeDevice == -1 ) {
 			if( pin )
-				cerr << "PIN " << setbase(16) << pin
-					<< " not found" << endl;
-			cerr << "No device selected" << endl;
+				cerr << _("PIN not found: ")
+					<< setbase(16) << pin << endl;
+			cerr << _("No device selected") << endl;
 			return 1;
 		}
 
 		const ProbeResult &device = probe.Get(activeDevice);
 
 		if( !force_serial && device.HasIpModem() ) {
-			barryverbose("Using IpModem mode...");
+			barryverbose(_("Using IpModem mode..."));
 
 			// Create our controller object using our threaded router.
 			Controller con(probe.Get(activeDevice));
@@ -291,10 +292,10 @@ int main(int argc, char *argv[])
 		}
 		else {
 			if( force_serial ) {
-				barryverbose("Using Serial mode per command line...");
+				barryverbose(_("Using Serial mode per command line..."));
 			}
 			else {
-				barryverbose("No IpModem mode available, using Serial mode...");
+				barryverbose(_("No IpModem mode available, using Serial mode..."));
 			}
 
 			// Create our socket router and start thread to handle
@@ -317,11 +318,11 @@ int main(int argc, char *argv[])
 			ProcessStdin(modem);
 		}
 
-		barryverbose("Exiting");
+		barryverbose(_("Exiting"));
 
 	}
 	catch( std::exception &e ) {
-		cerr << "exception caught in main(): " << e.what() << endl;
+		cerr << _("exception caught in main(): ") << e.what() << endl;
 		return 1;
 	}
 

@@ -20,6 +20,7 @@
     root directory of this project for more details.
 */
 
+#include "i18n.h"
 #include <iostream>
 #include <fstream>
 #include <algorithm>
@@ -70,7 +71,7 @@ void OSLoader::Load(const std::string& pathname)
 	vLateSmartPtr<DIR, int (*)(DIR*)> path(&closedir);
 	path.reset( opendir(pathname.c_str()) );
 	if( path.get() == NULL )
-		throw Barry::ErrnoError("Could not opendir: " + pathname, errno);
+		throw Barry::ErrnoError(_("Could not opendir: ") + pathname, errno);
 
 	while ((entry = readdir(path.get())) != NULL) {
 		alxfile = entry->d_name;
@@ -93,7 +94,7 @@ void OSLoader::LoadALXFile(const std::string& alxfile, const bool enable)
 {
 	std::ifstream file(alxfile.c_str());
 	if( !file )
-		throw Barry::Error("Cannot open ALX file: " + alxfile);
+		throw Barry::Error(_("Cannot open ALX file: ") + alxfile);
 
 	ALX::ALXParser parser(*this, file);
 
@@ -107,7 +108,7 @@ void OSLoader::Dump(std::ostream &os) const
 {
 	ios_format_state state(os);
 
-	os << "OS Properties :" << std::endl;
+	os << _("OS Properties :") << std::endl;
 
 	{
 		std::map<std::string, std::string>::const_iterator b = properties.begin(), e = properties.end();
@@ -119,11 +120,11 @@ void OSLoader::Dump(std::ostream &os) const
 
 	os << std::endl;
 
-	os << "SFI File :" << std::endl;
+	os << _("SFI File :") << std::endl;
 	os << "  " << sfifile << std::endl;
 	os << std::endl;
 
-	os << "Applications :" << std::endl;
+	os << _("Applications :") << std::endl;
 
 	{
 		CODSectionList::const_iterator b = applications.begin(), e = applications.end();
@@ -133,7 +134,7 @@ void OSLoader::Dump(std::ostream &os) const
 		}
 	}
 
-	os << "Libraries :" << std::endl;
+	os << _("Libraries :") << std::endl;
 
 	{
 		CODSectionList::const_iterator b = libraries.begin(), e = libraries.end();

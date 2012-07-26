@@ -19,10 +19,14 @@
     root directory of this project for more details.
 */
 
+#include "i18n.h"
 #include "common.h"
 #include <pthread.h>
 #include "debug.h"
 #include "config.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdarg.h>
 
 #ifdef USE_BARRY_SOCKETS
 #include "usbwrap.h"
@@ -72,8 +76,8 @@ void Init(bool data_dump_mode, std::ostream *logStream)
 		// but there isn't currently a deinit call.
 		int err = 0;
 		if( !Usb::LibraryInterface::Init(&err) ) {
-			eout("USB library failed to initialise with libusb error: " << err);
-			throw Error("Failed to initialise USB");
+			eout(_("USB library failed to initialise with libusb error: ") << err);
+			throw Error(_("Failed to initialise USB"));
 			return;
 		}
 #endif
@@ -116,6 +120,46 @@ void Verbose(bool data_dump_mode)
 bool IsVerbose()
 {
 	return __data_dump_mode__;
+}
+
+// The following code is based on the example from the vsnprintf(3) manpage
+std::string string_vprintf(const char *fmt, ...)
+{
+	// Guess we need no more than 200 bytes.
+	int n, size = 200;
+	char *p, *np;
+	std::string result;
+	va_list ap;
+
+	if ((p = (char*)malloc(size)) == NULL)
+		return NULL;
+
+	for (;;) {
+		// Try to print in the allocated space.
+		va_start(ap, fmt);
+		n = vsnprintf(p, size, fmt, ap);
+		va_end(ap);
+
+		// If that worked, return the string.
+		if (n > -1 && n < size) {
+			result = p;
+			free(p);
+			return result;
+		}
+
+		// Else try again with more space.
+		if (n > -1)    // glibc 2.1
+			size = n+1; // precisely what is needed
+		else           // glibc 2.0
+			size *= 2;  // twice the old size
+
+		if ((np = (char*)realloc (p, size)) == NULL) {
+			free(p);
+			return result;
+		} else {
+			p = np;
+		}
+	}
 }
 
 } // namespace Barry

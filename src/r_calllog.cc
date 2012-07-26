@@ -20,6 +20,7 @@
     root directory of this project for more details.
 */
 
+#include "i18n.h"
 #include "r_calllog.h"
 #include "record-internal.h"
 #include "protostructs.h"
@@ -80,9 +81,9 @@ uint8_t CallLog::PhoneTypeRec2Proto(PhoneTypeFlagType s)
 #define CLLFC_END			0xffff
 
 static FieldLink<CallLog> CallLogFieldLinks[] = {
-    { CLLFC_PHONE_NUMBER,	"Phone number",  0, 0, &CallLog::PhoneNumber, 0, 0, 0, 0, true },
-    { CLLFC_CONTACT_NAME,	"Contact name",  0, 0, &CallLog::ContactName, 0, 0, 0, 0, true },
-    { CLLFC_END,		"End of List",   0, 0, 0, 0, 0, 0, 0, false }
+    { CLLFC_PHONE_NUMBER,  N_("Phone number"),  0, 0, &CallLog::PhoneNumber, 0, 0, 0, 0, true },
+    { CLLFC_CONTACT_NAME,  N_("Contact name"),  0, 0, &CallLog::ContactName, 0, 0, 0, 0, true },
+    { CLLFC_END,           N_("End of List"),   0, 0, 0, 0, 0, 0, 0, false }
 };
 
 CallLog::CallLog()
@@ -110,7 +111,7 @@ const unsigned char* CallLog::ParseField(const unsigned char *begin,
 
 	if( field->type == CLLFC_CALLLOG_TYPE ) {
 		if( field->u.raw[0] != 'p' ) {
-			throw Error( "CallLog::ParseField: CallLogType is not 'p'" );
+			throw Error( _("CallLog::ParseField: CallLogType is not 'p'") );
 		}
 		return begin;
 	}
@@ -163,7 +164,7 @@ const unsigned char* CallLog::ParseField(const unsigned char *begin,
 
 	case CLLFC_DIRECTION:
 		if( field->u.raw[0] > CLL_DIRECTION_RANGE_HIGH ) {
-			throw Error( "CallLog::ParseField: direction field out of bounds" );
+			throw Error( _("CallLog::ParseField: direction field out of bounds") );
 		}
 		else {
 			DirectionFlag = DirectionProto2Rec(field->u.raw[0]);
@@ -253,22 +254,47 @@ void CallLog::Dump(std::ostream &os) const
 	uint32_t timestamp = Duration;
 	int32_t days, hours, minutes, secondes;
 
-	static const char *DirectionName[] = { "Received", "Sent", "Call Missing (Messagerie)", "Call Missing" };
-	static const char *StatusName[] = { "OK", "Busy", "Error", "Not supported by Barry" };
-	static const char *PhoneInfoName[] = { "Undefined", "Known phone number", "Unknown phone number", "Private phone number" };
-	static const char *PhoneTypeName[] = { "Unknown", "Office", "Home", "Mobile", "Not supported by Barry" };
+	static const char *DirectionName[] = {
+		N_("Received"),
+		N_("Sent"),
+		N_("Call Missing (Messagerie)"),
+		N_("Call Missing")
+	};
+	static const char *StatusName[] = {
+		N_("OK"),
+		N_("Busy"),
+		N_("Error"),
+		N_("Not supported by Barry")
+	};
+	static const char *PhoneInfoName[] = {
+		N_("Undefined"),
+		N_("Known phone number"),
+		N_("Unknown phone number"),
+		N_("Private phone number")
+	};
+	static const char *PhoneTypeName[] = {
+		N_("Unknown"),
+		N_("Office"),
+		N_("Home"),
+		N_("Mobile"),
+		N_("Not supported by Barry")
+	};
 
-	os << "CallLog entry: 0x" << setbase(16) << RecordId
+	os << _("CallLog entry: ") << "0x" << setbase(16) << RecordId
 	   << " (" << (unsigned int)RecType << ")\n";
 
 	time_t t = GetTime();
-	os << "   Timestamp: " << ctime(&t);
-	os << "   Direction: " << DirectionName[DirectionFlag] << "\n";
-	os << "   Status: " << StatusName[StatusFlag] << "\n";
-	os << "   Phone info: " << PhoneInfoName[PhoneInfoFlag] << "\n";
-	os << "   Phone type: " << PhoneTypeName[PhoneTypeFlag] << "\n";
+	os << _("   Timestamp: ") << ctime(&t);
+	os << _("   Direction: ")
+		<< gettext( DirectionName[DirectionFlag] ) << "\n";
+	os << _("   Status: ")
+		<< gettext( StatusName[StatusFlag] ) << "\n";
+	os << _("   Phone info: ")
+		<< gettext( PhoneInfoName[PhoneInfoFlag] ) << "\n";
+	os << _("   Phone type: ")
+		<< gettext( PhoneTypeName[PhoneTypeFlag] ) << "\n";
 
-	os << "   Duration: ";
+	os << _("   Duration: ");
 
 	// Days :
 	days = (int) (timestamp / (60 * 60 * 24));
@@ -283,9 +309,9 @@ void CallLog::Dump(std::ostream &os) const
 	secondes = timestamp;
 
 	if (days > 1)
-		os << setbase(10) << days << " days ";
+		os << setbase(10) << days << _(" days ");
 	else if (days > 0)
-		os << setbase(10) << days << " day ";
+		os << setbase(10) << days << _(" day ");
 
 	os << setfill ('0') << setw(2) << setbase(10) << hours;
 	os << ":";
@@ -302,14 +328,14 @@ void CallLog::Dump(std::ostream &os) const
 		if( b->strMember ) {
 			const std::string &s = this->*(b->strMember);
 			if( s.size() )
-				os << "   " << b->name << ": " << s << "\n";
+				os << "   " << gettext(b->name) << ": " << s << "\n";
 		}
 		else if( b->timeMember ) {
 			TimeT t = this->*(b->timeMember);
 			if( t.Time > 0 )
-				os << "   " << b->name << ": " << t << "\n";
+				os << "   " << gettext(b->name) << ": " << t << "\n";
 			else
-				os << "   " << b->name << ": unknown\n";
+				os << "   " << gettext(b->name) << ": " << _("unknown") << "\n";
 		}
 	}
 
@@ -350,40 +376,40 @@ const FieldHandle<CallLog>::ListT& CallLog::GetFieldHandles()
 #undef RECORD_CLASS_NAME
 #define RECORD_CLASS_NAME CallLog
 
-	FHP(RecType, "Record Type Code");
-	FHP(RecordId, "Unique Record ID");
+	FHP(RecType, _("Record Type Code"));
+	FHP(RecordId, _("Unique Record ID"));
 
-	FHD(Duration, "Duration of Call in Seconds", CLLFC_DURATION, false);
-	FHD(Timestamp, "Timestamp of Call in Milliseconds", CLLFC_TIMESTAMP, false);
-	FHD(ContactName, "Contact Name", CLLFC_CONTACT_NAME, true);
-	FHD(PhoneNumber, "Phone Number", CLLFC_PHONE_NUMBER, true);
+	FHD(Duration, _("Duration of Call in Seconds"), CLLFC_DURATION, false);
+	FHD(Timestamp, _("Timestamp of Call in Milliseconds"), CLLFC_TIMESTAMP, false);
+	FHD(ContactName, _("Contact Name"), CLLFC_CONTACT_NAME, true);
+	FHD(PhoneNumber, _("Phone Number"), CLLFC_PHONE_NUMBER, true);
 
-	FHE(dft, DirectionFlagType, DirectionFlag, "Direction of Call");
-	FHE_CONST(dft, Receiver, "Received Call");
-	FHE_CONST(dft, Emitter, "Placed the Call");
-	FHE_CONST(dft, Failed, "Failed Call");
-	FHE_CONST(dft, Missing, "Missed Call");
+	FHE(dft, DirectionFlagType, DirectionFlag, _("Direction of Call"));
+	FHE_CONST(dft, Receiver, _("Received Call"));
+	FHE_CONST(dft, Emitter, _("Placed the Call"));
+	FHE_CONST(dft, Failed, _("Failed Call"));
+	FHE_CONST(dft, Missing, _("Missed Call"));
 
-	FHE(sft, StatusFlagType, StatusFlag, "Status of Call");
-	FHE_CONST(sft, OK, "OK");
-	FHE_CONST(sft, Busy, "Busy");
-	FHE_CONST(sft, NetError, "Network Error");
-	FHE_CONST(sft, Unknown, "Unsupported Status");
+	FHE(sft, StatusFlagType, StatusFlag, _("Status of Call"));
+	FHE_CONST(sft, OK, _("OK"));
+	FHE_CONST(sft, Busy, _("Busy"));
+	FHE_CONST(sft, NetError, _("Network Error"));
+	FHE_CONST(sft, Unknown, _("Unsupported Status"));
 
-	FHE(ptf, PhoneTypeFlagType, PhoneTypeFlag, "Phone Type");
-	FHE_CONST(ptf, TypeUndefined, "Undefined");
-	FHE_CONST(ptf, TypeOffice, "Office");
-	FHE_CONST(ptf, TypeHome, "Home");
-	FHE_CONST(ptf, TypeMobile, "Mobile");
-	FHE_CONST(ptf, TypeUnknown, "Unknown");
+	FHE(ptf, PhoneTypeFlagType, PhoneTypeFlag, _("Phone Type"));
+	FHE_CONST(ptf, TypeUndefined, _("Undefined"));
+	FHE_CONST(ptf, TypeOffice, _("Office"));
+	FHE_CONST(ptf, TypeHome, _("Home"));
+	FHE_CONST(ptf, TypeMobile, _("Mobile"));
+	FHE_CONST(ptf, TypeUnknown, _("Unknown"));
 
-	FHE(pif, PhoneInfoFlagType, PhoneInfoFlag, "Phone Info");
-	FHE_CONST(pif, InfoUndefined, "Undefined");
-	FHE_CONST(pif, InfoKnown, "Phone Number is Set");
-	FHE_CONST(pif, InfoUnknown, "Phone Number Not Set");
-	FHE_CONST(pif, InfoPrivate, "Phone Number is Private");
+	FHE(pif, PhoneInfoFlagType, PhoneInfoFlag, _("Phone Info"));
+	FHE_CONST(pif, InfoUndefined, _("Undefined"));
+	FHE_CONST(pif, InfoKnown, _("Phone Number is Set"));
+	FHE_CONST(pif, InfoUnknown, _("Phone Number Not Set"));
+	FHE_CONST(pif, InfoPrivate, _("Phone Number is Private"));
 
-	FHP(Unknowns, "Unknown Fields");
+	FHP(Unknowns, _("Unknown Fields"));
 
 	return fhv;
 }

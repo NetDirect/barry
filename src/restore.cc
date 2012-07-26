@@ -19,6 +19,7 @@
     root directory of this project for more details.
 */
 
+#include "i18n.h"
 #include "restore.h"
 #include "tarfile.h"
 #include "error.h"
@@ -180,7 +181,7 @@ void Restore::SkipCurrentDB()
 	try {
 		Restore::RetrievalState state;
 		while( (state = Retrieve(m_record_data)) == RS_NEXT ) {
-			std::cerr << "Skipping: "
+			std::cerr << _("Skipping: ")
 				<< m_current_dbname << "/"
 				<< m_tar_id_text << std::endl;
 			m_tar_record_state = RS_EMPTY;
@@ -294,7 +295,7 @@ Restore::RetrievalState Restore::Retrieve(Data &record_data)
 		std::string dbname;
 		if( !SplitTarPath(filename, dbname, m_tar_id_text, m_rec_type, m_unique_id) ) {
 			// invalid filename, skip it
-			std::cerr << "Skipping invalid tar record: " << filename << std::endl;
+			std::cerr << _("Skipping invalid tar record: ") << filename << std::endl;
 			continue;
 		}
 
@@ -354,7 +355,7 @@ bool Restore::BuildRecord(Barry::DBData &data,
 	case RS_EMPTY:
 	case RS_UNKNOWN:
 	default:
-		throw std::logic_error("Invalid state in Restore::BuildRecord()");
+		throw std::logic_error(_("Invalid state in Restore::BuildRecord()"));
 
 	case RS_DBEND:
 		// process the end of database by returning false
@@ -406,7 +407,7 @@ bool Restore::FetchRecord(Barry::DBData &data, const Barry::IConverter *ic)
 	case RS_EMPTY:
 	case RS_UNKNOWN:
 	default:
-		throw std::logic_error("Invalid state in Restore::FetchRecord()");
+		throw std::logic_error(_("Invalid state in Restore::FetchRecord()"));
 
 	case RS_DBEND:
 		// process the end of database by returning false

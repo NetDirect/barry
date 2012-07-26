@@ -28,6 +28,7 @@
 #include "osprivatebase.h"
 #include "osconv22.h"
 #include <barry/vsmartptr.h>
+#include <barry/common.h>
 #include <iostream>
 #include <sstream>
 #include <memory>
@@ -39,6 +40,7 @@
 #include <../opensync-1.0/osengine/engine.h>
 
 using namespace std;
+using namespace Barry;
 
 namespace OpenSync {
 

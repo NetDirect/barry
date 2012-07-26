@@ -20,6 +20,7 @@
     root directory of this project for more details.
 */
 
+#include "i18n.h"
 #include "r_sms.h"
 #include "record-internal.h"
 #include "protostructs.h"
@@ -275,40 +276,40 @@ const FieldHandle<Sms>::ListT& Sms::GetFieldHandles()
 #undef RECORD_CLASS_NAME
 #define RECORD_CLASS_NAME Sms
 
-	FHP(RecType, "Record Type Code");
-	FHP(RecordId, "Unique Record ID");
+	FHP(RecType, _("Record Type Code"));
+	FHP(RecordId, _("Unique Record ID"));
 
-	FHE(mt, MessageType, MessageStatus, "Message Status");
-	FHE_CONST(mt, Unknown, "Unknown");
-	FHE_CONST(mt, Received, "Received");
-	FHE_CONST(mt, Sent, "Sent");
-	FHE_CONST(mt, Draft, "Draft");
+	FHE(mt, MessageType, MessageStatus, _("Message Status"));
+	FHE_CONST(mt, Unknown, _("Unknown"));
+	FHE_CONST(mt, Received, _("Received"));
+	FHE_CONST(mt, Sent, _("Sent"));
+	FHE_CONST(mt, Draft, _("Draft"));
 
-	FHE(dt, DeliveryType, DeliveryStatus, "Delivery Status");
-	FHE_CONST(dt, NoReport, "No Report");
-	FHE_CONST(dt, Failed, "Failed");
-	FHE_CONST(dt, Succeeded, "Succeeded");
+	FHE(dt, DeliveryType, DeliveryStatus, _("Delivery Status"));
+	FHE_CONST(dt, NoReport, _("No Report"));
+	FHE_CONST(dt, Failed, _("Failed"));
+	FHE_CONST(dt, Succeeded, _("Succeeded"));
 
-	FHP(IsNew, "Is New?");
-	FHP(NewConversation, "New Conversation");
-	FHP(Saved, "Saved");
-	FHP(Deleted, "Deleted");
-	FHP(Opened, "Opened");
+	FHP(IsNew, _("Is New?"));
+	FHP(NewConversation, _("New Conversation"));
+	FHP(Saved, _("Saved"));
+	FHP(Deleted, _("Deleted"));
+	FHP(Opened, _("Opened"));
 
-	FHP(Timestamp, "Timestamp in Milliseconds");
-	FHP(ServiceCenterTimestamp, "Service Center Timestamp");
+	FHP(Timestamp, _("Timestamp in Milliseconds"));
+	FHP(ServiceCenterTimestamp, _("Service Center Timestamp"));
 
-	FHE(dcst, DataCodingSchemeType, DataCodingScheme, "Data Coding Scheme");
-	FHE_CONST(dcst, SevenBit, "7bit");
-	FHE_CONST(dcst, EightBit, "8bit");
-	FHE_CONST(dcst, UCS2, "UCS2");
+	FHE(dcst, DataCodingSchemeType, DataCodingScheme, _("Data Coding Scheme"));
+	FHE_CONST(dcst, SevenBit, _("7bit"));
+	FHE_CONST(dcst, EightBit, _("8bit"));
+	FHE_CONST(dcst, UCS2, _("UCS2"));
 
-	FHP(ErrorId, "Error ID");
+	FHP(ErrorId, _("Error ID"));
 
-	FHD(Addresses, "Addresses", SMSFC_ADDRESS, true);
-	FHD(Body, "Body", SMSFC_BODY, true);
+	FHD(Addresses, _("Addresses"), SMSFC_ADDRESS, true);
+	FHD(Body, _("Body"), SMSFC_BODY, true);
 
-	FHP(Unknowns, "Unknown Fields");
+	FHP(Unknowns, _("Unknown Fields"));
 
 	return fhv;
 }
@@ -318,39 +319,39 @@ std::string Sms::GetDescription() const
 	if( Addresses.size() )
 		return Addresses[0];
 	else
-		return "Unknown destination";
+		return _("Unknown destination");
 }
 
 void Sms::Dump(std::ostream &os) const
 {
 	ios_format_state state(os);
 
-	os << "SMS record: 0x" << setbase(16) << RecordId
+	os << _("SMS record: ") << "0x" << setbase(16) << RecordId
 		<< " (" << (unsigned int)RecType << ")\n";
 	time_t t = GetTime();
-	os << "\tTimestamp: " << ctime(&t);
+	os << "\t" << _("Timestamp: ") << ctime(&t);
 
 	if (MessageStatus == Received) {
 		t = GetServiceCenterTime();
-		os << "\tService Center Timestamp: " << ctime(&t);
+		os << "\t" << _("Service Center Timestamp: ") << ctime(&t);
 	}
 
 	if (ErrorId)
-		os << "\tSend Error: 0x" << setbase(16) << ErrorId << "\n";
+		os << "\t" << _("Send Error: ") << "0x" << setbase(16) << ErrorId << "\n";
 
 	switch (MessageStatus)
 	{
 		case Received:
-			os << "\tReceived From:\n";
+			os << "\t" << _("Received From:\n");
 			break;
 		case Sent:
-			os << "\tSent to:\n";
+			os << "\t" << _("Sent to:\n");
 			break;
 		case Draft:
-			os << "\tDraft for:\n";
+			os << "\t" << _("Draft for:\n");
 			break;
 		case Unknown:
-			os << "\tUnknown status for:\n";
+			os << "\t" << _("Unknown status for:\n");
 			break;
 	}
 
@@ -360,16 +361,16 @@ void Sms::Dump(std::ostream &os) const
 	if (IsNew || Opened || Saved || Deleted || NewConversation) {
 		os << "\t";
 		if (IsNew)
-			os << "New ";
+			os << _("New ");
 		if (Opened)
-			os << "Opened ";
+			os << _("Opened ");
 		if (Saved)
-			os << "Saved ";
+			os << _("Saved ");
 		if (Deleted)
-			os << "Deleted ";
-		os << "Message" << (NewConversation ? " that starts a new conversation" : "") << "\n";
+			os << _("Deleted ");
+		os << _("Message") << (NewConversation ? _(" that starts a new conversation") : "") << "\n";
 	}
-	os << "\tContent: " << Body << "\n";
+	os << "\t" << _("Content: ") << Body << "\n";
 	os << "\n";
 }
 

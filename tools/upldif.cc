@@ -35,16 +35,16 @@ using namespace Barry;
 
 void Usage()
 {
-   cerr
-   << "upldif - Command line LDIF uploader\n"
-   << "         Copyright 2006-2012, Net Direct Inc. (http://www.netdirect.ca/)\n\n"
-   << "   -p pin    PIN of device to talk with\n"
-   << "             If only one device plugged in, this flag is optional\n"
-   << "   -P pass   Simplistic method to specify device password\n"
-   << "   -u        Do the upload.  If not specified, only dumps parsed\n"
-   << "             LDIF data to stdout.\n"
-   << "   -v        Dump protocol data during operation\n"
-   << "   -h        This help output\n"
+   cerr <<
+   _("upldif - Command line LDIF uploader\n"
+   "         Copyright 2006-2012, Net Direct Inc. (http://www.netdirect.ca/)\n\n"
+   "   -p pin    PIN of device to talk with\n"
+   "             If only one device plugged in, this flag is optional\n"
+   "   -P pass   Simplistic method to specify device password\n"
+   "   -u        Do the upload.  If not specified, only dumps parsed\n"
+   "             LDIF data to stdout.\n"
+   "   -v        Dump protocol data during operation\n"
+   "   -h        This help output\n")
    << endl;
 }
 
@@ -76,7 +76,7 @@ struct Store
 
 	~Store()
 	{
-		cout << "Store counted " << dec << count << " records." << endl;
+		cout << string_vprintf(_("Store counted %d records."), count) << endl;
 	}
 
 	// Retrieval operator -- called by Barry during the upload
@@ -170,7 +170,7 @@ int main(int argc, char *argv[])
 		Barry::Probe probe;
 		int activeDevice = probe.FindActive(pin);
 		if( activeDevice == -1 ) {
-			cerr << "Device not found, or not specified" << endl;
+			cerr << _("Device not found, or not specified") << endl;
 			return 1;
 		}
 
@@ -186,13 +186,13 @@ int main(int argc, char *argv[])
 
 	}
 	catch( Usb::Error &ue) {
-		std::cerr << "Usb::Error caught: " << ue.what() << endl;
+		std::cerr << _("Usb::Error caught: ") << ue.what() << endl;
 	}
 	catch( Barry::Error &se ) {
-		std::cerr << "Barry::Error caught: " << se.what() << endl;
+		std::cerr << _("Barry::Error caught: ") << se.what() << endl;
 	}
 	catch( std::exception &e ) {
-		std::cerr << "std::exception caught: " << e.what() << endl;
+		std::cerr << _("std::exception caught: ") << e.what() << endl;
 		return 1;
 	}
 

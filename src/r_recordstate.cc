@@ -19,6 +19,7 @@
     root directory of this project for more details.
 */
 
+#include "i18n.h"
 #include "record.h"
 #include "record-internal.h"
 #include "data.h"
@@ -127,7 +128,7 @@ void RecordStateTable::Dump(std::ostream &os) const
 	bool bPrintAscii = Data::PrintAscii();
 	Data::PrintAscii(false);
 
-	os << "  Index  RecordId    Dirty  RecType" << endl;
+	os << _("  Index  RecordId    Dirty  RecType") << endl;
 	os << "-------  ----------  -----  -------" << endl;
 
 	StateMapType::const_iterator b, e = StateMap.end();
@@ -137,7 +138,7 @@ void RecordStateTable::Dump(std::ostream &os) const
 		os.fill(' ');
 		os << setbase(10) << setw(7) << state.Index;
 		os << "  0x" << setbase(16) << setfill('0') << setw(8) << state.RecordId;
-		os << "  " << setfill(' ') << setw(5) << (state.Dirty ? "yes" : "no");
+		os << "  " << setfill(' ') << setw(5) << (state.Dirty ? _("yes") : _("no"));
 		os << "     0x" << setbase(16) << setfill('0') << setw(2) << state.RecType;
 		os << "   " << Data(state.Unknown2.data(), state.Unknown2.size());
 	}

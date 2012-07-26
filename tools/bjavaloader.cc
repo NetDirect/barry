@@ -62,70 +62,83 @@ void Usage()
    int logical, major, minor;
    const char *Version = Barry::Version(logical, major, minor);
 
-   cerr
-   << "bjavaloader - Command line USB Blackberry Java Loader\n"
-   << "        Copyright 2008-2009, Nicolas VIVIEN.\n"
-   << "        Copyright 2005-2012, Net Direct Inc. (http://www.netdirect.ca/)\n"
-   << "        Using: " << Version << "\n"
-   << "\n"
-   << "   -A        Save all modules found\n"
-   << "   -a        Wipe applications only\n"
-   << "   -i        Wipe filesystem only\n"
-   << "   -f        Force erase, if module is in use\n"
-   << "   -h        This help\n"
-   << "   -s        List sibling in module list\n"
-   << "   -p pin    PIN of device to talk with\n"
-   << "             If only one device is plugged in, this flag is optional\n"
-   << "   -P pass   Simplistic method to specify device password\n"
-   << "   -v        Dump protocol data during operation\n"
-   << "\n"
-   << "commands\n"
-   << "\n"
-   << "   " << CMD_LIST << " [-s]\n"
-   << "      Lists modules on the handheld\n"
-   << "\n"
-   << "   " << CMD_DEVICEINFO << "\n"
-   << "      Provides information on the handheld\n"
-   << "\n"
-   << "   " << CMD_LOAD << " <.cod file> ...\n"
-   << "      Loads modules onto the handheld\n"
-   << "\n"
-   << "   " << CMD_SAVE << " [-A] <module name> ...\n"
-   << "      Retrieves modules from the handheld and writes to .cod file\n"
-   << "      Note: will overwrite existing files!\n"
-   << "\n"
-   << "   " << CMD_WIPE << " [-a | -i]\n"
-   << "      Wipes the handheld\n"
-   << "      Use Caution: Wiping filesystem will remove all data\n"
-   << "                   such as messages, contacts, etc.\n"
-   << "                   Wiping applications will remove all .cod files\n"
-   << "                   on the device, including OS .cod files.\n"
-   << "\n"
-   << "   " << CMD_RESETFACTORY << "\n"
-   << "      Reset IT policy to factory defaults\n"
-   << "      Use Caution: Resetting IT policy to factory defaults will\n"
-   << "                   also perform a filesystem wipe which will remove\n"
-   << "                   all data such as messages, contacts, etc.\n"
-   << "\n"
-   << "   " << CMD_ERASE << " [-f] <module name> ...\n"
-   << "      Erase module from handheld\n"
-   << "\n"
-   << "   " << CMD_EVENTLOG << "\n"
-   << "      Retrieves the handheld event log\n"
-   << "\n"
-   << "   " << CMD_CLEAR_LOG << "\n"
-   << "      Clears the handheld event log\n"
-   << "\n"
-   << "   " << CMD_LOGSTRACES << "\n"
-   << "      Dump the stack traces for all threads to the event log\n"
-   << "\n"
-   << "   " << CMD_SCREENSHOT << " <.bmp file>\n"
-   << "      Make a screenshot of handheld\n"
-   << "\n"
-   << "   " << CMD_SETTIME << " [" << TIME_FMT_EXAMPLE << "]\n"
-   << "      Sets the time on the handheld to the current time\n"
-   << "      Or the time specified as an argument to " << CMD_SETTIME << "\n"
-   << "      If given as argument, current system timezone is assumed\n"
+   cerr << string_vprintf(
+   _("bjavaloader - Command line USB Blackberry Java Loader\n"
+   "        Copyright 2008-2009, Nicolas VIVIEN.\n"
+   "        Copyright 2005-2012, Net Direct Inc. (http://www.netdirect.ca/)\n"
+   "        Using: %s\n"
+   "\n"
+   "   -A        Save all modules found\n"
+   "   -a        Wipe applications only\n"
+   "   -i        Wipe filesystem only\n"
+   "   -f        Force erase, if module is in use\n"
+   "   -h        This help\n"
+   "   -s        List sibling in module list\n"
+   "   -p pin    PIN of device to talk with\n"
+   "             If only one device is plugged in, this flag is optional\n"
+   "   -P pass   Simplistic method to specify device password\n"
+   "   -v        Dump protocol data during operation\n"
+   "\n"
+   "Commands:\n"
+   "\n"
+   "   %s [-s]\n"
+   "      Lists modules on the handheld\n"
+   "\n"
+   "   %s\n"
+   "      Provides information on the handheld\n"
+   "\n"
+   "   %s <.cod file> ...\n"
+   "      Loads modules onto the handheld\n"
+   "\n"
+   "   %s [-A] <module name> ...\n"
+   "      Retrieves modules from the handheld and writes to .cod file\n"
+   "      Note: will overwrite existing files!\n"
+   "\n"
+   "   %s [-a | -i]\n"
+   "      Wipes the handheld\n"
+   "      Use Caution: Wiping filesystem will remove all data\n"
+   "                   such as messages, contacts, etc.\n"
+   "                   Wiping applications will remove all .cod files\n"
+   "                   on the device, including OS .cod files.\n"
+   "\n"
+   "   %s\n"
+   "      Reset IT policy to factory defaults\n"
+   "      Use Caution: Resetting IT policy to factory defaults will\n"
+   "                   also perform a filesystem wipe which will remove\n"
+   "                   all data such as messages, contacts, etc.\n"
+   "\n"
+   "   %s [-f] <module name> ...\n"
+   "      Erase module from handheld\n"
+   "\n"
+   "   %s\n"
+   "      Retrieves the handheld event log\n"
+   "\n"
+   "   %s\n"
+   "      Clears the handheld event log\n"
+   "\n"
+   "   %s\n"
+   "      Dump the stack traces for all threads to the event log\n"
+   "\n"
+   "   %s <.bmp file>\n"
+   "      Make a screenshot of handheld\n"
+   "\n"
+   "   %s [%s]\n"
+   "      Sets the time on the handheld to the current time\n"
+   "      Or the time specified as an argument to %s\n"
+   "      If given as argument, current system timezone is assumed\n"),
+	Version,
+	CMD_LIST,
+	CMD_DEVICEINFO,
+	CMD_LOAD,
+	CMD_SAVE,
+	CMD_WIPE,
+	CMD_RESETFACTORY,
+	CMD_ERASE,
+	CMD_EVENTLOG,
+	CMD_CLEAR_LOG,
+	CMD_LOGSTRACES,
+	CMD_SCREENSHOT,
+	CMD_SETTIME, TIME_FMT_EXAMPLE, CMD_SETTIME)
    << endl;
 }
 
@@ -157,7 +170,7 @@ void SetTime(Barry::Mode::JavaLoader *javaloader, const char *timestr)
 		// string, and returns a pointer to the NULL byte at the end of
 		// the input string on success
 		if( p == NULL || p != (timestr + strlen(timestr)) ) {
-			throw runtime_error(string("Unable to parse time string: ") + timestr);
+			throw runtime_error(string(_("Unable to parse time string: ")) + timestr);
 		}
 
 		when = mktime(&timeinfo);
@@ -192,7 +205,7 @@ void GetScreenshot(Barry::Mode::JavaLoader *javaloader, const char *filename)
 	// Write BMP file
 	FILE *fp = fopen(filename, "wb");
 	if (fp == NULL) {
-		throw runtime_error(string("Can't open: ") + filename);
+		throw runtime_error(string(_("Can't open: ")) + filename);
 	}
 	AutoClose ac(fp);
 
@@ -294,7 +307,7 @@ int main(int argc, char *argv[])
 		argv += optind;
 
 		if( argc < 1 ) {
-			cerr << "missing command" << endl;
+			cerr << _("missing command") << endl;
 			Usage();
 			return 1;
 		}
@@ -319,7 +332,8 @@ int main(int argc, char *argv[])
 		Barry::Probe probe;
 		int activeDevice = probe.FindActive(pin);
 		if( activeDevice == -1 ) {
-			cerr << "No device selected, or PIN not found" << endl;
+			cerr << _("No device selected, or PIN not found")
+				<< endl;
 			return 1;
 		}
 
@@ -340,38 +354,38 @@ int main(int argc, char *argv[])
 		}
 		else if( cmd == CMD_LOAD ) {
 			if( params.size() == 0 ) {
-				cerr << "specify at least one .cod file to load" << endl;
+				cerr << _("specify at least one .cod file to load") << endl;
 				Usage();
 				return 1;
 			}
 
 			vector<string>::iterator i = params.begin(), end = params.end();
 			for( ; i != end; ++i ) {
-				cout << "loading " << (*i) << "... ";
+				cout << _("loading: ") << (*i) << "... ";
 				SendAppFile(&javaloader, (*i).c_str());
-				cout << "done." << endl;
+				cout << _("done.") << endl;
 			}
 		}
 		else if( cmd == CMD_ERASE ) {
 			if( params.size() == 0 ) {
-				cerr << "specify at least one module to erase" << endl;
+				cerr << _("specify at least one module to erase") << endl;
 				Usage();
 				return 1;
 			}
 
 			vector<string>::iterator i = params.begin(), end = params.end();
 			for( ; i != end; ++i ) {
-				cout << "erasing: " << (*i) << "... ";
+				cout << _("erasing: ") << (*i) << "... ";
 				if( force_erase )
 					javaloader.ForceErase((*i));
 				else
 					javaloader.Erase((*i));
-				cout << "done." << endl;
+				cout << _("done.") << endl;
 			}
 		}
 		else if( cmd == CMD_SCREENSHOT ) {
 			if( params.size() == 0 ) {
-				cerr << "specify a .bmp filename" << endl;
+				cerr << _("specify a .bmp filename") << endl;
 				Usage();
 				return 1;
 			}
@@ -402,22 +416,22 @@ int main(int argc, char *argv[])
 				javaloader.GetDirectory(dir, false);
 				JLDirectory::BaseIterator i = dir.begin();
 				for( ; i != dir.end(); ++i ) {
-					cout << "saving: " << i->Name << "... ";
+					cout << _("saving: ") << i->Name << "... ";
 					SaveModule(&javaloader,i->Name.c_str());
-					cout << "done." << endl;
+					cout << _("done.") << endl;
 				}
 			}
 			else if( params.size() == 0 ) {
-				cerr << "specify at least one module to save" << endl;
+				cerr << _("specify at least one module to save") << endl;
 				Usage();
 				return 1;
 			}
 			else {
 				vector<string>::iterator i = params.begin(), end = params.end();
 				for( ; i != end; ++i ) {
-					cout << "saving: " << (*i) << "... ";
+					cout << _("saving: ") << (*i) << "... ";
 					SaveModule(&javaloader, (*i).c_str());
-					cout << "done." << endl;
+					cout << _("done.") << endl;
 				}
 			}
 		}
@@ -427,40 +441,42 @@ int main(int argc, char *argv[])
 			cout << info;
 		}
 		else if( cmd == CMD_WIPE ) {
-			cout
-				<< "Use Caution: Wiping filesystem will remove all data\n"
-				<< "             such as messages, contacts, etc.\n"
-				<< "             Wiping applications will remove all .cod files\n"
-				<< "             on the device, including OS .cod files.\n\n"
-				<< "You have selected to wipe the filesystem of device '" << probe.Get(activeDevice).m_pin.Str() << "'\n"
-				<< "Continue with wipe? (yes/no) ";
+			cout << string_vprintf(
+	// TRANSLATORS: you may translate yes/no as long as you also
+	// translate "yes" to match.
+	_("Use Caution: Wiping filesystem will remove all data\n"
+	"             such as messages, contacts, etc.\n"
+	"             Wiping applications will remove all .cod files\n"
+	"             on the device, including OS .cod files.\n\n"
+	"You have selected to wipe the filesystem of device '%s'\n"
+	"Continue with wipe? (yes/no) "), probe.Get(activeDevice).m_pin.Str().c_str());
 			string confirm;
 			getline(cin, confirm);
-			if( confirm == "yes" ) {
+			if( confirm == _("yes") ) {
 				javaloader.Wipe(wipe_apps, wipe_fs);
 			}
 			else {
-				cout << "Response of 'yes' not received, aborting." << endl;
+				cout << _("Response of 'yes' not received, aborting.") << endl;
 			}
 		}
 		else if( cmd == CMD_RESETFACTORY ) {
-			cout
-				<< "Use Caution: Resetting IT policy to factory defaults will\n"
-				<< "             also perform a filesystem wipe which will remove\n"
-				<< "             all data such as messages, contacts, etc.\n\n"
-				<< "You have selected to reset device '" << probe.Get(activeDevice).m_pin.Str() << "' to factory defaults\n"
-				<< "Continue with wipe? (yes/no) ";
+			cout << string_vprintf(
+	_("Use Caution: Resetting IT policy to factory defaults will\n"
+	"             also perform a filesystem wipe which will remove\n"
+	"             all data such as messages, contacts, etc.\n\n"
+	"You have selected to reset device '%s' to factory defaults\n"
+	"Continue with wipe? (yes/no) "), probe.Get(activeDevice).m_pin.Str().c_str());
 			string confirm;
 			getline(cin, confirm);
-			if( confirm == "yes" ) {
+			if( confirm == _("yes") ) {
 				javaloader.ResetToFactory();
 			}
 			else {
-				cout << "Response of 'yes' not received, aborting." << endl;
+				cout << _("Response of 'yes' not received, aborting.") << endl;
 			}
 		}
 		else {
-			cerr << "invalid command \"" << cmd << "\"" << endl;
+			cerr << _("invalid command: ") << cmd << endl;
 			Usage();
 			return 1;
 		}
@@ -471,17 +487,17 @@ int main(int argc, char *argv[])
 	}
 	catch( Usb::Error &ue) {
 		std::cout << endl;	// flush any normal output first
-		std::cerr << "Usb::Error caught: " << ue.what() << endl;
+		std::cerr << _("Usb::Error caught: ") << ue.what() << endl;
 		return 1;
 	}
 	catch( Barry::Error &se ) {
 		std::cout << endl;
-		std::cerr << "Barry::Error caught: " << se.what() << endl;
+		std::cerr << _("Barry::Error caught: ") << se.what() << endl;
 		return 1;
 	}
 	catch( std::exception &e ) {
 		std::cout << endl;
-		std::cerr << "std::exception caught: " << e.what() << endl;
+		std::cerr << _("std::exception caught: ") << e.what() << endl;
 		return 1;
 	}
 

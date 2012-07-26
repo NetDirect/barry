@@ -19,6 +19,7 @@
     root directory of this project for more details.
 */
 
+#include "i18n.h"
 #include "r_recur_base.h"
 #include "protostructs.h"
 #include "error.h"
@@ -87,7 +88,7 @@ bool RecurBase::ParseField(uint8_t type,
 		}
 		else {
 			// not enough data!
-			throw Error("RecurBase::ParseField: not enough data in recurrence data field");
+			throw Error(_("RecurBase::ParseField: not enough data in recurrence data field"));
 		}
 		return true;
 	}
@@ -153,7 +154,7 @@ void RecurBase::ParseRecurrenceData(const void *data)
 	default:
 		eout("Unknown recurrence data type: 0x"
 			<< setbase(16) << (unsigned int) rec->type);
-		throw Error("Unknown recurrence data type");
+		throw Error(_("Unknown recurrence data type"));
 	}
 
 	Recurring = true;
@@ -168,7 +169,7 @@ void RecurBase::Validate() const
 void RecurBase::BuildRecurrenceData(time_t StartTime, void *data) const
 {
 	if( !Recurring )
-		throw Error("RecurBase::BuildRecurrenceData: Attempting to build recurrence data on non-recurring record.");
+		throw Error(_("RecurBase::BuildRecurrenceData: Attempting to build recurrence data on non-recurring record."));
 
 	CalendarRecurrenceDataField *rec = (CalendarRecurrenceDataField*) data;
 
@@ -222,7 +223,7 @@ void RecurBase::BuildRecurrenceData(time_t StartTime, void *data) const
 		eout("RecurBase::BuildRecurrenceData: "
 			"Unknown recurrence data type: 0x"
 			<< setbase(16) << (unsigned int) rec->type);
-		throw Error("RecurBase::BuildRecurrenceData: Unknown recurrence data type");
+		throw Error(_("RecurBase::BuildRecurrenceData: Unknown recurrence data type"));
 	}
 }
 
@@ -246,82 +247,100 @@ void RecurBase::Dump(std::ostream &os) const
 {
 	ios_format_state state(os);
 
-	static const char *DayNames[] = { "Sun", "Mon", "Tue", "Wed",
-		"Thu", "Fri", "Sat" };
-	static const char *MonthNames[] = { "Jan", "Feb", "Mar", "Apr",
-		"May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
+	static const char *DayNames[] = {
+		N_("Sun"),
+		N_("Mon"),
+		N_("Tue"),
+		N_("Wed"),
+		N_("Thu"),
+		N_("Fri"),
+		N_("Sat")
+	};
+	static const char *MonthNames[] = {
+		N_("Jan"),
+		N_("Feb"),
+		N_("Mar"),
+		N_("Apr"),
+		N_("May"),
+		N_("Jun"),
+		N_("Jul"),
+		N_("Aug"),
+		N_("Sep"),
+		N_("Oct"),
+		N_("Nov"),
+		N_("Dec")
+	};
 
 // FIXME - need a "check all data" function that make sure that all
 // recurrence data is within range.  Then call that before using
 // the data, such as in Build and in Dump.
 
 	// print recurrence data if available
-	os << "   Recurring: " << (Recurring ? "yes" : "no") << "\n";
+	os << _("   Recurring: ") << (Recurring ? _("yes") : _("no")) << "\n";
 	if( Recurring ) {
 		switch( RecurringType )
 		{
 		case Day:
-			os << "      Every day.\n";
+			os << _("      Every day.\n");
 			break;
 
 		case MonthByDate:
-			os << "      Every month on the "
-			   << dec
-			   << DayOfMonth
-			   << (DayOfMonth == 1 ? "st" : "")
-			   << (DayOfMonth == 2 ? "nd" : "")
-			   << (DayOfMonth == 3 ? "rd" : "")
-			   << (DayOfMonth > 3  ? "th" : "")
+			// TRANSLATORS: to remove the 'th' ending on numbers,
+			// just skip the %s in this string.
+			os << string_vprintf(_("      Every month on the %u%s"),
+				DayOfMonth,
+				(DayOfMonth == 1 ? "st" :
+					(DayOfMonth == 2 ? "nd" :
+					(DayOfMonth == 3 ? "rd" :
+					(DayOfMonth > 3  ? "th" : "")))))
 			   << "\n";
 			break;
 
 		case MonthByDay:
-			os << "      Every month on the "
-			   << dec
-			   << DayNames[DayOfWeek]
-			   << " of week "
-			   << WeekOfMonth
+			os << string_vprintf(_("      Every month on the %s of week %u"),
+				gettext( DayNames[DayOfWeek] ),
+				WeekOfMonth)
 			   << "\n";
 			break;
 
 		case YearByDate:
-			os << "      Every year on "
-			   << dec
-			   << MonthNames[MonthOfYear-1]
-			   << " " << DayOfMonth << "\n";
+			os << string_vprintf(_("      Every year on %s %u"),
+				gettext( MonthNames[MonthOfYear-1] ),
+				DayOfMonth)
+			   << "\n";
 			break;
 
 		case YearByDay:
-			os << "      Every year in " << MonthNames[MonthOfYear-1]
-			   << dec
-			   << " on "
-			   << DayNames[DayOfWeek]
-			   << " of week " << WeekOfMonth << "\n";
+			os << string_vprintf(_("      Every year in %s on %s of week %u"),
+				gettext( MonthNames[MonthOfYear-1] ),
+				gettext( DayNames[DayOfWeek] ),
+				WeekOfMonth)
+			   << "\n";
 			break;
 
 		case Week:
-			os << "      Every week on: ";
-			if( WeekDays & CAL_WD_SUN ) os << "Sun ";
-			if( WeekDays & CAL_WD_MON ) os << "Mon ";
-			if( WeekDays & CAL_WD_TUE ) os << "Tue ";
-			if( WeekDays & CAL_WD_WED ) os << "Wed ";
-			if( WeekDays & CAL_WD_THU ) os << "Thu ";
-			if( WeekDays & CAL_WD_FRI ) os << "Fri ";
-			if( WeekDays & CAL_WD_SAT ) os << "Sat ";
+			os << _("      Every week on: ");
+			if( WeekDays & CAL_WD_SUN ) os << gettext("Sun") << " ";
+			if( WeekDays & CAL_WD_MON ) os << gettext("Mon") << " ";
+			if( WeekDays & CAL_WD_TUE ) os << gettext("Tue") << " ";
+			if( WeekDays & CAL_WD_WED ) os << gettext("Wed") << " ";
+			if( WeekDays & CAL_WD_THU ) os << gettext("Thu") << " ";
+			if( WeekDays & CAL_WD_FRI ) os << gettext("Fri") << " ";
+			if( WeekDays & CAL_WD_SAT ) os << gettext("Sat") << " ";
 			os << "\n";
 			break;
 
 		default:
-			os << "      Unknown recurrence type\n";
+			os << _("      Unknown recurrence type\n");
 			break;
 		}
 
-		os << dec << "      Interval: " << Interval << "\n";
+		os << dec << _("      Interval: ") << Interval << "\n";
 
 		if( Perpetual )
-			os << "      Ends: never\n";
+			os << _("      Ends: never\n");
 		else
-			os << "      Ends: " << RecurringEndTime << "\n";
+			os << _("      Ends: ") << RecurringEndTime << "\n";
 	}
 }
 

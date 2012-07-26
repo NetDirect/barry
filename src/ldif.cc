@@ -19,6 +19,7 @@
     root directory of this project for more details.
 */
 
+#include "i18n.h"
 #include "ldif.h"
 #include "record.h"
 #include "r_contact.h"
@@ -35,59 +36,59 @@
 namespace Barry {
 
 const ContactLdif::NameToFunc ContactLdif::FieldMap[] = {
-	{ "Email", "Email address",
+	{ "Email", N_("Email address"),
 		&ContactLdif::Email, &ContactLdif::SetEmail },
-	{ "Phone", "Phone number",
+	{ "Phone", N_("Phone number"),
 		&ContactLdif::Phone, &ContactLdif::SetPhone },
-	{ "Fax", "Fax number",
+	{ "Fax", N_("Fax number"),
 		&ContactLdif::Fax, &ContactLdif::SetFax },
-	{ "WorkPhone", "Work phone number",
+	{ "WorkPhone", N_("Work phone number"),
 		&ContactLdif::WorkPhone, &ContactLdif::SetWorkPhone },
-	{ "HomePhone", "Home phone number",
+	{ "HomePhone", N_("Home phone number"),
 		&ContactLdif::HomePhone, &ContactLdif::SetHomePhone },
-	{ "MobilePhone", "Mobile phone number",
+	{ "MobilePhone", N_("Mobile phone number"),
 		&ContactLdif::MobilePhone, &ContactLdif::SetMobilePhone },
-	{ "Pager", "Pager number",
+	{ "Pager", N_("Pager number"),
 		&ContactLdif::Pager, &ContactLdif::SetPager },
-	{ "PIN", "PIN",
+	{ "PIN", N_("PIN"),
 		&ContactLdif::PIN, &ContactLdif::SetPIN },
-	{ "FirstName", "First name",
+	{ "FirstName", N_("First name"),
 		&ContactLdif::FirstName, &ContactLdif::SetFirstName },
-	{ "LastName", "Last name",
+	{ "LastName", N_("Last name"),
 		&ContactLdif::LastName, &ContactLdif::SetLastName },
-	{ "Company", "Company name",
+	{ "Company", N_("Company name"),
 		&ContactLdif::Company, &ContactLdif::SetCompany },
-	{ "DefaultCommunicationsMethod", "Default communications method",
+	{ "DefaultCommunicationsMethod", N_("Default communications method"),
 		&ContactLdif::DefaultCommunicationsMethod, &ContactLdif::SetDefaultCommunicationsMethod },
-	{ "WorkAddress1", "Work Address, line 1",
+	{ "WorkAddress1", N_("Work Address, line 1"),
 		&ContactLdif::WorkAddress1, &ContactLdif::SetWorkAddress1 },
-	{ "WorkAddress2", "Work Address, line 2",
+	{ "WorkAddress2", N_("Work Address, line 2"),
 		&ContactLdif::WorkAddress2, &ContactLdif::SetWorkAddress2 },
-	{ "WorkAddress3", "Work Address, line 3",
+	{ "WorkAddress3", N_("Work Address, line 3"),
 		&ContactLdif::WorkAddress3, &ContactLdif::SetWorkAddress3 },
-	{ "WorkCity", "WorkCity",
+	{ "WorkCity", N_("WorkCity"),
 		&ContactLdif::WorkCity, &ContactLdif::SetWorkCity },
-	{ "WorkProvince", "WorkProvince / State",
+	{ "WorkProvince", N_("WorkProvince / State"),
 		&ContactLdif::WorkProvince, &ContactLdif::SetWorkProvince },
-	{ "WorkPostalCode", "Work Postal / ZIP code",
+	{ "WorkPostalCode", N_("Work Postal / ZIP code"),
 		&ContactLdif::WorkPostalCode, &ContactLdif::SetWorkPostalCode },
-	{ "WorkCountry", "WorkCountry",
+	{ "WorkCountry", N_("WorkCountry"),
 		&ContactLdif::WorkCountry, &ContactLdif::SetWorkCountry },
-	{ "JobTitle", "Job Title",
+	{ "JobTitle", N_("Job Title"),
 		&ContactLdif::JobTitle, &ContactLdif::SetJobTitle },
-	{ "PublicKey", "Public key",
+	{ "PublicKey", N_("Public key"),
 		&ContactLdif::PublicKey, &ContactLdif::SetPublicKey },
-	{ "Notes", "Notes",
+	{ "Notes", N_("Notes"),
 		&ContactLdif::Notes, &ContactLdif::SetNotes },
-	{ "Image", "Contact photo",
+	{ "Image", N_("Contact photo"),
 		&ContactLdif::Image, &ContactLdif::SetImage },
-	{ "WorkPostalAddress", "Mailing Work address (includes address lines, city, province, country, and postal code)",
+	{ "WorkPostalAddress", N_("Mailing Work address (includes address lines, city, province, country, and postal code)"),
 		&ContactLdif::WorkPostalAddress, &ContactLdif::SetWorkPostalAddress },
-	{ "HomePostalAddress", "Mailing home address (includes address lines, city, province, country, and postal code)",
+	{ "HomePostalAddress", N_("Mailing home address (includes address lines, city, province, country, and postal code)"),
 		&ContactLdif::HomePostalAddress, &ContactLdif::SetHomePostalAddress },
-	{ "FullName", "First + Last names",
+	{ "FullName", N_("First + Last names"),
 		&ContactLdif::FullName, &ContactLdif::SetFullName },
-	{ "FQDN", "Fully qualified domain name",
+	{ "FQDN", N_("Fully qualified domain name"),
 		&ContactLdif::FQDN, &ContactLdif::SetFQDN },
 	{ 0, 0, 0 }
 };
@@ -209,7 +210,7 @@ std::string ContactLdif::GetFieldReadName(GetFunctionType read) const
 		if( read == n->read )
 			return n->name;
 	}
-	return "<unknown>";
+	return _("<unknown>");
 }
 
 std::string ContactLdif::GetFieldWriteName(SetFunctionType write) const
@@ -218,7 +219,7 @@ std::string ContactLdif::GetFieldWriteName(SetFunctionType write) const
 		if( write == n->write )
 			return n->name;
 	}
-	return "<unknown>";
+	return _("<unknown>");
 }
 
 bool ContactLdif::Map(const LdifAttribute &ldifname,
@@ -433,7 +434,7 @@ std::string ContactLdif::FQDN(const Barry::Contact &con) const
 		FQDN += (this->*(i->second.read))(con);
 	}
 	else {
-		FQDN += "unknown";
+		FQDN += _("unknown");
 	}
 
 	FQDN += ",";
@@ -778,7 +779,7 @@ void ContactLdif::DumpMap(std::ostream &os) const
 	os.setf(std::ios::left);
 	os.fill(' ');
 
-	os << "ContactLdif Mapping:\n";
+	os << _("ContactLdif Mapping:\n");
 
 	// cycle through the map
 	for(	AccessMapType::const_iterator b = m_map.begin();
@@ -797,7 +798,7 @@ void ContactLdif::DumpMap(std::ostream &os) const
 		}
 	}
 
-	os << "   >>> DN attribute: " << m_dnAttr.name << "\n";
+	os << _("   >>> DN attribute: ") << m_dnAttr.name << "\n";
 }
 
 std::string ContactLdif::MakeLdifData(const std::string &str)
