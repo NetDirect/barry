@@ -139,10 +139,12 @@ else
 	#autoreconf -ifv --include=config
 
 	# Autogenerate the gettext PO support files
-	# Do this for ./ and gui/ and desktop/
+	# All submodules have PO support files now, so no difference
 	autopoint
 	(cd gui && autopoint)
 	(cd desktop && autopoint)
+	(cd opensync-plugin && autopoint)
+	(cd opensync-plugin-0.4x && autopoint)
 
 	# If we let autoreconf do this, it will run libtoolize after
 	# creating some or all of the configure files.  For example,

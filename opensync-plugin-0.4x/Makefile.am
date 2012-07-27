@@ -1,6 +1,6 @@
 ACLOCAL_FLAGS = -I m4
 
-SUBDIRS = src
+SUBDIRS = po . src
 
 EXTRA_DIST = \
 	buildgen.sh

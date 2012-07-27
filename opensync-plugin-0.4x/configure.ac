@@ -8,6 +8,10 @@ AC_CONFIG_AUX_DIR([.])
 AC_CONFIG_MACRO_DIR([m4])
 AM_INIT_AUTOMAKE(foreign)
 
+AM_GNU_GETTEXT([external])
+# this is the verion of gettext, not barry
+AM_GNU_GETTEXT_VERSION([0.18.1])
+
 AC_ISC_POSIX
 AC_PROG_CC
 AM_PROG_CC_STDC
@@ -48,6 +52,7 @@ AC_SUBST(OPENSYNC_HEADERDIR) ## Here are the headers that a user interface may n
 
 AC_OUTPUT([
 Makefile
+po/Makefile.in
 src/Makefile
 ])
 

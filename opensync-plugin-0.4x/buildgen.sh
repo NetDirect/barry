@@ -10,6 +10,7 @@ if [ "$1" = "clean" ] ; then
 		config.sub \
 		configure depcomp install-sh ltmain.sh missing \
 		src/Makefile.in INSTALL \
+		config.rpath \
 		config.h.in~
 else
 	autoreconf -if

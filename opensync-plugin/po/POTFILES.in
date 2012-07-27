@@ -1,0 +1,7 @@
+# List of source files which contain translatable strings.
+src/barry_sync.cc
+src/environment.cc
+src/idmap.cc
+src/vcard.cc
+src/vevent.cc
+

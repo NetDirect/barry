@@ -30,6 +30,7 @@
 #include <glib.h>
 #include <strings.h>
 #include <sstream>
+#include "i18n.h"
 
 using namespace Barry::Sync;
 
@@ -74,7 +75,7 @@ bool VJournalConverter::ParseData(const char *data)
 
 	}
 	catch( Barry::ConvertError &ce ) {
-		trace.logf("ERROR: vjournal:Barry::ConvertError exception: %s", ce.what());
+		trace.logf(_("ERROR: vjournal:Barry::ConvertError exception: %s"), ce.what());
 		m_last_errmsg = ce.what();
 		return false;
 	}
@@ -102,7 +103,7 @@ void VJournalConverter::operator()(const Barry::Memo &rec)
 
 	}
 	catch( Barry::ConvertError &ce ) {
-		trace.logf("ERROR: vjournal:Barry::ConvertError exception: %s", ce.what());
+		trace.logf(_("ERROR: vjournal:Barry::ConvertError exception: %s"), ce.what());
 		m_last_errmsg = ce.what();
 	}
 }
@@ -148,7 +149,7 @@ bool VJournalConverter::CommitRecordData(BarryEnvironment *env, unsigned int dbI
 			newRecordId = recordId;
 		}
 		else {
-			trace.log("Can't use recommended recordId, generating new one.");
+			trace.log(_("Can't use recommended recordId, generating new one."));
 			newRecordId = env->m_JournalSync.m_Table.MakeNewRecordId();
 		}
 	}
@@ -160,9 +161,10 @@ bool VJournalConverter::CommitRecordData(BarryEnvironment *env, unsigned int dbI
 	VJournalConverter convert(newRecordId);
 	if( !convert.ParseData(data) ) {
 		std::ostringstream oss;
-		oss << "unable to parse change data for new RecordId: "
+		oss << _("unable to parse change data for new RecordId: ")
 		    << newRecordId
-		    << " (" << convert.GetLastError() << ") data: " << data;
+		    << " (" << convert.GetLastError() << ") "
+		    << _("data: ") << data;
 		errmsg = oss.str();
 		trace.log(errmsg.c_str());
 		return false;
@@ -171,13 +173,13 @@ bool VJournalConverter::CommitRecordData(BarryEnvironment *env, unsigned int dbI
 	Barry::RecordBuilder<Barry::Memo, VJournalConverter> builder(convert);
 
 	if( add ) {
-		trace.log("adding record");
+		trace.log(_("adding record"));
 		env->GetDesktop()->AddRecord(dbId, builder);
 	}
 	else {
-		trace.log("setting record");
+		trace.log(_("setting record"));
 		env->GetDesktop()->SetRecord(dbId, StateIndex, builder);
-		trace.log("clearing dirty flag");
+		trace.log(_("clearing dirty flag"));
 		env->GetDesktop()->ClearDirty(dbId, StateIndex);
 	}
 

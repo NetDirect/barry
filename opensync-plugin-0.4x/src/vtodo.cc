@@ -31,6 +31,7 @@
 #include <glib.h>
 #include <string.h>
 #include <sstream>
+#include "i18n.h"
 
 using namespace Barry::Sync;
 
@@ -75,7 +76,7 @@ bool VTodoConverter::ParseData(const char *data)
 
 	}
 	catch( Barry::ConvertError &ce ) {
-		trace.logf("ERROR: vtodo:Barry::ConvertError exception: %s", ce.what());
+		trace.logf(_("ERROR: vtodo:Barry::ConvertError exception: %s"), ce.what());
 		m_last_errmsg = ce.what();
 		return false;
 	}
@@ -103,7 +104,7 @@ void VTodoConverter::operator()(const Barry::Task &rec)
 
 	}
 	catch( Barry::ConvertError &ce ) {
-		trace.logf("ERROR: vtodo:Barry::ConvertError exception: %s", ce.what());
+		trace.logf(_("ERROR: vtodo:Barry::ConvertError exception: %s"), ce.what());
 		m_last_errmsg = ce.what();
 	}
 }
@@ -149,7 +150,7 @@ bool VTodoConverter::CommitRecordData(BarryEnvironment *env, unsigned int dbId,
 			newRecordId = recordId;
 		}
 		else {
-			trace.log("Can't use recommended recordId, generating new one.");
+			trace.log(_("Can't use recommended recordId, generating new one."));
 			newRecordId = env->m_TodoSync.m_Table.MakeNewRecordId();
 		}
 	}
@@ -161,9 +162,10 @@ bool VTodoConverter::CommitRecordData(BarryEnvironment *env, unsigned int dbId,
 	VTodoConverter convert(newRecordId);
 	if( !convert.ParseData(data) ) {
 		std::ostringstream oss;
-		oss << "unable to parse change data for new RecordId: "
+		oss << _("unable to parse change data for new RecordId: ")
 		    << newRecordId
-		    << " (" << convert.GetLastError() << ") data: " << data;
+		    << " (" << convert.GetLastError() << ") "
+		    << _("data: ") << data;
 		errmsg = oss.str();
 		trace.log(errmsg.c_str());
 		return false;
@@ -172,7 +174,7 @@ bool VTodoConverter::CommitRecordData(BarryEnvironment *env, unsigned int dbId,
 	Barry::RecordBuilder<Barry::Task, VTodoConverter> builder(convert);
 
 	if( add ) {
-		trace.log("adding record");
+		trace.log(_("adding record"));
 		env->GetDesktop()->AddRecord(dbId, builder);
 	}
 	else {
@@ -197,9 +199,9 @@ bool VTodoConverter::CommitRecordData(BarryEnvironment *env, unsigned int dbId,
 		// dirty flag step, and leave it for FinishSync() in
 		// barry_sync... :-)
 		//
-		trace.log("deleting task record");
+		trace.log(_("deleting task record"));
 		env->GetDesktop()->DeleteRecord(dbId, StateIndex);
-		trace.log("re-adding task record");
+		trace.log(_("re-adding task record"));
 		env->GetDesktop()->AddRecord(dbId, builder);
 	}
 

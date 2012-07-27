@@ -35,6 +35,7 @@
 #include <iomanip>
 #include <string.h>
 #include <unistd.h>
+#include "i18n.h"
 
 using namespace Barry;
 
@@ -88,7 +89,7 @@ BarryEnvironment::~BarryEnvironment()
 void BarryEnvironment::DoConnect()
 {
 	if( !m_con.get() )
-		throw std::logic_error("Tried to use empty Connector");
+		throw std::logic_error(_("Tried to use empty Connector"));
 
 	m_con->Connect();
 
@@ -162,7 +163,7 @@ void BarryEnvironment::ClearDirtyFlags(Barry::RecordStateTable &table,
 	Barry::RecordStateTable::StateMapType::const_iterator i = table.StateMap.begin();
 	for( ; i != table.StateMap.end(); ++i ) {
 		if( i->second.Dirty ) {
-			trace.logf("Clearing dirty flag for db %u, index %u",
+			trace.logf(_("Clearing dirty flag for db %u, index %u"),
 				dbId, i->first);
 			m_con->GetDesktop().ClearDirty(dbId, i->first);
 		}
@@ -199,30 +200,30 @@ DatabaseSyncState* BarryEnvironment::GetSyncObject(OSyncChange *change)
 
 	const char *name = osync_change_get_objtype(change);
 
-	trace.logf("osync_change_get_objtype returns %s", name);
+	trace.logf(_("osync_change_get_objtype returns %s"), name);
 
 	if( strcmp(name, "event") == 0 ) {
-		trace.log("return calendar object");
+		trace.log(_("return calendar object"));
 
 		return &m_CalendarSync;
 	}
 	else if( strcmp(name, "contact") == 0 ) {
-		trace.log("return contact object");
+		trace.log(_("return contact object"));
 
 		return &m_ContactsSync;
 	}
 	else if( strcmp(name, "note") == 0 ) {
-		trace.log("return journal object");
+		trace.log(_("return journal object"));
 
 		return &m_JournalSync;
 	}
 	else if( strcmp(name, "todo") == 0 ) {
-		trace.log("return todo object");
+		trace.log(_("return todo object"));
 
 		return &m_TodoSync;
 	}
 
-	trace.log("return none");
+	trace.log(_("return none"));
 
 	return 0;
 }

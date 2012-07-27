@@ -42,6 +42,7 @@
 #include <stdint.h>
 #include <string.h>
 #include <errno.h>
+#include "i18n.h"
 
 typedef Barry::vSmartPtr<OSyncList, OSyncList, &osync_list_free> AutoOSyncList;
 
@@ -90,7 +91,7 @@ std::string GenerateHash(OSyncHashTable *hashtable,
 		errno = 0;
 		hashcount = strtoul(hash, NULL, 10);
 		if( errno )
-			throw std::runtime_error("Error converting string to unsigned long: " + std::string(hash));
+			throw std::runtime_error(_("Error converting string to unsigned long: ") + std::string(hash));
 	}
 
 	hashcount += (dirty ? 1 : 0);
@@ -132,11 +133,11 @@ void GetChanges(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncContext *ctx
 
 	// check if slow sync has been requested
 	if (slow_sync) {
-		trace.log("GetChanges: slow sync request detected");
+		trace.log(_("GetChanges: slow sync request detected"));
 
 		if( !osync_hashtable_slowsync(hashtable, &error) ) {
 			std::ostringstream oss;
-			oss << "GetChanges: slow sync error: " << osync_error_print(&error);
+			oss << _("GetChanges: slow sync error: ") << osync_error_print(&error);
 			osync_error_unref(&error);
 
 			trace.log(oss.str().c_str());
@@ -175,7 +176,7 @@ void GetChanges(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncContext *ctx
 
 		// setup change, just enough for hashtable use
 		osync_change_set_uid(change, uid.c_str());
-		trace.logf("change record ID: %s", uid.c_str());
+		trace.logf(_("change record ID: %s"), uid.c_str());
 		std::string hash = GenerateHash(hashtable, uid, state.Dirty);
 		osync_change_set_hash(change, hash.c_str());
 
@@ -238,12 +239,12 @@ void GetChanges(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncContext *ctx
 		for( ; i != table.StateMap.end(); ++i ) {
 
 			if( i->second.RecordId == recordId ) {
-				throw std::runtime_error("Found deleted record ID in state map! " + std::string(uid));
+				throw std::runtime_error(_("Found deleted record ID in state map! ") + std::string(uid));
 			}
 		}
 
 		// register a DELETE, no data
-		trace.log("found DELETE change");
+		trace.log(_("found DELETE change"));
 
 		OSyncChange *change = osync_change_new(&error);
 		if( !change ) {
@@ -364,7 +365,7 @@ static bool barry_contact_initialize(BarryEnvironment *env, OSyncPluginInfo *inf
 		OSyncObjFormatSink *objformatsink = (OSyncObjFormatSink *) r->data;
 
 		if(!strcmp("vcard30", osync_objformat_sink_get_objformat(objformatsink))) {
-			trace.log("vcard30 found in barry-sync");
+			trace.log(_("vcard30 found in barry-sync"));
 			hasObjFormat = true;
 			break;
 		}
@@ -383,7 +384,7 @@ static bool barry_contact_initialize(BarryEnvironment *env, OSyncPluginInfo *inf
 
 	osync_objtype_sink_enable_hashtable(sink, TRUE);
 
-	trace.log("contact initialize OK");
+	trace.log(_("contact initialize OK"));
 
 	return true;
 }
@@ -570,7 +571,7 @@ static void *initialize(OSyncPlugin *plugin, OSyncPluginInfo *info, OSyncError *
 		OSyncPluginConfig *config = osync_plugin_info_get_config(info);
 
 		if (!config) {
-			osync_error_set(error, OSYNC_ERROR_GENERIC, "Unable to get config.");
+			osync_error_set(error, OSYNC_ERROR_GENERIC, _("Unable to get config."));
 
 			delete env;
 
@@ -613,13 +614,13 @@ static void *initialize(OSyncPlugin *plugin, OSyncPluginInfo *info, OSyncError *
 		/*
 		 * Process Ressource options
 		 */
-		trace.log("Process Ressource options...");
+		trace.log(_("Process Ressource options..."));
 
 		if (barry_calendar_initialize(env, info, error)) {
 			env->m_CalendarSync.m_Sync = true;
 		}
 		else {
-			trace.log("No sync Calendar");
+			trace.log(_("No sync Calendar"));
 			env->m_CalendarSync.m_Sync = false;
 		}
 
@@ -627,7 +628,7 @@ static void *initialize(OSyncPlugin *plugin, OSyncPluginInfo *info, OSyncError *
 			env->m_ContactsSync.m_Sync = true;
 		}
 		else {
-			trace.log("No sync Contact");
+			trace.log(_("No sync Contact"));
 			env->m_ContactsSync.m_Sync = false;
 		}
 
@@ -635,7 +636,7 @@ static void *initialize(OSyncPlugin *plugin, OSyncPluginInfo *info, OSyncError *
 			env->m_JournalSync.m_Sync = true;
 		}
 		else {
-			trace.log("No sync Journal");
+			trace.log(_("No sync Journal"));
 			env->m_JournalSync.m_Sync = false;
 		}
 
@@ -643,7 +644,7 @@ static void *initialize(OSyncPlugin *plugin, OSyncPluginInfo *info, OSyncError *
 			env->m_TodoSync.m_Sync = true;
 		}
 		else {
-			trace.log("No sync Todo");
+			trace.log(_("No sync Todo"));
 			env->m_TodoSync.m_Sync = false;
 		}
 
@@ -651,12 +652,12 @@ static void *initialize(OSyncPlugin *plugin, OSyncPluginInfo *info, OSyncError *
 	}
 	// Don't let exceptions escape to the C modules
 	catch( std::bad_alloc &ba ) {
-		trace.logf("Unable to allocate memory for controller: %s", ba.what());
+		trace.logf(_("Unable to allocate memory for controller: %s"), ba.what());
 		delete env;
 		return NULL;
 	}
 	catch( std::exception &e ) {
-		trace.logf("exception: %s", e.what());
+		trace.logf(_("exception: %s"), e.what());
 		delete env;
 		return NULL;
 	}
@@ -704,26 +705,26 @@ static void connect(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncContext 
 			Barry::Probe probe;
 			int nIndex = probe.FindActive(env->m_pin);
 			if( nIndex == -1 ) {
-				osync_context_report_error(ctx, OSYNC_ERROR_NO_CONNECTION, "Unable to find PIN %x", env->m_pin);
+				osync_context_report_error(ctx, OSYNC_ERROR_NO_CONNECTION, _("Unable to find PIN %x"), env->m_pin);
 				return;
 			}
 
-			trace.log("connecting...");
+			trace.log(_("connecting..."));
 
 			env->Connect(probe.Get(nIndex));
 
-			trace.log("connected !");
+			trace.log(_("connected !"));
 		}
 
 		// Success!
 		osync_context_report_success(ctx);
 
-		trace.log("connect success");
+		trace.log(_("connect success"));
 	}
 	// Don't let exceptions escape to the C modules
 	catch( std::bad_alloc &ba ) {
 		osync_context_report_error(ctx, OSYNC_ERROR_NO_CONNECTION,
-			"Unable to allocate memory for controller: %s", ba.what());
+			_("Unable to allocate memory for controller: %s"), ba.what());
 	}
 	catch( std::exception &e ) {
 		osync_context_report_error(ctx, OSYNC_ERROR_NO_CONNECTION,
@@ -837,7 +838,7 @@ static void commit_change(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncCo
 		CommitData_t CommitData = GetCommitFunction(change);
 		if( !CommitData ) {
 			osync_context_report_error(ctx, OSYNC_ERROR_GENERIC,
-				"unable to get commit function pointer");
+				_("unable to get commit function pointer"));
 			return;
 		}
 
@@ -845,14 +846,14 @@ static void commit_change(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncCo
 		DatabaseSyncState *pSync = env->GetSyncObject(change);
 		if( !pSync ) {
 			osync_context_report_error(ctx, OSYNC_ERROR_GENERIC,
-				"unable to get sync object that matches change type");
+				_("unable to get sync object that matches change type"));
 			return;
 		}
 
 		// is syncing turned on for this type?
 		if( !pSync->m_Sync ) {
 			osync_context_report_error(ctx, OSYNC_ERROR_GENERIC,
-				"This object type is disabled in the barry-sync config");
+				_("This object type is disabled in the barry-sync config"));
 			return;
 		}
 
@@ -877,15 +878,15 @@ static void commit_change(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncCo
 		else {
 			// extract RecordId from change's UID,
 			const char *uid = osync_change_get_uid(change);
-			trace.logf("uid from change: %s", uid);
+			trace.logf(_("uid from change: %s"), uid);
 
 			// convert existing UID string to RecordId
 			if( strlen(uid) == 0 ||
 			    sscanf(uid, "%lu", &RecordId) != 1 ||
 			    RecordId == 0)
 			{
-				trace.logf("Unable to extract a valid record ID from: %s", uid);
-				osync_context_report_error(ctx, OSYNC_ERROR_IO_ERROR, "Unable to extract a valid record ID from: %s", uid);
+				trace.logf(_("Unable to extract a valid record ID from: %s"), uid);
+				osync_context_report_error(ctx, OSYNC_ERROR_IO_ERROR, _("Unable to extract a valid record ID from: %s"), uid);
 				return;
 			}
 
@@ -894,7 +895,7 @@ static void commit_change(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncCo
 			// modifying
 			if( !table.GetIndex(RecordId, &StateIndex) ) {
 				osync_context_report_error(ctx, OSYNC_ERROR_GENERIC,
-					"unable to get state table index for RecordId: %lu",
+					_("unable to get state table index for RecordId: %lu"),
 					RecordId);
 				return;
 			}
@@ -924,7 +925,7 @@ static void commit_change(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncCo
 			status = (*CommitData)(env, dbId, StateIndex, RecordId,
 				plain, true, errmsg);
 			if( !status ) {
-				trace.logf("CommitData() for ADDED state returned false: %s", errmsg.c_str());
+				trace.logf(_("CommitData() for ADDED state returned false: %s"), errmsg.c_str());
 				osync_context_report_error(ctx, OSYNC_ERROR_PARAMETER, "%s", errmsg.c_str());
 				return;
 			}
@@ -937,7 +938,7 @@ static void commit_change(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncCo
 			status = (*CommitData)(env, dbId, StateIndex, RecordId,
 				plain, false, errmsg);
 			if( !status ) {
-				trace.logf("CommitData() for MODIFIED state returned false: %s", errmsg.c_str());
+				trace.logf(_("CommitData() for MODIFIED state returned false: %s"), errmsg.c_str());
 				osync_context_report_error(ctx, OSYNC_ERROR_PARAMETER, "%s", errmsg.c_str());
 				return;
 			}
@@ -945,7 +946,7 @@ static void commit_change(OSyncObjTypeSink *sink, OSyncPluginInfo *info, OSyncCo
 			break;
 
 		default:
-			trace.log("Unknown change type");
+			trace.log(_("Unknown change type"));
 			break;
 		}
 
@@ -1096,6 +1097,15 @@ osync_bool get_sync_info(OSyncPluginEnv *env, OSyncError **error)
 {
 	Trace trace("get_sync_info");
 
+	static bool i18n_initialized = false;
+	if( !i18n_initialized ) {
+		// initialize i18n gettext directory
+		// the rest is done in i18n.h
+		bindtextdomain(PACKAGE, LOCALEDIR);
+
+		i18n_initialized = true;
+	}
+
 	// Create a new OpenSync plugin
 	OSyncPlugin *plugin = osync_plugin_new(error);
 	if( !plugin ) {
@@ -1105,8 +1115,8 @@ osync_bool get_sync_info(OSyncPluginEnv *env, OSyncError **error)
 
 	// Describe our plugin
 	osync_plugin_set_name(plugin, "barry-sync");
-	osync_plugin_set_longname(plugin, "Barry OpenSync plugin v" PACKAGE_VERSION " for the Blackberry handheld");
-	osync_plugin_set_description(plugin, "Plugin to synchronize note, task, calendar and contact entries on USB Blackberry handhelds");
+	osync_plugin_set_longname(plugin, Barry::string_vprintf(_("Barry OpenSync plugin v%s for the Blackberry handheld"), PACKAGE_VERSION).c_str());
+	osync_plugin_set_description(plugin, _("Plugin to synchronize note, task, calendar and contact entries on USB Blackberry handhelds"));
 
 	// Set the callback functions
 	osync_plugin_set_initialize_func(plugin, initialize);

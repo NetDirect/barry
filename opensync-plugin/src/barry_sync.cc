@@ -28,6 +28,7 @@
 #include "vcard.h"
 #include "trace.h"
 #include "config.h"
+#include "i18n.h"
 #include <string>
 #include <glib.h>
 #include <stdint.h>
@@ -72,7 +73,7 @@ void GetChanges(OSyncContext *ctx, BarryEnvironment *env,
 	// check if slow sync has been requested, and if so, empty the
 	// cache and id map and start fresh
 	if( osync_member_get_slow_sync(env->member, ObjTypeName) ) {
-		trace.log("GetChanges: slow sync request detected, clearing cache and id map");
+		trace.log(_("GetChanges: slow sync request detected, clearing cache and id map"));
 		cache.clear();
 		map.clear();
 	}
@@ -99,7 +100,7 @@ void GetChanges(OSyncContext *ctx, BarryEnvironment *env,
 		DatabaseSyncState::cache_type::const_iterator c = cache.find(state.RecordId);
 		if( c == cache.end() ) {
 			// not in cache, this is a new item
-			trace.log("found an ADDED change");
+			trace.log(_("found an ADDED change"));
 			change = osync_change_new();
 			osync_change_set_changetype(change, CHANGE_ADDED);
 		}
@@ -107,12 +108,12 @@ void GetChanges(OSyncContext *ctx, BarryEnvironment *env,
 			// in the cache... dirty?
 			if( state.Dirty ) {
 				// modified
-				trace.log("found a MODIFIED change");
+				trace.log(_("found a MODIFIED change"));
 				change = osync_change_new();
 				osync_change_set_changetype(change, CHANGE_MODIFIED);
 			}
 			else {
-				trace.log("no change detected");
+				trace.log(_("no change detected"));
 			}
 		}
 
@@ -122,7 +123,7 @@ void GetChanges(OSyncContext *ctx, BarryEnvironment *env,
 			osync_change_set_objformat_string(change, FormatName);
 
 			osync_change_set_uid(change, uid.c_str());
-			trace.logf("change record ID: %s", uid.c_str());
+			trace.logf(_("change record ID: %s"), uid.c_str());
 
 			// Now you can set the data for the object
 			// Set the last argument to FALSE if the real data
@@ -159,7 +160,7 @@ void GetChanges(OSyncContext *ctx, BarryEnvironment *env,
 		// check if not found...
 		if( i == table.StateMap.end() ) {
 			// register a DELETE, no data
-			trace.log("found DELETE change");
+			trace.log(_("found DELETE change"));
 
 			OSyncChange *change = osync_change_new();
 			osync_change_set_changetype(change, CHANGE_DELETED);
@@ -220,7 +221,7 @@ bool FinishSync(OSyncContext *ctx, BarryEnvironment *env, DatabaseSyncState *pSy
 	// update the cache
 	if( !pSync->SaveCache() ) {
 		osync_context_report_error(ctx, OSYNC_ERROR_IO_ERROR,
-			"Error saving calendar cache");
+			_("Error saving calendar cache"));
 		return false;
 	}
 
@@ -228,7 +229,7 @@ bool FinishSync(OSyncContext *ctx, BarryEnvironment *env, DatabaseSyncState *pSy
 	pSync->CleanupMap();
 	if( !pSync->SaveMap() ) {
 		osync_context_report_error(ctx, OSYNC_ERROR_IO_ERROR,
-			"Error saving calendar id map");
+			_("Error saving calendar id map"));
 		return false;
 	}
 
@@ -258,7 +259,7 @@ static void *initialize(OSyncMember *member, OSyncError **error)
 		char *configdata;
 		int configsize;
 		if (!osync_member_get_config(member, &configdata, &configsize, error)) {
-			osync_error_update(error, "Unable to get config data: %s",
+			osync_error_update(error, _("Unable to get config data: %s"),
 				osync_error_print(error));
 			delete env;
 			return NULL;
@@ -289,7 +290,7 @@ static void *initialize(OSyncMember *member, OSyncError **error)
 	}
 	// Don't let C++ exceptions escape to the C code
 	catch( std::bad_alloc &ba ) {
-		osync_error_update(error, "Unable to allocate memory for environment: %s", ba.what());
+		osync_error_update(error, _("Unable to allocate memory for environment: %s"), ba.what());
 		delete env;
 		return NULL;
 	}
@@ -315,7 +316,7 @@ static void connect(OSyncContext *ctx)
 		Barry::Probe probe;
 		int nIndex = probe.FindActive(env->m_pin);
 		if( nIndex == -1 ) {
-			osync_context_report_error(ctx, OSYNC_ERROR_NO_CONNECTION, "Unable to find PIN %lx", env->m_pin);
+			osync_context_report_error(ctx, OSYNC_ERROR_NO_CONNECTION, _("Unable to find PIN %lx"), env->m_pin);
 			return;
 		}
 
@@ -328,7 +329,7 @@ static void connect(OSyncContext *ctx)
 	// Don't let exceptions escape to the C modules
 	catch( std::bad_alloc &ba ) {
 		osync_context_report_error(ctx, OSYNC_ERROR_INITIALIZATION,
-			"Unable to allocate memory for controller: %s", ba.what());
+			_("Unable to allocate memory for controller: %s"), ba.what());
 	}
 	catch( std::exception &e ) {
 		osync_context_report_error(ctx, OSYNC_ERROR_INITIALIZATION,
@@ -381,7 +382,7 @@ static osync_bool commit_change(OSyncContext *ctx, OSyncChange *change)
 		CommitData_t CommitData = GetCommitFunction(change);
 		if( !CommitData ) {
 			osync_context_report_error(ctx, OSYNC_ERROR_GENERIC,
-				"unable to get commit function pointer");
+				_("unable to get commit function pointer"));
 			return false;
 		}
 
@@ -389,14 +390,14 @@ static osync_bool commit_change(OSyncContext *ctx, OSyncChange *change)
 		DatabaseSyncState *pSync = env->GetSyncObject(change);
 		if( !pSync ) {
 			osync_context_report_error(ctx, OSYNC_ERROR_GENERIC,
-				"unable to get sync object that matches change type");
+				_("unable to get sync object that matches change type"));
 			return false;
 		}
 
 		// is syncing turned on for this type?
 		if( !pSync->m_Sync ) {
 			osync_context_report_error(ctx, OSYNC_ERROR_GENERIC,
-				"This object type is disabled in the barry-sync config");
+				_("This object type is disabled in the barry-sync config"));
 			return false;
 		}
 
@@ -414,7 +415,7 @@ static osync_bool commit_change(OSyncContext *ctx, OSyncChange *change)
 		trace.logf("uid from change: %s", uid);
 		if( strlen(uid) == 0 ) {
 			osync_context_report_error(ctx, OSYNC_ERROR_GENERIC,
-				"uid from change object is blank!");
+				_("uid from change object is blank!"));
 		}
 		unsigned long RecordId = pSync->GetMappedRecordId(uid);
 
@@ -425,7 +426,7 @@ static osync_bool commit_change(OSyncContext *ctx, OSyncChange *change)
 		if( osync_change_get_changetype(change) != CHANGE_ADDED ) {
 			if( !table.GetIndex(RecordId, &StateIndex) ) {
 				osync_context_report_error(ctx, OSYNC_ERROR_GENERIC,
-					"unable to get state table index for RecordId: %lu",
+					_("unable to get state table index for RecordId: %lu"),
 					RecordId);
 				return false;
 			}
@@ -446,7 +447,7 @@ static osync_bool commit_change(OSyncContext *ctx, OSyncChange *change)
 			status = (*CommitData)(env, dbId, StateIndex, RecordId,
 				osync_change_get_data(change), true, errmsg);
 			if( !status ) {
-				trace.logf("CommitData() for ADDED state returned false: %s", errmsg.c_str());
+				trace.logf(_("CommitData() for ADDED state returned false: %s"), errmsg.c_str());
 				osync_context_report_error(ctx, OSYNC_ERROR_PARAMETER, "%s", errmsg.c_str());
 				map.UnmapUid(uid);
 				return false;
@@ -458,7 +459,7 @@ static osync_bool commit_change(OSyncContext *ctx, OSyncChange *change)
 			status = (*CommitData)(env, dbId, StateIndex, RecordId,
 				osync_change_get_data(change), false, errmsg);
 			if( !status ) {
-				trace.logf("CommitData() for MODIFIED state returned false: %s", errmsg.c_str());
+				trace.logf(_("CommitData() for MODIFIED state returned false: %s"), errmsg.c_str());
 				osync_context_report_error(ctx, OSYNC_ERROR_PARAMETER, "%s", errmsg.c_str());
 				map.UnmapUid(uid);
 				return false;
@@ -466,8 +467,8 @@ static osync_bool commit_change(OSyncContext *ctx, OSyncChange *change)
 			break;
 
 		default:
-			trace.log("Unknown change type");
-			osync_debug("barry-sync", 0, "Unknown change type");
+			trace.log(_("Unknown change type"));
+			osync_debug("barry-sync", 0, _("Unknown change type"));
 			break;
 		}
 
@@ -544,9 +545,20 @@ void get_info(OSyncEnv *env)
 {
 	Trace trace("get_info");
 
+	static bool i18n_initialized = false;
+	if( !i18n_initialized ) {
+		// initialize i18n gettext directory
+		// the rest is done in i18n.h
+		bindtextdomain(PACKAGE, LOCALEDIR);
+
+		i18n_initialized = true;
+	}
+
 	// Create first plugin
 	OSyncPluginInfo *info = osync_plugin_new_info(env);
 
+	// not translation for these strings, as I think they are const,
+	// and the info struct relies on their existence
 	info->name = "barry-sync";
 	info->longname = "Barry OpenSync plugin v" PACKAGE_VERSION " for the Blackberry handheld";
 	info->description = "Plugin to synchronize calendar and contact entries on USB Blackberry handhelds";

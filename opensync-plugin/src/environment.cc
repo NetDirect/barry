@@ -28,6 +28,7 @@
 #include <iomanip>
 #include <string.h>
 #include <unistd.h>
+#include "i18n.h"
 
 using namespace Barry;
 
@@ -143,7 +144,7 @@ unsigned long DatabaseSyncState::GetMappedRecordId(const std::string &uid)
 	// if already in map, use the matching rid
 	idmap::const_iterator it;
 	if( m_IdMap.UidExists(uid, &it) ) {
-		trace.logf("found existing uid in map: %lu", it->second);
+		trace.logf(_("found existing uid in map: %lu"), it->second);
 		return it->second;
 	}
 
@@ -154,7 +155,7 @@ unsigned long DatabaseSyncState::GetMappedRecordId(const std::string &uid)
 		if( m_IdMap.Map(uid, RecordId) != m_IdMap.end() )
 			return RecordId;
 
-		trace.logf("parsed uid already exists in map, skipping");
+		trace.logf(_("parsed uid already exists in map, skipping"));
 	}
 
 	// create one of our own, if we get here...
@@ -163,7 +164,7 @@ unsigned long DatabaseSyncState::GetMappedRecordId(const std::string &uid)
 		RecordId = m_Table.MakeNewRecordId();
 	} while( m_IdMap.Map(uid, RecordId) == m_IdMap.end() );
 
-	trace.logf("made new record id: %lu", RecordId);
+	trace.logf(_("made new record id: %lu"), RecordId);
 	return RecordId;
 }
 
@@ -188,7 +189,7 @@ BarryEnvironment::~BarryEnvironment()
 void BarryEnvironment::DoConnect()
 {
 	if( !m_con.get() )
-		throw std::logic_error("Tried to use empty Connector");
+		throw std::logic_error(_("Tried to use empty Connector"));
 
 	m_con->Connect();
 
@@ -237,7 +238,7 @@ void BarryEnvironment::ClearDirtyFlags(Barry::RecordStateTable &table,
 	Barry::RecordStateTable::StateMapType::const_iterator i = table.StateMap.begin();
 	for( ; i != table.StateMap.end(); ++i ) {
 		if( i->second.Dirty ) {
-			trace.logf("Clearing dirty flag for db %u, index %u",
+			trace.logf(_("Clearing dirty flag for db %u, index %u"),
 				dbId, i->first);
 			m_con->GetDesktop().ClearDirty(dbId, i->first);
 		}
@@ -318,17 +319,17 @@ void BarryEnvironment::ParseConfig(const char *data, int size)
 
 			if( cal ) {
 				m_CalendarSync.m_Sync = true;
-				trace.log("calendar syncing enabled");
+				trace.log(_("calendar syncing enabled"));
 			}
 
 			if( con ) {
 				m_ContactsSync.m_Sync = true;
-				trace.log("contacts syncing enabled");
+				trace.log(_("contacts syncing enabled"));
 			}
 		}
 		else if ( key == "Password" ) {
 			ils >> m_password;
-			trace.log("using password from config file");
+			trace.log(_("using password from config file"));
 		}
 	}
 }

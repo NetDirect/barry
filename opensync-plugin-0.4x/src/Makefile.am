@@ -3,6 +3,11 @@ configdir=@OPENSYNC_CONFIGDIR@
 #formatsdir=@OPENSYNC_FORMATSDIR@
 opensyncheaderdir=@OPENSYNC_HEADERDIR@
 
+# To use gettext
+datadir = @datadir@
+localedir = $(datadir)/locale
+DEFS = -DLOCALEDIR=\"$(localedir)\" @DEFS@
+
 INCLUDES = @TREE_BUILD_CXXFLAGS@ @GLIB2_CFLAGS@ @OPENSYNC4X_CFLAGS@ @BARRY_CFLAGS@ @BARRYSYNC_CFLAGS@
 LIBS = @TREE_BUILD_LDFLAGS@ @GLIB2_LIBS@ @OPENSYNC4X_LIBS@ @BARRY_LIBS@ @BARRYSYNC_LIBS@
 
@@ -20,6 +25,8 @@ endif
 EXTRA_DIST = barry_sync.h
 
 dist_config_DATA = barry-sync
+
+noinst_HEADERS = i18n.h gettext.h
 
 opensyncheader_HEADER = barry_sync.h
 
