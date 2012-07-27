@@ -35,11 +35,17 @@ Barry Release Checklist:
 		- opensync-plugin-0.4x/debian/control (libbarry-dev)
 
 	Languages:
-		- files under po/
-		- files under gui/po/
+		- files under:
+			po/
+			gui/po/
+			desktop/po/
+			desktop/po-osyncwrap/
+			opensync-plugin/po/
+			opensync-plugin-0.4x/po/
 
 	Misc:
 		- android/jni/barry/config.h (multiple version strings)
+		- wince/.../config.h
 		- test/nightly.sh
 
 - tests in following order:
