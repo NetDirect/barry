@@ -374,6 +374,12 @@ void SyncStatus::ReportError(const std::string &msg)
 
 APISet::APISet()
 {
+	// initialize gettext, only once, for libosyncwrap
+	static bool i18n_initialized = false;
+	if( !i18n_initialized ) {
+		INIT_I18N();
+		i18n_initialized = true;
+	}
 }
 
 APISet::~APISet()

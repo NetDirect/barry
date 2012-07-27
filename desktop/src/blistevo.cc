@@ -38,6 +38,7 @@ void DumpItems(const EvoSources::List &list)
 
 int main()
 {
+	setlocale(LC_ALL, "");
 	INIT_I18N();
 
 	const char *separator = "\n-----------------------------------------\n";

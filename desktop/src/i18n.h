@@ -51,7 +51,6 @@
 
 // Convenience macro for main().
 #define INIT_I18N() { \
-	setlocale(LC_ALL, ""); \
 	bindtextdomain("barryosyncwrap", LOCALEDIR); \
 	}
 
