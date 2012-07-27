@@ -549,6 +549,7 @@ void get_info(OSyncEnv *env)
 	if( !i18n_initialized ) {
 		// initialize i18n gettext directory
 		// the rest is done in i18n.h
+		setlocale(LC_ALL, "");
 		bindtextdomain(PACKAGE, LOCALEDIR);
 
 		i18n_initialized = true;
