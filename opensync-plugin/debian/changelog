@@ -7,6 +7,7 @@ opensync0-plugin-barry (0.18.4-1) unstable; urgency=low
   * Bumped compat to level 7 (2012/03/03)
   * Bumped Standards-Version to 3.9.1 (2012/03/03)
   * Using >0 debian version, since I'll probably be Debian maintainer now
+  * Added barry-opensync-plugin.mo files
 
  -- Chris Frey <cdfrey@foursquare.net>  Tue, 15 May 2012 01:33:39 -0400
 

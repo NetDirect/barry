@@ -1,3 +1,4 @@
 debian/tmp/usr/lib/libopensync1/plugins/barry_sync.so
 debian/tmp/usr/share/libopensync1/defaults/barry-sync
+debian/tmp/usr/share/locale/*/LC_MESSAGES/barry-opensync-plugin-0-4x.mo
 

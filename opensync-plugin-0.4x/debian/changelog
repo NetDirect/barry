@@ -8,6 +8,7 @@ opensync1-plugin-barry (0.18.4-1) unstable; urgency=low
   * Bumped Standards-Version to 3.9.1 (2012/03/03)
   * Using >0 debian version, since I'll probably be Debian maintainer now
   * Fixed extended-description-line-too-long lintian warning
+  * Added barry-opensync-plugin-0-4x.mo files
 
  -- Chris Frey <cdfrey@foursquare.net>  Tue, 15 May 2012 01:33:34 -0400
 
