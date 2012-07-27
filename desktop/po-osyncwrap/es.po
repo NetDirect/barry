@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: barrydesktop 0.18.4\n"
 "Report-Msgid-Bugs-To: http://netdirect.ca/barry\n"
-"POT-Creation-Date: 2012-07-20 21:39-0400\n"
+"POT-Creation-Date: 2012-07-27 01:48-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -64,325 +64,325 @@ msgstr ""
 msgid "no"
 msgstr ""
 
-#: src/os22.cc:248 src/os40.cc:547
+#: src/os22.cc:250 src/os40.cc:548
 msgid "ADDED"
 msgstr ""
 
-#: src/os22.cc:249 src/os40.cc:548
+#: src/os22.cc:251 src/os40.cc:549
 msgid "UNMODIFIED"
 msgstr ""
 
-#: src/os22.cc:250 src/os40.cc:549
+#: src/os22.cc:252 src/os40.cc:550
 msgid "DELETED"
 msgstr ""
 
-#: src/os22.cc:251 src/os40.cc:550
+#: src/os22.cc:253 src/os40.cc:551
 msgid "MODIFIED"
 msgstr ""
 
-#: src/os22.cc:291
+#: src/os22.cc:293
 msgid "Bad change_id, or error getting nth change object."
 msgstr ""
 
-#: src/os22.cc:315
+#: src/os22.cc:317
 msgid "Conflict not ignored: "
 msgstr ""
 
-#: src/os22.cc:330
+#: src/os22.cc:332
 msgid "Conflict not resolved: "
 msgstr ""
 
-#: src/os22.cc:381
+#: src/os22.cc:383
 #, c-format
 msgid "Member %lld (%s) just connected"
 msgstr ""
 
-#: src/os22.cc:384
+#: src/os22.cc:386
 #, c-format
 msgid "Member %lld (%s) just disconnected"
 msgstr ""
 
-#: src/os22.cc:387
+#: src/os22.cc:389
 #, c-format
 msgid "Member %lld (%s) just sent all changes"
 msgstr ""
 
-#: src/os22.cc:390
+#: src/os22.cc:392
 #, c-format
 msgid "Member %lld (%s) committed all changes"
 msgstr ""
 
-#: src/os22.cc:393
+#: src/os22.cc:395
 #, c-format
 msgid "Member %lld (%s) had an error while connecting: %s"
 msgstr ""
 
-#: src/os22.cc:397
+#: src/os22.cc:399
 #, c-format
 msgid "Member %lld (%s) had an error while getting changes: %s"
 msgstr ""
 
-#: src/os22.cc:402
+#: src/os22.cc:404
 #, c-format
 msgid "Member %lld (%s) had an error while calling sync done: %s"
 msgstr ""
 
-#: src/os22.cc:407
+#: src/os22.cc:409
 #, c-format
 msgid "Member %lld (%s) had an error while disconnecting: %s"
 msgstr ""
 
-#: src/os22.cc:412
+#: src/os22.cc:414
 #, c-format
 msgid "Member %lld (%s) had an error while commiting changes: %s"
 msgstr ""
 
-#: src/os22.cc:437 src/os40.cc:1037
+#: src/os22.cc:439 src/os40.cc:1038
 msgid "member_status error: "
 msgstr ""
 
-#: src/os22.cc:441 src/os40.cc:1041
+#: src/os22.cc:443 src/os40.cc:1042
 msgid "Unknown exception caught in member_status()"
 msgstr ""
 
-#: src/os22.cc:459
+#: src/os22.cc:461
 #, c-format
 msgid "Received an entry %s without data from member %d (%s).  Change type: %s"
 msgstr ""
 
-#: src/os22.cc:466
+#: src/os22.cc:468
 #, c-format
 msgid ""
 "Received an entry %s with data of size %d from member %d (%s).  Change type: "
 "%s"
 msgstr ""
 
-#: src/os22.cc:474
+#: src/os22.cc:476
 #, c-format
 msgid "Sent an entry %s of size %d to member %d (%s).  Change type: %s"
 msgstr ""
 
-#: src/os22.cc:483
+#: src/os22.cc:485
 #, c-format
 msgid "Error writing entry %s to member %d (%s): %s"
 msgstr ""
 
-#: src/os22.cc:491
+#: src/os22.cc:493
 #, c-format
 msgid "Error reading entry %s from member %d (%s): %s"
 msgstr ""
 
-#: src/os22.cc:506
+#: src/os22.cc:508
 msgid "entry_status error:"
 msgstr ""
 
-#: src/os22.cc:510 src/os40.cc:845
+#: src/os22.cc:512 src/os40.cc:846
 msgid "Unknown exception caught in entry_status()"
 msgstr ""
 
-#: src/os22.cc:525
+#: src/os22.cc:527
 msgid "The previous synchronization was unclean. Slow-syncing."
 msgstr ""
 
-#: src/os22.cc:528 src/os40.cc:900
+#: src/os22.cc:530 src/os40.cc:901
 msgid "All clients connected or error"
 msgstr ""
 
-#: src/os22.cc:531 src/os40.cc:938
+#: src/os22.cc:533 src/os40.cc:939
 msgid "All conflicts have been reported"
 msgstr ""
 
-#: src/os22.cc:534 src/os40.cc:906
+#: src/os22.cc:536 src/os40.cc:907
 msgid "All clients sent changes or error"
 msgstr ""
 
-#: src/os22.cc:537 src/os40.cc:921
+#: src/os22.cc:539 src/os40.cc:922
 msgid "All clients have written"
 msgstr ""
 
-#: src/os22.cc:540 src/os40.cc:924
+#: src/os22.cc:542 src/os40.cc:925
 msgid "All clients have disconnected"
 msgstr ""
 
-#: src/os22.cc:543 src/os40.cc:931
+#: src/os22.cc:545 src/os40.cc:932
 msgid "The sync was successful"
 msgstr ""
 
-#: src/os22.cc:546 src/os40.cc:928
+#: src/os22.cc:548 src/os40.cc:929
 msgid "The sync failed: "
 msgstr ""
 
-#: src/os22.cc:560 src/os40.cc:953
+#: src/os22.cc:562 src/os40.cc:954
 msgid "engine_status error: "
 msgstr ""
 
-#: src/os22.cc:564 src/os40.cc:957
+#: src/os22.cc:566 src/os40.cc:958
 msgid "Unknown exception caught in engine_status()"
 msgstr ""
 
-#: src/os22.cc:579 src/os40.cc:862
+#: src/os22.cc:581 src/os40.cc:863
 msgid "Mapping solved"
 msgstr ""
 
-#: src/os22.cc:582
+#: src/os22.cc:584
 msgid "Mapping Synced"
 msgstr ""
 
-#: src/os22.cc:586
+#: src/os22.cc:588
 msgid "Mapping Write Error: "
 msgstr ""
 
-#: src/os22.cc:597 src/os40.cc:878
+#: src/os22.cc:599 src/os40.cc:879
 msgid "mapping_status error: "
 msgstr ""
 
-#: src/os22.cc:601 src/os40.cc:882
+#: src/os22.cc:603 src/os40.cc:883
 msgid "Unknown exception caught in mapping_status()"
 msgstr ""
 
-#: src/os22.cc:623 src/os40.cc:788
+#: src/os22.cc:625 src/os40.cc:789
 msgid "Conflict not resolved. "
 msgstr ""
 
-#: src/os22.cc:627 src/os40.cc:792
+#: src/os22.cc:629 src/os40.cc:793
 msgid "Unknown exception caught in conflict_handler()"
 msgstr ""
 
-#: src/os22.cc:753
+#: src/os22.cc:755
 msgid "Error allocating opensync 0.22 environment"
 msgstr ""
 
-#: src/os22.cc:806
+#: src/os22.cc:808
 msgid "Unable to load format environment in GetFormats (22)"
 msgstr ""
 
-#: src/os22.cc:848 src/os40.cc:1861
+#: src/os22.cc:850 src/os40.cc:1862
 msgid "Unable to find group with name: "
 msgstr ""
 
-#: src/os22.cc:875
+#: src/os22.cc:877
 msgid "Group already exists: "
 msgstr ""
 
-#: src/os22.cc:883
+#: src/os22.cc:885
 msgid "Unable to save group: "
 msgstr ""
 
-#: src/os22.cc:896 src/os22.cc:917 src/os22.cc:942 src/os22.cc:973
-#: src/os22.cc:1007 src/os22.cc:1035 src/os40.cc:1910 src/os40.cc:1929
-#: src/os40.cc:1956 src/os40.cc:1988 src/os40.cc:2017 src/os40.cc:2068
-#: src/os40.cc:2101 src/os40.cc:2146 src/os40.cc:2187
+#: src/os22.cc:898 src/os22.cc:919 src/os22.cc:944 src/os22.cc:975
+#: src/os22.cc:1009 src/os22.cc:1037 src/os40.cc:1911 src/os40.cc:1930
+#: src/os40.cc:1957 src/os40.cc:1989 src/os40.cc:2018 src/os40.cc:2069
+#: src/os40.cc:2102 src/os40.cc:2147 src/os40.cc:2188
 msgid "Group not found: "
 msgstr ""
 
-#: src/os22.cc:900
+#: src/os22.cc:902
 msgid "Unable to delete group: "
 msgstr ""
 
-#: src/os22.cc:923
+#: src/os22.cc:925
 msgid "Unable to connect plugin with member: "
 msgstr ""
 
-#: src/os22.cc:929
+#: src/os22.cc:931
 msgid "Unable to save member: "
 msgstr ""
 
-#: src/os22.cc:947 src/os40.cc:1961 src/os40.cc:1978 src/os40.cc:1993
-#: src/os40.cc:2022 src/os40.cc:2073 src/os40.cc:2106
+#: src/os22.cc:949 src/os40.cc:1962 src/os40.cc:1979 src/os40.cc:1994
+#: src/os40.cc:2023 src/os40.cc:2074 src/os40.cc:2107
 msgid "Member not found: "
 msgstr ""
 
-#: src/os22.cc:954
+#: src/os22.cc:956
 msgid "Unable to determine needed config: "
 msgstr ""
 
-#: src/os22.cc:966 src/os22.cc:1000 src/os40.cc:2010 src/os40.cc:2061
-#: src/os40.cc:2094
+#: src/os22.cc:968 src/os22.cc:1002 src/os40.cc:2011 src/os40.cc:2062
+#: src/os40.cc:2095
 #, c-format
 msgid "Member %ld of group '%s' does not accept configuration."
 msgstr ""
 
-#: src/os22.cc:977 src/os22.cc:1011
+#: src/os22.cc:979 src/os22.cc:1013
 #, c-format
 msgid "Member %ld not found."
 msgstr ""
 
-#: src/os22.cc:984
+#: src/os22.cc:986
 msgid "Unable to retrieve config: "
 msgstr ""
 
-#: src/os22.cc:1018
+#: src/os22.cc:1020
 msgid "Unable to save member's config: "
 msgstr ""
 
-#: src/os22.cc:1055
+#: src/os22.cc:1057
 msgid "Error while synchronizing: "
 msgstr ""
 
-#: src/os22.cc:1076
+#: src/os22.cc:1078
 msgid "Error initializing osengine: "
 msgstr ""
 
-#: src/os22.cc:1088
+#: src/os22.cc:1090
 msgid "Error during sync: "
 msgstr ""
 
-#: src/os40.cc:446
+#: src/os40.cc:447
 msgid "(NULL error msg)"
 msgstr ""
 
-#: src/os40.cc:609
+#: src/os40.cc:610
 msgid "Problems while aborting: "
 msgstr ""
 
-#: src/os40.cc:811
+#: src/os40.cc:812
 #, c-format
 msgid "Received an entry %s (%s) from member %d (%s): %s"
 msgstr ""
 
-#: src/os40.cc:816
+#: src/os40.cc:817
 #, c-format
 msgid "Sent an entry %s (%s) to member %d (%s): %s"
 msgstr ""
 
-#: src/os40.cc:822
+#: src/os40.cc:823
 #, c-format
 msgid "Error for entry %s (%s) and member %d (%s): %s"
 msgstr ""
 
-#: src/os40.cc:841
+#: src/os40.cc:842
 msgid "entry_status error: "
 msgstr ""
 
-#: src/os40.cc:867
+#: src/os40.cc:868
 msgid "Mapping error: "
 msgstr ""
 
-#: src/os40.cc:909
+#: src/os40.cc:910
 msgid "All changes got mapped"
 msgstr ""
 
-#: src/os40.cc:912
+#: src/os40.cc:913
 msgid "All changes got multiplied"
 msgstr ""
 
-#: src/os40.cc:915
+#: src/os40.cc:916
 msgid "All changes got prepared for write"
 msgstr ""
 
-#: src/os40.cc:934
+#: src/os40.cc:935
 msgid "The previous synchronization was unclean. Slow-syncing"
 msgstr ""
 
-#: src/os40.cc:941
+#: src/os40.cc:942
 msgid "All clients reported sync done"
 msgstr ""
 
-#: src/os40.cc:973
+#: src/os40.cc:974
 msgid "Main sink"
 msgstr ""
 
-#: src/os40.cc:975
+#: src/os40.cc:976
 #, c-format
 msgid "%s sink"
 msgstr ""
@@ -391,189 +391,189 @@ msgstr ""
 #. "Main sink of member 5 (barry-sync) just connected"
 #. The "Main sink" part is based on the "Main sink"
 #. string or the "%s sink" string.
-#: src/os40.cc:989
+#: src/os40.cc:990
 #, c-format
 msgid "%s of member %d (%s) just connected"
 msgstr ""
 
-#: src/os40.cc:996
+#: src/os40.cc:997
 #, c-format
 msgid "%s of member %d (%s) just disconnected"
 msgstr ""
 
-#: src/os40.cc:999
+#: src/os40.cc:1000
 #, c-format
 msgid "%s of member %d (%s) just sent all changes"
 msgstr ""
 
-#: src/os40.cc:1002
+#: src/os40.cc:1003
 #, c-format
 msgid "%s of member %d (%s) committed all changes"
 msgstr ""
 
-#: src/os40.cc:1005
+#: src/os40.cc:1006
 #, c-format
 msgid "%s of member %d (%s) reported sync done"
 msgstr ""
 
-#: src/os40.cc:1008
+#: src/os40.cc:1009
 #, c-format
 msgid "%s of member %d (%s) discovered its objtypes"
 msgstr ""
 
-#: src/os40.cc:1011
+#: src/os40.cc:1012
 #, c-format
 msgid "%s of member %d (%s) had an error: %s"
 msgstr ""
 
-#: src/os40.cc:1066
+#: src/os40.cc:1067
 msgid "Error handling summary item. "
 msgstr ""
 
-#: src/os40.cc:1070
+#: src/os40.cc:1071
 msgid "Unknown exception caught in multiply_summary()"
 msgstr ""
 
-#: src/os40.cc:1439
+#: src/os40.cc:1440
 msgid "Username (authentication parameter) is not supported in plugin!"
 msgstr ""
 
-#: src/os40.cc:1477
+#: src/os40.cc:1478
 msgid "Password authentication is not supported in plugin!"
 msgstr ""
 
-#: src/os40.cc:1933
+#: src/os40.cc:1934
 msgid "Plugin not found: "
 msgstr ""
 
-#: src/os40.cc:1999 src/os40.cc:2028 src/os40.cc:2079 src/os40.cc:2112
+#: src/os40.cc:2000 src/os40.cc:2029 src/os40.cc:2080 src/os40.cc:2113
 msgid "Unable to find plugin with name: "
 msgstr ""
 
-#: src/os40.cc:2166
+#: src/os40.cc:2167
 msgid "discover failed: no objtypes returned"
 msgstr ""
 
-#: src/osbase.cc:202
+#: src/osbase.cc:158
 msgid ""
 "Which entry do you want to use?\n"
 "[1-9] To select a side"
 msgstr ""
 
-#: src/osbase.cc:206
+#: src/osbase.cc:162
 msgid ", [A]bort"
 msgstr ""
 
-#: src/osbase.cc:208
+#: src/osbase.cc:164
 msgid ", [D]uplicate"
 msgstr ""
 
-#: src/osbase.cc:211
+#: src/osbase.cc:167
 msgid ", [I]gnore"
 msgstr ""
 
-#: src/osbase.cc:214
+#: src/osbase.cc:170
 msgid ", Keep [N]ewer"
 msgstr ""
 
-#: src/osbase.cc:311
+#: src/osbase.cc:267
 msgid "Conflicting items:"
 msgstr ""
 
-#: src/osbase.cc:333
+#: src/osbase.cc:289
 msgid "Abort not supported!"
 msgstr ""
 
-#: src/osbase.cc:344
+#: src/osbase.cc:300
 msgid "Ignore not supported!"
 msgstr ""
 
-#: src/osbase.cc:351
+#: src/osbase.cc:307
 msgid "Keep Newer not supported!"
 msgstr ""
 
-#: src/osbase.cc:363 src/osbase.cc:370 src/osbase.cc:377 src/osbase.cc:387
+#: src/osbase.cc:319 src/osbase.cc:326 src/osbase.cc:333 src/osbase.cc:343
 msgid "ERROR: "
 msgstr ""
 
-#: src/osbase.cc:393
+#: src/osbase.cc:349
 msgid "Synchronization Forecast Summary:"
 msgstr ""
 
-#: src/osbase.cc:396
+#: src/osbase.cc:352
 msgid "Do you want to continue the synchronization? (N/y): "
 msgstr ""
 
-#: src/osbase.cc:402
+#: src/osbase.cc:358
 msgid "Aborting! Synchronization got aborted by user!"
 msgstr ""
 
-#: src/osbase.cc:405
+#: src/osbase.cc:361
 msgid "OK! Completing synchronization!"
 msgstr ""
 
-#: src/osbase.cc:412
+#: src/osbase.cc:368
 msgid "CALLBACK ERROR: "
 msgstr ""
 
-#: src/osbase.cc:451
+#: src/osbase.cc:407
 msgid "Unable to load opensync 0.40: "
 msgstr ""
 
-#: src/osbase.cc:461
+#: src/osbase.cc:417
 msgid "Unable to load opensync 0.22: "
 msgstr ""
 
-#: src/osconfig.cc:41
+#: src/osconfig.cc:42
 msgid "Unsupported"
 msgstr ""
 
-#: src/osconfig.cc:53
+#: src/osconfig.cc:54
 msgid "Barry config must have valid pin number."
 msgstr ""
 
-#: src/osconfig.cc:72
+#: src/osconfig.cc:73
 msgid ""
 "Unable to load pin number from Barry plugin config.  Consider this group "
 "corrupt, or not fully configured: "
 msgstr ""
 
-#: src/osconfig.cc:113
+#: src/osconfig.cc:114
 #, c-format
 msgid "No Barry plugins found in group '%s' and OSCG_THROW_ON_NO_BARRY is set."
 msgstr ""
 
-#: src/osconfig.cc:118
+#: src/osconfig.cc:119
 #, c-format
 msgid ""
 "Found %d Barry plugins in group '%s' and OSCG_THROW_ON_MULTIPLE_BARRIES is "
 "set."
 msgstr ""
 
-#: src/osconfig.cc:306
+#: src/osconfig.cc:307
 #, c-format
 msgid ""
 "Unsupported plugin '%s' in group '%s' and OSCG_THROW_ON_UNSUPPORTED is set."
 msgstr ""
 
-#: src/osconfig.cc:336
+#: src/osconfig.cc:337
 msgid ""
 "Cannot delete individual members from an OpenSync group with versions < 0.40."
 msgstr ""
 
-#: src/osconfig.cc:348
+#: src/osconfig.cc:349
 #, c-format
 msgid "Tried to delete non-existent member ID %ld (%s) from group '%s'"
 msgstr ""
 
-#: src/osconfig.cc:355
+#: src/osconfig.cc:356
 #, c-format
 msgid ""
 "Tried to delete member ID %ld using plugin '%s' from group '%s', but the "
 "existing member uses plugin '%s'"
 msgstr ""
 
-#: src/osconfig.cc:377
+#: src/osconfig.cc:378
 #, c-format
 msgid ""
 "Tried to overwrite group '%s' with a Group set that did not match in ID's "

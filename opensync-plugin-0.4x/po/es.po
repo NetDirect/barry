@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: barry-opensync-plugin-0-4x 0.18.4\n"
 "Report-Msgid-Bugs-To: http://netdirect.ca/barry\n"
-"POT-Creation-Date: 2012-07-26 23:23-0400\n"
+"POT-Creation-Date: 2012-07-27 01:48-0400\n"
 "PO-Revision-Date: 2012-07-26 23:24-0400\n"
 "Last-Translator: Chris Frey <cdfrey@foursquare.net>\n"
 "Language-Team: Spanish\n"
@@ -17,224 +17,224 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: src/barry_sync.cc:93
+#: src/barry_sync.cc:94
 msgid "Error converting string to unsigned long: "
 msgstr ""
 
-#: src/barry_sync.cc:135
+#: src/barry_sync.cc:136
 msgid "GetChanges: slow sync request detected"
 msgstr ""
 
-#: src/barry_sync.cc:139
+#: src/barry_sync.cc:140
 msgid "GetChanges: slow sync error: "
 msgstr ""
 
-#: src/barry_sync.cc:178
+#: src/barry_sync.cc:179
 #, c-format
 msgid "change record ID: %s"
 msgstr ""
 
-#: src/barry_sync.cc:241
+#: src/barry_sync.cc:242
 msgid "Found deleted record ID in state map! "
 msgstr ""
 
-#: src/barry_sync.cc:246
+#: src/barry_sync.cc:247
 msgid "found DELETE change"
 msgstr ""
 
-#: src/barry_sync.cc:367
+#: src/barry_sync.cc:368
 msgid "vcard30 found in barry-sync"
 msgstr ""
 
-#: src/barry_sync.cc:386
+#: src/barry_sync.cc:387
 msgid "contact initialize OK"
 msgstr ""
 
-#: src/barry_sync.cc:573
+#: src/barry_sync.cc:574
 msgid "Unable to get config."
 msgstr ""
 
-#: src/barry_sync.cc:616
+#: src/barry_sync.cc:617
 msgid "Process Ressource options..."
 msgstr ""
 
-#: src/barry_sync.cc:622
+#: src/barry_sync.cc:623
 msgid "No sync Calendar"
 msgstr ""
 
-#: src/barry_sync.cc:630
+#: src/barry_sync.cc:631
 msgid "No sync Contact"
 msgstr ""
 
-#: src/barry_sync.cc:638
+#: src/barry_sync.cc:639
 msgid "No sync Journal"
 msgstr ""
 
-#: src/barry_sync.cc:646
+#: src/barry_sync.cc:647
 msgid "No sync Todo"
 msgstr ""
 
-#: src/barry_sync.cc:654 src/barry_sync.cc:726
+#: src/barry_sync.cc:655 src/barry_sync.cc:727
 #, c-format
 msgid "Unable to allocate memory for controller: %s"
 msgstr ""
 
-#: src/barry_sync.cc:659
+#: src/barry_sync.cc:660
 #, c-format
 msgid "exception: %s"
 msgstr ""
 
-#: src/barry_sync.cc:707
+#: src/barry_sync.cc:708
 #, c-format
 msgid "Unable to find PIN %x"
 msgstr ""
 
-#: src/barry_sync.cc:711
+#: src/barry_sync.cc:712
 msgid "connecting..."
 msgstr ""
 
-#: src/barry_sync.cc:715
+#: src/barry_sync.cc:716
 msgid "connected !"
 msgstr ""
 
-#: src/barry_sync.cc:721
+#: src/barry_sync.cc:722
 msgid "connect success"
 msgstr ""
 
-#: src/barry_sync.cc:840
+#: src/barry_sync.cc:841
 msgid "unable to get commit function pointer"
 msgstr ""
 
-#: src/barry_sync.cc:848
+#: src/barry_sync.cc:849
 msgid "unable to get sync object that matches change type"
 msgstr ""
 
-#: src/barry_sync.cc:855
+#: src/barry_sync.cc:856
 msgid "This object type is disabled in the barry-sync config"
 msgstr ""
 
-#: src/barry_sync.cc:880
+#: src/barry_sync.cc:881
 #, c-format
 msgid "uid from change: %s"
 msgstr ""
 
-#: src/barry_sync.cc:887 src/barry_sync.cc:888
+#: src/barry_sync.cc:888 src/barry_sync.cc:889
 #, c-format
 msgid "Unable to extract a valid record ID from: %s"
 msgstr ""
 
-#: src/barry_sync.cc:897
+#: src/barry_sync.cc:898
 #, c-format
 msgid "unable to get state table index for RecordId: %lu"
 msgstr ""
 
-#: src/barry_sync.cc:927
+#: src/barry_sync.cc:928
 #, c-format
 msgid "CommitData() for ADDED state returned false: %s"
 msgstr ""
 
-#: src/barry_sync.cc:940
+#: src/barry_sync.cc:941
 #, c-format
 msgid "CommitData() for MODIFIED state returned false: %s"
 msgstr ""
 
-#: src/barry_sync.cc:948
+#: src/barry_sync.cc:949
 msgid "Unknown change type"
 msgstr ""
 
-#: src/barry_sync.cc:1117
+#: src/barry_sync.cc:1118
 #, c-format
 msgid "Barry OpenSync plugin v%s for the Blackberry handheld"
 msgstr ""
 
-#: src/barry_sync.cc:1118
+#: src/barry_sync.cc:1119
 msgid ""
 "Plugin to synchronize note, task, calendar and contact entries on USB "
 "Blackberry handhelds"
 msgstr ""
 
-#: src/environment.cc:91
+#: src/environment.cc:92
 msgid "Tried to use empty Connector"
 msgstr ""
 
-#: src/environment.cc:165
+#: src/environment.cc:166
 #, c-format
 msgid "Clearing dirty flag for db %u, index %u"
 msgstr ""
 
-#: src/environment.cc:202
+#: src/environment.cc:203
 #, c-format
 msgid "osync_change_get_objtype returns %s"
 msgstr ""
 
-#: src/environment.cc:205
+#: src/environment.cc:206
 msgid "return calendar object"
 msgstr ""
 
-#: src/environment.cc:210
+#: src/environment.cc:211
 msgid "return contact object"
 msgstr ""
 
-#: src/environment.cc:215
+#: src/environment.cc:216
 msgid "return journal object"
 msgstr ""
 
-#: src/environment.cc:220
+#: src/environment.cc:221
 msgid "return todo object"
 msgstr ""
 
-#: src/environment.cc:225
+#: src/environment.cc:226
 msgid "return none"
 msgstr ""
 
-#: src/vcard.cc:73 src/vcard.cc:100
+#: src/vcard.cc:74 src/vcard.cc:101
 #, c-format
 msgid "ERROR: vcard:Barry::ConvertError exception: %s"
 msgstr ""
 
-#: src/vcard.cc:146 src/vevent.cc:164 src/vjournal.cc:151 src/vtodo.cc:152
+#: src/vcard.cc:147 src/vevent.cc:165 src/vjournal.cc:152 src/vtodo.cc:153
 msgid "Can't use recommended recordId, generating new one."
 msgstr ""
 
-#: src/vcard.cc:158 src/vevent.cc:176 src/vjournal.cc:163 src/vtodo.cc:164
+#: src/vcard.cc:159 src/vevent.cc:177 src/vjournal.cc:164 src/vtodo.cc:165
 msgid "unable to parse change data for new RecordId: "
 msgstr ""
 
-#: src/vcard.cc:161 src/vevent.cc:179 src/vjournal.cc:166 src/vtodo.cc:167
+#: src/vcard.cc:162 src/vevent.cc:180 src/vjournal.cc:167 src/vtodo.cc:168
 msgid "data: "
 msgstr ""
 
-#: src/vcard.cc:170 src/vevent.cc:202 src/vjournal.cc:175 src/vtodo.cc:176
+#: src/vcard.cc:171 src/vevent.cc:203 src/vjournal.cc:176 src/vtodo.cc:177
 msgid "adding record"
 msgstr ""
 
-#: src/vcard.cc:174 src/vevent.cc:206 src/vjournal.cc:179
+#: src/vcard.cc:175 src/vevent.cc:207 src/vjournal.cc:180
 msgid "setting record"
 msgstr ""
 
-#: src/vcard.cc:176 src/vevent.cc:208 src/vjournal.cc:181
+#: src/vcard.cc:177 src/vevent.cc:209 src/vjournal.cc:182
 msgid "clearing dirty flag"
 msgstr ""
 
-#: src/vevent.cc:78 src/vevent.cc:118
+#: src/vevent.cc:79 src/vevent.cc:119
 #, c-format
 msgid "ERROR: vevent:Barry::ConvertError exception: %s"
 msgstr ""
 
-#: src/vjournal.cc:77 src/vjournal.cc:105
+#: src/vjournal.cc:78 src/vjournal.cc:106
 #, c-format
 msgid "ERROR: vjournal:Barry::ConvertError exception: %s"
 msgstr ""
 
-#: src/vtodo.cc:78 src/vtodo.cc:106
+#: src/vtodo.cc:79 src/vtodo.cc:107
 #, c-format
 msgid "ERROR: vtodo:Barry::ConvertError exception: %s"
 msgstr ""
 
-#: src/vtodo.cc:201
+#: src/vtodo.cc:202
 msgid "deleting task record"
 msgstr ""
 
-#: src/vtodo.cc:203
+#: src/vtodo.cc:204
 msgid "re-adding task record"
 msgstr ""
