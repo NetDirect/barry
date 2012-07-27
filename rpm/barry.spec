@@ -465,6 +465,7 @@ desktop-file-install --vendor netdirect \
 %defattr(-,root,root)
 %attr(0755,root,root) %{_libdir}/opensync/plugins/barry_sync.so
 %attr(0644,root,root) %{_datadir}/opensync/defaults/barry-sync
+%attr(0644,root,root) %{_datadir}/locale/*/LC_MESSAGES/barry-opensync-plugin.mo
 %doc COPYING
 %endif
 
@@ -473,6 +474,7 @@ desktop-file-install --vendor netdirect \
 %defattr(-,root,root)
 %attr(0755,root,root) %{_libdir}/libopensync1/plugins/barry_sync.so
 %attr(0644,root,root) %{_datadir}/libopensync1/defaults/barry-sync
+%attr(0644,root,root) %{_datadir}/locale/*/LC_MESSAGES/barry-opensync-plugin-0-4x.mo
 %doc COPYING
 %endif
 
@@ -518,6 +520,7 @@ desktop-file-install --vendor netdirect \
   across Fedora and openSUSE
 - use kdesu for openSUSE builds, beesu for Fedora
 - added desktop's barrydesktop.mo and barryosyncwrap.mo files
+- added .mo files for both plugins
 
 * Tue May 15 2012 Chris Frey <cdfrey@foursquare.net> 0.18.3-0
 - version bump
