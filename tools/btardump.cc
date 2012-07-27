@@ -104,6 +104,8 @@ public:
 
 int main(int argc, char *argv[])
 {
+	INIT_I18N(PACKAGE);
+
 	try {
 		bool vformat_mode = false;
 

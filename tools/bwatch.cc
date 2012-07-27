@@ -62,6 +62,8 @@ void Usage()
 
 int main(int argc, char *argv[])
 {
+	INIT_I18N(PACKAGE);
+
 	try {
 
 	cout.sync_with_stdio(true); // leave this on, since libusb uses stdio for debug messages

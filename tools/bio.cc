@@ -1127,6 +1127,8 @@ int App::main(int argc, char *argv[])
 
 int main(int argc, char *argv[])
 {
+	INIT_I18N(PACKAGE);
+
 	try {
 		App app;
 		return app.main(argc, argv);
