@@ -612,9 +612,9 @@ static void *initialize(OSyncPlugin *plugin, OSyncPluginInfo *info, OSyncError *
 
 
 		/*
-		 * Process Ressource options
+		 * Process Resource options
 		 */
-		trace.log(_("Process Ressource options..."));
+		trace.log(_("Process Resource options..."));
 
 		if (barry_calendar_initialize(env, info, error)) {
 			env->m_CalendarSync.m_Sync = true;
