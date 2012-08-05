@@ -8,168 +8,180 @@ msgstr ""
 "Project-Id-Version: barry-opensync-plugin 0.18.4\n"
 "Report-Msgid-Bugs-To: http://netdirect.ca/barry\n"
 "POT-Creation-Date: 2012-07-27 01:48-0400\n"
-"PO-Revision-Date: 2012-07-26 23:23-0400\n"
-"Last-Translator: Chris Frey <cdfrey@foursquare.net>\n"
+"PO-Revision-Date: 2012-08-05 12:47+0100\n"
+"Last-Translator: Nicolas CARRIER <carrier.nicolas0@gmail.com>\n"
 "Language-Team: French\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Poedit-Basepath: ..\n"
 
 #: src/barry_sync.cc:76
 msgid "GetChanges: slow sync request detected, clearing cache and id map"
-msgstr ""
+msgstr "GetChanges : requête de synchronisation lente détectée, nettoyage du cache et de la table des id"
 
 #: src/barry_sync.cc:103
 msgid "found an ADDED change"
-msgstr ""
+msgstr "Un changement ADDED a été rencontré"
 
 #: src/barry_sync.cc:111
 msgid "found a MODIFIED change"
-msgstr ""
+msgstr "Un changement MODIFIED a été rencontré"
 
 #: src/barry_sync.cc:116
 msgid "no change detected"
-msgstr ""
+msgstr "Pas de changement détecté"
 
 #: src/barry_sync.cc:126
 #, c-format
 msgid "change record ID: %s"
-msgstr ""
+msgstr "Changement de l'ID de l'enregistrement : %s"
 
 #: src/barry_sync.cc:163
 msgid "found DELETE change"
-msgstr ""
+msgstr "Un changement DELETE a été rencontré"
 
 #: src/barry_sync.cc:224
 msgid "Error saving calendar cache"
-msgstr ""
+msgstr "Erreur lors de la sauvegarde du cache du calendrier"
 
 #: src/barry_sync.cc:232
 msgid "Error saving calendar id map"
-msgstr ""
+msgstr "Erreur lors de la sauvegarde de la table des id du calendrier"
 
 #: src/barry_sync.cc:262
 #, c-format
 msgid "Unable to get config data: %s"
-msgstr ""
+msgstr "Impossible d'obtenir les données de configuration : %s"
 
 #: src/barry_sync.cc:293
 #, c-format
 msgid "Unable to allocate memory for environment: %s"
-msgstr ""
+msgstr "Impossible d'allouer de la mémoire depuis l'environnement : %s"
 
 #: src/barry_sync.cc:319
 #, c-format
 msgid "Unable to find PIN %lx"
-msgstr ""
+msgstr "Impossible de trouver le PIN %lx"
 
 #: src/barry_sync.cc:332
 #, c-format
 msgid "Unable to allocate memory for controller: %s"
-msgstr ""
+msgstr "Impossible d'allouer la mémoire pour le contrôleur : %s"
 
 #: src/barry_sync.cc:385
 msgid "unable to get commit function pointer"
-msgstr ""
+msgstr "Impossible de récupérer le pointeur de fonction de commit"
 
 #: src/barry_sync.cc:393
 msgid "unable to get sync object that matches change type"
-msgstr ""
+msgstr "Impossible d'obtenir un objet de synchronisation qui corresponde au type de changement"
 
 #: src/barry_sync.cc:400
 msgid "This object type is disabled in the barry-sync config"
-msgstr ""
+msgstr "Ce type d'objet est désactivé dans la configuration de barry-sync"
 
 #: src/barry_sync.cc:418
 msgid "uid from change object is blank!"
-msgstr ""
+msgstr "L'uid dans l'objet change est vide !"
 
 #: src/barry_sync.cc:429
-#, c-format
+#, fuzzy, c-format
 msgid "unable to get state table index for RecordId: %lu"
-msgstr ""
+msgstr "Impossible d'obtenir l'indice de la table d'état pour le RecordId : %lu"
 
 #: src/barry_sync.cc:450
 #, c-format
 msgid "CommitData() for ADDED state returned false: %s"
-msgstr ""
+msgstr "CommitData() pour l'état ADDED a retourné false : %s"
 
 #: src/barry_sync.cc:462
 #, c-format
 msgid "CommitData() for MODIFIED state returned false: %s"
-msgstr ""
+msgstr "CommitData() pour l'état MODIFIED a retourné false : %s"
 
-#: src/barry_sync.cc:470 src/barry_sync.cc:471
+#: src/barry_sync.cc:470
+#: src/barry_sync.cc:471
 msgid "Unknown change type"
-msgstr ""
+msgstr "Type de changement inconnu"
 
 #: src/environment.cc:147
 #, c-format
 msgid "found existing uid in map: %lu"
-msgstr ""
+msgstr "uid existant trouvé dans la table : %lu"
 
 #: src/environment.cc:158
 msgid "parsed uid already exists in map, skipping"
-msgstr ""
+msgstr "L'uid lu existe déjà dans la table, ignoré"
 
 #: src/environment.cc:167
 #, c-format
 msgid "made new record id: %lu"
-msgstr ""
+msgstr "Création d'un nouvel id d'enregistrement : %lu"
 
 #: src/environment.cc:192
 msgid "Tried to use empty Connector"
-msgstr ""
+msgstr "Tentative d'utiliser un Connector vide"
 
 #: src/environment.cc:241
 #, c-format
 msgid "Clearing dirty flag for db %u, index %u"
-msgstr ""
+msgstr "Suppression du drapeau dirty pour la base %u, index %u"
 
 #: src/environment.cc:322
 msgid "calendar syncing enabled"
-msgstr ""
+msgstr "Synchronisation de calendrier activée"
 
 #: src/environment.cc:327
 msgid "contacts syncing enabled"
-msgstr ""
+msgstr "Synchronisation des contacts activée"
 
 #: src/environment.cc:332
 msgid "using password from config file"
-msgstr ""
+msgstr "Utilisation du mot de passe du fichier de configuration"
 
-#: src/vcard.cc:75 src/vcard.cc:102
+#: src/vcard.cc:75
+#: src/vcard.cc:102
 #, c-format
 msgid "ERROR: vcard:Barry::ConvertError exception: %s"
-msgstr ""
+msgstr "ERREUR : exception dans vcard:Barry::ConvertError : %s"
 
-#: src/vcard.cc:148 src/vevent.cc:162
+#: src/vcard.cc:148
+#: src/vevent.cc:162
 msgid "Can't use recommended recordId, generating new one."
-msgstr ""
+msgstr "Impossible d'utiliser le recordId recommandé, un nouveau est généré."
 
-#: src/vcard.cc:160 src/vevent.cc:174
+#: src/vcard.cc:160
+#: src/vevent.cc:174
+#, fuzzy
 msgid "unable to parse change data for new RecordId: "
-msgstr ""
+msgstr "Impossible de lire les données du changement pour le nouveau RecordId :"
 
-#: src/vcard.cc:163 src/vevent.cc:177
+#: src/vcard.cc:163
+#: src/vevent.cc:177
 msgid "data: "
-msgstr ""
+msgstr "Données :"
 
-#: src/vcard.cc:172 src/vevent.cc:201
+#: src/vcard.cc:172
+#: src/vevent.cc:201
 msgid "adding record"
-msgstr ""
+msgstr "Ajout de l'enregistrement"
 
-#: src/vcard.cc:176 src/vevent.cc:205
+#: src/vcard.cc:176
+#: src/vevent.cc:205
 msgid "setting record"
-msgstr ""
+msgstr "Modification de l'enregistrement"
 
-#: src/vcard.cc:178 src/vevent.cc:207
+#: src/vcard.cc:178
+#: src/vevent.cc:207
 msgid "clearing dirty flag"
-msgstr ""
+msgstr "Suppression du drapeau dirty"
 
-#: src/vevent.cc:75 src/vevent.cc:116
+#: src/vevent.cc:75
+#: src/vevent.cc:116
 #, c-format
 msgid "ERROR: vevent:Barry::ConvertError exception: %s"
-msgstr ""
+msgstr "ERREUR : exception dans vevent:Barry::ConvertError : %s"
+
