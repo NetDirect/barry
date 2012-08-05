@@ -8,15 +8,15 @@ msgstr ""
 "Project-Id-Version: barry-backup 0.18.4\n"
 "Report-Msgid-Bugs-To: http://netdirect.ca/barry\n"
 "POT-Creation-Date: 2012-06-12 21:11-0400\n"
-"PO-Revision-Date: 2011-01-07 20:45+0100\n"
-"Last-Translator: Nicolas VIVIEN <webmaster@progweb.com>\n"
+"PO-Revision-Date: 2012-08-05 16:35+0100\n"
+"Last-Translator: Nicolas CARRIER <carrier.nicolas0@gmail.com>\n"
 "Language-Team: French\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Poedit-Basepath: .\n"
+"X-Poedit-Basepath: ..\n"
 "X-Poedit-SearchPath-0: /usr/local/src/barry/barry/gui\n"
 
 #: src/PasswordDlg.glade:8
@@ -25,7 +25,7 @@ msgstr "Mot de passe requis"
 
 #: src/PasswordDlg.glade:99
 msgid "Please enter device password: (5 tries remaining)"
-msgstr "Veuillez saisir le mot de passe: (5 tentatives)"
+msgstr "Veuillez saisir le mot de passe : (5 tentatives)"
 
 #: src/ConfigDlg.glade:7
 msgid "Configuration of Current PIN"
@@ -33,7 +33,7 @@ msgstr "Configuration du PIN code"
 
 #: src/ConfigDlg.glade:33
 msgid "Backup path:"
-msgstr "Dossier de sauvegarde:"
+msgstr "Dossier de sauvegarde :"
 
 #: src/ConfigDlg.glade:70
 msgid "Device name:"
@@ -44,18 +44,15 @@ msgid "Prompt for label on every backup."
 msgstr "Demander un nom lors de chaque sauvegarde."
 
 #: src/ConfigDlg.glade:102
-msgid ""
-"Database restore filter.  Only databases selected in this list will be "
-"restored, even if more exist in the backup."
-msgstr ""
-"Filtre des bases de données à restaurer. Si la sauvegarde contient plusieurs "
-"bases, seules celles sélectionnées seront restaurées."
+msgid "Database restore filter.  Only databases selected in this list will be restored, even if more exist in the backup."
+msgstr "Filtre des bases de données à restaurer. Si la sauvegarde contient plusieurs bases, seules celles sélectionnées seront restaurées."
 
 #: src/ConfigDlg.glade:118
 msgid "Device database backup list:"
-msgstr "Liste des bases de données à sauvegarder:"
+msgstr "Liste des bases de données à sauvegarder :"
 
-#: src/ConfigDlg.glade:138 src/ConfigDlg.glade:166
+#: src/ConfigDlg.glade:138
+#: src/ConfigDlg.glade:166
 msgid "Configure..."
 msgstr "Configuration..."
 
@@ -63,7 +60,8 @@ msgstr "Configuration..."
 msgid "Database Selection"
 msgstr "Sélection des bases de données"
 
-#: src/DatabaseSelectDlg.glade:100 src/ConfigDlg.cc:79
+#: src/DatabaseSelectDlg.glade:100
+#: src/ConfigDlg.cc:79
 msgid "Select the device databases you wish to backup:"
 msgstr "Sélectionnez les bases de données que vous souhaitez sauvegarder:"
 
@@ -76,42 +74,50 @@ msgid "_Deselect All"
 msgstr "Tout _Déselectionner"
 
 #: src/DatabaseSelectDlg.glade:181
-#, fuzzy
 msgid "Automatically select all databases on every backup"
-msgstr "Demander un nom lors de chaque sauvegarde."
+msgstr "Sélectionner automatiquement toutes les bases de données à chaque sauvegarde."
 
 #: src/PromptDlg.glade:8
 msgid "Question"
 msgstr "Question"
 
 #: src/PromptDlg.glade:101
+#, fuzzy
 msgid "Nice detailed question for the user to answer..."
-msgstr ""
+msgstr "Question détaillée sympathique à laquelle l'utilisateur doit répondre..."
 
-#: src/BackupWindow.glade:7 src/barry-gui.glade:8 src/barry-gui.glade:296
+#: src/BackupWindow.glade:7
+#: src/barry-gui.glade:8
+#: src/barry-gui.glade:296
 #: src/barry-gui.glade:446
 msgid "Barry Backup"
 msgstr "Barry Backup"
 
-#: src/BackupWindow.glade:18 src/barry-gui.glade:33 src/barry-gui.glade:321
+#: src/BackupWindow.glade:18
+#: src/barry-gui.glade:33
+#: src/barry-gui.glade:321
 #: src/barry-gui.glade:471
 msgid "_File"
 msgstr "_Fichier"
 
-#: src/BackupWindow.glade:36 src/barry-gui.glade:110 src/barry-gui.glade:365
+#: src/BackupWindow.glade:36
+#: src/barry-gui.glade:110
+#: src/barry-gui.glade:365
 #: src/barry-gui.glade:515
 msgid "_Help"
 msgstr "_Aide"
 
 #: src/BackupWindow.glade:72
 msgid "Device:"
-msgstr "Périphérique:"
+msgstr "Périphérique :"
 
-#: src/BackupWindow.glade:111 src/barry-gui.glade:684
+#: src/BackupWindow.glade:111
+#: src/barry-gui.glade:684
 msgid "Backup"
 msgstr "Sauvegarder"
 
-#: src/BackupWindow.glade:124 src/Thread.cc:203
+#: src/BackupWindow.glade:124
+#: src/Thread.cc:203
 msgid "Restore..."
 msgstr "Restauration..."
 
@@ -135,11 +141,13 @@ msgstr "Tout Déconnecter"
 msgid "_Device"
 msgstr "_Périphérique"
 
-#: src/barry-gui.glade:64 src/barry-gui.glade:147
+#: src/barry-gui.glade:64
+#: src/barry-gui.glade:147
 msgid "_Connect"
 msgstr "_Connexion"
 
-#: src/barry-gui.glade:73 src/barry-gui.glade:162
+#: src/barry-gui.glade:73
+#: src/barry-gui.glade:162
 msgid "_Disconnect"
 msgstr "_Déconnexion"
 
@@ -151,23 +159,29 @@ msgstr "_Sauvegarde..."
 msgid "_Restore..."
 msgstr "_Restauration..."
 
-#: src/barry-gui.glade:119 src/barry-gui.glade:374 src/barry-gui.glade:524
+#: src/barry-gui.glade:119
+#: src/barry-gui.glade:374
+#: src/barry-gui.glade:524
 msgid "_About"
 msgstr "_A propos"
 
-#: src/barry-gui.glade:190 src/barry-gui.glade:403
+#: src/barry-gui.glade:190
+#: src/barry-gui.glade:403
 msgid "_Backup"
 msgstr "_Sauvegarde"
 
-#: src/barry-gui.glade:205 src/barry-gui.glade:415
+#: src/barry-gui.glade:205
+#: src/barry-gui.glade:415
 msgid "_Restore"
 msgstr "_Restauration"
 
-#: src/barry-gui.glade:343 src/barry-gui.glade:493
+#: src/barry-gui.glade:343
+#: src/barry-gui.glade:493
 msgid "_Edit"
 msgstr "_Edition"
 
-#: src/barry-gui.glade:352 src/barry-gui.glade:502
+#: src/barry-gui.glade:352
+#: src/barry-gui.glade:502
 msgid "_Config..."
 msgstr "_Configuration..."
 
@@ -175,7 +189,8 @@ msgstr "_Configuration..."
 msgid "Device PIN"
 msgstr "Code PIN"
 
-#: src/barry-gui.glade:627 src/BackupWindow.cc:84
+#: src/barry-gui.glade:627
+#: src/BackupWindow.cc:84
 msgid "Progress"
 msgstr "Avancement"
 
@@ -192,63 +207,57 @@ msgid "Device Selection"
 msgstr "Sélection du périphérique"
 
 #: src/barry-gui.glade:827
-msgid ""
-"Multiple BlackBerry devices have been found. Please select the one to work "
-"with:"
-msgstr "Plusieurs BlackBerry ont été trouvés. Veuillez en sélectionner un:"
+msgid "Multiple BlackBerry devices have been found. Please select the one to work with:"
+msgstr "Plusieurs périphériques BlackBerry ont été trouvés. Veuillez en sélectionner un :"
 
 #: src/PasswordDlg.cc:41
 msgid "Please enter device password: ("
-msgstr "Veuillez saisir le mot de passe: ("
+msgstr "Veuillez saisir le mot de passe : ("
 
 #: src/PasswordDlg.cc:41
 msgid " tries remaining)"
 msgstr " essais restants)"
 
 #: src/ConfigDlg.cc:89
-msgid ""
-"Select the device databases you wish to recover.  This selection acts like a "
-"filter, in that only the databases you select here will be restored, even if "
-"more exist in the backup data."
-msgstr ""
-"Filtre des bases de données à restaurer. Si la sauvegarde contient plusieurs "
-"bases, seules celles sélectionnées seront restaurées."
+msgid "Select the device databases you wish to recover.  This selection acts like a filter, in that only the databases you select here will be restored, even if more exist in the backup data."
+msgstr "Filtre des bases de données à restaurer. Si la sauvegarde contient plusieurs bases, seules celles sélectionnées seront restaurées."
 
-#: src/main.cc:41 src/BackupWindow.cc:347
+#: src/main.cc:41
+#: src/BackupWindow.cc:347
 msgid "Glib::Exception caught in main: "
-msgstr ""
+msgstr "Glib::Exception attrapée dans main : "
 
 #: src/main.cc:47
 msgid "Usb::Error caught in main:\n"
-msgstr ""
+msgstr "Usb::Error attrapée dans main :\n"
 
 #: src/main.cc:54
-msgid ""
-"Device busy.  This is likely due to the usb_storage kernel module being "
-"loaded.  Try 'rmmod usb_storage'."
-msgstr ""
+msgid "Device busy.  This is likely due to the usb_storage kernel module being loaded.  Try 'rmmod usb_storage'."
+msgstr "Périphérique occupé. Ceci est probablement dû à la présence du module usb_storage dans le noyau. Essayez 'rmmod usb_storage'."
 
 #: src/main.cc:62
 msgid "std::exception caught in main: "
-msgstr ""
+msgstr "std::exception attrapée dans main : "
 
 #: src/main.cc:110
 msgid "Enable protocol debug output to stdout/stderr"
-msgstr ""
+msgstr "Activer l'affichage du debogage du protocole sur stdout/stderr."
 
-#: src/main.cc:113 src/main.cc:114
+#: src/main.cc:113
+#: src/main.cc:114
 msgid "Options specific to the Barry Backup application."
-msgstr ""
+msgstr "Options spécifiques à l'application Barry Backup."
 
 #: src/main.cc:118
 msgid "Backup program for the Blackberry Handheld"
-msgstr ""
+msgstr "Programme de sauvegarde pour périphérique Blackberry"
 
 #: src/BackupWindow.cc:80
 msgid "PIN"
 msgstr "PIN"
 
-#: src/BackupWindow.cc:81 src/DatabaseSelectDlg.cc:87
+#: src/BackupWindow.cc:81
+#: src/DatabaseSelectDlg.cc:87
 msgid "Name"
 msgstr "Nom"
 
@@ -256,16 +265,18 @@ msgstr "Nom"
 msgid "Status"
 msgstr "Statut"
 
-#: src/BackupWindow.cc:122 src/BackupWindow.cc:139
+#: src/BackupWindow.cc:122
+#: src/BackupWindow.cc:139
 msgid "Scanning for devices..."
 msgstr "Recherche des périphériques en cours..."
 
 #: src/BackupWindow.cc:149
 msgid ""
-"There were some potential BlackBerry devices that could not be probed.  "
-"Please check your system's USB permissions if this happens regularly.\n"
+"There were some potential BlackBerry devices that could not be probed.  Please check your system's USB permissions if this happens regularly.\n"
 "\n"
 msgstr ""
+"Certains périphérique pouvant potentiellement être des Blackberry n'ont pas pu être testés. Veuillez vérifier les permission USB de votre système si cela se produit régulièrement.\n"
+"\n"
 
 #: src/BackupWindow.cc:161
 msgid "No devices."
@@ -273,11 +284,11 @@ msgstr "Aucun périphérique."
 
 #: src/BackupWindow.cc:163
 msgid "1 device:"
-msgstr "1 périphérique:"
+msgstr "1 périphérique :"
 
 #: src/BackupWindow.cc:167
 msgid " devices:"
-msgstr " périphériques:"
+msgstr " périphériques :"
 
 #: src/BackupWindow.cc:183
 msgid "All devices loaded."
@@ -287,7 +298,9 @@ msgstr "Détection des périphériques terminée."
 msgid "Connecting to Device..."
 msgstr "Connexion au périphérique..."
 
-#: src/BackupWindow.cc:213 src/BackupWindow.cc:227 src/BackupWindow.cc:242
+#: src/BackupWindow.cc:213
+#: src/BackupWindow.cc:227
+#: src/BackupWindow.cc:242
 #: src/BackupWindow.cc:249
 msgid "Cannot connect to "
 msgstr "Impossible de se connecter à "
@@ -301,12 +314,8 @@ msgid "Connected to "
 msgstr "Connecté à "
 
 #: src/BackupWindow.cc:261
-msgid ""
-" is working, disconnecting from it may cause data corruption, are you sure "
-"to proceed?"
-msgstr ""
-" est en cours d'utilisation, une déconnexion pourrait corrompre vos données, "
-"êtes-vous sûr de vouloir continuer?"
+msgid " is working, disconnecting from it may cause data corruption, are you sure to proceed?"
+msgstr " est en cours d'utilisation, une déconnexion pourrait corrompre vos données, êtes-vous sûr de vouloir continuer ?"
 
 #: src/BackupWindow.cc:269
 msgid "Disconnected from "
@@ -318,23 +327,20 @@ msgstr "Non connecté."
 
 #: src/BackupWindow.cc:280
 msgid "Unnamed device found (PIN: "
-msgstr "Périphérique inconnu trouvé (PIN: "
+msgstr "Périphérique inconnu trouvé (PIN : "
 
 #: src/BackupWindow.cc:280
 msgid "Please enter a name for it:"
-msgstr "Veuillez saisir un nom:"
+msgstr "Veuillez saisir un nom :"
 
-#: src/BackupWindow.cc:288 src/BackupWindow.cc:583
+#: src/BackupWindow.cc:288
+#: src/BackupWindow.cc:583
 msgid "Error saving config: "
 msgstr "Erreur lors de la sauvegarde de la configuration"
 
 #: src/BackupWindow.cc:330
-msgid ""
-"One or more devices are working, disconnecting now may cause data "
-"corruption. Proceed anyway?"
-msgstr ""
-"Un ou plusieurs périphériques sont en cours d'utilisation, une déconnexion "
-"pourrait corrompre vos données.Continuer?"
+msgid "One or more devices are working, disconnecting now may cause data corruption. Proceed anyway?"
+msgstr "Un ou plusieurs périphériques sont en cours d'utilisation, une déconnexion pourrait corrompre vos données.Continuer?"
 
 #: src/BackupWindow.cc:387
 msgid "Backup on"
@@ -360,7 +366,7 @@ msgid ""
 msgstr ""
 "Attention\n"
 "\n"
-"Toutes les données n'ont pu être traitées sur: "
+"Tous les enregistrements n'ont pu être traités sur le périphérique :"
 
 #: src/BackupWindow.cc:411
 msgid ""
@@ -374,59 +380,54 @@ msgstr ""
 
 #: src/BackupWindow.cc:411
 msgid " of "
-msgstr " parmi "
+msgstr " enregistrements sur "
 
 #: src/BackupWindow.cc:412
-#, fuzzy
 msgid ""
 " records were backed up.\n"
 "\n"
-"It is suspected that due to international characters in these records, the "
-"BlackBerry uses a different low-level protocol, which Barry Backup does not "
-"yet support.  Alternatively, there may be hidden records that cannot be "
-"edited in your device.  If this occurs in a database such as Address Book, "
-"sometimes a restore of just that database may fix the issue."
+"It is suspected that due to international characters in these records, the BlackBerry uses a different low-level protocol, which Barry Backup does not yet support.  Alternatively, there may be hidden records that cannot be edited in your device.  If this occurs in a database such as Address Book, sometimes a restore of just that database may fix the issue."
 msgstr ""
-" données ont été traitées.\n"
+" ont été traités.\n"
 "\n"
-"Cela peut être du au fait que ces données contiennent des caractères "
-"spéciaux, votre BlackBerry utilise différents protocoles, qui ne sont pas "
-"encore tous supportés par Barry. Merci de contacter les développeurs à "
-"l'adresse http://netdirect.ca/barry si vous souhaitez aider à fixer ce "
-"problème."
+"Cela peut être dû au fait qu'en raison de caractères spéciaux, votre BlackBerry utilise un protocole bas-niveau différent, que Barry Backup ne supporte pas encore. Il est également possible que des enregistrements cachés soient présents, qui ne peuvent pas être édités sur votre périphérique. Si cela se produit dans une base de données telle que le Carnet d'Adresses, une simple restauration de cette base peut corriger le problème."
 
-#: src/BackupWindow.cc:414 src/BackupWindow.cc:423
+#: src/BackupWindow.cc:414
+#: src/BackupWindow.cc:423
 msgid ""
 "\n"
 "\n"
 "Summary:\n"
 msgstr ""
+"\n"
+"\n"
+"Résumé :\n"
 
 #: src/BackupWindow.cc:423
-#, fuzzy
 msgid "Warning: Record counts are not the same on device: "
-msgstr ""
-"Attention\n"
-"\n"
-"Toutes les données n'ont pu être traitées sur: "
+msgstr "Attention : le nombre d'enregistrements n'est pas le même sur le périphérique :"
 
 #: src/BackupWindow.cc:423
 msgid ""
 "\n"
 "It claims to have "
 msgstr ""
+"\n"
+"Il indique avoir "
 
-#: src/BackupWindow.cc:423 src/DeviceIface.cc:291
+#: src/BackupWindow.cc:423
+#: src/DeviceIface.cc:291
 msgid " records, but actually retrieved "
-msgstr ""
+msgstr " enregistrements, mais le nombre réellement récupéré est de "
 
-#: src/BackupWindow.cc:444 src/BackupWindow.cc:522
+#: src/BackupWindow.cc:444
+#: src/BackupWindow.cc:522
 msgid "Thread already in progress."
 msgstr "Traitement déjà en cours."
 
 #: src/BackupWindow.cc:451
 msgid "Could not create directory: "
-msgstr "Impossible de créer le dossier: "
+msgstr "Impossible de créer le dossier : "
 
 #: src/BackupWindow.cc:458
 msgid "No databases selected in configuration."
@@ -434,7 +435,7 @@ msgstr "Aucune base de données n'a été sélectionnée."
 
 #: src/BackupWindow.cc:467
 msgid "Please enter a label for this backup (blank is ok):"
-msgstr "Veuillez saisir un nom pour cette sauvegarde (vide est accepté):"
+msgstr "Veuillez saisir un nom pour cette sauvegarde (vide est accepté) :"
 
 #: src/BackupWindow.cc:479
 msgid "Error starting backup thread: "
@@ -444,7 +445,8 @@ msgstr "Erreur lors du lancement de la sauvegarde: "
 msgid "Backup of "
 msgstr "Sauvegarde du "
 
-#: src/BackupWindow.cc:484 src/BackupWindow.cc:538
+#: src/BackupWindow.cc:484
+#: src/BackupWindow.cc:538
 msgid " in progress..."
 msgstr " en cours..."
 
@@ -454,7 +456,7 @@ msgstr "Sélectionner la sauvegarde en restaurer"
 
 #: src/BackupWindow.cc:533
 msgid "Error starting restore thread: "
-msgstr "Erreur lors du lancement de la restauration: "
+msgstr "Erreur lors du lancement de la restauration : "
 
 #: src/BackupWindow.cc:538
 msgid "Restore of "
@@ -474,9 +476,10 @@ msgstr "pour davantage d'informations."
 
 #: src/BackupWindow.cc:633
 msgid "Using library: "
-msgstr "Librairie utilisée: "
+msgstr "Bibliothèque utilisée : "
 
-#: src/DeviceIface.cc:85 src/DeviceIface.cc:151
+#: src/DeviceIface.cc:85
+#: src/DeviceIface.cc:151
 msgid "Terminated by user."
 msgstr "Interrompu par l'utilisateur."
 
@@ -490,13 +493,14 @@ msgstr " Poursuite du traitement."
 
 #: src/DeviceIface.cc:133
 msgid "Error on database: "
-msgstr " Erreur concernant la base de données: "
+msgstr " Erreur concernant la base de données : "
 
 #: src/DeviceIface.cc:291
 msgid " claimed to have "
-msgstr ""
+msgstr " prétend avoir "
 
-#: src/DeviceIface.cc:313 src/DeviceIface.cc:338
+#: src/DeviceIface.cc:313
+#: src/DeviceIface.cc:338
 msgid "Thread already running."
 msgstr "Traitement déjà en cours."
 
@@ -504,11 +508,14 @@ msgstr "Traitement déjà en cours."
 msgid "Active"
 msgstr "Actif"
 
-#: src/Thread.cc:56 src/Thread.cc:139
+#: src/Thread.cc:56
+#: src/Thread.cc:139
 msgid "Ready"
 msgstr "Prêt"
 
-#: src/Thread.cc:112 src/Thread.cc:130 src/Thread.cc:228
+#: src/Thread.cc:112
+#: src/Thread.cc:130
+#: src/Thread.cc:228
 msgid "Connected"
 msgstr "Connecté"
 
@@ -518,15 +525,15 @@ msgstr "Sauvegarde..."
 
 #: src/Thread.cc:221
 msgid " error: "
-msgstr " erreur: "
+msgstr " erreur : "
 
 #: src/Thread.cc:238
 msgid "Erasing database: "
-msgstr "Suppression de la base de données: "
+msgstr "Suppression de la base de données : "
 
 #: src/Thread.cc:244
 msgid "Restored database: "
-msgstr "Base de données restaurée: "
+msgstr "Base de données restaurée : "
 
 #~ msgid "No unique ID available!"
 #~ msgstr "Pas d'ID unique disponible!"
