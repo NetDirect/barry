@@ -6,10 +6,12 @@ Written by:
 Contributors (code and otherwise) in alphabetical order by last name:
 ---------------------------------------------------------------------
 	Cesar Ballardini <cesar@ballardini.com.ar>
-		- Spanish translation
+		- Spanish translation work
 	Michael Brown <michael@netdirect.ca>
 		- udev rules patch
 		- edge case testing
+	Nicolas CARRIER <carrier.nicolas0@gmail.com>
+		- French translation work
 	Ian Darwin <ian@darwinsys.com>
 		- documentation fixes and additions
 		- OpenBSD port maintainer
@@ -119,6 +121,7 @@ Contributors (code and otherwise) in alphabetical order by last name:
 		- btardump & MIME vformat using
 		- bookmark parser
 		- Single & multiple ALX parser
+		- French translation work
 	Bojan Vondra <bojanvondra@hotmail.com>
 		- openSUSE build and packaging contributions
 	Niels de Vos <nixpanic@users.sourceforge.net>
