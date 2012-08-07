@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: barrydesktop 0.18.4\n"
 "Report-Msgid-Bugs-To: http://netdirect.ca/barry\n"
-"POT-Creation-Date: 2012-07-27 01:48-0400\n"
+"POT-Creation-Date: 2012-08-07 15:36-0400\n"
 "PO-Revision-Date: 2012-08-05 18:16+0100\n"
 "Last-Translator: Nicolas CARRIER <carrier.nicolas0@gmail.com>\n"
 "Language-Team: Barry\n"
@@ -17,19 +17,19 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-Basepath: ..\n"
 
-#: src/blistevo.cc:46
+#: src/blistevo.cc:47
 msgid "Addressbook:"
 msgstr "French Addressbook:"
 
-#: src/blistevo.cc:48
+#: src/blistevo.cc:49
 msgid "Events:"
 msgstr "Évenements"
 
-#: src/blistevo.cc:50
+#: src/blistevo.cc:51
 msgid "Tasks:"
 msgstr "Tâches :"
 
-#: src/blistevo.cc:52
+#: src/blistevo.cc:53
 msgid "Memos:"
 msgstr "Mémos :"
 
@@ -41,21 +41,11 @@ msgstr ""
 "Ceci est un programme utilitaire pour barrydesktop et\n"
 "n'est pas prévu pour être appelé directement.\n"
 
-#: src/null-os22.cc:30
-#: src/null-os22.cc:87
-#: src/null-os22.cc:145
-#: src/null-os22.cc:150
-#: src/null-os22.cc:155
-#: src/null-os22.cc:160
-#: src/null-os22.cc:165
-#: src/null-os22.cc:170
-#: src/null-os22.cc:241
-#: src/null-os40.cc:85
-#: src/null-os40.cc:152
-#: src/null-os40.cc:157
-#: src/null-os40.cc:162
-#: src/null-os40.cc:167
-#: src/null-os40.cc:172
+#: src/null-os22.cc:30 src/null-os22.cc:87 src/null-os22.cc:145
+#: src/null-os22.cc:150 src/null-os22.cc:155 src/null-os22.cc:160
+#: src/null-os22.cc:165 src/null-os22.cc:170 src/null-os22.cc:241
+#: src/null-os40.cc:85 src/null-os40.cc:152 src/null-os40.cc:157
+#: src/null-os40.cc:162 src/null-os40.cc:167 src/null-os40.cc:172
 #: src/null-os40.cc:177
 msgid "Not supported on this system."
 msgstr "Non supporté sur ce système"
@@ -68,39 +58,34 @@ msgstr "French OpenSync 0.22 support was not compiled in."
 msgid "OpenSync 0.4x support was not compiled in."
 msgstr "French OpenSync 0.4x support was not compiled in."
 
-#: src/deviceset.cc:195
-#: src/deviceset.cc:196
+#: src/deviceset.cc:195 src/deviceset.cc:196
 msgid "yes"
 msgstr "oui"
 
-#: src/deviceset.cc:195
-#: src/deviceset.cc:196
+#: src/deviceset.cc:195 src/deviceset.cc:196
 msgid "no"
 msgstr "non"
 
-#: src/os22.cc:250
-#: src/os40.cc:548
+#: src/os22.cc:250 src/os40.cc:548
 msgid "ADDED"
 msgstr "AJOUTÉ"
 
-#: src/os22.cc:251
-#: src/os40.cc:549
+#: src/os22.cc:251 src/os40.cc:549
 msgid "UNMODIFIED"
 msgstr "NON MODIFIÉ"
 
-#: src/os22.cc:252
-#: src/os40.cc:550
+#: src/os22.cc:252 src/os40.cc:550
 msgid "DELETED"
 msgstr "SUPPRIMÉ"
 
-#: src/os22.cc:253
-#: src/os40.cc:551
+#: src/os22.cc:253 src/os40.cc:551
 msgid "MODIFIED"
 msgstr "MODIFIÉ"
 
 #: src/os22.cc:293
 msgid "Bad change_id, or error getting nth change object."
-msgstr "change_id invalide ou erreur lors de la récupération du nième objet change."
+msgstr ""
+"change_id invalide ou erreur lors de la récupération du nième objet change."
 
 #: src/os22.cc:317
 msgid "Conflict not ignored: "
@@ -138,12 +123,16 @@ msgstr "Le membre %lld (%s) a rencontré un erreur lors de la connectino : %s"
 #: src/os22.cc:399
 #, c-format
 msgid "Member %lld (%s) had an error while getting changes: %s"
-msgstr "Le membre %lld (%s) a rencontré une erreur lors de la récupération des modifications : %s"
+msgstr ""
+"Le membre %lld (%s) a rencontré une erreur lors de la récupération des "
+"modifications : %s"
 
 #: src/os22.cc:404
 #, c-format
 msgid "Member %lld (%s) had an error while calling sync done: %s"
-msgstr "Le membre %lld (%s) a rencontré une erreur quand l'appel à sync a été effectué : %s"
+msgstr ""
+"Le membre %lld (%s) a rencontré une erreur quand l'appel à sync a été "
+"effectué : %s"
 
 #: src/os22.cc:409
 #, c-format
@@ -153,32 +142,40 @@ msgstr "Le membre %lld (%s) a rencontré une erreur à la déconnexion : %s"
 #: src/os22.cc:414
 #, c-format
 msgid "Member %lld (%s) had an error while commiting changes: %s"
-msgstr "Le membre %lld (%s) a rencontré une erreur à la validation des changements : %s"
+msgstr ""
+"Le membre %lld (%s) a rencontré une erreur à la validation des changements : "
+"%s"
 
-#: src/os22.cc:439
-#: src/os40.cc:1038
+#: src/os22.cc:439 src/os40.cc:1038
 msgid "member_status error: "
 msgstr "Erreur dans member_status :"
 
-#: src/os22.cc:443
-#: src/os40.cc:1042
+#: src/os22.cc:443 src/os40.cc:1042
 msgid "Unknown exception caught in member_status()"
 msgstr "Exception inconnue attrapée dans member_status()"
 
 #: src/os22.cc:461
 #, c-format
 msgid "Received an entry %s without data from member %d (%s).  Change type: %s"
-msgstr "Une entrée %s a été reçue sans donnée, du membre %d (%s). Type de changement : %s"
+msgstr ""
+"Une entrée %s a été reçue sans donnée, du membre %d (%s). Type de "
+"changement : %s"
 
 #: src/os22.cc:468
 #, c-format
-msgid "Received an entry %s with data of size %d from member %d (%s).  Change type: %s"
-msgstr "Une entrée %s a été reçue avec %d octets de données, du membre %d (%s). Type de changement : %s"
+msgid ""
+"Received an entry %s with data of size %d from member %d (%s).  Change type: "
+"%s"
+msgstr ""
+"Une entrée %s a été reçue avec %d octets de données, du membre %d (%s). Type "
+"de changement : %s"
 
 #: src/os22.cc:476
 #, c-format
 msgid "Sent an entry %s of size %d to member %d (%s).  Change type: %s"
-msgstr "Une entrée %s a été envoyée avec %d octets de données, au membre %d (%s). Type de changement : %s"
+msgstr ""
+"Une entrée %s a été envoyée avec %d octets de données, au membre %d (%s). "
+"Type de changement : %s"
 
 #: src/os22.cc:485
 #, c-format
@@ -194,62 +191,53 @@ msgstr "Erreur lors de la lecture de l'entrée %s au membre %d (%s) : %s"
 msgid "entry_status error:"
 msgstr "Erreur dans entry_status :"
 
-#: src/os22.cc:512
-#: src/os40.cc:846
+#: src/os22.cc:512 src/os40.cc:846
 msgid "Unknown exception caught in entry_status()"
 msgstr "Exception inconnue attrapée dans entry_status()"
 
 #: src/os22.cc:527
 msgid "The previous synchronization was unclean. Slow-syncing."
-msgstr "La précédente synchronisation n'était pas propre. Synchronisation lente."
+msgstr ""
+"La précédente synchronisation n'était pas propre. Synchronisation lente."
 
-#: src/os22.cc:530
-#: src/os40.cc:901
+#: src/os22.cc:530 src/os40.cc:901
 msgid "All clients connected or error"
 msgstr "Tous les clients sont connectés ou une erreur est survenue"
 
-#: src/os22.cc:533
-#: src/os40.cc:939
+#: src/os22.cc:533 src/os40.cc:939
 msgid "All conflicts have been reported"
 msgstr "Tous les conflits ont été signalés"
 
-#: src/os22.cc:536
-#: src/os40.cc:907
+#: src/os22.cc:536 src/os40.cc:907
 msgid "All clients sent changes or error"
-msgstr "Tous les clients ont envoyé leurs changements ou une erreur est survenue"
+msgstr ""
+"Tous les clients ont envoyé leurs changements ou une erreur est survenue"
 
-#: src/os22.cc:539
-#: src/os40.cc:922
+#: src/os22.cc:539 src/os40.cc:922
 msgid "All clients have written"
 msgstr "Tous les clients on écrit"
 
-#: src/os22.cc:542
-#: src/os40.cc:925
+#: src/os22.cc:542 src/os40.cc:925
 msgid "All clients have disconnected"
 msgstr "Tous les clients se sont déconnectés"
 
-#: src/os22.cc:545
-#: src/os40.cc:932
+#: src/os22.cc:545 src/os40.cc:932
 msgid "The sync was successful"
 msgstr "La synchronisation a réussi"
 
-#: src/os22.cc:548
-#: src/os40.cc:929
+#: src/os22.cc:548 src/os40.cc:929
 msgid "The sync failed: "
 msgstr "La synchronisation a échoué : "
 
-#: src/os22.cc:562
-#: src/os40.cc:954
+#: src/os22.cc:562 src/os40.cc:954
 msgid "engine_status error: "
 msgstr "Erreur dans engine_status : "
 
-#: src/os22.cc:566
-#: src/os40.cc:958
+#: src/os22.cc:566 src/os40.cc:958
 msgid "Unknown exception caught in engine_status()"
 msgstr "Exception inconnue attrapée dans engine_status()"
 
-#: src/os22.cc:581
-#: src/os40.cc:863
+#: src/os22.cc:581 src/os40.cc:863
 msgid "Mapping solved"
 msgstr "Correspondance résolue"
 
@@ -261,23 +249,19 @@ msgstr "Correspondance synchronisée"
 msgid "Mapping Write Error: "
 msgstr "Erreur lors de l'écriture de la correspondance : "
 
-#: src/os22.cc:599
-#: src/os40.cc:879
+#: src/os22.cc:599 src/os40.cc:879
 msgid "mapping_status error: "
 msgstr "Erreur dans mapping_status : "
 
-#: src/os22.cc:603
-#: src/os40.cc:883
+#: src/os22.cc:603 src/os40.cc:883
 msgid "Unknown exception caught in mapping_status()"
 msgstr "Exception inconnue attrapée dans mapping_status() : "
 
-#: src/os22.cc:625
-#: src/os40.cc:789
+#: src/os22.cc:625 src/os40.cc:789
 msgid "Conflict not resolved. "
 msgstr "Conflit non résolu."
 
-#: src/os22.cc:629
-#: src/os40.cc:793
+#: src/os22.cc:629 src/os40.cc:793
 msgid "Unknown exception caught in conflict_handler()"
 msgstr "Exception inconnue attrapée dans conflict_handler()"
 
@@ -289,8 +273,7 @@ msgstr "Erreur lors de l'allocation de l'environnement opensync 0.22."
 msgid "Unable to load format environment in GetFormats (22)"
 msgstr "Impossible de charger l'environnement de format dans GetFormats (22)"
 
-#: src/os22.cc:850
-#: src/os40.cc:1862
+#: src/os22.cc:850 src/os40.cc:1862
 msgid "Unable to find group with name: "
 msgstr "Impossible de trouver le groupe de nom : "
 
@@ -302,21 +285,10 @@ msgstr "Le groupe existe déjà : "
 msgid "Unable to save group: "
 msgstr "Impossible d'enregistrer le groupe : "
 
-#: src/os22.cc:898
-#: src/os22.cc:919
-#: src/os22.cc:944
-#: src/os22.cc:975
-#: src/os22.cc:1009
-#: src/os22.cc:1037
-#: src/os40.cc:1911
-#: src/os40.cc:1930
-#: src/os40.cc:1957
-#: src/os40.cc:1989
-#: src/os40.cc:2018
-#: src/os40.cc:2069
-#: src/os40.cc:2102
-#: src/os40.cc:2147
-#: src/os40.cc:2188
+#: src/os22.cc:898 src/os22.cc:919 src/os22.cc:944 src/os22.cc:975
+#: src/os22.cc:1009 src/os22.cc:1037 src/os40.cc:1911 src/os40.cc:1930
+#: src/os40.cc:1957 src/os40.cc:1989 src/os40.cc:2018 src/os40.cc:2069
+#: src/os40.cc:2102 src/os40.cc:2147 src/os40.cc:2188
 msgid "Group not found: "
 msgstr "Groupe non trouvé : "
 
@@ -332,13 +304,8 @@ msgstr "Impossible de connecter le greffon au membre : "
 msgid "Unable to save member: "
 msgstr "Impossible d'enregistrer le membre : "
 
-#: src/os22.cc:949
-#: src/os40.cc:1962
-#: src/os40.cc:1979
-#: src/os40.cc:1994
-#: src/os40.cc:2023
-#: src/os40.cc:2074
-#: src/os40.cc:2107
+#: src/os22.cc:949 src/os40.cc:1962 src/os40.cc:1979 src/os40.cc:1994
+#: src/os40.cc:2023 src/os40.cc:2074 src/os40.cc:2107
 msgid "Member not found: "
 msgstr "Membre non trouvé : "
 
@@ -346,17 +313,13 @@ msgstr "Membre non trouvé : "
 msgid "Unable to determine needed config: "
 msgstr "Impossible de déterminer la configuration requise : "
 
-#: src/os22.cc:968
-#: src/os22.cc:1002
-#: src/os40.cc:2011
-#: src/os40.cc:2062
+#: src/os22.cc:968 src/os22.cc:1002 src/os40.cc:2011 src/os40.cc:2062
 #: src/os40.cc:2095
 #, c-format
 msgid "Member %ld of group '%s' does not accept configuration."
 msgstr "Le membre %ld du groupe '%s' n'accepte pas de configuration."
 
-#: src/os22.cc:979
-#: src/os22.cc:1013
+#: src/os22.cc:979 src/os22.cc:1013
 #, c-format
 msgid "Member %ld not found."
 msgstr "Le membre %ld n'a pas été trouvé."
@@ -427,7 +390,8 @@ msgstr "Tous les changements ont été préparés pour l'écriture"
 
 #: src/os40.cc:935
 msgid "The previous synchronization was unclean. Slow-syncing"
-msgstr "La précédente synchronisation n'était pas propre. Synchronisation lente."
+msgstr ""
+"La précédente synchronisation n'était pas propre. Synchronisation lente."
 
 #: src/os40.cc:942
 msgid "All clients reported sync done"
@@ -491,20 +455,20 @@ msgstr "Exception inconnue attrapée dans multiply_summary()"
 
 #: src/os40.cc:1440
 msgid "Username (authentication parameter) is not supported in plugin!"
-msgstr "Le nom d'utilisateur (comme paramètre d'authentification) n'est pas supporté dans ce greffon !"
+msgstr ""
+"Le nom d'utilisateur (comme paramètre d'authentification) n'est pas supporté "
+"dans ce greffon !"
 
 #: src/os40.cc:1478
 msgid "Password authentication is not supported in plugin!"
-msgstr "L'authentification par mot de passe n'est pas supportée dans ce greffon !"
+msgstr ""
+"L'authentification par mot de passe n'est pas supportée dans ce greffon !"
 
 #: src/os40.cc:1934
 msgid "Plugin not found: "
 msgstr "Greffon non trouvé"
 
-#: src/os40.cc:2000
-#: src/os40.cc:2029
-#: src/os40.cc:2080
-#: src/os40.cc:2113
+#: src/os40.cc:2000 src/os40.cc:2029 src/os40.cc:2080 src/os40.cc:2113
 msgid "Unable to find plugin with name: "
 msgstr "Impossible de trouver le greffon nommé : "
 
@@ -552,10 +516,7 @@ msgstr "Ignorer n'est pas supporté !"
 msgid "Keep Newer not supported!"
 msgstr "Conserver le plus récent n'est pas supporté !"
 
-#: src/osbase.cc:319
-#: src/osbase.cc:326
-#: src/osbase.cc:333
-#: src/osbase.cc:343
+#: src/osbase.cc:319 src/osbase.cc:326 src/osbase.cc:333 src/osbase.cc:343
 msgid "ERROR: "
 msgstr "ERREUR : "
 
@@ -579,11 +540,11 @@ msgstr "OK ! Synchronisation effectuée !"
 msgid "CALLBACK ERROR: "
 msgstr "ERREUR DE FONCTION DE RAPPEL : "
 
-#: src/osbase.cc:407
+#: src/osbase.cc:413
 msgid "Unable to load opensync 0.40: "
 msgstr "Impossible de charger opensync 0.40 : "
 
-#: src/osbase.cc:417
+#: src/osbase.cc:423
 msgid "Unable to load opensync 0.22: "
 msgstr "Impossible de charger opensync 0.22 : "
 
@@ -596,49 +557,70 @@ msgid "Barry config must have valid pin number."
 msgstr "La configuration de Barry doit comporter un code pin valide."
 
 #: src/osconfig.cc:73
-msgid "Unable to load pin number from Barry plugin config.  Consider this group corrupt, or not fully configured: "
-msgstr "Impossible de charger le code pin depuis la configuration du greffon Barry. Ce groupe est considéré comme corrompu, ou incomplètement configuré : "
+msgid ""
+"Unable to load pin number from Barry plugin config.  Consider this group "
+"corrupt, or not fully configured: "
+msgstr ""
+"Impossible de charger le code pin depuis la configuration du greffon Barry. "
+"Ce groupe est considéré comme corrompu, ou incomplètement configuré : "
 
 #: src/osconfig.cc:114
 #, c-format
 msgid "No Barry plugins found in group '%s' and OSCG_THROW_ON_NO_BARRY is set."
-msgstr "Aucun greffon Barry trouvé dans le groupe '%s' et OSCG_THROW_ON_NO_BARRY est activé."
+msgstr ""
+"Aucun greffon Barry trouvé dans le groupe '%s' et OSCG_THROW_ON_NO_BARRY est "
+"activé."
 
 #: src/osconfig.cc:119
 #, c-format
-msgid "Found %d Barry plugins in group '%s' and OSCG_THROW_ON_MULTIPLE_BARRIES is set."
-msgstr "%d greffons Barry trouvés dans le groupe '%s' et OSCG_THROW_ON_NO_BARRY est activé."
+msgid ""
+"Found %d Barry plugins in group '%s' and OSCG_THROW_ON_MULTIPLE_BARRIES is "
+"set."
+msgstr ""
+"%d greffons Barry trouvés dans le groupe '%s' et OSCG_THROW_ON_NO_BARRY est "
+"activé."
 
 #: src/osconfig.cc:307
 #, c-format
-msgid "Unsupported plugin '%s' in group '%s' and OSCG_THROW_ON_UNSUPPORTED is set."
-msgstr "Greffon '%s' non-supporté dans le groupe '%s' et OSCG_THROW_ON_NO_BARRY est activé."
+msgid ""
+"Unsupported plugin '%s' in group '%s' and OSCG_THROW_ON_UNSUPPORTED is set."
+msgstr ""
+"Greffon '%s' non-supporté dans le groupe '%s' et OSCG_THROW_ON_NO_BARRY est "
+"activé."
 
 #: src/osconfig.cc:337
-msgid "Cannot delete individual members from an OpenSync group with versions < 0.40."
-msgstr "Impossible de supprimer séparément les membres d'un groupe OpenSync avec les versions < 0.40."
+msgid ""
+"Cannot delete individual members from an OpenSync group with versions < 0.40."
+msgstr ""
+"Impossible de supprimer séparément les membres d'un groupe OpenSync avec les "
+"versions < 0.40."
 
 #: src/osconfig.cc:349
 #, c-format
 msgid "Tried to delete non-existent member ID %ld (%s) from group '%s'"
-msgstr "Tentative de supprimer l'élément inexistant d'ID %ld (%s) du groupe '%s'"
+msgstr ""
+"Tentative de supprimer l'élément inexistant d'ID %ld (%s) du groupe '%s'"
 
 #: src/osconfig.cc:356
 #, c-format
-msgid "Tried to delete member ID %ld using plugin '%s' from group '%s', but the existing member uses plugin '%s'"
-msgstr "Tentative de supprimer le membre d'ID %ld en utilisant le greffon '%s' du groupe '%s', mais le membre existant utilise le greffon '%s'"
+msgid ""
+"Tried to delete member ID %ld using plugin '%s' from group '%s', but the "
+"existing member uses plugin '%s'"
+msgstr ""
+"Tentative de supprimer le membre d'ID %ld en utilisant le greffon '%s' du "
+"groupe '%s', mais le membre existant utilise le greffon '%s'"
 
 #: src/osconfig.cc:378
 #, c-format
-msgid "Tried to overwrite group '%s' with a Group set that did not match in ID's and plugin names."
-msgstr "Tentative d'écraser le groupe '%s' avec un ensemble de groupes qui ne correspond pas au niveau des IDs et des noms de greffon."
+msgid ""
+"Tried to overwrite group '%s' with a Group set that did not match in ID's "
+"and plugin names."
+msgstr ""
+"Tentative d'écraser le groupe '%s' avec un ensemble de groupes qui ne "
+"correspond pas au niveau des IDs et des noms de greffon."
 
-#: src/osconv22.cc:304
-#: src/osconv22.cc:321
-#: src/osconv22.cc:358
-#: src/osconv40.cc:269
-#: src/osconv40.cc:307
-#: src/osconv40.cc:344
+#: src/osconv22.cc:304 src/osconv22.cc:321 src/osconv22.cc:358
+#: src/osconv40.cc:269 src/osconv40.cc:307 src/osconv40.cc:344
 #: src/osconv40.cc:370
 msgid "Cannot save a plugin with a member_id of -1"
 msgstr "Impossible de sauvegarder un greffon avec un member_id valant -1"
@@ -646,4 +628,3 @@ msgstr "Impossible de sauvegarder un greffon avec un member_id valant -1"
 #: src/tempdir.cc:40
 msgid "Cannot create temp directory: "
 msgstr "Impossible de créer le répertoire temporaire : "
-

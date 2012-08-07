@@ -17,9 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-Basepath: ..\n"
 
-#: src/BaseFrame.cc:73
-#: src/BaseFrame.cc:283
-#: src/BaseFrame.cc:854
+#: src/BaseFrame.cc:73 src/BaseFrame.cc:283 src/BaseFrame.cc:854
 #: src/Mode_MainMenu.h:49
 msgid "Barry Desktop Control Panel"
 msgstr "Panneau de contrôle Barry Desktop"
@@ -68,9 +66,7 @@ msgstr "Menu principal"
 msgid "The Backup program is already running!"
 msgstr "Le programme de sauvegarde est déjà en cours de fonctionnement !"
 
-#: src/BaseFrame.cc:334
-#: src/BaseFrame.cc:338
-#: src/BaseFrame.cc:740
+#: src/BaseFrame.cc:334 src/BaseFrame.cc:338 src/BaseFrame.cc:740
 msgid "Backup and Restore"
 msgstr "Sauvegarder et restaurer"
 
@@ -126,17 +122,19 @@ msgstr ""
 "\n"
 "Erreur :"
 
-#: src/BaseFrame.cc:677
-#: src/MigrateDlg.cc:101
+#: src/BaseFrame.cc:677 src/MigrateDlg.cc:101
 msgid "Migrate Device"
 msgstr "Migrer le périphérique"
 
 #: src/BaseFrame.cc:686
-msgid "There is no device selected in the device list.  Please select a device to browse."
-msgstr "Aucun périphérique n'est sélectionné depuis la liste. Veuillez en sélectionner un à parcourir."
+msgid ""
+"There is no device selected in the device list.  Please select a device to "
+"browse."
+msgstr ""
+"Aucun périphérique n'est sélectionné depuis la liste. Veuillez en "
+"sélectionner un à parcourir."
 
-#: src/BaseFrame.cc:687
-#: src/BaseFrame.cc:705
+#: src/BaseFrame.cc:687 src/BaseFrame.cc:705
 msgid "Database Browser Mode"
 msgstr "Mode Parcours de base de données"
 
@@ -162,8 +160,12 @@ msgstr ""
 "Erreur :"
 
 #: src/BaseFrame.cc:739
-msgid "Unable to run barrybackup, or it returned an error. Please make sure it is installed and in your PATH."
-msgstr "Le lancement de barrybackup a échoué, ou il a retourné une erreur. Veuillez vous assurer qu'il est bien installé et présent dans votre PATH."
+msgid ""
+"Unable to run barrybackup, or it returned an error. Please make sure it is "
+"installed and in your PATH."
+msgstr ""
+"Le lancement de barrybackup a échoué, ou il a retourné une erreur. Veuillez "
+"vous assurer qu'il est bien installé et présent dans votre PATH."
 
 #: src/BaseFrame.cc:808
 msgid "Please enter a name for the current device:"
@@ -174,8 +176,12 @@ msgid "Rename Device"
 msgstr "Renommer le périphérique"
 
 #: src/BaseFrame.cc:856
-msgid "A Free Software graphical user interface for working with the BlackBerry® smartphone."
-msgstr "Logiciel libre avec interface graphique fonctionnant avec les smartphones BlackBerry®."
+msgid ""
+"A Free Software graphical user interface for working with the BlackBerry® "
+"smartphone."
+msgstr ""
+"Logiciel libre avec interface graphique fonctionnant avec les smartphones "
+"BlackBerry®."
 
 #: src/BaseFrame.cc:877
 msgid "Chris Frey - GUI interface"
@@ -205,22 +211,23 @@ msgstr ""
 "synchronisées doivent être effacées pour\n"
 "éviter une synchronisation lente."
 
-#: src/CUI_Barry.cc:117
-#: src/CUI_Google.cc:111
+#: src/CUI_Barry.cc:117 src/CUI_Google.cc:111
 msgid "Select Databases to Erase"
 msgstr "Sélectionner les bases de données à effacer"
 
 #: src/CUI_Barry.cc:123
-msgid "You have selected the following databases to be completely erased from device: "
-msgstr "Vous avez choisi les bases de données suivantes qui vont être complètement effacées du périphérique : "
+msgid ""
+"You have selected the following databases to be completely erased from "
+"device: "
+msgstr ""
+"Vous avez choisi les bases de données suivantes qui vont être complètement "
+"effacées du périphérique : "
 
-#: src/CUI_Barry.cc:128
-#: src/CUI_Google.cc:122
+#: src/CUI_Barry.cc:128 src/CUI_Google.cc:122
 msgid "Proceed with erase?"
 msgstr "Procéder à l'effacement ?"
 
-#: src/CUI_Barry.cc:130
-#: src/CUI_Google.cc:124
+#: src/CUI_Barry.cc:130 src/CUI_Google.cc:124
 msgid "Erase Confirmation"
 msgstr "Confirmation d'effacement"
 
@@ -242,7 +249,9 @@ msgstr "Exception Barry :"
 
 #: src/CUI_Barry.cc:161
 msgid "You may need to do a USB reset and rescan from the main menu."
-msgstr "Il vous est peut-être nécessaire de réinitialiser et re-scanner l'USB depuis le menu principal."
+msgstr ""
+"Il vous est peut-être nécessaire de réinitialiser et re-scanner l'USB depuis "
+"le menu principal."
 
 #: src/CUI_Barry.cc:164
 msgid "Barry Exception"
@@ -269,7 +278,8 @@ msgid ""
 "Would you like to start Evolution now?\n"
 msgstr ""
 "Impossible de détecter automatiquement la configuration\n"
-"d'Evolution. Vous devez lancer Evolution et cliquermanuellement sur chacun des boutons des sections : \n"
+"d'Evolution. Vous devez lancer Evolution et cliquermanuellement sur chacun "
+"des boutons des sections : \n"
 "\n"
 "      Courrier, Contacts, Calendriers, Memos etTâches\n"
 "\n"
@@ -277,9 +287,7 @@ msgstr ""
 "\n"
 "Voulez-vous lancer Evolution maintenant ?\n"
 
-#: src/CUI_Evolution.cc:168
-#: src/CUI_Evolution.cc:190
-#: src/CUI_Evolution.cc:206
+#: src/CUI_Evolution.cc:168 src/CUI_Evolution.cc:190 src/CUI_Evolution.cc:206
 msgid "Evolution Config"
 msgstr "Configuration d'Evolution"
 
@@ -291,27 +299,37 @@ msgstr "Attente de la fermeture d'Evolution"
 msgid "Evolution Running"
 msgstr "Evolution en cours de fonctionnement"
 
-#: src/CUI_Evolution.cc:190
-#: src/CUI_Evolution.cc:206
-msgid "Failed to run evolution. Please make sure it is installed and in your PATH."
-msgstr "Échec au lancement d'Evolution. Veuillez vous assurer qu'il est installé et présent dans votre PATH."
+#: src/CUI_Evolution.cc:190 src/CUI_Evolution.cc:206
+msgid ""
+"Failed to run evolution. Please make sure it is installed and in your PATH."
+msgstr ""
+"Échec au lancement d'Evolution. Veuillez vous assurer qu'il est installé et "
+"présent dans votre PATH."
 
 #: src/CUI_Evolution.cc:309
 msgid "Evolution already running."
 msgstr "Evolution est déjà en cours d'exécution."
 
-#: src/CUI_Evolution.cc:310
-#: src/CUI_KDEPim.cc:86
+#: src/CUI_Evolution.cc:310 src/CUI_KDEPim.cc:86
 msgid "Oops..."
 msgstr "Oups..."
 
 #: src/CUI_Evolution.cc:319
-msgid "Starting Evolution.  Delete all contacts and/or calendar entries manually, depending on your sync configuration."
-msgstr "Démarrage d'évolution. Supprimez toutes vos entrées de contacts et/ou de calendriers manuellement, en fonction de votre configuration de synchronisation."
+msgid ""
+"Starting Evolution.  Delete all contacts and/or calendar entries manually, "
+"depending on your sync configuration."
+msgstr ""
+"Démarrage d'évolution. Supprimez toutes vos entrées de contacts et/ou de "
+"calendriers manuellement, en fonction de votre configuration de "
+"synchronisation."
 
 #: src/CUI_Evolution.cc:324
-msgid "Starting Evolution.  Delete all objects (contacts, calendar, memos, and tasks, depending on your sync configuration)."
-msgstr "Démarrage d'évolution. Supprimez tous les objets (contacts, calendriers, mémos et tâches, selon votre configuration de synchronisation)."
+msgid ""
+"Starting Evolution.  Delete all objects (contacts, calendar, memos, and "
+"tasks, depending on your sync configuration)."
+msgstr ""
+"Démarrage d'évolution. Supprimez tous les objets (contacts, calendriers, "
+"mémos et tâches, selon votre configuration de synchronisation)."
 
 #: src/CUI_Evolution.cc:328
 msgid "Starting Evolution"
@@ -337,14 +355,17 @@ msgstr ""
 msgid "Calendar"
 msgstr "Calendrier"
 
-#: src/CUI_Google.cc:107
-#: src/GroupCfgDlg.cc:322
+#: src/CUI_Google.cc:107 src/GroupCfgDlg.cc:322
 msgid "Contacts"
 msgstr "Contacts"
 
 #: src/CUI_Google.cc:117
-msgid "You have selected the following databases to be completely erased from your Google Calendar:"
-msgstr "Vous avez sélectionné les bases de données suivantes, qui vont être supprimées de votre calendrier Google :"
+msgid ""
+"You have selected the following databases to be completely erased from your "
+"Google Calendar:"
+msgstr ""
+"Vous avez sélectionné les bases de données suivantes, qui vont être "
+"supprimées de votre calendrier Google :"
 
 #: src/CUI_KDEPim.cc:59
 msgid "KDEPim needs no configuration."
@@ -360,11 +381,18 @@ msgstr "Kontact est déjà en cours d'exécution."
 
 #: src/CUI_KDEPim.cc:95
 msgid "Starting Kontact.  Delete all contacts and calendar entries manually."
-msgstr "Démarrage de Kontact. Suppression de toutes les entrées de contacts et de calendries manuellement."
+msgstr ""
+"Démarrage de Kontact. Suppression de toutes les entrées de contacts et de "
+"calendries manuellement."
 
 #: src/CUI_KDEPim.cc:100
-msgid "Starting Kontact.  Delete all contacts and calendar entries manually (as well as memos and tasks if you are syncing them too)."
-msgstr "Démarrage de Kontact. Suppression de toutes les entrées de contacts et de calendries manuellement (de même que les mémos et les tâches si vous les synchronisez également)."
+msgid ""
+"Starting Kontact.  Delete all contacts and calendar entries manually (as "
+"well as memos and tasks if you are syncing them too)."
+msgstr ""
+"Démarrage de Kontact. Suppression de toutes les entrées de contacts et de "
+"calendries manuellement (de même que les mémos et les tâches si vous les "
+"synchronisez également)."
 
 #: src/CUI_KDEPim.cc:105
 msgid "Starting Kontact"
@@ -398,18 +426,15 @@ msgstr "Fin : "
 msgid "Duration:"
 msgstr "Durée : "
 
-#: src/CalendarEditDlg.cc:83
-#: src/CalendarEditDlg.cc:109
+#: src/CalendarEditDlg.cc:83 src/CalendarEditDlg.cc:109
 msgid "hours and"
 msgstr "heures et"
 
-#: src/CalendarEditDlg.cc:85
-#: src/CalendarEditDlg.cc:111
+#: src/CalendarEditDlg.cc:85 src/CalendarEditDlg.cc:111
 msgid "minutes."
 msgstr "minutes."
 
-#: src/CalendarEditDlg.cc:86
-#: src/TaskEditDlg.cc:103
+#: src/CalendarEditDlg.cc:86 src/TaskEditDlg.cc:103
 msgid "Time Zone:"
 msgstr "Zone de temps :"
 
@@ -438,73 +463,59 @@ msgstr "Occupé"
 msgid "Out of Office"
 msgstr "Sorti"
 
-#: src/CalendarEditDlg.cc:107
-#: src/TaskEditDlg.cc:108
+#: src/CalendarEditDlg.cc:107 src/TaskEditDlg.cc:108
 msgid "Reminder:"
 msgstr "Rappel : "
 
-#: src/CalendarEditDlg.cc:113
-#: src/TaskEditDlg.cc:115
+#: src/CalendarEditDlg.cc:113 src/TaskEditDlg.cc:115
 msgid "Recurrence:"
 msgstr "Fréquence : "
 
-#: src/CalendarEditDlg.cc:124
-#: src/TaskEditDlg.cc:126
+#: src/CalendarEditDlg.cc:124 src/TaskEditDlg.cc:126
 msgid "None"
 msgstr "Aucun"
 
-#: src/CalendarEditDlg.cc:125
-#: src/TaskEditDlg.cc:127
+#: src/CalendarEditDlg.cc:125 src/TaskEditDlg.cc:127
 msgid "Daily"
 msgstr "Journalier"
 
-#: src/CalendarEditDlg.cc:126
-#: src/TaskEditDlg.cc:128
+#: src/CalendarEditDlg.cc:126 src/TaskEditDlg.cc:128
 msgid "Weekly"
 msgstr "Hebdomadaire"
 
-#: src/CalendarEditDlg.cc:127
-#: src/TaskEditDlg.cc:129
+#: src/CalendarEditDlg.cc:127 src/TaskEditDlg.cc:129
 msgid "Monthly"
 msgstr "Mensuel"
 
-#: src/CalendarEditDlg.cc:128
-#: src/TaskEditDlg.cc:130
+#: src/CalendarEditDlg.cc:128 src/TaskEditDlg.cc:130
 msgid "Yearly"
 msgstr "Annuel"
 
-#: src/CalendarEditDlg.cc:131
-#: src/TaskEditDlg.cc:133
+#: src/CalendarEditDlg.cc:131 src/TaskEditDlg.cc:133
 msgid "Interval:"
 msgstr "Intervalle :"
 
-#: src/CalendarEditDlg.cc:132
-#: src/TaskEditDlg.cc:134
+#: src/CalendarEditDlg.cc:132 src/TaskEditDlg.cc:134
 msgid "Every"
 msgstr "Tous les"
 
-#: src/CalendarEditDlg.cc:134
-#: src/TaskEditDlg.cc:136
+#: src/CalendarEditDlg.cc:134 src/TaskEditDlg.cc:136
 msgid "days? weeks? months?"
 msgstr "jours ? semaines ? mois ? "
 
-#: src/CalendarEditDlg.cc:135
-#: src/TaskEditDlg.cc:137
+#: src/CalendarEditDlg.cc:135 src/TaskEditDlg.cc:137
 msgid "Days:"
 msgstr "Jours : "
 
-#: src/CalendarEditDlg.cc:143
-#: src/TaskEditDlg.cc:145
+#: src/CalendarEditDlg.cc:143 src/TaskEditDlg.cc:145
 msgid "Relative Date:"
 msgstr "Date relative :"
 
-#: src/CalendarEditDlg.cc:145
-#: src/TaskEditDlg.cc:147
+#: src/CalendarEditDlg.cc:145 src/TaskEditDlg.cc:147
 msgid "End Date:"
 msgstr "Date de fin : "
 
-#: src/CalendarEditDlg.cc:146
-#: src/TaskEditDlg.cc:148
+#: src/CalendarEditDlg.cc:146 src/TaskEditDlg.cc:148
 msgid "Never ends"
 msgstr "Ne s'achève jamais"
 
@@ -536,13 +547,11 @@ msgstr "Confidentiel"
 msgid "Class"
 msgstr "Classe"
 
-#: src/CalendarEditDlg.cc:170
-#: src/TaskEditDlg.cc:153
+#: src/CalendarEditDlg.cc:170 src/TaskEditDlg.cc:153
 msgid "Notes:"
 msgstr "Notes : "
 
-#: src/CalendarEditDlg.cc:181
-#: src/TaskEditDlg.cc:164
+#: src/CalendarEditDlg.cc:181 src/TaskEditDlg.cc:164
 msgid "Assume Local Timezone"
 msgstr "Sélectionner la zone de temps locale"
 
@@ -550,19 +559,19 @@ msgstr "Sélectionner la zone de temps locale"
 msgid "Calendar Event"
 msgstr "Événement de calendrier"
 
-#: src/CalendarEditDlg.cc:326
-#: src/CalendarEditDlg.cc:329
-#: src/TaskEditDlg.cc:246
-#: src/TaskEditDlg.cc:249
+#: src/CalendarEditDlg.cc:326 src/CalendarEditDlg.cc:329
+#: src/TaskEditDlg.cc:246 src/TaskEditDlg.cc:249
 msgid "Set Reminder to 0 to disable"
 msgstr "Mettre le rappel à 0 pour le désactiver"
 
-#: src/CalendarEditDlg.cc:342
-#: src/CalendarEditDlg.cc:343
-#: src/TaskEditDlg.cc:262
-#: src/TaskEditDlg.cc:263
-msgid "Relative monthly or yearly dates take the weekday of the start date into account. (eg. every first Sunday of month)"
-msgstr "Les fréquences annuelle et mensuelle relatives prennent en compte le jour de la semaine de la date de départ. (ex : chaque premier samedi du mois)"
+#: src/CalendarEditDlg.cc:342 src/CalendarEditDlg.cc:343
+#: src/TaskEditDlg.cc:262 src/TaskEditDlg.cc:263
+msgid ""
+"Relative monthly or yearly dates take the weekday of the start date into "
+"account. (eg. every first Sunday of month)"
+msgstr ""
+"Les fréquences annuelle et mensuelle relatives prennent en compte le jour de "
+"la semaine de la date de départ. (ex : chaque premier samedi du mois)"
 
 #: src/CalendarEditDlg.cc:642
 msgid "Start time must come before end time."
@@ -572,23 +581,19 @@ msgstr "Le moment de début doit précéder le moment de fin."
 msgid "Validation Error"
 msgstr "Erreur de validation"
 
-#: src/CalendarEditDlg.cc:826
-#: src/TaskEditDlg.cc:705
+#: src/CalendarEditDlg.cc:826 src/TaskEditDlg.cc:705
 msgid "day(s)"
 msgstr "jour(s)"
 
-#: src/CalendarEditDlg.cc:830
-#: src/TaskEditDlg.cc:709
+#: src/CalendarEditDlg.cc:830 src/TaskEditDlg.cc:709
 msgid "week(s)"
 msgstr "semaine(s)"
 
-#: src/CalendarEditDlg.cc:834
-#: src/TaskEditDlg.cc:713
+#: src/CalendarEditDlg.cc:834 src/TaskEditDlg.cc:713
 msgid "month(s)"
 msgstr "mois(s)"
 
-#: src/CalendarEditDlg.cc:838
-#: src/TaskEditDlg.cc:717
+#: src/CalendarEditDlg.cc:838 src/TaskEditDlg.cc:717
 msgid "year(s)"
 msgstr "années(s)"
 
@@ -628,11 +633,8 @@ msgstr "Garder le plus récent"
 msgid "Abort"
 msgstr "Annuler"
 
-#: src/ConflictDlg.cc:421
-#: src/SyncStatusDlg.cc:360
-#: src/SyncStatusDlg.cc:371
-#: src/SyncStatusDlg.cc:604
-#: src/SyncStatusDlg.cc:608
+#: src/ConflictDlg.cc:421 src/SyncStatusDlg.cc:360 src/SyncStatusDlg.cc:371
+#: src/SyncStatusDlg.cc:604 src/SyncStatusDlg.cc:608
 msgid "Kill Sync"
 msgstr "Interrompre la synchronisation"
 
@@ -653,8 +655,7 @@ msgid "Work"
 msgstr "Travail"
 
 #. TRANSLATORS: this is a main screen button label
-#: src/ContactEditDlg.cc:52
-#: src/util.cc:65
+#: src/ContactEditDlg.cc:52 src/util.cc:65
 msgid "Misc"
 msgstr "Divers"
 
@@ -662,13 +663,11 @@ msgstr "Divers"
 msgid "Mobile"
 msgstr "Mobile"
 
-#: src/ContactEditDlg.cc:54
-#: src/GroupCfgDlg.cc:328
+#: src/ContactEditDlg.cc:54 src/GroupCfgDlg.cc:328
 msgid "Notes"
 msgstr "Notes"
 
-#: src/ContactEditDlg.cc:55
-#: src/Mode_Sync.cc:182
+#: src/ContactEditDlg.cc:55 src/Mode_Sync.cc:182
 msgid "Name"
 msgstr "Nom"
 
@@ -698,43 +697,35 @@ msgstr "Titre professionnel"
 msgid "Nickname"
 msgstr "Surnom"
 
-#: src/ContactEditDlg.cc:69
-#: src/ContactEditDlg.cc:89
+#: src/ContactEditDlg.cc:69 src/ContactEditDlg.cc:89
 msgid "Address"
 msgstr "Adresse"
 
-#: src/ContactEditDlg.cc:73
-#: src/ContactEditDlg.cc:93
+#: src/ContactEditDlg.cc:73 src/ContactEditDlg.cc:93
 msgid "City"
 msgstr "Cille"
 
-#: src/ContactEditDlg.cc:75
-#: src/ContactEditDlg.cc:95
+#: src/ContactEditDlg.cc:75 src/ContactEditDlg.cc:95
 msgid "Province"
 msgstr "Département"
 
-#: src/ContactEditDlg.cc:77
-#: src/ContactEditDlg.cc:97
+#: src/ContactEditDlg.cc:77 src/ContactEditDlg.cc:97
 msgid "Postal Code"
 msgstr "Code postal"
 
-#: src/ContactEditDlg.cc:79
-#: src/ContactEditDlg.cc:99
+#: src/ContactEditDlg.cc:79 src/ContactEditDlg.cc:99
 msgid "Country"
 msgstr "Pays"
 
-#: src/ContactEditDlg.cc:83
-#: src/ContactEditDlg.cc:103
+#: src/ContactEditDlg.cc:83 src/ContactEditDlg.cc:103
 msgid "Phone"
 msgstr "Téléphone"
 
-#: src/ContactEditDlg.cc:85
-#: src/ContactEditDlg.cc:105
+#: src/ContactEditDlg.cc:85 src/ContactEditDlg.cc:105
 msgid "Phone 2"
 msgstr "Téléphone 2"
 
-#: src/ContactEditDlg.cc:87
-#: src/ContactEditDlg.cc:107
+#: src/ContactEditDlg.cc:87 src/ContactEditDlg.cc:107
 msgid "Fax"
 msgstr "Fax"
 
@@ -755,8 +746,7 @@ msgstr "Ancien téléphone"
 msgid "Radio"
 msgstr "Radio"
 
-#: src/ContactEditDlg.cc:117
-#: src/Mode_Sync.cc:180
+#: src/ContactEditDlg.cc:117 src/Mode_Sync.cc:180
 msgid "PIN"
 msgstr "PIN"
 
@@ -798,8 +788,11 @@ msgid "Contact"
 msgstr "Contact"
 
 #: src/ContactEditDlg.cc:183
-msgid "Comma separated list of simple email addresses.  Do not use <> characters."
-msgstr "Liste d'adresses courriel simples, séparées par des virgules. Ne pas utiliser de <>."
+msgid ""
+"Comma separated list of simple email addresses.  Do not use <> characters."
+msgstr ""
+"Liste d'adresses courriel simples, séparées par des virgules. Ne pas "
+"utiliser de <>."
 
 #: src/ContactEditDlg.cc:346
 msgid "Load new photo"
@@ -822,11 +815,11 @@ msgid "Photo Management"
 msgstr "Gestion de photos"
 
 #: src/ContactEditDlg.cc:398
-msgid "A contact record must contain either a First/Last name, or a Company name."
+msgid ""
+"A contact record must contain either a First/Last name, or a Company name."
 msgstr "Un contact doit contenir au moins un nom/prénom, ou un nom de société."
 
-#: src/ContactEditDlg.cc:399
-#: src/MemoEditDlg.cc:113
+#: src/ContactEditDlg.cc:399 src/MemoEditDlg.cc:113
 msgid "Required Fields"
 msgstr "Champs requis"
 
@@ -841,8 +834,7 @@ msgstr "Fichiers d'images"
 #. for more info.
 #. TRANSLATORS: this is a file selector string,
 #. see "Image files" for more info.
-#: src/ContactPhotoWidget.cc:47
-#: src/Mode_Browse.cc:1090
+#: src/ContactPhotoWidget.cc:47 src/Mode_Browse.cc:1090
 msgid "All files"
 msgstr "Tous les fichiers"
 
@@ -884,8 +876,7 @@ msgstr "Impossible de convertir l'image en JPEG."
 msgid "Photo Convert"
 msgstr "Conversion de photo"
 
-#: src/ContactPhotoWidget.cc:172
-#: src/Mode_Sync.cc:262
+#: src/ContactPhotoWidget.cc:172 src/Mode_Sync.cc:262
 msgid "No"
 msgstr "Non"
 
@@ -919,8 +910,14 @@ msgid "File '%s' does not exist."
 msgstr "Le fichier '%s' n'existe pas."
 
 #: src/EvoCfgDlg.cc:181
-msgid "No paths set!  If there are no default options available in the drop down lists, please double check that you've initialized your Evolution account first."
-msgstr "Pas de chemins définis ! S'il n'y a pas de choix par défaut dans les listes déroulantes, veuillez vérifier que vous avez configuré votre compte Evolution au préalable."
+msgid ""
+"No paths set!  If there are no default options available in the drop down "
+"lists, please double check that you've initialized your Evolution account "
+"first."
+msgstr ""
+"Pas de chemins définis ! S'il n'y a pas de choix par défaut dans les listes "
+"déroulantes, veuillez vérifier que vous avez configuré votre compte "
+"Evolution au préalable."
 
 #: src/EvoCfgDlg.cc:194
 msgid "Minimum Config Required"
@@ -951,8 +948,12 @@ msgid "Configure Device - "
 msgstr "Configurer un périphérique - "
 
 #: src/GroupCfgDlg.cc:140
-msgid "No supported applications found.  You may need to install some opensync plugins."
-msgstr "Aucune d'application supportée trouvée. Il est peut-être nécessaire d'installer des greffons opensync."
+msgid ""
+"No supported applications found.  You may need to install some opensync "
+"plugins."
+msgstr ""
+"Aucune d'application supportée trouvée. Il est peut-être nécessaire "
+"d'installer des greffons opensync."
 
 #: src/GroupCfgDlg.cc:141
 msgid "No App Found"
@@ -970,8 +971,7 @@ msgstr "Configuration de Barry"
 msgid "Name:"
 msgstr "Nom : "
 
-#: src/GroupCfgDlg.cc:214
-#: src/ModemDlg.cc:65
+#: src/GroupCfgDlg.cc:214 src/ModemDlg.cc:65
 msgid "Password:"
 msgstr "Mot de passe : "
 
@@ -979,8 +979,7 @@ msgstr "Mot de passe : "
 msgid "Debug output during sync"
 msgstr "Afficher des options de débogage lors de la synchronisation"
 
-#: src/GroupCfgDlg.cc:233
-#: src/Mode_Sync.cc:186
+#: src/GroupCfgDlg.cc:233 src/Mode_Sync.cc:186
 msgid "Application"
 msgstr "Application"
 
@@ -1034,9 +1033,7 @@ msgstr "Pour résoudre les conflits : "
 msgid "Please select an application."
 msgstr "Veuillez choisir une application."
 
-#: src/GroupCfgDlg.cc:492
-#: src/GroupCfgDlg.cc:500
-#: src/GroupCfgDlg.cc:588
+#: src/GroupCfgDlg.cc:492 src/GroupCfgDlg.cc:500 src/GroupCfgDlg.cc:588
 msgid "Application Config"
 msgstr "Configuration de l'application"
 
@@ -1048,8 +1045,7 @@ msgstr "Pas d'interface de configuration disponible pour cette application."
 msgid "Please select an engine."
 msgstr "Veuillez sélectionner un moteur."
 
-#: src/GroupCfgDlg.cc:567
-#: src/GroupCfgDlg.cc:574
+#: src/GroupCfgDlg.cc:567 src/GroupCfgDlg.cc:574
 msgid "Device Config"
 msgstr "Configuration du périphérique"
 
@@ -1077,8 +1073,7 @@ msgstr "Enregistrement de mémo"
 msgid "Title:"
 msgstr "Titre : "
 
-#: src/MemoEditDlg.cc:51
-#: src/TaskEditDlg.cc:151
+#: src/MemoEditDlg.cc:51 src/TaskEditDlg.cc:151
 msgid "Categories:"
 msgstr "Catégories : "
 
@@ -1104,7 +1099,8 @@ msgstr "Veuillez entrer un titre pour votre mémo"
 
 #: src/MigrateDlg.cc:144
 msgid "Migrate device data from source device to target device."
-msgstr "Faire migrer les données du périphérique source vers le périphérique cible."
+msgstr ""
+"Faire migrer les données du périphérique source vers le périphérique cible."
 
 #: src/MigrateDlg.cc:167
 msgid "Ready..."
@@ -1147,7 +1143,9 @@ msgstr "Ajouter seulement, ne pas écraser l'existant"
 
 #: src/MigrateDlg.cc:245
 msgid "Add every record as a new entry (may cause duplicates)"
-msgstr "Ajouter chaque nouvel enregistrement comme une nouvelle entrée (peut provoquer des doublons)"
+msgstr ""
+"Ajouter chaque nouvel enregistrement comme une nouvelle entrée (peut "
+"provoquer des doublons)"
 
 #: src/MigrateDlg.cc:247
 msgid "Write Mode:"
@@ -1158,8 +1156,11 @@ msgid "Waiting for thread to close..."
 msgstr "Attente de la fin du thread..."
 
 #: src/MigrateDlg.cc:336
-msgid "Please select a source and destination device, as well as the write mode."
-msgstr "Veuillez sélectionner des périphériques  source et destination, ainsi que le mode d'écriture."
+msgid ""
+"Please select a source and destination device, as well as the write mode."
+msgstr ""
+"Veuillez sélectionner des périphériques  source et destination, ainsi que le "
+"mode d'écriture."
 
 #: src/MigrateDlg.cc:337
 msgid "Migration Options Needed"
@@ -1175,7 +1176,9 @@ msgstr "Erreur d'option de migration"
 
 #: src/MigrateDlg.cc:371
 msgid "Invalid write mode. This should never happen. Contact the developers."
-msgstr "Mode d'écriture invalide. Ceci ne devrait pas se produire. Contactez les développeurs."
+msgstr ""
+"Mode d'écriture invalide. Ceci ne devrait pas se produire. Contactez les "
+"développeurs."
 
 #: src/MigrateDlg.cc:372
 msgid "Internal Logic Error"
@@ -1221,14 +1224,12 @@ msgstr "Impossible d'utiliser le même PIN comme cible pour la migration."
 msgid "Invalid Device Selection"
 msgstr "Sélection de périphérique invalide"
 
-#: src/MigrateDlg.cc:522
-#: src/Mode_Browse.cc:258
+#: src/MigrateDlg.cc:522 src/Mode_Browse.cc:258
 #, c-format
 msgid "Please enter device password: (%d tries remaining)"
 msgstr "Veuillez entrer le mot de passe du périphérique : (%d essais restants)"
 
-#: src/MigrateDlg.cc:527
-#: src/Mode_Browse.cc:263
+#: src/MigrateDlg.cc:527 src/Mode_Browse.cc:263
 msgid "Device Password"
 msgstr "Mot de passe du périphérique"
 
@@ -1282,8 +1283,13 @@ msgid "Save Card as..."
 msgstr "Enregistrer la carte sous..."
 
 #: src/Mode_Browse.cc:71
-msgid "This database is apparently read-only.  If this device is connected to a BES, you cannot edit records via USB.  (Error: "
-msgstr "Cette base de données semble être en lecture seule. Si ce périphérique est connecté à un serveur BES, vous ne pouvez pas modifier d'enregistrement par USB.(Erreur : "
+msgid ""
+"This database is apparently read-only.  If this device is connected to a "
+"BES, you cannot edit records via USB.  (Error: "
+msgstr ""
+"Cette base de données semble être en lecture seule. Si ce périphérique est "
+"connecté à un serveur BES, vous ne pouvez pas modifier d'enregistrement par "
+"USB.(Erreur : "
 
 #: src/Mode_Browse.cc:72
 msgid "Device Error"
@@ -1380,7 +1386,9 @@ msgstr "Description de l'enregistrement"
 #: src/Mode_Browse.cc:1069
 #, c-format
 msgid "Card file type (%s) does not match record you are trying to add (%s)."
-msgstr "Le type de carte (%s) ne correspond pas à l'enregistrement que vous essayez d'insérer (%s)."
+msgstr ""
+"Le type de carte (%s) ne correspond pas à l'enregistrement que vous essayez "
+"d'insérer (%s)."
 
 #: src/Mode_Browse.cc:1072
 msgid "Invalid Card Type"
@@ -1409,10 +1417,10 @@ msgstr "Erreur d'importation"
 
 #: src/Mode_Browse.cc:1164
 msgid "Internal pointer error: cannot find DBCachePtr for: "
-msgstr "Erreur interne de pointeur : Impossible de trouver un DBCachePtr pour : "
+msgstr ""
+"Erreur interne de pointeur : Impossible de trouver un DBCachePtr pour : "
 
-#: src/Mode_Browse.cc:1165
-#: src/Mode_Browse.cc:1180
+#: src/Mode_Browse.cc:1165 src/Mode_Browse.cc:1180
 msgid "Internal Error"
 msgstr "Erreur interne"
 
@@ -1442,27 +1450,35 @@ msgstr ""
 
 #: src/Mode_Sync.cc:125
 msgid "Select the device(s) you want to sync and press Sync Now."
-msgstr "Sélectionnez le périphérique que vous voulez synchroniser et appuyez sur Synchroniser maintenant."
+msgstr ""
+"Sélectionnez le périphérique que vous voulez synchroniser et appuyez sur "
+"Synchroniser maintenant."
 
 #: src/Mode_Sync.cc:126
 msgid "Use Configure to configure the currently selected device."
-msgstr "Utilisez Configure pour configurer le périphérique sélectionné actuellement."
+msgstr ""
+"Utilisez Configure pour configurer le périphérique sélectionné actuellement."
 
 #: src/Mode_Sync.cc:127
 msgid "Use Run App to start the application that the device syncs with."
-msgstr "Utiliser Lancer l'application pour lancer l'application avec laquelle le périphérique se synchronise."
+msgstr ""
+"Utiliser Lancer l'application pour lancer l'application avec laquelle le "
+"périphérique se synchronise."
 
 #: src/Mode_Sync.cc:128
-msgid "Use 1-Way Reset to recover from a broken sync, copying all device data to application, or vice versa."
-msgstr "Utiliser la réinitialisation à sens unique pour récupérer un échec de synchronisation, copie de toutes les données depuis le périphérique vers l'application, ou vice-versa."
+msgid ""
+"Use 1-Way Reset to recover from a broken sync, copying all device data to "
+"application, or vice versa."
+msgstr ""
+"Utiliser la réinitialisation à sens unique pour récupérer un échec de "
+"synchronisation, copie de toutes les données depuis le périphérique vers "
+"l'application, ou vice-versa."
 
-#: src/Mode_Sync.cc:140
-#: src/Mode_Sync.cc:507
+#: src/Mode_Sync.cc:140 src/Mode_Sync.cc:507
 msgid "Device List"
 msgstr "Liste de périphériques"
 
-#: src/Mode_Sync.cc:153
-#: src/SyncStatusDlg.cc:349
+#: src/Mode_Sync.cc:153 src/SyncStatusDlg.cc:349
 msgid "Run App"
 msgstr "Lancer une application"
 
@@ -1494,13 +1510,11 @@ msgstr "Oui"
 msgid "(No config)"
 msgstr "(Pas de configuration)"
 
-#: src/Mode_Sync.cc:363
-#: src/Mode_Sync.cc:678
+#: src/Mode_Sync.cc:363 src/Mode_Sync.cc:678
 msgid "An application is currently running."
 msgstr "Une application est en cours d'exécution."
 
-#: src/Mode_Sync.cc:364
-#: src/Mode_Sync.cc:706
+#: src/Mode_Sync.cc:364 src/Mode_Sync.cc:706
 msgid "Run App Error"
 msgstr "Erreur de lancement d'application"
 
@@ -1525,7 +1539,9 @@ msgstr "Erreur de sauvegarde OpenSync"
 #: src/Mode_Sync.cc:484
 #, c-format
 msgid "Selected device %s (%s) is not yet configured.  Configure now?"
-msgstr "Le périphérique sélectionné %s (%s) n'est pas encore configuré. Le faire maintenant ?"
+msgstr ""
+"Le périphérique sélectionné %s (%s) n'est pas encore configuré. Le faire "
+"maintenant ?"
 
 #: src/Mode_Sync.cc:489
 msgid "Configure Now?"
@@ -1557,7 +1573,8 @@ msgstr "Sélectionner le périphérique / l'application de référence"
 
 #: src/Mode_Sync.cc:639
 msgid "Unable to rewrite config!  Start over manually. Error: "
-msgstr "Impossible de récrire la configuration ! Redémarrez manuellement. Erreur : "
+msgstr ""
+"Impossible de récrire la configuration ! Redémarrez manuellement. Erreur : "
 
 #: src/Mode_Sync.cc:643
 msgid "Error Rewriting Config"
@@ -1565,11 +1582,16 @@ msgstr "Érreur lors de la ré-écriture de la configuration"
 
 #: src/Mode_Sync.cc:659
 msgid ""
-"The sync config you are about to save is sufficiently different from the existing one that a 1-Way Reset will be required.  You will need to perform the reset at your earliest convenience, before your next sync.\n"
+"The sync config you are about to save is sufficiently different from the "
+"existing one that a 1-Way Reset will be required.  You will need to perform "
+"the reset at your earliest convenience, before your next sync.\n"
 "\n"
 "Continue anyway?"
 msgstr ""
-"La configuration de la synchronisation que vous vous apprêtez à sauvegarder est trop peu différente de l'existante pour qu'une réinitialisation à sens unique soit requise. Vous devrez faire une réinitialisation dès que vous le souhaiterez, avant votre prochaine synchronisation.\n"
+"La configuration de la synchronisation que vous vous apprêtez à sauvegarder "
+"est trop peu différente de l'existante pour qu'une réinitialisation à sens "
+"unique soit requise. Vous devrez faire une réinitialisation dès que vous le "
+"souhaiterez, avant votre prochaine synchronisation.\n"
 "\n"
 "Poursuivre quand même ?"
 
@@ -1623,14 +1645,17 @@ msgstr "Démarrage du modem"
 msgid "Available provider scripts on your system.  Must pick one."
 msgstr "Scripts disponibles sur votre système. Vous devez en choisir un."
 
-#: src/ModemDlg.cc:102
-#: src/ModemDlg.cc:104
+#: src/ModemDlg.cc:102 src/ModemDlg.cc:104
 msgid "Optional device password"
 msgstr "Mot de passe de périphérique optionnel"
 
 #: src/ModemDlg.cc:254
-msgid "Cannot locate the xterm program.  This is used to display modem connection output.  Please install it and try again."
-msgstr "Impossible de trouver le programme xterm. Il est nécessaire pour afficher les messages de connexion du modem. Veuillez l'installer et réessayer."
+msgid ""
+"Cannot locate the xterm program.  This is used to display modem connection "
+"output.  Please install it and try again."
+msgstr ""
+"Impossible de trouver le programme xterm. Il est nécessaire pour afficher "
+"les messages de connexion du modem. Veuillez l'installer et réessayer."
 
 #: src/ModemDlg.cc:254
 msgid "Xterm Not Found"
@@ -1638,7 +1663,8 @@ msgstr "Xterm non trouvé"
 
 #: src/ModemDlg.cc:263
 msgid "Cannot find pppd.  Please install it for modem use."
-msgstr "Impossible de trouver pppd. Veuillez l'installer pour utiliser le modem."
+msgstr ""
+"Impossible de trouver pppd. Veuillez l'installer pour utiliser le modem."
 
 #: src/ModemDlg.cc:263
 msgid "pppd Not Found"
@@ -1647,11 +1673,15 @@ msgstr "pppd non trouvé"
 #: src/ModemDlg.cc:278
 #, c-format
 msgid ""
-"Your system's PPP has the suid bit set, with a group of '%s'.  You should add your account to the '%s' group, to avoid the need to enter the root password every time you use the modem.\n"
+"Your system's PPP has the suid bit set, with a group of '%s'.  You should "
+"add your account to the '%s' group, to avoid the need to enter the root "
+"password every time you use the modem.\n"
 "\n"
 "Continue anyway?"
 msgstr ""
-"Le PPP de votre système a le bit suid, avec '%s' comme groupe. Vous devriez vous ajouter au groupe '%s' pour éviter d'entrer votre mot de passe root pour utiliser le modem.\n"
+"Le PPP de votre système a le bit suid, avec '%s' comme groupe. Vous devriez "
+"vous ajouter au groupe '%s' pour éviter d'entrer votre mot de passe root "
+"pour utiliser le modem.\n"
 "\n"
 "Continuer quand même ?"
 
@@ -1670,23 +1700,32 @@ msgstr "Impossible de lancer pppd"
 #: src/ModemDlg.cc:303
 #, c-format
 msgid "Unable to run pppd correctly.  Unexpected error code: %d, %s"
-msgstr "Impossible de lancer pppd correctement. Code d'erreur inattendu : %d, %s"
+msgstr ""
+"Impossible de lancer pppd correctement. Code d'erreur inattendu : %d, %s"
 
 #: src/ModemDlg.cc:304
 msgid "Error Code"
 msgstr "Code d'erreur"
 
 #: src/ModemDlg.cc:318
-msgid "Unable to access files in /etc/ppp/peers.  Do you have the correct permissions?"
-msgstr "Impossible d'accéder aux fichiers de /etc/ppp/peers. Avez vous les droits d'accès ?"
+msgid ""
+"Unable to access files in /etc/ppp/peers.  Do you have the correct "
+"permissions?"
+msgstr ""
+"Impossible d'accéder aux fichiers de /etc/ppp/peers. Avez vous les droits "
+"d'accès ?"
 
 #: src/ModemDlg.cc:318
 msgid "Cannot Open Peers"
 msgstr "Impossible d'ouvrir  les peers"
 
 #: src/ModemDlg.cc:330
-msgid "No providers found.  Make sure Barry was properly installed, with peer files in /etc/ppp/peers."
-msgstr "Aucun fournisseur trouvé. Assurez vous que Barry est correctement installé, avec les fichiers peer dans /etc/ppp/peers."
+msgid ""
+"No providers found.  Make sure Barry was properly installed, with peer files "
+"in /etc/ppp/peers."
+msgstr ""
+"Aucun fournisseur trouvé. Assurez vous que Barry est correctement installé, "
+"avec les fichiers peer dans /etc/ppp/peers."
 
 #: src/ModemDlg.cc:330
 msgid "No Providers"
@@ -1694,8 +1733,12 @@ msgstr "Pas de fournisseur"
 
 #: src/ModemDlg.cc:346
 #, c-format
-msgid "Cannot read provider files under /etc/ppp/peers. Please check your file permissions. (Access failed for %s)"
-msgstr "Impossible de lire les fichiers dans /etc/ppp/peers. Vérifiez les permissions des fichiers. (Échec à l'accès à %s)"
+msgid ""
+"Cannot read provider files under /etc/ppp/peers. Please check your file "
+"permissions. (Access failed for %s)"
+msgstr ""
+"Impossible de lire les fichiers dans /etc/ppp/peers. Vérifiez les "
+"permissions des fichiers. (Échec à l'accès à %s)"
 
 #: src/ModemDlg.cc:347
 msgid "Permissions Error"
@@ -1734,8 +1777,7 @@ msgstr "Synchronisation du périphérique en cours"
 msgid "Sync Progress"
 msgstr "Synchronisation en cours"
 
-#: src/SyncStatusDlg.cc:340
-#: src/SyncStatusDlg.cc:629
+#: src/SyncStatusDlg.cc:340 src/SyncStatusDlg.cc:629
 msgid "Show Details"
 msgstr "Afficher les détails"
 
@@ -1790,7 +1832,9 @@ msgstr "ERREUR : impossible de démarrer bsyncjail"
 
 #: src/SyncStatusDlg.cc:557
 msgid "Slow sync detected!  Killing sync automatically."
-msgstr "Synchronisation lente détectée ! Annulation automatique de la synchronisation."
+msgstr ""
+"Synchronisation lente détectée ! Annulation automatique de la "
+"synchronisation."
 
 #: src/SyncStatusDlg.cc:560
 msgid "Slow syncs are known to be unreliable."
@@ -1814,17 +1858,20 @@ msgstr "Déjà en train d'annuler la synchronisation. Annuler de nouveau ?"
 
 #: src/SyncStatusDlg.cc:607
 msgid ""
-"This will kill the syncing child process, and will likely require a configuration reset.\n"
+"This will kill the syncing child process, and will likely require a "
+"configuration reset.\n"
 "\n"
 "Kill sync process anyway?"
 msgstr ""
-"Ceci va tuer le processus fils de synchronisation et va certainement nécessiter une remise à zéro de la configuration.\n"
+"Ceci va tuer le processus fils de synchronisation et va certainement "
+"nécessiter une remise à zéro de la configuration.\n"
 "\n"
 "Poursuivre malgré tout ?"
 
 #: src/SyncStatusDlg.cc:614
 msgid "Killing sync... this may take a little while..."
-msgstr "Annulation de la synchronisation... Ceci peut prendre un certain temps..."
+msgstr ""
+"Annulation de la synchronisation... Ceci peut prendre un certain temps..."
 
 #: src/SyncStatusDlg.cc:615
 msgid "Remember to re-plug your device."
@@ -1907,16 +1954,26 @@ msgid "Scanning USB..."
 msgstr "Balayage USB..."
 
 #: src/barrydesktop.cc:87
-msgid "A serious error occurred while probing the USB subsystem for BlackBerry(R) devices: "
-msgstr "Une erreur grave est survenue lors de la recherche de périphérique Blackberry® USB : "
+msgid ""
+"A serious error occurred while probing the USB subsystem for BlackBerry(R) "
+"devices: "
+msgstr ""
+"Une erreur grave est survenue lors de la recherche de périphérique "
+"Blackberry® USB : "
 
 #: src/barrydesktop.cc:89
 msgid "USB Error"
 msgstr "Erreur USB"
 
 #: src/barrydesktop.cc:150
-msgid "No OpenSync libraries were found. Sync will be unavailable until you install OpenSync version 0.22 or version 0.4x on your system, along with the needed plugins."
-msgstr "Bibliothèque OpenSync non trouvée. La synchronisation ne sera pas disponible tant que vous n'aurez pas installé OpenSync 0.22 ou 0.4x, ainsi que les greffons nécessaires."
+msgid ""
+"No OpenSync libraries were found. Sync will be unavailable until you install "
+"OpenSync version 0.22 or version 0.4x on your system, along with the needed "
+"plugins."
+msgstr ""
+"Bibliothèque OpenSync non trouvée. La synchronisation ne sera pas disponible "
+"tant que vous n'aurez pas installé OpenSync 0.22 ou 0.4x, ainsi que les "
+"greffons nécessaires."
 
 #: src/barrydesktop.cc:150
 msgid "OpenSync Not Found"
@@ -1944,7 +2001,8 @@ msgstr "Commande Select du serveur invalide : "
 
 #: src/bsyncjail.cc:250
 msgid "Abort not supported, and server sent Abort command."
-msgstr "Annulation non supportée or le serveur a envoyé une commande Annulation."
+msgstr ""
+"Annulation non supportée or le serveur a envoyé une commande Annulation."
 
 #: src/bsyncjail.cc:256
 msgid "Ignore not supported, and server sent Ignore command."
@@ -1952,7 +2010,9 @@ msgstr "Ignorer non supporté or le serveur a envoyé une commande Ignorer."
 
 #: src/bsyncjail.cc:262
 msgid "Keep Newer not supported, and server sent Keep Newer command."
-msgstr "Conserver le plus récent non supporté or le serveur a envoyé une commande Conserver le plus récent."
+msgstr ""
+"Conserver le plus récent non supporté or le serveur a envoyé une commande "
+"Conserver le plus récent."
 
 #: src/bsyncjail.cc:267
 msgid "Invalid command from server: "
@@ -1991,7 +2051,9 @@ msgstr "%s est déjà en cours d'execution."
 #: src/exechelper.cc:174
 #, c-format
 msgid "Failed to run %s. Please make sure it is installed and in your PATH."
-msgstr "Impossible de lancer %s. Assurez vous qu'il est bien installé et présent dans votre PATH."
+msgstr ""
+"Impossible de lancer %s. Assurez vous qu'il est bien installé et présent "
+"dans votre PATH."
 
 #. TRANSLATORS: this is a main screen button label. See
 #. util.cc line 200 for more information on its flexibility.
@@ -2066,12 +2128,10 @@ msgstr "Impossible de créer le bouton : l'étiquette est vide"
 msgid "Invalid date!"
 msgstr "Date invalide !"
 
-#: src/wxval.h:69
-#: src/wxval.h:157
+#: src/wxval.h:69 src/wxval.h:157
 msgid "Validation"
 msgstr "Validation"
 
 #: src/wxval.h:156
 msgid "Please select one of the radio buttons."
 msgstr "Veuillez sélectionner l'un des boutons radio."
-

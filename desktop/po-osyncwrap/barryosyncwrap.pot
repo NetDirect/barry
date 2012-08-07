@@ -8,28 +8,28 @@ msgid ""
 msgstr ""
 "Project-Id-Version: barrydesktop 0.18.4\n"
 "Report-Msgid-Bugs-To: http://netdirect.ca/barry\n"
-"POT-Creation-Date: 2012-07-27 01:48-0400\n"
+"POT-Creation-Date: 2012-08-07 15:36-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/blistevo.cc:46
+#: src/blistevo.cc:47
 msgid "Addressbook:"
 msgstr ""
 
-#: src/blistevo.cc:48
+#: src/blistevo.cc:49
 msgid "Events:"
 msgstr ""
 
-#: src/blistevo.cc:50
+#: src/blistevo.cc:51
 msgid "Tasks:"
 msgstr ""
 
-#: src/blistevo.cc:52
+#: src/blistevo.cc:53
 msgid "Memos:"
 msgstr ""
 
@@ -516,11 +516,11 @@ msgstr ""
 msgid "CALLBACK ERROR: "
 msgstr ""
 
-#: src/osbase.cc:407
+#: src/osbase.cc:413
 msgid "Unable to load opensync 0.40: "
 msgstr ""
 
-#: src/osbase.cc:417
+#: src/osbase.cc:423
 msgid "Unable to load opensync 0.22: "
 msgstr ""
 
