@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: barrydesktop 0.18.4\n"
 "Report-Msgid-Bugs-To: http://netdirect.ca/barry\n"
-"POT-Creation-Date: 2012-07-20 21:27-0400\n"
+"POT-Creation-Date: 2012-08-07 15:16-0400\n"
 "PO-Revision-Date: 2012-08-06 18:20+0100\n"
 "Last-Translator: Nicolas CARRIER <carrier.nicolas0@gmail.com>\n"
 "Language-Team: Barry\n"
@@ -2033,7 +2033,8 @@ msgid ""
 "Databases"
 msgstr ""
 "Parcourir\n"
-"Bases de données"
+"Bases de\n"
+"données"
 
 #. TRANSLATORS: this is a main screen button label
 #: src/util.cc:61
@@ -2054,8 +2055,8 @@ msgid "Unable to create button: font is invalid"
 msgstr "Impossible de créer le bouton : la fonte est invalide"
 
 #: src/util.cc:299
-msgid "Unable to create button: text is too big to fit"
-msgstr "Impossible de créer le bouton : le texte ne tient pas"
+msgid "Unable to create button: text is too big to fit: "
+msgstr "Impossible de créer le bouton : le texte ne tient pas : "
 
 #: src/util.cc:308
 msgid "Unable to create button: label is empty"

@@ -296,7 +296,7 @@ void DrawButtonLabelDC(wxDC &dc, const wxBitmap &bmp, const wxString &label,
 
 		// only reduce font so much...
 		if( tries >= 4 )
-			throw DrawButtonLabelError(_C("Unable to create button: text is too big to fit"));
+			throw DrawButtonLabelError(_C("Unable to create button: text is too big to fit: ") + string(label.utf8_str()));
 
 		// too big, reduce font and try again
 		font.SetPointSize( font.GetPointSize() - 1 );

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: barrydesktop 0.18.4\n"
 "Report-Msgid-Bugs-To: http://netdirect.ca/barry\n"
-"POT-Creation-Date: 2012-07-20 21:27-0400\n"
+"POT-Creation-Date: 2012-08-07 15:16-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1937,7 +1937,7 @@ msgid "Unable to create button: font is invalid"
 msgstr ""
 
 #: src/util.cc:299
-msgid "Unable to create button: text is too big to fit"
+msgid "Unable to create button: text is too big to fit: "
 msgstr ""
 
 #: src/util.cc:308
