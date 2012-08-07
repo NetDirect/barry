@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: barry 0.18.4\n"
 "Report-Msgid-Bugs-To: http://netdirect.ca/barry\n"
-"POT-Creation-Date: 2012-07-27 01:48-0400\n"
+"POT-Creation-Date: 2012-08-07 14:40-0400\n"
 "PO-Revision-Date: 2012-06-12 22:33-0300\n"
 "Last-Translator: Cesar Ballardini <cesar@ballardini.com.ar>\n"
 "Language-Team: es\n"
@@ -3718,7 +3718,7 @@ msgid ""
 "Unknown device output mode. Must be one of: erase, overwrite, addonly, addnew"
 msgstr ""
 
-#: tools/bio.cc:1135 tools/btarcmp.cc:813
+#: tools/bio.cc:1137 tools/btarcmp.cc:815
 msgid "Exception: "
 msgstr ""
 
@@ -3803,7 +3803,7 @@ msgid "missing command"
 msgstr ""
 
 #: tools/bjavaloader.cc:335 tools/bjdwp.cc:124 tools/bjvmdebug.cc:108
-#: tools/brawchannel.cc:250 tools/brecsum.cc:123 tools/bwatch.cc:130
+#: tools/brawchannel.cc:250 tools/brecsum.cc:123 tools/bwatch.cc:132
 msgid "No device selected, or PIN not found"
 msgstr ""
 
@@ -3875,18 +3875,18 @@ msgstr ""
 
 #: tools/bjavaloader.cc:490 tools/bjdwp.cc:154 tools/bjvmdebug.cc:171
 #: tools/brawchannel.cc:333 tools/bs11nread.cc:146 tools/btool.cc:1012
-#: tools/bwatch.cc:195 tools/upldif.cc:189
+#: tools/bwatch.cc:197 tools/upldif.cc:189
 msgid "Usb::Error caught: "
 msgstr ""
 
 #: tools/bjavaloader.cc:495 tools/bjdwp.cc:159 tools/bjvmdebug.cc:176
 #: tools/brawchannel.cc:337 tools/bs11nread.cc:150 tools/btool.cc:1016
-#: tools/bwatch.cc:200 tools/upldif.cc:192
+#: tools/bwatch.cc:202 tools/upldif.cc:192
 msgid "Barry::Error caught: "
 msgstr ""
 
 #: tools/bjavaloader.cc:500 tools/bjdwp.cc:164 tools/bjvmdebug.cc:181
-#: tools/bs11nread.cc:154 tools/btool.cc:1020 tools/bwatch.cc:205
+#: tools/bs11nread.cc:154 tools/btool.cc:1020 tools/bwatch.cc:207
 #: tools/upldif.cc:195
 msgid "std::exception caught: "
 msgstr ""
@@ -4180,11 +4180,11 @@ msgid ""
 "   [files...] Backup file(s), created by btool or the backup GUI.\n"
 msgstr ""
 
-#: tools/btardump.cc:130 tools/btool.cc:714
+#: tools/btardump.cc:132 tools/btool.cc:714
 msgid "-V option not supported - no Sync library support available\n"
 msgstr ""
 
-#: tools/btardump.cc:173
+#: tools/btardump.cc:175
 msgid "Reading file: "
 msgstr ""
 
@@ -4378,15 +4378,15 @@ msgid ""
 "   -v        Dump protocol data during operation\n"
 msgstr ""
 
-#: tools/bwatch.cc:85
+#: tools/bwatch.cc:87
 msgid "Invalid interval value of: "
 msgstr ""
 
-#: tools/bwatch.cc:85
+#: tools/bwatch.cc:87
 msgid "Defaulting to 500ms."
 msgstr ""
 
-#: tools/bwatch.cc:135
+#: tools/bwatch.cc:137
 msgid "Press a key to exit..."
 msgstr ""
 

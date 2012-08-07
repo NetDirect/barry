@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: barry-opensync-plugin-0-4x 0.18.4\n"
 "Report-Msgid-Bugs-To: http://netdirect.ca/barry\n"
-"POT-Creation-Date: 2012-07-27 01:48-0400\n"
+"POT-Creation-Date: 2012-08-07 14:47-0400\n"
 "PO-Revision-Date: 2012-08-05 12:51+0100\n"
 "Last-Translator: Nicolas CARRIER <carrier.nicolas0@gmail.com>\n"
 "Language-Team: French\n"
@@ -57,7 +57,7 @@ msgstr "Impossible d'obtenir la configuration."
 
 #: src/barry_sync.cc:617
 #, fuzzy
-msgid "Process Ressource options..."
+msgid "Process Resource options..."
 msgstr "Analyse des options de ressource..."
 
 #: src/barry_sync.cc:623
@@ -80,8 +80,7 @@ msgstr "Pas de synchronisation de journal"
 msgid "No sync Todo"
 msgstr "Pas de synchronisation de liste de tâches à faire"
 
-#: src/barry_sync.cc:655
-#: src/barry_sync.cc:727
+#: src/barry_sync.cc:655 src/barry_sync.cc:727
 #, c-format
 msgid "Unable to allocate memory for controller: %s"
 msgstr "Impossible d'allouer de la mémoire pour le contrôleur : %s"
@@ -114,7 +113,9 @@ msgstr "Impossible de récupérer le pointeur de fonction de commit"
 
 #: src/barry_sync.cc:849
 msgid "unable to get sync object that matches change type"
-msgstr "Impossible d'obtenir un objet de synchronisation qui corresponde au type de changement"
+msgstr ""
+"Impossible d'obtenir un objet de synchronisation qui corresponde au type de "
+"changement"
 
 #: src/barry_sync.cc:856
 msgid "This object type is disabled in the barry-sync config"
@@ -125,8 +126,7 @@ msgstr "Ce type d'objet est désactivé dans la configuration de barry-sync"
 msgid "uid from change: %s"
 msgstr "uid du change : %s"
 
-#: src/barry_sync.cc:888
-#: src/barry_sync.cc:889
+#: src/barry_sync.cc:888 src/barry_sync.cc:889
 #, c-format
 msgid "Unable to extract a valid record ID from: %s"
 msgstr "Impossible d'extraire un ID d'enregistrement valide depuis : %s"
@@ -156,8 +156,12 @@ msgid "Barry OpenSync plugin v%s for the Blackberry handheld"
 msgstr "Plugin OpenSync Barry v%s pour périphérique blackberry"
 
 #: src/barry_sync.cc:1119
-msgid "Plugin to synchronize note, task, calendar and contact entries on USB Blackberry handhelds"
-msgstr "Plugin de synchronisation de notes, tâches, calendriers et contacts avec un périphérique Blackberry USB"
+msgid ""
+"Plugin to synchronize note, task, calendar and contact entries on USB "
+"Blackberry handhelds"
+msgstr ""
+"Plugin de synchronisation de notes, tâches, calendriers et contacts avec un "
+"périphérique Blackberry USB"
 
 #: src/environment.cc:92
 msgid "Tried to use empty Connector"
@@ -193,66 +197,47 @@ msgstr "Renvoie un objet tâche à faire"
 msgid "return none"
 msgstr "Ne renvoie rien"
 
-#: src/vcard.cc:74
-#: src/vcard.cc:101
+#: src/vcard.cc:74 src/vcard.cc:101
 #, c-format
 msgid "ERROR: vcard:Barry::ConvertError exception: %s"
 msgstr "Exception ERROR: vcard:Barry::ConvertError : %s"
 
-#: src/vcard.cc:147
-#: src/vevent.cc:165
-#: src/vjournal.cc:152
-#: src/vtodo.cc:153
+#: src/vcard.cc:147 src/vevent.cc:165 src/vjournal.cc:152 src/vtodo.cc:153
 msgid "Can't use recommended recordId, generating new one."
 msgstr "Impossible d'utiliser le recordId recommandé, un nouveau est généré."
 
-#: src/vcard.cc:159
-#: src/vevent.cc:177
-#: src/vjournal.cc:164
-#: src/vtodo.cc:165
+#: src/vcard.cc:159 src/vevent.cc:177 src/vjournal.cc:164 src/vtodo.cc:165
 msgid "unable to parse change data for new RecordId: "
-msgstr "Impossible de lire les données du changement pour le nouveau RecordId :"
+msgstr ""
+"Impossible de lire les données du changement pour le nouveau RecordId :"
 
-#: src/vcard.cc:162
-#: src/vevent.cc:180
-#: src/vjournal.cc:167
-#: src/vtodo.cc:168
+#: src/vcard.cc:162 src/vevent.cc:180 src/vjournal.cc:167 src/vtodo.cc:168
 msgid "data: "
 msgstr "Données :"
 
-#: src/vcard.cc:171
-#: src/vevent.cc:203
-#: src/vjournal.cc:176
-#: src/vtodo.cc:177
+#: src/vcard.cc:171 src/vevent.cc:203 src/vjournal.cc:176 src/vtodo.cc:177
 msgid "adding record"
 msgstr "Ajout de l'enregistrement"
 
-#: src/vcard.cc:175
-#: src/vevent.cc:207
-#: src/vjournal.cc:180
+#: src/vcard.cc:175 src/vevent.cc:207 src/vjournal.cc:180
 msgid "setting record"
 msgstr "Modification de l'enregistrement"
 
-#: src/vcard.cc:177
-#: src/vevent.cc:209
-#: src/vjournal.cc:182
+#: src/vcard.cc:177 src/vevent.cc:209 src/vjournal.cc:182
 msgid "clearing dirty flag"
 msgstr "Suppression du drapeau dirty"
 
-#: src/vevent.cc:79
-#: src/vevent.cc:119
+#: src/vevent.cc:79 src/vevent.cc:119
 #, c-format
 msgid "ERROR: vevent:Barry::ConvertError exception: %s"
 msgstr "Exception ERROR: vevent:Barry::ConvertError : %s"
 
-#: src/vjournal.cc:78
-#: src/vjournal.cc:106
+#: src/vjournal.cc:78 src/vjournal.cc:106
 #, c-format
 msgid "ERROR: vjournal:Barry::ConvertError exception: %s"
 msgstr "Exception ERROR: vjournal:Barry::ConvertError : %s"
 
-#: src/vtodo.cc:79
-#: src/vtodo.cc:107
+#: src/vtodo.cc:79 src/vtodo.cc:107
 #, c-format
 msgid "ERROR: vtodo:Barry::ConvertError exception: %s"
 msgstr "Exception ERROR: vtodo:Barry::ConvertError : %s"
@@ -264,4 +249,3 @@ msgstr "Suppression de l'enregistrement de tâche"
 #: src/vtodo.cc:204
 msgid "re-adding task record"
 msgstr "Enregistrement de tâche ré-inséré"
-
