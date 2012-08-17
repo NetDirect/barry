@@ -75,6 +75,26 @@ void HexDumpParser::ParseRecord(const Barry::DBData &data,
 
 
 //////////////////////////////////////////////////////////////////////////////
+// DBNamesOnlyParser class
+
+DBNamesOnlyParser::DBNamesOnlyParser(std::ostream &os)
+	: m_os(os)
+{
+}
+
+void DBNamesOnlyParser::ParseRecord(const Barry::DBData &data,
+				const IConverter *ic)
+{
+	ios_format_state state(m_os);
+
+	if( m_last_dbname != data.GetDBName() ) {
+		m_os << data.GetDBName() << endl;
+		m_last_dbname = data.GetDBName();
+	}
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
 // MultiRecordParser class
 
 // takes ownership of default_parser!

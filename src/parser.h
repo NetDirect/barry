@@ -147,6 +147,28 @@ public:
 };
 
 //
+// DBNamesOnlyParser
+//
+/// Prints only the unique databases names found in the stream.
+///
+/// Do NOT derive your own personal parser classes from this,
+/// unless you are perfectly confident that you will catch
+/// future API changes on the devel tree without the compiler's
+/// help.
+///
+class BXEXPORT DBNamesOnlyParser : public Parser
+{
+	std::ostream &m_os;
+	std::string m_last_dbname;
+
+public:
+	explicit DBNamesOnlyParser(std::ostream &os);
+
+	virtual void ParseRecord(const Barry::DBData &data,
+				 const IConverter *ic);
+};
+
+//
 // RecordParserBase
 //
 /// Abstract base class for the following RecordParser template, that exposes
