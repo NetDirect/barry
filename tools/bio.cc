@@ -141,6 +141,7 @@ LDIF options?
    "\n"
    " Options to use for 'dump' to stdout output type:\n"
    "   -n        Use hex dump parser on all databases.\n"
+   "   -T        Show only the names of the databases.\n"
    "\n"
    " Options to use for 'sha1' sum stdout output type:\n"
    "   -t        Include DB Name, Type, and Unique record IDs in the checksums\n"
@@ -220,6 +221,11 @@ public:
 	virtual void SetHexDump()
 	{
 		throw runtime_error(_("No hex dump option in this mode"));
+	}
+
+	virtual void SetDBNamesOnly()
+	{
+		throw runtime_error(_("No name-only option in this mode"));
 	}
 
 	virtual void IncludeIDs()
@@ -709,10 +715,12 @@ class DumpOutput : public OutputBase
 {
 	auto_ptr<Parser> m_parser;
 	bool m_hex_only;
+	bool m_dbnames_only;
 
 public:
 	DumpOutput()
 		: m_hex_only(false)
+		, m_dbnames_only(false)
 	{
 	}
 
@@ -721,10 +729,18 @@ public:
 		m_hex_only = true;
 	}
 
+	void SetDBNamesOnly()
+	{
+		m_dbnames_only = true;
+	}
+
 	Parser& GetParser(Barry::Probe *probe, IConverter &ic)
 	{
 		if( m_hex_only ) {
 			m_parser.reset( new HexDumpParser(cout) );
+		}
+		else if( m_dbnames_only ) {
+			m_parser.reset( new DBNamesOnlyParser(cout) );
 		}
 		else {
 			m_parser.reset( new AllRecordParser(cout,
@@ -973,7 +989,7 @@ int App::main(int argc, char *argv[])
 	// process command line options
 	ModeBase *current = 0;
 	for(;;) {
-		int cmd = getopt(argc, argv, "hi:o:nvI:f:p:P:d:D:c:C:ASw:tl");
+		int cmd = getopt(argc, argv, "hi:o:nvI:f:p:P:d:D:c:C:ASw:tTl");
 		if( cmd == -1 )
 			break;
 
@@ -1049,6 +1065,10 @@ int App::main(int argc, char *argv[])
 
 		case 't':	// include type and IDs in sha1 mode
 			current->IncludeIDs();
+			break;
+
+		case 'T':	// display database names only instead of recs
+			current->SetDBNamesOnly();
 			break;
 
 		case 'l':	// list only
