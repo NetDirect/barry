@@ -8,607 +8,640 @@ msgstr ""
 "Project-Id-Version: barry 0.18.4\n"
 "Report-Msgid-Bugs-To: http://netdirect.ca/barry\n"
 "POT-Creation-Date: 2012-08-07 14:40-0400\n"
-"PO-Revision-Date: 2009-11-19 23:13+0100\n"
-"Last-Translator: Nicolas <nicolas@vivien.fr>\n"
-"Language-Team: French\n"
+"PO-Revision-Date: 2012-08-20 11:15+0100\n"
+"Last-Translator: Nicolas CARRIER <carrier.nicolas0@gmail.com>\n"
+"Language-Team: Nicolas CARRIER <carrier.nicolas0@gmail.com>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Poedit-Language: French\n"
+"X-Poedit-Country: FRANCE\n"
+"X-Poedit-SourceCharset: utf-8\n"
+"X-Poedit-Basepath: ..\n"
+"X-Poedit-SearchPath-0: ..\n"
 
 #: src/a_application.cc:59
 msgid "  Application "
-msgstr ""
+msgstr "  Application "
 
 #: src/a_application.cc:60 src/a_library.cc:60
 msgid "    ID          : "
-msgstr ""
+msgstr "    ID          : "
 
 #: src/a_application.cc:61 src/a_library.cc:61
 msgid "    Description : "
-msgstr ""
+msgstr "    Description : "
 
 #: src/a_application.cc:62 src/a_library.cc:62
 msgid "    Vendor      : "
-msgstr ""
+msgstr "    Vendeur     : "
 
 #: src/a_application.cc:63 src/a_library.cc:63
 msgid "    Copyright   : "
-msgstr ""
+msgstr "    Copyright   : "
 
 #: src/a_application.cc:64 src/a_library.cc:64
 msgid "    Required    : "
-msgstr ""
+msgstr "    Requis      : "
 
 #: src/a_application.cc:64 src/a_library.cc:64
 msgid "Yes"
-msgstr ""
+msgstr "Oui"
 
 #: src/a_application.cc:64 src/a_library.cc:64
 msgid "No"
-msgstr ""
+msgstr "Non"
 
 #: src/a_application.cc:68 src/a_library.cc:68
 msgid "    Files       : "
-msgstr ""
+msgstr "    Fichiers    : "
 
 #: src/a_library.cc:59
 msgid "  Library "
-msgstr ""
+msgstr "  Bibliothèque "
 
 #: src/a_osloader.cc:74
 msgid "Could not opendir: "
-msgstr ""
+msgstr "Échec d'opendir :"
 
 #: src/a_osloader.cc:97
 msgid "Cannot open ALX file: "
-msgstr ""
+msgstr "Impossible d'ouvrir le fichier ALX :"
 
 #: src/a_osloader.cc:111
 msgid "OS Properties :"
-msgstr ""
+msgstr "Propriétés du SE :"
 
 #: src/a_osloader.cc:123
 msgid "SFI File :"
-msgstr ""
+msgstr "Fichier SFI :"
 
 #: src/a_osloader.cc:127
 msgid "Applications :"
-msgstr ""
+msgstr "Applications :"
 
 #: src/a_osloader.cc:137
 msgid "Libraries :"
-msgstr ""
+msgstr "Bibliothèques :"
 
 #: src/backup.cc:84
 msgid "Backup: No database name available"
-msgstr ""
+msgstr "Sauvegarde : aucun nom de base de données disponibles"
 
 #: src/backup.cc:86
 msgid "Backup: No unique ID available!"
-msgstr ""
+msgstr "Sauvegarde : aucun ID unique disponible !"
 
 #: src/bmp.cc:80
 msgid "ScreenshotToRGB: depth must be 24 or 32"
-msgstr ""
+msgstr "ScreenshotToRGB : la profondeur doit être 24 ou 32"
 
 #: src/bmp.cc:100
 msgid ""
 "ScreenshotToRGB: Screenshot data size is too small for given width+height"
 msgstr ""
+"ScreenshotToRGB : trop peu de données dans la capture d'écran, par rapport "
+"au format"
 
 #: src/bmp.cc:102
 msgid ""
 "ScreenshotToRGB: Screenshot depth is not supported (Barry supports 2 byte or "
 "4 byte pixels in device screenshots)"
 msgstr ""
+"ScreenshotToRGB : profondeur de capture d'écran non supportée (Barry "
+"supporte 2 ou 4 octet par pixel)"
 
 #: src/bmp.cc:162
 msgid ""
 "ScreenshotToRGB: bad switch value, should never happen. Double check the "
 "data_size check."
 msgstr ""
+"ScreenshotToRGB : mauvaise valeur de switch/case, ne devrait pas arriver. "
+"Vérifier data_size."
 
 #: src/bmp.cc:196
 msgid "Screenshot data size is too small for given width+height"
-msgstr ""
+msgstr "Trop peu de données dans la capture d'écran, par rapport au format"
 
 #: src/builder.cc:54
 msgid "DBDataBuilder: offset greater than size"
-msgstr ""
+msgstr "DBDataBuilder: offset plus grand que la taille"
 
 #: src/cod.cc:61
 msgid "SeekNextCod: EOF while reading file signature"
 msgstr ""
+"SeekNextCod : fin de fichier prématurée lors de la lecture de la signature "
+"du fichier"
 
 #: src/cod.cc:70
 msgid "SeekNextCod: EOF while reading PKZIP header"
 msgstr ""
+"SeekNextCod : fin de fichier prématurée lors de la lecture de l'en-tête PKZIP"
 
 #: src/cod.cc:76
 msgid "SeekNextCod: EOF while skipping unused fields"
 msgstr ""
+"SeekNextCod : fin de fichier prématurée lors de la lecture des champs "
+"inutilisés"
 
 #: src/cod.cc:89
 msgid "SeekNextCod: seek to end failed"
-msgstr ""
+msgstr "SeekNextCod : impossible de se rendre à la fin"
 
 #: src/cod.cc:95
 msgid "SeekNextCod: seek to start failed"
-msgstr ""
+msgstr "SeekNextCod : impossible de se rendre au début"
 
 #: src/cod.cc:101
 msgid "SeekNextCod: unknown COD file signature"
-msgstr ""
+msgstr "SeekNextCod : signature de fichier COD inconnue"
 
 #: src/common.cc:79
 msgid "USB library failed to initialise with libusb error: "
 msgstr ""
+"L'initialisation de la bibliothèque USB a rencontré l'erreur suivante :"
 
 #: src/common.cc:80
 msgid "Failed to initialise USB"
-msgstr ""
+msgstr "Impossible d'initialiser l'USB"
 
 #: src/configfile.cc:50
 msgid "DBListType dump:\n"
-msgstr ""
+msgstr "Contenu de DBListType :\n"
 
 #: src/configfile.cc:77 src/configfile.cc:95
 msgid "Configfile: empty pin"
-msgstr ""
+msgstr "Fichier de configuration : PIN vide"
 
 #: src/configfile.cc:193 src/configfile.cc:394
 msgid "Unable to open file for writing: "
-msgstr ""
+msgstr "Impossible d'ouvrir le fichier en écriture :"
 
 #: src/configfile.cc:219 src/configfile.cc:411
 msgid "Error during write.  Config may be incomplete."
-msgstr ""
+msgstr "Erreur lord de l'écriture. La configuration risque d'être incomplète."
 
 #: src/configfile.cc:329
 msgid "App name must have no spaces."
-msgstr ""
+msgstr "Le nom d'une application ne peut pas contenir d'espace."
 
 #: src/configfile.cc:420 src/configfile.cc:433
 msgid "Cannot use SetKey() without specifying an appname in the constructor."
 msgstr ""
+"Impossible d'utiliser SetKey() dans spécifier de nom d'application dans le "
+"constructeur."
 
 #: src/configfile.cc:423
 msgid "SetKey values may not contain newline characters."
-msgstr ""
+msgstr "Les valeurs de SetKey ne peuvent pas contenir de saut de ligne."
 
 #: src/configfileunix.cc:91 src/configfileunix.cc:151
 msgid "BuildFilename: getpwuid failed"
-msgstr ""
+msgstr "BuildFilename : échec de getpwuid"
 
 #: src/configfileunix.cc:116 src/configfilewin32.cc:118
 msgid "ConfigFile::CheckPath(): path is empty!"
-msgstr ""
+msgstr "ConfigFile::CheckPath(): le chemin est vide !"
 
 #: src/configfileunix.cc:130
 msgid "mkdir() failed to create: "
-msgstr ""
+msgstr "mkdir() n'a pas réussi à créer :"
 
 #: src/configfileunix.cc:139
 msgid "last mkdir() failed to create: "
-msgstr ""
+msgstr "Le dernier mkdir() a échoué à créer :"
 
 #: src/configfilewin32.cc:84 src/configfilewin32.cc:163
 msgid "BuildFilename: SHGetSpecialFolderPath failed"
-msgstr ""
+msgstr "BuildFilename : SHGetSpecialFolderPath a échoué"
 
 #: src/configfilewin32.cc:87 src/configfilewin32.cc:104
 #: src/configfilewin32.cc:166
 msgid "BuildFilename: conversion failed"
-msgstr ""
+msgstr "BuildFilename : échec de la conversion"
 
 #: src/configfilewin32.cc:101
 msgid "BuildDefaultPath: SHGetSpecialFolderPath failed"
-msgstr ""
+msgstr "BuildDefaultPath : SHGetSpecialFolderPath a échoué"
 
 #: src/configfilewin32.cc:125
 msgid "Failed to convert to widechar"
-msgstr ""
+msgstr "La conversion en widechar a échoué"
 
 #: src/configfilewin32.cc:148
 msgid "failed to create directory"
-msgstr ""
+msgstr "La création du répertoire a échoué"
 
 #: src/connector.cc:185
 msgid "Timeout in Connector::Reconnect()... trying again"
-msgstr ""
+msgstr "Délai dépassé dans Connector::Reconnect()... Nouvelle tentative"
 
 #: src/controller.cc:52
 msgid "Controller: Using non-threaded sockets"
-msgstr ""
+msgstr "Controller : utilisation de sockets non threadées"
 
 #: src/controller.cc:73
 msgid "Controller: Using threaded socket router"
-msgstr ""
+msgstr "Controller : utilisation d'un routeur de socket threadé"
 
 #: src/controller.cc:86
 msgid "Controller: GetConfiguration failed"
-msgstr ""
+msgstr "Controller : échec de GetConfiguration"
 
 #: src/controller.cc:91
 msgid "Controller: SetConfiguration failed"
-msgstr ""
+msgstr "Controller : échec de SetConfiguration"
 
 #: src/controller.cc:146
 msgid "Controller: explicit mode name too long"
-msgstr ""
+msgstr "Controller : nom de mode explicite trop long"
 
 #: src/controller.cc:179
 msgid "Controller: No channel name given with RawChannel mode"
-msgstr ""
+msgstr "Controller : aucun nom de canal donné pour le mode RawChannel"
 
 #: src/controller.cc:183
 msgid "Controller: Invalid mode in SelectMode"
-msgstr ""
+msgstr "Controller : mode invalide dans SelectMode"
 
 #: src/controller.cc:200
 msgid "Controller: requested mode not supported"
-msgstr ""
+msgstr "Controller : le mode demandé n'est pas supporté"
 
 #: src/controller.cc:204
 msgid "Controller: mode not selected"
-msgstr ""
+msgstr "Controller : pas de mode choisi"
 
 #: src/controller.cc:211
 msgid "Controller: error setting desktop mode"
-msgstr ""
+msgstr "Controller : erreur lors de la définition du mode desktop"
 
 #: src/data.cc:293
 msgid "Data::ReleaseBuffer() argument must be -1 or >= 0"
-msgstr ""
+msgstr "L'argument de Data::ReleaseBuffer() doit être -1 ou >= 0"
 
 #: src/data.cc:295
 msgid "Data::ReleaseBuffer() must be called after GetBuffer()"
-msgstr ""
+msgstr "Data::ReleaseBuffer() doit être appelé après GetBuffer()"
 
 #: src/data.cc:297
 msgid ""
 "Data::ReleaseBuffer() must be called with a size smaller than the original "
 "buffer requested"
 msgstr ""
+"Data::ReleaseBuffer() doit être appelé avec une taille plus petite que celle "
+"demandée pour le tampon original"
 
 #: src/data.cc:489
 msgid "sizes differ: "
-msgstr ""
+msgstr "Les tailles sont différentes :"
 
 #: src/dp_codinfo.cc:171 src/m_jvmdebug.cc:89
 msgid "  UniqueID  "
-msgstr ""
+msgstr "  UniqueID  "
 
 #: src/dp_codinfo.cc:172
 msgid "        Module Name       "
-msgstr ""
+msgstr "        Nom de Module       "
 
 #: src/dp_codinfo.cc:173
 msgid "         File Name        "
-msgstr ""
+msgstr "         Nom de Fichier        "
 
 #: src/error.cc:58
 msgid "Bad packet size, not enough data: "
-msgstr ""
+msgstr "Mauvaise taille de paquet, pas assez de données :"
 
 #: src/error.cc:59 src/error.cc:68
 msgid "DataSize(): "
-msgstr ""
+msgstr "DataSize() :"
 
 #: src/error.cc:60 src/error.cc:69
 msgid "Required size: "
-msgstr ""
+msgstr "Taille requise :"
 
 #: src/error.cc:67
 msgid "Bad packet size. Packet: "
-msgstr ""
+msgstr "Mauvaise taille de paquet. Paquet :"
 
 #: src/fifoargs.cc:105
 msgid "Cannot open Barry argument fifo"
-msgstr ""
+msgstr "Impossible d'ouvrir la fifo passée en argument de Barry"
 
 #: src/j_jdwp.cc:94
 msgid "Timeout in read"
-msgstr ""
+msgstr "Délai dépassé dans read"
 
 #: src/j_jdwp.cc:96
 msgid "Error in read"
-msgstr ""
+msgstr "Erreur dans read"
 
 #: src/j_jdwp.cc:117
 msgid "Timeout in write (1)"
-msgstr ""
+msgstr "Délai dépassé dans write (1)"
 
 #: src/j_jdwp.cc:119
 msgid "Error in write (1)"
-msgstr ""
+msgstr "Erreur dans write (1)"
 
 #: src/j_jdwp.cc:137
 msgid "Timeout in write (2)"
-msgstr ""
+msgstr "Délai dépassé dans write (2)"
 
 #: src/j_jdwp.cc:139
 msgid "Error in write (2)"
-msgstr ""
+msgstr "Erreur dans write (2)"
 
 #: src/j_server.cc:91
 msgid "HOST_NOT_FOUND: The specified host is unknown"
-msgstr ""
+msgstr "HOST_NOT_FOUND : l'hôte spécifié est inconnu"
 
 #: src/j_server.cc:94
 msgid "NO_ADDRESS: The requested name is valid but does not have an IP address"
-msgstr ""
+msgstr "NO_ADDRESS : le nom requis est valide, mais n'a pas d'adresse IP"
 
 #: src/j_server.cc:97
 msgid "NO_RECOVERY: A non-recoverable name server error occurred"
 msgstr ""
+"NO_RECOVERY : une erreur no récupérable, de serveur de nom est survenue"
 
 #: src/j_server.cc:100
 msgid ""
 "TRY_AGAIN: A temporary error occurred on an authoritative name server. Try "
 "again later."
 msgstr ""
+"TRY_AGAIN : une erreur temporaire est survenue avec un serveur de nom "
+"faisant autorité. Réessayer plus tard."
 
 #: src/j_server.cc:103
 msgid "Unknown network error code"
-msgstr ""
+msgstr "Erreur réseau de code inconnu."
 
 #: src/j_server.cc:142
 msgid "JDWServer::Start: Cannot open socket."
-msgstr ""
+msgstr "JDWServer::Start : Impossible d'ouvrir la socket."
 
 #: src/j_server.cc:154
 msgid "JDWServer::Start: Cannot bind socket"
-msgstr ""
+msgstr "JDWServer::Start : Impossible d'associer la socket."
 
 #: src/j_server.cc:164
 msgid "JDWServer::Start: Cannot listen on socket"
-msgstr ""
+msgstr "JDWServer::Start : Impossible d'écouter sur la socket."
 
 #: src/j_server.cc:237
 msgid "No debug information found for: "
-msgstr ""
+msgstr "Aucune information de débogage trouvée pour :"
 
 #: src/j_server.cc:321 src/j_server.cc:350
 msgid "Packet size error !!!"
-msgstr ""
+msgstr "Taille de paquet erronée !!!"
 
 #: src/j_server.cc:491
 msgid "Commandset unknown !!!"
-msgstr ""
+msgstr "Ensemble de commandes inconnu !!!"
 
 #: src/ldif.cc:39
 msgid "Email address"
-msgstr ""
+msgstr "Adresse électronique"
 
 #: src/ldif.cc:41 src/r_calllog.cc:84
 msgid "Phone number"
-msgstr ""
+msgstr "Numéro de téléphone"
 
 #: src/ldif.cc:43
 msgid "Fax number"
-msgstr ""
+msgstr "Numéro de fax"
 
 #: src/ldif.cc:45
 msgid "Work phone number"
-msgstr ""
+msgstr "Numéro de téléphone professionnel"
 
 #: src/ldif.cc:47
 msgid "Home phone number"
-msgstr ""
+msgstr "Numéro de téléphone du domicile"
 
 #: src/ldif.cc:49
 msgid "Mobile phone number"
-msgstr ""
+msgstr "Numéro de téléphone mobile"
 
 #: src/ldif.cc:51
 msgid "Pager number"
-msgstr ""
+msgstr "Numéro de pager"
 
 #: src/ldif.cc:53 src/r_contact.cc:118 src/r_contact.cc:503
 #: src/r_hhagent.cc:69 src/r_hhagent.cc:105 src/r_hhagent.cc:290
 msgid "PIN"
-msgstr ""
+msgstr "PIN"
 
 #: src/ldif.cc:55
 msgid "First name"
-msgstr ""
+msgstr "Prénom"
 
 #: src/ldif.cc:57
 msgid "Last name"
-msgstr ""
+msgstr "Nom de famille"
 
 #: src/ldif.cc:59
 msgid "Company name"
-msgstr ""
+msgstr "Nom de société"
 
 #: src/ldif.cc:61
 msgid "Default communications method"
-msgstr ""
+msgstr "Méthode de communication par défaut"
 
 #: src/ldif.cc:63
 msgid "Work Address, line 1"
-msgstr ""
+msgstr "Adresse professionnelle, ligne 1"
 
 #: src/ldif.cc:65
 msgid "Work Address, line 2"
-msgstr ""
+msgstr "Adresse professionnelle, ligne 2"
 
 #: src/ldif.cc:67
 msgid "Work Address, line 3"
-msgstr ""
+msgstr "Adresse professionnelle, ligne 3"
 
 #: src/ldif.cc:69 src/r_contact.cc:128
 msgid "WorkCity"
-msgstr ""
+msgstr "Ville du lieu de travail"
 
 #: src/ldif.cc:71
 msgid "WorkProvince / State"
-msgstr ""
+msgstr "Département / état du lieu de travail"
 
 #: src/ldif.cc:73
 msgid "Work Postal / ZIP code"
-msgstr ""
+msgstr "Code postal / ZIP du lieu de travail"
 
 #: src/ldif.cc:75 src/r_contact.cc:131
 msgid "WorkCountry"
-msgstr ""
+msgstr "Pays du lieu de travail"
 
 #: src/ldif.cc:77 src/r_contact.cc:487
 msgid "Job Title"
-msgstr ""
+msgstr "Titre professionnel"
 
 #: src/ldif.cc:79
 msgid "Public key"
-msgstr ""
+msgstr "Clef publique"
 
 #: src/ldif.cc:81 src/r_calendar.cc:107 src/r_calendar.cc:434
 #: src/r_contact.cc:139 src/r_contact.cc:509 src/r_task.cc:108
 #: src/r_task.cc:399
 msgid "Notes"
-msgstr ""
+msgstr "Notes"
 
 #: src/ldif.cc:83
 msgid "Contact photo"
-msgstr ""
+msgstr "Photo du contact"
 
 #: src/ldif.cc:85
 msgid ""
 "Mailing Work address (includes address lines, city, province, country, and "
 "postal code)"
 msgstr ""
+"Adresse postale professionnelle (inclue les lignes d'adresse, la ville, le "
+"département, le pays et le code postal)"
 
 #: src/ldif.cc:87
 msgid ""
 "Mailing home address (includes address lines, city, province, country, and "
 "postal code)"
 msgstr ""
+"Adresse postale personnelle (inclue les lignes d'adresse, la ville, le "
+"département, le pays et le code postal)"
 
 #: src/ldif.cc:89
 msgid "First + Last names"
-msgstr ""
+msgstr "Prénom + Nom"
 
 #: src/ldif.cc:91
 msgid "Fully qualified domain name"
-msgstr ""
+msgstr "Nom de domaine pleinement qualifié"
 
 #: src/ldif.cc:213 src/ldif.cc:222
 msgid "<unknown>"
-msgstr ""
+msgstr "<inconnu>"
 
 #: src/ldif.cc:437 src/r_calllog.cc:338 src/r_message_base.cc:391
 msgid "unknown"
-msgstr ""
+msgstr "inconnu"
 
 #: src/ldif.cc:782
 msgid "ContactLdif Mapping:\n"
-msgstr ""
+msgstr "Correspondance ContactLdif :\n"
 
 #: src/ldif.cc:801
 msgid "   >>> DN attribute: "
-msgstr ""
+msgstr "   >>> Attribut DN : "
 
 #: src/m_desktop.cc:89
 msgid "Desktop: error getting command table"
-msgstr ""
+msgstr "Desktop : échec lors de la récupération de la table des commandes"
 
 #: src/m_desktop.cc:139
 msgid "Desktop: database name not found: "
-msgstr ""
+msgstr "Desktop : nom de base de données non trouvé :"
 
 #: src/m_desktop.cc:162
 msgid "Desktop: unknown command type"
-msgstr ""
+msgstr "Desktop : type de commande inconnu"
 
 #: src/m_desktop.cc:167
 msgid "Desktop: unable to get command code: "
-msgstr ""
+msgstr "Desktop : impossible d'obtenir le code de commande :"
 
 #: src/m_desktop.cc:188 src/m_desktop.cc:214 src/m_desktop.cc:251
 #: src/m_desktop.cc:301 src/m_desktop.cc:336 src/m_desktop.cc:355
 #: src/m_desktop.cc:406 src/m_desktop.cc:431 src/m_desktop.cc:440
 #: src/m_desktop.cc:490
 msgid "Database ID: "
-msgstr ""
+msgstr "ID de base de donnée :"
 
 #: src/m_desktop.cc:226 src/m_desktop.cc:316 src/m_desktop.cc:448
 msgid "Desktop: device responded with unexpected packet command code: "
 msgstr ""
+"Desktop : le périphérique a répondu avec un code de commande de paquet "
+"inattendu :"
 
 #: src/m_desktop.cc:232 src/m_desktop.cc:322 src/m_desktop.cc:454
 msgid "Desktop: device responded with error code (command: "
-msgstr ""
+msgstr "Desktop : le périphérique a répondu avec le code d'erreur (commande :"
 
 #: src/m_desktop.cc:233 src/m_desktop.cc:323 src/m_desktop.cc:417
 #: src/m_desktop.cc:455
 msgid "code: "
-msgstr ""
+msgstr "code :"
 
 #: src/m_desktop.cc:266
 msgid "Desktop: invalid response packet size of: "
-msgstr ""
+msgstr "Desktop : taille de paquet invalide de :"
 
 #: src/m_desktop.cc:275
 msgid "Desktop: unexpected command of "
-msgstr ""
+msgstr "Desktop : commande inattendue de :"
 
 #: src/m_desktop.cc:277
 msgid " instead of expected "
-msgstr ""
+msgstr " au lieu de "
 
 #: src/m_desktop.cc:301
 msgid "Index: "
-msgstr ""
+msgstr "Index :"
 
 #: src/m_desktop.cc:307
 msgid "Desktop: no data available in SetRecord"
-msgstr ""
+msgstr "Desktop : Pas de données dans SetRecord"
 
 #: src/m_desktop.cc:415
 msgid "Desktop: could not clear database: (command: "
 msgstr ""
+"Desktop : Impossible de réinitialiser la base de données : (commande : "
 
 #: src/m_desktop.cc:425
 msgid "Desktop: error clearing database, bad response"
 msgstr ""
+"Desktop : erreur lors de la réinitialisation de la base de données, réponse "
+"incorrecte"
 
 #: src/m_desktop.cc:670
 msgid "This database does not exist in device: "
-msgstr ""
+msgstr "Cette base de données n'existe pas sur le périphérique : "
 
 #: src/m_desktop.cc:670
 msgid "Dropping record."
-msgstr ""
+msgstr "Enregistrement ignoré."
 
 #: src/m_desktop.cc:700 src/m_desktop.cc:757
 msgid "DeviceParser: unknown mode"
-msgstr ""
+msgstr "DeviceParser : mode inconnu"
 
 #: src/m_ipmodem.cc:60
 msgid "Exception caught in IpModem destructor, ignoring: "
-msgstr ""
+msgstr "Exception attrapée dans le destructeur d'IpModem, ignorée : "
 
 #: src/m_ipmodem.cc:68
 msgid "Logic error: No password provided in SendPassword."
-msgstr ""
+msgstr "Erreur de logique : Pas de mot de passe fourni dans SendPassword."
 
 #: src/m_ipmodem.cc:80
 msgid "No password provided."
-msgstr ""
+msgstr "Pas de mot de passe fourni."
 
 #: src/m_ipmodem.cc:149 src/socket.cc:481
 msgid "Password rejected by device."
-msgstr ""
+msgstr "Mot de passe refusé par le périphérique."
 
 #: src/m_ipmodem.cc:198
 msgid "Exception in IpModem::DataReadThread: "
-msgstr ""
+msgstr "Exception dans IpModem::DataReadThread : "
 
 #: src/m_ipmodem.cc:220
 msgid "IP Modem not supported by this device: "
-msgstr ""
+msgstr "Modem IP non supporté par ce périphérique : "
 
 #: src/m_ipmodem.cc:260 src/socket.cc:467
 #, c-format
@@ -616,246 +649,250 @@ msgid ""
 "Fewer than %d password tries remaining in device. Refusing to proceed, to "
 "avoid device zapping itself.  Use a Windows client, or re-cradle the device."
 msgstr ""
+"Moins de %d tentatives de mot de passe restantes avec ce périphérique. On "
+"refuse de continuer, pour éviter que le device ne se petit-suicide. Utilisez "
+"un client windows ou "
 
 #: src/m_ipmodem.cc:267 src/m_ipmodem.cc:293 src/m_ipmodem.cc:332
 msgid "IpModem: Error sending password."
-msgstr ""
+msgstr "IpModem : erreur à l'envoi du mot de passe."
 
 #: src/m_ipmodem.cc:326
 msgid "This device requested a password."
-msgstr ""
+msgstr "Ce périphérique a demandé un mot de passe."
 
 #: src/m_ipmodem.cc:340
 msgid "This device requires a password."
-msgstr ""
+msgstr "Ce périphérique nécessite un mot de passe"
 
 #: src/m_ipmodem.cc:360
 msgid "IpModem: Error creating USB read thread."
-msgstr ""
+msgstr "IpModem : erreur lors de la création du thread de lecture"
 
 #: src/m_javaloader.cc:242
 msgid "JLEventlogEntry:Parse bad guid field"
-msgstr ""
+msgstr "JLEventlogEntry : décodage, mauvais champ guid"
 
 #: src/m_javaloader.cc:247
 msgid "JLEventlogEntry:Parse bad time field"
-msgstr ""
+msgstr "JLEventlogEntry : décodage, mauvais champ time"
 
 #: src/m_javaloader.cc:254
 msgid "JLEventlogEntry:Parse bad severity field"
-msgstr ""
+msgstr "JLEventlogEntry : décodage, mauvais champ severity"
 
 #: src/m_javaloader.cc:261
 msgid "JLEventlogEntry:Parse bad type field"
-msgstr ""
+msgstr "JLEventlogEntry : décodage, mauvais champ type"
 
 #: src/m_javaloader.cc:266
 msgid "JLEventlogEntry:Parse bad app field"
-msgstr ""
+msgstr "JLEventlogEntry : décodage, mauvais champ app"
 
 #: src/m_javaloader.cc:274
 msgid "JLEventlogEntry:Parse bad data field"
-msgstr ""
+msgstr "JLEventlogEntry : décodage, mauvais champ data"
 
 #: src/m_javaloader.cc:301
 msgid "Always Log"
-msgstr ""
+msgstr "Toujours afficher la sortie"
 
 #: src/m_javaloader.cc:302
 msgid "Severe Error"
-msgstr ""
+msgstr "Erreur sévère"
 
 #: src/m_javaloader.cc:303 src/r_calllog.cc:266
 msgid "Error"
-msgstr ""
+msgstr "Erreur"
 
 #: src/m_javaloader.cc:304
 msgid "Warning"
-msgstr ""
+msgstr "avertissement"
 
 #: src/m_javaloader.cc:305
 msgid "Information"
-msgstr ""
+msgstr "Information"
 
 #: src/m_javaloader.cc:306
 msgid "Debug Info"
-msgstr ""
+msgstr "Information de débogage"
 
 #: src/m_javaloader.cc:310
 msgid "Number"
-msgstr ""
+msgstr "Nombre"
 
 #: src/m_javaloader.cc:311
 msgid "String"
-msgstr ""
+msgstr "Chaîne"
 
 #: src/m_javaloader.cc:312
 msgid "Exception"
-msgstr ""
+msgstr "Exception"
 
 #: src/m_javaloader.cc:315
 msgid "guid:"
-msgstr ""
+msgstr "guid : "
 
 #: src/m_javaloader.cc:316
 msgid " time:"
-msgstr ""
+msgstr " moment : "
 
 #: src/m_javaloader.cc:317
 msgid " severity:"
-msgstr ""
+msgstr " sévérité : "
 
 #: src/m_javaloader.cc:318
 msgid " type:"
-msgstr ""
+msgstr " type : "
 
 #: src/m_javaloader.cc:319
 msgid " app:"
-msgstr ""
+msgstr " application : "
 
 #: src/m_javaloader.cc:320
 msgid " data:"
-msgstr ""
+msgstr " données : "
 
 #: src/m_javaloader.cc:331
 msgid "Hardware Id:"
-msgstr ""
+msgstr "Id de matériel : "
 
 #: src/m_javaloader.cc:334
 msgid "PIN:"
-msgstr ""
+msgstr "PIN : "
 
 #: src/m_javaloader.cc:337
 msgid "OS Version:"
-msgstr ""
+msgstr "Version de SE : "
 
 #: src/m_javaloader.cc:340
 msgid "VM Version:"
-msgstr ""
+msgstr "Version de VM : "
 
 #: src/m_javaloader.cc:343
 msgid "Radio ID:"
-msgstr ""
+msgstr "ID Radio : "
 
 #: src/m_javaloader.cc:346
 msgid "Vendor ID:"
-msgstr ""
+msgstr "ID de vendeur : "
 
 #: src/m_javaloader.cc:350
 msgid "Active Wireless Access Families:"
-msgstr ""
+msgstr "Familles d'accès sans fil actives : "
 
 #: src/m_javaloader.cc:353
 msgid "OS Metrics:"
-msgstr ""
+msgstr "Métriques du SE : "
 
 #: src/m_javaloader.cc:356
 msgid "Bootrom Metrics:"
-msgstr ""
+msgstr "Métriques du bootrom : "
 
 #: src/m_javaloader.cc:409
 msgid "JavaLoader::StartStream Hello"
-msgstr ""
+msgstr "JavaLoader::StartStream bonjour"
 
 #: src/m_javaloader.cc:416
 msgid "JavaLoader::StartStream Unknown1"
-msgstr ""
+msgstr "JavaLoader::StartStream inconnu1"
 
 #: src/m_javaloader.cc:467
 msgid "JavaLoader::SendStream: set code size first"
-msgstr ""
+msgstr "JavaLoader::SendStream : définir la taille du code en premier"
 
 #: src/m_javaloader.cc:475
 msgid "JavaLoader::SendStream: input stream read failed"
-msgstr ""
+msgstr "JavaLoader::SendStream : erreur à la lecture du flux d'entrée"
 
 #: src/m_javaloader.cc:482
 msgid "JavaLoader::SendStream: not enough memory to install the application"
 msgstr ""
+"JavaLoader::SendStream : plus assez de mémoire pour installer l'application"
 
 #: src/m_javaloader.cc:486
 msgid "JavaLoader::SendStream: send data"
-msgstr ""
+msgstr "JavaLoader::SendStream : envoi de données"
 
 #: src/m_javaloader.cc:538
 msgid "JavaLoader::StopStream error"
-msgstr ""
+msgstr "JavaLoader::StopStream erreur"
 
 #: src/m_javaloader.cc:552
 msgid "JavaLoader::SetTime error"
-msgstr ""
+msgstr "JavaLoader::SetTime erreur"
 
 #: src/m_javaloader.cc:559 src/m_jvmdebug.cc:260
 msgid "unexpected packet command code: "
-msgstr ""
+msgstr "Code de commande de paquet inattendu : "
 
 #: src/m_javaloader.cc:723
 msgid "JavaLoader::GetScreenShot expect"
-msgstr ""
+msgstr "JavaLoader::GetScreenShot attend"
 
 #: src/m_javaloader.cc:746
 msgid "JavaLoader::DoErase: module not found: "
-msgstr ""
+msgstr "JavaLoader::DoErase : module non trouvé : "
 
 #: src/m_javaloader.cc:754
 msgid "JavaLoader::DoErase: expected code ID not available"
-msgstr ""
+msgstr "JavaLoader::DoErase : ID du code attendue non disponible"
 
 #: src/m_javaloader.cc:766
 msgid "JavaLoader::DoErase: COD file in use."
-msgstr ""
+msgstr "JavaLoader::DoErase : fichier COD en cours d'utilisation."
 
 #: src/m_javaloader.cc:898
 msgid "JavaLoader::Save: module not found: "
-msgstr ""
+msgstr "JavaLoader::Save : module non trouvé : "
 
 #: src/m_javaloader.cc:907
 msgid "JavaLoader::Save: expected module ID, but not available"
-msgstr ""
+msgstr "JavaLoader::Save : ID de module attendu, mais non disponbile"
 
 #: src/m_jvmdebug.cc:88
 msgid "     ID     "
-msgstr ""
+msgstr "     ID     "
 
 #: src/m_jvmdebug.cc:90
 msgid " Module Name"
-msgstr ""
+msgstr " Nom de Module"
 
 #: src/m_jvmdebug.cc:152
 msgid "  Thread  "
-msgstr ""
+msgstr "  Thread  "
 
 #: src/m_jvmdebug.cc:153
 msgid "  Address   "
-msgstr ""
+msgstr "  Adresse   "
 
 #: src/m_jvmdebug.cc:154
 msgid " Byte "
-msgstr ""
+msgstr " Octet "
 
 #: src/m_jvmdebug.cc:155
 msgid " Unknown01  "
-msgstr ""
+msgstr " Inconnu01  "
 
 #: src/m_jvmdebug.cc:156
 msgid " Unknown02  "
-msgstr ""
+msgstr " Inconnu02  "
 
 #: src/m_jvmdebug.cc:157
 msgid " Unknown03  "
-msgstr ""
+msgstr " Inconnu03  "
 
 #: src/m_jvmdebug.cc:158
 msgid " Unknown04  "
-msgstr ""
+msgstr " Inconnu04  "
 
 #: src/m_jvmdebug.cc:159
 msgid " Unknown05  "
-msgstr ""
+msgstr " Inconnu05  "
 
 #: src/m_jvmdebug.cc:160
 msgid " Unknown06  "
-msgstr ""
+msgstr " Inconnu06  "
 
 #: src/m_jvmdebug.cc:291 src/m_jvmdebug.cc:321 src/m_jvmdebug.cc:351
 #: src/m_jvmdebug.cc:381 src/m_jvmdebug.cc:411 src/m_jvmdebug.cc:441
@@ -866,295 +903,305 @@ msgstr ""
 #: src/m_jvmdebug.cc:931 src/m_jvmdebug.cc:959 src/m_jvmdebug.cc:1001
 #: src/m_jvmdebug.cc:1034
 msgid "byte count mismatch"
-msgstr ""
+msgstr "nombre d'octets incohérent"
 
 #: src/m_mode_base.cc:142
 msgid "Socket alreay open in RetryPassword"
-msgstr ""
+msgstr "Socket déjà ouverte dans RetryPasswort"
 
 #: src/m_raw_channel.cc:116
 msgid "RawChannel: No routing queue set in controller"
-msgstr ""
+msgstr "RawChannel : pas de file de routage définie dans le contrôleur"
 
 #: src/m_raw_channel.cc:165
 msgid "RawChannel: Got packet not for socket-zero"
-msgstr ""
+msgstr "RawChannel : non-paquet obtenu pour la socket zéro"
 
 #: src/m_raw_channel.cc:183 src/m_raw_channel.cc:186
 msgid "RawChannel: Got unexpected socket zero packet"
-msgstr ""
+msgstr "RawChannel : paquet inattendu pour la socket zéro"
 
 #: src/m_raw_channel.cc:205
 msgid "RawChannel: Received data to handle when in non-callback mode"
-msgstr ""
+msgstr "RawChannel : données à traiter reçues sans être en mode callback"
 
 #: src/m_raw_channel.cc:212
 msgid "RawChannel: Socket error received, what: "
-msgstr ""
+msgstr "RawChannel : reçu une erreur de socket : "
 
 #: src/m_raw_channel.cc:245
 msgid "RawChannel: send data size larger than MaximumPacketSize"
-msgstr ""
+msgstr "RawChannel : envoi de données de taille supérieure à MaximumPacketSize"
 
 #: src/m_raw_channel.cc:268
 msgid "RawChannel: Receive called when channel was created with a callback"
 msgstr ""
+"RawChannel : Receive a été appelée alors que le canal a été créé avec une "
+"callback"
 
 #: src/m_raw_channel.cc:293
 msgid "RawChannel: Data size doesn't match packet size"
 msgstr ""
+"RawChannel : la taille des données ne correspond pas à la taille du paquet"
 
 #: src/m_serial.cc:45
 msgid ""
 "A SocketRoutingQueue is required in the Controller class when using Mode::"
 "Serial."
 msgstr ""
+"Une SocketRoutingQueue est requise dans la classe Controller en Mode::Serial."
 
 #: src/m_serial.cc:156
 msgid "Must call Open() before Write() in Mode::Serial"
-msgstr ""
+msgstr "Appeler Open() avant Write() en Mode::Serial"
 
 #: src/packet.cc:465
 msgid "Attempting to extract a return code from the wrong response packet type"
 msgstr ""
+"Tentative d'extraire un code de retour depuis un type de paquet réponse "
+"invalide"
 
 #: src/parser.cc:62
 msgid "Records for database: "
-msgstr ""
+msgstr "Enregistrements pour la base de données : "
 
 #: src/parser.cc:66 tools/bfuse.cc:128
 msgid "Raw record dump for record: "
-msgstr ""
+msgstr "Données brutes de l'enregistrement : "
 
 #: src/parser.cc:68
 msgid "type: "
-msgstr ""
+msgstr "type : "
 
 #: src/parser.cc:70
 msgid "offset: "
-msgstr ""
+msgstr "offset : "
 
 #: src/probe.cc:95
 msgid "Probe: Parse data failure: "
-msgstr ""
+msgstr "Probe : échec de l'interprétation des données : "
 
 #: src/probe.cc:172
 #, c-format
 msgid "Probe logged %u exception messages:"
-msgstr ""
+msgstr "Probe a enregistré %u messages d'exception :"
 
 #: src/probe.cc:195
 msgid "Usb::Error exception caught: "
-msgstr ""
+msgstr "Exception Usb::Erreur attrapée : "
 
 #: src/probe.cc:224
 msgid "Probe: No device descriptor for BlackBerry config (config id: "
 msgstr ""
+"Probe : pas de descripteur de périphérique pour la configuration BlackBerry "
+"(id de configuration : "
 
 #: src/probe.cc:236
 #, c-format
 msgid "Probe: Interface with BLACKBERRY_DB_CLASS (%u) not found."
-msgstr ""
+msgstr "Probe : pas d'interface de classe BLACKBERRY_DB_CLASS (%u) trouvée."
 
 #: src/probe.cc:248
 msgid "Probe: endpoint invalid."
-msgstr ""
+msgstr "Probe : endpoint invalide."
 
 #: src/probe.cc:250
 msgid "true"
-msgstr ""
+msgstr "vrai"
 
 #: src/probe.cc:250
 msgid "false"
-msgstr ""
+msgstr "faux"
 
 #: src/probe.cc:271
 msgid "Probe: GetConfiguration failed"
-msgstr ""
+msgstr "Probe : échec de GetConfiguration"
 
 #: src/probe.cc:275
 msgid "Probe: SetConfiguration failed"
-msgstr ""
+msgstr "Probe : échec de SetConfiguration"
 
 #: src/probe.cc:293
 msgid ""
 "Probe: probing endpoints failed, retrying after setting alternate interface"
 msgstr ""
+"Probe : recherche d'endpoints infructueuse, nouvelle tentative sur "
+"l'interface alternative"
 
 #: src/probe.cc:318
 msgid "Unable to discover endpoint pair for one device."
-msgstr ""
+msgstr "Pas de paire de endpoints trouve pour un périphérique."
 
 #: src/probe.cc:366
 msgid "Probe: Skipping non-bulk endpoint pair (offset: "
-msgstr ""
+msgstr "Probe : paire de endpoints non-bulk ignorée (offset : "
 
 #: src/probe.cc:418
 msgid "Probe: Intro(0) failed, retrying after clearing halt"
-msgstr ""
+msgstr "Détection : Intro(0) a échoué, nouvelle tentative après clear halt"
 
 #: src/probe.cc:426
 msgid "Probe: Intro(0) still failed after clearing halt"
-msgstr ""
+msgstr "Probe : Intro(0) a échoué, malgré un clear halt"
 
 #: src/probe.cc:448
 msgid "Probe: unable to fetch PIN"
-msgstr ""
+msgstr "Probe : impossible de récupérer le PIN"
 
 #: src/probe.cc:460
 msgid "Probe: unable to fetch description"
-msgstr ""
+msgstr "Probe : impossible de récupérer la description"
 
 #: src/probe.cc:567
 msgid "Device ID: "
-msgstr ""
+msgstr "ID du périphérique : "
 
 #: src/probe.cc:568
 msgid "PIN: "
-msgstr ""
+msgstr "PIN : "
 
 #: src/probe.cc:569
 msgid "Description: "
-msgstr ""
+msgstr "Description : "
 
 #: src/probe.cc:571
 msgid "Name: "
-msgstr ""
+msgstr "Nom : "
 
 #: src/r_bookmark.cc:275
 msgid "Bookmark::ParseField: BookmarkType is not 'D'"
-msgstr ""
+msgstr "Bookmark::ParseField : le BookmarkType n'est pas 'D'"
 
 #: src/r_bookmark.cc:325 src/r_bookmark.cc:331 src/r_bookmark.cc:337
 #: src/r_bookmark.cc:418 src/r_bookmark.cc:424
 msgid "Automatic"
-msgstr ""
+msgstr "Automatique"
 
 #: src/r_bookmark.cc:326 src/r_bookmark.cc:332 src/r_bookmark.cc:425
 msgid "Enabled"
-msgstr ""
+msgstr "Activé"
 
 #: src/r_bookmark.cc:327 src/r_bookmark.cc:333 src/r_bookmark.cc:426
 msgid "Disabled"
-msgstr ""
+msgstr "Désactivé"
 
 #: src/r_bookmark.cc:328 src/r_bookmark.cc:334 src/r_bookmark.cc:341
 #: src/r_bookmark.cc:421 src/r_bookmark.cc:427 src/r_calllog.cc:276
 #: src/r_calllog.cc:404 src/r_folder.cc:265 src/r_message_base.cc:361
 #: src/r_message_base.cc:368 src/r_sms.cc:283
 msgid "Unknown"
-msgstr ""
+msgstr "Inconnu"
 
 #: src/r_bookmark.cc:338
 msgid "BlackBerry"
-msgstr ""
+msgstr "BlackBerry"
 
 #: src/r_bookmark.cc:339
 msgid "FireFox"
-msgstr ""
+msgstr "FireFox"
 
 #: src/r_bookmark.cc:340
 msgid "Internet Explorer"
-msgstr ""
+msgstr "Internet Explorer"
 
 #: src/r_bookmark.cc:344
 msgid "Bookmark entry: "
-msgstr ""
+msgstr "Entrée de marque-page : "
 
 #: src/r_bookmark.cc:346
 msgid "index "
-msgstr ""
+msgstr "index "
 
 #: src/r_bookmark.cc:349
 msgid "                    Name: "
-msgstr ""
+msgstr "                     Nom : "
 
 #: src/r_bookmark.cc:351
 msgid "                    Icon: "
-msgstr ""
+msgstr "                   Icône : "
 
 #: src/r_bookmark.cc:353
 msgid "                     Url: "
-msgstr ""
+msgstr "                     Url : "
 
 #: src/r_bookmark.cc:354
 msgid "            Display mode: "
-msgstr ""
+msgstr "        Mode d'affichage : "
 
 #: src/r_bookmark.cc:356
 msgid "         JavaScript mode: "
-msgstr ""
+msgstr "         Mode JavaScript : "
 
 #: src/r_bookmark.cc:358
 msgid "   Browser Identity mode: "
-msgstr ""
+msgstr "   Nom du navigateur : "
 
 #: src/r_bookmark.cc:401
 msgid "Record Type"
-msgstr ""
+msgstr "Type d'enregistrement"
 
 #: src/r_bookmark.cc:402 src/r_calendar.cc:430 src/r_calllog.cc:380
 #: src/r_cstore.cc:229 src/r_folder.cc:210 src/r_hhagent.cc:284
 #: src/r_memo.cc:268 src/r_message_base.cc:334 src/r_servicebook.cc:447
 #: src/r_sms.cc:280 src/r_task.cc:396 src/r_timezone.cc:227
 msgid "Unique Record ID"
-msgstr ""
+msgstr "ID unique d'enregistrement"
 
 #: src/r_bookmark.cc:404
 msgid "Bookmark Field Index"
-msgstr ""
+msgstr "Indice de champ de marque-page"
 
 #: src/r_bookmark.cc:406
 msgid "Site Name"
-msgstr ""
+msgstr "Nom du site"
 
 #: src/r_bookmark.cc:407
 msgid "Site Icon"
-msgstr ""
+msgstr "Icône du site"
 
 #: src/r_bookmark.cc:408
 msgid "Site URL"
-msgstr ""
+msgstr "URL du site"
 
 #: src/r_bookmark.cc:410
 msgid "Browser Identity"
-msgstr ""
+msgstr "Identité du navigateur"
 
 #: src/r_bookmark.cc:411
 msgid "Auto detect browser"
-msgstr ""
+msgstr "Détecter le navigateur automatiquement"
 
 #: src/r_bookmark.cc:412
 msgid "BlackBerry browser"
-msgstr ""
+msgstr "Navigateur BlackBerry"
 
 #: src/r_bookmark.cc:413
 msgid "FireFox browser"
-msgstr ""
+msgstr "Navigateur FireFox"
 
 #: src/r_bookmark.cc:414
 msgid "Internet Explorer browser"
-msgstr ""
+msgstr "Navigateur Internet Explorer"
 
 #: src/r_bookmark.cc:415
 msgid "Unknown browser"
-msgstr ""
+msgstr "Navigateur inconnu"
 
 #: src/r_bookmark.cc:417
 msgid "Display Mode"
-msgstr ""
+msgstr "Mode d'affichage"
 
 #: src/r_bookmark.cc:419
 msgid "Column"
-msgstr ""
+msgstr "Colonne"
 
 #: src/r_bookmark.cc:420
 msgid "Page"
-msgstr ""
+msgstr "Page"
 
 #: src/r_bookmark.cc:423
 msgid "JavaScript Mode"
-msgstr ""
+msgstr "Mode JavaScript"
 
 #: src/r_bookmark.cc:429 src/r_calendar.cc:458 src/r_calllog.cc:412
 #: src/r_contact.cc:553 src/r_cstore.cc:236 src/r_folder.cc:231
@@ -1162,41 +1209,41 @@ msgstr ""
 #: src/r_servicebook.cc:462 src/r_sms.cc:312 src/r_task.cc:425
 #: src/r_timezone.cc:238
 msgid "Unknown Fields"
-msgstr ""
+msgstr "Champs inconnus"
 
 #: src/r_calendar.cc:106 src/r_calendar.cc:433 src/r_message_base.cc:86
 #: src/r_message_base.cc:342
 msgid "Subject"
-msgstr ""
+msgstr "Sujet"
 
 #: src/r_calendar.cc:108 src/r_calendar.cc:435
 msgid "Location"
-msgstr ""
+msgstr "Emplacement"
 
 #: src/r_calendar.cc:109
 msgid "Notification Time"
-msgstr ""
+msgstr "Date de notification"
 
 #: src/r_calendar.cc:110 src/r_calendar.cc:438 src/r_task.cc:109
 #: src/r_task.cc:403
 msgid "Start Time"
-msgstr ""
+msgstr "Date de début"
 
 #: src/r_calendar.cc:111 src/r_calendar.cc:439
 msgid "End Time"
-msgstr ""
+msgstr "Date de fin"
 
 #: src/r_calendar.cc:112 src/r_calendar.cc:440
 msgid "Organizer"
-msgstr ""
+msgstr "Organiseur"
 
 #: src/r_calendar.cc:113 src/r_calendar.cc:441
 msgid "Accepted By"
-msgstr ""
+msgstr "Accepté par"
 
 #: src/r_calendar.cc:114 src/r_calendar.cc:442
 msgid "Invited"
-msgstr ""
+msgstr "Invité"
 
 #: src/r_calendar.cc:115 src/r_calllog.cc:86 src/r_folder.cc:85
 #: src/r_hhagent.cc:71 src/r_hhagent.cc:76 src/r_hhagent.cc:81
@@ -1205,1653 +1252,1672 @@ msgstr ""
 #: src/r_servicebook.cc:254 src/r_servicebook.cc:261 src/r_servicebook.cc:270
 #: src/r_task.cc:112 src/r_timezone.cc:60
 msgid "End of List"
-msgstr ""
+msgstr "Fin de liste"
 
 #: src/r_calendar.cc:212
 msgid "Calendar::ParseField: unknown appointment type"
-msgstr ""
+msgstr "Calendar::ParseField : type de rendez-vous inconnu"
 
 #: src/r_calendar.cc:227
 msgid "Calendar::ParseField: not enough data in time zone code field"
 msgstr ""
+"Calendar::ParseField : pas assez de données dans le champ de code de zone de "
+"temps"
 
 #: src/r_calendar.cc:233
 msgid "Calendar::ParseField: FreeBusyFlag out of range"
-msgstr ""
+msgstr "Calendar::ParseField : FreeBusyFlag hors d'intervalle"
 
 #: src/r_calendar.cc:243
 msgid "Calendar::ParseField: size data unknown in calendar field"
 msgstr ""
+"Calendar::ParseField : donnée de taille inconnue dans le champ de calendrier"
 
 #: src/r_calendar.cc:249
 msgid "Calendar::ParseField: ClassFlag out of range"
-msgstr ""
+msgstr "Calendar::ParseField : ClassFlag hors d'intervalle"
 
 #: src/r_calendar.cc:429 src/r_calllog.cc:379 src/r_contact.cc:480
 #: src/r_cstore.cc:228 src/r_folder.cc:209 src/r_hhagent.cc:283
 #: src/r_memo.cc:267 src/r_message_base.cc:333 src/r_servicebook.cc:446
 #: src/r_sms.cc:279 src/r_task.cc:395 src/r_timezone.cc:226
 msgid "Record Type Code"
-msgstr ""
+msgstr "Code de type d'enregistrement"
 
 #: src/r_calendar.cc:432
 msgid "All Day Event"
-msgstr ""
+msgstr "Événement sur toute une journée"
 
 #: src/r_calendar.cc:436
 msgid "Notification Time (0 is off)"
-msgstr ""
+msgstr "Moment de la notification (0 pour désactivée)"
 
 #: src/r_calendar.cc:444
 msgid "Free or Busy Flag"
-msgstr ""
+msgstr "Étiquette Libre ou Occupé"
 
 #: src/r_calendar.cc:445 src/r_calendar.cc:486
 msgid "Free"
-msgstr ""
+msgstr "Libre"
 
 #: src/r_calendar.cc:446 src/r_calendar.cc:487
 msgid "Tentative"
-msgstr ""
+msgstr "Provisoire"
 
 #: src/r_calendar.cc:447 src/r_calendar.cc:488 src/r_calllog.cc:265
 #: src/r_calllog.cc:395 src/usbwrap_libusb_1_0.cc:103
 msgid "Busy"
-msgstr ""
+msgstr "Occupé"
 
 #: src/r_calendar.cc:448 src/r_calendar.cc:489
 msgid "Out of Office"
-msgstr ""
+msgstr "Parti du bureau"
 
 #: src/r_calendar.cc:450
 msgid "Event Class"
-msgstr ""
+msgstr "Classe d'événement"
 
 #: src/r_calendar.cc:451 src/r_calendar.cc:481
 msgid "Public"
-msgstr ""
+msgstr "Publique"
 
 #: src/r_calendar.cc:452 src/r_calendar.cc:482 src/r_message_base.cc:367
 msgid "Confidential"
-msgstr ""
+msgstr "Confidentiel"
 
 #: src/r_calendar.cc:453 src/r_calendar.cc:483 src/r_message_base.cc:366
 msgid "Private"
-msgstr ""
+msgstr "Privé"
 
 #: src/r_calendar.cc:455 src/r_task.cc:406
 msgid "Time Zone Code"
-msgstr ""
+msgstr "Code de zone de temps"
 
 #: src/r_calendar.cc:456
 msgid "Time Zone Validity"
-msgstr ""
+msgstr "Validité de la zone de temps"
 
 #: src/r_calendar.cc:463 src/r_calendar.cc:598
 msgid "Calendar ID"
-msgstr ""
+msgstr "ID de calendrier"
 
 #: src/r_calendar.cc:492
 msgid "   Calendar ID: "
-msgstr ""
+msgstr "   ID de calendrier : "
 
 #: src/r_calendar.cc:494
 msgid "   All Day Event: "
-msgstr ""
+msgstr "   Évenement sur toute une journée : "
 
 #: src/r_calendar.cc:495
 msgid "   Class: "
-msgstr ""
+msgstr "   Classe : "
 
 #: src/r_calendar.cc:496
 msgid "   Free/Busy: "
-msgstr ""
+msgstr "   Libre/Occupé : "
 
 #: src/r_calendar.cc:498 src/r_task.cc:486
 msgid "   Time Zone: "
-msgstr ""
+msgstr "   Zone de temps : "
 
 #: src/r_calendar.cc:509
 msgid "Calendar entry: "
-msgstr ""
+msgstr "Entrée de calendrier : "
 
 #: src/r_calendar.cc:528
 msgid "disabled"
-msgstr ""
+msgstr "désactivé"
 
 #: src/r_calendar.cc:601
 msgid "Mail Account"
-msgstr ""
+msgstr "Compte de courriel"
 
 #: src/r_calendar.cc:640
 msgid "CalendarAll::ParseField: size data unknown in calendar field"
 msgstr ""
+"CalendarAll::ParseField : donnée de taille inconnue dans le champ de "
+"calendrier"
 
 #: src/r_calendar.cc:653
 msgid "CalendarAll::ParseHeader: size data unknown in calendar field"
 msgstr ""
+"CalendarAll::ParseHeader : donnée de taille inconnue dans le champ de "
+"calendrier"
 
 #: src/r_calendar.cc:673
 msgid "   Mail Account: "
-msgstr ""
+msgstr "   Compte de courriel: "
 
 #: src/r_calllog.cc:85
 msgid "Contact name"
-msgstr ""
+msgstr "Nom de contact"
 
 #: src/r_calllog.cc:114
 msgid "CallLog::ParseField: CallLogType is not 'p'"
-msgstr ""
+msgstr "CallLog::ParseField : CallLogType n'est pas 'p'"
 
 #: src/r_calllog.cc:167
 msgid "CallLog::ParseField: direction field out of bounds"
-msgstr ""
+msgstr "CallLog::ParseField: le champ direction est hors limites"
 
 #: src/r_calllog.cc:258 src/r_sms.cc:284
 msgid "Received"
-msgstr ""
+msgstr "Reçu"
 
 #: src/r_calllog.cc:259 src/r_folder.cc:221 src/r_folder.cc:252
 #: src/r_sms.cc:285
 msgid "Sent"
-msgstr ""
+msgstr "Envoyé"
 
 #: src/r_calllog.cc:260
 msgid "Call Missing (Messagerie)"
-msgstr ""
+msgstr "Appel manqué (Messagerie)"
 
 #: src/r_calllog.cc:261
 msgid "Call Missing"
-msgstr ""
+msgstr "Appel manqué"
 
 #: src/r_calllog.cc:264 src/r_calllog.cc:394
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 #: src/r_calllog.cc:267 src/r_calllog.cc:280
 msgid "Not supported by Barry"
-msgstr ""
+msgstr "Non supporté dans Barry"
 
 #: src/r_calllog.cc:270 src/r_calllog.cc:400 src/r_calllog.cc:407
 msgid "Undefined"
-msgstr ""
+msgstr "Indéfini"
 
 #: src/r_calllog.cc:271
 msgid "Known phone number"
-msgstr ""
+msgstr "Numéro de téléphone connu"
 
 #: src/r_calllog.cc:272
 msgid "Unknown phone number"
-msgstr ""
+msgstr "Numéro de téléphone inconnu"
 
 #: src/r_calllog.cc:273
 msgid "Private phone number"
-msgstr ""
+msgstr "Numéro de téléphone privé"
 
 #: src/r_calllog.cc:277 src/r_calllog.cc:401
 msgid "Office"
-msgstr ""
+msgstr "Bureau"
 
 #: src/r_calllog.cc:278 src/r_calllog.cc:402
 msgid "Home"
-msgstr ""
+msgstr "Domicile"
 
 #: src/r_calllog.cc:279 src/r_calllog.cc:403
 msgid "Mobile"
-msgstr ""
+msgstr "Mobile"
 
 #: src/r_calllog.cc:283
 msgid "CallLog entry: "
-msgstr ""
+msgstr "Entrée de journal d'appel : "
 
 #: src/r_calllog.cc:287
 msgid "   Timestamp: "
-msgstr ""
+msgstr "   Horodatage : "
 
 #: src/r_calllog.cc:288
 msgid "   Direction: "
-msgstr ""
+msgstr "   Sens de l'appel : "
 
 #: src/r_calllog.cc:290 src/r_task.cc:481
 msgid "   Status: "
-msgstr ""
+msgstr "   Statut : "
 
 #: src/r_calllog.cc:292
 msgid "   Phone info: "
-msgstr ""
+msgstr "   Information sur le numéro : "
 
 #: src/r_calllog.cc:294
 msgid "   Phone type: "
-msgstr ""
+msgstr "   Type de numéro : "
 
 #: src/r_calllog.cc:297
 msgid "   Duration: "
-msgstr ""
+msgstr "   Durée : "
 
 #: src/r_calllog.cc:312
 msgid " days "
-msgstr ""
+msgstr " jours "
 
 #: src/r_calllog.cc:314
 msgid " day "
-msgstr ""
+msgstr " jour "
 
 #: src/r_calllog.cc:382
 msgid "Duration of Call in Seconds"
-msgstr ""
+msgstr "Durée de l'appel en secondes"
 
 #: src/r_calllog.cc:383
 msgid "Timestamp of Call in Milliseconds"
-msgstr ""
+msgstr "Durée de l'appel en millisecondes"
 
 #: src/r_calllog.cc:384
 msgid "Contact Name"
-msgstr ""
+msgstr "Nom du contact"
 
 #: src/r_calllog.cc:385
 msgid "Phone Number"
-msgstr ""
+msgstr "Numéro de télépone"
 
 #: src/r_calllog.cc:387
 msgid "Direction of Call"
-msgstr ""
+msgstr "Sens de l'appel"
 
 #: src/r_calllog.cc:388
 msgid "Received Call"
-msgstr ""
+msgstr "Appel entrant"
 
 #: src/r_calllog.cc:389
 msgid "Placed the Call"
-msgstr ""
+msgstr "Appel sortant"
 
 #: src/r_calllog.cc:390
 msgid "Failed Call"
-msgstr ""
+msgstr "Appel échoué"
 
 #: src/r_calllog.cc:391
 msgid "Missed Call"
-msgstr ""
+msgstr "Appel manqué"
 
 #: src/r_calllog.cc:393
 msgid "Status of Call"
-msgstr ""
+msgstr "Statut de l'appel"
 
 #: src/r_calllog.cc:396
 msgid "Network Error"
-msgstr ""
+msgstr "Problème de réseau"
 
 #: src/r_calllog.cc:397
 msgid "Unsupported Status"
-msgstr ""
+msgstr "Statut non supporté"
 
 #: src/r_calllog.cc:399
 msgid "Phone Type"
-msgstr ""
+msgstr "Type de numéro"
 
 #: src/r_calllog.cc:406
 msgid "Phone Info"
-msgstr ""
+msgstr "Information sur le numéro"
 
 #: src/r_calllog.cc:408
 msgid "Phone Number is Set"
-msgstr ""
+msgstr "Numéro connu"
 
 #: src/r_calllog.cc:409
 msgid "Phone Number Not Set"
-msgstr ""
+msgstr "Numéro inconnu"
 
 #: src/r_calllog.cc:410
 msgid "Phone Number is Private"
-msgstr ""
+msgstr "Numéro privé"
 
 #: src/r_command.cc:99
 msgid "Command table:\n"
-msgstr ""
+msgstr "Table de commandes :\n"
 
 #: src/r_command.cc:101
 msgid "    Command: "
-msgstr ""
+msgstr "    Commande : "
 
 #: src/r_contact.cc:109 src/r_contact.cc:490
 msgid "Nickname"
-msgstr ""
+msgstr "Surnom"
 
 #: src/r_contact.cc:110
 msgid "Phone"
-msgstr ""
+msgstr "Numéro de téléphone"
 
 #: src/r_contact.cc:111
 msgid "Fax"
-msgstr ""
+msgstr "Fax"
 
 #: src/r_contact.cc:112
 msgid "HomeFax"
-msgstr ""
+msgstr "Fax du domicile"
 
 #: src/r_contact.cc:113
 msgid "WorkPhone"
-msgstr ""
+msgstr "Numéro professionnel"
 
 #: src/r_contact.cc:114
 msgid "HomePhone"
-msgstr ""
+msgstr "Numéro de domicile"
 
 #: src/r_contact.cc:115
 msgid "MobilePhone"
-msgstr ""
+msgstr "Numéro de mobile"
 
 #: src/r_contact.cc:116
 msgid "MobilePhone2"
-msgstr ""
+msgstr "Numéro de mobile 2"
 
 #: src/r_contact.cc:117 src/r_contact.cc:502
 msgid "Pager"
-msgstr ""
+msgstr "Pager"
 
 #: src/r_contact.cc:119 src/r_contact.cc:504
 msgid "Radio"
-msgstr ""
+msgstr "Radio"
 
 #: src/r_contact.cc:120
 msgid "WorkPhone2"
-msgstr ""
+msgstr "Numéro de travail 2"
 
 #: src/r_contact.cc:121
 msgid "HomePhone2"
-msgstr ""
+msgstr "Numéro de domicile 2"
 
 #: src/r_contact.cc:122
 msgid "OtherPhone"
-msgstr ""
+msgstr "Autre numéro"
 
 #: src/r_contact.cc:123 src/r_contact.cc:486
 msgid "Company"
-msgstr ""
+msgstr "Société"
 
 #: src/r_contact.cc:124
 msgid "DefaultCommMethod"
-msgstr ""
+msgstr "Moyen de communication par défaut"
 
 #: src/r_contact.cc:125
 msgid "WorkAddress1"
-msgstr ""
+msgstr "Adresse professionnelle 1"
 
 #: src/r_contact.cc:126
 msgid "WorkAddress2"
-msgstr ""
+msgstr "Adresse professionnelle 2"
 
 #: src/r_contact.cc:127
 msgid "WorkAddress3"
-msgstr ""
+msgstr "Adresse professionnelle 3"
 
 #: src/r_contact.cc:129
 msgid "WorkProvince"
-msgstr ""
+msgstr "Département du lieu de travail"
 
 #: src/r_contact.cc:130
 msgid "WorkPostalCode"
-msgstr ""
+msgstr "Code postal du lieu de travail"
 
 #: src/r_contact.cc:132
 msgid "JobTitle"
-msgstr ""
+msgstr "Titre professionnel"
 
 #: src/r_contact.cc:133
 msgid "PublicKey"
-msgstr ""
+msgstr "Clef publique"
 
 #: src/r_contact.cc:134 src/r_contact.cc:508
 msgid "URL"
-msgstr ""
+msgstr "URL"
 
 #: src/r_contact.cc:135 src/r_contact.cc:488
 msgid "Prefix"
-msgstr ""
+msgstr "Préfixe"
 
 #: src/r_contact.cc:136
 msgid "HomeAddress1"
-msgstr ""
+msgstr "Adresse de domicile 1"
 
 #: src/r_contact.cc:137
 msgid "HomeAddress2"
-msgstr ""
+msgstr "Adresse de domicile 2"
 
 #: src/r_contact.cc:138
 msgid "HomeAddress3"
-msgstr ""
+msgstr "Adresse de domicile 3"
 
 #: src/r_contact.cc:140
 msgid "UserDefined1"
-msgstr ""
+msgstr "Personnalisé1"
 
 #: src/r_contact.cc:141
 msgid "UserDefined2"
-msgstr ""
+msgstr "Personnalisé2"
 
 #: src/r_contact.cc:142
 msgid "UserDefined3"
-msgstr ""
+msgstr "Personnalisé3"
 
 #: src/r_contact.cc:143
 msgid "UserDefined4"
-msgstr ""
+msgstr "Personnalisé4"
 
 #: src/r_contact.cc:144
 msgid "HomeCity"
-msgstr ""
+msgstr "Ville du domicile"
 
 #: src/r_contact.cc:145
 msgid "HomeProvince"
-msgstr ""
+msgstr "Département du domicile"
 
 #: src/r_contact.cc:146
 msgid "HomePostalCode"
-msgstr ""
+msgstr "Code postal du domicile"
 
 #: src/r_contact.cc:147
 msgid "HomeCountry"
-msgstr ""
+msgstr "Pays du domicile"
 
 #: src/r_contact.cc:148 src/r_contact.cc:514
 msgid "Image"
-msgstr ""
+msgstr "Image"
 
 #: src/r_contact.cc:149
 msgid "EndOfList"
-msgstr ""
+msgstr "Fin de liste"
 
 #: src/r_contact.cc:298
 msgid ""
 "A contact record must contain either a First/Last name, or a Company name."
 msgstr ""
+"Un enregistrement de contact doit contenir soit un nom prénom, soit un nom "
+"de société."
 
 #: src/r_contact.cc:319
 msgid "Contact must have name or company name."
-msgstr ""
+msgstr "Un contact doit avoir un nom ou un nom de société."
 
 #: src/r_contact.cc:481 src/r_servicebook.cc:454 src/r_servicebook.cc:496
 msgid "Unique ID"
-msgstr ""
+msgstr "ID unique"
 
 #: src/r_contact.cc:482
 msgid "Email Addresses"
-msgstr ""
+msgstr "Courriel"
 
 #: src/r_contact.cc:484
 msgid "First Name"
-msgstr ""
+msgstr "Prénom"
 
 #: src/r_contact.cc:485
 msgid "Last Name"
-msgstr ""
+msgstr "Nom de famille"
 
 #: src/r_contact.cc:491
 msgid "Phone (deprecated)"
-msgstr ""
+msgstr "Phone (déprécié)"
 
 #: src/r_contact.cc:492
 msgid "Work Fax"
-msgstr ""
+msgstr "Fax professionnel"
 
 #: src/r_contact.cc:493
 msgid "Home Fax"
-msgstr ""
+msgstr "Fax du domicile"
 
 #: src/r_contact.cc:494
 msgid "Work Phone"
-msgstr ""
+msgstr "Téléphone professionnel"
 
 #: src/r_contact.cc:496
 msgid "Work Phone 2"
-msgstr ""
+msgstr "Téléphone professionnel 2"
 
 #: src/r_contact.cc:497
 msgid "Home Phone"
-msgstr ""
+msgstr "Téléphone du domicile"
 
 #: src/r_contact.cc:498
 msgid "Home Phone 2"
-msgstr ""
+msgstr "Téléphone du domicile 2"
 
 #: src/r_contact.cc:499
 msgid "Mobile Phone"
-msgstr ""
+msgstr "Téléphone portable"
 
 #: src/r_contact.cc:500
 msgid "Mobile Phone 2"
-msgstr ""
+msgstr "Téléphone portable 2"
 
 #: src/r_contact.cc:501
 msgid "Other Phone"
-msgstr ""
+msgstr "Autre numéro de téléphone"
 
 #: src/r_contact.cc:505
 msgid "Default Communications Method"
-msgstr ""
+msgstr "Méthode de communication par défaut"
 
 #: src/r_contact.cc:507
 msgid "Public Key"
-msgstr ""
+msgstr "Clef publique"
 
 #: src/r_contact.cc:510
 msgid "User Defined Field 1"
-msgstr ""
+msgstr "Champ personnalisé 1"
 
 #: src/r_contact.cc:511
 msgid "User Defined Field 2"
-msgstr ""
+msgstr "Champ personnalisé 2"
 
 #: src/r_contact.cc:512
 msgid "User Defined Field 3"
-msgstr ""
+msgstr "Champ personnalisé 3"
 
 #: src/r_contact.cc:513
 msgid "User Defined Field 4"
-msgstr ""
+msgstr "Champ personnalisé 4"
 
 #: src/r_contact.cc:516
 msgid "Birthday"
-msgstr ""
+msgstr "Date de naissance"
 
 #: src/r_contact.cc:517
 msgid "Anniversary"
-msgstr ""
+msgstr "Anniversaire"
 
 #: src/r_contact.cc:519
 msgid "Work Address"
-msgstr ""
+msgstr "Adresse professionnelle"
 
 #: src/r_contact.cc:520
 msgid "Work Address 1"
-msgstr ""
+msgstr "Adresse professionnelle 1"
 
 #: src/r_contact.cc:522
 msgid "Work Address 2"
-msgstr ""
+msgstr "Adresse professionnelle 2"
 
 #: src/r_contact.cc:524
 msgid "Work Address 3"
-msgstr ""
+msgstr "Adresse professionnelle 3"
 
 #: src/r_contact.cc:526
 msgid "Work City"
-msgstr ""
+msgstr "Ville du lieu de travail"
 
 #: src/r_contact.cc:528
 msgid "Work Province"
-msgstr ""
+msgstr "Département du lieu de travail"
 
 #: src/r_contact.cc:530
 msgid "Work Postal Code"
-msgstr ""
+msgstr "Code postal du lieu de travail"
 
 #: src/r_contact.cc:532
 msgid "Work Country"
-msgstr ""
+msgstr "Pays du lieu de travail"
 
 #: src/r_contact.cc:535
 msgid "Home Address"
-msgstr ""
+msgstr "Adresse du domicile"
 
 #: src/r_contact.cc:536
 msgid "Home Address 1"
-msgstr ""
+msgstr "Adresse du domicile 1"
 
 #: src/r_contact.cc:538
 msgid "Home Address 2"
-msgstr ""
+msgstr "Adresse du domicile 2"
 
 #: src/r_contact.cc:540
 msgid "Home Address 3"
-msgstr ""
+msgstr "Adresse du domicile 3"
 
 #: src/r_contact.cc:542
 msgid "Home City"
-msgstr ""
+msgstr "Ville du domicile"
 
 #: src/r_contact.cc:544
 msgid "Home Province"
-msgstr ""
+msgstr "Département du domicile"
 
 #: src/r_contact.cc:546
 msgid "Home Postal Code"
-msgstr ""
+msgstr "Code postal du domicile"
 
 #: src/r_contact.cc:548
 msgid "Home Country"
-msgstr ""
+msgstr "Pays du domicile"
 
 #: src/r_contact.cc:551 src/r_memo.cc:272 src/r_task.cc:400
 msgid "Categories"
-msgstr ""
+msgstr "Catégories"
 
 #: src/r_contact.cc:601
 msgid "Contact: "
-msgstr ""
+msgstr "Contact : "
 
 #: src/r_contact.cc:605
 msgid "FirstName"
-msgstr ""
+msgstr "Prénom"
 
 #: src/r_contact.cc:607
 msgid "LastName"
-msgstr ""
+msgstr "Nom de famille"
 
 #: src/r_contact.cc:614
 msgid "    Email               : "
-msgstr ""
+msgstr "    Courriel            : "
 
 #: src/r_contact.cc:646
 msgid "    Categories          : "
-msgstr ""
+msgstr "    Catégories          : "
 
 #: src/r_contact.cc:651
 msgid "    Birthday            : "
-msgstr ""
+msgstr "    Date de naissance   : "
 
 #: src/r_contact.cc:654
 msgid "    Anniversary         : "
-msgstr ""
+msgstr "    Anniversaire        : "
 
 #: src/r_contact.cc:661
 msgid "    GroupLinks:\n"
-msgstr ""
+msgstr "    Réseaux :\n"
 
 #: src/r_contact.cc:663
 msgid "        ID: "
-msgstr ""
+msgstr "        ID : "
 
 #: src/r_contact.cc:669
 msgid "    Photo image:\n"
-msgstr ""
+msgstr "    Photographie :\n"
 
 #: src/r_contact.cc:748
 msgid ""
 "Error: Cannot convert complex name+address to a simple contact email "
 "address, skipping: "
 msgstr ""
+"Erreur : impossible de convertir un nom+adresse complexe en un simple "
+"courriel de contact, ignoré : "
 
 #: src/r_cstore.cc:150
 msgid "Content Store must have a name."
-msgstr ""
+msgstr "Un stockage de contenu doit avoir un nom."
 
 #: src/r_cstore.cc:153
 msgid "Content Store item without any data."
-msgstr ""
+msgstr "Élément de magasin de contenu sans données."
 
 #: src/r_cstore.cc:231
 msgid "File or Folder Name"
-msgstr ""
+msgstr "Nom de fichier ou de répertoire"
 
 #: src/r_cstore.cc:232
 msgid "Folder Flag"
-msgstr ""
+msgstr "Drapeau de dossier"
 
 #: src/r_cstore.cc:233
 msgid "File Content"
-msgstr ""
+msgstr "Contenu de fichier"
 
 #: src/r_cstore.cc:234
 msgid "File Descriptor"
-msgstr ""
+msgstr "Descripteur de fichier"
 
 #: src/r_cstore.cc:253
 msgid "ContentStore: "
-msgstr ""
+msgstr "Stockage de contenu : "
 
 #: src/r_cstore.cc:256
 msgid "       Filename: "
-msgstr ""
+msgstr "   Nom de fichier : "
 
 #: src/r_cstore.cc:257
 msgid "         Folder: "
-msgstr ""
+msgstr "       Répertoire : "
 
 #: src/r_cstore.cc:258
 msgid "        BB Size: "
-msgstr ""
+msgstr " Taille sur le BB : "
 
 #: src/r_cstore.cc:259
 msgid "    Actual Size: "
-msgstr ""
+msgstr "    Taille réelle : "
 
 #: src/r_cstore.cc:260
 msgid "     Descriptor:\n"
-msgstr ""
+msgstr "      Descripteur :\n"
 
 #: src/r_cstore.cc:262
 msgid "        Content:\n"
-msgstr ""
+msgstr "          Contenu :\n"
 
 #: src/r_dbdb.cc:118
 msgid "DatabaseDatabase: not enough data for parsing"
-msgstr ""
+msgstr "DatabaseDatabase: pas assez de données pour l'analyse"
 
 #: src/r_dbdb.cc:123
 msgid "Unknown protocol"
-msgstr ""
+msgstr "Protocole inconnu"
 
 #: src/r_dbdb.cc:197
 msgid "Database database:\n"
-msgstr ""
+msgstr "Base de données base de données :\n"
 
 #: src/r_dbdb.cc:199
 msgid "    Database: "
-msgstr ""
+msgstr "    Base de données : "
 
 #: src/r_dbdb.cc:200
 msgid "records: "
-msgstr ""
+msgstr "Enregistrements :"
 
 #: src/r_folder.cc:84
 msgid "FolderName"
-msgstr ""
+msgstr "Nom de dossier"
 
 #: src/r_folder.cc:212
 msgid "Folder Name"
-msgstr ""
+msgstr "Nom de dossier"
 
 #: src/r_folder.cc:213
 msgid "Order Number"
-msgstr ""
+msgstr "Numéro d'ordre"
 
 #: src/r_folder.cc:214
 msgid "Folder Level"
-msgstr ""
+msgstr "Niveau de dossier"
 
 #: src/r_folder.cc:216
 msgid "Folder Type"
-msgstr ""
+msgstr "Type de dossier"
 
 #: src/r_folder.cc:217 src/r_folder.cc:248
 msgid "Subtree"
-msgstr ""
+msgstr "Sous-arbre"
 
 #: src/r_folder.cc:218 src/r_folder.cc:249 src/r_sms.cc:296
 msgid "Deleted"
-msgstr ""
+msgstr "Supprimé"
 
 #: src/r_folder.cc:219 src/r_folder.cc:250
 msgid "Inbox"
-msgstr ""
+msgstr "Boîte de réception"
 
 #: src/r_folder.cc:220 src/r_folder.cc:251
 msgid "Outbox"
-msgstr ""
+msgstr "Boîte d'envoi"
 
 #: src/r_folder.cc:222 src/r_folder.cc:253 src/usbwrap_libusb_1_0.cc:117
 msgid "Other"
-msgstr ""
+msgstr "Autre"
 
 #: src/r_folder.cc:223 src/r_sms.cc:286
 msgid "Draft"
-msgstr ""
+msgstr "Brouillon"
 
 #: src/r_folder.cc:257
 msgid ""
 "Folder Records\n"
 "\n"
 msgstr ""
+"Enregistrements de dossiers\n"
+"\n"
 
 #: src/r_folder.cc:258
 msgid "Folder Name: "
-msgstr ""
+msgstr "Nom de dossier : "
 
 #: src/r_folder.cc:259
 msgid "Folder Type: "
-msgstr ""
+msgstr "Type de dossier : "
 
 #: src/r_folder.cc:263
 msgid "Draft\n"
-msgstr ""
+msgstr "Brouillon\n"
 
 #: src/r_folder.cc:266
 msgid "Folder Number: "
-msgstr ""
+msgstr "Numéro de dossier : "
 
 #: src/r_folder.cc:267
 msgid "Folder Level: "
-msgstr ""
+msgstr "Niveau de dossier : "
 
 #: src/r_hhagent.cc:65 src/r_hhagent.cc:86 src/r_hhagent.cc:100
 #: src/r_hhagent.cc:288
 msgid "Model"
-msgstr ""
+msgstr "Modèle"
 
 #: src/r_hhagent.cc:66 src/r_hhagent.cc:101 src/r_hhagent.cc:292
 msgid "Network"
-msgstr ""
+msgstr "Réseau"
 
 #: src/r_hhagent.cc:67 src/r_hhagent.cc:103 src/r_hhagent.cc:289
 msgid "Bands"
-msgstr ""
+msgstr "Bandes"
 
 #: src/r_hhagent.cc:68 src/r_hhagent.cc:104 src/r_hhagent.cc:287
 msgid "MEID/ESN"
-msgstr ""
+msgstr "MEID/ESN"
 
 #: src/r_hhagent.cc:70 src/r_hhagent.cc:106 src/r_hhagent.cc:291
 msgid "Version"
-msgstr ""
+msgstr "Version"
 
 #: src/r_hhagent.cc:87 src/r_hhagent.cc:102 src/r_hhagent.cc:296
 msgid "Manufacturer"
-msgstr ""
+msgstr "Fabricant"
 
 #: src/r_hhagent.cc:88
 msgid "Firmware"
-msgstr ""
+msgstr "Microprogramme"
 
 #: src/r_hhagent.cc:89 src/r_hhagent.cc:107
 msgid "Platform"
-msgstr ""
+msgstr "Plateforme"
 
 #: src/r_hhagent.cc:140
 msgid "HandheldAgent requires SetIds() to be called before ParseField()"
-msgstr ""
+msgstr "HandheldAgent requiert que SetIds() soit appelé avant ParseField()"
 
 #: src/r_hhagent.cc:295
 msgid "Platform Version"
-msgstr ""
+msgstr "Version de plateforme"
 
 #: src/r_hhagent.cc:306
 msgid "Handheld Agent: "
-msgstr ""
+msgstr "Périphérique : "
 
 #: src/r_hhagent.cc:314
 msgid "HandheldAgent entry: "
-msgstr ""
+msgstr "Entrée HandeldAgent : "
 
 #: src/r_memo.cc:50 src/r_memo.cc:270
 msgid "Title"
-msgstr ""
+msgstr "Titre"
 
 #: src/r_memo.cc:51 src/r_memo.cc:271 src/r_message_base.cc:87
 #: src/r_message_base.cc:343 src/r_sms.cc:310
 msgid "Body"
-msgstr ""
+msgstr "Corps"
 
 #: src/r_memo.cc:80
 msgid "Memo::ParseField: MemoType is not 'm'"
-msgstr ""
+msgstr "Memo::ParseField: MemoType n'est pas 'm'"
 
 #: src/r_memo.cc:209
 msgid "Memo entry: "
-msgstr ""
+msgstr "Entrée mémo :"
 
 #: src/r_memo.cc:211
 msgid "    Title: "
-msgstr ""
+msgstr "    Titre : "
 
 #: src/r_memo.cc:212
 msgid "    Body: "
-msgstr ""
+msgstr "    Corps : "
 
 #: src/r_memo.cc:227
 msgid "    Categories: "
-msgstr ""
+msgstr "    Catégories : "
 
 #: src/r_message_base.cc:80 src/r_message_base.cc:337
 msgid "To"
-msgstr ""
+msgstr "À"
 
 #: src/r_message_base.cc:81
 msgid "Cc"
-msgstr ""
+msgstr "Cc"
 
 #: src/r_message_base.cc:82
 msgid "Bcc"
-msgstr ""
+msgstr "Cci"
 
 #: src/r_message_base.cc:83 src/r_message_base.cc:340
 msgid "Sender"
-msgstr ""
+msgstr "Expéditeur"
 
 #: src/r_message_base.cc:84 src/r_message_base.cc:336
 msgid "From"
-msgstr ""
+msgstr "De"
 
 #: src/r_message_base.cc:85
 msgid "ReplyTo"
-msgstr ""
+msgstr "Répondre à"
 
 #: src/r_message_base.cc:88 src/r_message_base.cc:344
 msgid "Attachment"
-msgstr ""
+msgstr "Pièce jointe"
 
 #: src/r_message_base.cc:278
 msgid "MessageBase::BuildHeader not yet implemented"
-msgstr ""
+msgstr "MessageBase::BuildHeader non implementé"
 
 #: src/r_message_base.cc:283
 msgid "MessageBase::BuildFields not yet implemented"
-msgstr ""
+msgstr "MessageBase::BuildFields non implementé"
 
 #: src/r_message_base.cc:338
 msgid "CC"
-msgstr ""
+msgstr "CC"
 
 #: src/r_message_base.cc:339
 msgid "BCC"
-msgstr ""
+msgstr "CCI"
 
 #: src/r_message_base.cc:341
 msgid "Reply To"
-msgstr ""
+msgstr "Répondre à"
 
 #: src/r_message_base.cc:346
 msgid "Message Record ID"
-msgstr ""
+msgstr "ID d'enregistrement de message"
 
 #: src/r_message_base.cc:347
 msgid "Message Reply To"
-msgstr ""
+msgstr "Champ Répondre à de message"
 
 #: src/r_message_base.cc:348
 msgid "Date Sent"
-msgstr ""
+msgstr "Données envoyées"
 
 #: src/r_message_base.cc:349
 msgid "Date Received"
-msgstr ""
+msgstr "Données reçues"
 
 #: src/r_message_base.cc:351
 msgid "Truncated"
-msgstr ""
+msgstr "Tronqué"
 
 #: src/r_message_base.cc:352
 msgid "Read"
-msgstr ""
+msgstr "Lu"
 
 #: src/r_message_base.cc:353
 msgid "Reply"
-msgstr ""
+msgstr "Réponse"
 
 #: src/r_message_base.cc:354 src/r_sms.cc:295
 msgid "Saved"
-msgstr ""
+msgstr "Enregistré"
 
 #: src/r_message_base.cc:355
 msgid "Saved Deleted"
-msgstr ""
+msgstr "Enregistré supprimé"
 
 #: src/r_message_base.cc:357 src/r_task.cc:413
 msgid "Priority"
-msgstr ""
+msgstr "Priorité"
 
 #: src/r_message_base.cc:358 src/r_task.cc:416 src/r_task.cc:445
 msgid "Low"
-msgstr ""
+msgstr "Basse"
 
 #: src/r_message_base.cc:359 src/r_message_base.cc:364 src/r_task.cc:415
 #: src/r_task.cc:444
 msgid "Normal"
-msgstr ""
+msgstr "Normale"
 
 #: src/r_message_base.cc:360 src/r_task.cc:414 src/r_task.cc:443
 msgid "High"
-msgstr ""
+msgstr "Haute"
 
 #: src/r_message_base.cc:363
 msgid "Sensitivity"
-msgstr ""
+msgstr "Confidentialité"
 
 #: src/r_message_base.cc:365
 msgid "Personal"
-msgstr ""
+msgstr "Personnel"
 
 #: src/r_recordstate.cc:131
 msgid "  Index  RecordId    Dirty  RecType"
-msgstr ""
+msgstr "  Index   IdEnr      Sale   TypeEnr"
 
 #: src/r_recordstate.cc:141 src/r_recur_base.cc:279 tools/bjavaloader.cc:455
 #: tools/bjavaloader.cc:471
 msgid "yes"
-msgstr ""
+msgstr "oui"
 
 #: src/r_recordstate.cc:141 src/r_recur_base.cc:279
 msgid "no"
-msgstr ""
+msgstr "non"
 
 #: src/r_recur_base.cc:91
 msgid "RecurBase::ParseField: not enough data in recurrence data field"
-msgstr ""
+msgstr "RecurBase::ParseField: Pas assez de données dans le champ périodicité"
 
 #: src/r_recur_base.cc:157
 msgid "Unknown recurrence data type"
-msgstr ""
+msgstr "Type de donnée de périodicité inconnu"
 
 #: src/r_recur_base.cc:172
 msgid ""
 "RecurBase::BuildRecurrenceData: Attempting to build recurrence data on non-"
 "recurring record."
 msgstr ""
+"RecurBase::BuildRecurrenceData : tentative de créer une donnée de "
+"périodicité sur un enregistrement non périodique."
 
 #: src/r_recur_base.cc:226
 msgid "RecurBase::BuildRecurrenceData: Unknown recurrence data type"
-msgstr ""
+msgstr "RecurBase::BuildRecurrenceData : type de donnée de périodicité inconnu"
 
 #: src/r_recur_base.cc:251 src/r_recur_base.cc:323
 msgid "Sun"
-msgstr ""
+msgstr "Dim"
 
 #: src/r_recur_base.cc:252 src/r_recur_base.cc:324
 msgid "Mon"
-msgstr ""
+msgstr "Lun"
 
 #: src/r_recur_base.cc:253 src/r_recur_base.cc:325
 msgid "Tue"
-msgstr ""
+msgstr "Mar"
 
 #: src/r_recur_base.cc:254 src/r_recur_base.cc:326
 msgid "Wed"
-msgstr ""
+msgstr "Mer"
 
 #: src/r_recur_base.cc:255 src/r_recur_base.cc:327
 msgid "Thu"
-msgstr ""
+msgstr "Jeu"
 
 #: src/r_recur_base.cc:256 src/r_recur_base.cc:328
 msgid "Fri"
-msgstr ""
+msgstr "Ven"
 
 #: src/r_recur_base.cc:257 src/r_recur_base.cc:329
 msgid "Sat"
-msgstr ""
+msgstr "Sam"
 
 #: src/r_recur_base.cc:260 src/r_timezone.cc:257
 msgid "Jan"
-msgstr ""
+msgstr "Jan"
 
 #: src/r_recur_base.cc:261 src/r_timezone.cc:258
 msgid "Feb"
-msgstr ""
+msgstr "Fév"
 
 #: src/r_recur_base.cc:262 src/r_timezone.cc:259
 msgid "Mar"
-msgstr ""
+msgstr "Mar"
 
 #: src/r_recur_base.cc:263 src/r_timezone.cc:260
 msgid "Apr"
-msgstr ""
+msgstr "Avr"
 
 #: src/r_recur_base.cc:264 src/r_timezone.cc:261
 msgid "May"
-msgstr ""
+msgstr "Mai"
 
 #: src/r_recur_base.cc:265 src/r_timezone.cc:262
 msgid "Jun"
-msgstr ""
+msgstr "Juin"
 
 #: src/r_recur_base.cc:266 src/r_timezone.cc:263
 msgid "Jul"
-msgstr ""
+msgstr "Juil"
 
 #: src/r_recur_base.cc:267 src/r_timezone.cc:264
 msgid "Aug"
-msgstr ""
+msgstr "Aoû"
 
 #: src/r_recur_base.cc:268 src/r_timezone.cc:265
 msgid "Sep"
-msgstr ""
+msgstr "Sep"
 
 #: src/r_recur_base.cc:269 src/r_timezone.cc:266
 msgid "Oct"
-msgstr ""
+msgstr "Oct"
 
 #: src/r_recur_base.cc:270 src/r_timezone.cc:267
 msgid "Nov"
-msgstr ""
+msgstr "Nov"
 
 #: src/r_recur_base.cc:271 src/r_timezone.cc:268
 msgid "Dec"
-msgstr ""
+msgstr "Déc"
 
 #: src/r_recur_base.cc:279
 msgid "   Recurring: "
-msgstr ""
+msgstr "   Périodicité : "
 
 #: src/r_recur_base.cc:284
 msgid "      Every day.\n"
-msgstr ""
+msgstr "      Quotidienne\n"
 
 #. TRANSLATORS: to remove the 'th' ending on numbers,
 #. just skip the %s in this string.
 #: src/r_recur_base.cc:290
 #, c-format
 msgid "      Every month on the %u%s"
-msgstr ""
+msgstr "      Mensuelle, chaque %u%0s"
 
 #: src/r_recur_base.cc:300
 #, c-format
 msgid "      Every month on the %s of week %u"
-msgstr ""
+msgstr "      Mensuelle, chaque %s semaine %u"
 
 #: src/r_recur_base.cc:307
 #, c-format
 msgid "      Every year on %s %u"
-msgstr ""
+msgstr "      Annuelle, au %s %u"
 
 #: src/r_recur_base.cc:314
 #, c-format
 msgid "      Every year in %s on %s of week %u"
-msgstr ""
+msgstr "      Annuelle, en %s le %s de la semaine %u"
 
 #: src/r_recur_base.cc:322
 msgid "      Every week on: "
-msgstr ""
+msgstr "      Chaque semaine le : "
 
 #: src/r_recur_base.cc:334
 msgid "      Unknown recurrence type\n"
-msgstr ""
+msgstr "      Type de périodicité inconnu\n"
 
 #: src/r_recur_base.cc:338
 msgid "      Interval: "
-msgstr ""
+msgstr "      Intervalle : "
 
 #: src/r_recur_base.cc:341
 msgid "      Ends: never\n"
-msgstr ""
+msgstr "      Se termine : jamais\n"
 
 #: src/r_recur_base.cc:343
 msgid "      Ends: "
-msgstr ""
+msgstr "      Se termine : "
 
 #: src/r_servicebook.cc:182
 msgid "ServiceBookConfig::Build not yet implemented"
-msgstr ""
+msgstr "ServiceBookConfig::Build non implémenté"
 
 #: src/r_servicebook.cc:195
 msgid "   ServiceBookConfig Format: "
-msgstr ""
+msgstr "   ServiceBookConfig format : "
 
 #: src/r_servicebook.cc:216
 msgid "   ------------------- End of Config Field\n"
-msgstr ""
+msgstr "   ------------------- Fin du champ de configuration\n"
 
 #: src/r_servicebook.cc:251
 msgid "Old Name"
-msgstr ""
+msgstr "Ancien nom"
 
 #: src/r_servicebook.cc:252
 msgid "Old Desc"
-msgstr ""
+msgstr "Ancienne description"
 
 #: src/r_servicebook.cc:253
 msgid "Old UniqueId"
-msgstr ""
+msgstr "Ancien Id unique"
 
 #: src/r_servicebook.cc:258 src/r_servicebook.cc:449 src/r_servicebook.cc:492
 #: src/r_timezone.cc:59
 msgid "Name"
-msgstr ""
+msgstr "Nom"
 
 #: src/r_servicebook.cc:259 src/r_servicebook.cc:451 src/r_servicebook.cc:494
 msgid "Description"
-msgstr ""
+msgstr "Description"
 
 #: src/r_servicebook.cc:260
 msgid "UniqueId"
-msgstr ""
+msgstr "Id unique"
 
 #: src/r_servicebook.cc:266 src/r_servicebook.cc:450 src/r_servicebook.cc:493
 msgid "Hidden Name"
-msgstr ""
+msgstr "Nom masqué"
 
 #: src/r_servicebook.cc:267 src/r_servicebook.cc:452 src/r_servicebook.cc:495
 msgid "DSID"
-msgstr ""
+msgstr "DSID"
 
 #: src/r_servicebook.cc:268
 msgid "ContentId"
-msgstr ""
+msgstr "Id de contenu"
 
 #: src/r_servicebook.cc:269 src/r_servicebook.cc:453
 msgid "BES Domain"
-msgstr ""
+msgstr "Domaine BES"
 
 #: src/r_servicebook.cc:423
 msgid "ServiceBook::BuildFields not yet implemented"
-msgstr ""
+msgstr "ServiceBook::BuildFields non implémenté"
 
 #: src/r_servicebook.cc:455 src/r_servicebook.cc:497
 msgid "Content ID"
-msgstr ""
+msgstr "Id de contenu"
 
 #: src/r_servicebook.cc:489
 msgid "ServiceBook entry: "
-msgstr ""
+msgstr "Entrée ServiceBook :"
 
 #: src/r_servicebook.cc:498
 msgid "(BES) Domain"
-msgstr ""
+msgstr "Domaine (BES)"
 
 #: src/r_sms.cc:282
 msgid "Message Status"
-msgstr ""
+msgstr "Statut du message"
 
 #: src/r_sms.cc:288
 msgid "Delivery Status"
-msgstr ""
+msgstr "Statut d'acheminement"
 
 #: src/r_sms.cc:289
 msgid "No Report"
-msgstr ""
+msgstr "Pas de rapport"
 
 #: src/r_sms.cc:290
 msgid "Failed"
-msgstr ""
+msgstr "Échec"
 
 #: src/r_sms.cc:291
 msgid "Succeeded"
-msgstr ""
+msgstr "Succès"
 
 #: src/r_sms.cc:293
 msgid "Is New?"
-msgstr ""
+msgstr "Nouveau ?"
 
 #: src/r_sms.cc:294
 msgid "New Conversation"
-msgstr ""
+msgstr "Nouvelle conversation"
 
 #: src/r_sms.cc:297
 msgid "Opened"
-msgstr ""
+msgstr "Ouver"
 
 #: src/r_sms.cc:299
 msgid "Timestamp in Milliseconds"
-msgstr ""
+msgstr "Horodatage en millisecondes"
 
 #: src/r_sms.cc:300
 msgid "Service Center Timestamp"
-msgstr ""
+msgstr "Horodatage du centre de service"
 
 #: src/r_sms.cc:302
 msgid "Data Coding Scheme"
-msgstr ""
+msgstr "Schéma de codage de données"
 
 #: src/r_sms.cc:303
 msgid "7bit"
-msgstr ""
+msgstr "7 bits"
 
 #: src/r_sms.cc:304
 msgid "8bit"
-msgstr ""
+msgstr "8 bits"
 
 #: src/r_sms.cc:305
 msgid "UCS2"
-msgstr ""
+msgstr "UCS2"
 
 #: src/r_sms.cc:307
 msgid "Error ID"
-msgstr ""
+msgstr "ID d'erreur"
 
 #: src/r_sms.cc:309
 msgid "Addresses"
-msgstr ""
+msgstr "Adresses"
 
 #: src/r_sms.cc:322
 msgid "Unknown destination"
-msgstr ""
+msgstr "Destination inconnue"
 
 #: src/r_sms.cc:329
 msgid "SMS record: "
-msgstr ""
+msgstr "Enregistrement SMS :"
 
 #: src/r_sms.cc:332
 msgid "Timestamp: "
-msgstr ""
+msgstr "Horodatage : "
 
 #: src/r_sms.cc:336
 msgid "Service Center Timestamp: "
-msgstr ""
+msgstr "Horodatage du centre de service : "
 
 #: src/r_sms.cc:340
 msgid "Send Error: "
-msgstr ""
+msgstr "Erreur d'envoi : "
 
 #: src/r_sms.cc:345
 msgid "Received From:\n"
-msgstr ""
+msgstr "Reçu de :\n"
 
 #: src/r_sms.cc:348
 msgid "Sent to:\n"
-msgstr ""
+msgstr "Envoyé à  :\n"
 
 #: src/r_sms.cc:351
 msgid "Draft for:\n"
-msgstr ""
+msgstr "Brouillon pour :\n"
 
 #: src/r_sms.cc:354
 msgid "Unknown status for:\n"
-msgstr ""
+msgstr "Statut inconnu pour :\n"
 
 #: src/r_sms.cc:364
 msgid "New "
-msgstr ""
+msgstr "Nouveau"
 
 #: src/r_sms.cc:366
 msgid "Opened "
-msgstr ""
+msgstr "Ouvert"
 
 #: src/r_sms.cc:368
 msgid "Saved "
-msgstr ""
+msgstr "Enregistré"
 
 #: src/r_sms.cc:370
 msgid "Deleted "
-msgstr ""
+msgstr "Supprimé"
 
 #: src/r_sms.cc:371
 msgid "Message"
-msgstr ""
+msgstr "Message"
 
 #: src/r_sms.cc:371
 msgid " that starts a new conversation"
-msgstr ""
+msgstr " qui débute une nouvelle conversation"
 
 #: src/r_sms.cc:373
 msgid "Content: "
-msgstr ""
+msgstr "Contenu : "
 
 #: src/r_task.cc:107 src/r_task.cc:398
 msgid "Summary"
-msgstr ""
+msgstr "Résumé"
 
 #: src/r_task.cc:110 src/r_task.cc:404
 msgid "Due Time"
-msgstr ""
+msgstr "Échéance"
 
 #: src/r_task.cc:111 src/r_task.cc:405
 msgid "Alarm Time"
-msgstr ""
+msgstr "Date d'alerte"
 
 #: src/r_task.cc:140
 msgid "Task::ParseField: Task Type is not 't'"
-msgstr ""
+msgstr "Task::ParseField : le type de tâche n'est pas 't'"
 
 #: src/r_task.cc:171 src/r_task.cc:180
 msgid "Task::ParseField: priority field out of bounds"
-msgstr ""
+msgstr "Task::ParseField : le champ priorité est hors plage"
 
 #: src/r_task.cc:193
 msgid "Task::ParseField: not enough data in time zone code field"
-msgstr ""
+msgstr "Task::ParseField : pas assez de données dans le champ de zone de temps"
 
 #: src/r_task.cc:213
 msgid "Task::ParseField: AlarmType out of bounds"
-msgstr ""
+msgstr "Task::ParseField : type d'alarme hors plage"
 
 #: src/r_task.cc:401
 msgid "UID"
-msgstr ""
+msgstr "UID"
 
 #: src/r_task.cc:407
 msgid "Time Zone Code Valid"
-msgstr ""
+msgstr "Code de zone de temps valide"
 
 #: src/r_task.cc:409
 msgid "Alarm Type"
-msgstr ""
+msgstr "Type d'alarme"
 
 #: src/r_task.cc:410
 msgid "Date"
-msgstr ""
+msgstr "Date"
 
 #: src/r_task.cc:411 src/r_task.cc:457
 msgid "Relative"
-msgstr ""
+msgstr "Relative"
 
 #: src/r_task.cc:418
 msgid "Status"
-msgstr ""
+msgstr "Statut"
 
 #: src/r_task.cc:419 src/r_task.cc:448
 msgid "Not Started"
-msgstr ""
+msgstr "Non commencée"
 
 #: src/r_task.cc:420 src/r_task.cc:449
 msgid "In Progress"
-msgstr ""
+msgstr "En cours"
 
 #: src/r_task.cc:421 src/r_task.cc:450
 msgid "Completed"
-msgstr ""
+msgstr "Complétée"
 
 #: src/r_task.cc:422 src/r_task.cc:451
 msgid "Waiting"
-msgstr ""
+msgstr "En attente"
 
 #: src/r_task.cc:423 src/r_task.cc:452
 msgid "Deferred"
-msgstr ""
+msgstr "Reportée"
 
 #: src/r_task.cc:455
 msgid "None"
-msgstr ""
+msgstr "Aucun"
 
 #: src/r_task.cc:456
 msgid "By Date"
-msgstr ""
+msgstr "Par date"
 
 #: src/r_task.cc:460
 msgid "Task entry: "
-msgstr ""
+msgstr "Entrée de tâche : "
 
 #: src/r_task.cc:480
 msgid "   Priority: "
-msgstr ""
+msgstr "   Priorité : "
 
 #: src/r_task.cc:483
 msgid "   Alarm Type: "
-msgstr ""
+msgstr "   Type d'alarme : "
 
 #: src/r_task.cc:494
 msgid "   Categories: "
-msgstr ""
+msgstr "   Catégories : "
 
 #: src/r_timezone.cc:111
 msgid "TimeZone::ParseField: TimeZone Type is not valid"
-msgstr ""
+msgstr "TimeZone::ParseField : type de zone de temps invalide"
 
 #: src/r_timezone.cc:229
 msgid "TimeZone Name"
-msgstr ""
+msgstr "Nom de zone de temps"
 
 #: src/r_timezone.cc:230
 msgid "Index"
-msgstr ""
+msgstr "Index"
 
 #: src/r_timezone.cc:231
 msgid "TimeZone Offset in Minutes"
-msgstr ""
+msgstr "Décalage de zone de temps en minutes"
 
 #: src/r_timezone.cc:232
 msgid "Use DST?"
-msgstr ""
+msgstr "Passage à l'heure d'été ?"
 
 #: src/r_timezone.cc:233
 msgid "DST Offset"
-msgstr ""
+msgstr "Décalage d'heure d'été"
 
 #: src/r_timezone.cc:234
 msgid "Start Month"
-msgstr ""
+msgstr "Mois de début"
 
 #: src/r_timezone.cc:235
 msgid "End Month"
-msgstr ""
+msgstr "Mois de fin"
 
 #: src/r_timezone.cc:236
 msgid "TimeZone Type"
-msgstr ""
+msgstr "Type de zone de temps"
 
 #: src/r_timezone.cc:271
 msgid "TimeZone entry: "
-msgstr ""
+msgstr "Entrée zone de temps : "
 
 #: src/r_timezone.cc:289
 msgid "       Desc: "
-msgstr ""
+msgstr "       Desc : "
 
 #: src/r_timezone.cc:290
 msgid "      Index: "
-msgstr ""
+msgstr "      Index : "
 
 #: src/r_timezone.cc:291
 msgid "       Type: "
-msgstr ""
+msgstr "       Type : "
 
 #: src/r_timezone.cc:292
 msgid "     Offset: "
-msgstr ""
+msgstr "     Offset : "
 
 #: src/r_timezone.cc:292
 msgid " minutes "
-msgstr ""
+msgstr " minutes "
 
 #: src/r_timezone.cc:294
 msgid "            Split Offset: hours: "
-msgstr ""
+msgstr "       Décalage détaillé : heures : "
 
 #: src/r_timezone.cc:295
 msgid ", minutes: "
-msgstr ""
+msgstr ", minutes: "
 
 #: src/r_timezone.cc:296
 msgid "  Sample TZ: "
-msgstr ""
+msgstr "    ZT exemple : "
 
 #: src/r_timezone.cc:297
 msgid "    Use DST: "
-msgstr ""
+msgstr "   Heure d'été : "
 
 #: src/r_timezone.cc:299
 msgid " DST Offset: "
-msgstr ""
+msgstr "Déc. heure été : "
 
 #: src/r_timezone.cc:301
 msgid "Start Month: "
-msgstr ""
+msgstr " Mois de début :"
 
 #: src/r_timezone.cc:303
 msgid "Start Month: unknown ("
-msgstr ""
+msgstr " Mois de début : inconnu ("
 
 #: src/r_timezone.cc:305
 msgid "  End Month: "
-msgstr ""
+msgstr "   Mois de fin : "
 
 #: src/r_timezone.cc:307
 msgid "  End Month: unknown ("
-msgstr ""
+msgstr "   Mois de fin : inconnu ("
 
 #: src/record.cc:253
 msgid "    Unknowns:\n"
-msgstr ""
+msgstr "    Inconnus :\n"
 
 #: src/record.cc:255
 msgid "        Type: "
-msgstr ""
+msgstr "        Type : "
 
 #: src/record.cc:257
 msgid " Data:\n"
-msgstr ""
+msgstr " Données :\n"
 
 #: src/record.cc:459
 msgid "NULL time pointer passed to Date::FromTm"
-msgstr ""
+msgstr "Pointeur de temps NULL passé à Date::FromTm"
 
 #: src/record.cc:591
 msgid "Enum value not found in constant list"
-msgstr ""
+msgstr "Valeur d'enum non trouvée dans la liste de constantes"
 
 #: src/record.cc:642
 msgid "Different database types in DBNamedFieldCmp"
-msgstr ""
+msgstr "Types de bases de données différents dans DBNamedFieldCmp"
 
 #: src/record.cc:647
 msgid "Unknown database in DBNamedFieldCmp::operator()"
-msgstr ""
+msgstr "Base de données inconnue dans DBNamedFieldCmp::operator()"
 
 #: src/restore.cc:184
 msgid "Skipping: "
-msgstr ""
+msgstr "Ignore :"
 
 #: src/restore.cc:298
 msgid "Skipping invalid tar record: "
-msgstr ""
+msgstr "Enregistrement tar inconnu ignoré : "
 
 #: src/restore.cc:358
 msgid "Invalid state in Restore::BuildRecord()"
-msgstr ""
+msgstr "État invalide dans Restore::BuildRecord()"
 
 #: src/restore.cc:410
 msgid "Invalid state in Restore::FetchRecord()"
-msgstr ""
+msgstr "État invalide dans Restore::FetchRecord()"
 
 #: src/router.cc:198
 msgid "SimpleReadThread received uncaught exception: "
-msgstr ""
+msgstr "SimpleReadThread a reçu une exception non attrapée : "
 
 #: src/router.cc:198
 msgid " what: "
-msgstr ""
+msgstr " message : "
 
 #: src/router.cc:201
 msgid "SimpleReadThread recevied uncaught exception of unknown type"
-msgstr ""
+msgstr "SimpleReadThread a reçu une exception non attrapée et de type inconnu"
 
 #: src/router.cc:211
 msgid "SocketRoutingQueue Leftovers: "
-msgstr ""
+msgstr "SocketRoutingQueue paquet(s) en surplus : "
 
 #: src/router.cc:213
 msgid " packet(s) for socket: "
-msgstr ""
+msgstr " pour la socket : "
 
 #: src/router.cc:343
 msgid "RegisterInterest requesting a previously registered socket."
-msgstr ""
+msgstr "RegisterInterest sur une socket déjà enregistrée."
 
 #: src/router.cc:422
 msgid "SocketRead requested data from unregistered socket."
-msgstr ""
+msgstr "Demande de données dans SocketRead sur une socket non enregistrée."
 
 #: src/router.cc:616
 msgid "SocketRoutingQueue: Error creating USB read thread."
-msgstr ""
+msgstr "SocketRoutingQueue : erreur à la création du thread de lecture USB."
 
 #: src/socket.cc:123
 msgid "Socket: Whole packet too short to fragment"
-msgstr ""
+msgstr "Socket : paquet entier trop petit pour être fragmenté"
 
 #: src/socket.cc:170
 msgid "Socket: invalid sequence packet"
-msgstr ""
+msgstr "Socket: paquet de séquence invalide"
 
 #: src/socket.cc:183
 #, c-format
 msgid ""
 "Socket 0x%x: out of sequence. (Global sequence: 0x%x. Packet sequence: 0x%x)"
 msgstr ""
+"Socket 0x%x : hors sequence. (Séquence Globale: 0x%x. Séquence du paquet : 0x"
+"%x)"
 
 #: src/socket.cc:293
 msgid "SocketZero: No device available for RawSend"
-msgstr ""
+msgstr "SocketZero : pas de périphérique disponible pour un RawSend"
 
 #: src/socket.cc:324
 msgid ""
 "SocketZero::RawReceive: queue DefaultRead returned false (likely a timeout)"
 msgstr ""
+"SocketZero::RawReceive : DefaultRead sur la file a retourné faux "
+"(probablement un délai dépassé)"
 
 #: src/socket.cc:338
 msgid "Multiple pushbacks in SocketZero!"
-msgstr ""
+msgstr "Refoulements de données multiples dans SocketZero !"
 
 #: src/socket.cc:459
 msgid "No password specified."
-msgstr ""
+msgstr "Pas de mot de passe donnée."
 
 #: src/socket.cc:504
 msgid ""
@@ -2859,301 +2925,310 @@ msgid ""
 "password, or if the device thinks the socket is already open... please try "
 "again)"
 msgstr ""
+"Socket : le périphérique a fermé la socket lors de la tentative d'ouverture "
+"(ceci peut être causé par un mot de passe erroné, ou bien le périphérique "
+"pense que la socket est déjà ouverte... Veuillez réessayer)"
 
 #: src/socket.cc:512
 msgid "Socket: Bad OPENED packet in Open"
-msgstr ""
+msgstr "Socket : Mauvais paquet OPENED dans Open"
 
 #: src/socket.cc:528
 msgid "Could not find mode's starting sequence packet"
-msgstr ""
+msgstr "Impossible trouver le paquet de début de séquence du mode"
 
 #: src/socket.cc:617
 msgid "Socket: Bad CLOSED packet in Close"
-msgstr ""
+msgstr "Socket : Mauvais paquet CLOSED dans Close"
 
 #: src/socket.cc:628
 msgid "Socket: Missing RESET_REPLY in Close"
-msgstr ""
+msgstr "Socket : Pas de RESET_REPLY dans Close"
 
 #: src/socket.cc:677
 msgid "Socket: unknown send data in DBFragSend()"
-msgstr ""
+msgstr "Socket : données d'envoi inconnues dans DBFragSend()"
 
 #: src/socket.cc:781 src/socket.cc:870
 msgid "Socket: (read) unhandled packet in Packet(): "
-msgstr ""
+msgstr "Socket : (lecture) paquet non géré dans Packet() : "
 
 #: src/socket.cc:794 src/socket.cc:887 src/socket.cc:970
 msgid "Socket: 10 blank packets received"
-msgstr ""
+msgstr "Socket : 10 paquets vides reçus"
 
 #: src/socket.cc:840
 msgid "Socket: unknown send data in PacketJVM()"
-msgstr ""
+msgstr "Socket : données d'envoi inconnues dans PacketJVM()"
 
 #: src/socket.cc:908
 msgid "Socket: unknown send data in PacketData()"
-msgstr ""
+msgstr "Socket : données d'envoi inconnues dans PacketData()"
 
 #: src/socket.cc:950
 msgid "file is not a valid Java code file"
-msgstr ""
+msgstr "le fichier n'est pas un fichier de code java valide"
 
 #: src/socket.cc:954
 msgid "device does not support requested command"
-msgstr ""
+msgstr "le périphérique ne supporte pas la commande demandée"
 
 #: src/socket.cc:1072
 msgid "Non-sequence packet in Socket::SyncSend()"
-msgstr ""
+msgstr "Le paquet n'est pas un paquet séquence dans Socket::SyncSend()"
 
 #: src/socket.cc:1081
 msgid "Socket::Receive: queue SocketRead returned false (likely a timeout)"
 msgstr ""
+"Socket::RawReceive : DefaultRead sur la file a retourné faux (probablement "
+"un délai dépassé)"
 
 #: src/socket.cc:1084
 msgid "NULL queue pointer in a registered socket read."
-msgstr ""
+msgstr "Pointeur de file NULL lors d'un read sur une socket enregistrée."
 
 #: src/socket.cc:1099
 msgid ""
 "SocketRoutingQueue required in SocketZero in order to call Socket::"
 "RegisterInterest()"
 msgstr ""
+"Une SocketRoutingQueue est requise dans la SocketZero pour appeler Socket::"
+"RegisterInterest()"
 
 #: src/socket.cc:1102
 #, c-format
 msgid "Socket (%u) already registered in Socket::RegisterInterest()!"
-msgstr ""
+msgstr "Socket (%u) déjà enregistrée dans Socket::RegisterInterest()!"
 
 #: src/tarfile.cc:55
 msgid "Unable to open tar file: "
-msgstr ""
+msgstr "Impossible d'ouvrir le fichier tar"
 
 #: src/tarfile.cc:88
 msgid "Unable to write eof"
-msgstr ""
+msgstr "Impossible d'écrire eof"
 
 #: src/tarfile.cc:92
 msgid "Unable to close file"
-msgstr ""
+msgstr "Impossible de fermer le fichier"
 
 #: src/tarfile.cc:113
 msgid "Unable to write tar header"
-msgstr ""
+msgstr "Impossible d'écrire l'en-tête tar"
 
 #: src/tarfile.cc:128
 msgid "Unable to write block"
-msgstr ""
+msgstr "Impossible d'écrire le bloc"
 
 #: src/tarfile.cc:156 src/tarfile.cc:215 src/tarfile.cc:272
 msgid "Only regular files are supported inside a tarball."
-msgstr ""
+msgstr "Seuls les fichiers réguliers sont supportés dans un tarball."
 
 #: src/tarfile.cc:184 src/tarfile.cc:243
 msgid "Unable to read block"
-msgstr ""
+msgstr "Impossible de lire le bloc"
 
 #: src/tarfile.cc:281
 msgid "Unable to skip tar file"
-msgstr ""
+msgstr "Impossible d'ignorer le fichier tar"
 
 #: src/threadwrap.cc:54
 msgid "Thread: pthread_create failed."
-msgstr ""
+msgstr "Thread : échec de pthread_create."
 
 #: src/time.cc:154
 msgid "Unknown time zone"
-msgstr ""
+msgstr "Zone de temps inconnue"
 
 #: src/usbwrap_libusb.cc:228 src/usbwrap_libusb_1_0.cc:336
 msgid "invalid USB device ID"
-msgstr ""
+msgstr "ID de périphérique USB invalide"
 
 #: src/usbwrap_libusb.cc:231 src/usbwrap_libusb_1_0.cc:340
 msgid ""
 "Failed to open USB device.  Please check your system's USB device "
 "permissions."
 msgstr ""
+"Impossible d'ouvrir le périphérique USB. Veuillez vérifier les permissions "
+"de votre système."
 
 #: src/usbwrap_libusb.cc:275
 msgid "Timeout in usb_bulk_read"
-msgstr ""
+msgstr "Délai dépassé dans usb_bulk_read"
 
 #: src/usbwrap_libusb.cc:278
 msgid "Error in usb_bulk_read("
-msgstr ""
+msgstr "Erreur dans usb_bulk_read("
 
 #: src/usbwrap_libusb.cc:303
 msgid "Timeout in usb_bulk_write (1)"
-msgstr ""
+msgstr "Délai dépassé dans usb_bulk_write (1)"
 
 #: src/usbwrap_libusb.cc:305
 msgid "Error in usb_bulk_write (1)"
-msgstr ""
+msgstr "Erreur dans usb_bulk_read(1)"
 
 #: src/usbwrap_libusb.cc:327
 msgid "Timeout in usb_bulk_write (2)"
-msgstr ""
+msgstr "Délai dépassé dans usb_bulk_write (1)"
 
 #: src/usbwrap_libusb.cc:329
 msgid "Error in usb_bulk_write (2)"
-msgstr ""
+msgstr "Erreur dans usb_bulk_read(1)"
 
 #: src/usbwrap_libusb.cc:347
 msgid "Timeout in usb_interrupt_read"
-msgstr ""
+msgstr "Délai dépassé dans usb_interrupt_read"
 
 #: src/usbwrap_libusb.cc:349
 msgid "Error in usb_interrupt_read"
-msgstr ""
+msgstr "Erreur dans usb_interrupt_read"
 
 #: src/usbwrap_libusb.cc:370
 msgid "Timeout in usb_interrupt_write"
-msgstr ""
+msgstr "Délai dépassé dans usb_interrupt_write"
 
 #: src/usbwrap_libusb.cc:372
 msgid "Error in usb_interrupt_write"
-msgstr ""
+msgstr "Erreur dans usb_interrupt_write"
 
 #: src/usbwrap_libusb.cc:494 src/usbwrap_libusb_1_0.cc:669
 msgid "claim interface failed"
-msgstr ""
+msgstr "échec de la réclamation d'interface"
 
 #: src/usbwrap_libusb_1_0.cc:91
 msgid "Success"
-msgstr ""
+msgstr "Succès"
 
 #: src/usbwrap_libusb_1_0.cc:93
 msgid "IO Error"
-msgstr ""
+msgstr "Erreur d'E/S"
 
 #: src/usbwrap_libusb_1_0.cc:95
 msgid "Invalid parameter"
-msgstr ""
+msgstr "Paramètre invalide"
 
 #: src/usbwrap_libusb_1_0.cc:97
 msgid "Access"
-msgstr ""
+msgstr "Droits d'accès"
 
 #: src/usbwrap_libusb_1_0.cc:99
 msgid "No device"
-msgstr ""
+msgstr "Pas de périphérique"
 
 #: src/usbwrap_libusb_1_0.cc:101
 msgid "Not found"
-msgstr ""
+msgstr "Non trouvé"
 
 #: src/usbwrap_libusb_1_0.cc:105
 msgid "Timeout"
-msgstr ""
+msgstr "Délai dépassé"
 
 #: src/usbwrap_libusb_1_0.cc:107
 msgid "Overflow"
-msgstr ""
+msgstr "Dépassement"
 
 #: src/usbwrap_libusb_1_0.cc:109
 msgid "Pipe"
-msgstr ""
+msgstr "Tube"
 
 #: src/usbwrap_libusb_1_0.cc:111
 msgid "Interrupted"
-msgstr ""
+msgstr "Interrompu"
 
 #: src/usbwrap_libusb_1_0.cc:113
 msgid "No memory"
-msgstr ""
+msgstr "Plus de mémoire"
 
 #: src/usbwrap_libusb_1_0.cc:115
 msgid "Not supported"
-msgstr ""
+msgstr "Non supporté"
 
 #: src/usbwrap_libusb_1_0.cc:119
 msgid "Unknown LIBUSB error code"
-msgstr ""
+msgstr "Code d'erreur LIBUSB inconnu"
 
 #: src/usbwrap_libusb_1_0.cc:272
 msgid "Failed to get device list"
-msgstr ""
+msgstr "Impossible d'obtenir la liste de périphériques"
 
 #: src/usbwrap_libusb_1_0.cc:391
 msgid "Timeout in BulkRead"
-msgstr ""
+msgstr "Délai dépassé dans BulkRead"
 
 #: src/usbwrap_libusb_1_0.cc:397
 msgid "Error in libusb_bulk_tranfer("
-msgstr ""
+msgstr "Erreur dans libusb_bulk_transfer("
 
 #: src/usbwrap_libusb_1_0.cc:432
 msgid "Timeout in BulkWrite"
-msgstr ""
+msgstr "Délai dépassé dans BulkWrite"
 
 #: src/usbwrap_libusb_1_0.cc:434
 msgid "Error in BulkWrite"
-msgstr ""
+msgstr "Erreur dans BulkWrite"
 
 #: src/usbwrap_libusb_1_0.cc:441 src/usbwrap_libusb_1_0.cc:477
 #: src/usbwrap_libusb_1_0.cc:545
 msgid "Failed to perform a complete write"
-msgstr ""
+msgstr "Impossible d'effectuer une écriture complète"
 
 #: src/usbwrap_libusb_1_0.cc:469
 msgid "Timeout in BulkWrite (2)"
-msgstr ""
+msgstr "Délai dépassé dans BulkWrite (2)"
 
 #: src/usbwrap_libusb_1_0.cc:471
 msgid "Error in BulkWrite (2)"
-msgstr ""
+msgstr "Erreur dans BulkWrite (2)"
 
 #: src/usbwrap_libusb_1_0.cc:503
 msgid "Timeout in InterruptRead"
-msgstr ""
+msgstr "Délai dépassé dans InterruptRead"
 
 #: src/usbwrap_libusb_1_0.cc:508
 msgid "Error in InterruptRead"
-msgstr ""
+msgstr "Erreur dans InterruptRead"
 
 #: src/usbwrap_libusb_1_0.cc:536
 msgid "Timeout in InterruptWrite"
-msgstr ""
+msgstr "Délai dépassé dans InterruptWrite"
 
 #: src/usbwrap_libusb_1_0.cc:538
 msgid "Error in InterruptWrite"
-msgstr ""
+msgstr "Erreur dans InterruptWrite"
 
 #: src/vbase.cc:47
 msgid "gmtime_r() failed on time_t of: "
-msgstr ""
+msgstr "échec de gmtime_r() avec un time_t de : "
 
 #: src/vbase.cc:51
 msgid "(null pointer)"
-msgstr ""
+msgstr "(pointeur null)"
 
 #: src/vbase.cc:255
 msgid "Cannot construct vBase with null format"
-msgstr ""
+msgstr "Impossible de construire une vBase avec un format null"
 
 #: src/vbase.cc:269
 msgid "Cannot set vBase with null format"
-msgstr ""
+msgstr "Impossible de définir une vBase avec un format null"
 
 #: src/vbase.cc:294 src/vbase.cc:315
 msgid "resource error allocating vformat attribute"
-msgstr ""
+msgstr "Erreur d'allocation d'attribut de vformat"
 
 #: src/vcard.cc:141 src/vcard.cc:337 src/vevent.cc:595 src/vevent.cc:683
 #: src/vjournal.cc:79 src/vtodo.cc:94
 msgid "resource error allocating vformat"
-msgstr ""
+msgstr "Erreur d'allocation de vformat"
 
 #: src/vcard.cc:512
 msgid "Unable to parse BDAY field"
-msgstr ""
+msgstr "Impossible de lire le champ BDAY"
 
 #: src/vcard.cc:544
 msgid "FN and ORG fields both blank in VCARD data"
-msgstr ""
+msgstr "Champs FN et ORG tous les deux vide dans les données de VCARD"
 
 #: src/vevent.cc:72
 #, c-format
@@ -3161,12 +3236,14 @@ msgid ""
 "ERROR: recurrence rule contains %s, unsupported by Barry. MIME conversion "
 "will be incorrect."
 msgstr ""
+"ERREUR : la règle de périodicité contient %s, non supporté par Barry. La "
+"conversion MIME sera incorrecte."
 
 #: src/vevent.cc:73 src/vevent.cc:87 src/vevent.cc:110 src/vevent.cc:145
 #: src/vevent.cc:150 src/vevent.cc:163 src/vevent.cc:469 src/vevent.cc:495
 #: src/vevent.cc:556
 msgid "Record data so far:\n"
-msgstr ""
+msgstr "Données d'enregistrement à ce point :\n"
 
 #: src/vevent.cc:86
 #, c-format
@@ -3174,6 +3251,8 @@ msgid ""
 "Warning: multiple items in BYDAY, not supported by device (%s). Using only "
 "the first item."
 msgstr ""
+"Attention : éléments multiples dans BYDAY, non supporté par le périphérique "
+"(%s). Seul le premier est utilisé."
 
 #: src/vevent.cc:109
 #, c-format
@@ -3181,19 +3260,23 @@ msgid ""
 "Warning: negative week in BYDAY (%d), unsupported by device. Converting to "
 "positive week, based on 4 week months: %d."
 msgstr ""
+"Attention : semaine négative dans BYDAY (%d), non supporté par le "
+"périphérique. Conversion en semaine positive, basée sur 4 semaines par "
+"mois : %d."
 
 #: src/vevent.cc:140
 msgid "Called GetDayOfMonthFromBYMONTHDAY() without a BYMONTHDAY"
-msgstr ""
+msgstr "GetDayOfMonthFromBYMONTHDAY() appelé sans BYMONTHDAY"
 
 #: src/vevent.cc:144
 msgid "Warning: BYMONTHDAY of 0, assuming 1.\n"
-msgstr ""
+msgstr "Attention : BYMONTHDAY vaut 0, valeur retenue : 1.\n"
 
 #: src/vevent.cc:149
 #, c-format
 msgid "Warning: BYMONTHDAY larger than month (%d days). Assuming 1.\n"
 msgstr ""
+"Warning: BYMONTHDAY plus grand que le mois (%d jours). Valeur retenue : 1.\n"
 
 #: src/vevent.cc:162
 #, c-format
@@ -3201,59 +3284,70 @@ msgid ""
 "Warning: negative BYMONTHDAY (%d), unsupported by device. Converting to "
 "positive day of month: %d."
 msgstr ""
+"Attention : BYMONTHDAY négatif (%d), non supporté par le périphérique. "
+"Converti en jour de mois positif : %d."
 
 #: src/vevent.cc:274
 msgid "Unknown RecurringType in Barry Calendar object"
-msgstr ""
+msgstr "RecurringType inconnu dans l'objet calendrier Barry"
 
 #: src/vevent.cc:414
 msgid "Invalid COUNT in recurring rule: "
-msgstr ""
+msgstr "COUNT invalide dans la règle de récursivité :"
 
 #: src/vevent.cc:468
 msgid ""
 "Warning: WEEKLY VEVENT without a day selected. Assuming day of start time."
 msgstr ""
+"Attention : WEEKLY VEVENT sans jour sélectionné. Utilisation du jour de "
+"début."
 
 #: src/vevent.cc:494
 msgid ""
 "Warning: MONTHLY VEVENT without a day type specified (no BYMONTHDAY nor "
 "BYDAY). Assuming BYMONTHDAY, using day of start time."
 msgstr ""
+"Attention : MONTHLY VEVENT sans type de jour spécifié (ni BYMONTHDAY ni "
+"BYDAY). Utilisation de BYMONTHDAY, avec le jour de début."
 
 #: src/vevent.cc:555
 msgid ""
 "Warning: YEARLY VEVENT without a day type specified (no BYMONTHDAY nor "
 "BYDAY). Assuming BYMONTHDAY, using day and month of start time."
 msgstr ""
+"Attention : MONTHLY VEVENT sans type de jour spécifié (ni BYMONTHDAY ni "
+"BYDAY). Utilisation de BYMONTHDAY, avec le jour et le mois de début."
 
 #: src/vevent.cc:672
 msgid "vCalendar data contains more than one VEVENT block, unsupported"
 msgstr ""
+"Les données de vCalendar contiennent plus qu'un bloc VEVENT, non supporté"
 
 #: src/vevent.cc:723
 msgid "Blank DTSTART"
-msgstr ""
+msgstr "DTSTART vide"
 
 #: src/vevent.cc:783
 msgid "Unknown TRIGGER VALUE"
-msgstr ""
+msgstr "TRIGGER VALUE inconnue"
 
 #: src/vjournal.cc:124
 msgid "vCalendar data contains more than one VJOURNAL block, unsupported"
 msgstr ""
+"Les données de vCalendar contiennent plus qu'un bloc VJOURNAL, non supporté"
 
 #: src/vjournal.cc:135
 msgid "resource error allocating vjournal"
-msgstr ""
+msgstr "erreur lors de l'allocation de ressources pour un vjournal"
 
 #: src/vtodo.cc:168
 msgid "vCalendar data contains more than one VTODO block, unsupported"
 msgstr ""
+"Les données de vCalendar contiennent plus qu'un bloc VTODO, non supporté"
 
 #: src/vtodo.cc:179
 msgid "resource error allocating vtodo"
-msgstr ""
+msgstr "erreur lors de l'allocation de ressources pour un vtodo"
 
 #: tools/balxparse.cc:65
 #, c-format
@@ -3274,6 +3368,21 @@ msgid ""
 "   Language supported :\n"
 "\t"
 msgstr ""
+"balxparse - Analyseur lexicographique ALX en ligne de commandes\n"
+"        Copyright 2009-2010, Nicolas VIVIEN.\n"
+"        Copyright 2005-2012, Net Direct Inc. (http://www.netdirect.ca/)\n"
+"        Utilisation : %s\n"
+"\n"
+"   -h        Cette aide\n"
+"   -i lang   Langue\n"
+"   -d chem   Chemin système vers tous les fichiers ALX\n"
+"   -o fich   Nom système de fichier ALX (Platform.alx)\n"
+"\n"
+"   <ALX fichier> ...\n"
+"     Analyse un ou plusieurs fichiers ALX.\n"
+"\n"
+"   Langues supportées :\n"
+"\t"
 
 #: tools/bcharge.cc:59 tools/bcharge_libusb_1_0.cc:60
 #, c-format
@@ -3292,6 +3401,21 @@ msgid ""
 "   -s path     The path where sysfs is mounted.  Defaults to '/sys'\n"
 "\n"
 msgstr ""
+"bcharge - Définition du mode de charge Blackberry\n"
+"          Copyright 2006-2012, Net Direct Inc. (http://www.netdirect.ca/)\n"
+"\n"
+"   -d          Passer en mode dual (0004)\n"
+"   -o          Passer un pearl à l'ancien mode Blackberry (0001)\n"
+"   -g          Passer en mode double seulement si interface de base de\n"
+"               données de classe 255 n'existe pas\n"
+"\n"
+"   -h          Ce message d'aide\n"
+"   -p chemin   Argument devpath udev. Si précisé, essaye d'ajuster les\n"
+"               réglages d'USB suspend pour maintenir le périphérique en\n"
+"               charge.\n"
+" If specified, will attempt\n"
+"   -s chemin   Le chemin du point de montage du sysfs . '/sys' par défaut.\n"
+"\n"
 
 #: tools/bcharge.cc:81
 #, c-format
@@ -3299,76 +3423,78 @@ msgid ""
 "\n"
 "usb_control_msg failed: code: %d, %s\n"
 msgstr ""
+"\n"
+"échec de usb_control_msg : code: %d, %s\n"
 
 #: tools/bcharge.cc:139 tools/bcharge_libusb_1_0.cc:149
 #, c-format
 msgid "Can't find Mass Storage interface, assuming 0.\n"
-msgstr ""
+msgstr "Impossible de trouver l'interface Stockage de Masse, O utilisé.\n"
 
 #: tools/bcharge.cc:159
 #, c-format
 msgid "usb_detach_kernel_driver_np() failed: %s\n"
-msgstr ""
+msgstr "échec de usb_detach_kernel_driver_np() : %s\n"
 
 #: tools/bcharge.cc:162
 #, c-format
 msgid "usb_set_configuration() failed: %s\n"
-msgstr ""
+msgstr "échec de usb_set_configuration() : %s\n"
 
 #: tools/bcharge.cc:170
 #, c-format
 msgid "Found device #%s..."
-msgstr ""
+msgstr "Périphérique #%s trouvé..."
 
 #: tools/bcharge.cc:175
 #, c-format
 msgid "unable to open device\n"
-msgstr ""
+msgstr "impossible d'ouvrir le périphérique\n"
 
 #: tools/bcharge.cc:183 tools/bcharge_libusb_1_0.cc:196
 #, c-format
 msgid "adjusting charge setting"
-msgstr ""
+msgstr "ajustement des réglages de charge"
 
 #: tools/bcharge.cc:188 tools/bcharge_libusb_1_0.cc:201
 #, c-format
 msgid "already at 500mA"
-msgstr ""
+msgstr "déjà à 500mA"
 
 #: tools/bcharge.cc:196 tools/bcharge_libusb_1_0.cc:222
 #, c-format
 msgid "...no Pearl mode adjustment"
-msgstr ""
+msgstr "...pas d'ajustement en mode Pearl"
 
 #: tools/bcharge.cc:201 tools/bcharge_libusb_1_0.cc:227
 #, c-format
 msgid "...adjusting Pearl mode to single"
-msgstr ""
+msgstr "...ajustement du mode Pearl à simple"
 
 #: tools/bcharge.cc:206 tools/bcharge_libusb_1_0.cc:232
 #, c-format
 msgid "...already in classic/single mode"
-msgstr ""
+msgstr "...déjà en mode classique / simple"
 
 #: tools/bcharge.cc:212 tools/bcharge_libusb_1_0.cc:238
 #, c-format
 msgid "...adjusting Pearl mode to dual"
-msgstr ""
+msgstr "...ajustement du mode Pearl à double"
 
 #: tools/bcharge.cc:217 tools/bcharge_libusb_1_0.cc:243
 #, c-format
 msgid "...already in dual mode"
-msgstr ""
+msgstr "...déjà en mode double"
 
 #: tools/bcharge.cc:223 tools/bcharge_libusb_1_0.cc:249
 #, c-format
 msgid "...no database iface found, setting dual mode"
-msgstr ""
+msgstr "...pas d'interface de base de données, passage en mode double"
 
 #: tools/bcharge.cc:228 tools/bcharge_libusb_1_0.cc:254
 #, c-format
 msgid "...found database iface, no change"
-msgstr ""
+msgstr "...interface de base de données trouvée, pas de changement"
 
 #: tools/bcharge.cc:260
 #, c-format
@@ -3376,31 +3502,33 @@ msgid ""
 "\n"
 "usb_reset failed: %s\n"
 msgstr ""
+"\n"
+"échec de usb_reset : %s\n"
 
 #: tools/bcharge.cc:264 tools/bcharge_libusb_1_0.cc:291
 #, c-format
 msgid "...done"
-msgstr ""
+msgstr "...fait"
 
 #: tools/bcharge.cc:267 tools/bcharge_libusb_1_0.cc:294
 #, c-format
 msgid "...no change"
-msgstr ""
+msgstr "...pas de changement"
 
 #: tools/bcharge.cc:281 tools/bcharge_libusb_1_0.cc:308
 #, c-format
 msgid "autosuspend adjustment failure: (file: %s): %s\n"
-msgstr ""
+msgstr "échec du réglage d'autosuspend : (fichier : %s): %s\n"
 
 #: tools/bcharge.cc:292 tools/bcharge_libusb_1_0.cc:319
 #, c-format
 msgid "autosuspend adjustment failure (write): (file: %s): %s\n"
-msgstr ""
+msgstr "échec du réglage d'autosuspend (écriture) : (fichier : %s): %s\n"
 
 #: tools/bcharge.cc:298 tools/bcharge_libusb_1_0.cc:325
 #, c-format
 msgid "autosuspend adjustment: wrote %s to %s\n"
-msgstr ""
+msgstr "réglage d'autosuspend : écrit %s vers %s\n"
 
 #: tools/bcharge.cc:425
 #, c-format
@@ -3408,12 +3536,14 @@ msgid ""
 "\n"
 "Unable to scan devices: %s\n"
 msgstr ""
+"\n"
+"Impossible de chercher les périphériques : %s\n"
 
 #: tools/bcharge.cc:430 tools/bcharge_libusb_1_0.cc:460 tools/breset.cc:67
 #: tools/breset_libusb_1_0.cc:82
 #, c-format
 msgid "Scanning for Blackberry devices...\n"
-msgstr "Recherche de téléphone Blackberry...\n"
+msgstr "Recherche d'appareil Blackberry...\n"
 
 #: tools/bcharge_libusb_1_0.cc:82
 #, c-format
@@ -3421,41 +3551,43 @@ msgid ""
 "\n"
 "usb_control_transfer failed: code: %d\n"
 msgstr ""
+"\n"
+"échec de usb_control_transfer : code : %d\n"
 
 #: tools/bcharge_libusb_1_0.cc:163
 #, c-format
 msgid "Detecting possible kernel driver conflict, trying to resolve...\n"
-msgstr ""
+msgstr "Détection d'un possible conflit noyau, tentative de résolution...\n"
 
 #: tools/bcharge_libusb_1_0.cc:168
 #, c-format
 msgid "libusb_detach_kernel_driver() failed: %d\n"
-msgstr ""
+msgstr "échec de libusb_detach_kernel_driver() : %d\n"
 
 #: tools/bcharge_libusb_1_0.cc:172
 #, c-format
 msgid "libusb_set_configuration() failed: %d\n"
-msgstr ""
+msgstr "échec de libusb_set_configuration() : %d\n"
 
 #: tools/bcharge_libusb_1_0.cc:179
 #, c-format
 msgid "Found device #%d-%d..."
-msgstr ""
+msgstr "Périphérique #%d-%d trouvé..."
 
 #: tools/bcharge_libusb_1_0.cc:187
 #, c-format
 msgid "unable to open device, %d\n"
-msgstr ""
+msgstr "impossible d'ouvrir le périphérique, %d\n"
 
 #: tools/bcharge_libusb_1_0.cc:207
 #, c-format
 msgid "failed to discover power level\n"
-msgstr ""
+msgstr "la découverte de niveau de courant a échoué\n"
 
 #: tools/bcharge_libusb_1_0.cc:214
 #, c-format
 msgid "failed to get device descriptor: %d\n"
-msgstr ""
+msgstr "impossible de récupérer le descripteur de périphérique : %d\n"
 
 #: tools/bcharge_libusb_1_0.cc:287
 #, c-format
@@ -3463,15 +3595,17 @@ msgid ""
 "\n"
 "libusb_reset_device() failed: %d\n"
 msgstr ""
+"\n"
+"échec de libusb_reset_device() : %d\n"
 
 #: tools/bcharge_libusb_1_0.cc:453
 #, c-format
 msgid "Failed to start up USB: %d\n"
-msgstr ""
+msgstr "Échec au démarrage de l'USB : %d\n"
 
 #: tools/bdptest.cc:60
 msgid "List of debug files: "
-msgstr ""
+msgstr "Liste des fichiers de débogage :"
 
 #: tools/bfuse.cc:71
 #, c-format
@@ -3480,6 +3614,9 @@ msgid ""
 "        Copyright 2008-2012, Net Direct Inc. (http://www.netdirect.ca/)\n"
 "        Using: %s\n"
 msgstr ""
+"bfuse - Système de fichiers pour bases de données Blackberry\n"
+"        Copyright 2008-2012, Net Direct Inc. (http://www.netdirect.ca/)\n"
+"        Utilisation : %s\n"
 
 #: tools/bfuse.cc:80
 msgid ""
@@ -3489,14 +3626,22 @@ msgid ""
 "             If only one device is plugged in, this flag is optional\n"
 "   -P pass   Simplistic method to specify device password\n"
 msgstr ""
+"\n"
+"Options spécifiques de Barry :\n"
+"   -p pin    PIN du périphérique auquel parler\n"
+"             Si un seul périphérique est branché, ce paramètre est "
+"optionnel\n"
+"   -P pass   Méthode simple pour entrer le mot de passe\n"
 
 #: tools/bfuse.cc:434 tools/bfuse.cc:452
 msgid "Constructed != name"
-msgstr ""
+msgstr "Constructed != name"
 
 #: tools/bfuse.cc:571
 msgid "Hello FUSE world.  This is Barry.  Pleased to meet you.\n"
 msgstr ""
+"Bonjour le monde de FUSE. Ceci est Barry. Enchanté de faire ta "
+"connaissance.\n"
 
 #: tools/bidentify.cc:37
 #, c-format
@@ -3513,18 +3658,29 @@ msgid ""
 "   -h        This help\n"
 "   -v        Dump protocol data during operation\n"
 msgstr ""
+"bidentify - Outil USB d'identification de Blackberry\n"
+"            Copyright 2005-2012, Net Direct Inc. (http://www.netdirect.ca/)\n"
+"            Utilisation : %s\n"
+"\n"
+"   -B bus    Indique le bus USB sur lequel chercher\n"
+"   -N périph Indique le périphérique système, chaîne dépendant du système\n"
+"\n"
+"   -c        Si utilisé avec -m, afficher l'hexa et le décimal si possible\n"
+"   -m        Montrer aussi l'ESN / MEID / IMEI du périphérique\n"
+"   -h        Cette aide\n"
+"   -v        Afficher les données du protocole pendant les opérations\n"
 
 #: tools/bidentify.cc:156
 msgid "Error on PIN: "
-msgstr ""
+msgstr "Erreur de PIN :"
 
 #: tools/bidentify.cc:167 tools/brawchannel.cc:341
 msgid "exception caught: "
-msgstr ""
+msgstr "exception attrapée : "
 
 #: tools/bio.cc:68 tools/btool.cc:73
 msgid "Compiled with Boost support"
-msgstr ""
+msgstr "Compilé avec le support de Boost"
 
 #: tools/bio.cc:70
 msgid ""
@@ -3533,10 +3689,14 @@ msgid ""
 "   -f file   Boost serialization filename to read from or write to\n"
 "             Can use - to specify stdin/stdout\n"
 msgstr ""
+"\n"
+" Option à utiliser avec le type 'boost' :\n"
+"   -f fich   Nom de fichier de sérialisation à lire ou écrire\n"
+"             Utiliser - pour l'entrée et la sortie standards\n"
 
 #: tools/bio.cc:75 tools/btool.cc:76
 msgid "Compiled without Boost support"
-msgstr ""
+msgstr "Compilé sans le support de Boost"
 
 #. TRANSLATORS: the i/o types, such as device, tar, mime, etc. must
 #. be exact.  They are commands that the code tests for.  Do not
@@ -3613,115 +3773,198 @@ msgid ""
 "   -v        Dump protocol data during operation\n"
 "\n"
 msgstr ""
+"bio - Entrées sorties avec Barry\n"
+"      Copyright 2010-2012, Net Direct Inc. (http://www.netdirect.ca/)\n"
+"      Utilisation : %s\n"
+"      %s\n"
+"\n"
+" Usage:  bio -i <type> [options...]   -o <type> [options...]\n"
+"\n"
+"   -i type   Le type d'entrée (constructeur) utilisé pour produire\n"
+"             les enregistrements.\n"
+"             Possibilités : device, tar, %sldif, mime\n"
+"   -o type   Le type de sortie (analyseur lexical) pour traiter\n"
+"             les enregistrements.\n"
+"             Plusieurs sorties sont autorisées tant qu'il n'y a pas\n"
+"             de conflit (tels que des sorties dupliquées).\n"
+"             Possibilités : device, tar, %sldif, mime, dump, sha1, cstore\n"
+"\n"
+" Options du type 'device : \n"
+"   -d bdd    Nom de la base d'entrée. Peut être répété.\n"
+"   -A        Ajouter toutes les bases du périphérique, plutôt\n"
+"             que de les spécifier manuellement avec -d\n"
+"   -p pin    PIN du périphérique auquel parler\n"
+"             Optionnel s'il n'y a qu'un périphérique\n"
+"   -P pass   Méthode simple pour entrer le mot de passe\n"
+"   -w mode   Définit le mode d'écriture. Requis, sinon rien ne\n"
+"             sera écrit.\n"
+"             Possibilités : erase, overwrite, addonly, addnew\n"
+"\n"
+" Options du type 'tar' en sortie :\n"
+"   -d bdd    Nom de la base d'entrée. Peut être répété.\n"
+"             Non disponible en sortie. Noter que par défaut, toute les\n"
+"             bases de la sauvegarde sont sélectionnées, en lecture\n"
+"             à moins qu'au moins une option -d ne soit spécifiée.\n"
+"   -D bdd    Nom des bases d'entrée à ignorer. Si l'option -d est absente,\n"
+"             toutes les bases sont sélectionnées automatiquement. Utiliser -"
+"D\n"
+"             permet un filtrage sur la sélection.  Si -d et -D sont "
+"utilisés\n"
+"             pour la même base, -D l'emporte.\n"
+"   -f fich   Ficher de sauvegarde tar à lire ou écrire.\n"
+"%s\n"
+" Options du mode 'ldif' :\n"
+"   -c dn     Convertit le carnet d'adresses au format LDIF, avec le\n"
+"             baseDN spécifié.\n"
+"   -C dnattr Nom d'attribut LDIF à utiliser lors de la construction du "
+"FQDN.\n"
+"             'cn' par défaut.\n"
+"\n"
+" Options du type 'mime' :\n"
+"   -f fich   Nom de fichier à lire ou écrire. Utiliser - pour spécifier les\n"
+"             fichiers d'entrée / sortie standard, ce qui est le défaut.\n"
+"\n"
+" Options du mode 'dump' sur la sortie standard :\n"
+"   -n        Utiliser l'analyseur affichage hexadécimal pour toutes les "
+"bases.\n"
+"\n"
+" Options du mode somme 'sha1' sur la sortie standard :\n"
+"   -t        Inclut le nom de la bdd, son type et les IDs uniques\n"
+"             d'enregistrement dans la somme de contrôle.\n"
+"\n"
+" Options du type 'cstore' en sortie :\n"
+"   -l        Ne lister que les noms de fichiers.\n"
+"   -f fich   Nom de fichier de la liste au-dessus, chemin inclus.\n"
+"             S'il est trouvé, le fichier sera écris dans le répertoire\n"
+"             courant, en utilisant le nom de base du fichier sur le\n"
+"             périphérique.\n"
+" Options communes :\n"
+"   -h        Cette aide.\n"
+"   -I enc    Encodage pour la conversion de chaînes\n"
+"             Les valeurs admissibles sont données par 'iconv --list'\n"
+"   -S        Afficher la liste des analyseurs et constructeurs de\n"
+"             base de données supportés.\n"
+"             Si passée deux fois, montre également les noms des champs.\n"
+"   -v        Afficher les échanges pendant les opérations.\n"
+"\n"
 
 #: tools/bio.cc:177
 msgid "Filename not applicable for this mode"
-msgstr ""
+msgstr "Nom de fichier non applicable à ce mode"
 
 #: tools/bio.cc:182
 msgid "DB not applicable for this mode"
-msgstr ""
+msgstr "BDD non applicable à ce mode"
 
 #: tools/bio.cc:187
 msgid "DB skipping not applicable for this mode"
-msgstr ""
+msgstr "Ignorer une BDD non applicable à ce mode"
 
 #: tools/bio.cc:192
 msgid "DBs not applicable for this mode"
-msgstr ""
+msgstr "BDDs non applicables à ce mode"
 
 #: tools/bio.cc:197
 msgid "PIN not applicable for this mode"
-msgstr ""
+msgstr "PIN non applicable à ce mode"
 
 #: tools/bio.cc:202
 msgid "Password not applicable for this mode"
-msgstr ""
+msgstr "Mot de passe non applicable à ce mode"
 
 #: tools/bio.cc:207
 msgid "Device write behaviour not applicable for this mode"
-msgstr ""
+msgstr "Comportement d'écriture périphérique non applicable à ce mode"
 
 #: tools/bio.cc:212
 msgid "DN not applicable for this mode"
-msgstr ""
+msgstr "DN non applicable à ce mode"
 
 #: tools/bio.cc:217
 msgid "Attribute not applicable for this mode"
-msgstr ""
+msgstr "Attribut non applicable à ce mode"
 
 #: tools/bio.cc:222
 msgid "No hex dump option in this mode"
-msgstr ""
+msgstr "Pas d'option d'affichage hexadécimal pour ce mode"
 
 #: tools/bio.cc:227
 msgid "Including record IDs in the SHA1 sum is not applicable in this mode"
 msgstr ""
+"Inclure les IDs d'enregistrement dans la somme SHA1 n'est pas applicable à "
+"ce mode"
 
 #: tools/bio.cc:232
 msgid "List option not applicable for this mode"
-msgstr ""
+msgstr "Option de liste non applicable à ce mode"
 
 #: tools/bio.cc:250
 msgid "Invalid PIN: "
-msgstr ""
+msgstr "PIN invalide :"
 
 #: tools/bio.cc:304 tools/bio.cc:523 tools/btool.cc:817 tools/pppob.cc:271
 msgid "PIN not found: "
-msgstr ""
+msgstr "PIN non trouvé : "
 
 #: tools/bio.cc:306 tools/bio.cc:525
 msgid "PIN not specified, and more than one device exists."
-msgstr ""
+msgstr "PIN non spécifié, or il y a plus d'un périphérique."
 
 #: tools/bio.cc:310 tools/bio.cc:529
 msgid ""
 "It seems you are trying to use the same device for multiple input or outputs."
 msgstr ""
+"Il semble que vous essayiez d'utiliser le même périphérique pour de "
+"multiples entrées ou sorties."
 
 #: tools/bio.cc:325
 msgid "Database not found: "
-msgstr ""
+msgstr "Base de données non trouvée : "
 
 #: tools/bio.cc:347
 msgid "Cannot use stdin as tar source file, sorry."
-msgstr ""
+msgstr "Impossible d'utiliser l'entrée standard comme source tar, désolé."
 
 #: tools/bio.cc:517
 msgid ""
 "Warning: the -w switch was not specified: no data will be written to the "
 "device."
 msgstr ""
+"Attention : l'option -w n'a pas été activée : aucune donnée ne sera écrite "
+"sur le périphérique."
 
 #: tools/bio.cc:555
 msgid "Cannot use stdout as tar backup file, sorry."
-msgstr ""
+msgstr "Impossible d'utiliser stdout comme fichier de sauvegarde tar, désolé."
 
 #: tools/bio.cc:583
 msgid "Boost output requires a specific output file (-f switch)"
 msgstr ""
+"La sortie Boost requiert un type de fichier de sortie spécifique (option -f)"
 
 #: tools/bio.cc:801
 msgid " (folder)"
-msgstr ""
+msgstr " (dossier)"
 
 #: tools/bio.cc:836
 #, c-format
 msgid "Saving: %s as %s"
-msgstr ""
+msgstr "Sauvegarde : %s en tant que %s"
 
 #: tools/bio.cc:843
 msgid "Error during write!"
-msgstr ""
+msgstr "Erreur durant l'écriture !"
 
 #: tools/bio.cc:952
 msgid ""
 "Unknown device output mode. Must be one of: erase, overwrite, addonly, addnew"
 msgstr ""
+"Mode de sortie de périphérique inconnu. Doit être un parmi : erase, "
+"overwrite, addonly, addnew"
 
 #: tools/bio.cc:1137 tools/btarcmp.cc:815
 msgid "Exception: "
-msgstr ""
+msgstr "Exception : "
 
 #: tools/bjavaloader.cc:66
 #, c-format
@@ -3790,56 +4033,124 @@ msgid ""
 "      Or the time specified as an argument to %s\n"
 "      If given as argument, current system timezone is assumed\n"
 msgstr ""
+"bjavaloader - Chargeur Java USB pour Blackberry\n"
+"        Copyright 2008-2009, Nicolas VIVIEN.\n"
+"        Copyright 2005-2012, Net Direct Inc. (http://www.netdirect.ca/)\n"
+"        Utilisation : %s\n"
+"\n"
+"   -A        Sauver tous les modules trouvés\n"
+"   -a        Effacer seulement les applications\n"
+"   -i        Effacer seulement le système de fichiers\n"
+"   -f        Forcer l'effacement si un module est en cours d'utilisation\n"
+"   -h        Cette aide\n"
+"   -s        Lister les modules apparentés, dans la liste des modules.\n"
+"   -p pin    PIN du périphérique auquel parler\n"
+"             Si un seul périphérique est branché, ce paramètre est\n"
+"             optionnel\n"
+"   -P pass   Méthode simple pour entrer le mot de passe\n"
+"   -v        Afficher les données de protocole pendant l'opération\n"
+"\n"
+"Commandes :\n"
+"\n"
+"   %s [-s]\n"
+"      Liste tous les modules du périphérique.\n"
+"\n"
+"   %s\n"
+"      Fournit des informations sur le périphérique.\n"
+"\n"
+"   %s <fichier .cod> ...\n"
+"      Charge des modules sur le périphérique.\n"
+"\n"
+"   %s [-A] <nom de module> ...\n"
+"      Récupère les modules depuis le périphérique et les écrit\n"
+"      dans un fichier .cod. Note : écrase les fichiers existants !\n"
+"\n"
+"   %s [-a | -i]\n"
+"      Efface le périphérique.\n"
+"      Utiliser avec précautions : écraser le système de fichier\n"
+"                   effacera toutes les données, messages, contacts, etc.\n"
+"                   Écraser les applications supprimera tous les fichiers\n"
+"                   .cod du périphérique, fichiers .cod du SE inclus.\n"
+"\n"
+"   %s\n"
+"      Réinitialiser la politique IT aux paramètres par défaut\n"
+"      Avertissement : Réinitialiser la politique IT aux paramètres par\n"
+"                   défaut va également provoquer un effacement du système\n"
+"                   de fichiers qui supprimera toutes les données,\n"
+"                   messages, contacts, etc.\n"
+"\n"
+"   %s [-f] <nom de module> ...\n"
+"      Supprime le module du périphérique\n"
+"\n"
+"   %s\n"
+"      Récupère le journal d'événements du périphérique\n"
+"\n"
+"   %s\n"
+"      Efface le journal d'événements du périphérique\n"
+"\n"
+"   %s\n"
+"      Écrit toutes les traces de pile pour tous les threads dans le\n"
+"      journal d'événements\n"
+"\n"
+"   %s <fichier .bmp>\n"
+"      Fait une capture d'écran du périphérique\n"
+"\n"
+"   %s [%s]\n"
+"      Définit la date et l'heure sur le périphérique à la date et\n"
+"      l'heure courantes, ou à la date et heure spécifiées en argument\n"
+"      à %s\n"
+"      Si un argument est passé, la zone de temps actuelle du système est\n"
+"      utilisée.\n"
 
 #: tools/bjavaloader.cc:173
 msgid "Unable to parse time string: "
-msgstr ""
+msgstr "Chaîne de temps impossible à interpréter : "
 
 #: tools/bjavaloader.cc:208
 msgid "Can't open: "
-msgstr ""
+msgstr "Impossible d'ouvrir : "
 
 #: tools/bjavaloader.cc:310 tools/bjdwp.cc:104
 msgid "missing command"
-msgstr ""
+msgstr "commande manquante"
 
 #: tools/bjavaloader.cc:335 tools/bjdwp.cc:124 tools/bjvmdebug.cc:108
 #: tools/brawchannel.cc:250 tools/brecsum.cc:123 tools/bwatch.cc:132
 msgid "No device selected, or PIN not found"
-msgstr ""
+msgstr "Pas de périphérique sélectionné ou PIN manquant"
 
 #: tools/bjavaloader.cc:357
 msgid "specify at least one .cod file to load"
-msgstr ""
+msgstr "indiquer au moins un fichier .cod à charger"
 
 #: tools/bjavaloader.cc:364
 msgid "loading: "
-msgstr ""
+msgstr "chargement : "
 
 #: tools/bjavaloader.cc:366 tools/bjavaloader.cc:383 tools/bjavaloader.cc:421
 #: tools/bjavaloader.cc:434
 msgid "done."
-msgstr ""
+msgstr "fait."
 
 #: tools/bjavaloader.cc:371
 msgid "specify at least one module to erase"
-msgstr ""
+msgstr "spécifier au moins un module à effacer"
 
 #: tools/bjavaloader.cc:378
 msgid "erasing: "
-msgstr ""
+msgstr "en cours d'effacement : "
 
 #: tools/bjavaloader.cc:388
 msgid "specify a .bmp filename"
-msgstr ""
+msgstr "préciser un nom de fichier .bmp"
 
 #: tools/bjavaloader.cc:419 tools/bjavaloader.cc:432
 msgid "saving: "
-msgstr ""
+msgstr "enregistrement de : "
 
 #: tools/bjavaloader.cc:425
 msgid "specify at least one module to save"
-msgstr ""
+msgstr "préciser au moins un module à enregistrer"
 
 #. TRANSLATORS: you may translate yes/no as long as you also
 #. translate "yes" to match.
@@ -3854,10 +4165,19 @@ msgid ""
 "You have selected to wipe the filesystem of device '%s'\n"
 "Continue with wipe? (yes/no) "
 msgstr ""
+"Précaution d'utilisation : L'effacement du système de\n"
+"             fichiers va supprimer toutes les données\n"
+"             telles que les messages, les contacts, etc.\n"
+"             L'effacement des applications va supprimer\n"
+"             tous les fichiers .cod du périphérique, ceux\n"
+"             du SE inclus.\n"
+"\n"
+"Vous avez choisi d'effacer le système de fichier du périphérique '%s'\n"
+"Continuer l'effacement ? (oui / non)"
 
 #: tools/bjavaloader.cc:459 tools/bjavaloader.cc:475
 msgid "Response of 'yes' not received, aborting."
-msgstr ""
+msgstr "La réponse reçue n'est pas 'oui', annulation."
 
 #: tools/bjavaloader.cc:464
 #, c-format
@@ -3869,28 +4189,36 @@ msgid ""
 "You have selected to reset device '%s' to factory defaults\n"
 "Continue with wipe? (yes/no) "
 msgstr ""
+"Précaution d'utilisation : Réinitialiser la politique IT aux\n"
+"             paramètres d'usine va également effacer le\n"
+"             système de fichiers, ce qui supprimera toutes\n"
+"             les données telles que messages, contacts, etc.\n"
+"\n"
+"Vous avez choisi de réinitialiser le périphérique '%s' aux\n"
+"paramètres d'usine\n"
+"Continuer l'effacement ? (oui / non) "
 
 #: tools/bjavaloader.cc:479
 msgid "invalid command: "
-msgstr ""
+msgstr "commande invalide : "
 
 #: tools/bjavaloader.cc:490 tools/bjdwp.cc:154 tools/bjvmdebug.cc:171
 #: tools/brawchannel.cc:333 tools/bs11nread.cc:146 tools/btool.cc:1012
 #: tools/bwatch.cc:197 tools/upldif.cc:189
 msgid "Usb::Error caught: "
-msgstr ""
+msgstr "Exception Usb::Error attrapée : "
 
 #: tools/bjavaloader.cc:495 tools/bjdwp.cc:159 tools/bjvmdebug.cc:176
 #: tools/brawchannel.cc:337 tools/bs11nread.cc:150 tools/btool.cc:1016
 #: tools/bwatch.cc:202 tools/upldif.cc:192
 msgid "Barry::Error caught: "
-msgstr ""
+msgstr "Exception Barry::Error attrapée : "
 
 #: tools/bjavaloader.cc:500 tools/bjdwp.cc:164 tools/bjvmdebug.cc:181
 #: tools/bs11nread.cc:154 tools/btool.cc:1020 tools/bwatch.cc:207
 #: tools/upldif.cc:195
 msgid "std::exception caught: "
-msgstr ""
+msgstr "Exception std::exception attrapée : "
 
 #: tools/bjdwp.cc:44
 #, c-format
@@ -3910,6 +4238,21 @@ msgid ""
 "  <address>  Interface\n"
 "  <port>     Listen port\n"
 msgstr ""
+"bjdwp - JDWP Blackberry par USB, en ligne de commandes.\n"
+"        Copyright 2008-2009, Nicolas VIVIEN.\n"
+"        Utilisation : %s\n"
+"\n"
+"   -h        Cette aide.\n"
+"   -p pin    PIN du périphérique auquel parler\n"
+"             Si un seul périphérique est branché, ce paramètre est\n"
+"             optionnel.\n"
+"   -P pass   Méthode simple pour entrer le mot de passe.\n"
+"   -v        Afficher les données de protocole pendant l'opération.\n"
+"\n"
+"arguments\n"
+"\n"
+"  <adresse>  Interface\n"
+"  <port>     Port d'écoute\n"
 
 #: tools/bjvmdebug.cc:45
 #, c-format
@@ -3925,39 +4268,50 @@ msgid ""
 "   -P pass   Simplistic method to specify device password\n"
 "   -v        Dump protocol data during operation\n"
 msgstr ""
+"bjvmdebug - Débogueur Java USB en ligne de commandes\n"
+"        Copyright 2008-2009, Nicolas VIVIEN.\n"
+"        Copyright 2005-2012, Net Direct Inc. (http://www.netdirect.ca/)\n"
+"        Utilisation : %s\n"
+"\n"
+"   -h        Cette aide.\n"
+"   -p pin    PIN du périphérique auquel parler\n"
+"             Si un seul périphérique est branché, ce paramètre est\n"
+"             optionnel.\n"
+"   -P pass   Méthode simple pour entrer le mot de passe.\n"
+"   -v        Afficher les données de protocole pendant l'opération.\n"
 
 #: tools/bjvmdebug.cc:131
 msgid "Java Modules List :"
-msgstr ""
+msgstr "Liste des modules java : "
 
 #: tools/bjvmdebug.cc:138
 msgid "Java Threads currently running :"
-msgstr ""
+msgstr "Threads java en cours d'exécution : "
 
 #: tools/bjvmdebug.cc:162
 msgid "JVM message : "
-msgstr ""
+msgstr "Message de la JVM : "
 
 #: tools/boostwrap.cc:45
 msgid "Archive exception in DoLoadBoostFile(): "
-msgstr ""
+msgstr "Exception sur une archive dans DoLoadBoostFile() : "
 
 #: tools/boostwrap.cc:64
 msgid "Archive exception in DoSaveBoostFile(): "
-msgstr ""
+msgstr "Exception sur une archive dans DoSaveBoostFile() : "
 
 #: tools/brawchannel.cc:83
 msgid "From BB: "
-msgstr ""
+msgstr "Lu du BB : "
 
 #: tools/brawchannel.cc:95
 #, c-format
 msgid "Written %ld bytes over stdout"
-msgstr ""
+msgstr "%ld octets écrits sur la sortie standard"
 
 #: tools/brawchannel.cc:109
 msgid "CallbackHandler: Received error: "
-msgstr ""
+msgstr "CallbackHandler : erreur reçue : "
 
 #: tools/brawchannel.cc:124
 #, c-format
@@ -3977,42 +4331,63 @@ msgid ""
 "             This will cause libusb output to appear on STDOUT unless\n"
 "             the environment variable USB_DEBUG is set to 0,1 or 2.\n"
 msgstr ""
+"brawchannel - Interface en ligne de commande de canal brut USB pour "
+"Blackberry\n"
+"        Copyright 2010, RealVNC Ltd.\n"
+"        Utilisation : %s\n"
+"\n"
+"Usage :\n"
+"brawchannel [options] <nom de canal>\n"
+"\n"
+"   -h        Cette aide\n"
+"   -p pin    PIN du périphérique auquel parler\n"
+"             Si un seul périphérique est branché, ce paramètre est\n"
+"             optionnel\n"
+"   -P pass   Méthode simple pour entrer le mot de passe\n"
+"   -v        Afficher les données de protocole pendant l'opération\n"
+"             Provoque l'affichage de la sortie de libusb sur la sortie\n"
+"             standard, à moins que la variable d'environnement\n"
+"             USB_DEBUG ne vaille 0, 1 ou 2.\n"
 
 #: tools/brawchannel.cc:209
 msgid "Error: Missing raw channel name."
-msgstr ""
+msgstr "Erreur : nom de canal brut manquant."
 
 #: tools/brawchannel.cc:215
 msgid "Error: Too many arguments."
-msgstr ""
+msgstr "Erreur : trop d'arguments."
 
 #: tools/brawchannel.cc:235
 msgid ""
 "Warning: Protocol dump enabled without setting USB_DEBUG to 0, 1 or 2.\n"
 "         libusb might log to STDOUT and ruin data stream."
 msgstr ""
+"Attention : affichage du protocole activé sans avoir défini USB_DEBUG à 0, 1 "
+"ou 2.\n"
+"            la libusb risque d'afficher sur la sortie standard ce qui risque "
+"de corrompre le flux de données"
 
 #: tools/brawchannel.cc:257
 msgid "Connected to device, starting read/write\n"
-msgstr ""
+msgstr "Connecté au périphérique, début de la lecture / écriture\n"
 
 #: tools/brawchannel.cc:306
 msgid "Select failed with errno: "
-msgstr ""
+msgstr "Select a échoué avec une errno de : "
 
 #: tools/brawchannel.cc:315
 #, c-format
 msgid "Sending %ld bytes stdin->USB\n"
-msgstr ""
+msgstr "Envoi de %ld octets stdin->USB\n"
 
 #: tools/brawchannel.cc:316
 msgid "To BB: "
-msgstr ""
+msgstr "Au BB : "
 
 #: tools/brawchannel.cc:323
 #, c-format
 msgid "Sent %ld bytes stdin->USB\n"
-msgstr ""
+msgstr "%ld octets envoyés stdin->USB\n"
 
 #: tools/brecsum.cc:42
 #, c-format
@@ -4030,6 +4405,22 @@ msgid ""
 "   -P pass   Simplistic method to specify device password\n"
 "   -v        Dump protocol data during operation\n"
 msgstr ""
+"brecsum - Génère des sommes SHA1 des enregistrements de base de\n"
+"          données bruts.\n"
+"        Copyright 2008-2012, Net Direct Inc. (http://www.netdirect.ca/)\n"
+"        Utilisation : %s\n"
+"\n"
+"   -d bdd    Lit la base de données 'bdd' et calcule la somme.pour tous\n"
+"             ses enregistrements. Peut-être utilisé plusieurs fois pour\n"
+"             récupérer plus d'une base de données.\n"
+"   -h        Cette aide\n"
+"   -i        Inclure le nom de BDD, le type et les IDs uniques\n"
+"             d'enregistrement dans les sommes de contrôle.\n"
+"   -p pin    PIN du périphérique auquel parler\n"
+"             Si un seul périphérique est branché, ce paramètre est\n"
+"             optionnel.\n"
+"   -P pass   Méthode simple pour entrer le mot de passe.\n"
+"   -v        Afficher les données de protocole pendant l'opération.\n"
 
 #: tools/breset.cc:81 tools/breset_libusb_1_0.cc:105
 #, c-format
@@ -4054,7 +4445,7 @@ msgstr "%d périphérique%s réinitialisé.\n"
 #: tools/breset_libusb_1_0.cc:79
 #, c-format
 msgid "Failed to start USB: %d\n"
-msgstr ""
+msgstr "Échec au démarrage de l'USB : %d\n"
 
 #: tools/bs11nread.cc:49
 #, c-format
@@ -4068,18 +4459,28 @@ msgid ""
 "   -h        This help\n"
 "   -S        Show list of supported database parsers\n"
 msgstr ""
+"bs11nread - Lit un fichier de sérialisation boost (de btool)\n"
+"            et affiche le contenu su la sortie standard\n"
+"        Copyright 2008-2012, Net Direct Inc. (http://www.netdirect.ca/)\n"
+"        Utilisation : %s\n"
+"\n"
+"   -f fich   Nom du fichier duquel / vers lequel les données du\n"
+"             périphérique seront lues / écrites\n"
+"   -h        Cette aide\n"
+"   -S        Affiche la liste des analyseurs de base de données\n"
+"             supportés\n"
 
 #: tools/bs11nread.cc:76
 msgid " records loaded"
-msgstr ""
+msgstr " enregistrement chargés"
 
 #: tools/bs11nread.cc:100
 msgid "Unknown database name: "
-msgstr ""
+msgstr "Nom de base de données inconnu : "
 
 #: tools/bs11nread.cc:138
 msgid "Filename must be specified"
-msgstr ""
+msgstr "Le nom de fichier doit être spécifié"
 
 #. TRANSLATORS: the Using: string is followed by the Barry library version
 #. string.
@@ -4109,58 +4510,87 @@ msgid ""
 "   -v        Show verbose diff output (twice to force hex output)\n"
 "\n"
 msgstr ""
+"btarcmp - Compare des tarballs de sauvegarde Barry\n"
+"      Copyright 2012, Net Direct Inc. (http://www.netdirect.ca/)\n"
+"      Utilisation : %s\n"
+"\n"
+" Usage:  btarcmp [options...] tarball_0 tarball_1\n"
+"\n"
+"   -b        Utiliser des noms de fichier courts en sortie\n"
+"   -d bdd    Préciser une base de données spécifique à comparer. Peut\n"
+"             être utilisé plusieurs fois. Si non précisé, toutes les\n"
+"             bases sont comparées.\n"
+"   -D bdd    Préciser une base de données à ignorer. Si -d et -D sont\n"
+"             présents tous les deux pour un même nom de base, elle\n"
+"             sera ignorée.\n"
+"   -h        Cette aide.\n"
+"   -I enc    Encodage pour la conversion de chaînes\n"
+"             Les valeurs admissibles sont données par 'iconv --list'\n"
+"   -P        Ne comparer que les enregistrements des bases pouvant\n"
+"             être interprétées. Ceci est équivalent à spécifier -d pour\n"
+"             chaque base listée par -S.\n"
+"   -S        Affiche la liste des interpréteurs de bases de données\n"
+"             supportés. L'utiliser deux fois pour afficher également\n"
+"             les noms de champs.\n"
+"   -v        Afficher une sortie de comparaison verbeuse (deux fois\n"
+"             pour forcer un affichage en hexadécimal)\n"
+"\n"
 
 #: tools/btarcmp.cc:186
 msgid "Different database types in ParsedCompare ctor!"
-msgstr ""
+msgstr "Bases de données différentes dans ParsedCompare ctor !"
 
 #: tools/btarcmp.cc:461
 msgid ": has no database '"
-msgstr ""
+msgstr ": n'a pas de base de données '"
 
 #: tools/btarcmp.cc:502
 msgid "Comparing non-existant database!"
-msgstr ""
+msgstr "Comparaison de bases de données n'existant pas !"
 
 #: tools/btarcmp.cc:532
 msgid "record has been deleted in "
-msgstr ""
+msgstr "enregistrement a été supprimé dans "
 
 #: tools/btarcmp.cc:533
 msgid "record has been added in "
-msgstr ""
+msgstr "enregistrement a été ajouté dans "
 
 #: tools/btarcmp.cc:542
 msgid "Tried to compare records from different databases: "
 msgstr ""
+"Tentative de comparaison d'enregistrements de bases de données différentes :"
 
 #: tools/btarcmp.cc:569 tools/btarcmp.cc:579
 msgid ": differs: "
-msgstr ""
+msgstr ": diffère de :"
 
 #: tools/btarcmp.cc:571 tools/btarcmp.cc:581
 msgid "sizes ("
-msgstr ""
+msgstr "tailles ("
 
 #: tools/btarcmp.cc:573
 msgid "), SHA1 sums differ"
-msgstr ""
+msgstr "), les SHA1 diffèrent"
 
 #: tools/btarcmp.cc:589
 msgid "No differences found in parsed records, but SHA1 sums differ."
 msgstr ""
+"Pas de différence à la lecture des enregistrements, mais les SHA1 diffèrent."
 
 #: tools/btarcmp.cc:596
 msgid "   Hex diff of record:"
-msgstr ""
+msgstr "   diff hexa d'enregistrements :"
 
 #: tools/btarcmp.cc:687
 msgid "In database: "
-msgstr ""
+msgstr "Dans la base de données : "
 
 #: tools/btardump.cc:42 tools/btool.cc:81
 msgid "   -V        Dump records using MIME vformats where possible"
 msgstr ""
+"   -V        Affiche les enregistrements en utilisant les vformats MIME "
+"quand c'est possible possible"
 
 #: tools/btardump.cc:48
 #, c-format
@@ -4180,18 +4610,40 @@ msgid ""
 "\n"
 "   [files...] Backup file(s), created by btool or the backup GUI.\n"
 msgstr ""
+"btardump - Analyseur en ligne de commandes pour fichiers de sauvegarde "
+"Barry\n"
+"           Copyright 2010-2012, Net Direct Inc. (http://www.netdirect.ca/)\n"
+"           Utilisation : %s\n"
+"\n"
+"   -d bdd    Nom de la base à afficher.Peut être utilisé plusieurs fois "
+"pour\n"
+"             afficher plusieurs bases. Si on spécifiées, toutes les bases "
+"de\n"
+"             la sauvegarde sont affichées.\n"
+"   -h        Cette aide.\n"
+"   -I enc    Encodage pour la conversion de chaînes\n"
+"             Les valeurs admissibles sont données par 'iconv --list'\n"
+"%s\n"
+"\n"
+"   [fichiers...] fichier(s) de sauvegarde, créé par btool ou par "
+"l'interface\n"
+"             graphique de sauvegarde.\n"
 
 #: tools/btardump.cc:132 tools/btool.cc:714
 msgid "-V option not supported - no Sync library support available\n"
 msgstr ""
+"option -V option non supportée - pas de support de la synchronisation de "
+"bibliothèque disponible\n"
 
 #: tools/btardump.cc:175
 msgid "Reading file: "
-msgstr ""
+msgstr "Lecture du fichier : "
 
 #: tools/btool.cc:74
 msgid "   -f file   Filename to save or load handheld data to/from"
 msgstr ""
+"   -f fich   Nom de fichier à enregistrer ou à charger sur / depuis le "
+"péripérique"
 
 #: tools/btool.cc:87
 #, c-format
@@ -4262,105 +4714,179 @@ msgid ""
 "             which indicates the record to delete.  Used with the -d\n"
 "             command to specify the database.\n"
 msgstr ""
+"btool - Outil de test USB Blackberry en ligne de commandes\n"
+"        Copyright 2005-2012, Net Direct Inc. (http://www.netdirect.ca/)\n"
+"        Utilisation : %s\n"
+"        %s\n"
+"\n"
+"   -b fich   Nom de fichier de sauvegarde Barry à lire ou écrire (tar.gz)\n"
+"   -B bus    Indique le bus USB sur lequel chercher.\n"
+"   -N périph Indique le périphérique système, chaîne dépendant du système\n"
+"\n"
+"   -a bdd    Efface / vide la base de données 'bdd' du périphérique, avec\n"
+"             tous ses enregistrements. Peut être utilisé plusieurs fois\n"
+"             pour effacer plusieurs BDD.\n"
+"   -c dn     Convertit le carnet d'adresses au format LDIF, avec le\n"
+"             baseDN spécifié.\n"
+"   -C dnattr Nom d'attribut LDIF à utiliser lors de la construction du\n"
+"             FQDN. 'cn' par défaut.\n"
+"   -d bdd    Charge et affiche la base 'bdd' du périphérique. Peut-être\n"
+"             utilisé plusieurs fois pour récupérer plus d'une base.\n"
+"   -e pep    Passer outre la détection de paire de endpoints. 'pep' est\n"
+"             simple chaîne, contenant le paire de endpoints d'écriture\n"
+"             / lecture, séparée pas une virgule.  Exemple : -e 83,5\n"
+"             Note : les endpoints sont spécifié en base 16.\n"
+"             Vous ne devriez jamais utiliser cette option.\n"
+"%s\n"
+"   -F nom    Nom du champs par lequel la sortie doit être triée. Noter\n"
+"             que le format de ce champs est spécial :\n"
+"             'DBName:field1,field2' sans espaces à moins qu'ils ne\n"
+"             fassent partie du nom. Peut être utilisé plusieurs fois,\n"
+"             pour correspondre aux occurrences de -d.\n"
+"             Exemple: -F 'Address Book:Company,LastName,FirstName'\n"
+"   -h        Cette aide.\n"
+"   -I enc    Encodage pour la conversion de chaînes\n"
+"             Les valeurs admissibles sont données par 'iconv --list'\n"
+"   -I        Trier les enregistrements avant affichage.\n"
+"   -l        Lister les périphériques.\n"
+"   -L        Lister les noms de champs de Contact.\n"
+"   -m        (ne pas) Associer les noms LDIF avec les champs de Contact\n"
+"                Associer : ldif,read,write :\n"
+"                           associer ldif avec les champs Contact lus/écris\n"
+"                Ne pas associer : seulement les noms ldif\n"
+"   -M        Lister la correspondance LDIF courante.\n"
+"   -n        Utiliser un analyseur null, sur toutes les bases de données.\n"
+"   -p pin    PIN du périphérique auquel parler\n"
+"             Optionnel s'il n'y a qu'un périphérique\n"
+"   -P pass   Méthode simple pour entrer le mot de passe\n"
+"   -s bdd    Enregistrer la base 'bdd' VERS le périphérique, depuis les\n"
+"             données chargées avec -f fich\n"
+"   -S        Afficher la liste des interpréteurs de bases de données.\n"
+"             Utiliser deux fois pour afficher aussi les noms de champs.\n"
+"   -t        Afficher la base de données des tables de base de données.\n"
+"   -T bdd    Montrer la table d'état d'enregistrement pour la base données\n"
+"   -v        Afficher les données du protocole pendant l'opération.\n"
+"%s\n"
+"   -X        Réinitialiser le périphérique.\n"
+"   -z        Utiliser des sockets non threadées.\n"
+"   -Z        Utiliser un routeur de sockets threadé (par défaut).\n"
+"\n"
+" -d Modificateurs de commande :   (peut être utilisé plusieurs fois\n"
+"    pour plus d'un enregistrement)\n"
+"\n"
+"   -r #      Indice d'enregistrement tel que vu dans la table d'état -T.\n"
+"             Ceci outrepasse le comportement par défaut de -d et télécharge\n"
+"             les enregistrements spécifiés, envoyés sur la sortie standard.\n"
+"   -R #      Identique à -r, mais efface également le drapeau dirty des\n"
+"             enregistrements\n"
+"   -D #      Indice d'enregistrement tel que vu dans la table d'état -T, "
+"qui\n"
+"             indique quel enregistrement supprimer. À utiliser avec la\n"
+"             commande -d pour spécifier la base de données.\n"
 
 #: tools/btool.cc:196
 msgid "Loading: "
-msgstr ""
+msgstr "Chargement de :"
 
 #: tools/btool.cc:202
 msgid " records loaded from '"
-msgstr ""
+msgstr " enregistrements chargés depuis '"
 
 #: tools/btool.cc:230
 #, c-format
 msgid ""
 "Store counted %d records read from device, and %d records written to device."
 msgstr ""
+"Le store comprend %d enregistrements lus depuis le périphérique et %d "
+"enregistrements écris sur le périphérique."
 
 #: tools/btool.cc:234
 msgid "Saving: "
-msgstr ""
+msgstr "Enregistrement de : "
 
 #: tools/btool.cc:239
 msgid " records saved to '"
-msgstr ""
+msgstr " enregistrements sauvés sur '"
 
 #: tools/btool.cc:437
 msgid "No Builder available for database"
-msgstr ""
+msgstr "Pas de constructeur disponible pour la base de données"
 
 #: tools/btool.cc:477
 msgid "Unmapping: "
-msgstr ""
+msgstr "Ajout dans la table : "
 
 #: tools/btool.cc:481
 msgid "Mapping: "
-msgstr ""
+msgstr "Suppression de la table : "
 
 #: tools/btool.cc:487
 msgid "Read/Write name unknown: "
-msgstr ""
+msgstr "Nom de lecture / écriture inconnu : "
 
 #: tools/btool.cc:491
 msgid "Invalid map format: "
-msgstr ""
+msgstr "Format de table inconnu : "
 
 #: tools/btool.cc:582
 msgid "-b option not supported - no Barry Backup library support available\n"
 msgstr ""
+"Option -b non supportée - pas de support de la bibliothèque Barry Backup "
+"disponible\n"
 
 #: tools/btool.cc:627
 msgid "-f option not supported - no Boost serialization support available\n"
 msgstr ""
+"option -f non supportée - pas de support de la sérialisation Boost "
+"disponible\n"
 
 #: tools/btool.cc:764
 msgid "Unable to set DN Attr: "
-msgstr ""
+msgstr "Impossible de définir l'attribut DN :"
 
 #: tools/btool.cc:779
 msgid "Blackberry device errors with errors during probe:"
-msgstr ""
+msgstr "Erreur du périphérique Blackberry durant la détection : "
 
 #: tools/btool.cc:790
-#, fuzzy
 msgid "Blackberry devices found:"
-msgstr "Recherche de téléphone Blackberry...\n"
+msgstr "Appareils Blackberry trouvés :"
 
 #: tools/btool.cc:812 tools/pppob.cc:273
 msgid "No device selected"
-msgstr ""
+msgstr "Pas de périphérique sélectionné"
 
 #: tools/btool.cc:825
 msgid "Using device (PIN): "
-msgstr ""
+msgstr "Utilisation du périphérique (PIN) :"
 
 #: tools/btool.cc:841
 msgid "Endpoint pair (read,write) overridden with: "
-msgstr ""
+msgstr "Paire de endpoints (read, write) remplacée par : "
 
 #: tools/btool.cc:922
 msgid "No db names to process"
-msgstr ""
+msgstr "Pas de noms de bdd à analyser"
 
 #: tools/btool.cc:931
 msgid "Record state table for: "
-msgstr ""
+msgstr "Table d'état d'enregistrements pour : "
 
 #: tools/btool.cc:940
 msgid "Must have 1 db name to process"
-msgstr ""
+msgstr "Il faut au moins 1 nom de bdd à traiter"
 
 #: tools/btool.cc:952
 msgid "Clearing record's dirty flags..."
-msgstr ""
+msgstr "Nettoyage des drapeaux dirty de l'enregistrement..."
 
 #: tools/btool.cc:982
 msgid "No db names to erase"
-msgstr ""
+msgstr "Pas de nom de bdd à effacer"
 
 #: tools/btool.cc:990
 msgid "Deleting all records from "
-msgstr ""
+msgstr "Suppression de tous les enregistrements de "
 
 #: tools/bwatch.cc:47
 #, c-format
@@ -4378,18 +4904,31 @@ msgid ""
 "   -P pass   Simplistic method to specify device password\n"
 "   -v        Dump protocol data during operation\n"
 msgstr ""
+"bwatch - Voire des vidéos de captures d'écran de BlackBerry\n"
+"         Copyright 2011, Alberto Mattea\n"
+"         Copyright 2011-2012, Net Direct Inc. (http://www.netdirect.ca/)\n"
+"         Utilisation : %s\n"
+"\n"
+"   -d delay  Durée de l'intervalle entre les captures, en millisecondes.\n"
+"             Plus cette valeur est basse, plus la charge est importante\n"
+"             pour le périphérique. La valeur par défaut est 500ms.\n"
+"   -p pin    PIN du périphérique auquel parler\n"
+"             Si un seul périphérique est branché, ce paramètre est\n"
+"             optionnel.\n"
+"   -P pass   Méthode simple pour entrer le mot de passe.\n"
+"   -v        Afficher les données de protocole pendant l'opération.\n"
 
 #: tools/bwatch.cc:87
 msgid "Invalid interval value of: "
-msgstr ""
+msgstr "Valeur d'intervalle non valide : "
 
 #: tools/bwatch.cc:87
 msgid "Defaulting to 500ms."
-msgstr ""
+msgstr "Utilisation de 500ms par défaut."
 
 #: tools/bwatch.cc:137
 msgid "Press a key to exit..."
-msgstr ""
+msgstr "Appuyer une touche pour quitter..."
 
 #: tools/pppob.cc:58
 #, c-format
@@ -4406,46 +4945,61 @@ msgid ""
 "   -t        Use a pseudo-tty instead of stdin/stdout\n"
 "   -v        Dump protocol data during operation (debugging only!)\n"
 msgstr ""
+"pppob - Liaison PPP au travers de Barry\n"
+"        Copyright 2007-2012, Net Direct Inc. (http://www.netdirect.ca/)\n"
+"        Utilisation : %s\n"
+"\n"
+"   -l fich   Rediriger les messages de pppob dans un fichier\n"
+"             (utile avec -v)\n"
+"   -p pin    PIN du périphérique auquel parler\n"
+"             Si un seul périphérique est branché, ce paramètre est\n"
+"             optionnel\n"
+"   -P pass   Méthode simple pour entrer le mot de passe\n"
+"   -s        Utiliser le mode série au lieu du mode IpModem\n"
+"   -t        Utiliser un pseudo-terminal plutôt les fichiers\n"
+"             standards\n"
+"   -v        Afficher les données de protocole pendant l'opération\n"
+"             (pour le débogage seulement !).\n"
 
 #: tools/pppob.cc:90
 msgid "Error in write()"
-msgstr ""
+msgstr "Erreur dans write()"
 
 #: tools/pppob.cc:135
 msgid "Read error in ProcessStdin: "
-msgstr ""
+msgstr "Erreur de lecture dans ProcessStdin : "
 
 #: tools/pppob.cc:212
 msgid "Cannot open /dev/ptmx: "
-msgstr ""
+msgstr "Impossible d'ouvrir /dev/ptmx : "
 
 #: tools/pppob.cc:218
 msgid "Warning: grantpt() failure: "
-msgstr ""
+msgstr "Attention : échec de grantpt() : "
 
 #: tools/pppob.cc:222
 msgid "Warning: unlockpt() failure: "
-msgstr ""
+msgstr "Attention : échec de unlockpt() : "
 
 #: tools/pppob.cc:280
 msgid "Using IpModem mode..."
-msgstr ""
+msgstr "Utilisation du mode IpModem..."
 
 #: tools/pppob.cc:295
 msgid "Using Serial mode per command line..."
-msgstr ""
+msgstr "Utilisation du mode série comme demandé dans la ligne de commande..."
 
 #: tools/pppob.cc:298
 msgid "No IpModem mode available, using Serial mode..."
-msgstr ""
+msgstr "Mode IpModem non disponible, utilisation du mode série..."
 
 #: tools/pppob.cc:321
 msgid "Exiting"
-msgstr ""
+msgstr "Sortie"
 
 #: tools/pppob.cc:325
 msgid "exception caught in main(): "
-msgstr ""
+msgstr "exception attrapée dans main() :"
 
 #: tools/upldif.cc:39
 msgid ""
@@ -4460,24 +5014,35 @@ msgid ""
 "   -v        Dump protocol data during operation\n"
 "   -h        This help output\n"
 msgstr ""
+"upldif - Envoi de fichier LDIF en ligne de commande\n"
+"         Copyright 2006-2012, Net Direct Inc. (http://www.netdirect.ca/)\n"
+"\n"
+"   -p pin    PIN du périphérique auquel parler\n"
+"             Si un seul périphérique est branché, ce paramètre est "
+"optionnel\n"
+"   -P pass   Méthode simple pour entrer le mot de passe\n"
+"   -u        Faire l'envoi. Si non précisé, les données LDIF lues seront\n"
+"             seulement affichées sur la sortie standard.\n"
+"   -v        Afficher les données de protocole pendant l'opération.\n"
+"   -h        Cette aide\n"
 
 #: tools/upldif.cc:79
 #, c-format
 msgid "Store counted %d records."
-msgstr ""
+msgstr "Le Store comprend %d enregistrements."
 
 #: tools/upldif.cc:173
 msgid "Device not found, or not specified"
-msgstr ""
+msgstr "Périphérique non trouvé, ou non spécifié"
 
 #: tools/util.cc:37
 msgid "Supported Database parsers:\n"
-msgstr ""
+msgstr "Analyseurs de base de données supporté :\n"
 
 #: tools/util.cc:41
 msgid " (* = can display in vformat MIME mode)\n"
-msgstr ""
+msgstr " (* = affichage possible en mode MIME vformat MIME)\n"
 
 #: tools/util.cc:82
 msgid "Supported Database builders:\n"
-msgstr ""
+msgstr "Constructeurs de base de données supportés :\n"
