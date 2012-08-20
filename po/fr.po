@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: barry 0.18.4\n"
 "Report-Msgid-Bugs-To: http://netdirect.ca/barry\n"
 "POT-Creation-Date: 2012-08-20 14:31-0400\n"
-"PO-Revision-Date: 2012-08-20 11:15+0100\n"
+"PO-Revision-Date: 2012-08-20 21:10+0100\n"
 "Last-Translator: Nicolas CARRIER <carrier.nicolas0@gmail.com>\n"
 "Language-Team: Nicolas CARRIER <carrier.nicolas0@gmail.com>\n"
 "Language: fr\n"
@@ -3703,7 +3703,7 @@ msgstr "Compilé sans le support de Boost"
 #. translate those particular words.  Same with the -w write mode
 #. options.
 #: tools/bio.cc:85
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "bio - Barry Input / Output\n"
 "      Copyright 2010-2012, Net Direct Inc. (http://www.netdirect.ca/)\n"
@@ -3828,6 +3828,7 @@ msgstr ""
 " Options du mode 'dump' sur la sortie standard :\n"
 "   -n        Utiliser l'analyseur affichage hexadécimal pour toutes les "
 "bases.\n"
+"   -T        Ne montrer que les noms des basses de données.\n"
 "\n"
 " Options du mode somme 'sha1' sur la sortie standard :\n"
 "   -t        Inclut le nom de la bdd, son type et les IDs uniques\n"
@@ -3890,9 +3891,8 @@ msgid "No hex dump option in this mode"
 msgstr "Pas d'option d'affichage hexadécimal pour ce mode"
 
 #: tools/bio.cc:228
-#, fuzzy
 msgid "No name-only option in this mode"
-msgstr "Pas d'option d'affichage hexadécimal pour ce mode"
+msgstr "Pas d'option d'affichage 'noms seuls' pour ce mode"
 
 #: tools/bio.cc:233
 msgid "Including record IDs in the SHA1 sum is not applicable in this mode"
