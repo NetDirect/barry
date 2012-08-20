@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: barry 0.18.4\n"
 "Report-Msgid-Bugs-To: http://netdirect.ca/barry\n"
-"POT-Creation-Date: 2012-08-07 14:40-0400\n"
+"POT-Creation-Date: 2012-08-20 14:31-0400\n"
 "PO-Revision-Date: 2012-08-20 11:15+0100\n"
 "Last-Translator: Nicolas CARRIER <carrier.nicolas0@gmail.com>\n"
 "Language-Team: Nicolas CARRIER <carrier.nicolas0@gmail.com>\n"
@@ -3703,7 +3703,7 @@ msgstr "Compilé sans le support de Boost"
 #. translate those particular words.  Same with the -w write mode
 #. options.
 #: tools/bio.cc:85
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "bio - Barry Input / Output\n"
 "      Copyright 2010-2012, Net Direct Inc. (http://www.netdirect.ca/)\n"
@@ -3754,6 +3754,7 @@ msgid ""
 "\n"
 " Options to use for 'dump' to stdout output type:\n"
 "   -n        Use hex dump parser on all databases.\n"
+"   -T        Show only the names of the databases.\n"
 "\n"
 " Options to use for 'sha1' sum stdout output type:\n"
 "   -t        Include DB Name, Type, and Unique record IDs in the checksums\n"
@@ -3848,84 +3849,89 @@ msgstr ""
 "   -v        Afficher les échanges pendant les opérations.\n"
 "\n"
 
-#: tools/bio.cc:177
+#: tools/bio.cc:178
 msgid "Filename not applicable for this mode"
 msgstr "Nom de fichier non applicable à ce mode"
 
-#: tools/bio.cc:182
+#: tools/bio.cc:183
 msgid "DB not applicable for this mode"
 msgstr "BDD non applicable à ce mode"
 
-#: tools/bio.cc:187
+#: tools/bio.cc:188
 msgid "DB skipping not applicable for this mode"
 msgstr "Ignorer une BDD non applicable à ce mode"
 
-#: tools/bio.cc:192
+#: tools/bio.cc:193
 msgid "DBs not applicable for this mode"
 msgstr "BDDs non applicables à ce mode"
 
-#: tools/bio.cc:197
+#: tools/bio.cc:198
 msgid "PIN not applicable for this mode"
 msgstr "PIN non applicable à ce mode"
 
-#: tools/bio.cc:202
+#: tools/bio.cc:203
 msgid "Password not applicable for this mode"
 msgstr "Mot de passe non applicable à ce mode"
 
-#: tools/bio.cc:207
+#: tools/bio.cc:208
 msgid "Device write behaviour not applicable for this mode"
 msgstr "Comportement d'écriture périphérique non applicable à ce mode"
 
-#: tools/bio.cc:212
+#: tools/bio.cc:213
 msgid "DN not applicable for this mode"
 msgstr "DN non applicable à ce mode"
 
-#: tools/bio.cc:217
+#: tools/bio.cc:218
 msgid "Attribute not applicable for this mode"
 msgstr "Attribut non applicable à ce mode"
 
-#: tools/bio.cc:222
+#: tools/bio.cc:223
 msgid "No hex dump option in this mode"
 msgstr "Pas d'option d'affichage hexadécimal pour ce mode"
 
-#: tools/bio.cc:227
+#: tools/bio.cc:228
+#, fuzzy
+msgid "No name-only option in this mode"
+msgstr "Pas d'option d'affichage hexadécimal pour ce mode"
+
+#: tools/bio.cc:233
 msgid "Including record IDs in the SHA1 sum is not applicable in this mode"
 msgstr ""
 "Inclure les IDs d'enregistrement dans la somme SHA1 n'est pas applicable à "
 "ce mode"
 
-#: tools/bio.cc:232
+#: tools/bio.cc:238
 msgid "List option not applicable for this mode"
 msgstr "Option de liste non applicable à ce mode"
 
-#: tools/bio.cc:250
+#: tools/bio.cc:256
 msgid "Invalid PIN: "
 msgstr "PIN invalide :"
 
-#: tools/bio.cc:304 tools/bio.cc:523 tools/btool.cc:817 tools/pppob.cc:271
+#: tools/bio.cc:310 tools/bio.cc:529 tools/btool.cc:817 tools/pppob.cc:271
 msgid "PIN not found: "
 msgstr "PIN non trouvé : "
 
-#: tools/bio.cc:306 tools/bio.cc:525
+#: tools/bio.cc:312 tools/bio.cc:531
 msgid "PIN not specified, and more than one device exists."
 msgstr "PIN non spécifié, or il y a plus d'un périphérique."
 
-#: tools/bio.cc:310 tools/bio.cc:529
+#: tools/bio.cc:316 tools/bio.cc:535
 msgid ""
 "It seems you are trying to use the same device for multiple input or outputs."
 msgstr ""
 "Il semble que vous essayiez d'utiliser le même périphérique pour de "
 "multiples entrées ou sorties."
 
-#: tools/bio.cc:325
+#: tools/bio.cc:331
 msgid "Database not found: "
 msgstr "Base de données non trouvée : "
 
-#: tools/bio.cc:347
+#: tools/bio.cc:353
 msgid "Cannot use stdin as tar source file, sorry."
 msgstr "Impossible d'utiliser l'entrée standard comme source tar, désolé."
 
-#: tools/bio.cc:517
+#: tools/bio.cc:523
 msgid ""
 "Warning: the -w switch was not specified: no data will be written to the "
 "device."
@@ -3933,36 +3939,36 @@ msgstr ""
 "Attention : l'option -w n'a pas été activée : aucune donnée ne sera écrite "
 "sur le périphérique."
 
-#: tools/bio.cc:555
+#: tools/bio.cc:561
 msgid "Cannot use stdout as tar backup file, sorry."
 msgstr "Impossible d'utiliser stdout comme fichier de sauvegarde tar, désolé."
 
-#: tools/bio.cc:583
+#: tools/bio.cc:589
 msgid "Boost output requires a specific output file (-f switch)"
 msgstr ""
 "La sortie Boost requiert un type de fichier de sortie spécifique (option -f)"
 
-#: tools/bio.cc:801
+#: tools/bio.cc:817
 msgid " (folder)"
 msgstr " (dossier)"
 
-#: tools/bio.cc:836
+#: tools/bio.cc:852
 #, c-format
 msgid "Saving: %s as %s"
 msgstr "Sauvegarde : %s en tant que %s"
 
-#: tools/bio.cc:843
+#: tools/bio.cc:859
 msgid "Error during write!"
 msgstr "Erreur durant l'écriture !"
 
-#: tools/bio.cc:952
+#: tools/bio.cc:968
 msgid ""
 "Unknown device output mode. Must be one of: erase, overwrite, addonly, addnew"
 msgstr ""
 "Mode de sortie de périphérique inconnu. Doit être un parmi : erase, "
 "overwrite, addonly, addnew"
 
-#: tools/bio.cc:1137 tools/btarcmp.cc:815
+#: tools/bio.cc:1157 tools/btarcmp.cc:815
 msgid "Exception: "
 msgstr "Exception : "
 

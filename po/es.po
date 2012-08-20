@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: barry 0.18.4\n"
 "Report-Msgid-Bugs-To: http://netdirect.ca/barry\n"
-"POT-Creation-Date: 2012-08-07 14:40-0400\n"
+"POT-Creation-Date: 2012-08-20 14:31-0400\n"
 "PO-Revision-Date: 2012-06-12 22:33-0300\n"
 "Last-Translator: Cesar Ballardini <cesar@ballardini.com.ar>\n"
 "Language-Team: es\n"
@@ -3593,6 +3593,7 @@ msgid ""
 "\n"
 " Options to use for 'dump' to stdout output type:\n"
 "   -n        Use hex dump parser on all databases.\n"
+"   -T        Show only the names of the databases.\n"
 "\n"
 " Options to use for 'sha1' sum stdout output type:\n"
 "   -t        Include DB Name, Type, and Unique record IDs in the checksums\n"
@@ -3613,112 +3614,116 @@ msgid ""
 "\n"
 msgstr ""
 
-#: tools/bio.cc:177
+#: tools/bio.cc:178
 msgid "Filename not applicable for this mode"
 msgstr ""
 
-#: tools/bio.cc:182
+#: tools/bio.cc:183
 msgid "DB not applicable for this mode"
 msgstr ""
 
-#: tools/bio.cc:187
+#: tools/bio.cc:188
 msgid "DB skipping not applicable for this mode"
 msgstr ""
 
-#: tools/bio.cc:192
+#: tools/bio.cc:193
 msgid "DBs not applicable for this mode"
 msgstr ""
 
-#: tools/bio.cc:197
+#: tools/bio.cc:198
 msgid "PIN not applicable for this mode"
 msgstr ""
 
-#: tools/bio.cc:202
+#: tools/bio.cc:203
 msgid "Password not applicable for this mode"
 msgstr ""
 
-#: tools/bio.cc:207
+#: tools/bio.cc:208
 msgid "Device write behaviour not applicable for this mode"
 msgstr ""
 
-#: tools/bio.cc:212
+#: tools/bio.cc:213
 msgid "DN not applicable for this mode"
 msgstr ""
 
-#: tools/bio.cc:217
+#: tools/bio.cc:218
 msgid "Attribute not applicable for this mode"
 msgstr ""
 
-#: tools/bio.cc:222
+#: tools/bio.cc:223
 msgid "No hex dump option in this mode"
 msgstr ""
 
-#: tools/bio.cc:227
+#: tools/bio.cc:228
+msgid "No name-only option in this mode"
+msgstr ""
+
+#: tools/bio.cc:233
 msgid "Including record IDs in the SHA1 sum is not applicable in this mode"
 msgstr ""
 
-#: tools/bio.cc:232
+#: tools/bio.cc:238
 msgid "List option not applicable for this mode"
 msgstr ""
 
-#: tools/bio.cc:250
+#: tools/bio.cc:256
 msgid "Invalid PIN: "
 msgstr ""
 
-#: tools/bio.cc:304 tools/bio.cc:523 tools/btool.cc:817 tools/pppob.cc:271
+#: tools/bio.cc:310 tools/bio.cc:529 tools/btool.cc:817 tools/pppob.cc:271
 msgid "PIN not found: "
 msgstr ""
 
-#: tools/bio.cc:306 tools/bio.cc:525
+#: tools/bio.cc:312 tools/bio.cc:531
 msgid "PIN not specified, and more than one device exists."
 msgstr ""
 
-#: tools/bio.cc:310 tools/bio.cc:529
+#: tools/bio.cc:316 tools/bio.cc:535
 msgid ""
 "It seems you are trying to use the same device for multiple input or outputs."
 msgstr ""
 
-#: tools/bio.cc:325
+#: tools/bio.cc:331
 msgid "Database not found: "
 msgstr ""
 
-#: tools/bio.cc:347
+#: tools/bio.cc:353
 msgid "Cannot use stdin as tar source file, sorry."
 msgstr ""
 
-#: tools/bio.cc:517
+#: tools/bio.cc:523
 msgid ""
 "Warning: the -w switch was not specified: no data will be written to the "
 "device."
 msgstr ""
 
-#: tools/bio.cc:555
+#: tools/bio.cc:561
 msgid "Cannot use stdout as tar backup file, sorry."
 msgstr ""
 
-#: tools/bio.cc:583
+#: tools/bio.cc:589
 msgid "Boost output requires a specific output file (-f switch)"
 msgstr ""
 
-#: tools/bio.cc:801
+#: tools/bio.cc:817
 msgid " (folder)"
 msgstr ""
 
-#: tools/bio.cc:836
+#: tools/bio.cc:852
 #, c-format
 msgid "Saving: %s as %s"
 msgstr ""
 
-#: tools/bio.cc:843
+#: tools/bio.cc:859
 msgid "Error during write!"
 msgstr ""
 
-#: tools/bio.cc:952
+#: tools/bio.cc:968
 msgid ""
 "Unknown device output mode. Must be one of: erase, overwrite, addonly, addnew"
 msgstr ""
 
-#: tools/bio.cc:1137 tools/btarcmp.cc:815
+#: tools/bio.cc:1157 tools/btarcmp.cc:815
 msgid "Exception: "
 msgstr ""
 
