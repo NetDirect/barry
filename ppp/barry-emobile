@@ -1,0 +1,18 @@
+# See the README file in the source tree for notes and documentation
+
+connect "/usr/sbin/chat -f /etc/chatscripts/barry-emobile.chat"
+pty "/usr/sbin/pppob"
+
+user wapuser1
+
+nodetach
+defaultroute
+noipdefault
+noauth
+usepeerdns
+
+lcp-echo-failure 0
+lcp-echo-interval 0
+
+debug
+
