@@ -53,6 +53,7 @@ endif
 		$(DEB_SRCDIR)/ppp/barry-sprint \
 		$(DEB_SRCDIR)/ppp/barry-telus \
 		$(DEB_SRCDIR)/ppp/barry-o2ireland \
+		$(DEB_SRCDIR)/ppp/barry-emobile \
 		$(DEB_SRCDIR)/ppp/barry-tmobileus \
 		$(DEB_SRCDIR)/ppp/barry-att_cingular \
 		$(DEB_SRCDIR)/ppp/barry-chinamobile \
@@ -71,6 +72,7 @@ endif
 		$(DEB_SRCDIR)/ppp/barry-sprint.chat \
 		$(DEB_SRCDIR)/ppp/barry-telus.chat \
 		$(DEB_SRCDIR)/ppp/barry-o2ireland.chat \
+		$(DEB_SRCDIR)/ppp/barry-emobile.chat \
 		$(DEB_SRCDIR)/ppp/barry-tmobileus.chat \
 		$(DEB_SRCDIR)/ppp/barry-att_cingular.chat \
 		$(DEB_SRCDIR)/ppp/barry-chinamobile.chat \
