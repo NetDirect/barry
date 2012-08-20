@@ -259,6 +259,7 @@ cd ../
 %{__cp} ppp/barry-sprint %{buildroot}%{_sysconfdir}/ppp/peers/
 %{__cp} ppp/barry-telus %{buildroot}%{_sysconfdir}/ppp/peers/
 %{__cp} ppp/barry-o2ireland %{buildroot}%{_sysconfdir}/ppp/peers/
+%{__cp} ppp/barry-emobile %{buildroot}%{_sysconfdir}/ppp/peers/
 %{__cp} ppp/barry-tmobileus %{buildroot}%{_sysconfdir}/ppp/peers/
 %{__cp} ppp/barry-att_cingular %{buildroot}%{_sysconfdir}/ppp/peers/
 %{__cp} ppp/barry-chinamobile %{buildroot}%{_sysconfdir}/ppp/peers/
@@ -275,6 +276,7 @@ cd ../
 %{__cp} ppp/barry-sprint.chat %{buildroot}%{_sysconfdir}/chatscripts/
 %{__cp} ppp/barry-telus.chat %{buildroot}%{_sysconfdir}/chatscripts/
 %{__cp} ppp/barry-o2ireland.chat %{buildroot}%{_sysconfdir}/chatscripts/
+%{__cp} ppp/barry-emobile.chat %{buildroot}%{_sysconfdir}/chatscripts/
 %{__cp} ppp/barry-tmobileus.chat %{buildroot}%{_sysconfdir}/chatscripts/
 %{__cp} ppp/barry-att_cingular.chat %{buildroot}%{_sysconfdir}/chatscripts/
 %{__cp} ppp/barry-chinamobile.chat %{buildroot}%{_sysconfdir}/chatscripts/
@@ -418,6 +420,7 @@ desktop-file-install --vendor netdirect \
 %attr(0644,root,root) %config %{_sysconfdir}/ppp/peers/barry-sprint
 %attr(0644,root,root) %config %{_sysconfdir}/ppp/peers/barry-telus
 %attr(0644,root,root) %config %{_sysconfdir}/ppp/peers/barry-o2ireland
+%attr(0644,root,root) %config %{_sysconfdir}/ppp/peers/barry-emobile
 %attr(0644,root,root) %config %{_sysconfdir}/ppp/peers/barry-tmobileus
 %attr(0644,root,root) %config %{_sysconfdir}/ppp/peers/barry-att_cingular
 %attr(0644,root,root) %config %{_sysconfdir}/ppp/peers/barry-chinamobile
@@ -433,6 +436,7 @@ desktop-file-install --vendor netdirect \
 %attr(0640,root,root) %config %{_sysconfdir}/chatscripts/barry-sprint.chat
 %attr(0640,root,root) %config %{_sysconfdir}/chatscripts/barry-telus.chat
 %attr(0640,root,root) %config %{_sysconfdir}/chatscripts/barry-o2ireland.chat
+%attr(0640,root,root) %config %{_sysconfdir}/chatscripts/barry-emobile.chat
 %attr(0640,root,root) %config %{_sysconfdir}/chatscripts/barry-tmobileus.chat
 %attr(0640,root,root) %config %{_sysconfdir}/chatscripts/barry-att_cingular.chat
 %attr(0640,root,root) %config %{_sysconfdir}/chatscripts/barry-chinamobile.chat
@@ -511,7 +515,7 @@ desktop-file-install --vendor netdirect \
 /sbin/ldconfig
 
 %changelog
-* Fri Jul 13 2012 Chris Frey <cdfrey@foursquare.net> 0.18.4-0
+* Mon Aug 20 2012 Chris Frey <cdfrey@foursquare.net> 0.18.4-0
 - version bump
 - added spanish translation, and fixed locations of .mo files, so
   barry.mo goes to utils, and barry-backup.mo goes to backup
@@ -521,6 +525,7 @@ desktop-file-install --vendor netdirect \
 - use kdesu for openSUSE builds, beesu for Fedora
 - added desktop's barrydesktop.mo and barryosyncwrap.mo files
 - added .mo files for both plugins
+- added ppp chatscripts for eMobile Ireland
 
 * Tue May 15 2012 Chris Frey <cdfrey@foursquare.net> 0.18.3-0
 - version bump
