@@ -107,7 +107,7 @@ time_t b_vformat_time_to_unix(const char *inptime)
 	return utime;
 }
 
-static char *_fold_lines (char *buf)
+static char *_unfold_lines (char *buf)
 {
 	GString *str = g_string_new ("");
 	GString *line = g_string_new ("");
@@ -146,7 +146,7 @@ static char *_fold_lines (char *buf)
 				if (*next2 == '\n' || *next2 == '\r' || *next2 == ' ' || *next2 == '\t') {
 					p = g_utf8_next_char (next2);
 				}
-				else if(quotedprintable) {
+				else if(quotedprintable && (*p == '=')) {
 					p = g_utf8_next_char (next);
 				}
 				else {
@@ -733,7 +733,7 @@ static void _parse(b_VFormat *evc, const char *str)
 		*end = '\0';
 	}
 
-	buf = _fold_lines (buf);
+	buf = _unfold_lines (buf);
 
 	p = buf;
 
