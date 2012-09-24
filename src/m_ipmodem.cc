@@ -270,8 +270,14 @@ void IpModem::Open(const char *password)
 		// Re-send "start" packet
 		ddout("IPModem: Re-sending Start Response:\n");
 		m_dev.BulkWrite(write_ep, pw_start, sizeof(pw_start));
-		m_dev.BulkRead(read_ep, data);
-		ddout("IPModem: Start Response Packet:\n" << data);
+		try {
+			m_dev.BulkRead(read_ep, data);
+			ddout("IPModem: Start Response Packet:\n" << data);
+		}
+		catch( Usb::Timeout &to ) {
+			// do nothing on timeouts
+			ddout("IPModem: Start Response Timeout");
+		}
 	}
 
 	// send packet with the session_key
