@@ -11,6 +11,7 @@
 #include <algorithm>
 #include <functional>
 #include <locale>
+#include <cctype>
 
 namespace Barry { namespace Inplace {
 
