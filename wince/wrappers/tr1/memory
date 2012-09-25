@@ -1,0 +1,42 @@
+///
+/// \file	memory
+///		Wrapper header file to use boost for tr1 support unavailable
+///		on Windows CE.
+///
+
+/*
+    Copyright (C) 2012, RealVNC Ltd.
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+    See the GNU General Public License in the COPYING file at the
+    root directory of this project for more details.
+*/
+
+#ifndef WRAPPERS_TR1_MEMORY
+#define WRAPPERS_TR1_MEMORY
+
+#include <boost/smart_ptr.hpp>
+// Make sure some of STLPort is included (see below for reasons):
+#include <vector>
+
+/*
+ * Adding to or changing the std namespace (or namespaces it contains)
+ * is against the C++11 specification. However for WinCE builds STLPort
+ * is used anyway, which appears to create a #define for std to 
+ * do it's modifications, therefore the following probably won't actually
+ * be seen as "namespace std" once it's through the pre-processor.
+ */
+namespace std
+{
+  namespace tr1 = boost;
+}
+
+#endif // WRAPPERS_TR1_MEMORY

@@ -1113,6 +1113,14 @@
 						>
 					</File>
 				</Filter>
+				<Filter
+					Name="tr1"
+					>
+					<File
+						RelativePath=".\wrappers\tr1\memory"
+						>
+					</File>
+				</Filter>
 			</Filter>
 		</Filter>
 		<Filter
