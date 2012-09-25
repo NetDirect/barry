@@ -21,6 +21,7 @@
 
 #include "i18n.h"
 #include "common.h"
+#include "platform.h"
 #include <pthread.h>
 #include "debug.h"
 #include "config.h"
