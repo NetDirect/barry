@@ -20,6 +20,7 @@
     root directory of this project for more details.
 */
 
+#include "i18n.h"
 #include "configfile.h"
 #include "error.h"
 #include "r_message.h"
