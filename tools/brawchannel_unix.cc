@@ -23,6 +23,7 @@
 
 #include "brawchannel.h"
 #include "i18n.h"
+#include <barry/barry.h>
 
 #include <stdio.h>
 #include <errno.h>
@@ -40,6 +41,7 @@
 #define INVALID_HANDLE -1
 
 using namespace std;
+using namespace Barry;
 
 struct TcpStreamImpl
 {
@@ -89,7 +91,7 @@ TcpStream::TcpStream(const char * addr, long port)
 	mImpl->mSocket = INVALID_SOCKET;
 	mImpl->mListenSocket = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
 	if( mImpl->mListenSocket == INVALID_SOCKET ) {
-		cerr << "Failed to create listening socket: " << 
+		cerr << _("Failed to create listening socket: ") << 
 			errno << endl;
 	}
 	if( mImpl->mListenAddress == NULL ) {
@@ -126,7 +128,7 @@ bool TcpStream::accept()
 	serverAddr.sin_addr = mImpl->mHostAddress;
 	serverAddr.sin_port = htons(static_cast<u_short>(mImpl->mPort));
 	if( ::bind(mImpl->mListenSocket, (sockaddr*) & serverAddr, sizeof(serverAddr)) < 0 ) {
-		cerr << "Failed to bind to listening address" << endl;
+		cerr << _("Failed to bind to listening address") << endl;
 		return false;
 	}
 
@@ -134,39 +136,39 @@ bool TcpStream::accept()
 	int one = 1;
 	if( setsockopt(mImpl->mListenSocket, SOL_SOCKET, SO_REUSEADDR,
 		reinterpret_cast<const char *> (&one), sizeof(one)) < 0 ) {
-		cerr << "Failed to enable reuse of address" << endl;
+		cerr << _("Failed to enable reuse of address") << endl;
 		return false;
 	}
 
 	if( fcntl(mImpl->mListenSocket, F_SETFL,
 			fcntl(mImpl->mListenSocket, F_GETFL, 0) | O_NONBLOCK) < 0 ) {
-		cerr << "Failed to set non-blocking listening socket" << endl;
+		cerr << _("Failed to set non-blocking listening socket") << endl;
 		return false;
 	}
 
 	if( ::listen(mImpl->mListenSocket, 5) == INVALID_SOCKET ) {
-		cerr << "Failed to listen to listening address" << endl;
+		cerr << _("Failed to listen to listening address") << endl;
 		return false;
 	}
 
 	struct sockaddr_in clientAddr;
 	socklen_t len = sizeof(clientAddr);
-	cout << "Listening for connection on "
-		<< ( mImpl->mListenAddress == NULL ? "*" : mImpl->mListenAddress )
-		<< ":" << mImpl->mPort << endl;
+	cout << string_vprintf(_("Listening for connection on %s:%d"),
+			( mImpl->mListenAddress == NULL ? "*" : mImpl->mListenAddress ),
+			mImpl->mPort) << endl;
 
 	mImpl->mSocket = ::accept(mImpl->mListenSocket, (struct sockaddr*) &clientAddr, &len);
 	shutdown(mImpl->mListenSocket, SD_SEND);
 	close(mImpl->mListenSocket);
 	mImpl->mListenSocket = INVALID_SOCKET;
 	if( mImpl->mSocket == INVALID_SOCKET ) {
-		cerr << "Failed to accept on listening socket" << endl;
+		cerr << _("Failed to accept on listening socket") << endl;
 		return false;
 	}
 
 	if( setsockopt(mImpl->mSocket, IPPROTO_TCP, TCP_NODELAY,
 		reinterpret_cast<const char *> (&one), sizeof(one)) < 0 ) {
-		cerr << "Failed to set no delay" << endl;
+		cerr << _("Failed to set no delay") << endl;
 		return false;
 	}
 
@@ -183,7 +185,7 @@ ssize_t TcpInStream::read(unsigned char* ptr, size_t size, int timeout)
 	tv.tv_usec = 0;
 	int ret = select(mStream.mImpl->mSocket + 1, &rfds, NULL, NULL, &tv);
 	if( ret < 0 ) {
-		cerr << "Select failed with errno: " << errno << endl;
+		cerr << _("Select failed with errno: ") << errno << endl;
 		return -1;
 	} else if ( ret && FD_ISSET(mStream.mImpl->mSocket, &rfds) ) {
 		return ::recv(mStream.mImpl->mSocket, reinterpret_cast<char *>(ptr), size, 0);

@@ -23,6 +23,7 @@
 
 #include "brawchannel.h"
 #include "i18n.h"
+#include <barry/barry.h>
 
 #include <iostream>
 #include <winsock2.h>
@@ -35,6 +36,7 @@
 #define LISTEN_ADDRESS_MAX 128
 
 using namespace std;
+using namespace Barry;
 
 struct TcpStreamImpl
 {
@@ -76,11 +78,11 @@ TcpStream::TcpStream(const char * addr, long port)
 	WSADATA wsaData;
 	mImpl->mLastError = WSAStartup(MAKEWORD(2, 2), &wsaData);
 	if( mImpl->mLastError != 0 ) {
-		cerr << "Failed to startup WSA: " << mImpl->mLastError << endl;
+		cerr << _("Failed to startup WSA: ") << mImpl->mLastError << endl;
 	}
 	mImpl->mListenSocket = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
 	if( mImpl->mListenSocket == INVALID_SOCKET ) {
-		cerr << "Failed to create listening socket: " << 
+		cerr << _("Failed to create listening socket: ") << 
 			WSAGetLastError() << endl;
 	}
 	if( mImpl->mListenAddress == NULL ) {
@@ -122,7 +124,7 @@ bool TcpStream::accept()
 	serverAddr.sin_addr = mImpl->mHostAddress;
 	serverAddr.sin_port = htons(static_cast<u_short>(mImpl->mPort));
 	if( ::bind(mImpl->mListenSocket, (sockaddr*) & serverAddr, sizeof(serverAddr)) < 0 ) {
-		cerr << "Failed to bind to listening address" << endl;
+		cerr << _("Failed to bind to listening address") << endl;
 		return false;
 	}
 
@@ -130,26 +132,26 @@ bool TcpStream::accept()
 	int one = 1;
 	if( setsockopt(mImpl->mListenSocket, SOL_SOCKET, SO_REUSEADDR,
 		reinterpret_cast<const char *> (&one), sizeof(one)) < 0 ) {
-		cerr << "Failed to enable reuse of address" << endl;
+		cerr << _("Failed to enable reuse of address") << endl;
 		return false;
 	}
 
 	ULONG longOne = 1;
 	if( ioctlsocket(mImpl->mListenSocket, FIONBIO, &longOne) == INVALID_SOCKET ) {
-		cerr << "Failed to set non-blocking listening socket" << endl;
+		cerr << _("Failed to set non-blocking listening socket") << endl;
 		return false;
 	}
 
 	if( ::listen(mImpl->mListenSocket, 5) == INVALID_SOCKET ) {
-		cerr << "Failed to listen to listening address" << endl;
+		cerr << _("Failed to listen to listening address") << endl;
 		return false;
 	}
 
 	struct sockaddr_in clientAddr;
 	socklen_t len = sizeof(clientAddr);
-	cout << "Listening for connection on "
-		<< ( mImpl->mListenAddress == NULL ? "*" : mImpl->mListenAddress )
-		<< ":" << mImpl->mPort << endl;
+	cout << string_vprintf(_("Listening for connection on %s:%d"),
+			( mImpl->mListenAddress == NULL ? "*" : mImpl->mListenAddress ),
+			mImpl->mPort) << endl;
 
 	/* Signal to a public semaphore that the listen socket is up */
 	TCHAR wListenAddress[LISTEN_ADDRESS_MAX];
@@ -168,12 +170,12 @@ bool TcpStream::accept()
 
 	int ret = WSAEventSelect(mImpl->mListenSocket, mImpl->mEvent, FD_ACCEPT);
 	if( ret != 0 ) {
-		cerr << "WSAEventSelect failed with error: " << ret << endl;
+		cerr << _("WSAEventSelect failed with error: ") << ret << endl;
 		return false;
 	}
 	DWORD signalledObj = WaitForSingleObject(mImpl->mEvent, INFINITE);
 	if( signalledObj != WAIT_OBJECT_0 ) {
-		cerr << "Failed to wait for new connection: " << signalledObj << endl;
+		cerr << _("Failed to wait for new connection: ") << signalledObj << endl;
 		return false;
 	}
 
@@ -182,13 +184,13 @@ bool TcpStream::accept()
 	closesocket(mImpl->mListenSocket);
 	mImpl->mListenSocket = INVALID_SOCKET;
 	if( mImpl->mSocket == INVALID_SOCKET ) {
-		cerr << "Failed to accept on listening socket" << endl;
+		cerr << _("Failed to accept on listening socket") << endl;
 		return false;
 	}
 
 	if( setsockopt(mImpl->mSocket, IPPROTO_TCP, TCP_NODELAY,
 		reinterpret_cast<const char *> (&one), sizeof(one)) < 0 ) {
-		cerr << "Failed to set no delay" << endl;
+		cerr << _("Failed to set no delay") << endl;
 		return false;
 	}
 
@@ -199,7 +201,7 @@ ssize_t TcpInStream::read(unsigned char* ptr, size_t size, int timeout)
 {
 	int ret = WSAEventSelect(mStream.mImpl->mSocket, mStream.mImpl->mEvent, FD_READ);
 	if( ret != 0 ) {
-		cerr << "WSAEventSelect failed with error: " << ret << endl;
+		cerr << _("WSAEventSelect failed with error: ") << ret << endl;
 		return -1;
 	}
 	switch( WaitForSingleObject(mStream.mImpl->mEvent, timeout * 1000) ) {
@@ -222,7 +224,7 @@ ssize_t TcpInStream::read(unsigned char* ptr, size_t size, int timeout)
 			}
 		case WAIT_FAILED:
 		default:
-			cerr << "WaitForSingleObject failed with error: " << GetLastError() << endl;
+			cerr << _("WaitForSingleObject failed with error: ") << GetLastError() << endl;
 			return -1;
 	};
 }

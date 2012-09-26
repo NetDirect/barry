@@ -237,7 +237,7 @@ int main(int argc, char *argv[])
 		argv ++;
 
 		if( tcp_addr != NULL && tcp_port == 0 ) {
-			cerr << "Error: specified TCP listen address but no port." << endl;
+			cerr << _("Error: specified TCP listen address but no port.") << endl;
 			return 1;
 		}
 
@@ -362,7 +362,7 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 	catch( ... ) {
-		cerr << "unknown exception caught" << endl;
+		cerr << _("unknown exception caught") << endl;
 		return 1;
 	}
 
