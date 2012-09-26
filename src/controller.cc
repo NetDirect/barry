@@ -225,6 +225,24 @@ SocketHandle Controller::OpenSocket(uint16_t socket, const char *password)
 	return m_priv->m_zero.Open(socket, password);
 }
 
+//
+// OpenSocket
+//
+/// Sets a data handler from the start of the socket being opened.
+/// This avoids a race condition where data packets can be lost
+/// from the device if they are received before the mode which owns
+/// this socket calls Socket::RegisterInterest().
+///
+/// Can be called multiple times, in case of password retries.
+/// See also Mode::RetryPassword()
+///
+SocketHandle Controller::OpenSocket(
+	SocketRoutingQueue::SocketDataHandlerPtr handler,
+	uint16_t socket, const char *password)
+{
+	return m_priv->m_zero.Open(handler, socket, password);
+}
+
 
 ///////////////////////////////////////////////////////////////////////////////
 // public API

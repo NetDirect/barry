@@ -141,7 +141,13 @@ void Mode::RetryPassword(const char *password)
 	if( m_socket.get() != 0 )
 		throw std::logic_error(_("Socket alreay open in RetryPassword"));
 
-	m_socket = m_con.OpenSocket(m_ModeSocket, password);
+	SocketRoutingQueue::SocketDataHandlerPtr handler = GetHandler();
+	if( handler.get() ) {
+		m_socket = m_con.OpenSocket(handler, m_ModeSocket, password);
+	}
+	else {
+		m_socket = m_con.OpenSocket(m_ModeSocket, password);
+	}
 
 	// success... perform open-oriented setup
 	OnOpen();
@@ -150,6 +156,13 @@ void Mode::RetryPassword(const char *password)
 
 void Mode::OnOpen()
 {
+}
+
+SocketRoutingQueue::SocketDataHandlerPtr Mode::GetHandler()
+{
+	// Default to returning a NULL handler so that the
+	// socket open without handler is used.
+	return SocketRoutingQueue::SocketDataHandlerPtr();
 }
 
 

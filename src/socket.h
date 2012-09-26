@@ -109,6 +109,13 @@ public:
 
 	// Opens a new socket and returns a Socket object to manage it
 	SocketHandle Open(uint16_t socket, const char *password = 0);
+	// Opens a new socket and returns a Socket object to manage it
+	// Registers the provided handler interested in socket data.
+	// This avoids the race where calling RegisterInterest immediately
+	// on the returned SocketHandle can still miss incoming data.
+	SocketHandle Open(
+		Barry::SocketRoutingQueue::SocketDataHandlerPtr handler,
+		uint16_t socket, const char *password = 0);
 	void Close(Socket &socket);
 };
 

@@ -417,6 +417,40 @@ void SocketZero::Receive(Data &receive, int timeout)
 ///
 SocketHandle SocketZero::Open(uint16_t socket, const char *password)
 {
+	return Open(SocketRoutingQueue::SocketDataHandlerPtr(),
+		socket, password);
+}
+//
+// Open
+//
+/// Open a logical socket on the device.
+///
+/// Both the socket number and the flag are based on the response to the
+/// SELECT_MODE command.  See Controller::SelectMode() for more info
+/// on this.
+///
+/// This version of open includes a socket routing queue handler to
+/// avoid the race condition with incoming data being lost if
+/// the handler is only registered after the socket is opened.
+///
+/// The packet sequence is normal for most socket operations.
+///
+///	- Down: command packet with OPEN_SOCKET
+///	- Up: optional sequence handshake packet
+///	- Up: command response, which repeats the socket and flag data
+///		as confirmation
+///
+/// \exception	Barry::Error
+///		Thrown on protocol error.
+///
+/// \exception	Barry::BadPassword
+///		Thrown on invalid password, or not enough retries left
+///		on device.
+///
+SocketHandle SocketZero::Open(
+	Barry::SocketRoutingQueue::SocketDataHandlerPtr handler,
+	uint16_t socket, const char *password)
+{
 	// Things get a little funky here, as we may be left in an
 	// intermediate state in the case of a failed password.
 	// This function should support being called as many times
@@ -440,13 +474,10 @@ SocketHandle SocketZero::Open(uint16_t socket, const char *password)
 	SocketHandle sh(sock);
 
 	// if we are running with a routing queue, register the
-	// socket's interest in all its own data.  By default, this
+	// socket's interest in its own data.  By default, this
 	// data will be queued without a callback handler.
-	// If other application code needs to intercept this with
-	// its own handler, it must call UnregisterInterest() and
-	// re-register its own handler.
 	if( m_queue ) {
-		sock->RegisterInterest();
+		sock->RegisterInterest(handler);
 	}
 
 	if( !m_halfOpen ) {

@@ -102,6 +102,9 @@ protected:
 	uint16_t SelectMode(ModeType mode);	// returns mode socket
 	uint16_t SelectMode(ModeType mode, const char *explicitModeName); // returns mode socket
 	SocketHandle OpenSocket(uint16_t socket, const char *password = 0);
+	SocketHandle OpenSocket(
+		SocketRoutingQueue::SocketDataHandlerPtr handler,
+		uint16_t socket, const char *password = 0);
 	PrivateControllerData* GetPrivate() { return m_priv.get(); }
 
 public:

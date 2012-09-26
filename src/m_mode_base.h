@@ -61,6 +61,7 @@ protected:
 	// overrides
 
 	virtual void OnOpen();
+	virtual SocketRoutingQueue::SocketDataHandlerPtr GetHandler();
 };
 
 }} // namespace Barry::Mode
