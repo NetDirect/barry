@@ -473,12 +473,7 @@ SocketHandle SocketZero::Open(
 	Socket *sock = new Socket(*this, socket, closeFlag);
 	SocketHandle sh(sock);
 
-	// if we are running with a routing queue, register the
-	// socket's interest in its own data.  By default, this
-	// data will be queued without a callback handler.
-	if( m_queue ) {
-		sock->RegisterInterest(handler);
-	}
+	sock->Opening(handler);
 
 	if( !m_halfOpen ) {
 		// starting fresh
@@ -588,6 +583,8 @@ SocketHandle SocketZero::Open(
 	}
 
 	// success! 
+	sh->Opened();
+
 	return sh;
 }
 
@@ -1143,6 +1140,40 @@ void Socket::RegisterInterest(SocketRoutingQueue::SocketDataHandlerPtr handler)
 
 	m_zero->m_queue->RegisterInterest(m_socket, handler);
 	m_registered = true;
+}
+
+void Socket::Opening(Barry::SocketRoutingQueue::SocketDataHandlerPtr handler)
+{
+	// if we are running with a routing queue, register the
+	// socket's interest in its own data packets.  By default, this
+	// data will be queued without a callback handler.
+	// If other application code needs to intercept this with
+	// its own handler, it must call UnregisterInterest() and
+	// re-register its own handler or use TransferInterest
+	//
+	// As opening requires sequence packets to still come in on
+	// the default queue, only register for data until the socket
+	// is opened.
+	if( m_zero->m_queue ) {
+		m_zero->m_queue->RegisterInterest(m_socket,
+			handler, SocketRoutingQueue::DataPackets);
+		m_registered = true;
+	}
+}
+
+void Socket::Opened()
+{
+	if( m_zero->m_queue ) {
+		if( !m_registered ) {
+			std::ostringstream oss;
+			oss << "Socket (" << m_socket << ") not previously registered in Socket::Opened()!";
+			throw std::logic_error(oss.str());
+		}
+		// Need to complete registration and register for 
+		// sequence packets in addition to data packets.
+		m_zero->m_queue->ChangeInterest(m_socket,
+			SocketRoutingQueue::SequenceAndDataPackets);
+	}
 }
 
 

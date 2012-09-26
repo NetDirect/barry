@@ -147,6 +147,11 @@ public:
 	virtual void RegisterInterest(Barry::SocketRoutingQueue::SocketDataHandlerPtr handler = Barry::SocketRoutingQueue::SocketDataHandlerPtr()) = 0;
 	virtual void UnregisterInterest() = 0;
 
+	// Used to notify the socket when the connection is being opened
+	virtual void Opening(Barry::SocketRoutingQueue::SocketDataHandlerPtr handler) = 0;
+	// Used to notify the socket when the connection has been successfully opened
+	virtual void Opened() = 0;
+
 	void ResetOnClose(bool reset = true) { m_resetOnClose = reset; }
 	bool IsResetOnClose() const { return m_resetOnClose; }
 
@@ -246,6 +251,9 @@ public:
 	// which is safe to call as many times as you like.
 	void RegisterInterest(Barry::SocketRoutingQueue::SocketDataHandlerPtr handler = Barry::SocketRoutingQueue::SocketDataHandlerPtr());
 	void UnregisterInterest() { LocalUnregisterInterest(); }
+
+	void Opening(Barry::SocketRoutingQueue::SocketDataHandlerPtr handler);
+	void Opened();
 };
 
 
