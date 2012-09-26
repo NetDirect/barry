@@ -139,18 +139,20 @@ void RawChannel::OnOpen()
 	SocketRoutingQueue::SocketDataHandlerPtr zeroCallback;
 	zeroCallback.reset(new RawChannelZeroSocketHandler(*this));
 	m_con.GetQueue()->RegisterInterest(0, zeroCallback);
+}
+
+SocketRoutingQueue::SocketDataHandlerPtr RawChannel::GetHandler()
+{
 	// Get socket data packets routed to this class as well if a
 	// callback was provided, otherside just get the data packets
 	// placed into a queue for the socket.
 	if( m_callback ) {
-		SocketRoutingQueue::SocketDataHandlerPtr callback;
-		callback.reset(new RawChannelSocketHandler(*this));
-		m_socket->UnregisterInterest();
-		m_socket->RegisterInterest(callback);
+		SocketRoutingQueue::SocketDataHandlerPtr ret;
+		ret.reset(new RawChannelSocketHandler(*this));
+		return ret;
 	}
 	else {
-		// sockets already register themselves by default,
-		// so no need to do anything in this case
+		return Mode::GetHandler();
 	}
 }
 

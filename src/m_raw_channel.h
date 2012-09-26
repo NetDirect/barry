@@ -109,6 +109,11 @@ protected:
 	// This method is called by the internals of
 	// Barry when setting up a connection.
 	void OnOpen();
+
+	// Not intended for use by users of this class.
+	// This method is called by the internals of
+	// Barry when setting up a connection.
+	SocketRoutingQueue::SocketDataHandlerPtr GetHandler();
 public:
 	// Creates a raw channel in non-callback mode.
 	// This requires all data to be sent and received
