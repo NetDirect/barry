@@ -109,6 +109,8 @@ reverse engineer the battery charging handshake via USB.</p>
 	<li><? createLink("sync", "Sync my Blackberry with Evolution"); ?></li>
 	<li><? createLink("modem", "Use my Blackberry as a modem to surf the net"); ?></li>
 	<li><? createLink("rawchannel", "Use Blackberry USB channels with Barry"); ?></li>
+	<li><? createLink("wincebuild", "Build Barry for Windows CE"); ?></li>
+	<li><? createLink("androidbuild", "Build Barry for Android"); ?></li>
 	<li><? createLink("troubleshooting", "Find troubleshooting help"); ?></li>
 	<li><? createLink("bugs", "Report a bug"); ?></li>
 	<li><? createLink("patches", "Submit a patch"); ?></li>
