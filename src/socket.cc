@@ -1149,7 +1149,7 @@ void Socket::Opening(Barry::SocketRoutingQueue::SocketDataHandlerPtr handler)
 	// data will be queued without a callback handler.
 	// If other application code needs to intercept this with
 	// its own handler, it must call UnregisterInterest() and
-	// re-register its own handler or use TransferInterest
+	// re-register its own handler
 	//
 	// As opening requires sequence packets to still come in on
 	// the default queue, only register for data until the socket
