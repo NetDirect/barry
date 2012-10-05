@@ -355,7 +355,7 @@ void Bookmark::Dump(std::ostream &os) const
 		<< gettext( DisplayModeName[DisplayMode] ) << "\n";
 	os << _("         JavaScript mode: ")
 		<< gettext( JavaScriptModeName[JavaScriptMode] ) << "\n";
-	os << _("   Browser Identity mode: ")
+	os << _("        Browser Identity: ")
 		<< gettext( BrowserIdentityName[BrowserIdentity] ) << "\n";
 
 	os << Unknowns;
