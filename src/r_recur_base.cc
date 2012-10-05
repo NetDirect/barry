@@ -286,7 +286,7 @@ void RecurBase::Dump(std::ostream &os) const
 
 		case MonthByDate:
 			// TRANSLATORS: to remove the 'th' ending on numbers,
-			// just skip the %s in this string.
+			// just replace the %s with %.0s in this string.
 			os << string_vprintf(_("      Every month on the %u%s"),
 				DayOfMonth,
 				(DayOfMonth == 1 ? "st" :
