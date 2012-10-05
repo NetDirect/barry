@@ -150,7 +150,7 @@ bool TcpStream::accept()
 
 	struct sockaddr_in clientAddr;
 	socklen_t len = sizeof(clientAddr);
-	cout << string_vprintf(_("Listening for connection on %s:%d"),
+	cout << string_vprintf(_("Listening for connection on %s:%ld"),
 			( mImpl->mListenAddress == NULL ? "*" : mImpl->mListenAddress ),
 			mImpl->mPort) << endl;
 
