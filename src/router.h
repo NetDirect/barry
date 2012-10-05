@@ -199,6 +199,13 @@ public:
 	bool DefaultRead(Data &receive, int timeout = -1);
 	DataHandle DefaultRead(int timeout = -1);
 
+	// Internal registration of interest in data from a certain socket,
+	// filtered by a type.  NOTE: most code should not use this function,
+	// but use RegisterInterest() instead, since registering with the
+	// wrong type could cause Socket::SyncSend() to malfunction.
+	void RegisterInterestAndType(SocketId socket,
+		SocketDataHandlerPtr handler, InterestType type);
+
 	// Register an interest in data from a certain socket.  To read
 	// from that socket, use the SocketRead() function from then on.
 	// Any non-registered socket goes in the default queue
@@ -209,12 +216,10 @@ public:
 	// copying is done.  Once the handler returns, the data is
 	// considered processed and not added to the interested queue,
 	// but instead returned to m_free.
-	// The provided InterestType is used to determine which packets
-	// the socket is interested in.
-	void RegisterInterest(SocketId socket, SocketDataHandlerPtr handler, InterestType type);
-
-	// This behaves like RegisterInterest(SocketId, SocketDataHandlerPtr, InterestType)
-	// but defaults to an InterestType of SequenceAndDataPackets
+	//
+	// This simply calls RegisterInterestAndType(socket,handler,type)
+	// with type set to SequenceAndDataPackets.  Most code should use
+	// this function.
 	void RegisterInterest(SocketId socket, SocketDataHandlerPtr handler);
 
 	// Unregisters interest in data from the given socket, and discards
@@ -222,9 +227,10 @@ public:
 	// for this socket will be placed in the default queue.
 	void UnregisterInterest(SocketId socket);
 
-	// Changes the type of data that a client is interested in for a certain socket.
-	// Interest in the socket must have previously been registered by a call
-	// to RegisterInterest().
+	// Changes the type of data that a client is interested in for a
+	// certain socket.
+	// Interest in the socket must have previously been registered by a
+	// call to RegisterInterest() or RegisterInterestAndType().
 	void ChangeInterest(SocketId socket, InterestType type);
 
 	// Reads data from the interested socket cache.  Can only read

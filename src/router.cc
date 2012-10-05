@@ -325,7 +325,7 @@ DataHandle SocketRoutingQueue::DefaultRead(int timeout)
 }
 
 //
-// RegisterInterest
+// RegisterInterestAndType
 //
 /// Register an interest in data from a certain socket.  To read
 /// from that socket, use the SocketRead() function from then on.
@@ -342,9 +342,9 @@ DataHandle SocketRoutingQueue::DefaultRead(int timeout)
 ///
 /// Throws std::logic_error if already registered.
 ///
-void SocketRoutingQueue::RegisterInterest(SocketId socket,
-					  SocketDataHandlerPtr handler,
-					  InterestType type)
+void SocketRoutingQueue::RegisterInterestAndType(SocketId socket,
+						 SocketDataHandlerPtr handler,
+						 InterestType type)
 {
 	// modifying our own std::map, need a lock
 	scoped_lock lock(m_mutex);
@@ -366,7 +366,7 @@ void SocketRoutingQueue::RegisterInterest(SocketId socket,
 void SocketRoutingQueue::RegisterInterest(SocketId socket,
 					  SocketDataHandlerPtr handler)
 {
-	RegisterInterest(socket, handler, SequenceAndDataPackets);
+	RegisterInterestAndType(socket, handler, SequenceAndDataPackets);
 }
 
 //

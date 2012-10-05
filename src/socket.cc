@@ -1155,7 +1155,7 @@ void Socket::Opening(Barry::SocketRoutingQueue::SocketDataHandlerPtr handler)
 	// the default queue, only register for data until the socket
 	// is opened.
 	if( m_zero->m_queue ) {
-		m_zero->m_queue->RegisterInterest(m_socket,
+		m_zero->m_queue->RegisterInterestAndType(m_socket,
 			handler, SocketRoutingQueue::DataPackets);
 		m_registered = true;
 	}
