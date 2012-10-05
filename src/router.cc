@@ -116,18 +116,22 @@ void SocketRoutingQueue::ReturnBuffer(Data *buf)
 bool SocketRoutingQueue::QueuePacket(SocketId socket, DataHandle &buf)
 {
 	if( m_interest ) {
+		bool seq = Protocol::IsSequencePacket(*buf.get());
+
 		// lock so we can access the m_socketQueues map safely
 		scoped_lock lock(m_mutex);
 
 		// search for registration of socket
 		SocketQueueMap::iterator qi = m_socketQueues.find(socket);
 		if( qi != m_socketQueues.end() ) {
-			if( Protocol::IsSequencePacket(*buf.get()) &&
-					( qi->second->m_type & SequencePackets ) == 0 )
-				return false;
-			if( !Protocol::IsSequencePacket(*buf.get()) &&
-					( qi->second->m_type & DataPackets ) == 0 )
-				return false;
+			if( seq ) {
+				if( (qi->second->m_type & SequencePackets) == 0 )
+					return false;
+			}
+			else {
+				if( (qi->second->m_type & DataPackets) == 0 )
+					return false;
+			}
 			qi->second->m_queue.push(buf.release());
 			return true;
 		}
