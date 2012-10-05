@@ -583,7 +583,7 @@ SocketHandle SocketZero::Open(
 	}
 
 	// success! 
-	sh->Opened();
+	sock->Opened();
 
 	return sh;
 }
