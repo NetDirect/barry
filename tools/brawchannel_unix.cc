@@ -47,6 +47,7 @@ using namespace Barry;
 struct TcpStreamImpl
 {
 	in_addr mHostAddress;
+	// FIXME - this should be a std::string if ever moved to the library
 	const char * mListenAddress;
 	long mPort;
 	int mListenSocket;
