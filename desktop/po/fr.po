@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: barrydesktop 0.18.4\n"
 "Report-Msgid-Bugs-To: http://netdirect.ca/barry\n"
 "POT-Creation-Date: 2012-08-07 15:16-0400\n"
-"PO-Revision-Date: 2012-08-06 18:20+0100\n"
+"PO-Revision-Date: 2012-08-22 19:48+0100\n"
 "Last-Translator: Nicolas CARRIER <carrier.nicolas0@gmail.com>\n"
 "Language-Team: Barry\n"
 "Language: fr\n"
@@ -451,9 +451,8 @@ msgid "Free"
 msgstr "Libre"
 
 #: src/CalendarEditDlg.cc:102
-#, fuzzy
 msgid "Tentative"
-msgstr "Tentative"
+msgstr "Provisoire"
 
 #: src/CalendarEditDlg.cc:103
 msgid "Busy"
@@ -1633,9 +1632,8 @@ msgid "Providers"
 msgstr "Fournisseurs"
 
 #: src/ModemDlg.cc:57
-#, fuzzy
 msgid "For device pin:"
-msgstr "Pour le PIN du périphérique :"
+msgstr "Pour le périphérique de pin :"
 
 #: src/ModemDlg.cc:97
 msgid "Modem Starter"
