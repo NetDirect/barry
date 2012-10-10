@@ -28,6 +28,7 @@
 #include <iostream>
 #include <winsock2.h>
 #include <ws2tcpip.h>
+#include <string>
 
 #define INVALID_HANDLE ((HANDLE)NULL)
 // This is a name of a public semaphore to signal when the listen socket is opened
@@ -41,8 +42,7 @@ using namespace Barry;
 struct TcpStreamImpl
 {
 	in_addr mHostAddress;
-	// FIXME - this should be a std::string if ever moved to the library
-	const char * mListenAddress;
+	std::string mListenAddress;
 	long mPort;
 	SOCKET mListenSocket;
 	SOCKET mSocket;
@@ -68,7 +68,7 @@ ssize_t StdInStream::read(unsigned char* ptr, size_t size, int timeout)
 	return 0;
 }
 
-TcpStream::TcpStream(const char * addr, long port)
+TcpStream::TcpStream(const std::string& addr, long port)
 {
 	mImpl.reset(new TcpStreamImpl);
 	mImpl->mListenAddress = addr;
@@ -86,10 +86,11 @@ TcpStream::TcpStream(const char * addr, long port)
 		cerr << _("Failed to create listening socket: ") << 
 			WSAGetLastError() << endl;
 	}
-	if( mImpl->mListenAddress == NULL ) {
+	if( mImpl->mListenAddress.length() == 0 ) {
 		mImpl->mHostAddress.s_addr = INADDR_ANY;
+		mImpl->mListenAddress = "*";
 	} else {
-		mImpl->mHostAddress.s_addr = inet_addr(mImpl->mListenAddress);
+		mImpl->mHostAddress.s_addr = inet_addr(mImpl->mListenAddress.c_str());
 	}
 }
 
@@ -151,13 +152,13 @@ bool TcpStream::accept()
 	struct sockaddr_in clientAddr;
 	socklen_t len = sizeof(clientAddr);
 	cout << string_vprintf(_("Listening for connection on %s:%ld"),
-			( mImpl->mListenAddress == NULL ? "*" : mImpl->mListenAddress ),
+			mImpl->mListenAddress.c_str(),
 			mImpl->mPort) << endl;
 
 	/* Signal to a public semaphore that the listen socket is up */
 	TCHAR wListenAddress[LISTEN_ADDRESS_MAX];
 	if( MultiByteToWideChar(CP_ACP, 0,
-			(mImpl->mListenAddress == NULL ? "*" : mImpl->mListenAddress), -1,
+			mImpl->mListenAddress.c_str(), -1,
 			wListenAddress, LISTEN_ADDRESS_MAX) > 0 ) {
 		TCHAR semName[LISTEN_SEMAPHORE_MAX_LEN];
 		_snwprintf(semName, LISTEN_SEMAPHORE_MAX_LEN, LISTEN_SEMAPHORE_NAME, wListenAddress, mImpl->mPort);

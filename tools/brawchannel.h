@@ -26,6 +26,7 @@
 
 #include <sys/types.h>
 #include <memory>
+#include <string>
 
 // How long, in seconds, to wait between reads before checking if should shutdown
 #define READ_TIMEOUT_SECONDS 1
@@ -68,7 +69,7 @@ class TcpStream : public Stream {
 public:
 	std::auto_ptr<TcpStreamImpl> mImpl;
 public:
-	TcpStream(const char * addr, long port);
+	TcpStream(const std::string& addr, long port);
 	~TcpStream();
 	bool accept();
 };

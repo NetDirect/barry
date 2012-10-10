@@ -177,7 +177,7 @@ int main(int argc, char *argv[])
 		uint32_t pin = 0;
 		bool data_dump = false;
 		string password;
-		char * tcp_addr = NULL;
+		string tcp_addr;
 		long tcp_port = 0;
 
 		// process command line options
@@ -236,7 +236,7 @@ int main(int argc, char *argv[])
 		argc --;
 		argv ++;
 
-		if( tcp_addr != NULL && tcp_port == 0 ) {
+		if( tcp_addr.length() != 0 && tcp_port == 0 ) {
 			cerr << _("Error: specified TCP listen address but no port.") << endl;
 			return 1;
 		}
@@ -284,8 +284,10 @@ int main(int argc, char *argv[])
 		if( tcp_port != 0 ) {
 			/* Use TCP socket for channel data */
 			tcpStreamPtr.reset(new TcpStream(tcp_addr, tcp_port));
-			if( !tcpStreamPtr->accept() )
+			if( !tcpStreamPtr->accept() ) {
+				cerr << _("Failed to listen on requested port\n");
 				return 1;
+			}
 			inputPtr.reset(new TcpInStream(*tcpStreamPtr));
 			outputPtr.reset(new TcpOutStream(*tcpStreamPtr));
 		} else {

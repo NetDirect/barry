@@ -36,6 +36,7 @@
 #include <netinet/tcp.h>
 #include <arpa/inet.h>
 #include <fcntl.h>
+#include <string>
 
 #define SD_SEND SHUT_WR
 #define INVALID_SOCKET -1
@@ -47,8 +48,7 @@ using namespace Barry;
 struct TcpStreamImpl
 {
 	in_addr mHostAddress;
-	// FIXME - this should be a std::string if ever moved to the library
-	const char * mListenAddress;
+	std::string mListenAddress;
 	long mPort;
 	int mListenSocket;
 	int mSocket;
@@ -85,7 +85,7 @@ ssize_t StdInStream::read(unsigned char* ptr, size_t size, int timeout)
 	}
 }
 
-TcpStream::TcpStream(const char * addr, long port)
+TcpStream::TcpStream(const std::string& addr, long port)
 {
 	mImpl.reset(new TcpStreamImpl);
 	mImpl->mListenAddress = addr;
@@ -96,10 +96,11 @@ TcpStream::TcpStream(const char * addr, long port)
 		cerr << _("Failed to create listening socket: ") << 
 			errno << endl;
 	}
-	if( mImpl->mListenAddress == NULL ) {
+	if( mImpl->mListenAddress.length() == 0 ) {
 		mImpl->mHostAddress.s_addr = INADDR_ANY;
+		mImpl->mListenAddress = "*";
 	} else {
-		mImpl->mHostAddress.s_addr = inet_addr(mImpl->mListenAddress);
+		mImpl->mHostAddress.s_addr = inet_addr(mImpl->mListenAddress.c_str());
 	}
 }
 
@@ -156,7 +157,7 @@ bool TcpStream::accept()
 	struct sockaddr_in clientAddr;
 	socklen_t len = sizeof(clientAddr);
 	cout << string_vprintf(_("Listening for connection on %s:%ld"),
-			( mImpl->mListenAddress == NULL ? "*" : mImpl->mListenAddress ),
+			mImpl->mListenAddress.c_str(),
 			mImpl->mPort) << endl;
 
 	mImpl->mSocket = ::accept(mImpl->mListenSocket, (struct sockaddr*) &clientAddr, &len);
