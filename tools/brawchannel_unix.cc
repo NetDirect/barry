@@ -52,7 +52,6 @@ struct TcpStreamImpl
 	long mPort;
 	int mListenSocket;
 	int mSocket;
-	int mLastError;
 };
 
 
@@ -121,7 +120,6 @@ TcpStream::~TcpStream()
 bool TcpStream::accept()
 {
 	if( mImpl->mListenSocket == INVALID_SOCKET ||
-		mImpl->mLastError != 0 || 
 		mImpl->mHostAddress.s_addr == INADDR_NONE ) {
 		return false;
 	}
@@ -140,12 +138,6 @@ bool TcpStream::accept()
 	if( setsockopt(mImpl->mListenSocket, SOL_SOCKET, SO_REUSEADDR,
 		reinterpret_cast<const char *> (&one), sizeof(one)) < 0 ) {
 		cerr << _("Failed to enable reuse of address") << endl;
-		return false;
-	}
-
-	if( fcntl(mImpl->mListenSocket, F_SETFL,
-			fcntl(mImpl->mListenSocket, F_GETFL, 0) | O_NONBLOCK) < 0 ) {
-		cerr << _("Failed to set non-blocking listening socket") << endl;
 		return false;
 	}
 
@@ -172,6 +164,12 @@ bool TcpStream::accept()
 	if( setsockopt(mImpl->mSocket, IPPROTO_TCP, TCP_NODELAY,
 		reinterpret_cast<const char *> (&one), sizeof(one)) < 0 ) {
 		cerr << _("Failed to set no delay") << endl;
+		return false;
+	}
+
+	if( fcntl(mImpl->mSocket, F_SETFL,
+			fcntl(mImpl->mSocket, F_GETFL, 0) | O_NONBLOCK) < 0 ) {
+		cerr << _("Failed to set non-blocking on socket") << endl;
 		return false;
 	}
 
