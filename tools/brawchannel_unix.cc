@@ -58,7 +58,7 @@ struct TcpStreamImpl
 
 ssize_t StdOutStream::write(const unsigned char* ptr, size_t size)
 {
-	size_t written = fwrite(ptr, 1, size, stdout);
+	size_t written = ::write(STDOUT_FILENO, ptr, size);
 	if( written == 0 &&
 		( ferror(stdout) != 0 || feof(stdout) != 0 ) ) {
 		return -1;
