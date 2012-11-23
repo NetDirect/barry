@@ -417,6 +417,17 @@ int Device::GetPowerLevel()
 	return m_id.m_impl->m_dev->config[0].MaxPower;
 }
 
+std::string Device::GetSimpleSerialNumber()
+{
+	std::string sn;
+	char buf[1024];
+	int ret = usb_get_string_simple(m_handle->m_handle,
+		m_id.m_impl->m_dev->descriptor.iSerialNumber, buf, sizeof(buf));
+	if( ret > 0 )
+		sn.assign(buf, ret);
+	return sn;
+}
+
 bool Device::IsAttachKernelDriver(int iface)
 {
 	int ret;
@@ -546,7 +557,7 @@ DeviceDescriptor::DeviceDescriptor(DeviceID& devid)
 	     << "\nbNumConfigurations: " << std::dec << (unsigned int) m_impl->m_desc.bNumConfigurations
 	     << "\n"
 	);
-	
+
 	// Create all the configs
 	for( int i = 0; i < m_impl->m_desc.bNumConfigurations; ++i ) {
 		std::auto_ptr<ConfigDescriptor> ptr(new ConfigDescriptor(*this, i));

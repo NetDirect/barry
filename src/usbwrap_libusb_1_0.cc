@@ -600,6 +600,25 @@ int Device::GetPowerLevel()
 	return ret;
 }
 
+std::string Device::GetSimpleSerialNumber()
+{
+	std::string sn;
+
+	struct libusb_device_descriptor desc;
+	int ret = libusb_get_device_descriptor(m_id.m_impl->m_dev, &desc);
+	m_lasterror = ret;
+	if( ret == 0 ) {
+		char buf[1024];
+		ret = libusb_get_string_descriptor_ascii(m_handle->m_handle,
+			desc.iSerialNumber, (unsigned char*)buf, sizeof(buf));
+		if( ret > 0 )
+			sn.assign(buf, ret);
+		else
+			m_lasterror = ret;
+	}
+	return sn;
+}
+
 bool Device::IsAttachKernelDriver(int iface)
 {
 	int ret;

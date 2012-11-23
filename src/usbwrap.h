@@ -281,6 +281,7 @@ public:
 
 	int GetPowerLevel();
 	int FindInterface(int ifaceClass);
+	std::string GetSimpleSerialNumber();
 
 	/////////////////////////////
 	// Device manipulation
