@@ -43,6 +43,7 @@ void Usage()
    "\n"
    "   -c        If used with -m, show both hex and dec where possible\n"
    "   -m        Also show the device's ESN / MEID / IMEI\n"
+   "   -s        Also show the device's USB serial number (same as shown by lsusb)\n"
    "   -h        This help\n"
    "   -v        Dump protocol data during operation\n"), Version)
    << endl;
@@ -81,13 +82,14 @@ int main(int argc, char *argv[])
 
 		bool data_dump = false,
 			get_meid = false,
+			get_usb_serial = false,
 			show_both = false;
 		string busname;
 		string devname;
 
 		// process command line options
 		for(;;) {
-			int cmd = getopt(argc, argv, "B:hN:vmc");
+			int cmd = getopt(argc, argv, "B:hN:vmsc");
 			if( cmd == -1 )
 				break;
 
@@ -107,6 +109,10 @@ int main(int argc, char *argv[])
 
 			case 'm':	// get meid / esn
 				get_meid = true;
+				break;
+
+			case 's':	// get usb serial number
+				get_usb_serial = true;
 				break;
 
 			case 'v':	// data dump on
@@ -154,6 +160,11 @@ int main(int argc, char *argv[])
 				// output on cerr so as not to mess up
 				// the identify output
 				cerr << _("Error on PIN: ") << pr.m_pin.Str() << ": " << e.what() << endl;
+			}
+
+			if( get_usb_serial ) {
+				Usb::Device dev(pr.m_dev);
+				cout << ", " << dev.GetSimpleSerialNumber();
 			}
 
 			// finish the identity line

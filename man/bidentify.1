@@ -2,7 +2,7 @@
 .\" First parameter, NAME, should be all caps
 .\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
 .\" other parameters are allowed: see man(7), man(1)
-.TH BIDENTIFY 1 "February 24, 2011"
+.TH BIDENTIFY 1 "November 22, 2012"
 .\" Please adjust this date whenever revising the manpage.
 .\"
 .\" Some roff macros, for reference:
@@ -20,7 +20,7 @@
 \- Barry Project's program to identify BlackBerry handhelds
 .SH SYNOPSIS
 .B bidentify
-[\-B busname][\-N devname][\-h][\-v]
+[\-B busname][\-N devname][\-c][\-m][\-s][\-h][\-v]
 .SH DESCRIPTION
 .PP
 .B bidentify
@@ -50,6 +50,11 @@ no effect.
 Also show the device's ESN / MEID / IMEI number.  This requires desktop
 database access, so is an option.  It will only work on devices that have
 no password.
+.TP
+.B \-s
+Also show the device's USB serial number.  This is the same serial number
+that is available through the lsusb command line tool, and may not always
+be what you expect.
 .TP
 .B \-v
 Dump verbose protocol data during operation.
