@@ -125,17 +125,13 @@ void EvoSources::LoadBaseSyms()
 	// uses local:system, or puts its files under ~/.config, then
 	// build with evolution and link against it.
 	//
-/*
-	LoadSym(m_funcs->g_type_init, "g_type_init");
-	LoadSym(m_funcs->e_source_list_peek_groups,
-					"e_source_list_peek_groups");
-	LoadSym(m_funcs->e_source_group_peek_sources,
-					"e_source_group_peek_sources");
-	LoadSym(m_funcs->e_source_group_peek_name,
-					"e_source_group_peek_name");
-	LoadSym(m_funcs->e_source_peek_name, "e_source_peek_name");
-	LoadSym(m_funcs->e_source_get_uri, "e_source_get_uri");
-*/
+	// Note that if you do not have any OpenSync libraries installed,
+	// then you don't need this evolution source detection at all, and
+	// you can safely disable evolution for the barrydesktop compile too,
+	// since the desktop GUI will not allow the user to even enter the
+	// sync screen without OpenSync.
+	//
+
 	m_funcs->g_type_init = &g_type_init;
 	m_funcs->e_source_list_peek_groups = &e_source_list_peek_groups;
 	m_funcs->e_source_group_peek_sources = &e_source_group_peek_sources;
@@ -149,47 +145,31 @@ void EvoSources::LoadBaseSyms()
 
 bool EvoSources::LoadEbookLib()
 {
-//	try {
-		m_funcs.reset( new EvoFunctions );
-//		if( !Open("libebook-1.2.so.9") )
-//			return false;
-		LoadBaseSyms();
-//		LoadSym(m_funcs->e_book_get_addressbooks, "e_book_get_addressbooks");
+	m_funcs.reset( new EvoFunctions );
+	LoadBaseSyms();
 
-		m_funcs->g_type_init();
+	m_funcs->g_type_init();
 
-		ESourceList *sources = NULL;
-		if (m_funcs->e_book_get_addressbooks(&sources, NULL)) {
-			FetchSources(*m_funcs, m_addressbook, sources);
-		}
+	ESourceList *sources = NULL;
+	if (m_funcs->e_book_get_addressbooks(&sources, NULL)) {
+		FetchSources(*m_funcs, m_addressbook, sources);
+	}
 
-		return true;
-//	}
-//	catch( DlError & ) {
-//		return false;
-//	}
+	return true;
 }
 
 bool EvoSources::LoadEcalLib()
 {
-//	try {
-		m_funcs.reset( new EvoFunctions );
-//		if( !Open("libecal-1.2.so.7") )
-//			return false;
-		LoadBaseSyms();
-//		LoadSym(m_funcs->e_cal_get_sources, "e_cal_get_sources");
+	m_funcs.reset( new EvoFunctions );
+	LoadBaseSyms();
 
-		m_funcs->g_type_init();
+	m_funcs->g_type_init();
 
-		FetchCalendars(*m_funcs, m_events, E_CAL_SOURCE_TYPE_EVENT);
-		FetchCalendars(*m_funcs, m_tasks, E_CAL_SOURCE_TYPE_TODO);
-		FetchCalendars(*m_funcs, m_memos, E_CAL_SOURCE_TYPE_JOURNAL);
+	FetchCalendars(*m_funcs, m_events, E_CAL_SOURCE_TYPE_EVENT);
+	FetchCalendars(*m_funcs, m_tasks, E_CAL_SOURCE_TYPE_TODO);
+	FetchCalendars(*m_funcs, m_memos, E_CAL_SOURCE_TYPE_JOURNAL);
 
-		return true;
-//	}
-//	catch( DlError & ) {
-//		return false;
-//	}
+	return true;
 }
 
 void EvoSources::Detect()
@@ -205,9 +185,6 @@ void EvoSources::Detect()
 		GuessPaths();
 		m_supported = false;
 	}
-
-	// shutdown to unload symbols
-//	Shutdown();
 }
 
 bool EvoSources::IsSupported() const
