@@ -331,7 +331,8 @@ void BaseFrame::OnBackupRestore(wxCommandEvent &event)
 {
 	if( m_backup_process.IsAppRunning() ) {
 		wxMessageBox(_W("The Backup program is already running!"),
-			_W("Backup and Restore"), wxOK | wxICON_INFORMATION);
+			_W("Backup and Restore"), wxOK | wxICON_INFORMATION,
+			this);
 		return;
 	}
 
@@ -358,7 +359,7 @@ void BaseFrame::OnSync(wxCommandEvent &event)
 			"can find your BlackBerry(R) successfully.\n\n"
 			"Error: "));
 		msg += wxString(e.what(), wxConvUTF8);
-		wxMessageBox(msg, _W("Sync Mode"), wxOK | wxICON_ERROR);
+		wxMessageBox(msg, _W("Sync Mode"), wxOK | wxICON_ERROR, this);
 		return;
 	}
 
@@ -674,7 +675,7 @@ void BaseFrame::OnMigrateDevice(wxCommandEvent &event)
 			"\n"
 			"Error: "));
 		msg += wxString(e.what(), wxConvUTF8);
-		wxMessageBox(msg, _W("Migrate Device"), wxOK | wxICON_ERROR);
+		wxMessageBox(msg, _W("Migrate Device"), wxOK | wxICON_ERROR, this);
 		return;
 	}
 }
@@ -684,7 +685,7 @@ void BaseFrame::OnBrowseDatabases(wxCommandEvent &event)
 	int i = Barry::Probe::Find(wxGetApp().GetResults(), GetCurrentComboPin());
 	if( i == -1 ) {
 		wxMessageBox(_W("There is no device selected in the device list.  Please select a device to browse."),
-			_W("Database Browser Mode"), wxOK | wxICON_ERROR);
+			_W("Database Browser Mode"), wxOK | wxICON_ERROR, this);
 		return;
 	}
 
@@ -702,7 +703,7 @@ void BaseFrame::OnBrowseDatabases(wxCommandEvent &event)
 			"\n"
 			"Error: "));
 		msg += wxString(e.what(), wxConvUTF8);
-		wxMessageBox(msg, _W("Database Browser Mode"), wxOK | wxICON_ERROR);
+		wxMessageBox(msg, _W("Database Browser Mode"), wxOK | wxICON_ERROR, this);
 		return;
 	}
 
@@ -737,7 +738,7 @@ void BaseFrame::OnTermBackupAndRestore(wxProcessEvent &event)
 	    (time(NULL) - m_backup_process.GetStartTime()) < 2 )
 	{
 		wxMessageBox(_W("Unable to run barrybackup, or it returned an error. Please make sure it is installed and in your PATH."),
-			_W("Backup and Restore"), wxOK | wxICON_ERROR);
+			_W("Backup and Restore"), wxOK | wxICON_ERROR, this);
 	}
 	else
 	{

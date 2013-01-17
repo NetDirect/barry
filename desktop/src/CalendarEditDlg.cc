@@ -640,7 +640,8 @@ bool CalendarEditDlg::TransferDataFromWindow()
 	m_rec.EndTime.Time = m_EndDateObj.Get();
 	if( m_rec.EndTime.Time < m_rec.StartTime.Time ) {
 		wxMessageBox(_W("Start time must come before end time."),
-			_W("Validation Error"), wxOK | wxICON_INFORMATION);
+			_W("Validation Error"), wxOK | wxICON_INFORMATION,
+			this);
 		return false;
 	}
 

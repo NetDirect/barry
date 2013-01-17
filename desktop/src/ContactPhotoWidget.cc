@@ -86,7 +86,7 @@ void ContactPhotoWidget::PromptAndSave(wxWindow *parent)
 	if( !m_rec.Image.size() ) {
 		wxMessageBox(_W("There is no photo available to save."),
 			_W("No Photo"),
-			wxICON_INFORMATION | wxOK);
+			wxICON_INFORMATION | wxOK, this);
 		return;
 	}
 
@@ -118,7 +118,7 @@ bool ContactPhotoWidget::PromptAndLoad(wxWindow *parent)
 	if( !image.LoadFile(dlg.GetPath()) ) {
 		wxMessageBox(_W("Unable to load selected photo."),
 			_W("Photo Load Error"),
-			wxICON_ERROR | wxOK);
+			wxICON_ERROR | wxOK, this);
 		return false;
 	}
 

@@ -574,7 +574,7 @@ void SyncStatusDlg::OnRunApp(wxCommandEvent &event)
 
 	if( m_ui.get() && m_ui->IsAppRunning() ) {
 		wxMessageBox(_W("The application is already running."),
-			_W("Run Application"), wxOK | wxICON_ERROR);
+			_W("Run Application"), wxOK | wxICON_ERROR, this);
 		return;
 	}
 
@@ -601,11 +601,11 @@ void SyncStatusDlg::OnKillClose(wxCommandEvent &event)
 		int choice;
 		if( m_killingjail ) {
 			choice = wxMessageBox(_W("Already killing sync.  Kill again?"),
-				_W("Kill Sync"), wxYES_NO | wxICON_QUESTION);
+				_W("Kill Sync"), wxYES_NO | wxICON_QUESTION, this);
 		}
 		else {
 			choice = wxMessageBox(_W("This will kill the syncing child process, and will likely require a configuration reset.\n\nKill sync process anyway?"),
-				_W("Kill Sync"), wxYES_NO | wxICON_QUESTION);
+				_W("Kill Sync"), wxYES_NO | wxICON_QUESTION, this);
 		}
 
 		if( choice == wxYES ) {

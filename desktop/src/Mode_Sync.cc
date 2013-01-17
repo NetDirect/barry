@@ -361,7 +361,7 @@ void SyncMode::ConfigureDevice(DeviceEntry &entry)
 	// make sure it's not already running
 	if( m_cui.get() && m_cui->IsAppRunning() ) {
 		wxMessageBox(_W("An application is currently running."),
-			_W("Run App Error"), wxOK | wxICON_ERROR);
+			_W("Run App Error"), wxOK | wxICON_ERROR, m_parent);
 		return;
 	}
 
@@ -447,7 +447,7 @@ void SyncMode::ConfigureDevice(DeviceEntry &entry)
 			wxString msg = _W("Unable to save configuration for this device.\nError: ");
 			msg += wxString(se.what(), wxConvUTF8);
 			wxMessageBox(msg, _W("OpenSync Save Error"),
-				wxOK | wxICON_ERROR);
+				wxOK | wxICON_ERROR, m_parent);
 			return;
 		}
 
@@ -504,7 +504,7 @@ int SyncMode::GetSelectedDevice()
 {
 	if( m_device_list->GetSelectedItemCount() != 1 ) {
 		wxMessageBox(_W("Please select one device from the list."),
-			_W("Device List"), wxOK | wxICON_ERROR);
+			_W("Device List"), wxOK | wxICON_ERROR, m_parent);
 		return -1;
 	}
 
@@ -676,7 +676,7 @@ void SyncMode::OnSyncNow(wxCommandEvent &event)
 	// make sure an app is not running
 	if( m_cui.get() && m_cui->IsAppRunning() ) {
 		wxMessageBox(_W("An application is currently running."),
-			_W("Sync Error"), wxOK | wxICON_ERROR);
+			_W("Sync Error"), wxOK | wxICON_ERROR, m_parent);
 		return;
 	}
 
@@ -703,7 +703,7 @@ void SyncMode::OnRunApp(wxCommandEvent &event)
 	// make sure it's not already running
 	if( m_cui.get() && m_cui->IsAppRunning() ) {
 		wxMessageBox(_W("An application is already running."),
-			_W("Run App Error"), wxOK | wxICON_ERROR);
+			_W("Run App Error"), wxOK | wxICON_ERROR, m_parent);
 		return;
 	}
 

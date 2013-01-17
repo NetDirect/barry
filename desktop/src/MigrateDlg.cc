@@ -334,14 +334,14 @@ void MigrateDlg::OnMigrateNow(wxCommandEvent &event)
 		write_mode_index == wxNOT_FOUND )
 	{
 		wxMessageBox(_W("Please select a source and destination device, as well as the write mode."),
-			_W("Migration Options Needed"), wxOK | wxICON_ERROR);
+			_W("Migration Options Needed"), wxOK | wxICON_ERROR, this);
 		return;
 	}
 
 	// do not migrate from one PIN to the same PIN
 	if( source_index == (dest_index - 1) ) {
 		wxMessageBox(_W("Cannot migrate from and to the same PIN."),
-			_W("Migration Options Error"), wxOK | wxICON_ERROR);
+			_W("Migration Options Error"), wxOK | wxICON_ERROR, this);
 		return;
 	}
 
@@ -369,7 +369,7 @@ void MigrateDlg::OnMigrateNow(wxCommandEvent &event)
 		break;
 	default:
 		wxMessageBox(_W("Invalid write mode. This should never happen. Contact the developers."),
-			_W("Internal Logic Error"), wxOK | wxICON_ERROR);
+			_W("Internal Logic Error"), wxOK | wxICON_ERROR, this);
 		return;
 	}
 
