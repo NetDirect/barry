@@ -49,7 +49,17 @@
 #include <glib.h>
 #include <libedataserver/eds-version.h>
 
-#if EDS_CHECK_VERSION(3,6,0)
+// For some reason, the evolution-data-server libraries use a floating
+// point number in the version numbers, which causes trouble during
+// compiles when compared in preprocessor statements.  Define our own
+// here, only comparing major and minor, since that's all we should need
+// to care about.
+#define NON_FLOAT_EDS_CHECK_VERSION(major,minor,micro) \
+	(EDS_MAJOR_VERSION > (major) || \
+	(EDS_MAJOR_VERSION == (major) && EDS_MINOR_VERSION > (minor)) || \
+	(EDS_MAJOR_VERSION == (major) && EDS_MINOR_VERSION == (minor)))
+
+#if NON_FLOAT_EDS_CHECK_VERSION(3,6,0)
 #include <libecal/libecal.h>
 #include <libebook/libebook.h>
 #include <libedataserver/libedataserver.h>
