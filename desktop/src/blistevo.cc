@@ -52,5 +52,10 @@ int main()
 	DumpItems(es.GetTasks());
 	cout << "\n" << _C("Memos:") << separator;
 	DumpItems(es.GetMemos());
+
+	cout << "Defaultable: " << (es.IsDefaultable() ? "Yes" : "No") << endl;
+	if( es.GetErrorMsg().size() ) {
+		cout << "Error during detect: " << es.GetErrorMsg() << endl;
+	}
 }
 

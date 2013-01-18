@@ -59,6 +59,8 @@ private:
 	List m_tasks;
 	List m_memos;
 
+	std::string m_error_msg;
+
 protected:
 	void LoadBaseSyms();
 	bool LoadEbookLib();
@@ -67,7 +69,11 @@ protected:
 	void Clear();
 
 public:
+	/// Generally always succeeds, in some manner, but if you were
+	/// expecting a different result than you got, check GetErrorMsg();
 	EvoSources();
+
+	const std::string& GetErrorMsg() const { return m_error_msg; }
 
 	/// This is automatically run from inside the constructor.
 	/// It can be called again to retry detection with the same instance,

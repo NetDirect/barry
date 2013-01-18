@@ -45,7 +45,99 @@
 //
 
 #define HANDLE_LIBICAL_MEMORY 1
+
 #include <glib.h>
+#include <libedataserver/eds-version.h>
+
+#if EDS_CHECK_VERSION(3,6,0)
+#include <libecal/libecal.h>
+#include <libebook/libebook.h>
+#include <libedataserver/libedataserver.h>
+
+#include "EvoSources.h"
+
+struct EvoFunctions
+{
+	void (*g_type_init)(void);
+};
+
+// helper functions
+
+void FetchSources(EvoFunctions &funcs, EvoSources::List &list,
+		ESourceRegistry *reg,
+		const gchar *extension_type)
+{
+	GList *sources = e_source_registry_list_sources(reg, extension_type);
+
+	ESource *source = NULL;
+	GList *s = NULL;
+
+	for( s = sources; s; s = s->next ) {
+		source = E_SOURCE(s->data);
+
+		EvoSource sitem;
+		sitem.m_SourceName = e_source_get_display_name(source);
+		sitem.m_SourcePath = e_source_get_uid(source);
+
+		list.push_back(sitem);
+	}
+
+	g_list_free_full(sources, g_object_unref);
+}
+
+void EvoSources::LoadBaseSyms()
+{
+	m_funcs->g_type_init = &g_type_init;
+}
+
+bool EvoSources::LoadEbookLib()
+{
+	m_funcs.reset( new EvoFunctions );
+	LoadBaseSyms();
+
+	m_funcs->g_type_init();
+
+	GError *gerror = NULL;
+	ESourceRegistry *reg = e_source_registry_new_sync(NULL, &gerror);
+
+	FetchSources(*m_funcs, m_addressbook, reg,
+		E_SOURCE_EXTENSION_ADDRESS_BOOK);
+
+	g_object_unref(reg);
+
+	return true;
+}
+
+bool EvoSources::LoadEcalLib()
+{
+	m_funcs.reset( new EvoFunctions );
+	LoadBaseSyms();
+
+	m_funcs->g_type_init();
+
+	GError *gerror = NULL;
+	ESourceRegistry *reg = e_source_registry_new_sync(NULL, &gerror);
+	if( !reg ) {
+		m_error_msg = gerror->message;
+		return false;
+	}
+
+	FetchSources(*m_funcs, m_events, reg, E_SOURCE_EXTENSION_CALENDAR);
+	FetchSources(*m_funcs, m_tasks, reg, E_SOURCE_EXTENSION_TASK_LIST);
+	FetchSources(*m_funcs, m_memos, reg, E_SOURCE_EXTENSION_MEMO_LIST);
+
+	g_object_unref(reg);
+
+	return true;
+}
+
+
+
+///////////////////////////////////////////////////////////////////////////////
+#else	// EDS_CHECK_VERSION(3,6,0)
+///////////////////////////////////////////////////////////////////////////////
+
+
 #include <libecal/e-cal.h>
 #include <libebook/e-book.h>
 #include <libedataserver/e-data-server-util.h>
@@ -87,6 +179,14 @@ void FetchSources(EvoFunctions &funcs, EvoSources::List &list,
 
 			list.push_back(sitem);
 		}
+	}
+}
+
+void FetchAddressBooks(EvoFunctions &funcs, EvoSources::List &list)
+{
+	ESourceList *sources = NULL;
+	if( funcs.e_book_get_addressbooks(&sources, NULL) ) {
+		FetchSources(funcs, list, sources);
 	}
 }
 
@@ -150,10 +250,7 @@ bool EvoSources::LoadEbookLib()
 
 	m_funcs->g_type_init();
 
-	ESourceList *sources = NULL;
-	if (m_funcs->e_book_get_addressbooks(&sources, NULL)) {
-		FetchSources(*m_funcs, m_addressbook, sources);
-	}
+	FetchAddressBooks(*m_funcs, m_addressbook);
 
 	return true;
 }
@@ -171,6 +268,8 @@ bool EvoSources::LoadEcalLib()
 
 	return true;
 }
+
+#endif	// EDS_CHECK_VERSION
 
 void EvoSources::Detect()
 {
@@ -192,7 +291,15 @@ bool EvoSources::IsSupported() const
 	return m_supported;
 }
 
+
+
+
+/////////////////////////////////////////////////////////////////////////////
 #else // HAVE_EVOLUTION
+/////////////////////////////////////////////////////////////////////////////
+
+
+
 
 // No Evolution data libraries available
 
@@ -211,7 +318,11 @@ bool EvoSources::IsSupported() const
 	return false;
 }
 
+
+
+/////////////////////////////////////////////////////////////////////////////
 #endif // HAVE_EVOLUTION
+/////////////////////////////////////////////////////////////////////////////
 
 
 #include <sys/types.h>
