@@ -44,6 +44,14 @@ int main()
 	const char *separator = "\n-----------------------------------------\n";
 
 	EvoSources es;
+	cout << _C("Defaultable: ") << (es.IsDefaultable() ?
+					_C("Yes") : _C("No")) << endl;
+	cout << _C("Error during detect: ")
+		<< (es.GetErrorMsg().size() ?
+			es.GetErrorMsg().c_str() : _C("(none)"))
+		<< endl;
+	cout << _C("Results:") << "\n";
+
 	cout << "\n" << _C("Addressbook:") << separator;
 	DumpItems(es.GetAddressBook());
 	cout << "\n" << _C("Events:") << separator;
@@ -52,10 +60,5 @@ int main()
 	DumpItems(es.GetTasks());
 	cout << "\n" << _C("Memos:") << separator;
 	DumpItems(es.GetMemos());
-
-	cout << "Defaultable: " << (es.IsDefaultable() ? "Yes" : "No") << endl;
-	if( es.GetErrorMsg().size() ) {
-		cout << "Error during detect: " << es.GetErrorMsg() << endl;
-	}
 }
 
