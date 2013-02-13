@@ -1,3 +1,10 @@
+No support for BlackBerry Z10 and newer devices
+-----------------------------------------------
+	I don't have one of these devices, and from what I understand,
+	the protocol is completely different.  User reports
+	would be appreciated.
+
+
 Tasks database self-corrupts on many devices
 --------------------------------------------
 	If you extract a Tasks record, and then write it back via
