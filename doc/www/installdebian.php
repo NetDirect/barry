@@ -2,6 +2,42 @@
 
 <? createHeader("Installing Barry on Debian or Ubuntu or Mint"); ?>
 
+<? createSubHeader("Warning"); ?>
+
+<p>There are two recent non-Barry bugs popping up that are making this
+install process just a little bit more tricky for Debian/Ubuntu/Mint users.
+
+<p>One is a bug in apt-get, which causes downloads to stop with an error
+if one of the HTTP header lines is longer than 360 characters.  Normally,
+this bug is not encountered, but it is encountered on sourceforge.net.
+
+<p>The Barry repositories on netdirect are setup to redirect all large binary
+file downloads to the appropriate file on sourceforge.  The apt repo metadata,
+such as signatures and checksums are downloaded from netdirect's server
+itself, and the binary files are checked against them.
+
+<p>Sourceforge.net includes a cookie in one HTTP header line that is
+about 550 characters long.  This has been causing trouble for a number
+of users.
+
+<p>Fortunately, the 360 character limit should be removed eventually,
+as this has been fixed upstream, according to this
+<a href="http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=658346">Debian bug report</a>.
+
+<? createSubHeader("Workaround"); ?>
+
+<p>If, after following the usual steps below, you encounter the
+"360 char limit" error, there is a workaround.  Go to
+<a href="http://sourceforge.net/projects/barry/files/barry/barry-0.18.3/">the Barry file download page</a>
+and navigate to your distro and platform.  For example, if you are using
+squeeze on 64bit, navigate through: bmbuild/dists/squeeze/main/binary-amd64.
+Then download all the .deb files into your /var/cache/apt/archives/ directory,
+and install again. Apt will notice the existing files, check them, and
+resolve dependencies for you.
+
+<p>Sorry for the inconvenience.  We now return to the usual documentation...
+
+
 <? createSubHeader("The Setup"); ?>
 
 <p>Starting with the 0.18.x version series, Barry and OpenSync binary
