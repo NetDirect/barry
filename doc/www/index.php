@@ -19,7 +19,7 @@ endian systems.</p>
 and polish to Blackberry usage on Linux ever since.  We were the first to
 reverse engineer the battery charging handshake via USB.</p>
 
-<p>Today, it is possible to:
+<p>Today, it is possible to (on BlackBerry devices <b>older</b> than the Z10):
 
 <ul>
 	<li> charge your Blackberry's battery from your USB port </li>
