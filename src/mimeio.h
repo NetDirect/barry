@@ -38,6 +38,7 @@ namespace Barry {
 
 class Contact;
 class Calendar;
+class CalendarAll;
 class Memo;
 class Task;
 
@@ -75,6 +76,20 @@ class MimeDump<Barry::Calendar>
 {
 public:
 	static void Dump(std::ostream &os, const Barry::Calendar &rec)
+	{
+		Barry::Sync::vTimeConverter vtc;
+		Barry::Sync::vCalendar vcal(vtc);
+		os << vcal.ToVCal(rec) << std::endl;
+	}
+
+	static bool Supported() { return true; }
+};
+
+template <>
+class MimeDump<Barry::CalendarAll>
+{
+public:
+	static void Dump(std::ostream &os, const Barry::CalendarAll &rec)
 	{
 		Barry::Sync::vTimeConverter vtc;
 		Barry::Sync::vCalendar vcal(vtc);
