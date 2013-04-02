@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: barrydesktop 0.18.4\n"
 "Report-Msgid-Bugs-To: http://netdirect.ca/barry\n"
-"POT-Creation-Date: 2012-08-07 15:16-0400\n"
+"POT-Creation-Date: 2013-04-02 18:54-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/BaseFrame.cc:73 src/BaseFrame.cc:283 src/BaseFrame.cc:854
+#: src/BaseFrame.cc:73 src/BaseFrame.cc:283 src/BaseFrame.cc:855
 #: src/Mode_MainMenu.h:49
 msgid "Barry Desktop Control Panel"
 msgstr ""
@@ -66,11 +66,11 @@ msgstr ""
 msgid "The Backup program is already running!"
 msgstr ""
 
-#: src/BaseFrame.cc:334 src/BaseFrame.cc:338 src/BaseFrame.cc:740
+#: src/BaseFrame.cc:334 src/BaseFrame.cc:339 src/BaseFrame.cc:741
 msgid "Backup and Restore"
 msgstr ""
 
-#: src/BaseFrame.cc:354
+#: src/BaseFrame.cc:355
 msgid ""
 "An error occurred that prevented the loading of Sync\n"
 "mode.  This is most likely because a critical piece\n"
@@ -81,19 +81,19 @@ msgid ""
 "Error: "
 msgstr ""
 
-#: src/BaseFrame.cc:361
+#: src/BaseFrame.cc:362
 msgid "Sync Mode"
 msgstr ""
 
-#: src/BaseFrame.cc:375
+#: src/BaseFrame.cc:376
 msgid "Please select a device first."
 msgstr ""
 
-#: src/BaseFrame.cc:376
+#: src/BaseFrame.cc:377
 msgid "No Device"
 msgstr ""
 
-#: src/BaseFrame.cc:669
+#: src/BaseFrame.cc:670
 msgid ""
 "An error occurred during device migration.\n"
 "This could be due to a low level USB issue\n"
@@ -104,21 +104,21 @@ msgid ""
 "Error: "
 msgstr ""
 
-#: src/BaseFrame.cc:677 src/MigrateDlg.cc:101
+#: src/BaseFrame.cc:678 src/MigrateDlg.cc:101
 msgid "Migrate Device"
 msgstr ""
 
-#: src/BaseFrame.cc:686
+#: src/BaseFrame.cc:687
 msgid ""
 "There is no device selected in the device list.  Please select a device to "
 "browse."
 msgstr ""
 
-#: src/BaseFrame.cc:687 src/BaseFrame.cc:705
+#: src/BaseFrame.cc:688 src/BaseFrame.cc:706
 msgid "Database Browser Mode"
 msgstr ""
 
-#: src/BaseFrame.cc:697
+#: src/BaseFrame.cc:698
 msgid ""
 "An error occurred that prevented the loading of Database\n"
 "Browse mode.  This could be due to a low level USB\n"
@@ -129,35 +129,35 @@ msgid ""
 "Error: "
 msgstr ""
 
-#: src/BaseFrame.cc:739
+#: src/BaseFrame.cc:740
 msgid ""
 "Unable to run barrybackup, or it returned an error. Please make sure it is "
 "installed and in your PATH."
 msgstr ""
 
-#: src/BaseFrame.cc:808
+#: src/BaseFrame.cc:809
 msgid "Please enter a name for the current device:"
 msgstr ""
 
-#: src/BaseFrame.cc:809
+#: src/BaseFrame.cc:810
 msgid "Rename Device"
 msgstr ""
 
-#: src/BaseFrame.cc:856
+#: src/BaseFrame.cc:857
 msgid ""
 "A Free Software graphical user interface for working with the BlackBerry® "
 "smartphone."
 msgstr ""
 
-#: src/BaseFrame.cc:877
+#: src/BaseFrame.cc:878
 msgid "Chris Frey - GUI interface"
 msgstr ""
 
-#: src/BaseFrame.cc:878
+#: src/BaseFrame.cc:879
 msgid "Martin Owens - Barry logo"
 msgstr ""
 
-#: src/BaseFrame.cc:879
+#: src/BaseFrame.cc:880
 msgid "Tango Desktop Project - Public domain icons"
 msgstr ""
 
@@ -504,19 +504,19 @@ msgstr ""
 msgid "Validation Error"
 msgstr ""
 
-#: src/CalendarEditDlg.cc:826 src/TaskEditDlg.cc:705
+#: src/CalendarEditDlg.cc:827 src/TaskEditDlg.cc:705
 msgid "day(s)"
 msgstr ""
 
-#: src/CalendarEditDlg.cc:830 src/TaskEditDlg.cc:709
+#: src/CalendarEditDlg.cc:831 src/TaskEditDlg.cc:709
 msgid "week(s)"
 msgstr ""
 
-#: src/CalendarEditDlg.cc:834 src/TaskEditDlg.cc:713
+#: src/CalendarEditDlg.cc:835 src/TaskEditDlg.cc:713
 msgid "month(s)"
 msgstr ""
 
-#: src/CalendarEditDlg.cc:838 src/TaskEditDlg.cc:717
+#: src/CalendarEditDlg.cc:839 src/TaskEditDlg.cc:717
 msgid "year(s)"
 msgstr ""
 

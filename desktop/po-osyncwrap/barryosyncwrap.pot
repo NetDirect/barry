@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: barrydesktop 0.18.4\n"
 "Report-Msgid-Bugs-To: http://netdirect.ca/barry\n"
-"POT-Creation-Date: 2012-08-07 15:36-0400\n"
+"POT-Creation-Date: 2013-04-02 18:54-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,18 +18,42 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #: src/blistevo.cc:47
-msgid "Addressbook:"
+msgid "Defaultable: "
+msgstr ""
+
+#: src/blistevo.cc:48
+msgid "Yes"
+msgstr ""
+
+#: src/blistevo.cc:48
+msgid "No"
 msgstr ""
 
 #: src/blistevo.cc:49
-msgid "Events:"
+msgid "Error during detect: "
 msgstr ""
 
 #: src/blistevo.cc:51
-msgid "Tasks:"
+msgid "(none)"
 msgstr ""
 
 #: src/blistevo.cc:53
+msgid "Results:"
+msgstr ""
+
+#: src/blistevo.cc:55
+msgid "Addressbook:"
+msgstr ""
+
+#: src/blistevo.cc:57
+msgid "Events:"
+msgstr ""
+
+#: src/blistevo.cc:59
+msgid "Tasks:"
+msgstr ""
+
+#: src/blistevo.cc:61
 msgid "Memos:"
 msgstr ""
 

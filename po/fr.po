@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: barry 0.18.4\n"
 "Report-Msgid-Bugs-To: http://netdirect.ca/barry\n"
-"POT-Creation-Date: 2012-08-20 14:31-0400\n"
+"POT-Creation-Date: 2013-04-02 18:53-0400\n"
 "PO-Revision-Date: 2012-08-20 21:10+0100\n"
 "Last-Translator: Nicolas CARRIER <carrier.nicolas0@gmail.com>\n"
 "Language-Team: Nicolas CARRIER <carrier.nicolas0@gmail.com>\n"
@@ -653,19 +653,19 @@ msgstr ""
 "refuse de continuer, pour éviter que le device ne se petit-suicide. Utilisez "
 "un client windows ou "
 
-#: src/m_ipmodem.cc:267 src/m_ipmodem.cc:293 src/m_ipmodem.cc:332
+#: src/m_ipmodem.cc:267 src/m_ipmodem.cc:299 src/m_ipmodem.cc:338
 msgid "IpModem: Error sending password."
 msgstr "IpModem : erreur à l'envoi du mot de passe."
 
-#: src/m_ipmodem.cc:326
+#: src/m_ipmodem.cc:332
 msgid "This device requested a password."
 msgstr "Ce périphérique a demandé un mot de passe."
 
-#: src/m_ipmodem.cc:340
+#: src/m_ipmodem.cc:346
 msgid "This device requires a password."
 msgstr "Ce périphérique nécessite un mot de passe"
 
-#: src/m_ipmodem.cc:360
+#: src/m_ipmodem.cc:366
 msgid "IpModem: Error creating USB read thread."
 msgstr "IpModem : erreur lors de la création du thread de lecture"
 
@@ -1133,7 +1133,8 @@ msgid "         JavaScript mode: "
 msgstr "         Mode JavaScript : "
 
 #: src/r_bookmark.cc:358
-msgid "   Browser Identity mode: "
+#, fuzzy
+msgid "        Browser Identity: "
 msgstr "   Nom du navigateur : "
 
 #: src/r_bookmark.cc:401
@@ -2378,7 +2379,7 @@ msgid "      Every day.\n"
 msgstr "      Quotidienne\n"
 
 #. TRANSLATORS: to remove the 'th' ending on numbers,
-#. just skip the %s in this string.
+#. just replace the %s with %.0s in this string.
 #: src/r_recur_base.cc:290
 #, c-format
 msgid "      Every month on the %u%s"
@@ -3092,7 +3093,7 @@ msgstr "Délai dépassé dans usb_interrupt_write"
 msgid "Error in usb_interrupt_write"
 msgstr "Erreur dans usb_interrupt_write"
 
-#: src/usbwrap_libusb.cc:494 src/usbwrap_libusb_1_0.cc:669
+#: src/usbwrap_libusb.cc:505 src/usbwrap_libusb_1_0.cc:688
 msgid "claim interface failed"
 msgstr "échec de la réclamation d'interface"
 
@@ -3644,7 +3645,7 @@ msgstr ""
 "connaissance.\n"
 
 #: tools/bidentify.cc:37
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "bidentify - USB Blackberry Identifier Tool\n"
 "            Copyright 2005-2012, Net Direct Inc. (http://www.netdirect.ca/)\n"
@@ -3655,6 +3656,8 @@ msgid ""
 "\n"
 "   -c        If used with -m, show both hex and dec where possible\n"
 "   -m        Also show the device's ESN / MEID / IMEI\n"
+"   -s        Also show the device's USB serial number (same as shown by "
+"lsusb)\n"
 "   -h        This help\n"
 "   -v        Dump protocol data during operation\n"
 msgstr ""
@@ -3670,11 +3673,11 @@ msgstr ""
 "   -h        Cette aide\n"
 "   -v        Afficher les données du protocole pendant les opérations\n"
 
-#: tools/bidentify.cc:156
+#: tools/bidentify.cc:162
 msgid "Error on PIN: "
 msgstr "Erreur de PIN :"
 
-#: tools/bidentify.cc:167 tools/brawchannel.cc:341
+#: tools/bidentify.cc:178 tools/brawchannel.cc:341
 msgid "exception caught: "
 msgstr "exception attrapée : "
 

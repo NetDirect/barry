@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: barrydesktop 0.18.4\n"
 "Report-Msgid-Bugs-To: http://netdirect.ca/barry\n"
-"POT-Creation-Date: 2012-08-07 15:36-0400\n"
+"POT-Creation-Date: 2013-04-02 18:54-0400\n"
 "PO-Revision-Date: 2012-08-05 18:16+0100\n"
 "Last-Translator: Nicolas CARRIER <carrier.nicolas0@gmail.com>\n"
 "Language-Team: Barry\n"
@@ -18,18 +18,44 @@ msgstr ""
 "X-Poedit-Basepath: ..\n"
 
 #: src/blistevo.cc:47
+msgid "Defaultable: "
+msgstr ""
+
+#: src/blistevo.cc:48
+#, fuzzy
+msgid "Yes"
+msgstr "oui"
+
+#: src/blistevo.cc:48
+msgid "No"
+msgstr ""
+
+#: src/blistevo.cc:49
+#, fuzzy
+msgid "Error during detect: "
+msgstr "Erreur lors de la synchronisation : "
+
+#: src/blistevo.cc:51
+msgid "(none)"
+msgstr ""
+
+#: src/blistevo.cc:53
+msgid "Results:"
+msgstr ""
+
+#: src/blistevo.cc:55
 msgid "Addressbook:"
 msgstr "French Addressbook:"
 
-#: src/blistevo.cc:49
+#: src/blistevo.cc:57
 msgid "Events:"
 msgstr "Évenements"
 
-#: src/blistevo.cc:51
+#: src/blistevo.cc:59
 msgid "Tasks:"
 msgstr "Tâches :"
 
-#: src/blistevo.cc:53
+#: src/blistevo.cc:61
 msgid "Memos:"
 msgstr "Mémos :"
 
