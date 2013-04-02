@@ -9,7 +9,7 @@
 #define BARRY_MINOR 0
 
 /* Full Barry version in string form */
-#define BARRY_VER_STRING "0.18.0"
+#define BARRY_VER_STRING "0.18.4"
 
 /* Define to 1 if the `closedir' function returns void instead of `int'. */
 #define CLOSEDIR_VOID 1
@@ -143,7 +143,7 @@
 #define PACKAGE_NAME "barry"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "barry 0.18.0"
+#define PACKAGE_STRING "barry 0.18.4"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "barry"
@@ -152,7 +152,7 @@
 #define PACKAGE_URL ""
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "0.18.0"
+#define PACKAGE_VERSION "0.18.4"
 
 /* Define to the type of arg 1 for `select'. */
 #define SELECT_TYPE_ARG1 int
@@ -204,7 +204,7 @@
 
 
 /* Version number of package */
-#define VERSION "0.18.0"
+#define VERSION "0.18.4"
 
 /* Define WORDS_BIGENDIAN to 1 if your processor stores words with the most
    significant byte first (like Motorola and SPARC, unlike Intel). */

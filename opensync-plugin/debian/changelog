@@ -9,5 +9,5 @@ opensync0-plugin-barry (0.18.4-1) unstable; urgency=low
   * Using >0 debian version, since I'll probably be Debian maintainer now
   * Added barry-opensync-plugin.mo files
 
- -- Chris Frey <cdfrey@foursquare.net>  Tue, 15 May 2012 01:33:39 -0400
+ -- Chris Frey <cdfrey@foursquare.net>  Fri, 04 Apr 2013 01:33:39 -0400
 

@@ -10,7 +10,7 @@ opensync1-plugin-barry (0.18.4-1) unstable; urgency=low
   * Fixed extended-description-line-too-long lintian warning
   * Added barry-opensync-plugin-0-4x.mo files
 
- -- Chris Frey <cdfrey@foursquare.net>  Tue, 15 May 2012 01:33:34 -0400
+ -- Chris Frey <cdfrey@foursquare.net>  Fri, 04 Apr 2013 01:33:34 -0400
 
 opensync1-plugin-barry (0.17-0) unstable; urgency=low
 
