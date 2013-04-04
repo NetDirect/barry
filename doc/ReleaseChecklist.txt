@@ -62,7 +62,8 @@ Barry Release Checklist:
 		hardening-check tmp/usr/bin/barrydesktop
 		hardening-check tmp/usr/lib/libbarry.so.18
 		- between both, should show all options enabled
-	- run binary-meta release build test
+	- run binary-meta release build test (remember that chroot builds
+		need a password, so run them first if running a batch)
 - write release notes, including contributors, known issues, new
 	features and bugs fixed
 	- include mention of distros that support Barry:
@@ -96,7 +97,7 @@ Barry Release Checklist:
 		./make-redirect.sh bmbuild /barry-latest http://sourceforge.net/projects/barry/files/barry/barry-0.18.3/bmbuild
 	- add the new release to .htaccess, and replace barry-latest
 		redirect links with the new ones
-	- make backup of new htaccess
+	- make backup of new htaccess in your local release directory
 - send announcement to devel and announce mailing list, including:
 	- release notes
 	- shortlog
@@ -110,6 +111,5 @@ Barry Release Checklist:
 - submit tracker news item at SourceForge
 - update Freshmeat entry
 - update Sourceforge screenshots / icons if applicable
-- send identi.ca/cdfrey and blog notices
 - update source project, bumping revision numbers in source code
 
