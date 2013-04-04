@@ -16,7 +16,7 @@ barry (0.18.4-1) unstable; urgency=low
   * Added serial number option (-s) to bidentify
   * Added Evolution 3.6 support to EvoSources.cc (only useful for builds
     using OpenSync)
-  * Added Bold 9930 ipmode timeout fix
+  * Added Bold 9930 ipmodem timeout fix
   * Added support for converting "Calendar - All" databases to MIME
 
  -- Chris Frey <cdfrey@foursquare.net>  Fri, 04 Apr 2013 14:20:40 -0400
