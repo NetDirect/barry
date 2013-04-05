@@ -81,6 +81,9 @@ Barry Release Checklist:
 - manually push git tags to repo.or.cz and sourceforge.net
 - create binary-meta tree under dists/, and debian source packages and tarballs,
 	including binary-meta tarball, under sources/
+	./make-apt.sh bmbuild
+	./make-yum.sh bmbuild
+	./make-slimdist.sh bmbuild
 - upload above tree to SourceForge
 	ssh -x -a -2 -t USER,PROJECT@shell.sourceforge.net create
 	   then use sf-help for details
