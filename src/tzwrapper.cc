@@ -5,7 +5,7 @@
 ///
 
 /*
-    Copyright (C) 2010-2012, Chris Frey <cdfrey@foursquare.net>, To God be the glory
+    Copyright (C) 2010-2013, Chris Frey <cdfrey@foursquare.net>, To God be the glory
     Released to the public domain.
     Included in Barry and Barrified the namespace July 2010
 */

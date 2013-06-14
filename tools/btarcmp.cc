@@ -4,7 +4,7 @@
 ///
 
 /*
-    Copyright (C) 2012, Net Direct Inc. (http://www.netdirect.ca/)
+    Copyright (C) 2012-2013, Net Direct Inc. (http://www.netdirect.ca/)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -54,7 +54,7 @@ void Usage()
    // TRANSLATORS: the Using: string is followed by the Barry library version
    // string.
    _("btarcmp - Compare Barry backup tarballs\n"
-   "      Copyright 2012, Net Direct Inc. (http://www.netdirect.ca/)\n"
+   "      Copyright 2012-2013, Net Direct Inc. (http://www.netdirect.ca/)\n"
    "      Using: %s\n"
    "\n"
    " Usage:  btarcmp [options...] tarball_0 tarball_1\n"

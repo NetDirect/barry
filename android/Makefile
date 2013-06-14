@@ -2,7 +2,7 @@
 # \file Makefile
 #       Make rules for building Barry and dependent libraries for Android
 #
-#    Copyright (C) 2011-2012 RealVNC Ltd.
+#    Copyright (C) 2011-2013 RealVNC Ltd.
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
