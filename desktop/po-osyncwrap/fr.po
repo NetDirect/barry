@@ -1,7 +1,7 @@
 # Barry Desktop French Translation
 # Copyright (C) 2012 Net Direct, Inc.
 # This file is distributed under the same license as the Barry Desktop package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# Copyright Nicolas CARRIER <carrier.nicolas0@gmail.com>, 2012
 #
 msgid ""
 msgstr ""
