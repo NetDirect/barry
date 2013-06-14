@@ -4,7 +4,7 @@
 ///
 
 /*
-    Copyright (C) 2011-2012, Net Direct Inc. (http://www.netdirect.ca/)
+    Copyright (C) 2011-2013, Net Direct Inc. (http://www.netdirect.ca/)
     Based on evolution2_sync.h and list_sources.c from evolution opensync plugin
     by Ian Martin
     Copyright (C) 2009, Ian Martin, licensed under LGPL 2.1

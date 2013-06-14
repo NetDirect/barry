@@ -7,14 +7,14 @@ Source:
 
 Files: *
 Copyright:
- Copyright 2005-2012 Net Direct Inc. (http://www.netdirect.ca/)
- Copyright 2007-2012 Chris Frey <cdfrey@foursquare.net>
+ Copyright 2005-2013 Net Direct Inc. (http://www.netdirect.ca/)
+ Copyright 2007-2013 Chris Frey <cdfrey@foursquare.net>
  Copyright 2008 Brian Edginton (edge@edginton.net)
  Copyright 1995-1999 Cryptography Research, Inc.
  Copyright 2003 Ximian, Inc. 2005 Armin Bauer
- Copyright 2008-2012 Nicolas VIVIEN <nicolas@vivien.fr>
+ Copyright 2008-2013 Nicolas VIVIEN <nicolas@vivien.fr>
  Copyright 2009 Josh Kropf <josh@slashdev.ca>
- Copyright 2010-2012 RealVNC Ltd., Toby Gray
+ Copyright 2010-2013 RealVNC Ltd., Toby Gray
  Copyright 2012 Nicolas CARRIER <carrier.nicolas0@gmail.com>
  Copyright 2012 Cesar Ballardini <cesar@ballardini.com.ar>
 License: GPL-2+

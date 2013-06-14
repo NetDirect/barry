@@ -1,5 +1,5 @@
 # Barry Spanish Translation File
-# Copyright (C) 2012 Net Direct, Inc.
+# Copyright (C) 2012-2013 Net Direct, Inc.
 # This file is distributed under the same license as the Barry Desktop package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #

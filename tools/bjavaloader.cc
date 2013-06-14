@@ -5,7 +5,7 @@
 
 /*
     Copyright (C) 2008-2009, Nicolas VIVIEN
-    Copyright (C) 2005-2012, Net Direct Inc. (http://www.netdirect.ca/)
+    Copyright (C) 2005-2013, Net Direct Inc. (http://www.netdirect.ca/)
 
         Some parts are inspired from btool.cc
 
@@ -65,7 +65,7 @@ void Usage()
    cerr << string_vprintf(
    _("bjavaloader - Command line USB Blackberry Java Loader\n"
    "        Copyright 2008-2009, Nicolas VIVIEN.\n"
-   "        Copyright 2005-2012, Net Direct Inc. (http://www.netdirect.ca/)\n"
+   "        Copyright 2005-2013, Net Direct Inc. (http://www.netdirect.ca/)\n"
    "        Using: %s\n"
    "\n"
    "   -A        Save all modules found\n"
