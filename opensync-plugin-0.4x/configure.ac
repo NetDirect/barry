@@ -9,7 +9,7 @@ AC_CONFIG_MACRO_DIR([m4])
 AM_INIT_AUTOMAKE(foreign)
 
 AM_GNU_GETTEXT([external])
-# this is the verion of gettext, not barry
+# this is the version of gettext, not barry
 AM_GNU_GETTEXT_VERSION([0.18.1])
 
 AC_ISC_POSIX
