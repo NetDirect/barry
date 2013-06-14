@@ -8,7 +8,6 @@ barry (0.18.4-2) unstable; urgency=low
 barry (0.18.4-1) unstable; urgency=low
 
   * New upstream version 0.18.4
-    - New barry-doc package which includes the html user docs (Closes: #582190)
     - Added barrydesktop.mo and barryosyncwrap.mo files for Desktop
     - Added ppp chatscripts for eMobile Ireland
     - Partial Spanish translation, and updated French translations
@@ -24,6 +23,8 @@ barry (0.18.4-1) unstable; urgency=low
       using OpenSync)
     - Added Bold 9930 ipmodem timeout fix
     - Added support for converting "Calendar - All" databases to MIME
+  * New barry-doc package which includes the html user docs (Closes: #582190)
+    This adds new php5-cli build dependency.
   * Moved barry-backup.mo from barry-util package to barrybackup-gui
 
  -- Chris Frey <cdfrey@foursquare.net>  Fri, 04 Apr 2013 14:20:40 -0400
