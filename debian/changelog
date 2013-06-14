@@ -7,23 +7,23 @@ barry (0.18.4-2) unstable; urgency=low
 barry (0.18.4-1) unstable; urgency=low
 
   * New upstream version 0.18.4
-  * New barry-doc package which includes the html user docs (Closes: #582190)
+    - New barry-doc package which includes the html user docs (Closes: #582190)
+    - Added barrydesktop.mo and barryosyncwrap.mo files for Desktop
+    - Added ppp chatscripts for eMobile Ireland
+    - Partial Spanish translation, and updated French translations
+    - Fixed potential pppob hang on shutdown
+    - Added pty support to pppob with the -t option
+    - Fixed device renaming bug in Desktop
+    - Added i18n support in various apps, especially the Desktop
+    - Fixed missing BXEXPORT for DataQueue library class
+    - Fixed incorrect handling of vformat line endings when syncing and
+      using MIME formats
+    - Added serial number option (-s) to bidentify
+    - Added Evolution 3.6 support to EvoSources.cc (only useful for builds
+      using OpenSync)
+    - Added Bold 9930 ipmodem timeout fix
+    - Added support for converting "Calendar - All" databases to MIME
   * Moved barry-backup.mo from barry-util package to barrybackup-gui
-  * Added barrydesktop.mo and barryosyncwrap.mo files for Desktop
-  * Added ppp chatscripts for eMobile Ireland
-  * Partial Spanish translation, and updated French translations
-  * Fixed potential pppob hang on shutdown
-  * Added pty support to pppob with the -t option
-  * Fixed device renaming bug in Desktop
-  * Added i18n support in various apps, especially the Desktop
-  * Fixed missing BXEXPORT for DataQueue library class
-  * Fixed incorrect handling of vformat line endings when syncing and
-    using MIME formats
-  * Added serial number option (-s) to bidentify
-  * Added Evolution 3.6 support to EvoSources.cc (only useful for builds
-    using OpenSync)
-  * Added Bold 9930 ipmodem timeout fix
-  * Added support for converting "Calendar - All" databases to MIME
 
  -- Chris Frey <cdfrey@foursquare.net>  Fri, 04 Apr 2013 14:20:40 -0400
 
