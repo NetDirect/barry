@@ -7,6 +7,7 @@ barry (0.19.0-1) unstable; urgency=low
 barry (0.18.4-2) unstable; urgency=low
 
   * Fixed Break/Replace dependency for barry-backup.mo move
+  * Removed unnecessary subshell in barry-doc packaging
 
  -- Chris Frey <cdfrey@foursquare.net>  Thu, 13 Jun 2013 20:39:40 -0400
 
