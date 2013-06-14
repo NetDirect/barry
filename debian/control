@@ -131,11 +131,6 @@ Description: Desktop Panel GUI for the RIM BlackBerry Handheld
  application for backups, modem operation, device data migration,
  and desktop editing of database records via the GUI (Address Book,
  Calendar, Tasks, Memos).
- .
- Sync support has been disabled in the official Debian packages due
- to lack of OpenSync libraries, but enabled in upstream builds.
- See the upstream documentation at http://netdirect.ca/barry
- for more information.
 
 Package: barrydesktop-dbg
 Section: debug

@@ -1,0 +1,5 @@
+OpenSync plugin and GUI support has been disabled in the official Debian
+packages due to lack of OpenSync libraries, but enabled in upstream
+builds.  See the upstream documentation at http://netdirect.ca/barry
+for more information.
+
