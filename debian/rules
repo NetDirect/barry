@@ -63,6 +63,7 @@ endif
 		$(DEB_SRCDIR)/ppp/barry-mts \
 		$(DEB_SRCDIR)/ppp/barry-optus-au \
 		$(DEB_SRCDIR)/ppp/barry-vodafone-au \
+		$(DEB_SRCDIR)/ppp/barry-giffgaff \
 		$(CURDIR)/debian/barry-util/etc/ppp/peers
 	install -d $(CURDIR)/debian/barry-util/etc/chatscripts
 	install -m 0640 \
@@ -82,6 +83,7 @@ endif
 		$(DEB_SRCDIR)/ppp/barry-mts.chat \
 		$(DEB_SRCDIR)/ppp/barry-optus-au.chat \
 		$(DEB_SRCDIR)/ppp/barry-vodafone-au.chat \
+		$(DEB_SRCDIR)/ppp/barry-giffgaff.chat \
 		$(CURDIR)/debian/barry-util/etc/chatscripts
 	# Install hal fdi configs
 	install -d $(CURDIR)/debian/barry-util/usr/share/hal/fdi/information/10freedesktop
