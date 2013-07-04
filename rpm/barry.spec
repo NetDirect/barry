@@ -269,6 +269,7 @@ cd ../
 %{__cp} ppp/barry-mts %{buildroot}%{_sysconfdir}/ppp/peers/
 %{__cp} ppp/barry-optus-au %{buildroot}%{_sysconfdir}/ppp/peers/
 %{__cp} ppp/barry-vodafone-au %{buildroot}%{_sysconfdir}/ppp/peers/
+%{__cp} ppp/barry-giffgaff %{buildroot}%{_sysconfdir}/ppp/peers/
 %{__mkdir_p} %{buildroot}%{_sysconfdir}/chatscripts
 %{__cp} ppp/barry-rogers.chat %{buildroot}%{_sysconfdir}/chatscripts/
 %{__cp} ppp/barry-minimal.chat %{buildroot}%{_sysconfdir}/chatscripts/
@@ -286,6 +287,7 @@ cd ../
 %{__cp} ppp/barry-mts.chat %{buildroot}%{_sysconfdir}/chatscripts/
 %{__cp} ppp/barry-optus-au.chat %{buildroot}%{_sysconfdir}/chatscripts/
 %{__cp} ppp/barry-vodafone-au.chat %{buildroot}%{_sysconfdir}/chatscripts/
+%{__cp} ppp/barry-giffgaff.chat %{buildroot}%{_sysconfdir}/chatscripts/
 # Install hal fdi config
 %{__mkdir_p} %{buildroot}%{_datadir}/hal/fdi/information/10freedesktop
 %{__mkdir_p} %{buildroot}%{_datadir}/hal/fdi/policy/10osvendor
@@ -430,6 +432,7 @@ desktop-file-install --vendor netdirect \
 %attr(0644,root,root) %config %{_sysconfdir}/ppp/peers/barry-mts
 %attr(0644,root,root) %config %{_sysconfdir}/ppp/peers/barry-optus-au
 %attr(0644,root,root) %config %{_sysconfdir}/ppp/peers/barry-vodafone-au
+%attr(0644,root,root) %config %{_sysconfdir}/ppp/peers/barry-giffgaff
 %attr(0640,root,root) %config %{_sysconfdir}/chatscripts/barry-rogers.chat
 %attr(0640,root,root) %config %{_sysconfdir}/chatscripts/barry-minimal.chat
 %attr(0640,root,root) %config %{_sysconfdir}/chatscripts/barry-verizon.chat
@@ -446,6 +449,7 @@ desktop-file-install --vendor netdirect \
 %attr(0640,root,root) %config %{_sysconfdir}/chatscripts/barry-mts.chat
 %attr(0640,root,root) %config %{_sysconfdir}/chatscripts/barry-optus-au.chat
 %attr(0640,root,root) %config %{_sysconfdir}/chatscripts/barry-vodafone-au.chat
+%attr(0640,root,root) %config %{_sysconfdir}/chatscripts/barry-giffgaff.chat
 %attr(0640,root,root) %config %{_sysconfdir}/bash_completion.d/bjavaloader
 %attr(0640,root,root) %config %{_sysconfdir}/bash_completion.d/btool
 %doc COPYING
@@ -517,6 +521,7 @@ desktop-file-install --vendor netdirect \
 %changelog
 * Fri Jul 20 2012 Chris Frey <cdfrey@foursquare.net> 0.19.0-0
 - version bump
+- added ppp chatscripts for giffgaff
 
 * Mon Aug 20 2012 Chris Frey <cdfrey@foursquare.net> 0.18.4-0
 - version bump
