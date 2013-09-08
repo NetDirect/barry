@@ -29,6 +29,13 @@ barry (0.18.4-1) unstable; urgency=low
 
  -- Chris Frey <cdfrey@foursquare.net>  Fri, 04 Apr 2013 14:20:40 -0400
 
+barry (0.18.3-6) unstable; urgency=low
+
+  * Disabled evolution dependency in Desktop build, for upcoming
+    evolution 3.8 in sid. (Closes: #722032)
+
+ -- Chris Frey <cdfrey@foursquare.net>  Sun, 08 Sep 2013 15:00:07 -0400
+
 barry (0.18.3-5) unstable; urgency=low
 
   * Removed dependency on ppp for kfreebsd, since kernel side pppd is not
