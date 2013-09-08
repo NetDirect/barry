@@ -48,6 +48,19 @@ Barry Release Checklist:
 		- wince/.../config.h
 		- test/nightly.sh
 
+- Building Debian package:
+	- use existing orig tarball if possible
+	- git archive --prefix=barry-0.18.3/ v0.18.3-7 > something.tar
+	- cd empty_work_dir
+	- tar xvf something.tar
+	- cp orig.tar.gz .
+	- dpkg-source -b barry-0.18.3
+	- test build:
+		- dpkg-source -x *dsc
+		- cd barry-*
+		- dpkg-buildpackage -b
+		- run lintian (see below)
+	- debsign -kB6C2250E barry_0.18.3-7.dsc
 - tests in following order:
 	- run 'make update-po' periodically in each po directory to
 		update translation work
