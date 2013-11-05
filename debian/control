@@ -33,9 +33,9 @@ Section: misc
 Priority: optional
 Maintainer: Chris Frey <cdfrey@foursquare.net>
 Build-Depends: debhelper (>= 7.0.0), g++ (>= 4.1), cdbs, autoconf, autoconf-archive, automake, libtool, pkg-config, libusb-dev, libboost-serialization-dev, libxml++2.6-dev, libfuse-dev (>= 2.5), zlib1g-dev, libtar-dev, libglibmm-2.4-dev, libgtkmm-2.4-dev, libglademm-2.4-dev, autopoint | gettext (<< 0.18), libgcal-dev, wx-common, libwxgtk2.8-dev, libsdl-dev, php5-cli
-Standards-Version: 3.9.3
+Standards-Version: 3.9.4
 Homepage: http://netdirect.ca/barry
-Vcs-Git: git://repo.or.cz/barry.git
+Vcs-Git: git://repo.or.cz/barry.git -b v0.18.x
 Vcs-Browser: http://repo.or.cz/w/barry.git
 
 Package: libbarry18
