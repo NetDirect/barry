@@ -3,6 +3,7 @@ barry (0.18.4-2) unstable; urgency=low
   * Fixed Break/Replace dependency for barry-backup.mo move
   * Removed unnecessary subshell in barry-doc packaging
   * Bumped standards version to 3.9.4 and added default branch to Vcs-Git
+  * Added source/options and source/patch-header
 
  -- Chris Frey <cdfrey@foursquare.net>  Tue, 05 Nov 2013 16:12:40 -0500
 
