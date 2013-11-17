@@ -6,7 +6,7 @@
 #
 
 AC_PREREQ(2.61)
-AC_INIT([barrydesktop], [0.18.4], [barry-devel@lists.sourceforge.net])
+AC_INIT([barrydesktop], [0.18.5], [barry-devel@lists.sourceforge.net])
 #AM_CONFIG_HEADER(config.h)
 AC_CONFIG_SRCDIR([src/barrydesktop.cc])
 AC_CONFIG_HEADERS([config.h:config.h.in])
@@ -26,7 +26,7 @@ AM_GNU_GETTEXT_VERSION([0.18.1])
 #
 BARRY_DESKTOP_LOGICAL=0
 BARRY_DESKTOP_MAJOR=18
-BARRY_DESKTOP_MINOR=4
+BARRY_DESKTOP_MINOR=5
 AC_DEFINE_UNQUOTED([BARRY_DESKTOP_LOGICAL], [$BARRY_DESKTOP_LOGICAL], [Logical version number])
 AC_DEFINE_UNQUOTED([BARRY_DESKTOP_MAJOR], [$BARRY_DESKTOP_MAJOR], [Major library version number])
 AC_DEFINE_UNQUOTED([BARRY_DESKTOP_MINOR], [$BARRY_DESKTOP_MINOR], [Minor library version number])
