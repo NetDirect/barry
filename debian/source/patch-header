@@ -1,8 +1,0 @@
-From: Chris Frey <cdfrey@foursquare.net>
-Subject: in-tree changes from git
-
-  * Added single-debian-patch in source/options since Barry debian changes
-    are handled in the upstream git repository.  Changes motivated by
-    Debian policy are not always the cause for a new upstream point
-    release, so are included in patch form here.
-
