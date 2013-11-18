@@ -1,4 +1,4 @@
-barry (0.18.5-1~rc1) unstable; urgency=low
+barry (0.18.5-1) unstable; urgency=low
 
   * New upstream version 0.18.5
   * Removed source/options and source/patch-header, using upstream versions
