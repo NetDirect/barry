@@ -61,6 +61,13 @@ Barry Release Checklist:
 		- dpkg-buildpackage -b
 		- run lintian (see below)
 	- debsign -kB6C2250E barry_0.18.3-7.dsc
+- Releasing Debian package:
+	- release an 0.18.5-1~rc1 version for intrigeri first, and do not
+		increment the -1, -2 , -3.  When the final rc version
+		has been ok'd, then drop the ~rc1, and release officially.
+		This should prevent numerous debian versions from
+		cluttering the history, and make sure that bugs get
+		closed properly via the changelog notes.
 - tests in following order:
 	- run 'make update-po' periodically in each po directory to
 		update translation work
