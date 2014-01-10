@@ -509,6 +509,9 @@ ostream& operator<< (ostream &os, const Diff &diff)
 /// Default constructor, constructs an empty local Data object
 DBData::DBData()
 	: m_version(REC_VERSION_1)  // a reasonable default for now
+	, m_recType(0)
+	, m_uniqueId(0)
+	, m_offset(0)
 	, m_localData(new Data)
 	, m_data(*m_localData)
 {
@@ -531,6 +534,9 @@ DBData::DBData(const DBData &other)
 /// Constructs a local Data object that points to external memory
 DBData::DBData(const void *ValidData, size_t size)
 	: m_version(REC_VERSION_1)  // a reasonable default for now
+	, m_recType(0)
+	, m_uniqueId(0)
+	, m_offset(0)
 	, m_localData(new Data)
 	, m_data(*m_localData)
 {
@@ -557,6 +563,9 @@ DBData::DBData(RecordFormatVersion ver,
 /// If copy == true, constructs an internal Data object copy
 DBData::DBData(Data &externalData, bool copy)
 	: m_version(REC_VERSION_1)  // a reasonable default for now
+	, m_recType(0)
+	, m_uniqueId(0)
+	, m_offset(0)
 	, m_localData(copy ? new Data(externalData) : 0)
 	, m_data(copy ? *m_localData : externalData)
 {

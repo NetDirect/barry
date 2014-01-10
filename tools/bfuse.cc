@@ -381,9 +381,20 @@ public:
 	{
 		// remove any entries that point to us
 		FileMap::iterator b = g_filemap.begin(), e = g_filemap.end();
-		for( ; b != e; ++b ) {
+		for( ; b != e; ) {
+			// we advance the iterator inside the loop
+			// so that we can take advantage of this
+			// nice safe construct:  .erase(b++);
+			// otherwise, b will not be safe to use after
+			// the erase(), but using it together with the
+			// erase function call, it keeps a copy of the
+			// old b to erase, then advances the iterator,
+			// then calls erase()
 			if( b->second == this ) {
-				g_filemap.erase(b);
+				g_filemap.erase(b++);
+			}
+			else {
+				++b;
 			}
 		}
 

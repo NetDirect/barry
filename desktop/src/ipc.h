@@ -53,6 +53,11 @@ class SillyBuffer
 	int m_size;
 	int m_data_size;
 
+private:
+	// not meant to be copied
+	SillyBuffer(const SillyBuffer &);
+	SillyBuffer& operator=(const SillyBuffer &);
+
 public:
 	SillyBuffer()
 		: m_buf( new wxChar[100] )

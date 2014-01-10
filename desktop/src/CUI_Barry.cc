@@ -30,6 +30,7 @@ using namespace std;
 namespace AppConfig {
 
 Barry::Barry()
+	: m_parent(0)
 {
 }
 
