@@ -1885,7 +1885,7 @@ static void base64_init(char *rank)
 {
 	int i;
 
-	memset(rank, 0xff, sizeof(rank));
+	memset(rank, 0xff, 256);
 	for (i=0;i<64;i++) {
 		rank[(unsigned int)base64_alphabet[i]] = i;
 	}
@@ -2010,6 +2010,8 @@ static size_t base64_encode_step(const unsigned char *in, size_t len, gboolean b
  **/
 static size_t base64_decode_step(const unsigned char *in, size_t len, unsigned char *out, int *state, unsigned int *save)
 {
+	/* This buffer must be at least 256 bytes long, as base64_init()
+	   depends on it. */
 	unsigned char base64_rank[256];
 	base64_init((char*)base64_rank);
 
