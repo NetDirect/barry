@@ -32,12 +32,12 @@ class DateTimeValidator : public wxValidator
 
 public:
 	explicit DateTimeValidator(wxDateTime *pval)
-		: m_pDateTime(pval)
+		: m_pDateTime(pval), m_pCtrl(0)
 	{
 	}
 
 	DateTimeValidator(const DateTimeValidator &other)
-		: m_pDateTime(other.m_pDateTime)
+		: m_pDateTime(other.m_pDateTime), m_pCtrl(0)
 	{
 	}
 
@@ -103,13 +103,14 @@ class RadioBoxValidator : public wxValidator
 
 public:
 	explicit RadioBoxValidator(EnumT *pval)
-		: m_pEnum(pval)
+		: m_pEnum(pval), m_pCtrl(0)
 	{
 	}
 
 	RadioBoxValidator(const RadioBoxValidator &other)
 		: m_codes(other.m_codes)
 		, m_pEnum(other.m_pEnum)
+		, m_pCtrl(0)
 	{
 	}
 

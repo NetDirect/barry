@@ -120,7 +120,7 @@ struct SyncMemberSummary
 	unsigned long deleted;
 
 	SyncMemberSummary()
-		: added(0), modified(0), deleted(0)
+		: id(0), member_id(0), added(0), modified(0), deleted(0)
 	{}
 };
 

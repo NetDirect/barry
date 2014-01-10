@@ -43,7 +43,8 @@ using namespace Barry;
 // DatabaseSyncState
 
 DatabaseSyncState::DatabaseSyncState(OSyncPluginInfo *info, const char *description)
-	: m_dbId(0),
+	: sink(0),
+	m_dbId(0),
 	m_Sync(false),
 	m_Desc(description)
 {
@@ -72,6 +73,7 @@ std::string DatabaseSyncState::Map2Uid(uint32_t recordId) const
 // BarryEnvironment Public API
 
 BarryEnvironment::BarryEnvironment(OSyncPluginInfo *info):
+	member(0),
 	info(info),
 	m_pin(-1),
 	m_DebugMode(false),

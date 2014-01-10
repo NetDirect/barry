@@ -68,6 +68,7 @@ Error::Error(int errcode, const std::string &str)
 // JDWP::JDWP communication class
 
 JDWP::JDWP()
+	: m_lasterror(0)
 {
 }
 
