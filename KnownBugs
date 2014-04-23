@@ -5,6 +5,19 @@ No support for BlackBerry Z10 and newer devices
 	would be appreciated.
 
 
+Desktop GUI does not display or edit some recurring calendar entries correctly
+------------------------------------------------------------------------------
+	Some recurring calendar entries, such as birthdays, have 0 value
+	start and end times, but use the recurring mode YearByDate to
+	specify the day of the birthday.  This is not handled correctly,
+	if at all, in the Desktop GUI, and merely shows todays date
+	in the Start and End fields, and does not display the month or
+	day number of the recurring YearByDate at all.
+
+	This requires a GUI modification, and additional code to handle the
+	special case.
+
+
 Tasks database self-corrupts on many devices
 --------------------------------------------
 	If you extract a Tasks record, and then write it back via
