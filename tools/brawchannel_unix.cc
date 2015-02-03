@@ -37,6 +37,7 @@
 #include <arpa/inet.h>
 #include <fcntl.h>
 #include <string>
+#include <unistd.h>
 
 #define SD_SEND SHUT_WR
 #define INVALID_SOCKET -1
