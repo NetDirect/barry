@@ -78,7 +78,7 @@ struct tm* iso_to_tm(const char *timestamp,
 		if( *i == 'T' )
 			date = false;
 		if( (date && *i == '-') || *i == ':' )
-			ts.erase(i);
+			i = ts.erase(i);
 		else
 			++i;
 	}
